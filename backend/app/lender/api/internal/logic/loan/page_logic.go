@@ -3,14 +3,12 @@ package loan
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/copierx"
 )
 
 type PageLogic struct {
@@ -35,22 +33,19 @@ func (l *PageLogic) Page(req *types.LoanPageRequest) (resp *types.LoanPageRespon
 		},
 	}
 	resp = &types.LoanPageResponse{}
-
-	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{
-		IgnoreEmpty: true,
-		DeepCopy:    true,
-	})
+	rpcReq.Data, err = copierx.Trans[types.LoanPageRequest, lender.LoanPageRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
 
 	rpcResp, err := l.svcCtx.LoanRpcClient.LoanPage(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err
 	}
-	err = copier.Copy(resp, &rpcResp.Data)
+
+	resp, err = copierx.Trans[lender.LoanPageResponseData, types.LoanPageResponse](rpcResp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return resp, err
 }

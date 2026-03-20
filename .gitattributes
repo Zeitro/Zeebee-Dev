@@ -1,0 +1,35 @@
+# Line ending normalization for backend (Go) only
+# Frontend and other directories remain unchanged
+
+# Auto detect backend text files and normalize to LF
+backend/** text=auto eol=lf
+
+# Backend source code files
+backend/**/*.go text eol=lf
+backend/**/*.proto text eol=lf
+backend/**/*.api text eol=lf
+backend/**/*.sql text eol=lf
+backend/**/*.json text eol=lf
+backend/**/*.yaml text eol=lf
+backend/**/*.yml text eol=lf
+backend/**/*.xml text eol=lf
+backend/**/*.md text eol=lf
+backend/**/*.txt text eol=lf
+backend/**/*.sh text eol=lf
+
+# Backend specific files
+backend/**/go.mod text eol=lf
+backend/**/go.sum text eol=lf
+backend/**/Makefile text eol=lf
+backend/**/Dockerfile text eol=lf
+backend/**/.dockerignore text eol=lf
+
+# Binary files should not be modified
+backend/**/*.png binary
+backend/**/*.jpg binary
+backend/**/*.jpeg binary
+backend/**/*.gif binary
+backend/**/*.ico binary
+backend/**/*.pdf binary
+backend/**/*.zip binary
+backend/**/*.tar.gz binary

@@ -15,10 +15,18 @@ import {
 	validateRule,
 	createRequest,
 } from '@repo/shared-methods/utils';
-import { Button, Col, Form, Input, InputNumber, Row, Image, message } from 'antd';
+import { Button, Col, Form, Input, InputNumber, Row, Image, message, Space } from 'antd';
 import { useState, forwardRef, useImperativeHandle, useEffect, useRef } from 'react';
 import _ from 'lodash';
 const { TextArea } = Input;
+const AddonInput = ({ value, onChange }) => {
+	return (
+		<Space.Compact className="w-full">
+			<Space.Addon>https://</Space.Addon>
+			<Input placeholder="Website link" allowClear value={value} onChange={onChange} />
+		</Space.Compact>
+	);
+};
 // 组织信息填写
 const OrganizationProfile = (
 	{
@@ -281,7 +289,7 @@ const OrganizationProfile = (
 						name={websiteName}
 						getValueFromEvent={(v) => v.target.value?.replace(/^https?:\/\//, '')}
 					>
-						<Input addonBefore="https://" placeholder="Website link" allowClear />
+						<AddonInput />
 					</Form.Item>
 					<div className="!flex">
 						<Form.Item

@@ -33,7 +33,7 @@ func NewSendRequestsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Send
 	return &SendRequestsLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 		Logger:    logx.WithContext(ctx),
 	}
 }
@@ -94,6 +94,7 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 		})
 
 		innerErr = l.baseLogic.CreateLoanOperationLog(
+			l.ctx,
 			tx,
 			loan.Id,
 			claim.OrganizationUserId,
@@ -137,7 +138,7 @@ func (l *SendRequestsLogic) prepare(in *lender.LoanDocumentSendRequestsRequest, 
 		return nil, errorx.WithStack(errorx.New("No document type found"))
 	}
 	// var document *model.LoanDocument
-	loan, _, err = l.baseLogic.GetLoanAndDocumentByDocumentId(in.Data.Documents[0].Id, claim.OrganizationId)
+	loan, _, err = l.baseLogic.GetLoanAndDocumentByDocumentId(l.ctx, in.Data.Documents[0].Id, claim.OrganizationId)
 	return loan, err
 }
 

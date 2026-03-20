@@ -3,8 +3,6 @@ package organization_user
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
@@ -30,13 +28,12 @@ func NewOrganizationUserPageLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 func (l *OrganizationUserPageLogic) OrganizationUserPage(req *types.OrganizationUserPageRequest) (resp *types.OrganizationUserPageResponse, err error) {
+	resp = &types.OrganizationUserPageResponse{}
 	rpcReq := &admin.OrganizationUserPageRequest{
 		Data: &admin.OrganizationUserPageRequestData{},
 	}
-	err = copier.CopyWithOption(rpcReq.Data, req, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+
+	rpcReq.Data, err = copierx.Trans[types.OrganizationUserPageRequest, admin.OrganizationUserPageRequestData](req)
 	if err != nil {
 		err = errorx.GetFailedTransReqErr(err)
 		return nil, err
@@ -47,17 +44,10 @@ func (l *OrganizationUserPageLogic) OrganizationUserPage(req *types.Organization
 		return nil, errorx.WithStack(err)
 	}
 
-	resp = &types.OrganizationUserPageResponse{}
-	err = copier.CopyWithOption(resp, rpcResp.Data, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
+	// trans response
+	resp, err = copierx.Trans[admin.OrganizationUserPageResponseData, types.OrganizationUserPageResponse](rpcResp.Data)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-
-	return resp, nil
+	return resp, err
 }

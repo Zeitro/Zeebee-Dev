@@ -14,27 +14,25 @@ import (
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data"
-	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
-	"zeebee-backend/domains/zeebee/repo"
 )
 
-// OrganizationTemplateLogic provides base template business logic
+// OrganizationTemplateLogic provides organization template business logic
 type OrganizationTemplateLogic struct {
-	repos *repo.AllRepos
+	*BaseLogic
 }
 
-// NewOrganizationTemplateLogic creates a new base template logic instance
-func NewOrganizationTemplateLogic(repos *repo.AllRepos) *OrganizationTemplateLogic {
+// NewOrganizationTemplateLogic creates a new organization template logic instance
+func NewOrganizationTemplateLogic(baseLogic *BaseLogic) *OrganizationTemplateLogic {
 	return &OrganizationTemplateLogic{
-		repos: repos,
+		BaseLogic: baseLogic,
 	}
 }
 
 // Detail retrieves detailed information about an organization template by its ID.
 // It fetches the template from the repository and converts it to a business object.
-func (l *OrganizationTemplateLogic) Detail(ctx context.Context, id int64) (result *bo.OrganizationTemplateBo, err error) {
+func (l *OrganizationTemplateLogic) Detail(ctx context.Context, id int64) (result *dto.OrganizationTemplateEntityDto, err error) {
 	organizationTemplate, err := l.repos.OrganizationTemplateRepo.Detail(ctx, id, true)
 	if err != nil {
 		return nil, errorx.WithStack(err)
@@ -43,7 +41,7 @@ func (l *OrganizationTemplateLogic) Detail(ctx context.Context, id int64) (resul
 	if err != nil {
 		return nil, err
 	}
-	result, err = copierx.Trans[model.OrganizationTemplate, bo.OrganizationTemplateBo](organizationTemplate)
+	result, err = copierx.Trans[model.OrganizationTemplate, dto.OrganizationTemplateEntityDto](organizationTemplate)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +49,7 @@ func (l *OrganizationTemplateLogic) Detail(ctx context.Context, id int64) (resul
 }
 
 // DetailByPurpose retrieves an organization template by its purpose and organization ID.
-func (l *OrganizationTemplateLogic) DetailByPurpose(ctx context.Context, organizationId int64, purpose string) (result *bo.OrganizationTemplateBo, err error) {
+func (l *OrganizationTemplateLogic) DetailByPurpose(ctx context.Context, organizationId int64, purpose string) (result *dto.OrganizationTemplateEntityDto, err error) {
 	organizationTemplate, err := l.repos.OrganizationTemplateRepo.DetailByPurpose(ctx, organizationId, purpose, true)
 	if err != nil {
 		return nil, err
@@ -62,14 +60,14 @@ func (l *OrganizationTemplateLogic) DetailByPurpose(ctx context.Context, organiz
 		return nil, err
 	}
 
-	result, err = copierx.Trans[model.OrganizationTemplate, bo.OrganizationTemplateBo](organizationTemplate)
+	result, err = copierx.Trans[model.OrganizationTemplate, dto.OrganizationTemplateEntityDto](organizationTemplate)
 	if err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (l *OrganizationTemplateLogic) UpdateVariableGroup(ctx context.Context, req dto.OrganizationTemplateUpdateVariableGroupDto) (result *bo.OrganizationTemplateBo, err error) {
+func (l *OrganizationTemplateLogic) UpdateVariableGroup(ctx context.Context, req dto.OrganizationTemplateUpdateVariableGroupDto) (result *dto.OrganizationTemplateEntityDto, err error) {
 	// Get existing template
 	existing, err := l.repos.OrganizationTemplateRepo.Detail(ctx, req.Id, false)
 	if err != nil {
@@ -192,20 +190,20 @@ func (l *OrganizationTemplateLogic) UpdateVariableGroup(ctx context.Context, req
 		return nil, err
 	}
 
-	result, err = copierx.Trans[model.OrganizationTemplate, bo.OrganizationTemplateBo](updated)
+	result, err = copierx.Trans[model.OrganizationTemplate, dto.OrganizationTemplateEntityDto](updated)
 	if err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (l *OrganizationTemplateLogic) Page(ctx context.Context, pageReq dto.OrganizationTemplatePageRequestDto) (page bo.PageResultBo[bo.OrganizationTemplatePageBo], err error) {
+func (l *OrganizationTemplateLogic) Page(ctx context.Context, pageReq dto.OrganizationTemplatePageRequestDto) (page dto.PageResultDto[dto.OrganizationTemplatePageEntityDto], err error) {
 	pageResult, err := l.repos.OrganizationTemplateRepo.Page(ctx, pageReq)
 	if err != nil {
 		return page, err
 	}
 
-	pagePtr, err := copierx.Trans[gormx.PageResponse[*model.OrganizationTemplate], bo.PageResultBo[bo.OrganizationTemplatePageBo]](&pageResult)
+	pagePtr, err := copierx.Trans[gormx.PageResponse[*model.OrganizationTemplate], dto.PageResultDto[dto.OrganizationTemplatePageEntityDto]](&pageResult)
 	if err != nil {
 		return page, err
 	}
@@ -213,7 +211,7 @@ func (l *OrganizationTemplateLogic) Page(ctx context.Context, pageReq dto.Organi
 }
 
 // Reset resets an organization template to its base template settings.
-func (l *OrganizationTemplateLogic) Reset(ctx context.Context, id int64, organizationId int64) (result *bo.OrganizationTemplateBo, err error) {
+func (l *OrganizationTemplateLogic) Reset(ctx context.Context, id int64, organizationId int64) (result *dto.OrganizationTemplateEntityDto, err error) {
 	// Retrieve the template details with full information
 	template, err := l.repos.OrganizationTemplateRepo.Detail(ctx, id, true)
 	if err != nil {
@@ -256,7 +254,7 @@ func (l *OrganizationTemplateLogic) Reset(ctx context.Context, id int64, organiz
 	}
 
 	// Convert the updated model to the business object format
-	result, err = copierx.Trans[model.OrganizationTemplate, bo.OrganizationTemplateBo](updated)
+	result, err = copierx.Trans[model.OrganizationTemplate, dto.OrganizationTemplateEntityDto](updated)
 	if err != nil {
 		return nil, err
 	}

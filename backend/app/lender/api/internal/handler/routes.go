@@ -15,6 +15,7 @@ import (
 	organization_template "zeebee-backend/app/lender/api/internal/handler/organization_template"
 	organization_user "zeebee-backend/app/lender/api/internal/handler/organization_user"
 	pdf "zeebee-backend/app/lender/api/internal/handler/pdf"
+	resource "zeebee-backend/app/lender/api/internal/handler/resource"
 	role "zeebee-backend/app/lender/api/internal/handler/role"
 	storage "zeebee-backend/app/lender/api/internal/handler/storage"
 	user "zeebee-backend/app/lender/api/internal/handler/user"
@@ -25,32 +26,35 @@ import (
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				// select options
-				Method:  http.MethodGet,
-				Path:    "/select_options",
-				Handler: common.SelectOptionsHandler(serverCtx),
-			},
-			{
-				// sync data
-				Method:  http.MethodGet,
-				Path:    "/sync_data",
-				Handler: common.SyncDataHandler(serverCtx),
-			},
-			{
-				// get us city
-				Method:  http.MethodGet,
-				Path:    "/us_cities",
-				Handler: common.GetUsCitiesHandler(serverCtx),
-			},
-			{
-				// get us states
-				Method:  http.MethodGet,
-				Path:    "/us_states",
-				Handler: common.GetUsStatesHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// select options
+					Method:  http.MethodGet,
+					Path:    "/select_options",
+					Handler: common.SelectOptionsHandler(serverCtx),
+				},
+				{
+					// sync data
+					Method:  http.MethodGet,
+					Path:    "/sync_data",
+					Handler: common.SyncDataHandler(serverCtx),
+				},
+				{
+					// get us city
+					Method:  http.MethodGet,
+					Path:    "/us_cities",
+					Handler: common.GetUsCitiesHandler(serverCtx),
+				},
+				{
+					// get us states
+					Method:  http.MethodGet,
+					Path:    "/us_states",
+					Handler: common.GetUsStatesHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithPrefix("/api/v1"),
 	)
 
@@ -253,14 +257,17 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				// accept invitation
-				Method:  http.MethodPost,
-				Path:    "/organization_user/accept_invitation",
-				Handler: organization_user.OrganizationUserAcceptInvitationHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// accept invitation
+					Method:  http.MethodPost,
+					Path:    "/organization_user/accept_invitation",
+					Handler: organization_user.OrganizationUserAcceptInvitationHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithPrefix("/api/v1"),
 	)
 
@@ -332,10 +339,25 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
-					// create apply form pdf
+					// convert html to pdf
 					Method:  http.MethodPost,
 					Path:    "/pdf/html_to_pdf",
 					Handler: pdf.HtmlToPdfHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// tree
+					Method:  http.MethodGet,
+					Path:    "/resource/tree",
+					Handler: resource.ResourceTreeHandler(serverCtx),
 				},
 			}...,
 		),
@@ -369,6 +391,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodDelete,
 					Path:    "/role/:id",
 					Handler: role.RoleDeleteHandler(serverCtx),
+				},
+				{
+					// assign organization users
+					Method:  http.MethodPost,
+					Path:    "/role/:id/assign_organization_users",
+					Handler: role.RoleAssignOrganizationUsersHandler(serverCtx),
 				},
 				{
 					// update status
@@ -409,50 +437,53 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				// login
-				Method:  http.MethodPost,
-				Path:    "/user/login",
-				Handler: user.LoginHandler(serverCtx),
-			},
-			{
-				// refresh
-				Method:  http.MethodPost,
-				Path:    "/user/refresh",
-				Handler: user.RefreshTokenHandler(serverCtx),
-			},
-			{
-				// register
-				Method:  http.MethodPost,
-				Path:    "/user/register",
-				Handler: user.RegisterHandler(serverCtx),
-			},
-			{
-				// reset password
-				Method:  http.MethodPost,
-				Path:    "/user/reset_password",
-				Handler: user.ResetPasswordHandler(serverCtx),
-			},
-			{
-				// send reset password email
-				Method:  http.MethodPost,
-				Path:    "/user/send_reset_password",
-				Handler: user.SendResetPasswordHandler(serverCtx),
-			},
-			{
-				// send verify email
-				Method:  http.MethodPost,
-				Path:    "/user/send_verify_email",
-				Handler: user.SendVerifyEmailHandler(serverCtx),
-			},
-			{
-				// verify email
-				Method:  http.MethodPost,
-				Path:    "/user/verify_email",
-				Handler: user.VerifyEmailHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// login
+					Method:  http.MethodPost,
+					Path:    "/user/login",
+					Handler: user.LoginHandler(serverCtx),
+				},
+				{
+					// refresh
+					Method:  http.MethodPost,
+					Path:    "/user/refresh",
+					Handler: user.RefreshTokenHandler(serverCtx),
+				},
+				{
+					// register
+					Method:  http.MethodPost,
+					Path:    "/user/register",
+					Handler: user.RegisterHandler(serverCtx),
+				},
+				{
+					// reset password
+					Method:  http.MethodPost,
+					Path:    "/user/reset_password",
+					Handler: user.ResetPasswordHandler(serverCtx),
+				},
+				{
+					// send reset password email
+					Method:  http.MethodPost,
+					Path:    "/user/send_reset_password",
+					Handler: user.SendResetPasswordHandler(serverCtx),
+				},
+				{
+					// send verify email
+					Method:  http.MethodPost,
+					Path:    "/user/send_verify_email",
+					Handler: user.SendVerifyEmailHandler(serverCtx),
+				},
+				{
+					// verify email
+					Method:  http.MethodPost,
+					Path:    "/user/verify_email",
+					Handler: user.VerifyEmailHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithPrefix("/api/v1"),
 	)
 
@@ -465,6 +496,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/user/info",
 					Handler: user.InfoHandler(serverCtx),
+				},
+				{
+					// user menu
+					Method:  http.MethodGet,
+					Path:    "/user/menu",
+					Handler: user.UserMenuHandler(serverCtx),
 				},
 				{
 					// switch organization

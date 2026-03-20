@@ -13,8 +13,8 @@ import (
 )
 
 type SwitchStatusLogic struct {
-	ctx       context.Context
-	svcCtx    *svc.ServiceContext
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
 	logx.Logger
 	baseLogic *logic.BaseLogic
 }
@@ -24,7 +24,7 @@ func NewSwitchStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Swit
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 

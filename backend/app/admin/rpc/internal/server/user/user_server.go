@@ -34,7 +34,7 @@ func (s *UserServer) RefreshToken(ctx context.Context, in *admin.RefreshTokenReq
 	return l.RefreshToken(in)
 }
 
-func (s *UserServer) UserInfo(ctx context.Context, in *admin.UserInfoRequest) (*admin.UserinfoResponse, error) {
+func (s *UserServer) UserInfo(ctx context.Context, in *admin.EmptyRequest) (*admin.UserinfoResponse, error) {
 	l := userlogic.NewUserInfoLogic(ctx, s.svcCtx)
 	return l.UserInfo(in)
 }

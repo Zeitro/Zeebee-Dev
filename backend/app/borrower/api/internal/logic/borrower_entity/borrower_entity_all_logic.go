@@ -3,14 +3,12 @@ package borrower_entity
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/errorx"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/common/copierx"
 )
 
 type BorrowerEntityAllLogic struct {
@@ -38,14 +36,11 @@ func (l *BorrowerEntityAllLogic) BorrowerEntityAll(req *types.EmptyRequest) (res
 
 	resp = &types.BorrowerEntityAllResponse{}
 	resp.Lists = make([]*types.BorrowerEntityPageEntity, 0, len(rpcResp.Data))
-
-	err = copier.CopyWithOption(&resp.Lists, rpcResp.Data, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+	listPtr, err := copierx.Trans[[]*borrower.BorrowerEntityPageEntity, []*types.BorrowerEntityPageEntity](&rpcResp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
+	resp.Lists = *listPtr
 
 	return resp, nil
 }

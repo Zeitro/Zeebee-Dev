@@ -3,14 +3,15 @@ package userlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type UserInfoLogic struct {
@@ -25,7 +26,7 @@ func NewUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserInfo
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -44,13 +45,10 @@ func (l *UserInfoLogic) UserInfo(in *lender.UserInfoRequest) (resp *lender.Useri
 	if err != nil {
 		return nil, err
 	}
-	data := &lender.UserinfoResponseData{}
-	err = copier.CopyWithOption(data, user, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+
+	data, err := copierx.Trans[dto.UserinfoDto, lender.UserinfoResponseData](user)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	userInfo := &lender.UserinfoResponse{
 		Data: data,

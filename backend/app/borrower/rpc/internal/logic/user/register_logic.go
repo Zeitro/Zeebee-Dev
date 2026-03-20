@@ -26,7 +26,6 @@ import (
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/limiter"
 	"zeebee-backend/domains/zeebee/model"
@@ -44,7 +43,7 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -129,7 +128,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 
 	go func() {
 		var err error
-		var tokenInfo *bo.UserJwtTokenBo
+		var tokenInfo *dto.UserJwtTokenDto
 		ctx := context.WithoutCancel(newCxt)
 		md, _ := metadata.FromIncomingContext(ctx)
 		newMd := md.Copy()

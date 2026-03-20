@@ -11,7 +11,6 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
 )
 
@@ -27,7 +26,7 @@ func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogi
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -55,7 +54,7 @@ func (l *UpdateLogic) Update(in *borrower.RoleUpdateRequest) (resp *borrower.Rol
 		return nil, err
 	}
 
-	data, err := copierx.Trans[bo.RoleBo, borrower.RoleEntity](role, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[dto.RoleEntityDto, borrower.RoleEntity](role, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

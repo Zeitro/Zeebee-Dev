@@ -9,7 +9,6 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,7 +28,7 @@ func NewPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PageLogic {
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -58,7 +57,7 @@ func (l *PageLogic) Page(in *lender.OrganizationUserPageRequest) (resp *lender.O
 	}
 	var list []*lender.OrganizationUserPageEntity
 	for _, v := range results.List {
-		item, err := copierx.Trans[bo.OrganizationUserBo, lender.OrganizationUserPageEntity](v, copierx.TimeToRFC3339Str())
+		item, err := copierx.Trans[dto.OrganizationUserEntityDto, lender.OrganizationUserPageEntity](v, copierx.TimeToRFC3339Str())
 		if err != nil {
 			return nil, errorx.GetFailedTransRespErr(err)
 		}
