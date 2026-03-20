@@ -42,7 +42,7 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *lender.SendRese
 
 	email := in.Data.Email
 	if email == "" {
-		return nil, errorx.WithStack(errorx.New("Email Is Required"))
+		return nil, errorx.WithStack(errorx.New("Email is required"))
 	}
 
 	// rate limit
@@ -61,7 +61,7 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *lender.SendRese
 		return nil, errorx.WithStack(err)
 	}
 	if user == nil {
-		return nil, errorx.WithStack(errorx.New("User Not Found"))
+		return nil, errorx.WithStack(errorx.New("User not found"))
 	}
 
 	go func() {

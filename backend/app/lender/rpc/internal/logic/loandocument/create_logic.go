@@ -12,6 +12,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -85,7 +86,7 @@ func (l *CreateLogic) Create(in *lender.LoanDocumentCreateExtendTypeRequest) (re
 			return errorx.GetFailedTransErr(innerErr)
 		}
 
-		operationDocs := []*model.OperationLoanDocument{}
+		operationDocs := []*data.OperationLoanDocument{}
 		innerErr = copier.CopyWithOption(&operationDocs, loanDocuments, copier.Option{
 			IgnoreEmpty:   false,
 			DeepCopy:      true,
@@ -99,16 +100,16 @@ func (l *CreateLogic) Create(in *lender.LoanDocumentCreateExtendTypeRequest) (re
 			tx,
 			in.Data.LoanId,
 			claim.OrganizationUserId,
-			model.LoanOperationStatus{
+			data.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			model.LoanOperationStatus{
+			data.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			constants.LoanOperationActionCreateDocumentType,
-			&model.LoanOperationMetadata{
+			&data.LoanOperationMetadata{
 				LoanDocuments: operationDocs,
 			},
 		)
@@ -131,7 +132,7 @@ func (l *CreateLogic) prepare(in *lender.LoanDocumentCreateExtendTypeRequest, cl
 		constants.LoanDocumentCategoryExtend,
 		constants.LoanDocumentCategoryLenderClosingExtend,
 	}, category) {
-		return nil, errorx.WithStack(errorx.New("Loan Document Category Not Supported"))
+		return nil, errorx.WithStack(errorx.New("Loan document category not supported"))
 	}
 
 	loan, err = l.baseLogic.GetLenderLoan(in.Data.LoanId, claim.OrganizationId, nil)
@@ -143,7 +144,7 @@ func (l *CreateLogic) prepare(in *lender.LoanDocumentCreateExtendTypeRequest, cl
 	// check unique
 	fileTypes = slice.Unique(fileTypes)
 	if len(fileTypes) == 0 {
-		return nil, errorx.WithStack(errorx.New("File Types Cannot Be Empty"))
+		return nil, errorx.WithStack(errorx.New("File types cannot be empty"))
 	}
 
 	// checked repeated file types

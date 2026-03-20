@@ -17,7 +17,7 @@ type Response struct {
 func Success(w http.ResponseWriter, data interface{}) {
 	httpx.WriteJson(w, http.StatusOK, Response{
 		Code:    200,
-		Message: "success",
+		Message: "Success",
 		Data:    data,
 	})
 }

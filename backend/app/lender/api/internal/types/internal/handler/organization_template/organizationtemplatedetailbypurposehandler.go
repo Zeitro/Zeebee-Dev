@@ -1,0 +1,33 @@
+// Code scaffolded by goctl. Safe to edit.
+// goctl 1.9.2
+
+package organization_template
+
+import (
+	"net/http"
+
+	"github.com/zeromicro/go-zero/rest/httpx"
+
+	"zeebee-backend/app/lender/api/internal/types/internal/logic/organization_template"
+	"zeebee-backend/app/lender/api/internal/types/internal/svc"
+	"zeebee-backend/app/lender/api/internal/types/internal/types"
+)
+
+// Get Detail by purpose
+func OrganizationTemplateDetailByPurposeHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req types.OrganizationTemplateDetailByPurposeRequest
+		if err := httpx.Parse(r, &req); err != nil {
+			httpx.ErrorCtx(r.Context(), w, err)
+			return
+		}
+
+		l := organization_template.NewOrganizationTemplateDetailByPurposeLogic(r.Context(), svcCtx)
+		resp, err := l.OrganizationTemplateDetailByPurpose(&req)
+		if err != nil {
+			httpx.ErrorCtx(r.Context(), w, err)
+		} else {
+			httpx.OkJsonCtx(r.Context(), w, resp)
+		}
+	}
+}

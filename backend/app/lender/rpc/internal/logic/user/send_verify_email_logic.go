@@ -53,7 +53,7 @@ func (l *SendVerifyEmailLogic) SendVerifyEmail(in *lender.SendVerifyEmailRequest
 	}
 
 	if user.Status != constants.UserStatusUnverified {
-		return nil, errorx.WithStack(errorx.New("User Is Verified"))
+		return nil, errorx.WithStack(errorx.New("User is verified"))
 	}
 
 	// send email

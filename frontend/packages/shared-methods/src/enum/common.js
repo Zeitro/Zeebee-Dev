@@ -52,3 +52,9 @@ export const userStatusColor = {
 		color: 'rgba(0, 0, 0, 0.85)',
 	},
 };
+
+export const systemTypeOptions = [
+	{ value: 'Admin', label: 'Admin' },
+	{ value: 'Lender', label: 'Lender' },
+	{ value: 'Borrower', label: 'Borrower' },
+];

@@ -34,7 +34,7 @@ func NewRoleLogic(repos *repo.AllRepos) *RoleLogic {
 
 func (l *RoleLogic) checkRoleName(roleName string) (err error) {
 	if roleName == constants.AdminRoleName {
-		return errorx.New("Role Name is Reserved")
+		return errorx.New("Role name is reserved")
 	}
 	return err
 }
@@ -63,7 +63,7 @@ func (l *RoleLogic) Create(ctx context.Context, input dto.RoleCreateRequestDto) 
 		return nil, err
 	}
 	if isExisted {
-		return nil, errorx.New("Role Already Exists")
+		return nil, errorx.New("Role already exists")
 	}
 
 	// resourceIds := input.ResourceIds
@@ -138,7 +138,7 @@ func (l *RoleLogic) Update(ctx context.Context, id int64, input dto.RoleUpdateRe
 		return nil, err
 	}
 	if isExisted {
-		return nil, errorx.New("Role Already Exists")
+		return nil, errorx.New("Role already exists")
 	}
 
 	resourceIds := slice.Map[*model.RoleAndResource, int64](roleModel.RoleAndResources, func(i int, item *model.RoleAndResource) int64 {
@@ -225,7 +225,7 @@ func (l *RoleLogic) Update(ctx context.Context, id int64, input dto.RoleUpdateRe
 	if err != nil {
 		return nil, err
 	}
-	// todo update user's permissions
+	// TODO update user's permissions
 
 	result, err = copierx.Trans[model.Role, bo.RoleBo](roleModel)
 	return result, err
@@ -259,12 +259,12 @@ func (l *RoleLogic) Delete(ctx context.Context, id int64, organizationId int64, 
 		return err
 	}
 	if role.Name == constants.AdminRoleName {
-		return errorx.New("Cannot Delete Admin Role")
+		return errorx.New("Cannot delete admin role")
 	}
 
-	// todo remove role's users
+	// TODO remove role's users
 
-	// todo remove user's permissions
+	// TODO remove user's permissions
 
 	_, err = l.repos.RoleRepo.DeleteByID(ctx, id)
 	return err
@@ -278,7 +278,7 @@ func (l *RoleLogic) UpdateStatus(ctx context.Context, id int64, organizationId i
 		return err
 	}
 	if result.Name == constants.AdminRoleName {
-		return errorx.New("Cannot Update Admin Role")
+		return errorx.New("Cannot update admin role")
 	}
 
 	result.Status = status
@@ -288,7 +288,7 @@ func (l *RoleLogic) UpdateStatus(ctx context.Context, id int64, organizationId i
 		return err
 	}
 
-	// todo update user's permissions
+	// TODO update user's permissions
 
 	return nil
 }
