@@ -206,22 +206,39 @@
       ],
       "children": [
         {
-          "id": 56,
+          "id": 55,
           "parent_id": 12,
           "type": "Admin",
           "resource_type": "Button",
-          "name": "Edit",
+          "name": "Add",
           "path": "",
           "icon": "",
-          "tag": "Lenders:Edit",
+          "tag": "Lenders:Add",
           "is_show": false,
           "status": "Active",
           "sort_order": 6,
           "enable_data_scope": false,
           "description": "",
           "is_public": false,
-          "created_at": "2026-03-12T07:47:10Z",
-          "updated_at": "2026-03-12T07:47:21Z"
+          "created_at": "2026-03-12T07:46:28Z",
+          "updated_at": "2026-03-19T08:55:36Z",
+          "apis": [
+            {
+              "id": 124,
+              "parent_id": 121,
+              "name": "lender create",
+              "path": "/api/v1/organization/lender",
+              "method": "POST",
+              "status": "Active",
+              "description": "lender create",
+              "type": "Admin",
+              "sort_order": 3,
+              "auth_required": true,
+              "permission_required": true,
+              "created_at": "2026-03-11T07:44:46Z",
+              "updated_at": "2026-03-11T07:44:46Z"
+            }
+          ]
         },
         {
           "id": 58,
@@ -239,25 +256,74 @@
           "description": "",
           "is_public": false,
           "created_at": "2026-03-12T07:49:25Z",
-          "updated_at": "2026-03-12T07:56:25Z"
+          "updated_at": "2026-03-19T08:55:23Z",
+          "apis": [
+            {
+              "id": 127,
+              "parent_id": 121,
+              "name": "switch status",
+              "path": "/api/v1/organization/:id/status",
+              "method": "PATCH",
+              "status": "Active",
+              "description": "switch status",
+              "type": "Admin",
+              "sort_order": 6,
+              "auth_required": true,
+              "permission_required": true,
+              "created_at": "2026-03-11T07:44:46Z",
+              "updated_at": "2026-03-11T07:44:46Z"
+            }
+          ]
         },
         {
-          "id": 55,
+          "id": 56,
           "parent_id": 12,
           "type": "Admin",
           "resource_type": "Button",
-          "name": "Add",
+          "name": "Edit",
           "path": "",
           "icon": "",
-          "tag": "Lenders:Add",
+          "tag": "Lenders:Edit",
           "is_show": false,
           "status": "Active",
           "sort_order": 6,
           "enable_data_scope": false,
           "description": "",
           "is_public": false,
-          "created_at": "2026-03-12T07:46:28Z",
-          "updated_at": "2026-03-12T07:47:29Z"
+          "created_at": "2026-03-12T07:47:10Z",
+          "updated_at": "2026-03-19T08:55:07Z",
+          "apis": [
+            {
+              "id": 122,
+              "parent_id": 121,
+              "name": "detail",
+              "path": "/api/v1/organization/:id",
+              "method": "GET",
+              "status": "Active",
+              "description": "detail",
+              "type": "Admin",
+              "sort_order": 1,
+              "auth_required": true,
+              "permission_required": true,
+              "created_at": "2026-03-11T07:44:46Z",
+              "updated_at": "2026-03-11T07:44:46Z"
+            },
+            {
+              "id": 125,
+              "parent_id": 121,
+              "name": "lender update",
+              "path": "/api/v1/organization/lender/:id",
+              "method": "PUT",
+              "status": "Active",
+              "description": "lender update",
+              "type": "Admin",
+              "sort_order": 4,
+              "auth_required": true,
+              "permission_required": true,
+              "created_at": "2026-03-11T07:44:46Z",
+              "updated_at": "2026-03-11T07:44:46Z"
+            }
+          ]
         },
         {
           "id": 57,
@@ -1298,6 +1364,41 @@
       ],
       "children": [
         {
+          "id": 120,
+          "parent_id": 46,
+          "type": "Lender",
+          "resource_type": "Button",
+          "name": "ChangeStage",
+          "path": "",
+          "icon": "",
+          "tag": "Loan:ChangeStage",
+          "is_show": false,
+          "status": "Active",
+          "sort_order": 6,
+          "enable_data_scope": false,
+          "description": "",
+          "is_public": false,
+          "created_at": "2026-03-16T07:13:58Z",
+          "updated_at": "2026-03-16T07:13:58Z",
+          "apis": [
+            {
+              "id": 206,
+              "parent_id": 202,
+              "name": "update loan stage",
+              "path": "/api/v1/loan/:id/stage",
+              "method": "PATCH",
+              "status": "Active",
+              "description": "update loan stage",
+              "type": "Lender",
+              "sort_order": 4,
+              "auth_required": true,
+              "permission_required": true,
+              "created_at": "2026-03-11T07:44:46Z",
+              "updated_at": "2026-03-11T07:44:46Z"
+            }
+          ]
+        },
+        {
           "id": 48,
           "parent_id": 46,
           "type": "Lender",
@@ -1333,56 +1434,6 @@
           ],
           "children": [
             {
-              "id": 118,
-              "parent_id": 48,
-              "type": "Lender",
-              "resource_type": "Button",
-              "name": "Edit",
-              "path": "",
-              "icon": "",
-              "tag": "Loan:Details:Edit",
-              "is_show": false,
-              "status": "Active",
-              "sort_order": 6,
-              "enable_data_scope": false,
-              "description": "",
-              "is_public": false,
-              "created_at": "2026-03-16T07:08:26Z",
-              "updated_at": "2026-03-16T07:08:36Z",
-              "apis": [
-                {
-                  "id": 203,
-                  "parent_id": 202,
-                  "name": "detail",
-                  "path": "/api/v1/loan/:id",
-                  "method": "GET",
-                  "status": "Active",
-                  "description": "detail",
-                  "type": "Lender",
-                  "sort_order": 1,
-                  "auth_required": true,
-                  "permission_required": true,
-                  "created_at": "2026-03-11T07:44:46Z",
-                  "updated_at": "2026-03-11T07:44:46Z"
-                },
-                {
-                  "id": 205,
-                  "parent_id": 202,
-                  "name": "update",
-                  "path": "/api/v1/loan/:id",
-                  "method": "PUT",
-                  "status": "Active",
-                  "description": "update",
-                  "type": "Lender",
-                  "sort_order": 3,
-                  "auth_required": true,
-                  "permission_required": true,
-                  "created_at": "2026-03-11T07:44:46Z",
-                  "updated_at": "2026-03-11T07:44:46Z"
-                }
-              ]
-            },
-            {
               "id": 123,
               "parent_id": 48,
               "type": "Lender",
@@ -1399,41 +1450,6 @@
               "is_public": false,
               "created_at": "2026-03-16T07:36:43Z",
               "updated_at": "2026-03-16T07:36:43Z",
-              "apis": [
-                {
-                  "id": 208,
-                  "parent_id": 202,
-                  "name": "reveiw loan pending status",
-                  "path": "/api/v1/loan/:id/review_pending_status",
-                  "method": "POST",
-                  "status": "Active",
-                  "description": "reveiw loan pending status",
-                  "type": "Lender",
-                  "sort_order": 6,
-                  "auth_required": true,
-                  "permission_required": true,
-                  "created_at": "2026-03-11T07:44:46Z",
-                  "updated_at": "2026-03-11T07:44:46Z"
-                }
-              ]
-            },
-            {
-              "id": 119,
-              "parent_id": 48,
-              "type": "Lender",
-              "resource_type": "Button",
-              "name": "Quoting",
-              "path": "",
-              "icon": "",
-              "tag": "Loan:Details:Quoting",
-              "is_show": false,
-              "status": "Active",
-              "sort_order": 6,
-              "enable_data_scope": false,
-              "description": "",
-              "is_public": false,
-              "created_at": "2026-03-16T07:11:24Z",
-              "updated_at": "2026-03-16T07:36:04Z",
               "apis": [
                 {
                   "id": 208,
@@ -1563,6 +1579,91 @@
               ]
             },
             {
+              "id": 119,
+              "parent_id": 48,
+              "type": "Lender",
+              "resource_type": "Button",
+              "name": "Quoting",
+              "path": "",
+              "icon": "",
+              "tag": "Loan:Details:Quoting",
+              "is_show": false,
+              "status": "Active",
+              "sort_order": 6,
+              "enable_data_scope": false,
+              "description": "",
+              "is_public": false,
+              "created_at": "2026-03-16T07:11:24Z",
+              "updated_at": "2026-03-16T07:36:04Z",
+              "apis": [
+                {
+                  "id": 208,
+                  "parent_id": 202,
+                  "name": "reveiw loan pending status",
+                  "path": "/api/v1/loan/:id/review_pending_status",
+                  "method": "POST",
+                  "status": "Active",
+                  "description": "reveiw loan pending status",
+                  "type": "Lender",
+                  "sort_order": 6,
+                  "auth_required": true,
+                  "permission_required": true,
+                  "created_at": "2026-03-11T07:44:46Z",
+                  "updated_at": "2026-03-11T07:44:46Z"
+                }
+              ]
+            },
+            {
+              "id": 118,
+              "parent_id": 48,
+              "type": "Lender",
+              "resource_type": "Button",
+              "name": "Edit",
+              "path": "",
+              "icon": "",
+              "tag": "Loan:Details:Edit",
+              "is_show": false,
+              "status": "Active",
+              "sort_order": 6,
+              "enable_data_scope": false,
+              "description": "",
+              "is_public": false,
+              "created_at": "2026-03-16T07:08:26Z",
+              "updated_at": "2026-03-16T07:08:36Z",
+              "apis": [
+                {
+                  "id": 203,
+                  "parent_id": 202,
+                  "name": "detail",
+                  "path": "/api/v1/loan/:id",
+                  "method": "GET",
+                  "status": "Active",
+                  "description": "detail",
+                  "type": "Lender",
+                  "sort_order": 1,
+                  "auth_required": true,
+                  "permission_required": true,
+                  "created_at": "2026-03-11T07:44:46Z",
+                  "updated_at": "2026-03-11T07:44:46Z"
+                },
+                {
+                  "id": 205,
+                  "parent_id": 202,
+                  "name": "update",
+                  "path": "/api/v1/loan/:id",
+                  "method": "PUT",
+                  "status": "Active",
+                  "description": "update",
+                  "type": "Lender",
+                  "sort_order": 3,
+                  "auth_required": true,
+                  "permission_required": true,
+                  "created_at": "2026-03-11T07:44:46Z",
+                  "updated_at": "2026-03-11T07:44:46Z"
+                }
+              ]
+            },
+            {
               "id": 124,
               "parent_id": 48,
               "type": "Lender",
@@ -1630,41 +1731,6 @@
           ]
         },
         {
-          "id": 120,
-          "parent_id": 46,
-          "type": "Lender",
-          "resource_type": "Button",
-          "name": "ChangeStage",
-          "path": "",
-          "icon": "",
-          "tag": "Loan:ChangeStage",
-          "is_show": false,
-          "status": "Active",
-          "sort_order": 6,
-          "enable_data_scope": false,
-          "description": "",
-          "is_public": false,
-          "created_at": "2026-03-16T07:13:58Z",
-          "updated_at": "2026-03-16T07:13:58Z",
-          "apis": [
-            {
-              "id": 206,
-              "parent_id": 202,
-              "name": "update loan stage",
-              "path": "/api/v1/loan/:id/stage",
-              "method": "PATCH",
-              "status": "Active",
-              "description": "update loan stage",
-              "type": "Lender",
-              "sort_order": 4,
-              "auth_required": true,
-              "permission_required": true,
-              "created_at": "2026-03-11T07:44:46Z",
-              "updated_at": "2026-03-11T07:44:46Z"
-            }
-          ]
-        },
-        {
           "id": 121,
           "parent_id": 46,
           "type": "Lender",
@@ -1719,6 +1785,61 @@
       "created_at": "2026-03-12T03:12:17Z",
       "updated_at": "2026-03-12T06:37:57Z",
       "children": [
+        {
+          "id": 51,
+          "parent_id": 49,
+          "type": "Lender",
+          "resource_type": "Menu",
+          "name": "System",
+          "path": "/setting/system",
+          "icon": "",
+          "tag": "Setting:System",
+          "is_show": true,
+          "status": "Active",
+          "sort_order": 6,
+          "enable_data_scope": false,
+          "description": "",
+          "is_public": false,
+          "created_at": "2026-03-12T03:13:27Z",
+          "updated_at": "2026-03-12T03:13:27Z",
+          "children": [
+            {
+              "id": 78,
+              "parent_id": 51,
+              "type": "Lender",
+              "resource_type": "Button",
+              "name": "Send Pre-Approval Letter",
+              "path": "",
+              "icon": "",
+              "tag": "Setting:System:SendPreApprovalLetter",
+              "is_show": false,
+              "status": "Active",
+              "sort_order": 1,
+              "enable_data_scope": false,
+              "description": "Do you need to send a pre-approval letter to borrower automatically?\nNote: \n         Associato al menu`Pre-approval letter`.",
+              "is_public": false,
+              "created_at": "2026-03-13T08:37:41Z",
+              "updated_at": "2026-03-19T06:38:25Z",
+              "apis": [
+                {
+                  "id": 252,
+                  "parent_id": 250,
+                  "name": "switch status",
+                  "path": "/api/v1/organization_setting/:id/status",
+                  "method": "PATCH",
+                  "status": "Active",
+                  "description": "switch status",
+                  "type": "Lender",
+                  "sort_order": 2,
+                  "auth_required": true,
+                  "permission_required": true,
+                  "created_at": "2026-03-11T07:44:46Z",
+                  "updated_at": "2026-03-11T07:44:46Z"
+                }
+              ]
+            }
+          ]
+        },
         {
           "id": 54,
           "parent_id": 49,
@@ -1942,270 +2063,6 @@
           ]
         },
         {
-          "id": 51,
-          "parent_id": 49,
-          "type": "Lender",
-          "resource_type": "Menu",
-          "name": "System",
-          "path": "/setting/system",
-          "icon": "",
-          "tag": "Setting:System",
-          "is_show": true,
-          "status": "Active",
-          "sort_order": 6,
-          "enable_data_scope": false,
-          "description": "",
-          "is_public": false,
-          "created_at": "2026-03-12T03:13:27Z",
-          "updated_at": "2026-03-12T03:13:27Z",
-          "children": [
-            {
-              "id": 78,
-              "parent_id": 51,
-              "type": "Lender",
-              "resource_type": "Button",
-              "name": "Send Pre-Approval Letter",
-              "path": "",
-              "icon": "",
-              "tag": "Setting:System:SendPreApprovalLetter",
-              "is_show": false,
-              "status": "Active",
-              "sort_order": 1,
-              "enable_data_scope": false,
-              "description": "",
-              "is_public": false,
-              "created_at": "2026-03-13T08:37:41Z",
-              "updated_at": "2026-03-16T06:39:39Z",
-              "apis": [
-                {
-                  "id": 252,
-                  "parent_id": 250,
-                  "name": "switch status",
-                  "path": "/api/v1/organization_setting/:id/status",
-                  "method": "PATCH",
-                  "status": "Active",
-                  "description": "switch status",
-                  "type": "Lender",
-                  "sort_order": 2,
-                  "auth_required": true,
-                  "permission_required": true,
-                  "created_at": "2026-03-11T07:44:46Z",
-                  "updated_at": "2026-03-11T07:44:46Z"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": 53,
-          "parent_id": 49,
-          "type": "Lender",
-          "resource_type": "Menu",
-          "name": "Pre-approval letter",
-          "path": "/setting/preApprovedLetter",
-          "icon": "",
-          "tag": "Setting:PreApprovedLetter",
-          "is_show": true,
-          "status": "Active",
-          "sort_order": 6,
-          "enable_data_scope": false,
-          "description": "",
-          "is_public": false,
-          "created_at": "2026-03-12T03:14:39Z",
-          "updated_at": "2026-03-16T06:55:10Z",
-          "apis": [
-            {
-              "id": 246,
-              "parent_id": 243,
-              "name": "Get Detail by purpose",
-              "path": "/api/v1/organization_template/detail_by_purpose",
-              "method": "GET",
-              "status": "Active",
-              "description": "Get Detail by purpose",
-              "type": "Lender",
-              "sort_order": 3,
-              "auth_required": true,
-              "permission_required": true,
-              "created_at": "2026-03-11T07:44:46Z",
-              "updated_at": "2026-03-11T07:44:46Z"
-            },
-            {
-              "id": 248,
-              "parent_id": 243,
-              "name": "Preview",
-              "path": "/api/v1/organization_template/preview",
-              "method": "POST",
-              "status": "Active",
-              "description": "Preview",
-              "type": "Lender",
-              "sort_order": 5,
-              "auth_required": true,
-              "permission_required": false,
-              "created_at": "2026-03-11T07:44:46Z",
-              "updated_at": "2026-03-11T07:44:46Z"
-            }
-          ],
-          "children": [
-            {
-              "id": 81,
-              "parent_id": 53,
-              "type": "Lender",
-              "resource_type": "Button",
-              "name": "Save",
-              "path": "",
-              "icon": "",
-              "tag": "Setting:PreApprovedLetter:Save",
-              "is_show": false,
-              "status": "Active",
-              "sort_order": 1,
-              "enable_data_scope": false,
-              "description": "",
-              "is_public": false,
-              "created_at": "2026-03-13T08:37:41Z",
-              "updated_at": "2026-03-16T07:00:10Z",
-              "apis": [
-                {
-                  "id": 244,
-                  "parent_id": 243,
-                  "name": "Update",
-                  "path": "/api/v1/organization_template/:id",
-                  "method": "PUT",
-                  "status": "Active",
-                  "description": "Update",
-                  "type": "Lender",
-                  "sort_order": 1,
-                  "auth_required": true,
-                  "permission_required": true,
-                  "created_at": "2026-03-11T07:44:46Z",
-                  "updated_at": "2026-03-11T07:44:46Z"
-                },
-                {
-                  "id": 249,
-                  "parent_id": 243,
-                  "name": "Reset",
-                  "path": "/api/v1/organization_template/:id/reset",
-                  "method": "POST",
-                  "status": "Active",
-                  "description": "Reset",
-                  "type": "Lender",
-                  "sort_order": 6,
-                  "auth_required": true,
-                  "permission_required": true,
-                  "created_at": "2026-03-11T07:44:46Z",
-                  "updated_at": "2026-03-11T07:44:46Z"
-                }
-              ]
-            },
-            {
-              "id": 82,
-              "parent_id": 53,
-              "type": "Lender",
-              "resource_type": "Button",
-              "name": "Download",
-              "path": "",
-              "icon": "",
-              "tag": "Setting:PreApprovedLetter:Download",
-              "is_show": false,
-              "status": "Active",
-              "sort_order": 2,
-              "enable_data_scope": false,
-              "description": "",
-              "is_public": false,
-              "created_at": "2026-03-13T08:37:41Z",
-              "updated_at": "2026-03-16T07:02:03Z",
-              "apis": [
-                {
-                  "id": 254,
-                  "parent_id": 253,
-                  "name": "convert html to pdf",
-                  "path": "/api/v1/pdf/html_to_pdf",
-                  "method": "POST",
-                  "status": "Active",
-                  "description": "convert html to pdf",
-                  "type": "Lender",
-                  "sort_order": 1,
-                  "auth_required": true,
-                  "permission_required": false,
-                  "created_at": "2026-03-11T07:44:46Z",
-                  "updated_at": "2026-03-11T07:44:46Z"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": 52,
-          "parent_id": 49,
-          "type": "Lender",
-          "resource_type": "Menu",
-          "name": "Organization profile",
-          "path": "/setting/organizationProfile",
-          "icon": "",
-          "tag": "Setting:OrganizationProfile",
-          "is_show": true,
-          "status": "Active",
-          "sort_order": 6,
-          "enable_data_scope": false,
-          "description": "",
-          "is_public": false,
-          "created_at": "2026-03-12T03:14:07Z",
-          "updated_at": "2026-03-16T06:41:59Z",
-          "apis": [
-            {
-              "id": 240,
-              "parent_id": 239,
-              "name": "profile",
-              "path": "/api/v1/organization/profile",
-              "method": "GET",
-              "status": "Active",
-              "description": "profile",
-              "type": "Lender",
-              "sort_order": 1,
-              "auth_required": true,
-              "permission_required": false,
-              "created_at": "2026-03-11T07:44:46Z",
-              "updated_at": "2026-03-11T07:44:46Z"
-            }
-          ],
-          "children": [
-            {
-              "id": 87,
-              "parent_id": 52,
-              "type": "Lender",
-              "resource_type": "Button",
-              "name": "Save",
-              "path": "",
-              "icon": "",
-              "tag": "Setting:OrganizationProfile:Save",
-              "is_show": false,
-              "status": "Active",
-              "sort_order": 1,
-              "enable_data_scope": false,
-              "description": "",
-              "is_public": false,
-              "created_at": "2026-03-13T08:37:41Z",
-              "updated_at": "2026-03-16T06:42:35Z",
-              "apis": [
-                {
-                  "id": 241,
-                  "parent_id": 239,
-                  "name": "update profile",
-                  "path": "/api/v1/organization/profile",
-                  "method": "PUT",
-                  "status": "Active",
-                  "description": "update profile",
-                  "type": "Lender",
-                  "sort_order": 2,
-                  "auth_required": true,
-                  "permission_required": true,
-                  "created_at": "2026-03-11T07:44:46Z",
-                  "updated_at": "2026-03-11T07:44:46Z"
-                }
-              ]
-            }
-          ]
-        },
-        {
           "id": 50,
           "parent_id": 49,
           "type": "Lender",
@@ -2376,6 +2233,41 @@
               ]
             },
             {
+              "id": 117,
+              "parent_id": 50,
+              "type": "Lender",
+              "resource_type": "Button",
+              "name": "ChangeStatus",
+              "path": "",
+              "icon": "",
+              "tag": "Setting:User:ChangeStatus",
+              "is_show": false,
+              "status": "Active",
+              "sort_order": 6,
+              "enable_data_scope": false,
+              "description": "",
+              "is_public": false,
+              "created_at": "2026-03-16T06:33:35Z",
+              "updated_at": "2026-03-16T06:33:35Z",
+              "apis": [
+                {
+                  "id": 236,
+                  "parent_id": 228,
+                  "name": "switch status",
+                  "path": "/api/v1/organization_user/:id/status",
+                  "method": "PATCH",
+                  "status": "Active",
+                  "description": "switch status",
+                  "type": "Lender",
+                  "sort_order": 8,
+                  "auth_required": true,
+                  "permission_required": true,
+                  "created_at": "2026-03-11T07:44:46Z",
+                  "updated_at": "2026-03-11T07:44:46Z"
+                }
+              ]
+            },
+            {
               "id": 116,
               "parent_id": 50,
               "type": "Lender",
@@ -2409,37 +2301,211 @@
                   "updated_at": "2026-03-11T07:44:46Z"
                 }
               ]
-            },
+            }
+          ]
+        },
+        {
+          "id": 52,
+          "parent_id": 49,
+          "type": "Lender",
+          "resource_type": "Menu",
+          "name": "Organization profile",
+          "path": "/setting/organizationProfile",
+          "icon": "",
+          "tag": "Setting:OrganizationProfile",
+          "is_show": true,
+          "status": "Active",
+          "sort_order": 6,
+          "enable_data_scope": false,
+          "description": "",
+          "is_public": false,
+          "created_at": "2026-03-12T03:14:07Z",
+          "updated_at": "2026-03-16T06:41:59Z",
+          "apis": [
             {
-              "id": 117,
-              "parent_id": 50,
+              "id": 240,
+              "parent_id": 239,
+              "name": "profile",
+              "path": "/api/v1/organization/profile",
+              "method": "GET",
+              "status": "Active",
+              "description": "profile",
+              "type": "Lender",
+              "sort_order": 1,
+              "auth_required": true,
+              "permission_required": false,
+              "created_at": "2026-03-11T07:44:46Z",
+              "updated_at": "2026-03-11T07:44:46Z"
+            }
+          ],
+          "children": [
+            {
+              "id": 87,
+              "parent_id": 52,
               "type": "Lender",
               "resource_type": "Button",
-              "name": "ChangeStatus",
+              "name": "Save",
               "path": "",
               "icon": "",
-              "tag": "Setting:User:ChangeStatus",
+              "tag": "Setting:OrganizationProfile:Save",
               "is_show": false,
               "status": "Active",
-              "sort_order": 6,
+              "sort_order": 1,
               "enable_data_scope": false,
               "description": "",
               "is_public": false,
-              "created_at": "2026-03-16T06:33:35Z",
-              "updated_at": "2026-03-16T06:33:35Z",
+              "created_at": "2026-03-13T08:37:41Z",
+              "updated_at": "2026-03-16T06:42:35Z",
               "apis": [
                 {
-                  "id": 236,
-                  "parent_id": 228,
-                  "name": "switch status",
-                  "path": "/api/v1/organization_user/:id/status",
-                  "method": "PATCH",
+                  "id": 241,
+                  "parent_id": 239,
+                  "name": "update profile",
+                  "path": "/api/v1/organization/profile",
+                  "method": "PUT",
                   "status": "Active",
-                  "description": "switch status",
+                  "description": "update profile",
                   "type": "Lender",
-                  "sort_order": 8,
+                  "sort_order": 2,
                   "auth_required": true,
                   "permission_required": true,
+                  "created_at": "2026-03-11T07:44:46Z",
+                  "updated_at": "2026-03-11T07:44:46Z"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": 53,
+          "parent_id": 49,
+          "type": "Lender",
+          "resource_type": "Menu",
+          "name": "Pre-approval letter",
+          "path": "/setting/preApprovedLetter",
+          "icon": "",
+          "tag": "Setting:PreApprovedLetter",
+          "is_show": true,
+          "status": "Active",
+          "sort_order": 6,
+          "enable_data_scope": false,
+          "description": "Configurazione del modello di file della lettera di pre-approvazione inviata al mutuatario.\nNote:\n          You need to turn on the \"Send Pre-approval letter\" button under the \"System\" menu for the system to send the letter automatically.",
+          "is_public": false,
+          "created_at": "2026-03-12T03:14:39Z",
+          "updated_at": "2026-03-19T06:49:46Z",
+          "apis": [
+            {
+              "id": 246,
+              "parent_id": 243,
+              "name": "Get Detail by purpose",
+              "path": "/api/v1/organization_template/detail_by_purpose",
+              "method": "GET",
+              "status": "Active",
+              "description": "Get Detail by purpose",
+              "type": "Lender",
+              "sort_order": 3,
+              "auth_required": true,
+              "permission_required": true,
+              "created_at": "2026-03-11T07:44:46Z",
+              "updated_at": "2026-03-11T07:44:46Z"
+            },
+            {
+              "id": 248,
+              "parent_id": 243,
+              "name": "Preview",
+              "path": "/api/v1/organization_template/preview",
+              "method": "POST",
+              "status": "Active",
+              "description": "Preview",
+              "type": "Lender",
+              "sort_order": 5,
+              "auth_required": true,
+              "permission_required": false,
+              "created_at": "2026-03-11T07:44:46Z",
+              "updated_at": "2026-03-11T07:44:46Z"
+            }
+          ],
+          "children": [
+            {
+              "id": 81,
+              "parent_id": 53,
+              "type": "Lender",
+              "resource_type": "Button",
+              "name": "Save",
+              "path": "",
+              "icon": "",
+              "tag": "Setting:PreApprovedLetter:Save",
+              "is_show": false,
+              "status": "Active",
+              "sort_order": 1,
+              "enable_data_scope": false,
+              "description": "",
+              "is_public": false,
+              "created_at": "2026-03-13T08:37:41Z",
+              "updated_at": "2026-03-16T07:00:10Z",
+              "apis": [
+                {
+                  "id": 244,
+                  "parent_id": 243,
+                  "name": "Update",
+                  "path": "/api/v1/organization_template/:id",
+                  "method": "PUT",
+                  "status": "Active",
+                  "description": "Update",
+                  "type": "Lender",
+                  "sort_order": 1,
+                  "auth_required": true,
+                  "permission_required": true,
+                  "created_at": "2026-03-11T07:44:46Z",
+                  "updated_at": "2026-03-11T07:44:46Z"
+                },
+                {
+                  "id": 249,
+                  "parent_id": 243,
+                  "name": "Reset",
+                  "path": "/api/v1/organization_template/:id/reset",
+                  "method": "POST",
+                  "status": "Active",
+                  "description": "Reset",
+                  "type": "Lender",
+                  "sort_order": 6,
+                  "auth_required": true,
+                  "permission_required": true,
+                  "created_at": "2026-03-11T07:44:46Z",
+                  "updated_at": "2026-03-11T07:44:46Z"
+                }
+              ]
+            },
+            {
+              "id": 82,
+              "parent_id": 53,
+              "type": "Lender",
+              "resource_type": "Button",
+              "name": "Download",
+              "path": "",
+              "icon": "",
+              "tag": "Setting:PreApprovedLetter:Download",
+              "is_show": false,
+              "status": "Active",
+              "sort_order": 2,
+              "enable_data_scope": false,
+              "description": "",
+              "is_public": false,
+              "created_at": "2026-03-13T08:37:41Z",
+              "updated_at": "2026-03-16T07:02:03Z",
+              "apis": [
+                {
+                  "id": 254,
+                  "parent_id": 253,
+                  "name": "convert html to pdf",
+                  "path": "/api/v1/pdf/html_to_pdf",
+                  "method": "POST",
+                  "status": "Active",
+                  "description": "convert html to pdf",
+                  "type": "Lender",
+                  "sort_order": 1,
+                  "auth_required": true,
+                  "permission_required": false,
                   "created_at": "2026-03-11T07:44:46Z",
                   "updated_at": "2026-03-11T07:44:46Z"
                 }
@@ -2485,20 +2551,20 @@
       "description": "",
       "is_public": false,
       "created_at": "2026-03-11T10:19:19Z",
-      "updated_at": "2026-03-11T10:19:19Z",
+      "updated_at": "2026-03-19T09:19:56Z",
       "apis": [
         {
-          "id": 275,
-          "parent_id": 274,
-          "name": "register",
-          "path": "/api/v1/user/register",
+          "id": 295,
+          "parent_id": 286,
+          "name": "page",
+          "path": "/api/v1/loan/page",
           "method": "POST",
           "status": "Active",
-          "description": "register",
+          "description": "page",
           "type": "Borrower",
-          "sort_order": 1,
-          "auth_required": false,
-          "permission_required": false,
+          "sort_order": 9,
+          "auth_required": true,
+          "permission_required": true,
           "created_at": "2026-03-11T07:44:46Z",
           "updated_at": "2026-03-11T07:44:46Z"
         }
@@ -3299,24 +3365,7 @@
       "description": "",
       "is_public": false,
       "created_at": "2026-03-11T10:30:46Z",
-      "updated_at": "2026-03-12T06:52:51Z",
-      "apis": [
-        {
-          "id": 272,
-          "parent_id": 269,
-          "name": "get us city",
-          "path": "/api/v1/us_cities",
-          "method": "GET",
-          "status": "Active",
-          "description": "get us city",
-          "type": "Borrower",
-          "sort_order": 3,
-          "auth_required": false,
-          "permission_required": false,
-          "created_at": "2026-03-11T07:44:46Z",
-          "updated_at": "2026-03-11T07:44:46Z"
-        }
-      ],
+      "updated_at": "2026-03-19T09:20:33Z",
       "children": [
         {
           "id": 29,
@@ -3685,6 +3734,116 @@
       ]
     },
     {
+      "id": 39,
+      "parent_id": 0,
+      "type": "Borrower",
+      "resource_type": "Menu",
+      "name": "Market Tools",
+      "path": "marketTools",
+      "icon": "marketTools",
+      "tag": "MarketTools",
+      "is_show": true,
+      "status": "Active",
+      "sort_order": 5,
+      "enable_data_scope": false,
+      "description": "",
+      "is_public": false,
+      "created_at": "2026-03-11T10:41:28Z",
+      "updated_at": "2026-03-19T09:21:21Z",
+      "children": [
+        {
+          "id": 40,
+          "parent_id": 39,
+          "type": "Borrower",
+          "resource_type": "Menu",
+          "name": "Property Finder",
+          "path": "/marketTools/propertyFinder",
+          "icon": "",
+          "tag": "MarketTools:PropertyFinder",
+          "is_show": true,
+          "status": "Active",
+          "sort_order": 6,
+          "enable_data_scope": false,
+          "description": "",
+          "is_public": false,
+          "created_at": "2026-03-11T10:42:27Z",
+          "updated_at": "2026-03-17T03:30:22Z",
+          "apis": [
+            {
+              "id": 365,
+              "parent_id": 364,
+              "name": "Search property listings from Zeitro API",
+              "path": "/api/v1/zeitro/listings/search",
+              "method": "GET",
+              "status": "Active",
+              "description": "Search property listings from Zeitro API",
+              "type": "Borrower",
+              "sort_order": 1,
+              "auth_required": true,
+              "permission_required": false,
+              "created_at": "2026-03-11T07:44:46Z",
+              "updated_at": "2026-03-11T07:44:46Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 36,
+      "parent_id": 0,
+      "type": "Borrower",
+      "resource_type": "Menu",
+      "name": "Profile settings",
+      "path": "personalCenter",
+      "icon": "",
+      "tag": "Personal",
+      "is_show": false,
+      "status": "Active",
+      "sort_order": 6,
+      "enable_data_scope": false,
+      "description": "",
+      "is_public": false,
+      "created_at": "2026-03-11T10:38:33Z",
+      "updated_at": "2026-03-19T09:21:38Z",
+      "children": [
+        {
+          "id": 38,
+          "parent_id": 36,
+          "type": "Borrower",
+          "resource_type": "Menu",
+          "name": "Change Password",
+          "path": "/personalCenter/changePassword",
+          "icon": "",
+          "tag": "Personal:ChangePassword",
+          "is_show": false,
+          "status": "Active",
+          "sort_order": 6,
+          "enable_data_scope": false,
+          "description": "",
+          "is_public": false,
+          "created_at": "2026-03-11T10:40:30Z",
+          "updated_at": "2026-03-17T03:18:41Z",
+          "apis": [
+            {
+              "id": 285,
+              "parent_id": 274,
+              "name": "change password",
+              "path": "/api/v1/user/change_password",
+              "method": "POST",
+              "status": "Active",
+              "description": "change password",
+              "type": "Borrower",
+              "sort_order": 11,
+              "auth_required": true,
+              "permission_required": false,
+              "created_at": "2026-03-11T07:44:46Z",
+              "updated_at": "2026-03-11T07:44:46Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": 32,
       "parent_id": 0,
       "type": "Borrower",
@@ -3695,12 +3854,12 @@
       "tag": "Setting",
       "is_show": true,
       "status": "Active",
-      "sort_order": 5,
+      "sort_order": 7,
       "enable_data_scope": false,
       "description": "",
       "is_public": false,
       "created_at": "2026-03-11T10:34:00Z",
-      "updated_at": "2026-03-12T06:59:47Z",
+      "updated_at": "2026-03-19T09:11:40Z",
       "apis": [
         {
           "id": 273,
@@ -4282,150 +4441,6 @@
                   "updated_at": "2026-03-12T02:19:45Z"
                 }
               ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 36,
-      "parent_id": 0,
-      "type": "Borrower",
-      "resource_type": "Menu",
-      "name": "Profile settings",
-      "path": "personalCenter",
-      "icon": "",
-      "tag": "Personal",
-      "is_show": false,
-      "status": "Active",
-      "sort_order": 6,
-      "enable_data_scope": false,
-      "description": "",
-      "is_public": false,
-      "created_at": "2026-03-11T10:38:33Z",
-      "updated_at": "2026-03-12T06:59:58Z",
-      "apis": [
-        {
-          "id": 273,
-          "parent_id": 269,
-          "name": "get uuid",
-          "path": "/api/v1/uuid",
-          "method": "GET",
-          "status": "Active",
-          "description": "get uuid",
-          "type": "Borrower",
-          "sort_order": 4,
-          "auth_required": true,
-          "permission_required": false,
-          "created_at": "2026-03-11T07:44:46Z",
-          "updated_at": "2026-03-11T07:44:46Z"
-        }
-      ],
-      "children": [
-        {
-          "id": 38,
-          "parent_id": 36,
-          "type": "Borrower",
-          "resource_type": "Menu",
-          "name": "Change Password",
-          "path": "/personalCenter/changePassword",
-          "icon": "",
-          "tag": "Personal:ChangePassword",
-          "is_show": false,
-          "status": "Active",
-          "sort_order": 6,
-          "enable_data_scope": false,
-          "description": "",
-          "is_public": false,
-          "created_at": "2026-03-11T10:40:30Z",
-          "updated_at": "2026-03-17T03:18:41Z",
-          "apis": [
-            {
-              "id": 285,
-              "parent_id": 274,
-              "name": "change password",
-              "path": "/api/v1/user/change_password",
-              "method": "POST",
-              "status": "Active",
-              "description": "change password",
-              "type": "Borrower",
-              "sort_order": 11,
-              "auth_required": true,
-              "permission_required": false,
-              "created_at": "2026-03-11T07:44:46Z",
-              "updated_at": "2026-03-11T07:44:46Z"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 39,
-      "parent_id": 0,
-      "type": "Borrower",
-      "resource_type": "Menu",
-      "name": "Market Tools",
-      "path": "marketTools",
-      "icon": "marketTools",
-      "tag": "MarketTools",
-      "is_show": true,
-      "status": "Active",
-      "sort_order": 7,
-      "enable_data_scope": false,
-      "description": "",
-      "is_public": false,
-      "created_at": "2026-03-11T10:41:28Z",
-      "updated_at": "2026-03-12T07:00:04Z",
-      "apis": [
-        {
-          "id": 273,
-          "parent_id": 269,
-          "name": "get uuid",
-          "path": "/api/v1/uuid",
-          "method": "GET",
-          "status": "Active",
-          "description": "get uuid",
-          "type": "Borrower",
-          "sort_order": 4,
-          "auth_required": true,
-          "permission_required": false,
-          "created_at": "2026-03-11T07:44:46Z",
-          "updated_at": "2026-03-11T07:44:46Z"
-        }
-      ],
-      "children": [
-        {
-          "id": 40,
-          "parent_id": 39,
-          "type": "Borrower",
-          "resource_type": "Menu",
-          "name": "Property Finder",
-          "path": "/marketTools/propertyFinder",
-          "icon": "",
-          "tag": "MarketTools:PropertyFinder",
-          "is_show": true,
-          "status": "Active",
-          "sort_order": 6,
-          "enable_data_scope": false,
-          "description": "",
-          "is_public": false,
-          "created_at": "2026-03-11T10:42:27Z",
-          "updated_at": "2026-03-17T03:30:22Z",
-          "apis": [
-            {
-              "id": 365,
-              "parent_id": 364,
-              "name": "Search property listings from Zeitro API",
-              "path": "/api/v1/zeitro/listings/search",
-              "method": "GET",
-              "status": "Active",
-              "description": "Search property listings from Zeitro API",
-              "type": "Borrower",
-              "sort_order": 1,
-              "auth_required": true,
-              "permission_required": false,
-              "created_at": "2026-03-11T07:44:46Z",
-              "updated_at": "2026-03-11T07:44:46Z"
             }
           ]
         }
