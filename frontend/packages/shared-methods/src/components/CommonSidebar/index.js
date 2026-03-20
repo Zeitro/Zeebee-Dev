@@ -77,7 +77,8 @@ export const CommonSidebar = ({
 		delay: 0,
 	});
 
-	return config ? (
+	// hideSidebar隐藏左侧菜单栏
+	return config && !config?.hideSidebar ? (
 		<div
 			style={{ width: sidebarCollapsed ? 63 : 216 }}
 			className={[
