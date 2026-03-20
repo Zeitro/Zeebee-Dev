@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
@@ -24,19 +23,23 @@ func NewResourceRepo(db *gorm.DB) *ResourceRepo {
 	}
 }
 
-// GetResource return api by id
-func (repo *ResourceRepo) All(ctx context.Context, apiType constants.UserType) (result []*model.Resource, err error) {
-	err = repo.Client(ctx).
-		Where("type = ?", apiType).
+// GetResource return all resources
+func (repo *ResourceRepo) All(ctx context.Context, apiType constants.UserType, withPreload bool) (result []*model.Resource, err error) {
+	query := repo.Client(ctx).
+		Where("type = ?", apiType)
+	if withPreload {
+		query = query.Preload("Apis")
+	}
+	err = query.Order("sort_order asc").
 		Order("parent_id asc").
-		Order("sort_order asc").
 		Find(&result).Error
 	return result, errorx.WithStack(err)
 }
 
 // IsExistedWithTx check resource is existed
 func (repo *ResourceRepo) IsExistedWithTx(ctx context.Context, tx *gorm.DB, data *model.Resource) (isExisted bool, err error) {
-	query := repo.Client(ctx).WithContext(ctx).Model(&model.Resource{}).
+	query := tx.WithContext(ctx).Model(&model.Resource{}).
+		Where("parent_id = ?", data.ParentId).
 		Where("name = ?", data.Name).
 		Where("type = ?", data.Type).
 		Where("path = ?", data.Path).
@@ -49,26 +52,43 @@ func (repo *ResourceRepo) IsExistedWithTx(ctx context.Context, tx *gorm.DB, data
 	return count > 0, errorx.WithStack(err)
 }
 
-// GetResource return api by id
-func (repo *ResourceRepo) GetResource(ctx context.Context, id int64, apiType constants.UserType) (result *model.Resource, err error) {
-	err = repo.Client(ctx).
+// IsTagExistedWithTx check resource tag is existed
+func (repo *ResourceRepo) IsTagExistedWithTx(ctx context.Context, tx *gorm.DB, tag string, id int64, resourceType constants.UserType) (isExisted bool, err error) {
+	query := tx.WithContext(ctx).Model(&model.Resource{}).Where("tag = ? and type = ?", tag, resourceType)
+	if id > 0 {
+		query = query.Where("id != ?", id)
+	}
+	var count int64
+	err = query.Count(&count).Error
+	return count > 0, errorx.WithStack(err)
+}
+
+// GetResource get resource by id and api type
+func (repo *ResourceRepo) GetResource(ctx context.Context, id int64, apiType constants.UserType, withPreload bool) (result *model.Resource, err error) {
+	query := repo.Client(ctx).
 		Where("id = ?", id).
-		Where("type = ?", apiType).
-		Preload("Apis", func(db *gorm.DB) *gorm.DB {
+		Where("type = ?", apiType)
+	if withPreload {
+		query = query.Preload("Apis", func(db *gorm.DB) *gorm.DB {
 			return db.Order("apis.sort_order asc")
-		}).
-		First(&result).Error
+		})
+	}
+	err = query.First(&result).Error
 	return result, errorx.WithStack(err)
 }
 
-func (repo *ResourceRepo) GetResourceWithTx(ctx context.Context, tx *gorm.DB, id int64, apiType constants.UserType) (result *model.Resource, err error) {
-	err = tx.WithContext(ctx).Model(&model.Resource{}).
+// GetResourceWithTx get resource with tx
+func (repo *ResourceRepo) GetResourceWithTx(ctx context.Context, tx *gorm.DB, id int64, apiType constants.UserType, withPreload bool) (result *model.Resource, err error) {
+	query := tx.WithContext(ctx).Model(&model.Resource{}).
 		Where("id = ?", id).
-		Where("type = ?", apiType).
-		Preload("Apis", func(db *gorm.DB) *gorm.DB {
+		Where("type = ?", apiType)
+	if withPreload {
+		query = query.Preload("Apis", func(db *gorm.DB) *gorm.DB {
 			return db.Order("apis.sort_order asc")
 		}).
-		First(&result).Error
+			Preload("Roles")
+	}
+	err = query.First(&result).Error
 	return result, errorx.WithStack(err)
 }
 
@@ -81,19 +101,46 @@ func (repo *ResourceRepo) GetResourceByParentId(ctx context.Context, parentId in
 	return result, errorx.WithStack(err)
 }
 
-// DelByIdWithTx delete resource by id
-func (repo *ResourceRepo) DelByIdWithTx(ctx context.Context, tx *gorm.DB, id int64, typ constants.UserType) (err error) {
-	var resource *model.Resource
-	resource, err = repo.GetResourceWithTx(ctx, tx, id, typ)
-	if err != nil {
-		return err
+// GetResourceByParentIdWithTx get resources with tx
+func (repo *ResourceRepo) GetResourceByParentIdWithTx(ctx context.Context, tx *gorm.DB, parentId int64, apiType constants.UserType) (result []*model.Resource, err error) {
+	err = tx.WithContext(ctx).Model(&model.Resource{}).
+		Where("parent_id = ? and type = ?", parentId, apiType).
+		Order("sort_order asc").
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+}
+
+// DeleteResourceWithTx delete resource
+func (repo *ResourceRepo) DeleteResourceWithTx(ctx context.Context, tx *gorm.DB, resource *model.Resource) (err error) {
+	if resource == nil {
+		return
 	}
+	apis := resource.Apis
+	if len(apis) > 0 {
+		err = repo.RemoveApisWithTx(ctx, tx, resource, apis)
+		if err != nil {
+			return err
+		}
+	}
+
+	// delete role relations
+	roleAndResourceTable := model.RoleAndResource{}.TableName()
 	err = tx.WithContext(ctx).
-		Model(&model.Resource{}).
-		Where("id = ?", id).
-		Select(clause.Associations).
+		Table(roleAndResourceTable).
+		Where("resource_id = ?", resource.Id).
+		Delete(&model.RoleAndResource{}).Error
+	if err != nil {
+		return errorx.WithStack(err)
+	}
+
+	// delete resource
+	err = tx.WithContext(ctx).
 		Delete(resource).Error
-	return errorx.WithStack(err)
+	if err != nil {
+		return errorx.WithStack(err)
+	}
+
+	return nil
 }
 
 // RemoveApis remove apis with tx and return error if occurred
@@ -129,5 +176,51 @@ func (repo *ResourceRepo) GetResourcesWithTx(ctx context.Context, tx *gorm.DB, i
 		Where("id in (?) and type = ?", ids, apiType).
 		Order("sort_order asc").
 		Find(&result).Error
+	return result, errorx.WithStack(err)
+}
+
+// AllResourcesForAuth return all resources for auth
+func (repo *ResourceRepo) AllResourcesForAuth(ctx context.Context, organizationId int64, apiType constants.UserType) (result []*model.Resource, err error) {
+	err = repo.Client(ctx).Where("type = ? and status = ?", apiType, constants.CommonStatusActive).
+		Preload("Roles", func(db *gorm.DB) *gorm.DB {
+			query := db.Where("status = ?", constants.CommonStatusActive)
+			if organizationId > 0 {
+				query = query.Where("organization_id = ?", organizationId)
+			}
+
+			return query
+		}).Find(&result).Error
+	return result, errorx.WithStack(err)
+}
+
+// AllResources return all resources
+func (repo *ResourceRepo) AllResources(ctx context.Context, organizationId int64, resourceType constants.UserType, withPreload bool) (result []*model.Resource, err error) {
+	query := repo.Client(ctx).Where("type = ? and status = ?", resourceType, constants.CommonStatusActive)
+	if withPreload {
+		query = query.
+			// Preload("Apis").
+			Preload("Roles", func(db *gorm.DB) *gorm.DB {
+				subQuery := db
+				if organizationId > 0 {
+					subQuery = subQuery.Where("organization_id = ?", organizationId)
+				}
+				return subQuery
+			})
+
+	}
+	err = query.Find(&result).Error
+	return result, errorx.WithStack(err)
+}
+
+// PublicResources return public resources
+func (repo *ResourceRepo) PublicResources(ctx context.Context, resourceType constants.UserType, withPreload bool) (result []*model.Resource, err error) {
+	query := repo.Client(ctx).
+		Where("type = ? and status = ? and is_public = ?", resourceType, constants.CommonStatusActive, true)
+	if withPreload {
+		query = query.
+			Preload("Apis")
+		// Preload("Roles")
+	}
+	err = query.Find(&result).Error
 	return result, errorx.WithStack(err)
 }

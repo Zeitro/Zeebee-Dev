@@ -10,18 +10,17 @@ import (
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/email/client"
 	"zeebee-backend/domains/zeebee/model"
-	"zeebee-backend/domains/zeebee/repo"
 )
 
+// OrganizationEmailLogic provides organization email business logic
 type OrganizationEmailLogic struct {
-	repos *repo.AllRepos
+	*BaseLogic
 }
 
-// NewOrganizationEmailLogic creates a new instance of OrganizationEmailLogic.
-// It initializes the logic with the provided repository dependencies.
-func NewOrganizationEmailLogic(repos *repo.AllRepos) *OrganizationEmailLogic {
+// NewOrganizationEmailLogic creates a new organization email logic instance
+func NewOrganizationEmailLogic(baseLogic *BaseLogic) *OrganizationEmailLogic {
 	return &OrganizationEmailLogic{
-		repos: repos,
+		BaseLogic: baseLogic,
 	}
 }
 

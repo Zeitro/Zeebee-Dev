@@ -7,15 +7,16 @@ import (
 	"fmt"
 
 	"github.com/duke-git/lancet/v2/mathutil"
-	"github.com/jinzhu/copier"
 
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/email"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/templater"
 	"zeebee-backend/domains/zeebee/templater/loader"
@@ -37,7 +38,7 @@ func NewVerifyEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Verif
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -64,9 +65,9 @@ func (l *VerifyEmailLogic) VerifyEmail(in *borrower.VerifyEmailRequest) (resp *b
 		return nil, err
 	}
 	data := &borrower.UserLoginResponseData{}
-	err = copier.CopyWithOption(data, tokenInfo, copier.Option{CaseSensitive: true})
+	data, err = copierx.Trans[dto.UserJwtTokenDto, borrower.UserLoginResponseData](tokenInfo)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
 	go func() {

@@ -3,14 +3,12 @@ package borrower_applicant
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/copierx"
 )
 
 type BorrowerApplicantPageLogic struct {
@@ -39,11 +37,7 @@ func (l *BorrowerApplicantPageLogic) BorrowerApplicantPage(req *types.BorrowerAp
 	rpcResp := &borrower.BorrowerApplicantPageResponse{
 		Data: &borrower.BorrowerApplicantPageResponseData{},
 	}
-
-	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{DeepCopy: true})
-	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
-	}
+	rpcReq.Data, err = copierx.Trans[types.BorrowerApplicantPageRequest, borrower.BorrowerApplicantPageRequestData](req)
 	if err != nil {
 		return nil, err
 	}
@@ -51,9 +45,9 @@ func (l *BorrowerApplicantPageLogic) BorrowerApplicantPage(req *types.BorrowerAp
 	if err != nil {
 		return nil, err
 	}
-	err = copier.Copy(resp, &rpcResp.Data)
+	resp, err = copierx.Trans[borrower.BorrowerApplicantPageResponseData, types.BorrowerApplicantPageResponse](rpcResp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return resp, err
 }

@@ -4,12 +4,12 @@ import (
 	"context"
 
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/model"
@@ -30,7 +30,7 @@ func NewDeleteRequestLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Del
 	return &DeleteRequestLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 		Logger:    logx.WithContext(ctx),
 	}
 }
@@ -87,15 +87,13 @@ func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestR
 
 		}
 		operationLoanDocument := &data.OperationLoanDocument{}
-		innerErr = copier.CopyWithOption(operationLoanDocument, loanDocument, copier.Option{
-			CaseSensitive: true,
-			DeepCopy:      true,
-		})
-		if innerErr != nil {
-			return errorx.GetFailedTransErr(innerErr)
+		operationLoanDocument, err = copierx.Trans[model.LoanDocument, data.OperationLoanDocument](loanDocument)
+		if err != nil {
+			return errorx.Wrap(err, "Failed To Copy Loan Document")
 		}
 
 		innerErr = l.baseLogic.CreateLoanOperationLog(
+			l.ctx,
 			tx,
 			loanDocument.LoanId,
 			claim.OrganizationUserId,
@@ -130,5 +128,5 @@ func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestR
 
 func (l *DeleteRequestLogic) prepare(in *lender.LoanDocumentDeleteRequestRequest, organizationId int64) (loan *model.Loan, loanDocument *model.LoanDocument, err error) {
 
-	return l.baseLogic.GetLoanAndDocumentByDocumentId(in.Data.Id, organizationId)
+	return l.baseLogic.GetLoanAndDocumentByDocumentId(l.ctx, in.Data.Id, organizationId)
 }

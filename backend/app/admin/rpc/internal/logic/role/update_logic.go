@@ -11,7 +11,6 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
 )
 
@@ -27,11 +26,11 @@ func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogi
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *UpdateLogic) Update(in *admin.RoleUpdateRequest) (resp *admin.RoleUpdateResponse, err error) {
+func (l *UpdateLogic) Update(in *admin.RoleUpdateRequest) (resp *admin.RoleDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -55,12 +54,12 @@ func (l *UpdateLogic) Update(in *admin.RoleUpdateRequest) (resp *admin.RoleUpdat
 		return nil, err
 	}
 
-	data, err := copierx.Trans[bo.RoleBo, admin.RoleEntity](role, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[dto.RoleEntityDto, admin.RoleEntity](role, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}
 
-	return &admin.RoleUpdateResponse{
+	return &admin.RoleDetailResponse{
 		Data: data,
 	}, nil
 }

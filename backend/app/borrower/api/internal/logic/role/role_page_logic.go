@@ -3,13 +3,12 @@ package role
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/copierx"
 )
 
 type RolePageLogic struct {
@@ -34,9 +33,9 @@ func (l *RolePageLogic) RolePage(req *types.RolePageRequest) (resp *types.RolePa
 			Filter: &borrower.RolePageRequestFilter{},
 		},
 	}
-	err = copier.CopyWithOption(rpcReq.Data, req, copier.Option{DeepCopy: true})
+	rpcReq.Data, err = copierx.Trans[types.RolePageRequest, borrower.RolePageRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
 
 	rpcResp, err := l.svcCtx.RoleRpcClient.Page(l.ctx, rpcReq)
@@ -45,9 +44,9 @@ func (l *RolePageLogic) RolePage(req *types.RolePageRequest) (resp *types.RolePa
 	}
 
 	// trans response
-	err = copier.CopyWithOption(&resp, &rpcResp.Data, copier.Option{DeepCopy: true, CaseSensitive: true})
+	resp, err = copierx.Trans[borrower.RolePageResponseData, types.RolePageResponse](rpcResp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
 	return resp, err
 }

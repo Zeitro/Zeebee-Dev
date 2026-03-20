@@ -33,7 +33,7 @@ type UserClient interface {
 	// user
 	Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
 	RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
-	UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
+	UserInfo(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
 	ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error)
 	EditProfile(ctx context.Context, in *UserProfileEditRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
 }
@@ -66,7 +66,7 @@ func (c *userClient) RefreshToken(ctx context.Context, in *RefreshTokenRequest, 
 	return out, nil
 }
 
-func (c *userClient) UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error) {
+func (c *userClient) UserInfo(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*UserinfoResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserinfoResponse)
 	err := c.cc.Invoke(ctx, User_UserInfo_FullMethodName, in, out, cOpts...)
@@ -103,7 +103,7 @@ type UserServer interface {
 	// user
 	Login(context.Context, *UserLoginRequest) (*UserLoginResponse, error)
 	RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error)
-	UserInfo(context.Context, *UserInfoRequest) (*UserinfoResponse, error)
+	UserInfo(context.Context, *EmptyRequest) (*UserinfoResponse, error)
 	ResetPassword(context.Context, *ResetPasswordRequest) (*ResetPasswordResponse, error)
 	EditProfile(context.Context, *UserProfileEditRequest) (*UserinfoResponse, error)
 	mustEmbedUnimplementedUserServer()
@@ -122,7 +122,7 @@ func (UnimplementedUserServer) Login(context.Context, *UserLoginRequest) (*UserL
 func (UnimplementedUserServer) RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RefreshToken not implemented")
 }
-func (UnimplementedUserServer) UserInfo(context.Context, *UserInfoRequest) (*UserinfoResponse, error) {
+func (UnimplementedUserServer) UserInfo(context.Context, *EmptyRequest) (*UserinfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserInfo not implemented")
 }
 func (UnimplementedUserServer) ResetPassword(context.Context, *ResetPasswordRequest) (*ResetPasswordResponse, error) {
@@ -189,7 +189,7 @@ func _User_RefreshToken_Handler(srv interface{}, ctx context.Context, dec func(i
 }
 
 func _User_UserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserInfoRequest)
+	in := new(EmptyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -201,7 +201,7 @@ func _User_UserInfo_Handler(srv interface{}, ctx context.Context, dec func(inter
 		FullMethod: User_UserInfo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).UserInfo(ctx, req.(*UserInfoRequest))
+		return srv.(UserServer).UserInfo(ctx, req.(*EmptyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -288,8 +288,8 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OrganizationUserClient interface {
 	Page(ctx context.Context, in *OrganizationUserPageRequest, opts ...grpc.CallOption) (*OrganizationUserPageResponse, error)
-	Create(ctx context.Context, in *OrganizationUserCreateRequest, opts ...grpc.CallOption) (*OrganizationUserCreateResponse, error)
-	Update(ctx context.Context, in *OrganizationUserUpdateRequest, opts ...grpc.CallOption) (*OrganizationUserUpdateResponse, error)
+	Create(ctx context.Context, in *OrganizationUserCreateRequest, opts ...grpc.CallOption) (*OrganizationUserDetailResponse, error)
+	Update(ctx context.Context, in *OrganizationUserUpdateRequest, opts ...grpc.CallOption) (*OrganizationUserDetailResponse, error)
 	Delete(ctx context.Context, in *OrganizationUserDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	Detail(ctx context.Context, in *OrganizationUserDetailRequest, opts ...grpc.CallOption) (*OrganizationUserDetailResponse, error)
 	SwitchStatus(ctx context.Context, in *OrganizationUserSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
@@ -313,9 +313,9 @@ func (c *organizationUserClient) Page(ctx context.Context, in *OrganizationUserP
 	return out, nil
 }
 
-func (c *organizationUserClient) Create(ctx context.Context, in *OrganizationUserCreateRequest, opts ...grpc.CallOption) (*OrganizationUserCreateResponse, error) {
+func (c *organizationUserClient) Create(ctx context.Context, in *OrganizationUserCreateRequest, opts ...grpc.CallOption) (*OrganizationUserDetailResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OrganizationUserCreateResponse)
+	out := new(OrganizationUserDetailResponse)
 	err := c.cc.Invoke(ctx, OrganizationUser_Create_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -323,9 +323,9 @@ func (c *organizationUserClient) Create(ctx context.Context, in *OrganizationUse
 	return out, nil
 }
 
-func (c *organizationUserClient) Update(ctx context.Context, in *OrganizationUserUpdateRequest, opts ...grpc.CallOption) (*OrganizationUserUpdateResponse, error) {
+func (c *organizationUserClient) Update(ctx context.Context, in *OrganizationUserUpdateRequest, opts ...grpc.CallOption) (*OrganizationUserDetailResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OrganizationUserUpdateResponse)
+	out := new(OrganizationUserDetailResponse)
 	err := c.cc.Invoke(ctx, OrganizationUser_Update_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -368,8 +368,8 @@ func (c *organizationUserClient) SwitchStatus(ctx context.Context, in *Organizat
 // for forward compatibility.
 type OrganizationUserServer interface {
 	Page(context.Context, *OrganizationUserPageRequest) (*OrganizationUserPageResponse, error)
-	Create(context.Context, *OrganizationUserCreateRequest) (*OrganizationUserCreateResponse, error)
-	Update(context.Context, *OrganizationUserUpdateRequest) (*OrganizationUserUpdateResponse, error)
+	Create(context.Context, *OrganizationUserCreateRequest) (*OrganizationUserDetailResponse, error)
+	Update(context.Context, *OrganizationUserUpdateRequest) (*OrganizationUserDetailResponse, error)
 	Delete(context.Context, *OrganizationUserDeleteRequest) (*EmptyResponse, error)
 	Detail(context.Context, *OrganizationUserDetailRequest) (*OrganizationUserDetailResponse, error)
 	SwitchStatus(context.Context, *OrganizationUserSwitchStatusRequest) (*EmptyResponse, error)
@@ -386,10 +386,10 @@ type UnimplementedOrganizationUserServer struct{}
 func (UnimplementedOrganizationUserServer) Page(context.Context, *OrganizationUserPageRequest) (*OrganizationUserPageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Page not implemented")
 }
-func (UnimplementedOrganizationUserServer) Create(context.Context, *OrganizationUserCreateRequest) (*OrganizationUserCreateResponse, error) {
+func (UnimplementedOrganizationUserServer) Create(context.Context, *OrganizationUserCreateRequest) (*OrganizationUserDetailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedOrganizationUserServer) Update(context.Context, *OrganizationUserUpdateRequest) (*OrganizationUserUpdateResponse, error) {
+func (UnimplementedOrganizationUserServer) Update(context.Context, *OrganizationUserUpdateRequest) (*OrganizationUserDetailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 func (UnimplementedOrganizationUserServer) Delete(context.Context, *OrganizationUserDeleteRequest) (*EmptyResponse, error) {
@@ -579,10 +579,10 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ApiClient interface {
 	ApiTree(ctx context.Context, in *ApiTreeRequest, opts ...grpc.CallOption) (*ApiTreeResponse, error)
-	Create(ctx context.Context, in *ApiCreateRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error)
-	Update(ctx context.Context, in *ApiUpdateRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error)
+	Create(ctx context.Context, in *ApiCreateRequest, opts ...grpc.CallOption) (*ApiDetailResponse, error)
+	Update(ctx context.Context, in *ApiUpdateRequest, opts ...grpc.CallOption) (*ApiDetailResponse, error)
 	Delete(ctx context.Context, in *ApiDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-	Detail(ctx context.Context, in *ApiDetailRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error)
+	Detail(ctx context.Context, in *ApiDetailRequest, opts ...grpc.CallOption) (*ApiDetailResponse, error)
 }
 
 type apiClient struct {
@@ -603,9 +603,9 @@ func (c *apiClient) ApiTree(ctx context.Context, in *ApiTreeRequest, opts ...grp
 	return out, nil
 }
 
-func (c *apiClient) Create(ctx context.Context, in *ApiCreateRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error) {
+func (c *apiClient) Create(ctx context.Context, in *ApiCreateRequest, opts ...grpc.CallOption) (*ApiDetailResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ApiCreateResponse)
+	out := new(ApiDetailResponse)
 	err := c.cc.Invoke(ctx, Api_Create_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -613,9 +613,9 @@ func (c *apiClient) Create(ctx context.Context, in *ApiCreateRequest, opts ...gr
 	return out, nil
 }
 
-func (c *apiClient) Update(ctx context.Context, in *ApiUpdateRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error) {
+func (c *apiClient) Update(ctx context.Context, in *ApiUpdateRequest, opts ...grpc.CallOption) (*ApiDetailResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ApiCreateResponse)
+	out := new(ApiDetailResponse)
 	err := c.cc.Invoke(ctx, Api_Update_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -633,9 +633,9 @@ func (c *apiClient) Delete(ctx context.Context, in *ApiDeleteRequest, opts ...gr
 	return out, nil
 }
 
-func (c *apiClient) Detail(ctx context.Context, in *ApiDetailRequest, opts ...grpc.CallOption) (*ApiCreateResponse, error) {
+func (c *apiClient) Detail(ctx context.Context, in *ApiDetailRequest, opts ...grpc.CallOption) (*ApiDetailResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ApiCreateResponse)
+	out := new(ApiDetailResponse)
 	err := c.cc.Invoke(ctx, Api_Detail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -648,10 +648,10 @@ func (c *apiClient) Detail(ctx context.Context, in *ApiDetailRequest, opts ...gr
 // for forward compatibility.
 type ApiServer interface {
 	ApiTree(context.Context, *ApiTreeRequest) (*ApiTreeResponse, error)
-	Create(context.Context, *ApiCreateRequest) (*ApiCreateResponse, error)
-	Update(context.Context, *ApiUpdateRequest) (*ApiCreateResponse, error)
+	Create(context.Context, *ApiCreateRequest) (*ApiDetailResponse, error)
+	Update(context.Context, *ApiUpdateRequest) (*ApiDetailResponse, error)
 	Delete(context.Context, *ApiDeleteRequest) (*EmptyResponse, error)
-	Detail(context.Context, *ApiDetailRequest) (*ApiCreateResponse, error)
+	Detail(context.Context, *ApiDetailRequest) (*ApiDetailResponse, error)
 	mustEmbedUnimplementedApiServer()
 }
 
@@ -665,16 +665,16 @@ type UnimplementedApiServer struct{}
 func (UnimplementedApiServer) ApiTree(context.Context, *ApiTreeRequest) (*ApiTreeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ApiTree not implemented")
 }
-func (UnimplementedApiServer) Create(context.Context, *ApiCreateRequest) (*ApiCreateResponse, error) {
+func (UnimplementedApiServer) Create(context.Context, *ApiCreateRequest) (*ApiDetailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedApiServer) Update(context.Context, *ApiUpdateRequest) (*ApiCreateResponse, error) {
+func (UnimplementedApiServer) Update(context.Context, *ApiUpdateRequest) (*ApiDetailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 func (UnimplementedApiServer) Delete(context.Context, *ApiDeleteRequest) (*EmptyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (UnimplementedApiServer) Detail(context.Context, *ApiDetailRequest) (*ApiCreateResponse, error) {
+func (UnimplementedApiServer) Detail(context.Context, *ApiDetailRequest) (*ApiDetailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Detail not implemented")
 }
 func (UnimplementedApiServer) mustEmbedUnimplementedApiServer() {}
@@ -826,6 +826,7 @@ const (
 	Resource_Update_FullMethodName       = "/admin.resource/Update"
 	Resource_Delete_FullMethodName       = "/admin.resource/Delete"
 	Resource_Detail_FullMethodName       = "/admin.resource/Detail"
+	Resource_UserMenu_FullMethodName     = "/admin.resource/UserMenu"
 )
 
 // ResourceClient is the client API for Resource service.
@@ -837,6 +838,7 @@ type ResourceClient interface {
 	Update(ctx context.Context, in *ResourceUpdateRequest, opts ...grpc.CallOption) (*ResourceDetailResponse, error)
 	Delete(ctx context.Context, in *ResourceDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	Detail(ctx context.Context, in *ResourceDetailRequest, opts ...grpc.CallOption) (*ResourceDetailResponse, error)
+	UserMenu(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error)
 }
 
 type resourceClient struct {
@@ -897,6 +899,16 @@ func (c *resourceClient) Detail(ctx context.Context, in *ResourceDetailRequest, 
 	return out, nil
 }
 
+func (c *resourceClient) UserMenu(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResourceTreeResponse)
+	err := c.cc.Invoke(ctx, Resource_UserMenu_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ResourceServer is the server API for Resource service.
 // All implementations must embed UnimplementedResourceServer
 // for forward compatibility.
@@ -906,6 +918,7 @@ type ResourceServer interface {
 	Update(context.Context, *ResourceUpdateRequest) (*ResourceDetailResponse, error)
 	Delete(context.Context, *ResourceDeleteRequest) (*EmptyResponse, error)
 	Detail(context.Context, *ResourceDetailRequest) (*ResourceDetailResponse, error)
+	UserMenu(context.Context, *EmptyRequest) (*ResourceTreeResponse, error)
 	mustEmbedUnimplementedResourceServer()
 }
 
@@ -930,6 +943,9 @@ func (UnimplementedResourceServer) Delete(context.Context, *ResourceDeleteReques
 }
 func (UnimplementedResourceServer) Detail(context.Context, *ResourceDetailRequest) (*ResourceDetailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Detail not implemented")
+}
+func (UnimplementedResourceServer) UserMenu(context.Context, *EmptyRequest) (*ResourceTreeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserMenu not implemented")
 }
 func (UnimplementedResourceServer) mustEmbedUnimplementedResourceServer() {}
 func (UnimplementedResourceServer) testEmbeddedByValue()                  {}
@@ -1042,6 +1058,24 @@ func _Resource_Detail_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Resource_UserMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ResourceServer).UserMenu(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Resource_UserMenu_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ResourceServer).UserMenu(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Resource_ServiceDesc is the grpc.ServiceDesc for Resource service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1069,19 +1103,24 @@ var Resource_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "Detail",
 			Handler:    _Resource_Detail_Handler,
 		},
+		{
+			MethodName: "UserMenu",
+			Handler:    _Resource_UserMenu_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "app/admin/rpc/pb/admin.proto",
 }
 
 const (
-	Role_Page_FullMethodName         = "/admin.role/Page"
-	Role_Create_FullMethodName       = "/admin.role/Create"
-	Role_Update_FullMethodName       = "/admin.role/Update"
-	Role_Delete_FullMethodName       = "/admin.role/Delete"
-	Role_Detail_FullMethodName       = "/admin.role/Detail"
-	Role_UpdateStatus_FullMethodName = "/admin.role/UpdateStatus"
-	Role_All_FullMethodName          = "/admin.role/All"
+	Role_Page_FullMethodName                    = "/admin.role/Page"
+	Role_Create_FullMethodName                  = "/admin.role/Create"
+	Role_Update_FullMethodName                  = "/admin.role/Update"
+	Role_Delete_FullMethodName                  = "/admin.role/Delete"
+	Role_Detail_FullMethodName                  = "/admin.role/Detail"
+	Role_SwitchStatus_FullMethodName            = "/admin.role/SwitchStatus"
+	Role_All_FullMethodName                     = "/admin.role/All"
+	Role_AssignOrganizationUsers_FullMethodName = "/admin.role/AssignOrganizationUsers"
 )
 
 // RoleClient is the client API for Role service.
@@ -1089,12 +1128,13 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RoleClient interface {
 	Page(ctx context.Context, in *RolePageRequest, opts ...grpc.CallOption) (*RolePageResponse, error)
-	Create(ctx context.Context, in *RoleCreateRequest, opts ...grpc.CallOption) (*RoleCreateResponse, error)
-	Update(ctx context.Context, in *RoleUpdateRequest, opts ...grpc.CallOption) (*RoleUpdateResponse, error)
+	Create(ctx context.Context, in *RoleCreateRequest, opts ...grpc.CallOption) (*RoleDetailResponse, error)
+	Update(ctx context.Context, in *RoleUpdateRequest, opts ...grpc.CallOption) (*RoleDetailResponse, error)
 	Delete(ctx context.Context, in *RoleDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	Detail(ctx context.Context, in *RoleDetailRequest, opts ...grpc.CallOption) (*RoleDetailResponse, error)
-	UpdateStatus(ctx context.Context, in *RoleUpdateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	SwitchStatus(ctx context.Context, in *RoleSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	All(ctx context.Context, in *RoleAllRequest, opts ...grpc.CallOption) (*RoleAllResponse, error)
+	AssignOrganizationUsers(ctx context.Context, in *RoleAssignOrganizationUsersRequest, opts ...grpc.CallOption) (*RoleDetailResponse, error)
 }
 
 type roleClient struct {
@@ -1115,9 +1155,9 @@ func (c *roleClient) Page(ctx context.Context, in *RolePageRequest, opts ...grpc
 	return out, nil
 }
 
-func (c *roleClient) Create(ctx context.Context, in *RoleCreateRequest, opts ...grpc.CallOption) (*RoleCreateResponse, error) {
+func (c *roleClient) Create(ctx context.Context, in *RoleCreateRequest, opts ...grpc.CallOption) (*RoleDetailResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RoleCreateResponse)
+	out := new(RoleDetailResponse)
 	err := c.cc.Invoke(ctx, Role_Create_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1125,9 +1165,9 @@ func (c *roleClient) Create(ctx context.Context, in *RoleCreateRequest, opts ...
 	return out, nil
 }
 
-func (c *roleClient) Update(ctx context.Context, in *RoleUpdateRequest, opts ...grpc.CallOption) (*RoleUpdateResponse, error) {
+func (c *roleClient) Update(ctx context.Context, in *RoleUpdateRequest, opts ...grpc.CallOption) (*RoleDetailResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RoleUpdateResponse)
+	out := new(RoleDetailResponse)
 	err := c.cc.Invoke(ctx, Role_Update_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1155,10 +1195,10 @@ func (c *roleClient) Detail(ctx context.Context, in *RoleDetailRequest, opts ...
 	return out, nil
 }
 
-func (c *roleClient) UpdateStatus(ctx context.Context, in *RoleUpdateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+func (c *roleClient) SwitchStatus(ctx context.Context, in *RoleSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(EmptyResponse)
-	err := c.cc.Invoke(ctx, Role_UpdateStatus_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Role_SwitchStatus_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1175,17 +1215,28 @@ func (c *roleClient) All(ctx context.Context, in *RoleAllRequest, opts ...grpc.C
 	return out, nil
 }
 
+func (c *roleClient) AssignOrganizationUsers(ctx context.Context, in *RoleAssignOrganizationUsersRequest, opts ...grpc.CallOption) (*RoleDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RoleDetailResponse)
+	err := c.cc.Invoke(ctx, Role_AssignOrganizationUsers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RoleServer is the server API for Role service.
 // All implementations must embed UnimplementedRoleServer
 // for forward compatibility.
 type RoleServer interface {
 	Page(context.Context, *RolePageRequest) (*RolePageResponse, error)
-	Create(context.Context, *RoleCreateRequest) (*RoleCreateResponse, error)
-	Update(context.Context, *RoleUpdateRequest) (*RoleUpdateResponse, error)
+	Create(context.Context, *RoleCreateRequest) (*RoleDetailResponse, error)
+	Update(context.Context, *RoleUpdateRequest) (*RoleDetailResponse, error)
 	Delete(context.Context, *RoleDeleteRequest) (*EmptyResponse, error)
 	Detail(context.Context, *RoleDetailRequest) (*RoleDetailResponse, error)
-	UpdateStatus(context.Context, *RoleUpdateStatusRequest) (*EmptyResponse, error)
+	SwitchStatus(context.Context, *RoleSwitchStatusRequest) (*EmptyResponse, error)
 	All(context.Context, *RoleAllRequest) (*RoleAllResponse, error)
+	AssignOrganizationUsers(context.Context, *RoleAssignOrganizationUsersRequest) (*RoleDetailResponse, error)
 	mustEmbedUnimplementedRoleServer()
 }
 
@@ -1199,10 +1250,10 @@ type UnimplementedRoleServer struct{}
 func (UnimplementedRoleServer) Page(context.Context, *RolePageRequest) (*RolePageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Page not implemented")
 }
-func (UnimplementedRoleServer) Create(context.Context, *RoleCreateRequest) (*RoleCreateResponse, error) {
+func (UnimplementedRoleServer) Create(context.Context, *RoleCreateRequest) (*RoleDetailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedRoleServer) Update(context.Context, *RoleUpdateRequest) (*RoleUpdateResponse, error) {
+func (UnimplementedRoleServer) Update(context.Context, *RoleUpdateRequest) (*RoleDetailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 func (UnimplementedRoleServer) Delete(context.Context, *RoleDeleteRequest) (*EmptyResponse, error) {
@@ -1211,11 +1262,14 @@ func (UnimplementedRoleServer) Delete(context.Context, *RoleDeleteRequest) (*Emp
 func (UnimplementedRoleServer) Detail(context.Context, *RoleDetailRequest) (*RoleDetailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Detail not implemented")
 }
-func (UnimplementedRoleServer) UpdateStatus(context.Context, *RoleUpdateStatusRequest) (*EmptyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateStatus not implemented")
+func (UnimplementedRoleServer) SwitchStatus(context.Context, *RoleSwitchStatusRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SwitchStatus not implemented")
 }
 func (UnimplementedRoleServer) All(context.Context, *RoleAllRequest) (*RoleAllResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method All not implemented")
+}
+func (UnimplementedRoleServer) AssignOrganizationUsers(context.Context, *RoleAssignOrganizationUsersRequest) (*RoleDetailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AssignOrganizationUsers not implemented")
 }
 func (UnimplementedRoleServer) mustEmbedUnimplementedRoleServer() {}
 func (UnimplementedRoleServer) testEmbeddedByValue()              {}
@@ -1328,20 +1382,20 @@ func _Role_Detail_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Role_UpdateStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RoleUpdateStatusRequest)
+func _Role_SwitchStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RoleSwitchStatusRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RoleServer).UpdateStatus(ctx, in)
+		return srv.(RoleServer).SwitchStatus(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Role_UpdateStatus_FullMethodName,
+		FullMethod: Role_SwitchStatus_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RoleServer).UpdateStatus(ctx, req.(*RoleUpdateStatusRequest))
+		return srv.(RoleServer).SwitchStatus(ctx, req.(*RoleSwitchStatusRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1360,6 +1414,24 @@ func _Role_All_Handler(srv interface{}, ctx context.Context, dec func(interface{
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RoleServer).All(ctx, req.(*RoleAllRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Role_AssignOrganizationUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RoleAssignOrganizationUsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleServer).AssignOrganizationUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Role_AssignOrganizationUsers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleServer).AssignOrganizationUsers(ctx, req.(*RoleAssignOrganizationUsersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1392,12 +1464,16 @@ var Role_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Role_Detail_Handler,
 		},
 		{
-			MethodName: "UpdateStatus",
-			Handler:    _Role_UpdateStatus_Handler,
+			MethodName: "SwitchStatus",
+			Handler:    _Role_SwitchStatus_Handler,
 		},
 		{
 			MethodName: "All",
 			Handler:    _Role_All_Handler,
+		},
+		{
+			MethodName: "AssignOrganizationUsers",
+			Handler:    _Role_AssignOrganizationUsers_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1840,6 +1916,7 @@ const (
 	Common_GetOpt_FullMethodName      = "/admin.common/GetOpt"
 	Common_GetUsState_FullMethodName  = "/admin.common/GetUsState"
 	Common_GetUsCities_FullMethodName = "/admin.common/GetUsCities"
+	Common_SyncData_FullMethodName    = "/admin.common/SyncData"
 )
 
 // CommonClient is the client API for Common service.
@@ -1849,6 +1926,7 @@ type CommonClient interface {
 	GetOpt(ctx context.Context, in *OptionRequest, opts ...grpc.CallOption) (*OptionResponse, error)
 	GetUsState(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*StringSliceResponse, error)
 	GetUsCities(ctx context.Context, in *UsCitiesRequest, opts ...grpc.CallOption) (*StringSliceResponse, error)
+	SyncData(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 }
 
 type commonClient struct {
@@ -1889,6 +1967,16 @@ func (c *commonClient) GetUsCities(ctx context.Context, in *UsCitiesRequest, opt
 	return out, nil
 }
 
+func (c *commonClient) SyncData(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Common_SyncData_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CommonServer is the server API for Common service.
 // All implementations must embed UnimplementedCommonServer
 // for forward compatibility.
@@ -1896,6 +1984,7 @@ type CommonServer interface {
 	GetOpt(context.Context, *OptionRequest) (*OptionResponse, error)
 	GetUsState(context.Context, *EmptyRequest) (*StringSliceResponse, error)
 	GetUsCities(context.Context, *UsCitiesRequest) (*StringSliceResponse, error)
+	SyncData(context.Context, *EmptyRequest) (*EmptyResponse, error)
 	mustEmbedUnimplementedCommonServer()
 }
 
@@ -1914,6 +2003,9 @@ func (UnimplementedCommonServer) GetUsState(context.Context, *EmptyRequest) (*St
 }
 func (UnimplementedCommonServer) GetUsCities(context.Context, *UsCitiesRequest) (*StringSliceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUsCities not implemented")
+}
+func (UnimplementedCommonServer) SyncData(context.Context, *EmptyRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SyncData not implemented")
 }
 func (UnimplementedCommonServer) mustEmbedUnimplementedCommonServer() {}
 func (UnimplementedCommonServer) testEmbeddedByValue()                {}
@@ -1990,6 +2082,24 @@ func _Common_GetUsCities_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Common_SyncData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommonServer).SyncData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Common_SyncData_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommonServer).SyncData(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Common_ServiceDesc is the grpc.ServiceDesc for Common service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2008,6 +2118,10 @@ var Common_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUsCities",
 			Handler:    _Common_GetUsCities_Handler,
+		},
+		{
+			MethodName: "SyncData",
+			Handler:    _Common_SyncData_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -2592,6 +2706,108 @@ var Loan_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "LoanLenderCompanies",
 			Handler:    _Loan_LoanLenderCompanies_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/admin/rpc/pb/admin.proto",
+}
+
+const (
+	Auth_AuthCheck_FullMethodName = "/admin.Auth/AuthCheck"
+)
+
+// AuthClient is the client API for Auth service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type AuthClient interface {
+	AuthCheck(ctx context.Context, in *AuthCheckRequest, opts ...grpc.CallOption) (*AuthCheckResponse, error)
+}
+
+type authClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewAuthClient(cc grpc.ClientConnInterface) AuthClient {
+	return &authClient{cc}
+}
+
+func (c *authClient) AuthCheck(ctx context.Context, in *AuthCheckRequest, opts ...grpc.CallOption) (*AuthCheckResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AuthCheckResponse)
+	err := c.cc.Invoke(ctx, Auth_AuthCheck_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// AuthServer is the server API for Auth service.
+// All implementations must embed UnimplementedAuthServer
+// for forward compatibility.
+type AuthServer interface {
+	AuthCheck(context.Context, *AuthCheckRequest) (*AuthCheckResponse, error)
+	mustEmbedUnimplementedAuthServer()
+}
+
+// UnimplementedAuthServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedAuthServer struct{}
+
+func (UnimplementedAuthServer) AuthCheck(context.Context, *AuthCheckRequest) (*AuthCheckResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AuthCheck not implemented")
+}
+func (UnimplementedAuthServer) mustEmbedUnimplementedAuthServer() {}
+func (UnimplementedAuthServer) testEmbeddedByValue()              {}
+
+// UnsafeAuthServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AuthServer will
+// result in compilation errors.
+type UnsafeAuthServer interface {
+	mustEmbedUnimplementedAuthServer()
+}
+
+func RegisterAuthServer(s grpc.ServiceRegistrar, srv AuthServer) {
+	// If the following call pancis, it indicates UnimplementedAuthServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&Auth_ServiceDesc, srv)
+}
+
+func _Auth_AuthCheck_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AuthCheckRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).AuthCheck(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Auth_AuthCheck_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).AuthCheck(ctx, req.(*AuthCheckRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Auth_ServiceDesc is the grpc.ServiceDesc for Auth service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Auth_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "admin.Auth",
+	HandlerType: (*AuthServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "AuthCheck",
+			Handler:    _Auth_AuthCheck_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

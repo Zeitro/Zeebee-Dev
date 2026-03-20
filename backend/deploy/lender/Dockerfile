@@ -13,5 +13,6 @@ ENV CONFIG_ENV=${CONFIG_ENV}
 WORKDIR /app
 COPY --from=builder /app/lender /app/lender
 COPY ./app/lender/etc/config-${CONFIG_ENV}.yaml /app/etc/config-${CONFIG_ENV}.yaml
+COPY ./app/lender/etc/model.conf /app/etc/model.conf
 EXPOSE 10100
 ENTRYPOINT /app/lender -f /app/etc/config-${CONFIG_ENV}.yaml

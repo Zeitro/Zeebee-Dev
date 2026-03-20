@@ -5,40 +5,33 @@ import (
 
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/threading"
+	"gorm.io/gorm"
 
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
+	"zeebee-backend/domains/zeebee/auth"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
-	"zeebee-backend/domains/zeebee/repo"
 )
 
+// ApiLogic provides API business logic
 type ApiLogic struct {
-	repos *repo.AllRepos
+	*BaseLogic
+	authTopicMap map[constants.UserType]string
 }
 
-func NewApiLogic(repos *repo.AllRepos) *ApiLogic {
+// NewApiLogic creates a new API logic instance
+func NewApiLogic(baseLogic *BaseLogic, authTopicMap map[constants.UserType]string) *ApiLogic {
 	return &ApiLogic{
-		repos: repos,
+		BaseLogic:    baseLogic,
+		authTopicMap: authTopicMap,
 	}
 }
 
-type ApiTree struct {
-	Id          int64      `json:"id"`
-	ParentId    int64      `json:"parent_id"`
-	Name        string     `json:"name"`
-	Path        string     `json:"path"`
-	Method      string     `json:"method"`
-	Status      string     `json:"status"`
-	Description string     `json:"description"`
-	Type        string     `json:"type"`
-	SortOrder   int32      `json:"sort_order"`
-	CreatedAt   string     `json:"created_at"`
-	UpdatedAt   string     `json:"updated_at"`
-	Children    []*ApiTree `json:"children,omitempty"`
-}
-
-func (l *ApiLogic) ApiTree(ctx context.Context, apiType constants.UserType) (trees []*ApiTree, err error) {
+func (l *ApiLogic) ApiTree(ctx context.Context, apiType constants.UserType) (trees []*dto.ApiEntityDto, err error) {
 	results, err := l.repos.ApiRepo.All(ctx, apiType)
 	if err != nil {
 		return
@@ -47,9 +40,120 @@ func (l *ApiLogic) ApiTree(ctx context.Context, apiType constants.UserType) (tre
 	return
 }
 
-// DeleteApi deletes api and its children recursively
+// CreateApi creates a new api
+func (l *ApiLogic) CreateApi(ctx context.Context, input *dto.ApiCreateRequestDto) (result *dto.ApiEntityDto, err error) {
+	apiModel, err := copierx.Trans[dto.ApiCreateRequestDto, model.Api](input)
+	if err != nil {
+		return nil, err
+	}
+	// check existed
+	isExisted, err := l.repos.ApiRepo.IsExisted(ctx, apiModel)
+	if err != nil {
+		return nil, err
+	}
+	if isExisted {
+		err = errorx.New("API already exists")
+		return nil, err
+	}
+	apiModel, err = l.repos.ApiRepo.Create(ctx, apiModel)
+	if err != nil {
+		return nil, err
+	}
+	result, err = copierx.Trans[model.Api, dto.ApiEntityDto](apiModel)
+	if err != nil {
+		return nil, err
+	}
+
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action: auth.ActionApiReload,
+			Scope:  auth.ScopeGlobal,
+			Type:   input.Type,
+		}
+		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
+	})
+
+	return result, nil
+}
+
+// UpdateApi updates an existing api
+func (l *ApiLogic) UpdateApi(ctx context.Context, input *dto.ApiUpdateRequestDto) (result *dto.ApiEntityDto, err error) {
+
+	apiModel, err := l.repos.ApiRepo.GetApi(ctx, input.Id, input.Type, false)
+	if err != nil {
+		return nil, err
+	}
+
+	err = copier.CopyWithOption(apiModel, input, copier.Option{DeepCopy: true})
+	if err != nil {
+		return nil, errorx.GetFailedTransReqErr(err)
+	}
+
+	// check existed
+	isExisted, err := l.repos.ApiRepo.IsExisted(ctx, apiModel)
+	if err != nil {
+		return nil, err
+	}
+	if isExisted {
+		err = errorx.New("API already exists")
+		return nil, err
+	}
+	apiModel, err = l.repos.ApiRepo.UpdateOneById(ctx, input.Id, apiModel)
+	if err != nil {
+		return nil, err
+	}
+	result, err = copierx.Trans[model.Api, dto.ApiEntityDto](apiModel)
+	// publish auth event
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action: auth.ActionApiReload,
+			Scope:  auth.ScopeGlobal,
+			Type:   input.Type,
+		}
+		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
+
+	})
+	return result, err
+}
+
+// Detail returns api detail
+func (l *ApiLogic) Detail(ctx context.Context, id int64, apiType constants.UserType) (result *dto.ApiEntityDto, err error) {
+	api, err := l.repos.ApiRepo.GetApi(ctx, id, apiType, true)
+	if err != nil {
+		return nil, err
+	}
+	result, err = copierx.Trans[model.Api, dto.ApiEntityDto](api)
+	return result, err
+}
+
+// DeleteApi deletes an existing api
 func (l *ApiLogic) DeleteApi(ctx context.Context, id int64, apiType constants.UserType) (err error) {
-	api, err := l.repos.ApiRepo.GetApi(ctx, id, apiType)
+
+	err = l.repos.ApiRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		return l.deleteApi(ctx, tx, id, apiType)
+	})
+	if err != nil {
+		return err
+	}
+	// publish auth event
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action: auth.ActionApiReload,
+			Scope:  auth.ScopeGlobal,
+			Type:   apiType,
+		}
+		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[apiType], msg)
+
+	})
+	return
+}
+
+// deleteApi deletes api and its children recursively
+func (l *ApiLogic) deleteApi(ctx context.Context, tx *gorm.DB, id int64, apiType constants.UserType) (err error) {
+	api, err := l.repos.ApiRepo.GetApiWithTx(ctx, tx, id, apiType, true)
 	if err != nil {
 		return err
 	}
@@ -59,30 +163,23 @@ func (l *ApiLogic) DeleteApi(ctx context.Context, id int64, apiType constants.Us
 		return err
 	}
 	for _, child := range children {
-		err := l.DeleteApi(ctx, child.Id, apiType)
+		err = l.deleteApi(ctx, tx, child.Id, apiType)
 		if err != nil {
 			return err
 		}
 	}
-	// todo delete resource and api relation
-
-	_, err = l.repos.ApiRepo.DeleteByID(ctx, api.Id)
-	return
+	// delete resource and api relation
+	err = l.repos.ApiRepo.DeleteApiWithTx(ctx, tx, api)
+	return err
 }
 
-func (l *ApiLogic) buildTree(apis []*model.Api, parentId int64) (results []*ApiTree) {
-	results = slice.FilterMap[*model.Api, *ApiTree](apis, func(index int, item *model.Api) (*ApiTree, bool) {
+// buildTree builds a tree structure from a list of apis
+func (l *ApiLogic) buildTree(apis []*model.Api, parentId int64) (results []*dto.ApiEntityDto) {
+	results = slice.FilterMap[*model.Api, *dto.ApiEntityDto](apis, func(index int, item *model.Api) (*dto.ApiEntityDto, bool) {
 		if item.ParentId != parentId {
 			return nil, false
 		}
-		tree := &ApiTree{}
-		err := copier.CopyWithOption(tree, item, copier.Option{
-			CaseSensitive: true,
-			Converters: []copier.TypeConverter{
-				copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
-				copierx.TimeToRFC3339Str(),
-			},
-		})
+		tree, err := copierx.Trans[model.Api, dto.ApiEntityDto](item, copierx.SqlTimePtrToStr(timex.LayoutUsStyle), copierx.TimeToRFC3339Str())
 		if err != nil {
 			return nil, false
 		}
