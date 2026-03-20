@@ -198,4 +198,8 @@ export const menuSetting = {
 	'/': {
 		hideCrumbs: true,
 	},
+	'/gmailAuth': {
+		hideCrumbs: true,
+		hideSidebar: true,
+	},
 };
