@@ -701,6 +701,13 @@ message OrganizationLenderMetadataEntity {
   RangeFloat loan_point_range = 4;
 }
 
+message OrganizationOptionsEntity {
+  int64 id = 1;
+  string name = 2;
+  string contact_email = 3;
+  string type = 4;
+}
+
 // page -- request
 message OrganizationPageRequest {
   OrganizationPageRequestData data = 1;
@@ -787,6 +794,19 @@ message OrganizationSwitchStatusRequestData {
   int64 id = 1;
   string status = 2;
 }
+
+// select options -- request
+message OrganizationSelectOptionsRequest {
+  OrganizationSelectOptionsRequestData data = 1;
+}
+message OrganizationSelectOptionsRequestData {
+  string type = 1;
+}
+// select options -- response
+message OrganizationSelectOptionsResponse {
+  repeated OrganizationOptionsEntity data = 1;
+}
+
 service organization {
   rpc Page(OrganizationPageRequest) returns(OrganizationPageResponse);
   rpc CreateLender(OrganizationCreateLenderRequest) returns(OrganizationDetailResponse);
@@ -794,6 +814,8 @@ service organization {
   rpc Detail(IdRequest) returns(OrganizationDetailResponse);
   rpc Delete(IdRequest) returns(EmptyResponse);
   rpc SwitchStatus(OrganizationSwitchStatusRequest) returns(EmptyResponse);
+  rpc SelectOptions(OrganizationSelectOptionsRequest) returns(OrganizationSelectOptionsResponse);
+  //  rpc AllLender(EmptyRequest) returns(OrganizationSelectOptionsResponse);
 }
 // =================== organization service end =================
 
@@ -862,3 +884,542 @@ service common {
   rpc GetUsCities(UsCitiesRequest) returns(StringSliceResponse);
 }
 // ========================== common service end =================
+
+// ========================== base template service start =================
+// Template variable entity for JSONB variable_group_schema field
+message TemplateVariableEntity {
+  string label = 1;
+  string type = 2;           // String, Array, Object
+  string key = 3;
+  bool is_editable = 4;
+  string source = 5;         // Fixed, Dynamic,Template
+  string fixed_value = 6;
+  map<string, TemplateVariableEntity> properties = 8;  // for Object type
+  repeated TemplateVariableEntity items = 9;            // for Array type
+  string format = 10;
+  bool is_required = 11;
+}
+
+// Template variable group entity
+message TemplateVariableGroupEntity {
+  string name = 1;
+  repeated TemplateVariableEntity variables = 2;
+}
+
+// Base template entity
+message BaseTemplateEntity {
+  int64 id = 1;
+  string name = 2;
+  string type = 3;           // Borrower, Lender
+  string category = 4;       // Email, Contract
+  string purpose = 5;
+  string content = 6;
+  repeated TemplateVariableGroupEntity variable_group_schema = 7;
+  string status = 8;         // Active, Disabled
+  string description = 9;
+  string created_at = 10;
+  string updated_at = 11;
+  string example_variables = 12;
+  string scope = 13; // System, Organization
+  bool is_configurable = 14;
+}
+
+// Base template page entity (for list display)
+message BaseTemplatePageEntity {
+  int64 id = 1;
+  string name = 2;
+  string type = 3;
+  string category = 4;
+  string purpose = 5;
+  string status = 6;
+  string description = 7;
+  string created_at = 8;
+  string updated_at = 9;
+  string scope = 10;
+  bool is_configurable = 11;
+}
+
+// Create ---- request
+message CreateBaseTemplateRequest {
+  CreateBaseTemplateRequestData data = 1;
+}
+message CreateBaseTemplateRequestData {
+  string name = 1;
+  string type = 2;
+  string category = 3;
+  string purpose = 4;
+  string content = 5;
+  repeated TemplateVariableGroupEntity variable_group_schema = 6;
+  string description = 7;
+  string example_variables = 8;
+  string scope = 9;
+  bool is_configurable = 10;
+}
+// Create ---- response
+message CreateBaseTemplateResponse {
+  BaseTemplateEntity data = 1;
+}
+
+// Update ---- request
+message UpdateBaseTemplateRequest {
+  UpdateBaseTemplateRequestData data = 1;
+}
+message UpdateBaseTemplateRequestData {
+  int64 id = 1;
+  string name = 2;
+  string category = 4;
+  string content = 6;
+  repeated TemplateVariableGroupEntity variable_group_schema = 7;
+  string description = 8;
+  string example_variables = 9;
+  string scope = 10;
+  bool is_configurable = 11;
+}
+// Update ---- response
+message UpdateBaseTemplateResponse {
+  BaseTemplateEntity data = 1;
+}
+
+// detail ---- request
+message GetBaseTemplateRequest {
+  IdRequest data = 1;
+}
+// detail ---- response
+message GetBaseTemplateResponse {
+  BaseTemplateEntity data = 1;
+}
+
+// Page ---- request
+message BaseTemplatePageRequest {
+  BaseTemplatePageRequestData data = 1;
+}
+message BaseTemplatePageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  BaseTemplatePageRequestFilter filter = 3;
+  BaseTemplatePageRequestSorter sorter = 4;
+}
+message BaseTemplatePageRequestFilter {
+  string keyword = 1;
+  string type = 2;
+  string category = 3;
+  string status = 4;
+  string scope = 5;
+}
+message BaseTemplatePageRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+// Page ---- response
+message BaseTemplatePageResponse {
+  BaseTemplatePageResponseData data = 1;
+}
+message BaseTemplatePageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated BaseTemplatePageEntity list = 5;
+}
+
+// Switch ---- request
+message SwitchBaseTemplateStatusRequest {
+  SwitchBaseTemplateStatusRequestData data = 1;
+}
+message SwitchBaseTemplateStatusRequestData {
+  int64 id = 1;
+  string status = 2;
+}
+
+// Delete ---- request
+message DeleteBaseTemplateRequest {
+  IdRequest data = 1;
+}
+
+// preview ---- request
+message BaseTemplatePreviewRequest {
+  BaseTemplatePreviewRequestData data = 1;
+}
+message BaseTemplatePreviewRequestData {
+  string content = 1;
+  repeated TemplateVariableGroupEntity variable_group_schema = 2;
+  string example_variables = 3;
+  string name = 4;
+}
+// preview ---- response
+message BaseTemplatePreviewResponse {
+  BaseTemplatePreviewResponseData data = 1;
+}
+message BaseTemplatePreviewResponseData {
+  string content = 1;
+}
+
+
+service BaseTemplate {
+  rpc Create(CreateBaseTemplateRequest) returns(CreateBaseTemplateResponse);
+  rpc Update(UpdateBaseTemplateRequest) returns(UpdateBaseTemplateResponse);
+  rpc Detail(GetBaseTemplateRequest) returns(GetBaseTemplateResponse);
+  rpc Page(BaseTemplatePageRequest) returns(BaseTemplatePageResponse);
+  rpc SwitchStatus(SwitchBaseTemplateStatusRequest) returns(EmptyResponse);
+  rpc Delete(DeleteBaseTemplateRequest) returns(EmptyResponse);
+  rpc Preview(BaseTemplatePreviewRequest) returns(BaseTemplatePreviewResponse);
+  rpc Reset(IdRequest) returns(EmptyResponse);
+}
+// ========================== base template service end =================
+
+// ========================== loan service start =================
+message LoanEntity {
+  int64 id = 1;
+  string stage = 2;
+  string pending_status = 3;
+  string loan_purpose = 4;
+  string loan_type = 5;
+  double total_amount = 6;
+  double initial_amount = 7;
+  LoanPropertyEntity loan_property = 8;
+  string lender_company = 9;
+  string closing_date = 10;
+  double holdback_amount = 11;
+  double holdback_released_amount = 12;
+  float rate = 13;
+  double closing_fund = 14;
+  double principal_amount = 15;
+  double monthly_payment = 16;
+  string lien_position = 17;
+  string maturity_date = 18;
+  int32 prepayment_penalty = 19;
+  string service_company = 20;
+  string paid_off_date = 21;
+  string created_at = 22;
+  string updated_at = 23;
+  int64 lender_organization_id = 24;
+  int64 borrower_organization_id = 25;
+  repeated string business_strategy = 26;
+  repeated LoanApplicantEntity applicants = 27;
+  string source = 28;
+  int32 loan_term = 29;
+  double ltv = 30;
+  int32 est_credit_score = 31;
+  double reserves_amount = 32;
+  repeated LoanExperienceEntity transaction_experiences = 33;
+  repeated LoanExperienceEntity real_estate_experiences = 34;
+  LoanBorrowerEntity loan_borrower = 35;
+  LoanDemographicEntity loan_demographic = 36;
+  repeated LoanThirdServiceEntity loan_third_services = 37;
+  string original_contract_date = 38;
+  string extension_date = 39;
+  string loan_processor = 40;
+  LoanExtendValueEntity extend = 41;
+  repeated LoanDocumentEntity loan_documents = 42;
+  string code = 43;
+}
+
+message  LoanBudgetEntity {
+  double original_budget = 1;
+  double remaining_budget = 2;
+  double cost_spent_to_date_amount = 3;
+}
+
+message LoanExtendValueEntity {
+  string  pricing = 1;
+  string loan_status_updates = 2;
+  string meeting_notes = 3;
+  string action_list = 4;
+  string business_line = 5;
+}
+
+// loan page --- request
+message LoanPageRequest {
+  LoanPageRequestData data = 1;
+}
+// loan page --- response
+message LoanPageResponse {
+  LoanPageResponseData data = 1;
+}
+
+message  LoanPageRequestFilter {
+  string stage = 2;
+  string keyword = 3;
+  string keyword_type = 4;
+  repeated string loan_purpose = 5;
+  repeated string loan_type = 6;
+  repeated string pending_status = 7;
+  repeated string lender = 8;
+}
+
+message  LoanPageRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+
+message LoanPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  LoanPageRequestFilter filter = 3;
+  LoanPageRequestSorter sorter = 4;
+}
+
+message LoanPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated LoanEntity list = 5;
+}
+
+// detail ---- response
+message LoanDetailResponse {
+  LoanEntity data = 1;
+}
+
+// reassign --  request
+message ReassignLoanRequest {
+  ReassignLoanRequestData data = 1;
+}
+message ReassignLoanRequestData {
+  int64 id = 1;
+  int64 lender_organization_id = 2;
+}
+
+// loan lender companies ---- response
+message LoanLenderCompaniesResponse {
+  repeated string data = 1;
+}
+
+
+service Loan {
+  rpc LoanPage(LoanPageRequest) returns(LoanPageResponse);
+  rpc LoanDetail(IdRequest) returns(LoanDetailResponse);
+  rpc ReassignLoan(ReassignLoanRequest) returns(EmptyResponse);
+  rpc LoanLenderCompanies(EmptyRequest) returns(LoanLenderCompaniesResponse);
+}
+
+// =========================== loan service end =================
+
+// ========================== loan property service start =================
+message LoanPropertyEntity{
+  int64 id = 1;
+  string property_type = 2 ;
+  BorrowerPropertyEntity borrower_property = 3;
+  float living_area_sqft = 5;
+  int32 bedrooms = 6;
+  int32 bathrooms = 7;
+  string future_property_type = 8;
+  int32  future_unit = 9;
+  float future_living_area_sqft = 10;
+  int32 future_bedrooms = 11;
+  int32 future_bathrooms = 12;
+  string owner = 13;
+  int32 unit = 14;
+  //
+  string existing_lender_company = 15;
+  float existing_rate = 16;
+  string existing_maturity_date = 17;
+  double purchase_amount = 18;
+  string purchase_date = 19;
+  bool has_assignment_fee = 20;
+  double assignment_fee_amount = 21;
+  bool has_subordinate_debt = 22;
+  double subordinate_debt_amount = 23;
+  string scheduled_close_escrow_date = 24;
+  double liquidity_amount = 25;
+  LoanBudgetEntity budget = 26;
+  bool mid_construction = 27;
+  double est_yearly_rental_income_amount = 28;
+  double yearly_liability_expense_amount = 29;
+  double dscr = 30;
+  bool has_delayed_financing = 31;
+  bool has_collateralized_blanket = 32;
+  bool has_properties_vacant = 33;
+  bool has_short_term_rental = 34;
+  double est_property_value_amount = 35;
+  AddressEntity address = 36;
+  double arv = 37;
+
+  int64 borrower_property_id = 38;
+}
+// =========================== loan property service end =================
+
+// ===================== borrower property service start ======================
+message BorrowerPropertyEntity{
+  int64 id = 1;
+  string property_type = 2;
+  double total_amount = 3;
+  int32  unit = 4;
+  float living_area_sqft = 5;
+  int32 bedrooms = 6;
+  float bathrooms = 7;
+  AddressEntity address = 8;
+  string created_at = 9;
+  string updated_at = 10;
+  int32 loan_count = 11;
+}
+// ====================== borrower property service end ======================
+
+// ===================== loan applicant service start ======================
+message LoanApplicantEntity{
+  int64 id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  bool is_primary = 4;
+  string created_at = 5;
+  string updated_at = 6;
+  string mid_name = 7;
+  string type = 8;
+  string invitation_status = 9;
+  string full_name = 10;
+  int64  loan_property_id = 11;
+  string ssn = 12;
+  string dob = 13;
+  string marital_status = 14;
+  string email = 15;
+  int32 est_credit_score = 16;
+  string driver_license_num = 17;
+  AddressEntity address = 18;
+  int64  loan_borrower_id = 19;
+  string phone = 20;
+  int32 own_percent = 21;
+  int64 borrower_applicant_id = 22;
+  int64 loan_id = 23;
+  int64 borrower_id = 24;
+}
+// ===================== loan applicant service end ======================
+// ===================== loan experience service start ======================
+message LoanExperienceEntity{
+  int64 id = 1;
+  int64 loan_id = 2;
+  string city = 3 [deprecated = true];
+  string state = 4 [deprecated = true];
+  string ownership_on_title = 5;
+  string property_type = 6;
+  double purchase_amount = 7;
+  string purchase_date = 8;
+  double sold_amount = 9;
+  string sold_date = 10;
+  double budget_or_cost = 11;
+  double profit = 12;
+  bool is_tenant_occupied = 13;
+  string type = 14;
+  AddressEntity address = 15;
+}
+// ===================== loan experience service end ======================
+
+// ===================== loan third service start ======================
+message LoanThirdServiceEntity{
+  int64 id = 1;
+  int64 loan_id = 2;
+  string type = 3;
+  string name = 4;
+  string email = 5;
+  string phone = 6;
+  string company = 7;
+}
+// ===================== loan third service end ======================
+
+// ===================== loan demographic service start ======================
+message LoanDemographicEntity{
+  int64 id = 1;
+  int64 loan_id = 2;
+  LoanDemographicPropertyEntity property = 3;
+  LoanDemographicEthnicityEntity ethnicity = 4;
+  LoanDemographicRaceEntity race = 5;
+  string sex = 6;
+}
+
+message LoanDemographicPropertyEntity {
+  bool as_primary_resident = 1;
+  bool has_transaction_relationship = 2;
+  bool has_borrowed_money = 3;
+  double borrowed_money_amount = 4;
+  bool has_another_mortgage_loan = 5;
+  bool has_priority_over1st = 6;
+  bool has_outstanding_judgments = 7;
+  bool has_federal_debt = 8;
+  bool has_a_lawsuit = 9;
+  bool has_conveyed_title = 10;
+  bool has_a_pre_foreclosure_sale = 11;
+  bool has_foreclosed_upon = 12;
+  bool has_a_bankruptcy = 13;
+  string bankruptcy_chapter = 14;
+}
+
+message LoanDemographicEthnicityEntity {
+  repeated string values = 1;
+  string other_hispanic_or_latino_name = 2;
+
+}
+
+message LoanDemographicRaceEntity {
+  repeated string values = 1;
+  repeated string asian_values = 2;
+  string american_indian_or_alaska_native_name = 3;
+  string asian_other_name = 4;
+  string other_pacific_islander_name = 5;
+}
+
+message LoanDemographicExtraDemographicEntity {
+  bool is_ethnicity_collected_by_observation = 1;
+  bool is_sex_collected_by_observation = 2;
+  bool is_race_collected_by_observation = 3;
+  repeated string info_channels = 4;
+}
+// ===================== loan demographic service end ======================
+// ===================== borrower entity service start ======================
+message BorrowerEntityEntity {
+  int64 id = 1;
+  string created_at = 2;
+  string updated_at = 3;
+  int64 borrower_id = 4;
+  string type = 5;
+  string name = 6;
+  string tin_type = 7;
+  string tin = 8;
+  AddressEntity mailing_address = 9;
+  string contact_email = 10;
+  string contact_name = 11;
+  string contact_phone = 12;
+}
+// ===================== borrower entity service end ======================
+// ===================== loan borrower service start ======================
+message LoanBorrowerEntity{
+  int64 id = 1;
+  int64 loan_id = 2;
+  string type = 3;
+  string name = 4;
+  string tin_type = 5;
+  string tin = 6;
+  AddressEntity mailing_address = 7;
+  string contact_email = 8;
+  string contact_phone = 9;
+  string contact_name = 10;
+  int32 own_percent = 11;
+  int64 borrower_entity_id = 12;
+  string created_at = 13;
+  string updated_at = 14;
+}
+
+// ====================== loan borrower service end ======================
+// ===================== loan document service start ======================
+message LoanDocumentEntity {
+  int64 id = 1;
+  int64 loan_id = 2;
+  string category = 3;
+  string file_type = 4;
+  string comment = 5;
+  string status = 6;
+  string created_at = 7;
+  string updated_at = 8;
+  repeated FileEntity files = 9;
+  string LastUploadedAt = 10;
+}
+// ====================== loan document service end ======================
+// ===================== file service start ======================
+message FileEntity {
+  int64 id = 1;
+  string entity_type = 2;
+  int64 entity_id = 3;
+  string file_url = 4;
+  string created_at = 5;
+  string updated_at = 6;
+}
+// ===================== file service end ======================

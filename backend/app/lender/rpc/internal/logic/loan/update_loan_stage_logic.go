@@ -12,7 +12,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/data"
 )
 
 type UpdateLoanStageLogic struct {
@@ -49,7 +49,7 @@ func (l *UpdateLoanStageLogic) UpdateLoanStage(in *lender.LoanUpdateStageRequest
 	}
 
 	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreapproval {
-		return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
+		return nil, errorx.WithStack(errorx.New("Invalid loan source"))
 	}
 
 	// Save original status for operation log
@@ -69,18 +69,18 @@ func (l *UpdateLoanStageLogic) UpdateLoanStage(in *lender.LoanUpdateStageRequest
 		// Create operation log
 		operatorId := claim.OrganizationUserId
 
-		fromStatus := model.LoanOperationStatus{
+		fromStatus := data.LoanOperationStatus{
 			Stage:         originalStage,
 			PendingStatus: originalPendingStatus,
 		}
 
-		toStatus := model.LoanOperationStatus{
+		toStatus := data.LoanOperationStatus{
 			Stage:         stage,
 			PendingStatus: loan.PendingStatus,
 		}
 
-		loanBaseLogic := NewLoanBaseLogic(l.ctx, l.svcCtx)
-		return loanBaseLogic.CreateLoanOperationLog(tx, loan.Id, operatorId, fromStatus, toStatus, constants.LoanOperationActionUpdate, nil)
+		// loanBaseLogic := NewLoanBaseLogic(l.ctx, l.svcCtx)
+		return l.baseLogic.CreateLoanOperationLog(tx, loan.Id, operatorId, fromStatus, toStatus, constants.LoanOperationActionUpdate, nil)
 	})
 
 	if err != nil {

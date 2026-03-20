@@ -1,0 +1,19 @@
+syntax = "v1"
+
+info(
+    title: "admin-loan-third-service-api"
+    desc: "admin-loan-third-service-api http service description"
+    version: "v1"
+)
+
+type LoanThirdServiceEntity {
+    Id int64 `json:"id,optional"`
+    LoanId int64 `json:"loan_id,optional"`
+    Type string `json:"type,optional" validate:"required,oneof='Title Co' 'Escrow Co' Insurance 'Appraisal Scheduling' 'Appraisal Access Contact' 'Appraisal Payment Contact'"`
+    Name string `json:"name,optional" validate:"required"`
+    Email string `json:"email,optional"`
+    Phone string `json:"phone,optional"`
+    Company string `json:"company,optional" validate:"required_unless=Type 'Title Co' Type 'Escrow Co' Type Insurance"`
+}
+
+

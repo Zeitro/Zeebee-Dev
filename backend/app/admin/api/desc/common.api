@@ -53,3 +53,14 @@ type (
         TotalPage int64 `json:"total_page"`
     }
 )
+
+type (
+    EmptyRequest {
+    }
+    EmptyResponse {
+    }
+)
+
+type PathIdRequest {
+    id int64 `path:"id" validate:"required,gt=0"`
+}

@@ -56,7 +56,7 @@ func (l *CreateLogic) Create(in *admin.ResourceCreateRequest) (resp *admin.Resou
 			return innerErr
 		}
 		if isExisted {
-			innerErr = errorx.New("Resource is Existed")
+			innerErr = errorx.New("Resource is existed")
 			return innerErr
 		}
 

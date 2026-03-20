@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -86,22 +87,22 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.LoanDocumentDeleteFileRequest) (
 			tx,
 			in.Data.Id,
 			claim.OrganizationUserId,
-			model.LoanOperationStatus{
+			data.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			model.LoanOperationStatus{
+			data.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			constants.LoanOperationActionDeleteDocumentFile,
-			&model.LoanOperationMetadata{
-				LoanDocuments: []*model.OperationLoanDocument{
+			&data.LoanOperationMetadata{
+				LoanDocuments: []*data.OperationLoanDocument{
 					{
 						Category: loanDocument.Category,
 						FileType: loanDocument.FileType,
 						Status:   loanDocument.Status,
-						Files: []*model.OperationFile{
+						Files: []*data.OperationFile{
 							{
 								EntityId:   file.EntityId,
 								EntityType: file.EntityType,
@@ -133,7 +134,7 @@ func (l *DeleteFileLogic) prepare(in *lender.LoanDocumentDeleteFileRequest, clai
 	}
 
 	if file.EntityType != constants.FileEntityTypeLoanDocument {
-		return nil, nil, nil, errorx.WithStack(errorx.New("File Is Not Associated With A Loan Document"))
+		return nil, nil, nil, errorx.WithStack(errorx.New("File is not associated with a loan document"))
 	}
 	loan, loanDocument, err = l.baseLogic.GetLoanAndDocumentByDocumentId(file.EntityId, claim.OrganizationId)
 

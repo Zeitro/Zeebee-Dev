@@ -6,6 +6,7 @@ on:
       - prod-borrower-backend
       - prod-lender-backend
       - prod-admin-backend
+      - prod-pdfgenerator-backend
 
 jobs:
   deploy:
@@ -28,8 +29,10 @@ jobs:
              SERVICE_NAME=borrower
           elif [[ "${{ github.ref }}" == "refs/heads/prod-lender-backend" ]]; then
             SERVICE_NAME=lender
-           elif [[ "${{ github.ref }}" == "refs/heads/prod-admin-backend" ]]; then
+          elif [[ "${{ github.ref }}" == "refs/heads/prod-admin-backend" ]]; then
             SERVICE_NAME=admin
+          elif [[ "${{ github.ref }}" == "refs/heads/prod-pdfgenerator-backend" ]]; then
+            SERVICE_NAME=pdfgenerator
           else
             echo "Invalid Branch ${{ github.ref }}"
             exit 1
