@@ -1,19 +1,19 @@
 'use client';
-import { useUserStore } from '@/store/user';
+import { useUserStore, usePermissionStore } from '@repo/shared-methods/store';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
-import { clearAllCookie } from '@repo/shared-methods/utils';
+import { flattenNavRouter, matchRoute } from '@repo/shared-methods/utils';
 // import { localStorageUtil } from '@/lib/local';
 import { noTokenRouter } from '@config/routes';
-import { flattenNavRouter, matchRoute } from '@config/common';
 const LoginLayout = ({ children }) => {
 	const router = useRouter();
 	const pathname = usePathname();
 	const { clearUserInfo } = useUserStore();
+	const { clearPermission } = usePermissionStore();
 	useEffect(() => {
 		clearUserInfo();
-		clearAllCookie();
+		clearPermission();
 		const noNavList = flattenNavRouter(noTokenRouter);
 		const isLogin = noNavList.some((item) => matchRoute(item.path, pathname));
 		// localStorageUtil.clear();
@@ -22,7 +22,7 @@ const LoginLayout = ({ children }) => {
 		if (!isLogin) {
 			router.replace('/login');
 		}
-	}, [clearUserInfo, pathname, router]);
+	}, [clearUserInfo, clearPermission, pathname, router]);
 	return (
 		<div className="h-full w-full flex flex-col">
 			<div className="h-20 flex-shrink-0 flex items-center pl-6">
