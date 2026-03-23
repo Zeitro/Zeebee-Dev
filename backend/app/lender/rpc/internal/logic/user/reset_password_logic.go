@@ -3,8 +3,6 @@ package userlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
@@ -13,7 +11,6 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
 )
 
@@ -29,7 +26,7 @@ func NewResetPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Res
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -51,15 +48,11 @@ func (l *ResetPasswordLogic) ResetPassword(in *lender.ResetPasswordRequest) (res
 		return nil, err
 	}
 
-	jwtInfo, err := copierx.Trans[bo.UserJwtTokenBo, lender.UserJwtResponseData](token)
+	jwtInfo, err := copierx.Trans[dto.UserJwtTokenDto, lender.UserJwtResponseData](token)
 	if err != nil {
 		return nil, err
 	}
 
-	err = copier.CopyWithOption(jwtInfo, token, copier.Option{CaseSensitive: true})
-	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
-	}
 	return &lender.UserJwtResponse{
 		Data: jwtInfo,
 	}, nil

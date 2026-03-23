@@ -9,6 +9,7 @@ import (
 
 	"zeebee-backend/app/lender/config"
 	"zeebee-backend/app/lender/rpc/internal/global"
+	authServer "zeebee-backend/app/lender/rpc/internal/server/auth"
 	commonServer "zeebee-backend/app/lender/rpc/internal/server/common"
 	fileServer "zeebee-backend/app/lender/rpc/internal/server/file"
 	loanServer "zeebee-backend/app/lender/rpc/internal/server/loan"
@@ -17,6 +18,7 @@ import (
 	organizationSettingServer "zeebee-backend/app/lender/rpc/internal/server/organizationsetting"
 	organizationTemplateServer "zeebee-backend/app/lender/rpc/internal/server/organizationtemplate"
 	organizationUserServer "zeebee-backend/app/lender/rpc/internal/server/organizationuser"
+	resourceServer "zeebee-backend/app/lender/rpc/internal/server/resource"
 	roleServer "zeebee-backend/app/lender/rpc/internal/server/role"
 	storageServer "zeebee-backend/app/lender/rpc/internal/server/storage"
 	userServer "zeebee-backend/app/lender/rpc/internal/server/user"
@@ -49,6 +51,8 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		lender.RegisterOrganizationServer(grpcServer, organizationServer.NewOrganizationServer(ctx))
 		lender.RegisterOrganizationTemplateServer(grpcServer, organizationTemplateServer.NewOrganizationTemplateServer(ctx))
 		lender.RegisterOrganizationSettingServer(grpcServer, organizationSettingServer.NewOrganizationSettingServer(ctx))
+		lender.RegisterAuthServer(grpcServer, authServer.NewAuthServer(ctx))
+		lender.RegisterResourceServer(grpcServer, resourceServer.NewResourceServer(ctx))
 
 		if rpcConfig.Mode == service.DevMode || rpcConfig.Mode == service.TestMode {
 			reflection.Register(grpcServer)

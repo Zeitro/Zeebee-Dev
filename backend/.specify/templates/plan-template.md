@@ -3,7 +3,7 @@
 **Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
 **Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
 
-**Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/commands/plan.md` for the
+**Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/plan-template.md` for the
 execution workflow.
 
 ## Summary
@@ -18,37 +18,21 @@ execution workflow.
   the iteration process.
 -->
 
-**Language/Version**: Go 1.23+
-**Primary Dependencies**: go-zero 1.9.3, GORM, Redis, AWS S3
-**Storage**: PostgreSQL 14+
-**Testing**: go test, golangci-lint
-**Target Platform**: Linux server (microservices architecture)
-**Project Type**: microservices (API/RPC separation)
-**Performance Goals**: <200ms API response (p95), 1000+ req/s
-**Constraints**: API/RPC dual-layer, shared domain models, copierx.Trans for conversions
-**Scale/Scope**: Multiple services (borrower, lender, admin), shared domain layer
+**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
+**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
+**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
+**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
+**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
+**Project Type**: [e.g., library/cli/web-service/mobile-app/compiler/desktop-app or NEEDS CLARIFICATION]  
+**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
+**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
+**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-Based on `.specify/memory/constitution.md`:
-
-- [ ] **Shared Domain-First**: New models/repositories in `domains/zeebee/`? Or service-specific?
-- [ ] **API/RPC Separation**: Does feature respect API (validation) vs RPC (business logic) boundary?
-- [ ] **Code Generation**: Will `.api`/`.proto` definitions be used with `goctl`?
-- [ ] **Data Conversion**: All type conversions using `copierx.Trans[T, U]`?
-- [ ] **Type Safety**: Are unit tests included for `common/` utilities?
-- [ ] **Test Coverage**: Does implementation plan include adequate tests (target: 80%+)?
-
-**Violations Requiring Justification**:
-
-| Principle           | Potential Violation | Justification Required?                          |
-|---------------------|---------------------|--------------------------------------------------|
-| Shared Domain-First |                     | If NOT using `domains/zeebee/` for shared models |
-| API/RPC Separation  |                     | If blurring API/RPC responsibilities             |
-| Code Generation     |                     | If NOT using goctl code generation               |
-| Data Conversion     |                     | If NOT using copierx.Trans for conversions       |
+[Gates determined based on constitution file]
 
 ## Project Structure
 
@@ -65,7 +49,6 @@ specs/[###-feature]/
 ```
 
 ### Source Code (repository root)
-
 <!--
   ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
   for this feature. Delete unused options and expand the chosen structure with
@@ -74,47 +57,49 @@ specs/[###-feature]/
 -->
 
 ```text
-# Zeebee Backend - Microservices Architecture
-app/
-├── borrower/           # Borrower service
-│   ├── api/           # HTTP API layer
-│   │   ├── desc/      # API definitions (.api files)
-│   │   ├── internal/
-│   │   │   ├── handler/   # HTTP handlers
-│   │   │   ├── logic/     # API logic (validation, routing)
-│   │   │   └── svc/       # Service context
-│   │   └── etc/       # Configuration
-│   └── rpc/           # gRPC RPC layer
-│       ├── pb/        # Protocol buffers (.proto files)
-│       ├── internal/
-│       │   └── logic/ # RPC logic (business logic)
-│       └── etc/       # Configuration
-├── lender/            # Lender service (same structure as borrower)
-└── admin/             # Admin service (same structure as borrower)
+# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
+src/
+├── models/
+├── services/
+├── cli/
+└── lib/
 
-domains/zeebee/         # Shared domain layer
-├── model/             # Unified data models
-├── repo/              # Shared repositories
-└── constants/         # Business constants
+tests/
+├── contract/
+├── integration/
+└── unit/
 
-common/                # Shared utilities
-├── errorx/            # Error handling
-├── copierx/           # Type conversion
-├── validator/         # Data validation
-├── gormx/             # Database operations
-└── utils/             # Utilities (JWT, password, etc.)
+# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
+backend/
+├── src/
+│   ├── models/
+│   ├── services/
+│   └── api/
+└── tests/
 
-tests/                 # Test files (alongside source)
+frontend/
+├── src/
+│   ├── components/
+│   ├── pages/
+│   └── services/
+└── tests/
+
+# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
+api/
+└── [same as backend above]
+
+ios/ or android/
+└── [platform-specific structure: feature modules, UI flows, platform tests]
 ```
 
-**Structure Decision**: Microservices with API/RPC dual-layer architecture. Shared domain models in `domains/zeebee/`,
-shared utilities in `common/`.
+**Structure Decision**: [Document the selected structure and reference the real
+directories captured above]
 
 ## Complexity Tracking
 
 > **Fill ONLY if Constitution Check has violations that must be justified**
 
-| Violation                                               | Why Needed         | Simpler Alternative Rejected Because   |
-|---------------------------------------------------------|--------------------|----------------------------------------|
-| [e.g., Service-specific model instead of shared domain] | [current need]     | [why `domains/zeebee/` insufficient]   |
-| [e.g., Direct data access instead of copierx.Trans]     | [specific problem] | [why standard conversion insufficient] |
+| Violation                  | Why Needed         | Simpler Alternative Rejected Because |
+|----------------------------|--------------------|--------------------------------------|
+| [e.g., 4th project]        | [current need]     | [why 3 projects insufficient]        |
+| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient]  |

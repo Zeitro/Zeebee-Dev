@@ -3,14 +3,12 @@ package loan
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/errorx"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/common/copierx"
 )
 
 type PreApprovalLogic struct {
@@ -35,24 +33,19 @@ func (l *PreApprovalLogic) PreApproval(req *types.LoanPreApprovalRequest) (resp 
 	resp = &types.LoanPreApprovalResponse{}
 	rpcResp := &borrower.LoanPreApprovalResponse{}
 
-	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+	rpcReq.Data, err = copierx.Trans[types.LoanPreApprovalRequest, borrower.LoanPreApprovalRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
+
 	rpcResp, err = l.svcCtx.LoanRpcClient.PreApprovalLoan(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err
 	}
 
-	err = copier.CopyWithOption(resp, rpcResp.Data, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+	resp, err = copierx.Trans[borrower.LoanPreApprovalResponse, types.LoanPreApprovalResponse](rpcResp)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
 
 	return resp, nil
