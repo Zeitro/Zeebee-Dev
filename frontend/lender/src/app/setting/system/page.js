@@ -17,7 +17,7 @@ const SystemSetting = () => {
 			</div>
 			<ContactEmail /> */}
 			<div className="text-xl font-medium pb-4">System Settings</div>
-			<PermissionSlot permission={PERMISSIONS.SETTING_SYSTEM.PRE_APPROVED_LETTER}>
+			<PermissionSlot code={PERMISSIONS.SETTING_SYSTEM.PRE_APPROVED_LETTER}>
 				<PreApprovedLetterSetting />
 			</PermissionSlot>
 		</div>
