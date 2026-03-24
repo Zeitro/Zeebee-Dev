@@ -27,7 +27,7 @@ func NewUpdateLoanStageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *U
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -80,7 +80,7 @@ func (l *UpdateLoanStageLogic) UpdateLoanStage(in *lender.LoanUpdateStageRequest
 		}
 
 		// loanBaseLogic := NewLoanBaseLogic(l.ctx, l.svcCtx)
-		return l.baseLogic.CreateLoanOperationLog(tx, loan.Id, operatorId, fromStatus, toStatus, constants.LoanOperationActionUpdate, nil)
+		return l.baseLogic.CreateLoanOperationLog(l.ctx, tx, loan.Id, operatorId, fromStatus, toStatus, constants.LoanOperationActionUpdate, nil)
 	})
 
 	if err != nil {

@@ -5345,19 +5345,97 @@
                             "is_show",
                             "status",
                             "sort_order",
+                            "enable_data_scope",
+                            "description",
+                            "is_public",
                             "created_at",
                             "updated_at",
-                            "pivot_role_data_scope"
+                            "apis",
+                            "data_scope"
                           ],
                           "properties": {
+                            "apis": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "required": [
+                                  "id",
+                                  "parent_id",
+                                  "name",
+                                  "path",
+                                  "method",
+                                  "status",
+                                  "description",
+                                  "type",
+                                  "sort_order",
+                                  "auth_required",
+                                  "permission_required",
+                                  "created_at",
+                                  "updated_at"
+                                ],
+                                "properties": {
+                                  "auth_required": {
+                                    "type": "boolean"
+                                  },
+                                  "created_at": {
+                                    "type": "string"
+                                  },
+                                  "description": {
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "type": "integer"
+                                  },
+                                  "method": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "parent_id": {
+                                    "type": "integer"
+                                  },
+                                  "path": {
+                                    "type": "string"
+                                  },
+                                  "permission_required": {
+                                    "type": "boolean"
+                                  },
+                                  "sort_order": {
+                                    "type": "integer"
+                                  },
+                                  "status": {
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "type": "string"
+                                  },
+                                  "updated_at": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
                             "created_at": {
                               "type": "string"
+                            },
+                            "data_scope": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "enable_data_scope": {
+                              "type": "boolean"
                             },
                             "icon": {
                               "type": "string"
                             },
                             "id": {
                               "type": "integer"
+                            },
+                            "is_public": {
+                              "type": "boolean"
                             },
                             "is_show": {
                               "type": "boolean"
@@ -5369,9 +5447,6 @@
                               "type": "integer"
                             },
                             "path": {
-                              "type": "string"
-                            },
-                            "pivot_role_data_scope": {
                               "type": "string"
                             },
                             "resource_type": {
@@ -5928,19 +6003,97 @@
                             "is_show",
                             "status",
                             "sort_order",
+                            "enable_data_scope",
+                            "description",
+                            "is_public",
                             "created_at",
                             "updated_at",
-                            "pivot_role_data_scope"
+                            "apis",
+                            "data_scope"
                           ],
                           "properties": {
+                            "apis": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "required": [
+                                  "id",
+                                  "parent_id",
+                                  "name",
+                                  "path",
+                                  "method",
+                                  "status",
+                                  "description",
+                                  "type",
+                                  "sort_order",
+                                  "auth_required",
+                                  "permission_required",
+                                  "created_at",
+                                  "updated_at"
+                                ],
+                                "properties": {
+                                  "auth_required": {
+                                    "type": "boolean"
+                                  },
+                                  "created_at": {
+                                    "type": "string"
+                                  },
+                                  "description": {
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "type": "integer"
+                                  },
+                                  "method": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "parent_id": {
+                                    "type": "integer"
+                                  },
+                                  "path": {
+                                    "type": "string"
+                                  },
+                                  "permission_required": {
+                                    "type": "boolean"
+                                  },
+                                  "sort_order": {
+                                    "type": "integer"
+                                  },
+                                  "status": {
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "type": "string"
+                                  },
+                                  "updated_at": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
                             "created_at": {
                               "type": "string"
+                            },
+                            "data_scope": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "enable_data_scope": {
+                              "type": "boolean"
                             },
                             "icon": {
                               "type": "string"
                             },
                             "id": {
                               "type": "integer"
+                            },
+                            "is_public": {
+                              "type": "boolean"
                             },
                             "is_show": {
                               "type": "boolean"
@@ -5952,9 +6105,6 @@
                               "type": "integer"
                             },
                             "path": {
-                              "type": "string"
-                            },
-                            "pivot_role_data_scope": {
                               "type": "string"
                             },
                             "resource_type": {
@@ -6144,19 +6294,97 @@
                             "is_show",
                             "status",
                             "sort_order",
+                            "enable_data_scope",
+                            "description",
+                            "is_public",
                             "created_at",
                             "updated_at",
-                            "pivot_role_data_scope"
+                            "apis",
+                            "data_scope"
                           ],
                           "properties": {
+                            "apis": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "required": [
+                                  "id",
+                                  "parent_id",
+                                  "name",
+                                  "path",
+                                  "method",
+                                  "status",
+                                  "description",
+                                  "type",
+                                  "sort_order",
+                                  "auth_required",
+                                  "permission_required",
+                                  "created_at",
+                                  "updated_at"
+                                ],
+                                "properties": {
+                                  "auth_required": {
+                                    "type": "boolean"
+                                  },
+                                  "created_at": {
+                                    "type": "string"
+                                  },
+                                  "description": {
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "type": "integer"
+                                  },
+                                  "method": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "parent_id": {
+                                    "type": "integer"
+                                  },
+                                  "path": {
+                                    "type": "string"
+                                  },
+                                  "permission_required": {
+                                    "type": "boolean"
+                                  },
+                                  "sort_order": {
+                                    "type": "integer"
+                                  },
+                                  "status": {
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "type": "string"
+                                  },
+                                  "updated_at": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
                             "created_at": {
                               "type": "string"
+                            },
+                            "data_scope": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "enable_data_scope": {
+                              "type": "boolean"
                             },
                             "icon": {
                               "type": "string"
                             },
                             "id": {
                               "type": "integer"
+                            },
+                            "is_public": {
+                              "type": "boolean"
                             },
                             "is_show": {
                               "type": "boolean"
@@ -6168,9 +6396,6 @@
                               "type": "integer"
                             },
                             "path": {
-                              "type": "string"
-                            },
-                            "pivot_role_data_scope": {
                               "type": "string"
                             },
                             "resource_type": {
@@ -6401,7 +6626,7 @@
         "tags": [
           "pdf"
         ],
-        "summary": "create apply form pdf",
+        "summary": "convert html to pdf",
         "operationId": "pdfHtmlToPdf",
         "parameters": [
           {
@@ -6435,6 +6660,257 @@
         }
       }
     },
+    "/api/v1/resource/tree": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "resource"
+        ],
+        "summary": "tree",
+        "operationId": "resourceResourceTree",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "parent_id",
+                      "type",
+                      "resource_type",
+                      "name",
+                      "path",
+                      "icon",
+                      "tag",
+                      "is_show",
+                      "status",
+                      "sort_order",
+                      "enable_data_scope",
+                      "description",
+                      "is_public",
+                      "created_at",
+                      "updated_at",
+                      "children",
+                      "apis"
+                    ],
+                    "properties": {
+                      "apis": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "parent_id",
+                            "name",
+                            "path",
+                            "method",
+                            "status",
+                            "description",
+                            "type",
+                            "sort_order",
+                            "auth_required",
+                            "permission_required",
+                            "created_at",
+                            "updated_at"
+                          ],
+                          "properties": {
+                            "auth_required": {
+                              "type": "boolean"
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "method": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "parent_id": {
+                              "type": "integer"
+                            },
+                            "path": {
+                              "type": "string"
+                            },
+                            "permission_required": {
+                              "type": "boolean"
+                            },
+                            "sort_order": {
+                              "type": "integer"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "children": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "parent_id",
+                            "type",
+                            "resource_type",
+                            "name",
+                            "path",
+                            "icon",
+                            "tag",
+                            "is_show",
+                            "status",
+                            "sort_order",
+                            "enable_data_scope",
+                            "description",
+                            "is_public",
+                            "created_at",
+                            "updated_at",
+                            "children",
+                            "apis"
+                          ],
+                          "properties": {
+                            "apis": {
+                              "type": "array",
+                              "items": {
+                                "type": "object"
+                              }
+                            },
+                            "children": {
+                              "type": "array",
+                              "items": {
+                                "type": "object"
+                              }
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "enable_data_scope": {
+                              "type": "boolean"
+                            },
+                            "icon": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "is_public": {
+                              "type": "boolean"
+                            },
+                            "is_show": {
+                              "type": "boolean"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "parent_id": {
+                              "type": "integer"
+                            },
+                            "path": {
+                              "type": "string"
+                            },
+                            "resource_type": {
+                              "type": "string"
+                            },
+                            "sort_order": {
+                              "type": "integer"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "tag": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "enable_data_scope": {
+                        "type": "boolean"
+                      },
+                      "icon": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "is_public": {
+                        "type": "boolean"
+                      },
+                      "is_show": {
+                        "type": "boolean"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "parent_id": {
+                        "type": "integer"
+                      },
+                      "path": {
+                        "type": "string"
+                      },
+                      "resource_type": {
+                        "type": "string"
+                      },
+                      "sort_order": {
+                        "type": "integer"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "tag": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/role": {
       "post": {
         "consumes": [
@@ -6460,7 +6936,6 @@
               "type": "object",
               "required": [
                 "name",
-                "description",
                 "status"
               ],
               "properties": {
@@ -6470,10 +6945,25 @@
                 "name": {
                   "type": "string"
                 },
-                "resource_ids": {
+                "resources": {
                   "type": "array",
                   "items": {
-                    "type": "integer"
+                    "type": "object",
+                    "required": [
+                      "resource_id",
+                      "data_scope"
+                    ],
+                    "properties": {
+                      "data_scope": {
+                        "type": "string"
+                      },
+                      "resource_id": {
+                        "type": "integer"
+                      },
+                      "role_id": {
+                        "type": "integer"
+                      }
+                    }
                   }
                 },
                 "status": {
@@ -6520,19 +7010,97 @@
                       "is_show",
                       "status",
                       "sort_order",
+                      "enable_data_scope",
+                      "description",
+                      "is_public",
                       "created_at",
                       "updated_at",
-                      "pivot_role_data_scope"
+                      "apis",
+                      "data_scope"
                     ],
                     "properties": {
+                      "apis": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "parent_id",
+                            "name",
+                            "path",
+                            "method",
+                            "status",
+                            "description",
+                            "type",
+                            "sort_order",
+                            "auth_required",
+                            "permission_required",
+                            "created_at",
+                            "updated_at"
+                          ],
+                          "properties": {
+                            "auth_required": {
+                              "type": "boolean"
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "method": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "parent_id": {
+                              "type": "integer"
+                            },
+                            "path": {
+                              "type": "string"
+                            },
+                            "permission_required": {
+                              "type": "boolean"
+                            },
+                            "sort_order": {
+                              "type": "integer"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
                       "created_at": {
                         "type": "string"
+                      },
+                      "data_scope": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "enable_data_scope": {
+                        "type": "boolean"
                       },
                       "icon": {
                         "type": "string"
                       },
                       "id": {
                         "type": "integer"
+                      },
+                      "is_public": {
+                        "type": "boolean"
                       },
                       "is_show": {
                         "type": "boolean"
@@ -6544,9 +7112,6 @@
                         "type": "integer"
                       },
                       "path": {
-                        "type": "string"
-                      },
-                      "pivot_role_data_scope": {
                         "type": "string"
                       },
                       "resource_type": {
@@ -6651,19 +7216,97 @@
                             "is_show",
                             "status",
                             "sort_order",
+                            "enable_data_scope",
+                            "description",
+                            "is_public",
                             "created_at",
                             "updated_at",
-                            "pivot_role_data_scope"
+                            "apis",
+                            "data_scope"
                           ],
                           "properties": {
+                            "apis": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "required": [
+                                  "id",
+                                  "parent_id",
+                                  "name",
+                                  "path",
+                                  "method",
+                                  "status",
+                                  "description",
+                                  "type",
+                                  "sort_order",
+                                  "auth_required",
+                                  "permission_required",
+                                  "created_at",
+                                  "updated_at"
+                                ],
+                                "properties": {
+                                  "auth_required": {
+                                    "type": "boolean"
+                                  },
+                                  "created_at": {
+                                    "type": "string"
+                                  },
+                                  "description": {
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "type": "integer"
+                                  },
+                                  "method": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "parent_id": {
+                                    "type": "integer"
+                                  },
+                                  "path": {
+                                    "type": "string"
+                                  },
+                                  "permission_required": {
+                                    "type": "boolean"
+                                  },
+                                  "sort_order": {
+                                    "type": "integer"
+                                  },
+                                  "status": {
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "type": "string"
+                                  },
+                                  "updated_at": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
                             "created_at": {
                               "type": "string"
+                            },
+                            "data_scope": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "enable_data_scope": {
+                              "type": "boolean"
                             },
                             "icon": {
                               "type": "string"
                             },
                             "id": {
                               "type": "integer"
+                            },
+                            "is_public": {
+                              "type": "boolean"
                             },
                             "is_show": {
                               "type": "boolean"
@@ -6675,9 +7318,6 @@
                               "type": "integer"
                             },
                             "path": {
-                              "type": "string"
-                            },
-                            "pivot_role_data_scope": {
                               "type": "string"
                             },
                             "resource_type": {
@@ -6744,9 +7384,7 @@
               "type": "object",
               "required": [
                 "page",
-                "limit",
-                "filter",
-                "sort"
+                "limit"
               ],
               "properties": {
                 "filter": {
@@ -6845,19 +7483,97 @@
                             "is_show",
                             "status",
                             "sort_order",
+                            "enable_data_scope",
+                            "description",
+                            "is_public",
                             "created_at",
                             "updated_at",
-                            "pivot_role_data_scope"
+                            "apis",
+                            "data_scope"
                           ],
                           "properties": {
+                            "apis": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "required": [
+                                  "id",
+                                  "parent_id",
+                                  "name",
+                                  "path",
+                                  "method",
+                                  "status",
+                                  "description",
+                                  "type",
+                                  "sort_order",
+                                  "auth_required",
+                                  "permission_required",
+                                  "created_at",
+                                  "updated_at"
+                                ],
+                                "properties": {
+                                  "auth_required": {
+                                    "type": "boolean"
+                                  },
+                                  "created_at": {
+                                    "type": "string"
+                                  },
+                                  "description": {
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "type": "integer"
+                                  },
+                                  "method": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "parent_id": {
+                                    "type": "integer"
+                                  },
+                                  "path": {
+                                    "type": "string"
+                                  },
+                                  "permission_required": {
+                                    "type": "boolean"
+                                  },
+                                  "sort_order": {
+                                    "type": "integer"
+                                  },
+                                  "status": {
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "type": "string"
+                                  },
+                                  "updated_at": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
                             "created_at": {
                               "type": "string"
+                            },
+                            "data_scope": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "enable_data_scope": {
+                              "type": "boolean"
                             },
                             "icon": {
                               "type": "string"
                             },
                             "id": {
                               "type": "integer"
+                            },
+                            "is_public": {
+                              "type": "boolean"
                             },
                             "is_show": {
                               "type": "boolean"
@@ -6869,9 +7585,6 @@
                               "type": "integer"
                             },
                             "path": {
-                              "type": "string"
-                            },
-                            "pivot_role_data_scope": {
                               "type": "string"
                             },
                             "resource_type": {
@@ -6980,19 +7693,97 @@
                       "is_show",
                       "status",
                       "sort_order",
+                      "enable_data_scope",
+                      "description",
+                      "is_public",
                       "created_at",
                       "updated_at",
-                      "pivot_role_data_scope"
+                      "apis",
+                      "data_scope"
                     ],
                     "properties": {
+                      "apis": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "parent_id",
+                            "name",
+                            "path",
+                            "method",
+                            "status",
+                            "description",
+                            "type",
+                            "sort_order",
+                            "auth_required",
+                            "permission_required",
+                            "created_at",
+                            "updated_at"
+                          ],
+                          "properties": {
+                            "auth_required": {
+                              "type": "boolean"
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "method": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "parent_id": {
+                              "type": "integer"
+                            },
+                            "path": {
+                              "type": "string"
+                            },
+                            "permission_required": {
+                              "type": "boolean"
+                            },
+                            "sort_order": {
+                              "type": "integer"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
                       "created_at": {
                         "type": "string"
+                      },
+                      "data_scope": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "enable_data_scope": {
+                        "type": "boolean"
                       },
                       "icon": {
                         "type": "string"
                       },
                       "id": {
                         "type": "integer"
+                      },
+                      "is_public": {
+                        "type": "boolean"
                       },
                       "is_show": {
                         "type": "boolean"
@@ -7004,9 +7795,6 @@
                         "type": "integer"
                       },
                       "path": {
-                        "type": "string"
-                      },
-                      "pivot_role_data_scope": {
                         "type": "string"
                       },
                       "resource_type": {
@@ -7074,7 +7862,6 @@
               "type": "object",
               "required": [
                 "name",
-                "description",
                 "status"
               ],
               "properties": {
@@ -7084,10 +7871,25 @@
                 "name": {
                   "type": "string"
                 },
-                "resource_ids": {
+                "resources": {
                   "type": "array",
                   "items": {
-                    "type": "integer"
+                    "type": "object",
+                    "required": [
+                      "resource_id",
+                      "data_scope"
+                    ],
+                    "properties": {
+                      "data_scope": {
+                        "type": "string"
+                      },
+                      "resource_id": {
+                        "type": "integer"
+                      },
+                      "role_id": {
+                        "type": "integer"
+                      }
+                    }
                   }
                 },
                 "status": {
@@ -7134,19 +7936,97 @@
                       "is_show",
                       "status",
                       "sort_order",
+                      "enable_data_scope",
+                      "description",
+                      "is_public",
                       "created_at",
                       "updated_at",
-                      "pivot_role_data_scope"
+                      "apis",
+                      "data_scope"
                     ],
                     "properties": {
+                      "apis": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "parent_id",
+                            "name",
+                            "path",
+                            "method",
+                            "status",
+                            "description",
+                            "type",
+                            "sort_order",
+                            "auth_required",
+                            "permission_required",
+                            "created_at",
+                            "updated_at"
+                          ],
+                          "properties": {
+                            "auth_required": {
+                              "type": "boolean"
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "method": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "parent_id": {
+                              "type": "integer"
+                            },
+                            "path": {
+                              "type": "string"
+                            },
+                            "permission_required": {
+                              "type": "boolean"
+                            },
+                            "sort_order": {
+                              "type": "integer"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
                       "created_at": {
                         "type": "string"
+                      },
+                      "data_scope": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "enable_data_scope": {
+                        "type": "boolean"
                       },
                       "icon": {
                         "type": "string"
                       },
                       "id": {
                         "type": "integer"
+                      },
+                      "is_public": {
+                        "type": "boolean"
                       },
                       "is_show": {
                         "type": "boolean"
@@ -7158,9 +8038,6 @@
                         "type": "integer"
                       },
                       "path": {
-                        "type": "string"
-                      },
-                      "pivot_role_data_scope": {
                         "type": "string"
                       },
                       "resource_type": {
@@ -7226,6 +8103,223 @@
             "description": "",
             "schema": {
               "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/role/{id}/assign_organization_users": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "role"
+        ],
+        "summary": "assign organization users",
+        "operationId": "roleRoleAssignOrganizationUsers",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "organization_user_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "created_at": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "organization_id": {
+                  "type": "integer"
+                },
+                "resources": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "parent_id",
+                      "type",
+                      "resource_type",
+                      "name",
+                      "path",
+                      "icon",
+                      "tag",
+                      "is_show",
+                      "status",
+                      "sort_order",
+                      "enable_data_scope",
+                      "description",
+                      "is_public",
+                      "created_at",
+                      "updated_at",
+                      "apis",
+                      "data_scope"
+                    ],
+                    "properties": {
+                      "apis": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "parent_id",
+                            "name",
+                            "path",
+                            "method",
+                            "status",
+                            "description",
+                            "type",
+                            "sort_order",
+                            "auth_required",
+                            "permission_required",
+                            "created_at",
+                            "updated_at"
+                          ],
+                          "properties": {
+                            "auth_required": {
+                              "type": "boolean"
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "method": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "parent_id": {
+                              "type": "integer"
+                            },
+                            "path": {
+                              "type": "string"
+                            },
+                            "permission_required": {
+                              "type": "boolean"
+                            },
+                            "sort_order": {
+                              "type": "integer"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "data_scope": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "enable_data_scope": {
+                        "type": "boolean"
+                      },
+                      "icon": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "is_public": {
+                        "type": "boolean"
+                      },
+                      "is_show": {
+                        "type": "boolean"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "parent_id": {
+                        "type": "integer"
+                      },
+                      "path": {
+                        "type": "string"
+                      },
+                      "resource_type": {
+                        "type": "string"
+                      },
+                      "sort_order": {
+                        "type": "integer"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "tag": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "status": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                }
+              }
             }
           }
         }
@@ -7617,6 +8711,257 @@
                 },
                 "refresh_token_expire": {
                   "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/user/menu": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "user"
+        ],
+        "summary": "user menu",
+        "operationId": "userUserMenu",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "parent_id",
+                      "type",
+                      "resource_type",
+                      "name",
+                      "path",
+                      "icon",
+                      "tag",
+                      "is_show",
+                      "status",
+                      "sort_order",
+                      "enable_data_scope",
+                      "description",
+                      "is_public",
+                      "created_at",
+                      "updated_at",
+                      "children",
+                      "apis"
+                    ],
+                    "properties": {
+                      "apis": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "parent_id",
+                            "name",
+                            "path",
+                            "method",
+                            "status",
+                            "description",
+                            "type",
+                            "sort_order",
+                            "auth_required",
+                            "permission_required",
+                            "created_at",
+                            "updated_at"
+                          ],
+                          "properties": {
+                            "auth_required": {
+                              "type": "boolean"
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "method": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "parent_id": {
+                              "type": "integer"
+                            },
+                            "path": {
+                              "type": "string"
+                            },
+                            "permission_required": {
+                              "type": "boolean"
+                            },
+                            "sort_order": {
+                              "type": "integer"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "children": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "parent_id",
+                            "type",
+                            "resource_type",
+                            "name",
+                            "path",
+                            "icon",
+                            "tag",
+                            "is_show",
+                            "status",
+                            "sort_order",
+                            "enable_data_scope",
+                            "description",
+                            "is_public",
+                            "created_at",
+                            "updated_at",
+                            "children",
+                            "apis"
+                          ],
+                          "properties": {
+                            "apis": {
+                              "type": "array",
+                              "items": {
+                                "type": "object"
+                              }
+                            },
+                            "children": {
+                              "type": "array",
+                              "items": {
+                                "type": "object"
+                              }
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "enable_data_scope": {
+                              "type": "boolean"
+                            },
+                            "icon": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "is_public": {
+                              "type": "boolean"
+                            },
+                            "is_show": {
+                              "type": "boolean"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "parent_id": {
+                              "type": "integer"
+                            },
+                            "path": {
+                              "type": "string"
+                            },
+                            "resource_type": {
+                              "type": "string"
+                            },
+                            "sort_order": {
+                              "type": "integer"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "tag": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "enable_data_scope": {
+                        "type": "boolean"
+                      },
+                      "icon": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "is_public": {
+                        "type": "boolean"
+                      },
+                      "is_show": {
+                        "type": "boolean"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "parent_id": {
+                        "type": "integer"
+                      },
+                      "path": {
+                        "type": "string"
+                      },
+                      "resource_type": {
+                        "type": "string"
+                      },
+                      "sort_order": {
+                        "type": "integer"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "tag": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -8025,7 +9370,7 @@
       }
     }
   },
-  "x-date": "2026-02-10 16:51:08",
+  "x-date": "2026-03-18 10:51:23",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

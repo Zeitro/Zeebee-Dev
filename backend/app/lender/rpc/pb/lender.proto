@@ -890,7 +890,23 @@ service Storage {
   rpc CreatePresignedUrl(StorageCreatePresignedUrlRequest) returns(StorageCreatePresignedUrlResponse);
 }
 // ===================== storage service end ======================
-
+// ====================== api service start =================
+message ApiEntity{
+  int64 id = 1;
+  int64 parent_id = 2;
+  string name = 3;
+  string path = 4;
+  string method = 5;
+  string status = 6;
+  string description = 7;
+  string type = 8;
+  int32  sort_order = 9;
+  string created_at = 10;
+  string updated_at = 11;
+  bool auth_required = 13;
+  bool permission_required = 14;
+}
+// ====================== api service end =================
 // ====================== resource service start =================
 message ResourceTreeEntity{
   int64 id = 1;
@@ -907,6 +923,10 @@ message ResourceTreeEntity{
   string created_at = 12;
   string updated_at = 13;
   repeated ResourceTreeEntity children = 14;
+  bool enable_data_scope = 15;
+  repeated ApiEntity apis = 16;
+  string description = 17;
+  bool is_public = 18;
 }
 
 message ResourceEntity{
@@ -923,7 +943,11 @@ message ResourceEntity{
   int32  sort_order = 11;
   string created_at = 12;
   string updated_at = 13;
-  string pivot_role_data_scope = 14;
+  repeated ApiEntity apis = 14;
+  string data_scope = 15;
+  bool enable_data_scope = 16;
+  string description = 17;
+  bool is_public = 18;
 }
 
 // resource tree
@@ -939,6 +963,7 @@ message ResourceTreeResponse {
 }
 service resource {
   rpc ResourceTree(ResourceTreeRequest) returns(ResourceTreeResponse);
+  rpc UserMenu(EmptyRequest) returns(ResourceTreeResponse);
 }
 // =================== resource service end =================
 // =================== role service start =================
@@ -1055,6 +1080,15 @@ message RoleAllResponse {
   repeated RoleEntity  data = 1;
 }
 
+// assign organization users -- request
+message RoleAssignOrganizationUsersRequest {
+  RoleAssignOrganizationUsersRequestData data = 1;
+}
+message RoleAssignOrganizationUsersRequestData {
+  int64 id = 1;
+  repeated int64 organization_user_ids = 2;
+}
+
 service role {
   rpc Page(RolePageRequest) returns(RolePageResponse);
   rpc Create(RoleCreateRequest) returns(RoleCreateResponse);
@@ -1063,6 +1097,7 @@ service role {
   rpc Detail(RoleDetailRequest) returns(RoleDetailResponse);
   rpc UpdateStatus(RoleUpdateStatusRequest) returns(EmptyResponse);
   rpc All(RoleAllRequest) returns(RoleAllResponse);
+  rpc AssignOrganizationUsers(RoleAssignOrganizationUsersRequest) returns(RoleDetailResponse);
 }
 
 // ================== role service end =================
@@ -1535,3 +1570,29 @@ service OrganizationSetting {
   rpc SwitchStatus(OrganizationSettingSwitchStatusRequest) returns(OrganizationSettingDetailResponse);
 }
 // =============== organization setting service end =================
+// ===================== auth service start ======================
+message AuthCheckRequest {
+  AuthCheckRequestData data = 1;
+}
+
+message AuthCheckRequestData {
+  string method = 1;
+  string path = 2;
+  string type = 3;
+}
+message AuthCheckResponse {
+  AuthCheckResponseData data = 1;
+}
+message AuthCheckResponseData {
+  bool authentication_required = 1;
+  bool authorization_required = 2;
+  string data_scope = 3;
+  bool authenticated = 4;
+  bool authorized = 5;
+}
+
+service Auth {
+  rpc AuthCheck(AuthCheckRequest) returns (AuthCheckResponse);
+}
+
+// ========== auth service end ======================

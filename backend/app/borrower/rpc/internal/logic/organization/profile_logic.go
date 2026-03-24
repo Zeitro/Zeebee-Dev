@@ -8,7 +8,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/bo"
+	"zeebee-backend/domains/zeebee/data/dto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -27,7 +27,7 @@ func NewProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ProfileLo
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -45,7 +45,7 @@ func (l *ProfileLogic) Profile(in *borrower.EmptyRequest) (resp *borrower.Organi
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[bo.OrganizationBo, borrower.OrganizationEntity](organization, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[dto.OrganizationEntityDto, borrower.OrganizationEntity](organization, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

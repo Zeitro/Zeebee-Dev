@@ -4,11 +4,11 @@ import (
 	"context"
 
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/jinzhu/copier"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -34,14 +34,9 @@ func (l *UpdateLogic) Update(req *types.LoanUpdateRequest) (resp *types.EmptyRes
 		Data: &borrower.LoanUpdateRequestData{},
 	}
 	resp = &types.EmptyResponse{}
-
-	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{
-		DeepCopy:      true,
-		IgnoreEmpty:   false,
-		CaseSensitive: true,
-	})
+	rpcReq.Data, err = copierx.Trans[types.LoanUpdateRequest, borrower.LoanUpdateRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
 	rpcApplicants := slice.UniqueByComparator(rpcReq.Data.Applicants, func(item *borrower.ThirdPartyLoanApplicantEditEntity, other *borrower.ThirdPartyLoanApplicantEditEntity) bool {
 		return item.BorrowerApplicantId == other.BorrowerApplicantId

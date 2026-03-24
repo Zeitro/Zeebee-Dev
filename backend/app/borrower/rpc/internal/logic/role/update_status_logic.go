@@ -24,7 +24,7 @@ func NewUpdateStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upda
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -40,7 +40,7 @@ func (l *UpdateStatusLogic) UpdateStatus(in *borrower.RoleUpdateStatusRequest) (
 		return nil, err
 	}
 
-	err = l.baseLogic.RoleLogic.UpdateStatus(l.ctx, in.Data.Id, claim.OrganizationId, constants.UserTypeBorrower, constants.CommonStatus(in.Data.Status))
+	err = l.baseLogic.RoleLogic.SwitchStatus(l.ctx, in.Data.Id, claim.OrganizationId, constants.UserTypeBorrower, constants.CommonStatus(in.Data.Status))
 	if err != nil {
 		return nil, err
 	}

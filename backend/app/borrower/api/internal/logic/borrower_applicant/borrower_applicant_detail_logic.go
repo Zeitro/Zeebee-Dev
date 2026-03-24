@@ -3,14 +3,12 @@ package borrower_applicant
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/copierx"
 )
 
 type BorrowerApplicantDetailLogic struct {
@@ -41,10 +39,10 @@ func (l *BorrowerApplicantDetailLogic) BorrowerApplicantDetail(req *types.PathId
 	}
 
 	resp = &types.BorrowerApplicantDetailResponse{}
-	err = copier.CopyWithOption(&resp.BorrowerApplicantEntity, &rpcResp.Data, copier.Option{DeepCopy: true})
+	entityPtr, err := copierx.Trans[borrower.BorrowerApplicantEntity, types.BorrowerApplicantEntity](rpcResp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
-
+	resp.BorrowerApplicantEntity = *entityPtr
 	return resp, nil
 }

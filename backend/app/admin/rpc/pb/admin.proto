@@ -161,7 +161,7 @@ service User {
   // user
   rpc Login(UserLoginRequest) returns(UserLoginResponse);
   rpc RefreshToken(RefreshTokenRequest) returns(RefreshTokenResponse);
-  rpc UserInfo(UserInfoRequest) returns(UserinfoResponse);
+  rpc UserInfo(EmptyRequest) returns(UserinfoResponse);
   rpc ResetPassword(ResetPasswordRequest) returns(ResetPasswordResponse);
   rpc EditProfile(UserProfileEditRequest) returns(UserinfoResponse);
 }
@@ -223,8 +223,6 @@ message OrganizationUserPageRequestSorter {
 message OrganizationUserPageResponse {
   OrganizationUserPageResponseData data = 1;
 }
-
-
 message OrganizationUserPageResponseData {
   int64 page = 1;
   int64 limit = 2;
@@ -235,9 +233,6 @@ message OrganizationUserPageResponseData {
 // create -- request
 message OrganizationUserCreateRequest {
   OrganizationUserCreateRequestData data = 1;
-}
-message OrganizationUserCreateResponse {
-  OrganizationUserEntity data = 1;
 }
 message OrganizationUserCreateRequestData {
   string email = 1;
@@ -251,9 +246,6 @@ message OrganizationUserCreateRequestData {
 message OrganizationUserUpdateRequest {
   OrganizationUserUpdateRequestData data = 1;
 }
-message OrganizationUserUpdateResponse {
-  OrganizationUserEntity data = 1;
-}
 message OrganizationUserUpdateRequestData {
   int64 id = 1;
   string first_name = 2;
@@ -261,6 +253,8 @@ message OrganizationUserUpdateRequestData {
   string phone = 5;
   repeated int64 role_ids = 6;
 }
+
+
 // delete -- request
 message OrganizationUserDeleteRequest {
   OrganizationUserDeleteRequestData data = 1;
@@ -274,12 +268,14 @@ message OrganizationUserDeleteRequestData {
 message OrganizationUserDetailRequest {
   OrganizationUserDetailRequestData data = 1;
 }
-message OrganizationUserDetailResponse {
-  OrganizationUserEntity data = 1;
-}
 message OrganizationUserDetailRequestData {
   int64 id = 1;
 }
+// detail -- response
+message OrganizationUserDetailResponse {
+  OrganizationUserEntity data = 1;
+}
+
 // switch status -- request
 message OrganizationUserSwitchStatusRequest {
   OrganizationUserSwitchStatusRequestData data = 1;
@@ -291,8 +287,8 @@ message OrganizationUserSwitchStatusRequestData {
 
 service OrganizationUser {
   rpc Page(OrganizationUserPageRequest) returns(OrganizationUserPageResponse);
-  rpc Create(OrganizationUserCreateRequest) returns(OrganizationUserCreateResponse);
-  rpc Update(OrganizationUserUpdateRequest) returns(OrganizationUserUpdateResponse);
+  rpc Create(OrganizationUserCreateRequest) returns(OrganizationUserDetailResponse);
+  rpc Update(OrganizationUserUpdateRequest) returns(OrganizationUserDetailResponse);
   rpc Delete(OrganizationUserDeleteRequest) returns(EmptyResponse);
   rpc Detail(OrganizationUserDetailRequest) returns(OrganizationUserDetailResponse);
   rpc SwitchStatus(OrganizationUserSwitchStatusRequest) returns(EmptyResponse);
@@ -313,6 +309,8 @@ message ApiTreeEntity{
   string created_at = 10;
   string updated_at = 11;
   repeated ApiTreeEntity children = 12;
+  bool auth_required = 13;
+  bool permission_required = 14;
 }
 
 message ApiEntity{
@@ -327,6 +325,8 @@ message ApiEntity{
   int32  sort_order = 9;
   string created_at = 10;
   string updated_at = 11;
+  bool auth_required = 13;
+  bool permission_required = 14;
 }
 
 // api tree -- request
@@ -355,11 +355,10 @@ message ApiCreateRequestData {
   string description = 6;
   string status = 7;
   int32 sort_order = 8;
+  bool auth_required = 9;
+  bool permission_required = 10;
 }
-// create -- response
-message ApiCreateResponse {
-  ApiTreeEntity data = 1;
-}
+
 // update -- request
 message ApiUpdateRequest {
   ApiUpdateRequestData data = 1;
@@ -374,6 +373,8 @@ message ApiUpdateRequestData {
   string description = 7;
   string status = 8;
   int32 sort_order = 9;
+  bool auth_required = 10;
+  bool permission_required = 11;
 }
 
 //  delete -- request
@@ -393,12 +394,17 @@ message ApiDetailRequestData {
   string type = 2;
 }
 
+// detail -- response
+message ApiDetailResponse {
+  ApiEntity data = 1;
+}
+
 service api {
   rpc ApiTree(ApiTreeRequest) returns(ApiTreeResponse);
-  rpc Create(ApiCreateRequest) returns(ApiCreateResponse);
-  rpc Update(ApiUpdateRequest) returns(ApiCreateResponse);
+  rpc Create(ApiCreateRequest) returns(ApiDetailResponse);
+  rpc Update(ApiUpdateRequest) returns(ApiDetailResponse);
   rpc Delete(ApiDeleteRequest) returns(EmptyResponse);
-  rpc Detail(ApiDetailRequest) returns(ApiCreateResponse);
+  rpc Detail(ApiDetailRequest) returns(ApiDetailResponse);
 }
 // =================== api service end =================
 
@@ -418,6 +424,10 @@ message ResourceTreeEntity{
   string created_at = 12;
   string updated_at = 13;
   repeated ResourceTreeEntity children = 14;
+  bool enable_data_scope = 15;
+  repeated ApiEntity apis = 16;
+  string description = 17;
+  bool is_public = 18;
 }
 
 message ResourceEntity{
@@ -435,7 +445,10 @@ message ResourceEntity{
   string created_at = 12;
   string updated_at = 13;
   repeated ApiEntity apis = 14;
-  string pivot_role_data_scope = 15;
+  string data_scope = 15;
+  bool enable_data_scope = 16;
+  string description = 17;
+  bool is_public = 18;
 }
 
 // resource tree -- request
@@ -465,10 +478,11 @@ message ResourceCreateRequestData {
   string status = 9;
   int32 sort_order = 10;
   repeated int64 api_ids = 11;
+  bool enable_data_scope = 12;
+  string description = 13;
+  bool is_public = 14;
 }
-message ResourceCreateResponse {
-  ResourceTreeEntity data = 1;
-}
+
 // update -- request
 message ResourceUpdateRequest {
   ResourceUpdateRequestData data = 1;
@@ -486,6 +500,9 @@ message ResourceUpdateRequestData {
   string status = 10;
   int32 sort_order = 11;
   repeated int64 api_ids = 12;
+  bool enable_data_scope = 13;
+  string description = 14;
+  bool is_public = 15;
 }
 
 //  delete -- request
@@ -516,6 +533,7 @@ service resource {
   rpc Update(ResourceUpdateRequest) returns(ResourceDetailResponse);
   rpc Delete(ResourceDeleteRequest) returns(EmptyResponse);
   rpc Detail(ResourceDetailRequest) returns(ResourceDetailResponse);
+  rpc UserMenu(EmptyRequest) returns(ResourceTreeResponse);
 }
 // =================== resource service end =================
 // ================= role service start =================
@@ -529,6 +547,7 @@ message RoleEntity {
   string updated_at = 7;
   int64 organization_id = 8;
   repeated ResourceEntity resources = 9;
+  repeated OrganizationUserEntity organization_users = 10;
 }
 // role page -- request
 message RolePageRequest {
@@ -541,9 +560,7 @@ message RolePageRequestData {
   RolePageRequestSorter sorter = 4;
 }
 message RolePageRequestFilter {
-  //  int64 user_id = 1;
   string keyword = 2;
-  //  int64 organization_id = 3;
 }
 message RolePageRequestSorter {
   string column = 1;
@@ -572,17 +589,10 @@ message RoleCreateRequestData {
   string status = 4;
   repeated RoleAndResourceRelationEntity role_and_resources = 5;
 }
-// create -- response
-message RoleCreateResponse {
-  RoleEntity data = 1;
-}
+
 //  update -- request
 message RoleUpdateRequest {
   RoleUpdateRequestData data = 1;
-}
-// update -- response
-message RoleUpdateResponse {
-  RoleEntity data = 1;
 }
 message RoleUpdateRequestData {
   int64 id = 1;
@@ -617,11 +627,11 @@ message RoleDetailRequestData {
 message RoleDetailResponse {
   RoleEntity data = 1;
 }
-// update status -- request
-message RoleUpdateStatusRequest {
-  RoleUpdateStatusRequestData data = 1;
+// switch status -- request
+message RoleSwitchStatusRequest {
+  RoleSwitchStatusRequestData data = 1;
 }
-message RoleUpdateStatusRequestData {
+message RoleSwitchStatusRequestData {
   int64 id = 1;
   string status = 2;
 }
@@ -637,14 +647,24 @@ message RoleAllResponse {
   repeated RoleEntity data = 1;
 }
 
+// assign organization users -- request
+message RoleAssignOrganizationUsersRequest {
+  RoleAssignOrganizationUsersRequestData data = 1;
+}
+message RoleAssignOrganizationUsersRequestData {
+  int64 id = 1;
+  repeated int64 organization_user_ids = 2;
+}
+
 service role {
   rpc Page(RolePageRequest) returns(RolePageResponse);
-  rpc Create(RoleCreateRequest) returns(RoleCreateResponse);
-  rpc Update(RoleUpdateRequest) returns(RoleUpdateResponse);
+  rpc Create(RoleCreateRequest) returns(RoleDetailResponse);
+  rpc Update(RoleUpdateRequest) returns(RoleDetailResponse);
   rpc Delete(RoleDeleteRequest) returns(EmptyResponse);
   rpc Detail(RoleDetailRequest) returns(RoleDetailResponse);
-  rpc UpdateStatus(RoleUpdateStatusRequest) returns(EmptyResponse);
+  rpc SwitchStatus(RoleSwitchStatusRequest) returns(EmptyResponse);
   rpc All(RoleAllRequest) returns(RoleAllResponse);
+  rpc AssignOrganizationUsers(RoleAssignOrganizationUsersRequest) returns(RoleDetailResponse);
 }
 
 // ================== role service end =================
@@ -882,6 +902,7 @@ service common {
   rpc GetOpt(OptionRequest) returns(OptionResponse);
   rpc GetUsState(EmptyRequest) returns(StringSliceResponse);
   rpc GetUsCities(UsCitiesRequest) returns(StringSliceResponse);
+  rpc SyncData(EmptyRequest) returns(EmptyResponse);
 }
 // ========================== common service end =================
 
@@ -1423,3 +1444,30 @@ message FileEntity {
   string updated_at = 6;
 }
 // ===================== file service end ======================
+
+// ===================== auth service start ======================
+message AuthCheckRequest {
+  AuthCheckRequestData data = 1;
+}
+
+message AuthCheckRequestData {
+  string method = 1;
+  string path = 2;
+  string type = 3;
+}
+message AuthCheckResponse {
+  AuthCheckResponseData data = 1;
+}
+message AuthCheckResponseData {
+  bool authentication_required = 1;
+  bool authorization_required = 2;
+  string data_scope = 3;
+  bool authenticated = 4;
+  bool authorized = 5;
+}
+
+service Auth {
+  rpc AuthCheck(AuthCheckRequest) returns (AuthCheckResponse);
+}
+
+// ========== auth service end ======================

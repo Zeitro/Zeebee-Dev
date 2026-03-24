@@ -10,18 +10,17 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/repo"
 )
 
+// LoanLogic provides loan business logic
 type LoanLogic struct {
-	repos *repo.AllRepos
+	*BaseLogic
 }
 
-// NewLoanLogic creates a new instance of LoanLogic.
-// It initializes the logic with the provided repository dependencies.
-func NewLoanLogic(repos *repo.AllRepos) *LoanLogic {
+// NewLoanLogic creates a new loan logic instance
+func NewLoanLogic(baseLogic *BaseLogic) *LoanLogic {
 	return &LoanLogic{
-		repos: repos,
+		BaseLogic: baseLogic,
 	}
 }
 
@@ -57,7 +56,7 @@ func (l *LoanLogic) ReassignLender(ctx context.Context, id int64, lenderOrganiza
 		loan.LenderCompany = lenderOrganization.Name
 		_, err = l.repos.LoanRepo.UpdateOneByIdWithTx(ctx, tx, loan.Id, loan)
 
-		operationLogic := NewLoanOperationLogic(l.repos)
+		operationLogic := NewLoanOperationLogic(l.BaseLogic)
 		input := dto.LoanOperationCreateDto{
 			LoanId:     loan.Id,
 			OperatorId: claim.OrganizationUserId,
