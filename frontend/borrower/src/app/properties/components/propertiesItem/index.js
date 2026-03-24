@@ -50,7 +50,7 @@ const PropertiesItem = ({ data, handleSearch }) => {
 							View details
 						</Button>
 					</PermissionSlot>
-					<PermissionSlot permissions={PERMISSIONS?.PROPERTY?.EDIT} className="ml-2">
+					<PermissionSlot code={PERMISSIONS?.PROPERTY?.EDIT} className="ml-2">
 						<BtnPopUpModal
 							getContent={(setOpen) => (
 								<AddModal

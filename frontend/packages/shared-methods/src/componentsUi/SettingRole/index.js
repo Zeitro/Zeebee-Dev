@@ -1,23 +1,18 @@
 'use client';
-import React, { useMemo, useRef, useState } from 'react';
-import {
-	assemblyAddress,
-	createRequest,
-	formatPhone,
-	formatTINOrSSN,
-} from '@repo/shared-methods/utils';
+import React, { useRef, useState } from 'react';
 import { ReloadOutlined, PlusOutlined } from '@ant-design/icons';
-import { BtnPopUpModal, DeleteBtn, FilterTableCard } from '@repo/shared-methods';
+import { BtnPopUpModal, FilterTableCard } from '@repo/shared-methods';
 import useContent from './components/useContent';
 import MainModal from './components/Main';
 import { useAuth } from '@repo/shared-methods/hooks';
 const SettingRole = ({ api, systemType, PERMISSIONS }) => {
-	const { hasPermission, getActiveByPermission } = useAuth();
+	const { hasPermission } = useAuth();
 	const tableFilterRef = useRef();
 	const [searchValue, setSearchValue] = useState('');
 	const { columns } = useContent({
 		handleSearch: () => tableFilterRef?.current?.handleSearch(),
 		systemType,
+		PERMISSIONS,
 	});
 
 	const filterList = [
