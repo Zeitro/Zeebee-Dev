@@ -3,14 +3,15 @@ import React, { useEffect, useState } from 'react';
 import { Button, Checkbox, Form, Input, message, Modal } from 'antd';
 import Password from 'antd/es/input/Password';
 import { useRouter } from 'next/navigation';
-import { useUserStore } from '@/store/user';
+import { useUserStore, usePermissionStore } from '@repo/shared-methods/store';
 import { validateRule, emailRegex, localStorageUtil } from '@repo/shared-methods/utils';
 import { MailOutlined, LockOutlined } from '@ant-design/icons';
 import { initConfigFn } from '@repo/shared-methods';
 import useContent from './useContent';
 const SignIn = ({ form, setPageType }) => {
 	const router = useRouter();
-	const { login, resendVerifyEmail } = useUserStore();
+	const { resendVerifyEmail } = useUserStore();
+	const { login } = usePermissionStore();
 	const { loginByToken } = useContent();
 	const [apiError, setApiError] = useState('');
 	const [loading, setLoading] = useState(false);
@@ -60,7 +61,7 @@ const SignIn = ({ form, setPageType }) => {
 			const values = await form.validateFields();
 			setLoading(true);
 			const access = await login(values, { isHideTips: true });
-			loginByToken(access, { setLoading });
+			loginByToken(access, setLoading);
 		} catch (error) {
 			if (error.code === 401001) {
 				const initValue = initConfigFn({
