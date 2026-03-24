@@ -1,0 +1,23 @@
+.Quoting :global(.ant-btn) {
+	color: var(--green-medium) !important;
+	background-color: var(--green-light) !important;
+	border-color: var(--green-light-100) !important;
+}
+.Processing :global(.ant-btn) {
+	color: var(--blue-dark) !important;
+	background-color: var(--blue-light-2) !important;
+	border-color: var(--blue-light) !important;
+}
+.Underwriting :global(.ant-btn) {
+	color: #eb2f96 !important;
+	background-color: #fff0f6 !important;
+	border-color: #ffadd2 !important;
+}
+.Closing :global(.ant-btn) {
+	color: var(--purple-dark) !important;
+	background-color: var(--purple-light) !important;
+	border-color: var(--purple-medium) !important;
+}
+.disabled :global(.ant-dropdown-trigger) {
+	display: none !important;
+}

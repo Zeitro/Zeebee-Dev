@@ -3,14 +3,12 @@ package user
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/errorx"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/common/copierx"
 )
 
 type VerifyEmailLogic struct {
@@ -41,9 +39,9 @@ func (l *VerifyEmailLogic) VerifyEmail(req *types.UserVerifyEmailRequest) (resp 
 		return nil, err
 	}
 	// trans response data
-	err = copier.Copy(resp, &rpcResp.Data)
+	resp, err = copierx.Trans[borrower.UserLoginResponseData, types.UserLoginResponse](rpcResp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return resp, nil
 }

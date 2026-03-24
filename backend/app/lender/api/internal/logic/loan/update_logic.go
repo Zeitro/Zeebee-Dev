@@ -3,13 +3,12 @@ package loan
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 )
 
@@ -33,30 +32,19 @@ func (l *UpdateLogic) Update(req *types.LoanUpdateRequest) (resp *types.LoanUpda
 		Data: &lender.LoanUpdateRequestData{},
 	}
 	resp = &types.LoanUpdateResponse{}
-	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{
-		IgnoreEmpty:   false,
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+	rpcReq.Data, err = copierx.Trans[types.LoanUpdateRequest, lender.LoanUpdateRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
-	// claim, err := utils.GetUserClaimFromCtx(l.ctx)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// get lender id
-	// rpcReq.Data.OrganizationId = claim.OrganizationId
-	// rpcReq.Data.UserId = claim.UserId
 
 	rpcResp, err := l.svcCtx.LoanRpcClient.UpdateLoan(l.ctx, rpcReq)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	err = copier.Copy(resp, &rpcResp.Data)
+	resp, err = copierx.Trans[lender.LoanUpdateResponseData, types.LoanUpdateResponse](rpcResp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
+
 	return resp, err
 }

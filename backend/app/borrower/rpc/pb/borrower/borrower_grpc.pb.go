@@ -256,7 +256,7 @@ type UserClient interface {
 	Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
 	Register(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*UserRegisterResponse, error)
 	RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
-	UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
+	UserInfo(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
 	VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...grpc.CallOption) (*VerifyEmailResponse, error)
 	SendVerifyEmail(ctx context.Context, in *SendVerifyEmailRequest, opts ...grpc.CallOption) (*SendVerifyEmailResponse, error)
 	ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error)
@@ -304,7 +304,7 @@ func (c *userClient) RefreshToken(ctx context.Context, in *RefreshTokenRequest, 
 	return out, nil
 }
 
-func (c *userClient) UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error) {
+func (c *userClient) UserInfo(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*UserinfoResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserinfoResponse)
 	err := c.cc.Invoke(ctx, User_UserInfo_FullMethodName, in, out, cOpts...)
@@ -392,7 +392,7 @@ type UserServer interface {
 	Login(context.Context, *UserLoginRequest) (*UserLoginResponse, error)
 	Register(context.Context, *UserRegisterRequest) (*UserRegisterResponse, error)
 	RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error)
-	UserInfo(context.Context, *UserInfoRequest) (*UserinfoResponse, error)
+	UserInfo(context.Context, *EmptyRequest) (*UserinfoResponse, error)
 	VerifyEmail(context.Context, *VerifyEmailRequest) (*VerifyEmailResponse, error)
 	SendVerifyEmail(context.Context, *SendVerifyEmailRequest) (*SendVerifyEmailResponse, error)
 	ResetPassword(context.Context, *ResetPasswordRequest) (*ResetPasswordResponse, error)
@@ -419,7 +419,7 @@ func (UnimplementedUserServer) Register(context.Context, *UserRegisterRequest) (
 func (UnimplementedUserServer) RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RefreshToken not implemented")
 }
-func (UnimplementedUserServer) UserInfo(context.Context, *UserInfoRequest) (*UserinfoResponse, error) {
+func (UnimplementedUserServer) UserInfo(context.Context, *EmptyRequest) (*UserinfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserInfo not implemented")
 }
 func (UnimplementedUserServer) VerifyEmail(context.Context, *VerifyEmailRequest) (*VerifyEmailResponse, error) {
@@ -519,7 +519,7 @@ func _User_RefreshToken_Handler(srv interface{}, ctx context.Context, dec func(i
 }
 
 func _User_UserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserInfoRequest)
+	in := new(EmptyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -531,7 +531,7 @@ func _User_UserInfo_Handler(srv interface{}, ctx context.Context, dec func(inter
 		FullMethod: User_UserInfo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).UserInfo(ctx, req.(*UserInfoRequest))
+		return srv.(UserServer).UserInfo(ctx, req.(*EmptyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2714,6 +2714,7 @@ var Storage_ServiceDesc = grpc.ServiceDesc{
 
 const (
 	Resource_ResourceTree_FullMethodName = "/borrower.resource/ResourceTree"
+	Resource_UserMenu_FullMethodName     = "/borrower.resource/UserMenu"
 )
 
 // ResourceClient is the client API for Resource service.
@@ -2721,6 +2722,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ResourceClient interface {
 	ResourceTree(ctx context.Context, in *ResourceTreeRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error)
+	UserMenu(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error)
 }
 
 type resourceClient struct {
@@ -2741,11 +2743,22 @@ func (c *resourceClient) ResourceTree(ctx context.Context, in *ResourceTreeReque
 	return out, nil
 }
 
+func (c *resourceClient) UserMenu(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResourceTreeResponse)
+	err := c.cc.Invoke(ctx, Resource_UserMenu_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ResourceServer is the server API for Resource service.
 // All implementations must embed UnimplementedResourceServer
 // for forward compatibility.
 type ResourceServer interface {
 	ResourceTree(context.Context, *ResourceTreeRequest) (*ResourceTreeResponse, error)
+	UserMenu(context.Context, *EmptyRequest) (*ResourceTreeResponse, error)
 	mustEmbedUnimplementedResourceServer()
 }
 
@@ -2758,6 +2771,9 @@ type UnimplementedResourceServer struct{}
 
 func (UnimplementedResourceServer) ResourceTree(context.Context, *ResourceTreeRequest) (*ResourceTreeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResourceTree not implemented")
+}
+func (UnimplementedResourceServer) UserMenu(context.Context, *EmptyRequest) (*ResourceTreeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserMenu not implemented")
 }
 func (UnimplementedResourceServer) mustEmbedUnimplementedResourceServer() {}
 func (UnimplementedResourceServer) testEmbeddedByValue()                  {}
@@ -2798,6 +2814,24 @@ func _Resource_ResourceTree_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Resource_UserMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ResourceServer).UserMenu(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Resource_UserMenu_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ResourceServer).UserMenu(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Resource_ServiceDesc is the grpc.ServiceDesc for Resource service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2809,19 +2843,24 @@ var Resource_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "ResourceTree",
 			Handler:    _Resource_ResourceTree_Handler,
 		},
+		{
+			MethodName: "UserMenu",
+			Handler:    _Resource_UserMenu_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "app/borrower/rpc/pb/borrower.proto",
 }
 
 const (
-	Role_Page_FullMethodName         = "/borrower.role/Page"
-	Role_Create_FullMethodName       = "/borrower.role/Create"
-	Role_Update_FullMethodName       = "/borrower.role/Update"
-	Role_Delete_FullMethodName       = "/borrower.role/Delete"
-	Role_Detail_FullMethodName       = "/borrower.role/Detail"
-	Role_UpdateStatus_FullMethodName = "/borrower.role/UpdateStatus"
-	Role_All_FullMethodName          = "/borrower.role/All"
+	Role_Page_FullMethodName                    = "/borrower.role/Page"
+	Role_Create_FullMethodName                  = "/borrower.role/Create"
+	Role_Update_FullMethodName                  = "/borrower.role/Update"
+	Role_Delete_FullMethodName                  = "/borrower.role/Delete"
+	Role_Detail_FullMethodName                  = "/borrower.role/Detail"
+	Role_UpdateStatus_FullMethodName            = "/borrower.role/UpdateStatus"
+	Role_All_FullMethodName                     = "/borrower.role/All"
+	Role_AssignOrganizationUsers_FullMethodName = "/borrower.role/AssignOrganizationUsers"
 )
 
 // RoleClient is the client API for Role service.
@@ -2835,6 +2874,7 @@ type RoleClient interface {
 	Detail(ctx context.Context, in *RoleDetailRequest, opts ...grpc.CallOption) (*RoleDetailResponse, error)
 	UpdateStatus(ctx context.Context, in *RoleUpdateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	All(ctx context.Context, in *RoleAllRequest, opts ...grpc.CallOption) (*RoleAllResponse, error)
+	AssignOrganizationUsers(ctx context.Context, in *RoleAssignOrganizationUsersRequest, opts ...grpc.CallOption) (*RoleDetailResponse, error)
 }
 
 type roleClient struct {
@@ -2915,6 +2955,16 @@ func (c *roleClient) All(ctx context.Context, in *RoleAllRequest, opts ...grpc.C
 	return out, nil
 }
 
+func (c *roleClient) AssignOrganizationUsers(ctx context.Context, in *RoleAssignOrganizationUsersRequest, opts ...grpc.CallOption) (*RoleDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RoleDetailResponse)
+	err := c.cc.Invoke(ctx, Role_AssignOrganizationUsers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RoleServer is the server API for Role service.
 // All implementations must embed UnimplementedRoleServer
 // for forward compatibility.
@@ -2926,6 +2976,7 @@ type RoleServer interface {
 	Detail(context.Context, *RoleDetailRequest) (*RoleDetailResponse, error)
 	UpdateStatus(context.Context, *RoleUpdateStatusRequest) (*EmptyResponse, error)
 	All(context.Context, *RoleAllRequest) (*RoleAllResponse, error)
+	AssignOrganizationUsers(context.Context, *RoleAssignOrganizationUsersRequest) (*RoleDetailResponse, error)
 	mustEmbedUnimplementedRoleServer()
 }
 
@@ -2956,6 +3007,9 @@ func (UnimplementedRoleServer) UpdateStatus(context.Context, *RoleUpdateStatusRe
 }
 func (UnimplementedRoleServer) All(context.Context, *RoleAllRequest) (*RoleAllResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method All not implemented")
+}
+func (UnimplementedRoleServer) AssignOrganizationUsers(context.Context, *RoleAssignOrganizationUsersRequest) (*RoleDetailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AssignOrganizationUsers not implemented")
 }
 func (UnimplementedRoleServer) mustEmbedUnimplementedRoleServer() {}
 func (UnimplementedRoleServer) testEmbeddedByValue()              {}
@@ -3104,6 +3158,24 @@ func _Role_All_Handler(srv interface{}, ctx context.Context, dec func(interface{
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Role_AssignOrganizationUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RoleAssignOrganizationUsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleServer).AssignOrganizationUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Role_AssignOrganizationUsers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleServer).AssignOrganizationUsers(ctx, req.(*RoleAssignOrganizationUsersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Role_ServiceDesc is the grpc.ServiceDesc for Role service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -3138,6 +3210,10 @@ var Role_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "All",
 			Handler:    _Role_All_Handler,
+		},
+		{
+			MethodName: "AssignOrganizationUsers",
+			Handler:    _Role_AssignOrganizationUsers_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -4040,6 +4116,108 @@ var Zeitro_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ZeitroListingSearch",
 			Handler:    _Zeitro_ZeitroListingSearch_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/borrower/rpc/pb/borrower.proto",
+}
+
+const (
+	Auth_AuthCheck_FullMethodName = "/borrower.Auth/AuthCheck"
+)
+
+// AuthClient is the client API for Auth service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type AuthClient interface {
+	AuthCheck(ctx context.Context, in *AuthCheckRequest, opts ...grpc.CallOption) (*AuthCheckResponse, error)
+}
+
+type authClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewAuthClient(cc grpc.ClientConnInterface) AuthClient {
+	return &authClient{cc}
+}
+
+func (c *authClient) AuthCheck(ctx context.Context, in *AuthCheckRequest, opts ...grpc.CallOption) (*AuthCheckResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AuthCheckResponse)
+	err := c.cc.Invoke(ctx, Auth_AuthCheck_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// AuthServer is the server API for Auth service.
+// All implementations must embed UnimplementedAuthServer
+// for forward compatibility.
+type AuthServer interface {
+	AuthCheck(context.Context, *AuthCheckRequest) (*AuthCheckResponse, error)
+	mustEmbedUnimplementedAuthServer()
+}
+
+// UnimplementedAuthServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedAuthServer struct{}
+
+func (UnimplementedAuthServer) AuthCheck(context.Context, *AuthCheckRequest) (*AuthCheckResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AuthCheck not implemented")
+}
+func (UnimplementedAuthServer) mustEmbedUnimplementedAuthServer() {}
+func (UnimplementedAuthServer) testEmbeddedByValue()              {}
+
+// UnsafeAuthServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AuthServer will
+// result in compilation errors.
+type UnsafeAuthServer interface {
+	mustEmbedUnimplementedAuthServer()
+}
+
+func RegisterAuthServer(s grpc.ServiceRegistrar, srv AuthServer) {
+	// If the following call pancis, it indicates UnimplementedAuthServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&Auth_ServiceDesc, srv)
+}
+
+func _Auth_AuthCheck_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AuthCheckRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).AuthCheck(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Auth_AuthCheck_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).AuthCheck(ctx, req.(*AuthCheckRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Auth_ServiceDesc is the grpc.ServiceDesc for Auth service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Auth_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "borrower.Auth",
+	HandlerType: (*AuthServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "AuthCheck",
+			Handler:    _Auth_AuthCheck_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

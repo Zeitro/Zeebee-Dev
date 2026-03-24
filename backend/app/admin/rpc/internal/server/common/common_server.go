@@ -37,3 +37,8 @@ func (s *CommonServer) GetUsCities(ctx context.Context, in *admin.UsCitiesReques
 	l := commonlogic.NewGetUsCitiesLogic(ctx, s.svcCtx)
 	return l.GetUsCities(in)
 }
+
+func (s *CommonServer) SyncData(ctx context.Context, in *admin.EmptyRequest) (*admin.EmptyResponse, error) {
+	l := commonlogic.NewSyncDataLogic(ctx, s.svcCtx)
+	return l.SyncData(in)
+}
