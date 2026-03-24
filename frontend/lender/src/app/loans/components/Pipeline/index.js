@@ -15,7 +15,10 @@ import {
 import { message } from 'antd';
 import { useRouter } from 'next/navigation';
 import { throttle } from 'lodash';
+import { PERMISSIONS } from '@config/permissions';
+import { useAuth } from '@repo/shared-methods/hooks';
 const Pipeline = () => {
+	const { hasPermission } = useAuth();
 	const router = useRouter();
 	const { request } = createRequest();
 	const [items, setItems] = useState([
@@ -40,6 +43,7 @@ const Pipeline = () => {
 		(e, item) => {
 			e.preventDefault();
 			e.stopPropagation();
+			if (!hasPermission(PERMISSIONS?.LOAN?.DETAILS)) return;
 			router.push(`/loans/zeeBeeDetails?id=${item?.id}`);
 		},
 		1000,
