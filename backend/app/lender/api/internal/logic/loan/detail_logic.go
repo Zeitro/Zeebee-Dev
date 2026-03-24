@@ -3,13 +3,12 @@ package loan
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/copierx"
 )
 
 type DetailLogic struct {
@@ -38,12 +37,10 @@ func (l *DetailLogic) Detail(req *types.LoanDetailRequest) (resp *types.LoanDeta
 	if err != nil {
 		return nil, err
 	}
-	err = copier.CopyWithOption(resp, &rpcResp.Data, copier.Option{
-		CaseSensitive: true,
-		DeepCopy:      true,
-	})
+
+	resp, err = copierx.Trans[lender.LoanEntity, types.LoanDetailResponse](rpcResp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
 	return resp, nil

@@ -3,14 +3,12 @@ package borrower_property
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/errorx"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/common/copierx"
 )
 
 type PropertyDetailLogic struct {
@@ -40,10 +38,9 @@ func (l *PropertyDetailLogic) PropertyDetail(req *types.PropertyDetailRequest) (
 		return nil, err
 	}
 
-	resp = &types.PropertyDetailResponse{}
-	err = copier.CopyWithOption(resp, &rpcResp.Data, copier.Option{DeepCopy: true})
+	resp, err = copierx.Trans[borrower.BorrowerPropertyEntity, types.PropertyDetailResponse](rpcResp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
 	return resp, nil

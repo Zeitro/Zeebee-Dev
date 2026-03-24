@@ -3,8 +3,6 @@ package organization_user
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
@@ -29,14 +27,13 @@ func NewOrganizationUserUpdateLogic(ctx context.Context, svcCtx *svc.ServiceCont
 	}
 }
 
-func (l *OrganizationUserUpdateLogic) OrganizationUserUpdate(req *types.OrganizationUserUpdateRequest) (resp *types.OrganizationUserUpdateResponse, err error) {
+func (l *OrganizationUserUpdateLogic) OrganizationUserUpdate(req *types.OrganizationUserUpdateRequest) (resp *types.OrganizationUserDetailResponse, err error) {
+	resp = &types.OrganizationUserDetailResponse{}
 	rpcReq := &admin.OrganizationUserUpdateRequest{
 		Data: &admin.OrganizationUserUpdateRequestData{},
 	}
-	err = copier.CopyWithOption(rpcReq.Data, req, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+
+	rpcReq.Data, err = copierx.Trans[types.OrganizationUserUpdateRequest, admin.OrganizationUserUpdateRequestData](req)
 	if err != nil {
 		err = errorx.GetFailedTransReqErr(err)
 		return nil, err
@@ -47,17 +44,14 @@ func (l *OrganizationUserUpdateLogic) OrganizationUserUpdate(req *types.Organiza
 		return nil, errorx.WithStack(err)
 	}
 
-	resp = &types.OrganizationUserUpdateResponse{}
-	err = copier.CopyWithOption(resp, rpcResp.Data, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
+	// trans response
+	var entity *types.OrganizationUserEntity
+	entity, err = copierx.Trans[admin.OrganizationUserEntity, types.OrganizationUserEntity](rpcResp.Data)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-
+	resp = &types.OrganizationUserDetailResponse{
+		OrganizationUserEntity: *entity,
+	}
 	return resp, nil
 }

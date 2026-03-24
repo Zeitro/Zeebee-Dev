@@ -10,7 +10,6 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
 
 	"zeebee-backend/common/errorx"
@@ -28,7 +27,7 @@ func NewLenderPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Lender
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -51,7 +50,7 @@ func (l *LenderPageLogic) LenderPage(in *borrower.OrganizationLenderPageRequest)
 		return nil, err
 	}
 
-	data, err := copierx.Trans[bo.PageResultBo[bo.OrganizationPageEntityBo], borrower.OrganizationLenderPageResponseData](&pageResult, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[dto.PageResultDto[dto.OrganizationPageEntityDto], borrower.OrganizationLenderPageResponseData](&pageResult, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

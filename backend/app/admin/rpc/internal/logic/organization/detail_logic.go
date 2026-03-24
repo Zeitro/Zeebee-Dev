@@ -10,7 +10,7 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/data/bo"
+	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type DetailLogic struct {
@@ -25,7 +25,7 @@ func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogi
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -43,7 +43,7 @@ func (l *DetailLogic) Detail(in *admin.IdRequest) (resp *admin.OrganizationDetai
 		return nil, err
 	}
 	// Convert to response
-	data, err := copierx.Trans[bo.OrganizationBo, admin.OrganizationEntity](organization, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[dto.OrganizationEntityDto, admin.OrganizationEntity](organization, copierx.TimeToRFC3339Str())
 
 	return &admin.OrganizationDetailResponse{
 		Data: data,

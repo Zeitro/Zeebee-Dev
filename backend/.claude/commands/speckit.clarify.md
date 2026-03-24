@@ -98,12 +98,12 @@ Execution steps:
     - Each question must be answerable with EITHER:
         - A short multiple‑choice selection (2–5 distinct, mutually exclusive options), OR
         - A one-word / short‑phrase answer (explicitly constrain: "Answer in <=5 words").
-    - Only include questions whose answers materially impact architecture, data modeling, task decomposition, test
-      design, UX behavior, operational readiness, or compliance validation.
-    - Ensure category coverage balance: attempt to cover the highest impact unresolved categories first; avoid asking
-      two low-impact questions when a single high-impact area (e.g., security posture) is unresolved.
-    - Exclude questions already answered, trivial stylistic preferences, or plan-level execution details (unless
-      blocking correctness).
+   - Only include questions whose answers materially impact architecture, data modeling, task decomposition, test
+     design, UX behavior, operational readiness, or compliance validation.
+   - Ensure category coverage balance: attempt to cover the highest impact unresolved categories first; avoid asking two
+     low-impact questions when a single high-impact area (e.g., security posture) is unresolved.
+   - Exclude questions already answered, trivial stylistic preferences, or plan-level execution details (unless blocking
+     correctness).
     - Favor clarifications that reduce downstream rework risk or prevent misaligned acceptance tests.
     - If more than 5 categories remain unresolved, select the top 5 by (Impact * Uncertainty) heuristic.
 
@@ -167,8 +167,8 @@ Execution steps:
           template provides placeholder for it).
         - Terminology conflict → Normalize term across spec; retain original only if necessary by adding
           `(formerly referred to as "X")` once.
-    - If the clarification invalidates an earlier ambiguous statement, replace that statement instead of duplicating;
-      leave no obsolete contradictory text.
+   - If the clarification invalidates an earlier ambiguous statement, replace that statement instead of duplicating;
+     leave no obsolete contradictory text.
     - Save the spec file AFTER each integration to minimize risk of context loss (atomic overwrite).
     - Preserve formatting: do not reorder unrelated sections; keep heading hierarchy intact.
     - Keep each inserted clarification minimal and testable (avoid narrative drift).

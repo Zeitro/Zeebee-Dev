@@ -3,14 +3,12 @@ package borrower_property
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/errorx"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/common/copierx"
 )
 
 type PropertyUpdateLogic struct {
@@ -33,13 +31,9 @@ func (l *PropertyUpdateLogic) PropertyUpdate(req *types.PropertyUpdateRequest) (
 		Data: &borrower.PropertyUpdateRequestData{},
 	}
 
-	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{
-		DeepCopy:      true,
-		IgnoreEmpty:   true,
-		CaseSensitive: true,
-	})
+	rpcReq.Data, err = copierx.Trans[types.PropertyUpdateRequest, borrower.PropertyUpdateRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
 
 	_, err = l.svcCtx.BorrowerPropertyRpcClient.Update(l.ctx, rpcReq)

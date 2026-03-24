@@ -28,12 +28,12 @@ func (s *OrganizationUserServer) Page(ctx context.Context, in *admin.Organizatio
 	return l.Page(in)
 }
 
-func (s *OrganizationUserServer) Create(ctx context.Context, in *admin.OrganizationUserCreateRequest) (*admin.OrganizationUserCreateResponse, error) {
+func (s *OrganizationUserServer) Create(ctx context.Context, in *admin.OrganizationUserCreateRequest) (*admin.OrganizationUserDetailResponse, error) {
 	l := organizationuserlogic.NewCreateLogic(ctx, s.svcCtx)
 	return l.Create(in)
 }
 
-func (s *OrganizationUserServer) Update(ctx context.Context, in *admin.OrganizationUserUpdateRequest) (*admin.OrganizationUserUpdateResponse, error) {
+func (s *OrganizationUserServer) Update(ctx context.Context, in *admin.OrganizationUserUpdateRequest) (*admin.OrganizationUserDetailResponse, error) {
 	l := organizationuserlogic.NewUpdateLogic(ctx, s.svcCtx)
 	return l.Update(in)
 }
