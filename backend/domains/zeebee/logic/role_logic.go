@@ -4,58 +4,67 @@ import (
 	"context"
 
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/threading"
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
+	"zeebee-backend/domains/zeebee/auth"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
-	"zeebee-backend/domains/zeebee/repo"
 )
 
-// type Role struct {
-// 	model.Role
-// 	Resources []*ResourceWithPivot
-// }
-
+// RoleLogic provides role business logic
 type RoleLogic struct {
-	repos *repo.AllRepos
+	*BaseLogic
+	// enforcer *rbac.Enforcer
+	authTopicMap map[constants.UserType]string
 }
 
-func NewRoleLogic(repos *repo.AllRepos) *RoleLogic {
+// NewRoleLogic creates a new role logic instance
+func NewRoleLogic(baseLogic *BaseLogic, authTopicMap map[constants.UserType]string) *RoleLogic {
 	return &RoleLogic{
-		repos: repos,
+		BaseLogic:    baseLogic,
+		authTopicMap: authTopicMap,
+		// enforcer:  enforcer,
 	}
 }
 
 func (l *RoleLogic) checkRoleName(roleName string) (err error) {
 	if roleName == constants.AdminRoleName {
-		return errorx.New("Role Name is Reserved")
+		return errorx.New("Role name is reserved")
 	}
 	return err
 }
 
 // Page returns paginated roles
-func (l *RoleLogic) Page(ctx context.Context, req dto.RolePageRequestDto) (result gormx.PageResponse[*model.Role], err error) {
-	result, err = l.repos.RoleRepo.Page(ctx, req)
-	return result, err
+func (l *RoleLogic) Page(ctx context.Context, req dto.RolePageRequestDto) (result gormx.PageResponse[dto.RoleEntityDto], err error) {
+	pageResult, err := l.repos.RoleRepo.Page(ctx, req)
+	if err != nil {
+		return gormx.PageResponse[dto.RoleEntityDto]{}, err
+	}
+
+	resultPtr, err := copierx.Trans[gormx.PageResponse[*model.Role], gormx.PageResponse[dto.RoleEntityDto]](&pageResult)
+	if err != nil {
+		return gormx.PageResponse[dto.RoleEntityDto]{}, err
+	}
+
+	return *resultPtr, err
 }
 
 // Create creates a new role
-func (l *RoleLogic) Create(ctx context.Context, input dto.RoleCreateRequestDto) (result *bo.RoleBo, err error) {
-	if err := l.checkRoleName(input.Name); err != nil {
+func (l *RoleLogic) Create(ctx context.Context, input dto.RoleCreateRequestDto) (result *dto.RoleEntityDto, err error) {
+	if err = l.checkRoleName(input.Name); err != nil {
 		return nil, err
 	}
 
-	role := &model.Role{}
-	err = copier.Copy(role, &input)
+	role, err := copierx.Trans[dto.RoleCreateRequestDto, model.Role](&input)
 	if err != nil {
-		return nil, errorx.GetFailedTransErr(err)
+		return nil, err
 	}
+	role.RemoveRelationships()
 
 	// check existed
 	isExisted, err := l.repos.RoleRepo.IsExisted(ctx, role)
@@ -63,17 +72,17 @@ func (l *RoleLogic) Create(ctx context.Context, input dto.RoleCreateRequestDto) 
 		return nil, err
 	}
 	if isExisted {
-		return nil, errorx.New("Role Already Exists")
+		return nil, errorx.New("Role already exists")
 	}
 
-	// resourceIds := input.ResourceIds
 	resourceIds := slice.Map[dto.RoleAndResourceDto, int64](input.RoleAndResources, func(i int, item dto.RoleAndResourceDto) int64 {
 		return item.ResourceId
 	})
-
+	var resources []*model.Resource
+	var rolesAndResources []*model.RoleAndResource
 	err = l.repos.RoleRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
-		var resources []*model.Resource
+
 		var validResourceIds []int64
 		// create role
 		role, innerErr = l.repos.RoleRepo.CreateWithTx(ctx, tx, role, false)
@@ -89,10 +98,13 @@ func (l *RoleLogic) Create(ctx context.Context, input dto.RoleCreateRequestDto) 
 		validResourceIds = slice.Map[*model.Resource, int64](resources, func(i int, item *model.Resource) int64 {
 			return item.Id
 		})
-		rolesAndResources := slice.FilterMap[dto.RoleAndResourceDto, *model.RoleAndResource](input.RoleAndResources, func(i int, item dto.RoleAndResourceDto) (*model.RoleAndResource, bool) {
+		rolesAndResources = slice.FilterMap[dto.RoleAndResourceDto, *model.RoleAndResource](input.RoleAndResources, func(i int, item dto.RoleAndResourceDto) (*model.RoleAndResource, bool) {
 			if slice.Contain(validResourceIds, item.ResourceId) {
-				role.RoleAndResources[i].RoleId = role.Id
-				return role.RoleAndResources[i], true
+				return &model.RoleAndResource{
+					RoleId:     role.Id,
+					ResourceId: item.ResourceId,
+					DataScope:  item.DataScope,
+				}, true
 			}
 			return nil, false
 		})
@@ -103,20 +115,42 @@ func (l *RoleLogic) Create(ctx context.Context, input dto.RoleCreateRequestDto) 
 			}
 		}
 
+		if innerErr != nil {
+			return innerErr
+		}
+
 		return nil
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	result, err = copierx.Trans[model.Role, bo.RoleBo](role)
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:         auth.ActionRoleReload,
+			Scope:          auth.ScopeOrganization,
+			Type:           input.Type,
+			OrganizationId: input.OrganizationId,
+		}
+		policies := l.createRolePolicy(role.Id, input.Type, rolesAndResources)
+		if len(policies) > 0 && input.Status == constants.CommonStatusActive {
+			msg.AddedPolicies = policies
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
 
+	})
+
+	result, err = l.Detail(ctx, role.Id, role.OrganizationId, role.Type)
+	if err != nil {
+		return nil, err
+	}
 	return result, err
 }
 
 // Update updates a role
-func (l *RoleLogic) Update(ctx context.Context, id int64, input dto.RoleUpdateRequestDto) (result *bo.RoleBo, err error) {
-	if err := l.checkRoleName(input.Name); err != nil {
+func (l *RoleLogic) Update(ctx context.Context, id int64, input dto.RoleUpdateRequestDto) (result *dto.RoleEntityDto, err error) {
+	if err = l.checkRoleName(input.Name); err != nil {
 		return nil, err
 	}
 	// First get the existing record
@@ -125,9 +159,7 @@ func (l *RoleLogic) Update(ctx context.Context, id int64, input dto.RoleUpdateRe
 		return nil, err
 	}
 
-	roleModel, err = copierx.Trans[dto.RoleUpdateRequestDto, model.Role](&input)
-
-	// err = copier.CopyWithOption(result, data, copier.Option{DeepCopy: true})
+	err = copierx.Assign[dto.RoleUpdateRequestDto, model.Role](&input, roleModel)
 	if err != nil {
 		return nil, err
 	}
@@ -138,17 +170,20 @@ func (l *RoleLogic) Update(ctx context.Context, id int64, input dto.RoleUpdateRe
 		return nil, err
 	}
 	if isExisted {
-		return nil, errorx.New("Role Already Exists")
+		return nil, errorx.New("Role already exists")
 	}
 
-	resourceIds := slice.Map[*model.RoleAndResource, int64](roleModel.RoleAndResources, func(i int, item *model.RoleAndResource) int64 {
+	resourceIds := slice.Map[dto.RoleAndResourceDto, int64](input.RoleAndResources, func(i int, item dto.RoleAndResourceDto) int64 {
 		return item.ResourceId
 	})
+	var addPolicies [][]string
+	var removedPolicies [][]string
 	err = l.repos.RoleRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 		var resources []*model.Resource
 		var validResourceIds []int64
 		// update role
+		roleModel.RemoveRelationships()
 		roleModel, innerErr = l.repos.RoleRepo.UpdateOneWithTx(ctx, tx, roleModel)
 		if innerErr != nil {
 			return innerErr
@@ -162,10 +197,13 @@ func (l *RoleLogic) Update(ctx context.Context, id int64, input dto.RoleUpdateRe
 		validResourceIds = slice.Map[*model.Resource, int64](resources, func(i int, item *model.Resource) int64 {
 			return item.Id
 		})
-		rolesAndResources := slice.FilterMap[*model.RoleAndResource, *model.RoleAndResource](roleModel.RoleAndResources, func(i int, item *model.RoleAndResource) (*model.RoleAndResource, bool) {
+		rolesAndResources := slice.FilterMap[dto.RoleAndResourceDto, *model.RoleAndResource](input.RoleAndResources, func(i int, item dto.RoleAndResourceDto) (*model.RoleAndResource, bool) {
 			if slice.Contain(validResourceIds, item.ResourceId) {
-				roleModel.RoleAndResources[i].RoleId = roleModel.Id
-				return roleModel.RoleAndResources[i], true
+				return &model.RoleAndResource{
+					RoleId:     roleModel.Id,
+					ResourceId: item.ResourceId,
+					DataScope:  item.DataScope,
+				}, true
 			}
 			return nil, false
 		})
@@ -201,6 +239,7 @@ func (l *RoleLogic) Update(ctx context.Context, id int64, input dto.RoleUpdateRe
 			if innerErr != nil {
 				return innerErr
 			}
+			addPolicies = l.createRolePolicy(input.Id, input.Type, newRelations)
 		}
 		if len(updateRelations) > 0 {
 			for _, updatedRelation := range updateRelations {
@@ -218,35 +257,61 @@ func (l *RoleLogic) Update(ctx context.Context, id int64, input dto.RoleUpdateRe
 			if innerErr != nil {
 				return innerErr
 			}
+			removedPolicies = l.createRolePolicy(input.Id, input.Type, removedRelations)
 		}
-
 		return nil
 	})
 	if err != nil {
 		return nil, err
 	}
-	// todo update user's permissions
 
-	result, err = copierx.Trans[model.Role, bo.RoleBo](roleModel)
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:          auth.ActionRoleReload,
+			Scope:           auth.ScopeOrganization,
+			Type:            input.Type,
+			OrganizationId:  input.OrganizationId,
+			AddedPolicies:   addPolicies,
+			RemovedPolicies: removedPolicies,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
+
+	})
+
+	result, err = l.Detail(ctx, roleModel.Id, roleModel.OrganizationId, roleModel.Type)
 	return result, err
 }
 
-// GetRole returns a role by id
-func (l *RoleLogic) GetRole(ctx context.Context, id int64, organizationId int64, roleType constants.UserType) (result *bo.RoleBo, err error) {
+// Detail returns a role by id
+func (l *RoleLogic) Detail(ctx context.Context, id int64, organizationId int64, roleType constants.UserType) (result *dto.RoleEntityDto, err error) {
 	role, err := l.repos.RoleRepo.GetRole(ctx, id, organizationId, roleType)
 	if err != nil {
 		return nil, err
 	}
-	result, err = copierx.Trans[model.Role, bo.RoleBo](role)
+	// get admin's resources
+	if role.Name == constants.AdminRoleName {
+
+		var resources []*model.Resource
+		resources, err = l.repos.ResourceRepo.All(ctx, roleType, false)
+		if err != nil {
+			return nil, err
+		}
+		role.Resources = resources
+	}
+
+	result, err = copierx.Trans[model.Role, dto.RoleEntityDto](role)
 	if err != nil {
 		return nil, err
 	}
-	slice.ForEach(result.Resources, func(index int, item *bo.ResourceBo) {
+	slice.ForEach(result.Resources, func(index int, item *dto.ResourceEntityDto) {
 		relation, err := l.repos.RoleAndResourceRepo.GetRelation(ctx, role.Id, item.Id)
 		if err != nil {
 			return
 		}
-		item.PivotRoleDataScope = relation.DataScope
+		if relation != nil {
+			item.DataScope = relation.DataScope
+		}
 	})
 
 	return result, nil
@@ -259,46 +324,172 @@ func (l *RoleLogic) Delete(ctx context.Context, id int64, organizationId int64, 
 		return err
 	}
 	if role.Name == constants.AdminRoleName {
-		return errorx.New("Cannot Delete Admin Role")
+		return errorx.New("Cannot delete admin role")
+	}
+	var removedPolicies [][]string
+	err = l.repos.RoleRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		oldRelations, innerErr := l.repos.RoleAndResourceRepo.GetRoleRelationsWithTx(ctx, tx, role.Id)
+		if innerErr != nil {
+			return innerErr
+		}
+		innerErr = l.repos.RoleRepo.DeleteByIdWithTx(ctx, tx, id)
+		if innerErr != nil {
+			return innerErr
+		}
+		// remove role policies
+		removedPolicies = l.createRolePolicy(id, roleType, oldRelations)
+
+		return nil
+	})
+	if err != nil {
+		return err
 	}
 
-	// todo remove role's users
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:          auth.ActionRoleReload,
+			Scope:           auth.ScopeOrganization,
+			Type:            roleType,
+			OrganizationId:  organizationId,
+			RemovedPolicies: removedPolicies,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[roleType], msg)
 
-	// todo remove user's permissions
+	})
 
-	_, err = l.repos.RoleRepo.DeleteByID(ctx, id)
 	return err
 }
 
 // UpdateStatus updates a role's status
-func (l *RoleLogic) UpdateStatus(ctx context.Context, id int64, organizationId int64, roleType constants.UserType, status constants.CommonStatus) (err error) {
+func (l *RoleLogic) SwitchStatus(ctx context.Context, id int64, organizationId int64, roleType constants.UserType, status constants.CommonStatus) (err error) {
 	// First get the existing record
 	result, err := l.repos.RoleRepo.GetRole(ctx, id, organizationId, roleType)
 	if err != nil {
 		return err
 	}
 	if result.Name == constants.AdminRoleName {
-		return errorx.New("Cannot Update Admin Role")
+		return errorx.New("Cannot update admin role")
 	}
 
 	result.Status = status
-	// Save the updated record
-	_, err = l.repos.RoleRepo.UpdateOneById(ctx, id, result)
+	var addPolicies [][]string
+	var removedPolicies [][]string
+
+	err = l.repos.RoleRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		oldRelations, innerErr := l.repos.RoleAndResourceRepo.GetRoleRelationsWithTx(ctx, tx, id)
+		if innerErr != nil {
+			return innerErr
+		}
+		_, innerErr = l.repos.RoleRepo.UpdateOneByIdWithTx(ctx, tx, id, result)
+		if innerErr != nil {
+			return innerErr
+		}
+
+		switch status {
+		case constants.CommonStatusActive:
+			addPolicies = l.createRolePolicy(id, roleType, oldRelations)
+		case constants.CommonStatusDisabled:
+			removedPolicies = l.createRolePolicy(id, roleType, oldRelations)
+		default:
+			innerErr = errorx.Errorf("Invalid status: %v", status)
+			return innerErr
+		}
+
+		return nil
+	})
+
 	if err != nil {
 		return err
 	}
 
-	// todo update user's permissions
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:          auth.ActionRoleReload,
+			Scope:           auth.ScopeOrganization,
+			Type:            roleType,
+			OrganizationId:  organizationId,
+			RemovedPolicies: removedPolicies,
+			AddedPolicies:   addPolicies,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[roleType], msg)
+	})
 
 	return nil
 }
 
 // All returns all roles by type
-func (l *RoleLogic) All(ctx context.Context, organizationId int64, roleType constants.UserType) (result []*bo.RoleBo, err error) {
+func (l *RoleLogic) All(ctx context.Context, organizationId int64, roleType constants.UserType) (result []*dto.RoleEntityDto, err error) {
 	roles, err := l.repos.RoleRepo.All(ctx, organizationId, roleType)
 	if err != nil {
 		return nil, err
 	}
-	results, err := copierx.Trans[[]*model.Role, []*bo.RoleBo](&roles)
-	return *results, err
+	resultPtr, err := copierx.Trans[[]*model.Role, []*dto.RoleEntityDto](&roles)
+	return *resultPtr, err
+}
+
+// AssignOrganizationUsers assign organization users for role
+func (l *RoleLogic) AssignOrganizationUsers(ctx context.Context, input dto.RoleAssignOrganizationUsersRequestDto) (result *dto.RoleEntityDto, err error) {
+	role, err := l.repos.RoleRepo.GetRole(ctx, input.Id, input.OrganizationId, input.Type)
+	if err != nil {
+		return nil, err
+	}
+	if role.Name == constants.AdminRoleName {
+		ownerId, err := l.repos.OrganizationUserRepo.GetOwnerId(ctx, input.OrganizationId, input.Type)
+		if err != nil {
+			return nil, err
+		}
+		input.OrganizationUserIds = append(input.OrganizationUserIds, ownerId)
+	}
+
+	err = l.repos.RoleRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		organizationUsers, innerErr := l.repos.OrganizationUserRepo.GetOrganizationUsersByIdsWithTx(ctx, tx, input.OrganizationId, input.OrganizationUserIds)
+		if innerErr != nil {
+			return innerErr
+		}
+		newUsers := []*model.OrganizationUser{}
+		removedUsers := []*model.OrganizationUser{}
+		newUsers = slice.DifferenceWith(organizationUsers, role.OrganizationUsers, func(item1, item2 *model.OrganizationUser) bool {
+			return item1.Id == item2.Id
+		})
+		removedUsers = slice.DifferenceWith(role.OrganizationUsers, organizationUsers, func(item1, item2 *model.OrganizationUser) bool {
+			return item1.Id == item2.Id
+		})
+		innerErr = l.repos.RoleRepo.UpdateOrganizationUsersWithTx(ctx, tx, role, newUsers, removedUsers)
+		if innerErr != nil {
+			return innerErr
+		}
+		role.OrganizationUsers = organizationUsers
+		return innerErr
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:         auth.ActionRoleReload,
+			Scope:          auth.ScopeOrganization,
+			Type:           input.Type,
+			OrganizationId: input.OrganizationId,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
+	})
+
+	result, err = l.Detail(ctx, role.Id, role.OrganizationId, role.Type)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func (l *RoleLogic) createRolePolicy(roleId int64, roleType constants.UserType, relations []*model.RoleAndResource) [][]string {
+	return slice.Map[*model.RoleAndResource, []string](relations, func(i int, item *model.RoleAndResource) []string {
+		return auth.BuildPolicy(roleId, item.ResourceId, roleType)
+	})
 }

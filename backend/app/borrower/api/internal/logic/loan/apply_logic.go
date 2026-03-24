@@ -4,11 +4,11 @@ import (
 	"context"
 
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/jinzhu/copier"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -36,13 +36,9 @@ func (l *ApplyLogic) Apply(req *types.LoanApplyRequest) (resp *types.LoanApplyRe
 	resp = &types.LoanApplyResponse{}
 	rpcResp := &borrower.LoanApplyResponse{}
 
-	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{
-		DeepCopy:      true,
-		IgnoreEmpty:   true,
-		CaseSensitive: true,
-	})
+	rpcReq.Data, err = copierx.Trans[types.LoanApplyRequest, borrower.LoanApplyRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
 
 	// handle applicants
@@ -50,7 +46,7 @@ func (l *ApplyLogic) Apply(req *types.LoanApplyRequest) (resp *types.LoanApplyRe
 		return item.BorrowerApplicantId == other.BorrowerApplicantId
 	})
 	if len(rpcApplicants) == 0 {
-		err = errorx.WithStack(errorx.New("No Applicant"))
+		err = errorx.WithStack(errorx.New("No applicant"))
 		return nil, err
 	}
 	rpcReq.Data.Applicants = rpcApplicants
@@ -61,10 +57,9 @@ func (l *ApplyLogic) Apply(req *types.LoanApplyRequest) (resp *types.LoanApplyRe
 	if err != nil {
 		return nil, err
 	}
-	err = copier.Copy(resp, &rpcResp.Data)
+	resp, err = copierx.Trans[borrower.LoanApplyResponse, types.LoanApplyResponse](rpcResp)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
-
 	return
 }

@@ -3,16 +3,16 @@ package loanlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/common/gormx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/model"
 
 	"zeebee-backend/common/errorx"
 )
@@ -29,7 +29,7 @@ func NewLoanPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoanPage
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -44,14 +44,14 @@ func (l *LoanPageLogic) LoanPage(in *lender.LoanPageRequest) (resp *lender.LoanP
 		return nil, err
 	}
 
-	pageRep := dto.LoanLenderPageRequestDto{}
-	_ = copier.CopyWithOption(&pageRep, in.Data, copier.Option{
-		CaseSensitive: true,
-		DeepCopy:      true,
-	})
+	pageRep := &dto.LoanLenderPageRequestDto{}
+	pageRep, err = copierx.Trans[lender.LoanPageRequestData, dto.LoanLenderPageRequestDto](in.Data)
+	if err != nil {
+		return nil, err
+	}
 	pageRep.Filter.OrganizationId = claim.OrganizationId
 
-	pageResult, err := l.svcCtx.LoanRepo.PageForLenderCompany(l.ctx, pageRep)
+	pageResult, err := l.svcCtx.LoanRepo.PageForLender(l.ctx, *pageRep)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
@@ -59,15 +59,12 @@ func (l *LoanPageLogic) LoanPage(in *lender.LoanPageRequest) (resp *lender.LoanP
 		Data: &lender.LoanPageResponseData{},
 	}
 
-	err = copier.CopyWithOption(&resp.Data, pageResult, copier.Option{
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-			copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
-		},
-	})
+	resp.Data, err = copierx.Trans[gormx.PageResponse[*model.Loan], lender.LoanPageResponseData](&pageResult,
+		copierx.TimeToRFC3339Str(),
+		copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
+	)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
 	return resp, nil

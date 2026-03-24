@@ -24,7 +24,7 @@ func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogi
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -45,7 +45,7 @@ func (l *DeleteLogic) Delete(in *borrower.BorrowerEntityDeleteRequest) (resp *bo
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 	if result.OrganizationId != claim.OrganizationId {
-		return nil, errorx.GetFailedTransRespErr(errorx.New("You Have No Access To This Entity"))
+		return nil, errorx.GetFailedTransRespErr(errorx.New("You have no access to this entity"))
 	}
 
 	_, err = l.svcCtx.BorrowerEntityRepo.DeleteByID(l.ctx, in.Data.Id)

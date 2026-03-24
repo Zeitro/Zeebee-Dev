@@ -3,14 +3,12 @@ package common
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/errorx"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/common/copierx"
 )
 
 type SelectOptionsLogic struct {
@@ -41,10 +39,12 @@ func (l *SelectOptionsLogic) SelectOptions(req *types.GetSelectOptionRequest) (r
 	if err != nil {
 		return nil, err
 	}
-	err = copier.Copy(&resp.Options, rpcResp.Data)
+
+	optionsPtr, err := copierx.Trans[[]*borrower.OptionEntity, []types.SelectOptionEntity](&rpcResp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
+	resp.Options = *optionsPtr
 
 	return
 }

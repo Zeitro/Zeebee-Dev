@@ -28,7 +28,7 @@ func NewGenerateAuthCodeUrlLogic(ctx context.Context, svcCtx *svc.ServiceContext
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -52,7 +52,7 @@ func (l *GenerateAuthCodeUrlLogic) GenerateAuthCodeUrl(in *borrower.Organization
 
 	authCodeUrlGenerator, ok := global.EmailAuthUrlGenerator[input.EmailProvider]
 	if !ok {
-		return nil, errorx.Errorf("Invalid Email Provider %v", input.EmailProvider)
+		return nil, errorx.Errorf("Invalid email provider %v", input.EmailProvider)
 	}
 	input.AuthCodeGenerator = authCodeUrlGenerator
 

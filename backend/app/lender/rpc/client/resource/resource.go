@@ -15,6 +15,11 @@ import (
 
 type (
 	AddressEntity                                  = lender.AddressEntity
+	ApiEntity                                      = lender.ApiEntity
+	AuthCheckRequest                               = lender.AuthCheckRequest
+	AuthCheckRequestData                           = lender.AuthCheckRequestData
+	AuthCheckResponse                              = lender.AuthCheckResponse
+	AuthCheckResponseData                          = lender.AuthCheckResponseData
 	BorrowerApplicantEntity                        = lender.BorrowerApplicantEntity
 	BorrowerEditApplicantEntity                    = lender.BorrowerEditApplicantEntity
 	BorrowerEntityEntity                           = lender.BorrowerEntityEntity
@@ -24,6 +29,7 @@ type (
 	FileDeleteRequest                              = lender.FileDeleteRequest
 	FileDeleteRequestData                          = lender.FileDeleteRequestData
 	FileEntity                                     = lender.FileEntity
+	IdRequest                                      = lender.IdRequest
 	LoanApplicantEntity                            = lender.LoanApplicantEntity
 	LoanApplicantLoanEditEntity                    = lender.LoanApplicantLoanEditEntity
 	LoanBorrowerEntity                             = lender.LoanBorrowerEntity
@@ -91,6 +97,30 @@ type (
 	OrganizationEntity                             = lender.OrganizationEntity
 	OrganizationLenderMetadataEntity               = lender.OrganizationLenderMetadataEntity
 	OrganizationMetadataEntity                     = lender.OrganizationMetadataEntity
+	OrganizationProfileEntity                      = lender.OrganizationProfileEntity
+	OrganizationProfileResponse                    = lender.OrganizationProfileResponse
+	OrganizationSettingDetailByPurposeRequest      = lender.OrganizationSettingDetailByPurposeRequest
+	OrganizationSettingDetailByPurposeRequestData  = lender.OrganizationSettingDetailByPurposeRequestData
+	OrganizationSettingDetailResponse              = lender.OrganizationSettingDetailResponse
+	OrganizationSettingEntity                      = lender.OrganizationSettingEntity
+	OrganizationSettingProfileEntity               = lender.OrganizationSettingProfileEntity
+	OrganizationSettingSwitchStatusRequest         = lender.OrganizationSettingSwitchStatusRequest
+	OrganizationSettingSwitchStatusRequestData     = lender.OrganizationSettingSwitchStatusRequestData
+	OrganizationTemplateDetailByPurposeRequest     = lender.OrganizationTemplateDetailByPurposeRequest
+	OrganizationTemplateDetailByPurposeRequestData = lender.OrganizationTemplateDetailByPurposeRequestData
+	OrganizationTemplateDetailResponse             = lender.OrganizationTemplateDetailResponse
+	OrganizationTemplateEntity                     = lender.OrganizationTemplateEntity
+	OrganizationTemplatePageEntity                 = lender.OrganizationTemplatePageEntity
+	OrganizationTemplatePageRequest                = lender.OrganizationTemplatePageRequest
+	OrganizationTemplatePageRequestData            = lender.OrganizationTemplatePageRequestData
+	OrganizationTemplatePageRequestFilter          = lender.OrganizationTemplatePageRequestFilter
+	OrganizationTemplatePageRequestSorter          = lender.OrganizationTemplatePageRequestSorter
+	OrganizationTemplatePageResponse               = lender.OrganizationTemplatePageResponse
+	OrganizationTemplatePageResponseData           = lender.OrganizationTemplatePageResponseData
+	OrganizationTemplatePreviewRequest             = lender.OrganizationTemplatePreviewRequest
+	OrganizationTemplatePreviewRequestData         = lender.OrganizationTemplatePreviewRequestData
+	OrganizationTemplatePreviewResponse            = lender.OrganizationTemplatePreviewResponse
+	OrganizationTemplatePreviewResponseData        = lender.OrganizationTemplatePreviewResponseData
 	OrganizationUpdateProfileRequest               = lender.OrganizationUpdateProfileRequest
 	OrganizationUpdateProfileRequestData           = lender.OrganizationUpdateProfileRequestData
 	OrganizationUserAcceptInvitationRequest        = lender.OrganizationUserAcceptInvitationRequest
@@ -138,6 +168,8 @@ type (
 	RoleAllRequestData                             = lender.RoleAllRequestData
 	RoleAllResponse                                = lender.RoleAllResponse
 	RoleAndResourceRelationEntity                  = lender.RoleAndResourceRelationEntity
+	RoleAssignOrganizationUsersRequest             = lender.RoleAssignOrganizationUsersRequest
+	RoleAssignOrganizationUsersRequestData         = lender.RoleAssignOrganizationUsersRequestData
 	RoleCreateRequest                              = lender.RoleCreateRequest
 	RoleCreateRequestData                          = lender.RoleCreateRequestData
 	RoleCreateResponse                             = lender.RoleCreateResponse
@@ -172,6 +204,11 @@ type (
 	StringSliceResponse                            = lender.StringSliceResponse
 	SwitchOrganizationRequest                      = lender.SwitchOrganizationRequest
 	SwitchOrganizationRequestData                  = lender.SwitchOrganizationRequestData
+	TemplateVariableEntity                         = lender.TemplateVariableEntity
+	TemplateVariableGroupEntity                    = lender.TemplateVariableGroupEntity
+	UpdateOrganizationTemplateRequest              = lender.UpdateOrganizationTemplateRequest
+	UpdateOrganizationTemplateRequestData          = lender.UpdateOrganizationTemplateRequestData
+	UpdateOrganizationTemplateResponse             = lender.UpdateOrganizationTemplateResponse
 	UsCitiesRequest                                = lender.UsCitiesRequest
 	UsCitiesRequestData                            = lender.UsCitiesRequestData
 	UserEntity                                     = lender.UserEntity
@@ -191,6 +228,7 @@ type (
 
 	Resource interface {
 		ResourceTree(ctx context.Context, in *ResourceTreeRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error)
+		UserMenu(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error)
 	}
 
 	defaultResource struct {
@@ -207,4 +245,9 @@ func NewResource(cli zrpc.Client) Resource {
 func (m *defaultResource) ResourceTree(ctx context.Context, in *ResourceTreeRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error) {
 	client := lender.NewResourceClient(m.cli.Conn())
 	return client.ResourceTree(ctx, in, opts...)
+}
+
+func (m *defaultResource) UserMenu(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error) {
+	client := lender.NewResourceClient(m.cli.Conn())
+	return client.UserMenu(ctx, in, opts...)
 }

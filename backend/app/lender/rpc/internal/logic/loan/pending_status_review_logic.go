@@ -11,7 +11,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/data"
 )
 
 type PendingStatusReviewLogic struct {
@@ -26,7 +26,7 @@ func NewPendingStatusReviewLogic(ctx context.Context, svcCtx *svc.ServiceContext
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -56,17 +56,17 @@ func (l *PendingStatusReviewLogic) PendingStatusReview(in *lender.LoanPendingSta
 
 	// validate loan pending status
 	if loan.Stage != constants.LoanStagePending {
-		return nil, errorx.WithStack(errorx.New("Loan Is Not In Pending Stage"))
+		return nil, errorx.WithStack(errorx.New("Loan is not in pending stage"))
 	}
 	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreapproval {
-		return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
+		return nil, errorx.WithStack(errorx.New("Invalid loan source"))
 	}
 
 	if loan.PendingStatus != currentStatus {
-		return nil, errorx.WithStack(errorx.New("Current Pending Status Is Not Valid"))
+		return nil, errorx.WithStack(errorx.New("Current pending status is not valid"))
 	}
 	if action == constants.LoanOperationActionReject && in.Data.Comment == "" {
-		return nil, errorx.WithStack(errorx.New("Comment Is Empty"))
+		return nil, errorx.WithStack(errorx.New("Comment is empty"))
 	}
 	var targetStatus constants.LoanPendingStatus
 	loanBaseLogic := NewLoanBaseLogic(l.ctx, l.svcCtx)
@@ -89,19 +89,19 @@ func (l *PendingStatusReviewLogic) PendingStatusReview(in *lender.LoanPendingSta
 
 		// add operation
 		operatorId := claim.OrganizationUserId
-		fromStatus := model.LoanOperationStatus{
+		fromStatus := data.LoanOperationStatus{
 			Stage:         originalStage,
 			PendingStatus: originalPendingStatus,
 		}
-		toStatus := model.LoanOperationStatus{
+		toStatus := data.LoanOperationStatus{
 			Stage:         targetStage,
 			PendingStatus: targetStatus,
 		}
-		metadata := &model.LoanOperationMetadata{
+		metadata := &data.LoanOperationMetadata{
 			Comment: in.Data.Comment,
 		}
 
-		return loanBaseLogic.CreateLoanOperationLog(tx, loan.Id, operatorId, fromStatus, toStatus, action, metadata)
+		return l.baseLogic.CreateLoanOperationLog(l.ctx, tx, loan.Id, operatorId, fromStatus, toStatus, action, metadata)
 	})
 
 	if err != nil {

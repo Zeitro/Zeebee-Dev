@@ -5,7 +5,14 @@ import { Button, message } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { createRequest } from '../../lib/fetch';
 
-export const DownloadFileButton = ({ fileUrl, fileName, onProgress, children, ...rest }) => {
+export const DownloadFileButton = ({
+	fileUrl,
+	requestOptions = {},
+	fileName,
+	onProgress,
+	children,
+	...rest
+}) => {
 	const { request } = createRequest();
 	const [loading, setLoading] = useState(false);
 	const [messageApi, contextHolder] = message.useMessage();
@@ -16,9 +23,24 @@ export const DownloadFileButton = ({ fileUrl, fileName, onProgress, children, ..
 		messageApi.loading({ content: 'Downloading...', key: 'download' });
 
 		try {
-			const response = await request(fileUrl, { isExternalLink: true });
+			const response = await request(fileUrl, { isExternalLink: true, ...requestOptions });
 
 			// 1. 获取文件总大小
+			// 获取Content-Disposition中的文件名
+			const contentDisposition = response.headers.get('Content-Disposition');
+			let realFileName = fileName;
+			if (contentDisposition) {
+				// 兼容 filename*=utf-8''xxx.pdf 和 filename="xxx.pdf"
+				const utf8Match = contentDisposition.match(/filename\*=utf-8''([^;\n]*)/i);
+				const asciiMatch = contentDisposition.match(/filename="?([^";\n]*)"?/i);
+				if (utf8Match) {
+					realFileName = decodeURIComponent(utf8Match[1]);
+				} else if (asciiMatch) {
+					realFileName = asciiMatch[1];
+				}
+			}
+
+			const contentType = response.headers.get('Content-Type') || 'application/octet-stream';
 			const contentLength = response.headers.get('Content-Length');
 			if (!contentLength) {
 				console.warn('Content-Length header not found, cannot track progress.');
@@ -46,12 +68,12 @@ export const DownloadFileButton = ({ fileUrl, fileName, onProgress, children, ..
 				onProgress?.(percent); // ✅ 调用进度回调
 			}
 
-			// 3. 组合数据块并触发下载
-			const blob = new Blob(chunks);
+			// 3. 组合数据块并触发下载，指定类型
+			const blob = new Blob(chunks, { type: contentType });
 			const url = window.URL.createObjectURL(blob);
 			const a = document.createElement('a');
 			a.href = url;
-			a.download = fileName || fileUrl.substring(fileUrl.lastIndexOf('/') + 1);
+			a.download = realFileName || fileUrl.substring(fileUrl.lastIndexOf('/') + 1);
 			document.body.appendChild(a);
 			a.click();
 			a.remove();

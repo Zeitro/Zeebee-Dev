@@ -4,14 +4,15 @@ import (
 	"context"
 	"time"
 
-	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -30,7 +31,7 @@ func NewAddFilesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddFiles
 	return &AddFilesLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 		Logger:    logx.WithContext(ctx),
 	}
 }
@@ -84,31 +85,30 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 		}
 
 		// convert files
-		operationFiles := make([]*model.OperationFile, 0, len(files))
-		innerErr = copier.CopyWithOption(&operationFiles, files, copier.Option{
-			DeepCopy:      true,
-			CaseSensitive: true,
-		})
-		if innerErr != nil {
-			return errorx.GetFailedTransErr(innerErr)
+		operationFiles := make([]*data.OperationFile, 0, len(files))
+		operationFilesPtr, err := copierx.Trans[[]*model.File, []*data.OperationFile](&files)
+		if err != nil {
+			return err
 		}
+		operationFiles = *operationFilesPtr
 
 		// Create operation log
 		innerErr = l.baseLogic.CreateLoanOperationLog(
+			l.ctx,
 			tx,
 			in.Data.Id,
 			claim.OrganizationUserId,
-			model.LoanOperationStatus{
+			data.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			model.LoanOperationStatus{
+			data.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			constants.LoanOperationActionUploadDocumentFile,
-			&model.LoanOperationMetadata{
-				LoanDocuments: []*model.OperationLoanDocument{
+			&data.LoanOperationMetadata{
+				LoanDocuments: []*data.OperationLoanDocument{
 					{
 						Category: loanDocument.Category,
 						FileType: loanDocument.FileType,
@@ -148,10 +148,10 @@ func (l *AddFilesLogic) prepare(in *lender.LoanDocumentAddFilesRequest, claim ut
 	existingFileCount := int64(len(loanDocument.Files))
 	newFileCount := int64(len(in.Data.FileUrls))
 	if existingFileCount+newFileCount > 10 {
-		return nil, nil, errorx.WithStack(errorx.New("Total Number Of Files (Existing + New) Cannot Exceed 10"))
+		return nil, nil, errorx.WithStack(errorx.New("Total number of files (existing + new) cannot exceed 10"))
 	}
 
-	loan, err = l.baseLogic.GetLenderLoan(loanDocument.LoanId, claim.OrganizationId, nil)
+	loan, err = l.baseLogic.GetLenderLoan(l.ctx, loanDocument.LoanId, claim.OrganizationId, nil)
 	if err != nil {
 		return nil, nil, err
 	}

@@ -4,14 +4,15 @@ import (
 	"context"
 
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -30,7 +31,7 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 	return &CreateLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 		Logger:    logx.WithContext(ctx),
 	}
 }
@@ -76,39 +77,34 @@ func (l *CreateLogic) Create(in *lender.LoanDocumentCreateExtendTypeRequest) (re
 			return innerErr
 		}
 
-		innerErr = copier.CopyWithOption(&results, loanDocuments, copier.Option{
-			IgnoreEmpty:   false,
-			DeepCopy:      true,
-			CaseSensitive: true,
-		})
+		resultsPtr, innerErr := copierx.Trans[[]*model.LoanDocument, []*lender.LoanDocumentOptEntity](&loanDocuments)
 		if innerErr != nil {
-			return errorx.GetFailedTransErr(innerErr)
+			return innerErr
 		}
+		results = *resultsPtr
 
-		operationDocs := []*model.OperationLoanDocument{}
-		innerErr = copier.CopyWithOption(&operationDocs, loanDocuments, copier.Option{
-			IgnoreEmpty:   false,
-			DeepCopy:      true,
-			CaseSensitive: true,
-		})
+		operationDocs := []*data.OperationLoanDocument{}
+		operationDocsPtr, innerErr := copierx.Trans[[]*model.LoanDocument, []*data.OperationLoanDocument](&loanDocuments)
 		if innerErr != nil {
-			return errorx.GetFailedTransErr(innerErr)
+			return innerErr
 		}
+		operationDocs = *operationDocsPtr
 
 		innerErr = l.baseLogic.CreateLoanOperationLog(
+			l.ctx,
 			tx,
 			in.Data.LoanId,
 			claim.OrganizationUserId,
-			model.LoanOperationStatus{
+			data.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			model.LoanOperationStatus{
+			data.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			constants.LoanOperationActionCreateDocumentType,
-			&model.LoanOperationMetadata{
+			&data.LoanOperationMetadata{
 				LoanDocuments: operationDocs,
 			},
 		)
@@ -131,10 +127,10 @@ func (l *CreateLogic) prepare(in *lender.LoanDocumentCreateExtendTypeRequest, cl
 		constants.LoanDocumentCategoryExtend,
 		constants.LoanDocumentCategoryLenderClosingExtend,
 	}, category) {
-		return nil, errorx.WithStack(errorx.New("Loan Document Category Not Supported"))
+		return nil, errorx.WithStack(errorx.New("Loan document category not supported"))
 	}
 
-	loan, err = l.baseLogic.GetLenderLoan(in.Data.LoanId, claim.OrganizationId, nil)
+	loan, err = l.baseLogic.GetLenderLoan(l.ctx, in.Data.LoanId, claim.OrganizationId, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -143,7 +139,7 @@ func (l *CreateLogic) prepare(in *lender.LoanDocumentCreateExtendTypeRequest, cl
 	// check unique
 	fileTypes = slice.Unique(fileTypes)
 	if len(fileTypes) == 0 {
-		return nil, errorx.WithStack(errorx.New("File Types Cannot Be Empty"))
+		return nil, errorx.WithStack(errorx.New("File types cannot be empty"))
 	}
 
 	// checked repeated file types

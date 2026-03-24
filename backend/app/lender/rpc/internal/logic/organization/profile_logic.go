@@ -8,7 +8,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/bo"
+	"zeebee-backend/domains/zeebee/data/dto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -26,12 +26,12 @@ func NewProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ProfileLo
 	return &ProfileLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 		Logger:    logx.WithContext(ctx),
 	}
 }
 
-func (l *ProfileLogic) Profile(in *lender.EmptyRequest) (resp *lender.OrganizationDetailResponse, err error) {
+func (l *ProfileLogic) Profile(in *lender.EmptyRequest) (resp *lender.OrganizationProfileResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -41,12 +41,12 @@ func (l *ProfileLogic) Profile(in *lender.EmptyRequest) (resp *lender.Organizati
 	// Get current user claim from gRPC metadata (JWT token)
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed To Get User Claim From Context")
+		return nil, errorx.Wrap(err, "Failed to get user claim from context")
 	}
 
 	// Validate user belongs to an organization
 	if claim.OrganizationId == 0 {
-		return nil, errorx.New("User Not Belong To Any Organization")
+		return nil, errorx.New("User does not belong to any organization")
 	}
 
 	// Get organization details with preloaded associations (emails, etc.)
@@ -56,22 +56,36 @@ func (l *ProfileLogic) Profile(in *lender.EmptyRequest) (resp *lender.Organizati
 		constants.UserTypeLender,
 	)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed To Get Organization")
+		return nil, errorx.Wrap(err, "Failed to get organization")
 	}
 
 	// Convert business object to proto entity with time field conversion
-	data, err := copierx.Trans[bo.OrganizationBo, lender.OrganizationEntity](
+	data, err := copierx.Trans[dto.OrganizationEntityDto, lender.OrganizationProfileEntity](
 		organization,
 		copierx.TimeToRFC3339Str(),
+		copierx.StrMapToBytes(),
 	)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	if claim.UserId == organization.OwnerId {
 		data.IsEditable = true
 	}
+	for _, setting := range data.OrganizationSettings {
+		if setting.Purpose == constants.OrganizationPurposePreapprovalLetter {
+			preapprovalLetterTemplate, err := l.svcCtx.AllRepos.OrganizationTemplateRepo.DetailByPurpose(l.ctx, claim.OrganizationId, constants.OrganizationPurposePreapprovalLetter, false)
+			if err != nil {
+				return nil, err
+			}
+			setting.HasConfigured = preapprovalLetterTemplate.HasConfigured
 
-	return &lender.OrganizationDetailResponse{
+		} else {
+			setting.HasConfigured = true
+		}
+
+	}
+
+	return &lender.OrganizationProfileResponse{
 		Data: data,
 	}, nil
 }

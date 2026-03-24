@@ -36,7 +36,7 @@ func NewSendQuoteEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Se
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -47,7 +47,7 @@ func (l *SendQuoteEmailLogic) SendQuoteEmail(in *borrower.LoanSendQuoteEmailRequ
 		}
 	}()
 	if len(in.Data.LenderIds) == 0 {
-		return nil, errorx.New("Lender is Required")
+		return nil, errorx.New("Lender is required")
 	}
 
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
@@ -59,13 +59,13 @@ func (l *SendQuoteEmailLogic) SendQuoteEmail(in *borrower.LoanSendQuoteEmailRequ
 		return nil, err
 	}
 	if borrowerOrganization.Status != constants.OrganizationStatusActive {
-		return nil, errorx.New("Borrower Organization Not Active")
+		return nil, errorx.New("Borrower organization is not active")
 	}
 	borrowerApplicantIds := slice.Map(in.Data.Applicants, func(index int, item *borrower.ThirdPartyLoanApplicantEditEntity) int64 {
 		return item.BorrowerApplicantId
 	})
 	if len(borrowerApplicantIds) == 0 {
-		return nil, errorx.New("Borrowers is Required")
+		return nil, errorx.New("Borrowers is required")
 	}
 
 	borrowerApplicantNames, err := l.svcCtx.BorrowerApplicantRepo.GetFullNames(l.ctx, borrowerApplicantIds, claim.OrganizationId)
@@ -84,7 +84,7 @@ func (l *SendQuoteEmailLogic) SendQuoteEmail(in *borrower.LoanSendQuoteEmailRequ
 
 	go func() {
 		newCtx := context.WithoutCancel(l.ctx)
-		l.WithContext(newCtx).WithFields(logx.Field("lender ids", in.Data.LenderIds)).Info("start send quote email")
+		l.WithContext(newCtx).WithFields(logx.Field("lender ids", in.Data.LenderIds)).Info("Start send quote email")
 		tplVars := map[string]interface{}{
 			"borrower_name":           borrowerOrganization.Name,
 			"borrower_applicant_name": strings.Join(borrowerApplicantNames, ","),
@@ -110,9 +110,9 @@ func (l *SendQuoteEmailLogic) SendQuoteEmail(in *borrower.LoanSendQuoteEmailRequ
 				l.WithContext(newCtx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 			}
 		}
-		l.WithContext(newCtx).Info("end send quote email")
+		l.WithContext(newCtx).Info("End send quote email")
 	}()
-	l.WithContext(l.ctx).Info("finish request")
+	l.WithContext(l.ctx).Info("Finish request")
 	return &borrower.EmptyResponse{}, nil
 }
 
@@ -130,13 +130,13 @@ func (l *SendQuoteEmailLogic) sendEmail(ctx context.Context, input quoteEmailInp
 		return err
 	}
 	if lender.Status != constants.OrganizationStatusActive {
-		return errorx.New("Lender Organization Not Active")
+		return errorx.New("Lender organization is not active")
 	}
 	tplVars := input.tplVars
 	tplVars["lender_name"] = lender.Name
 	property, ok := tplVars["property"].(*model.BorrowerProperty)
 	if !ok {
-		return errorx.New("Invalid Property")
+		return errorx.New("Invalid property")
 	}
 
 	key := global.EmailAuthManager.BuildKey(limiter.StrategySendLoanQuoteEmail, input.senderEmail, lender.ContactEmail, claim.OrganizationId, claim.UserType)
@@ -146,7 +146,7 @@ func (l *SendQuoteEmailLogic) sendEmail(ctx context.Context, input quoteEmailInp
 		return errorx.WithStack(err)
 	}
 	if !ok {
-		return errorx.New("Rate Limit")
+		return errorx.New("Rate limit")
 	}
 
 	emailContent := ""
@@ -168,7 +168,7 @@ func (l *SendQuoteEmailLogic) sendEmail(ctx context.Context, input quoteEmailInp
 	l.WithContext(ctx).WithFields(
 		logx.Field("sender", input.senderEmail),
 		logx.Field("receiver", lender.ContactEmail),
-	).Info("Send Quote Email Success")
+	).Info("Send quote email success")
 	return err
 }
 
@@ -185,14 +185,14 @@ func (l *SendQuoteEmailLogic) getEmailClient(ctx context.Context, userId int64, 
 	case constants.EmailAuthStrategyUser:
 		emailAuthorization, err = l.svcCtx.EmailAuthorizationRepo.GetEmailAuthorizationByOrganizationEmailId(ctx, organizationEmail.Id, userId, constants.EmailPurposeContact)
 	default:
-		err = errorx.New("Invalid Email Auth Strategy")
+		err = errorx.New("Invalid email auth strategy")
 	}
 	if err != nil {
 		return "", nil, err
 	}
 
 	if !emailAuthorization.IsAuthorized {
-		err = errorx.New("Borrower Email Not Authorized")
+		err = errorx.New("Borrower email is not authorized")
 		return "", nil, err
 	}
 
@@ -201,14 +201,14 @@ func (l *SendQuoteEmailLogic) getEmailClient(ctx context.Context, userId int64, 
 	if !existed {
 		emailProvider, ok := global.EmailAuthUrlGenerator[emailAuthorization.EmailProvider]
 		if !ok {
-			return "", nil, errorx.New("Invalid Email Provider")
+			return "", nil, errorx.New("Invalid email provider")
 		}
 		oauth2Config := emailProvider.GetConfig()
 		switch emailAuthorization.EmailProvider {
 		case constants.EmailProviderGmail:
 			emailClient, err = client.NewGmailClientFromToken(oauth2Config, emailAuthorization.Token.Token)
 		default:
-			err = errorx.New("Invalid Email Provider")
+			err = errorx.New("Invalid email provider")
 		}
 		if err != nil {
 			return "", nil, err

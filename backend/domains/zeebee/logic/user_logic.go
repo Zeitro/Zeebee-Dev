@@ -6,7 +6,7 @@ import (
 
 	"github.com/duke-git/lancet/v2/condition"
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/threading"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
@@ -14,48 +14,41 @@ import (
 
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/redisx"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
+	"zeebee-backend/domains/zeebee/auth"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
-	"zeebee-backend/domains/zeebee/repo"
 )
 
-type JwtConfig struct {
-	AccessSecret  string
-	AccessExpire  int64
-	RefreshSecret string
-	RefreshExpire int64
-}
-
+// UserLogic provides user business logic
 type UserLogic struct {
-	repos     *repo.AllRepos
-	redisCli  *redisx.Redisx
-	jwtConfig JwtConfig
+	*BaseLogic
+	jwtConfig    dto.JwtConfig
+	authTopicMap map[constants.UserType]string
 }
 
-func NewUserLogic(repos *repo.AllRepos, redisCli *redisx.Redisx, jwtConfig JwtConfig) *UserLogic {
+// NewUserLogic creates a new user logic instance
+func NewUserLogic(baseLogic *BaseLogic, jwtConfig dto.JwtConfig, authTopicMap map[constants.UserType]string) *UserLogic {
 	return &UserLogic{
-		repos:     repos,
-		redisCli:  redisCli,
-		jwtConfig: jwtConfig,
+		BaseLogic:    baseLogic,
+		jwtConfig:    jwtConfig,
+		authTopicMap: authTopicMap,
 	}
 }
 
 // GetUserClaimFromCtx get user claim from context
 func (l *UserLogic) GetUserClaimFromCtx(ctx context.Context) (claim utils.JwtUser, err error) {
-	// get from metadata
+	// Get from metadata
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		err = status.Error(codes.Unauthenticated, "Not Login")
+		err = status.Error(codes.Unauthenticated, "Not login")
 		return claim, errorx.WithStack(err)
 	}
 	tokens := md[utils.JwtTokenCtxKey]
 	if len(tokens) == 0 {
-		err = status.Error(codes.Unauthenticated, "Not Login")
+		err = status.Error(codes.Unauthenticated, "Not login")
 		return claim, errorx.WithStack(err)
 	}
 	token := tokens[0]
@@ -68,9 +61,9 @@ func (l *UserLogic) GetUserClaimFromCtx(ctx context.Context) (claim utils.JwtUse
 }
 
 // GenerateJwtToken generate jwt token for user
-func (l *UserLogic) GenerateJwtToken(user *model.User, organizationUser *model.OrganizationUser, userType constants.UserType) (token *bo.UserJwtTokenBo, err error) {
+func (l *UserLogic) GenerateJwtToken(user *model.User, organizationUser *model.OrganizationUser, userType constants.UserType) (token *dto.UserJwtTokenDto, err error) {
 	if user == nil {
-		return nil, errorx.WithStack(errorx.New("User Is Empty."))
+		return nil, errorx.WithStack(errorx.New("User is empty"))
 	}
 	userClaim := utils.JwtUser{
 		UserId:         user.Id,
@@ -101,7 +94,7 @@ func (l *UserLogic) GenerateJwtToken(user *model.User, organizationUser *model.O
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	token = &bo.UserJwtTokenBo{
+	token = &dto.UserJwtTokenDto{
 		AccessToken:        accessToken,
 		RefreshToken:       refreshToken,
 		AccessTokenExpire:  l.jwtConfig.AccessExpire,
@@ -110,7 +103,7 @@ func (l *UserLogic) GenerateJwtToken(user *model.User, organizationUser *model.O
 	return
 }
 
-func (l *UserLogic) GenerateJwtTokenById(ctx context.Context, userId int64, organizationId int64, userType constants.UserType) (token *bo.UserJwtTokenBo, err error) {
+func (l *UserLogic) GenerateJwtTokenById(ctx context.Context, userId int64, organizationId int64, userType constants.UserType) (token *dto.UserJwtTokenDto, err error) {
 	user, err := l.repos.UserRepo.GetUser(ctx, userId, userType, false)
 	if err != nil {
 		return nil, errorx.WithStack(err)
@@ -124,14 +117,14 @@ func (l *UserLogic) GenerateJwtTokenById(ctx context.Context, userId int64, orga
 }
 
 // RefreshToken refresh token
-func (l *UserLogic) RefreshToken(ctx context.Context, refreshToken string, userType constants.UserType) (token *bo.UserJwtTokenBo, err error) {
-	// parse refresh token
+func (l *UserLogic) RefreshToken(ctx context.Context, refreshToken string, userType constants.UserType) (token *dto.UserJwtTokenDto, err error) {
+	// Parse refresh token
 	claim, err := utils.ParseToken(refreshToken, l.jwtConfig.RefreshSecret)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
 	if claim.UserType != userType {
-		return nil, errorx.New("User Type Is Not Match")
+		return nil, errorx.New("User type does not match")
 	}
 
 	user, err := l.repos.UserRepo.GetUser(ctx, claim.UserId, claim.UserType, false)
@@ -139,7 +132,7 @@ func (l *UserLogic) RefreshToken(ctx context.Context, refreshToken string, userT
 		return nil, errorx.WithStack(err)
 	}
 	if user.Status != constants.UserStatusActive {
-		return nil, errorx.New("User Is Not Active")
+		return nil, errorx.New("User is not active")
 	}
 
 	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserByUserId(ctx, claim.OrganizationId, user.Id)
@@ -147,19 +140,19 @@ func (l *UserLogic) RefreshToken(ctx context.Context, refreshToken string, userT
 		return nil, err
 	}
 	if organizationUser.Status != constants.OrganizationUserStatusActive {
-		return nil, errorx.New("Organization User Is Not Active")
+		return nil, errorx.New("Organization user is not active")
 	}
 	token, err = l.GenerateJwtToken(user, organizationUser, claim.UserType)
 	return token, err
 }
 
 // ResetPasswordWithEmail reset password with email
-func (l *UserLogic) ResetPasswordWithEmail(ctx context.Context, input dto.UserResetPasswordByEmailRequestDto) (token *bo.UserJwtTokenBo, err error) {
+func (l *UserLogic) ResetPasswordWithEmail(ctx context.Context, input dto.UserResetPasswordByEmailRequestDto) (token *dto.UserJwtTokenDto, err error) {
 	email := input.Email
 	code := input.Code
 	newPwd := input.NewPassword
 	if email == "" || code == "" || newPwd == "" {
-		return nil, errorx.New("Email, Code And New Password Are Required")
+		return nil, errorx.New("Email, code and new password are required")
 	}
 	redisKey := stringx.Format(constants.ResetPwdCode, input.UserType, email)
 	cacheToken, err := l.redisCli.Get(ctx, redisKey)
@@ -167,7 +160,7 @@ func (l *UserLogic) ResetPasswordWithEmail(ctx context.Context, input dto.UserRe
 		return nil, errorx.WithStack(err)
 	}
 	if cacheToken == "" || cacheToken != code {
-		return nil, errorx.WithStack(errorx.New("Invalid Or Expired Code"))
+		return nil, errorx.WithStack(errorx.New("Invalid or expired code"))
 	}
 
 	user, err := l.repos.UserRepo.GetUserByEmail(ctx, email, input.UserType)
@@ -175,16 +168,16 @@ func (l *UserLogic) ResetPasswordWithEmail(ctx context.Context, input dto.UserRe
 		return nil, err
 	}
 	if user == nil {
-		return nil, errorx.New("User Not Found")
+		return nil, errorx.New("User not found")
 	}
 
-	// hash pwd
+	// Hash pwd
 	pwdHash, err := utils.HashPassword(newPwd)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
 
-	// update pwd
+	// Update pwd
 	err = l.repos.UserRepo.UpdateUserPassword(ctx, user.Id, pwdHash)
 	if err != nil {
 		return nil, err
@@ -192,14 +185,14 @@ func (l *UserLogic) ResetPasswordWithEmail(ctx context.Context, input dto.UserRe
 
 	user, organizationUser, err := l.CheckAndUpdateActiveOrganizationByUser(ctx, user)
 	if err != nil {
-		return nil, errorx.WithStack(err)
+		return nil, err
 	}
 
 	token, err = l.GenerateJwtToken(user, organizationUser, input.UserType)
 	if err != nil {
 		return nil, err
 	}
-	// delete redis key
+	// Delete redis key
 	_ = l.redisCli.Del(ctx, redisKey)
 	return token, nil
 }
@@ -207,12 +200,12 @@ func (l *UserLogic) ResetPasswordWithEmail(ctx context.Context, input dto.UserRe
 // GetActiveOrganizationByUser return active organization for user
 func (l *UserLogic) GetActiveOrganizationByUser(user *model.User) (currentOrganization *model.Organization, isChanged bool, err error) {
 	if user == nil {
-		return nil, false, errorx.New("User Is Empty")
+		return nil, false, errorx.New("User is empty")
 	}
 	organizations := user.Organizations
 	organizationUsers := user.OrganizationUsers
 
-	// find current organization
+	// Find current organization
 	currentOrganization, ok := slice.FindBy(organizations, func(index int, item *model.Organization) bool {
 		isActiveOrganization := (item.Id == user.DefaultOrganizationId || user.DefaultOrganizationId == 0) && item.Status == constants.OrganizationStatusActive
 		if !isActiveOrganization {
@@ -224,7 +217,7 @@ func (l *UserLogic) GetActiveOrganizationByUser(user *model.User) (currentOrgani
 
 		return ok
 	})
-	// find first active organization
+	// Find first active organization
 	if !ok {
 		currentOrganization, ok = slice.FindBy(organizations, func(index int, item *model.Organization) bool {
 			isActiveOrganization := item.Status == constants.OrganizationStatusActive
@@ -239,11 +232,11 @@ func (l *UserLogic) GetActiveOrganizationByUser(user *model.User) (currentOrgani
 		})
 	}
 	if !ok {
-		// no active company
+		// No active company
 		isChanged = condition.Ternary(user.DefaultOrganizationId == 0, false, true)
 		user.DefaultOrganizationId = 0
 	} else if user.DefaultOrganizationId != currentOrganization.Id {
-		// company changed
+		// Company changed
 		isChanged = true
 		user.DefaultOrganizationId = currentOrganization.Id
 	}
@@ -282,7 +275,7 @@ func (l *UserLogic) CheckAndUpdateActiveOrganizationByUser(ctx context.Context, 
 }
 
 // Login
-func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limiter dto.LoginLimiterDto) (token *bo.UserJwtTokenBo, err error) {
+func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limiter dto.LoginLimiterDto) (token *dto.UserJwtTokenDto, err error) {
 	redisKey := stringx.Format(constants.UserLoginFailedTimes, req.UserType, req.Email)
 	var loginFailedTimes int
 	var orgUser *model.OrganizationUser
@@ -292,7 +285,7 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 			return nil, errorx.WithStack(err)
 		}
 		if loginFailedTimes >= limiter.Rate {
-			return nil, errorx.New("Login Failed Times Exceeded, Please Try Again Later")
+			return nil, errorx.New("Login failed times exceeded, please try again later")
 		}
 	}
 
@@ -301,17 +294,17 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 		return nil, errorx.WithStack(err)
 	}
 	if user == nil {
-		return nil, errorx.New("User Not Found.")
+		return nil, errorx.New("User not found")
 	}
 
-	// check pwd
+	// Check pwd
 	if !utils.CheckPassword(req.Password, user.PasswordHash) {
-		// add input wrong pwd times to redis
+		// Add input wrong pwd times to redis
 		_, err = limiter.RedisCli.IncreaseExpire(ctx, redisKey, limiter.Period)
 		if err != nil {
 			return nil, errorx.WithStack(err)
 		}
-		return nil, errorx.WithStack(errorx.New("The Email And Password You Entered Don't Match."))
+		return nil, errorx.WithStack(errorx.New("The email and password you entered don't match."))
 	}
 
 	if limiter.Rate > 0 {
@@ -321,21 +314,13 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 		}
 	}
 
-	// check status
+	// Check status
 	if user.Status == constants.UserStatusInactive {
-		return nil, errorx.New("User Is Not Active")
+		return nil, errorx.New("User is not active")
 	}
 	if user.Status == constants.UserStatusUnverified {
-		err = status.Error(codes.PermissionDenied, "User Is Unverified")
+		err = status.Error(codes.PermissionDenied, "User is unverified")
 		return nil, err
-	}
-
-	// check status
-	if user.Status == constants.UserStatusInactive {
-		return nil, errorx.WithStack(errorx.New("User Is Not Active"))
-	}
-	if user.Status == constants.UserStatusUnverified {
-		return nil, errorx.WithStack(errorx.New("User Is Unverified"))
 	}
 
 	user, orgUser, err = l.CheckAndUpdateActiveOrganizationByUser(ctx, user)
@@ -347,32 +332,44 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 	if err != nil {
 		return nil, err
 	}
+
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:             auth.ActionRoleReload,
+			Scope:              auth.ScopeOrganizationUser,
+			Type:               req.UserType,
+			OrganizationId:     orgUser.OrganizationId,
+			OrganizationUserId: orgUser.Id,
+		}
+		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[req.UserType], msg)
+	})
+
 	return
 }
 
 // Info return user info
-func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, userType constants.UserType) (userInfo *bo.UserinfoBo, err error) {
-	organizations := []*bo.UserOrganizationBo{}
+func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, userType constants.UserType) (userInfo *dto.UserinfoDto, err error) {
+	organizations := []*dto.UserOrganizationDto{}
 	user, err := l.repos.UserRepo.GetUser(ctx, id, userType, true)
 	if err != nil {
 		return nil, err
 	}
 	if user == nil {
-		return nil, errorx.WithStack(errorx.New("User Not Found"))
+		return nil, errorx.WithStack(errorx.New("User not found"))
 	}
 	if len(user.Organizations) > 0 {
-		err = copier.CopyWithOption(&organizations, user.Organizations, copier.Option{
-			DeepCopy:      true,
-			CaseSensitive: true,
-		})
+		organizationsPtr := &[]*dto.UserOrganizationDto{}
+		err = copierx.Assign[[]*model.Organization, []*dto.UserOrganizationDto](&user.Organizations, organizationsPtr)
 		if err != nil {
-			return nil, errorx.Wrap(err, "Failed To Copy Organization")
+			return nil, err
 		}
+		organizations = *organizationsPtr
 	}
-	var currentOrganization *bo.UserOrganizationBo
+	var currentOrganization *dto.UserOrganizationDto
 	var organizationUser *model.OrganizationUser
 
-	organizations = slice.Filter(organizations, func(i int, organization *bo.UserOrganizationBo) bool {
+	organizations = slice.Filter(organizations, func(i int, organization *dto.UserOrganizationDto) bool {
 		if organization.Status != constants.OrganizationStatusActive {
 			return false
 		}
@@ -386,17 +383,17 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 		}
 		return true
 	})
-
-	organizationUser, ok := slice.FindBy(user.OrganizationUsers, func(index int, item *model.OrganizationUser) bool {
+	var ok bool
+	organizationUser, ok = slice.FindBy(user.OrganizationUsers, func(index int, item *model.OrganizationUser) bool {
 		return item.OrganizationId == organizationId && item.IsDel == 0
 	})
 	if !ok {
-		err = errorx.New("Organization User Is Not Found")
+		err = errorx.New("Organization user not found")
 		return nil, err
 	}
 
-	// var organizationId int64
 	var organizationName string
+	var currentOrganizationId = organizationId
 	var isOwner bool
 	var isAdmin bool
 
@@ -405,10 +402,10 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 	}
 
 	if currentOrganization != nil {
-		organizationId = user.DefaultOrganizationId
+		currentOrganizationId = user.DefaultOrganizationId
 		organizationName = currentOrganization.Name
 
-		roles, err := l.repos.RoleRepo.GetOrganizationUserRoles(ctx, organizationUser.Id)
+		roles, err := l.repos.RoleRepo.GetRolesByOrganizationUserId(ctx, organizationUser.Id)
 		if err != nil {
 			return nil, errorx.WithStack(err)
 		}
@@ -420,14 +417,14 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 		})
 	}
 
-	userInfo = &bo.UserinfoBo{
+	userInfo = &dto.UserinfoDto{
 		Id:                 user.Id,
 		OrganizationUserId: organizationUser.Id,
 		Email:              user.Email,
 		FirstName:          organizationUser.FirstName,
 		LastName:           organizationUser.LastName,
 		FullName:           organizationUser.FullName,
-		OrganizationId:     organizationId,
+		OrganizationId:     currentOrganizationId,
 		OrganizationName:   organizationName,
 		Status:             organizationUser.Status,
 		Organizations:      organizations,
@@ -438,7 +435,7 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 }
 
 // SwitchOrganization switch user default organization
-func (l *UserLogic) SwitchOrganization(ctx context.Context, userId int64, organizationId int64, userType constants.UserType) (user *bo.UserBo, err error) {
+func (l *UserLogic) SwitchOrganization(ctx context.Context, userId int64, organizationId int64, userType constants.UserType) (user *dto.UserEntityDto, err error) {
 	userModel, err := l.repos.UserRepo.GetUser(ctx, userId, userType, true)
 	if err != nil {
 		return nil, err
@@ -448,16 +445,19 @@ func (l *UserLogic) SwitchOrganization(ctx context.Context, userId int64, organi
 		return organization.Id == organizationId
 	})
 	if !ok {
-		return nil, errorx.New("User Is Not Member Of This Organization")
+		return nil, errorx.New("User is not member of this organization")
 	}
 
 	if organization.Status != constants.OrganizationStatusActive {
-		return nil, errorx.New("Organization Is Not Active")
+		return nil, errorx.New("Organization is not active")
 	}
 
-	organizationUser, _ := l.repos.OrganizationUserRepo.GetOrganizationUserByUserId(ctx, organizationId, userModel.Id)
+	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserByUserId(ctx, organizationId, userModel.Id)
+	if err != nil {
+		return nil, err
+	}
 	if organizationUser == nil || organizationUser.Status != constants.OrganizationUserStatusActive {
-		return nil, errorx.New("User Is Not Member Of This Organization")
+		return nil, errorx.New("User is not member of this organization")
 	}
 
 	userModel.DefaultOrganizationId = organizationId
@@ -467,13 +467,10 @@ func (l *UserLogic) SwitchOrganization(ctx context.Context, userId int64, organi
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	user = &bo.UserBo{}
-	err = copier.CopyWithOption(user, userModel, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+
+	user, err = copierx.Trans[model.User, dto.UserEntityDto](userModel)
 	if err != nil {
-		return nil, errorx.GetFailedTransErr(err)
+		return nil, err
 	}
 	return user, nil
 }
@@ -485,7 +482,7 @@ func (l *UserLogic) SwitchOrganization(ctx context.Context, userId int64, organi
 func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.UserRegisterRequestDto, organizationInput dto.OrganizationRegisterRequestDto, userType constants.UserType, isManual bool) (newUser *model.User, organizationUser *model.OrganizationUser, err error) {
 	var user *model.User
 	var organization *model.Organization
-	// check user exist
+	// Check user exist
 	if len(userInput.FirstName) == 0 {
 		return nil, nil, errorx.New("User Is Empty")
 	}
@@ -497,16 +494,16 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 		return nil, nil, err
 	}
 	if isExisted {
-		return nil, nil, errorx.New("User Is Already Existed")
+		return nil, nil, errorx.New("User already exists")
 	}
 	user, err = copierx.Trans[dto.UserRegisterRequestDto, model.User](&userInput)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	// check organization exist
+	// Check organization exist
 	if len(organizationInput.Name) == 0 {
-		return nil, nil, errorx.New("Organization Name Is Empty")
+		return nil, nil, errorx.New("Organization name is empty")
 	}
 	isExisted, err = l.repos.OrganizationRepo.IsExistedByColumns(ctx, map[string]interface{}{
 		"name": organizationInput.Name,
@@ -516,7 +513,7 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 		return nil, nil, err
 	}
 	if isExisted {
-		return nil, nil, errorx.New("Organization Is Already Existed")
+		return nil, nil, errorx.New("Organization already exists")
 	}
 	organization, err = copierx.Trans[dto.OrganizationRegisterRequestDto, model.Organization](&organizationInput)
 	if err != nil {
@@ -533,7 +530,7 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 		}
 
 		user.DefaultOrganizationId = organization.Id
-		// create user
+		// Create user
 		roles := []*model.Role{
 			{
 				Name:           constants.AdminRoleName,
@@ -546,7 +543,7 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 		if innerErr != nil {
 			return innerErr
 		}
-		// update organization's owner
+		// Update organization's owner
 		organization.OwnerId = user.Id
 		innerErr = l.repos.OrganizationRepo.UpdateOwnerIdWithTx(ctx, tx, organization.Id, user.Id)
 		if innerErr != nil {
@@ -554,7 +551,7 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 		}
 		user.DefaultOrganizationId = organization.Id
 
-		// create organization user
+		// Create organization user
 		organizationUser = &model.OrganizationUser{
 			OrganizationId: organization.Id,
 			UserId:         user.Id,
@@ -565,13 +562,41 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 			FullName:       user.FullName,
 			Roles:          roles,
 		}
-		// create organization and user relation
+		// Create organization and user relation
 		organizationUser, innerErr = l.repos.OrganizationUserRepo.CreateWithTx(ctx, tx, organizationUser, true)
-		return innerErr
+		if innerErr != nil {
+			return innerErr
+		}
+
+		// Sync organization template
+		organizationTemplateLogic := NewOrganizationTemplateLogic(l.BaseLogic)
+		innerErr = organizationTemplateLogic.SyncByOrganizationIdWithTx(ctx, tx, organization)
+		if innerErr != nil {
+			return innerErr
+		}
+		// Init lender organization setting
+		organizationSettingLogic := NewOrganizationSettingLogic(l.BaseLogic)
+		innerErr = organizationSettingLogic.InitLenderOrganizationSettingWithTx(ctx, tx, organization)
+		if innerErr != nil {
+			return innerErr
+		}
+
+		return nil
 	})
 	if err != nil {
 		return nil, nil, err
 	}
+
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:         auth.ActionRoleReload,
+			Scope:          auth.ScopeOrganization,
+			Type:           userInput.Type,
+			OrganizationId: organization.Id,
+		}
+		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[userInput.Type], msg)
+	})
 
 	return user, organizationUser, nil
 }
@@ -580,9 +605,9 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code string, userType constants.UserType) (user *model.User, err error) {
 	var token string
 	if email == "" || code == "" {
-		return nil, errorx.New("Email And Code Are Required")
+		return nil, errorx.New("Email and code are required")
 	}
-	// check code
+	// Check code
 	verifyCodeKey := stringx.Format(constants.UserRegisterVerifyCode, userType, email)
 	token, err = l.redisCli.Get(ctx, verifyCodeKey)
 	if err != nil {
@@ -590,7 +615,7 @@ func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code stri
 	}
 	// Check if code exists (expired or invalid)
 	if len(token) == 0 || token != code {
-		return nil, errorx.New("Invalid Or Expired Code")
+		return nil, errorx.New("Invalid or expired code")
 	}
 	defer func() {
 		if err == nil {
@@ -600,35 +625,49 @@ func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code stri
 
 	err = l.repos.UserRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
-		// get user
+		// Get user
 		user, innerErr = l.repos.UserRepo.GetUserByEmailWithTx(ctx, tx, email, userType)
 		if innerErr != nil {
 			return innerErr
 		}
 		if user.Status != constants.UserStatusUnverified {
-			return errorx.New("Email Is Already Verified")
+			return errorx.New("Email is already verified")
 		}
-		// update user status
+		// Update user status
 		innerErr = l.repos.UserRepo.UpdateColumnsByIdWithTx(ctx, tx, user.Id, map[string]interface{}{
 			"status": constants.UserStatusActive,
 		})
 		if innerErr != nil {
 			return innerErr
 		}
-		// update user's organization status
-		innerErr = l.repos.OrganizationRepo.UpdateOwnerOrganizationStatusWithTx(ctx, tx, user.Id, constants.OrganizationStatusActive)
+		// Update user's organization status
+		innerErr = l.handleOwnedOrganizationWithTx(ctx, tx, user)
 		if innerErr != nil {
 			return innerErr
 		}
 
-		// update organization user  status
+		// Update organization user status
 		innerErr = l.repos.OrganizationUserRepo.ActiveByUserIdWithTx(ctx, tx, user.Id)
 		if innerErr != nil {
 			return innerErr
 		}
-
 		return nil
 	})
+
+	if err != nil {
+		return nil, err
+	}
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:         auth.ActionRoleReload,
+			Scope:          auth.ScopeOrganization,
+			Type:           userType,
+			OrganizationId: user.DefaultOrganizationId,
+		}
+		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
+	})
+
 	return
 }
 
@@ -639,12 +678,12 @@ func (l *UserLogic) ChangePassword(ctx context.Context, input dto.UserChangePass
 		return err
 	}
 	if !l.validatePassword(input.NewPassword) {
-		return errorx.New("New Password Is Invalid")
+		return errorx.New("New password is invalid")
 	}
 
 	oldPassword := input.OldPassword
 	if !utils.CheckPassword(oldPassword, user.PasswordHash) {
-		return errorx.New("Old Password Is Incorrect")
+		return errorx.New("Old password is incorrect")
 	}
 	newPasswordHash, err := utils.HashPassword(input.NewPassword)
 	if err != nil {
@@ -665,4 +704,31 @@ func (l *UserLogic) validatePassword(password string) bool {
 	hasUpper := regexp.MustCompile(`[A-Z]`).MatchString(password)
 	hasNumber := regexp.MustCompile(`\d`).MatchString(password)
 	return hasLower && hasUpper && hasNumber
+}
+
+// handleOwnedOrganization
+func (l *UserLogic) handleOwnedOrganizationWithTx(ctx context.Context, tx *gorm.DB, user *model.User) (err error) {
+	if user == nil {
+		return errorx.New("User is empty")
+	}
+	// Update owned organization status
+	err = l.repos.OrganizationRepo.UpdateOwnerOrganizationStatusWithTx(ctx, tx, user.Id, constants.OrganizationStatusActive)
+	if err != nil {
+		return err
+	}
+	// Get owned organization ids
+	organizations, err := l.repos.OrganizationRepo.GetOrganizationsByOwnerIdWithTx(ctx, tx, user.Id, user.Type)
+	if err != nil {
+		return err
+	}
+	// Sync owned organization templates
+	organizationTemplateLogic := NewOrganizationTemplateLogic(l.BaseLogic)
+	for index := range organizations {
+		err = organizationTemplateLogic.SyncByOrganizationIdWithTx(ctx, tx, organizations[index])
+		if err != nil {
+			return err
+		}
+	}
+
+	return err
 }

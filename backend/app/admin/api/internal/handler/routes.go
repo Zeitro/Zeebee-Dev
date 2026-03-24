@@ -7,7 +7,9 @@ import (
 	"net/http"
 
 	api "zeebee-backend/app/admin/api/internal/handler/api"
+	base_template "zeebee-backend/app/admin/api/internal/handler/base_template"
 	common "zeebee-backend/app/admin/api/internal/handler/common"
+	loan "zeebee-backend/app/admin/api/internal/handler/loan"
 	organization "zeebee-backend/app/admin/api/internal/handler/organization"
 	organization_user "zeebee-backend/app/admin/api/internal/handler/organization_user"
 	resource "zeebee-backend/app/admin/api/internal/handler/resource"
@@ -60,12 +62,75 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// Create
+					Method:  http.MethodPost,
+					Path:    "/base_template",
+					Handler: base_template.BaseTemplateCreateHandler(serverCtx),
+				},
+				{
+					// Update
+					Method:  http.MethodPut,
+					Path:    "/base_template/:id",
+					Handler: base_template.BaseTemplateUpdateHandler(serverCtx),
+				},
+				{
+					// Detail
+					Method:  http.MethodGet,
+					Path:    "/base_template/:id",
+					Handler: base_template.BaseTemplateDetailHandler(serverCtx),
+				},
+				{
+					// Delete
+					Method:  http.MethodDelete,
+					Path:    "/base_template/:id",
+					Handler: base_template.BaseTemplateDeleteHandler(serverCtx),
+				},
+				{
+					// Reset
+					Method:  http.MethodPost,
+					Path:    "/base_template/:id/reset",
+					Handler: base_template.BaseTemplateResetHandler(serverCtx),
+				},
+				{
+					// Switch status
+					Method:  http.MethodPatch,
+					Path:    "/base_template/:id/status",
+					Handler: base_template.BaseTemplateSwitchStatusHandler(serverCtx),
+				},
+				{
+					// page
+					Method:  http.MethodPost,
+					Path:    "/base_template/page",
+					Handler: base_template.BaseTemplatePageHandler(serverCtx),
+				},
+				{
+					// Preview
+					Method:  http.MethodPost,
+					Path:    "/base_template/preview",
+					Handler: base_template.BaseTemplatePreviewHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
 		[]rest.Route{
 			{
 				// select options
 				Method:  http.MethodGet,
 				Path:    "/select_options",
 				Handler: common.SelectOptionsHandler(serverCtx),
+			},
+			{
+				// sync data
+				Method:  http.MethodGet,
+				Path:    "/sync_data",
+				Handler: common.SyncDataHandler(serverCtx),
 			},
 			{
 				// get us city
@@ -80,6 +145,39 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: common.GetUsStatesHandler(serverCtx),
 			},
 		},
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// detail
+					Method:  http.MethodGet,
+					Path:    "/loan/:id",
+					Handler: loan.LoanDetailHandler(serverCtx),
+				},
+				{
+					// reassign
+					Method:  http.MethodPost,
+					Path:    "/loan/:id/reassign",
+					Handler: loan.LoanReassignHandler(serverCtx),
+				},
+				{
+					// lender companies list
+					Method:  http.MethodGet,
+					Path:    "/loan/lender_companies",
+					Handler: loan.LenderCompaniesHandler(serverCtx),
+				},
+				{
+					// page
+					Method:  http.MethodPost,
+					Path:    "/loan/page",
+					Handler: loan.LoanPageHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithPrefix("/api/v1"),
 	)
 
@@ -123,6 +221,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/organization/page",
 					Handler: organization.OrganizationPageHandler(serverCtx),
 				},
+				{
+					// select option
+					Method:  http.MethodGet,
+					Path:    "/organization/select_options",
+					Handler: organization.OrganizationSelectOptionHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithPrefix("/api/v1"),
@@ -164,7 +268,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					// page
-					Method:  http.MethodGet,
+					Method:  http.MethodPost,
 					Path:    "/organization_user/page",
 					Handler: organization_user.OrganizationUserPageHandler(serverCtx),
 				},
@@ -217,12 +321,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
-					// page
-					Method:  http.MethodGet,
-					Path:    "/role",
-					Handler: role.RolePageHandler(serverCtx),
-				},
-				{
 					// create
 					Method:  http.MethodPost,
 					Path:    "/role",
@@ -247,16 +345,28 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: role.RoleDeleteHandler(serverCtx),
 				},
 				{
-					// update status
+					// assign organization users
+					Method:  http.MethodPost,
+					Path:    "/role/:id/assign_organization_users",
+					Handler: role.RoleAssignOrganizationUsersHandler(serverCtx),
+				},
+				{
+					// switch status
 					Method:  http.MethodPatch,
 					Path:    "/role/:id/status",
-					Handler: role.RoleUpdateStatusHandler(serverCtx),
+					Handler: role.RoleSwitchStatusHandler(serverCtx),
 				},
 				{
 					// all
 					Method:  http.MethodGet,
 					Path:    "/role/all",
 					Handler: role.RoleAllHandler(serverCtx),
+				},
+				{
+					// page
+					Method:  http.MethodPost,
+					Path:    "/role/page",
+					Handler: role.RolePageHandler(serverCtx),
 				},
 			}...,
 		),
@@ -279,26 +389,29 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				// login
-				Method:  http.MethodPost,
-				Path:    "/user/login",
-				Handler: user.LoginHandler(serverCtx),
-			},
-			{
-				// refresh
-				Method:  http.MethodPost,
-				Path:    "/user/refresh",
-				Handler: user.RefreshTokenHandler(serverCtx),
-			},
-			{
-				// reset password
-				Method:  http.MethodPost,
-				Path:    "/user/reset_password",
-				Handler: user.ResetPasswordHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// login
+					Method:  http.MethodPost,
+					Path:    "/user/login",
+					Handler: user.LoginHandler(serverCtx),
+				},
+				{
+					// refresh
+					Method:  http.MethodPost,
+					Path:    "/user/refresh",
+					Handler: user.RefreshTokenHandler(serverCtx),
+				},
+				{
+					// reset password
+					Method:  http.MethodPost,
+					Path:    "/user/reset_password",
+					Handler: user.ResetPasswordHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithPrefix("/api/v1"),
 	)
 
@@ -311,6 +424,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/user/info",
 					Handler: user.InfoHandler(serverCtx),
+				},
+				{
+					// user menu
+					Method:  http.MethodGet,
+					Path:    "/user/menu",
+					Handler: user.UserMenuHandler(serverCtx),
 				},
 				{
 					// edit profile

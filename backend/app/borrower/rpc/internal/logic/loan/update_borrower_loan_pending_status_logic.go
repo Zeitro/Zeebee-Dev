@@ -25,7 +25,7 @@ func NewUpdateBorrowerLoanPendingStatusLogic(ctx context.Context, svcCtx *svc.Se
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -50,11 +50,11 @@ func (l *UpdateBorrowerLoanPendingStatusLogic) UpdateBorrowerLoanPendingStatus(i
 		return nil, errorx.Wrap(err, "Failed To Get Loan")
 	}
 	if loanModel.Stage != constants.LoanStagePending {
-		return nil, errorx.New("Loan's Stage Should Be Pending")
+		return nil, errorx.New("Loan's stage should be pending")
 	}
 
 	if loanModel.Source != constants.LoanSourceBorrower {
-		return nil, errorx.WithStack(errorx.New("Loan Source Is Not 3rd Party"))
+		return nil, errorx.WithStack(errorx.New("Loan source is not 3rd party"))
 	}
 	err = l.svcCtx.LoanRepo.UpdateColumnsById(l.ctx, in.Data.Id, map[string]interface{}{"pending_status": in.Data.PendingStatus})
 

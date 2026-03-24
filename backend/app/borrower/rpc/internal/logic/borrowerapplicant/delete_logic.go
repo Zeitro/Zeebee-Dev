@@ -23,7 +23,7 @@ func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogi
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -44,7 +44,7 @@ func (l *DeleteLogic) Delete(in *borrower.BorrowerApplicantDeleteRequest) (resp 
 	}
 	// todo check organization
 	if result.OrganizationId != claim.OrganizationId {
-		return nil, errorx.New("You Have No Access To This Applicant")
+		return nil, errorx.New("You have no access to this applicant")
 	}
 
 	_, err = l.svcCtx.BorrowerApplicantRepo.DeleteByID(l.ctx, in.Data.Id)

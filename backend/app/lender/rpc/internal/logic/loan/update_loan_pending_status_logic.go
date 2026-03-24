@@ -10,10 +10,9 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/model"
-
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data"
 )
 
 type UpdateLoanPendingStatusLogic struct {
@@ -27,7 +26,7 @@ func NewUpdateLoanPendingStatusLogic(ctx context.Context, svcCtx *svc.ServiceCon
 	return &UpdateLoanPendingStatusLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 		Logger:    logx.WithContext(ctx),
 	}
 }
@@ -52,10 +51,10 @@ func (l *UpdateLoanPendingStatusLogic) UpdateLoanPendingStatus(in *lender.LoanUp
 
 	// Validate loan is in pending stage
 	if loan.Stage != constants.LoanStagePending {
-		return nil, errorx.New("Loan Is Not In Pending Stage")
+		return nil, errorx.New("Loan is not in pending stage")
 	}
 	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreapproval {
-		return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
+		return nil, errorx.WithStack(errorx.New("Invalid loan source"))
 	}
 	// Save original status for operation log
 	originalStage := loan.Stage
@@ -86,18 +85,18 @@ func (l *UpdateLoanPendingStatusLogic) UpdateLoanPendingStatus(in *lender.LoanUp
 		// Create operation log
 		operatorId := claim.OrganizationUserId
 
-		fromStatus := model.LoanOperationStatus{
+		fromStatus := data.LoanOperationStatus{
 			Stage:         originalStage,
 			PendingStatus: originalPendingStatus,
 		}
 
-		toStatus := model.LoanOperationStatus{
+		toStatus := data.LoanOperationStatus{
 			Stage:         loan.Stage,
 			PendingStatus: pendingStatus,
 		}
 
-		loanBaseLogic := NewLoanBaseLogic(l.ctx, l.svcCtx)
-		return loanBaseLogic.CreateLoanOperationLog(tx, loan.Id, operatorId, fromStatus, toStatus, constants.LoanOperationActionUpdate, nil)
+		// loanBaseLogic := NewLoanBaseLogic(l.ctx, l.svcCtx)
+		return l.baseLogic.CreateLoanOperationLog(l.ctx, tx, loan.Id, operatorId, fromStatus, toStatus, constants.LoanOperationActionUpdate, nil)
 	})
 
 	if err != nil {

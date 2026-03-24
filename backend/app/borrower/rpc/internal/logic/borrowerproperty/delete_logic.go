@@ -24,7 +24,7 @@ func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogi
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -46,11 +46,11 @@ func (l *DeleteLogic) Delete(in *borrower.PropertyDeleteRequest) (resp *borrower
 	}
 	// todo check organization
 	if result.OrganizationId != claim.OrganizationId {
-		return nil, errorx.GetFailedTransRespErr(errorx.New("You Have No Access To This Property"))
+		return nil, errorx.GetFailedTransRespErr(errorx.New("You have no access to this property"))
 	}
 
 	if result.LoanCount > 0 {
-		return nil, errorx.GetFailedTransRespErr(errorx.New("You Cannot Delete A Property That Has Loans"))
+		return nil, errorx.GetFailedTransRespErr(errorx.New("You cannot delete a property that has loans"))
 	}
 	_, err = l.svcCtx.BorrowerPropertyRepo.DeleteByID(l.ctx, in.Data.Id)
 

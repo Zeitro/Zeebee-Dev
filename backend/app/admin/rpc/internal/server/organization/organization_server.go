@@ -52,3 +52,8 @@ func (s *OrganizationServer) SwitchStatus(ctx context.Context, in *admin.Organiz
 	l := organizationlogic.NewSwitchStatusLogic(ctx, s.svcCtx)
 	return l.SwitchStatus(in)
 }
+
+func (s *OrganizationServer) SelectOptions(ctx context.Context, in *admin.OrganizationSelectOptionsRequest) (*admin.OrganizationSelectOptionsResponse, error) {
+	l := organizationlogic.NewSelectOptionsLogic(ctx, s.svcCtx)
+	return l.SelectOptions(in)
+}

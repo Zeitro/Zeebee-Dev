@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
@@ -33,7 +32,7 @@ func NewCreateBorrowerLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -121,16 +120,9 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 			return nil, nil, nil, nil, err
 		}
 		applicantItem := &model.LoanApplicant{}
-		err = copier.CopyWithOption(applicantItem, borrowerApplicant, copier.Option{
-			IgnoreEmpty:   false,
-			DeepCopy:      true,
-			CaseSensitive: true,
-			Converters: []copier.TypeConverter{
-				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-			},
-		})
+		applicantItem, err = copierx.Trans[model.BorrowerApplicant, model.LoanApplicant](borrowerApplicant, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 		if err != nil {
-			return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
+			return nil, nil, nil, nil, err
 		}
 		applicantItem.Id = 0
 		applicantItem.IsPrimary = applicant.IsPrimary
@@ -140,7 +132,7 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 		applicants = append(applicants, applicantItem)
 	}
 	if totalOwnPercent > 100 {
-		return nil, nil, nil, nil, errorx.New("Total Own Percent Cannot Be Greater Than 100")
+		return nil, nil, nil, nil, errorx.New("Total own percent cannot be greater than 100")
 	}
 
 	slice.SortBy(applicants, func(a, b *model.LoanApplicant) bool {
@@ -151,10 +143,10 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 		return item.IsPrimary
 	})
 	if primaryCount == 0 {
-		return nil, nil, nil, nil, errorx.New("No Primary Applicant")
+		return nil, nil, nil, nil, errorx.New("No primary applicant")
 	}
 	if primaryCount > 1 {
-		return nil, nil, nil, nil, errorx.New("Multiple Primary Applicant")
+		return nil, nil, nil, nil, errorx.New("Multiple primary applicants")
 	}
 
 	// loan borrower
@@ -166,40 +158,23 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 		return nil, nil, nil, nil, err
 	}
 	loanProperty = &model.LoanProperty{}
-	err = copier.CopyWithOption(loanProperty, borrowerProperty, copier.Option{
-		IgnoreEmpty:   false,
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
+	loanProperty, err = copierx.Trans[model.BorrowerProperty, model.LoanProperty](borrowerProperty, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
-		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
+		return nil, nil, nil, nil, err
 	}
-	err = copier.CopyWithOption(loanProperty, in.LoanProperty, copier.Option{
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
+
+	err = copierx.Assign[borrower.ThirdPartyLoanPropertyEditEntity, model.LoanProperty](in.LoanProperty, loanProperty, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
-		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
+		return nil, nil, nil, nil, err
 	}
+
 	loanProperty.Id = 0
 
 	// loan
 	loan = &model.Loan{}
-	err = copier.CopyWithOption(loan, in, copier.Option{
-		IgnoreEmpty:   false,
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
+	loan, err = copierx.Trans[borrower.LoanCreateRequestData, model.Loan](in, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
-		return nil, nil, nil, nil, errorx.GetFailedTransErr(err)
+		return nil, nil, nil, nil, err
 	}
 
 	loan.CreatorId = claim.OrganizationUserId
@@ -208,12 +183,12 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	loan.PendingStatus = constants.LoanPendingStatusNone
 	loan.Source = constants.LoanSourceBorrower
 	if loan.TotalAmount < loan.InitialAmount {
-		return nil, nil, nil, nil, errorx.New("Total Amount Cannot Be Less Than Initial Amount")
+		return nil, nil, nil, nil, errorx.New("Total amount cannot be less than initial amount")
 	}
 	switch constants.LoanStage(in.Stage) {
 	case constants.LoanStagePending:
 		if loan.ClosingDate == nil {
-			return nil, nil, nil, nil, errorx.New("Closing Date Is Required")
+			return nil, nil, nil, nil, errorx.New("Closing date is required")
 		}
 		loan.HoldbackAmount = loan.TotalAmount - loan.InitialAmount
 		loan.PrincipalAmount = loan.TotalAmount
@@ -222,18 +197,18 @@ func (l *CreateBorrowerLoanLogic) buildCreateModels(in *borrower.LoanCreateReque
 	case constants.LoanStageActive:
 		// loan.PrincipalAmount = in.PrincipalAmount
 		if loan.MaturityDate == nil {
-			return nil, nil, nil, nil, errorx.New("Maturity Date Is Required")
+			return nil, nil, nil, nil, errorx.New("Maturity date is required")
 		}
 
 	case constants.LoanStageArchived:
 
 		// loan.PrincipalAmount = in.PrincipalAmount
 		if loan.PaidOffDate == nil {
-			return nil, nil, nil, nil, errorx.New("Paid Off Date Is Required")
+			return nil, nil, nil, nil, errorx.New("Paid off date is required")
 		}
 
 	default:
-		return nil, nil, nil, nil, errorx.WithStack(errorx.New("Invalid Loan Stage"))
+		return nil, nil, nil, nil, errorx.WithStack(errorx.New("Invalid loan stage"))
 	}
 	return
 }

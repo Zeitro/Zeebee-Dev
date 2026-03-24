@@ -15,8 +15,9 @@ type Config struct {
 
 type ApiConf struct {
 	rest.RestConf
-	JwtAuth types.JwtAuth      `json:",optional"`
-	RpcConf zrpc.RpcClientConf `json:",optional"`
+	JwtAuth         types.JwtAuth      `json:",optional"`
+	RpcConf         zrpc.RpcClientConf `json:",optional"`
+	PdfGeneratorUrl string
 }
 
 type RpcConf struct {
@@ -36,6 +37,7 @@ type RpcConf struct {
 	InviteUserUrl                string
 	InviteUserExpireSeconds      int
 	SendInviteEmailPeriodSeconds int
+	CasbinConf                   CasbinConf
 }
 
 type DbConf struct {
@@ -74,4 +76,21 @@ type EmailConf struct {
 	Port     int
 	Password string
 	Username string
+}
+
+type CasbinConf struct {
+	ModelPath  string
+	Watcher    CasbinWatcher
+	EventTopic CasbinEventTopic
+}
+
+type CasbinWatcher struct {
+	Host          string
+	Pwd           string
+	LenderChannel string
+	Tls           bool `json:",default=false"`
+}
+
+type CasbinEventTopic struct {
+	LenderTopic string
 }

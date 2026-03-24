@@ -28,7 +28,7 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -63,7 +63,7 @@ func (l *CreateLogic) Create(in *borrower.PropertyCreateRequest) (resp *borrower
 		return nil, err
 	}
 	if isExisted {
-		err = errorx.WithStack(errorx.New("Address Is Existed"))
+		err = errorx.WithStack(errorx.New("Address already exists"))
 		return nil, err
 	}
 

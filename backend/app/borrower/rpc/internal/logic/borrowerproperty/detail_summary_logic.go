@@ -4,8 +4,6 @@ import (
 	"context"
 
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/jinzhu/copier"
-
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
@@ -15,6 +13,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/model"
 )
 
 type DetailSummaryLogic struct {
@@ -29,7 +28,7 @@ func NewDetailSummaryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Det
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -52,22 +51,19 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 		return nil, err
 	}
 	if borrowerProperty == nil || borrowerProperty.Id == 0 {
-		return nil, errorx.WithStack(errorx.New("Property Is Invalid"))
+		return nil, errorx.WithStack(errorx.New("Property is invalid"))
 	}
-	// todo check organization
+
 	if borrowerProperty.OrganizationId != claim.OrganizationId {
-		return nil, errorx.WithStack(errorx.New("Access Denied"))
+		return nil, errorx.WithStack(errorx.New("Access denied"))
 	}
 
 	loanProperties := borrowerProperty.LoanProperties
 
 	respData := &borrower.PropertyDetailSummaryResponseData{}
-	err = copier.CopyWithOption(respData, borrowerProperty, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+	respData, err = copierx.Trans[model.BorrowerProperty, borrower.PropertyDetailSummaryResponseData](borrowerProperty)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
 
 	var totalClosingFundAmount float64
@@ -91,28 +87,20 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 				Applicants: []*borrower.LoanApplicantEntity{},
 			}
 			loan.LoanProperty = loanProperties[i]
-
-			err = copier.CopyWithOption(loanEntry, loan, copier.Option{
-				CaseSensitive: true,
-				Converters: []copier.TypeConverter{
-					copierx.TimeToRFC3339Str(),
-					copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
-				},
-			})
-
+			err = copierx.Assign[model.Loan, borrower.LoanEntity](loan, loanEntry,
+				copierx.TimeToRFC3339Str(),
+				copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
+			)
 			if err != nil {
-				return nil, errorx.GetFailedTransRespErr(err)
+				return nil, err
 			}
 
-			err = copier.CopyWithOption(&loanEntry.Applicants, loanProperty.Applicants, copier.Option{
-				CaseSensitive: true,
-				Converters: []copier.TypeConverter{
-					copierx.TimeToRFC3339Str(),
-					copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
-				},
-			})
+			err = copierx.Assign[[]*model.LoanApplicant, []*borrower.LoanApplicantEntity](&loanProperty.Applicants, &loanEntry.Applicants,
+				copierx.TimeToRFC3339Str(),
+				copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
+			)
 			if err != nil {
-				return nil, errorx.GetFailedTransRespErr(err)
+				return nil, err
 			}
 
 			switch loan.Stage {

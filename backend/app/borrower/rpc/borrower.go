@@ -9,21 +9,27 @@ import (
 
 	"github.com/zeromicro/go-zero/core/service"
 
+	"zeebee-backend/app/borrower/rpc/internal/logic"
 	borrowerApplicantServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerapplicant"
 	borrowerEntityServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerentity"
 	borrowerPropertyServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerproperty"
 	organizationServer "zeebee-backend/app/borrower/rpc/internal/server/organization"
 	organizationEmailServer "zeebee-backend/app/borrower/rpc/internal/server/organizationemail"
 	zeitroServer "zeebee-backend/app/borrower/rpc/internal/server/zeitro"
+	"zeebee-backend/domains/zeebee/templater"
+	"zeebee-backend/domains/zeebee/templater/convertor"
+	"zeebee-backend/domains/zeebee/templater/loader"
 
 	loanApplicantServer "zeebee-backend/app/borrower/rpc/internal/server/loanapplicant"
 
 	"zeebee-backend/app/borrower/config"
 	"zeebee-backend/app/borrower/rpc/internal/global"
+	authServer "zeebee-backend/app/borrower/rpc/internal/server/auth"
 	commonServer "zeebee-backend/app/borrower/rpc/internal/server/common"
 	loanServer "zeebee-backend/app/borrower/rpc/internal/server/loan"
 	loanDocumentServer "zeebee-backend/app/borrower/rpc/internal/server/loandocument"
 	organizationUserServer "zeebee-backend/app/borrower/rpc/internal/server/organizationuser"
+	resourceServer "zeebee-backend/app/borrower/rpc/internal/server/resource"
 	roleServer "zeebee-backend/app/borrower/rpc/internal/server/role"
 	storageServer "zeebee-backend/app/borrower/rpc/internal/server/storage"
 	userServer "zeebee-backend/app/borrower/rpc/internal/server/user"
@@ -45,6 +51,13 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 	zrpc.SetClientSlowThreshold(time.Second * 2)
 
 	ctx := svc.NewServiceContext(rpcConfig)
+
+	baseLogic := logic.NewBaseLogic(ctx)
+	tplLoader := loader.NewDefaultTemplateLoader(baseLogic.BaseTemplateLogic, baseLogic.OrganizationTemplateLogic)
+	tplConvertor := convertor.NewDefaultConvertor(rpcConfig.PdfGeneratorUrl)
+	tpl := templater.NewEngine(tplLoader, tplConvertor)
+	global.Templater = tpl
+
 	rpcServer := zrpc.MustNewServer(rpcConfig.RpcServerConf, func(grpcServer *grpc.Server) {
 		borrower.RegisterUserServer(grpcServer, userServer.NewUserServer(ctx))
 		borrower.RegisterLoanServer(grpcServer, loanServer.NewLoanServer(ctx))
@@ -60,6 +73,8 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		borrower.RegisterOrganizationServer(grpcServer, organizationServer.NewOrganizationServer(ctx))
 		borrower.RegisterOrganizationEmailServer(grpcServer, organizationEmailServer.NewOrganizationEmailServer(ctx))
 		borrower.RegisterZeitroServer(grpcServer, zeitroServer.NewZeitroServer(ctx))
+		borrower.RegisterAuthServer(grpcServer, authServer.NewAuthServer(ctx))
+		borrower.RegisterResourceServer(grpcServer, resourceServer.NewResourceServer(ctx))
 
 		if rpcConfig.Mode == service.DevMode || rpcConfig.Mode == service.TestMode {
 			reflection.Register(grpcServer)

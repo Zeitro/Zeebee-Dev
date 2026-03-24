@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
@@ -43,7 +42,7 @@ func NewImportPendingLoansLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -162,16 +161,9 @@ func (l *ImportPendingLoansLogic) buildImportModels(in []*borrower.ImportPending
 func (l *ImportPendingLoansLogic) buildImportModel(in *borrower.ImportPendingLoansRequestData, claim utils.JwtUser) (data *importPendingLoanModelData, err error) {
 	// loan
 	loan := &model.Loan{}
-
-	err = copier.CopyWithOption(loan, &in, copier.Option{
-		IgnoreEmpty: true,
-		DeepCopy:    true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
+	loan, err = copierx.Trans[borrower.ImportPendingLoansRequestData, model.Loan](in, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
-		return nil, errorx.GetFailedTransErr(err)
+		return nil, err
 	}
 	loan.CreatorId = claim.OrganizationUserId
 	loan.CreatorName = claim.Username
@@ -183,62 +175,42 @@ func (l *ImportPendingLoansLogic) buildImportModel(in *borrower.ImportPendingLoa
 
 	// loan borrower
 	loanBorrower := &model.LoanBorrower{}
-	err = copier.CopyWithOption(loanBorrower, in.LoanBorrower, copier.Option{
-		IgnoreEmpty:   true,
-		CaseSensitive: true,
-		DeepCopy:      true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
+	loanBorrower, err = copierx.Trans[borrower.ImportPendingLoansRequestData, model.LoanBorrower](in, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
-		return nil, errorx.GetFailedTransErr(err)
+		return nil, err
 	}
 
 	// applicants
 	var applicants []*model.LoanApplicant
 	var totalOwnPercent int32
-
-	err = copier.CopyWithOption(&applicants, in.Applicants, copier.Option{
-		IgnoreEmpty:   false,
-		CaseSensitive: true,
-		DeepCopy:      true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
+	applicantsPtr, err := copierx.Trans[[]*borrower.ImportPendingLoanApplicantEntity, []*model.LoanApplicant](&in.Applicants, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
-		return nil, errorx.GetFailedTransErr(err)
+		return nil, err
 	}
+	applicants = *applicantsPtr
+
 	if len(applicants) == 0 {
-		return nil, errorx.New("No Applicant")
+		return nil, errorx.New("No applicant")
 	}
 	primaryCount := slice.CountBy(applicants, func(index int, item *model.LoanApplicant) bool {
 		return item.IsPrimary
 	})
 	if primaryCount == 0 {
-		return nil, errorx.New("No Primary Applicant")
+		return nil, errorx.New("No primary applicant")
 	}
 	slice.ForEach(applicants, func(index int, item *model.LoanApplicant) {
 		item.BorrowerOrganizationId = claim.OrganizationId
 		totalOwnPercent += item.OwnPercent
 	})
 	if totalOwnPercent > 100 {
-		return nil, errorx.New("Total Own Percent Greater Than 100")
+		return nil, errorx.New("Total own percent is greater than 100")
 	}
 
 	// loan property
 	loanProperty := &model.LoanProperty{}
-	err = copier.CopyWithOption(loanProperty, in.LoanProperty, copier.Option{
-		IgnoreEmpty:   true,
-		CaseSensitive: true,
-		DeepCopy:      true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
+	loanProperty, err = copierx.Trans[borrower.ImportPendingLoansRequestData, model.LoanProperty](in, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
-		return nil, errorx.GetFailedTransErr(err)
+		return nil, err
 	}
 
 	// BorrowerProperty

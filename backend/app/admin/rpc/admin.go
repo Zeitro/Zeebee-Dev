@@ -8,7 +8,10 @@ import (
 	"github.com/zeromicro/go-zero/core/service"
 
 	apiServer "zeebee-backend/app/admin/rpc/internal/server/api"
+	authServer "zeebee-backend/app/admin/rpc/internal/server/auth"
+	baseTemplateServer "zeebee-backend/app/admin/rpc/internal/server/basetemplate"
 	commonServer "zeebee-backend/app/admin/rpc/internal/server/common"
+	loanServer "zeebee-backend/app/admin/rpc/internal/server/loan"
 	organizationServer "zeebee-backend/app/admin/rpc/internal/server/organization"
 	organizationUserServer "zeebee-backend/app/admin/rpc/internal/server/organizationuser"
 	resourceServer "zeebee-backend/app/admin/rpc/internal/server/resource"
@@ -44,6 +47,9 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		admin.RegisterOrganizationServer(grpcServer, organizationServer.NewOrganizationServer(ctx))
 		admin.RegisterStorageServer(grpcServer, storageServer.NewStorageServer(ctx))
 		admin.RegisterCommonServer(grpcServer, commonServer.NewCommonServer(ctx))
+		admin.RegisterBaseTemplateServer(grpcServer, baseTemplateServer.NewBaseTemplateServer(ctx))
+		admin.RegisterLoanServer(grpcServer, loanServer.NewLoanServer(ctx))
+		admin.RegisterAuthServer(grpcServer, authServer.NewAuthServer(ctx))
 		if rpcConfig.Mode == service.DevMode || rpcConfig.Mode == service.TestMode {
 			reflection.Register(grpcServer)
 		}

@@ -17,11 +17,11 @@ type (
 	AddressEntity                              = admin.AddressEntity
 	ApiCreateRequest                           = admin.ApiCreateRequest
 	ApiCreateRequestData                       = admin.ApiCreateRequestData
-	ApiCreateResponse                          = admin.ApiCreateResponse
 	ApiDeleteRequest                           = admin.ApiDeleteRequest
 	ApiDeleteRequestData                       = admin.ApiDeleteRequestData
 	ApiDetailRequest                           = admin.ApiDetailRequest
 	ApiDetailRequestData                       = admin.ApiDetailRequestData
+	ApiDetailResponse                          = admin.ApiDetailResponse
 	ApiEntity                                  = admin.ApiEntity
 	ApiTreeEntity                              = admin.ApiTreeEntity
 	ApiTreeRequest                             = admin.ApiTreeRequest
@@ -29,9 +29,56 @@ type (
 	ApiTreeResponse                            = admin.ApiTreeResponse
 	ApiUpdateRequest                           = admin.ApiUpdateRequest
 	ApiUpdateRequestData                       = admin.ApiUpdateRequestData
+	AuthCheckRequest                           = admin.AuthCheckRequest
+	AuthCheckRequestData                       = admin.AuthCheckRequestData
+	AuthCheckResponse                          = admin.AuthCheckResponse
+	AuthCheckResponseData                      = admin.AuthCheckResponseData
+	BaseTemplateEntity                         = admin.BaseTemplateEntity
+	BaseTemplatePageEntity                     = admin.BaseTemplatePageEntity
+	BaseTemplatePageRequest                    = admin.BaseTemplatePageRequest
+	BaseTemplatePageRequestData                = admin.BaseTemplatePageRequestData
+	BaseTemplatePageRequestFilter              = admin.BaseTemplatePageRequestFilter
+	BaseTemplatePageRequestSorter              = admin.BaseTemplatePageRequestSorter
+	BaseTemplatePageResponse                   = admin.BaseTemplatePageResponse
+	BaseTemplatePageResponseData               = admin.BaseTemplatePageResponseData
+	BaseTemplatePreviewRequest                 = admin.BaseTemplatePreviewRequest
+	BaseTemplatePreviewRequestData             = admin.BaseTemplatePreviewRequestData
+	BaseTemplatePreviewResponse                = admin.BaseTemplatePreviewResponse
+	BaseTemplatePreviewResponseData            = admin.BaseTemplatePreviewResponseData
+	BorrowerEntityEntity                       = admin.BorrowerEntityEntity
+	BorrowerPropertyEntity                     = admin.BorrowerPropertyEntity
+	CreateBaseTemplateRequest                  = admin.CreateBaseTemplateRequest
+	CreateBaseTemplateRequestData              = admin.CreateBaseTemplateRequestData
+	CreateBaseTemplateResponse                 = admin.CreateBaseTemplateResponse
+	DeleteBaseTemplateRequest                  = admin.DeleteBaseTemplateRequest
 	EmptyRequest                               = admin.EmptyRequest
 	EmptyResponse                              = admin.EmptyResponse
+	FileEntity                                 = admin.FileEntity
+	GetBaseTemplateRequest                     = admin.GetBaseTemplateRequest
+	GetBaseTemplateResponse                    = admin.GetBaseTemplateResponse
 	IdRequest                                  = admin.IdRequest
+	LoanApplicantEntity                        = admin.LoanApplicantEntity
+	LoanBorrowerEntity                         = admin.LoanBorrowerEntity
+	LoanBudgetEntity                           = admin.LoanBudgetEntity
+	LoanDemographicEntity                      = admin.LoanDemographicEntity
+	LoanDemographicEthnicityEntity             = admin.LoanDemographicEthnicityEntity
+	LoanDemographicExtraDemographicEntity      = admin.LoanDemographicExtraDemographicEntity
+	LoanDemographicPropertyEntity              = admin.LoanDemographicPropertyEntity
+	LoanDemographicRaceEntity                  = admin.LoanDemographicRaceEntity
+	LoanDetailResponse                         = admin.LoanDetailResponse
+	LoanDocumentEntity                         = admin.LoanDocumentEntity
+	LoanEntity                                 = admin.LoanEntity
+	LoanExperienceEntity                       = admin.LoanExperienceEntity
+	LoanExtendValueEntity                      = admin.LoanExtendValueEntity
+	LoanLenderCompaniesResponse                = admin.LoanLenderCompaniesResponse
+	LoanPageRequest                            = admin.LoanPageRequest
+	LoanPageRequestData                        = admin.LoanPageRequestData
+	LoanPageRequestFilter                      = admin.LoanPageRequestFilter
+	LoanPageRequestSorter                      = admin.LoanPageRequestSorter
+	LoanPageResponse                           = admin.LoanPageResponse
+	LoanPageResponseData                       = admin.LoanPageResponseData
+	LoanPropertyEntity                         = admin.LoanPropertyEntity
+	LoanThirdServiceEntity                     = admin.LoanThirdServiceEntity
 	OptionEntity                               = admin.OptionEntity
 	OptionRequest                              = admin.OptionRequest
 	OptionRequestData                          = admin.OptionRequestData
@@ -45,6 +92,7 @@ type (
 	OrganizationEntity                         = admin.OrganizationEntity
 	OrganizationLenderMetadataEntity           = admin.OrganizationLenderMetadataEntity
 	OrganizationMetadataEntity                 = admin.OrganizationMetadataEntity
+	OrganizationOptionsEntity                  = admin.OrganizationOptionsEntity
 	OrganizationPageEntity                     = admin.OrganizationPageEntity
 	OrganizationPageRequest                    = admin.OrganizationPageRequest
 	OrganizationPageRequestData                = admin.OrganizationPageRequestData
@@ -52,13 +100,15 @@ type (
 	OrganizationPageRequestSorter              = admin.OrganizationPageRequestSorter
 	OrganizationPageResponse                   = admin.OrganizationPageResponse
 	OrganizationPageResponseData               = admin.OrganizationPageResponseData
+	OrganizationSelectOptionsRequest           = admin.OrganizationSelectOptionsRequest
+	OrganizationSelectOptionsRequestData       = admin.OrganizationSelectOptionsRequestData
+	OrganizationSelectOptionsResponse          = admin.OrganizationSelectOptionsResponse
 	OrganizationSwitchStatusRequest            = admin.OrganizationSwitchStatusRequest
 	OrganizationSwitchStatusRequestData        = admin.OrganizationSwitchStatusRequestData
 	OrganizationUpdateLenderRequest            = admin.OrganizationUpdateLenderRequest
 	OrganizationUpdateLenderRequestData        = admin.OrganizationUpdateLenderRequestData
 	OrganizationUserCreateRequest              = admin.OrganizationUserCreateRequest
 	OrganizationUserCreateRequestData          = admin.OrganizationUserCreateRequestData
-	OrganizationUserCreateResponse             = admin.OrganizationUserCreateResponse
 	OrganizationUserDeleteRequest              = admin.OrganizationUserDeleteRequest
 	OrganizationUserDeleteRequestData          = admin.OrganizationUserDeleteRequestData
 	OrganizationUserDetailRequest              = admin.OrganizationUserDetailRequest
@@ -76,10 +126,11 @@ type (
 	OrganizationUserSwitchStatusRequestData    = admin.OrganizationUserSwitchStatusRequestData
 	OrganizationUserUpdateRequest              = admin.OrganizationUserUpdateRequest
 	OrganizationUserUpdateRequestData          = admin.OrganizationUserUpdateRequestData
-	OrganizationUserUpdateResponse             = admin.OrganizationUserUpdateResponse
 	RangeFloat                                 = admin.RangeFloat
 	RangeInt32                                 = admin.RangeInt32
 	RangeInt64                                 = admin.RangeInt64
+	ReassignLoanRequest                        = admin.ReassignLoanRequest
+	ReassignLoanRequestData                    = admin.ReassignLoanRequestData
 	RefreshTokenRequest                        = admin.RefreshTokenRequest
 	RefreshTokenRequestData                    = admin.RefreshTokenRequestData
 	RefreshTokenResponse                       = admin.RefreshTokenResponse
@@ -90,7 +141,6 @@ type (
 	ResetPasswordResponseData                  = admin.ResetPasswordResponseData
 	ResourceCreateRequest                      = admin.ResourceCreateRequest
 	ResourceCreateRequestData                  = admin.ResourceCreateRequestData
-	ResourceCreateResponse                     = admin.ResourceCreateResponse
 	ResourceDeleteRequest                      = admin.ResourceDeleteRequest
 	ResourceDeleteRequestData                  = admin.ResourceDeleteRequestData
 	ResourceDetailRequest                      = admin.ResourceDetailRequest
@@ -107,9 +157,10 @@ type (
 	RoleAllRequestData                         = admin.RoleAllRequestData
 	RoleAllResponse                            = admin.RoleAllResponse
 	RoleAndResourceRelationEntity              = admin.RoleAndResourceRelationEntity
+	RoleAssignOrganizationUsersRequest         = admin.RoleAssignOrganizationUsersRequest
+	RoleAssignOrganizationUsersRequestData     = admin.RoleAssignOrganizationUsersRequestData
 	RoleCreateRequest                          = admin.RoleCreateRequest
 	RoleCreateRequestData                      = admin.RoleCreateRequestData
-	RoleCreateResponse                         = admin.RoleCreateResponse
 	RoleDeleteRequest                          = admin.RoleDeleteRequest
 	RoleDeleteRequestData                      = admin.RoleDeleteRequestData
 	RoleDetailRequest                          = admin.RoleDetailRequest
@@ -122,16 +173,22 @@ type (
 	RolePageRequestSorter                      = admin.RolePageRequestSorter
 	RolePageResponse                           = admin.RolePageResponse
 	RolePageResponseData                       = admin.RolePageResponseData
+	RoleSwitchStatusRequest                    = admin.RoleSwitchStatusRequest
+	RoleSwitchStatusRequestData                = admin.RoleSwitchStatusRequestData
 	RoleUpdateRequest                          = admin.RoleUpdateRequest
 	RoleUpdateRequestData                      = admin.RoleUpdateRequestData
-	RoleUpdateResponse                         = admin.RoleUpdateResponse
-	RoleUpdateStatusRequest                    = admin.RoleUpdateStatusRequest
-	RoleUpdateStatusRequestData                = admin.RoleUpdateStatusRequestData
 	StorageCreatePresignedUrlRequest           = admin.StorageCreatePresignedUrlRequest
 	StorageCreatePresignedUrlRequestData       = admin.StorageCreatePresignedUrlRequestData
 	StorageCreatePresignedUrlResponse          = admin.StorageCreatePresignedUrlResponse
 	StorageCreatePresignedUrlResponseData      = admin.StorageCreatePresignedUrlResponseData
 	StringSliceResponse                        = admin.StringSliceResponse
+	SwitchBaseTemplateStatusRequest            = admin.SwitchBaseTemplateStatusRequest
+	SwitchBaseTemplateStatusRequestData        = admin.SwitchBaseTemplateStatusRequestData
+	TemplateVariableEntity                     = admin.TemplateVariableEntity
+	TemplateVariableGroupEntity                = admin.TemplateVariableGroupEntity
+	UpdateBaseTemplateRequest                  = admin.UpdateBaseTemplateRequest
+	UpdateBaseTemplateRequestData              = admin.UpdateBaseTemplateRequestData
+	UpdateBaseTemplateResponse                 = admin.UpdateBaseTemplateResponse
 	UsCitiesRequest                            = admin.UsCitiesRequest
 	UsCitiesRequestData                        = admin.UsCitiesRequestData
 	UserEntity                                 = admin.UserEntity
@@ -151,6 +208,7 @@ type (
 		GetOpt(ctx context.Context, in *OptionRequest, opts ...grpc.CallOption) (*OptionResponse, error)
 		GetUsState(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*StringSliceResponse, error)
 		GetUsCities(ctx context.Context, in *UsCitiesRequest, opts ...grpc.CallOption) (*StringSliceResponse, error)
+		SyncData(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	}
 
 	defaultCommon struct {
@@ -177,4 +235,9 @@ func (m *defaultCommon) GetUsState(ctx context.Context, in *EmptyRequest, opts .
 func (m *defaultCommon) GetUsCities(ctx context.Context, in *UsCitiesRequest, opts ...grpc.CallOption) (*StringSliceResponse, error) {
 	client := admin.NewCommonClient(m.cli.Conn())
 	return client.GetUsCities(ctx, in, opts...)
+}
+
+func (m *defaultCommon) SyncData(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	client := admin.NewCommonClient(m.cli.Conn())
+	return client.SyncData(ctx, in, opts...)
 }

@@ -3,6 +3,8 @@ package loanlogic
 import (
 	"context"
 
+	"github.com/duke-git/lancet/v2/slice"
+
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -24,7 +26,7 @@ func NewBorrowerLoanLenderCompaniesLogic(ctx context.Context, svcCtx *svc.Servic
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -41,10 +43,14 @@ func (l *BorrowerLoanLenderCompaniesLogic) BorrowerLoanLenderCompanies(in *borro
 	}
 
 	var lenderCompanies []string
-	lenderCompanies, err = l.svcCtx.LoanRepo.GetLenderCompanyForBorrower(l.ctx, claim.OrganizationUserId, claim.OrganizationId)
+	lenderCompanies, err = l.svcCtx.LoanRepo.GetLenderCompanyForBorrower(l.ctx, 0, claim.OrganizationId)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed To Get Lender Companies")
+		return nil, errorx.Wrap(err, "Failed to get lender companies")
 	}
+
+	lenderCompanies = slice.Filter(lenderCompanies, func(index int, item string) bool {
+		return len(item) > 0
+	})
 
 	return &borrower.LoanLenderCompaniesResponse{
 		Data: lenderCompanies,

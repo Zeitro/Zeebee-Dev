@@ -125,6 +125,9 @@ func (repo *BaseRepo[T]) CreateWithTx(ctx context.Context, tx *gorm.DB, data T, 
 // BatchCreateWithTx batch create with tx
 func (repo *BaseRepo[T]) BatchCreateWithTx(ctx context.Context, tx *gorm.DB, data []T, withAssociation bool) ([]T, error) {
 	var err error
+	if len(data) == 0 {
+		return data, nil
+	}
 	if withAssociation {
 		err = tx.WithContext(ctx).Create(&data).Error
 	} else {
@@ -273,7 +276,7 @@ func (repo *BaseRepo[T]) Delete(ctx context.Context, filters map[string]interfac
 // DeleteWithTx delete with tx
 func (repo *BaseRepo[T]) DeleteWithTx(ctx context.Context, tx *gorm.DB, filters map[string]interface{}) (effectRaws int64, err error) {
 	if len(filters) == 0 {
-		return 0, errorx.New("Filters Is Empty")
+		return 0, errorx.New("Filters is empty")
 	}
 	query := tx.WithContext(ctx)
 	for k, v := range filters {
@@ -319,6 +322,17 @@ func (repo *BaseRepo[T]) Page(query *gorm.DB, pageReq PageRequest) (page PageRes
 // FindAll find all
 func (repo *BaseRepo[T]) FindAll(ctx context.Context, filter map[string]interface{}) ([]T, error) {
 	query := repo.Client(ctx)
+	for k, v := range filter {
+		query = query.Where(k+" = ?", v)
+	}
+
+	var data []T
+	err := query.Find(&data).Error
+	return data, errorx.WithStack(err)
+}
+
+func (repo *BaseRepo[T]) FindAllWithTx(ctx context.Context, tx *gorm.DB, filter map[string]interface{}) ([]T, error) {
+	query := tx.WithContext(ctx)
 	for k, v := range filter {
 		query = query.Where(k+" = ?", v)
 	}

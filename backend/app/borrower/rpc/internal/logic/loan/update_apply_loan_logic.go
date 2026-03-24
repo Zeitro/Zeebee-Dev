@@ -28,7 +28,7 @@ func NewUpdateApplyLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *U
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -62,7 +62,7 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 		constants.LoanSourcePreapproval,
 	}
 	if !slice.Contain(sources, loan.Source) {
-		return nil, errorx.WithStack(errorx.New("Invalid Loan Source"))
+		return nil, errorx.WithStack(errorx.New("Invalid loan source"))
 	}
 	stages := []constants.LoanStage{
 		constants.LoanStagePending,
@@ -73,11 +73,11 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 		constants.LoanPendingStatusNone,
 	}
 	if !slice.Contain(stages, loan.Stage) && !slice.Contain(pendingStatus, loan.PendingStatus) {
-		return nil, errorx.New("Loan's Stage Should Be Pending Or Draft")
+		return nil, errorx.New("Loan's stage should be pending or draft")
 	}
 	// todo check organization
 	if loan.BorrowerOrganizationId != claim.OrganizationId {
-		return nil, errorx.WithStack(errorx.New("Loan Does Not Belong To Borrower"))
+		return nil, errorx.WithStack(errorx.New("Loan does not belong to borrower"))
 	}
 
 	oldApplicants := loan.Applicants
@@ -182,7 +182,7 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 				case constants.LoanStageDraft:
 					// change stage from draft to pending
 				default:
-					err = errorx.WithStack(errorx.New("Invalid Loan Stage"))
+					err = errorx.WithStack(errorx.New("Invalid loan stage"))
 					return err
 				}
 				loanDocumentTypes := constants.GetLoanDocumentTypes()

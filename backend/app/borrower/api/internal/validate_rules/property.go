@@ -125,7 +125,7 @@ func LoanPropertyApplyEntity(sl validator.StructLevel) {
 	parent := sl.Parent().Interface()
 	property, ok := val.(types.LoanPropertyApplyEntity)
 	if !ok {
-		sl.ReportError(property, "property", "Property", "property_type", "Invalid Loan Apply Property")
+		sl.ReportError(property, "property", "Property", "property_type", "Invalid loan apply property")
 		return
 	}
 	switch req := parent.(type) {
@@ -135,7 +135,7 @@ func LoanPropertyApplyEntity(sl validator.StructLevel) {
 		loanType = req.LoanType
 
 	default:
-		sl.ReportError(property, "property", "Property", "property_type", "Invalid Loan Apply Property")
+		sl.ReportError(property, "property", "Property", "property_type", "Invalid loan apply property")
 		return
 	}
 

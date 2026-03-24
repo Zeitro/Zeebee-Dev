@@ -11,6 +11,60 @@ type AddressEntity struct {
 	ZipCode  string `json:"zip_code,optional"`
 }
 
+type ApiEntity struct {
+	Id                 int64  `json:"id"`
+	ParentId           int64  `json:"parent_id"`
+	Name               string `json:"name"`
+	Path               string `json:"path"`
+	Method             string `json:"method"`
+	Status             string `json:"status"`
+	Description        string `json:"description"`
+	Type               string `json:"type"`
+	SortOrder          int32  `json:"sort_order"`
+	AuthRequired       bool   `json:"auth_required"`
+	PermissionRequired bool   `json:"permission_required"`
+	CreatedAt          string `json:"created_at"`
+	UpdatedAt          string `json:"updated_at"`
+}
+
+type ApiTreeEntity struct {
+	Id                 int64            `json:"id"`
+	ParentId           int64            `json:"parent_id"`
+	Name               string           `json:"name"`
+	Path               string           `json:"path"`
+	Method             string           `json:"method"`
+	Status             string           `json:"status"`
+	Description        string           `json:"description"`
+	Type               string           `json:"type"`
+	SortOrder          int32            `json:"sort_order"`
+	AuthRequired       bool             `json:"auth_required"`
+	PermissionRequired bool             `json:"permission_required"`
+	CreatedAt          string           `json:"created_at"`
+	UpdatedAt          string           `json:"updated_at"`
+	Children           []*ApiTreeEntity `json:"children,omitempty"`
+}
+
+type BasePageFilter struct {
+	Keyword string `json:"keyword,optional"`
+}
+
+type BasePageRequest struct {
+	Limit int `json:"limit,optional"`
+	Page  int `json:"page, optional"`
+}
+
+type BasePageResponse struct {
+	Page      int64 `json:"page"`
+	Limit     int64 `json:"limit"`
+	Total     int64 `json:"total"`
+	TotalPage int64 `json:"total_page"`
+}
+
+type BasePageSort struct {
+	Column string `json:"column,optional"`
+	Sort   string `json:"sort,optional"`
+}
+
 type EmptyRequest struct {
 }
 
@@ -32,6 +86,31 @@ type FileEntity struct {
 	FileUrl    string `json:"file_url"`
 	CreatedAt  string `json:"created_at"`
 	UpdatedAt  string `json:"updated_at"`
+}
+
+type GetSelectOptionRequest struct {
+	Name string `form:"name"`
+}
+
+type GetSelectOptionResponse struct {
+	Options []SelectOptionEntity `json:"options"`
+}
+
+type GetUsCitiesRequest struct {
+	State string `form:"state"`
+}
+
+type GetUsCitiesResponse struct {
+	List []string `json:"list"`
+}
+
+type GetUsStatesResponse struct {
+	List []string `json:"list"`
+}
+
+type HtmlToPdfRequest struct {
+	Name    string `json:"name"`
+	Content string `json:"content"`
 }
 
 type ImportLoanExtendEntity struct {
@@ -138,6 +217,29 @@ type LoanDemographicRaceEntity struct {
 	AmericanIndianOrAlaskaNativeName string   `json:"american_indian_or_alaska_native_name,optional"`
 }
 
+type LoanDetailRequest struct {
+	Id int64 `path:"id"`
+}
+
+type LoanDetailResponse struct {
+	LoanEntity
+}
+
+type LoanDocumentAddFilesRequest struct {
+	Id       int64    `path:"id"`
+	FileUrls []string `json:"file_urls" validate:"required,dive,url"`
+}
+
+type LoanDocumentCreateRequest struct {
+	LoanId    int64    `json:"loan_id"`
+	Category  string   `json:"category" validate:"required,oneof=Extend LenderClosingExtend"`
+	FileTypes []string `json:"file_types" validate:"required,min=1,dive,required"`
+}
+
+type LoanDocumentCreateResponse struct {
+	LoanDocuments []*LoanDocumentOptEntity `json:"loan_documents"`
+}
+
 type LoanDocumentEntity struct {
 	Id             int64        `json:"id"`
 	LoanId         int64        `json:"loan_id"`
@@ -157,9 +259,22 @@ type LoanDocumentOptEntity struct {
 	FileType string `json:"file_type"`
 }
 
+type LoanDocumentOptResponse struct {
+	Options []LoanDocumentOptEntity `json:"options"`
+}
+
 type LoanDocumentSendRequestEntity struct {
 	Id      int64  `json:"id"`
 	Comment string `json:"comment,optional"`
+}
+
+type LoanDocumentSendRequestsRequest struct {
+	Documents []LoanDocumentSendRequestEntity `json:"documents" validate:"required,min=1,dive,required"`
+}
+
+type LoanDocumentUpdateCommentRequest struct {
+	Id      int64  `path:"id"`
+	Comment string `json:"comment" validate:"required,max=255"`
 }
 
 type LoanEntity struct {
@@ -186,8 +301,8 @@ type LoanEntity struct {
 	PaidOffDate            string                    `json:"paid_off_date,optional" validate:"required_if=Stage Archived,omitempty,datetime=01/02/2006"`
 	BusinessStrategy       []string                  `json:"business_strategy" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
 	Applicants             []LoanApplicantEntity     `json:"applicants"`
-	LenderCompanyId        int64                     `json:"lender_company_id"`
-	BorrowerId             int64                     `json:"borrower_id"`
+	LenderOrganizationId   int64                     `json:"lender_organization_id"`
+	BorrowerOrganizationId int64                     `json:"borrower_organization_id"`
 	CreatedAt              string                    `json:"created_at"`
 	UpdatedAt              string                    `json:"updated_at"`
 	Source                 string                    `json:"source"`
@@ -231,6 +346,21 @@ type LoanPageFilter struct {
 	LoanPurpose   []string `json:"loan_purpose,optional" `
 	LoanType      []string `json:"loan_type,optional"`
 	Lender        []string `json:"lender,optional"`
+}
+
+type LoanPageRequest struct {
+	Page   int64          `json:"page,optional"`
+	Limit  int64          `json:"limit,optional"`
+	Filter LoanPageFilter `json:"filter,optional"`
+	Sorter LoanPageSorter `json:"sorter,optional"`
+}
+
+type LoanPageResponse struct {
+	Page      int64        `json:"page"`
+	Limit     int64        `json:"limit"`
+	Total     int64        `json:"total"`
+	TotalPage int64        `json:"total_page"`
+	List      []LoanEntity `json:"list"`
 }
 
 type LoanPageSorter struct {
@@ -338,12 +468,73 @@ type LoanUpdateApplicantEntity struct {
 	Address          *AddressEntity `json:"address,optional" validate:"required"`
 }
 
+type LoanUpdateRequest struct {
+	Id                     int64                          `path:"id,optional"`
+	Stage                  string                         `json:"stage" validate:"required,oneof=Pending Active Archived Rejected"`
+	PendingStatus          string                         `json:"pending_status,optional" validate:"required_if=Stage Pending,omitempty,oneof=Quoting Processing Underwriting Closing"`
+	LoanType               string                         `json:"loan_type,optional" validate:"required,oneof=Bridge Rehab Rental 'Ground up construction'"`
+	LoanPurpose            string                         `json:"loan_purpose,optional" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
+	TotalAmount            float64                        `json:"total_amount,optional" validate:"required,gt=0"`
+	InitialAmount          float64                        `json:"initial_amount,optional" validate:"ltefield=TotalAmount"`
+	LoanProperty           *LoanPropertyEditEntity        `json:"loan_property,optional" validate:"required"`
+	Applicants             []*LoanApplicantEditLoanEntity `json:"applicants,optional" validate:"required"`
+	HoldbackAmount         float64                        `json:"holdback_amount,optional" validate:"ltefield=TotalAmount"`
+	PrincipalAmount        float64                        `json:"principal_amount,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
+	MaturityDate           string                         `json:"maturity_date, optional"`
+	PrepaymentPenalty      int32                          `json:"prepayment_penalty,optional" validate:"required_if=LoanType Rental,omitempty,gte=0"`
+	BusinessStrategy       []string                       `json:"business_strategy,optional" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
+	LoanTerm               int32                          `json:"loan_term,optional" validate:"gte=1"`
+	ReservesAmount         float64                        `json:"reserves_amount,optional" validate:"required_if=LoanType Rental,omitempty,gt=0"`
+	TransactionExperiences []*LoanExperienceEntity        `json:"transaction_experiences,optional"`
+	RealEstateExperiences  []*LoanExperienceEntity        `json:"real_estate_experiences,optional"`
+	LoanThirdServices      []*LoanThirdServiceEntity      `json:"loan_third_services,optional"`
+	LoanDemographic        *LoanDemographicEntity         `json:"loan_demographic,optional" validate:"required"`
+}
+
+type LoanUpdateResponse struct {
+	Id int64 `json:"id"`
+}
+
+type OrganizationCreateRequest struct {
+	Name         string                            `json:"name" validate:"required,min=2,max=50"`
+	ContactEmail string                            `json:"contact_email" validate:"required,email"`
+	ContactPhone string                            `json:"contact_phone" validate:"required,min=8,max=20"`
+	ContactName  string                            `json:"contact_name" validate:"required,min=2,max=50"`
+	Address      *AddressEntity                    `json:"address" validate:"required"`
+	Logo         string                            `json:"logo" validate:"required,url"`
+	Website      string                            `json:"website,optional" validate:"omitempty,url"`
+	Tagline      string                            `json:"tagline,optional"`
+	Metadata     *OrganizationLenderMetadataEntity `json:"metadata,optional"`
+}
+
 type OrganizationEmailEntity struct {
 	Id           int64  `json:"id"`
 	Email        string `json:"email"`
 	AuthStrategy string `json:"auth_strategy"`
 	Purpose      string `json:"purpose"`
 	IsAuthorized bool   `json:"is_authorized"`
+}
+
+type OrganizationEntity struct {
+	Id                   int64                        `json:"id"`
+	Name                 string                       `json:"name"`
+	Status               string                       `json:"status"`
+	Address              AddressEntity                `json:"address"`
+	ContactEmail         string                       `json:"contact_email"`
+	ContactPhone         string                       `json:"contact_phone"`
+	ContactName          string                       `json:"contact_name"`
+	OwnerType            string                       `json:"owner_type"`
+	Type                 string                       `json:"type"`
+	Logo                 string                       `json:"logo"`
+	Website              string                       `json:"website"`
+	Tagline              string                       `json:"tagline"`
+	Metadata             *OrganizationMetadataEntity  `json:"metadata"`
+	CreatedAt            string                       `json:"created_at"`
+	UpdatedAt            string                       `json:"updated_at"`
+	IsEditable           bool                         `json:"is_editable"`
+	OrganizationEmails   []*OrganizationEmailEntity   `json:"organization_emails"`
+	Owner                *UserEntity                  `json:"owner"`
+	OrganizationSettings []*OrganizationSettingEntity `json:"organization_settings"`
 }
 
 type OrganizationLenderMetadataEntity struct {
@@ -357,12 +548,198 @@ type OrganizationMetadataEntity struct {
 	Lender *OrganizationLenderMetadataEntity `json:"lender,omitempty"`
 }
 
+type OrganizationProfileEntity struct {
+	Id                   int64                               `json:"id"`
+	Name                 string                              `json:"name"`
+	Status               string                              `json:"status"`
+	Address              AddressEntity                       `json:"address"`
+	ContactEmail         string                              `json:"contact_email"`
+	ContactPhone         string                              `json:"contact_phone"`
+	ContactName          string                              `json:"contact_name"`
+	OwnerType            string                              `json:"owner_type"`
+	Type                 string                              `json:"type"`
+	Logo                 string                              `json:"logo"`
+	Website              string                              `json:"website"`
+	Tagline              string                              `json:"tagline"`
+	Metadata             *OrganizationMetadataEntity         `json:"metadata"`
+	CreatedAt            string                              `json:"created_at"`
+	UpdatedAt            string                              `json:"updated_at"`
+	IsEditable           bool                                `json:"is_editable"`
+	OrganizationEmails   []*OrganizationEmailEntity          `json:"organization_emails"`
+	Owner                *UserEntity                         `json:"owner"`
+	OrganizationSettings []*OrganizationSettingProfileEntity `json:"organization_settings"`
+}
+
+type OrganizationSettingDetailByPurposeRequest struct {
+	Purpose string `form:"purpose" validate:"required"`
+}
+
+type OrganizationSettingDetailResponse struct {
+	OrganizationSettingEntity
+}
+
+type OrganizationSettingEntity struct {
+	Id        int64                  `json:"id"`
+	CreatedAt string                 `json:"created_at"`
+	UpdatedAt string                 `json:"updated_at"`
+	Enabled   bool                   `json:"enabled"`
+	Setting   map[string]interface{} `json:"setting"`
+	Purpose   string                 `json:"purpose"`
+}
+
+type OrganizationSettingPageEntity struct {
+	Id            int64  `json:"id"`
+	Name          string `json:"name"`
+	Type          string `json:"type"`
+	Category      string `json:"category"`
+	Purpose       string `json:"purpose"`
+	Status        string `json:"status"`
+	HasConfigured bool   `json:"has_configured"`
+	Description   string `json:"description"`
+	CreatedAt     string `json:"created_at"`
+	UpdatedAt     string `json:"updated_at"`
+}
+
+type OrganizationSettingProfileEntity struct {
+	OrganizationSettingEntity
+	HasConfigured bool `json:"has_configured"`
+}
+
+type OrganizationSettingSwitchStatusRequest struct {
+	Id      int64 `path:"id" validate:"required,min=1"`
+	Enabled bool  `json:"enabled,optional"`
+}
+
+type OrganizationTemplateDetailByPurposeRequest struct {
+	Purpose string `form:"purpose" validate:"required"`
+}
+
+type OrganizationTemplateDetailRequest struct {
+	Id int64 `path:"id" validate:"required,min=1"`
+}
+
+type OrganizationTemplateDetailResponse struct {
+	OrganizationTemplateEntity
+}
+
+type OrganizationTemplateEntity struct {
+	Id                  int64                          `json:"id"`
+	Name                string                         `json:"name"`
+	Type                string                         `json:"type"`
+	Category            string                         `json:"category"`
+	Purpose             string                         `json:"purpose"`
+	Content             string                         `json:"content"`
+	VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema"`
+	Status              string                         `json:"status"`
+	HasConfigured       bool                           `json:"has_configured"`
+	Description         string                         `json:"description"`
+	ExampleVariables    string                         `json:"example_variables,omitempty,optional"`
+	CreatedAt           string                         `json:"created_at"`
+	UpdatedAt           string                         `json:"updated_at"`
+}
+
+type OrganizationTemplateFilter struct {
+	Keyword  string `json:"keyword,optional"`
+	Category string `json:"category,optional" validate:"omitempty,oneof=Email Contract"`
+}
+
+type OrganizationTemplatePageEntity struct {
+	Id            int64  `json:"id"`
+	Name          string `json:"name"`
+	Type          string `json:"type"`
+	Category      string `json:"category"`
+	Purpose       string `json:"purpose"`
+	Status        string `json:"status"`
+	HasConfigured bool   `json:"has_configured"`
+	Description   string `json:"description"`
+	CreatedAt     string `json:"created_at"`
+	UpdatedAt     string `json:"updated_at"`
+}
+
+type OrganizationTemplatePageRequest struct {
+	BasePageRequest
+	Filter *OrganizationTemplateFilter `json:"filter,optional"`
+	Sort   *BasePageSort               `json:"sort,optional"`
+}
+
+type OrganizationTemplatePageResponse struct {
+	BasePageResponse
+	List []*OrganizationTemplatePageEntity `json:"list"`
+}
+
+type OrganizationTemplatePreviewRequest struct {
+	Name                string                         `json:"name" validate:"required,min=1,max=100"`
+	Content             string                         `json:"content" validate:"required,max=10485760"`
+	VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema,optional" validate:"omitempty,dive"`
+	ExampleVariables    string                         `json:"example_variables,omitempty,optional" validate:"omitempty,json"`
+}
+
+type OrganizationTemplatePreviewResponse struct {
+	Content string `json:"content"`
+}
+
+type OrganizationTemplateUpdateRequest struct {
+	Id                  int64                          `path:"id" validate:"required,min=1"`
+	VariableGroupSchema []*TemplateVariableGroupEntity `json:"variable_group_schema,optional" validate:"omitempty,dive"`
+}
+
+type OrganizationUpdateProfileRequest struct {
+	ContactEmail string                            `json:"contact_email" validate:"required,email"`
+	ContactPhone string                            `json:"contact_phone" validate:"required,min=8,max=20"`
+	ContactName  string                            `json:"contact_name" validate:"required,min=2,max=50"`
+	Address      *AddressEntity                    `json:"address" validate:"required"`
+	Logo         string                            `json:"logo" validate:"required,url"`
+	Website      string                            `json:"website,optional" validate:"omitempty,url"`
+	Tagline      string                            `json:"tagline,optional"`
+	Metadata     *OrganizationLenderMetadataEntity `json:"metadata,optional"`
+}
+
+type OrganizationUserAcceptInvitationRequest struct {
+	Code           string `json:"code" validate:"required"`
+	Email          string `json:"email" validate:"required,email"`
+	OrganizationId int64  `json:"organization_id" validate:"required"`
+	FirstName      string `json:"first_name" validate:"required,min=2,max=100"`
+	LastName       string `json:"last_name" validate:"required,min=2,max=100"`
+}
+
+type OrganizationUserAllResponse struct {
+	List []*OrganizationUserEntity `json:"list"`
+}
+
+type OrganizationUserAssignRolesRequest struct {
+	Id      int64   `path:"id" validate:"required"`
+	RoleIds []int64 `json:"role_ids,optional"`
+}
+
+type OrganizationUserCreateRequest struct {
+	Email   string  `json:"email" validate:"required,email"`
+	Phone   string  `json:"phone,optional"`
+	RoleIds []int64 `json:"role_ids,optional"`
+}
+
 type OrganizationUserCreateResponse struct {
 	OrganizationUserEntity
 }
 
 type OrganizationUserDetailResponse struct {
 	OrganizationUserEntity
+}
+
+type OrganizationUserEntity struct {
+	Id             int64         `json:"id"`
+	OrganizationId int64         `json:"organization_id"`
+	UserId         int64         `json:"user_id"`
+	Status         string        `json:"status"`
+	FirstName      string        `json:"first_name"`
+	MidName        string        `json:"mid_name"`
+	LastName       string        `json:"last_name"`
+	FullName       string        `json:"full_name"`
+	Phone          string        `json:"phone"`
+	Remark         string        `json:"remark"`
+	CreatedAt      string        `json:"created_at"`
+	UpdatedAt      string        `json:"updated_at"`
+	Email          string        `json:"email"`
+	Roles          []*RoleEntity `json:"roles"`
 }
 
 type OrganizationUserPageEntity struct {
@@ -381,6 +758,13 @@ type OrganizationUserPageEntity struct {
 	Roles     []*RoleEntity `json:"roles"`
 }
 
+type OrganizationUserPageRequest struct {
+	Page   int64                              `json:"page,optional"`
+	Limit  int64                              `json:"limit,optional"`
+	Filter *OrganizationUserPageRequestFilter `json:"filter,optional"`
+	Sorter *OrganizationUserPageRequestSorter `json:"sorter,optional"`
+}
+
 type OrganizationUserPageRequestFilter struct {
 	Keyword string `json:"keyword,optional"`
 	Status  string `json:"status,optional"`
@@ -390,6 +774,28 @@ type OrganizationUserPageRequestFilter struct {
 type OrganizationUserPageRequestSorter struct {
 	Column string `json:"column,optional"`
 	Sort   string `json:"sort,optional"`
+}
+
+type OrganizationUserPageResponse struct {
+	Page      int64                         `json:"page"`
+	Limit     int64                         `json:"limit"`
+	Total     int64                         `json:"total"`
+	TotalPage int64                         `json:"total_page"`
+	List      []*OrganizationUserPageEntity `json:"list"`
+}
+
+type OrganizationUserSwitchStatusRequest struct {
+	Id     int64  `path:"id" validate:"required"`
+	Status string `json:"status" validate:"required,oneof=Active Disabled"`
+}
+
+type OrganizationUserUpdateRequest struct {
+	Id        int64   `path:"id" validate:"required"`
+	FirstName string  `json:"first_name" validate:"required,min=2,max=100"`
+	LastName  string  `json:"last_name" validate:"required,min=2,max=100"`
+	Phone     string  `json:"phone, optional"`
+	Remark    string  `json:"remark, optional" validate:"max=255"`
+	RoleIds   []int64 `json:"role_ids,optional"`
 }
 
 type OrganizationUserUpdateResponse struct {
@@ -411,37 +817,45 @@ type RangeInt struct {
 }
 
 type ResourceEntity struct {
-	Id                 int64  `json:"id"`
-	ParentId           int64  `json:"parent_id"`
-	Type               string `json:"type"`
-	ResourceType       string `json:"resource_type"`
-	Name               string `json:"name"`
-	Path               string `json:"path"`
-	Icon               string `json:"icon"`
-	Tag                string `json:"tag"`
-	IsShow             bool   `json:"is_show"`
-	Status             string `json:"status"`
-	SortOrder          int32  `json:"sort_order"`
-	CreatedAt          string `json:"created_at"`
-	UpdatedAt          string `json:"updated_at"`
-	PivotRoleDataScope string `json:"pivot_role_data_scope,omitempty"`
+	Id              int64        `json:"id"`
+	ParentId        int64        `json:"parent_id"`
+	Type            string       `json:"type"`
+	ResourceType    string       `json:"resource_type"`
+	Name            string       `json:"name"`
+	Path            string       `json:"path"`
+	Icon            string       `json:"icon"`
+	Tag             string       `json:"tag"`
+	IsShow          bool         `json:"is_show"`
+	Status          string       `json:"status"`
+	SortOrder       int32        `json:"sort_order"`
+	EnableDataScope bool         `json:"enable_data_scope"`
+	Description     string       `json:"description"`
+	IsPublic        bool         `json:"is_public"`
+	CreatedAt       string       `json:"created_at"`
+	UpdatedAt       string       `json:"updated_at"`
+	Apis            []*ApiEntity `json:"apis,omitempty"`
+	DataScope       string       `json:"data_scope,omitempty"`
 }
 
 type ResourceTreeEntity struct {
-	Id           int64                 `json:"id"`
-	ParentId     int64                 `json:"parent_id"`
-	Type         string                `json:"type"`
-	ResourceType string                `json:"resource_type"`
-	Name         string                `json:"name"`
-	Path         string                `json:"path"`
-	Icon         string                `json:"icon"`
-	Tag          string                `json:"tag"`
-	IsShow       bool                  `json:"is_show"`
-	Status       string                `json:"status"`
-	SortOrder    int32                 `json:"sort_order"`
-	CreatedAt    string                `json:"created_at"`
-	UpdatedAt    string                `json:"updated_at"`
-	Children     []*ResourceTreeEntity `json:"children,omitempty"`
+	Id              int64                 `json:"id"`
+	ParentId        int64                 `json:"parent_id"`
+	Type            string                `json:"type"`
+	ResourceType    string                `json:"resource_type"`
+	Name            string                `json:"name"`
+	Path            string                `json:"path"`
+	Icon            string                `json:"icon"`
+	Tag             string                `json:"tag"`
+	IsShow          bool                  `json:"is_show"`
+	Status          string                `json:"status"`
+	SortOrder       int32                 `json:"sort_order"`
+	EnableDataScope bool                  `json:"enable_data_scope"`
+	Description     string                `json:"description"`
+	IsPublic        bool                  `json:"is_public"`
+	CreatedAt       string                `json:"created_at"`
+	UpdatedAt       string                `json:"updated_at"`
+	Children        []*ResourceTreeEntity `json:"children,omitempty"`
+	Apis            []*ApiEntity          `json:"apis,omitempty"`
 }
 
 type ResourceTreeRequest struct {
@@ -452,17 +866,95 @@ type ResourceTreeResponse struct {
 	List []*ResourceTreeEntity `json:"list"`
 }
 
+type ReviewLoanPendingStatusRequest struct {
+	Id                   int64  `path:"id" validate:"required,gt=0"`
+	Action               string `json:"action" validate:"required,oneof=Approve Reject"`
+	Comment              string `json:"comment, optional" validate:"required_if=Action Reject"`
+	CurrentPendingStatus string `json:"current_pending_status" validate:"required,oneof=Quoting Processing Underwriting Closing"`
+}
+
+type RoleAllResponse struct {
+	List []*RoleEntity `json:"list"`
+}
+
+type RoleAndResourceRelation struct {
+	RoleId     int64  `json:"role_id,optional" validate:"min=0"`
+	ResourceId int64  `json:"resource_id" validate:"min=1"`
+	DataScope  string `json:"data_scope" validate:"oneof=All Own"`
+}
+
+type RoleAssignOrganizationUserRequest struct {
+	Id                  int64   `path:"id" validate:"required,gt=0"`
+	OrganizationUserIds []int64 `json:"organization_user_ids,optional" validate:"dive,gt=0"`
+}
+
+type RoleCreateRequest struct {
+	Name        string                    `json:"name" validate:"required,min=2,max=100,ne='admin'"`
+	Description string                    `json:"description,optional" validate:"max=255"`
+	Status      string                    `json:"status" validate:"required,oneof=Active Inactive"`
+	Resources   []RoleAndResourceRelation `json:"resources,optional" validate:"dive"`
+}
+
 type RoleDeleteRequest struct {
 	Id int64 `path:"id" validate:"required,gt=0"`
 }
 
+type RoleEntity struct {
+	Id             int64             `json:"id"`
+	OrganizationId int64             `json:"organization_id"`
+	Name           string            `json:"name"`
+	Description    string            `json:"description"`
+	Type           string            `json:"type"`
+	Status         string            `json:"status"`
+	CreatedAt      string            `json:"created_at"`
+	UpdatedAt      string            `json:"updated_at"`
+	Resources      []*ResourceEntity `json:"resources"`
+}
+
 type RolePageFilter struct {
-	Keyword string `json:"keyword"`
+	Keyword string `json:"keyword, optional"`
+}
+
+type RolePageRequest struct {
+	Page   int64          `json:"page,default=1"`
+	Limit  int64          `json:"limit,default=10"`
+	Filter RolePageFilter `json:"filter,optional"`
+	Sort   RolePageSort   `json:"sort,optional"`
+}
+
+type RolePageResponse struct {
+	Page      int64        `json:"page"`
+	Limit     int64        `json:"limit"`
+	Total     int64        `json:"total"`
+	TotalPage int64        `json:"total_page"`
+	List      []RoleEntity `json:"list"`
 }
 
 type RolePageSort struct {
-	Column string `json:"column"`
-	Sort   string `json:"sort"`
+	Column string `json:"column, optional"`
+	Sort   string `json:"sort, optional"`
+}
+
+type RoleUpdateRequest struct {
+	Id          int64                     `path:"id" validate:"required,gt=0"`
+	Name        string                    `json:"name" validate:"required,min=2,max=100,ne='admin'"`
+	Description string                    `json:"description,optional" validate:"max=255"`
+	Status      string                    `json:"status" validate:"required,oneof=Active Inactive"`
+	Resources   []RoleAndResourceRelation `json:"resources,optional" validate:"dive"`
+}
+
+type RoleUpdateStatusRequest struct {
+	Id     int64  `path:"id" validate:"required,gt=0"`
+	Status string `json:"status" validate:"required,oneof=Active Inactive"`
+}
+
+type S3PresignUrlCreateRequest struct {
+	Type       string `json:"type" validate:"required,oneof=pdf image doc"`
+	FileSuffix string `json:"file_suffix" validate:"required"`
+}
+
+type S3PresignUrlCreateResponse struct {
+	Url string `json:"url"`
 }
 
 type SelectOptionEntity struct {
@@ -470,9 +962,37 @@ type SelectOptionEntity struct {
 	Value string `json:"value"`
 }
 
+type TemplateVariableEntity struct {
+	Label      string                             `json:"label"`
+	Type       string                             `json:"type" validate:"oneof=String Object Array"`
+	Key        string                             `json:"key"`
+	IsEditable bool                               `json:"is_editable"`
+	IsRequired bool                               `json:"is_required"`
+	Source     string                             `json:"source" validate:"omitempty,oneof=Fixed Dynamic Template"`
+	Format     string                             `json:"format" validate:"omitempty,oneof=Email Phone Currency Input TextArea"`
+	FixedValue string                             `json:"fixed_value,optional" validate:"required_if=Source Fixed IsRequired true,required_if=Source Template IsRequired true"`
+	Properties map[string]*TemplateVariableEntity `json:"properties,omitempty,optional"`
+	Items      []*TemplateVariableEntity          `json:"items,omitempty,optional"`
+}
+
+type TemplateVariableGroupEntity struct {
+	Name      string                    `json:"name"`
+	Variables []*TemplateVariableEntity `json:"variables" validate:"dive"`
+}
+
 type UpdateDocumentsRequest struct {
 	Id        int64             `path:"id" validate:"required,gt=0"`
 	Documents []*FileEditEntity `json:"documents" validate:"required,gt=0,dive,required"`
+}
+
+type UpdateLoanPendingStatusRequest struct {
+	Id            int64  `path:"id" validate:"required,gt=0"`
+	PendingStatus string `json:"pending_status" validate:"required,oneof=Quoting Processing Underwriting Closing"`
+}
+
+type UpdateLoanStageRequest struct {
+	Id    int64  `path:"id" validate:"required,gt=0"`
+	Stage string `json:"stage" validate:"required,oneof=Pending Active Archived Rejected"`
 }
 
 type UserEntity struct {
@@ -510,9 +1030,55 @@ type UserInfoOrganizationEntity struct {
 	IsDefault bool   `json:"is_default"`
 }
 
+type UserInfoResponse struct {
+	UserInfo
+}
+
 type UserJwtResponse struct {
 	AccessToken        string `json:"access_token"`
 	AccessTokenExpire  int64  `json:"access_token_expire"`
 	RefreshToken       string `json:"refresh_token"`
 	RefreshTokenExpire int64  `json:"refresh_token_expire"`
+}
+
+type UserLoginRequest struct {
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=8,max=32"`
+}
+
+type UserRefreshTokenRequest struct {
+	RefreshToken string `json:"refresh_token" validate:"required"`
+}
+
+type UserRegisterRequest struct {
+	Email            string `json:"email" validate:"required,email"`
+	OrganizationName string `json:"organization_name" validate:"required,max=100"`
+	Password         string `json:"password" validate:"required,min=8,max=32,password"`
+	ConfirmPassword  string `json:"confirm_password" validate:"required,eqfield=Password"`
+	FirstName        string `json:"first_name" validate:"required,min=2,max=30"`
+	LastName         string `json:"last_name" validate:"required,min=2,max=30"`
+}
+
+type UserResetPasswordRequest struct {
+	Email           string `json:"email" validate:"required,email"`
+	Password        string `json:"password" validate:"required,min=8,max=32,password"`
+	ConfirmPassword string `json:"confirm_password" validate:"required,eqfield=Password"`
+	Code            string `json:"code" validate:"required,len=10"`
+}
+
+type UserSendResetPasswordEmailRequest struct {
+	Email string `json:"email" validate:"required,email"`
+}
+
+type UserSendVerifyEmailRequest struct {
+	Email string `json:"email" validate:"required,email"`
+}
+
+type UserSwitchOrganizationRequest struct {
+	OrganizationId int64 `json:"organization_id" validate:"required,gt=0"`
+}
+
+type UserVerifyEmailRequest struct {
+	Email string `json:"email" validate:"required,email"`
+	Code  string `json:"code" validate:"required,len=10"`
 }
