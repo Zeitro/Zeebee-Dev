@@ -1,5 +1,5 @@
 'use client';
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { message, Modal } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
@@ -12,9 +12,11 @@ import { useGlobalStore } from '@/store/global';
 import { useOptionsStore } from '@repo/shared-methods/store';
 import { ReloadOutlined } from '@ant-design/icons';
 import { useAuth } from '@repo/shared-methods/hooks';
+import { filterTimeCount, filterTimeCountTips } from '@repo/shared-methods/enum';
 import { PERMISSIONS } from '@config/permissions';
+import { FieldTips } from '@repo/shared-methods';
 
-export default function useOpt({ stage }) {
+export default function useOpt({ stage, searchQuery }) {
 	const { hasPermission } = useAuth();
 	const [modal, contextHolder] = Modal.useModal();
 	const [confirmLoading, setConfirmLoading] = useState(false);
@@ -32,6 +34,14 @@ export default function useOpt({ stage }) {
 	const [loanType, setLoanType] = useState([]);
 	const [status, setStatus] = useState([]);
 	const [lender, setLender] = useState([]);
+	const [dayCount, setDayCount] = useState();
+
+	useEffect(() => {
+		const setFilterParamsFn = () => {
+			setDayCount(searchQuery?.dayCount || 'All');
+		};
+		setFilterParamsFn();
+	}, [searchQuery]);
 
 	const filterList = useMemo(() => {
 		const purposeSetting = {
@@ -122,6 +132,18 @@ export default function useOpt({ stage }) {
 				}).map((i) => ({ ...i, key: i.value })),
 			},
 			{
+				filterType: 'select',
+				label: '',
+				paramsKey: 'dayCount',
+				placeholder: 'Date',
+				style: { width: 160 },
+				value: dayCount || searchQuery?.dayCount,
+				onChange: (e) => setDayCount(e),
+				allowClear: false,
+				options: filterTimeCount,
+				suffixIcon: <FieldTips title={filterTimeCountTips} isShowDescription={true} />,
+			},
+			{
 				filterType: 'button',
 				onClick: () => {
 					tableFilterRef?.current?.handleSearch?.();
@@ -139,9 +161,12 @@ export default function useOpt({ stage }) {
 					setLoanType([]);
 					setStatus([]);
 					setLender([]);
-					setTimeout(() => {
-						tableFilterRef?.current?.handleSearch?.();
-					}, 300);
+					setDayCount('All');
+					tableFilterRef?.current?.handleSearch?.({
+						filter: {
+							dayCount: 'All',
+						},
+					});
 				},
 			},
 		];
@@ -158,6 +183,8 @@ export default function useOpt({ stage }) {
 		stage,
 		lenderOptions,
 		lender,
+		dayCount,
+		searchQuery,
 	]);
 
 	const handleDelete = async (id) => {

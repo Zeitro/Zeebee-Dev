@@ -1,6 +1,18 @@
 import { HomeOutlined } from '@ant-design/icons';
 import { formatAmount } from '@repo/shared-methods/utils';
 import { PERMISSIONS } from '@config/permissions'; // admin/lender/borrower都需要的权限
+
+export const filterTimeCountTips =
+	'Based on the selected number of days, perform a global page filter for loans that match this time period.';
+
+// loan最近天数筛选
+export const filterTimeCount = [
+	{ value: 7, label: '7 days' },
+	{ value: 15, label: '15 days' },
+	{ value: 30, label: '30 days' },
+	{ value: 'All', label: 'All' },
+];
+
 export const tinOptions = [
 	{ label: 'SSN', value: 'SSN' },
 	{ label: 'ITIN', value: 'ITIN' },

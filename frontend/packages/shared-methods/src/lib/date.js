@@ -32,6 +32,44 @@ export function addDays(date, days) {
 }
 
 /**
+ * 计算时间区间，返回 { startDate, endDate }
+ * @param {number|string} days - 天数
+ * @param {Date|string|number} [date=new Date()] - 基准日期，默认为当天
+ * @param {string|boolean} [direction='past'] - 'past' | 'future'，或布尔值(true 表示过去)
+ * @returns {{startDate: Date, endDate: Date}}
+ */
+export function getDateRange(days = 7, date = new Date(), direction = 'past') {
+	// 特殊值处理：'All' 或 空字符串 返回空对象
+	if (days === 'All' || days === '') return {};
+
+	const n = Math.abs(Number(days)) || 0;
+	const count = Math.max(1, n);
+	const base = dayjs(date);
+
+	// 支持布尔型参数：true 表示过去，false 表示未来
+	const isPast =
+		typeof direction === 'boolean'
+			? Boolean(direction)
+			: String(direction).toLowerCase() !== 'future';
+
+	if (isPast) {
+		const startDate = base
+			.subtract(count - 1, 'day')
+			.startOf('day')
+			.toDate();
+		const endDate = base.endOf('day').toDate();
+		return { startDate: formatDate(startDate), endDate: formatDate(endDate) };
+	}
+
+	const startDate = base.startOf('day').toDate();
+	const endDate = base
+		.add(count - 1, 'day')
+		.endOf('day')
+		.toDate();
+	return { start_date: formatDate(startDate), end_date: formatDate(endDate) };
+}
+
+/**
  * 秒数转换为 Date 对象（更精确）
  * @param {number} seconds - 秒数
  * @param {number} defaultDays - 默认天数（秒数无效时使用）

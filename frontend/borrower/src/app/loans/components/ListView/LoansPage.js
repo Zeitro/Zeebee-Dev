@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { FilterTable } from '@repo/shared-methods';
 import useColumn from './useColumn';
-import { createRequest, eventBus } from '@repo/shared-methods/utils';
+import { createRequest, eventBus, getDateRange } from '@repo/shared-methods/utils';
 import useOpt from './useOpt';
 const LoansPage = ({
 	hasFilterField,
@@ -17,9 +17,10 @@ const LoansPage = ({
 	columns,
 	api,
 	stage = 'Pending', // 默认是pending，可传草稿draft(因草稿展示和pending loans的一致，只有表格操作栏不同，所以需要区分)
+	searchQuery, // 其他页面跳转来所需要的搜索参数
 }) => {
 	const { showDeleteModal, contextHolder, handleSelectedRow, filterList, tableFilterRef } =
-		useOpt({ stage });
+		useOpt({ stage, searchQuery });
 	const { getColumnsByStage } = useColumn({
 		isNotAddress,
 		successCallback: () => {
@@ -67,19 +68,22 @@ const LoansPage = ({
 							total: dataSource?.length,
 						};
 					}
-					const filter = hasFilterField
-						? {}
-						: {
-								...(params?.filter || {}),
-								stage,
-							};
 					const payload = {
 						method,
 					};
 					if (method === 'POST') {
+						const dayNum = params.filter.dayCount;
+						delete params.filter.dayCount;
+						const timeInfo = getDateRange(dayNum);
 						payload.body = {
 							...params,
-							filter,
+							filter: hasFilterField
+								? {}
+								: {
+										...(params?.filter || {}),
+										stage,
+										...timeInfo,
+									},
 						};
 					}
 					return request(api, payload);
