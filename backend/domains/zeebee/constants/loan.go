@@ -140,6 +140,15 @@ const (
 	BankruptcyChapter13 BankruptcyChapter = "Chapter 13"
 )
 
+type LoanDueStatus string
+
+const LoanDueStatusName = "loan_due_status"
+const (
+	LoanDueStatusNone    LoanDueStatus = ""
+	LoanDueStatusDueSoon LoanDueStatus = "due soon"
+	LoanDueStatusOverdue LoanDueStatus = "overdue"
+)
+
 func init() {
 	// register loan stage
 	enums.Register(LoanStageName, []enums.EnumOpt{
@@ -412,6 +421,18 @@ func init() {
 		{
 			Label: string(BankruptcyChapter13),
 			Value: string(BankruptcyChapter13),
+		},
+	})
+
+	// register loan due status
+	enums.Register(LoanDueStatusName, []enums.EnumOpt{
+		{
+			Label: string(LoanDueStatusDueSoon),
+			Value: string(LoanDueStatusDueSoon),
+		},
+		{
+			Label: string(LoanDueStatusOverdue),
+			Value: string(LoanDueStatusOverdue),
 		},
 	})
 }

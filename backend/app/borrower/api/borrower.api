@@ -36,12 +36,12 @@ type PathIdRequest {
 
 // ============== common start =============
 @server (
-    desc: "borrower-api service"
-    version: v1
-    group: common
+	desc: "borrower-api service"
+	version: v1
+	group: common
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: common
+	tags: common
 )
 service borrower-api {
 	@doc "select options"
@@ -64,12 +64,12 @@ service borrower-api {
 // ============== common end =============
 // ============== user start =============
 @server (
-    desc: "borrower-api service"
-    version: v1
-    group: user
+	desc: "borrower-api service"
+	version: v1
+	group: user
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: user
+	tags: user
 )
 service borrower-api {
 	@doc "register"
@@ -134,12 +134,12 @@ service borrower-api {
 // ============== user end =============
 // ============== loan start =============
 @server (
-    desc: "loan service"
-    version: v1
-    group: loan
+	desc: "loan service"
+	version: v1
+	group: loan
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: loan
+	tags: loan
 )
 service borrower-api {
 	@doc "preapproval"
@@ -215,6 +215,10 @@ service borrower-api {
 	@doc "send quote email"
 	@handler SendQuoteEmail
 	post /loan/send_quote_email (LoanSendQuoteEmailRequest) returns (EmptyResponse)
+
+	@doc "dashboard"
+	@handler dashboard
+	post /loan/dashboard (LoanDashboardRequest) returns (LoanDashboardResponse)
 }
 
 // ============== loan end =============
@@ -420,12 +424,12 @@ service borrower-api {
 // ============== loan document end =============
 // ============== resource start ============
 @server(
-    desc: "borrower-api service"
-    version: v1
-    group: resource
+	desc: "borrower-api service"
+	version: v1
+	group: resource
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: resource
+	tags: resource
 )
 service borrower-api {
 	@doc "tree"
@@ -480,12 +484,12 @@ service borrower-api {
 // ============== role end =============
 // ============== organization user start ============
 @server (
-    desc: "organization user service"
-    version: v1
-    group: organization_user
+	desc: "organization user service"
+	version: v1
+	group: organization_user
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: organization_user
+	tags: organization_user
 )
 service borrower-api {
 	@doc "accept invitation"

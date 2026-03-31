@@ -2232,6 +2232,614 @@
         }
       }
     },
+    "/api/v1/loan/dashboard": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "loan"
+        ],
+        "summary": "dashboard",
+        "operationId": "loanDashboard",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "due_in_days"
+              ],
+              "properties": {
+                "due_in_days": {
+                  "type": "integer",
+                  "default": 60,
+                  "example": 60
+                },
+                "end_date": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "start_date": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "active_loan_count": {
+                  "type": "integer"
+                },
+                "active_loan_summary": {
+                  "type": "object",
+                  "required": [
+                    "total_loan_amount",
+                    "total_principal_amount",
+                    "total_holdback_amount",
+                    "total_closing_fund_amount",
+                    "total_monthly_payment_amount",
+                    "total_released_amount",
+                    "total_remaining_amount",
+                    "total_loan_count",
+                    "average_rate",
+                    "list"
+                  ],
+                  "properties": {
+                    "average_rate": {
+                      "type": "number"
+                    },
+                    "list": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "creator_id",
+                          "creator_name",
+                          "stage",
+                          "pending_status",
+                          "loan_purpose",
+                          "loan_type",
+                          "total_amount",
+                          "initial_amount",
+                          "loan_property",
+                          "lender_company",
+                          "closing_date",
+                          "closing_fund",
+                          "holdback_amount",
+                          "rate",
+                          "principal_amount",
+                          "monthly_payment",
+                          "lien_position",
+                          "maturity_date",
+                          "prepayment_penalty",
+                          "service_company",
+                          "paid_off_date",
+                          "business_strategy",
+                          "applicants",
+                          "lender_organization_id",
+                          "borrower_organization_id",
+                          "created_at",
+                          "updated_at",
+                          "source",
+                          "loan_term",
+                          "ltv",
+                          "est_credit_score",
+                          "reserves_amount",
+                          "has_collateralized_blanket",
+                          "transaction_experiences",
+                          "real_estate_experiences",
+                          "loan_third_services",
+                          "loan_borrower",
+                          "loan_demographic",
+                          "loan_processor",
+                          "extend",
+                          "loan_documents",
+                          "requested_loan_document_count",
+                          "holdback_released_amount",
+                          "holdback_remaining_amount",
+                          "due_status",
+                          "due_days"
+                        ],
+                        "properties": {
+                          "applicants": {
+                            "type": "array",
+                            "items": {
+                              "type": "object"
+                            }
+                          },
+                          "borrower_organization_id": {
+                            "type": "integer"
+                          },
+                          "business_strategy": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "closing_date": {
+                            "type": "string"
+                          },
+                          "closing_fund": {
+                            "type": "number"
+                          },
+                          "code": {
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "creator_id": {
+                            "type": "integer"
+                          },
+                          "creator_name": {
+                            "type": "string"
+                          },
+                          "due_days": {
+                            "type": "integer"
+                          },
+                          "due_status": {
+                            "type": "string"
+                          },
+                          "est_credit_score": {
+                            "type": "integer"
+                          },
+                          "extend": {
+                            "type": "object"
+                          },
+                          "extension_date": {
+                            "type": "string"
+                          },
+                          "has_collateralized_blanket": {
+                            "type": "boolean"
+                          },
+                          "holdback_amount": {
+                            "type": "number"
+                          },
+                          "holdback_released_amount": {
+                            "type": "number"
+                          },
+                          "holdback_remaining_amount": {
+                            "type": "number"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "initial_amount": {
+                            "type": "number"
+                          },
+                          "lender_company": {
+                            "type": "string"
+                          },
+                          "lender_organization_id": {
+                            "type": "integer"
+                          },
+                          "lien_position": {
+                            "type": "string"
+                          },
+                          "loan_borrower": {
+                            "type": "object"
+                          },
+                          "loan_demographic": {
+                            "type": "object"
+                          },
+                          "loan_documents": {
+                            "type": "array",
+                            "items": {
+                              "type": "object"
+                            }
+                          },
+                          "loan_processor": {
+                            "type": "string"
+                          },
+                          "loan_property": {
+                            "type": "object"
+                          },
+                          "loan_purpose": {
+                            "type": "string"
+                          },
+                          "loan_term": {
+                            "type": "integer"
+                          },
+                          "loan_third_services": {
+                            "type": "array",
+                            "items": {
+                              "type": "object"
+                            }
+                          },
+                          "loan_type": {
+                            "type": "string"
+                          },
+                          "ltv": {
+                            "type": "number"
+                          },
+                          "maturity_date": {
+                            "type": "string"
+                          },
+                          "monthly_payment": {
+                            "type": "number"
+                          },
+                          "original_contract_date": {
+                            "type": "string"
+                          },
+                          "paid_off_date": {
+                            "type": "string"
+                          },
+                          "pending_status": {
+                            "type": "string"
+                          },
+                          "prepayment_penalty": {
+                            "type": "integer"
+                          },
+                          "principal_amount": {
+                            "type": "number"
+                          },
+                          "rate": {
+                            "type": "number"
+                          },
+                          "real_estate_experiences": {
+                            "type": "array",
+                            "items": {
+                              "type": "object"
+                            }
+                          },
+                          "requested_loan_document_count": {
+                            "type": "integer"
+                          },
+                          "reserves_amount": {
+                            "type": "number"
+                          },
+                          "service_company": {
+                            "type": "string"
+                          },
+                          "source": {
+                            "type": "string"
+                          },
+                          "stage": {
+                            "type": "string"
+                          },
+                          "total_amount": {
+                            "type": "number"
+                          },
+                          "transaction_experiences": {
+                            "type": "array",
+                            "items": {
+                              "type": "object"
+                            }
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "total_closing_fund_amount": {
+                      "type": "number"
+                    },
+                    "total_holdback_amount": {
+                      "type": "number"
+                    },
+                    "total_loan_amount": {
+                      "type": "number"
+                    },
+                    "total_loan_count": {
+                      "type": "integer"
+                    },
+                    "total_monthly_payment_amount": {
+                      "type": "number"
+                    },
+                    "total_principal_amount": {
+                      "type": "number"
+                    },
+                    "total_released_amount": {
+                      "type": "number"
+                    },
+                    "total_remaining_amount": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "archived_loan_count": {
+                  "type": "integer"
+                },
+                "pending_loan_count": {
+                  "type": "integer"
+                },
+                "pending_loan_summary": {
+                  "type": "object",
+                  "required": [
+                    "total_loan_amount",
+                    "total_principal_amount",
+                    "total_holdback_amount",
+                    "total_closing_fund_amount",
+                    "total_monthly_payment_amount",
+                    "total_released_amount",
+                    "total_remaining_amount",
+                    "total_loan_count",
+                    "average_rate",
+                    "list"
+                  ],
+                  "properties": {
+                    "average_rate": {
+                      "type": "number"
+                    },
+                    "list": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "creator_id",
+                          "creator_name",
+                          "stage",
+                          "pending_status",
+                          "loan_purpose",
+                          "loan_type",
+                          "total_amount",
+                          "initial_amount",
+                          "loan_property",
+                          "lender_company",
+                          "closing_date",
+                          "closing_fund",
+                          "holdback_amount",
+                          "rate",
+                          "principal_amount",
+                          "monthly_payment",
+                          "lien_position",
+                          "maturity_date",
+                          "prepayment_penalty",
+                          "service_company",
+                          "paid_off_date",
+                          "business_strategy",
+                          "applicants",
+                          "lender_organization_id",
+                          "borrower_organization_id",
+                          "created_at",
+                          "updated_at",
+                          "source",
+                          "loan_term",
+                          "ltv",
+                          "est_credit_score",
+                          "reserves_amount",
+                          "has_collateralized_blanket",
+                          "transaction_experiences",
+                          "real_estate_experiences",
+                          "loan_third_services",
+                          "loan_borrower",
+                          "loan_demographic",
+                          "loan_processor",
+                          "extend",
+                          "loan_documents",
+                          "requested_loan_document_count",
+                          "holdback_released_amount",
+                          "holdback_remaining_amount",
+                          "due_status",
+                          "due_days"
+                        ],
+                        "properties": {
+                          "applicants": {
+                            "type": "array",
+                            "items": {
+                              "type": "object"
+                            }
+                          },
+                          "borrower_organization_id": {
+                            "type": "integer"
+                          },
+                          "business_strategy": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "closing_date": {
+                            "type": "string"
+                          },
+                          "closing_fund": {
+                            "type": "number"
+                          },
+                          "code": {
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "creator_id": {
+                            "type": "integer"
+                          },
+                          "creator_name": {
+                            "type": "string"
+                          },
+                          "due_days": {
+                            "type": "integer"
+                          },
+                          "due_status": {
+                            "type": "string"
+                          },
+                          "est_credit_score": {
+                            "type": "integer"
+                          },
+                          "extend": {
+                            "type": "object"
+                          },
+                          "extension_date": {
+                            "type": "string"
+                          },
+                          "has_collateralized_blanket": {
+                            "type": "boolean"
+                          },
+                          "holdback_amount": {
+                            "type": "number"
+                          },
+                          "holdback_released_amount": {
+                            "type": "number"
+                          },
+                          "holdback_remaining_amount": {
+                            "type": "number"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "initial_amount": {
+                            "type": "number"
+                          },
+                          "lender_company": {
+                            "type": "string"
+                          },
+                          "lender_organization_id": {
+                            "type": "integer"
+                          },
+                          "lien_position": {
+                            "type": "string"
+                          },
+                          "loan_borrower": {
+                            "type": "object"
+                          },
+                          "loan_demographic": {
+                            "type": "object"
+                          },
+                          "loan_documents": {
+                            "type": "array",
+                            "items": {
+                              "type": "object"
+                            }
+                          },
+                          "loan_processor": {
+                            "type": "string"
+                          },
+                          "loan_property": {
+                            "type": "object"
+                          },
+                          "loan_purpose": {
+                            "type": "string"
+                          },
+                          "loan_term": {
+                            "type": "integer"
+                          },
+                          "loan_third_services": {
+                            "type": "array",
+                            "items": {
+                              "type": "object"
+                            }
+                          },
+                          "loan_type": {
+                            "type": "string"
+                          },
+                          "ltv": {
+                            "type": "number"
+                          },
+                          "maturity_date": {
+                            "type": "string"
+                          },
+                          "monthly_payment": {
+                            "type": "number"
+                          },
+                          "original_contract_date": {
+                            "type": "string"
+                          },
+                          "paid_off_date": {
+                            "type": "string"
+                          },
+                          "pending_status": {
+                            "type": "string"
+                          },
+                          "prepayment_penalty": {
+                            "type": "integer"
+                          },
+                          "principal_amount": {
+                            "type": "number"
+                          },
+                          "rate": {
+                            "type": "number"
+                          },
+                          "real_estate_experiences": {
+                            "type": "array",
+                            "items": {
+                              "type": "object"
+                            }
+                          },
+                          "requested_loan_document_count": {
+                            "type": "integer"
+                          },
+                          "reserves_amount": {
+                            "type": "number"
+                          },
+                          "service_company": {
+                            "type": "string"
+                          },
+                          "source": {
+                            "type": "string"
+                          },
+                          "stage": {
+                            "type": "string"
+                          },
+                          "total_amount": {
+                            "type": "number"
+                          },
+                          "transaction_experiences": {
+                            "type": "array",
+                            "items": {
+                              "type": "object"
+                            }
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "total_closing_fund_amount": {
+                      "type": "number"
+                    },
+                    "total_holdback_amount": {
+                      "type": "number"
+                    },
+                    "total_loan_amount": {
+                      "type": "number"
+                    },
+                    "total_loan_count": {
+                      "type": "integer"
+                    },
+                    "total_monthly_payment_amount": {
+                      "type": "number"
+                    },
+                    "total_principal_amount": {
+                      "type": "number"
+                    },
+                    "total_released_amount": {
+                      "type": "number"
+                    },
+                    "total_remaining_amount": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "total_loan_count": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/loan/draft": {
       "post": {
         "consumes": [
@@ -2898,6 +3506,12 @@
                         "type": "string"
                       }
                     },
+                    "source": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "stage": {
                       "type": "string"
                     }
@@ -2979,7 +3593,11 @@
                       "loan_processor",
                       "extend",
                       "loan_documents",
-                      "requested_loan_document_count"
+                      "requested_loan_document_count",
+                      "holdback_released_amount",
+                      "holdback_remaining_amount",
+                      "due_status",
+                      "due_days"
                     ],
                     "properties": {
                       "applicants": {
@@ -3132,6 +3750,12 @@
                       "creator_name": {
                         "type": "string"
                       },
+                      "due_days": {
+                        "type": "integer"
+                      },
+                      "due_status": {
+                        "type": "string"
+                      },
                       "est_credit_score": {
                         "type": "integer"
                       },
@@ -3162,6 +3786,12 @@
                         "type": "boolean"
                       },
                       "holdback_amount": {
+                        "type": "number"
+                      },
+                      "holdback_released_amount": {
+                        "type": "number"
+                      },
+                      "holdback_remaining_amount": {
                         "type": "number"
                       },
                       "id": {
@@ -4446,6 +5076,12 @@
                 "creator_name": {
                   "type": "string"
                 },
+                "due_days": {
+                  "type": "integer"
+                },
+                "due_status": {
+                  "type": "string"
+                },
                 "est_credit_score": {
                   "type": "integer"
                 },
@@ -4476,6 +5112,12 @@
                   "type": "boolean"
                 },
                 "holdback_amount": {
+                  "type": "number"
+                },
+                "holdback_released_amount": {
+                  "type": "number"
+                },
+                "holdback_remaining_amount": {
                   "type": "number"
                 },
                 "id": {
@@ -9912,7 +10554,11 @@
                       "loan_processor",
                       "extend",
                       "loan_documents",
-                      "requested_loan_document_count"
+                      "requested_loan_document_count",
+                      "holdback_released_amount",
+                      "holdback_remaining_amount",
+                      "due_status",
+                      "due_days"
                     ],
                     "properties": {
                       "applicants": {
@@ -10065,6 +10711,12 @@
                       "creator_name": {
                         "type": "string"
                       },
+                      "due_days": {
+                        "type": "integer"
+                      },
+                      "due_status": {
+                        "type": "string"
+                      },
                       "est_credit_score": {
                         "type": "integer"
                       },
@@ -10095,6 +10747,12 @@
                         "type": "boolean"
                       },
                       "holdback_amount": {
+                        "type": "number"
+                      },
+                      "holdback_released_amount": {
+                        "type": "number"
+                      },
+                      "holdback_remaining_amount": {
                         "type": "number"
                       },
                       "id": {
@@ -10758,7 +11416,11 @@
                       "loan_processor",
                       "extend",
                       "loan_documents",
-                      "requested_loan_document_count"
+                      "requested_loan_document_count",
+                      "holdback_released_amount",
+                      "holdback_remaining_amount",
+                      "due_status",
+                      "due_days"
                     ],
                     "properties": {
                       "applicants": {
@@ -10911,6 +11573,12 @@
                       "creator_name": {
                         "type": "string"
                       },
+                      "due_days": {
+                        "type": "integer"
+                      },
+                      "due_status": {
+                        "type": "string"
+                      },
                       "est_credit_score": {
                         "type": "integer"
                       },
@@ -10941,6 +11609,12 @@
                         "type": "boolean"
                       },
                       "holdback_amount": {
+                        "type": "number"
+                      },
+                      "holdback_released_amount": {
+                        "type": "number"
+                      },
+                      "holdback_remaining_amount": {
                         "type": "number"
                       },
                       "id": {
@@ -11605,7 +12279,11 @@
                       "loan_processor",
                       "extend",
                       "loan_documents",
-                      "requested_loan_document_count"
+                      "requested_loan_document_count",
+                      "holdback_released_amount",
+                      "holdback_remaining_amount",
+                      "due_status",
+                      "due_days"
                     ],
                     "properties": {
                       "applicants": {
@@ -11758,6 +12436,12 @@
                       "creator_name": {
                         "type": "string"
                       },
+                      "due_days": {
+                        "type": "integer"
+                      },
+                      "due_status": {
+                        "type": "string"
+                      },
                       "est_credit_score": {
                         "type": "integer"
                       },
@@ -11788,6 +12472,12 @@
                         "type": "boolean"
                       },
                       "holdback_amount": {
+                        "type": "number"
+                      },
+                      "holdback_released_amount": {
+                        "type": "number"
+                      },
+                      "holdback_remaining_amount": {
                         "type": "number"
                       },
                       "id": {
@@ -15409,7 +16099,7 @@
       }
     }
   },
-  "x-date": "2026-03-18 10:51:29",
+  "x-date": "2026-03-31 17:43:18",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

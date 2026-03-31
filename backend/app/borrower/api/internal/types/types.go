@@ -548,6 +548,35 @@ type LoanCreateResponse struct {
 	Id int64 `json:"id"`
 }
 
+type LoanDashboardLoanSummary struct {
+	TotalLoanAmount           float64      `json:"total_loan_amount"`
+	TotalPrincipalAmount      float64      `json:"total_principal_amount"`
+	TotalHoldbackAmount       float64      `json:"total_holdback_amount"`
+	TotalClosingFundAmount    float64      `json:"total_closing_fund_amount"`
+	TotalMonthlyPaymentAmount float64      `json:"total_monthly_payment_amount"`
+	TotalReleasedAmount       float64      `json:"total_released_amount"`
+	TotalRemainingAmount      float64      `json:"total_remaining_amount"`
+	TotalLoanCount            int64        `json:"total_loan_count"`
+	AverageRate               float64      `json:"average_rate"`
+	List                      []LoanEntity `json:"list"`
+}
+
+type LoanDashboardRequest struct {
+	StartDate string   `json:"start_date,optional" validate:"omitempty,datetime=01/02/2006"`
+	EndDate   string   `json:"end_date,optional" validate:"omitempty,datetime=01/02/2006"`
+	DueInDays int32    `json:"due_in_days,default=60" validate:"omitempty,gte=0"`
+	Source    []string `json:"source,optional" validate:"omitempty,dive,required,oneof=System Borrower Preapproval"`
+}
+
+type LoanDashboardResponse struct {
+	TotalLoanCount     int64                     `json:"total_loan_count"`
+	PendingLoanCount   int64                     `json:"pending_loan_count"`
+	ActiveLoanCount    int64                     `json:"active_loan_count"`
+	ArchivedLoanCount  int64                     `json:"archived_loan_count"`
+	PendingLoanSummary *LoanDashboardLoanSummary `json:"pending_loan_summary"`
+	ActiveLoanSummary  *LoanDashboardLoanSummary `json:"active_loan_summary"`
+}
+
 type LoanDeleteRequest struct {
 	Id int64 `path:"id"`
 }
@@ -671,6 +700,10 @@ type LoanEntity struct {
 	Extend                     *ImportLoanExtendEntity   `json:"extend"`
 	LoanDocuments              []*LoanDocumentEntity     `json:"loan_documents"`
 	RequestedLoanDocumentCount int64                     `json:"requested_loan_document_count"`
+	HoldbackReleasedAmount     float64                   `json:"holdback_released_amount"`
+	HoldbackRemainingAmount    float64                   `json:"holdback_remaining_amount"`
+	DueStatus                  string                    `json:"due_status"`
+	DueDays                    int32                     `json:"due_days"`
 }
 
 type LoanExperienceEntity struct {
@@ -701,6 +734,7 @@ type LoanPageFilter struct {
 	LoanPurpose   []string `json:"loan_purpose,optional" `
 	LoanType      []string `json:"loan_type,optional"`
 	Lender        []string `json:"lender,optional"`
+	Source        []string `json:"source,optional"`
 }
 
 type LoanPageRequest struct {
