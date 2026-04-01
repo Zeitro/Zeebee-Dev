@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/duke-git/lancet/v2/datetime"
+	"github.com/duke-git/lancet/v2/mathutil"
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/copierx"
@@ -126,6 +127,17 @@ func (l *LoanLogic) BorrowerLoanSummary(ctx context.Context, req dto.LoanSummary
 	}
 	result.List = *page
 	result.TotalLoanCount = pageRes.Total
+
+	result.TotalLoanAmount = mathutil.RoundToFloat(result.TotalLoanAmount, 2)
+	result.TotalPrincipalAmount = mathutil.RoundToFloat(result.TotalPrincipalAmount, 2)
+	result.TotalReservesAmount = mathutil.RoundToFloat(result.TotalReservesAmount, 2)
+	result.TotalHoldbackAmount = mathutil.RoundToFloat(result.TotalHoldbackAmount, 2)
+	result.TotalHoldbackRemainingAmount = mathutil.RoundToFloat(result.TotalHoldbackRemainingAmount, 2)
+	result.TotalHoldbackReleasedAmount = mathutil.RoundToFloat(result.TotalHoldbackReleasedAmount, 2)
+	result.AverageRate = mathutil.RoundToFloat(result.AverageRate, 2)
+	result.TotalMonthlyPaymentAmount = mathutil.RoundToFloat(result.TotalMonthlyPaymentAmount, 2)
+	result.TotalClosingFundAmount = mathutil.RoundToFloat(result.TotalClosingFundAmount, 2)
+
 	l.handleDueInfo(result.List, int(req.DueInDays))
 
 	return
