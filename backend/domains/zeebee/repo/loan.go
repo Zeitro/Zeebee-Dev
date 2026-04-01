@@ -129,19 +129,8 @@ func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq dto.LoanBorro
 
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
-	var dateField string
-	var isMaturityDate bool
-	switch filter.DateType {
-	case "maturity_date":
-		dateField = "maturity_date"
-		isMaturityDate = true
-	case "closing_date":
-		dateField = "closing_date"
-	case "update":
-		dateField = "updated_at"
-	default:
-		dateField = "updated_at"
-	}
+	dateField, isMaturityDate := repo.mapDateField(filter.DateType)
+
 	query := repo.Client(ctx).
 		Where(fmt.Sprintf("%s.borrower_organization_id = ?", loanTable), filter.OrganizationId).
 		Preload("Property").
@@ -201,7 +190,7 @@ func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq dto.LoanBorro
 	if isMaturityDate {
 		today := datetime.BeginOfDay(time.Now())
 		dueDate := datetime.BeginOfDay(today.AddDate(0, 0, int(filter.DueInDays)))
-		query = query.Where(fmt.Sprintf("%s.maturity_date <= ?", loanTable), today, dueDate)
+		query = query.Where(fmt.Sprintf("%s.maturity_date <= ?", loanTable), dueDate)
 	}
 
 	sortColumns := []string{}
@@ -252,17 +241,8 @@ func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq dto.LoanBorro
 
 // SummaryForBorrower
 func (repo *LoanRepo) SummaryForBorrower(ctx context.Context, req dto.LoanSummaryRequestDto) (result *dto.LoanSummaryResponseDto, err error) {
-	var dateField string
-	switch req.DateType {
-	case "maturity_date":
-		dateField = "maturity_date"
-	case "closing_date":
-		dateField = "closing_date"
-	case "update":
-		dateField = "updated_at"
-	default:
-		dateField = "updated_at"
-	}
+
+	dateField, _ := repo.mapDateField(req.DateType)
 
 	query := repo.Client(ctx).
 		Where("borrower_organization_id = ?", req.OrganizationId)
@@ -288,6 +268,7 @@ func (repo *LoanRepo) SummaryForBorrower(ctx context.Context, req dto.LoanSummar
 		"sum(monthly_payment) as total_monthly_payment",
 		"sum(closing_fund) as total_closing_fund_amount",
 		"sum(holdback_released_amount) as total_holdback_released_amount",
+		"sum(holdback_amount) as total_holdback_amount",
 		"sum(reserves_amount) as total_reserves_amount",
 		"avg(rate) as average_rate",
 	}
@@ -572,4 +553,20 @@ func (repo *LoanRepo) GetByBorrowerPropertyId(ctx context.Context, borrowerPrope
 		Where(fmt.Sprintf("%s.id = ?", borrowerPropertyTable), borrowerPropertyId).
 		Find(&result).Error
 	return result, errorx.WithStack(err)
+}
+
+// mapDateField
+func (repo *LoanRepo) mapDateField(dateType string) (dateField string, isMaturityDate bool) {
+
+	switch dateType {
+	case "maturity_date":
+		dateField = "maturity_date"
+	case "closing_date":
+		dateField = "closing_date"
+	case "update":
+		dateField = "updated_at"
+	default:
+		dateField = "updated_at"
+	}
+	return dateField, dateType == "maturity_date"
 }

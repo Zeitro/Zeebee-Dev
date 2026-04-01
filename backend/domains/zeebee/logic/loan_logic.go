@@ -155,10 +155,10 @@ func (l *LoanLogic) handleDueInfo(items []*dto.LoanEntityDto, days int) {
 	for _, item := range items {
 		item.HoldbackRemainingAmount = item.TotalAmount - item.PrincipalAmount - item.ReservesAmount
 		if item.Stage != constants.LoanStageActive {
-			return
+			continue
 		}
 		if item.MaturityDate == nil || !item.MaturityDate.Valid {
-			return
+			continue
 		}
 		maturityDate := item.MaturityDate.Time
 		if maturityDate.Before(today) {
