@@ -735,6 +735,10 @@ type LoanPageFilter struct {
 	LoanType      []string `json:"loan_type,optional"`
 	Lender        []string `json:"lender,optional"`
 	Source        []string `json:"source,optional"`
+	DateType      string   `json:"date_type,optional"`
+	DueInDays     int32    `json:"due_in_days,default=60" validate:"omitempty,gte=0"`
+	StartDate     string   `json:"start_date,optional" validate:"omitempty,datetime=01/02/2006"`
+	EndDate       string   `json:"end_date,optional" validate:"omitempty,datetime=01/02/2006"`
 }
 
 type LoanPageRequest struct {

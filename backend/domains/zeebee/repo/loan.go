@@ -177,6 +177,11 @@ func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq dto.LoanBorro
 	if len(filter.PendingStatus) > 0 {
 		query = query.Where(fmt.Sprintf("%s.pending_status in ?", loanTable), filter.PendingStatus)
 	}
+	// resource type
+	if len(filter.Source) > 0 {
+		query = query.Where(fmt.Sprintf("%s.source in ?", loanTable), filter.Source)
+	}
+
 	// date
 	if filter.StartDate != nil && filter.StartDate.Valid {
 		startDate := datetime.BeginOfDay(filter.StartDate.Time)

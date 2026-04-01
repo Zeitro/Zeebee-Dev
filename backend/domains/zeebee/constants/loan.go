@@ -145,8 +145,8 @@ type LoanDueStatus string
 const LoanDueStatusName = "loan_due_status"
 const (
 	LoanDueStatusNone    LoanDueStatus = ""
-	LoanDueStatusDueSoon LoanDueStatus = "due soon"
-	LoanDueStatusOverdue LoanDueStatus = "overdue"
+	LoanDueStatusDueSoon LoanDueStatus = "Due Soon"
+	LoanDueStatusOverdue LoanDueStatus = "Overdue"
 )
 
 func init() {

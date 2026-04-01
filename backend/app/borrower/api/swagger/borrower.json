@@ -3475,7 +3475,21 @@
               "properties": {
                 "filter": {
                   "type": "object",
+                  "required": [
+                    "due_in_days"
+                  ],
                   "properties": {
+                    "date_type": {
+                      "type": "string"
+                    },
+                    "due_in_days": {
+                      "type": "integer",
+                      "default": 60,
+                      "example": 60
+                    },
+                    "end_date": {
+                      "type": "string"
+                    },
                     "keyword": {
                       "type": "string"
                     },
@@ -3513,6 +3527,9 @@
                       }
                     },
                     "stage": {
+                      "type": "string"
+                    },
+                    "start_date": {
                       "type": "string"
                     }
                   }
@@ -16099,7 +16116,7 @@
       }
     }
   },
-  "x-date": "2026-03-31 17:43:18",
+  "x-date": "2026-04-01 17:27:36",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
