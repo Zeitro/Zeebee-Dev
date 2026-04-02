@@ -1,29 +1,37 @@
 'use client';
+
+import {
+	BankOutlined,
+	CheckCircleOutlined,
+	ContainerOutlined,
+	HistoryOutlined,
+} from '@ant-design/icons';
+
 const LoanStatusCard = ({ data, handleGotoLoans }) => {
 	const list = [
 		{
 			title: 'All loans',
-			icon: '',
+			icon: <BankOutlined style={{ fontSize: 20, color: 'var(--base-primary)' }} />,
 			total: data?.total_loan_count,
 			value: 'all',
 		},
 		{
 			title: 'Active',
-			icon: '',
+			icon: <CheckCircleOutlined style={{ fontSize: 20, color: '#52C41A' }} />,
 			total: data?.active_loan_count,
 			value: 'Active',
 			dataType: 'updated_at',
 		},
 		{
 			title: 'Pending',
-			icon: '',
+			icon: <HistoryOutlined style={{ fontSize: 20, color: '#FA8C16' }} />,
 			total: data?.pending_loan_count,
 			value: 'Pending',
 			dataType: 'closing_date',
 		},
 		{
 			title: 'Archived',
-			icon: '',
+			icon: <ContainerOutlined style={{ fontSize: 20, color: '#44474C' }} />,
 			total: data?.archived_loan_count,
 			value: 'Archived',
 			dataType: 'updated_at',
