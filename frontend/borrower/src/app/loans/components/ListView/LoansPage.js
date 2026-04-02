@@ -30,17 +30,25 @@ const LoansPage = ({
 		},
 		showDeleteModal,
 		stage,
+		searchQuery,
 	});
 	const { request } = createRequest();
 
-	// 导入3rd party后调用，更新列表
 	useEffect(() => {
+		const searchPendingLoans = () =>
+			tableFilterRef?.current?.handleSearch?.({
+				sorter: {
+					column: searchQuery?.sorter?.column,
+					sort: searchQuery?.sorter?.sort,
+				},
+			});
+		searchPendingLoans?.();
+		// 导入3rd party后调用，更新列表
 		if (stage === 'Pending') {
-			const searchPendingLoans = () => tableFilterRef?.current?.handleSearch?.();
 			eventBus.on('searchPendingLoans', searchPendingLoans);
 			return () => eventBus.off('searchPendingLoans', searchPendingLoans);
 		}
-	}, [stage]);
+	}, [stage, searchQuery]);
 
 	return (
 		<>
@@ -56,11 +64,13 @@ const LoansPage = ({
 				filterWrapClassName={filterWrapClassName}
 				dataSource={dataSource}
 				dataSourceLoading={loading}
+				hasInitRequest={dataSource ? true : false}
 				onRow={(row) => ({
 					onClick: () => {
 						handleSelectedRow(row, stage);
 					},
 				})}
+				modifyParams={{ sorter: searchQuery?.sorter }}
 				getData={(params) => {
 					if (!api) {
 						return {
@@ -72,18 +82,32 @@ const LoansPage = ({
 						method,
 					};
 					if (method === 'POST') {
-						const dayNum = params.filter.dayCount;
-						delete params.filter.dayCount;
-						const timeInfo = getDateRange(dayNum);
+						const dayNum = params.filter?.dayCount;
+						const sourceType = params.filter?.sourceType;
+						delete params.filter?.dayCount;
+						delete params.filter?.sourceType;
+						let timeInfo = {};
+						if (dayNum) {
+							timeInfo = getDateRange(dayNum);
+						}
+						let filterData = {
+							...(params?.filter || {}),
+							stage,
+							source: [],
+							...timeInfo,
+						};
+						if (sourceType === 'ZeeBee') {
+							filterData.source = ['System', 'Preapproval'];
+						} else if (sourceType === '3rdParty') {
+							filterData.source = ['Borrower'];
+						}
+						if (searchQuery?.date_type) {
+							filterData.date_type = searchQuery.date_type;
+						}
+
 						payload.body = {
 							...params,
-							filter: hasFilterField
-								? {}
-								: {
-										...(params?.filter || {}),
-										stage,
-										...timeInfo,
-									},
+							filter: hasFilterField ? {} : filterData,
 						};
 					}
 					return request(api, payload);

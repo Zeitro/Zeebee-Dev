@@ -15,7 +15,7 @@ const ListView = ({ className, options = [] }) => {
 	useEffect(() => {
 		const getUrlQuery = () => {
 			const query = sessionStorageUtil.get('LOANS-FILTER');
-			setSearchQuery(query);
+			// setSearchQuery(query); 暂时取消获取dashboard跳转带的参数
 			setTabKey(query?.stage || 'Pending');
 			sessionStorageUtil.remove('LOANS-FILTER');
 		};
@@ -39,6 +39,14 @@ const ListView = ({ className, options = [] }) => {
 		},
 		...options,
 	]);
+
+	const loansProps = {
+		filterWrapClassName: 'px-4 pb-4',
+		api,
+		searchQuery,
+		setSearchQuery,
+	};
+
 	return (
 		<Tabs
 			activeKey={tabKey}
@@ -46,26 +54,12 @@ const ListView = ({ className, options = [] }) => {
 				{
 					key: 'Pending',
 					label: 'Pending',
-					children: (
-						<LoansPage
-							filterWrapClassName="px-4 pb-4"
-							stage="Pending"
-							api={api}
-							searchQuery={searchQuery}
-						/>
-					),
+					children: <LoansPage stage="Pending" {...loansProps} />,
 				},
 				{
 					key: 'Active',
 					label: 'Active',
-					children: (
-						<LoansPage
-							filterWrapClassName="px-4 pb-4"
-							stage="Active"
-							api={api}
-							searchQuery={searchQuery}
-						/>
-					),
+					children: <LoansPage stage="Active" {...loansProps} />,
 				},
 				{
 					key: 'Archived',
@@ -74,23 +68,14 @@ const ListView = ({ className, options = [] }) => {
 						<LoansPage
 							filterWrapClassName="px-4 pb-4"
 							stage="Archived"
-							api={api}
-							searchQuery={searchQuery}
+							{...loansProps}
 						/>
 					),
 				},
 				{
 					key: 'Draft',
 					label: 'Drafts',
-					children: (
-						<LoansPage
-							filterWrapClassName="px-4 pb-4"
-							stage="Draft"
-							key="Draft"
-							api={api}
-							searchQuery={searchQuery}
-						/>
-					),
+					children: <LoansPage stage="Draft" key="Draft" {...loansProps} />,
 				},
 			]}
 			onChange={(v) => setTabKey(v)}

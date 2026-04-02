@@ -1,66 +1,61 @@
 'use client';
-import { Button, Radio } from 'antd';
-import React, { useCallback, useState } from 'react';
+import { Button } from 'antd';
+import React from 'react';
 import { FilterTable } from '@repo/shared-methods';
 import useColumn from './useColumns';
+import { ArrowRightOutlined } from '@ant-design/icons';
 
-const DifferentStatusLoans = ({ stage, data }) => {
+const DifferentStatusLoans = ({
+	stage,
+	data,
+	handleGotoLoans,
+	handleGotoLoanDetails,
+	className,
+	dataType,
+}) => {
 	const { getColumnsByStage, getDataSourceByStage, titleInfo, totalList } = useColumn(
 		data,
 		stage,
 	);
+
 	return (
-		<div className="border border-base-border rounded-lg">
-			<div className="flex justify-between items-center">
-				<span>{titleInfo[stage]}</span>
-				<Button type="text">View all</Button>
+		<div className="border border-base-border rounded-lg mt-6 bg-background">
+			<div className="flex justify-between items-center p-4">
+				<span className="text-xl font-medium text-base-text">{titleInfo[stage]}</span>
+				<Button
+					type="text"
+					size="small"
+					className="!text-base-gray"
+					onClick={() => handleGotoLoans(stage, dataType)}
+				>
+					View all
+					<ArrowRightOutlined />
+				</Button>
 			</div>
-			<div className="flex gap-4">
+			<div
+				className={`px-4 pb-6 grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-5 gap-4 ${className}`}
+			>
 				{totalList.map((item, index) => (
-					<div key={index} className="border border-base-border rounded-lg">
-						<span>{item.label}</span>
-						<div>{item?.render?.() || item.value}</div>
+					<div key={index} className="border border-base-border rounded-md py-4 px-6">
+						<span className="font-bold text-base-gray pb-1">{item.label}</span>
+						<div className="text-2xl font-medium text-base-text">
+							{item?.render?.() || item.value}
+						</div>
 					</div>
 				))}
 			</div>
 			<FilterTable
 				key={stage}
-				// ref={tableFilterRef}
 				columns={getColumnsByStage(stage)}
-				// scroll={{ x: scrollX }}
 				hasFilterField={false}
 				pagination={false}
-				// filterWrapClassName={filterWrapClassName}
+				className={'rounded-lg'}
 				dataSource={getDataSourceByStage()}
-				// onRow={(row) => ({
-				// 	onClick: () => {
-				// 		handleSelectedRow(row, stage);
-				// 	},
-				// })}
-				// getData={(params) => {
-				// 	if (!api) {
-				// 		return {
-				// 			list: dataSource,
-				// 			total: dataSource?.length,
-				// 		};
-				// 	}
-				// 	const filter = hasFilterField
-				// 		? {}
-				// 		: {
-				// 				...(params?.filter || {}),
-				// 				stage,
-				// 			};
-				// 	const payload = {
-				// 		method,
-				// 	};
-				// 	if (method === 'POST') {
-				// 		payload.body = {
-				// 			...params,
-				// 			filter,
-				// 		};
-				// 	}
-				// 	return request(api, payload);
-				// }}
+				onRow={(row) => ({
+					onClick: () => {
+						handleGotoLoanDetails(row);
+					},
+				})}
 			/>
 		</div>
 	);

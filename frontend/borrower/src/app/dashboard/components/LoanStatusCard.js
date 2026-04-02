@@ -1,60 +1,63 @@
 'use client';
-import { Button } from 'antd';
-import { ArrowRightOutlined } from '@ant-design/icons';
-import { useRouter } from 'next/navigation';
-import { sessionStorageUtil } from '@repo/shared-methods/utils';
-const LoanStatusCard = ({ dayCount }) => {
-	const router = useRouter();
+const LoanStatusCard = ({ data, handleGotoLoans }) => {
 	const list = [
 		{
 			title: 'All loans',
 			icon: '',
-			total: 5,
+			total: data?.total_loan_count,
 			value: 'all',
 		},
 		{
 			title: 'Active',
 			icon: '',
-			total: 5,
+			total: data?.active_loan_count,
 			value: 'Active',
+			dataType: 'updated_at',
 		},
 		{
 			title: 'Pending',
 			icon: '',
-			total: 5,
+			total: data?.pending_loan_count,
 			value: 'Pending',
+			dataType: 'closing_date',
 		},
 		{
 			title: 'Archived',
 			icon: '',
-			total: 5,
+			total: data?.archived_loan_count,
 			value: 'Archived',
+			dataType: 'updated_at',
 		},
 	];
 
-	const handleClick = (item) => {
-		router.push('/loans');
-		sessionStorageUtil.set('LOANS-FILTER', { stage: item.value, dayCount });
-	};
 	return (
-		<div className="w-full lg:w-2/3 flex flex-wrap">
+		<div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-2">
 			{list.map((item) => {
 				return (
 					<div
-						className="border rounded-lg border-base-border w-full md:w-1/2"
+						className="border rounded-lg border-base-border p-4 bg-background hover:shadow-lg cursor-pointer"
 						key={item.value}
+						onClick={() => handleGotoLoans(item?.value, item?.dataType)}
 					>
-						<div className="flex items-center justify-between">
-							<div>{item.title}</div>
-
+						<div className="flex items-center justify-between pb-4">
+							<div className="text-sm/[22px] text-base-label">{item.title}</div>
 							{item.icon}
 						</div>
-						<div className="flex items-center justify-between">
-							<span>{item.total}</span>
-							<Button type="text" onClick={() => handleClick(item)}>
-								View all
-								<ArrowRightOutlined />
-							</Button>
+						<div className="flex items-center justify-between gap-2">
+							<span className="text-3xl/10 font-medium text-base-text">
+								{item.total}
+							</span>
+							{/* {!item?.isHide && (
+								<Button
+									type="text"
+									onClick={() => handleGotoLoans(item?.value, item?.dataType)}
+									size="small"
+									className="!text-base-gray"
+								>
+									View all
+									<ArrowRightOutlined />
+								</Button>
+							)} */}
 						</div>
 					</div>
 				);

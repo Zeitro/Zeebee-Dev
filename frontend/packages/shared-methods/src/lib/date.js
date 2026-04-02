@@ -40,7 +40,7 @@ export function addDays(date, days) {
  */
 export function getDateRange(days = 7, date = new Date(), direction = 'past') {
 	// 特殊值处理：'All' 或 空字符串 返回空对象
-	if (days === 'All' || days === '') return {};
+	if (days === 'All' || !days) return {};
 
 	const n = Math.abs(Number(days)) || 0;
 	const count = Math.max(1, n);

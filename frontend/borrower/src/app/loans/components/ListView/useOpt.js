@@ -12,9 +12,8 @@ import { useGlobalStore } from '@/store/global';
 import { useOptionsStore } from '@repo/shared-methods/store';
 import { ReloadOutlined } from '@ant-design/icons';
 import { useAuth } from '@repo/shared-methods/hooks';
-import { filterTimeCount, filterTimeCountTips } from '@repo/shared-methods/enum';
+import { loansSourceTypeOptions } from '@repo/shared-methods/enum';
 import { PERMISSIONS } from '@config/permissions';
-import { FieldTips } from '@repo/shared-methods';
 
 export default function useOpt({ stage, searchQuery }) {
 	const { hasPermission } = useAuth();
@@ -35,10 +34,12 @@ export default function useOpt({ stage, searchQuery }) {
 	const [status, setStatus] = useState([]);
 	const [lender, setLender] = useState([]);
 	const [dayCount, setDayCount] = useState();
+	const [sourceType, setSourceType] = useState();
 
 	useEffect(() => {
 		const setFilterParamsFn = () => {
 			setDayCount(searchQuery?.dayCount || 'All');
+			setSourceType(searchQuery?.sourceType || 'All');
 		};
 		setFilterParamsFn();
 	}, [searchQuery]);
@@ -131,17 +132,28 @@ export default function useOpt({ stage, searchQuery }) {
 					outputKey: 'title',
 				}).map((i) => ({ ...i, key: i.value })),
 			},
+			// {
+			// 	filterType: 'select',
+			// 	label: '',
+			// 	paramsKey: 'dayCount',
+			// 	placeholder: 'Date',
+			// 	style: { width: 160 },
+			// 	value: dayCount || searchQuery?.dayCount,
+			// 	onChange: (e) => setDayCount(e),
+			// 	allowClear: false,
+			// 	options: filterTimeCount,
+			// 	suffixIcon: <FieldTips title={filterTimeCountTips} isShowDescription={true} />,
+			// },
 			{
 				filterType: 'select',
 				label: '',
-				paramsKey: 'dayCount',
-				placeholder: 'Date',
+				paramsKey: 'sourceType',
+				placeholder: 'Source type',
 				style: { width: 160 },
-				value: dayCount || searchQuery?.dayCount,
-				onChange: (e) => setDayCount(e),
+				value: sourceType || searchQuery?.sourceType,
+				onChange: (e) => setSourceType(e),
 				allowClear: false,
-				options: filterTimeCount,
-				suffixIcon: <FieldTips title={filterTimeCountTips} isShowDescription={true} />,
+				options: loansSourceTypeOptions,
 			},
 			{
 				filterType: 'button',
@@ -162,6 +174,7 @@ export default function useOpt({ stage, searchQuery }) {
 					setStatus([]);
 					setLender([]);
 					setDayCount('All');
+					setSourceType('All');
 					tableFilterRef?.current?.handleSearch?.({
 						filter: {
 							dayCount: 'All',
@@ -183,7 +196,8 @@ export default function useOpt({ stage, searchQuery }) {
 		stage,
 		lenderOptions,
 		lender,
-		dayCount,
+		// dayCount,
+		sourceType,
 		searchQuery,
 	]);
 
