@@ -10,7 +10,6 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -30,7 +29,7 @@ func NewAcceptInvitationLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -54,7 +53,7 @@ func (l *AcceptInvitationLogic) AcceptInvitation(in *lender.OrganizationUserAcce
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[bo.UserJwtTokenBo, lender.UserJwtResponseData](token)
+	data, err := copierx.Trans[dto.UserJwtTokenDto, lender.UserJwtResponseData](token)
 	if err != nil {
 		return nil, err
 	}

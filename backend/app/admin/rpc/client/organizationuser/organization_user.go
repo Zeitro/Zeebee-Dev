@@ -17,11 +17,11 @@ type (
 	AddressEntity                              = admin.AddressEntity
 	ApiCreateRequest                           = admin.ApiCreateRequest
 	ApiCreateRequestData                       = admin.ApiCreateRequestData
-	ApiCreateResponse                          = admin.ApiCreateResponse
 	ApiDeleteRequest                           = admin.ApiDeleteRequest
 	ApiDeleteRequestData                       = admin.ApiDeleteRequestData
 	ApiDetailRequest                           = admin.ApiDetailRequest
 	ApiDetailRequestData                       = admin.ApiDetailRequestData
+	ApiDetailResponse                          = admin.ApiDetailResponse
 	ApiEntity                                  = admin.ApiEntity
 	ApiTreeEntity                              = admin.ApiTreeEntity
 	ApiTreeRequest                             = admin.ApiTreeRequest
@@ -29,6 +29,10 @@ type (
 	ApiTreeResponse                            = admin.ApiTreeResponse
 	ApiUpdateRequest                           = admin.ApiUpdateRequest
 	ApiUpdateRequestData                       = admin.ApiUpdateRequestData
+	AuthCheckRequest                           = admin.AuthCheckRequest
+	AuthCheckRequestData                       = admin.AuthCheckRequestData
+	AuthCheckResponse                          = admin.AuthCheckResponse
+	AuthCheckResponseData                      = admin.AuthCheckResponseData
 	BaseTemplateEntity                         = admin.BaseTemplateEntity
 	BaseTemplatePageEntity                     = admin.BaseTemplatePageEntity
 	BaseTemplatePageRequest                    = admin.BaseTemplatePageRequest
@@ -105,7 +109,6 @@ type (
 	OrganizationUpdateLenderRequestData        = admin.OrganizationUpdateLenderRequestData
 	OrganizationUserCreateRequest              = admin.OrganizationUserCreateRequest
 	OrganizationUserCreateRequestData          = admin.OrganizationUserCreateRequestData
-	OrganizationUserCreateResponse             = admin.OrganizationUserCreateResponse
 	OrganizationUserDeleteRequest              = admin.OrganizationUserDeleteRequest
 	OrganizationUserDeleteRequestData          = admin.OrganizationUserDeleteRequestData
 	OrganizationUserDetailRequest              = admin.OrganizationUserDetailRequest
@@ -123,7 +126,6 @@ type (
 	OrganizationUserSwitchStatusRequestData    = admin.OrganizationUserSwitchStatusRequestData
 	OrganizationUserUpdateRequest              = admin.OrganizationUserUpdateRequest
 	OrganizationUserUpdateRequestData          = admin.OrganizationUserUpdateRequestData
-	OrganizationUserUpdateResponse             = admin.OrganizationUserUpdateResponse
 	RangeFloat                                 = admin.RangeFloat
 	RangeInt32                                 = admin.RangeInt32
 	RangeInt64                                 = admin.RangeInt64
@@ -139,7 +141,6 @@ type (
 	ResetPasswordResponseData                  = admin.ResetPasswordResponseData
 	ResourceCreateRequest                      = admin.ResourceCreateRequest
 	ResourceCreateRequestData                  = admin.ResourceCreateRequestData
-	ResourceCreateResponse                     = admin.ResourceCreateResponse
 	ResourceDeleteRequest                      = admin.ResourceDeleteRequest
 	ResourceDeleteRequestData                  = admin.ResourceDeleteRequestData
 	ResourceDetailRequest                      = admin.ResourceDetailRequest
@@ -156,9 +157,10 @@ type (
 	RoleAllRequestData                         = admin.RoleAllRequestData
 	RoleAllResponse                            = admin.RoleAllResponse
 	RoleAndResourceRelationEntity              = admin.RoleAndResourceRelationEntity
+	RoleAssignOrganizationUsersRequest         = admin.RoleAssignOrganizationUsersRequest
+	RoleAssignOrganizationUsersRequestData     = admin.RoleAssignOrganizationUsersRequestData
 	RoleCreateRequest                          = admin.RoleCreateRequest
 	RoleCreateRequestData                      = admin.RoleCreateRequestData
-	RoleCreateResponse                         = admin.RoleCreateResponse
 	RoleDeleteRequest                          = admin.RoleDeleteRequest
 	RoleDeleteRequestData                      = admin.RoleDeleteRequestData
 	RoleDetailRequest                          = admin.RoleDetailRequest
@@ -171,11 +173,10 @@ type (
 	RolePageRequestSorter                      = admin.RolePageRequestSorter
 	RolePageResponse                           = admin.RolePageResponse
 	RolePageResponseData                       = admin.RolePageResponseData
+	RoleSwitchStatusRequest                    = admin.RoleSwitchStatusRequest
+	RoleSwitchStatusRequestData                = admin.RoleSwitchStatusRequestData
 	RoleUpdateRequest                          = admin.RoleUpdateRequest
 	RoleUpdateRequestData                      = admin.RoleUpdateRequestData
-	RoleUpdateResponse                         = admin.RoleUpdateResponse
-	RoleUpdateStatusRequest                    = admin.RoleUpdateStatusRequest
-	RoleUpdateStatusRequestData                = admin.RoleUpdateStatusRequestData
 	StorageCreatePresignedUrlRequest           = admin.StorageCreatePresignedUrlRequest
 	StorageCreatePresignedUrlRequestData       = admin.StorageCreatePresignedUrlRequestData
 	StorageCreatePresignedUrlResponse          = admin.StorageCreatePresignedUrlResponse
@@ -205,8 +206,8 @@ type (
 
 	OrganizationUser interface {
 		Page(ctx context.Context, in *OrganizationUserPageRequest, opts ...grpc.CallOption) (*OrganizationUserPageResponse, error)
-		Create(ctx context.Context, in *OrganizationUserCreateRequest, opts ...grpc.CallOption) (*OrganizationUserCreateResponse, error)
-		Update(ctx context.Context, in *OrganizationUserUpdateRequest, opts ...grpc.CallOption) (*OrganizationUserUpdateResponse, error)
+		Create(ctx context.Context, in *OrganizationUserCreateRequest, opts ...grpc.CallOption) (*OrganizationUserDetailResponse, error)
+		Update(ctx context.Context, in *OrganizationUserUpdateRequest, opts ...grpc.CallOption) (*OrganizationUserDetailResponse, error)
 		Delete(ctx context.Context, in *OrganizationUserDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		Detail(ctx context.Context, in *OrganizationUserDetailRequest, opts ...grpc.CallOption) (*OrganizationUserDetailResponse, error)
 		SwitchStatus(ctx context.Context, in *OrganizationUserSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
@@ -228,12 +229,12 @@ func (m *defaultOrganizationUser) Page(ctx context.Context, in *OrganizationUser
 	return client.Page(ctx, in, opts...)
 }
 
-func (m *defaultOrganizationUser) Create(ctx context.Context, in *OrganizationUserCreateRequest, opts ...grpc.CallOption) (*OrganizationUserCreateResponse, error) {
+func (m *defaultOrganizationUser) Create(ctx context.Context, in *OrganizationUserCreateRequest, opts ...grpc.CallOption) (*OrganizationUserDetailResponse, error) {
 	client := admin.NewOrganizationUserClient(m.cli.Conn())
 	return client.Create(ctx, in, opts...)
 }
 
-func (m *defaultOrganizationUser) Update(ctx context.Context, in *OrganizationUserUpdateRequest, opts ...grpc.CallOption) (*OrganizationUserUpdateResponse, error) {
+func (m *defaultOrganizationUser) Update(ctx context.Context, in *OrganizationUserUpdateRequest, opts ...grpc.CallOption) (*OrganizationUserDetailResponse, error) {
 	client := admin.NewOrganizationUserClient(m.cli.Conn())
 	return client.Update(ctx, in, opts...)
 }

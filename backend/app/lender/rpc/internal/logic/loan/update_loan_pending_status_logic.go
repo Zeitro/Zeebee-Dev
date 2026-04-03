@@ -26,7 +26,7 @@ func NewUpdateLoanPendingStatusLogic(ctx context.Context, svcCtx *svc.ServiceCon
 	return &UpdateLoanPendingStatusLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 		Logger:    logx.WithContext(ctx),
 	}
 }
@@ -96,7 +96,7 @@ func (l *UpdateLoanPendingStatusLogic) UpdateLoanPendingStatus(in *lender.LoanUp
 		}
 
 		// loanBaseLogic := NewLoanBaseLogic(l.ctx, l.svcCtx)
-		return l.baseLogic.CreateLoanOperationLog(tx, loan.Id, operatorId, fromStatus, toStatus, constants.LoanOperationActionUpdate, nil)
+		return l.baseLogic.CreateLoanOperationLog(l.ctx, tx, loan.Id, operatorId, fromStatus, toStatus, constants.LoanOperationActionUpdate, nil)
 	})
 
 	if err != nil {

@@ -7,7 +7,13 @@ import { useAuth } from '@repo/shared-methods/hooks';
 import { SendOutlined } from '@ant-design/icons';
 import QuoteBtn from '../Quote';
 
-export default function useColumn({ isNotAddress, successCallback, showDeleteModal, stage }) {
+export default function useColumn({
+	isNotAddress,
+	successCallback,
+	showDeleteModal,
+	stage,
+	searchQuery,
+}) {
 	const { hasPermission, getActiveByPermission } = useAuth();
 	const get3rdPartyMark = (v, { source }) => (
 		<div className="flex items-center">
@@ -24,6 +30,14 @@ export default function useColumn({ isNotAddress, successCallback, showDeleteMod
 	const common = (isNotAddress) => {
 		const addressArr = [
 			{
+				title: 'Loan ID',
+				dataIndex: 'id',
+				key: 'id',
+				width: 160,
+				fixed: 'left',
+				render: get3rdPartyMark,
+			},
+			{
 				title: 'Property address',
 				dataIndex: ['loan_property', 'address', 'address1'],
 				key: 'address',
@@ -33,7 +47,6 @@ export default function useColumn({ isNotAddress, successCallback, showDeleteMod
 				// defaultSortOrder: 'descend',
 				fixed: 'left',
 				width: 260,
-				render: get3rdPartyMark,
 			},
 			{
 				title: 'City',
@@ -66,7 +79,7 @@ export default function useColumn({ isNotAddress, successCallback, showDeleteMod
 				ellipsis: true,
 				sorter: true,
 				width: 170,
-				defaultSortOrder: 'descend',
+				defaultSortOrder: searchQuery?.sorter?.column ? null : 'descend',
 				render: (v) => formatTime(v) || '--',
 			},
 			{
@@ -280,6 +293,7 @@ export default function useColumn({ isNotAddress, successCallback, showDeleteMod
 				ellipsis: true,
 				sorter: true,
 				width: 170,
+				defaultSortOrder: searchQuery?.sorter?.column === 'closing_date' ? 'descend' : null,
 				render: (v) => v || '--',
 			},
 			{
@@ -435,6 +449,21 @@ export default function useColumn({ isNotAddress, successCallback, showDeleteMod
 				sorter: true,
 				width: 180,
 				render: (v) => formatAmount(v),
+			},
+			{
+				title: 'Hold back (Release/Remaining)',
+				dataIndex: 'holdback_amount',
+				key: 'holdback_amount',
+				ellipsis: true,
+				render: (v, { holdback_released_amount, holdback_remaining_amount }) => (
+					<>
+						<span>{formatAmount(v)}</span>
+						<div className="text-base-gray text-xs">
+							({formatAmount(holdback_released_amount)}/
+							{formatAmount(holdback_remaining_amount)})
+						</div>
+					</>
+				),
 			},
 			// {
 			// 	title: 'Released Holdback',
