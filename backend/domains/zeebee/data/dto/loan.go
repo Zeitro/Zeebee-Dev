@@ -2,6 +2,7 @@ package dto
 
 import (
 	"database/sql"
+	"time"
 
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data"
@@ -30,8 +31,8 @@ type LoanEntityDto struct {
 	PrepaymentPenalty      int32                        `json:"prepayment_penalty"`
 	ServiceCompany         string                       `json:"service_company"`
 	PaidOffDate            *sql.NullTime                `json:"paid_off_date"`
-	CreatedAt              *sql.NullTime                `json:"created_at"`
-	UpdatedAt              *sql.NullTime                `json:"updated_at"`
+	CreatedAt              time.Time                    `json:"created_at"`
+	UpdatedAt              time.Time                    `json:"updated_at"`
 	OrganizationId         int64                        `json:"organization_id"`
 	BorrowerId             int64                        `json:"borrower_id"`
 	BusinessStrategy       []constants.BusinessStrategy `json:"business_strategy"`
@@ -51,6 +52,11 @@ type LoanEntityDto struct {
 	LoanProcessor          string                       `json:"loan_processor"`
 	Extend                 *data.LoanExtendValueEntity  `json:"extend"`
 	LoanDocuments          []*LoanDocumentEntityDto     `json:"loan_documents"`
+
+	// HoldbackReleasedAmount   float64                 `json:"release_holdback_amount"`
+	HoldbackRemainingAmount float64                 `json:"holdback_remaining_amount"`
+	DueStatus               constants.LoanDueStatus `json:"due_status"`
+	DueDays                 int32                   `json:"due_days"`
 }
 
 type LoanBorrowerPageRequestDto struct {
@@ -63,13 +69,18 @@ type LoanBorrowerPageRequestFilter struct {
 	UserId         int64 `json:"user_id,omitempty"`
 	OrganizationId int64 `json:"organization_id"`
 	// BorrowerOrganizationId int64    `json:"borrower_organization_id"`
-	Stage         string   `json:"stage,omitempty"`
-	Keyword       string   `json:"keyword,omitempty"`
-	KeywordType   string   `json:"keyword_type,omitempty"`
-	LoanPurpose   []string `json:"loan_purpose,omitempty"`
-	LoanType      []string `json:"loan_type,omitempty"`
-	Lender        []string `json:"lender,omitempty"`
-	PendingStatus []string `json:"pending_status,omitempty"`
+	Stage         constants.LoanStage    `json:"stage,omitempty"`
+	Keyword       string                 `json:"keyword,omitempty"`
+	KeywordType   string                 `json:"keyword_type,omitempty"`
+	LoanPurpose   []string               `json:"loan_purpose,omitempty"`
+	LoanType      []string               `json:"loan_type,omitempty"`
+	Lender        []string               `json:"lender,omitempty"`
+	PendingStatus []string               `json:"pending_status,omitempty"`
+	Source        []constants.LoanSource `json:"source,omitempty"`
+	DueInDays     int32                  `json:"due_in_days,omitempty"`
+	StartDate     *sql.NullTime          `json:"start_date,omitempty"`
+	EndDate       *sql.NullTime          `json:"end_date,omitempty"`
+	DateType      string                 `json:"date_type"`
 }
 
 type LoanLenderPageRequestDto struct {
@@ -79,13 +90,13 @@ type LoanLenderPageRequestDto struct {
 }
 
 type LoanLenderPageRequestFilter struct {
-	OrganizationId int64    `json:"organization_id"`
-	Stage          string   `json:"stage,omitempty"`
-	Keyword        string   `json:"keyword,omitempty"`
-	KeywordType    string   `json:"keyword_type,omitempty"`
-	LoanPurpose    []string `json:"loan_purpose,omitempty"`
-	LoanType       []string `json:"loan_type,omitempty"`
-	PendingStatus  []string `json:"pending_status,omitempty"`
+	OrganizationId int64               `json:"organization_id"`
+	Stage          constants.LoanStage `json:"stage,omitempty"`
+	Keyword        string              `json:"keyword,omitempty"`
+	KeywordType    string              `json:"keyword_type,omitempty"`
+	LoanPurpose    []string            `json:"loan_purpose,omitempty"`
+	LoanType       []string            `json:"loan_type,omitempty"`
+	PendingStatus  []string            `json:"pending_status,omitempty"`
 }
 
 type LoanAdminPageRequestDto struct {
@@ -96,11 +107,37 @@ type LoanAdminPageRequestDto struct {
 
 type LoanAdminPageRequestFilter struct {
 	// OrganizationId int64    `json:"organization_id"`
-	Stage         string   `json:"stage,omitempty"`
-	Keyword       string   `json:"keyword,omitempty"`
-	KeywordType   string   `json:"keyword_type,omitempty"`
-	LoanPurpose   []string `json:"loan_purpose,omitempty"`
-	LoanType      []string `json:"loan_type,omitempty"`
-	PendingStatus []string `json:"pending_status,omitempty"`
-	Lender        []string `json:"lender,omitempty"`
+	Stage         constants.LoanStage `json:"stage,omitempty"`
+	Keyword       string              `json:"keyword,omitempty"`
+	KeywordType   string              `json:"keyword_type,omitempty"`
+	LoanPurpose   []string            `json:"loan_purpose,omitempty"`
+	LoanType      []string            `json:"loan_type,omitempty"`
+	PendingStatus []string            `json:"pending_status,omitempty"`
+	Lender        []string            `json:"lender,omitempty"`
+}
+
+type LoanSummaryRequestDto struct {
+	OrganizationId     int64                  `json:"organization_id"`
+	OrganizationUserId int64                  `json:"organization_user_id"`
+	StartDate          *sql.NullTime          `json:"start_date"`
+	EndDate            *sql.NullTime          `json:"end_date"`
+	DateType           string                 `json:"date_type"`
+	Source             []constants.LoanSource `json:"source"`
+	DueInDays          int32                  `json:"due_in_days"`
+	Stage              constants.LoanStage    `json:"stage"`
+	Sorter             BasePageSorter         `json:"sorter"`
+}
+
+type LoanSummaryResponseDto struct {
+	TotalLoanAmount              float64          `json:"total_loan_amount"`
+	TotalPrincipalAmount         float64          `json:"total_principal_amount"`
+	TotalHoldbackAmount          float64          `json:"total_holdback_amount"`
+	TotalClosingFundAmount       float64          `json:"total_closing_fund_amount"`
+	TotalMonthlyPaymentAmount    float64          `json:"total_monthly_payment_amount"`
+	TotalHoldbackReleasedAmount  float64          `json:"total_holdback_released_amount"`
+	TotalHoldbackRemainingAmount float64          `json:"total_remaining_holdback_amount"`
+	TotalReservesAmount          float64          `json:"total_reserves_amount"`
+	TotalLoanCount               int64            `json:"total_loan_count"`
+	AverageRate                  float64          `json:"average_rate"`
+	List                         []*LoanEntityDto `json:"list" gorm:"-"`
 }
