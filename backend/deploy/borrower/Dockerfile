@@ -13,5 +13,6 @@ ENV CONFIG_ENV=${CONFIG_ENV}
 WORKDIR /app
 COPY --from=builder /app/borrower /app/borrower
 COPY ./app/borrower/etc/config-${CONFIG_ENV}.yaml /app/etc/config-${CONFIG_ENV}.yaml
+COPY ./app/borrower/etc/model.conf /app/etc/model.conf
 EXPOSE 10000
 ENTRYPOINT /app/borrower -f /app/etc/config-${CONFIG_ENV}.yaml

@@ -3,7 +3,6 @@ package borrowerentitylogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
@@ -27,7 +26,7 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -44,33 +43,25 @@ func (l *CreateLogic) Create(in *borrower.BorrowerEntityCreateRequest) (resp *bo
 
 	saveData := &model.BorrowerEntity{}
 	responseData := &borrower.BorrowerEntityEntity{}
-	err = copier.CopyWithOption(saveData, in.Data, copier.Option{
-		CaseSensitive: true,
-		DeepCopy:      true,
-		Converters:    []copier.TypeConverter{},
-	})
+	saveData, err = copierx.Trans[borrower.BorrowerEntityEditEntity, model.BorrowerEntity](in.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
+
 	saveData.CreatorId = claim.OrganizationUserId
 	saveData.OrganizationId = claim.OrganizationId
 	saveData.CreatorName = claim.Username
 
 	result, err := l.svcCtx.BorrowerEntityRepo.Create(l.ctx, saveData)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
-
-	err = copier.CopyWithOption(responseData, result, copier.Option{
-		CaseSensitive: true,
-		DeepCopy:      true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-			copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
-		},
-	})
+	responseData, err = copierx.Trans[model.BorrowerEntity, borrower.BorrowerEntityEntity](result,
+		copierx.TimeToRFC3339Str(),
+		copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
+	)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
 	return &borrower.BorrowerEntityCreateResponse{

@@ -10,7 +10,7 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/bo"
+	"zeebee-backend/domains/zeebee/data/dto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -27,7 +27,7 @@ func NewSelectOptionsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sel
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -47,7 +47,7 @@ func (l *SelectOptionsLogic) SelectOptions(in *admin.OrganizationSelectOptionsRe
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[[]*bo.OrganizationOptionBo, []*admin.OrganizationOptionsEntity](&organization)
+	data, err := copierx.Trans[[]*dto.OrganizationOptionDto, []*admin.OrganizationOptionsEntity](&organization)
 	if err != nil {
 		return nil, err
 	}

@@ -15,6 +15,11 @@ import (
 
 type (
 	AddressEntity                                  = lender.AddressEntity
+	ApiEntity                                      = lender.ApiEntity
+	AuthCheckRequest                               = lender.AuthCheckRequest
+	AuthCheckRequestData                           = lender.AuthCheckRequestData
+	AuthCheckResponse                              = lender.AuthCheckResponse
+	AuthCheckResponseData                          = lender.AuthCheckResponseData
 	BorrowerApplicantEntity                        = lender.BorrowerApplicantEntity
 	BorrowerEditApplicantEntity                    = lender.BorrowerEditApplicantEntity
 	BorrowerEntityEntity                           = lender.BorrowerEntityEntity
@@ -163,6 +168,8 @@ type (
 	RoleAllRequestData                             = lender.RoleAllRequestData
 	RoleAllResponse                                = lender.RoleAllResponse
 	RoleAndResourceRelationEntity                  = lender.RoleAndResourceRelationEntity
+	RoleAssignOrganizationUsersRequest             = lender.RoleAssignOrganizationUsersRequest
+	RoleAssignOrganizationUsersRequestData         = lender.RoleAssignOrganizationUsersRequestData
 	RoleCreateRequest                              = lender.RoleCreateRequest
 	RoleCreateRequestData                          = lender.RoleCreateRequestData
 	RoleCreateResponse                             = lender.RoleCreateResponse

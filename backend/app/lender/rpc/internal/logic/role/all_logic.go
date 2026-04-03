@@ -11,7 +11,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/bo"
+	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type AllLogic struct {
@@ -26,7 +26,7 @@ func NewAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AllLogic {
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -47,7 +47,7 @@ func (l *AllLogic) All(in *lender.RoleAllRequest) (resp *lender.RoleAllResponse,
 		return nil, err
 	}
 
-	data, err := copierx.Trans[[]*bo.RoleBo, []*lender.RoleEntity](&result, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[[]*dto.RoleEntityDto, []*lender.RoleEntity](&result, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

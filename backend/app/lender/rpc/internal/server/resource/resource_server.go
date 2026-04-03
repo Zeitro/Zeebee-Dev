@@ -27,3 +27,8 @@ func (s *ResourceServer) ResourceTree(ctx context.Context, in *lender.ResourceTr
 	l := resourcelogic.NewResourceTreeLogic(ctx, s.svcCtx)
 	return l.ResourceTree(in)
 }
+
+func (s *ResourceServer) UserMenu(ctx context.Context, in *lender.EmptyRequest) (*lender.ResourceTreeResponse, error) {
+	l := resourcelogic.NewUserMenuLogic(ctx, s.svcCtx)
+	return l.UserMenu(in)
+}
