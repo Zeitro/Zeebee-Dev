@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button, Checkbox, Col, Form, Input, Row } from 'antd';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useUserStore } from '@/store/user';
+import { useUserStore } from '@repo/shared-methods/store';
 import { validateRule, emailRegex } from '@repo/shared-methods/utils';
 import styles from '../index.module.scss';
 import ConfirmPassWord from '../components/ConfirmPassword';

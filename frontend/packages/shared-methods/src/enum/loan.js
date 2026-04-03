@@ -1,5 +1,6 @@
 import { HomeOutlined } from '@ant-design/icons';
 import { formatAmount } from '@repo/shared-methods/utils';
+import { PERMISSIONS } from '@config/permissions'; // admin/lender/borrower都需要的权限
 export const tinOptions = [
 	{ label: 'SSN', value: 'SSN' },
 	{ label: 'ITIN', value: 'ITIN' },
@@ -176,18 +177,22 @@ export const pendingSteps = [
 	{
 		title: 'Quoting',
 		key: 'Quoting',
+		role: PERMISSIONS?.LOAN?.QUOTING,
 	},
 	{
 		title: 'Processing',
 		key: 'Processing',
+		role: PERMISSIONS?.LOAN?.PROCESSING,
 	},
 	{
 		title: 'Underwriting',
 		key: 'Underwriting',
+		role: PERMISSIONS?.LOAN?.UNDERWRITING,
 	},
 	{
 		title: 'Closing',
 		key: 'Closing',
+		role: PERMISSIONS?.LOAN?.CLOSING,
 	},
 ];
 

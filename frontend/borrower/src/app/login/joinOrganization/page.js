@@ -1,15 +1,14 @@
 'use client';
 import { InputNameCombination } from '@repo/shared-methods';
 import { Button, Form, message, Row } from 'antd';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { createRequest, setCookie } from '@repo/shared-methods/utils';
-import { useUserStore } from '@/store/user';
+import { useSearchParams } from 'next/navigation';
+import { createRequest } from '@repo/shared-methods/utils';
+import useData from '../components/useData';
 // 邀请加入组织，邮件链接确认加入访问的页面
 const JoinOrganization = () => {
-	const router = useRouter();
+	const { getUserPermissions } = useData();
 	const { request } = createRequest();
 	const searchParams = useSearchParams();
-	const { getUserInfo, updateAccess } = useUserStore();
 	const email = searchParams.get('email');
 	const organizationName = searchParams.get('organization_name');
 	const first_name = searchParams.get('first_name');
@@ -24,14 +23,16 @@ const JoinOrganization = () => {
 			method: 'POST',
 			body: { organization_id: Number(organization_id), email, code, ...values },
 		});
-		setCookie('token', access?.access_token, access?.access_token_expire * 1000);
-		message.open({
-			type: 'success',
-			content: `Successfully joined the ${organizationName} organization. Logging in...`,
+		// await updateAccess(access);
+		await getUserPermissions(access, () => {
+			message.open({
+				type: 'success',
+				content: `Successfully joined the ${organizationName} organization. Logging in...`,
+			});
 		});
-		await updateAccess(access);
-		await getUserInfo();
-		router.push('/');
+		// setCookie('token', access?.access_token, access?.access_token_expire * 1000);
+		// await getUserInfo();
+		// router.push('/');
 	};
 	return (
 		<div className="flex-1 w-full bg-[#F5F5F5] overflow-hidden flex justify-center items-center ">

@@ -10,10 +10,8 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/gormx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/model"
 )
 
 type BorrowerLoanPageLogic struct {
@@ -45,7 +43,7 @@ func (l *BorrowerLoanPageLogic) BorrowerLoanPage(in *borrower.LoanPageRequest) (
 	}
 
 	pageReq := &dto.LoanBorrowerPageRequestDto{}
-	pageReq, err = copierx.Trans[borrower.LoanPageRequestData, dto.LoanBorrowerPageRequestDto](in.Data)
+	pageReq, err = copierx.Trans[borrower.LoanPageRequestData, dto.LoanBorrowerPageRequestDto](in.Data, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
 		return nil, err
 	}
@@ -53,14 +51,15 @@ func (l *BorrowerLoanPageLogic) BorrowerLoanPage(in *borrower.LoanPageRequest) (
 	pageReq.Filter.OrganizationId = claim.OrganizationId
 	pageReq.Filter.UserId = claim.OrganizationUserId
 
-	pageResult, err := l.svcCtx.LoanRepo.PageForBorrower(l.ctx, *pageReq)
+	pageResult, err := l.baseLogic.LoanLogic.BorrowerLoanPage(l.ctx, *pageReq)
 	if err != nil {
-		return nil, errorx.WithStack(err)
+		return nil, err
 	}
+
 	resp = &borrower.LoanPageResponse{
 		Data: &borrower.LoanPageResponseData{},
 	}
-	resp.Data, err = copierx.Trans[gormx.PageResponse[*model.Loan], borrower.LoanPageResponseData](&pageResult,
+	resp.Data, err = copierx.Trans[dto.PageResultDto[*dto.LoanEntityDto], borrower.LoanPageResponseData](pageResult,
 		copierx.TimeToRFC3339Str(),
 		copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
 	)
