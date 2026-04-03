@@ -11,7 +11,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/bo"
+	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type RefreshTokenLogic struct {
@@ -25,7 +25,7 @@ func NewRefreshTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Refr
 	return &RefreshTokenLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 		Logger:    logx.WithContext(ctx),
 	}
 }
@@ -41,7 +41,7 @@ func (l *RefreshTokenLogic) RefreshToken(in *lender.RefreshTokenRequest) (resp *
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[bo.UserJwtTokenBo, lender.UserJwtResponseData](token)
+	data, err := copierx.Trans[dto.UserJwtTokenDto, lender.UserJwtResponseData](token)
 	if err != nil {
 		return nil, err
 	}

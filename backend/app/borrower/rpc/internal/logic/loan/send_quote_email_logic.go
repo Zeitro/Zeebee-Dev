@@ -36,7 +36,7 @@ func NewSendQuoteEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Se
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 

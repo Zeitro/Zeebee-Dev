@@ -3,10 +3,9 @@ package loanlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/repo"
 
@@ -43,13 +42,11 @@ func (l *LoanDocumentOptsLogic) LoanDocumentOpts(in *lender.LoanDocumentOptsRequ
 		return nil, err
 	}
 
-	err = copier.CopyWithOption(&resultOpts, opts, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+	resultOptsPtr, err := copierx.Trans[[]repo.LoanDocumentOption, []*lender.LoanDocumentOptEntity](&opts)
 	if err != nil {
-		return nil, errorx.GetFailedTransErr(err)
+		return nil, err
 	}
+	resultOpts = *resultOptsPtr
 
 	return &lender.LoanDocumentOptsResponse{
 		Data: resultOpts,

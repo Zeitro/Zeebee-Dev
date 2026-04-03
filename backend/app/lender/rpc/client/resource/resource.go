@@ -15,6 +15,11 @@ import (
 
 type (
 	AddressEntity                                  = lender.AddressEntity
+	ApiEntity                                      = lender.ApiEntity
+	AuthCheckRequest                               = lender.AuthCheckRequest
+	AuthCheckRequestData                           = lender.AuthCheckRequestData
+	AuthCheckResponse                              = lender.AuthCheckResponse
+	AuthCheckResponseData                          = lender.AuthCheckResponseData
 	BorrowerApplicantEntity                        = lender.BorrowerApplicantEntity
 	BorrowerEditApplicantEntity                    = lender.BorrowerEditApplicantEntity
 	BorrowerEntityEntity                           = lender.BorrowerEntityEntity
@@ -163,6 +168,8 @@ type (
 	RoleAllRequestData                             = lender.RoleAllRequestData
 	RoleAllResponse                                = lender.RoleAllResponse
 	RoleAndResourceRelationEntity                  = lender.RoleAndResourceRelationEntity
+	RoleAssignOrganizationUsersRequest             = lender.RoleAssignOrganizationUsersRequest
+	RoleAssignOrganizationUsersRequestData         = lender.RoleAssignOrganizationUsersRequestData
 	RoleCreateRequest                              = lender.RoleCreateRequest
 	RoleCreateRequestData                          = lender.RoleCreateRequestData
 	RoleCreateResponse                             = lender.RoleCreateResponse
@@ -221,6 +228,7 @@ type (
 
 	Resource interface {
 		ResourceTree(ctx context.Context, in *ResourceTreeRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error)
+		UserMenu(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error)
 	}
 
 	defaultResource struct {
@@ -237,4 +245,9 @@ func NewResource(cli zrpc.Client) Resource {
 func (m *defaultResource) ResourceTree(ctx context.Context, in *ResourceTreeRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error) {
 	client := lender.NewResourceClient(m.cli.Conn())
 	return client.ResourceTree(ctx, in, opts...)
+}
+
+func (m *defaultResource) UserMenu(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error) {
+	client := lender.NewResourceClient(m.cli.Conn())
+	return client.UserMenu(ctx, in, opts...)
 }

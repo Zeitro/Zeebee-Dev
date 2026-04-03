@@ -47,3 +47,8 @@ func (s *ResourceServer) Detail(ctx context.Context, in *admin.ResourceDetailReq
 	l := resourcelogic.NewDetailLogic(ctx, s.svcCtx)
 	return l.Detail(in)
 }
+
+func (s *ResourceServer) UserMenu(ctx context.Context, in *admin.EmptyRequest) (*admin.ResourceTreeResponse, error) {
+	l := resourcelogic.NewUserMenuLogic(ctx, s.svcCtx)
+	return l.UserMenu(in)
+}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"os"
@@ -14,6 +15,7 @@ import (
 	"zeebee-backend/app/admin/api"
 	"zeebee-backend/app/admin/config"
 	"zeebee-backend/app/admin/rpc"
+	"zeebee-backend/common/errorx"
 )
 
 var configFile = flag.String("f", "etc/config.yaml", "the config file")
@@ -23,12 +25,17 @@ func main() {
 
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
-	logx.Infof("loand service config successfully")
+	logx.Infof("load service config successfully")
 
 	apiServer := api.NewApiServer(c)
 	rpcServer, err := rpc.NewRpcServer(c)
 	if err != nil {
-		fmt.Printf("start rpc server err: %v", err)
+		logx.WithContext(context.Background()).
+			WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("err", err),
+			).
+			Errorf("failed to start rpc server")
 		panic(err)
 	}
 	logx.Infof("start rpc service in %s mode", c.RpcConf.Mode)
