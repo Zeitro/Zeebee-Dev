@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Drawer, Form, Input, InputNumber, Switch, Button, message, Space } from 'antd';
 import { createRequest } from '@repo/shared-methods/utils';
 
@@ -9,28 +9,33 @@ const { TextArea } = Input;
 const DiscoverSettingsDrawer = ({ open, onClose }) => {
 	const { request } = createRequest();
 	const requestRef = useRef(request);
-	requestRef.current = request;
+	useEffect(() => {
+		requestRef.current = request;
+	});
 
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState(false);
 	const [saving, setSaving] = useState(false);
 
-	const load = useCallback(async () => {
-		try {
-			setLoading(true);
-			const res = await requestRef.current('/lender_discover/settings');
-			form.setFieldsValue(res?.data || {});
-			setLoading(false);
-		} catch {
-			setLoading(false);
-		}
-	}, [form]);
-
 	useEffect(() => {
-		if (open) {
-			load();
-		}
-	}, [open, load]);
+		if (!open) return;
+		let cancelled = false;
+		(async () => {
+			try {
+				setLoading(true);
+				const res = await requestRef.current('/lender_discover/settings');
+				if (!cancelled) {
+					form.setFieldsValue(res?.data || {});
+					setLoading(false);
+				}
+			} catch {
+				if (!cancelled) setLoading(false);
+			}
+		})();
+		return () => {
+			cancelled = true;
+		};
+	}, [open, form]);
 
 	const onSave = async () => {
 		try {
@@ -64,7 +69,11 @@ const DiscoverSettingsDrawer = ({ open, onClose }) => {
 			}
 		>
 			<Form form={form} layout="vertical" disabled={loading}>
-				<Form.Item name="schedule_enabled" label="Enable scheduled search" valuePropName="checked">
+				<Form.Item
+					name="schedule_enabled"
+					label="Enable scheduled search"
+					valuePropName="checked"
+				>
 					<Switch />
 				</Form.Item>
 				<Form.Item
@@ -92,8 +101,8 @@ const DiscoverSettingsDrawer = ({ open, onClose }) => {
 				</Form.Item>
 			</Form>
 			<p className="text-xs text-base-label mt-2">
-				Set <code className="text-xs">OPENAI_API_KEY</code> on the admin server; it is never stored in the UI or
-				database.
+				Set <code className="text-xs">OPENAI_API_KEY</code> on the admin server; it is never
+				stored in the UI or database.
 			</p>
 		</Drawer>
 	);
