@@ -43,9 +43,7 @@ const MainModal = ({ rowData, setOpen, successCallback }) => {
 	};
 
 	const needSearchOnboard =
-		Boolean(rowData?.id) &&
-		rowData?.status === 'Not activated' &&
-		rowData?.source === 'search';
+		Boolean(rowData?.id) && rowData?.status === 'Not activated' && rowData?.source === 'search';
 
 	const getDetails = useCallback(async () => {
 		try {
@@ -74,11 +72,8 @@ const MainModal = ({ rowData, setOpen, successCallback }) => {
 		<NewModal
 			width={800}
 			title={
-				(rowData?.id
-					? needSearchOnboard
-						? 'Approve'
-						: 'Edit'
-					: 'Add') + ' Lender Organization'
+				(rowData?.id ? (needSearchOnboard ? 'Approve' : 'Edit') : 'Add') +
+				' Lender Organization'
 			}
 			okText="Save"
 			confirmLoading={confirmLoading}

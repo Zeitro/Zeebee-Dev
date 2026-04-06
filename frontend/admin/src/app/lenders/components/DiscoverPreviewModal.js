@@ -11,7 +11,9 @@ const DISCOVER_TIMEOUT_MS = 5 * 60 * 1000;
 async function longRequest(path, { method = 'POST', body } = {}) {
 	const base = process.env.NEXT_PUBLIC_API_URL || '';
 	const url = `${base}/api/v1${path}`;
-	const store = JSON.parse(Cookie.get(`permissionStore_${process.env.NEXT_PUBLIC_SYSTEM_TYPE}`) || '{}');
+	const store = JSON.parse(
+		Cookie.get(`permissionStore_${process.env.NEXT_PUBLIC_SYSTEM_TYPE}`) || '{}',
+	);
 	const token = store?.state?.access?.access_token;
 	const res = await fetch(url, {
 		method,
@@ -200,7 +202,12 @@ export default function DiscoverPreviewModal({ open, onClose, onCommitted }) {
 			footer={
 				<Space>
 					<Button onClick={onClose}>Cancel</Button>
-					<Button type="primary" loading={committing} disabled={loading} onClick={handleCommit}>
+					<Button
+						type="primary"
+						loading={committing}
+						disabled={loading}
+						onClick={handleCommit}
+					>
 						Update
 					</Button>
 				</Space>
