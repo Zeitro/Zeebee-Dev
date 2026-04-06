@@ -733,6 +733,7 @@ const (
 	Loan_PreApprovalLoan_FullMethodName                 = "/borrower.Loan/PreApprovalLoan"
 	Loan_SendPreApprovalNotification_FullMethodName     = "/borrower.Loan/SendPreApprovalNotification"
 	Loan_SendQuoteEmail_FullMethodName                  = "/borrower.Loan/SendQuoteEmail"
+	Loan_Summary_FullMethodName                         = "/borrower.Loan/Summary"
 )
 
 // LoanClient is the client API for Loan service.
@@ -753,6 +754,7 @@ type LoanClient interface {
 	PreApprovalLoan(ctx context.Context, in *LoanPreApprovalRequest, opts ...grpc.CallOption) (*LoanPreApprovalResponse, error)
 	SendPreApprovalNotification(ctx context.Context, in *LoanSendPreApprovalNotificationRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	SendQuoteEmail(ctx context.Context, in *LoanSendQuoteEmailRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	Summary(ctx context.Context, in *LoanSummaryRequest, opts ...grpc.CallOption) (*LoanSummaryResponse, error)
 }
 
 type loanClient struct {
@@ -903,6 +905,16 @@ func (c *loanClient) SendQuoteEmail(ctx context.Context, in *LoanSendQuoteEmailR
 	return out, nil
 }
 
+func (c *loanClient) Summary(ctx context.Context, in *LoanSummaryRequest, opts ...grpc.CallOption) (*LoanSummaryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LoanSummaryResponse)
+	err := c.cc.Invoke(ctx, Loan_Summary_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LoanServer is the server API for Loan service.
 // All implementations must embed UnimplementedLoanServer
 // for forward compatibility.
@@ -921,6 +933,7 @@ type LoanServer interface {
 	PreApprovalLoan(context.Context, *LoanPreApprovalRequest) (*LoanPreApprovalResponse, error)
 	SendPreApprovalNotification(context.Context, *LoanSendPreApprovalNotificationRequest) (*EmptyResponse, error)
 	SendQuoteEmail(context.Context, *LoanSendQuoteEmailRequest) (*EmptyResponse, error)
+	Summary(context.Context, *LoanSummaryRequest) (*LoanSummaryResponse, error)
 	mustEmbedUnimplementedLoanServer()
 }
 
@@ -972,6 +985,9 @@ func (UnimplementedLoanServer) SendPreApprovalNotification(context.Context, *Loa
 }
 func (UnimplementedLoanServer) SendQuoteEmail(context.Context, *LoanSendQuoteEmailRequest) (*EmptyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendQuoteEmail not implemented")
+}
+func (UnimplementedLoanServer) Summary(context.Context, *LoanSummaryRequest) (*LoanSummaryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Summary not implemented")
 }
 func (UnimplementedLoanServer) mustEmbedUnimplementedLoanServer() {}
 func (UnimplementedLoanServer) testEmbeddedByValue()              {}
@@ -1246,6 +1262,24 @@ func _Loan_SendQuoteEmail_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Loan_Summary_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanSummaryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).Summary(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_Summary_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).Summary(ctx, req.(*LoanSummaryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Loan_ServiceDesc is the grpc.ServiceDesc for Loan service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1308,6 +1342,10 @@ var Loan_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendQuoteEmail",
 			Handler:    _Loan_SendQuoteEmail_Handler,
+		},
+		{
+			MethodName: "Summary",
+			Handler:    _Loan_Summary_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
