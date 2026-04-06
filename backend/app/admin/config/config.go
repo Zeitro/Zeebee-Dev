@@ -27,7 +27,15 @@ type RpcConf struct {
 	JwtAuth     types.JwtAuth `json:",optional"`
 	DbConf      DbConf
 	AwsS3Conf   AwsS3Conf
+	OpenAIConf  OpenAIConf `json:",optional"`
 	CasbinConf  CasbinConf
+}
+
+// OpenAIConf optional keys for lender discover; prefer env OPENAI_API_KEY in production.
+type OpenAIConf struct {
+	APIKey  string `json:",optional"`
+	Model   string `json:",optional"`
+	BaseURL string `json:",optional"`
 }
 
 type DbConf struct {

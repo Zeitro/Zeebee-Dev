@@ -26,6 +26,7 @@ type ServiceContext struct {
 	CommonRpcClient           admin.CommonClient
 	BaseTemplateRpcClient     admin.BaseTemplateClient
 	LoanRpcClient             admin.LoanClient
+	LenderDiscoverRpcClient   admin.LenderDiscoverClient
 }
 
 func NewServiceContext(c config.ApiConf) *ServiceContext {
@@ -47,5 +48,6 @@ func NewServiceContext(c config.ApiConf) *ServiceContext {
 		CommonRpcClient:           admin.NewCommonClient(rpcClient.Conn()),
 		BaseTemplateRpcClient:     admin.NewBaseTemplateClient(rpcClient.Conn()),
 		LoanRpcClient:             admin.NewLoanClient(rpcClient.Conn()),
+		LenderDiscoverRpcClient:   admin.NewLenderDiscoverClient(rpcClient.Conn()),
 	}
 }
