@@ -15,8 +15,6 @@ import {
 } from '@repo/shared-methods/utils';
 import { useGlobalStore } from '@/store/global';
 import QuoteBtn from '../components/Quote';
-import { PermissionSlot } from '@repo/shared-methods';
-import { PERMISSIONS } from '@config/permissions';
 const initialValues = {
 	applicants: [{ is_primary: true, type: 'Individual' }],
 };
@@ -132,7 +130,7 @@ const EditLoanPage = () => {
 			>
 				<Form
 					form={form}
-					name="Edit-3rdParty-basic"
+					name="basic"
 					disabled={loading}
 					layout="vertical"
 					autoComplete="off"
@@ -195,13 +193,11 @@ const EditLoanPage = () => {
 					title={{ width: '100px' }}
 				>
 					<div className="flex justify-end py-4 gap-4">
-						<PermissionSlot code={PERMISSIONS?.LOAN?.QUOTE}>
-							<QuoteBtn
-								disabled={!(stage === 'Pending' && pending_status === 'Quoting')}
-								getRowData={async () => await form.validateFields()}
-								isGetOrganization={true}
-							/>
-						</PermissionSlot>
+						<QuoteBtn
+							disabled={!(stage === 'Pending' && pending_status === 'Quoting')}
+							getRowData={async () => await form.validateFields()}
+							isGetOrganization={true}
+						/>
 						<Button type="primary" onClick={handleNext} loading={loading}>
 							Save change
 						</Button>

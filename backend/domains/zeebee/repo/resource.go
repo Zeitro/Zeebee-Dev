@@ -208,9 +208,7 @@ func (repo *ResourceRepo) AllResources(ctx context.Context, organizationId int64
 			})
 
 	}
-	err = query.Order("sort_order asc").
-		Order("parent_id asc").
-		Find(&result).Error
+	err = query.Find(&result).Error
 	return result, errorx.WithStack(err)
 }
 
@@ -223,8 +221,6 @@ func (repo *ResourceRepo) PublicResources(ctx context.Context, resourceType cons
 			Preload("Apis")
 		// Preload("Roles")
 	}
-	err = query.Order("sort_order asc").
-		Order("parent_id asc").
-		Find(&result).Error
+	err = query.Find(&result).Error
 	return result, errorx.WithStack(err)
 }

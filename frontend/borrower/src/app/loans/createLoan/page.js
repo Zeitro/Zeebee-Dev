@@ -120,7 +120,7 @@ const CreateLoanPage = () => {
 									loanData[0]?.pending_status === 'Quoting'
 								)
 							}
-							// onSave={handleNext}
+							onSave={handleNext}
 							getRowData={async () => {
 								const values = await form.validateFields();
 								return _.merge(

@@ -2,7 +2,9 @@
 import Image from 'next/image';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { propertiesFieldArr, propertyList } from '@/enum/properties';
-import LoansPage from '../../loans/components/ListView/LoansPage';
+import PendingPage from '../../loans/components/Pending';
+import ActiveLoans from '../../loans/components/Active';
+import ArchivedLoans from '../../loans/components/Archived';
 import { useParams } from 'next/navigation';
 import { createRequest, assemblyAddress, eventBus } from '@repo/shared-methods/utils';
 import { useGetOptions } from '@repo/shared-methods/hooks';
@@ -34,15 +36,14 @@ const PropertiesDetails = () => {
 				title: 'Pending loan',
 				total: rowData?.pending_loans?.length,
 				content: (
-					<LoansPage
+					<PendingPage
 						hasFilterField={false}
 						hasPagination={false}
 						dataSource={rowData?.pending_loans}
 						isNotAddress={true}
 						loading={loading}
-						// scrollX={2000}
+						scrollX={2000}
 						successCallback={getDetails}
-						stage="Pending"
 					/>
 				),
 			},
@@ -50,15 +51,14 @@ const PropertiesDetails = () => {
 				title: 'Active loan',
 				total: rowData?.active_loans?.length,
 				content: (
-					<LoansPage
+					<ActiveLoans
 						hasFilterField={false}
 						hasPagination={false}
 						dataSource={rowData?.active_loans}
 						isNotAddress={true}
 						loading={loading}
-						// scrollX={2100}
+						scrollX={2100}
 						successCallback={getDetails}
-						stage="Active"
 					/>
 				),
 			},
@@ -66,15 +66,14 @@ const PropertiesDetails = () => {
 				title: 'Archived loan',
 				total: rowData?.archived_loans?.length,
 				content: (
-					<LoansPage
+					<ArchivedLoans
 						hasFilterField={false}
 						hasPagination={false}
 						dataSource={rowData?.archived_loans}
 						isNotAddress={true}
 						loading={loading}
-						// scrollX={1000}
+						scrollX={1000}
 						successCallback={getDetails}
-						stage="Archived"
 					/>
 				),
 			},

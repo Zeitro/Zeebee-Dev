@@ -4,14 +4,14 @@ import styles from './index.module.scss';
 import { propertiesFieldArr, propertyList } from '@/enum/properties';
 import { Button, Col, message, Row, Space } from 'antd';
 import { useRouter } from 'next/navigation';
-import { formatDate, assemblyAddress } from '@repo/shared-methods/utils';
-import { BtnPopUpModal, DeleteBtn, FieldTips, PermissionSlot } from '@repo/shared-methods';
-import AddModal from '@repo/shared-methods/componentsUi/SelectCard/Add/property';
-import { useProperty } from '@repo/shared-methods/componentsUi/SelectCard/Item/useCommon';
+import { formatDate, assemblyAddress, createRequest } from '@repo/shared-methods/utils';
+import { BtnPopUpModal, DeleteBtn, FieldTips } from '@repo/shared-methods';
+import AddModal from '@/components/SelectCard/Add/property';
 import { DeleteOutlined } from '@ant-design/icons';
-import { PERMISSIONS } from '@config/permissions';
-
+import { useState } from 'react';
 const PropertiesItem = ({ data, handleSearch }) => {
+	const { request } = createRequest();
+	const [loading, setLoading] = useState(false);
 	const router = useRouter();
 	const nameList = [
 		{
@@ -25,9 +25,6 @@ const PropertiesItem = ({ data, handleSearch }) => {
 			render: (v) => <FieldTips title={v?.join(',')}>{v?.join(',') || '--'}</FieldTips>,
 		},
 	];
-	const { handleDelete, loading } = useProperty({
-		handleSearch: () => handleSearch(true),
-	});
 
 	const getItem = (item, index) => {
 		return (
@@ -40,58 +37,67 @@ const PropertiesItem = ({ data, handleSearch }) => {
 		);
 	};
 
+	const handleDelete = async () => {
+		try {
+			setLoading(true);
+			await request(`/property/${data?.id}`, { method: 'DELETE' });
+			handleSearch();
+			message.destroy();
+			message.open({
+				type: 'success',
+				content: 'Delete successful！',
+			});
+			setLoading(false);
+		} catch {
+			setLoading(false);
+		}
+	};
 	return (
 		<div className={[styles.propertiesItem].join(' ')}>
 			<div className={styles.header}>
 				<p className={styles.address}>{assemblyAddress(data?.address)}</p>
 				<Space className="flex items-center shrink-0 gap-2">
-					<PermissionSlot code={PERMISSIONS?.PROPERTY?.DETAILS}>
-						<Button onClick={() => router.push(`/properties/${data?.id}`)}>
-							View details
-						</Button>
-					</PermissionSlot>
-					<PermissionSlot code={PERMISSIONS?.PROPERTY?.EDIT} className="ml-2">
-						<BtnPopUpModal
-							getContent={(setOpen) => (
-								<AddModal
-									setOpen={setOpen}
-									rowData={data}
-									handleSearch={handleSearch}
-								/>
-							)}
-							type="default"
-							size="medium"
-						>
-							Edit
-						</BtnPopUpModal>
-					</PermissionSlot>
+					<Button onClick={() => router.push(`/properties/${data?.id}`)}>
+						View details
+					</Button>
+					<BtnPopUpModal
+						getContent={(setOpen) => (
+							<AddModal
+								setOpen={setOpen}
+								rowData={data}
+								handleSearch={handleSearch}
+							/>
+						)}
+						type="default"
+						size="medium"
+					>
+						Edit
+					</BtnPopUpModal>
 
-					<PermissionSlot code={PERMISSIONS?.PROPERTY?.DELETE}>
-						<DeleteBtn
-							type="default"
-							title="Are you sure delete this Property?"
-							content={assemblyAddress(data?.address)}
-							size="medium"
-							onOk={handleDelete}
-							danger={!data?.loan_count}
-							className={data?.loan_count && '!text-base-disabled'}
-							predicate={() => {
-								if (data?.loan_count) {
-									message.destroy();
-									message.open({
-										type: 'warning',
-										content:
-											'This property has an associated loan, so it cannot be deleted.',
-									});
-									return false;
-								}
-								return true;
-							}}
-							confirmLoading={loading}
-						>
-							<DeleteOutlined />
-						</DeleteBtn>
-					</PermissionSlot>
+					<DeleteBtn
+						type="default"
+						title="Are you sure delete this Property?"
+						content={assemblyAddress(data?.address)}
+						size="medium"
+						onOk={handleDelete}
+						danger={!data?.loan_count}
+						className={data?.loan_count && '!text-base-disabled'}
+						predicate={() => {
+							if (data?.loan_count) {
+								message.destroy();
+								message.open({
+									type: 'warning',
+									content:
+										'This property has an associated loan, so it cannot be deleted.',
+								});
+								return false;
+							}
+							return true;
+						}}
+						confirmLoading={loading}
+					>
+						<DeleteOutlined />
+					</DeleteBtn>
 				</Space>
 			</div>
 			<Row className="py-4 px-4">

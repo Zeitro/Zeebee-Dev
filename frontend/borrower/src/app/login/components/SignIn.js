@@ -3,16 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { Button, Checkbox, Form, Input, message, Modal } from 'antd';
 import Password from 'antd/es/input/Password';
 import { useRouter } from 'next/navigation';
-import { useUserStore, usePermissionStore } from '@repo/shared-methods/store';
-import { validateRule, emailRegex, localStorageUtil } from '@repo/shared-methods/utils';
+import { useUserStore } from '@/store/user';
+import { setCookie, validateRule, emailRegex, localStorageUtil } from '@repo/shared-methods/utils';
 import { MailOutlined, LockOutlined } from '@ant-design/icons';
 import { initConfigFn } from '@repo/shared-methods';
-import useData from './useData';
 const SignIn = ({ form, setPageType }) => {
 	const router = useRouter();
-	const { getUserPermissions } = useData();
-	const { resendVerifyEmail } = useUserStore();
-	const { login } = usePermissionStore();
+	const { getUserInfo, login, resendVerifyEmail } = useUserStore();
 	const [apiError, setApiError] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [verifyLoading, setVerifyLoading] = useState(false);
@@ -61,11 +58,10 @@ const SignIn = ({ form, setPageType }) => {
 			const values = await form.validateFields();
 			setLoading(true);
 			const access = await login(values, { isHideTips: true });
-			// await getUserInfo();
-			// setCookie('token', access?.access_token, access?.access_token_expire * 1000);
-			// setLoading(false);
-			// router.push('/');
-			await getUserPermissions(access, setLoading);
+			await getUserInfo();
+			setCookie('token', access?.access_token, access?.access_token_expire * 1000);
+			setLoading(false);
+			router.push('/');
 		} catch (error) {
 			if (error.code === 401001) {
 				const initValue = initConfigFn({

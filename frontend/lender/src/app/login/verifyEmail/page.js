@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { Button } from 'antd';
-import { useUserStore } from '@repo/shared-methods/store';
+import { useUserStore } from '@/store/user';
 import { CheckCircleTwoTone } from '@ant-design/icons';
 import { useSearchParams } from 'next/navigation';
 import { throttle } from 'lodash';
@@ -20,7 +20,7 @@ const VerifyEmail = () => {
 			if (!email || !code) return;
 			setLoading(true);
 			const access = await verifyEmail({ email, code });
-			loginByToken(access, setLoading);
+			loginByToken(access, { setLoading });
 		} catch {
 			setLoading(false);
 		}

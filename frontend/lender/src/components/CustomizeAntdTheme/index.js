@@ -3,12 +3,13 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { ConfigProvider } from 'antd';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import { NewHeader, CommonSidebar } from '@repo/shared-methods';
-import { matchRoute } from '@repo/shared-methods/utils';
-// import { noNavRouter } from '@config/routes';
+import { getCurrentRouterItem } from '@config/common';
+import { noNavRouter, navRouter } from '@config/routes';
 import { usePathname, useRouter } from 'next/navigation';
-import { useUserStore, usePermissionStore } from '@repo/shared-methods/store';
+import { useUserStore } from '@/store/user';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 import useContent from './useContent';
+import { sidebarIcon } from './icon';
 import Image from 'next/image';
 const defaultToken = {
 	colorPrimary: '#1677ff',
@@ -34,8 +35,7 @@ function getCssVarValue(name, key) {
  * 自定义antd主题，区分有无（导航栏和面包屑）的页面
  */
 export default function CustomizeAntdTheme({ children, fontFamily }) {
-	const { accessibleRoutes, userInfo } = useUserStore();
-	const { accessPaths, access } = usePermissionStore();
+	const { userInfo } = useUserStore();
 	const [antdToken, setAntdToken] = useState({});
 	const pathname = usePathname();
 	const router = useRouter();
@@ -44,23 +44,19 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 		required: 'Please enter ${label}!',
 	};
 	// 没有导航栏/面包屑的纯页面（例如：login
-	// const isNoNav = useMemo(() => {
-	// 	const routerItem = getCurrentRouterItem(pathname, noNavRouter);
-	// 	return !!routerItem;
-	// }, [pathname]);
+	const isNoNav = useMemo(() => {
+		const routerItem = getCurrentRouterItem(pathname, noNavRouter);
+		return !!routerItem;
+	}, [pathname]);
 
-	const isPermissionPage = useMemo(() => {
-		return accessPaths?.some((path) => matchRoute(path, pathname));
-	}, [pathname, accessPaths]);
-
-	// 处理特殊情况（有导航栏的页面遇到token到期清空了，则重新登录）
 	useEffect(() => {
-		if (isPermissionPage && (access === null || userInfo === null)) {
+		const haveSiderRoute = getCurrentRouterItem(pathname, navRouter);
+		if (haveSiderRoute?.path && userInfo === null) {
 			router.replace('/login');
 			console.log('---退出---');
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [access, isPermissionPage, userInfo]);
+	}, [userInfo, pathname]);
 
 	useDeferredSyncEffect({
 		deferred: () => {
@@ -117,15 +113,15 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 			form={{ validateMessages }}
 		>
 			<AntdRegistry>
-				{!isPermissionPage ? (
+				{isNoNav ? (
 					children
 				) : (
 					<div className="h-full flex items-stretch customRoot">
 						<CommonSidebar
-							// routerList={navRouter}
-							routerList={accessibleRoutes || []}
+							routerList={navRouter}
 							personalList={personalList}
 							handleClickPersonalItem={handleClickPersonalItem}
+							sidebarIcon={sidebarIcon}
 							renderLogo={({ rect }) => (
 								<div
 									className={[
@@ -135,21 +131,21 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 								>
 									<Image
 										src="/images/logo.png"
-										fill
-										sizes="149px"
+										width={149}
+										height={30}
 										alt="ZeeBee Logo"
 										className={[
-											'absolute top-1/2 left-0 w-[149px] transition-opacity duration-200 ease-in-out',
+											'absolute top-1/2 left-0 w-[149px] -translate-y-1/2 transition-opacity duration-300 ease-in-out',
 											rect?.width < 150 ? 'opacity-0' : 'opacity-100',
 										].join(' ')}
 									/>
 									<Image
 										src="/images/logo_abbreviated.png"
-										fill
-										sizes="27px"
+										width={27}
+										height={27}
 										alt="ZeeBee Logo"
 										className={[
-											'absolute top-1/2 left-0 w-[27px] transition-opacity duration-100 ease-in-out z-10',
+											'absolute top-1/2 left-0 w-[27px] -translate-y-1/2 transition-opacity duration-300 ease-in-out z-10',
 											rect?.width >= 150 ? 'opacity-0' : 'opacity-100',
 										].join(' ')}
 									/>

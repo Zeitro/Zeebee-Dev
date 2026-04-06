@@ -2,12 +2,13 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { createRequest, formatPhone } from '@repo/shared-methods/utils';
 import { LinkOutlined, ReloadOutlined } from '@ant-design/icons';
-import { FilterTableCard } from '@repo/shared-methods';
+import { BtnPopUpModal, DeleteBtn, FilterTableCard } from '@repo/shared-methods';
 // import useContent from './components/useContent';
 // import MainModal from './components/Main';
 import PersonSvg from '@repo/shared-methods/assets/images/person.svg';
 import EmailSvg from '@repo/shared-methods/assets/images/email.svg';
 import PhoneSvg from '@repo/shared-methods/assets/images/phone.svg';
+import NoOrgLogo from '@/assets/images/noOrgLogo.svg';
 import { Image } from 'antd';
 import Link from 'next/link';
 const ContactLender = () => {
@@ -41,11 +42,9 @@ const ContactLender = () => {
 				icon: <ReloadOutlined />,
 				onClick: () => {
 					setSearchValue('');
-					tableFilterRef?.current?.handleSearch({
-						filter: {
-							keyword: '',
-						},
-					});
+					setTimeout(() => {
+						tableFilterRef?.current?.handleSearch();
+					}, 300);
 				},
 			},
 		],
@@ -66,17 +65,19 @@ const ContactLender = () => {
 				return (
 					<>
 						<div className="flex items-center">
-							<Image
-								key={row?.id}
-								src={row?.logo || null}
-								width={48}
-								height={48}
-								alt="logo"
-								preview={false}
-								fallback={'/images/noOrgLogo.svg'}
-								style={{ objectFit: 'contain', borderRadius: 8 }}
-							/>
-
+							{row?.logo ? (
+								<Image
+									src={row?.logo}
+									width={48}
+									height={48}
+									alt="logo"
+									preview={false}
+									fallback={NoOrgLogo}
+									style={{ objectFit: 'contain' }}
+								/>
+							) : (
+								<NoOrgLogo style={{ width: 48, height: 48 }} />
+							)}
 							<p className="font-medium text-base text-black-dark pl-2 overflow-hidden">
 								{row?.name || '--'}
 							</p>

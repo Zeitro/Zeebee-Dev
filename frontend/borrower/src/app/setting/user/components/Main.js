@@ -3,7 +3,7 @@ import { Row, Col, Form, Select, Input, message } from 'antd';
 import { emailRegex, phoneRegex, validateRule, createRequest } from '@repo/shared-methods/utils';
 import { layoutCol, titleCol } from '@/enum/common';
 import { InputNameCombination, InputPhone, NewModal } from '@repo/shared-methods';
-import { useUserStore } from '@repo/shared-methods/store';
+import { useUserStore } from '@/store/user';
 const { TextArea } = Input;
 const MainModal = ({ setOpen, rowData, handleSearch, roles }) => {
 	const { request } = createRequest();

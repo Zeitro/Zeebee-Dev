@@ -7,18 +7,15 @@ import {
 	formatTINOrSSN,
 } from '@repo/shared-methods/utils';
 import { ReloadOutlined, PlusOutlined } from '@ant-design/icons';
-import { BtnPopUpModal, DeleteBtn, FilterTableCard, PermissionSlot } from '@repo/shared-methods';
-import { useBorrower } from '@repo/shared-methods/componentsUi/SelectCard/Item/useCommon';
-import AddModal from '@repo/shared-methods/componentsUi/SelectCard/Add/borrower';
+import { BtnPopUpModal, DeleteBtn, FilterTableCard } from '@repo/shared-methods';
+import useBorrower from './components/useBorrower';
+import AddModal from '@/components/SelectCard/Add/borrower';
 import DistanceSvg from '@repo/shared-methods/assets/images/distance.svg';
-import { PERMISSIONS } from '@config/permissions';
-import { useAuth } from '@repo/shared-methods/hooks';
 const BorrowerManagement = () => {
-	const { hasPermission } = useAuth();
 	const { cancel } = createRequest();
 	const tableFilterRef = useRef();
 	const [searchValue, setSearchValue] = useState('');
-	const { handleDelete, loading } = useBorrower({
+	const { columns, handleDelete, loading } = useBorrower({
 		handleSearch: () => tableFilterRef?.current?.handleSearch(),
 	});
 
@@ -55,7 +52,6 @@ const BorrowerManagement = () => {
 			},
 			{
 				filterType: 'button',
-				hidden: !hasPermission(PERMISSIONS?.MANAGEMENT_BORROWER?.ADD),
 				children: (
 					<BtnPopUpModal
 						getContent={(setOpen) => (
@@ -73,13 +69,13 @@ const BorrowerManagement = () => {
 				),
 			},
 		],
-		[searchValue, cancel, hasPermission],
+		[searchValue, cancel],
 	);
 	return (
 		<FilterTableCard
 			filterWrapClassName="px-8 pt-10 pb-8 flex-1 overflow-hidden"
 			ref={tableFilterRef}
-			// columns={columns}
+			columns={columns}
 			scroll={{ x: 1200 }}
 			filterList={filterList}
 			hasFilterField={true}
@@ -109,40 +105,36 @@ const BorrowerManagement = () => {
 								</div>
 							</div>
 							<div className="flex items-center">
-								<PermissionSlot code={PERMISSIONS?.MANAGEMENT_BORROWER?.EDIT}>
-									<BtnPopUpModal
-										getContent={(setOpen) => (
-											<AddModal
-												setOpen={setOpen}
-												handleSearch={() =>
-													tableFilterRef?.current?.handleSearch()
-												}
-												rowData={row}
-											/>
-										)}
-										type="link"
-										size="large"
-										// isButton={false}
-										// icon={<EditOutlined />}
-										className="!px-2"
-									>
-										Edit
-									</BtnPopUpModal>
-								</PermissionSlot>
-								<PermissionSlot code={PERMISSIONS?.MANAGEMENT_BORROWER?.DELETE}>
-									<DeleteBtn
-										type="link"
-										title="Are you sure delete this borrower?"
-										content={row.full_name}
-										// isButton={false}
-										onOk={() => handleDelete(row.id)}
-										loading={loading}
-										danger
-										className="!px-2"
-									>
-										Delete
-									</DeleteBtn>
-								</PermissionSlot>
+								<BtnPopUpModal
+									getContent={(setOpen) => (
+										<AddModal
+											setOpen={setOpen}
+											handleSearch={() =>
+												tableFilterRef?.current?.handleSearch()
+											}
+											rowData={row}
+										/>
+									)}
+									type="link"
+									size="large"
+									// isButton={false}
+									// icon={<EditOutlined />}
+									className="!px-2"
+								>
+									Edit
+								</BtnPopUpModal>
+								<DeleteBtn
+									type="link"
+									title="Are you sure delete this borrower?"
+									content={row.full_name}
+									// isButton={false}
+									onOk={() => handleDelete(row.id)}
+									loading={loading}
+									danger
+									className="!px-2"
+								>
+									Delete
+								</DeleteBtn>
 							</div>
 						</div>
 						<div className="pt-4 mt-4 border-t border-base-border flex items-center justify-between">

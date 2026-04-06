@@ -1,17 +1,21 @@
 'use client';
 import { Tooltip } from 'antd';
-import { LogoutOutlined, RightOutlined, SwapOutlined, UserOutlined } from '@ant-design/icons';
+import {
+	LockOutlined,
+	LogoutOutlined,
+	RightOutlined,
+	SwapOutlined,
+	UserOutlined,
+} from '@ant-design/icons';
 import { DeleteBtn, SwitchOrganization } from '@repo/shared-methods';
 import { useRouter } from 'next/navigation';
-import { useUserStore } from '@repo/shared-methods/store';
+import { useUserStore } from '@/store/user';
 // import styles from './index.module.scss';
 import { useState } from 'react';
 import { eventBus } from '@repo/shared-methods/utils';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
-import useData from '@/app/login/components/useContent';
 const useContent = () => {
 	const router = useRouter();
-	const { loginByToken } = useData();
 	const { userInfo } = useUserStore();
 	const [organizationRow, setOrganizationRow] = useState({});
 
@@ -33,6 +37,7 @@ const useContent = () => {
 				router.push('/personalCenter/changePassword');
 				break;
 			case 'organization':
+				console.log(domEvent);
 				domEvent.stopPropagation();
 				domEvent.preventDefault();
 				break;
@@ -57,7 +62,6 @@ const useContent = () => {
 				organization_name={item?.name}
 				organization_id={item?.id}
 				api="/user/switch_organization"
-				successCallback={loginByToken}
 			/>,
 		);
 	};

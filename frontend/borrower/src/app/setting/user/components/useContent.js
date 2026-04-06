@@ -4,7 +4,7 @@ import { createRequest, formatPhone } from '@repo/shared-methods/utils';
 import { useState } from 'react';
 import { message, Space } from 'antd';
 import { getSelectOptions } from '@repo/shared-methods/api';
-import { useUserStore } from '@repo/shared-methods/store';
+import { useUserStore } from '@/store/user';
 const useUser = ({ handleSearch }) => {
 	const { request } = createRequest();
 	const { userInfo } = useUserStore();

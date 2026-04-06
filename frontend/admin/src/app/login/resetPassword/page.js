@@ -2,17 +2,16 @@
 import React, { useState } from 'react';
 import { Button, Form } from 'antd';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useUserStore } from '@repo/shared-methods/store';
+import { useUserStore } from '@/store/user';
+import { setCookie } from '@repo/shared-methods/utils';
 import styles from '../index.module.scss';
 import ConfirmPassWord from '../components/ConfirmPassword';
 import { throttle } from 'lodash';
-import useData from '../components/useData';
 const ResetPassword = () => {
 	const [form] = Form.useForm();
-	const { getUserPermissions } = useData();
 	const router = useRouter();
 	const searchParams = useSearchParams();
-	const { resetPassword } = useUserStore();
+	const { getUserInfo, resetPassword } = useUserStore();
 	const [loading, setLoading] = useState(false);
 
 	// 重置密码并登录
@@ -28,11 +27,10 @@ const ResetPassword = () => {
 				code,
 				...values,
 			});
-			await getUserPermissions(access, setLoading);
-			// await getUserInfo();
-			// setCookie('token', access?.access_token, access?.access_token_expire * 1000);
-			// setLoading(false);
-			// router.push('/');
+			await getUserInfo();
+			setCookie('token', access?.access_token, access?.access_token_expire * 1000);
+			setLoading(false);
+			router.push('/');
 		} catch (error) {
 			setLoading(false);
 		}

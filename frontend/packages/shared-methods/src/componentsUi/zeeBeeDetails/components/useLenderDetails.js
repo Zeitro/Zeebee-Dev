@@ -45,7 +45,6 @@ import General from './General';
 import HeaderBtn from './HeaderBtn';
 import { EditOutlined } from '@ant-design/icons';
 import SaveSvg from '@repo/shared-methods/assets/images/save.svg';
-import { useAuth } from '@repo/shared-methods/hooks';
 const initialValues = {
 	applicants: [{ type: 'Individual', is_primary: true }],
 };
@@ -56,9 +55,7 @@ const CommonSave = ({
 	handleUpdate,
 	confirmLoading,
 	isAllReadonly,
-	PERMISSIONS,
 }) => {
-	const { hasPermission } = useAuth();
 	const [isSave, setIsSave] = useState(false);
 	const handleClick = async () => {
 		if (isSave) {
@@ -68,7 +65,6 @@ const CommonSave = ({
 		setIsSave(!isSave);
 	};
 	const changeHeaderBtnDom = () => {
-		if (!hasPermission(PERMISSIONS?.LOAN?.EDIT)) return '';
 		return isAllReadonly ? (
 			''
 		) : (
@@ -96,7 +92,7 @@ const CommonSave = ({
  * @param {*} pageType 区分详情页 create/ details
  * @param {*} isAllReadonly 详情页所有都不可操作，只能只读
  */
-const useLenderDetails = ({ isAllReadonly, PERMISSIONS }) => {
+const useLenderDetails = ({ isAllReadonly }) => {
 	const searchParams = useSearchParams();
 	const api = `/property/${searchParams.get('propertyId')}`;
 	const [form] = Form.useForm();
@@ -256,7 +252,6 @@ const useLenderDetails = ({ isAllReadonly, PERMISSIONS }) => {
 						handleUpdate={handleSave}
 						confirmLoading={confirmLoading}
 						isAllReadonly={isAllReadonly}
-						PERMISSIONS={PERMISSIONS}
 					>
 						<ApplicantInfo
 							form={form}
@@ -280,7 +275,6 @@ const useLenderDetails = ({ isAllReadonly, PERMISSIONS }) => {
 						handleUpdate={handleSave}
 						confirmLoading={confirmLoading}
 						isAllReadonly={isAllReadonly}
-						PERMISSIONS={PERMISSIONS}
 					>
 						<PropertyInfo
 							form={form}
@@ -299,7 +293,6 @@ const useLenderDetails = ({ isAllReadonly, PERMISSIONS }) => {
 						handleUpdate={handleSave}
 						confirmLoading={confirmLoading}
 						isAllReadonly={isAllReadonly}
-						PERMISSIONS={PERMISSIONS}
 					>
 						<Experience
 							form={form}
@@ -330,7 +323,6 @@ const useLenderDetails = ({ isAllReadonly, PERMISSIONS }) => {
 						handleUpdate={handleSave}
 						confirmLoading={confirmLoading}
 						isAllReadonly={isAllReadonly}
-						PERMISSIONS={PERMISSIONS}
 					>
 						<Declaration form={form} disabled={disabled} />
 						<Demographics form={form} />

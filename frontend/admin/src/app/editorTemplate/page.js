@@ -1,21 +1,18 @@
 'use client';
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { message, Space, Button, Alert } from 'antd';
 import { DeleteBtn, FilterTable } from '@repo/shared-methods';
 import { createRequest, formatTime } from '@repo/shared-methods/utils';
 import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import MainDrawer from './components/Main';
 import { userStatusColor } from '@repo/shared-methods/enum';
-import { useAuth } from '@repo/shared-methods/hooks';
-import { PERMISSIONS } from '@config/permissions';
 const api = '/base_template/page';
 
 const EditorTemplate = () => {
-	const { hasPermission, getActiveByPermission } = useAuth();
 	const tableFilterRef = useRef();
 	const { request } = createRequest();
 	const [searchValue, setSearchValue] = useState('');
-	// const [type, setType] = useState(null);
+	const [type, setType] = useState(null);
 	const [status, setStatus] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [open, setOpen] = useState(false);
@@ -34,69 +31,66 @@ const EditorTemplate = () => {
 		},
 	];
 
-	const filterList = [
-		{
-			filterType: 'input',
-			placeholder: 'Search by any field',
-			paramsKey: 'keyword',
-			value: searchValue,
-			onChange: ({ target: { value } }) => setSearchValue(value),
-		},
-		// {
-		// 	filterType: 'select',
-		// 	placeholder: 'System',
-		// 	paramsKey: 'type',
-		// 	value: type,
-		// 	options: systemOptions,
-		// 	onChange: (v) => setType(v),
-		// },
-		{
-			filterType: 'select',
-			placeholder: 'Status',
-			paramsKey: 'status',
-			value: status,
-			options: statusOptions,
-			onChange: (v) => setStatus(v),
-		},
-		{
-			filterType: 'button',
-			onClick: () => {
-				tableFilterRef?.current?.handleSearch?.();
+	const filterList = useMemo(
+		() => [
+			{
+				filterType: 'input',
+				placeholder: 'Search by any field',
+				paramsKey: 'keyword',
+				value: searchValue,
+				onChange: ({ target: { value } }) => setSearchValue(value),
 			},
-		},
-		{
-			filterType: 'button',
-			type: 'default',
-			text: 'Reset',
-			icon: <ReloadOutlined />,
-			onClick: () => {
-				setSearchValue('');
-				setStatus(null);
-				// setType(null);
-				// setTimeout(() => {
-				tableFilterRef?.current?.handleSearch?.({
-					filters: {
-						keyword: '',
-						status: null,
-					},
-				});
-				// }, 300);
+			// {
+			// 	filterType: 'select',
+			// 	placeholder: 'System',
+			// 	paramsKey: 'type',
+			// 	value: type,
+			// 	options: systemOptions,
+			// 	onChange: (v) => setType(v),
+			// },
+			{
+				filterType: 'select',
+				placeholder: 'Status',
+				paramsKey: 'status',
+				value: status,
+				options: statusOptions,
+				onChange: (v) => setStatus(v),
 			},
-			colProps: {
-				className: 'flex-1',
+			{
+				filterType: 'button',
+				onClick: () => {
+					tableFilterRef?.current?.handleSearch?.();
+				},
 			},
-		},
-		{
-			filterType: 'button',
-			text: 'Add template',
-			icon: <PlusOutlined />,
-			hidden: !hasPermission(PERMISSIONS.TEMPLATE.ADD),
-			onClick: () => {
-				setRowData({});
-				setOpen(true);
+			{
+				filterType: 'button',
+				type: 'default',
+				text: 'Reset',
+				icon: <ReloadOutlined />,
+				onClick: () => {
+					setSearchValue('');
+					setStatus(null);
+					setType(null);
+					setTimeout(() => {
+						tableFilterRef?.current?.handleSearch?.();
+					}, 300);
+				},
+				colProps: {
+					className: 'flex-1',
+				},
 			},
-		},
-	];
+			{
+				filterType: 'button',
+				text: 'Add template',
+				icon: <PlusOutlined />,
+				onClick: () => {
+					setRowData({});
+					setOpen(true);
+				},
+			},
+		],
+		[searchValue, type, status],
+	);
 
 	// 删除模板
 	const handleDelete = async (id) => {
@@ -167,7 +161,7 @@ const EditorTemplate = () => {
 						dataIndex: 'purpose',
 						key: 'purpose',
 						ellipsis: true,
-						minWidth: 240,
+						width: 240,
 					},
 					{
 						title: 'Template name',
@@ -175,7 +169,7 @@ const EditorTemplate = () => {
 						key: 'name',
 						ellipsis: true,
 						render: (v) => v || '--',
-						// width: 240,
+						width: 240,
 					},
 					// {
 					// 	title: 'Type',
@@ -186,6 +180,13 @@ const EditorTemplate = () => {
 					// 	render: (v) => v || '--',
 					// },
 					{
+						title: 'Description',
+						dataIndex: 'description',
+						key: 'description',
+						ellipsis: true,
+						render: (v) => v || '--',
+					},
+					{
 						title: 'Created time',
 						dataIndex: 'created_at',
 						key: 'created_at',
@@ -194,15 +195,6 @@ const EditorTemplate = () => {
 						defaultSortOrder: 'descend',
 						render: (v) => formatTime(v) || '--',
 						width: 180,
-					},
-					{
-						title: 'Description',
-						dataIndex: 'description',
-						key: 'description',
-						ellipsis: true,
-						render: (v) => v || '--',
-						// width: 300,
-						minWidth: 300,
 					},
 					{
 						title: 'Status',
@@ -224,17 +216,15 @@ const EditorTemplate = () => {
 							</div>
 						),
 					},
-					getActiveByPermission({
-						permissionList: [
-							PERMISSIONS.TEMPLATE.EDIT,
-							PERMISSIONS.TEMPLATE.DELETE,
-							PERMISSIONS.TEMPLATE.CHANGE_STATUS,
-							PERMISSIONS.TEMPLATE.UPDATE,
-						],
+					{
+						title: 'Action',
+						dataIndex: 'operation',
+						width: 260,
+						align: 'left',
+						fixed: 'right',
 						render: (_, record) => {
-							const actions = [];
-							if (hasPermission(PERMISSIONS.TEMPLATE.EDIT)) {
-								actions.push(
+							return (
+								<Space>
 									<Button
 										size="small"
 										type="link"
@@ -244,48 +234,34 @@ const EditorTemplate = () => {
 										}}
 									>
 										Edit
-									</Button>,
-								);
-							}
-							if (
-								hasPermission(PERMISSIONS.TEMPLATE.CHANGE_STATUS) &&
-								record?.status === 'Active'
-							) {
-								actions.push(
-									<DeleteBtn
-										title="Are you sure you want to disable this template?"
-										content={record.name}
-										onOk={() => handleChangeStatus(record.id, 'Disabled')}
-										loading={statusLoading}
-										isStopPropagation={false}
-										okText="Disable"
-										danger={false}
-									>
-										Disable
-									</DeleteBtn>,
-								);
-							}
-							if (
-								hasPermission(PERMISSIONS.TEMPLATE.CHANGE_STATUS) &&
-								record?.status === 'Disabled'
-							) {
-								actions.push(
-									<DeleteBtn
-										title="Are you sure you want to enable this template?"
-										content={record.name}
-										onOk={() => handleChangeStatus(record.id, 'Active')}
-										loading={statusLoading}
-										isStopPropagation={false}
-										okText="Enable"
-										danger={false}
-										okButtonProps={{ danger: false }}
-									>
-										Enable
-									</DeleteBtn>,
-								);
-							}
-							if (hasPermission(PERMISSIONS.TEMPLATE.UPDATE)) {
-								actions.push(
+									</Button>
+									{record?.status === 'Active' && (
+										<DeleteBtn
+											title="Are you sure you want to disable this template?"
+											content={record.name}
+											onOk={() => handleChangeStatus(record.id, 'Disabled')}
+											loading={statusLoading}
+											isStopPropagation={false}
+											okText="Disable"
+											danger={false}
+										>
+											Disable
+										</DeleteBtn>
+									)}
+									{record?.status === 'Disabled' && (
+										<DeleteBtn
+											title="Are you sure you want to enable this template?"
+											content={record.name}
+											onOk={() => handleChangeStatus(record.id, 'Active')}
+											loading={statusLoading}
+											isStopPropagation={false}
+											okText="Enable"
+											danger={false}
+											okButtonProps={{ danger: false }}
+										>
+											Enable
+										</DeleteBtn>
+									)}
 									<DeleteBtn
 										title="Are you sure you want to force a template update?"
 										content={
@@ -306,11 +282,8 @@ const EditorTemplate = () => {
 										okButtonProps={{ danger: false }}
 									>
 										Update
-									</DeleteBtn>,
-								);
-							}
-							if (hasPermission(PERMISSIONS.TEMPLATE.DELETE)) {
-								actions.push(
+									</DeleteBtn>
+
 									<DeleteBtn
 										title="Are you sure delete this editor template?"
 										content={record.name}
@@ -320,15 +293,14 @@ const EditorTemplate = () => {
 										isStopPropagation={false}
 									>
 										Delete
-									</DeleteBtn>,
-								);
-							}
-							return <Space>{actions}</Space>;
+									</DeleteBtn>
+								</Space>
+							);
 						},
-					}),
+					},
 				]}
 				filterList={filterList}
-				scroll={{ x: 1500 }}
+				scroll={{ x: 1300 }}
 				// pagination={true}
 
 				getData={(params) => {

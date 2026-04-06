@@ -30,19 +30,3 @@ export function isBefore(date1, date2) {
 export function addDays(date, days) {
 	return dayjs(date).add(days, 'day').toDate();
 }
-
-/**
- * 秒数转换为 Date 对象（更精确）
- * @param {number} seconds - 秒数
- * @param {number} defaultDays - 默认天数（秒数无效时使用）
- * @returns {Date} 过期时间 Wed Mar 18 2026 11:18:28 GMT+0800 (GMT+08:00)
- */
-export const secondsToDate = (seconds, defaultDays = 7) => {
-	const date = new Date();
-	if (!seconds || typeof seconds !== 'number' || seconds <= 0) {
-		date.setDate(date.getDate() + defaultDays);
-		return date;
-	}
-	date.setSeconds(date.getSeconds() + seconds);
-	return date;
-};

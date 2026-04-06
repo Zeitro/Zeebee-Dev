@@ -5,7 +5,7 @@ import { get } from 'lodash';
 import { Button, Checkbox, Col, message, Row, Space, Spin } from 'antd';
 import { HomeTwoTone } from '@ant-design/icons';
 import { assemblyAddress, formatAmount, createRequest } from '@repo/shared-methods/utils';
-import { useUserStore } from '@repo/shared-methods/store';
+import { useUserStore } from '@/store/user';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 
 // 询价（选择lender发送邮件询价，邮箱未授权只有admin有权限设置）

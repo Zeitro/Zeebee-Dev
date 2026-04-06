@@ -5,9 +5,8 @@ import { InputNumAmount, CommonFormDate, InputNameCombination } from '@repo/shar
 import { useGetOptions } from '@repo/shared-methods/hooks';
 import { loan_active, loan_pending, titleCol } from '@/enum/common';
 import { capitalizeFirstLetter } from '@repo/shared-methods/utils';
-import SelectCard from '@repo/shared-methods/componentsUi/SelectCard';
+import SelectCard from '@/components/SelectCard';
 import { PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons';
-import _ from 'lodash';
 const layoutCol = {
 	xs: 24,
 	sm: 24,
@@ -98,11 +97,10 @@ const CreateTerm = ({
 										addTitle="Add a borrower"
 										className="mb-8"
 										changeFormValue={(values) => {
-											const newValues = _.cloneDeep(values);
 											const borrower_applicant_id = values.id;
-											delete newValues.id;
+											delete values.id;
 											applicants[field.name] = {
-												...newValues,
+												...values,
 												borrower_applicant_id,
 												type: 'Individual',
 												is_primary:
@@ -144,10 +142,7 @@ const CreateTerm = ({
 												size="small"
 												icon={<PlusCircleOutlined />}
 												onClick={() =>
-													add({
-														type: 'Individual',
-														is_primary: false,
-													})
+													add({ type: 'Individual', is_primary: false })
 												}
 											>
 												Add borrower

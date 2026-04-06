@@ -1,67 +1,58 @@
-// export const navRouter = [
-// 	{
-// 		path: '/',
-// 		title: 'Home',
-// 		hideCrumbs: true,
-// 	},
-// 	{
-// 		path: '/loans',
-// 		title: 'All loans',
-// 		icon: 'loan',
-// 		roles: [],
-// 		hideCrumbs: true,
-// 		router: [
-// 			{
-// 				path: '/loans/createZeeBeeLoan',
-// 				title: 'Apply ZeeBee Loan',
-// 				hideMenu: true,
-// 			},
-// 			{
-// 				path: '/loans/zeeBeeDetails',
-// 				title: 'ZeeBee Loan Details',
-// 				hideMenu: true,
-// 			},
-// 		],
-// 	},
-// 	{
-// 		path: '/setting',
-// 		title: 'Setting',
-// 		icon: 'setting',
-// 		isPageNotFound: true, // 只是用于侧边栏显示,并无此页面
-// 		router: [
-// 			{
-// 				path: '/setting/user',
-// 				title: 'User',
-// 			},
-// 			{
-// 				path: '/setting/system',
-// 				title: 'System',
-// 			},
-// 			// {
-// 			// 	path: '/setting/role',
-// 			// 	title: 'Setting ( Role )',
-// 			// 	menuTitle: 'Role',
-// 			// },
-// 			{
-// 				path: '/setting/organizationProfile',
-// 				title: 'Organization profile',
-// 			},
-// 			{
-// 				path: '/setting/preApprovedLetter',
-// 				title: 'Pre-approval letter',
-// 			},
-// 		],
-// 	},
-// ];
-
-export const menuSetting = {
-	'/': {
+export const navRouter = [
+	{
+		path: '/',
+		title: 'Home',
 		hideCrumbs: true,
 	},
-	'/loans': {
+	{
+		path: '/loans',
+		title: 'All loans',
+		icon: 'loan',
+		roles: [],
 		hideCrumbs: true,
+		router: [
+			{
+				path: '/loans/createZeeBeeLoan',
+				title: 'Apply ZeeBee Loan',
+				hideMenu: true,
+			},
+			{
+				path: '/loans/zeeBeeDetails',
+				title: 'ZeeBee Loan Details',
+				hideMenu: true,
+			},
+		],
 	},
-};
+	{
+		path: '/setting',
+		title: 'Setting',
+		icon: 'setting',
+		isPageNotFound: true, // 只是用于侧边栏显示,并无此页面
+		router: [
+			{
+				path: '/setting/user',
+				title: 'User',
+			},
+			{
+				path: '/setting/system',
+				title: 'System',
+			},
+			// {
+			// 	path: '/setting/role',
+			// 	title: 'Setting ( Role )',
+			// 	menuTitle: 'Role',
+			// },
+			{
+				path: '/setting/organizationProfile',
+				title: 'Organization profile',
+			},
+			{
+				path: '/setting/preApprovedLetter',
+				title: 'Pre-approval letter',
+			},
+		],
+	},
+];
 
 export const noTokenRouter = [
 	{
@@ -102,6 +93,10 @@ export const noTokenRouter = [
 			},
 		],
 	},
+];
+
+export const noNavRouter = [
+	...noTokenRouter,
 	{
 		path: '/not-found',
 		title: '404',
@@ -110,14 +105,4 @@ export const noTokenRouter = [
 	},
 ];
 
-// export const noNavRouter = [
-// 	...noTokenRouter,
-// 	{
-// 		path: '/not-found',
-// 		title: '404',
-// 		hideCrumbs: true,
-// 		hideMenu: true,
-// 	},
-// ];
-
-// export const routers = [...noNavRouter, ...navRouter];
+export const routers = [...noNavRouter, ...navRouter];

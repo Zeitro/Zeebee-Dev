@@ -5,7 +5,7 @@ import { useState } from 'react';
 import ConfirmPassword from '@/app/login/components/ConfirmPassword';
 import { localStorageUtil, passwordRegex } from '@repo/shared-methods/utils';
 import { debounce } from 'lodash';
-import { useUserStore } from '@repo/shared-methods/store';
+import { useUserStore } from '@/store/user';
 import { useRouter } from 'next/navigation';
 const ChangePassword = () => {
 	const router = useRouter();
