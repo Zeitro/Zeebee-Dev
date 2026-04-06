@@ -1,5 +1,5 @@
 import { message, Switch } from 'antd';
-import { useUserStore } from '@/store/user';
+import { useUserStore } from '@repo/shared-methods/store';
 import { useMemo, useRef, useState } from 'react';
 import { createRequest } from '@repo/shared-methods/utils';
 

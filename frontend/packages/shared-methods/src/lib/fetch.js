@@ -1,5 +1,6 @@
 import { localStorageUtil } from '../lib/local';
 import { message } from 'antd';
+import Cookie from 'js-cookie';
 // 公共提示
 function showMessage(msg, type = 'error') {
 	message.destroy();
@@ -75,7 +76,10 @@ export function createRequest() {
 			isHideTips,
 			...restConfig
 		} = options;
-		const token = localStorageUtil.get('userStore')?.state?.access?.access_token;
+		const permissionStore = JSON.parse(
+			Cookie.get(`permissionStore_${process.env.NEXT_PUBLIC_SYSTEM_TYPE}`) || '{}',
+		);
+		const token = permissionStore?.state?.access?.access_token;
 		const headersConfig = {
 			'Content-Type': 'application/json',
 			Authorization: '',

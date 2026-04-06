@@ -45,7 +45,7 @@ const ListView = ({ className }) => {
 							filterWrapClassName="px-4 pb-4"
 							// key="Active"
 							stage="Active"
-							scrollX={2860}
+							scrollX={2950}
 						/>
 					),
 				},
@@ -57,7 +57,7 @@ const ListView = ({ className }) => {
 							filterWrapClassName="px-4 pb-4"
 							// key="Archived"
 							stage="Archived"
-							scrollX={1880}
+							scrollX={'max-content'}
 						/>
 					),
 				},
@@ -70,7 +70,7 @@ const ListView = ({ className }) => {
 							api={api}
 							stage="Rejected"
 							// key="Rejected"
-							scrollX={2610}
+							scrollX={'max-content'}
 						/>
 					),
 				},
@@ -83,7 +83,7 @@ const ListView = ({ className }) => {
 							api={api}
 							stage="Draft"
 							key="Draft"
-							scrollX={2460}
+							scrollX={2820}
 						/>
 					),
 				},
