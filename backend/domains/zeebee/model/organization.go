@@ -27,6 +27,8 @@ type Organization struct {
 	Logo         string                          `gorm:"column:logo;type:varchar(255);default:''" json:"logo"`
 	Website      string                          `gorm:"column:website;type:varchar(255);default:''" json:"website"`
 	Tagline      string                          `gorm:"column:tagline;type:varchar(255);default:''" json:"tagline"`
+	Source       string                          `gorm:"column:source;type:varchar(16);default:'manual'" json:"source"`
+	Order        int                             `gorm:"column:order;default:2" json:"order"`
 	Metadata     *OrganizationMetadata           `gorm:"column:metadata;type:jsonb;default:'{}';serializer:json" json:"metadata"`
 
 	//  relationships

@@ -1048,6 +1048,8 @@ type OrganizationEntity struct {
 	Logo               string                      `json:"logo"`
 	Website            string                      `json:"website"`
 	Tagline            string                      `json:"tagline"`
+	Source             string                      `json:"source,optional"`
+	Order              int                         `json:"order"`
 	Metadata           *OrganizationMetadataEntity `json:"metadata"`
 	CreatedAt          string                      `json:"created_at"`
 	UpdatedAt          string                      `json:"updated_at"`
