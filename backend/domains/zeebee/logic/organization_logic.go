@@ -175,6 +175,14 @@ func (l *OrganizationLogic) Delete(ctx context.Context, id int64) (err error) {
 	return nil
 }
 
+// UpdateOrder sets the display order of an organization. Lower = higher in list. Min 0.
+func (l *OrganizationLogic) UpdateOrder(ctx context.Context, id int64, order int) error {
+	if order < 0 {
+		return errorx.New("Order must be >= 0")
+	}
+	return l.repos.OrganizationRepo.UpdateOrder(ctx, id, order)
+}
+
 // SwitchStatus changes the status of an organization.
 func (l *OrganizationLogic) SwitchStatus(ctx context.Context, input dto.OrganizationSwitchStatusRequestDto) (err error) {
 
@@ -196,6 +204,9 @@ func (l *OrganizationLogic) SwitchStatus(ctx context.Context, input dto.Organiza
 
 		// Update organization status
 		organization.Status = newStatus
+		if newStatus == constants.OrganizationStatusActive && organization.Order < 2 {
+			organization.Order = 2
+		}
 		_, innerErr = l.repos.OrganizationRepo.UpdateOneByIdWithTx(ctx, tx, organization.Id, organization)
 		if innerErr != nil {
 			return innerErr
