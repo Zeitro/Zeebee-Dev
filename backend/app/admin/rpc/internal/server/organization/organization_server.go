@@ -48,6 +48,11 @@ func (s *OrganizationServer) Delete(ctx context.Context, in *admin.IdRequest) (*
 	return l.Delete(in)
 }
 
+func (s *OrganizationServer) UpdateOrder(ctx context.Context, in *admin.OrganizationUpdateOrderRequest) (*admin.EmptyResponse, error) {
+	l := organizationlogic.NewUpdateOrderLogic(ctx, s.svcCtx)
+	return l.UpdateOrder(in)
+}
+
 func (s *OrganizationServer) SwitchStatus(ctx context.Context, in *admin.OrganizationSwitchStatusRequest) (*admin.EmptyResponse, error) {
 	l := organizationlogic.NewSwitchStatusLogic(ctx, s.svcCtx)
 	return l.SwitchStatus(in)

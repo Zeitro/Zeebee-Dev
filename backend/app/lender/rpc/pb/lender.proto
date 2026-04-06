@@ -1290,6 +1290,8 @@ message OrganizationEntity {
   UserEntity owner = 18;
   bool is_editable = 19;
   repeated OrganizationSettingEntity organization_settings = 20;
+  string source = 21;
+  int32 order = 22;
 }
 
 message OrganizationProfileEntity {
@@ -1313,6 +1315,8 @@ message OrganizationProfileEntity {
   UserEntity owner = 18;
   bool is_editable = 19;
   repeated OrganizationSettingProfileEntity organization_settings = 20;
+  string source = 21;
+  int32 order = 22;
 }
 
 message OrganizationMetadataEntity {

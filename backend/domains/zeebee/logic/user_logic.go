@@ -601,6 +601,97 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 	return user, organizationUser, nil
 }
 
+// ValidatePortalPassword enforces the same rules as lender portal password changes.
+func (l *UserLogic) ValidatePortalPassword(password string) bool {
+	return l.validatePassword(password)
+}
+
+// CreatePrimaryOwnerForLenderOrgWithTx creates the lender owner user for an organization
+// inserted without one (e.g. OpenAI discover). Caller must use the same transaction for the org update.
+func (l *UserLogic) CreatePrimaryOwnerForLenderOrgWithTx(ctx context.Context, tx *gorm.DB, organization *model.Organization, userInput dto.UserRegisterRequestDto) (err error) {
+	if organization == nil {
+		return errorx.New("Organization is empty")
+	}
+	if organization.Type != constants.UserTypeLender {
+		return errorx.New("Invalid organization type")
+	}
+	if organization.OwnerId != 0 {
+		return errorx.New("Organization already has an owner")
+	}
+	if organization.Source != constants.OrganizationSourceSearch {
+		return errorx.New("Owner onboarding is only allowed for search-sourced lenders")
+	}
+	if len(userInput.Email) == 0 || len(userInput.PasswordHash) == 0 {
+		return errorx.New("Owner email and password are required")
+	}
+	if len(userInput.FirstName) == 0 || len(userInput.LastName) == 0 {
+		return errorx.New("Owner first and last name are required")
+	}
+	isExisted, err := l.repos.UserRepo.IsExistedByColumnsWithTx(ctx, tx, map[string]interface{}{
+		"email": userInput.Email,
+		"type":  constants.UserTypeLender,
+	})
+	if err != nil {
+		return err
+	}
+	if isExisted {
+		return errorx.New("User already exists")
+	}
+
+	user, err := copierx.Trans[dto.UserRegisterRequestDto, model.User](&userInput)
+	if err != nil {
+		return err
+	}
+	user.PasswordHash = userInput.PasswordHash
+	user.DefaultOrganizationId = organization.Id
+	user.RemoveRelationships()
+
+	user, err = l.repos.UserRepo.CreateWithTx(ctx, tx, user, false)
+	if err != nil {
+		return err
+	}
+
+	err = l.repos.OrganizationRepo.UpdateOwnerIdWithTx(ctx, tx, organization.Id, user.Id)
+	if err != nil {
+		return err
+	}
+	organization.OwnerId = user.Id
+
+	roles := []*model.Role{
+		{
+			Name:           constants.AdminRoleName,
+			Type:           constants.UserTypeLender,
+			OrganizationId: organization.Id,
+		},
+	}
+	organizationUser := &model.OrganizationUser{
+		OrganizationId: organization.Id,
+		UserId:         user.Id,
+		FirstName:      user.FirstName,
+		MidName:        user.MidName,
+		LastName:       user.LastName,
+		Status:         constants.OrganizationUserStatusActive,
+		FullName:       user.FullName,
+		Roles:          roles,
+	}
+	_, err = l.repos.OrganizationUserRepo.CreateWithTx(ctx, tx, organizationUser, true)
+	return err
+}
+
+// PublishRoleReloadForOrganization notifies Casbin consumers after roles change for an org.
+func (l *UserLogic) PublishRoleReloadForOrganization(ctx context.Context, organizationId int64, userType constants.UserType) {
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:         auth.ActionRoleReload,
+			Scope:          auth.ScopeOrganization,
+			Type:           userType,
+			OrganizationId: organizationId,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
+	})
+}
+
 // VerifyUserEmail verity user email
 func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code string, userType constants.UserType) (user *model.User, err error) {
 	var token string

@@ -1,9 +1,9 @@
 syntax = "v1"
 
-info(
-    title: "admin-api http service"
-    desc: "admin-api http service description"
-    wrapCodeMsg:            true
+info (
+	title:                  "admin-api http service"
+	desc:                   "admin-api http service description"
+	wrapCodeMsg:            true
 	bizCodeEnumDescription: "400--Bad request<br>401--Not Login<br>403--No permission"
 )
 
@@ -18,12 +18,13 @@ import "desc/us_geography.api"
 import "desc/common.api"
 import "desc/base_template.api"
 import "desc/loan.api"
+import "desc/lender_discover.api"
 
 // ============== common start =============
-@server(
-    desc: "admin-api service"
+@server (
+	desc:    "admin-api service"
 	version: v1
-    group: common
+	group:   common
 	prefix:  /api/v1
 	//       middleware: AuthMiddleware
 	tags: common
@@ -48,13 +49,13 @@ service admin-api {
 
 // ============== common end =============
 // ============== user start =============
-@server(
-    desc: "admin-api service"
-    version: v1
-    group: user
+@server (
+	desc:       "admin-api service"
+	version:    v1
+	group:      user
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: user
+	tags:       user
 )
 service admin-api {
 	@doc "login"
@@ -70,13 +71,13 @@ service admin-api {
 	post /user/reset_password (UserResetPasswordRequest) returns (UserLoginResponse)
 }
 
-@server(
-    desc: "admin-api service"
-    version: v1
-    group: user
+@server (
+	desc:       "admin-api service"
+	version:    v1
+	group:      user
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: user
+	tags:       user
 )
 service admin-api {
 	@doc "info"
@@ -94,13 +95,13 @@ service admin-api {
 
 // ============== user end =============
 // ============== organization service start ============
-@server(
-    desc: "admin-api service"
-    version: v1
-    group: organization
+@server (
+	desc:       "admin-api service"
+	version:    v1
+	group:      organization
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: organization
+	tags:       organization
 )
 service admin-api {
 	@doc "detail"
@@ -123,6 +124,10 @@ service admin-api {
 	@handler OrganizationDelete
 	delete /organization/:id (PathIdRequest) returns (EmptyResponse)
 
+	@doc "update order"
+	@handler OrganizationUpdateOrder
+	patch /organization/:id/order (OrganizationUpdateOrderRequest) returns (EmptyResponse)
+
 	@doc "switch status"
 	@handler OrganizationSwitchStatus
 	patch /organization/:id/status (OrganizationSwitchStatusRequest) returns (EmptyResponse)
@@ -133,14 +138,46 @@ service admin-api {
 }
 
 // ============= organization service end ============
-// ============== organization user start ============
-@server(
-    desc: "admin-api service"
-    version: v1
-    group: organization_user
+// ============= lender discover start ============
+@server (
+	desc:       "admin-api service"
+	version:    v1
+	group:      lender_discover
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: organization_user
+	tags:       lender_discover
+)
+service admin-api {
+	@doc "lender discover get settings"
+	@handler LenderDiscoverGetSettings
+	get /lender_discover/settings (EmptyRequest) returns (LenderDiscoverSettingsResponse)
+
+	@doc "lender discover update settings"
+	@handler LenderDiscoverUpdateSettings
+	put /lender_discover/settings (LenderDiscoverUpdateSettingsRequest) returns (LenderDiscoverSettingsResponse)
+
+	@doc "lender discover preview (OpenAI + dedupe, no insert)"
+	@handler LenderDiscoverPreview
+	post /lender_discover/preview (EmptyRequest) returns (LenderDiscoverPreviewResponse)
+
+	@doc "lender discover commit selected new lenders"
+	@handler LenderDiscoverCommit
+	post /lender_discover/commit (LenderDiscoverCommitRequest) returns (LenderDiscoverRunResponse)
+
+	@doc "lender discover latest run"
+	@handler LenderDiscoverLatestRun
+	get /lender_discover/runs/latest (EmptyRequest) returns (LenderDiscoverRunResponse)
+}
+
+// ============= lender discover end ============
+// ============== organization user start ============
+@server (
+	desc:       "admin-api service"
+	version:    v1
+	group:      organization_user
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags:       organization_user
 )
 service admin-api {
 	@doc "page"
@@ -170,13 +207,13 @@ service admin-api {
 
 // ============== organization user end ============
 // ============== api start ============
-@server(
-    desc: "admin-api service"
-    version: v1
-    group: api
+@server (
+	desc:       "admin-api service"
+	version:    v1
+	group:      api
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: api
+	tags:       api
 )
 service admin-api {
 	@doc "detail"
@@ -202,13 +239,13 @@ service admin-api {
 
 // ============= api end =============
 // ============== resource start ============
-@server(
-    desc: "admin-api service"
-    version: v1
-    group: resource
+@server (
+	desc:       "admin-api service"
+	version:    v1
+	group:      resource
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: resource
+	tags:       resource
 )
 service admin-api {
 	@doc "detail"
@@ -234,13 +271,13 @@ service admin-api {
 
 // ============== resource end =============
 // ============== role start ============
-@server(
-    desc: "admin-api service"
-    version: v1
-    group: role
+@server (
+	desc:       "admin-api service"
+	version:    v1
+	group:      role
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: role
+	tags:       role
 )
 service admin-api {
 	@doc "detail"
@@ -278,13 +315,13 @@ service admin-api {
 
 // ============== role end =============
 // ============= storage start ============
-@server(
-    desc: "storage service"
-    version: v1
-    group: storage
+@server (
+	desc:       "storage service"
+	version:    v1
+	group:      storage
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: storage
+	tags:       storage
 )
 service admin-api {
 	@doc "create aws s3 presign url"
@@ -294,13 +331,13 @@ service admin-api {
 
 // ============= storage end =============
 // ============== base template start ============
-@server(
-    desc: "base template service"
-    version: v1
+@server (
+	desc:       "base template service"
+	version:    v1
 	prefix:     /api/v1
-    group: base_template
+	group:      base_template
 	middleware: AuthMiddleware
-    tags: base_template
+	tags:       base_template
 )
 service admin-api {
 	@doc "Create"
@@ -338,13 +375,13 @@ service admin-api {
 
 // ============== base template end ============
 // ============== loan service end ============
-@server(
-    desc: "loan service"
-    version: v1
+@server (
+	desc:       "loan service"
+	version:    v1
 	prefix:     /api/v1
-    group: loan
+	group:      loan
 	middleware: AuthMiddleware
-    tags: loan
+	tags:       loan
 )
 service admin-api {
 	@doc "page"
@@ -364,4 +401,4 @@ service admin-api {
 	get /loan/lender_companies (EmptyRequest) returns (LoanLenderCompanyResponse)
 }
 
-    // ============== loan service end ============
+// ============== loan service end ============

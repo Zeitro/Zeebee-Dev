@@ -9,6 +9,7 @@ import (
 	api "zeebee-backend/app/admin/api/internal/handler/api"
 	base_template "zeebee-backend/app/admin/api/internal/handler/base_template"
 	common "zeebee-backend/app/admin/api/internal/handler/common"
+	lender_discover "zeebee-backend/app/admin/api/internal/handler/lender_discover"
 	loan "zeebee-backend/app/admin/api/internal/handler/loan"
 	organization "zeebee-backend/app/admin/api/internal/handler/organization"
 	organization_user "zeebee-backend/app/admin/api/internal/handler/organization_user"
@@ -153,6 +154,45 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
+					// lender discover commit selected new lenders
+					Method:  http.MethodPost,
+					Path:    "/lender_discover/commit",
+					Handler: lender_discover.LenderDiscoverCommitHandler(serverCtx),
+				},
+				{
+					// lender discover preview (OpenAI + dedupe, no insert)
+					Method:  http.MethodPost,
+					Path:    "/lender_discover/preview",
+					Handler: lender_discover.LenderDiscoverPreviewHandler(serverCtx),
+				},
+				{
+					// lender discover latest run
+					Method:  http.MethodGet,
+					Path:    "/lender_discover/runs/latest",
+					Handler: lender_discover.LenderDiscoverLatestRunHandler(serverCtx),
+				},
+				{
+					// lender discover get settings
+					Method:  http.MethodGet,
+					Path:    "/lender_discover/settings",
+					Handler: lender_discover.LenderDiscoverGetSettingsHandler(serverCtx),
+				},
+				{
+					// lender discover update settings
+					Method:  http.MethodPut,
+					Path:    "/lender_discover/settings",
+					Handler: lender_discover.LenderDiscoverUpdateSettingsHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
 					// detail
 					Method:  http.MethodGet,
 					Path:    "/loan/:id",
@@ -196,6 +236,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodDelete,
 					Path:    "/organization/:id",
 					Handler: organization.OrganizationDeleteHandler(serverCtx),
+				},
+				{
+					// update order
+					Method:  http.MethodPatch,
+					Path:    "/organization/:id/order",
+					Handler: organization.OrganizationUpdateOrderHandler(serverCtx),
 				},
 				{
 					// switch status
