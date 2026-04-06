@@ -27,8 +27,6 @@ type OrganizationPageEntity struct {
 	Logo           string                          `json:"logo"`
 	Website        string                          `json:"website"`
 	Tagline        string                          `json:"tagline"`
-	Source         string                          `json:"source"`
-	Order          int                             `json:"order"`
 	OwnerEmail     string                          `json:"owner_email"`
 	OwnerFullName  string                          `json:"owner_full_name"`
 	OwnerFirstName string                          `json:"owner_first_name"`
@@ -48,15 +46,6 @@ func NewOrganizationRepo(db *gorm.DB) *OrganizationRepo {
 		BaseRepo: gormx.NewBaseRepo[*model.Organization](db),
 		m:        new(model.Organization),
 	}
-}
-
-// UpdateOrder updates the display order of an organization.
-func (r *OrganizationRepo) UpdateOrder(ctx context.Context, id int64, order int) (err error) {
-	err = r.Client(ctx).
-		Model(&model.Organization{}).
-		Where("id = ?", id).
-		Update(`"order"`, order).Error
-	return errorx.WithStack(err)
 }
 
 // UpdateOwnerIdWithTx update owner id with transaction
@@ -135,15 +124,6 @@ func (repo *OrganizationRepo) All(ctx context.Context, organizationType constant
 	return result, errorx.WithStack(err)
 }
 
-// AllByTypeAllStatuses returns all organizations of a type regardless of status (e.g. discover dedup).
-func (repo *OrganizationRepo) AllByTypeAllStatuses(ctx context.Context, organizationType constants.UserType) (result []*model.Organization, err error) {
-	err = repo.Client(ctx).
-		Where("type = ?", organizationType).
-		Order("id asc").
-		Find(&result).Error
-	return result, errorx.WithStack(err)
-}
-
 // AllForOption all for option
 func (repo *OrganizationRepo) AllForOption(ctx context.Context, organizationType constants.UserType, status constants.OrganizationStatus) (result []*model.Organization, err error) {
 	query := repo.Client(ctx).
@@ -152,7 +132,7 @@ func (repo *OrganizationRepo) AllForOption(ctx context.Context, organizationType
 	if status != constants.OrganizationStatusNone {
 		query = query.Where("status = ?", status)
 	}
-	err = query.Order(`"order" asc, id asc`).
+	err = query.Order("id asc").
 		Find(&result).Error
 	return result, errorx.WithStack(err)
 }
@@ -175,8 +155,6 @@ func (repo *OrganizationRepo) Page(ctx context.Context, pageReq dto.Organization
 		fmt.Sprintf("%s.logo", organizationTable),
 		fmt.Sprintf("%s.website", organizationTable),
 		fmt.Sprintf("%s.tagline", organizationTable),
-		fmt.Sprintf("%s.source", organizationTable),
-		fmt.Sprintf(`%s."order"`, organizationTable),
 		fmt.Sprintf("%s.owner_id", organizationTable),
 		fmt.Sprintf("%s.created_at", organizationTable),
 		fmt.Sprintf("%s.updated_at", organizationTable),
@@ -213,7 +191,7 @@ func (repo *OrganizationRepo) Page(ctx context.Context, pageReq dto.Organization
 	if len(sorter.Column) > 0 {
 		query = query.Order(fmt.Sprintf("%s %s", sorter.Column, sorter.Sort))
 	}
-	query = query.Order(fmt.Sprintf(`%s."order" asc, %s.created_at desc`, organizationTable, organizationTable))
+	query = query.Order(fmt.Sprintf("%s.created_at desc", organizationTable))
 	page, err = gormx.Page[*OrganizationPageEntity](query, gormx.PageRequest{
 		Page:         pageReq.Page,
 		Limit:        pageReq.Limit,

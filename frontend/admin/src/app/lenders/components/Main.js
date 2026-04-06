@@ -42,11 +42,6 @@ const MainModal = ({ rowData, setOpen, successCallback }) => {
 		}
 	};
 
-	const needSearchOnboard =
-		Boolean(rowData?.id) &&
-		rowData?.status === 'Not activated' &&
-		rowData?.source === 'search';
-
 	const getDetails = useCallback(async () => {
 		try {
 			setLoading(true);
@@ -73,13 +68,7 @@ const MainModal = ({ rowData, setOpen, successCallback }) => {
 	return (
 		<NewModal
 			width={800}
-			title={
-				(rowData?.id
-					? needSearchOnboard
-						? 'Approve'
-						: 'Edit'
-					: 'Add') + ' Lender Organization'
-			}
+			title={(rowData?.id ? 'Edit' : 'Add') + ' Lender Organization'}
 			okText="Save"
 			confirmLoading={confirmLoading}
 			onOk={handleSave}
@@ -89,7 +78,7 @@ const MainModal = ({ rowData, setOpen, successCallback }) => {
 					Cancel
 				</Button>,
 				<Space key="ok">
-					{(!rowData?.id || needSearchOnboard) && (
+					{!rowData?.id && (
 						<Button key="copy" type="primary" onClick={handleCopy} ghost>
 							Copy account
 						</Button>
@@ -118,7 +107,7 @@ const MainModal = ({ rowData, setOpen, successCallback }) => {
 					className={'h-[65vh] overflow-hidden overflow-y-auto'}
 					leftCol={{ lg: 8, sm: 24, xl: 8 }}
 					rightCol={{ lg: 16, sm: 24, xl: 16 }}
-					isShowAccountInput={!rowData?.id || needSearchOnboard}
+					isShowAccountInput={!rowData?.id}
 					passwordName={['owner', 'password']}
 					confirmPasswordName={['owner', 'confirm_password']}
 					firstName={['owner', 'first_name']}

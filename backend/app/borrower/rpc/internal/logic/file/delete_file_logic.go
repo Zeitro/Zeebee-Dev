@@ -5,7 +5,6 @@ import (
 
 	"gorm.io/gorm"
 
-	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
@@ -16,18 +15,16 @@ import (
 )
 
 type DeleteFileLogic struct {
-	ctx       context.Context
-	svcCtx    *svc.ServiceContext
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
 	logx.Logger
-	baseLogic *logic.BaseLogic
 }
 
 func NewDeleteFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteFileLogic {
 	return &DeleteFileLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.GetBaseLogic(svcCtx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+		Logger: logx.WithContext(ctx),
 	}
 }
 
@@ -41,11 +38,6 @@ func (l *DeleteFileLogic) DeleteFile(in *borrower.FileDeleteRequest) (resp *borr
 	var loan *model.Loan
 	var loanDocument *model.LoanDocument
 	var file *model.File
-
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
 
 	file, err = l.svcCtx.FileRepo.FindOneById(l.ctx, in.Data.Id)
 	if err != nil {
@@ -61,11 +53,11 @@ func (l *DeleteFileLogic) DeleteFile(in *borrower.FileDeleteRequest) (resp *borr
 		return nil, errorx.Wrap(err, "Failed To Find Loan Document")
 	}
 
-	loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, loanDocument.LoanId, claim.OrganizationId)
+	loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, loanDocument.LoanId, in.Data.OrganizationId)
 	if err != nil {
 		return nil, errorx.Wrap(err, "Failed To Get Loan")
 	}
-	if loan.BorrowerOrganizationId != claim.OrganizationId {
+	if loan.BorrowerOrganizationId != in.Data.OrganizationId {
 		return nil, errorx.WithStack(errorx.New("Loan does not belong to borrower"))
 	}
 

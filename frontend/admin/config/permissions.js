@@ -4,8 +4,6 @@ export const PERMISSIONS = {
 		EDIT: 'Lenders:Edit',
 		DELETE: 'Lenders:Delete',
 		CHANGE_STATUS: 'Lenders:ChangeStatus',
-		DISCOVER_SETTINGS: 'Lenders:DiscoverSettings',
-		DISCOVER_RUN: 'Lenders:DiscoverRun',
 	},
 	TEMPLATE: {
 		UPDATE: 'Template:Update',

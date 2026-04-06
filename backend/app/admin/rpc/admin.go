@@ -11,7 +11,6 @@ import (
 	authServer "zeebee-backend/app/admin/rpc/internal/server/auth"
 	baseTemplateServer "zeebee-backend/app/admin/rpc/internal/server/basetemplate"
 	commonServer "zeebee-backend/app/admin/rpc/internal/server/common"
-	lenderDiscoverServer "zeebee-backend/app/admin/rpc/internal/server/lenderdiscover"
 	loanServer "zeebee-backend/app/admin/rpc/internal/server/loan"
 	organizationServer "zeebee-backend/app/admin/rpc/internal/server/organization"
 	organizationUserServer "zeebee-backend/app/admin/rpc/internal/server/organizationuser"
@@ -23,13 +22,11 @@ import (
 
 	"zeebee-backend/app/admin/config"
 	"zeebee-backend/app/admin/rpc/internal/global"
-	"zeebee-backend/app/admin/rpc/internal/schedule"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 )
 
 type RpcServer struct {
-	s      *zrpc.RpcServer
-	svcCtx *svc.ServiceContext
+	s *zrpc.RpcServer
 }
 
 func NewRpcServer(c config.Config) (s service.Service, err error) {
@@ -53,14 +50,12 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		admin.RegisterBaseTemplateServer(grpcServer, baseTemplateServer.NewBaseTemplateServer(ctx))
 		admin.RegisterLoanServer(grpcServer, loanServer.NewLoanServer(ctx))
 		admin.RegisterAuthServer(grpcServer, authServer.NewAuthServer(ctx))
-		admin.RegisterLenderDiscoverServer(grpcServer, lenderDiscoverServer.NewLenderDiscoverServer(ctx))
 		if rpcConfig.Mode == service.DevMode || rpcConfig.Mode == service.TestMode {
 			reflection.Register(grpcServer)
 		}
 	})
 	return &RpcServer{
-		s:      rpcServer,
-		svcCtx: ctx,
+		s: rpcServer,
 	}, nil
 }
 
@@ -68,9 +63,6 @@ func (s *RpcServer) Start() {
 	go func() {
 		s.s.Start()
 	}()
-	if s.svcCtx != nil {
-		schedule.StartLenderDiscoverScheduler(s.svcCtx)
-	}
 }
 
 func (s *RpcServer) Stop() {

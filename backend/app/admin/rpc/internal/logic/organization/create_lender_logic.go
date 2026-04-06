@@ -72,8 +72,6 @@ func (l *CreateLenderLogic) CreateLender(in *admin.OrganizationCreateLenderReque
 	orgInput.Status = constants.OrganizationStatusActive
 	orgInput.Type = constants.UserTypeLender
 	orgInput.OwnerType = constants.OrganizationOwnerTypeThirdParty
-	orgInput.Source = constants.OrganizationSourceManual
-	orgInput.Order = 2
 
 	// Register with organization
 	_, organizationUser, err := l.baseLogic.UserLogic.RegisterWithOrganization(l.ctx, *userInput, *orgInput, constants.UserTypeLender, true)

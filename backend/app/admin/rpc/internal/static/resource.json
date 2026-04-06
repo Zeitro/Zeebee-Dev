@@ -322,21 +322,6 @@
               "permission_required": true,
               "created_at": "2026-03-11T07:44:46Z",
               "updated_at": "2026-03-11T07:44:46Z"
-            },
-            {
-              "id": 165,
-              "parent_id": 121,
-              "name": "update order",
-              "path": "/api/v1/organization/:id/order",
-              "method": "PATCH",
-              "status": "Active",
-              "description": "update lender display order",
-              "type": "Admin",
-              "sort_order": 5,
-              "auth_required": true,
-              "permission_required": true,
-              "created_at": "2026-04-06T00:00:00Z",
-              "updated_at": "2026-04-06T00:00:00Z"
             }
           ]
         },
@@ -357,96 +342,6 @@
           "is_public": false,
           "created_at": "2026-03-12T07:48:27Z",
           "updated_at": "2026-03-12T07:48:27Z"
-        },
-        {
-          "id": 5901,
-          "parent_id": 12,
-          "type": "Admin",
-          "resource_type": "Button",
-          "name": "Discover settings",
-          "path": "",
-          "icon": "",
-          "tag": "Lenders:DiscoverSettings",
-          "is_show": false,
-          "status": "Active",
-          "sort_order": 7,
-          "enable_data_scope": false,
-          "description": "OpenAI discover schedule and prompt",
-          "is_public": false,
-          "created_at": "2026-04-05T00:00:00Z",
-          "updated_at": "2026-04-05T00:00:00Z",
-          "apis": [
-            {
-              "path": "/api/v1/lender_discover/settings",
-              "method": "GET",
-              "status": "Active",
-              "description": "lender discover get settings",
-              "type": "Admin",
-              "sort_order": 1,
-              "auth_required": true,
-              "permission_required": true
-            },
-            {
-              "path": "/api/v1/lender_discover/settings",
-              "method": "PUT",
-              "status": "Active",
-              "description": "lender discover update settings",
-              "type": "Admin",
-              "sort_order": 2,
-              "auth_required": true,
-              "permission_required": true
-            }
-          ]
-        },
-        {
-          "id": 5902,
-          "parent_id": 12,
-          "type": "Admin",
-          "resource_type": "Button",
-          "name": "Search lenders",
-          "path": "",
-          "icon": "",
-          "tag": "Lenders:DiscoverRun",
-          "is_show": false,
-          "status": "Active",
-          "sort_order": 8,
-          "enable_data_scope": false,
-          "description": "Run OpenAI lender discovery",
-          "is_public": false,
-          "created_at": "2026-04-05T00:00:00Z",
-          "updated_at": "2026-04-05T00:00:00Z",
-          "apis": [
-            {
-              "path": "/api/v1/lender_discover/preview",
-              "method": "POST",
-              "status": "Active",
-              "description": "lender discover preview",
-              "type": "Admin",
-              "sort_order": 1,
-              "auth_required": true,
-              "permission_required": true
-            },
-            {
-              "path": "/api/v1/lender_discover/commit",
-              "method": "POST",
-              "status": "Active",
-              "description": "lender discover commit",
-              "type": "Admin",
-              "sort_order": 2,
-              "auth_required": true,
-              "permission_required": true
-            },
-            {
-              "path": "/api/v1/lender_discover/runs/latest",
-              "method": "GET",
-              "status": "Active",
-              "description": "lender discover latest run",
-              "type": "Admin",
-              "sort_order": 3,
-              "auth_required": true,
-              "permission_required": true
-            }
-          ]
         }
       ]
     },

@@ -1,12 +1,10 @@
 'use client';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Button, InputNumber, message, Modal, Space, Image, Tag } from 'antd';
+import React, { useMemo, useRef, useState } from 'react';
+import { message, Space, Image } from 'antd';
 import { BtnPopUpModal, DeleteBtn, FilterTable, PermissionSlot } from '@repo/shared-methods';
 import { createRequest, formatPhone, formatTime } from '@repo/shared-methods/utils';
-import { PlusOutlined, ReloadOutlined, SearchOutlined, SettingOutlined } from '@ant-design/icons';
+import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import MainModal from './components/Main';
-import DiscoverSettingsDrawer from './components/DiscoverSettingsDrawer';
-import DiscoverPreviewModal from './components/DiscoverPreviewModal';
 import { userStatusColor } from '@repo/shared-methods/enum';
 import { useAuth } from '@repo/shared-methods/hooks';
 import { PERMISSIONS } from '@config/permissions';
@@ -14,43 +12,10 @@ const api = '/organization/page';
 const Lenders = () => {
 	const tableFilterRef = useRef();
 	const { request } = createRequest();
-	// createRequest() returns a new `request` every render; keep a ref so effects do not loop.
-	const requestRef = useRef(request);
-	requestRef.current = request;
-
 	const [searchValue, setSearchValue] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [statusLoading, setStatusLoading] = useState(false);
-	const [discoverDrawerOpen, setDiscoverDrawerOpen] = useState(false);
-	const [discoverPreviewOpen, setDiscoverPreviewOpen] = useState(false);
-	const [latestRun, setLatestRun] = useState(null);
 	const { hasPermission, getActiveByPermission } = useAuth();
-
-	const refreshLatestRun = useCallback(async () => {
-		if (!hasPermission(PERMISSIONS.LENDERS.DISCOVER_RUN)) {
-			return;
-		}
-		try {
-			const res = await requestRef.current('/lender_discover/runs/latest');
-			setLatestRun(res?.data || null);
-		} catch {
-			setLatestRun(null);
-		}
-	}, [hasPermission]);
-
-	useEffect(() => {
-		refreshLatestRun();
-	}, [refreshLatestRun]);
-
-	const openDiscoverPreview = () => {
-		Modal.confirm({
-			title: 'Search lenders with ChatGPT?',
-			content:
-				'This can take several minutes. You will review new vs existing lenders before anything is saved. Results are unverified research leads.',
-			okText: 'Continue',
-			onOk: () => setDiscoverPreviewOpen(true),
-		});
-	};
 
 	const filterList = useMemo(
 		() => [
@@ -106,33 +71,6 @@ const Lenders = () => {
 				),
 				hidden: !hasPermission(PERMISSIONS.LENDERS.ADD),
 			},
-			{
-				filterType: 'button',
-				children: (
-					<PermissionSlot code={PERMISSIONS.LENDERS.DISCOVER_SETTINGS}>
-						<Button icon={<SettingOutlined />} size="large" onClick={() => setDiscoverDrawerOpen(true)}>
-							Search settings
-						</Button>
-					</PermissionSlot>
-				),
-				hidden: !hasPermission(PERMISSIONS.LENDERS.DISCOVER_SETTINGS),
-			},
-			{
-				filterType: 'button',
-				children: (
-					<PermissionSlot code={PERMISSIONS.LENDERS.DISCOVER_RUN}>
-						<Button
-							type="primary"
-							icon={<SearchOutlined />}
-							size="large"
-							onClick={openDiscoverPreview}
-						>
-							Search lenders
-						</Button>
-					</PermissionSlot>
-				),
-				hidden: !hasPermission(PERMISSIONS.LENDERS.DISCOVER_RUN),
-			},
 		],
 		[searchValue, hasPermission],
 	);
@@ -177,21 +115,8 @@ const Lenders = () => {
 		}
 	};
 
-	const handleUpdateOrder = async (id, order) => {
-		try {
-			await request(`/organization/${id}/order`, {
-				method: 'PATCH',
-				body: { order },
-			});
-			tableFilterRef?.current?.getList?.();
-		} catch {
-			message.error('Failed to update order');
-		}
-	};
-
 	return (
-		<div className="flex-1 overflow-hidden w-full flex flex-col py-4 px-4 gap-3">
-			<div className="flex-1 min-h-0 flex items-center justify-center">
+		<div className="flex-1 overflow-hidden w-full flex items-center justify-center py-4 px-4">
 			<FilterTable
 				ref={tableFilterRef}
 				columns={[
@@ -219,39 +144,6 @@ const Lenders = () => {
 						key: 'name',
 						ellipsis: true,
 						render: (v) => v || '--',
-					},
-					{
-						title: 'Source',
-						dataIndex: 'source',
-						key: 'source',
-						width: 108,
-						render: (v) => {
-							if (v === 'search') return <Tag color="blue">Search</Tag>;
-							if (v === 'manual') return <Tag>Manual</Tag>;
-							return v || '—';
-						},
-					},
-					{
-						title: 'Order',
-						dataIndex: 'order',
-						key: 'order',
-						width: 90,
-						render: (v, record) =>
-							hasPermission(PERMISSIONS.LENDERS.EDIT) ? (
-								<InputNumber
-									size="small"
-									min={0}
-									value={v ?? 2}
-									onChange={(val) => {
-										if (val != null && val !== v) {
-											handleUpdateOrder(record.id, val);
-										}
-									}}
-									style={{ width: 64 }}
-								/>
-							) : (
-								v ?? '—'
-							),
 					},
 					{
 						title: 'Email account',
@@ -287,6 +179,7 @@ const Lenders = () => {
 						key: 'created_at',
 						ellipsis: true,
 						sorter: true,
+						defaultSortOrder: 'descend',
 						render: (v) => formatTime(v) || '--',
 					},
 					{
@@ -402,23 +295,6 @@ const Lenders = () => {
 						},
 					};
 					return request(api, payload);
-				}}
-			/>
-			</div>
-			<DiscoverSettingsDrawer
-				open={discoverDrawerOpen}
-				onClose={() => {
-					setDiscoverDrawerOpen(false);
-					refreshLatestRun();
-				}}
-			/>
-			<DiscoverPreviewModal
-				open={discoverPreviewOpen}
-				onClose={() => setDiscoverPreviewOpen(false)}
-				onCommitted={async () => {
-					message.success('Selected lenders added as Not activated.');
-					await refreshLatestRun();
-					tableFilterRef?.current?.handleSearch?.();
 				}}
 			/>
 		</div>

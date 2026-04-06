@@ -688,8 +688,6 @@ message OrganizationEntity {
   string updated_at = 15;
   repeated OrganizationEmailEntity organization_emails = 16;
   UserEntity owner = 17;
-  string source = 18;
-  int32 order = 19;
 }
 
 message OrganizationPageEntity {
@@ -711,8 +709,6 @@ message OrganizationPageEntity {
   string owner_full_name = 16;
   string owner_first_name = 17;
   string owner_last_name = 18;
-  string source = 19;
-  int32 order = 20;
 }
 
 message OrganizationMetadataEntity {
@@ -804,7 +800,6 @@ message OrganizationUpdateLenderRequestData {
   string tagline = 7;
   OrganizationMetadataEntity metadata = 8;
   AddressEntity address = 9;
-  OrganizationCreateLenderUserEntity owner = 10;
 }
 
 // detail -- response
@@ -812,14 +807,6 @@ message OrganizationDetailResponse {
   OrganizationEntity data = 1;
 }
 // switch status -- request
-message OrganizationUpdateOrderRequest {
-  OrganizationUpdateOrderRequestData data = 1;
-}
-message OrganizationUpdateOrderRequestData {
-  int64 id = 1;
-  int32 order = 2;
-}
-
 message OrganizationSwitchStatusRequest {
   OrganizationSwitchStatusRequestData data = 1;
 }
@@ -846,7 +833,6 @@ service organization {
   rpc UpdateLender(OrganizationUpdateLenderRequest) returns(OrganizationDetailResponse);
   rpc Detail(IdRequest) returns(OrganizationDetailResponse);
   rpc Delete(IdRequest) returns(EmptyResponse);
-  rpc UpdateOrder(OrganizationUpdateOrderRequest) returns(EmptyResponse);
   rpc SwitchStatus(OrganizationSwitchStatusRequest) returns(EmptyResponse);
   rpc SelectOptions(OrganizationSelectOptionsRequest) returns(OrganizationSelectOptionsResponse);
   //  rpc AllLender(EmptyRequest) returns(OrganizationSelectOptionsResponse);
@@ -1485,110 +1471,3 @@ service Auth {
 }
 
 // ========== auth service end ======================
-
-// ========== lender discover start ==================
-message LenderDiscoverSettingsEntity {
-  bool schedule_enabled = 1;
-  int32 interval_days = 2;
-  string scope_state = 3;
-  string scope_extra = 4;
-  string user_prompt = 5;
-  string openai_model = 6;
-}
-
-message LenderDiscoverSettingsResponse {
-  LenderDiscoverSettingsEntity data = 1;
-}
-
-message LenderDiscoverUpdateSettingsRequest {
-  LenderDiscoverUpdateSettingsRequestData data = 1;
-}
-message LenderDiscoverUpdateSettingsRequestData {
-  bool schedule_enabled = 1;
-  int32 interval_days = 2;
-  string scope_state = 3;
-  string scope_extra = 4;
-  string user_prompt = 5;
-  string openai_model = 6;
-  int64 updated_by_user_id = 7;
-}
-
-message LenderDiscoverRunRequest {
-  LenderDiscoverRunRequestData data = 1;
-}
-message LenderDiscoverRunRequestData {
-  string trigger = 1;
-}
-
-message LenderDiscoverRunStats {
-  int32 requested_count = 1;
-  int32 inserted_count = 2;
-  int32 skipped_duplicate_count = 3;
-  int32 error_count = 4;
-}
-
-message LenderDiscoverRunEntity {
-  int64 id = 1;
-  string trigger_type = 2;
-  string status = 3;
-  string started_at = 4;
-  string finished_at = 5;
-  string error_message = 6;
-  LenderDiscoverRunStats stats = 7;
-}
-
-message LenderDiscoverRunResponse {
-  LenderDiscoverRunEntity data = 1;
-}
-
-message LenderDiscoverCandidateEntity {
-  string dedupe_status = 1;
-  string normalized_key = 2;
-  string name = 3;
-  string contact_email = 4;
-  string contact_phone = 5;
-  string contact_name = 6;
-  string website = 7;
-  string tagline = 8;
-  string logo = 9;
-  AddressEntity address = 10;
-  OrganizationLenderMetadataEntity lender_metadata = 11;
-}
-
-message LenderDiscoverPreviewResponseData {
-  repeated LenderDiscoverCandidateEntity candidates = 1;
-  int32 new_count = 2;
-  int32 existed_count = 3;
-}
-
-message LenderDiscoverPreviewResponse {
-  LenderDiscoverPreviewResponseData data = 1;
-}
-
-message LenderDiscoverCommitRequest {
-  LenderDiscoverCommitRequestData data = 1;
-}
-message LenderDiscoverCommitRequestData {
-  repeated LenderDiscoverCommitLender lenders = 1;
-}
-message LenderDiscoverCommitLender {
-  string name = 1;
-  string contact_email = 2;
-  string contact_phone = 3;
-  string contact_name = 4;
-  string website = 5;
-  string tagline = 6;
-  string logo = 7;
-  AddressEntity address = 8;
-  OrganizationLenderMetadataEntity lender_metadata = 9;
-}
-
-service LenderDiscover {
-  rpc GetSettings(EmptyRequest) returns (LenderDiscoverSettingsResponse);
-  rpc UpdateSettings(LenderDiscoverUpdateSettingsRequest) returns (LenderDiscoverSettingsResponse);
-  rpc Run(LenderDiscoverRunRequest) returns (LenderDiscoverRunResponse);
-  rpc Preview(EmptyRequest) returns (LenderDiscoverPreviewResponse);
-  rpc Commit(LenderDiscoverCommitRequest) returns (LenderDiscoverRunResponse);
-  rpc LatestRun(EmptyRequest) returns (LenderDiscoverRunResponse);
-}
-// ========== lender discover end ====================

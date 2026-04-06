@@ -15,12 +15,6 @@ const (
 	OrganizationOwnerTypePartner    OrganizationOwnerType = "Partner"
 )
 
-// OrganizationSource records how the lender org was created (admin UI vs discover).
-const (
-	OrganizationSourceManual = "manual"
-	OrganizationSourceSearch = "search"
-)
-
 type OrganizationStatus string
 
 var OrganizationStatusName = "organization_status"

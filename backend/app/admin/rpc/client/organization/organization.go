@@ -57,21 +57,6 @@ type (
 	GetBaseTemplateRequest                     = admin.GetBaseTemplateRequest
 	GetBaseTemplateResponse                    = admin.GetBaseTemplateResponse
 	IdRequest                                  = admin.IdRequest
-	LenderDiscoverCandidateEntity              = admin.LenderDiscoverCandidateEntity
-	LenderDiscoverCommitLender                 = admin.LenderDiscoverCommitLender
-	LenderDiscoverCommitRequest                = admin.LenderDiscoverCommitRequest
-	LenderDiscoverCommitRequestData            = admin.LenderDiscoverCommitRequestData
-	LenderDiscoverPreviewResponse              = admin.LenderDiscoverPreviewResponse
-	LenderDiscoverPreviewResponseData          = admin.LenderDiscoverPreviewResponseData
-	LenderDiscoverRunEntity                    = admin.LenderDiscoverRunEntity
-	LenderDiscoverRunRequest                   = admin.LenderDiscoverRunRequest
-	LenderDiscoverRunRequestData               = admin.LenderDiscoverRunRequestData
-	LenderDiscoverRunResponse                  = admin.LenderDiscoverRunResponse
-	LenderDiscoverRunStats                     = admin.LenderDiscoverRunStats
-	LenderDiscoverSettingsEntity               = admin.LenderDiscoverSettingsEntity
-	LenderDiscoverSettingsResponse             = admin.LenderDiscoverSettingsResponse
-	LenderDiscoverUpdateSettingsRequest        = admin.LenderDiscoverUpdateSettingsRequest
-	LenderDiscoverUpdateSettingsRequestData    = admin.LenderDiscoverUpdateSettingsRequestData
 	LoanApplicantEntity                        = admin.LoanApplicantEntity
 	LoanBorrowerEntity                         = admin.LoanBorrowerEntity
 	LoanBudgetEntity                           = admin.LoanBudgetEntity
@@ -122,8 +107,6 @@ type (
 	OrganizationSwitchStatusRequestData        = admin.OrganizationSwitchStatusRequestData
 	OrganizationUpdateLenderRequest            = admin.OrganizationUpdateLenderRequest
 	OrganizationUpdateLenderRequestData        = admin.OrganizationUpdateLenderRequestData
-	OrganizationUpdateOrderRequest             = admin.OrganizationUpdateOrderRequest
-	OrganizationUpdateOrderRequestData         = admin.OrganizationUpdateOrderRequestData
 	OrganizationUserCreateRequest              = admin.OrganizationUserCreateRequest
 	OrganizationUserCreateRequestData          = admin.OrganizationUserCreateRequestData
 	OrganizationUserDeleteRequest              = admin.OrganizationUserDeleteRequest
@@ -227,7 +210,6 @@ type (
 		UpdateLender(ctx context.Context, in *OrganizationUpdateLenderRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
 		Detail(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
 		Delete(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-		UpdateOrder(ctx context.Context, in *OrganizationUpdateOrderRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		SwitchStatus(ctx context.Context, in *OrganizationSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		SelectOptions(ctx context.Context, in *OrganizationSelectOptionsRequest, opts ...grpc.CallOption) (*OrganizationSelectOptionsResponse, error)
 	}
@@ -266,11 +248,6 @@ func (m *defaultOrganization) Detail(ctx context.Context, in *IdRequest, opts ..
 func (m *defaultOrganization) Delete(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	client := admin.NewOrganizationClient(m.cli.Conn())
 	return client.Delete(ctx, in, opts...)
-}
-
-func (m *defaultOrganization) UpdateOrder(ctx context.Context, in *OrganizationUpdateOrderRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
-	client := admin.NewOrganizationClient(m.cli.Conn())
-	return client.UpdateOrder(ctx, in, opts...)
 }
 
 func (m *defaultOrganization) SwitchStatus(ctx context.Context, in *OrganizationSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
