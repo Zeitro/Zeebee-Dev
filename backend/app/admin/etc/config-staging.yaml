@@ -2,7 +2,7 @@ ApiConf:
   Name: admin-api
   Host: 0.0.0.0
   Port: 10200
-  Timeout: 10000
+  Timeout: 600000
   Log:
     Stat: false
 
@@ -13,13 +13,13 @@ ApiConf:
   RpcConf:
     Endpoints:
       - 127.0.0.1:10201
-    Timeout: 10000
+    Timeout: 600000
     NonBlock: true
 
 RpcConf:
   Name: admin.rpc
   ListenOn: 0.0.0.0:10201
-  Timeout: 10000
+  Timeout: 600000
   LimiterConf:
     Login:
       Rate: 5
