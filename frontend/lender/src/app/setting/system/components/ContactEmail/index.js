@@ -7,7 +7,7 @@ import AddContactEmail from './AddContactEmail';
 import { BtnPopUpModal } from '@repo/shared-methods';
 import { authorizedColor } from '@repo/shared-methods/enum';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
-import { useUserStore } from '@/store/user';
+import { useUserStore } from '@repo/shared-methods/store';
 import { createRequest } from '@repo/shared-methods/utils';
 const ContactEmail = () => {
 	const { request } = createRequest();

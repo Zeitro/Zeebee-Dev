@@ -318,6 +318,11 @@ message LoanEntity {
   int64 RequestedLoanDocumentCount = 44;
   string creator_name = 45;
 
+  //  double HoldbackReleaseAmount = 46;
+  double HoldbackRemainingAmount = 47;
+  string due_status = 48;
+  int32 due_days = 49;
+
 }
 
 message  LoanBudgetEntity {
@@ -470,6 +475,11 @@ message  LoanPageRequestFilter {
   repeated string loan_type = 5;
   repeated string lender = 6;
   repeated string pending_status = 7;
+  repeated string source = 8;
+  string date_type = 9;
+  int32 due_in_days = 10;
+  string start_date = 11;
+  string end_date = 12;
 }
 
 message  LoanPageRequestSorter {
@@ -744,6 +754,36 @@ message LoanSendQuoteEmailRequestData {
   repeated ThirdPartyLoanApplicantEditEntity applicants = 12;
 }
 
+// loan summary -- request
+message LoanSummaryRequest {
+  LoanSummaryRequestData data = 1;
+}
+message LoanSummaryRequestData {
+  string  start_date = 1;
+  string  end_date = 2;
+  repeated string  source = 3;
+  int32 due_in_days = 4;
+  LoanPageRequestSorter sorter = 5;
+  string stage = 6;
+  string date_type = 7;
+}
+
+message LoanSummaryResponse {
+  LoanSummaryResponseData data = 1;
+}
+message LoanSummaryResponseData {
+  double total_loan_amount = 1;
+  double total_principal_amount = 2;
+  double total_holdback_amount = 3;
+  double total_closing_fund_amount = 4;
+  double total_monthly_payment_amount = 5;
+  double total_release_holdback_amount = 6;
+  double total_remaining_holdback_amount = 7;
+  int64 total_loan_count = 8;
+  double average_rate = 9;
+  repeated LoanEntity list = 10;
+}
+
 
 
 service Loan {
@@ -761,6 +801,7 @@ service Loan {
   rpc PreApprovalLoan(LoanPreApprovalRequest) returns(LoanPreApprovalResponse);
   rpc SendPreApprovalNotification(LoanSendPreApprovalNotificationRequest) returns(EmptyResponse);
   rpc SendQuoteEmail(LoanSendQuoteEmailRequest) returns(EmptyResponse);
+  rpc Summary(LoanSummaryRequest) returns(LoanSummaryResponse);
 }
 // ===================== loan service end ======================
 
