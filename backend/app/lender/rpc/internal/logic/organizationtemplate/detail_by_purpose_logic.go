@@ -7,7 +7,7 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/domains/zeebee/data/bo"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/repo"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -28,7 +28,7 @@ func NewDetailByPurposeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *D
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -46,7 +46,7 @@ func (l *DetailByPurposeLogic) DetailByPurpose(in *lender.OrganizationTemplateDe
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[bo.OrganizationTemplateBo, lender.OrganizationTemplateEntity](
+	data, err := copierx.Trans[dto.OrganizationTemplateEntityDto, lender.OrganizationTemplateEntity](
 		detail,
 		copierx.TimeToRFC3339Str(),
 	)

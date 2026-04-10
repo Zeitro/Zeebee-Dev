@@ -8,40 +8,42 @@ import (
 	"github.com/duke-git/lancet/v2/random"
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/duke-git/lancet/v2/strutil"
-	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/threading"
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/copierx"
 	email2 "zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/redisx"
+	"zeebee-backend/common/gormx"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
+	"zeebee-backend/domains/zeebee/auth"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/repo"
 )
 
+// OrganizationUserLogic provides organization user business logic
 type OrganizationUserLogic struct {
-	repos       *repo.AllRepos
-	redisCli    *redisx.Redisx
-	emailClient *email2.Email
+	*BaseLogic
+	authTopicMap map[constants.UserType]string
+	emailClient  *email2.Email
 }
 
-func NewOrganizationUserLogic(repos *repo.AllRepos, redisCli *redisx.Redisx, emailClient *email2.Email) *OrganizationUserLogic {
+// NewOrganizationUserLogic creates a new organization user logic instance
+func NewOrganizationUserLogic(baseLogic *BaseLogic, emailClient *email2.Email, authTopicMap map[constants.UserType]string) *OrganizationUserLogic {
 	return &OrganizationUserLogic{
-		repos:       repos,
-		redisCli:    redisCli,
-		emailClient: emailClient,
+		BaseLogic:    baseLogic,
+		authTopicMap: authTopicMap,
+		emailClient:  emailClient,
 	}
 }
 
 // Page returns organization user list
-func (l *OrganizationUserLogic) Page(ctx context.Context, pageReq dto.OrganizationUserPageRequestDto) (page bo.PageResultBo[*bo.OrganizationUserBo], err error) {
+func (l *OrganizationUserLogic) Page(ctx context.Context, pageReq dto.OrganizationUserPageRequestDto) (page dto.PageResultDto[*dto.OrganizationUserEntityDto], err error) {
 	organizationId := pageReq.Filter.OrganizationId
 	organization, err := l.repos.OrganizationRepo.FindOneById(ctx, organizationId)
 	if err != nil {
@@ -55,32 +57,26 @@ func (l *OrganizationUserLogic) Page(ctx context.Context, pageReq dto.Organizati
 	}
 
 	for i, entity := range results.List {
-		roles, err := l.repos.RoleRepo.GetOrganizationUserRoles(ctx, entity.Id)
+		roles, err := l.repos.RoleRepo.GetRolesByOrganizationUserId(ctx, entity.Id)
 		if err != nil {
 			return page, err
 		}
 		results.List[i].Roles = roles
 	}
-
-	err = copier.CopyWithOption(&page, results, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
+	pagePtr, err := copierx.Trans[gormx.PageResponse[*repo.OrganizationUserPageEntity], dto.PageResultDto[*dto.OrganizationUserEntityDto]](&results)
 	if err != nil {
-		return page, errorx.GetFailedTransRespErr(err)
+		return page, err
 	}
+	page = *pagePtr
 
-	slice.ForEach(page.List, func(index int, item *bo.OrganizationUserBo) {
+	slice.ForEach(page.List, func(index int, item *dto.OrganizationUserEntityDto) {
 		page.List[index].IsOwner = item.UserId == organizationOwnerId
 	})
 	return page, err
 }
 
 // CreateAdminOrganizationUser creates admin organization user
-func (l *OrganizationUserLogic) CreateAdminOrganizationUser(ctx context.Context, input dto.OrganizationUserCreateAdminRequestDto) (result *bo.OrganizationUserBo, err error) {
+func (l *OrganizationUserLogic) CreateAdminOrganizationUser(ctx context.Context, input dto.OrganizationUserCreateAdminRequestDto) (result *dto.OrganizationUserEntityDto, err error) {
 	isInOrganization, err := l.repos.OrganizationUserRepo.CheckOrganizationUserExistedByEmail(ctx, input.OrganizationId, input.Email, input.UserType)
 	if err != nil {
 		return nil, err
@@ -93,7 +89,7 @@ func (l *OrganizationUserLogic) CreateAdminOrganizationUser(ctx context.Context,
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
-	if l.validatePassword(input.Password) {
+	if !l.validatePassword(input.Password) {
 		err = errorx.New("The password is invalid")
 		return nil, err
 	}
@@ -111,6 +107,7 @@ func (l *OrganizationUserLogic) CreateAdminOrganizationUser(ctx context.Context,
 			innerErr = errorx.New("The organization is not active")
 			return innerErr
 		}
+		firstName, lastName, fullName := input.FirstName, input.LastName, stringx.FormatFullName(input.FirstName, "", input.LastName)
 		// Create user if not exist
 		if user == nil || user.Id == 0 {
 
@@ -124,6 +121,9 @@ func (l *OrganizationUserLogic) CreateAdminOrganizationUser(ctx context.Context,
 				Status:                constants.UserStatusActive,
 				PasswordHash:          pwdHash,
 				DefaultOrganizationId: input.OrganizationId,
+				FirstName:             firstName,
+				LastName:              lastName,
+				FullName:              fullName,
 			}
 			user, innerErr = l.repos.UserRepo.CreateWithTx(ctx, tx, user, false)
 			if innerErr != nil {
@@ -138,11 +138,15 @@ func (l *OrganizationUserLogic) CreateAdminOrganizationUser(ctx context.Context,
 			Phone:          input.Phone,
 			Remark:         input.Remark,
 			Status:         constants.OrganizationUserStatusActive,
+			FirstName:      firstName,
+			MidName:        "",
+			LastName:       lastName,
+			FullName:       fullName,
 		}
 
 		// Get organization roles
 		if len(input.RoleIds) > 0 {
-			roles, innerErr := l.repos.RoleRepo.GetOrganizationRolesByIdsWithTx(ctx, tx, input.OrganizationId, input.RoleIds)
+			roles, innerErr := l.repos.RoleRepo.GetOrganizationRolesByIdsWithTx(ctx, tx, input.OrganizationId, input.RoleIds, constants.UserTypeAdmin)
 			if innerErr != nil {
 				return innerErr
 			}
@@ -158,12 +162,25 @@ func (l *OrganizationUserLogic) CreateAdminOrganizationUser(ctx context.Context,
 	if err != nil {
 		return nil, err
 	}
+
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:         auth.ActionRoleReload,
+			Scope:          auth.ScopeOrganizationUser,
+			Type:           organization.Type,
+			OrganizationId: input.OrganizationId,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[organization.Type], msg)
+
+	})
+
 	result = l.transToBo(organizationUser)
 	return result, nil
 }
 
 // InviteOrganizationUser invites organization user to join organization
-func (l *OrganizationUserLogic) InviteOrganizationUser(ctx context.Context, createDto dto.OrganizationUserCreateRequestDto) (result *bo.OrganizationUserBo, err error) {
+func (l *OrganizationUserLogic) InviteOrganizationUser(ctx context.Context, createDto dto.OrganizationUserCreateRequestDto) (result *dto.OrganizationUserEntityDto, err error) {
 	isInOrganization, err := l.repos.OrganizationUserRepo.CheckOrganizationUserExistedByEmail(ctx, createDto.OrganizationId, createDto.Email, createDto.UserType)
 	if err != nil {
 		return nil, err
@@ -224,7 +241,7 @@ func (l *OrganizationUserLogic) InviteOrganizationUser(ctx context.Context, crea
 
 		// Get organization roles
 		if len(createDto.RoleIds) > 0 {
-			roles, innerErr := l.repos.RoleRepo.GetOrganizationRolesByIdsWithTx(ctx, tx, createDto.OrganizationId, createDto.RoleIds)
+			roles, innerErr := l.repos.RoleRepo.GetOrganizationRolesByIdsWithTx(ctx, tx, createDto.OrganizationId, createDto.RoleIds, createDto.UserType)
 			if innerErr != nil {
 				return innerErr
 			}
@@ -241,7 +258,7 @@ func (l *OrganizationUserLogic) InviteOrganizationUser(ctx context.Context, crea
 		return nil, err
 	}
 	// Send email
-	go func() {
+	threading.GoSafe(func() {
 		newCtx := context.WithoutCancel(ctx)
 		err := l.sendInviteEmail(newCtx, SendInviteUserEmailInput{
 			EmailConfig:      createDto.EmailConfig,
@@ -260,7 +277,7 @@ func (l *OrganizationUserLogic) InviteOrganizationUser(ctx context.Context, crea
 			err = errorx.Wrap(err, "Send invite email error")
 			logx.WithContext(ctx).Error(err)
 		}
-	}()
+	})
 
 	result = l.transToBo(organizationUser)
 
@@ -324,7 +341,7 @@ func (l *OrganizationUserLogic) SendInviteEmail(ctx context.Context, input dto.O
 }
 
 // AcceptInvitation accepts organization invitation to join organization
-func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.OrganizationUserAcceptInvitationRequestDto) (user bo.UserBo, err error) {
+func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.OrganizationUserAcceptInvitationRequestDto) (user dto.UserEntityDto, err error) {
 	key := stringx.Format(constants.UserInviteCode, input.UserType, input.Email, input.OrganizationId)
 	code, err := l.redisCli.Get(ctx, key)
 	if err != nil {
@@ -383,31 +400,39 @@ func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.
 	if err != nil {
 		return user, err
 	}
-	err = copier.CopyWithOption(&user, userModel, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
+
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:         auth.ActionRoleReload,
+			Scope:          auth.ScopeOrganizationUser,
+			Type:           userModel.Type,
+			OrganizationId: input.OrganizationId,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[userModel.Type], msg)
+
 	})
-	return user, nil
+
+	userPtr, err := copierx.Trans[model.User, dto.UserEntityDto](userModel, copierx.TimeToRFC3339Str())
+	if err != nil {
+		return user, err
+	}
+
+	return *userPtr, nil
 }
 
 // UpdateOrganizationUser updates organization user information
-func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, reqDto dto.OrganizationUserUpdateRequestDto) (result *bo.OrganizationUserBo, err error) {
-	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserById(ctx, reqDto.Id, reqDto.OrganizationId)
+func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, input dto.OrganizationUserUpdateRequestDto) (result *dto.OrganizationUserEntityDto, err error) {
+	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserById(ctx, input.Id, input.OrganizationId)
 	if err != nil {
 		return nil, err
 	}
 	user := organizationUser.User
-	// saveModel := &model.OrganizationUser{}
-	err = copier.CopyWithOption(organizationUser, reqDto, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+	err = copierx.Assign[dto.OrganizationUserUpdateRequestDto, model.OrganizationUser](&input, organizationUser)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
+
 	organizationUser.FullName = stringx.FormatFullName(organizationUser.FirstName, organizationUser.MidName, organizationUser.LastName)
 
 	// var organizationUser *model.OrganizationUser
@@ -416,7 +441,7 @@ func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, reqD
 		var innerErr error
 		oldRoles := organizationUser.Roles
 		// Get organization
-		organization, innerErr = l.repos.OrganizationRepo.GetOrganizationWithTx(ctx, tx, reqDto.OrganizationId, reqDto.UserType, false)
+		organization, innerErr = l.repos.OrganizationRepo.GetOrganizationWithTx(ctx, tx, input.OrganizationId, input.UserType, false)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -431,7 +456,7 @@ func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, reqD
 			return innerErr
 		}
 		// Update roles
-		roles, innerErr := l.repos.RoleRepo.GetOrganizationRolesByIdsWithTx(ctx, tx, reqDto.OrganizationId, reqDto.RoleIds)
+		roles, innerErr := l.repos.RoleRepo.GetOrganizationRolesByIdsWithTx(ctx, tx, input.OrganizationId, input.RoleIds, input.UserType)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -455,7 +480,18 @@ func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, reqD
 	if err != nil {
 		return nil, err
 	}
-	// TODO update user's permissions
+
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:         auth.ActionRoleReload,
+			Scope:          auth.ScopeOrganizationUser,
+			Type:           organization.Type,
+			OrganizationId: input.OrganizationId,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[organization.Type], msg)
+
+	})
 
 	organizationUser.User = user
 	result = l.transToBo(organizationUser)
@@ -570,7 +606,7 @@ func (l *OrganizationUserLogic) sendInviteEmail(ctx context.Context, input SendI
 }
 
 // AllOrganizationUsers
-func (l *OrganizationUserLogic) AllOrganizationUsers(ctx context.Context, organizationId int64) (result []*bo.OrganizationUserBo, err error) {
+func (l *OrganizationUserLogic) AllOrganizationUsers(ctx context.Context, organizationId int64) (result []*dto.OrganizationUserEntityDto, err error) {
 	repoResults, err := l.repos.OrganizationUserRepo.AllOrganizationUsers(ctx, organizationId)
 	if err != nil {
 		return nil, err
@@ -580,7 +616,7 @@ func (l *OrganizationUserLogic) AllOrganizationUsers(ctx context.Context, organi
 }
 
 // Detail
-func (l *OrganizationUserLogic) Detail(ctx context.Context, id int64, organizationId int64) (result *bo.OrganizationUserBo, err error) {
+func (l *OrganizationUserLogic) Detail(ctx context.Context, id int64, organizationId int64) (result *dto.OrganizationUserEntityDto, err error) {
 	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserById(ctx, id, organizationId)
 	if err != nil {
 		return nil, err
@@ -590,18 +626,8 @@ func (l *OrganizationUserLogic) Detail(ctx context.Context, id int64, organizati
 		err = errorx.New("User not existed")
 		return nil, err
 	}
-	result = &bo.OrganizationUserBo{}
-	err = copier.CopyWithOption(result, organizationUser, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
-	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
-	}
-	result.Email = user.Email
+
+	result = l.transToBo(organizationUser)
 	return result, nil
 }
 
@@ -623,19 +649,31 @@ func (l *OrganizationUserLogic) SwitchStatus(ctx context.Context, id int64, orga
 
 	err = l.repos.OrganizationUserRepo.UpdateOrganizationUserStatus(ctx, id, organizationId, status)
 
-	// TODO update user's permissions
+	// Reload organization user auth
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:         auth.ActionRoleReload,
+			Scope:          auth.ScopeOrganizationUser,
+			Type:           userType,
+			OrganizationId: organizationId,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
+
+	})
+
 	return err
 }
 
 // AssignRoles assign roles for organization user
-func (l *OrganizationUserLogic) AssignRoles(ctx context.Context, id int64, organizationId int64, roleIds []int64) (err error) {
+func (l *OrganizationUserLogic) AssignRoles(ctx context.Context, id int64, organizationId int64, roleIds []int64, userType constants.UserType) (err error) {
 	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserById(ctx, id, organizationId)
 	if err != nil {
 		return err
 	}
 	err = l.repos.OrganizationUserRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
-		roles, innerErr := l.repos.RoleRepo.GetOrganizationRolesByIdsWithTx(ctx, tx, organizationId, roleIds)
+		roles, innerErr := l.repos.RoleRepo.GetOrganizationRolesByIdsWithTx(ctx, tx, organizationId, roleIds, userType)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -651,7 +689,19 @@ func (l *OrganizationUserLogic) AssignRoles(ctx context.Context, id int64, organ
 
 		return innerErr
 	})
-	// TODO update user's permissions
+
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:         auth.ActionRoleReload,
+			Scope:          auth.ScopeOrganizationUser,
+			Type:           userType,
+			OrganizationId: organizationId,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
+
+	})
+
 	return err
 }
 
@@ -674,13 +724,25 @@ func (l *OrganizationUserLogic) Delete(ctx context.Context, id int64, organizati
 		innerErr = l.repos.OrganizationUserRepo.DeleteOrganizationUserWithTx(ctx, tx, organizationUser)
 		return innerErr
 	})
-	// TODO delete user's permissions
+
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:         auth.ActionRoleReload,
+			Scope:          auth.ScopeOrganizationUser,
+			Type:           userType,
+			OrganizationId: organizationId,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
+
+	})
+
 	return err
 }
 
 // transToBo
-func (l *OrganizationUserLogic) transToBo(src *model.OrganizationUser) (result *bo.OrganizationUserBo) {
-	result, err := copierx.Trans[model.OrganizationUser, bo.OrganizationUserBo](src)
+func (l *OrganizationUserLogic) transToBo(src *model.OrganizationUser) (result *dto.OrganizationUserEntityDto) {
+	result, err := copierx.Trans[model.OrganizationUser, dto.OrganizationUserEntityDto](src)
 	if err != nil {
 		return nil
 	}
@@ -691,8 +753,8 @@ func (l *OrganizationUserLogic) transToBo(src *model.OrganizationUser) (result *
 }
 
 // batchTransToBo batch transforms to bo
-func (l *OrganizationUserLogic) batchTransToBo(src []*model.OrganizationUser) (result []*bo.OrganizationUserBo) {
-	result = make([]*bo.OrganizationUserBo, 0, len(src))
+func (l *OrganizationUserLogic) batchTransToBo(src []*model.OrganizationUser) (result []*dto.OrganizationUserEntityDto) {
+	result = make([]*dto.OrganizationUserEntityDto, 0, len(src))
 	if len(src) == 0 {
 		return result
 	}

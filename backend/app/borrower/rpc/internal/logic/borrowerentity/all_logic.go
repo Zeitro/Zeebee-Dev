@@ -3,7 +3,6 @@ package borrowerentitylogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
@@ -11,6 +10,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/timex"
+	"zeebee-backend/domains/zeebee/model"
 
 	"zeebee-backend/common/errorx"
 )
@@ -27,7 +27,7 @@ func NewAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AllLogic {
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -49,18 +49,14 @@ func (l *AllLogic) All(in *borrower.BorrowerEntityAllRequest) (resp *borrower.Bo
 	}
 
 	respData := make([]*borrower.BorrowerEntityPageEntity, 0, len(results))
-
-	err = copier.CopyWithOption(&respData, &results, copier.Option{
-		CaseSensitive: true,
-		DeepCopy:      true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-			copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
-		},
-	})
+	respDataPtr, err := copierx.Trans[[]*model.BorrowerEntity, []*borrower.BorrowerEntityPageEntity](&results,
+		copierx.TimeToRFC3339Str(),
+		copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
+	)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
+	respData = *respDataPtr
 
 	return &borrower.BorrowerEntityAllResponse{
 		Data: respData,
