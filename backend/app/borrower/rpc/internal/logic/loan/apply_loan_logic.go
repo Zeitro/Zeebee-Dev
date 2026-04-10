@@ -5,7 +5,6 @@ import (
 
 	"github.com/duke-git/lancet/v2/mathutil"
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -45,7 +44,7 @@ func NewApplyLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ApplyLo
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -228,33 +227,19 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 	// loan
 	loan := &model.Loan{}
 	if oldLoan != nil {
-		err = copier.CopyWithOption(loan, oldLoan, copier.Option{
-			IgnoreEmpty:   true,
-			DeepCopy:      true,
-			CaseSensitive: true,
-		})
+		loan, err = copierx.Trans[model.Loan, model.Loan](oldLoan)
+
 		if err != nil {
-			return nil, errorx.GetFailedTransErr(err)
+			return nil, err
 		}
 
 		loan.RemoveRelationships()
 	}
-	err = copier.CopyWithOption(loan, reqData, copier.Option{
-		IgnoreEmpty:   false,
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
-	if err != nil {
-		return nil, errorx.GetFailedTransErr(err)
-	}
-	// creator, err := l.svcCtx.UserRepo.GetUser(l.ctx, claim.OrganizationUserId, constants.UserTypeBorrower)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	err = copierx.Assign[borrower.LoanApplyRequestData, model.Loan](reqData, loan, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 
+	if err != nil {
+		return nil, err
+	}
 	loan.CreatorId = claim.OrganizationUserId
 	loan.CreatorName = claim.Username
 	loan.BorrowerOrganizationId = claim.OrganizationId
@@ -292,16 +277,9 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 			return nil, err
 		}
 		applicantItem := &model.LoanApplicant{}
-		err = copier.CopyWithOption(applicantItem, borrowerApplicant, copier.Option{
-			IgnoreEmpty:   false,
-			DeepCopy:      true,
-			CaseSensitive: true,
-			Converters: []copier.TypeConverter{
-				copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-			},
-		})
+		applicantItem, err = copierx.Trans[model.BorrowerApplicant, model.LoanApplicant](borrowerApplicant, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 		if err != nil {
-			return nil, errorx.GetFailedTransErr(err)
+			return nil, err
 		}
 		applicantItem.Id = applicant.Id
 		applicantItem.IsPrimary = applicant.IsPrimary
@@ -333,16 +311,9 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 		return nil, err
 	}
 	loanProperty := &model.LoanProperty{}
-	err = copier.CopyWithOption(loanProperty, reqData.LoanProperty, copier.Option{
-		IgnoreEmpty:   false,
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
+	loanProperty, err = copierx.Trans[borrower.LoanPropertyApplyEntity, model.LoanProperty](reqData.LoanProperty, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
-		return nil, errorx.GetFailedTransErr(err)
+		return nil, err
 	}
 	// loanProperty.Id = 0
 	loanProperty.PropertyType = borrowerProperty.PropertyType
@@ -358,58 +329,30 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 
 	// transaction experience
 	transactionExperiences := make([]*model.LoanExperience, 0)
-	err = copier.CopyWithOption(&transactionExperiences, &reqData.TransactionExperiences, copier.Option{
-		IgnoreEmpty:   false,
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
+	err = copierx.Assign[[]*borrower.LoanExperienceEntity, []*model.LoanExperience](&reqData.TransactionExperiences, &transactionExperiences, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
-		return nil, errorx.GetFailedTransErr(err)
+		return nil, err
 	}
 
 	// real_estates experience
 	realEstatesExperiences := make([]*model.LoanExperience, 0)
-	err = copier.CopyWithOption(&realEstatesExperiences, &reqData.RealEstateExperiences, copier.Option{
-		IgnoreEmpty:   false,
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
+	err = copierx.Assign[[]*borrower.LoanExperienceEntity, []*model.LoanExperience](&reqData.RealEstateExperiences, &realEstatesExperiences, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
-		return nil, errorx.GetFailedTransErr(err)
+		return nil, err
 	}
 
 	// third services
 	loanThirdServices := make([]*model.LoanThirdService, 0)
-	err = copier.CopyWithOption(&loanThirdServices, &reqData.LoanThirdServices, copier.Option{
-		IgnoreEmpty:   false,
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
+	err = copierx.Assign[[]*borrower.LoanThirdServiceEntity, []*model.LoanThirdService](&reqData.LoanThirdServices, &loanThirdServices, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
-		return nil, errorx.GetFailedTransErr(err)
+		return nil, err
 	}
 
 	// demographic
 	loanDemographic := &model.LoanDemographic{}
-	err = copier.CopyWithOption(&loanDemographic, &reqData.LoanDemographic, copier.Option{
-		IgnoreEmpty:   false,
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
-		},
-	})
+	loanDemographic, err = copierx.Trans[borrower.LoanDemographicEntity, model.LoanDemographic](reqData.LoanDemographic, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
-		return nil, errorx.GetFailedTransErr(err)
+		return nil, err
 	}
 
 	data = &applyLoanModelData{

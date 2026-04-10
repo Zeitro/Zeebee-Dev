@@ -179,7 +179,7 @@ cd "$REPO_ROOT"
 if [ -d "$REPO_ROOT/backend" ] && [ "$SCRIPT_DIR" == "$REPO_ROOT/backend/.specify"* ]; then
     SPECS_DIR="$REPO_ROOT/backend/specs"
 else
-    SPECS_DIR="$REPO_ROOT/specs"
+SPECS_DIR="$REPO_ROOT/specs"
 fi
 mkdir -p "$SPECS_DIR"
 

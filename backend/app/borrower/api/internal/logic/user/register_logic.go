@@ -3,13 +3,12 @@ package user
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/copierx"
 )
 
 type RegisterLogic struct {
@@ -33,11 +32,9 @@ func (l *RegisterLogic) Register(req *types.UserRegisterRequest) (resp *types.Us
 		Data: &borrower.UserRegisterRequestData{},
 	}
 
-	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{
-		CaseSensitive: true,
-	})
+	rpcReq.Data, err = copierx.Trans[types.UserRegisterRequest, borrower.UserRegisterRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
 	// call rpc server
@@ -47,9 +44,9 @@ func (l *RegisterLogic) Register(req *types.UserRegisterRequest) (resp *types.Us
 	}
 
 	// trans response data
-	err = copier.Copy(resp, &rpcResp.Data)
+	resp, err = copierx.Trans[borrower.UserRegisterResponseData, types.UserRegisterResponse](rpcResp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return resp, err
 }

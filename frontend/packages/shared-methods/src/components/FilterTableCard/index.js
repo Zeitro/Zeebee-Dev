@@ -23,6 +23,7 @@ export const FilterTableCard = forwardRef(
 			rowProps = {}, // 过滤搜索栏的Row配置
 			filterName = '',
 			hasFilterField = true, // 有过滤搜索栏
+			hasInitRequest = true, //true初始化请求接口，当有dataSource时默认‘不请求’
 			filterWrapClassName,
 			getData = () => {}, //请求接口的方法（无api时使用）
 			hasPaginationRequest = true, // true需要请求分页数据，false不请求分页接口
@@ -56,6 +57,7 @@ export const FilterTableCard = forwardRef(
 			getData,
 			hasPaginationRequest,
 			settingPagination,
+			hasInitRequest,
 		});
 
 		const getMoreTypesContent = (type) => {

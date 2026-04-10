@@ -90,4 +90,4 @@
 
 ---
 
-*此文档由 Claude AI 工具自动维护，记录 claudedocs 目录的组织结构和使用指南。*
+*此文档由 Claude AI 工具自动维护，记录 claude/docs 目录的组织结构和使用指南。*

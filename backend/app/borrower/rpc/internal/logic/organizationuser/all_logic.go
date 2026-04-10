@@ -27,7 +27,7 @@ func NewAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AllLogic {
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		BaseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		BaseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 

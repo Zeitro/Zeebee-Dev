@@ -3,7 +3,6 @@ package rolelogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
@@ -11,6 +10,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 )
@@ -27,7 +27,7 @@ func NewPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PageLogic {
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -43,29 +43,19 @@ func (l *PageLogic) Page(in *borrower.RolePageRequest) (resp *borrower.RolePageR
 	}
 
 	pageReq := dto.RolePageRequestDto{}
-	_ = copier.CopyWithOption(&pageReq, in.Data, copier.Option{
-		CaseSensitive: true,
-		DeepCopy:      true,
-	})
+	_ = copierx.Assign[borrower.RolePageRequestData, dto.RolePageRequestDto](in.Data, &pageReq)
 
 	pageReq.Filter.RoleType = constants.UserTypeBorrower
 	pageReq.Filter.OrganizationId = claim.OrganizationId
-	pageReq.Filter.UserId = claim.OrganizationUserId
 
 	result, err := l.baseLogic.RoleLogic.Page(l.ctx, pageReq)
 	if err != nil {
 		return nil, err
 	}
 
-	data := &borrower.RolePageResponseData{}
-	err = copier.CopyWithOption(data, &result, copier.Option{
-		DeepCopy: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
+	data, err := copierx.Trans[gormx.PageResponse[dto.RoleEntityDto], borrower.RolePageResponseData](&result, copierx.TimeToRFC3339Str())
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
 	return &borrower.RolePageResponse{
