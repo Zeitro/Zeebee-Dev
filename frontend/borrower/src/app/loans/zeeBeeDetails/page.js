@@ -1,11 +1,12 @@
 'use client';
 import styles from '../createZeeBeeLoan/index.module.scss';
-import { Badge, Form, Radio, Skeleton, Steps, Tabs } from 'antd';
-import React, { useEffect } from 'react';
+import {Badge, Form, Radio, Skeleton, Steps, Tabs} from 'antd';
+import React, {useEffect} from 'react';
 import useCreate from '../components/CreateZeeBee/hooks/useCreate';
-import { assemblyAddress } from '@repo/shared-methods/utils';
-import { stageColor, pendingStatusColor, loanDetailsFields } from '@/enum/loan';
+import {assemblyAddress} from '@repo/shared-methods/utils';
+import {loanDetailsFields, pendingStatusColor, stageColor} from '@/enum/loan';
 import HomeSvg from '@/assets/images/home.svg';
+
 const ZeeBeeDetails = () => {
 	const {
 		getTabsItem,
@@ -116,7 +117,7 @@ const ZeeBeeDetails = () => {
 									size="small"
 									offset={[3, -3]}
 								>
-									{item.label}
+									<span className="text-base">{item.label}</span>
 								</Badge>
 							) : (
 								item.label
