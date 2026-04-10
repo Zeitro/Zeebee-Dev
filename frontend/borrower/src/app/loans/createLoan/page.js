@@ -1,16 +1,17 @@
 'use client';
-import { Button, Col, Form, message, Space, Steps } from 'antd';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import {Button, Col, Form, message, Space, Steps} from 'antd';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import CreateLoan from '../components/Create/Loan';
 import CreateProperty from '../components/Create/property';
 import CreateTerm from '../components/Create/term';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { createLoanSteps } from '@/enum/loan';
-import { createRequest } from '@repo/shared-methods/utils';
-import { loan_pending } from '@/enum/common';
-import { BtnPopUpModal } from '@repo/shared-methods';
+import {useRouter, useSearchParams} from 'next/navigation';
+import {createLoanSteps} from '@/enum/loan';
+import {createRequest} from '@repo/shared-methods/utils';
+import {loan_pending} from '@/enum/common';
+import {BtnPopUpModal} from '@repo/shared-methods';
 import _ from 'lodash';
 import QuoteBtn from '../components/Quote';
+
 const CreateLoanPage = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();

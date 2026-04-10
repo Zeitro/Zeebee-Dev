@@ -1,13 +1,14 @@
 'use client';
-import { Button, Col, Form, Input, InputNumber, Row, Select } from 'antd';
+import {Button, Col, Form, Input, InputNumber, Row, Select} from 'antd';
 import styles from './index.module.scss';
-import { InputNumAmount, CommonFormDate, InputNameCombination } from '@repo/shared-methods';
-import { useGetOptions } from '@repo/shared-methods/hooks';
-import { loan_active, loan_pending, titleCol } from '@/enum/common';
-import { capitalizeFirstLetter } from '@repo/shared-methods/utils';
+import {CommonFormDate, InputNameCombination, InputNumAmount} from '@repo/shared-methods';
+import {useGetOptions} from '@repo/shared-methods/hooks';
+import {loan_active, loan_pending, titleCol} from '@/enum/common';
+import {capitalizeFirstLetter} from '@repo/shared-methods/utils';
 import SelectCard from '@repo/shared-methods/componentsUi/SelectCard';
-import { PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons';
+import {MinusCircleOutlined, PlusCircleOutlined} from '@ant-design/icons';
 import _ from 'lodash';
+
 const layoutCol = {
 	xs: 24,
 	sm: 24,

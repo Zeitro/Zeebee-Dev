@@ -1,11 +1,12 @@
 import React from 'react';
 import styles from './index.module.scss';
-import { Row, Col, Form, Select, InputNumber } from 'antd';
+import {Col, Form, InputNumber, Row, Select} from 'antd';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
-import { useGetOptions } from '@repo/shared-methods/hooks';
-import { layoutCol, titleCol } from '@/enum/common';
-import { livingAreaProps } from '@repo/shared-methods/utils';
+import {useGetOptions} from '@repo/shared-methods/hooks';
+import {layoutCol, titleCol} from '@/enum/common';
+import {livingAreaProps} from '@repo/shared-methods/utils';
 import SelectCard from '@/components/SelectCard/index';
+
 let name = 'loan_property';
 const PropertyInfo = ({
 	gutter = 24,

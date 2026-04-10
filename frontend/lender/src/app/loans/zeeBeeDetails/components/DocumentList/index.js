@@ -1,8 +1,9 @@
 import React from 'react';
 import styles from './index.module.scss';
-import { Space, Spin } from 'antd';
+import {Space, Spin} from 'antd';
 import DocumentItem from './Item';
-import { NoData } from '@repo/shared-methods';
+import {NoData} from '@repo/shared-methods';
+
 const DocumentList = ({
 	dataSource = [
 		{

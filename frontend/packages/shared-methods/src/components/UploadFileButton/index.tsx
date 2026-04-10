@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState, forwardRef, useImperativeHandle, useEffect } from 'react';
-import { Upload, Button, message } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
-import type { RcFile } from 'antd/es/upload/interface';
-import type { GetProp, UploadFile, UploadProps } from 'antd';
-import { uploadAwsS3 } from '../../api/common';
+import React, {forwardRef, useEffect, useImperativeHandle, useState} from 'react';
+import type {GetProp, UploadFile, UploadProps} from 'antd';
+import {Button, message, Upload} from 'antd';
+import {UploadOutlined} from '@ant-design/icons';
+import type {RcFile} from 'antd/es/upload/interface';
+import {uploadAwsS3} from '../../api/common';
+
 const MAX_SIZE_MB = 10;
 export interface CommonUploadRef {
 	// eslint-disable-next-line no-unused-vars

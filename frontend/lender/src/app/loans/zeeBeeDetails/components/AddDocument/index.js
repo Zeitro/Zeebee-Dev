@@ -1,9 +1,10 @@
-import { Button, Divider } from 'antd';
-import React, { useState } from 'react';
-import { PlusOutlined, SendOutlined, UploadOutlined } from '@ant-design/icons';
-import { NewModal } from '@repo/shared-methods';
+import {Button, Divider} from 'antd';
+import React, {useState} from 'react';
+import {PlusOutlined, SendOutlined, UploadOutlined} from '@ant-design/icons';
+import {NewModal} from '@repo/shared-methods';
 import AddRequest from './AddRequest';
 import UploadModal from './UploadModal';
+
 export const AddDocumentModal = ({
 	open,
 	setOpen,

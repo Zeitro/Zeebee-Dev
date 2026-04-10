@@ -1,13 +1,14 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import { Button, Checkbox, Form, Input, message, Modal } from 'antd';
+import React, {useEffect, useState} from 'react';
+import {Button, Checkbox, Form, Input, message, Modal} from 'antd';
 import Password from 'antd/es/input/Password';
-import { useRouter } from 'next/navigation';
-import { useUserStore, usePermissionStore } from '@repo/shared-methods/store';
-import { validateRule, emailRegex, localStorageUtil } from '@repo/shared-methods/utils';
-import { MailOutlined, LockOutlined } from '@ant-design/icons';
-import { initConfigFn } from '@repo/shared-methods';
+import {useRouter} from 'next/navigation';
+import {usePermissionStore, useUserStore} from '@repo/shared-methods/store';
+import {emailRegex, localStorageUtil, validateRule} from '@repo/shared-methods/utils';
+import {LockOutlined, MailOutlined} from '@ant-design/icons';
+import {initConfigFn} from '@repo/shared-methods';
 import useData from './useData';
+
 const SignIn = ({ form, setPageType }) => {
 	const router = useRouter();
 	const { getUserPermissions } = useData();
