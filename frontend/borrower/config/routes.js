@@ -187,4 +187,32 @@ export const noNavRouter = [
 	},
 ];
 
-export const routers = [...noNavRouter, ...navRouter];
+// export const noNavRouter = [
+// 	...noTokenRouter,
+// 	{
+// 		path: '/pdf',
+// 		title: 'pdf',
+// 		hideMenu: true,
+// 		hideCrumbs: true,
+// 	},
+// 	{
+// 		path: '/not-found',
+// 		title: '404',
+// 		hideCrumbs: true,
+// 		hideMenu: true,
+// 	},
+// ];
+
+// export const routers = [...noNavRouter, ...navRouter];
+export const menuSetting = {
+    '/': {
+        hideCrumbs: true,
+    },
+    '/gmailAuth': {
+        hideCrumbs: true,
+        hideSidebar: true,
+    },
+    '/dashboard': {
+        hideCrumbs: true,
+    },
+};
