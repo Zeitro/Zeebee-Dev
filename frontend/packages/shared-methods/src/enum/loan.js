@@ -1,5 +1,36 @@
 import { HomeOutlined } from '@ant-design/icons';
 import { formatAmount } from '@repo/shared-methods/utils';
+import { PERMISSIONS } from '@config/permissions'; // admin/lender/borrower都需要的权限
+// start------dashboard-----
+export const loansSourceTypeOptions = [
+	{ value: 'All', label: 'All loans' },
+	{ value: 'ZeeBee', label: 'ZeeBee loans' },
+	{ value: '3rdParty', label: '3rd party loans' },
+];
+export const maturityAlertsStatusColor = {
+	Overdue: {
+		color: '#F5222D',
+		background: '#FFF1F0',
+		borderColor: '#FFA39E',
+	},
+	'Due Soon': {
+		color: '#FA8C16',
+		background: '#FFF7E6',
+		borderColor: '#FFD591',
+	},
+};
+export const filterTimeCountTips =
+	'Based on the selected number of days, perform a global page filter for loans that match this time period.';
+
+// loan最近天数筛选
+export const filterTimeCount = [
+	{ value: 'All', label: 'All dates' },
+	{ value: 7, label: 'Last 7 days' },
+	{ value: 15, label: 'Last 15 days' },
+	{ value: 30, label: 'Last 30 days' },
+];
+// end------dashboard-----
+// start------create zeeBee loan/loan details-----
 export const tinOptions = [
 	{ label: 'SSN', value: 'SSN' },
 	{ label: 'ITIN', value: 'ITIN' },
@@ -176,18 +207,22 @@ export const pendingSteps = [
 	{
 		title: 'Quoting',
 		key: 'Quoting',
+		role: PERMISSIONS?.LOAN?.QUOTING,
 	},
 	{
 		title: 'Processing',
 		key: 'Processing',
+		role: PERMISSIONS?.LOAN?.PROCESSING,
 	},
 	{
 		title: 'Underwriting',
 		key: 'Underwriting',
+		role: PERMISSIONS?.LOAN?.UNDERWRITING,
 	},
 	{
 		title: 'Closing',
 		key: 'Closing',
+		role: PERMISSIONS?.LOAN?.CLOSING,
 	},
 ];
 

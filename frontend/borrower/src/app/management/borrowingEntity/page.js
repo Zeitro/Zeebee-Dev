@@ -2,18 +2,21 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { createRequest, formatPhone, formatTINOrSSN } from '@repo/shared-methods/utils';
 import { ReloadOutlined, PlusOutlined } from '@ant-design/icons';
-import { BtnPopUpModal, FilterTableCard, DeleteBtn } from '@repo/shared-methods';
-import useBorrowingEntity from './components/useBorrowingEntity';
-import AddModal from '@/components/SelectCard/Add/borrowingEntity';
+import { BtnPopUpModal, FilterTableCard, DeleteBtn, PermissionSlot } from '@repo/shared-methods';
+import { useBorrowingEntity } from '@repo/shared-methods/componentsUi/SelectCard/Item/useCommon';
+import AddModal from '@repo/shared-methods/componentsUi/SelectCard/Add/borrowingEntity';
 import PersonSvg from '@repo/shared-methods/assets/images/person.svg';
 import EmailSvg from '@repo/shared-methods/assets/images/email.svg';
 import PhoneSvg from '@repo/shared-methods/assets/images/phone.svg';
+import { PERMISSIONS } from '@config/permissions';
+import { useAuth } from '@repo/shared-methods/hooks';
 const BorrowingEntity = () => {
+	const { hasPermission } = useAuth();
 	const { cancel } = createRequest();
 	const tableFilterRef = useRef();
 	const [searchValue, setSearchValue] = useState('');
 	// const [pagination, setPagination] = useState(getPagination());
-	const { columns, handleDelete, loading } = useBorrowingEntity({
+	const { handleDelete, loading } = useBorrowingEntity({
 		handleSearch: () => tableFilterRef?.current?.handleSearch(),
 	});
 
@@ -50,6 +53,7 @@ const BorrowingEntity = () => {
 			},
 			{
 				filterType: 'button',
+				hidden: !hasPermission(PERMISSIONS?.MANAGEMENT_BORROWING_ENTITY?.ADD),
 				children: (
 					<BtnPopUpModal
 						getContent={(setOpen) => (
@@ -67,13 +71,12 @@ const BorrowingEntity = () => {
 				),
 			},
 		],
-		[searchValue, cancel],
+		[searchValue, cancel, hasPermission],
 	);
 	return (
 		<FilterTableCard
 			filterWrapClassName="px-8 pt-10 pb-8 flex-1 overflow-hidden"
 			ref={tableFilterRef}
-			columns={columns}
 			scroll={{ x: 1200 }}
 			filterList={filterList}
 			hasFilterField={true}
@@ -100,36 +103,44 @@ const BorrowingEntity = () => {
 								</div>
 							</div>
 							<div className="flex items-center">
-								<BtnPopUpModal
-									getContent={(setOpen) => (
-										<AddModal
-											setOpen={setOpen}
-											handleSearch={() =>
-												tableFilterRef?.current?.handleSearch()
-											}
-											rowData={row}
-										/>
-									)}
-									type="link"
-									size="large"
-									// isButton={false}
-									// icon={<EditOutlined />}
-									className="!px-2"
+								<PermissionSlot
+									code={PERMISSIONS?.MANAGEMENT_BORROWING_ENTITY?.EDIT}
 								>
-									Edit
-								</BtnPopUpModal>
-								<DeleteBtn
-									type="link"
-									title="Are you sure delete this borrowing entity?"
-									content={row.name}
-									// isButton={false}
-									onOk={() => handleDelete(row.id)}
-									loading={loading}
-									danger
-									className="!px-2"
+									<BtnPopUpModal
+										getContent={(setOpen) => (
+											<AddModal
+												setOpen={setOpen}
+												handleSearch={() =>
+													tableFilterRef?.current?.handleSearch()
+												}
+												rowData={row}
+											/>
+										)}
+										type="link"
+										size="large"
+										// isButton={false}
+										// icon={<EditOutlined />}
+										className="!px-2"
+									>
+										Edit
+									</BtnPopUpModal>
+								</PermissionSlot>
+								<PermissionSlot
+									code={PERMISSIONS?.MANAGEMENT_BORROWING_ENTITY?.DELETE}
 								>
-									Delete
-								</DeleteBtn>
+									<DeleteBtn
+										type="link"
+										title="Are you sure delete this borrowing entity?"
+										content={row.name}
+										// isButton={false}
+										onOk={() => handleDelete(row.id)}
+										loading={loading}
+										danger
+										className="!px-2"
+									>
+										Delete
+									</DeleteBtn>
+								</PermissionSlot>
 							</div>
 						</div>
 						<div className="py-4 border-t border-b border-base-border my-4 flex items-center justify-between">

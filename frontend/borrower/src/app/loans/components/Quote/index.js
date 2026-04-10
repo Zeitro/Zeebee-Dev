@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { FieldTips } from '@repo/shared-methods';
 import { Button } from 'antd';
-import { useUserStore } from '@/store/user';
+import { useUserStore } from '@repo/shared-methods/store';
 import PreviewQuoteModal from './PreviewQuoteModal';
 // 公共询价按钮
 const QuoteBtn = ({

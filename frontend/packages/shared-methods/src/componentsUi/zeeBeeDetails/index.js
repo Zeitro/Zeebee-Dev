@@ -9,8 +9,10 @@ import HomeSvg from '@repo/shared-methods/assets/images/home.svg';
 import _ from 'lodash';
 import { CheckOutlined } from '@ant-design/icons';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
+import { useAuth } from '@repo/shared-methods/hooks';
 // loan详情页面组件（lender端/admin端使用）
-const ZeeBeeDetails = ({ isAllReadonly }) => {
+const ZeeBeeDetails = ({ isAllReadonly, PERMISSIONS }) => {
+	const { hasPermission } = useAuth();
 	const {
 		scrollRef,
 		currentStep,
@@ -28,7 +30,7 @@ const ZeeBeeDetails = ({ isAllReadonly }) => {
 		unitInfo,
 		setUnitInfo,
 		detailsLoading,
-	} = useLenderDetails({ isAllReadonly });
+	} = useLenderDetails({ isAllReadonly, PERMISSIONS });
 	let [lenderMenu, setLenderMenu] = useState([]);
 	// 计算总步骤，方便跟loanProgress比较。
 	let count = useRef({ index: -1, key: '' });
@@ -77,6 +79,7 @@ const ZeeBeeDetails = ({ isAllReadonly }) => {
 				key: item.key,
 				label: item.title,
 				icon: iconFn(item, isChild, index),
+				disabled: item?.role ? !hasPermission(item.role) : false,
 			};
 			if (item.children) {
 				obj.children = getLenderMenu(item.children, true);

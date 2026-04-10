@@ -8,10 +8,13 @@ import { des, asc } from '@/enum/common';
 import PropertiesItem from './components/propertiesItem';
 import { createRequest, getPagination, transformArrayStructure } from '@repo/shared-methods/utils';
 import { Spin } from 'antd';
-import { useGetOptions } from '@repo/shared-methods/hooks';
-import AddModal from '@/components/SelectCard/Add/property';
+import { useGetOptions, useAuth } from '@repo/shared-methods/hooks';
+import AddModal from '@repo/shared-methods/componentsUi/SelectCard/Add/property';
 import { PlusOutlined } from '@ant-design/icons';
+import { PERMISSIONS } from '@config/permissions';
+
 const Properties = () => {
+	const { hasPermission } = useAuth();
 	const { request, cancel } = createRequest();
 	const { borrowerOptions } = useGetOptions([{ type: 'borrower' }]);
 	const filterFieldRef = useRef();
@@ -60,11 +63,19 @@ const Properties = () => {
 			setPagination((v) => ({ ...v, total }));
 			setList(list);
 			setLoading(false);
+			return list;
 		} catch {
 			setLoading(false);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	const handleSearch = (isDelete) => {
+		if (isDelete) {
+			paginationRef.current.current = 1;
+		}
+		getList();
+	};
 
 	const filterList = useMemo(
 		() => [
@@ -122,6 +133,7 @@ const Properties = () => {
 			},
 			{
 				filterType: 'button',
+				hidden: !hasPermission(PERMISSIONS?.PROPERTY?.ADD),
 				children: (
 					<BtnPopUpModal
 						getContent={(setOpen) => (
@@ -136,7 +148,7 @@ const Properties = () => {
 				),
 			},
 		],
-		[searchValue, borrower, borrowerOptions, cancel, getList],
+		[searchValue, borrower, borrowerOptions, cancel, getList, hasPermission],
 	);
 
 	useEffect(() => {
@@ -175,11 +187,7 @@ const Properties = () => {
 				<Spin spinning={loading}>
 					{list?.length ? (
 						list.map((item, index) => (
-							<PropertiesItem
-								key={index}
-								data={item}
-								handleSearch={() => getList()}
-							/>
+							<PropertiesItem key={index} data={item} handleSearch={handleSearch} />
 						))
 					) : loading ? (
 						<div className="min-h-[100px]"></div>
