@@ -1,7 +1,7 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import { Input } from 'antd';
-import { formatPhone } from '../../lib';
+import React, {useEffect, useState} from 'react';
+import {Input} from 'antd';
+import {formatPhone} from '../../lib';
 
 export const InputPhone = (props) => {
 	const { value = '', onChange, ...rest } = props;

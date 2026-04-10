@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { NewModal } from '@repo/shared-methods';
-import { Button, Form, Input, message } from 'antd';
-import { eventBus, createRequest } from '@repo/shared-methods/utils';
+import React, {useState} from 'react';
+import {NewModal} from '@repo/shared-methods';
+import {Button, Form, Input, message} from 'antd';
+import {createRequest, eventBus} from '@repo/shared-methods/utils';
+
 const AddRequest = ({ open, setOpen, loan_id, category }) => {
 	const [form] = Form.useForm();
 	const { request } = createRequest();
