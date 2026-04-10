@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Button, Modal, Space, Spin, Table, Tag, Typography } from 'antd';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {Button, Modal, Space, Spin, Table, Tag, Typography} from 'antd';
 import Cookie from 'js-cookie';
 
 const { Text } = Typography;

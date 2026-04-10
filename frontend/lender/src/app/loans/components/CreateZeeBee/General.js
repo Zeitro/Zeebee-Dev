@@ -1,6 +1,7 @@
 'use client';
-import { Col, Row } from 'antd';
-import { formatAmount } from '@repo/shared-methods/utils';
+import {Col, Row} from 'antd';
+import {formatAmount} from '@repo/shared-methods/utils';
+
 export const generalTermsFields = [
 	{
 		label: 'Total loan amount',

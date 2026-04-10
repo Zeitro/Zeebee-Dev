@@ -1,6 +1,6 @@
 import React from 'react';
-import { Input } from 'antd';
-import { formatTINOrSSN } from '../../lib/format';
+import {Input} from 'antd';
+import {formatTINOrSSN} from '../../lib/format';
 // SSN和ITIN都是9位数字
 let maxLength = 9;
 

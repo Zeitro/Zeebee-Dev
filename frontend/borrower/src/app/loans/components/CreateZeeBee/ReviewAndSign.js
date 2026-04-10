@@ -1,7 +1,7 @@
 'use client';
-import React, { useMemo } from 'react';
+import React, {useMemo} from 'react';
 import dynamic from 'next/dynamic';
-import { Form } from 'antd';
+import {Form} from 'antd';
 
 const ApplicationFormViewPDF = dynamic(
 	() => import('@/components/ApplicationFormViewPDF'), // Adjust the path to your component

@@ -1,15 +1,15 @@
 'use client';
-import { Button, Form, Space, Steps } from 'antd';
-import React, { useMemo, useState } from 'react';
+import {Button, Form, Space, Steps} from 'antd';
+import React, {useMemo, useState} from 'react';
 import styles from './index.module.scss';
 import BorrowerInfo from './BorrowerInfo';
 import Property from './Property';
 import Loan from './Loan';
-import { useRouter } from 'next/navigation';
-import { useLoanStore } from '@/store/loan';
+import {useRouter} from 'next/navigation';
+import {useLoanStore} from '@/store/loan';
 import _ from 'lodash';
-import { changeUnitByPropertyType, createRequest } from '@repo/shared-methods/utils';
-import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
+import {changeUnitByPropertyType, createRequest} from '@repo/shared-methods/utils';
+import {useDeferredSyncEffect} from '@repo/shared-methods/hooks';
 
 // pre-approval,提交简易loan计算
 const EstimateLoan = ({ setIsResult, setResult }) => {
