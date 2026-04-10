@@ -14,6 +14,7 @@ const LoanStatusCard = ({ data, handleGotoLoans }) => {
 			icon: <BankOutlined style={{ fontSize: 20, color: 'var(--base-primary)' }} />,
 			total: data?.total_loan_count,
 			value: 'all',
+			isNoClick: true,
 		},
 		{
 			title: 'Active',
@@ -43,9 +44,15 @@ const LoanStatusCard = ({ data, handleGotoLoans }) => {
 			{list.map((item) => {
 				return (
 					<div
-						className="border rounded-lg border-base-border p-4 bg-background hover:shadow-lg cursor-pointer"
+						className="border rounded-lg border-base-border p-4 bg-background hover:shadow-lg"
+						style={{
+							cursor: item?.isNoClick ? 'no-drop' : 'pointer',
+						}}
 						key={item.value}
-						onClick={() => handleGotoLoans(item?.value, item?.dataType)}
+						onClick={() => {
+							if (item?.isNoClick) return;
+							handleGotoLoans(item?.value, item?.dataType);
+						}}
 					>
 						<div className="flex items-center justify-between pb-4">
 							<div className="text-sm/[22px] text-base-label">{item.title}</div>
