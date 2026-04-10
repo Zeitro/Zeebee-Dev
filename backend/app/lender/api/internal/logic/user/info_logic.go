@@ -3,14 +3,12 @@ package user
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/errorx"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/common/copierx"
 )
 
 type InfoLogic struct {
@@ -37,9 +35,9 @@ func (l *InfoLogic) Info(req *types.EmptyRequest) (resp *types.UserInfoResponse,
 	if err != nil {
 		return nil, err
 	}
-	err = copier.Copy(resp, &userInfo.Data)
+	resp, err = copierx.Trans[lender.UserinfoResponseData, types.UserInfoResponse](userInfo.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return resp, err
 }

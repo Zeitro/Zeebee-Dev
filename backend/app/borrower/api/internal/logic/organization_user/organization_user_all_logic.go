@@ -3,8 +3,6 @@ package organization_user
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -39,16 +37,10 @@ func (l *OrganizationUserAllLogic) OrganizationUserAll(req *types.EmptyRequest) 
 	resp = &types.OrganizationUserAllResponse{
 		List: []*types.OrganizationUserEntity{},
 	}
-	err = copier.CopyWithOption(&resp.List, rpcResp.Data, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
+	listPtr, err := copierx.Trans[[]*borrower.OrganizationUserEntity, []*types.OrganizationUserEntity](&rpcResp.Data, copierx.TimeToRFC3339Str())
 	if err != nil {
-		err = errorx.GetFailedTransRespErr(err)
 		return nil, err
 	}
+	resp.List = *listPtr
 	return resp, nil
 }

@@ -29,7 +29,7 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 	return &CreateLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 		Logger:    logx.WithContext(ctx),
 	}
 }

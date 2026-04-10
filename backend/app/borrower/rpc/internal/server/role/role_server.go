@@ -57,3 +57,8 @@ func (s *RoleServer) All(ctx context.Context, in *borrower.RoleAllRequest) (*bor
 	l := rolelogic.NewAllLogic(ctx, s.svcCtx)
 	return l.All(in)
 }
+
+func (s *RoleServer) AssignOrganizationUsers(ctx context.Context, in *borrower.RoleAssignOrganizationUsersRequest) (*borrower.RoleDetailResponse, error) {
+	l := rolelogic.NewAssignOrganizationUsersLogic(ctx, s.svcCtx)
+	return l.AssignOrganizationUsers(in)
+}

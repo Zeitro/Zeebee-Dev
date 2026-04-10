@@ -9,7 +9,7 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/domains/zeebee/data/bo"
+	"zeebee-backend/domains/zeebee/data/dto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -26,7 +26,7 @@ func NewResetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ResetLogic 
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -44,7 +44,7 @@ func (l *ResetLogic) Reset(in *lender.IdRequest) (resp *lender.OrganizationTempl
 	if err != nil {
 		return nil, err
 	}
-	result, err := copierx.Trans[bo.OrganizationTemplateBo, lender.OrganizationTemplateEntity](
+	result, err := copierx.Trans[dto.OrganizationTemplateEntityDto, lender.OrganizationTemplateEntity](
 		organizationTemplate,
 		copierx.TimeToRFC3339Str(),
 	)

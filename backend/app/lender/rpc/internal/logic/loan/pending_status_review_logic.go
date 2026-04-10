@@ -26,7 +26,7 @@ func NewPendingStatusReviewLogic(ctx context.Context, svcCtx *svc.ServiceContext
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -101,7 +101,7 @@ func (l *PendingStatusReviewLogic) PendingStatusReview(in *lender.LoanPendingSta
 			Comment: in.Data.Comment,
 		}
 
-		return l.baseLogic.CreateLoanOperationLog(tx, loan.Id, operatorId, fromStatus, toStatus, action, metadata)
+		return l.baseLogic.CreateLoanOperationLog(l.ctx, tx, loan.Id, operatorId, fromStatus, toStatus, action, metadata)
 	})
 
 	if err != nil {

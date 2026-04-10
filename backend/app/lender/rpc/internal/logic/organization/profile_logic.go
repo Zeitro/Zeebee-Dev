@@ -8,7 +8,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/bo"
+	"zeebee-backend/domains/zeebee/data/dto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -26,7 +26,7 @@ func NewProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ProfileLo
 	return &ProfileLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 		Logger:    logx.WithContext(ctx),
 	}
 }
@@ -60,7 +60,7 @@ func (l *ProfileLogic) Profile(in *lender.EmptyRequest) (resp *lender.Organizati
 	}
 
 	// Convert business object to proto entity with time field conversion
-	data, err := copierx.Trans[bo.OrganizationBo, lender.OrganizationProfileEntity](
+	data, err := copierx.Trans[dto.OrganizationEntityDto, lender.OrganizationProfileEntity](
 		organization,
 		copierx.TimeToRFC3339Str(),
 		copierx.StrMapToBytes(),

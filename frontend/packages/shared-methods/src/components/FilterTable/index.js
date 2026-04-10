@@ -24,10 +24,11 @@ export const FilterTable = forwardRef(
 			filterList,
 			rowProps = {}, // 过滤搜索栏的Row配置
 			filterName = '',
-			hasFilterField = true, // 有过滤搜索栏
+			hasFilterField = true, // true有过滤搜索栏
+			hasInitRequest = true, //true初始化请求接口，当有dataSource时默认‘不请求’
 			filterWrapClassName,
 			getData = () => {}, //请求接口的方法（无api时使用）
-			hasPaginationRequest = true, // true需要请求分页数据，false不请求分页接口
+			hasPaginationRequest = true, // true需要请求分页接口，false不请求
 			api,
 			method = 'POST',
 			settingPagination, // 初始化修改分页请求参数
@@ -52,6 +53,7 @@ export const FilterTable = forwardRef(
 			getData,
 			hasPaginationRequest,
 			settingPagination,
+			hasInitRequest,
 		});
 
 		useEffect(() => {

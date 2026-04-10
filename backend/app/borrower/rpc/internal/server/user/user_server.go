@@ -39,7 +39,7 @@ func (s *UserServer) RefreshToken(ctx context.Context, in *borrower.RefreshToken
 	return l.RefreshToken(in)
 }
 
-func (s *UserServer) UserInfo(ctx context.Context, in *borrower.UserInfoRequest) (*borrower.UserinfoResponse, error) {
+func (s *UserServer) UserInfo(ctx context.Context, in *borrower.EmptyRequest) (*borrower.UserinfoResponse, error) {
 	l := userlogic.NewUserInfoLogic(ctx, s.svcCtx)
 	return l.UserInfo(in)
 }
