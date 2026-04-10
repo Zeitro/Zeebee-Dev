@@ -202,4 +202,7 @@ export const menuSetting = {
 		hideCrumbs: true,
 		hideSidebar: true,
 	},
+	'/dashboard': {
+		hideCrumbs: true,
+	},
 };

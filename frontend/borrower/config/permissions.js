@@ -36,6 +36,7 @@ export const PERMISSIONS = {
 		DETAILS: 'Property:Details',
 	},
 	LOAN: {
+		LOAN_PAGE: 'Loan',
 		ADD_3RD_PARTY: 'Loan:Create3rdParty',
 		ADD_ZEEBEE: 'Loan:Create',
 		EDIT_3RD_PARTY: 'Loan:Edit3rdParty',
