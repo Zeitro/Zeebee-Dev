@@ -1,11 +1,10 @@
 'use client';
-import React, { useState } from 'react';
-import { Form } from 'antd';
+import React, {useState} from 'react';
+import {Form} from 'antd';
 import styles from './index.module.scss';
 import SignIn from './components/SignIn';
-import SendResetPasswordEmail, {
-	ResetPasswordEmailTips,
-} from './components/SendResetPasswordEmail';
+import SendResetPasswordEmail, {ResetPasswordEmailTips,} from './components/SendResetPasswordEmail';
+
 const Login = () => {
 	const [form] = Form.useForm();
 	const [pageType, setPageType] = useState('signIn');
