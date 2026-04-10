@@ -1,7 +1,7 @@
 'use client';
-import { Button, Modal } from 'antd';
-import { useState } from 'react';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import {Button, Modal} from 'antd';
+import {useState} from 'react';
+import {ExclamationCircleOutlined} from '@ant-design/icons';
 // 弹框的初始配置样式
 export const initConfigFn = (config = {}) => {
 	return {

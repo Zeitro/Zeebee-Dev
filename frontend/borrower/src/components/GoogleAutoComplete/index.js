@@ -1,7 +1,8 @@
 'use client';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { AutoComplete, Spin } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {AutoComplete, Spin} from 'antd';
+import {LoadingOutlined} from '@ant-design/icons';
+
 /**
  * Google Api
  * 根据输入内容，获取地址信息，并拿到city/county/state/zip/unit相关数据

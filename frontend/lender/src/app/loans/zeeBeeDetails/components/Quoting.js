@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import CollapseList from './CollapseList';
 import HeaderBtn from './HeaderBtn';
+
 const QuotingPage = ({ id, setNextStep, disabledOperate }) => {
 	const [list, setList] = useState([
 		{
