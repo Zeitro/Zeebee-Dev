@@ -1,8 +1,9 @@
-import React, { useMemo, useState } from 'react';
-import { NewModal } from '@repo/shared-methods';
-import { Button, Dropdown, Form, Input, message } from 'antd';
+import React, {useMemo, useState} from 'react';
+import {NewModal} from '@repo/shared-methods';
+import {Button, Dropdown, Form, Input, message} from 'antd';
+import {createRequest, eventBus} from '@repo/shared-methods/utils';
+
 const { TextArea } = Input;
-import { eventBus, createRequest } from '@repo/shared-methods/utils';
 const SendRequestModal = ({ open, setOpen, maxCount, list = [] }) => {
 	const { request } = createRequest();
 	const [form] = Form.useForm();

@@ -1,9 +1,10 @@
 'use client';
-import React, { useState } from 'react';
-import { NewModal, InputPhone } from '@repo/shared-methods';
-import { Col, Form, Input, Row } from 'antd';
-import { useGetOptions } from '@repo/shared-methods/hooks';
-import { emailRegex, phoneRegex, validateRule } from '@repo/shared-methods/utils';
+import React, {useState} from 'react';
+import {InputPhone, NewModal} from '@repo/shared-methods';
+import {Col, Form, Input, Row} from 'antd';
+import {useGetOptions} from '@repo/shared-methods/hooks';
+import {emailRegex, phoneRegex, validateRule} from '@repo/shared-methods/utils';
+
 const AddThirdService = ({ title, rowData, onOk, onCancel }) => {
 	const [form] = Form.useForm();
 	const [confirmLoading, setConfirmLoading] = useState(false);

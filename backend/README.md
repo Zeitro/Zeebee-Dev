@@ -803,6 +803,53 @@ docker-compose -f deploy/service/docker-compose.yml up -d
 - 错误告警和通知
 - 性能监控和分析
 
+## 🌿 Branch Strategy
+
+This project follows a Gitflow-inspired branching model defined in the project root README.md:
+
+### Branch Types
+
+| Branch Type | Naming Convention                         | Purpose                                            |
+|-------------|-------------------------------------------|----------------------------------------------------|
+| Master      | `master`                                  | Stores all production code (frontend + backend)    |
+| Staging     | `staging`                                 | Stores all staging phase code (frontend + backend) |
+| Feature     | `feat-{borrower/lender/admin}-{feature}`  | New feature development                            |
+| Environment | `staging-{borrower/lender/admin}-backend` | Staging preparation for backend features           |
+| Environment | `prod-{borrower/lender/admin}--backend`   | Direct deployment branch for backend features      |
+
+### Backend Branch Naming
+
+- **Feature branches**: `feat-{business-area}-{feature-name}`
+  - Example: `feat-borrower-user-auth`
+  - Example: `feat-lender-loan-approval`
+  - Example: `feat-admin-role-management`
+
+- **Staging branches**: `staging-{business-area}-backend`
+  - Example: `staging-borrower-backend`
+  - Example: `staging-lender-backend`
+  - Example: `staging-admin-backend`
+
+- **Production branches**: `prod-{business-area}--backend`
+  - Example: `prod-borrower--backend`
+  - Example: `prod-lender--backend`
+  - Example: `prod-admin--backend`
+
+**Note**: Production branches use double dash (`--`) separator
+
+### Merge Sequence
+
+```
+feat-{business-area}-{feature}
+    ↓
+staging-{business-area}-backend
+    ↓
+staging (contains all staging code)
+    ↓ (after staging tests pass)
+prod-{business-area}--backend (direct deployment branch)
+    ↓
+master (contains all production code)
+```
+
 ## 🤝 Contributing
 
 ### 开发流程

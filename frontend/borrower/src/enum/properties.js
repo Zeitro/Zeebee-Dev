@@ -1,4 +1,5 @@
-import { formatAmount, formatNumber } from '@repo/shared-methods/utils';
+import {formatAmount, formatNumber} from '@repo/shared-methods/utils';
+
 export const sort_asc = 'Ascending';
 export const sort_des = 'Descending';
 

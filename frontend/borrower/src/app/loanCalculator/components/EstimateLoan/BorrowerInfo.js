@@ -1,15 +1,16 @@
-import { Row, Col, Form, Input, InputNumber } from 'antd';
+import {Col, Form, Input, InputNumber, Row} from 'antd';
 import {
-	emailRegex,
-	creditScoreRegex,
-	minCreditScore,
-	maxCreditScore,
-	validateRule,
 	capitalizeFirstLetter,
+	creditScoreRegex,
+	emailRegex,
+	maxCreditScore,
+	minCreditScore,
 	nameRegex,
+	validateRule,
 } from '@repo/shared-methods/utils';
-import { titleCol } from '@/enum/common';
-import { InputPhone } from '@repo/shared-methods';
+import {titleCol} from '@/enum/common';
+import {InputPhone} from '@repo/shared-methods';
+
 const BorrowerInfo = ({ gutter = 24, children }) => {
 	return (
 		<Row gutter={gutter}>
