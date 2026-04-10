@@ -1,15 +1,15 @@
 'use client';
 import React from 'react';
 import styles from './index.module.scss';
-import { propertiesFieldArr, propertyList } from '@/enum/properties';
-import { Button, Col, message, Row, Space } from 'antd';
-import { useRouter } from 'next/navigation';
-import { formatDate, assemblyAddress } from '@repo/shared-methods/utils';
-import { BtnPopUpModal, DeleteBtn, FieldTips, PermissionSlot } from '@repo/shared-methods';
+import {propertiesFieldArr, propertyList} from '@/enum/properties';
+import {Button, Col, message, Row, Space} from 'antd';
+import {useRouter} from 'next/navigation';
+import {assemblyAddress, formatDate} from '@repo/shared-methods/utils';
+import {BtnPopUpModal, DeleteBtn, FieldTips, PermissionSlot} from '@repo/shared-methods';
 import AddModal from '@repo/shared-methods/componentsUi/SelectCard/Add/property';
-import { useProperty } from '@repo/shared-methods/componentsUi/SelectCard/Item/useCommon';
-import { DeleteOutlined } from '@ant-design/icons';
-import { PERMISSIONS } from '@config/permissions';
+import {useProperty} from '@repo/shared-methods/componentsUi/SelectCard/Item/useCommon';
+import {DeleteOutlined} from '@ant-design/icons';
+import {PERMISSIONS} from '@config/permissions';
 
 const PropertiesItem = ({ data, handleSearch }) => {
 	const router = useRouter();

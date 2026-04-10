@@ -216,9 +216,9 @@ service borrower-api {
 	@handler SendQuoteEmail
 	post /loan/send_quote_email (LoanSendQuoteEmailRequest) returns (EmptyResponse)
 
-	@doc "dashboard"
-	@handler dashboard
-	post /loan/dashboard (LoanDashboardRequest) returns (LoanDashboardResponse)
+    @doc "dashboard"
+    @handler dashboard
+    post /loan/dashboard (LoanDashboardRequest) returns (LoanDashboardResponse)
 }
 
 // ============== loan end =============
