@@ -60,7 +60,7 @@ const LoanStatusCard = ({ data, handleGotoLoans }) => {
 						</div>
 						<div className="flex items-center justify-between gap-2">
 							<span className="text-3xl/10 font-medium text-base-text">
-								{item.total}
+								{item.total || 0}
 							</span>
 							{/* {!item?.isHide && (
 								<Button
