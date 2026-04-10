@@ -15,6 +15,11 @@ import (
 
 type (
 	AddressEntity                                    = borrower.AddressEntity
+	ApiEntity                                        = borrower.ApiEntity
+	AuthCheckRequest                                 = borrower.AuthCheckRequest
+	AuthCheckRequestData                             = borrower.AuthCheckRequestData
+	AuthCheckResponse                                = borrower.AuthCheckResponse
+	AuthCheckResponseData                            = borrower.AuthCheckResponseData
 	BorrowerApplicantAllRequest                      = borrower.BorrowerApplicantAllRequest
 	BorrowerApplicantAllRequestData                  = borrower.BorrowerApplicantAllRequestData
 	BorrowerApplicantAllResponse                     = borrower.BorrowerApplicantAllResponse
@@ -136,6 +141,10 @@ type (
 	LoanSendPreApprovalNotificationRequestData       = borrower.LoanSendPreApprovalNotificationRequestData
 	LoanSendQuoteEmailRequest                        = borrower.LoanSendQuoteEmailRequest
 	LoanSendQuoteEmailRequestData                    = borrower.LoanSendQuoteEmailRequestData
+	LoanSummaryRequest                               = borrower.LoanSummaryRequest
+	LoanSummaryRequestData                           = borrower.LoanSummaryRequestData
+	LoanSummaryResponse                              = borrower.LoanSummaryResponse
+	LoanSummaryResponseData                          = borrower.LoanSummaryResponseData
 	LoanThirdServiceEntity                           = borrower.LoanThirdServiceEntity
 	LoanUpdatePendingStatusRequest                   = borrower.LoanUpdatePendingStatusRequest
 	LoanUpdatePendingStatusRequestData               = borrower.LoanUpdatePendingStatusRequestData
@@ -237,6 +246,8 @@ type (
 	RoleAllRequestData                               = borrower.RoleAllRequestData
 	RoleAllResponse                                  = borrower.RoleAllResponse
 	RoleAndResourceRelationEntity                    = borrower.RoleAndResourceRelationEntity
+	RoleAssignOrganizationUsersRequest               = borrower.RoleAssignOrganizationUsersRequest
+	RoleAssignOrganizationUsersRequestData           = borrower.RoleAssignOrganizationUsersRequestData
 	RoleCreateRequest                                = borrower.RoleCreateRequest
 	RoleCreateRequestData                            = borrower.RoleCreateRequestData
 	RoleCreateResponse                               = borrower.RoleCreateResponse
@@ -277,8 +288,6 @@ type (
 	ThirdPartyLoanPropertyEditEntity                 = borrower.ThirdPartyLoanPropertyEditEntity
 	UsCitiesRequest                                  = borrower.UsCitiesRequest
 	UsCitiesRequestData                              = borrower.UsCitiesRequestData
-	UserInfoRequest                                  = borrower.UserInfoRequest
-	UserInfoRequestData                              = borrower.UserInfoRequestData
 	UserLoginRequest                                 = borrower.UserLoginRequest
 	UserLoginRequestData                             = borrower.UserLoginRequestData
 	UserLoginResponse                                = borrower.UserLoginResponse
@@ -315,6 +324,7 @@ type (
 		PreApprovalLoan(ctx context.Context, in *LoanPreApprovalRequest, opts ...grpc.CallOption) (*LoanPreApprovalResponse, error)
 		SendPreApprovalNotification(ctx context.Context, in *LoanSendPreApprovalNotificationRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		SendQuoteEmail(ctx context.Context, in *LoanSendQuoteEmailRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		Summary(ctx context.Context, in *LoanSummaryRequest, opts ...grpc.CallOption) (*LoanSummaryResponse, error)
 	}
 
 	defaultLoan struct {
@@ -396,4 +406,9 @@ func (m *defaultLoan) SendPreApprovalNotification(ctx context.Context, in *LoanS
 func (m *defaultLoan) SendQuoteEmail(ctx context.Context, in *LoanSendQuoteEmailRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	client := borrower.NewLoanClient(m.cli.Conn())
 	return client.SendQuoteEmail(ctx, in, opts...)
+}
+
+func (m *defaultLoan) Summary(ctx context.Context, in *LoanSummaryRequest, opts ...grpc.CallOption) (*LoanSummaryResponse, error) {
+	client := borrower.NewLoanClient(m.cli.Conn())
+	return client.Summary(ctx, in, opts...)
 }

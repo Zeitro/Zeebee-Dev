@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import Cookies from 'js-cookie';
 import { matchRoute } from './commonRouter';
 /**
  * 公共方法封装（格式化或验证相关写在format文件）
@@ -125,7 +126,7 @@ export const findItem = ({
 	parentIndex,
 }) => {
 	let result = null;
-	list.map((i, index) => {
+	list?.map?.((i, index) => {
 		if (isPushIndex) {
 			i.index = index;
 		}
@@ -193,3 +194,121 @@ export const copyToClipboard = async (text) => {
 		return false;
 	}
 };
+
+// 完整的html中，只将link/style标签插入head标签内，用于引入资源
+export const injectHeadResources = (html) => {
+	// 清理旧的
+	document.querySelectorAll('[data-template-preview]').forEach((el) => el.remove());
+	const doc = new window.DOMParser().parseFromString(html, 'text/html');
+	const headNodes = doc.head ? Array.from(doc.head.children) : [];
+	headNodes.forEach((node) => {
+		if (['LINK', 'STYLE'].includes(node.tagName) || node.tagName.startsWith('FONT')) {
+			const clone = node.cloneNode(true);
+			clone.setAttribute('data-template-preview', '1');
+			document.head.appendChild(clone);
+		}
+	});
+};
+
+// html中取出body的内容
+export const getBodyInnerHTML = (html) => {
+	try {
+		const doc = new window.DOMParser().parseFromString(html, 'text/html');
+		return doc.body.innerHTML;
+	} catch {
+		return html;
+	}
+};
+
+// 完整的html，替换body内容
+export function replaceBodyContent(html, newBodyHtml) {
+	const parser = new DOMParser();
+	const doc = parser.parseFromString(html, 'text/html');
+	doc.body.innerHTML = newBodyHtml;
+	return doc.documentElement.outerHTML;
+}
+
+/**
+ * 自定义 storage 适配器
+ * 根据字段名决定存储到 localStorage 还是 cookie
+ */
+// export const hybridStorageFn = (COOKIE_FIELDS) => {
+// 	return {
+// 		getItem: (name) => {
+// 			try {
+// 				// 先从 cookie 读取
+// 				const cookieValue = Cookies.get(name);
+// 				if (cookieValue) {
+// 					return cookieValue;
+// 				}
+// 				// 再从 localStorage 读取（仅限客户端）
+// 				if (typeof window !== 'undefined' && window.localStorage) {
+// 					const localStorageValue = window.localStorage.getItem(name);
+// 					return localStorageValue;
+// 				}
+// 				return null;
+// 			} catch (error) {
+// 				console.error('Error reading from storage:', error);
+// 				return null;
+// 			}
+// 		},
+
+// 		setItem: (name, value) => {
+// 			try {
+// 				const parsed = JSON.parse(value);
+
+// 				// 检查是否包含需要存 cookie 的字段
+// 				const hasCookieFields = Object.keys(parsed).some((key) =>
+// 					COOKIE_FIELDS.includes(key),
+// 				);
+
+// 				if (hasCookieFields) {
+// 					// 提取 cookie 字段
+// 					const cookieData = {};
+// 					const localStorageData = {};
+
+// 					Object.entries(parsed).forEach(([key, val]) => {
+// 						if (COOKIE_FIELDS.includes(key)) {
+// 							cookieData[key] = val;
+// 						} else {
+// 							localStorageData[key] = val;
+// 						}
+// 					});
+// 					// 动态设置 cookie 过期时间
+// 					let expires = 7; // 默认7天
+// 					if (cookieData.access && cookieData.access.access_token_expire) {
+// 						expires = cookieData.access.access_token_expire / 86400;
+// 					}
+// 					Cookies.set(name, JSON.stringify(cookieData), {
+// 						expires,
+// 						secure: process.env.NODE_ENV === 'production',
+// 						sameSite: 'strict',
+// 					});
+
+// 					// 存储到 localStorage
+// 					if (Object.keys(localStorageData).length > 0) {
+// 						if (typeof window !== 'undefined' && window.localStorage) {
+// 							window.localStorage.setItem(name, JSON.stringify(localStorageData));
+// 						}
+// 					}
+// 				} else {
+// 					// 全部存 localStorage
+// 					localStorage.setItem(name, value);
+// 				}
+// 			} catch (error) {
+// 				console.error('Error writing to storage:', error);
+// 			}
+// 		},
+
+// 		removeItem: (name) => {
+// 			try {
+// 				Cookies.remove(name);
+// 				if (typeof window !== 'undefined' && window.localStorage) {
+// 					window.localStorage.removeItem(name);
+// 				}
+// 			} catch (error) {
+// 				console.error('Error removing from storage:', error);
+// 			}
+// 		},
+// 	};
+// };

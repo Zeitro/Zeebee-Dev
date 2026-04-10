@@ -15,6 +15,11 @@ import (
 
 type (
 	AddressEntity                                    = borrower.AddressEntity
+	ApiEntity                                        = borrower.ApiEntity
+	AuthCheckRequest                                 = borrower.AuthCheckRequest
+	AuthCheckRequestData                             = borrower.AuthCheckRequestData
+	AuthCheckResponse                                = borrower.AuthCheckResponse
+	AuthCheckResponseData                            = borrower.AuthCheckResponseData
 	BorrowerApplicantAllRequest                      = borrower.BorrowerApplicantAllRequest
 	BorrowerApplicantAllRequestData                  = borrower.BorrowerApplicantAllRequestData
 	BorrowerApplicantAllResponse                     = borrower.BorrowerApplicantAllResponse
@@ -136,6 +141,10 @@ type (
 	LoanSendPreApprovalNotificationRequestData       = borrower.LoanSendPreApprovalNotificationRequestData
 	LoanSendQuoteEmailRequest                        = borrower.LoanSendQuoteEmailRequest
 	LoanSendQuoteEmailRequestData                    = borrower.LoanSendQuoteEmailRequestData
+	LoanSummaryRequest                               = borrower.LoanSummaryRequest
+	LoanSummaryRequestData                           = borrower.LoanSummaryRequestData
+	LoanSummaryResponse                              = borrower.LoanSummaryResponse
+	LoanSummaryResponseData                          = borrower.LoanSummaryResponseData
 	LoanThirdServiceEntity                           = borrower.LoanThirdServiceEntity
 	LoanUpdatePendingStatusRequest                   = borrower.LoanUpdatePendingStatusRequest
 	LoanUpdatePendingStatusRequestData               = borrower.LoanUpdatePendingStatusRequestData
@@ -237,6 +246,8 @@ type (
 	RoleAllRequestData                               = borrower.RoleAllRequestData
 	RoleAllResponse                                  = borrower.RoleAllResponse
 	RoleAndResourceRelationEntity                    = borrower.RoleAndResourceRelationEntity
+	RoleAssignOrganizationUsersRequest               = borrower.RoleAssignOrganizationUsersRequest
+	RoleAssignOrganizationUsersRequestData           = borrower.RoleAssignOrganizationUsersRequestData
 	RoleCreateRequest                                = borrower.RoleCreateRequest
 	RoleCreateRequestData                            = borrower.RoleCreateRequestData
 	RoleCreateResponse                               = borrower.RoleCreateResponse
@@ -277,8 +288,6 @@ type (
 	ThirdPartyLoanPropertyEditEntity                 = borrower.ThirdPartyLoanPropertyEditEntity
 	UsCitiesRequest                                  = borrower.UsCitiesRequest
 	UsCitiesRequestData                              = borrower.UsCitiesRequestData
-	UserInfoRequest                                  = borrower.UserInfoRequest
-	UserInfoRequestData                              = borrower.UserInfoRequestData
 	UserLoginRequest                                 = borrower.UserLoginRequest
 	UserLoginRequestData                             = borrower.UserLoginRequestData
 	UserLoginResponse                                = borrower.UserLoginResponse
@@ -308,6 +317,7 @@ type (
 		Detail(ctx context.Context, in *RoleDetailRequest, opts ...grpc.CallOption) (*RoleDetailResponse, error)
 		UpdateStatus(ctx context.Context, in *RoleUpdateStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		All(ctx context.Context, in *RoleAllRequest, opts ...grpc.CallOption) (*RoleAllResponse, error)
+		AssignOrganizationUsers(ctx context.Context, in *RoleAssignOrganizationUsersRequest, opts ...grpc.CallOption) (*RoleDetailResponse, error)
 	}
 
 	defaultRole struct {
@@ -354,4 +364,9 @@ func (m *defaultRole) UpdateStatus(ctx context.Context, in *RoleUpdateStatusRequ
 func (m *defaultRole) All(ctx context.Context, in *RoleAllRequest, opts ...grpc.CallOption) (*RoleAllResponse, error) {
 	client := borrower.NewRoleClient(m.cli.Conn())
 	return client.All(ctx, in, opts...)
+}
+
+func (m *defaultRole) AssignOrganizationUsers(ctx context.Context, in *RoleAssignOrganizationUsersRequest, opts ...grpc.CallOption) (*RoleDetailResponse, error) {
+	client := borrower.NewRoleClient(m.cli.Conn())
+	return client.AssignOrganizationUsers(ctx, in, opts...)
 }

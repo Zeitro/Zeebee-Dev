@@ -3,8 +3,6 @@ package loanlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
@@ -28,7 +26,7 @@ func NewBorrowerLoanPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -44,31 +42,29 @@ func (l *BorrowerLoanPageLogic) BorrowerLoanPage(in *borrower.LoanPageRequest) (
 		return nil, err
 	}
 
-	pageReq := dto.LoanBorrowerPageRequestDto{}
-	_ = copier.CopyWithOption(&pageReq, in.Data, copier.Option{
-		CaseSensitive: true,
-		DeepCopy:      true,
-	})
+	pageReq := &dto.LoanBorrowerPageRequestDto{}
+	pageReq, err = copierx.Trans[borrower.LoanPageRequestData, dto.LoanBorrowerPageRequestDto](in.Data, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
+	if err != nil {
+		return nil, err
+	}
+
 	pageReq.Filter.OrganizationId = claim.OrganizationId
 	pageReq.Filter.UserId = claim.OrganizationUserId
 
-	pageResult, err := l.svcCtx.LoanRepo.PageForBorrower(l.ctx, pageReq)
+	pageResult, err := l.baseLogic.LoanLogic.BorrowerLoanPage(l.ctx, *pageReq)
 	if err != nil {
-		return nil, errorx.WithStack(err)
+		return nil, err
 	}
+
 	resp = &borrower.LoanPageResponse{
 		Data: &borrower.LoanPageResponseData{},
 	}
-
-	err = copier.CopyWithOption(&resp.Data, pageResult, copier.Option{
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-			copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
-		},
-	})
+	resp.Data, err = copierx.Trans[dto.PageResultDto[*dto.LoanEntityDto], borrower.LoanPageResponseData](pageResult,
+		copierx.TimeToRFC3339Str(),
+		copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
+	)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
 	return resp, nil

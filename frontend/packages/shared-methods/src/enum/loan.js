@@ -1,3 +1,36 @@
+import { HomeOutlined } from '@ant-design/icons';
+import { formatAmount } from '@repo/shared-methods/utils';
+import { PERMISSIONS } from '@config/permissions'; // admin/lender/borrower都需要的权限
+// start------dashboard-----
+export const loansSourceTypeOptions = [
+	{ value: 'All', label: 'All loans' },
+	{ value: 'ZeeBee', label: 'ZeeBee loans' },
+	{ value: '3rdParty', label: '3rd party loans' },
+];
+export const maturityAlertsStatusColor = {
+	Overdue: {
+		color: '#F5222D',
+		background: '#FFF1F0',
+		borderColor: '#FFA39E',
+	},
+	'Due Soon': {
+		color: '#FA8C16',
+		background: '#FFF7E6',
+		borderColor: '#FFD591',
+	},
+};
+export const filterTimeCountTips =
+	'Based on the selected number of days, perform a global page filter for loans that match this time period.';
+
+// loan最近天数筛选
+export const filterTimeCount = [
+	{ value: 'All', label: 'All dates' },
+	{ value: 7, label: 'Last 7 days' },
+	{ value: 15, label: 'Last 15 days' },
+	{ value: 30, label: 'Last 30 days' },
+];
+// end------dashboard-----
+// start------create zeeBee loan/loan details-----
 export const tinOptions = [
 	{ label: 'SSN', value: 'SSN' },
 	{ label: 'ITIN', value: 'ITIN' },
@@ -102,3 +135,218 @@ export const raceOptions = [
 		isRadio: true,
 	},
 ];
+
+// loan details
+
+export const createZeeBeeSteps = [
+	{
+		title: 'Borrower information',
+		key: 'borrowerInformation',
+		// children: [
+		// 	{
+		// 		title: 'Applicant information',
+		// 		key: 'applicantInformation',
+		// 		validate: ['loan_borrower.'],
+		// 	},
+		// 	{
+		// 		title: 'Borrower information',
+		// 		key: 'borrowerInformation',
+		// 		validate: ['applicants.'],
+		// 	},
+		// ],
+	},
+	{
+		title: 'Property & loan',
+		key: 'propertyAndLoan',
+		// children: [
+		// 	{
+		// 		title: 'Property information',
+		// 		key: 'propertyInformation ',
+		// 	},
+		// 	{
+		// 		title: 'Loan detail',
+		// 		key: 'loanDetail ',
+		// 	},
+		// ],
+	},
+	{
+		title: 'Experience & Third service',
+		key: 'experienceAndThirdService',
+		// children: [
+		// 	{
+		// 		title: 'Experience',
+		// 		key: 'experience',
+		// 	},
+		// 	{
+		// 		title: 'Third-party services',
+		// 		key: 'thirdPartyServices',
+		// 	},
+		// ],
+	},
+	{
+		title: 'Declaration & Demographics',
+		key: 'declarationAndDemographics',
+		// children: [
+		// 	{
+		// 		title: 'About this property and your money for this loan',
+		// 		key: 'propertyLoanMoney',
+		// 	},
+		// 	{
+		// 		title: 'Borrower demographic information',
+		// 		key: 'borrowerDemographic',
+		// 	},
+		// ],
+	},
+	{
+		title: 'Review and sign',
+		key: 'reviewAndSign',
+	},
+];
+
+export const pendingSteps = [
+	{
+		title: 'Quoting',
+		key: 'Quoting',
+		role: PERMISSIONS?.LOAN?.QUOTING,
+	},
+	{
+		title: 'Processing',
+		key: 'Processing',
+		role: PERMISSIONS?.LOAN?.PROCESSING,
+	},
+	{
+		title: 'Underwriting',
+		key: 'Underwriting',
+		role: PERMISSIONS?.LOAN?.UNDERWRITING,
+	},
+	{
+		title: 'Closing',
+		key: 'Closing',
+		role: PERMISSIONS?.LOAN?.CLOSING,
+	},
+];
+
+export const lenderDetailsSteps = [
+	{
+		title: 'GENERAL',
+		key: 'General',
+		icon: <HomeOutlined />,
+	},
+	{
+		title: 'APPLICATION',
+		key: 'Application',
+		children: createZeeBeeSteps,
+	},
+	{
+		title: 'PENDING',
+		key: 'Pending',
+		children: pendingSteps,
+	},
+	{
+		title: 'FUNDED',
+		key: 'Funded',
+	},
+];
+
+export const zeeBeeDetailsTabs = [
+	{
+		label: 'General',
+		value: 'general',
+	},
+	{
+		label: 'Documents',
+		value: 'documents',
+	},
+];
+
+export const stageColor = {
+	Pending: 'var(--base-primary)',
+	Active: 'var(--base-success)',
+	Archived: 'var(--base-error)',
+	Draft: 'var(--base-warning)',
+};
+
+export const pendingStatusColor = {
+	Quoting: {
+		color: 'var(--green-medium)',
+		bg: 'var(--green-light)',
+		border: 'var(--green-light-100)',
+	},
+	Processing: {
+		color: 'var(--blue-dark)',
+		bg: 'var(--blue-light-2)',
+		border: 'var(--blue-light)',
+	},
+	Underwriting: {
+		color: '#eb2f96',
+		bg: '#fff0f6',
+		border: '#ffadd2',
+	},
+	Closing: {
+		color: 'var(--purple-dark)',
+		bg: 'var(--purple-light)',
+		border: 'var(--purple-medium)',
+	},
+};
+
+export const pendingFields = [
+	{ label: 'ID', value: 'code' },
+	{ label: 'Target closing date', value: 'closing_date' },
+	{
+		label: 'Total loan amount',
+		value: 'total_amount',
+		render: (v) => formatAmount(v),
+	},
+	{
+		label: 'Rate',
+		value: 'rate',
+		render: (v) => (v ? `${v}%` : '--'),
+	},
+];
+
+export const activeFields = [
+	{ label: 'ID', value: 'code' },
+	{ label: 'Maturity date', value: 'maturity_date' },
+	{
+		label: 'Total loan amount',
+		value: 'total_amount',
+		render: (v) => formatAmount(v),
+	},
+	{
+		label: 'Outstanding loan amount',
+		value: 'total_principal_amount',
+		render: (v) => formatAmount(v),
+	},
+	{
+		label: 'Rate',
+		value: 'rate',
+		render: (v) => (v ? `${v}%` : '--'),
+	},
+];
+
+export const archivedFields = [
+	{ label: 'ID', value: 'code' },
+	{ label: 'Paid off date', value: 'paid_off_date' },
+	{
+		label: 'Total loan amount',
+		value: 'total_amount',
+		render: (v) => formatAmount(v),
+	},
+	{
+		label: 'Principal balance:',
+		value: 'principal_amount:',
+		render: (v) => formatAmount(v),
+	},
+	{
+		label: 'Rate',
+		value: 'rate',
+		render: (v) => (v ? `${v}%` : '--'),
+	},
+];
+
+export const loanDetailsFields = {
+	Pending: pendingFields,
+	Active: activeFields,
+	Archived: archivedFields,
+	Draft: pendingFields,
+};

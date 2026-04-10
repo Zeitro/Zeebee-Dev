@@ -2,26 +2,32 @@ package logic
 
 import (
 	"context"
+	"time"
 
+	"github.com/duke-git/lancet/v2/datetime"
+	"github.com/duke-git/lancet/v2/mathutil"
 	"gorm.io/gorm"
 
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/gormx"
+	"zeebee-backend/common/timex"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/repo"
+	"zeebee-backend/domains/zeebee/model"
 )
 
+// LoanLogic provides loan business logic
 type LoanLogic struct {
-	repos *repo.AllRepos
+	*BaseLogic
 }
 
-// NewLoanLogic creates a new instance of LoanLogic.
-// It initializes the logic with the provided repository dependencies.
-func NewLoanLogic(repos *repo.AllRepos) *LoanLogic {
+// NewLoanLogic creates a new loan logic instance
+func NewLoanLogic(baseLogic *BaseLogic) *LoanLogic {
 	return &LoanLogic{
-		repos: repos,
+		BaseLogic: baseLogic,
 	}
 }
 
@@ -57,7 +63,7 @@ func (l *LoanLogic) ReassignLender(ctx context.Context, id int64, lenderOrganiza
 		loan.LenderCompany = lenderOrganization.Name
 		_, err = l.repos.LoanRepo.UpdateOneByIdWithTx(ctx, tx, loan.Id, loan)
 
-		operationLogic := NewLoanOperationLogic(l.repos)
+		operationLogic := NewLoanOperationLogic(l.BaseLogic)
 		input := dto.LoanOperationCreateDto{
 			LoanId:     loan.Id,
 			OperatorId: claim.OrganizationUserId,
@@ -83,4 +89,100 @@ func (l *LoanLogic) ReassignLender(ctx context.Context, id int64, lenderOrganiza
 	})
 
 	return errorx.WithStack(err)
+}
+
+// BorrowerLoanSummary get borrower loan summary
+func (l *LoanLogic) BorrowerLoanSummary(ctx context.Context, req dto.LoanSummaryRequestDto) (result *dto.LoanSummaryResponseDto, err error) {
+	// get loan summary
+	result, err = l.repos.LoanRepo.SummaryForBorrower(ctx, req)
+	if err != nil {
+		return
+	}
+	// handle holdback
+	result.TotalHoldbackRemainingAmount = result.TotalLoanAmount - result.TotalPrincipalAmount - result.TotalReservesAmount
+	result.TotalHoldbackReleasedAmount = result.TotalHoldbackAmount - result.TotalHoldbackRemainingAmount
+
+	// get page result
+	pageReq := dto.LoanBorrowerPageRequestDto{
+		BasePageRequestDto: dto.BasePageRequestDto{
+			Page:  1,
+			Limit: 5,
+		},
+		Filter: dto.LoanBorrowerPageRequestFilter{
+			OrganizationId: req.OrganizationId,
+			Stage:          req.Stage,
+			Source:         req.Source,
+		},
+	}
+	pageRes, err := l.repos.LoanRepo.PageForBorrower(ctx, pageReq)
+	if err != nil {
+		return
+	}
+	page, err := copierx.Trans[[]*model.Loan, []*dto.LoanEntityDto](&pageRes.List,
+		copierx.SqlTimePtrToRFC3339Str(),
+		copierx.TimeToRFC3339Str(),
+	)
+	if err != nil {
+		return
+	}
+	result.List = *page
+	result.TotalLoanCount = pageRes.Total
+
+	result.TotalLoanAmount = mathutil.RoundToFloat(result.TotalLoanAmount, 2)
+	result.TotalPrincipalAmount = mathutil.RoundToFloat(result.TotalPrincipalAmount, 2)
+	result.TotalReservesAmount = mathutil.RoundToFloat(result.TotalReservesAmount, 2)
+	result.TotalHoldbackAmount = mathutil.RoundToFloat(result.TotalHoldbackAmount, 2)
+	result.TotalHoldbackRemainingAmount = mathutil.RoundToFloat(result.TotalHoldbackRemainingAmount, 2)
+	result.TotalHoldbackReleasedAmount = mathutil.RoundToFloat(result.TotalHoldbackReleasedAmount, 2)
+	result.AverageRate = mathutil.RoundToFloat(result.AverageRate, 2)
+	result.TotalMonthlyPaymentAmount = mathutil.RoundToFloat(result.TotalMonthlyPaymentAmount, 2)
+	result.TotalClosingFundAmount = mathutil.RoundToFloat(result.TotalClosingFundAmount, 2)
+
+	l.handleDueInfo(result.List, int(req.DueInDays))
+
+	return
+}
+
+func (l *LoanLogic) BorrowerLoanPage(ctx context.Context, req dto.LoanBorrowerPageRequestDto) (result *dto.PageResultDto[*dto.LoanEntityDto], err error) {
+	pageResult, err := l.repos.LoanRepo.PageForBorrower(ctx, req)
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+	result, err = copierx.Trans[gormx.PageResponse[*model.Loan], dto.PageResultDto[*dto.LoanEntityDto]](&pageResult,
+		copierx.TimeToRFC3339Str(),
+		copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
+	)
+	if err != nil {
+		return nil, err
+	}
+	l.handleDueInfo(result.List, int(req.Filter.DueInDays))
+
+	return
+}
+
+func (l *LoanLogic) handleDueInfo(items []*dto.LoanEntityDto, days int) {
+	today := datetime.EndOfDay(time.Now())
+	dueDay := datetime.BeginOfDay(time.Now().AddDate(0, 0, days))
+
+	for _, item := range items {
+		item.HoldbackRemainingAmount = item.TotalAmount - item.PrincipalAmount - item.ReservesAmount
+		if item.Stage != constants.LoanStageActive {
+			continue
+		}
+		if item.MaturityDate == nil || !item.MaturityDate.Valid {
+			continue
+		}
+		maturityDate := item.MaturityDate.Time
+		if maturityDate.Before(today) {
+			item.DueStatus = constants.LoanDueStatusOverdue
+			item.DueDays = int32(datetime.DaysBetween(maturityDate, today))
+		} else if maturityDate.Before(dueDay) {
+			item.DueStatus = constants.LoanDueStatusDueSoon
+			item.DueDays = int32(datetime.DaysBetween(today, dueDay))
+		} else {
+			item.DueStatus = constants.LoanDueStatusNone
+			item.DueDays = int32(datetime.DaysBetween(today, maturityDate))
+		}
+	}
+
 }

@@ -116,7 +116,7 @@ const ZeeBeeDetails = () => {
 									size="small"
 									offset={[3, -3]}
 								>
-									{item.label}
+									<span className="text-base">{item.label}</span>
 								</Badge>
 							) : (
 								item.label

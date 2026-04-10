@@ -8,18 +8,17 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
-	"zeebee-backend/domains/zeebee/repo"
 )
 
+// LoanOperationLogic provides loan operation business logic
 type LoanOperationLogic struct {
-	repos *repo.AllRepos
+	*BaseLogic
 }
 
-// NewLoanOperationLogic creates a new instance of LoanOperationLogic.
-// It initializes the logic with the provided repository dependencies.
-func NewLoanOperationLogic(repos *repo.AllRepos) *LoanOperationLogic {
+// NewLoanOperationLogic creates a new loan operation logic instance
+func NewLoanOperationLogic(baseLogic *BaseLogic) *LoanOperationLogic {
 	return &LoanOperationLogic{
-		repos: repos,
+		BaseLogic: baseLogic,
 	}
 }
 

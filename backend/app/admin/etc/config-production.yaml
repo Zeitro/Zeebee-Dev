@@ -54,3 +54,16 @@ RpcConf:
     Bucket: zeebee-files-production
     FileFolder: files-production
     PreSigneUrlExpireSeconds: 60
+  CasbinConf:
+    ModelPath: etc/model.conf
+    EventTopic:
+      AdminTopic: /admin-rbac-event
+      BorrowerTopic: /borrower-rbac-event
+      LenderTopic: /lender-rbac-event
+    Watcher:
+      Host: zeebee-backend-redis-pro-001.zeebee-backend-redis-pro.uwixeb.usw1.cache.amazonaws.com:6379
+      Pwd: ''
+      Tls: true
+      AdminChannel: /admin-channel
+      BorrowerChannel: /borrower-channel
+      LenderChannel: /lender-channel

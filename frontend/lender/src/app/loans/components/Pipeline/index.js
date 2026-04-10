@@ -15,7 +15,10 @@ import {
 import { message } from 'antd';
 import { useRouter } from 'next/navigation';
 import { throttle } from 'lodash';
+import { PERMISSIONS } from '@config/permissions';
+import { useAuth } from '@repo/shared-methods/hooks';
 const Pipeline = () => {
+	const { hasPermission } = useAuth();
 	const router = useRouter();
 	const { request } = createRequest();
 	const [items, setItems] = useState([
@@ -40,6 +43,7 @@ const Pipeline = () => {
 		(e, item) => {
 			e.preventDefault();
 			e.stopPropagation();
+			if (!hasPermission(PERMISSIONS?.LOAN?.DETAILS)) return;
 			router.push(`/loans/zeeBeeDetails?id=${item?.id}`);
 		},
 		1000,
@@ -52,7 +56,7 @@ const Pipeline = () => {
 			items={items}
 			setItems={setItems}
 			enableDrag={true}
-			parentClassName="!h-[calc(100%-84px)]  py-4 px-6 gap-4 overflow-x-auto"
+			parentClassName="!flex-1  py-4 px-6 gap-4 overflow-x-auto"
 			columnClassName="w-[338px] min-w-[338px] max-w-[338px]"
 			boxClassName="flex-1 bg-[#F6F6F6] py-4 px-4"
 			renderItem={(item, idx, options) => {

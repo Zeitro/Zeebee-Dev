@@ -24,15 +24,21 @@
 		"@ant-design/icons": "~5.6.1",
 		"@ant-design/nextjs-registry": "^1.0.2",
 		"@ant-design/v5-patch-for-react-19": "^1.0.3",
+		"@monaco-editor/react": "^4.7.0",
 		"@repo/shared-methods": "workspace:*",
 		"@svgr/webpack": "^8.1.0",
+		"@wangeditor-next/editor": "^5.6.49",
+		"@wangeditor-next/editor-for-react": "^1.0.11",
 		"antd": "^5.26.2",
 		"dayjs": "^1.11.13",
 		"events": "^3.3.0",
+		"js-cookie": "^3.0.5",
 		"lodash": "^4.17.21",
 		"next": "15.3.0",
+		"pdfjs-dist": "5.3.31",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
+		"react-pdf": "^10.0.1",
 		"zustand": "^5.0.6"
 	},
 	"devDependencies": {
@@ -59,5 +65,8 @@
 		"tailwindcss": "^3.4.17",
 		"typescript": "^5"
 	},
-	"type": "module"
+	"type": "module",
+	"resolutions": {
+		"pdfjs-dist": "5.3.31"
+	}
 }

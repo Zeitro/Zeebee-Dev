@@ -143,8 +143,9 @@ export const formatPhone = (phoneNumber) => {
 export const formatThousands = (amount) => {
 	if (!amount) return '';
 	if (typeof amount === 'string') {
-		amount = Number(amount);
+		amount = Number(amount.replace(/[^\d.-]/g, '')); //去除字符串中所有非数字、小数点和负号的字符
 	}
+	if (isNaN(amount)) return '';
 
 	let [integerPart, decimalPart = ''] = amount.toString().split('.');
 	if (decimalPart.length > 2) {
@@ -158,6 +159,13 @@ export const formatThousands = (amount) => {
 	}
 	return `${integerPart}.${decimalPart}`;
 };
+
+// 判断是否为数字
+export function isNumberFn(str) {
+	if (typeof str === 'number') return true;
+	const value = str?.replace?.(/[^\d.-]/g, ''); //去除字符串中所有非数字、小数点和负号的字符
+	return !isNaN(value) && !isNaN(parseFloat(value)) && isFinite(value);
+}
 
 // 格式化金额
 export function formatAmount(value) {

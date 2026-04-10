@@ -192,13 +192,13 @@ message ResetPasswordResponseData {
 }
 
 // userinfo
-message UserInfoRequest {
-  UserInfoRequestData data = 1;
-}
-
-message UserInfoRequestData {
-  int64 id = 1;
-}
+//message UserInfoRequest {
+//  UserInfoRequestData data = 1;
+//}
+//
+//message UserInfoRequestData {
+//  int64 id = 1;
+//}
 
 message UserinfoResponse {
   UserinfoResponseData data = 1;
@@ -231,7 +231,7 @@ message SwitchOrganizationRequest {
   SwitchOrganizationRequestData data = 1;
 }
 message SwitchOrganizationRequestData {
-  int64 user_id = 1;
+  //  int64 user_id = 1;
   int64 organization_id = 2;
 }
 
@@ -260,7 +260,7 @@ service user {
   rpc Login(UserLoginRequest) returns(UserLoginResponse);
   rpc Register(UserRegisterRequest) returns(UserRegisterResponse);
   rpc RefreshToken(RefreshTokenRequest) returns(RefreshTokenResponse);
-  rpc UserInfo(UserInfoRequest) returns(UserinfoResponse);
+  rpc UserInfo(EmptyRequest) returns(UserinfoResponse);
   rpc VerifyEmail(VerifyEmailRequest) returns(VerifyEmailResponse);
   rpc SendVerifyEmail(SendVerifyEmailRequest) returns(SendVerifyEmailResponse);
   rpc ResetPassword(ResetPasswordRequest) returns(ResetPasswordResponse);
@@ -317,6 +317,11 @@ message LoanEntity {
   string code = 43;
   int64 RequestedLoanDocumentCount = 44;
   string creator_name = 45;
+
+  //  double HoldbackReleaseAmount = 46;
+  double HoldbackRemainingAmount = 47;
+  string due_status = 48;
+  int32 due_days = 49;
 
 }
 
@@ -470,6 +475,11 @@ message  LoanPageRequestFilter {
   repeated string loan_type = 5;
   repeated string lender = 6;
   repeated string pending_status = 7;
+  repeated string source = 8;
+  string date_type = 9;
+  int32 due_in_days = 10;
+  string start_date = 11;
+  string end_date = 12;
 }
 
 message  LoanPageRequestSorter {
@@ -744,6 +754,36 @@ message LoanSendQuoteEmailRequestData {
   repeated ThirdPartyLoanApplicantEditEntity applicants = 12;
 }
 
+// loan summary -- request
+message LoanSummaryRequest {
+  LoanSummaryRequestData data = 1;
+}
+message LoanSummaryRequestData {
+  string  start_date = 1;
+  string  end_date = 2;
+  repeated string  source = 3;
+  int32 due_in_days = 4;
+  LoanPageRequestSorter sorter = 5;
+  string stage = 6;
+  string date_type = 7;
+}
+
+message LoanSummaryResponse {
+  LoanSummaryResponseData data = 1;
+}
+message LoanSummaryResponseData {
+  double total_loan_amount = 1;
+  double total_principal_amount = 2;
+  double total_holdback_amount = 3;
+  double total_closing_fund_amount = 4;
+  double total_monthly_payment_amount = 5;
+  double total_release_holdback_amount = 6;
+  double total_remaining_holdback_amount = 7;
+  int64 total_loan_count = 8;
+  double average_rate = 9;
+  repeated LoanEntity list = 10;
+}
+
 
 
 service Loan {
@@ -761,6 +801,7 @@ service Loan {
   rpc PreApprovalLoan(LoanPreApprovalRequest) returns(LoanPreApprovalResponse);
   rpc SendPreApprovalNotification(LoanSendPreApprovalNotificationRequest) returns(EmptyResponse);
   rpc SendQuoteEmail(LoanSendQuoteEmailRequest) returns(EmptyResponse);
+  rpc Summary(LoanSummaryRequest) returns(LoanSummaryResponse);
 }
 // ===================== loan service end ======================
 
@@ -1531,6 +1572,23 @@ service Storage {
   rpc CreatePresignedUrl(StorageCreatePresignedUrlRequest) returns(StorageCreatePresignedUrlResponse);
 }
 // ====================== storage service end ======================
+// ====================== api service start =================
+message ApiEntity{
+  int64 id = 1;
+  int64 parent_id = 2;
+  string name = 3;
+  string path = 4;
+  string method = 5;
+  string status = 6;
+  string description = 7;
+  string type = 8;
+  int32  sort_order = 9;
+  string created_at = 10;
+  string updated_at = 11;
+  bool auth_required = 13;
+  bool permission_required = 14;
+}
+// ====================== api service end =================
 // ====================== resource service start =================
 message ResourceTreeEntity{
   int64 id = 1;
@@ -1547,8 +1605,11 @@ message ResourceTreeEntity{
   string created_at = 12;
   string updated_at = 13;
   repeated ResourceTreeEntity children = 14;
+  bool enable_data_scope = 15;
+  repeated ApiEntity apis = 16;
+  string description = 17;
+  bool is_public = 18;
 }
-
 message ResourceEntity{
   int64 id = 1;
   int64 parent_id = 2;
@@ -1563,7 +1624,11 @@ message ResourceEntity{
   int32  sort_order = 11;
   string created_at = 12;
   string updated_at = 13;
-  string pivot_role_data_scope = 14;
+  repeated ApiEntity apis = 14;
+  string data_scope = 15;
+  bool enable_data_scope = 16;
+  string description = 17;
+  bool is_public = 18;
 }
 
 // resource tree
@@ -1579,6 +1644,7 @@ message ResourceTreeResponse {
 }
 service resource {
   rpc ResourceTree(ResourceTreeRequest) returns(ResourceTreeResponse);
+  rpc UserMenu(EmptyRequest) returns(ResourceTreeResponse);
 }
 // =================== resource service end =================
 // =================== role service start =================
@@ -1695,6 +1761,15 @@ message RoleAllResponse {
   repeated RoleEntity  data = 1;
 }
 
+// assign organization users -- request
+message RoleAssignOrganizationUsersRequest {
+  RoleAssignOrganizationUsersRequestData data = 1;
+}
+message RoleAssignOrganizationUsersRequestData {
+  int64 id = 1;
+  repeated int64 organization_user_ids = 2;
+}
+
 service role {
   rpc Page(RolePageRequest) returns(RolePageResponse);
   rpc Create(RoleCreateRequest) returns(RoleCreateResponse);
@@ -1703,6 +1778,7 @@ service role {
   rpc Detail(RoleDetailRequest) returns(RoleDetailResponse);
   rpc UpdateStatus(RoleUpdateStatusRequest) returns(EmptyResponse);
   rpc All(RoleAllRequest) returns(RoleAllResponse);
+  rpc AssignOrganizationUsers(RoleAssignOrganizationUsersRequest) returns(RoleDetailResponse);
 }
 
 // ================== role service end =================
@@ -2068,3 +2144,29 @@ service Zeitro {
 }
 
 // ================= zeitro listing service end =================
+// ===================== auth service start ======================
+message AuthCheckRequest {
+  AuthCheckRequestData data = 1;
+}
+
+message AuthCheckRequestData {
+  string method = 1;
+  string path = 2;
+  string type = 3;
+}
+message AuthCheckResponse {
+  AuthCheckResponseData data = 1;
+}
+message AuthCheckResponseData {
+  bool authentication_required = 1;
+  bool authorization_required = 2;
+  string data_scope = 3;
+  bool authenticated = 4;
+  bool authorized = 5;
+}
+
+service Auth {
+  rpc AuthCheck(AuthCheckRequest) returns (AuthCheckResponse);
+}
+
+// ========== auth service end ======================

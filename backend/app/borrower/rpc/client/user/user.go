@@ -15,6 +15,11 @@ import (
 
 type (
 	AddressEntity                                    = borrower.AddressEntity
+	ApiEntity                                        = borrower.ApiEntity
+	AuthCheckRequest                                 = borrower.AuthCheckRequest
+	AuthCheckRequestData                             = borrower.AuthCheckRequestData
+	AuthCheckResponse                                = borrower.AuthCheckResponse
+	AuthCheckResponseData                            = borrower.AuthCheckResponseData
 	BorrowerApplicantAllRequest                      = borrower.BorrowerApplicantAllRequest
 	BorrowerApplicantAllRequestData                  = borrower.BorrowerApplicantAllRequestData
 	BorrowerApplicantAllResponse                     = borrower.BorrowerApplicantAllResponse
@@ -136,6 +141,10 @@ type (
 	LoanSendPreApprovalNotificationRequestData       = borrower.LoanSendPreApprovalNotificationRequestData
 	LoanSendQuoteEmailRequest                        = borrower.LoanSendQuoteEmailRequest
 	LoanSendQuoteEmailRequestData                    = borrower.LoanSendQuoteEmailRequestData
+	LoanSummaryRequest                               = borrower.LoanSummaryRequest
+	LoanSummaryRequestData                           = borrower.LoanSummaryRequestData
+	LoanSummaryResponse                              = borrower.LoanSummaryResponse
+	LoanSummaryResponseData                          = borrower.LoanSummaryResponseData
 	LoanThirdServiceEntity                           = borrower.LoanThirdServiceEntity
 	LoanUpdatePendingStatusRequest                   = borrower.LoanUpdatePendingStatusRequest
 	LoanUpdatePendingStatusRequestData               = borrower.LoanUpdatePendingStatusRequestData
@@ -237,6 +246,8 @@ type (
 	RoleAllRequestData                               = borrower.RoleAllRequestData
 	RoleAllResponse                                  = borrower.RoleAllResponse
 	RoleAndResourceRelationEntity                    = borrower.RoleAndResourceRelationEntity
+	RoleAssignOrganizationUsersRequest               = borrower.RoleAssignOrganizationUsersRequest
+	RoleAssignOrganizationUsersRequestData           = borrower.RoleAssignOrganizationUsersRequestData
 	RoleCreateRequest                                = borrower.RoleCreateRequest
 	RoleCreateRequestData                            = borrower.RoleCreateRequestData
 	RoleCreateResponse                               = borrower.RoleCreateResponse
@@ -277,8 +288,6 @@ type (
 	ThirdPartyLoanPropertyEditEntity                 = borrower.ThirdPartyLoanPropertyEditEntity
 	UsCitiesRequest                                  = borrower.UsCitiesRequest
 	UsCitiesRequestData                              = borrower.UsCitiesRequestData
-	UserInfoRequest                                  = borrower.UserInfoRequest
-	UserInfoRequestData                              = borrower.UserInfoRequestData
 	UserLoginRequest                                 = borrower.UserLoginRequest
 	UserLoginRequestData                             = borrower.UserLoginRequestData
 	UserLoginResponse                                = borrower.UserLoginResponse
@@ -305,7 +314,7 @@ type (
 		Login(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
 		Register(ctx context.Context, in *UserRegisterRequest, opts ...grpc.CallOption) (*UserRegisterResponse, error)
 		RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
-		UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
+		UserInfo(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*UserinfoResponse, error)
 		VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...grpc.CallOption) (*VerifyEmailResponse, error)
 		SendVerifyEmail(ctx context.Context, in *SendVerifyEmailRequest, opts ...grpc.CallOption) (*SendVerifyEmailResponse, error)
 		ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error)
@@ -342,7 +351,7 @@ func (m *defaultUser) RefreshToken(ctx context.Context, in *RefreshTokenRequest,
 	return client.RefreshToken(ctx, in, opts...)
 }
 
-func (m *defaultUser) UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserinfoResponse, error) {
+func (m *defaultUser) UserInfo(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*UserinfoResponse, error) {
 	client := borrower.NewUserClient(m.cli.Conn())
 	return client.UserInfo(ctx, in, opts...)
 }

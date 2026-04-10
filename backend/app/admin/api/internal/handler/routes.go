@@ -127,6 +127,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: common.SelectOptionsHandler(serverCtx),
 			},
 			{
+				// sync data
+				Method:  http.MethodGet,
+				Path:    "/sync_data",
+				Handler: common.SyncDataHandler(serverCtx),
+			},
+			{
 				// get us city
 				Method:  http.MethodGet,
 				Path:    "/us_cities",
@@ -262,7 +268,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					// page
-					Method:  http.MethodGet,
+					Method:  http.MethodPost,
 					Path:    "/organization_user/page",
 					Handler: organization_user.OrganizationUserPageHandler(serverCtx),
 				},
@@ -315,12 +321,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
-					// page
-					Method:  http.MethodGet,
-					Path:    "/role",
-					Handler: role.RolePageHandler(serverCtx),
-				},
-				{
 					// create
 					Method:  http.MethodPost,
 					Path:    "/role",
@@ -345,16 +345,28 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: role.RoleDeleteHandler(serverCtx),
 				},
 				{
-					// update status
+					// assign organization users
+					Method:  http.MethodPost,
+					Path:    "/role/:id/assign_organization_users",
+					Handler: role.RoleAssignOrganizationUsersHandler(serverCtx),
+				},
+				{
+					// switch status
 					Method:  http.MethodPatch,
 					Path:    "/role/:id/status",
-					Handler: role.RoleUpdateStatusHandler(serverCtx),
+					Handler: role.RoleSwitchStatusHandler(serverCtx),
 				},
 				{
 					// all
 					Method:  http.MethodGet,
 					Path:    "/role/all",
 					Handler: role.RoleAllHandler(serverCtx),
+				},
+				{
+					// page
+					Method:  http.MethodPost,
+					Path:    "/role/page",
+					Handler: role.RolePageHandler(serverCtx),
 				},
 			}...,
 		),
@@ -377,26 +389,29 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				// login
-				Method:  http.MethodPost,
-				Path:    "/user/login",
-				Handler: user.LoginHandler(serverCtx),
-			},
-			{
-				// refresh
-				Method:  http.MethodPost,
-				Path:    "/user/refresh",
-				Handler: user.RefreshTokenHandler(serverCtx),
-			},
-			{
-				// reset password
-				Method:  http.MethodPost,
-				Path:    "/user/reset_password",
-				Handler: user.ResetPasswordHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// login
+					Method:  http.MethodPost,
+					Path:    "/user/login",
+					Handler: user.LoginHandler(serverCtx),
+				},
+				{
+					// refresh
+					Method:  http.MethodPost,
+					Path:    "/user/refresh",
+					Handler: user.RefreshTokenHandler(serverCtx),
+				},
+				{
+					// reset password
+					Method:  http.MethodPost,
+					Path:    "/user/reset_password",
+					Handler: user.ResetPasswordHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithPrefix("/api/v1"),
 	)
 
@@ -409,6 +424,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/user/info",
 					Handler: user.InfoHandler(serverCtx),
+				},
+				{
+					// user menu
+					Method:  http.MethodGet,
+					Path:    "/user/menu",
+					Handler: user.UserMenuHandler(serverCtx),
 				},
 				{
 					// edit profile
