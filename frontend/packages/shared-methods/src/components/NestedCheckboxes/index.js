@@ -1,5 +1,6 @@
 import React from 'react';
-import { Checkbox, Col, Input, Row } from 'antd';
+import {Checkbox, Col, Input, Row} from 'antd';
+
 /**
  * 多层嵌套的多选框
  * @params paramsKey: 第一层checkbox的值对应的key（可与传给后端的key保持一致）

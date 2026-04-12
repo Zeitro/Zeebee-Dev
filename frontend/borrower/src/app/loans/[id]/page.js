@@ -8,10 +8,10 @@ import { useParams, useRouter } from 'next/navigation';
 import { createLoanSteps } from '@/enum/loan';
 import styles from './index.module.scss';
 import {
-	eventBus,
 	assemblyAddress,
 	changeUnitByPropertyType,
 	createRequest,
+	eventBus,
 } from '@repo/shared-methods/utils';
 import { useGlobalStore } from '@/store/global';
 import QuoteBtn from '../components/Quote';

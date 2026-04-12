@@ -12,6 +12,7 @@ import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 import useContent from './useContent';
 import { sidebarIcon } from './icon';
 import Image from 'next/image';
+
 const defaultToken = {
 	colorPrimary: '#1677ff',
 	colorTextBase: 'rgba(0, 0, 0, 0.88)',

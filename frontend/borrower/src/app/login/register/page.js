@@ -7,6 +7,7 @@ import { validateRule, emailRegex, capitalizeFirstLetter } from '@repo/shared-me
 import styles from '../index.module.scss';
 import ConfirmPassWord from '../components/ConfirmPassword';
 import { throttle } from 'lodash';
+
 const Register = () => {
 	const [form] = Form.useForm();
 	const router = useRouter();

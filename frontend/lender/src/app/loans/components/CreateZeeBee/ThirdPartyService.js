@@ -1,11 +1,12 @@
 'use client';
-import React, { useState } from 'react';
-import { NewTable } from '@repo/shared-methods';
-import { useColumnByZeeBeeLoan } from './components/column';
-import { AddEditBtn } from './components/AddEditBtn';
-import { Form, message } from 'antd';
+import React, {useState} from 'react';
+import {NewTable} from '@repo/shared-methods';
+import {useColumnByZeeBeeLoan} from './components/column';
+import {AddEditBtn} from './components/AddEditBtn';
+import {Form, message} from 'antd';
 import _ from 'lodash';
-import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
+import {useDeferredSyncEffect} from '@repo/shared-methods/hooks';
+
 let paramsKey = 'loan_third_services';
 const ThirdPartyService = ({ form, rowData, setIsChange, changeFieldsValue = () => {} }) => {
 	const [list, setList] = useState([]);

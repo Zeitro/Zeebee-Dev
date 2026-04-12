@@ -1,5 +1,6 @@
-import { create } from 'zustand';
-import { getStateList, getCityList } from '@repo/shared-methods/api';
+import {create} from 'zustand';
+import {getCityList, getStateList} from '@repo/shared-methods/api';
+
 export const useAddressStore = create((set) => ({
 	stateOptions: [],
 	cityOptions: [],

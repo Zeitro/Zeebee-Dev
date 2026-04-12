@@ -6,7 +6,8 @@ import { useUserStore } from '@/store/user';
 import { validateRule, emailRegex } from '@repo/shared-methods/utils';
 import styles from '../index.module.scss';
 import ConfirmPassWord from '../components/ConfirmPassword';
-import { throttle } from 'lodash';
+import {throttle} from 'lodash';
+
 const Register = () => {
 	const [form] = Form.useForm();
 	const router = useRouter();

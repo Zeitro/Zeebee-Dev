@@ -1,6 +1,6 @@
 'use client';
-import { Table } from 'antd';
-import React, { useState } from 'react';
+import {Table} from 'antd';
+import React, {useState} from 'react';
 import styles from './index.module.scss';
 // import { debounce } from 'lodash';
 // const limitHeight = 200;
