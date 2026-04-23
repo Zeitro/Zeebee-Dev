@@ -1,7 +1,7 @@
-import React, {useState} from 'react';
-import {NewModal} from '@repo/shared-methods';
-import {Form, Input, message} from 'antd';
-import {createRequest, eventBus} from '@repo/shared-methods/utils';
+import React, { useState } from 'react';
+import { NewModal } from '@repo/shared-methods';
+import { Form, Input, message } from 'antd';
+import { createRequest, eventBus } from '@repo/shared-methods/utils';
 
 const { TextArea } = Input;
 const EditCommentModal = ({ open, setOpen, record = {} }) => {

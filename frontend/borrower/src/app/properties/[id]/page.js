@@ -1,12 +1,12 @@
 'use client';
 import Image from 'next/image';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {propertiesFieldArr, propertyList} from '@/enum/properties';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { propertiesFieldArr, propertyList } from '@/enum/properties';
 import LoansPage from '../../loans/components/ListView/LoansPage';
-import {useParams} from 'next/navigation';
-import {assemblyAddress, createRequest, eventBus} from '@repo/shared-methods/utils';
-import {useGetOptions} from '@repo/shared-methods/hooks';
-import {useGlobalStore} from '@/store/global';
+import { useParams } from 'next/navigation';
+import { assemblyAddress, createRequest, eventBus } from '@repo/shared-methods/utils';
+import { useGetOptions } from '@repo/shared-methods/hooks';
+import { useGlobalStore } from '@/store/global';
 
 const PropertiesDetails = () => {
 	const { id } = useParams();

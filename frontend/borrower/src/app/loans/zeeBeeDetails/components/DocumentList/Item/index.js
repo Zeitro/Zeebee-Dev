@@ -1,10 +1,15 @@
-import React, {useState} from 'react';
-import {Collapse, List, Space} from 'antd';
-import {DeleteOutlined, FileImageOutlined, FilePdfOutlined, FileTextOutlined,} from '@ant-design/icons';
+import React, { useState } from 'react';
+import { Collapse, List, Space } from 'antd';
+import {
+	DeleteOutlined,
+	FileImageOutlined,
+	FilePdfOutlined,
+	FileTextOutlined,
+} from '@ant-design/icons';
 import styles from '../index.module.scss';
-import {DeleteBtn, ViewFile} from '@repo/shared-methods';
-import {createRequest, eventBus} from '@repo/shared-methods/utils';
-import {useDeferredSyncEffect} from '@repo/shared-methods/hooks';
+import { DeleteBtn, ViewFile } from '@repo/shared-methods';
+import { createRequest, eventBus } from '@repo/shared-methods/utils';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 
 const DocumentItem = ({ columns, item, isHide }) => {
 	const [activeKey, setActiveKey] = useState([]);

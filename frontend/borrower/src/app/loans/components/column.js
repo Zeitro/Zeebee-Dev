@@ -1,8 +1,8 @@
-import {formatAmount, formatTime} from '@repo/shared-methods/utils';
-import {LoanPendingStatus} from './ChangeStageStatus';
-import {TableOperation} from '@repo/shared-methods';
+import { formatAmount, formatTime } from '@repo/shared-methods/utils';
+import { LoanPendingStatus } from './ChangeStageStatus';
+import { TableOperation } from '@repo/shared-methods';
 import QuoteBtn from './Quote';
-import {SendOutlined} from '@ant-design/icons';
+import { SendOutlined } from '@ant-design/icons';
 
 export const get3rdPartyMark = (v, { source }) => (
 	<div className="flex items-center">

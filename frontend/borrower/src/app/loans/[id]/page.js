@@ -1,17 +1,22 @@
 'use client';
-import {Anchor, Button, Col, Form, message, Row, Skeleton} from 'antd';
-import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
+import { Anchor, Button, Col, Form, message, Row, Skeleton } from 'antd';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import CreateLoan from '../components/Create/Loan';
 import CreateProperty from '../components/Create/property';
 import CreateTerm from '../components/Create/term';
-import {useParams, useRouter} from 'next/navigation';
-import {createLoanSteps} from '@/enum/loan';
+import { useParams, useRouter } from 'next/navigation';
+import { createLoanSteps } from '@/enum/loan';
 import styles from './index.module.scss';
-import {assemblyAddress, changeUnitByPropertyType, createRequest, eventBus,} from '@repo/shared-methods/utils';
-import {useGlobalStore} from '@/store/global';
+import {
+	assemblyAddress,
+	changeUnitByPropertyType,
+	createRequest,
+	eventBus,
+} from '@repo/shared-methods/utils';
+import { useGlobalStore } from '@/store/global';
 import QuoteBtn from '../components/Quote';
-import {PermissionSlot} from '@repo/shared-methods';
-import {PERMISSIONS} from '@config/permissions';
+import { PermissionSlot } from '@repo/shared-methods';
+import { PERMISSIONS } from '@config/permissions';
 
 const initialValues = {
 	applicants: [{ is_primary: true, type: 'Individual' }],

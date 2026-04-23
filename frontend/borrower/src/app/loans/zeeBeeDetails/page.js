@@ -1,10 +1,10 @@
 'use client';
 import styles from '../createZeeBeeLoan/index.module.scss';
-import {Badge, Form, Radio, Skeleton, Steps, Tabs} from 'antd';
-import React, {useEffect} from 'react';
+import { Badge, Form, Radio, Skeleton, Steps, Tabs } from 'antd';
+import React, { useEffect } from 'react';
 import useCreate from '../components/CreateZeeBee/hooks/useCreate';
-import {assemblyAddress} from '@repo/shared-methods/utils';
-import {loanDetailsFields, pendingStatusColor, stageColor} from '@/enum/loan';
+import { assemblyAddress } from '@repo/shared-methods/utils';
+import { loanDetailsFields, pendingStatusColor, stageColor } from '@/enum/loan';
 import HomeSvg from '@/assets/images/home.svg';
 
 const ZeeBeeDetails = () => {

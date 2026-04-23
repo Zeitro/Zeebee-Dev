@@ -1,5 +1,5 @@
-import {localStorageUtil} from '../lib/local';
-import {message} from 'antd';
+import { localStorageUtil } from '../lib/local';
+import { message } from 'antd';
 import Cookie from 'js-cookie';
 
 // 公共提示

@@ -1,10 +1,10 @@
 'use client';
-import {Col, Form, Input, InputNumber, Row, Select} from 'antd';
+import { Col, Form, Input, InputNumber, Row, Select } from 'antd';
 import styles from './index.module.scss';
-import {useGetOptions} from '@repo/shared-methods/hooks';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
-import {loan_pending} from '@/enum/common';
-import {CommonFormDate, InputNumAmount} from '@repo/shared-methods';
+import { loan_pending } from '@/enum/common';
+import { CommonFormDate, InputNumAmount } from '@repo/shared-methods';
 import SelectCard from '@repo/shared-methods/componentsUi/SelectCard';
 
 const layoutCol = {

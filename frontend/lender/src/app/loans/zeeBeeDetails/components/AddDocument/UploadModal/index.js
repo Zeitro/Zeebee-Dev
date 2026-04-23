@@ -1,9 +1,9 @@
-import React, {useRef, useState} from 'react';
-import {NewModal, UploadFileButton} from '@repo/shared-methods';
-import {Button, Form, Input, message} from 'antd';
-import {CloseOutlined, FileTextOutlined, InboxOutlined} from '@ant-design/icons';
+import React, { useRef, useState } from 'react';
+import { NewModal, UploadFileButton } from '@repo/shared-methods';
+import { Button, Form, Input, message } from 'antd';
+import { CloseOutlined, FileTextOutlined, InboxOutlined } from '@ant-design/icons';
 import styles from './index.module.scss';
-import {createRequest, eventBus} from '@repo/shared-methods/utils';
+import { createRequest, eventBus } from '@repo/shared-methods/utils';
 // const { TextArea } = Input;
 const UploadModal = ({ open, setOpen, isChangeType = true, record = {}, loan_id, category }) => {
 	const [form] = Form.useForm();

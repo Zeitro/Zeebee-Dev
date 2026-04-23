@@ -1,5 +1,5 @@
 import React from 'react';
-import {Checkbox, Col, Input, Row} from 'antd';
+import { Checkbox, Col, Input, Row } from 'antd';
 
 /**
  * 多层嵌套的多选框

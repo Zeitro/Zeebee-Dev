@@ -1,6 +1,6 @@
 import React from 'react';
-import {Space} from 'antd';
-import {ApproveRejectModal} from '../ApproveRejectModal';
+import { Space } from 'antd';
+import { ApproveRejectModal } from '../ApproveRejectModal';
 
 const HeaderBtn = ({
 	title,

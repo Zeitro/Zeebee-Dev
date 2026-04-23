@@ -1,11 +1,11 @@
 'use client';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import DocumentList from '../DocumentList';
-import {lenderClosingColumns} from '../documentColumns';
+import { lenderClosingColumns } from '../documentColumns';
 import HeaderBtn from '../HeaderBtn';
-import {AddDocument} from '../AddDocument';
-import {useSearchParams} from 'next/navigation';
-import {useDeferredSyncEffect} from '@repo/shared-methods/hooks';
+import { AddDocument } from '../AddDocument';
+import { useSearchParams } from 'next/navigation';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 
 const Closing = ({ disabledOperate, rowData, id }) => {
 	const [lenderList, setLenderList] = useState([]);

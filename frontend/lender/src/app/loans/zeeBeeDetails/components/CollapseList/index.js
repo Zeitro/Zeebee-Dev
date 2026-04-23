@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {Checkbox, Collapse} from 'antd';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Checkbox, Collapse } from 'antd';
 import styles from './index.module.scss';
 
 const CollapseList = ({ list = [], setList, hideCollapsible, isHideCheck = false }) => {

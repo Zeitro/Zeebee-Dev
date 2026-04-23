@@ -1,6 +1,6 @@
-import {NextResponse} from 'next/server';
-import {flattenNavRouter, matchRoute} from '@repo/shared-methods/lib/commonRouter';
-import {noTokenRouter} from '@config/routes';
+import { NextResponse } from 'next/server';
+import { flattenNavRouter, matchRoute } from '@repo/shared-methods/lib/commonRouter';
+import { noTokenRouter } from '@config/routes';
 
 export function middleware(request) {
 	const { pathname } = request.nextUrl;
