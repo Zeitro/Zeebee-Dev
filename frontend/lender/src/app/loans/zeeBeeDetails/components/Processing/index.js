@@ -1,14 +1,14 @@
 'use client';
-import React, {useMemo, useState} from 'react';
+import React, { useMemo, useState } from 'react';
 import DocumentList from '../DocumentList';
-import {borrowerUploadColumns, lenderUploadColumns} from '../documentColumns';
-import {message} from 'antd';
+import { borrowerUploadColumns, lenderUploadColumns } from '../documentColumns';
+import { message } from 'antd';
 import HeaderBtn from '../HeaderBtn';
-import {AddDocument} from '../AddDocument';
-import {SendRequestBtn} from '../SendRequestModal';
-import {useSearchParams} from 'next/navigation';
-import {createRequest, eventBus} from '@repo/shared-methods/utils';
-import {useDeferredSyncEffect} from '@repo/shared-methods/hooks';
+import { AddDocument } from '../AddDocument';
+import { SendRequestBtn } from '../SendRequestModal';
+import { useSearchParams } from 'next/navigation';
+import { createRequest, eventBus } from '@repo/shared-methods/utils';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 
 const Processing = ({
 	isHide,

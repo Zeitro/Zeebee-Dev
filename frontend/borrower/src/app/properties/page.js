@@ -1,16 +1,16 @@
 'use client';
-import {BtnPopUpModal, FilterField, NewPagination, NoData} from '@repo/shared-methods';
+import { BtnPopUpModal, FilterField, NewPagination, NoData } from '@repo/shared-methods';
 import Image from 'next/image';
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {PlusOutlined, ReloadOutlined} from '@ant-design/icons';
-import {sort_asc, sort_des} from '@/enum/properties';
-import {asc, des} from '@/enum/common';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
+import { sort_asc, sort_des } from '@/enum/properties';
+import { asc, des } from '@/enum/common';
 import PropertiesItem from './components/propertiesItem';
-import {createRequest, getPagination, transformArrayStructure} from '@repo/shared-methods/utils';
-import {Spin} from 'antd';
-import {useAuth, useGetOptions} from '@repo/shared-methods/hooks';
+import { createRequest, getPagination, transformArrayStructure } from '@repo/shared-methods/utils';
+import { Spin } from 'antd';
+import { useAuth, useGetOptions } from '@repo/shared-methods/hooks';
 import AddModal from '@repo/shared-methods/componentsUi/SelectCard/Add/property';
-import {PERMISSIONS} from '@config/permissions';
+import { PERMISSIONS } from '@config/permissions';
 
 const Properties = () => {
 	const { hasPermission } = useAuth();

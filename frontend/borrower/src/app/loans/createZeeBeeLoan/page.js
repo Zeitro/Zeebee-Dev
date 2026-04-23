@@ -1,9 +1,9 @@
 'use client';
-import {Form, Steps, Tabs} from 'antd';
+import { Form, Steps, Tabs } from 'antd';
 import React from 'react';
 import styles from './index.module.scss';
 import useCreate from '../components/CreateZeeBee/hooks/useCreate';
-import {changeUnitByPropertyType} from '@repo/shared-methods/utils';
+import { changeUnitByPropertyType } from '@repo/shared-methods/utils';
 
 const CreateZeeBeeLoan = () => {
 	const {

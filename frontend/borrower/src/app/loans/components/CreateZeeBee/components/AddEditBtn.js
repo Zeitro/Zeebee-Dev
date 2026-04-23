@@ -1,8 +1,8 @@
 'use client';
-import {Button} from 'antd';
-import React, {useState} from 'react';
-import {PlusOutlined} from '@ant-design/icons';
-import {AddExperience} from './AddExperience';
+import { Button } from 'antd';
+import React, { useState } from 'react';
+import { PlusOutlined } from '@ant-design/icons';
+import { AddExperience } from './AddExperience';
 import AddThirdService from './AddThirdService';
 
 export const AddEditBtn = ({ title, commonType, children, rowData, onOk = () => {}, ...props }) => {

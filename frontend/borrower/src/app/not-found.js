@@ -1,6 +1,6 @@
 'use client';
-import {Button, Result} from 'antd';
-import {useRouter} from 'next/navigation';
+import { Button, Result } from 'antd';
+import { useRouter } from 'next/navigation';
 
 const NotFound = () => {
 	const router = useRouter();

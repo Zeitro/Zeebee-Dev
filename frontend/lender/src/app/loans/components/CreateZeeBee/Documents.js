@@ -1,10 +1,10 @@
 'use client';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import styles from './index.module.scss';
-import {InboxOutlined} from '@ant-design/icons';
+import { InboxOutlined } from '@ant-design/icons';
 import ArticleSvg from '@/assets/images/article.svg';
-import {DownloadFileButton, UploadFileButton, ViewFile} from '@repo/shared-methods';
-import {Space} from 'antd';
+import { DownloadFileButton, UploadFileButton, ViewFile } from '@repo/shared-methods';
+import { Space } from 'antd';
 
 const Documents = () => {
 	const [fileList, setFileList] = useState([]);

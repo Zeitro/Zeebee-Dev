@@ -1,9 +1,9 @@
 'use client';
-import {Dropdown, message, Tooltip} from 'antd';
-import React, {useMemo, useState} from 'react';
-import {DownOutlined} from '@ant-design/icons';
+import { Dropdown, message, Tooltip } from 'antd';
+import React, { useMemo, useState } from 'react';
+import { DownOutlined } from '@ant-design/icons';
 import styles from './index.module.css';
-import {createRequest} from '../../lib/fetch';
+import { createRequest } from '../../lib/fetch';
 
 /**
  * 状态修改

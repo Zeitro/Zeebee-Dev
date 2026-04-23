@@ -1,4 +1,4 @@
-import {formatAmount} from '@repo/shared-methods/utils';
+import { formatAmount } from '@repo/shared-methods/utils';
 
 // 创建或编辑loan时的步骤
 export const createLoanSteps = [

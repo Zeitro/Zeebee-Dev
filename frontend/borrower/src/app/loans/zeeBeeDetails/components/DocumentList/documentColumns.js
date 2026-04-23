@@ -1,7 +1,7 @@
 import DocumentStatus from './DocumentStatus';
-import {UploadModalBtn} from './UploadModal';
-import {formatDate} from '@repo/shared-methods/utils';
-import {Tooltip} from 'antd';
+import { UploadModalBtn } from './UploadModal';
+import { formatDate } from '@repo/shared-methods/utils';
+import { Tooltip } from 'antd';
 
 const getUploadCommonColumns = (typeTitle, isHaveComments = true) => {
 	const getStatus = (v) => {

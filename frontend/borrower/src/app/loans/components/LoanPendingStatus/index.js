@@ -1,10 +1,10 @@
 'use client';
-import {Dropdown, message, Tooltip} from 'antd';
-import React, {useMemo, useState} from 'react';
-import {DownOutlined} from '@ant-design/icons';
+import { Dropdown, message, Tooltip } from 'antd';
+import React, { useMemo, useState } from 'react';
+import { DownOutlined } from '@ant-design/icons';
 import styles from './index.module.css';
-import {createRequest, transformArrayStructure} from '@repo/shared-methods/utils';
-import {useOptionsStore} from '@repo/shared-methods/store';
+import { createRequest, transformArrayStructure } from '@repo/shared-methods/utils';
+import { useOptionsStore } from '@repo/shared-methods/store';
 
 let api = '/api/loan/status';
 

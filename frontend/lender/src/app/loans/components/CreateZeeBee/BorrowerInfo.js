@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './index.module.scss';
-import {Button, Col, Form, Input, InputNumber, Row, Select} from 'antd';
+import { Button, Col, Form, Input, InputNumber, Row, Select } from 'antd';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import {
 	creditScoreRegex,
@@ -11,10 +11,10 @@ import {
 	tinOrSSNRegex,
 	validateRule,
 } from '@repo/shared-methods/utils';
-import {MinusCircleOutlined, PlusCircleOutlined} from '@ant-design/icons';
-import {layoutCol, titleCol} from '@/enum/common';
-import {useGetOptions} from '@repo/shared-methods/hooks';
-import {CommonFormDate, InputNameCombination, InputPhone, InputTIN} from '@repo/shared-methods';
+import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { layoutCol, titleCol } from '@/enum/common';
+import { useGetOptions } from '@repo/shared-methods/hooks';
+import { CommonFormDate, InputNameCombination, InputPhone, InputTIN } from '@repo/shared-methods';
 import SelectCard from '@/components/SelectCard';
 
 const ApplicantInfo = ({

@@ -1,9 +1,9 @@
 import React from 'react';
 // import styles from './index.module.scss';
-import {Col, Form, InputNumber, Radio, Row, Select} from 'antd';
+import { Col, Form, InputNumber, Radio, Row, Select } from 'antd';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
-import {useGetOptions} from '@repo/shared-methods/hooks';
-import {layoutCol, titleCol, yesNoOptions} from '@/enum/common';
+import { useGetOptions } from '@repo/shared-methods/hooks';
+import { layoutCol, titleCol, yesNoOptions } from '@/enum/common';
 
 let name = 'property';
 const PropertyInfo = ({ gutter = 24, unitInfo }) => {

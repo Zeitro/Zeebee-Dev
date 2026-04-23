@@ -1,7 +1,7 @@
 'use client';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {AutoComplete, Spin} from 'antd';
-import {LoadingOutlined} from '@ant-design/icons';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { AutoComplete, Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 
 /**
  * Google Api
