@@ -1,9 +1,9 @@
 'use client';
-import type {ComponentRef} from 'react';
-import {useRef} from 'react';
+import type { ComponentRef } from 'react';
+import { useRef } from 'react';
 import SignaturePad from 'react-signature-pad-wrapper';
-import {NewModal} from '@repo/shared-methods';
-import {message} from 'antd';
+import { NewModal } from '@repo/shared-methods';
+import { message } from 'antd';
 //使用 ComponentRef 和 typeof 来获取组件的实例类型
 type SignaturePadType = ComponentRef<typeof SignaturePad>;
 

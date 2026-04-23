@@ -1,5 +1,5 @@
-import {create} from 'zustand';
-import {createJSONStorage, persist} from 'zustand/middleware';
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 const STORAGE_KEY = 'loanStore';
 // const EXPIRE_MS = 24 * 60 * 60 * 1000; // 24 hours
