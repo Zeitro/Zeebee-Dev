@@ -3,7 +3,7 @@ import { Col, Form, Input, InputNumber, Row, Select } from 'antd';
 import styles from './index.module.scss';
 import { useGetOptions } from '@repo/shared-methods/hooks';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
-import { loan_pending } from '@/enum/common';
+import { loan_pending } from '@repo/shared-methods/enum';
 import { CommonFormDate, InputNumAmount } from '@repo/shared-methods';
 import SelectCard from '@repo/shared-methods/componentsUi/SelectCard';
 

@@ -3,7 +3,7 @@ import { Button, Col, Form, Input, InputNumber, Row, Select } from 'antd';
 import styles from './index.module.scss';
 import { CommonFormDate, InputNameCombination, InputNumAmount } from '@repo/shared-methods';
 import { useGetOptions } from '@repo/shared-methods/hooks';
-import { loan_active, loan_pending, titleCol } from '@/enum/common';
+import { loan_active, loan_pending, titleCol } from '@repo/shared-methods/enum';
 import { capitalizeFirstLetter } from '@repo/shared-methods/utils';
 import SelectCard from '@repo/shared-methods/componentsUi/SelectCard';
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';

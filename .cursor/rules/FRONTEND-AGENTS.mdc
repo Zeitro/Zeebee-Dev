@@ -1,0 +1,67 @@
+---
+description: Zeebee-Dev 前端 monorepo — Next 15、antd 5、Tailwind、workspace 共享包与开发约定
+alwaysApply: true
+---
+
+# Zeebee-Dev 前端 Agent 规则
+
+面向 `frontend/` 下的开发与排错；版本与脚本以各应用 `package.json` 为准。
+
+### Monorepo 布局
+
+```
+Zeebee-Dev/
+├── backend/                 # Go + go-zero，详见 backend/CLAUDE.md
+├── frontend/
+│   ├── admin/               # 管理端 Next 应用（next-admin）
+│   ├── borrower/          # 借款方 Next 应用（next-borrower）
+│   ├── lender/            # 贷款方 Next 应用（lender）
+│   └── packages/          # 前端 workspace 包（如共享逻辑与组件）
+├── env/                     # 环境配置
+├── pnpm-workspace.yaml      # pnpm 工作区定义（以仓库实际内容为准）
+└── CLAUDE.md                # 全仓任务类型与目录切换路由
+```
+
+## 框架与包管理
+
+### 运行时栈（各应用以 `package.json` 为准）
+
+- **Next.js 15**（App Router）、**React 19**。
+- **UI / 数据展示**：**antd 5**、**@ant-design/icons**；与 Next/React 19 集成时沿用各应用已有的 **`@ant-design/nextjs-registry`**、**`@ant-design/v5-patch-for-react-19`** 等配置。
+- **样式**：**Tailwind CSS 3**；按需 **Sass**；SVG 处理以各应用 `next.config` 为准（如 `@svgr/webpack`）。
+- **通用能力**：**dayjs**（与 antd 5 日期配套）、**zustand**（状态）；其余依赖（如 `lodash`、`js-cookie`）按业务文件现有用法引入。
+
+### 语言与代码形态
+
+- 业务页面多为 **`.js` / `.jsx`**，与 **TypeScript** 混存；**新增或修改时与所在目录、同 feature 文件保持一致**（不要强行把整页改成 TS 除非任务要求）。
+
+### pnpm 与工作区
+
+- 全仓使用 **pnpm**；工作区定义在根目录 **`pnpm-workspace.yaml`**（当前通常包含 `frontend/borrower`、`frontend/lender`、`frontend/packages/*`）。
+- **依赖安装**：在**仓库根目录**执行 `pnpm install`，以便解析各包之间的 **`workspace:*`**（如 `@repo/shared-methods`）。
+- **日常开发**：进入目标应用目录执行脚本（常见如 **`pnpm run local`** / **`npm run local`**，以该目录 `package.json` 的 `scripts` 为准），勿混淆根目录与子包脚本。
+
+## 共享包 `@repo/shared-methods`
+
+- 路径：`frontend/packages/shared-methods`，包名 **`@repo/shared-methods`**。
+- 跨应用复用的 **hooks、api、组件、enum、工具** 等放这里；避免在 admin / borrower / lender 之间复制同一段逻辑。
+- 新增对外入口时，在包的 **`package.json` → `exports`** 中声明子路径；以 **TS** 为主，各 Next 应用需 **`transpilePackages`**（或等价）包含该包名，否则构建可能报错。
+
+## UI
+
+- **交互组件**（Form、Table、Modal、Message 等）优先 **Ant Design 5.x**，并沿用各应用根布局里已有的 **AntdRegistry / ConfigProvider** 接入方式。
+- **布局、间距、响应式**用 **Tailwind 3.x**；避免与 antd 强耦合的重复样式。
+- **图标**：`@ant-design/icons`；**日期**与 antd 5 对齐 **dayjs**。
+
+## 质量与提交
+
+- 提交前遵循仓库的 lint/format 配置，遵守配置好的 **ESLint 9** 与 **Prettier 3.x** 规则，新增文件保持与邻近平文件一致的风格。
+- 根目录 **husky / lint-staged** 只覆盖前端项目；以 **`frontend/<app>/package.json`** 与根 `package.json` 实际配置为准。
+
+## Agent 工作方式
+
+- **最小必要改动**，不做无关重构。
+- **默认只动**被指派的 `frontend/<app>` 或 `frontend/packages/*`；跨应用同步需有明确需求。
+- **风格以邻近文件为准**（引号、组件拆分、antd 写法、Tailwind 密度）。
+- 业务枚举、贷款状态等与域相关的常量：**优先** `@repo/shared-methods` 的 `enum` 导出或各应用已有 `enum` 目录，与后端字段保持已有命名习惯。
+
