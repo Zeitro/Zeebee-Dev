@@ -1,6 +1,7 @@
-import { Modal, Button } from 'antd';
+import { Button, Modal } from 'antd';
 import React from 'react';
 import styles from './index.module.scss';
+
 export const NewModal = ({ children, customFooter = false, confirmLoading = false, ...props }) => {
 	return (
 		<Modal

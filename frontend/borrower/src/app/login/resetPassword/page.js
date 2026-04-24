@@ -7,6 +7,7 @@ import styles from '../index.module.scss';
 import { ConfirmPassWord } from '@repo/shared-methods';
 import { throttle } from 'lodash';
 import useData from '../components/useData';
+
 const ResetPassword = () => {
 	const [form] = Form.useForm();
 	const { getUserPermissions } = useData();
