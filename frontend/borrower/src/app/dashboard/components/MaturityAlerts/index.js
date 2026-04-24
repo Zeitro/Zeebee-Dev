@@ -4,7 +4,8 @@ import ListModal from './ListModal';
 import SettingModal from './SettingModal';
 import { useCallback, useEffect, useState } from 'react';
 import { SettingOutlined } from '@ant-design/icons';
-import { createRequest, getPagination } from '@repo/shared-methods/utils';
+import { createRequest } from '@repo/shared-methods/utils';
+import { NoData } from '@repo/shared-methods';
 
 const MaturityAlerts = ({ list, source, handleGotoLoanDetails }) => {
 	const [open, setOpen] = useState(false);
@@ -64,9 +65,11 @@ const MaturityAlerts = ({ list, source, handleGotoLoanDetails }) => {
 					Maturity alerts({total})
 				</div>
 				<Space size={8}>
-					<Button size="small" onClick={() => setOpen(true)}>
-						View all
-					</Button>
+					{total > 0 && (
+						<Button size="small" onClick={() => setOpen(true)}>
+							View all
+						</Button>
+					)}
 					<Button
 						size="small"
 						icon={<SettingOutlined />}
@@ -75,13 +78,17 @@ const MaturityAlerts = ({ list, source, handleGotoLoanDetails }) => {
 				</Space>
 			</div>
 			<Spin spinning={loading}>
-				{maturityList.map((item) => (
-					<MaturityAlertsItem
-						key={item.id}
-						item={item}
-						handleGotoLoanDetails={handleGotoLoanDetails}
-					/>
-				))}
+				{total > 0 ? (
+					maturityList.map((item) => (
+						<MaturityAlertsItem
+							key={item.id}
+							item={item}
+							handleGotoLoanDetails={handleGotoLoanDetails}
+						/>
+					))
+				) : (
+					<NoData imageProps={{ style: { width: 80, height: 80 } }} />
+				)}
 			</Spin>
 			{open && (
 				<ListModal

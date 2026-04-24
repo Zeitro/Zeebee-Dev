@@ -141,6 +141,10 @@ type (
 	LoanSendPreApprovalNotificationRequestData       = borrower.LoanSendPreApprovalNotificationRequestData
 	LoanSendQuoteEmailRequest                        = borrower.LoanSendQuoteEmailRequest
 	LoanSendQuoteEmailRequestData                    = borrower.LoanSendQuoteEmailRequestData
+	LoanSummaryRequest                               = borrower.LoanSummaryRequest
+	LoanSummaryRequestData                           = borrower.LoanSummaryRequestData
+	LoanSummaryResponse                              = borrower.LoanSummaryResponse
+	LoanSummaryResponseData                          = borrower.LoanSummaryResponseData
 	LoanThirdServiceEntity                           = borrower.LoanThirdServiceEntity
 	LoanUpdatePendingStatusRequest                   = borrower.LoanUpdatePendingStatusRequest
 	LoanUpdatePendingStatusRequestData               = borrower.LoanUpdatePendingStatusRequestData
@@ -320,6 +324,7 @@ type (
 		PreApprovalLoan(ctx context.Context, in *LoanPreApprovalRequest, opts ...grpc.CallOption) (*LoanPreApprovalResponse, error)
 		SendPreApprovalNotification(ctx context.Context, in *LoanSendPreApprovalNotificationRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		SendQuoteEmail(ctx context.Context, in *LoanSendQuoteEmailRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		Summary(ctx context.Context, in *LoanSummaryRequest, opts ...grpc.CallOption) (*LoanSummaryResponse, error)
 	}
 
 	defaultLoan struct {
@@ -401,4 +406,9 @@ func (m *defaultLoan) SendPreApprovalNotification(ctx context.Context, in *LoanS
 func (m *defaultLoan) SendQuoteEmail(ctx context.Context, in *LoanSendQuoteEmailRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	client := borrower.NewLoanClient(m.cli.Conn())
 	return client.SendQuoteEmail(ctx, in, opts...)
+}
+
+func (m *defaultLoan) Summary(ctx context.Context, in *LoanSummaryRequest, opts ...grpc.CallOption) (*LoanSummaryResponse, error) {
+	client := borrower.NewLoanClient(m.cli.Conn())
+	return client.Summary(ctx, in, opts...)
 }

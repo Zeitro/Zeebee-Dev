@@ -5,6 +5,7 @@ import { useUserStore } from '@repo/shared-methods/store';
 import { emailRegex } from '@repo/shared-methods/utils';
 import { MailOutlined } from '@ant-design/icons';
 import Image from 'next/image';
+
 const SendResetPasswordEmail = ({ form, setPageType }) => {
 	const { sendResetPasswordEmail } = useUserStore();
 	const [apiError, setApiError] = useState('');

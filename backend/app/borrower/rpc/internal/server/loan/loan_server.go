@@ -92,3 +92,8 @@ func (s *LoanServer) SendQuoteEmail(ctx context.Context, in *borrower.LoanSendQu
 	l := loanlogic.NewSendQuoteEmailLogic(ctx, s.svcCtx)
 	return l.SendQuoteEmail(in)
 }
+
+func (s *LoanServer) Summary(ctx context.Context, in *borrower.LoanSummaryRequest) (*borrower.LoanSummaryResponse, error) {
+	l := loanlogic.NewSummaryLogic(ctx, s.svcCtx)
+	return l.Summary(in)
+}

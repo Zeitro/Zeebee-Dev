@@ -3,8 +3,9 @@ import { Col, Form, Row } from 'antd';
 import styles from './index.module.scss';
 import { titleCol } from '@/enum/common';
 import { NestedCheckboxes } from '@repo/shared-methods';
-import { raceOptions, ethnicityOptions } from '@/enum/loan';
+import { ethnicityOptions, raceOptions } from '@/enum/loan';
 import { useGetOptions } from '@repo/shared-methods/hooks';
+
 const Demographics = ({ gutter = 24, form }) => {
 	const { getSelectFormDom } = useGetOptions([
 		{

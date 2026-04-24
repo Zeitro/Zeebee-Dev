@@ -1,6 +1,6 @@
 'use client';
-import { useRef } from 'react';
 import type { ComponentRef } from 'react';
+import { useRef } from 'react';
 import SignaturePad from 'react-signature-pad-wrapper';
 import { NewModal } from '@repo/shared-methods';
 import { message } from 'antd';
