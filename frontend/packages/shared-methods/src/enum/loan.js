@@ -1,7 +1,7 @@
 import { HomeOutlined } from '@ant-design/icons';
 import { formatAmount } from '@repo/shared-methods/utils';
 import { PERMISSIONS } from '@config/permissions'; // admin/lender/borrower都需要的权限
-// start------dashboard-----
+// dashboard loan------------------------start------------------------
 export const loansSourceTypeOptions = [
 	{ value: 'All', label: 'All loans' },
 	{ value: 'ZeeBee', label: 'ZeeBee loans' },
@@ -29,8 +29,9 @@ export const filterTimeCount = [
 	{ value: 15, label: 'Last 15 days' },
 	{ value: 30, label: 'Last 30 days' },
 ];
-// end------dashboard-----
-// start------create zeeBee loan/loan details-----
+// dashboard loan------------------------end------------------------
+
+// create zeeBee loan/loan details------------------------start------------------------
 export const tinOptions = [
 	{ label: 'SSN', value: 'SSN' },
 	{ label: 'ITIN', value: 'ITIN' },
@@ -135,9 +136,9 @@ export const raceOptions = [
 		isRadio: true,
 	},
 ];
+// create zeeBee loan/loan details------------------------end------------------------
 
-// loan details
-
+// Lender、Admin端zeeBeeLoan详情菜单------------------------start------------------------
 export const createZeeBeeSteps = [
 	{
 		title: 'Borrower information',
@@ -258,7 +259,9 @@ export const zeeBeeDetailsTabs = [
 		value: 'documents',
 	},
 ];
+// Lender、Admin端zeeBeeLoan详情菜单------------------------end------------------------
 
+// Loan状态阶段颜色------------------------start------------------------
 export const stageColor = {
 	Pending: 'var(--base-primary)',
 	Active: 'var(--base-success)',
@@ -288,7 +291,9 @@ export const pendingStatusColor = {
 		border: 'var(--purple-medium)',
 	},
 };
+// Loan状态阶段颜色------------------------end------------------------
 
+// zeeBeeLoan details字段------------------------start------------------------
 export const pendingFields = [
 	{ label: 'ID', value: 'code' },
 	{ label: 'Target closing date', value: 'closing_date' },
@@ -350,3 +355,4 @@ export const loanDetailsFields = {
 	Archived: archivedFields,
 	Draft: pendingFields,
 };
+// zeeBeeLoan details字段------------------------end------------------------
