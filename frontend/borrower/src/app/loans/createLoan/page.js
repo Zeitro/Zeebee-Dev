@@ -7,7 +7,7 @@ import CreateTerm from '../components/Create/term';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createLoanSteps } from '@/enum/loan';
 import { createRequest } from '@repo/shared-methods/utils';
-import { loan_pending } from '@/enum/common';
+import { loan_pending } from '@repo/shared-methods/enum';
 import { BtnPopUpModal } from '@repo/shared-methods';
 import _ from 'lodash';
 import QuoteBtn from '../components/Quote';
