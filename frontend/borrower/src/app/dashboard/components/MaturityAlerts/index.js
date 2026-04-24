@@ -56,7 +56,7 @@ const MaturityAlerts = ({ list, source, handleGotoLoanDetails }) => {
 		const loadFn = () => loadInitList();
 		loadFn();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [source]);
 
 	return (
 		<div className="border rounded-lg border-base-border lg:col-span-1 p-4 bg-background">
