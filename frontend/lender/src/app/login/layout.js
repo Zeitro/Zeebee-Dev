@@ -1,11 +1,12 @@
 'use client';
-import { useUserStore, usePermissionStore } from '@repo/shared-methods/store';
+import { usePermissionStore, useUserStore } from '@repo/shared-methods/store';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 import { flattenNavRouter, matchRoute } from '@repo/shared-methods/utils';
 // import { localStorageUtil } from '@/lib/local';
 import { noTokenRouter } from '@config/routes';
+
 const LoginLayout = ({ children }) => {
 	const router = useRouter();
 	const pathname = usePathname();
