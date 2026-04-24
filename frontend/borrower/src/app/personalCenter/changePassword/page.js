@@ -2,7 +2,7 @@
 
 import { Button, Form, Input, message } from 'antd';
 import { useState } from 'react';
-import ConfirmPassword from '@/app/login/components/ConfirmPassword';
+import { ConfirmPassWord } from '@repo/shared-methods';
 import { localStorageUtil, passwordRegex } from '@repo/shared-methods/utils';
 import { debounce } from 'lodash';
 import { useUserStore } from '@repo/shared-methods/store';
@@ -68,7 +68,7 @@ const ChangePassword = () => {
 				>
 					<Input.Password placeholder="Old password" className="w-full" allowClear />
 				</Form.Item>
-				<ConfirmPassword passwordPlaceholder="New password" passwordName="new_password" />
+				<ConfirmPassWord passwordPlaceholder="New password" passwordName="new_password" />
 				<div className="pt-8 flex justify-center">
 					<Button
 						type="primary"

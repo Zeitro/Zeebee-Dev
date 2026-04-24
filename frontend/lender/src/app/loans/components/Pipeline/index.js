@@ -5,7 +5,7 @@ import AccountCircle from '@/assets/images/account_circle.svg';
 import SellSvg from '@/assets/images/sell.svg';
 import Calender from '@/assets/images/calendar_today.svg';
 import { MultiVirtuosoDndKit } from '@repo/shared-methods';
-import { pendingStatusColor } from '@/enum/loan';
+import { pendingStatusColor } from '@repo/shared-methods/enum';
 import {
 	assemblyAddress,
 	createRequest,

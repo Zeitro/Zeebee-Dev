@@ -3,7 +3,7 @@ import React from 'react';
 import { Col, Form, InputNumber, Radio, Row, Select } from 'antd';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import { useGetOptions } from '@repo/shared-methods/hooks';
-import { layoutCol, titleCol, yesNoOptions } from '@/enum/common';
+import { layoutCol, titleCol, yesNoOptions } from '@repo/shared-methods/enum';
 
 let name = 'property';
 const PropertyInfo = ({ gutter = 24, unitInfo }) => {
