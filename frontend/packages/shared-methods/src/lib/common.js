@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import Cookies from 'js-cookie';
 import { matchRoute } from './commonRouter';
+
 /**
  * 公共方法封装（格式化或验证相关写在format文件）
  * */

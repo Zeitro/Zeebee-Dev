@@ -1,11 +1,12 @@
 'use client';
-import React, { useMemo, useState, useRef } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { ReloadOutlined } from '@ant-design/icons';
 import { FilterTable } from '@repo/shared-methods';
 import { activeColumns } from './column';
-import { transformArrayStructure, createRequest } from '@repo/shared-methods/utils';
+import { createRequest, transformArrayStructure } from '@repo/shared-methods/utils';
 import { useOptionsStore } from '@repo/shared-methods/store';
 import useOpt from './useOpt';
+
 const ActiveLoans = ({
 	hasFilterField,
 	hasPagination,

@@ -2,6 +2,7 @@
 import Image from 'next/image';
 import React from 'react';
 import styles from './index.module.scss';
+
 const EstimateLoanLayout = ({ children }) => {
 	return (
 		<div className="h-full w-full flex flex-col">

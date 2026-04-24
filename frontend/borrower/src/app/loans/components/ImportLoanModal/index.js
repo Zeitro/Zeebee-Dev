@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { DownloadOutlined, InboxOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import { DownloadFileButton, UploadFileButton, NewModal, initConfigFn } from '@repo/shared-methods';
+import { DownloadFileButton, initConfigFn, NewModal, UploadFileButton } from '@repo/shared-methods';
 import { createRequest, eventBus } from '@repo/shared-methods/utils';
 import { Modal } from 'antd';
+
 const ImportLoanModal = ({ setOpen }) => {
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [fileList, setFileList] = useState([]);

@@ -6,6 +6,7 @@ import HeaderBtn from '../HeaderBtn';
 import { AddDocument } from '../AddDocument';
 import { useSearchParams } from 'next/navigation';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
+
 const Closing = ({ disabledOperate, rowData, id }) => {
 	const [lenderList, setLenderList] = useState([]);
 	const searchParams = useSearchParams();

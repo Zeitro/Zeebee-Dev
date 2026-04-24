@@ -6,6 +6,7 @@ import { AddEditBtn } from './components/AddEditBtn';
 import { Form, message } from 'antd';
 import _ from 'lodash';
 import { useDeferredSyncEffects } from '@repo/shared-methods/hooks';
+
 const paramsKeyInfo = {
 	transactionHistory: 'transaction_experiences',
 	realEstate: 'real_estate_experiences',

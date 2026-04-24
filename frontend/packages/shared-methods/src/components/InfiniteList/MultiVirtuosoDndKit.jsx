@@ -8,7 +8,7 @@ import useContent from './useContent';
 // 多列虚拟滚动+拖拽
 export function MultiVirtuosoDndKit({
 	items, // [ { value: 'a', label:'A', list:[], total:0 } ]
-	setItems, 
+	setItems,
 	itemHeight = 160,
 	enableDrag = false,
 	renderHeader,

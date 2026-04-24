@@ -2,6 +2,7 @@
 import { Button } from 'antd';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
+
 const SendRegisterTips = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
