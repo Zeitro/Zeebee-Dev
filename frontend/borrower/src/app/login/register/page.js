@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useUserStore } from '@repo/shared-methods/store';
 import { capitalizeFirstLetter, emailRegex, validateRule } from '@repo/shared-methods/utils';
 import styles from '../index.module.scss';
-import ConfirmPassWord from '../components/ConfirmPassword';
+import { ConfirmPassWord } from '@repo/shared-methods';
 import { throttle } from 'lodash';
 
 const Register = () => {

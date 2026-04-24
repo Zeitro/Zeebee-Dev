@@ -4,7 +4,7 @@ import Image from 'next/image';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { sort_asc, sort_des } from '@/enum/properties';
-import { asc, des } from '@/enum/common';
+import { des, asc } from '@repo/shared-methods/enum';
 import PropertiesItem from './components/propertiesItem';
 import { createRequest, getPagination, transformArrayStructure } from '@repo/shared-methods/utils';
 import { Spin } from 'antd';
