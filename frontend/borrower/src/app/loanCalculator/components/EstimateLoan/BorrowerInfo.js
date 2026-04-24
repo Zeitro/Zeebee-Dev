@@ -8,7 +8,7 @@ import {
 	nameRegex,
 	validateRule,
 } from '@repo/shared-methods/utils';
-import { titleCol } from '@/enum/common';
+import { titleCol } from '@repo/shared-methods/enum';
 import { InputPhone } from '@repo/shared-methods';
 
 const BorrowerInfo = ({ gutter = 24, children }) => {
