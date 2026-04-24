@@ -4,8 +4,9 @@ import { Badge, Form, Radio, Skeleton, Steps, Tabs } from 'antd';
 import React, { useEffect } from 'react';
 import useCreate from '../components/CreateZeeBee/hooks/useCreate';
 import { assemblyAddress } from '@repo/shared-methods/utils';
-import { stageColor, pendingStatusColor, loanDetailsFields } from '@/enum/loan';
+import { loanDetailsFields, pendingStatusColor, stageColor } from '@/enum/loan';
 import HomeSvg from '@/assets/images/home.svg';
+
 const ZeeBeeDetails = () => {
 	const {
 		getTabsItem,

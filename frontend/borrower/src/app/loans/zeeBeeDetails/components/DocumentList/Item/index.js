@@ -10,6 +10,7 @@ import styles from '../index.module.scss';
 import { DeleteBtn, ViewFile } from '@repo/shared-methods';
 import { createRequest, eventBus } from '@repo/shared-methods/utils';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
+
 const DocumentItem = ({ columns, item, isHide }) => {
 	const [activeKey, setActiveKey] = useState([]);
 	const [loading, setLoading] = useState(false);

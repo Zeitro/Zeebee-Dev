@@ -11,6 +11,7 @@ import { loan_pending } from '@/enum/common';
 import { BtnPopUpModal } from '@repo/shared-methods';
 import _ from 'lodash';
 import QuoteBtn from '../components/Quote';
+
 const CreateLoanPage = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();

@@ -6,12 +6,13 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
 	eventBus,
-	getCurrentRouterItem,
 	flattenNavRouter,
 	getCrumbs,
+	getCurrentRouterItem,
 } from '@repo/shared-methods/utils';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 import { useUserStore } from '@repo/shared-methods/store';
+
 /**
  * 面包屑导航
  * isShowCrumbs：true时不受router内配置的hideCrumbs影响，直接显示

@@ -1,5 +1,6 @@
 import { getFileTypeBySuffix } from '../lib/common';
 import { createRequest } from '../lib/fetch';
+
 const { request, uploadWithProgress } = createRequest();
 // 公共的下拉字段
 export const getSelectOptions = (name) => {

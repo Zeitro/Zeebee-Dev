@@ -6,6 +6,7 @@ import SignIn from './components/SignIn';
 import SendResetPasswordEmail, {
 	ResetPasswordEmailTips,
 } from './components/SendResetPasswordEmail';
+
 const Login = () => {
 	const [form] = Form.useForm();
 	const [pageType, setPageType] = useState('signIn');

@@ -4,24 +4,24 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createZeeBeeSteps, zeeBeeDetailsTabs } from '@/enum/loan';
 import {
-	createRequest,
-	flattenObjectPaths,
-	eventBus,
 	assemblyAddress,
+	createRequest,
+	eventBus,
+	flattenObjectPaths,
 } from '@repo/shared-methods/utils';
 // import ApplicantInfo from '../ApplicantInfo';
 import {
 	ApplicantInfo,
 	BorrowerInfo,
-	PropertyInfo,
-	LoanDetail,
-	Experience,
-	ThirdPartyService,
+	contractSignatureZones,
 	Declaration,
 	Demographics,
-	ReviewAndSign,
-	contractSignatureZones,
+	Experience,
 	LeaveAndSaveDraftBtn,
+	LoanDetail,
+	PropertyInfo,
+	ReviewAndSign,
+	ThirdPartyService,
 } from '@repo/shared-methods';
 // import BorrowerInfo from '../BorrowerInfo';
 // import PropertyInfo from '../PropertyInfo';
@@ -35,6 +35,7 @@ import Documents from '../../../zeeBeeDetails/components/Documents';
 // import ReviewAndSign, { contractSignatureZones } from '../ReviewAndSign';
 import _ from 'lodash';
 import { uploadAwsS3 } from '@repo/shared-methods/api';
+
 const initialValues = {
 	applicants: [{ type: 'Individual', is_primary: true }],
 };

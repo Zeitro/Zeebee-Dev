@@ -7,6 +7,7 @@ import styles from '../index.module.scss';
 import ConfirmPassWord from '../components/ConfirmPassword';
 import { throttle } from 'lodash';
 import useContent from '../components/useContent';
+
 const ResetPassword = () => {
 	const [form] = Form.useForm();
 	const router = useRouter();

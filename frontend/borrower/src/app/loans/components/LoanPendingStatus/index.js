@@ -5,6 +5,7 @@ import { DownOutlined } from '@ant-design/icons';
 import styles from './index.module.css';
 import { createRequest, transformArrayStructure } from '@repo/shared-methods/utils';
 import { useOptionsStore } from '@repo/shared-methods/store';
+
 let api = '/api/loan/status';
 
 /**

@@ -1,15 +1,15 @@
 import React from 'react';
 import styles from './index.module.scss';
-import { Row, Col, Form, Select, Input, InputNumber, Button } from 'antd';
+import { Button, Col, Form, Input, InputNumber, Row, Select } from 'antd';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
 import {
-	emailRegex,
-	phoneRegex,
 	creditScoreRegex,
-	minCreditScore,
+	emailRegex,
 	maxCreditScore,
-	validateRule,
+	minCreditScore,
+	phoneRegex,
 	tinOrSSNRegex,
+	validateRule,
 } from '@repo/shared-methods/utils';
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { layoutCol, titleCol } from '@/enum/common';
@@ -17,6 +17,7 @@ import { useGetOptions } from '@repo/shared-methods/hooks';
 import { CommonFormDate, InputNameCombination, InputPhone, InputTIN } from '@repo/shared-methods';
 import SelectCard from '@/components/SelectCard';
 import _ from 'lodash';
+
 const ApplicantInfo = ({
 	gutter = 24,
 	addressProps,

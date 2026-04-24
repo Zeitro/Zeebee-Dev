@@ -8,15 +8,16 @@ import { useParams, useRouter } from 'next/navigation';
 import { createLoanSteps } from '@/enum/loan';
 import styles from './index.module.scss';
 import {
-	eventBus,
 	assemblyAddress,
 	changeUnitByPropertyType,
 	createRequest,
+	eventBus,
 } from '@repo/shared-methods/utils';
 import { useGlobalStore } from '@/store/global';
 import QuoteBtn from '../components/Quote';
 import { PermissionSlot } from '@repo/shared-methods';
 import { PERMISSIONS } from '@config/permissions';
+
 const initialValues = {
 	applicants: [{ is_primary: true, type: 'Individual' }],
 };
