@@ -5,6 +5,7 @@ import TableLoan from './components/ListView';
 import PipelinePendingLoan from './components/Pipeline';
 import { NewHeader } from '@repo/shared-methods';
 import { createRequest } from '@repo/shared-methods/utils';
+
 const Loans = () => {
 	const { cancelAll } = createRequest();
 	const [type, setType] = useState('list');

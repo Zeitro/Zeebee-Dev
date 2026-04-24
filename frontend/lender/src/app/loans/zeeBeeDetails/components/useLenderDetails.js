@@ -2,7 +2,7 @@
 import { Button, Form, message } from 'antd';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { createZeeBeeSteps, zeeBeeDetailsTabs, lenderDetailsSteps } from '@/enum/loan';
+import { createZeeBeeSteps, lenderDetailsSteps, zeeBeeDetailsTabs } from '@/enum/loan';
 // import ApplicantInfo from '../../components/CreateZeeBee/ApplicantInfo';
 // import BorrowerInfo from '../../components/CreateZeeBee/BorrowerInfo';
 // import PropertyInfo from '../../components/CreateZeeBee/PropertyInfo';
@@ -15,32 +15,31 @@ import { createZeeBeeSteps, zeeBeeDetailsTabs, lenderDetailsSteps } from '@/enum
 import {
 	ApplicantInfo,
 	BorrowerInfo,
-	PropertyInfo,
-	LoanDetail,
-	Experience,
-	ThirdPartyService,
 	Declaration,
 	Demographics,
+	Experience,
+	LoanDetail,
+	PropertyInfo,
 	ReviewAndSign,
-	// contractSignatureZones,
-	// LeaveAndSaveDraftBtn,
+	ThirdPartyService,
 } from '@repo/shared-methods';
 import Quoting from './Quoting';
 import Processing from './Processing';
 import Closing from './Closing';
 import _ from 'lodash';
 import {
+	assemblyAddress,
+	createRequest,
+	eventBus,
 	findItem,
 	flattenArray,
-	assemblyAddress,
-	eventBus,
-	createRequest,
 } from '@repo/shared-methods/utils';
 import { uploadAwsS3 } from '@repo/shared-methods/api';
 import General from '../../components/CreateZeeBee/General';
 import HeaderBtn from './HeaderBtn';
 import { EditOutlined } from '@ant-design/icons';
 import SaveSvg from '@/assets/images/save.svg';
+
 const initialValues = {
 	applicants: [{ type: 'Individual', is_primary: true }],
 };

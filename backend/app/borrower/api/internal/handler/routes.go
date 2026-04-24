@@ -304,6 +304,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: loan.ApplyHandler(serverCtx),
 				},
 				{
+					// dashboard
+					Method:  http.MethodPost,
+					Path:    "/loan/dashboard",
+					Handler: loan.DashboardHandler(serverCtx),
+				},
+				{
 					// create draft
 					Method:  http.MethodPost,
 					Path:    "/loan/draft",

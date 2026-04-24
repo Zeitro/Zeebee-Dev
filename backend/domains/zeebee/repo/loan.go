@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"time"
 
+	"github.com/duke-git/lancet/v2/datetime"
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/errorx"
@@ -127,6 +129,8 @@ func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq dto.LoanBorro
 
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
+	dateField, isMaturityDate := repo.mapDateField(filter.DateType)
+
 	query := repo.Client(ctx).
 		Where(fmt.Sprintf("%s.borrower_organization_id = ?", loanTable), filter.OrganizationId).
 		Preload("Property").
@@ -173,6 +177,27 @@ func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq dto.LoanBorro
 	if len(filter.PendingStatus) > 0 {
 		query = query.Where(fmt.Sprintf("%s.pending_status in ?", loanTable), filter.PendingStatus)
 	}
+	// resource type
+	if len(filter.Source) > 0 {
+		query = query.Where(fmt.Sprintf("%s.source in ?", loanTable), filter.Source)
+	}
+
+	// date
+	if filter.StartDate != nil && filter.StartDate.Valid {
+		startDate := datetime.BeginOfDay(filter.StartDate.Time)
+		query = query.Where(fmt.Sprintf("%s.%s >= ?", loanTable, dateField), startDate)
+	}
+	if filter.EndDate != nil && filter.EndDate.Valid {
+		endDate := datetime.EndOfDay(filter.EndDate.Time)
+		query = query.Where(fmt.Sprintf("%s.%s <= ?", loanTable, dateField), endDate)
+	}
+
+	if isMaturityDate {
+		today := datetime.BeginOfDay(time.Now())
+		dueDate := datetime.BeginOfDay(today.AddDate(0, 0, int(filter.DueInDays)))
+		query = query.Where(fmt.Sprintf("%s.maturity_date <= ?", loanTable), dueDate)
+	}
+
 	sortColumns := []string{}
 
 	// sort
@@ -219,6 +244,44 @@ func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq dto.LoanBorro
 	return
 }
 
+// SummaryForBorrower
+func (repo *LoanRepo) SummaryForBorrower(ctx context.Context, req dto.LoanSummaryRequestDto) (result *dto.LoanSummaryResponseDto, err error) {
+
+	dateField, _ := repo.mapDateField(req.DateType)
+
+	query := repo.Client(ctx).
+		Where("borrower_organization_id = ?", req.OrganizationId)
+	if len(req.Source) > 0 {
+		query = query.Where("source in ?", req.Source)
+	}
+	if len(req.Stage) > 0 {
+		query = query.Where("stage = ?", req.Stage)
+	}
+
+	if req.StartDate != nil && req.StartDate.Valid {
+		startDate := datetime.BeginOfDay(req.StartDate.Time)
+		query = query.Where(fmt.Sprintf("%s >= ?", dateField), startDate)
+	}
+	if req.EndDate != nil && req.EndDate.Valid {
+		endDate := datetime.EndOfDay(req.EndDate.Time)
+		query = query.Where(fmt.Sprintf("%s <= ?", dateField), endDate)
+	}
+
+	fields := []string{
+		"sum(total_amount) as total_loan_amount",
+		"sum(principal_amount) as total_principal_amount",
+		"sum(monthly_payment) as total_monthly_payment",
+		"sum(closing_fund) as total_closing_fund_amount",
+		"sum(holdback_released_amount) as total_holdback_released_amount",
+		"sum(holdback_amount) as total_holdback_amount",
+		"sum(reserves_amount) as total_reserves_amount",
+		"avg(rate) as average_rate",
+	}
+	err = query.Select(fields).
+		Scan(&result).Error
+	return result, errorx.WithStack(err)
+}
+
 func (repo *LoanRepo) PageForLender(ctx context.Context, pageReq dto.LoanLenderPageRequestDto) (page gormx.PageResponse[*model.Loan], err error) {
 	loanTable := model.Loan{}.TableName()
 	loanPropertyTable := model.LoanProperty{}.TableName()
@@ -246,7 +309,7 @@ func (repo *LoanRepo) PageForLender(ctx context.Context, pageReq dto.LoanLenderP
 		Preload("Applicants")
 	if len(filter.Stage) > 0 {
 		query = query.Where(fmt.Sprintf("%s.stage = ?", loanTable), filter.Stage)
-		if filter.Stage == string(constants.LoanStageDraft) {
+		if filter.Stage == constants.LoanStageDraft {
 			resources = append(resources, constants.LoanSourcePreapproval)
 		}
 	}
@@ -356,7 +419,7 @@ func (repo *LoanRepo) PageForAdmin(ctx context.Context, pageReq dto.LoanAdminPag
 	sources := []constants.LoanSource{constants.LoanSourceSystem}
 	if len(filter.Stage) > 0 {
 		query = query.Where(fmt.Sprintf("%s.stage = ?", loanTable), filter.Stage)
-		if filter.Stage == string(constants.LoanStageDraft) {
+		if filter.Stage == constants.LoanStageDraft {
 			sources = append(sources, constants.LoanSourcePreapproval)
 		}
 	}
@@ -495,4 +558,20 @@ func (repo *LoanRepo) GetByBorrowerPropertyId(ctx context.Context, borrowerPrope
 		Where(fmt.Sprintf("%s.id = ?", borrowerPropertyTable), borrowerPropertyId).
 		Find(&result).Error
 	return result, errorx.WithStack(err)
+}
+
+// mapDateField
+func (repo *LoanRepo) mapDateField(dateType string) (dateField string, isMaturityDate bool) {
+
+	switch dateType {
+	case "maturity_date":
+		dateField = "maturity_date"
+	case "closing_date":
+		dateField = "closing_date"
+	case "update":
+		dateField = "updated_at"
+	default:
+		dateField = "updated_at"
+	}
+	return dateField, dateType == "maturity_date"
 }

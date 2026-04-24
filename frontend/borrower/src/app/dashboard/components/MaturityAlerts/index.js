@@ -4,7 +4,7 @@ import ListModal from './ListModal';
 import SettingModal from './SettingModal';
 import { useCallback, useEffect, useState } from 'react';
 import { SettingOutlined } from '@ant-design/icons';
-import { createRequest, getPagination } from '@repo/shared-methods/utils';
+import { createRequest } from '@repo/shared-methods/utils';
 import { NoData } from '@repo/shared-methods';
 
 const MaturityAlerts = ({ list, source, handleGotoLoanDetails }) => {

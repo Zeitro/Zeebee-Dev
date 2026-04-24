@@ -5,6 +5,7 @@ import { InboxOutlined } from '@ant-design/icons';
 import ArticleSvg from '@/assets/images/article.svg';
 import { DownloadFileButton, UploadFileButton, ViewFile } from '@repo/shared-methods';
 import { Space } from 'antd';
+
 const Documents = () => {
 	const [fileList, setFileList] = useState([]);
 	return (

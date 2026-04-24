@@ -7,6 +7,7 @@ import { useGetOptions } from '@repo/shared-methods/hooks';
 import InputNumAmount from '@/components/InputNumAmount';
 import CommonFormDate from '@/components/CommonDate';
 import { yesNoOptions } from '@/enum/common';
+
 export const AddExperience = ({ title, rowData = {}, type, onOk, onCancel }) => {
 	const [form] = Form.useForm();
 	const [confirmLoading, setConfirmLoading] = useState(false);

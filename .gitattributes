@@ -1,35 +1,31 @@
-# Line ending normalization for backend (Go) only
-# Frontend and other directories remain unchanged
+* text=auto eol=lf
 
-# Auto detect backend text files and normalize to LF
-backend/** text=auto eol=lf
+*.go     text eol=lf
+*.js     text eol=lf
+*.ts     text eol=lf
+*.tsx    text eol=lf
+*.jsx    text eol=lf
+*.json   text eol=lf
+*.yml    text eol=lf
+*.yaml   text eol=lf
+*.xml    text eol=lf
+*.md     text eol=lf
+*.sh     text eol=lf
+*.sql    text eol=lf
+*.proto  text eol=lf
+*.api    text eol=lf
 
-# Backend source code files
-backend/**/*.go text eol=lf
-backend/**/*.proto text eol=lf
-backend/**/*.api text eol=lf
-backend/**/*.sql text eol=lf
-backend/**/*.json text eol=lf
-backend/**/*.yaml text eol=lf
-backend/**/*.yml text eol=lf
-backend/**/*.xml text eol=lf
-backend/**/*.md text eol=lf
-backend/**/*.txt text eol=lf
-backend/**/*.sh text eol=lf
+*.bat    text eol=crlf
+*.cmd    text eol=crlf
+*.ps1    text eol=crlf
 
-# Backend specific files
-backend/**/go.mod text eol=lf
-backend/**/go.sum text eol=lf
-backend/**/Makefile text eol=lf
-backend/**/Dockerfile text eol=lf
-backend/**/.dockerignore text eol=lf
-
-# Binary files should not be modified
-backend/**/*.png binary
-backend/**/*.jpg binary
-backend/**/*.jpeg binary
-backend/**/*.gif binary
-backend/**/*.ico binary
-backend/**/*.pdf binary
-backend/**/*.zip binary
-backend/**/*.tar.gz binary
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.ico    binary
+*.pdf    binary
+*.zip    binary
+*.tar.gz binary
+*.exe    binary
+*.dll    binary

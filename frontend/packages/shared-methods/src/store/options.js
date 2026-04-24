@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { getSelectOptions, getLenders, getBorrowers } from '@repo/shared-methods/api';
+import { getBorrowers, getLenders, getSelectOptions } from '@repo/shared-methods/api';
+
 export const useOptionsStore = create((set) => ({
 	// loan创建或详情时需要的下拉选项
 	lenderOptions: [],
