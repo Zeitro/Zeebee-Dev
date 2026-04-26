@@ -135,41 +135,29 @@ service admin-api {
 	@doc "select option"
 	@handler OrganizationSelectOption
 	get /organization/select_options (OrganizationSelectOptionRequest) returns (OrganizationOptionResponse)
-}
 
-// ============= organization service end ============
-// ============= lender discover start ============
-@server (
-	desc:       "admin-api service"
-	version:    v1
-	group:      lender_discover
-	prefix:     /api/v1
-	middleware: AuthMiddleware
-	tags:       lender_discover
-)
-service admin-api {
 	@doc "lender discover get settings"
 	@handler LenderDiscoverGetSettings
-	get /lender_discover/settings (EmptyRequest) returns (LenderDiscoverSettingsResponse)
+	get /organization/discover/settings (EmptyRequest) returns (LenderDiscoverSettingsResponse)
 
 	@doc "lender discover update settings"
 	@handler LenderDiscoverUpdateSettings
-	put /lender_discover/settings (LenderDiscoverUpdateSettingsRequest) returns (LenderDiscoverSettingsResponse)
+	put /organization/discover/settings (LenderDiscoverUpdateSettingsRequest) returns (LenderDiscoverSettingsResponse)
 
 	@doc "lender discover preview (OpenAI + dedupe, no insert)"
 	@handler LenderDiscoverPreview
-	post /lender_discover/preview (EmptyRequest) returns (LenderDiscoverPreviewResponse)
+	post /organization/discover/preview (EmptyRequest) returns (LenderDiscoverPreviewResponse)
 
 	@doc "lender discover commit selected new lenders"
 	@handler LenderDiscoverCommit
-	post /lender_discover/commit (LenderDiscoverCommitRequest) returns (LenderDiscoverRunResponse)
+	post /organization/discover/commit (LenderDiscoverCommitRequest) returns (LenderDiscoverRunResponse)
 
 	@doc "lender discover latest run"
 	@handler LenderDiscoverLatestRun
-	get /lender_discover/runs/latest (EmptyRequest) returns (LenderDiscoverRunResponse)
+	get /organization/discover/runs/latest (EmptyRequest) returns (LenderDiscoverRunResponse)
 }
 
-// ============= lender discover end ============
+// ============= organization service end ============
 // ============== organization user start ============
 @server (
 	desc:       "admin-api service"

@@ -8,8 +8,8 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/global"
+	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	domainlenderdiscover "zeebee-backend/domains/zeebee/lenderdiscover"
 )
@@ -17,6 +17,8 @@ import (
 const schedulerLockKey = "lender_discover:scheduler"
 const schedulerLockTTL = 45 * time.Minute
 const tickInterval = 5 * time.Minute
+
+const lastScheduledSuccessKey = "lender_discover:last_scheduled_success"
 
 // StartLenderDiscoverScheduler runs a background ticker that may trigger scheduled discover jobs.
 func StartLenderDiscoverScheduler(svcCtx *svc.ServiceContext) {
@@ -30,12 +32,12 @@ func StartLenderDiscoverScheduler(svcCtx *svc.ServiceContext) {
 }
 
 func tryRunScheduled(ctx context.Context, svcCtx *svc.ServiceContext) {
-	settings, err := svcCtx.LenderDiscoverSettingsRepo.GetSingleton(ctx)
+	cfg, _, err := domainlenderdiscover.LoadConfig(ctx, svcCtx.OrganizationSettingRepo)
 	if err != nil {
 		logx.WithContext(ctx).Errorf("lender discover scheduler: load settings: %v", err)
 		return
 	}
-	if !settings.ScheduleEnabled {
+	if !cfg.ScheduleEnabled {
 		return
 	}
 	apiKey := strings.TrimSpace(svcCtx.Config.OpenAIConf.APIKey)
@@ -46,23 +48,27 @@ func tryRunScheduled(ctx context.Context, svcCtx *svc.ServiceContext) {
 		return
 	}
 
-	lastFinPtr, err := svcCtx.LenderDiscoverRunRepo.LastSuccessfulScheduledFinished(ctx)
-	if err != nil {
-		logx.WithContext(ctx).Errorf("lender discover scheduler: last run: %v", err)
-		return
-	}
-	now := time.Now().UTC()
-	if lastFinPtr != nil {
-		due := lastFinPtr.AddDate(0, 0, int(settings.IntervalDays))
-		if now.Before(due) {
-			return
-		}
-	}
-
 	rds := global.GetRedis()
 	if rds == nil {
 		return
 	}
+
+	now := time.Now().UTC()
+	lastStr, err := rds.Get(ctx, lastScheduledSuccessKey)
+	if err != nil {
+		logx.WithContext(ctx).Errorf("lender discover scheduler: redis get last run: %v", err)
+		return
+	}
+	if lastStr != "" {
+		lastTime, parseErr := time.Parse(time.RFC3339, lastStr)
+		if parseErr == nil {
+			due := lastTime.AddDate(0, 0, int(cfg.IntervalDays))
+			if now.Before(due) {
+				return
+			}
+		}
+	}
+
 	ok, err := rds.SetNX(ctx, schedulerLockKey, "1", schedulerLockTTL)
 	if err != nil || !ok {
 		return
@@ -78,5 +84,11 @@ func tryRunScheduled(ctx context.Context, svcCtx *svc.ServiceContext) {
 	}
 	if _, err := rn.Run(ctx, domainlenderdiscover.TriggerScheduled); err != nil {
 		logx.WithContext(ctx).Errorf("lender discover scheduled run failed: %v", err)
+		return
+	}
+
+	ttlSeconds := int(cfg.IntervalDays) * 2 * 86400
+	if setErr := rds.SetExpire(ctx, lastScheduledSuccessKey, now.Format(time.RFC3339), ttlSeconds); setErr != nil {
+		logx.WithContext(ctx).Errorf("lender discover scheduler: redis set last run: %v", setErr)
 	}
 }

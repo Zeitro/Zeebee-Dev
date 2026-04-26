@@ -1,11 +1,10 @@
-package lender_discover
+package organization
 
 import (
 	"context"
 
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
-	"zeebee-backend/common/errorx"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,16 +25,7 @@ func NewLenderDiscoverCommitLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 func (l *LenderDiscoverCommitLogic) LenderDiscoverCommit(req *types.LenderDiscoverCommitRequest) (resp *types.LenderDiscoverRunResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
-	rpcResp, err := l.svcCtx.LenderDiscoverRpcClient.Commit(context.WithoutCancel(l.ctx), typesCommitRequestToProto(req))
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-	return &types.LenderDiscoverRunResponse{
-		Data: protoRunToTypes(rpcResp.GetData()),
-	}, nil
+	// todo: add your logic here and delete this line
+
+	return
 }

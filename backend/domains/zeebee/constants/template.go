@@ -11,7 +11,12 @@ const BorrowerPreapprovalLetterEmailName = "PreApprovalLetterEmail"
 
 const (
 	OrganizationPurposePreapprovalLetter = "preApprovedLetter"
+	OrganizationPurposeLenderDiscover    = "lenderDiscover"
 )
+
+// OrganizationIdPublicDiscoverSettings is the default public / platform org id used for global
+// lender discover settings (organization_settings row with purpose OrganizationPurposeLenderDiscover).
+const OrganizationIdPublicDiscoverSettings int64 = 1
 
 type TemplateCategory string
 

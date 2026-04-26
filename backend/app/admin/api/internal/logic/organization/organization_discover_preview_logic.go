@@ -1,4 +1,4 @@
-package lender_discover
+package organization
 
 import (
 	"context"
@@ -11,34 +11,36 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type LenderDiscoverPreviewLogic struct {
+type OrganizationDiscoverPreviewLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-// lender discover preview (OpenAI + dedupe, no insert)
-func NewLenderDiscoverPreviewLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LenderDiscoverPreviewLogic {
-	return &LenderDiscoverPreviewLogic{
+func NewOrganizationDiscoverPreviewLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OrganizationDiscoverPreviewLogic {
+	return &OrganizationDiscoverPreviewLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *LenderDiscoverPreviewLogic) LenderDiscoverPreview(_ *types.EmptyRequest) (resp *types.LenderDiscoverPreviewResponse, err error) {
+func (l *OrganizationDiscoverPreviewLogic) LenderDiscoverPreview(_ *types.EmptyRequest) (resp *types.LenderDiscoverPreviewResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	rpcResp, err := l.svcCtx.LenderDiscoverRpcClient.Preview(context.WithoutCancel(l.ctx), &admin.EmptyRequest{})
+	rpcResp, err := l.svcCtx.OrganizationRpcClient.DiscoverPreview(context.WithoutCancel(l.ctx), &admin.EmptyRequest{})
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
 	var data types.LenderDiscoverPreviewData
 	if rpcResp.GetData() != nil {
-		data = protoPreviewDataToTypes(rpcResp.GetData())
+		data, err = discoverProtoPreviewDataToTypes(rpcResp.GetData())
+		if err != nil {
+			return nil, err
+		}
 	}
 	return &types.LenderDiscoverPreviewResponse{Data: data}, nil
 }

@@ -199,13 +199,23 @@ func (l *OrganizationLogic) SwitchStatus(ctx context.Context, input dto.Organiza
 	}
 
 	// Use transaction to update both organization and organization users
+	previousStatus := organization.Status
 	err = l.repos.OrganizationRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 
 		// Update organization status
 		organization.Status = newStatus
-		if newStatus == constants.OrganizationStatusActive && organization.Order < 2 {
-			organization.Order = 2
+
+		// When transitioning from a non-active state (e.g. discover "Not activated")
+		// to Active, append the org to the end of its type's list so it does not
+		// jump ahead of existing active orgs just because discover seeded order = 1.
+		if newStatus == constants.OrganizationStatusActive && previousStatus != constants.OrganizationStatusActive {
+			var maxOrder int
+			maxOrder, innerErr = l.repos.OrganizationRepo.MaxOrderByTypeWithTx(ctx, tx, organization.Type)
+			if innerErr != nil {
+				return innerErr
+			}
+			organization.Order = maxOrder + 1
 		}
 		_, innerErr = l.repos.OrganizationRepo.UpdateOneByIdWithTx(ctx, tx, organization.Id, organization)
 		if innerErr != nil {

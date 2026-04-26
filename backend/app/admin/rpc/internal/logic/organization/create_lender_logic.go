@@ -73,7 +73,13 @@ func (l *CreateLenderLogic) CreateLender(in *admin.OrganizationCreateLenderReque
 	orgInput.Type = constants.UserTypeLender
 	orgInput.OwnerType = constants.OrganizationOwnerTypeThirdParty
 	orgInput.Source = constants.OrganizationSourceManual
-	orgInput.Order = 2
+
+	// Append the new lender at the end of the lender list.
+	maxOrder, err := l.svcCtx.OrganizationRepo.MaxOrderByType(l.ctx, constants.UserTypeLender)
+	if err != nil {
+		return nil, err
+	}
+	orgInput.Order = maxOrder + 1
 
 	// Register with organization
 	_, organizationUser, err := l.baseLogic.UserLogic.RegisterWithOrganization(l.ctx, *userInput, *orgInput, constants.UserTypeLender, true)

@@ -1,5 +1,5 @@
--- Lender org provenance: manual (admin UI create) vs search (OpenAI discover).
+-- Lender org provenance: Manual (admin UI create) vs Search (OpenAI discover).
 ALTER TABLE organizations
-    ADD COLUMN IF NOT EXISTS source VARCHAR(16) NOT NULL DEFAULT 'manual';
+    ADD COLUMN IF NOT EXISTS source VARCHAR(16) NOT NULL DEFAULT 'Manual';
 
-COMMENT ON COLUMN organizations.source IS 'manual | search';
+COMMENT ON COLUMN organizations.source IS 'Manual | Search';

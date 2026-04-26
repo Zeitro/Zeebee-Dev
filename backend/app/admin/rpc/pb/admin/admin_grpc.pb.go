@@ -1481,14 +1481,20 @@ var Role_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	Organization_Page_FullMethodName          = "/admin.organization/Page"
-	Organization_CreateLender_FullMethodName  = "/admin.organization/CreateLender"
-	Organization_UpdateLender_FullMethodName  = "/admin.organization/UpdateLender"
-	Organization_Detail_FullMethodName        = "/admin.organization/Detail"
-	Organization_Delete_FullMethodName        = "/admin.organization/Delete"
-	Organization_UpdateOrder_FullMethodName   = "/admin.organization/UpdateOrder"
-	Organization_SwitchStatus_FullMethodName  = "/admin.organization/SwitchStatus"
-	Organization_SelectOptions_FullMethodName = "/admin.organization/SelectOptions"
+	Organization_Page_FullMethodName                   = "/admin.organization/Page"
+	Organization_CreateLender_FullMethodName           = "/admin.organization/CreateLender"
+	Organization_UpdateLender_FullMethodName           = "/admin.organization/UpdateLender"
+	Organization_Detail_FullMethodName                 = "/admin.organization/Detail"
+	Organization_Delete_FullMethodName                 = "/admin.organization/Delete"
+	Organization_UpdateOrder_FullMethodName            = "/admin.organization/UpdateOrder"
+	Organization_SwitchStatus_FullMethodName           = "/admin.organization/SwitchStatus"
+	Organization_SelectOptions_FullMethodName          = "/admin.organization/SelectOptions"
+	Organization_DiscoverGetSettings_FullMethodName    = "/admin.organization/DiscoverGetSettings"
+	Organization_DiscoverUpdateSettings_FullMethodName = "/admin.organization/DiscoverUpdateSettings"
+	Organization_DiscoverRun_FullMethodName            = "/admin.organization/DiscoverRun"
+	Organization_DiscoverPreview_FullMethodName        = "/admin.organization/DiscoverPreview"
+	Organization_DiscoverCommit_FullMethodName         = "/admin.organization/DiscoverCommit"
+	Organization_DiscoverLatestRun_FullMethodName      = "/admin.organization/DiscoverLatestRun"
 )
 
 // OrganizationClient is the client API for Organization service.
@@ -1503,6 +1509,13 @@ type OrganizationClient interface {
 	UpdateOrder(ctx context.Context, in *OrganizationUpdateOrderRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	SwitchStatus(ctx context.Context, in *OrganizationSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	SelectOptions(ctx context.Context, in *OrganizationSelectOptionsRequest, opts ...grpc.CallOption) (*OrganizationSelectOptionsResponse, error)
+	// lender discover (organization-scoped)
+	DiscoverGetSettings(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverSettingsResponse, error)
+	DiscoverUpdateSettings(ctx context.Context, in *LenderDiscoverUpdateSettingsRequest, opts ...grpc.CallOption) (*LenderDiscoverSettingsResponse, error)
+	DiscoverRun(ctx context.Context, in *LenderDiscoverRunRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error)
+	DiscoverPreview(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverPreviewResponse, error)
+	DiscoverCommit(ctx context.Context, in *LenderDiscoverCommitRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error)
+	DiscoverLatestRun(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error)
 }
 
 type organizationClient struct {
@@ -1593,6 +1606,66 @@ func (c *organizationClient) SelectOptions(ctx context.Context, in *Organization
 	return out, nil
 }
 
+func (c *organizationClient) DiscoverGetSettings(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverSettingsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LenderDiscoverSettingsResponse)
+	err := c.cc.Invoke(ctx, Organization_DiscoverGetSettings_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationClient) DiscoverUpdateSettings(ctx context.Context, in *LenderDiscoverUpdateSettingsRequest, opts ...grpc.CallOption) (*LenderDiscoverSettingsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LenderDiscoverSettingsResponse)
+	err := c.cc.Invoke(ctx, Organization_DiscoverUpdateSettings_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationClient) DiscoverRun(ctx context.Context, in *LenderDiscoverRunRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LenderDiscoverRunResponse)
+	err := c.cc.Invoke(ctx, Organization_DiscoverRun_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationClient) DiscoverPreview(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverPreviewResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LenderDiscoverPreviewResponse)
+	err := c.cc.Invoke(ctx, Organization_DiscoverPreview_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationClient) DiscoverCommit(ctx context.Context, in *LenderDiscoverCommitRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LenderDiscoverRunResponse)
+	err := c.cc.Invoke(ctx, Organization_DiscoverCommit_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationClient) DiscoverLatestRun(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LenderDiscoverRunResponse)
+	err := c.cc.Invoke(ctx, Organization_DiscoverLatestRun_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrganizationServer is the server API for Organization service.
 // All implementations must embed UnimplementedOrganizationServer
 // for forward compatibility.
@@ -1605,6 +1678,13 @@ type OrganizationServer interface {
 	UpdateOrder(context.Context, *OrganizationUpdateOrderRequest) (*EmptyResponse, error)
 	SwitchStatus(context.Context, *OrganizationSwitchStatusRequest) (*EmptyResponse, error)
 	SelectOptions(context.Context, *OrganizationSelectOptionsRequest) (*OrganizationSelectOptionsResponse, error)
+	// lender discover (organization-scoped)
+	DiscoverGetSettings(context.Context, *EmptyRequest) (*LenderDiscoverSettingsResponse, error)
+	DiscoverUpdateSettings(context.Context, *LenderDiscoverUpdateSettingsRequest) (*LenderDiscoverSettingsResponse, error)
+	DiscoverRun(context.Context, *LenderDiscoverRunRequest) (*LenderDiscoverRunResponse, error)
+	DiscoverPreview(context.Context, *EmptyRequest) (*LenderDiscoverPreviewResponse, error)
+	DiscoverCommit(context.Context, *LenderDiscoverCommitRequest) (*LenderDiscoverRunResponse, error)
+	DiscoverLatestRun(context.Context, *EmptyRequest) (*LenderDiscoverRunResponse, error)
 	mustEmbedUnimplementedOrganizationServer()
 }
 
@@ -1638,6 +1718,24 @@ func (UnimplementedOrganizationServer) SwitchStatus(context.Context, *Organizati
 }
 func (UnimplementedOrganizationServer) SelectOptions(context.Context, *OrganizationSelectOptionsRequest) (*OrganizationSelectOptionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SelectOptions not implemented")
+}
+func (UnimplementedOrganizationServer) DiscoverGetSettings(context.Context, *EmptyRequest) (*LenderDiscoverSettingsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DiscoverGetSettings not implemented")
+}
+func (UnimplementedOrganizationServer) DiscoverUpdateSettings(context.Context, *LenderDiscoverUpdateSettingsRequest) (*LenderDiscoverSettingsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DiscoverUpdateSettings not implemented")
+}
+func (UnimplementedOrganizationServer) DiscoverRun(context.Context, *LenderDiscoverRunRequest) (*LenderDiscoverRunResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DiscoverRun not implemented")
+}
+func (UnimplementedOrganizationServer) DiscoverPreview(context.Context, *EmptyRequest) (*LenderDiscoverPreviewResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DiscoverPreview not implemented")
+}
+func (UnimplementedOrganizationServer) DiscoverCommit(context.Context, *LenderDiscoverCommitRequest) (*LenderDiscoverRunResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DiscoverCommit not implemented")
+}
+func (UnimplementedOrganizationServer) DiscoverLatestRun(context.Context, *EmptyRequest) (*LenderDiscoverRunResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DiscoverLatestRun not implemented")
 }
 func (UnimplementedOrganizationServer) mustEmbedUnimplementedOrganizationServer() {}
 func (UnimplementedOrganizationServer) testEmbeddedByValue()                      {}
@@ -1804,6 +1902,114 @@ func _Organization_SelectOptions_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Organization_DiscoverGetSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServer).DiscoverGetSettings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Organization_DiscoverGetSettings_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServer).DiscoverGetSettings(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Organization_DiscoverUpdateSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LenderDiscoverUpdateSettingsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServer).DiscoverUpdateSettings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Organization_DiscoverUpdateSettings_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServer).DiscoverUpdateSettings(ctx, req.(*LenderDiscoverUpdateSettingsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Organization_DiscoverRun_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LenderDiscoverRunRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServer).DiscoverRun(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Organization_DiscoverRun_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServer).DiscoverRun(ctx, req.(*LenderDiscoverRunRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Organization_DiscoverPreview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServer).DiscoverPreview(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Organization_DiscoverPreview_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServer).DiscoverPreview(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Organization_DiscoverCommit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LenderDiscoverCommitRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServer).DiscoverCommit(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Organization_DiscoverCommit_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServer).DiscoverCommit(ctx, req.(*LenderDiscoverCommitRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Organization_DiscoverLatestRun_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServer).DiscoverLatestRun(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Organization_DiscoverLatestRun_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServer).DiscoverLatestRun(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Organization_ServiceDesc is the grpc.ServiceDesc for Organization service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1842,6 +2048,30 @@ var Organization_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SelectOptions",
 			Handler:    _Organization_SelectOptions_Handler,
+		},
+		{
+			MethodName: "DiscoverGetSettings",
+			Handler:    _Organization_DiscoverGetSettings_Handler,
+		},
+		{
+			MethodName: "DiscoverUpdateSettings",
+			Handler:    _Organization_DiscoverUpdateSettings_Handler,
+		},
+		{
+			MethodName: "DiscoverRun",
+			Handler:    _Organization_DiscoverRun_Handler,
+		},
+		{
+			MethodName: "DiscoverPreview",
+			Handler:    _Organization_DiscoverPreview_Handler,
+		},
+		{
+			MethodName: "DiscoverCommit",
+			Handler:    _Organization_DiscoverCommit_Handler,
+		},
+		{
+			MethodName: "DiscoverLatestRun",
+			Handler:    _Organization_DiscoverLatestRun_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -2846,298 +3076,6 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AuthCheck",
 			Handler:    _Auth_AuthCheck_Handler,
-		},
-	},
-	Streams:  []grpc.StreamDesc{},
-	Metadata: "app/admin/rpc/pb/admin.proto",
-}
-
-const (
-	LenderDiscover_GetSettings_FullMethodName    = "/admin.LenderDiscover/GetSettings"
-	LenderDiscover_UpdateSettings_FullMethodName = "/admin.LenderDiscover/UpdateSettings"
-	LenderDiscover_Run_FullMethodName            = "/admin.LenderDiscover/Run"
-	LenderDiscover_Preview_FullMethodName        = "/admin.LenderDiscover/Preview"
-	LenderDiscover_Commit_FullMethodName         = "/admin.LenderDiscover/Commit"
-	LenderDiscover_LatestRun_FullMethodName      = "/admin.LenderDiscover/LatestRun"
-)
-
-// LenderDiscoverClient is the client API for LenderDiscover service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type LenderDiscoverClient interface {
-	GetSettings(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverSettingsResponse, error)
-	UpdateSettings(ctx context.Context, in *LenderDiscoverUpdateSettingsRequest, opts ...grpc.CallOption) (*LenderDiscoverSettingsResponse, error)
-	Run(ctx context.Context, in *LenderDiscoverRunRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error)
-	Preview(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverPreviewResponse, error)
-	Commit(ctx context.Context, in *LenderDiscoverCommitRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error)
-	LatestRun(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error)
-}
-
-type lenderDiscoverClient struct {
-	cc grpc.ClientConnInterface
-}
-
-func NewLenderDiscoverClient(cc grpc.ClientConnInterface) LenderDiscoverClient {
-	return &lenderDiscoverClient{cc}
-}
-
-func (c *lenderDiscoverClient) GetSettings(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverSettingsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(LenderDiscoverSettingsResponse)
-	err := c.cc.Invoke(ctx, LenderDiscover_GetSettings_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *lenderDiscoverClient) UpdateSettings(ctx context.Context, in *LenderDiscoverUpdateSettingsRequest, opts ...grpc.CallOption) (*LenderDiscoverSettingsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(LenderDiscoverSettingsResponse)
-	err := c.cc.Invoke(ctx, LenderDiscover_UpdateSettings_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *lenderDiscoverClient) Run(ctx context.Context, in *LenderDiscoverRunRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(LenderDiscoverRunResponse)
-	err := c.cc.Invoke(ctx, LenderDiscover_Run_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *lenderDiscoverClient) Preview(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverPreviewResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(LenderDiscoverPreviewResponse)
-	err := c.cc.Invoke(ctx, LenderDiscover_Preview_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *lenderDiscoverClient) Commit(ctx context.Context, in *LenderDiscoverCommitRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(LenderDiscoverRunResponse)
-	err := c.cc.Invoke(ctx, LenderDiscover_Commit_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *lenderDiscoverClient) LatestRun(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(LenderDiscoverRunResponse)
-	err := c.cc.Invoke(ctx, LenderDiscover_LatestRun_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// LenderDiscoverServer is the server API for LenderDiscover service.
-// All implementations must embed UnimplementedLenderDiscoverServer
-// for forward compatibility.
-type LenderDiscoverServer interface {
-	GetSettings(context.Context, *EmptyRequest) (*LenderDiscoverSettingsResponse, error)
-	UpdateSettings(context.Context, *LenderDiscoverUpdateSettingsRequest) (*LenderDiscoverSettingsResponse, error)
-	Run(context.Context, *LenderDiscoverRunRequest) (*LenderDiscoverRunResponse, error)
-	Preview(context.Context, *EmptyRequest) (*LenderDiscoverPreviewResponse, error)
-	Commit(context.Context, *LenderDiscoverCommitRequest) (*LenderDiscoverRunResponse, error)
-	LatestRun(context.Context, *EmptyRequest) (*LenderDiscoverRunResponse, error)
-	mustEmbedUnimplementedLenderDiscoverServer()
-}
-
-// UnimplementedLenderDiscoverServer must be embedded to have
-// forward compatible implementations.
-//
-// NOTE: this should be embedded by value instead of pointer to avoid a nil
-// pointer dereference when methods are called.
-type UnimplementedLenderDiscoverServer struct{}
-
-func (UnimplementedLenderDiscoverServer) GetSettings(context.Context, *EmptyRequest) (*LenderDiscoverSettingsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetSettings not implemented")
-}
-func (UnimplementedLenderDiscoverServer) UpdateSettings(context.Context, *LenderDiscoverUpdateSettingsRequest) (*LenderDiscoverSettingsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateSettings not implemented")
-}
-func (UnimplementedLenderDiscoverServer) Run(context.Context, *LenderDiscoverRunRequest) (*LenderDiscoverRunResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Run not implemented")
-}
-func (UnimplementedLenderDiscoverServer) Preview(context.Context, *EmptyRequest) (*LenderDiscoverPreviewResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Preview not implemented")
-}
-func (UnimplementedLenderDiscoverServer) Commit(context.Context, *LenderDiscoverCommitRequest) (*LenderDiscoverRunResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Commit not implemented")
-}
-func (UnimplementedLenderDiscoverServer) LatestRun(context.Context, *EmptyRequest) (*LenderDiscoverRunResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method LatestRun not implemented")
-}
-func (UnimplementedLenderDiscoverServer) mustEmbedUnimplementedLenderDiscoverServer() {}
-func (UnimplementedLenderDiscoverServer) testEmbeddedByValue()                        {}
-
-// UnsafeLenderDiscoverServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to LenderDiscoverServer will
-// result in compilation errors.
-type UnsafeLenderDiscoverServer interface {
-	mustEmbedUnimplementedLenderDiscoverServer()
-}
-
-func RegisterLenderDiscoverServer(s grpc.ServiceRegistrar, srv LenderDiscoverServer) {
-	// If the following call pancis, it indicates UnimplementedLenderDiscoverServer was
-	// embedded by pointer and is nil.  This will cause panics if an
-	// unimplemented method is ever invoked, so we test this at initialization
-	// time to prevent it from happening at runtime later due to I/O.
-	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
-		t.testEmbeddedByValue()
-	}
-	s.RegisterService(&LenderDiscover_ServiceDesc, srv)
-}
-
-func _LenderDiscover_GetSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(LenderDiscoverServer).GetSettings(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: LenderDiscover_GetSettings_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LenderDiscoverServer).GetSettings(ctx, req.(*EmptyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _LenderDiscover_UpdateSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LenderDiscoverUpdateSettingsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(LenderDiscoverServer).UpdateSettings(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: LenderDiscover_UpdateSettings_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LenderDiscoverServer).UpdateSettings(ctx, req.(*LenderDiscoverUpdateSettingsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _LenderDiscover_Run_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LenderDiscoverRunRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(LenderDiscoverServer).Run(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: LenderDiscover_Run_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LenderDiscoverServer).Run(ctx, req.(*LenderDiscoverRunRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _LenderDiscover_Preview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(LenderDiscoverServer).Preview(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: LenderDiscover_Preview_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LenderDiscoverServer).Preview(ctx, req.(*EmptyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _LenderDiscover_Commit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LenderDiscoverCommitRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(LenderDiscoverServer).Commit(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: LenderDiscover_Commit_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LenderDiscoverServer).Commit(ctx, req.(*LenderDiscoverCommitRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _LenderDiscover_LatestRun_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(LenderDiscoverServer).LatestRun(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: LenderDiscover_LatestRun_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LenderDiscoverServer).LatestRun(ctx, req.(*EmptyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-// LenderDiscover_ServiceDesc is the grpc.ServiceDesc for LenderDiscover service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var LenderDiscover_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "admin.LenderDiscover",
-	HandlerType: (*LenderDiscoverServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "GetSettings",
-			Handler:    _LenderDiscover_GetSettings_Handler,
-		},
-		{
-			MethodName: "UpdateSettings",
-			Handler:    _LenderDiscover_UpdateSettings_Handler,
-		},
-		{
-			MethodName: "Run",
-			Handler:    _LenderDiscover_Run_Handler,
-		},
-		{
-			MethodName: "Preview",
-			Handler:    _LenderDiscover_Preview_Handler,
-		},
-		{
-			MethodName: "Commit",
-			Handler:    _LenderDiscover_Commit_Handler,
-		},
-		{
-			MethodName: "LatestRun",
-			Handler:    _LenderDiscover_LatestRun_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

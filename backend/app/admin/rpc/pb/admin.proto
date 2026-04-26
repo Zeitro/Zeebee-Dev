@@ -850,6 +850,14 @@ service organization {
   rpc SwitchStatus(OrganizationSwitchStatusRequest) returns(EmptyResponse);
   rpc SelectOptions(OrganizationSelectOptionsRequest) returns(OrganizationSelectOptionsResponse);
   //  rpc AllLender(EmptyRequest) returns(OrganizationSelectOptionsResponse);
+
+  // lender discover (organization-scoped)
+  rpc DiscoverGetSettings(EmptyRequest) returns(LenderDiscoverSettingsResponse);
+  rpc DiscoverUpdateSettings(LenderDiscoverUpdateSettingsRequest) returns(LenderDiscoverSettingsResponse);
+  rpc DiscoverRun(LenderDiscoverRunRequest) returns(LenderDiscoverRunResponse);
+  rpc DiscoverPreview(EmptyRequest) returns(LenderDiscoverPreviewResponse);
+  rpc DiscoverCommit(LenderDiscoverCommitRequest) returns(LenderDiscoverRunResponse);
+  rpc DiscoverLatestRun(EmptyRequest) returns(LenderDiscoverRunResponse);
 }
 // =================== organization service end =================
 
@@ -1583,12 +1591,4 @@ message LenderDiscoverCommitLender {
   OrganizationLenderMetadataEntity lender_metadata = 9;
 }
 
-service LenderDiscover {
-  rpc GetSettings(EmptyRequest) returns (LenderDiscoverSettingsResponse);
-  rpc UpdateSettings(LenderDiscoverUpdateSettingsRequest) returns (LenderDiscoverSettingsResponse);
-  rpc Run(LenderDiscoverRunRequest) returns (LenderDiscoverRunResponse);
-  rpc Preview(EmptyRequest) returns (LenderDiscoverPreviewResponse);
-  rpc Commit(LenderDiscoverCommitRequest) returns (LenderDiscoverRunResponse);
-  rpc LatestRun(EmptyRequest) returns (LenderDiscoverRunResponse);
-}
 // ========== lender discover end ====================
