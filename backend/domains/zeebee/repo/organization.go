@@ -50,13 +50,80 @@ func NewOrganizationRepo(db *gorm.DB) *OrganizationRepo {
 	}
 }
 
-// UpdateOrder updates the display order of an organization.
-func (r *OrganizationRepo) UpdateOrder(ctx context.Context, id int64, order int) (err error) {
-	err = r.Client(ctx).
-		Model(&model.Organization{}).
-		Where("id = ?", id).
-		Update(`"order"`, order).Error
+// UpdateOrder updates the display order of an organization and cascades the
+// existing occupants so that the target org ends up at the requested slot.
+//
+// Behavior (scoped to the same organization type):
+//   - If newOrder == oldOrder: no-op.
+//   - If newOrder <  oldOrder (moving up): every other org with order in
+//     [newOrder, oldOrder) shifts down by +1 to make room.
+//   - If newOrder >  oldOrder (moving down): every other org with order in
+//     (oldOrder, newOrder] shifts up by -1 to close the gap.
+//
+// All writes happen in a single transaction.
+func (r *OrganizationRepo) UpdateOrder(ctx context.Context, id int64, newOrder int) (err error) {
+	err = r.Transaction(ctx, func(tx *gorm.DB) error {
+		var current model.Organization
+		if innerErr := tx.WithContext(ctx).
+			Select("id", "type", `"order"`).
+			Where("id = ?", id).
+			First(&current).Error; innerErr != nil {
+			return innerErr
+		}
+
+		oldOrder := current.Order
+		if oldOrder == newOrder {
+			return nil
+		}
+
+		if newOrder < oldOrder {
+			if innerErr := tx.WithContext(ctx).
+				Model(&model.Organization{}).
+				Where(`type = ? AND id <> ? AND "order" >= ? AND "order" < ?`,
+					current.Type, id, newOrder, oldOrder).
+				UpdateColumn(`"order"`, gorm.Expr(`"order" + 1`)).Error; innerErr != nil {
+				return innerErr
+			}
+		} else {
+			if innerErr := tx.WithContext(ctx).
+				Model(&model.Organization{}).
+				Where(`type = ? AND id <> ? AND "order" > ? AND "order" <= ?`,
+					current.Type, id, oldOrder, newOrder).
+				UpdateColumn(`"order"`, gorm.Expr(`"order" - 1`)).Error; innerErr != nil {
+				return innerErr
+			}
+		}
+
+		return tx.WithContext(ctx).
+			Model(&model.Organization{}).
+			Where("id = ?", id).
+			UpdateColumn(`"order"`, newOrder).Error
+	})
 	return errorx.WithStack(err)
+}
+
+// MaxOrderByType is the non-transactional variant of MaxOrderByTypeWithTx.
+func (r *OrganizationRepo) MaxOrderByType(ctx context.Context, organizationType constants.UserType) (int, error) {
+	return r.MaxOrderByTypeWithTx(ctx, r.Client(ctx), organizationType)
+}
+
+// MaxOrderByTypeWithTx returns the largest "order" value among organizations
+// of the given type. Returns -1 when no rows exist so callers can safely use
+// (max + 1) as the next append slot (starting at 0).
+func (r *OrganizationRepo) MaxOrderByTypeWithTx(ctx context.Context, tx *gorm.DB, organizationType constants.UserType) (int, error) {
+	var max *int
+	err := tx.WithContext(ctx).
+		Model(&model.Organization{}).
+		Where("type = ?", organizationType).
+		Select(`COALESCE(MAX("order"), -1)`).
+		Scan(&max).Error
+	if err != nil {
+		return 0, errorx.WithStack(err)
+	}
+	if max == nil {
+		return -1, nil
+	}
+	return *max, nil
 }
 
 // UpdateOwnerIdWithTx update owner id with transaction

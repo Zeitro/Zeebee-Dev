@@ -110,7 +110,13 @@ func (l *UpdateLenderLogic) UpdateLender(in *admin.OrganizationUpdateLenderReque
 		org.Name = preservedName
 		if wasNA {
 			org.Status = constants.OrganizationStatusActive
-			org.Order = 2
+			// Append the newly activated lender at the end of the lender list.
+			var maxOrder int
+			maxOrder, innerErr = l.svcCtx.OrganizationRepo.MaxOrderByTypeWithTx(l.ctx, tx, constants.UserTypeLender)
+			if innerErr != nil {
+				return innerErr
+			}
+			org.Order = maxOrder + 1
 		}
 		_, innerErr = l.svcCtx.OrganizationRepo.UpdateOneByIdWithTx(l.ctx, tx, in.Data.Id, org)
 		return innerErr

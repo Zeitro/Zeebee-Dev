@@ -62,3 +62,34 @@ func (s *OrganizationServer) SelectOptions(ctx context.Context, in *admin.Organi
 	l := organizationlogic.NewSelectOptionsLogic(ctx, s.svcCtx)
 	return l.SelectOptions(in)
 }
+
+// lender discover (organization-scoped)
+func (s *OrganizationServer) DiscoverGetSettings(ctx context.Context, in *admin.EmptyRequest) (*admin.LenderDiscoverSettingsResponse, error) {
+	l := organizationlogic.NewDiscoverGetSettingsLogic(ctx, s.svcCtx)
+	return l.DiscoverGetSettings(in)
+}
+
+func (s *OrganizationServer) DiscoverUpdateSettings(ctx context.Context, in *admin.LenderDiscoverUpdateSettingsRequest) (*admin.LenderDiscoverSettingsResponse, error) {
+	l := organizationlogic.NewDiscoverUpdateSettingsLogic(ctx, s.svcCtx)
+	return l.DiscoverUpdateSettings(in)
+}
+
+func (s *OrganizationServer) DiscoverRun(ctx context.Context, in *admin.LenderDiscoverRunRequest) (*admin.LenderDiscoverRunResponse, error) {
+	l := organizationlogic.NewDiscoverRunLogic(ctx, s.svcCtx)
+	return l.DiscoverRun(in)
+}
+
+func (s *OrganizationServer) DiscoverPreview(ctx context.Context, in *admin.EmptyRequest) (*admin.LenderDiscoverPreviewResponse, error) {
+	l := organizationlogic.NewDiscoverPreviewLogic(ctx, s.svcCtx)
+	return l.DiscoverPreview(in)
+}
+
+func (s *OrganizationServer) DiscoverCommit(ctx context.Context, in *admin.LenderDiscoverCommitRequest) (*admin.LenderDiscoverRunResponse, error) {
+	l := organizationlogic.NewDiscoverCommitLogic(ctx, s.svcCtx)
+	return l.DiscoverCommit(in)
+}
+
+func (s *OrganizationServer) DiscoverLatestRun(ctx context.Context, in *admin.EmptyRequest) (*admin.LenderDiscoverRunResponse, error) {
+	l := organizationlogic.NewDiscoverLatestRunLogic(ctx, s.svcCtx)
+	return l.DiscoverLatestRun(in)
+}

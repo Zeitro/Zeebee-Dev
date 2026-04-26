@@ -156,14 +156,9 @@
           "description": "select option",
           "auth_required": true,
           "permission_required": true
-        }
-      ]
-    },
-    {
-      "group": "lender_discover",
-      "apis": [
+        },
         {
-          "path": "/api/v1/lender_discover/settings",
+          "path": "/api/v1/organization/discover/settings",
           "method": "GET",
           "name": "lender discover get settings",
           "description": "lender discover get settings",
@@ -171,7 +166,7 @@
           "permission_required": true
         },
         {
-          "path": "/api/v1/lender_discover/settings",
+          "path": "/api/v1/organization/discover/settings",
           "method": "PUT",
           "name": "lender discover update settings",
           "description": "lender discover update settings",
@@ -179,7 +174,7 @@
           "permission_required": true
         },
         {
-          "path": "/api/v1/lender_discover/preview",
+          "path": "/api/v1/organization/discover/preview",
           "method": "POST",
           "name": "lender discover preview",
           "description": "lender discover preview (OpenAI + dedupe, no insert)",
@@ -187,7 +182,7 @@
           "permission_required": true
         },
         {
-          "path": "/api/v1/lender_discover/commit",
+          "path": "/api/v1/organization/discover/commit",
           "method": "POST",
           "name": "lender discover commit",
           "description": "lender discover commit selected lenders",
@@ -195,7 +190,7 @@
           "permission_required": true
         },
         {
-          "path": "/api/v1/lender_discover/runs/latest",
+          "path": "/api/v1/organization/discover/runs/latest",
           "method": "GET",
           "name": "lender discover latest run",
           "description": "lender discover latest run",

@@ -1,4 +1,4 @@
-package lenderdiscover
+package organizationlogic
 
 import (
 	"context"
@@ -14,21 +14,21 @@ import (
 	domainlenderdiscover "zeebee-backend/domains/zeebee/lenderdiscover"
 )
 
-type PreviewLogic struct {
+type DiscoverPreviewLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewPreviewLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PreviewLogic {
-	return &PreviewLogic{
+func NewDiscoverPreviewLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DiscoverPreviewLogic {
+	return &DiscoverPreviewLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *PreviewLogic) Preview(_ *admin.EmptyRequest) (resp *admin.LenderDiscoverPreviewResponse, err error) {
+func (l *DiscoverPreviewLogic) DiscoverPreview(_ *admin.EmptyRequest) (resp *admin.LenderDiscoverPreviewResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -54,7 +54,11 @@ func (l *PreviewLogic) Preview(_ *admin.EmptyRequest) (resp *admin.LenderDiscove
 	var newN, existedN int32
 	for i := range cands {
 		c := &cands[i]
-		protoList = append(protoList, candidateToProto(c))
+		ent, transErr := discoverCandidateToProto(c)
+		if transErr != nil {
+			return nil, transErr
+		}
+		protoList = append(protoList, ent)
 		if c.DedupeStatus == domainlenderdiscover.DedupeNew {
 			newN++
 		} else {
@@ -63,9 +67,9 @@ func (l *PreviewLogic) Preview(_ *admin.EmptyRequest) (resp *admin.LenderDiscove
 	}
 	return &admin.LenderDiscoverPreviewResponse{
 		Data: &admin.LenderDiscoverPreviewResponseData{
-			Candidates:    protoList,
-			NewCount:      newN,
-			ExistedCount:  existedN,
+			Candidates:   protoList,
+			NewCount:     newN,
+			ExistedCount: existedN,
 		},
 	}, nil
 }

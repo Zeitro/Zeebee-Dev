@@ -15496,7 +15496,7 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x06Detail\x12\x18.admin.RoleDetailRequest\x1a\x19.admin.RoleDetailResponse\x12D\n" +
 	"\fSwitchStatus\x12\x1e.admin.RoleSwitchStatusRequest\x1a\x14.admin.EmptyResponse\x124\n" +
 	"\x03All\x12\x15.admin.RoleAllRequest\x1a\x16.admin.RoleAllResponse\x12_\n" +
-	"\x17AssignOrganizationUsers\x12).admin.RoleAssignOrganizationUsersRequest\x1a\x19.admin.RoleDetailResponse2\xfc\x04\n" +
+	"\x17AssignOrganizationUsers\x12).admin.RoleAssignOrganizationUsersRequest\x1a\x19.admin.RoleDetailResponse2\x80\t\n" +
 	"\forganization\x12G\n" +
 	"\x04Page\x12\x1e.admin.OrganizationPageRequest\x1a\x1f.admin.OrganizationPageResponse\x12Y\n" +
 	"\fCreateLender\x12&.admin.OrganizationCreateLenderRequest\x1a!.admin.OrganizationDetailResponse\x12Y\n" +
@@ -15505,7 +15505,13 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\x06Delete\x12\x10.admin.IdRequest\x1a\x14.admin.EmptyResponse\x12J\n" +
 	"\vUpdateOrder\x12%.admin.OrganizationUpdateOrderRequest\x1a\x14.admin.EmptyResponse\x12L\n" +
 	"\fSwitchStatus\x12&.admin.OrganizationSwitchStatusRequest\x1a\x14.admin.EmptyResponse\x12b\n" +
-	"\rSelectOptions\x12'.admin.OrganizationSelectOptionsRequest\x1a(.admin.OrganizationSelectOptionsResponse2r\n" +
+	"\rSelectOptions\x12'.admin.OrganizationSelectOptionsRequest\x1a(.admin.OrganizationSelectOptionsResponse\x12Q\n" +
+	"\x13DiscoverGetSettings\x12\x13.admin.EmptyRequest\x1a%.admin.LenderDiscoverSettingsResponse\x12k\n" +
+	"\x16DiscoverUpdateSettings\x12*.admin.LenderDiscoverUpdateSettingsRequest\x1a%.admin.LenderDiscoverSettingsResponse\x12P\n" +
+	"\vDiscoverRun\x12\x1f.admin.LenderDiscoverRunRequest\x1a .admin.LenderDiscoverRunResponse\x12L\n" +
+	"\x0fDiscoverPreview\x12\x13.admin.EmptyRequest\x1a$.admin.LenderDiscoverPreviewResponse\x12V\n" +
+	"\x0eDiscoverCommit\x12\".admin.LenderDiscoverCommitRequest\x1a .admin.LenderDiscoverRunResponse\x12J\n" +
+	"\x11DiscoverLatestRun\x12\x13.admin.EmptyRequest\x1a .admin.LenderDiscoverRunResponse2r\n" +
 	"\aStorage\x12g\n" +
 	"\x12CreatePresignedUrl\x12'.admin.StorageCreatePresignedUrlRequest\x1a(.admin.StorageCreatePresignedUrlResponse2\xf8\x01\n" +
 	"\x06common\x125\n" +
@@ -15530,14 +15536,7 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\fReassignLoan\x12\x1a.admin.ReassignLoanRequest\x1a\x14.admin.EmptyResponse\x12N\n" +
 	"\x13LoanLenderCompanies\x12\x13.admin.EmptyRequest\x1a\".admin.LoanLenderCompaniesResponse2F\n" +
 	"\x04Auth\x12>\n" +
-	"\tAuthCheck\x12\x17.admin.AuthCheckRequest\x1a\x18.admin.AuthCheckResponse2\xe4\x03\n" +
-	"\x0eLenderDiscover\x12I\n" +
-	"\vGetSettings\x12\x13.admin.EmptyRequest\x1a%.admin.LenderDiscoverSettingsResponse\x12c\n" +
-	"\x0eUpdateSettings\x12*.admin.LenderDiscoverUpdateSettingsRequest\x1a%.admin.LenderDiscoverSettingsResponse\x12H\n" +
-	"\x03Run\x12\x1f.admin.LenderDiscoverRunRequest\x1a .admin.LenderDiscoverRunResponse\x12D\n" +
-	"\aPreview\x12\x13.admin.EmptyRequest\x1a$.admin.LenderDiscoverPreviewResponse\x12N\n" +
-	"\x06Commit\x12\".admin.LenderDiscoverCommitRequest\x1a .admin.LenderDiscoverRunResponse\x12B\n" +
-	"\tLatestRun\x12\x13.admin.EmptyRequest\x1a .admin.LenderDiscoverRunResponseB\tZ\a./adminb\x06proto3"
+	"\tAuthCheck\x12\x17.admin.AuthCheckRequest\x1a\x18.admin.AuthCheckResponseB\tZ\a./adminb\x06proto3"
 
 var (
 	file_app_admin_rpc_pb_admin_proto_rawDescOnce sync.Once
@@ -15960,30 +15959,30 @@ var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
 	116, // 195: admin.organization.UpdateOrder:input_type -> admin.OrganizationUpdateOrderRequest
 	118, // 196: admin.organization.SwitchStatus:input_type -> admin.OrganizationSwitchStatusRequest
 	120, // 197: admin.organization.SelectOptions:input_type -> admin.OrganizationSelectOptionsRequest
-	124, // 198: admin.Storage.CreatePresignedUrl:input_type -> admin.StorageCreatePresignedUrlRequest
-	128, // 199: admin.common.GetOpt:input_type -> admin.OptionRequest
-	0,   // 200: admin.common.GetUsState:input_type -> admin.EmptyRequest
-	132, // 201: admin.common.GetUsCities:input_type -> admin.UsCitiesRequest
-	0,   // 202: admin.common.SyncData:input_type -> admin.EmptyRequest
-	138, // 203: admin.BaseTemplate.Create:input_type -> admin.CreateBaseTemplateRequest
-	141, // 204: admin.BaseTemplate.Update:input_type -> admin.UpdateBaseTemplateRequest
-	144, // 205: admin.BaseTemplate.Detail:input_type -> admin.GetBaseTemplateRequest
-	146, // 206: admin.BaseTemplate.Page:input_type -> admin.BaseTemplatePageRequest
-	152, // 207: admin.BaseTemplate.SwitchStatus:input_type -> admin.SwitchBaseTemplateStatusRequest
-	154, // 208: admin.BaseTemplate.Delete:input_type -> admin.DeleteBaseTemplateRequest
-	155, // 209: admin.BaseTemplate.Preview:input_type -> admin.BaseTemplatePreviewRequest
-	3,   // 210: admin.BaseTemplate.Reset:input_type -> admin.IdRequest
-	162, // 211: admin.Loan.LoanPage:input_type -> admin.LoanPageRequest
-	3,   // 212: admin.Loan.LoanDetail:input_type -> admin.IdRequest
-	169, // 213: admin.Loan.ReassignLoan:input_type -> admin.ReassignLoanRequest
-	0,   // 214: admin.Loan.LoanLenderCompanies:input_type -> admin.EmptyRequest
-	186, // 215: admin.Auth.AuthCheck:input_type -> admin.AuthCheckRequest
-	0,   // 216: admin.LenderDiscover.GetSettings:input_type -> admin.EmptyRequest
-	192, // 217: admin.LenderDiscover.UpdateSettings:input_type -> admin.LenderDiscoverUpdateSettingsRequest
-	194, // 218: admin.LenderDiscover.Run:input_type -> admin.LenderDiscoverRunRequest
-	0,   // 219: admin.LenderDiscover.Preview:input_type -> admin.EmptyRequest
-	202, // 220: admin.LenderDiscover.Commit:input_type -> admin.LenderDiscoverCommitRequest
-	0,   // 221: admin.LenderDiscover.LatestRun:input_type -> admin.EmptyRequest
+	0,   // 198: admin.organization.DiscoverGetSettings:input_type -> admin.EmptyRequest
+	192, // 199: admin.organization.DiscoverUpdateSettings:input_type -> admin.LenderDiscoverUpdateSettingsRequest
+	194, // 200: admin.organization.DiscoverRun:input_type -> admin.LenderDiscoverRunRequest
+	0,   // 201: admin.organization.DiscoverPreview:input_type -> admin.EmptyRequest
+	202, // 202: admin.organization.DiscoverCommit:input_type -> admin.LenderDiscoverCommitRequest
+	0,   // 203: admin.organization.DiscoverLatestRun:input_type -> admin.EmptyRequest
+	124, // 204: admin.Storage.CreatePresignedUrl:input_type -> admin.StorageCreatePresignedUrlRequest
+	128, // 205: admin.common.GetOpt:input_type -> admin.OptionRequest
+	0,   // 206: admin.common.GetUsState:input_type -> admin.EmptyRequest
+	132, // 207: admin.common.GetUsCities:input_type -> admin.UsCitiesRequest
+	0,   // 208: admin.common.SyncData:input_type -> admin.EmptyRequest
+	138, // 209: admin.BaseTemplate.Create:input_type -> admin.CreateBaseTemplateRequest
+	141, // 210: admin.BaseTemplate.Update:input_type -> admin.UpdateBaseTemplateRequest
+	144, // 211: admin.BaseTemplate.Detail:input_type -> admin.GetBaseTemplateRequest
+	146, // 212: admin.BaseTemplate.Page:input_type -> admin.BaseTemplatePageRequest
+	152, // 213: admin.BaseTemplate.SwitchStatus:input_type -> admin.SwitchBaseTemplateStatusRequest
+	154, // 214: admin.BaseTemplate.Delete:input_type -> admin.DeleteBaseTemplateRequest
+	155, // 215: admin.BaseTemplate.Preview:input_type -> admin.BaseTemplatePreviewRequest
+	3,   // 216: admin.BaseTemplate.Reset:input_type -> admin.IdRequest
+	162, // 217: admin.Loan.LoanPage:input_type -> admin.LoanPageRequest
+	3,   // 218: admin.Loan.LoanDetail:input_type -> admin.IdRequest
+	169, // 219: admin.Loan.ReassignLoan:input_type -> admin.ReassignLoanRequest
+	0,   // 220: admin.Loan.LoanLenderCompanies:input_type -> admin.EmptyRequest
+	186, // 221: admin.Auth.AuthCheck:input_type -> admin.AuthCheckRequest
 	11,  // 222: admin.User.Login:output_type -> admin.UserLoginResponse
 	15,  // 223: admin.User.RefreshToken:output_type -> admin.RefreshTokenResponse
 	23,  // 224: admin.User.UserInfo:output_type -> admin.UserinfoResponse
@@ -16022,30 +16021,30 @@ var file_app_admin_rpc_pb_admin_proto_depIdxs = []int32{
 	1,   // 257: admin.organization.UpdateOrder:output_type -> admin.EmptyResponse
 	1,   // 258: admin.organization.SwitchStatus:output_type -> admin.EmptyResponse
 	122, // 259: admin.organization.SelectOptions:output_type -> admin.OrganizationSelectOptionsResponse
-	126, // 260: admin.Storage.CreatePresignedUrl:output_type -> admin.StorageCreatePresignedUrlResponse
-	130, // 261: admin.common.GetOpt:output_type -> admin.OptionResponse
-	2,   // 262: admin.common.GetUsState:output_type -> admin.StringSliceResponse
-	2,   // 263: admin.common.GetUsCities:output_type -> admin.StringSliceResponse
-	1,   // 264: admin.common.SyncData:output_type -> admin.EmptyResponse
-	140, // 265: admin.BaseTemplate.Create:output_type -> admin.CreateBaseTemplateResponse
-	143, // 266: admin.BaseTemplate.Update:output_type -> admin.UpdateBaseTemplateResponse
-	145, // 267: admin.BaseTemplate.Detail:output_type -> admin.GetBaseTemplateResponse
-	150, // 268: admin.BaseTemplate.Page:output_type -> admin.BaseTemplatePageResponse
-	1,   // 269: admin.BaseTemplate.SwitchStatus:output_type -> admin.EmptyResponse
-	1,   // 270: admin.BaseTemplate.Delete:output_type -> admin.EmptyResponse
-	157, // 271: admin.BaseTemplate.Preview:output_type -> admin.BaseTemplatePreviewResponse
-	1,   // 272: admin.BaseTemplate.Reset:output_type -> admin.EmptyResponse
-	163, // 273: admin.Loan.LoanPage:output_type -> admin.LoanPageResponse
-	168, // 274: admin.Loan.LoanDetail:output_type -> admin.LoanDetailResponse
-	1,   // 275: admin.Loan.ReassignLoan:output_type -> admin.EmptyResponse
-	171, // 276: admin.Loan.LoanLenderCompanies:output_type -> admin.LoanLenderCompaniesResponse
-	188, // 277: admin.Auth.AuthCheck:output_type -> admin.AuthCheckResponse
-	191, // 278: admin.LenderDiscover.GetSettings:output_type -> admin.LenderDiscoverSettingsResponse
-	191, // 279: admin.LenderDiscover.UpdateSettings:output_type -> admin.LenderDiscoverSettingsResponse
-	198, // 280: admin.LenderDiscover.Run:output_type -> admin.LenderDiscoverRunResponse
-	201, // 281: admin.LenderDiscover.Preview:output_type -> admin.LenderDiscoverPreviewResponse
-	198, // 282: admin.LenderDiscover.Commit:output_type -> admin.LenderDiscoverRunResponse
-	198, // 283: admin.LenderDiscover.LatestRun:output_type -> admin.LenderDiscoverRunResponse
+	191, // 260: admin.organization.DiscoverGetSettings:output_type -> admin.LenderDiscoverSettingsResponse
+	191, // 261: admin.organization.DiscoverUpdateSettings:output_type -> admin.LenderDiscoverSettingsResponse
+	198, // 262: admin.organization.DiscoverRun:output_type -> admin.LenderDiscoverRunResponse
+	201, // 263: admin.organization.DiscoverPreview:output_type -> admin.LenderDiscoverPreviewResponse
+	198, // 264: admin.organization.DiscoverCommit:output_type -> admin.LenderDiscoverRunResponse
+	198, // 265: admin.organization.DiscoverLatestRun:output_type -> admin.LenderDiscoverRunResponse
+	126, // 266: admin.Storage.CreatePresignedUrl:output_type -> admin.StorageCreatePresignedUrlResponse
+	130, // 267: admin.common.GetOpt:output_type -> admin.OptionResponse
+	2,   // 268: admin.common.GetUsState:output_type -> admin.StringSliceResponse
+	2,   // 269: admin.common.GetUsCities:output_type -> admin.StringSliceResponse
+	1,   // 270: admin.common.SyncData:output_type -> admin.EmptyResponse
+	140, // 271: admin.BaseTemplate.Create:output_type -> admin.CreateBaseTemplateResponse
+	143, // 272: admin.BaseTemplate.Update:output_type -> admin.UpdateBaseTemplateResponse
+	145, // 273: admin.BaseTemplate.Detail:output_type -> admin.GetBaseTemplateResponse
+	150, // 274: admin.BaseTemplate.Page:output_type -> admin.BaseTemplatePageResponse
+	1,   // 275: admin.BaseTemplate.SwitchStatus:output_type -> admin.EmptyResponse
+	1,   // 276: admin.BaseTemplate.Delete:output_type -> admin.EmptyResponse
+	157, // 277: admin.BaseTemplate.Preview:output_type -> admin.BaseTemplatePreviewResponse
+	1,   // 278: admin.BaseTemplate.Reset:output_type -> admin.EmptyResponse
+	163, // 279: admin.Loan.LoanPage:output_type -> admin.LoanPageResponse
+	168, // 280: admin.Loan.LoanDetail:output_type -> admin.LoanDetailResponse
+	1,   // 281: admin.Loan.ReassignLoan:output_type -> admin.EmptyResponse
+	171, // 282: admin.Loan.LoanLenderCompanies:output_type -> admin.LoanLenderCompaniesResponse
+	188, // 283: admin.Auth.AuthCheck:output_type -> admin.AuthCheckResponse
 	222, // [222:284] is the sub-list for method output_type
 	160, // [160:222] is the sub-list for method input_type
 	160, // [160:160] is the sub-list for extension type_name
@@ -16066,7 +16065,7 @@ func file_app_admin_rpc_pb_admin_proto_init() {
 			NumEnums:      0,
 			NumMessages:   207,
 			NumExtensions: 0,
-			NumServices:   12,
+			NumServices:   11,
 		},
 		GoTypes:           file_app_admin_rpc_pb_admin_proto_goTypes,
 		DependencyIndexes: file_app_admin_rpc_pb_admin_proto_depIdxs,

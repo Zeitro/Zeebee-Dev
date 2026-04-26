@@ -1,4 +1,4 @@
-package lenderdiscover
+package organizationlogic
 
 import (
 	"context"
@@ -14,28 +14,37 @@ import (
 	domainlenderdiscover "zeebee-backend/domains/zeebee/lenderdiscover"
 )
 
-type RunLogic struct {
+type DiscoverCommitLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewRunLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RunLogic {
-	return &RunLogic{ctx: ctx, svcCtx: svcCtx, Logger: logx.WithContext(ctx)}
+func NewDiscoverCommitLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DiscoverCommitLogic {
+	return &DiscoverCommitLogic{
+		ctx:    ctx,
+		svcCtx: svcCtx,
+		Logger: logx.WithContext(ctx),
+	}
 }
 
-func (l *RunLogic) Run(in *admin.LenderDiscoverRunRequest) (resp *admin.LenderDiscoverRunResponse, err error) {
+func (l *DiscoverCommitLogic) DiscoverCommit(in *admin.LenderDiscoverCommitRequest) (resp *admin.LenderDiscoverRunResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	trigger := domainlenderdiscover.TriggerManual
-	if in.GetData() != nil && in.GetData().GetTrigger() == domainlenderdiscover.TriggerScheduled {
-		trigger = domainlenderdiscover.TriggerScheduled
+	var lenders []*admin.LenderDiscoverCommitLender
+	if in.GetData() != nil {
+		lenders = in.GetData().GetLenders()
 	}
-	if trigger != domainlenderdiscover.TriggerScheduled {
-		return nil, errorx.New("manual discover: use Preview then Commit from the admin UI")
+	raws := make([]domainlenderdiscover.RawLender, 0, len(lenders))
+	for _, p := range lenders {
+		raw, transErr := discoverRawLenderFromCommitProto(p)
+		if transErr != nil {
+			return nil, transErr
+		}
+		raws = append(raws, raw)
 	}
 
 	bl := logic.GetBaseLogic(l.svcCtx)
@@ -50,14 +59,9 @@ func (l *RunLogic) Run(in *admin.LenderDiscoverRunRequest) (resp *admin.LenderDi
 		OpenAIKey:          apiKey,
 		PlaceholderLogoURL: domainlenderdiscover.DefaultPlaceholderLogoURL,
 	}
-	runRow, err := rn.Run(context.WithoutCancel(l.ctx), trigger)
+	result, err := rn.Commit(context.WithoutCancel(l.ctx), raws)
 	if err != nil {
 		return nil, err
 	}
-	// Reload for latest stats/error persisted by runner
-	fresh, err := l.svcCtx.LenderDiscoverRunRepo.GetById(l.ctx, runRow.Id)
-	if err != nil {
-		return &admin.LenderDiscoverRunResponse{Data: runToProto(runRow)}, nil
-	}
-	return &admin.LenderDiscoverRunResponse{Data: runToProto(fresh)}, nil
+	return &admin.LenderDiscoverRunResponse{Data: discoverRunResultToProto(result)}, nil
 }

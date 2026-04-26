@@ -7,4 +7,4 @@ COMMENT ON COLUMN organizations."order" IS 'Display priority: 0 = top, 1 = disco
 
 -- Back-fill existing rows based on source + status.
 UPDATE organizations SET "order" = 1
-WHERE source = 'search' AND status = 'Not activated';
+WHERE source = 'Search' AND status = 'Not activated';
