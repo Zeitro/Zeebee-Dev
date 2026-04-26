@@ -14,9 +14,11 @@ const api = '/organization/page';
 
 const OrderInput = ({ value, onCommit }) => {
 	const [draft, setDraft] = useState(value ?? 2);
-	useEffect(() => {
+	const [prevValue, setPrevValue] = useState(value);
+	if (value !== prevValue) {
+		setPrevValue(value);
 		setDraft(value ?? 2);
-	}, [value]);
+	}
 
 	const commit = () => {
 		if (draft == null || draft === value) return;
