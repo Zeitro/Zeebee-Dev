@@ -82,7 +82,7 @@ export default function DiscoverPreviewModal({ open, onClose, onCommitted }) {
 		setCandidates([]);
 		setSelectedKeys([]);
 		try {
-			const res = await longRequest('/lender_discover/preview', { method: 'POST', body: {} });
+			const res = await longRequest('/organization/discover/preview', { method: 'POST', body: {} });
 			const list = res?.data?.candidates ?? [];
 			setCandidates(list);
 			const defaults = list
@@ -179,7 +179,7 @@ export default function DiscoverPreviewModal({ open, onClose, onCommitted }) {
 		}
 		setCommitting(true);
 		try {
-			await longRequest('/lender_discover/commit', {
+			await longRequest('/organization/discover/commit', {
 				method: 'POST',
 				body: { lenders },
 			});
