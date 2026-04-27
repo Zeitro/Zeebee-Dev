@@ -44,7 +44,7 @@ func applyDiscoverConfigDefaults(cfg *Config) {
 	}
 }
 
-// LoadConfig reads discover settings from organization_settings (default public org id, purpose=lenderDiscover).
+// LoadConfig reads discover settings from organization_settings (default public org id, purpose=LenderDiscover).
 // Returns the parsed config and the row ID (for subsequent updates).
 func LoadConfig(ctx context.Context, settingRepo *repo.OrganizationSettingRepo) (*Config, int64, error) {
 	row, err := settingRepo.DetailByPurpose(ctx, constants.OrganizationIdPublicDiscoverSettings, constants.OrganizationPurposeLenderDiscover, false)
