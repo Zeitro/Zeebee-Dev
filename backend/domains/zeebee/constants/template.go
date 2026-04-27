@@ -11,7 +11,7 @@ const BorrowerPreapprovalLetterEmailName = "PreApprovalLetterEmail"
 
 const (
 	OrganizationPurposePreapprovalLetter = "preApprovedLetter"
-	OrganizationPurposeLenderDiscover    = "lenderDiscover"
+	OrganizationPurposeLenderDiscover    = "LenderDiscover"
 )
 
 // OrganizationIdPublicDiscoverSettings is the default public / platform org id used for global

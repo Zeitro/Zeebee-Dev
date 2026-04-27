@@ -137,23 +137,23 @@ service admin-api {
 	get /organization/select_options (OrganizationSelectOptionRequest) returns (OrganizationOptionResponse)
 
 	@doc "lender discover get settings"
-	@handler LenderDiscoverGetSettings
+	@handler OrganizationDiscoverGetSettings
 	get /organization/discover/settings (EmptyRequest) returns (LenderDiscoverSettingsResponse)
 
 	@doc "lender discover update settings"
-	@handler LenderDiscoverUpdateSettings
+	@handler OrganizationDiscoverUpdateSettings
 	put /organization/discover/settings (LenderDiscoverUpdateSettingsRequest) returns (LenderDiscoverSettingsResponse)
 
 	@doc "lender discover preview (OpenAI + dedupe, no insert)"
-	@handler LenderDiscoverPreview
+	@handler OrganizationDiscoverPreview
 	post /organization/discover/preview (EmptyRequest) returns (LenderDiscoverPreviewResponse)
 
 	@doc "lender discover commit selected new lenders"
-	@handler LenderDiscoverCommit
+	@handler OrganizationDiscoverCommit
 	post /organization/discover/commit (LenderDiscoverCommitRequest) returns (LenderDiscoverRunResponse)
 
 	@doc "lender discover latest run"
-	@handler LenderDiscoverLatestRun
+	@handler OrganizationDiscoverLatestRun
 	get /organization/discover/runs/latest (EmptyRequest) returns (LenderDiscoverRunResponse)
 }
 

@@ -15,7 +15,7 @@ import (
 	"zeebee-backend/common/validator"
 )
 
-func LenderDiscoverGetSettingsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func OrganizationDiscoverGetSettingsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -51,7 +51,7 @@ func LenderDiscoverGetSettingsHandler(svcCtx *svc.ServiceContext) http.HandlerFu
 	}
 }
 
-func LenderDiscoverUpdateSettingsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func OrganizationDiscoverUpdateSettingsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -87,7 +87,7 @@ func LenderDiscoverUpdateSettingsHandler(svcCtx *svc.ServiceContext) http.Handle
 	}
 }
 
-func LenderDiscoverPreviewHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func OrganizationDiscoverPreviewHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -123,7 +123,7 @@ func LenderDiscoverPreviewHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	}
 }
 
-func LenderDiscoverCommitHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func OrganizationDiscoverCommitHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -159,7 +159,7 @@ func LenderDiscoverCommitHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	}
 }
 
-func LenderDiscoverLatestRunHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func OrganizationDiscoverLatestRunHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
