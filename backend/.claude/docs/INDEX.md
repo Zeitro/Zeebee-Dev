@@ -1,433 +1,409 @@
 # Zeebee 后端知识库总索引
 
-**创建时间**: 2025-11-24
+**创建时间**: 2025-11-24 | **最后更新**: 2026-05-12
 **项目**: Zeebee 贷款管理系统后端
 **技术栈**: Go + go-zero + gRPC + PostgreSQL
 **文档类型**: 项目知识库导航中心
 
 ## 📋 概述
 
-这是 Zeebee Backend 项目的综合文档索引，提供项目知识库的导航指南和交叉引用。项目是基于 go-zero 框架构建的微服务贷款管理系统后端。
+Zeebee Backend 是基于 go-zero 框架的微服务贷款管理系统后端，采用 DDD 分层架构，通过共享 domains 层实现跨服务代码复用。
 
-**项目规模**: 1,181个Go文件，~151,416行代码，50个API定义，20个Proto文件，14个测试文件，共享domains层实现代码复用
+**项目规模**: 4个微服务，27个领域模型，50+ API定义，3个 Proto 文件
 **架构评分**: 8.5/10 ([2026最新分析](reports/architecture/architecture_deep_analysis_20260226.md))
 **项目状态**: 开发阶段，核心功能已实现
 
-## 📅 最新分析报告 (2026-02-26)
-
-### 🔬 深度分析系列
-
-| 分析类型       | 评分     | 报告                                                                    | 状态   |
-|------------|--------|-----------------------------------------------------------------------|------|
-| 🔒 **安全性** | 6.5/10 | [安全深度分析](reports/security/security_deep_analysis_20260226.md)         | 需要改进 |
-| ⚡ **性能**   | 7.5/10 | [性能深度分析](reports/performance/performance_deep_analysis_20260226.md)   | 良好   |
-| 🏗️ **架构** | 8.5/10 | [架构深度分析](reports/architecture/architecture_deep_analysis_20260226.md) | 优秀   |
-
-### 📊 综合质量报告
-
-- **[多域深度分析](reports/code-quality/multi_domain_analysis_20260226.md)** - 安全+性能+架构综合分析 ⭐
-- **[后端代码质量分析](reports/code-quality/backend_quality_analysis_20260226.md)** - 全面质量评估
-
-### 🔴 关键发现 (需紧急处理)
-
-### 紧急修复 (1-3天)
-
-1. **编译错误**: Protobuf 生成代码不同步导致编译失败
-  - 影响: 阻塞所有开发工作
-  - 文件: `app/borrower/rpc/client/applicant/applicant.go`
-  - 修复: 同步protobuf定义和客户端代码
-
-2. **CORS配置漏洞**: `Access-Control-Allow-Origin: *` 通配符 + credentials 启用
-  - 风险: 🔴 高 - 可能导致CSRF攻击
-  - 文件: `app/lender/api/internal/middleware/cors_middleware.go`
-  - 修复: 限制origin白名单或移除credentials
-
-3. **权限中间件未实现**: `AuthorityMiddleware` 空实现，所有请求直接通过
-  - 风险: 🔴 高 - 无权限控制
-  - 文件: `app/borrower/api/internal/middleware/authority_middleware.go`
-  - 修复: 实现基于角色的访问控制(RBAC)
-
-4. **Redis TLS证书跳过**: `InsecureSkipVerify: true`
-  - 风险: 🟡 中 - 可能遭受中间人攻击
-  - 文件: `common/limiter/redis_limiter.go`
-  - 修复: 生产环境启用证书验证
+---
 
 ## 🚀 快速导航
 
-### 🎯 核心文档
+### 核心文档
 
-- **[项目开发指南](CLAUDE.md)** - Claude Code 开发规范和工作流程 ⭐
-- **[项目README](README.md)** - 项目概述和快速开始 ⭐
-- **[最新代码分析报告](reports/code-quality/analysis_report_2025-12-22.md)** - 2025年12月综合代码质量分析 ⭐
-- **[架构分析报告](analysis/architecture_analysis_20250124.md)** - 深度架构分析和改进建议
-- **[API文档索引](guides/api_documentation_index.md)** - 完整API接口导航和使用说明
-- **[项目结构指南](guides/project_structure_guide.md)** - 详细代码组织和架构说明
-- **[域架构设计指南](guides/domain_architecture_guide.md)** - 共享数据层设计和代码复用实现
-- **[README文档索引](guides/readme_index.md)** - 各模块README文档导航
-- **[导航指南](guides/navigation-guide.md)** - 知识库使用和搜索指南
+- **[CLAUDE.md](../../CLAUDE.md)** - 开发规范和工作流程 ⭐
+- **[架构总览](analysis/architecture.md)** - 系统架构设计必读文档 ⭐
+- **[API文档索引](guides/api_documentation_index.md)** - 完整API接口导航
+- **[项目结构指南](guides/project_structure_guide.md)** - 代码组织和架构说明
+- **[域架构设计指南](guides/domain_architecture_guide.md)** - 共享数据层设计
+- **[导航指南](guides/navigation-guide.md)** - 知识库使用指南
 
-### 🔧 开发资源
+### 分析报告
 
-- **[Makefile](Makefile)** - 代码生成和管理命令
-- **[Go模块配置](go.mod)** - 依赖和版本管理
-- **[代码质量配置](.golangci.yml)** - 代码检查规则
+- **[多域深度分析](reports/code-quality/multi_domain_analysis_20260226.md)** - 安全+性能+架构综合分析 ⭐
+- **[架构深度分析](reports/architecture/architecture_deep_analysis_20260226.md)** - 架构专项评估
+- **[安全深度分析](reports/security/security_deep_analysis_20260226.md)** - 安全专项评估
+- **[性能深度分析](reports/performance/performance_deep_analysis_20260226.md)** - 性能专项评估
+
+---
 
 ## 🏗️ 项目架构概览
 
-### 微服务架构 (共享数据层)
+### 四大微服务 (共享数据层)
 
 ```
-┌─────────────────┐    ┌─────────────────┐
-│   Borrower API  │    │   Lender API    │
-│   (Port: 10000)  │    │   (Port: TBD)   │
-└─────────┬───────┘    └─────────┬───────┘
-          │                      │
-          ▼                      ▼
-┌─────────────────┐    ┌─────────────────┐
-│  Borrower RPC   │    │   Lender RPC    │
-│   (Port: 10001)  │    │   (Port: TBD)   │
-└─────────┬───────┘    └─────────┬───────┘
-          │                      │
-          └──────────┬───────────┘
-                     ▼
+┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌───────────────┐
+│ Borrower API │  │  Lender API  │  │  Admin API   │  │ PDF Generator │
+│  :10000 HTTP │  │  :11000 HTTP │  │  :12000 HTTP │  │               │
+└──────┬───────┘  └──────┬───────┘  └──────┬───────┘  └───────────────┘
+       │                 │                 │
+       ▼                 ▼                 ▼
+┌──────────────┐  ┌──────────────┐  ┌──────────────┐
+│Borrower RPC  │  │ Lender RPC   │  │  Admin RPC   │
+│  :10001      │  │  :11001      │  │  :12001      │
+└──────┬───────┘  └──────┬───────┘  └──────┬───────┘
+       │                 │                 │
+       └────────────┬────┴─────────────────┘
+                    ▼
           ┌─────────────────┐
-          │  Shared Layer   │
-          │  (domains/zeebee)│
-          │  • Models       │
-          │  • Repositories │
-          └─────────┬───────┘
-                     ▼
+          │  domains/zeebee │ ← 共享领域层
+          │  • model (27)   │
+          │  • repo  (27)   │
+          │  • dto   (26)   │
+          │  • logic        │
+          └────────┬────────┘
+                   ▼
           ┌─────────────────┐
-          │   PostgreSQL   │
-          │    + Redis     │
-          │   + AWS S3     │
+          │  PostgreSQL     │
+          │  + Redis        │
+          │  + AWS S3       │
           └─────────────────┘
 ```
 
-### 服务目录结构
+### 服务端口映射
+
+| 服务 | HTTP 端口 | RPC 端口 | 入口文件 | 配置文件 |
+|------|-----------|----------|----------|----------|
+| Borrower | 10000 | 10001 | `app/borrower/cmd/main.go` | `app/borrower/etc/config-*.yaml` |
+| Lender | 11000 | 11001 | `app/lender/cmd/main.go` | `app/lender/etc/config-*.yaml` |
+| Admin | 12000 | 12001 | `app/admin/cmd/main.go` | `app/admin/etc/config-*.yaml` |
+| PDF Generator | - | - | `app/pdf_generator/cmd/main.go` | `app/pdf_generator/etc/config-*.yaml` |
+
+---
+
+## 📂 目录结构详解
+
+### 顶层结构
 
 ```
-├── app/               # 应用服务层
-│   ├── borrower/      # 借款方服务
-│   │   ├── api/       # HTTP API 层
-│   │   │   ├── desc/  # API 消息体定义
-│   │   │   └── borrower.api # HTTP 服务定义
-│   │   ├── rpc/       # RPC 业务层
-│   │   │   ├── pb/    # Protocol Buffers
-│   │   │   └── internal/ # 业务逻辑实现
-│   │   └── docs/      # 服务文档
-│   └── lender/       # 贷款方服务
-│       └── ...       # 类似结构
-├── domains/          # 共享数据层
-│   └── zeebee/        # 共享数据模型和仓储
-│       ├── model/     # 共享数据模型
-│       └── repo/      # 共享数据访问实现
-├── common/           # 通用组件库
-└── third_party/      # 第三方模板和工具
+backend/
+├── app/              # 4个微服务应用
+├── domains/          # 共享领域层 (DDD)
+├── common/           # 通用工具库
+├── deploy/           # Docker 部署配置
+├── scripts/          # 构建和管理脚本
+├── third_party/      # 第三方 proto 定义
+├── Makefile          # 代码生成和构建命令
+├── go.mod            # Go 模块依赖
+└── .golangci.yml     # 代码检查规则
 ```
 
-## 📚 文档分类
+### 服务内部结构 (以 borrower 为例)
 
-### 1. 📖 项目文档
+```
+app/borrower/
+├── api/                          # HTTP API 层
+│   ├── desc/                     # API 消息体定义
+│   ├── etc/                      # API 服务配置
+│   ├── swagger/                  # Swagger 文档
+│   ├── statics/                  # 静态资源
+│   └── internal/
+│       ├── handler/              # HTTP 请求处理器
+│       │   ├── borrower_applicant/
+│       │   ├── borrower_entity/
+│       │   ├── borrower_property/
+│       │   ├── common/
+│       │   ├── file/
+│       │   ├── loan/
+│       │   ├── loan_applicant/
+│       │   ├── loan_document/
+│       │   ├── organization/
+│       │   ├── organization_email/
+│       │   ├── organization_user/
+│       │   ├── pdf/
+│       │   ├── resource/
+│       │   ├── role/
+│       │   ├── storage/
+│       │   ├── user/
+│       │   └── zeitro/
+│       ├── logic/                # API 业务逻辑
+│       ├── middleware/           # 中间件
+│       ├── svc/                  # 服务上下文
+│       └── types/                # 请求/响应类型
+├── rpc/                          # RPC 业务层
+│   ├── pb/                       # Protocol Buffers 定义
+│   ├── client/                   # RPC 客户端
+│   └── internal/
+│       ├── logic/                # RPC 业务逻辑
+│       │   ├── auth/
+│       │   ├── borrowerapplicant/
+│       │   ├── borrowerentity/
+│       │   ├── borrowerproperty/
+│       │   ├── common/
+│       │   ├── file/
+│       │   ├── loan/
+│       │   ├── loanapplicant/
+│       │   ├── loandocument/
+│       │   ├── organization/
+│       │   ├── organizationemail/
+│       │   ├── organizationuser/
+│       │   ├── resource/
+│       │   ├── role/
+│       │   ├── storage/
+│       │   ├── user/
+│       │   └── zeitro/
+│       ├── server/               # RPC 服务端
+│       └── svc/                  # 服务上下文
+├── cmd/main.go                   # 服务入口
+├── etc/config-*.yaml             # 环境配置
+└── config/                       # 配置结构体
+```
 
-#### 核心指南
+---
 
-- **[CLAUDE.md](CLAUDE.md)** - Claude Code 开发规范
-    - 语言使用规范 (中文交流，英文注释)
-    - 开发工作流程 (API → RPC → Database)
-    - 代码风格和约定
-    - 技术债务优先级
+## 🏛️ 领域模型 (domains/zeebee)
 
-#### 项目概览
+### 核心模型 (27个)
 
-- **[README.md](README.md)** - 项目介绍
-    - 开发环境设置
-    - 项目结构说明
-    - 快速开始指南
+| 模型 | 文件 | 用途 |
+|------|------|------|
+| `BaseModel` | `model/base.go` | 基础模型（ID, CreatedAt, UpdatedAt, DeletedAt） |
+| `User` | `model/user.go` | 用户 |
+| `Role` | `model/role.go` | 角色 |
+| `Resource` | `model/resource.go` | 权限资源 |
+| `RoleAndResource` | `model/role_and_resource.go` | 角色-资源关联 |
+| `Api` | `model/api.go` | API 权限定义 |
+| `Organization` | `model/organization.go` | 组织/贷款机构 |
+| `OrganizationUser` | `model/organization_user.go` | 组织-用户关联 |
+| `OrganizationEmail` | `model/organization_email.go` | 组织邮箱 |
+| `OrganizationSetting` | `model/organization_setting.go` | 组织设置 |
+| `OrganizationTemplate` | `model/organization_template.go` | 组织模板 |
+| `BaseTemplate` | `model/base_template.go` | 基础模板 |
+| `Loan` | `model/loan.go` | 贷款申请 |
+| `LoanBorrower` | `model/loan_borrower.go` | 贷款-借款人关联 |
+| `LoanApplicant` | `model/loan_applicant.go` | 贷款申请人 |
+| `LoanProperty` | `model/loan_property.go` | 贷款房产 |
+| `LoanDocument` | `model/loan_document.go` | 贷款文档 |
+| `LoanOperation` | `model/loan_operation.go` | 贷款操作记录 |
+| `LoanExperience` | `model/loan_experience.go` | 贷款经验 |
+| `LoanDemographic` | `model/loan_demographic.go` | 贷款人口统计 |
+| `LoanThirdService` | `model/loan_third_service.go` | 贷款第三方服务 |
+| `BorrowerApplicant` | `model/borrower_applicant.go` | 借款申请人 |
+| `BorrowerEntity` | `model/borrower_entity.go` | 借款实体 |
+| `BorrowerProperty` | `model/borrower_property.go` | 借款房产 |
+| `File` | `model/file.go` | 文件存储 |
+| `EmailAuthorization` | `model/email_authorization.go` | 邮箱验证 |
+| `UsGeography` | `model/us_geography.go` | 美国地理数据 |
 
-### 2. 🏛️ 架构文档
+### 数据层架构
 
-#### 分析报告
+```
+domains/zeebee/
+├── model/           # 27个领域模型（GORM实体）
+├── repo/            # 27个仓储（数据访问层）
+│   └── provider.go  # 仓储提供者（依赖注入）
+├── data/dto/        # 26个数据传输对象
+├── logic/           # 共享业务逻辑
+├── auth/            # 认证逻辑
+├── constants/       # 业务常量
+├── email/client/    # 邮件客户端
+├── limiter/         # 限流器
+├── templater/       # 模板引擎
+│   ├── convertor/   # 模板转换器
+│   └── loader/      # 模板加载器
+└── zeitro/          # Zeitro API 集成
+```
 
-- **[架构分析报告](claudedocs/analysis.md)** - 详细架构评估
-    - 微服务架构设计评估 ⭐
-    - 数据层架构模式分析
-    - API 和服务间通信设计
-    - 改进建议和行动计划
+---
 
-#### 设计指南
+## 🔧 通用工具库 (common/)
 
-- **[域架构设计指南](guides/domain_architecture_guide.md)** - 共享数据层设计
-    - 共享数据层架构设计 ⭐
-    - 代码复用实现模式
-    - 服务间协作机制
-    - 架构演进和最佳实践
+| 模块 | 用途 |
+|------|------|
+| `aws_s3` | AWS S3 文件存储 |
+| `conforming_loan_limit` | 贷款额度限制计算 |
+| `copierx` | 泛型数据转换 (`copierx.Trans[T,U]`) |
+| `email` | 邮件发送 |
+| `enums` | 枚举定义 |
+| `errorx` | 统一错误处理 |
+| `gormx` | GORM 数据库扩展 |
+| `limiter` | Redis 限流器 |
+| `mapx` | Map 工具函数 |
+| `preapproval_engine` | 预审批引擎 |
+| `rbac` | 基于角色的访问控制 |
+| `redisx` | Redis 客户端封装 |
+| `response` | 统一响应格式 |
+| `routex` | 路由工具 |
+| `stringx` | 字符串工具 |
+| `timex` | 时间工具 |
+| `types` | 公共类型定义 |
+| `utils` | 通用工具函数 |
+| `uuid` | Sonyflake UUID 生成 |
+| `validator` | 数据验证 |
 
-#### 研究分析
+---
 
-- **[项目研究分析](claudedocs/research_project_analysis_20251106.md)** - 深度项目调研
-    - 项目规模和复杂度分析
-    - 技术栈评估
-    - 业务领域分析
-    - 代码质量评估
+## 📊 服务功能矩阵
 
-### 3. 🔧 开发文档
+### Borrower 服务 (18个 API 模块)
 
-#### API 文档
+| 模块 | API Handlers | RPC Logic | 功能 |
+|------|-------------|-----------|------|
+| auth | - | ✅ | 认证登录 |
+| borrower_applicant | ✅ | ✅ | 借款申请人 CRUD |
+| borrower_entity | ✅ | ✅ | 借款实体 CRUD |
+| borrower_property | ✅ | ✅ | 借款房产 CRUD |
+| loan | ✅ | ✅ | 贷款申请和管理 |
+| loan_applicant | ✅ | ✅ | 贷款申请人 |
+| loan_document | ✅ | ✅ | 贷款文档管理 |
+| organization | ✅ | ✅ | 组织查询 |
+| organization_email | ✅ | ✅ | 组织邮箱 |
+| organization_user | ✅ | ✅ | 组织用户 |
+| user | ✅ | ✅ | 用户管理 |
+| role | ✅ | ✅ | 角色管理 |
+| resource | ✅ | ✅ | 资源管理 |
+| file | ✅ | ✅ | 文件操作 |
+| storage | ✅ | ✅ | 存储管理 |
+| common | ✅ | ✅ | 公共接口（州/城市/选项） |
+| pdf | ✅ | - | PDF 生成 |
+| zeitro | ✅ | ✅ | Zeitro 房产搜索 |
 
-- **[Swagger文档](app/borrower/api/swagger/)** - 自动生成的 API 文档
-- **[API 定义文件](app/borrower/api/desc/)** - HTTP API 消息体和服务定义
-    - `common.api` - 通用消息体
-    - `loan.api` - 贷款相关消息体
-    - `user.api` - 用户相关消息体
-    - `property.api` - 房产相关消息体
+### Lender 服务 (14个 API 模块)
 
-#### 数据库文档
+| 模块 | API Handlers | RPC Logic | 功能 |
+|------|-------------|-----------|------|
+| auth | - | ✅ | 认证登录 |
+| loan | ✅ | ✅ | 贷款审核和管理 |
+| loan_document | ✅ | ✅ | 贷款文档管理 |
+| organization | ✅ | ✅ | 组织管理 |
+| organization_setting | ✅ | ✅ | 组织设置 |
+| organization_template | ✅ | ✅ | 组织模板 |
+| organization_user | ✅ | ✅ | 组织用户 |
+| user | ✅ | ✅ | 用户管理 |
+| role | ✅ | ✅ | 角色管理 |
+| resource | ✅ | ✅ | 资源管理 |
+| file | ✅ | ✅ | 文件操作 |
+| storage | ✅ | ✅ | 存储管理 |
+| common | ✅ | ✅ | 公共接口 |
+| pdf | ✅ | - | PDF 生成 |
 
-- **[数据库设计](app/borrower/docs/sql/)** - 数据库结构和迁移脚本
-    - `20250807094911_create_us_geography.sql` - 地理数据表
-- **[ER图](app/borrower/docs/diagram/er/er.puml)** - 数据库关系图
+### Admin 服务 (12个 API 模块)
 
-#### 配置文档
+| 模块 | API Handlers | RPC Logic | 功能 |
+|------|-------------|-----------|------|
+| auth | - | ✅ | 认证登录 |
+| api | ✅ | ✅ | API 权限管理 |
+| base_template | ✅ | ✅ | 基础模板 CRUD |
+| loan | ✅ | ✅ | 贷款管理（列表/详情/分配） |
+| organization | ✅ | ✅ | 组织管理（含创建/删除/状态切换） |
+| organization_user | ✅ | ✅ | 组织用户管理 |
+| user | ✅ | ✅ | 用户管理 |
+| role | ✅ | ✅ | 角色管理 |
+| resource | ✅ | ✅ | 资源管理 |
+| storage | ✅ | ✅ | 存储管理 |
+| common | ✅ | ✅ | 公共接口（州/城市/数据同步） |
 
-- **[服务配置](app/borrower/etc/)** - 环境配置文件
-    - `config.yaml` - 开发环境配置
-    - `config-staging.yaml` - 预发布环境配置
+---
 
-#### 外部集成
+## 📊 分析报告索引
 
-- **[Zeitro API Proxy](specs/004-borrower-zeitro-proxy/)** - Zeitro 房产搜索代理服务 ⭐
-    - [功能规格](specs/004-borrower-zeitro-proxy/spec.md) - Zeitro API 集成需求说明
-    - [实施计划](specs/004-borrower-zeitro-proxy/plan.md) - 技术设计和架构决策
-    - [任务清单](specs/004-borrower-zeitro-proxy/tasks.md) - 开发任务和进度跟踪
-    - [快速入门](specs/004-borrower-zeitro-proxy/quickstart.md) - 使用指南和示例
-    - `domains/zeebee/zeitro/client.go` - Zeitro 客户端实现
-    - `app/borrower/api/desc/zeitro.api` - API 定义
+### 2026年最新分析 (2026-02-26)
 
-### 4. 📊 分析报告
+| 分析类型 | 评分 | 报告 | 状态 |
+|---------|------|------|------|
+| 🔒 安全性 | 6.5/10 | [安全深度分析](reports/security/security_deep_analysis_20260226.md) | 需改进 |
+| ⚡ 性能 | 7.5/10 | [性能深度分析](reports/performance/performance_deep_analysis_20260226.md) | 良好 |
+| 🏗️ 架构 | 8.5/10 | [架构深度分析](reports/architecture/architecture_deep_analysis_20260226.md) | 优秀 |
 
-#### 代码质量报告
-
-##### 📅 2026年最新分析 (2026-02-26)
-
-- **[多域深度分析](reports/code-quality/multi_domain_analysis_20260226.md)** ⭐ - 安全+性能+架构综合分析
-  - 综合评分: 6.5/10 安全 | 7.5/10 性能 | 8.5/10 架构
-  - 跨领域问题识别和优先级排序
-  - 综合改进路线图
-
+- **[多域深度分析](reports/code-quality/multi_domain_analysis_20260226.md)** - 综合分析 ⭐
 - **[后端代码质量分析](reports/code-quality/backend_quality_analysis_20260226.md)** - 全面质量评估
-  - 可编译性: 0/10 (🔴 编译错误阻塞)
-  - 测试覆盖率: 3/10 (~1.2%, 需提升至60%+)
-  - 代码规范性: 7/10
-  - 架构设计: 8/10
 
-##### 🔍 单域深度分析
+### 🔴 关键发现
 
-- **[安全深度分析](reports/security/security_deep_analysis_20260226.md)** - 安全专项评估
-  - 安全评分: 6.5/10
-  - 🔴 CORS配置漏洞: 通配符origin + credentials
-  - 🔴 Redis TLS证书验证跳过
-  - 🔴 权限中间件未实现
-  - ✅ JWT认证规范 (HS256 + bcrypt)
-  - ✅ SQL注入防护 (GORM参数化查询)
+1. **CORS配置漏洞**: `Access-Control-Allow-Origin: *` + credentials 启用 → CSRF 风险
+2. **权限中间件未实现**: `AuthorityMiddleware` 空实现 → 无权限控制
+3. **Redis TLS证书跳过**: `InsecureSkipVerify: true` → 中间人攻击风险
 
-- **[性能深度分析](reports/performance/performance_deep_analysis_20260226.md)** - 性能专项评估
-  - 性能评分: 7.5/10
-  - 🟡 缺少数据库连接生命周期管理
-  - ✅ Preload防止N+1查询
-  - ✅ Redis限流器实现
-  - 🟢 HTTP客户端连接池配置合理
+---
 
-- **[架构深度分析](reports/architecture/architecture_deep_analysis_20260226.md)** - 架构专项评估
-  - 架构评分: 8.5/10
-  - ✅ DDD + 微服务分层清晰
-  - ✅ Repository模式统一数据访问
-  - ✅ 泛型设计类型安全
-  - 🟢 代码复用通过domains/zeebee实现
-
-##### 📚 历史分析报告
-
-- **[2025年12月综合分析](reports/code-quality/analysis_report_2025-12-22.md)** - 年度代码质量评估
-- **[2025年11月代码质量](reports/code-quality/code_quality_analysis_20251107.md)** - 历史质量基线
-- **[2025年11月性能分析](reports/performance/performance_analysis_report_20251107.md)** - 性能基线
-- **[2025年11月架构分析](reports/architecture/architecture_analysis_report_20251107.md)** - 架构基线
-- **[2025年11月综合分析](reports/comprehensive-system-analysis/comprehensive_analysis_report_20251107.md)** - 系统基线
-
-#### 任务管理
-
-##### 2026年1月任务
-
-- **[Admin组织CRUD任务](tasks/20260112_admin_organization_crud.md)** - 管理后台组织管理功能
-- **[Admin模板CRUD任务](tasks/20260123_admin_template_crud.md)** - 管理后台模板管理功能
-- **[Borrower Zeitro代理](tasks/20260109_borrower_zertrio_api_proxy.md)** - 借款方Zeitro API代理集成
-- **[Lender组织注册](tasks/20260109_lender_oraganization_register.md)** - 贷款方组织注册功能
-
-##### 2025年12月任务
-
-- **[Admin用户CRUD任务](tasks/20251202_admin_user_curd_task.md)** - 管理后台用户管理功能
-
-### 5. 📋 开发规范
-
-#### 代码规范
-
-- **[Golangci配置](.golangci.yml)** - Go 代码检查规则
-- **[Git提交规范](CLAUDE.md#git-提交规范)** - Conventional Commits 标准
-
-#### 开发工具
-
-- **[代码生成模板](third_party/goctl_template/)** - go-zero 代码生成模板
-- **[Makefile](Makefile)** - 自动化构建命令
-
-## 🔍 开发工作流程
-
-### 1. API 服务开发流程
-
-```mermaid
-graph LR
-    A[定义消息体<br/>app/service/api/desc/] --> B[定义HTTP服务<br/>app/service/api/]
-    B --> C[生成代码<br/>make create-api-service]
-    C --> D[实现Logic<br/>app/service/api/internal/logic/]
-```
-
-### 2. RPC 服务开发流程
-
-```mermaid
-graph LR
-    A[定义Proto<br/>app/service/rpc/pb/] --> B[生成代码<br/>make create-rpc-service]
-    B --> C[实现Logic<br/>app/service/rpc/internal/logic/]
-```
-
-### 3. 数据流向
+## 🔍 数据流向
 
 ```
-HTTP Request → API Handler → API Logic → RPC Call → RPC Logic → Repository → Model → Database
+HTTP Request
+    → API Handler (参数校验、路由)
+    → API Logic (数据整合、转发)
+    → RPC Client (gRPC 调用)
+    → RPC Logic (核心业务逻辑)
+    → Repository (数据访问)
+    → Model (GORM 实体)
+    → PostgreSQL
 ```
 
-## 🏷️ 标签系统
+**数据转换链**: `DTO → Model → BO → Proto Entity` (使用 `copierx.Trans`)
 
-### 状态标签
-
-- 🔴 **高优先级** - 立即需要处理
-- 🟡 **中优先级** - 计划处理
-- 🟢 **低优先级** - 长期规划
-
-### 类型标签
-
-- **架构** - 系统架构相关
-- **API** - 接口文档
-- **数据库** - 数据存储相关
-- **配置** - 配置文件
-- **部署** - 部署和运维
-
-### 重要度标记
-
-- ⭐ **核心文档** - 必读文档
-- 📚 **参考文档** - 开发参考资料
+---
 
 ## 🗺️ 知识地图
 
-### 按功能域分类
+### 按功能域
 
 ```
 贷款管理系统
-├── 借款方管理 (Borrower)
+├── 借款方 (Borrower) ← 最复杂的业务域
+│   ├── 申请人管理 (BorrowerApplicant)
 │   ├── 实体管理 (BorrowerEntity)
 │   ├── 房产管理 (BorrowerProperty)
-│   ├── 申请人管理 (BorrowerApplicant)
-│   └── 贷款申请 (Loan)
-├── 贷款方管理 (Lender)
-│   ├── 贷款审核
+│   ├── 贷款申请 (Loan + LoanBorrower/Property/Document)
+│   └── Zeitro 房产搜索集成
+├── 贷款方 (Lender)
+│   ├── 贷款审核和状态管理
 │   ├── 文档管理
+│   ├── 组织设置和模板
 │   └── 审批流程
-└── 通用组件 (Common)
-    ├── 用户认证
-    ├── 文件存储
-    └── 数据验证
+├── 管理后台 (Admin)
+│   ├── 组织管理 (CRUD + 状态切换)
+│   ├── 基础模板管理
+│   ├── 贷款分配
+│   └── API 权限管理
+└── 通用 (Common)
+    ├── 用户认证 (JWT + bcrypt)
+    ├── RBAC 权限 (Role/Resource)
+    ├── 文件存储 (AWS S3)
+    ├── 邮件服务
+    ├── 预审批引擎
+    └── PDF 生成
 ```
 
-### 按技术栈分类
+---
 
-```
-技术架构
-├── 前端层
-│   └── HTTP API (go-zero)
-├── 业务层
-│   └── RPC 服务 (gRPC)
-├── 数据层
-│   ├── PostgreSQL (主数据库)
-│   ├── Redis (缓存)
-│   └── AWS S3 (文件存储)
-└── 基础设施
-    ├── Docker 容器化
-    └── 配置管理
-```
+## 📋 Proto 文件
 
-## 📝 开发注意事项
+| 服务 | Proto 文件 | 位置 |
+|------|-----------|------|
+| Admin | `admin.proto` | `app/admin/rpc/pb/` |
+| Borrower | `borrower.proto` | `app/borrower/rpc/pb/` |
+| Lender | `lender.proto` | `app/lender/rpc/pb/` |
 
-### 当前阶段重点
+第三方 Proto: `third_party/google/api/` (annotations, http, etc.)
 
-1. **基础功能**: 专注于核心业务逻辑实现
-2. **代码质量**: 统一错误处理和数据验证
-3. **测试覆盖**: 提升单元测试覆盖率
-4. **文档完善**: 补充 API 和开发文档
+---
 
-### 避免的复杂性
+## 🔗 部署配置
 
-- ❌ 过早引入链路追踪 (当前阶段不需要)
-- ❌ 复杂的服务发现机制 (当前使用硬编码配置)
-- ❌ 过度的监控和性能优化 (业务稳定后考虑)
+| 服务 | Docker Compose | 环境 |
+|------|---------------|------|
+| Borrower | `deploy/borrower/docker-compose.yml` | local/staging/production |
+| Lender | `deploy/lender/docker-compose.yml` | local/staging/production |
+| Admin | `deploy/admin/docker-compose.yml` | local/staging/production |
+| PDF Generator | `deploy/pdfgenerator/docker-compose.yml` | local/staging/production |
 
-## 🔗 外部资源
+---
 
-### 框架文档
+## 📚 外部资源
 
 - [go-zero 官方文档](https://go-zero.dev/)
 - [GORM 文档](https://gorm.io/docs/)
 - [Protocol Buffers 指南](https://developers.google.com/protocol-buffers)
-
-### 工具文档
-
-- [goctl 工具](https://github.com/zeromicro/go-zero)
 - [golangci-lint](https://golangci-lint.run/)
 
-## 📊 项目状态
-
-### 技术指标 (2026-02-26)
-
-- **Go 文件数量**: 1,181 个
-  - app服务层: 借款方、贷款方、管理后台服务
-    - domains共享层: 统一数据模型和仓储
-    - common通用组件: 工具库和基础设施
-- **代码行数**: ~151,416 行
-- **API 定义文件**: 50 个 (HTTP API 规范)
-- **Proto 文件**: 20 个 (gRPC 服务定义)
-- **测试文件**: 14 个
-- **测试覆盖率**: ~1.2% (急需提升至 60%+)
-- **代码质量评分**: 6.5/10 (受编译错误影响，排除后为7.5/10)
-
-### 架构成熟度 (2026最新评估)
-
-| 维度   | 评分     | 状态     | 变化趋势            |
-|------|--------|--------|-----------------|
-| 可扩展性 | 9/10   | 🟢 优秀  | ⬆️ +1           |
-| 可维护性 | 8/10   | 🟢 良好  | → 持平            |
-| 安全性  | 6.5/10 | 🟡 需改进 | ⬇️ -1.5 (发现新问题) |
-| 性能   | 7.5/10 | 🟢 良好  | ⬆️ +0.5         |
-| 架构设计 | 8.5/10 | 🟢 优秀  | ⬆️ +0.5         |
-
-### 联系信息
-
-- **文档维护**: 通过 `claudedocs/` 目录管理 AI 生成文档
-- **问题反馈**: 通过项目 Issue 或团队沟通渠道
-
 ---
 
-## 📚 更多导航资源
-
-- **[2026版导航指南](NAVIGATION_2026.md)** - 完整文档树和快速定位指南 ⭐
-- **[导航指南](guides/navigation-guide.md)** - 知识库使用和搜索指南
-
----
-
-*本文档由 /sc:index 命令自动生成，包含项目的完整知识库索引和导航指南。*
-*最后更新: 2026-02-26 | 版本: v2.0*
+*本文档由 /sc:index 自动生成。最后更新: 2026-05-12 | 版本: v3.0*
