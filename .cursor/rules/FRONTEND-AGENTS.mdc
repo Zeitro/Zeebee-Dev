@@ -5,7 +5,20 @@ alwaysApply: true
 
 # Zeebee-Dev 前端 Agent 规则
 
-面向 `frontend/` 下的开发与排错；版本与脚本以各应用 `package.json` 为准。
+面向 `frontend/**` 下的开发与排错；版本与脚本以各应用 `package.json` 为准。
+
+### 工作范围边界（纯前端）
+
+- 只改 **`frontend/**`**（含 **`frontend/packages/*`**）；**禁改 `backend/**`**（含 SQL/部署脚本等），除非用户明确要求全栈。
+- 侧栏与 **`middleware` accessPaths** 来自后端菜单（如 **`/user/menu`**）；新路径未登记则无入口或访问被拒，由后端/运维配置，**勿在仓库写 SQL 代配**。
+
+### 命名与体量（与本仓库一致）
+
+- **`src/app/` 路由目录**：多词用 **camelCase**（如 `myTransactions`、`marketTools`），勿用 kebab-case；URL 与目录名一致。
+- **封装组件文件**：**PascalCase**；单文件建议 **≤300 行**，逻辑拆子组件或 hooks。
+- **布尔**用 `is` / `has` / `can` / `should` 前缀；**ref 对象**以 `Ref` 结尾；样式优先 **Tailwind**，必要时 **`.scss`**。
+- **约定 vs 工具**：本仓库前端规范写在本文件；查 Next/antd 等**官方文档**用 **Context7 等 MCP**；重复脚手架流程可做成 **Cursor Skill**。
+- **列表（筛选 + 表格）**：对话中可 @ Skill **`filter-table`**；说明见 `.cursor/skills/filter-table/SKILL.md`（优先 `FilterTable` / `FilterTableCard`，勿手写 `FilterField`+`NewTable` 重复流水线）。
 
 ### Monorepo 布局
 
@@ -45,11 +58,20 @@ Zeebee-Dev/
 
 - 路径：`frontend/packages/shared-methods`，包名 **`@repo/shared-methods`**。
 - 跨应用复用的 **hooks、api、组件、enum、工具** 等放这里；避免在 admin / borrower / lender 之间复制同一段逻辑。
+- **生成页面 / 新增功能时的选型顺序（先查共享包，再写应用内代码）**
+  - **新建 hooks / 工具方法 / 请求封装/ UI 组件/ 枚举与展示用常量**：在某一应用 `src` 内落新文件前，**优先判断**该逻辑是否适合放进 **`@repo/shared-methods`**（无强绑定单应用路由或环境、可被 **admin / borrower / lender** 或多 feature 复用、或适合集中维护接口与类型）。适合则新增到 **`hooks/*`**、**`lib/*`**、**`api/*`**、**`components/*`**、**`enum/*`** 等与职责匹配的目录，并视需要写入 **`package.json` → `exports`**；仅当确认单应用专属时再写在当前应用对应目录，避免默认「先写应用内、再在应用间复制」。
+  - **UI 组件**：在页面或业务组件里直接使用 **antd** 前，先检索 **`@repo/shared-methods/components/*`** 与 **`@repo/shared-methods/componentsUi/*`**（源码目录 `src/components/`、`src/componentsUi/`；可先浏览包内目录，再在仓库内搜既有 `import`）。已有封装（含组合表单、表格、弹层、上传等）**必须复用**；仅当确认无合适封装时，再使用 **antd** 原生组件。列表「筛选 + 表格」仍优先 **Skill `filter-table`**（`FilterTable` / `FilterTableCard`），勿手写 `FilterField` + `NewTable` 流水线。
+  - **枚举与展示用常量**：先查 **`@repo/shared-methods/enum/*`** 及既有聚合导出。若无定义，再判断该值是否会被 **admin / borrower / lender** 或多 feature 复用：**会** → 新增到共享包 **`enum`**，并视需要在 **`package.json` → `exports`** 增加子路径；**不会** → 放在当前应用的 **`enum/`**（或与同 feature 既有常量文件并列），避免把仅单应用使用的值塞进公共包。命名与后端字段、全站既有习惯对齐。
+  - **hooks**：先查 **`@repo/shared-methods/hooks/*`** 与当前应用内是否已有等价 hook；跨应用复用则抽到共享包并在 **`exports`** 声明，禁止在三个应用各复制一份实现。
+  - **展示类格式化**：先查 **`@repo/shared-methods/utils`**（实现于 **`lib/date.js`**、**`lib/format.js`**），优先 **`formatDate` / `formatTime` / `formatAmount` / `formatPhone`** 等，勿在业务里手写与全站不一致的 `dayjs(...).format(...)`（与 antd 表单配套的日期仍可用 **dayjs**）。
+  - **API / 请求与通用逻辑**：先查 **`@repo/shared-methods/api/*`**、**`lib/*`**、**`utils`**（及对外的 **`@repo/shared-methods/utils`**），避免重复封装 `fetch`、鉴权拼接、重复工具函数。
+  - **全局或跨页面状态（如 zustand store、跨路由 context）**：先查共享包与各应用是否已有等价模块；**明确跨应用**的抽到共享包；**仅单应用**的保留在该应用既有 `store` / `context` 目录（或与邻近 feature 一致），不强行上收公共包。
 - 新增对外入口时，在包的 **`package.json` → `exports`** 中声明子路径；以 **TS** 为主，各 Next 应用需 **`transpilePackages`**（或等价）包含该包名，否则构建可能报错。
+
 
 ## UI
 
-- **交互组件**（Form、Table、Modal、Message 等）优先 **Ant Design 5.x**，并沿用各应用根布局里已有的 **AntdRegistry / ConfigProvider** 接入方式。
+- **交互组件**（Form、Table、Modal、Message 等）：遵循上文共享包 **「UI 组件」** 的查找顺序——**先 `@repo/shared-methods` 封装，再 Ant Design 5.x**；并沿用各应用根布局里已有的 **AntdRegistry / ConfigProvider** 接入方式。
 - **布局、间距、响应式**用 **Tailwind 3.x**；避免与 antd 强耦合的重复样式。
 - **图标**：`@ant-design/icons`；**日期**与 antd 5 对齐 **dayjs**。
 
@@ -61,7 +83,7 @@ Zeebee-Dev/
 ## Agent 工作方式
 
 - **最小必要改动**，不做无关重构。
-- **默认只动**被指派的 `frontend/<app>` 或 `frontend/packages/*`；跨应用同步需有明确需求。
+- **默认只动** `frontend/<app>` 或 `frontend/packages/*`；跨应用同步需有明确需求；纯前端勿动 `backend/`。
 - **风格以邻近文件为准**（引号、组件拆分、antd 写法、Tailwind 密度）。
-- 业务枚举、贷款状态等与域相关的常量：**优先** `@repo/shared-methods` 的 `enum` 导出或各应用已有 `enum` 目录，与后端字段保持已有命名习惯。
+- 业务枚举、贷款状态等与域相关的常量：**遵循**共享包章节 **「枚举与展示用常量」**；与后端字段保持已有命名习惯。
 

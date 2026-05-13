@@ -12,9 +12,10 @@ import { useAuth, useGetOptions } from '@repo/shared-methods/hooks';
 import AddModal from '@repo/shared-methods/componentsUi/SelectCard/Add/property';
 import { PERMISSIONS } from '@config/permissions';
 
+const PROPERTY_API = '/property/page';
 const Properties = () => {
 	const { hasPermission } = useAuth();
-	const { request, cancel } = createRequest();
+	const { request, cancelMatch } = useMemo(() => createRequest(), []);
 	const { borrowerOptions } = useGetOptions([{ type: 'borrower' }]);
 	const filterFieldRef = useRef();
 	const [searchValue, setSearchValue] = useState('');
@@ -100,7 +101,7 @@ const Properties = () => {
 			{
 				filterType: 'button',
 				onClick: () => {
-					cancel('/property/page');
+					cancelMatch(PROPERTY_API);
 					setPagination((v) => {
 						const next = { ...v, current: 1 };
 						paginationRef.current = next;
@@ -147,7 +148,7 @@ const Properties = () => {
 				),
 			},
 		],
-		[searchValue, borrower, borrowerOptions, cancel, getList, hasPermission],
+		[searchValue, borrower, borrowerOptions, cancelMatch, getList, hasPermission],
 	);
 
 	useEffect(() => {
@@ -199,7 +200,7 @@ const Properties = () => {
 				<NewPagination
 					className="!mt-4 justify-end"
 					onChange={(page) => {
-						cancel('/property/page');
+						cancelMatch(PROPERTY_API);
 						setPagination((v) => {
 							const next = { ...v, current: page };
 							paginationRef.current = next;
