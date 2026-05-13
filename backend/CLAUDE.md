@@ -13,11 +13,18 @@
 - **服务与端口**：详见 `.specify/memory/constitution.md` §架构治理
 - **文档规范**：详见 `.specify/memory/constitution.md` §语言规范
 
-## 工作前检查
+## 文档阅读流程
 
-- [ ] 已阅读 `.specify/memory/constitution.md` 了解核心原则
-- [ ] 已阅读 `.claude/docs/analysis/architecture.md` 理解架构
-- [ ] 确认当前任务涉及的层次（API/RPC/Domain）和代码位置
+按以下顺序阅读（首次会话必读，后续会话按需）：
+
+1. **本文件（CLAUDE.md）** — 开发规范、代码示例（你正在读）
+2. **`.specify/memory/constitution.md`** — 项目宪章：核心原则、技术栈、Git 规范、行为准则
+3. **`.claude/docs/analysis/architecture.md`** — 架构设计：分层职责、数据流、目录结构（必读）
+
+文档关系：
+- `constitution.md` 定义**规则**（必须怎么做），本文件提供**代码示例**（怎么做）
+- `architecture.md` 定义**结构**（代码组织），本文件定义**规范**（代码风格）
+- `.claude/docs/INDEX.md` 是知识库**导航索引**（非必读，按需查阅）
 
 ## 工作目录
 
@@ -79,7 +86,9 @@ if err != nil {
 
 ## 相关文档
 
-- **项目宪章**：`.specify/memory/constitution.md` — 核心原则、开发标准、行为准则
-- **架构文档**：`.claude/docs/analysis/architecture.md` — 系统架构设计（必读）
-- **文档索引**：`.claude/docs/INDEX.md` — 完整知识库导航
-- **项目 README**：`README.md` — 项目概述和快速开始
+| 文档 | 用途 | 何时阅读 |
+|------|------|----------|
+| `.specify/memory/constitution.md` | 项目宪章：核心原则、开发标准 | 首次会话必读 |
+| `.claude/docs/analysis/architecture.md` | 架构设计：分层、数据流、目录结构 | 首次会话必读 |
+| `.claude/docs/INDEX.md` | 知识库导航：服务矩阵、模型列表、分析报告 | 按需查阅 |
+| `README.md` | 项目概述和快速开始 | 按需查阅 |
