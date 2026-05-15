@@ -206,7 +206,6 @@ func (repo *ResourceRepo) AllResources(ctx context.Context, organizationId int64
 				}
 				return subQuery
 			})
-
 	}
 	err = query.Order("sort_order asc").
 		Order("parent_id asc").

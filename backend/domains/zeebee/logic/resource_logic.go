@@ -276,7 +276,6 @@ func (l *ResourceLogic) DeleteResource(ctx context.Context, id int64, resourceTy
 // 3. User may have multiple roles, resources from all roles are merged and deduplicated
 // 4. If user has admin role, all organization resources are returned
 func (l *ResourceLogic) GetUserResources(ctx context.Context, input dto.ResourceUserMenuRequestDto) (result []*dto.ResourceTreeDto, err error) {
-
 	// Get user's roles
 	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserById(ctx, input.OrganizationUserId, input.OrganizationId)
 	if err != nil {
@@ -337,7 +336,6 @@ func (l *ResourceLogic) GetUserResources(ctx context.Context, input dto.Resource
 		allResources = slice.UniqueBy(allResources, func(item *model.Resource) int64 {
 			return item.Id
 		})
-
 	}
 
 	slice.SortBy(allResources, func(a, b *model.Resource) bool {
@@ -439,7 +437,6 @@ func (l *ResourceLogic) buildUserResourceChildren(resourceMap map[int64]*model.R
 // createResourcePolices build resource policies
 func (l *ResourceLogic) createResourcePolices(resourceId int64, resourceType constants.UserType, roles []*model.Role) (polices [][]string) {
 	polices = slice.FilterMap(roles, func(index int, item *model.Role) ([]string, bool) {
-
 		if item == nil || item.Status != constants.CommonStatusActive {
 			return nil, false
 		}

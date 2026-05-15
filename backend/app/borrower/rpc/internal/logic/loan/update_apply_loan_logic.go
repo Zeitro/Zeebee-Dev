@@ -120,7 +120,6 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 					loan.LoanProperty = property
 				}
 				return err
-
 			},
 			// loan borrower
 			func() error {
@@ -233,7 +232,6 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 }
 
 func (l *UpdateApplyLoanLogic) updateApplicants(tx *gorm.DB, oldItems []*model.LoanApplicant, curItems []*model.LoanApplicant, loan *model.Loan) (err error) {
-
 	slice.ForEach(curItems, func(index int, item *model.LoanApplicant) {
 		curItems[index].LoanId = loan.Id
 		if loan.LoanProperty != nil && loan.LoanProperty.Id > 0 {

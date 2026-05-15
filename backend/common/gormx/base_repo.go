@@ -234,7 +234,6 @@ func (repo *BaseRepo[T]) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, data 
 
 // DeleteById delete one
 func (repo *BaseRepo[T]) DeleteByID(ctx context.Context, id int64) (effectRaws int64, err error) {
-
 	return repo.Delete(ctx, map[string]interface{}{
 		"id": id,
 	})
@@ -242,7 +241,6 @@ func (repo *BaseRepo[T]) DeleteByID(ctx context.Context, id int64) (effectRaws i
 
 // DeleteByIDWithTx delete one with tx
 func (repo *BaseRepo[T]) DeleteByIDWithTx(ctx context.Context, tx *gorm.DB, id int64) (effectRaws int64, err error) {
-
 	return repo.DeleteWithTx(ctx, tx, map[string]interface{}{
 		"id": id,
 	})

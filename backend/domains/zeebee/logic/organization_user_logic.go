@@ -110,7 +110,6 @@ func (l *OrganizationUserLogic) CreateAdminOrganizationUser(ctx context.Context,
 		firstName, lastName, fullName := input.FirstName, input.LastName, stringx.FormatFullName(input.FirstName, "", input.LastName)
 		// Create user if not exist
 		if user == nil || user.Id == 0 {
-
 			pwdHash, innerErr := utils.HashPassword(input.Password)
 			if innerErr != nil {
 				return errorx.WithStack(innerErr)
@@ -172,7 +171,6 @@ func (l *OrganizationUserLogic) CreateAdminOrganizationUser(ctx context.Context,
 			OrganizationId: input.OrganizationId,
 		}
 		_ = l.publishAuthEvent(subCtx, l.authTopicMap[organization.Type], msg)
-
 	})
 
 	result = l.transToBo(organizationUser)
@@ -410,7 +408,6 @@ func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.
 			OrganizationId: input.OrganizationId,
 		}
 		_ = l.publishAuthEvent(subCtx, l.authTopicMap[userModel.Type], msg)
-
 	})
 
 	userPtr, err := copierx.Trans[model.User, dto.UserEntityDto](userModel, copierx.TimeToRFC3339Str())
@@ -490,7 +487,6 @@ func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, inpu
 			OrganizationId: input.OrganizationId,
 		}
 		_ = l.publishAuthEvent(subCtx, l.authTopicMap[organization.Type], msg)
-
 	})
 
 	organizationUser.User = user
@@ -532,7 +528,6 @@ type SendInviteUserEmailInput struct {
 
 // sendInviteEmail sends invite email
 func (l *OrganizationUserLogic) sendInviteEmail(ctx context.Context, input SendInviteUserEmailInput) (err error) {
-
 	sendTagKey := stringx.Format(constants.UserInviteEmailSendTag, input.UserType, input.TargetEmail, input.OrganizationId)
 	isExisted, _ := l.redisCli.IsExisted(ctx, sendTagKey)
 	if isExisted {
@@ -659,7 +654,6 @@ func (l *OrganizationUserLogic) SwitchStatus(ctx context.Context, id int64, orga
 			OrganizationId: organizationId,
 		}
 		_ = l.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
-
 	})
 
 	return err
@@ -699,7 +693,6 @@ func (l *OrganizationUserLogic) AssignRoles(ctx context.Context, id int64, organ
 			OrganizationId: organizationId,
 		}
 		_ = l.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
-
 	})
 
 	return err
@@ -734,7 +727,6 @@ func (l *OrganizationUserLogic) Delete(ctx context.Context, id int64, organizati
 			OrganizationId: organizationId,
 		}
 		_ = l.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
-
 	})
 
 	return err

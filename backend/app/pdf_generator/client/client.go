@@ -43,7 +43,6 @@ func NewClient(url string) *Client {
 
 // GeneratePdf generates pdf from html or url
 func (c *Client) GeneratePdf(ctx context.Context, payload GeneratePdfRequest) ([]byte, error) {
-
 	requestBody, err := json.Marshal(payload)
 	if err != nil {
 		return nil, err

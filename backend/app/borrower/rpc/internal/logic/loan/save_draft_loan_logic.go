@@ -215,7 +215,6 @@ func (l *SaveDraftLoanLogic) updateProperty(tx *gorm.DB, property *model.LoanPro
 
 // updateLoanBorrower update loan borrower
 func (l *SaveDraftLoanLogic) updateLoanBorrower(tx *gorm.DB, loanBorrower *model.LoanBorrower, loan *model.Loan) (newLoanBorrower *model.LoanBorrower, err error) {
-
 	if loanBorrower == nil {
 		return nil, nil
 	}
@@ -225,14 +224,12 @@ func (l *SaveDraftLoanLogic) updateLoanBorrower(tx *gorm.DB, loanBorrower *model
 		loanBorrower.LoanId = loan.Id
 		loanBorrower.Applicants = nil
 		newLoanBorrower, err = l.svcCtx.LoanBorrowerRepo.CreateWithTx(l.ctx, tx, loanBorrower, false)
-
 	}
 	return newLoanBorrower, err
 }
 
 // updateLoanDemographic update loan demographic
 func (l *SaveDraftLoanLogic) updateLoanDemographic(tx *gorm.DB, loanDemographic *model.LoanDemographic, loan *model.Loan) (err error) {
-
 	if loanDemographic == nil {
 		return nil
 	}
@@ -247,7 +244,6 @@ func (l *SaveDraftLoanLogic) updateLoanDemographic(tx *gorm.DB, loanDemographic 
 
 // buildModelData return save model data
 func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, oldLoan *model.Loan, claim utils.JwtUser) (data *applyLoanModelData, err error) {
-
 	if reqData == nil {
 		return nil, errorx.New("Invalid request data")
 	}

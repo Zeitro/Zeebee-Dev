@@ -103,7 +103,6 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 			if innerErr != nil {
 				return innerErr
 			}
-
 		}
 
 		// handle applicant
@@ -173,7 +172,6 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 }
 
 func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateRequestData, oldLoan *model.Loan, claim utils.JwtUser) (loan *model.Loan, loanProperty *model.LoanProperty, applicants []*model.LoanApplicant, loanBorrower *model.LoanBorrower, err error) {
-
 	// build applicants
 	var totalOwnPercent int32
 	for _, applicant := range in.Applicants {

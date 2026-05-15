@@ -138,7 +138,6 @@ func (l *RoleLogic) Create(ctx context.Context, input dto.RoleCreateRequestDto) 
 			msg.AddedPolicies = policies
 		}
 		_ = l.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
-
 	})
 
 	result, err = l.Detail(ctx, role.Id, role.OrganizationId, role.Type)
@@ -276,7 +275,6 @@ func (l *RoleLogic) Update(ctx context.Context, id int64, input dto.RoleUpdateRe
 			RemovedPolicies: removedPolicies,
 		}
 		_ = l.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
-
 	})
 
 	result, err = l.Detail(ctx, roleModel.Id, roleModel.OrganizationId, roleModel.Type)
@@ -291,7 +289,6 @@ func (l *RoleLogic) Detail(ctx context.Context, id int64, organizationId int64, 
 	}
 	// get admin's resources
 	if role.Name == constants.AdminRoleName {
-
 		var resources []*model.Resource
 		resources, err = l.repos.ResourceRepo.All(ctx, roleType, false)
 		if err != nil {
@@ -356,7 +353,6 @@ func (l *RoleLogic) Delete(ctx context.Context, id int64, organizationId int64, 
 			RemovedPolicies: removedPolicies,
 		}
 		_ = l.publishAuthEvent(subCtx, l.authTopicMap[roleType], msg)
-
 	})
 
 	return err

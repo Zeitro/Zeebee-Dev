@@ -137,7 +137,6 @@ func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq dto.LoanBorro
 		Preload("Applicants")
 	if len(filter.Stage) > 0 {
 		query = query.Where(fmt.Sprintf("%s.stage = ?", loanTable), filter.Stage)
-
 	}
 	hasJoinProperty := false
 
@@ -246,9 +245,7 @@ func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq dto.LoanBorro
 
 // SummaryForBorrower
 func (repo *LoanRepo) SummaryForBorrower(ctx context.Context, req dto.LoanSummaryRequestDto) (result *dto.LoanSummaryResponseDto, err error) {
-
 	dateField, _ := repo.mapDateField(req.DateType)
-
 	query := repo.Client(ctx).
 		Where("borrower_organization_id = ?", req.OrganizationId)
 	if len(req.Source) > 0 {
@@ -562,7 +559,6 @@ func (repo *LoanRepo) GetByBorrowerPropertyId(ctx context.Context, borrowerPrope
 
 // mapDateField
 func (repo *LoanRepo) mapDateField(dateType string) (dateField string, isMaturityDate bool) {
-
 	switch dateType {
 	case "maturity_date":
 		dateField = "maturity_date"

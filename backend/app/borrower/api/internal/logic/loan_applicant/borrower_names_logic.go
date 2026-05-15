@@ -26,7 +26,6 @@ func NewBorrowerNamesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Bor
 }
 
 func (l *BorrowerNamesLogic) BorrowerNames(req *types.EmptyRequest) (resp *types.BorrowerNamesResponse, err error) {
-
 	rpcResp, err := l.svcCtx.LoanApplicantRpcClient.BorrowerNames(l.ctx, &borrower.BorrowerNamesRequest{
 		Data: &borrower.BorrowerNamesRequestData{},
 	})

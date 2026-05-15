@@ -79,7 +79,6 @@ func (l *ApiLogic) CreateApi(ctx context.Context, input *dto.ApiCreateRequestDto
 
 // UpdateApi updates an existing api
 func (l *ApiLogic) UpdateApi(ctx context.Context, input *dto.ApiUpdateRequestDto) (result *dto.ApiEntityDto, err error) {
-
 	apiModel, err := l.repos.ApiRepo.GetApi(ctx, input.Id, input.Type, false)
 	if err != nil {
 		return nil, err
@@ -113,7 +112,6 @@ func (l *ApiLogic) UpdateApi(ctx context.Context, input *dto.ApiUpdateRequestDto
 			Type:   input.Type,
 		}
 		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
-
 	})
 	return result, err
 }
@@ -130,7 +128,6 @@ func (l *ApiLogic) Detail(ctx context.Context, id int64, apiType constants.UserT
 
 // DeleteApi deletes an existing api
 func (l *ApiLogic) DeleteApi(ctx context.Context, id int64, apiType constants.UserType) (err error) {
-
 	err = l.repos.ApiRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		return l.deleteApi(ctx, tx, id, apiType)
 	})
@@ -146,7 +143,6 @@ func (l *ApiLogic) DeleteApi(ctx context.Context, id int64, apiType constants.Us
 			Type:   apiType,
 		}
 		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[apiType], msg)
-
 	})
 	return
 }
@@ -190,5 +186,4 @@ func (l *ApiLogic) buildTree(apis []*model.Api, parentId int64) (results []*dto.
 		results[i].Children = l.buildTree(apis, result.Id)
 	}
 	return results
-
 }

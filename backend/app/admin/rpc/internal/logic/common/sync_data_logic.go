@@ -309,7 +309,6 @@ func (l *SyncDataLogic) syncResource() (err error) {
 				return err
 			}
 		}
-
 	}
 
 	return err

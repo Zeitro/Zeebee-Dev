@@ -78,11 +78,9 @@ func (l *ProfileLogic) Profile(in *lender.EmptyRequest) (resp *lender.Organizati
 				return nil, err
 			}
 			setting.HasConfigured = preapprovalLetterTemplate.HasConfigured
-
 		} else {
 			setting.HasConfigured = true
 		}
-
 	}
 
 	return &lender.OrganizationProfileResponse{

@@ -93,7 +93,6 @@ func (f TemplateVariableFormat) Validate() error {
 		return nil
 	}
 	return fmt.Errorf("Invalid Template Variable Format:%v", f)
-
 }
 
 type BaseTemplateScope string

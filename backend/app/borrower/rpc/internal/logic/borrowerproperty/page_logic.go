@@ -64,7 +64,6 @@ func (l *PageLogic) Page(in *borrower.PropertyPageRequest) (resp *borrower.Prope
 	properties := make([]*borrower.PropertyPageEntity, len(borrowerPropertyPageResult.List))
 	now := datetime.BeginOfDay(time.Now())
 	for i, borrowerProperty := range borrowerPropertyPageResult.List {
-
 		propertyPageEntry := &borrower.PropertyPageEntity{}
 		err = copier.CopyWithOption(propertyPageEntry, borrowerProperty, copier.Option{
 			DeepCopy:      true,
@@ -100,7 +99,6 @@ func (l *PageLogic) Page(in *borrower.PropertyPageRequest) (resp *borrower.Prope
 			case constants.LoanStageArchived:
 				propertyPageEntry.ArchivedLoanCount++
 			}
-
 		}
 		if totalRate > 0 {
 			propertyPageEntry.AvgRate = totalRate / float32(len(borrowerProperty.Loans))
@@ -111,7 +109,6 @@ func (l *PageLogic) Page(in *borrower.PropertyPageRequest) (resp *borrower.Prope
 		propertyPageEntry.Applicants = slice.Unique(propertyPageEntry.Applicants)
 		propertyPageEntry.Lenders = slice.Unique(propertyPageEntry.Lenders)
 		properties[i] = propertyPageEntry
-
 	}
 
 	return &borrower.PropertyPageResponse{
