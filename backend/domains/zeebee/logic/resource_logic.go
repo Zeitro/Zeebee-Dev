@@ -105,7 +105,7 @@ func (l *ResourceLogic) CreateResource(ctx context.Context, input *dto.ResourceC
 			Scope:  auth.ScopeGlobal,
 			Type:   input.Type,
 		}
-		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
 	})
 
 	result, err = copierx.Trans[model.Resource, dto.ResourceEntityDto](resourceModel)
@@ -225,7 +225,7 @@ func (l *ResourceLogic) UpdateResource(ctx context.Context, input *dto.ResourceU
 			RemovedPolicies: removedPolicies,
 		}
 
-		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
 	})
 
 	result, err = l.Detail(ctx, resourceModel.Id, resourceModel.Type)
@@ -264,7 +264,7 @@ func (l *ResourceLogic) DeleteResource(ctx context.Context, id int64, resourceTy
 			RemovedPolicies: policies,
 		}
 
-		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[resourceType], msg)
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[resourceType], msg)
 	})
 
 	return nil

@@ -198,5 +198,5 @@ func parseUsaCurrency(s string) (result int64, err error) {
 	if err != nil {
 		return 0, errorx.Wrapf(err, "failed to parse int %s", s)
 	}
-	return int64(val), nil
+	return val, nil
 }

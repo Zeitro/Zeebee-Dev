@@ -46,7 +46,7 @@ func (repo *BorrowerPropertyRepo) GetOne(ctx context.Context, id int64) (result 
 
 func (repo *BorrowerPropertyRepo) GetOrCreateBorrowerPropertyWithTxForBorrower(ctx context.Context, tx *gorm.DB, organizationId int64, creatorId int64, creatorName string, address model.Address) (result *model.BorrowerProperty, err error) {
 	if len(address.City) == 0 || len(address.Address1) == 0 || len(address.State) == 0 {
-		return nil, fmt.Errorf("Invalid Borrower Address")
+		return nil, fmt.Errorf("invalid borrower address")
 	}
 	// if not existed,create one
 	err = tx.WithContext(ctx).
@@ -133,7 +133,7 @@ func (repo *BorrowerPropertyRepo) PageForBorrower(ctx context.Context, pageReq d
 	borrowerPropertyTable := model.BorrowerProperty{}.TableName()
 	loanPropertyTable := model.LoanProperty{}.TableName()
 	applicantTable := model.LoanApplicant{}.TableName()
-	loanRepo := NewLoanRepo(repo.BaseRepo.GetDB())
+	loanRepo := NewLoanRepo(repo.GetDB())
 
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter

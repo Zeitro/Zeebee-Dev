@@ -71,7 +71,7 @@ func (l *ApiLogic) CreateApi(ctx context.Context, input *dto.ApiCreateRequestDto
 			Scope:  auth.ScopeGlobal,
 			Type:   input.Type,
 		}
-		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
 	})
 
 	return result, nil
@@ -111,7 +111,7 @@ func (l *ApiLogic) UpdateApi(ctx context.Context, input *dto.ApiUpdateRequestDto
 			Scope:  auth.ScopeGlobal,
 			Type:   input.Type,
 		}
-		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
 	})
 	return result, err
 }
@@ -142,7 +142,7 @@ func (l *ApiLogic) DeleteApi(ctx context.Context, id int64, apiType constants.Us
 			Scope:  auth.ScopeGlobal,
 			Type:   apiType,
 		}
-		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[apiType], msg)
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[apiType], msg)
 	})
 	return
 }

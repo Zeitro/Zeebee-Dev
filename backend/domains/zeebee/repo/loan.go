@@ -124,8 +124,8 @@ func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq dto.LoanBorro
 	loanTable := model.Loan{}.TableName()
 	loanPropertyTable := model.LoanProperty{}.TableName()
 	applicantTable := model.LoanApplicant{}.TableName()
-	loanPropertyRepo := NewLoanPropertyRepo(repo.BaseRepo.GetDB())
-	applicantRepo := NewLoanApplicantRepo(repo.BaseRepo.GetDB())
+	loanPropertyRepo := NewLoanPropertyRepo(repo.GetDB())
+	applicantRepo := NewLoanApplicantRepo(repo.GetDB())
 
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
@@ -283,8 +283,8 @@ func (repo *LoanRepo) PageForLender(ctx context.Context, pageReq dto.LoanLenderP
 	loanTable := model.Loan{}.TableName()
 	loanPropertyTable := model.LoanProperty{}.TableName()
 	applicantTable := model.LoanApplicant{}.TableName()
-	loanPropertyRepo := NewLoanPropertyRepo(repo.BaseRepo.GetDB())
-	applicantRepo := NewLoanApplicantRepo(repo.BaseRepo.GetDB())
+	loanPropertyRepo := NewLoanPropertyRepo(repo.GetDB())
+	applicantRepo := NewLoanApplicantRepo(repo.GetDB())
 
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
@@ -396,8 +396,8 @@ func (repo *LoanRepo) PageForAdmin(ctx context.Context, pageReq dto.LoanAdminPag
 	loanPropertyTable := model.LoanProperty{}.TableName()
 	applicantTable := model.LoanApplicant{}.TableName()
 	// organizationTable := model.Organization{}.TableName()
-	loanPropertyRepo := NewLoanPropertyRepo(repo.BaseRepo.GetDB())
-	applicantRepo := NewLoanApplicantRepo(repo.BaseRepo.GetDB())
+	loanPropertyRepo := NewLoanPropertyRepo(repo.GetDB())
+	applicantRepo := NewLoanApplicantRepo(repo.GetDB())
 
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
