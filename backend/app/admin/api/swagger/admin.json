@@ -1096,9 +1096,6 @@
             "required": true,
             "schema": {
               "type": "object",
-              "required": [
-                "page"
-              ],
               "properties": {
                 "filter": {
                   "type": "object",
@@ -4584,10 +4581,6 @@
                       "properties": {
                         "loan_amount_range": {
                           "type": "object",
-                          "required": [
-                            "min",
-                            "max"
-                          ],
                           "properties": {
                             "max": {
                               "type": "number"
@@ -4599,10 +4592,6 @@
                         },
                         "loan_point_range": {
                           "type": "object",
-                          "required": [
-                            "min",
-                            "max"
-                          ],
                           "properties": {
                             "max": {
                               "type": "number"
@@ -4614,10 +4603,6 @@
                         },
                         "loan_rate_range": {
                           "type": "object",
-                          "required": [
-                            "min",
-                            "max"
-                          ],
                           "properties": {
                             "max": {
                               "type": "number"
@@ -4629,10 +4614,6 @@
                         },
                         "loan_term_range": {
                           "type": "object",
-                          "required": [
-                            "min",
-                            "max"
-                          ],
                           "properties": {
                             "max": {
                               "type": "integer"
@@ -4749,10 +4730,6 @@
                           "properties": {
                             "loan_amount_range": {
                               "type": "object",
-                              "required": [
-                                "min",
-                                "max"
-                              ],
                               "properties": {
                                 "max": {
                                   "type": "number"
@@ -4764,10 +4741,6 @@
                             },
                             "loan_point_range": {
                               "type": "object",
-                              "required": [
-                                "min",
-                                "max"
-                              ],
                               "properties": {
                                 "max": {
                                   "type": "number"
@@ -4779,10 +4752,6 @@
                             },
                             "loan_rate_range": {
                               "type": "object",
-                              "required": [
-                                "min",
-                                "max"
-                              ],
                               "properties": {
                                 "max": {
                                   "type": "number"
@@ -4794,10 +4763,6 @@
                             },
                             "loan_term_range": {
                               "type": "object",
-                              "required": [
-                                "min",
-                                "max"
-                              ],
                               "properties": {
                                 "max": {
                                   "type": "integer"
@@ -5252,10 +5217,6 @@
                   "properties": {
                     "loan_amount_range": {
                       "type": "object",
-                      "required": [
-                        "min",
-                        "max"
-                      ],
                       "properties": {
                         "max": {
                           "type": "number"
@@ -5267,10 +5228,6 @@
                     },
                     "loan_point_range": {
                       "type": "object",
-                      "required": [
-                        "min",
-                        "max"
-                      ],
                       "properties": {
                         "max": {
                           "type": "number"
@@ -5282,10 +5239,6 @@
                     },
                     "loan_rate_range": {
                       "type": "object",
-                      "required": [
-                        "min",
-                        "max"
-                      ],
                       "properties": {
                         "max": {
                           "type": "number"
@@ -5297,10 +5250,6 @@
                     },
                     "loan_term_range": {
                       "type": "object",
-                      "required": [
-                        "min",
-                        "max"
-                      ],
                       "properties": {
                         "max": {
                           "type": "integer"
@@ -5385,10 +5334,6 @@
                           "properties": {
                             "loan_amount_range": {
                               "type": "object",
-                              "required": [
-                                "min",
-                                "max"
-                              ],
                               "properties": {
                                 "max": {
                                   "type": "number"
@@ -5400,10 +5345,6 @@
                             },
                             "loan_point_range": {
                               "type": "object",
-                              "required": [
-                                "min",
-                                "max"
-                              ],
                               "properties": {
                                 "max": {
                                   "type": "number"
@@ -5415,10 +5356,6 @@
                             },
                             "loan_rate_range": {
                               "type": "object",
-                              "required": [
-                                "min",
-                                "max"
-                              ],
                               "properties": {
                                 "max": {
                                   "type": "number"
@@ -5430,10 +5367,6 @@
                             },
                             "loan_term_range": {
                               "type": "object",
-                              "required": [
-                                "min",
-                                "max"
-                              ],
                               "properties": {
                                 "max": {
                                   "type": "integer"
@@ -5837,9 +5770,6 @@
             "required": true,
             "schema": {
               "type": "object",
-              "required": [
-                "page"
-              ],
               "properties": {
                 "filter": {
                   "type": "object",
@@ -6154,10 +6084,6 @@
                           "properties": {
                             "loan_amount_range": {
                               "type": "object",
-                              "required": [
-                                "min",
-                                "max"
-                              ],
                               "properties": {
                                 "max": {
                                   "type": "number"
@@ -6169,10 +6095,6 @@
                             },
                             "loan_point_range": {
                               "type": "object",
-                              "required": [
-                                "min",
-                                "max"
-                              ],
                               "properties": {
                                 "max": {
                                   "type": "number"
@@ -6184,10 +6106,6 @@
                             },
                             "loan_rate_range": {
                               "type": "object",
-                              "required": [
-                                "min",
-                                "max"
-                              ],
                               "properties": {
                                 "max": {
                                   "type": "number"
@@ -6199,10 +6117,6 @@
                             },
                             "loan_term_range": {
                               "type": "object",
-                              "required": [
-                                "min",
-                                "max"
-                              ],
                               "properties": {
                                 "max": {
                                   "type": "integer"
@@ -6722,8 +6636,7 @@
                 "email",
                 "password",
                 "first_name",
-                "last_name",
-                "phone"
+                "last_name"
               ],
               "properties": {
                 "email": {
@@ -7087,9 +7000,6 @@
             "required": true,
             "schema": {
               "type": "object",
-              "required": [
-                "page"
-              ],
               "properties": {
                 "filter": {
                   "type": "object",
@@ -7637,8 +7547,7 @@
               "type": "object",
               "required": [
                 "first_name",
-                "last_name",
-                "phone"
+                "last_name"
               ],
               "properties": {
                 "first_name": {
@@ -9666,7 +9575,6 @@
             "schema": {
               "type": "object",
               "required": [
-                "page",
                 "filter",
                 "sort"
               ],
@@ -11988,9 +11896,9 @@
       }
     }
   },
-  "x-date": "2026-03-18 10:51:35",
+  "x-date": "2026-05-15 13:39:09",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
-  "x-goctl-version": "1.9.2"
+  "x-goctl-version": "1.10.1"
 }

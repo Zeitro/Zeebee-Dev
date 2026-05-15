@@ -265,7 +265,7 @@ type ImportPendingLoanEntity {
     MaturityDate string `json:"maturity_date,optional"`
     ClosingFund float64 `json:"closing_fund,optional"`
     LenderCompany string `json:"lender_company,optional"`
-    LoanType string `json:"loan_type, optional"`
+    LoanType string `json:"loan_type,optional"`
     TotalAmount float64 `json:"total_amount,optional"`
     // => 1st Loan Amount
     HoldbackAmount float64 `json:"holdback_amount,optional"`
@@ -322,7 +322,7 @@ type (
     }
 
     LoanPreApprovalRequest {
-        RequestId string `json:"request_id, optional"`
+        RequestId string `json:"request_id,optional"`
         Borrower *LoanPreApprovalRequestBorrower `json:"borrower" validate:"required"`
         Property *LoanPreApprovalRequestProperty `json:"property" validate:"required"`
         Loan *LoanPreApprovalRequestLoan `json:"loan" validate:"required"`

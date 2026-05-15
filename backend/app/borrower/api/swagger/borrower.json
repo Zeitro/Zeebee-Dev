@@ -383,7 +383,7 @@
             "type": "string",
             "name": "mid_name",
             "in": "query",
-            "required": true
+            "allowEmptyValue": true
           }
         ],
         "responses": {
@@ -1631,8 +1631,7 @@
                 "loan_property": {
                   "type": "object",
                   "required": [
-                    "borrower_property_id",
-                    "existing_lender_company"
+                    "borrower_property_id"
                   ],
                   "properties": {
                     "arv": {
@@ -1751,7 +1750,6 @@
                     "type": "object",
                     "required": [
                       "borrower_applicant_id",
-                      "is_primary",
                       "own_percent"
                     ],
                     "properties": {
@@ -1909,25 +1907,7 @@
                     "future_living_area_sqft",
                     "future_bedrooms",
                     "future_bathrooms",
-                    "existing_lender_company",
-                    "existing_rate",
-                    "existing_maturity_date",
-                    "purchase_amount",
-                    "purchase_date",
-                    "has_assignment_fee",
-                    "assignment_fee_amount",
-                    "has_subordinate_debt",
-                    "subordinate_debt_amount",
-                    "scheduled_close_escrow_date",
-                    "est_property_value_amount",
-                    "liquidity_amount",
-                    "budget",
-                    "mid_construction",
-                    "est_yearly_rental_income_amount",
-                    "yearly_liability_expense_amount",
-                    "has_delayed_financing",
-                    "has_properties_vacant",
-                    "has_short_term_rental"
+                    "liquidity_amount"
                   ],
                   "properties": {
                     "arv": {
@@ -2875,7 +2855,6 @@
                     "type": "object",
                     "required": [
                       "borrower_applicant_id",
-                      "is_primary",
                       "own_percent"
                     ],
                     "properties": {
@@ -3033,25 +3012,7 @@
                     "future_living_area_sqft",
                     "future_bedrooms",
                     "future_bathrooms",
-                    "existing_lender_company",
-                    "existing_rate",
-                    "existing_maturity_date",
-                    "purchase_amount",
-                    "purchase_date",
-                    "has_assignment_fee",
-                    "assignment_fee_amount",
-                    "has_subordinate_debt",
-                    "subordinate_debt_amount",
-                    "scheduled_close_escrow_date",
-                    "est_property_value_amount",
-                    "liquidity_amount",
-                    "budget",
-                    "mid_construction",
-                    "est_yearly_rental_income_amount",
-                    "yearly_liability_expense_amount",
-                    "has_delayed_financing",
-                    "has_properties_vacant",
-                    "has_short_term_rental"
+                    "liquidity_amount"
                   ],
                   "properties": {
                     "arv": {
@@ -4445,7 +4406,6 @@
             "schema": {
               "type": "object",
               "required": [
-                "request_id",
                 "borrower",
                 "property",
                 "loan"
@@ -4857,8 +4817,7 @@
                 "loan_property": {
                   "type": "object",
                   "required": [
-                    "borrower_property_id",
-                    "existing_lender_company"
+                    "borrower_property_id"
                   ],
                   "properties": {
                     "arv": {
@@ -5912,8 +5871,7 @@
                 "loan_property": {
                   "type": "object",
                   "required": [
-                    "borrower_property_id",
-                    "existing_lender_company"
+                    "borrower_property_id"
                   ],
                   "properties": {
                     "arv": {
@@ -6065,7 +6023,6 @@
                     "type": "object",
                     "required": [
                       "borrower_applicant_id",
-                      "is_primary",
                       "own_percent"
                     ],
                     "properties": {
@@ -6223,25 +6180,7 @@
                     "future_living_area_sqft",
                     "future_bedrooms",
                     "future_bathrooms",
-                    "existing_lender_company",
-                    "existing_rate",
-                    "existing_maturity_date",
-                    "purchase_amount",
-                    "purchase_date",
-                    "has_assignment_fee",
-                    "assignment_fee_amount",
-                    "has_subordinate_debt",
-                    "subordinate_debt_amount",
-                    "scheduled_close_escrow_date",
-                    "est_property_value_amount",
-                    "liquidity_amount",
-                    "budget",
-                    "mid_construction",
-                    "est_yearly_rental_income_amount",
-                    "yearly_liability_expense_amount",
-                    "has_delayed_financing",
-                    "has_properties_vacant",
-                    "has_short_term_rental"
+                    "liquidity_amount"
                   ],
                   "properties": {
                     "arv": {
@@ -6631,7 +6570,6 @@
                     "type": "object",
                     "required": [
                       "borrower_applicant_id",
-                      "is_primary",
                       "own_percent"
                     ],
                     "properties": {
@@ -6789,25 +6727,7 @@
                     "future_living_area_sqft",
                     "future_bedrooms",
                     "future_bathrooms",
-                    "existing_lender_company",
-                    "existing_rate",
-                    "existing_maturity_date",
-                    "purchase_amount",
-                    "purchase_date",
-                    "has_assignment_fee",
-                    "assignment_fee_amount",
-                    "has_subordinate_debt",
-                    "subordinate_debt_amount",
-                    "scheduled_close_escrow_date",
-                    "est_property_value_amount",
-                    "liquidity_amount",
-                    "budget",
-                    "mid_construction",
-                    "est_yearly_rental_income_amount",
-                    "yearly_liability_expense_amount",
-                    "has_delayed_financing",
-                    "has_properties_vacant",
-                    "has_short_term_rental"
+                    "liquidity_amount"
                   ],
                   "properties": {
                     "arv": {
@@ -8723,9 +8643,7 @@
               "type": "object",
               "required": [
                 "first_name",
-                "last_name",
-                "phone",
-                "remark"
+                "last_name"
               ],
               "properties": {
                 "first_name": {
@@ -9447,25 +9365,7 @@
                     "future_living_area_sqft",
                     "future_bedrooms",
                     "future_bathrooms",
-                    "existing_lender_company",
-                    "existing_rate",
-                    "existing_maturity_date",
-                    "purchase_amount",
-                    "purchase_date",
-                    "has_assignment_fee",
-                    "assignment_fee_amount",
-                    "has_subordinate_debt",
-                    "subordinate_debt_amount",
-                    "scheduled_close_escrow_date",
-                    "est_property_value_amount",
-                    "liquidity_amount",
-                    "budget",
-                    "mid_construction",
-                    "est_yearly_rental_income_amount",
-                    "yearly_liability_expense_amount",
-                    "has_delayed_financing",
-                    "has_properties_vacant",
-                    "has_short_term_rental"
+                    "liquidity_amount"
                   ],
                   "properties": {
                     "address": {
@@ -16116,9 +16016,9 @@
       }
     }
   },
-  "x-date": "2026-04-01 17:27:36",
+  "x-date": "2026-05-15 13:43:32",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
-  "x-goctl-version": "1.9.2"
+  "x-goctl-version": "1.10.1"
 }

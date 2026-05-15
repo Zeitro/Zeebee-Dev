@@ -36,7 +36,7 @@ type (
 type (
     BasePageRequest {
         Limit int `json:"limit,optional"`
-        Page int `json:"page, optional"`
+        Page int `json:"page,optional"`
     }
     BasePageFilter {
         Keyword string `json:"keyword,optional"`
