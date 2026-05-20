@@ -27,6 +27,28 @@ export const maxTerm = 10000;
 export const maxTerm_zeeBee = 24;
 export const minTerm_zeeBee = 12;
 
+/** 表格/详情等展示：字段无数据时的统一占位符 */
+export const EMPTY_DISPLAY = '--';
+
+/**
+ * 展示用：无有效数据时返回 {@link EMPTY_DISPLAY}（`--`）
+ * @param {*} value 原始值
+ * @param {(v: *) => *} [formatter] 可选格式化（如 formatAmount、formatDate）
+ */
+export function displayValue(value, formatter) {
+	if (value === null || value === undefined || value === '') {
+		return EMPTY_DISPLAY;
+	}
+	const formatted = formatter ? formatter(value) : value;
+	if (formatted === null || formatted === undefined || formatted === '') {
+		return EMPTY_DISPLAY;
+	}
+	if (formatted === '$ --') {
+		return EMPTY_DISPLAY;
+	}
+	return formatted;
+}
+
 // 通过property_type获取unit
 export const changeUnitByPropertyType = (property_type, newUnit) => {
 	let unit = null,

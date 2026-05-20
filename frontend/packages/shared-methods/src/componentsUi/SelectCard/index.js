@@ -26,6 +26,7 @@ export const SelectCard = ({
 	xs = 24,
 	btnCol = { xl: 6, sm: 24, xs: 24 },
 	sliceIndex = 3,
+	isHideAddBtn = false,
 }) => {
 	const isInit = useRef(true);
 	const { request } = createRequest();
@@ -189,20 +190,22 @@ export const SelectCard = ({
 								/>
 							</BtnPopUpModal>
 						)}
-						<BtnPopUpModal
-							getContent={(setOpen) =>
-								getAddDom(type, { setOpen, handleSearch: handleSelect })
-							}
-							type="default"
-							size="large"
-							className={[
-								'w-full max-w-40 block !h-[49px]',
-								!disabled && '!text-base-primary',
-							].join(' ')}
-							disabled={disabled}
-						>
-							{addTitle}
-						</BtnPopUpModal>
+						{!isHideAddBtn && (
+							<BtnPopUpModal
+								getContent={(setOpen) =>
+									getAddDom(type, { setOpen, handleSearch: handleSelect })
+								}
+								type="default"
+								size="large"
+								className={[
+									'w-full max-w-40 block !h-[49px]',
+									!disabled && '!text-base-primary',
+								].join(' ')}
+								disabled={disabled}
+							>
+								{addTitle}
+							</BtnPopUpModal>
+						)}
 					</Space>
 				</Col>
 			</Row>

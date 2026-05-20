@@ -16,6 +16,13 @@ const STATUS_OPTIONS = [
 	{ label: 'Closed', value: 'Closed' },
 ];
 
+const TRANSACTION_TYPE_OPTIONS = [
+	{ label: 'Purchase', value: 'Purchase' },
+	{ label: 'Sale', value: 'Sale' },
+	{ label: 'Re-finance', value: 'Re-finance' },
+	{ label: 'Change Title', value: 'Change Title' },
+	{ label: 'Assignment', value: 'Assignment' },
+];
 function statusTag(status) {
 	const color = status === 'Pending' ? 'gold' : status === 'Cancelled' ? 'red' : 'success';
 	return (
@@ -51,8 +58,19 @@ const MyTransactionsPage = () => {
 				paramsKey: 'keyword',
 				value: keyword,
 				onChange: ({ target: { value } }) => setKeyword(value),
-				colProps: { xs: 24, sm: 24, md: 12, lg: 10, xl: 10 },
+				colProps: { xs: 24, sm: 24, md: 12, lg: 5, xl: 5 },
 				style: { width: '100%', maxWidth: '100%' },
+			},
+			{
+				filterType: 'select',
+				placeholder: 'Transaction type',
+				paramsKey: 'type',
+				options: TRANSACTION_TYPE_OPTIONS,
+				value: status || undefined,
+				onChange: (v) => setStatus(v ?? ''),
+				allowClear: true,
+				colProps: { xs: 24, sm: 12, md: 6, lg: 4, xl: 4 },
+				style: { width: '100%', minWidth: 140 },
 			},
 			{
 				filterType: 'select',
@@ -72,7 +90,7 @@ const MyTransactionsPage = () => {
 					cancelMatch(TRANSACTION_LIST_API);
 					tableFilterRef.current?.handleSearch?.();
 				},
-				colProps: { xs: 12, sm: 6, md: 'auto' },
+				// colProps: { xs: 12, sm: 6, md: 'auto' },
 			},
 			{
 				filterType: 'button',
@@ -85,31 +103,13 @@ const MyTransactionsPage = () => {
 					cancelMatch(TRANSACTION_LIST_API);
 					setTimeout(() => tableFilterRef.current?.handleSearch?.(), 300);
 				},
-				colProps: { xs: 12, sm: 6, md: 'auto' },
+				// colProps: { xs: 12, sm: 6, md: 'auto' },
 			},
 			{
-				filterType: 'custom',
-				colProps: {
-					xs: 24,
-					sm: 24,
-					md: 24,
-					lg: 24,
-					xl: 24,
-					flex: '1 1 200px',
-					style: { display: 'flex', justifyContent: 'flex-end' },
-				},
-				children: (
-					<div className="flex justify-end w-full">
-						<Button
-							type="primary"
-							size="large"
-							icon={<PlusOutlined />}
-							onClick={() => setNewTransactionOpen(true)}
-						>
-							New Transaction
-						</Button>
-					</div>
-				),
+				filterType: 'button',
+				text: 'New Transaction',
+				icon: <PlusOutlined />,
+				onClick: () => setNewTransactionOpen(true),
 			},
 		],
 		[keyword, status, cancelMatch],
@@ -125,9 +125,9 @@ const MyTransactionsPage = () => {
 				width: 140,
 			},
 			{
-				title: 'Property',
-				dataIndex: 'property',
-				key: 'property',
+				title: 'Property address',
+				dataIndex: ['property', 'address', 'address1'],
+				key: 'address',
 				sorter: true,
 				render: (_, record) => {
 					const text = record?.property?.address?.address1 ?? '—';
@@ -145,7 +145,7 @@ const MyTransactionsPage = () => {
 			},
 			{
 				title: 'City',
-				dataIndex: 'city',
+				dataIndex: ['property', 'address', 'city'],
 				key: 'city',
 				sorter: true,
 				width: 120,
@@ -153,7 +153,7 @@ const MyTransactionsPage = () => {
 			},
 			{
 				title: 'State',
-				dataIndex: 'state',
+				dataIndex: ['property', 'address', 'state'],
 				key: 'state',
 				width: 80,
 				sorter: true,
@@ -176,7 +176,7 @@ const MyTransactionsPage = () => {
 				render: (v) => (v ? statusTag(v) : '—'),
 			},
 			{
-				title: 'COE Date',
+				title: 'COE date',
 				dataIndex: 'coe_date',
 				key: 'coe_date',
 				width: 120,
@@ -187,19 +187,7 @@ const MyTransactionsPage = () => {
 					return formatted || '—';
 				},
 			},
-			{
-				title: 'Files',
-				key: 'files',
-				width: 80,
-				align: 'center',
-				render: () => (
-					<Button
-						type="text"
-						icon={<FolderOpenOutlined className="text-base-warning" />}
-						onClick={() => message.info('File list is not wired yet.')}
-					/>
-				),
-			},
+
 			{
 				title: 'Action',
 				key: 'action',
@@ -207,6 +195,12 @@ const MyTransactionsPage = () => {
 				fixed: 'right',
 				render: (_, record) => (
 					<Space size="small">
+						<Button
+							size="small"
+							type="text"
+							icon={<FolderOpenOutlined className="text-base-warning" />}
+							onClick={() => message.info('File list is not wired yet.')}
+						/>
 						<Button
 							size="small"
 							onClick={() =>
@@ -238,7 +232,6 @@ const MyTransactionsPage = () => {
 		<>
 			<FilterTable
 				ref={tableFilterRef}
-				rowKey="id"
 				columns={columns}
 				filterList={filterList}
 				filterName="Transaction filters"

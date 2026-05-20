@@ -31,8 +31,9 @@ function formatPropertyOptionLabel(p) {
  * @param {() => void} props.onClose
  * @param {() => void} [props.onSaved] 保存成功后回调（如刷新表格）
  * @param {(values: { property_id: number, type: string }) => Promise<void>} [props.onSubmit] 自定义提交；不传则 POST `TRANSACTION_CREATE_API`
+ * @param {object} [props.initialProperty] 预填物业（如从 Properties 列表行传入）；有值时不再请求 `/property/all`，且物业下拉只读
  */
-const NewTransactionModal = ({ open, onClose, onSaved, onSubmit }) => {
+const NewTransactionModal = ({ open, onClose, onSaved, onSubmit, initialProperty }) => {
 	const [form] = Form.useForm();
 	const { request } = useMemo(() => createRequest(), []);
 	const [confirmLoading, setConfirmLoading] = useState(false);
@@ -43,6 +44,14 @@ const NewTransactionModal = ({ open, onClose, onSaved, onSubmit }) => {
 		if (!open) return;
 		form.resetFields();
 		let cancelled = false;
+
+		if (initialProperty?.id) {
+			setProperties([initialProperty]);
+			setPropertyLoading(false);
+			form.setFieldsValue({ property_id: initialProperty.id });
+			return;
+		}
+
 		(async () => {
 			try {
 				setPropertyLoading(true);
@@ -57,7 +66,7 @@ const NewTransactionModal = ({ open, onClose, onSaved, onSubmit }) => {
 		return () => {
 			cancelled = true;
 		};
-	}, [open, form, request]);
+	}, [open, form, request, initialProperty]);
 
 	const propertySelectOptions = useMemo(
 		() =>
@@ -129,8 +138,9 @@ const NewTransactionModal = ({ open, onClose, onSaved, onSubmit }) => {
 				>
 					<Select
 						placeholder="Select property"
-						allowClear
-						showSearch
+						allowClear={!initialProperty?.id}
+						showSearch={!initialProperty?.id}
+						disabled={!!initialProperty?.id}
 						loading={propertyLoading}
 						options={propertySelectOptions}
 						optionFilterProp="label"

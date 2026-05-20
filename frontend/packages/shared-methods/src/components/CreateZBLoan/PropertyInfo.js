@@ -1,7 +1,7 @@
 'use client';
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import styles from './index.module.scss';
-import { Row, Col, Form, Select, InputNumber } from 'antd';
+import { Row, Col, Form, Select, InputNumber, Radio } from 'antd';
 import AddressForm from '../GoogleAutoComplete/AddressForm';
 import { useGetOptions } from '@repo/shared-methods/hooks';
 import { layoutCol, titleCol } from '@repo/shared-methods/enum';
@@ -9,6 +9,12 @@ import { livingAreaProps } from '../../lib/format';
 // import SelectCard from '@/components/SelectCard/index';
 import { SelectCard } from '@repo/shared-methods';
 let name = 'loan_property';
+
+const SELECT_MODE = {
+	property: 'property',
+	transaction: 'transaction',
+};
+
 export const PropertyInfo = ({
 	gutter = 24,
 	addressProps,
@@ -17,7 +23,9 @@ export const PropertyInfo = ({
 	isShowSelectCard = true,
 }) => {
 	const form = Form.useFormInstance();
+	const [selectMode, setSelectMode] = useState(SELECT_MODE.property);
 	const borrower_property_id = Form.useWatch([name, 'borrower_property_id'], form);
+	const transaction_id = Form.useWatch([name, 'transaction_id'], form);
 	const { loanPurposeOptions, loanTypeOptions, propertyTypeOptions } = useGetOptions([
 		{
 			key: 'loan_purpose',
@@ -33,24 +41,94 @@ export const PropertyInfo = ({
 		},
 	]);
 
+	const isTransactionMode = selectMode === SELECT_MODE.transaction;
+
+	const selectCardProps = useMemo(() => {
+		if (isTransactionMode) {
+			return {
+				type: 'transaction',
+				api: '/transaction/all',
+				title: '',
+				formFieldName: [name, 'transaction_id'],
+				selectedId: transaction_id,
+				isHideAddBtn: true,
+			};
+		}
+		return {
+			type: 'property',
+			api: '/property/all',
+			title: '',
+			addTitle: 'Add a property',
+			formFieldName: [name, 'borrower_property_id'],
+			selectedId: borrower_property_id,
+		};
+	}, [isTransactionMode, borrower_property_id, transaction_id]);
+
+	const handleSelectModeChange = (mode) => {
+		setSelectMode(mode);
+		// if (mode === SELECT_MODE.property) {
+		// 	form.setFieldValue([name, 'transaction_id'], undefined);
+		// 	return;
+		// }
+		// form.setFieldValue([name, 'borrower_property_id'], undefined);
+	};
+
 	return (
 		<Row className={styles.createZeeBee} gutter={gutter}>
 			<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
 				Property information
 			</Col>
 			{isShowSelectCard && (
-				<SelectCard
-					className="mb-8"
-					changeFormValue={(values) => {
-						const property = {
-							[name]: { ...values, borrower_property_id: values.id },
-						};
-						form.setFieldsValue(property);
-					}}
-					name={[name, 'borrower_property_id']}
-					id={borrower_property_id}
-					disabled={isRequestProperty}
-				/>
+				<Col span={24}>
+					<Radio.Group
+						value={selectMode}
+						onChange={(e) => handleSelectModeChange(e.target.value)}
+						disabled={isRequestProperty}
+						size="large"
+					>
+						<Radio
+							value={SELECT_MODE.property}
+							className="[&_.ant-radio-label]:!font-medium [&_.ant-radio-label]:text-base !text-base-text"
+						>
+							Choose a property
+						</Radio>
+						<span className="text-base text-base-gray select-none px-2">or</span>
+						<Radio
+							value={SELECT_MODE.transaction}
+							className="[&_.ant-radio-label]:!font-medium [&_.ant-radio-label]:text-base !text-base-text"
+						>
+							Choose a transaction
+						</Radio>
+					</Radio.Group>
+					<SelectCard
+						key={selectMode}
+						className="mb-8"
+						type={selectCardProps.type}
+						api={selectCardProps.api}
+						title={selectCardProps.title}
+						addTitle={selectCardProps.addTitle}
+						name={selectCardProps.formFieldName}
+						id={selectCardProps.selectedId}
+						changeFormValue={(values) => {
+							if (isTransactionMode) {
+								const property = values?.property ?? {};
+								form.setFieldsValue({
+									[name]: {
+										...property,
+										borrower_property_id:
+											property.id ?? property.borrower_property_id,
+										transaction_id: values.id,
+									},
+								});
+								return;
+							}
+							form.setFieldsValue({
+								[name]: { ...values, borrower_property_id: values.id },
+							});
+						}}
+						disabled={isRequestProperty}
+					/>
+				</Col>
 			)}
 			<AddressForm
 				{...addressProps}

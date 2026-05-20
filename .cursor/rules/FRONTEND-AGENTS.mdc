@@ -74,6 +74,7 @@ Zeebee-Dev/
 - **交互组件**（Form、Table、Modal、Message 等）：遵循上文共享包 **「UI 组件」** 的查找顺序——**先 `@repo/shared-methods` 封装，再 Ant Design 5.x**；并沿用各应用根布局里已有的 **AntdRegistry / ConfigProvider** 接入方式。
 - **布局、间距、响应式**用 **Tailwind 3.x**；避免与 antd 强耦合的重复样式。
 - **图标**：`@ant-design/icons`；**日期**与 antd 5 对齐 **dayjs**。
+- **空值展示**：表格列、`render`、详情字段等**无数据**（`null` / `undefined` / `''`，格式化后为空或 `formatAmount` 的 `$ --`）时，统一显示 **`--`**（两个连字符），勿用 `—`、`N/A`、`-` 或其它占位。优先使用 `@repo/shared-methods/utils` 的 **`EMPTY_DISPLAY`**、**`displayValue(value, formatter?)`**（`lib/format.js`）；与邻近平文件已写 `v || '--'` 时保持一致即可。
 
 ## 质量与提交
 
