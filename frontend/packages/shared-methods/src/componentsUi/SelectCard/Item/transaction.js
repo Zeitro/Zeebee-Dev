@@ -6,7 +6,7 @@ import { EditOutlined, DeleteOutlined, SwapOutlined } from '@ant-design/icons';
 import { formatDate, EMPTY_DISPLAY } from '@repo/shared-methods/utils';
 import { BtnPopUpModal, DeleteBtn } from '@repo/shared-methods';
 // import AddModal from '../Add/transaction';
-import { useTransaction } from './useCommon';
+// import { useTransaction } from './useCommon';
 
 function transactionStatusTag(status) {
 	if (!status) return null;
@@ -34,11 +34,11 @@ const TransactionCardItem = ({
 	...props
 }) => {
 	const handleSearch = () => getList?.();
-	const { loading, handleDelete } = useTransaction({
-		handleSearch,
-		handleClickItem,
-		rowData,
-	});
+	// const { loading, handleDelete } = useTransaction({
+	// 	handleSearch,
+	// 	handleClickItem,
+	// 	rowData,
+	// });
 
 	const isActive = rowData?.id && rowData?.id === item?.id;
 	const activeColor = isActive ? '#0958D9' : 'rgba(0,0,0,0.45)';
