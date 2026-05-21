@@ -1,4 +1,4 @@
-package property_transaction
+package borrower_property_transaction
 
 import (
 	"context"
@@ -11,26 +11,27 @@ import (
 	"zeebee-backend/common/copierx"
 )
 
-type TransactionDeleteLogic struct {
+type BorrowerPropertyTransactionDeleteLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewTransactionDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *TransactionDeleteLogic {
-	return &TransactionDeleteLogic{
+// delete transaction
+func NewBorrowerPropertyTransactionDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BorrowerPropertyTransactionDeleteLogic {
+	return &BorrowerPropertyTransactionDeleteLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *TransactionDeleteLogic) TransactionDelete(req *types.TransactionDeleteRequest) (resp *types.EmptyResponse, err error) {
+func (l *BorrowerPropertyTransactionDeleteLogic) BorrowerPropertyTransactionDelete(req *types.BorrowerPropertyTransactionDeleteRequest) (resp *types.EmptyResponse, err error) {
 	rpcReq := &borrower.BorrowerPropertyTransactionDeleteRequest{
 		Data: &borrower.BorrowerPropertyTransactionDeleteRequestData{},
 	}
 
-	rpcReq.Data, err = copierx.Trans[types.TransactionDeleteRequest, borrower.BorrowerPropertyTransactionDeleteRequestData](req)
+	rpcReq.Data, err = copierx.Trans[types.BorrowerPropertyTransactionDeleteRequest, borrower.BorrowerPropertyTransactionDeleteRequestData](req)
 	if err != nil {
 		return nil, err
 	}

@@ -1,4 +1,4 @@
-package property_transaction
+package borrower_property_transaction
 
 import (
 	"context"
@@ -11,21 +11,22 @@ import (
 	"zeebee-backend/common/copierx"
 )
 
-type TransactionDetailLogic struct {
+type BorrowerPropertyTransactionDetailLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewTransactionDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *TransactionDetailLogic {
-	return &TransactionDetailLogic{
+// transaction detail
+func NewBorrowerPropertyTransactionDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BorrowerPropertyTransactionDetailLogic {
+	return &BorrowerPropertyTransactionDetailLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *TransactionDetailLogic) TransactionDetail(req *types.TransactionDetailRequest) (resp *types.TransactionDetailResponse, err error) {
+func (l *BorrowerPropertyTransactionDetailLogic) BorrowerPropertyTransactionDetail(req *types.BorrowerPropertyTransactionDetailRequest) (resp *types.BorrowerPropertyTransactionDetailResponse, err error) {
 	rpcResp, err := l.svcCtx.BorrowerPropertyTransactionRpcClient.Detail(l.ctx, &borrower.BorrowerPropertyTransactionDetailRequest{
 		Data: &borrower.BorrowerPropertyTransactionDetailRequestData{
 			Id: req.Id,
@@ -35,8 +36,8 @@ func (l *TransactionDetailLogic) TransactionDetail(req *types.TransactionDetailR
 		return nil, err
 	}
 
-	resp = &types.TransactionDetailResponse{}
-	resp, err = copierx.Trans[borrower.BorrowerPropertyTransactionEntity, types.TransactionDetailResponse](rpcResp.Data)
+	resp = &types.BorrowerPropertyTransactionDetailResponse{}
+	resp, err = copierx.Trans[borrower.BorrowerPropertyTransactionEntity, types.BorrowerPropertyTransactionDetailResponse](rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

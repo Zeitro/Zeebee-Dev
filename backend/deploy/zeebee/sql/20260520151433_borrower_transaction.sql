@@ -80,14 +80,14 @@ CREATE TABLE "public"."documents"
 (
     "id"               serial,
     "parent_id"        int4         NOT NULL DEFAULT 0,
-    "type"             varchar(20)  NOT NULL DEFAULT '',
+    "type"             varchar(50)  NOT NULL DEFAULT '',
     "name"             varchar(255) NOT NULL,
     "level"            int4         NOT NULL DEFAULT 0,
     "sort_order"       int4         NOT NULL DEFAULT 9,
     "last_uploaded_at" timestamptz,
     "metadata"         jsonb        NOT NULL DEFAULT '{}',
     "created_at"       timestamptz  NOT NULL DEFAULT now(),
-    "uploaded_at"      timestamptz  NOT NULL DEFAULT now(),
+    "updated_at"       timestamptz  NOT NULL DEFAULT now(),
     "is_del"           int2         NOT NULL DEFAULT 0,
     PRIMARY KEY ("id")
 );

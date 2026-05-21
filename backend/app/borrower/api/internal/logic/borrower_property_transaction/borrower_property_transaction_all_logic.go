@@ -1,4 +1,4 @@
-package property_transaction
+package borrower_property_transaction
 
 import (
 	"context"
@@ -11,29 +11,30 @@ import (
 	"zeebee-backend/common/copierx"
 )
 
-type TransactionAllLogic struct {
+type BorrowerPropertyTransactionAllLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewTransactionAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *TransactionAllLogic {
-	return &TransactionAllLogic{
+// all transactions for select
+func NewBorrowerPropertyTransactionAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BorrowerPropertyTransactionAllLogic {
+	return &BorrowerPropertyTransactionAllLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *TransactionAllLogic) TransactionAll(req *types.EmptyRequest) (resp *types.TransactionAllResponse, err error) {
+func (l *BorrowerPropertyTransactionAllLogic) BorrowerPropertyTransactionAll(req *types.EmptyRequest) (resp *types.BorrowerPropertyTransactionAllResponse, err error) {
 	rpcResp, err := l.svcCtx.BorrowerPropertyTransactionRpcClient.All(l.ctx, &borrower.BorrowerPropertyTransactionAllRequest{})
 	if err != nil {
 		return nil, err
 	}
 
-	resp = &types.TransactionAllResponse{}
+	resp = &types.BorrowerPropertyTransactionAllResponse{}
 	for _, opt := range rpcResp.GetData() {
-		item, innerErr := copierx.Trans[borrower.BorrowerPropertyTransactionOptionEntity, types.TransactionOption](opt)
+		item, innerErr := copierx.Trans[borrower.BorrowerPropertyTransactionOptionEntity, types.BorrowerPropertyTransactionOption](opt)
 		if innerErr != nil {
 			continue
 		}

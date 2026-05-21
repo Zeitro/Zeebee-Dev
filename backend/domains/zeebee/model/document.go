@@ -20,7 +20,7 @@ type Document struct {
 
 	// Relationships
 	Children []*Document `json:"children" gorm:"foreignKey:ParentId;references:Id"`
-	Files    []*File     `json:"files" gorm:"-"`
+	Files    []*File     `json:"files" gorm:"polymorphicType:EntityType;polymorphicId:EntityId;polymorphicValue:Document"`
 }
 
 func (m Document) TableName() string {

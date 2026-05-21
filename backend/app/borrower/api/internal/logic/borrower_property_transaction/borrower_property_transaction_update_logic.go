@@ -1,4 +1,4 @@
-package property_transaction
+package borrower_property_transaction
 
 import (
 	"context"
@@ -11,26 +11,27 @@ import (
 	"zeebee-backend/common/copierx"
 )
 
-type TransactionUpdateLogic struct {
+type BorrowerPropertyTransactionUpdateLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewTransactionUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *TransactionUpdateLogic {
-	return &TransactionUpdateLogic{
+// update transaction
+func NewBorrowerPropertyTransactionUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BorrowerPropertyTransactionUpdateLogic {
+	return &BorrowerPropertyTransactionUpdateLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *TransactionUpdateLogic) TransactionUpdate(req *types.TransactionUpdateRequest) (resp *types.EmptyResponse, err error) {
+func (l *BorrowerPropertyTransactionUpdateLogic) BorrowerPropertyTransactionUpdate(req *types.BorrowerPropertyTransactionUpdateRequest) (resp *types.EmptyResponse, err error) {
 	rpcReq := &borrower.BorrowerPropertyTransactionUpdateRequest{
 		Data: &borrower.BorrowerPropertyTransactionUpdateRequestData{},
 	}
 
-	rpcReq.Data, err = copierx.Trans[types.TransactionUpdateRequest, borrower.BorrowerPropertyTransactionUpdateRequestData](req)
+	rpcReq.Data, err = copierx.Trans[types.BorrowerPropertyTransactionUpdateRequest, borrower.BorrowerPropertyTransactionUpdateRequestData](req)
 	if err != nil {
 		return nil, err
 	}

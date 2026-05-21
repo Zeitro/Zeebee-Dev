@@ -1,11 +1,11 @@
-package property_transaction
+package borrower_property_transaction
 
 import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"zeebee-backend/app/borrower/api/internal/logic/property_transaction"
+	"zeebee-backend/app/borrower/api/internal/logic/borrower_property_transaction"
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 
@@ -14,8 +14,8 @@ import (
 	"zeebee-backend/common/validator"
 )
 
-// update transaction checklist
-func TransactionUpdateChecklistHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+// all transactions for select
+func BorrowerPropertyTransactionAllHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -25,7 +25,7 @@ func TransactionUpdateChecklistHandler(svcCtx *svc.ServiceContext) http.HandlerF
 					Error(err)
 			}
 		}()
-		var req types.TransactionChecklistRequest
+		var req types.EmptyRequest
 		if err = httpx.Parse(r, &req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
@@ -41,8 +41,8 @@ func TransactionUpdateChecklistHandler(svcCtx *svc.ServiceContext) http.HandlerF
 			return
 		}
 
-		l := property_transaction.NewTransactionUpdateChecklistLogic(r.Context(), svcCtx)
-		resp, err := l.TransactionUpdateChecklist(&req)
+		l := borrower_property_transaction.NewBorrowerPropertyTransactionAllLogic(r.Context(), svcCtx)
+		resp, err := l.BorrowerPropertyTransactionAll(&req)
 		if err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 		} else {

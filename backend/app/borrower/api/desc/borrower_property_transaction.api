@@ -8,18 +8,11 @@ info(
 
 // create
 type (
-    TransactionCreateRequest {
+    BorrowerPropertyTransactionCreateRequest {
         BorrowerPropertyId int64   `json:"borrower_property_id" validate:"required,gt=0"`
         Type               string  `json:"type" validate:"required,oneof=Purchase Sale Re-finance 'Change Title' Assignment"`
-//        CoeDate            string  `json:"coe_date,optional"`
-//        PurchaseAmount     float64 `json:"purchase_amount,optional"`
-//        EmdAmount          float64 `json:"emd_amount,optional"`
-//        PropertyType       string  `json:"property_type,optional"`
-//        Pm                 string  `json:"pm,optional"`
-//        Strategy           string  `json:"strategy,optional"`
-//        Note               string  `json:"note,optional"`
     }
-    TransactionCreateResponse {
+    BorrowerPropertyTransactionCreateResponse {
         Id                 int64   `json:"id"`
         Code               string  `json:"code"`
         Type               string  `json:"type"`
@@ -41,7 +34,7 @@ type (
 
 // update
 type (
-    TransactionUpdateRequest {
+    BorrowerPropertyTransactionUpdateRequest {
         Id             int64   `path:"id" validate:"required,gt=0"`
         CoeDate        string  `json:"coe_date,optional"`
         PurchaseAmount float64 `json:"purchase_amount,optional"`
@@ -55,7 +48,7 @@ type (
 
 // switch status
 type (
-    TransactionSwitchStatusRequest {
+    BorrowerPropertyTransactionSwitchStatusRequest {
         Id     int64  `path:"id" validate:"required,gt=0"`
         Status string `json:"status" validate:"required,oneof=Pending Closed Cancelled"`
     }
@@ -63,17 +56,17 @@ type (
 
 // delete
 type (
-    TransactionDeleteRequest {
+    BorrowerPropertyTransactionDeleteRequest {
         Id int64 `path:"id" validate:"required,gt=0"`
     }
 )
 
 // detail
 type (
-    TransactionDetailRequest {
+    BorrowerPropertyTransactionDetailRequest {
         Id int64 `path:"id" validate:"required,gt=0"`
     }
-    TransactionDetailResponse {
+    BorrowerPropertyTransactionDetailResponse {
         Id                 int64   `json:"id"`
         Code               string  `json:"code"`
         Type               string  `json:"type"`
@@ -95,25 +88,23 @@ type (
 
 // all (for select dropdown)
 type (
-    TransactionAllResponse {
-        Lists []TransactionOption `json:"lists"`
+    BorrowerPropertyTransactionAllResponse {
+        Lists []BorrowerPropertyTransactionOption `json:"lists"`
     }
-    TransactionOption {
+    BorrowerPropertyTransactionOption {
         Id                 int64  `json:"id"`
-        Code               string `json:"code"`
-        Type               string `json:"type"`
-        Status             string `json:"status"`
-        PropertyType       string `json:"property_type"`
+        Code               string  `json:"code"`
+        Type               string  `json:"type"`
+        Status             string  `json:"status"`
+        PropertyType       string  `json:"property_type"`
         BorrowerPropertyId int64  `json:"borrower_property_id"`
     }
 )
 
 // checklist
 type (
-    TransactionChecklistRequest {
+    BorrowerPropertyTransactionChecklistRequest {
         Id         int64  `path:"id" validate:"required,gt=0"`
-        StatusKey  string `json:"status_key" validate:"required"`
         AllChecked bool   `json:"all_checked"`
-        DocumentId int64  `json:"document_id"`
     }
 )

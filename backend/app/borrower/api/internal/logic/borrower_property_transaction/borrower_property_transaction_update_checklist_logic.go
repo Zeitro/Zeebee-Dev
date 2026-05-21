@@ -1,4 +1,4 @@
-package property_transaction
+package borrower_property_transaction
 
 import (
 	"context"
@@ -11,26 +11,27 @@ import (
 	"zeebee-backend/common/copierx"
 )
 
-type TransactionUpdateChecklistLogic struct {
+type BorrowerPropertyTransactionUpdateChecklistLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewTransactionUpdateChecklistLogic(ctx context.Context, svcCtx *svc.ServiceContext) *TransactionUpdateChecklistLogic {
-	return &TransactionUpdateChecklistLogic{
+// update transaction checklist
+func NewBorrowerPropertyTransactionUpdateChecklistLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BorrowerPropertyTransactionUpdateChecklistLogic {
+	return &BorrowerPropertyTransactionUpdateChecklistLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *TransactionUpdateChecklistLogic) TransactionUpdateChecklist(req *types.TransactionChecklistRequest) (resp *types.EmptyResponse, err error) {
+func (l *BorrowerPropertyTransactionUpdateChecklistLogic) BorrowerPropertyTransactionUpdateChecklist(req *types.BorrowerPropertyTransactionChecklistRequest) (resp *types.EmptyResponse, err error) {
 	rpcReq := &borrower.BorrowerPropertyTransactionChecklistRequest{
 		Data: &borrower.BorrowerPropertyTransactionChecklistRequestData{},
 	}
 
-	rpcReq.Data, err = copierx.Trans[types.TransactionChecklistRequest, borrower.BorrowerPropertyTransactionChecklistRequestData](req)
+	rpcReq.Data, err = copierx.Trans[types.BorrowerPropertyTransactionChecklistRequest, borrower.BorrowerPropertyTransactionChecklistRequestData](req)
 	if err != nil {
 		return nil, err
 	}

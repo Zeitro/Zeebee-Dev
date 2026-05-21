@@ -1,11 +1,11 @@
-package property_transaction
+package borrower_property_transaction
 
 import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"zeebee-backend/app/borrower/api/internal/logic/property_transaction"
+	"zeebee-backend/app/borrower/api/internal/logic/borrower_property_transaction"
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 
@@ -14,8 +14,8 @@ import (
 	"zeebee-backend/common/validator"
 )
 
-// create transaction
-func TransactionCreateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+// switch transaction status
+func BorrowerPropertyTransactionSwitchStatusHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -25,7 +25,7 @@ func TransactionCreateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 					Error(err)
 			}
 		}()
-		var req types.TransactionCreateRequest
+		var req types.BorrowerPropertyTransactionSwitchStatusRequest
 		if err = httpx.Parse(r, &req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
@@ -41,8 +41,8 @@ func TransactionCreateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := property_transaction.NewTransactionCreateLogic(r.Context(), svcCtx)
-		resp, err := l.TransactionCreate(&req)
+		l := borrower_property_transaction.NewBorrowerPropertyTransactionSwitchStatusLogic(r.Context(), svcCtx)
+		resp, err := l.BorrowerPropertyTransactionSwitchStatus(&req)
 		if err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 		} else {

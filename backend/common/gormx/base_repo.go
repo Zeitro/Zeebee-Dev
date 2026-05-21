@@ -200,6 +200,26 @@ func (repo *BaseRepo[T]) FindOneByColumnsWithTx(ctx context.Context, tx *gorm.DB
 	return data, nil
 }
 
+// FindColumnByColumns find column by columns
+func (repo *BaseRepo[T]) FindColumnByColumns(ctx context.Context, columnName string, target interface{}, columns map[string]interface{}) error {
+	query := repo.Client(ctx).Select(columnName)
+	for k, v := range columns {
+		query = query.Where(k+" = ?", v)
+	}
+	err := query.Scan(target).Error
+	return errorx.WithStack(err)
+}
+
+// FindColumnByColumnsWithTx find column by columns with tx
+func (repo *BaseRepo[T]) FindColumnByColumnsWithTx(ctx context.Context, tx *gorm.DB, columnName string, target interface{}, columns map[string]interface{}) error {
+	query := tx.Model(new(T)).WithContext(ctx).Select(columnName)
+	for k, v := range columns {
+		query = query.Where(k+" = ?", v)
+	}
+	err := query.Scan(target).Error
+	return errorx.WithStack(err)
+}
+
 func (repo *BaseRepo[T]) UpdateOne(ctx context.Context, data T) (T, error) {
 	err := repo.Client(ctx).Save(data).Error
 	if err != nil {

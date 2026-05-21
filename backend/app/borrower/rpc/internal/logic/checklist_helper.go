@@ -15,16 +15,16 @@ import (
 func (b *BaseLogic) RecalculateChecklist(ctx context.Context, tx *gorm.DB, transactionId int64) error {
 	repos := b.svcCtx.AllRepos
 
-	var rootDocId int64
-	err := tx.WithContext(ctx).Table("entity_documents").
-		Select("root_document_id").
-		Where("entity_type = ? AND entity_id = ?", string(constants.EntityDocumentTypeBorrowerPropertyTransaction), transactionId).
-		Scan(&rootDocId).Error
+	entityDoc, err := b.svcCtx.AllRepos.EntityDocumentRepo.FindOneByColumnsWithTx(ctx, tx, map[string]interface{}{
+		"entity_type": constants.EntityDocumentTypeBorrowerPropertyTransaction,
+		"entity_id":   transactionId,
+	})
+
 	if err != nil {
 		return errorx.Wrap(err, "Entity document not found")
 	}
 
-	children, err := repos.DocumentRepo.GetChildren(ctx, rootDocId)
+	children, err := repos.DocumentRepo.GetChildren(ctx, entityDoc.RootDocumentId)
 	if err != nil {
 		return errorx.Wrap(err, "Failed to get root children")
 	}
@@ -45,17 +45,17 @@ func (b *BaseLogic) RecalculateChecklist(ctx context.Context, tx *gorm.DB, trans
 		}
 	}
 
-	allChecked := false
-	existing, _ := repos.BorrowerPropertyTransactionRepo.GetOne(ctx, transactionId)
-	if existing != nil {
-		var prev dto.ChecklistRoot
-		if json.Unmarshal(existing.Checklist, &prev) == nil {
-			allChecked = prev.AllChecked
-		}
+	// allChecked := false
+	existing, err := repos.BorrowerPropertyTransactionRepo.FindOneByIdWithTx(ctx, tx, transactionId)
+	if err != nil {
+		return errorx.WithStack(err)
 	}
-
-	checklist := dto.ChecklistRoot{
-		AllChecked:                        allChecked,
+	if existing == nil {
+		return errorx.New("transaction not found")
+	}
+	
+	existing.Checklist = dto.ChecklistRoot{
+		AllChecked:                        existing.Checklist.AllChecked,
 		TotalDocumentCount:                totalReqCount + totalOptCount,
 		TotalRequiredDocumentCount:        totalReqCount,
 		TotalRequiredUpdatedDocumentCount: totalReqUpdatedCount,
@@ -64,15 +64,8 @@ func (b *BaseLogic) RecalculateChecklist(ctx context.Context, tx *gorm.DB, trans
 		RequiredDocuments:                 requiredNodes,
 		OptionalDocuments:                 optionalNodes,
 	}
-
-	checklistJSON, err := json.Marshal(checklist)
-	if err != nil {
-		return errorx.Wrap(err, "Failed to marshal checklist")
-	}
-
-	return tx.Table("borrower_property_transactions").
-		Where("id = ?", transactionId).
-		UpdateColumn("checklist", checklistJSON).Error
+	_, err = b.svcCtx.AllRepos.BorrowerPropertyTransactionRepo.UpdateOneByIdWithTx(ctx, tx, transactionId, existing)
+	return errorx.WithStack(err)
 }
 
 func (b *BaseLogic) buildChecklistNode(ctx context.Context, doc *model.Document) dto.ChecklistNode {
@@ -133,9 +126,14 @@ func (b *BaseLogic) FindTransactionIdByDocumentId(ctx context.Context, documentI
 	}
 
 	var entityId int64
-	err = repos.BorrowerPropertyTransactionRepo.Client(ctx).Table("entity_documents").
-		Select("entity_id").
-		Where("root_document_id = ? AND entity_type = ?", doc.Id, string(constants.EntityDocumentTypeBorrowerPropertyTransaction)).
-		Scan(&entityId).Error
+
+	err = repos.EntityDocumentRepo.FindColumnByColumns(ctx, "entity_id", &entityId, map[string]interface{}{
+		"root_document_id": doc.Id,
+		"entity_type":      constants.EntityDocumentTypeBorrowerPropertyTransaction,
+	})
+
+	if entityId == 0 {
+		return 0, errorx.New("transaction not found")
+	}
 	return entityId, errorx.WithStack(err)
 }

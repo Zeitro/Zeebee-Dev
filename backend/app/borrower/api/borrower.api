@@ -594,46 +594,46 @@ service borrower-api {
 }
 
 // ============= organization email end =============
-// =============== property transaction start ==============
+// =============== borrower property transaction start ==============
 @server (
-	desc:       "property transaction service"
+	desc:       "borrower property transaction service"
 	version:    v1
-	group:      property_transaction
+	group:      borrower_property_transaction
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-	tags:       property_transaction
+	tags:       borrower_property_transaction
 )
 service borrower-api {
 	@doc "create transaction"
-	@handler TransactionCreate
-	post /property_transaction (TransactionCreateRequest) returns (TransactionCreateResponse)
+	@handler BorrowerPropertyTransactionCreate
+	post /borrower_property_transaction (BorrowerPropertyTransactionCreateRequest) returns (BorrowerPropertyTransactionCreateResponse)
 
 	@doc "transaction detail"
-	@handler TransactionDetail
-	get /property_transaction/:id (TransactionDetailRequest) returns (TransactionDetailResponse)
+	@handler BorrowerPropertyTransactionDetail
+	get /borrower_property_transaction/:id (BorrowerPropertyTransactionDetailRequest) returns (BorrowerPropertyTransactionDetailResponse)
 
 	@doc "update transaction"
-	@handler TransactionUpdate
-	put /property_transaction/:id (TransactionUpdateRequest) returns (EmptyResponse)
+	@handler BorrowerPropertyTransactionUpdate
+	put /borrower_property_transaction/:id (BorrowerPropertyTransactionUpdateRequest) returns (EmptyResponse)
 
 	@doc "delete transaction"
-	@handler TransactionDelete
-	delete /property_transaction/:id (TransactionDeleteRequest) returns (EmptyResponse)
+	@handler BorrowerPropertyTransactionDelete
+	delete /borrower_property_transaction/:id (BorrowerPropertyTransactionDeleteRequest) returns (EmptyResponse)
 
 	@doc "switch transaction status"
-	@handler TransactionSwitchStatus
-	patch /property_transaction/:id/status (TransactionSwitchStatusRequest) returns (EmptyResponse)
+	@handler BorrowerPropertyTransactionSwitchStatus
+	patch /borrower_property_transaction/:id/status (BorrowerPropertyTransactionSwitchStatusRequest) returns (EmptyResponse)
 
 	@doc "all transactions for select"
-	@handler TransactionAll
-	get /property_transaction/all (EmptyRequest) returns (TransactionAllResponse)
+	@handler BorrowerPropertyTransactionAll
+	get /borrower_property_transaction/all (EmptyRequest) returns (BorrowerPropertyTransactionAllResponse)
 
 	@doc "update transaction checklist"
-	@handler TransactionUpdateChecklist
-	patch /property_transaction/:id/checklist (TransactionChecklistRequest) returns (EmptyResponse)
+	@handler BorrowerPropertyTransactionUpdateChecklist
+	patch /borrower_property_transaction/:id/checklist (BorrowerPropertyTransactionChecklistRequest) returns (EmptyResponse)
 }
 
-// =============== property transaction end ==============
+// =============== borrower property transaction end ==============
 // =============== document start ==============
 @server (
 	desc:       "document service"

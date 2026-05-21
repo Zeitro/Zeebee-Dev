@@ -3,9 +3,8 @@ package model
 import (
 	"database/sql"
 
-	"gorm.io/datatypes"
-
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type BorrowerPropertyTransaction struct {
@@ -22,7 +21,7 @@ type BorrowerPropertyTransaction struct {
 	Pm                 string                                      `gorm:"column:pm;type:varchar(255);not null;default:''" json:"pm"`
 	Strategy           string                                      `gorm:"column:strategy;type:varchar(100);not null;default:''" json:"strategy"`
 	Note               string                                      `gorm:"column:note;type:varchar(255);not null;default:''" json:"note"`
-	Checklist          datatypes.JSON                              `gorm:"column:checklist;type:jsonb;not null;default:'{}'" json:"checklist"`
+	Checklist          dto.ChecklistRoot                           `gorm:"column:checklist;type:jsonb;not null;default:'{}';serializer:json" json:"checklist"`
 
 	// Relationships
 	BorrowerProperty *BorrowerProperty `json:"borrower_property" gorm:"foreignKey:BorrowerPropertyId;references:Id"`

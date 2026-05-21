@@ -296,6 +296,91 @@ type BorrowerPropertyEntity struct {
 	LoanCount      int32          `json:"loan_count"`
 }
 
+type BorrowerPropertyTransactionAllResponse struct {
+	Lists []BorrowerPropertyTransactionOption `json:"lists"`
+}
+
+type BorrowerPropertyTransactionChecklistRequest struct {
+	Id         int64 `path:"id" validate:"required,gt=0"`
+	AllChecked bool  `json:"all_checked"`
+}
+
+type BorrowerPropertyTransactionCreateRequest struct {
+	BorrowerPropertyId int64  `json:"borrower_property_id" validate:"required,gt=0"`
+	Type               string `json:"type" validate:"required,oneof=Purchase Sale Re-finance 'Change Title' Assignment"`
+}
+
+type BorrowerPropertyTransactionCreateResponse struct {
+	Id                 int64   `json:"id"`
+	Code               string  `json:"code"`
+	Type               string  `json:"type"`
+	Status             string  `json:"status"`
+	BorrowerPropertyId int64   `json:"borrower_property_id"`
+	OrganizationId     int64   `json:"organization_id"`
+	CoeDate            string  `json:"coe_date"`
+	PurchaseAmount     float64 `json:"purchase_amount"`
+	EmdAmount          float64 `json:"emd_amount"`
+	PropertyType       string  `json:"property_type"`
+	Pm                 string  `json:"pm"`
+	Strategy           string  `json:"strategy"`
+	Note               string  `json:"note"`
+	Checklist          string  `json:"checklist"`
+	CreatedAt          string  `json:"created_at"`
+	UpdatedAt          string  `json:"updated_at"`
+}
+
+type BorrowerPropertyTransactionDeleteRequest struct {
+	Id int64 `path:"id" validate:"required,gt=0"`
+}
+
+type BorrowerPropertyTransactionDetailRequest struct {
+	Id int64 `path:"id" validate:"required,gt=0"`
+}
+
+type BorrowerPropertyTransactionDetailResponse struct {
+	Id                 int64   `json:"id"`
+	Code               string  `json:"code"`
+	Type               string  `json:"type"`
+	Status             string  `json:"status"`
+	BorrowerPropertyId int64   `json:"borrower_property_id"`
+	OrganizationId     int64   `json:"organization_id"`
+	CoeDate            string  `json:"coe_date"`
+	PurchaseAmount     float64 `json:"purchase_amount"`
+	EmdAmount          float64 `json:"emd_amount"`
+	PropertyType       string  `json:"property_type"`
+	Pm                 string  `json:"pm"`
+	Strategy           string  `json:"strategy"`
+	Note               string  `json:"note"`
+	Checklist          string  `json:"checklist"`
+	CreatedAt          string  `json:"created_at"`
+	UpdatedAt          string  `json:"updated_at"`
+}
+
+type BorrowerPropertyTransactionOption struct {
+	Id                 int64  `json:"id"`
+	Code               string `json:"code"`
+	Type               string `json:"type"`
+	Status             string `json:"status"`
+	PropertyType       string `json:"property_type"`
+	BorrowerPropertyId int64  `json:"borrower_property_id"`
+}
+
+type BorrowerPropertyTransactionSwitchStatusRequest struct {
+	Id     int64  `path:"id" validate:"required,gt=0"`
+	Status string `json:"status" validate:"required,oneof=Pending Closed Cancelled"`
+}
+
+type BorrowerPropertyTransactionUpdateRequest struct {
+	Id             int64   `path:"id" validate:"required,gt=0"`
+	CoeDate        string  `json:"coe_date,optional"`
+	PurchaseAmount float64 `json:"purchase_amount,optional"`
+	EmdAmount      float64 `json:"emd_amount,optional"`
+	PropertyType   string  `json:"property_type,optional"`
+	Pm             string  `json:"pm,optional"`
+	Strategy       string  `json:"strategy,optional"`
+	Note           string  `json:"note,optional"`
+}
+
 type DocumentCreateRequest struct {
 	EntityType string `json:"entity_type" validate:"required"`
 	EntityId   int64  `json:"entity_id" validate:"required,gt=0"`
@@ -1584,93 +1669,6 @@ type ThirdPartyLoanApplicantEntity struct {
 	BorrowerApplicantId int64 `json:"borrower_applicant_id" validate:"required,gt=0"`
 	IsPrimary           bool  `json:"is_primary,optional"`
 	OwnPercent          int32 `json:"own_percent,optional" validate:"min=0,max=100"`
-}
-
-type TransactionAllResponse struct {
-	Lists []TransactionOption `json:"lists"`
-}
-
-type TransactionChecklistRequest struct {
-	Id         int64  `path:"id" validate:"required,gt=0"`
-	StatusKey  string `json:"status_key" validate:"required"`
-	AllChecked bool   `json:"all_checked"`
-	DocumentId int64  `json:"document_id"`
-}
-
-type TransactionCreateRequest struct {
-	BorrowerPropertyId int64  `json:"borrower_property_id" validate:"required,gt=0"`
-	Type               string `json:"type" validate:"required,oneof=Purchase Sale Re-finance 'Change Title' Assignment"`
-}
-
-type TransactionCreateResponse struct {
-	Id                 int64   `json:"id"`
-	Code               string  `json:"code"`
-	Type               string  `json:"type"`
-	Status             string  `json:"status"`
-	BorrowerPropertyId int64   `json:"borrower_property_id"`
-	OrganizationId     int64   `json:"organization_id"`
-	CoeDate            string  `json:"coe_date"`
-	PurchaseAmount     float64 `json:"purchase_amount"`
-	EmdAmount          float64 `json:"emd_amount"`
-	PropertyType       string  `json:"property_type"`
-	Pm                 string  `json:"pm"`
-	Strategy           string  `json:"strategy"`
-	Note               string  `json:"note"`
-	Checklist          string  `json:"checklist"`
-	CreatedAt          string  `json:"created_at"`
-	UpdatedAt          string  `json:"updated_at"`
-}
-
-type TransactionDeleteRequest struct {
-	Id int64 `path:"id" validate:"required,gt=0"`
-}
-
-type TransactionDetailRequest struct {
-	Id int64 `path:"id" validate:"required,gt=0"`
-}
-
-type TransactionDetailResponse struct {
-	Id                 int64   `json:"id"`
-	Code               string  `json:"code"`
-	Type               string  `json:"type"`
-	Status             string  `json:"status"`
-	BorrowerPropertyId int64   `json:"borrower_property_id"`
-	OrganizationId     int64   `json:"organization_id"`
-	CoeDate            string  `json:"coe_date"`
-	PurchaseAmount     float64 `json:"purchase_amount"`
-	EmdAmount          float64 `json:"emd_amount"`
-	PropertyType       string  `json:"property_type"`
-	Pm                 string  `json:"pm"`
-	Strategy           string  `json:"strategy"`
-	Note               string  `json:"note"`
-	Checklist          string  `json:"checklist"`
-	CreatedAt          string  `json:"created_at"`
-	UpdatedAt          string  `json:"updated_at"`
-}
-
-type TransactionOption struct {
-	Id                 int64  `json:"id"`
-	Code               string `json:"code"`
-	Type               string `json:"type"`
-	Status             string `json:"status"`
-	PropertyType       string `json:"property_type"`
-	BorrowerPropertyId int64  `json:"borrower_property_id"`
-}
-
-type TransactionSwitchStatusRequest struct {
-	Id     int64  `path:"id" validate:"required,gt=0"`
-	Status string `json:"status" validate:"required,oneof=Pending Closed Cancelled"`
-}
-
-type TransactionUpdateRequest struct {
-	Id             int64   `path:"id" validate:"required,gt=0"`
-	CoeDate        string  `json:"coe_date,optional"`
-	PurchaseAmount float64 `json:"purchase_amount,optional"`
-	EmdAmount      float64 `json:"emd_amount,optional"`
-	PropertyType   string  `json:"property_type,optional"`
-	Pm             string  `json:"pm,optional"`
-	Strategy       string  `json:"strategy,optional"`
-	Note           string  `json:"note,optional"`
 }
 
 type UserChangePasswordRequest struct {

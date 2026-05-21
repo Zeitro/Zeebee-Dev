@@ -52,12 +52,12 @@ func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateReque
 	// validate property exists and belongs to organization
 	_, err = l.svcCtx.BorrowerPropertyRepo.GetOneByIdForOrganization(l.ctx, in.Data.BorrowerPropertyId, claim.OrganizationId)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Property not found")
+		return nil, errorx.Wrap(err, "property not found")
 	}
 
 	// validate transaction type
 	if !constants.BorrowerPropertyTransactionType(in.Data.Type).IsValid() {
-		return nil, errorx.New("Invalid transaction type")
+		return nil, errorx.New("invalid transaction type")
 	}
 
 	// generate code: tc + year + base62(ms timestamp)
@@ -70,24 +70,12 @@ func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateReque
 		Code:               code,
 		Type:               constants.BorrowerPropertyTransactionType(in.Data.Type),
 		Status:             constants.BorrowerPropertyTransactionStatusPending,
-		// PurchaseAmount:     in.Data.PurchaseAmount,
-		// EmdAmount:          in.Data.EmdAmount,
-		// PropertyType:       constants.PropertyType(in.Data.PropertyType),
-		// Pm:                 in.Data.Pm,
-		// Strategy:           in.Data.Strategy,
-		// Note:               in.Data.Note,
 	}
-	// if in.Data.CoeDate != "" {
-	// 	t, parseErr := time.Parse(timex.LayoutUsStyle, in.Data.CoeDate)
-	// 	if parseErr == nil {
-	// 		transactionData.CoeDate = &sql.NullTime{Time: t, Valid: true}
-	// 	}
-	// }
 
 	// load document template
 	template, err := l.svcCtx.DocumentTemplateRepo.GetByType(l.ctx, constants.DocumentTemplateTypeBorrowerPropertyTransaction)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Document template not found")
+		return nil, errorx.Wrap(err, "document template not found")
 	}
 
 	var result *model.BorrowerPropertyTransaction
@@ -137,7 +125,7 @@ func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateReque
 		return innerErr
 	})
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to create transaction")
+		return nil, errorx.Wrap(err, "failed to create transaction")
 	}
 
 	// convert response
@@ -192,7 +180,7 @@ func (l *CreateLogic) createDocumentNode(tx *gorm.DB, parentId int64, node model
 
 	metadata, _ := json.Marshal(map[string]interface{}{
 		"is_required": node.IsRequired,
-		"status":      "pending",
+		"status":      constants.BorrowerPropertyTransactionStatusPending,
 	})
 
 	doc := &model.Document{

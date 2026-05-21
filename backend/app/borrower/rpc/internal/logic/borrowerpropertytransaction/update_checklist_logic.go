@@ -2,14 +2,13 @@ package borrowerpropertytransactionlogic
 
 import (
 	"context"
-	"encoding/json"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/domains/zeebee/data/dto"
 
 	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/common/errorx"
 )
 
@@ -48,17 +47,11 @@ func (l *UpdateChecklistLogic) UpdateChecklist(in *borrower.BorrowerPropertyTran
 		return nil, errorx.New("Transaction does not belong to your organization")
 	}
 
-	// update all_checked on existing checklist, then save
-	var checklist dto.ChecklistRoot
-	if existing.Checklist != nil {
-		_ = json.Unmarshal(existing.Checklist, &checklist)
-	}
+	checklist := existing.Checklist
 	checklist.AllChecked = in.Data.AllChecked
 
-	updatedChecklist, _ := json.Marshal(checklist)
-
 	err = l.svcCtx.BorrowerPropertyTransactionRepo.UpdateColumnsById(l.ctx, in.Data.Id, map[string]interface{}{
-		"checklist": string(updatedChecklist),
+		"checklist": checklist,
 	})
 	if err != nil {
 		return nil, errorx.Wrap(err, "Failed to update checklist")

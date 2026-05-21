@@ -1,11 +1,11 @@
-package property_transaction
+package borrower_property_transaction
 
 import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"zeebee-backend/app/borrower/api/internal/logic/property_transaction"
+	"zeebee-backend/app/borrower/api/internal/logic/borrower_property_transaction"
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 
@@ -14,8 +14,8 @@ import (
 	"zeebee-backend/common/validator"
 )
 
-// delete transaction
-func TransactionDeleteHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+// update transaction checklist
+func BorrowerPropertyTransactionUpdateChecklistHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -25,7 +25,7 @@ func TransactionDeleteHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 					Error(err)
 			}
 		}()
-		var req types.TransactionDeleteRequest
+		var req types.BorrowerPropertyTransactionChecklistRequest
 		if err = httpx.Parse(r, &req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
@@ -41,8 +41,8 @@ func TransactionDeleteHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := property_transaction.NewTransactionDeleteLogic(r.Context(), svcCtx)
-		resp, err := l.TransactionDelete(&req)
+		l := borrower_property_transaction.NewBorrowerPropertyTransactionUpdateChecklistLogic(r.Context(), svcCtx)
+		resp, err := l.BorrowerPropertyTransactionUpdateChecklist(&req)
 		if err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 		} else {

@@ -1,4 +1,4 @@
-package property_transaction
+package borrower_property_transaction
 
 import (
 	"context"
@@ -11,26 +11,27 @@ import (
 	"zeebee-backend/common/copierx"
 )
 
-type TransactionSwitchStatusLogic struct {
+type BorrowerPropertyTransactionSwitchStatusLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewTransactionSwitchStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *TransactionSwitchStatusLogic {
-	return &TransactionSwitchStatusLogic{
+// switch transaction status
+func NewBorrowerPropertyTransactionSwitchStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BorrowerPropertyTransactionSwitchStatusLogic {
+	return &BorrowerPropertyTransactionSwitchStatusLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *TransactionSwitchStatusLogic) TransactionSwitchStatus(req *types.TransactionSwitchStatusRequest) (resp *types.EmptyResponse, err error) {
+func (l *BorrowerPropertyTransactionSwitchStatusLogic) BorrowerPropertyTransactionSwitchStatus(req *types.BorrowerPropertyTransactionSwitchStatusRequest) (resp *types.EmptyResponse, err error) {
 	rpcReq := &borrower.BorrowerPropertyTransactionSwitchStatusRequest{
 		Data: &borrower.BorrowerPropertyTransactionSwitchStatusRequestData{},
 	}
 
-	rpcReq.Data, err = copierx.Trans[types.TransactionSwitchStatusRequest, borrower.BorrowerPropertyTransactionSwitchStatusRequestData](req)
+	rpcReq.Data, err = copierx.Trans[types.BorrowerPropertyTransactionSwitchStatusRequest, borrower.BorrowerPropertyTransactionSwitchStatusRequestData](req)
 	if err != nil {
 		return nil, err
 	}
