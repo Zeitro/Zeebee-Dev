@@ -1,0 +1,73 @@
+syntax = "v1"
+
+info(
+    title: "document-api"
+    desc: "document management api"
+    version: "v1"
+)
+
+// document tree
+type (
+    DocumentTreeRequest {
+        EntityType string `path:"entity_type"`
+        EntityId   int64  `path:"entity_id"`
+    }
+    DocumentTreeNode {
+        Id            int64               `json:"id"`
+        ParentId      int64               `json:"parent_id"`
+        Type          string              `json:"type"`
+        Name          string              `json:"name"`
+        Level         int32               `json:"level"`
+        SortOrder     int32               `json:"sort_order"`
+        LastUploadedAt string             `json:"last_uploaded_at"`
+        Metadata      string              `json:"metadata"`
+        CreatedAt     string              `json:"created_at"`
+        UpdatedAt     string              `json:"updated_at"`
+        Children      []DocumentTreeNode  `json:"children"`
+        Files         []DocumentFile      `json:"files"`
+    }
+    DocumentFile {
+        Id        int64  `json:"id"`
+        EntityType string `json:"entity_type"`
+        EntityId   int64  `json:"entity_id"`
+        FileUrl    string `json:"file_url"`
+        CreatedAt  string `json:"created_at"`
+        UpdatedAt  string `json:"updated_at"`
+    }
+    DocumentTreeResponse {
+        Data DocumentTreeNode `json:"data"`
+    }
+)
+
+// upload file
+type (
+    DocumentUploadFileRequest {
+        DocumentId int64  `path:"document_id" validate:"required,gt=0"`
+        FileName   string `json:"file_name" validate:"required"`
+        FileUrl    string `json:"file_url" validate:"required"`
+        FileSuffix string `json:"file_suffix" validate:"required"`
+    }
+    DocumentUploadFileResponse {
+        DocumentFile
+    }
+)
+
+// delete file
+type (
+    DocumentDeleteFileRequest {
+        FileId int64 `path:"file_id" validate:"required,gt=0"`
+    }
+)
+
+// create leaf document
+type (
+    DocumentCreateRequest {
+        EntityType string `json:"entity_type" validate:"required"`
+        EntityId   int64  `json:"entity_id" validate:"required,gt=0"`
+        ParentId   int64  `json:"parent_id" validate:"required,gt=0"`
+        Name       string `json:"name" validate:"required"`
+    }
+    DocumentCreateResponse {
+        DocumentTreeNode
+    }
+)

@@ -1493,6 +1493,834 @@
         }
       }
     },
+    "/api/v1/document": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "document"
+        ],
+        "summary": "create leaf document",
+        "operationId": "documentDocumentCreate",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "entity_type",
+                "entity_id",
+                "parent_id",
+                "name"
+              ],
+              "properties": {
+                "entity_id": {
+                  "type": "integer"
+                },
+                "entity_type": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "parent_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "children": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "parent_id",
+                      "type",
+                      "name",
+                      "level",
+                      "sort_order",
+                      "last_uploaded_at",
+                      "metadata",
+                      "created_at",
+                      "updated_at",
+                      "children",
+                      "files"
+                    ],
+                    "properties": {
+                      "children": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "parent_id",
+                            "type",
+                            "name",
+                            "level",
+                            "sort_order",
+                            "last_uploaded_at",
+                            "metadata",
+                            "created_at",
+                            "updated_at",
+                            "children",
+                            "files"
+                          ],
+                          "properties": {
+                            "children": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "required": [
+                                  "id",
+                                  "parent_id",
+                                  "type",
+                                  "name",
+                                  "level",
+                                  "sort_order",
+                                  "last_uploaded_at",
+                                  "metadata",
+                                  "created_at",
+                                  "updated_at",
+                                  "children",
+                                  "files"
+                                ],
+                                "properties": {
+                                  "children": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object"
+                                    }
+                                  },
+                                  "created_at": {
+                                    "type": "string"
+                                  },
+                                  "files": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object"
+                                    }
+                                  },
+                                  "id": {
+                                    "type": "integer"
+                                  },
+                                  "last_uploaded_at": {
+                                    "type": "string"
+                                  },
+                                  "level": {
+                                    "type": "integer"
+                                  },
+                                  "metadata": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "parent_id": {
+                                    "type": "integer"
+                                  },
+                                  "sort_order": {
+                                    "type": "integer"
+                                  },
+                                  "type": {
+                                    "type": "string"
+                                  },
+                                  "updated_at": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "files": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "required": [
+                                  "id",
+                                  "entity_type",
+                                  "entity_id",
+                                  "file_url",
+                                  "created_at",
+                                  "updated_at"
+                                ],
+                                "properties": {
+                                  "created_at": {
+                                    "type": "string"
+                                  },
+                                  "entity_id": {
+                                    "type": "integer"
+                                  },
+                                  "entity_type": {
+                                    "type": "string"
+                                  },
+                                  "file_url": {
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "type": "integer"
+                                  },
+                                  "updated_at": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "last_uploaded_at": {
+                              "type": "string"
+                            },
+                            "level": {
+                              "type": "integer"
+                            },
+                            "metadata": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "parent_id": {
+                              "type": "integer"
+                            },
+                            "sort_order": {
+                              "type": "integer"
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "files": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "entity_type",
+                            "entity_id",
+                            "file_url",
+                            "created_at",
+                            "updated_at"
+                          ],
+                          "properties": {
+                            "created_at": {
+                              "type": "string"
+                            },
+                            "entity_id": {
+                              "type": "integer"
+                            },
+                            "entity_type": {
+                              "type": "string"
+                            },
+                            "file_url": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "updated_at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "last_uploaded_at": {
+                        "type": "string"
+                      },
+                      "level": {
+                        "type": "integer"
+                      },
+                      "metadata": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "parent_id": {
+                        "type": "integer"
+                      },
+                      "sort_order": {
+                        "type": "integer"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "created_at": {
+                  "type": "string"
+                },
+                "files": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "entity_type",
+                      "entity_id",
+                      "file_url",
+                      "created_at",
+                      "updated_at"
+                    ],
+                    "properties": {
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "entity_id": {
+                        "type": "integer"
+                      },
+                      "entity_type": {
+                        "type": "string"
+                      },
+                      "file_url": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "last_uploaded_at": {
+                  "type": "string"
+                },
+                "level": {
+                  "type": "integer"
+                },
+                "metadata": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "parent_id": {
+                  "type": "integer"
+                },
+                "sort_order": {
+                  "type": "integer"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/document/file/{file_id}": {
+      "delete": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "document"
+        ],
+        "summary": "delete document file",
+        "operationId": "documentDocumentDeleteFile",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "file_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/document/tree/{entity_type}/{entity_id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "document"
+        ],
+        "summary": "document tree",
+        "operationId": "documentDocumentTree",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "entity_type",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "entity_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "parent_id",
+                    "type",
+                    "name",
+                    "level",
+                    "sort_order",
+                    "last_uploaded_at",
+                    "metadata",
+                    "created_at",
+                    "updated_at",
+                    "children",
+                    "files"
+                  ],
+                  "properties": {
+                    "children": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "parent_id",
+                          "type",
+                          "name",
+                          "level",
+                          "sort_order",
+                          "last_uploaded_at",
+                          "metadata",
+                          "created_at",
+                          "updated_at",
+                          "children",
+                          "files"
+                        ],
+                        "properties": {
+                          "children": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "parent_id",
+                                "type",
+                                "name",
+                                "level",
+                                "sort_order",
+                                "last_uploaded_at",
+                                "metadata",
+                                "created_at",
+                                "updated_at",
+                                "children",
+                                "files"
+                              ],
+                              "properties": {
+                                "children": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "required": [
+                                      "id",
+                                      "parent_id",
+                                      "type",
+                                      "name",
+                                      "level",
+                                      "sort_order",
+                                      "last_uploaded_at",
+                                      "metadata",
+                                      "created_at",
+                                      "updated_at",
+                                      "children",
+                                      "files"
+                                    ],
+                                    "properties": {
+                                      "children": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object"
+                                        }
+                                      },
+                                      "created_at": {
+                                        "type": "string"
+                                      },
+                                      "files": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object"
+                                        }
+                                      },
+                                      "id": {
+                                        "type": "integer"
+                                      },
+                                      "last_uploaded_at": {
+                                        "type": "string"
+                                      },
+                                      "level": {
+                                        "type": "integer"
+                                      },
+                                      "metadata": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "parent_id": {
+                                        "type": "integer"
+                                      },
+                                      "sort_order": {
+                                        "type": "integer"
+                                      },
+                                      "type": {
+                                        "type": "string"
+                                      },
+                                      "updated_at": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                },
+                                "created_at": {
+                                  "type": "string"
+                                },
+                                "files": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "required": [
+                                      "id",
+                                      "entity_type",
+                                      "entity_id",
+                                      "file_url",
+                                      "created_at",
+                                      "updated_at"
+                                    ],
+                                    "properties": {
+                                      "created_at": {
+                                        "type": "string"
+                                      },
+                                      "entity_id": {
+                                        "type": "integer"
+                                      },
+                                      "entity_type": {
+                                        "type": "string"
+                                      },
+                                      "file_url": {
+                                        "type": "string"
+                                      },
+                                      "id": {
+                                        "type": "integer"
+                                      },
+                                      "updated_at": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "last_uploaded_at": {
+                                  "type": "string"
+                                },
+                                "level": {
+                                  "type": "integer"
+                                },
+                                "metadata": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "parent_id": {
+                                  "type": "integer"
+                                },
+                                "sort_order": {
+                                  "type": "integer"
+                                },
+                                "type": {
+                                  "type": "string"
+                                },
+                                "updated_at": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "files": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "entity_type",
+                                "entity_id",
+                                "file_url",
+                                "created_at",
+                                "updated_at"
+                              ],
+                              "properties": {
+                                "created_at": {
+                                  "type": "string"
+                                },
+                                "entity_id": {
+                                  "type": "integer"
+                                },
+                                "entity_type": {
+                                  "type": "string"
+                                },
+                                "file_url": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "updated_at": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "last_uploaded_at": {
+                            "type": "string"
+                          },
+                          "level": {
+                            "type": "integer"
+                          },
+                          "metadata": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "parent_id": {
+                            "type": "integer"
+                          },
+                          "sort_order": {
+                            "type": "integer"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "files": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "entity_type",
+                          "entity_id",
+                          "file_url",
+                          "created_at",
+                          "updated_at"
+                        ],
+                        "properties": {
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "entity_id": {
+                            "type": "integer"
+                          },
+                          "entity_type": {
+                            "type": "string"
+                          },
+                          "file_url": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "last_uploaded_at": {
+                      "type": "string"
+                    },
+                    "level": {
+                      "type": "integer"
+                    },
+                    "metadata": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "parent_id": {
+                      "type": "integer"
+                    },
+                    "sort_order": {
+                      "type": "integer"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/document/{document_id}/upload": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "document"
+        ],
+        "summary": "upload file to document",
+        "operationId": "documentDocumentUploadFile",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "document_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "file_name",
+                "file_url",
+                "file_suffix"
+              ],
+              "properties": {
+                "file_name": {
+                  "type": "string"
+                },
+                "file_suffix": {
+                  "type": "string"
+                },
+                "file_url": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "created_at": {
+                  "type": "string"
+                },
+                "entity_id": {
+                  "type": "integer"
+                },
+                "entity_type": {
+                  "type": "string"
+                },
+                "file_url": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "updated_at": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/file/{id}": {
       "delete": {
         "consumes": [
@@ -13016,6 +13844,447 @@
         }
       }
     },
+    "/api/v1/property_transaction": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "property_transaction"
+        ],
+        "summary": "create transaction",
+        "operationId": "propertyTransactionTransactionCreate",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "borrower_property_id",
+                "type"
+              ],
+              "properties": {
+                "borrower_property_id": {
+                  "type": "integer"
+                },
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "borrower_property_id": {
+                  "type": "integer"
+                },
+                "checklist": {
+                  "type": "string"
+                },
+                "code": {
+                  "type": "string"
+                },
+                "coe_date": {
+                  "type": "string"
+                },
+                "created_at": {
+                  "type": "string"
+                },
+                "emd_amount": {
+                  "type": "number"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "organization_id": {
+                  "type": "integer"
+                },
+                "pm": {
+                  "type": "string"
+                },
+                "property_type": {
+                  "type": "string"
+                },
+                "purchase_amount": {
+                  "type": "number"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "strategy": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/property_transaction/all": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "property_transaction"
+        ],
+        "summary": "all transactions for select",
+        "operationId": "propertyTransactionTransactionAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "lists": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "code",
+                      "type",
+                      "status",
+                      "property_type",
+                      "borrower_property_id"
+                    ],
+                    "properties": {
+                      "borrower_property_id": {
+                        "type": "integer"
+                      },
+                      "code": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "property_type": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/property_transaction/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "property_transaction"
+        ],
+        "summary": "transaction detail",
+        "operationId": "propertyTransactionTransactionDetail",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "borrower_property_id": {
+                  "type": "integer"
+                },
+                "checklist": {
+                  "type": "string"
+                },
+                "code": {
+                  "type": "string"
+                },
+                "coe_date": {
+                  "type": "string"
+                },
+                "created_at": {
+                  "type": "string"
+                },
+                "emd_amount": {
+                  "type": "number"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "organization_id": {
+                  "type": "integer"
+                },
+                "pm": {
+                  "type": "string"
+                },
+                "property_type": {
+                  "type": "string"
+                },
+                "purchase_amount": {
+                  "type": "number"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "strategy": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "property_transaction"
+        ],
+        "summary": "update transaction",
+        "operationId": "propertyTransactionTransactionUpdate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "coe_date": {
+                  "type": "string"
+                },
+                "emd_amount": {
+                  "type": "number"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "pm": {
+                  "type": "string"
+                },
+                "property_type": {
+                  "type": "string"
+                },
+                "purchase_amount": {
+                  "type": "number"
+                },
+                "strategy": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "delete": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "property_transaction"
+        ],
+        "summary": "delete transaction",
+        "operationId": "propertyTransactionTransactionDelete",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/property_transaction/{id}/checklist": {
+      "patch": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "property_transaction"
+        ],
+        "summary": "update transaction checklist",
+        "operationId": "propertyTransactionTransactionUpdateChecklist",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "status_key",
+                "all_checked",
+                "document_id"
+              ],
+              "properties": {
+                "all_checked": {
+                  "type": "boolean"
+                },
+                "document_id": {
+                  "type": "integer"
+                },
+                "status_key": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/property_transaction/{id}/status": {
+      "patch": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "property_transaction"
+        ],
+        "summary": "switch transaction status",
+        "operationId": "propertyTransactionTransactionSwitchStatus",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "status"
+              ],
+              "properties": {
+                "status": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/resource/tree": {
       "get": {
         "produces": [
@@ -16016,7 +17285,7 @@
       }
     }
   },
-  "x-date": "2026-05-15 13:43:32",
+  "x-date": "2026-05-20 16:37:50",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

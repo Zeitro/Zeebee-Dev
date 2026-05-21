@@ -386,6 +386,7 @@ message LoanCreateRequestData {
   string original_contract_date = 23;
   string extension_date = 24;
   string loan_processor = 25;
+  int64 borrower_property_transaction_id = 26;
 }
 
 message LoanCreateResponse {
@@ -2170,3 +2171,217 @@ service Auth {
 }
 
 // ========== auth service end ======================
+
+// ===================== borrower property transaction service start ======================
+message BorrowerPropertyTransactionEntity {
+  int64 id = 1;
+  string created_at = 2;
+  string updated_at = 3;
+  int64 borrower_property_id = 4;
+  int64 organization_id = 5;
+  string code = 6;
+  string type = 7;
+  string status = 8;
+  string coe_date = 9;
+  double purchase_amount = 10;
+  double emd_amount = 11;
+  string property_type = 12;
+  string pm = 13;
+  string strategy = 14;
+  string note = 15;
+  string checklist = 16;
+}
+
+message BorrowerPropertyTransactionOptionEntity {
+  int64 id = 1;
+  string code = 2;
+  string type = 3;
+  string status = 4;
+  string property_type = 5;
+  int64 borrower_property_id = 6;
+}
+
+message BorrowerPropertyTransactionCreateRequest {
+  BorrowerPropertyTransactionCreateRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionCreateRequestData {
+  int64 borrower_property_id = 1;
+  string type = 2;
+//  string coe_date = 3;
+//  double purchase_amount = 4;
+//  double emd_amount = 5;
+//  string property_type = 6;
+//  string pm = 7;
+//  string strategy = 8;
+//  string note = 9;
+}
+
+message BorrowerPropertyTransactionCreateResponse {
+  BorrowerPropertyTransactionEntity data = 1;
+}
+
+message BorrowerPropertyTransactionDetailRequest {
+  BorrowerPropertyTransactionDetailRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionDetailRequestData {
+  int64 id = 1;
+}
+
+message BorrowerPropertyTransactionDetailResponse {
+  BorrowerPropertyTransactionEntity data = 1;
+}
+
+message BorrowerPropertyTransactionUpdateRequest {
+  BorrowerPropertyTransactionUpdateRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionUpdateRequestData {
+  int64 id = 1;
+  string coe_date = 2;
+  double purchase_amount = 3;
+  double emd_amount = 4;
+  string property_type = 5;
+  string pm = 6;
+  string strategy = 7;
+  string note = 8;
+}
+
+message BorrowerPropertyTransactionDeleteRequest {
+  BorrowerPropertyTransactionDeleteRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionDeleteRequestData {
+  int64 id = 1;
+}
+
+message BorrowerPropertyTransactionSwitchStatusRequest {
+  BorrowerPropertyTransactionSwitchStatusRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionSwitchStatusRequestData {
+  int64 id = 1;
+  string status = 2;
+}
+
+message BorrowerPropertyTransactionAllRequest {
+  BorrowerPropertyTransactionAllRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionAllRequestData {}
+
+message BorrowerPropertyTransactionAllResponse {
+  repeated BorrowerPropertyTransactionOptionEntity data = 1;
+}
+
+message BorrowerPropertyTransactionChecklistRequest {
+  BorrowerPropertyTransactionChecklistRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionChecklistRequestData {
+  int64 id = 1;
+  string status_key = 2;
+  bool all_checked = 3;
+  int64 document_id = 4;
+}
+
+service BorrowerPropertyTransaction {
+  rpc Create(BorrowerPropertyTransactionCreateRequest) returns(BorrowerPropertyTransactionCreateResponse);
+  rpc Detail(BorrowerPropertyTransactionDetailRequest) returns(BorrowerPropertyTransactionDetailResponse);
+  rpc Update(BorrowerPropertyTransactionUpdateRequest) returns(EmptyResponse);
+  rpc Delete(BorrowerPropertyTransactionDeleteRequest) returns(EmptyResponse);
+  rpc SwitchStatus(BorrowerPropertyTransactionSwitchStatusRequest) returns(EmptyResponse);
+  rpc All(BorrowerPropertyTransactionAllRequest) returns(BorrowerPropertyTransactionAllResponse);
+  rpc UpdateChecklist(BorrowerPropertyTransactionChecklistRequest) returns(EmptyResponse);
+}
+// ===================== borrower property transaction service end ======================
+
+// ===================== document service start ======================
+message DocumentEntity {
+  int64 id = 1;
+  int64 parent_id = 2;
+  string type = 3;
+  string name = 4;
+  int32 level = 5;
+  int32 sort_order = 6;
+  string last_uploaded_at = 7;
+  string metadata = 8;
+  string created_at = 9;
+  string updated_at = 10;
+  repeated DocumentEntity children = 11;
+  repeated FileEntity files = 12;
+}
+
+message DocumentDetailRequest {
+  DocumentDetailRequestData data = 1;
+}
+
+message DocumentDetailRequestData {
+  string entity_type = 1;
+  int64 entity_id = 2;
+}
+
+message DocumentDetailResponse {
+  DocumentEntity data = 1;
+}
+
+message DocumentCreateRequest {
+  DocumentCreateRequestData data = 1;
+}
+
+message DocumentCreateRequestData {
+  string entity_type = 1;
+  int64 entity_id = 2;
+  int64 parent_id = 3;
+  string name = 4;
+}
+
+message DocumentCreateResponse {
+  DocumentEntity data = 1;
+}
+
+message DocumentUploadFileRequest {
+  DocumentUploadFileRequestData data = 1;
+}
+
+message DocumentUploadFileRequestData {
+  int64 document_id = 1;
+  string file_name = 2;
+  string file_url = 3;
+  string file_suffix = 4;
+}
+
+message DocumentUploadFileResponse {
+  FileEntity data = 1;
+}
+
+message DocumentDeleteFileRequest {
+  DocumentDeleteFileRequestData data = 1;
+}
+
+message DocumentDeleteFileRequestData {
+  int64 file_id = 1;
+}
+
+message DocumentLeafListRequest {
+  DocumentLeafListRequestData data = 1;
+}
+
+message DocumentLeafListRequestData {
+  string entity_type = 1;
+  int64 entity_id = 2;
+}
+
+message DocumentLeafListResponse {
+  repeated DocumentEntity data = 1;
+}
+
+service Document {
+  rpc Detail(DocumentDetailRequest) returns(DocumentDetailResponse);
+  rpc Create(DocumentCreateRequest) returns(DocumentCreateResponse);
+  rpc UploadFile(DocumentUploadFileRequest) returns(DocumentUploadFileResponse);
+  rpc DeleteFile(DocumentDeleteFileRequest) returns(EmptyResponse);
+  rpc LeafList(DocumentLeafListRequest) returns(DocumentLeafListResponse);
+}
+// ===================== document service end ======================

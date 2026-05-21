@@ -44,7 +44,8 @@ type Loan struct {
 	OriginalContractDate   *sql.NullTime               `json:"original_contract_date" gorm:"column:original_contract_date"`
 	ExtensionDate          *sql.NullTime               `json:"extension_date" gorm:"column:extension_date"`
 	LoanProcessor          string                      `json:"loan_processor" gorm:"column:loan_processor;size:100;not null;default:''"`
-	Extend                 data.LoanExtendValueEntity  `json:"extend" gorm:"column:extend;type:jsonb;serializer:json"`
+	Extend                         data.LoanExtendValueEntity  `json:"extend" gorm:"column:extend;type:jsonb;serializer:json"`
+	BorrowerPropertyTransactionId  int64                       `gorm:"column:borrower_property_transaction_id;not null;default:0" json:"borrower_property_transaction_id"`
 
 	// relationships
 	Creator              *User               `json:"creator" gorm:"foreignKey:CreatorId;references:Id"`

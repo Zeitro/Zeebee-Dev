@@ -10,6 +10,7 @@ import (
 	borrower_entity "zeebee-backend/app/borrower/api/internal/handler/borrower_entity"
 	borrower_property "zeebee-backend/app/borrower/api/internal/handler/borrower_property"
 	common "zeebee-backend/app/borrower/api/internal/handler/common"
+	document "zeebee-backend/app/borrower/api/internal/handler/document"
 	file "zeebee-backend/app/borrower/api/internal/handler/file"
 	loan "zeebee-backend/app/borrower/api/internal/handler/loan"
 	loan_applicant "zeebee-backend/app/borrower/api/internal/handler/loan_applicant"
@@ -18,6 +19,7 @@ import (
 	organization_email "zeebee-backend/app/borrower/api/internal/handler/organization_email"
 	organization_user "zeebee-backend/app/borrower/api/internal/handler/organization_user"
 	pdf "zeebee-backend/app/borrower/api/internal/handler/pdf"
+	property_transaction "zeebee-backend/app/borrower/api/internal/handler/property_transaction"
 	resource "zeebee-backend/app/borrower/api/internal/handler/resource"
 	role "zeebee-backend/app/borrower/api/internal/handler/role"
 	storage "zeebee-backend/app/borrower/api/internal/handler/storage"
@@ -209,6 +211,39 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/uuid",
 					Handler: common.GetUuidHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// create leaf document
+					Method:  http.MethodPost,
+					Path:    "/document",
+					Handler: document.DocumentCreateHandler(serverCtx),
+				},
+				{
+					// upload file to document
+					Method:  http.MethodPost,
+					Path:    "/document/:document_id/upload",
+					Handler: document.DocumentUploadFileHandler(serverCtx),
+				},
+				{
+					// delete document file
+					Method:  http.MethodDelete,
+					Path:    "/document/file/:file_id",
+					Handler: document.DocumentDeleteFileHandler(serverCtx),
+				},
+				{
+					// document tree
+					Method:  http.MethodGet,
+					Path:    "/document/tree/:entity_type/:entity_id",
+					Handler: document.DocumentTreeHandler(serverCtx),
 				},
 			}...,
 		),
@@ -521,6 +556,57 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/pdf/apply_form",
 					Handler: pdf.ApplyFormPdfHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// create transaction
+					Method:  http.MethodPost,
+					Path:    "/property_transaction",
+					Handler: property_transaction.TransactionCreateHandler(serverCtx),
+				},
+				{
+					// transaction detail
+					Method:  http.MethodGet,
+					Path:    "/property_transaction/:id",
+					Handler: property_transaction.TransactionDetailHandler(serverCtx),
+				},
+				{
+					// update transaction
+					Method:  http.MethodPut,
+					Path:    "/property_transaction/:id",
+					Handler: property_transaction.TransactionUpdateHandler(serverCtx),
+				},
+				{
+					// delete transaction
+					Method:  http.MethodDelete,
+					Path:    "/property_transaction/:id",
+					Handler: property_transaction.TransactionDeleteHandler(serverCtx),
+				},
+				{
+					// update transaction checklist
+					Method:  http.MethodPatch,
+					Path:    "/property_transaction/:id/checklist",
+					Handler: property_transaction.TransactionUpdateChecklistHandler(serverCtx),
+				},
+				{
+					// switch transaction status
+					Method:  http.MethodPatch,
+					Path:    "/property_transaction/:id/status",
+					Handler: property_transaction.TransactionSwitchStatusHandler(serverCtx),
+				},
+				{
+					// all transactions for select
+					Method:  http.MethodGet,
+					Path:    "/property_transaction/all",
+					Handler: property_transaction.TransactionAllHandler(serverCtx),
 				},
 			}...,
 		),

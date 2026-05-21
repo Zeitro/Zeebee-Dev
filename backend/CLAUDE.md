@@ -17,6 +17,7 @@
 
 按以下顺序阅读（首次会话必读，后续会话按需）：
 
+
 1. **本文件（CLAUDE.md）** — 开发规范、代码示例（你正在读）
 2. **`.specify/memory/constitution.md`** — 项目宪章：核心原则、技术栈、Git 规范、行为准则
 3. **`.claude/docs/analysis/architecture.md`** — 架构设计：分层职责、数据流、目录结构（必读）

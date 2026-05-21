@@ -30,8 +30,10 @@ type ServiceContext struct {
 	OrganizationUserRpcClient  borrower.OrganizationUserClient
 	OrganizationRpcClient      borrower.OrganizationClient
 	OrganizationEmailRpcClient borrower.OrganizationEmailClient
-	ZeitroRpcClient            borrower.ZeitroClient
-	ResourceRpcClient          borrower.ResourceClient
+	ZeitroRpcClient                       borrower.ZeitroClient
+	ResourceRpcClient                     borrower.ResourceClient
+	BorrowerPropertyTransactionRpcClient  borrower.BorrowerPropertyTransactionClient
+	DocumentRpcClient                     borrower.DocumentClient
 }
 
 func NewServiceContext(c config.ApiConf) *ServiceContext {
@@ -56,7 +58,9 @@ func NewServiceContext(c config.ApiConf) *ServiceContext {
 		OrganizationUserRpcClient:  borrower.NewOrganizationUserClient(rpcClient.Conn()),
 		OrganizationRpcClient:      borrower.NewOrganizationClient(rpcClient.Conn()),
 		OrganizationEmailRpcClient: borrower.NewOrganizationEmailClient(rpcClient.Conn()),
-		ZeitroRpcClient:            borrower.NewZeitroClient(rpcClient.Conn()),
-		ResourceRpcClient:          borrower.NewResourceClient(rpcClient.Conn()),
+		ZeitroRpcClient:                       borrower.NewZeitroClient(rpcClient.Conn()),
+		ResourceRpcClient:                     borrower.NewResourceClient(rpcClient.Conn()),
+		BorrowerPropertyTransactionRpcClient:  borrower.NewBorrowerPropertyTransactionClient(rpcClient.Conn()),
+		DocumentRpcClient:                     borrower.NewDocumentClient(rpcClient.Conn()),
 	}
 }
