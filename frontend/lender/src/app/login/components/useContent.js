@@ -11,14 +11,14 @@ const useContent = () => {
 
 	// 组织信息完整后登录
 	const getUserPermissions = async (access, successCallback, org) => {
-		await getUserInfo();
-		const result = await getUserMenus(menuSetting);
-		setPermissionTags(result?.permissionTags);
-		setAccessPaths(result?.accessPaths);
 		if (access) {
 			updateAccess(access);
 			// 	setCookie('token', access?.access_token, access?.access_token_expire * 1000);
 		}
+		await getUserInfo();
+		const result = await getUserMenus(menuSetting);
+		setPermissionTags(result?.permissionTags);
+		setAccessPaths(result?.accessPaths);
 		successCallback?.(false);
 		if (!org) return;
 		const list = org?.organization_settings;
