@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { FolderOpenOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Button, message, Space, Tag, Typography } from 'antd';
 import { FilterTable } from '@repo/shared-methods';
@@ -33,6 +34,7 @@ function statusTag(status) {
 }
 
 const MyTransactionsPage = () => {
+	const router = useRouter();
 	const { request, cancelMatch } = useMemo(() => createRequest(), []);
 	const tableFilterRef = useRef();
 	const [keyword, setKeyword] = useState('');
@@ -42,10 +44,27 @@ const MyTransactionsPage = () => {
 	const getData = useCallback(
 		(params) => {
 			cancelMatch(TRANSACTION_LIST_API);
-			return request(TRANSACTION_LIST_API, {
-				method: 'POST',
-				body: params,
-			});
+			// return request(TRANSACTION_LIST_API, {
+			// 	method: 'POST',
+			// 	body: params,
+			// });
+			return {
+				total: 100,
+				list: [
+					{
+						id: 1,
+						property: { address: { address1: '123 Main St' } },
+						type: 'Purchase',
+						status: 'Pending',
+					},
+					{
+						id: 2,
+						property: { address: { address1: '456 Main St' } },
+						type: 'Sale',
+						status: 'Completed',
+					},
+				],
+			};
 		},
 		[request, cancelMatch],
 	);
@@ -123,6 +142,16 @@ const MyTransactionsPage = () => {
 				key: 'id',
 				sorter: true,
 				width: 140,
+				render: (v, record) => (
+					<Typography.Link
+						onClick={(e) => {
+							e.preventDefault();
+							router.push(`/myTransactions/${record.id}`);
+						}}
+					>
+						{v ?? '—'}
+					</Typography.Link>
+				),
 			},
 			{
 				title: 'Property address',
@@ -148,14 +177,14 @@ const MyTransactionsPage = () => {
 				dataIndex: ['property', 'address', 'city'],
 				key: 'city',
 				sorter: true,
-				width: 120,
+				// width: 120,
 				render: (_, record) => record?.property?.address?.city ?? '—',
 			},
 			{
 				title: 'State',
 				dataIndex: ['property', 'address', 'state'],
 				key: 'state',
-				width: 80,
+				// width: 80,
 				sorter: true,
 				render: (_, record) => record?.property?.address?.state ?? '—',
 			},
@@ -163,7 +192,7 @@ const MyTransactionsPage = () => {
 				title: 'Type',
 				dataIndex: 'type',
 				key: 'type',
-				width: 120,
+				// width: 120,
 				sorter: true,
 				render: (_, record) => record.type ?? '—',
 			},
@@ -171,7 +200,7 @@ const MyTransactionsPage = () => {
 				title: 'Status',
 				dataIndex: 'status',
 				key: 'status',
-				width: 120,
+				// width: 120,
 				sorter: true,
 				render: (v) => (v ? statusTag(v) : '—'),
 			},
@@ -179,7 +208,7 @@ const MyTransactionsPage = () => {
 				title: 'COE date',
 				dataIndex: 'coe_date',
 				key: 'coe_date',
-				width: 120,
+				// width: 120,
 				sorter: true,
 				render: (_, record) => {
 					const raw = record.coe_date ?? record.coeDate;
@@ -197,22 +226,21 @@ const MyTransactionsPage = () => {
 					<Space size="small">
 						<Button
 							size="small"
-							type="text"
+							type="link"
 							icon={<FolderOpenOutlined className="text-base-warning" />}
 							onClick={() => message.info('File list is not wired yet.')}
 						/>
 						<Button
 							size="small"
-							onClick={() =>
-								message.info(`Edit is a placeholder for transaction ${record.id}.`)
-							}
+							type="link"
+							onClick={() => router.push(`/myTransactions/${record.id}?tab=details`)}
 						>
 							Edit
 						</Button>
 						<Button
 							size="small"
+							type="link"
 							danger
-							type="default"
 							onClick={() =>
 								message.info(
 									`Delete is a placeholder for transaction ${record.id}.`,
@@ -225,7 +253,7 @@ const MyTransactionsPage = () => {
 				),
 			},
 		],
-		[],
+		[router],
 	);
 
 	return (

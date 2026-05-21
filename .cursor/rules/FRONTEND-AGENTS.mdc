@@ -16,7 +16,8 @@ alwaysApply: true
 
 - **`src/app/` 路由目录**：多词用 **camelCase**（如 `myTransactions`、`marketTools`），勿用 kebab-case；URL 与目录名一致。
 - **封装组件文件**：**PascalCase**；单文件建议 **≤300 行**，逻辑拆子组件或 hooks。
-- **布尔**用 `is` / `has` / `can` / `should` 前缀；**ref 对象**以 `Ref` 结尾；样式优先 **Tailwind**，必要时 **`.scss`**。
+- **页面组件拆分**（详情页 / 多 Tab 页）：`page.js` 只做**路由壳**——读 params、拉共享数据、Tab 切换、全局 Actions / Modal；每个 Tab 或独立区块拆到同路由下的 **`components/<TabName>/`**（如 `components/DetailsTab/index.js`）。Tab 内再拆 **`DetailField`**、**`TransactionCard`** 等展示原子组件；字段配置放同目录 **`constants.js`**；样式实现遵循 **Tailwind 优先**，仅在 Tailwind 不易表达（复杂伪元素、深层全局覆写、第三方组件强覆盖）时才落 **`index.module.scss`**。子 Tab **自己管自己的请求与列定义**（除非数据必须由父级统一拉取）；父传 **`rowData` / `id` + 回调**（`onRefresh`、`onEdit`），避免在父组件堆业务 UI。仅当 **2+ feature 复用** 时再上收到 **`@repo/shared-methods`**。
+- **布尔**用 `is` / `has` / `can` / `should` 前缀；**ref 对象**以 `Ref` 结尾；样式规则为 **Tailwind 第一选择，`index.module.scss` 第二选择**。
 - **约定 vs 工具**：本仓库前端规范写在本文件；查 Next/antd 等**官方文档**用 **Context7 等 MCP**；重复脚手架流程可做成 **Cursor Skill**。
 - **列表（筛选 + 表格）**：对话中可 @ Skill **`filter-table`**；说明见 `.cursor/skills/filter-table/SKILL.md`（优先 `FilterTable` / `FilterTableCard`，勿手写 `FilterField`+`NewTable` 重复流水线）。
 
@@ -73,8 +74,9 @@ Zeebee-Dev/
 
 - **交互组件**（Form、Table、Modal、Message 等）：遵循上文共享包 **「UI 组件」** 的查找顺序——**先 `@repo/shared-methods` 封装，再 Ant Design 5.x**；并沿用各应用根布局里已有的 **AntdRegistry / ConfigProvider** 接入方式。
 - **布局、间距、响应式**用 **Tailwind 3.x**；避免与 antd 强耦合的重复样式。
+- **颜色 token**（全站，含 Tailwind class 与行内 `style`）：写**文字色 / 背景色 / 边框色**前，先查当前应用的 **`src/app/globals.css`**（`:root` 里 `--*` 变量）与同应用 **`tailwind.config.js`** → `theme.extend.colors` 的对应关系（admin / borrower / lender 三端结构应对齐）。**已在 Tailwind 注册**的 token 优先用 utility class，规则为 `{css属性前缀}-{token路径}`：`--base-primary` → `text-base-primary` / `bg-base-primary` / `border-base-primary`； 等。**仅在 `globals.css` 有、Tailwind 未注册**的变量（如 `--orange-dark`），行内样式写 `color: 'var(--orange-dark)'`（或 `backgroundColor` / `borderColor`）。**禁止**硬编码与 token 等价的 `#1677ff`、`rgba(0,0,0,0.45)`、`text-[rgba(...)]`、`bg-[#...]` 等；确无 token 时再评估是否新增 `--*` 与 `tailwind.config.js` 映射。
 - **图标**：`@ant-design/icons`；**日期**与 antd 5 对齐 **dayjs**。
-- **空值展示**：表格列、`render`、详情字段等**无数据**（`null` / `undefined` / `''`，格式化后为空或 `formatAmount` 的 `$ --`）时，统一显示 **`--`**（两个连字符），勿用 `—`、`N/A`、`-` 或其它占位。优先使用 `@repo/shared-methods/utils` 的 **`EMPTY_DISPLAY`**、**`displayValue(value, formatter?)`**（`lib/format.js`）；与邻近平文件已写 `v || '--'` 时保持一致即可。
+- **空值展示**（全站统一，不限页面/组件类型）：凡向用户**展示字段值**（表格列、`render`、详情 `DetailField`、卡片、描述列表、Tab 内只读文本等），无有效数据时一律显示 **`--`**（两个 ASCII 连字符）。**禁止**手写 `'--'`、`value ?? '--'`、`v || '--'` 以及 `—`、`N/A`、单字符 `-` 等其它占位。实现上**必须**使用 `@repo/shared-methods/utils` 的 **`displayValue(value, formatter?)`**；仅需常量时引用 **`EMPTY_DISPLAY`**（均来自 `lib/format.js`）。`displayValue` 已覆盖 `null` / `undefined` / `''`、格式化后为空、以及 `formatAmount` 返回的 `$ --` 等情形；有 formatter 时写 `displayValue(raw, formatAmount)`，展示组件内写 `displayValue(value)`，勿在业务层重复判空逻辑。
 
 ## 质量与提交
 

@@ -65,6 +65,11 @@
 		"typescript": "^5"
 	},
 	"type": "module",
+	"pnpm": {
+		"publicHoistPattern": [
+			"pdfjs-dist"
+		]
+	},
 	"resolutions": {
 		"pdfjs-dist": "5.3.31"
 	}

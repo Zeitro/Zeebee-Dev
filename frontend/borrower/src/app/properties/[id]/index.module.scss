@@ -1,0 +1,40 @@
+.propertyDetailTabs {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	overflow: hidden;
+	background-color: var(--base-text2);
+
+	:global {
+		.ant-tabs-nav {
+			margin-bottom: 0;
+			padding: 0 24px;
+			background-color: #fff;
+
+			&::before {
+				border-color: var(--base-border);
+			}
+		}
+
+		.ant-tabs-tab {
+			padding: 12px 0;
+			margin: 0 32px 0 0 !important;
+			font-size: 14px;
+			line-height: 22px;
+		}
+
+		.ant-tabs-tab-btn {
+			font-weight: 400;
+		}
+
+		.ant-tabs-content-holder {
+			flex: 1;
+			overflow-y: auto;
+		}
+
+		.ant-tabs-content,
+		.ant-tabs-tabpane {
+			height: 100%;
+		}
+	}
+}
