@@ -171,21 +171,28 @@ export default function useColumn({
 			align: 'center',
 			fixed: 'right',
 			render: (v, record) => {
+				let title = '';
+				if (
+					record?.source !== 'Borrower' &&
+					!hasPermission(PERMISSIONS?.LOAN?.CHANGE_STAGE)
+				) {
+					title = "You don't have permission to change the stage.";
+				} else if (record?.source !== 'Borrower') {
+					title = 'Only the 3rd part can change the stage.';
+				}
 				return (
 					<div onClick={(e) => e.stopPropagation()}>
-						{record?.source === 'Borrower' ? (
-							hasPermission(PERMISSIONS?.LOAN?.CHANGE_STAGE) ? (
-								<LoanStage data={record} successCallback={successCallback} />
-							) : (
-								<FieldTips title="You don't have permission to change the stage.">
-									{v}
-								</FieldTips>
-							)
-						) : (
-							<FieldTips title="Only the 3rd part can change the stage.">
-								{v}
-							</FieldTips>
-						)}
+						<LoanStage
+							data={record}
+							successCallback={successCallback}
+							disabled={
+								record?.source !== 'Borrower' ||
+								!hasPermission(PERMISSIONS?.LOAN?.CHANGE_STAGE)
+							}
+							tooltipProps={{
+								title,
+							}}
+						/>
 					</div>
 				);
 			},
