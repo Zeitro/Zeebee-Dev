@@ -78,22 +78,24 @@ CREATE INDEX "idx_entity_doc_root_id" ON "public"."entity_documents" ("root_docu
 -- documents
 CREATE TABLE "public"."documents"
 (
-    "id"               serial,
-    "parent_id"        int4         NOT NULL DEFAULT 0,
-    "type"             varchar(50)  NOT NULL DEFAULT '',
-    "name"             varchar(255) NOT NULL,
-    "level"            int4         NOT NULL DEFAULT 0,
-    "sort_order"       int4         NOT NULL DEFAULT 9,
-    "last_uploaded_at" timestamptz,
-    "metadata"         jsonb        NOT NULL DEFAULT '{}',
-    "created_at"       timestamptz  NOT NULL DEFAULT now(),
-    "updated_at"       timestamptz  NOT NULL DEFAULT now(),
-    "is_del"           int2         NOT NULL DEFAULT 0,
+    "id"                   serial,
+    "parent_id"            int4         NOT NULL DEFAULT 0,
+    "entity_document_id"   int4         NOT NULL DEFAULT 0,
+    "type"                 varchar(50)  NOT NULL DEFAULT '',
+    "name"                 varchar(255) NOT NULL DEFAULT '',
+    "level"                int4         NOT NULL DEFAULT 0,
+    "sort_order"           int4         NOT NULL DEFAULT 9,
+    "last_uploaded_at"     timestamptz,
+    "metadata"             jsonb        NOT NULL DEFAULT '{}',
+    "created_at"           timestamptz  NOT NULL DEFAULT now(),
+    "updated_at"           timestamptz  NOT NULL DEFAULT now(),
+    "is_del"               int2         NOT NULL DEFAULT 0,
     PRIMARY KEY ("id")
 );
 
 CREATE INDEX "idx_doc_pid" ON "public"."documents" ("parent_id");
 CREATE INDEX "idx_doc_name" ON "public"."documents" ("name");
+CREATE INDEX "idx_doc_entity_document_id" ON "public"."documents" ("entity_document_id");
 
 -- files
 ALTER TABLE "public"."files"
@@ -115,7 +117,7 @@ CREATE TABLE "public"."document_templates"
     "id"         serial,
     "name"       varchar(255) NOT NULL DEFAULT '',
     "type"       varchar(20)  NOT NULL DEFAULT '',
-    "structure"  json         NOT NULL DEFAULT '{}',
+    "structure"  jsonb         NOT NULL DEFAULT '{}',
     "status"     varchar(20)  NOT NULL DEFAULT '',
     "created_at" timestamptz  NOT NULL DEFAULT now(),
     "updated_at" timestamptz  NOT NULL DEFAULT now(),

@@ -6,50 +6,76 @@ info(
     version: "v1"
 )
 
+import "borrower_property.api"
+import "file.api"
+
+// checklist types
+type BorrowerPropertyTransactionChecklistNode {
+    Name string `json:"name"`
+    DocumentId int64 `json:"document_id"`
+    IsRequired bool `json:"is_required"`
+    SubDocumentCount int32 `json:"sub_document_count"`
+    UploadedDocumentCount int32 `json:"uploaded_document_count"`
+    Children []BorrowerPropertyTransactionChecklistNode `json:"children"`
+    FileCount int32 `json:"file_count"`
+    Files []FileEntity `json:"files"`
+}
+
+type BorrowerPropertyTransactionChecklist {
+    AllChecked bool `json:"all_checked"`
+    TotalDocumentCount int32 `json:"total_document_count"`
+    TotalRequiredDocumentCount int32 `json:"total_required_document_count"`
+    TotalRequiredUpdatedDocumentCount int32 `json:"total_required_updated_document_count"`
+    TotalOptionalDocumentCount int32 `json:"total_optional_document_count"`
+    TotalOptionalUpdatedDocumentCount int32 `json:"total_optional_updated_document_count"`
+    RequiredDocuments []BorrowerPropertyTransactionChecklistNode `json:"required_documents"`
+    OptionalDocuments []BorrowerPropertyTransactionChecklistNode `json:"optional_documents"`
+}
+
 // create
 type (
     BorrowerPropertyTransactionCreateRequest {
-        BorrowerPropertyId int64   `json:"borrower_property_id" validate:"required,gt=0"`
-        Type               string  `json:"type" validate:"required,oneof=Purchase Sale Re-finance 'Change Title' Assignment"`
+        BorrowerPropertyId int64 `json:"borrower_property_id" validate:"required,gt=0"`
+        Type string `json:"type" validate:"required,oneof=Purchase Sale Re-finance 'Change Title' Assignment"`
     }
     BorrowerPropertyTransactionCreateResponse {
-        Id                 int64   `json:"id"`
-        Code               string  `json:"code"`
-        Type               string  `json:"type"`
-        Status             string  `json:"status"`
-        BorrowerPropertyId int64   `json:"borrower_property_id"`
-        OrganizationId     int64   `json:"organization_id"`
-        CoeDate            string  `json:"coe_date"`
-        PurchaseAmount     float64 `json:"purchase_amount"`
-        EmdAmount          float64 `json:"emd_amount"`
-        PropertyType       string  `json:"property_type"`
-        Pm                 string  `json:"pm"`
-        Strategy           string  `json:"strategy"`
-        Note               string  `json:"note"`
-        Checklist          string  `json:"checklist"`
-        CreatedAt          string  `json:"created_at"`
-        UpdatedAt          string  `json:"updated_at"`
+        Id int64 `json:"id"`
+        Code string `json:"code"`
+        Type string `json:"type"`
+        Status string `json:"status"`
+        BorrowerPropertyId int64 `json:"borrower_property_id"`
+        OrganizationId int64 `json:"organization_id"`
+        CoeDate string `json:"coe_date"`
+        PurchaseAmount float64 `json:"purchase_amount"`
+        EmdAmount float64 `json:"emd_amount"`
+        PropertyType string `json:"property_type"`
+        Pm string `json:"pm"`
+        Strategy string `json:"strategy"`
+        Note string `json:"note"`
+        Checklist BorrowerPropertyTransactionChecklist `json:"checklist"`
+        CreatedAt string `json:"created_at"`
+        UpdatedAt string `json:"updated_at"`
     }
 )
 
 // update
 type (
     BorrowerPropertyTransactionUpdateRequest {
-        Id             int64   `path:"id" validate:"required,gt=0"`
-        CoeDate        string  `json:"coe_date,optional"`
+        Id int64 `path:"id" validate:"required,gt=0"`
+        CoeDate string `json:"coe_date,optional"`
         PurchaseAmount float64 `json:"purchase_amount,optional"`
-        EmdAmount      float64 `json:"emd_amount,optional"`
-        PropertyType   string  `json:"property_type,optional"`
-        Pm             string  `json:"pm,optional"`
-        Strategy       string  `json:"strategy,optional"`
-        Note           string  `json:"note,optional"`
+        EmdAmount float64 `json:"emd_amount,optional"`
+        PropertyType string `json:"property_type,optional"`
+        Pm string `json:"pm,optional"`
+        Strategy string `json:"strategy,optional"`
+        Note string `json:"note,optional"`
     }
 )
 
 // switch status
 type (
     BorrowerPropertyTransactionSwitchStatusRequest {
-        Id     int64  `path:"id" validate:"required,gt=0"`
+        Id int64 `path:"id" validate:"required,gt=0"`
         Status string `json:"status" validate:"required,oneof=Pending Closed Cancelled"`
     }
 )
@@ -67,22 +93,22 @@ type (
         Id int64 `path:"id" validate:"required,gt=0"`
     }
     BorrowerPropertyTransactionDetailResponse {
-        Id                 int64   `json:"id"`
-        Code               string  `json:"code"`
-        Type               string  `json:"type"`
-        Status             string  `json:"status"`
-        BorrowerPropertyId int64   `json:"borrower_property_id"`
-        OrganizationId     int64   `json:"organization_id"`
-        CoeDate            string  `json:"coe_date"`
-        PurchaseAmount     float64 `json:"purchase_amount"`
-        EmdAmount          float64 `json:"emd_amount"`
-        PropertyType       string  `json:"property_type"`
-        Pm                 string  `json:"pm"`
-        Strategy           string  `json:"strategy"`
-        Note               string  `json:"note"`
-        Checklist          string  `json:"checklist"`
-        CreatedAt          string  `json:"created_at"`
-        UpdatedAt          string  `json:"updated_at"`
+        Id int64 `json:"id"`
+        Code string `json:"code"`
+        Type string `json:"type"`
+        Status string `json:"status"`
+        BorrowerPropertyId int64 `json:"borrower_property_id"`
+        OrganizationId int64 `json:"organization_id"`
+        CoeDate string `json:"coe_date"`
+        PurchaseAmount float64 `json:"purchase_amount"`
+        EmdAmount float64 `json:"emd_amount"`
+        PropertyType string `json:"property_type"`
+        Pm string `json:"pm"`
+        Strategy string `json:"strategy"`
+        Note string `json:"note"`
+        Checklist BorrowerPropertyTransactionChecklist `json:"checklist"`
+        CreatedAt string `json:"created_at"`
+        UpdatedAt string `json:"updated_at"`
     }
 )
 
@@ -92,19 +118,20 @@ type (
         Lists []BorrowerPropertyTransactionOption `json:"lists"`
     }
     BorrowerPropertyTransactionOption {
-        Id                 int64  `json:"id"`
-        Code               string  `json:"code"`
-        Type               string  `json:"type"`
-        Status             string  `json:"status"`
-        PropertyType       string  `json:"property_type"`
-        BorrowerPropertyId int64  `json:"borrower_property_id"`
+        Id int64 `json:"id"`
+        Code string `json:"code"`
+        Type string `json:"type"`
+        Status string `json:"status"`
+        PropertyType string `json:"property_type"`
+        BorrowerPropertyId int64 `json:"borrower_property_id"`
+        BorrowerProperty BorrowerPropertyEntity `json:"borrower_property"`
     }
 )
 
 // checklist
 type (
     BorrowerPropertyTransactionChecklistRequest {
-        Id         int64  `path:"id" validate:"required,gt=0"`
-        AllChecked bool   `json:"all_checked"`
+        Id int64 `path:"id" validate:"required,gt=0"`
+        AllChecked bool `json:"all_checked"`
     }
 )

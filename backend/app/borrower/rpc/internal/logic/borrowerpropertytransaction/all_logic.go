@@ -6,8 +6,11 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/common/errorx"
 )
 
@@ -40,22 +43,18 @@ func (l *AllLogic) All(in *borrower.BorrowerPropertyTransactionAllRequest) (resp
 
 	transactions, err := l.svcCtx.BorrowerPropertyTransactionRepo.AllByOrganization(l.ctx, claim.OrganizationId)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to get transactions")
+		return nil, err
 	}
-
-	options := make([]*borrower.BorrowerPropertyTransactionOptionEntity, 0, len(transactions))
-	for _, t := range transactions {
-		options = append(options, &borrower.BorrowerPropertyTransactionOptionEntity{
-			Id:                 t.Id,
-			Code:               t.Code,
-			Type:               string(t.Type),
-			Status:             string(t.Status),
-			PropertyType:       string(t.PropertyType),
-			BorrowerPropertyId: t.BorrowerPropertyId,
-		})
+	var options *[]*borrower.BorrowerPropertyTransactionOptionEntity
+	options, err = copierx.Trans[[]*model.BorrowerPropertyTransaction, []*borrower.BorrowerPropertyTransactionOptionEntity](&transactions, copierx.SqlTimePtrToRFC3339Str(), copierx.TimeToRFC3339Str())
+	if err != nil {
+		return
+	}
+	if options == nil {
+		return &borrower.BorrowerPropertyTransactionAllResponse{}, nil
 	}
 
 	return &borrower.BorrowerPropertyTransactionAllResponse{
-		Data: options,
+		Data: *options,
 	}, nil
 }

@@ -7,6 +7,7 @@ import (
 
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
 )
 
@@ -28,6 +29,14 @@ func (repo *BorrowerPropertyTransactionRepo) GetOne(ctx context.Context, id int6
 	return result, errorx.WithStack(err)
 }
 
+func (repo *BorrowerPropertyTransactionRepo) GetOrganizationTransaction(ctx context.Context, id int64, organizationId int64) (result *model.BorrowerPropertyTransaction, err error) {
+	err = repo.Client(ctx).
+		Where("id = ? and organization_id = ?", id, organizationId).
+		Preload("BorrowerProperty").
+		First(&result).Error
+	return result, errorx.WithStack(err)
+}
+
 func (repo *BorrowerPropertyTransactionRepo) GetByCode(ctx context.Context, code string) (result *model.BorrowerPropertyTransaction, err error) {
 	err = repo.Client(ctx).
 		Where("code = ?", code).
@@ -37,7 +46,8 @@ func (repo *BorrowerPropertyTransactionRepo) GetByCode(ctx context.Context, code
 
 func (repo *BorrowerPropertyTransactionRepo) AllByOrganization(ctx context.Context, organizationId int64) (result []*model.BorrowerPropertyTransaction, err error) {
 	err = repo.Client(ctx).
-		Where("organization_id = ?", organizationId).
+		Where("organization_id = ? and status in ?", organizationId, []constants.BorrowerPropertyTransactionStatus{constants.BorrowerPropertyTransactionStatusPending, constants.BorrowerPropertyTransactionStatusClosed}).
+		Preload("BorrowerProperty").
 		Order("id desc").
 		Find(&result).Error
 	return result, errorx.WithStack(err)

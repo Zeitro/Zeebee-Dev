@@ -1541,7 +1541,477 @@
                   "type": "integer"
                 },
                 "checklist": {
-                  "type": "string"
+                  "type": "object",
+                  "required": [
+                    "all_checked",
+                    "total_document_count",
+                    "total_required_document_count",
+                    "total_required_updated_document_count",
+                    "total_optional_document_count",
+                    "total_optional_updated_document_count",
+                    "required_documents",
+                    "optional_documents"
+                  ],
+                  "properties": {
+                    "all_checked": {
+                      "type": "boolean"
+                    },
+                    "optional_documents": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "name",
+                          "document_id",
+                          "is_required",
+                          "sub_document_count",
+                          "uploaded_document_count",
+                          "children",
+                          "file_count",
+                          "files"
+                        ],
+                        "properties": {
+                          "children": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "name",
+                                "document_id",
+                                "is_required",
+                                "sub_document_count",
+                                "uploaded_document_count",
+                                "children",
+                                "file_count",
+                                "files"
+                              ],
+                              "properties": {
+                                "children": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "required": [
+                                      "name",
+                                      "document_id",
+                                      "is_required",
+                                      "sub_document_count",
+                                      "uploaded_document_count",
+                                      "children",
+                                      "file_count",
+                                      "files"
+                                    ],
+                                    "properties": {
+                                      "children": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object"
+                                        }
+                                      },
+                                      "document_id": {
+                                        "type": "integer"
+                                      },
+                                      "file_count": {
+                                        "type": "integer"
+                                      },
+                                      "files": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object"
+                                        }
+                                      },
+                                      "is_required": {
+                                        "type": "boolean"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "sub_document_count": {
+                                        "type": "integer"
+                                      },
+                                      "uploaded_document_count": {
+                                        "type": "integer"
+                                      }
+                                    }
+                                  }
+                                },
+                                "document_id": {
+                                  "type": "integer"
+                                },
+                                "file_count": {
+                                  "type": "integer"
+                                },
+                                "files": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "required": [
+                                      "id",
+                                      "entity_type",
+                                      "entity_id",
+                                      "file_url",
+                                      "file_name",
+                                      "storage_type",
+                                      "external_id",
+                                      "upload_type",
+                                      "created_at",
+                                      "updated_at"
+                                    ],
+                                    "properties": {
+                                      "created_at": {
+                                        "type": "string"
+                                      },
+                                      "entity_id": {
+                                        "type": "integer"
+                                      },
+                                      "entity_type": {
+                                        "type": "string"
+                                      },
+                                      "external_id": {
+                                        "type": "string"
+                                      },
+                                      "file_name": {
+                                        "type": "string"
+                                      },
+                                      "file_url": {
+                                        "type": "string"
+                                      },
+                                      "id": {
+                                        "type": "integer"
+                                      },
+                                      "storage_type": {
+                                        "type": "string"
+                                      },
+                                      "updated_at": {
+                                        "type": "string"
+                                      },
+                                      "upload_type": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                },
+                                "is_required": {
+                                  "type": "boolean"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "sub_document_count": {
+                                  "type": "integer"
+                                },
+                                "uploaded_document_count": {
+                                  "type": "integer"
+                                }
+                              }
+                            }
+                          },
+                          "document_id": {
+                            "type": "integer"
+                          },
+                          "file_count": {
+                            "type": "integer"
+                          },
+                          "files": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "entity_type",
+                                "entity_id",
+                                "file_url",
+                                "file_name",
+                                "storage_type",
+                                "external_id",
+                                "upload_type",
+                                "created_at",
+                                "updated_at"
+                              ],
+                              "properties": {
+                                "created_at": {
+                                  "type": "string"
+                                },
+                                "entity_id": {
+                                  "type": "integer"
+                                },
+                                "entity_type": {
+                                  "type": "string"
+                                },
+                                "external_id": {
+                                  "type": "string"
+                                },
+                                "file_name": {
+                                  "type": "string"
+                                },
+                                "file_url": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "storage_type": {
+                                  "type": "string"
+                                },
+                                "updated_at": {
+                                  "type": "string"
+                                },
+                                "upload_type": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "is_required": {
+                            "type": "boolean"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "sub_document_count": {
+                            "type": "integer"
+                          },
+                          "uploaded_document_count": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "required_documents": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "name",
+                          "document_id",
+                          "is_required",
+                          "sub_document_count",
+                          "uploaded_document_count",
+                          "children",
+                          "file_count",
+                          "files"
+                        ],
+                        "properties": {
+                          "children": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "name",
+                                "document_id",
+                                "is_required",
+                                "sub_document_count",
+                                "uploaded_document_count",
+                                "children",
+                                "file_count",
+                                "files"
+                              ],
+                              "properties": {
+                                "children": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "required": [
+                                      "name",
+                                      "document_id",
+                                      "is_required",
+                                      "sub_document_count",
+                                      "uploaded_document_count",
+                                      "children",
+                                      "file_count",
+                                      "files"
+                                    ],
+                                    "properties": {
+                                      "children": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object"
+                                        }
+                                      },
+                                      "document_id": {
+                                        "type": "integer"
+                                      },
+                                      "file_count": {
+                                        "type": "integer"
+                                      },
+                                      "files": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object"
+                                        }
+                                      },
+                                      "is_required": {
+                                        "type": "boolean"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "sub_document_count": {
+                                        "type": "integer"
+                                      },
+                                      "uploaded_document_count": {
+                                        "type": "integer"
+                                      }
+                                    }
+                                  }
+                                },
+                                "document_id": {
+                                  "type": "integer"
+                                },
+                                "file_count": {
+                                  "type": "integer"
+                                },
+                                "files": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "required": [
+                                      "id",
+                                      "entity_type",
+                                      "entity_id",
+                                      "file_url",
+                                      "file_name",
+                                      "storage_type",
+                                      "external_id",
+                                      "upload_type",
+                                      "created_at",
+                                      "updated_at"
+                                    ],
+                                    "properties": {
+                                      "created_at": {
+                                        "type": "string"
+                                      },
+                                      "entity_id": {
+                                        "type": "integer"
+                                      },
+                                      "entity_type": {
+                                        "type": "string"
+                                      },
+                                      "external_id": {
+                                        "type": "string"
+                                      },
+                                      "file_name": {
+                                        "type": "string"
+                                      },
+                                      "file_url": {
+                                        "type": "string"
+                                      },
+                                      "id": {
+                                        "type": "integer"
+                                      },
+                                      "storage_type": {
+                                        "type": "string"
+                                      },
+                                      "updated_at": {
+                                        "type": "string"
+                                      },
+                                      "upload_type": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                },
+                                "is_required": {
+                                  "type": "boolean"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "sub_document_count": {
+                                  "type": "integer"
+                                },
+                                "uploaded_document_count": {
+                                  "type": "integer"
+                                }
+                              }
+                            }
+                          },
+                          "document_id": {
+                            "type": "integer"
+                          },
+                          "file_count": {
+                            "type": "integer"
+                          },
+                          "files": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "entity_type",
+                                "entity_id",
+                                "file_url",
+                                "file_name",
+                                "storage_type",
+                                "external_id",
+                                "upload_type",
+                                "created_at",
+                                "updated_at"
+                              ],
+                              "properties": {
+                                "created_at": {
+                                  "type": "string"
+                                },
+                                "entity_id": {
+                                  "type": "integer"
+                                },
+                                "entity_type": {
+                                  "type": "string"
+                                },
+                                "external_id": {
+                                  "type": "string"
+                                },
+                                "file_name": {
+                                  "type": "string"
+                                },
+                                "file_url": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "storage_type": {
+                                  "type": "string"
+                                },
+                                "updated_at": {
+                                  "type": "string"
+                                },
+                                "upload_type": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "is_required": {
+                            "type": "boolean"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "sub_document_count": {
+                            "type": "integer"
+                          },
+                          "uploaded_document_count": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "total_document_count": {
+                      "type": "integer"
+                    },
+                    "total_optional_document_count": {
+                      "type": "integer"
+                    },
+                    "total_optional_updated_document_count": {
+                      "type": "integer"
+                    },
+                    "total_required_document_count": {
+                      "type": "integer"
+                    },
+                    "total_required_updated_document_count": {
+                      "type": "integer"
+                    }
+                  }
                 },
                 "code": {
                   "type": "string"
@@ -1620,9 +2090,90 @@
                       "type",
                       "status",
                       "property_type",
-                      "borrower_property_id"
+                      "borrower_property_id",
+                      "borrower_property"
                     ],
                     "properties": {
+                      "borrower_property": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "creator_id",
+                          "creator_name",
+                          "organization_id",
+                          "property_type",
+                          "total_amount",
+                          "unit",
+                          "living_area_sqft",
+                          "bedrooms",
+                          "bathrooms",
+                          "address",
+                          "created_at",
+                          "updated_at",
+                          "loan_count"
+                        ],
+                        "properties": {
+                          "address": {
+                            "type": "object",
+                            "properties": {
+                              "address1": {
+                                "type": "string"
+                              },
+                              "address2": {
+                                "type": "string"
+                              },
+                              "city": {
+                                "type": "string"
+                              },
+                              "state": {
+                                "type": "string"
+                              },
+                              "zip_code": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "bathrooms": {
+                            "type": "number"
+                          },
+                          "bedrooms": {
+                            "type": "integer"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "creator_id": {
+                            "type": "integer"
+                          },
+                          "creator_name": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "living_area_sqft": {
+                            "type": "number"
+                          },
+                          "loan_count": {
+                            "type": "integer"
+                          },
+                          "organization_id": {
+                            "type": "integer"
+                          },
+                          "property_type": {
+                            "type": "string"
+                          },
+                          "total_amount": {
+                            "type": "number"
+                          },
+                          "unit": {
+                            "type": "integer"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        }
+                      },
                       "borrower_property_id": {
                         "type": "integer"
                       },
@@ -1681,7 +2232,477 @@
                   "type": "integer"
                 },
                 "checklist": {
-                  "type": "string"
+                  "type": "object",
+                  "required": [
+                    "all_checked",
+                    "total_document_count",
+                    "total_required_document_count",
+                    "total_required_updated_document_count",
+                    "total_optional_document_count",
+                    "total_optional_updated_document_count",
+                    "required_documents",
+                    "optional_documents"
+                  ],
+                  "properties": {
+                    "all_checked": {
+                      "type": "boolean"
+                    },
+                    "optional_documents": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "name",
+                          "document_id",
+                          "is_required",
+                          "sub_document_count",
+                          "uploaded_document_count",
+                          "children",
+                          "file_count",
+                          "files"
+                        ],
+                        "properties": {
+                          "children": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "name",
+                                "document_id",
+                                "is_required",
+                                "sub_document_count",
+                                "uploaded_document_count",
+                                "children",
+                                "file_count",
+                                "files"
+                              ],
+                              "properties": {
+                                "children": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "required": [
+                                      "name",
+                                      "document_id",
+                                      "is_required",
+                                      "sub_document_count",
+                                      "uploaded_document_count",
+                                      "children",
+                                      "file_count",
+                                      "files"
+                                    ],
+                                    "properties": {
+                                      "children": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object"
+                                        }
+                                      },
+                                      "document_id": {
+                                        "type": "integer"
+                                      },
+                                      "file_count": {
+                                        "type": "integer"
+                                      },
+                                      "files": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object"
+                                        }
+                                      },
+                                      "is_required": {
+                                        "type": "boolean"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "sub_document_count": {
+                                        "type": "integer"
+                                      },
+                                      "uploaded_document_count": {
+                                        "type": "integer"
+                                      }
+                                    }
+                                  }
+                                },
+                                "document_id": {
+                                  "type": "integer"
+                                },
+                                "file_count": {
+                                  "type": "integer"
+                                },
+                                "files": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "required": [
+                                      "id",
+                                      "entity_type",
+                                      "entity_id",
+                                      "file_url",
+                                      "file_name",
+                                      "storage_type",
+                                      "external_id",
+                                      "upload_type",
+                                      "created_at",
+                                      "updated_at"
+                                    ],
+                                    "properties": {
+                                      "created_at": {
+                                        "type": "string"
+                                      },
+                                      "entity_id": {
+                                        "type": "integer"
+                                      },
+                                      "entity_type": {
+                                        "type": "string"
+                                      },
+                                      "external_id": {
+                                        "type": "string"
+                                      },
+                                      "file_name": {
+                                        "type": "string"
+                                      },
+                                      "file_url": {
+                                        "type": "string"
+                                      },
+                                      "id": {
+                                        "type": "integer"
+                                      },
+                                      "storage_type": {
+                                        "type": "string"
+                                      },
+                                      "updated_at": {
+                                        "type": "string"
+                                      },
+                                      "upload_type": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                },
+                                "is_required": {
+                                  "type": "boolean"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "sub_document_count": {
+                                  "type": "integer"
+                                },
+                                "uploaded_document_count": {
+                                  "type": "integer"
+                                }
+                              }
+                            }
+                          },
+                          "document_id": {
+                            "type": "integer"
+                          },
+                          "file_count": {
+                            "type": "integer"
+                          },
+                          "files": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "entity_type",
+                                "entity_id",
+                                "file_url",
+                                "file_name",
+                                "storage_type",
+                                "external_id",
+                                "upload_type",
+                                "created_at",
+                                "updated_at"
+                              ],
+                              "properties": {
+                                "created_at": {
+                                  "type": "string"
+                                },
+                                "entity_id": {
+                                  "type": "integer"
+                                },
+                                "entity_type": {
+                                  "type": "string"
+                                },
+                                "external_id": {
+                                  "type": "string"
+                                },
+                                "file_name": {
+                                  "type": "string"
+                                },
+                                "file_url": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "storage_type": {
+                                  "type": "string"
+                                },
+                                "updated_at": {
+                                  "type": "string"
+                                },
+                                "upload_type": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "is_required": {
+                            "type": "boolean"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "sub_document_count": {
+                            "type": "integer"
+                          },
+                          "uploaded_document_count": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "required_documents": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "name",
+                          "document_id",
+                          "is_required",
+                          "sub_document_count",
+                          "uploaded_document_count",
+                          "children",
+                          "file_count",
+                          "files"
+                        ],
+                        "properties": {
+                          "children": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "name",
+                                "document_id",
+                                "is_required",
+                                "sub_document_count",
+                                "uploaded_document_count",
+                                "children",
+                                "file_count",
+                                "files"
+                              ],
+                              "properties": {
+                                "children": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "required": [
+                                      "name",
+                                      "document_id",
+                                      "is_required",
+                                      "sub_document_count",
+                                      "uploaded_document_count",
+                                      "children",
+                                      "file_count",
+                                      "files"
+                                    ],
+                                    "properties": {
+                                      "children": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object"
+                                        }
+                                      },
+                                      "document_id": {
+                                        "type": "integer"
+                                      },
+                                      "file_count": {
+                                        "type": "integer"
+                                      },
+                                      "files": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object"
+                                        }
+                                      },
+                                      "is_required": {
+                                        "type": "boolean"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "sub_document_count": {
+                                        "type": "integer"
+                                      },
+                                      "uploaded_document_count": {
+                                        "type": "integer"
+                                      }
+                                    }
+                                  }
+                                },
+                                "document_id": {
+                                  "type": "integer"
+                                },
+                                "file_count": {
+                                  "type": "integer"
+                                },
+                                "files": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "required": [
+                                      "id",
+                                      "entity_type",
+                                      "entity_id",
+                                      "file_url",
+                                      "file_name",
+                                      "storage_type",
+                                      "external_id",
+                                      "upload_type",
+                                      "created_at",
+                                      "updated_at"
+                                    ],
+                                    "properties": {
+                                      "created_at": {
+                                        "type": "string"
+                                      },
+                                      "entity_id": {
+                                        "type": "integer"
+                                      },
+                                      "entity_type": {
+                                        "type": "string"
+                                      },
+                                      "external_id": {
+                                        "type": "string"
+                                      },
+                                      "file_name": {
+                                        "type": "string"
+                                      },
+                                      "file_url": {
+                                        "type": "string"
+                                      },
+                                      "id": {
+                                        "type": "integer"
+                                      },
+                                      "storage_type": {
+                                        "type": "string"
+                                      },
+                                      "updated_at": {
+                                        "type": "string"
+                                      },
+                                      "upload_type": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                },
+                                "is_required": {
+                                  "type": "boolean"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "sub_document_count": {
+                                  "type": "integer"
+                                },
+                                "uploaded_document_count": {
+                                  "type": "integer"
+                                }
+                              }
+                            }
+                          },
+                          "document_id": {
+                            "type": "integer"
+                          },
+                          "file_count": {
+                            "type": "integer"
+                          },
+                          "files": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "entity_type",
+                                "entity_id",
+                                "file_url",
+                                "file_name",
+                                "storage_type",
+                                "external_id",
+                                "upload_type",
+                                "created_at",
+                                "updated_at"
+                              ],
+                              "properties": {
+                                "created_at": {
+                                  "type": "string"
+                                },
+                                "entity_id": {
+                                  "type": "integer"
+                                },
+                                "entity_type": {
+                                  "type": "string"
+                                },
+                                "external_id": {
+                                  "type": "string"
+                                },
+                                "file_name": {
+                                  "type": "string"
+                                },
+                                "file_url": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "storage_type": {
+                                  "type": "string"
+                                },
+                                "updated_at": {
+                                  "type": "string"
+                                },
+                                "upload_type": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "is_required": {
+                            "type": "boolean"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "sub_document_count": {
+                            "type": "integer"
+                          },
+                          "uploaded_document_count": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "total_document_count": {
+                      "type": "integer"
+                    },
+                    "total_optional_document_count": {
+                      "type": "integer"
+                    },
+                    "total_optional_updated_document_count": {
+                      "type": "integer"
+                    },
+                    "total_required_document_count": {
+                      "type": "integer"
+                    },
+                    "total_required_updated_document_count": {
+                      "type": "integer"
+                    }
+                  }
                 },
                 "code": {
                   "type": "string"
@@ -5248,6 +6269,10 @@
                                   "entity_type",
                                   "entity_id",
                                   "file_url",
+                                  "file_name",
+                                  "storage_type",
+                                  "external_id",
+                                  "upload_type",
                                   "created_at",
                                   "updated_at"
                                 ],
@@ -5261,13 +6286,25 @@
                                   "entity_type": {
                                     "type": "string"
                                   },
+                                  "external_id": {
+                                    "type": "string"
+                                  },
+                                  "file_name": {
+                                    "type": "string"
+                                  },
                                   "file_url": {
                                     "type": "string"
                                   },
                                   "id": {
                                     "type": "integer"
                                   },
+                                  "storage_type": {
+                                    "type": "string"
+                                  },
                                   "updated_at": {
+                                    "type": "string"
+                                  },
+                                  "upload_type": {
                                     "type": "string"
                                   }
                                 }
@@ -6572,6 +7609,10 @@
                             "entity_type",
                             "entity_id",
                             "file_url",
+                            "file_name",
+                            "storage_type",
+                            "external_id",
+                            "upload_type",
                             "created_at",
                             "updated_at"
                           ],
@@ -6585,13 +7626,25 @@
                             "entity_type": {
                               "type": "string"
                             },
+                            "external_id": {
+                              "type": "string"
+                            },
+                            "file_name": {
+                              "type": "string"
+                            },
                             "file_url": {
                               "type": "string"
                             },
                             "id": {
                               "type": "integer"
                             },
+                            "storage_type": {
+                              "type": "string"
+                            },
                             "updated_at": {
+                              "type": "string"
+                            },
+                            "upload_type": {
                               "type": "string"
                             }
                           }
@@ -12148,6 +13201,10 @@
                                   "entity_type",
                                   "entity_id",
                                   "file_url",
+                                  "file_name",
+                                  "storage_type",
+                                  "external_id",
+                                  "upload_type",
                                   "created_at",
                                   "updated_at"
                                 ],
@@ -12161,13 +13218,25 @@
                                   "entity_type": {
                                     "type": "string"
                                   },
+                                  "external_id": {
+                                    "type": "string"
+                                  },
+                                  "file_name": {
+                                    "type": "string"
+                                  },
                                   "file_url": {
                                     "type": "string"
                                   },
                                   "id": {
                                     "type": "integer"
                                   },
+                                  "storage_type": {
+                                    "type": "string"
+                                  },
                                   "updated_at": {
+                                    "type": "string"
+                                  },
+                                  "upload_type": {
                                     "type": "string"
                                   }
                                 }
@@ -13010,6 +14079,10 @@
                                   "entity_type",
                                   "entity_id",
                                   "file_url",
+                                  "file_name",
+                                  "storage_type",
+                                  "external_id",
+                                  "upload_type",
                                   "created_at",
                                   "updated_at"
                                 ],
@@ -13023,13 +14096,25 @@
                                   "entity_type": {
                                     "type": "string"
                                   },
+                                  "external_id": {
+                                    "type": "string"
+                                  },
+                                  "file_name": {
+                                    "type": "string"
+                                  },
                                   "file_url": {
                                     "type": "string"
                                   },
                                   "id": {
                                     "type": "integer"
                                   },
+                                  "storage_type": {
+                                    "type": "string"
+                                  },
                                   "updated_at": {
+                                    "type": "string"
+                                  },
+                                  "upload_type": {
                                     "type": "string"
                                   }
                                 }
@@ -13873,6 +14958,10 @@
                                   "entity_type",
                                   "entity_id",
                                   "file_url",
+                                  "file_name",
+                                  "storage_type",
+                                  "external_id",
+                                  "upload_type",
                                   "created_at",
                                   "updated_at"
                                 ],
@@ -13886,13 +14975,25 @@
                                   "entity_type": {
                                     "type": "string"
                                   },
+                                  "external_id": {
+                                    "type": "string"
+                                  },
+                                  "file_name": {
+                                    "type": "string"
+                                  },
                                   "file_url": {
                                     "type": "string"
                                   },
                                   "id": {
                                     "type": "integer"
                                   },
+                                  "storage_type": {
+                                    "type": "string"
+                                  },
                                   "updated_at": {
+                                    "type": "string"
+                                  },
+                                  "upload_type": {
                                     "type": "string"
                                   }
                                 }
@@ -17277,7 +18378,7 @@
       }
     }
   },
-  "x-date": "2026-05-21 13:43:13",
+  "x-date": "2026-05-22 10:58:43",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

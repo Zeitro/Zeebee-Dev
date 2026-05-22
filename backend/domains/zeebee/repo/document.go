@@ -38,3 +38,19 @@ func (repo *DocumentRepo) GetDescendants(ctx context.Context, rootIds []int64) (
 		Find(&result).Error
 	return result, errorx.WithStack(err)
 }
+
+func (repo *DocumentRepo) GetAllByEntityDocumentId(ctx context.Context, entityDocumentId int64) (result []*model.Document, err error) {
+	err = repo.Client(ctx).
+		Where("entity_document_id = ?", entityDocumentId).
+		Order("level asc, sort_order asc").
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+}
+
+func (repo *DocumentRepo) GetAllByEntityDocumentIdWithTx(ctx context.Context, tx *gorm.DB, entityDocumentId int64) (result []*model.Document, err error) {
+	err = tx.WithContext(ctx).
+		Where("entity_document_id = ?", entityDocumentId).
+		Order("level asc, sort_order asc").
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+}

@@ -300,6 +300,28 @@ type BorrowerPropertyTransactionAllResponse struct {
 	Lists []BorrowerPropertyTransactionOption `json:"lists"`
 }
 
+type BorrowerPropertyTransactionChecklist struct {
+	AllChecked                        bool                                       `json:"all_checked"`
+	TotalDocumentCount                int32                                      `json:"total_document_count"`
+	TotalRequiredDocumentCount        int32                                      `json:"total_required_document_count"`
+	TotalRequiredUpdatedDocumentCount int32                                      `json:"total_required_updated_document_count"`
+	TotalOptionalDocumentCount        int32                                      `json:"total_optional_document_count"`
+	TotalOptionalUpdatedDocumentCount int32                                      `json:"total_optional_updated_document_count"`
+	RequiredDocuments                 []BorrowerPropertyTransactionChecklistNode `json:"required_documents"`
+	OptionalDocuments                 []BorrowerPropertyTransactionChecklistNode `json:"optional_documents"`
+}
+
+type BorrowerPropertyTransactionChecklistNode struct {
+	Name                  string                                     `json:"name"`
+	DocumentId            int64                                      `json:"document_id"`
+	IsRequired            bool                                       `json:"is_required"`
+	SubDocumentCount      int32                                      `json:"sub_document_count"`
+	UploadedDocumentCount int32                                      `json:"uploaded_document_count"`
+	Children              []BorrowerPropertyTransactionChecklistNode `json:"children"`
+	FileCount             int32                                      `json:"file_count"`
+	Files                 []FileEntity                               `json:"files"`
+}
+
 type BorrowerPropertyTransactionChecklistRequest struct {
 	Id         int64 `path:"id" validate:"required,gt=0"`
 	AllChecked bool  `json:"all_checked"`
@@ -311,22 +333,22 @@ type BorrowerPropertyTransactionCreateRequest struct {
 }
 
 type BorrowerPropertyTransactionCreateResponse struct {
-	Id                 int64   `json:"id"`
-	Code               string  `json:"code"`
-	Type               string  `json:"type"`
-	Status             string  `json:"status"`
-	BorrowerPropertyId int64   `json:"borrower_property_id"`
-	OrganizationId     int64   `json:"organization_id"`
-	CoeDate            string  `json:"coe_date"`
-	PurchaseAmount     float64 `json:"purchase_amount"`
-	EmdAmount          float64 `json:"emd_amount"`
-	PropertyType       string  `json:"property_type"`
-	Pm                 string  `json:"pm"`
-	Strategy           string  `json:"strategy"`
-	Note               string  `json:"note"`
-	Checklist          string  `json:"checklist"`
-	CreatedAt          string  `json:"created_at"`
-	UpdatedAt          string  `json:"updated_at"`
+	Id                 int64                                `json:"id"`
+	Code               string                               `json:"code"`
+	Type               string                               `json:"type"`
+	Status             string                               `json:"status"`
+	BorrowerPropertyId int64                                `json:"borrower_property_id"`
+	OrganizationId     int64                                `json:"organization_id"`
+	CoeDate            string                               `json:"coe_date"`
+	PurchaseAmount     float64                              `json:"purchase_amount"`
+	EmdAmount          float64                              `json:"emd_amount"`
+	PropertyType       string                               `json:"property_type"`
+	Pm                 string                               `json:"pm"`
+	Strategy           string                               `json:"strategy"`
+	Note               string                               `json:"note"`
+	Checklist          BorrowerPropertyTransactionChecklist `json:"checklist"`
+	CreatedAt          string                               `json:"created_at"`
+	UpdatedAt          string                               `json:"updated_at"`
 }
 
 type BorrowerPropertyTransactionDeleteRequest struct {
@@ -338,31 +360,32 @@ type BorrowerPropertyTransactionDetailRequest struct {
 }
 
 type BorrowerPropertyTransactionDetailResponse struct {
-	Id                 int64   `json:"id"`
-	Code               string  `json:"code"`
-	Type               string  `json:"type"`
-	Status             string  `json:"status"`
-	BorrowerPropertyId int64   `json:"borrower_property_id"`
-	OrganizationId     int64   `json:"organization_id"`
-	CoeDate            string  `json:"coe_date"`
-	PurchaseAmount     float64 `json:"purchase_amount"`
-	EmdAmount          float64 `json:"emd_amount"`
-	PropertyType       string  `json:"property_type"`
-	Pm                 string  `json:"pm"`
-	Strategy           string  `json:"strategy"`
-	Note               string  `json:"note"`
-	Checklist          string  `json:"checklist"`
-	CreatedAt          string  `json:"created_at"`
-	UpdatedAt          string  `json:"updated_at"`
+	Id                 int64                                `json:"id"`
+	Code               string                               `json:"code"`
+	Type               string                               `json:"type"`
+	Status             string                               `json:"status"`
+	BorrowerPropertyId int64                                `json:"borrower_property_id"`
+	OrganizationId     int64                                `json:"organization_id"`
+	CoeDate            string                               `json:"coe_date"`
+	PurchaseAmount     float64                              `json:"purchase_amount"`
+	EmdAmount          float64                              `json:"emd_amount"`
+	PropertyType       string                               `json:"property_type"`
+	Pm                 string                               `json:"pm"`
+	Strategy           string                               `json:"strategy"`
+	Note               string                               `json:"note"`
+	Checklist          BorrowerPropertyTransactionChecklist `json:"checklist"`
+	CreatedAt          string                               `json:"created_at"`
+	UpdatedAt          string                               `json:"updated_at"`
 }
 
 type BorrowerPropertyTransactionOption struct {
-	Id                 int64  `json:"id"`
-	Code               string `json:"code"`
-	Type               string `json:"type"`
-	Status             string `json:"status"`
-	PropertyType       string `json:"property_type"`
-	BorrowerPropertyId int64  `json:"borrower_property_id"`
+	Id                 int64                  `json:"id"`
+	Code               string                 `json:"code"`
+	Type               string                 `json:"type"`
+	Status             string                 `json:"status"`
+	PropertyType       string                 `json:"property_type"`
+	BorrowerPropertyId int64                  `json:"borrower_property_id"`
+	BorrowerProperty   BorrowerPropertyEntity `json:"borrower_property"`
 }
 
 type BorrowerPropertyTransactionSwitchStatusRequest struct {
@@ -447,12 +470,16 @@ type EmptyResponse struct {
 }
 
 type FileEntity struct {
-	Id         int64  `json:"id"`
-	EntityType string `json:"entity_type"`
-	EntityId   int64  `json:"entity_id"`
-	FileUrl    string `json:"file_url"`
-	CreatedAt  string `json:"created_at"`
-	UpdatedAt  string `json:"updated_at"`
+	Id          int64  `json:"id"`
+	EntityType  string `json:"entity_type"`
+	EntityId    int64  `json:"entity_id"`
+	FileUrl     string `json:"file_url"`
+	FileName    string `json:"file_name"`
+	StorageType string `json:"storage_type"`
+	ExternalId  string `json:"external_id"`
+	UploadType  string `json:"upload_type"`
+	CreatedAt   string `json:"created_at"`
+	UpdatedAt   string `json:"updated_at"`
 }
 
 type GetSelectOptionRequest struct {

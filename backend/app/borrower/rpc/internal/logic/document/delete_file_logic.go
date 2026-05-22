@@ -76,7 +76,7 @@ func (l *DeleteFileLogic) DeleteFile(in *borrower.DocumentDeleteFileRequest) (re
 		// recalculate checklist for parent transaction
 		transactionId, _ := l.baseLogic.FindTransactionIdByDocumentId(l.ctx, fileRecord.EntityId)
 		if transactionId > 0 {
-			innerErr = l.baseLogic.RecalculateChecklist(l.ctx, tx, transactionId)
+			_, innerErr = l.baseLogic.RecalculateBorrowerPropertyTransactionChecklist(l.ctx, tx, transactionId)
 		}
 		return innerErr
 	})

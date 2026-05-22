@@ -1539,6 +1539,10 @@ message FileEntity {
   string file_url = 4;
   string created_at = 5;
   string updated_at = 6;
+  string file_name = 7;
+  string storage_type = 8;
+  string external_id = 9;
+  string upload_type = 10;
 }
 message FileDeleteRequest {
   FileDeleteRequestData data = 1;
@@ -2173,6 +2177,28 @@ service Auth {
 // ========== auth service end ======================
 
 // ===================== borrower property transaction service start ======================
+message BorrowerPropertyTransactionChecklistNodeEntity {
+  string name = 1;
+  int64 document_id = 2;
+  bool is_required = 3;
+  int32 sub_document_count = 4;
+  int32 uploaded_document_count = 5;
+  repeated BorrowerPropertyTransactionChecklistNodeEntity children = 6;
+  int32 file_count = 7;
+  repeated FileEntity files = 8;
+}
+
+message BorrowerPropertyTransactionChecklistEntity {
+  bool all_checked = 1;
+  int32 total_document_count = 2;
+  int32 total_required_document_count = 3;
+  int32 total_required_updated_document_count = 4;
+  int32 total_optional_document_count = 5;
+  int32 total_optional_updated_document_count = 6;
+  repeated BorrowerPropertyTransactionChecklistNodeEntity required_documents = 7;
+  repeated BorrowerPropertyTransactionChecklistNodeEntity optional_documents = 8;
+}
+
 message BorrowerPropertyTransactionEntity {
   int64 id = 1;
   string created_at = 2;
@@ -2189,7 +2215,7 @@ message BorrowerPropertyTransactionEntity {
   string pm = 13;
   string strategy = 14;
   string note = 15;
-  string checklist = 16;
+  BorrowerPropertyTransactionChecklistEntity checklist = 16;
 }
 
 message BorrowerPropertyTransactionOptionEntity {
@@ -2199,6 +2225,7 @@ message BorrowerPropertyTransactionOptionEntity {
   string status = 4;
   string property_type = 5;
   int64 borrower_property_id = 6;
+  BorrowerPropertyEntity borrower_property = 7;
 }
 
 message BorrowerPropertyTransactionCreateRequest {
@@ -2208,13 +2235,6 @@ message BorrowerPropertyTransactionCreateRequest {
 message BorrowerPropertyTransactionCreateRequestData {
   int64 borrower_property_id = 1;
   string type = 2;
-//  string coe_date = 3;
-//  double purchase_amount = 4;
-//  double emd_amount = 5;
-//  string property_type = 6;
-//  string pm = 7;
-//  string strategy = 8;
-//  string note = 9;
 }
 
 message BorrowerPropertyTransactionCreateResponse {

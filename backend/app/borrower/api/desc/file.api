@@ -11,6 +11,10 @@ type FileEntity {
     EntityType string `json:"entity_type"`
     EntityId int64 `json:"entity_id"`
     FileUrl string `json:"file_url"`
+    FileName string `json:"file_name"`
+    StorageType string `json:"storage_type"`
+    ExternalId string `json:"external_id"`
+    UploadType string `json:"upload_type"`
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
 }

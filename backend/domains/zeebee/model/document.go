@@ -10,7 +10,8 @@ import (
 
 type Document struct {
 	Base
-	ParentId       int64                  `gorm:"column:parent_id;not null;default:0" json:"parent_id"`
+	ParentId         int64                  `gorm:"column:parent_id;not null;default:0" json:"parent_id"`
+	EntityDocumentId int64                  `gorm:"column:entity_document_id;not null;default:0" json:"entity_document_id"`
 	Type           constants.DocumentType `gorm:"column:type;type:varchar(20);not null;default:''" json:"type"`
 	Name           string                 `gorm:"column:name;type:varchar(255);not null" json:"name"`
 	Level          int32                  `gorm:"column:level;not null;default:0" json:"level"`

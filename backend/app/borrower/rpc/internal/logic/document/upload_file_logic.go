@@ -97,7 +97,7 @@ func (l *UploadFileLogic) UploadFile(in *borrower.DocumentUploadFileRequest) (re
 		// recalculate checklist for parent transaction
 		transactionId, _ := l.baseLogic.FindTransactionIdByDocumentId(l.ctx, doc.Id)
 		if transactionId > 0 {
-			innerErr = l.baseLogic.RecalculateChecklist(l.ctx, tx, transactionId)
+			_, innerErr = l.baseLogic.RecalculateBorrowerPropertyTransactionChecklist(l.ctx, tx, transactionId)
 		}
 		return innerErr
 	})

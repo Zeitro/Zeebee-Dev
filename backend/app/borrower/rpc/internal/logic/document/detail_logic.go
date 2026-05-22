@@ -42,7 +42,7 @@ func (l *DetailLogic) Detail(in *borrower.DocumentDetailRequest) (resp *borrower
 		return nil, errorx.Wrap(err, "Entity document not found")
 	}
 
-	rootDoc, err := l.buildDocumentTree(entityDoc.RootDocumentId)
+	rootDoc, err := l.buildDocumentTree(entityDoc.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -57,17 +57,17 @@ func (l *DetailLogic) Detail(in *borrower.DocumentDetailRequest) (resp *borrower
 	}, nil
 }
 
-func (l *DetailLogic) buildDocumentTree(rootId int64) (*model.Document, error) {
-	descendants, err := l.svcCtx.DocumentRepo.GetDescendants(l.ctx, []int64{rootId})
+func (l *DetailLogic) buildDocumentTree(entityDocId int64) (*model.Document, error) {
+	allDocs, err := l.svcCtx.DocumentRepo.GetAllByEntityDocumentId(l.ctx, entityDocId)
 	if err != nil {
 		return nil, errorx.Wrap(err, "Failed to load documents")
 	}
 
 	docMap := make(map[int64]*model.Document)
 	var root *model.Document
-	for _, d := range descendants {
+	for _, d := range allDocs {
 		docMap[d.Id] = d
-		if d.Id == rootId {
+		if d.ParentId == 0 {
 			root = d
 		}
 	}
@@ -77,7 +77,7 @@ func (l *DetailLogic) buildDocumentTree(rootId int64) (*model.Document, error) {
 
 	// load files for all documents
 	fileEntityType := string(constants.FileEntityTypeDocument)
-	for _, d := range descendants {
+	for _, d := range allDocs {
 		var files []*model.File
 		err := l.svcCtx.FileRepo.Client(l.ctx).
 			Where("entity_type = ? AND entity_id = ?", fileEntityType, d.Id).
@@ -88,8 +88,8 @@ func (l *DetailLogic) buildDocumentTree(rootId int64) (*model.Document, error) {
 	}
 
 	// build parent-child tree
-	for _, d := range descendants {
-		if d.Id == rootId {
+	for _, d := range allDocs {
+		if d.ParentId == 0 {
 			continue
 		}
 		if parent, ok := docMap[d.ParentId]; ok {

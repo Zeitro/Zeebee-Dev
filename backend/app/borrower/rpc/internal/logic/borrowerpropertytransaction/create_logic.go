@@ -90,28 +90,43 @@ func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateReque
 			return innerErr
 		}
 
-		// build document tree from template structure
-		rootDoc, innerErr := l.createDocumentTree(tx, template.Structure, string(result.Type))
+		// create entity_document binding first (root_document_id=0, backfilled later)
+		entityDoc := &model.EntityDocument{
+			EntityType:     constants.EntityDocumentTypeBorrowerPropertyTransaction,
+			EntityId:       result.Id,
+			RootDocumentId: 0,
+		}
+		entityDoc, innerErr = l.svcCtx.EntityDocumentRepo.CreateWithTx(l.ctx, tx, entityDoc, false)
 		if innerErr != nil {
 			return innerErr
 		}
 
-		// create entity_document binding
-		entityDoc := &model.EntityDocument{
-			EntityType:     constants.EntityDocumentTypeBorrowerPropertyTransaction,
-			EntityId:       result.Id,
-			RootDocumentId: rootDoc.Id,
+		// build document tree with entity_document_id
+		rootDoc, innerErr := l.createDocumentTree(tx, entityDoc.Id, template.Structure, string(result.Type))
+		if innerErr != nil {
+			return innerErr
 		}
-		_, innerErr = l.svcCtx.EntityDocumentRepo.CreateWithTx(l.ctx, tx, entityDoc, false)
+
+		// backfill root_document_id
+		innerErr = l.svcCtx.EntityDocumentRepo.UpdateColumnsByIdWithTx(l.ctx, tx, entityDoc.Id, map[string]interface{}{
+			"root_document_id": rootDoc.Id,
+		})
 		if innerErr != nil {
 			return innerErr
 		}
 
 		// initialize checklist
-		innerErr = l.baseLogic.RecalculateChecklist(l.ctx, tx, result.Id)
+		checklist, innerErr := l.baseLogic.RecalculateBorrowerPropertyTransactionChecklist(l.ctx, tx, result.Id)
 		if innerErr != nil {
 			return innerErr
 		}
+
+		// re-fetch to get updated checklist
+		// result, innerErr = l.svcCtx.BorrowerPropertyTransactionRepo.FindOneByIdWithTx(l.ctx, tx, result.Id)
+		// if innerErr != nil {
+		// 	return innerErr
+		// }
+		result.Checklist = checklist
 
 		// create operation log
 		innerErr = l.baseLogic.OperationLogic.CreateOperationLog(l.ctx, tx, dto.OperationCreateDto{
@@ -143,7 +158,7 @@ func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateReque
 	}, nil
 }
 
-func (l *CreateLogic) createDocumentTree(tx *gorm.DB, structureMap model.DocumentTemplateStructureMap, transactionType string) (*model.Document, error) {
+func (l *CreateLogic) createDocumentTree(tx *gorm.DB, entityDocumentId int64, structureMap model.DocumentTemplateStructureMap, transactionType string) (*model.Document, error) {
 	// merge common + per-type nodes
 	nodes := structureMap["common"]
 	typeKey := strings.ToLower(transactionType)
@@ -152,11 +167,12 @@ func (l *CreateLogic) createDocumentTree(tx *gorm.DB, structureMap model.Documen
 	}
 
 	root := &model.Document{
-		ParentId:  0,
-		Type:      constants.DocumentTypeRoot,
-		Name:      "Root",
-		Level:     0,
-		SortOrder: 0,
+		ParentId:         0,
+		EntityDocumentId: entityDocumentId,
+		Type:             constants.DocumentTypeRoot,
+		Name:             "Root",
+		Level:            0,
+		SortOrder:        0,
 	}
 	root, err := l.svcCtx.DocumentRepo.CreateWithTx(l.ctx, tx, root, false)
 	if err != nil {
@@ -164,7 +180,7 @@ func (l *CreateLogic) createDocumentTree(tx *gorm.DB, structureMap model.Documen
 	}
 
 	for _, node := range nodes {
-		if err := l.createDocumentNode(tx, root.Id, node, 1); err != nil {
+		if err := l.createDocumentNode(tx, entityDocumentId, root.Id, node, 1); err != nil {
 			return nil, err
 		}
 	}
@@ -172,7 +188,7 @@ func (l *CreateLogic) createDocumentTree(tx *gorm.DB, structureMap model.Documen
 	return root, nil
 }
 
-func (l *CreateLogic) createDocumentNode(tx *gorm.DB, parentId int64, node model.DocumentTemplateStructure, level int32) error {
+func (l *CreateLogic) createDocumentNode(tx *gorm.DB, entityDocumentId int64, parentId int64, node model.DocumentTemplateStructure, level int32) error {
 	docType := constants.DocumentTypeBranch
 	if len(node.Children) == 0 {
 		docType = constants.DocumentTypeLeaf
@@ -184,12 +200,13 @@ func (l *CreateLogic) createDocumentNode(tx *gorm.DB, parentId int64, node model
 	})
 
 	doc := &model.Document{
-		ParentId:  parentId,
-		Type:      docType,
-		Name:      node.Name,
-		Level:     level,
-		SortOrder: node.SortOrder,
-		Metadata:  metadata,
+		ParentId:         parentId,
+		EntityDocumentId: entityDocumentId,
+		Type:             docType,
+		Name:             node.Name,
+		Level:            level,
+		SortOrder:        node.SortOrder,
+		Metadata:         metadata,
 	}
 
 	doc, err := l.svcCtx.DocumentRepo.CreateWithTx(l.ctx, tx, doc, false)
@@ -198,7 +215,7 @@ func (l *CreateLogic) createDocumentNode(tx *gorm.DB, parentId int64, node model
 	}
 
 	for _, child := range node.Children {
-		if err := l.createDocumentNode(tx, doc.Id, child, level+1); err != nil {
+		if err := l.createDocumentNode(tx, entityDocumentId, doc.Id, child, level+1); err != nil {
 			return err
 		}
 	}
@@ -211,7 +228,7 @@ func generateTransactionCode() string {
 	year := now.Format("06")
 	ms := now.UnixMilli()
 	base62 := encodeBase62(ms)
-	return fmt.Sprintf("tc%s%s", year, base62)
+	return fmt.Sprintf("TC%s%s", year, base62)
 }
 
 func encodeBase62(n int64) string {
