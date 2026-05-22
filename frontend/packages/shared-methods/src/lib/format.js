@@ -30,7 +30,7 @@ export const minTerm_zeeBee = 12;
 // 通过property_type获取unit
 export const changeUnitByPropertyType = (property_type, newUnit) => {
 	let unit = null,
-		minUnit = 1,
+		minUnit = 0,
 		maxUnit = maxNumberOfUnits,
 		disabled = false;
 	switch (property_type) {
@@ -65,7 +65,7 @@ export const changeUnitByPropertyType = (property_type, newUnit) => {
 // 格式化居住面积, 用于<InputNumber>中配置
 export const livingAreaProps = {
 	controls: false,
-	min: 1,
+	min: 0,
 	formatter: (value) => {
 		// 保留两位小数
 		const [int, dec] = value.split('.');
