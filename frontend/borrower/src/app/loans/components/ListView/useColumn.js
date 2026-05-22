@@ -173,11 +173,12 @@ export default function useColumn({
 			render: (v, record) => {
 				let title = '';
 				if (
-					record?.source !== 'Borrower' &&
+					record?.source === 'Borrower' &&
 					!hasPermission(PERMISSIONS?.LOAN?.CHANGE_STAGE)
 				) {
 					title = "You don't have permission to change the stage.";
-				} else if (record?.source !== 'Borrower') {
+				}
+				if (record?.source !== 'Borrower') {
 					title = 'Only the 3rd part can change the stage.';
 				}
 				return (
