@@ -1,39 +1,57 @@
-import { assemblyAddress, formatDate } from '@repo/shared-methods/utils';
+import { formatAmount, formatDate } from '@repo/shared-methods/utils';
 
-export const TRANSACTION_FIELDS = [
-	{ label: 'Transaction type', getValue: (data) => data?.type },
-	{ label: 'Status', getValue: (data) => data?.status },
+export const BASIC_INFO_FORM_FIELDS = [
+	'coe_date',
+	'purchase_price',
+	'emd',
+	'property_type',
+	'pm',
+	'business_strategy',
+	'tc_notes',
+];
+
+export const BASIC_INFO_VIEW_FIELDS = [
 	{
-		label: 'COE date',
+		label: 'COE',
+		key: 'coe_date',
 		getValue: (data) => {
 			const raw = data?.coe_date ?? data?.coeDate;
 			return raw ? formatDate(raw) : null;
 		},
 	},
 	{
-		label: 'Created',
+		label: 'Purchase price',
+		key: 'purchase_price',
 		getValue: (data) => {
-			const raw = data?.created_at ?? data?.createdAt;
-			return raw ? formatDate(raw) : null;
+			const raw = data?.purchase_price ?? data?.purchasePrice;
+			return raw != null && raw !== '' ? formatAmount(raw) : null;
 		},
 	},
 	{
-		label: 'Updated',
-		getValue: (data) => {
-			const raw = data?.updated_at ?? data?.updatedAt;
-			return raw ? formatDate(raw) : null;
-		},
+		label: 'EMD',
+		key: 'emd',
+		getValue: (data) => (data?.emd != null && data?.emd !== '' ? formatAmount(data.emd) : null),
 	},
-];
-
-export const PROPERTY_FIELDS = [
 	{
-		label: 'Property',
-		getValue: (data) => assemblyAddress(data?.property?.address),
+		label: 'Property type',
+		key: 'property_type',
+		getValue: (data) =>
+			data?.property_type ?? data?.propertyType ?? data?.property?.property_type,
 	},
-	{ label: 'Street 1', getValue: (data) => data?.property?.address?.address1 },
-	{ label: 'Street 2', getValue: (data) => data?.property?.address?.address2 },
-	{ label: 'City', getValue: (data) => data?.property?.address?.city },
-	{ label: 'State', getValue: (data) => data?.property?.address?.state },
-	{ label: 'Zip code', getValue: (data) => data?.property?.address?.zip_code },
+	{
+		label: 'PM',
+		key: 'pm',
+		getValue: (data) => data?.pm,
+	},
+	{
+		label: 'Strategy',
+		key: 'business_strategy',
+		getValue: (data) => data?.business_strategy ?? data?.businessStrategy,
+	},
+	{
+		label: 'TC Notes',
+		key: 'tc_notes',
+		getValue: (data) => data?.tc_notes ?? data?.tcNotes,
+		fullWidth: true,
+	},
 ];

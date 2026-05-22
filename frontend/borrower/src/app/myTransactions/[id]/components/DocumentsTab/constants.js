@@ -1,3 +1,24 @@
+/** 右侧内容区展示类型；非 upload 时可在此扩展并在 CategoryContentPanel 中分支 */
+export const CATEGORY_CONTENT_TYPE = {
+	UPLOAD: 'upload',
+};
+
+export function resolveCategoryContentType(category) {
+	return category?.contentType ?? CATEGORY_CONTENT_TYPE.UPLOAD;
+}
+
+/** 转为 CollapsibleDocumentList 所需数据结构 */
+export function toDocumentListItems(documents = []) {
+	return documents.map((doc, index) => ({
+		id: doc.id ?? doc.key ?? index,
+		document_type: doc.document_type ?? doc.name ?? doc.file_type,
+		updated_at: doc.updated_at ?? doc.last_uploaded_at ?? null,
+		status: doc.status ?? 'Pending upload',
+		active: doc.active ?? true,
+		files: doc.files ?? [],
+	}));
+}
+
 /** Mock document categories — replace when `/transaction/:id/documents` is wired */
 export const MOCK_DOCUMENT_CATEGORIES = [
 	{
@@ -6,8 +27,31 @@ export const MOCK_DOCUMENT_CATEGORIES = [
 		required: true,
 		completed: true,
 		documents: [
-			{ key: 'purchase_agreement', name: 'Purchase Agreement', required: true },
-			{ key: 'addendum', name: 'Addendum', required: false },
+			{
+				key: 'purchase_agreement',
+				name: 'Purchase Agreement',
+				required: true,
+				status: 'Ready for review',
+				updated_at: '2026-04-10',
+				active: true,
+				files: [
+					{
+						id: 1001,
+						file_url: 'https://example.com/uploads/purchase_agreement.pdf',
+						updated_at: '2026-04-10',
+						status: 'Ready for review',
+					},
+				],
+			},
+			{
+				key: 'addendum',
+				name: 'Addendum',
+				required: false,
+				status: 'Pending upload',
+				updated_at: null,
+				active: false,
+				files: [],
+			},
 		],
 	},
 	{
@@ -37,10 +81,49 @@ export const MOCK_DOCUMENT_CATEGORIES = [
 		required: true,
 		pendingCount: 3,
 		documents: [
-			{ key: 'eoi', name: 'EOI', required: true },
-			{ key: 'payment_receipt', name: 'Payment Receipt', required: true },
-			{ key: 'full_policy', name: 'Full Policy', required: true },
-			{ key: 'flood_insurance', name: 'Flood Insurance', required: false },
+			{
+				key: 'eoi',
+				name: 'EOI',
+				required: true,
+				status: 'Pending upload',
+				updated_at: null,
+				active: true,
+				files: [],
+			},
+			{
+				key: 'payment_receipt',
+				name: 'Payment Receipt',
+				required: true,
+				status: 'Ready for review',
+				updated_at: '2026-04-15',
+				active: true,
+				files: [
+					{
+						id: 2001,
+						file_url: 'https://example.com/uploads/payment_receipt.pdf',
+						updated_at: '2026-04-15',
+						status: 'Ready for review',
+					},
+				],
+			},
+			{
+				key: 'full_policy',
+				name: 'Full Policy',
+				required: true,
+				status: 'Requested',
+				updated_at: null,
+				active: false,
+				files: [],
+			},
+			{
+				key: 'flood_insurance',
+				name: 'Flood Insurance',
+				required: false,
+				status: 'Pending upload',
+				updated_at: null,
+				active: true,
+				files: [],
+			},
 		],
 	},
 	{

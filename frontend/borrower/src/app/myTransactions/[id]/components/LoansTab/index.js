@@ -28,11 +28,11 @@ const LoansTab = ({ rowData, loading, onRefresh }) => {
 	);
 
 	return (
-		<div className="[&_.ant-table-column-title]:!text-base-gray [&_th]:!text-base-gray">
+		<div className="[&_.ant-table-column-title]:!text-base-gray [&_th]:!text-base-gray px-4 pt-[26px]">
 			{sections.map((section) => (
 				<div key={section.key} className="border border-base-border rounded-lg mb-4 pb-1">
 					<div className="py-2 px-4 text-base/6 font-medium border-b border-base-border">
-						{section.title} ({section.dataSource.length})
+						{section.title} ({section?.dataSource?.length})
 					</div>
 					<LoansPage
 						hasFilterField={false}

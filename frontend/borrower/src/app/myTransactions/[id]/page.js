@@ -30,6 +30,12 @@ const MOCK_TRANSACTION_DETAIL = {
 	type: 'Purchase',
 	status: 'Pending',
 	coe_date: '2026-05-01',
+	purchase_price: 1845000,
+	emd: 50000,
+	property_type: 'Single Family Residence',
+	pm: 'Nancy',
+	business_strategy: 'Rental',
+	tc_notes: 'This is a note',
 	updated_at: '2026-05-01T16:27:24',
 	created_at: '2026-01-15',
 	property: {
@@ -228,7 +234,7 @@ const TransactionDetailsPage = () => {
 				label: 'Details',
 				children: (
 					<div className="px-6 py-6">
-						<DetailsTab rowData={rowData} />
+						<DetailsTab rowData={rowData} transactionId={id} onRefresh={getDetails} />
 					</div>
 				),
 			},
@@ -240,15 +246,15 @@ const TransactionDetailsPage = () => {
 			{
 				key: 'log',
 				label: 'Log',
-				children: <LogTab />,
+				children: <LogTab transactionId={id} />,
 			},
 		],
-		[getDetails, loading, rowData],
+		[getDetails, id, loading, rowData],
 	);
 
 	return (
 		<div className="flex h-full flex-1 flex-col overflow-hidden bg-white">
-			<div className="flex shrink-0 flex-col gap-4 border-b border-base-border px-6 pb-0 pt-6">
+			<div className="flex shrink-0 flex-col gap-4 px-6 pb-4 pt-6">
 				<div className="flex flex-wrap items-start justify-between gap-4">
 					<div className="flex min-w-0 flex-col gap-2">
 						<div className="flex flex-wrap items-center gap-8">
