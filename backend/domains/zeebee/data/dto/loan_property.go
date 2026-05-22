@@ -12,6 +12,7 @@ type LoanPropertyEntityDto struct {
 	PropertyType                 constants.PropertyType `json:"property_type"`
 	BorrowerProperty             BorrowerPropertyDto    `json:"borrower_property"`
 	LivingAreaSqft               float32                `json:"living_area_sqft"`
+	LotAreaSqft                  float32                `json:"lot_area_sqft"`
 	Bedrooms                     int32                  `json:"bedrooms"`
 	Bathrooms                    int32                  `json:"bathrooms"`
 	FuturePropertyType           constants.PropertyType `json:"future_property_type"`
