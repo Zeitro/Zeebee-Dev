@@ -176,13 +176,10 @@ export function formatAmount(value) {
 
 // 格式化数字/面积(传单位)
 export function formatNumber(value, unit = 'sqft', isAfter = true) {
-	const num = formatThousands(value);
+	const num = value === 0 || value === '0' ? '0' : formatThousands(value);
 	if (!num) return '--';
-
-	if (isAfter) {
-		return unit ? `${num} ${unit}` : num;
-	}
-	return unit ? `${unit} ${num}` : num;
+	if (!unit) return num;
+	return isAfter ? `${num} ${unit}` : `${unit} ${num}`;
 }
 
 // 格式化TIN,包括SSN/ITIN/EIN, 不同类型税务ID
