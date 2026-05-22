@@ -1,7 +1,7 @@
 'use client';
-import {InputNumber} from 'antd';
+import { InputNumber } from 'antd';
 import React from 'react';
-import {maxAmount} from '../../lib/format';
+import { maxAmount } from '../../lib/format';
 
 /**
  * 金额输入框

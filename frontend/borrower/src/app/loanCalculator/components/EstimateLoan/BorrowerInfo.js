@@ -1,4 +1,4 @@
-import {Col, Form, Input, InputNumber, Row} from 'antd';
+import { Col, Form, Input, InputNumber, Row } from 'antd';
 import {
 	capitalizeFirstLetter,
 	creditScoreRegex,
@@ -8,8 +8,8 @@ import {
 	nameRegex,
 	validateRule,
 } from '@repo/shared-methods/utils';
-import {titleCol} from '@/enum/common';
-import {InputPhone} from '@repo/shared-methods';
+import { titleCol } from '@repo/shared-methods/enum';
+import { InputPhone } from '@repo/shared-methods';
 
 const BorrowerInfo = ({ gutter = 24, children }) => {
 	return (

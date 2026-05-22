@@ -1,9 +1,14 @@
 'use client';
-import {Button, Col, Form, message, Space} from 'antd';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {useRouter, useSearchParams} from 'next/navigation';
-import {createZeeBeeSteps, zeeBeeDetailsTabs} from '@/enum/loan';
-import {assemblyAddress, createRequest, eventBus, flattenObjectPaths,} from '@repo/shared-methods/utils';
+import { Button, Col, Form, message, Space } from 'antd';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { createZeeBeeSteps, zeeBeeDetailsTabs } from '@/enum/loan';
+import {
+	assemblyAddress,
+	createRequest,
+	eventBus,
+	flattenObjectPaths,
+} from '@repo/shared-methods/utils';
 // import ApplicantInfo from '../ApplicantInfo';
 import {
 	ApplicantInfo,
@@ -29,7 +34,7 @@ import General from '../../../zeeBeeDetails/components/General';
 import Documents from '../../../zeeBeeDetails/components/Documents';
 // import ReviewAndSign, { contractSignatureZones } from '../ReviewAndSign';
 import _ from 'lodash';
-import {uploadAwsS3} from '@repo/shared-methods/api';
+import { uploadAwsS3 } from '@repo/shared-methods/api';
 
 const initialValues = {
 	applicants: [{ type: 'Individual', is_primary: true }],

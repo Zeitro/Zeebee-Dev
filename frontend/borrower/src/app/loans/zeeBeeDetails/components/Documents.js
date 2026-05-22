@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import DocumentList from './DocumentList';
-import {documentsColumns} from './DocumentList/documentColumns';
-import {NoData} from '@repo/shared-methods';
-import {useDeferredSyncEffect} from '@repo/shared-methods/hooks';
+import { documentsColumns } from './DocumentList/documentColumns';
+import { NoData } from '@repo/shared-methods';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 
 const Documents = ({ rowData }) => {
 	const [lenderList, setLenderList] = useState([]);

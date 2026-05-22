@@ -102,7 +102,7 @@ export const ConfirmPassWord = ({
 									? item.status === 'success'
 										? 'var(--base-success)'
 										: 'var(--base-error)'
-									: 'rgba(0, 0, 0, 0.65',
+									: 'rgba(0, 0, 0, 0.65)',
 							}}
 							className="pt-4 flex items-center"
 						>

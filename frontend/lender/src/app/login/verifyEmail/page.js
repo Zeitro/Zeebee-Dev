@@ -1,10 +1,10 @@
 'use client';
-import React, {useState} from 'react';
-import {Button} from 'antd';
-import {useUserStore} from '@repo/shared-methods/store';
-import {CheckCircleTwoTone} from '@ant-design/icons';
-import {useSearchParams} from 'next/navigation';
-import {throttle} from 'lodash';
+import React, { useState } from 'react';
+import { Button } from 'antd';
+import { useUserStore } from '@repo/shared-methods/store';
+import { CheckCircleTwoTone } from '@ant-design/icons';
+import { useSearchParams } from 'next/navigation';
+import { throttle } from 'lodash';
 import useContent from '../components/useContent';
 
 // 注册成功后，邮箱打开此页面，触发验证并登录
