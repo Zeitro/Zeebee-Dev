@@ -4,9 +4,10 @@ import { Button, Form } from 'antd';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useUserStore } from '@repo/shared-methods/store';
 import styles from '../index.module.scss';
-import ConfirmPassWord from '../components/ConfirmPassword';
+import { ConfirmPassWord } from '@repo/shared-methods';
 import { throttle } from 'lodash';
 import useContent from '../components/useContent';
+
 const ResetPassword = () => {
 	const [form] = Form.useForm();
 	const router = useRouter();

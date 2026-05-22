@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { flattenNavRouter, matchRoute } from '@repo/shared-methods/lib/commonRouter';
 import { noTokenRouter } from '@config/routes';
+
 export function middleware(request) {
 	const { pathname } = request.nextUrl;
 
@@ -40,8 +41,8 @@ export function middleware(request) {
 }
 
 export const config = {
-	// 排除Next.js内部资源、静态文件、API路径
+	// 排除 Next 内部、API、常见静态后缀（与上方短路逻辑一致，减轻中间件编译/匹配差异带来的漏网）
 	matcher: [
-		'/((?!_next/static|_next/image|api/|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+		'/((?!_next/|api/|favicon.ico|robots\\.txt|sitemap\\.xml|.*\\.(?:svg|png|jpe?g|gif|ico|webp|avif|mjs|js|css|map|json|txt|xml|webmanifest|woff2?|ttf|otf|wasm|pdf|xlsx?)$).*)',
 	],
 };
