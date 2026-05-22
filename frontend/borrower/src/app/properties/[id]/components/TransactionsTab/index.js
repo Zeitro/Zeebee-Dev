@@ -18,6 +18,7 @@ const getTimelineStatus = (status) => {
 const TransactionsTab = ({ propertyId, onNewTransaction, refreshKey = 0 }) => {
 	const { request, cancelMatch } = useMemo(() => createRequest(), []);
 	const [loading, setLoading] = useState(false);
+	const [expandedTransactionId, setExpandedTransactionId] = useState(null);
 	const [list, setList] = useState([
 		{ id: 1, type: 'Purchase', status: 'Pending' },
 		{ id: 2, type: 'Sale', status: 'Completed' },
@@ -72,11 +73,21 @@ const TransactionsTab = ({ propertyId, onNewTransaction, refreshKey = 0 }) => {
 							].join(' ')}
 						/>
 					),
-					children: <TransactionCard item={item} />,
+					children: (
+						<TransactionCard
+							item={item}
+							isExpanded={expandedTransactionId === item?.id}
+							onToggle={() =>
+								setExpandedTransactionId((prev) =>
+									prev === item?.id ? null : item?.id,
+								)
+							}
+						/>
+					),
 					className: statusType === 'pending' ? styles.itemPending : '',
 				};
 			}),
-		[list],
+		[expandedTransactionId, list],
 	);
 
 	return (

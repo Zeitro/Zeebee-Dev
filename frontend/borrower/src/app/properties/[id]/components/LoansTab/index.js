@@ -10,7 +10,7 @@ const LOAN_SECTIONS = [
 	{ title: 'Archived loan', key: 'archived_loans', stage: 'Archived' },
 ];
 
-const LoansTab = ({ rowData, loading, onRefresh }) => {
+const LoansTab = ({ rowData, loading, onRefresh, className }) => {
 	useGetOptions([
 		{
 			key: 'loan_pending_status',
@@ -28,7 +28,9 @@ const LoansTab = ({ rowData, loading, onRefresh }) => {
 	);
 
 	return (
-		<div className="[&_.ant-table-column-title]:!text-base-gray [&_th]:!text-base-gray">
+		<div
+			className={`[&_.ant-table-column-title]:!text-base-gray [&_th]:!text-base-gray ${className}`}
+		>
 			{sections.map((section) => (
 				<div key={section.key} className="border border-base-border rounded-lg mb-4 pb-1">
 					<div className="py-2 px-4 text-base/6 font-medium border-b border-base-border">

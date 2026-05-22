@@ -130,9 +130,12 @@ const PropertiesDetails = () => {
 				key: 'loans',
 				label: 'Loans',
 				children: (
-					<div className="px-6 py-6">
-						<LoansTab rowData={rowData} loading={loading} onRefresh={getDetails} />
-					</div>
+					<LoansTab
+						rowData={rowData}
+						loading={loading}
+						onRefresh={getDetails}
+						className="px-4 pb-4"
+					/>
 				),
 			},
 		],

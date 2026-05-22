@@ -92,7 +92,13 @@ const DetailsTab = ({ rowData, propertyId, canEdit, onRefresh }) => {
 
 			<DetailSection icon={<HomeOutlined />} title="Property details">
 				{isEditing ? (
-					<Form form={form} layout="vertical" disabled={saving} scrollToFirstError>
+					<Form
+						form={form}
+						layout="vertical"
+						disabled={saving}
+						scrollToFirstError
+						size="large"
+					>
 						<PropertyDetailsForm rowData={rowData} />
 					</Form>
 				) : (
