@@ -405,8 +405,7 @@ export default function useColumn({
 				ellipsis: true,
 				width: 180,
 			},
-			getStageOpt(successCallback),
-			...(stage === 'Draft' ? [] : [status]),
+			...(stage === 'Draft' ? [] : [getStageOpt(successCallback), status]),
 			getOpt(showDeleteModal, stage),
 		];
 		if (spliceList) {
