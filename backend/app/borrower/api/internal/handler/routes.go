@@ -230,6 +230,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/borrower_property_transaction/all",
 					Handler: borrower_property_transaction.BorrowerPropertyTransactionAllHandler(serverCtx),
 				},
+				{
+					// page transactions
+					Method:  http.MethodPost,
+					Path:    "/borrower_property_transaction/page",
+					Handler: borrower_property_transaction.BorrowerPropertyTransactionPageHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithPrefix("/api/v1"),

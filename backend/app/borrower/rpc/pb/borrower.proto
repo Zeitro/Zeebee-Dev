@@ -2306,14 +2306,61 @@ message BorrowerPropertyTransactionChecklistRequestData {
   int64 document_id = 4;
 }
 
+// page
+message BorrowerPropertyTransactionPageRequest {
+  BorrowerPropertyTransactionPageRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  BorrowerPropertyTransactionPageRequestFilter filter = 3;
+  BasePageRequestSorter sorter = 4;
+}
+
+message BorrowerPropertyTransactionPageRequestFilter {
+  string keyword = 1;
+  string type = 2;
+  string status = 3;
+}
+
+message BasePageRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+
+message BorrowerPropertyTransactionPageResponse {
+  BorrowerPropertyTransactionPageResponseData data = 1;
+}
+
+message BorrowerPropertyTransactionPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated BorrowerPropertyTransactionPageEntity list = 5;
+}
+
+message BorrowerPropertyTransactionPageEntity {
+  int64 id = 1;
+  string code = 2;
+  string type = 3;
+  string status = 4;
+  string coe_date = 5;
+  string created_at = 6;
+  string updated_at = 7;
+  AddressEntity address = 8;
+}
+
 service BorrowerPropertyTransaction {
   rpc Create(BorrowerPropertyTransactionCreateRequest) returns(BorrowerPropertyTransactionCreateResponse);
   rpc Detail(BorrowerPropertyTransactionDetailRequest) returns(BorrowerPropertyTransactionDetailResponse);
-  rpc Update(BorrowerPropertyTransactionUpdateRequest) returns(EmptyResponse);
+  rpc Update(BorrowerPropertyTransactionUpdateRequest) returns(BorrowerPropertyTransactionDetailResponse);
   rpc Delete(BorrowerPropertyTransactionDeleteRequest) returns(EmptyResponse);
   rpc SwitchStatus(BorrowerPropertyTransactionSwitchStatusRequest) returns(EmptyResponse);
   rpc All(BorrowerPropertyTransactionAllRequest) returns(BorrowerPropertyTransactionAllResponse);
   rpc UpdateChecklist(BorrowerPropertyTransactionChecklistRequest) returns(EmptyResponse);
+  rpc Page(BorrowerPropertyTransactionPageRequest) returns(BorrowerPropertyTransactionPageResponse);
 }
 // ===================== borrower property transaction service end ======================
 

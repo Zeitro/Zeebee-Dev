@@ -2,14 +2,39 @@ package repo
 
 import (
 	"context"
+	"database/sql"
+	"fmt"
+	"time"
 
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 )
+
+// BorrowerPropertyTransactionPageRow maps the JOIN query result (transaction + address)
+type BorrowerPropertyTransactionPageRow struct {
+	Id                 int64                                       `gorm:"column:id"`
+	BorrowerPropertyId int64                                       `gorm:"column:borrower_property_id"`
+	OrganizationId     int64                                       `gorm:"column:organization_id"`
+	Code               string                                      `gorm:"column:code"`
+	Type               constants.BorrowerPropertyTransactionType   `gorm:"column:type"`
+	Status             constants.BorrowerPropertyTransactionStatus `gorm:"column:status"`
+	CoeDate            *sql.NullTime                               `gorm:"column:coe_date"`
+	PurchaseAmount     float64                                     `gorm:"column:purchase_amount"`
+	EmdAmount          float64                                     `gorm:"column:emd_amount"`
+	PropertyType       constants.PropertyType                      `gorm:"column:property_type"`
+	Pm                 string                                      `gorm:"column:pm"`
+	Strategy           string                                      `gorm:"column:strategy"`
+	Note               string                                      `gorm:"column:note"`
+	CreatedAt          time.Time                                   `gorm:"column:created_at"`
+	UpdatedAt          time.Time                                   `gorm:"column:updated_at"`
+	Address            data.Address                                `gorm:"column:address;;serializer:json"`
+}
 
 type BorrowerPropertyTransactionRepo struct {
 	*gormx.BaseRepo[*model.BorrowerPropertyTransaction]
@@ -66,4 +91,60 @@ func (repo *BorrowerPropertyTransactionRepo) UpdateOne(ctx context.Context, id i
 
 func (repo *BorrowerPropertyTransactionRepo) IsBoundToLoan(ctx context.Context, id int64) (bool, error) {
 	return false, nil
+}
+
+// Page get borrower property transactions
+func (repo *BorrowerPropertyTransactionRepo) Page(ctx context.Context, pageReq dto.BorrowerPropertyTransactionPageRequestDto) (page gormx.PageResponse[BorrowerPropertyTransactionPageRow], err error) {
+	transTable := model.BorrowerPropertyTransaction{}.TableName()
+	propTable := model.BorrowerProperty{}.TableName()
+
+	filter := pageReq.Filter
+	query := repo.GetDB().
+		Table(transTable).WithContext(ctx).
+		Select(fmt.Sprintf("%s.*, %s.address", transTable, propTable)).
+		Joins(fmt.Sprintf("LEFT JOIN %s ON %s.borrower_property_id = %s.id", propTable, transTable, propTable)).
+		Where(fmt.Sprintf("%s.organization_id = ?", transTable), filter.OrganizationId).
+		Where(fmt.Sprintf("%s.is_del = 0 and %s.is_del = 0", transTable, propTable))
+
+	// keyword: fuzzy match on property address (address1, city, state)
+	if len(filter.Keyword) > 0 {
+		query = query.Where(fmt.Sprintf(
+			"%s.address->>'address1' LIKE @keyword OR %s.address->>'city' LIKE @keyword OR %s.address->>'state' LIKE @keyword",
+			propTable, propTable, propTable,
+		), sql.Named("keyword", "%"+filter.Keyword+"%"))
+	}
+
+	// type: exact match
+	if len(filter.Type) > 0 {
+		query = query.Where(fmt.Sprintf("%s.type = ?", transTable), filter.Type)
+	}
+
+	// status: exact match
+	if len(filter.Status) > 0 {
+		query = query.Where(fmt.Sprintf("%s.status = ?", transTable), filter.Status)
+	}
+
+	// sort
+	var sortColumns []string
+	if len(pageReq.Sorter.Column) > 0 {
+		switch pageReq.Sorter.Column {
+		case "created_at", "updated_at":
+			sortColumns = append(sortColumns, fmt.Sprintf("%s.%s %s", transTable, pageReq.Sorter.Column, pageReq.Sorter.Sort))
+		}
+	}
+	sortColumns = append(sortColumns, fmt.Sprintf("%s.created_at DESC", transTable))
+	for _, col := range sortColumns {
+		query = query.Order(col)
+	}
+
+	page, err = gormx.Page[BorrowerPropertyTransactionPageRow](query, gormx.PageRequest{
+		Page:        pageReq.Page,
+		Limit:       pageReq.Limit,
+		CountColumn: fmt.Sprintf("%s.id", transTable),
+	})
+	if err != nil {
+		return page, errorx.WithStack(err)
+	}
+
+	return page, nil
 }

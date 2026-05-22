@@ -37,6 +37,17 @@ const (
 	BorrowerPropertyTransactionStatusCancelled BorrowerPropertyTransactionStatus = "Cancelled"
 )
 
+func (b BorrowerPropertyTransactionStatus) IsValid() bool {
+	switch b {
+	case BorrowerPropertyTransactionStatusPending,
+		BorrowerPropertyTransactionStatusClosed, BorrowerPropertyTransactionStatusCancelled:
+		return true
+	default:
+		return false
+
+	}
+}
+
 func init() {
 	enums.Register(BorrowerPropertyTransactionTypeName, []enums.EnumOpt{
 		{Label: string(BorrowerPropertyTransactionTransactionTypePurchase), Value: string(BorrowerPropertyTransactionTransactionTypePurchase)},

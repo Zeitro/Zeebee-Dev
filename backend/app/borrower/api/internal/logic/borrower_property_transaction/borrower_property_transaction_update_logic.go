@@ -26,7 +26,7 @@ func NewBorrowerPropertyTransactionUpdateLogic(ctx context.Context, svcCtx *svc.
 	}
 }
 
-func (l *BorrowerPropertyTransactionUpdateLogic) BorrowerPropertyTransactionUpdate(req *types.BorrowerPropertyTransactionUpdateRequest) (resp *types.EmptyResponse, err error) {
+func (l *BorrowerPropertyTransactionUpdateLogic) BorrowerPropertyTransactionUpdate(req *types.BorrowerPropertyTransactionUpdateRequest) (resp *types.BorrowerPropertyTransactionDetailResponse, err error) {
 	rpcReq := &borrower.BorrowerPropertyTransactionUpdateRequest{
 		Data: &borrower.BorrowerPropertyTransactionUpdateRequestData{},
 	}
@@ -36,10 +36,17 @@ func (l *BorrowerPropertyTransactionUpdateLogic) BorrowerPropertyTransactionUpda
 		return nil, err
 	}
 
-	_, err = l.svcCtx.BorrowerPropertyTransactionRpcClient.Update(l.ctx, rpcReq)
+	var rpcResp *borrower.BorrowerPropertyTransactionDetailResponse
+	rpcResp, err = l.svcCtx.BorrowerPropertyTransactionRpcClient.Update(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err
 	}
 
-	return &types.EmptyResponse{}, nil
+	resp = &types.BorrowerPropertyTransactionDetailResponse{}
+	resp, err = copierx.Trans[borrower.BorrowerPropertyTransactionEntity, types.BorrowerPropertyTransactionDetailResponse](rpcResp.Data)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }

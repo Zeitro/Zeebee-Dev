@@ -388,6 +388,37 @@ type BorrowerPropertyTransactionOption struct {
 	BorrowerProperty   BorrowerPropertyEntity `json:"borrower_property"`
 }
 
+type BorrowerPropertyTransactionPageEntity struct {
+	Id        int64          `json:"id"`
+	Code      string         `json:"code"`
+	Type      string         `json:"type"`
+	Status    string         `json:"status"`
+	CoeDate   string         `json:"coe_date"`
+	CreatedAt string         `json:"created_at"`
+	UpdatedAt string         `json:"updated_at"`
+	Address   *AddressEntity `json:"address"`
+}
+
+type BorrowerPropertyTransactionPageFilter struct {
+	Keyword string `json:"keyword,optional"`
+	Type    string `json:"type,optional"`
+	Status  string `json:"status,optional"`
+}
+
+type BorrowerPropertyTransactionPageRequest struct {
+	Page   int64                                 `json:"page,optional"`
+	Limit  int64                                 `json:"limit,optional"`
+	Filter BorrowerPropertyTransactionPageFilter `json:"filter,optional"`
+}
+
+type BorrowerPropertyTransactionPageResponse struct {
+	Page      int64                                   `json:"page"`
+	Limit     int64                                   `json:"limit"`
+	Total     int64                                   `json:"total"`
+	TotalPage int64                                   `json:"total_page"`
+	List      []BorrowerPropertyTransactionPageEntity `json:"list"`
+}
+
 type BorrowerPropertyTransactionSwitchStatusRequest struct {
 	Id     int64  `path:"id" validate:"required,gt=0"`
 	Status string `json:"status" validate:"required,oneof=Pending Closed Cancelled"`
@@ -395,12 +426,12 @@ type BorrowerPropertyTransactionSwitchStatusRequest struct {
 
 type BorrowerPropertyTransactionUpdateRequest struct {
 	Id             int64   `path:"id" validate:"required,gt=0"`
-	CoeDate        string  `json:"coe_date,optional"`
-	PurchaseAmount float64 `json:"purchase_amount,optional"`
-	EmdAmount      float64 `json:"emd_amount,optional"`
-	PropertyType   string  `json:"property_type,optional"`
+	CoeDate        string  `json:"coe_date,optional" validate:"omitempty,datetime=01/02/2006"`
+	PurchaseAmount float64 `json:"purchase_amount,optional" validate:"min=0"`
+	EmdAmount      float64 `json:"emd_amount,optional" validate:"min=0"`
+	PropertyType   string  `json:"property_type,optional" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
 	Pm             string  `json:"pm,optional"`
-	Strategy       string  `json:"strategy,optional"`
+	Strategy       string  `json:"strategy,optional" validate:"oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
 	Note           string  `json:"note,optional"`
 }
 

@@ -11,12 +11,13 @@ type OperationAction string
 
 const (
 	// Borrower propperty transaction actions
-	OperationActionBorrowerPropertyTransactionCreate         OperationAction = "Transaction Created"
-	OperationActionBorrowerPropertyTransactionUpdateBaseInfo OperationAction = "Transaction base information updated"
-	OperationActionBorrowerPropertyTransactionUpdateStatus   OperationAction = "Transaction status changed"
-	OperationActionBorrowerPropertyTransactionDelete         OperationAction = "Borrower Property Transaction Delete"
-	OperationActionBorrowerPropertyTransactionUploadDocument OperationAction = "Borrower Property Transaction Upload Document"
-	OperationActionBorrowerPropertyTransactionDeleteDocument OperationAction = "Borrower Property Transaction Delete Document"
+	OperationActionBorrowerPropertyTransactionCreate          OperationAction = "Transaction Created"
+	OperationActionBorrowerPropertyTransactionUpdateBaseInfo  OperationAction = "Transaction base information updated"
+	OperationActionBorrowerPropertyTransactionUpdateStatus    OperationAction = "Transaction status changed"
+	OperationActionBorrowerPropertyTransactionUpdateChecklist OperationAction = "Transaction checklist changed"
+	OperationActionBorrowerPropertyTransactionDelete          OperationAction = "Borrower Property Transaction Delete"
+	OperationActionBorrowerPropertyTransactionUploadDocument  OperationAction = "Borrower Property Transaction Upload Document"
+	OperationActionBorrowerPropertyTransactionDeleteDocument  OperationAction = "Borrower Property Transaction Delete Document"
 
 	// Loan actions
 	OperationActionLoanCreate       OperationAction = "Loan Create"

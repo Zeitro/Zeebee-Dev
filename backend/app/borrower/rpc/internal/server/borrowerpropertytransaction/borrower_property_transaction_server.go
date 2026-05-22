@@ -33,7 +33,7 @@ func (s *BorrowerPropertyTransactionServer) Detail(ctx context.Context, in *borr
 	return l.Detail(in)
 }
 
-func (s *BorrowerPropertyTransactionServer) Update(ctx context.Context, in *borrower.BorrowerPropertyTransactionUpdateRequest) (*borrower.EmptyResponse, error) {
+func (s *BorrowerPropertyTransactionServer) Update(ctx context.Context, in *borrower.BorrowerPropertyTransactionUpdateRequest) (*borrower.BorrowerPropertyTransactionDetailResponse, error) {
 	l := borrowerpropertytransactionlogic.NewUpdateLogic(ctx, s.svcCtx)
 	return l.Update(in)
 }
@@ -56,4 +56,9 @@ func (s *BorrowerPropertyTransactionServer) All(ctx context.Context, in *borrowe
 func (s *BorrowerPropertyTransactionServer) UpdateChecklist(ctx context.Context, in *borrower.BorrowerPropertyTransactionChecklistRequest) (*borrower.EmptyResponse, error) {
 	l := borrowerpropertytransactionlogic.NewUpdateChecklistLogic(ctx, s.svcCtx)
 	return l.UpdateChecklist(in)
+}
+
+func (s *BorrowerPropertyTransactionServer) Page(ctx context.Context, in *borrower.BorrowerPropertyTransactionPageRequest) (*borrower.BorrowerPropertyTransactionPageResponse, error) {
+	l := borrowerpropertytransactionlogic.NewPageLogic(ctx, s.svcCtx)
+	return l.Page(in)
 }

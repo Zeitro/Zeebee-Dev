@@ -2,8 +2,6 @@ package borrowerpropertytransactionlogic
 
 import (
 	"context"
-	"database/sql"
-	"time"
 
 	"gorm.io/gorm"
 
@@ -12,6 +10,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/constants"
@@ -35,7 +34,7 @@ func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogi
 	}
 }
 
-func (l *UpdateLogic) Update(in *borrower.BorrowerPropertyTransactionUpdateRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *UpdateLogic) Update(in *borrower.BorrowerPropertyTransactionUpdateRequest) (resp *borrower.BorrowerPropertyTransactionDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -52,24 +51,29 @@ func (l *UpdateLogic) Update(in *borrower.BorrowerPropertyTransactionUpdateReque
 		return nil, errorx.Wrap(err, "Transaction not found")
 	}
 	if existing.OrganizationId != claim.OrganizationId {
-		return nil, errorx.New("Transaction does not belong to your organization")
+		return nil, errorx.New("transaction does not belong to your organization")
 	}
 
 	updateData := &model.BorrowerPropertyTransaction{
-		PurchaseAmount: in.Data.PurchaseAmount,
-		EmdAmount:      in.Data.EmdAmount,
-		PropertyType:   constants.PropertyType(in.Data.PropertyType),
-		Pm:             in.Data.Pm,
-		Strategy:       in.Data.Strategy,
-		Note:           in.Data.Note,
+		// PurchaseAmount: in.Data.PurchaseAmount,
+		// EmdAmount:      in.Data.EmdAmount,
+		// PropertyType:   constants.PropertyType(in.Data.PropertyType),
+		// Pm:             in.Data.Pm,
+		// Strategy:       in.Data.Strategy,
+		// Note:           in.Data.Note,
 	}
 
-	if in.Data.CoeDate != "" {
-		t, parseErr := time.Parse(timex.LayoutUsStyle, in.Data.CoeDate)
-		if parseErr == nil {
-			updateData.CoeDate = &sql.NullTime{Time: t, Valid: true}
-		}
+	err = copierx.Assign(in.Data, updateData, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
+	if err != nil {
+		return nil, err
 	}
+
+	// if in.Data.CoeDate != "" {
+	// 	t, parseErr := time.Parse(timex.LayoutUsStyle, in.Data.CoeDate)
+	// 	if parseErr == nil {
+	// 		updateData.CoeDate = &sql.NullTime{Time: t, Valid: true}
+	// 	}
+	// }
 
 	err = l.svcCtx.BorrowerPropertyTransactionRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		_, innerErr := l.svcCtx.BorrowerPropertyTransactionRepo.UpdateOne(l.ctx, in.Data.Id, updateData)
@@ -91,5 +95,11 @@ func (l *UpdateLogic) Update(in *borrower.BorrowerPropertyTransactionUpdateReque
 		return nil, errorx.Wrap(err, "Failed to update transaction")
 	}
 
-	return &borrower.EmptyResponse{}, nil
+	detailLogic := NewDetailLogic(l.ctx, l.svcCtx)
+	detail, err := detailLogic.Detail(&borrower.BorrowerPropertyTransactionDetailRequest{
+		Data: &borrower.BorrowerPropertyTransactionDetailRequestData{
+			Id: in.Data.Id,
+		},
+	})
+	return detail, err
 }

@@ -70,3 +70,29 @@ type BpTransactionSwitchStatusDto struct {
 	OrganizationId int64                                       `json:"organization_id"`
 	OperatorId     int64                                       `json:"operator_id"`
 }
+
+// Page request/filter/response
+
+type BorrowerPropertyTransactionPageRequestDto struct {
+	BasePageRequestDto
+	Filter BorrowerPropertyTransactionPageRequestFilter `json:"filter"`
+	Sorter BasePageSorter                                `json:"sorter"`
+}
+
+type BorrowerPropertyTransactionPageRequestFilter struct {
+	OrganizationId int64  `json:"organization_id"`
+	Keyword        string `json:"keyword,omitempty"`
+	Type           string `json:"type,omitempty"`
+	Status         string `json:"status,omitempty"`
+}
+
+type BorrowerPropertyTransactionPageEntity struct {
+	Id        int64       `json:"id"`
+	Code      string      `json:"code"`
+	Type      string      `json:"type"`
+	Status    string      `json:"status"`
+	CoeDate   string      `json:"coe_date"`
+	CreatedAt string      `json:"created_at"`
+	UpdatedAt string      `json:"updated_at"`
+	Address   AddressDto  `json:"address"`
+}

@@ -614,7 +614,7 @@ service borrower-api {
 
 	@doc "update transaction"
 	@handler BorrowerPropertyTransactionUpdate
-	put /borrower_property_transaction/:id (BorrowerPropertyTransactionUpdateRequest) returns (EmptyResponse)
+	put /borrower_property_transaction/:id (BorrowerPropertyTransactionUpdateRequest) returns (BorrowerPropertyTransactionDetailResponse)
 
 	@doc "delete transaction"
 	@handler BorrowerPropertyTransactionDelete
@@ -631,6 +631,10 @@ service borrower-api {
 	@doc "update transaction checklist"
 	@handler BorrowerPropertyTransactionUpdateChecklist
 	patch /borrower_property_transaction/:id/checklist (BorrowerPropertyTransactionChecklistRequest) returns (EmptyResponse)
+
+	@doc "page transactions"
+	@handler BorrowerPropertyTransactionPage
+	post /borrower_property_transaction/page (BorrowerPropertyTransactionPageRequest) returns (BorrowerPropertyTransactionPageResponse)
 }
 
 // =============== borrower property transaction end ==============

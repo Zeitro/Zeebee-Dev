@@ -46,30 +46,38 @@ func (l *SwitchStatusLogic) SwitchStatus(in *borrower.BorrowerPropertyTransactio
 	// validate ownership
 	existing, err := l.svcCtx.BorrowerPropertyTransactionRepo.GetOne(l.ctx, in.Data.Id)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Transaction not found")
+		return nil, errorx.Wrap(err, "transaction not found")
 	}
 	if existing.OrganizationId != claim.OrganizationId {
-		return nil, errorx.New("Transaction does not belong to your organization")
+		return nil, errorx.New("transaction does not belong to your organization")
 	}
 
 	newStatus := constants.BorrowerPropertyTransactionStatus(in.Data.Status)
-	if !isValidTransactionStatus(newStatus) {
-		return nil, errorx.New("Invalid status")
+	if !newStatus.IsValid() {
+		return nil, errorx.New("invalid status")
 	}
 
-	oldStatus := string(existing.Status)
+	oldStatus := existing.Status
+
+	if oldStatus == newStatus {
+		return &borrower.EmptyResponse{}, nil
+	}
 
 	err = l.svcCtx.BorrowerPropertyTransactionRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		innerErr := l.svcCtx.BorrowerPropertyTransactionRepo.UpdateColumnsById(l.ctx, in.Data.Id, map[string]interface{}{
-			"status": string(newStatus),
+			"status": newStatus,
 		})
 		if innerErr != nil {
 			return innerErr
 		}
 
-		metadata, _ := json.Marshal(map[string]string{
-			"old_status": oldStatus,
-			"new_status": string(newStatus),
+		metadata, _ := json.Marshal(map[string]interface{}{
+			"before": map[string]interface{}{
+				"status": oldStatus,
+			},
+			"after": map[string]interface{}{
+				"status": newStatus,
+			},
 		})
 
 		innerErr = l.baseLogic.OperationLogic.CreateOperationLog(l.ctx, tx, dto.OperationCreateDto{
@@ -84,18 +92,8 @@ func (l *SwitchStatusLogic) SwitchStatus(in *borrower.BorrowerPropertyTransactio
 		return innerErr
 	})
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to switch status")
+		return nil, errorx.Wrap(err, "failed to switch status")
 	}
 
 	return &borrower.EmptyResponse{}, nil
-}
-
-func isValidTransactionStatus(s constants.BorrowerPropertyTransactionStatus) bool {
-	switch s {
-	case constants.BorrowerPropertyTransactionStatusPending,
-		constants.BorrowerPropertyTransactionStatusClosed,
-		constants.BorrowerPropertyTransactionStatusCancelled:
-		return true
-	}
-	return false
 }
