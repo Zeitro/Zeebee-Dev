@@ -44,10 +44,10 @@ func (l *DeleteLogic) Delete(in *borrower.BorrowerPropertyTransactionDeleteReque
 
 	existing, err := l.svcCtx.BorrowerPropertyTransactionRepo.GetOne(l.ctx, in.Data.Id)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Transaction not found")
+		return nil, errorx.Wrap(err, "transaction not found")
 	}
 	if existing.OrganizationId != claim.OrganizationId {
-		return nil, errorx.New("Transaction does not belong to your organization")
+		return nil, errorx.New("transaction does not belong to your organization")
 	}
 
 	// validate no loan binding
@@ -56,7 +56,7 @@ func (l *DeleteLogic) Delete(in *borrower.BorrowerPropertyTransactionDeleteReque
 		return nil, err
 	}
 	if isBound {
-		return nil, errorx.New("Cannot delete transaction bound to a loan")
+		return nil, errorx.New("cannot delete transaction bound to a loan")
 	}
 
 	err = l.svcCtx.BorrowerPropertyTransactionRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
@@ -67,19 +67,33 @@ func (l *DeleteLogic) Delete(in *borrower.BorrowerPropertyTransactionDeleteReque
 		}
 
 		// find and delete entity_document
-		entityDoc, innerErr := l.svcCtx.EntityDocumentRepo.GetByEntity(l.ctx, string(constants.OperationEntityTypeBorrowerPropertyTransaction), in.Data.Id)
-		if innerErr == nil && entityDoc != nil {
-			// delete all documents in tree
-			descendants, _ := l.svcCtx.DocumentRepo.GetDescendants(l.ctx, []int64{entityDoc.RootDocumentId})
-			for _, doc := range descendants {
-				// delete associated files
-				l.svcCtx.FileRepo.Client(l.ctx).
-					Where("entity_type = ? AND entity_id = ?", string(constants.FileEntityTypeDocument), doc.Id).
-					Delete(nil)
-			}
+		entityDoc, innerErr := l.svcCtx.EntityDocumentRepo.GetByEntityWithTx(l.ctx, tx, constants.EntityDocumentTypeBorrowerPropertyTransaction, in.Data.Id)
+		if innerErr != nil {
+			return innerErr
+		}
+		_, innerErr = l.svcCtx.EntityDocumentRepo.DeleteByIDWithTx(l.ctx, tx, entityDoc.Id)
+		if innerErr != nil {
+			return innerErr
+		}
 
-			// delete entity_document
-			l.svcCtx.EntityDocumentRepo.DeleteByIDWithTx(l.ctx, tx, entityDoc.Id)
+		// get all document ids and delete them
+		var docIds []int64
+		innerErr = l.svcCtx.DocumentRepo.PluckByColumnsWithTx(l.ctx, tx, "id", &docIds, map[string]interface{}{
+			"entity_document_id": entityDoc.Id,
+		})
+		if innerErr != nil {
+			return innerErr
+		}
+
+		_, innerErr = l.svcCtx.DocumentRepo.DeleteByIDsWithTx(l.ctx, tx, docIds)
+		if innerErr != nil {
+			return innerErr
+		}
+		// delete document files
+		innerErr = l.svcCtx.FileRepo.DeleteByEntityIdWithTx(l.ctx, tx, docIds, constants.FileEntityTypeDocument)
+
+		if innerErr != nil {
+			return innerErr
 		}
 
 		// create operation log
@@ -94,7 +108,7 @@ func (l *DeleteLogic) Delete(in *borrower.BorrowerPropertyTransactionDeleteReque
 		return innerErr
 	})
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to delete transaction")
+		return nil, errorx.Wrap(err, "failed to delete transaction")
 	}
 
 	return &borrower.EmptyResponse{}, nil

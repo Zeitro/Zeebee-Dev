@@ -220,6 +220,26 @@ func (repo *BaseRepo[T]) FindColumnByColumnsWithTx(ctx context.Context, tx *gorm
 	return errorx.WithStack(err)
 }
 
+// PluckByColumns find column slice by columns
+func (repo *BaseRepo[T]) PluckByColumns(ctx context.Context, columnName string, target interface{}, columns map[string]interface{}) error {
+	query := repo.Client(ctx)
+	for k, v := range columns {
+		query = query.Where(k+" = ?", v)
+	}
+	err := query.Pluck(columnName, target).Error
+	return errorx.WithStack(err)
+}
+
+// PluckByColumnsWithTx find column slice by columns with tx
+func (repo *BaseRepo[T]) PluckByColumnsWithTx(ctx context.Context, tx *gorm.DB, columnName string, target interface{}, columns map[string]interface{}) error {
+	query := tx.WithContext(ctx)
+	for k, v := range columns {
+		query = query.Where(k+" = ?", v)
+	}
+	err := query.Pluck(columnName, target).Error
+	return errorx.WithStack(err)
+}
+
 func (repo *BaseRepo[T]) UpdateOne(ctx context.Context, data T) (T, error) {
 	err := repo.Client(ctx).Save(data).Error
 	if err != nil {

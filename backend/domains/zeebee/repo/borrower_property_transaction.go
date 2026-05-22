@@ -89,8 +89,18 @@ func (repo *BorrowerPropertyTransactionRepo) UpdateOne(ctx context.Context, id i
 	return data, nil
 }
 
+// IsBoundToLoan check if the transaction is bound to a loan
 func (repo *BorrowerPropertyTransactionRepo) IsBoundToLoan(ctx context.Context, id int64) (bool, error) {
-	return false, nil
+	var count int64
+	err := repo.Client(ctx).
+		Model(model.Loan{}).
+		Where("borrower_property_transaction_id = ?", id).
+		Count(&count).Error
+	if err != nil {
+		return false, errorx.WithStack(err)
+	}
+
+	return count > 0, nil
 }
 
 // Page get borrower property transactions
