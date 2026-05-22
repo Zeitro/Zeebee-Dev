@@ -151,7 +151,7 @@ const CreateTerm = ({
 													})
 												}
 											>
-												Add borrower
+												Add co-borrower
 											</Button>
 										</Col>
 									)}
