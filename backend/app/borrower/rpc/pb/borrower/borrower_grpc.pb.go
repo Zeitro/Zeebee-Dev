@@ -4289,8 +4289,8 @@ type BorrowerPropertyTransactionClient interface {
 	UpdateChecklist(ctx context.Context, in *BorrowerPropertyTransactionChecklistRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	Page(ctx context.Context, in *BorrowerPropertyTransactionPageRequest, opts ...grpc.CallOption) (*BorrowerPropertyTransactionPageResponse, error)
 	CreateDocument(ctx context.Context, in *DocumentCreateRequest, opts ...grpc.CallOption) (*DocumentCreateResponse, error)
-	UploadDocumentFile(ctx context.Context, in *DocumentUploadFileRequest, opts ...grpc.CallOption) (*DocumentUploadFileResponse, error)
-	DeleteDocumentFile(ctx context.Context, in *DocumentDeleteFileRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	UploadDocumentFile(ctx context.Context, in *BorrowerPropertyTransactionDocumentUploadFileRequest, opts ...grpc.CallOption) (*DocumentUploadFileResponse, error)
+	DeleteDocumentFile(ctx context.Context, in *BorrowerPropertyTransactionDocumentDeleteFileRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 }
 
 type borrowerPropertyTransactionClient struct {
@@ -4391,7 +4391,7 @@ func (c *borrowerPropertyTransactionClient) CreateDocument(ctx context.Context, 
 	return out, nil
 }
 
-func (c *borrowerPropertyTransactionClient) UploadDocumentFile(ctx context.Context, in *DocumentUploadFileRequest, opts ...grpc.CallOption) (*DocumentUploadFileResponse, error) {
+func (c *borrowerPropertyTransactionClient) UploadDocumentFile(ctx context.Context, in *BorrowerPropertyTransactionDocumentUploadFileRequest, opts ...grpc.CallOption) (*DocumentUploadFileResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DocumentUploadFileResponse)
 	err := c.cc.Invoke(ctx, BorrowerPropertyTransaction_UploadDocumentFile_FullMethodName, in, out, cOpts...)
@@ -4401,7 +4401,7 @@ func (c *borrowerPropertyTransactionClient) UploadDocumentFile(ctx context.Conte
 	return out, nil
 }
 
-func (c *borrowerPropertyTransactionClient) DeleteDocumentFile(ctx context.Context, in *DocumentDeleteFileRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+func (c *borrowerPropertyTransactionClient) DeleteDocumentFile(ctx context.Context, in *BorrowerPropertyTransactionDocumentDeleteFileRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(EmptyResponse)
 	err := c.cc.Invoke(ctx, BorrowerPropertyTransaction_DeleteDocumentFile_FullMethodName, in, out, cOpts...)
@@ -4424,8 +4424,8 @@ type BorrowerPropertyTransactionServer interface {
 	UpdateChecklist(context.Context, *BorrowerPropertyTransactionChecklistRequest) (*EmptyResponse, error)
 	Page(context.Context, *BorrowerPropertyTransactionPageRequest) (*BorrowerPropertyTransactionPageResponse, error)
 	CreateDocument(context.Context, *DocumentCreateRequest) (*DocumentCreateResponse, error)
-	UploadDocumentFile(context.Context, *DocumentUploadFileRequest) (*DocumentUploadFileResponse, error)
-	DeleteDocumentFile(context.Context, *DocumentDeleteFileRequest) (*EmptyResponse, error)
+	UploadDocumentFile(context.Context, *BorrowerPropertyTransactionDocumentUploadFileRequest) (*DocumentUploadFileResponse, error)
+	DeleteDocumentFile(context.Context, *BorrowerPropertyTransactionDocumentDeleteFileRequest) (*EmptyResponse, error)
 	mustEmbedUnimplementedBorrowerPropertyTransactionServer()
 }
 
@@ -4463,10 +4463,10 @@ func (UnimplementedBorrowerPropertyTransactionServer) Page(context.Context, *Bor
 func (UnimplementedBorrowerPropertyTransactionServer) CreateDocument(context.Context, *DocumentCreateRequest) (*DocumentCreateResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateDocument not implemented")
 }
-func (UnimplementedBorrowerPropertyTransactionServer) UploadDocumentFile(context.Context, *DocumentUploadFileRequest) (*DocumentUploadFileResponse, error) {
+func (UnimplementedBorrowerPropertyTransactionServer) UploadDocumentFile(context.Context, *BorrowerPropertyTransactionDocumentUploadFileRequest) (*DocumentUploadFileResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UploadDocumentFile not implemented")
 }
-func (UnimplementedBorrowerPropertyTransactionServer) DeleteDocumentFile(context.Context, *DocumentDeleteFileRequest) (*EmptyResponse, error) {
+func (UnimplementedBorrowerPropertyTransactionServer) DeleteDocumentFile(context.Context, *BorrowerPropertyTransactionDocumentDeleteFileRequest) (*EmptyResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteDocumentFile not implemented")
 }
 func (UnimplementedBorrowerPropertyTransactionServer) mustEmbedUnimplementedBorrowerPropertyTransactionServer() {
@@ -4654,7 +4654,7 @@ func _BorrowerPropertyTransaction_CreateDocument_Handler(srv interface{}, ctx co
 }
 
 func _BorrowerPropertyTransaction_UploadDocumentFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DocumentUploadFileRequest)
+	in := new(BorrowerPropertyTransactionDocumentUploadFileRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -4666,13 +4666,13 @@ func _BorrowerPropertyTransaction_UploadDocumentFile_Handler(srv interface{}, ct
 		FullMethod: BorrowerPropertyTransaction_UploadDocumentFile_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BorrowerPropertyTransactionServer).UploadDocumentFile(ctx, req.(*DocumentUploadFileRequest))
+		return srv.(BorrowerPropertyTransactionServer).UploadDocumentFile(ctx, req.(*BorrowerPropertyTransactionDocumentUploadFileRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _BorrowerPropertyTransaction_DeleteDocumentFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DocumentDeleteFileRequest)
+	in := new(BorrowerPropertyTransactionDocumentDeleteFileRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -4684,7 +4684,7 @@ func _BorrowerPropertyTransaction_DeleteDocumentFile_Handler(srv interface{}, ct
 		FullMethod: BorrowerPropertyTransaction_DeleteDocumentFile_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BorrowerPropertyTransactionServer).DeleteDocumentFile(ctx, req.(*DocumentDeleteFileRequest))
+		return srv.(BorrowerPropertyTransactionServer).DeleteDocumentFile(ctx, req.(*BorrowerPropertyTransactionDocumentDeleteFileRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -4748,6 +4748,7 @@ var BorrowerPropertyTransaction_ServiceDesc = grpc.ServiceDesc{
 const (
 	Document_Detail_FullMethodName   = "/borrower.Document/Detail"
 	Document_LeafList_FullMethodName = "/borrower.Document/LeafList"
+	Document_Files_FullMethodName    = "/borrower.Document/Files"
 )
 
 // DocumentClient is the client API for Document service.
@@ -4756,6 +4757,7 @@ const (
 type DocumentClient interface {
 	Detail(ctx context.Context, in *DocumentDetailRequest, opts ...grpc.CallOption) (*DocumentDetailResponse, error)
 	LeafList(ctx context.Context, in *DocumentLeafListRequest, opts ...grpc.CallOption) (*DocumentLeafListResponse, error)
+	Files(ctx context.Context, in *DocumentFilesRequest, opts ...grpc.CallOption) (*DocumentFilesResponse, error)
 }
 
 type documentClient struct {
@@ -4786,12 +4788,23 @@ func (c *documentClient) LeafList(ctx context.Context, in *DocumentLeafListReque
 	return out, nil
 }
 
+func (c *documentClient) Files(ctx context.Context, in *DocumentFilesRequest, opts ...grpc.CallOption) (*DocumentFilesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DocumentFilesResponse)
+	err := c.cc.Invoke(ctx, Document_Files_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DocumentServer is the server API for Document service.
 // All implementations must embed UnimplementedDocumentServer
 // for forward compatibility.
 type DocumentServer interface {
 	Detail(context.Context, *DocumentDetailRequest) (*DocumentDetailResponse, error)
 	LeafList(context.Context, *DocumentLeafListRequest) (*DocumentLeafListResponse, error)
+	Files(context.Context, *DocumentFilesRequest) (*DocumentFilesResponse, error)
 	mustEmbedUnimplementedDocumentServer()
 }
 
@@ -4807,6 +4820,9 @@ func (UnimplementedDocumentServer) Detail(context.Context, *DocumentDetailReques
 }
 func (UnimplementedDocumentServer) LeafList(context.Context, *DocumentLeafListRequest) (*DocumentLeafListResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method LeafList not implemented")
+}
+func (UnimplementedDocumentServer) Files(context.Context, *DocumentFilesRequest) (*DocumentFilesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Files not implemented")
 }
 func (UnimplementedDocumentServer) mustEmbedUnimplementedDocumentServer() {}
 func (UnimplementedDocumentServer) testEmbeddedByValue()                  {}
@@ -4865,6 +4881,24 @@ func _Document_LeafList_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Document_Files_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DocumentFilesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocumentServer).Files(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Document_Files_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocumentServer).Files(ctx, req.(*DocumentFilesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Document_ServiceDesc is the grpc.ServiceDesc for Document service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -4879,6 +4913,10 @@ var Document_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "LeafList",
 			Handler:    _Document_LeafList_Handler,
+		},
+		{
+			MethodName: "Files",
+			Handler:    _Document_Files_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

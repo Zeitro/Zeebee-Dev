@@ -10,8 +10,13 @@ type (
     S3PresignUrlCreateRequest {
         Type string `json:"type" validate:"required,oneof=pdf image doc"`
         FileSuffix string `json:"file_suffix" validate:"required"`
+        FileName string `json:"file_name,omitempty"`
     }
     S3PresignUrlCreateResponse {
         Url string `json:"url"`
+        FileName string `json:"file_name"`
+        StorageType string `json:"storage_type"`
+        ExternalId string `json:"external_id"`
+        UploadType string `json:"upload_type"`
     }
 )

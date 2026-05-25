@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 )
 
 type DocumentDeleteFileLogic struct {
@@ -24,12 +25,12 @@ func NewDocumentDeleteFileLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *DocumentDeleteFileLogic) DocumentDeleteFile(req *types.DocumentDeleteFileRequest) (resp *types.EmptyResponse, err error) {
-	rpcReq := &borrower.DocumentDeleteFileRequest{
-		Data: &borrower.DocumentDeleteFileRequestData{
-			TransactionId: req.TransactionId,
-			FileId:        req.FileId,
-		},
+func (l *DocumentDeleteFileLogic) DocumentDeleteFile(req *types.BorrowerPropertyTransactionDocumentDeleteFileRequest) (resp *types.EmptyResponse, err error) {
+	rpcReq := &borrower.BorrowerPropertyTransactionDocumentDeleteFileRequest{}
+
+	rpcReq.Data, err = copierx.Trans[types.BorrowerPropertyTransactionDocumentDeleteFileRequest, borrower.BorrowerPropertyTransactionDocumentDeleteFileRequestData](req)
+	if err != nil {
+		return nil, err
 	}
 
 	_, err = l.svcCtx.BorrowerPropertyTransactionRpcClient.DeleteDocumentFile(l.ctx, rpcReq)

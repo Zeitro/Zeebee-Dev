@@ -44,7 +44,7 @@ func (l *DocumentCreateLogic) DocumentCreate(req *types.DocumentCreateRequest) (
 		return &types.DocumentCreateResponse{}, nil
 	}
 
-	treeNode, err := copierx.Trans[borrower.DocumentEntity, types.DocumentTreeNode](protoDoc)
+	treeNode, err := copierx.Trans[borrower.DocumentEntity, types.DocumentTreeNode](protoDoc, copierx.StrToStrMap())
 	if err != nil {
 		return nil, err
 	}

@@ -32,3 +32,8 @@ func (s *DocumentServer) LeafList(ctx context.Context, in *borrower.DocumentLeaf
 	l := documentlogic.NewLeafListLogic(ctx, s.svcCtx)
 	return l.LeafList(in)
 }
+
+func (s *DocumentServer) Files(ctx context.Context, in *borrower.DocumentFilesRequest) (*borrower.DocumentFilesResponse, error) {
+	l := documentlogic.NewFilesLogic(ctx, s.svcCtx)
+	return l.Files(in)
+}

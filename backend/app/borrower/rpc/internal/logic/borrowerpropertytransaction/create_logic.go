@@ -93,6 +93,7 @@ func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateReque
 		// create entity_document binding first (root_document_id=0, backfilled later)
 		entityDoc := &model.EntityDocument{
 			EntityType:     constants.EntityDocumentTypeBorrowerPropertyTransaction,
+			OrganizationId: claim.OrganizationId,
 			EntityId:       result.Id,
 			RootDocumentId: 0,
 		}
@@ -197,6 +198,7 @@ func (l *CreateLogic) createDocumentNode(tx *gorm.DB, entityDocumentId int64, pa
 	metadata, _ := json.Marshal(map[string]interface{}{
 		"is_required": node.IsRequired,
 		"status":      constants.BorrowerPropertyTransactionStatusPending,
+		"create_type": "System",
 	})
 
 	doc := &model.Document{

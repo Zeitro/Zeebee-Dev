@@ -25,7 +25,7 @@ func DocumentDeleteFileHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 					Error(err)
 			}
 		}()
-		var req types.DocumentDeleteFileRequest
+		var req types.BorrowerPropertyTransactionDocumentDeleteFileRequest
 		if err = httpx.Parse(r, &req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return

@@ -14,6 +14,7 @@ import (
 	borrowerEntityServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerentity"
 	borrowerPropertyServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerproperty"
 	borrowerPropertyTransactionServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerpropertytransaction"
+	documentServer "zeebee-backend/app/borrower/rpc/internal/server/document"
 	organizationServer "zeebee-backend/app/borrower/rpc/internal/server/organization"
 	organizationEmailServer "zeebee-backend/app/borrower/rpc/internal/server/organizationemail"
 	zeitroServer "zeebee-backend/app/borrower/rpc/internal/server/zeitro"
@@ -77,6 +78,7 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		borrower.RegisterAuthServer(grpcServer, authServer.NewAuthServer(ctx))
 		borrower.RegisterResourceServer(grpcServer, resourceServer.NewResourceServer(ctx))
 		borrower.RegisterBorrowerPropertyTransactionServer(grpcServer, borrowerPropertyTransactionServer.NewBorrowerPropertyTransactionServer(ctx))
+		borrower.RegisterDocumentServer(grpcServer, documentServer.NewDocumentServer(ctx))
 
 		if rpcConfig.Mode == service.DevMode || rpcConfig.Mode == service.TestMode {
 			reflection.Register(grpcServer)

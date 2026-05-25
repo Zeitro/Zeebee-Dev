@@ -25,15 +25,21 @@ func NewDocumentUploadFileLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *DocumentUploadFileLogic) DocumentUploadFile(req *types.DocumentUploadFileRequest) (resp *types.DocumentUploadFileResponse, err error) {
-	rpcReq := &borrower.DocumentUploadFileRequest{
-		Data: &borrower.DocumentUploadFileRequestData{
-			TransactionId: req.TransactionId,
-			DocumentId:    req.DocumentId,
-			FileName:      req.FileName,
-			FileUrl:       req.FileUrl,
-			FileSuffix:    req.FileSuffix,
-		},
+func (l *DocumentUploadFileLogic) DocumentUploadFile(req *types.BorrowerPropertyTransactionDocumentUploadFileRequest) (resp *types.DocumentUploadFileResponse, err error) {
+	rpcReq := &borrower.BorrowerPropertyTransactionDocumentUploadFileRequest{
+		// Data: &borrower.BorrowerPropertyTransactionDocumentUploadFileRequestData{
+		// 	TransactionId: req.TransactionId,
+		// 	DocumentId:    req.DocumentId,
+		// 	FileName:      req.FileName,
+		// 	FileUrl:       req.FileUrl,
+		// 	StorageType:   req.StorageType,
+		// 	UploadType:    req.UploadType,
+		// },
+	}
+
+	rpcReq.Data, err = copierx.Trans[types.BorrowerPropertyTransactionDocumentUploadFileRequest, borrower.BorrowerPropertyTransactionDocumentUploadFileRequestData](req)
+	if err != nil {
+		return nil, err
 	}
 
 	rpcResp, err := l.svcCtx.BorrowerPropertyTransactionRpcClient.UploadDocumentFile(l.ctx, rpcReq)

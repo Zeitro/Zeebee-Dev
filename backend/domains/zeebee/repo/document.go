@@ -54,3 +54,22 @@ func (repo *DocumentRepo) GetAllByEntityDocumentIdWithTx(ctx context.Context, tx
 		Find(&result).Error
 	return result, errorx.WithStack(err)
 }
+
+// GetMaxSortOrderByParentId get max sort order by parent id
+func (repo *DocumentRepo) GetMaxSortOrderByParentId(ctx context.Context, parentId int64) (result int64, err error) {
+	err = repo.Client(ctx).
+		Where("parent_id = ?", parentId).
+		Select("COALESCE(MAX(sort_order), 0) as max_sort_order").
+		Scan(&result).Error
+	return result, errorx.WithStack(err)
+}
+
+// FindOneWithFiles get document with files preloaded, ordered by created_at DESC
+func (repo *DocumentRepo) FindOneWithFiles(ctx context.Context, id int64) (result *model.Document, err error) {
+	err = repo.Client(ctx).
+		Preload("Files", func(db *gorm.DB) *gorm.DB {
+			return db.Order("created_at DESC")
+		}).
+		First(&result, id).Error
+	return result, errorx.WithStack(err)
+}

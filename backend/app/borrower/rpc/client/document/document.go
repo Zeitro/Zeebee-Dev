@@ -16,12 +16,15 @@ import (
 type (
 	DocumentDetailRequest    = borrower.DocumentDetailRequest
 	DocumentDetailResponse   = borrower.DocumentDetailResponse
+	DocumentFilesRequest     = borrower.DocumentFilesRequest
+	DocumentFilesResponse    = borrower.DocumentFilesResponse
 	DocumentLeafListRequest  = borrower.DocumentLeafListRequest
 	DocumentLeafListResponse = borrower.DocumentLeafListResponse
 
 	Document interface {
 		Detail(ctx context.Context, in *DocumentDetailRequest, opts ...grpc.CallOption) (*DocumentDetailResponse, error)
 		LeafList(ctx context.Context, in *DocumentLeafListRequest, opts ...grpc.CallOption) (*DocumentLeafListResponse, error)
+		Files(ctx context.Context, in *DocumentFilesRequest, opts ...grpc.CallOption) (*DocumentFilesResponse, error)
 	}
 
 	defaultDocument struct {
@@ -43,4 +46,9 @@ func (m *defaultDocument) Detail(ctx context.Context, in *DocumentDetailRequest,
 func (m *defaultDocument) LeafList(ctx context.Context, in *DocumentLeafListRequest, opts ...grpc.CallOption) (*DocumentLeafListResponse, error) {
 	client := borrower.NewDocumentClient(m.cli.Conn())
 	return client.LeafList(ctx, in, opts...)
+}
+
+func (m *defaultDocument) Files(ctx context.Context, in *DocumentFilesRequest, opts ...grpc.CallOption) (*DocumentFilesResponse, error) {
+	client := borrower.NewDocumentClient(m.cli.Conn())
+	return client.Files(ctx, in, opts...)
 }

@@ -1563,6 +1563,7 @@ message StorageCreatePresignedUrlRequest {
 message StorageCreatePresignedUrlRequestData {
   string type = 1;
   string file_suffix = 2;
+  string file_name = 3;
 }
 
 message StorageCreatePresignedUrlResponse {
@@ -1571,6 +1572,10 @@ message StorageCreatePresignedUrlResponse {
 
 message StorageCreatePresignedUrlResponseData {
   string url = 1;
+  string file_name = 2;
+  string storage_type = 3;
+  string external_id = 4;
+  string upload_type = 5;
 }
 
 service Storage {
@@ -2352,6 +2357,28 @@ message BorrowerPropertyTransactionPageEntity {
   AddressEntity address = 8;
 }
 
+message BorrowerPropertyTransactionDocumentUploadFileRequest {
+  BorrowerPropertyTransactionDocumentUploadFileRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionDocumentUploadFileRequestData {
+  int64 transaction_id = 1;
+  int64 document_id = 2;
+  string file_name = 3;
+  string file_url = 4;
+  string storage_type = 5;
+  string upload_type = 6;
+}
+
+message BorrowerPropertyTransactionDocumentDeleteFileRequest {
+  BorrowerPropertyTransactionDocumentDeleteFileRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionDocumentDeleteFileRequestData {
+  int64 transaction_id = 1;
+  int64 file_id = 2;
+}
+
 service BorrowerPropertyTransaction {
   rpc Create(BorrowerPropertyTransactionCreateRequest) returns(BorrowerPropertyTransactionCreateResponse);
   rpc Detail(BorrowerPropertyTransactionDetailRequest) returns(BorrowerPropertyTransactionDetailResponse);
@@ -2362,8 +2389,8 @@ service BorrowerPropertyTransaction {
   rpc UpdateChecklist(BorrowerPropertyTransactionChecklistRequest) returns(EmptyResponse);
   rpc Page(BorrowerPropertyTransactionPageRequest) returns(BorrowerPropertyTransactionPageResponse);
   rpc CreateDocument(DocumentCreateRequest) returns(DocumentCreateResponse);
-  rpc UploadDocumentFile(DocumentUploadFileRequest) returns(DocumentUploadFileResponse);
-  rpc DeleteDocumentFile(DocumentDeleteFileRequest) returns(EmptyResponse);
+  rpc UploadDocumentFile(BorrowerPropertyTransactionDocumentUploadFileRequest) returns(DocumentUploadFileResponse);
+  rpc DeleteDocumentFile(BorrowerPropertyTransactionDocumentDeleteFileRequest) returns(EmptyResponse);
 }
 // ===================== borrower property transaction service end ======================
 
@@ -2410,30 +2437,13 @@ message DocumentCreateResponse {
   DocumentEntity data = 1;
 }
 
-message DocumentUploadFileRequest {
-  DocumentUploadFileRequestData data = 1;
-}
 
-message DocumentUploadFileRequestData {
-  int64 transaction_id = 1;
-  int64 document_id = 2;
-  string file_name = 3;
-  string file_url = 4;
-  string file_suffix = 5;
-}
 
 message DocumentUploadFileResponse {
   FileEntity data = 1;
 }
 
-message DocumentDeleteFileRequest {
-  DocumentDeleteFileRequestData data = 1;
-}
 
-message DocumentDeleteFileRequestData {
-  int64 transaction_id = 1;
-  int64 file_id = 2;
-}
 
 message DocumentLeafListRequest {
   DocumentLeafListRequestData data = 1;
@@ -2448,8 +2458,21 @@ message DocumentLeafListResponse {
   repeated DocumentEntity data = 1;
 }
 
+message DocumentFilesRequest {
+  DocumentFilesRequestData data = 1;
+}
+
+message DocumentFilesRequestData {
+  int64 document_id = 1;
+}
+
+message DocumentFilesResponse {
+  repeated FileEntity data = 1;
+}
+
 service Document {
   rpc Detail(DocumentDetailRequest) returns(DocumentDetailResponse);
   rpc LeafList(DocumentLeafListRequest) returns(DocumentLeafListResponse);
+  rpc Files(DocumentFilesRequest) returns(DocumentFilesResponse);
 }
 // ===================== document service end ======================

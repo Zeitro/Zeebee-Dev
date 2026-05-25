@@ -14,24 +14,24 @@ import (
 )
 
 type (
-	BorrowerPropertyTransactionAllRequest          = borrower.BorrowerPropertyTransactionAllRequest
-	BorrowerPropertyTransactionAllResponse         = borrower.BorrowerPropertyTransactionAllResponse
-	BorrowerPropertyTransactionChecklistRequest    = borrower.BorrowerPropertyTransactionChecklistRequest
-	BorrowerPropertyTransactionCreateRequest       = borrower.BorrowerPropertyTransactionCreateRequest
-	BorrowerPropertyTransactionCreateResponse      = borrower.BorrowerPropertyTransactionCreateResponse
-	BorrowerPropertyTransactionDeleteRequest       = borrower.BorrowerPropertyTransactionDeleteRequest
-	BorrowerPropertyTransactionDetailRequest       = borrower.BorrowerPropertyTransactionDetailRequest
-	BorrowerPropertyTransactionDetailResponse      = borrower.BorrowerPropertyTransactionDetailResponse
-	BorrowerPropertyTransactionPageRequest         = borrower.BorrowerPropertyTransactionPageRequest
-	BorrowerPropertyTransactionPageResponse        = borrower.BorrowerPropertyTransactionPageResponse
-	BorrowerPropertyTransactionSwitchStatusRequest = borrower.BorrowerPropertyTransactionSwitchStatusRequest
-	BorrowerPropertyTransactionUpdateRequest       = borrower.BorrowerPropertyTransactionUpdateRequest
-	DocumentCreateRequest                          = borrower.DocumentCreateRequest
-	DocumentCreateResponse                         = borrower.DocumentCreateResponse
-	DocumentDeleteFileRequest                      = borrower.DocumentDeleteFileRequest
-	DocumentUploadFileRequest                      = borrower.DocumentUploadFileRequest
-	DocumentUploadFileResponse                     = borrower.DocumentUploadFileResponse
-	EmptyResponse                                  = borrower.EmptyResponse
+	BorrowerPropertyTransactionAllRequest                = borrower.BorrowerPropertyTransactionAllRequest
+	BorrowerPropertyTransactionAllResponse               = borrower.BorrowerPropertyTransactionAllResponse
+	BorrowerPropertyTransactionChecklistRequest          = borrower.BorrowerPropertyTransactionChecklistRequest
+	BorrowerPropertyTransactionCreateRequest             = borrower.BorrowerPropertyTransactionCreateRequest
+	BorrowerPropertyTransactionCreateResponse            = borrower.BorrowerPropertyTransactionCreateResponse
+	BorrowerPropertyTransactionDeleteRequest             = borrower.BorrowerPropertyTransactionDeleteRequest
+	BorrowerPropertyTransactionDetailRequest             = borrower.BorrowerPropertyTransactionDetailRequest
+	BorrowerPropertyTransactionDetailResponse            = borrower.BorrowerPropertyTransactionDetailResponse
+	BorrowerPropertyTransactionDocumentDeleteFileRequest = borrower.BorrowerPropertyTransactionDocumentDeleteFileRequest
+	BorrowerPropertyTransactionDocumentUploadFileRequest = borrower.BorrowerPropertyTransactionDocumentUploadFileRequest
+	BorrowerPropertyTransactionPageRequest               = borrower.BorrowerPropertyTransactionPageRequest
+	BorrowerPropertyTransactionPageResponse              = borrower.BorrowerPropertyTransactionPageResponse
+	BorrowerPropertyTransactionSwitchStatusRequest       = borrower.BorrowerPropertyTransactionSwitchStatusRequest
+	BorrowerPropertyTransactionUpdateRequest             = borrower.BorrowerPropertyTransactionUpdateRequest
+	DocumentCreateRequest                                = borrower.DocumentCreateRequest
+	DocumentCreateResponse                               = borrower.DocumentCreateResponse
+	DocumentUploadFileResponse                           = borrower.DocumentUploadFileResponse
+	EmptyResponse                                        = borrower.EmptyResponse
 
 	BorrowerPropertyTransaction interface {
 		Create(ctx context.Context, in *BorrowerPropertyTransactionCreateRequest, opts ...grpc.CallOption) (*BorrowerPropertyTransactionCreateResponse, error)
@@ -43,8 +43,8 @@ type (
 		UpdateChecklist(ctx context.Context, in *BorrowerPropertyTransactionChecklistRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		Page(ctx context.Context, in *BorrowerPropertyTransactionPageRequest, opts ...grpc.CallOption) (*BorrowerPropertyTransactionPageResponse, error)
 		CreateDocument(ctx context.Context, in *DocumentCreateRequest, opts ...grpc.CallOption) (*DocumentCreateResponse, error)
-		UploadDocumentFile(ctx context.Context, in *DocumentUploadFileRequest, opts ...grpc.CallOption) (*DocumentUploadFileResponse, error)
-		DeleteDocumentFile(ctx context.Context, in *DocumentDeleteFileRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		UploadDocumentFile(ctx context.Context, in *BorrowerPropertyTransactionDocumentUploadFileRequest, opts ...grpc.CallOption) (*DocumentUploadFileResponse, error)
+		DeleteDocumentFile(ctx context.Context, in *BorrowerPropertyTransactionDocumentDeleteFileRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	}
 
 	defaultBorrowerPropertyTransaction struct {
@@ -103,12 +103,12 @@ func (m *defaultBorrowerPropertyTransaction) CreateDocument(ctx context.Context,
 	return client.CreateDocument(ctx, in, opts...)
 }
 
-func (m *defaultBorrowerPropertyTransaction) UploadDocumentFile(ctx context.Context, in *DocumentUploadFileRequest, opts ...grpc.CallOption) (*DocumentUploadFileResponse, error) {
+func (m *defaultBorrowerPropertyTransaction) UploadDocumentFile(ctx context.Context, in *BorrowerPropertyTransactionDocumentUploadFileRequest, opts ...grpc.CallOption) (*DocumentUploadFileResponse, error) {
 	client := borrower.NewBorrowerPropertyTransactionClient(m.cli.Conn())
 	return client.UploadDocumentFile(ctx, in, opts...)
 }
 
-func (m *defaultBorrowerPropertyTransaction) DeleteDocumentFile(ctx context.Context, in *DocumentDeleteFileRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+func (m *defaultBorrowerPropertyTransaction) DeleteDocumentFile(ctx context.Context, in *BorrowerPropertyTransactionDocumentDeleteFileRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	client := borrower.NewBorrowerPropertyTransactionClient(m.cli.Conn())
 	return client.DeleteDocumentFile(ctx, in, opts...)
 }

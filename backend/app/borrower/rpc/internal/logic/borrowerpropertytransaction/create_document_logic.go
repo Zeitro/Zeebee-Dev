@@ -2,6 +2,7 @@ package borrowerpropertytransactionlogic
 
 import (
 	"context"
+	"encoding/json"
 
 	"gorm.io/gorm"
 
@@ -18,8 +19,8 @@ import (
 )
 
 type CreateDocumentLogic struct {
-	ctx       context.Context
-	svcCtx    *svc.ServiceContext
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
 	logx.Logger
 	baseLogic *logic.BaseLogic
 }
@@ -48,41 +49,64 @@ func (l *CreateDocumentLogic) CreateDocument(in *borrower.DocumentCreateRequest)
 	// validate entity_document binding exists for the transaction
 	entityDoc, err := l.svcCtx.EntityDocumentRepo.GetByEntity(l.ctx, constants.EntityDocumentTypeBorrowerPropertyTransaction, in.Data.TransactionId)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Entity document not found for transaction")
+		return nil, errorx.Wrap(err, "failed to find entity document")
 	}
 
 	// validate parent exists and belongs to the transaction's document tree
 	parent, err := l.svcCtx.DocumentRepo.FindOneById(l.ctx, in.Data.ParentId)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Parent document not found")
+		err = errorx.Wrap(err, "failed to find parent document")
+		return
 	}
 	if !isDescendantOf(l.ctx, l.svcCtx.DocumentRepo, parent, entityDoc.RootDocumentId) {
-		return nil, errorx.New("Parent document does not belong to this transaction")
+		err = errorx.New("parent document does not belong to this transaction")
+		return
+	}
+	if parent.Type != constants.DocumentTypeBranch {
+		err = errorx.New("parent document must be a branch")
+		return
 	}
 
 	// FR-014: name uniqueness among siblings
-	siblings, err := l.svcCtx.DocumentRepo.GetChildren(l.ctx, parent.Id)
+	isExisted, err := l.svcCtx.DocumentRepo.IsExistedByColumns(l.ctx, map[string]interface{}{
+		"name":      in.Data.Name,
+		"parent_id": parent.Id,
+	})
 	if err != nil {
-		return nil, err
+		err = errorx.Wrap(err, "failed to check document name existence")
+		return
 	}
-	for _, s := range siblings {
-		if s.Name == in.Data.Name {
-			return nil, errorx.New("Document name already exists at this level")
-		}
+	if isExisted {
+		return nil, errorx.New("document name already exists at this level")
+	}
+	maxSortOrder, err := l.svcCtx.DocumentRepo.GetMaxSortOrderByParentId(l.ctx, parent.Id)
+	if err != nil {
+		err = errorx.Wrap(err, "failed to get max sort order")
+		return
 	}
 
 	// FR-013: only create leaf documents at same level as existing leaves
 	doc := &model.Document{
-		ParentId:  parent.Id,
-		Type:      "leaf",
-		Name:      in.Data.Name,
-		Level:     parent.Level + 1,
-		SortOrder: int32(len(siblings)) + 1,
+		ParentId:         parent.Id,
+		EntityDocumentId: parent.EntityDocumentId,
+		Type:             constants.DocumentTypeLeaf,
+		Name:             in.Data.Name,
+		Level:            parent.Level + 1,
+		SortOrder:        int32(maxSortOrder) + 1,
 	}
 
 	err = l.svcCtx.DocumentRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		var innerErr error
-
+		// create document
+		metadata := map[string]interface{}{}
+		innerErr = json.Unmarshal([]byte(parent.Metadata), &metadata)
+		if innerErr != nil {
+			innerErr = errorx.Wrap(innerErr, "failed to unmarshal parent document metadata")
+			return innerErr
+		}
+		metadata["create_type"] = "Manual"
+		metadataContent, _ := json.Marshal(metadata)
+		doc.Metadata = metadataContent
 		doc, innerErr = l.svcCtx.DocumentRepo.CreateWithTx(l.ctx, tx, doc, false)
 		if innerErr != nil {
 			return innerErr
@@ -94,20 +118,20 @@ func (l *CreateDocumentLogic) CreateDocument(in *borrower.DocumentCreateRequest)
 			EntityType:     constants.OperationEntityTypeBorrowerPropertyTransaction,
 			OperatorId:     claim.OrganizationUserId,
 			OperatorName:   claim.Username,
-			Operation:      constants.OperationActionBorrowerPropertyTransactionUploadDocument,
+			Operation:      constants.OperationActionBorrowerPropertyTransactionAddDocument,
 			OrganizationId: claim.OrganizationId,
-			Note:           "Create document node: " + in.Data.Name,
+			Note:           "Create document: " + in.Data.Name,
 		})
 		if innerErr != nil {
 			return innerErr
 		}
 
-		// FR-017a: recalculate checklist
+		// recalculate checklist
 		_, innerErr = l.baseLogic.RecalculateBorrowerPropertyTransactionChecklist(l.ctx, tx, in.Data.TransactionId)
 		return innerErr
 	})
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to create document")
+		return
 	}
 
 	protoDoc, err := copierx.Trans[model.Document, borrower.DocumentEntity](doc, copierx.TimeToRFC3339Str())

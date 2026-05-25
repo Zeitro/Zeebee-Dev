@@ -2,6 +2,8 @@ package borrowerpropertytransactionlogic
 
 import (
 	"context"
+	"database/sql"
+	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -19,8 +21,8 @@ import (
 )
 
 type UploadDocumentFileLogic struct {
-	ctx       context.Context
-	svcCtx    *svc.ServiceContext
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
 	logx.Logger
 	baseLogic *logic.BaseLogic
 }
@@ -34,7 +36,7 @@ func NewUploadDocumentFileLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.DocumentUploadFileRequest) (resp *borrower.DocumentUploadFileResponse, err error) {
+func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerPropertyTransactionDocumentUploadFileRequest) (resp *borrower.DocumentUploadFileResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -49,32 +51,50 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.DocumentUpload
 	// FR-009: validate document exists and is leaf node
 	doc, err := l.svcCtx.DocumentRepo.FindOneById(l.ctx, in.Data.DocumentId)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Document not found")
+		err = errorx.Wrap(err, "failed to find document")
+		return
 	}
-	if doc.Type != "leaf" {
-		return nil, errorx.New("Can only upload files to leaf documents")
+	if doc.Type != constants.DocumentTypeLeaf {
+		err = errorx.New("can only upload files to leaf documents")
+		return
 	}
 
 	// validate document belongs to the transaction's document tree
 	entityDoc, err := l.svcCtx.EntityDocumentRepo.GetByEntity(l.ctx, constants.EntityDocumentTypeBorrowerPropertyTransaction, in.Data.TransactionId)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Transaction document binding not found")
+		err = errorx.New("transaction document binding not found")
+		return
 	}
 	if !isDescendantOf(l.ctx, l.svcCtx.DocumentRepo, doc, entityDoc.RootDocumentId) {
-		return nil, errorx.New("Document does not belong to this transaction")
+		err = errorx.New("document does not belong to this transaction")
+		return
 	}
 
-	// FR-010: create file record with storage_type and upload_type defaults
+	storageType := constants.StorageType(in.Data.StorageType)
+	if !storageType.IsValid() {
+		err = errorx.New("invalid storage type")
+		return
+	}
+	uploadType := constants.UploadType(in.Data.UploadType)
+	if !uploadType.IsValid() {
+		err = errorx.New("invalid upload type")
+		return
+	}
+
+	// FR-010: create file record with storage_type and upload_type from request
 	fileRecord := &model.File{
 		EntityType:  constants.FileEntityTypeDocument,
 		EntityId:    doc.Id,
 		FileUrl:     in.Data.FileUrl,
 		FileName:    in.Data.FileName,
-		StorageType: constants.StorageTypeAwsS3,
-		UploadType:  constants.UploadTypeManual,
+		StorageType: storageType,
+		UploadType:  uploadType,
 	}
 
-	now := time.Now()
+	now := &sql.NullTime{
+		Time:  time.Now(),
+		Valid: true,
+	}
 
 	err = l.svcCtx.DocumentRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		var innerErr error
@@ -98,7 +118,7 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.DocumentUpload
 			OperatorName:   claim.Username,
 			Operation:      constants.OperationActionBorrowerPropertyTransactionUploadDocument,
 			OrganizationId: claim.OrganizationId,
-			Note:           "Upload file to document: " + doc.Name,
+			Note:           fmt.Sprintf("upload file %s to document %s", fileRecord.FileName, doc.Name),
 		})
 		if innerErr != nil {
 			return innerErr
@@ -109,7 +129,7 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.DocumentUpload
 		return innerErr
 	})
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to upload file")
+		return
 	}
 
 	protoFile, err := copierx.Trans[model.File, borrower.FileEntity](fileRecord, copierx.TimeToRFC3339Str())
@@ -122,7 +142,7 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.DocumentUpload
 	}, nil
 }
 
-func (l *UploadDocumentFileLogic) propagateLastUploadedAt(tx *gorm.DB, doc *model.Document, t time.Time) error {
+func (l *UploadDocumentFileLogic) propagateLastUploadedAt(tx *gorm.DB, doc *model.Document, t *sql.NullTime) error {
 	err := l.svcCtx.DocumentRepo.UpdateColumnsByIdWithTx(l.ctx, tx, doc.Id, map[string]interface{}{
 		"last_uploaded_at": t,
 	})

@@ -2,6 +2,7 @@ package borrowerpropertytransactionlogic
 
 import (
 	"context"
+	"fmt"
 
 	"gorm.io/gorm"
 
@@ -16,8 +17,8 @@ import (
 )
 
 type DeleteDocumentFileLogic struct {
-	ctx       context.Context
-	svcCtx    *svc.ServiceContext
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
 	logx.Logger
 	baseLogic *logic.BaseLogic
 }
@@ -31,7 +32,7 @@ func NewDeleteDocumentFileLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *DeleteDocumentFileLogic) DeleteDocumentFile(in *borrower.DocumentDeleteFileRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *DeleteDocumentFileLogic) DeleteDocumentFile(in *borrower.BorrowerPropertyTransactionDocumentDeleteFileRequest) (resp *borrower.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -46,26 +47,29 @@ func (l *DeleteDocumentFileLogic) DeleteDocumentFile(in *borrower.DocumentDelete
 	// validate transaction exists and has document binding
 	entityDoc, err := l.svcCtx.EntityDocumentRepo.GetByEntity(l.ctx, constants.EntityDocumentTypeBorrowerPropertyTransaction, in.Data.TransactionId)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Transaction document binding not found")
+		err = errorx.Wrap(err, "transaction document binding not found")
+		return
 	}
 
 	fileRecord, err := l.svcCtx.FileRepo.FindOneById(l.ctx, in.Data.FileId)
 	if err != nil {
-		return nil, errorx.Wrap(err, "File not found")
+		err = errorx.Wrap(err, "failed to find file")
+		return
 	}
 
 	// validate file's document belongs to the transaction's document tree
 	fileDoc, err := l.svcCtx.DocumentRepo.FindOneById(l.ctx, fileRecord.EntityId)
 	if err != nil {
-		return nil, errorx.Wrap(err, "File document not found")
+		err = errorx.Wrap(err, "failed to find document")
+		return
 	}
 	if !isDescendantOf(l.ctx, l.svcCtx.DocumentRepo, fileDoc, entityDoc.RootDocumentId) {
-		return nil, errorx.New("File does not belong to this transaction")
+		return nil, errorx.New("file does not belong to this transaction")
 	}
 
 	// FR-012: only allow deleting manually uploaded files
 	if fileRecord.UploadType != constants.UploadTypeManual {
-		return nil, errorx.New("Can only delete manually uploaded files")
+		return nil, errorx.New("can only delete manually uploaded files")
 	}
 
 	err = l.svcCtx.FileRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
@@ -83,7 +87,7 @@ func (l *DeleteDocumentFileLogic) DeleteDocumentFile(in *borrower.DocumentDelete
 			OperatorName:   claim.Username,
 			Operation:      constants.OperationActionBorrowerPropertyTransactionDeleteDocument,
 			OrganizationId: claim.OrganizationId,
-			Note:           "Delete file from document",
+			Note:           fmt.Sprintf("delete file %s from document %s", fileRecord.FileName, fileDoc.Name),
 		})
 		if innerErr != nil {
 			return innerErr
@@ -94,7 +98,7 @@ func (l *DeleteDocumentFileLogic) DeleteDocumentFile(in *borrower.DocumentDelete
 		return innerErr
 	})
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to delete file")
+		return
 	}
 
 	return &borrower.EmptyResponse{}, nil

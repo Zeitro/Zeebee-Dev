@@ -25,7 +25,7 @@ func DocumentUploadFileHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 					Error(err)
 			}
 		}()
-		var req types.DocumentUploadFileRequest
+		var req types.BorrowerPropertyTransactionDocumentUploadFileRequest
 		if err = httpx.Parse(r, &req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
