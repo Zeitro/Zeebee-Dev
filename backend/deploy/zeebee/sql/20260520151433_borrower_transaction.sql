@@ -63,6 +63,7 @@ CREATE INDEX "idx_operation_org_id" ON "public"."operations" ("organization_id")
 CREATE TABLE "public"."entity_documents"
 (
     "id"               serial,
+    "organization_id" int4 NOT NULL DEFAULT 0,
     "entity_type"      varchar(50) NOT NULL DEFAULT '',
     "entity_id"        int4        NOT NULL DEFAULT 0,
     "root_document_id" int4        NOT NULL DEFAULT 0,
@@ -74,6 +75,7 @@ CREATE TABLE "public"."entity_documents"
 
 CREATE INDEX "idx_entity_doc_entity_id" ON "public"."entity_documents" ("entity_type","entity_id");
 CREATE INDEX "idx_entity_doc_root_id" ON "public"."entity_documents" ("root_document_id");
+CREATE INDEX "idx_entity_doc_org_id" ON "public"."entity_documents" ("organization_id");
 
 -- documents
 CREATE TABLE "public"."documents"
