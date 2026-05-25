@@ -1,11 +1,11 @@
-package document
+package borrower_property_transaction
 
 import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"zeebee-backend/app/borrower/api/internal/logic/document"
+	"zeebee-backend/app/borrower/api/internal/logic/borrower_property_transaction"
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 
@@ -14,8 +14,8 @@ import (
 	"zeebee-backend/common/validator"
 )
 
-// create leaf document
-func DocumentCreateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+// delete document file
+func DocumentDeleteFileHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -25,7 +25,7 @@ func DocumentCreateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 					Error(err)
 			}
 		}()
-		var req types.DocumentCreateRequest
+		var req types.DocumentDeleteFileRequest
 		if err = httpx.Parse(r, &req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
@@ -41,8 +41,8 @@ func DocumentCreateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := document.NewDocumentCreateLogic(r.Context(), svcCtx)
-		resp, err := l.DocumentCreate(&req)
+		l := borrower_property_transaction.NewDocumentDeleteFileLogic(r.Context(), svcCtx)
+		resp, err := l.DocumentDeleteFile(&req)
 		if err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 		} else {

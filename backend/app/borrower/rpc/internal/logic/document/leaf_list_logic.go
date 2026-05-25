@@ -38,7 +38,7 @@ func (l *LeafListLogic) LeafList(in *borrower.DocumentLeafListRequest) (resp *bo
 	}()
 
 	// find entity_document to get root
-	entityDoc, err := l.svcCtx.EntityDocumentRepo.GetByEntity(l.ctx, in.Data.EntityType, in.Data.EntityId)
+	entityDoc, err := l.svcCtx.EntityDocumentRepo.GetByEntity(l.ctx, constants.EntityDocumentType(in.Data.EntityType), in.Data.EntityId)
 	if err != nil {
 		return nil, errorx.Wrap(err, "Entity document not found")
 	}

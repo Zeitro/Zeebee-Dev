@@ -225,6 +225,24 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: borrower_property_transaction.BorrowerPropertyTransactionSwitchStatusHandler(serverCtx),
 				},
 				{
+					// create leaf document
+					Method:  http.MethodPost,
+					Path:    "/borrower_property_transaction/:transaction_id/document",
+					Handler: borrower_property_transaction.DocumentCreateHandler(serverCtx),
+				},
+				{
+					// upload file to document
+					Method:  http.MethodPost,
+					Path:    "/borrower_property_transaction/:transaction_id/document/:document_id/file",
+					Handler: borrower_property_transaction.DocumentUploadFileHandler(serverCtx),
+				},
+				{
+					// delete document file
+					Method:  http.MethodDelete,
+					Path:    "/borrower_property_transaction/:transaction_id/document/:document_id/file/:file_id",
+					Handler: borrower_property_transaction.DocumentDeleteFileHandler(serverCtx),
+				},
+				{
 					// all transactions for select
 					Method:  http.MethodGet,
 					Path:    "/borrower_property_transaction/all",
@@ -278,24 +296,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		rest.WithMiddlewares(
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
-				{
-					// create leaf document
-					Method:  http.MethodPost,
-					Path:    "/document",
-					Handler: document.DocumentCreateHandler(serverCtx),
-				},
-				{
-					// upload file to document
-					Method:  http.MethodPost,
-					Path:    "/document/:document_id/upload",
-					Handler: document.DocumentUploadFileHandler(serverCtx),
-				},
-				{
-					// delete document file
-					Method:  http.MethodDelete,
-					Path:    "/document/file/:file_id",
-					Handler: document.DocumentDeleteFileHandler(serverCtx),
-				},
 				{
 					// document tree
 					Method:  http.MethodGet,

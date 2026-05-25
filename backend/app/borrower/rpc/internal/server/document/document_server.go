@@ -28,21 +28,6 @@ func (s *DocumentServer) Detail(ctx context.Context, in *borrower.DocumentDetail
 	return l.Detail(in)
 }
 
-func (s *DocumentServer) Create(ctx context.Context, in *borrower.DocumentCreateRequest) (*borrower.DocumentCreateResponse, error) {
-	l := documentlogic.NewCreateLogic(ctx, s.svcCtx)
-	return l.Create(in)
-}
-
-func (s *DocumentServer) UploadFile(ctx context.Context, in *borrower.DocumentUploadFileRequest) (*borrower.DocumentUploadFileResponse, error) {
-	l := documentlogic.NewUploadFileLogic(ctx, s.svcCtx)
-	return l.UploadFile(in)
-}
-
-func (s *DocumentServer) DeleteFile(ctx context.Context, in *borrower.DocumentDeleteFileRequest) (*borrower.EmptyResponse, error) {
-	l := documentlogic.NewDeleteFileLogic(ctx, s.svcCtx)
-	return l.DeleteFile(in)
-}
-
 func (s *DocumentServer) LeafList(ctx context.Context, in *borrower.DocumentLeafListRequest) (*borrower.DocumentLeafListResponse, error) {
 	l := documentlogic.NewLeafListLogic(ctx, s.svcCtx)
 	return l.LeafList(in)

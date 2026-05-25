@@ -635,12 +635,24 @@ service borrower-api {
 	@doc "page transactions"
 	@handler BorrowerPropertyTransactionPage
 	post /borrower_property_transaction/page (BorrowerPropertyTransactionPageRequest) returns (BorrowerPropertyTransactionPageResponse)
+
+	@doc "upload file to document"
+	@handler DocumentUploadFile
+	post /borrower_property_transaction/:transaction_id/document/:document_id/file (DocumentUploadFileRequest) returns (DocumentUploadFileResponse)
+
+	@doc "delete document file"
+	@handler DocumentDeleteFile
+	delete /borrower_property_transaction/:transaction_id/document/:document_id/file/:file_id (DocumentDeleteFileRequest) returns (EmptyResponse)
+
+	@doc "create leaf document"
+	@handler DocumentCreate
+	post /borrower_property_transaction/:transaction_id/document (DocumentCreateRequest) returns (DocumentCreateResponse)
 }
 
 // =============== borrower property transaction end ==============
 // =============== document start ==============
 @server (
-	desc:       "document service"
+	desc:       "document service (read-only)"
 	version:    v1
 	group:      document
 	prefix:     /api/v1
@@ -651,18 +663,6 @@ service borrower-api {
 	@doc "document tree"
 	@handler DocumentTree
 	get /document/tree/:entity_type/:entity_id (DocumentTreeRequest) returns (DocumentTreeResponse)
-
-	@doc "upload file to document"
-	@handler DocumentUploadFile
-	post /document/:document_id/upload (DocumentUploadFileRequest) returns (DocumentUploadFileResponse)
-
-	@doc "delete document file"
-	@handler DocumentDeleteFile
-	delete /document/file/:file_id (DocumentDeleteFileRequest) returns (EmptyResponse)
-
-	@doc "create leaf document"
-	@handler DocumentCreate
-	post /document (DocumentCreateRequest) returns (DocumentCreateResponse)
 }
 
 // =============== document end ==============

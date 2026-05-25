@@ -1,4 +1,4 @@
-package document
+package borrower_property_transaction
 
 import (
 	"context"
@@ -28,19 +28,19 @@ func NewDocumentUploadFileLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 func (l *DocumentUploadFileLogic) DocumentUploadFile(req *types.DocumentUploadFileRequest) (resp *types.DocumentUploadFileResponse, err error) {
 	rpcReq := &borrower.DocumentUploadFileRequest{
 		Data: &borrower.DocumentUploadFileRequestData{
-			DocumentId: req.DocumentId,
-			FileName:   req.FileName,
-			FileUrl:    req.FileUrl,
-			FileSuffix: req.FileSuffix,
+			TransactionId: req.TransactionId,
+			DocumentId:    req.DocumentId,
+			FileName:      req.FileName,
+			FileUrl:       req.FileUrl,
+			FileSuffix:    req.FileSuffix,
 		},
 	}
 
-	rpcResp, err := l.svcCtx.DocumentRpcClient.UploadFile(l.ctx, rpcReq)
+	rpcResp, err := l.svcCtx.BorrowerPropertyTransactionRpcClient.UploadDocumentFile(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err
 	}
 
-	resp = &types.DocumentUploadFileResponse{}
 	resp, err = copierx.Trans[borrower.FileEntity, types.DocumentUploadFileResponse](rpcResp.Data)
 	if err != nil {
 		return nil, err

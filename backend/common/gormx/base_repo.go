@@ -232,7 +232,7 @@ func (repo *BaseRepo[T]) PluckByColumns(ctx context.Context, columnName string, 
 
 // PluckByColumnsWithTx find column slice by columns with tx
 func (repo *BaseRepo[T]) PluckByColumnsWithTx(ctx context.Context, tx *gorm.DB, columnName string, target interface{}, columns map[string]interface{}) error {
-	query := tx.WithContext(ctx)
+	query := tx.WithContext(ctx).Model(new(T))
 	for k, v := range columns {
 		query = query.Where(k+" = ?", v)
 	}

@@ -37,7 +37,7 @@ func (l *DetailLogic) Detail(in *borrower.DocumentDetailRequest) (resp *borrower
 		}
 	}()
 
-	entityDoc, err := l.svcCtx.EntityDocumentRepo.GetByEntity(l.ctx, in.Data.EntityType, in.Data.EntityId)
+	entityDoc, err := l.svcCtx.EntityDocumentRepo.GetByEntity(l.ctx, constants.EntityDocumentType(in.Data.EntityType), in.Data.EntityId)
 	if err != nil {
 		return nil, errorx.Wrap(err, "Entity document not found")
 	}

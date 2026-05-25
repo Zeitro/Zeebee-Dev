@@ -14,22 +14,13 @@ import (
 )
 
 type (
-	DocumentCreateRequest      = borrower.DocumentCreateRequest
-	DocumentCreateResponse     = borrower.DocumentCreateResponse
-	DocumentDeleteFileRequest  = borrower.DocumentDeleteFileRequest
-	DocumentDetailRequest      = borrower.DocumentDetailRequest
-	DocumentDetailResponse     = borrower.DocumentDetailResponse
-	DocumentLeafListRequest    = borrower.DocumentLeafListRequest
-	DocumentLeafListResponse   = borrower.DocumentLeafListResponse
-	DocumentUploadFileRequest  = borrower.DocumentUploadFileRequest
-	DocumentUploadFileResponse = borrower.DocumentUploadFileResponse
-	EmptyResponse              = borrower.EmptyResponse
+	DocumentDetailRequest    = borrower.DocumentDetailRequest
+	DocumentDetailResponse   = borrower.DocumentDetailResponse
+	DocumentLeafListRequest  = borrower.DocumentLeafListRequest
+	DocumentLeafListResponse = borrower.DocumentLeafListResponse
 
 	Document interface {
 		Detail(ctx context.Context, in *DocumentDetailRequest, opts ...grpc.CallOption) (*DocumentDetailResponse, error)
-		Create(ctx context.Context, in *DocumentCreateRequest, opts ...grpc.CallOption) (*DocumentCreateResponse, error)
-		UploadFile(ctx context.Context, in *DocumentUploadFileRequest, opts ...grpc.CallOption) (*DocumentUploadFileResponse, error)
-		DeleteFile(ctx context.Context, in *DocumentDeleteFileRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		LeafList(ctx context.Context, in *DocumentLeafListRequest, opts ...grpc.CallOption) (*DocumentLeafListResponse, error)
 	}
 
@@ -47,21 +38,6 @@ func NewDocument(cli zrpc.Client) Document {
 func (m *defaultDocument) Detail(ctx context.Context, in *DocumentDetailRequest, opts ...grpc.CallOption) (*DocumentDetailResponse, error) {
 	client := borrower.NewDocumentClient(m.cli.Conn())
 	return client.Detail(ctx, in, opts...)
-}
-
-func (m *defaultDocument) Create(ctx context.Context, in *DocumentCreateRequest, opts ...grpc.CallOption) (*DocumentCreateResponse, error) {
-	client := borrower.NewDocumentClient(m.cli.Conn())
-	return client.Create(ctx, in, opts...)
-}
-
-func (m *defaultDocument) UploadFile(ctx context.Context, in *DocumentUploadFileRequest, opts ...grpc.CallOption) (*DocumentUploadFileResponse, error) {
-	client := borrower.NewDocumentClient(m.cli.Conn())
-	return client.UploadFile(ctx, in, opts...)
-}
-
-func (m *defaultDocument) DeleteFile(ctx context.Context, in *DocumentDeleteFileRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
-	client := borrower.NewDocumentClient(m.cli.Conn())
-	return client.DeleteFile(ctx, in, opts...)
 }
 
 func (m *defaultDocument) LeafList(ctx context.Context, in *DocumentLeafListRequest, opts ...grpc.CallOption) (*DocumentLeafListResponse, error) {

@@ -436,10 +436,9 @@ type BorrowerPropertyTransactionUpdateRequest struct {
 }
 
 type DocumentCreateRequest struct {
-	EntityType string `json:"entity_type" validate:"required"`
-	EntityId   int64  `json:"entity_id" validate:"required,gt=0"`
-	ParentId   int64  `json:"parent_id" validate:"required,gt=0"`
-	Name       string `json:"name" validate:"required"`
+	TransactionId int64  `path:"transaction_id" validate:"required,gt=0"`
+	ParentId      int64  `json:"parent_id" validate:"required,gt=0"`
+	Name          string `json:"name" validate:"required"`
 }
 
 type DocumentCreateResponse struct {
@@ -447,7 +446,9 @@ type DocumentCreateResponse struct {
 }
 
 type DocumentDeleteFileRequest struct {
-	FileId int64 `path:"file_id" validate:"required,gt=0"`
+	TransactionId int64 `path:"transaction_id" validate:"required,gt=0"`
+	DocumentId    int64 `path:"document_id" validate:"required,gt=0"`
+	FileId        int64 `path:"file_id" validate:"required,gt=0"`
 }
 
 type DocumentFile struct {
@@ -484,10 +485,11 @@ type DocumentTreeResponse struct {
 }
 
 type DocumentUploadFileRequest struct {
-	DocumentId int64  `path:"document_id" validate:"required,gt=0"`
-	FileName   string `json:"file_name" validate:"required"`
-	FileUrl    string `json:"file_url" validate:"required"`
-	FileSuffix string `json:"file_suffix" validate:"required"`
+	TransactionId int64  `path:"transaction_id" validate:"required,gt=0"`
+	DocumentId    int64  `path:"document_id" validate:"required,gt=0"`
+	FileName      string `json:"file_name" validate:"required"`
+	FileUrl       string `json:"file_url" validate:"required"`
+	FileSuffix    string `json:"file_suffix" validate:"required"`
 }
 
 type DocumentUploadFileResponse struct {

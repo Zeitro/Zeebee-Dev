@@ -1,4 +1,4 @@
-package document
+package borrower_property_transaction
 
 import (
 	"context"
@@ -27,11 +27,12 @@ func NewDocumentDeleteFileLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 func (l *DocumentDeleteFileLogic) DocumentDeleteFile(req *types.DocumentDeleteFileRequest) (resp *types.EmptyResponse, err error) {
 	rpcReq := &borrower.DocumentDeleteFileRequest{
 		Data: &borrower.DocumentDeleteFileRequestData{
-			FileId: req.FileId,
+			TransactionId: req.TransactionId,
+			FileId:        req.FileId,
 		},
 	}
 
-	_, err = l.svcCtx.DocumentRpcClient.DeleteFile(l.ctx, rpcReq)
+	_, err = l.svcCtx.BorrowerPropertyTransactionRpcClient.DeleteDocumentFile(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err
 	}

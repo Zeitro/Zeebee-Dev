@@ -1,4 +1,4 @@
-package documentlogic
+package borrowerpropertytransactionlogic
 
 import (
 	"context"
@@ -15,15 +15,15 @@ import (
 	"zeebee-backend/domains/zeebee/data/dto"
 )
 
-type DeleteFileLogic struct {
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+type DeleteDocumentFileLogic struct {
+	ctx       context.Context
+	svcCtx    *svc.ServiceContext
 	logx.Logger
 	baseLogic *logic.BaseLogic
 }
 
-func NewDeleteFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteFileLogic {
-	return &DeleteFileLogic{
+func NewDeleteDocumentFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteDocumentFileLogic {
+	return &DeleteDocumentFileLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		Logger:    logx.WithContext(ctx),
@@ -31,15 +31,22 @@ func NewDeleteFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delete
 	}
 }
 
-func (l *DeleteFileLogic) DeleteFile(in *borrower.DocumentDeleteFileRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *DeleteDocumentFileLogic) DeleteDocumentFile(in *borrower.DocumentDeleteFileRequest) (resp *borrower.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
+
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
+	}
+
+	// validate transaction exists and has document binding
+	entityDoc, err := l.svcCtx.EntityDocumentRepo.GetByEntity(l.ctx, constants.EntityDocumentTypeBorrowerPropertyTransaction, in.Data.TransactionId)
+	if err != nil {
+		return nil, errorx.Wrap(err, "Transaction document binding not found")
 	}
 
 	fileRecord, err := l.svcCtx.FileRepo.FindOneById(l.ctx, in.Data.FileId)
@@ -47,7 +54,16 @@ func (l *DeleteFileLogic) DeleteFile(in *borrower.DocumentDeleteFileRequest) (re
 		return nil, errorx.Wrap(err, "File not found")
 	}
 
-	// only allow deleting manually uploaded files
+	// validate file's document belongs to the transaction's document tree
+	fileDoc, err := l.svcCtx.DocumentRepo.FindOneById(l.ctx, fileRecord.EntityId)
+	if err != nil {
+		return nil, errorx.Wrap(err, "File document not found")
+	}
+	if !isDescendantOf(l.ctx, l.svcCtx.DocumentRepo, fileDoc, entityDoc.RootDocumentId) {
+		return nil, errorx.New("File does not belong to this transaction")
+	}
+
+	// FR-012: only allow deleting manually uploaded files
 	if fileRecord.UploadType != constants.UploadTypeManual {
 		return nil, errorx.New("Can only delete manually uploaded files")
 	}
@@ -59,9 +75,9 @@ func (l *DeleteFileLogic) DeleteFile(in *borrower.DocumentDeleteFileRequest) (re
 			return innerErr
 		}
 
-		// create operation log
+		// operation log
 		innerErr = l.baseLogic.OperationLogic.CreateOperationLog(l.ctx, tx, dto.OperationCreateDto{
-			EntityId:       fileRecord.EntityId,
+			EntityId:       in.Data.TransactionId,
 			EntityType:     constants.OperationEntityTypeBorrowerPropertyTransaction,
 			OperatorId:     claim.OrganizationUserId,
 			OperatorName:   claim.Username,
@@ -73,11 +89,8 @@ func (l *DeleteFileLogic) DeleteFile(in *borrower.DocumentDeleteFileRequest) (re
 			return innerErr
 		}
 
-		// recalculate checklist for parent transaction
-		transactionId, _ := l.baseLogic.FindTransactionIdByDocumentId(l.ctx, fileRecord.EntityId)
-		if transactionId > 0 {
-			_, innerErr = l.baseLogic.RecalculateBorrowerPropertyTransactionChecklist(l.ctx, tx, transactionId)
-		}
+		// FR-017a: recalculate checklist
+		_, innerErr = l.baseLogic.RecalculateBorrowerPropertyTransactionChecklist(l.ctx, tx, in.Data.TransactionId)
 		return innerErr
 	})
 	if err != nil {

@@ -1,4 +1,4 @@
-package document
+package borrower_property_transaction
 
 import (
 	"context"
@@ -28,14 +28,13 @@ func NewDocumentCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Do
 func (l *DocumentCreateLogic) DocumentCreate(req *types.DocumentCreateRequest) (resp *types.DocumentCreateResponse, err error) {
 	rpcReq := &borrower.DocumentCreateRequest{
 		Data: &borrower.DocumentCreateRequestData{
-			EntityType: req.EntityType,
-			EntityId:   req.EntityId,
-			ParentId:   req.ParentId,
-			Name:       req.Name,
+			TransactionId: req.TransactionId,
+			ParentId:      req.ParentId,
+			Name:          req.Name,
 		},
 	}
 
-	rpcResp, err := l.svcCtx.DocumentRpcClient.Create(l.ctx, rpcReq)
+	rpcResp, err := l.svcCtx.BorrowerPropertyTransactionRpcClient.CreateDocument(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err
 	}

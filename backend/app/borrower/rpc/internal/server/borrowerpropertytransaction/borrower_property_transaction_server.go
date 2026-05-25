@@ -62,3 +62,18 @@ func (s *BorrowerPropertyTransactionServer) Page(ctx context.Context, in *borrow
 	l := borrowerpropertytransactionlogic.NewPageLogic(ctx, s.svcCtx)
 	return l.Page(in)
 }
+
+func (s *BorrowerPropertyTransactionServer) CreateDocument(ctx context.Context, in *borrower.DocumentCreateRequest) (*borrower.DocumentCreateResponse, error) {
+	l := borrowerpropertytransactionlogic.NewCreateDocumentLogic(ctx, s.svcCtx)
+	return l.CreateDocument(in)
+}
+
+func (s *BorrowerPropertyTransactionServer) UploadDocumentFile(ctx context.Context, in *borrower.DocumentUploadFileRequest) (*borrower.DocumentUploadFileResponse, error) {
+	l := borrowerpropertytransactionlogic.NewUploadDocumentFileLogic(ctx, s.svcCtx)
+	return l.UploadDocumentFile(in)
+}
+
+func (s *BorrowerPropertyTransactionServer) DeleteDocumentFile(ctx context.Context, in *borrower.DocumentDeleteFileRequest) (*borrower.EmptyResponse, error) {
+	l := borrowerpropertytransactionlogic.NewDeleteDocumentFileLogic(ctx, s.svcCtx)
+	return l.DeleteDocumentFile(in)
+}

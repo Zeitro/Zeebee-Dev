@@ -21435,10 +21435,9 @@ func (x *DocumentCreateRequest) GetData() *DocumentCreateRequestData {
 
 type DocumentCreateRequestData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	EntityType    string                 `protobuf:"bytes,1,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"`
-	EntityId      int64                  `protobuf:"varint,2,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
-	ParentId      int64                  `protobuf:"varint,3,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
-	Name          string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	TransactionId int64                  `protobuf:"varint,1,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`
+	ParentId      int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
+	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -21473,16 +21472,9 @@ func (*DocumentCreateRequestData) Descriptor() ([]byte, []int) {
 	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{321}
 }
 
-func (x *DocumentCreateRequestData) GetEntityType() string {
+func (x *DocumentCreateRequestData) GetTransactionId() int64 {
 	if x != nil {
-		return x.EntityType
-	}
-	return ""
-}
-
-func (x *DocumentCreateRequestData) GetEntityId() int64 {
-	if x != nil {
-		return x.EntityId
+		return x.TransactionId
 	}
 	return 0
 }
@@ -21591,10 +21583,11 @@ func (x *DocumentUploadFileRequest) GetData() *DocumentUploadFileRequestData {
 
 type DocumentUploadFileRequestData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	FileName      string                 `protobuf:"bytes,2,opt,name=file_name,json=fileName,proto3" json:"file_name,omitempty"`
-	FileUrl       string                 `protobuf:"bytes,3,opt,name=file_url,json=fileUrl,proto3" json:"file_url,omitempty"`
-	FileSuffix    string                 `protobuf:"bytes,4,opt,name=file_suffix,json=fileSuffix,proto3" json:"file_suffix,omitempty"`
+	TransactionId int64                  `protobuf:"varint,1,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`
+	DocumentId    int64                  `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	FileName      string                 `protobuf:"bytes,3,opt,name=file_name,json=fileName,proto3" json:"file_name,omitempty"`
+	FileUrl       string                 `protobuf:"bytes,4,opt,name=file_url,json=fileUrl,proto3" json:"file_url,omitempty"`
+	FileSuffix    string                 `protobuf:"bytes,5,opt,name=file_suffix,json=fileSuffix,proto3" json:"file_suffix,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -21627,6 +21620,13 @@ func (x *DocumentUploadFileRequestData) ProtoReflect() protoreflect.Message {
 // Deprecated: Use DocumentUploadFileRequestData.ProtoReflect.Descriptor instead.
 func (*DocumentUploadFileRequestData) Descriptor() ([]byte, []int) {
 	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{324}
+}
+
+func (x *DocumentUploadFileRequestData) GetTransactionId() int64 {
+	if x != nil {
+		return x.TransactionId
+	}
+	return 0
 }
 
 func (x *DocumentUploadFileRequestData) GetDocumentId() int64 {
@@ -21747,7 +21747,8 @@ func (x *DocumentDeleteFileRequest) GetData() *DocumentDeleteFileRequestData {
 
 type DocumentDeleteFileRequestData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	FileId        int64                  `protobuf:"varint,1,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"`
+	TransactionId int64                  `protobuf:"varint,1,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`
+	FileId        int64                  `protobuf:"varint,2,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -21780,6 +21781,13 @@ func (x *DocumentDeleteFileRequestData) ProtoReflect() protoreflect.Message {
 // Deprecated: Use DocumentDeleteFileRequestData.ProtoReflect.Descriptor instead.
 func (*DocumentDeleteFileRequestData) Descriptor() ([]byte, []int) {
 	return file_app_borrower_rpc_pb_borrower_proto_rawDescGZIP(), []int{327}
+}
+
+func (x *DocumentDeleteFileRequestData) GetTransactionId() int64 {
+	if x != nil {
+		return x.TransactionId
+	}
+	return 0
 }
 
 func (x *DocumentDeleteFileRequestData) GetFileId() int64 {
@@ -24187,30 +24195,30 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x16DocumentDetailResponse\x12,\n" +
 	"\x04data\x18\x01 \x01(\v2\x18.borrower.DocumentEntityR\x04data\"P\n" +
 	"\x15DocumentCreateRequest\x127\n" +
-	"\x04data\x18\x01 \x01(\v2#.borrower.DocumentCreateRequestDataR\x04data\"\x8a\x01\n" +
-	"\x19DocumentCreateRequestData\x12\x1f\n" +
-	"\ventity_type\x18\x01 \x01(\tR\n" +
-	"entityType\x12\x1b\n" +
-	"\tentity_id\x18\x02 \x01(\x03R\bentityId\x12\x1b\n" +
-	"\tparent_id\x18\x03 \x01(\x03R\bparentId\x12\x12\n" +
-	"\x04name\x18\x04 \x01(\tR\x04name\"F\n" +
+	"\x04data\x18\x01 \x01(\v2#.borrower.DocumentCreateRequestDataR\x04data\"s\n" +
+	"\x19DocumentCreateRequestData\x12%\n" +
+	"\x0etransaction_id\x18\x01 \x01(\x03R\rtransactionId\x12\x1b\n" +
+	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\"F\n" +
 	"\x16DocumentCreateResponse\x12,\n" +
 	"\x04data\x18\x01 \x01(\v2\x18.borrower.DocumentEntityR\x04data\"X\n" +
 	"\x19DocumentUploadFileRequest\x12;\n" +
-	"\x04data\x18\x01 \x01(\v2'.borrower.DocumentUploadFileRequestDataR\x04data\"\x99\x01\n" +
-	"\x1dDocumentUploadFileRequestData\x12\x1f\n" +
-	"\vdocument_id\x18\x01 \x01(\x03R\n" +
+	"\x04data\x18\x01 \x01(\v2'.borrower.DocumentUploadFileRequestDataR\x04data\"\xc0\x01\n" +
+	"\x1dDocumentUploadFileRequestData\x12%\n" +
+	"\x0etransaction_id\x18\x01 \x01(\x03R\rtransactionId\x12\x1f\n" +
+	"\vdocument_id\x18\x02 \x01(\x03R\n" +
 	"documentId\x12\x1b\n" +
-	"\tfile_name\x18\x02 \x01(\tR\bfileName\x12\x19\n" +
-	"\bfile_url\x18\x03 \x01(\tR\afileUrl\x12\x1f\n" +
-	"\vfile_suffix\x18\x04 \x01(\tR\n" +
+	"\tfile_name\x18\x03 \x01(\tR\bfileName\x12\x19\n" +
+	"\bfile_url\x18\x04 \x01(\tR\afileUrl\x12\x1f\n" +
+	"\vfile_suffix\x18\x05 \x01(\tR\n" +
 	"fileSuffix\"F\n" +
 	"\x1aDocumentUploadFileResponse\x12(\n" +
 	"\x04data\x18\x01 \x01(\v2\x14.borrower.FileEntityR\x04data\"X\n" +
 	"\x19DocumentDeleteFileRequest\x12;\n" +
-	"\x04data\x18\x01 \x01(\v2'.borrower.DocumentDeleteFileRequestDataR\x04data\"8\n" +
-	"\x1dDocumentDeleteFileRequestData\x12\x17\n" +
-	"\afile_id\x18\x01 \x01(\x03R\x06fileId\"T\n" +
+	"\x04data\x18\x01 \x01(\v2'.borrower.DocumentDeleteFileRequestDataR\x04data\"_\n" +
+	"\x1dDocumentDeleteFileRequestData\x12%\n" +
+	"\x0etransaction_id\x18\x01 \x01(\x03R\rtransactionId\x12\x17\n" +
+	"\afile_id\x18\x02 \x01(\x03R\x06fileId\"T\n" +
 	"\x17DocumentLeafListRequest\x129\n" +
 	"\x04data\x18\x01 \x01(\v2%.borrower.DocumentLeafListRequestDataR\x04data\"[\n" +
 	"\x1bDocumentLeafListRequestData\x12\x1f\n" +
@@ -24321,7 +24329,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x06Zeitro\x12b\n" +
 	"\x13ZeitroListingSearch\x12$.borrower.ZeitroListingSearchRequest\x1a%.borrower.ZeitroListingSearchResponse2L\n" +
 	"\x04Auth\x12D\n" +
-	"\tAuthCheck\x12\x1a.borrower.AuthCheckRequest\x1a\x1b.borrower.AuthCheckResponse2\xea\x06\n" +
+	"\tAuthCheck\x12\x1a.borrower.AuthCheckRequest\x1a\x1b.borrower.AuthCheckResponse2\xf4\b\n" +
 	"\x1bBorrowerPropertyTransaction\x12q\n" +
 	"\x06Create\x122.borrower.BorrowerPropertyTransactionCreateRequest\x1a3.borrower.BorrowerPropertyTransactionCreateResponse\x12q\n" +
 	"\x06Detail\x122.borrower.BorrowerPropertyTransactionDetailRequest\x1a3.borrower.BorrowerPropertyTransactionDetailResponse\x12q\n" +
@@ -24330,14 +24338,12 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\fSwitchStatus\x128.borrower.BorrowerPropertyTransactionSwitchStatusRequest\x1a\x17.borrower.EmptyResponse\x12h\n" +
 	"\x03All\x12/.borrower.BorrowerPropertyTransactionAllRequest\x1a0.borrower.BorrowerPropertyTransactionAllResponse\x12a\n" +
 	"\x0fUpdateChecklist\x125.borrower.BorrowerPropertyTransactionChecklistRequest\x1a\x17.borrower.EmptyResponse\x12k\n" +
-	"\x04Page\x120.borrower.BorrowerPropertyTransactionPageRequest\x1a1.borrower.BorrowerPropertyTransactionPageResponse2\x9c\x03\n" +
+	"\x04Page\x120.borrower.BorrowerPropertyTransactionPageRequest\x1a1.borrower.BorrowerPropertyTransactionPageResponse\x12S\n" +
+	"\x0eCreateDocument\x12\x1f.borrower.DocumentCreateRequest\x1a .borrower.DocumentCreateResponse\x12_\n" +
+	"\x12UploadDocumentFile\x12#.borrower.DocumentUploadFileRequest\x1a$.borrower.DocumentUploadFileResponse\x12R\n" +
+	"\x12DeleteDocumentFile\x12#.borrower.DocumentDeleteFileRequest\x1a\x17.borrower.EmptyResponse2\xaa\x01\n" +
 	"\bDocument\x12K\n" +
-	"\x06Detail\x12\x1f.borrower.DocumentDetailRequest\x1a .borrower.DocumentDetailResponse\x12K\n" +
-	"\x06Create\x12\x1f.borrower.DocumentCreateRequest\x1a .borrower.DocumentCreateResponse\x12W\n" +
-	"\n" +
-	"UploadFile\x12#.borrower.DocumentUploadFileRequest\x1a$.borrower.DocumentUploadFileResponse\x12J\n" +
-	"\n" +
-	"DeleteFile\x12#.borrower.DocumentDeleteFileRequest\x1a\x17.borrower.EmptyResponse\x12Q\n" +
+	"\x06Detail\x12\x1f.borrower.DocumentDetailRequest\x1a .borrower.DocumentDetailResponse\x12Q\n" +
 	"\bLeafList\x12!.borrower.DocumentLeafListRequest\x1a\".borrower.DocumentLeafListResponseB\fZ\n" +
 	"./borrowerb\x06proto3"
 
@@ -25044,10 +25050,10 @@ var file_app_borrower_rpc_pb_borrower_proto_depIdxs = []int32{
 	304, // 347: borrower.BorrowerPropertyTransaction.All:input_type -> borrower.BorrowerPropertyTransactionAllRequest
 	307, // 348: borrower.BorrowerPropertyTransaction.UpdateChecklist:input_type -> borrower.BorrowerPropertyTransactionChecklistRequest
 	309, // 349: borrower.BorrowerPropertyTransaction.Page:input_type -> borrower.BorrowerPropertyTransactionPageRequest
-	317, // 350: borrower.Document.Detail:input_type -> borrower.DocumentDetailRequest
-	320, // 351: borrower.Document.Create:input_type -> borrower.DocumentCreateRequest
-	323, // 352: borrower.Document.UploadFile:input_type -> borrower.DocumentUploadFileRequest
-	326, // 353: borrower.Document.DeleteFile:input_type -> borrower.DocumentDeleteFileRequest
+	320, // 350: borrower.BorrowerPropertyTransaction.CreateDocument:input_type -> borrower.DocumentCreateRequest
+	323, // 351: borrower.BorrowerPropertyTransaction.UploadDocumentFile:input_type -> borrower.DocumentUploadFileRequest
+	326, // 352: borrower.BorrowerPropertyTransaction.DeleteDocumentFile:input_type -> borrower.DocumentDeleteFileRequest
+	317, // 353: borrower.Document.Detail:input_type -> borrower.DocumentDetailRequest
 	328, // 354: borrower.Document.LeafList:input_type -> borrower.DocumentLeafListRequest
 	9,   // 355: borrower.common.GetOpt:output_type -> borrower.OptionResponse
 	2,   // 356: borrower.common.GetUsState:output_type -> borrower.StringSliceResponse
@@ -25140,10 +25146,10 @@ var file_app_borrower_rpc_pb_borrower_proto_depIdxs = []int32{
 	306, // 443: borrower.BorrowerPropertyTransaction.All:output_type -> borrower.BorrowerPropertyTransactionAllResponse
 	1,   // 444: borrower.BorrowerPropertyTransaction.UpdateChecklist:output_type -> borrower.EmptyResponse
 	313, // 445: borrower.BorrowerPropertyTransaction.Page:output_type -> borrower.BorrowerPropertyTransactionPageResponse
-	319, // 446: borrower.Document.Detail:output_type -> borrower.DocumentDetailResponse
-	322, // 447: borrower.Document.Create:output_type -> borrower.DocumentCreateResponse
-	325, // 448: borrower.Document.UploadFile:output_type -> borrower.DocumentUploadFileResponse
-	1,   // 449: borrower.Document.DeleteFile:output_type -> borrower.EmptyResponse
+	322, // 446: borrower.BorrowerPropertyTransaction.CreateDocument:output_type -> borrower.DocumentCreateResponse
+	325, // 447: borrower.BorrowerPropertyTransaction.UploadDocumentFile:output_type -> borrower.DocumentUploadFileResponse
+	1,   // 448: borrower.BorrowerPropertyTransaction.DeleteDocumentFile:output_type -> borrower.EmptyResponse
+	319, // 449: borrower.Document.Detail:output_type -> borrower.DocumentDetailResponse
 	330, // 450: borrower.Document.LeafList:output_type -> borrower.DocumentLeafListResponse
 	355, // [355:451] is the sub-list for method output_type
 	259, // [259:355] is the sub-list for method input_type

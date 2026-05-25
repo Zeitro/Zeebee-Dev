@@ -2361,6 +2361,9 @@ service BorrowerPropertyTransaction {
   rpc All(BorrowerPropertyTransactionAllRequest) returns(BorrowerPropertyTransactionAllResponse);
   rpc UpdateChecklist(BorrowerPropertyTransactionChecklistRequest) returns(EmptyResponse);
   rpc Page(BorrowerPropertyTransactionPageRequest) returns(BorrowerPropertyTransactionPageResponse);
+  rpc CreateDocument(DocumentCreateRequest) returns(DocumentCreateResponse);
+  rpc UploadDocumentFile(DocumentUploadFileRequest) returns(DocumentUploadFileResponse);
+  rpc DeleteDocumentFile(DocumentDeleteFileRequest) returns(EmptyResponse);
 }
 // ===================== borrower property transaction service end ======================
 
@@ -2398,10 +2401,9 @@ message DocumentCreateRequest {
 }
 
 message DocumentCreateRequestData {
-  string entity_type = 1;
-  int64 entity_id = 2;
-  int64 parent_id = 3;
-  string name = 4;
+  int64 transaction_id = 1;
+  int64 parent_id = 2;
+  string name = 3;
 }
 
 message DocumentCreateResponse {
@@ -2413,10 +2415,11 @@ message DocumentUploadFileRequest {
 }
 
 message DocumentUploadFileRequestData {
-  int64 document_id = 1;
-  string file_name = 2;
-  string file_url = 3;
-  string file_suffix = 4;
+  int64 transaction_id = 1;
+  int64 document_id = 2;
+  string file_name = 3;
+  string file_url = 4;
+  string file_suffix = 5;
 }
 
 message DocumentUploadFileResponse {
@@ -2428,7 +2431,8 @@ message DocumentDeleteFileRequest {
 }
 
 message DocumentDeleteFileRequestData {
-  int64 file_id = 1;
+  int64 transaction_id = 1;
+  int64 file_id = 2;
 }
 
 message DocumentLeafListRequest {
@@ -2446,9 +2450,6 @@ message DocumentLeafListResponse {
 
 service Document {
   rpc Detail(DocumentDetailRequest) returns(DocumentDetailResponse);
-  rpc Create(DocumentCreateRequest) returns(DocumentCreateResponse);
-  rpc UploadFile(DocumentUploadFileRequest) returns(DocumentUploadFileResponse);
-  rpc DeleteFile(DocumentDeleteFileRequest) returns(EmptyResponse);
   rpc LeafList(DocumentLeafListRequest) returns(DocumentLeafListResponse);
 }
 // ===================== document service end ======================
