@@ -378,6 +378,20 @@ type BorrowerPropertyTransactionDetailResponse struct {
 	UpdatedAt          string                               `json:"updated_at"`
 }
 
+type BorrowerPropertyTransactionDocumentDeleteFileRequest struct {
+	TransactionId int64 `path:"transaction_id" validate:"required,gt=0"`
+	FileId        int64 `path:"file_id" validate:"required,gt=0"`
+}
+
+type BorrowerPropertyTransactionDocumentUploadFileRequest struct {
+	TransactionId int64  `path:"transaction_id" validate:"required,gt=0"`
+	DocumentId    int64  `path:"document_id" validate:"required,gt=0"`
+	FileName      string `json:"file_name" validate:"required"`
+	FileUrl       string `json:"file_url" validate:"required"`
+	StorageType   string `json:"storage_type" validate:"required,oneof='Aws S3' 'Google Drive'"`
+	UploadType    string `json:"upload_type" validate:"required,oneof='Manual' 'Google Drive'"`
+}
+
 type BorrowerPropertyTransactionOption struct {
 	Id                 int64                  `json:"id"`
 	Code               string                 `json:"code"`
@@ -445,51 +459,40 @@ type DocumentCreateResponse struct {
 	DocumentTreeNode
 }
 
-type DocumentDeleteFileRequest struct {
-	TransactionId int64 `path:"transaction_id" validate:"required,gt=0"`
-	DocumentId    int64 `path:"document_id" validate:"required,gt=0"`
-	FileId        int64 `path:"file_id" validate:"required,gt=0"`
+type DocumentFile struct {
+	Id          int64  `json:"id"`
+	EntityType  string `json:"entity_type"`
+	EntityId    int64  `json:"entity_id"`
+	FileUrl     string `json:"file_url"`
+	StorageType string `json:"storage_type"`
+	FileName    string `json:"file_name"`
+	ExternalId  string `json:"external_id"`
+	UploadType  string `json:"upload_type"`
+	CreatedAt   string `json:"created_at"`
+	UpdatedAt   string `json:"updated_at"`
 }
 
-type DocumentFile struct {
-	Id         int64  `json:"id"`
-	EntityType string `json:"entity_type"`
-	EntityId   int64  `json:"entity_id"`
-	FileUrl    string `json:"file_url"`
-	CreatedAt  string `json:"created_at"`
-	UpdatedAt  string `json:"updated_at"`
+type DocumentFilesRequest struct {
+	Id int64 `path:"id" validate:"required,gt=0"`
+}
+
+type DocumentFilesResponse struct {
+	Files []DocumentFile `json:"files"`
 }
 
 type DocumentTreeNode struct {
-	Id             int64              `json:"id"`
-	ParentId       int64              `json:"parent_id"`
-	Type           string             `json:"type"`
-	Name           string             `json:"name"`
-	Level          int32              `json:"level"`
-	SortOrder      int32              `json:"sort_order"`
-	LastUploadedAt string             `json:"last_uploaded_at"`
-	Metadata       string             `json:"metadata"`
-	CreatedAt      string             `json:"created_at"`
-	UpdatedAt      string             `json:"updated_at"`
-	Children       []DocumentTreeNode `json:"children"`
-	Files          []DocumentFile     `json:"files"`
-}
-
-type DocumentTreeRequest struct {
-	EntityType string `path:"entity_type"`
-	EntityId   int64  `path:"entity_id"`
-}
-
-type DocumentTreeResponse struct {
-	Data DocumentTreeNode `json:"data"`
-}
-
-type DocumentUploadFileRequest struct {
-	TransactionId int64  `path:"transaction_id" validate:"required,gt=0"`
-	DocumentId    int64  `path:"document_id" validate:"required,gt=0"`
-	FileName      string `json:"file_name" validate:"required"`
-	FileUrl       string `json:"file_url" validate:"required"`
-	FileSuffix    string `json:"file_suffix" validate:"required"`
+	Id             int64                  `json:"id"`
+	ParentId       int64                  `json:"parent_id"`
+	Type           string                 `json:"type"`
+	Name           string                 `json:"name"`
+	Level          int32                  `json:"level"`
+	SortOrder      int32                  `json:"sort_order"`
+	LastUploadedAt string                 `json:"last_uploaded_at"`
+	Metadata       map[string]interface{} `json:"metadata"`
+	CreatedAt      string                 `json:"created_at"`
+	UpdatedAt      string                 `json:"updated_at"`
+	Children       []DocumentTreeNode     `json:"children"`
+	Files          []DocumentFile         `json:"files"`
 }
 
 type DocumentUploadFileResponse struct {
@@ -1678,10 +1681,15 @@ type RoleUpdateStatusRequest struct {
 type S3PresignUrlCreateRequest struct {
 	Type       string `json:"type" validate:"required,oneof=pdf image doc"`
 	FileSuffix string `json:"file_suffix" validate:"required"`
+	FileName   string `json:"file_name,omitempty"`
 }
 
 type S3PresignUrlCreateResponse struct {
-	Url string `json:"url"`
+	Url         string `json:"url"`
+	FileName    string `json:"file_name"`
+	StorageType string `json:"storage_type"`
+	ExternalId  string `json:"external_id"`
+	UploadType  string `json:"upload_type"`
 }
 
 type SecondaryPreApprovalLoan struct {

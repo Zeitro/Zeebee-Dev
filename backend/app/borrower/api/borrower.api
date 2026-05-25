@@ -638,11 +638,11 @@ service borrower-api {
 
 	@doc "upload file to document"
 	@handler DocumentUploadFile
-	post /borrower_property_transaction/:transaction_id/document/:document_id/file (DocumentUploadFileRequest) returns (DocumentUploadFileResponse)
+	post /borrower_property_transaction/:transaction_id/document/:document_id/file (BorrowerPropertyTransactionDocumentUploadFileRequest) returns (DocumentUploadFileResponse)
 
 	@doc "delete document file"
 	@handler DocumentDeleteFile
-	delete /borrower_property_transaction/:transaction_id/document/:document_id/file/:file_id (DocumentDeleteFileRequest) returns (EmptyResponse)
+	delete /borrower_property_transaction/:transaction_id/file/:file_id (BorrowerPropertyTransactionDocumentDeleteFileRequest) returns (EmptyResponse)
 
 	@doc "create leaf document"
 	@handler DocumentCreate
@@ -660,9 +660,9 @@ service borrower-api {
 	tags:       document
 )
 service borrower-api {
-	@doc "document tree"
-	@handler DocumentTree
-	get /document/tree/:entity_type/:entity_id (DocumentTreeRequest) returns (DocumentTreeResponse)
+	@doc "document files"
+	@handler DocumentFiles
+	get /document/:id/files (DocumentFilesRequest) returns (DocumentFilesResponse)
 }
 
 // =============== document end ==============

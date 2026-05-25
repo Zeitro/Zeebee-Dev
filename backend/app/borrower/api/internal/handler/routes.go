@@ -239,7 +239,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				{
 					// delete document file
 					Method:  http.MethodDelete,
-					Path:    "/borrower_property_transaction/:transaction_id/document/:document_id/file/:file_id",
+					Path:    "/borrower_property_transaction/:transaction_id/file/:file_id",
 					Handler: borrower_property_transaction.DocumentDeleteFileHandler(serverCtx),
 				},
 				{
@@ -297,10 +297,10 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
-					// document tree
+					// document files
 					Method:  http.MethodGet,
-					Path:    "/document/tree/:entity_type/:entity_id",
-					Handler: document.DocumentTreeHandler(serverCtx),
+					Path:    "/document/:id/files",
+					Handler: document.DocumentFilesHandler(serverCtx),
 				},
 			}...,
 		),
