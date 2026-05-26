@@ -4274,6 +4274,8 @@ const (
 	BorrowerPropertyTransaction_CreateDocument_FullMethodName     = "/borrower.BorrowerPropertyTransaction/CreateDocument"
 	BorrowerPropertyTransaction_UploadDocumentFile_FullMethodName = "/borrower.BorrowerPropertyTransaction/UploadDocumentFile"
 	BorrowerPropertyTransaction_DeleteDocumentFile_FullMethodName = "/borrower.BorrowerPropertyTransaction/DeleteDocumentFile"
+	BorrowerPropertyTransaction_OperationStats_FullMethodName     = "/borrower.BorrowerPropertyTransaction/OperationStats"
+	BorrowerPropertyTransaction_OperationList_FullMethodName      = "/borrower.BorrowerPropertyTransaction/OperationList"
 )
 
 // BorrowerPropertyTransactionClient is the client API for BorrowerPropertyTransaction service.
@@ -4291,6 +4293,8 @@ type BorrowerPropertyTransactionClient interface {
 	CreateDocument(ctx context.Context, in *DocumentCreateRequest, opts ...grpc.CallOption) (*DocumentCreateResponse, error)
 	UploadDocumentFile(ctx context.Context, in *BorrowerPropertyTransactionDocumentUploadFileRequest, opts ...grpc.CallOption) (*DocumentUploadFileResponse, error)
 	DeleteDocumentFile(ctx context.Context, in *BorrowerPropertyTransactionDocumentDeleteFileRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	OperationStats(ctx context.Context, in *TransactionOperationStatsRequest, opts ...grpc.CallOption) (*TransactionOperationStatsResponse, error)
+	OperationList(ctx context.Context, in *TransactionOperationListRequest, opts ...grpc.CallOption) (*TransactionOperationListResponse, error)
 }
 
 type borrowerPropertyTransactionClient struct {
@@ -4411,6 +4415,26 @@ func (c *borrowerPropertyTransactionClient) DeleteDocumentFile(ctx context.Conte
 	return out, nil
 }
 
+func (c *borrowerPropertyTransactionClient) OperationStats(ctx context.Context, in *TransactionOperationStatsRequest, opts ...grpc.CallOption) (*TransactionOperationStatsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TransactionOperationStatsResponse)
+	err := c.cc.Invoke(ctx, BorrowerPropertyTransaction_OperationStats_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *borrowerPropertyTransactionClient) OperationList(ctx context.Context, in *TransactionOperationListRequest, opts ...grpc.CallOption) (*TransactionOperationListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TransactionOperationListResponse)
+	err := c.cc.Invoke(ctx, BorrowerPropertyTransaction_OperationList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BorrowerPropertyTransactionServer is the server API for BorrowerPropertyTransaction service.
 // All implementations must embed UnimplementedBorrowerPropertyTransactionServer
 // for forward compatibility.
@@ -4426,6 +4450,8 @@ type BorrowerPropertyTransactionServer interface {
 	CreateDocument(context.Context, *DocumentCreateRequest) (*DocumentCreateResponse, error)
 	UploadDocumentFile(context.Context, *BorrowerPropertyTransactionDocumentUploadFileRequest) (*DocumentUploadFileResponse, error)
 	DeleteDocumentFile(context.Context, *BorrowerPropertyTransactionDocumentDeleteFileRequest) (*EmptyResponse, error)
+	OperationStats(context.Context, *TransactionOperationStatsRequest) (*TransactionOperationStatsResponse, error)
+	OperationList(context.Context, *TransactionOperationListRequest) (*TransactionOperationListResponse, error)
 	mustEmbedUnimplementedBorrowerPropertyTransactionServer()
 }
 
@@ -4468,6 +4494,12 @@ func (UnimplementedBorrowerPropertyTransactionServer) UploadDocumentFile(context
 }
 func (UnimplementedBorrowerPropertyTransactionServer) DeleteDocumentFile(context.Context, *BorrowerPropertyTransactionDocumentDeleteFileRequest) (*EmptyResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteDocumentFile not implemented")
+}
+func (UnimplementedBorrowerPropertyTransactionServer) OperationStats(context.Context, *TransactionOperationStatsRequest) (*TransactionOperationStatsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method OperationStats not implemented")
+}
+func (UnimplementedBorrowerPropertyTransactionServer) OperationList(context.Context, *TransactionOperationListRequest) (*TransactionOperationListResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method OperationList not implemented")
 }
 func (UnimplementedBorrowerPropertyTransactionServer) mustEmbedUnimplementedBorrowerPropertyTransactionServer() {
 }
@@ -4689,6 +4721,42 @@ func _BorrowerPropertyTransaction_DeleteDocumentFile_Handler(srv interface{}, ct
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BorrowerPropertyTransaction_OperationStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TransactionOperationStatsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BorrowerPropertyTransactionServer).OperationStats(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BorrowerPropertyTransaction_OperationStats_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BorrowerPropertyTransactionServer).OperationStats(ctx, req.(*TransactionOperationStatsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BorrowerPropertyTransaction_OperationList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TransactionOperationListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BorrowerPropertyTransactionServer).OperationList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BorrowerPropertyTransaction_OperationList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BorrowerPropertyTransactionServer).OperationList(ctx, req.(*TransactionOperationListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BorrowerPropertyTransaction_ServiceDesc is the grpc.ServiceDesc for BorrowerPropertyTransaction service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -4739,6 +4807,14 @@ var BorrowerPropertyTransaction_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteDocumentFile",
 			Handler:    _BorrowerPropertyTransaction_DeleteDocumentFile_Handler,
+		},
+		{
+			MethodName: "OperationStats",
+			Handler:    _BorrowerPropertyTransaction_OperationStats_Handler,
+		},
+		{
+			MethodName: "OperationList",
+			Handler:    _BorrowerPropertyTransaction_OperationList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

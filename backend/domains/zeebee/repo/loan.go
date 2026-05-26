@@ -47,6 +47,7 @@ func (repo *LoanRepo) getDetailByQuery(query *gorm.DB, withPreload bool) (result
 		}).
 			Preload("LoanProperty").
 			Preload("LoanBorrower").
+			Preload("BorrowerPropertyTransaction").
 			Preload("LoanExperiences", func(db *gorm.DB) *gorm.DB {
 				return db.Order("loan_experiences.id asc")
 			}).

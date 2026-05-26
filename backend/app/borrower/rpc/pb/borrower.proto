@@ -322,6 +322,7 @@ message LoanEntity {
   double HoldbackRemainingAmount = 47;
   string due_status = 48;
   int32 due_days = 49;
+  BorrowerPropertyTransactionEntity borrower_property_transaction = 50;
 
 }
 
@@ -543,6 +544,7 @@ message LoanApplyRequestData {
   bool is_preapprove_loan = 23;
   string code = 24;
   LoanPreapproveInfo loan_preapprove_info = 25;
+  int64 borrower_property_transaction_id = 26;
 }
 
 message LoanPreapproveInfo {
@@ -2230,7 +2232,7 @@ message BorrowerPropertyTransactionOptionEntity {
   string status = 4;
   string property_type = 5;
   int64 borrower_property_id = 6;
-  BorrowerPropertyEntity borrower_property = 7;
+  AddressEntity address = 7;
 }
 
 message BorrowerPropertyTransactionCreateRequest {
@@ -2379,6 +2381,56 @@ message BorrowerPropertyTransactionDocumentDeleteFileRequestData {
   int64 file_id = 2;
 }
 
+message TransactionOperationStatsRequest {
+  TransactionOperationStatsRequestData data = 1;
+}
+
+message TransactionOperationStatsRequestData {
+  int64 transaction_id = 1;
+}
+
+message TransactionOperationStatsResponse {
+  TransactionOperationStatsResponseData data = 1;
+}
+
+message TransactionOperationStatsResponseData {
+  int64 total = 1;
+  repeated OperationStatsItem items = 2;
+}
+
+message OperationStatsItem {
+  string type = 1;
+  int64 count = 2;
+}
+
+message TransactionOperationListRequest {
+  TransactionOperationListRequestData data = 1;
+}
+
+message TransactionOperationListRequestData {
+  int64 transaction_id = 1;
+  string operation_type = 2;
+}
+
+message TransactionOperationListResponse {
+  TransactionOperationListResponseData data = 1;
+}
+
+message TransactionOperationListResponseData {
+  repeated OperationListItem list = 1;
+}
+
+message OperationListItem {
+  int64 id = 1;
+  string operation = 2;
+  int64 operator_id = 3;
+  string operator_name = 4;
+  string operator_type = 5;
+  string note = 6;
+  string metadata = 7;
+  string created_at = 8;
+}
+
 service BorrowerPropertyTransaction {
   rpc Create(BorrowerPropertyTransactionCreateRequest) returns(BorrowerPropertyTransactionCreateResponse);
   rpc Detail(BorrowerPropertyTransactionDetailRequest) returns(BorrowerPropertyTransactionDetailResponse);
@@ -2391,6 +2443,8 @@ service BorrowerPropertyTransaction {
   rpc CreateDocument(DocumentCreateRequest) returns(DocumentCreateResponse);
   rpc UploadDocumentFile(BorrowerPropertyTransactionDocumentUploadFileRequest) returns(DocumentUploadFileResponse);
   rpc DeleteDocumentFile(BorrowerPropertyTransactionDocumentDeleteFileRequest) returns(EmptyResponse);
+  rpc OperationStats(TransactionOperationStatsRequest) returns(TransactionOperationStatsResponse);
+  rpc OperationList(TransactionOperationListRequest) returns(TransactionOperationListResponse);
 }
 // ===================== borrower property transaction service end ======================
 

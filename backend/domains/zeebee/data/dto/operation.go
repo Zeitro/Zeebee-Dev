@@ -11,7 +11,7 @@ type OperationCreateDto struct {
 	EntityType     constants.OperationEntityType `json:"entity_type"`
 	OperatorId     int64                         `json:"operator_id"`
 	OperatorName   string                        `json:"operator_name"`
-	OperatorType   string                        `json:"operator_type"`
+	OperatorType   constants.UserType            `json:"operator_type"`
 	Operation      constants.OperationAction     `json:"operation"`
 	Note           string                        `json:"note,omitempty"`
 	Metadata       datatypes.JSON                `json:"metadata,omitempty"`

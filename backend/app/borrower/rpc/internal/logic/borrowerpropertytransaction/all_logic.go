@@ -54,6 +54,15 @@ func (l *AllLogic) All(in *borrower.BorrowerPropertyTransactionAllRequest) (resp
 		return &borrower.BorrowerPropertyTransactionAllResponse{}, nil
 	}
 
+	for i, opt := range *options {
+		if transactions[i].BorrowerProperty != nil {
+			addr, transErr := copierx.Trans[model.Address, borrower.AddressEntity](&transactions[i].BorrowerProperty.Address)
+			if transErr == nil {
+				opt.Address = addr
+			}
+		}
+	}
+
 	return &borrower.BorrowerPropertyTransactionAllResponse{
 		Data: *options,
 	}, nil

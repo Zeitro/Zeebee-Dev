@@ -392,14 +392,33 @@ type BorrowerPropertyTransactionDocumentUploadFileRequest struct {
 	UploadType    string `json:"upload_type" validate:"required,oneof='Manual' 'Google Drive'"`
 }
 
+type BorrowerPropertyTransactionEntity struct {
+	Id                 int64                                `json:"id"`
+	Code               string                               `json:"code"`
+	Type               string                               `json:"type"`
+	Status             string                               `json:"status"`
+	BorrowerPropertyId int64                                `json:"borrower_property_id"`
+	OrganizationId     int64                                `json:"organization_id"`
+	CoeDate            string                               `json:"coe_date"`
+	PurchaseAmount     float64                              `json:"purchase_amount"`
+	EmdAmount          float64                              `json:"emd_amount"`
+	PropertyType       string                               `json:"property_type"`
+	Pm                 string                               `json:"pm"`
+	Strategy           string                               `json:"strategy"`
+	Note               string                               `json:"note"`
+	Checklist          BorrowerPropertyTransactionChecklist `json:"checklist"`
+	CreatedAt          string                               `json:"created_at"`
+	UpdatedAt          string                               `json:"updated_at"`
+}
+
 type BorrowerPropertyTransactionOption struct {
-	Id                 int64                  `json:"id"`
-	Code               string                 `json:"code"`
-	Type               string                 `json:"type"`
-	Status             string                 `json:"status"`
-	PropertyType       string                 `json:"property_type"`
-	BorrowerPropertyId int64                  `json:"borrower_property_id"`
-	BorrowerProperty   BorrowerPropertyEntity `json:"borrower_property"`
+	Id                 int64          `json:"id"`
+	Code               string         `json:"code"`
+	Type               string         `json:"type"`
+	Status             string         `json:"status"`
+	PropertyType       string         `json:"property_type"`
+	BorrowerPropertyId int64          `json:"borrower_property_id"`
+	Address            *AddressEntity `json:"address"`
 }
 
 type BorrowerPropertyTransactionPageEntity struct {
@@ -670,26 +689,27 @@ type LoanApplicantEntity struct {
 }
 
 type LoanApplyRequest struct {
-	Id                     int64                       `path:"id,optional"`
-	Code                   string                      `json:"code,optional" validate:"omitempty,number,min=15,max=100"`
-	LoanType               string                      `json:"loan_type,optional" validate:"required,oneof=Bridge Rehab Rental 'Ground up construction'"`
-	LoanPurpose            string                      `json:"loan_purpose,optional" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
-	TotalAmount            float64                     `json:"total_amount,optional" validate:"required,gt=0"`
-	InitialAmount          float64                     `json:"initial_amount,optional" validate:"ltefield=TotalAmount"`
-	LoanProperty           *LoanPropertyApplyEntity    `json:"loan_property,optional"`
-	HoldbackAmount         float64                     `json:"holdback_amount,optional" validate:"ltefield=TotalAmount"`
-	PrincipalAmount        float64                     `json:"principal_amount,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
-	PrepaymentPenalty      int32                       `json:"prepayment_penalty,optional" validate:"required_if=LoanType Rental,omitempty,gte=0"`
-	BusinessStrategy       []string                    `json:"business_strategy,optional" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
-	Applicants             []*LoanApplicantApplyEntity `json:"applicants,optional" validate:"required,gt=0,lte=2"`
-	LoanTerm               int32                       `json:"loan_term,optional" validate:"gte=1"`
-	ReservesAmount         float64                     `json:"reserves_amount,optional" validate:"required_if=LoanType Rental,omitempty,gt=0"`
-	TransactionExperiences []*LoanExperienceEntity     `json:"transaction_experiences,optional"`
-	RealEstateExperiences  []*LoanExperienceEntity     `json:"real_estate_experiences,optional"`
-	LoanThirdServices      []*LoanThirdServiceEntity   `json:"loan_third_services,optional"`
-	LoanBorrower           *LoanBorrowerLoanEditEntity `json:"loan_borrower,optional"`
-	LoanDemographic        *LoanDemographicEntity      `json:"loan_demographic,optional" validate:"required"`
-	ApplyFormFile          string                      `json:"apply_form_file,optional" validate:"required"`
+	Id                            int64                       `path:"id,optional"`
+	Code                          string                      `json:"code,optional" validate:"omitempty,number,min=15,max=100"`
+	LoanType                      string                      `json:"loan_type,optional" validate:"required,oneof=Bridge Rehab Rental 'Ground up construction'"`
+	LoanPurpose                   string                      `json:"loan_purpose,optional" validate:"required,oneof=Purchase 'Rate-term refi' 'Cash-out refi'"`
+	TotalAmount                   float64                     `json:"total_amount,optional" validate:"required,gt=0"`
+	InitialAmount                 float64                     `json:"initial_amount,optional" validate:"ltefield=TotalAmount"`
+	LoanProperty                  *LoanPropertyApplyEntity    `json:"loan_property,optional"`
+	HoldbackAmount                float64                     `json:"holdback_amount,optional" validate:"ltefield=TotalAmount"`
+	PrincipalAmount               float64                     `json:"principal_amount,optional" validate:"required_unless=LoanPurpose Purchase,omitempty,gte=0"`
+	PrepaymentPenalty             int32                       `json:"prepayment_penalty,optional" validate:"required_if=LoanType Rental,omitempty,gte=0"`
+	BusinessStrategy              []string                    `json:"business_strategy,optional" validate:"required,dive,required,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
+	Applicants                    []*LoanApplicantApplyEntity `json:"applicants,optional" validate:"required,gt=0,lte=2"`
+	LoanTerm                      int32                       `json:"loan_term,optional" validate:"gte=1"`
+	ReservesAmount                float64                     `json:"reserves_amount,optional" validate:"required_if=LoanType Rental,omitempty,gt=0"`
+	TransactionExperiences        []*LoanExperienceEntity     `json:"transaction_experiences,optional"`
+	RealEstateExperiences         []*LoanExperienceEntity     `json:"real_estate_experiences,optional"`
+	LoanThirdServices             []*LoanThirdServiceEntity   `json:"loan_third_services,optional"`
+	LoanBorrower                  *LoanBorrowerLoanEditEntity `json:"loan_borrower,optional"`
+	LoanDemographic               *LoanDemographicEntity      `json:"loan_demographic,optional" validate:"required"`
+	ApplyFormFile                 string                      `json:"apply_form_file,optional" validate:"required"`
+	BorrowerPropertyTransactionId int64                       `json:"borrower_property_transaction_id,optional"`
 }
 
 type LoanApplyResponse struct {
@@ -861,56 +881,57 @@ type LoanDocumentEntity struct {
 }
 
 type LoanEntity struct {
-	Id                         int64                     `json:"id,optional"`
-	CreatorId                  int64                     `json:"creator_id"`
-	CreatorName                string                    `json:"creator_name"`
-	Code                       string                    `json:"code,optional"`
-	Stage                      string                    `json:"stage"`
-	PendingStatus              string                    `json:"pending_status"`
-	LoanPurpose                string                    `json:"loan_purpose"`
-	LoanType                   string                    `json:"loan_type"`
-	TotalAmount                float64                   `json:"total_amount"`
-	InitialAmount              float64                   `json:"initial_amount"`
-	LoanProperty               *LoanPropertyEntity       `json:"loan_property"  `
-	LenderCompany              string                    `json:"lender_company"`
-	ClosingDate                string                    `json:"closing_date"`
-	ClosingFund                float64                   `json:"closing_fund" `
-	HoldbackAmount             float64                   `json:"holdback_amount" `
-	Rate                       float32                   `json:"rate" `
-	PrincipalAmount            float64                   `json:"principal_amount" `
-	MonthlyPayment             float64                   `json:"monthly_payment" `
-	LienPosition               string                    `json:"lien_position" `
-	MaturityDate               string                    `json:"maturity_date" `
-	PrepaymentPenalty          int32                     `json:"prepayment_penalty" `
-	ServiceCompany             string                    `json:"service_company" `
-	PaidOffDate                string                    `json:"paid_off_date" `
-	BusinessStrategy           []string                  `json:"business_strategy"`
-	Applicants                 []LoanApplicantEntity     `json:"applicants"`
-	LenderOrganizationId       int64                     `json:"lender_organization_id"`
-	BorrowerOrganizationId     int64                     `json:"borrower_organization_id"`
-	CreatedAt                  string                    `json:"created_at"`
-	UpdatedAt                  string                    `json:"updated_at"`
-	Source                     string                    `json:"source"`
-	LoanTerm                   int32                     `json:"loan_term" `
-	Ltv                        float64                   `json:"ltv"`
-	EstCreditScore             int32                     `json:"est_credit_score"`
-	ReservesAmount             float64                   `json:"reserves_amount"`
-	HasCollateralizedBlanket   bool                      `json:"has_collateralized_blanket"`
-	TransactionExperiences     []*LoanExperienceEntity   `json:"transaction_experiences"`
-	RealEstateExperiences      []*LoanExperienceEntity   `json:"real_estate_experiences"`
-	LoanThirdServices          []*LoanThirdServiceEntity `json:"loan_third_services"`
-	LoanBorrower               *LoanBorrowerEntity       `json:"loan_borrower"`
-	LoanDemographic            *LoanDemographicEntity    `json:"loan_demographic"`
-	OriginalContractDate       string                    `json:"original_contract_date,optional"`
-	ExtensionDate              string                    `json:"extension_date,optional"`
-	LoanProcessor              string                    `json:"loan_processor"`
-	Extend                     *ImportLoanExtendEntity   `json:"extend"`
-	LoanDocuments              []*LoanDocumentEntity     `json:"loan_documents"`
-	RequestedLoanDocumentCount int64                     `json:"requested_loan_document_count"`
-	HoldbackReleasedAmount     float64                   `json:"holdback_released_amount"`
-	HoldbackRemainingAmount    float64                   `json:"holdback_remaining_amount"`
-	DueStatus                  string                    `json:"due_status"`
-	DueDays                    int32                     `json:"due_days"`
+	Id                          int64                              `json:"id,optional"`
+	CreatorId                   int64                              `json:"creator_id"`
+	CreatorName                 string                             `json:"creator_name"`
+	Code                        string                             `json:"code,optional"`
+	Stage                       string                             `json:"stage"`
+	PendingStatus               string                             `json:"pending_status"`
+	LoanPurpose                 string                             `json:"loan_purpose"`
+	LoanType                    string                             `json:"loan_type"`
+	TotalAmount                 float64                            `json:"total_amount"`
+	InitialAmount               float64                            `json:"initial_amount"`
+	LoanProperty                *LoanPropertyEntity                `json:"loan_property"  `
+	LenderCompany               string                             `json:"lender_company"`
+	ClosingDate                 string                             `json:"closing_date"`
+	ClosingFund                 float64                            `json:"closing_fund" `
+	HoldbackAmount              float64                            `json:"holdback_amount" `
+	Rate                        float32                            `json:"rate" `
+	PrincipalAmount             float64                            `json:"principal_amount" `
+	MonthlyPayment              float64                            `json:"monthly_payment" `
+	LienPosition                string                             `json:"lien_position" `
+	MaturityDate                string                             `json:"maturity_date" `
+	PrepaymentPenalty           int32                              `json:"prepayment_penalty" `
+	ServiceCompany              string                             `json:"service_company" `
+	PaidOffDate                 string                             `json:"paid_off_date" `
+	BusinessStrategy            []string                           `json:"business_strategy"`
+	Applicants                  []LoanApplicantEntity              `json:"applicants"`
+	LenderOrganizationId        int64                              `json:"lender_organization_id"`
+	BorrowerOrganizationId      int64                              `json:"borrower_organization_id"`
+	CreatedAt                   string                             `json:"created_at"`
+	UpdatedAt                   string                             `json:"updated_at"`
+	Source                      string                             `json:"source"`
+	LoanTerm                    int32                              `json:"loan_term" `
+	Ltv                         float64                            `json:"ltv"`
+	EstCreditScore              int32                              `json:"est_credit_score"`
+	ReservesAmount              float64                            `json:"reserves_amount"`
+	HasCollateralizedBlanket    bool                               `json:"has_collateralized_blanket"`
+	TransactionExperiences      []*LoanExperienceEntity            `json:"transaction_experiences"`
+	RealEstateExperiences       []*LoanExperienceEntity            `json:"real_estate_experiences"`
+	LoanThirdServices           []*LoanThirdServiceEntity          `json:"loan_third_services"`
+	LoanBorrower                *LoanBorrowerEntity                `json:"loan_borrower"`
+	LoanDemographic             *LoanDemographicEntity             `json:"loan_demographic"`
+	OriginalContractDate        string                             `json:"original_contract_date,optional"`
+	ExtensionDate               string                             `json:"extension_date,optional"`
+	LoanProcessor               string                             `json:"loan_processor"`
+	Extend                      *ImportLoanExtendEntity            `json:"extend"`
+	LoanDocuments               []*LoanDocumentEntity              `json:"loan_documents"`
+	RequestedLoanDocumentCount  int64                              `json:"requested_loan_document_count"`
+	HoldbackReleasedAmount      float64                            `json:"holdback_released_amount"`
+	HoldbackRemainingAmount     float64                            `json:"holdback_remaining_amount"`
+	DueStatus                   string                             `json:"due_status"`
+	DueDays                     int32                              `json:"due_days"`
+	BorrowerPropertyTransaction *BorrowerPropertyTransactionEntity `json:"borrower_property_transaction"`
 }
 
 type LoanExperienceEntity struct {
@@ -1209,6 +1230,22 @@ type LoanUpdateRequest struct {
 	OriginalContractDate  string                           `json:"original_contract_date,optional"`
 	ExtensionDate         string                           `json:"extension_date,optional"`
 	LoanProcessor         string                           `json:"loan_processor,optional"`
+}
+
+type OperationListItem struct {
+	Id           int64                  `json:"id"`
+	Operation    string                 `json:"operation"`
+	OperatorId   int64                  `json:"operator_id"`
+	OperatorName string                 `json:"operator_name"`
+	OperatorType string                 `json:"operator_type"`
+	Note         string                 `json:"note"`
+	Metadata     map[string]interface{} `json:"metadata"`
+	CreatedAt    string                 `json:"created_at"`
+}
+
+type OperationStatsItem struct {
+	Type  string `json:"type"`
+	Count int64  `json:"count"`
 }
 
 type OrganizationEmailAuthorizeRequest struct {
@@ -1737,6 +1774,24 @@ type ThirdPartyLoanApplicantEntity struct {
 	BorrowerApplicantId int64 `json:"borrower_applicant_id" validate:"required,gt=0"`
 	IsPrimary           bool  `json:"is_primary,optional"`
 	OwnPercent          int32 `json:"own_percent,optional" validate:"min=0,max=100"`
+}
+
+type TransactionOperationListRequest struct {
+	TransactionId int64  `path:"transaction_id" validate:"required,gt=0"`
+	OperationType string `form:"operation_type,optional"`
+}
+
+type TransactionOperationListResponse struct {
+	List []OperationListItem `json:"list"`
+}
+
+type TransactionOperationStatsRequest struct {
+	TransactionId int64 `path:"transaction_id" validate:"required,gt=0"`
+}
+
+type TransactionOperationStatsResponse struct {
+	Total int64                `json:"total"`
+	Items []OperationStatsItem `json:"items"`
 }
 
 type UserChangePasswordRequest struct {

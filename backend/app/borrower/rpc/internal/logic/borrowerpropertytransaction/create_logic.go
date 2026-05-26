@@ -135,6 +135,7 @@ func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateReque
 			EntityType:     constants.OperationEntityTypeBorrowerPropertyTransaction,
 			OperatorId:     claim.OrganizationUserId,
 			OperatorName:   claim.Username,
+			OperatorType:   claim.UserType,
 			Operation:      constants.OperationActionBorrowerPropertyTransactionCreate,
 			OrganizationId: claim.OrganizationId,
 		})

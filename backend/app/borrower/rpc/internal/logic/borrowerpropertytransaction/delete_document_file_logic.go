@@ -85,6 +85,7 @@ func (l *DeleteDocumentFileLogic) DeleteDocumentFile(in *borrower.BorrowerProper
 			EntityType:     constants.OperationEntityTypeBorrowerPropertyTransaction,
 			OperatorId:     claim.OrganizationUserId,
 			OperatorName:   claim.Username,
+			OperatorType:   claim.UserType,
 			Operation:      constants.OperationActionBorrowerPropertyTransactionDeleteDocument,
 			OrganizationId: claim.OrganizationId,
 			Note:           fmt.Sprintf("delete file %s from document %s", fileRecord.FileName, fileDoc.Name),

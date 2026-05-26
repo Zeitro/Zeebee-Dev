@@ -77,3 +77,13 @@ func (s *BorrowerPropertyTransactionServer) DeleteDocumentFile(ctx context.Conte
 	l := borrowerpropertytransactionlogic.NewDeleteDocumentFileLogic(ctx, s.svcCtx)
 	return l.DeleteDocumentFile(in)
 }
+
+func (s *BorrowerPropertyTransactionServer) OperationStats(ctx context.Context, in *borrower.TransactionOperationStatsRequest) (*borrower.TransactionOperationStatsResponse, error) {
+	l := borrowerpropertytransactionlogic.NewOperationStatsLogic(ctx, s.svcCtx)
+	return l.OperationStats(in)
+}
+
+func (s *BorrowerPropertyTransactionServer) OperationList(ctx context.Context, in *borrower.TransactionOperationListRequest) (*borrower.TransactionOperationListResponse, error) {
+	l := borrowerpropertytransactionlogic.NewOperationListLogic(ctx, s.svcCtx)
+	return l.OperationList(in)
+}

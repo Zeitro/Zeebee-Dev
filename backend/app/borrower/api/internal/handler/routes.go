@@ -243,6 +243,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: borrower_property_transaction.DocumentDeleteFileHandler(serverCtx),
 				},
 				{
+					// transaction operation list
+					Method:  http.MethodGet,
+					Path:    "/borrower_property_transaction/:transaction_id/operations",
+					Handler: borrower_property_transaction.OperationListHandler(serverCtx),
+				},
+				{
+					// transaction operation stats
+					Method:  http.MethodGet,
+					Path:    "/borrower_property_transaction/:transaction_id/operations/stats",
+					Handler: borrower_property_transaction.OperationStatsHandler(serverCtx),
+				},
+				{
 					// all transactions for select
 					Method:  http.MethodGet,
 					Path:    "/borrower_property_transaction/all",

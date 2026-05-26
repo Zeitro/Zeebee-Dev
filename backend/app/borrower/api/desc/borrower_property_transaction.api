@@ -6,10 +6,28 @@ info(
     version: "v1"
 )
 
-import "borrower_property.api"
 import "file.api"
 import "address.api"
 import "document.api"
+
+type BorrowerPropertyTransactionEntity {
+    Id int64 `json:"id"`
+    Code string `json:"code"`
+    Type string `json:"type"`
+    Status string `json:"status"`
+    BorrowerPropertyId int64 `json:"borrower_property_id"`
+    OrganizationId int64 `json:"organization_id"`
+    CoeDate string `json:"coe_date"`
+    PurchaseAmount float64 `json:"purchase_amount"`
+    EmdAmount float64 `json:"emd_amount"`
+    PropertyType string `json:"property_type"`
+    Pm string `json:"pm"`
+    Strategy string `json:"strategy"`
+    Note string `json:"note"`
+    Checklist BorrowerPropertyTransactionChecklist `json:"checklist"`
+    CreatedAt string `json:"created_at"`
+    UpdatedAt string `json:"updated_at"`
+}
 
 // checklist types
 type BorrowerPropertyTransactionChecklistNode {
@@ -126,7 +144,7 @@ type (
         Status string `json:"status"`
         PropertyType string `json:"property_type"`
         BorrowerPropertyId int64 `json:"borrower_property_id"`
-        BorrowerProperty BorrowerPropertyEntity `json:"borrower_property"`
+        Address *AddressEntity `json:"address"`
     }
 )
 
@@ -188,7 +206,43 @@ type (
 type (
     BorrowerPropertyTransactionDocumentDeleteFileRequest {
         TransactionId int64 `path:"transaction_id" validate:"required,gt=0"`
-//        DocumentId int64 `path:"document_id" validate:"required,gt=0"`
+        //        DocumentId int64 `path:"document_id" validate:"required,gt=0"`
         FileId int64 `path:"file_id" validate:"required,gt=0"`
+    }
+)
+
+// operation stats
+type (
+    TransactionOperationStatsRequest {
+        TransactionId int64 `path:"transaction_id" validate:"required,gt=0"`
+    }
+    TransactionOperationStatsResponse {
+        Total int64 `json:"total"`
+        Items []OperationStatsItem `json:"items"`
+    }
+    OperationStatsItem {
+        Type string `json:"type"`
+        Count int64 `json:"count"`
+    }
+)
+
+// operation list
+type (
+    TransactionOperationListRequest {
+        TransactionId int64 `path:"transaction_id" validate:"required,gt=0"`
+        OperationType string `form:"operation_type,optional"`
+    }
+    TransactionOperationListResponse {
+        List []OperationListItem `json:"list"`
+    }
+    OperationListItem {
+        Id int64 `json:"id"`
+        Operation string `json:"operation"`
+        OperatorId int64 `json:"operator_id"`
+        OperatorName string `json:"operator_name"`
+        OperatorType string `json:"operator_type"`
+        Note string `json:"note"`
+        Metadata map[string]interface{} `json:"metadata"`
+        CreatedAt string `json:"created_at"`
     }
 )

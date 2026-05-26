@@ -84,6 +84,7 @@ func (l *UpdateChecklistLogic) UpdateChecklist(in *borrower.BorrowerPropertyTran
 			EntityType:     constants.OperationEntityTypeBorrowerPropertyTransaction,
 			OperatorId:     claim.OrganizationUserId,
 			OperatorName:   claim.Username,
+			OperatorType:   claim.UserType,
 			Operation:      constants.OperationActionBorrowerPropertyTransactionUpdateChecklist,
 			OrganizationId: claim.OrganizationId,
 			Metadata:       metadata,

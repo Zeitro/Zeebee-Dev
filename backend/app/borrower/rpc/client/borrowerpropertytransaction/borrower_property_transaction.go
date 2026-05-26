@@ -32,6 +32,10 @@ type (
 	DocumentCreateResponse                               = borrower.DocumentCreateResponse
 	DocumentUploadFileResponse                           = borrower.DocumentUploadFileResponse
 	EmptyResponse                                        = borrower.EmptyResponse
+	TransactionOperationListRequest                      = borrower.TransactionOperationListRequest
+	TransactionOperationListResponse                     = borrower.TransactionOperationListResponse
+	TransactionOperationStatsRequest                     = borrower.TransactionOperationStatsRequest
+	TransactionOperationStatsResponse                    = borrower.TransactionOperationStatsResponse
 
 	BorrowerPropertyTransaction interface {
 		Create(ctx context.Context, in *BorrowerPropertyTransactionCreateRequest, opts ...grpc.CallOption) (*BorrowerPropertyTransactionCreateResponse, error)
@@ -45,6 +49,8 @@ type (
 		CreateDocument(ctx context.Context, in *DocumentCreateRequest, opts ...grpc.CallOption) (*DocumentCreateResponse, error)
 		UploadDocumentFile(ctx context.Context, in *BorrowerPropertyTransactionDocumentUploadFileRequest, opts ...grpc.CallOption) (*DocumentUploadFileResponse, error)
 		DeleteDocumentFile(ctx context.Context, in *BorrowerPropertyTransactionDocumentDeleteFileRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		OperationStats(ctx context.Context, in *TransactionOperationStatsRequest, opts ...grpc.CallOption) (*TransactionOperationStatsResponse, error)
+		OperationList(ctx context.Context, in *TransactionOperationListRequest, opts ...grpc.CallOption) (*TransactionOperationListResponse, error)
 	}
 
 	defaultBorrowerPropertyTransaction struct {
@@ -111,4 +117,14 @@ func (m *defaultBorrowerPropertyTransaction) UploadDocumentFile(ctx context.Cont
 func (m *defaultBorrowerPropertyTransaction) DeleteDocumentFile(ctx context.Context, in *BorrowerPropertyTransactionDocumentDeleteFileRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	client := borrower.NewBorrowerPropertyTransactionClient(m.cli.Conn())
 	return client.DeleteDocumentFile(ctx, in, opts...)
+}
+
+func (m *defaultBorrowerPropertyTransaction) OperationStats(ctx context.Context, in *TransactionOperationStatsRequest, opts ...grpc.CallOption) (*TransactionOperationStatsResponse, error) {
+	client := borrower.NewBorrowerPropertyTransactionClient(m.cli.Conn())
+	return client.OperationStats(ctx, in, opts...)
+}
+
+func (m *defaultBorrowerPropertyTransaction) OperationList(ctx context.Context, in *TransactionOperationListRequest, opts ...grpc.CallOption) (*TransactionOperationListResponse, error) {
+	client := borrower.NewBorrowerPropertyTransactionClient(m.cli.Conn())
+	return client.OperationList(ctx, in, opts...)
 }

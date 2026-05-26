@@ -102,6 +102,7 @@ func (l *DeleteLogic) Delete(in *borrower.BorrowerPropertyTransactionDeleteReque
 			EntityType:     constants.OperationEntityTypeBorrowerPropertyTransaction,
 			OperatorId:     claim.OrganizationUserId,
 			OperatorName:   claim.Username,
+			OperatorType:   claim.UserType,
 			Operation:      constants.OperationActionBorrowerPropertyTransactionDelete,
 			OrganizationId: claim.OrganizationId,
 		})

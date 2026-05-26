@@ -610,11 +610,11 @@ service borrower-api {
 
 	@doc "transaction detail"
 	@handler BorrowerPropertyTransactionDetail
-	get /borrower_property_transaction/:id (BorrowerPropertyTransactionDetailRequest) returns (BorrowerPropertyTransactionDetailResponse)
+	get /borrower_property_transaction/:id (BorrowerPropertyTransactionDetailRequest) returns (BorrowerPropertyTransactionEntity)
 
 	@doc "update transaction"
 	@handler BorrowerPropertyTransactionUpdate
-	put /borrower_property_transaction/:id (BorrowerPropertyTransactionUpdateRequest) returns (BorrowerPropertyTransactionDetailResponse)
+	put /borrower_property_transaction/:id (BorrowerPropertyTransactionUpdateRequest) returns (BorrowerPropertyTransactionEntity)
 
 	@doc "delete transaction"
 	@handler BorrowerPropertyTransactionDelete
@@ -647,6 +647,14 @@ service borrower-api {
 	@doc "create leaf document"
 	@handler DocumentCreate
 	post /borrower_property_transaction/:transaction_id/document (DocumentCreateRequest) returns (DocumentCreateResponse)
+
+	@doc "transaction operation stats"
+	@handler OperationStats
+	get /borrower_property_transaction/:transaction_id/operations/stats (TransactionOperationStatsRequest) returns (TransactionOperationStatsResponse)
+
+	@doc "transaction operation list"
+	@handler OperationList
+	get /borrower_property_transaction/:transaction_id/operations (TransactionOperationListRequest) returns (TransactionOperationListResponse)
 }
 
 // =============== borrower property transaction end ==============

@@ -116,6 +116,7 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 			EntityType:     constants.OperationEntityTypeBorrowerPropertyTransaction,
 			OperatorId:     claim.OrganizationUserId,
 			OperatorName:   claim.Username,
+			OperatorType:   claim.UserType,
 			Operation:      constants.OperationActionBorrowerPropertyTransactionUploadDocument,
 			OrganizationId: claim.OrganizationId,
 			Note:           fmt.Sprintf("upload file %s to document %s", fileRecord.FileName, doc.Name),

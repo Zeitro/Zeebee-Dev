@@ -301,6 +301,17 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 
 	// LoanProperty
 	var loanProperty *model.LoanProperty
+	// When BorrowerPropertyTransactionId is provided, derive property from transaction
+	if reqData.BorrowerPropertyTransactionId > 0 {
+		transaction, txErr := l.svcCtx.BorrowerPropertyTransactionRepo.GetOrganizationTransaction(l.ctx, reqData.BorrowerPropertyTransactionId, claim.OrganizationId)
+		if txErr != nil {
+			return nil, errorx.Wrap(txErr, "Invalid transaction")
+		}
+		if reqData.LoanProperty == nil {
+			reqData.LoanProperty = &borrower.LoanPropertyApplyEntity{}
+		}
+		reqData.LoanProperty.BorrowerPropertyId = transaction.BorrowerPropertyId
+	}
 	if reqData.LoanProperty != nil {
 		if reqData.LoanProperty.BorrowerPropertyId > 0 {
 			loanProperty, err = l.svcCtx.BorrowerPropertyRepo.TranToLoanPropertyWithId(l.ctx, reqData.LoanProperty.BorrowerPropertyId, claim.OrganizationId)

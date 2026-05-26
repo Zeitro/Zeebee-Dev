@@ -118,6 +118,7 @@ func (l *CreateDocumentLogic) CreateDocument(in *borrower.DocumentCreateRequest)
 			EntityType:     constants.OperationEntityTypeBorrowerPropertyTransaction,
 			OperatorId:     claim.OrganizationUserId,
 			OperatorName:   claim.Username,
+			OperatorType:   claim.UserType,
 			Operation:      constants.OperationActionBorrowerPropertyTransactionAddDocument,
 			OrganizationId: claim.OrganizationId,
 			Note:           "Create document: " + in.Data.Name,

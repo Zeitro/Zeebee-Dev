@@ -85,6 +85,7 @@ func (l *SwitchStatusLogic) SwitchStatus(in *borrower.BorrowerPropertyTransactio
 			EntityType:     constants.OperationEntityTypeBorrowerPropertyTransaction,
 			OperatorId:     claim.OrganizationUserId,
 			OperatorName:   claim.Username,
+			OperatorType:   claim.UserType,
 			Operation:      constants.OperationActionBorrowerPropertyTransactionUpdateStatus,
 			OrganizationId: claim.OrganizationId,
 			Metadata:       metadata,

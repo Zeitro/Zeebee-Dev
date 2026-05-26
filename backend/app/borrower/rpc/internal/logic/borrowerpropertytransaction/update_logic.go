@@ -86,6 +86,7 @@ func (l *UpdateLogic) Update(in *borrower.BorrowerPropertyTransactionUpdateReque
 			EntityType:     constants.OperationEntityTypeBorrowerPropertyTransaction,
 			OperatorId:     claim.OrganizationUserId,
 			OperatorName:   claim.Username,
+			OperatorType:   claim.UserType,
 			Operation:      constants.OperationActionBorrowerPropertyTransactionUpdateBaseInfo,
 			OrganizationId: claim.OrganizationId,
 		})
