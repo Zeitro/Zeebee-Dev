@@ -54,7 +54,6 @@ protoData, err := copierx.Trans[bo.BaseTemplateBo, admin.BaseTemplateEntity](boD
 | DTO → Model | `dto.XxxDto` | `model.Xxx` | `&dtoData` | `*model.Xxx` |
 | Model → BO | `model.Xxx` | `bo.XxxBo` | `modelData` | `*bo.XxxBo` |
 | BO → Proto | `bo.XxxBo` | `admin.XxxEntity` | `boData` | `*admin.XxxEntity` |
-
 ## 错误处理规范
 
 ```go
@@ -67,7 +66,7 @@ defer func() {
 }()
 
 if err != nil {
-    return nil, errorx.NewDefaultError("Invalid input parameters")
+    return nil, errorx.NewDefaultError("invalid input parameters")
 }
 ```
 
@@ -84,6 +83,10 @@ if err != nil {
 4. **日志**：使用 go-zero logx
 5. **配置**：YAML 配置文件，禁止硬编码敏感信息
 6. **代码质量**：遵循项目规范，清晰易读
+7. **TDD 模式**：开发时必须使用测试驱动开发（TDD），先写测试再写实现
+8. **API/Proto 变更**：`.api` 或 `.proto` 文件修改后，必须执行 `make create-service <service-name>` 重新生成代码
+9. **切片转换**：切片类型的数据转换同样使用 `copierx.Trans`，例如 `copierx.Trans[[]dto.Item, []model.Item](&dtoSlice)`
+10. **开发文档语言**：LLM 生成的开发中间文档（计划、分析、设计等）统一使用中文
 
 ## 相关文档
 
