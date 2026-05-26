@@ -21,7 +21,7 @@ type BorrowerPropertyTransaction struct {
 	EmdAmount          float64                                     `gorm:"column:emd_amount;type:decimal(10,2);not null;default:0" json:"emd_amount"`
 	PropertyType       constants.PropertyType                      `gorm:"column:property_type;type:varchar(50);not null;default:''" json:"property_type"`
 	Pm                 string                                      `gorm:"column:pm;type:varchar(255);not null;default:''" json:"pm"`
-	BusinessStrategy   pq.StringArray                              `gorm:"column:business_strategy;ttype:text[];default:'{}'" json:"business_strategy"`
+	BusinessStrategy   pq.StringArray                              `gorm:"column:business_strategy;type:text[]" json:"business_strategy"`
 	Note               string                                      `gorm:"column:note;type:varchar(255);not null;default:''" json:"note"`
 	Checklist          dto.ChecklistRoot                           `gorm:"column:checklist;type:jsonb;not null;default:'{}';serializer:json" json:"checklist"`
 

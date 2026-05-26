@@ -131,3 +131,15 @@ CREATE TABLE "public"."document_templates"
 ALTER TABLE public.loans
     ADD column borrower_property_transaction_id int4 DEFAULT 0 NOT NULL;
 CREATE INDEX idx_loan_borrower_property_trans_id ON public.loans (borrower_property_transaction_id);
+
+-- migrate existing strategy varchar to business_strategy text[]
+ALTER TABLE public.borrower_property_transactions
+    RENAME COLUMN strategy TO business_strategy;
+
+ALTER TABLE public.borrower_property_transactions
+    ALTER COLUMN business_strategy TYPE text[] USING
+        CASE WHEN business_strategy = '' THEN '{}'::text[]
+             ELSE string_to_array(business_strategy, ',') END;
+
+ALTER TABLE public.borrower_property_transactions
+    ALTER COLUMN business_strategy SET DEFAULT '{}'::text[];

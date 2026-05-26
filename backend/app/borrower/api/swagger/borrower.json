@@ -1540,6 +1540,12 @@
                 "borrower_property_id": {
                   "type": "integer"
                 },
+                "business_strategy": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
                 "checklist": {
                   "type": "object",
                   "required": [
@@ -2044,9 +2050,6 @@
                   "type": "number"
                 },
                 "status": {
-                  "type": "string"
-                },
-                "strategy": {
                   "type": "string"
                 },
                 "type": {
@@ -2302,6 +2305,12 @@
                 "borrower_property_id": {
                   "type": "integer"
                 },
+                "business_strategy": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
                 "checklist": {
                   "type": "object",
                   "required": [
@@ -2806,9 +2815,6 @@
                   "type": "number"
                 },
                 "status": {
-                  "type": "string"
-                },
-                "strategy": {
                   "type": "string"
                 },
                 "type": {
@@ -2851,6 +2857,12 @@
             "schema": {
               "type": "object",
               "properties": {
+                "business_strategy": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
                 "coe_date": {
                   "type": "string"
                 },
@@ -2868,9 +2880,6 @@
                 },
                 "purchase_amount": {
                   "type": "number"
-                },
-                "strategy": {
-                  "type": "string"
                 }
               }
             }
@@ -2884,6 +2893,12 @@
               "properties": {
                 "borrower_property_id": {
                   "type": "integer"
+                },
+                "business_strategy": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 },
                 "checklist": {
                   "type": "object",
@@ -3389,9 +3404,6 @@
                   "type": "number"
                 },
                 "status": {
-                  "type": "string"
-                },
-                "strategy": {
                   "type": "string"
                 },
                 "type": {
@@ -6545,7 +6557,7 @@
                           "emd_amount",
                           "property_type",
                           "pm",
-                          "strategy",
+                          "business_strategy",
                           "note",
                           "checklist",
                           "created_at",
@@ -6554,6 +6566,12 @@
                         "properties": {
                           "borrower_property_id": {
                             "type": "integer"
+                          },
+                          "business_strategy": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
                           },
                           "checklist": {
                             "type": "object",
@@ -7059,9 +7077,6 @@
                             "type": "number"
                           },
                           "status": {
-                            "type": "string"
-                          },
-                          "strategy": {
                             "type": "string"
                           },
                           "type": {
@@ -8426,7 +8441,7 @@
                     "emd_amount",
                     "property_type",
                     "pm",
-                    "strategy",
+                    "business_strategy",
                     "note",
                     "checklist",
                     "created_at",
@@ -8435,6 +8450,12 @@
                   "properties": {
                     "borrower_property_id": {
                       "type": "integer"
+                    },
+                    "business_strategy": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
                     },
                     "checklist": {
                       "type": "object",
@@ -8940,9 +8961,6 @@
                       "type": "number"
                     },
                     "status": {
-                      "type": "string"
-                    },
-                    "strategy": {
                       "type": "string"
                     },
                     "type": {
@@ -14566,7 +14584,7 @@
                           "emd_amount",
                           "property_type",
                           "pm",
-                          "strategy",
+                          "business_strategy",
                           "note",
                           "checklist",
                           "created_at",
@@ -14575,6 +14593,12 @@
                         "properties": {
                           "borrower_property_id": {
                             "type": "integer"
+                          },
+                          "business_strategy": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
                           },
                           "checklist": {
                             "type": "object",
@@ -15080,9 +15104,6 @@
                             "type": "number"
                           },
                           "status": {
-                            "type": "string"
-                          },
-                          "strategy": {
                             "type": "string"
                           },
                           "type": {
@@ -15986,7 +16007,7 @@
                           "emd_amount",
                           "property_type",
                           "pm",
-                          "strategy",
+                          "business_strategy",
                           "note",
                           "checklist",
                           "created_at",
@@ -15995,6 +16016,12 @@
                         "properties": {
                           "borrower_property_id": {
                             "type": "integer"
+                          },
+                          "business_strategy": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
                           },
                           "checklist": {
                             "type": "object",
@@ -16500,9 +16527,6 @@
                             "type": "number"
                           },
                           "status": {
-                            "type": "string"
-                          },
-                          "strategy": {
                             "type": "string"
                           },
                           "type": {
@@ -17407,7 +17431,7 @@
                           "emd_amount",
                           "property_type",
                           "pm",
-                          "strategy",
+                          "business_strategy",
                           "note",
                           "checklist",
                           "created_at",
@@ -17416,6 +17440,12 @@
                         "properties": {
                           "borrower_property_id": {
                             "type": "integer"
+                          },
+                          "business_strategy": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
                           },
                           "checklist": {
                             "type": "object",
@@ -17921,9 +17951,6 @@
                             "type": "number"
                           },
                           "status": {
-                            "type": "string"
-                          },
-                          "strategy": {
                             "type": "string"
                           },
                           "type": {
@@ -21653,7 +21680,7 @@
       }
     }
   },
-  "x-date": "2026-05-26 14:10:04",
+  "x-date": "2026-05-26 15:04:17",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

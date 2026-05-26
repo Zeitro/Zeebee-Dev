@@ -19650,7 +19650,7 @@ type BorrowerPropertyTransactionEntity struct {
 	EmdAmount          float64                                     `protobuf:"fixed64,11,opt,name=emd_amount,json=emdAmount,proto3" json:"emd_amount,omitempty"`
 	PropertyType       string                                      `protobuf:"bytes,12,opt,name=property_type,json=propertyType,proto3" json:"property_type,omitempty"`
 	Pm                 string                                      `protobuf:"bytes,13,opt,name=pm,proto3" json:"pm,omitempty"`
-	Strategy           string                                      `protobuf:"bytes,14,opt,name=strategy,proto3" json:"strategy,omitempty"`
+	BusinessStrategy   []string                                    `protobuf:"bytes,14,rep,name=business_strategy,json=businessStrategy,proto3" json:"business_strategy,omitempty"`
 	Note               string                                      `protobuf:"bytes,15,opt,name=note,proto3" json:"note,omitempty"`
 	Checklist          *BorrowerPropertyTransactionChecklistEntity `protobuf:"bytes,16,opt,name=checklist,proto3" json:"checklist,omitempty"`
 	unknownFields      protoimpl.UnknownFields
@@ -19778,11 +19778,11 @@ func (x *BorrowerPropertyTransactionEntity) GetPm() string {
 	return ""
 }
 
-func (x *BorrowerPropertyTransactionEntity) GetStrategy() string {
+func (x *BorrowerPropertyTransactionEntity) GetBusinessStrategy() []string {
 	if x != nil {
-		return x.Strategy
+		return x.BusinessStrategy
 	}
-	return ""
+	return nil
 }
 
 func (x *BorrowerPropertyTransactionEntity) GetNote() string {
@@ -20208,17 +20208,17 @@ func (x *BorrowerPropertyTransactionUpdateRequest) GetData() *BorrowerPropertyTr
 }
 
 type BorrowerPropertyTransactionUpdateRequestData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	CoeDate        string                 `protobuf:"bytes,2,opt,name=coe_date,json=coeDate,proto3" json:"coe_date,omitempty"`
-	PurchaseAmount float64                `protobuf:"fixed64,3,opt,name=purchase_amount,json=purchaseAmount,proto3" json:"purchase_amount,omitempty"`
-	EmdAmount      float64                `protobuf:"fixed64,4,opt,name=emd_amount,json=emdAmount,proto3" json:"emd_amount,omitempty"`
-	PropertyType   string                 `protobuf:"bytes,5,opt,name=property_type,json=propertyType,proto3" json:"property_type,omitempty"`
-	Pm             string                 `protobuf:"bytes,6,opt,name=pm,proto3" json:"pm,omitempty"`
-	Strategy       string                 `protobuf:"bytes,7,opt,name=strategy,proto3" json:"strategy,omitempty"`
-	Note           string                 `protobuf:"bytes,8,opt,name=note,proto3" json:"note,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	CoeDate          string                 `protobuf:"bytes,2,opt,name=coe_date,json=coeDate,proto3" json:"coe_date,omitempty"`
+	PurchaseAmount   float64                `protobuf:"fixed64,3,opt,name=purchase_amount,json=purchaseAmount,proto3" json:"purchase_amount,omitempty"`
+	EmdAmount        float64                `protobuf:"fixed64,4,opt,name=emd_amount,json=emdAmount,proto3" json:"emd_amount,omitempty"`
+	PropertyType     string                 `protobuf:"bytes,5,opt,name=property_type,json=propertyType,proto3" json:"property_type,omitempty"`
+	Pm               string                 `protobuf:"bytes,6,opt,name=pm,proto3" json:"pm,omitempty"`
+	BusinessStrategy []string               `protobuf:"bytes,7,rep,name=business_strategy,json=businessStrategy,proto3" json:"business_strategy,omitempty"`
+	Note             string                 `protobuf:"bytes,8,opt,name=note,proto3" json:"note,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *BorrowerPropertyTransactionUpdateRequestData) Reset() {
@@ -20293,11 +20293,11 @@ func (x *BorrowerPropertyTransactionUpdateRequestData) GetPm() string {
 	return ""
 }
 
-func (x *BorrowerPropertyTransactionUpdateRequestData) GetStrategy() string {
+func (x *BorrowerPropertyTransactionUpdateRequestData) GetBusinessStrategy() []string {
 	if x != nil {
-		return x.Strategy
+		return x.BusinessStrategy
 	}
-	return ""
+	return nil
 }
 
 func (x *BorrowerPropertyTransactionUpdateRequestData) GetNote() string {
@@ -24782,7 +24782,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x1dtotal_optional_document_count\x18\x05 \x01(\x05R\x1atotalOptionalDocumentCount\x12P\n" +
 	"%total_optional_updated_document_count\x18\x06 \x01(\x05R!totalOptionalUpdatedDocumentCount\x12g\n" +
 	"\x12required_documents\x18\a \x03(\v28.borrower.BorrowerPropertyTransactionChecklistNodeEntityR\x11requiredDocuments\x12g\n" +
-	"\x12optional_documents\x18\b \x03(\v28.borrower.BorrowerPropertyTransactionChecklistNodeEntityR\x11optionalDocuments\"\xa8\x04\n" +
+	"\x12optional_documents\x18\b \x03(\v28.borrower.BorrowerPropertyTransactionChecklistNodeEntityR\x11optionalDocuments\"\xb9\x04\n" +
 	"!BorrowerPropertyTransactionEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -24800,8 +24800,8 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\n" +
 	"emd_amount\x18\v \x01(\x01R\temdAmount\x12#\n" +
 	"\rproperty_type\x18\f \x01(\tR\fpropertyType\x12\x0e\n" +
-	"\x02pm\x18\r \x01(\tR\x02pm\x12\x1a\n" +
-	"\bstrategy\x18\x0e \x01(\tR\bstrategy\x12\x12\n" +
+	"\x02pm\x18\r \x01(\tR\x02pm\x12+\n" +
+	"\x11business_strategy\x18\x0e \x03(\tR\x10businessStrategy\x12\x12\n" +
 	"\x04note\x18\x0f \x01(\tR\x04note\x12R\n" +
 	"\tchecklist\x18\x10 \x01(\v24.borrower.BorrowerPropertyTransactionChecklistEntityR\tchecklist\"\x83\x02\n" +
 	"'BorrowerPropertyTransactionOptionEntity\x12\x0e\n" +
@@ -24826,7 +24826,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	")BorrowerPropertyTransactionDetailResponse\x12?\n" +
 	"\x04data\x18\x01 \x01(\v2+.borrower.BorrowerPropertyTransactionEntityR\x04data\"v\n" +
 	"(BorrowerPropertyTransactionUpdateRequest\x12J\n" +
-	"\x04data\x18\x01 \x01(\v26.borrower.BorrowerPropertyTransactionUpdateRequestDataR\x04data\"\x86\x02\n" +
+	"\x04data\x18\x01 \x01(\v26.borrower.BorrowerPropertyTransactionUpdateRequestDataR\x04data\"\x97\x02\n" +
 	",BorrowerPropertyTransactionUpdateRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\bcoe_date\x18\x02 \x01(\tR\acoeDate\x12'\n" +
@@ -24834,8 +24834,8 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\n" +
 	"emd_amount\x18\x04 \x01(\x01R\temdAmount\x12#\n" +
 	"\rproperty_type\x18\x05 \x01(\tR\fpropertyType\x12\x0e\n" +
-	"\x02pm\x18\x06 \x01(\tR\x02pm\x12\x1a\n" +
-	"\bstrategy\x18\a \x01(\tR\bstrategy\x12\x12\n" +
+	"\x02pm\x18\x06 \x01(\tR\x02pm\x12+\n" +
+	"\x11business_strategy\x18\a \x03(\tR\x10businessStrategy\x12\x12\n" +
 	"\x04note\x18\b \x01(\tR\x04note\"v\n" +
 	"(BorrowerPropertyTransactionDeleteRequest\x12J\n" +
 	"\x04data\x18\x01 \x01(\v26.borrower.BorrowerPropertyTransactionDeleteRequestDataR\x04data\">\n" +
