@@ -4123,6 +4123,18 @@
             "name": "operation_type",
             "in": "query",
             "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "start_date",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "end_date",
+            "in": "query",
+            "allowEmptyValue": true
           }
         ],
         "responses": {
@@ -4199,6 +4211,18 @@
             "name": "transaction_id",
             "in": "path",
             "required": true
+          },
+          {
+            "type": "string",
+            "name": "start_date",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "end_date",
+            "in": "query",
+            "allowEmptyValue": true
           }
         ],
         "responses": {
@@ -21682,7 +21706,7 @@
       }
     }
   },
-  "x-date": "2026-05-26 16:25:20",
+  "x-date": "2026-05-26 18:27:12",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
