@@ -20448,8 +20448,7 @@
               "type": "object",
               "required": [
                 "type",
-                "file_suffix",
-                "file_name"
+                "file_suffix"
               ],
               "properties": {
                 "file_name": {
@@ -21680,7 +21679,7 @@
       }
     }
   },
-  "x-date": "2026-05-26 15:04:17",
+  "x-date": "2026-05-26 16:09:34",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

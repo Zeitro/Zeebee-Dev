@@ -858,6 +858,7 @@ message StorageCreatePresignedUrlRequest {
 message StorageCreatePresignedUrlRequestData {
   string type = 1;
   string file_suffix = 2;
+  string file_name = 3;
 }
 
 message StorageCreatePresignedUrlResponse {
@@ -866,6 +867,10 @@ message StorageCreatePresignedUrlResponse {
 
 message StorageCreatePresignedUrlResponseData {
   string url = 1;
+  string file_name = 2;
+  string storage_type = 3;
+  string external_id = 4;
+  string upload_type = 5;
 }
 
 service Storage {
