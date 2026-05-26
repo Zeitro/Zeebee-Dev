@@ -12,7 +12,7 @@ CREATE TABLE "public"."borrower_property_transactions"
     "emd_amount"           decimal(10, 2) NOT NULL DEFAULT 0,
     "property_type"        varchar(50)    NOT NULL DEFAULT '',
     "pm"                   varchar(255)   NOT NULL DEFAULT '',
-    "strategy"             varchar(100)   NOT NULL DEFAULT '',
+    "business_strategy"    text[] COLLATE "pg_catalog"."default" DEFAULT '{}'::text[],
     "note"                 varchar(255)   NOT NULL DEFAULT '',
     "created_at"           timestamptz    NOT NULL DEFAULT now(),
     "updated_at"           timestamptz    NOT NULL DEFAULT now(),

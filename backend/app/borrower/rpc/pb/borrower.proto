@@ -2220,7 +2220,7 @@ message BorrowerPropertyTransactionEntity {
   double emd_amount = 11;
   string property_type = 12;
   string pm = 13;
-  string strategy = 14;
+  repeated string business_strategy = 14;
   string note = 15;
   BorrowerPropertyTransactionChecklistEntity checklist = 16;
 }
@@ -2271,7 +2271,7 @@ message BorrowerPropertyTransactionUpdateRequestData {
   double emd_amount = 4;
   string property_type = 5;
   string pm = 6;
-  string strategy = 7;
+  repeated string business_strategy = 7;
   string note = 8;
 }
 

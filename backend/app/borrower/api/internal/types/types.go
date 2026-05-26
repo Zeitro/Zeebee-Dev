@@ -344,7 +344,7 @@ type BorrowerPropertyTransactionCreateResponse struct {
 	EmdAmount          float64                              `json:"emd_amount"`
 	PropertyType       string                               `json:"property_type"`
 	Pm                 string                               `json:"pm"`
-	Strategy           string                               `json:"strategy"`
+	BusinessStrategy   []string                             `json:"business_strategy"`
 	Note               string                               `json:"note"`
 	Checklist          BorrowerPropertyTransactionChecklist `json:"checklist"`
 	CreatedAt          string                               `json:"created_at"`
@@ -371,7 +371,7 @@ type BorrowerPropertyTransactionDetailResponse struct {
 	EmdAmount          float64                              `json:"emd_amount"`
 	PropertyType       string                               `json:"property_type"`
 	Pm                 string                               `json:"pm"`
-	Strategy           string                               `json:"strategy"`
+	BusinessStrategy   []string                             `json:"business_strategy"`
 	Note               string                               `json:"note"`
 	Checklist          BorrowerPropertyTransactionChecklist `json:"checklist"`
 	CreatedAt          string                               `json:"created_at"`
@@ -404,7 +404,7 @@ type BorrowerPropertyTransactionEntity struct {
 	EmdAmount          float64                              `json:"emd_amount"`
 	PropertyType       string                               `json:"property_type"`
 	Pm                 string                               `json:"pm"`
-	Strategy           string                               `json:"strategy"`
+	BusinessStrategy   []string                             `json:"business_strategy"`
 	Note               string                               `json:"note"`
 	Checklist          BorrowerPropertyTransactionChecklist `json:"checklist"`
 	CreatedAt          string                               `json:"created_at"`
@@ -458,14 +458,14 @@ type BorrowerPropertyTransactionSwitchStatusRequest struct {
 }
 
 type BorrowerPropertyTransactionUpdateRequest struct {
-	Id             int64   `path:"id" validate:"required,gt=0"`
-	CoeDate        string  `json:"coe_date,optional" validate:"omitempty,datetime=01/02/2006"`
-	PurchaseAmount float64 `json:"purchase_amount,optional" validate:"min=0"`
-	EmdAmount      float64 `json:"emd_amount,optional" validate:"min=0"`
-	PropertyType   string  `json:"property_type,optional" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
-	Pm             string  `json:"pm,optional"`
-	Strategy       string  `json:"strategy,optional" validate:"oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
-	Note           string  `json:"note,optional"`
+	Id               int64    `path:"id" validate:"required,gt=0"`
+	CoeDate          string   `json:"coe_date,optional" validate:"omitempty,datetime=01/02/2006"`
+	PurchaseAmount   float64  `json:"purchase_amount,optional" validate:"min=0"`
+	EmdAmount        float64  `json:"emd_amount,optional" validate:"min=0"`
+	PropertyType     string   `json:"property_type,optional" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
+	Pm               string   `json:"pm,optional"`
+	BusinessStrategy []string `json:"business_strategy,optional" validate:"omitempty,dive,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
+	Note             string   `json:"note,optional"`
 }
 
 type DocumentCreateRequest struct {
