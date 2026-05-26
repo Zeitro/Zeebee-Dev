@@ -80,9 +80,14 @@ func (repo *OrganizationUserRepo) Page(ctx context.Context, pageReq dto.Organiza
 			Where(fmt.Sprintf("%s.role_id = ?", organizationUserAndRoleTable), filter.RoleId)
 	}
 
+	if len(filter.Status) > 0 {
+		query = query.Where(fmt.Sprintf("%s.status = ?", organizationUserTable), filter.Status)
+	}
+
 	if len(sorter.Column) > 0 {
 		query = query.Order(fmt.Sprintf("%s.%s %s", organizationUserTable, sorter.Column, sorter.Sort))
 	}
+
 	query = query.Order(fmt.Sprintf("case %s.status when '%s' then 1 when '%s' then 2 when '%s' then 3 else 4 end", organizationUserTable,
 		constants.OrganizationUserStatusActive,
 		constants.OrganizationUserStatusDisabled,
