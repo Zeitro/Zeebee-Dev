@@ -6278,6 +6278,9 @@
                     "due_in_days"
                   ],
                   "properties": {
+                    "borrower_property_transaction_id": {
+                      "type": "integer"
+                    },
                     "date_type": {
                       "type": "string"
                     },
@@ -21679,7 +21682,7 @@
       }
     }
   },
-  "x-date": "2026-05-26 16:09:34",
+  "x-date": "2026-05-26 16:25:20",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

@@ -955,18 +955,19 @@ type LoanLenderCompanyResponse struct {
 }
 
 type LoanPageFilter struct {
-	Stage         string   `json:"stage,optional"`
-	Keyword       string   `json:"keyword,optional"`
-	KeywordType   string   `json:"keyword_type,optional"`
-	PendingStatus []string `json:"pending_status,optional"`
-	LoanPurpose   []string `json:"loan_purpose,optional" `
-	LoanType      []string `json:"loan_type,optional"`
-	Lender        []string `json:"lender,optional"`
-	Source        []string `json:"source,optional"`
-	DateType      string   `json:"date_type,optional"`
-	DueInDays     int32    `json:"due_in_days,default=60" validate:"omitempty,gte=0"`
-	StartDate     string   `json:"start_date,optional" validate:"omitempty,datetime=01/02/2006"`
-	EndDate       string   `json:"end_date,optional" validate:"omitempty,datetime=01/02/2006"`
+	Stage                         string   `json:"stage,optional"`
+	Keyword                       string   `json:"keyword,optional"`
+	KeywordType                   string   `json:"keyword_type,optional"`
+	PendingStatus                 []string `json:"pending_status,optional"`
+	LoanPurpose                   []string `json:"loan_purpose,optional" `
+	LoanType                      []string `json:"loan_type,optional"`
+	Lender                        []string `json:"lender,optional"`
+	Source                        []string `json:"source,optional"`
+	BorrowerPropertyTransactionId int64    `json:"borrower_property_transaction_id,optional"`
+	DateType                      string   `json:"date_type,optional"`
+	DueInDays                     int32    `json:"due_in_days,default=60" validate:"omitempty,gte=0"`
+	StartDate                     string   `json:"start_date,optional" validate:"omitempty,datetime=01/02/2006"`
+	EndDate                       string   `json:"end_date,optional" validate:"omitempty,datetime=01/02/2006"`
 }
 
 type LoanPageRequest struct {

@@ -191,6 +191,10 @@ func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq dto.LoanBorro
 		endDate := datetime.EndOfDay(filter.EndDate.Time)
 		query = query.Where(fmt.Sprintf("%s.%s <= ?", loanTable, dateField), endDate)
 	}
+	// borrower property transaction id
+	if filter.BorrowerPropertyTransactionId > 0 {
+		query = query.Where(fmt.Sprintf("%s.borrower_property_transaction_id = ?", loanTable), filter.BorrowerPropertyTransactionId)
+	}
 
 	if isMaturityDate {
 		today := datetime.BeginOfDay(time.Now())

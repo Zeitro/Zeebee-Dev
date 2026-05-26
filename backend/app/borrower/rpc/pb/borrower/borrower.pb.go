@@ -4249,21 +4249,22 @@ func (x *LoanPageResponse) GetData() *LoanPageResponseData {
 }
 
 type LoanPageRequestFilter struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Stage         string                 `protobuf:"bytes,1,opt,name=stage,proto3" json:"stage,omitempty"`
-	Keyword       string                 `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"`
-	KeywordType   string                 `protobuf:"bytes,3,opt,name=keyword_type,json=keywordType,proto3" json:"keyword_type,omitempty"`
-	LoanPurpose   []string               `protobuf:"bytes,4,rep,name=loan_purpose,json=loanPurpose,proto3" json:"loan_purpose,omitempty"`
-	LoanType      []string               `protobuf:"bytes,5,rep,name=loan_type,json=loanType,proto3" json:"loan_type,omitempty"`
-	Lender        []string               `protobuf:"bytes,6,rep,name=lender,proto3" json:"lender,omitempty"`
-	PendingStatus []string               `protobuf:"bytes,7,rep,name=pending_status,json=pendingStatus,proto3" json:"pending_status,omitempty"`
-	Source        []string               `protobuf:"bytes,8,rep,name=source,proto3" json:"source,omitempty"`
-	DateType      string                 `protobuf:"bytes,9,opt,name=date_type,json=dateType,proto3" json:"date_type,omitempty"`
-	DueInDays     int32                  `protobuf:"varint,10,opt,name=due_in_days,json=dueInDays,proto3" json:"due_in_days,omitempty"`
-	StartDate     string                 `protobuf:"bytes,11,opt,name=start_date,json=startDate,proto3" json:"start_date,omitempty"`
-	EndDate       string                 `protobuf:"bytes,12,opt,name=end_date,json=endDate,proto3" json:"end_date,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                         protoimpl.MessageState `protogen:"open.v1"`
+	Stage                         string                 `protobuf:"bytes,1,opt,name=stage,proto3" json:"stage,omitempty"`
+	Keyword                       string                 `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"`
+	KeywordType                   string                 `protobuf:"bytes,3,opt,name=keyword_type,json=keywordType,proto3" json:"keyword_type,omitempty"`
+	LoanPurpose                   []string               `protobuf:"bytes,4,rep,name=loan_purpose,json=loanPurpose,proto3" json:"loan_purpose,omitempty"`
+	LoanType                      []string               `protobuf:"bytes,5,rep,name=loan_type,json=loanType,proto3" json:"loan_type,omitempty"`
+	Lender                        []string               `protobuf:"bytes,6,rep,name=lender,proto3" json:"lender,omitempty"`
+	PendingStatus                 []string               `protobuf:"bytes,7,rep,name=pending_status,json=pendingStatus,proto3" json:"pending_status,omitempty"`
+	Source                        []string               `protobuf:"bytes,8,rep,name=source,proto3" json:"source,omitempty"`
+	DateType                      string                 `protobuf:"bytes,9,opt,name=date_type,json=dateType,proto3" json:"date_type,omitempty"`
+	DueInDays                     int32                  `protobuf:"varint,10,opt,name=due_in_days,json=dueInDays,proto3" json:"due_in_days,omitempty"`
+	StartDate                     string                 `protobuf:"bytes,11,opt,name=start_date,json=startDate,proto3" json:"start_date,omitempty"`
+	EndDate                       string                 `protobuf:"bytes,12,opt,name=end_date,json=endDate,proto3" json:"end_date,omitempty"`
+	BorrowerPropertyTransactionId int64                  `protobuf:"varint,13,opt,name=borrower_property_transaction_id,json=borrowerPropertyTransactionId,proto3" json:"borrower_property_transaction_id,omitempty"`
+	unknownFields                 protoimpl.UnknownFields
+	sizeCache                     protoimpl.SizeCache
 }
 
 func (x *LoanPageRequestFilter) Reset() {
@@ -4378,6 +4379,13 @@ func (x *LoanPageRequestFilter) GetEndDate() string {
 		return x.EndDate
 	}
 	return ""
+}
+
+func (x *LoanPageRequestFilter) GetBorrowerPropertyTransactionId() int64 {
+	if x != nil {
+		return x.BorrowerPropertyTransactionId
+	}
+	return 0
 }
 
 type LoanPageRequestSorter struct {
@@ -7218,37 +7226,37 @@ func (x *LoanPropertyEntity) GetArv() float64 {
 }
 
 type LoanPropertyApplyEntity struct {
-	state                protoimpl.MessageState `protogen:"open.v1"`
-	Id                   int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	BorrowerPropertyId   int64                  `protobuf:"varint,2,opt,name=borrower_property_id,json=borrowerPropertyId,proto3" json:"borrower_property_id,omitempty"`
-	FuturePropertyType   string                 `protobuf:"bytes,3,opt,name=future_property_type,json=futurePropertyType,proto3" json:"future_property_type,omitempty"`
-	FutureUnit           int32                  `protobuf:"varint,4,opt,name=future_unit,json=futureUnit,proto3" json:"future_unit,omitempty"`
-	FutureLivingAreaSqft float32                `protobuf:"fixed32,5,opt,name=future_living_area_sqft,json=futureLivingAreaSqft,proto3" json:"future_living_area_sqft,omitempty"`
-	FutureBedrooms       int32                  `protobuf:"varint,6,opt,name=future_bedrooms,json=futureBedrooms,proto3" json:"future_bedrooms,omitempty"`
-	FutureBathrooms      int32                  `protobuf:"varint,7,opt,name=future_bathrooms,json=futureBathrooms,proto3" json:"future_bathrooms,omitempty"`
-	Owner                string                 `protobuf:"bytes,8,opt,name=owner,proto3" json:"owner,omitempty"`
-	ExistingLenderCompany        string            `protobuf:"bytes,9,opt,name=existing_lender_company,json=existingLenderCompany,proto3" json:"existing_lender_company,omitempty"`
-	ExistingRate                 float32           `protobuf:"fixed32,10,opt,name=existing_rate,json=existingRate,proto3" json:"existing_rate,omitempty"`
-	ExistingMaturityDate         string            `protobuf:"bytes,11,opt,name=existing_maturity_date,json=existingMaturityDate,proto3" json:"existing_maturity_date,omitempty"`
-	PurchaseAmount               float64           `protobuf:"fixed64,12,opt,name=purchase_amount,json=purchaseAmount,proto3" json:"purchase_amount,omitempty"`
-	PurchaseDate                 string            `protobuf:"bytes,13,opt,name=purchase_date,json=purchaseDate,proto3" json:"purchase_date,omitempty"`
-	HasAssignmentFee             bool              `protobuf:"varint,14,opt,name=has_assignment_fee,json=hasAssignmentFee,proto3" json:"has_assignment_fee,omitempty"`
-	AssignmentFeeAmount          float64           `protobuf:"fixed64,15,opt,name=assignment_fee_amount,json=assignmentFeeAmount,proto3" json:"assignment_fee_amount,omitempty"`
-	HasSubordinateDebt           bool              `protobuf:"varint,16,opt,name=has_subordinate_debt,json=hasSubordinateDebt,proto3" json:"has_subordinate_debt,omitempty"`
-	SubordinateDebtAmount        float64           `protobuf:"fixed64,17,opt,name=subordinate_debt_amount,json=subordinateDebtAmount,proto3" json:"subordinate_debt_amount,omitempty"`
-	ScheduledCloseEscrowDate     string            `protobuf:"bytes,18,opt,name=scheduled_close_escrow_date,json=scheduledCloseEscrowDate,proto3" json:"scheduled_close_escrow_date,omitempty"`
-	LiquidityAmount              float64           `protobuf:"fixed64,19,opt,name=liquidity_amount,json=liquidityAmount,proto3" json:"liquidity_amount,omitempty"`
-	Budget                       *LoanBudgetEntity `protobuf:"bytes,20,opt,name=budget,proto3" json:"budget,omitempty"`
-	MidConstruction              bool              `protobuf:"varint,21,opt,name=mid_construction,json=midConstruction,proto3" json:"mid_construction,omitempty"`
-	EstYearlyRentalIncomeAmount  float64           `protobuf:"fixed64,22,opt,name=est_yearly_rental_income_amount,json=estYearlyRentalIncomeAmount,proto3" json:"est_yearly_rental_income_amount,omitempty"`
-	YearlyLiabilityExpenseAmount float64           `protobuf:"fixed64,23,opt,name=yearly_liability_expense_amount,json=yearlyLiabilityExpenseAmount,proto3" json:"yearly_liability_expense_amount,omitempty"`
-	Dscr                         float64           `protobuf:"fixed64,24,opt,name=dscr,proto3" json:"dscr,omitempty"`
-	HasDelayedFinancing          bool              `protobuf:"varint,25,opt,name=has_delayed_financing,json=hasDelayedFinancing,proto3" json:"has_delayed_financing,omitempty"`
-	HasCollateralizedBlanket     bool              `protobuf:"varint,26,opt,name=has_collateralized_blanket,json=hasCollateralizedBlanket,proto3" json:"has_collateralized_blanket,omitempty"`
-	HasPropertiesVacant          bool              `protobuf:"varint,27,opt,name=has_properties_vacant,json=hasPropertiesVacant,proto3" json:"has_properties_vacant,omitempty"`
-	HasShortTermRental           bool              `protobuf:"varint,28,opt,name=has_short_term_rental,json=hasShortTermRental,proto3" json:"has_short_term_rental,omitempty"`
-	EstPropertyValueAmount       float64           `protobuf:"fixed64,29,opt,name=est_property_value_amount,json=estPropertyValueAmount,proto3" json:"est_property_value_amount,omitempty"`
-	Arv                          float64           `protobuf:"fixed64,30,opt,name=arv,proto3" json:"arv,omitempty"`
+	state                        protoimpl.MessageState `protogen:"open.v1"`
+	Id                           int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	BorrowerPropertyId           int64                  `protobuf:"varint,2,opt,name=borrower_property_id,json=borrowerPropertyId,proto3" json:"borrower_property_id,omitempty"`
+	FuturePropertyType           string                 `protobuf:"bytes,3,opt,name=future_property_type,json=futurePropertyType,proto3" json:"future_property_type,omitempty"`
+	FutureUnit                   int32                  `protobuf:"varint,4,opt,name=future_unit,json=futureUnit,proto3" json:"future_unit,omitempty"`
+	FutureLivingAreaSqft         float32                `protobuf:"fixed32,5,opt,name=future_living_area_sqft,json=futureLivingAreaSqft,proto3" json:"future_living_area_sqft,omitempty"`
+	FutureBedrooms               int32                  `protobuf:"varint,6,opt,name=future_bedrooms,json=futureBedrooms,proto3" json:"future_bedrooms,omitempty"`
+	FutureBathrooms              int32                  `protobuf:"varint,7,opt,name=future_bathrooms,json=futureBathrooms,proto3" json:"future_bathrooms,omitempty"`
+	Owner                        string                 `protobuf:"bytes,8,opt,name=owner,proto3" json:"owner,omitempty"`
+	ExistingLenderCompany        string                 `protobuf:"bytes,9,opt,name=existing_lender_company,json=existingLenderCompany,proto3" json:"existing_lender_company,omitempty"`
+	ExistingRate                 float32                `protobuf:"fixed32,10,opt,name=existing_rate,json=existingRate,proto3" json:"existing_rate,omitempty"`
+	ExistingMaturityDate         string                 `protobuf:"bytes,11,opt,name=existing_maturity_date,json=existingMaturityDate,proto3" json:"existing_maturity_date,omitempty"`
+	PurchaseAmount               float64                `protobuf:"fixed64,12,opt,name=purchase_amount,json=purchaseAmount,proto3" json:"purchase_amount,omitempty"`
+	PurchaseDate                 string                 `protobuf:"bytes,13,opt,name=purchase_date,json=purchaseDate,proto3" json:"purchase_date,omitempty"`
+	HasAssignmentFee             bool                   `protobuf:"varint,14,opt,name=has_assignment_fee,json=hasAssignmentFee,proto3" json:"has_assignment_fee,omitempty"`
+	AssignmentFeeAmount          float64                `protobuf:"fixed64,15,opt,name=assignment_fee_amount,json=assignmentFeeAmount,proto3" json:"assignment_fee_amount,omitempty"`
+	HasSubordinateDebt           bool                   `protobuf:"varint,16,opt,name=has_subordinate_debt,json=hasSubordinateDebt,proto3" json:"has_subordinate_debt,omitempty"`
+	SubordinateDebtAmount        float64                `protobuf:"fixed64,17,opt,name=subordinate_debt_amount,json=subordinateDebtAmount,proto3" json:"subordinate_debt_amount,omitempty"`
+	ScheduledCloseEscrowDate     string                 `protobuf:"bytes,18,opt,name=scheduled_close_escrow_date,json=scheduledCloseEscrowDate,proto3" json:"scheduled_close_escrow_date,omitempty"`
+	LiquidityAmount              float64                `protobuf:"fixed64,19,opt,name=liquidity_amount,json=liquidityAmount,proto3" json:"liquidity_amount,omitempty"`
+	Budget                       *LoanBudgetEntity      `protobuf:"bytes,20,opt,name=budget,proto3" json:"budget,omitempty"`
+	MidConstruction              bool                   `protobuf:"varint,21,opt,name=mid_construction,json=midConstruction,proto3" json:"mid_construction,omitempty"`
+	EstYearlyRentalIncomeAmount  float64                `protobuf:"fixed64,22,opt,name=est_yearly_rental_income_amount,json=estYearlyRentalIncomeAmount,proto3" json:"est_yearly_rental_income_amount,omitempty"`
+	YearlyLiabilityExpenseAmount float64                `protobuf:"fixed64,23,opt,name=yearly_liability_expense_amount,json=yearlyLiabilityExpenseAmount,proto3" json:"yearly_liability_expense_amount,omitempty"`
+	Dscr                         float64                `protobuf:"fixed64,24,opt,name=dscr,proto3" json:"dscr,omitempty"`
+	HasDelayedFinancing          bool                   `protobuf:"varint,25,opt,name=has_delayed_financing,json=hasDelayedFinancing,proto3" json:"has_delayed_financing,omitempty"`
+	HasCollateralizedBlanket     bool                   `protobuf:"varint,26,opt,name=has_collateralized_blanket,json=hasCollateralizedBlanket,proto3" json:"has_collateralized_blanket,omitempty"`
+	HasPropertiesVacant          bool                   `protobuf:"varint,27,opt,name=has_properties_vacant,json=hasPropertiesVacant,proto3" json:"has_properties_vacant,omitempty"`
+	HasShortTermRental           bool                   `protobuf:"varint,28,opt,name=has_short_term_rental,json=hasShortTermRental,proto3" json:"has_short_term_rental,omitempty"`
+	EstPropertyValueAmount       float64                `protobuf:"fixed64,29,opt,name=est_property_value_amount,json=estPropertyValueAmount,proto3" json:"est_property_value_amount,omitempty"`
+	Arv                          float64                `protobuf:"fixed64,30,opt,name=arv,proto3" json:"arv,omitempty"`
 	unknownFields                protoimpl.UnknownFields
 	sizeCache                    protoimpl.SizeCache
 }
@@ -23465,7 +23473,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x0fLoanPageRequest\x121\n" +
 	"\x04data\x18\x01 \x01(\v2\x1d.borrower.LoanPageRequestDataR\x04data\"F\n" +
 	"\x10LoanPageResponse\x122\n" +
-	"\x04data\x18\x01 \x01(\v2\x1e.borrower.LoanPageResponseDataR\x04data\"\xf8\x02\n" +
+	"\x04data\x18\x01 \x01(\v2\x1e.borrower.LoanPageResponseDataR\x04data\"\xc1\x03\n" +
 	"\x15LoanPageRequestFilter\x12\x14\n" +
 	"\x05stage\x18\x01 \x01(\tR\x05stage\x12\x18\n" +
 	"\akeyword\x18\x02 \x01(\tR\akeyword\x12!\n" +
@@ -23480,7 +23488,8 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	" \x01(\x05R\tdueInDays\x12\x1d\n" +
 	"\n" +
 	"start_date\x18\v \x01(\tR\tstartDate\x12\x19\n" +
-	"\bend_date\x18\f \x01(\tR\aendDate\"C\n" +
+	"\bend_date\x18\f \x01(\tR\aendDate\x12G\n" +
+	" borrower_property_transaction_id\x18\r \x01(\x03R\x1dborrowerPropertyTransactionId\"C\n" +
 	"\x15LoanPageRequestSorter\x12\x16\n" +
 	"\x06column\x18\x01 \x01(\tR\x06column\x12\x12\n" +
 	"\x04sort\x18\x02 \x01(\tR\x04sort\"\xb1\x01\n" +

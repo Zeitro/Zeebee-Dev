@@ -179,6 +179,7 @@ type (
         LoanType []string `json:"loan_type,optional"`
         Lender []string `json:"lender,optional"`
         Source []string `json:"source,optional"`
+        BorrowerPropertyTransactionId int64 `json:"borrower_property_transaction_id,optional"`
 
         DateType string `json:"date_type,optional"`
         DueInDays int32 `json:"due_in_days,default=60" validate:"omitempty,gte=0"`

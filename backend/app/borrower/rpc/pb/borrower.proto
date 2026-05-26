@@ -482,6 +482,7 @@ message  LoanPageRequestFilter {
   int32 due_in_days = 10;
   string start_date = 11;
   string end_date = 12;
+  int64 borrower_property_transaction_id = 13;
 }
 
 message  LoanPageRequestSorter {
