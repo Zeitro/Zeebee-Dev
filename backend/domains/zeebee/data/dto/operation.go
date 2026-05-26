@@ -1,6 +1,8 @@
 package dto
 
 import (
+	"database/sql"
+
 	"gorm.io/datatypes"
 
 	"zeebee-backend/domains/zeebee/constants"
@@ -16,4 +18,19 @@ type OperationCreateDto struct {
 	Note           string                        `json:"note,omitempty"`
 	Metadata       datatypes.JSON                `json:"metadata,omitempty"`
 	OrganizationId int64                         `json:"organization_id"`
+}
+
+type OperationStatsRequestDto struct {
+	EntityId   int64                         `json:"entity_id"`
+	EntityType constants.OperationEntityType `json:"entity_type"`
+	StartDate  *sql.NullTime                 `json:"start_date"`
+	EndDate    *sql.NullTime                 `json:"end_date"`
+}
+
+type OperationListRequestDto struct {
+	EntityId   int64                         `json:"entity_id"`
+	EntityType constants.OperationEntityType `json:"entity_type"`
+	StartDate  *sql.NullTime                 `json:"start_date"`
+	EndDate    *sql.NullTime                 `json:"end_date"`
+	Operation  constants.OperationAction     `json:"operation"`
 }

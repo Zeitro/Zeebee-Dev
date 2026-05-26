@@ -6,7 +6,9 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -50,7 +52,16 @@ func (l *OperationListLogic) OperationList(in *borrower.TransactionOperationList
 		return
 	}
 
-	list, err := l.svcCtx.OperationRepo.GetOperationList(l.ctx, in.Data.TransactionId, constants.OperationEntityTypeBorrowerPropertyTransaction, in.Data.OperationType)
+	input := &dto.OperationListRequestDto{}
+	input, err = copierx.Trans[borrower.TransactionOperationListRequestData, dto.OperationListRequestDto](in.Data, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
+	if err != nil {
+		return nil, err
+	}
+	input.EntityId = in.Data.TransactionId
+	input.EntityType = constants.OperationEntityTypeBorrowerPropertyTransaction
+	input.Operation = constants.OperationAction(in.Data.OperationType)
+
+	list, err := l.svcCtx.OperationRepo.GetOperationList(l.ctx, *input)
 	if err != nil {
 		return nil, errorx.Wrap(err, "failed to get operation list")
 	}

@@ -121,7 +121,7 @@ func (l *CreateDocumentLogic) CreateDocument(in *borrower.DocumentCreateRequest)
 			OperatorType:   claim.UserType,
 			Operation:      constants.OperationActionBorrowerPropertyTransactionAddDocument,
 			OrganizationId: claim.OrganizationId,
-			Note:           "Create document: " + in.Data.Name,
+			Note:           "create document: " + in.Data.Name,
 		})
 		if innerErr != nil {
 			return innerErr

@@ -1780,6 +1780,8 @@ type ThirdPartyLoanApplicantEntity struct {
 type TransactionOperationListRequest struct {
 	TransactionId int64  `path:"transaction_id" validate:"required,gt=0"`
 	OperationType string `form:"operation_type,optional"`
+	StartDate     string `form:"start_date,optional" validate:"omitempty,datetime=01/02/2006"`
+	EndDate       string `form:"end_date,optional" validate:"omitempty,datetime=01/02/2006"`
 }
 
 type TransactionOperationListResponse struct {
@@ -1787,7 +1789,9 @@ type TransactionOperationListResponse struct {
 }
 
 type TransactionOperationStatsRequest struct {
-	TransactionId int64 `path:"transaction_id" validate:"required,gt=0"`
+	TransactionId int64  `path:"transaction_id" validate:"required,gt=0"`
+	StartDate     string `form:"start_date,optional" validate:"omitempty,datetime=01/02/2006"`
+	EndDate       string `form:"end_date,optional" validate:"omitempty,datetime=01/02/2006"`
 }
 
 type TransactionOperationStatsResponse struct {

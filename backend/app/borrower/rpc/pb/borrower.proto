@@ -2388,6 +2388,8 @@ message TransactionOperationStatsRequest {
 
 message TransactionOperationStatsRequestData {
   int64 transaction_id = 1;
+  string  start_date = 2;
+  string  end_date = 3;
 }
 
 message TransactionOperationStatsResponse {
@@ -2411,6 +2413,8 @@ message TransactionOperationListRequest {
 message TransactionOperationListRequestData {
   int64 transaction_id = 1;
   string operation_type = 2;
+  string  start_date = 3;
+  string  end_date = 4;
 }
 
 message TransactionOperationListResponse {

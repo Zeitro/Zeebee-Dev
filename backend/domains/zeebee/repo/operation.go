@@ -3,10 +3,11 @@ package repo
 import (
 	"context"
 
+	"github.com/duke-git/lancet/v2/datetime"
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/gormx"
-	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 )
 
@@ -25,11 +26,20 @@ type OperationStatsItem struct {
 	Count int64  `json:"count"`
 }
 
-func (repo *OperationRepo) GetOperationStats(ctx context.Context, entityId int64, entityType constants.OperationEntityType) (items []OperationStatsItem, total int64, err error) {
-	err = repo.Client(ctx).
+func (repo *OperationRepo) GetOperationStats(ctx context.Context, input dto.OperationStatsRequestDto) (items []OperationStatsItem, total int64, err error) {
+	query := repo.Client(ctx).
 		Select("operation as type, count(*) as count").
-		Where("entity_id = ? AND entity_type = ? AND is_del = 0", entityId, entityType).
-		Group("operation").
+		Where("entity_id = ? AND entity_type = ? AND is_del = 0", input.EntityId, input.EntityType)
+	if input.StartDate != nil && input.StartDate.Valid {
+		startDate := datetime.BeginOfDay(input.StartDate.Time)
+		query = query.Where("created_at >= ?", startDate)
+	}
+	if input.EndDate != nil && input.EndDate.Valid {
+		endDate := datetime.EndOfDay(input.EndDate.Time)
+		query = query.Where("created_at <= ?", endDate)
+	}
+
+	err = query.Group("operation").
 		Find(&items).Error
 	if err != nil {
 		return
@@ -40,12 +50,22 @@ func (repo *OperationRepo) GetOperationStats(ctx context.Context, entityId int64
 	return
 }
 
-func (repo *OperationRepo) GetOperationList(ctx context.Context, entityId int64, entityType constants.OperationEntityType, operationType string) (list []*model.Operation, err error) {
+func (repo *OperationRepo) GetOperationList(ctx context.Context, input dto.OperationListRequestDto) (list []*model.Operation, err error) {
 	query := repo.Client(ctx).
-		Where("entity_id = ? AND entity_type = ? AND is_del = 0", entityId, entityType)
-	if operationType != "" {
-		query = query.Where("operation = ?", operationType)
+		Where("entity_id = ? AND entity_type = ?", input.EntityId, input.EntityType)
+	if len(input.Operation) > 0 {
+		query = query.Where("operation = ?", input.Operation)
 	}
+
+	if input.StartDate != nil && input.StartDate.Valid {
+		startDate := datetime.BeginOfDay(input.StartDate.Time)
+		query = query.Where("created_at >= ?", startDate)
+	}
+	if input.EndDate != nil && input.EndDate.Valid {
+		endDate := datetime.EndOfDay(input.EndDate.Time)
+		query = query.Where("created_at <= ?", endDate)
+	}
+
 	err = query.Order("created_at DESC").Find(&list).Error
 	return
 }

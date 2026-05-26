@@ -76,7 +76,7 @@ type BpTransactionSwitchStatusDto struct {
 type BorrowerPropertyTransactionPageRequestDto struct {
 	BasePageRequestDto
 	Filter BorrowerPropertyTransactionPageRequestFilter `json:"filter"`
-	Sorter BasePageSorter                                `json:"sorter"`
+	Sorter BasePageSorter                               `json:"sorter"`
 }
 
 type BorrowerPropertyTransactionPageRequestFilter struct {
@@ -87,12 +87,12 @@ type BorrowerPropertyTransactionPageRequestFilter struct {
 }
 
 type BorrowerPropertyTransactionPageEntity struct {
-	Id        int64       `json:"id"`
-	Code      string      `json:"code"`
-	Type      string      `json:"type"`
-	Status    string      `json:"status"`
-	CoeDate   string      `json:"coe_date"`
-	CreatedAt string      `json:"created_at"`
-	UpdatedAt string      `json:"updated_at"`
-	Address   AddressDto  `json:"address"`
+	Id        int64      `json:"id"`
+	Code      string     `json:"code"`
+	Type      string     `json:"type"`
+	Status    string     `json:"status"`
+	CoeDate   string     `json:"coe_date"`
+	CreatedAt string     `json:"created_at"`
+	UpdatedAt string     `json:"updated_at"`
+	Address   AddressDto `json:"address"`
 }
