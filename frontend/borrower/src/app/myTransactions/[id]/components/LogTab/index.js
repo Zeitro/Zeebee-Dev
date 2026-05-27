@@ -5,9 +5,10 @@ import { InfiniteVirtuoso, CommonFormDate } from '@repo/shared-methods';
 import { createRequest } from '@repo/shared-methods/utils';
 import ActivityLogItem from './ActivityLogItem';
 import ActivitySummary from './ActivitySummary';
+const ALL_ACTIVITY_TYPE = 'All activities';
 const LogTab = ({ transactionId }) => {
 	const { request, cancelMatch } = useMemo(() => createRequest(), []);
-	const [activityType, setActivityType] = useState('all');
+	const [activityType, setActivityType] = useState(ALL_ACTIVITY_TYPE);
 	const [dateRange, setDateRange] = useState(null);
 
 	const filterParams = useMemo(
@@ -25,7 +26,7 @@ const LogTab = ({ transactionId }) => {
 		}
 
 		const params = new URLSearchParams({});
-		if (activityType && activityType !== 'all') {
+		if (activityType && activityType !== ALL_ACTIVITY_TYPE) {
 			params.set('operation_type', activityType);
 		}
 		if (dateRange?.[0] && dateRange?.[1]) {
@@ -65,7 +66,7 @@ const LogTab = ({ transactionId }) => {
 				<InfiniteVirtuoso
 					key={`${transactionId}-${activityType}-${dateRange?.join('-') || ''}`}
 					boxClassName="min-h-0 flex-1"
-					minItemHeight={100}
+					minItemHeight={70}
 					enableLoadMore={false}
 					getData={getData}
 					params={filterParams}
@@ -86,6 +87,7 @@ const LogTab = ({ transactionId }) => {
 					dateRange={dateRange}
 					activeKey={activityType}
 					onSelect={setActivityType}
+					allActivityType={ALL_ACTIVITY_TYPE}
 				/>
 			</div>
 		</div>

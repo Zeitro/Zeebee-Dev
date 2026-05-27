@@ -38,7 +38,7 @@ export const BASIC_INFO_VIEW_FIELDS = [
 	{
 		label: 'Business strategy',
 		key: 'business_strategy',
-		getValue: (data) => data?.business_strategy,
+		getValue: (data) => data?.business_strategy?.join(', '),
 	},
 	{
 		label: 'TC Notes',

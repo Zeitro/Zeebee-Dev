@@ -5,12 +5,18 @@ import { displayValue } from '@repo/shared-methods/utils';
 import { CATEGORY_CONTENT_TYPE, resolveCategoryContentType } from '../constants';
 import UploadDocumentList from './UploadDocumentList';
 
-function renderCategoryContent(category) {
+function renderCategoryContent(category, onRefresh, transactionId) {
 	const contentType = resolveCategoryContentType(category);
 
 	switch (contentType) {
 		case CATEGORY_CONTENT_TYPE.UPLOAD:
-			return <UploadDocumentList category={category} />;
+			return (
+				<UploadDocumentList
+					category={category}
+					onRefresh={onRefresh}
+					transactionId={transactionId}
+				/>
+			);
 		default:
 			return (
 				<div className="px-6 py-12 text-center text-base-label">
@@ -20,7 +26,7 @@ function renderCategoryContent(category) {
 	}
 }
 
-const CategoryContentPanel = ({ category }) => {
+const CategoryContentPanel = ({ category, onRefresh, transactionId }) => {
 	return (
 		<div className="min-w-0 flex-1 overflow-hidden rounded-lg border border-base-border bg-background">
 			<div className="border-b border-base-border px-6 py-4">
@@ -29,7 +35,7 @@ const CategoryContentPanel = ({ category }) => {
 				</h2>
 			</div>
 
-			{category ? renderCategoryContent(category) : null}
+			{category ? renderCategoryContent(category, onRefresh, transactionId) : null}
 		</div>
 	);
 };

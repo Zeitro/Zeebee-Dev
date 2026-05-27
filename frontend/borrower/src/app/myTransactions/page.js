@@ -2,9 +2,14 @@
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FolderOpenOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
+import {
+	DeleteOutlined,
+	FolderOpenOutlined,
+	PlusOutlined,
+	ReloadOutlined,
+} from '@ant-design/icons';
 import { Button, message, Space, Typography } from 'antd';
-import { FilterTable } from '@repo/shared-methods';
+import { DeleteBtn, FilterTable } from '@repo/shared-methods';
 import { useGetOptions } from '@repo/shared-methods/hooks';
 import { createRequest, displayValue, formatDate } from '@repo/shared-methods/utils';
 import NewTransactionModal from './components/NewTransactionModal';
@@ -38,7 +43,8 @@ const MyTransactionsPage = () => {
 	const [status, setStatus] = useState('');
 	const [transactionType, setTransactionType] = useState('');
 	const [newTransactionOpen, setNewTransactionOpen] = useState(false);
-
+	const [deleteLoading, setDeleteLoading] = useState(false);
+	const [messageApi, contextHolder] = message.useMessage();
 	const getData = useCallback(
 		(params) => {
 			cancelMatch(TRANSACTION_LIST_API);
@@ -58,6 +64,17 @@ const MyTransactionsPage = () => {
 		},
 		[request, cancelMatch],
 	);
+
+	const handleDelete = async (id) => {
+		try {
+			setDeleteLoading(true);
+			await request(`/borrower_property_transaction/${id}`, { method: 'DELETE' });
+			messageApi.success('Delete transaction successfully');
+			tableFilterRef.current?.handleSearch?.();
+		} finally {
+			setDeleteLoading(false);
+		}
+	};
 
 	const filterList = useMemo(
 		() => [
@@ -142,7 +159,7 @@ const MyTransactionsPage = () => {
 				key: 'code',
 				sorter: true,
 				width: 140,
-				render: (v, record) => displayValue(v),
+				render: (v) => displayValue(v),
 			},
 			{
 				title: 'Property address',
@@ -155,7 +172,7 @@ const MyTransactionsPage = () => {
 						<Typography.Link
 							onClick={(e) => {
 								e.preventDefault();
-								message.info('Property detail is not wired yet.');
+								window.open(`/myTransactions/${record.id}`, '_blank');
 							}}
 						>
 							{text}
@@ -218,7 +235,7 @@ const MyTransactionsPage = () => {
 							size="small"
 							type="link"
 							icon={<FolderOpenOutlined className="text-base-warning" />}
-							onClick={() => message.info('File list is not wired yet.')}
+							onClick={() => router.push(`/myTransactions/${record.id}`)}
 						/>
 						<Button
 							size="small"
@@ -231,18 +248,12 @@ const MyTransactionsPage = () => {
 						>
 							Edit
 						</Button>
-						<Button
-							size="small"
-							type="link"
-							danger
-							onClick={() =>
-								message.info(
-									`Delete is a placeholder for transaction ${record.id}.`,
-								)
-							}
-						>
-							Delete
-						</Button>
+						<DeleteBtn
+							icon={<DeleteOutlined />}
+							content={`ID: ${record?.code}`}
+							onOk={() => handleDelete(record.id)}
+							loading={deleteLoading}
+						/>
 					</Space>
 				),
 			},
@@ -252,6 +263,7 @@ const MyTransactionsPage = () => {
 
 	return (
 		<>
+			{contextHolder}
 			<FilterTable
 				ref={tableFilterRef}
 				columns={columns}
@@ -265,7 +277,6 @@ const MyTransactionsPage = () => {
 				open={newTransactionOpen}
 				onClose={() => setNewTransactionOpen(false)}
 				onSaved={() => {
-					cancelMatch(TRANSACTION_LIST_API);
 					tableFilterRef.current?.handleSearch?.();
 				}}
 			/>

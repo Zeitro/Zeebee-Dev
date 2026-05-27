@@ -1,11 +1,13 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import CollapsibleDocumentList from '@/components/CollapsibleDocumentList';
 import { NoData } from '@repo/shared-methods';
-import { toDocumentListItems } from '../constants';
-import { transactionDocumentColumns } from './documentColumns';
 import styles from './index.module.scss';
+import { createRequest, displayValue, formatDate } from '@repo/shared-methods/utils';
+import UploadModal from './uploadModal';
+import { Button, message } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
 
 function SectionLabel({ title, count }) {
 	return (
@@ -16,14 +18,85 @@ function SectionLabel({ title, count }) {
 	);
 }
 
-const UploadDocumentList = ({ category }) => {
-	const columns = useMemo(() => transactionDocumentColumns(), []);
-
+const UploadDocumentList = ({ category, onRefresh, transactionId }) => {
+	/**
+	 * CollapsibleDocumentList 列配置（交易 Documents Tab）
+	 *
+	 * rowPlacement:
+	 * - parent：仅父级（文档类型行）
+	 * - file：仅子级（文件行）；父级该列空占位对齐
+	 * - both：父子都展示；可用 parentDataIndex / fileDataIndex 区分字段
+	 *
+	 * 渲染：
+	 * - render(value, record, { level, dataIndex })：仅父级（both 列的父级侧也用 render，子级勿用）
+	 * - fileRender(value, defaultNode, file, parentRecord)：子级或 both 的子级侧
+	 *   - 省略 fileRender 时：首列默认文件名 pill，末列默认 View / Delete
+	 * - formatter：无自定义 render 时用于 displayValue(value, formatter)
+	 */
+	const columns = useMemo(
+		() => [
+			{
+				title: 'Document type',
+				key: 'document_type',
+				dataIndex: 'document_type',
+				minWidth: 200,
+				ellipsis: true,
+				rowPlacement: 'both',
+				// 父级展示类型名；子级走组件默认（文件名 + 图标 pill），无需 fileRender
+			},
+			{
+				title: 'Update date',
+				key: 'updated_at',
+				width: 120,
+				ellipsis: true,
+				rowPlacement: 'file',
+				fileDataIndex: 'updated_at',
+				fileRender: (value, _defaultNode, file, parentRecord) =>
+					displayValue(value ?? file?.updated_at ?? parentRecord?.updated_at, formatDate),
+			},
+			{
+				title: 'Status',
+				key: 'status',
+				width: 150,
+				ellipsis: true,
+				rowPlacement: 'file',
+				fileDataIndex: 'status',
+				fileRender: (value, _defaultNode, file, parentRecord) => displayValue(value),
+			},
+			{
+				title: '',
+				key: 'operation',
+				width: 120,
+				align: 'right',
+				rowPlacement: 'both',
+				render: (_, record) => (
+					<Button
+						type="default"
+						size="small"
+						onClick={(e) => {
+							e.stopPropagation();
+							setRecord(record);
+							setOpen(true);
+						}}
+						icon={<UploadOutlined />}
+					>
+						Upload
+					</Button>
+				),
+				// 子级省略 fileRender → 默认 View / Delete（DefaultFileActions）
+			},
+		],
+		[category, onRefresh],
+	);
+	const [open, setOpen] = useState(false);
+	const [record, setRecord] = useState({});
+	const { request } = useMemo(() => createRequest(), []);
+	const [messageApi, contextHolder] = message.useMessage();
 	const { requiredList, optionalList } = useMemo(() => {
 		const documents = category?.documents ?? [];
 		return {
-			requiredList: toDocumentListItems(documents.filter((d) => d.required)),
-			optionalList: toDocumentListItems(documents.filter((d) => !d.required)),
+			requiredList: documents.filter((d) => d.required),
+			optionalList: documents.filter((d) => !d.required),
 		};
 	}, [category?.documents]);
 
@@ -38,21 +111,45 @@ const UploadDocumentList = ({ category }) => {
 	const hasRequired = requiredList.length > 0;
 	const hasOptional = optionalList.length > 0;
 
+	const deleteFile = async (file) => {
+		await request(`/borrower_property_transaction/${transactionId}/file/${file?.id}`, {
+			method: 'DELETE',
+		});
+		messageApi.success('File deleted successfully');
+		onRefresh?.();
+	};
+
 	return (
 		<div className="px-6 py-5">
+			{contextHolder}
 			{hasRequired && (
 				<section className="mt-4">
 					<SectionLabel title="Required" count={requiredList.length} />
-					<CollapsibleDocumentList columns={columns} dataSource={requiredList} />
+					<CollapsibleDocumentList
+						columns={columns}
+						dataSource={requiredList}
+						onDeleteFile={deleteFile}
+					/>
 				</section>
 			)}
 
 			{hasOptional && (
 				<section className={hasRequired ? 'mt-8' : 'mt-4'}>
 					<SectionLabel title="Optional" count={optionalList.length} />
-					<CollapsibleDocumentList columns={columns} dataSource={optionalList} />
+					<CollapsibleDocumentList
+						columns={columns}
+						dataSource={optionalList}
+						onDeleteFile={deleteFile}
+					/>
 				</section>
 			)}
+			<UploadModal
+				open={open}
+				setOpen={setOpen}
+				record={record}
+				transaction_id={transactionId}
+				onRefresh={onRefresh}
+			/>
 		</div>
 	);
 };

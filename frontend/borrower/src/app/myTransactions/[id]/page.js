@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Button, Modal, Select, Tabs, message } from 'antd';
+import { Select, Tabs, message } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -11,6 +11,7 @@ import {
 	formatDate,
 	formatTime,
 } from '@repo/shared-methods/utils';
+import { DeleteBtn } from '@repo/shared-methods/components/NewModal/BtnPopUpModal';
 import { useGetOptions } from '@repo/shared-methods/hooks';
 import { useGlobalStore } from '@/store/global';
 import DocumentsTab from './components/DocumentsTab';
@@ -31,6 +32,7 @@ const TransactionDetailsPage = () => {
 	const [messageApi, contextHolder] = message.useMessage();
 	const { request } = useMemo(() => createRequest(), []);
 	const [loading, setLoading] = useState(false);
+	const [deleteLoading, setDeleteLoading] = useState(false);
 	const [rowData, setRowData] = useState({});
 	const [tabFromUrl, setTabFromUrl] = useState(searchParams.get('tab') || 'documents');
 	// const tabFromUrl = resolveTransactionDetailTab(searchParams.get('tab'));
@@ -70,22 +72,15 @@ const TransactionDetailsPage = () => {
 		}
 	};
 
-	const handleDelete = () => {
-		Modal.confirm({
-			title: 'Are you sure delete this transaction?',
-			content: rowData?.code,
-			okText: 'Delete',
-			okButtonProps: { danger: true },
-			onOk: async () => {
-				try {
-					await request(api, { method: 'DELETE' });
-					messageApi.success('Transaction deleted');
-					router.push('/myTransactions');
-				} catch {
-					messageApi.info('Delete is not wired to the API yet.');
-				}
-			},
-		});
+	const handleDelete = async () => {
+		try {
+			setDeleteLoading(true);
+			await request(`/borrower_property_transaction/${id}`, { method: 'DELETE' });
+			messageApi.success('Delete transaction successfully');
+			router.push('/myTransactions');
+		} finally {
+			setDeleteLoading(false);
+		}
 	};
 
 	const handleTabChange = (key) => {
@@ -116,7 +111,7 @@ const TransactionDetailsPage = () => {
 			{
 				key: 'documents',
 				label: 'Document',
-				children: <DocumentsTab rowData={rowData} />,
+				children: <DocumentsTab rowData={rowData} onRefresh={getDetails} />,
 			},
 			{
 				key: 'details',
@@ -143,7 +138,7 @@ const TransactionDetailsPage = () => {
 				children: <LogTab transactionId={id} />,
 			},
 		],
-		[getDetails, id, loading, rowData],
+		[getDetails, id, loading, rowData, isSearchParamsEditing],
 	);
 
 	return (
@@ -151,7 +146,7 @@ const TransactionDetailsPage = () => {
 			{contextHolder}
 			<div className="flex shrink-0 flex-col gap-4 px-6 pb-4 pt-6">
 				<div className="flex flex-wrap items-start justify-between gap-4">
-					<div className="flex min-w-0 flex-col gap-2">
+					<div className="flex min-w-0 flex-col gap-2 flex-1">
 						<div className="flex flex-wrap items-center gap-8">
 							<h1 className="m-0 text-xl font-medium leading-7 text-foreground">
 								{`${rowData.type} transaction`}
@@ -195,9 +190,14 @@ const TransactionDetailsPage = () => {
 							</span>
 						</div>
 					</div>
-					<Button danger icon={<DeleteOutlined />} onClick={handleDelete}>
-						Delete
-					</Button>
+					<DeleteBtn
+						type="default"
+						size="middle"
+						icon={<DeleteOutlined />}
+						content={`ID: ${rowData?.code}`}
+						onOk={handleDelete}
+						loading={deleteLoading}
+					/>
 				</div>
 			</div>
 

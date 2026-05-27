@@ -20,7 +20,12 @@ function CategoryStatusTag({ completed, pendingCount }) {
 	return null;
 }
 
-export default function DocumentCategoryButton({ category, isActive, onSelect }) {
+export default function DocumentCategoryButton({
+	category,
+	isActive,
+	onSelect,
+	isHideStatusTag = false,
+}) {
 	const { key, name, completed, pendingCount } = category;
 
 	return (
@@ -39,7 +44,9 @@ export default function DocumentCategoryButton({ category, isActive, onSelect })
 			>
 				{name}
 			</span>
-			<CategoryStatusTag completed={completed} pendingCount={pendingCount} />
+			{!isHideStatusTag && (
+				<CategoryStatusTag completed={completed} pendingCount={pendingCount} />
+			)}
 		</div>
 	);
 }

@@ -45,7 +45,7 @@ const DetailsTab = ({ rowData, transactionId, onRefresh, isSearchParamsEditing }
 			emd_amount: rowData?.emd_amount,
 			property_type: rowData?.property_type,
 			pm: rowData?.pm,
-			strategy: rowData?.strategy,
+			business_strategy: rowData?.business_strategy,
 			note: rowData?.note,
 		});
 	}, [form, rowData]);

@@ -3,18 +3,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Form, message, Select } from 'antd';
 import { NewModal } from '@repo/shared-methods';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 import { createRequest } from '@repo/shared-methods/utils';
 
 /** 与列表页 `TRANSACTION_LIST_API` 同前缀的创建接口；若后端路径不同，只改此处 */
-const TRANSACTION_CREATE_API = '/transaction';
-
-const TRANSACTION_TYPE_OPTIONS = [
-	{ label: 'Purchase', value: 'Purchase' },
-	{ label: 'Sale', value: 'Sale' },
-	{ label: 'Re-finance', value: 'Re-finance' },
-	{ label: 'Change Title', value: 'Change Title' },
-	{ label: 'Assignment', value: 'Assignment' },
-];
+const TRANSACTION_CREATE_API = '/borrower_property_transaction';
 
 function formatPropertyOptionLabel(p) {
 	const a = p?.address;
@@ -33,9 +26,12 @@ function formatPropertyOptionLabel(p) {
  * @param {(values: { property_id: number, type: string }) => Promise<void>} [props.onSubmit] 自定义提交；不传则 POST `TRANSACTION_CREATE_API`
  * @param {object} [props.initialProperty] 预填物业（如从 Properties 列表行传入）；有值时不再请求 `/property/all`，且物业下拉只读
  */
-const NewTransactionModal = ({ open, onClose, onSaved, onSubmit, initialProperty }) => {
+const NewTransactionModal = ({ open, onClose, onSaved, initialProperty }) => {
 	const [form] = Form.useForm();
 	const { request } = useMemo(() => createRequest(), []);
+	const { transactionTypeOptions } = useGetOptions([
+		{ key: 'borrower_property_transaction_type', valueName: 'transactionTypeOptions' },
+	]);
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [remotePropertyLoading, setRemotePropertyLoading] = useState(false);
 	const [remoteProperties, setRemoteProperties] = useState([]);
@@ -46,7 +42,10 @@ const NewTransactionModal = ({ open, onClose, onSaved, onSubmit, initialProperty
 		if (!open) return;
 		form.resetFields();
 		if (isPresetProperty) {
-			form.setFieldsValue({ property_id: initialProperty.id });
+			form.setFieldsValue({
+				borrower_property_id: initialProperty.id,
+				type: initialProperty.type,
+			});
 			return;
 		}
 
@@ -77,25 +76,16 @@ const NewTransactionModal = ({ open, onClose, onSaved, onSubmit, initialProperty
 		}));
 	}, [initialProperty, isPresetProperty, remoteProperties]);
 
-	const defaultSubmit = async (values) => {
-		await request(TRANSACTION_CREATE_API, {
-			method: 'POST',
-			body: {
-				property_id: values.property_id,
-				type: values.type,
-			},
-		});
-	};
-
 	const handleSave = async () => {
 		try {
 			const values = await form.validateFields();
 			setConfirmLoading(true);
-			if (onSubmit) {
-				await onSubmit(values);
-			} else {
-				await defaultSubmit(values);
-			}
+			await request(TRANSACTION_CREATE_API, {
+				method: 'POST',
+				body: {
+					...values,
+				},
+			});
 			message.open({
 				type: 'success',
 				content: 'Transaction created successfully',
@@ -133,7 +123,7 @@ const NewTransactionModal = ({ open, onClose, onSaved, onSubmit, initialProperty
 			>
 				<Form.Item
 					label="Property"
-					name="property_id"
+					name="borrower_property_id"
 					rules={[{ required: true, message: 'Please select a property' }]}
 				>
 					<Select
@@ -152,9 +142,9 @@ const NewTransactionModal = ({ open, onClose, onSaved, onSubmit, initialProperty
 					rules={[{ required: true, message: 'Please select a type' }]}
 				>
 					<Select
-						placeholder="Select type"
+						placeholder="Select transaction type"
 						allowClear
-						options={TRANSACTION_TYPE_OPTIONS}
+						options={transactionTypeOptions}
 					/>
 				</Form.Item>
 			</Form>
@@ -163,4 +153,3 @@ const NewTransactionModal = ({ open, onClose, onSaved, onSubmit, initialProperty
 };
 
 export default NewTransactionModal;
-export { TRANSACTION_TYPE_OPTIONS };

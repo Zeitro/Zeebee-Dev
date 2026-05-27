@@ -45,7 +45,7 @@ export function DefaultParentNameCell({ record, fieldKey = 'document_type', open
 }
 
 export function DefaultFileNameCell({ file, fileKey = 'file_url' }) {
-	const name = getFileName(file, fileKey);
+	const name = file?.file_name ?? getFileName(file, fileKey);
 	const suffix = getFileSuffix(file, fileKey);
 
 	return (
@@ -91,7 +91,7 @@ export function DefaultFileActions({
 					onOk={handleDelete}
 					confirmLoading={loading}
 					isStopPropagation
-					content={file.name}
+					content={file?.file_name ?? file?.name}
 				>
 					Delete
 				</DeleteBtn>

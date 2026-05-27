@@ -8,7 +8,7 @@ import CategoryContentPanel from './CategoryContentPanel';
 import { buildDocumentCategoriesFromChecklist, getChecklistProgress } from './checklist';
 import DocumentCategoryButton from './DocumentCategoryButton';
 
-const DocumentsTab = ({ rowData }) => {
+const DocumentsTab = ({ rowData, onRefresh }) => {
 	const categories = useMemo(
 		() => buildDocumentCategoriesFromChecklist(rowData?.checklist),
 		[rowData?.checklist],
@@ -97,12 +97,17 @@ const DocumentsTab = ({ rowData }) => {
 							category={cat}
 							isActive={cat.key === resolvedActiveKey}
 							onSelect={setActiveKey}
+							isHideStatusTag={true}
 						/>
 					))}
 				</div>
 			</div>
 
-			<CategoryContentPanel category={activeCategory} />
+			<CategoryContentPanel
+				category={activeCategory}
+				onRefresh={onRefresh}
+				transactionId={rowData?.id}
+			/>
 		</div>
 	);
 };
