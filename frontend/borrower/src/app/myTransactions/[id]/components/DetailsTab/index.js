@@ -6,7 +6,7 @@ import { EditOutlined, SaveOutlined } from '@ant-design/icons';
 import { createRequest } from '@repo/shared-methods/utils';
 import DetailField from './DetailField';
 import DetailsForm from './DetailsForm';
-import { BASIC_INFO_FORM_FIELDS, BASIC_INFO_VIEW_FIELDS } from './constants';
+import { BASIC_INFO_VIEW_FIELDS } from './constants';
 
 function renderViewFields(fields, data) {
 	const gridFields = fields.filter((f) => !f.fullWidth);
@@ -31,22 +31,22 @@ function renderViewFields(fields, data) {
 	);
 }
 
-const DetailsTab = ({ rowData, transactionId, onRefresh }) => {
+const DetailsTab = ({ rowData, transactionId, onRefresh, isSearchParamsEditing }) => {
 	const [form] = Form.useForm();
+	const [messageApi, contextHolder] = message.useMessage();
 	const { request } = useMemo(() => createRequest(), []);
-	const [isEditing, setIsEditing] = useState(false);
+	const [isEditing, setIsEditing] = useState(isSearchParamsEditing);
 	const [saving, setSaving] = useState(false);
 
 	const syncFormValues = useCallback(() => {
 		form.setFieldsValue({
-			coe_date: rowData?.coe_date ?? rowData?.coeDate,
-			purchase_price: rowData?.purchase_price ?? rowData?.purchasePrice,
-			emd: rowData?.emd,
-			property_type:
-				rowData?.property_type ?? rowData?.propertyType ?? rowData?.property?.property_type,
+			coe_date: rowData?.coe_date,
+			purchase_amount: rowData?.purchase_amount,
+			emd_amount: rowData?.emd_amount,
+			property_type: rowData?.property_type,
 			pm: rowData?.pm,
-			business_strategy: rowData?.business_strategy ?? rowData?.businessStrategy,
-			tc_notes: rowData?.tc_notes ?? rowData?.tcNotes,
+			strategy: rowData?.strategy,
+			note: rowData?.note,
 		});
 	}, [form, rowData]);
 
@@ -64,16 +64,15 @@ const DetailsTab = ({ rowData, transactionId, onRefresh }) => {
 	const handleSave = async () => {
 		try {
 			setSaving(true);
-			const values = await form.validateFields(BASIC_INFO_FORM_FIELDS);
-			await request(`/transaction/${transactionId}`, {
+			const values = await form.validateFields();
+			await request(`/borrower_property_transaction/${transactionId}`, {
 				method: 'PUT',
 				body: {
-					...rowData,
 					...values,
 				},
 			});
 			setIsEditing(false);
-			message.success('Transaction updated');
+			messageApi.success('Transaction updated');
 			onRefresh?.();
 		} catch {
 			// validation or request errors are handled by antd / request layer
@@ -94,6 +93,7 @@ const DetailsTab = ({ rowData, transactionId, onRefresh }) => {
 
 	return (
 		<div className="flex flex-col gap-6 rounded-lg border border-base-border bg-background px-8 py-6">
+			{contextHolder}
 			<div className="flex items-center justify-between gap-4">
 				<h2 className="m-0 text-xl font-medium leading-7 text-foreground">
 					Basic Information

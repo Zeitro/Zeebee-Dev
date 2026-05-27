@@ -2,11 +2,11 @@
 
 import React, { useCallback, useMemo, useState } from 'react';
 import { InfiniteVirtuoso, CommonFormDate } from '@repo/shared-methods';
+import { createRequest } from '@repo/shared-methods/utils';
 import ActivityLogItem from './ActivityLogItem';
 import ActivitySummary from './ActivitySummary';
-import { ACTIVITY_LOG_ITEM_HEIGHT, MOCK_ACTIVITY_SUMMARY, fetchActivityLogs } from './constants';
-
 const LogTab = ({ transactionId }) => {
+	const { request, cancelMatch } = useMemo(() => createRequest(), []);
 	const [activityType, setActivityType] = useState('all');
 	const [dateRange, setDateRange] = useState(null);
 
@@ -19,13 +19,43 @@ const LogTab = ({ transactionId }) => {
 		[activityType, dateRange, transactionId],
 	);
 
+	async function fetchActivityLogs({ transactionId, activityType, dateRange }) {
+		if (!transactionId || !request) {
+			return { list: [], total: 0 };
+		}
+
+		const params = new URLSearchParams({});
+		if (activityType && activityType !== 'all') {
+			params.set('operation_type', activityType);
+		}
+		if (dateRange?.[0] && dateRange?.[1]) {
+			params.set('start_date', dateRange[0]);
+			params.set('end_date', dateRange[1]);
+		}
+
+		const data = await request(
+			`/borrower_property_transaction/${transactionId}/operations?${params.toString()}`,
+			{ method: 'GET' },
+		);
+		const list = data?.list ?? [];
+		return { list, total: list.length };
+	}
+
 	const getData = useCallback(
-		async ({ page, limit }) => fetchActivityLogs({ page, limit, ...filterParams }),
-		[filterParams],
+		async ({ transactionId: txId, activityType: type, dateRange: range }) => {
+			const operationsUrl = `/borrower_property_transaction/${txId}/operations`;
+			cancelMatch(operationsUrl);
+			return fetchActivityLogs({
+				transactionId: txId,
+				activityType: type,
+				dateRange: range,
+			});
+		},
+		[cancelMatch, request],
 	);
 
 	const renderItem = useCallback(
-		(item, _index, { style } = {}) => <ActivityLogItem item={item} />,
+		(item, _index, { style } = {}) => <ActivityLogItem item={item} style={style} />,
 		[],
 	);
 
@@ -35,12 +65,11 @@ const LogTab = ({ transactionId }) => {
 				<InfiniteVirtuoso
 					key={`${transactionId}-${activityType}-${dateRange?.join('-') || ''}`}
 					boxClassName="min-h-0 flex-1"
-					className="h-full"
-					itemHeight={ACTIVITY_LOG_ITEM_HEIGHT}
+					minItemHeight={100}
+					enableLoadMore={false}
 					getData={getData}
 					params={filterParams}
 					renderItem={renderItem}
-					defaultItemHeight={ACTIVITY_LOG_ITEM_HEIGHT}
 				/>
 			</div>
 
@@ -53,7 +82,8 @@ const LogTab = ({ transactionId }) => {
 					allowClear
 				/>
 				<ActivitySummary
-					summary={MOCK_ACTIVITY_SUMMARY}
+					transactionId={transactionId}
+					dateRange={dateRange}
 					activeKey={activityType}
 					onSelect={setActivityType}
 				/>

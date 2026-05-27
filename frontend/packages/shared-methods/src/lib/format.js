@@ -235,13 +235,28 @@ export const assemblyAddress = (address = {}, isHaveZip) => {
 	return [...new Set(newArr)].join(', ');
 };
 
-// 简写姓名：只显示姓名首字母，并大写
+// 简写姓名：只显示姓名首字母，并大写（支持 userInfo 对象或完整姓名字符串）
+function initialsFromDisplayName(name) {
+	const parts = String(name).trim().split(/\s+/).filter(Boolean);
+	if (!parts.length) return '';
+	if (parts.length === 1) {
+		return parts[0][0]?.toUpperCase() || '';
+	}
+	const first = parts[0][0]?.toUpperCase() || '';
+	const last = parts[parts.length - 1][0]?.toUpperCase() || '';
+	return `${first}${last}`;
+}
+
 export const formatFirstLetterName = (userInfo) => {
 	if (!userInfo) return '';
+	if (typeof userInfo === 'string') {
+		return initialsFromDisplayName(userInfo);
+	}
 	const { first_name, last_name } = userInfo;
 	const name1 = first_name?.[0]?.toUpperCase() || '';
 	const name2 = last_name?.[0]?.toUpperCase() || '';
-	return name1 && name2 ? `${name1}${name2}` : '';
+	if (name1 && name2) return `${name1}${name2}`;
+	return name1 || name2 || '';
 };
 
 /**

@@ -37,45 +37,45 @@ const NewTransactionModal = ({ open, onClose, onSaved, onSubmit, initialProperty
 	const [form] = Form.useForm();
 	const { request } = useMemo(() => createRequest(), []);
 	const [confirmLoading, setConfirmLoading] = useState(false);
-	const [propertyLoading, setPropertyLoading] = useState(false);
-	const [properties, setProperties] = useState([]);
+	const [remotePropertyLoading, setRemotePropertyLoading] = useState(false);
+	const [remoteProperties, setRemoteProperties] = useState([]);
+	const isPresetProperty = Boolean(initialProperty?.id);
+	const propertyLoading = isPresetProperty ? false : remotePropertyLoading;
 
 	useEffect(() => {
 		if (!open) return;
 		form.resetFields();
-		let cancelled = false;
-
-		if (initialProperty?.id) {
-			setProperties([initialProperty]);
-			setPropertyLoading(false);
+		if (isPresetProperty) {
 			form.setFieldsValue({ property_id: initialProperty.id });
 			return;
 		}
 
+		let cancelled = false;
 		(async () => {
+			await Promise.resolve();
+			if (cancelled) return;
 			try {
-				setPropertyLoading(true);
+				setRemotePropertyLoading(true);
 				const res = await request('/property/all', { method: 'GET' });
-				if (!cancelled) setProperties(res?.lists ?? []);
+				if (!cancelled) setRemoteProperties(res?.lists ?? []);
 			} catch {
-				if (!cancelled) setProperties([]);
+				if (!cancelled) setRemoteProperties([]);
 			} finally {
-				if (!cancelled) setPropertyLoading(false);
+				if (!cancelled) setRemotePropertyLoading(false);
 			}
 		})();
 		return () => {
 			cancelled = true;
 		};
-	}, [open, form, request, initialProperty]);
+	}, [open, form, request, initialProperty, isPresetProperty]);
 
-	const propertySelectOptions = useMemo(
-		() =>
-			(properties ?? []).map((p) => ({
-				value: p.id,
-				label: formatPropertyOptionLabel(p),
-			})),
-		[properties],
-	);
+	const propertySelectOptions = useMemo(() => {
+		const source = isPresetProperty ? [initialProperty] : remoteProperties;
+		return (source ?? []).map((p) => ({
+			value: p.id,
+			label: formatPropertyOptionLabel(p),
+		}));
+	}, [initialProperty, isPresetProperty, remoteProperties]);
 
 	const defaultSubmit = async (values) => {
 		await request(TRANSACTION_CREATE_API, {

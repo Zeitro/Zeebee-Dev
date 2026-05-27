@@ -8,16 +8,28 @@ import { NoData } from '../NoData';
 /**
  * 虚拟无限滚动列表：分页拉取、多列/单列数据、底部加载与空态（与 DnD 版共用）
  */
+function normalizeListResponse(raw) {
+	const nextList = raw?.list ?? (Array.isArray(raw) ? raw : []);
+	const nextTotal = raw?.total ?? nextList.length;
+	return { nextList, nextTotal };
+}
+
 export function useInfiniteVirtuoso({
 	getData,
 	params,
+	pageSize = 10,
+	enableLoadMore = true,
 	multiple = false,
 	items,
 	setItems,
 	itemKey,
 }) {
 	const [rect, listBoxRef] = useElementSize();
-	const pagination = useRef(getPagination());
+	const pagination = useRef(getPagination({ pageSize }));
+
+	useEffect(() => {
+		pagination.current = getPagination({ pageSize });
+	}, [pageSize]);
 	const [list, setList] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [hasMore, setHasMore] = useState(true);
@@ -43,12 +55,13 @@ export function useInfiniteVirtuoso({
 			try {
 				if (multiple && !itemKey) return;
 				setLoading(true);
-				const { total: nextTotal, list: nextList } = await getDataRef.current({
+				const raw = await getDataRef.current({
 					page: pagination?.current?.current,
 					limit: pagination?.current?.pageSize,
 					...(paramsRef.current || {}),
 					itemKey,
 				});
+				const { nextList, nextTotal } = normalizeListResponse(raw);
 				if (multiple) {
 					setItems((v) => {
 						return v?.map((i) => {
@@ -63,13 +76,16 @@ export function useInfiniteVirtuoso({
 					setList((v) => (isInit ? nextList : [...v, ...nextList]));
 				}
 				setTotal(nextTotal);
+				if (!enableLoadMore || nextList.length >= nextTotal) {
+					setHasMore(false);
+				}
 				setLoading(false);
 			} catch (error) {
 				console.log(error);
 				setLoading(false);
 			}
 		},
-		[multiple, itemKey, setItems],
+		[multiple, itemKey, setItems, setList, enableLoadMore, getDataRef, paramsRef, pagination],
 	);
 
 	const loadMore = useCallback(() => {
@@ -119,16 +135,21 @@ export function useInfiniteVirtuoso({
 
 	const handleEndReached = useCallback(
 		(endIndex, { itemHeight } = {}) => {
-			if (hasMore && !loading) loadMore();
+			if (enableLoadMore && hasMore && !loading) loadMore();
 			const rectHeight = rect?.height;
 			if (itemHeight && rectHeight) {
 				const maxNum = Math.floor(rectHeight / itemHeight);
 				if (endIndex + 1 > maxNum) {
 					setIsScroll(true);
 				}
+				return;
+			}
+			// 不等高列表：Virtuoso 自动测量，用是否滚过首屏判断「已滚动」
+			if (endIndex > 0) {
+				setIsScroll(true);
 			}
 		},
-		[hasMore, loading, loadMore, rect],
+		[enableLoadMore, hasMore, loading, loadMore, rect],
 	);
 
 	useDeferredSyncEffect({

@@ -11,58 +11,60 @@ import {
 	formatDate,
 	formatTime,
 } from '@repo/shared-methods/utils';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 import { useGlobalStore } from '@/store/global';
 import DocumentsTab from './components/DocumentsTab';
 import DetailsTab from './components/DetailsTab';
 import LoansTab from './components/LoansTab';
 import LogTab from './components/LogTab';
-import { buildMockTransactionDetail } from './components/mockTransactionDetail';
-import {
-	TRANSACTION_STATUS_OPTIONS,
-	formatTransactionId,
-	getTransactionTitle,
-	resolveTransactionDetailTab,
-} from './components/utils';
+import { getStatusTagClass } from '../components/utils';
 import styles from './index.module.scss';
 
 const TransactionDetailsPage = () => {
 	const { id } = useParams();
 	const router = useRouter();
 	const searchParams = useSearchParams();
+	const isSearchParamsEditing = useMemo(
+		() => searchParams.get('isEditing') === 'true',
+		[searchParams],
+	);
+	const [messageApi, contextHolder] = message.useMessage();
 	const { request } = useMemo(() => createRequest(), []);
 	const [loading, setLoading] = useState(false);
 	const [rowData, setRowData] = useState({});
-	const tabFromUrl = resolveTransactionDetailTab(searchParams.get('tab'));
+	const [tabFromUrl, setTabFromUrl] = useState(searchParams.get('tab') || 'documents');
+	// const tabFromUrl = resolveTransactionDetailTab(searchParams.get('tab'));
 	const [statusSaving, setStatusSaving] = useState(false);
 	const { changeSidebarCollapsed } = useGlobalStore();
-	const api = `/transaction/${id}`;
+	const { transactionStatusOptions } = useGetOptions([
+		{ key: 'borrower_property_transaction_status', valueName: 'transactionStatusOptions' },
+	]);
+	const api = `/borrower_property_transaction/${id}`;
 
 	const getDetails = useCallback(async () => {
 		try {
 			setLoading(true);
 			const data = await request(api);
 			setRowData(data);
-			eventBus.emit('changeCrumbs', { 2: getTransactionTitle(data) });
+			eventBus.emit('changeCrumbs', { 2: `${data.type} transaction` });
 		} catch {
-			const mock = buildMockTransactionDetail(id);
-			setRowData(mock);
-			eventBus.emit('changeCrumbs', { 2: getTransactionTitle(mock) });
+			setRowData({});
 		} finally {
 			setLoading(false);
 		}
-	}, [api, id, request]);
+	}, [api, request]);
 
 	const handleStatusChange = async (status) => {
 		try {
 			setStatusSaving(true);
-			await request(api, {
-				method: 'PUT',
-				body: { ...rowData, status },
+			await request(`/borrower_property_transaction/${id}/status`, {
+				method: 'PATCH',
+				body: { status },
 			});
-			setRowData((prev) => ({ ...prev, status }));
-			message.success('Status updated');
+			messageApi.success('Status updated');
+			await getDetails();
 		} catch {
-			setRowData((prev) => ({ ...prev, status }));
+			// 错误提示由 request 层统一处理
 		} finally {
 			setStatusSaving(false);
 		}
@@ -71,16 +73,16 @@ const TransactionDetailsPage = () => {
 	const handleDelete = () => {
 		Modal.confirm({
 			title: 'Are you sure delete this transaction?',
-			content: formatTransactionId(rowData),
+			content: rowData?.code,
 			okText: 'Delete',
 			okButtonProps: { danger: true },
 			onOk: async () => {
 				try {
 					await request(api, { method: 'DELETE' });
-					message.success('Transaction deleted');
+					messageApi.success('Transaction deleted');
 					router.push('/myTransactions');
 				} catch {
-					message.info('Delete is not wired to the API yet.');
+					messageApi.info('Delete is not wired to the API yet.');
 				}
 			},
 		});
@@ -90,8 +92,10 @@ const TransactionDetailsPage = () => {
 		const params = new URLSearchParams(searchParams.toString());
 		if (key === 'documents') {
 			params.delete('tab');
+			setTabFromUrl('documents');
 		} else {
 			params.set('tab', key);
+			setTabFromUrl(key);
 		}
 		const query = params.toString();
 		router.replace(query ? `/myTransactions/${id}?${query}` : `/myTransactions/${id}`, {
@@ -107,12 +111,6 @@ const TransactionDetailsPage = () => {
 		return () => clearTimeout(timer);
 	}, [changeSidebarCollapsed, getDetails]);
 
-	const updatedRaw = rowData?.updated_at ?? rowData?.updatedAt;
-	const updatedDate = updatedRaw ? formatDate(updatedRaw) : displayValue(null);
-	const updatedTime = updatedRaw ? formatTime(updatedRaw) : null;
-	const coeRaw = rowData?.coe_date ?? rowData?.coeDate;
-	const status = rowData?.status;
-
 	const tabItems = useMemo(
 		() => [
 			{
@@ -125,7 +123,12 @@ const TransactionDetailsPage = () => {
 				label: 'Details',
 				children: (
 					<div className="px-6 py-6">
-						<DetailsTab rowData={rowData} transactionId={id} onRefresh={getDetails} />
+						<DetailsTab
+							rowData={rowData}
+							transactionId={id}
+							onRefresh={getDetails}
+							isSearchParamsEditing={isSearchParamsEditing}
+						/>
 					</div>
 				),
 			},
@@ -145,22 +148,26 @@ const TransactionDetailsPage = () => {
 
 	return (
 		<div className="flex h-full flex-1 flex-col overflow-hidden bg-white">
+			{contextHolder}
 			<div className="flex shrink-0 flex-col gap-4 px-6 pb-4 pt-6">
 				<div className="flex flex-wrap items-start justify-between gap-4">
 					<div className="flex min-w-0 flex-col gap-2">
 						<div className="flex flex-wrap items-center gap-8">
 							<h1 className="m-0 text-xl font-medium leading-7 text-foreground">
-								{getTransactionTitle(rowData)}
+								{`${rowData.type} transaction`}
 							</h1>
 							<div className="flex items-center gap-2">
 								<span className="text-sm font-medium leading-[22px] text-base-gray">
 									Status
 								</span>
 								<Select
-									className="min-w-[120px]"
-									value={status}
+									className={[
+										'min-w-[120px]',
+										getStatusTagClass(rowData?.status),
+									].join(' ')}
+									value={rowData?.status}
 									placeholder="Status"
-									options={TRANSACTION_STATUS_OPTIONS}
+									options={transactionStatusOptions}
 									loading={statusSaving}
 									onChange={handleStatusChange}
 									allowClear={false}
@@ -169,22 +176,21 @@ const TransactionDetailsPage = () => {
 						</div>
 						<div className="flex flex-wrap gap-6 text-sm font-medium leading-[22px]">
 							<span className="text-base-gray">
-								ID{' '}
-								<span className="text-foreground">
-									{formatTransactionId(rowData)}
+								ID
+								<span className="text-foreground pl-1">
+									{displayValue(rowData?.code)}
 								</span>
 							</span>
 							<span className="text-base-gray">
-								COE{' '}
-								<span className="text-foreground">
-									{displayValue(coeRaw, formatDate)}
+								COE
+								<span className="text-foreground pl-1">
+									{displayValue(rowData?.coe_date, formatDate)}
 								</span>
 							</span>
 							<span className="text-base-gray">
-								Updated{' '}
-								<span className="text-foreground">
-									{updatedDate}
-									{updatedTime ? ` ${updatedTime}` : ''}
+								Updated
+								<span className="text-foreground pl-1">
+									{displayValue(rowData?.updated_at, formatTime)}
 								</span>
 							</span>
 						</div>

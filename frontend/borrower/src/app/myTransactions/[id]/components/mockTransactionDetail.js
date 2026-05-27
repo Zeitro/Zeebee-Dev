@@ -1,15 +1,15 @@
 export const MOCK_TRANSACTION_DETAIL = {
 	id: 1,
-	transaction_no: 'TC26asldkjfpk',
+	code: 'TC26asldkjfpk',
 	type: 'Purchase',
 	status: 'Pending',
 	coe_date: '2026-05-01',
-	purchase_price: 1845000,
-	emd: 50000,
+	purchase_amount: 1845000,
+	emd_amount: 50000,
 	property_type: 'Single Family Residence',
 	pm: 'Nancy',
-	business_strategy: 'Rental',
-	tc_notes: 'This is a note',
+	strategy: 'Rental',
+	note: 'This is a note',
 	updated_at: '2026-05-01T16:27:24',
 	created_at: '2026-01-15',
 	property: {
@@ -22,8 +22,13 @@ export const MOCK_TRANSACTION_DETAIL = {
 			zip_code: '11201',
 		},
 	},
-	document_completed_count: 16,
-	document_total_count: 24,
+	checklist: {
+		total_document_count: 24,
+		total_required_updated_document_count: 12,
+		total_optional_updated_document_count: 4,
+		required_documents: [],
+		optional_documents: [],
+	},
 	pending_loans: [
 		{
 			id: 1001,

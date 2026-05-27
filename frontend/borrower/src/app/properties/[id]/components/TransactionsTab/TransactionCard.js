@@ -4,7 +4,7 @@ import React from 'react';
 import { Progress } from 'antd';
 import { CaretRightFilled, FileTextOutlined } from '@ant-design/icons';
 import { displayValue, formatDate, formatTime } from '@repo/shared-methods/utils';
-import { getStatusTagClass } from '@/app/myTransactions/[id]/components/utils';
+import { getStatusTagClass } from '@/app/myTransactions/components/utils';
 import TransactionCardExpandedContent from './TransactionCardExpandedContent';
 
 function formatTransactionId(item) {

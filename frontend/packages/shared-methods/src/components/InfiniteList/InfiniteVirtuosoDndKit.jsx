@@ -15,7 +15,8 @@ import styles from './index.module.scss';
  * 单列拖拽排序
  */
 export function InfiniteVirtuosoDndKit({
-	itemHeight = 160,
+	itemHeight,
+	minItemHeight,
 	renderItem,
 	enableDrag,
 	className,
@@ -48,6 +49,13 @@ export function InfiniteVirtuosoDndKit({
 		setList,
 	});
 
+	const isFixedHeight = itemHeight != null;
+	const virtuosoHeightProps = isFixedHeight
+		? { fixedItemHeight: itemHeight }
+		: minItemHeight != null
+			? { defaultItemHeight: minItemHeight }
+			: {};
+
 	const virtuosoSort = (
 		<SortableContext items={newList?.map((i) => i.id)} strategy={verticalListSortingStrategy}>
 			{/* 只有跨多列时，无数据时需要EmptyColumnDroppable占位符 */}
@@ -55,6 +63,8 @@ export function InfiniteVirtuosoDndKit({
 				<Virtuoso
 					data={newList}
 					className={[styles.virtuosoList, className].filter(Boolean).join(' ')}
+					style={{ height: '100%', ...(props?.style || {}) }}
+					{...virtuosoHeightProps}
 					itemContent={(index, item, style) => (
 						<SortableItem
 							id={item.id}
@@ -63,10 +73,15 @@ export function InfiniteVirtuosoDndKit({
 							renderItem={renderItem}
 							style={style}
 							itemHeight={itemHeight}
+							minItemHeight={minItemHeight}
+							isFixedHeight={isFixedHeight}
 						/>
 					)}
 					endReached={(endIndex) =>
-						handleEndReached(endIndex, { itemHeight })
+						handleEndReached(
+							endIndex,
+							isFixedHeight ? { itemHeight } : {},
+						)
 					}
 					overscan={2}
 					components={{
@@ -83,7 +98,10 @@ export function InfiniteVirtuosoDndKit({
 	);
 
 	return (
-		<div className={['h-full', boxClassName].filter(Boolean).join(' ')} ref={listBoxRef}>
+		<div
+			className={['h-full min-h-0 overflow-hidden', boxClassName].filter(Boolean).join(' ')}
+			ref={listBoxRef}
+		>
 			{multiple ? (
 				virtuosoSort
 			) : (

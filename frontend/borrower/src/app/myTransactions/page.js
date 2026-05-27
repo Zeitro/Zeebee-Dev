@@ -3,68 +3,58 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FolderOpenOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
-import { Button, message, Space, Tag, Typography } from 'antd';
+import { Button, message, Space, Typography } from 'antd';
 import { FilterTable } from '@repo/shared-methods';
-import { createRequest, formatDate } from '@repo/shared-methods/utils';
+import { useGetOptions } from '@repo/shared-methods/hooks';
+import { createRequest, displayValue, formatDate } from '@repo/shared-methods/utils';
 import NewTransactionModal from './components/NewTransactionModal';
+import { getStatusTagClass } from './components/utils';
 
 /** 与后端约定一致的分页接口；若路径不同，只改此处 */
-const TRANSACTION_LIST_API = '/transaction/page';
+const TRANSACTION_LIST_API = '/borrower_property_transaction/page';
 
-const STATUS_OPTIONS = [
-	{ label: 'Pending', value: 'Pending' },
-	{ label: 'Cancelled', value: 'Cancelled' },
-	{ label: 'Closed', value: 'Closed' },
-];
-
-const TRANSACTION_TYPE_OPTIONS = [
-	{ label: 'Purchase', value: 'Purchase' },
-	{ label: 'Sale', value: 'Sale' },
-	{ label: 'Re-finance', value: 'Re-finance' },
-	{ label: 'Change Title', value: 'Change Title' },
-	{ label: 'Assignment', value: 'Assignment' },
-];
 function statusTag(status) {
-	const color = status === 'Pending' ? 'gold' : status === 'Cancelled' ? 'red' : 'success';
 	return (
-		<Tag bordered={false} color={color}>
+		<span
+			className={[
+				'inline-flex whitespace-nowrap rounded-[2px] border px-2 text-xs leading-5',
+				getStatusTagClass(status),
+			].join(' ')}
+		>
 			{status}
-		</Tag>
+		</span>
 	);
 }
 
 const MyTransactionsPage = () => {
 	const router = useRouter();
+	const { transactionTypeOptions, transactionStatusOptions } = useGetOptions([
+		{ key: 'borrower_property_transaction_type', valueName: 'transactionTypeOptions' },
+		{ key: 'borrower_property_transaction_status', valueName: 'transactionStatusOptions' },
+	]);
 	const { request, cancelMatch } = useMemo(() => createRequest(), []);
 	const tableFilterRef = useRef();
 	const [keyword, setKeyword] = useState('');
 	const [status, setStatus] = useState('');
+	const [transactionType, setTransactionType] = useState('');
 	const [newTransactionOpen, setNewTransactionOpen] = useState(false);
 
 	const getData = useCallback(
 		(params) => {
 			cancelMatch(TRANSACTION_LIST_API);
-			// return request(TRANSACTION_LIST_API, {
-			// 	method: 'POST',
-			// 	body: params,
-			// });
-			return {
-				total: 100,
-				list: [
-					{
-						id: 1,
-						property: { address: { address1: '123 Main St' } },
-						type: 'Purchase',
-						status: 'Pending',
-					},
-					{
-						id: 2,
-						property: { address: { address1: '456 Main St' } },
-						type: 'Sale',
-						status: 'Completed',
-					},
-				],
+			const reqBody = {
+				...params,
+				filter: {
+					...(params?.filter || {}),
+					keyword: params?.filter?.keyword?.trim?.() || '',
+					type: params?.filter?.type || '',
+					status: params?.filter?.status || '',
+				},
 			};
+			return request(TRANSACTION_LIST_API, {
+				method: 'POST',
+				body: reqBody,
+			});
 		},
 		[request, cancelMatch],
 	);
@@ -84,9 +74,9 @@ const MyTransactionsPage = () => {
 				filterType: 'select',
 				placeholder: 'Transaction type',
 				paramsKey: 'type',
-				options: TRANSACTION_TYPE_OPTIONS,
-				value: status || undefined,
-				onChange: (v) => setStatus(v ?? ''),
+				options: transactionTypeOptions,
+				value: transactionType || undefined,
+				onChange: (v) => setTransactionType(v ?? ''),
 				allowClear: true,
 				colProps: { xs: 24, sm: 12, md: 6, lg: 4, xl: 4 },
 				style: { width: '100%', minWidth: 140 },
@@ -95,7 +85,7 @@ const MyTransactionsPage = () => {
 				filterType: 'select',
 				placeholder: 'All status',
 				paramsKey: 'status',
-				options: STATUS_OPTIONS,
+				options: transactionStatusOptions,
 				value: status || undefined,
 				onChange: (v) => setStatus(v ?? ''),
 				allowClear: true,
@@ -119,8 +109,11 @@ const MyTransactionsPage = () => {
 				onClick: () => {
 					setKeyword('');
 					setStatus('');
+					setTransactionType('');
 					cancelMatch(TRANSACTION_LIST_API);
-					setTimeout(() => tableFilterRef.current?.handleSearch?.(), 300);
+					tableFilterRef.current?.handleSearch?.({
+						filter: { keyword: '', type: '', status: '' },
+					});
 				},
 				// colProps: { xs: 12, sm: 6, md: 'auto' },
 			},
@@ -131,35 +124,33 @@ const MyTransactionsPage = () => {
 				onClick: () => setNewTransactionOpen(true),
 			},
 		],
-		[keyword, status, cancelMatch],
+		[
+			keyword,
+			status,
+			transactionType,
+			transactionTypeOptions,
+			transactionStatusOptions,
+			cancelMatch,
+		],
 	);
 
 	const columns = useMemo(
 		() => [
 			{
 				title: 'ID',
-				dataIndex: 'id',
-				key: 'id',
+				dataIndex: 'code',
+				key: 'code',
 				sorter: true,
 				width: 140,
-				render: (v, record) => (
-					<Typography.Link
-						onClick={(e) => {
-							e.preventDefault();
-							router.push(`/myTransactions/${record.id}`);
-						}}
-					>
-						{v ?? '—'}
-					</Typography.Link>
-				),
+				render: (v, record) => displayValue(v),
 			},
 			{
 				title: 'Property address',
-				dataIndex: ['property', 'address', 'address1'],
+				dataIndex: ['address', 'address1'],
 				key: 'address',
 				sorter: true,
 				render: (_, record) => {
-					const text = record?.property?.address?.address1 ?? '—';
+					const text = displayValue(record?.address?.address1);
 					return (
 						<Typography.Link
 							onClick={(e) => {
@@ -174,19 +165,19 @@ const MyTransactionsPage = () => {
 			},
 			{
 				title: 'City',
-				dataIndex: ['property', 'address', 'city'],
+				dataIndex: ['address', 'city'],
 				key: 'city',
 				sorter: true,
 				// width: 120,
-				render: (_, record) => record?.property?.address?.city ?? '—',
+				render: (_, record) => displayValue(record?.address?.city),
 			},
 			{
 				title: 'State',
-				dataIndex: ['property', 'address', 'state'],
+				dataIndex: ['address', 'state'],
 				key: 'state',
 				// width: 80,
 				sorter: true,
-				render: (_, record) => record?.property?.address?.state ?? '—',
+				render: (_, record) => displayValue(record?.address?.state),
 			},
 			{
 				title: 'Type',
@@ -194,7 +185,7 @@ const MyTransactionsPage = () => {
 				key: 'type',
 				// width: 120,
 				sorter: true,
-				render: (_, record) => record.type ?? '—',
+				render: (_, record) => displayValue(record?.type),
 			},
 			{
 				title: 'Status',
@@ -202,7 +193,7 @@ const MyTransactionsPage = () => {
 				key: 'status',
 				// width: 120,
 				sorter: true,
-				render: (v) => (v ? statusTag(v) : '—'),
+				render: (v) => (v ? statusTag(v) : displayValue(v)),
 			},
 			{
 				title: 'COE date',
@@ -211,9 +202,8 @@ const MyTransactionsPage = () => {
 				// width: 120,
 				sorter: true,
 				render: (_, record) => {
-					const raw = record.coe_date ?? record.coeDate;
-					const formatted = raw ? formatDate(raw) : '';
-					return formatted || '—';
+					const formatted = record.coe_date ? formatDate(record.coe_date) : '';
+					return displayValue(formatted);
 				},
 			},
 
@@ -233,7 +223,11 @@ const MyTransactionsPage = () => {
 						<Button
 							size="small"
 							type="link"
-							onClick={() => router.push(`/myTransactions/${record.id}?tab=details`)}
+							onClick={() =>
+								router.push(
+									`/myTransactions/${record.id}?tab=details&isEditing=true`,
+								)
+							}
 						>
 							Edit
 						</Button>

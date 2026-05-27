@@ -18,30 +18,27 @@ const LoansTab = ({ rowData, loading, onRefresh }) => {
 		},
 	]);
 
-	const sections = useMemo(
-		() =>
-			LOAN_SECTIONS.map((section) => ({
-				...section,
-				dataSource: rowData?.[section.key],
-			})),
-		[rowData],
-	);
+	const loanSearchQuery = useMemo(() => {
+		return rowData?.id != null ? { borrower_property_transaction_id: rowData.id } : undefined;
+	}, [rowData]);
 
 	return (
 		<div className="[&_.ant-table-column-title]:!text-base-gray [&_th]:!text-base-gray px-4 pt-[26px]">
-			{sections.map((section) => (
+			{LOAN_SECTIONS.map((section) => (
 				<div key={section.key} className="border border-base-border rounded-lg mb-4 pb-1">
 					<div className="py-2 px-4 text-base/6 font-medium border-b border-base-border">
-						{section.title} ({section?.dataSource?.length})
+						{section.title}
 					</div>
 					<LoansPage
 						hasFilterField={false}
 						hasPagination={false}
-						dataSource={section.dataSource || []}
 						isNotAddress={true}
 						loading={loading}
 						successCallback={onRefresh}
 						stage={section.stage}
+						api="/loan/page"
+						waitForSearchQuery
+						searchQuery={loanSearchQuery}
 					/>
 				</div>
 			))}

@@ -5,23 +5,33 @@ import { Button, Progress, message } from 'antd';
 import { CloudSyncOutlined, ImportOutlined } from '@ant-design/icons';
 import { displayValue } from '@repo/shared-methods/utils';
 import CategoryContentPanel from './CategoryContentPanel';
-import { MOCK_DOCUMENT_CATEGORIES } from './constants';
+import { buildDocumentCategoriesFromChecklist, getChecklistProgress } from './checklist';
 import DocumentCategoryButton from './DocumentCategoryButton';
 
 const DocumentsTab = ({ rowData }) => {
-	const categories = rowData?.document_categories ?? MOCK_DOCUMENT_CATEGORIES;
-	const completed = rowData?.document_completed_count ?? rowData?.documents_completed ?? 16;
-	const total = rowData?.document_total_count ?? rowData?.documents_total ?? 24;
+	const categories = useMemo(
+		() => buildDocumentCategoriesFromChecklist(rowData?.checklist),
+		[rowData?.checklist],
+	);
+	const { completed, total } = useMemo(
+		() => getChecklistProgress(rowData?.checklist),
+		[rowData?.checklist],
+	);
 	const progressPercent = total > 0 ? Math.round((completed / total) * 100) : 0;
 
-	const defaultCategoryKey = useMemo(() => {
+	const [activeKey, setActiveKey] = useState(null);
+
+	// rowData 异步加载后 categories 才有值；useState 初值不会随 default 更新，需派生当前选中项
+	const resolvedActiveKey = useMemo(() => {
+		if (!categories.length) return null;
+		if (activeKey && categories.some((c) => c.key === activeKey)) {
+			return activeKey;
+		}
 		const firstPending = categories.find((c) => c.pendingCount > 0 && !c.completed);
 		return firstPending?.key ?? categories[0]?.key;
-	}, [categories]);
+	}, [activeKey, categories]);
 
-	const [activeKey, setActiveKey] = useState(defaultCategoryKey);
-
-	const activeCategory = categories.find((c) => c.key === activeKey) ?? categories[0];
+	const activeCategory = categories.find((c) => c.key === resolvedActiveKey) ?? categories[0];
 	const requiredCategories = categories.filter((c) => c.required);
 	const optionalCategories = categories.filter((c) => !c.required);
 
@@ -70,7 +80,7 @@ const DocumentsTab = ({ rowData }) => {
 						<DocumentCategoryButton
 							key={cat.key}
 							category={cat}
-							isActive={cat.key === activeKey}
+							isActive={cat.key === resolvedActiveKey}
 							onSelect={setActiveKey}
 						/>
 					))}
@@ -85,7 +95,7 @@ const DocumentsTab = ({ rowData }) => {
 						<DocumentCategoryButton
 							key={cat.key}
 							category={cat}
-							isActive={cat.key === activeKey}
+							isActive={cat.key === resolvedActiveKey}
 							onSelect={setActiveKey}
 						/>
 					))}

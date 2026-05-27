@@ -6,12 +6,11 @@ import DocumentsTab from '@/app/myTransactions/[id]/components/DocumentsTab';
 import DetailsTab from '@/app/myTransactions/[id]/components/DetailsTab';
 import LoansTab from '@/app/myTransactions/[id]/components/LoansTab';
 import LogTab from '@/app/myTransactions/[id]/components/LogTab';
-import { TRANSACTION_DETAIL_DEFAULT_TAB } from '@/app/myTransactions/[id]/components/utils';
 import { useTransactionDetail } from './useTransactionDetail';
 import styles from './TransactionCard.module.scss';
 
 const TransactionCardExpandedContent = ({ transactionId }) => {
-	const [activeTab, setActiveTab] = useState(TRANSACTION_DETAIL_DEFAULT_TAB);
+	const [activeTab, setActiveTab] = useState('documents');
 	const { rowData, loading, getDetails } = useTransactionDetail(transactionId, true);
 
 	const tabItems = useMemo(
