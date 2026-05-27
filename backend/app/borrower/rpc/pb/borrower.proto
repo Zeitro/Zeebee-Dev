@@ -2364,13 +2364,17 @@ message BorrowerPropertyTransactionDocumentUploadFileRequest {
   BorrowerPropertyTransactionDocumentUploadFileRequestData data = 1;
 }
 
+message FileUploadItem {
+  string file_name = 1;
+  string file_url = 2;
+  string storage_type = 3;
+  string upload_type = 4;
+}
+
 message BorrowerPropertyTransactionDocumentUploadFileRequestData {
   int64 transaction_id = 1;
   int64 document_id = 2;
-  string file_name = 3;
-  string file_url = 4;
-  string storage_type = 5;
-  string upload_type = 6;
+  repeated FileUploadItem files = 3;
 }
 
 message BorrowerPropertyTransactionDocumentDeleteFileRequest {
@@ -2499,7 +2503,7 @@ message DocumentCreateResponse {
 
 
 message DocumentUploadFileResponse {
-  FileEntity data = 1;
+  repeated FileEntity data = 1;
 }
 
 

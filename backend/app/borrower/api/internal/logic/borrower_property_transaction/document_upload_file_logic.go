@@ -47,10 +47,10 @@ func (l *DocumentUploadFileLogic) DocumentUploadFile(req *types.BorrowerProperty
 		return nil, err
 	}
 
-	resp, err = copierx.Trans[borrower.FileEntity, types.DocumentUploadFileResponse](rpcResp.Data)
+	files, err := copierx.Trans[[]*borrower.FileEntity, []types.DocumentFile](&rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}
 
-	return resp, nil
+	return &types.DocumentUploadFileResponse{Files: *files}, nil
 }

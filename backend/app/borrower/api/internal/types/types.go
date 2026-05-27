@@ -384,12 +384,9 @@ type BorrowerPropertyTransactionDocumentDeleteFileRequest struct {
 }
 
 type BorrowerPropertyTransactionDocumentUploadFileRequest struct {
-	TransactionId int64  `path:"transaction_id" validate:"required,gt=0"`
-	DocumentId    int64  `path:"document_id" validate:"required,gt=0"`
-	FileName      string `json:"file_name" validate:"required"`
-	FileUrl       string `json:"file_url" validate:"required"`
-	StorageType   string `json:"storage_type" validate:"required,oneof='Aws S3' 'Google Drive'"`
-	UploadType    string `json:"upload_type" validate:"required,oneof='Manual' 'Google Drive'"`
+	TransactionId int64                    `path:"transaction_id" validate:"required,gt=0"`
+	DocumentId    int64                    `path:"document_id" validate:"required,gt=0"`
+	Files         []DocumentUploadFileItem `json:"files" validate:"required,dive"`
 }
 
 type BorrowerPropertyTransactionEntity struct {
@@ -514,8 +511,15 @@ type DocumentTreeNode struct {
 	Files          []DocumentFile         `json:"files"`
 }
 
+type DocumentUploadFileItem struct {
+	FileName    string `json:"file_name" validate:"required"`
+	FileUrl     string `json:"file_url" validate:"required"`
+	StorageType string `json:"storage_type" validate:"required,oneof='Aws S3' 'Google Drive'"`
+	UploadType  string `json:"upload_type" validate:"required,oneof='Manual' 'Google Drive'"`
+}
+
 type DocumentUploadFileResponse struct {
-	DocumentFile
+	Files []DocumentFile `json:"files"`
 }
 
 type EmptyRequest struct {

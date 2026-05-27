@@ -3994,23 +3994,34 @@
             "schema": {
               "type": "object",
               "required": [
-                "file_name",
-                "file_url",
-                "storage_type",
-                "upload_type"
+                "files"
               ],
               "properties": {
-                "file_name": {
-                  "type": "string"
-                },
-                "file_url": {
-                  "type": "string"
-                },
-                "storage_type": {
-                  "type": "string"
-                },
-                "upload_type": {
-                  "type": "string"
+                "files": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "file_name",
+                      "file_url",
+                      "storage_type",
+                      "upload_type"
+                    ],
+                    "properties": {
+                      "file_name": {
+                        "type": "string"
+                      },
+                      "file_url": {
+                        "type": "string"
+                      },
+                      "storage_type": {
+                        "type": "string"
+                      },
+                      "upload_type": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -4022,35 +4033,55 @@
             "schema": {
               "type": "object",
               "properties": {
-                "created_at": {
-                  "type": "string"
-                },
-                "entity_id": {
-                  "type": "integer"
-                },
-                "entity_type": {
-                  "type": "string"
-                },
-                "external_id": {
-                  "type": "string"
-                },
-                "file_name": {
-                  "type": "string"
-                },
-                "file_url": {
-                  "type": "string"
-                },
-                "id": {
-                  "type": "integer"
-                },
-                "storage_type": {
-                  "type": "string"
-                },
-                "updated_at": {
-                  "type": "string"
-                },
-                "upload_type": {
-                  "type": "string"
+                "files": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "entity_type",
+                      "entity_id",
+                      "file_url",
+                      "storage_type",
+                      "file_name",
+                      "external_id",
+                      "upload_type",
+                      "created_at",
+                      "updated_at"
+                    ],
+                    "properties": {
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "entity_id": {
+                        "type": "integer"
+                      },
+                      "entity_type": {
+                        "type": "string"
+                      },
+                      "external_id": {
+                        "type": "string"
+                      },
+                      "file_name": {
+                        "type": "string"
+                      },
+                      "file_url": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "storage_type": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      },
+                      "upload_type": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -21706,7 +21737,7 @@
       }
     }
   },
-  "x-date": "2026-05-26 18:27:12",
+  "x-date": "2026-05-27 15:11:55",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

@@ -70,42 +70,42 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 		return
 	}
 
-	storageType := constants.StorageType(in.Data.StorageType)
-	if !storageType.IsValid() {
-		err = errorx.New("invalid storage type")
-		return
-	}
-	uploadType := constants.UploadType(in.Data.UploadType)
-	if !uploadType.IsValid() {
-		err = errorx.New("invalid upload type")
-		return
-	}
-
-	// FR-010: create file record with storage_type and upload_type from request
-	fileRecord := &model.File{
-		EntityType:  constants.FileEntityTypeDocument,
-		EntityId:    doc.Id,
-		FileUrl:     in.Data.FileUrl,
-		FileName:    in.Data.FileName,
-		StorageType: storageType,
-		UploadType:  uploadType,
-	}
-
 	now := &sql.NullTime{
 		Time:  time.Now(),
 		Valid: true,
 	}
 
-	err = l.svcCtx.DocumentRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
-		var innerErr error
+	var uploadedFiles []model.File
 
-		fileRecord, innerErr = l.svcCtx.FileRepo.CreateWithTx(l.ctx, tx, fileRecord, false)
-		if innerErr != nil {
-			return innerErr
+	err = l.svcCtx.DocumentRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
+		for _, item := range in.Data.GetFiles() {
+			storageType := constants.StorageType(item.StorageType)
+			if !storageType.IsValid() {
+				return errorx.New("invalid storage type")
+			}
+			uploadType := constants.UploadType(item.UploadType)
+			if !uploadType.IsValid() {
+				return errorx.New("invalid upload type")
+			}
+
+			fileRecord := &model.File{
+				EntityType:  constants.FileEntityTypeDocument,
+				EntityId:    doc.Id,
+				FileUrl:     item.FileUrl,
+				FileName:    item.FileName,
+				StorageType: storageType,
+				UploadType:  uploadType,
+			}
+
+			created, innerErr := l.svcCtx.FileRepo.CreateWithTx(l.ctx, tx, fileRecord, false)
+			if innerErr != nil {
+				return innerErr
+			}
+			uploadedFiles = append(uploadedFiles, *created)
 		}
 
 		// FR-011: propagate last_uploaded_at to document and all ancestors
-		innerErr = l.propagateLastUploadedAt(tx, doc, now)
+		innerErr := l.propagateLastUploadedAt(tx, doc, now)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -119,7 +119,7 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 			OperatorType:   claim.UserType,
 			Operation:      constants.OperationActionBorrowerPropertyTransactionUploadDocument,
 			OrganizationId: claim.OrganizationId,
-			Note:           fmt.Sprintf("upload file %s to document %s", fileRecord.FileName, doc.Name),
+			Note:           fmt.Sprintf("upload %d file(s) to document %s", len(uploadedFiles), doc.Name),
 		})
 		if innerErr != nil {
 			return innerErr
@@ -133,13 +133,13 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 		return
 	}
 
-	protoFile, err := copierx.Trans[model.File, borrower.FileEntity](fileRecord, copierx.TimeToRFC3339Str())
+	protoFiles, err := copierx.Trans[[]model.File, []*borrower.FileEntity](&uploadedFiles, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
 	return &borrower.DocumentUploadFileResponse{
-		Data: protoFile,
+		Data: *protoFiles,
 	}, nil
 }
 
