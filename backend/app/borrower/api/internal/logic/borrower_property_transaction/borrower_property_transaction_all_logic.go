@@ -31,15 +31,20 @@ func (l *BorrowerPropertyTransactionAllLogic) BorrowerPropertyTransactionAll(req
 	if err != nil {
 		return nil, err
 	}
+	l.Infof("data:%+v", rpcResp.Data)
 
 	resp = &types.BorrowerPropertyTransactionAllResponse{}
-	for _, opt := range rpcResp.GetData() {
-		item, innerErr := copierx.Trans[borrower.BorrowerPropertyTransactionOptionEntity, types.BorrowerPropertyTransactionOption](opt)
-		if innerErr != nil {
-			continue
-		}
-		resp.Lists = append(resp.Lists, *item)
+
+	listPtr, err := copierx.Trans[[]*borrower.BorrowerPropertyTransactionOptionEntity, []types.BorrowerPropertyTransactionOption](&rpcResp.Data)
+	if err != nil {
+		return nil, err
 	}
+	if listPtr == nil {
+		return resp, nil
+	}
+
+	resp.Lists = *listPtr
+	l.Infof("list:%+v", resp.Lists)
 
 	return resp, nil
 }

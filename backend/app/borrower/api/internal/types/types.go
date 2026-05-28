@@ -408,14 +408,23 @@ type BorrowerPropertyTransactionEntity struct {
 	UpdatedAt          string                               `json:"updated_at"`
 }
 
+type BorrowerPropertyTransactionListByPropertyRequest struct {
+	Id int64 `path:"id" validate:"required,gt=0"`
+}
+
+type BorrowerPropertyTransactionListByPropertyResponse struct {
+	List []BorrowerPropertyTransactionEntity `json:"list"`
+}
+
 type BorrowerPropertyTransactionOption struct {
-	Id                 int64          `json:"id"`
-	Code               string         `json:"code"`
-	Type               string         `json:"type"`
-	Status             string         `json:"status"`
-	PropertyType       string         `json:"property_type"`
-	BorrowerPropertyId int64          `json:"borrower_property_id"`
-	Address            *AddressEntity `json:"address"`
+	Id                 int64                                     `json:"id"`
+	Code               string                                    `json:"code"`
+	Type               string                                    `json:"type"`
+	CoeDate            string                                    `json:"coe_date"`
+	Status             string                                    `json:"status"`
+	PropertyType       string                                    `json:"property_type"`
+	BorrowerPropertyId int64                                     `json:"borrower_property_id"`
+	BorrowerProperty   BorrowerPropertyTransactionPropertyEntity `json:"borrower_property"`
 }
 
 type BorrowerPropertyTransactionPageEntity struct {
@@ -448,6 +457,23 @@ type BorrowerPropertyTransactionPageResponse struct {
 	Total     int64                                   `json:"total"`
 	TotalPage int64                                   `json:"total_page"`
 	List      []BorrowerPropertyTransactionPageEntity `json:"list"`
+}
+
+type BorrowerPropertyTransactionPropertyEntity struct {
+	Id             int64          `json:"id"`
+	CreatorId      int64          `json:"creator_id"`
+	CreatorName    string         `json:"creator_name"`
+	OrganizationId int64          `json:"organization_id"`
+	PropertyType   string         `json:"property_type"`
+	TotalAmount    float64        `json:"total_amount"`
+	Unit           int32          `json:"unit"`
+	LivingAreaSqft float32        `json:"living_area_sqft"`
+	Bedrooms       int32          `json:"bedrooms"`
+	Bathrooms      float32        `json:"bathrooms"`
+	Address        *AddressEntity `json:"address"`
+	CreatedAt      string         `json:"created_at"`
+	UpdatedAt      string         `json:"updated_at"`
+	LoanCount      int32          `json:"loan_count"`
 }
 
 type BorrowerPropertyTransactionSwitchStatusRequest struct {

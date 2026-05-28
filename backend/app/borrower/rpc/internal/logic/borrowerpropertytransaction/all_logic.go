@@ -7,6 +7,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -46,21 +47,12 @@ func (l *AllLogic) All(in *borrower.BorrowerPropertyTransactionAllRequest) (resp
 		return nil, err
 	}
 	var options *[]*borrower.BorrowerPropertyTransactionOptionEntity
-	options, err = copierx.Trans[[]*model.BorrowerPropertyTransaction, []*borrower.BorrowerPropertyTransactionOptionEntity](&transactions, copierx.SqlTimePtrToRFC3339Str(), copierx.TimeToRFC3339Str())
+	options, err = copierx.Trans[[]*model.BorrowerPropertyTransaction, []*borrower.BorrowerPropertyTransactionOptionEntity](&transactions, copierx.SqlTimePtrToStr(timex.LayoutUsStyle), copierx.TimeToRFC3339Str())
 	if err != nil {
 		return
 	}
 	if options == nil {
 		return &borrower.BorrowerPropertyTransactionAllResponse{}, nil
-	}
-
-	for i, opt := range *options {
-		if transactions[i].BorrowerProperty != nil {
-			addr, transErr := copierx.Trans[model.Address, borrower.AddressEntity](&transactions[i].BorrowerProperty.Address)
-			if transErr == nil {
-				opt.Address = addr
-			}
-		}
 	}
 
 	return &borrower.BorrowerPropertyTransactionAllResponse{

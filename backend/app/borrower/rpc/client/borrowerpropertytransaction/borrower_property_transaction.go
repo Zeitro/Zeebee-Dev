@@ -24,6 +24,8 @@ type (
 	BorrowerPropertyTransactionDetailResponse            = borrower.BorrowerPropertyTransactionDetailResponse
 	BorrowerPropertyTransactionDocumentDeleteFileRequest = borrower.BorrowerPropertyTransactionDocumentDeleteFileRequest
 	BorrowerPropertyTransactionDocumentUploadFileRequest = borrower.BorrowerPropertyTransactionDocumentUploadFileRequest
+	BorrowerPropertyTransactionListByPropertyRequest     = borrower.BorrowerPropertyTransactionListByPropertyRequest
+	BorrowerPropertyTransactionListByPropertyResponse    = borrower.BorrowerPropertyTransactionListByPropertyResponse
 	BorrowerPropertyTransactionPageRequest               = borrower.BorrowerPropertyTransactionPageRequest
 	BorrowerPropertyTransactionPageResponse              = borrower.BorrowerPropertyTransactionPageResponse
 	BorrowerPropertyTransactionSwitchStatusRequest       = borrower.BorrowerPropertyTransactionSwitchStatusRequest
@@ -44,6 +46,7 @@ type (
 		Delete(ctx context.Context, in *BorrowerPropertyTransactionDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		SwitchStatus(ctx context.Context, in *BorrowerPropertyTransactionSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		All(ctx context.Context, in *BorrowerPropertyTransactionAllRequest, opts ...grpc.CallOption) (*BorrowerPropertyTransactionAllResponse, error)
+		ListByBorrowerProperty(ctx context.Context, in *BorrowerPropertyTransactionListByPropertyRequest, opts ...grpc.CallOption) (*BorrowerPropertyTransactionListByPropertyResponse, error)
 		UpdateChecklist(ctx context.Context, in *BorrowerPropertyTransactionChecklistRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		Page(ctx context.Context, in *BorrowerPropertyTransactionPageRequest, opts ...grpc.CallOption) (*BorrowerPropertyTransactionPageResponse, error)
 		CreateDocument(ctx context.Context, in *DocumentCreateRequest, opts ...grpc.CallOption) (*DocumentCreateResponse, error)
@@ -92,6 +95,11 @@ func (m *defaultBorrowerPropertyTransaction) SwitchStatus(ctx context.Context, i
 func (m *defaultBorrowerPropertyTransaction) All(ctx context.Context, in *BorrowerPropertyTransactionAllRequest, opts ...grpc.CallOption) (*BorrowerPropertyTransactionAllResponse, error) {
 	client := borrower.NewBorrowerPropertyTransactionClient(m.cli.Conn())
 	return client.All(ctx, in, opts...)
+}
+
+func (m *defaultBorrowerPropertyTransaction) ListByBorrowerProperty(ctx context.Context, in *BorrowerPropertyTransactionListByPropertyRequest, opts ...grpc.CallOption) (*BorrowerPropertyTransactionListByPropertyResponse, error) {
+	client := borrower.NewBorrowerPropertyTransactionClient(m.cli.Conn())
+	return client.ListByBorrowerProperty(ctx, in, opts...)
 }
 
 func (m *defaultBorrowerPropertyTransaction) UpdateChecklist(ctx context.Context, in *BorrowerPropertyTransactionChecklistRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {

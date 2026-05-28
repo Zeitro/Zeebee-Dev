@@ -14,6 +14,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
@@ -47,15 +48,18 @@ func (l *PageLogic) Page(in *borrower.PropertyPageRequest) (resp *borrower.Prope
 		return nil, err
 	}
 
-	pageReq := dto.BorrowerPropertyPageRequestDto{}
-	_ = copier.CopyWithOption(&pageReq, in.Data, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+	pageReq, err := copierx.Trans[borrower.PropertyPageRequestData, dto.BorrowerPropertyPageRequestDto](in.Data)
+	if err != nil {
+		return nil, err
+	}
+	if pageReq == nil {
+		pageReq = &dto.BorrowerPropertyPageRequestDto{}
+	}
+
 	pageReq.Filter.OrganizationId = claim.OrganizationId
 	pageReq.Filter.UserId = claim.OrganizationUserId
 
-	borrowerPropertyPageResult, err := l.svcCtx.BorrowerPropertyRepo.PageForBorrower(l.ctx, pageReq)
+	borrowerPropertyPageResult, err := l.svcCtx.BorrowerPropertyRepo.PageForBorrower(l.ctx, *pageReq)
 	if err != nil {
 		return nil, err
 	}

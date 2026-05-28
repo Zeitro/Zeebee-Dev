@@ -78,6 +78,15 @@ func (repo *BorrowerPropertyTransactionRepo) AllByOrganization(ctx context.Conte
 	return result, errorx.WithStack(err)
 }
 
+func (repo *BorrowerPropertyTransactionRepo) ListByBorrowerPropertyId(ctx context.Context, borrowerPropertyId int64, organizationId int64) (result []*model.BorrowerPropertyTransaction, err error) {
+	err = repo.Client(ctx).
+		Where("borrower_property_id = ? and organization_id = ?", borrowerPropertyId, organizationId).
+		Preload("BorrowerProperty").
+		Order("created_at desc").
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+}
+
 func (repo *BorrowerPropertyTransactionRepo) UpdateOne(ctx context.Context, id int64, data *model.BorrowerPropertyTransaction) (result *model.BorrowerPropertyTransaction, err error) {
 	err = repo.Client(ctx).
 		Model(new(model.BorrowerPropertyTransaction)).

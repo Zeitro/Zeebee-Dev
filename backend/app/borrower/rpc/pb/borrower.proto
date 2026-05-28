@@ -2233,7 +2233,8 @@ message BorrowerPropertyTransactionOptionEntity {
   string status = 4;
   string property_type = 5;
   int64 borrower_property_id = 6;
-  AddressEntity address = 7;
+  BorrowerPropertyEntity borrower_property = 7;
+  string coe_date = 8;
 }
 
 message BorrowerPropertyTransactionCreateRequest {
@@ -2301,6 +2302,18 @@ message BorrowerPropertyTransactionAllRequestData {}
 
 message BorrowerPropertyTransactionAllResponse {
   repeated BorrowerPropertyTransactionOptionEntity data = 1;
+}
+
+message BorrowerPropertyTransactionListByPropertyRequest {
+  BorrowerPropertyTransactionListByPropertyRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionListByPropertyRequestData {
+  int64 borrower_property_id = 1;
+}
+
+message BorrowerPropertyTransactionListByPropertyResponse {
+  repeated BorrowerPropertyTransactionEntity data = 1;
 }
 
 message BorrowerPropertyTransactionChecklistRequest {
@@ -2448,6 +2461,7 @@ service BorrowerPropertyTransaction {
   rpc Delete(BorrowerPropertyTransactionDeleteRequest) returns(EmptyResponse);
   rpc SwitchStatus(BorrowerPropertyTransactionSwitchStatusRequest) returns(EmptyResponse);
   rpc All(BorrowerPropertyTransactionAllRequest) returns(BorrowerPropertyTransactionAllResponse);
+  rpc ListByBorrowerProperty(BorrowerPropertyTransactionListByPropertyRequest) returns(BorrowerPropertyTransactionListByPropertyResponse);
   rpc UpdateChecklist(BorrowerPropertyTransactionChecklistRequest) returns(EmptyResponse);
   rpc Page(BorrowerPropertyTransactionPageRequest) returns(BorrowerPropertyTransactionPageResponse);
   rpc CreateDocument(DocumentCreateRequest) returns(DocumentCreateResponse);

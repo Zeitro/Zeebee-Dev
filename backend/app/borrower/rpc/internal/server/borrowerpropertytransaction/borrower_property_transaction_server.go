@@ -53,6 +53,11 @@ func (s *BorrowerPropertyTransactionServer) All(ctx context.Context, in *borrowe
 	return l.All(in)
 }
 
+func (s *BorrowerPropertyTransactionServer) ListByBorrowerProperty(ctx context.Context, in *borrower.BorrowerPropertyTransactionListByPropertyRequest) (*borrower.BorrowerPropertyTransactionListByPropertyResponse, error) {
+	l := borrowerpropertytransactionlogic.NewListByBorrowerPropertyLogic(ctx, s.svcCtx)
+	return l.ListByBorrowerProperty(in)
+}
+
 func (s *BorrowerPropertyTransactionServer) UpdateChecklist(ctx context.Context, in *borrower.BorrowerPropertyTransactionChecklistRequest) (*borrower.EmptyResponse, error) {
 	l := borrowerpropertytransactionlogic.NewUpdateChecklistLogic(ctx, s.svcCtx)
 	return l.UpdateChecklist(in)

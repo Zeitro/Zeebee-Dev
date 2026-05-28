@@ -138,7 +138,6 @@ func (l *SyncDataLogic) syncApi() (err error) {
 // ========== sync api end ==========
 
 // ========== create button for menu ==========
-
 func (l *SyncDataLogic) createMenuButton() (err error) {
 	types := []constants.UserType{
 		constants.UserTypeLender,

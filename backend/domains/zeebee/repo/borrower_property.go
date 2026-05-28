@@ -159,6 +159,14 @@ func (repo *BorrowerPropertyRepo) PageForBorrower(ctx context.Context, pageReq d
 			sortColumns = append(sortColumns,
 				fmt.Sprintf("%s.total_amount %s", borrowerPropertyTable, sorter.Sort),
 			)
+		case "address1","state","city":
+			sortColumns = append(sortColumns,
+				fmt.Sprintf("%s.address->>'%s' %s", borrowerPropertyTable,sorter.Column, sorter.Sort),
+			)
+		default:
+			sortColumns = append(sortColumns,
+				fmt.Sprintf("%s.%s %s", borrowerPropertyTable, sorter.Column, sorter.Sort),
+			)
 		}
 	}
 	sortColumns = append(sortColumns, fmt.Sprintf("%s.updated_at desc", borrowerPropertyTable))

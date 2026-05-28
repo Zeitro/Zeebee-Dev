@@ -141,10 +141,30 @@ type (
         Id int64 `json:"id"`
         Code string `json:"code"`
         Type string `json:"type"`
+        CoeDate string `json:"coe_date"`
         Status string `json:"status"`
         PropertyType string `json:"property_type"`
         BorrowerPropertyId int64 `json:"borrower_property_id"`
+        BorrowerProperty BorrowerPropertyTransactionPropertyEntity `json:"borrower_property"`
+
+//        Address *AddressEntity `json:"address"`
+    }
+
+    BorrowerPropertyTransactionPropertyEntity {
+        Id int64 `json:"id"`
+        CreatorId int64 `json:"creator_id"`
+        CreatorName string `json:"creator_name"`
+        OrganizationId int64 `json:"organization_id"`
+        PropertyType string `json:"property_type"`
+        TotalAmount float64 `json:"total_amount"`
+        Unit int32 `json:"unit"`
+        LivingAreaSqft float32 `json:"living_area_sqft"`
+        Bedrooms int32 `json:"bedrooms"`
+        Bathrooms float32 `json:"bathrooms"`
         Address *AddressEntity `json:"address"`
+        CreatedAt string `json:"created_at"`
+        UpdatedAt string `json:"updated_at"`
+        LoanCount int32 `json:"loan_count"`
     }
 )
 
@@ -252,5 +272,15 @@ type (
         Note string `json:"note"`
         Metadata map[string]interface{} `json:"metadata"`
         CreatedAt string `json:"created_at"`
+    }
+)
+
+// list by borrower property
+type (
+    BorrowerPropertyTransactionListByPropertyRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+    }
+    BorrowerPropertyTransactionListByPropertyResponse {
+        List []BorrowerPropertyTransactionEntity `json:"list"`
     }
 )

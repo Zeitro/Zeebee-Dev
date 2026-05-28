@@ -51,11 +51,11 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 		return nil, err
 	}
 	if borrowerProperty == nil || borrowerProperty.Id == 0 {
-		return nil, errorx.WithStack(errorx.New("Property is invalid"))
+		return nil, errorx.WithStack(errorx.New("property is invalid"))
 	}
 
 	if borrowerProperty.OrganizationId != claim.OrganizationId {
-		return nil, errorx.WithStack(errorx.New("Access denied"))
+		return nil, errorx.WithStack(errorx.New("access denied"))
 	}
 
 	loanProperties := borrowerProperty.LoanProperties
@@ -76,10 +76,16 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 	respData.ActiveLoans = make([]*borrower.LoanEntity, 0)
 	respData.ArchivedLoans = make([]*borrower.LoanEntity, 0)
 
+	loanIdMap := make(map[int64]struct{})
 	if len(loanProperties) > 0 {
 		for i, loanProperty := range loanProperties {
 			loan := loanProperty.Loan
 			if loan == nil || loan.Id == 0 {
+				continue
+			}
+
+			_, ok := loanIdMap[loan.Id]
+			if ok {
 				continue
 			}
 
@@ -129,6 +135,17 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 	})
 	slice.SortBy(respData.ArchivedLoans, func(item, other *borrower.LoanEntity) bool {
 		return item.Id < other.Id
+	})
+
+	// remove duplicate loans
+	respData.PendingLoans = slice.UniqueBy(respData.PendingLoans, func(item *borrower.LoanEntity) int64 {
+		return item.Id
+	})
+	respData.ActiveLoans = slice.UniqueBy(respData.ActiveLoans, func(item *borrower.LoanEntity) int64 {
+		return item.Id
+	})
+	respData.ArchivedLoans = slice.UniqueBy(respData.ArchivedLoans, func(item *borrower.LoanEntity) int64 {
+		return item.Id
 	})
 
 	respData.TotalClosingFundAmount = totalClosingFundAmount

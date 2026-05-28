@@ -250,6 +250,10 @@ service borrower-api {
 	@handler PropertyDetailSummary
 	get /property/:id/summary (PropertyDetailRequest) returns (PropertyDetailSummaryResponse)
 
+	@doc "transactions"
+	@handler PropertyBorrowerPropertyTransactions
+	get /property/:id/borrower_property_transactions (BorrowerPropertyTransactionListByPropertyRequest) returns (BorrowerPropertyTransactionListByPropertyResponse)
+
 	@doc "detail"
 	@handler PropertyDetail
 	get /property/:id (PathIdRequest) returns (PropertyDetailResponse)

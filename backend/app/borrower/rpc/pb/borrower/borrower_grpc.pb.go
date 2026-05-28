@@ -4263,19 +4263,20 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	BorrowerPropertyTransaction_Create_FullMethodName             = "/borrower.BorrowerPropertyTransaction/Create"
-	BorrowerPropertyTransaction_Detail_FullMethodName             = "/borrower.BorrowerPropertyTransaction/Detail"
-	BorrowerPropertyTransaction_Update_FullMethodName             = "/borrower.BorrowerPropertyTransaction/Update"
-	BorrowerPropertyTransaction_Delete_FullMethodName             = "/borrower.BorrowerPropertyTransaction/Delete"
-	BorrowerPropertyTransaction_SwitchStatus_FullMethodName       = "/borrower.BorrowerPropertyTransaction/SwitchStatus"
-	BorrowerPropertyTransaction_All_FullMethodName                = "/borrower.BorrowerPropertyTransaction/All"
-	BorrowerPropertyTransaction_UpdateChecklist_FullMethodName    = "/borrower.BorrowerPropertyTransaction/UpdateChecklist"
-	BorrowerPropertyTransaction_Page_FullMethodName               = "/borrower.BorrowerPropertyTransaction/Page"
-	BorrowerPropertyTransaction_CreateDocument_FullMethodName     = "/borrower.BorrowerPropertyTransaction/CreateDocument"
-	BorrowerPropertyTransaction_UploadDocumentFile_FullMethodName = "/borrower.BorrowerPropertyTransaction/UploadDocumentFile"
-	BorrowerPropertyTransaction_DeleteDocumentFile_FullMethodName = "/borrower.BorrowerPropertyTransaction/DeleteDocumentFile"
-	BorrowerPropertyTransaction_OperationStats_FullMethodName     = "/borrower.BorrowerPropertyTransaction/OperationStats"
-	BorrowerPropertyTransaction_OperationList_FullMethodName      = "/borrower.BorrowerPropertyTransaction/OperationList"
+	BorrowerPropertyTransaction_Create_FullMethodName                 = "/borrower.BorrowerPropertyTransaction/Create"
+	BorrowerPropertyTransaction_Detail_FullMethodName                 = "/borrower.BorrowerPropertyTransaction/Detail"
+	BorrowerPropertyTransaction_Update_FullMethodName                 = "/borrower.BorrowerPropertyTransaction/Update"
+	BorrowerPropertyTransaction_Delete_FullMethodName                 = "/borrower.BorrowerPropertyTransaction/Delete"
+	BorrowerPropertyTransaction_SwitchStatus_FullMethodName           = "/borrower.BorrowerPropertyTransaction/SwitchStatus"
+	BorrowerPropertyTransaction_All_FullMethodName                    = "/borrower.BorrowerPropertyTransaction/All"
+	BorrowerPropertyTransaction_ListByBorrowerProperty_FullMethodName = "/borrower.BorrowerPropertyTransaction/ListByBorrowerProperty"
+	BorrowerPropertyTransaction_UpdateChecklist_FullMethodName        = "/borrower.BorrowerPropertyTransaction/UpdateChecklist"
+	BorrowerPropertyTransaction_Page_FullMethodName                   = "/borrower.BorrowerPropertyTransaction/Page"
+	BorrowerPropertyTransaction_CreateDocument_FullMethodName         = "/borrower.BorrowerPropertyTransaction/CreateDocument"
+	BorrowerPropertyTransaction_UploadDocumentFile_FullMethodName     = "/borrower.BorrowerPropertyTransaction/UploadDocumentFile"
+	BorrowerPropertyTransaction_DeleteDocumentFile_FullMethodName     = "/borrower.BorrowerPropertyTransaction/DeleteDocumentFile"
+	BorrowerPropertyTransaction_OperationStats_FullMethodName         = "/borrower.BorrowerPropertyTransaction/OperationStats"
+	BorrowerPropertyTransaction_OperationList_FullMethodName          = "/borrower.BorrowerPropertyTransaction/OperationList"
 )
 
 // BorrowerPropertyTransactionClient is the client API for BorrowerPropertyTransaction service.
@@ -4288,6 +4289,7 @@ type BorrowerPropertyTransactionClient interface {
 	Delete(ctx context.Context, in *BorrowerPropertyTransactionDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	SwitchStatus(ctx context.Context, in *BorrowerPropertyTransactionSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	All(ctx context.Context, in *BorrowerPropertyTransactionAllRequest, opts ...grpc.CallOption) (*BorrowerPropertyTransactionAllResponse, error)
+	ListByBorrowerProperty(ctx context.Context, in *BorrowerPropertyTransactionListByPropertyRequest, opts ...grpc.CallOption) (*BorrowerPropertyTransactionListByPropertyResponse, error)
 	UpdateChecklist(ctx context.Context, in *BorrowerPropertyTransactionChecklistRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	Page(ctx context.Context, in *BorrowerPropertyTransactionPageRequest, opts ...grpc.CallOption) (*BorrowerPropertyTransactionPageResponse, error)
 	CreateDocument(ctx context.Context, in *DocumentCreateRequest, opts ...grpc.CallOption) (*DocumentCreateResponse, error)
@@ -4359,6 +4361,16 @@ func (c *borrowerPropertyTransactionClient) All(ctx context.Context, in *Borrowe
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(BorrowerPropertyTransactionAllResponse)
 	err := c.cc.Invoke(ctx, BorrowerPropertyTransaction_All_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *borrowerPropertyTransactionClient) ListByBorrowerProperty(ctx context.Context, in *BorrowerPropertyTransactionListByPropertyRequest, opts ...grpc.CallOption) (*BorrowerPropertyTransactionListByPropertyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BorrowerPropertyTransactionListByPropertyResponse)
+	err := c.cc.Invoke(ctx, BorrowerPropertyTransaction_ListByBorrowerProperty_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -4445,6 +4457,7 @@ type BorrowerPropertyTransactionServer interface {
 	Delete(context.Context, *BorrowerPropertyTransactionDeleteRequest) (*EmptyResponse, error)
 	SwitchStatus(context.Context, *BorrowerPropertyTransactionSwitchStatusRequest) (*EmptyResponse, error)
 	All(context.Context, *BorrowerPropertyTransactionAllRequest) (*BorrowerPropertyTransactionAllResponse, error)
+	ListByBorrowerProperty(context.Context, *BorrowerPropertyTransactionListByPropertyRequest) (*BorrowerPropertyTransactionListByPropertyResponse, error)
 	UpdateChecklist(context.Context, *BorrowerPropertyTransactionChecklistRequest) (*EmptyResponse, error)
 	Page(context.Context, *BorrowerPropertyTransactionPageRequest) (*BorrowerPropertyTransactionPageResponse, error)
 	CreateDocument(context.Context, *DocumentCreateRequest) (*DocumentCreateResponse, error)
@@ -4479,6 +4492,9 @@ func (UnimplementedBorrowerPropertyTransactionServer) SwitchStatus(context.Conte
 }
 func (UnimplementedBorrowerPropertyTransactionServer) All(context.Context, *BorrowerPropertyTransactionAllRequest) (*BorrowerPropertyTransactionAllResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method All not implemented")
+}
+func (UnimplementedBorrowerPropertyTransactionServer) ListByBorrowerProperty(context.Context, *BorrowerPropertyTransactionListByPropertyRequest) (*BorrowerPropertyTransactionListByPropertyResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListByBorrowerProperty not implemented")
 }
 func (UnimplementedBorrowerPropertyTransactionServer) UpdateChecklist(context.Context, *BorrowerPropertyTransactionChecklistRequest) (*EmptyResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateChecklist not implemented")
@@ -4627,6 +4643,24 @@ func _BorrowerPropertyTransaction_All_Handler(srv interface{}, ctx context.Conte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BorrowerPropertyTransactionServer).All(ctx, req.(*BorrowerPropertyTransactionAllRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BorrowerPropertyTransaction_ListByBorrowerProperty_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BorrowerPropertyTransactionListByPropertyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BorrowerPropertyTransactionServer).ListByBorrowerProperty(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BorrowerPropertyTransaction_ListByBorrowerProperty_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BorrowerPropertyTransactionServer).ListByBorrowerProperty(ctx, req.(*BorrowerPropertyTransactionListByPropertyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -4787,6 +4821,10 @@ var BorrowerPropertyTransaction_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "All",
 			Handler:    _BorrowerPropertyTransaction_All_Handler,
+		},
+		{
+			MethodName: "ListByBorrowerProperty",
+			Handler:    _BorrowerPropertyTransaction_ListByBorrowerProperty_Handler,
 		},
 		{
 			MethodName: "UpdateChecklist",

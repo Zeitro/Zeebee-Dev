@@ -162,6 +162,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: borrower_property.PropertyDeleteHandler(serverCtx),
 				},
 				{
+					// transactions
+					Method:  http.MethodGet,
+					Path:    "/property/:id/borrower_property_transactions",
+					Handler: borrower_property.PropertyBorrowerPropertyTransactionsHandler(serverCtx),
+				},
+				{
 					// property Summary
 					Method:  http.MethodGet,
 					Path:    "/property/:id/summary",

@@ -59,7 +59,7 @@ func (l *ResourceLogic) CreateResource(ctx context.Context, input *dto.ResourceC
 				return innerErr
 			}
 			if !isExisted {
-				return errorx.New("Parent resource not found")
+				return errorx.New("parent resource not found")
 			}
 		}
 
@@ -69,7 +69,7 @@ func (l *ResourceLogic) CreateResource(ctx context.Context, input *dto.ResourceC
 			return innerErr
 		}
 		if isExisted {
-			return errorx.New("Resource already exists")
+			return errorx.New("resource already exists")
 		}
 
 		// check tag
@@ -78,7 +78,7 @@ func (l *ResourceLogic) CreateResource(ctx context.Context, input *dto.ResourceC
 			return innerErr
 		}
 		if isTagExisted {
-			return errorx.New("Tag already exists")
+			return errorx.New("rag already exists")
 		}
 
 		// Get apis by ids
@@ -131,7 +131,7 @@ func (l *ResourceLogic) UpdateResource(ctx context.Context, input *dto.ResourceU
 				return innerErr
 			}
 			if !isExisted {
-				return errorx.New("Parent resource not found")
+				return errorx.New("parent resource not found")
 			}
 		}
 
@@ -153,7 +153,7 @@ func (l *ResourceLogic) UpdateResource(ctx context.Context, input *dto.ResourceU
 			return innerErr
 		}
 		if isExisted {
-			return errorx.New("Resource already exists")
+			return errorx.New("resource already exists")
 		}
 
 		// check tag
@@ -162,7 +162,7 @@ func (l *ResourceLogic) UpdateResource(ctx context.Context, input *dto.ResourceU
 			return innerErr
 		}
 		if isTagExisted {
-			return errorx.New("Tag already exists")
+			return errorx.New("tag already exists")
 		}
 
 		// handle apis
@@ -282,7 +282,7 @@ func (l *ResourceLogic) GetUserResources(ctx context.Context, input dto.Resource
 		return nil, err
 	}
 	if organizationUser.Status != constants.OrganizationUserStatusActive {
-		return nil, errorx.New("User is not active")
+		return nil, errorx.New("user is not active")
 	}
 	// filter roles
 	hasAdminRole := false
