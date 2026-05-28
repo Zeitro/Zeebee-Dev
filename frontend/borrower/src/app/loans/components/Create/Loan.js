@@ -106,7 +106,7 @@ const CreateLoan = ({ form, stepBtn, gutter, isRadioStyle, ...colProps }) => {
 						</Form.Item>
 					</Col>
 					<Col {...layoutCol} {...(colProps || {})}>
-						<Form.Item label="Initial loan amount(optional)" name="initial_amount">
+						<Form.Item label="Initial loan amount" name="initial_amount">
 							<InputNumAmount
 								placeholder="Enter initial loan amount"
 								max={total_amount}

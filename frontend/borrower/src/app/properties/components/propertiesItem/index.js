@@ -34,7 +34,7 @@ const PropertiesItem = ({ data, handleSearch }) => {
 			<div key={index} className={[item?.className || 'w-1/2', 'pb-4'].join(' ')}>
 				<p className="text-base-gray text-sm pb-1">{item.label}</p>
 				<span className="text-black-dark text-base font-medium">
-					{(item?.render ? item?.render?.(data[item.value]) : data[item.value]) || '--'}
+					{(item?.render ? item?.render?.(data[item.value]) : data[item.value]) ?? '--'}
 				</span>
 			</div>
 		);
