@@ -32,17 +32,6 @@ const PROPERTY_API = '/property/page';
 
 const DEFAULT_SORTER = { column: 'total_amount', sort: des };
 
-function loanStatusCell(record) {
-	const parts = [];
-	if (record?.active_loan_count) {
-		parts.push(`${record.active_loan_count} Active`);
-	}
-	if (record?.pending_loan_count) {
-		parts.push(`${record.pending_loan_count} Pending`);
-	}
-	return parts.length ? parts.join(' · ') : EMPTY_DISPLAY;
-}
-
 const Properties = () => {
 	const router = useRouter();
 	const { hasPermission, getActiveByPermission } = useAuth();
@@ -138,25 +127,30 @@ const Properties = () => {
 	const columns = useMemo(
 		() => [
 			{
-				title: 'Address',
+				title: 'Property address',
+				dataIndex: ['address', 'address1'],
 				key: 'address',
-				dataIndex: 'address',
-				fixed: 'left',
-				width: 300,
 				sorter: true,
-				render: (_, record) => {
-					const text = displayValue(assemblyAddress(record?.address));
-					return (
-						<FieldTips title={text === EMPTY_DISPLAY ? undefined : text}>
-							<span
-								className="text-primary cursor-pointer"
-								onClick={() => router.push(`/properties/${record?.id}`)}
-							>
-								{text}
-							</span>
-						</FieldTips>
-					);
-				},
+				fixed: 'left',
+				render: (_, record) => displayValue(record?.address?.address1),
+			},
+			{
+				title: 'City',
+				dataIndex: ['address', 'city'],
+				key: 'city',
+				sorter: true,
+				fixed: 'left',
+				// width: 120,
+				render: (_, record) => displayValue(record?.address?.city),
+			},
+			{
+				title: 'State',
+				dataIndex: ['address', 'state'],
+				key: 'state',
+				// width: 80,
+				sorter: true,
+				fixed: 'left',
+				render: (_, record) => displayValue(record?.address?.state),
 			},
 			{
 				title: 'Property type',
@@ -183,22 +177,22 @@ const Properties = () => {
 				sorter: true,
 				render: (v) => displayValue(v),
 			},
-			{
-				title: 'Beds',
-				dataIndex: 'bedrooms',
-				key: 'bedrooms',
-				width: 72,
-				sorter: true,
-				render: (v) => displayValue(v),
-			},
-			{
-				title: 'Baths',
-				dataIndex: 'bathrooms',
-				key: 'bathrooms',
-				width: 72,
-				sorter: true,
-				render: (v) => displayValue(v),
-			},
+			// {
+			// 	title: 'Beds',
+			// 	dataIndex: 'bedrooms',
+			// 	key: 'bedrooms',
+			// 	width: 72,
+			// 	sorter: true,
+			// 	render: (v) => displayValue(v),
+			// },
+			// {
+			// 	title: 'Baths',
+			// 	dataIndex: 'bathrooms',
+			// 	key: 'bathrooms',
+			// 	width: 72,
+			// 	sorter: true,
+			// 	render: (v) => displayValue(v),
+			// },
 			{
 				title: 'Total active loan',
 				dataIndex: 'total_amount',
@@ -236,7 +230,25 @@ const Properties = () => {
 				title: 'Loan status',
 				key: 'loan_status',
 				width: 200,
-				render: (_, record) => loanStatusCell(record),
+				render: (_, record) => {
+					return (
+						<div className="flex flex-wrap gap-1">
+							{!!record?.active_loan_count && (
+								<div className="rounded-[2px] px-2 text-xs border border-[var(--green-light-100)] bg-green-light text-green-medium">
+									{record?.active_loan_count || 0} Active Loans
+								</div>
+							)}
+							{!!record?.pending_loan_count && (
+								<div className="rounded-[2px] px-2 text-xs border border-[var(--orange-medium)] bg-[var(--orange-light)] text-[var(--orange-dark)]">
+									{record?.pending_loan_count || 0} Pending Loans
+								</div>
+							)}
+							{!record?.pending_loan_count && !record?.active_loan_count && (
+								<span>--</span>
+							)}
+						</div>
+					);
+				},
 			},
 			{
 				title: 'Nearest maturity',
@@ -251,6 +263,7 @@ const Properties = () => {
 				dataIndex: 'applicants',
 				key: 'applicants',
 				width: 200,
+				ellipsis: true,
 				render: (v) => {
 					const text = displayValue(v?.length ? v.join(', ') : null);
 					return (
@@ -265,6 +278,7 @@ const Properties = () => {
 				dataIndex: 'lenders',
 				key: 'lenders',
 				width: 200,
+				ellipsis: true,
 				render: (v) => {
 					const text = displayValue(v?.length ? v.join(', ') : null);
 					return (
@@ -317,7 +331,7 @@ const Properties = () => {
 								setTransactionModalOpen(true);
 							}}
 						>
-							New Transaction
+							Add Transaction
 						</Button>
 						<PermissionSlot code={PERMISSIONS?.PROPERTY?.DELETE}>
 							<DeleteBtn
@@ -374,6 +388,7 @@ const Properties = () => {
 				onSaved={() => {
 					setTransactionModalOpen(false);
 					setTransactionModalProperty(null);
+					router.push('/myTransactions');
 				}}
 			/>
 		</>

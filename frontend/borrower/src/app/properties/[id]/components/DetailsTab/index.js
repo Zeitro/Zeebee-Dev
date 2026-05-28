@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, Form } from 'antd';
+import { Button, Form, message } from 'antd';
 import {
 	EditOutlined,
 	EnvironmentOutlined,
@@ -21,13 +21,12 @@ function renderFields(fields, data) {
 	));
 }
 
-const PROPERTY_FORM_FIELDS = ['property_type', 'living_area_sqft', 'unit', 'bedrooms', 'bathrooms'];
-
 const DetailsTab = ({ rowData, propertyId, canEdit, onRefresh }) => {
 	const [form] = Form.useForm();
 	const { request } = createRequest();
 	const [isEditing, setIsEditing] = useState(false);
 	const [saving, setSaving] = useState(false);
+	const [messageApi, contextHolder] = message.useMessage();
 
 	const syncFormValues = useCallback(() => {
 		form.setFieldsValue({
@@ -53,18 +52,16 @@ const DetailsTab = ({ rowData, propertyId, canEdit, onRefresh }) => {
 	const handleSave = async () => {
 		try {
 			setSaving(true);
-			const values = await form.validateFields(PROPERTY_FORM_FIELDS);
+			const values = await form.validateFields();
 			await request(`/property/${propertyId}`, {
 				method: 'PUT',
 				body: {
-					...rowData,
 					...values,
 				},
 			});
 			setIsEditing(false);
+			messageApi.success('Property updated successfully');
 			onRefresh?.();
-		} catch {
-			// validation or request errors are handled by antd / request layer
 		} finally {
 			setSaving(false);
 		}
@@ -84,6 +81,7 @@ const DetailsTab = ({ rowData, propertyId, canEdit, onRefresh }) => {
 
 	return (
 		<div className="rounded-lg border border-base-border bg-background p-4">
+			{contextHolder}
 			<DetailSection icon={<EnvironmentOutlined />} title="Address" extra={headerAction}>
 				<div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
 					{renderFields(ADDRESS_FIELDS, rowData)}

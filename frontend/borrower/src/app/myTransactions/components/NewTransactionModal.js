@@ -80,7 +80,7 @@ const NewTransactionModal = ({ open, onClose, onSaved, initialProperty }) => {
 		try {
 			const values = await form.validateFields();
 			setConfirmLoading(true);
-			await request(TRANSACTION_CREATE_API, {
+			const res = await request(TRANSACTION_CREATE_API, {
 				method: 'POST',
 				body: {
 					...values,
@@ -90,7 +90,7 @@ const NewTransactionModal = ({ open, onClose, onSaved, initialProperty }) => {
 				type: 'success',
 				content: 'Transaction created successfully',
 			});
-			onSaved?.();
+			onSaved?.(res);
 			onClose();
 		} catch (e) {
 			if (e?.errorFields) return;

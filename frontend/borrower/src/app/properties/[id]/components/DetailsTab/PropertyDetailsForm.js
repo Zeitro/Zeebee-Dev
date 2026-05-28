@@ -71,7 +71,7 @@ const PropertyDetailsForm = ({ rowData }) => {
 			>
 				<InputNumber
 					style={{ width: '100%' }}
-					min={1}
+					min={0}
 					max={100}
 					controls={false}
 					placeholder="Enter Number of bedrooms"
@@ -84,7 +84,7 @@ const PropertyDetailsForm = ({ rowData }) => {
 			>
 				<InputNumber
 					style={{ width: '100%' }}
-					min={1}
+					min={0}
 					max={100}
 					controls={false}
 					placeholder="Enter Number of bathrooms"
