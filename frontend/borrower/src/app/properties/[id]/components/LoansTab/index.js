@@ -16,6 +16,10 @@ const LoansTab = ({ rowData, loading, onRefresh, className }) => {
 			key: 'loan_pending_status',
 			valueName: 'loanPendingStatus',
 		},
+		{
+			key: 'loan_stage',
+			valueName: 'loanStatusOptions',
+		},
 	]);
 
 	const sections = useMemo(

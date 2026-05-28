@@ -9,7 +9,7 @@ import {
 	ReloadOutlined,
 } from '@ant-design/icons';
 import { Button, message, Space, Typography } from 'antd';
-import { DeleteBtn, FilterTable } from '@repo/shared-methods';
+import { DeleteBtn, FieldTips, FilterTable } from '@repo/shared-methods';
 import { useGetOptions } from '@repo/shared-methods/hooks';
 import { createRequest, displayValue, formatDate } from '@repo/shared-methods/utils';
 import NewTransactionModal from './components/NewTransactionModal';
@@ -172,10 +172,12 @@ const MyTransactionsPage = () => {
 						<Typography.Link
 							onClick={(e) => {
 								e.preventDefault();
-								window.open(`/myTransactions/${record.id}`, '_blank');
+								window.open(`/properties/${record.borrower_property_id}`, '_blank');
 							}}
 						>
-							{text}
+							<FieldTips title="Click to go to the property details page">
+								{text}
+							</FieldTips>
 						</Typography.Link>
 					);
 				},
