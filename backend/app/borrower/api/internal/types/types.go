@@ -419,14 +419,15 @@ type BorrowerPropertyTransactionOption struct {
 }
 
 type BorrowerPropertyTransactionPageEntity struct {
-	Id        int64          `json:"id"`
-	Code      string         `json:"code"`
-	Type      string         `json:"type"`
-	Status    string         `json:"status"`
-	CoeDate   string         `json:"coe_date"`
-	CreatedAt string         `json:"created_at"`
-	UpdatedAt string         `json:"updated_at"`
-	Address   *AddressEntity `json:"address"`
+	Id                 int64          `json:"id"`
+	BorrowerPropertyId int64          `json:"borrower_property_id"`
+	Code               string         `json:"code"`
+	Type               string         `json:"type"`
+	Status             string         `json:"status"`
+	CoeDate            string         `json:"coe_date"`
+	CreatedAt          string         `json:"created_at"`
+	UpdatedAt          string         `json:"updated_at"`
+	Address            *AddressEntity `json:"address"`
 }
 
 type BorrowerPropertyTransactionPageFilter struct {

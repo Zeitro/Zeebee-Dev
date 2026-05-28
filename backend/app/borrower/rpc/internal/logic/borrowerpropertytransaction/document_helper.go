@@ -11,7 +11,12 @@ func isDescendantOf(ctx context.Context, repo interface {
 	FindOneById(context.Context, int64) (*model.Document, error)
 }, doc *model.Document, rootDocId int64) bool {
 	current := doc
+	maxDepth := 20
+	depth := 0
 	for current != nil {
+		if depth > maxDepth {
+			break
+		}
 		if current.Id == rootDocId {
 			return true
 		}
@@ -23,6 +28,7 @@ func isDescendantOf(ctx context.Context, repo interface {
 			break
 		}
 		current = parent
+		depth++
 	}
 	return false
 }

@@ -572,6 +572,7 @@ const (
 	Api_Update_FullMethodName  = "/admin.api/Update"
 	Api_Delete_FullMethodName  = "/admin.api/Delete"
 	Api_Detail_FullMethodName  = "/admin.api/Detail"
+	Api_SyncApi_FullMethodName = "/admin.api/SyncApi"
 )
 
 // ApiClient is the client API for Api service.
@@ -583,6 +584,7 @@ type ApiClient interface {
 	Update(ctx context.Context, in *ApiUpdateRequest, opts ...grpc.CallOption) (*ApiDetailResponse, error)
 	Delete(ctx context.Context, in *ApiDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	Detail(ctx context.Context, in *ApiDetailRequest, opts ...grpc.CallOption) (*ApiDetailResponse, error)
+	SyncApi(ctx context.Context, in *SyncApiRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 }
 
 type apiClient struct {
@@ -643,6 +645,16 @@ func (c *apiClient) Detail(ctx context.Context, in *ApiDetailRequest, opts ...gr
 	return out, nil
 }
 
+func (c *apiClient) SyncApi(ctx context.Context, in *SyncApiRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Api_SyncApi_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ApiServer is the server API for Api service.
 // All implementations must embed UnimplementedApiServer
 // for forward compatibility.
@@ -652,6 +664,7 @@ type ApiServer interface {
 	Update(context.Context, *ApiUpdateRequest) (*ApiDetailResponse, error)
 	Delete(context.Context, *ApiDeleteRequest) (*EmptyResponse, error)
 	Detail(context.Context, *ApiDetailRequest) (*ApiDetailResponse, error)
+	SyncApi(context.Context, *SyncApiRequest) (*EmptyResponse, error)
 	mustEmbedUnimplementedApiServer()
 }
 
@@ -676,6 +689,9 @@ func (UnimplementedApiServer) Delete(context.Context, *ApiDeleteRequest) (*Empty
 }
 func (UnimplementedApiServer) Detail(context.Context, *ApiDetailRequest) (*ApiDetailResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Detail not implemented")
+}
+func (UnimplementedApiServer) SyncApi(context.Context, *SyncApiRequest) (*EmptyResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SyncApi not implemented")
 }
 func (UnimplementedApiServer) mustEmbedUnimplementedApiServer() {}
 func (UnimplementedApiServer) testEmbeddedByValue()             {}
@@ -788,6 +804,24 @@ func _Api_Detail_Handler(srv interface{}, ctx context.Context, dec func(interfac
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Api_SyncApi_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SyncApiRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiServer).SyncApi(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Api_SyncApi_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiServer).SyncApi(ctx, req.(*SyncApiRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Api_ServiceDesc is the grpc.ServiceDesc for Api service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -814,6 +848,10 @@ var Api_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Detail",
 			Handler:    _Api_Detail_Handler,
+		},
+		{
+			MethodName: "SyncApi",
+			Handler:    _Api_SyncApi_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

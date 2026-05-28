@@ -201,7 +201,7 @@ func (repo *BorrowerPropertyRepo) UpdateOne(ctx context.Context, id int64, data 
 	return data, nil
 }
 
-// AllForOrganization return all of the organization's properties
+// AllForOrganization return all property for organization
 func (repo *BorrowerPropertyRepo) AllForOrganization(ctx context.Context, organizationId int64) (result []*model.BorrowerProperty, err error) {
 	err = repo.Client(ctx).
 		Where("organization_id = ?", organizationId).

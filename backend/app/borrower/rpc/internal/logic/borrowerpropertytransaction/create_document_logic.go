@@ -52,6 +52,10 @@ func (l *CreateDocumentLogic) CreateDocument(in *borrower.DocumentCreateRequest)
 		return nil, errorx.Wrap(err, "failed to find entity document")
 	}
 
+	if entityDoc.OrganizationId != claim.OrganizationId {
+		return nil, errorx.New("the document does not belong to your organization")
+	}
+
 	// validate parent exists and belongs to the transaction's document tree
 	parent, err := l.svcCtx.DocumentRepo.FindOneById(l.ctx, in.Data.ParentId)
 	if err != nil {

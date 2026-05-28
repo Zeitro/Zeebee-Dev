@@ -2358,6 +2358,7 @@ message BorrowerPropertyTransactionPageEntity {
   string created_at = 6;
   string updated_at = 7;
   AddressEntity address = 8;
+  int64 borrower_property_id = 9;
 }
 
 message BorrowerPropertyTransactionDocumentUploadFileRequest {
@@ -2539,3 +2540,18 @@ service Document {
   rpc Files(DocumentFilesRequest) returns(DocumentFilesResponse);
 }
 // ===================== document service end ======================
+// ===================== api service start ======================
+message SyncApiRequest {
+  SyncApiRequestData data = 1;
+}
+
+message SyncApiRequestData {
+  string api_json = 1;
+}
+
+message SyncApiResponse {}
+
+service api {
+  rpc SyncApi(SyncApiRequest) returns(EmptyResponse);
+}
+// ===================== api service end ======================

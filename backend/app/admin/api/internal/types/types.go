@@ -993,7 +993,7 @@ type RoleUpdateRequest struct {
 type S3PresignUrlCreateRequest struct {
 	Type       string `json:"type" validate:"required,oneof=pdf image doc"`
 	FileSuffix string `json:"file_suffix" validate:"required"`
-	FileName   string `json:"file_name,omitempty"`
+	FileName   string `json:"file_name,optional"`
 }
 
 type S3PresignUrlCreateResponse struct {

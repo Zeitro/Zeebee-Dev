@@ -51,6 +51,10 @@ func (l *DeleteDocumentFileLogic) DeleteDocumentFile(in *borrower.BorrowerProper
 		return
 	}
 
+	if entityDoc.OrganizationId != claim.OrganizationId {
+		return nil, errorx.New("transaction does not belong to your organization")
+	}
+
 	fileRecord, err := l.svcCtx.FileRepo.FindOneById(l.ctx, in.Data.FileId)
 	if err != nil {
 		err = errorx.Wrap(err, "failed to find file")

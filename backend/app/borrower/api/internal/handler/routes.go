@@ -276,6 +276,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
+					// sync api
+					Method:  http.MethodGet,
+					Path:    "/common/sync_api",
+					Handler: common.SyncApiHandler(serverCtx),
+				},
+				{
 					// select options
 					Method:  http.MethodGet,
 					Path:    "/select_options",

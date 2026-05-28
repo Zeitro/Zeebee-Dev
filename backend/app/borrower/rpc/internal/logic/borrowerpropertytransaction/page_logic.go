@@ -70,40 +70,6 @@ func (l *PageLogic) Page(in *borrower.BorrowerPropertyTransactionPageRequest) (r
 	if err != nil {
 		return
 	}
-
-	// list := make([]*borrower.BorrowerPropertyTransactionPageEntity, 0, len(pageResult.List))
-	// for _, row := range pageResult.List {
-	// 	entity, transErr := copierx.Trans[model.BorrowerPropertyTransaction, borrower.BorrowerPropertyTransactionPageEntity](
-	// 		&model.BorrowerPropertyTransaction{
-	// 			Base:             model.Base{Id: row.Id, CreatedAt: row.CreatedAt, UpdatedAt: row.UpdatedAt},
-	// 			BorrowerPropertyId: row.BorrowerPropertyId,
-	// 			OrganizationId:   row.OrganizationId,
-	// 			Code:             row.Code,
-	// 			Type:             row.Type,
-	// 			Status:           row.Status,
-	// 			CoeDate:          row.CoeDate,
-	// 			PurchaseAmount:   row.PurchaseAmount,
-	// 			EmdAmount:        row.EmdAmount,
-	// 			PropertyType:     row.PropertyType,
-	// 			Pm:               row.Pm,
-	// 			Strategy:         row.Strategy,
-	// 			Note:             row.Note,
-	// 		},
-	// 		copierx.TimeToRFC3339Str(),
-	// 		copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
-	// 	)
-	// 	if transErr != nil {
-	// 		return nil, errorx.GetFailedTransRespErr(transErr)
-	// 	}
-	//
-	// 	addrEntity, transErr := copierx.Trans[data.Address, borrower.AddressEntity](&row.Address)
-	// 	if transErr == nil {
-	// 		entity.Address = addrEntity
-	// 	}
-	//
-	// 	list = append(list, entity)
-	// }
-
 	return &borrower.BorrowerPropertyTransactionPageResponse{
 		Data: data,
 	}, nil

@@ -2,6 +2,8 @@ package borrowerpropertytransactionlogic
 
 import (
 	"context"
+	"encoding/json"
+	"time"
 
 	"gorm.io/gorm"
 
@@ -48,38 +50,38 @@ func (l *UpdateLogic) Update(in *borrower.BorrowerPropertyTransactionUpdateReque
 	// validate ownership
 	existing, err := l.svcCtx.BorrowerPropertyTransactionRepo.GetOne(l.ctx, in.Data.Id)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Transaction not found")
+		return nil, errorx.Wrap(err, "transaction not found")
 	}
 	if existing.OrganizationId != claim.OrganizationId {
 		return nil, errorx.New("transaction does not belong to your organization")
 	}
 
-	updateData := &model.BorrowerPropertyTransaction{
-		// PurchaseAmount: in.Data.PurchaseAmount,
-		// EmdAmount:      in.Data.EmdAmount,
-		// PropertyType:   constants.PropertyType(in.Data.PropertyType),
-		// Pm:             in.Data.Pm,
-		// Strategy:       in.Data.Strategy,
-		// Note:           in.Data.Note,
-	}
+	updateData := &model.BorrowerPropertyTransaction{}
 
 	err = copierx.Assign(in.Data, updateData, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
 		return nil, err
 	}
 
-	// if in.Data.CoeDate != "" {
-	// 	t, parseErr := time.Parse(timex.LayoutUsStyle, in.Data.CoeDate)
-	// 	if parseErr == nil {
-	// 		updateData.CoeDate = &sql.NullTime{Time: t, Valid: true}
-	// 	}
-	// }
-
 	err = l.svcCtx.BorrowerPropertyTransactionRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		_, innerErr := l.svcCtx.BorrowerPropertyTransactionRepo.UpdateOne(l.ctx, in.Data.Id, updateData)
 		if innerErr != nil {
 			return innerErr
 		}
+
+		type transactionMetadata struct {
+			*model.BorrowerPropertyTransaction
+			Id        int64             `json:"-"`
+			Code      string            `json:"-"`
+			Checklist dto.ChecklistRoot `json:"-"`
+			CreatedAt time.Time         `json:"-"`
+			UpdatedAt time.Time         `json:"-"`
+		}
+
+		metadata, _ := json.Marshal(map[string]interface{}{
+			"before": transactionMetadata{BorrowerPropertyTransaction: existing},
+			"after":  transactionMetadata{BorrowerPropertyTransaction: updateData},
+		})
 
 		innerErr = l.baseLogic.OperationLogic.CreateOperationLog(l.ctx, tx, dto.OperationCreateDto{
 			EntityId:       in.Data.Id,
@@ -89,11 +91,12 @@ func (l *UpdateLogic) Update(in *borrower.BorrowerPropertyTransactionUpdateReque
 			OperatorType:   claim.UserType,
 			Operation:      constants.OperationActionBorrowerPropertyTransactionUpdateBaseInfo,
 			OrganizationId: claim.OrganizationId,
+			Metadata:       metadata,
 		})
 		return innerErr
 	})
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to update transaction")
+		return nil, errorx.Wrap(err, "failed to update transaction")
 	}
 
 	detailLogic := NewDetailLogic(l.ctx, l.svcCtx)

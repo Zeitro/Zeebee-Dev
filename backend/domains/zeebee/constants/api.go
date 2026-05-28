@@ -10,3 +10,18 @@ const (
 	ApiMethodPatch  ApiMethod = "PATCH"
 	ApiMethodHead   ApiMethod = "HEAD"
 )
+
+func (m ApiMethod) IsValid() bool {
+	switch m {
+	case ApiMethodGet,
+		ApiMethodPost,
+		ApiMethodPut,
+		ApiMethodDelete,
+		ApiMethodPatch,
+		ApiMethodHead:
+		return true
+	default:
+		return false
+
+	}
+}

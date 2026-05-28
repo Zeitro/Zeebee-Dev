@@ -121,6 +121,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
+				// sync api
+				Method:  http.MethodGet,
+				Path:    "/common/sync_api",
+				Handler: common.SyncApiHandler(serverCtx),
+			},
+			{
 				// select options
 				Method:  http.MethodGet,
 				Path:    "/select_options",

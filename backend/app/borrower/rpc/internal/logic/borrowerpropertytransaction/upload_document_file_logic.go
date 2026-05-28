@@ -3,6 +3,7 @@ package borrowerpropertytransactionlogic
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -65,6 +66,11 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 		err = errorx.New("transaction document binding not found")
 		return
 	}
+	if entityDoc.OrganizationId != claim.OrganizationId {
+		err = errorx.New("the document does not belong to your organization")
+		return
+	}
+
 	if !isDescendantOf(l.ctx, l.svcCtx.DocumentRepo, doc, entityDoc.RootDocumentId) {
 		err = errorx.New("document does not belong to this transaction")
 		return
@@ -110,6 +116,12 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 			return innerErr
 		}
 
+		metadata, _ := json.Marshal(map[string]interface{}{
+			"after": map[string]interface{}{
+				"files": uploadedFiles,
+			},
+		})
+
 		// operation log
 		innerErr = l.baseLogic.OperationLogic.CreateOperationLog(l.ctx, tx, dto.OperationCreateDto{
 			EntityId:       in.Data.TransactionId,
@@ -120,6 +132,7 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 			Operation:      constants.OperationActionBorrowerPropertyTransactionUploadDocument,
 			OrganizationId: claim.OrganizationId,
 			Note:           fmt.Sprintf("upload %d file(s) to document %s", len(uploadedFiles), doc.Name),
+			Metadata:       metadata,
 		})
 		if innerErr != nil {
 			return innerErr
@@ -154,7 +167,7 @@ func (l *UploadDocumentFileLogic) propagateLastUploadedAt(tx *gorm.DB, doc *mode
 	if doc.ParentId != 0 {
 		parent, err := l.svcCtx.DocumentRepo.FindOneByIdWithTx(l.ctx, tx, doc.ParentId)
 		if err != nil {
-			return nil
+			return err
 		}
 		return l.propagateLastUploadedAt(tx, parent, t)
 	}

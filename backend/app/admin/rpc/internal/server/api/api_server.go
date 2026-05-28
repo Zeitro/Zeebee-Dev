@@ -47,3 +47,8 @@ func (s *ApiServer) Detail(ctx context.Context, in *admin.ApiDetailRequest) (*ad
 	l := apilogic.NewDetailLogic(ctx, s.svcCtx)
 	return l.Detail(in)
 }
+
+func (s *ApiServer) SyncApi(ctx context.Context, in *admin.SyncApiRequest) (*admin.EmptyResponse, error) {
+	l := apilogic.NewSyncApiLogic(ctx, s.svcCtx)
+	return l.SyncApi(in)
+}

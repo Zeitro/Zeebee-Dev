@@ -12,7 +12,7 @@ import (
 	"zeebee-backend/domains/zeebee/model"
 )
 
-func (b *BaseLogic) RecalculateBorrowerPropertyTransactionChecklist(ctx context.Context, tx *gorm.DB, transactionId int64) (checklist dto.ChecklistRoot,err error) {
+func (b *BaseLogic) RecalculateBorrowerPropertyTransactionChecklist(ctx context.Context, tx *gorm.DB, transactionId int64) (checklist dto.ChecklistRoot, err error) {
 	repos := b.svcCtx.AllRepos
 
 	entityDoc, err := b.svcCtx.AllRepos.EntityDocumentRepo.FindOneByColumnsWithTx(ctx, tx, map[string]interface{}{
@@ -20,14 +20,14 @@ func (b *BaseLogic) RecalculateBorrowerPropertyTransactionChecklist(ctx context.
 		"entity_id":   transactionId,
 	})
 	if err != nil {
-		err =  errorx.Wrap(err, "Entity document not found")
+		err = errorx.Wrap(err, "Entity document not found")
 		return
 	}
 
 	// single query: fetch all documents for this entity
 	allDocs, err := repos.DocumentRepo.GetAllByEntityDocumentIdWithTx(ctx, tx, entityDoc.Id)
 	if err != nil {
-		err =  errorx.Wrap(err, "Failed to load documents")
+		err = errorx.Wrap(err, "Failed to load documents")
 		return
 	}
 
@@ -44,7 +44,11 @@ func (b *BaseLogic) RecalculateBorrowerPropertyTransactionChecklist(ctx context.
 
 	// batch load file counts for all leaf documents
 	leafIds := collectLeafIds(allDocs, childrenMap)
-	fileCountMap, _ := repos.FileRepo.BatchFileCountByEntityIds(ctx, tx, leafIds, constants.FileEntityTypeDocument)
+	fileCountMap, err := repos.FileRepo.BatchFileCountByEntityIds(ctx, tx, leafIds, constants.FileEntityTypeDocument)
+	if err != nil {
+		err = errorx.Wrap(err, "failed to load file counts")
+		return
+	}
 
 	// build checklist tree from root's direct children
 	rootChildren := childrenMap[rootId]
@@ -66,11 +70,11 @@ func (b *BaseLogic) RecalculateBorrowerPropertyTransactionChecklist(ctx context.
 
 	existing, err := repos.BorrowerPropertyTransactionRepo.FindOneByIdWithTx(ctx, tx, transactionId)
 	if err != nil {
-		err =  errorx.WithStack(err)
+		err = errorx.WithStack(err)
 		return
 	}
 	if existing == nil {
-		err =  errorx.New("transaction not found")
+		err = errorx.New("transaction not found")
 		return
 	}
 

@@ -2207,6 +2207,7 @@
                     "type": "object",
                     "required": [
                       "id",
+                      "borrower_property_id",
                       "code",
                       "type",
                       "status",
@@ -2235,6 +2236,9 @@
                             "type": "string"
                           }
                         }
+                      },
+                      "borrower_property_id": {
+                        "type": "integer"
                       },
                       "code": {
                         "type": "string"
@@ -4284,6 +4288,29 @@
                   "type": "integer"
                 }
               }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/common/sync_api": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "common"
+        ],
+        "summary": "sync api",
+        "operationId": "commonSyncApi",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
             }
           }
         }
@@ -21737,7 +21764,7 @@
       }
     }
   },
-  "x-date": "2026-05-27 15:11:55",
+  "x-date": "2026-05-28 11:11:38",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

@@ -187,3 +187,96 @@ func (l *ApiLogic) buildTree(apis []*model.Api, parentId int64) (results []*dto.
 	}
 	return results
 }
+
+// SyncApi syncs API definitions from parsed .api files
+func (l *ApiLogic) SyncApi(ctx context.Context, input *dto.ApiSyncRequestDto) (err error) {
+	apiRepo := l.repos.ApiRepo
+
+	err = apiRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		for groupName, apis := range input.Apis {
+			// 1. Get or create parent category
+			parent, innerErr := apiRepo.FindApiCategoryByNameAndTypeWithTx(ctx, tx, groupName, input.Type)
+			if innerErr != nil {
+				return innerErr
+			}
+			if parent == nil {
+				maxSort, innerErr := apiRepo.GetMaxSortOrderWithTx(ctx, tx, 0, input.Type)
+				if innerErr != nil {
+					return innerErr
+				}
+				parent = &model.Api{
+					Name:               groupName,
+					Path:               "",
+					Method:             "",
+					Description:        groupName,
+					Type:               input.Type,
+					ParentId:           0,
+					Status:             constants.CommonStatusActive,
+					SortOrder:          maxSort + 1,
+					AuthRequired:       false,
+					PermissionRequired: false,
+				}
+				innerErr = tx.WithContext(ctx).Create(parent).Error
+				if innerErr != nil {
+					return innerErr
+				}
+			}
+
+			// 2. Get or create child APIs
+			var apiMaxSort int32
+			apiMaxSort, innerErr = apiRepo.GetMaxSortOrderWithTx(ctx, tx, parent.Id, input.Type)
+			if innerErr != nil {
+				return innerErr
+			}
+			for _, api := range apis {
+				if len(api.Path) == 0 || len(api.Method) == 0 {
+					continue
+				}
+				existing, innerErr := apiRepo.FindApiByPathMethodAndTypeWithTx(ctx, tx, api.Path, api.Method, input.Type)
+				if innerErr != nil {
+					return innerErr
+				}
+				if existing == nil {
+					apiMaxSort++
+					apiMethod := constants.ApiMethod(api.Method)
+					if !apiMethod.IsValid() {
+						innerErr = errorx.Errorf("api[%s-%s] invalid method: %v", api.Name, api.Path, api.Method)
+					}
+					child := &model.Api{
+						Name:               api.Name,
+						Path:               api.Path,
+						Method:             apiMethod,
+						Description:        api.Description,
+						Type:               input.Type,
+						ParentId:           parent.Id,
+						Status:             constants.CommonStatusActive,
+						SortOrder:          apiMaxSort,
+						AuthRequired:       true,
+						PermissionRequired: true,
+					}
+					innerErr = tx.WithContext(ctx).Create(child).Error
+					if innerErr != nil {
+						return innerErr
+					}
+				}
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+
+	// publish auth reload event
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action: auth.ActionApiReload,
+			Scope:  auth.ScopeGlobal,
+			Type:   input.Type,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
+	})
+
+	return nil
+}

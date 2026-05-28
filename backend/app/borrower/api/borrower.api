@@ -61,6 +61,10 @@ service borrower-api {
 	@doc "get uuid"
 	@handler GetUuid
 	get /uuid (EmptyRequest) returns (GetUuidResponse)
+
+	@doc "sync api"
+	@handler SyncApi
+	get /common/sync_api (EmptyRequest) returns (EmptyResponse)
 }
 
 // ============== common end =============

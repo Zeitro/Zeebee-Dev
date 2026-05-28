@@ -122,12 +122,18 @@ func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateReque
 			return innerErr
 		}
 
-		// re-fetch to get updated checklist
-		// result, innerErr = l.svcCtx.BorrowerPropertyTransactionRepo.FindOneByIdWithTx(l.ctx, tx, result.Id)
-		// if innerErr != nil {
-		// 	return innerErr
-		// }
 		result.Checklist = checklist
+
+		metadata, _ := json.Marshal(map[string]interface{}{
+			"after": struct {
+				*model.BorrowerPropertyTransaction
+				Id        int64     `json:"-"`
+				CreatedAt time.Time `json:"-"`
+				UpdatedAt time.Time `json:"-"`
+			}{
+				BorrowerPropertyTransaction: result,
+			},
+		})
 
 		// create operation log
 		innerErr = l.baseLogic.OperationLogic.CreateOperationLog(l.ctx, tx, dto.OperationCreateDto{
@@ -138,6 +144,7 @@ func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateReque
 			OperatorType:   claim.UserType,
 			Operation:      constants.OperationActionBorrowerPropertyTransactionCreate,
 			OrganizationId: claim.OrganizationId,
+			Metadata:       metadata,
 		})
 		return innerErr
 	})

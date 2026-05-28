@@ -296,6 +296,16 @@ service OrganizationUser {
 // ================== organization user service end =================
 
 // ================= api service start =================
+message SyncApiRequest {
+  SyncApiRequestData data = 1;
+}
+
+message SyncApiRequestData {
+  string api_json = 1;
+}
+
+message SyncApiResponse {}
+
 message ApiTreeEntity{
   int64 id = 1;
   int64 parent_id = 2;
@@ -405,6 +415,7 @@ service api {
   rpc Update(ApiUpdateRequest) returns(ApiDetailResponse);
   rpc Delete(ApiDeleteRequest) returns(EmptyResponse);
   rpc Detail(ApiDetailRequest) returns(ApiDetailResponse);
+  rpc SyncApi(SyncApiRequest) returns(EmptyResponse);
 }
 // =================== api service end =================
 

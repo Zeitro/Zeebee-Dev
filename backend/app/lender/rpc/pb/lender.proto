@@ -911,6 +911,17 @@ message ApiEntity{
   bool auth_required = 13;
   bool permission_required = 14;
 }
+message SyncApiRequest {
+  SyncApiRequestData data = 1;
+}
+
+message SyncApiRequestData {
+  string api_json = 1;
+}
+
+service api {
+  rpc SyncApi(SyncApiRequest) returns(EmptyResponse);
+}
 // ====================== api service end =================
 // ====================== resource service start =================
 message ResourceTreeEntity{

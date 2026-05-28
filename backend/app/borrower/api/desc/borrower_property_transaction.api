@@ -177,6 +177,7 @@ type (
     }
     BorrowerPropertyTransactionPageEntity {
         Id int64 `json:"id"`
+        BorrowerPropertyId int64 `json:"borrower_property_id"`
         Code string `json:"code"`
         Type string `json:"type"`
         Status string `json:"status"`
@@ -190,15 +191,15 @@ type (
 // upload file (nested under transaction route)
 type (
     DocumentUploadFileItem {
-        FileName    string `json:"file_name" validate:"required"`
-        FileUrl     string `json:"file_url" validate:"required"`
+        FileName string `json:"file_name" validate:"required"`
+        FileUrl string `json:"file_url" validate:"required"`
         StorageType string `json:"storage_type" validate:"required,oneof='Aws S3' 'Google Drive'"`
-        UploadType  string `json:"upload_type" validate:"required,oneof='Manual' 'Google Drive'"`
+        UploadType string `json:"upload_type" validate:"required,oneof='Manual' 'Google Drive'"`
     }
     BorrowerPropertyTransactionDocumentUploadFileRequest {
-        TransactionId int64                   `path:"transaction_id" validate:"required,gt=0"`
-        DocumentId    int64                   `path:"document_id" validate:"required,gt=0"`
-        Files         []DocumentUploadFileItem `json:"files" validate:"required,dive"`
+        TransactionId int64 `path:"transaction_id" validate:"required,gt=0"`
+        DocumentId int64 `path:"document_id" validate:"required,gt=0"`
+        Files []DocumentUploadFileItem `json:"files" validate:"required,dive"`
     }
     DocumentUploadFileResponse {
         Files []DocumentFile `json:"files"`

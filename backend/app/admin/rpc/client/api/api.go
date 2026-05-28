@@ -22,6 +22,7 @@ type (
 	ApiTreeResponse   = admin.ApiTreeResponse
 	ApiUpdateRequest  = admin.ApiUpdateRequest
 	EmptyResponse     = admin.EmptyResponse
+	SyncApiRequest    = admin.SyncApiRequest
 
 	Api interface {
 		ApiTree(ctx context.Context, in *ApiTreeRequest, opts ...grpc.CallOption) (*ApiTreeResponse, error)
@@ -29,6 +30,7 @@ type (
 		Update(ctx context.Context, in *ApiUpdateRequest, opts ...grpc.CallOption) (*ApiDetailResponse, error)
 		Delete(ctx context.Context, in *ApiDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		Detail(ctx context.Context, in *ApiDetailRequest, opts ...grpc.CallOption) (*ApiDetailResponse, error)
+		SyncApi(ctx context.Context, in *SyncApiRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	}
 
 	defaultApi struct {
@@ -65,4 +67,9 @@ func (m *defaultApi) Delete(ctx context.Context, in *ApiDeleteRequest, opts ...g
 func (m *defaultApi) Detail(ctx context.Context, in *ApiDetailRequest, opts ...grpc.CallOption) (*ApiDetailResponse, error) {
 	client := admin.NewApiClient(m.cli.Conn())
 	return client.Detail(ctx, in, opts...)
+}
+
+func (m *defaultApi) SyncApi(ctx context.Context, in *SyncApiRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	client := admin.NewApiClient(m.cli.Conn())
+	return client.SyncApi(ctx, in, opts...)
 }
