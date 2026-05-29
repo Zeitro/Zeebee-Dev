@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { NewModal, UploadFileButton } from '@repo/shared-methods';
-import { Button, message } from 'antd';
+import { message } from 'antd';
 import { CloseOutlined, FileTextOutlined, InboxOutlined } from '@ant-design/icons';
 import { createRequest } from '@repo/shared-methods/utils';
 // const { TextArea } = Input;
@@ -9,7 +9,6 @@ const UploadModal = ({ transaction_id, open, setOpen, record = {}, onRefresh }) 
 	const uploadRef = useRef(null);
 	const [loading, setLoading] = useState(false);
 	const [fileList, setFileList] = useState([]);
-
 	const handleOK = async () => {
 		try {
 			setLoading(true);
@@ -21,7 +20,7 @@ const UploadModal = ({ transaction_id, open, setOpen, record = {}, onRefresh }) 
 				file_url: i.url,
 			}));
 			await request(
-				`/borrower_property_transaction/${transaction_id}/document/${record.id}/file`,
+				`/borrower_property_transaction/${transaction_id}/document/${record.document_id}/file`,
 				{
 					method: 'POST',
 					body: {
@@ -57,7 +56,7 @@ const UploadModal = ({ transaction_id, open, setOpen, record = {}, onRefresh }) 
 			<div className="h-[400px] overflow-hidden overflow-y-auto">
 				<div className="pb-4">
 					<label>Document type</label>
-					<div className="font-medium text-black-dark">{record.document_type}</div>
+					<div className="font-medium text-black-dark">{record.name}</div>
 				</div>
 
 				{/* <Form.Item label="Comment (Optional）" name="comment">

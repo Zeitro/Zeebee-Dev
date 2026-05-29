@@ -32,8 +32,8 @@ const DocumentsTab = ({ rowData, onRefresh }) => {
 	}, [activeKey, categories]);
 
 	const activeCategory = categories.find((c) => c.key === resolvedActiveKey) ?? categories[0];
-	const requiredCategories = categories.filter((c) => c.required);
-	const optionalCategories = categories.filter((c) => !c.required);
+	const requiredCategories = categories.filter((c) => c.is_required);
+	const optionalCategories = categories.filter((c) => !c.is_required);
 
 	return (
 		<div className="flex gap-4 p-4">

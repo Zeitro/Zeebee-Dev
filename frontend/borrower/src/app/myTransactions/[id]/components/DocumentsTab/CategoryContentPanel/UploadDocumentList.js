@@ -7,7 +7,8 @@ import styles from './index.module.scss';
 import { createRequest, displayValue, formatDate } from '@repo/shared-methods/utils';
 import UploadModal from './uploadModal';
 import { Button, message } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
+import AddRequest from '@repo/shared-methods/componentsUi/zeeBeeDetails/components/AddDocument/AddRequest';
 
 function SectionLabel({ title, count }) {
 	return (
@@ -37,8 +38,8 @@ const UploadDocumentList = ({ category, onRefresh, transactionId }) => {
 		() => [
 			{
 				title: 'Document type',
-				key: 'document_type',
-				dataIndex: 'document_type',
+				key: 'name',
+				dataIndex: 'name',
 				minWidth: 200,
 				ellipsis: true,
 				rowPlacement: 'both',
@@ -90,15 +91,16 @@ const UploadDocumentList = ({ category, onRefresh, transactionId }) => {
 	);
 	const [open, setOpen] = useState(false);
 	const [record, setRecord] = useState({});
+	const [openAdd, setOpenAdd] = useState(false);
 	const { request } = useMemo(() => createRequest(), []);
 	const [messageApi, contextHolder] = message.useMessage();
 	const { requiredList, optionalList } = useMemo(() => {
-		const documents = category?.documents ?? [];
+		const documents = category?.children ?? [];
 		return {
-			requiredList: documents.filter((d) => d.required),
-			optionalList: documents.filter((d) => !d.required),
+			requiredList: documents.filter((d) => d.is_required),
+			optionalList: documents.filter((d) => !d.is_required),
 		};
-	}, [category?.documents]);
+	}, [category?.children]);
 
 	if (!requiredList.length && !optionalList.length) {
 		return (
@@ -129,6 +131,7 @@ const UploadDocumentList = ({ category, onRefresh, transactionId }) => {
 						columns={columns}
 						dataSource={requiredList}
 						onDeleteFile={deleteFile}
+						rowKey="document_id"
 					/>
 				</section>
 			)}
@@ -140,12 +143,31 @@ const UploadDocumentList = ({ category, onRefresh, transactionId }) => {
 						columns={columns}
 						dataSource={optionalList}
 						onDeleteFile={deleteFile}
+						rowKey="document_id"
 					/>
 				</section>
 			)}
-			<Button type="primary" onClick={() => setOpen(true)}>
-				Add Document
-			</Button>
+			<div className="pt-4">
+				<Button
+					type="primary"
+					onClick={() => setOpenAdd(true)}
+					size="large"
+					icon={<PlusOutlined />}
+				>
+					Add Document type
+				</Button>
+			</div>
+			{openAdd && (
+				<AddRequest
+					open={openAdd}
+					setOpen={setOpenAdd}
+					id={transactionId}
+					category={category?.document_id}
+					apiType="transaction"
+					title="Add document type"
+					onSuccessCallback={onRefresh}
+				/>
+			)}
 			{open && (
 				<UploadModal
 					open={open}

@@ -138,7 +138,9 @@ const CollapsibleDocumentRow = ({
 			collapsible="header"
 			className={styles.collapse}
 			activeKey={activeKey}
-			onChange={setActiveKey}
+			onChange={(e) => {
+				setActiveKey(e?.map((item) => Number(item)));
+			}}
 			items={[
 				{
 					key: panelKey,

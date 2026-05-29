@@ -17,44 +17,20 @@ function slugifyCategoryKey(name, documentId) {
 }
 
 /**
- * 将 API 子文档（children 中的一项）映射为 CollapsibleDocumentList 的单条 document。
- * document_type 对应 API `name`；status 由是否已有上传文件推导；updated_at 取首个文件的更新时间。
- */
-function mapChecklistDocument(doc) {
-	const files = doc?.files ?? [];
-	const fileCount = doc?.file_count ?? files.length;
-	const hasFiles = fileCount > 0;
-	const updatedAt = files[0]?.updated_at ?? null;
-
-	return {
-		id: doc.document_id,
-		key: String(doc.document_id),
-		document_type: doc.name,
-		required: doc.is_required,
-		status: hasFiles ? 'Ready for review' : 'Pending upload',
-		updated_at: updatedAt,
-		active: true,
-		files,
-	};
-}
-
-/**
  * 将 API 一级分类（required_documents / optional_documents 中的一项）映射为侧栏 category。
  * completed：子文档已全部上传；pendingCount：尚未上传的子文档数（用于角标）。
  */
-function mapChecklistCategory(doc, required) {
+function mapChecklistCategory(doc) {
 	const children = doc?.children ?? [];
 	const subCount = doc?.sub_document_count ?? children.length;
 	const uploaded = doc?.uploaded_document_count ?? 0;
 	const pendingCount = Math.max(0, subCount - uploaded);
 
 	return {
+		...doc,
 		key: slugifyCategoryKey(doc.name, doc.document_id),
-		name: doc.name,
-		required,
 		completed: subCount > 0 && uploaded >= subCount,
 		pendingCount,
-		documents: children.map(mapChecklistDocument),
 		contentType: 'upload',
 	};
 }
