@@ -1070,7 +1070,7 @@ type LoanPreApprovalResponse struct {
 
 type LoanPropertyApplyEntity struct {
 	Id                           int64             `json:"id,optional"`
-	BorrowerPropertyId           int64             `json:"borrower_property_id" validate:"required,gt=0"`
+	BorrowerPropertyId           int64             `json:"borrower_property_id,optional" validate:"gte=0"`
 	FuturePropertyType           string            `json:"future_property_type"`
 	FutureUnit                   int32             `json:"future_unit" `
 	FutureLivingAreaSqft         float32           `json:"future_living_area_sqft" `

@@ -66,7 +66,7 @@ type LoanPropertyEditEntity {
 
 type LoanPropertyApplyEntity {
     Id int64 `json:"id,optional"`
-    BorrowerPropertyId int64 `json:"borrower_property_id" validate:"required,gt=0"`
+    BorrowerPropertyId int64 `json:"borrower_property_id,optional" validate:"gte=0"`
 
     // new fields
     FuturePropertyType string `json:"future_property_type"`

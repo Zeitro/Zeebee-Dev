@@ -4874,7 +4874,6 @@
                 "loan_property": {
                   "type": "object",
                   "required": [
-                    "borrower_property_id",
                     "future_property_type",
                     "future_unit",
                     "future_living_area_sqft",
@@ -5990,7 +5989,6 @@
                 "loan_property": {
                   "type": "object",
                   "required": [
-                    "borrower_property_id",
                     "future_property_type",
                     "future_unit",
                     "future_living_area_sqft",
@@ -10285,7 +10283,6 @@
                 "loan_property": {
                   "type": "object",
                   "required": [
-                    "borrower_property_id",
                     "future_property_type",
                     "future_unit",
                     "future_living_area_sqft",
@@ -10835,7 +10832,6 @@
                 "loan_property": {
                   "type": "object",
                   "required": [
-                    "borrower_property_id",
                     "future_property_type",
                     "future_unit",
                     "future_living_area_sqft",
@@ -22408,7 +22404,7 @@
       }
     }
   },
-  "x-date": "2026-05-28 16:06:44",
+  "x-date": "2026-05-28 17:21:58",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
