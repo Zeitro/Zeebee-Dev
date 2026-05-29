@@ -113,7 +113,6 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 					oldLoan.LoanProperty = property
 				}
 				return err
-
 			},
 			// update Applicants
 			func() error {

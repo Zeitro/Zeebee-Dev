@@ -26,7 +26,6 @@ func NewLenderCompaniesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *L
 }
 
 func (l *LenderCompaniesLogic) LenderCompanies(req *types.EmptyRequest) (resp *types.LoanLenderCompanyResponse, err error) {
-
 	rpcResp, err := l.svcCtx.LoanRpcClient.LoanLenderCompanies(l.ctx, &admin.EmptyRequest{})
 	if err != nil {
 		return nil, err

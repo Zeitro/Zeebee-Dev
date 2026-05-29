@@ -28,7 +28,6 @@ func NewReviewPendingStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *ReviewPendingStatusLogic) ReviewPendingStatus(req *types.ReviewLoanPendingStatusRequest) (resp *types.EmptyResponse, err error) {
-
 	rpcReq := &lender.LoanPendingStatusReviewRequest{
 		Data: &lender.LoanPendingStatusReviewRequestData{},
 	}

@@ -876,6 +876,7 @@ message StorageCreatePresignedUrlRequest {
 message StorageCreatePresignedUrlRequestData {
   string type = 1;
   string file_suffix = 2;
+  string file_name = 3;
 }
 
 message StorageCreatePresignedUrlResponse {
@@ -884,6 +885,10 @@ message StorageCreatePresignedUrlResponse {
 
 message StorageCreatePresignedUrlResponseData {
   string url = 1;
+  string file_name = 2;
+  string storage_type = 3;
+  string external_id = 4;
+  string upload_type = 5;
 }
 
 service Storage {
@@ -905,6 +910,17 @@ message ApiEntity{
   string updated_at = 11;
   bool auth_required = 13;
   bool permission_required = 14;
+}
+message SyncApiRequest {
+  SyncApiRequestData data = 1;
+}
+
+message SyncApiRequestData {
+  string api_json = 1;
+}
+
+service api {
+  rpc SyncApi(SyncApiRequest) returns(EmptyResponse);
 }
 // ====================== api service end =================
 // ====================== resource service start =================
@@ -961,9 +977,18 @@ message ResourceTreeRequestData {
 message ResourceTreeResponse {
   repeated ResourceTreeEntity data = 1;
 }
+message SyncResourceRequest {
+  SyncResourceRequestData data = 1;
+}
+
+message SyncResourceRequestData {
+  string resource_json = 1;
+}
+
 service resource {
   rpc ResourceTree(ResourceTreeRequest) returns(ResourceTreeResponse);
   rpc UserMenu(EmptyRequest) returns(ResourceTreeResponse);
+  rpc SyncResource(SyncResourceRequest) returns(EmptyResponse);
 }
 // =================== resource service end =================
 // =================== role service start =================

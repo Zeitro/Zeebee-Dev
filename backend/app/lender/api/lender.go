@@ -1,6 +1,8 @@
 package api
 
 import (
+	_ "embed"
+
 	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/rest"
 
@@ -10,6 +12,9 @@ import (
 	"zeebee-backend/app/lender/config"
 	"zeebee-backend/common/response"
 )
+
+//go:embed lender.api
+var lenderApiContent string
 
 type ApiServer struct {
 	s *rest.Server
@@ -28,7 +33,7 @@ func NewApiServer(c config.Config) (s service.Service) {
 	restServer := rest.MustNewServer(apiConfig.RestConf, runOpts...)
 	// restServer.Use(middleware.CorsMiddleware)
 
-	ctx := svc.NewServiceContext(apiConfig)
+	ctx := svc.NewServiceContext(apiConfig, lenderApiContent)
 
 	// register handlers
 	handler.RegisterHandlers(restServer, ctx)

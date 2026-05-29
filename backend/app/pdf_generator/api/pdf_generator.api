@@ -14,7 +14,7 @@ type CreatePdfRequest {
 }
 
 type CreatePdfResponse {
-    Data []byte `json: "data"`
+    Data []byte `json:"data"`
 }
 
 @server(

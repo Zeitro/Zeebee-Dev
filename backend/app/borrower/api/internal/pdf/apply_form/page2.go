@@ -71,7 +71,6 @@ func (form *ApplyForm) page2() (err error) {
 		if err != nil {
 			return err
 		}
-
 	}
 
 	return err

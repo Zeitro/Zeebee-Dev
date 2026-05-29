@@ -52,7 +52,6 @@ const (
 )
 
 func init() {
-
 	eg := errgroup.Group{}
 	eg.Go(func() error {
 		return email.RegisterTemplateWithText(RegisterVerifyEmail, RegisterVerifyEmailTpl)

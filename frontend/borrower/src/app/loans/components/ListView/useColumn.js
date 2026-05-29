@@ -1,7 +1,10 @@
 'use client';
 import { formatAmount, formatTime } from '@repo/shared-methods/utils';
-import { LoanPendingStatus } from '@repo/shared-methods/componentsUi/zeeBeeDetails/components/ChangeStageStatus';
-import { TableOperation } from '@repo/shared-methods';
+import {
+	LoanStage,
+	LoanPendingStatus,
+} from '@repo/shared-methods/componentsUi/zeeBeeDetails/components/ChangeStageStatus';
+import { FieldTips, TableOperation } from '@repo/shared-methods';
 import { PERMISSIONS } from '@config/permissions';
 import { useAuth } from '@repo/shared-methods/hooks';
 import { SendOutlined } from '@ant-design/icons';
@@ -156,6 +159,45 @@ export default function useColumn({
 			default:
 				return commonBtn;
 		}
+	};
+
+	const getStageOpt = (successCallback) => {
+		return {
+			title: 'Stage',
+			dataIndex: 'stage',
+			key: 'stage',
+			ellipsis: true,
+			width: 150,
+			align: 'center',
+			fixed: 'right',
+			render: (v, record) => {
+				let title = '';
+				if (
+					record?.source === 'Borrower' &&
+					!hasPermission(PERMISSIONS?.LOAN?.CHANGE_STAGE)
+				) {
+					title = "You don't have permission to change the stage.";
+				}
+				if (record?.source !== 'Borrower') {
+					title = 'Only the 3rd part can change the stage.';
+				}
+				return (
+					<div onClick={(e) => e.stopPropagation()}>
+						<LoanStage
+							data={record}
+							successCallback={successCallback}
+							disabled={
+								record?.source !== 'Borrower' ||
+								!hasPermission(PERMISSIONS?.LOAN?.CHANGE_STAGE)
+							}
+							tooltipProps={{
+								title,
+							}}
+						/>
+					</div>
+				);
+			},
+		};
 	};
 	const getOpt = (showDeleteModal) => {
 		return getActiveByPermission({
@@ -363,7 +405,7 @@ export default function useColumn({
 				ellipsis: true,
 				width: 180,
 			},
-			...(stage === 'Draft' ? [] : [status]),
+			...(stage === 'Draft' ? [] : [getStageOpt(successCallback), status]),
 			getOpt(showDeleteModal, stage),
 		];
 		if (spliceList) {
@@ -498,6 +540,7 @@ export default function useColumn({
 				width: 160,
 				render: (v) => v || '--',
 			},
+			getStageOpt(successCallback),
 			getOpt(showDeleteModal),
 		];
 		if (spliceList) {
@@ -553,6 +596,7 @@ export default function useColumn({
 				width: 160,
 				render: (v) => v || '--',
 			},
+			getStageOpt(successCallback),
 			getOpt(showDeleteModal),
 		];
 		if (spliceList) {
