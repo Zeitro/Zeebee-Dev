@@ -54,18 +54,6 @@ func (l *AllLogic) All(in *borrower.PropertyAllRequest) (resp *borrower.Property
 		return nil, err
 	}
 
-	// err = copier.CopyWithOption(&respData, &results, copier.Option{
-	// 	CaseSensitive: true,
-	// 	DeepCopy:      true,
-	// 	Converters: []copier.TypeConverter{
-	// 		copierx.TimeToRFC3339Str(),
-	// 		copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
-	// 	},
-	// })
-	// if err != nil {
-	// 	return nil, errorx.GetFailedTransRespErr(err)
-	// }
-
 	return &borrower.PropertyAllResponse{
 		Data: *data,
 	}, nil
