@@ -722,6 +722,7 @@ const (
 	Loan_CreateBorrowerLoan_FullMethodName              = "/borrower.Loan/CreateBorrowerLoan"
 	Loan_UpdateBorrowerLoan_FullMethodName              = "/borrower.Loan/UpdateBorrowerLoan"
 	Loan_UpdateBorrowerLoanPendingStatus_FullMethodName = "/borrower.Loan/UpdateBorrowerLoanPendingStatus"
+	Loan_UpdateBorrowerLoanStage_FullMethodName         = "/borrower.Loan/UpdateBorrowerLoanStage"
 	Loan_DeleteBorrowerLoan_FullMethodName              = "/borrower.Loan/DeleteBorrowerLoan"
 	Loan_BorrowerLoanDetail_FullMethodName              = "/borrower.Loan/BorrowerLoanDetail"
 	Loan_BorrowerLoanPage_FullMethodName                = "/borrower.Loan/BorrowerLoanPage"
@@ -743,6 +744,7 @@ type LoanClient interface {
 	CreateBorrowerLoan(ctx context.Context, in *LoanCreateRequest, opts ...grpc.CallOption) (*LoanCreateResponse, error)
 	UpdateBorrowerLoan(ctx context.Context, in *LoanUpdateRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	UpdateBorrowerLoanPendingStatus(ctx context.Context, in *LoanUpdatePendingStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	UpdateBorrowerLoanStage(ctx context.Context, in *LoanUpdateStageRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	DeleteBorrowerLoan(ctx context.Context, in *LoanDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	BorrowerLoanDetail(ctx context.Context, in *LoanDetailRequest, opts ...grpc.CallOption) (*LoanDetailResponse, error)
 	BorrowerLoanPage(ctx context.Context, in *LoanPageRequest, opts ...grpc.CallOption) (*LoanPageResponse, error)
@@ -789,6 +791,16 @@ func (c *loanClient) UpdateBorrowerLoanPendingStatus(ctx context.Context, in *Lo
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(EmptyResponse)
 	err := c.cc.Invoke(ctx, Loan_UpdateBorrowerLoanPendingStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *loanClient) UpdateBorrowerLoanStage(ctx context.Context, in *LoanUpdateStageRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, Loan_UpdateBorrowerLoanStage_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -922,6 +934,7 @@ type LoanServer interface {
 	CreateBorrowerLoan(context.Context, *LoanCreateRequest) (*LoanCreateResponse, error)
 	UpdateBorrowerLoan(context.Context, *LoanUpdateRequest) (*EmptyResponse, error)
 	UpdateBorrowerLoanPendingStatus(context.Context, *LoanUpdatePendingStatusRequest) (*EmptyResponse, error)
+	UpdateBorrowerLoanStage(context.Context, *LoanUpdateStageRequest) (*EmptyResponse, error)
 	DeleteBorrowerLoan(context.Context, *LoanDeleteRequest) (*EmptyResponse, error)
 	BorrowerLoanDetail(context.Context, *LoanDetailRequest) (*LoanDetailResponse, error)
 	BorrowerLoanPage(context.Context, *LoanPageRequest) (*LoanPageResponse, error)
@@ -952,6 +965,9 @@ func (UnimplementedLoanServer) UpdateBorrowerLoan(context.Context, *LoanUpdateRe
 }
 func (UnimplementedLoanServer) UpdateBorrowerLoanPendingStatus(context.Context, *LoanUpdatePendingStatusRequest) (*EmptyResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateBorrowerLoanPendingStatus not implemented")
+}
+func (UnimplementedLoanServer) UpdateBorrowerLoanStage(context.Context, *LoanUpdateStageRequest) (*EmptyResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateBorrowerLoanStage not implemented")
 }
 func (UnimplementedLoanServer) DeleteBorrowerLoan(context.Context, *LoanDeleteRequest) (*EmptyResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteBorrowerLoan not implemented")
@@ -1060,6 +1076,24 @@ func _Loan_UpdateBorrowerLoanPendingStatus_Handler(srv interface{}, ctx context.
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(LoanServer).UpdateBorrowerLoanPendingStatus(ctx, req.(*LoanUpdatePendingStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Loan_UpdateBorrowerLoanStage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoanUpdateStageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoanServer).UpdateBorrowerLoanStage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Loan_UpdateBorrowerLoanStage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoanServer).UpdateBorrowerLoanStage(ctx, req.(*LoanUpdateStageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1298,6 +1332,10 @@ var Loan_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateBorrowerLoanPendingStatus",
 			Handler:    _Loan_UpdateBorrowerLoanPendingStatus_Handler,
+		},
+		{
+			MethodName: "UpdateBorrowerLoanStage",
+			Handler:    _Loan_UpdateBorrowerLoanStage_Handler,
 		},
 		{
 			MethodName: "DeleteBorrowerLoan",
@@ -2753,7 +2791,6 @@ var Storage_ServiceDesc = grpc.ServiceDesc{
 const (
 	Resource_ResourceTree_FullMethodName = "/borrower.resource/ResourceTree"
 	Resource_UserMenu_FullMethodName     = "/borrower.resource/UserMenu"
-	Resource_SyncResource_FullMethodName = "/borrower.resource/SyncResource"
 )
 
 // ResourceClient is the client API for Resource service.
@@ -2762,7 +2799,6 @@ const (
 type ResourceClient interface {
 	ResourceTree(ctx context.Context, in *ResourceTreeRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error)
 	UserMenu(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error)
-	SyncResource(ctx context.Context, in *SyncResourceRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 }
 
 type resourceClient struct {
@@ -2793,23 +2829,12 @@ func (c *resourceClient) UserMenu(ctx context.Context, in *EmptyRequest, opts ..
 	return out, nil
 }
 
-func (c *resourceClient) SyncResource(ctx context.Context, in *SyncResourceRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(EmptyResponse)
-	err := c.cc.Invoke(ctx, Resource_SyncResource_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // ResourceServer is the server API for Resource service.
 // All implementations must embed UnimplementedResourceServer
 // for forward compatibility.
 type ResourceServer interface {
 	ResourceTree(context.Context, *ResourceTreeRequest) (*ResourceTreeResponse, error)
 	UserMenu(context.Context, *EmptyRequest) (*ResourceTreeResponse, error)
-	SyncResource(context.Context, *SyncResourceRequest) (*EmptyResponse, error)
 	mustEmbedUnimplementedResourceServer()
 }
 
@@ -2825,9 +2850,6 @@ func (UnimplementedResourceServer) ResourceTree(context.Context, *ResourceTreeRe
 }
 func (UnimplementedResourceServer) UserMenu(context.Context, *EmptyRequest) (*ResourceTreeResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UserMenu not implemented")
-}
-func (UnimplementedResourceServer) SyncResource(context.Context, *SyncResourceRequest) (*EmptyResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method SyncResource not implemented")
 }
 func (UnimplementedResourceServer) mustEmbedUnimplementedResourceServer() {}
 func (UnimplementedResourceServer) testEmbeddedByValue()                  {}
@@ -2886,24 +2908,6 @@ func _Resource_UserMenu_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Resource_SyncResource_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SyncResourceRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ResourceServer).SyncResource(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Resource_SyncResource_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ResourceServer).SyncResource(ctx, req.(*SyncResourceRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // Resource_ServiceDesc is the grpc.ServiceDesc for Resource service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2918,10 +2922,6 @@ var Resource_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UserMenu",
 			Handler:    _Resource_UserMenu_Handler,
-		},
-		{
-			MethodName: "SyncResource",
-			Handler:    _Resource_SyncResource_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -4294,883 +4294,6 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AuthCheck",
 			Handler:    _Auth_AuthCheck_Handler,
-		},
-	},
-	Streams:  []grpc.StreamDesc{},
-	Metadata: "app/borrower/rpc/pb/borrower.proto",
-}
-
-const (
-	BorrowerPropertyTransaction_Create_FullMethodName                 = "/borrower.BorrowerPropertyTransaction/Create"
-	BorrowerPropertyTransaction_Detail_FullMethodName                 = "/borrower.BorrowerPropertyTransaction/Detail"
-	BorrowerPropertyTransaction_Update_FullMethodName                 = "/borrower.BorrowerPropertyTransaction/Update"
-	BorrowerPropertyTransaction_Delete_FullMethodName                 = "/borrower.BorrowerPropertyTransaction/Delete"
-	BorrowerPropertyTransaction_SwitchStatus_FullMethodName           = "/borrower.BorrowerPropertyTransaction/SwitchStatus"
-	BorrowerPropertyTransaction_All_FullMethodName                    = "/borrower.BorrowerPropertyTransaction/All"
-	BorrowerPropertyTransaction_ListByBorrowerProperty_FullMethodName = "/borrower.BorrowerPropertyTransaction/ListByBorrowerProperty"
-	BorrowerPropertyTransaction_UpdateChecklist_FullMethodName        = "/borrower.BorrowerPropertyTransaction/UpdateChecklist"
-	BorrowerPropertyTransaction_Page_FullMethodName                   = "/borrower.BorrowerPropertyTransaction/Page"
-	BorrowerPropertyTransaction_CreateDocument_FullMethodName         = "/borrower.BorrowerPropertyTransaction/CreateDocument"
-	BorrowerPropertyTransaction_UploadDocumentFile_FullMethodName     = "/borrower.BorrowerPropertyTransaction/UploadDocumentFile"
-	BorrowerPropertyTransaction_DeleteDocumentFile_FullMethodName     = "/borrower.BorrowerPropertyTransaction/DeleteDocumentFile"
-	BorrowerPropertyTransaction_OperationStats_FullMethodName         = "/borrower.BorrowerPropertyTransaction/OperationStats"
-	BorrowerPropertyTransaction_OperationList_FullMethodName          = "/borrower.BorrowerPropertyTransaction/OperationList"
-)
-
-// BorrowerPropertyTransactionClient is the client API for BorrowerPropertyTransaction service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type BorrowerPropertyTransactionClient interface {
-	Create(ctx context.Context, in *BorrowerPropertyTransactionCreateRequest, opts ...grpc.CallOption) (*BorrowerPropertyTransactionCreateResponse, error)
-	Detail(ctx context.Context, in *BorrowerPropertyTransactionDetailRequest, opts ...grpc.CallOption) (*BorrowerPropertyTransactionDetailResponse, error)
-	Update(ctx context.Context, in *BorrowerPropertyTransactionUpdateRequest, opts ...grpc.CallOption) (*BorrowerPropertyTransactionDetailResponse, error)
-	Delete(ctx context.Context, in *BorrowerPropertyTransactionDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-	SwitchStatus(ctx context.Context, in *BorrowerPropertyTransactionSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-	All(ctx context.Context, in *BorrowerPropertyTransactionAllRequest, opts ...grpc.CallOption) (*BorrowerPropertyTransactionAllResponse, error)
-	ListByBorrowerProperty(ctx context.Context, in *BorrowerPropertyTransactionListByPropertyRequest, opts ...grpc.CallOption) (*BorrowerPropertyTransactionListByPropertyResponse, error)
-	UpdateChecklist(ctx context.Context, in *BorrowerPropertyTransactionChecklistRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-	Page(ctx context.Context, in *BorrowerPropertyTransactionPageRequest, opts ...grpc.CallOption) (*BorrowerPropertyTransactionPageResponse, error)
-	CreateDocument(ctx context.Context, in *DocumentCreateRequest, opts ...grpc.CallOption) (*DocumentCreateResponse, error)
-	UploadDocumentFile(ctx context.Context, in *BorrowerPropertyTransactionDocumentUploadFileRequest, opts ...grpc.CallOption) (*DocumentUploadFileResponse, error)
-	DeleteDocumentFile(ctx context.Context, in *BorrowerPropertyTransactionDocumentDeleteFileRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-	OperationStats(ctx context.Context, in *TransactionOperationStatsRequest, opts ...grpc.CallOption) (*TransactionOperationStatsResponse, error)
-	OperationList(ctx context.Context, in *TransactionOperationListRequest, opts ...grpc.CallOption) (*TransactionOperationListResponse, error)
-}
-
-type borrowerPropertyTransactionClient struct {
-	cc grpc.ClientConnInterface
-}
-
-func NewBorrowerPropertyTransactionClient(cc grpc.ClientConnInterface) BorrowerPropertyTransactionClient {
-	return &borrowerPropertyTransactionClient{cc}
-}
-
-func (c *borrowerPropertyTransactionClient) Create(ctx context.Context, in *BorrowerPropertyTransactionCreateRequest, opts ...grpc.CallOption) (*BorrowerPropertyTransactionCreateResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(BorrowerPropertyTransactionCreateResponse)
-	err := c.cc.Invoke(ctx, BorrowerPropertyTransaction_Create_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *borrowerPropertyTransactionClient) Detail(ctx context.Context, in *BorrowerPropertyTransactionDetailRequest, opts ...grpc.CallOption) (*BorrowerPropertyTransactionDetailResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(BorrowerPropertyTransactionDetailResponse)
-	err := c.cc.Invoke(ctx, BorrowerPropertyTransaction_Detail_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *borrowerPropertyTransactionClient) Update(ctx context.Context, in *BorrowerPropertyTransactionUpdateRequest, opts ...grpc.CallOption) (*BorrowerPropertyTransactionDetailResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(BorrowerPropertyTransactionDetailResponse)
-	err := c.cc.Invoke(ctx, BorrowerPropertyTransaction_Update_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *borrowerPropertyTransactionClient) Delete(ctx context.Context, in *BorrowerPropertyTransactionDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(EmptyResponse)
-	err := c.cc.Invoke(ctx, BorrowerPropertyTransaction_Delete_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *borrowerPropertyTransactionClient) SwitchStatus(ctx context.Context, in *BorrowerPropertyTransactionSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(EmptyResponse)
-	err := c.cc.Invoke(ctx, BorrowerPropertyTransaction_SwitchStatus_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *borrowerPropertyTransactionClient) All(ctx context.Context, in *BorrowerPropertyTransactionAllRequest, opts ...grpc.CallOption) (*BorrowerPropertyTransactionAllResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(BorrowerPropertyTransactionAllResponse)
-	err := c.cc.Invoke(ctx, BorrowerPropertyTransaction_All_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *borrowerPropertyTransactionClient) ListByBorrowerProperty(ctx context.Context, in *BorrowerPropertyTransactionListByPropertyRequest, opts ...grpc.CallOption) (*BorrowerPropertyTransactionListByPropertyResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(BorrowerPropertyTransactionListByPropertyResponse)
-	err := c.cc.Invoke(ctx, BorrowerPropertyTransaction_ListByBorrowerProperty_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *borrowerPropertyTransactionClient) UpdateChecklist(ctx context.Context, in *BorrowerPropertyTransactionChecklistRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(EmptyResponse)
-	err := c.cc.Invoke(ctx, BorrowerPropertyTransaction_UpdateChecklist_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *borrowerPropertyTransactionClient) Page(ctx context.Context, in *BorrowerPropertyTransactionPageRequest, opts ...grpc.CallOption) (*BorrowerPropertyTransactionPageResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(BorrowerPropertyTransactionPageResponse)
-	err := c.cc.Invoke(ctx, BorrowerPropertyTransaction_Page_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *borrowerPropertyTransactionClient) CreateDocument(ctx context.Context, in *DocumentCreateRequest, opts ...grpc.CallOption) (*DocumentCreateResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DocumentCreateResponse)
-	err := c.cc.Invoke(ctx, BorrowerPropertyTransaction_CreateDocument_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *borrowerPropertyTransactionClient) UploadDocumentFile(ctx context.Context, in *BorrowerPropertyTransactionDocumentUploadFileRequest, opts ...grpc.CallOption) (*DocumentUploadFileResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DocumentUploadFileResponse)
-	err := c.cc.Invoke(ctx, BorrowerPropertyTransaction_UploadDocumentFile_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *borrowerPropertyTransactionClient) DeleteDocumentFile(ctx context.Context, in *BorrowerPropertyTransactionDocumentDeleteFileRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(EmptyResponse)
-	err := c.cc.Invoke(ctx, BorrowerPropertyTransaction_DeleteDocumentFile_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *borrowerPropertyTransactionClient) OperationStats(ctx context.Context, in *TransactionOperationStatsRequest, opts ...grpc.CallOption) (*TransactionOperationStatsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(TransactionOperationStatsResponse)
-	err := c.cc.Invoke(ctx, BorrowerPropertyTransaction_OperationStats_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *borrowerPropertyTransactionClient) OperationList(ctx context.Context, in *TransactionOperationListRequest, opts ...grpc.CallOption) (*TransactionOperationListResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(TransactionOperationListResponse)
-	err := c.cc.Invoke(ctx, BorrowerPropertyTransaction_OperationList_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// BorrowerPropertyTransactionServer is the server API for BorrowerPropertyTransaction service.
-// All implementations must embed UnimplementedBorrowerPropertyTransactionServer
-// for forward compatibility.
-type BorrowerPropertyTransactionServer interface {
-	Create(context.Context, *BorrowerPropertyTransactionCreateRequest) (*BorrowerPropertyTransactionCreateResponse, error)
-	Detail(context.Context, *BorrowerPropertyTransactionDetailRequest) (*BorrowerPropertyTransactionDetailResponse, error)
-	Update(context.Context, *BorrowerPropertyTransactionUpdateRequest) (*BorrowerPropertyTransactionDetailResponse, error)
-	Delete(context.Context, *BorrowerPropertyTransactionDeleteRequest) (*EmptyResponse, error)
-	SwitchStatus(context.Context, *BorrowerPropertyTransactionSwitchStatusRequest) (*EmptyResponse, error)
-	All(context.Context, *BorrowerPropertyTransactionAllRequest) (*BorrowerPropertyTransactionAllResponse, error)
-	ListByBorrowerProperty(context.Context, *BorrowerPropertyTransactionListByPropertyRequest) (*BorrowerPropertyTransactionListByPropertyResponse, error)
-	UpdateChecklist(context.Context, *BorrowerPropertyTransactionChecklistRequest) (*EmptyResponse, error)
-	Page(context.Context, *BorrowerPropertyTransactionPageRequest) (*BorrowerPropertyTransactionPageResponse, error)
-	CreateDocument(context.Context, *DocumentCreateRequest) (*DocumentCreateResponse, error)
-	UploadDocumentFile(context.Context, *BorrowerPropertyTransactionDocumentUploadFileRequest) (*DocumentUploadFileResponse, error)
-	DeleteDocumentFile(context.Context, *BorrowerPropertyTransactionDocumentDeleteFileRequest) (*EmptyResponse, error)
-	OperationStats(context.Context, *TransactionOperationStatsRequest) (*TransactionOperationStatsResponse, error)
-	OperationList(context.Context, *TransactionOperationListRequest) (*TransactionOperationListResponse, error)
-	mustEmbedUnimplementedBorrowerPropertyTransactionServer()
-}
-
-// UnimplementedBorrowerPropertyTransactionServer must be embedded to have
-// forward compatible implementations.
-//
-// NOTE: this should be embedded by value instead of pointer to avoid a nil
-// pointer dereference when methods are called.
-type UnimplementedBorrowerPropertyTransactionServer struct{}
-
-func (UnimplementedBorrowerPropertyTransactionServer) Create(context.Context, *BorrowerPropertyTransactionCreateRequest) (*BorrowerPropertyTransactionCreateResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method Create not implemented")
-}
-func (UnimplementedBorrowerPropertyTransactionServer) Detail(context.Context, *BorrowerPropertyTransactionDetailRequest) (*BorrowerPropertyTransactionDetailResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method Detail not implemented")
-}
-func (UnimplementedBorrowerPropertyTransactionServer) Update(context.Context, *BorrowerPropertyTransactionUpdateRequest) (*BorrowerPropertyTransactionDetailResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method Update not implemented")
-}
-func (UnimplementedBorrowerPropertyTransactionServer) Delete(context.Context, *BorrowerPropertyTransactionDeleteRequest) (*EmptyResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
-}
-func (UnimplementedBorrowerPropertyTransactionServer) SwitchStatus(context.Context, *BorrowerPropertyTransactionSwitchStatusRequest) (*EmptyResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method SwitchStatus not implemented")
-}
-func (UnimplementedBorrowerPropertyTransactionServer) All(context.Context, *BorrowerPropertyTransactionAllRequest) (*BorrowerPropertyTransactionAllResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method All not implemented")
-}
-func (UnimplementedBorrowerPropertyTransactionServer) ListByBorrowerProperty(context.Context, *BorrowerPropertyTransactionListByPropertyRequest) (*BorrowerPropertyTransactionListByPropertyResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method ListByBorrowerProperty not implemented")
-}
-func (UnimplementedBorrowerPropertyTransactionServer) UpdateChecklist(context.Context, *BorrowerPropertyTransactionChecklistRequest) (*EmptyResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method UpdateChecklist not implemented")
-}
-func (UnimplementedBorrowerPropertyTransactionServer) Page(context.Context, *BorrowerPropertyTransactionPageRequest) (*BorrowerPropertyTransactionPageResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method Page not implemented")
-}
-func (UnimplementedBorrowerPropertyTransactionServer) CreateDocument(context.Context, *DocumentCreateRequest) (*DocumentCreateResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method CreateDocument not implemented")
-}
-func (UnimplementedBorrowerPropertyTransactionServer) UploadDocumentFile(context.Context, *BorrowerPropertyTransactionDocumentUploadFileRequest) (*DocumentUploadFileResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method UploadDocumentFile not implemented")
-}
-func (UnimplementedBorrowerPropertyTransactionServer) DeleteDocumentFile(context.Context, *BorrowerPropertyTransactionDocumentDeleteFileRequest) (*EmptyResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method DeleteDocumentFile not implemented")
-}
-func (UnimplementedBorrowerPropertyTransactionServer) OperationStats(context.Context, *TransactionOperationStatsRequest) (*TransactionOperationStatsResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method OperationStats not implemented")
-}
-func (UnimplementedBorrowerPropertyTransactionServer) OperationList(context.Context, *TransactionOperationListRequest) (*TransactionOperationListResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method OperationList not implemented")
-}
-func (UnimplementedBorrowerPropertyTransactionServer) mustEmbedUnimplementedBorrowerPropertyTransactionServer() {
-}
-func (UnimplementedBorrowerPropertyTransactionServer) testEmbeddedByValue() {}
-
-// UnsafeBorrowerPropertyTransactionServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to BorrowerPropertyTransactionServer will
-// result in compilation errors.
-type UnsafeBorrowerPropertyTransactionServer interface {
-	mustEmbedUnimplementedBorrowerPropertyTransactionServer()
-}
-
-func RegisterBorrowerPropertyTransactionServer(s grpc.ServiceRegistrar, srv BorrowerPropertyTransactionServer) {
-	// If the following call panics, it indicates UnimplementedBorrowerPropertyTransactionServer was
-	// embedded by pointer and is nil.  This will cause panics if an
-	// unimplemented method is ever invoked, so we test this at initialization
-	// time to prevent it from happening at runtime later due to I/O.
-	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
-		t.testEmbeddedByValue()
-	}
-	s.RegisterService(&BorrowerPropertyTransaction_ServiceDesc, srv)
-}
-
-func _BorrowerPropertyTransaction_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BorrowerPropertyTransactionCreateRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BorrowerPropertyTransactionServer).Create(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BorrowerPropertyTransaction_Create_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BorrowerPropertyTransactionServer).Create(ctx, req.(*BorrowerPropertyTransactionCreateRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BorrowerPropertyTransaction_Detail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BorrowerPropertyTransactionDetailRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BorrowerPropertyTransactionServer).Detail(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BorrowerPropertyTransaction_Detail_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BorrowerPropertyTransactionServer).Detail(ctx, req.(*BorrowerPropertyTransactionDetailRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BorrowerPropertyTransaction_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BorrowerPropertyTransactionUpdateRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BorrowerPropertyTransactionServer).Update(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BorrowerPropertyTransaction_Update_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BorrowerPropertyTransactionServer).Update(ctx, req.(*BorrowerPropertyTransactionUpdateRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BorrowerPropertyTransaction_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BorrowerPropertyTransactionDeleteRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BorrowerPropertyTransactionServer).Delete(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BorrowerPropertyTransaction_Delete_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BorrowerPropertyTransactionServer).Delete(ctx, req.(*BorrowerPropertyTransactionDeleteRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BorrowerPropertyTransaction_SwitchStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BorrowerPropertyTransactionSwitchStatusRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BorrowerPropertyTransactionServer).SwitchStatus(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BorrowerPropertyTransaction_SwitchStatus_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BorrowerPropertyTransactionServer).SwitchStatus(ctx, req.(*BorrowerPropertyTransactionSwitchStatusRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BorrowerPropertyTransaction_All_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BorrowerPropertyTransactionAllRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BorrowerPropertyTransactionServer).All(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BorrowerPropertyTransaction_All_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BorrowerPropertyTransactionServer).All(ctx, req.(*BorrowerPropertyTransactionAllRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BorrowerPropertyTransaction_ListByBorrowerProperty_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BorrowerPropertyTransactionListByPropertyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BorrowerPropertyTransactionServer).ListByBorrowerProperty(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BorrowerPropertyTransaction_ListByBorrowerProperty_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BorrowerPropertyTransactionServer).ListByBorrowerProperty(ctx, req.(*BorrowerPropertyTransactionListByPropertyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BorrowerPropertyTransaction_UpdateChecklist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BorrowerPropertyTransactionChecklistRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BorrowerPropertyTransactionServer).UpdateChecklist(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BorrowerPropertyTransaction_UpdateChecklist_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BorrowerPropertyTransactionServer).UpdateChecklist(ctx, req.(*BorrowerPropertyTransactionChecklistRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BorrowerPropertyTransaction_Page_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BorrowerPropertyTransactionPageRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BorrowerPropertyTransactionServer).Page(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BorrowerPropertyTransaction_Page_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BorrowerPropertyTransactionServer).Page(ctx, req.(*BorrowerPropertyTransactionPageRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BorrowerPropertyTransaction_CreateDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DocumentCreateRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BorrowerPropertyTransactionServer).CreateDocument(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BorrowerPropertyTransaction_CreateDocument_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BorrowerPropertyTransactionServer).CreateDocument(ctx, req.(*DocumentCreateRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BorrowerPropertyTransaction_UploadDocumentFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BorrowerPropertyTransactionDocumentUploadFileRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BorrowerPropertyTransactionServer).UploadDocumentFile(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BorrowerPropertyTransaction_UploadDocumentFile_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BorrowerPropertyTransactionServer).UploadDocumentFile(ctx, req.(*BorrowerPropertyTransactionDocumentUploadFileRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BorrowerPropertyTransaction_DeleteDocumentFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BorrowerPropertyTransactionDocumentDeleteFileRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BorrowerPropertyTransactionServer).DeleteDocumentFile(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BorrowerPropertyTransaction_DeleteDocumentFile_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BorrowerPropertyTransactionServer).DeleteDocumentFile(ctx, req.(*BorrowerPropertyTransactionDocumentDeleteFileRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BorrowerPropertyTransaction_OperationStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TransactionOperationStatsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BorrowerPropertyTransactionServer).OperationStats(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BorrowerPropertyTransaction_OperationStats_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BorrowerPropertyTransactionServer).OperationStats(ctx, req.(*TransactionOperationStatsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _BorrowerPropertyTransaction_OperationList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TransactionOperationListRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BorrowerPropertyTransactionServer).OperationList(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: BorrowerPropertyTransaction_OperationList_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BorrowerPropertyTransactionServer).OperationList(ctx, req.(*TransactionOperationListRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-// BorrowerPropertyTransaction_ServiceDesc is the grpc.ServiceDesc for BorrowerPropertyTransaction service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var BorrowerPropertyTransaction_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "borrower.BorrowerPropertyTransaction",
-	HandlerType: (*BorrowerPropertyTransactionServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "Create",
-			Handler:    _BorrowerPropertyTransaction_Create_Handler,
-		},
-		{
-			MethodName: "Detail",
-			Handler:    _BorrowerPropertyTransaction_Detail_Handler,
-		},
-		{
-			MethodName: "Update",
-			Handler:    _BorrowerPropertyTransaction_Update_Handler,
-		},
-		{
-			MethodName: "Delete",
-			Handler:    _BorrowerPropertyTransaction_Delete_Handler,
-		},
-		{
-			MethodName: "SwitchStatus",
-			Handler:    _BorrowerPropertyTransaction_SwitchStatus_Handler,
-		},
-		{
-			MethodName: "All",
-			Handler:    _BorrowerPropertyTransaction_All_Handler,
-		},
-		{
-			MethodName: "ListByBorrowerProperty",
-			Handler:    _BorrowerPropertyTransaction_ListByBorrowerProperty_Handler,
-		},
-		{
-			MethodName: "UpdateChecklist",
-			Handler:    _BorrowerPropertyTransaction_UpdateChecklist_Handler,
-		},
-		{
-			MethodName: "Page",
-			Handler:    _BorrowerPropertyTransaction_Page_Handler,
-		},
-		{
-			MethodName: "CreateDocument",
-			Handler:    _BorrowerPropertyTransaction_CreateDocument_Handler,
-		},
-		{
-			MethodName: "UploadDocumentFile",
-			Handler:    _BorrowerPropertyTransaction_UploadDocumentFile_Handler,
-		},
-		{
-			MethodName: "DeleteDocumentFile",
-			Handler:    _BorrowerPropertyTransaction_DeleteDocumentFile_Handler,
-		},
-		{
-			MethodName: "OperationStats",
-			Handler:    _BorrowerPropertyTransaction_OperationStats_Handler,
-		},
-		{
-			MethodName: "OperationList",
-			Handler:    _BorrowerPropertyTransaction_OperationList_Handler,
-		},
-	},
-	Streams:  []grpc.StreamDesc{},
-	Metadata: "app/borrower/rpc/pb/borrower.proto",
-}
-
-const (
-	Document_Detail_FullMethodName   = "/borrower.Document/Detail"
-	Document_LeafList_FullMethodName = "/borrower.Document/LeafList"
-	Document_Files_FullMethodName    = "/borrower.Document/Files"
-)
-
-// DocumentClient is the client API for Document service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type DocumentClient interface {
-	Detail(ctx context.Context, in *DocumentDetailRequest, opts ...grpc.CallOption) (*DocumentDetailResponse, error)
-	LeafList(ctx context.Context, in *DocumentLeafListRequest, opts ...grpc.CallOption) (*DocumentLeafListResponse, error)
-	Files(ctx context.Context, in *DocumentFilesRequest, opts ...grpc.CallOption) (*DocumentFilesResponse, error)
-}
-
-type documentClient struct {
-	cc grpc.ClientConnInterface
-}
-
-func NewDocumentClient(cc grpc.ClientConnInterface) DocumentClient {
-	return &documentClient{cc}
-}
-
-func (c *documentClient) Detail(ctx context.Context, in *DocumentDetailRequest, opts ...grpc.CallOption) (*DocumentDetailResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DocumentDetailResponse)
-	err := c.cc.Invoke(ctx, Document_Detail_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *documentClient) LeafList(ctx context.Context, in *DocumentLeafListRequest, opts ...grpc.CallOption) (*DocumentLeafListResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DocumentLeafListResponse)
-	err := c.cc.Invoke(ctx, Document_LeafList_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *documentClient) Files(ctx context.Context, in *DocumentFilesRequest, opts ...grpc.CallOption) (*DocumentFilesResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DocumentFilesResponse)
-	err := c.cc.Invoke(ctx, Document_Files_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// DocumentServer is the server API for Document service.
-// All implementations must embed UnimplementedDocumentServer
-// for forward compatibility.
-type DocumentServer interface {
-	Detail(context.Context, *DocumentDetailRequest) (*DocumentDetailResponse, error)
-	LeafList(context.Context, *DocumentLeafListRequest) (*DocumentLeafListResponse, error)
-	Files(context.Context, *DocumentFilesRequest) (*DocumentFilesResponse, error)
-	mustEmbedUnimplementedDocumentServer()
-}
-
-// UnimplementedDocumentServer must be embedded to have
-// forward compatible implementations.
-//
-// NOTE: this should be embedded by value instead of pointer to avoid a nil
-// pointer dereference when methods are called.
-type UnimplementedDocumentServer struct{}
-
-func (UnimplementedDocumentServer) Detail(context.Context, *DocumentDetailRequest) (*DocumentDetailResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method Detail not implemented")
-}
-func (UnimplementedDocumentServer) LeafList(context.Context, *DocumentLeafListRequest) (*DocumentLeafListResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method LeafList not implemented")
-}
-func (UnimplementedDocumentServer) Files(context.Context, *DocumentFilesRequest) (*DocumentFilesResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method Files not implemented")
-}
-func (UnimplementedDocumentServer) mustEmbedUnimplementedDocumentServer() {}
-func (UnimplementedDocumentServer) testEmbeddedByValue()                  {}
-
-// UnsafeDocumentServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to DocumentServer will
-// result in compilation errors.
-type UnsafeDocumentServer interface {
-	mustEmbedUnimplementedDocumentServer()
-}
-
-func RegisterDocumentServer(s grpc.ServiceRegistrar, srv DocumentServer) {
-	// If the following call panics, it indicates UnimplementedDocumentServer was
-	// embedded by pointer and is nil.  This will cause panics if an
-	// unimplemented method is ever invoked, so we test this at initialization
-	// time to prevent it from happening at runtime later due to I/O.
-	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
-		t.testEmbeddedByValue()
-	}
-	s.RegisterService(&Document_ServiceDesc, srv)
-}
-
-func _Document_Detail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DocumentDetailRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DocumentServer).Detail(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Document_Detail_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocumentServer).Detail(ctx, req.(*DocumentDetailRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Document_LeafList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DocumentLeafListRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DocumentServer).LeafList(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Document_LeafList_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocumentServer).LeafList(ctx, req.(*DocumentLeafListRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Document_Files_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DocumentFilesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DocumentServer).Files(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Document_Files_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocumentServer).Files(ctx, req.(*DocumentFilesRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-// Document_ServiceDesc is the grpc.ServiceDesc for Document service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var Document_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "borrower.Document",
-	HandlerType: (*DocumentServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "Detail",
-			Handler:    _Document_Detail_Handler,
-		},
-		{
-			MethodName: "LeafList",
-			Handler:    _Document_LeafList_Handler,
-		},
-		{
-			MethodName: "Files",
-			Handler:    _Document_Files_Handler,
-		},
-	},
-	Streams:  []grpc.StreamDesc{},
-	Metadata: "app/borrower/rpc/pb/borrower.proto",
-}
-
-const (
-	Api_SyncApi_FullMethodName = "/borrower.api/SyncApi"
-)
-
-// ApiClient is the client API for Api service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type ApiClient interface {
-	SyncApi(ctx context.Context, in *SyncApiRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-}
-
-type apiClient struct {
-	cc grpc.ClientConnInterface
-}
-
-func NewApiClient(cc grpc.ClientConnInterface) ApiClient {
-	return &apiClient{cc}
-}
-
-func (c *apiClient) SyncApi(ctx context.Context, in *SyncApiRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(EmptyResponse)
-	err := c.cc.Invoke(ctx, Api_SyncApi_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// ApiServer is the server API for Api service.
-// All implementations must embed UnimplementedApiServer
-// for forward compatibility.
-type ApiServer interface {
-	SyncApi(context.Context, *SyncApiRequest) (*EmptyResponse, error)
-	mustEmbedUnimplementedApiServer()
-}
-
-// UnimplementedApiServer must be embedded to have
-// forward compatible implementations.
-//
-// NOTE: this should be embedded by value instead of pointer to avoid a nil
-// pointer dereference when methods are called.
-type UnimplementedApiServer struct{}
-
-func (UnimplementedApiServer) SyncApi(context.Context, *SyncApiRequest) (*EmptyResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method SyncApi not implemented")
-}
-func (UnimplementedApiServer) mustEmbedUnimplementedApiServer() {}
-func (UnimplementedApiServer) testEmbeddedByValue()             {}
-
-// UnsafeApiServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to ApiServer will
-// result in compilation errors.
-type UnsafeApiServer interface {
-	mustEmbedUnimplementedApiServer()
-}
-
-func RegisterApiServer(s grpc.ServiceRegistrar, srv ApiServer) {
-	// If the following call panics, it indicates UnimplementedApiServer was
-	// embedded by pointer and is nil.  This will cause panics if an
-	// unimplemented method is ever invoked, so we test this at initialization
-	// time to prevent it from happening at runtime later due to I/O.
-	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
-		t.testEmbeddedByValue()
-	}
-	s.RegisterService(&Api_ServiceDesc, srv)
-}
-
-func _Api_SyncApi_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SyncApiRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ApiServer).SyncApi(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Api_SyncApi_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApiServer).SyncApi(ctx, req.(*SyncApiRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-// Api_ServiceDesc is the grpc.ServiceDesc for Api service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var Api_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "borrower.api",
-	HandlerType: (*ApiServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "SyncApi",
-			Handler:    _Api_SyncApi_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

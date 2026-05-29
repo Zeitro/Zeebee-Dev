@@ -182,6 +182,10 @@ service borrower-api {
 	@handler UpdatePendingStatus
 	patch /loan/:id/pending_status (LoanUpdatePendingStatusRequest) returns (EmptyResponse)
 
+	@doc "update stage"
+	@handler UpdateStage
+	patch /loan/:id/stage (LoanUpdatePendingRequest) returns (EmptyResponse)
+
 	@doc "delete"
 	@handler DeleteLoan
 	delete /loan/:id (LoanDeleteRequest) returns (EmptyResponse)

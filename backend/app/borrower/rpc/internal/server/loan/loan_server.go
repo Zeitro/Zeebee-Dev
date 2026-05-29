@@ -38,6 +38,11 @@ func (s *LoanServer) UpdateBorrowerLoanPendingStatus(ctx context.Context, in *bo
 	return l.UpdateBorrowerLoanPendingStatus(in)
 }
 
+func (s *LoanServer) UpdateBorrowerLoanStage(ctx context.Context, in *borrower.LoanUpdateStageRequest) (*borrower.EmptyResponse, error) {
+	l := loanlogic.NewUpdateBorrowerLoanStageLogic(ctx, s.svcCtx)
+	return l.UpdateBorrowerLoanStage(in)
+}
+
 func (s *LoanServer) DeleteBorrowerLoan(ctx context.Context, in *borrower.LoanDeleteRequest) (*borrower.EmptyResponse, error) {
 	l := loanlogic.NewDeleteBorrowerLoanLogic(ctx, s.svcCtx)
 	return l.DeleteBorrowerLoan(in)

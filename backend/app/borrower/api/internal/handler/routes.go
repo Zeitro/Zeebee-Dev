@@ -414,6 +414,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: loan.UpdatePendingStatusHandler(serverCtx),
 				},
 				{
+					// update stage
+					Method:  http.MethodPatch,
+					Path:    "/loan/:id/stage",
+					Handler: loan.UpdateStageHandler(serverCtx),
+				},
+				{
 					// update apply
 					Method:  http.MethodPut,
 					Path:    "/loan/:id/update_apply",

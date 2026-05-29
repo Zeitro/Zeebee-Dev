@@ -143,11 +143,19 @@ type (
     }
 )
 
-// update state
+// update pending status
 type (
     LoanUpdatePendingStatusRequest {
         Id int64 `path:"id"`
         PendingStatus string `json:"pending_status" validate:"required,oneof=Quoting Processing Underwriting Closing"`
+    }
+)
+
+// update stage
+type (
+    LoanUpdatePendingRequest {
+        Id int64 `path:"id"`
+        Stage string `json:"stage" validate:"required,oneof=Pending Active Archived Rejected"`
     }
 )
 

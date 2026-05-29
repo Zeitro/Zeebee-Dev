@@ -2,3 +2,8 @@ packages:
   - "frontend/borrower"
   - "frontend/lender"
   - "frontend/packages/*"
+allowBuilds:
+  '@parcel/watcher': true
+  es5-ext: set this to true or false
+  sharp: true
+  unrs-resolver: true

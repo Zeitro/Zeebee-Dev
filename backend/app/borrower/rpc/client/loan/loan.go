@@ -36,11 +36,13 @@ type (
 	LoanSummaryResponse                    = borrower.LoanSummaryResponse
 	LoanUpdatePendingStatusRequest         = borrower.LoanUpdatePendingStatusRequest
 	LoanUpdateRequest                      = borrower.LoanUpdateRequest
+	LoanUpdateStageRequest                 = borrower.LoanUpdateStageRequest
 
 	Loan interface {
 		CreateBorrowerLoan(ctx context.Context, in *LoanCreateRequest, opts ...grpc.CallOption) (*LoanCreateResponse, error)
 		UpdateBorrowerLoan(ctx context.Context, in *LoanUpdateRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		UpdateBorrowerLoanPendingStatus(ctx context.Context, in *LoanUpdatePendingStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		UpdateBorrowerLoanStage(ctx context.Context, in *LoanUpdateStageRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		DeleteBorrowerLoan(ctx context.Context, in *LoanDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		BorrowerLoanDetail(ctx context.Context, in *LoanDetailRequest, opts ...grpc.CallOption) (*LoanDetailResponse, error)
 		BorrowerLoanPage(ctx context.Context, in *LoanPageRequest, opts ...grpc.CallOption) (*LoanPageResponse, error)
@@ -79,6 +81,11 @@ func (m *defaultLoan) UpdateBorrowerLoan(ctx context.Context, in *LoanUpdateRequ
 func (m *defaultLoan) UpdateBorrowerLoanPendingStatus(ctx context.Context, in *LoanUpdatePendingStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	client := borrower.NewLoanClient(m.cli.Conn())
 	return client.UpdateBorrowerLoanPendingStatus(ctx, in, opts...)
+}
+
+func (m *defaultLoan) UpdateBorrowerLoanStage(ctx context.Context, in *LoanUpdateStageRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	client := borrower.NewLoanClient(m.cli.Conn())
+	return client.UpdateBorrowerLoanStage(ctx, in, opts...)
 }
 
 func (m *defaultLoan) DeleteBorrowerLoan(ctx context.Context, in *LoanDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {

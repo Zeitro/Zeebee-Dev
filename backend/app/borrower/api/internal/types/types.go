@@ -288,6 +288,7 @@ type BorrowerPropertyEntity struct {
 	TotalAmount    float64        `json:"total_amount"`
 	Unit           int32          `json:"unit"`
 	LivingAreaSqft float32        `json:"living_area_sqft"`
+	LotAreaSqft    float32        `json:"lot_area_sqft"`
 	Bedrooms       int32          `json:"bedrooms"`
 	Bathrooms      float32        `json:"bathrooms"`
 	Address        *AddressEntity `json:"address"`
@@ -1104,6 +1105,7 @@ type LoanPropertyApplyFormPdfEntity struct {
 	Id                           int64             `json:"id,optional"`
 	Unit                         int32             `json:"unit"`
 	LivingAreaSqft               float32           `json:"living_area_sqft"`
+	LotAreaSqft                  float32           `json:"lot_area_sqft"`
 	Bedrooms                     int32             `json:"bedrooms" `
 	Bathrooms                    int32             `json:"bathrooms"`
 	PropertyType                 string            `json:"property_type"`
@@ -1154,6 +1156,7 @@ type LoanPropertyEntity struct {
 	PropertyType                 string            `json:"property_type"`
 	Unit                         int32             `json:"unit"`
 	LivingAreaSqft               float32           `json:"living_area_sqft"`
+	LotAreaSqft                  float32           `json:"lot_area_sqft"`
 	Bedrooms                     int32             `json:"bedrooms" `
 	Bathrooms                    int32             `json:"bathrooms"`
 	FuturePropertyType           string            `json:"future_property_type"`
@@ -1188,7 +1191,7 @@ type LoanPropertyEntity struct {
 }
 
 type LoanPropertyPdfEntity struct {
-	PropertyType         string         `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
+	PropertyType         string         `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial' 'Raw Land' 'Entitled Land'"`
 	Unit                 int32          `json:"unit" validate:"required,gt=0"`
 	LivingAreaSqft       float32        `json:"living_area_sqft" validate:"required,gt=0"`
 	Bedrooms             int32          `json:"bedrooms" validate:"required,gt=0"`
@@ -1225,6 +1228,11 @@ type LoanThirdServiceEntity struct {
 	Email   string `json:"email,optional"`
 	Phone   string `json:"phone,optional"`
 	Company string `json:"company,optional" validate:"required_unless=Type 'Title Co' Type 'Escrow Co' Type Insurance"`
+}
+
+type LoanUpdatePendingRequest struct {
+	Id    int64  `path:"id"`
+	Stage string `json:"stage" validate:"required,oneof=Pending Active Archived Rejected"`
 }
 
 type LoanUpdatePendingStatusRequest struct {
@@ -1515,11 +1523,12 @@ type PropertyAllResponse struct {
 }
 
 type PropertyCreateRequest struct {
-	PropertyType   string         `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
-	Unit           int32          `json:"unit" validate:"required,gt=0"`
-	LivingAreaSqft float32        `json:"living_area_sqft" validate:"required,gt=0"`
-	Bedrooms       int32          `json:"bedrooms" validate:"required,gt=0"`
-	Bathrooms      float32        `json:"bathrooms" validate:"required,gt=0"`
+	PropertyType   string         `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial' 'Raw Land' 'Entitled Land'"`
+	Unit           int32          `json:"unit" validate:"gte=0"`
+	LivingAreaSqft float32        `json:"living_area_sqft,optianal" validate:"gte=0"`
+	LotAreaSqft    float32        `json:"lot_area_sqft,optianal" validate:"gte=0"`
+	Bedrooms       int32          `json:"bedrooms,optianal" validate:"gte=0"`
+	Bathrooms      float32        `json:"bathrooms,optianal" validate:"gte=0"`
 	Address        *AddressEntity `json:"address" validate:"required"`
 }
 
@@ -1543,6 +1552,7 @@ type PropertyDetailSummaryResponse struct {
 	TotalAmount               float64        `json:"total_amount"`
 	Unit                      int32          `json:"unit"`
 	LivingAreaSqft            float32        `json:"living_area_sqft"`
+	LotAreaSqft               float32        `json:"lot_area_sqft"`
 	Bedrooms                  int32          `json:"bedrooms"`
 	Bathrooms                 float32        `json:"bathrooms"`
 	Address                   *AddressEntity `json:"address"`
@@ -1561,6 +1571,7 @@ type PropertyPageEntity struct {
 	CreatorName               string         `json:"creator_name"`
 	PropertyType              string         `json:"property_type"`
 	LivingAreaSqft            float32        `json:"living_area_sqft"`
+	LotAreaSqft               float32        `json:"lot_area_sqft"`
 	Bedrooms                  int32          `json:"bedrooms"`
 	Bathrooms                 float32        `json:"bathrooms"`
 	Unit                      int32          `json:"unit"`
@@ -1605,11 +1616,12 @@ type PropertyPageSorter struct {
 
 type PropertyUpdateRequest struct {
 	Id             int64   `path:"id" validate:"required,gt=0"`
-	PropertyType   string  `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
-	Unit           int32   `json:"unit" validate:"required,gt=0"`
-	LivingAreaSqft float32 `json:"living_area_sqft" validate:"required,gt=0"`
-	Bedrooms       int32   `json:"bedrooms" validate:"required,gt=0"`
-	Bathrooms      float32 `json:"bathrooms" validate:"required,gt=0"`
+	PropertyType   string  `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial' 'Raw Land' 'Entitled Land'"`
+	Unit           int32   `json:"unit,optianal" validate:"gte=0"`
+	LivingAreaSqft float32 `json:"living_area_sqft,optianal" validate:"gte=0"`
+	LotAreaSqft    float32 `json:"lot_area_sqft,optianal" validate:"gte=0"`
+	Bedrooms       int32   `json:"bedrooms,optianal" validate:"gte=0"`
+	Bathrooms      float32 `json:"bathrooms,optianal" validate:"gte=0"`
 }
 
 type RangeFloat64 struct {

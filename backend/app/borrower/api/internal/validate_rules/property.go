@@ -76,8 +76,8 @@ func PropertyCreateRequest(sl validator.StructLevel) {
 			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
 		}
 	default:
-		if property.Unit < 1 {
-			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, " >= 1")
+		if property.Unit < 0 {
+			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, " >= 0")
 		}
 	}
 }
@@ -111,8 +111,8 @@ func PropertyUpdateRequest(sl validator.StructLevel) {
 			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
 		}
 	default:
-		if property.Unit < 1 {
-			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, " >= 1")
+		if property.Unit < 0 {
+			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, " >= 0")
 		}
 	}
 }
