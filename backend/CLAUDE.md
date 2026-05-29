@@ -72,7 +72,8 @@ if err != nil {
 
 ## Git 提交规范
 
-- 提交格式：`<type>(<scope>-backend): <description>`，详见 constitution.md §Git 提交格式
+- 提交格式：`<type>(<scope>-<service-name>-backend): <description>`，详见 constitution.md §Git 提交格式
+- 如果一次提交多个功能，请使用多个 commit
 - **禁止将 LLM（如 Claude、Copilot 等）添加为提交者或共同作者**
 
 ## 开发注意事项

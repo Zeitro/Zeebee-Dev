@@ -49,14 +49,14 @@
 ### Git 提交格式
 
 ```
-<type>(<scope>-backend): <description>
+<type>(<scope>-<service-name>-backend): <description>
 
 feat: 新功能 | fix: 修复 | refactor: 重构 | docs: 文档
 style: 格式 | perf: 性能 | test: 测试
 
 # 示例
-feat(borrower-backend): add loan application endpoint
-fix(lender-backend): fix document upload validation error
+feat(applicant-borrower-backend): add loan application endpoint
+fix(document-lender-backend): fix document upload validation error
 ```
 
 ### AI 文档策略
