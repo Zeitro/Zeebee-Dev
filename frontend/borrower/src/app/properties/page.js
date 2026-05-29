@@ -215,7 +215,6 @@ const Properties = () => {
 				dataIndex: 'avg_rate',
 				key: 'avg_rate',
 				width: 180,
-				sorter: true,
 				render: (v) => displayValue(v, (n) => `${n}%`),
 			},
 			{
@@ -226,30 +225,7 @@ const Properties = () => {
 				sorter: true,
 				render: (v) => displayValue(v, formatAmount),
 			},
-			{
-				title: 'Loan status',
-				key: 'loan_status',
-				width: 200,
-				render: (_, record) => {
-					return (
-						<div className="flex flex-wrap gap-1">
-							{!!record?.active_loan_count && (
-								<div className="rounded-[2px] px-2 text-xs border border-[var(--green-light-100)] bg-green-light text-green-medium">
-									{record?.active_loan_count || 0} Active Loans
-								</div>
-							)}
-							{!!record?.pending_loan_count && (
-								<div className="rounded-[2px] px-2 text-xs border border-[var(--orange-medium)] bg-[var(--orange-light)] text-[var(--orange-dark)]">
-									{record?.pending_loan_count || 0} Pending Loans
-								</div>
-							)}
-							{!record?.pending_loan_count && !record?.active_loan_count && (
-								<span>--</span>
-							)}
-						</div>
-					);
-				},
-			},
+
 			{
 				title: 'Nearest maturity',
 				dataIndex: 'nearest_maturity_date',
@@ -288,13 +264,39 @@ const Properties = () => {
 					);
 				},
 			},
+			{
+				title: 'Loan status',
+				key: 'loan_status',
+				width: 180,
+				fixed: 'right',
+				align: 'center',
+				render: (_, record) => {
+					return (
+						<div className="flex flex-col flex-wrap items-stretch gap-1 w-max m-auto">
+							{!!record?.active_loan_count && (
+								<div className="rounded-[2px] px-2 text-xs border border-[var(--green-light-100)] bg-green-light text-green-medium">
+									{record?.active_loan_count || 0} Active Loans
+								</div>
+							)}
+							{!!record?.pending_loan_count && (
+								<div className="rounded-[2px] px-2 text-xs border border-[var(--orange-medium)] bg-[var(--orange-light)] text-[var(--orange-dark)]">
+									{record?.pending_loan_count || 0} Pending Loans
+								</div>
+							)}
+							{!record?.pending_loan_count && !record?.active_loan_count && (
+								<span>--</span>
+							)}
+						</div>
+					);
+				},
+			},
 			getActiveByPermission({
 				key: 'action',
 				fixed: 'right',
 				buttonOptions: [
 					{ permission: PERMISSIONS?.PROPERTY?.DETAILS, width: 62 },
 					{ permission: PERMISSIONS?.PROPERTY?.EDIT, width: 50 },
-					{ width: 110 },
+					{ permission: PERMISSIONS?.TRANSACTION?.ADD, width: 110 },
 					{ permission: PERMISSIONS?.PROPERTY?.DELETE, width: 62 },
 				],
 				render: (_, record) => (
@@ -323,16 +325,18 @@ const Properties = () => {
 								Edit
 							</BtnPopUpModal>
 						</PermissionSlot>
-						<Button
-							type="link"
-							size="small"
-							onClick={() => {
-								setTransactionModalProperty(record);
-								setTransactionModalOpen(true);
-							}}
-						>
-							Add Transaction
-						</Button>
+						<PermissionSlot code={PERMISSIONS?.TRANSACTION?.ADD}>
+							<Button
+								type="link"
+								size="small"
+								onClick={() => {
+									setTransactionModalProperty(record);
+									setTransactionModalOpen(true);
+								}}
+							>
+								Add Transaction
+							</Button>
+						</PermissionSlot>
 						<PermissionSlot code={PERMISSIONS?.PROPERTY?.DELETE}>
 							<DeleteBtn
 								type="link"

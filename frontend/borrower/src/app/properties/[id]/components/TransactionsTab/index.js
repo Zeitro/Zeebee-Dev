@@ -3,11 +3,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Button, Spin, Timeline } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { createRequest } from '@repo/shared-methods/utils';
 import TransactionCard from './TransactionCard';
+import { useTransactionList } from './useTransactionList';
 import styles from './index.module.scss';
-
-const TRANSACTION_LIST_API = '/transaction/page';
+import { PermissionSlot } from '@repo/shared-methods';
+import { PERMISSIONS } from '@config/permissions';
 
 const getTimelineStatus = (status) => {
 	if (status === 'Pending') return 'pending';
@@ -15,45 +15,13 @@ const getTimelineStatus = (status) => {
 	return 'default';
 };
 
-const TransactionsTab = ({ propertyId, onNewTransaction, refreshKey = 0 }) => {
-	const { request, cancelMatch } = useMemo(() => createRequest(), []);
-	const [loading, setLoading] = useState(false);
+const TransactionsTab = ({ propertyId, onNewTransaction, onRegisterRefresh }) => {
+	const { list, loading, refreshTransactionList } = useTransactionList(propertyId);
 	const [expandedTransactionId, setExpandedTransactionId] = useState(null);
-	const [list, setList] = useState([
-		{ id: 1, type: 'Purchase', status: 'Pending' },
-		{ id: 2, type: 'Sale', status: 'Completed' },
-	]);
 
 	useEffect(() => {
-		if (!propertyId) return;
-		let cancelled = false;
-		void (async () => {
-			await Promise.resolve();
-			if (cancelled) return;
-			try {
-				setLoading(true);
-				cancelMatch(TRANSACTION_LIST_API);
-				await request(TRANSACTION_LIST_API, {
-					method: 'POST',
-					body: {
-						page: 1,
-						limit: 100,
-						filter: {
-							property_id: Number(propertyId),
-						},
-					},
-				});
-				// if (!cancelled) setList(res?.list ?? []);
-			} catch {
-				// if (!cancelled) setList([]);
-			} finally {
-				if (!cancelled) setLoading(false);
-			}
-		})();
-		return () => {
-			cancelled = true;
-		};
-	}, [cancelMatch, propertyId, refreshKey, request]);
+		onRegisterRefresh?.(refreshTransactionList);
+	}, [onRegisterRefresh, refreshTransactionList]);
 
 	const timelineItems = useMemo(
 		() =>
@@ -82,12 +50,13 @@ const TransactionsTab = ({ propertyId, onNewTransaction, refreshKey = 0 }) => {
 									prev === item?.id ? null : item?.id,
 								)
 							}
+							onRefreshList={refreshTransactionList}
 						/>
 					),
 					className: statusType === 'pending' ? styles.itemPending : '',
 				};
 			}),
-		[expandedTransactionId, list],
+		[expandedTransactionId, list, refreshTransactionList],
 	);
 
 	return (
@@ -96,9 +65,11 @@ const TransactionsTab = ({ propertyId, onNewTransaction, refreshKey = 0 }) => {
 				<h2 className="m-0 text-base font-medium leading-6 text-foreground">
 					{list.length} Transaction history
 				</h2>
-				<Button type="primary" icon={<PlusOutlined />} onClick={onNewTransaction}>
-					New transaction
-				</Button>
+				<PermissionSlot code={PERMISSIONS?.TRANSACTION?.ADD}>
+					<Button type="primary" icon={<PlusOutlined />} onClick={onNewTransaction}>
+						New transaction
+					</Button>
+				</PermissionSlot>
 			</div>
 			<Spin spinning={loading} wrapperClassName="mr-4 ml-5 pt-2">
 				{list.length ? (

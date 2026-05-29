@@ -23,9 +23,12 @@ export const PropertyInfo = ({
 	isShowSelectCard = true,
 }) => {
 	const form = Form.useFormInstance();
-	const [selectMode, setSelectMode] = useState(SELECT_MODE.property);
 	const borrower_property_id = Form.useWatch([name, 'borrower_property_id'], form);
-	const transaction_id = Form.useWatch([name, 'transaction_id'], form);
+	const borrower_property_transaction_id = Form.useWatch(
+		['borrower_property_transaction_id'],
+		form,
+	);
+	const [manualSelectMode, setManualSelectMode] = useState(null);
 	const { loanPurposeOptions, loanTypeOptions, propertyTypeOptions } = useGetOptions([
 		{
 			key: 'loan_purpose',
@@ -41,17 +44,21 @@ export const PropertyInfo = ({
 		},
 	]);
 
-	const isTransactionMode = selectMode === SELECT_MODE.transaction;
+	const resolvedSelectMode =
+		manualSelectMode ||
+		(borrower_property_transaction_id ? SELECT_MODE.transaction : SELECT_MODE.property);
+	const isTransactionMode = resolvedSelectMode === SELECT_MODE.transaction;
 
 	const selectCardProps = useMemo(() => {
 		if (isTransactionMode) {
 			return {
 				type: 'transaction',
-				api: '/transaction/all',
-				title: '',
-				formFieldName: [name, 'transaction_id'],
-				selectedId: transaction_id,
+				api: '/borrower_property_transaction/all',
+				viewMoreTitle: 'View all transactions',
+				formFieldName: ['borrower_property_transaction_id'],
+				selectedId: borrower_property_transaction_id,
 				isHideAddBtn: true,
+				title: '',
 			};
 		}
 		return {
@@ -62,17 +69,11 @@ export const PropertyInfo = ({
 			formFieldName: [name, 'borrower_property_id'],
 			selectedId: borrower_property_id,
 		};
-	}, [isTransactionMode, borrower_property_id, transaction_id]);
+	}, [isTransactionMode, borrower_property_id, borrower_property_transaction_id]);
 
 	const handleSelectModeChange = (mode) => {
-		setSelectMode(mode);
-		// if (mode === SELECT_MODE.property) {
-		// 	form.setFieldValue([name, 'transaction_id'], undefined);
-		// 	return;
-		// }
-		// form.setFieldValue([name, 'borrower_property_id'], undefined);
+		setManualSelectMode(mode);
 	};
-
 	return (
 		<Row className={styles.createZeeBee} gutter={gutter}>
 			<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
@@ -80,8 +81,18 @@ export const PropertyInfo = ({
 			</Col>
 			{isShowSelectCard && (
 				<Col span={24}>
+					<Form.Item
+						noStyle
+						name={[name, 'borrower_property_id']}
+						rules={[{ required: true }]}
+					></Form.Item>
+					<Form.Item
+						noStyle
+						name={['borrower_property_transaction_id']}
+						rules={[{ required: true }]}
+					></Form.Item>
 					<Radio.Group
-						value={selectMode}
+						value={resolvedSelectMode}
 						onChange={(e) => handleSelectModeChange(e.target.value)}
 						disabled={isRequestProperty}
 						size="large"
@@ -101,7 +112,7 @@ export const PropertyInfo = ({
 						</Radio>
 					</Radio.Group>
 					<SelectCard
-						key={selectMode}
+						key={resolvedSelectMode}
 						className="mb-8"
 						type={selectCardProps.type}
 						api={selectCardProps.api}
@@ -109,20 +120,20 @@ export const PropertyInfo = ({
 						addTitle={selectCardProps.addTitle}
 						name={selectCardProps.formFieldName}
 						id={selectCardProps.selectedId}
+						isHideAddBtn={selectCardProps.isHideAddBtn}
 						changeFormValue={(values) => {
 							if (isTransactionMode) {
-								const property = values?.property ?? {};
 								form.setFieldsValue({
+									borrower_property_transaction_id: values.id,
 									[name]: {
-										...property,
-										borrower_property_id:
-											property.id ?? property.borrower_property_id,
-										transaction_id: values.id,
+										borrower_property_id: values.borrower_property_id,
+										...values?.borrower_property,
 									},
 								});
 								return;
 							}
 							form.setFieldsValue({
+								borrower_property_transaction_id: null,
 								[name]: { ...values, borrower_property_id: values.id },
 							});
 						}}

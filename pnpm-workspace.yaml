@@ -5,6 +5,9 @@ packages:
   - "frontend/packages/*"
 allowBuilds:
   '@parcel/watcher': true
-  es5-ext: set this to true or false
+  es5-ext: true
   sharp: true
   unrs-resolver: true
+overrides:
+  react-pdf: 10.0.1
+  pdfjs-dist: 5.3.31

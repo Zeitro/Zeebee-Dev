@@ -20,6 +20,8 @@ import LoansTab from './components/LoansTab';
 import LogTab from './components/LogTab';
 import { getStatusTagClass } from '../components/utils';
 import styles from './index.module.scss';
+import { PermissionSlot } from '@repo/shared-methods';
+import { PERMISSIONS } from '@config/permissions';
 
 const TransactionDetailsPage = () => {
 	const { id } = useParams();
@@ -149,7 +151,7 @@ const TransactionDetailsPage = () => {
 					<div className="flex min-w-0 flex-col gap-2 flex-1">
 						<div className="flex flex-wrap items-center gap-8">
 							<h1 className="m-0 text-xl font-medium leading-7 text-foreground">
-								{`${rowData.type} transaction`}
+								{rowData.type} transaction
 							</h1>
 							<div className="flex items-center gap-2">
 								<span className="text-sm font-medium leading-[22px] text-base-gray">
@@ -190,14 +192,16 @@ const TransactionDetailsPage = () => {
 							</span>
 						</div>
 					</div>
-					<DeleteBtn
-						type="default"
-						size="middle"
-						icon={<DeleteOutlined />}
-						content={`ID: ${rowData?.code}`}
-						onOk={handleDelete}
-						loading={deleteLoading}
-					/>
+					<PermissionSlot code={PERMISSIONS?.TRANSACTION?.DELETE}>
+						<DeleteBtn
+							type="default"
+							size="middle"
+							icon={<DeleteOutlined />}
+							content={`ID: ${rowData?.code}`}
+							onOk={handleDelete}
+							loading={deleteLoading}
+						/>
+					</PermissionSlot>
 				</div>
 			</div>
 

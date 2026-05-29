@@ -94,6 +94,7 @@ const useCreate = (pageType = 'create') => {
 			if (!res?.applicants?.length) {
 				res.applicants = initialValues.applicants;
 			}
+			res.borrower_property_transaction_id = res?.borrower_property_transaction?.id;
 			setRowData(res);
 			setDetailsLoading(false);
 			// 详情页 Form 在 Skeleton 内，需等卸载后再回填
@@ -331,6 +332,7 @@ const useCreate = (pageType = 'create') => {
 				['loan_property', 'future_unit'],
 				['loan_property', 'future_bedrooms'],
 				['loan_property', 'future_bathrooms'],
+				['loan_property', 'borrower_property_id'],
 			],
 			'1-1': [],
 			'2-0': ['transaction_experiences', 'real_estate_experiences'],

@@ -4,21 +4,9 @@ import React from 'react';
 import { Progress } from 'antd';
 import { CaretRightFilled, FileTextOutlined } from '@ant-design/icons';
 import { displayValue, formatDate, formatTime } from '@repo/shared-methods/utils';
+import { getChecklistProgress } from '@/app/myTransactions/[id]/components/DocumentsTab/checklist';
 import { getStatusTagClass } from '@/app/myTransactions/components/utils';
 import TransactionCardExpandedContent from './TransactionCardExpandedContent';
-
-function formatTransactionId(item) {
-	if (item?.transaction_no) return item.transaction_no;
-	if (item?.id != null && item?.id !== '') return `TC${item.id}`;
-	return displayValue(null);
-}
-
-function getDocumentProgress(item) {
-	const completed =
-		item?.document_completed_count ?? item?.documents_completed ?? item?.document_count ?? 0;
-	const total = item?.document_total_count ?? item?.documents_total ?? item?.document_total ?? 0;
-	return { completed, total };
-}
 
 function getProgressStatus(status, completed, total) {
 	if (total > 0 && completed >= total) return 'success';
@@ -26,15 +14,11 @@ function getProgressStatus(status, completed, total) {
 	return 'normal';
 }
 
-const TransactionCard = ({ item, isExpanded, onToggle }) => {
+const TransactionCard = ({ item, isExpanded, onToggle, onRefreshList }) => {
 	const status = item?.status;
 	const tagClass = getStatusTagClass(status);
-	const { completed, total } = getDocumentProgress(item);
+	const { completed, total } = getChecklistProgress(item?.checklist);
 	const progressPercent = total > 0 ? Math.round((completed / total) * 100) : 0;
-	const updatedRaw = item?.updated_at ?? item?.updatedAt;
-	const updatedDate = updatedRaw ? formatDate(updatedRaw) : displayValue(null);
-	const updatedTime = updatedRaw ? formatTime(updatedRaw) : null;
-	const coeRaw = item?.coe_date ?? item?.coeDate;
 
 	const handleHeaderClick = () => {
 		onToggle?.();
@@ -83,16 +67,15 @@ const TransactionCard = ({ item, isExpanded, onToggle }) => {
 						<div className="flex flex-wrap gap-6 text-sm font-medium leading-[22px] text-base-label">
 							<span>
 								<span className="mr-2">ID</span>
-								{formatTransactionId(item)}
+								{displayValue(item?.code)}
 							</span>
 							<span>
 								<span className="mr-2">COE</span>
-								{displayValue(coeRaw, formatDate)}
+								{displayValue(item?.coe_date, formatDate)}
 							</span>
 							<span>
 								<span className="mr-2">Updated</span>
-								{updatedDate}
-								{updatedTime ? ` ${updatedTime}` : ''}
+								{displayValue(item?.updated_at, formatTime)}
 							</span>
 						</div>
 					</div>
@@ -124,7 +107,11 @@ const TransactionCard = ({ item, isExpanded, onToggle }) => {
 				</div>
 			</div>
 			{isExpanded && item?.id != null ? (
-				<TransactionCardExpandedContent transactionId={item.id} />
+				<TransactionCardExpandedContent
+					transactionId={item.id}
+					initialRowData={item}
+					onRefreshList={onRefreshList}
+				/>
 			) : null}
 		</div>
 	);

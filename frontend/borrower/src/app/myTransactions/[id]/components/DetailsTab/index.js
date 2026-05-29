@@ -7,6 +7,8 @@ import { createRequest } from '@repo/shared-methods/utils';
 import DetailField from './DetailField';
 import DetailsForm from './DetailsForm';
 import { BASIC_INFO_VIEW_FIELDS } from './constants';
+import { PermissionSlot } from '@repo/shared-methods';
+import { PERMISSIONS } from '@config/permissions';
 
 function renderViewFields(fields, data) {
 	const gridFields = fields.filter((f) => !f.fullWidth);
@@ -98,7 +100,9 @@ const DetailsTab = ({ rowData, transactionId, onRefresh, isSearchParamsEditing }
 				<h2 className="m-0 text-xl font-medium leading-7 text-foreground">
 					Basic Information
 				</h2>
-				{headerAction}
+				<PermissionSlot code={PERMISSIONS?.TRANSACTION?.EDIT}>
+					{headerAction}
+				</PermissionSlot>
 			</div>
 
 			{isEditing ? (

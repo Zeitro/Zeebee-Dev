@@ -1,8 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Button, Dropdown, Modal, message, Tabs } from 'antd';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Modal, message, Tabs } from 'antd';
 import { useParams, useRouter } from 'next/navigation';
 import AddModal from '@repo/shared-methods/componentsUi/SelectCard/Add/property';
 import { useProperty } from '@repo/shared-methods/componentsUi/SelectCard/Item/useCommon';
@@ -26,7 +26,7 @@ const PropertiesDetails = () => {
 	const [activeTab, setActiveTab] = useState('details');
 	const [editOpen, setEditOpen] = useState(false);
 	const [transactionModalOpen, setTransactionModalOpen] = useState(false);
-	const [transactionRefreshKey, setTransactionRefreshKey] = useState(0);
+	const refreshTransactionsListRef = useRef(() => {});
 	const { changeSidebarCollapsed } = useGlobalStore();
 	const api = `/property/${id}/summary`;
 
@@ -99,8 +99,8 @@ const PropertiesDetails = () => {
 		return () => clearTimeout(timer);
 	}, [changeSidebarCollapsed, getDetails]);
 
-	const tabItems = useMemo(
-		() => [
+	const tabItems = useMemo(() => {
+		let items = [
 			{
 				key: 'details',
 				label: 'Details',
@@ -115,17 +115,7 @@ const PropertiesDetails = () => {
 					</div>
 				),
 			},
-			{
-				key: 'transactions',
-				label: 'Transactions',
-				children: (
-					<TransactionsTab
-						propertyId={id}
-						refreshKey={transactionRefreshKey}
-						onNewTransaction={() => setTransactionModalOpen(true)}
-					/>
-				),
-			},
+
 			{
 				key: 'loans',
 				label: 'Loans',
@@ -138,9 +128,24 @@ const PropertiesDetails = () => {
 					/>
 				),
 			},
-		],
-		[getDetails, hasPermission, id, loading, rowData, transactionRefreshKey],
-	);
+		];
+		if (hasPermission(PERMISSIONS?.TRANSACTION?.PAGE)) {
+			items.splice(1, 0, {
+				key: 'transactions',
+				label: 'Transactions',
+				children: (
+					<TransactionsTab
+						propertyId={id}
+						onNewTransaction={() => setTransactionModalOpen(true)}
+						onRegisterRefresh={(fn) => {
+							refreshTransactionsListRef.current = fn ?? (() => {});
+						}}
+					/>
+				),
+			});
+		}
+		return items;
+	}, [getDetails, hasPermission, id, loading, rowData]);
 
 	return (
 		<div className="h-full flex flex-col overflow-hidden flex-1 bg-white">
@@ -173,7 +178,7 @@ const PropertiesDetails = () => {
 				onClose={() => setTransactionModalOpen(false)}
 				onSaved={() => {
 					setTransactionModalOpen(false);
-					setTransactionRefreshKey((v) => v + 1);
+					void refreshTransactionsListRef.current?.();
 				}}
 			/>
 		</div>

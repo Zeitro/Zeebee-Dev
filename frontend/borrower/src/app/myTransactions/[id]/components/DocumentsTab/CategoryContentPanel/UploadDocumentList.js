@@ -143,13 +143,18 @@ const UploadDocumentList = ({ category, onRefresh, transactionId }) => {
 					/>
 				</section>
 			)}
-			<UploadModal
-				open={open}
-				setOpen={setOpen}
-				record={record}
-				transaction_id={transactionId}
-				onRefresh={onRefresh}
-			/>
+			<Button type="primary" onClick={() => setOpen(true)}>
+				Add Document
+			</Button>
+			{open && (
+				<UploadModal
+					open={open}
+					setOpen={setOpen}
+					record={record}
+					transaction_id={transactionId}
+					onRefresh={onRefresh}
+				/>
+			)}
 		</div>
 	);
 };

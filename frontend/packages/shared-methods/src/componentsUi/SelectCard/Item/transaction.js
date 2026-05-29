@@ -3,25 +3,32 @@
 import React from 'react';
 import { Row, Col, Space, Tag } from 'antd';
 import { EditOutlined, DeleteOutlined, SwapOutlined } from '@ant-design/icons';
-import { formatDate, EMPTY_DISPLAY } from '@repo/shared-methods/utils';
+import { formatDate, EMPTY_DISPLAY, displayValue } from '@repo/shared-methods/utils';
 import { BtnPopUpModal, DeleteBtn } from '@repo/shared-methods';
 // import AddModal from '../Add/transaction';
 // import { useTransaction } from './useCommon';
 
-function transactionStatusTag(status) {
-	if (!status) return null;
-	const color = status === 'Pending' ? 'gold' : status === 'Cancelled' ? 'red' : 'success';
-	return (
-		<Tag bordered={false} color={color} className="!m-0 shrink-0 !text-xs leading-5">
-			{status}
-		</Tag>
-	);
+export function getStatusTagClass(status) {
+	if (status === 'Pending') {
+		return 'border-[var(--orange-medium)] bg-[var(--orange-light)] text-[var(--orange-dark)]';
+	}
+	if (status === 'Cancelled') {
+		return 'border-base-error bg-gray-light text-base-error';
+	}
+	return 'border-base-border bg-gray-light text-foreground';
 }
 
-function formatTransactionId(item) {
-	if (item?.transaction_no) return item.transaction_no;
-	if (item?.id != null && item?.id !== '') return `TS-${item.id}`;
-	return EMPTY_DISPLAY;
+function statusTag(status) {
+	return (
+		<span
+			className={[
+				'inline-flex whitespace-nowrap rounded-[2px] border px-2 text-xs leading-5',
+				getStatusTagClass(status),
+			].join(' ')}
+		>
+			{status}
+		</span>
+	);
 }
 
 const TransactionCardItem = ({
@@ -71,16 +78,19 @@ const TransactionCardItem = ({
 					>
 						{item?.type || EMPTY_DISPLAY}
 					</p>
-					{transactionStatusTag(item?.status)}
+					{statusTag(item?.status)}
 				</div>
 				<Row className="pl-2 pt-1 text-[rgba(0,0,0,0.65)]">
-					<Col span={12} className="common-ellipsis" title={formatTransactionId(item)}>
-						{formatTransactionId(item)}
+					<Col span={12} className="common-ellipsis" title={item?.code}>
+						{item?.code || EMPTY_DISPLAY}
 					</Col>
-					<Col span={12} className="common-ellipsis text-right" title={coeText}>
-						{coeText}
+					<Col span={12} className="common-ellipsis text-right">
+						{displayValue(item?.coe_date, formatDate)}
 					</Col>
 				</Row>
+				<div className="text-[rgba(0,0,0,0.65)] pl-2">
+					{item?.borrower_property?.address?.address1 || EMPTY_DISPLAY}
+				</div>
 				{/* {isShowOperate && (
 					<Space className="w-full justify-end pt-2">
 						<BtnPopUpModal

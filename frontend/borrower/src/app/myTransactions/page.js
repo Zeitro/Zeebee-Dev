@@ -9,11 +9,12 @@ import {
 	ReloadOutlined,
 } from '@ant-design/icons';
 import { Button, message, Space, Typography } from 'antd';
-import { DeleteBtn, FieldTips, FilterTable } from '@repo/shared-methods';
-import { useGetOptions } from '@repo/shared-methods/hooks';
+import { DeleteBtn, FieldTips, FilterTable, PermissionSlot } from '@repo/shared-methods';
+import { useGetOptions, useAuth } from '@repo/shared-methods/hooks';
 import { createRequest, displayValue, formatDate } from '@repo/shared-methods/utils';
 import NewTransactionModal from './components/NewTransactionModal';
 import { getStatusTagClass } from './components/utils';
+import { PERMISSIONS } from '@config/permissions';
 
 /** 与后端约定一致的分页接口；若路径不同，只改此处 */
 const TRANSACTION_LIST_API = '/borrower_property_transaction/page';
@@ -33,6 +34,7 @@ function statusTag(status) {
 
 const MyTransactionsPage = () => {
 	const router = useRouter();
+	const { hasPermission, getActiveByPermission } = useAuth();
 	const { transactionTypeOptions, transactionStatusOptions } = useGetOptions([
 		{ key: 'borrower_property_transaction_type', valueName: 'transactionTypeOptions' },
 		{ key: 'borrower_property_transaction_status', valueName: 'transactionStatusOptions' },
@@ -136,9 +138,10 @@ const MyTransactionsPage = () => {
 			},
 			{
 				filterType: 'button',
-				text: 'New Transaction',
+				text: 'Add a transaction',
 				icon: <PlusOutlined />,
 				onClick: () => setNewTransactionOpen(true),
+				hidden: !hasPermission(PERMISSIONS?.TRANSACTION?.ADD),
 			},
 		],
 		[
@@ -148,6 +151,7 @@ const MyTransactionsPage = () => {
 			transactionTypeOptions,
 			transactionStatusOptions,
 			cancelMatch,
+			hasPermission,
 		],
 	);
 
@@ -168,7 +172,8 @@ const MyTransactionsPage = () => {
 				sorter: true,
 				render: (_, record) => {
 					const text = displayValue(record?.address?.address1);
-					return (
+					const isHavePermission = hasPermission(PERMISSIONS?.PROPERTY?.DETAILS);
+					return isHavePermission ? (
 						<Typography.Link
 							onClick={(e) => {
 								e.preventDefault();
@@ -179,6 +184,8 @@ const MyTransactionsPage = () => {
 								{text}
 							</FieldTips>
 						</Typography.Link>
+					) : (
+						text
 					);
 				},
 			},
@@ -225,42 +232,48 @@ const MyTransactionsPage = () => {
 					return displayValue(formatted);
 				},
 			},
-
-			{
-				title: 'Action',
-				key: 'action',
-				width: 160,
-				fixed: 'right',
+			getActiveByPermission({
+				buttonOptions: [
+					{ permission: PERMISSIONS?.PROPERTY?.DETAILS, width: 30 },
+					{ permission: PERMISSIONS?.TRANSACTION?.EDIT, width: 50 },
+					{ permission: PERMISSIONS?.TRANSACTION?.DELETE, width: 62 },
+				],
 				render: (_, record) => (
 					<Space size="small">
-						<Button
-							size="small"
-							type="link"
-							icon={<FolderOpenOutlined className="text-base-warning" />}
-							onClick={() => router.push(`/myTransactions/${record.id}`)}
-						/>
-						<Button
-							size="small"
-							type="link"
-							onClick={() =>
-								router.push(
-									`/myTransactions/${record.id}?tab=details&isEditing=true`,
-								)
-							}
-						>
-							Edit
-						</Button>
-						<DeleteBtn
-							icon={<DeleteOutlined />}
-							content={`ID: ${record?.code}`}
-							onOk={() => handleDelete(record.id)}
-							loading={deleteLoading}
-						/>
+						<PermissionSlot code={PERMISSIONS?.TRANSACTION?.DETAILS}>
+							<Button
+								size="small"
+								type="link"
+								icon={<FolderOpenOutlined className="text-base-warning" />}
+								onClick={() => router.push(`/myTransactions/${record.id}`)}
+							/>
+						</PermissionSlot>
+						<PermissionSlot code={PERMISSIONS?.TRANSACTION?.EDIT}>
+							<Button
+								size="small"
+								type="link"
+								onClick={() =>
+									router.push(
+										`/myTransactions/${record.id}?tab=details&isEditing=true`,
+									)
+								}
+							>
+								Edit
+							</Button>
+						</PermissionSlot>
+						<PermissionSlot code={PERMISSIONS?.TRANSACTION?.DELETE}>
+							<DeleteBtn
+								icon={<DeleteOutlined />}
+								content={`ID: ${record?.code}`}
+								onOk={() => handleDelete(record.id)}
+								loading={deleteLoading}
+							/>
+						</PermissionSlot>
 					</Space>
 				),
-			},
+			}),
 		],
-		[router],
+		[router, hasPermission, getActiveByPermission, deleteLoading],
 	);
 
 	return (

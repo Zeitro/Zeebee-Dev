@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Spin, Tabs } from 'antd';
 import DocumentsTab from '@/app/myTransactions/[id]/components/DocumentsTab';
 import DetailsTab from '@/app/myTransactions/[id]/components/DetailsTab';
@@ -9,16 +9,26 @@ import LogTab from '@/app/myTransactions/[id]/components/LogTab';
 import { useTransactionDetail } from './useTransactionDetail';
 import styles from './TransactionCard.module.scss';
 
-const TransactionCardExpandedContent = ({ transactionId }) => {
+const TransactionCardExpandedContent = ({ transactionId, initialRowData, onRefreshList }) => {
 	const [activeTab, setActiveTab] = useState('documents');
-	const { rowData, loading, getDetails } = useTransactionDetail(transactionId, true);
+	const { rowData, loading, getDetails } = useTransactionDetail(
+		transactionId,
+		true,
+		initialRowData,
+	);
+
+	/** 详情变更后同步详情与列表（卡片头部 Documents 进度等） */
+	const handleRefresh = useCallback(async () => {
+		// getDetails(),
+		await Promise.all([onRefreshList?.()]);
+	}, [onRefreshList]);
 
 	const tabItems = useMemo(
 		() => [
 			{
 				key: 'documents',
 				label: 'Document',
-				children: <DocumentsTab rowData={rowData} />,
+				children: <DocumentsTab rowData={rowData} onRefresh={handleRefresh} />,
 			},
 			{
 				key: 'details',
@@ -28,7 +38,7 @@ const TransactionCardExpandedContent = ({ transactionId }) => {
 						<DetailsTab
 							rowData={rowData}
 							transactionId={transactionId}
-							onRefresh={getDetails}
+							onRefresh={handleRefresh}
 						/>
 					</div>
 				),
@@ -36,7 +46,9 @@ const TransactionCardExpandedContent = ({ transactionId }) => {
 			{
 				key: 'loans',
 				label: 'Loan',
-				children: <LoansTab rowData={rowData} loading={loading} onRefresh={getDetails} />,
+				children: (
+					<LoansTab rowData={rowData} loading={loading} onRefresh={handleRefresh} />
+				),
 			},
 			{
 				key: 'log',
@@ -44,7 +56,7 @@ const TransactionCardExpandedContent = ({ transactionId }) => {
 				children: <LogTab transactionId={transactionId} />,
 			},
 		],
-		[getDetails, loading, rowData, transactionId],
+		[handleRefresh, loading, rowData, transactionId],
 	);
 
 	return (
