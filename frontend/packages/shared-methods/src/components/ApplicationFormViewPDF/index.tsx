@@ -7,7 +7,8 @@ import Image from 'next/image';
 import { Modal } from 'antd';
 import { formatDate, createRequest } from '@repo/shared-methods/utils';
 import EditSvg from '../../assets/images/edit.svg';
-pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
+// 使用与当前 pdfjs 运行版本一致的 worker，避免本地静态文件与依赖版本不匹配。
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 // 定义签名区 (Hotspot/Zone) 的类型
 export interface SignatureZone {

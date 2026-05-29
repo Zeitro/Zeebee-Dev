@@ -1,16 +1,16 @@
 import { BtnPopUpModal, DeleteBtn, PermissionSlot } from '@repo/shared-methods';
 import MainModal from './Main';
 import { createRequest, formatPhone } from '@repo/shared-methods/utils';
-import { useRef, useState } from 'react';
+import { useRef, useState, useMemo } from 'react';
 import { message, Space } from 'antd';
 import { getSelectOptions } from '@repo/shared-methods/api';
 import { useUserStore } from '@repo/shared-methods/store';
 import { userStatusColor } from '@repo/shared-methods/enum';
 import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { useAuth } from '@repo/shared-methods/hooks';
-const useUser = ({ getNewMainModal, PERMISSIONS }) => {
+const useUser = ({ getNewMainModal, PERMISSIONS, SETTING_USER_API }) => {
 	const { hasPermission, getActiveByPermission } = useAuth();
-	const { request, cancel } = createRequest();
+	const { request, cancelMatch } = useMemo(() => createRequest(), []);
 	const { userInfo } = useUserStore();
 	const [loading, setLoading] = useState(false);
 	const [statusLoading, setStatusLoading] = useState(false);
@@ -57,7 +57,7 @@ const useUser = ({ getNewMainModal, PERMISSIONS }) => {
 		{
 			filterType: 'button',
 			onClick: () => {
-				cancel('/organization_user');
+				cancelMatch(SETTING_USER_API);
 				tableFilterRef?.current?.handleSearch();
 			},
 		},
@@ -67,11 +67,13 @@ const useUser = ({ getNewMainModal, PERMISSIONS }) => {
 			text: 'Reset',
 			icon: <ReloadOutlined />,
 			onClick: () => {
-				cancel('/organization_user');
+				cancelMatch(SETTING_USER_API);
 				setSearchValue('');
-				setTimeout(() => {
-					tableFilterRef?.current?.handleSearch();
-				}, 300);
+				tableFilterRef?.current?.handleSearch({
+					filter: {
+						keyword: '',
+					},
+				});
 			},
 			colProps: {
 				className: 'flex-1',

@@ -13,9 +13,11 @@ import AddModal from '@repo/shared-methods/componentsUi/SelectCard/Add/borrower'
 import DistanceSvg from '@repo/shared-methods/assets/images/distance.svg';
 import { PERMISSIONS } from '@config/permissions';
 import { useAuth } from '@repo/shared-methods/hooks';
+
+const BORROWER_API = '/borrower_applicant/page';
 const BorrowerManagement = () => {
 	const { hasPermission } = useAuth();
-	const { cancel } = createRequest();
+	const { cancelMatch } = useMemo(() => createRequest(), []);
 	const tableFilterRef = useRef();
 	const [searchValue, setSearchValue] = useState('');
 	const { handleDelete, loading } = useBorrower({
@@ -34,7 +36,7 @@ const BorrowerManagement = () => {
 			{
 				filterType: 'button',
 				onClick: () => {
-					cancel('/property/page');
+					cancelMatch(BORROWER_API);
 					tableFilterRef?.current?.handleSearch();
 				},
 			},
@@ -44,10 +46,13 @@ const BorrowerManagement = () => {
 				text: 'Reset',
 				icon: <ReloadOutlined />,
 				onClick: () => {
+					cancelMatch(BORROWER_API);
 					setSearchValue('');
-					setTimeout(() => {
-						tableFilterRef?.current?.handleSearch();
-					}, 300);
+					tableFilterRef?.current?.handleSearch({
+						filter: {
+							keyword: '',
+						},
+					});
 				},
 				colProps: {
 					className: 'flex-1',
@@ -73,7 +78,7 @@ const BorrowerManagement = () => {
 				),
 			},
 		],
-		[searchValue, cancel, hasPermission],
+		[searchValue, cancelMatch, hasPermission],
 	);
 	return (
 		<FilterTableCard
@@ -84,7 +89,7 @@ const BorrowerManagement = () => {
 			filterList={filterList}
 			hasFilterField={true}
 			// pagination={pagination}
-			api="/borrower_applicant/page"
+			api={BORROWER_API}
 			onRow={() => ({
 				onClick: () => {
 					// handleSelectedRow(row, stage);

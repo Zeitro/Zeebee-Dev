@@ -343,7 +343,7 @@ export default function useColumn({
 				dataIndex: 'business_strategy',
 				key: 'business_strategy',
 				ellipsis: true,
-				render: (v) => v?.join(',') || '--',
+				render: (v) => v?.join?.(',') || '--',
 				width: 160,
 			},
 			{
@@ -447,7 +447,7 @@ export default function useColumn({
 				dataIndex: 'business_strategy',
 				key: 'business_strategy',
 				ellipsis: true,
-				render: (v) => v?.join(','),
+				render: (v) => v?.join?.(',') || '--',
 				width: 160,
 			},
 			{

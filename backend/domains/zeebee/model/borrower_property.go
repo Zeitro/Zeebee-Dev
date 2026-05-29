@@ -12,6 +12,7 @@ type BorrowerProperty struct {
 	Unit           int32                  `gorm:"column:unit;not null;default:0" json:"unit"`
 	PropertyType   constants.PropertyType `gorm:"column:property_type;size:30;not null;default:''" json:"property_type"`
 	LivingAreaSqft float32                `gorm:"column:living_area_sqft;type:numeric(8,2);not null;default:0" json:"living_area_sqft"`
+	LotAreaSqft    float32                `gorm:"column:lot_area_sqft;type:numeric(8,2);not null;default:0" json:"lot_area_sqft"`
 	Bedrooms       int32                  `gorm:"column:bedrooms;not null;default:0" json:"bedrooms"`
 	Bathrooms      int32                  `gorm:"column:bathrooms;not null;default:0" json:"bathrooms"`
 	Address        Address                `gorm:"column:address;type:jsonb;serializer:json" json:"address"`

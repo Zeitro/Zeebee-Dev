@@ -19,6 +19,8 @@ export const useOptionsStore = create((set) => ({
 	sexOptions: [], //applicant_sex
 	bankruptcyChapterOptions: [], //bankruptcy_chapter
 	// ---------以下为其他公共下拉选项----------
+	transactionTypeOptions: [], //borrower_property_transaction_type
+	transactionStatusOptions: [], //borrower_property_transaction_status
 	getOptions: async (name, key) => {
 		const { options } = await getSelectOptions(name);
 		return (
