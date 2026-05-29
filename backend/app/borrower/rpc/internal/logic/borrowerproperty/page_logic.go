@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/duke-git/lancet/v2/datetime"
+	"github.com/duke-git/lancet/v2/mathutil"
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
 
@@ -106,6 +107,7 @@ func (l *PageLogic) Page(in *borrower.PropertyPageRequest) (resp *borrower.Prope
 		}
 		if totalRate > 0 {
 			propertyPageEntry.AvgRate = totalRate / float32(len(borrowerProperty.Loans))
+			propertyPageEntry.AvgRate = float32(mathutil.RoundToFloat(propertyPageEntry.AvgRate, 2))
 		}
 		if maturityDate != nil && maturityDate.Valid {
 			propertyPageEntry.NearestMaturityDate = maturityDate.Time.Format("01/02/2006")

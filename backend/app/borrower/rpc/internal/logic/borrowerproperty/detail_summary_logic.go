@@ -3,6 +3,7 @@ package borrowerpropertylogic
 import (
 	"context"
 
+	"github.com/duke-git/lancet/v2/mathutil"
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -154,6 +155,7 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 	respData.TotalMonthlyPaymentAmount = totalMonthlyPaymentAmount
 	if loanCount > 0 {
 		respData.AvgRate = totalRate / float32(loanCount)
+		respData.AvgRate = float32(mathutil.RoundToFloat(respData.AvgRate, 2))
 	}
 
 	return &borrower.PropertyDetailSummaryResponse{

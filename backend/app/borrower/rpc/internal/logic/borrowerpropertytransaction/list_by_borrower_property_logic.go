@@ -47,6 +47,10 @@ func (l *ListByBorrowerPropertyLogic) ListByBorrowerProperty(in *borrower.Borrow
 		return nil, err
 	}
 
+	for i := range transactions {
+		fillChecklistNodeFiles(l.ctx, l.svcCtx.FileRepo, transactions[i].Checklist)
+	}
+
 	entities, err := copierx.Trans[[]*model.BorrowerPropertyTransaction, []*borrower.BorrowerPropertyTransactionEntity](
 		&transactions,
 		copierx.TimeToRFC3339Str(),
