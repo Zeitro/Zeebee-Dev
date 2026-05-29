@@ -1,6 +1,6 @@
 'use client';
 import { Anchor, Button, Col, Form, message, Row, Skeleton } from 'antd';
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState, useMemo } from 'react';
 import CreateLoan from '../components/Create/Loan';
 import CreateProperty from '../components/Create/property';
 import CreateTerm from '../components/Create/term';
@@ -27,36 +27,13 @@ const EditLoanPage = () => {
 	const [form] = Form.useForm();
 	const stage = Form.useWatch('stage', form);
 	const pending_status = Form.useWatch(['pending_status'], form);
-	const { request } = createRequest();
+	const { request } = useMemo(() => createRequest(), []);
 	const [loading, setLoading] = useState(false);
 	const [detailsLoading, setDetailsLoading] = useState(true);
 	const { changeSidebarCollapsed } = useGlobalStore();
 	const property_type = Form.useWatch(['loan_property', 'property_type'], form);
 	const [unitInfo, setUnitInfo] = useState({});
 	let isInit = useRef(true);
-
-	const getDetails = async () => {
-		let res = initialValues;
-		try {
-			setDetailsLoading(true);
-			res = await request(`/loan/${id}`);
-			eventBus.emit('changeCrumbs', {
-				2: `Edit Loan(${assemblyAddress(res?.loan_property?.address)})`,
-			});
-			if (!res.applicants?.length) {
-				res.applicants = initialValues?.applicants;
-			}
-			form.setFieldsValue({
-				...res,
-			});
-			setDetailsLoading(false);
-		} catch {
-			form.setFieldsValue({
-				...res,
-			});
-			setDetailsLoading(false);
-		}
-	};
 
 	// edit loan
 	const handleNext = async () => {
@@ -82,9 +59,30 @@ const EditLoanPage = () => {
 	};
 
 	useEffect(() => {
-		getDetails();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+		let cancelled = false;
+		(async () => {
+			let res = initialValues;
+			try {
+				res = await request(`/loan/${id}`);
+				if (cancelled) return;
+				eventBus.emit('changeCrumbs', {
+					2: `Edit Loan(${assemblyAddress(res?.loan_property?.address)})`,
+				});
+				if (!res.applicants?.length) {
+					res.applicants = initialValues?.applicants;
+				}
+				form.setFieldsValue({ ...res });
+				setDetailsLoading(false);
+			} catch {
+				if (cancelled) return;
+				form.setFieldsValue({ ...res });
+				setDetailsLoading(false);
+			}
+		})();
+		return () => {
+			cancelled = true;
+		};
+	}, [id, request, form]);
 
 	useLayoutEffect(() => {
 		changeSidebarCollapsed(true);

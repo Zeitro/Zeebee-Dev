@@ -10,9 +10,11 @@ import EmailSvg from '@repo/shared-methods/assets/images/email.svg';
 import PhoneSvg from '@repo/shared-methods/assets/images/phone.svg';
 import { PERMISSIONS } from '@config/permissions';
 import { useAuth } from '@repo/shared-methods/hooks';
+
+const BORROWING_ENTITY_API = '/borrower_entity/page';
 const BorrowingEntity = () => {
 	const { hasPermission } = useAuth();
-	const { cancel } = createRequest();
+	const { cancelMatch } = useMemo(() => createRequest(), []);
 	const tableFilterRef = useRef();
 	const [searchValue, setSearchValue] = useState('');
 	// const [pagination, setPagination] = useState(getPagination());
@@ -32,7 +34,7 @@ const BorrowingEntity = () => {
 			{
 				filterType: 'button',
 				onClick: () => {
-					cancel('/borrower_entity/page');
+					cancelMatch(BORROWING_ENTITY_API);
 					tableFilterRef?.current?.handleSearch();
 				},
 			},
@@ -42,10 +44,13 @@ const BorrowingEntity = () => {
 				text: 'Reset',
 				icon: <ReloadOutlined />,
 				onClick: () => {
+					cancelMatch(BORROWING_ENTITY_API);
 					setSearchValue('');
-					setTimeout(() => {
-						tableFilterRef?.current?.handleSearch();
-					}, 300);
+					tableFilterRef?.current?.handleSearch({
+						filter: {
+							keyword: '',
+						},
+					});
 				},
 				colProps: {
 					className: 'flex-1',
@@ -71,7 +76,7 @@ const BorrowingEntity = () => {
 				),
 			},
 		],
-		[searchValue, cancel, hasPermission],
+		[searchValue, cancelMatch, hasPermission],
 	);
 	return (
 		<FilterTableCard
@@ -81,7 +86,7 @@ const BorrowingEntity = () => {
 			filterList={filterList}
 			hasFilterField={true}
 			// pagination={pagination}
-			api="/borrower_entity/page"
+			api={BORROWING_ENTITY_API}
 			onRow={() => ({
 				onClick: () => {
 					// handleSelectedRow(row, stage);
