@@ -4380,6 +4380,29 @@
         }
       }
     },
+    "/api/v1/common/sync_resource": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "common"
+        ],
+        "summary": "sync resource",
+        "operationId": "commonSyncResource",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/document/{id}/files": {
       "get": {
         "produces": [
@@ -22404,7 +22427,7 @@
       }
     }
   },
-  "x-date": "2026-05-28 17:21:58",
+  "x-date": "2026-05-29 10:22:40",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
