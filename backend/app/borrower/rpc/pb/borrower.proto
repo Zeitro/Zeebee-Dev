@@ -2218,6 +2218,8 @@ message BorrowerPropertyTransactionChecklistNodeEntity {
   repeated BorrowerPropertyTransactionChecklistNodeEntity children = 6;
   int32 file_count = 7;
   repeated FileEntity files = 8;
+  int32 required_document_count = 9;
+  int32 optional_document_count = 10;
 }
 
 message BorrowerPropertyTransactionChecklistEntity {

@@ -19685,6 +19685,8 @@ type BorrowerPropertyTransactionChecklistNodeEntity struct {
 	Children              []*BorrowerPropertyTransactionChecklistNodeEntity `protobuf:"bytes,6,rep,name=children,proto3" json:"children,omitempty"`
 	FileCount             int32                                             `protobuf:"varint,7,opt,name=file_count,json=fileCount,proto3" json:"file_count,omitempty"`
 	Files                 []*FileEntity                                     `protobuf:"bytes,8,rep,name=files,proto3" json:"files,omitempty"`
+	RequiredDocumentCount int32                                             `protobuf:"varint,9,opt,name=required_document_count,json=requiredDocumentCount,proto3" json:"required_document_count,omitempty"`
+	OptionalDocumentCount int32                                             `protobuf:"varint,10,opt,name=optional_document_count,json=optionalDocumentCount,proto3" json:"optional_document_count,omitempty"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }
@@ -19773,6 +19775,20 @@ func (x *BorrowerPropertyTransactionChecklistNodeEntity) GetFiles() []*FileEntit
 		return x.Files
 	}
 	return nil
+}
+
+func (x *BorrowerPropertyTransactionChecklistNodeEntity) GetRequiredDocumentCount() int32 {
+	if x != nil {
+		return x.RequiredDocumentCount
+	}
+	return 0
+}
+
+func (x *BorrowerPropertyTransactionChecklistNodeEntity) GetOptionalDocumentCount() int32 {
+	if x != nil {
+		return x.OptionalDocumentCount
+	}
+	return 0
 }
 
 type BorrowerPropertyTransactionChecklistEntity struct {
@@ -25366,7 +25382,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\rauthenticated\x18\x04 \x01(\bR\rauthenticated\x12\x1e\n" +
 	"\n" +
 	"authorized\x18\x05 \x01(\bR\n" +
-	"authorized\"\x8d\x03\n" +
+	"authorized\"\xfd\x03\n" +
 	".BorrowerPropertyTransactionChecklistNodeEntity\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
@@ -25378,7 +25394,10 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\bchildren\x18\x06 \x03(\v28.borrower.BorrowerPropertyTransactionChecklistNodeEntityR\bchildren\x12\x1d\n" +
 	"\n" +
 	"file_count\x18\a \x01(\x05R\tfileCount\x12*\n" +
-	"\x05files\x18\b \x03(\v2\x14.borrower.FileEntityR\x05files\"\xfb\x04\n" +
+	"\x05files\x18\b \x03(\v2\x14.borrower.FileEntityR\x05files\x126\n" +
+	"\x17required_document_count\x18\t \x01(\x05R\x15requiredDocumentCount\x126\n" +
+	"\x17optional_document_count\x18\n" +
+	" \x01(\x05R\x15optionalDocumentCount\"\xfb\x04\n" +
 	"*BorrowerPropertyTransactionChecklistEntity\x12\x1f\n" +
 	"\vall_checked\x18\x01 \x01(\bR\n" +
 	"allChecked\x120\n" +

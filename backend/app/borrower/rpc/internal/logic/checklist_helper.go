@@ -105,16 +105,22 @@ func buildChecklistNode(doc *model.Document, childrenMap map[int64][]*model.Docu
 
 	children := childrenMap[doc.Id]
 	if len(children) == 0 {
-		return dto.ChecklistNode{
+		node := dto.ChecklistNode{
 			Name:       doc.Name,
 			DocumentId: doc.Id,
 			IsRequired: isRequired,
 			FileCount:  fileCountMap[doc.Id],
 		}
+		if isRequired {
+			node.RequiredDocumentCount = 1
+		} else {
+			node.OptionalDocumentCount = 1
+		}
+		return node
 	}
 
 	var childNodes []dto.ChecklistNode
-	var subDocCount, uploadedCount int32
+	var subDocCount, uploadedCount, reqDocCount, optDocCount int32
 	for _, child := range children {
 		childNode := buildChecklistNode(child, childrenMap, fileCountMap)
 		childNodes = append(childNodes, childNode)
@@ -122,6 +128,8 @@ func buildChecklistNode(doc *model.Document, childrenMap map[int64][]*model.Docu
 		if childNode.FileCount > 0 || childNode.UploadedDocumentCount > 0 {
 			uploadedCount++
 		}
+		reqDocCount += childNode.RequiredDocumentCount
+		optDocCount += childNode.OptionalDocumentCount
 	}
 
 	return dto.ChecklistNode{
@@ -130,6 +138,8 @@ func buildChecklistNode(doc *model.Document, childrenMap map[int64][]*model.Docu
 		IsRequired:            isRequired,
 		SubDocumentCount:      subDocCount,
 		UploadedDocumentCount: uploadedCount,
+		RequiredDocumentCount: reqDocCount,
+		OptionalDocumentCount: optDocCount,
 		Children:              childNodes,
 	}
 }
