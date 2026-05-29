@@ -78,7 +78,7 @@ func (l *ResourceLogic) CreateResource(ctx context.Context, input *dto.ResourceC
 			return innerErr
 		}
 		if isTagExisted {
-			return errorx.New("rag already exists")
+			return errorx.New("tag already exists")
 		}
 
 		// Get apis by ids
@@ -444,4 +444,102 @@ func (l *ResourceLogic) createResourcePolices(resourceId int64, resourceType con
 	})
 
 	return
+}
+
+// SyncResource sync resource
+func (l *ResourceLogic) SyncResource(ctx context.Context, input *dto.ResourceSyncRequestDto) (err error) {
+	resourceRepo := l.repos.ResourceRepo
+
+	err = resourceRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		for _, item := range input.Resources {
+			if innerErr := l.handleSyncResource(ctx, tx, input.Type, item, 0); innerErr != nil {
+				return innerErr
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action: auth.ActionResourceReload,
+			Scope:  auth.ScopeGlobal,
+			Type:   input.Type,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[input.Type], msg)
+	})
+
+	return nil
+}
+
+func (l *ResourceLogic) handleSyncResource(ctx context.Context, tx *gorm.DB, userType constants.UserType, item dto.ResourceSyncItemDto, parentId int64) (err error) {
+	resourceRepo := l.repos.ResourceRepo
+	apiRepo := l.repos.ApiRepo
+
+	maxSort, err := resourceRepo.GetMaxSortOrderWithTx(ctx, tx, parentId, userType)
+	if err != nil {
+		return err
+	}
+	sortOrder := maxSort + 1
+
+	apiModels := make([]*model.Api, 0, len(item.Apis))
+	for _, apiItem := range item.Apis {
+		if len(apiItem.Path) == 0 || len(apiItem.Method) == 0 {
+			continue
+		}
+		api, _ := apiRepo.FindOneByColumnsWithTx(ctx, tx, map[string]interface{}{
+			"path":   apiItem.Path,
+			"method": apiItem.Method,
+			"type":   userType,
+		})
+		if api != nil && api.Id != 0 {
+			apiModels = append(apiModels, api)
+		}
+	}
+
+	existing, _ := resourceRepo.FindOneByColumnsWithTx(ctx, tx, map[string]interface{}{
+		"type":          userType,
+		"resource_type": item.ResourceType,
+		"tag":           item.Tag,
+		// "path":          item.Path,
+		// "name":          item.Name,
+	})
+
+	var resourceId int64
+	if existing == nil || existing.Id == 0 {
+		resourceModel := &model.Resource{
+			ParentId:        parentId,
+			Type:            userType,
+			ResourceType:    item.ResourceType,
+			Name:            item.Name,
+			Path:            item.Path,
+			Icon:            item.Icon,
+			Tag:             item.Tag,
+			IsShow:          item.IsShow,
+			Status:          item.Status,
+			SortOrder:       sortOrder,
+			EnableDataScope: item.EnableDataScope,
+			Description:     item.Description,
+			IsPublic:        item.IsPublic,
+			Apis:            apiModels,
+		}
+		created, innerErr := resourceRepo.CreateWithTx(ctx, tx, resourceModel, true)
+		if innerErr != nil {
+			return errorx.Wrap(innerErr, "failed to create resource")
+		}
+		resourceId = created.Id
+	} else {
+		resourceId = existing.Id
+	}
+
+	for _, child := range item.Children {
+		if err = l.handleSyncResource(ctx, tx, userType, child, resourceId); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
