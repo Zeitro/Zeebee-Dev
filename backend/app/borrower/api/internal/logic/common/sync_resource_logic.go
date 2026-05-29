@@ -8,7 +8,6 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -30,14 +29,26 @@ func NewSyncResourceLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sync
 }
 
 func (l *SyncResourceLogic) SyncResource(req *types.EmptyRequest) (resp *types.EmptyResponse, err error) {
-	resourceJson, err := json.Marshal(resources)
+	// resourceJson, err := json.Marshal(resources)
+	// if err != nil {
+	// 	return nil, errorx.Wrap(err, "failed to marshal resources")
+	// }
+	var resourceList []dto.ResourceSyncItemDto
+	err = json.Unmarshal(resourceBytes, &resourceList)
 	if err != nil {
-		return nil, errorx.Wrap(err, "failed to marshal resources")
+		return nil, errorx.Wrap(err, "failed to unmarshal resources")
+	}
+	if len(resourceList) == 0 {
+		return nil, errorx.New("no resources found")
+	}
+	resourceContent, err := json.Marshal(resourceList)
+	if err != nil {
+		return nil, errorx.Wrap(err, "failed to marshal resource content")
 	}
 
 	_, err = l.svcCtx.ResourceRpcClient.SyncResource(l.ctx, &borrower.SyncResourceRequest{
 		Data: &borrower.SyncResourceRequestData{
-			ResourceJson: string(resourceJson),
+			ResourceJson: string(resourceContent),
 		},
 	})
 	if err != nil {
@@ -47,39 +58,112 @@ func (l *SyncResourceLogic) SyncResource(req *types.EmptyRequest) (resp *types.E
 	return &types.EmptyResponse{}, nil
 }
 
-var resources = []dto.ResourceSyncItemDto{
-	{
-		ResourceType:    constants.ResourceTypeMenu,
-		Name:            "home",
-		Path:            "/home",
-		Icon:            "Home",
-		Tag:             "",
-		IsShow:          true,
-		Status:          constants.CommonStatusActive,
-		EnableDataScope: false,
-		Description:     "home menu",
-		IsPublic:        true,
-		Children: []dto.ResourceSyncItemDto{
-			{
-				ResourceType:    constants.ResourceTypeMenu,
-				Name:            "dashboard",
-				Path:            "/home/dashboard",
-				Icon:            "Dashboard",
-				Tag:             "",
-				IsShow:          true,
-				Status:          constants.CommonStatusActive,
-				EnableDataScope: false,
-				Description:     "dashboard menu",
-				IsPublic:        true,
-				Children:        nil,
-				Apis: []dto.ApiSyncItemDto{
-					{
-						Path:   "/home/dashboard",
-						Method: "GET",
-					},
-				},
-			},
-		},
-		Apis: nil,
-	},
-}
+// var resources = []dto.ResourceSyncItemDto{
+// 	{
+// 		ResourceType:    constants.ResourceTypeMenu,
+// 		Name:            "Test Menu",
+// 		Path:            "/TestMenu",
+// 		Icon:            "",
+// 		Tag:             "TestMenu",
+// 		IsShow:          true,
+// 		Status:          constants.CommonStatusActive,
+// 		EnableDataScope: false,
+// 		Description:     "test menu",
+// 		IsPublic:        false,
+// 		Children: []dto.ResourceSyncItemDto{
+// 			{
+// 				ResourceType:    constants.ResourceTypeMenu,
+// 				Name:            "sub test menu",
+// 				Path:            "/SubTestMenu",
+// 				Icon:            "",
+// 				Tag:             "TestMenu:Sub",
+// 				IsShow:          true,
+// 				Status:          constants.CommonStatusActive,
+// 				EnableDataScope: false,
+// 				Description:     "sub test menu",
+// 				IsPublic:        false,
+// 				Children: []dto.ResourceSyncItemDto{
+// 					{
+// 						ResourceType:    constants.ResourceTypeButton,
+// 						Name:            "create",
+// 						Path:            "",
+// 						Icon:            "",
+// 						Tag:             "TestMenu:Sub:Create",
+// 						IsShow:          true,
+// 						Status:          constants.CommonStatusActive,
+// 						EnableDataScope: false,
+// 						Description:     "create button",
+// 						IsPublic:        false,
+// 						Apis: []dto.ApiSyncItemDto{
+// 							{
+// 								Path:   "/api/v1/loan/:id",
+// 								Method: "GET",
+// 							},
+// 							{
+// 								Path:   "/api/v1/loan",
+// 								Method: "POST",
+// 							},
+// 						},
+// 					},
+// 				},
+// 			},
+// 		},
+// 		Apis: nil,
+// 	},
+// }
+
+var resourceBytes []byte = []byte(`[
+  {
+    "resource_type": "Menu",
+    "name": "Test Menu",
+    "path": "/TestMenu",
+    "icon": "",
+    "tag": "TestMenu",
+    "is_show": true,
+    "status": "Active",
+    "enable_data_scope": false,
+    "description": "test menu",
+    "is_public": false,
+    "children": [
+      {
+        "resource_type": "menu",
+        "name": "sub test menu",
+        "path": "/SubTestMenu",
+        "icon": "",
+        "tag": "TestMenu:Sub",
+        "is_show": true,
+        "status": "Active",
+        "enable_data_scope": false,
+        "description": "sub test menu",
+        "is_public": false,
+        "children": [
+          {
+            "resource_type": "Button",
+            "name": "create",
+            "path": "",
+            "icon": "",
+            "tag": "TestMenu:Sub:Create",
+            "is_show": true,
+            "status": "Active",
+            "enable_data_scope": false,
+            "description": "create button",
+            "is_public": false,
+            "apis": [
+              {
+                "path": "/api/v1/loan/:id",
+                "method": "GET"
+              },
+              {
+                "path": "/api/v1/loan",
+                "method": "POST"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "apis": [
+      
+    ]
+  }
+]`)
