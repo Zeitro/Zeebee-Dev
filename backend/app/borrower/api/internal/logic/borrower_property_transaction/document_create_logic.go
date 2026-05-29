@@ -27,11 +27,12 @@ func NewDocumentCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Do
 
 func (l *DocumentCreateLogic) DocumentCreate(req *types.DocumentCreateRequest) (resp *types.DocumentCreateResponse, err error) {
 	rpcReq := &borrower.DocumentCreateRequest{
-		Data: &borrower.DocumentCreateRequestData{
-			TransactionId: req.TransactionId,
-			ParentId:      req.ParentId,
-			Name:          req.Name,
-		},
+		Data: &borrower.DocumentCreateRequestData{},
+	}
+
+	rpcReq.Data, err = copierx.Trans[types.DocumentCreateRequest, borrower.DocumentCreateRequestData](req)
+	if err != nil {
+		return nil, err
 	}
 
 	rpcResp, err := l.svcCtx.BorrowerPropertyTransactionRpcClient.CreateDocument(l.ctx, rpcReq)
@@ -39,15 +40,19 @@ func (l *DocumentCreateLogic) DocumentCreate(req *types.DocumentCreateRequest) (
 		return nil, err
 	}
 
-	protoDoc := rpcResp.GetData()
-	if protoDoc == nil {
+	protoDocs := rpcResp.GetData()
+	if len(protoDocs) == 0 {
 		return &types.DocumentCreateResponse{}, nil
 	}
 
-	treeNode, err := copierx.Trans[borrower.DocumentEntity, types.DocumentTreeNode](protoDoc, copierx.StrToStrMap())
-	if err != nil {
-		return nil, err
+	var treeNodes []types.DocumentTreeNode
+	for _, protoDoc := range protoDocs {
+		treeNode, transErr := copierx.Trans[borrower.DocumentEntity, types.DocumentTreeNode](protoDoc, copierx.StrToStrMap())
+		if transErr != nil {
+			return nil, transErr
+		}
+		treeNodes = append(treeNodes, *treeNode)
 	}
 
-	return &types.DocumentCreateResponse{*treeNode}, nil
+	return &types.DocumentCreateResponse{List: treeNodes}, nil
 }

@@ -55,9 +55,9 @@ type (
     DocumentCreateRequest {
         TransactionId int64 `path:"transaction_id" validate:"required,gt=0"`
         ParentId int64 `json:"parent_id" validate:"required,gt=0"`
-        Name string `json:"name" validate:"required"`
+        Names []string `json:"names" validate:"required,dive,required,min=1"`
     }
     DocumentCreateResponse {
-        DocumentTreeNode
+        List []DocumentTreeNode `json:"list"`
     }
 )

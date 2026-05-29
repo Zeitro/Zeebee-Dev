@@ -3649,11 +3649,14 @@
               "type": "object",
               "required": [
                 "parent_id",
-                "name"
+                "names"
               ],
               "properties": {
-                "name": {
-                  "type": "string"
+                "names": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 },
                 "parent_id": {
                   "type": "integer"
@@ -3668,7 +3671,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "children": {
+                "list": {
                   "type": "array",
                   "items": {
                     "type": "object",
@@ -3709,66 +3712,7 @@
                             "children": {
                               "type": "array",
                               "items": {
-                                "type": "object",
-                                "required": [
-                                  "id",
-                                  "parent_id",
-                                  "type",
-                                  "name",
-                                  "level",
-                                  "sort_order",
-                                  "last_uploaded_at",
-                                  "metadata",
-                                  "created_at",
-                                  "updated_at",
-                                  "children",
-                                  "files"
-                                ],
-                                "properties": {
-                                  "children": {
-                                    "type": "array",
-                                    "items": {
-                                      "type": "object"
-                                    }
-                                  },
-                                  "created_at": {
-                                    "type": "string"
-                                  },
-                                  "files": {
-                                    "type": "array",
-                                    "items": {
-                                      "type": "object"
-                                    }
-                                  },
-                                  "id": {
-                                    "type": "integer"
-                                  },
-                                  "last_uploaded_at": {
-                                    "type": "string"
-                                  },
-                                  "level": {
-                                    "type": "integer"
-                                  },
-                                  "metadata": {
-                                    "type": "object",
-                                    "additionalProperties": {}
-                                  },
-                                  "name": {
-                                    "type": "string"
-                                  },
-                                  "parent_id": {
-                                    "type": "integer"
-                                  },
-                                  "sort_order": {
-                                    "type": "integer"
-                                  },
-                                  "type": {
-                                    "type": "string"
-                                  },
-                                  "updated_at": {
-                                    "type": "string"
-                                  }
-                                }
+                                "type": "object"
                               }
                             },
                             "created_at": {
@@ -3777,51 +3721,7 @@
                             "files": {
                               "type": "array",
                               "items": {
-                                "type": "object",
-                                "required": [
-                                  "id",
-                                  "entity_type",
-                                  "entity_id",
-                                  "file_url",
-                                  "storage_type",
-                                  "file_name",
-                                  "external_id",
-                                  "upload_type",
-                                  "created_at",
-                                  "updated_at"
-                                ],
-                                "properties": {
-                                  "created_at": {
-                                    "type": "string"
-                                  },
-                                  "entity_id": {
-                                    "type": "integer"
-                                  },
-                                  "entity_type": {
-                                    "type": "string"
-                                  },
-                                  "external_id": {
-                                    "type": "string"
-                                  },
-                                  "file_name": {
-                                    "type": "string"
-                                  },
-                                  "file_url": {
-                                    "type": "string"
-                                  },
-                                  "id": {
-                                    "type": "integer"
-                                  },
-                                  "storage_type": {
-                                    "type": "string"
-                                  },
-                                  "updated_at": {
-                                    "type": "string"
-                                  },
-                                  "upload_type": {
-                                    "type": "string"
-                                  }
-                                }
+                                "type": "object"
                               }
                             },
                             "id": {
@@ -3938,87 +3838,6 @@
                       }
                     }
                   }
-                },
-                "created_at": {
-                  "type": "string"
-                },
-                "files": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "required": [
-                      "id",
-                      "entity_type",
-                      "entity_id",
-                      "file_url",
-                      "storage_type",
-                      "file_name",
-                      "external_id",
-                      "upload_type",
-                      "created_at",
-                      "updated_at"
-                    ],
-                    "properties": {
-                      "created_at": {
-                        "type": "string"
-                      },
-                      "entity_id": {
-                        "type": "integer"
-                      },
-                      "entity_type": {
-                        "type": "string"
-                      },
-                      "external_id": {
-                        "type": "string"
-                      },
-                      "file_name": {
-                        "type": "string"
-                      },
-                      "file_url": {
-                        "type": "string"
-                      },
-                      "id": {
-                        "type": "integer"
-                      },
-                      "storage_type": {
-                        "type": "string"
-                      },
-                      "updated_at": {
-                        "type": "string"
-                      },
-                      "upload_type": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "id": {
-                  "type": "integer"
-                },
-                "last_uploaded_at": {
-                  "type": "string"
-                },
-                "level": {
-                  "type": "integer"
-                },
-                "metadata": {
-                  "type": "object",
-                  "additionalProperties": {}
-                },
-                "name": {
-                  "type": "string"
-                },
-                "parent_id": {
-                  "type": "integer"
-                },
-                "sort_order": {
-                  "type": "integer"
-                },
-                "type": {
-                  "type": "string"
-                },
-                "updated_at": {
-                  "type": "string"
                 }
               }
             }
@@ -22526,7 +22345,7 @@
       }
     }
   },
-  "x-date": "2026-05-29 15:45:28",
+  "x-date": "2026-05-29 16:28:29",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

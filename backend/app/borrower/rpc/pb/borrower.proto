@@ -2532,11 +2532,11 @@ message DocumentCreateRequest {
 message DocumentCreateRequestData {
   int64 transaction_id = 1;
   int64 parent_id = 2;
-  string name = 3;
+  repeated string names = 3;
 }
 
 message DocumentCreateResponse {
-  DocumentEntity data = 1;
+  repeated DocumentEntity data = 1;
 }
 
 

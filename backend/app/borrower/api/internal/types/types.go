@@ -494,13 +494,13 @@ type BorrowerPropertyTransactionUpdateRequest struct {
 }
 
 type DocumentCreateRequest struct {
-	TransactionId int64  `path:"transaction_id" validate:"required,gt=0"`
-	ParentId      int64  `json:"parent_id" validate:"required,gt=0"`
-	Name          string `json:"name" validate:"required"`
+	TransactionId int64    `path:"transaction_id" validate:"required,gt=0"`
+	ParentId      int64    `json:"parent_id" validate:"required,gt=0"`
+	Names         []string `json:"names" validate:"required,dive,required,min=1"`
 }
 
 type DocumentCreateResponse struct {
-	DocumentTreeNode
+	List []DocumentTreeNode `json:"list"`
 }
 
 type DocumentFile struct {

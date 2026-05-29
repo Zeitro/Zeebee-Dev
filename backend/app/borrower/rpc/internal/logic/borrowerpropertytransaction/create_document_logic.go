@@ -3,6 +3,7 @@ package borrowerpropertytransactionlogic
 import (
 	"context"
 	"encoding/json"
+	"strings"
 
 	"gorm.io/gorm"
 
@@ -59,65 +60,75 @@ func (l *CreateDocumentLogic) CreateDocument(in *borrower.DocumentCreateRequest)
 	// validate parent exists and belongs to the transaction's document tree
 	parent, err := l.svcCtx.DocumentRepo.FindOneById(l.ctx, in.Data.ParentId)
 	if err != nil {
-		err = errorx.Wrap(err, "failed to find parent document")
-		return
+		return nil, errorx.Wrap(err, "failed to find parent document")
 	}
 	if !isDescendantOf(l.ctx, l.svcCtx.DocumentRepo, parent, entityDoc.RootDocumentId) {
-		err = errorx.New("parent document does not belong to this transaction")
-		return
+		return nil, errorx.New("parent document does not belong to this transaction")
 	}
 	if parent.Type != constants.DocumentTypeBranch {
-		err = errorx.New("parent document must be a branch")
-		return
+		return nil, errorx.New("parent document must be a branch")
 	}
 
-	// FR-014: name uniqueness among siblings
-	isExisted, err := l.svcCtx.DocumentRepo.IsExistedByColumns(l.ctx, map[string]interface{}{
-		"name":      in.Data.Name,
-		"parent_id": parent.Id,
-	})
-	if err != nil {
-		err = errorx.Wrap(err, "failed to check document name existence")
-		return
+	// FR-014: name uniqueness among siblings — check all requested names
+	existingNames := map[string]bool{}
+	for _, name := range in.Data.Names {
+		isExisted, checkErr := l.svcCtx.DocumentRepo.IsExistedByColumns(l.ctx, map[string]interface{}{
+			"name":      name,
+			"parent_id": parent.Id,
+		})
+		if checkErr != nil {
+			return nil, errorx.Wrap(checkErr, "failed to check document name existence")
+		}
+		if isExisted {
+			existingNames[name] = true
+		}
 	}
-	if isExisted {
-		return nil, errorx.New("document name already exists at this level")
-	}
+
 	maxSortOrder, err := l.svcCtx.DocumentRepo.GetMaxSortOrderByParentId(l.ctx, parent.Id)
 	if err != nil {
-		err = errorx.Wrap(err, "failed to get max sort order")
-		return
+		return nil, errorx.Wrap(err, "failed to get max sort order")
 	}
 
-	// FR-013: only create leaf documents at same level as existing leaves
-	doc := &model.Document{
-		ParentId:         parent.Id,
-		EntityDocumentId: parent.EntityDocumentId,
-		Type:             constants.DocumentTypeLeaf,
-		Name:             in.Data.Name,
-		Level:            parent.Level + 1,
-		SortOrder:        int32(maxSortOrder) + 1,
+	// unmarshal parent metadata once
+	metadata := map[string]interface{}{}
+	if err = json.Unmarshal(parent.Metadata, &metadata); err != nil {
+		return nil, errorx.Wrap(err, "failed to unmarshal parent document metadata")
 	}
+	metadata["create_type"] = "Manual"
+	metadataContent, _ := json.Marshal(metadata)
+
+	var createdDocs []*model.Document
+	var createdNames []string
 
 	err = l.svcCtx.DocumentRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
-		var innerErr error
-		// create document
-		metadata := map[string]interface{}{}
-		innerErr = json.Unmarshal([]byte(parent.Metadata), &metadata)
-		if innerErr != nil {
-			innerErr = errorx.Wrap(innerErr, "failed to unmarshal parent document metadata")
-			return innerErr
+		for i, name := range in.Data.Names {
+			if existingNames[name] {
+				continue
+			}
+			doc := &model.Document{
+				ParentId:         parent.Id,
+				EntityDocumentId: parent.EntityDocumentId,
+				Type:             constants.DocumentTypeLeaf,
+				Name:             name,
+				Level:            parent.Level + 1,
+				SortOrder:        int32(maxSortOrder) + int32(i) + 1,
+				Metadata:         metadataContent,
+			}
+
+			doc, innerErr := l.svcCtx.DocumentRepo.CreateWithTx(l.ctx, tx, doc, false)
+			if innerErr != nil {
+				return innerErr
+			}
+			createdDocs = append(createdDocs, doc)
+			createdNames = append(createdNames, name)
 		}
-		metadata["create_type"] = "Manual"
-		metadataContent, _ := json.Marshal(metadata)
-		doc.Metadata = metadataContent
-		doc, innerErr = l.svcCtx.DocumentRepo.CreateWithTx(l.ctx, tx, doc, false)
-		if innerErr != nil {
-			return innerErr
+
+		if len(createdDocs) == 0 {
+			return errorx.New("all document names already exist at this level")
 		}
 
 		// operation log
-		innerErr = l.baseLogic.OperationLogic.CreateOperationLog(l.ctx, tx, dto.OperationCreateDto{
+		innerErr := l.baseLogic.OperationLogic.CreateOperationLog(l.ctx, tx, dto.OperationCreateDto{
 			EntityId:       in.Data.TransactionId,
 			EntityType:     constants.OperationEntityTypeBorrowerPropertyTransaction,
 			OperatorId:     claim.OrganizationUserId,
@@ -125,7 +136,7 @@ func (l *CreateDocumentLogic) CreateDocument(in *borrower.DocumentCreateRequest)
 			OperatorType:   claim.UserType,
 			Operation:      constants.OperationActionBorrowerPropertyTransactionAddDocument,
 			OrganizationId: claim.OrganizationId,
-			Note:           "create document: " + in.Data.Name,
+			Note:           "create documents: " + strings.Join(createdNames, ", "),
 		})
 		if innerErr != nil {
 			return innerErr
@@ -136,15 +147,19 @@ func (l *CreateDocumentLogic) CreateDocument(in *borrower.DocumentCreateRequest)
 		return innerErr
 	})
 	if err != nil {
-		return
+		return nil, err
 	}
 
-	protoDoc, err := copierx.Trans[model.Document, borrower.DocumentEntity](doc, copierx.TimeToRFC3339Str())
-	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+	var protoDocs []*borrower.DocumentEntity
+	for _, doc := range createdDocs {
+		protoDoc, transErr := copierx.Trans[model.Document, borrower.DocumentEntity](doc, copierx.TimeToRFC3339Str())
+		if transErr != nil {
+			return nil, errorx.GetFailedTransRespErr(transErr)
+		}
+		protoDocs = append(protoDocs, protoDoc)
 	}
 
 	return &borrower.DocumentCreateResponse{
-		Data: protoDoc,
+		Data: protoDocs,
 	}, nil
 }
