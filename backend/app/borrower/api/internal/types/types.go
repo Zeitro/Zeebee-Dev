@@ -318,6 +318,8 @@ type BorrowerPropertyTransactionChecklistNode struct {
 	IsRequired            bool                                       `json:"is_required"`
 	SubDocumentCount      int32                                      `json:"sub_document_count"`
 	UploadedDocumentCount int32                                      `json:"uploaded_document_count"`
+	RequiredDocumentCount int32                                      `json:"required_document_count"`
+	OptionalDocumentCount int32                                      `json:"optional_document_count"`
 	Children              []BorrowerPropertyTransactionChecklistNode `json:"children"`
 	FileCount             int32                                      `json:"file_count"`
 	Files                 []FileEntity                               `json:"files"`

@@ -36,6 +36,8 @@ type BorrowerPropertyTransactionChecklistNode {
     IsRequired bool `json:"is_required"`
     SubDocumentCount int32 `json:"sub_document_count"`
     UploadedDocumentCount int32 `json:"uploaded_document_count"`
+    RequiredDocumentCount int32 `json:"required_document_count"`
+    OptionalDocumentCount int32 `json:"optional_document_count"`
     Children []BorrowerPropertyTransactionChecklistNode `json:"children"`
     FileCount int32 `json:"file_count"`
     Files []FileEntity `json:"files"`
@@ -147,7 +149,7 @@ type (
         BorrowerPropertyId int64 `json:"borrower_property_id"`
         BorrowerProperty BorrowerPropertyTransactionPropertyEntity `json:"borrower_property"`
 
-//        Address *AddressEntity `json:"address"`
+        //        Address *AddressEntity `json:"address"`
     }
 
     BorrowerPropertyTransactionPropertyEntity {

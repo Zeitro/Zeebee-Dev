@@ -1572,6 +1572,8 @@
                           "is_required",
                           "sub_document_count",
                           "uploaded_document_count",
+                          "required_document_count",
+                          "optional_document_count",
                           "children",
                           "file_count",
                           "files"
@@ -1587,6 +1589,8 @@
                                 "is_required",
                                 "sub_document_count",
                                 "uploaded_document_count",
+                                "required_document_count",
+                                "optional_document_count",
                                 "children",
                                 "file_count",
                                 "files"
@@ -1602,6 +1606,8 @@
                                       "is_required",
                                       "sub_document_count",
                                       "uploaded_document_count",
+                                      "required_document_count",
+                                      "optional_document_count",
                                       "children",
                                       "file_count",
                                       "files"
@@ -1630,6 +1636,12 @@
                                       },
                                       "name": {
                                         "type": "string"
+                                      },
+                                      "optional_document_count": {
+                                        "type": "integer"
+                                      },
+                                      "required_document_count": {
+                                        "type": "integer"
                                       },
                                       "sub_document_count": {
                                         "type": "integer"
@@ -1702,6 +1714,12 @@
                                 "name": {
                                   "type": "string"
                                 },
+                                "optional_document_count": {
+                                  "type": "integer"
+                                },
+                                "required_document_count": {
+                                  "type": "integer"
+                                },
                                 "sub_document_count": {
                                   "type": "integer"
                                 },
@@ -1772,6 +1790,12 @@
                           },
                           "name": {
                             "type": "string"
+                          },
+                          "optional_document_count": {
+                            "type": "integer"
+                          },
+                          "required_document_count": {
+                            "type": "integer"
                           },
                           "sub_document_count": {
                             "type": "integer"
@@ -1792,6 +1816,8 @@
                           "is_required",
                           "sub_document_count",
                           "uploaded_document_count",
+                          "required_document_count",
+                          "optional_document_count",
                           "children",
                           "file_count",
                           "files"
@@ -1807,6 +1833,8 @@
                                 "is_required",
                                 "sub_document_count",
                                 "uploaded_document_count",
+                                "required_document_count",
+                                "optional_document_count",
                                 "children",
                                 "file_count",
                                 "files"
@@ -1822,6 +1850,8 @@
                                       "is_required",
                                       "sub_document_count",
                                       "uploaded_document_count",
+                                      "required_document_count",
+                                      "optional_document_count",
                                       "children",
                                       "file_count",
                                       "files"
@@ -1850,6 +1880,12 @@
                                       },
                                       "name": {
                                         "type": "string"
+                                      },
+                                      "optional_document_count": {
+                                        "type": "integer"
+                                      },
+                                      "required_document_count": {
+                                        "type": "integer"
                                       },
                                       "sub_document_count": {
                                         "type": "integer"
@@ -1922,6 +1958,12 @@
                                 "name": {
                                   "type": "string"
                                 },
+                                "optional_document_count": {
+                                  "type": "integer"
+                                },
+                                "required_document_count": {
+                                  "type": "integer"
+                                },
                                 "sub_document_count": {
                                   "type": "integer"
                                 },
@@ -1992,6 +2034,12 @@
                           },
                           "name": {
                             "type": "string"
+                          },
+                          "optional_document_count": {
+                            "type": "integer"
+                          },
+                          "required_document_count": {
+                            "type": "integer"
                           },
                           "sub_document_count": {
                             "type": "integer"
@@ -2405,6 +2453,8 @@
                           "is_required",
                           "sub_document_count",
                           "uploaded_document_count",
+                          "required_document_count",
+                          "optional_document_count",
                           "children",
                           "file_count",
                           "files"
@@ -2420,6 +2470,8 @@
                                 "is_required",
                                 "sub_document_count",
                                 "uploaded_document_count",
+                                "required_document_count",
+                                "optional_document_count",
                                 "children",
                                 "file_count",
                                 "files"
@@ -2435,6 +2487,8 @@
                                       "is_required",
                                       "sub_document_count",
                                       "uploaded_document_count",
+                                      "required_document_count",
+                                      "optional_document_count",
                                       "children",
                                       "file_count",
                                       "files"
@@ -2463,6 +2517,12 @@
                                       },
                                       "name": {
                                         "type": "string"
+                                      },
+                                      "optional_document_count": {
+                                        "type": "integer"
+                                      },
+                                      "required_document_count": {
+                                        "type": "integer"
                                       },
                                       "sub_document_count": {
                                         "type": "integer"
@@ -2535,6 +2595,12 @@
                                 "name": {
                                   "type": "string"
                                 },
+                                "optional_document_count": {
+                                  "type": "integer"
+                                },
+                                "required_document_count": {
+                                  "type": "integer"
+                                },
                                 "sub_document_count": {
                                   "type": "integer"
                                 },
@@ -2605,6 +2671,12 @@
                           },
                           "name": {
                             "type": "string"
+                          },
+                          "optional_document_count": {
+                            "type": "integer"
+                          },
+                          "required_document_count": {
+                            "type": "integer"
                           },
                           "sub_document_count": {
                             "type": "integer"
@@ -2625,6 +2697,8 @@
                           "is_required",
                           "sub_document_count",
                           "uploaded_document_count",
+                          "required_document_count",
+                          "optional_document_count",
                           "children",
                           "file_count",
                           "files"
@@ -2640,6 +2714,8 @@
                                 "is_required",
                                 "sub_document_count",
                                 "uploaded_document_count",
+                                "required_document_count",
+                                "optional_document_count",
                                 "children",
                                 "file_count",
                                 "files"
@@ -2655,6 +2731,8 @@
                                       "is_required",
                                       "sub_document_count",
                                       "uploaded_document_count",
+                                      "required_document_count",
+                                      "optional_document_count",
                                       "children",
                                       "file_count",
                                       "files"
@@ -2683,6 +2761,12 @@
                                       },
                                       "name": {
                                         "type": "string"
+                                      },
+                                      "optional_document_count": {
+                                        "type": "integer"
+                                      },
+                                      "required_document_count": {
+                                        "type": "integer"
                                       },
                                       "sub_document_count": {
                                         "type": "integer"
@@ -2755,6 +2839,12 @@
                                 "name": {
                                   "type": "string"
                                 },
+                                "optional_document_count": {
+                                  "type": "integer"
+                                },
+                                "required_document_count": {
+                                  "type": "integer"
+                                },
                                 "sub_document_count": {
                                   "type": "integer"
                                 },
@@ -2825,6 +2915,12 @@
                           },
                           "name": {
                             "type": "string"
+                          },
+                          "optional_document_count": {
+                            "type": "integer"
+                          },
+                          "required_document_count": {
+                            "type": "integer"
                           },
                           "sub_document_count": {
                             "type": "integer"
@@ -2994,6 +3090,8 @@
                           "is_required",
                           "sub_document_count",
                           "uploaded_document_count",
+                          "required_document_count",
+                          "optional_document_count",
                           "children",
                           "file_count",
                           "files"
@@ -3009,6 +3107,8 @@
                                 "is_required",
                                 "sub_document_count",
                                 "uploaded_document_count",
+                                "required_document_count",
+                                "optional_document_count",
                                 "children",
                                 "file_count",
                                 "files"
@@ -3024,6 +3124,8 @@
                                       "is_required",
                                       "sub_document_count",
                                       "uploaded_document_count",
+                                      "required_document_count",
+                                      "optional_document_count",
                                       "children",
                                       "file_count",
                                       "files"
@@ -3052,6 +3154,12 @@
                                       },
                                       "name": {
                                         "type": "string"
+                                      },
+                                      "optional_document_count": {
+                                        "type": "integer"
+                                      },
+                                      "required_document_count": {
+                                        "type": "integer"
                                       },
                                       "sub_document_count": {
                                         "type": "integer"
@@ -3124,6 +3232,12 @@
                                 "name": {
                                   "type": "string"
                                 },
+                                "optional_document_count": {
+                                  "type": "integer"
+                                },
+                                "required_document_count": {
+                                  "type": "integer"
+                                },
                                 "sub_document_count": {
                                   "type": "integer"
                                 },
@@ -3194,6 +3308,12 @@
                           },
                           "name": {
                             "type": "string"
+                          },
+                          "optional_document_count": {
+                            "type": "integer"
+                          },
+                          "required_document_count": {
+                            "type": "integer"
                           },
                           "sub_document_count": {
                             "type": "integer"
@@ -3214,6 +3334,8 @@
                           "is_required",
                           "sub_document_count",
                           "uploaded_document_count",
+                          "required_document_count",
+                          "optional_document_count",
                           "children",
                           "file_count",
                           "files"
@@ -3229,6 +3351,8 @@
                                 "is_required",
                                 "sub_document_count",
                                 "uploaded_document_count",
+                                "required_document_count",
+                                "optional_document_count",
                                 "children",
                                 "file_count",
                                 "files"
@@ -3244,6 +3368,8 @@
                                       "is_required",
                                       "sub_document_count",
                                       "uploaded_document_count",
+                                      "required_document_count",
+                                      "optional_document_count",
                                       "children",
                                       "file_count",
                                       "files"
@@ -3272,6 +3398,12 @@
                                       },
                                       "name": {
                                         "type": "string"
+                                      },
+                                      "optional_document_count": {
+                                        "type": "integer"
+                                      },
+                                      "required_document_count": {
+                                        "type": "integer"
                                       },
                                       "sub_document_count": {
                                         "type": "integer"
@@ -3344,6 +3476,12 @@
                                 "name": {
                                   "type": "string"
                                 },
+                                "optional_document_count": {
+                                  "type": "integer"
+                                },
+                                "required_document_count": {
+                                  "type": "integer"
+                                },
                                 "sub_document_count": {
                                   "type": "integer"
                                 },
@@ -3414,6 +3552,12 @@
                           },
                           "name": {
                             "type": "string"
+                          },
+                          "optional_document_count": {
+                            "type": "integer"
+                          },
+                          "required_document_count": {
+                            "type": "integer"
                           },
                           "sub_document_count": {
                             "type": "integer"
@@ -6588,6 +6732,8 @@
                                     "is_required",
                                     "sub_document_count",
                                     "uploaded_document_count",
+                                    "required_document_count",
+                                    "optional_document_count",
                                     "children",
                                     "file_count",
                                     "files"
@@ -6603,6 +6749,8 @@
                                           "is_required",
                                           "sub_document_count",
                                           "uploaded_document_count",
+                                          "required_document_count",
+                                          "optional_document_count",
                                           "children",
                                           "file_count",
                                           "files"
@@ -6618,6 +6766,8 @@
                                                 "is_required",
                                                 "sub_document_count",
                                                 "uploaded_document_count",
+                                                "required_document_count",
+                                                "optional_document_count",
                                                 "children",
                                                 "file_count",
                                                 "files"
@@ -6646,6 +6796,12 @@
                                                 },
                                                 "name": {
                                                   "type": "string"
+                                                },
+                                                "optional_document_count": {
+                                                  "type": "integer"
+                                                },
+                                                "required_document_count": {
+                                                  "type": "integer"
                                                 },
                                                 "sub_document_count": {
                                                   "type": "integer"
@@ -6718,6 +6874,12 @@
                                           "name": {
                                             "type": "string"
                                           },
+                                          "optional_document_count": {
+                                            "type": "integer"
+                                          },
+                                          "required_document_count": {
+                                            "type": "integer"
+                                          },
                                           "sub_document_count": {
                                             "type": "integer"
                                           },
@@ -6788,6 +6950,12 @@
                                     },
                                     "name": {
                                       "type": "string"
+                                    },
+                                    "optional_document_count": {
+                                      "type": "integer"
+                                    },
+                                    "required_document_count": {
+                                      "type": "integer"
                                     },
                                     "sub_document_count": {
                                       "type": "integer"
@@ -6808,6 +6976,8 @@
                                     "is_required",
                                     "sub_document_count",
                                     "uploaded_document_count",
+                                    "required_document_count",
+                                    "optional_document_count",
                                     "children",
                                     "file_count",
                                     "files"
@@ -6823,6 +6993,8 @@
                                           "is_required",
                                           "sub_document_count",
                                           "uploaded_document_count",
+                                          "required_document_count",
+                                          "optional_document_count",
                                           "children",
                                           "file_count",
                                           "files"
@@ -6838,6 +7010,8 @@
                                                 "is_required",
                                                 "sub_document_count",
                                                 "uploaded_document_count",
+                                                "required_document_count",
+                                                "optional_document_count",
                                                 "children",
                                                 "file_count",
                                                 "files"
@@ -6866,6 +7040,12 @@
                                                 },
                                                 "name": {
                                                   "type": "string"
+                                                },
+                                                "optional_document_count": {
+                                                  "type": "integer"
+                                                },
+                                                "required_document_count": {
+                                                  "type": "integer"
                                                 },
                                                 "sub_document_count": {
                                                   "type": "integer"
@@ -6938,6 +7118,12 @@
                                           "name": {
                                             "type": "string"
                                           },
+                                          "optional_document_count": {
+                                            "type": "integer"
+                                          },
+                                          "required_document_count": {
+                                            "type": "integer"
+                                          },
                                           "sub_document_count": {
                                             "type": "integer"
                                           },
@@ -7008,6 +7194,12 @@
                                     },
                                     "name": {
                                       "type": "string"
+                                    },
+                                    "optional_document_count": {
+                                      "type": "integer"
+                                    },
+                                    "required_document_count": {
+                                      "type": "integer"
                                     },
                                     "sub_document_count": {
                                       "type": "integer"
@@ -8476,6 +8668,8 @@
                               "is_required",
                               "sub_document_count",
                               "uploaded_document_count",
+                              "required_document_count",
+                              "optional_document_count",
                               "children",
                               "file_count",
                               "files"
@@ -8491,6 +8685,8 @@
                                     "is_required",
                                     "sub_document_count",
                                     "uploaded_document_count",
+                                    "required_document_count",
+                                    "optional_document_count",
                                     "children",
                                     "file_count",
                                     "files"
@@ -8506,6 +8702,8 @@
                                           "is_required",
                                           "sub_document_count",
                                           "uploaded_document_count",
+                                          "required_document_count",
+                                          "optional_document_count",
                                           "children",
                                           "file_count",
                                           "files"
@@ -8534,6 +8732,12 @@
                                           },
                                           "name": {
                                             "type": "string"
+                                          },
+                                          "optional_document_count": {
+                                            "type": "integer"
+                                          },
+                                          "required_document_count": {
+                                            "type": "integer"
                                           },
                                           "sub_document_count": {
                                             "type": "integer"
@@ -8606,6 +8810,12 @@
                                     "name": {
                                       "type": "string"
                                     },
+                                    "optional_document_count": {
+                                      "type": "integer"
+                                    },
+                                    "required_document_count": {
+                                      "type": "integer"
+                                    },
                                     "sub_document_count": {
                                       "type": "integer"
                                     },
@@ -8676,6 +8886,12 @@
                               },
                               "name": {
                                 "type": "string"
+                              },
+                              "optional_document_count": {
+                                "type": "integer"
+                              },
+                              "required_document_count": {
+                                "type": "integer"
                               },
                               "sub_document_count": {
                                 "type": "integer"
@@ -8696,6 +8912,8 @@
                               "is_required",
                               "sub_document_count",
                               "uploaded_document_count",
+                              "required_document_count",
+                              "optional_document_count",
                               "children",
                               "file_count",
                               "files"
@@ -8711,6 +8929,8 @@
                                     "is_required",
                                     "sub_document_count",
                                     "uploaded_document_count",
+                                    "required_document_count",
+                                    "optional_document_count",
                                     "children",
                                     "file_count",
                                     "files"
@@ -8726,6 +8946,8 @@
                                           "is_required",
                                           "sub_document_count",
                                           "uploaded_document_count",
+                                          "required_document_count",
+                                          "optional_document_count",
                                           "children",
                                           "file_count",
                                           "files"
@@ -8754,6 +8976,12 @@
                                           },
                                           "name": {
                                             "type": "string"
+                                          },
+                                          "optional_document_count": {
+                                            "type": "integer"
+                                          },
+                                          "required_document_count": {
+                                            "type": "integer"
                                           },
                                           "sub_document_count": {
                                             "type": "integer"
@@ -8826,6 +9054,12 @@
                                     "name": {
                                       "type": "string"
                                     },
+                                    "optional_document_count": {
+                                      "type": "integer"
+                                    },
+                                    "required_document_count": {
+                                      "type": "integer"
+                                    },
                                     "sub_document_count": {
                                       "type": "integer"
                                     },
@@ -8896,6 +9130,12 @@
                               },
                               "name": {
                                 "type": "string"
+                              },
+                              "optional_document_count": {
+                                "type": "integer"
+                              },
+                              "required_document_count": {
+                                "type": "integer"
                               },
                               "sub_document_count": {
                                 "type": "integer"
@@ -14519,6 +14759,8 @@
                                 "is_required",
                                 "sub_document_count",
                                 "uploaded_document_count",
+                                "required_document_count",
+                                "optional_document_count",
                                 "children",
                                 "file_count",
                                 "files"
@@ -14534,6 +14776,8 @@
                                       "is_required",
                                       "sub_document_count",
                                       "uploaded_document_count",
+                                      "required_document_count",
+                                      "optional_document_count",
                                       "children",
                                       "file_count",
                                       "files"
@@ -14549,6 +14793,8 @@
                                             "is_required",
                                             "sub_document_count",
                                             "uploaded_document_count",
+                                            "required_document_count",
+                                            "optional_document_count",
                                             "children",
                                             "file_count",
                                             "files"
@@ -14577,6 +14823,12 @@
                                             },
                                             "name": {
                                               "type": "string"
+                                            },
+                                            "optional_document_count": {
+                                              "type": "integer"
+                                            },
+                                            "required_document_count": {
+                                              "type": "integer"
                                             },
                                             "sub_document_count": {
                                               "type": "integer"
@@ -14649,6 +14901,12 @@
                                       "name": {
                                         "type": "string"
                                       },
+                                      "optional_document_count": {
+                                        "type": "integer"
+                                      },
+                                      "required_document_count": {
+                                        "type": "integer"
+                                      },
                                       "sub_document_count": {
                                         "type": "integer"
                                       },
@@ -14719,6 +14977,12 @@
                                 },
                                 "name": {
                                   "type": "string"
+                                },
+                                "optional_document_count": {
+                                  "type": "integer"
+                                },
+                                "required_document_count": {
+                                  "type": "integer"
                                 },
                                 "sub_document_count": {
                                   "type": "integer"
@@ -14739,6 +15003,8 @@
                                 "is_required",
                                 "sub_document_count",
                                 "uploaded_document_count",
+                                "required_document_count",
+                                "optional_document_count",
                                 "children",
                                 "file_count",
                                 "files"
@@ -14754,6 +15020,8 @@
                                       "is_required",
                                       "sub_document_count",
                                       "uploaded_document_count",
+                                      "required_document_count",
+                                      "optional_document_count",
                                       "children",
                                       "file_count",
                                       "files"
@@ -14769,6 +15037,8 @@
                                             "is_required",
                                             "sub_document_count",
                                             "uploaded_document_count",
+                                            "required_document_count",
+                                            "optional_document_count",
                                             "children",
                                             "file_count",
                                             "files"
@@ -14797,6 +15067,12 @@
                                             },
                                             "name": {
                                               "type": "string"
+                                            },
+                                            "optional_document_count": {
+                                              "type": "integer"
+                                            },
+                                            "required_document_count": {
+                                              "type": "integer"
                                             },
                                             "sub_document_count": {
                                               "type": "integer"
@@ -14869,6 +15145,12 @@
                                       "name": {
                                         "type": "string"
                                       },
+                                      "optional_document_count": {
+                                        "type": "integer"
+                                      },
+                                      "required_document_count": {
+                                        "type": "integer"
+                                      },
                                       "sub_document_count": {
                                         "type": "integer"
                                       },
@@ -14939,6 +15221,12 @@
                                 },
                                 "name": {
                                   "type": "string"
+                                },
+                                "optional_document_count": {
+                                  "type": "integer"
+                                },
+                                "required_document_count": {
+                                  "type": "integer"
                                 },
                                 "sub_document_count": {
                                   "type": "integer"
@@ -15277,6 +15565,8 @@
                                     "is_required",
                                     "sub_document_count",
                                     "uploaded_document_count",
+                                    "required_document_count",
+                                    "optional_document_count",
                                     "children",
                                     "file_count",
                                     "files"
@@ -15292,6 +15582,8 @@
                                           "is_required",
                                           "sub_document_count",
                                           "uploaded_document_count",
+                                          "required_document_count",
+                                          "optional_document_count",
                                           "children",
                                           "file_count",
                                           "files"
@@ -15307,6 +15599,8 @@
                                                 "is_required",
                                                 "sub_document_count",
                                                 "uploaded_document_count",
+                                                "required_document_count",
+                                                "optional_document_count",
                                                 "children",
                                                 "file_count",
                                                 "files"
@@ -15335,6 +15629,12 @@
                                                 },
                                                 "name": {
                                                   "type": "string"
+                                                },
+                                                "optional_document_count": {
+                                                  "type": "integer"
+                                                },
+                                                "required_document_count": {
+                                                  "type": "integer"
                                                 },
                                                 "sub_document_count": {
                                                   "type": "integer"
@@ -15407,6 +15707,12 @@
                                           "name": {
                                             "type": "string"
                                           },
+                                          "optional_document_count": {
+                                            "type": "integer"
+                                          },
+                                          "required_document_count": {
+                                            "type": "integer"
+                                          },
                                           "sub_document_count": {
                                             "type": "integer"
                                           },
@@ -15477,6 +15783,12 @@
                                     },
                                     "name": {
                                       "type": "string"
+                                    },
+                                    "optional_document_count": {
+                                      "type": "integer"
+                                    },
+                                    "required_document_count": {
+                                      "type": "integer"
                                     },
                                     "sub_document_count": {
                                       "type": "integer"
@@ -15497,6 +15809,8 @@
                                     "is_required",
                                     "sub_document_count",
                                     "uploaded_document_count",
+                                    "required_document_count",
+                                    "optional_document_count",
                                     "children",
                                     "file_count",
                                     "files"
@@ -15512,6 +15826,8 @@
                                           "is_required",
                                           "sub_document_count",
                                           "uploaded_document_count",
+                                          "required_document_count",
+                                          "optional_document_count",
                                           "children",
                                           "file_count",
                                           "files"
@@ -15527,6 +15843,8 @@
                                                 "is_required",
                                                 "sub_document_count",
                                                 "uploaded_document_count",
+                                                "required_document_count",
+                                                "optional_document_count",
                                                 "children",
                                                 "file_count",
                                                 "files"
@@ -15555,6 +15873,12 @@
                                                 },
                                                 "name": {
                                                   "type": "string"
+                                                },
+                                                "optional_document_count": {
+                                                  "type": "integer"
+                                                },
+                                                "required_document_count": {
+                                                  "type": "integer"
                                                 },
                                                 "sub_document_count": {
                                                   "type": "integer"
@@ -15627,6 +15951,12 @@
                                           "name": {
                                             "type": "string"
                                           },
+                                          "optional_document_count": {
+                                            "type": "integer"
+                                          },
+                                          "required_document_count": {
+                                            "type": "integer"
+                                          },
                                           "sub_document_count": {
                                             "type": "integer"
                                           },
@@ -15697,6 +16027,12 @@
                                     },
                                     "name": {
                                       "type": "string"
+                                    },
+                                    "optional_document_count": {
+                                      "type": "integer"
+                                    },
+                                    "required_document_count": {
+                                      "type": "integer"
                                     },
                                     "sub_document_count": {
                                       "type": "integer"
@@ -16704,6 +17040,8 @@
                                     "is_required",
                                     "sub_document_count",
                                     "uploaded_document_count",
+                                    "required_document_count",
+                                    "optional_document_count",
                                     "children",
                                     "file_count",
                                     "files"
@@ -16719,6 +17057,8 @@
                                           "is_required",
                                           "sub_document_count",
                                           "uploaded_document_count",
+                                          "required_document_count",
+                                          "optional_document_count",
                                           "children",
                                           "file_count",
                                           "files"
@@ -16734,6 +17074,8 @@
                                                 "is_required",
                                                 "sub_document_count",
                                                 "uploaded_document_count",
+                                                "required_document_count",
+                                                "optional_document_count",
                                                 "children",
                                                 "file_count",
                                                 "files"
@@ -16762,6 +17104,12 @@
                                                 },
                                                 "name": {
                                                   "type": "string"
+                                                },
+                                                "optional_document_count": {
+                                                  "type": "integer"
+                                                },
+                                                "required_document_count": {
+                                                  "type": "integer"
                                                 },
                                                 "sub_document_count": {
                                                   "type": "integer"
@@ -16834,6 +17182,12 @@
                                           "name": {
                                             "type": "string"
                                           },
+                                          "optional_document_count": {
+                                            "type": "integer"
+                                          },
+                                          "required_document_count": {
+                                            "type": "integer"
+                                          },
                                           "sub_document_count": {
                                             "type": "integer"
                                           },
@@ -16904,6 +17258,12 @@
                                     },
                                     "name": {
                                       "type": "string"
+                                    },
+                                    "optional_document_count": {
+                                      "type": "integer"
+                                    },
+                                    "required_document_count": {
+                                      "type": "integer"
                                     },
                                     "sub_document_count": {
                                       "type": "integer"
@@ -16924,6 +17284,8 @@
                                     "is_required",
                                     "sub_document_count",
                                     "uploaded_document_count",
+                                    "required_document_count",
+                                    "optional_document_count",
                                     "children",
                                     "file_count",
                                     "files"
@@ -16939,6 +17301,8 @@
                                           "is_required",
                                           "sub_document_count",
                                           "uploaded_document_count",
+                                          "required_document_count",
+                                          "optional_document_count",
                                           "children",
                                           "file_count",
                                           "files"
@@ -16954,6 +17318,8 @@
                                                 "is_required",
                                                 "sub_document_count",
                                                 "uploaded_document_count",
+                                                "required_document_count",
+                                                "optional_document_count",
                                                 "children",
                                                 "file_count",
                                                 "files"
@@ -16982,6 +17348,12 @@
                                                 },
                                                 "name": {
                                                   "type": "string"
+                                                },
+                                                "optional_document_count": {
+                                                  "type": "integer"
+                                                },
+                                                "required_document_count": {
+                                                  "type": "integer"
                                                 },
                                                 "sub_document_count": {
                                                   "type": "integer"
@@ -17054,6 +17426,12 @@
                                           "name": {
                                             "type": "string"
                                           },
+                                          "optional_document_count": {
+                                            "type": "integer"
+                                          },
+                                          "required_document_count": {
+                                            "type": "integer"
+                                          },
                                           "sub_document_count": {
                                             "type": "integer"
                                           },
@@ -17124,6 +17502,12 @@
                                     },
                                     "name": {
                                       "type": "string"
+                                    },
+                                    "optional_document_count": {
+                                      "type": "integer"
+                                    },
+                                    "required_document_count": {
+                                      "type": "integer"
                                     },
                                     "sub_document_count": {
                                       "type": "integer"
@@ -18135,6 +18519,8 @@
                                     "is_required",
                                     "sub_document_count",
                                     "uploaded_document_count",
+                                    "required_document_count",
+                                    "optional_document_count",
                                     "children",
                                     "file_count",
                                     "files"
@@ -18150,6 +18536,8 @@
                                           "is_required",
                                           "sub_document_count",
                                           "uploaded_document_count",
+                                          "required_document_count",
+                                          "optional_document_count",
                                           "children",
                                           "file_count",
                                           "files"
@@ -18165,6 +18553,8 @@
                                                 "is_required",
                                                 "sub_document_count",
                                                 "uploaded_document_count",
+                                                "required_document_count",
+                                                "optional_document_count",
                                                 "children",
                                                 "file_count",
                                                 "files"
@@ -18193,6 +18583,12 @@
                                                 },
                                                 "name": {
                                                   "type": "string"
+                                                },
+                                                "optional_document_count": {
+                                                  "type": "integer"
+                                                },
+                                                "required_document_count": {
+                                                  "type": "integer"
                                                 },
                                                 "sub_document_count": {
                                                   "type": "integer"
@@ -18265,6 +18661,12 @@
                                           "name": {
                                             "type": "string"
                                           },
+                                          "optional_document_count": {
+                                            "type": "integer"
+                                          },
+                                          "required_document_count": {
+                                            "type": "integer"
+                                          },
                                           "sub_document_count": {
                                             "type": "integer"
                                           },
@@ -18335,6 +18737,12 @@
                                     },
                                     "name": {
                                       "type": "string"
+                                    },
+                                    "optional_document_count": {
+                                      "type": "integer"
+                                    },
+                                    "required_document_count": {
+                                      "type": "integer"
                                     },
                                     "sub_document_count": {
                                       "type": "integer"
@@ -18355,6 +18763,8 @@
                                     "is_required",
                                     "sub_document_count",
                                     "uploaded_document_count",
+                                    "required_document_count",
+                                    "optional_document_count",
                                     "children",
                                     "file_count",
                                     "files"
@@ -18370,6 +18780,8 @@
                                           "is_required",
                                           "sub_document_count",
                                           "uploaded_document_count",
+                                          "required_document_count",
+                                          "optional_document_count",
                                           "children",
                                           "file_count",
                                           "files"
@@ -18385,6 +18797,8 @@
                                                 "is_required",
                                                 "sub_document_count",
                                                 "uploaded_document_count",
+                                                "required_document_count",
+                                                "optional_document_count",
                                                 "children",
                                                 "file_count",
                                                 "files"
@@ -18413,6 +18827,12 @@
                                                 },
                                                 "name": {
                                                   "type": "string"
+                                                },
+                                                "optional_document_count": {
+                                                  "type": "integer"
+                                                },
+                                                "required_document_count": {
+                                                  "type": "integer"
                                                 },
                                                 "sub_document_count": {
                                                   "type": "integer"
@@ -18485,6 +18905,12 @@
                                           "name": {
                                             "type": "string"
                                           },
+                                          "optional_document_count": {
+                                            "type": "integer"
+                                          },
+                                          "required_document_count": {
+                                            "type": "integer"
+                                          },
                                           "sub_document_count": {
                                             "type": "integer"
                                           },
@@ -18555,6 +18981,12 @@
                                     },
                                     "name": {
                                       "type": "string"
+                                    },
+                                    "optional_document_count": {
+                                      "type": "integer"
+                                    },
+                                    "required_document_count": {
+                                      "type": "integer"
                                     },
                                     "sub_document_count": {
                                       "type": "integer"
@@ -22345,7 +22777,7 @@
       }
     }
   },
-  "x-date": "2026-05-29 16:28:29",
+  "x-date": "2026-05-29 18:07:22",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
