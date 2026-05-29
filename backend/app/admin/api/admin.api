@@ -48,6 +48,10 @@ service admin-api {
 	@doc "sync api"
 	@handler SyncApi
 	get /common/sync_api (EmptyRequest) returns (EmptyResponse)
+
+	@doc "sync resource"
+	@handler SyncResource
+	get /common/sync_resource (EmptyRequest) returns (EmptyResponse)
 }
 
 // ============== common end =============

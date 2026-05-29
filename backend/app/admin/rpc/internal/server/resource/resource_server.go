@@ -52,3 +52,8 @@ func (s *ResourceServer) UserMenu(ctx context.Context, in *admin.EmptyRequest) (
 	l := resourcelogic.NewUserMenuLogic(ctx, s.svcCtx)
 	return l.UserMenu(in)
 }
+
+func (s *ResourceServer) SyncResource(ctx context.Context, in *admin.SyncResourceRequest) (*admin.EmptyResponse, error) {
+	l := resourcelogic.NewSyncResourceLogic(ctx, s.svcCtx)
+	return l.SyncResource(in)
+}

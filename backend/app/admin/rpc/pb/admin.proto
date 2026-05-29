@@ -538,6 +538,14 @@ message ResourceDetailResponse {
 }
 
 
+message SyncResourceRequest {
+  SyncResourceRequestData data = 1;
+}
+
+message SyncResourceRequestData {
+  string resource_json = 1;
+}
+
 service resource {
   rpc ResourceTree(ResourceTreeRequest) returns(ResourceTreeResponse);
   rpc Create(ResourceCreateRequest) returns(ResourceDetailResponse);
@@ -545,6 +553,7 @@ service resource {
   rpc Delete(ResourceDeleteRequest) returns(EmptyResponse);
   rpc Detail(ResourceDetailRequest) returns(ResourceDetailResponse);
   rpc UserMenu(EmptyRequest) returns(ResourceTreeResponse);
+  rpc SyncResource(SyncResourceRequest) returns(EmptyResponse);
 }
 // =================== resource service end =================
 // ================= role service start =================

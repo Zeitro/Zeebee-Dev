@@ -23,6 +23,7 @@ type (
 	ResourceTreeRequest    = admin.ResourceTreeRequest
 	ResourceTreeResponse   = admin.ResourceTreeResponse
 	ResourceUpdateRequest  = admin.ResourceUpdateRequest
+	SyncResourceRequest    = admin.SyncResourceRequest
 
 	Resource interface {
 		ResourceTree(ctx context.Context, in *ResourceTreeRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error)
@@ -31,6 +32,7 @@ type (
 		Delete(ctx context.Context, in *ResourceDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		Detail(ctx context.Context, in *ResourceDetailRequest, opts ...grpc.CallOption) (*ResourceDetailResponse, error)
 		UserMenu(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error)
+		SyncResource(ctx context.Context, in *SyncResourceRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	}
 
 	defaultResource struct {
@@ -72,4 +74,9 @@ func (m *defaultResource) Detail(ctx context.Context, in *ResourceDetailRequest,
 func (m *defaultResource) UserMenu(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error) {
 	client := admin.NewResourceClient(m.cli.Conn())
 	return client.UserMenu(ctx, in, opts...)
+}
+
+func (m *defaultResource) SyncResource(ctx context.Context, in *SyncResourceRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	client := admin.NewResourceClient(m.cli.Conn())
+	return client.SyncResource(ctx, in, opts...)
 }

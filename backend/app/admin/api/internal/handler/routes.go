@@ -127,6 +127,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: common.SyncApiHandler(serverCtx),
 			},
 			{
+				// sync resource
+				Method:  http.MethodGet,
+				Path:    "/common/sync_resource",
+				Handler: common.SyncResourceHandler(serverCtx),
+			},
+			{
 				// select options
 				Method:  http.MethodGet,
 				Path:    "/select_options",
