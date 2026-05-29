@@ -336,6 +336,10 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 	loanProperty.LivingAreaSqft = borrowerProperty.LivingAreaSqft
 	loanProperty.Address = borrowerProperty.Address
 	loanProperty.BorrowerPropertyId = reqData.LoanProperty.BorrowerPropertyId
+	if oldLoan!=nil && oldLoan.LoanProperty != nil {
+		loanProperty.Id = oldLoan.LoanProperty.Id
+	}
+
 	if loanProperty.YearlyLiabilityExpenseAmount > 0 {
 		loanProperty.Dscr = mathutil.RoundToFloat((loanProperty.EstYearlyRentalIncomeAmount/loanProperty.YearlyLiabilityExpenseAmount)*100, 2)
 	}
