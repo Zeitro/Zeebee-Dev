@@ -1,12 +1,13 @@
 import { BtnPopUpModal, DeleteBtn, PermissionSlot } from '@repo/shared-methods';
 import { userStatusColor, iconData } from '@repo/shared-methods/enum';
-import { message, Space } from 'antd';
+import { Button, message, Space } from 'antd';
 import { useState, useRef } from 'react';
 import ApiMainModal from './ApiMain';
 import ResourceMain from './ResourceMain';
-import { createRequest, eventBus } from '@repo/shared-methods/utils';
+import { createRequest, eventBus, copyToClipboard } from '@repo/shared-methods/utils';
 import { useAuth } from '@repo/shared-methods/hooks';
 import { PERMISSIONS } from '@config/permissions';
+import { CopyOutlined } from '@ant-design/icons';
 const useColumn = ({ eventBusPrefix, api }) => {
 	const { getActiveByPermission } = useAuth();
 	const { request } = createRequest();
@@ -53,6 +54,15 @@ const useColumn = ({ eventBusPrefix, api }) => {
 			setDeleteLoading(false);
 			throw error;
 		}
+	};
+
+	const handleCopyCode = (record) => {
+		let str = JSON.stringify([record]);
+		copyToClipboard(str);
+		message.open({
+			type: 'success',
+			content: 'Copy code successfully',
+		});
 	};
 
 	const apiColumns = [
@@ -273,6 +283,9 @@ const useColumn = ({ eventBusPrefix, api }) => {
 					width: 50,
 				},
 				{
+					width: 50,
+				},
+				{
 					permission: PERMISSIONS.RESOURCE.DELETE,
 					width: 70,
 				},
@@ -298,6 +311,11 @@ const useColumn = ({ eventBusPrefix, api }) => {
 								Edit
 							</BtnPopUpModal>
 						</PermissionSlot>
+						<Button
+							type="link"
+							icon={<CopyOutlined />}
+							onClick={() => handleCopyCode(record)}
+						/>
 						<PermissionSlot code={PERMISSIONS.RESOURCE.DELETE}>
 							<DeleteBtn
 								title="Are you sure delete this resource?"
