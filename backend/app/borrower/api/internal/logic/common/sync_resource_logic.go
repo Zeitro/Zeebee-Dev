@@ -29,10 +29,6 @@ func NewSyncResourceLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sync
 }
 
 func (l *SyncResourceLogic) SyncResource(req *types.EmptyRequest) (resp *types.EmptyResponse, err error) {
-	// resourceJson, err := json.Marshal(resources)
-	// if err != nil {
-	// 	return nil, errorx.Wrap(err, "failed to marshal resources")
-	// }
 	var resourceList []dto.ResourceSyncItemDto
 	err = json.Unmarshal(resourceBytes, &resourceList)
 	if err != nil {
@@ -57,60 +53,6 @@ func (l *SyncResourceLogic) SyncResource(req *types.EmptyRequest) (resp *types.E
 
 	return &types.EmptyResponse{}, nil
 }
-
-// var resources = []dto.ResourceSyncItemDto{
-// 	{
-// 		ResourceType:    constants.ResourceTypeMenu,
-// 		Name:            "Test Menu",
-// 		Path:            "/TestMenu",
-// 		Icon:            "",
-// 		Tag:             "TestMenu",
-// 		IsShow:          true,
-// 		Status:          constants.CommonStatusActive,
-// 		EnableDataScope: false,
-// 		Description:     "test menu",
-// 		IsPublic:        false,
-// 		Children: []dto.ResourceSyncItemDto{
-// 			{
-// 				ResourceType:    constants.ResourceTypeMenu,
-// 				Name:            "sub test menu",
-// 				Path:            "/SubTestMenu",
-// 				Icon:            "",
-// 				Tag:             "TestMenu:Sub",
-// 				IsShow:          true,
-// 				Status:          constants.CommonStatusActive,
-// 				EnableDataScope: false,
-// 				Description:     "sub test menu",
-// 				IsPublic:        false,
-// 				Children: []dto.ResourceSyncItemDto{
-// 					{
-// 						ResourceType:    constants.ResourceTypeButton,
-// 						Name:            "create",
-// 						Path:            "",
-// 						Icon:            "",
-// 						Tag:             "TestMenu:Sub:Create",
-// 						IsShow:          true,
-// 						Status:          constants.CommonStatusActive,
-// 						EnableDataScope: false,
-// 						Description:     "create button",
-// 						IsPublic:        false,
-// 						Apis: []dto.ApiSyncItemDto{
-// 							{
-// 								Path:   "/api/v1/loan/:id",
-// 								Method: "GET",
-// 							},
-// 							{
-// 								Path:   "/api/v1/loan",
-// 								Method: "POST",
-// 							},
-// 						},
-// 					},
-// 				},
-// 			},
-// 		},
-// 		Apis: nil,
-// 	},
-// }
 
 var resourceBytes []byte = []byte(`[
   {
