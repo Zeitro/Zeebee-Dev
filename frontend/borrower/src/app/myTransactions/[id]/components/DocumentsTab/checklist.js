@@ -22,7 +22,7 @@ function slugifyCategoryKey(name, documentId) {
  */
 function mapChecklistCategory(doc) {
 	const children = doc?.children ?? [];
-	const subCount = doc?.sub_document_count ?? children.length;
+	const subCount = doc?.required_document_count ?? children.length;
 	const uploaded = doc?.uploaded_document_count ?? 0;
 	const pendingCount = Math.max(0, subCount - uploaded);
 
