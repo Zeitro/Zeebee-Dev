@@ -977,9 +977,18 @@ message ResourceTreeRequestData {
 message ResourceTreeResponse {
   repeated ResourceTreeEntity data = 1;
 }
+message SyncResourceRequest {
+  SyncResourceRequestData data = 1;
+}
+
+message SyncResourceRequestData {
+  string resource_json = 1;
+}
+
 service resource {
   rpc ResourceTree(ResourceTreeRequest) returns(ResourceTreeResponse);
   rpc UserMenu(EmptyRequest) returns(ResourceTreeResponse);
+  rpc SyncResource(SyncResourceRequest) returns(EmptyResponse);
 }
 // =================== resource service end =================
 // =================== role service start =================

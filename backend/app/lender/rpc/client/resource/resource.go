@@ -15,12 +15,15 @@ import (
 
 type (
 	EmptyRequest         = lender.EmptyRequest
+	EmptyResponse        = lender.EmptyResponse
 	ResourceTreeRequest  = lender.ResourceTreeRequest
 	ResourceTreeResponse = lender.ResourceTreeResponse
+	SyncResourceRequest  = lender.SyncResourceRequest
 
 	Resource interface {
 		ResourceTree(ctx context.Context, in *ResourceTreeRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error)
 		UserMenu(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error)
+		SyncResource(ctx context.Context, in *SyncResourceRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	}
 
 	defaultResource struct {
@@ -42,4 +45,9 @@ func (m *defaultResource) ResourceTree(ctx context.Context, in *ResourceTreeRequ
 func (m *defaultResource) UserMenu(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ResourceTreeResponse, error) {
 	client := lender.NewResourceClient(m.cli.Conn())
 	return client.UserMenu(ctx, in, opts...)
+}
+
+func (m *defaultResource) SyncResource(ctx context.Context, in *SyncResourceRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	client := lender.NewResourceClient(m.cli.Conn())
+	return client.SyncResource(ctx, in, opts...)
 }
