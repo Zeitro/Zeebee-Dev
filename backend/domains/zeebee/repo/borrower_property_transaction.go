@@ -118,8 +118,7 @@ func (repo *BorrowerPropertyTransactionRepo) Page(ctx context.Context, pageReq d
 	propTable := model.BorrowerProperty{}.TableName()
 
 	filter := pageReq.Filter
-	query := repo.GetDB().
-		Table(transTable).WithContext(ctx).
+	query := repo.Client(ctx).
 		Select(fmt.Sprintf("%s.*, %s.address", transTable, propTable)).
 		Joins(fmt.Sprintf("LEFT JOIN %s ON %s.borrower_property_id = %s.id", propTable, transTable, propTable)).
 		Where(fmt.Sprintf("%s.organization_id = ?", transTable), filter.OrganizationId).
@@ -128,8 +127,8 @@ func (repo *BorrowerPropertyTransactionRepo) Page(ctx context.Context, pageReq d
 	// keyword: fuzzy match on property address (address1, city, state)
 	if len(filter.Keyword) > 0 {
 		query = query.Where(fmt.Sprintf(
-			"%s.address->>'address1' LIKE @keyword OR %s.address->>'city' LIKE @keyword OR %s.address->>'state' LIKE @keyword",
-			propTable, propTable, propTable,
+			"%s.code LIKE @keyword OR %s.address->>'address1' LIKE @keyword OR %s.address->>'city' LIKE @keyword OR %s.address->>'state' LIKE @keyword",
+			transTable, propTable, propTable, propTable,
 		), sql.Named("keyword", "%"+filter.Keyword+"%"))
 	}
 
