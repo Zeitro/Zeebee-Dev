@@ -8,6 +8,7 @@ import {
 	formatFirstLetterName,
 	formatTime,
 } from '@repo/shared-methods/utils';
+import { getActivityLogDisplayFields } from './activityLogFields';
 
 const formatFieldValue = (field) => {
 	const raw = field?.value;
@@ -18,6 +19,8 @@ const formatFieldValue = (field) => {
 };
 
 const ActivityLogItem = ({ item, style }) => {
+	const fields = getActivityLogDisplayFields(item);
+
 	return (
 		<div className="flex flex-col gap-4 border-b border-base-border py-4 mb-2" style={style}>
 			<div className="flex items-center justify-between gap-4">
@@ -45,7 +48,7 @@ const ActivityLogItem = ({ item, style }) => {
 					</span>
 				</div>
 			</div>
-			{(item?.fields || []).map((field, index) => (
+			{fields.map((field, index) => (
 				<div
 					key={`${field?.label}-${index}`}
 					className="flex items-center gap-6 text-sm leading-[22px]"

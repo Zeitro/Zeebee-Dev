@@ -39,7 +39,7 @@ const PropertyDetailsForm = ({ rowData }) => {
 				/>
 			</Form.Item>
 			<Form.Item
-				label="Living Area"
+				label="Living area"
 				name="living_area_sqft"
 				rules={[{ required: true, message: 'Please enter Living area sqft!' }]}
 			>
@@ -62,6 +62,18 @@ const PropertyDetailsForm = ({ rowData }) => {
 					controls={false}
 					placeholder="Enter number of units"
 					disabled={unitInfo?.disabled}
+				/>
+			</Form.Item>
+			<Form.Item
+				label="Lot area"
+				name="lot_area_sqft"
+				rules={[{ required: true, message: 'Please enter Lot area sqft!' }]}
+			>
+				<InputNumber
+					style={{ width: '100%' }}
+					{...livingAreaProps}
+					placeholder="Enter Lot area sqft"
+					suffix="sqft"
 				/>
 			</Form.Item>
 			<Form.Item

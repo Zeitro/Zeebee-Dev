@@ -1,7 +1,13 @@
 'use client';
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
+import {
+	DeleteOutlined,
+	EditOutlined,
+	PlusOutlined,
+	ProfileOutlined,
+	ReloadOutlined,
+} from '@ant-design/icons';
 import { Button, message, Space } from 'antd';
 import { useRouter } from 'next/navigation';
 import {
@@ -13,7 +19,6 @@ import {
 } from '@repo/shared-methods';
 import AddModal from '@repo/shared-methods/componentsUi/SelectCard/Add/property';
 import { useProperty } from '@repo/shared-methods/componentsUi/SelectCard/Item/useCommon';
-import { des } from '@repo/shared-methods/enum';
 import { useAuth, useGetOptions } from '@repo/shared-methods/hooks';
 import {
 	assemblyAddress,
@@ -30,7 +35,7 @@ import NewTransactionModal from '@/app/myTransactions/components/NewTransactionM
 
 const PROPERTY_API = '/property/page';
 
-const DEFAULT_SORTER = { column: 'total_amount', sort: des };
+// const DEFAULT_SORTER = { column: 'total_amount', sort: des };
 
 const Properties = () => {
 	const router = useRouter();
@@ -49,10 +54,9 @@ const Properties = () => {
 	const getData = useCallback(
 		(params) => {
 			cancelMatch(PROPERTY_API);
-			const sorter = params?.sorter?.column ? params.sorter : DEFAULT_SORTER;
 			return request(PROPERTY_API, {
 				method: 'POST',
-				body: { ...params, sorter },
+				body: { ...params },
 			});
 		},
 		[request, cancelMatch],
@@ -116,7 +120,7 @@ const Properties = () => {
 						icon={<PlusOutlined />}
 						size="large"
 					>
-						Add a property
+						Add property
 					</BtnPopUpModal>
 				),
 			},
@@ -199,7 +203,6 @@ const Properties = () => {
 				key: 'total_amount',
 				width: 180,
 				sorter: true,
-				defaultSortOrder: 'descend',
 				render: (v) => displayValue(v, formatAmount),
 			},
 			{
@@ -294,18 +297,22 @@ const Properties = () => {
 				key: 'action',
 				fixed: 'right',
 				buttonOptions: [
-					{ permission: PERMISSIONS?.PROPERTY?.DETAILS, width: 62 },
-					{ permission: PERMISSIONS?.PROPERTY?.EDIT, width: 50 },
-					{ permission: PERMISSIONS?.TRANSACTION?.ADD, width: 110 },
-					{ permission: PERMISSIONS?.PROPERTY?.DELETE, width: 62 },
+					{ permission: PERMISSIONS?.PROPERTY?.DETAILS, width: 80 },
+					{ permission: PERMISSIONS?.PROPERTY?.EDIT, width: 62 },
+					{ permission: PERMISSIONS?.TRANSACTION?.ADD, width: 140 },
+					{ permission: PERMISSIONS?.PROPERTY?.DELETE, width: 78 },
 				],
 				render: (_, record) => (
-					<Space size="small" onClick={(e) => e.stopPropagation()}>
+					<Space size={0}>
 						<PermissionSlot code={PERMISSIONS?.PROPERTY?.DETAILS}>
 							<Button
+								icon={<ProfileOutlined />}
 								type="link"
 								size="small"
-								onClick={() => router.push(`/properties/${record?.id}`)}
+								onClick={(e) => {
+									e.stopPropagation();
+									router.push(`/properties/${record?.id}`);
+								}}
 							>
 								Details
 							</Button>
@@ -321,15 +328,19 @@ const Properties = () => {
 								)}
 								type="link"
 								size="small"
+								icon={<EditOutlined />}
+								isStopPropagation={true}
 							>
 								Edit
 							</BtnPopUpModal>
 						</PermissionSlot>
 						<PermissionSlot code={PERMISSIONS?.TRANSACTION?.ADD}>
 							<Button
+								icon={<PlusOutlined />}
 								type="link"
 								size="small"
-								onClick={() => {
+								onClick={(e) => {
+									e.stopPropagation();
 									setTransactionModalProperty(record);
 									setTransactionModalOpen(true);
 								}}
@@ -339,6 +350,7 @@ const Properties = () => {
 						</PermissionSlot>
 						<PermissionSlot code={PERMISSIONS?.PROPERTY?.DELETE}>
 							<DeleteBtn
+								icon={<DeleteOutlined />}
 								type="link"
 								size="small"
 								title="Are you sure delete this Property?"
@@ -359,6 +371,7 @@ const Properties = () => {
 									}
 									return true;
 								}}
+								isStopPropagation={true}
 							>
 								Delete
 							</DeleteBtn>
@@ -369,6 +382,12 @@ const Properties = () => {
 		],
 		[router, handleDelete, deleteLoading, getActiveByPermission],
 	);
+
+	const handleSelectedRow = (row) => {
+		if (hasPermission(PERMISSIONS?.PROPERTY?.DETAILS)) {
+			router.push(`/properties/${row.id}`);
+		}
+	};
 
 	return (
 		<>
@@ -381,6 +400,11 @@ const Properties = () => {
 				getData={getData}
 				scroll={{ x: 'max-content' }}
 				filterWrapClassName="px-8 pt-10 pb-8 flex-1 overflow-hidden flex flex-col min-h-0"
+				onRow={(row) => ({
+					onClick: () => {
+						handleSelectedRow(row);
+					},
+				})}
 			/>
 			<NewTransactionModal
 				open={transactionModalOpen}

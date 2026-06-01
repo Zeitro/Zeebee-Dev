@@ -35,6 +35,7 @@ const DetailsTab = ({ rowData, propertyId, canEdit, onRefresh }) => {
 			unit: rowData?.unit,
 			bedrooms: rowData?.bedrooms,
 			bathrooms: rowData?.bathrooms,
+			lot_area_sqft: rowData?.lot_area_sqft,
 		});
 	}, [form, rowData]);
 

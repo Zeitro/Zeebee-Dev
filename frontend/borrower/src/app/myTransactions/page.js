@@ -4,6 +4,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
 	DeleteOutlined,
+	EditOutlined,
 	FolderOpenOutlined,
 	PlusOutlined,
 	ReloadOutlined,
@@ -82,7 +83,7 @@ const MyTransactionsPage = () => {
 		() => [
 			{
 				filterType: 'input',
-				placeholder: 'Search by property, city, state, type or status...',
+				placeholder: 'Search by property, city, state, ID',
 				paramsKey: 'keyword',
 				value: keyword,
 				onChange: ({ target: { value } }) => setKeyword(value),
@@ -134,11 +135,13 @@ const MyTransactionsPage = () => {
 						filter: { keyword: '', type: '', status: '' },
 					});
 				},
-				// colProps: { xs: 12, sm: 6, md: 'auto' },
+				colProps: {
+					className: 'flex-1',
+				},
 			},
 			{
 				filterType: 'button',
-				text: 'Add a transaction',
+				text: 'Add transaction',
 				icon: <PlusOutlined />,
 				onClick: () => setNewTransactionOpen(true),
 				hidden: !hasPermission(PERMISSIONS?.TRANSACTION?.ADD),
@@ -176,6 +179,7 @@ const MyTransactionsPage = () => {
 					return isHavePermission ? (
 						<Typography.Link
 							onClick={(e) => {
+								e.stopPropagation();
 								e.preventDefault();
 								window.open(`/properties/${record.borrower_property_id}`, '_blank');
 							}}
@@ -235,21 +239,24 @@ const MyTransactionsPage = () => {
 			getActiveByPermission({
 				buttonOptions: [
 					{ permission: PERMISSIONS?.PROPERTY?.DETAILS, width: 30 },
-					{ permission: PERMISSIONS?.TRANSACTION?.EDIT, width: 50 },
-					{ permission: PERMISSIONS?.TRANSACTION?.DELETE, width: 62 },
+					{ permission: PERMISSIONS?.TRANSACTION?.EDIT, width: 65 },
+					{ permission: PERMISSIONS?.TRANSACTION?.DELETE, width: 80 },
 				],
 				render: (_, record) => (
-					<Space size="small">
+					<Space size={0} onClick={(e) => e.stopPropagation()}>
 						<PermissionSlot code={PERMISSIONS?.TRANSACTION?.DETAILS}>
 							<Button
 								size="small"
 								type="link"
-								icon={<FolderOpenOutlined className="text-base-warning" />}
+								icon={<FolderOpenOutlined />}
 								onClick={() => router.push(`/myTransactions/${record.id}`)}
-							/>
+							>
+								Document
+							</Button>
 						</PermissionSlot>
 						<PermissionSlot code={PERMISSIONS?.TRANSACTION?.EDIT}>
 							<Button
+								icon={<EditOutlined />}
 								size="small"
 								type="link"
 								onClick={() =>
@@ -276,6 +283,12 @@ const MyTransactionsPage = () => {
 		[router, hasPermission, getActiveByPermission, deleteLoading],
 	);
 
+	const handleSelectedRow = (row) => {
+		if (hasPermission(PERMISSIONS?.TRANSACTION?.DETAILS)) {
+			router.push(`/myTransactions/${row.id}`);
+		}
+	};
+
 	return (
 		<>
 			{contextHolder}
@@ -287,6 +300,11 @@ const MyTransactionsPage = () => {
 				getData={getData}
 				scroll={{ x: 'max-content' }}
 				filterWrapClassName="px-8 pt-10 pb-8 flex-1 overflow-hidden flex flex-col min-h-0"
+				onRow={(row) => ({
+					onClick: () => {
+						handleSelectedRow(row);
+					},
+				})}
 			/>
 			<NewTransactionModal
 				open={newTransactionOpen}
