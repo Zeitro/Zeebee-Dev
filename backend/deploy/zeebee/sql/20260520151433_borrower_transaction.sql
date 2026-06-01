@@ -7,7 +7,7 @@ CREATE TABLE "public"."borrower_property_transactions"
     "code"                 varchar(20)    NOT NULL DEFAULT '',
     "type"                 varchar(20)    NOT NULL DEFAULT 'Purchase',
     "status"               varchar(20)    NOT NULL DEFAULT 'Pending',
-    "coe_data"             date,
+    "coe_date"             date,
     "purchase_amount"      decimal(10, 2) NOT NULL DEFAULT 0,
     "emd_amount"           decimal(10, 2) NOT NULL DEFAULT 0,
     "property_type"        varchar(50)    NOT NULL DEFAULT '',
@@ -30,7 +30,7 @@ ON COLUMN "public"."borrower_property_transactions"."code" IS 'unique code';
 COMMENT
 ON COLUMN "public"."borrower_property_transactions"."type" IS 'Purchase,Sale,Re-finance,Change Title,Assignment';
 COMMENT
-ON COLUMN "public"."borrower_property_transactions"."status" IS 'Pending,Closed,Canclled';
+ON COLUMN "public"."borrower_property_transactions"."status" IS 'Pending,Closed,Cancelled';
 COMMENT
 ON COLUMN "public"."borrower_property_transactions"."coe_data" IS 'close of end date';
 

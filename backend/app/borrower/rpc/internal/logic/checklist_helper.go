@@ -20,29 +20,17 @@ func (b *BaseLogic) RecalculateBorrowerPropertyTransactionChecklist(ctx context.
 		"entity_id":   transactionId,
 	})
 	if err != nil {
-		err = errorx.Wrap(err, "Entity document not found")
+		err = errorx.Wrap(err, "entity document not found")
 		return
 	}
 
-	// single query: fetch all documents for this entity
 	allDocs, err := repos.DocumentRepo.GetAllByEntityDocumentIdWithTx(ctx, tx, entityDoc.Id)
 	if err != nil {
-		err = errorx.Wrap(err, "Failed to load documents")
+		err = errorx.Wrap(err, "failed to load documents")
 		return
 	}
 
-	// build parent-child map and find root
-	childrenMap := make(map[int64][]*model.Document)
-	var rootId int64
-	for _, doc := range allDocs {
-		if doc.ParentId == 0 {
-			rootId = doc.Id
-			continue
-		}
-		childrenMap[doc.ParentId] = append(childrenMap[doc.ParentId], doc)
-	}
-
-	// batch load file counts for all leaf documents
+	childrenMap := buildChildrenMap(allDocs)
 	leafIds := collectLeafIds(allDocs, childrenMap)
 	fileCountMap, err := repos.FileRepo.BatchFileCountByEntityIds(ctx, tx, leafIds, constants.FileEntityTypeDocument)
 	if err != nil {
@@ -50,23 +38,7 @@ func (b *BaseLogic) RecalculateBorrowerPropertyTransactionChecklist(ctx context.
 		return
 	}
 
-	// build checklist tree from root's direct children
-	rootChildren := childrenMap[rootId]
-	var requiredNodes, optionalNodes []dto.ChecklistNode
-	var totalReqCount, totalReqUpdatedCount, totalOptCount, totalOptUpdatedCount int32
-
-	for _, child := range rootChildren {
-		node := buildChecklistNode(child, childrenMap, fileCountMap)
-		if node.IsRequired {
-			requiredNodes = append(requiredNodes, node)
-			totalReqCount += countLeaves(node)
-			totalReqUpdatedCount += countUploadedLeaves(node)
-		} else {
-			optionalNodes = append(optionalNodes, node)
-			totalOptCount += countLeaves(node)
-			totalOptUpdatedCount += countUploadedLeaves(node)
-		}
-	}
+	checklist = BuildChecklistTree(allDocs, fileCountMap)
 
 	existing, err := repos.BorrowerPropertyTransactionRepo.FindOneByIdWithTx(ctx, tx, transactionId)
 	if err != nil {
@@ -78,8 +50,40 @@ func (b *BaseLogic) RecalculateBorrowerPropertyTransactionChecklist(ctx context.
 		return
 	}
 
-	existing.Checklist = dto.ChecklistRoot{
-		AllChecked:                        existing.Checklist.AllChecked,
+	checklist.AllChecked = existing.Checklist.AllChecked
+	existing.Checklist = checklist
+	_, err = b.svcCtx.AllRepos.BorrowerPropertyTransactionRepo.UpdateOneByIdWithTx(ctx, tx, transactionId, existing)
+	return existing.Checklist, errorx.WithStack(err)
+}
+
+// BuildChecklistTree builds a complete ChecklistRoot from loaded documents and file counts.
+// Pure computation — no DB dependency, suitable for unit testing.
+func BuildChecklistTree(allDocs []*model.Document, fileCountMap map[int64]int32) dto.ChecklistRoot {
+	childrenMap := buildChildrenMap(allDocs)
+	var rootId int64
+	for _, doc := range allDocs {
+		if doc.ParentId == 0 {
+			rootId = doc.Id
+			break
+		}
+	}
+
+	var requiredNodes, optionalNodes []dto.ChecklistNode
+	var totalReqCount, totalReqUpdatedCount, totalOptCount, totalOptUpdatedCount int32
+
+	for _, child := range childrenMap[rootId] {
+		node := buildChecklistNode(child, childrenMap, fileCountMap)
+		if node.IsRequired {
+			requiredNodes = append(requiredNodes, node)
+		} else {
+			optionalNodes = append(optionalNodes, node)
+		}
+		totalReqCount += node.RequiredDocumentCount
+		totalOptCount += node.OptionalDocumentCount
+		totalReqUpdatedCount += countUploadedLeaves(node)
+	}
+
+	return dto.ChecklistRoot{
 		TotalDocumentCount:                totalReqCount + totalOptCount,
 		TotalRequiredDocumentCount:        totalReqCount,
 		TotalRequiredUpdatedDocumentCount: totalReqUpdatedCount,
@@ -88,8 +92,16 @@ func (b *BaseLogic) RecalculateBorrowerPropertyTransactionChecklist(ctx context.
 		RequiredDocuments:                 requiredNodes,
 		OptionalDocuments:                 optionalNodes,
 	}
-	_, err = b.svcCtx.AllRepos.BorrowerPropertyTransactionRepo.UpdateOneByIdWithTx(ctx, tx, transactionId, existing)
-	return existing.Checklist, errorx.WithStack(err)
+}
+
+func buildChildrenMap(allDocs []*model.Document) map[int64][]*model.Document {
+	childrenMap := make(map[int64][]*model.Document)
+	for _, doc := range allDocs {
+		if doc.ParentId != 0 {
+			childrenMap[doc.ParentId] = append(childrenMap[doc.ParentId], doc)
+		}
+	}
+	return childrenMap
 }
 
 // buildChecklistNode recursively builds checklist node from in-memory maps
@@ -105,18 +117,12 @@ func buildChecklistNode(doc *model.Document, childrenMap map[int64][]*model.Docu
 
 	children := childrenMap[doc.Id]
 	if len(children) == 0 {
-		node := dto.ChecklistNode{
+		return dto.ChecklistNode{
 			Name:       doc.Name,
 			DocumentId: doc.Id,
 			IsRequired: isRequired,
 			FileCount:  fileCountMap[doc.Id],
 		}
-		if isRequired {
-			node.RequiredDocumentCount = 1
-		} else {
-			node.OptionalDocumentCount = 1
-		}
-		return node
 	}
 
 	var childNodes []dto.ChecklistNode
@@ -128,8 +134,11 @@ func buildChecklistNode(doc *model.Document, childrenMap map[int64][]*model.Docu
 		if childNode.FileCount > 0 || childNode.UploadedDocumentCount > 0 {
 			uploadedCount++
 		}
-		reqDocCount += childNode.RequiredDocumentCount
-		optDocCount += childNode.OptionalDocumentCount
+		if childNode.IsRequired {
+			reqDocCount++
+		} else {
+			optDocCount++
+		}
 	}
 
 	return dto.ChecklistNode{
@@ -158,17 +167,6 @@ func collectLeafIds(allDocs []*model.Document, childrenMap map[int64][]*model.Do
 	return ids
 }
 
-func countLeaves(node dto.ChecklistNode) int32 {
-	if len(node.Children) == 0 {
-		return 1
-	}
-	var count int32
-	for _, child := range node.Children {
-		count += countLeaves(child)
-	}
-	return count
-}
-
 func countUploadedLeaves(node dto.ChecklistNode) int32 {
 	if len(node.Children) == 0 {
 		if node.FileCount > 0 {
@@ -181,34 +179,4 @@ func countUploadedLeaves(node dto.ChecklistNode) int32 {
 		count += countUploadedLeaves(child)
 	}
 	return count
-}
-
-func (b *BaseLogic) FindTransactionIdByDocumentId(ctx context.Context, documentId int64) (int64, error) {
-	repos := b.svcCtx.AllRepos
-
-	// walk up to root document, then use entity_document_id for single lookup
-	doc, err := repos.DocumentRepo.FindOneById(ctx, documentId)
-	if err != nil {
-		return 0, err
-	}
-	for doc.ParentId != 0 {
-		doc, err = repos.DocumentRepo.FindOneById(ctx, doc.ParentId)
-		if err != nil {
-			return 0, err
-		}
-	}
-
-	if doc.EntityDocumentId == 0 {
-		return 0, errorx.New("document not bound to entity")
-	}
-
-	entityDoc, err := b.svcCtx.AllRepos.EntityDocumentRepo.FindOneById(ctx, doc.EntityDocumentId)
-	if err != nil {
-		return 0, errorx.Wrap(err, "entity document not found")
-	}
-
-	if entityDoc.EntityId == 0 {
-		return 0, errorx.New("transaction not found")
-	}
-	return entityDoc.EntityId, nil
 }
