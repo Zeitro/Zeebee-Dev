@@ -65,7 +65,7 @@ func (l *CreateDocumentLogic) CreateDocument(in *borrower.DocumentCreateRequest)
 	if !isDescendantOf(l.ctx, l.svcCtx.DocumentRepo, parent, entityDoc.RootDocumentId) {
 		return nil, errorx.New("parent document does not belong to this transaction")
 	}
-	if parent.Type != constants.DocumentTypeBranch {
+	if parent.Level != 1 {
 		return nil, errorx.New("parent document must be a branch")
 	}
 
@@ -101,6 +101,7 @@ func (l *CreateDocumentLogic) CreateDocument(in *borrower.DocumentCreateRequest)
 	var createdNames []string
 
 	err = l.svcCtx.DocumentRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
+		var innerErr error
 		for i, name := range in.Data.Names {
 			if existingNames[name] {
 				continue
@@ -115,7 +116,7 @@ func (l *CreateDocumentLogic) CreateDocument(in *borrower.DocumentCreateRequest)
 				Metadata:         metadataContent,
 			}
 
-			doc, innerErr := l.svcCtx.DocumentRepo.CreateWithTx(l.ctx, tx, doc, false)
+			doc, innerErr = l.svcCtx.DocumentRepo.CreateWithTx(l.ctx, tx, doc, false)
 			if innerErr != nil {
 				return innerErr
 			}
@@ -123,12 +124,22 @@ func (l *CreateDocumentLogic) CreateDocument(in *borrower.DocumentCreateRequest)
 			createdNames = append(createdNames, name)
 		}
 
+		// check parent document type
+		if parent.Type != constants.DocumentTypeBranch && parent.Type != constants.DocumentTypeRoot {
+			innerErr = l.svcCtx.DocumentRepo.UpdateColumnsByIdWithTx(l.ctx, tx, parent.Id, map[string]interface{}{
+				"type": constants.DocumentTypeBranch,
+			})
+			if innerErr != nil {
+				return innerErr
+			}
+		}
+
 		if len(createdDocs) == 0 {
 			return errorx.New("all document names already exist at this level")
 		}
 
 		// operation log
-		innerErr := l.baseLogic.OperationLogic.CreateOperationLog(l.ctx, tx, dto.OperationCreateDto{
+		innerErr = l.baseLogic.OperationLogic.CreateOperationLog(l.ctx, tx, dto.OperationCreateDto{
 			EntityId:       in.Data.TransactionId,
 			EntityType:     constants.OperationEntityTypeBorrowerPropertyTransaction,
 			OperatorId:     claim.OrganizationUserId,
