@@ -18,6 +18,7 @@ import DocumentsTab from './components/DocumentsTab';
 import DetailsTab from './components/DetailsTab';
 import LoansTab from './components/LoansTab';
 import LogTab from './components/LogTab';
+import TransactionDetailSkeleton from './components/TransactionDetailSkeleton';
 import { getStatusTagClass } from '../components/utils';
 import styles from './index.module.scss';
 import { PermissionSlot } from '@repo/shared-methods';
@@ -34,6 +35,7 @@ const TransactionDetailsPage = () => {
 	const [messageApi, contextHolder] = message.useMessage();
 	const { request } = useMemo(() => createRequest(), []);
 	const [loading, setLoading] = useState(false);
+	const [isInitialLoading, setIsInitialLoading] = useState(true);
 	const [deleteLoading, setDeleteLoading] = useState(false);
 	const [rowData, setRowData] = useState({});
 	const [tabFromUrl, setTabFromUrl] = useState(searchParams.get('tab') || 'documents');
@@ -55,6 +57,7 @@ const TransactionDetailsPage = () => {
 			setRowData({});
 		} finally {
 			setLoading(false);
+			setIsInitialLoading(false);
 		}
 	}, [api, request]);
 
@@ -142,6 +145,10 @@ const TransactionDetailsPage = () => {
 		],
 		[getDetails, id, loading, rowData, isSearchParamsEditing],
 	);
+
+	if (isInitialLoading) {
+		return <TransactionDetailSkeleton />;
+	}
 
 	return (
 		<div className="flex h-full flex-1 flex-col overflow-hidden bg-white">

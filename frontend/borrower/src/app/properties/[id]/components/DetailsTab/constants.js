@@ -11,13 +11,20 @@ export const ADDRESS_FIELDS = [
 export const PROPERTY_FIELDS = [
 	{ label: 'Property type', getValue: (data) => data?.property_type },
 	{
-		label: 'Living Area',
+		label: 'Living area',
 		getValue: (data) => {
 			const v = data?.living_area_sqft;
-			return v != null && v !== '' ? `${formatNumber(v)} sqft` : null;
+			return formatNumber(v, 'sqft');
 		},
 	},
 	{ label: 'Units', getValue: (data) => data?.unit },
+	{
+		label: 'Lot area',
+		getValue: (data) => {
+			const v = data?.lot_area_sqft;
+			return formatNumber(v, 'sqft');
+		},
+	},
 	{ label: 'Beds', getValue: (data) => data?.bedrooms },
 	{ label: 'Baths', getValue: (data) => data?.bathrooms },
 ];

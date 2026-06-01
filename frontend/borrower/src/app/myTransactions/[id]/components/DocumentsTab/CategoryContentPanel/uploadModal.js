@@ -5,6 +5,7 @@ import { CloseOutlined, FileTextOutlined, InboxOutlined } from '@ant-design/icon
 import { createRequest } from '@repo/shared-methods/utils';
 // const { TextArea } = Input;
 const UploadModal = ({ transaction_id, open, setOpen, record = {}, onRefresh }) => {
+	let accept = '.pdf,.png,.jpg,.jpeg';
 	const { request } = createRequest();
 	const uploadRef = useRef(null);
 	const [loading, setLoading] = useState(false);
@@ -53,7 +54,7 @@ const UploadModal = ({ transaction_id, open, setOpen, record = {}, onRefresh }) 
 				disabled: !fileList.length,
 			}}
 		>
-			<div className="h-[400px] overflow-hidden overflow-y-auto">
+			<div className="h-[500px] overflow-hidden overflow-y-auto">
 				<div className="pb-4">
 					<label>Document type</label>
 					<div className="font-medium text-black-dark">{record.name}</div>
@@ -66,7 +67,7 @@ const UploadModal = ({ transaction_id, open, setOpen, record = {}, onRefresh }) 
 					ref={uploadRef}
 					isReturnMoreInfo={true}
 					immediateUpload={false}
-					accept=".pdf,.png,.jpg,.jpeg"
+					accept={accept}
 					maxCount={10}
 					multiple={true}
 					onGetUploadList={setFileList}
@@ -88,10 +89,17 @@ const UploadModal = ({ transaction_id, open, setOpen, record = {}, onRefresh }) 
 						);
 					}}
 				>
-					<div className=" bg-gray-light py-4 w-full flex flex-col items-center border border-dashed border-base-border rounded-sm text-gray-light cursor-pointer hover:bg-[#E6F4FF]">
+					<div className="bg-gray-light py-12 w-full flex flex-col items-center border border-dashed border-base-border rounded-sm text-gray-light cursor-pointer hover:bg-[#E6F4FF]">
 						<InboxOutlined style={{ fontSize: '48px', color: 'var(--base-primary)' }} />
 						<div className="text-base pt-5 pb-1 text-foreground">
-							Click or drag file to this area to upload
+							Click or drag to upload.
+						</div>
+						<div className="text-base-label text-sm">
+							<span className="font-medium">Upload requirements</span>
+							<br />
+							1. Accepted formats: PDF, PNG, JPG, and JPEG.
+							<br />
+							2. Maximum file size: 20 MB.
 						</div>
 					</div>
 				</UploadFileButton>

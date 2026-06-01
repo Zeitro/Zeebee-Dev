@@ -15,7 +15,7 @@ function formatPropertyOptionLabel(p) {
 	const city = a?.city ?? '';
 	const state = a?.state ?? '';
 	const tail = [line1, city, state].filter(Boolean).join(', ');
-	return tail ? `P-${p?.id} - ${tail}` : `P-${p?.id}`;
+	return tail;
 }
 
 /**
@@ -105,7 +105,7 @@ const NewTransactionModal = ({ open, onClose, onSaved, initialProperty }) => {
 	return (
 		<NewModal
 			width={520}
-			title="New Transaction"
+			title="Add Transaction"
 			open={open}
 			okText="Save"
 			cancelText="Cancel"
