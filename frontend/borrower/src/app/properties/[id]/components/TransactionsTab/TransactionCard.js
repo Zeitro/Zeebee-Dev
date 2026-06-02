@@ -5,8 +5,8 @@ import { Progress } from 'antd';
 import { CaretRightFilled, FileTextOutlined } from '@ant-design/icons';
 import { displayValue, formatDate, formatTime } from '@repo/shared-methods/utils';
 import { getChecklistProgress } from '@/app/myTransactions/[id]/components/DocumentsTab/checklist';
-import { getStatusTagClass } from '@/app/myTransactions/components/utils';
 import TransactionCardExpandedContent from './TransactionCardExpandedContent';
+import TransactionStatusSelect from '@/app/myTransactions/[id]/components/TransactionStatusSelect';
 
 function getProgressStatus(status, completed, total) {
 	if (total > 0 && completed >= total) return 'success';
@@ -14,9 +14,14 @@ function getProgressStatus(status, completed, total) {
 	return 'normal';
 }
 
-const TransactionCard = ({ item, isExpanded, onToggle, onRefreshList }) => {
+const TransactionCard = ({
+	item,
+	isExpanded,
+	onToggle,
+	onRefreshList,
+	transactionStatusOptions,
+}) => {
 	const status = item?.status;
-	const tagClass = getStatusTagClass(status);
 	const { completed, total } = getChecklistProgress(item?.checklist);
 	const progressPercent = total > 0 ? Math.round((completed / total) * 100) : 0;
 
@@ -53,16 +58,15 @@ const TransactionCard = ({ item, isExpanded, onToggle, onRefreshList }) => {
 							<p className="m-0 text-xl font-medium leading-7 text-foreground">
 								{item?.type ? `${item.type} transaction` : displayValue(null)}
 							</p>
-							{status ? (
-								<span
-									className={[
-										'inline-flex whitespace-nowrap rounded-[2px] border px-2 text-xs leading-5',
-										tagClass,
-									].join(' ')}
-								>
-									{status}
-								</span>
-							) : null}
+							<div onClick={(e) => e.stopPropagation()}>
+								<TransactionStatusSelect
+									value={status}
+									options={transactionStatusOptions}
+									id={item?.id}
+									onSuccess={onRefreshList}
+									size="small"
+								/>
+							</div>
 						</div>
 						<div className="flex flex-wrap gap-6 text-sm font-medium leading-[22px] text-base-label">
 							<span>
