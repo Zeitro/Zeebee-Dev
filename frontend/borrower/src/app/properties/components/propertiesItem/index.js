@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import styles from './index.module.scss';
+// import { LOAN_ACTIVE_BADGE_CLASS, LOAN_PENDING_BADGE_CLASS } from '../loanStatusBadge';
 import { propertiesFieldArr, propertyList } from '@/enum/properties';
 import { Button, Col, message, Row, Space } from 'antd';
 import { useRouter } from 'next/navigation';
@@ -128,19 +129,19 @@ const PropertiesItem = ({ data, handleSearch }) => {
 						Loan Status
 					</p>
 					<div className="flex flex-wrap gap-1">
-						{!!data?.active_loan_count && (
-							<div className={styles.active}>
+						{/* {!!data?.active_loan_count && (
+							<div className={LOAN_ACTIVE_BADGE_CLASS}>
 								{data?.active_loan_count || 0} Active Loans
 							</div>
 						)}
 						{!!data?.pending_loan_count && (
-							<div className={styles.pending}>
+							<div className={LOAN_PENDING_BADGE_CLASS}>
 								{data?.pending_loan_count || 0} Pending Loans
 							</div>
 						)}
 						{!data?.pending_loan_count && !data?.active_loan_count && (
 							<span className="text-black-dark text-base font-medium">--</span>
-						)}
+						)} */}
 					</div>
 					<div className="pt-4">
 						<p className="text-base-gray text-sm pb-1">Nearest maturity date</p>

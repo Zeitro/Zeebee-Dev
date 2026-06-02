@@ -231,7 +231,7 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 		return nil, nil, nil, nil, err
 	}
 
-	loanProperty, err = copierx.Trans[borrower.ThirdPartyLoanPropertyEditEntity, model.LoanProperty](in.LoanProperty, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
+	err = copierx.Assign[borrower.ThirdPartyLoanPropertyEditEntity, model.LoanProperty](in.LoanProperty, loanProperty, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
@@ -247,7 +247,7 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
-	loan, err = copierx.Trans[borrower.LoanUpdateRequestData, model.Loan](in, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
+	err = copierx.Assign[borrower.LoanUpdateRequestData, model.Loan](in, loan, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}

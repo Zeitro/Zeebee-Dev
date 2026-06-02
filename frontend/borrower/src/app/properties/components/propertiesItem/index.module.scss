@@ -32,20 +32,3 @@
 		}
 	}
 }
-
-.active,
-.pending {
-	border-radius: 2px;
-	padding: 0 8px;
-	font-size: 12px;
-}
-.active {
-	border: 1px solid var(--green-light-100);
-	background-color: var(--green-light);
-	color: var(--green-medium);
-}
-.pending {
-	border: 1px solid var(--orange-medium);
-	background-color: var(--orange-light);
-	color: var(--orange-dark);
-}
