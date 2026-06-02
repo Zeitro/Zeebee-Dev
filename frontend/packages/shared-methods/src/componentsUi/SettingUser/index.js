@@ -3,6 +3,8 @@ import { FilterTableCard } from '@repo/shared-methods';
 import useContent from './components/useContent';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 
+const SETTING_USER_API = '/organization_user/page';
+
 /**
  * 设置查询user
  * @param {*} getNewMainModal 获取添加/编辑弹框（与封装的组件差距大，则直接引用自定义的组件）
@@ -13,6 +15,7 @@ const SettingUser = ({ getNewMainModal = () => {}, PERMISSIONS }) => {
 		useContent({
 			getNewMainModal,
 			PERMISSIONS,
+			SETTING_USER_API,
 		});
 
 	useDeferredSyncEffect({
@@ -31,7 +34,7 @@ const SettingUser = ({ getNewMainModal = () => {}, PERMISSIONS }) => {
 			scroll={{ x: 'max-content' }}
 			filterList={filterList}
 			hasFilterField={true}
-			api="/organization_user/page"
+			api={SETTING_USER_API}
 		/>
 	);
 };

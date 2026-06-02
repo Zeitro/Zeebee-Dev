@@ -26,14 +26,14 @@ export const DropdownStatus = ({
 }) => {
 	const [loading, setLoading] = useState(false);
 	const [statusValue, setStatusValue] = useState(data[statusKey] || '');
-	const { request, cancel } = createRequest();
+	const { request, cancelMatch } = useMemo(() => createRequest(), []);
 	const rowData = useMemo(() => {
 		return items.find((i) => i.key === statusValue) || {};
 	}, [statusValue, items]);
 
 	const handleSelect = async ({ key }) => {
 		try {
-			cancel(api);
+			cancelMatch(api);
 			setLoading(true);
 			setStatusValue(key);
 			await request(api, {

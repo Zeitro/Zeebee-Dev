@@ -15,6 +15,8 @@ const (
 	PropertyTypePUDCondominium        PropertyType = "PUD/Condominium"
 	PropertyTypeMixedUse              PropertyType = "Mixed Use"
 	PropertyTypeCommercial            PropertyType = "Commercial"
+	PropertyTypeRawLand               PropertyType = "Raw Land"
+	PropertyTypeEntitledLand          PropertyType = "Entitled Land"
 )
 
 var PropertyTypeName = "property_type"
@@ -57,6 +59,14 @@ func init() {
 		{
 			Label: string(PropertyTypeCommercial),
 			Value: string(PropertyTypeCommercial),
+		},
+		{
+			Label: string(PropertyTypeRawLand),
+			Value: string(PropertyTypeRawLand),
+		},
+		{
+			Label: string(PropertyTypeEntitledLand),
+			Value: string(PropertyTypeEntitledLand),
 		},
 	})
 }
