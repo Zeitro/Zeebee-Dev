@@ -6,7 +6,15 @@ import { message, Space } from 'antd';
 import { getSelectOptions } from '@repo/shared-methods/api';
 import { useUserStore } from '@repo/shared-methods/store';
 import { userStatusColor } from '@repo/shared-methods/enum';
-import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
+import {
+	CheckCircleOutlined,
+	DeleteOutlined,
+	EditOutlined,
+	PlusOutlined,
+	ReloadOutlined,
+	SendOutlined,
+	StopOutlined,
+} from '@ant-design/icons';
 import { useAuth } from '@repo/shared-methods/hooks';
 const useUser = ({ getNewMainModal, PERMISSIONS, SETTING_USER_API }) => {
 	const { hasPermission, getActiveByPermission } = useAuth();
@@ -269,8 +277,8 @@ const useUser = ({ getNewMainModal, PERMISSIONS, SETTING_USER_API }) => {
 									);
 								}}
 								size="small"
-								icon={null}
 								isStopPropagation={false}
+								icon={<EditOutlined />}
 								// disabled={isDisabled}
 							>
 								Edit
@@ -290,6 +298,7 @@ const useUser = ({ getNewMainModal, PERMISSIONS, SETTING_USER_API }) => {
 									}}
 									modalType="confirm"
 									isStopPropagation={false}
+									icon={<SendOutlined />}
 									// disabled={isDisabled}
 								>
 									Send Invitation
@@ -307,6 +316,7 @@ const useUser = ({ getNewMainModal, PERMISSIONS, SETTING_USER_API }) => {
 									okText="Disable"
 									danger={false}
 									disabled={isDisabled}
+									icon={<StopOutlined />}
 								>
 									Disable
 								</DeleteBtn>
@@ -322,6 +332,7 @@ const useUser = ({ getNewMainModal, PERMISSIONS, SETTING_USER_API }) => {
 									danger={false}
 									disabled={isDisabled}
 									okButtonProps={{ danger: false }}
+									icon={<CheckCircleOutlined />}
 								>
 									Enable
 								</DeleteBtn>
@@ -336,6 +347,7 @@ const useUser = ({ getNewMainModal, PERMISSIONS, SETTING_USER_API }) => {
 								loading={loading}
 								isStopPropagation={false}
 								disabled={isDisabled}
+								icon={<DeleteOutlined />}
 							>
 								Delete
 							</DeleteBtn>

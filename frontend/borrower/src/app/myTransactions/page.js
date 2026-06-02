@@ -4,7 +4,8 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
 	DeleteOutlined,
-	FolderOpenOutlined,
+	EditOutlined,
+	FolderOpenTwoTone,
 	PlusOutlined,
 	ReloadOutlined,
 } from '@ant-design/icons';
@@ -82,7 +83,7 @@ const MyTransactionsPage = () => {
 		() => [
 			{
 				filterType: 'input',
-				placeholder: 'Search by property, city, state, type or status...',
+				placeholder: 'Search by ID, address, city, state',
 				paramsKey: 'keyword',
 				value: keyword,
 				onChange: ({ target: { value } }) => setKeyword(value),
@@ -134,11 +135,13 @@ const MyTransactionsPage = () => {
 						filter: { keyword: '', type: '', status: '' },
 					});
 				},
-				// colProps: { xs: 12, sm: 6, md: 'auto' },
+				colProps: {
+					className: 'flex-1',
+				},
 			},
 			{
 				filterType: 'button',
-				text: 'Add a transaction',
+				text: 'Add transaction',
 				icon: <PlusOutlined />,
 				onClick: () => setNewTransactionOpen(true),
 				hidden: !hasPermission(PERMISSIONS?.TRANSACTION?.ADD),
@@ -155,8 +158,24 @@ const MyTransactionsPage = () => {
 		],
 	);
 
-	const columns = useMemo(
-		() => [
+	const columns = useMemo(() => {
+		const documentColumn = {
+			title: 'Documents',
+			dataIndex: 'id',
+			key: 'id',
+			width: 120,
+			fixed: 'right',
+			align: 'center',
+			render: (v) => (
+				<Button
+					size="small"
+					type="link"
+					icon={<FolderOpenTwoTone twoToneColor={['#FF9800']} />}
+					onClick={() => router.push(`/myTransactions/${v}`)}
+				/>
+			),
+		};
+		const arr = [
 			{
 				title: 'ID',
 				dataIndex: 'code',
@@ -176,6 +195,7 @@ const MyTransactionsPage = () => {
 					return isHavePermission ? (
 						<Typography.Link
 							onClick={(e) => {
+								e.stopPropagation();
 								e.preventDefault();
 								window.open(`/properties/${record.borrower_property_id}`, '_blank');
 							}}
@@ -232,24 +252,17 @@ const MyTransactionsPage = () => {
 					return displayValue(formatted);
 				},
 			},
+			...(hasPermission(PERMISSIONS?.TRANSACTION?.DETAILS) ? [documentColumn] : []),
 			getActiveByPermission({
 				buttonOptions: [
-					{ permission: PERMISSIONS?.PROPERTY?.DETAILS, width: 30 },
-					{ permission: PERMISSIONS?.TRANSACTION?.EDIT, width: 50 },
-					{ permission: PERMISSIONS?.TRANSACTION?.DELETE, width: 62 },
+					{ permission: PERMISSIONS?.TRANSACTION?.EDIT, width: 65 },
+					{ permission: PERMISSIONS?.TRANSACTION?.DELETE, width: 80 },
 				],
 				render: (_, record) => (
-					<Space size="small">
-						<PermissionSlot code={PERMISSIONS?.TRANSACTION?.DETAILS}>
-							<Button
-								size="small"
-								type="link"
-								icon={<FolderOpenOutlined className="text-base-warning" />}
-								onClick={() => router.push(`/myTransactions/${record.id}`)}
-							/>
-						</PermissionSlot>
+					<Space size={0} onClick={(e) => e.stopPropagation()}>
 						<PermissionSlot code={PERMISSIONS?.TRANSACTION?.EDIT}>
 							<Button
+								icon={<EditOutlined />}
 								size="small"
 								type="link"
 								onClick={() =>
@@ -272,9 +285,15 @@ const MyTransactionsPage = () => {
 					</Space>
 				),
 			}),
-		],
-		[router, hasPermission, getActiveByPermission, deleteLoading],
-	);
+		];
+		return arr;
+	}, [router, hasPermission, getActiveByPermission, deleteLoading]);
+
+	const handleSelectedRow = (row) => {
+		if (hasPermission(PERMISSIONS?.TRANSACTION?.DETAILS)) {
+			router.push(`/myTransactions/${row.id}`);
+		}
+	};
 
 	return (
 		<>
@@ -287,6 +306,11 @@ const MyTransactionsPage = () => {
 				getData={getData}
 				scroll={{ x: 'max-content' }}
 				filterWrapClassName="px-8 pt-10 pb-8 flex-1 overflow-hidden flex flex-col min-h-0"
+				onRow={(row) => ({
+					onClick: () => {
+						handleSelectedRow(row);
+					},
+				})}
 			/>
 			<NewTransactionModal
 				open={newTransactionOpen}

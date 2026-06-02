@@ -8,6 +8,7 @@ import { useTransactionList } from './useTransactionList';
 import styles from './index.module.scss';
 import { PermissionSlot } from '@repo/shared-methods';
 import { PERMISSIONS } from '@config/permissions';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 
 const getTimelineStatus = (status) => {
 	if (status === 'Pending') return 'pending';
@@ -18,7 +19,9 @@ const getTimelineStatus = (status) => {
 const TransactionsTab = ({ propertyId, onNewTransaction, onRegisterRefresh }) => {
 	const { list, loading, refreshTransactionList } = useTransactionList(propertyId);
 	const [expandedTransactionId, setExpandedTransactionId] = useState(null);
-
+	const { transactionStatusOptions } = useGetOptions([
+		{ key: 'borrower_property_transaction_status', valueName: 'transactionStatusOptions' },
+	]);
 	useEffect(() => {
 		onRegisterRefresh?.(refreshTransactionList);
 	}, [onRegisterRefresh, refreshTransactionList]);
@@ -51,12 +54,13 @@ const TransactionsTab = ({ propertyId, onNewTransaction, onRegisterRefresh }) =>
 								)
 							}
 							onRefreshList={refreshTransactionList}
+							transactionStatusOptions={transactionStatusOptions}
 						/>
 					),
 					className: statusType === 'pending' ? styles.itemPending : '',
 				};
 			}),
-		[expandedTransactionId, list, refreshTransactionList],
+		[expandedTransactionId, list, refreshTransactionList, transactionStatusOptions],
 	);
 
 	return (
@@ -67,7 +71,7 @@ const TransactionsTab = ({ propertyId, onNewTransaction, onRegisterRefresh }) =>
 				</h2>
 				<PermissionSlot code={PERMISSIONS?.TRANSACTION?.ADD}>
 					<Button type="primary" icon={<PlusOutlined />} onClick={onNewTransaction}>
-						New transaction
+						Add transaction
 					</Button>
 				</PermissionSlot>
 			</div>

@@ -55,15 +55,15 @@ const UploadDocumentList = ({ category, onRefresh, transactionId }) => {
 				fileRender: (value, _defaultNode, file, parentRecord) =>
 					displayValue(value ?? file?.updated_at ?? parentRecord?.updated_at, formatDate),
 			},
-			{
-				title: 'Status',
-				key: 'status',
-				width: 150,
-				ellipsis: true,
-				rowPlacement: 'file',
-				fileDataIndex: 'status',
-				fileRender: (value, _defaultNode, file, parentRecord) => displayValue(value),
-			},
+			// {
+			// 	title: 'Status',
+			// 	key: 'status',
+			// 	width: 150,
+			// 	ellipsis: true,
+			// 	rowPlacement: 'file',
+			// 	fileDataIndex: 'status',
+			// 	fileRender: (value, _defaultNode, file, parentRecord) => displayValue(value),
+			// },
 			{
 				title: '',
 				key: 'operation',
@@ -102,14 +102,6 @@ const UploadDocumentList = ({ category, onRefresh, transactionId }) => {
 		};
 	}, [category?.children]);
 
-	if (!requiredList.length && !optionalList.length) {
-		return (
-			<div className="px-6 py-6">
-				<NoData />
-			</div>
-		);
-	}
-
 	const hasRequired = requiredList.length > 0;
 	const hasOptional = optionalList.length > 0;
 
@@ -124,6 +116,16 @@ const UploadDocumentList = ({ category, onRefresh, transactionId }) => {
 	return (
 		<div className="px-6 py-5">
 			{contextHolder}
+			<div className="pb-4">
+				<Button
+					type="primary"
+					onClick={() => setOpenAdd(true)}
+					size="large"
+					icon={<PlusOutlined />}
+				>
+					Add Document type
+				</Button>
+			</div>
 			{hasRequired && (
 				<section className="mt-4">
 					<SectionLabel title="Required" count={requiredList.length} />
@@ -147,16 +149,12 @@ const UploadDocumentList = ({ category, onRefresh, transactionId }) => {
 					/>
 				</section>
 			)}
-			<div className="pt-4">
-				<Button
-					type="primary"
-					onClick={() => setOpenAdd(true)}
-					size="large"
-					icon={<PlusOutlined />}
-				>
-					Add Document type
-				</Button>
-			</div>
+
+			{!hasRequired && !hasOptional && (
+				<div className="px-6 py-6">
+					<NoData />
+				</div>
+			)}
 			{openAdd && (
 				<AddRequest
 					open={openAdd}

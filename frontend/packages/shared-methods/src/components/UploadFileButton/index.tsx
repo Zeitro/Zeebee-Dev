@@ -7,7 +7,7 @@ import { UploadOutlined } from '@ant-design/icons';
 import type { RcFile } from 'antd/es/upload/interface';
 import { uploadAwsS3 } from '../../api/common';
 
-const MAX_SIZE_MB = 10;
+const MAX_SIZE_MB = 20;
 
 type UploadDetail = {
 	// 成功上传后裁剪掉 query string 的最终可访问 url

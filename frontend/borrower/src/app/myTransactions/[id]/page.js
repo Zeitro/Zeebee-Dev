@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Select, Tabs, message } from 'antd';
+import { Tabs, message } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -13,12 +13,12 @@ import {
 } from '@repo/shared-methods/utils';
 import { DeleteBtn } from '@repo/shared-methods/components/NewModal/BtnPopUpModal';
 import { useGetOptions } from '@repo/shared-methods/hooks';
-import { useGlobalStore } from '@/store/global';
+import TransactionStatusSelect from './components/TransactionStatusSelect';
 import DocumentsTab from './components/DocumentsTab';
 import DetailsTab from './components/DetailsTab';
 import LoansTab from './components/LoansTab';
 import LogTab from './components/LogTab';
-import { getStatusTagClass } from '../components/utils';
+import TransactionDetailSkeleton from './components/TransactionDetailSkeleton';
 import styles from './index.module.scss';
 import { PermissionSlot } from '@repo/shared-methods';
 import { PERMISSIONS } from '@config/permissions';
@@ -34,12 +34,11 @@ const TransactionDetailsPage = () => {
 	const [messageApi, contextHolder] = message.useMessage();
 	const { request } = useMemo(() => createRequest(), []);
 	const [loading, setLoading] = useState(false);
+	const [isInitialLoading, setIsInitialLoading] = useState(true);
 	const [deleteLoading, setDeleteLoading] = useState(false);
 	const [rowData, setRowData] = useState({});
 	const [tabFromUrl, setTabFromUrl] = useState(searchParams.get('tab') || 'documents');
 	// const tabFromUrl = resolveTransactionDetailTab(searchParams.get('tab'));
-	const [statusSaving, setStatusSaving] = useState(false);
-	const { changeSidebarCollapsed } = useGlobalStore();
 	const { transactionStatusOptions } = useGetOptions([
 		{ key: 'borrower_property_transaction_status', valueName: 'transactionStatusOptions' },
 	]);
@@ -55,24 +54,9 @@ const TransactionDetailsPage = () => {
 			setRowData({});
 		} finally {
 			setLoading(false);
+			setIsInitialLoading(false);
 		}
 	}, [api, request]);
-
-	const handleStatusChange = async (status) => {
-		try {
-			setStatusSaving(true);
-			await request(`/borrower_property_transaction/${id}/status`, {
-				method: 'PATCH',
-				body: { status },
-			});
-			messageApi.success('Status updated');
-			await getDetails();
-		} catch {
-			// 错误提示由 request 层统一处理
-		} finally {
-			setStatusSaving(false);
-		}
-	};
 
 	const handleDelete = async () => {
 		try {
@@ -101,18 +85,17 @@ const TransactionDetailsPage = () => {
 	};
 
 	useEffect(() => {
-		changeSidebarCollapsed(true);
 		const timer = setTimeout(() => {
 			getDetails();
 		}, 0);
 		return () => clearTimeout(timer);
-	}, [changeSidebarCollapsed, getDetails]);
+	}, [getDetails]);
 
 	const tabItems = useMemo(
 		() => [
 			{
 				key: 'documents',
-				label: 'Document',
+				label: 'Documents',
 				children: <DocumentsTab rowData={rowData} onRefresh={getDetails} />,
 			},
 			{
@@ -143,6 +126,10 @@ const TransactionDetailsPage = () => {
 		[getDetails, id, loading, rowData, isSearchParamsEditing],
 	);
 
+	if (isInitialLoading) {
+		return <TransactionDetailSkeleton />;
+	}
+
 	return (
 		<div className="flex h-full flex-1 flex-col overflow-hidden bg-white">
 			{contextHolder}
@@ -157,17 +144,11 @@ const TransactionDetailsPage = () => {
 								<span className="text-sm font-medium leading-[22px] text-base-gray">
 									Status
 								</span>
-								<Select
-									className={[
-										'min-w-[120px]',
-										getStatusTagClass(rowData?.status),
-									].join(' ')}
+								<TransactionStatusSelect
 									value={rowData?.status}
-									placeholder="Status"
 									options={transactionStatusOptions}
-									loading={statusSaving}
-									onChange={handleStatusChange}
-									allowClear={false}
+									id={id}
+									onSuccess={getDetails}
 								/>
 							</div>
 						</div>
