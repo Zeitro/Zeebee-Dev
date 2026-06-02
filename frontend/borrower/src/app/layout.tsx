@@ -25,14 +25,14 @@ const RootLayout = ({
 	children: React.ReactNode;
 }>) => {
 	return (
-		<html lang="en">
+		<html lang="en" suppressHydrationWarning>
 			<head>
 				<Script
 					src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places&loading=async`}
 					strategy="lazyOnload" // 页面交互前加载
 				/>
 			</head>
-			<body className={`${roboto.variable}`}>
+			<body className={`${roboto.variable}`} suppressHydrationWarning>
 				<CustomizeAntdTheme fontFamily={`${roboto.variable}`}>
 					{children}
 					<PortalComponent />

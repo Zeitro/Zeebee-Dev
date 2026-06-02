@@ -1,20 +1,38 @@
 'use client';
+
 import Image from 'next/image';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { propertiesFieldArr, propertyList } from '@/enum/properties';
-import LoansPage from '../../loans/components/ListView/LoansPage';
-import { useParams } from 'next/navigation';
-import { assemblyAddress, createRequest, eventBus } from '@repo/shared-methods/utils';
-import { useGetOptions } from '@repo/shared-methods/hooks';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Modal, message, Tabs } from 'antd';
+import { useParams, useRouter } from 'next/navigation';
+import AddModal from '@repo/shared-methods/componentsUi/SelectCard/Add/property';
+import { useProperty } from '@repo/shared-methods/componentsUi/SelectCard/Item/useCommon';
+import { useAuth } from '@repo/shared-methods/hooks';
+import { assemblyAddress, createRequest, displayValue, eventBus } from '@repo/shared-methods/utils';
+import NewTransactionModal from '@/app/myTransactions/components/NewTransactionModal';
+import { PERMISSIONS } from '@config/permissions';
 import { useGlobalStore } from '@/store/global';
+import DetailsTab from './components/DetailsTab';
+import TransactionsTab from './components/TransactionsTab';
+import LoansTab from './components/LoansTab';
+import styles from './index.module.scss';
 
 const PropertiesDetails = () => {
 	const { id } = useParams();
-	const { request } = createRequest();
+	const router = useRouter();
+	const { hasPermission } = useAuth();
+	const { request } = useMemo(() => createRequest(), []);
 	const [loading, setLoading] = useState(false);
 	const [rowData, setRowData] = useState({});
+	const [activeTab, setActiveTab] = useState('details');
+	const [editOpen, setEditOpen] = useState(false);
+	const [transactionModalOpen, setTransactionModalOpen] = useState(false);
+	const refreshTransactionsListRef = useRef(() => {});
 	const { changeSidebarCollapsed } = useGlobalStore();
 	const api = `/property/${id}/summary`;
+
+	const { handleDelete, loading: deleteLoading } = useProperty({
+		handleSearch: () => router.push('/properties'),
+	});
 
 	const getDetails = useCallback(async () => {
 		try {
@@ -22,133 +40,149 @@ const PropertiesDetails = () => {
 			const data = await request(api);
 			setRowData(data);
 			eventBus.emit('changeCrumbs', { 2: assemblyAddress(data?.address) });
-			setLoading(false);
-		} catch (error) {
+		} catch {
+			// keep previous rowData on error
+		} finally {
 			setLoading(false);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api]);
 
-	const list = useMemo(() => {
-		return [
+	const actionItems = useMemo(() => {
+		const items = [];
+		if (hasPermission(PERMISSIONS?.PROPERTY?.EDIT)) {
+			items.push({
+				key: 'edit',
+				label: 'Edit',
+				onClick: () => setEditOpen(true),
+			});
+		}
+		items.push({
+			key: 'newTransaction',
+			label: 'New Transaction',
+			onClick: () => setTransactionModalOpen(true),
+		});
+		if (hasPermission(PERMISSIONS?.PROPERTY?.DELETE)) {
+			items.push({
+				key: 'delete',
+				label: 'Delete',
+				danger: true,
+				onClick: () => {
+					if (rowData?.loan_count) {
+						message.destroy();
+						message.open({
+							type: 'warning',
+							content:
+								'This property has an associated loan, so it cannot be deleted.',
+						});
+						return;
+					}
+					Modal.confirm({
+						title: 'Are you sure delete this Property?',
+						content: assemblyAddress(rowData?.address),
+						okText: 'Delete',
+						okButtonProps: { danger: true },
+						onOk: () => handleDelete(rowData?.id),
+						confirmLoading: deleteLoading,
+					});
+				},
+			});
+		}
+		return items;
+	}, [deleteLoading, handleDelete, hasPermission, rowData]);
+
+	useEffect(() => {
+		changeSidebarCollapsed(true);
+		const timer = setTimeout(() => {
+			getDetails();
+		}, 0);
+		return () => clearTimeout(timer);
+	}, [changeSidebarCollapsed, getDetails]);
+
+	const tabItems = useMemo(() => {
+		let items = [
 			{
-				title: 'Pending loan',
-				total: rowData?.pending_loans?.length,
-				content: (
-					<LoansPage
-						hasFilterField={false}
-						hasPagination={false}
-						dataSource={rowData?.pending_loans}
-						isNotAddress={true}
-						loading={loading}
-						// scrollX={2000}
-						successCallback={getDetails}
-						stage="Pending"
-					/>
+				key: 'details',
+				label: 'Details',
+				children: (
+					<div className="px-6 py-6">
+						<DetailsTab
+							rowData={rowData}
+							propertyId={id}
+							canEdit={hasPermission(PERMISSIONS?.PROPERTY?.EDIT)}
+							onRefresh={getDetails}
+						/>
+					</div>
 				),
 			},
+
 			{
-				title: 'Active loan',
-				total: rowData?.active_loans?.length,
-				content: (
-					<LoansPage
-						hasFilterField={false}
-						hasPagination={false}
-						dataSource={rowData?.active_loans}
-						isNotAddress={true}
+				key: 'loans',
+				label: 'Loans',
+				children: (
+					<LoansTab
+						rowData={rowData}
 						loading={loading}
-						// scrollX={2100}
-						successCallback={getDetails}
-						stage="Active"
-					/>
-				),
-			},
-			{
-				title: 'Archived loan',
-				total: rowData?.archived_loans?.length,
-				content: (
-					<LoansPage
-						hasFilterField={false}
-						hasPagination={false}
-						dataSource={rowData?.archived_loans}
-						isNotAddress={true}
-						loading={loading}
-						// scrollX={1000}
-						successCallback={getDetails}
-						stage="Archived"
+						onRefresh={getDetails}
+						className="px-4 pb-4"
 					/>
 				),
 			},
 		];
-	}, [
-		getDetails,
-		loading,
-		rowData?.active_loans,
-		rowData?.archived_loans,
-		rowData?.pending_loans,
-	]);
-
-	useGetOptions([
-		{
-			key: 'loan_pending_status',
-			valueName: 'loanPendingStatus',
-		},
-		{
-			key: 'loan_stage',
-			valueName: 'loanStatusOptions',
-		},
-	]);
-
-	useEffect(() => {
-		changeSidebarCollapsed(true);
-
-		// macrotask 调度，能让 React 完成当前渲染周期后再执行 setState
-		const timer = setTimeout(async () => {
-			await getDetails();
-		}, 0);
-
-		return () => {
-			clearTimeout(timer);
-		};
-	}, [changeSidebarCollapsed, getDetails]);
-
-	const getItem = (item, index) => {
-		return (
-			<div key={index} className={[item?.className || 'w-1/2', 'pb-4'].join(' ')}>
-				<p className="text-base-gray text-sm pb-1">{item.label}</p>
-				<span className="text-black-dark text-base font-medium">
-					{(item?.render ? item?.render?.(rowData[item.value]) : rowData[item.value]) ??
-						'--'}
-				</span>
-			</div>
-		);
-	};
+		if (hasPermission(PERMISSIONS?.TRANSACTION?.PAGE)) {
+			items.splice(1, 0, {
+				key: 'transactions',
+				label: 'Transactions',
+				children: (
+					<TransactionsTab
+						propertyId={id}
+						onNewTransaction={() => setTransactionModalOpen(true)}
+						onRegisterRefresh={(fn) => {
+							refreshTransactionsListRef.current = fn ?? (() => {});
+						}}
+					/>
+				),
+			});
+		}
+		return items;
+	}, [getDetails, hasPermission, id, loading, rowData]);
 
 	return (
-		<div className={['h-full px-8 py-6 overflow-hidden overflow-y-auto flex-1'].join(' ')}>
-			<div className="flex items-center pb-6">
-				<Image src="/images/home.svg" width={32} height={32} alt="" />
-				<p className="text-[24px]/8 font-medium">{assemblyAddress(rowData?.address)}</p>
-			</div>
-			<div className="flex flex-wrap gap-6 flex-col md:flex-row">
-				<div className="w-full flex-1 border border-base-border rounded-lg pt-4 px-4 flex flex-wrap">
-					{propertyList.map(getItem)}
+		<div className="h-full flex flex-col overflow-hidden flex-1 bg-white">
+			<div className="flex items-center justify-between gap-4 shrink-0 px-6 pt-6 pb-4">
+				<div className="flex items-center gap-2 min-w-0">
+					<Image src="/images/home.svg" width={32} height={32} alt="" />
+					<p className="text-xl leading-7 font-medium truncate">
+						{displayValue(assemblyAddress(rowData?.address))}
+					</p>
 				</div>
-				<div className="w-full  flex-1 border border-base-border rounded-lg pt-4 px-4 flex flex-wrap">
-					{propertiesFieldArr.map(getItem)}
-				</div>
+				{/* {actionItems.length > 0 && (
+					<Dropdown menu={{ items: actionItems }} trigger={['click']}>
+						<Button>Actions</Button>
+					</Dropdown>
+				)} */}
 			</div>
-			{list.map((item, index) => {
-				return (
-					<div key={index}>
-						<div className="pt-6 pb-2 mb-4 text-xl/7 font-medium border-b border-[#91CAFF]">
-							{item.title}
-						</div>
-						{item.content}
-					</div>
-				);
-			})}
+			<Tabs
+				activeKey={activeTab}
+				onChange={setActiveTab}
+				items={tabItems}
+				className={styles.propertyDetailTabs}
+				destroyOnHidden={false}
+			/>
+			{editOpen && (
+				<AddModal setOpen={setEditOpen} rowData={rowData} handleSearch={getDetails} />
+			)}
+			<NewTransactionModal
+				open={transactionModalOpen}
+				initialProperty={rowData?.id ? rowData : null}
+				onClose={() => setTransactionModalOpen(false)}
+				onSaved={() => {
+					setTransactionModalOpen(false);
+					void refreshTransactionsListRef.current?.();
+				}}
+			/>
 		</div>
 	);
 };
+
 export default PropertiesDetails;

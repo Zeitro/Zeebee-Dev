@@ -48,4 +48,11 @@ export const PERMISSIONS = {
 		CHANGE_STAGE: 'Loan:ChangeStage',
 		QUOTE: 'Loan:Quote',
 	},
+	TRANSACTION: {
+		PAGE: 'Transactions',
+		DETAILS: 'Transactions:Details',
+		EDIT: 'Transactions:Edit',
+		DELETE: 'Transactions:Delete',
+		ADD: 'Transactions:Add',
+	},
 };

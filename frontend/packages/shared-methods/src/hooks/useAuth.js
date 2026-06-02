@@ -59,6 +59,9 @@ export const useAuth = () => {
 					if (item?.permission && hasPermission(item?.permission)) {
 						return item.width;
 					}
+					if (!item?.permission && item?.width) {
+						return item.width;
+					}
 					return 0;
 				});
 				const totalWidth = widths.reduce((a, b) => a + b, 0);

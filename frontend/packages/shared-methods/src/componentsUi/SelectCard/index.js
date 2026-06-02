@@ -18,6 +18,7 @@ export const SelectCard = ({
 	type = 'property',
 	api = '/property/all',
 	title = 'Choose a property',
+	viewMoreTitle = 'View all properties',
 	addTitle = 'Add a property',
 	name,
 	required = true,
@@ -26,6 +27,7 @@ export const SelectCard = ({
 	xs = 24,
 	btnCol = { xl: 6, sm: 24, xs: 24 },
 	sliceIndex = 3,
+	isHideAddBtn = false,
 }) => {
 	const isInit = useRef(true);
 	const { request } = createRequest();
@@ -122,7 +124,7 @@ export const SelectCard = ({
 	return (
 		<Col className={['w-full', className].join(' ')}>
 			<div className="text-base font-medium text-black-dark pb-2">{title}</div>
-			<Form.Item noStyle name={name} rules={[{ required }]}></Form.Item>
+			{name && <Form.Item noStyle name={name} rules={[{ required }]}></Form.Item>}
 			<Row gutter={[16, 16]} className="w-full">
 				{loading ? (
 					<Spin className="h-[100px] w-[100px] !flex items-center justify-center" />
@@ -155,7 +157,7 @@ export const SelectCard = ({
 										disabled={disabled}
 										list={list}
 										handleClickItem={handleClickItem}
-										title={title}
+										title={viewMoreTitle}
 									>
 										{({ item, index, setData, data }) => {
 											return getCardItem(type, {
@@ -189,20 +191,22 @@ export const SelectCard = ({
 								/>
 							</BtnPopUpModal>
 						)}
-						<BtnPopUpModal
-							getContent={(setOpen) =>
-								getAddDom(type, { setOpen, handleSearch: handleSelect })
-							}
-							type="default"
-							size="large"
-							className={[
-								'w-full max-w-40 block !h-[49px]',
-								!disabled && '!text-base-primary',
-							].join(' ')}
-							disabled={disabled}
-						>
-							{addTitle}
-						</BtnPopUpModal>
+						{!isHideAddBtn && (
+							<BtnPopUpModal
+								getContent={(setOpen) =>
+									getAddDom(type, { setOpen, handleSearch: handleSelect })
+								}
+								type="default"
+								size="large"
+								className={[
+									'w-full max-w-40 block !h-[49px]',
+									!disabled && '!text-base-primary',
+								].join(' ')}
+								disabled={disabled}
+							>
+								{addTitle}
+							</BtnPopUpModal>
+						)}
 					</Space>
 				</Col>
 			</Row>

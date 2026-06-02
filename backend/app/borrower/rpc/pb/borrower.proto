@@ -452,6 +452,14 @@ message LoanUpdatePendingStatusRequestData {
   string pending_status = 2;
 }
 
+message LoanUpdateStageRequest {
+  LoanUpdateStageRequestData data = 1;
+}
+message LoanUpdateStageRequestData {
+  int64 id = 1;
+  string stage = 2;
+}
+
 message LoanDeleteRequest {
   LoanDeleteRequestData data = 1;
 }
@@ -790,6 +798,7 @@ service Loan {
   rpc CreateBorrowerLoan(LoanCreateRequest) returns(LoanCreateResponse);
   rpc UpdateBorrowerLoan(LoanUpdateRequest) returns(EmptyResponse);
   rpc UpdateBorrowerLoanPendingStatus(LoanUpdatePendingStatusRequest) returns(EmptyResponse);
+  rpc UpdateBorrowerLoanStage(LoanUpdateStageRequest) returns(EmptyResponse);
   rpc DeleteBorrowerLoan(LoanDeleteRequest) returns(EmptyResponse);
   rpc BorrowerLoanDetail(LoanDetailRequest) returns(LoanDetailResponse);
   rpc BorrowerLoanPage(LoanPageRequest) returns(LoanPageResponse);
@@ -843,6 +852,7 @@ message LoanPropertyEntity{
   double est_property_value_amount = 34;
   AddressEntity address = 35;
   double arv = 36;
+  float lot_area_sqft = 37;
 
 }
 
@@ -897,6 +907,7 @@ message BorrowerPropertyEntity {
   int64 creator_id = 12;
   int64 organization_id = 13;
   string creator_name = 14;
+  float lot_area_sqft = 15;
 }
 
 message PropertyPageEntity{
@@ -920,6 +931,7 @@ message PropertyPageEntity{
   int32 loan_count = 18;
   int64 creator_id = 19;
   int64 creator_name = 20;
+  float lot_area_sqft = 21;
 
 }
 
@@ -984,6 +996,7 @@ message PropertyDetailSummaryResponseData {
   float living_area_sqft = 13;
   int32 bedrooms = 14;
   int32 bathrooms = 15;
+  float lot_area_sqft = 16;
 }
 
 // create property
@@ -998,6 +1011,7 @@ message PropertyCreateRequestData {
   int32 bedrooms = 4;
   int32 bathrooms = 5;
   AddressEntity address = 6;
+  float lot_area_sqft = 7;
 }
 
 message PropertyCreateResponse {
@@ -1017,6 +1031,7 @@ message PropertyUpdateRequestData {
   float living_area_sqft = 4;
   int32 bedrooms = 5;
   int32 bathrooms = 6;
+  float lot_area_sqft = 7;
 }
 
 // detail property
