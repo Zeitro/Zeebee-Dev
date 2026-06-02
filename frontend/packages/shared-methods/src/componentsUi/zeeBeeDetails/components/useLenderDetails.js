@@ -139,6 +139,7 @@ const useLenderDetails = ({ isAllReadonly, PERMISSIONS }) => {
 			if (!res?.applicants?.length) {
 				res.applicants = initialValues.applicants;
 			}
+			res.borrower_property_transaction_id = res?.borrower_property_transaction?.id;
 			// 保存两份，一份用于展示和修改（可能出现修改了就离开了，并未保存），一份用于最新数据保存
 			setRowData(res);
 			setNewRowData(res);

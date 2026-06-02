@@ -1,16 +1,24 @@
 import { BtnPopUpModal, DeleteBtn, PermissionSlot } from '@repo/shared-methods';
 import MainModal from './Main';
 import { createRequest, formatPhone } from '@repo/shared-methods/utils';
-import { useRef, useState } from 'react';
+import { useRef, useState, useMemo } from 'react';
 import { message, Space } from 'antd';
 import { getSelectOptions } from '@repo/shared-methods/api';
 import { useUserStore } from '@repo/shared-methods/store';
 import { userStatusColor } from '@repo/shared-methods/enum';
-import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
+import {
+	CheckCircleOutlined,
+	DeleteOutlined,
+	EditOutlined,
+	PlusOutlined,
+	ReloadOutlined,
+	SendOutlined,
+	StopOutlined,
+} from '@ant-design/icons';
 import { useAuth } from '@repo/shared-methods/hooks';
-const useUser = ({ getNewMainModal, PERMISSIONS }) => {
+const useUser = ({ getNewMainModal, PERMISSIONS, SETTING_USER_API }) => {
 	const { hasPermission, getActiveByPermission } = useAuth();
-	const { request, cancel } = createRequest();
+	const { request, cancelMatch } = useMemo(() => createRequest(), []);
 	const { userInfo } = useUserStore();
 	const [loading, setLoading] = useState(false);
 	const [statusLoading, setStatusLoading] = useState(false);
@@ -57,7 +65,7 @@ const useUser = ({ getNewMainModal, PERMISSIONS }) => {
 		{
 			filterType: 'button',
 			onClick: () => {
-				cancel('/organization_user');
+				cancelMatch(SETTING_USER_API);
 				tableFilterRef?.current?.handleSearch();
 			},
 		},
@@ -67,11 +75,13 @@ const useUser = ({ getNewMainModal, PERMISSIONS }) => {
 			text: 'Reset',
 			icon: <ReloadOutlined />,
 			onClick: () => {
-				cancel('/organization_user');
+				cancelMatch(SETTING_USER_API);
 				setSearchValue('');
-				setTimeout(() => {
-					tableFilterRef?.current?.handleSearch();
-				}, 300);
+				tableFilterRef?.current?.handleSearch({
+					filter: {
+						keyword: '',
+					},
+				});
 			},
 			colProps: {
 				className: 'flex-1',
@@ -267,8 +277,8 @@ const useUser = ({ getNewMainModal, PERMISSIONS }) => {
 									);
 								}}
 								size="small"
-								icon={null}
 								isStopPropagation={false}
+								icon={<EditOutlined />}
 								// disabled={isDisabled}
 							>
 								Edit
@@ -288,6 +298,7 @@ const useUser = ({ getNewMainModal, PERMISSIONS }) => {
 									}}
 									modalType="confirm"
 									isStopPropagation={false}
+									icon={<SendOutlined />}
 									// disabled={isDisabled}
 								>
 									Send Invitation
@@ -305,6 +316,7 @@ const useUser = ({ getNewMainModal, PERMISSIONS }) => {
 									okText="Disable"
 									danger={false}
 									disabled={isDisabled}
+									icon={<StopOutlined />}
 								>
 									Disable
 								</DeleteBtn>
@@ -320,6 +332,7 @@ const useUser = ({ getNewMainModal, PERMISSIONS }) => {
 									danger={false}
 									disabled={isDisabled}
 									okButtonProps={{ danger: false }}
+									icon={<CheckCircleOutlined />}
 								>
 									Enable
 								</DeleteBtn>
@@ -334,6 +347,7 @@ const useUser = ({ getNewMainModal, PERMISSIONS }) => {
 								loading={loading}
 								isStopPropagation={false}
 								disabled={isDisabled}
+								icon={<DeleteOutlined />}
 							>
 								Delete
 							</DeleteBtn>

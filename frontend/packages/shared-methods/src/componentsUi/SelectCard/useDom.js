@@ -2,6 +2,7 @@ import React from 'react';
 import PropertyCardItem from './Item/property';
 import BorrowerCardItem from './Item/borrower';
 import BorrowingEntityCardItem from './Item/borrowingEntity';
+import TransactionCardItem from './Item/transaction';
 import PropertyAdd from './Add/property';
 import BorrowerAdd from './Add/borrower';
 import BorrowingEntityAdd from './Add/borrowingEntity';
@@ -14,6 +15,8 @@ const useDom = () => {
 				return <BorrowerCardItem key={config.index} {...config} />;
 			case 'borrowingEntity':
 				return <BorrowingEntityCardItem key={config.index} {...config} />;
+			case 'transaction':
+				return <TransactionCardItem key={config.index} {...config} />;
 
 			default:
 				break;

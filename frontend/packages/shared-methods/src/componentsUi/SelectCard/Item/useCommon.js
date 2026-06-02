@@ -86,3 +86,29 @@ export const useProperty = ({ handleSearch, handleClickItem, rowData }) => {
 
 	return { handleDelete, loading };
 };
+
+// export const useTransaction = ({ handleSearch, handleClickItem, rowData }) => {
+// 	const { request } = createRequest();
+// 	const [loading, setLoading] = useState(false);
+// 	const handleDelete = async (id) => {
+// 		try {
+// 			setLoading(true);
+// 			await request(`/transaction/${id}`, { method: 'DELETE' });
+// 			const list = await handleSearch();
+// 			const newList = _.cloneDeep(list);
+// 			if (newList?.length && rowData?.id === id) {
+// 				handleClickItem?.(list[0], newList);
+// 			}
+// 			message.destroy();
+// 			message.open({
+// 				type: 'success',
+// 				content: 'Transaction deleted successfully!',
+// 			});
+// 			setLoading(false);
+// 		} catch {
+// 			setLoading(false);
+// 		}
+// 	};
+
+// 	return { handleDelete, loading };
+// };

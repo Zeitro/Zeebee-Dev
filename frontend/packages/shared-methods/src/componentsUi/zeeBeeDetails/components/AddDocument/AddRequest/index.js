@@ -1,42 +1,35 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { NewModal } from '@repo/shared-methods';
-import { Button, Form, Input, message } from 'antd';
-import { eventBus, createRequest } from '@repo/shared-methods/utils';
-const AddRequest = ({ open, setOpen, loan_id, category }) => {
-	const [form] = Form.useForm();
-	const { request } = createRequest();
-	const [loading, setLoading] = useState(false);
+import { Button, Form, Input } from 'antd';
+import useData from '../useData';
 
-	const handleOK = async () => {
-		try {
-			const values = await form.validateFields();
-			setLoading(true);
-			await request('/loan_document', {
-				method: 'POST',
-				body: {
-					...values,
-					loan_id,
-					category,
-				},
-			});
-			message.open({
-				type: 'success',
-				content: 'Add Document request successfully',
-			});
-			eventBus.emit('getLoanDetail');
-			setLoading(false);
-			setOpen(false);
-		} catch (error) {
-			setLoading(false);
-		}
-	};
+// 公共使用组件，用于在 loan 和 transaction 中创建文档类型
+const AddRequest = ({
+	open,
+	setOpen,
+	loan_id,
+	category,
+	id,
+	apiType = 'loan', // loan 或 transaction
+	title = 'Add request document type',
+	onSuccessCallback = () => {},
+}) => {
+	const { form, loading, switchCreateDocumentType } = useData({
+		id,
+		category,
+		setOpen,
+		loan_id,
+		apiType,
+		onSuccessCallback,
+	});
+
 	return (
 		<NewModal
-			title={'Add request document type'}
+			title={title}
 			width={650}
 			open={open}
 			onCancel={() => setOpen(false)}
-			onOk={handleOK}
+			onOk={switchCreateDocumentType}
 			okText="Save"
 			confirmLoading={loading}
 		>
