@@ -62,6 +62,9 @@
 	--orange-light: #fff7e6;
 	--orange-medium: #ffd591;
 	--orange-dark: #fa8c16;
+
+	--error-light: #fff2f0;
+	--error-medium: #ffccc7;
 }
 
 .dark {

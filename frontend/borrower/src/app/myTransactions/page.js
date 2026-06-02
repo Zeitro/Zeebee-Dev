@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import {
 	DeleteOutlined,
 	EditOutlined,
-	FolderOpenOutlined,
+	FolderOpenTwoTone,
 	PlusOutlined,
 	ReloadOutlined,
 } from '@ant-design/icons';
@@ -83,7 +83,7 @@ const MyTransactionsPage = () => {
 		() => [
 			{
 				filterType: 'input',
-				placeholder: 'Search by property, city, state, ID',
+				placeholder: 'Search by ID, address, city, state',
 				paramsKey: 'keyword',
 				value: keyword,
 				onChange: ({ target: { value } }) => setKeyword(value),
@@ -158,8 +158,24 @@ const MyTransactionsPage = () => {
 		],
 	);
 
-	const columns = useMemo(
-		() => [
+	const columns = useMemo(() => {
+		const documentColumn = {
+			title: 'Documents',
+			dataIndex: 'id',
+			key: 'id',
+			width: 120,
+			fixed: 'right',
+			align: 'center',
+			render: (v) => (
+				<Button
+					size="small"
+					type="link"
+					icon={<FolderOpenTwoTone twoToneColor={['#FF9800']} />}
+					onClick={() => router.push(`/myTransactions/${v}`)}
+				/>
+			),
+		};
+		const arr = [
 			{
 				title: 'ID',
 				dataIndex: 'code',
@@ -236,24 +252,14 @@ const MyTransactionsPage = () => {
 					return displayValue(formatted);
 				},
 			},
+			...(hasPermission(PERMISSIONS?.TRANSACTION?.DETAILS) ? [documentColumn] : []),
 			getActiveByPermission({
 				buttonOptions: [
-					{ permission: PERMISSIONS?.PROPERTY?.DETAILS, width: 30 },
 					{ permission: PERMISSIONS?.TRANSACTION?.EDIT, width: 65 },
 					{ permission: PERMISSIONS?.TRANSACTION?.DELETE, width: 80 },
 				],
 				render: (_, record) => (
 					<Space size={0} onClick={(e) => e.stopPropagation()}>
-						<PermissionSlot code={PERMISSIONS?.TRANSACTION?.DETAILS}>
-							<Button
-								size="small"
-								type="link"
-								icon={<FolderOpenOutlined />}
-								onClick={() => router.push(`/myTransactions/${record.id}`)}
-							>
-								Document
-							</Button>
-						</PermissionSlot>
 						<PermissionSlot code={PERMISSIONS?.TRANSACTION?.EDIT}>
 							<Button
 								icon={<EditOutlined />}
@@ -279,9 +285,9 @@ const MyTransactionsPage = () => {
 					</Space>
 				),
 			}),
-		],
-		[router, hasPermission, getActiveByPermission, deleteLoading],
-	);
+		];
+		return arr;
+	}, [router, hasPermission, getActiveByPermission, deleteLoading]);
 
 	const handleSelectedRow = (row) => {
 		if (hasPermission(PERMISSIONS?.TRANSACTION?.DETAILS)) {

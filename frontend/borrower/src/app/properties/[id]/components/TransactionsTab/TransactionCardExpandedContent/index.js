@@ -7,7 +7,7 @@ import DetailsTab from '@/app/myTransactions/[id]/components/DetailsTab';
 import LoansTab from '@/app/myTransactions/[id]/components/LoansTab';
 import LogTab from '@/app/myTransactions/[id]/components/LogTab';
 import { useTransactionDetail } from './useTransactionDetail';
-import styles from './TransactionCard.module.scss';
+import styles from './index.module.scss';
 
 const TransactionCardExpandedContent = ({ transactionId, initialRowData, onRefreshList }) => {
 	const [activeTab, setActiveTab] = useState('documents');

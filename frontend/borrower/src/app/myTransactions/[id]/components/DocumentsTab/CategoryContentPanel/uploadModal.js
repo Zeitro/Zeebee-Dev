@@ -89,12 +89,12 @@ const UploadModal = ({ transaction_id, open, setOpen, record = {}, onRefresh }) 
 						);
 					}}
 				>
-					<div className="bg-gray-light py-12 w-full flex flex-col items-center border border-dashed border-base-border rounded-sm text-gray-light cursor-pointer hover:bg-[#E6F4FF]">
+					<div className="bg-gray-light py-20 w-full flex flex-col items-center border border-dashed border-base-border rounded-sm text-gray-light cursor-pointer hover:bg-[#E6F4FF]">
 						<InboxOutlined style={{ fontSize: '48px', color: 'var(--base-primary)' }} />
 						<div className="text-base pt-5 pb-1 text-foreground">
 							Click or drag to upload.
 						</div>
-						<div className="text-base-label text-sm">
+						<div className="text-base-label text-sm pt-4">
 							<span className="font-medium">Upload requirements</span>
 							<br />
 							1. Accepted formats: PDF, PNG, JPG, and JPEG.

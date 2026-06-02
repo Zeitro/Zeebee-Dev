@@ -55,15 +55,15 @@ const UploadDocumentList = ({ category, onRefresh, transactionId }) => {
 				fileRender: (value, _defaultNode, file, parentRecord) =>
 					displayValue(value ?? file?.updated_at ?? parentRecord?.updated_at, formatDate),
 			},
-			{
-				title: 'Status',
-				key: 'status',
-				width: 150,
-				ellipsis: true,
-				rowPlacement: 'file',
-				fileDataIndex: 'status',
-				fileRender: (value, _defaultNode, file, parentRecord) => displayValue(value),
-			},
+			// {
+			// 	title: 'Status',
+			// 	key: 'status',
+			// 	width: 150,
+			// 	ellipsis: true,
+			// 	rowPlacement: 'file',
+			// 	fileDataIndex: 'status',
+			// 	fileRender: (value, _defaultNode, file, parentRecord) => displayValue(value),
+			// },
 			{
 				title: '',
 				key: 'operation',
