@@ -1,6 +1,6 @@
 'use client';
 import { Anchor, Button, Col, Form, message, Row, Skeleton } from 'antd';
-import React, { useEffect, useLayoutEffect, useRef, useState, useMemo } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import CreateLoan from '../components/Create/Loan';
 import CreateProperty from '../components/Create/property';
 import CreateTerm from '../components/Create/term';
@@ -13,7 +13,6 @@ import {
 	createRequest,
 	eventBus,
 } from '@repo/shared-methods/utils';
-import { useGlobalStore } from '@/store/global';
 import QuoteBtn from '../components/Quote';
 import { PermissionSlot } from '@repo/shared-methods';
 import { PERMISSIONS } from '@config/permissions';
@@ -30,7 +29,6 @@ const EditLoanPage = () => {
 	const { request } = useMemo(() => createRequest(), []);
 	const [loading, setLoading] = useState(false);
 	const [detailsLoading, setDetailsLoading] = useState(true);
-	const { changeSidebarCollapsed } = useGlobalStore();
 	const property_type = Form.useWatch(['loan_property', 'property_type'], form);
 	const [unitInfo, setUnitInfo] = useState({});
 	let isInit = useRef(true);
@@ -83,11 +81,6 @@ const EditLoanPage = () => {
 			cancelled = true;
 		};
 	}, [id, request, form]);
-
-	useLayoutEffect(() => {
-		changeSidebarCollapsed(true);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	// 通过property_type改变unit
 	useEffect(() => {

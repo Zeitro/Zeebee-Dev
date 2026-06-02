@@ -2,13 +2,7 @@
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-	DeleteOutlined,
-	EditOutlined,
-	FolderOpenTwoTone,
-	PlusOutlined,
-	ReloadOutlined,
-} from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Button, message, Space, Typography } from 'antd';
 import { DeleteBtn, FieldTips, FilterTable, PermissionSlot } from '@repo/shared-methods';
 import { useGetOptions, useAuth } from '@repo/shared-methods/hooks';
@@ -16,6 +10,7 @@ import { createRequest, displayValue, formatDate } from '@repo/shared-methods/ut
 import NewTransactionModal from './components/NewTransactionModal';
 import { getStatusTagClass } from './components/utils';
 import { PERMISSIONS } from '@config/permissions';
+import DocumentSvg from '@/assets/images/document.svg';
 
 /** 与后端约定一致的分页接口；若路径不同，只改此处 */
 const TRANSACTION_LIST_API = '/borrower_property_transaction/page';
@@ -170,7 +165,7 @@ const MyTransactionsPage = () => {
 				<Button
 					size="small"
 					type="link"
-					icon={<FolderOpenTwoTone twoToneColor={['#FF9800']} />}
+					icon={<DocumentSvg style={{ width: 20, height: 20 }} />}
 					onClick={() => router.push(`/myTransactions/${v}`)}
 				/>
 			),
