@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from 'react';
+import { useMemo, useRef, useState, useCallback } from 'react';
 import { createRequest } from '../../lib/fetch';
 import { getPagination } from '../../lib/common';
 import { asc, des, ascend, descend } from '@repo/shared-methods/enum';
@@ -18,7 +18,7 @@ const useContent = ({
 	const scrollRef = useRef();
 	const isGetRef = useRef(hasInitRequest); // 是否请求接口
 	const filterFieldRef = useRef();
-	const { request, cancel } = createRequest();
+	const { request, cancelMatch } = useMemo(() => createRequest(), []);
 
 	// 保留 ref 以便 getList 读取最新值（避免异步 state 导致的旧值问题），
 	// 但提供一套封装方法同步更新 ref 与用于渲染的 state（paramsData）
@@ -58,7 +58,7 @@ const useContent = ({
 				let res = {};
 				let newApi = api;
 				if (newApi) {
-					cancel(newApi);
+					cancelMatch(newApi);
 					if (method === 'GET') {
 						const params = new URLSearchParams(params);
 						newApi += `?${params}`;
@@ -80,7 +80,7 @@ const useContent = ({
 				setLoading(false);
 			}
 		},
-		[api, getData, method, paramsData],
+		[api, getData, method, paramsData, cancelMatch, request],
 	);
 
 	const handleSearch = async (modifyParams = {}) => {

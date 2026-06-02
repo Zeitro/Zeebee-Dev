@@ -4080,6 +4080,7 @@
                           "property_type",
                           "unit",
                           "living_area_sqft",
+                          "lot_area_sqft",
                           "bedrooms",
                           "bathrooms",
                           "future_property_type",
@@ -4192,6 +4193,9 @@
                             "type": "number"
                           },
                           "living_area_sqft": {
+                            "type": "number"
+                          },
+                          "lot_area_sqft": {
                             "type": "number"
                           },
                           "mid_construction": {
@@ -5406,6 +5410,7 @@
                     "property_type",
                     "unit",
                     "living_area_sqft",
+                    "lot_area_sqft",
                     "bedrooms",
                     "bathrooms",
                     "future_property_type",
@@ -5551,6 +5556,9 @@
                       "type": "number"
                     },
                     "living_area_sqft": {
+                      "type": "number"
+                    },
+                    "lot_area_sqft": {
                       "type": "number"
                     },
                     "mid_construction": {
@@ -6580,6 +6588,56 @@
               ],
               "properties": {
                 "pending_status": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/loan/{id}/stage": {
+      "patch": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "loan"
+        ],
+        "summary": "update stage",
+        "operationId": "loanUpdateStage",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "stage"
+              ],
+              "properties": {
+                "stage": {
                   "type": "string"
                 }
               }
@@ -9438,6 +9496,7 @@
                   "required": [
                     "unit",
                     "living_area_sqft",
+                    "lot_area_sqft",
                     "bedrooms",
                     "bathrooms",
                     "property_type",
@@ -9577,6 +9636,9 @@
                       "type": "number"
                     },
                     "living_area_sqft": {
+                      "type": "number"
+                    },
+                    "lot_area_sqft": {
                       "type": "number"
                     },
                     "mid_construction": {
@@ -9891,6 +9953,7 @@
                 "property_type",
                 "unit",
                 "living_area_sqft",
+                "lot_area_sqft",
                 "bedrooms",
                 "bathrooms",
                 "address"
@@ -9923,6 +9986,9 @@
                   "type": "integer"
                 },
                 "living_area_sqft": {
+                  "type": "number"
+                },
+                "lot_area_sqft": {
                   "type": "number"
                 },
                 "property_type": {
@@ -9985,6 +10051,9 @@
                 "loan_count": {
                   "type": "integer"
                 },
+                "lot_area_sqft": {
+                  "type": "number"
+                },
                 "organization_id": {
                   "type": "integer"
                 },
@@ -10038,6 +10107,7 @@
                       "total_amount",
                       "unit",
                       "living_area_sqft",
+                      "lot_area_sqft",
                       "bedrooms",
                       "bathrooms",
                       "address",
@@ -10089,6 +10159,9 @@
                       },
                       "loan_count": {
                         "type": "integer"
+                      },
+                      "lot_area_sqft": {
+                        "type": "number"
                       },
                       "organization_id": {
                         "type": "integer"
@@ -10192,6 +10265,7 @@
                       "creator_name",
                       "property_type",
                       "living_area_sqft",
+                      "lot_area_sqft",
                       "bedrooms",
                       "bathrooms",
                       "unit",
@@ -10270,6 +10344,9 @@
                       },
                       "loan_count": {
                         "type": "integer"
+                      },
+                      "lot_area_sqft": {
+                        "type": "number"
                       },
                       "nearest_maturity_date": {
                         "type": "string"
@@ -10381,6 +10458,9 @@
                 "loan_count": {
                   "type": "integer"
                 },
+                "lot_area_sqft": {
+                  "type": "number"
+                },
                 "organization_id": {
                   "type": "integer"
                 },
@@ -10433,6 +10513,7 @@
                 "property_type",
                 "unit",
                 "living_area_sqft",
+                "lot_area_sqft",
                 "bedrooms",
                 "bathrooms"
               ],
@@ -10444,6 +10525,9 @@
                   "type": "integer"
                 },
                 "living_area_sqft": {
+                  "type": "number"
+                },
+                "lot_area_sqft": {
                   "type": "number"
                 },
                 "property_type": {
@@ -11041,6 +11125,7 @@
                           "property_type",
                           "unit",
                           "living_area_sqft",
+                          "lot_area_sqft",
                           "bedrooms",
                           "bathrooms",
                           "future_property_type",
@@ -11153,6 +11238,9 @@
                             "type": "number"
                           },
                           "living_area_sqft": {
+                            "type": "number"
+                          },
+                          "lot_area_sqft": {
                             "type": "number"
                           },
                           "mid_construction": {
@@ -11903,6 +11991,7 @@
                           "property_type",
                           "unit",
                           "living_area_sqft",
+                          "lot_area_sqft",
                           "bedrooms",
                           "bathrooms",
                           "future_property_type",
@@ -12015,6 +12104,9 @@
                             "type": "number"
                           },
                           "living_area_sqft": {
+                            "type": "number"
+                          },
+                          "lot_area_sqft": {
                             "type": "number"
                           },
                           "mid_construction": {
@@ -12248,6 +12340,9 @@
                   "type": "integer"
                 },
                 "living_area_sqft": {
+                  "type": "number"
+                },
+                "lot_area_sqft": {
                   "type": "number"
                 },
                 "pending_loans": {
@@ -12766,6 +12861,7 @@
                           "property_type",
                           "unit",
                           "living_area_sqft",
+                          "lot_area_sqft",
                           "bedrooms",
                           "bathrooms",
                           "future_property_type",
@@ -12878,6 +12974,9 @@
                             "type": "number"
                           },
                           "living_area_sqft": {
+                            "type": "number"
+                          },
+                          "lot_area_sqft": {
                             "type": "number"
                           },
                           "mid_construction": {
@@ -16116,9 +16215,9 @@
       }
     }
   },
-  "x-date": "2026-04-01 17:27:36",
+  "x-date": "2026-05-22 18:59:18",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
-  "x-goctl-version": "1.9.2"
+  "x-goctl-version": "1.10.1"
 }

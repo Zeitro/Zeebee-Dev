@@ -150,6 +150,24 @@ const AddModal = ({ setOpen, rowData, handleSearch }) => {
 					</Col>
 					<Col {...layoutCol} md={12}>
 						<Form.Item
+							label="Lot area sqft"
+							name={['lot_area_sqft']}
+							rules={[
+								{
+									required: true,
+									message: 'Please enter Lot area sqft!',
+								},
+							]}
+						>
+							<InputNumber
+								style={{ width: '100%' }}
+								{...livingAreaProps}
+								placeholder="Enter Living area sqft"
+							/>
+						</Form.Item>
+					</Col>
+					<Col {...layoutCol} md={12}>
+						<Form.Item
 							label="Number of bedrooms"
 							name={['bedrooms']}
 							rules={[
@@ -161,7 +179,7 @@ const AddModal = ({ setOpen, rowData, handleSearch }) => {
 						>
 							<InputNumber
 								style={{ width: '100%' }}
-								min={1}
+								min={0}
 								max={100}
 								controls={false}
 								placeholder="Enter Number of bedrooms"
@@ -181,7 +199,7 @@ const AddModal = ({ setOpen, rowData, handleSearch }) => {
 						>
 							<InputNumber
 								style={{ width: '100%' }}
-								min={1}
+								min={0}
 								max={100}
 								controls={false}
 								placeholder="Enter Number of bathrooms"

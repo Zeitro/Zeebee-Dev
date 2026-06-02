@@ -18,15 +18,13 @@ const GoogleAutoComplete = ({
 	placeholder = 'Enter address',
 	...props
 }) => {
-	const [address, setAddress] = useState('');
+	const [internalAddress, setInternalAddress] = useState('');
 	const [options, setOptions] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const autocompleteService = useRef(null);
 	const sessionToken = useRef(null);
-
-	useEffect(() => {
-		setAddress(value);
-	}, [value]);
+	const isControlled = value !== undefined && value !== null;
+	const displayAddress = isControlled ? value : internalAddress;
 
 	const initAutocompleteService = () => {
 		if (window.google?.maps?.places) {
@@ -88,7 +86,7 @@ const GoogleAutoComplete = ({
 						? `${addressInfo?.streetNumber} ${addressInfo?.street}`
 						: addressInfo?.street;
 					onChange(address);
-					setAddress(address);
+					if (!isControlled) setInternalAddress(address);
 					const zip = addressInfo?.zipCode_suffix
 						? `${addressInfo?.zipCode}-${addressInfo?.zipCode_suffix}`
 						: addressInfo?.zipCode || '';
@@ -136,10 +134,10 @@ const GoogleAutoComplete = ({
 	}, []);
 	return (
 		<AutoComplete
-			value={address}
+			value={displayAddress}
 			options={options}
 			onChange={(e) => {
-				setAddress(e);
+				if (!isControlled) setInternalAddress(e);
 				onChange(e);
 			}}
 			onSearch={handleSearch}

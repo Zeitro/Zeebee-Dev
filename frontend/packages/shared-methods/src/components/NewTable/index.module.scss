@@ -28,6 +28,9 @@
 			height: 55px !important;
 			padding: 10px 16px !important;
 		}
+		.ant-table-tbody > tr > td:last-child .ant-btn {
+			gap: 4px !important;
+		}
 	}
 	.selectedRow {
 		cursor: pointer;
