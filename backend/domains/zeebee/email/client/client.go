@@ -61,9 +61,7 @@ func buildRawMessage(msg commonemail.Message) (string, error) {
 	_, _ = partWriter.Write([]byte(msg.Body))
 
 	for _, att := range msg.Attachments {
-
 		h := make(textproto.MIMEHeader)
-
 		if att.MimeType == "" {
 			att.MimeType = "application/octet-stream"
 		}

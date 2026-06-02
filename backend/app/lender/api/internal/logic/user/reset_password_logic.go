@@ -27,7 +27,6 @@ func NewResetPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Res
 }
 
 func (l *ResetPasswordLogic) ResetPassword(req *types.UserResetPasswordRequest) (resp *types.UserJwtResponse, err error) {
-
 	rpcResp, err := l.svcCtx.UserRpcClient.ResetPassword(l.ctx, &lender.ResetPasswordRequest{
 		Data: &lender.ResetPasswordRequestData{
 			Email:    req.Email,

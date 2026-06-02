@@ -16,7 +16,7 @@ func init() {
 func GetSonyflakeID() (id int64, err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = fmt.Errorf("Get Sonyflake ID error: %v", r)
+			err = fmt.Errorf("get Sonyflake ID error: %v", r)
 		}
 	}()
 

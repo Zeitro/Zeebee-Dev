@@ -61,7 +61,6 @@ func LoanPreApprovalRequestPropertyRule(sl validator.StructLevel) {
 		if property.Unit < 1 {
 			sl.ReportError(property.Unit, property.PropertyType, "Unit", unitTag, string(property.Unit))
 		}
-
 	}
 }
 

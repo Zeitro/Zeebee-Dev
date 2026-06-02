@@ -119,5 +119,4 @@ func init() {
 			Value: string(OrganizationUserStatusDisabled),
 		},
 	})
-
 }

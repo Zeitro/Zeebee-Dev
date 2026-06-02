@@ -159,3 +159,34 @@ func (repo *ApiRepo) GetOrCreateApiWithTx(ctx context.Context, tx *gorm.DB, api 
 	err = query.Create(&api).Error
 	return api, errorx.WithStack(err)
 }
+
+// FindApiCategoryByNameAndTypeWithTx finds a category by name and type (path='' AND method='')
+func (repo *ApiRepo) FindApiCategoryByNameAndTypeWithTx(ctx context.Context, tx *gorm.DB, name string, apiType constants.UserType) (result *model.Api, err error) {
+	err = tx.WithContext(ctx).Model(&model.Api{}).
+		Where("name = ? AND type = ? AND path = '' AND method = ''", name, apiType).
+		First(&result).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil, nil
+	}
+	return result, errorx.WithStack(err)
+}
+
+// FindApiByPathMethodAndTypeWithTx finds an API by path, method and type
+func (repo *ApiRepo) FindApiByPathMethodAndTypeWithTx(ctx context.Context, tx *gorm.DB, path, method string, apiType constants.UserType) (result *model.Api, err error) {
+	err = tx.WithContext(ctx).Model(&model.Api{}).
+		Where("path = ? AND method = ? AND type = ?", path, method, apiType).
+		First(&result).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil, nil
+	}
+	return result, errorx.WithStack(err)
+}
+
+// GetMaxSortOrderWithTx returns the max sort_order for a given parent_id and type
+func (repo *ApiRepo) GetMaxSortOrderWithTx(ctx context.Context, tx *gorm.DB, parentId int64, apiType constants.UserType) (result int32, err error) {
+	err = tx.WithContext(ctx).Model(&model.Api{}).
+		Where("parent_id = ? AND type = ?", parentId, apiType).
+		Select("COALESCE(MAX(sort_order), 0)").
+		Scan(&result).Error
+	return result, errorx.WithStack(err)
+}

@@ -92,6 +92,24 @@ func (repo *ResourceRepo) GetResourceWithTx(ctx context.Context, tx *gorm.DB, id
 	return result, errorx.WithStack(err)
 }
 
+// GetMaxSortOrder returns the max sort_order for a given parent_id and type
+func (repo *ResourceRepo) GetMaxSortOrder(ctx context.Context, parentId int64, resourceType constants.UserType) (result int32, err error) {
+	err = repo.Client(ctx).Model(&model.Resource{}).
+		Where("parent_id = ? AND type = ?", parentId, resourceType).
+		Select("COALESCE(MAX(sort_order), 0)").
+		Scan(&result).Error
+	return result, errorx.WithStack(err)
+}
+
+// GetMaxSortOrderWithTx returns the max sort_order for a given parent_id and type with tx
+func (repo *ResourceRepo) GetMaxSortOrderWithTx(ctx context.Context, tx *gorm.DB, parentId int64, resourceType constants.UserType) (result int32, err error) {
+	err = tx.WithContext(ctx).Model(&model.Resource{}).
+		Where("parent_id = ? AND type = ?", parentId, resourceType).
+		Select("COALESCE(MAX(sort_order), 0)").
+		Scan(&result).Error
+	return result, errorx.WithStack(err)
+}
+
 // GetResourceByParentId get resources by parent id and api type
 func (repo *ResourceRepo) GetResourceByParentId(ctx context.Context, parentId int64, apiType constants.UserType) (result []*model.Resource, err error) {
 	err = repo.Client(ctx).
@@ -206,7 +224,6 @@ func (repo *ResourceRepo) AllResources(ctx context.Context, organizationId int64
 				}
 				return subQuery
 			})
-
 	}
 	err = query.Order("sort_order asc").
 		Order("parent_id asc").

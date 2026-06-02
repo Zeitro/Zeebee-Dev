@@ -8,7 +8,6 @@ import {
 	transformArrayStructure,
 } from '@repo/shared-methods/utils';
 import { useRouter } from 'next/navigation';
-import { useGlobalStore } from '@/store/global';
 import { useOptionsStore } from '@repo/shared-methods/store';
 import { ReloadOutlined } from '@ant-design/icons';
 import { useAuth } from '@repo/shared-methods/hooks';
@@ -21,7 +20,6 @@ export default function useOpt({ stage, searchQuery }) {
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const { request } = createRequest();
 	const router = useRouter();
-	const { changeSidebarCollapsed } = useGlobalStore();
 
 	const tableFilterRef = useRef();
 	const { loanPendingStatus, loanPurposeOptions, loanTypeOptions, lenderOptions } =
@@ -243,7 +241,6 @@ export default function useOpt({ stage, searchQuery }) {
 	const handleSelectedRow = (record) => {
 		const routerFn = (url) => {
 			router.push(url);
-			setTimeout(() => changeSidebarCollapsed(true), 300);
 		};
 
 		// 3rd party

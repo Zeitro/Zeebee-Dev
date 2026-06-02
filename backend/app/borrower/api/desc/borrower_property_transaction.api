@@ -1,0 +1,288 @@
+syntax = "v1"
+
+info(
+    title: "borrower-property-transaction-api"
+    desc: "property transaction api"
+    version: "v1"
+)
+
+import "file.api"
+import "address.api"
+import "document.api"
+
+type BorrowerPropertyTransactionEntity {
+    Id int64 `json:"id"`
+    Code string `json:"code"`
+    Type string `json:"type"`
+    Status string `json:"status"`
+    BorrowerPropertyId int64 `json:"borrower_property_id"`
+    OrganizationId int64 `json:"organization_id"`
+    CoeDate string `json:"coe_date"`
+    PurchaseAmount float64 `json:"purchase_amount"`
+    EmdAmount float64 `json:"emd_amount"`
+    PropertyType string `json:"property_type"`
+    Pm string `json:"pm"`
+    BusinessStrategy []string `json:"business_strategy"`
+    Note string `json:"note"`
+    Checklist BorrowerPropertyTransactionChecklist `json:"checklist"`
+    CreatedAt string `json:"created_at"`
+    UpdatedAt string `json:"updated_at"`
+}
+
+// checklist types
+type BorrowerPropertyTransactionChecklistNode {
+    Name string `json:"name"`
+    DocumentId int64 `json:"document_id"`
+    IsRequired bool `json:"is_required"`
+    SubDocumentCount int32 `json:"sub_document_count"`
+    UploadedDocumentCount int32 `json:"uploaded_document_count"`
+    RequiredDocumentCount int32 `json:"required_document_count"`
+    OptionalDocumentCount int32 `json:"optional_document_count"`
+    Children []BorrowerPropertyTransactionChecklistNode `json:"children"`
+    FileCount int32 `json:"file_count"`
+    Files []FileEntity `json:"files"`
+}
+
+type BorrowerPropertyTransactionChecklist {
+    AllChecked bool `json:"all_checked"`
+    TotalDocumentCount int32 `json:"total_document_count"`
+    TotalRequiredDocumentCount int32 `json:"total_required_document_count"`
+    TotalRequiredUpdatedDocumentCount int32 `json:"total_required_updated_document_count"`
+    TotalOptionalDocumentCount int32 `json:"total_optional_document_count"`
+    TotalOptionalUpdatedDocumentCount int32 `json:"total_optional_updated_document_count"`
+    RequiredDocuments []BorrowerPropertyTransactionChecklistNode `json:"required_documents"`
+    OptionalDocuments []BorrowerPropertyTransactionChecklistNode `json:"optional_documents"`
+}
+
+// create
+type (
+    BorrowerPropertyTransactionCreateRequest {
+        BorrowerPropertyId int64 `json:"borrower_property_id" validate:"required,gt=0"`
+        Type string `json:"type" validate:"required,oneof=Purchase Sale Re-finance 'Change Title' Assignment"`
+    }
+    BorrowerPropertyTransactionCreateResponse {
+        Id int64 `json:"id"`
+        Code string `json:"code"`
+        Type string `json:"type"`
+        Status string `json:"status"`
+        BorrowerPropertyId int64 `json:"borrower_property_id"`
+        OrganizationId int64 `json:"organization_id"`
+        CoeDate string `json:"coe_date"`
+        PurchaseAmount float64 `json:"purchase_amount"`
+        EmdAmount float64 `json:"emd_amount"`
+        PropertyType string `json:"property_type"`
+        Pm string `json:"pm"`
+        BusinessStrategy []string `json:"business_strategy"`
+        Note string `json:"note"`
+        Checklist BorrowerPropertyTransactionChecklist `json:"checklist"`
+        CreatedAt string `json:"created_at"`
+        UpdatedAt string `json:"updated_at"`
+    }
+)
+
+// update
+type (
+    BorrowerPropertyTransactionUpdateRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        CoeDate string `json:"coe_date,optional" validate:"omitempty,datetime=01/02/2006"`
+        PurchaseAmount float64 `json:"purchase_amount,optional" validate:"min=0"`
+        EmdAmount float64 `json:"emd_amount,optional" validate:"min=0"`
+        PropertyType string `json:"property_type,optional" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
+        Pm string `json:"pm,optional"`
+        BusinessStrategy []string `json:"business_strategy,optional" validate:"omitempty,dive,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
+        Note string `json:"note,optional"`
+    }
+)
+
+// switch status
+type (
+    BorrowerPropertyTransactionSwitchStatusRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Status string `json:"status" validate:"required,oneof=Pending Closed Cancelled"`
+    }
+)
+
+// delete
+type (
+    BorrowerPropertyTransactionDeleteRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+    }
+)
+
+// detail
+type (
+    BorrowerPropertyTransactionDetailRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+    }
+    BorrowerPropertyTransactionDetailResponse {
+        Id int64 `json:"id"`
+        Code string `json:"code"`
+        Type string `json:"type"`
+        Status string `json:"status"`
+        BorrowerPropertyId int64 `json:"borrower_property_id"`
+        OrganizationId int64 `json:"organization_id"`
+        CoeDate string `json:"coe_date"`
+        PurchaseAmount float64 `json:"purchase_amount"`
+        EmdAmount float64 `json:"emd_amount"`
+        PropertyType string `json:"property_type"`
+        Pm string `json:"pm"`
+        BusinessStrategy []string `json:"business_strategy"`
+        Note string `json:"note"`
+        Checklist BorrowerPropertyTransactionChecklist `json:"checklist"`
+        CreatedAt string `json:"created_at"`
+        UpdatedAt string `json:"updated_at"`
+    }
+)
+
+// all (for select dropdown)
+type (
+    BorrowerPropertyTransactionAllResponse {
+        Lists []BorrowerPropertyTransactionOption `json:"lists"`
+    }
+    BorrowerPropertyTransactionOption {
+        Id int64 `json:"id"`
+        Code string `json:"code"`
+        Type string `json:"type"`
+        CoeDate string `json:"coe_date"`
+        Status string `json:"status"`
+        PropertyType string `json:"property_type"`
+        BorrowerPropertyId int64 `json:"borrower_property_id"`
+        BorrowerProperty BorrowerPropertyTransactionPropertyEntity `json:"borrower_property"`
+
+        //        Address *AddressEntity `json:"address"`
+    }
+
+    BorrowerPropertyTransactionPropertyEntity {
+        Id int64 `json:"id"`
+        CreatorId int64 `json:"creator_id"`
+        CreatorName string `json:"creator_name"`
+        OrganizationId int64 `json:"organization_id"`
+        PropertyType string `json:"property_type"`
+        TotalAmount float64 `json:"total_amount"`
+        Unit int32 `json:"unit"`
+        LivingAreaSqft float32 `json:"living_area_sqft"`
+        Bedrooms int32 `json:"bedrooms"`
+        Bathrooms float32 `json:"bathrooms"`
+        Address *AddressEntity `json:"address"`
+        CreatedAt string `json:"created_at"`
+        UpdatedAt string `json:"updated_at"`
+        LoanCount int32 `json:"loan_count"`
+    }
+)
+
+// checklist
+type (
+    BorrowerPropertyTransactionChecklistRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        AllChecked bool `json:"all_checked"`
+    }
+)
+
+// page
+type (
+    BorrowerPropertyTransactionPageFilter {
+        Keyword string `json:"keyword,optional"`
+        Type string `json:"type,optional"`
+        Status string `json:"status,optional"`
+    }
+    BorrowerPropertyTransactionPageRequest {
+        Page int64 `json:"page,optional"`
+        Limit int64 `json:"limit,optional"`
+        Filter BorrowerPropertyTransactionPageFilter `json:"filter,optional"`
+    }
+    BorrowerPropertyTransactionPageResponse {
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+        Total int64 `json:"total"`
+        TotalPage int64 `json:"total_page"`
+        List []BorrowerPropertyTransactionPageEntity `json:"list"`
+    }
+    BorrowerPropertyTransactionPageEntity {
+        Id int64 `json:"id"`
+        BorrowerPropertyId int64 `json:"borrower_property_id"`
+        Code string `json:"code"`
+        Type string `json:"type"`
+        Status string `json:"status"`
+        CoeDate string `json:"coe_date"`
+        CreatedAt string `json:"created_at"`
+        UpdatedAt string `json:"updated_at"`
+        Address *AddressEntity `json:"address"`
+    }
+)
+
+// upload file (nested under transaction route)
+type (
+    DocumentUploadFileItem {
+        FileName string `json:"file_name" validate:"required"`
+        FileUrl string `json:"file_url" validate:"required"`
+        StorageType string `json:"storage_type" validate:"required,oneof='Aws S3' 'Google Drive'"`
+        UploadType string `json:"upload_type" validate:"required,oneof='Manual' 'Google Drive'"`
+    }
+    BorrowerPropertyTransactionDocumentUploadFileRequest {
+        TransactionId int64 `path:"transaction_id" validate:"required,gt=0"`
+        DocumentId int64 `path:"document_id" validate:"required,gt=0"`
+        Files []DocumentUploadFileItem `json:"files" validate:"required,dive"`
+    }
+    DocumentUploadFileResponse {
+        Files []DocumentFile `json:"files"`
+    }
+)
+
+// delete file (nested under transaction route)
+type (
+    BorrowerPropertyTransactionDocumentDeleteFileRequest {
+        TransactionId int64 `path:"transaction_id" validate:"required,gt=0"`
+        //        DocumentId int64 `path:"document_id" validate:"required,gt=0"`
+        FileId int64 `path:"file_id" validate:"required,gt=0"`
+    }
+)
+
+// operation stats
+type (
+    TransactionOperationStatsRequest {
+        TransactionId int64 `path:"transaction_id" validate:"required,gt=0"`
+        StartDate string `form:"start_date,optional" validate:"omitempty,datetime=01/02/2006"`
+        EndDate string `form:"end_date,optional" validate:"omitempty,datetime=01/02/2006"`
+    }
+    TransactionOperationStatsResponse {
+        Total int64 `json:"total"`
+        Items []OperationStatsItem `json:"items"`
+    }
+    OperationStatsItem {
+        Type string `json:"type"`
+        Count int64 `json:"count"`
+    }
+)
+
+// operation list
+type (
+    TransactionOperationListRequest {
+        TransactionId int64 `path:"transaction_id" validate:"required,gt=0"`
+        OperationType string `form:"operation_type,optional"`
+        StartDate string `form:"start_date,optional" validate:"omitempty,datetime=01/02/2006"`
+        EndDate string `form:"end_date,optional" validate:"omitempty,datetime=01/02/2006"`
+    }
+    TransactionOperationListResponse {
+        List []OperationListItem `json:"list"`
+    }
+    OperationListItem {
+        Id int64 `json:"id"`
+        Operation string `json:"operation"`
+        OperatorId int64 `json:"operator_id"`
+        OperatorName string `json:"operator_name"`
+        OperatorType string `json:"operator_type"`
+        Note string `json:"note"`
+        Metadata map[string]interface{} `json:"metadata"`
+        CreatedAt string `json:"created_at"`
+    }
+)
+
+// list by borrower property
+type (
+    BorrowerPropertyTransactionListByPropertyRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+    }
+    BorrowerPropertyTransactionListByPropertyResponse {
+        List []BorrowerPropertyTransactionEntity `json:"list"`
+    }
+)

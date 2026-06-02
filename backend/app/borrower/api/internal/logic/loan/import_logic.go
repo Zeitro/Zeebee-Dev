@@ -176,7 +176,6 @@ func (l *ImportLogic) importPendingLoans(content []byte, userId int64, organizat
 }
 
 func parsePendingLoans(rows [][]string, borrowerId int64, organizationId int64) ([]*types.ImportPendingLoanEntity, error) {
-
 	importLoans := make([]*types.ImportPendingLoanEntity, 0, len(rows))
 	// Create a map for column indices
 	columnIndex := make(map[string]int)
@@ -349,12 +348,12 @@ func parsePendingLoans(rows [][]string, borrowerId int64, organizationId int64) 
 	return importLoans, nil
 }
 
-func parseInteger(s string) (int64, error) {
-	if len(s) == 0 {
-		return 0, nil
-	}
-	return strconv.ParseInt(s, 10, 64)
-}
+// func parseInteger(s string) (int64, error) {
+// 	if len(s) == 0 {
+// 		return 0, nil
+// 	}
+// 	return strconv.ParseInt(s, 10, 64)
+// }
 
 func parseFloat(s string) (float64, error) {
 	if len(s) == 0 {

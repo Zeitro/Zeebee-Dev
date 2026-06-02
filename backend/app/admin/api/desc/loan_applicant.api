@@ -37,9 +37,9 @@ type LoanApplicantEntity {
 
 type LoanApplicantEditLoanEntity {
     Id int64 `json:"id,omitempty,optional"`
-    BorrowerApplicantId int64 `json:"borrower_applicant_id,omitempty, optional"`
-    IsPrimary bool `json:"is_primary,omitempty, optional"`
-    OwnPercent int32 `json:"own_percent, optional" validate:"gt=0,max=100"`
+    BorrowerApplicantId int64 `json:"borrower_applicant_id,omitempty,optional"`
+    IsPrimary bool `json:"is_primary,omitempty,optional"`
+    OwnPercent int32 `json:"own_percent,optional" validate:"gt=0,max=100"`
 }
 
 

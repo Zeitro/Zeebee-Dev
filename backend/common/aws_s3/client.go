@@ -97,7 +97,6 @@ func (c *S3Client) UploadFile(ctx context.Context, presignedReq *v4.PresignedHTT
 		for _, v := range strings {
 			req.Header.Add(s, v)
 		}
-
 	}
 
 	client := &http.Client{}

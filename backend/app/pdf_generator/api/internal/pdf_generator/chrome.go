@@ -346,43 +346,43 @@ func WithWaitTime(d time.Duration) PDFOption {
 }
 
 // compressHTML removes newlines and excess whitespace from HTML for chromedp
-func compressHTML(html string) string {
-	// Remove carriage returns and newlines
-	html = strings.ReplaceAll(html, "\r\n", "")
-	html = strings.ReplaceAll(html, "\n", " ")
-	html = strings.ReplaceAll(html, "\r", " ")
-	// Fix escaped quotes from JSON transport: \" → "
-	// html = strings.ReplaceAll(html, "\\\"", "\"")
-
-	// Replace multiple spaces with single space (except within tags)
-	var result strings.Builder
-	inTag := false
-	prevSpace := false
-
-	for _, r := range html {
-		if r == '<' {
-			inTag = true
-			result.WriteRune(r)
-			prevSpace = false
-		} else if r == '>' {
-			inTag = false
-			result.WriteRune(r)
-			prevSpace = false
-		} else if inTag {
-			// Inside tags, keep original spacing
-			result.WriteRune(r)
-			prevSpace = false
-		} else if r == ' ' || r == '\t' {
-			// Outside tags, collapse multiple spaces to one
-			if !prevSpace {
-				result.WriteRune(' ')
-				prevSpace = true
-			}
-		} else {
-			result.WriteRune(r)
-			prevSpace = false
-		}
-	}
-
-	return result.String()
-}
+// func compressHTML(html string) string {
+// 	// Remove carriage returns and newlines
+// 	html = strings.ReplaceAll(html, "\r\n", "")
+// 	html = strings.ReplaceAll(html, "\n", " ")
+// 	html = strings.ReplaceAll(html, "\r", " ")
+// 	// Fix escaped quotes from JSON transport: \" → "
+// 	// html = strings.ReplaceAll(html, "\\\"", "\"")
+//
+// 	// Replace multiple spaces with single space (except within tags)
+// 	var result strings.Builder
+// 	inTag := false
+// 	prevSpace := false
+//
+// 	for _, r := range html {
+// 		if r == '<' {
+// 			inTag = true
+// 			result.WriteRune(r)
+// 			prevSpace = false
+// 		} else if r == '>' {
+// 			inTag = false
+// 			result.WriteRune(r)
+// 			prevSpace = false
+// 		} else if inTag {
+// 			// Inside tags, keep original spacing
+// 			result.WriteRune(r)
+// 			prevSpace = false
+// 		} else if r == ' ' || r == '\t' {
+// 			// Outside tags, collapse multiple spaces to one
+// 			if !prevSpace {
+// 				result.WriteRune(' ')
+// 				prevSpace = true
+// 			}
+// 		} else {
+// 			result.WriteRune(r)
+// 			prevSpace = false
+// 		}
+// 	}
+//
+// 	return result.String()
+// }

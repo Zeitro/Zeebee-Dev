@@ -57,7 +57,7 @@ func (l *ApplyLogic) Apply(req *types.LoanApplyRequest) (resp *types.LoanApplyRe
 	if err != nil {
 		return nil, err
 	}
-	resp, err = copierx.Trans[borrower.LoanApplyResponse, types.LoanApplyResponse](rpcResp)
+	resp, err = copierx.Trans[borrower.LoanApplyResponseData, types.LoanApplyResponse](rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

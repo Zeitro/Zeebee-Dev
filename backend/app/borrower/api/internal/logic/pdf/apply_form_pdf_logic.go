@@ -29,7 +29,6 @@ func NewApplyFormPdfLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Appl
 }
 
 func (l *ApplyFormPdfLogic) ApplyFormPdf(req *types.ApplyFormPdfRequest) (contents []byte, err error) {
-
 	if req.LoanProperty != nil && req.LoanProperty.YearlyLiabilityExpenseAmount > 0 {
 		dscr := (req.LoanProperty.EstYearlyRentalIncomeAmount / req.LoanProperty.YearlyLiabilityExpenseAmount) * 100.0
 		req.LoanProperty.Dscr = mathutil.RoundToFloat(dscr, 2)

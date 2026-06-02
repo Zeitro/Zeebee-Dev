@@ -27,7 +27,6 @@ func NewPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PageLogic {
 }
 
 func (l *PageLogic) Page(req *types.LoanPageRequest) (resp *types.LoanPageResponse, err error) {
-
 	rpcReq := &borrower.LoanPageRequest{
 		Data: &borrower.LoanPageRequestData{
 			Filter: &borrower.LoanPageRequestFilter{},
