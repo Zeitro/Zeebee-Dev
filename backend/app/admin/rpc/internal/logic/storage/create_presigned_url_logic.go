@@ -13,6 +13,7 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 type CreatePresignedUrlLogic struct {
@@ -48,6 +49,11 @@ func (l *CreatePresignedUrlLogic) CreatePresignedUrl(in *admin.StorageCreatePres
 
 	key := fmt.Sprintf("%s/%s/%s.%s", folder, typ, name, suffix)
 
+	fileName := in.Data.FileName
+	if len(fileName) == 0 {
+		fileName = fmt.Sprintf("%s.%s", name, suffix)
+	}
+
 	req, err := client.GetPresignUrl(l.ctx, key, expireSeconds, suffix)
 	if err != nil {
 		return
@@ -55,7 +61,10 @@ func (l *CreatePresignedUrlLogic) CreatePresignedUrl(in *admin.StorageCreatePres
 
 	return &admin.StorageCreatePresignedUrlResponse{
 		Data: &admin.StorageCreatePresignedUrlResponseData{
-			Url: req.URL,
+			Url:         req.URL,
+			FileName:    fileName,
+			StorageType: string(constants.StorageTypeAwsS3),
+			UploadType:  string(constants.UploadTypeManual),
 		},
 	}, nil
 }

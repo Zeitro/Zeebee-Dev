@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/global"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/domains/zeebee/constants"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -49,6 +50,11 @@ func (l *CreatePresignedUrlLogic) CreatePresignedUrl(in *lender.StorageCreatePre
 
 	key := fmt.Sprintf("%s/%s/%s.%s", folder, typ, name, suffix)
 
+	fileName := in.Data.FileName
+	if len(fileName) == 0 {
+		fileName = fmt.Sprintf("%s.%s", name, suffix)
+	}
+
 	req, err := client.GetPresignUrl(l.ctx, key, expireSeconds, suffix)
 	if err != nil {
 		return
@@ -56,7 +62,10 @@ func (l *CreatePresignedUrlLogic) CreatePresignedUrl(in *lender.StorageCreatePre
 
 	return &lender.StorageCreatePresignedUrlResponse{
 		Data: &lender.StorageCreatePresignedUrlResponseData{
-			Url: req.URL,
+			Url:         req.URL,
+			FileName:    fileName,
+			StorageType: string(constants.StorageTypeAwsS3),
+			UploadType:  string(constants.UploadTypeManual),
 		},
 	}, nil
 }

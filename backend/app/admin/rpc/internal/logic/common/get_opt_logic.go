@@ -37,8 +37,7 @@ func (l *GetOptLogic) GetOpt(in *admin.OptionRequest) (resp *admin.OptionRespons
 	resp = &admin.OptionResponse{
 		Data: []*admin.OptionEntity{},
 	}
-	opts := enums.Get(in.Data.Name)
-	err = copier.Copy(&resp.Data, &opts)
+	err = copier.Copy(&resp.Data, new(enums.Get(in.Data.Name)))
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

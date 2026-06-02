@@ -322,6 +322,7 @@ message LoanEntity {
   double HoldbackRemainingAmount = 47;
   string due_status = 48;
   int32 due_days = 49;
+  BorrowerPropertyTransactionEntity borrower_property_transaction = 50;
 
 }
 
@@ -386,6 +387,7 @@ message LoanCreateRequestData {
   string original_contract_date = 23;
   string extension_date = 24;
   string loan_processor = 25;
+  int64 borrower_property_transaction_id = 26;
 }
 
 message LoanCreateResponse {
@@ -488,6 +490,7 @@ message  LoanPageRequestFilter {
   int32 due_in_days = 10;
   string start_date = 11;
   string end_date = 12;
+  int64 borrower_property_transaction_id = 13;
 }
 
 message  LoanPageRequestSorter {
@@ -550,6 +553,7 @@ message LoanApplyRequestData {
   bool is_preapprove_loan = 23;
   string code = 24;
   LoanPreapproveInfo loan_preapprove_info = 25;
+  int64 borrower_property_transaction_id = 26;
 }
 
 message LoanPreapproveInfo {
@@ -1553,6 +1557,10 @@ message FileEntity {
   string file_url = 4;
   string created_at = 5;
   string updated_at = 6;
+  string file_name = 7;
+  string storage_type = 8;
+  string external_id = 9;
+  string upload_type = 10;
 }
 message FileDeleteRequest {
   FileDeleteRequestData data = 1;
@@ -1573,6 +1581,7 @@ message StorageCreatePresignedUrlRequest {
 message StorageCreatePresignedUrlRequestData {
   string type = 1;
   string file_suffix = 2;
+  string file_name = 3;
 }
 
 message StorageCreatePresignedUrlResponse {
@@ -1581,6 +1590,10 @@ message StorageCreatePresignedUrlResponse {
 
 message StorageCreatePresignedUrlResponseData {
   string url = 1;
+  string file_name = 2;
+  string storage_type = 3;
+  string external_id = 4;
+  string upload_type = 5;
 }
 
 service Storage {
@@ -1657,9 +1670,18 @@ message ResourceTreeRequestData {
 message ResourceTreeResponse {
   repeated ResourceTreeEntity data = 1;
 }
+message SyncResourceRequest {
+  SyncResourceRequestData data = 1;
+}
+
+message SyncResourceRequestData {
+  string resource_json = 1;
+}
+
 service resource {
   rpc ResourceTree(ResourceTreeRequest) returns(ResourceTreeResponse);
   rpc UserMenu(EmptyRequest) returns(ResourceTreeResponse);
+  rpc SyncResource(SyncResourceRequest) returns(EmptyResponse);
 }
 // =================== resource service end =================
 // =================== role service start =================
@@ -2185,3 +2207,391 @@ service Auth {
 }
 
 // ========== auth service end ======================
+
+// ===================== borrower property transaction service start ======================
+message BorrowerPropertyTransactionChecklistNodeEntity {
+  string name = 1;
+  int64 document_id = 2;
+  bool is_required = 3;
+  int32 sub_document_count = 4;
+  int32 uploaded_document_count = 5;
+  repeated BorrowerPropertyTransactionChecklistNodeEntity children = 6;
+  int32 file_count = 7;
+  repeated FileEntity files = 8;
+  int32 required_document_count = 9;
+  int32 optional_document_count = 10;
+}
+
+message BorrowerPropertyTransactionChecklistEntity {
+  bool all_checked = 1;
+  int32 total_document_count = 2;
+  int32 total_required_document_count = 3;
+  int32 total_required_updated_document_count = 4;
+  int32 total_optional_document_count = 5;
+  int32 total_optional_updated_document_count = 6;
+  repeated BorrowerPropertyTransactionChecklistNodeEntity required_documents = 7;
+  repeated BorrowerPropertyTransactionChecklistNodeEntity optional_documents = 8;
+}
+
+message BorrowerPropertyTransactionEntity {
+  int64 id = 1;
+  string created_at = 2;
+  string updated_at = 3;
+  int64 borrower_property_id = 4;
+  int64 organization_id = 5;
+  string code = 6;
+  string type = 7;
+  string status = 8;
+  string coe_date = 9;
+  double purchase_amount = 10;
+  double emd_amount = 11;
+  string property_type = 12;
+  string pm = 13;
+  repeated string business_strategy = 14;
+  string note = 15;
+  BorrowerPropertyTransactionChecklistEntity checklist = 16;
+}
+
+message BorrowerPropertyTransactionOptionEntity {
+  int64 id = 1;
+  string code = 2;
+  string type = 3;
+  string status = 4;
+  string property_type = 5;
+  int64 borrower_property_id = 6;
+  BorrowerPropertyEntity borrower_property = 7;
+  string coe_date = 8;
+}
+
+message BorrowerPropertyTransactionCreateRequest {
+  BorrowerPropertyTransactionCreateRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionCreateRequestData {
+  int64 borrower_property_id = 1;
+  string type = 2;
+}
+
+message BorrowerPropertyTransactionCreateResponse {
+  BorrowerPropertyTransactionEntity data = 1;
+}
+
+message BorrowerPropertyTransactionDetailRequest {
+  BorrowerPropertyTransactionDetailRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionDetailRequestData {
+  int64 id = 1;
+}
+
+message BorrowerPropertyTransactionDetailResponse {
+  BorrowerPropertyTransactionEntity data = 1;
+}
+
+message BorrowerPropertyTransactionUpdateRequest {
+  BorrowerPropertyTransactionUpdateRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionUpdateRequestData {
+  int64 id = 1;
+  string coe_date = 2;
+  double purchase_amount = 3;
+  double emd_amount = 4;
+  string property_type = 5;
+  string pm = 6;
+  repeated string business_strategy = 7;
+  string note = 8;
+}
+
+message BorrowerPropertyTransactionDeleteRequest {
+  BorrowerPropertyTransactionDeleteRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionDeleteRequestData {
+  int64 id = 1;
+}
+
+message BorrowerPropertyTransactionSwitchStatusRequest {
+  BorrowerPropertyTransactionSwitchStatusRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionSwitchStatusRequestData {
+  int64 id = 1;
+  string status = 2;
+}
+
+message BorrowerPropertyTransactionAllRequest {
+  BorrowerPropertyTransactionAllRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionAllRequestData {}
+
+message BorrowerPropertyTransactionAllResponse {
+  repeated BorrowerPropertyTransactionOptionEntity data = 1;
+}
+
+message BorrowerPropertyTransactionListByPropertyRequest {
+  BorrowerPropertyTransactionListByPropertyRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionListByPropertyRequestData {
+  int64 borrower_property_id = 1;
+}
+
+message BorrowerPropertyTransactionListByPropertyResponse {
+  repeated BorrowerPropertyTransactionEntity data = 1;
+}
+
+message BorrowerPropertyTransactionChecklistRequest {
+  BorrowerPropertyTransactionChecklistRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionChecklistRequestData {
+  int64 id = 1;
+  string status_key = 2;
+  bool all_checked = 3;
+  int64 document_id = 4;
+}
+
+// page
+message BorrowerPropertyTransactionPageRequest {
+  BorrowerPropertyTransactionPageRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  BorrowerPropertyTransactionPageRequestFilter filter = 3;
+  BasePageRequestSorter sorter = 4;
+}
+
+message BorrowerPropertyTransactionPageRequestFilter {
+  string keyword = 1;
+  string type = 2;
+  string status = 3;
+}
+
+message BasePageRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+
+message BorrowerPropertyTransactionPageResponse {
+  BorrowerPropertyTransactionPageResponseData data = 1;
+}
+
+message BorrowerPropertyTransactionPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated BorrowerPropertyTransactionPageEntity list = 5;
+}
+
+message BorrowerPropertyTransactionPageEntity {
+  int64 id = 1;
+  string code = 2;
+  string type = 3;
+  string status = 4;
+  string coe_date = 5;
+  string created_at = 6;
+  string updated_at = 7;
+  AddressEntity address = 8;
+  int64 borrower_property_id = 9;
+}
+
+message BorrowerPropertyTransactionDocumentUploadFileRequest {
+  BorrowerPropertyTransactionDocumentUploadFileRequestData data = 1;
+}
+
+message FileUploadItem {
+  string file_name = 1;
+  string file_url = 2;
+  string storage_type = 3;
+  string upload_type = 4;
+}
+
+message BorrowerPropertyTransactionDocumentUploadFileRequestData {
+  int64 transaction_id = 1;
+  int64 document_id = 2;
+  repeated FileUploadItem files = 3;
+}
+
+message BorrowerPropertyTransactionDocumentDeleteFileRequest {
+  BorrowerPropertyTransactionDocumentDeleteFileRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionDocumentDeleteFileRequestData {
+  int64 transaction_id = 1;
+  int64 file_id = 2;
+}
+
+message TransactionOperationStatsRequest {
+  TransactionOperationStatsRequestData data = 1;
+}
+
+message TransactionOperationStatsRequestData {
+  int64 transaction_id = 1;
+  string  start_date = 2;
+  string  end_date = 3;
+}
+
+message TransactionOperationStatsResponse {
+  TransactionOperationStatsResponseData data = 1;
+}
+
+message TransactionOperationStatsResponseData {
+  int64 total = 1;
+  repeated OperationStatsItem items = 2;
+}
+
+message OperationStatsItem {
+  string type = 1;
+  int64 count = 2;
+}
+
+message TransactionOperationListRequest {
+  TransactionOperationListRequestData data = 1;
+}
+
+message TransactionOperationListRequestData {
+  int64 transaction_id = 1;
+  string operation_type = 2;
+  string  start_date = 3;
+  string  end_date = 4;
+}
+
+message TransactionOperationListResponse {
+  TransactionOperationListResponseData data = 1;
+}
+
+message TransactionOperationListResponseData {
+  repeated OperationListItem list = 1;
+}
+
+message OperationListItem {
+  int64 id = 1;
+  string operation = 2;
+  int64 operator_id = 3;
+  string operator_name = 4;
+  string operator_type = 5;
+  string note = 6;
+  string metadata = 7;
+  string created_at = 8;
+}
+
+service BorrowerPropertyTransaction {
+  rpc Create(BorrowerPropertyTransactionCreateRequest) returns(BorrowerPropertyTransactionCreateResponse);
+  rpc Detail(BorrowerPropertyTransactionDetailRequest) returns(BorrowerPropertyTransactionDetailResponse);
+  rpc Update(BorrowerPropertyTransactionUpdateRequest) returns(BorrowerPropertyTransactionDetailResponse);
+  rpc Delete(BorrowerPropertyTransactionDeleteRequest) returns(EmptyResponse);
+  rpc SwitchStatus(BorrowerPropertyTransactionSwitchStatusRequest) returns(EmptyResponse);
+  rpc All(BorrowerPropertyTransactionAllRequest) returns(BorrowerPropertyTransactionAllResponse);
+  rpc ListByBorrowerProperty(BorrowerPropertyTransactionListByPropertyRequest) returns(BorrowerPropertyTransactionListByPropertyResponse);
+  rpc UpdateChecklist(BorrowerPropertyTransactionChecklistRequest) returns(EmptyResponse);
+  rpc Page(BorrowerPropertyTransactionPageRequest) returns(BorrowerPropertyTransactionPageResponse);
+  rpc CreateDocument(DocumentCreateRequest) returns(DocumentCreateResponse);
+  rpc UploadDocumentFile(BorrowerPropertyTransactionDocumentUploadFileRequest) returns(DocumentUploadFileResponse);
+  rpc DeleteDocumentFile(BorrowerPropertyTransactionDocumentDeleteFileRequest) returns(EmptyResponse);
+  rpc OperationStats(TransactionOperationStatsRequest) returns(TransactionOperationStatsResponse);
+  rpc OperationList(TransactionOperationListRequest) returns(TransactionOperationListResponse);
+}
+// ===================== borrower property transaction service end ======================
+
+// ===================== document service start ======================
+message DocumentEntity {
+  int64 id = 1;
+  int64 parent_id = 2;
+  string type = 3;
+  string name = 4;
+  int32 level = 5;
+  int32 sort_order = 6;
+  string last_uploaded_at = 7;
+  string metadata = 8;
+  string created_at = 9;
+  string updated_at = 10;
+  repeated DocumentEntity children = 11;
+  repeated FileEntity files = 12;
+}
+
+message DocumentDetailRequest {
+  DocumentDetailRequestData data = 1;
+}
+
+message DocumentDetailRequestData {
+  string entity_type = 1;
+  int64 entity_id = 2;
+}
+
+message DocumentDetailResponse {
+  DocumentEntity data = 1;
+}
+
+message DocumentCreateRequest {
+  DocumentCreateRequestData data = 1;
+}
+
+message DocumentCreateRequestData {
+  int64 transaction_id = 1;
+  int64 parent_id = 2;
+  repeated string names = 3;
+}
+
+message DocumentCreateResponse {
+  repeated DocumentEntity data = 1;
+}
+
+
+
+message DocumentUploadFileResponse {
+  repeated FileEntity data = 1;
+}
+
+
+
+message DocumentLeafListRequest {
+  DocumentLeafListRequestData data = 1;
+}
+
+message DocumentLeafListRequestData {
+  string entity_type = 1;
+  int64 entity_id = 2;
+}
+
+message DocumentLeafListResponse {
+  repeated DocumentEntity data = 1;
+}
+
+message DocumentFilesRequest {
+  DocumentFilesRequestData data = 1;
+}
+
+message DocumentFilesRequestData {
+  int64 document_id = 1;
+}
+
+message DocumentFilesResponse {
+  repeated FileEntity data = 1;
+}
+
+service Document {
+  rpc Detail(DocumentDetailRequest) returns(DocumentDetailResponse);
+  rpc LeafList(DocumentLeafListRequest) returns(DocumentLeafListResponse);
+  rpc Files(DocumentFilesRequest) returns(DocumentFilesResponse);
+}
+// ===================== document service end ======================
+// ===================== api service start ======================
+message SyncApiRequest {
+  SyncApiRequestData data = 1;
+}
+
+message SyncApiRequestData {
+  string api_json = 1;
+}
+
+message SyncApiResponse {}
+
+service api {
+  rpc SyncApi(SyncApiRequest) returns(EmptyResponse);
+}
+// ===================== api service end ======================

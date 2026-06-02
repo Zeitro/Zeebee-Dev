@@ -84,7 +84,6 @@ func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestR
 			}
 		default:
 			return errorx.WithStack(errorx.New("Invalid loan document category"))
-
 		}
 		operationLoanDocument := &data.OperationLoanDocument{}
 		operationLoanDocument, err = copierx.Trans[model.LoanDocument, data.OperationLoanDocument](loanDocument)
@@ -127,6 +126,5 @@ func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestR
 }
 
 func (l *DeleteRequestLogic) prepare(in *lender.LoanDocumentDeleteRequestRequest, organizationId int64) (loan *model.Loan, loanDocument *model.LoanDocument, err error) {
-
 	return l.baseLogic.GetLoanAndDocumentByDocumentId(l.ctx, in.Data.Id, organizationId)
 }
