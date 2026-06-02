@@ -46,7 +46,7 @@ func (repo *BorrowerPropertyRepo) GetOne(ctx context.Context, id int64) (result 
 
 func (repo *BorrowerPropertyRepo) GetOrCreateBorrowerPropertyWithTxForBorrower(ctx context.Context, tx *gorm.DB, organizationId int64, creatorId int64, creatorName string, address model.Address) (result *model.BorrowerProperty, err error) {
 	if len(address.City) == 0 || len(address.Address1) == 0 || len(address.State) == 0 {
-		return nil, fmt.Errorf("Invalid Borrower Address")
+		return nil, fmt.Errorf("invalid borrower address")
 	}
 	// if not existed,create one
 	err = tx.WithContext(ctx).
@@ -133,7 +133,7 @@ func (repo *BorrowerPropertyRepo) PageForBorrower(ctx context.Context, pageReq d
 	borrowerPropertyTable := model.BorrowerProperty{}.TableName()
 	loanPropertyTable := model.LoanProperty{}.TableName()
 	applicantTable := model.LoanApplicant{}.TableName()
-	loanRepo := NewLoanRepo(repo.BaseRepo.GetDB())
+	loanRepo := NewLoanRepo(repo.GetDB())
 
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
@@ -158,6 +158,14 @@ func (repo *BorrowerPropertyRepo) PageForBorrower(ctx context.Context, pageReq d
 		case "total_amount":
 			sortColumns = append(sortColumns,
 				fmt.Sprintf("%s.total_amount %s", borrowerPropertyTable, sorter.Sort),
+			)
+		case "address1","state","city":
+			sortColumns = append(sortColumns,
+				fmt.Sprintf("%s.address->>'%s' %s", borrowerPropertyTable,sorter.Column, sorter.Sort),
+			)
+		default:
+			sortColumns = append(sortColumns,
+				fmt.Sprintf("%s.%s %s", borrowerPropertyTable, sorter.Column, sorter.Sort),
 			)
 		}
 	}
@@ -201,7 +209,7 @@ func (repo *BorrowerPropertyRepo) UpdateOne(ctx context.Context, id int64, data 
 	return data, nil
 }
 
-// AllForOrganization return all of the organization's properties
+// AllForOrganization return all property for organization
 func (repo *BorrowerPropertyRepo) AllForOrganization(ctx context.Context, organizationId int64) (result []*model.BorrowerProperty, err error) {
 	err = repo.Client(ctx).
 		Where("organization_id = ?", organizationId).

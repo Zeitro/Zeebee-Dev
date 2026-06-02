@@ -30,7 +30,7 @@ export const minTerm_zeeBee = 12;
 // 通过property_type获取unit
 export const changeUnitByPropertyType = (property_type, newUnit) => {
 	let unit = null,
-		minUnit = 1,
+		minUnit = 0,
 		maxUnit = maxNumberOfUnits,
 		disabled = false;
 	switch (property_type) {
@@ -65,7 +65,7 @@ export const changeUnitByPropertyType = (property_type, newUnit) => {
 // 格式化居住面积, 用于<InputNumber>中配置
 export const livingAreaProps = {
 	controls: false,
-	min: 1,
+	min: 0,
 	formatter: (value) => {
 		// 保留两位小数
 		const [int, dec] = value.split('.');
@@ -176,13 +176,10 @@ export function formatAmount(value) {
 
 // 格式化数字/面积(传单位)
 export function formatNumber(value, unit = 'sqft', isAfter = true) {
-	const num = formatThousands(value);
+	const num = value === 0 || value === '0' ? '0' : formatThousands(value);
 	if (!num) return '--';
-
-	if (isAfter) {
-		return unit ? `${num} ${unit}` : num;
-	}
-	return unit ? `${unit} ${num}` : num;
+	if (!unit) return num;
+	return isAfter ? `${num} ${unit}` : `${unit} ${num}`;
 }
 
 // 格式化TIN,包括SSN/ITIN/EIN, 不同类型税务ID

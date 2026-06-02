@@ -150,22 +150,3 @@ type (
         Phone string `json:"phone,optional" validate:"omitempty,min=8,max=20"`
     }
 )
-
-    //// generate email auth code url
-    //type (
-    //    UserGenerateEmailAuthCodeUrlRequest {
-    //        Type string `json:"type" validate:"required,oneof=Gmail"`
-    //    }
-    //    UserGenerateEmailAuthCodeUrlResponse {
-    //        Url string `json:"url"`
-    //    }
-    //)
-    //
-    //// email auth
-    //type (
-    //    UserEmailAuthRequest {
-    //        Code string `json:"code" validate:"required"`
-    //        Type string `json:"type" validate:"required,oneof=Gmail"`
-    //        State string `json:"state,optional"`
-    //    }
-    //)

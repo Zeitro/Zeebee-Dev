@@ -3,6 +3,7 @@ package borrowerpropertylogic
 import (
 	"context"
 
+	"github.com/duke-git/lancet/v2/mathutil"
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -51,11 +52,11 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 		return nil, err
 	}
 	if borrowerProperty == nil || borrowerProperty.Id == 0 {
-		return nil, errorx.WithStack(errorx.New("Property is invalid"))
+		return nil, errorx.WithStack(errorx.New("property is invalid"))
 	}
 
 	if borrowerProperty.OrganizationId != claim.OrganizationId {
-		return nil, errorx.WithStack(errorx.New("Access denied"))
+		return nil, errorx.WithStack(errorx.New("access denied"))
 	}
 
 	loanProperties := borrowerProperty.LoanProperties
@@ -76,10 +77,16 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 	respData.ActiveLoans = make([]*borrower.LoanEntity, 0)
 	respData.ArchivedLoans = make([]*borrower.LoanEntity, 0)
 
+	loanIdMap := make(map[int64]struct{})
 	if len(loanProperties) > 0 {
 		for i, loanProperty := range loanProperties {
 			loan := loanProperty.Loan
 			if loan == nil || loan.Id == 0 {
+				continue
+			}
+
+			_, ok := loanIdMap[loan.Id]
+			if ok {
 				continue
 			}
 
@@ -131,12 +138,24 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 		return item.Id < other.Id
 	})
 
+	// remove duplicate loans
+	respData.PendingLoans = slice.UniqueBy(respData.PendingLoans, func(item *borrower.LoanEntity) int64 {
+		return item.Id
+	})
+	respData.ActiveLoans = slice.UniqueBy(respData.ActiveLoans, func(item *borrower.LoanEntity) int64 {
+		return item.Id
+	})
+	respData.ArchivedLoans = slice.UniqueBy(respData.ArchivedLoans, func(item *borrower.LoanEntity) int64 {
+		return item.Id
+	})
+
 	respData.TotalClosingFundAmount = totalClosingFundAmount
 	// respData.TotalLoanAmount = property.TotalAmount
 	respData.TotalPrincipalAmount = totalPrincipalAmount
 	respData.TotalMonthlyPaymentAmount = totalMonthlyPaymentAmount
 	if loanCount > 0 {
 		respData.AvgRate = totalRate / float32(loanCount)
+		respData.AvgRate = float32(mathutil.RoundToFloat(respData.AvgRate, 2))
 	}
 
 	return &borrower.PropertyDetailSummaryResponse{

@@ -41,5 +41,4 @@ func (repo *LoanBorrowerRepo) DeleteByLoanIdWithTx(ctx context.Context, tx *gorm
 		Delete(&model.LoanBorrower{}).
 		Error
 	return errors.WithStack(err)
-
 }

@@ -8,6 +8,8 @@ info (
 )
 
 import "desc/user.api"
+import "desc/borrower_property_transaction.api"
+import "desc/document.api"
 import "desc/loan.api"
 import "desc/common.api"
 import "desc/borrower_property.api"
@@ -59,6 +61,14 @@ service borrower-api {
 	@doc "get uuid"
 	@handler GetUuid
 	get /uuid (EmptyRequest) returns (GetUuidResponse)
+
+	@doc "sync api"
+	@handler SyncApi
+	get /common/sync_api (EmptyRequest) returns (EmptyResponse)
+
+	@doc "sync resource"
+	@handler SyncResource
+	get /common/sync_resource (EmptyRequest) returns (EmptyResponse)
 }
 
 // ============== common end =============
@@ -247,6 +257,10 @@ service borrower-api {
 	@doc "property Summary"
 	@handler PropertyDetailSummary
 	get /property/:id/summary (PropertyDetailRequest) returns (PropertyDetailSummaryResponse)
+
+	@doc "transactions"
+	@handler PropertyBorrowerPropertyTransactions
+	get /property/:id/borrower_property_transactions (BorrowerPropertyTransactionListByPropertyRequest) returns (BorrowerPropertyTransactionListByPropertyResponse)
 
 	@doc "detail"
 	@handler PropertyDetail
@@ -596,6 +610,86 @@ service borrower-api {
 }
 
 // ============= organization email end =============
+// =============== borrower property transaction start ==============
+@server (
+	desc:       "borrower property transaction service"
+	version:    v1
+	group:      borrower_property_transaction
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags:       borrower_property_transaction
+)
+service borrower-api {
+	@doc "create transaction"
+	@handler BorrowerPropertyTransactionCreate
+	post /borrower_property_transaction (BorrowerPropertyTransactionCreateRequest) returns (BorrowerPropertyTransactionCreateResponse)
+
+	@doc "transaction detail"
+	@handler BorrowerPropertyTransactionDetail
+	get /borrower_property_transaction/:id (BorrowerPropertyTransactionDetailRequest) returns (BorrowerPropertyTransactionEntity)
+
+	@doc "update transaction"
+	@handler BorrowerPropertyTransactionUpdate
+	put /borrower_property_transaction/:id (BorrowerPropertyTransactionUpdateRequest) returns (BorrowerPropertyTransactionEntity)
+
+	@doc "delete transaction"
+	@handler BorrowerPropertyTransactionDelete
+	delete /borrower_property_transaction/:id (BorrowerPropertyTransactionDeleteRequest) returns (EmptyResponse)
+
+	@doc "switch transaction status"
+	@handler BorrowerPropertyTransactionSwitchStatus
+	patch /borrower_property_transaction/:id/status (BorrowerPropertyTransactionSwitchStatusRequest) returns (EmptyResponse)
+
+	@doc "all transactions for select"
+	@handler BorrowerPropertyTransactionAll
+	get /borrower_property_transaction/all (EmptyRequest) returns (BorrowerPropertyTransactionAllResponse)
+
+	@doc "update transaction checklist"
+	@handler BorrowerPropertyTransactionUpdateChecklist
+	patch /borrower_property_transaction/:id/checklist (BorrowerPropertyTransactionChecklistRequest) returns (EmptyResponse)
+
+	@doc "page transactions"
+	@handler BorrowerPropertyTransactionPage
+	post /borrower_property_transaction/page (BorrowerPropertyTransactionPageRequest) returns (BorrowerPropertyTransactionPageResponse)
+
+	@doc "upload file to document"
+	@handler DocumentUploadFile
+	post /borrower_property_transaction/:transaction_id/document/:document_id/file (BorrowerPropertyTransactionDocumentUploadFileRequest) returns (DocumentUploadFileResponse)
+
+	@doc "delete document file"
+	@handler DocumentDeleteFile
+	delete /borrower_property_transaction/:transaction_id/file/:file_id (BorrowerPropertyTransactionDocumentDeleteFileRequest) returns (EmptyResponse)
+
+	@doc "create leaf document"
+	@handler DocumentCreate
+	post /borrower_property_transaction/:transaction_id/document (DocumentCreateRequest) returns (DocumentCreateResponse)
+
+	@doc "transaction operation stats"
+	@handler OperationStats
+	get /borrower_property_transaction/:transaction_id/operations/stats (TransactionOperationStatsRequest) returns (TransactionOperationStatsResponse)
+
+	@doc "transaction operation list"
+	@handler OperationList
+	get /borrower_property_transaction/:transaction_id/operations (TransactionOperationListRequest) returns (TransactionOperationListResponse)
+}
+
+// =============== borrower property transaction end ==============
+// =============== document start ==============
+@server (
+	desc:       "document service (read-only)"
+	version:    v1
+	group:      document
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags:       document
+)
+service borrower-api {
+	@doc "document files"
+	@handler DocumentFiles
+	get /document/:id/files (DocumentFilesRequest) returns (DocumentFilesResponse)
+}
+
+// =============== document end ==============
 // ============== zeitro start ============
 @server (
 	desc:       "Zeitro API"

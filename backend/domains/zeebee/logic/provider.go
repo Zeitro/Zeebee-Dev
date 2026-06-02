@@ -22,6 +22,7 @@ type AllLogics struct {
 	OrganizationSettingLogic  *OrganizationSettingLogic
 	LoanLogic                 *LoanLogic
 	LoanOperationLogic        *LoanOperationLogic
+	OperationLogic            *OperationLogic
 	AuthLogic                 *AuthLogic
 }
 
@@ -50,6 +51,7 @@ func NewAllLogics(config AllLogicConfig) *AllLogics {
 		OrganizationSettingLogic:  NewOrganizationSettingLogic(baseLogic),
 		LoanLogic:                 NewLoanLogic(baseLogic),
 		LoanOperationLogic:        NewLoanOperationLogic(baseLogic),
+		OperationLogic:            NewOperationLogic(baseLogic),
 		AuthLogic:                 NewAuthLogic(baseLogic, config.JwtConfig, config.CurrentEnforcer, config.CurrentAuthEventTopic),
 	}
 }
