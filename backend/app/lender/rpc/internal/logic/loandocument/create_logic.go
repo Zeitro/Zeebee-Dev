@@ -121,7 +121,6 @@ func (l *CreateLogic) Create(in *lender.LoanDocumentCreateExtendTypeRequest) (re
 }
 
 func (l *CreateLogic) prepare(in *lender.LoanDocumentCreateExtendTypeRequest, claim utils.JwtUser) (loan *model.Loan, err error) {
-
 	category := constants.LoanDocumentCategory(in.Data.Category)
 	if !slice.Contain([]constants.LoanDocumentCategory{
 		constants.LoanDocumentCategoryExtend,

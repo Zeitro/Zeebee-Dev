@@ -43,7 +43,7 @@ func (l *SwitchStatusLogic) SwitchStatus(in *admin.OrganizationSwitchStatusReque
 	if err != nil {
 		return nil, err
 	}
-	err = l.BaseLogic.OrganizationLogic.SwitchStatus(l.ctx, *input)
+	err = l.OrganizationLogic.SwitchStatus(l.ctx, *input)
 	if err != nil {
 		return nil, err
 	}

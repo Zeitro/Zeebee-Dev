@@ -73,16 +73,14 @@ func (l *ProfileLogic) Profile(in *lender.EmptyRequest) (resp *lender.Organizati
 	}
 	for _, setting := range data.OrganizationSettings {
 		if setting.Purpose == constants.OrganizationPurposePreapprovalLetter {
-			preapprovalLetterTemplate, err := l.svcCtx.AllRepos.OrganizationTemplateRepo.DetailByPurpose(l.ctx, claim.OrganizationId, constants.OrganizationPurposePreapprovalLetter, false)
+			preapprovalLetterTemplate, err := l.svcCtx.OrganizationTemplateRepo.DetailByPurpose(l.ctx, claim.OrganizationId, constants.OrganizationPurposePreapprovalLetter, false)
 			if err != nil {
 				return nil, err
 			}
 			setting.HasConfigured = preapprovalLetterTemplate.HasConfigured
-
 		} else {
 			setting.HasConfigured = true
 		}
-
 	}
 
 	return &lender.OrganizationProfileResponse{

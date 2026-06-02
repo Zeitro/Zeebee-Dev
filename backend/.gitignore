@@ -1,3 +1,4 @@
 .claude/settings.local.json
 specs
 .claude/docs/tasks/ref_file
+.DS_Store

@@ -27,7 +27,6 @@ func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogi
 }
 
 func (l *DeleteLogic) Delete(req *types.PathIdRequest) (resp *types.EmptyResponse, err error) {
-
 	// Call RPC to delete file
 	_, err = l.svcCtx.FileRpcClient.DeleteFile(l.ctx, &borrower.FileDeleteRequest{
 		Data: &borrower.FileDeleteRequestData{

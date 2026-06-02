@@ -4,6 +4,7 @@ env
 .idea
 .vscode
 .lingma
+.DS_Store
 /frontend/borrower/node_modules
 /frontend/lender/node_modules
 /frontend/borrower/.next
