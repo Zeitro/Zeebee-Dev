@@ -17,4 +17,7 @@ type FileEntityDto struct {
 	UploadType  constants.UploadType     `json:"upload_type"`
 	CreatedAt   time.Time                `json:"created_at"`
 	UpdatedAt   time.Time                `json:"updated_at"`
+	// Google Drive 同步标记：drive_synced_at 非空即表示当前在 Drive 对应文件夹中。
+	DriveUrl      string `json:"drive_url"`
+	DriveSyncedAt string `json:"drive_synced_at"`
 }

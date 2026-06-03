@@ -24,6 +24,7 @@ import "desc/role.api"
 import "desc/organization_user.api"
 import "desc/organization.api"
 import "desc/organization_email.api"
+import "desc/drive.api"
 import "desc/zeitro.api"
 import "desc/resource.api"
 
@@ -610,6 +611,54 @@ service borrower-api {
 }
 
 // ============= organization email end =============
+// ============= drive start ============
+@server (
+	desc:       "google drive integration service"
+	version:    v1
+	group:      drive
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags:       drive
+)
+service borrower-api {
+	@doc "drive auth status"
+	@handler DriveAuthStatus
+	get /drive/auth_status (EmptyRequest) returns (DriveIntegrationEntity)
+
+	@doc "drive auth url"
+	@handler DriveAuthUrl
+	get /drive/auth_url (EmptyRequest) returns (DriveAuthUrlResponse)
+
+	@doc "drive authorize"
+	@handler DriveAuthorize
+	post /drive/authorize (DriveAuthorizeRequest) returns (DriveIntegrationEntity)
+
+	@doc "list shared drives"
+	@handler DriveListDrives
+	get /drive/drives (EmptyRequest) returns (DriveListDrivesResponse)
+
+	@doc "update drive selection"
+	@handler DriveUpdateSelection
+	put /drive/selection (DriveUpdateSelectionRequest) returns (EmptyResponse)
+
+	@doc "update folder name"
+	@handler DriveUpdateFolder
+	put /drive/folder (DriveUpdateFolderRequest) returns (EmptyResponse)
+
+	@doc "disconnect drive"
+	@handler DriveDisconnect
+	post /drive/disconnect (EmptyRequest) returns (EmptyResponse)
+
+	@doc "sync transaction documents to drive"
+	@handler DriveSyncTransaction
+	post /borrower_property_transaction/:id/sync_to_drive (DriveSyncTransactionRequest) returns (DriveSyncTransactionResponse)
+
+	@doc "get latest drive sync job status for a transaction"
+	@handler DriveGetSyncTransactionStatus
+	get /borrower_property_transaction/:id/sync_to_drive/status (DriveSyncTransactionRequest) returns (DriveSyncTransactionResponse)
+}
+
+// ============= drive end =============
 // =============== borrower property transaction start ==============
 @server (
 	desc:       "borrower property transaction service"

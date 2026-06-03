@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"time"
 
 	"gorm.io/gorm"
 
@@ -66,6 +67,14 @@ func (repo *FileRepo) BatchFileCountByEntityIds(ctx context.Context, tx *gorm.DB
 func (repo *FileRepo) GetFiles(ctx context.Context, entityId int64, entityType constants.FileEntityType) (result []*model.File, err error) {
 	err = repo.Client(ctx).Where("entity_id = ?", entityId).Where("entity_type = ?", entityType).Find(&result).Error
 	return result, errorx.WithStack(err)
+}
+
+// MarkDriveSynced records the Google Drive link and sync time for a file.
+func (repo *FileRepo) MarkDriveSynced(ctx context.Context, id int64, driveUrl string, syncedAt time.Time) error {
+	return repo.UpdateColumnsById(ctx, id, map[string]interface{}{
+		"drive_url":       driveUrl,
+		"drive_synced_at": syncedAt,
+	})
 }
 
 // DeleteByEntityIdsWithTx deletes files by entity IDs with transaction
