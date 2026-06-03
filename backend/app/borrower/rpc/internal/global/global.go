@@ -44,6 +44,9 @@ func InitGlobal(c config.RpcConf) (err error) {
 		return initEmailClient(c)
 	})
 	eg.Do(func() error {
+		return initDrive(c)
+	})
+	eg.Do(func() error {
 		return initStateHighCostLimitMgr(statics.FullCountyLoanLimitListContent, c.HighCostLimitValue)
 	})
 	eg.Do(func() error {
