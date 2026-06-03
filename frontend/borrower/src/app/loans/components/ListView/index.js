@@ -35,6 +35,10 @@ const ListView = ({ className, options = [] }) => {
 			valueName: 'loanPendingStatus',
 		},
 		{
+			key: 'loan_stage',
+			valueName: 'loanStatusOptions',
+		},
+		{
 			type: 'lender',
 		},
 		...options,
@@ -80,7 +84,7 @@ const ListView = ({ className, options = [] }) => {
 			]}
 			onChange={(v) => setTabKey(v)}
 			className={`flex-1 overflow-hidden ${styles.loans} ${className}`}
-			// destroyOnHidden
+			destroyOnHidden
 		/>
 	);
 };

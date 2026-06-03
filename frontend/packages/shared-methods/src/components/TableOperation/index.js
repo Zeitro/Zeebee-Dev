@@ -1,6 +1,6 @@
 'use client';
 import { Button, Dropdown, Space } from 'antd';
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { EditOutlined, EllipsisOutlined, DeleteOutlined, ProfileOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 
@@ -30,17 +30,14 @@ export const TableOperation = ({ list, className, onSelect, getItems, disabled, 
 	};
 	const [selectedKey, setSelectedKey] = useState(null);
 	const router = useRouter();
-	const info = useMemo(() => {
-		const newItems = getItems?.(editItem, deleteItem, detailsItem) || [editItem, deleteItem];
-		const arr = list || newItems;
-		const count = sliceCount === null ? arr.length : sliceCount;
-		const showList = arr.slice(0, count);
-		return {
-			showList,
-			moreList: arr.slice(count, arr.length - showList.length),
-		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [list, sliceCount]);
+	const newItems = getItems?.(editItem, deleteItem, detailsItem) || [editItem, deleteItem];
+	const arr = list || newItems;
+	const count = sliceCount === null ? arr.length : sliceCount;
+	const showList = arr.slice(0, count);
+	const info = {
+		showList,
+		moreList: arr.slice(count, arr.length - showList.length),
+	};
 
 	const handleSelect = async ({ key }) => {
 		setSelectedKey(key);

@@ -1,11 +1,11 @@
-import type {Metadata} from 'next';
-import {Roboto} from 'next/font/google';
+import type { Metadata } from 'next';
+import { Roboto } from 'next/font/google';
 import Script from 'next/script';
 // import 'antd/dist/reset.css';
 import './globals.css';
 import '@ant-design/v5-patch-for-react-19';
 import CustomizeAntdTheme from '@/components/CustomizeAntdTheme/index';
-import {PortalComponent} from '@repo/shared-methods';
+import { PortalComponent } from '@repo/shared-methods';
 
 export const roboto = Roboto({
 	weight: ['400', '500', '700'], // 选择需要的字重
@@ -25,14 +25,14 @@ const RootLayout = ({
 	children: React.ReactNode;
 }>) => {
 	return (
-		<html lang="en">
+		<html lang="en" suppressHydrationWarning>
 			<head>
 				<Script
 					src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places&loading=async`}
 					strategy="lazyOnload" // 页面交互前加载
 				/>
 			</head>
-			<body className={`${roboto.variable}`}>
+			<body className={`${roboto.variable}`} suppressHydrationWarning>
 				<CustomizeAntdTheme fontFamily={`${roboto.variable}`}>
 					{children}
 					<PortalComponent />

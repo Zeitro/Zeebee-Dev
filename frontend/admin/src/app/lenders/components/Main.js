@@ -43,7 +43,7 @@ const MainModal = ({ rowData, setOpen, successCallback }) => {
 	};
 
 	const needSearchOnboard =
-		Boolean(rowData?.id) && rowData?.status === 'Not activated' && rowData?.source === 'search';
+		Boolean(rowData?.id) && rowData?.status === 'Not activated' && rowData?.source === 'Search';
 
 	const getDetails = useCallback(async () => {
 		try {

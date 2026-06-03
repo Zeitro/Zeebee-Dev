@@ -1,6 +1,6 @@
 'use client';
-import {Button, Image} from 'antd';
-import React, {useState} from 'react';
+import { Button, Image } from 'antd';
+import React, { useState } from 'react';
 import ViewSvg from '@repo/shared-methods/assets/images/view.svg';
 import styles from './index.module.scss';
 // 预览文件

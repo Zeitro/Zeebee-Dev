@@ -3,8 +3,6 @@ package organizationuserlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
@@ -42,16 +40,18 @@ func (l *PageLogic) Page(in *lender.OrganizationUserPageRequest) (resp *lender.O
 	if err != nil {
 		return nil, err
 	}
-	pageReq := dto.OrganizationUserPageRequestDto{}
-	err = copier.Copy(&pageReq, &in.Data)
+	pageReq := &dto.OrganizationUserPageRequestDto{}
+	pageReq, err = copierx.Trans[lender.OrganizationUserPageRequestData, dto.OrganizationUserPageRequestDto](in.Data)
+	// err = copier.Copy(&pageReq, &in.Data)
 	if err != nil {
 		return nil, err
 	}
+
 	pageReq.Filter.UserType = claim.UserType
 	pageReq.Filter.OrganizationId = claim.OrganizationId
 	pageReq.Filter.UserId = claim.UserId
 
-	results, err := l.baseLogic.OrganizationUserLogic.Page(l.ctx, pageReq)
+	results, err := l.baseLogic.OrganizationUserLogic.Page(l.ctx, *pageReq)
 	if err != nil {
 		return nil, err
 	}

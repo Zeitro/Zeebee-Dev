@@ -48,7 +48,6 @@ func (repo *BorrowerEntityRepo) GetOneByIdForOrganization(ctx context.Context, i
 
 // PageForBorrower return page
 func (repo *BorrowerEntityRepo) PageForBorrower(ctx context.Context, pageReq dto.BorrowerEntityPageRequestDto) (page gormx.PageResponse[*model.BorrowerEntity], err error) {
-
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
 	query := repo.Client(ctx).

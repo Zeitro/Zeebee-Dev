@@ -1,15 +1,16 @@
 'use client';
 import React from 'react';
 import styles from './index.module.scss';
-import {propertiesFieldArr, propertyList} from '@/enum/properties';
-import {Button, Col, message, Row, Space} from 'antd';
-import {useRouter} from 'next/navigation';
-import {assemblyAddress, formatDate} from '@repo/shared-methods/utils';
-import {BtnPopUpModal, DeleteBtn, FieldTips, PermissionSlot} from '@repo/shared-methods';
+// import { LOAN_ACTIVE_BADGE_CLASS, LOAN_PENDING_BADGE_CLASS } from '../loanStatusBadge';
+import { propertiesFieldArr, propertyList } from '@/enum/properties';
+import { Button, Col, message, Row, Space } from 'antd';
+import { useRouter } from 'next/navigation';
+import { assemblyAddress, formatDate } from '@repo/shared-methods/utils';
+import { BtnPopUpModal, DeleteBtn, FieldTips, PermissionSlot } from '@repo/shared-methods';
 import AddModal from '@repo/shared-methods/componentsUi/SelectCard/Add/property';
-import {useProperty} from '@repo/shared-methods/componentsUi/SelectCard/Item/useCommon';
-import {DeleteOutlined} from '@ant-design/icons';
-import {PERMISSIONS} from '@config/permissions';
+import { useProperty } from '@repo/shared-methods/componentsUi/SelectCard/Item/useCommon';
+import { DeleteOutlined } from '@ant-design/icons';
+import { PERMISSIONS } from '@config/permissions';
 
 const PropertiesItem = ({ data, handleSearch }) => {
 	const router = useRouter();
@@ -34,7 +35,7 @@ const PropertiesItem = ({ data, handleSearch }) => {
 			<div key={index} className={[item?.className || 'w-1/2', 'pb-4'].join(' ')}>
 				<p className="text-base-gray text-sm pb-1">{item.label}</p>
 				<span className="text-black-dark text-base font-medium">
-					{(item?.render ? item?.render?.(data[item.value]) : data[item.value]) || '--'}
+					{(item?.render ? item?.render?.(data[item.value]) : data[item.value]) ?? '--'}
 				</span>
 			</div>
 		);
@@ -128,19 +129,19 @@ const PropertiesItem = ({ data, handleSearch }) => {
 						Loan Status
 					</p>
 					<div className="flex flex-wrap gap-1">
-						{!!data?.active_loan_count && (
-							<div className={styles.active}>
+						{/* {!!data?.active_loan_count && (
+							<div className={LOAN_ACTIVE_BADGE_CLASS}>
 								{data?.active_loan_count || 0} Active Loans
 							</div>
 						)}
 						{!!data?.pending_loan_count && (
-							<div className={styles.pending}>
+							<div className={LOAN_PENDING_BADGE_CLASS}>
 								{data?.pending_loan_count || 0} Pending Loans
 							</div>
 						)}
 						{!data?.pending_loan_count && !data?.active_loan_count && (
 							<span className="text-black-dark text-base font-medium">--</span>
-						)}
+						)} */}
 					</div>
 					<div className="pt-4">
 						<p className="text-base-gray text-sm pb-1">Nearest maturity date</p>

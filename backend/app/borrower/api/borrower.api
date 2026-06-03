@@ -8,6 +8,8 @@ info (
 )
 
 import "desc/user.api"
+import "desc/borrower_property_transaction.api"
+import "desc/document.api"
 import "desc/loan.api"
 import "desc/common.api"
 import "desc/borrower_property.api"
@@ -36,12 +38,12 @@ type PathIdRequest {
 
 // ============== common start =============
 @server (
-    desc: "borrower-api service"
-    version: v1
-    group: common
+	desc:       "borrower-api service"
+	version:    v1
+	group:      common
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: common
+	tags:       common
 )
 service borrower-api {
 	@doc "select options"
@@ -59,17 +61,25 @@ service borrower-api {
 	@doc "get uuid"
 	@handler GetUuid
 	get /uuid (EmptyRequest) returns (GetUuidResponse)
+
+	@doc "sync api"
+	@handler SyncApi
+	get /common/sync_api (EmptyRequest) returns (EmptyResponse)
+
+	@doc "sync resource"
+	@handler SyncResource
+	get /common/sync_resource (EmptyRequest) returns (EmptyResponse)
 }
 
 // ============== common end =============
 // ============== user start =============
 @server (
-    desc: "borrower-api service"
-    version: v1
-    group: user
+	desc:       "borrower-api service"
+	version:    v1
+	group:      user
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: user
+	tags:       user
 )
 service borrower-api {
 	@doc "register"
@@ -134,12 +144,12 @@ service borrower-api {
 // ============== user end =============
 // ============== loan start =============
 @server (
-    desc: "loan service"
-    version: v1
-    group: loan
+	desc:       "loan service"
+	version:    v1
+	group:      loan
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: loan
+	tags:       loan
 )
 service borrower-api {
 	@doc "preapproval"
@@ -171,6 +181,10 @@ service borrower-api {
 	@doc "update pending status"
 	@handler UpdatePendingStatus
 	patch /loan/:id/pending_status (LoanUpdatePendingStatusRequest) returns (EmptyResponse)
+
+	@doc "update stage"
+	@handler UpdateStage
+	patch /loan/:id/stage (LoanUpdatePendingRequest) returns (EmptyResponse)
 
 	@doc "delete"
 	@handler DeleteLoan
@@ -216,9 +230,9 @@ service borrower-api {
 	@handler SendQuoteEmail
 	post /loan/send_quote_email (LoanSendQuoteEmailRequest) returns (EmptyResponse)
 
-    @doc "dashboard"
-    @handler dashboard
-    post /loan/dashboard (LoanDashboardRequest) returns (LoanDashboardResponse)
+	@doc "dashboard"
+	@handler dashboard
+	post /loan/dashboard (LoanDashboardRequest) returns (LoanDashboardResponse)
 }
 
 // ============== loan end =============
@@ -243,6 +257,10 @@ service borrower-api {
 	@doc "property Summary"
 	@handler PropertyDetailSummary
 	get /property/:id/summary (PropertyDetailRequest) returns (PropertyDetailSummaryResponse)
+
+	@doc "transactions"
+	@handler PropertyBorrowerPropertyTransactions
+	get /property/:id/borrower_property_transactions (BorrowerPropertyTransactionListByPropertyRequest) returns (BorrowerPropertyTransactionListByPropertyResponse)
 
 	@doc "detail"
 	@handler PropertyDetail
@@ -423,13 +441,13 @@ service borrower-api {
 
 // ============== loan document end =============
 // ============== resource start ============
-@server(
-    desc: "borrower-api service"
-    version: v1
-    group: resource
+@server (
+	desc:       "borrower-api service"
+	version:    v1
+	group:      resource
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: resource
+	tags:       resource
 )
 service borrower-api {
 	@doc "tree"
@@ -484,12 +502,12 @@ service borrower-api {
 // ============== role end =============
 // ============== organization user start ============
 @server (
-    desc: "organization user service"
-    version: v1
-    group: organization_user
+	desc:       "organization user service"
+	version:    v1
+	group:      organization_user
 	prefix:     /api/v1
 	middleware: AuthMiddleware
-    tags: organization_user
+	tags:       organization_user
 )
 service borrower-api {
 	@doc "accept invitation"
@@ -592,6 +610,86 @@ service borrower-api {
 }
 
 // ============= organization email end =============
+// =============== borrower property transaction start ==============
+@server (
+	desc:       "borrower property transaction service"
+	version:    v1
+	group:      borrower_property_transaction
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags:       borrower_property_transaction
+)
+service borrower-api {
+	@doc "create transaction"
+	@handler BorrowerPropertyTransactionCreate
+	post /borrower_property_transaction (BorrowerPropertyTransactionCreateRequest) returns (BorrowerPropertyTransactionCreateResponse)
+
+	@doc "transaction detail"
+	@handler BorrowerPropertyTransactionDetail
+	get /borrower_property_transaction/:id (BorrowerPropertyTransactionDetailRequest) returns (BorrowerPropertyTransactionEntity)
+
+	@doc "update transaction"
+	@handler BorrowerPropertyTransactionUpdate
+	put /borrower_property_transaction/:id (BorrowerPropertyTransactionUpdateRequest) returns (BorrowerPropertyTransactionEntity)
+
+	@doc "delete transaction"
+	@handler BorrowerPropertyTransactionDelete
+	delete /borrower_property_transaction/:id (BorrowerPropertyTransactionDeleteRequest) returns (EmptyResponse)
+
+	@doc "switch transaction status"
+	@handler BorrowerPropertyTransactionSwitchStatus
+	patch /borrower_property_transaction/:id/status (BorrowerPropertyTransactionSwitchStatusRequest) returns (EmptyResponse)
+
+	@doc "all transactions for select"
+	@handler BorrowerPropertyTransactionAll
+	get /borrower_property_transaction/all (EmptyRequest) returns (BorrowerPropertyTransactionAllResponse)
+
+	@doc "update transaction checklist"
+	@handler BorrowerPropertyTransactionUpdateChecklist
+	patch /borrower_property_transaction/:id/checklist (BorrowerPropertyTransactionChecklistRequest) returns (EmptyResponse)
+
+	@doc "page transactions"
+	@handler BorrowerPropertyTransactionPage
+	post /borrower_property_transaction/page (BorrowerPropertyTransactionPageRequest) returns (BorrowerPropertyTransactionPageResponse)
+
+	@doc "upload file to document"
+	@handler DocumentUploadFile
+	post /borrower_property_transaction/:transaction_id/document/:document_id/file (BorrowerPropertyTransactionDocumentUploadFileRequest) returns (DocumentUploadFileResponse)
+
+	@doc "delete document file"
+	@handler DocumentDeleteFile
+	delete /borrower_property_transaction/:transaction_id/file/:file_id (BorrowerPropertyTransactionDocumentDeleteFileRequest) returns (EmptyResponse)
+
+	@doc "create leaf document"
+	@handler DocumentCreate
+	post /borrower_property_transaction/:transaction_id/document (DocumentCreateRequest) returns (DocumentCreateResponse)
+
+	@doc "transaction operation stats"
+	@handler OperationStats
+	get /borrower_property_transaction/:transaction_id/operations/stats (TransactionOperationStatsRequest) returns (TransactionOperationStatsResponse)
+
+	@doc "transaction operation list"
+	@handler OperationList
+	get /borrower_property_transaction/:transaction_id/operations (TransactionOperationListRequest) returns (TransactionOperationListResponse)
+}
+
+// =============== borrower property transaction end ==============
+// =============== document start ==============
+@server (
+	desc:       "document service (read-only)"
+	version:    v1
+	group:      document
+	prefix:     /api/v1
+	middleware: AuthMiddleware
+	tags:       document
+)
+service borrower-api {
+	@doc "document files"
+	@handler DocumentFiles
+	get /document/:id/files (DocumentFilesRequest) returns (DocumentFilesResponse)
+}
+
+// =============== document end ==============
 // ============== zeitro start ============
 @server (
 	desc:       "Zeitro API"

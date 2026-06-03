@@ -114,7 +114,6 @@ func (form *ApplyForm) buildPage6TransactionTable(tablePosition position) (err e
 			experience.SoldDate,
 			stringx.FormatUsDollarCurrency(experience.Profit),
 		})
-
 	}
 	err = table.DrawTable()
 

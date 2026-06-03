@@ -37,7 +37,6 @@ func (repo *BorrowerApplicantRepo) GetBorrowerApplicantById(ctx context.Context,
 }
 
 func (repo *BorrowerApplicantRepo) PageForBorrower(ctx context.Context, pageReq dto.BorrowerApplicantBorrowerPageRequestDto) (page gormx.PageResponse[*model.BorrowerApplicant], err error) {
-
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
 	query := repo.Client(ctx).
@@ -59,7 +58,6 @@ func (repo *BorrowerApplicantRepo) PageForBorrower(ctx context.Context, pageReq 
 	})
 
 	return page, errorx.WithStack(err)
-
 }
 
 // AllForOrganization return all organization's entities

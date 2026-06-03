@@ -45,6 +45,14 @@ export const PERMISSIONS = {
 		IMPORT: 'Loan:ImportLoans',
 		DETAILS: 'Loan:Details',
 		CHANGE_PENDING_STATUS: 'Loan:ChangePendingStatus',
+		CHANGE_STAGE: 'Loan:ChangeStage',
 		QUOTE: 'Loan:Quote',
+	},
+	TRANSACTION: {
+		PAGE: 'Transactions',
+		DETAILS: 'Transactions:Details',
+		EDIT: 'Transactions:Edit',
+		DELETE: 'Transactions:Delete',
+		ADD: 'Transactions:Add',
 	},
 };
