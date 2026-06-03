@@ -11,6 +11,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
+	"zeebee-backend/app/borrower/rpc/internal/biz_helper"
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -139,7 +140,7 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 		}
 
 		// FR-017a: recalculate checklist
-		_, innerErr = l.baseLogic.RecalculateBorrowerPropertyTransactionChecklist(l.ctx, tx, in.Data.TransactionId)
+		_, innerErr = biz_helper.RecalculateBorrowerPropertyTransactionChecklist(l.ctx, l.svcCtx.AllRepos, tx, in.Data.TransactionId)
 		return innerErr
 	})
 	if err != nil {

@@ -21,6 +21,20 @@ const (
 
 var PropertyTypeName = "property_type"
 
+type BorrowerPropertyStatus string
+
+const (
+	BorrowerPropertyStatusActive             BorrowerPropertyStatus = "Active"
+	BorrowerPropertyStatusPurchasePending    BorrowerPropertyStatus = "Purchase pending"
+	BorrowerPropertyStatusReFinancePending   BorrowerPropertyStatus = "Re-finance pending"
+	BorrowerPropertyStatusChangeTitlePending BorrowerPropertyStatus = "Change Title Pending"
+	BorrowerPropertyStatusSalePending        BorrowerPropertyStatus = "Sale pending"
+	BorrowerPropertyStatusAssignmentPending  BorrowerPropertyStatus = "Assignment pending"
+	BorrowerPropertyStatusSold               BorrowerPropertyStatus = "Sold"
+)
+
+var BorrowerPropertyStatusName = "borrower_property_status"
+
 func init() {
 	// register property type
 	enums.Register(PropertyTypeName, []enums.EnumOpt{
@@ -67,6 +81,38 @@ func init() {
 		{
 			Label: string(PropertyTypeEntitledLand),
 			Value: string(PropertyTypeEntitledLand),
+		},
+	})
+
+	// register borrower property status
+	enums.Register(BorrowerPropertyStatusName, []enums.EnumOpt{
+		{
+			Label: string(BorrowerPropertyStatusActive),
+			Value: string(BorrowerPropertyStatusActive),
+		},
+		{
+			Label: string(BorrowerPropertyStatusPurchasePending),
+			Value: string(BorrowerPropertyStatusPurchasePending),
+		},
+		{
+			Label: string(BorrowerPropertyStatusReFinancePending),
+			Value: string(BorrowerPropertyStatusReFinancePending),
+		},
+		{
+			Label: string(BorrowerPropertyStatusChangeTitlePending),
+			Value: string(BorrowerPropertyStatusChangeTitlePending),
+		},
+		{
+			Label: string(BorrowerPropertyStatusSalePending),
+			Value: string(BorrowerPropertyStatusSalePending),
+		},
+		{
+			Label: string(BorrowerPropertyStatusAssignmentPending),
+			Value: string(BorrowerPropertyStatusAssignmentPending),
+		},
+		{
+			Label: string(BorrowerPropertyStatusSold),
+			Value: string(BorrowerPropertyStatusSold),
 		},
 	})
 }

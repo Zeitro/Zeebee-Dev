@@ -1,4 +1,4 @@
-package logic
+package biz_helper
 
 import (
 	"context"
@@ -10,12 +10,12 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/repo"
 )
 
-func (b *BaseLogic) RecalculateBorrowerPropertyTransactionChecklist(ctx context.Context, tx *gorm.DB, transactionId int64) (checklist dto.ChecklistRoot, err error) {
-	repos := b.svcCtx.AllRepos
+func RecalculateBorrowerPropertyTransactionChecklist(ctx context.Context, repos *repo.AllRepos, tx *gorm.DB, transactionId int64) (checklist dto.ChecklistRoot, err error) {
 
-	entityDoc, err := b.svcCtx.AllRepos.EntityDocumentRepo.FindOneByColumnsWithTx(ctx, tx, map[string]interface{}{
+	entityDoc, err := repos.EntityDocumentRepo.FindOneByColumnsWithTx(ctx, tx, map[string]interface{}{
 		"entity_type": constants.EntityDocumentTypeBorrowerPropertyTransaction,
 		"entity_id":   transactionId,
 	})
@@ -52,7 +52,7 @@ func (b *BaseLogic) RecalculateBorrowerPropertyTransactionChecklist(ctx context.
 
 	checklist.AllChecked = existing.Checklist.AllChecked
 	existing.Checklist = checklist
-	_, err = b.svcCtx.AllRepos.BorrowerPropertyTransactionRepo.UpdateOneByIdWithTx(ctx, tx, transactionId, existing)
+	_, err = repos.BorrowerPropertyTransactionRepo.UpdateOneByIdWithTx(ctx, tx, transactionId, existing)
 	return existing.Checklist, errorx.WithStack(err)
 }
 

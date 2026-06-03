@@ -7,6 +7,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
+	"zeebee-backend/app/borrower/rpc/internal/biz_helper"
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -50,6 +51,8 @@ func (l *DeleteLogic) Delete(in *borrower.BorrowerPropertyTransactionDeleteReque
 		return nil, errorx.New("transaction does not belong to your organization")
 	}
 
+	propertyId := existing.BorrowerPropertyId
+
 	// validate no loan binding
 	isBound, err := l.svcCtx.BorrowerPropertyTransactionRepo.IsBoundToLoan(l.ctx, in.Data.Id)
 	if err != nil {
@@ -92,6 +95,12 @@ func (l *DeleteLogic) Delete(in *borrower.BorrowerPropertyTransactionDeleteReque
 		// delete document files
 		innerErr = l.svcCtx.FileRepo.DeleteByEntityIdWithTx(l.ctx, tx, docIds, constants.FileEntityTypeDocument)
 
+		if innerErr != nil {
+			return innerErr
+		}
+
+		// recalculate property status
+		innerErr = biz_helper.CalculatePropertyStatuses(l.ctx, l.svcCtx.AllRepos, tx, propertyId)
 		if innerErr != nil {
 			return innerErr
 		}
