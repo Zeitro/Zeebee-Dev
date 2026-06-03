@@ -84,7 +84,7 @@ func fillNodeFiles(ctx context.Context, fileRepo *repo.FileRepo, nodes []dto.Che
 
 			if err == nil && len(files) > 0 {
 				for _, f := range files {
-					dtoFile, err := copierx.Trans[model.File, dto.FileEntityDto](f, copierx.TimeToRFC3339Str())
+					dtoFile, err := copierx.Trans[model.File, dto.FileEntityDto](f, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToStr(timex.LayoutUsStyle))
 					if err == nil {
 						nodes[i].Files = append(node.Files, *dtoFile)
 					}

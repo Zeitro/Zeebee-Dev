@@ -13,8 +13,75 @@ function showMessage(msg, type = 'error') {
 const str = '/api/v1';
 const baseURL = process.env.NEXT_PUBLIC_API_URL + str;
 
+/** 稳定序列化对象，用于生成取消用的默认 key（与属性顺序无关） */
+function stableStringify(value) {
+	if (value === null || value === undefined) {
+		return 'null';
+	}
+	const t = typeof value;
+	if (t !== 'object') {
+		return JSON.stringify(value);
+	}
+	if (Array.isArray(value)) {
+		return `[${value.map(stableStringify).join(',')}]`;
+	}
+	const keys = Object.keys(value).sort();
+	return `{${keys.map((k) => `${JSON.stringify(k)}:${stableStringify(value[k])}`).join(',')}}`;
+}
+
+function fingerprintBody(body) {
+	if (body === undefined || body === null) {
+		return '';
+	}
+	if (typeof body === 'string') {
+		try {
+			const parsed = JSON.parse(body);
+			if (typeof parsed === 'object' && parsed !== null) {
+				return stableStringify(parsed);
+			}
+		} catch {
+			return body;
+		}
+		return body;
+	}
+	if (typeof body === 'object') {
+		if (typeof FormData !== 'undefined' && body instanceof FormData) {
+			return '[FormData]';
+		}
+		if (typeof Blob !== 'undefined' && body instanceof Blob) {
+			return '[Blob]';
+		}
+		return stableStringify(body);
+	}
+	return String(body);
+}
+
+/** 未传 cancelKey 时：method + url + body 指纹，区分同 URL 不同参数与不同方法 */
+export function computeDefaultRequestKey(url, options = {}) {
+	const method = String(options.method || 'GET').toUpperCase();
+	return `${method}\u0000${url}\u0000${fingerprintBody(options.body)}`;
+}
+
 export function createRequest() {
 	const controllers = new Map();
+
+	function addController(key, controller) {
+		let set = controllers.get(key);
+		if (!set) {
+			set = new Set();
+			controllers.set(key, set);
+		}
+		set.add(controller);
+	}
+
+	function removeController(key, controller) {
+		const set = controllers.get(key);
+		if (!set) return;
+		set.delete(controller);
+		if (set.size === 0) {
+			controllers.delete(key);
+		}
+	}
 
 	const commonJudge = async ({ ok, isExternalLink, fetchRes, xhr }) => {
 		if (!ok) {
@@ -65,10 +132,18 @@ export function createRequest() {
 		};
 	};
 
-	async function request(url, options = {}, key = url) {
-		// 创建控制器用于取消请求
+	/**
+	 * @param {string} url
+	 * @param {object} [options]
+	 * @param {string} [cancelKey] 同一 key 共用一个「槽位」：新请求前 cancel(cancelKey) 可打断同槽旧请求；不传则按 method+url+body 自动区分
+	 */
+	async function request(url, options = {}, cancelKey) {
 		const controller = new AbortController();
-		controllers.set(key, controller);
+		const key =
+			cancelKey !== undefined && cancelKey !== null
+				? String(cancelKey)
+				: computeDefaultRequestKey(url, options);
+		addController(key, controller);
 		const {
 			body,
 			method = 'GET',
@@ -104,20 +179,19 @@ export function createRequest() {
 		try {
 			response = await fetch(isExternalLink ? url : finalURL, fetchOptions);
 		} catch (error) {
-			console.log(error, '----error----');
 			if (error.name !== 'AbortError' && !isHideTips) {
+				console.log(error, '----error----');
 				showMessage(error.message || 'Network anomaly');
 				return Promise.reject(error);
 			}
 			return;
 		} finally {
-			controllers.delete(key);
+			removeController(key, controller);
 		}
 		const data = await commonJudge({ ok: response?.ok, fetchRes: response, isExternalLink });
 
 		if (!data) return Promise.reject({ message: '401' });
 		if (data?.message) {
-			console.log('0000', message);
 			if (!isHideTips) {
 				showMessage(data.message);
 			}
@@ -127,7 +201,13 @@ export function createRequest() {
 	}
 
 	// 上传需要得知进度时，只能用XMLHttpRequest，fetch现不支持
-	function uploadWithProgress(url, options) {
+	function uploadWithProgress(url, options, cancelKey) {
+		const controller = new AbortController();
+		const key =
+			cancelKey !== undefined && cancelKey !== null
+				? String(cancelKey)
+				: computeDefaultRequestKey(url, options);
+		addController(key, controller);
 		return new Promise((resolve, reject) => {
 			const {
 				onProgress,
@@ -137,7 +217,6 @@ export function createRequest() {
 				isHideTips,
 			} = options;
 			const xhr = new XMLHttpRequest();
-
 			const finalURL =
 				process.env.NEXT_PUBLIC_ENV !== 'local' ? `${baseURL}${url}` : `${str}${url}`;
 
@@ -150,6 +229,26 @@ export function createRequest() {
 			}
 			// ❗️ 注意：此处不能设置 'Content-Type'，必须由浏览器自动处理 FormData
 
+			// 绑定 AbortController 到 XHR：controller.abort() 时触发 xhr.abort()
+			const abortHandler = () => {
+				xhr.abort();
+			};
+			if (controller.signal) {
+				controller.signal.addEventListener('abort', abortHandler);
+			}
+
+			// 清理 helpers
+			const cleanup = () => {
+				removeController(key, controller);
+				controller.signal.removeEventListener('abort', abortHandler);
+			};
+
+			// 当中止时，触发 reject（与 fetch 的行为一致）
+			xhr.onabort = () => {
+				cleanup();
+				reject({ name: 'AbortError', message: 'The upload has been aborted.' });
+			};
+
 			// 监听上传进度
 			xhr.upload.onprogress = (event) => {
 				if (event.lengthComputable) {
@@ -161,18 +260,24 @@ export function createRequest() {
 			// 监听请求完成
 			xhr.onload = async () => {
 				const data = await commonJudge({ ok: xhr.status === 200, xhr, isExternalLink });
-				if (!data) return reject({ message: '401' });
+				if (!data) {
+					cleanup();
+					return reject({ message: '401' });
+				}
 				if (data.message) {
+					cleanup();
 					if (!isHideTips) {
 						showMessage(data.message, 'warning');
 					}
 					return reject(data);
 				}
+				cleanup();
 				resolve(data === true ? data : data.res);
 			};
 
 			// 监听网络等其他错误
 			xhr.onerror = () => {
+				cleanup();
 				showMessage('Network anomaly');
 				reject(new Error('Upload request failed due to a network error'));
 			};
@@ -182,22 +287,42 @@ export function createRequest() {
 		});
 	}
 
-	// 取消单个请求
+	/** 精确匹配 cancelKey，取消该槽位上所有进行中的请求 */
 	function cancel(key) {
-		const controller = controllers.get(key);
-		if (controller) {
-			controller.abort();
-			controllers.delete(key);
+		const set = controllers.get(String(key));
+		if (!set) return;
+		for (const c of set) {
+			c.abort();
 		}
+		controllers.delete(String(key));
 	}
 
-	// 取消全部请求
 	const cancelAll = () => {
-		controllers.forEach((controller) => {
-			controller.abort();
-		});
+		for (const set of controllers.values()) {
+			for (const c of set) {
+				c.abort();
+			}
+		}
 		controllers.clear();
 	};
 
-	return { request, cancel, cancelAll, uploadWithProgress };
+	/** 取消所有「已注册 key」包含 partial 的请求（含精确等于） */
+	function cancelMatch(partial) {
+		if (partial == null || partial === '') {
+			cancelAll();
+			return;
+		}
+		const needle = String(partial);
+		const keysToCancel = [];
+		for (const k of controllers.keys()) {
+			if (k === needle || k.includes(needle)) {
+				keysToCancel.push(k);
+			}
+		}
+		for (const k of keysToCancel) {
+			cancel(k);
+		}
+	}
+
+	return { request, cancel, cancelMatch, cancelAll, uploadWithProgress };
 }

@@ -1,0 +1,24 @@
+.sectionLabel {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding-bottom: 8px;
+	margin-bottom: 8px;
+	border-bottom: 1px dashed var(--base-border);
+}
+
+.sectionLabelTitle {
+	margin: 0;
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 20px;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--base-label);
+}
+
+.sectionLabelCount {
+	font-size: 12px;
+	line-height: 20px;
+	color: var(--base-label);
+}

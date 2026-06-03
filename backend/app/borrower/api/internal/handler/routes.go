@@ -12,6 +12,7 @@ import (
 	borrower_property_transaction "zeebee-backend/app/borrower/api/internal/handler/borrower_property_transaction"
 	common "zeebee-backend/app/borrower/api/internal/handler/common"
 	document "zeebee-backend/app/borrower/api/internal/handler/document"
+	drive "zeebee-backend/app/borrower/api/internal/handler/drive"
 	file "zeebee-backend/app/borrower/api/internal/handler/file"
 	loan "zeebee-backend/app/borrower/api/internal/handler/loan"
 	loan_applicant "zeebee-backend/app/borrower/api/internal/handler/loan_applicant"
@@ -331,6 +332,69 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/document/:id/files",
 					Handler: document.DocumentFilesHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// sync transaction documents to drive
+					Method:  http.MethodPost,
+					Path:    "/borrower_property_transaction/:id/sync_to_drive",
+					Handler: drive.DriveSyncTransactionHandler(serverCtx),
+				},
+				{
+					// get latest drive sync job status for a transaction
+					Method:  http.MethodGet,
+					Path:    "/borrower_property_transaction/:id/sync_to_drive/status",
+					Handler: drive.DriveGetSyncTransactionStatusHandler(serverCtx),
+				},
+				{
+					// drive auth status
+					Method:  http.MethodGet,
+					Path:    "/drive/auth_status",
+					Handler: drive.DriveAuthStatusHandler(serverCtx),
+				},
+				{
+					// drive auth url
+					Method:  http.MethodGet,
+					Path:    "/drive/auth_url",
+					Handler: drive.DriveAuthUrlHandler(serverCtx),
+				},
+				{
+					// drive authorize
+					Method:  http.MethodPost,
+					Path:    "/drive/authorize",
+					Handler: drive.DriveAuthorizeHandler(serverCtx),
+				},
+				{
+					// disconnect drive
+					Method:  http.MethodPost,
+					Path:    "/drive/disconnect",
+					Handler: drive.DriveDisconnectHandler(serverCtx),
+				},
+				{
+					// list shared drives
+					Method:  http.MethodGet,
+					Path:    "/drive/drives",
+					Handler: drive.DriveListDrivesHandler(serverCtx),
+				},
+				{
+					// update folder name
+					Method:  http.MethodPut,
+					Path:    "/drive/folder",
+					Handler: drive.DriveUpdateFolderHandler(serverCtx),
+				},
+				{
+					// update drive selection
+					Method:  http.MethodPut,
+					Path:    "/drive/selection",
+					Handler: drive.DriveUpdateSelectionHandler(serverCtx),
 				},
 			}...,
 		),
