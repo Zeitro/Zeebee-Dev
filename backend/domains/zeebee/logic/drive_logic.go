@@ -383,7 +383,7 @@ func (l *DriveLogic) buildClient(ctx context.Context, organizationId int64, orga
 
 // syncNodes recursively mirrors the checklist tree: every node becomes a folder, and
 // files attached to a leaf node are uploaded into that node's folder.
-func (l *DriveLogic) syncNodes(ctx context.Context, cli *client.DriveClient, s3Client *aws_s3.S3Client, driveId, parentId string, nodes []dto.ChecklistNode, result *dto.DriveSyncTransactionResultDto) {
+func (l *DriveLogic) syncNodes(ctx context.Context, cli *client.DriveClient, s3Client *aws_s3.S3Client, driveId, parentId string, nodes []*dto.ChecklistNode, result *dto.DriveSyncTransactionResultDto) {
 	for i := range nodes {
 		node := nodes[i]
 		folderId, _, err := cli.EnsureFolder(ctx, sanitizeFolderName(node.Name), parentId, driveId)
@@ -407,7 +407,7 @@ func (l *DriveLogic) syncNodes(ctx context.Context, cli *client.DriveClient, s3C
 
 // reconcileFolderFiles trashes managed Drive files whose names are no longer present
 // in the system's current file set for this folder.
-func (l *DriveLogic) reconcileFolderFiles(ctx context.Context, cli *client.DriveClient, driveId, folderId string, currentFiles []dto.FileEntityDto, result *dto.DriveSyncTransactionResultDto) {
+func (l *DriveLogic) reconcileFolderFiles(ctx context.Context, cli *client.DriveClient, driveId, folderId string, currentFiles []*dto.FileEntityDto, result *dto.DriveSyncTransactionResultDto) {
 	managed, err := cli.ListManagedFiles(ctx, folderId, driveId)
 	if err != nil {
 		logx.WithContext(ctx).WithFields(logx.Field("folder_id", folderId)).
@@ -433,7 +433,7 @@ func (l *DriveLogic) reconcileFolderFiles(ctx context.Context, cli *client.Drive
 }
 
 // syncFile downloads a file from S3 and upserts it into the target Drive folder.
-func (l *DriveLogic) syncFile(ctx context.Context, cli *client.DriveClient, s3Client *aws_s3.S3Client, driveId, parentId string, f dto.FileEntityDto, result *dto.DriveSyncTransactionResultDto) {
+func (l *DriveLogic) syncFile(ctx context.Context, cli *client.DriveClient, s3Client *aws_s3.S3Client, driveId, parentId string, f *dto.FileEntityDto, result *dto.DriveSyncTransactionResultDto) {
 	result.Total++
 	synced := dto.DriveSyncedFileDto{FileName: f.FileName}
 
@@ -473,7 +473,7 @@ func (l *DriveLogic) syncFile(ctx context.Context, cli *client.DriveClient, s3Cl
 	result.Files = append(result.Files, synced)
 }
 
-func (l *DriveLogic) markNodeFilesFailed(node dto.ChecklistNode, result *dto.DriveSyncTransactionResultDto) {
+func (l *DriveLogic) markNodeFilesFailed(node *dto.ChecklistNode, result *dto.DriveSyncTransactionResultDto) {
 	if len(node.Children) > 0 {
 		for _, child := range node.Children {
 			l.markNodeFilesFailed(child, result)
@@ -493,7 +493,7 @@ func (l *DriveLogic) fillChecklistFiles(ctx context.Context, checklist *dto.Chec
 	l.fillNodeFiles(ctx, checklist.OptionalDocuments)
 }
 
-func (l *DriveLogic) fillNodeFiles(ctx context.Context, nodes []dto.ChecklistNode) {
+func (l *DriveLogic) fillNodeFiles(ctx context.Context, nodes []*dto.ChecklistNode) {
 	for i := range nodes {
 		if len(nodes[i].Children) > 0 {
 			l.fillNodeFiles(ctx, nodes[i].Children)
@@ -503,13 +503,13 @@ func (l *DriveLogic) fillNodeFiles(ctx context.Context, nodes []dto.ChecklistNod
 		if err != nil || len(files) == 0 {
 			continue
 		}
-		dtoFiles := make([]dto.FileEntityDto, 0, len(files))
+		dtoFiles := make([]*dto.FileEntityDto, 0, len(files))
 		for _, f := range files {
 			dtoFile, terr := copierx.Trans[model.File, dto.FileEntityDto](f, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToStr(timex.LayoutUsStyle))
 			if terr != nil || dtoFile == nil {
 				continue
 			}
-			dtoFiles = append(dtoFiles, *dtoFile)
+			dtoFiles = append(dtoFiles, dtoFile)
 		}
 		nodes[i].Files = dtoFiles
 	}
