@@ -32,6 +32,7 @@ import {
 } from '@repo/shared-methods/utils';
 import { PERMISSIONS } from '@config/permissions';
 import NewTransactionModal from '@/app/myTransactions/components/NewTransactionModal';
+import TruncatedTagGrid from './components/TruncatedTagGrid';
 
 const PROPERTY_API = '/property/page';
 
@@ -41,10 +42,17 @@ const Properties = () => {
 	const router = useRouter();
 	const { hasPermission, getActiveByPermission } = useAuth();
 	const { request, cancelMatch } = useMemo(() => createRequest(), []);
-	const { borrowerOptions } = useGetOptions([{ type: 'borrower' }]);
+	const { borrowerOptions, borrowerPropertyStatusOptions } = useGetOptions([
+		{ type: 'borrower' },
+		{
+			key: 'borrower_property_status',
+			valueName: 'borrowerPropertyStatusOptions',
+		},
+	]);
 	const tableFilterRef = useRef();
 	const [searchValue, setSearchValue] = useState('');
 	const [borrower, setBorrower] = useState([]);
+	const [propertyStatus, setPropertyStatus] = useState([]);
 	const [transactionModalOpen, setTransactionModalOpen] = useState(false);
 	const [transactionModalProperty, setTransactionModalProperty] = useState(null);
 
@@ -82,6 +90,19 @@ const Properties = () => {
 					sourceArray: borrowerOptions,
 					outputKey: 'title',
 				})?.map((i) => ({ ...i, key: i.value })),
+			},
+			{
+				filterType: 'treeSelect',
+				label: 'Property status',
+				value: propertyStatus,
+				paramsKey: 'status',
+				placeholder: 'Property status',
+				onChange: (value) => setPropertyStatus(value),
+				treeData: transformArrayStructure({
+					sourceArray: borrowerPropertyStatusOptions,
+					outputKey: 'title',
+				})?.map((i) => ({ ...i, key: i.value })),
+				style: { width: 200 },
 			},
 			{
 				filterType: 'button',
@@ -125,7 +146,15 @@ const Properties = () => {
 				),
 			},
 		],
-		[searchValue, borrower, borrowerOptions, cancelMatch, hasPermission],
+		[
+			searchValue,
+			borrower,
+			borrowerOptions,
+			cancelMatch,
+			hasPermission,
+			propertyStatus,
+			borrowerPropertyStatusOptions,
+		],
 	);
 
 	const columns = useMemo(
@@ -136,6 +165,8 @@ const Properties = () => {
 				key: 'address',
 				sorter: true,
 				fixed: 'left',
+				width: 200,
+				ellipsis: true,
 				render: (_, record) => displayValue(record?.address?.address1),
 			},
 			{
@@ -144,17 +175,58 @@ const Properties = () => {
 				key: 'city',
 				sorter: true,
 				fixed: 'left',
-				// width: 120,
+				width: 150,
 				render: (_, record) => displayValue(record?.address?.city),
 			},
 			{
 				title: 'State',
 				dataIndex: ['address', 'state'],
 				key: 'state',
-				// width: 80,
+				width: 100,
 				sorter: true,
 				fixed: 'left',
 				render: (_, record) => displayValue(record?.address?.state),
+			},
+			{
+				title: 'Property status',
+				dataIndex: 'status',
+				key: 'status',
+				width: 300,
+				ellipsis: true,
+				render: (v) => <TruncatedTagGrid items={v} />,
+			},
+			{
+				title: 'Transaction status',
+				dataIndex: 'transaction_status',
+				key: 'transaction_status',
+				width: 300,
+				ellipsis: true,
+				render: (v) => <TruncatedTagGrid items={v} />,
+			},
+			{
+				title: 'Loan status',
+				key: 'loan_status',
+				width: 180,
+				align: 'center',
+				render: (_, record) => {
+					return (
+						<div className="flex flex-col flex-wrap items-stretch gap-1 w-max m-auto">
+							{!!record?.active_loan_count && (
+								<div className="rounded-[2px] px-2 text-xs border border-[var(--green-light-100)] bg-green-light text-green-medium">
+									{record?.active_loan_count || 0} Active Loans
+								</div>
+							)}
+							{!!record?.pending_loan_count && (
+								<div className="rounded-[2px] px-2 text-xs border border-[var(--orange-medium)] bg-[var(--orange-light)] text-[var(--orange-dark)]">
+									{record?.pending_loan_count || 0} Pending Loans
+								</div>
+							)}
+							{!record?.pending_loan_count && !record?.active_loan_count && (
+								<span>--</span>
+							)}
+						</div>
+					);
+				},
 			},
 			{
 				title: 'Property type',
@@ -177,7 +249,7 @@ const Properties = () => {
 				title: 'Units',
 				dataIndex: 'unit',
 				key: 'unit',
-				width: 72,
+				width: 90,
 				sorter: true,
 				render: (v) => displayValue(v),
 			},
@@ -217,7 +289,7 @@ const Properties = () => {
 				title: 'Avg active rate',
 				dataIndex: 'avg_rate',
 				key: 'avg_rate',
-				width: 180,
+				width: 150,
 				render: (v) => displayValue(v, (n) => `${n}%`),
 			},
 			{
@@ -264,32 +336,6 @@ const Properties = () => {
 						<FieldTips title={text === EMPTY_DISPLAY ? undefined : text}>
 							{text}
 						</FieldTips>
-					);
-				},
-			},
-			{
-				title: 'Loan status',
-				key: 'loan_status',
-				width: 180,
-				fixed: 'right',
-				align: 'center',
-				render: (_, record) => {
-					return (
-						<div className="flex flex-col flex-wrap items-stretch gap-1 w-max m-auto">
-							{!!record?.active_loan_count && (
-								<div className="rounded-[2px] px-2 text-xs border border-[var(--green-light-100)] bg-green-light text-green-medium">
-									{record?.active_loan_count || 0} Active Loans
-								</div>
-							)}
-							{!!record?.pending_loan_count && (
-								<div className="rounded-[2px] px-2 text-xs border border-[var(--orange-medium)] bg-[var(--orange-light)] text-[var(--orange-dark)]">
-									{record?.pending_loan_count || 0} Pending Loans
-								</div>
-							)}
-							{!record?.pending_loan_count && !record?.active_loan_count && (
-								<span>--</span>
-							)}
-						</div>
 					);
 				},
 			},
@@ -398,7 +444,7 @@ const Properties = () => {
 				filterList={filterList}
 				filterName="Property filters"
 				getData={getData}
-				scroll={{ x: 'max-content' }}
+				scroll={{ x: 1800 }}
 				filterWrapClassName="px-8 pt-10 pb-8 flex-1 overflow-hidden flex flex-col min-h-0"
 				onRow={(row) => ({
 					onClick: () => {
