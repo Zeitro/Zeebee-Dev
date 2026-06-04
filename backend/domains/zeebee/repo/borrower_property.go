@@ -148,7 +148,8 @@ func (repo *BorrowerPropertyRepo) PageForBorrower(ctx context.Context, pageReq d
 	}
 	// applicant
 	if len(filter.Applicant) > 0 {
-		query = query.Joins(fmt.Sprintf("left join %s on %s.id = %s.borrower_property_id", loanPropertyTable, borrowerPropertyTable, loanPropertyTable)).
+		query = query.Distinct(fmt.Sprintf("%s.*", borrowerPropertyTable)).
+			Joins(fmt.Sprintf("left join %s on %s.id = %s.borrower_property_id", loanPropertyTable, borrowerPropertyTable, loanPropertyTable)).
 			Joins(fmt.Sprintf("left join %s on %s.id = %s.loan_property_id", applicantTable, loanPropertyTable, applicantTable)).
 			Where(fmt.Sprintf("%s.full_name in ?", applicantTable), filter.Applicant)
 	}
