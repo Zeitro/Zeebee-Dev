@@ -70,6 +70,10 @@ service borrower-api {
 	@doc "sync resource"
 	@handler SyncResource
 	get /common/sync_resource (EmptyRequest) returns (EmptyResponse)
+
+	@doc "sync data"
+	@handler SyncData
+	get /common/sync_data (EmptyRequest) returns (EmptyResponse)
 }
 
 // ============== common end =============

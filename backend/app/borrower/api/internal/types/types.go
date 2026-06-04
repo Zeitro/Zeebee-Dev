@@ -295,6 +295,7 @@ type BorrowerPropertyEntity struct {
 	CreatedAt      string         `json:"created_at"`
 	UpdatedAt      string         `json:"updated_at"`
 	LoanCount      int32          `json:"loan_count"`
+	Status         []string       `json:"status"`
 }
 
 type BorrowerPropertyTransactionAllResponse struct {
@@ -1651,11 +1652,14 @@ type PropertyPageEntity struct {
 	ActiveLoanCount           int64          `json:"active_loan_count"`
 	ArchivedLoanCount         int64          `json:"archived_loan_count"`
 	LoanCount                 int32          `json:"loan_count"`
+	Status                    []string       `json:"status"`
+	TransactionStatus         []string       `json:"transaction_status"`
 }
 
 type PropertyPageFilter struct {
 	Keyword   string   `json:"keyword,optional"`
 	Applicant []string `json:"applicant,optional"`
+	Status    []string `json:"status,optional" validate:"omitempty,dive,oneof='Active' 'Purchase Pending' 'Re-finance Pending' 'Change Title Pending' 'Sale Pending' 'Assignment Pending' 'Sold'"`
 }
 
 type PropertyPageRequest struct {
