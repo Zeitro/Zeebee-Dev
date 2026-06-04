@@ -25,11 +25,11 @@ type BorrowerPropertyStatus string
 
 const (
 	BorrowerPropertyStatusActive             BorrowerPropertyStatus = "Active"
-	BorrowerPropertyStatusPurchasePending    BorrowerPropertyStatus = "Purchase pending"
-	BorrowerPropertyStatusReFinancePending   BorrowerPropertyStatus = "Re-finance pending"
+	BorrowerPropertyStatusPurchasePending    BorrowerPropertyStatus = "Purchase Pending"
+	BorrowerPropertyStatusReFinancePending   BorrowerPropertyStatus = "Re-finance Pending"
 	BorrowerPropertyStatusChangeTitlePending BorrowerPropertyStatus = "Change Title Pending"
-	BorrowerPropertyStatusSalePending        BorrowerPropertyStatus = "Sale pending"
-	BorrowerPropertyStatusAssignmentPending  BorrowerPropertyStatus = "Assignment pending"
+	BorrowerPropertyStatusSalePending        BorrowerPropertyStatus = "Sale Pending"
+	BorrowerPropertyStatusAssignmentPending  BorrowerPropertyStatus = "Assignment Pending"
 	BorrowerPropertyStatusSold               BorrowerPropertyStatus = "Sold"
 )
 
