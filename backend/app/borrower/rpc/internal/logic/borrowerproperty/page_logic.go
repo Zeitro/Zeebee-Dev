@@ -82,9 +82,12 @@ func (l *PageLogic) Page(in *borrower.PropertyPageRequest) (resp *borrower.Prope
 				transactionStatus = append(transactionStatus, fmt.Sprintf("%s %s", transaction.Type, transaction.Status))
 			}
 		}
-		propertyPageEntry.TransactionStatus = slice.Unique(transactionStatus)
+		transactionStatus = slice.Unique(transactionStatus)
+		slice.Sort(transactionStatus)
+		propertyPageEntry.TransactionStatus = transactionStatus
 
 		propertyPageEntry.Status = borrowerProperty.Status
+		slice.Sort(propertyPageEntry.Status)
 		var maturityDate *sql.NullTime
 		var totalRate float32 = 0.0
 		for _, loan := range borrowerProperty.Loans {
