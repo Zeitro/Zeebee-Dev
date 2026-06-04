@@ -105,6 +105,7 @@ const ImportLoanModal = ({ setOpen }) => {
 						immediateUpload={false}
 						accept=".xlsx,.xls"
 						onGetUploadList={setFileList}
+						limitSize={10}
 						// disabled={fileList?.length}
 						key={reUpload}
 					>
