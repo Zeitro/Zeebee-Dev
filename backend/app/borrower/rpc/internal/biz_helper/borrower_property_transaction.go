@@ -13,9 +13,19 @@ import (
 	"zeebee-backend/domains/zeebee/repo"
 )
 
-func RecalculateBorrowerPropertyTransactionChecklist(ctx context.Context, repos *repo.AllRepos, tx *gorm.DB, transactionId int64) (checklist dto.ChecklistRoot, err error) {
+type BorrowerPropertyTransaction struct {
+	repos *repo.AllRepos
+}
 
-	entityDoc, err := repos.EntityDocumentRepo.FindOneByColumnsWithTx(ctx, tx, map[string]interface{}{
+func NewBorrowerPropertyTransaction(repos *repo.AllRepos) *BorrowerPropertyTransaction {
+	return &BorrowerPropertyTransaction{
+		repos: repos,
+	}
+}
+
+func (h *BorrowerPropertyTransaction) RecalculateBorrowerPropertyTransactionChecklist(ctx context.Context, tx *gorm.DB, transactionId int64) (checklist dto.ChecklistRoot, err error) {
+
+	entityDoc, err := h.repos.EntityDocumentRepo.FindOneByColumnsWithTx(ctx, tx, map[string]interface{}{
 		"entity_type": constants.EntityDocumentTypeBorrowerPropertyTransaction,
 		"entity_id":   transactionId,
 	})
@@ -24,7 +34,7 @@ func RecalculateBorrowerPropertyTransactionChecklist(ctx context.Context, repos 
 		return
 	}
 
-	allDocs, err := repos.DocumentRepo.GetAllByEntityDocumentIdWithTx(ctx, tx, entityDoc.Id)
+	allDocs, err := h.repos.DocumentRepo.GetAllByEntityDocumentIdWithTx(ctx, tx, entityDoc.Id)
 	if err != nil {
 		err = errorx.Wrap(err, "failed to load documents")
 		return
@@ -32,7 +42,7 @@ func RecalculateBorrowerPropertyTransactionChecklist(ctx context.Context, repos 
 
 	childrenMap := buildChildrenMap(allDocs)
 	leafIds := collectLeafIds(allDocs, childrenMap)
-	fileCountMap, err := repos.FileRepo.BatchFileCountByEntityIds(ctx, tx, leafIds, constants.FileEntityTypeDocument)
+	fileCountMap, err := h.repos.FileRepo.BatchFileCountByEntityIds(ctx, tx, leafIds, constants.FileEntityTypeDocument)
 	if err != nil {
 		err = errorx.Wrap(err, "failed to load file counts")
 		return
@@ -40,7 +50,7 @@ func RecalculateBorrowerPropertyTransactionChecklist(ctx context.Context, repos 
 
 	checklist = BuildChecklistTree(allDocs, fileCountMap)
 
-	existing, err := repos.BorrowerPropertyTransactionRepo.FindOneByIdWithTx(ctx, tx, transactionId)
+	existing, err := h.repos.BorrowerPropertyTransactionRepo.FindOneByIdWithTx(ctx, tx, transactionId)
 	if err != nil {
 		err = errorx.WithStack(err)
 		return
@@ -52,7 +62,7 @@ func RecalculateBorrowerPropertyTransactionChecklist(ctx context.Context, repos 
 
 	checklist.AllChecked = existing.Checklist.AllChecked
 	existing.Checklist = checklist
-	_, err = repos.BorrowerPropertyTransactionRepo.UpdateOneByIdWithTx(ctx, tx, transactionId, existing)
+	_, err = h.repos.BorrowerPropertyTransactionRepo.UpdateOneByIdWithTx(ctx, tx, transactionId, existing)
 	return existing.Checklist, errorx.WithStack(err)
 }
 
@@ -68,7 +78,7 @@ func BuildChecklistTree(allDocs []*model.Document, fileCountMap map[int64]int32)
 		}
 	}
 
-	var requiredNodes, optionalNodes []dto.ChecklistNode
+	var requiredNodes, optionalNodes []*dto.ChecklistNode
 	var totalReqCount, totalReqUpdatedCount, totalOptCount, totalOptUpdatedCount int32
 
 	for _, child := range childrenMap[rootId] {
@@ -105,7 +115,7 @@ func buildChildrenMap(allDocs []*model.Document) map[int64][]*model.Document {
 }
 
 // buildChecklistNode recursively builds checklist node from in-memory maps
-func buildChecklistNode(doc *model.Document, childrenMap map[int64][]*model.Document, fileCountMap map[int64]int32) dto.ChecklistNode {
+func buildChecklistNode(doc *model.Document, childrenMap map[int64][]*model.Document, fileCountMap map[int64]int32) *dto.ChecklistNode {
 	isRequired := true
 	if doc.Metadata != nil {
 		var meta struct {
@@ -117,7 +127,7 @@ func buildChecklistNode(doc *model.Document, childrenMap map[int64][]*model.Docu
 
 	children := childrenMap[doc.Id]
 	if len(children) == 0 {
-		return dto.ChecklistNode{
+		return &dto.ChecklistNode{
 			Name:       doc.Name,
 			DocumentId: doc.Id,
 			IsRequired: isRequired,
@@ -125,7 +135,7 @@ func buildChecklistNode(doc *model.Document, childrenMap map[int64][]*model.Docu
 		}
 	}
 
-	var childNodes []dto.ChecklistNode
+	var childNodes []*dto.ChecklistNode
 	var subDocCount, uploadedCount, reqDocCount, optDocCount int32
 	for _, child := range children {
 		childNode := buildChecklistNode(child, childrenMap, fileCountMap)
@@ -141,7 +151,7 @@ func buildChecklistNode(doc *model.Document, childrenMap map[int64][]*model.Docu
 		}
 	}
 
-	return dto.ChecklistNode{
+	return &dto.ChecklistNode{
 		Name:                  doc.Name,
 		DocumentId:            doc.Id,
 		IsRequired:            isRequired,
@@ -167,7 +177,10 @@ func collectLeafIds(allDocs []*model.Document, childrenMap map[int64][]*model.Do
 	return ids
 }
 
-func countUploadedLeaves(node dto.ChecklistNode) int32 {
+func countUploadedLeaves(node *dto.ChecklistNode) int32 {
+	if node == nil {
+		return 0
+	}
 	if len(node.Children) == 0 {
 		if node.FileCount > 0 {
 			return 1

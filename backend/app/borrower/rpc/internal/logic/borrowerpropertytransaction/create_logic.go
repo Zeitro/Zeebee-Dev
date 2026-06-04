@@ -118,7 +118,8 @@ func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateReque
 		}
 
 		// initialize checklist
-		checklist, innerErr := biz_helper.RecalculateBorrowerPropertyTransactionChecklist(l.ctx, l.svcCtx.AllRepos, tx, result.Id)
+		transHelper := biz_helper.NewBorrowerPropertyTransaction(l.svcCtx.AllRepos)
+		checklist, innerErr := transHelper.RecalculateBorrowerPropertyTransactionChecklist(l.ctx, tx, result.Id)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -126,7 +127,8 @@ func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateReque
 		result.Checklist = checklist
 
 		// recalculate property status
-		innerErr = biz_helper.CalculatePropertyStatuses(l.ctx, l.svcCtx.AllRepos, tx, in.Data.BorrowerPropertyId)
+		propertyHelper := biz_helper.NewBorrowerProperty(l.svcCtx.AllRepos)
+		innerErr = propertyHelper.CalculatePropertyStatuses(l.ctx, tx, in.Data.BorrowerPropertyId)
 		if innerErr != nil {
 			return innerErr
 		}

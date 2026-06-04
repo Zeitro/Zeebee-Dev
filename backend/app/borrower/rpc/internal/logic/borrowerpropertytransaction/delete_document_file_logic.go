@@ -100,7 +100,8 @@ func (l *DeleteDocumentFileLogic) DeleteDocumentFile(in *borrower.BorrowerProper
 		}
 
 		// FR-017a: recalculate checklist
-		_, innerErr = biz_helper.RecalculateBorrowerPropertyTransactionChecklist(l.ctx, l.svcCtx.AllRepos, tx, in.Data.TransactionId)
+		transHelper := biz_helper.NewBorrowerPropertyTransaction(l.svcCtx.AllRepos)
+		_, innerErr = transHelper.RecalculateBorrowerPropertyTransactionChecklist(l.ctx, tx, in.Data.TransactionId)
 		return innerErr
 	})
 	if err != nil {

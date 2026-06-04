@@ -8,6 +8,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
+	"zeebee-backend/app/borrower/rpc/internal/biz_helper"
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -90,7 +91,15 @@ func (l *SwitchStatusLogic) SwitchStatus(in *borrower.BorrowerPropertyTransactio
 			OrganizationId: claim.OrganizationId,
 			Metadata:       metadata,
 		})
-		return innerErr
+
+		// recalculate property status
+		propertyHelper := biz_helper.NewBorrowerProperty(l.svcCtx.AllRepos)
+		innerErr = propertyHelper.CalculatePropertyStatuses(l.ctx, tx, existing.BorrowerPropertyId)
+		if innerErr != nil {
+			return innerErr
+		}
+
+		return nil
 	})
 	if err != nil {
 		return nil, errorx.Wrap(err, "failed to switch status")

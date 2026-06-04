@@ -100,7 +100,8 @@ func (l *DeleteLogic) Delete(in *borrower.BorrowerPropertyTransactionDeleteReque
 		}
 
 		// recalculate property status
-		innerErr = biz_helper.CalculatePropertyStatuses(l.ctx, l.svcCtx.AllRepos, tx, propertyId)
+		propertyHelper := biz_helper.NewBorrowerProperty(l.svcCtx.AllRepos)
+		innerErr = propertyHelper.CalculatePropertyStatuses(l.ctx, tx, propertyId)
 		if innerErr != nil {
 			return innerErr
 		}

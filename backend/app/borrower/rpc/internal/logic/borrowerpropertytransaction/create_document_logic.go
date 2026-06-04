@@ -153,9 +153,9 @@ func (l *CreateDocumentLogic) CreateDocument(in *borrower.DocumentCreateRequest)
 		if innerErr != nil {
 			return innerErr
 		}
-
+		transHelper := biz_helper.NewBorrowerPropertyTransaction(l.svcCtx.AllRepos)
 		// recalculate checklist
-		_, innerErr = biz_helper.RecalculateBorrowerPropertyTransactionChecklist(l.ctx, l.svcCtx.AllRepos, tx, in.Data.TransactionId)
+		_, innerErr = transHelper.RecalculateBorrowerPropertyTransactionChecklist(l.ctx, tx, in.Data.TransactionId)
 		return innerErr
 	})
 	if err != nil {

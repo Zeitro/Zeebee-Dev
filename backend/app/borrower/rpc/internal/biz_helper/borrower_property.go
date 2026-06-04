@@ -3,12 +3,23 @@ package biz_helper
 import (
 	"context"
 
+	"github.com/lib/pq"
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/repo"
 )
+
+type BorrowerProperty struct {
+	repos *repo.AllRepos
+}
+
+func NewBorrowerProperty(repos *repo.AllRepos) *BorrowerProperty {
+	return &BorrowerProperty{
+		repos: repos,
+	}
+}
 
 // MapTransactionToPropertyStatus maps transaction type+status to property status.
 // Returns empty string and false if the combination is not in the mapping table (e.g. Cancelled).
@@ -37,28 +48,28 @@ func MapTransactionToPropertyStatus(txType constants.BorrowerPropertyTransaction
 
 // CalculatePropertyStatuses queries all transactions for a property, maps each to a property status,
 // deduplicates, and updates the property's status column.
-func CalculatePropertyStatuses(ctx context.Context, repos *repo.AllRepos, tx *gorm.DB, propertyId int64) error {
-	transactions, err := repos.BorrowerPropertyTransactionRepo.FindByBorrowerPropertyIdWithTx(ctx, tx, propertyId)
+func (h *BorrowerProperty) CalculatePropertyStatuses(ctx context.Context, tx *gorm.DB, propertyId int64) error {
+	transactions, err := h.repos.BorrowerPropertyTransactionRepo.FindByBorrowerPropertyIdWithTx(ctx, tx, propertyId)
 	if err != nil {
 		return errorx.Wrap(err, "failed to query transactions for property status calculation")
 	}
 
 	seen := make(map[constants.BorrowerPropertyStatus]struct{})
-	var statuses []constants.BorrowerPropertyStatus
+	var statuses pq.StringArray
 	for _, t := range transactions {
 		if status, ok := MapTransactionToPropertyStatus(t.Type, t.Status); ok {
 			if _, exists := seen[status]; !exists {
 				seen[status] = struct{}{}
-				statuses = append(statuses, status)
+				statuses = append(statuses, string(status))
 			}
 		}
 	}
 
 	if statuses == nil {
-		statuses = []constants.BorrowerPropertyStatus{}
+		statuses = pq.StringArray{}
 	}
 
-	return repos.BorrowerPropertyRepo.UpdateColumnsByIdWithTx(ctx, tx, propertyId, map[string]interface{}{
+	return h.repos.BorrowerPropertyRepo.UpdateColumnsByIdWithTx(ctx, tx, propertyId, map[string]interface{}{
 		"status": statuses,
 	})
 }
