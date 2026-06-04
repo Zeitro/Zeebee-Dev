@@ -1,6 +1,8 @@
 package model
 
 import (
+	"github.com/lib/pq"
+
 	"zeebee-backend/domains/zeebee/constants"
 )
 
@@ -18,13 +20,15 @@ type BorrowerProperty struct {
 	Address        Address                `gorm:"column:address;type:jsonb;serializer:json" json:"address"`
 	TotalAmount    float64                `gorm:"column:total_amount;not null;default:0" json:"total_amount"`
 	LoanCount      int32                  `gorm:"column:loan_count;not null;default:0" json:"loan_count"`
+	Status         pq.StringArray         `gorm:"column:status;type:text[];default:'{}'" json:"status"`
 
 	// Relationships
-	Creator        *User            `json:"creator" gorm:"foreignKey:CreatorId;references:Id"`
-	Organization   *Organization    `json:"organization" gorm:"foreignKey:OrganizationId;references:Id"`
-	Loans          []*Loan          `json:"loans" gorm:"-"`
-	Applicants     []*LoanApplicant `json:"applicants" gorm:"-"`
-	LoanProperties []*LoanProperty  `json:"loan_properties" gorm:"foreignKey:BorrowerPropertyId;references:Id"`
+	Creator        *User                          `json:"creator" gorm:"foreignKey:CreatorId;references:Id"`
+	Organization   *Organization                  `json:"organization" gorm:"foreignKey:OrganizationId;references:Id"`
+	Loans          []*Loan                        `json:"loans" gorm:"-"`
+	Applicants     []*LoanApplicant               `json:"applicants" gorm:"-"`
+	LoanProperties []*LoanProperty                `json:"loan_properties" gorm:"foreignKey:BorrowerPropertyId;references:Id"`
+	Transactions   []*BorrowerPropertyTransaction `json:"transactions" gorm:"foreignKey:BorrowerPropertyId;references:Id"`
 }
 
 func (m BorrowerProperty) TableName() string {

@@ -383,3 +383,248 @@ VALUES ('Borrower Property Transaction Documents', 'BorrowerPropertyTransaction'
     }
   ]
 }', 'Active');
+
+update "public"."document_templates"
+set "structure" = '{
+  "common": [
+    {
+      "name": "Contract",
+      "children": [
+        {
+          "name": "Original RPA",
+          "sort_order": 1,
+          "is_required": true
+        },
+        {
+          "name": "Assignment Agreement AOAA",
+          "sort_order": 2,
+          "is_required": false
+        },
+        {
+          "name": "Counter Offer",
+          "sort_order": 3,
+          "is_required": false
+        },
+        {
+          "name": "Addendum (Extension)",
+          "sort_order": 4,
+          "is_required": false
+        },
+        {
+          "name": "Seller financing Docs",
+          "sort_order": 5,
+          "is_required": false
+        },
+        {
+          "name": "JV Agreement",
+          "sort_order": 6,
+          "is_required": false
+        }
+      ],
+      "sort_order": 1,
+      "is_required": true
+    },
+    {
+      "name": "Escrow",
+      "children": [
+        {
+          "name": "Wire Instructions",
+          "sort_order": 1,
+          "is_required": true
+        },
+        {
+          "name": "EMD Payment Proof",
+          "sort_order": 2,
+          "is_required": true
+        },
+        {
+          "name": "EMD Receipt",
+          "sort_order": 3,
+          "is_required": true
+        },
+        {
+          "name": "Prelim Report",
+          "sort_order": 4,
+          "is_required": true
+        },
+        {
+          "name": "NHD Report",
+          "sort_order": 5,
+          "is_required": true
+        },
+        {
+          "name": "Colored map",
+          "sort_order": 6,
+          "is_required": false
+        },
+        {
+          "name": "FinCen",
+          "sort_order": 7,
+          "is_required": false
+        },
+        {
+          "name": "Buyer Open Package",
+          "sort_order": 8,
+          "is_required": false
+        }
+      ],
+      "sort_order": 2,
+      "is_required": true
+    },
+    {
+      "name": "Disclosures",
+      "sort_order": 3,
+      "is_required": true
+    },
+    {
+      "name": "Loan",
+      "children": [
+        {
+          "name": "Appraisal Report (Appraisal Payment confirmation and receipt)",
+          "sort_order": 1,
+          "is_required": true
+        },
+        {
+          "name": "LOI",
+          "sort_order": 2,
+          "is_required": true
+        },
+        {
+          "name": "Application Form",
+          "sort_order": 3,
+          "is_required": false
+        },
+        {
+          "name": "Loan Document",
+          "sort_order": 4,
+          "is_required": false
+        },
+        {
+          "name": "Contact form",
+          "sort_order": 5,
+          "is_required": false
+        }
+      ],
+      "sort_order": 4,
+      "is_required": true
+    },
+    {
+      "name": "Insurance",
+      "children": [
+        {
+          "name": "EOI",
+          "sort_order": 1,
+          "is_required": true
+        },
+        {
+          "name": "Payment Receipt",
+          "sort_order": 2,
+          "is_required": true
+        },
+        {
+          "name": "Full Policy",
+          "sort_order": 3,
+          "is_required": true
+        },
+        {
+          "name": "Flood Insurance",
+          "sort_order": 4,
+          "is_required": false
+        }
+      ],
+      "sort_order": 5,
+      "is_required": true
+    },
+    {
+      "name": "Closing Package",
+      "children": [
+        {
+          "name": "Final Buyer Statement",
+          "sort_order": 1,
+          "is_required": true
+        },
+        {
+          "name": "All Signed Documents",
+          "sort_order": 2,
+          "is_required": true
+        },
+        {
+          "name": "Recorded GD",
+          "sort_order": 3,
+          "is_required": true
+        },
+        {
+          "name": "Recorded DOT",
+          "sort_order": 4,
+          "is_required": false
+        },
+        {
+          "name": "Buyer Estimated Statement",
+          "sort_order": 5,
+          "is_required": false
+        }
+      ],
+      "sort_order": 6,
+      "is_required": true
+    },
+    {
+      "name": "1031",
+      "children": [
+        {
+          "name": "1031 Exchange Documents",
+          "sort_order": 1,
+          "is_required": false
+        }
+      ],
+      "sort_order": 7,
+      "is_required": false
+    },
+    {
+      "name": "Lease",
+      "children": [
+        {
+          "name": "Lease Agreement",
+          "sort_order": 1,
+          "is_required": false
+        },
+        {
+          "name": "TENANT ESTOPPEL CERTIFICATE",
+          "sort_order": 2,
+          "is_required": false
+        }
+      ],
+      "sort_order": 8,
+      "is_required": false
+    },
+    {
+      "name": "HOA",
+      "children": [
+        {
+          "name": "See \"HOA\" Sheet",
+          "sort_order": 1,
+          "is_required": false
+        }
+      ],
+      "sort_order": 9,
+      "is_required": false
+    },
+    {
+      "name": "Solar",
+      "children": [
+        {
+          "name": "See \"Solar\" Sheet",
+          "sort_order": 1,
+          "is_required": false
+        }
+      ],
+      "sort_order": 10,
+      "is_required": false
+    }
+  ]
+}'
+where "type" = 'BorrowerPropertyTransaction';
+
+ALTER TABLE "public"."borrower_properties"
+    ADD COLUMN "status" text[] NOT NULL DEFAULT '{}'::text[];
+
+CREATE INDEX "idx_property_status" ON "public"."borrower_properties" USING gin ("status");

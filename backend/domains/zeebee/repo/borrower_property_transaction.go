@@ -87,6 +87,13 @@ func (repo *BorrowerPropertyTransactionRepo) ListByBorrowerPropertyId(ctx contex
 	return result, errorx.WithStack(err)
 }
 
+func (repo *BorrowerPropertyTransactionRepo) FindByBorrowerPropertyIdWithTx(ctx context.Context, tx *gorm.DB, borrowerPropertyId int64) (result []*model.BorrowerPropertyTransaction, err error) {
+	err = tx.WithContext(ctx).
+		Where("borrower_property_id = ? and is_del = 0", borrowerPropertyId).
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+}
+
 func (repo *BorrowerPropertyTransactionRepo) UpdateOne(ctx context.Context, id int64, data *model.BorrowerPropertyTransaction) (result *model.BorrowerPropertyTransaction, err error) {
 	err = repo.Client(ctx).
 		Model(new(model.BorrowerPropertyTransaction)).

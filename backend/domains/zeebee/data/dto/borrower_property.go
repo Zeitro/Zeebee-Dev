@@ -29,8 +29,9 @@ type BorrowerPropertyPageRequestDto struct {
 }
 
 type BorrowerPropertyPageRequestFilter struct {
-	UserId         int64    `json:"user_id"`
-	OrganizationId int64    `json:"organization_id"`
-	Keyword        string   `json:"keyword,omitempty"`
-	Applicant      []string `json:"applicant,omitempty"`
+	UserId         int64                              `json:"user_id"`
+	OrganizationId int64                              `json:"organization_id"`
+	Keyword        string                             `json:"keyword,omitempty"`
+	Applicant      []string                           `json:"applicant,omitempty"`
+	Status         []constants.BorrowerPropertyStatus `json:"status,omitempty"`
 }
