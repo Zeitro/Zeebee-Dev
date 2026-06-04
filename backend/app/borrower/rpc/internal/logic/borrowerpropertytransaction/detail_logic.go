@@ -89,15 +89,6 @@ func fillNodeFiles(ctx context.Context, fileRepo *repo.FileRepo, nodes []*dto.Ch
 				nodes[i].FileCount = int32(len(*dtoFiles))
 				nodes[i].Files = *dtoFiles
 			}
-
-			// if err == nil && len(files) > 0 {
-			// 	for _, f := range files {
-			// 		dtoFile, err := copierx.Trans[model.File, dto.FileEntityDto](f, copierx.TimeToRFC3339Str())
-			// 		if err == nil {
-			// 			nodes[i].Files = append(node.Files, *dtoFile)
-			// 		}
-			// 	}
-			// }
 		} else {
 			fillNodeFiles(ctx, fileRepo, node.Children)
 		}
