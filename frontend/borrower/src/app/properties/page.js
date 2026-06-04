@@ -119,8 +119,15 @@ const Properties = () => {
 				onClick: () => {
 					setSearchValue('');
 					setBorrower([]);
+					setPropertyStatus([]);
 					cancelMatch(PROPERTY_API);
-					setTimeout(() => tableFilterRef.current?.handleSearch?.(), 300);
+					tableFilterRef.current?.handleSearch?.({
+						filter: {
+							keyword: '',
+							applicant: [],
+							status: [],
+						},
+					});
 				},
 				colProps: {
 					className: 'flex-1',
