@@ -78,7 +78,9 @@ func (l *PageLogic) Page(in *borrower.PropertyPageRequest) (resp *borrower.Prope
 		// handle transaction status
 		var transactionStatus []string
 		for _, transaction := range borrowerProperty.Transactions {
-			transactionStatus = append(transactionStatus, fmt.Sprintf("%s %s", transaction.Type, transaction.Status))
+			if transaction.Status != constants.BorrowerPropertyTransactionStatusCancelled {
+				transactionStatus = append(transactionStatus, fmt.Sprintf("%s %s", transaction.Type, transaction.Status))
+			}
 		}
 		propertyPageEntry.TransactionStatus = slice.Unique(transactionStatus)
 
