@@ -5,24 +5,21 @@ import { FieldTips } from '@repo/shared-methods';
 import { EMPTY_DISPLAY } from '@repo/shared-methods/utils';
 
 const DEFAULT_MAX_VISIBLE = 4;
-const DEFAULT_COLS = 2;
 const DEFAULT_TAG_CLASS =
-	'rounded-[2px] px-2 text-xs border border-base-border truncate min-w-0 w-max';
+	'rounded-[2px] px-2 text-xs border border-base-border truncate max-w-full w-max';
 
 /**
- * 表格单元格标签网格：每行固定列数，最多展示若干行；超出部分 hover 展示完整列表。
+ * 表格单元格标签：横向顺排、自动换行，最多展示 maxVisible 个；超出 hover 展示完整列表。
  * 纯展示，不修改入参 items。
  *
  * @param {string[]} [items] 标签文案列表
- * @param {number} [maxVisible=4] 最多展示标签数（默认 2 列 × 2 行）
- * @param {number} [cols=2] 每行标签列数
+ * @param {number} [maxVisible=4] 最多展示标签数（约两行内顺排）
  * @param {string} [tagClassName] 单个标签基础样式
  * @param {{ className?: string }} [tagProps] 追加到每个标签的 props（如列配色）
  */
 const TruncatedTagGrid = ({
 	items = [],
 	maxVisible = DEFAULT_MAX_VISIBLE,
-	cols = DEFAULT_COLS,
 	tagClassName = DEFAULT_TAG_CLASS,
 	tagProps = {},
 }) => {
@@ -32,41 +29,31 @@ const TruncatedTagGrid = ({
 
 	const visibleItems = items.slice(0, maxVisible);
 	const hasOverflow = items.length > maxVisible;
+	const tagClass = [tagClassName, tagProps?.className].filter(Boolean).join(' ');
 
-	const grid = (
-		<div
-			className="grid gap-1"
-			style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
-		>
-			{visibleItems.map((item, index) => (
-				<div
-					key={`${item}-${index}`}
-					className={[tagClassName, tagProps?.className].filter(Boolean).join(' ')}
-				>
-					{item}
-				</div>
-			))}
+	const renderTag = (item, index) => (
+		<div key={`${item}-${index}`} className={tagClass}>
+			{item}
+		</div>
+	);
+
+	const content = (
+		<div className="flex flex-wrap gap-1 overflow-hidden max-h-[52px]">
+			{visibleItems.map(renderTag)}
 		</div>
 	);
 
 	if (!hasOverflow) {
-		return grid;
+		return content;
 	}
 
 	const tooltipTitle = (
 		<div className="flex flex-wrap gap-1" onClick={(e) => e.stopPropagation()}>
-			{items.map((item, index) => (
-				<div
-					key={`${item}-${index}`}
-					className={[tagClassName, tagProps?.className].filter(Boolean).join(' ')}
-				>
-					{item}
-				</div>
-			))}
+			{items.map(renderTag)}
 		</div>
 	);
 
-	return <FieldTips title={tooltipTitle}>{grid}</FieldTips>;
+	return <FieldTips title={tooltipTitle}>{content}</FieldTips>;
 };
 
 export default TruncatedTagGrid;
