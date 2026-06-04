@@ -65,7 +65,7 @@ func (l *SwitchStatusLogic) SwitchStatus(in *borrower.BorrowerPropertyTransactio
 	}
 
 	err = l.svcCtx.BorrowerPropertyTransactionRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
-		innerErr := l.svcCtx.BorrowerPropertyTransactionRepo.UpdateColumnsById(l.ctx, in.Data.Id, map[string]interface{}{
+		innerErr := l.svcCtx.BorrowerPropertyTransactionRepo.UpdateColumnsByIdWithTx(l.ctx, tx, in.Data.Id, map[string]interface{}{
 			"status": newStatus,
 		})
 		if innerErr != nil {
