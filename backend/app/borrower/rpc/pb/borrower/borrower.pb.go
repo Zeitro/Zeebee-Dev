@@ -7623,6 +7623,7 @@ type BorrowerPropertyEntity struct {
 	OrganizationId int64                  `protobuf:"varint,13,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
 	CreatorName    string                 `protobuf:"bytes,14,opt,name=creator_name,json=creatorName,proto3" json:"creator_name,omitempty"`
 	LotAreaSqft    float32                `protobuf:"fixed32,15,opt,name=lot_area_sqft,json=lotAreaSqft,proto3" json:"lot_area_sqft,omitempty"`
+	Status         []string               `protobuf:"bytes,16,rep,name=status,proto3" json:"status,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -7762,6 +7763,13 @@ func (x *BorrowerPropertyEntity) GetLotAreaSqft() float32 {
 	return 0
 }
 
+func (x *BorrowerPropertyEntity) GetStatus() []string {
+	if x != nil {
+		return x.Status
+	}
+	return nil
+}
+
 type PropertyPageEntity struct {
 	state                     protoimpl.MessageState `protogen:"open.v1"`
 	Id                        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -7783,8 +7791,10 @@ type PropertyPageEntity struct {
 	Unit                      int32                  `protobuf:"varint,17,opt,name=unit,proto3" json:"unit,omitempty"`
 	LoanCount                 int32                  `protobuf:"varint,18,opt,name=loan_count,json=loanCount,proto3" json:"loan_count,omitempty"`
 	CreatorId                 int64                  `protobuf:"varint,19,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
-	CreatorName               int64                  `protobuf:"varint,20,opt,name=creator_name,json=creatorName,proto3" json:"creator_name,omitempty"`
+	CreatorName               string                 `protobuf:"bytes,20,opt,name=creator_name,json=creatorName,proto3" json:"creator_name,omitempty"`
 	LotAreaSqft               float32                `protobuf:"fixed32,21,opt,name=lot_area_sqft,json=lotAreaSqft,proto3" json:"lot_area_sqft,omitempty"`
+	Status                    []string               `protobuf:"bytes,22,rep,name=status,proto3" json:"status,omitempty"`
+	TransactionStatus         []string               `protobuf:"bytes,23,rep,name=transaction_status,json=transactionStatus,proto3" json:"transaction_status,omitempty"`
 	unknownFields             protoimpl.UnknownFields
 	sizeCache                 protoimpl.SizeCache
 }
@@ -7952,11 +7962,11 @@ func (x *PropertyPageEntity) GetCreatorId() int64 {
 	return 0
 }
 
-func (x *PropertyPageEntity) GetCreatorName() int64 {
+func (x *PropertyPageEntity) GetCreatorName() string {
 	if x != nil {
 		return x.CreatorName
 	}
-	return 0
+	return ""
 }
 
 func (x *PropertyPageEntity) GetLotAreaSqft() float32 {
@@ -7964,6 +7974,20 @@ func (x *PropertyPageEntity) GetLotAreaSqft() float32 {
 		return x.LotAreaSqft
 	}
 	return 0
+}
+
+func (x *PropertyPageEntity) GetStatus() []string {
+	if x != nil {
+		return x.Status
+	}
+	return nil
+}
+
+func (x *PropertyPageEntity) GetTransactionStatus() []string {
+	if x != nil {
+		return x.TransactionStatus
+	}
+	return nil
 }
 
 type PropertyPageRequest struct {
@@ -8126,6 +8150,7 @@ type PropertyPageRequestFilter struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Keyword       string                 `protobuf:"bytes,1,opt,name=keyword,proto3" json:"keyword,omitempty"`
 	Applicant     []string               `protobuf:"bytes,2,rep,name=applicant,proto3" json:"applicant,omitempty"`
+	Status        []string               `protobuf:"bytes,3,rep,name=status,proto3" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -8170,6 +8195,13 @@ func (x *PropertyPageRequestFilter) GetKeyword() string {
 func (x *PropertyPageRequestFilter) GetApplicant() []string {
 	if x != nil {
 		return x.Applicant
+	}
+	return nil
+}
+
+func (x *PropertyPageRequestFilter) GetStatus() []string {
+	if x != nil {
+		return x.Status
 	}
 	return nil
 }
@@ -24428,7 +24460,7 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x15has_properties_vacant\x18\x1b \x01(\bR\x13hasPropertiesVacant\x121\n" +
 	"\x15has_short_term_rental\x18\x1c \x01(\bR\x12hasShortTermRental\x129\n" +
 	"\x19est_property_value_amount\x18\x1d \x01(\x01R\x16estPropertyValueAmount\x12\x10\n" +
-	"\x03arv\x18\x1e \x01(\x01R\x03arv\"\x87\x04\n" +
+	"\x03arv\x18\x1e \x01(\x01R\x03arv\"\x9f\x04\n" +
 	"\x16BorrowerPropertyEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rproperty_type\x18\x02 \x01(\tR\fpropertyType\x12!\n" +
@@ -24449,7 +24481,8 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"creator_id\x18\f \x01(\x03R\tcreatorId\x12'\n" +
 	"\x0forganization_id\x18\r \x01(\x03R\x0eorganizationId\x12!\n" +
 	"\fcreator_name\x18\x0e \x01(\tR\vcreatorName\x12\"\n" +
-	"\rlot_area_sqft\x18\x0f \x01(\x02R\vlotAreaSqft\"\xa6\x06\n" +
+	"\rlot_area_sqft\x18\x0f \x01(\x02R\vlotAreaSqft\x12\x16\n" +
+	"\x06status\x18\x10 \x03(\tR\x06status\"\xed\x06\n" +
 	"\x12PropertyPageEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rproperty_type\x18\x02 \x01(\tR\fpropertyType\x12!\n" +
@@ -24475,8 +24508,10 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"loan_count\x18\x12 \x01(\x05R\tloanCount\x12\x1d\n" +
 	"\n" +
 	"creator_id\x18\x13 \x01(\x03R\tcreatorId\x12!\n" +
-	"\fcreator_name\x18\x14 \x01(\x03R\vcreatorName\x12\"\n" +
-	"\rlot_area_sqft\x18\x15 \x01(\x02R\vlotAreaSqft\"L\n" +
+	"\fcreator_name\x18\x14 \x01(\tR\vcreatorName\x12\"\n" +
+	"\rlot_area_sqft\x18\x15 \x01(\x02R\vlotAreaSqft\x12\x16\n" +
+	"\x06status\x18\x16 \x03(\tR\x06status\x12-\n" +
+	"\x12transaction_status\x18\x17 \x03(\tR\x11transactionStatus\"L\n" +
 	"\x13PropertyPageRequest\x125\n" +
 	"\x04data\x18\x01 \x01(\v2!.borrower.PropertyPageRequestDataR\x04data\"N\n" +
 	"\x14PropertyPageResponse\x126\n" +
@@ -24485,10 +24520,11 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x04page\x18\x01 \x01(\x03R\x04page\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x03R\x05limit\x12;\n" +
 	"\x06filter\x18\x03 \x01(\v2#.borrower.PropertyPageRequestFilterR\x06filter\x12;\n" +
-	"\x06sorter\x18\x04 \x01(\v2#.borrower.PropertyPageRequestSorterR\x06sorter\"S\n" +
+	"\x06sorter\x18\x04 \x01(\v2#.borrower.PropertyPageRequestSorterR\x06sorter\"k\n" +
 	"\x19PropertyPageRequestFilter\x12\x18\n" +
 	"\akeyword\x18\x01 \x01(\tR\akeyword\x12\x1c\n" +
-	"\tapplicant\x18\x02 \x03(\tR\tapplicant\"G\n" +
+	"\tapplicant\x18\x02 \x03(\tR\tapplicant\x12\x16\n" +
+	"\x06status\x18\x03 \x03(\tR\x06status\"G\n" +
 	"\x19PropertyPageRequestSorter\x12\x16\n" +
 	"\x06column\x18\x01 \x01(\tR\x06column\x12\x12\n" +
 	"\x04sort\x18\x02 \x01(\tR\x04sort\"\xab\x01\n" +

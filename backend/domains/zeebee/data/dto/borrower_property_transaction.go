@@ -43,27 +43,27 @@ type BpTransactionChecklistDto struct {
 // Checklist structures (cached in transaction.checklist JSONB)
 
 type ChecklistRoot struct {
-	AllChecked                        bool            `json:"all_checked"`
-	TotalDocumentCount                int32           `json:"total_document_count"`
-	TotalRequiredDocumentCount        int32           `json:"total_required_document_count"`
-	TotalRequiredUpdatedDocumentCount int32           `json:"total_required_updated_document_count"`
-	TotalOptionalDocumentCount        int32           `json:"total_optional_document_count"`
-	TotalOptionalUpdatedDocumentCount int32           `json:"total_optional_updated_document_count"`
-	RequiredDocuments                 []ChecklistNode `json:"required_documents"`
-	OptionalDocuments                 []ChecklistNode `json:"optional_documents"`
+	AllChecked                        bool             `json:"all_checked"`
+	TotalDocumentCount                int32            `json:"total_document_count"`
+	TotalRequiredDocumentCount        int32            `json:"total_required_document_count"`
+	TotalRequiredUpdatedDocumentCount int32            `json:"total_required_updated_document_count"`
+	TotalOptionalDocumentCount        int32            `json:"total_optional_document_count"`
+	TotalOptionalUpdatedDocumentCount int32            `json:"total_optional_updated_document_count"`
+	RequiredDocuments                 []*ChecklistNode `json:"required_documents"`
+	OptionalDocuments                 []*ChecklistNode `json:"optional_documents"`
 }
 
 type ChecklistNode struct {
-	Name                  string          `json:"name"`
-	DocumentId            int64           `json:"document_id"`
-	IsRequired            bool            `json:"is_required"`
-	SubDocumentCount      int32           `json:"sub_document_count"`
-	UploadedDocumentCount int32           `json:"uploaded_document_count"`
-	RequiredDocumentCount int32           `json:"required_document_count"`
-	OptionalDocumentCount int32           `json:"optional_document_count"`
-	Children              []ChecklistNode `json:"children,omitempty"`
-	FileCount             int32           `json:"file_count,omitempty"`
-	Files                 []FileEntityDto `json:"files,omitempty"`
+	Name                  string           `json:"name"`
+	DocumentId            int64            `json:"document_id"`
+	IsRequired            bool             `json:"is_required"`
+	SubDocumentCount      int32            `json:"sub_document_count"`
+	UploadedDocumentCount int32            `json:"uploaded_document_count"`
+	RequiredDocumentCount int32            `json:"required_document_count"`
+	OptionalDocumentCount int32            `json:"optional_document_count"`
+	Children              []*ChecklistNode `json:"children,omitempty"`
+	FileCount             int32            `json:"file_count,omitempty"`
+	Files                 []*FileEntityDto `json:"files,omitempty"`
 }
 
 type BpTransactionSwitchStatusDto struct {
