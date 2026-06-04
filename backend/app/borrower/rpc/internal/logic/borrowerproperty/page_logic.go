@@ -111,8 +111,8 @@ func (l *PageLogic) Page(in *borrower.PropertyPageRequest) (resp *borrower.Prope
 				propertyPageEntry.ArchivedLoanCount++
 			}
 		}
-		if totalRate > 0 {
-			propertyPageEntry.AvgRate = totalRate / float32(len(borrowerProperty.Loans))
+		if totalRate > 0 && propertyPageEntry.ActiveLoanCount > 0 {
+			propertyPageEntry.AvgRate = totalRate / float32(propertyPageEntry.ActiveLoanCount)
 			propertyPageEntry.AvgRate = float32(mathutil.RoundToFloat(propertyPageEntry.AvgRate, 2))
 		}
 		if maturityDate != nil && maturityDate.Valid {
