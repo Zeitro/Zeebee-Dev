@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button, Progress, message } from 'antd';
-import { CloudSyncOutlined, ImportOutlined } from '@ant-design/icons';
+import { CloudSyncOutlined } from '@ant-design/icons';
 import { NewModal } from '@repo/shared-methods';
 import { createRequest, displayValue } from '@repo/shared-methods/utils';
 import CategoryContentPanel from './CategoryContentPanel';
@@ -189,14 +189,13 @@ const DocumentsTab = ({ rowData, onRefresh }) => {
 		<div className="flex gap-4 p-4">
 			<div className="flex w-[311px] shrink-0 flex-col gap-2">
 				<div className="flex gap-2">
+					{/* Import 按钮本期不需要，先隐藏 */}
 					<Button
 						className="flex-1"
-						icon={<ImportOutlined />}
-						onClick={() => message.info('Import is not wired yet.')}
+						icon={<CloudSyncOutlined />}
+						loading={syncing}
+						onClick={runSync}
 					>
-						Import
-					</Button>
-					<Button icon={<CloudSyncOutlined />} loading={syncing} onClick={runSync}>
 						Sync to Google Drive
 					</Button>
 				</div>
