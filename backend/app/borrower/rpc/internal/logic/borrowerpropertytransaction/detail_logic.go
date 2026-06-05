@@ -80,20 +80,11 @@ func fillNodeFiles(ctx context.Context, fileRepo *repo.FileRepo, nodes []*dto.Ch
 	for i, node := range nodes {
 		if len(node.Children) == 0 {
 			// leaf node: query files for this document
-			files, err := fileRepo.GetFiles(ctx, node.DocumentId, constants.FileEntityTypeDocument)
+			files, _ := fileRepo.GetFiles(ctx, node.DocumentId, constants.FileEntityTypeDocument)
 
-			if err == nil && len(files) > 0 {
-				for _, f := range files {
-					dtoFile, err := copierx.Trans[model.File, dto.FileEntityDto](f, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToStr(timex.LayoutUsStyle))
-					if err == nil {
-						// 必须 append 到 nodes[i].Files（正在累积的切片）；
-						// node 是 range 的拷贝，node.Files 始终是初始值，
-						// 用它会导致每次覆盖、最终只剩最后一个文件。
-						nodes[i].Files = append(nodes[i].Files, *dtoFile)
-					}
-				}
-			}
-			dtoFiles, _ := copierx.Trans[[]*model.File, []*dto.FileEntityDto](&files, copierx.TimeToRFC3339Str())
+			// 整段切片一次性转换：天然支持同一文档下的多个文件；
+			// 额外带上 SqlTimePtrToStr 以填充 drive_synced_at（Google Drive 标签需要）。
+			dtoFiles, _ := copierx.Trans[[]*model.File, []*dto.FileEntityDto](&files, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToStr(timex.LayoutUsStyle))
 			if dtoFiles != nil && len(*dtoFiles) > 0 {
 				nodes[i].FileCount = int32(len(*dtoFiles))
 				nodes[i].Files = *dtoFiles
