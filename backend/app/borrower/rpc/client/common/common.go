@@ -15,6 +15,7 @@ import (
 
 type (
 	EmptyRequest        = borrower.EmptyRequest
+	EmptyResponse       = borrower.EmptyResponse
 	GetUuidResponse     = borrower.GetUuidResponse
 	OptionRequest       = borrower.OptionRequest
 	OptionResponse      = borrower.OptionResponse
@@ -26,6 +27,7 @@ type (
 		GetUsState(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*StringSliceResponse, error)
 		GetUsCities(ctx context.Context, in *UsCitiesRequest, opts ...grpc.CallOption) (*StringSliceResponse, error)
 		GetUuid(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*GetUuidResponse, error)
+		SyncData(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	}
 
 	defaultCommon struct {
@@ -57,4 +59,9 @@ func (m *defaultCommon) GetUsCities(ctx context.Context, in *UsCitiesRequest, op
 func (m *defaultCommon) GetUuid(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*GetUuidResponse, error) {
 	client := borrower.NewCommonClient(m.cli.Conn())
 	return client.GetUuid(ctx, in, opts...)
+}
+
+func (m *defaultCommon) SyncData(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	client := borrower.NewCommonClient(m.cli.Conn())
+	return client.SyncData(ctx, in, opts...)
 }

@@ -51,7 +51,7 @@ func (l *DetailLogic) Detail(in *borrower.BorrowerPropertyTransactionDetailReque
 		return nil, errorx.Wrap(err, "transaction not found")
 	}
 
-	fillChecklistNodeFiles(l.ctx, l.svcCtx.FileRepo, result.Checklist)
+	fillChecklistNodeFiles(l.ctx, l.svcCtx.FileRepo, &result.Checklist)
 
 	entity, err := copierx.Trans[model.BorrowerPropertyTransaction, borrower.BorrowerPropertyTransactionEntity](
 		result,
@@ -70,13 +70,13 @@ func (l *DetailLogic) Detail(in *borrower.BorrowerPropertyTransactionDetailReque
 }
 
 // fillChecklistNodeFiles recursively fills files for leaf checklist nodes
-func fillChecklistNodeFiles(ctx context.Context, fileRepo *repo.FileRepo, checklist dto.ChecklistRoot) {
+func fillChecklistNodeFiles(ctx context.Context, fileRepo *repo.FileRepo, checklist *dto.ChecklistRoot) {
 
 	fillNodeFiles(ctx, fileRepo, checklist.RequiredDocuments)
 	fillNodeFiles(ctx, fileRepo, checklist.OptionalDocuments)
 }
 
-func fillNodeFiles(ctx context.Context, fileRepo *repo.FileRepo, nodes []dto.ChecklistNode) {
+func fillNodeFiles(ctx context.Context, fileRepo *repo.FileRepo, nodes []*dto.ChecklistNode) {
 	for i, node := range nodes {
 		if len(node.Children) == 0 {
 			// leaf node: query files for this document
@@ -86,9 +86,17 @@ func fillNodeFiles(ctx context.Context, fileRepo *repo.FileRepo, nodes []dto.Che
 				for _, f := range files {
 					dtoFile, err := copierx.Trans[model.File, dto.FileEntityDto](f, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToStr(timex.LayoutUsStyle))
 					if err == nil {
-						nodes[i].Files = append(node.Files, *dtoFile)
+						// 必须 append 到 nodes[i].Files（正在累积的切片）；
+						// node 是 range 的拷贝，node.Files 始终是初始值，
+						// 用它会导致每次覆盖、最终只剩最后一个文件。
+						nodes[i].Files = append(nodes[i].Files, *dtoFile)
 					}
 				}
+			}
+			dtoFiles, _ := copierx.Trans[[]*model.File, []*dto.FileEntityDto](&files, copierx.TimeToRFC3339Str())
+			if dtoFiles != nil && len(*dtoFiles) > 0 {
+				nodes[i].FileCount = int32(len(*dtoFiles))
+				nodes[i].Files = *dtoFiles
 			}
 		} else {
 			fillNodeFiles(ctx, fileRepo, node.Children)
