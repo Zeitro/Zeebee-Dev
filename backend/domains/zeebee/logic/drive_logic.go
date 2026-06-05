@@ -2,12 +2,14 @@ package logic
 
 import (
 	"context"
+	"encoding/json"
 	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"golang.org/x/oauth2"
+	"gorm.io/datatypes"
 
 	"zeebee-backend/common/aws_s3"
 	"zeebee-backend/common/copierx"
@@ -38,6 +40,10 @@ const (
 
 	// upper bound for a single background sync run, independent of the HTTP request.
 	driveSyncJobTimeout = 10 * time.Minute
+
+	// 同步操作日志的结果（写入 operations.metadata.outcome）
+	driveSyncOutcomeSuccess = "success"
+	driveSyncOutcomeFailed  = "failed"
 )
 
 // DriveLogic provides Google Drive integration business logic (per organization).
@@ -251,11 +257,13 @@ func (l *DriveLogic) runSyncJob(jobId int64, s3Client *aws_s3.S3Client, input dt
 	result, err := l.runSyncTransaction(ctx, s3Client, input)
 
 	columns := map[string]interface{}{}
+	var status string
 	if err != nil {
-		columns["status"] = DriveSyncStatusFailed
+		status = DriveSyncStatusFailed
+		columns["status"] = status
 		columns["error"] = truncateError(err.Error())
 	} else {
-		status := DriveSyncStatusSuccess
+		status = DriveSyncStatusSuccess
 		if result.Failed > 0 {
 			status = DriveSyncStatusPartialFailed
 		}
@@ -272,6 +280,52 @@ func (l *DriveLogic) runSyncJob(jobId int64, s3Client *aws_s3.S3Client, input dt
 	if uerr := l.repos.DriveSyncJobRepo.UpdateResult(ctx, jobId, columns); uerr != nil {
 		logx.WithContext(ctx).WithFields(logx.Field("job_id", jobId)).
 			Errorf("drive sync job persist failed: %v", uerr)
+	}
+
+	// 记录交易操作日志：成功/失败（outcome）放 metadata，供 Log 页展示。
+	l.recordSyncOperation(ctx, input, status, result, err)
+}
+
+// recordSyncOperation 在同步任务终态后写一条交易操作日志。
+// 事件统一为 "Synced to Google Drive"，成功/失败及统计明细放在 metadata 里：
+// 整体出错或存在文件失败（部分失败）→ outcome=failed；全部成功 → outcome=success。
+func (l *DriveLogic) recordSyncOperation(ctx context.Context, input dto.DriveSyncTransactionRequestDto, status string, result *dto.DriveSyncTransactionResultDto, syncErr error) {
+	meta := map[string]interface{}{"status": status}
+	outcome := driveSyncOutcomeSuccess
+	if syncErr != nil {
+		outcome = driveSyncOutcomeFailed
+		meta["error"] = truncateError(syncErr.Error())
+	} else if result != nil {
+		meta["total"] = result.Total
+		meta["created"] = result.Created
+		meta["replaced"] = result.Replaced
+		meta["removed"] = result.Removed
+		meta["failed"] = result.Failed
+		// 部分失败也算失败：只要有文件没同步成功，outcome 即为 failed。
+		if result.Failed > 0 {
+			outcome = driveSyncOutcomeFailed
+		}
+	}
+	meta["outcome"] = outcome
+
+	metaJSON, merr := json.Marshal(meta)
+	if merr != nil {
+		metaJSON = []byte("{}")
+	}
+
+	op := &model.Operation{
+		EntityId:       input.TransactionId,
+		EntityType:     constants.OperationEntityTypeBorrowerPropertyTransaction,
+		OperatorId:     input.OperatorId,
+		OperatorName:   input.OperatorName,
+		OperatorType:   input.OrganizationType,
+		Operation:      constants.OperationActionBorrowerPropertyTransactionSyncToDrive,
+		Metadata:       datatypes.JSON(metaJSON),
+		OrganizationId: input.OrganizationId,
+	}
+	if _, oerr := l.repos.OperationRepo.Create(ctx, op); oerr != nil {
+		logx.WithContext(ctx).WithFields(logx.Field("transaction_id", input.TransactionId)).
+			Errorf("record drive sync operation failed: %v", oerr)
 	}
 }
 
@@ -338,8 +392,9 @@ func (l *DriveLogic) runSyncTransaction(ctx context.Context, s3Client *aws_s3.S3
 		return nil, err
 	}
 
-	// 3. transaction folder "<Type> Transaction <Status>"
-	txId, txUrl, err := cli.EnsureFolder(ctx, buildTransactionFolderName(transaction), propId, driveId)
+	// 3. transaction folder "<Type> Transaction <Code> (<Status>)"：同一交易固定复用
+	//    同一个文件夹，状态变化时改名而非新建，避免遗留旧状态的孤儿文件夹。
+	txId, txUrl, err := l.ensureTransactionFolder(ctx, cli, propId, driveId, transaction)
 	if err != nil {
 		return nil, err
 	}
@@ -519,8 +574,61 @@ func (l *DriveLogic) fillNodeFiles(ctx context.Context, nodes []*dto.ChecklistNo
 // "Purchase Transaction (Pending)". The transaction code is intentionally
 // omitted from the folder name.
 func buildTransactionFolderName(transaction *model.BorrowerPropertyTransaction) string {
-	name := strings.TrimSpace(string(transaction.Type)) + " Transaction (" + strings.TrimSpace(string(transaction.Status)) + ")"
+	name := transactionFolderNamePrefix(transaction) + strings.TrimSpace(string(transaction.Status)) + ")"
 	return sanitizeFolderName(name)
+}
+
+// transactionFolderNamePrefix 返回交易文件夹名中不随状态变化的稳定前缀
+// "<Type> Transaction <Code> ("，用于识别同一交易在状态变更前后的文件夹。
+// 前缀含交易编号（Code），故能唯一对应一笔交易。
+func transactionFolderNamePrefix(transaction *model.BorrowerPropertyTransaction) string {
+	prefix := strings.TrimSpace(string(transaction.Type)) + " Transaction"
+	if code := strings.TrimSpace(transaction.Code); code != "" {
+		prefix += " " + code
+	}
+	return prefix + " ("
+}
+
+// ensureTransactionFolder resolves the single Drive folder for a transaction.
+// 父目录下若已存在该交易的文件夹（按不含状态的前缀识别）：
+//   - 名字已是当前状态：直接复用；
+//   - 名字是旧状态：改名为当前状态后复用（folder id / 链接不变），不再新建，
+//     从而把旧状态的文件夹「换」成当前状态，避免遗留孤儿文件夹。
+//
+// 找不到现成文件夹（或列举失败兜底）时再按名查找或新建。
+func (l *DriveLogic) ensureTransactionFolder(ctx context.Context, cli *client.DriveClient, parentId, driveId string, transaction *model.BorrowerPropertyTransaction) (id, webViewLink string, err error) {
+	targetName := buildTransactionFolderName(transaction)
+	prefix := transactionFolderNamePrefix(transaction)
+
+	folders, lerr := cli.ListFolders(ctx, parentId, driveId)
+	if lerr == nil {
+		if folder, needRename := pickTransactionFolder(folders, targetName, prefix); folder != nil {
+			if needRename {
+				if rerr := cli.RenameFile(ctx, folder.Id, targetName); rerr != nil {
+					return "", "", rerr
+				}
+			}
+			return folder.Id, folder.WebViewLink, nil
+		}
+	}
+	return cli.EnsureFolder(ctx, targetName, parentId, driveId)
+}
+
+// pickTransactionFolder decides which existing sibling folder to use, by name only:
+//   - 名字与 targetName 完全一致：直接复用（needRename=false）；
+//   - 否则取第一个以 prefix 开头的旧状态文件夹：改名复用（needRename=true）；
+//   - 都没有：返回 (nil, false)，交由调用方新建。
+func pickTransactionFolder(folders []client.DriveFolderInfo, targetName, prefix string) (folder *client.DriveFolderInfo, needRename bool) {
+	var stale *client.DriveFolderInfo
+	for i := range folders {
+		if folders[i].Name == targetName {
+			return &folders[i], false
+		}
+		if stale == nil && strings.HasPrefix(folders[i].Name, prefix) {
+			stale = &folders[i]
+		}
+	}
+	return stale, stale != nil
 }
 
 // buildPropertyFolderName builds a readable folder name from the property address.

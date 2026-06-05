@@ -64,6 +64,9 @@ type DriveSyncTransactionRequestDto struct {
 	OrganizationId   int64
 	OrganizationType constants.UserType
 	Oauth2Config     *oauth2.Config
+	// 触发同步的操作者，用于在异步任务完成后写交易操作日志（detached goroutine 无 JWT）。
+	OperatorId   int64
+	OperatorName string
 }
 
 // DriveSyncedFileDto is the per-file outcome of a sync.
