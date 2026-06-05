@@ -58,6 +58,8 @@ func (l *SyncTransactionLogic) SyncTransaction(in *borrower.DriveSyncTransaction
 		OrganizationId:   claim.OrganizationId,
 		OrganizationType: constants.UserTypeBorrower,
 		Oauth2Config:     global.DriveOAuthConfig,
+		OperatorId:       claim.OrganizationUserId,
+		OperatorName:     claim.Username,
 	}
 
 	// Kick off the sync asynchronously and return immediately: the actual Drive

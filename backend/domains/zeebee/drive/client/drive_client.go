@@ -33,6 +33,13 @@ type DriveFileInfo struct {
 	Name string
 }
 
+// DriveFolderInfo is a lightweight description of a Drive folder.
+type DriveFolderInfo struct {
+	Id          string
+	Name        string
+	WebViewLink string
+}
+
 // DriveClient wraps the Google Drive v3 API for a single authorized account.
 //
 // Drive scope convention: every file/folder operation carries a driveId.
@@ -165,6 +172,46 @@ func (cli *DriveClient) EnsureFolder(ctx context.Context, name, parentId, driveI
 		return "", "", errorx.WithStack(err)
 	}
 	return created.Id, created.WebViewLink, nil
+}
+
+// ListFolders returns the non-trashed sub-folders directly under parent.
+func (cli *DriveClient) ListFolders(ctx context.Context, parentId, driveId string) (folders []DriveFolderInfo, err error) {
+	srv, err := cli.getSrv(ctx)
+	if err != nil {
+		return nil, err
+	}
+	parent := resolveParent(parentId, driveId)
+	q := "mimeType = '" + folderMimeType + "' and '" + escape(parent) + "' in parents and trashed = false"
+	pageToken := ""
+	for {
+		call := applyDriveScope(srv.Files.List().Q(q).Fields("nextPageToken, files(id, name, webViewLink)").PageSize(100), driveId)
+		if pageToken != "" {
+			call = call.PageToken(pageToken)
+		}
+		res, err := call.Context(ctx).Do()
+		if err != nil {
+			return nil, errorx.WithStack(err)
+		}
+		for _, f := range res.Files {
+			folders = append(folders, DriveFolderInfo{Id: f.Id, Name: f.Name, WebViewLink: f.WebViewLink})
+		}
+		if res.NextPageToken == "" {
+			break
+		}
+		pageToken = res.NextPageToken
+	}
+	return folders, nil
+}
+
+// RenameFile renames a file or folder by id. The id (and thus webViewLink) is unchanged.
+func (cli *DriveClient) RenameFile(ctx context.Context, fileId, newName string) (err error) {
+	srv, err := cli.getSrv(ctx)
+	if err != nil {
+		return err
+	}
+	_, err = srv.Files.Update(fileId, &driveapi.File{Name: newName}).
+		SupportsAllDrives(true).Context(ctx).Do()
+	return errorx.WithStack(err)
 }
 
 // FindFile returns the first non-trashed file with name under parent, or empty id if absent.
