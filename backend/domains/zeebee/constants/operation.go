@@ -19,6 +19,7 @@ const (
 	OperationActionBorrowerPropertyTransactionDelete          OperationAction = "Transaction deleted"
 	OperationActionBorrowerPropertyTransactionUploadDocument  OperationAction = "Documents uploaded"
 	OperationActionBorrowerPropertyTransactionDeleteDocument  OperationAction = "Document deleted"
+	OperationActionBorrowerPropertyTransactionSyncToDrive     OperationAction = "Synced to Google Drive"
 
 	// Loan actions
 	OperationActionLoanCreate       OperationAction = "Loan Create"
