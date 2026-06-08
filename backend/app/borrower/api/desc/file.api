@@ -17,4 +17,6 @@ type FileEntity {
     UploadType string `json:"upload_type"`
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
+    DriveUrl string `json:"drive_url"`
+    DriveSyncedAt string `json:"drive_synced_at"`
 }
