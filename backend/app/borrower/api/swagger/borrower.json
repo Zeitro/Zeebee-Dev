@@ -4606,6 +4606,29 @@
         }
       }
     },
+    "/api/v1/common/sync_data": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "common"
+        ],
+        "summary": "sync data",
+        "operationId": "commonSyncData",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/common/sync_resource": {
       "get": {
         "produces": [
@@ -14796,6 +14819,12 @@
                 "property_type": {
                   "type": "string"
                 },
+                "status": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
                 "total_amount": {
                   "type": "number"
                 },
@@ -14849,7 +14878,8 @@
                       "address",
                       "created_at",
                       "updated_at",
-                      "loan_count"
+                      "loan_count",
+                      "status"
                     ],
                     "properties": {
                       "address": {
@@ -14905,6 +14935,12 @@
                       "property_type": {
                         "type": "string"
                       },
+                      "status": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
                       "total_amount": {
                         "type": "number"
                       },
@@ -14958,6 +14994,12 @@
                     },
                     "keyword": {
                       "type": "string"
+                    },
+                    "status": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
                     }
                   }
                 },
@@ -15016,7 +15058,9 @@
                       "pending_loan_count",
                       "active_loan_count",
                       "archived_loan_count",
-                      "loan_count"
+                      "loan_count",
+                      "status",
+                      "transaction_status"
                     ],
                     "properties": {
                       "active_loan_count": {
@@ -15093,6 +15137,12 @@
                       "property_type": {
                         "type": "string"
                       },
+                      "status": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
                       "total_amount": {
                         "type": "number"
                       },
@@ -15101,6 +15151,12 @@
                       },
                       "total_principal_amount": {
                         "type": "number"
+                      },
+                      "transaction_status": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
                       },
                       "unit": {
                         "type": "integer"
@@ -15202,6 +15258,12 @@
                 },
                 "property_type": {
                   "type": "string"
+                },
+                "status": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 },
                 "total_amount": {
                   "type": "number"
@@ -23573,7 +23635,7 @@
       }
     }
   },
-  "x-date": "2026-06-03 04:42:36",
+  "x-date": "2026-06-04 15:05:40",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

@@ -1,4 +1,4 @@
-package logic
+package biz_helper
 
 import (
 	"encoding/json"

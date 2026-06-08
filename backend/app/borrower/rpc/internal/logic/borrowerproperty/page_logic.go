@@ -3,13 +3,12 @@ package borrowerpropertylogic
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"time"
 
 	"github.com/duke-git/lancet/v2/datetime"
 	"github.com/duke-git/lancet/v2/mathutil"
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/jinzhu/copier"
-
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
@@ -19,6 +18,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/model"
 )
 
 type PageLogic struct {
@@ -70,13 +70,24 @@ func (l *PageLogic) Page(in *borrower.PropertyPageRequest) (resp *borrower.Prope
 	now := datetime.BeginOfDay(time.Now())
 	for i, borrowerProperty := range borrowerPropertyPageResult.List {
 		propertyPageEntry := &borrower.PropertyPageEntity{}
-		err = copier.CopyWithOption(propertyPageEntry, borrowerProperty, copier.Option{
-			DeepCopy:      true,
-			CaseSensitive: true,
-		})
+		propertyPageEntry, err = copierx.Trans[model.BorrowerProperty, borrower.PropertyPageEntity](borrowerProperty)
+
 		if err != nil {
-			return nil, errorx.GetFailedTransReqErr(err)
+			return nil, err
 		}
+		// handle transaction status
+		var transactionStatus []string
+		for _, transaction := range borrowerProperty.Transactions {
+			if transaction.Status != constants.BorrowerPropertyTransactionStatusCancelled {
+				transactionStatus = append(transactionStatus, fmt.Sprintf("%s %s", transaction.Type, transaction.Status))
+			}
+		}
+		transactionStatus = slice.Unique(transactionStatus)
+		slice.Sort(transactionStatus)
+		propertyPageEntry.TransactionStatus = transactionStatus
+
+		propertyPageEntry.Status = borrowerProperty.Status
+		slice.Sort(propertyPageEntry.Status)
 		var maturityDate *sql.NullTime
 		var totalRate float32 = 0.0
 		for _, loan := range borrowerProperty.Loans {
@@ -105,8 +116,8 @@ func (l *PageLogic) Page(in *borrower.PropertyPageRequest) (resp *borrower.Prope
 				propertyPageEntry.ArchivedLoanCount++
 			}
 		}
-		if totalRate > 0 {
-			propertyPageEntry.AvgRate = totalRate / float32(len(borrowerProperty.Loans))
+		if totalRate > 0 && propertyPageEntry.ActiveLoanCount > 0 {
+			propertyPageEntry.AvgRate = totalRate / float32(propertyPageEntry.ActiveLoanCount)
 			propertyPageEntry.AvgRate = float32(mathutil.RoundToFloat(propertyPageEntry.AvgRate, 2))
 		}
 		if maturityDate != nil && maturityDate.Valid {

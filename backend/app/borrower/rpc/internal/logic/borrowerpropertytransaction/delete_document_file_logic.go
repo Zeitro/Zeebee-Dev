@@ -8,6 +8,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
+	"zeebee-backend/app/borrower/rpc/internal/biz_helper"
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -99,7 +100,8 @@ func (l *DeleteDocumentFileLogic) DeleteDocumentFile(in *borrower.BorrowerProper
 		}
 
 		// FR-017a: recalculate checklist
-		_, innerErr = l.baseLogic.RecalculateBorrowerPropertyTransactionChecklist(l.ctx, tx, in.Data.TransactionId)
+		transHelper := biz_helper.NewBorrowerPropertyTransaction(l.svcCtx.AllRepos)
+		_, innerErr = transHelper.RecalculateBorrowerPropertyTransactionChecklist(l.ctx, tx, in.Data.TransactionId)
 		return innerErr
 	})
 	if err != nil {

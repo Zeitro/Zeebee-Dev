@@ -42,3 +42,8 @@ func (s *CommonServer) GetUuid(ctx context.Context, in *borrower.EmptyRequest) (
 	l := commonlogic.NewGetUuidLogic(ctx, s.svcCtx)
 	return l.GetUuid(in)
 }
+
+func (s *CommonServer) SyncData(ctx context.Context, in *borrower.EmptyRequest) (*borrower.EmptyResponse, error) {
+	l := commonlogic.NewSyncDataLogic(ctx, s.svcCtx)
+	return l.SyncData(in)
+}

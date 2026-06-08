@@ -69,6 +69,7 @@ service common {
   rpc GetUsState(EmptyRequest) returns(StringSliceResponse);
   rpc GetUsCities(UsCitiesRequest) returns(StringSliceResponse);
   rpc GetUuid(EmptyRequest) returns(GetUuidResponse);
+  rpc SyncData(EmptyRequest) returns(EmptyResponse);
 }
 // ========================== common service end =================
 // ========================== user service start =================
@@ -912,6 +913,7 @@ message BorrowerPropertyEntity {
   int64 organization_id = 13;
   string creator_name = 14;
   float lot_area_sqft = 15;
+  repeated string status = 16;
 }
 
 message PropertyPageEntity{
@@ -934,9 +936,10 @@ message PropertyPageEntity{
   int32 unit = 17;
   int32 loan_count = 18;
   int64 creator_id = 19;
-  int64 creator_name = 20;
+  string creator_name = 20;
   float lot_area_sqft = 21;
-
+  repeated string status = 22;
+  repeated string transaction_status = 23;
 }
 
 message PropertyPageRequest {
@@ -957,6 +960,7 @@ message PropertyPageRequestData {
 message  PropertyPageRequestFilter{
   string keyword = 1;
   repeated string applicant = 2;
+  repeated string status = 3;
 }
 
 message  PropertyPageRequestSorter {
