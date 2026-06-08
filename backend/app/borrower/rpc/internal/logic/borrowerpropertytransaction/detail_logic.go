@@ -80,11 +80,11 @@ func fillNodeFiles(ctx context.Context, fileRepo *repo.FileRepo, nodes []*dto.Ch
 	for i, node := range nodes {
 		if len(node.Children) == 0 {
 			// leaf node: query files for this document
-			files, _ := fileRepo.GetFiles(ctx, node.DocumentId, constants.FileEntityTypeDocument)
-
-			// 整段切片一次性转换：天然支持同一文档下的多个文件；
-			// 额外带上 SqlTimePtrToStr 以填充 drive_synced_at（Google Drive 标签需要）。
-			dtoFiles, _ := copierx.Trans[[]*model.File, []*dto.FileEntityDto](&files, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToStr(timex.LayoutUsStyle))
+			files, err := fileRepo.GetFiles(ctx, node.DocumentId, constants.FileEntityTypeDocument)
+			if err != nil {
+				continue
+			}
+			dtoFiles, _ := copierx.Trans[[]*model.File, []*dto.FileEntityDto](&files, copierx.TimeToRFC3339Str())
 			if dtoFiles != nil && len(*dtoFiles) > 0 {
 				nodes[i].FileCount = int32(len(*dtoFiles))
 				nodes[i].Files = *dtoFiles

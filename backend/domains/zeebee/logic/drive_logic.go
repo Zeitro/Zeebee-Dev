@@ -406,7 +406,7 @@ func (l *DriveLogic) runSyncTransaction(ctx context.Context, s3Client *aws_s3.S3
 	//    directly under the transaction folder (no extra Required/Optional wrapper).
 	//    Required nodes come first, then optional, so the numeric prefix added in
 	//    syncNodes keeps a continuous order across both groups.
-	nodes := make([]dto.ChecklistNode, 0, len(transaction.Checklist.RequiredDocuments)+len(transaction.Checklist.OptionalDocuments))
+	nodes := make([]*dto.ChecklistNode, 0, len(transaction.Checklist.RequiredDocuments)+len(transaction.Checklist.OptionalDocuments))
 	nodes = append(nodes, transaction.Checklist.RequiredDocuments...)
 	nodes = append(nodes, transaction.Checklist.OptionalDocuments...)
 	l.syncNodes(ctx, cli, s3Client, driveId, txId, nodes, result)
