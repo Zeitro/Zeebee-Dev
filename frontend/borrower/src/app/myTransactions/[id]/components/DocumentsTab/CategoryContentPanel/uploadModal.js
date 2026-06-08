@@ -5,7 +5,7 @@ import { CloseOutlined, FileTextOutlined, InboxOutlined } from '@ant-design/icon
 import { createRequest } from '@repo/shared-methods/utils';
 // const { TextArea } = Input;
 const UploadModal = ({ transaction_id, open, setOpen, record = {}, onRefresh }) => {
-	let accept = '.pdf,.png,.jpg,.jpeg';
+	const accept = '.pdf,.png,.jpg,.jpeg,.xlsx,.xls,.docx,.doc,.pptx,.ppt';
 	const { request } = createRequest();
 	const uploadRef = useRef(null);
 	const [loading, setLoading] = useState(false);
@@ -74,7 +74,6 @@ const UploadModal = ({ transaction_id, open, setOpen, record = {}, onRefresh }) 
 					className={[
 						'w-full [&_.ant-upload-list]:w-max [&_.ant-upload]:w-full [&_.ant-upload]:pb-6',
 					].join(' ')}
-					limitSize={10}
 					disabled={false}
 					itemRender={(node, file, fileList, { remove }) => {
 						return (
@@ -89,7 +88,7 @@ const UploadModal = ({ transaction_id, open, setOpen, record = {}, onRefresh }) 
 						);
 					}}
 				>
-					<div className="bg-gray-light py-20 w-full flex flex-col items-center border border-dashed border-base-border rounded-sm text-gray-light cursor-pointer hover:bg-[#E6F4FF]">
+					<div className="bg-gray-light py-20 px-10 w-full flex flex-col items-center border border-dashed border-base-border rounded-sm text-gray-light cursor-pointer hover:bg-[#E6F4FF]">
 						<InboxOutlined style={{ fontSize: '48px', color: 'var(--base-primary)' }} />
 						<div className="text-base pt-5 pb-1 text-foreground">
 							Click or drag to upload.
@@ -97,7 +96,8 @@ const UploadModal = ({ transaction_id, open, setOpen, record = {}, onRefresh }) 
 						<div className="text-base-label text-sm pt-4">
 							<span className="font-medium">Upload requirements</span>
 							<br />
-							1. Accepted formats: PDF, PNG, JPG, and JPEG.
+							1. Accepted formats: PDF, PNG, JPG, JPEG, Excel (.xlsx, .xls), Word
+							(.docx, .doc), and PowerPoint (.pptx, .ppt).
 							<br />
 							2. Maximum file size: 20 MB.
 						</div>
