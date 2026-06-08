@@ -170,6 +170,12 @@ export const noTokenRouter = [
 		hideCrumbs: true,
 	},
 	{
+		path: '/driveAuth',
+		title: 'Google Drive Authorized',
+		hideMenu: true,
+		hideCrumbs: true,
+	},
+	{
 		path: '/not-found',
 		title: '404',
 		hideCrumbs: true,
@@ -199,6 +205,10 @@ export const menuSetting = {
 		hideCrumbs: true,
 	},
 	'/gmailAuth': {
+		hideCrumbs: true,
+		hideSidebar: true,
+	},
+	'/driveAuth': {
 		hideCrumbs: true,
 		hideSidebar: true,
 	},
