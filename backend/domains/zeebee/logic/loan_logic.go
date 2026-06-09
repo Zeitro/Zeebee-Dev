@@ -184,5 +184,4 @@ func (l *LoanLogic) handleDueInfo(items []*dto.LoanEntityDto, days int) {
 			item.DueDays = int32(datetime.DaysBetween(today, maturityDate))
 		}
 	}
-
 }

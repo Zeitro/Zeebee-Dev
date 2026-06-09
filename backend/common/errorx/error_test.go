@@ -122,7 +122,6 @@ func TestWrapf(t *testing.T) {
 	if !strings.Contains(err.Error(), "wrapper 42") {
 		t.Errorf("err.Error() = %q, should contain 'wrapper 42'", err.Error())
 	}
-
 }
 
 func TestUnwrap(t *testing.T) {

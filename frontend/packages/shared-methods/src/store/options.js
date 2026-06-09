@@ -21,6 +21,7 @@ export const useOptionsStore = create((set) => ({
 	// ---------以下为其他公共下拉选项----------
 	transactionTypeOptions: [], //borrower_property_transaction_type
 	transactionStatusOptions: [], //borrower_property_transaction_status
+	borrowerPropertyStatusOptions: [], //borrower_property_status
 	getOptions: async (name, key) => {
 		const { options } = await getSelectOptions(name);
 		return (

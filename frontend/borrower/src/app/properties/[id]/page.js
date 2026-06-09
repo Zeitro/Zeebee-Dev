@@ -10,7 +10,6 @@ import { useAuth } from '@repo/shared-methods/hooks';
 import { assemblyAddress, createRequest, displayValue, eventBus } from '@repo/shared-methods/utils';
 import NewTransactionModal from '@/app/myTransactions/components/NewTransactionModal';
 import { PERMISSIONS } from '@config/permissions';
-import { useGlobalStore } from '@/store/global';
 import DetailsTab from './components/DetailsTab';
 import TransactionsTab from './components/TransactionsTab';
 import LoansTab from './components/LoansTab';
@@ -27,7 +26,6 @@ const PropertiesDetails = () => {
 	const [editOpen, setEditOpen] = useState(false);
 	const [transactionModalOpen, setTransactionModalOpen] = useState(false);
 	const refreshTransactionsListRef = useRef(() => {});
-	const { changeSidebarCollapsed } = useGlobalStore();
 	const api = `/property/${id}/summary`;
 
 	const { handleDelete, loading: deleteLoading } = useProperty({
@@ -92,12 +90,11 @@ const PropertiesDetails = () => {
 	}, [deleteLoading, handleDelete, hasPermission, rowData]);
 
 	useEffect(() => {
-		changeSidebarCollapsed(true);
 		const timer = setTimeout(() => {
 			getDetails();
 		}, 0);
 		return () => clearTimeout(timer);
-	}, [changeSidebarCollapsed, getDetails]);
+	}, [getDetails]);
 
 	const tabItems = useMemo(() => {
 		let items = [

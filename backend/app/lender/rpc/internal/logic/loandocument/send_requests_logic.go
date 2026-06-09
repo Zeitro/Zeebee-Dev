@@ -143,7 +143,6 @@ func (l *SendRequestsLogic) prepare(in *lender.LoanDocumentSendRequestsRequest, 
 }
 
 func (l *SendRequestsLogic) sendDocumentRequestEmail(ctx context.Context, loan *model.Loan, loanDocuments []*model.LoanDocument) error {
-
 	if loan.LoanBorrower == nil || len(loan.LoanBorrower.ContactEmail) == 0 {
 		return errorx.New("No contact email found for the loan")
 	}

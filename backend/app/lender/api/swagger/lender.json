@@ -15,6 +15,52 @@
   },
   "basePath": "/",
   "paths": {
+    "/api/v1/common/sync_api": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "common"
+        ],
+        "summary": "sync api",
+        "operationId": "commonSyncApi",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/common/sync_resource": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "common"
+        ],
+        "summary": "sync resource",
+        "operationId": "commonSyncResource",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/file/{id}": {
       "delete": {
         "consumes": [
@@ -1896,19 +1942,13 @@
             "schema": {
               "type": "object",
               "required": [
-                "stage",
-                "maturity_date"
+                "stage"
               ],
               "properties": {
                 "applicants": {
                   "type": "array",
                   "items": {
                     "type": "object",
-                    "required": [
-                      "borrower_applicant_id",
-                      "is_primary",
-                      "own_percent"
-                    ],
                     "properties": {
                       "borrower_applicant_id": {
                         "type": "integer"
@@ -2511,7 +2551,6 @@
               "type": "object",
               "required": [
                 "action",
-                "comment",
                 "current_pending_status"
               ],
               "properties": {
@@ -4222,9 +4261,6 @@
             "required": true,
             "schema": {
               "type": "object",
-              "required": [
-                "page"
-              ],
               "properties": {
                 "filter": {
                   "type": "object",
@@ -6184,9 +6220,7 @@
               "type": "object",
               "required": [
                 "first_name",
-                "last_name",
-                "phone",
-                "remark"
+                "last_name"
               ],
               "properties": {
                 "first_name": {
@@ -7389,9 +7423,6 @@
               "properties": {
                 "filter": {
                   "type": "object",
-                  "required": [
-                    "keyword"
-                  ],
                   "properties": {
                     "keyword": {
                       "type": "string"
@@ -7410,10 +7441,6 @@
                 },
                 "sort": {
                   "type": "object",
-                  "required": [
-                    "column",
-                    "sort"
-                  ],
                   "properties": {
                     "column": {
                       "type": "string"
@@ -8454,6 +8481,9 @@
                 "file_suffix"
               ],
               "properties": {
+                "file_name": {
+                  "type": "string"
+                },
                 "file_suffix": {
                   "type": "string"
                 },
@@ -8470,6 +8500,18 @@
             "schema": {
               "type": "object",
               "properties": {
+                "external_id": {
+                  "type": "string"
+                },
+                "file_name": {
+                  "type": "string"
+                },
+                "storage_type": {
+                  "type": "string"
+                },
+                "upload_type": {
+                  "type": "string"
+                },
                 "url": {
                   "type": "string"
                 }
@@ -9370,9 +9412,9 @@
       }
     }
   },
-  "x-date": "2026-03-18 10:51:23",
+  "x-date": "2026-05-29 11:26:35",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
-  "x-goctl-version": "1.9.2"
+  "x-goctl-version": "1.10.1"
 }

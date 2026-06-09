@@ -92,11 +92,10 @@ func TestTrans_WithTimeConverter(t *testing.T) {
 
 // TestTrans_WithTimePtrConverter tests Trans with time pointer to string converter
 func TestTrans_WithTimePtrConverter(t *testing.T) {
-	now := time.Date(2024, 12, 29, 14, 30, 0, 0, time.UTC)
 	src := &sourceModel{
 		Name:      "Bob Smith",
 		Age:       35,
-		UpdatedAt: &now,
+		UpdatedAt: new(time.Date(2024, 12, 29, 14, 30, 0, 0, time.UTC)),
 	}
 
 	result, err := Trans[sourceModel, destModel](src, TimePtrToRFC3339Str())

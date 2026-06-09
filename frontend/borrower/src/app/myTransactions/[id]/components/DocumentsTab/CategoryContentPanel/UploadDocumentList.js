@@ -6,7 +6,8 @@ import { NoData } from '@repo/shared-methods';
 import styles from './index.module.scss';
 import { createRequest, displayValue, formatDate } from '@repo/shared-methods/utils';
 import UploadModal from './uploadModal';
-import { Button, message } from 'antd';
+import { Button, Tag, Tooltip, message } from 'antd';
+import { GoogleOutlined } from '@ant-design/icons';
 import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import AddRequest from '@repo/shared-methods/componentsUi/zeeBeeDetails/components/AddDocument/AddRequest';
 
@@ -34,61 +35,73 @@ const UploadDocumentList = ({ category, onRefresh, transactionId }) => {
 	 *   - 省略 fileRender 时：首列默认文件名 pill，末列默认 View / Delete
 	 * - formatter：无自定义 render 时用于 displayValue(value, formatter)
 	 */
-	const columns = useMemo(
-		() => [
-			{
-				title: 'Document type',
-				key: 'name',
-				dataIndex: 'name',
-				minWidth: 200,
-				ellipsis: true,
-				rowPlacement: 'both',
-				// 父级展示类型名；子级走组件默认（文件名 + 图标 pill），无需 fileRender
+	// 列配置不依赖任何响应式值（仅用到稳定的 setState 与导入工具），
+	// 直接声明为普通常量，由 React Compiler 自动记忆化。
+	const columns = [
+		{
+			title: 'Document type',
+			key: 'name',
+			dataIndex: 'name',
+			minWidth: 180,
+			ellipsis: true,
+			rowPlacement: 'both',
+			// 父级展示类型名；子级走组件默认（文件名 + 图标 pill），无需 fileRender
+		},
+		{
+			title: 'Update date',
+			key: 'updated_at',
+			width: 100,
+			ellipsis: true,
+			rowPlacement: 'file',
+			fileDataIndex: 'updated_at',
+			fileRender: (value, _defaultNode, file, parentRecord) =>
+				displayValue(value ?? file?.updated_at ?? parentRecord?.updated_at, formatDate),
+		},
+		{
+			// 文件已同步到 Google Drive 时展示标签；有标签即表示该文件当前在 Drive 对应文件夹中。
+			// 同步日期通过 hover 标签的 tooltip 展示，标签本身不跳转，保持列宽紧凑。
+			title: '',
+			key: 'drive',
+			width: 140,
+			rowPlacement: 'file',
+			fileDataIndex: 'drive_synced_at',
+			fileRender: (value, _defaultNode, file) => {
+				const syncedAt = value ?? file?.drive_synced_at;
+				if (!syncedAt) {
+					return displayValue(null);
+				}
+				return (
+					<Tooltip title={`Synced ${syncedAt}`}>
+						<Tag icon={<GoogleOutlined />} color="green" className="m-0">
+							Google Drive
+						</Tag>
+					</Tooltip>
+				);
 			},
-			{
-				title: 'Update date',
-				key: 'updated_at',
-				width: 120,
-				ellipsis: true,
-				rowPlacement: 'file',
-				fileDataIndex: 'updated_at',
-				fileRender: (value, _defaultNode, file, parentRecord) =>
-					displayValue(value ?? file?.updated_at ?? parentRecord?.updated_at, formatDate),
-			},
-			// {
-			// 	title: 'Status',
-			// 	key: 'status',
-			// 	width: 150,
-			// 	ellipsis: true,
-			// 	rowPlacement: 'file',
-			// 	fileDataIndex: 'status',
-			// 	fileRender: (value, _defaultNode, file, parentRecord) => displayValue(value),
-			// },
-			{
-				title: '',
-				key: 'operation',
-				width: 120,
-				align: 'right',
-				rowPlacement: 'both',
-				render: (_, record) => (
-					<Button
-						type="default"
-						size="small"
-						onClick={(e) => {
-							e.stopPropagation();
-							setRecord(record);
-							setOpen(true);
-						}}
-						icon={<UploadOutlined />}
-					>
-						Upload
-					</Button>
-				),
-				// 子级省略 fileRender → 默认 View / Delete（DefaultFileActions）
-			},
-		],
-		[category, onRefresh],
-	);
+		},
+		{
+			title: '',
+			key: 'operation',
+			width: 120,
+			align: 'right',
+			rowPlacement: 'both',
+			render: (_, record) => (
+				<Button
+					type="default"
+					size="small"
+					onClick={(e) => {
+						e.stopPropagation();
+						setRecord(record);
+						setOpen(true);
+					}}
+					icon={<UploadOutlined />}
+				>
+					Upload
+				</Button>
+			),
+			// 子级省略 fileRender → 默认 View / Delete（DefaultFileActions）
+		},
+	];
 	const [open, setOpen] = useState(false);
 	const [record, setRecord] = useState({});
 	const [openAdd, setOpenAdd] = useState(false);

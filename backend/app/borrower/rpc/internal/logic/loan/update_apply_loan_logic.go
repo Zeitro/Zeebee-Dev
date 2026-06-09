@@ -62,7 +62,7 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 		constants.LoanSourcePreapproval,
 	}
 	if !slice.Contain(sources, loan.Source) {
-		return nil, errorx.WithStack(errorx.New("Invalid loan source"))
+		return nil, errorx.WithStack(errorx.New("invalid loan source"))
 	}
 	stages := []constants.LoanStage{
 		constants.LoanStagePending,
@@ -73,11 +73,11 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 		constants.LoanPendingStatusNone,
 	}
 	if !slice.Contain(stages, loan.Stage) && !slice.Contain(pendingStatus, loan.PendingStatus) {
-		return nil, errorx.New("Loan's stage should be pending or draft")
+		return nil, errorx.New("loan's stage should be pending or draft")
 	}
-	// todo check organization
+
 	if loan.BorrowerOrganizationId != claim.OrganizationId {
-		return nil, errorx.WithStack(errorx.New("Loan does not belong to borrower"))
+		return nil, errorx.WithStack(errorx.New("loan does not belong to borrower"))
 	}
 
 	oldApplicants := loan.Applicants
@@ -120,7 +120,6 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 					loan.LoanProperty = property
 				}
 				return err
-
 			},
 			// loan borrower
 			func() error {
@@ -233,7 +232,6 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 }
 
 func (l *UpdateApplyLoanLogic) updateApplicants(tx *gorm.DB, oldItems []*model.LoanApplicant, curItems []*model.LoanApplicant, loan *model.Loan) (err error) {
-
 	slice.ForEach(curItems, func(index int, item *model.LoanApplicant) {
 		curItems[index].LoanId = loan.Id
 		if loan.LoanProperty != nil && loan.LoanProperty.Id > 0 {

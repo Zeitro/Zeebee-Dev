@@ -1,13 +1,14 @@
 'use client';
 
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
-import type { GetProp, UploadFile, UploadProps } from 'antd';
+import type { UploadFile, UploadProps } from 'antd';
 import { Button, message, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import type { RcFile } from 'antd/es/upload/interface';
 import { uploadAwsS3 } from '../../api/common';
 
-const MAX_SIZE_MB = 20;
+/** 未传 limitSize 时的默认单文件大小上限（MB） */
+const DEFAULT_LIMIT_SIZE_MB = 20;
 
 type UploadDetail = {
 	// 成功上传后裁剪掉 query string 的最终可访问 url
@@ -45,12 +46,18 @@ interface CommonUploadProps {
 	listType?: UploadProps['listType'];
 	maxCount?: number;
 	accept?: string;
+	/** 单文件大小上限（MB），默认 {@link DEFAULT_LIMIT_SIZE_MB} */
+	limitSize?: number;
 	children?: React.ReactNode;
-	onGetUploadList?: () => UploadFile[];
+	// eslint-disable-next-line no-unused-vars
+	onGetUploadList?: (fileList: UploadFile[]) => void;
 }
-type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
-export const UploadFileButton = forwardRef<CommonUploadRef, CommonUploadProps>(
+/** 透传 antd Upload 的其余 props（fileList / beforeUpload / customRequest 由组件内部管理） */
+type UploadFileButtonProps = CommonUploadProps &
+	Omit<UploadProps, keyof CommonUploadProps | 'fileList' | 'beforeUpload' | 'customRequest'>;
+
+export const UploadFileButton = forwardRef<CommonUploadRef, UploadFileButtonProps>(
 	(
 		{
 			immediateUpload = true,
@@ -60,6 +67,7 @@ export const UploadFileButton = forwardRef<CommonUploadRef, CommonUploadProps>(
 			listType = 'text',
 			maxCount = 1,
 			accept,
+			limitSize = DEFAULT_LIMIT_SIZE_MB,
 			children,
 			// eslint-disable-next-line no-unused-vars
 			onGetUploadList = (_fileList: UploadFile[]) => [],
@@ -70,18 +78,18 @@ export const UploadFileButton = forwardRef<CommonUploadRef, CommonUploadProps>(
 		const [fileList, setFileList] = useState<UploadFile[]>([]);
 
 		const checkFileSize = (file: RcFile) => {
-			const isLt10M = file.size / 1024 / 1024 < MAX_SIZE_MB;
-			if (!isLt10M) {
+			const isWithinLimit = file.size / 1024 / 1024 < limitSize;
+			if (!isWithinLimit) {
 				message.destroy();
 				message.open({
 					type: 'error',
-					content: `The file size cannot exceed ${MAX_SIZE_MB}MB!`,
+					content: `The file size cannot exceed ${limitSize}MB!`,
 				});
 			}
-			return isLt10M;
+			return isWithinLimit;
 		};
 
-		const getBase64 = (file: FileType): Promise<string> =>
+		const getBase64 = (file: RcFile): Promise<string> =>
 			new Promise((resolve, reject) => {
 				const reader = new FileReader();
 				reader.readAsDataURL(file);
@@ -210,7 +218,7 @@ export const UploadFileButton = forwardRef<CommonUploadRef, CommonUploadProps>(
 			},
 		}));
 
-		const uploadProps: UploadProps = {
+		const uploadProps: Partial<UploadProps> = {
 			accept,
 			listType,
 			fileList,
@@ -267,13 +275,13 @@ export const UploadFileButton = forwardRef<CommonUploadRef, CommonUploadProps>(
 			uploadProps.beforeUpload = async (file: RcFile) => {
 				if (!checkFileSize(file)) return Upload.LIST_IGNORE;
 				const thumbUrl = await getBase64(file);
-				const uploadFile: UploadFile = {
+				const uploadFile = {
 					uid: file.uid,
 					name: file.name,
-					status: 'uploading', // 或 'uploading'，但预览用 'done' 更好
+					status: 'uploading' as const,
 					originFileObj: file,
-					thumbUrl, // 关键
-				};
+					thumbUrl,
+				} as UploadFile;
 				setFileList((currentList) => {
 					const newList = [...currentList, uploadFile];
 					return maxCount ? newList.slice(-maxCount) : newList;

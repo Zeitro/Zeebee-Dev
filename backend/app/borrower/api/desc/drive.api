@@ -1,0 +1,83 @@
+syntax = "v1"
+
+info(
+    title: "drive-api"
+    desc: "google drive integration api"
+    version: "v1"
+)
+
+// drive integration detail (per organization)
+type DriveIntegrationEntity {
+    IsAuthorized bool `json:"is_authorized"`
+    AuthEmail string `json:"auth_email"`
+    FolderName string `json:"folder_name"`
+    DriveId string `json:"drive_id"`
+    DriveName string `json:"drive_name"`
+    RootFolderUrl string `json:"root_folder_url"`
+    AuthorizedByUserId int64 `json:"authorized_by_user_id"`
+}
+
+// auth url
+type (
+    DriveAuthUrlResponse {
+        Url string `json:"url"`
+    }
+)
+
+// authorize
+type (
+    DriveAuthorizeRequest {
+        Code string `json:"code" validate:"required"`
+        State string `json:"state,optional"`
+    }
+)
+
+// list shared drives
+type (
+    DriveItemEntity {
+        Id string `json:"id"`
+        Name string `json:"name"`
+    }
+    DriveListDrivesResponse {
+        Lists []DriveItemEntity `json:"lists"`
+    }
+)
+
+// update drive selection
+type (
+    DriveUpdateSelectionRequest {
+        DriveId string `json:"drive_id,optional"`
+        DriveName string `json:"drive_name,optional"`
+    }
+)
+
+// update folder name
+type (
+    DriveUpdateFolderRequest {
+        FolderName string `json:"folder_name" validate:"required"`
+    }
+)
+
+// sync transaction documents to drive
+type (
+    DriveSyncTransactionRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+    }
+    DriveSyncedFileEntity {
+        FileName string `json:"file_name"`
+        DriveUrl string `json:"drive_url"`
+        Status string `json:"status"`
+    }
+    DriveSyncTransactionResponse {
+        Total int64 `json:"total"`
+        Created int64 `json:"created"`
+        Replaced int64 `json:"replaced"`
+        Failed int64 `json:"failed"`
+        Removed int64 `json:"removed"`
+        FolderWebLink string `json:"folder_web_link"`
+        Files []DriveSyncedFileEntity `json:"files"`
+        Status string `json:"status"`
+        JobId int64 `json:"job_id"`
+        Error string `json:"error"`
+    }
+)
