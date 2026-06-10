@@ -34,7 +34,10 @@ func NewProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ProfileLo
 func (l *ProfileLogic) Profile(in *lender.EmptyRequest) (resp *lender.OrganizationProfileResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 

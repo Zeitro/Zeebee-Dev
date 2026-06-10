@@ -2889,3 +2889,702 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "app/admin/rpc/pb/admin.proto",
 }
+
+const (
+	PricingPlan_Create_FullMethodName        = "/admin.PricingPlan/Create"
+	PricingPlan_Update_FullMethodName        = "/admin.PricingPlan/Update"
+	PricingPlan_Delete_FullMethodName        = "/admin.PricingPlan/Delete"
+	PricingPlan_Detail_FullMethodName        = "/admin.PricingPlan/Detail"
+	PricingPlan_Page_FullMethodName          = "/admin.PricingPlan/Page"
+	PricingPlan_SwitchStatus_FullMethodName  = "/admin.PricingPlan/SwitchStatus"
+	PricingPlan_BindResources_FullMethodName = "/admin.PricingPlan/BindResources"
+	PricingPlan_ResourceList_FullMethodName  = "/admin.PricingPlan/ResourceList"
+	PricingPlan_CreatePolicy_FullMethodName  = "/admin.PricingPlan/CreatePolicy"
+	PricingPlan_UpdatePolicy_FullMethodName  = "/admin.PricingPlan/UpdatePolicy"
+	PricingPlan_DeletePolicy_FullMethodName  = "/admin.PricingPlan/DeletePolicy"
+)
+
+// PricingPlanClient is the client API for PricingPlan service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type PricingPlanClient interface {
+	Create(ctx context.Context, in *PricingPlanCreateRequest, opts ...grpc.CallOption) (*PricingPlanCreateResponse, error)
+	Update(ctx context.Context, in *PricingPlanUpdateRequest, opts ...grpc.CallOption) (*PricingPlanUpdateResponse, error)
+	Delete(ctx context.Context, in *PricingPlanDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	Detail(ctx context.Context, in *PricingPlanDetailRequest, opts ...grpc.CallOption) (*PricingPlanDetailResponse, error)
+	Page(ctx context.Context, in *PricingPlanPageRequest, opts ...grpc.CallOption) (*PricingPlanPageResponse, error)
+	SwitchStatus(ctx context.Context, in *PricingPlanSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	BindResources(ctx context.Context, in *PricingPlanBindResourcesRequest, opts ...grpc.CallOption) (*PricingPlanBindResourcesResponse, error)
+	ResourceList(ctx context.Context, in *PricingPlanResourceListRequest, opts ...grpc.CallOption) (*PricingPlanResourceListResponse, error)
+	CreatePolicy(ctx context.Context, in *PricingPlanPolicyCreateRequest, opts ...grpc.CallOption) (*PricingPlanPolicyCreateResponse, error)
+	UpdatePolicy(ctx context.Context, in *PricingPlanPolicyUpdateRequest, opts ...grpc.CallOption) (*PricingPlanPolicyUpdateResponse, error)
+	DeletePolicy(ctx context.Context, in *PricingPlanPolicyDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+}
+
+type pricingPlanClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewPricingPlanClient(cc grpc.ClientConnInterface) PricingPlanClient {
+	return &pricingPlanClient{cc}
+}
+
+func (c *pricingPlanClient) Create(ctx context.Context, in *PricingPlanCreateRequest, opts ...grpc.CallOption) (*PricingPlanCreateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PricingPlanCreateResponse)
+	err := c.cc.Invoke(ctx, PricingPlan_Create_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pricingPlanClient) Update(ctx context.Context, in *PricingPlanUpdateRequest, opts ...grpc.CallOption) (*PricingPlanUpdateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PricingPlanUpdateResponse)
+	err := c.cc.Invoke(ctx, PricingPlan_Update_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pricingPlanClient) Delete(ctx context.Context, in *PricingPlanDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, PricingPlan_Delete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pricingPlanClient) Detail(ctx context.Context, in *PricingPlanDetailRequest, opts ...grpc.CallOption) (*PricingPlanDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PricingPlanDetailResponse)
+	err := c.cc.Invoke(ctx, PricingPlan_Detail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pricingPlanClient) Page(ctx context.Context, in *PricingPlanPageRequest, opts ...grpc.CallOption) (*PricingPlanPageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PricingPlanPageResponse)
+	err := c.cc.Invoke(ctx, PricingPlan_Page_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pricingPlanClient) SwitchStatus(ctx context.Context, in *PricingPlanSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, PricingPlan_SwitchStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pricingPlanClient) BindResources(ctx context.Context, in *PricingPlanBindResourcesRequest, opts ...grpc.CallOption) (*PricingPlanBindResourcesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PricingPlanBindResourcesResponse)
+	err := c.cc.Invoke(ctx, PricingPlan_BindResources_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pricingPlanClient) ResourceList(ctx context.Context, in *PricingPlanResourceListRequest, opts ...grpc.CallOption) (*PricingPlanResourceListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PricingPlanResourceListResponse)
+	err := c.cc.Invoke(ctx, PricingPlan_ResourceList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pricingPlanClient) CreatePolicy(ctx context.Context, in *PricingPlanPolicyCreateRequest, opts ...grpc.CallOption) (*PricingPlanPolicyCreateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PricingPlanPolicyCreateResponse)
+	err := c.cc.Invoke(ctx, PricingPlan_CreatePolicy_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pricingPlanClient) UpdatePolicy(ctx context.Context, in *PricingPlanPolicyUpdateRequest, opts ...grpc.CallOption) (*PricingPlanPolicyUpdateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PricingPlanPolicyUpdateResponse)
+	err := c.cc.Invoke(ctx, PricingPlan_UpdatePolicy_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pricingPlanClient) DeletePolicy(ctx context.Context, in *PricingPlanPolicyDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, PricingPlan_DeletePolicy_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// PricingPlanServer is the server API for PricingPlan service.
+// All implementations must embed UnimplementedPricingPlanServer
+// for forward compatibility.
+type PricingPlanServer interface {
+	Create(context.Context, *PricingPlanCreateRequest) (*PricingPlanCreateResponse, error)
+	Update(context.Context, *PricingPlanUpdateRequest) (*PricingPlanUpdateResponse, error)
+	Delete(context.Context, *PricingPlanDeleteRequest) (*EmptyResponse, error)
+	Detail(context.Context, *PricingPlanDetailRequest) (*PricingPlanDetailResponse, error)
+	Page(context.Context, *PricingPlanPageRequest) (*PricingPlanPageResponse, error)
+	SwitchStatus(context.Context, *PricingPlanSwitchStatusRequest) (*EmptyResponse, error)
+	BindResources(context.Context, *PricingPlanBindResourcesRequest) (*PricingPlanBindResourcesResponse, error)
+	ResourceList(context.Context, *PricingPlanResourceListRequest) (*PricingPlanResourceListResponse, error)
+	CreatePolicy(context.Context, *PricingPlanPolicyCreateRequest) (*PricingPlanPolicyCreateResponse, error)
+	UpdatePolicy(context.Context, *PricingPlanPolicyUpdateRequest) (*PricingPlanPolicyUpdateResponse, error)
+	DeletePolicy(context.Context, *PricingPlanPolicyDeleteRequest) (*EmptyResponse, error)
+	mustEmbedUnimplementedPricingPlanServer()
+}
+
+// UnimplementedPricingPlanServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedPricingPlanServer struct{}
+
+func (UnimplementedPricingPlanServer) Create(context.Context, *PricingPlanCreateRequest) (*PricingPlanCreateResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedPricingPlanServer) Update(context.Context, *PricingPlanUpdateRequest) (*PricingPlanUpdateResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedPricingPlanServer) Delete(context.Context, *PricingPlanDeleteRequest) (*EmptyResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedPricingPlanServer) Detail(context.Context, *PricingPlanDetailRequest) (*PricingPlanDetailResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Detail not implemented")
+}
+func (UnimplementedPricingPlanServer) Page(context.Context, *PricingPlanPageRequest) (*PricingPlanPageResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Page not implemented")
+}
+func (UnimplementedPricingPlanServer) SwitchStatus(context.Context, *PricingPlanSwitchStatusRequest) (*EmptyResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SwitchStatus not implemented")
+}
+func (UnimplementedPricingPlanServer) BindResources(context.Context, *PricingPlanBindResourcesRequest) (*PricingPlanBindResourcesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method BindResources not implemented")
+}
+func (UnimplementedPricingPlanServer) ResourceList(context.Context, *PricingPlanResourceListRequest) (*PricingPlanResourceListResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ResourceList not implemented")
+}
+func (UnimplementedPricingPlanServer) CreatePolicy(context.Context, *PricingPlanPolicyCreateRequest) (*PricingPlanPolicyCreateResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreatePolicy not implemented")
+}
+func (UnimplementedPricingPlanServer) UpdatePolicy(context.Context, *PricingPlanPolicyUpdateRequest) (*PricingPlanPolicyUpdateResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdatePolicy not implemented")
+}
+func (UnimplementedPricingPlanServer) DeletePolicy(context.Context, *PricingPlanPolicyDeleteRequest) (*EmptyResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeletePolicy not implemented")
+}
+func (UnimplementedPricingPlanServer) mustEmbedUnimplementedPricingPlanServer() {}
+func (UnimplementedPricingPlanServer) testEmbeddedByValue()                     {}
+
+// UnsafePricingPlanServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to PricingPlanServer will
+// result in compilation errors.
+type UnsafePricingPlanServer interface {
+	mustEmbedUnimplementedPricingPlanServer()
+}
+
+func RegisterPricingPlanServer(s grpc.ServiceRegistrar, srv PricingPlanServer) {
+	// If the following call panics, it indicates UnimplementedPricingPlanServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&PricingPlan_ServiceDesc, srv)
+}
+
+func _PricingPlan_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PricingPlanCreateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PricingPlanServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PricingPlan_Create_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PricingPlanServer).Create(ctx, req.(*PricingPlanCreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PricingPlan_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PricingPlanUpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PricingPlanServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PricingPlan_Update_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PricingPlanServer).Update(ctx, req.(*PricingPlanUpdateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PricingPlan_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PricingPlanDeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PricingPlanServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PricingPlan_Delete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PricingPlanServer).Delete(ctx, req.(*PricingPlanDeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PricingPlan_Detail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PricingPlanDetailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PricingPlanServer).Detail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PricingPlan_Detail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PricingPlanServer).Detail(ctx, req.(*PricingPlanDetailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PricingPlan_Page_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PricingPlanPageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PricingPlanServer).Page(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PricingPlan_Page_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PricingPlanServer).Page(ctx, req.(*PricingPlanPageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PricingPlan_SwitchStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PricingPlanSwitchStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PricingPlanServer).SwitchStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PricingPlan_SwitchStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PricingPlanServer).SwitchStatus(ctx, req.(*PricingPlanSwitchStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PricingPlan_BindResources_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PricingPlanBindResourcesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PricingPlanServer).BindResources(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PricingPlan_BindResources_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PricingPlanServer).BindResources(ctx, req.(*PricingPlanBindResourcesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PricingPlan_ResourceList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PricingPlanResourceListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PricingPlanServer).ResourceList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PricingPlan_ResourceList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PricingPlanServer).ResourceList(ctx, req.(*PricingPlanResourceListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PricingPlan_CreatePolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PricingPlanPolicyCreateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PricingPlanServer).CreatePolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PricingPlan_CreatePolicy_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PricingPlanServer).CreatePolicy(ctx, req.(*PricingPlanPolicyCreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PricingPlan_UpdatePolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PricingPlanPolicyUpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PricingPlanServer).UpdatePolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PricingPlan_UpdatePolicy_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PricingPlanServer).UpdatePolicy(ctx, req.(*PricingPlanPolicyUpdateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PricingPlan_DeletePolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PricingPlanPolicyDeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PricingPlanServer).DeletePolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PricingPlan_DeletePolicy_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PricingPlanServer).DeletePolicy(ctx, req.(*PricingPlanPolicyDeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// PricingPlan_ServiceDesc is the grpc.ServiceDesc for PricingPlan service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var PricingPlan_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "admin.PricingPlan",
+	HandlerType: (*PricingPlanServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Create",
+			Handler:    _PricingPlan_Create_Handler,
+		},
+		{
+			MethodName: "Update",
+			Handler:    _PricingPlan_Update_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _PricingPlan_Delete_Handler,
+		},
+		{
+			MethodName: "Detail",
+			Handler:    _PricingPlan_Detail_Handler,
+		},
+		{
+			MethodName: "Page",
+			Handler:    _PricingPlan_Page_Handler,
+		},
+		{
+			MethodName: "SwitchStatus",
+			Handler:    _PricingPlan_SwitchStatus_Handler,
+		},
+		{
+			MethodName: "BindResources",
+			Handler:    _PricingPlan_BindResources_Handler,
+		},
+		{
+			MethodName: "ResourceList",
+			Handler:    _PricingPlan_ResourceList_Handler,
+		},
+		{
+			MethodName: "CreatePolicy",
+			Handler:    _PricingPlan_CreatePolicy_Handler,
+		},
+		{
+			MethodName: "UpdatePolicy",
+			Handler:    _PricingPlan_UpdatePolicy_Handler,
+		},
+		{
+			MethodName: "DeletePolicy",
+			Handler:    _PricingPlan_DeletePolicy_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/admin/rpc/pb/admin.proto",
+}
+
+const (
+	OrganizationSubscription_Create_FullMethodName       = "/admin.OrganizationSubscription/Create"
+	OrganizationSubscription_Renew_FullMethodName        = "/admin.OrganizationSubscription/Renew"
+	OrganizationSubscription_SwitchStatus_FullMethodName = "/admin.OrganizationSubscription/SwitchStatus"
+	OrganizationSubscription_Page_FullMethodName         = "/admin.OrganizationSubscription/Page"
+)
+
+// OrganizationSubscriptionClient is the client API for OrganizationSubscription service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type OrganizationSubscriptionClient interface {
+	Create(ctx context.Context, in *OrganizationSubscriptionCreateRequest, opts ...grpc.CallOption) (*OrganizationSubscriptionCreateResponse, error)
+	Renew(ctx context.Context, in *OrganizationSubscriptionRenewRequest, opts ...grpc.CallOption) (*OrganizationSubscriptionRenewResponse, error)
+	SwitchStatus(ctx context.Context, in *OrganizationSubscriptionSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	Page(ctx context.Context, in *OrganizationSubscriptionPageRequest, opts ...grpc.CallOption) (*OrganizationSubscriptionPageResponse, error)
+}
+
+type organizationSubscriptionClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewOrganizationSubscriptionClient(cc grpc.ClientConnInterface) OrganizationSubscriptionClient {
+	return &organizationSubscriptionClient{cc}
+}
+
+func (c *organizationSubscriptionClient) Create(ctx context.Context, in *OrganizationSubscriptionCreateRequest, opts ...grpc.CallOption) (*OrganizationSubscriptionCreateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationSubscriptionCreateResponse)
+	err := c.cc.Invoke(ctx, OrganizationSubscription_Create_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationSubscriptionClient) Renew(ctx context.Context, in *OrganizationSubscriptionRenewRequest, opts ...grpc.CallOption) (*OrganizationSubscriptionRenewResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationSubscriptionRenewResponse)
+	err := c.cc.Invoke(ctx, OrganizationSubscription_Renew_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationSubscriptionClient) SwitchStatus(ctx context.Context, in *OrganizationSubscriptionSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, OrganizationSubscription_SwitchStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationSubscriptionClient) Page(ctx context.Context, in *OrganizationSubscriptionPageRequest, opts ...grpc.CallOption) (*OrganizationSubscriptionPageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationSubscriptionPageResponse)
+	err := c.cc.Invoke(ctx, OrganizationSubscription_Page_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// OrganizationSubscriptionServer is the server API for OrganizationSubscription service.
+// All implementations must embed UnimplementedOrganizationSubscriptionServer
+// for forward compatibility.
+type OrganizationSubscriptionServer interface {
+	Create(context.Context, *OrganizationSubscriptionCreateRequest) (*OrganizationSubscriptionCreateResponse, error)
+	Renew(context.Context, *OrganizationSubscriptionRenewRequest) (*OrganizationSubscriptionRenewResponse, error)
+	SwitchStatus(context.Context, *OrganizationSubscriptionSwitchStatusRequest) (*EmptyResponse, error)
+	Page(context.Context, *OrganizationSubscriptionPageRequest) (*OrganizationSubscriptionPageResponse, error)
+	mustEmbedUnimplementedOrganizationSubscriptionServer()
+}
+
+// UnimplementedOrganizationSubscriptionServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedOrganizationSubscriptionServer struct{}
+
+func (UnimplementedOrganizationSubscriptionServer) Create(context.Context, *OrganizationSubscriptionCreateRequest) (*OrganizationSubscriptionCreateResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedOrganizationSubscriptionServer) Renew(context.Context, *OrganizationSubscriptionRenewRequest) (*OrganizationSubscriptionRenewResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Renew not implemented")
+}
+func (UnimplementedOrganizationSubscriptionServer) SwitchStatus(context.Context, *OrganizationSubscriptionSwitchStatusRequest) (*EmptyResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SwitchStatus not implemented")
+}
+func (UnimplementedOrganizationSubscriptionServer) Page(context.Context, *OrganizationSubscriptionPageRequest) (*OrganizationSubscriptionPageResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Page not implemented")
+}
+func (UnimplementedOrganizationSubscriptionServer) mustEmbedUnimplementedOrganizationSubscriptionServer() {
+}
+func (UnimplementedOrganizationSubscriptionServer) testEmbeddedByValue() {}
+
+// UnsafeOrganizationSubscriptionServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to OrganizationSubscriptionServer will
+// result in compilation errors.
+type UnsafeOrganizationSubscriptionServer interface {
+	mustEmbedUnimplementedOrganizationSubscriptionServer()
+}
+
+func RegisterOrganizationSubscriptionServer(s grpc.ServiceRegistrar, srv OrganizationSubscriptionServer) {
+	// If the following call panics, it indicates UnimplementedOrganizationSubscriptionServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&OrganizationSubscription_ServiceDesc, srv)
+}
+
+func _OrganizationSubscription_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationSubscriptionCreateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationSubscriptionServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationSubscription_Create_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationSubscriptionServer).Create(ctx, req.(*OrganizationSubscriptionCreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationSubscription_Renew_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationSubscriptionRenewRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationSubscriptionServer).Renew(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationSubscription_Renew_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationSubscriptionServer).Renew(ctx, req.(*OrganizationSubscriptionRenewRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationSubscription_SwitchStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationSubscriptionSwitchStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationSubscriptionServer).SwitchStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationSubscription_SwitchStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationSubscriptionServer).SwitchStatus(ctx, req.(*OrganizationSubscriptionSwitchStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationSubscription_Page_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationSubscriptionPageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationSubscriptionServer).Page(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationSubscription_Page_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationSubscriptionServer).Page(ctx, req.(*OrganizationSubscriptionPageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// OrganizationSubscription_ServiceDesc is the grpc.ServiceDesc for OrganizationSubscription service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var OrganizationSubscription_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "admin.OrganizationSubscription",
+	HandlerType: (*OrganizationSubscriptionServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Create",
+			Handler:    _OrganizationSubscription_Create_Handler,
+		},
+		{
+			MethodName: "Renew",
+			Handler:    _OrganizationSubscription_Renew_Handler,
+		},
+		{
+			MethodName: "SwitchStatus",
+			Handler:    _OrganizationSubscription_SwitchStatus_Handler,
+		},
+		{
+			MethodName: "Page",
+			Handler:    _OrganizationSubscription_Page_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/admin/rpc/pb/admin.proto",
+}

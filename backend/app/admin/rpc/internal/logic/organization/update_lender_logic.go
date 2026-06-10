@@ -37,7 +37,10 @@ func NewUpdateLenderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upda
 func (l *UpdateLenderLogic) UpdateLender(in *admin.OrganizationUpdateLenderRequest) (resp *admin.OrganizationDetailResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 

@@ -3259,6 +3259,7 @@
                               "property_type",
                               "unit",
                               "living_area_sqft",
+                              "lot_area_sqft",
                               "bedrooms",
                               "bathrooms",
                               "future_property_type",
@@ -3376,6 +3377,9 @@
                                 "type": "number"
                               },
                               "living_area_sqft": {
+                                "type": "number"
+                              },
+                              "lot_area_sqft": {
                                 "type": "number"
                               },
                               "mid_construction": {
@@ -4108,6 +4112,7 @@
                         "property_type",
                         "unit",
                         "living_area_sqft",
+                        "lot_area_sqft",
                         "bedrooms",
                         "bathrooms",
                         "future_property_type",
@@ -4258,6 +4263,9 @@
                           "type": "number"
                         },
                         "living_area_sqft": {
+                          "type": "number"
+                        },
+                        "lot_area_sqft": {
                           "type": "number"
                         },
                         "mid_construction": {
@@ -6685,6 +6693,439 @@
         }
       }
     },
+    "/api/v1/organization_subscription": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization_subscription"
+        ],
+        "summary": "create",
+        "operationId": "organizationSubscriptionOrganizationSubscriptionCreate",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "pricing_plan_id",
+                "pricing_plan_policy_id"
+              ],
+              "properties": {
+                "pricing_plan_id": {
+                  "type": "integer"
+                },
+                "pricing_plan_policy_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "actual_amount": {
+                      "type": "number"
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "expire_date": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "is_auto_renew": {
+                      "type": "boolean"
+                    },
+                    "organization_id": {
+                      "type": "integer"
+                    },
+                    "organization_name": {
+                      "type": "string"
+                    },
+                    "original_amount": {
+                      "type": "number"
+                    },
+                    "pricing_plan_id": {
+                      "type": "integer"
+                    },
+                    "pricing_plan_name": {
+                      "type": "string"
+                    },
+                    "pricing_plan_policy_id": {
+                      "type": "integer"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organization_subscription/page": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization_subscription"
+        ],
+        "summary": "page",
+        "operationId": "organizationSubscriptionOrganizationSubscriptionPage",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "filter": {
+                  "type": "object",
+                  "properties": {
+                    "organization_id": {
+                      "type": "integer"
+                    },
+                    "pricing_plan_id": {
+                      "type": "integer"
+                    },
+                    "status": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "limit": {
+                  "type": "integer"
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "sort": {
+                  "type": "object",
+                  "properties": {
+                    "column": {
+                      "type": "string"
+                    },
+                    "sort": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "list": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "code",
+                          "organization_name",
+                          "pricing_plan_name",
+                          "status",
+                          "expire_date",
+                          "original_amount",
+                          "actual_amount",
+                          "is_auto_renew",
+                          "created_at",
+                          "updated_at"
+                        ],
+                        "properties": {
+                          "actual_amount": {
+                            "type": "number"
+                          },
+                          "code": {
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "expire_date": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "is_auto_renew": {
+                            "type": "boolean"
+                          },
+                          "organization_name": {
+                            "type": "string"
+                          },
+                          "original_amount": {
+                            "type": "number"
+                          },
+                          "pricing_plan_name": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "page": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "total_page": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organization_subscription/{id}/renew": {
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization_subscription"
+        ],
+        "summary": "renew",
+        "operationId": "organizationSubscriptionOrganizationSubscriptionRenew",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "expire_date"
+              ],
+              "properties": {
+                "expire_date": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "actual_amount": {
+                      "type": "number"
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "expire_date": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "is_auto_renew": {
+                      "type": "boolean"
+                    },
+                    "organization_id": {
+                      "type": "integer"
+                    },
+                    "organization_name": {
+                      "type": "string"
+                    },
+                    "original_amount": {
+                      "type": "number"
+                    },
+                    "pricing_plan_id": {
+                      "type": "integer"
+                    },
+                    "pricing_plan_name": {
+                      "type": "string"
+                    },
+                    "pricing_plan_policy_id": {
+                      "type": "integer"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organization_subscription/{id}/status": {
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization_subscription"
+        ],
+        "summary": "switch status",
+        "operationId": "organizationSubscriptionOrganizationSubscriptionSwitchStatus",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "status"
+              ],
+              "properties": {
+                "status": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/organization_user": {
       "post": {
         "consumes": [
@@ -8043,6 +8484,2572 @@
                 }
               }
             }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pricing_plan": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "pricing_plan"
+        ],
+        "summary": "create",
+        "operationId": "pricingPlanPricingPlanCreate",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "status",
+                "is_public",
+                "is_default",
+                "type",
+                "plan_type"
+              ],
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "is_default": {
+                  "type": "boolean"
+                },
+                "is_public": {
+                  "type": "boolean"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "plan_type": {
+                  "type": "string"
+                },
+                "sort_order": {
+                  "type": "integer"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "subtitle": {
+                  "type": "string"
+                },
+                "trial_days": {
+                  "type": "integer"
+                },
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "is_default": {
+                      "type": "boolean"
+                    },
+                    "is_public": {
+                      "type": "boolean"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "plan_type": {
+                      "type": "string"
+                    },
+                    "policies": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "pricing_plan_id",
+                          "original_amount",
+                          "actual_amount",
+                          "type",
+                          "created_at",
+                          "updated_at"
+                        ],
+                        "properties": {
+                          "actual_amount": {
+                            "type": "number"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "original_amount": {
+                            "type": "number"
+                          },
+                          "pricing_plan_id": {
+                            "type": "integer"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "resources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "parent_id",
+                          "type",
+                          "resource_type",
+                          "name",
+                          "path",
+                          "icon",
+                          "tag",
+                          "is_show",
+                          "status",
+                          "sort_order",
+                          "enable_data_scope",
+                          "description",
+                          "is_public",
+                          "created_at",
+                          "updated_at",
+                          "apis",
+                          "children"
+                        ],
+                        "properties": {
+                          "apis": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "parent_id",
+                                "name",
+                                "path",
+                                "method",
+                                "status",
+                                "description",
+                                "type",
+                                "sort_order",
+                                "auth_required",
+                                "permission_required",
+                                "created_at",
+                                "updated_at"
+                              ],
+                              "properties": {
+                                "auth_required": {
+                                  "type": "boolean"
+                                },
+                                "created_at": {
+                                  "type": "string"
+                                },
+                                "description": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "method": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "parent_id": {
+                                  "type": "integer"
+                                },
+                                "path": {
+                                  "type": "string"
+                                },
+                                "permission_required": {
+                                  "type": "boolean"
+                                },
+                                "sort_order": {
+                                  "type": "integer"
+                                },
+                                "status": {
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string"
+                                },
+                                "updated_at": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "children": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "parent_id",
+                                "type",
+                                "resource_type",
+                                "name",
+                                "path",
+                                "icon",
+                                "tag",
+                                "is_show",
+                                "status",
+                                "sort_order",
+                                "enable_data_scope",
+                                "description",
+                                "is_public",
+                                "created_at",
+                                "updated_at",
+                                "apis",
+                                "children"
+                              ],
+                              "properties": {
+                                "apis": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "required": [
+                                      "id",
+                                      "parent_id",
+                                      "name",
+                                      "path",
+                                      "method",
+                                      "status",
+                                      "description",
+                                      "type",
+                                      "sort_order",
+                                      "auth_required",
+                                      "permission_required",
+                                      "created_at",
+                                      "updated_at"
+                                    ],
+                                    "properties": {
+                                      "auth_required": {
+                                        "type": "boolean"
+                                      },
+                                      "created_at": {
+                                        "type": "string"
+                                      },
+                                      "description": {
+                                        "type": "string"
+                                      },
+                                      "id": {
+                                        "type": "integer"
+                                      },
+                                      "method": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "parent_id": {
+                                        "type": "integer"
+                                      },
+                                      "path": {
+                                        "type": "string"
+                                      },
+                                      "permission_required": {
+                                        "type": "boolean"
+                                      },
+                                      "sort_order": {
+                                        "type": "integer"
+                                      },
+                                      "status": {
+                                        "type": "string"
+                                      },
+                                      "type": {
+                                        "type": "string"
+                                      },
+                                      "updated_at": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                },
+                                "children": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "required": [
+                                      "id",
+                                      "parent_id",
+                                      "type",
+                                      "resource_type",
+                                      "name",
+                                      "path",
+                                      "icon",
+                                      "tag",
+                                      "is_show",
+                                      "status",
+                                      "sort_order",
+                                      "enable_data_scope",
+                                      "description",
+                                      "is_public",
+                                      "created_at",
+                                      "updated_at",
+                                      "apis",
+                                      "children"
+                                    ],
+                                    "properties": {
+                                      "apis": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object"
+                                        }
+                                      },
+                                      "children": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object"
+                                        }
+                                      },
+                                      "created_at": {
+                                        "type": "string"
+                                      },
+                                      "description": {
+                                        "type": "string"
+                                      },
+                                      "enable_data_scope": {
+                                        "type": "boolean"
+                                      },
+                                      "icon": {
+                                        "type": "string"
+                                      },
+                                      "id": {
+                                        "type": "integer"
+                                      },
+                                      "is_public": {
+                                        "type": "boolean"
+                                      },
+                                      "is_show": {
+                                        "type": "boolean"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "parent_id": {
+                                        "type": "integer"
+                                      },
+                                      "path": {
+                                        "type": "string"
+                                      },
+                                      "resource_type": {
+                                        "type": "string"
+                                      },
+                                      "sort_order": {
+                                        "type": "integer"
+                                      },
+                                      "status": {
+                                        "type": "string"
+                                      },
+                                      "tag": {
+                                        "type": "string"
+                                      },
+                                      "type": {
+                                        "type": "string"
+                                      },
+                                      "updated_at": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                },
+                                "created_at": {
+                                  "type": "string"
+                                },
+                                "description": {
+                                  "type": "string"
+                                },
+                                "enable_data_scope": {
+                                  "type": "boolean"
+                                },
+                                "icon": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "is_public": {
+                                  "type": "boolean"
+                                },
+                                "is_show": {
+                                  "type": "boolean"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "parent_id": {
+                                  "type": "integer"
+                                },
+                                "path": {
+                                  "type": "string"
+                                },
+                                "resource_type": {
+                                  "type": "string"
+                                },
+                                "sort_order": {
+                                  "type": "integer"
+                                },
+                                "status": {
+                                  "type": "string"
+                                },
+                                "tag": {
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string"
+                                },
+                                "updated_at": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "enable_data_scope": {
+                            "type": "boolean"
+                          },
+                          "icon": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "is_public": {
+                            "type": "boolean"
+                          },
+                          "is_show": {
+                            "type": "boolean"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "parent_id": {
+                            "type": "integer"
+                          },
+                          "path": {
+                            "type": "string"
+                          },
+                          "resource_type": {
+                            "type": "string"
+                          },
+                          "sort_order": {
+                            "type": "integer"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "tag": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "sort_order": {
+                      "type": "integer"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "subtitle": {
+                      "type": "string"
+                    },
+                    "trial_days": {
+                      "type": "integer"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pricing_plan/page": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "pricing_plan"
+        ],
+        "summary": "page",
+        "operationId": "pricingPlanPricingPlanPage",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "filter": {
+                  "type": "object",
+                  "properties": {
+                    "keyword": {
+                      "type": "string"
+                    },
+                    "plan_type": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "limit": {
+                  "type": "integer"
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "sort": {
+                  "type": "object",
+                  "properties": {
+                    "column": {
+                      "type": "string"
+                    },
+                    "sort": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "list": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name",
+                          "subtitle",
+                          "status",
+                          "trial_days",
+                          "sort_order",
+                          "is_public",
+                          "is_default",
+                          "type",
+                          "plan_type",
+                          "created_at",
+                          "updated_at"
+                        ],
+                        "properties": {
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "is_default": {
+                            "type": "boolean"
+                          },
+                          "is_public": {
+                            "type": "boolean"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "plan_type": {
+                            "type": "string"
+                          },
+                          "sort_order": {
+                            "type": "integer"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "subtitle": {
+                            "type": "string"
+                          },
+                          "trial_days": {
+                            "type": "integer"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "page": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "total_page": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pricing_plan/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "pricing_plan"
+        ],
+        "summary": "detail",
+        "operationId": "pricingPlanPricingPlanDetail",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "is_default": {
+                      "type": "boolean"
+                    },
+                    "is_public": {
+                      "type": "boolean"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "plan_type": {
+                      "type": "string"
+                    },
+                    "policies": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "pricing_plan_id",
+                          "original_amount",
+                          "actual_amount",
+                          "type",
+                          "created_at",
+                          "updated_at"
+                        ],
+                        "properties": {
+                          "actual_amount": {
+                            "type": "number"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "original_amount": {
+                            "type": "number"
+                          },
+                          "pricing_plan_id": {
+                            "type": "integer"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "resources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "parent_id",
+                          "type",
+                          "resource_type",
+                          "name",
+                          "path",
+                          "icon",
+                          "tag",
+                          "is_show",
+                          "status",
+                          "sort_order",
+                          "enable_data_scope",
+                          "description",
+                          "is_public",
+                          "created_at",
+                          "updated_at",
+                          "apis",
+                          "children"
+                        ],
+                        "properties": {
+                          "apis": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "parent_id",
+                                "name",
+                                "path",
+                                "method",
+                                "status",
+                                "description",
+                                "type",
+                                "sort_order",
+                                "auth_required",
+                                "permission_required",
+                                "created_at",
+                                "updated_at"
+                              ],
+                              "properties": {
+                                "auth_required": {
+                                  "type": "boolean"
+                                },
+                                "created_at": {
+                                  "type": "string"
+                                },
+                                "description": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "method": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "parent_id": {
+                                  "type": "integer"
+                                },
+                                "path": {
+                                  "type": "string"
+                                },
+                                "permission_required": {
+                                  "type": "boolean"
+                                },
+                                "sort_order": {
+                                  "type": "integer"
+                                },
+                                "status": {
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string"
+                                },
+                                "updated_at": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "children": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "parent_id",
+                                "type",
+                                "resource_type",
+                                "name",
+                                "path",
+                                "icon",
+                                "tag",
+                                "is_show",
+                                "status",
+                                "sort_order",
+                                "enable_data_scope",
+                                "description",
+                                "is_public",
+                                "created_at",
+                                "updated_at",
+                                "apis",
+                                "children"
+                              ],
+                              "properties": {
+                                "apis": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "required": [
+                                      "id",
+                                      "parent_id",
+                                      "name",
+                                      "path",
+                                      "method",
+                                      "status",
+                                      "description",
+                                      "type",
+                                      "sort_order",
+                                      "auth_required",
+                                      "permission_required",
+                                      "created_at",
+                                      "updated_at"
+                                    ],
+                                    "properties": {
+                                      "auth_required": {
+                                        "type": "boolean"
+                                      },
+                                      "created_at": {
+                                        "type": "string"
+                                      },
+                                      "description": {
+                                        "type": "string"
+                                      },
+                                      "id": {
+                                        "type": "integer"
+                                      },
+                                      "method": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "parent_id": {
+                                        "type": "integer"
+                                      },
+                                      "path": {
+                                        "type": "string"
+                                      },
+                                      "permission_required": {
+                                        "type": "boolean"
+                                      },
+                                      "sort_order": {
+                                        "type": "integer"
+                                      },
+                                      "status": {
+                                        "type": "string"
+                                      },
+                                      "type": {
+                                        "type": "string"
+                                      },
+                                      "updated_at": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                },
+                                "children": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "required": [
+                                      "id",
+                                      "parent_id",
+                                      "type",
+                                      "resource_type",
+                                      "name",
+                                      "path",
+                                      "icon",
+                                      "tag",
+                                      "is_show",
+                                      "status",
+                                      "sort_order",
+                                      "enable_data_scope",
+                                      "description",
+                                      "is_public",
+                                      "created_at",
+                                      "updated_at",
+                                      "apis",
+                                      "children"
+                                    ],
+                                    "properties": {
+                                      "apis": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object"
+                                        }
+                                      },
+                                      "children": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object"
+                                        }
+                                      },
+                                      "created_at": {
+                                        "type": "string"
+                                      },
+                                      "description": {
+                                        "type": "string"
+                                      },
+                                      "enable_data_scope": {
+                                        "type": "boolean"
+                                      },
+                                      "icon": {
+                                        "type": "string"
+                                      },
+                                      "id": {
+                                        "type": "integer"
+                                      },
+                                      "is_public": {
+                                        "type": "boolean"
+                                      },
+                                      "is_show": {
+                                        "type": "boolean"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "parent_id": {
+                                        "type": "integer"
+                                      },
+                                      "path": {
+                                        "type": "string"
+                                      },
+                                      "resource_type": {
+                                        "type": "string"
+                                      },
+                                      "sort_order": {
+                                        "type": "integer"
+                                      },
+                                      "status": {
+                                        "type": "string"
+                                      },
+                                      "tag": {
+                                        "type": "string"
+                                      },
+                                      "type": {
+                                        "type": "string"
+                                      },
+                                      "updated_at": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                },
+                                "created_at": {
+                                  "type": "string"
+                                },
+                                "description": {
+                                  "type": "string"
+                                },
+                                "enable_data_scope": {
+                                  "type": "boolean"
+                                },
+                                "icon": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "is_public": {
+                                  "type": "boolean"
+                                },
+                                "is_show": {
+                                  "type": "boolean"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "parent_id": {
+                                  "type": "integer"
+                                },
+                                "path": {
+                                  "type": "string"
+                                },
+                                "resource_type": {
+                                  "type": "string"
+                                },
+                                "sort_order": {
+                                  "type": "integer"
+                                },
+                                "status": {
+                                  "type": "string"
+                                },
+                                "tag": {
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string"
+                                },
+                                "updated_at": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "enable_data_scope": {
+                            "type": "boolean"
+                          },
+                          "icon": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "is_public": {
+                            "type": "boolean"
+                          },
+                          "is_show": {
+                            "type": "boolean"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "parent_id": {
+                            "type": "integer"
+                          },
+                          "path": {
+                            "type": "string"
+                          },
+                          "resource_type": {
+                            "type": "string"
+                          },
+                          "sort_order": {
+                            "type": "integer"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "tag": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "sort_order": {
+                      "type": "integer"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "subtitle": {
+                      "type": "string"
+                    },
+                    "trial_days": {
+                      "type": "integer"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "pricing_plan"
+        ],
+        "summary": "update",
+        "operationId": "pricingPlanPricingPlanUpdate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "is_public",
+                "is_default",
+                "plan_type"
+              ],
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "is_default": {
+                  "type": "boolean"
+                },
+                "is_public": {
+                  "type": "boolean"
+                },
+                "plan_type": {
+                  "type": "string"
+                },
+                "sort_order": {
+                  "type": "integer"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "subtitle": {
+                  "type": "string"
+                },
+                "trial_days": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "is_default": {
+                      "type": "boolean"
+                    },
+                    "is_public": {
+                      "type": "boolean"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "plan_type": {
+                      "type": "string"
+                    },
+                    "policies": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "pricing_plan_id",
+                          "original_amount",
+                          "actual_amount",
+                          "type",
+                          "created_at",
+                          "updated_at"
+                        ],
+                        "properties": {
+                          "actual_amount": {
+                            "type": "number"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "original_amount": {
+                            "type": "number"
+                          },
+                          "pricing_plan_id": {
+                            "type": "integer"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "resources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "parent_id",
+                          "type",
+                          "resource_type",
+                          "name",
+                          "path",
+                          "icon",
+                          "tag",
+                          "is_show",
+                          "status",
+                          "sort_order",
+                          "enable_data_scope",
+                          "description",
+                          "is_public",
+                          "created_at",
+                          "updated_at",
+                          "apis",
+                          "children"
+                        ],
+                        "properties": {
+                          "apis": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "parent_id",
+                                "name",
+                                "path",
+                                "method",
+                                "status",
+                                "description",
+                                "type",
+                                "sort_order",
+                                "auth_required",
+                                "permission_required",
+                                "created_at",
+                                "updated_at"
+                              ],
+                              "properties": {
+                                "auth_required": {
+                                  "type": "boolean"
+                                },
+                                "created_at": {
+                                  "type": "string"
+                                },
+                                "description": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "method": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "parent_id": {
+                                  "type": "integer"
+                                },
+                                "path": {
+                                  "type": "string"
+                                },
+                                "permission_required": {
+                                  "type": "boolean"
+                                },
+                                "sort_order": {
+                                  "type": "integer"
+                                },
+                                "status": {
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string"
+                                },
+                                "updated_at": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "children": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "parent_id",
+                                "type",
+                                "resource_type",
+                                "name",
+                                "path",
+                                "icon",
+                                "tag",
+                                "is_show",
+                                "status",
+                                "sort_order",
+                                "enable_data_scope",
+                                "description",
+                                "is_public",
+                                "created_at",
+                                "updated_at",
+                                "apis",
+                                "children"
+                              ],
+                              "properties": {
+                                "apis": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "required": [
+                                      "id",
+                                      "parent_id",
+                                      "name",
+                                      "path",
+                                      "method",
+                                      "status",
+                                      "description",
+                                      "type",
+                                      "sort_order",
+                                      "auth_required",
+                                      "permission_required",
+                                      "created_at",
+                                      "updated_at"
+                                    ],
+                                    "properties": {
+                                      "auth_required": {
+                                        "type": "boolean"
+                                      },
+                                      "created_at": {
+                                        "type": "string"
+                                      },
+                                      "description": {
+                                        "type": "string"
+                                      },
+                                      "id": {
+                                        "type": "integer"
+                                      },
+                                      "method": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "parent_id": {
+                                        "type": "integer"
+                                      },
+                                      "path": {
+                                        "type": "string"
+                                      },
+                                      "permission_required": {
+                                        "type": "boolean"
+                                      },
+                                      "sort_order": {
+                                        "type": "integer"
+                                      },
+                                      "status": {
+                                        "type": "string"
+                                      },
+                                      "type": {
+                                        "type": "string"
+                                      },
+                                      "updated_at": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                },
+                                "children": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "required": [
+                                      "id",
+                                      "parent_id",
+                                      "type",
+                                      "resource_type",
+                                      "name",
+                                      "path",
+                                      "icon",
+                                      "tag",
+                                      "is_show",
+                                      "status",
+                                      "sort_order",
+                                      "enable_data_scope",
+                                      "description",
+                                      "is_public",
+                                      "created_at",
+                                      "updated_at",
+                                      "apis",
+                                      "children"
+                                    ],
+                                    "properties": {
+                                      "apis": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object"
+                                        }
+                                      },
+                                      "children": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object"
+                                        }
+                                      },
+                                      "created_at": {
+                                        "type": "string"
+                                      },
+                                      "description": {
+                                        "type": "string"
+                                      },
+                                      "enable_data_scope": {
+                                        "type": "boolean"
+                                      },
+                                      "icon": {
+                                        "type": "string"
+                                      },
+                                      "id": {
+                                        "type": "integer"
+                                      },
+                                      "is_public": {
+                                        "type": "boolean"
+                                      },
+                                      "is_show": {
+                                        "type": "boolean"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "parent_id": {
+                                        "type": "integer"
+                                      },
+                                      "path": {
+                                        "type": "string"
+                                      },
+                                      "resource_type": {
+                                        "type": "string"
+                                      },
+                                      "sort_order": {
+                                        "type": "integer"
+                                      },
+                                      "status": {
+                                        "type": "string"
+                                      },
+                                      "tag": {
+                                        "type": "string"
+                                      },
+                                      "type": {
+                                        "type": "string"
+                                      },
+                                      "updated_at": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                },
+                                "created_at": {
+                                  "type": "string"
+                                },
+                                "description": {
+                                  "type": "string"
+                                },
+                                "enable_data_scope": {
+                                  "type": "boolean"
+                                },
+                                "icon": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "is_public": {
+                                  "type": "boolean"
+                                },
+                                "is_show": {
+                                  "type": "boolean"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "parent_id": {
+                                  "type": "integer"
+                                },
+                                "path": {
+                                  "type": "string"
+                                },
+                                "resource_type": {
+                                  "type": "string"
+                                },
+                                "sort_order": {
+                                  "type": "integer"
+                                },
+                                "status": {
+                                  "type": "string"
+                                },
+                                "tag": {
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string"
+                                },
+                                "updated_at": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "enable_data_scope": {
+                            "type": "boolean"
+                          },
+                          "icon": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "is_public": {
+                            "type": "boolean"
+                          },
+                          "is_show": {
+                            "type": "boolean"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "parent_id": {
+                            "type": "integer"
+                          },
+                          "path": {
+                            "type": "string"
+                          },
+                          "resource_type": {
+                            "type": "string"
+                          },
+                          "sort_order": {
+                            "type": "integer"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "tag": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "sort_order": {
+                      "type": "integer"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "subtitle": {
+                      "type": "string"
+                    },
+                    "trial_days": {
+                      "type": "integer"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "pricing_plan"
+        ],
+        "summary": "delete",
+        "operationId": "pricingPlanPricingPlanDelete",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pricing_plan/{id}/bind_resources": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "pricing_plan"
+        ],
+        "summary": "bind resources",
+        "operationId": "pricingPlanPricingPlanBindResources",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "resource_ids"
+              ],
+              "properties": {
+                "resource_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "list": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "parent_id",
+                          "type",
+                          "resource_type",
+                          "name",
+                          "path",
+                          "icon",
+                          "tag",
+                          "is_show",
+                          "status",
+                          "sort_order",
+                          "enable_data_scope",
+                          "description",
+                          "is_public",
+                          "created_at",
+                          "updated_at",
+                          "apis",
+                          "children"
+                        ],
+                        "properties": {
+                          "apis": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "parent_id",
+                                "name",
+                                "path",
+                                "method",
+                                "status",
+                                "description",
+                                "type",
+                                "sort_order",
+                                "auth_required",
+                                "permission_required",
+                                "created_at",
+                                "updated_at"
+                              ],
+                              "properties": {
+                                "auth_required": {
+                                  "type": "boolean"
+                                },
+                                "created_at": {
+                                  "type": "string"
+                                },
+                                "description": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "method": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "parent_id": {
+                                  "type": "integer"
+                                },
+                                "path": {
+                                  "type": "string"
+                                },
+                                "permission_required": {
+                                  "type": "boolean"
+                                },
+                                "sort_order": {
+                                  "type": "integer"
+                                },
+                                "status": {
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string"
+                                },
+                                "updated_at": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "children": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "parent_id",
+                                "type",
+                                "resource_type",
+                                "name",
+                                "path",
+                                "icon",
+                                "tag",
+                                "is_show",
+                                "status",
+                                "sort_order",
+                                "enable_data_scope",
+                                "description",
+                                "is_public",
+                                "created_at",
+                                "updated_at",
+                                "apis",
+                                "children"
+                              ],
+                              "properties": {
+                                "apis": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object"
+                                  }
+                                },
+                                "children": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object"
+                                  }
+                                },
+                                "created_at": {
+                                  "type": "string"
+                                },
+                                "description": {
+                                  "type": "string"
+                                },
+                                "enable_data_scope": {
+                                  "type": "boolean"
+                                },
+                                "icon": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "is_public": {
+                                  "type": "boolean"
+                                },
+                                "is_show": {
+                                  "type": "boolean"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "parent_id": {
+                                  "type": "integer"
+                                },
+                                "path": {
+                                  "type": "string"
+                                },
+                                "resource_type": {
+                                  "type": "string"
+                                },
+                                "sort_order": {
+                                  "type": "integer"
+                                },
+                                "status": {
+                                  "type": "string"
+                                },
+                                "tag": {
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string"
+                                },
+                                "updated_at": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "enable_data_scope": {
+                            "type": "boolean"
+                          },
+                          "icon": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "is_public": {
+                            "type": "boolean"
+                          },
+                          "is_show": {
+                            "type": "boolean"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "parent_id": {
+                            "type": "integer"
+                          },
+                          "path": {
+                            "type": "string"
+                          },
+                          "resource_type": {
+                            "type": "string"
+                          },
+                          "sort_order": {
+                            "type": "integer"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "tag": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pricing_plan/{id}/resource_list": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "pricing_plan"
+        ],
+        "summary": "resource list",
+        "operationId": "pricingPlanPricingPlanResourceList",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "list": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "parent_id",
+                          "type",
+                          "resource_type",
+                          "name",
+                          "path",
+                          "icon",
+                          "tag",
+                          "is_show",
+                          "status",
+                          "sort_order",
+                          "enable_data_scope",
+                          "description",
+                          "is_public",
+                          "created_at",
+                          "updated_at",
+                          "apis",
+                          "children"
+                        ],
+                        "properties": {
+                          "apis": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "parent_id",
+                                "name",
+                                "path",
+                                "method",
+                                "status",
+                                "description",
+                                "type",
+                                "sort_order",
+                                "auth_required",
+                                "permission_required",
+                                "created_at",
+                                "updated_at"
+                              ],
+                              "properties": {
+                                "auth_required": {
+                                  "type": "boolean"
+                                },
+                                "created_at": {
+                                  "type": "string"
+                                },
+                                "description": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "method": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "parent_id": {
+                                  "type": "integer"
+                                },
+                                "path": {
+                                  "type": "string"
+                                },
+                                "permission_required": {
+                                  "type": "boolean"
+                                },
+                                "sort_order": {
+                                  "type": "integer"
+                                },
+                                "status": {
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string"
+                                },
+                                "updated_at": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "children": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "parent_id",
+                                "type",
+                                "resource_type",
+                                "name",
+                                "path",
+                                "icon",
+                                "tag",
+                                "is_show",
+                                "status",
+                                "sort_order",
+                                "enable_data_scope",
+                                "description",
+                                "is_public",
+                                "created_at",
+                                "updated_at",
+                                "apis",
+                                "children"
+                              ],
+                              "properties": {
+                                "apis": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object"
+                                  }
+                                },
+                                "children": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object"
+                                  }
+                                },
+                                "created_at": {
+                                  "type": "string"
+                                },
+                                "description": {
+                                  "type": "string"
+                                },
+                                "enable_data_scope": {
+                                  "type": "boolean"
+                                },
+                                "icon": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "is_public": {
+                                  "type": "boolean"
+                                },
+                                "is_show": {
+                                  "type": "boolean"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "parent_id": {
+                                  "type": "integer"
+                                },
+                                "path": {
+                                  "type": "string"
+                                },
+                                "resource_type": {
+                                  "type": "string"
+                                },
+                                "sort_order": {
+                                  "type": "integer"
+                                },
+                                "status": {
+                                  "type": "string"
+                                },
+                                "tag": {
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string"
+                                },
+                                "updated_at": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "enable_data_scope": {
+                            "type": "boolean"
+                          },
+                          "icon": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "is_public": {
+                            "type": "boolean"
+                          },
+                          "is_show": {
+                            "type": "boolean"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "parent_id": {
+                            "type": "integer"
+                          },
+                          "path": {
+                            "type": "string"
+                          },
+                          "resource_type": {
+                            "type": "string"
+                          },
+                          "sort_order": {
+                            "type": "integer"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "tag": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pricing_plan_policy": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "pricing_plan_policy"
+        ],
+        "summary": "create",
+        "operationId": "pricingPlanPolicyPricingPlanPolicyCreate",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "pricing_plan_id",
+                "original_amount",
+                "actual_amount",
+                "type"
+              ],
+              "properties": {
+                "actual_amount": {
+                  "type": "number"
+                },
+                "original_amount": {
+                  "type": "number"
+                },
+                "pricing_plan_id": {
+                  "type": "integer"
+                },
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "actual_amount": {
+                      "type": "number"
+                    },
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "original_amount": {
+                      "type": "number"
+                    },
+                    "pricing_plan_id": {
+                      "type": "integer"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pricing_plan_policy/{id}": {
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "pricing_plan_policy"
+        ],
+        "summary": "update",
+        "operationId": "pricingPlanPolicyPricingPlanPolicyUpdate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "original_amount",
+                "actual_amount",
+                "type"
+              ],
+              "properties": {
+                "actual_amount": {
+                  "type": "number"
+                },
+                "original_amount": {
+                  "type": "number"
+                },
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "actual_amount": {
+                      "type": "number"
+                    },
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "original_amount": {
+                      "type": "number"
+                    },
+                    "pricing_plan_id": {
+                      "type": "integer"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "pricing_plan_policy"
+        ],
+        "summary": "delete",
+        "operationId": "pricingPlanPolicyPricingPlanPolicyDelete",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
           }
         ],
         "responses": {
@@ -11987,7 +14994,7 @@
       }
     }
   },
-  "x-date": "2026-05-29 11:26:34",
+  "x-date": "2026-06-10 17:50:13",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

@@ -1,0 +1,38 @@
+package pricingplanlogic
+
+import (
+	"context"
+
+	"zeebee-backend/app/admin/rpc/internal/logic"
+	"zeebee-backend/app/admin/rpc/internal/svc"
+	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/common/errorx"
+
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+type DeleteLogic struct {
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+	logx.Logger
+	baseLogic *logic.BaseLogic
+}
+
+func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogic {
+	return &DeleteLogic{
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
+	}
+}
+
+func (l *DeleteLogic) Delete(in *admin.PricingPlanDeleteRequest) (resp *admin.EmptyResponse, err error) {
+
+	err = l.baseLogic.PricingPlanLogic.Delete(l.ctx, in.Data.Id)
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+
+	return &admin.EmptyResponse{}, nil
+}

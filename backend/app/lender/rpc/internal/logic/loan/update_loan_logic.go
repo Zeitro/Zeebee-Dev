@@ -54,7 +54,10 @@ func NewUpdateLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender.LoanUpdateResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 	var oldLoan *model.Loan

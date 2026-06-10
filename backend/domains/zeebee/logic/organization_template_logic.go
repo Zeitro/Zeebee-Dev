@@ -13,7 +13,6 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 )
@@ -83,8 +82,8 @@ func (l *OrganizationTemplateLogic) UpdateVariableGroup(ctx context.Context, req
 		return nil, errorx.Errorf("Variable group number not match: expected %d, got %d", len(oldGroups), len(groups))
 	}
 	// Check variable group
-	var checkVariableFn func(oldVariable *data.TemplateVariable, newVariable *data.TemplateVariable) (err error)
-	checkVariableFn = func(oldVariable *data.TemplateVariable, newVariable *data.TemplateVariable) (err error) {
+	var checkVariableFn func(oldVariable *dto.TemplateVariable, newVariable *dto.TemplateVariable) (err error)
+	checkVariableFn = func(oldVariable *dto.TemplateVariable, newVariable *dto.TemplateVariable) (err error) {
 		if oldVariable == nil {
 			return nil
 		}
@@ -125,7 +124,7 @@ func (l *OrganizationTemplateLogic) UpdateVariableGroup(ctx context.Context, req
 				return errorx.Errorf("Variable %s Item Number Not Match", oldVariable.Label)
 			}
 			for _, oldItem := range oldVariable.Items {
-				newItem, ok := slice.FindBy(newVariable.Items, func(index int, item *data.TemplateVariable) bool {
+				newItem, ok := slice.FindBy(newVariable.Items, func(index int, item *dto.TemplateVariable) bool {
 					return oldItem.Key == item.Key &&
 						oldItem.Label == item.Label &&
 						oldItem.IsRequired == item.IsRequired &&
@@ -145,7 +144,7 @@ func (l *OrganizationTemplateLogic) UpdateVariableGroup(ctx context.Context, req
 		return newVariable.ValidateRequiredField()
 	}
 	for _, oldGroup := range oldGroups {
-		newGroup, ok := slice.FindBy(groups, func(index int, item *data.TemplateVariableGroup) bool {
+		newGroup, ok := slice.FindBy(groups, func(index int, item *dto.TemplateVariableGroup) bool {
 			return oldGroup.Name == item.Name
 		})
 		if !ok {
@@ -156,7 +155,7 @@ func (l *OrganizationTemplateLogic) UpdateVariableGroup(ctx context.Context, req
 		}
 
 		for _, oldVariable := range oldGroup.Variables {
-			newVariable, ok := slice.FindBy(newGroup.Variables, func(index int, item *data.TemplateVariable) bool {
+			newVariable, ok := slice.FindBy(newGroup.Variables, func(index int, item *dto.TemplateVariable) bool {
 				return oldVariable.Key == item.Key &&
 					oldVariable.Label == item.Label &&
 					oldVariable.IsRequired == item.IsRequired &&
@@ -396,15 +395,15 @@ func (l *OrganizationTemplateLogic) renderOrganizationSystemInfo(organizationTem
 }
 
 // mergeTemplateVariables merges template variables from different sources
-func (l *OrganizationTemplateLogic) mergeTemplateVariableGroup(oldVariableGroup, newVariableGroup []*data.TemplateVariableGroup) (result []*data.TemplateVariableGroup) {
+func (l *OrganizationTemplateLogic) mergeTemplateVariableGroup(oldVariableGroup, newVariableGroup []*dto.TemplateVariableGroup) (result []*dto.TemplateVariableGroup) {
 	if len(oldVariableGroup) == 0 {
 		return newVariableGroup
 	}
-	result = make([]*data.TemplateVariableGroup, 0, len(newVariableGroup))
+	result = make([]*dto.TemplateVariableGroup, 0, len(newVariableGroup))
 	for _, newGroup := range newVariableGroup {
 		newGroup := newGroup
 
-		oldGroup, ok := slice.FindBy(oldVariableGroup, func(index int, item *data.TemplateVariableGroup) bool {
+		oldGroup, ok := slice.FindBy(oldVariableGroup, func(index int, item *dto.TemplateVariableGroup) bool {
 			return newGroup.Name == item.Name
 		})
 		if !ok || oldGroup == nil || oldGroup.Variables == nil {
@@ -412,10 +411,10 @@ func (l *OrganizationTemplateLogic) mergeTemplateVariableGroup(oldVariableGroup,
 			continue
 		}
 
-		mergedVariables := make([]*data.TemplateVariable, 0, len(newGroup.Variables))
+		mergedVariables := make([]*dto.TemplateVariable, 0, len(newGroup.Variables))
 		for _, newVariable := range newGroup.Variables {
 			newVariable := newVariable
-			oldVar, ok := slice.FindBy(oldGroup.Variables, func(index int, item *data.TemplateVariable) bool {
+			oldVar, ok := slice.FindBy(oldGroup.Variables, func(index int, item *dto.TemplateVariable) bool {
 				return newVariable.Key == item.Key &&
 					newVariable.Type == item.Type &&
 					newVariable.Format == item.Format
@@ -429,7 +428,7 @@ func (l *OrganizationTemplateLogic) mergeTemplateVariableGroup(oldVariableGroup,
 			mergedVariables = append(mergedVariables, mergedVar)
 		}
 
-		mergedGroup := &data.TemplateVariableGroup{
+		mergedGroup := &dto.TemplateVariableGroup{
 			Name:      newGroup.Name,
 			Variables: mergedVariables,
 		}
@@ -439,12 +438,12 @@ func (l *OrganizationTemplateLogic) mergeTemplateVariableGroup(oldVariableGroup,
 	return result
 }
 
-func (l *OrganizationTemplateLogic) mergeVariable(newVar *data.TemplateVariable, oldVar *data.TemplateVariable) (result *data.TemplateVariable) {
+func (l *OrganizationTemplateLogic) mergeVariable(newVar *dto.TemplateVariable, oldVar *dto.TemplateVariable) (result *dto.TemplateVariable) {
 	if oldVar == nil || newVar == nil {
 		return newVar
 	}
 
-	result, _ = copierx.Trans[data.TemplateVariable, data.TemplateVariable](newVar)
+	result, _ = copierx.Trans[dto.TemplateVariable, dto.TemplateVariable](newVar)
 	if !newVar.IsEditable {
 		return result
 	}
@@ -457,7 +456,7 @@ func (l *OrganizationTemplateLogic) mergeVariable(newVar *data.TemplateVariable,
 
 	if result.Type == constants.TemplateVariableTypeObject {
 		if oldVar.Properties == nil {
-			oldVar.Properties = make(map[string]*data.TemplateVariable)
+			oldVar.Properties = make(map[string]*dto.TemplateVariable)
 		}
 
 		for key := range result.Properties {
@@ -467,7 +466,7 @@ func (l *OrganizationTemplateLogic) mergeVariable(newVar *data.TemplateVariable,
 
 	if result.Type == constants.TemplateVariableTypeArray {
 		for key := range result.Items {
-			subOldVar, ok := slice.FindBy(oldVar.Items, func(index int, item *data.TemplateVariable) bool {
+			subOldVar, ok := slice.FindBy(oldVar.Items, func(index int, item *dto.TemplateVariable) bool {
 				return result.Items[key].Key == item.Key &&
 					result.Items[key].Type == item.Type &&
 					result.Items[key].Format == item.Format

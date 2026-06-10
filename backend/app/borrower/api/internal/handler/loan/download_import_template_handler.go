@@ -15,13 +15,16 @@ import (
 )
 
 // DownloadImportTemplateHandler download import template
-func DownloadImportTemplateHandler(_ *svc.ServiceContext) http.HandlerFunc {
+func DownloadImportTemplateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
 			if err != nil {
 				logx.WithContext(r.Context()).
-					WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
+					WithFields(
+						logx.Field("stacks", errorx.GetErrorStack(err)),
+						logx.Field("service_name", svcCtx.Config.Name),
+					).
 					Error(err)
 			}
 		}()

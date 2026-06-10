@@ -33,7 +33,10 @@ func NewBorrowerLoanLenderCompaniesLogic(ctx context.Context, svcCtx *svc.Servic
 func (l *BorrowerLoanLenderCompaniesLogic) BorrowerLoanLenderCompanies(in *borrower.LoanLenderCompaniesRequest) (resp *borrower.LoanLenderCompaniesResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 

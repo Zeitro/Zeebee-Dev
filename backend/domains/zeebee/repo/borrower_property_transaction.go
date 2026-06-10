@@ -11,7 +11,6 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 )
@@ -33,7 +32,7 @@ type BorrowerPropertyTransactionPageRow struct {
 	Note               string                                      `gorm:"column:note"`
 	CreatedAt          time.Time                                   `gorm:"column:created_at"`
 	UpdatedAt          time.Time                                   `gorm:"column:updated_at"`
-	Address            data.Address                                `gorm:"column:address;;serializer:json"`
+	Address            dto.AddressDto                              `gorm:"column:address;;serializer:json"`
 }
 
 type BorrowerPropertyTransactionRepo struct {

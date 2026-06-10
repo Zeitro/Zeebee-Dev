@@ -28,7 +28,10 @@ func NewSendPreApprovalNotificationLogic(ctx context.Context, svcCtx *svc.Servic
 func (l *SendPreApprovalNotificationLogic) SendPreApprovalNotification(in *borrower.LoanSendPreApprovalNotificationRequest) (resp *borrower.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 	go func() {

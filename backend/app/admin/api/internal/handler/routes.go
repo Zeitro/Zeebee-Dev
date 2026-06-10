@@ -11,7 +11,10 @@ import (
 	common "zeebee-backend/app/admin/api/internal/handler/common"
 	loan "zeebee-backend/app/admin/api/internal/handler/loan"
 	organization "zeebee-backend/app/admin/api/internal/handler/organization"
+	organization_subscription "zeebee-backend/app/admin/api/internal/handler/organization_subscription"
 	organization_user "zeebee-backend/app/admin/api/internal/handler/organization_user"
+	pricing_plan "zeebee-backend/app/admin/api/internal/handler/pricing_plan"
+	pricing_plan_policy "zeebee-backend/app/admin/api/internal/handler/pricing_plan_policy"
 	resource "zeebee-backend/app/admin/api/internal/handler/resource"
 	role "zeebee-backend/app/admin/api/internal/handler/role"
 	storage "zeebee-backend/app/admin/api/internal/handler/storage"
@@ -251,6 +254,39 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				{
 					// create
 					Method:  http.MethodPost,
+					Path:    "/organization_subscription",
+					Handler: organization_subscription.OrganizationSubscriptionCreateHandler(serverCtx),
+				},
+				{
+					// renew
+					Method:  http.MethodPut,
+					Path:    "/organization_subscription/:id/renew",
+					Handler: organization_subscription.OrganizationSubscriptionRenewHandler(serverCtx),
+				},
+				{
+					// switch status
+					Method:  http.MethodPut,
+					Path:    "/organization_subscription/:id/status",
+					Handler: organization_subscription.OrganizationSubscriptionSwitchStatusHandler(serverCtx),
+				},
+				{
+					// page
+					Method:  http.MethodPost,
+					Path:    "/organization_subscription/page",
+					Handler: organization_subscription.OrganizationSubscriptionPageHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// create
+					Method:  http.MethodPost,
 					Path:    "/organization_user",
 					Handler: organization_user.OrganizationUserCreateHandler(serverCtx),
 				},
@@ -283,6 +319,84 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/organization_user/page",
 					Handler: organization_user.OrganizationUserPageHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// create
+					Method:  http.MethodPost,
+					Path:    "/pricing_plan",
+					Handler: pricing_plan.PricingPlanCreateHandler(serverCtx),
+				},
+				{
+					// update
+					Method:  http.MethodPut,
+					Path:    "/pricing_plan/:id",
+					Handler: pricing_plan.PricingPlanUpdateHandler(serverCtx),
+				},
+				{
+					// delete
+					Method:  http.MethodDelete,
+					Path:    "/pricing_plan/:id",
+					Handler: pricing_plan.PricingPlanDeleteHandler(serverCtx),
+				},
+				{
+					// detail
+					Method:  http.MethodGet,
+					Path:    "/pricing_plan/:id",
+					Handler: pricing_plan.PricingPlanDetailHandler(serverCtx),
+				},
+				{
+					// bind resources
+					Method:  http.MethodPost,
+					Path:    "/pricing_plan/:id/bind_resources",
+					Handler: pricing_plan.PricingPlanBindResourcesHandler(serverCtx),
+				},
+				{
+					// resource list
+					Method:  http.MethodGet,
+					Path:    "/pricing_plan/:id/resource_list",
+					Handler: pricing_plan.PricingPlanResourceListHandler(serverCtx),
+				},
+				{
+					// page
+					Method:  http.MethodPost,
+					Path:    "/pricing_plan/page",
+					Handler: pricing_plan.PricingPlanPageHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// create
+					Method:  http.MethodPost,
+					Path:    "/pricing_plan_policy",
+					Handler: pricing_plan_policy.PricingPlanPolicyCreateHandler(serverCtx),
+				},
+				{
+					// update
+					Method:  http.MethodPut,
+					Path:    "/pricing_plan_policy/:id",
+					Handler: pricing_plan_policy.PricingPlanPolicyUpdateHandler(serverCtx),
+				},
+				{
+					// delete
+					Method:  http.MethodDelete,
+					Path:    "/pricing_plan_policy/:id",
+					Handler: pricing_plan_policy.PricingPlanPolicyDeleteHandler(serverCtx),
 				},
 			}...,
 		),

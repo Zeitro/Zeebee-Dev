@@ -88,6 +88,7 @@ if err != nil {
 8. **API/Proto 变更**：`.api` 或 `.proto` 文件修改后，必须执行 `make create-service <service-name>` 重新生成代码
 9. **切片转换**：切片类型的数据转换同样使用 `copierx.Trans`，例如 `copierx.Trans[[]dto.Item, []model.Item](&dtoSlice)`
 10. **开发文档语言**：LLM 生成的开发中间文档（计划、分析、设计等）统一使用中文
+11. **函数/方法**：函数/方法的入参限制在4个参数以内，函数/方法返回值限制在3个参数以内
 
 ## 相关文档
 

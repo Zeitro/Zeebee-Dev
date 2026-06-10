@@ -36,7 +36,10 @@ func NewUpdateCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upd
 func (l *UpdateCommentLogic) UpdateComment(in *lender.LoanDocumentUpdateCommentRequest) (resp *lender.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 	var loan *model.Loan

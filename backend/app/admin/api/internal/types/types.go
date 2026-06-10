@@ -537,6 +537,7 @@ type LoanPropertyEntity struct {
 	PropertyType                 string            `json:"property_type"`
 	Unit                         int32             `json:"unit"`
 	LivingAreaSqft               float32           `json:"living_area_sqft"`
+	LotAreaSqft                  float32           `json:"lot_area_sqft"`
 	Bedrooms                     int32             `json:"bedrooms" `
 	Bathrooms                    int32             `json:"bathrooms"`
 	FuturePropertyType           string            `json:"future_property_type"`
@@ -712,6 +713,73 @@ type OrganizationSelectOptionRequest struct {
 	Type string `form:"type" validate:"required,oneof=Lender Borrower"`
 }
 
+type OrganizationSubscriptionCreateRequest struct {
+	PricingPlanId       int64 `json:"pricing_plan_id" validate:"required,gt=0"`
+	PricingPlanPolicyId int64 `json:"pricing_plan_policy_id" validate:"required,gt=0"`
+}
+
+type OrganizationSubscriptionDetailResponse struct {
+	OrganizationSubscriptionEntity
+}
+
+type OrganizationSubscriptionEntity struct {
+	Id                  int64   `json:"id"`
+	Code                string  `json:"code"`
+	OrganizationId      int64   `json:"organization_id"`
+	OrganizationName    string  `json:"organization_name"`
+	PricingPlanId       int64   `json:"pricing_plan_id"`
+	PricingPlanName     string  `json:"pricing_plan_name"`
+	PricingPlanPolicyId int64   `json:"pricing_plan_policy_id"`
+	Status              string  `json:"status"`
+	ExpireDate          string  `json:"expire_date"`
+	OriginalAmount      float64 `json:"original_amount"`
+	ActualAmount        float64 `json:"actual_amount"`
+	IsAutoRenew         bool    `json:"is_auto_renew"`
+	CreatedAt           string  `json:"created_at"`
+	UpdatedAt           string  `json:"updated_at"`
+}
+
+type OrganizationSubscriptionFilter struct {
+	OrganizationId int64  `json:"organization_id,optional"`
+	PricingPlanId  int64  `json:"pricing_plan_id,optional"`
+	Status         string `json:"status,optional" validate:"omitempty,oneof=Trialing Active Expiring Expired Suspended"`
+}
+
+type OrganizationSubscriptionPageEntity struct {
+	Id               int64   `json:"id"`
+	Code             string  `json:"code"`
+	OrganizationName string  `json:"organization_name"`
+	PricingPlanName  string  `json:"pricing_plan_name"`
+	Status           string  `json:"status"`
+	ExpireDate       string  `json:"expire_date"`
+	OriginalAmount   float64 `json:"original_amount"`
+	ActualAmount     float64 `json:"actual_amount"`
+	IsAutoRenew      bool    `json:"is_auto_renew"`
+	CreatedAt        string  `json:"created_at"`
+	UpdatedAt        string  `json:"updated_at"`
+}
+
+type OrganizationSubscriptionPageRequest struct {
+	BasePageRequest
+	Filter *OrganizationSubscriptionFilter `json:"filter,optional"`
+	Sort   *BasePageSort                   `json:"sort,optional"`
+}
+
+type OrganizationSubscriptionPageResponse struct {
+	BasePageResponse
+	List []*OrganizationSubscriptionPageEntity `json:"list"`
+}
+
+type OrganizationSubscriptionRenewRequest struct {
+	Id         int64  `path:"id" validate:"required,gt=0"`
+	ExpireDate string `json:"expire_date" validate:"required"`
+}
+
+type OrganizationSubscriptionSwitchStatusRequest struct {
+	Id     int64  `path:"id" validate:"required,gt=0"`
+	Status string `json:"status" validate:"required,oneof=Trialing Active Expiring Expired Suspended"`
+}
+
 type OrganizationSwitchStatusRequest struct {
 	Id     int64  `path:"id" validate:"required,min=1"`
 	Status string `json:"status" validate:"required,oneof=Active Disabled"`
@@ -801,6 +869,131 @@ type OrganizationUserUpdateRequest struct {
 
 type PathIdRequest struct {
 	Id int64 `path:"id" validate:"required,gt=0"`
+}
+
+type PricingPlanBindResourcesRequest struct {
+	Id          int64   `path:"id" validate:"required,gt=0"`
+	ResourceIds []int64 `json:"resource_ids" validate:"required,dive,gt=0"`
+}
+
+type PricingPlanCreateRequest struct {
+	Name        string `json:"name" validate:"required,min=1,max=100"`
+	Subtitle    string `json:"subtitle,optional" validate:"max=255"`
+	Description string `json:"description,optional" validate:"max=255"`
+	Status      string `json:"status" validate:"required,oneof=Active Disabled"`
+	TrialDays   int16  `json:"trial_days,optional"`
+	SortOrder   int16  `json:"sort_order,optional"`
+	IsPublic    bool   `json:"is_public"`
+	IsDefault   bool   `json:"is_default"`
+	Type        string `json:"type" validate:"required,oneof=Borrower Lender Admin"`
+	PlanType    string `json:"plan_type" validate:"required,oneof=Standard Custom"`
+}
+
+type PricingPlanDeleteRequest struct {
+	Id int64 `path:"id" validate:"required,gt=0"`
+}
+
+type PricingPlanDetailResponse struct {
+	PricingPlanEntity
+}
+
+type PricingPlanEntity struct {
+	Id          int64                      `json:"id"`
+	Name        string                     `json:"name"`
+	Subtitle    string                     `json:"subtitle"`
+	Description string                     `json:"description"`
+	Status      string                     `json:"status"`
+	TrialDays   int16                      `json:"trial_days"`
+	SortOrder   int16                      `json:"sort_order"`
+	IsPublic    bool                       `json:"is_public"`
+	IsDefault   bool                       `json:"is_default"`
+	Type        string                     `json:"type"`
+	PlanType    string                     `json:"plan_type"`
+	CreatedAt   string                     `json:"created_at"`
+	UpdatedAt   string                     `json:"updated_at"`
+	Policies    []*PricingPlanPolicyEntity `json:"policies"`
+	Resources   []*ResourceTreeEntity      `json:"resources"`
+}
+
+type PricingPlanFilter struct {
+	Keyword  string `json:"keyword,optional"`
+	Status   string `json:"status,optional" validate:"omitempty,oneof=Active Disabled"`
+	Type     string `json:"type,optional" validate:"omitempty,oneof=Borrower Lender"`
+	PlanType string `json:"plan_type,optional" validate:"omitempty,oneof=Standard Custom"`
+}
+
+type PricingPlanPageEntity struct {
+	Id        int64  `json:"id"`
+	Name      string `json:"name"`
+	Subtitle  string `json:"subtitle"`
+	Status    string `json:"status"`
+	TrialDays int16  `json:"trial_days"`
+	SortOrder int16  `json:"sort_order"`
+	IsPublic  bool   `json:"is_public"`
+	IsDefault bool   `json:"is_default"`
+	Type      string `json:"type"`
+	PlanType  string `json:"plan_type"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+}
+
+type PricingPlanPageRequest struct {
+	BasePageRequest
+	Filter *PricingPlanFilter `json:"filter,optional"`
+	Sort   *BasePageSort      `json:"sort,optional"`
+}
+
+type PricingPlanPageResponse struct {
+	BasePageResponse
+	List []*PricingPlanPageEntity `json:"list"`
+}
+
+type PricingPlanPolicyCreateRequest struct {
+	PricingPlanId  int64   `json:"pricing_plan_id" validate:"required,gt=0"`
+	OriginalAmount float64 `json:"original_amount" validate:"required,gte=0"`
+	ActualAmount   float64 `json:"actual_amount" validate:"required,gte=0"`
+	Type           string  `json:"type" validate:"required,oneof=Monthly Quarterly Yearly"`
+}
+
+type PricingPlanPolicyDeleteRequest struct {
+	Id int64 `path:"id" validate:"required,gt=0"`
+}
+
+type PricingPlanPolicyEntity struct {
+	Id             int64   `json:"id"`
+	PricingPlanId  int64   `json:"pricing_plan_id"`
+	OriginalAmount float64 `json:"original_amount"`
+	ActualAmount   float64 `json:"actual_amount"`
+	Type           string  `json:"type"`
+	CreatedAt      string  `json:"created_at"`
+	UpdatedAt      string  `json:"updated_at"`
+}
+
+type PricingPlanPolicyEntityResponse struct {
+	PricingPlanPolicyEntity
+}
+
+type PricingPlanPolicyUpdateRequest struct {
+	Id             int64   `path:"id" validate:"required,gt=0"`
+	OriginalAmount float64 `json:"original_amount" validate:"gte=0"`
+	ActualAmount   float64 `json:"actual_amount" validate:"gte=0"`
+	Type           string  `json:"type" validate:"oneof=Monthly Quarterly Yearly"`
+}
+
+type PricingPlanResourceListResponse struct {
+	List []*ResourceTreeEntity `json:"list"`
+}
+
+type PricingPlanUpdateRequest struct {
+	Id          int64  `path:"id" validate:"required,gt=0"`
+	Subtitle    string `json:"subtitle,optional" validate:"max=255"`
+	Description string `json:"description,optional" validate:"max=255"`
+	Status      string `json:"status" validate:"required,oneof=Active Disabled"`
+	TrialDays   int16  `json:"trial_days,optional"`
+	SortOrder   int16  `json:"sort_order,optional"`
+	IsPublic    bool   `json:"is_public"`
+	IsDefault   bool   `json:"is_default"`
+	PlanType    string `json:"plan_type" validate:"required,oneof=Standard Custom"`
 }
 
 type RangeFloat64 struct {

@@ -1,0 +1,50 @@
+package pricingplanlogic
+
+import (
+	"context"
+
+	"zeebee-backend/app/admin/rpc/internal/logic"
+	"zeebee-backend/app/admin/rpc/internal/svc"
+	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/common/copierx"
+	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/data/dto"
+
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+type UpdateLogic struct {
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+	logx.Logger
+	baseLogic *logic.BaseLogic
+}
+
+func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogic {
+	return &UpdateLogic{
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
+	}
+}
+
+func (l *UpdateLogic) Update(in *admin.PricingPlanUpdateRequest) (resp *admin.PricingPlanUpdateResponse, err error) {
+
+	dtoData, err := copierx.Trans[admin.PricingPlanUpdateRequestData, dto.PricingPlanUpdateDto](in.Data)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := l.baseLogic.PricingPlanLogic.Update(l.ctx, in.Data.Id, *dtoData)
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+
+	protoData, err := copierx.Trans[dto.PricingPlanDetailEntityDto, admin.PricingPlanEntity](result, copierx.TimeToRFC3339Str())
+	if err != nil {
+		return nil, err
+	}
+
+	return &admin.PricingPlanUpdateResponse{Data: protoData}, nil
+}

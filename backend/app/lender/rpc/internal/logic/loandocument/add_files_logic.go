@@ -39,7 +39,10 @@ func NewAddFilesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddFiles
 func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *lender.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 
