@@ -2,6 +2,7 @@ package loader
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -52,7 +53,7 @@ func (l *DefaultTemplateLoader) LoadOrganizationTemplate(ctx context.Context, pu
 		return "", nil, ErrTemplateNotActive
 	}
 	if !tpl.HasConfigured {
-		return "", nil, fmt.Errorf("Template is not configured")
+		return "", nil, errors.New("Template is not configured")
 	}
 
 	content = tpl.Content

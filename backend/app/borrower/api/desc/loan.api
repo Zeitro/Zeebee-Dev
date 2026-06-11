@@ -14,6 +14,7 @@ import "loan_demographic.api"
 import "file.api"
 import "loan_document.api"
 import "loan_property.api"
+import "borrower_property_transaction.api"
 
 type LoanEntity {
     Id int64 `json:"id,optional"`
@@ -67,6 +68,8 @@ type LoanEntity {
     HoldbackRemainingAmount float64 `json:"holdback_remaining_amount"`
     DueStatus string `json:"due_status"`
     DueDays int32 `json:"due_days"`
+
+    BorrowerPropertyTransaction *BorrowerPropertyTransactionEntity `json:"borrower_property_transaction"`
 }
 
 // create third party loan
@@ -184,6 +187,7 @@ type (
         LoanType []string `json:"loan_type,optional"`
         Lender []string `json:"lender,optional"`
         Source []string `json:"source,optional"`
+        BorrowerPropertyTransactionId int64 `json:"borrower_property_transaction_id,optional"`
 
         DateType string `json:"date_type,optional"`
         DueInDays int32 `json:"due_in_days,default=60" validate:"omitempty,gte=0"`
@@ -235,6 +239,7 @@ type (
         LoanBorrower *LoanBorrowerLoanEditEntity `json:"loan_borrower,optional"`
         LoanDemographic *LoanDemographicEntity `json:"loan_demographic,optional" validate:"required"`
         ApplyFormFile string `json:"apply_form_file,optional" validate:"required"`
+        BorrowerPropertyTransactionId int64 `json:"borrower_property_transaction_id,optional"`
     }
 
     LoanApplyResponse {
@@ -273,7 +278,7 @@ type ImportPendingLoanEntity {
     MaturityDate string `json:"maturity_date,optional"`
     ClosingFund float64 `json:"closing_fund,optional"`
     LenderCompany string `json:"lender_company,optional"`
-    LoanType string `json:"loan_type, optional"`
+    LoanType string `json:"loan_type,optional"`
     TotalAmount float64 `json:"total_amount,optional"`
     // => 1st Loan Amount
     HoldbackAmount float64 `json:"holdback_amount,optional"`
@@ -330,7 +335,7 @@ type (
     }
 
     LoanPreApprovalRequest {
-        RequestId string `json:"request_id, optional"`
+        RequestId string `json:"request_id,optional"`
         Borrower *LoanPreApprovalRequestBorrower `json:"borrower" validate:"required"`
         Property *LoanPreApprovalRequestProperty `json:"property" validate:"required"`
         Loan *LoanPreApprovalRequestLoan `json:"loan" validate:"required"`

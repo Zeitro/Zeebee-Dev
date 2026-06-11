@@ -1,6 +1,5 @@
-import { localStorageUtil } from '../lib/local';
+import { getAccessTokenFromStorage } from '../lib/permissionStorage.js';
 import { message } from 'antd';
-import Cookie from 'js-cookie';
 
 // 公共提示
 function showMessage(msg, type = 'error') {
@@ -115,7 +114,7 @@ export function createRequest() {
 		}
 
 		if (data?.code && data?.code === 401) {
-			window.location.href = '/login';
+			window.location.replace('/login');
 			showMessage('Please log in again!', 'warning');
 			return false;
 		}
@@ -152,10 +151,7 @@ export function createRequest() {
 			isHideTips,
 			...restConfig
 		} = options;
-		const permissionStore = JSON.parse(
-			Cookie.get(`permissionStore_${process.env.NEXT_PUBLIC_SYSTEM_TYPE}`) || '{}',
-		);
-		const token = permissionStore?.state?.access?.access_token;
+		const token = getAccessTokenFromStorage();
 		const headersConfig = {
 			'Content-Type': 'application/json',
 			Authorization: '',
@@ -223,7 +219,7 @@ export function createRequest() {
 			xhr.open(method, isExternalLink ? url : finalURL, true);
 
 			// ✅ 3. 设置认证 Token Header
-			const token = localStorageUtil.get('userStore')?.state?.access?.access_token;
+			const token = getAccessTokenFromStorage();
 			if (token && !isExternalLink) {
 				xhr.setRequestHeader('Authorization', `Bearer ${token}`);
 			}

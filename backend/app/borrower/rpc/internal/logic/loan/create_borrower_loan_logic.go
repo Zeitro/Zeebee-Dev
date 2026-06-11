@@ -52,6 +52,15 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 		return nil, err
 	}
 
+	// set transaction binding if provided
+	if in.Data.BorrowerPropertyTransactionId > 0 {
+		_, err = l.svcCtx.BorrowerPropertyTransactionRepo.GetOne(l.ctx, in.Data.BorrowerPropertyTransactionId)
+		if err != nil {
+			return nil, errorx.Wrap(err, "Transaction not found")
+		}
+		loan.BorrowerPropertyTransactionId = in.Data.BorrowerPropertyTransactionId
+	}
+
 	// create loan
 	err = l.svcCtx.LoanRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		var innerErr error

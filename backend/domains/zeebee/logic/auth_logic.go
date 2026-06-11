@@ -25,7 +25,6 @@ func NewAuthLogic(baseLogic *BaseLogic, jwtConfig dto.JwtConfig, enforcer *rbac.
 }
 
 func (l *AuthLogic) AuthCheck(ctx context.Context, input dto.AuthCheckRequestDto) (result *dto.AuthCheckResponseDto, err error) {
-
 	result, err = l.auth.AuthCheck(ctx, input)
 	if err != nil {
 		return

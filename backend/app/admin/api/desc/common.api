@@ -23,12 +23,12 @@ type (
 
 type (
     RangeInt {
-        Min int `json:"min, optional"`
-        Max int `json:"max, optional"`
+        Min int `json:"min,optional"`
+        Max int `json:"max,optional"`
     }
     RangeFloat64 {
-        Min float64 `json:"min, optional"`
-        Max float64 `json:"max, optional"`
+        Min float64 `json:"min,optional"`
+        Max float64 `json:"max,optional"`
     }
 )
 
@@ -36,7 +36,7 @@ type (
 type (
     BasePageRequest {
         Limit int `json:"limit,optional"`
-        Page int `json:"page, optional"`
+        Page int `json:"page,optional"`
     }
     BasePageFilter {
         Keyword string `json:"keyword,optional"`
