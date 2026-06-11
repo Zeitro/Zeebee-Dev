@@ -35,6 +35,14 @@ func (repo *PricingPlanRepo) ExistsByNameAndType(ctx context.Context, name strin
 	})
 }
 
+func (repo *PricingPlanRepo) FindDefaultByType(ctx context.Context, planType constants.UserType) (result *model.PricingPlan, err error) {
+	err = repo.Client(ctx).Where("type = ? AND is_default = ? AND status = ?", planType, true, constants.CommonStatusActive).First(&result).Error
+	if err != nil {
+		return nil, nil
+	}
+	return result, nil
+}
+
 func (repo *PricingPlanRepo) Page(ctx context.Context, pageReq dto.PricingPlanPageRequestDto) (page gormx.PageResponse[model.PricingPlan], err error) {
 	table := model.PricingPlan{}.TableName()
 	filter := pageReq.Filter

@@ -117,6 +117,9 @@ func (l *CreateLogic) Create(in *lender.OrganizationCreateRequest) (resp *lender
 		return nil, err
 	}
 
+
+	// Subscribe default pricing plan (best-effort, ignore errors)
+	_ = l.baseLogic.OrganizationSubscriptionLogic.SubscribeDefaultPlan(l.ctx, organization.Id, constants.UserTypeLender)
 	// Convert created organization to proto entity for response
 	resultOrganization, err := copierx.Trans[model.Organization, lender.OrganizationEntity](
 		organization,

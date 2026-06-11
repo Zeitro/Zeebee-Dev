@@ -3,6 +3,8 @@ package logic
 import (
 	"context"
 
+	"gorm.io/gorm"
+
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
@@ -26,12 +28,17 @@ func NewPricingPlanLogic(baseLogic *BaseLogic, authTopicMap map[constants.UserTy
 	}
 }
 
-func (l *PricingPlanLogic) Create(ctx context.Context, input dto.PricingPlanCreateDto) (*dto.PricingPlanEntityDto, error) {
-	exists, err := l.repos.PricingPlanRepo.ExistsByNameAndType(ctx, input.Name, input.Type)
+func (l *PricingPlanLogic) Create(ctx context.Context, input dto.PricingPlanCreateDto) (result *dto.PricingPlanEntityDto, err error) {
+	var isExisted bool
+	isExisted, err = l.repos.PricingPlanRepo.IsExistedByColumns(ctx, map[string]interface{}{
+		"name": input.Name,
+		"type": input.Type,
+	})
 	if err != nil {
-		return nil, err
+		return
 	}
-	if exists {
+
+	if isExisted {
 		return nil, errorx.New("pricing plan name already exists under this type")
 	}
 
@@ -40,29 +47,62 @@ func (l *PricingPlanLogic) Create(ctx context.Context, input dto.PricingPlanCrea
 		return nil, err
 	}
 
-	result, err := l.repos.PricingPlanRepo.Create(ctx, planModel)
+	err = l.repos.PricingPlanRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		if planModel.IsDefault {
+			// set all other plans to non-default
+			columns := map[string]interface{}{"is_default": false}
+			filterColumns := map[string]interface{}{"is_default": true}
+			innerErr = l.repos.PricingPlanRepo.UpdateColumnsWithTx(ctx, tx, columns, filterColumns, nil)
+			if innerErr != nil {
+				return innerErr
+			}
+		}
+		planModel, innerErr = l.repos.PricingPlanRepo.CreateWithTx(ctx, tx, planModel, false)
+
+		return innerErr
+	})
+	// plan, err := l.repos.PricingPlanRepo.Create(ctx, planModel)
 	if err != nil {
 		return nil, err
 	}
 
-	l.publishResourceReloadEvent(ctx, result.Type)
-	return l.transToDetailDto(ctx, result)
+	l.publishResourceReloadEvent(ctx, planModel.Type)
+	return l.transToDetailDto(ctx, planModel)
 }
 
-func (l *PricingPlanLogic) Update(ctx context.Context, id int64, input dto.PricingPlanUpdateDto) (*dto.PricingPlanEntityDto, error) {
-	plan, err := l.repos.PricingPlanRepo.GetOne(ctx, id)
-	if err != nil {
-		return nil, errorx.Wrap(err, "pricing plan not found")
-	}
+func (l *PricingPlanLogic) Update(ctx context.Context, input dto.PricingPlanUpdateDto) (result *dto.PricingPlanEntityDto, err error) {
 
-	err = copierx.Assign[dto.PricingPlanUpdateDto, model.PricingPlan](&input, plan)
-	if err != nil {
-		return nil, err
-	}
+	var plan *model.PricingPlan
+	err = l.repos.PricingPlanRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		plan, innerErr = l.repos.PricingPlanRepo.FindOneByIdWithTx(ctx, tx, input.Id)
+		if innerErr != nil {
+			return errorx.Wrap(innerErr, "fail to find pricing plan")
+		}
+		// set all other plans to non-default
+		if !plan.IsDefault && input.IsDefault {
+			columns := map[string]interface{}{"is_default": false}
+			filterColumns := map[string]interface{}{"is_default": true}
+			innerErr = l.repos.PricingPlanRepo.UpdateColumnsWithTx(ctx, tx, columns, filterColumns, nil)
+			if innerErr != nil {
+				return innerErr
+			}
 
-	plan, err = l.repos.PricingPlanRepo.UpdateOneById(ctx, id, plan)
+		}
+
+		innerErr = copierx.Assign[dto.PricingPlanUpdateDto, model.PricingPlan](&input, plan)
+		if innerErr != nil {
+			return innerErr
+		}
+		plan, innerErr = l.repos.PricingPlanRepo.UpdateOneByIdWithTx(ctx, tx, input.Id, plan)
+
+		return innerErr
+	})
+
 	if err != nil {
-		return nil, err
+		err = errorx.Wrap(err, "fail to update pricing plan")
+		return
 	}
 
 	l.publishResourceReloadEvent(ctx, plan.Type)
@@ -186,19 +226,19 @@ func (l *PricingPlanLogic) transToDetailDto(ctx context.Context, plan *model.Pri
 	}
 
 	// load policies if not preloaded
-	if plan.Policies == nil {
-		policies, innerErr := l.repos.PricingPlanPolicyRepo.ListByPlanId(ctx, plan.Id)
-		if innerErr != nil {
-			return nil, innerErr
-		}
-		plan.Policies = policies
-	}
-
-	policyDtos, err := copierx.Trans[[]*model.PricingPlanPolicy, []dto.PricingPlanPolicyEntityDto](&plan.Policies)
-	if err != nil {
-		return nil, err
-	}
-	result.Policies = *policyDtos
+	// if plan.Policies == nil {
+	// 	policies, innerErr := l.repos.PricingPlanPolicyRepo.ListByPlanId(ctx, plan.Id)
+	// 	if innerErr != nil {
+	// 		return nil, innerErr
+	// 	}
+	// 	plan.Policies = policies
+	// }
+	//
+	// policyDtos, err := copierx.Trans[[]*model.PricingPlanPolicy, []dto.PricingPlanPolicyEntityDto](&plan.Policies)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// result.Policies = *policyDtos
 
 	return result, nil
 }

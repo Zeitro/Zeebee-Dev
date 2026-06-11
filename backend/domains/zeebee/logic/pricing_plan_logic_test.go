@@ -329,7 +329,7 @@ func TestPricingPlanUpdate_NameNotChangeable(t *testing.T) {
 		Description: "Updated Description",
 	}
 
-	updated, err := logic.Update(ctx, created.Id, updateInput)
+	updated, err := logic.Update(ctx, updateInput)
 	require.NoError(t, err)
 	assert.Equal(t, "Original Name", updated.Name)
 	assert.Equal(t, "Updated Subtitle", updated.Subtitle)

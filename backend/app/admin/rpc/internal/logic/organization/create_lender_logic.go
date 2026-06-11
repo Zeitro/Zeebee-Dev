@@ -82,6 +82,10 @@ func (l *CreateLenderLogic) CreateLender(in *admin.OrganizationCreateLenderReque
 		return nil, err
 	}
 
+
+	// Subscribe default pricing plan (best-effort, ignore errors)
+	_ = l.baseLogic.OrganizationSubscriptionLogic.SubscribeDefaultPlan(l.ctx, organizationUser.OrganizationId, constants.UserTypeLender)
+
 	// Load organization with relations for response
 	organization, err := l.baseLogic.OrganizationLogic.DetailWithType(l.ctx, organizationUser.OrganizationId, constants.UserTypeLender)
 	if err != nil {

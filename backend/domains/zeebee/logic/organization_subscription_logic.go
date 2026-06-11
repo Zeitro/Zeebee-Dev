@@ -212,6 +212,39 @@ func (l *OrganizationSubscriptionLogic) transToDetailDto(ctx context.Context, su
 	return result, nil
 }
 
+// SubscribeDefaultPlan finds the default plan for the given user type and creates a subscription.
+// If no default plan exists or the plan is inactive, returns nil with no error.
+func (l *OrganizationSubscriptionLogic) SubscribeDefaultPlan(ctx context.Context, organizationId int64, userType constants.UserType) error {
+	plan, err := l.repos.PricingPlanRepo.FindDefaultByType(ctx, userType)
+	if err != nil || plan == nil {
+		return nil
+	}
+
+	// Find a zero-amount policy for the plan
+	policies, err := l.repos.PricingPlanPolicyRepo.ListByPlanId(ctx, plan.Id)
+	if err != nil || len(policies) == 0 {
+		return nil
+	}
+
+	var policy *model.PricingPlanPolicy
+	for _, p := range policies {
+		if p.ActualAmount == 0 {
+			policy = p
+			break
+		}
+	}
+	if policy == nil {
+		policy = policies[0]
+	}
+
+	_, err = l.Create(ctx, dto.OrganizationSubscriptionCreateDto{
+		OrganizationId:      organizationId,
+		PricingPlanId:       plan.Id,
+		PricingPlanPolicyId: policy.Id,
+	})
+	return err
+}
+
 func (l *OrganizationSubscriptionLogic) publishRoleReloadEvent(ctx context.Context, orgId int64, userType constants.UserType) {
 	threading.GoSafe(func() {
 		subCtx := context.WithoutCancel(ctx)

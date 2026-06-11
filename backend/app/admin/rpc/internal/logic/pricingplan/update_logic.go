@@ -36,7 +36,8 @@ func (l *UpdateLogic) Update(in *admin.PricingPlanUpdateRequest) (resp *admin.Pr
 		return nil, err
 	}
 
-	result, err := l.baseLogic.PricingPlanLogic.Update(l.ctx, in.Data.Id, *dtoData)
+	dtoData.Id = in.Data.Id
+	result, err := l.baseLogic.PricingPlanLogic.Update(l.ctx, *dtoData)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
