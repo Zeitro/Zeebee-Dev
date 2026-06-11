@@ -107,7 +107,7 @@ func (c *S3Client) UploadFile(ctx context.Context, presignedReq *v4.PresignedHTT
 	req.Header.Set("Content-Length", strconv.Itoa(buf.Len()))
 	defer resp.Body.Close()
 
-	// failed to upload
+	// fail to upload
 	if resp.StatusCode != http.StatusOK {
 		// get error response
 		content, readErr := io.ReadAll(resp.Body)
