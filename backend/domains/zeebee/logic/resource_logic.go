@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"time"
 
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/zeromicro/go-zero/core/threading"
@@ -550,7 +551,7 @@ func (l *ResourceLogic) handleSyncResource(ctx context.Context, tx *gorm.DB, use
 		}
 		created, innerErr := resourceRepo.CreateWithTx(ctx, tx, resourceModel, true)
 		if innerErr != nil {
-			return errorx.Wrap(innerErr, "failed to create resource")
+			return errorx.Wrap(innerErr, "fail to create resource")
 		}
 		resourceId = created.Id
 	} else {
@@ -575,8 +576,22 @@ func (l *ResourceLogic) filterByPricingPlan(ctx context.Context, organizationId 
 		return []*model.Resource{}, nil
 	}
 
+	now := time.Now()
 	planResourceIds := make(map[int64]bool)
 	for _, sub := range activeSubs {
+		if sub.Status != constants.OrganizationSubscriptionStatusActive &&
+			sub.Status != constants.OrganizationSubscriptionStatusTrialing {
+			continue
+		}
+		if sub.ExpireDate != nil && sub.ExpireDate.Valid && !sub.ExpireDate.Time.After(now) {
+			continue
+		}
+
+		plan, innerErr := l.repos.PricingPlanRepo.GetOne(ctx, sub.PricingPlanId)
+		if innerErr != nil || plan == nil || plan.Status != constants.CommonStatusActive {
+			continue
+		}
+
 		ids, innerErr := l.repos.PricingPlanAndResourceRepo.FindResourceIdsByPlanId(ctx, sub.PricingPlanId)
 		if innerErr != nil {
 			return nil, innerErr
@@ -584,6 +599,10 @@ func (l *ResourceLogic) filterByPricingPlan(ctx context.Context, organizationId 
 		for _, id := range ids {
 			planResourceIds[id] = true
 		}
+	}
+
+	if len(planResourceIds) == 0 {
+		return []*model.Resource{}, nil
 	}
 
 	return slice.Filter(resources, func(index int, item *model.Resource) bool {
