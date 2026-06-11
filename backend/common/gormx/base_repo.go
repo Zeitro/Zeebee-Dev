@@ -107,6 +107,44 @@ func (repo *BaseRepo[T]) UpdateColumnsByIdWithTx(ctx context.Context, tx *gorm.D
 	return errorx.WithStack(tx.WithContext(ctx).Model(new(T)).Where("id = ?", id).Updates(columns).Error)
 }
 
+// UpdateColumns update columns
+func (repo *BaseRepo[T]) UpdateColumns(ctx context.Context, columns map[string]interface{}, equalColumns map[string]interface{}, notEqualColumns map[string]interface{}) error {
+	if len(equalColumns) == 0 && len(notEqualColumns) == 0 {
+		return errorx.New("filter columns can not be empty")
+	}
+	if len(columns) == 0 {
+		return errorx.New("columns can not be empty")
+	}
+
+	query := repo.Client(ctx).Model(new(T))
+	if len(equalColumns) > 0 {
+		query = query.Where(equalColumns)
+	}
+	if len(notEqualColumns) > 0 {
+		query = query.Not(notEqualColumns)
+	}
+	return errorx.WithStack(query.Updates(columns).Error)
+}
+
+// UpdateColumnsWithTx update columns with tx
+func (repo *BaseRepo[T]) UpdateColumnsWithTx(ctx context.Context, tx *gorm.DB, columns map[string]interface{}, equalColumns map[string]interface{}, notEqualColumns map[string]interface{}) error {
+	if len(equalColumns) == 0 && len(notEqualColumns) == 0 {
+		return errorx.New("filter columns can not be empty")
+	}
+	if len(columns) == 0 {
+		return errorx.New("columns can not be empty")
+	}
+
+	query := tx.WithContext(ctx).Model(new(T))
+	if len(equalColumns) > 0 {
+		query = query.Where(equalColumns)
+	}
+	if len(notEqualColumns) > 0 {
+		query = query.Not(notEqualColumns)
+	}
+	return errorx.WithStack(query.Updates(columns).Error)
+}
+
 // CreateWithTx create with tx
 func (repo *BaseRepo[T]) CreateWithTx(ctx context.Context, tx *gorm.DB, data T, withAssociation bool) (T, error) {
 	var err error
@@ -221,20 +259,21 @@ func (repo *BaseRepo[T]) FindColumnByColumnsWithTx(ctx context.Context, tx *gorm
 }
 
 // PluckByColumns find column slice by columns
-func (repo *BaseRepo[T]) PluckByColumns(ctx context.Context, columnName string, target interface{}, columns map[string]interface{}) error {
+func (repo *BaseRepo[T]) PluckByColumns(ctx context.Context, columnName string, target interface{}, filters []WhereRaw) error {
 	query := repo.Client(ctx)
-	for k, v := range columns {
-		query = query.Where(k+" = ?", v)
+	for i := range filters {
+		query = query.Where(filters[i].Raw, filters[i].Args...)
 	}
+
 	err := query.Pluck(columnName, target).Error
 	return errorx.WithStack(err)
 }
 
 // PluckByColumnsWithTx find column slice by columns with tx
-func (repo *BaseRepo[T]) PluckByColumnsWithTx(ctx context.Context, tx *gorm.DB, columnName string, target interface{}, columns map[string]interface{}) error {
+func (repo *BaseRepo[T]) PluckByColumnsWithTx(ctx context.Context, tx *gorm.DB, columnName string, target interface{}, filters []WhereRaw) error {
 	query := tx.WithContext(ctx).Model(new(T))
-	for k, v := range columns {
-		query = query.Where(k+" = ?", v)
+	for i := range filters {
+		query = query.Where(filters[i].Raw, filters[i].Args...)
 	}
 	err := query.Pluck(columnName, target).Error
 	return errorx.WithStack(err)

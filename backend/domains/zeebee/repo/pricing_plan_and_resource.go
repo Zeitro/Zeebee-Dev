@@ -5,6 +5,7 @@ import (
 
 	"gorm.io/gorm"
 
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/model"
@@ -61,4 +62,29 @@ func (repo *PricingPlanAndResourceRepo) ReplaceResourcesByPlanId(ctx context.Con
 		Association("Resources").
 		Replace(resources)
 	return errorx.WithStack(err)
+}
+
+// UpdateResourcesWithTx updates a plan's resource associations within a transaction.
+// New resources are appended, removed resources are deleted, unchanged ones are left alone.
+func (repo *PricingPlanAndResourceRepo) UpdateResourcesWithTx(ctx context.Context, tx *gorm.DB, plan *model.PricingPlan, newResources []*model.Resource, removedResources []*model.Resource) error {
+	copyPlan, err := copierx.Trans[model.PricingPlan, model.PricingPlan](plan)
+	if err != nil {
+		return err
+	}
+	copyPlan.RemoveRelationships()
+	query := tx.WithContext(ctx).Model(copyPlan)
+	if len(newResources) > 0 {
+		err = query.Association("Resources").Append(newResources)
+		if err != nil {
+			return errorx.WithStack(err)
+		}
+	}
+	copyPlan.RemoveRelationships()
+	if len(removedResources) > 0 {
+		err = query.Association("Resources").Delete(removedResources)
+		if err != nil {
+			return errorx.WithStack(err)
+		}
+	}
+	return nil
 }
