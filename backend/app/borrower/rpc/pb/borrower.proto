@@ -1565,6 +1565,8 @@ message FileEntity {
   string storage_type = 8;
   string external_id = 9;
   string upload_type = 10;
+  string drive_url = 11;
+  string drive_synced_at = 12;
 }
 message FileDeleteRequest {
   FileDeleteRequestData data = 1;
@@ -2141,6 +2143,110 @@ message EmailAuthorizationEntity {
 }
 
 // ================= email authorization end =================
+// ===================== drive service start ======================
+// drive integration detail (per organization)
+message DriveIntegrationEntity {
+  bool is_authorized = 1;
+  string auth_email = 2;
+  string folder_name = 3;
+  string drive_id = 4;
+  string drive_name = 5;
+  string root_folder_url = 6;
+  int64 authorized_by_user_id = 7;
+}
+
+// auth status -- response
+message DriveAuthStatusResponse {
+  DriveIntegrationEntity data = 1;
+}
+
+// auth url -- response
+message DriveAuthUrlResponse {
+  DriveAuthUrlResponseData data = 1;
+}
+message DriveAuthUrlResponseData {
+  string url = 1;
+}
+
+// authorize -- request
+message DriveAuthorizeRequest {
+  DriveAuthorizeRequestData data = 1;
+}
+message DriveAuthorizeRequestData {
+  string code = 1;
+  string state = 2;
+}
+
+// shared drive option
+message DriveItemEntity {
+  string id = 1;
+  string name = 2;
+}
+// list drives -- response
+message DriveListDrivesResponse {
+  repeated DriveItemEntity data = 1;
+}
+
+// update drive selection -- request
+message DriveUpdateSelectionRequest {
+  DriveUpdateSelectionRequestData data = 1;
+}
+message DriveUpdateSelectionRequestData {
+  string drive_id = 1;
+  string drive_name = 2;
+}
+
+// update folder name -- request
+message DriveUpdateFolderRequest {
+  DriveUpdateFolderRequestData data = 1;
+}
+message DriveUpdateFolderRequestData {
+  string folder_name = 1;
+}
+
+// sync transaction documents -- request
+message DriveSyncTransactionRequest {
+  DriveSyncTransactionRequestData data = 1;
+}
+message DriveSyncTransactionRequestData {
+  int64 transaction_id = 1;
+}
+
+// per-file sync result
+message DriveSyncedFileEntity {
+  string file_name = 1;
+  string drive_url = 2;
+  string status = 3;
+}
+// sync transaction documents -- response
+message DriveSyncTransactionResponse {
+  DriveSyncTransactionResponseData data = 1;
+}
+message DriveSyncTransactionResponseData {
+  int64 total = 1;
+  int64 created = 2;
+  int64 replaced = 3;
+  int64 failed = 4;
+  string folder_web_link = 5;
+  repeated DriveSyncedFileEntity files = 6;
+  string status = 7;   // Running,Success,PartialFailed,Failed (empty when no job yet)
+  int64 job_id = 8;
+  string error = 9;
+  int64 removed = 10;
+}
+
+service Drive {
+  rpc AuthStatus(EmptyRequest) returns(DriveAuthStatusResponse);
+  rpc AuthUrl(EmptyRequest) returns(DriveAuthUrlResponse);
+  rpc Authorize(DriveAuthorizeRequest) returns(DriveAuthStatusResponse);
+  rpc ListDrives(EmptyRequest) returns(DriveListDrivesResponse);
+  rpc UpdateSelection(DriveUpdateSelectionRequest) returns(EmptyResponse);
+  rpc UpdateFolder(DriveUpdateFolderRequest) returns(EmptyResponse);
+  rpc Disconnect(EmptyRequest) returns(EmptyResponse);
+  rpc SyncTransaction(DriveSyncTransactionRequest) returns(DriveSyncTransactionResponse);
+  rpc GetSyncTransactionStatus(DriveSyncTransactionRequest) returns(DriveSyncTransactionResponse);
+}
+// ===================== drive service end ======================
 // ================= zeitro listing service start =================
 
 // Zeitro

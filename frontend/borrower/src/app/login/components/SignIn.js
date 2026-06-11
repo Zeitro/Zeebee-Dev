@@ -1,15 +1,20 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Checkbox, Form, Input, message, Modal } from 'antd';
 import Password from 'antd/es/input/Password';
 import { useRouter } from 'next/navigation';
+import { useRememberLoginEmail } from '@repo/shared-methods/hooks';
 import { usePermissionStore, useUserStore } from '@repo/shared-methods/store';
-import { emailRegex, localStorageUtil, validateRule } from '@repo/shared-methods/utils';
+import {
+	emailRegex,
+	storeBrowserPasswordCredential,
+	validateRule,
+} from '@repo/shared-methods/utils';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import { initConfigFn } from '@repo/shared-methods';
 import useData from './useData';
 
-const SignIn = ({ form, setPageType }) => {
+const SignIn = ({ form, setPageType, registerFinish }) => {
 	const router = useRouter();
 	const { getUserPermissions } = useData();
 	const { resendVerifyEmail } = useUserStore();
@@ -20,31 +25,16 @@ const SignIn = ({ form, setPageType }) => {
 
 	const [modal, contextHolder] = Modal.useModal();
 	const email = Form.useWatch('email', form);
-	const password = Form.useWatch('password', form);
 	const remember = Form.useWatch('remember', form);
+	const { persistRememberedEmail, shouldAutofill } = useRememberLoginEmail(form);
+	const [autofillGuardReleased, setAutofillGuardReleased] = useState(false);
 
+	// 保存邮箱
 	useEffect(() => {
-		const account = localStorageUtil.get('account');
-		if (account?.email || account?.password) {
-			form.setFieldsValue({
-				email: account.email,
-				password: account.password,
-				remember: true,
-			});
-		}
-	}, [form]);
-
-	// 保存登录信息
-	useEffect(() => {
-		if (remember) {
-			localStorageUtil.set('account', { email, password });
-		} else {
-			localStorageUtil.remove('account');
-		}
-	}, [email, password, remember]);
-
+		persistRememberedEmail(email, remember);
+	}, [email, persistRememberedEmail, remember]);
 	// 重新验证邮箱（针对已注册未验证用户）
-	const reVerify = async () => {
+	const reVerify = useCallback(async () => {
 		try {
 			setVerifyLoading(true);
 			await resendVerifyEmail(email);
@@ -56,43 +46,52 @@ const SignIn = ({ form, setPageType }) => {
 		} catch {
 			setVerifyLoading(false);
 		}
-	};
-	const onFinish = async () => {
-		try {
-			const values = await form.validateFields();
-			setLoading(true);
-			const access = await login(values, { isHideTips: true });
-			// await getUserInfo();
-			// setCookie('token', access?.access_token, access?.access_token_expire * 1000);
-			// setLoading(false);
-			// router.push('/');
-			await getUserPermissions(access, setLoading);
-		} catch (error) {
-			if (error.code === 401001) {
-				const initValue = initConfigFn({
-					title: 'Check your email',
-					content: (
-						<div>
-							<div className="text-black-dark pb-6">
-								We will sent a verification link to
-								<p className="text-base-primary">{email}</p>
+	}, [email, resendVerifyEmail]);
+
+	const onFinish = useCallback(
+		async (values) => {
+			try {
+				setLoading(true);
+				const access = await login(values, { isHideTips: true });
+				if (values.remember) {
+					await storeBrowserPasswordCredential(values.email, values.password);
+				}
+				persistRememberedEmail(values.email, values.remember);
+				await getUserPermissions(access, setLoading);
+			} catch (error) {
+				if (error.code === 401001) {
+					const initValue = initConfigFn({
+						title: 'Check your email',
+						content: (
+							<div>
+								<div className="text-black-dark pb-6">
+									We will sent a verification link to
+									<p className="text-base-primary">{email}</p>
+								</div>
+								<div className="text-gray-dark">
+									Click the link in the email to activate your account. The link
+									will expire in 24 hours.
+								</div>
 							</div>
-							<div className="text-gray-dark">
-								Click the link in the email to activate your account. The link will
-								expire in 24 hours.
-							</div>
-						</div>
-					),
-					okText: 'Send email',
-					onOk: reVerify,
-					confirmLoading: verifyLoading,
-				});
-				modal.confirm(initValue);
+						),
+						okText: 'Send email',
+						onOk: reVerify,
+						confirmLoading: verifyLoading,
+					});
+					modal.confirm(initValue);
+				}
+				setApiError(error.message);
+				setLoading(false);
 			}
-			setApiError(error.message);
-			setLoading(false);
-		}
-	};
+		},
+		[email, getUserPermissions, login, modal, persistRememberedEmail, reVerify, verifyLoading],
+	);
+
+	useEffect(() => {
+		registerFinish?.(onFinish);
+		return () => registerFinish?.(null);
+	}, [registerFinish, onFinish]);
+
 	return (
 		<>
 			{contextHolder}
@@ -112,6 +111,11 @@ const SignIn = ({ form, setPageType }) => {
 				]}
 			>
 				<Input
+					id="email"
+					name="email"
+					autoComplete={shouldAutofill ? 'username' : 'off'}
+					readOnly={!shouldAutofill && !autofillGuardReleased}
+					onFocus={() => !shouldAutofill && setAutofillGuardReleased(true)}
 					placeholder="Email"
 					className="w-full"
 					prefix={
@@ -134,6 +138,11 @@ const SignIn = ({ form, setPageType }) => {
 				]}
 			>
 				<Password
+					id="password"
+					name="password"
+					autoComplete="current-password"
+					readOnly={!shouldAutofill && !autofillGuardReleased}
+					onFocus={() => !shouldAutofill && setAutofillGuardReleased(true)}
 					placeholder="Password"
 					className="w-full"
 					prefix={
@@ -143,11 +152,6 @@ const SignIn = ({ form, setPageType }) => {
 						/>
 					}
 					allowClear
-					onKeyDown={(e) => {
-						if (e.key === 'Enter') {
-							onFinish();
-						}
-					}}
 				/>
 			</Form.Item>
 			<div className="text-xs/5 text-base-error">{apiError}</div>
@@ -167,7 +171,7 @@ const SignIn = ({ form, setPageType }) => {
 			</div>
 
 			<Form.Item label={null}>
-				<Button type="primary" onClick={onFinish} className="w-full" loading={loading}>
+				<Button type="primary" htmlType="submit" className="w-full" loading={loading}>
 					Login
 				</Button>
 			</Form.Item>
