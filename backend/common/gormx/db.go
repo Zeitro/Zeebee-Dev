@@ -60,7 +60,8 @@ func GetDB(dsn string, isDebug bool, typ DBType) (db *gorm.DB, err error) {
 		return nil, err
 	}
 
-	ctx, _ := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
 	err = sqlDb.PingContext(ctx)
 	if err != nil {
 		return nil, errorx.Wrap(err, "Ping DB error")

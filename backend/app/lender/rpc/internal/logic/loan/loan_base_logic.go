@@ -67,7 +67,6 @@ var loanPendingStatusTransMap = map[constants.LoanPendingStatus]loanPendingStatu
 }
 
 func (l *LoanBaseLogic) GetNextPendingStatus(currentStatus constants.LoanPendingStatus, action constants.LoanOperationAction) (nextStatus constants.LoanPendingStatus, err error) {
-
 	trans, ok := loanPendingStatusTransMap[currentStatus]
 	if !ok {
 		return constants.LoanPendingStatusNone, errorx.Errorf("Invalid Current Status %v", currentStatus)

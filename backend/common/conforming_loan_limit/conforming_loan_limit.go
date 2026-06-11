@@ -65,7 +65,6 @@ func (mgr *StateHighCostLimitMgr) IsHighCostZone(state string, county string) (i
 	_, isExisted = stateHighCostLimit.CountyLimits[county]
 
 	return isExisted
-
 }
 
 func ParseHighCostLimit(content []byte, limitAmount int64) (mgr *StateHighCostLimitMgr, err error) {
@@ -90,14 +89,12 @@ func ParseHighCostLimit(content []byte, limitAmount int64) (mgr *StateHighCostLi
 		if limit.OneUnitLimit > limitAmount {
 			stateHighCostLimit.CountyLimits[limit.CountyName] = limit
 		}
-
 	}
 
 	return
 }
 
 func getConformingLoanLimits(content []byte) (limits []*ConformingLoanLimit, err error) {
-
 	r := bytes.NewReader(content)
 	f, err := excelize.OpenReader(r)
 
@@ -201,5 +198,5 @@ func parseUsaCurrency(s string) (result int64, err error) {
 	if err != nil {
 		return 0, errorx.Wrapf(err, "failed to parse int %s", s)
 	}
-	return int64(val), nil
+	return val, nil
 }

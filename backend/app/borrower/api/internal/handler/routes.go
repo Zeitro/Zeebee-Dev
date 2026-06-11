@@ -9,7 +9,10 @@ import (
 	borrower_applicant "zeebee-backend/app/borrower/api/internal/handler/borrower_applicant"
 	borrower_entity "zeebee-backend/app/borrower/api/internal/handler/borrower_entity"
 	borrower_property "zeebee-backend/app/borrower/api/internal/handler/borrower_property"
+	borrower_property_transaction "zeebee-backend/app/borrower/api/internal/handler/borrower_property_transaction"
 	common "zeebee-backend/app/borrower/api/internal/handler/common"
+	document "zeebee-backend/app/borrower/api/internal/handler/document"
+	drive "zeebee-backend/app/borrower/api/internal/handler/drive"
 	file "zeebee-backend/app/borrower/api/internal/handler/file"
 	loan "zeebee-backend/app/borrower/api/internal/handler/loan"
 	loan_applicant "zeebee-backend/app/borrower/api/internal/handler/loan_applicant"
@@ -160,6 +163,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: borrower_property.PropertyDeleteHandler(serverCtx),
 				},
 				{
+					// transactions
+					Method:  http.MethodGet,
+					Path:    "/property/:id/borrower_property_transactions",
+					Handler: borrower_property.PropertyBorrowerPropertyTransactionsHandler(serverCtx),
+				},
+				{
 					// property Summary
 					Method:  http.MethodGet,
 					Path:    "/property/:id/summary",
@@ -187,6 +196,111 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
+					// create transaction
+					Method:  http.MethodPost,
+					Path:    "/borrower_property_transaction",
+					Handler: borrower_property_transaction.BorrowerPropertyTransactionCreateHandler(serverCtx),
+				},
+				{
+					// transaction detail
+					Method:  http.MethodGet,
+					Path:    "/borrower_property_transaction/:id",
+					Handler: borrower_property_transaction.BorrowerPropertyTransactionDetailHandler(serverCtx),
+				},
+				{
+					// update transaction
+					Method:  http.MethodPut,
+					Path:    "/borrower_property_transaction/:id",
+					Handler: borrower_property_transaction.BorrowerPropertyTransactionUpdateHandler(serverCtx),
+				},
+				{
+					// delete transaction
+					Method:  http.MethodDelete,
+					Path:    "/borrower_property_transaction/:id",
+					Handler: borrower_property_transaction.BorrowerPropertyTransactionDeleteHandler(serverCtx),
+				},
+				{
+					// update transaction checklist
+					Method:  http.MethodPatch,
+					Path:    "/borrower_property_transaction/:id/checklist",
+					Handler: borrower_property_transaction.BorrowerPropertyTransactionUpdateChecklistHandler(serverCtx),
+				},
+				{
+					// switch transaction status
+					Method:  http.MethodPatch,
+					Path:    "/borrower_property_transaction/:id/status",
+					Handler: borrower_property_transaction.BorrowerPropertyTransactionSwitchStatusHandler(serverCtx),
+				},
+				{
+					// create leaf document
+					Method:  http.MethodPost,
+					Path:    "/borrower_property_transaction/:transaction_id/document",
+					Handler: borrower_property_transaction.DocumentCreateHandler(serverCtx),
+				},
+				{
+					// upload file to document
+					Method:  http.MethodPost,
+					Path:    "/borrower_property_transaction/:transaction_id/document/:document_id/file",
+					Handler: borrower_property_transaction.DocumentUploadFileHandler(serverCtx),
+				},
+				{
+					// delete document file
+					Method:  http.MethodDelete,
+					Path:    "/borrower_property_transaction/:transaction_id/file/:file_id",
+					Handler: borrower_property_transaction.DocumentDeleteFileHandler(serverCtx),
+				},
+				{
+					// transaction operation list
+					Method:  http.MethodGet,
+					Path:    "/borrower_property_transaction/:transaction_id/operations",
+					Handler: borrower_property_transaction.OperationListHandler(serverCtx),
+				},
+				{
+					// transaction operation stats
+					Method:  http.MethodGet,
+					Path:    "/borrower_property_transaction/:transaction_id/operations/stats",
+					Handler: borrower_property_transaction.OperationStatsHandler(serverCtx),
+				},
+				{
+					// all transactions for select
+					Method:  http.MethodGet,
+					Path:    "/borrower_property_transaction/all",
+					Handler: borrower_property_transaction.BorrowerPropertyTransactionAllHandler(serverCtx),
+				},
+				{
+					// page transactions
+					Method:  http.MethodPost,
+					Path:    "/borrower_property_transaction/page",
+					Handler: borrower_property_transaction.BorrowerPropertyTransactionPageHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// sync api
+					Method:  http.MethodGet,
+					Path:    "/common/sync_api",
+					Handler: common.SyncApiHandler(serverCtx),
+				},
+				{
+					// sync data
+					Method:  http.MethodGet,
+					Path:    "/common/sync_data",
+					Handler: common.SyncDataHandler(serverCtx),
+				},
+				{
+					// sync resource
+					Method:  http.MethodGet,
+					Path:    "/common/sync_resource",
+					Handler: common.SyncResourceHandler(serverCtx),
+				},
+				{
 					// select options
 					Method:  http.MethodGet,
 					Path:    "/select_options",
@@ -209,6 +323,84 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/uuid",
 					Handler: common.GetUuidHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// document files
+					Method:  http.MethodGet,
+					Path:    "/document/:id/files",
+					Handler: document.DocumentFilesHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// sync transaction documents to drive
+					Method:  http.MethodPost,
+					Path:    "/borrower_property_transaction/:id/sync_to_drive",
+					Handler: drive.DriveSyncTransactionHandler(serverCtx),
+				},
+				{
+					// get latest drive sync job status for a transaction
+					Method:  http.MethodGet,
+					Path:    "/borrower_property_transaction/:id/sync_to_drive/status",
+					Handler: drive.DriveGetSyncTransactionStatusHandler(serverCtx),
+				},
+				{
+					// drive auth status
+					Method:  http.MethodGet,
+					Path:    "/drive/auth_status",
+					Handler: drive.DriveAuthStatusHandler(serverCtx),
+				},
+				{
+					// drive auth url
+					Method:  http.MethodGet,
+					Path:    "/drive/auth_url",
+					Handler: drive.DriveAuthUrlHandler(serverCtx),
+				},
+				{
+					// drive authorize
+					Method:  http.MethodPost,
+					Path:    "/drive/authorize",
+					Handler: drive.DriveAuthorizeHandler(serverCtx),
+				},
+				{
+					// disconnect drive
+					Method:  http.MethodPost,
+					Path:    "/drive/disconnect",
+					Handler: drive.DriveDisconnectHandler(serverCtx),
+				},
+				{
+					// list shared drives
+					Method:  http.MethodGet,
+					Path:    "/drive/drives",
+					Handler: drive.DriveListDrivesHandler(serverCtx),
+				},
+				{
+					// update folder name
+					Method:  http.MethodPut,
+					Path:    "/drive/folder",
+					Handler: drive.DriveUpdateFolderHandler(serverCtx),
+				},
+				{
+					// update drive selection
+					Method:  http.MethodPut,
+					Path:    "/drive/selection",
+					Handler: drive.DriveUpdateSelectionHandler(serverCtx),
 				},
 			}...,
 		),

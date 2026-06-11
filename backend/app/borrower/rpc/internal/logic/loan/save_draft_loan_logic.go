@@ -215,7 +215,6 @@ func (l *SaveDraftLoanLogic) updateProperty(tx *gorm.DB, property *model.LoanPro
 
 // updateLoanBorrower update loan borrower
 func (l *SaveDraftLoanLogic) updateLoanBorrower(tx *gorm.DB, loanBorrower *model.LoanBorrower, loan *model.Loan) (newLoanBorrower *model.LoanBorrower, err error) {
-
 	if loanBorrower == nil {
 		return nil, nil
 	}
@@ -225,14 +224,12 @@ func (l *SaveDraftLoanLogic) updateLoanBorrower(tx *gorm.DB, loanBorrower *model
 		loanBorrower.LoanId = loan.Id
 		loanBorrower.Applicants = nil
 		newLoanBorrower, err = l.svcCtx.LoanBorrowerRepo.CreateWithTx(l.ctx, tx, loanBorrower, false)
-
 	}
 	return newLoanBorrower, err
 }
 
 // updateLoanDemographic update loan demographic
 func (l *SaveDraftLoanLogic) updateLoanDemographic(tx *gorm.DB, loanDemographic *model.LoanDemographic, loan *model.Loan) (err error) {
-
 	if loanDemographic == nil {
 		return nil
 	}
@@ -247,7 +244,6 @@ func (l *SaveDraftLoanLogic) updateLoanDemographic(tx *gorm.DB, loanDemographic 
 
 // buildModelData return save model data
 func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, oldLoan *model.Loan, claim utils.JwtUser) (data *applyLoanModelData, err error) {
-
 	if reqData == nil {
 		return nil, errorx.New("Invalid request data")
 	}
@@ -305,6 +301,17 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 
 	// LoanProperty
 	var loanProperty *model.LoanProperty
+	// When BorrowerPropertyTransactionId is provided, derive property from transaction
+	if reqData.BorrowerPropertyTransactionId > 0 {
+		transaction, txErr := l.svcCtx.BorrowerPropertyTransactionRepo.GetOrganizationTransaction(l.ctx, reqData.BorrowerPropertyTransactionId, claim.OrganizationId)
+		if txErr != nil {
+			return nil, errorx.Wrap(txErr, "Invalid transaction")
+		}
+		if reqData.LoanProperty == nil {
+			reqData.LoanProperty = &borrower.LoanPropertyApplyEntity{}
+		}
+		reqData.LoanProperty.BorrowerPropertyId = transaction.BorrowerPropertyId
+	}
 	if reqData.LoanProperty != nil {
 		if reqData.LoanProperty.BorrowerPropertyId > 0 {
 			loanProperty, err = l.svcCtx.BorrowerPropertyRepo.TranToLoanPropertyWithId(l.ctx, reqData.LoanProperty.BorrowerPropertyId, claim.OrganizationId)

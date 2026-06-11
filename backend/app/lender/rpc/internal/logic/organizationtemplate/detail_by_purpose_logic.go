@@ -3,14 +3,13 @@ package organizationtemplatelogic
 import (
 	"context"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/repo"
-
-	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/common/errorx"
 )
@@ -20,7 +19,7 @@ type DetailByPurposeLogic struct {
 	svcCtx *svc.ServiceContext
 	logx.Logger
 	baseLogic *logic.BaseLogic
-	repo      *repo.AllRepos
+	// repo      *repo.AllRepos
 }
 
 func NewDetailByPurposeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailByPurposeLogic {

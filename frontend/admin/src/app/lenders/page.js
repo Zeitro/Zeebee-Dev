@@ -1,5 +1,5 @@
 'use client';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button, InputNumber, message, Modal, Space, Image, Tag } from 'antd';
 import { BtnPopUpModal, DeleteBtn, FilterTable, PermissionSlot } from '@repo/shared-methods';
 import { createRequest, formatPhone, formatTime } from '@repo/shared-methods/utils';
@@ -11,6 +11,33 @@ import { userStatusColor } from '@repo/shared-methods/enum';
 import { useAuth } from '@repo/shared-methods/hooks';
 import { PERMISSIONS } from '@config/permissions';
 const api = '/organization/page';
+
+const OrderInput = ({ value, onCommit }) => {
+	const [draft, setDraft] = useState(value ?? 2);
+	const [prevValue, setPrevValue] = useState(value);
+	if (value !== prevValue) {
+		setPrevValue(value);
+		setDraft(value ?? 2);
+	}
+
+	const commit = () => {
+		if (draft == null || draft === value) return;
+		onCommit(draft);
+	};
+
+	return (
+		<InputNumber
+			size="small"
+			min={0}
+			value={draft}
+			onChange={(val) => setDraft(val)}
+			onBlur={commit}
+			onPressEnter={commit}
+			style={{ width: 64 }}
+		/>
+	);
+};
+
 const Lenders = () => {
 	const tableFilterRef = useRef();
 	const { request } = createRequest();
@@ -24,25 +51,7 @@ const Lenders = () => {
 	const [statusLoading, setStatusLoading] = useState(false);
 	const [discoverDrawerOpen, setDiscoverDrawerOpen] = useState(false);
 	const [discoverPreviewOpen, setDiscoverPreviewOpen] = useState(false);
-	const [latestRun, setLatestRun] = useState(null);
 	const { hasPermission, getActiveByPermission } = useAuth();
-
-	const refreshLatestRun = useCallback(async () => {
-		if (!hasPermission(PERMISSIONS.LENDERS.DISCOVER_RUN)) {
-			return;
-		}
-		try {
-			const res = await requestRef.current('/lender_discover/runs/latest');
-			setLatestRun(res?.data || null);
-		} catch {
-			setLatestRun(null);
-		}
-	}, [hasPermission]);
-
-	useEffect(() => {
-		// eslint-disable-next-line react-hooks/set-state-in-effect
-		refreshLatestRun();
-	}, [refreshLatestRun]);
 
 	const openDiscoverPreview = () => {
 		Modal.confirm({
@@ -232,8 +241,8 @@ const Lenders = () => {
 							key: 'source',
 							width: 108,
 							render: (v) => {
-								if (v === 'search') return <Tag color="blue">Search</Tag>;
-								if (v === 'manual') return <Tag>Manual</Tag>;
+								if (v === 'Search') return <Tag color="blue">Search</Tag>;
+								if (v === 'Manual') return <Tag>Manual</Tag>;
 								return v || '—';
 							},
 						},
@@ -244,16 +253,9 @@ const Lenders = () => {
 							width: 90,
 							render: (v, record) =>
 								hasPermission(PERMISSIONS.LENDERS.EDIT) ? (
-									<InputNumber
-										size="small"
-										min={0}
-										value={v ?? 2}
-										onChange={(val) => {
-											if (val != null && val !== v) {
-												handleUpdateOrder(record.id, val);
-											}
-										}}
-										style={{ width: 64 }}
+									<OrderInput
+										value={v}
+										onCommit={(val) => handleUpdateOrder(record.id, val)}
 									/>
 								) : (
 									(v ?? '—')
@@ -411,17 +413,13 @@ const Lenders = () => {
 			</div>
 			<DiscoverSettingsDrawer
 				open={discoverDrawerOpen}
-				onClose={() => {
-					setDiscoverDrawerOpen(false);
-					refreshLatestRun();
-				}}
+				onClose={() => setDiscoverDrawerOpen(false)}
 			/>
 			<DiscoverPreviewModal
 				open={discoverPreviewOpen}
 				onClose={() => setDiscoverPreviewOpen(false)}
-				onCommitted={async () => {
+				onCommitted={() => {
 					message.success('Selected lenders added as Not activated.');
-					await refreshLatestRun();
 					tableFilterRef?.current?.handleSearch?.();
 				}}
 			/>

@@ -283,7 +283,6 @@ func (l *BaseTemplateLogic) Preview(_ context.Context, req dto.BaseTemplatePrevi
 		}
 	}
 	for _, groupDto := range req.VariableGroupSchema {
-
 		for _, variableDto := range groupDto.Variables {
 			if variableDto.Source == constants.TemplateVariableSourceFixed || variableDto.Source == constants.TemplateVariableSourceTemplate {
 				key := strings.Trim(variableDto.Key, ".")
