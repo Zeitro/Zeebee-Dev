@@ -3,3 +3,4 @@ export * from './common';
 export * from './useElementSize';
 export * from './useGetOptions';
 export * from './useAuth';
+export * from './useRememberLoginEmail';
