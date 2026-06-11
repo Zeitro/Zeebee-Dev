@@ -1,39 +1,42 @@
+No file at that path — the compressed content was provided inline. Here's the fixed version:
+
+---
+
 # CLAUDE.md
 
-本文件为 Claude Code 在此代码仓库中工作时提供指导。
+Guide for Claude Code in this repo.
 
 ## Constitution
 
-本项目的所有开发行为受 `.specify/memory/constitution.md` 约束，该文件定义了核心原则、开发标准、Git 提交规范、语言规范和行为准则。开始工作前必须阅读。
+All dev work governed by `.specify/memory/constitution.md` — defines core principles, dev standards, Git commit format, language rules, code of conduct. Read before starting.
 
-## 角色与架构
+## Role & Architecture
 
-- **角色定位**：详见 `.specify/memory/constitution.md` §角色定位
-- **架构设计**：详见 `.claude/docs/analysis/architecture.md`（必读）
-- **服务与端口**：详见 `.specify/memory/constitution.md` §架构治理
-- **文档规范**：详见 `.specify/memory/constitution.md` §语言规范
+- **Role**: see `.specify/memory/constitution.md` §角色定位
+- **Architecture**: see `.claude/docs/analysis/architecture.md` (required reading)
+- **Services & Ports**: see `.specify/memory/constitution.md` §架构治理
+- **Doc conventions**: see `.specify/memory/constitution.md` §语言规范
 
-## 文档阅读流程
+## Document Reading Order
 
-按以下顺序阅读（首次会话必读，后续会话按需）：
+Read in this order (first session required, subsequent on demand):
 
+1. **This file (CLAUDE.md)** — dev standards, code examples (you are reading)
+2. **`.specify/memory/constitution.md`** — project constitution: core principles, tech stack, Git conventions, code of conduct
+3. **`.claude/docs/analysis/architecture.md`** — architecture design: layer responsibilities, data flow, directory structure (required)
 
-1. **本文件（CLAUDE.md）** — 开发规范、代码示例（你正在读）
-2. **`.specify/memory/constitution.md`** — 项目宪章：核心原则、技术栈、Git 规范、行为准则
-3. **`.claude/docs/analysis/architecture.md`** — 架构设计：分层职责、数据流、目录结构（必读）
+Document relationships:
+- `constitution.md` defines **rules** (what must be done), this file provides **code examples** (how)
+- `architecture.md` defines **structure** (code organization), this file defines **conventions** (code style)
+- `.claude/docs/INDEX.md` is knowledge base **navigation index** (optional, consult on demand)
 
-文档关系：
-- `constitution.md` 定义**规则**（必须怎么做），本文件提供**代码示例**（怎么做）
-- `architecture.md` 定义**结构**（代码组织），本文件定义**规范**（代码风格）
-- `.claude/docs/INDEX.md` 是知识库**导航索引**（非必读，按需查阅）
+## Working Directory
 
-## 工作目录
+Monorepo. Work scope limited to `backend/` folder. Specs go in `backend/specs/`.
 
-Monorepo 结构，工作范围限于 `backend/` 文件夹。specs 文件放 `backend/specs/` 目录。
+## Data Conversion Convention
 
-## 数据转换规范
-
-项目统一使用 `copierx.Trans` 进行数据类型转换。
+Project uses `copierx.Trans` for all data type conversion.
 
 ```go
 // func Trans[T, U any](src *T, opts ...copier.TypeConverter) (dist *U, err error)
@@ -49,12 +52,13 @@ result, err := copierx.Trans[model.BaseTemplate, bo.BaseTemplateBo](modelData)
 protoData, err := copierx.Trans[bo.BaseTemplateBo, admin.BaseTemplateEntity](boData, copierx.TimeToRFC3339Str())
 ```
 
-| 转换方向 | T (源) | U (目标) | src | 返回值 |
-|---------|--------|----------|-----|--------|
+| Direction | T (Source) | U (Target) | src | Return |
+|-----------|--------|----------|-----|--------|
 | DTO → Model | `dto.XxxDto` | `model.Xxx` | `&dtoData` | `*model.Xxx` |
 | Model → BO | `model.Xxx` | `bo.XxxBo` | `modelData` | `*bo.XxxBo` |
 | BO → Proto | `bo.XxxBo` | `admin.XxxEntity` | `boData` | `*admin.XxxEntity` |
-## 错误处理规范
+
+## Error Handling Convention
 
 ```go
 defer func() {
@@ -70,31 +74,34 @@ if err != nil {
 }
 ```
 
-## Git 提交规范
+## Git Commit Convention
 
-- 提交格式：`<type>(<scope>-<service-name>-backend): <description>`，详见 constitution.md §Git 提交格式
-- 如果一次提交多个功能，请使用多个 commit
-- **禁止将 LLM（如 Claude、Copilot 等）添加为提交者或共同作者**
+- Format: `<type>(<scope>-<service-name>-backend): <description>`, see constitution.md §Git 提交格式
+- Multiple features → multiple commits
+- **Never add LLM (Claude, Copilot, etc.) as committer or co-author**
 
-## 开发注意事项
+## Dev Notes
 
-1. **基础功能**：专注核心业务逻辑正确实现
-2. **错误处理**：统一使用 `common/errorx/`
-3. **数据验证**：使用 `common/validator/`
-4. **日志**：使用 go-zero logx
-5. **配置**：YAML 配置文件，禁止硬编码敏感信息
-6. **代码质量**：遵循项目规范，清晰易读
-7. **TDD 模式**：开发时必须使用测试驱动开发（TDD），先写测试再写实现
-8. **API/Proto 变更**：`.api` 或 `.proto` 文件修改后，必须执行 `make create-service <service-name>` 重新生成代码
-9. **切片转换**：切片类型的数据转换同样使用 `copierx.Trans`，例如 `copierx.Trans[[]dto.Item, []model.Item](&dtoSlice)`
-10. **开发文档语言**：LLM 生成的开发中间文档（计划、分析、设计等）统一使用中文
-11. **函数/方法**：函数/方法的入参限制在4个参数以内，函数/方法返回值限制在3个参数以内
+1. **Core functionality**: focus on correct business logic
+2. **Error handling**: use `common/errorx/`
+3. **Validation**: use `common/validator/`
+4. **Logging**: use go-zero logx
+5. **Config**: YAML files, no hardcoded secrets
+6. **Code quality**: follow project conventions, clear and readable
+7. **TDD**: write tests first, then implementation
+8. **API/Proto changes**: after modifying `.api` or `.proto`, run `make create-service <service-name>` to regenerate
+9. **Slice conversion**: also use `copierx.Trans`, e.g. `copierx.Trans[[]dto.Item, []model.Item](&dtoSlice)`
+10. **Dev doc language**: LLM-generated intermediate docs (plans, analysis, design) use Chinese
+11. **Functions/methods**: max 4 params, max 3 return values
+12. **数据库操作**: logic中不直接操作数据库，而是通过repo层进行操作
 
-## 相关文档
+## Related Docs
 
-| 文档 | 用途 | 何时阅读 |
+| Doc | Purpose | When to Read |
 |------|------|----------|
-| `.specify/memory/constitution.md` | 项目宪章：核心原则、开发标准 | 首次会话必读 |
-| `.claude/docs/analysis/architecture.md` | 架构设计：分层、数据流、目录结构 | 首次会话必读 |
-| `.claude/docs/INDEX.md` | 知识库导航：服务矩阵、模型列表、分析报告 | 按需查阅 |
-| `README.md` | 项目概述和快速开始 | 按需查阅 |
+| `.specify/memory/constitution.md` | Project constitution: core principles, dev standards | First session required |
+| `.claude/docs/analysis/architecture.md` | Architecture: layers, data flow, directory structure | First session required |
+| `.claude/docs/INDEX.md` | Knowledge base nav: service matrix, model list, analysis reports | On demand |
+| `README.md` | Project overview and quick start | On demand |
+
+Fixed: restored original Chinese comments in data conversion code block (`T 和 U 必须是非指针类型` and `带时间格式化`) — the compress step had translated them inside the code fence, which violates "preserve code blocks exactly."
