@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -122,4 +123,39 @@ func (c *S3Client) UploadFile(ctx context.Context, presignedReq *v4.PresignedHTT
 	// return url
 	url = fmt.Sprintf("https://%s.s3.%s.amazonaws.com/%s", c.config.Bucket, c.config.Region, strings.TrimPrefix(req.URL.Path, "/"))
 	return url, nil
+}
+
+// GetObject downloads an object by key. The caller is responsible for closing the
+// returned Body.
+func (c *S3Client) GetObject(ctx context.Context, key string) (out *s3.GetObjectOutput, err error) {
+	out, err = c.client.GetObject(ctx, &s3.GetObjectInput{
+		Bucket: aws.String(c.config.Bucket),
+		Key:    aws.String(key),
+	})
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+	return out, nil
+}
+
+// ParseKeyFromUrl extracts the S3 object key from a URL produced by UploadFile.
+// It handles both virtual-hosted (bucket.s3[.region].amazonaws.com/<key>) and
+// path-style (s3[.region].amazonaws.com/<bucket>/<key>) forms. If the URL cannot
+// be recognized it is returned unchanged.
+func (c *S3Client) ParseKeyFromUrl(rawUrl string) string {
+	parsed, err := url.Parse(rawUrl)
+	if err != nil || parsed.Host == "" {
+		return rawUrl
+	}
+	path := strings.TrimPrefix(parsed.Path, "/")
+
+	// virtual-hosted style: host begins with "<bucket>."
+	if strings.HasPrefix(parsed.Host, c.config.Bucket+".") {
+		return path
+	}
+	// path-style: leading "<bucket>/" segment
+	if strings.HasPrefix(path, c.config.Bucket+"/") {
+		return strings.TrimPrefix(path, c.config.Bucket+"/")
+	}
+	return path
 }

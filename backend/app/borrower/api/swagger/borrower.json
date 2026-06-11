@@ -1672,10 +1672,18 @@
                                       "external_id",
                                       "upload_type",
                                       "created_at",
-                                      "updated_at"
+                                      "updated_at",
+                                      "drive_url",
+                                      "drive_synced_at"
                                     ],
                                     "properties": {
                                       "created_at": {
+                                        "type": "string"
+                                      },
+                                      "drive_synced_at": {
+                                        "type": "string"
+                                      },
+                                      "drive_url": {
                                         "type": "string"
                                       },
                                       "entity_id": {
@@ -1749,10 +1757,18 @@
                                 "external_id",
                                 "upload_type",
                                 "created_at",
-                                "updated_at"
+                                "updated_at",
+                                "drive_url",
+                                "drive_synced_at"
                               ],
                               "properties": {
                                 "created_at": {
+                                  "type": "string"
+                                },
+                                "drive_synced_at": {
+                                  "type": "string"
+                                },
+                                "drive_url": {
                                   "type": "string"
                                 },
                                 "entity_id": {
@@ -1916,10 +1932,18 @@
                                       "external_id",
                                       "upload_type",
                                       "created_at",
-                                      "updated_at"
+                                      "updated_at",
+                                      "drive_url",
+                                      "drive_synced_at"
                                     ],
                                     "properties": {
                                       "created_at": {
+                                        "type": "string"
+                                      },
+                                      "drive_synced_at": {
+                                        "type": "string"
+                                      },
+                                      "drive_url": {
                                         "type": "string"
                                       },
                                       "entity_id": {
@@ -1993,10 +2017,18 @@
                                 "external_id",
                                 "upload_type",
                                 "created_at",
-                                "updated_at"
+                                "updated_at",
+                                "drive_url",
+                                "drive_synced_at"
                               ],
                               "properties": {
                                 "created_at": {
+                                  "type": "string"
+                                },
+                                "drive_synced_at": {
+                                  "type": "string"
+                                },
+                                "drive_url": {
                                   "type": "string"
                                 },
                                 "entity_id": {
@@ -2553,10 +2585,18 @@
                                       "external_id",
                                       "upload_type",
                                       "created_at",
-                                      "updated_at"
+                                      "updated_at",
+                                      "drive_url",
+                                      "drive_synced_at"
                                     ],
                                     "properties": {
                                       "created_at": {
+                                        "type": "string"
+                                      },
+                                      "drive_synced_at": {
+                                        "type": "string"
+                                      },
+                                      "drive_url": {
                                         "type": "string"
                                       },
                                       "entity_id": {
@@ -2630,10 +2670,18 @@
                                 "external_id",
                                 "upload_type",
                                 "created_at",
-                                "updated_at"
+                                "updated_at",
+                                "drive_url",
+                                "drive_synced_at"
                               ],
                               "properties": {
                                 "created_at": {
+                                  "type": "string"
+                                },
+                                "drive_synced_at": {
+                                  "type": "string"
+                                },
+                                "drive_url": {
                                   "type": "string"
                                 },
                                 "entity_id": {
@@ -2797,10 +2845,18 @@
                                       "external_id",
                                       "upload_type",
                                       "created_at",
-                                      "updated_at"
+                                      "updated_at",
+                                      "drive_url",
+                                      "drive_synced_at"
                                     ],
                                     "properties": {
                                       "created_at": {
+                                        "type": "string"
+                                      },
+                                      "drive_synced_at": {
+                                        "type": "string"
+                                      },
+                                      "drive_url": {
                                         "type": "string"
                                       },
                                       "entity_id": {
@@ -2874,10 +2930,18 @@
                                 "external_id",
                                 "upload_type",
                                 "created_at",
-                                "updated_at"
+                                "updated_at",
+                                "drive_url",
+                                "drive_synced_at"
                               ],
                               "properties": {
                                 "created_at": {
+                                  "type": "string"
+                                },
+                                "drive_synced_at": {
+                                  "type": "string"
+                                },
+                                "drive_url": {
                                   "type": "string"
                                 },
                                 "entity_id": {
@@ -3190,10 +3254,18 @@
                                       "external_id",
                                       "upload_type",
                                       "created_at",
-                                      "updated_at"
+                                      "updated_at",
+                                      "drive_url",
+                                      "drive_synced_at"
                                     ],
                                     "properties": {
                                       "created_at": {
+                                        "type": "string"
+                                      },
+                                      "drive_synced_at": {
+                                        "type": "string"
+                                      },
+                                      "drive_url": {
                                         "type": "string"
                                       },
                                       "entity_id": {
@@ -3267,10 +3339,18 @@
                                 "external_id",
                                 "upload_type",
                                 "created_at",
-                                "updated_at"
+                                "updated_at",
+                                "drive_url",
+                                "drive_synced_at"
                               ],
                               "properties": {
                                 "created_at": {
+                                  "type": "string"
+                                },
+                                "drive_synced_at": {
+                                  "type": "string"
+                                },
+                                "drive_url": {
                                   "type": "string"
                                 },
                                 "entity_id": {
@@ -3434,10 +3514,18 @@
                                       "external_id",
                                       "upload_type",
                                       "created_at",
-                                      "updated_at"
+                                      "updated_at",
+                                      "drive_url",
+                                      "drive_synced_at"
                                     ],
                                     "properties": {
                                       "created_at": {
+                                        "type": "string"
+                                      },
+                                      "drive_synced_at": {
+                                        "type": "string"
+                                      },
+                                      "drive_url": {
                                         "type": "string"
                                       },
                                       "entity_id": {
@@ -3511,10 +3599,18 @@
                                 "external_id",
                                 "upload_type",
                                 "created_at",
-                                "updated_at"
+                                "updated_at",
+                                "drive_url",
+                                "drive_synced_at"
                               ],
                               "properties": {
                                 "created_at": {
+                                  "type": "string"
+                                },
+                                "drive_synced_at": {
+                                  "type": "string"
+                                },
+                                "drive_url": {
                                   "type": "string"
                                 },
                                 "entity_id": {
@@ -3757,6 +3853,173 @@
             "description": "",
             "schema": {
               "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/borrower_property_transaction/{id}/sync_to_drive": {
+      "post": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "drive"
+        ],
+        "summary": "sync transaction documents to drive",
+        "operationId": "driveDriveSyncTransaction",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "created": {
+                  "type": "integer"
+                },
+                "error": {
+                  "type": "string"
+                },
+                "failed": {
+                  "type": "integer"
+                },
+                "files": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "file_name",
+                      "drive_url",
+                      "status"
+                    ],
+                    "properties": {
+                      "drive_url": {
+                        "type": "string"
+                      },
+                      "file_name": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "folder_web_link": {
+                  "type": "string"
+                },
+                "job_id": {
+                  "type": "integer"
+                },
+                "removed": {
+                  "type": "integer"
+                },
+                "replaced": {
+                  "type": "integer"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "total": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/borrower_property_transaction/{id}/sync_to_drive/status": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "drive"
+        ],
+        "summary": "get latest drive sync job status for a transaction",
+        "operationId": "driveDriveGetSyncTransactionStatus",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "created": {
+                  "type": "integer"
+                },
+                "error": {
+                  "type": "string"
+                },
+                "failed": {
+                  "type": "integer"
+                },
+                "files": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "file_name",
+                      "drive_url",
+                      "status"
+                    ],
+                    "properties": {
+                      "drive_url": {
+                        "type": "string"
+                      },
+                      "file_name": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "folder_web_link": {
+                  "type": "string"
+                },
+                "job_id": {
+                  "type": "integer"
+                },
+                "removed": {
+                  "type": "integer"
+                },
+                "replaced": {
+                  "type": "integer"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "total": {
+                  "type": "integer"
+                }
+              }
             }
           }
         }
@@ -4343,6 +4606,29 @@
         }
       }
     },
+    "/api/v1/common/sync_data": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "common"
+        ],
+        "summary": "sync data",
+        "operationId": "commonSyncData",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/common/sync_resource": {
       "get": {
         "produces": [
@@ -4444,6 +4730,307 @@
                   }
                 }
               }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/drive/auth_status": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "drive"
+        ],
+        "summary": "drive auth status",
+        "operationId": "driveDriveAuthStatus",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "auth_email": {
+                  "type": "string"
+                },
+                "authorized_by_user_id": {
+                  "type": "integer"
+                },
+                "drive_id": {
+                  "type": "string"
+                },
+                "drive_name": {
+                  "type": "string"
+                },
+                "folder_name": {
+                  "type": "string"
+                },
+                "is_authorized": {
+                  "type": "boolean"
+                },
+                "root_folder_url": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/drive/auth_url": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "drive"
+        ],
+        "summary": "drive auth url",
+        "operationId": "driveDriveAuthUrl",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/drive/authorize": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "drive"
+        ],
+        "summary": "drive authorize",
+        "operationId": "driveDriveAuthorize",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "auth_email": {
+                  "type": "string"
+                },
+                "authorized_by_user_id": {
+                  "type": "integer"
+                },
+                "drive_id": {
+                  "type": "string"
+                },
+                "drive_name": {
+                  "type": "string"
+                },
+                "folder_name": {
+                  "type": "string"
+                },
+                "is_authorized": {
+                  "type": "boolean"
+                },
+                "root_folder_url": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/drive/disconnect": {
+      "post": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "drive"
+        ],
+        "summary": "disconnect drive",
+        "operationId": "driveDriveDisconnect",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/drive/drives": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "drive"
+        ],
+        "summary": "list shared drives",
+        "operationId": "driveDriveListDrives",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "lists": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/drive/folder": {
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "drive"
+        ],
+        "summary": "update folder name",
+        "operationId": "driveDriveUpdateFolder",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "folder_name"
+              ],
+              "properties": {
+                "folder_name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/drive/selection": {
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "drive"
+        ],
+        "summary": "update drive selection",
+        "operationId": "driveDriveUpdateSelection",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "drive_id": {
+                  "type": "string"
+                },
+                "drive_name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
             }
           }
         }
@@ -6832,10 +7419,18 @@
                                                 "external_id",
                                                 "upload_type",
                                                 "created_at",
-                                                "updated_at"
+                                                "updated_at",
+                                                "drive_url",
+                                                "drive_synced_at"
                                               ],
                                               "properties": {
                                                 "created_at": {
+                                                  "type": "string"
+                                                },
+                                                "drive_synced_at": {
+                                                  "type": "string"
+                                                },
+                                                "drive_url": {
                                                   "type": "string"
                                                 },
                                                 "entity_id": {
@@ -6909,10 +7504,18 @@
                                           "external_id",
                                           "upload_type",
                                           "created_at",
-                                          "updated_at"
+                                          "updated_at",
+                                          "drive_url",
+                                          "drive_synced_at"
                                         ],
                                         "properties": {
                                           "created_at": {
+                                            "type": "string"
+                                          },
+                                          "drive_synced_at": {
+                                            "type": "string"
+                                          },
+                                          "drive_url": {
                                             "type": "string"
                                           },
                                           "entity_id": {
@@ -7076,10 +7679,18 @@
                                                 "external_id",
                                                 "upload_type",
                                                 "created_at",
-                                                "updated_at"
+                                                "updated_at",
+                                                "drive_url",
+                                                "drive_synced_at"
                                               ],
                                               "properties": {
                                                 "created_at": {
+                                                  "type": "string"
+                                                },
+                                                "drive_synced_at": {
+                                                  "type": "string"
+                                                },
+                                                "drive_url": {
                                                   "type": "string"
                                                 },
                                                 "entity_id": {
@@ -7153,10 +7764,18 @@
                                           "external_id",
                                           "upload_type",
                                           "created_at",
-                                          "updated_at"
+                                          "updated_at",
+                                          "drive_url",
+                                          "drive_synced_at"
                                         ],
                                         "properties": {
                                           "created_at": {
+                                            "type": "string"
+                                          },
+                                          "drive_synced_at": {
+                                            "type": "string"
+                                          },
+                                          "drive_url": {
                                             "type": "string"
                                           },
                                           "entity_id": {
@@ -7556,10 +8175,18 @@
                                   "external_id",
                                   "upload_type",
                                   "created_at",
-                                  "updated_at"
+                                  "updated_at",
+                                  "drive_url",
+                                  "drive_synced_at"
                                 ],
                                 "properties": {
                                   "created_at": {
+                                    "type": "string"
+                                  },
+                                  "drive_synced_at": {
+                                    "type": "string"
+                                  },
+                                  "drive_url": {
                                     "type": "string"
                                   },
                                   "entity_id": {
@@ -8768,10 +9395,18 @@
                                           "external_id",
                                           "upload_type",
                                           "created_at",
-                                          "updated_at"
+                                          "updated_at",
+                                          "drive_url",
+                                          "drive_synced_at"
                                         ],
                                         "properties": {
                                           "created_at": {
+                                            "type": "string"
+                                          },
+                                          "drive_synced_at": {
+                                            "type": "string"
+                                          },
+                                          "drive_url": {
                                             "type": "string"
                                           },
                                           "entity_id": {
@@ -8845,10 +9480,18 @@
                                     "external_id",
                                     "upload_type",
                                     "created_at",
-                                    "updated_at"
+                                    "updated_at",
+                                    "drive_url",
+                                    "drive_synced_at"
                                   ],
                                   "properties": {
                                     "created_at": {
+                                      "type": "string"
+                                    },
+                                    "drive_synced_at": {
+                                      "type": "string"
+                                    },
+                                    "drive_url": {
                                       "type": "string"
                                     },
                                     "entity_id": {
@@ -9012,10 +9655,18 @@
                                           "external_id",
                                           "upload_type",
                                           "created_at",
-                                          "updated_at"
+                                          "updated_at",
+                                          "drive_url",
+                                          "drive_synced_at"
                                         ],
                                         "properties": {
                                           "created_at": {
+                                            "type": "string"
+                                          },
+                                          "drive_synced_at": {
+                                            "type": "string"
+                                          },
+                                          "drive_url": {
                                             "type": "string"
                                           },
                                           "entity_id": {
@@ -9089,10 +9740,18 @@
                                     "external_id",
                                     "upload_type",
                                     "created_at",
-                                    "updated_at"
+                                    "updated_at",
+                                    "drive_url",
+                                    "drive_synced_at"
                                   ],
                                   "properties": {
                                     "created_at": {
+                                      "type": "string"
+                                    },
+                                    "drive_synced_at": {
+                                      "type": "string"
+                                    },
+                                    "drive_url": {
                                       "type": "string"
                                     },
                                     "entity_id": {
@@ -9492,10 +10151,18 @@
                             "external_id",
                             "upload_type",
                             "created_at",
-                            "updated_at"
+                            "updated_at",
+                            "drive_url",
+                            "drive_synced_at"
                           ],
                           "properties": {
                             "created_at": {
+                              "type": "string"
+                            },
+                            "drive_synced_at": {
+                              "type": "string"
+                            },
+                            "drive_url": {
                               "type": "string"
                             },
                             "entity_id": {
@@ -14152,6 +14819,12 @@
                 "property_type": {
                   "type": "string"
                 },
+                "status": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
                 "total_amount": {
                   "type": "number"
                 },
@@ -14205,7 +14878,8 @@
                       "address",
                       "created_at",
                       "updated_at",
-                      "loan_count"
+                      "loan_count",
+                      "status"
                     ],
                     "properties": {
                       "address": {
@@ -14261,6 +14935,12 @@
                       "property_type": {
                         "type": "string"
                       },
+                      "status": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
                       "total_amount": {
                         "type": "number"
                       },
@@ -14314,6 +14994,12 @@
                     },
                     "keyword": {
                       "type": "string"
+                    },
+                    "status": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
                     }
                   }
                 },
@@ -14372,7 +15058,9 @@
                       "pending_loan_count",
                       "active_loan_count",
                       "archived_loan_count",
-                      "loan_count"
+                      "loan_count",
+                      "status",
+                      "transaction_status"
                     ],
                     "properties": {
                       "active_loan_count": {
@@ -14449,6 +15137,12 @@
                       "property_type": {
                         "type": "string"
                       },
+                      "status": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
                       "total_amount": {
                         "type": "number"
                       },
@@ -14457,6 +15151,12 @@
                       },
                       "total_principal_amount": {
                         "type": "number"
+                      },
+                      "transaction_status": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
                       },
                       "unit": {
                         "type": "integer"
@@ -14558,6 +15258,12 @@
                 },
                 "property_type": {
                   "type": "string"
+                },
+                "status": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 },
                 "total_amount": {
                   "type": "number"
@@ -14859,10 +15565,18 @@
                                             "external_id",
                                             "upload_type",
                                             "created_at",
-                                            "updated_at"
+                                            "updated_at",
+                                            "drive_url",
+                                            "drive_synced_at"
                                           ],
                                           "properties": {
                                             "created_at": {
+                                              "type": "string"
+                                            },
+                                            "drive_synced_at": {
+                                              "type": "string"
+                                            },
+                                            "drive_url": {
                                               "type": "string"
                                             },
                                             "entity_id": {
@@ -14936,10 +15650,18 @@
                                       "external_id",
                                       "upload_type",
                                       "created_at",
-                                      "updated_at"
+                                      "updated_at",
+                                      "drive_url",
+                                      "drive_synced_at"
                                     ],
                                     "properties": {
                                       "created_at": {
+                                        "type": "string"
+                                      },
+                                      "drive_synced_at": {
+                                        "type": "string"
+                                      },
+                                      "drive_url": {
                                         "type": "string"
                                       },
                                       "entity_id": {
@@ -15103,10 +15825,18 @@
                                             "external_id",
                                             "upload_type",
                                             "created_at",
-                                            "updated_at"
+                                            "updated_at",
+                                            "drive_url",
+                                            "drive_synced_at"
                                           ],
                                           "properties": {
                                             "created_at": {
+                                              "type": "string"
+                                            },
+                                            "drive_synced_at": {
+                                              "type": "string"
+                                            },
+                                            "drive_url": {
                                               "type": "string"
                                             },
                                             "entity_id": {
@@ -15180,10 +15910,18 @@
                                       "external_id",
                                       "upload_type",
                                       "created_at",
-                                      "updated_at"
+                                      "updated_at",
+                                      "drive_url",
+                                      "drive_synced_at"
                                     ],
                                     "properties": {
                                       "created_at": {
+                                        "type": "string"
+                                      },
+                                      "drive_synced_at": {
+                                        "type": "string"
+                                      },
+                                      "drive_url": {
                                         "type": "string"
                                       },
                                       "entity_id": {
@@ -15665,10 +16403,18 @@
                                                 "external_id",
                                                 "upload_type",
                                                 "created_at",
-                                                "updated_at"
+                                                "updated_at",
+                                                "drive_url",
+                                                "drive_synced_at"
                                               ],
                                               "properties": {
                                                 "created_at": {
+                                                  "type": "string"
+                                                },
+                                                "drive_synced_at": {
+                                                  "type": "string"
+                                                },
+                                                "drive_url": {
                                                   "type": "string"
                                                 },
                                                 "entity_id": {
@@ -15742,10 +16488,18 @@
                                           "external_id",
                                           "upload_type",
                                           "created_at",
-                                          "updated_at"
+                                          "updated_at",
+                                          "drive_url",
+                                          "drive_synced_at"
                                         ],
                                         "properties": {
                                           "created_at": {
+                                            "type": "string"
+                                          },
+                                          "drive_synced_at": {
+                                            "type": "string"
+                                          },
+                                          "drive_url": {
                                             "type": "string"
                                           },
                                           "entity_id": {
@@ -15909,10 +16663,18 @@
                                                 "external_id",
                                                 "upload_type",
                                                 "created_at",
-                                                "updated_at"
+                                                "updated_at",
+                                                "drive_url",
+                                                "drive_synced_at"
                                               ],
                                               "properties": {
                                                 "created_at": {
+                                                  "type": "string"
+                                                },
+                                                "drive_synced_at": {
+                                                  "type": "string"
+                                                },
+                                                "drive_url": {
                                                   "type": "string"
                                                 },
                                                 "entity_id": {
@@ -15986,10 +16748,18 @@
                                           "external_id",
                                           "upload_type",
                                           "created_at",
-                                          "updated_at"
+                                          "updated_at",
+                                          "drive_url",
+                                          "drive_synced_at"
                                         ],
                                         "properties": {
                                           "created_at": {
+                                            "type": "string"
+                                          },
+                                          "drive_synced_at": {
+                                            "type": "string"
+                                          },
+                                          "drive_url": {
                                             "type": "string"
                                           },
                                           "entity_id": {
@@ -16389,10 +17159,18 @@
                                   "external_id",
                                   "upload_type",
                                   "created_at",
-                                  "updated_at"
+                                  "updated_at",
+                                  "drive_url",
+                                  "drive_synced_at"
                                 ],
                                 "properties": {
                                   "created_at": {
+                                    "type": "string"
+                                  },
+                                  "drive_synced_at": {
+                                    "type": "string"
+                                  },
+                                  "drive_url": {
                                     "type": "string"
                                   },
                                   "entity_id": {
@@ -17140,10 +17918,18 @@
                                                 "external_id",
                                                 "upload_type",
                                                 "created_at",
-                                                "updated_at"
+                                                "updated_at",
+                                                "drive_url",
+                                                "drive_synced_at"
                                               ],
                                               "properties": {
                                                 "created_at": {
+                                                  "type": "string"
+                                                },
+                                                "drive_synced_at": {
+                                                  "type": "string"
+                                                },
+                                                "drive_url": {
                                                   "type": "string"
                                                 },
                                                 "entity_id": {
@@ -17217,10 +18003,18 @@
                                           "external_id",
                                           "upload_type",
                                           "created_at",
-                                          "updated_at"
+                                          "updated_at",
+                                          "drive_url",
+                                          "drive_synced_at"
                                         ],
                                         "properties": {
                                           "created_at": {
+                                            "type": "string"
+                                          },
+                                          "drive_synced_at": {
+                                            "type": "string"
+                                          },
+                                          "drive_url": {
                                             "type": "string"
                                           },
                                           "entity_id": {
@@ -17384,10 +18178,18 @@
                                                 "external_id",
                                                 "upload_type",
                                                 "created_at",
-                                                "updated_at"
+                                                "updated_at",
+                                                "drive_url",
+                                                "drive_synced_at"
                                               ],
                                               "properties": {
                                                 "created_at": {
+                                                  "type": "string"
+                                                },
+                                                "drive_synced_at": {
+                                                  "type": "string"
+                                                },
+                                                "drive_url": {
                                                   "type": "string"
                                                 },
                                                 "entity_id": {
@@ -17461,10 +18263,18 @@
                                           "external_id",
                                           "upload_type",
                                           "created_at",
-                                          "updated_at"
+                                          "updated_at",
+                                          "drive_url",
+                                          "drive_synced_at"
                                         ],
                                         "properties": {
                                           "created_at": {
+                                            "type": "string"
+                                          },
+                                          "drive_synced_at": {
+                                            "type": "string"
+                                          },
+                                          "drive_url": {
                                             "type": "string"
                                           },
                                           "entity_id": {
@@ -17864,10 +18674,18 @@
                                   "external_id",
                                   "upload_type",
                                   "created_at",
-                                  "updated_at"
+                                  "updated_at",
+                                  "drive_url",
+                                  "drive_synced_at"
                                 ],
                                 "properties": {
                                   "created_at": {
+                                    "type": "string"
+                                  },
+                                  "drive_synced_at": {
+                                    "type": "string"
+                                  },
+                                  "drive_url": {
                                     "type": "string"
                                   },
                                   "entity_id": {
@@ -18619,10 +19437,18 @@
                                                 "external_id",
                                                 "upload_type",
                                                 "created_at",
-                                                "updated_at"
+                                                "updated_at",
+                                                "drive_url",
+                                                "drive_synced_at"
                                               ],
                                               "properties": {
                                                 "created_at": {
+                                                  "type": "string"
+                                                },
+                                                "drive_synced_at": {
+                                                  "type": "string"
+                                                },
+                                                "drive_url": {
                                                   "type": "string"
                                                 },
                                                 "entity_id": {
@@ -18696,10 +19522,18 @@
                                           "external_id",
                                           "upload_type",
                                           "created_at",
-                                          "updated_at"
+                                          "updated_at",
+                                          "drive_url",
+                                          "drive_synced_at"
                                         ],
                                         "properties": {
                                           "created_at": {
+                                            "type": "string"
+                                          },
+                                          "drive_synced_at": {
+                                            "type": "string"
+                                          },
+                                          "drive_url": {
                                             "type": "string"
                                           },
                                           "entity_id": {
@@ -18863,10 +19697,18 @@
                                                 "external_id",
                                                 "upload_type",
                                                 "created_at",
-                                                "updated_at"
+                                                "updated_at",
+                                                "drive_url",
+                                                "drive_synced_at"
                                               ],
                                               "properties": {
                                                 "created_at": {
+                                                  "type": "string"
+                                                },
+                                                "drive_synced_at": {
+                                                  "type": "string"
+                                                },
+                                                "drive_url": {
                                                   "type": "string"
                                                 },
                                                 "entity_id": {
@@ -18940,10 +19782,18 @@
                                           "external_id",
                                           "upload_type",
                                           "created_at",
-                                          "updated_at"
+                                          "updated_at",
+                                          "drive_url",
+                                          "drive_synced_at"
                                         ],
                                         "properties": {
                                           "created_at": {
+                                            "type": "string"
+                                          },
+                                          "drive_synced_at": {
+                                            "type": "string"
+                                          },
+                                          "drive_url": {
                                             "type": "string"
                                           },
                                           "entity_id": {
@@ -19343,10 +20193,18 @@
                                   "external_id",
                                   "upload_type",
                                   "created_at",
-                                  "updated_at"
+                                  "updated_at",
+                                  "drive_url",
+                                  "drive_synced_at"
                                 ],
                                 "properties": {
                                   "created_at": {
+                                    "type": "string"
+                                  },
+                                  "drive_synced_at": {
+                                    "type": "string"
+                                  },
+                                  "drive_url": {
                                     "type": "string"
                                   },
                                   "entity_id": {
@@ -22777,7 +23635,7 @@
       }
     }
   },
-  "x-date": "2026-05-29 18:07:22",
+  "x-date": "2026-06-04 15:05:40",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

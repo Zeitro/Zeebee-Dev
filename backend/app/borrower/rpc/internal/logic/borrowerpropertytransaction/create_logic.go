@@ -11,6 +11,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
+	"zeebee-backend/app/borrower/rpc/internal/biz_helper"
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -117,12 +118,20 @@ func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateReque
 		}
 
 		// initialize checklist
-		checklist, innerErr := l.baseLogic.RecalculateBorrowerPropertyTransactionChecklist(l.ctx, tx, result.Id)
+		transHelper := biz_helper.NewBorrowerPropertyTransaction(l.svcCtx.AllRepos)
+		checklist, innerErr := transHelper.RecalculateBorrowerPropertyTransactionChecklist(l.ctx, tx, result.Id)
 		if innerErr != nil {
 			return innerErr
 		}
 
 		result.Checklist = checklist
+
+		// recalculate property status
+		propertyHelper := biz_helper.NewBorrowerProperty(l.svcCtx.AllRepos)
+		innerErr = propertyHelper.CalculatePropertyStatuses(l.ctx, tx, in.Data.BorrowerPropertyId)
+		if innerErr != nil {
+			return innerErr
+		}
 
 		metadata, _ := json.Marshal(map[string]interface{}{
 			"after": struct {

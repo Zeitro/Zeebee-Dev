@@ -295,6 +295,7 @@ type BorrowerPropertyEntity struct {
 	CreatedAt      string         `json:"created_at"`
 	UpdatedAt      string         `json:"updated_at"`
 	LoanCount      int32          `json:"loan_count"`
+	Status         []string       `json:"status"`
 }
 
 type BorrowerPropertyTransactionAllResponse struct {
@@ -552,6 +553,66 @@ type DocumentUploadFileResponse struct {
 	Files []DocumentFile `json:"files"`
 }
 
+type DriveAuthUrlResponse struct {
+	Url string `json:"url"`
+}
+
+type DriveAuthorizeRequest struct {
+	Code  string `json:"code" validate:"required"`
+	State string `json:"state,optional"`
+}
+
+type DriveIntegrationEntity struct {
+	IsAuthorized       bool   `json:"is_authorized"`
+	AuthEmail          string `json:"auth_email"`
+	FolderName         string `json:"folder_name"`
+	DriveId            string `json:"drive_id"`
+	DriveName          string `json:"drive_name"`
+	RootFolderUrl      string `json:"root_folder_url"`
+	AuthorizedByUserId int64  `json:"authorized_by_user_id"`
+}
+
+type DriveItemEntity struct {
+	Id   string `json:"id"`
+	Name string `json:"name"`
+}
+
+type DriveListDrivesResponse struct {
+	Lists []DriveItemEntity `json:"lists"`
+}
+
+type DriveSyncTransactionRequest struct {
+	Id int64 `path:"id" validate:"required,gt=0"`
+}
+
+type DriveSyncTransactionResponse struct {
+	Total         int64                   `json:"total"`
+	Created       int64                   `json:"created"`
+	Replaced      int64                   `json:"replaced"`
+	Failed        int64                   `json:"failed"`
+	Removed       int64                   `json:"removed"`
+	FolderWebLink string                  `json:"folder_web_link"`
+	Files         []DriveSyncedFileEntity `json:"files"`
+	Status        string                  `json:"status"`
+	JobId         int64                   `json:"job_id"`
+	Error         string                  `json:"error"`
+}
+
+type DriveSyncedFileEntity struct {
+	FileName string `json:"file_name"`
+	DriveUrl string `json:"drive_url"`
+	Status   string `json:"status"`
+}
+
+type DriveUpdateFolderRequest struct {
+	FolderName string `json:"folder_name" validate:"required"`
+}
+
+type DriveUpdateSelectionRequest struct {
+	DriveId   string `json:"drive_id,optional"`
+	DriveName string `json:"drive_name,optional"`
+}
+
 type EmptyRequest struct {
 }
 
@@ -559,16 +620,18 @@ type EmptyResponse struct {
 }
 
 type FileEntity struct {
-	Id          int64  `json:"id"`
-	EntityType  string `json:"entity_type"`
-	EntityId    int64  `json:"entity_id"`
-	FileUrl     string `json:"file_url"`
-	FileName    string `json:"file_name"`
-	StorageType string `json:"storage_type"`
-	ExternalId  string `json:"external_id"`
-	UploadType  string `json:"upload_type"`
-	CreatedAt   string `json:"created_at"`
-	UpdatedAt   string `json:"updated_at"`
+	Id            int64  `json:"id"`
+	EntityType    string `json:"entity_type"`
+	EntityId      int64  `json:"entity_id"`
+	FileUrl       string `json:"file_url"`
+	FileName      string `json:"file_name"`
+	StorageType   string `json:"storage_type"`
+	ExternalId    string `json:"external_id"`
+	UploadType    string `json:"upload_type"`
+	CreatedAt     string `json:"created_at"`
+	UpdatedAt     string `json:"updated_at"`
+	DriveUrl      string `json:"drive_url"`
+	DriveSyncedAt string `json:"drive_synced_at"`
 }
 
 type GetSelectOptionRequest struct {
@@ -1589,11 +1652,14 @@ type PropertyPageEntity struct {
 	ActiveLoanCount           int64          `json:"active_loan_count"`
 	ArchivedLoanCount         int64          `json:"archived_loan_count"`
 	LoanCount                 int32          `json:"loan_count"`
+	Status                    []string       `json:"status"`
+	TransactionStatus         []string       `json:"transaction_status"`
 }
 
 type PropertyPageFilter struct {
 	Keyword   string   `json:"keyword,optional"`
 	Applicant []string `json:"applicant,optional"`
+	Status    []string `json:"status,optional" validate:"omitempty,dive,oneof='Active' 'Purchase Pending' 'Re-finance Pending' 'Change Title Pending' 'Sale Pending' 'Assignment Pending' 'Sold'"`
 }
 
 type PropertyPageRequest struct {
