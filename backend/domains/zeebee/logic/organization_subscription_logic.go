@@ -67,20 +67,20 @@ func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.Or
 	}
 
 	err = l.repos.OrganizationSubscriptionRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		activeSubs, innerErr := l.repos.OrganizationSubscriptionRepo.FindActiveByOrgId(ctx, input.OrganizationId)
+		activeSubs, innerErr := l.repos.OrganizationSubscriptionRepo.FindActiveByOrgIdWithTx(ctx, tx, input.OrganizationId)
 		if innerErr != nil {
 			return innerErr
 		}
 		for _, sub := range activeSubs {
 			sub.Status = constants.OrganizationSubscriptionStatusExpired
-			_, innerErr = l.repos.OrganizationSubscriptionRepo.UpdateOneById(ctx, sub.Id, sub)
+			_, innerErr = l.repos.OrganizationSubscriptionRepo.UpdateOneByIdWithTx(ctx, tx, sub.Id, sub)
 			if innerErr != nil {
 				return innerErr
 			}
 		}
 
 		var createErr error
-		subscription, createErr = l.repos.OrganizationSubscriptionRepo.Create(ctx, subscription)
+		subscription, createErr = l.repos.OrganizationSubscriptionRepo.CreateWithTx(ctx, tx, subscription, false)
 		return createErr
 	})
 	if err != nil {

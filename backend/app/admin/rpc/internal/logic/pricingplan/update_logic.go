@@ -41,7 +41,7 @@ func (l *UpdateLogic) Update(in *admin.PricingPlanUpdateRequest) (resp *admin.Pr
 		return nil, errorx.WithStack(err)
 	}
 
-	protoData, err := copierx.Trans[dto.PricingPlanDetailEntityDto, admin.PricingPlanEntity](result, copierx.TimeToRFC3339Str())
+	protoData, err := copierx.Trans[dto.PricingPlanEntityDto, admin.PricingPlanEntity](result, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

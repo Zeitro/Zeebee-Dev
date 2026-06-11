@@ -63,6 +63,17 @@ func (repo *OrganizationSubscriptionRepo) FindActiveByOrgId(ctx context.Context,
 	return result, errorx.WithStack(err)
 }
 
+func (repo *OrganizationSubscriptionRepo) FindActiveByOrgIdWithTx(ctx context.Context, tx *gorm.DB, organizationId int64) (result []*model.OrganizationSubscription, err error) {
+	err = tx.WithContext(ctx).
+		Where("organization_id = ? AND status NOT IN ?",
+			organizationId,
+			[]constants.OrganizationSubscriptionStatus{constants.OrganizationSubscriptionStatusExpired},
+		).
+		Order("id desc").
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+}
+
 func (repo *OrganizationSubscriptionRepo) FindByPricingPlanId(ctx context.Context, pricingPlanId int64) (result []*model.OrganizationSubscription, err error) {
 	err = repo.Client(ctx).
 		Where("pricing_plan_id = ?", pricingPlanId).

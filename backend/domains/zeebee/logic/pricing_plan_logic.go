@@ -3,8 +3,6 @@ package logic
 import (
 	"context"
 
-	"gorm.io/gorm"
-
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
@@ -144,28 +142,7 @@ func (l *PricingPlanLogic) BindResources(ctx context.Context, planId int64, reso
 		return nil, errorx.Wrap(err, "pricing plan not found")
 	}
 
-	err = l.repos.PricingPlanRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		innerErr := l.repos.PricingPlanAndResourceRepo.DeleteByPlanId(ctx, planId)
-		if innerErr != nil {
-			return innerErr
-		}
-
-		if len(resourceIds) > 0 {
-			items := make([]*model.PricingPlanAndResource, 0, len(resourceIds))
-			for _, rid := range resourceIds {
-				items = append(items, &model.PricingPlanAndResource{
-					PricingPlanId: planId,
-					ResourceId:    rid,
-				})
-			}
-			innerErr = l.repos.PricingPlanAndResourceRepo.BatchCreate(ctx, items)
-			if innerErr != nil {
-				return innerErr
-			}
-		}
-
-		return nil
-	})
+	err = l.repos.PricingPlanAndResourceRepo.ReplaceResourcesByPlanId(ctx, planId, resourceIds)
 	if err != nil {
 		return nil, err
 	}
