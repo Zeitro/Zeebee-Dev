@@ -114,7 +114,7 @@ export function createRequest() {
 		}
 
 		if (data?.code && data?.code === 401) {
-			window.location.href = '/login';
+			window.location.replace('/login');
 			showMessage('Please log in again!', 'warning');
 			return false;
 		}
