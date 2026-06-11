@@ -5,7 +5,7 @@ import { AntdRegistry } from '@ant-design/nextjs-registry';
 import { NewHeader, CommonSidebar } from '@repo/shared-methods';
 import { matchRoute, flattenNavRouter } from '@repo/shared-methods/utils';
 // import { noNavRouter } from '@config/routes';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useUserStore, usePermissionStore } from '@repo/shared-methods/store';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 import useContent from './useContent';
@@ -39,7 +39,6 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 	const { accessPaths, access } = usePermissionStore();
 	const [antdToken, setAntdToken] = useState({});
 	const pathname = usePathname();
-	const router = useRouter();
 	const { personalList, handleClickPersonalItem } = useContent();
 	const validateMessages = {
 		required: 'Please enter ${label}!',
@@ -56,10 +55,9 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 	// 处理特殊情况（有导航栏的页面遇到token到期清空了，则重新登录）
 	useEffect(() => {
 		if ((isPermissionPage || !isNoNav) && (!access || !userInfo)) {
-			router.replace('/login');
+			window.location.replace('/login');
 			console.log('---退出---');
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [access, isPermissionPage, userInfo, isNoNav]);
 
 	useDeferredSyncEffect({
