@@ -292,7 +292,7 @@ func TestSubscriptionRenew_Success(t *testing.T) {
 	created, err := subLogic.Create(ctx, createInput)
 	require.NoError(t, err)
 
-	newExpiry := time.Now().AddDate(0, 1, 0).Format(time.RFC3339)
+	newExpiry := &sql.NullTime{Time: time.Now().AddDate(0, 1, 0), Valid: true}
 	renewInput := dto.OrganizationSubscriptionRenewDto{
 		Id:         created.Id,
 		ExpireDate: newExpiry,
@@ -310,7 +310,7 @@ func TestSubscriptionRenew_NotFound(t *testing.T) {
 
 	renewInput := dto.OrganizationSubscriptionRenewDto{
 		Id:         99999,
-		ExpireDate: time.Now().AddDate(0, 1, 0).Format(time.RFC3339),
+		ExpireDate: &sql.NullTime{Time: time.Now().AddDate(0, 1, 0), Valid: true},
 	}
 
 	_, err := subLogic.Renew(ctx, 99999, renewInput)

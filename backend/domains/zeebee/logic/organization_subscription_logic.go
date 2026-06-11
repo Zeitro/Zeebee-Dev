@@ -85,22 +85,28 @@ func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.Or
 		return nil, err
 	}
 
-	l.publishRoleReloadEvent(ctx, input.OrganizationId, plan.Type)
+	// l.publishRoleReloadEvent(ctx, input.OrganizationId, plan.Type)
 	return l.transToDetailDto(ctx, subscription)
 }
 
-func (l *OrganizationSubscriptionLogic) Renew(ctx context.Context, id int64, input dto.OrganizationSubscriptionRenewDto) (*dto.OrganizationSubscriptionEntity, error) {
+func (l *OrganizationSubscriptionLogic) Renew(ctx context.Context, id int64, input dto.OrganizationSubscriptionRenewDto) (result *dto.OrganizationSubscriptionEntity, err error) {
 	subscription, err := l.repos.OrganizationSubscriptionRepo.GetOne(ctx, id)
 	if err != nil {
-		return nil, errorx.Wrap(err, "organization subscription not found")
+		err = errorx.New("organization subscription not found")
+		return
 	}
 
-	parsedDate, err := time.Parse(time.RFC3339, input.ExpireDate)
-	if err != nil {
-		return nil, errorx.New("invalid expire_date format, expected RFC3339")
+	if input.ExpireDate == nil || !input.ExpireDate.Valid {
+		err = errorx.New("invalid expire date")
+		return
+	}
+	subscription.ExpireDate = input.ExpireDate
+	if input.ExpireDate.Time.After(time.Now()) {
+		subscription.Status = constants.OrganizationSubscriptionStatusActive
+	} else {
+		subscription.Status = constants.OrganizationSubscriptionStatusExpired
 	}
 
-	subscription.ExpireDate = &sql.NullTime{Time: parsedDate, Valid: true}
 	subscription, err = l.repos.OrganizationSubscriptionRepo.UpdateOneById(ctx, id, subscription)
 	if err != nil {
 		return nil, err
@@ -125,6 +131,13 @@ func (l *OrganizationSubscriptionLogic) UpdateExpireDate(ctx context.Context, id
 	}
 
 	subscription.ExpireDate = &sql.NullTime{Time: expireDate, Valid: true}
+
+	if expireDate.After(time.Now()) {
+		subscription.Status = constants.OrganizationSubscriptionStatusActive
+	} else {
+		subscription.Status = constants.OrganizationSubscriptionStatusExpired
+	}
+
 	_, err = l.repos.OrganizationSubscriptionRepo.UpdateOneById(ctx, id, subscription)
 	if err != nil {
 		return err

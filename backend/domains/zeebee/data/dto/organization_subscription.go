@@ -31,8 +31,8 @@ type OrganizationSubscriptionCreateDto struct {
 }
 
 type OrganizationSubscriptionRenewDto struct {
-	Id         int64  `json:"id"`
-	ExpireDate string `json:"expire_date"`
+	Id         int64         `json:"id"`
+	ExpireDate *sql.NullTime `json:"expire_date"`
 }
 
 type OrganizationSubscriptionSwitchStatusDto struct {
