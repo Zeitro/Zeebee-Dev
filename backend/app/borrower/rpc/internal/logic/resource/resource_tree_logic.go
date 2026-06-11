@@ -40,7 +40,11 @@ func (l *ResourceTreeLogic) ResourceTree(in *borrower.ResourceTreeRequest) (resp
 			).Error(err)
 		}
 	}()
-	trees, err := l.baseLogic.ResourceLogic.ResourceTree(l.ctx, constants.UserType(in.Data.Type))
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	trees, err := l.baseLogic.ResourceLogic.GetOrganizationResources(l.ctx, claim.OrganizationId, constants.UserType(in.Data.Type))
 	if err != nil {
 		return nil, err
 	}

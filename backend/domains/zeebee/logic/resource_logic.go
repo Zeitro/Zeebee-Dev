@@ -39,6 +39,22 @@ func (l *ResourceLogic) ResourceTree(ctx context.Context, resourceType constants
 	return
 }
 
+// GetOrganizationResources returns resource tree filtered by the organization's active pricing plan
+func (l *ResourceLogic) GetOrganizationResources(ctx context.Context, organizationId int64, resourceType constants.UserType) (trees []*dto.ResourceTreeDto, err error) {
+	results, err := l.repos.ResourceRepo.All(ctx, resourceType, true)
+	if err != nil {
+		return
+	}
+
+	results, err = l.filterByPricingPlan(ctx, organizationId, results)
+	if err != nil {
+		return
+	}
+
+	trees = l.buildTree(results, 0)
+	return
+}
+
 // CreateResource creates a new resource
 func (l *ResourceLogic) CreateResource(ctx context.Context, input *dto.ResourceCreateRequestDto) (result *dto.ResourceEntityDto, err error) {
 	resourceModel, err := copierx.Trans[dto.ResourceCreateRequestDto, model.Resource](input)
@@ -345,6 +361,12 @@ func (l *ResourceLogic) GetUserResources(ctx context.Context, input dto.Resource
 		return a.Id < b.Id
 	})
 
+	// Filter by pricing plan resource scope
+	allResources, err = l.filterByPricingPlan(ctx, input.OrganizationId, allResources)
+	if err != nil {
+		return nil, err
+	}
+
 	// Filter root level to only menu type, collect all resource IDs
 	rootResources := slice.Filter(allResources, func(index int, item *model.Resource) bool {
 		return item.ParentId == 0 && item.ResourceType == constants.ResourceTypeMenu
@@ -542,4 +564,29 @@ func (l *ResourceLogic) handleSyncResource(ctx context.Context, tx *gorm.DB, use
 	}
 
 	return nil
+}
+
+func (l *ResourceLogic) filterByPricingPlan(ctx context.Context, organizationId int64, resources []*model.Resource) ([]*model.Resource, error) {
+	activeSubs, err := l.repos.OrganizationSubscriptionRepo.FindActiveByOrgId(ctx, organizationId)
+	if err != nil {
+		return nil, err
+	}
+	if len(activeSubs) == 0 {
+		return []*model.Resource{}, nil
+	}
+
+	planResourceIds := make(map[int64]bool)
+	for _, sub := range activeSubs {
+		ids, innerErr := l.repos.PricingPlanAndResourceRepo.FindResourceIdsByPlanId(ctx, sub.PricingPlanId)
+		if innerErr != nil {
+			return nil, innerErr
+		}
+		for _, id := range ids {
+			planResourceIds[id] = true
+		}
+	}
+
+	return slice.Filter(resources, func(index int, item *model.Resource) bool {
+		return planResourceIds[item.Id]
+	}), nil
 }
