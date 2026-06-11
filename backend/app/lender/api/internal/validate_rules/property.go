@@ -96,7 +96,6 @@ func LoanPropertyEditEntity(sl validator.StructLevel) {
 			sl.ReportError(property.ExistingMaturityDate, "purchase date", "PurchaseDate", "datetime", property.ExistingMaturityDate)
 			return
 		}
-
 	}
 
 	if loanPurpose == string(constants.LoanPurposePurchase) {

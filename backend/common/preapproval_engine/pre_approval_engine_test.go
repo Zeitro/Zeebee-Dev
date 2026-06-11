@@ -240,5 +240,4 @@ func TestPreApprovalEngine_CalPreApprovalLoanAmount(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
 	})
-
 }

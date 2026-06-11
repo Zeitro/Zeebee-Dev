@@ -7,7 +7,7 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 )
 
-var myAddress *types.AddressEntry = &types.AddressEntry{
+var myAddress *types.AddressEntity = &types.AddressEntity{
 	State:    "NY",
 	City:     "New York",
 	Address1: "Str 1",
@@ -21,7 +21,7 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 	LoanPurpose:   "Purchase",
 	TotalAmount:   30000,
 	InitialAmount: 20000,
-	LoanProperty: &types.LoanPropertyApplyFormPdfEntry{
+	LoanProperty: &types.LoanPropertyApplyFormPdfEntity{
 		PropertyType:         "Townhouse",
 		Unit:                 1,
 		LivingAreaSqft:       50,
@@ -33,7 +33,7 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 		FutureBedrooms:       1,
 		FutureBathrooms:      2,
 		Owner:                "zz",
-		Address: &types.AddressEntry{
+		Address: &types.AddressEntity{
 			State:    "NY",
 			City:     "New York",
 			Address1: "sddd",
@@ -51,7 +51,7 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 		ScheduledCloseEscrowDate: "06/01/2008",
 		EstPropertyValueAmount:   36541,
 		LiquidityAmount:          20100,
-		Budget: &types.LoanBudgetEntry{
+		Budget: &types.LoanBudgetEntity{
 			OriginalBudget:        20000,
 			RemainingBudget:       36000,
 			CostSpentToDateAmount: 12000,
@@ -71,8 +71,8 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 	MaturityDate:      "06/03/2025",
 	PrepaymentPenalty: 30000,
 	BusinessStrategy:  []string{"Sale", "Rental"},
-	Applicants: []*types.LoanApplicantApplyFormPdfEntry{
-		&types.LoanApplicantApplyFormPdfEntry{
+	Applicants: []*types.LoanApplicantApplyFormPdfEntity{
+		&types.LoanApplicantApplyFormPdfEntity{
 			FirstName:        "Wei",
 			MidName:          "",
 			LastName:         "Wang",
@@ -88,7 +88,7 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 			Address:          myAddress,
 			OwnPercent:       50,
 		},
-		&types.LoanApplicantApplyFormPdfEntry{
+		&types.LoanApplicantApplyFormPdfEntity{
 			FirstName:        "Wei2",
 			MidName:          "",
 			LastName:         "Wang",
@@ -113,8 +113,8 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 	ReservesAmount: 145211,
 
 	// AdditionalInfo:           "extral info",
-	TransactionExperiences: []*types.LoanExperienceEntry{
-		&types.LoanExperienceEntry{
+	TransactionExperiences: []*types.LoanExperienceEntity{
+		&types.LoanExperienceEntity{
 			Type:             "Transaction",
 			Address:          myAddress,
 			OwnershipOnTitle: "Me",
@@ -128,8 +128,8 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 			IsTenantOccupied: true,
 		},
 	},
-	RealEstateExperiences: []*types.LoanExperienceEntry{
-		&types.LoanExperienceEntry{
+	RealEstateExperiences: []*types.LoanExperienceEntity{
+		&types.LoanExperienceEntity{
 			Type:             "Real Estate",
 			Address:          myAddress,
 			OwnershipOnTitle: "Me",
@@ -143,15 +143,15 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 			IsTenantOccupied: true,
 		},
 	},
-	LoanThirdServices: []*types.LoanThirdServiceEntry{
-		&types.LoanThirdServiceEntry{
+	LoanThirdServices: []*types.LoanThirdServiceEntity{
+		&types.LoanThirdServiceEntity{
 			Type:    "Title Co",
 			Name:    "Nmae",
 			Email:   "name@gmail.com",
 			Phone:   "1122145121",
 			Company: "company name1",
 		},
-		&types.LoanThirdServiceEntry{
+		&types.LoanThirdServiceEntity{
 			Type:    "Escrow Co",
 			Name:    "Nmae2",
 			Email:   "name@gmail.com",
@@ -159,7 +159,7 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 			Company: "company name3",
 		},
 	},
-	LoanBorrower: &types.LoanBorrowerEntry{
+	LoanBorrower: &types.LoanBorrowerEntity{
 		Type:           "LLC",
 		Name:           "Lily",
 		TinType:        "Ssn",
@@ -169,9 +169,9 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 		ContactPhone:   "1236521021",
 		ContactName:    "name 12",
 	},
-	LoanDemographic: &types.LoanDemographicEntry{
+	LoanDemographic: &types.LoanDemographicEntity{
 		Sex: "Male",
-		Property: &types.LoanDemographicPropertyEntry{
+		Property: &types.LoanDemographicPropertyEntity{
 			AsPrimaryResident:          true,
 			HasTransactionRelationship: false,
 			HasBorrowedMoney:           false,
@@ -187,14 +187,14 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 			BorrowedMoneyAmount:        122000,
 			BankruptcyChapter:          "Chapter 7",
 		},
-		Ethnicity: &types.LoanDemographicEthnicityEntry{
+		Ethnicity: &types.LoanDemographicEthnicityEntity{
 			Values: []string{
 				"Hispanic or Latino",
 				"Other Hispanic or Latino",
 			},
 			OtherHispanicOrLatinoName: "Nono",
 		},
-		Race: &types.LoanDemographicRaceEntry{
+		Race: &types.LoanDemographicRaceEntity{
 			Values: []string{
 				"American Indian or Alaska Native",
 				"Asian",
@@ -210,7 +210,7 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 		},
 	},
 	Signatures: &types.Signatures{
-		BorrowerInfo: []*types.SignatureEntry{
+		BorrowerInfo: []*types.SignatureEntity{
 			{
 				SignatureImage: signatureBase64,
 				SignatureDate:  "06/01/2023",
@@ -220,7 +220,7 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 				SignatureDate:  "06/01/2023",
 			},
 		},
-		BusinessPurpose: []*types.SignatureEntry{
+		BusinessPurpose: []*types.SignatureEntity{
 			{
 				SignatureImage: signatureBase64,
 				SignatureDate:  "06/01/2023",
@@ -230,7 +230,7 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 				SignatureDate:  "06/01/2023",
 			},
 		},
-		PatriotAct: []*types.SignatureEntry{
+		PatriotAct: []*types.SignatureEntity{
 			{
 				SignatureImage: signatureBase64,
 				SignatureDate:  "06/01/2023",
@@ -240,7 +240,7 @@ var applyFormInfo *types.ApplyFormPdfRequest = &types.ApplyFormPdfRequest{
 				SignatureDate:  "06/01/2023",
 			},
 		},
-		BorrowerAuthorization: []*types.SignatureEntry{
+		BorrowerAuthorization: []*types.SignatureEntity{
 			{
 				SignatureImage: signatureBase64,
 				SignatureDate:  "06/01/2023",

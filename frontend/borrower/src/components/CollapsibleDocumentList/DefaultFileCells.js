@@ -3,9 +3,12 @@
 import React, { useState } from 'react';
 import {
 	DeleteOutlined,
+	FileExcelOutlined,
 	FileImageOutlined,
 	FilePdfOutlined,
+	FilePptOutlined,
 	FileTextOutlined,
+	FileWordOutlined,
 	FolderOpenOutlined,
 	FolderOutlined,
 } from '@ant-design/icons';
@@ -30,6 +33,15 @@ function FileTypeIcon({ suffix }) {
 		case 'jpg':
 		case 'jpeg':
 			return <FileImageOutlined className="text-base-label" />;
+		case 'xlsx':
+		case 'xls':
+			return <FileExcelOutlined className="text-base-label" />;
+		case 'doc':
+		case 'docx':
+			return <FileWordOutlined className="text-base-label" />;
+		case 'ppt':
+		case 'pptx':
+			return <FilePptOutlined className="text-base-label" />;
 		default:
 			return <FileTextOutlined className="text-base-label" />;
 	}

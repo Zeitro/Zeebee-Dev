@@ -416,21 +416,21 @@ func (r *PreApprovalRule) getTotalLoanCap(input InputLoanInfo) (ltaiv float64, l
 }
 
 // isHighValueZone checks if the given state and city are in the high-value zone
-func (r *PreApprovalRule) isHighValueZone(state string, city string) (isHighValueZone bool) {
-	// Check if state is in high value states
-	stateInfo, ok := slice.FindBy(r.HighValueStates, func(index int, value *HighValueState) bool {
-		return state == value.State
-	})
-	if !ok {
-		return false
-	}
-	// Check if city is in the high value state's cities
-	_, isHighValueZone = slice.FindBy(stateInfo.Cities, func(index int, value string) bool {
-		return city == value
-	})
-
-	return isHighValueZone
-}
+// func (r *PreApprovalRule) isHighValueZone(state string, city string) (isHighValueZone bool) {
+// 	// Check if state is in high value states
+// 	stateInfo, ok := slice.FindBy(r.HighValueStates, func(index int, value *HighValueState) bool {
+// 		return state == value.State
+// 	})
+// 	if !ok {
+// 		return false
+// 	}
+// 	// Check if city is in the high value state's cities
+// 	_, isHighValueZone = slice.FindBy(stateInfo.Cities, func(index int, value string) bool {
+// 		return city == value
+// 	})
+//
+// 	return isHighValueZone
+// }
 
 // isHeavyRehab checks if the rehabilitation is considered heavy based on the budget amount and current property value
 func (r *PreApprovalRule) isHeavyRehab(loanType constants.LoanType, budgetAmount float64, currentPropertyValue float64) (isHeavyRehab bool) {

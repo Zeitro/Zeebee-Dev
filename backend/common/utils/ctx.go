@@ -43,7 +43,6 @@ func GetUserClaimFromCtx(ctx context.Context) (claim *JWTClaims, err error) {
 		return val, nil
 	}
 	return nil, errorx.New("Invalid user claim")
-
 }
 
 func GetOrganizationIdFromCtx(ctx context.Context) (organizationId int64, err error) {

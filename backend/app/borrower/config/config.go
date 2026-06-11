@@ -27,6 +27,7 @@ type RpcConf struct {
 	HighCostLimitValue           int64
 	EmailConf                    EmailConf
 	EmailAuthConf                EmailAuthConf
+	DriveAuthConf                DriveAuthConf
 	RedisConf                    RedisConf
 	JwtAuth                      types.JwtAuth `json:",optional"`
 	DbConf                       DbConf
@@ -110,6 +111,14 @@ type PreApprovalLoanLoanTerm struct {
 
 type EmailAuthConf struct {
 	Gmail struct {
+		ClientId     string
+		ClientSecret string
+		CallbackUrl  string
+	}
+}
+
+type DriveAuthConf struct {
+	Google struct {
 		ClientId     string
 		ClientSecret string
 		CallbackUrl  string

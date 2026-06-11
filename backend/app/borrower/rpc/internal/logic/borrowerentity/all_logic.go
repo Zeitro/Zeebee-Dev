@@ -61,5 +61,4 @@ func (l *AllLogic) All(in *borrower.BorrowerEntityAllRequest) (resp *borrower.Bo
 	return &borrower.BorrowerEntityAllResponse{
 		Data: respData,
 	}, nil
-
 }
