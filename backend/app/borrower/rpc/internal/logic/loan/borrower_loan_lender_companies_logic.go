@@ -48,7 +48,7 @@ func (l *BorrowerLoanLenderCompaniesLogic) BorrowerLoanLenderCompanies(in *borro
 	var lenderCompanies []string
 	lenderCompanies, err = l.svcCtx.LoanRepo.GetLenderCompanyForBorrower(l.ctx, 0, claim.OrganizationId)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to get lender companies")
+		return nil, errorx.Wrap(err, "fail to get lender companies")
 	}
 
 	lenderCompanies = slice.Filter(lenderCompanies, func(index int, item string) bool {

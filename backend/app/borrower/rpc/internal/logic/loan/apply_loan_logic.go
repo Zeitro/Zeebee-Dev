@@ -59,7 +59,7 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 	}()
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
-		return nil, errorx.Wrap(err, "failed to get user claim")
+		return nil, errorx.Wrap(err, "fail to get user claim")
 	}
 
 	data, err := l.buildModelData(in.Data, nil, claim)
@@ -201,7 +201,7 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 		return innerErr
 	})
 	if err != nil {
-		return nil, errorx.Wrap(err, "failed to apply loan")
+		return nil, errorx.Wrap(err, "fail to apply loan")
 	}
 
 	return &borrower.LoanApplyResponse{

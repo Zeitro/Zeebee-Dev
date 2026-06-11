@@ -73,14 +73,14 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 		return nil, err
 	}
 	if oldLoan.Source != constants.LoanSourceSystem && oldLoan.Source != constants.LoanSourcePreapproval {
-		return nil, errorx.WithStack(errorx.New("Invalid loan source"))
+		return nil, errorx.WithStack(errorx.New("invalid loan source"))
 	}
 
 	// oldApplicants := oldLoan.Applicants
 
 	oldLoanCopy, err = utils.Clone(oldLoan)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed To Get Copy Loan")
+		return nil, errorx.Wrap(err, "fail to get copy loan")
 	}
 
 	data, err := l.buildModelData(in.Data, oldLoanCopy)

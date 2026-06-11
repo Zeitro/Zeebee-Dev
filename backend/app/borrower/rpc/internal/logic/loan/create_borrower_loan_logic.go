@@ -111,7 +111,7 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 		return innerErr
 	})
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed To Create Loan")
+		return nil, errorx.Wrap(err, "fail to create loan")
 	}
 
 	return &borrower.LoanCreateResponse{

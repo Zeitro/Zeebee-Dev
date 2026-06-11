@@ -75,7 +75,7 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 		if len(files) > 0 {
 			files, innerErr = l.svcCtx.FileRepo.BatchCreateWithTx(l.ctx, tx, files, false)
 			if innerErr != nil {
-				return errorx.Wrap(innerErr, "Failed To Create File Records")
+				return errorx.Wrap(innerErr, "fail to create file records")
 			}
 		}
 
@@ -84,7 +84,7 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 			"status": constants.LoanDocumentStatusReadyForReview,
 		})
 		if innerErr != nil {
-			return errorx.Wrap(innerErr, "Failed To Update Loan Document Status")
+			return errorx.Wrap(innerErr, "fail to update loan document status")
 		}
 
 		// convert files
@@ -122,7 +122,7 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 			},
 		)
 		if innerErr != nil {
-			return errorx.Wrap(innerErr, "Failed To Create Operation Log")
+			return errorx.Wrap(innerErr, "fail to create operation log")
 		}
 
 		// upload loan document upload time
@@ -144,14 +144,14 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 func (l *AddFilesLogic) prepare(in *lender.LoanDocumentAddFilesRequest, claim utils.JwtUser) (loan *model.Loan, loanDocument *model.LoanDocument, err error) {
 	loanDocument, err = l.svcCtx.LoanDocumentRepo.FindOneWithPreloadById(l.ctx, in.Data.Id, []string{"Files"})
 	if err != nil {
-		return nil, nil, errorx.Wrap(err, "Failed To Find Loan Document")
+		return nil, nil, errorx.Wrap(err, "fail to find loan document")
 	}
 
 	// Validate file count - existing files + new files should not exceed 10
 	existingFileCount := int64(len(loanDocument.Files))
 	newFileCount := int64(len(in.Data.FileUrls))
 	if existingFileCount+newFileCount > 10 {
-		return nil, nil, errorx.WithStack(errorx.New("Total number of files (existing + new) cannot exceed 10"))
+		return nil, nil, errorx.WithStack(errorx.New("total number of files (existing + new) cannot exceed 10"))
 	}
 
 	loan, err = l.baseLogic.GetLenderLoan(l.ctx, loanDocument.LoanId, claim.OrganizationId, nil)

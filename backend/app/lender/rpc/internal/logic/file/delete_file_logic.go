@@ -54,11 +54,11 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.FileDeleteRequest) (resp *lender
 
 	file, err = l.svcCtx.FileRepo.FindOneById(l.ctx, in.Data.Id)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed To Find File")
+		return nil, errorx.Wrap(err, "fail to find file")
 	}
 
 	if file.EntityType != constants.FileEntityTypeLoanDocument {
-		return nil, errorx.WithStack(errorx.New("File is not associated with a loan document"))
+		return nil, errorx.WithStack(errorx.New("file is not associated with a loan document"))
 	}
 
 	loan, loanDocument, err = l.baseLogic.GetLoanAndDocumentByDocumentId(l.ctx, file.EntityId, claim.OrganizationId)
@@ -72,14 +72,14 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.FileDeleteRequest) (resp *lender
 		// delete file
 		_, innerErr = l.svcCtx.FileRepo.DeleteByIDWithTx(l.ctx, tx, in.Data.Id)
 		if innerErr != nil {
-			return errorx.Wrap(innerErr, "Failed To Delete File")
+			return errorx.Wrap(innerErr, "fail to delete file")
 		}
 
 		// get file count
 		var fileCount int64
 		fileCount, innerErr = l.svcCtx.FileRepo.GetFileCountByEntityIdWithTx(l.ctx, tx, loanDocument.Id, constants.FileEntityTypeLoanDocument)
 		if innerErr != nil {
-			return errorx.Wrap(innerErr, "Failed To Check Remaining Files")
+			return errorx.Wrap(innerErr, "fail to check remaining files")
 		}
 
 		// update loan document status
@@ -93,7 +93,7 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.FileDeleteRequest) (resp *lender
 				"status": documentStatus,
 			})
 			if innerErr != nil {
-				return errorx.Wrap(innerErr, "Failed To Update Loan Document Status")
+				return errorx.Wrap(innerErr, "fail to update loan document status")
 			}
 		}
 
@@ -130,7 +130,7 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.FileDeleteRequest) (resp *lender
 			},
 		)
 		if innerErr != nil {
-			return errorx.Wrap(innerErr, "Failed To Create Operation Log")
+			return errorx.Wrap(innerErr, "fail to create operation log")
 		}
 
 		return nil

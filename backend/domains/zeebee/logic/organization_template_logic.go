@@ -373,7 +373,7 @@ func (l *OrganizationTemplateLogic) renderOrganizationSystemInfo(organizationTem
 			Delims("[[", "]]").
 			Parse(organizationTemplate.Content)
 		if err != nil {
-			return nil, errorx.Wrap(err, "Failed to parse template")
+			return nil, errorx.Wrap(err, "fail to parse template")
 		}
 		now := time.Now()
 		renderData := map[string]interface{}{

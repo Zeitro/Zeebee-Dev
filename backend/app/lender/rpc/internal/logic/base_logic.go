@@ -71,7 +71,7 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 			logx.WithContext(ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
 				logx.Field("user_type", constants.UserTypeLender),
-			).Error("failed to rebuild lender policy")
+			).Error("fail to rebuild lender policy")
 		}
 	})
 	return l
@@ -107,12 +107,12 @@ func (l *BaseLogic) CreateLoanOperationLog(ctx context.Context, tx *gorm.DB, loa
 				logx.Field("action", action),
 				logx.Field("metadata", metadata),
 				logx.Field("OperatorType", constants.LoanOperationOperatorTypeLender),
-			).Error("failed to create loan operation log")
+			).Error("fail to create loan operation log")
 		}
 	}()
 	operator, _ := l.svcCtx.OrganizationUserRepo.FindOneByIdWithTx(ctx, tx, operatorId)
 	// if err != nil {
-	// 	return errorx.Wrap(err, "Failed To Get Operator")
+	// 	return errorx.Wrap(err, "fail to Get Operator")
 	// }
 
 	operatorName := ""
@@ -132,7 +132,7 @@ func (l *BaseLogic) CreateLoanOperationLog(ctx context.Context, tx *gorm.DB, loa
 	}
 	_, err = l.svcCtx.LoanOperationRepo.CreateWithTx(ctx, tx, operation, false)
 	if err != nil {
-		return errorx.Wrap(err, "failed to create operation log")
+		return errorx.Wrap(err, "fail to create operation log")
 	}
 
 	return nil
@@ -141,7 +141,7 @@ func (l *BaseLogic) CreateLoanOperationLog(ctx context.Context, tx *gorm.DB, loa
 func (l *BaseLogic) GetLoanAndDocumentByDocumentId(ctx context.Context, documentId int64, organization int64) (loan *model.Loan, loanDocument *model.LoanDocument, err error) {
 	loanDocument, err = l.svcCtx.LoanDocumentRepo.FindOneWithPreloadById(ctx, documentId, []string{"Files"})
 	if err != nil {
-		return nil, nil, errorx.Wrap(err, "failed to find loan document")
+		return nil, nil, errorx.Wrap(err, "fail to find loan document")
 	}
 
 	loan, err = l.GetLenderLoan(ctx, loanDocument.LoanId, organization, []string{"LoanBorrower"})

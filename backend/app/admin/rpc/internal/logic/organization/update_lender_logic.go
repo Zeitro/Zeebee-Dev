@@ -57,7 +57,7 @@ func (l *UpdateLenderLogic) UpdateLender(in *admin.OrganizationUpdateLenderReque
 	// Update the model
 	_, err = l.svcCtx.OrganizationRepo.UpdateOneById(l.ctx, in.Data.Id, organization)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to update organization")
+		return nil, errorx.Wrap(err, "fail to update organization")
 	}
 	// Get updated organization
 	organizationBo, err := l.baseLogic.OrganizationLogic.Detail(l.ctx, in.Data.Id)

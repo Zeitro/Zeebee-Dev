@@ -76,14 +76,14 @@ func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestR
 		case constants.LoanDocumentCategoryExtend:
 			_, innerErr = l.svcCtx.LoanDocumentRepo.DeleteByIDWithTx(l.ctx, tx, loanDocument.Id)
 			if innerErr != nil {
-				return errorx.Wrap(innerErr, "failed To Delete Loan Document")
+				return errorx.Wrap(innerErr, "fail to delete loan document")
 			}
 		case constants.LoanDocumentCategoryBorrower:
 			innerErr = l.svcCtx.LoanDocumentRepo.UpdateColumnsByIdWithTx(l.ctx, tx, loanDocument.Id, map[string]interface{}{
 				"status": constants.LoanDocumentStatusPendingUpload,
 			})
 			if innerErr != nil {
-				return errorx.Wrap(innerErr, "failed To Update Loan Document Status")
+				return errorx.Wrap(innerErr, "fail to update loan document status")
 			}
 		default:
 			return errorx.WithStack(errorx.New("invalid loan document category"))
@@ -91,7 +91,7 @@ func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestR
 		operationLoanDocument := &dto.OperationLoanDocument{}
 		operationLoanDocument, err = copierx.Trans[model.LoanDocument, dto.OperationLoanDocument](loanDocument)
 		if err != nil {
-			return errorx.Wrap(err, "failed To Copy Loan Document")
+			return errorx.Wrap(err, "fail to copy loan document")
 		}
 
 		innerErr = l.baseLogic.CreateLoanOperationLog(
@@ -115,7 +115,7 @@ func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestR
 			},
 		)
 		if innerErr != nil {
-			return errorx.Wrap(innerErr, "failed To Create Operation Log")
+			return errorx.Wrap(innerErr, "fail to create operation log")
 		}
 
 		return nil

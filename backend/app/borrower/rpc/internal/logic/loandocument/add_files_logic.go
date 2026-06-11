@@ -67,7 +67,7 @@ func (l *AddFilesLogic) AddFiles(in *borrower.LoanDocumentAddFilesRequest) (resp
 		if len(files) > 0 {
 			files, innerErr = l.svcCtx.FileRepo.BatchCreateWithTx(l.ctx, tx, files, false)
 			if innerErr != nil {
-				return errorx.Wrap(innerErr, "Failed To Create File Records")
+				return errorx.Wrap(innerErr, "fail to create file records")
 			}
 		}
 
@@ -76,7 +76,7 @@ func (l *AddFilesLogic) AddFiles(in *borrower.LoanDocumentAddFilesRequest) (resp
 			"status": constants.LoanDocumentStatusReadyForReview,
 		})
 		if innerErr != nil {
-			return errorx.Wrap(innerErr, "Failed To Update Loan Document Status")
+			return errorx.Wrap(innerErr, "fail to update loan document status")
 		}
 
 		// upload loan document upload time
@@ -98,14 +98,14 @@ func (l *AddFilesLogic) AddFiles(in *borrower.LoanDocumentAddFilesRequest) (resp
 func (l *AddFilesLogic) prepare(in *borrower.LoanDocumentAddFilesRequest) (loan *model.Loan, loanDocument *model.LoanDocument, err error) {
 	loanDocument, err = l.svcCtx.LoanDocumentRepo.FindOneWithPreloadById(l.ctx, in.Data.Id, []string{"Files"})
 	if err != nil {
-		return nil, nil, errorx.Wrap(err, "Failed To Find Loan Document")
+		return nil, nil, errorx.Wrap(err, "fail to find loan document")
 	}
 
 	// Validate file count - existing files + new files should not exceed 10
 	existingFileCount := int64(len(loanDocument.Files))
 	newFileCount := int64(len(in.Data.FileUrls))
 	if existingFileCount+newFileCount > 10 {
-		return nil, nil, errorx.WithStack(errorx.New("Total number of files (existing + new) cannot exceed 10"))
+		return nil, nil, errorx.WithStack(errorx.New("total number of files (existing + new) cannot exceed 10"))
 	}
 
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
@@ -115,22 +115,22 @@ func (l *AddFilesLogic) prepare(in *borrower.LoanDocumentAddFilesRequest) (loan 
 
 	loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, loanDocument.LoanId, claim.OrganizationId)
 	if err != nil {
-		return nil, nil, errorx.Wrap(err, "Failed To Get Loan")
+		return nil, nil, errorx.Wrap(err, "fail to get loan")
 	}
 
 	if loan == nil || loanDocument == nil {
-		return nil, nil, errorx.WithStack(errorx.New("Loan or loan document not found"))
+		return nil, nil, errorx.WithStack(errorx.New("loan or loan document not found"))
 	}
 	validCategories := []constants.LoanDocumentCategory{
 		constants.LoanDocumentCategoryBorrower,
 		constants.LoanDocumentCategoryExtend,
 	}
 	if !slice.Contain(validCategories, loanDocument.Category) {
-		return nil, nil, errorx.WithStack(errorx.New("Loan document category not supported"))
+		return nil, nil, errorx.WithStack(errorx.New("loan document category not supported"))
 	}
 
 	if loanDocument.Status != constants.LoanDocumentStatusRequested && loanDocument.Status != constants.LoanDocumentStatusReadyForReview {
-		return nil, nil, errorx.WithStack(errorx.New("Loan document is not in requested or ready for review status"))
+		return nil, nil, errorx.WithStack(errorx.New("loan document is not in requested or ready for review status"))
 	}
 
 	if loan.Stage != constants.LoanStagePending {

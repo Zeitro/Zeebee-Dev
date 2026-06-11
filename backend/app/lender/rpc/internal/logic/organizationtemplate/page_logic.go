@@ -42,7 +42,7 @@ func (l *PageLogic) Page(in *lender.OrganizationTemplatePageRequest) (resp *lend
 	}()
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed To Get User Claim From Context")
+		return nil, errorx.Wrap(err, "fail to Get User Claim From Context")
 	}
 
 	input, err := copierx.Trans[lender.OrganizationTemplatePageRequestData, dto.OrganizationTemplatePageRequestDto](

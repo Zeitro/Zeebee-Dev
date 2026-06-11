@@ -163,7 +163,7 @@ func (l *SendRequestsLogic) sendDocumentRequestEmail(ctx context.Context, loan *
 	// parse email template
 	content, err := email2.ParseTemplate(email_tpl.SendLoanDocumentRequestEmail, emailData)
 	if err != nil {
-		return errorx.Wrap(err, "failed to parse email template")
+		return errorx.Wrap(err, "fail to parse email template")
 	}
 
 	// send email
@@ -177,7 +177,7 @@ func (l *SendRequestsLogic) sendDocumentRequestEmail(ctx context.Context, loan *
 
 	err = global.EmailClient.SendEmail(msg)
 	if err != nil {
-		return errorx.Wrap(err, "failed to send email")
+		return errorx.Wrap(err, "fail to send email")
 	}
 
 	return nil

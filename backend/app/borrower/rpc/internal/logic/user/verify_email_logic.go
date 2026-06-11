@@ -77,7 +77,7 @@ func (l *VerifyEmailLogic) VerifyEmail(in *borrower.VerifyEmailRequest) (resp *b
 		newCtx := context.WithoutCancel(l.ctx)
 		err := l.handlePreapprovalLoan(newCtx, user, organizationUser.OrganizationId)
 		if err != nil {
-			err = errorx.Wrap(err, "Failed to handle preapproval loan")
+			err = errorx.Wrap(err, "fail to handle preapproval loan")
 			l.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
 				logx.Field("service_name", l.svcCtx.Config.Name),

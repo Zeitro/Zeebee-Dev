@@ -138,7 +138,7 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 		return innerErr
 	})
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed To Import Pending Loan")
+		return nil, errorx.Wrap(err, "fail to import pending loan")
 	}
 
 	return &borrower.ImportPendingLoansResponse{

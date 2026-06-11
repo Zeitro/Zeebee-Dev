@@ -47,7 +47,7 @@ func (l *AllLogic) All(in *borrower.PropertyAllRequest) (resp *borrower.Property
 
 	results, err := l.svcCtx.BorrowerPropertyRepo.AllForOrganization(l.ctx, claim.OrganizationId)
 	if err != nil {
-		return nil, errorx.Wrap(err, "failed to get properties")
+		return nil, errorx.Wrap(err, "fail to get properties")
 	}
 
 	// respData := make([]*borrower.BorrowerPropertyEntity, 0, len(results))

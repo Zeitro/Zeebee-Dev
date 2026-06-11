@@ -11,6 +11,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 )
@@ -81,9 +82,15 @@ func (l *DeleteLogic) Delete(in *borrower.BorrowerPropertyTransactionDeleteReque
 
 		// get all document ids and delete them
 		var docIds []int64
-		innerErr = l.svcCtx.DocumentRepo.PluckByColumnsWithTx(l.ctx, tx, "id", &docIds, map[string]interface{}{
-			"entity_document_id": entityDoc.Id,
-		})
+		filters := []gormx.WhereRaw{
+			{
+				Raw: "entity_document_id = ?",
+				Args: []interface{}{
+					entityDoc.Id,
+				},
+			},
+		}
+		innerErr = l.svcCtx.DocumentRepo.PluckByColumnsWithTx(l.ctx, tx, "id", &docIds, filters)
 		if innerErr != nil {
 			return innerErr
 		}

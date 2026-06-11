@@ -168,7 +168,7 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 		return innerErr
 	})
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed To Update Loan")
+		return nil, errorx.Wrap(err, "fail to update loan")
 	}
 
 	return &borrower.EmptyResponse{}, nil

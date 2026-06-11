@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/data/dto"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -31,7 +32,7 @@ func NewRenewLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RenewLogic 
 
 func (l *RenewLogic) Renew(in *admin.OrganizationSubscriptionRenewRequest) (resp *admin.OrganizationSubscriptionRenewResponse, err error) {
 
-	dtoData, err := copierx.Trans[admin.OrganizationSubscriptionRenewRequestData, dto.OrganizationSubscriptionRenewDto](in.Data)
+	dtoData, err := copierx.Trans[admin.OrganizationSubscriptionRenewRequestData, dto.OrganizationSubscriptionRenewDto](in.Data, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
 		return nil, err
 	}

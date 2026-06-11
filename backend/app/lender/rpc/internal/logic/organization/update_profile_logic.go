@@ -44,19 +44,19 @@ func (l *UpdateProfileLogic) UpdateProfile(in *lender.OrganizationUpdateProfileR
 	// Get current user claim from gRPC metadata (JWT token)
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to get user claim from context")
+		return nil, errorx.Wrap(err, "fail to get user claim from context")
 	}
 
 	// Get organization details to verify ownership
 	organization, err := l.svcCtx.OrganizationRepo.GetOrganization(l.ctx, claim.OrganizationId, constants.UserTypeLender, false)
 
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to get organization")
+		return nil, errorx.Wrap(err, "fail to get organization")
 	}
 
 	// Verify user is the organization owner
 	if organization.Id != claim.OrganizationId {
-		return nil, errorx.New("You do not belong to this organization")
+		return nil, errorx.New("you do not belong to this organization")
 	}
 
 	// Copy request fields to existing model (only copies non-zero fields)
@@ -68,7 +68,7 @@ func (l *UpdateProfileLogic) UpdateProfile(in *lender.OrganizationUpdateProfileR
 	// Update the model
 	_, err = l.svcCtx.OrganizationRepo.UpdateOneById(l.ctx, claim.OrganizationId, organization)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to update organization")
+		return nil, errorx.Wrap(err, "fail to update organization")
 	}
 
 	// Return updated organization by calling Profile again

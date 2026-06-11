@@ -48,11 +48,11 @@ func (l *UpdateLoanStageLogic) UpdateLoanStage(in *lender.LoanUpdateStageRequest
 	// Get loan
 	loan, err := l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, claim.OrganizationId, false)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed To Get Loan")
+		return nil, errorx.Wrap(err, "fail to get loan")
 	}
 
 	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreapproval {
-		return nil, errorx.WithStack(errorx.New("Invalid loan source"))
+		return nil, errorx.WithStack(errorx.New("invalid loan source"))
 	}
 
 	// Save original status for operation log
@@ -66,7 +66,7 @@ func (l *UpdateLoanStageLogic) UpdateLoanStage(in *lender.LoanUpdateStageRequest
 
 		err = l.svcCtx.LoanRepo.UpdateStageWithTx(l.ctx, tx, in.Data.Id, stage)
 		if err != nil {
-			return errorx.Wrap(err, "Failed To Update Loan")
+			return errorx.Wrap(err, "fail to update loan")
 		}
 
 		// Create operation log

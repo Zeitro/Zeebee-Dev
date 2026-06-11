@@ -39,14 +39,14 @@ func DownloadImportTemplateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc 
 
 		file, err := os.Open(templatePath)
 		if err != nil {
-			response.BadRequest(w, "Failed to open template file")
+			response.BadRequest(w, "fail to open template file")
 			return
 		}
 		defer file.Close()
 
 		fileInfo, err := file.Stat()
 		if err != nil {
-			response.BadRequest(w, "Failed to get template file info")
+			response.BadRequest(w, "fail to get template file info")
 			return
 		}
 
@@ -57,7 +57,7 @@ func DownloadImportTemplateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc 
 
 		_, err = io.Copy(w, file)
 		if err != nil {
-			response.BadRequest(w, "Failed to send template file")
+			response.BadRequest(w, "fail to send template file")
 			return
 		}
 		return

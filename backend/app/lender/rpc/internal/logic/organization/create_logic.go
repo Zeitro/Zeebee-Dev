@@ -47,7 +47,7 @@ func (l *CreateLogic) Create(in *lender.OrganizationCreateRequest) (resp *lender
 	// Get current user claim (creator will become owner)
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to get user claim from context")
+		return nil, errorx.Wrap(err, "fail to get user claim from context")
 	}
 
 	// Convert request data to organization model
@@ -71,10 +71,10 @@ func (l *CreateLogic) Create(in *lender.OrganizationCreateRequest) (resp *lender
 		"type": constants.UserTypeLender,
 	})
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to check organization name uniqueness")
+		return nil, errorx.Wrap(err, "fail to check organization name uniqueness")
 	}
 	if exists {
-		return nil, errorx.New("Organization with this name already exists")
+		return nil, errorx.New("organization with this name already exists")
 	}
 
 	// Use transaction to ensure data consistency across multiple operations
@@ -82,7 +82,7 @@ func (l *CreateLogic) Create(in *lender.OrganizationCreateRequest) (resp *lender
 		// Create organization record
 		organization, err = l.svcCtx.OrganizationRepo.CreateWithTx(l.ctx, tx, organization, false)
 		if err != nil {
-			return errorx.Wrap(err, "Failed to create organization")
+			return errorx.Wrap(err, "fail to create organization")
 		}
 
 		// Create admin role for the organization
@@ -107,7 +107,7 @@ func (l *CreateLogic) Create(in *lender.OrganizationCreateRequest) (resp *lender
 
 		_, err = l.svcCtx.OrganizationUserRepo.CreateWithTx(l.ctx, tx, organizationUser, true)
 		if err != nil {
-			return errorx.Wrap(err, "Failed to create organization user")
+			return errorx.Wrap(err, "fail to create organization user")
 		}
 
 		return nil
@@ -117,9 +117,8 @@ func (l *CreateLogic) Create(in *lender.OrganizationCreateRequest) (resp *lender
 		return nil, err
 	}
 
-
 	// Subscribe default pricing plan (best-effort, ignore errors)
-	_ = l.baseLogic.OrganizationSubscriptionLogic.SubscribeDefaultPlan(l.ctx, organization.Id, constants.UserTypeLender)
+	// _ = l.baseLogic.OrganizationSubscriptionLogic.SubscribeDefaultPlan(l.ctx, organization.Id, constants.UserTypeLender)
 	// Convert created organization to proto entity for response
 	resultOrganization, err := copierx.Trans[model.Organization, lender.OrganizationEntity](
 		organization,

@@ -62,7 +62,7 @@ func (l *UpdateCommentLogic) UpdateComment(in *lender.LoanDocumentUpdateCommentR
 			"comment": in.Data.Comment,
 		})
 		if innerErr != nil {
-			return errorx.Wrap(innerErr, "failed to update loan document comment")
+			return errorx.Wrap(innerErr, "fail to update loan document comment")
 		}
 
 		innerErr = l.baseLogic.CreateLoanOperationLog(

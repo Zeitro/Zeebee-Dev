@@ -90,7 +90,7 @@ func (l *SendResetPasswordEmailLogic) sendResetPwdEmail(email string, firstName 
 		expireSeconds := global.Config.ResetPwdExpireSeconds
 		err = global.GetRedis().SetExpire(ctx, redisKey, code, expireSeconds)
 		if err != nil {
-			return errorx.WithStack(errorx.Wrap(err, "Failed To Cache Reset Password Code"))
+			return errorx.WithStack(errorx.Wrap(err, "fail to cache reset password code"))
 		}
 	}
 
