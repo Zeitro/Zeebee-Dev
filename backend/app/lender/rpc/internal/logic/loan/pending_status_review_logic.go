@@ -11,7 +11,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
+	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type PendingStatusReviewLogic struct {
@@ -92,15 +92,15 @@ func (l *PendingStatusReviewLogic) PendingStatusReview(in *lender.LoanPendingSta
 
 		// add operation
 		operatorId := claim.OrganizationUserId
-		fromStatus := data.LoanOperationStatus{
+		fromStatus := dto.LoanOperationStatus{
 			Stage:         originalStage,
 			PendingStatus: originalPendingStatus,
 		}
-		toStatus := data.LoanOperationStatus{
+		toStatus := dto.LoanOperationStatus{
 			Stage:         targetStage,
 			PendingStatus: targetStatus,
 		}
-		metadata := &data.LoanOperationMetadata{
+		metadata := &dto.LoanOperationMetadata{
 			Comment: in.Data.Comment,
 		}
 

@@ -12,7 +12,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
+	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type UpdateLoanPendingStatusLogic struct {
@@ -88,12 +88,12 @@ func (l *UpdateLoanPendingStatusLogic) UpdateLoanPendingStatus(in *lender.LoanUp
 		// Create operation log
 		operatorId := claim.OrganizationUserId
 
-		fromStatus := data.LoanOperationStatus{
+		fromStatus := dto.LoanOperationStatus{
 			Stage:         originalStage,
 			PendingStatus: originalPendingStatus,
 		}
 
-		toStatus := data.LoanOperationStatus{
+		toStatus := dto.LoanOperationStatus{
 			Stage:         loan.Stage,
 			PendingStatus: pendingStatus,
 		}

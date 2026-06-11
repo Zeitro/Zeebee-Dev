@@ -12,7 +12,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -86,8 +86,8 @@ func (l *CreateLogic) Create(in *lender.LoanDocumentCreateExtendTypeRequest) (re
 		}
 		results = *resultsPtr
 
-		operationDocs := []*data.OperationLoanDocument{}
-		operationDocsPtr, innerErr := copierx.Trans[[]*model.LoanDocument, []*data.OperationLoanDocument](&loanDocuments)
+		operationDocs := []*dto.OperationLoanDocument{}
+		operationDocsPtr, innerErr := copierx.Trans[[]*model.LoanDocument, []*dto.OperationLoanDocument](&loanDocuments)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -98,16 +98,16 @@ func (l *CreateLogic) Create(in *lender.LoanDocumentCreateExtendTypeRequest) (re
 			tx,
 			in.Data.LoanId,
 			claim.OrganizationUserId,
-			data.LoanOperationStatus{
+			dto.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			data.LoanOperationStatus{
+			dto.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			constants.LoanOperationActionCreateDocumentType,
-			&data.LoanOperationMetadata{
+			&dto.LoanOperationMetadata{
 				LoanDocuments: operationDocs,
 			},
 		)

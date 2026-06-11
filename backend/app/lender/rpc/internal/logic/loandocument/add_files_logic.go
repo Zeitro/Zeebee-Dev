@@ -12,7 +12,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -88,8 +88,8 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 		}
 
 		// convert files
-		operationFiles := make([]*data.OperationFile, 0, len(files))
-		operationFilesPtr, err := copierx.Trans[[]*model.File, []*data.OperationFile](&files)
+		operationFiles := make([]*dto.OperationFile, 0, len(files))
+		operationFilesPtr, err := copierx.Trans[[]*model.File, []*dto.OperationFile](&files)
 		if err != nil {
 			return err
 		}
@@ -101,17 +101,17 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 			tx,
 			in.Data.Id,
 			claim.OrganizationUserId,
-			data.LoanOperationStatus{
+			dto.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			data.LoanOperationStatus{
+			dto.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			constants.LoanOperationActionUploadDocumentFile,
-			&data.LoanOperationMetadata{
-				LoanDocuments: []*data.OperationLoanDocument{
+			&dto.LoanOperationMetadata{
+				LoanDocuments: []*dto.OperationLoanDocument{
 					{
 						Category: loanDocument.Category,
 						FileType: loanDocument.FileType,
