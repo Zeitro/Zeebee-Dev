@@ -167,26 +167,20 @@ func TestSubscriptionCreate_TrialStatus(t *testing.T) {
 		PlanType:  constants.PricingPlanTypeStandard,
 		Status:    constants.CommonStatusActive,
 		TrialDays: 14,
+		IsDefault: true,
 	}
 	require.NoError(t, db.Create(plan).Error)
 
-	policy := &model.PricingPlanPolicy{
-		PricingPlanId:  plan.Id,
-		OriginalAmount: 0,
-		ActualAmount:   0,
-		Type:           constants.PricingPolicyTypeMonthly,
-	}
-	require.NoError(t, db.Create(policy).Error)
-
-	input := dto.OrganizationSubscriptionCreateDto{
-		OrganizationId:      1,
-		PricingPlanId:       plan.Id,
-		PricingPlanPolicyId: policy.Id,
-	}
-
-	result, err := subLogic.Create(ctx, input)
+	// SubscribeDefaultPlan creates a trial subscription
+	err := subLogic.SubscribeDefaultPlan(ctx, 1, constants.UserTypeLender)
 	require.NoError(t, err)
-	assert.Equal(t, string(constants.OrganizationSubscriptionStatusTrialing), result.Status)
+
+	var sub model.OrganizationSubscription
+	require.NoError(t, db.First(&sub, "organization_id = ?", 1).Error)
+	assert.Equal(t, constants.OrganizationSubscriptionStatusTrialing, sub.Status)
+	assert.Equal(t, float64(0), sub.OriginalAmount)
+	assert.Equal(t, float64(0), sub.ActualAmount)
+	assert.NotNil(t, sub.ExpireDate)
 }
 
 func TestSubscriptionCreate_OldSubscriptionExpired(t *testing.T) {

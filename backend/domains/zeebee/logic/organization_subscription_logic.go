@@ -2,7 +2,9 @@ package logic
 
 import (
 	"context"
+	"crypto/rand"
 	"database/sql"
+	"encoding/hex"
 	"fmt"
 	"time"
 
@@ -47,26 +49,22 @@ func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.Or
 		return nil, errorx.New("pricing plan policy not found")
 	}
 
-	code := fmt.Sprintf("SU%d", time.Now().UnixNano())
+	code := fmt.Sprintf("SU%s%s", time.Now().Format("20060102150405"), randomHex(4))
 	expireDate := l.calculateExpireDate(policy.Type)
-
-	status := constants.OrganizationSubscriptionStatusActive
-	if plan.TrialDays > 0 {
-		status = constants.OrganizationSubscriptionStatusTrialing
-	}
 
 	subscription := &model.OrganizationSubscription{
 		Code:                code,
 		OrganizationId:      input.OrganizationId,
 		PricingPlanId:       input.PricingPlanId,
 		PricingPlanPolicyId: input.PricingPlanPolicyId,
-		Status:              status,
+		Status:              constants.OrganizationSubscriptionStatusActive,
 		ExpireDate:          expireDate,
 		OriginalAmount:      policy.OriginalAmount,
 		ActualAmount:        policy.ActualAmount,
 	}
 
 	err = l.repos.OrganizationSubscriptionRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		// set active subscription to inactive
 		activeSubs, innerErr := l.repos.OrganizationSubscriptionRepo.FindActiveByOrgIdWithTx(ctx, tx, input.OrganizationId)
 		if innerErr != nil {
 			return innerErr
@@ -212,37 +210,64 @@ func (l *OrganizationSubscriptionLogic) transToDetailDto(ctx context.Context, su
 	return result, nil
 }
 
-// SubscribeDefaultPlan finds the default plan for the given user type and creates a subscription.
-// If no default plan exists or the plan is inactive, returns nil with no error.
+// SubscribeDefaultPlan finds the default plan and creates a trial subscription.
+// Only applies to plans with TrialDays > 0 and Active status.
+// Creates subscription with Trialing status and expire_date based on plan.TrialDays.
 func (l *OrganizationSubscriptionLogic) SubscribeDefaultPlan(ctx context.Context, organizationId int64, userType constants.UserType) error {
 	plan, err := l.repos.PricingPlanRepo.FindDefaultByType(ctx, userType)
 	if err != nil || plan == nil {
 		return nil
 	}
 
-	// Find a zero-amount policy for the plan
-	policies, err := l.repos.PricingPlanPolicyRepo.ListByPlanId(ctx, plan.Id)
-	if err != nil || len(policies) == 0 {
+	if plan.Status != constants.CommonStatusActive || plan.TrialDays <= 0 {
 		return nil
 	}
 
-	var policy *model.PricingPlanPolicy
-	for _, p := range policies {
-		if p.ActualAmount == 0 {
-			policy = p
-			break
-		}
-	}
-	if policy == nil {
-		policy = policies[0]
-	}
+	code := fmt.Sprintf("SU%s%s", time.Now().Format("20060102150405"), randomHex(4))
+	expireDate := &sql.NullTime{Time: time.Now().AddDate(0, 0, int(plan.TrialDays)), Valid: true}
 
-	_, err = l.Create(ctx, dto.OrganizationSubscriptionCreateDto{
+	subscription := &model.OrganizationSubscription{
+		Code:                code,
 		OrganizationId:      organizationId,
 		PricingPlanId:       plan.Id,
-		PricingPlanPolicyId: policy.Id,
+		PricingPlanPolicyId: 0,
+		Status:              constants.OrganizationSubscriptionStatusTrialing,
+		ExpireDate:          expireDate,
+		OriginalAmount:      0,
+		ActualAmount:        0,
+	}
+
+	err = l.repos.OrganizationSubscriptionRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		activeSubs, innerErr := l.repos.OrganizationSubscriptionRepo.FindActiveByOrgIdWithTx(ctx, tx, organizationId)
+		if innerErr != nil {
+			return innerErr
+		}
+		for _, sub := range activeSubs {
+			sub.Status = constants.OrganizationSubscriptionStatusExpired
+			_, innerErr = l.repos.OrganizationSubscriptionRepo.UpdateOneByIdWithTx(ctx, tx, sub.Id, sub)
+			if innerErr != nil {
+				return innerErr
+			}
+		}
+
+		_, createErr := l.repos.OrganizationSubscriptionRepo.CreateWithTx(ctx, tx, subscription, false)
+		return createErr
 	})
-	return err
+	if err != nil {
+		return err
+	}
+
+	l.publishRoleReloadEvent(ctx, organizationId, plan.Type)
+	return nil
+}
+
+// randomHex returns n random bytes as a hex-encoded string.
+func randomHex(n int) string {
+	b := make([]byte, n)
+	if _, err := rand.Read(b); err != nil {
+		return "0000"
+	}
+	return hex.EncodeToString(b)
 }
 
 func (l *OrganizationSubscriptionLogic) publishRoleReloadEvent(ctx context.Context, orgId int64, userType constants.UserType) {
