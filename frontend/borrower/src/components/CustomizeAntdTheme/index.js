@@ -2,8 +2,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ConfigProvider } from 'antd';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
-import { CommonSidebar, NewHeader } from '@repo/shared-methods';
+import { CommonSidebar } from '@repo/shared-methods';
 import HeaderCustomAction from '../HeaderCustomAction';
+import TabAppHeader from '../TabWorkspace/TabAppHeader';
+import TabWorkspace from '../TabWorkspace';
+import { shouldShowTabBar } from '../TabWorkspace/tabUtils';
 import { matchRoute, flattenNavRouter } from '@repo/shared-methods/utils';
 import { usePathname } from 'next/navigation';
 import { usePermissionStore, useUserStore } from '@repo/shared-methods/store';
@@ -41,13 +44,20 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 	const [antdToken, setAntdToken] = useState({});
 	const pathname = usePathname();
 	const { personalList, handleClickPersonalItem } = useContent();
+	const isShowTabHeader = useMemo(
+		() => shouldShowTabBar(pathname, accessibleRoutes),
+		[pathname, accessibleRoutes],
+	);
 	const validateMessages = {
 		required: 'Please enter ${label}!',
 	};
-	// 没有导航栏/面包屑的纯页面（例如：login
-	const isNoNav = useMemo(() => {
+	// 无侧边栏/无标签栏的纯页面（login、gmail 授权、loanCalculator 等）
+	const isChromelessPage = useMemo(() => {
 		return flattenNavRouter(noTokenRouter).some((item) => matchRoute(item.path, pathname));
 	}, [pathname]);
+
+	// 没有导航栏/面包屑的纯页面（例如：login
+	const isNoNav = isChromelessPage;
 
 	const isPermissionPage = useMemo(() => {
 		return accessPaths?.some((path) => matchRoute(path, pathname));
@@ -116,12 +126,11 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 			form={{ validateMessages }}
 		>
 			<AntdRegistry>
-				{!isPermissionPage ? (
+				{isChromelessPage || !isPermissionPage ? (
 					children
 				) : (
 					<div className="h-full flex items-stretch customRoot">
 						<CommonSidebar
-							// routerList={navRouter}
 							routerList={accessibleRoutes}
 							personalList={personalList}
 							handleClickPersonalItem={handleClickPersonalItem}
@@ -135,11 +144,12 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 							)}
 						/>
 						<div className="flex-1 overflow-hidden flex flex-col">
-							<NewHeader>
-								<HeaderCustomAction />
-							</NewHeader>
-							{/* <div className="flex-1 overflow-hidden">{children}</div> */}
-							{children}
+							{isShowTabHeader ? (
+								<TabAppHeader>
+									<HeaderCustomAction />
+								</TabAppHeader>
+							) : null}
+							<TabWorkspace>{children}</TabWorkspace>
 						</div>
 					</div>
 				)}
