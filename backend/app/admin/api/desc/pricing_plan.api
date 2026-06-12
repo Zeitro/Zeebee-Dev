@@ -8,6 +8,7 @@ info(
 
 import "common.api"
 import "resource.api"
+import "pricing_plan_policy.api"
 
 // Entity
 type PricingPlanEntity {
@@ -43,16 +44,6 @@ type PricingPlanPageEntity {
     UpdatedAt string `json:"updated_at"`
 }
 
-type PricingPlanPolicyEntity {
-    Id int64 `json:"id"`
-    PricingPlanId int64 `json:"pricing_plan_id"`
-    OriginalAmount float64 `json:"original_amount"`
-    ActualAmount float64 `json:"actual_amount"`
-    Type string `json:"type"`
-    CreatedAt string `json:"created_at"`
-    UpdatedAt string `json:"updated_at"`
-}
-
 // Page
 type (
     PricingPlanFilter {
@@ -80,17 +71,12 @@ type (
         Name string `json:"name" validate:"required,min=1,max=100"`
         Subtitle string `json:"subtitle,optional" validate:"max=255"`
         Description string `json:"description,optional" validate:"max=255"`
-        Status string `json:"status" validate:"required,oneof=Active Disabled"`
         TrialDays int16 `json:"trial_days,optional"`
         SortOrder int16 `json:"sort_order,optional"`
         IsPublic bool `json:"is_public"`
         IsDefault bool `json:"is_default"`
         Type string `json:"type" validate:"required,oneof=Borrower Lender Admin"`
         PlanType string `json:"plan_type" validate:"required,oneof=Standard Custom"`
-    }
-
-    PricingPlanDetailResponse {
-        PricingPlanEntity
     }
 )
 
@@ -99,7 +85,6 @@ type PricingPlanUpdateRequest {
     Id int64 `path:"id" validate:"required,gt=0"`
     Subtitle string `json:"subtitle,optional" validate:"max=255"`
     Description string `json:"description,optional" validate:"max=255"`
-    Status string `json:"status" validate:"required,oneof=Active Disabled"`
     TrialDays int16 `json:"trial_days,optional"`
     SortOrder int16 `json:"sort_order,optional"`
     IsPublic bool `json:"is_public"`
@@ -107,10 +92,6 @@ type PricingPlanUpdateRequest {
     PlanType string `json:"plan_type" validate:"required,oneof=Standard Custom"`
 }
 
-// Delete
-type PricingPlanDeleteRequest {
-    Id int64 `path:"id" validate:"required,gt=0"`
-}
 
 // Bind Resources
 type (
@@ -118,35 +99,8 @@ type (
         Id int64 `path:"id" validate:"required,gt=0"`
         ResourceIds []int64 `json:"resource_ids" validate:"required,dive,gt=0"`
     }
-
     PricingPlanResourceListResponse {
         List []*ResourceTreeEntity `json:"list"`
     }
 )
 
-// PricingPlanPolicy Create
-type (
-    PricingPlanPolicyCreateRequest {
-        PricingPlanId int64 `json:"pricing_plan_id" validate:"required,gt=0"`
-        OriginalAmount float64 `json:"original_amount" validate:"required,gte=0"`
-        ActualAmount float64 `json:"actual_amount" validate:"required,gte=0"`
-        Type string `json:"type" validate:"required,oneof=Monthly Quarterly Yearly"`
-    }
-
-    PricingPlanPolicyEntityResponse {
-        PricingPlanPolicyEntity
-    }
-)
-
-// PricingPlanPolicy Update
-type PricingPlanPolicyUpdateRequest {
-    Id int64 `path:"id" validate:"required,gt=0"`
-    OriginalAmount float64 `json:"original_amount" validate:"gte=0"`
-    ActualAmount float64 `json:"actual_amount" validate:"gte=0"`
-    Type string `json:"type" validate:"oneof=Monthly Quarterly Yearly"`
-}
-
-// PricingPlanPolicy Delete
-type PricingPlanPolicyDeleteRequest {
-    Id int64 `path:"id" validate:"required,gt=0"`
-}

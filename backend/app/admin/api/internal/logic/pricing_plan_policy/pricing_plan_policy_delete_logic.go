@@ -29,8 +29,8 @@ func NewPricingPlanPolicyDeleteLogic(ctx context.Context, svcCtx *svc.ServiceCon
 func (l *PricingPlanPolicyDeleteLogic) PricingPlanPolicyDelete(req *types.PathIdRequest) (resp *types.EmptyResponse, err error) {
 
 	// Call RPC server
-	_, err = l.svcCtx.PricingPlanRpcClient.DeletePolicy(l.ctx, &admin.PricingPlanPolicyDeleteRequest{
-		Data: &admin.PricingPlanPolicyDeleteRequestData{Id: req.Id},
+	_, err = l.svcCtx.PricingPlanPolicyRpcClient.Delete(l.ctx, &admin.PathIdRequest{
+		Data: &admin.PathIdRequestData{Id: req.Id},
 	})
 	if err != nil {
 		return nil, errorx.WithStack(err)

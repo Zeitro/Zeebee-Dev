@@ -880,21 +880,12 @@ type PricingPlanCreateRequest struct {
 	Name        string `json:"name" validate:"required,min=1,max=100"`
 	Subtitle    string `json:"subtitle,optional" validate:"max=255"`
 	Description string `json:"description,optional" validate:"max=255"`
-	Status      string `json:"status" validate:"required,oneof=Active Disabled"`
 	TrialDays   int16  `json:"trial_days,optional"`
 	SortOrder   int16  `json:"sort_order,optional"`
 	IsPublic    bool   `json:"is_public"`
 	IsDefault   bool   `json:"is_default"`
 	Type        string `json:"type" validate:"required,oneof=Borrower Lender Admin"`
 	PlanType    string `json:"plan_type" validate:"required,oneof=Standard Custom"`
-}
-
-type PricingPlanDeleteRequest struct {
-	Id int64 `path:"id" validate:"required,gt=0"`
-}
-
-type PricingPlanDetailResponse struct {
-	PricingPlanEntity
 }
 
 type PricingPlanEntity struct {
@@ -955,10 +946,6 @@ type PricingPlanPolicyCreateRequest struct {
 	Type           string  `json:"type" validate:"required,oneof=Monthly Quarterly Yearly"`
 }
 
-type PricingPlanPolicyDeleteRequest struct {
-	Id int64 `path:"id" validate:"required,gt=0"`
-}
-
 type PricingPlanPolicyEntity struct {
 	Id             int64   `json:"id"`
 	PricingPlanId  int64   `json:"pricing_plan_id"`
@@ -967,10 +954,6 @@ type PricingPlanPolicyEntity struct {
 	Type           string  `json:"type"`
 	CreatedAt      string  `json:"created_at"`
 	UpdatedAt      string  `json:"updated_at"`
-}
-
-type PricingPlanPolicyEntityResponse struct {
-	PricingPlanPolicyEntity
 }
 
 type PricingPlanPolicyUpdateRequest struct {
@@ -988,7 +971,6 @@ type PricingPlanUpdateRequest struct {
 	Id          int64  `path:"id" validate:"required,gt=0"`
 	Subtitle    string `json:"subtitle,optional" validate:"max=255"`
 	Description string `json:"description,optional" validate:"max=255"`
-	Status      string `json:"status" validate:"required,oneof=Active Disabled"`
 	TrialDays   int16  `json:"trial_days,optional"`
 	SortOrder   int16  `json:"sort_order,optional"`
 	IsPublic    bool   `json:"is_public"`

@@ -27,18 +27,18 @@ func NewPricingPlanDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 	}
 }
 
-func (l *PricingPlanDetailLogic) PricingPlanDetail(req *types.PathIdRequest) (resp *types.PricingPlanDetailResponse, err error) {
+func (l *PricingPlanDetailLogic) PricingPlanDetail(req *types.PathIdRequest) (resp *types.PricingPlanEntity, err error) {
 
 	// Call RPC server
-	rpcResp, err := l.svcCtx.PricingPlanRpcClient.Detail(l.ctx, &admin.PricingPlanDetailRequest{
-		Data: &admin.PricingPlanDetailRequestData{Id: req.Id},
+	rpcResp, err := l.svcCtx.PricingPlanRpcClient.Detail(l.ctx, &admin.PathIdRequest{
+		Data: &admin.PathIdRequestData{Id: req.Id},
 	})
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
 
 	// Convert pb response to types
-	resp, err = copierx.Trans[admin.PricingPlanEntity, types.PricingPlanDetailResponse](rpcResp.Data, copierx.TimeToRFC3339Str())
+	resp, err = copierx.Trans[admin.PricingPlanEntity, types.PricingPlanEntity](rpcResp.Data, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

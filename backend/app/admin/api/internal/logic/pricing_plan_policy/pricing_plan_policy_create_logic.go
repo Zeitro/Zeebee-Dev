@@ -27,7 +27,7 @@ func NewPricingPlanPolicyCreateLogic(ctx context.Context, svcCtx *svc.ServiceCon
 	}
 }
 
-func (l *PricingPlanPolicyCreateLogic) PricingPlanPolicyCreate(req *types.PricingPlanPolicyCreateRequest) (resp *types.PricingPlanPolicyEntityResponse, err error) {
+func (l *PricingPlanPolicyCreateLogic) PricingPlanPolicyCreate(req *types.PricingPlanPolicyCreateRequest) (resp *types.PricingPlanPolicyEntity, err error) {
 
 	// Convert types to pb request
 	rpcReq := &admin.PricingPlanPolicyCreateRequest{}
@@ -37,13 +37,13 @@ func (l *PricingPlanPolicyCreateLogic) PricingPlanPolicyCreate(req *types.Pricin
 	}
 
 	// Call RPC server
-	rpcResp, err := l.svcCtx.PricingPlanRpcClient.CreatePolicy(l.ctx, rpcReq)
+	rpcResp, err := l.svcCtx.PricingPlanPolicyRpcClient.Create(l.ctx, rpcReq)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
 
 	// Convert pb response to types
-	resp, err = copierx.Trans[admin.PricingPlanPolicyEntity, types.PricingPlanPolicyEntityResponse](rpcResp.Data, copierx.TimeToRFC3339Str())
+	resp, err = copierx.Trans[admin.PricingPlanPolicyEntity, types.PricingPlanPolicyEntity](rpcResp.Data, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

@@ -27,7 +27,7 @@ func NewOrganizationSubscriptionRenewLogic(ctx context.Context, svcCtx *svc.Serv
 	}
 }
 
-func (l *OrganizationSubscriptionRenewLogic) OrganizationSubscriptionRenew(req *types.OrganizationSubscriptionRenewRequest) (resp *types.OrganizationSubscriptionDetailResponse, err error) {
+func (l *OrganizationSubscriptionRenewLogic) OrganizationSubscriptionRenew(req *types.OrganizationSubscriptionRenewRequest) (resp *types.EmptyResponse, err error) {
 
 	// Convert types to pb request
 	rpcReq := &admin.OrganizationSubscriptionRenewRequest{}
@@ -38,16 +38,9 @@ func (l *OrganizationSubscriptionRenewLogic) OrganizationSubscriptionRenew(req *
 	rpcReq.Data.Id = req.Id
 
 	// Call RPC server
-	rpcResp, err := l.svcCtx.OrganizationSubscriptionRpcClient.Renew(l.ctx, rpcReq)
+	_, err = l.svcCtx.OrganizationSubscriptionRpcClient.Renew(l.ctx, rpcReq)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-
-	// Convert pb response to types
-	resp, err = copierx.Trans[admin.OrganizationSubscriptionEntity, types.OrganizationSubscriptionDetailResponse](rpcResp.Data, copierx.TimeToRFC3339Str())
-	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
-	}
-
-	return resp, nil
+	return &types.EmptyResponse{}, nil
 }

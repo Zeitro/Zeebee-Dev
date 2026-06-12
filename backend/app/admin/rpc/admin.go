@@ -13,7 +13,10 @@ import (
 	commonServer "zeebee-backend/app/admin/rpc/internal/server/common"
 	loanServer "zeebee-backend/app/admin/rpc/internal/server/loan"
 	organizationServer "zeebee-backend/app/admin/rpc/internal/server/organization"
+	organizationSubscriptionServer "zeebee-backend/app/admin/rpc/internal/server/organizationsubscription"
 	organizationUserServer "zeebee-backend/app/admin/rpc/internal/server/organizationuser"
+	pricingPlanServer "zeebee-backend/app/admin/rpc/internal/server/pricingplan"
+	pricingPlanPolicyServer "zeebee-backend/app/admin/rpc/internal/server/pricingplanpolicy"
 	resourceServer "zeebee-backend/app/admin/rpc/internal/server/resource"
 	roleServer "zeebee-backend/app/admin/rpc/internal/server/role"
 	storageServer "zeebee-backend/app/admin/rpc/internal/server/storage"
@@ -50,6 +53,9 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		admin.RegisterBaseTemplateServer(grpcServer, baseTemplateServer.NewBaseTemplateServer(ctx))
 		admin.RegisterLoanServer(grpcServer, loanServer.NewLoanServer(ctx))
 		admin.RegisterAuthServer(grpcServer, authServer.NewAuthServer(ctx))
+		admin.RegisterPricingPlanServer(grpcServer, pricingPlanServer.NewPricingPlanServer(ctx))
+		admin.RegisterPricingPlanPolicyServer(grpcServer, pricingPlanPolicyServer.NewPricingPlanPolicyServer(ctx))
+		admin.RegisterOrganizationSubscriptionServer(grpcServer, organizationSubscriptionServer.NewOrganizationSubscriptionServer(ctx))
 		if rpcConfig.Mode == service.DevMode || rpcConfig.Mode == service.TestMode {
 			reflection.Register(grpcServer)
 		}

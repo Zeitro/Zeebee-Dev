@@ -37,16 +37,7 @@ func (l *PricingPlanBindResourcesLogic) PricingPlanBindResources(req *types.Pric
 	rpcReq.Data.Id = req.Id
 
 	// Call RPC server
-	rpcResp, err := l.svcCtx.PricingPlanRpcClient.BindResources(l.ctx, rpcReq)
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
+	_, err = l.svcCtx.PricingPlanRpcClient.BindResources(l.ctx, rpcReq)
+	return nil, errorx.WithStack(err)
 
-	// Convert pb response to types
-	resp, err = copierx.Trans[admin.PricingPlanBindResourcesResponse, types.PricingPlanResourceListResponse](rpcResp)
-	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
-	}
-
-	return resp, nil
 }

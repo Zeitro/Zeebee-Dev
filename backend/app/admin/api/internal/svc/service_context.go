@@ -6,8 +6,6 @@ import (
 
 	"zeebee-backend/app/admin/api/internal/middleware"
 	"zeebee-backend/app/admin/config"
-	"zeebee-backend/app/admin/rpc/client/organizationsubscription"
-	"zeebee-backend/app/admin/rpc/client/pricingplan"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/domains/zeebee/constants"
 )
@@ -28,8 +26,9 @@ type ServiceContext struct {
 	CommonRpcClient                   admin.CommonClient
 	BaseTemplateRpcClient             admin.BaseTemplateClient
 	LoanRpcClient                     admin.LoanClient
-	PricingPlanRpcClient              pricingplan.PricingPlan
-	OrganizationSubscriptionRpcClient organizationsubscription.OrganizationSubscription
+	PricingPlanRpcClient              admin.PricingPlanClient
+	PricingPlanPolicyRpcClient        admin.PricingPlanPolicyClient
+	OrganizationSubscriptionRpcClient admin.OrganizationSubscriptionClient
 
 	AdminApiContent string
 }
@@ -53,8 +52,9 @@ func NewServiceContext(c config.ApiConf, adminApiContent string) *ServiceContext
 		CommonRpcClient:                   admin.NewCommonClient(rpcClient.Conn()),
 		BaseTemplateRpcClient:             admin.NewBaseTemplateClient(rpcClient.Conn()),
 		LoanRpcClient:                     admin.NewLoanClient(rpcClient.Conn()),
-		PricingPlanRpcClient:              pricingplan.NewPricingPlan(rpcClient),
-		OrganizationSubscriptionRpcClient: organizationsubscription.NewOrganizationSubscription(rpcClient),
+		PricingPlanRpcClient:              admin.NewPricingPlanClient(rpcClient.Conn()),
+		PricingPlanPolicyRpcClient:        admin.NewPricingPlanPolicyClient(rpcClient.Conn()),
+		OrganizationSubscriptionRpcClient: admin.NewOrganizationSubscriptionClient(rpcClient.Conn()),
 		AdminApiContent:                   adminApiContent,
 	}
 }

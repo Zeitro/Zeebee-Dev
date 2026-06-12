@@ -27,7 +27,7 @@ func NewPricingPlanUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 	}
 }
 
-func (l *PricingPlanUpdateLogic) PricingPlanUpdate(req *types.PricingPlanUpdateRequest) (resp *types.PricingPlanDetailResponse, err error) {
+func (l *PricingPlanUpdateLogic) PricingPlanUpdate(req *types.PricingPlanUpdateRequest) (resp *types.PricingPlanEntity, err error) {
 
 	// Convert types to pb request
 	rpcReq := &admin.PricingPlanUpdateRequest{}
@@ -44,7 +44,7 @@ func (l *PricingPlanUpdateLogic) PricingPlanUpdate(req *types.PricingPlanUpdateR
 	}
 
 	// Convert pb response to types
-	resp, err = copierx.Trans[admin.PricingPlanEntity, types.PricingPlanDetailResponse](rpcResp.Data, copierx.TimeToRFC3339Str())
+	resp, err = copierx.Trans[admin.PricingPlanEntity, types.PricingPlanEntity](rpcResp.Data, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
