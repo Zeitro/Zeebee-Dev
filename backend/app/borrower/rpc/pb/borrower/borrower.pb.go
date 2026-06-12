@@ -20761,17 +20761,17 @@ func (x *BorrowerPropertyTransactionChecklistNodeEntity) GetOptionalDocumentCoun
 }
 
 type BorrowerPropertyTransactionChecklistEntity struct {
-	state                             protoimpl.MessageState                            `protogen:"open.v1"`
-	AllChecked                        bool                                              `protobuf:"varint,1,opt,name=all_checked,json=allChecked,proto3" json:"all_checked,omitempty"`
-	TotalDocumentCount                int32                                             `protobuf:"varint,2,opt,name=total_document_count,json=totalDocumentCount,proto3" json:"total_document_count,omitempty"`
-	TotalRequiredDocumentCount        int32                                             `protobuf:"varint,3,opt,name=total_required_document_count,json=totalRequiredDocumentCount,proto3" json:"total_required_document_count,omitempty"`
-	TotalRequiredUpdatedDocumentCount int32                                             `protobuf:"varint,4,opt,name=total_required_updated_document_count,json=totalRequiredUpdatedDocumentCount,proto3" json:"total_required_updated_document_count,omitempty"`
-	TotalOptionalDocumentCount        int32                                             `protobuf:"varint,5,opt,name=total_optional_document_count,json=totalOptionalDocumentCount,proto3" json:"total_optional_document_count,omitempty"`
-	TotalOptionalUpdatedDocumentCount int32                                             `protobuf:"varint,6,opt,name=total_optional_updated_document_count,json=totalOptionalUpdatedDocumentCount,proto3" json:"total_optional_updated_document_count,omitempty"`
-	RequiredDocuments                 []*BorrowerPropertyTransactionChecklistNodeEntity `protobuf:"bytes,7,rep,name=required_documents,json=requiredDocuments,proto3" json:"required_documents,omitempty"`
-	OptionalDocuments                 []*BorrowerPropertyTransactionChecklistNodeEntity `protobuf:"bytes,8,rep,name=optional_documents,json=optionalDocuments,proto3" json:"optional_documents,omitempty"`
-	unknownFields                     protoimpl.UnknownFields
-	sizeCache                         protoimpl.SizeCache
+	state                              protoimpl.MessageState                            `protogen:"open.v1"`
+	AllChecked                         bool                                              `protobuf:"varint,1,opt,name=all_checked,json=allChecked,proto3" json:"all_checked,omitempty"`
+	TotalDocumentCount                 int32                                             `protobuf:"varint,2,opt,name=total_document_count,json=totalDocumentCount,proto3" json:"total_document_count,omitempty"`
+	TotalRequiredDocumentCount         int32                                             `protobuf:"varint,3,opt,name=total_required_document_count,json=totalRequiredDocumentCount,proto3" json:"total_required_document_count,omitempty"`
+	TotalRequiredUploadedDocumentCount int32                                             `protobuf:"varint,4,opt,name=total_required_uploaded_document_count,json=totalRequiredUploadedDocumentCount,proto3" json:"total_required_uploaded_document_count,omitempty"`
+	TotalOptionalDocumentCount         int32                                             `protobuf:"varint,5,opt,name=total_optional_document_count,json=totalOptionalDocumentCount,proto3" json:"total_optional_document_count,omitempty"`
+	TotalOptionalUploadedDocumentCount int32                                             `protobuf:"varint,6,opt,name=total_optional_uploaded_document_count,json=totalOptionalUploadedDocumentCount,proto3" json:"total_optional_uploaded_document_count,omitempty"`
+	RequiredDocuments                  []*BorrowerPropertyTransactionChecklistNodeEntity `protobuf:"bytes,7,rep,name=required_documents,json=requiredDocuments,proto3" json:"required_documents,omitempty"`
+	OptionalDocuments                  []*BorrowerPropertyTransactionChecklistNodeEntity `protobuf:"bytes,8,rep,name=optional_documents,json=optionalDocuments,proto3" json:"optional_documents,omitempty"`
+	unknownFields                      protoimpl.UnknownFields
+	sizeCache                          protoimpl.SizeCache
 }
 
 func (x *BorrowerPropertyTransactionChecklistEntity) Reset() {
@@ -20825,9 +20825,9 @@ func (x *BorrowerPropertyTransactionChecklistEntity) GetTotalRequiredDocumentCou
 	return 0
 }
 
-func (x *BorrowerPropertyTransactionChecklistEntity) GetTotalRequiredUpdatedDocumentCount() int32 {
+func (x *BorrowerPropertyTransactionChecklistEntity) GetTotalRequiredUploadedDocumentCount() int32 {
 	if x != nil {
-		return x.TotalRequiredUpdatedDocumentCount
+		return x.TotalRequiredUploadedDocumentCount
 	}
 	return 0
 }
@@ -20839,9 +20839,9 @@ func (x *BorrowerPropertyTransactionChecklistEntity) GetTotalOptionalDocumentCou
 	return 0
 }
 
-func (x *BorrowerPropertyTransactionChecklistEntity) GetTotalOptionalUpdatedDocumentCount() int32 {
+func (x *BorrowerPropertyTransactionChecklistEntity) GetTotalOptionalUploadedDocumentCount() int32 {
 	if x != nil {
-		return x.TotalOptionalUpdatedDocumentCount
+		return x.TotalOptionalUploadedDocumentCount
 	}
 	return 0
 }
@@ -26432,15 +26432,15 @@ const file_app_borrower_rpc_pb_borrower_proto_rawDesc = "" +
 	"\x05files\x18\b \x03(\v2\x14.borrower.FileEntityR\x05files\x126\n" +
 	"\x17required_document_count\x18\t \x01(\x05R\x15requiredDocumentCount\x126\n" +
 	"\x17optional_document_count\x18\n" +
-	" \x01(\x05R\x15optionalDocumentCount\"\xfb\x04\n" +
+	" \x01(\x05R\x15optionalDocumentCount\"\xff\x04\n" +
 	"*BorrowerPropertyTransactionChecklistEntity\x12\x1f\n" +
 	"\vall_checked\x18\x01 \x01(\bR\n" +
 	"allChecked\x120\n" +
 	"\x14total_document_count\x18\x02 \x01(\x05R\x12totalDocumentCount\x12A\n" +
-	"\x1dtotal_required_document_count\x18\x03 \x01(\x05R\x1atotalRequiredDocumentCount\x12P\n" +
-	"%total_required_updated_document_count\x18\x04 \x01(\x05R!totalRequiredUpdatedDocumentCount\x12A\n" +
-	"\x1dtotal_optional_document_count\x18\x05 \x01(\x05R\x1atotalOptionalDocumentCount\x12P\n" +
-	"%total_optional_updated_document_count\x18\x06 \x01(\x05R!totalOptionalUpdatedDocumentCount\x12g\n" +
+	"\x1dtotal_required_document_count\x18\x03 \x01(\x05R\x1atotalRequiredDocumentCount\x12R\n" +
+	"&total_required_uploaded_document_count\x18\x04 \x01(\x05R\"totalRequiredUploadedDocumentCount\x12A\n" +
+	"\x1dtotal_optional_document_count\x18\x05 \x01(\x05R\x1atotalOptionalDocumentCount\x12R\n" +
+	"&total_optional_uploaded_document_count\x18\x06 \x01(\x05R\"totalOptionalUploadedDocumentCount\x12g\n" +
 	"\x12required_documents\x18\a \x03(\v28.borrower.BorrowerPropertyTransactionChecklistNodeEntityR\x11requiredDocuments\x12g\n" +
 	"\x12optional_documents\x18\b \x03(\v28.borrower.BorrowerPropertyTransactionChecklistNodeEntityR\x11optionalDocuments\"\xb9\x04\n" +
 	"!BorrowerPropertyTransactionEntity\x12\x0e\n" +
