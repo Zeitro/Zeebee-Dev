@@ -34,12 +34,12 @@ type RoleAndResourceRelation {
 }
 
 type RolePageFilter {
-    Keyword string `json:"keyword, optional"`
+    Keyword string `json:"keyword,optional"`
 }
 
 type RolePageSort {
-    Column string `json:"column, optional"`
-    Sort string `json:"sort, optional"`
+    Column string `json:"column,optional"`
+    Sort string `json:"sort,optional"`
 }
 
 type RolePageResponse {

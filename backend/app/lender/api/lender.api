@@ -55,6 +55,14 @@ service lender-api {
 	@doc "sync data"
 	@handler SyncData
 	get /sync_data (EmptyRequest) returns (EmptyResponse)
+
+	@doc "sync api"
+	@handler SyncApi
+	get /common/sync_api (EmptyRequest) returns (EmptyResponse)
+
+	@doc "sync resource"
+	@handler SyncResource
+	get /common/sync_resource (EmptyRequest) returns (EmptyResponse)
 }
 
 // ============== user =============

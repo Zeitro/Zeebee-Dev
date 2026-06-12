@@ -103,7 +103,6 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 			if innerErr != nil {
 				return innerErr
 			}
-
 		}
 
 		// handle applicant
@@ -173,7 +172,6 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 }
 
 func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateRequestData, oldLoan *model.Loan, claim utils.JwtUser) (loan *model.Loan, loanProperty *model.LoanProperty, applicants []*model.LoanApplicant, loanBorrower *model.LoanBorrower, err error) {
-
 	// build applicants
 	var totalOwnPercent int32
 	for _, applicant := range in.Applicants {
@@ -231,7 +229,7 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 		return nil, nil, nil, nil, err
 	}
 
-	loanProperty, err = copierx.Trans[borrower.ThirdPartyLoanPropertyEditEntity, model.LoanProperty](in.LoanProperty, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
+	err = copierx.Assign[borrower.ThirdPartyLoanPropertyEditEntity, model.LoanProperty](in.LoanProperty, loanProperty, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
@@ -247,7 +245,7 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
-	loan, err = copierx.Trans[borrower.LoanUpdateRequestData, model.Loan](in, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
+	err = copierx.Assign[borrower.LoanUpdateRequestData, model.Loan](in, loan, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}

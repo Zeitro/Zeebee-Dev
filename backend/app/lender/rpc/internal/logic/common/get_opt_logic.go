@@ -36,8 +36,7 @@ func (l *GetOptLogic) GetOpt(in *lender.OptionRequest) (resp *lender.OptionRespo
 	resp = &lender.OptionResponse{
 		Data: []*lender.OptionEntity{},
 	}
-	opts := enums.Get(in.Data.Name)
-	optsPtr, err := copierx.Trans[[]enums.EnumOpt, []*lender.OptionEntity](&opts)
+	optsPtr, err := copierx.Trans[[]enums.EnumOpt, []*lender.OptionEntity](new(enums.Get(in.Data.Name)))
 	if err != nil {
 		return nil, err
 	}

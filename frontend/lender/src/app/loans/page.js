@@ -1,10 +1,10 @@
 'use client';
-import {Radio} from 'antd';
-import React, {useState} from 'react';
+import { Radio } from 'antd';
+import React, { useState } from 'react';
 import TableLoan from './components/ListView';
 import PipelinePendingLoan from './components/Pipeline';
-import {NewHeader} from '@repo/shared-methods';
-import {createRequest} from '@repo/shared-methods/utils';
+import { NewHeader } from '@repo/shared-methods';
+import { createRequest } from '@repo/shared-methods/utils';
 
 const Loans = () => {
 	const { cancelAll } = createRequest();

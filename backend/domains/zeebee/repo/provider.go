@@ -29,6 +29,13 @@ type AllRepos struct {
 	BaseTemplateRepo           *BaseTemplateRepo
 	OrganizationTemplateRepo   *OrganizationTemplateRepo
 	OrganizationSettingRepo  *OrganizationSettingRepo
+	BorrowerPropertyTransactionRepo *BorrowerPropertyTransactionRepo
+	OperationRepo                   *OperationRepo
+	DocumentRepo                    *DocumentRepo
+	EntityDocumentRepo              *EntityDocumentRepo
+	DocumentTemplateRepo            *DocumentTemplateRepo
+	DriveAuthorizationRepo          *DriveAuthorizationRepo
+	DriveSyncJobRepo                *DriveSyncJobRepo
 }
 
 // NewAllRepos creates a new AllRepos instance with all repository implementations initialized.
@@ -62,5 +69,12 @@ func NewAllRepos(db *gorm.DB) *AllRepos {
 		BaseTemplateRepo:           NewBaseTemplateRepo(db),
 		OrganizationTemplateRepo:   NewOrganizationTemplateRepo(db),
 		OrganizationSettingRepo:  NewOrganizationSettingRepo(db),
+		BorrowerPropertyTransactionRepo: NewBorrowerPropertyTransactionRepo(db),
+		OperationRepo:                   NewOperationRepo(db),
+		DocumentRepo:                    NewDocumentRepo(db),
+		EntityDocumentRepo:              NewEntityDocumentRepo(db),
+		DocumentTemplateRepo:            NewDocumentTemplateRepo(db),
+		DriveAuthorizationRepo:          NewDriveAuthorizationRepo(db),
+		DriveSyncJobRepo:                NewDriveSyncJobRepo(db),
 	}
 }

@@ -44,5 +44,4 @@ func (l *BorrowerNamesLogic) BorrowerNames(in *borrower.BorrowerNamesRequest) (r
 		return nil, err
 	}
 	return &borrower.BorrowerNamesResponse{Data: names}, nil
-
 }

@@ -1,70 +1,74 @@
 'use client';
-import { BtnPopUpModal, FilterField, NewPagination, NoData } from '@repo/shared-methods';
-import Image from 'next/image';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
-import { sort_asc, sort_des } from '@/enum/properties';
-import { asc, des } from '@/enum/common';
-import PropertiesItem from './components/propertiesItem';
-import { createRequest, getPagination, transformArrayStructure } from '@repo/shared-methods/utils';
-import { Spin } from 'antd';
-import { useGetOptions } from '@repo/shared-methods/hooks';
-import AddModal from '@/components/SelectCard/Add/property';
-import { PlusOutlined } from '@ant-design/icons';
+
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import {
+	DeleteOutlined,
+	EditOutlined,
+	PlusOutlined,
+	ProfileOutlined,
+	ReloadOutlined,
+} from '@ant-design/icons';
+import { Button, message, Space } from 'antd';
+import { useRouter } from 'next/navigation';
+import {
+	BtnPopUpModal,
+	DeleteBtn,
+	FieldTips,
+	FilterTable,
+	PermissionSlot,
+} from '@repo/shared-methods';
+import AddModal from '@repo/shared-methods/componentsUi/SelectCard/Add/property';
+import { useProperty } from '@repo/shared-methods/componentsUi/SelectCard/Item/useCommon';
+import { useAuth, useGetOptions } from '@repo/shared-methods/hooks';
+import {
+	assemblyAddress,
+	createRequest,
+	displayValue,
+	EMPTY_DISPLAY,
+	formatAmount,
+	formatDate,
+	formatNumber,
+	transformArrayStructure,
+} from '@repo/shared-methods/utils';
+import { PERMISSIONS } from '@config/permissions';
+import NewTransactionModal from '@/app/myTransactions/components/NewTransactionModal';
+import TruncatedTagGrid from './components/TruncatedTagGrid';
+
+const PROPERTY_API = '/property/page';
+
+// const DEFAULT_SORTER = { column: 'total_amount', sort: des };
+
 const Properties = () => {
-	const { request, cancel } = createRequest();
-	const { borrowerOptions } = useGetOptions([{ type: 'borrower' }]);
-	const filterFieldRef = useRef();
+	const router = useRouter();
+	const { hasPermission, getActiveByPermission } = useAuth();
+	const { request, cancelMatch } = useMemo(() => createRequest(), []);
+	const { borrowerOptions, borrowerPropertyStatusOptions } = useGetOptions([
+		{ type: 'borrower' },
+		{
+			key: 'borrower_property_status',
+			valueName: 'borrowerPropertyStatusOptions',
+		},
+	]);
+	const tableFilterRef = useRef();
 	const [searchValue, setSearchValue] = useState('');
 	const [borrower, setBorrower] = useState([]);
+	const [propertyStatus, setPropertyStatus] = useState([]);
+	const [transactionModalOpen, setTransactionModalOpen] = useState(false);
+	const [transactionModalProperty, setTransactionModalProperty] = useState(null);
 
-	const [pagination, setPagination] = useState(getPagination());
-	const paginationRef = useRef(pagination);
+	const refreshList = useCallback(() => tableFilterRef.current?.handleSearch?.(), []);
+	const { handleDelete, loading: deleteLoading } = useProperty({ handleSearch: refreshList });
 
-	const [sorter, setSorter] = useState({
-		column: 'total_amount',
-		sort: des,
-	});
-	const sorterRef = useRef(sorter);
-
-	const [loading, setLoading] = useState(true);
-	const [list, setList] = useState([]);
-	const scrollRef = useRef(null);
-
-	useEffect(() => {
-		paginationRef.current = pagination;
-	}, [pagination]);
-
-	useEffect(() => {
-		sorterRef.current = sorter;
-	}, [sorter]);
-
-	const getList = useCallback(async () => {
-		try {
-			const filterParams = filterFieldRef?.current?.getApiParams?.();
-			setLoading(true);
-			const params = {
-				page: paginationRef.current?.current,
-				limit: paginationRef.current?.pageSize,
-				filter: {
-					...filterParams,
-				},
-			};
-			if (sorterRef.current?.column) {
-				params.sorter = sorterRef.current;
-			}
-			const { total, list } = await request('/property/page', {
+	const getData = useCallback(
+		(params) => {
+			cancelMatch(PROPERTY_API);
+			return request(PROPERTY_API, {
 				method: 'POST',
-				body: params,
+				body: { ...params },
 			});
-			setPagination((v) => ({ ...v, total }));
-			setList(list);
-			setLoading(false);
-		} catch {
-			setLoading(false);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+		},
+		[request, cancelMatch],
+	);
 
 	const filterList = useMemo(
 		() => [
@@ -88,15 +92,23 @@ const Properties = () => {
 				})?.map((i) => ({ ...i, key: i.value })),
 			},
 			{
+				filterType: 'treeSelect',
+				label: 'Property status',
+				value: propertyStatus,
+				paramsKey: 'status',
+				placeholder: 'Property status',
+				onChange: (value) => setPropertyStatus(value),
+				treeData: transformArrayStructure({
+					sourceArray: borrowerPropertyStatusOptions,
+					outputKey: 'title',
+				})?.map((i) => ({ ...i, key: i.value })),
+				style: { width: 200 },
+			},
+			{
 				filterType: 'button',
 				onClick: () => {
-					cancel('/property/page');
-					setPagination((v) => {
-						const next = { ...v, current: 1 };
-						paginationRef.current = next;
-						return next;
-					});
-					getList();
+					cancelMatch(PROPERTY_API);
+					tableFilterRef.current?.handleSearch?.();
 				},
 			},
 			{
@@ -107,14 +119,15 @@ const Properties = () => {
 				onClick: () => {
 					setSearchValue('');
 					setBorrower([]);
-					setTimeout(() => {
-						setPagination((v) => {
-							const next = { ...v, current: 1 };
-							paginationRef.current = next;
-							return next;
-						});
-						getList?.();
-					}, 300);
+					setPropertyStatus([]);
+					cancelMatch(PROPERTY_API);
+					tableFilterRef.current?.handleSearch?.({
+						filter: {
+							keyword: '',
+							applicant: [],
+							status: [],
+						},
+					});
 				},
 				colProps: {
 					className: 'flex-1',
@@ -122,92 +135,345 @@ const Properties = () => {
 			},
 			{
 				filterType: 'button',
+				hidden: !hasPermission(PERMISSIONS?.PROPERTY?.ADD),
 				children: (
 					<BtnPopUpModal
 						getContent={(setOpen) => (
-							<AddModal setOpen={setOpen} handleSearch={() => getList()} />
+							<AddModal
+								setOpen={setOpen}
+								handleSearch={() => tableFilterRef.current?.handleSearch?.()}
+							/>
 						)}
 						type="primary"
 						icon={<PlusOutlined />}
 						size="large"
 					>
-						Add a property
+						Add property
 					</BtnPopUpModal>
 				),
 			},
 		],
-		[searchValue, borrower, borrowerOptions, cancel, getList],
+		[
+			searchValue,
+			borrower,
+			borrowerOptions,
+			cancelMatch,
+			hasPermission,
+			propertyStatus,
+			borrowerPropertyStatusOptions,
+		],
 	);
 
-	useEffect(() => {
-		const t = setTimeout(() => {
-			getList();
-		}, 0);
-		return () => clearTimeout(t);
-	}, [getList]);
+	const columns = useMemo(
+		() => [
+			{
+				title: 'Property address',
+				dataIndex: ['address', 'address1'],
+				key: 'address',
+				sorter: true,
+				fixed: 'left',
+				width: 200,
+				ellipsis: true,
+				render: (_, record) => displayValue(record?.address?.address1),
+			},
+			{
+				title: 'City',
+				dataIndex: ['address', 'city'],
+				key: 'city',
+				sorter: true,
+				fixed: 'left',
+				width: 150,
+				render: (_, record) => displayValue(record?.address?.city),
+			},
+			{
+				title: 'State',
+				dataIndex: ['address', 'state'],
+				key: 'state',
+				width: 100,
+				sorter: true,
+				fixed: 'left',
+				render: (_, record) => displayValue(record?.address?.state),
+			},
+			{
+				title: 'Property status',
+				dataIndex: 'status',
+				key: 'status',
+				width: 300,
+				ellipsis: true,
+				render: (v) => <TruncatedTagGrid items={v} />,
+			},
+			{
+				title: 'Transaction status',
+				dataIndex: 'transaction_status',
+				key: 'transaction_status',
+				width: 300,
+				ellipsis: true,
+				render: (v) => <TruncatedTagGrid items={v} />,
+			},
+			{
+				title: 'Loan status',
+				key: 'loan_status',
+				width: 180,
+				align: 'center',
+				render: (_, record) => {
+					return (
+						<div className="flex flex-col flex-wrap items-stretch gap-1 w-max m-auto">
+							{!!record?.active_loan_count && (
+								<div className="rounded-[2px] px-2 text-xs border border-[var(--green-light-100)] bg-green-light text-green-medium">
+									{record?.active_loan_count || 0} Active Loans
+								</div>
+							)}
+							{!!record?.pending_loan_count && (
+								<div className="rounded-[2px] px-2 text-xs border border-[var(--orange-medium)] bg-[var(--orange-light)] text-[var(--orange-dark)]">
+									{record?.pending_loan_count || 0} Pending Loans
+								</div>
+							)}
+							{!record?.pending_loan_count && !record?.active_loan_count && (
+								<span>--</span>
+							)}
+						</div>
+					);
+				},
+			},
+			{
+				title: 'Property type',
+				dataIndex: 'property_type',
+				key: 'property_type',
+				width: 200,
+				sorter: true,
+				render: (v) => displayValue(v),
+			},
+			{
+				title: 'Living area',
+				dataIndex: 'living_area_sqft',
+				key: 'living_area_sqft',
+				width: 160,
+				sorter: true,
+				render: (v) =>
+					v != null && v !== '' ? displayValue(formatNumber(v)) : EMPTY_DISPLAY,
+			},
+			{
+				title: 'Units',
+				dataIndex: 'unit',
+				key: 'unit',
+				width: 90,
+				sorter: true,
+				render: (v) => displayValue(v),
+			},
+			// {
+			// 	title: 'Beds',
+			// 	dataIndex: 'bedrooms',
+			// 	key: 'bedrooms',
+			// 	width: 72,
+			// 	sorter: true,
+			// 	render: (v) => displayValue(v),
+			// },
+			// {
+			// 	title: 'Baths',
+			// 	dataIndex: 'bathrooms',
+			// 	key: 'bathrooms',
+			// 	width: 72,
+			// 	sorter: true,
+			// 	render: (v) => displayValue(v),
+			// },
+			{
+				title: 'Total active loan',
+				dataIndex: 'total_amount',
+				key: 'total_amount',
+				width: 180,
+				sorter: true,
+				render: (v) => displayValue(v, formatAmount),
+			},
+			{
+				title: 'Outstanding loan',
+				dataIndex: 'total_principal_amount',
+				key: 'total_principal_amount',
+				width: 180,
+				sorter: true,
+				render: (v) => displayValue(v, formatAmount),
+			},
+			{
+				title: 'Avg active rate',
+				dataIndex: 'avg_rate',
+				key: 'avg_rate',
+				width: 150,
+				render: (v) => displayValue(v, (n) => `${n}%`),
+			},
+			{
+				title: 'Monthly payment',
+				dataIndex: 'total_monthly_payment_amount',
+				key: 'total_monthly_payment_amount',
+				width: 180,
+				sorter: true,
+				render: (v) => displayValue(v, formatAmount),
+			},
+
+			{
+				title: 'Nearest maturity',
+				dataIndex: 'nearest_maturity_date',
+				key: 'nearest_maturity_date',
+				width: 180,
+				sorter: true,
+				render: (v) => displayValue(v, formatDate),
+			},
+			{
+				title: 'Active borrower',
+				dataIndex: 'applicants',
+				key: 'applicants',
+				width: 200,
+				ellipsis: true,
+				render: (v) => {
+					const text = displayValue(v?.length ? v.join(', ') : null);
+					return (
+						<FieldTips title={text === EMPTY_DISPLAY ? undefined : text}>
+							{text}
+						</FieldTips>
+					);
+				},
+			},
+			{
+				title: 'Active lender',
+				dataIndex: 'lenders',
+				key: 'lenders',
+				width: 200,
+				ellipsis: true,
+				render: (v) => {
+					const text = displayValue(v?.length ? v.join(', ') : null);
+					return (
+						<FieldTips title={text === EMPTY_DISPLAY ? undefined : text}>
+							{text}
+						</FieldTips>
+					);
+				},
+			},
+			getActiveByPermission({
+				key: 'action',
+				fixed: 'right',
+				buttonOptions: [
+					{ permission: PERMISSIONS?.PROPERTY?.DETAILS, width: 80 },
+					{ permission: PERMISSIONS?.PROPERTY?.EDIT, width: 62 },
+					{ permission: PERMISSIONS?.TRANSACTION?.ADD, width: 140 },
+					{ permission: PERMISSIONS?.PROPERTY?.DELETE, width: 78 },
+				],
+				render: (_, record) => (
+					<Space size={0}>
+						<PermissionSlot code={PERMISSIONS?.PROPERTY?.DETAILS}>
+							<Button
+								icon={<ProfileOutlined />}
+								type="link"
+								size="small"
+								onClick={(e) => {
+									e.stopPropagation();
+									router.push(`/properties/${record?.id}`);
+								}}
+							>
+								Details
+							</Button>
+						</PermissionSlot>
+						<PermissionSlot code={PERMISSIONS?.PROPERTY?.EDIT}>
+							<BtnPopUpModal
+								getContent={(setOpen) => (
+									<AddModal
+										setOpen={setOpen}
+										rowData={record}
+										handleSearch={() => tableFilterRef.current?.getList?.()}
+									/>
+								)}
+								type="link"
+								size="small"
+								icon={<EditOutlined />}
+								isStopPropagation={true}
+							>
+								Edit
+							</BtnPopUpModal>
+						</PermissionSlot>
+						<PermissionSlot code={PERMISSIONS?.TRANSACTION?.ADD}>
+							<Button
+								icon={<PlusOutlined />}
+								type="link"
+								size="small"
+								onClick={(e) => {
+									e.stopPropagation();
+									setTransactionModalProperty(record);
+									setTransactionModalOpen(true);
+								}}
+							>
+								Add Transaction
+							</Button>
+						</PermissionSlot>
+						<PermissionSlot code={PERMISSIONS?.PROPERTY?.DELETE}>
+							<DeleteBtn
+								icon={<DeleteOutlined />}
+								type="link"
+								size="small"
+								title="Are you sure delete this Property?"
+								content={assemblyAddress(record?.address)}
+								onOk={() => handleDelete(record.id)}
+								confirmLoading={deleteLoading}
+								danger={!record?.loan_count}
+								className={record?.loan_count ? '!text-base-disabled' : undefined}
+								predicate={() => {
+									if (record?.loan_count) {
+										message.destroy();
+										message.open({
+											type: 'warning',
+											content:
+												'This property has an associated loan, so it cannot be deleted.',
+										});
+										return false;
+									}
+									return true;
+								}}
+								isStopPropagation={true}
+							>
+								Delete
+							</DeleteBtn>
+						</PermissionSlot>
+					</Space>
+				),
+			}),
+		],
+		[router, handleDelete, deleteLoading, getActiveByPermission],
+	);
+
+	const handleSelectedRow = (row) => {
+		if (hasPermission(PERMISSIONS?.PROPERTY?.DETAILS)) {
+			router.push(`/properties/${row.id}`);
+		}
+	};
 
 	return (
-		<div className={['flex-1 flex flex-col px-8 pt-10 pb-8 overflow-hidden'].join(' ')}>
-			<FilterField ref={filterFieldRef} list={filterList} className="pb-8" />
-			<div className="flex items-center justify-between flex-shrink-0 mb-4 text-base font-medium pb-2 border-b border-base-disabled">
-				<p className="text-base font-medium">{pagination?.total || 0} Properties</p>
-				<div
-					className="flex cursor-pointer"
-					onClick={() => {
-						setSorter((v) => {
-							const next = { ...v, sort: v.sort === des ? asc : des };
-							sorterRef.current = next;
-							return next;
-						});
-						setPagination((v) => {
-							const next = { ...v, current: 1 };
-							paginationRef.current = next;
-							return next;
-						});
-						getList();
-					}}
-				>
-					<Image src="/images/sort.svg" alt="" width={24} height={24} />
-					Total loan: {sorter.sort === des ? sort_des : sort_asc}
-				</div>
-			</div>
-			<div ref={scrollRef} className="flex-1 overflow-hidden overflow-y-auto">
-				<Spin spinning={loading}>
-					{list?.length ? (
-						list.map((item, index) => (
-							<PropertiesItem
-								key={index}
-								data={item}
-								handleSearch={() => getList()}
-							/>
-						))
-					) : loading ? (
-						<div className="min-h-[100px]"></div>
-					) : (
-						<NoData height={200} />
-					)}
-				</Spin>
-			</div>
-			{!!list.length && (
-				<NewPagination
-					className="!mt-4 justify-end"
-					onChange={(page) => {
-						cancel('/property/page');
-						setPagination((v) => {
-							const next = { ...v, current: page };
-							paginationRef.current = next;
-							return next;
-						});
-						getList();
-						scrollRef.current.scrollTo({
-							// behavior: 'smooth',
-							top: 0,
-						});
-					}}
-					{...pagination}
-				/>
-			)}
-		</div>
+		<>
+			<FilterTable
+				ref={tableFilterRef}
+				rowKey="id"
+				columns={columns}
+				filterList={filterList}
+				filterName="Property filters"
+				getData={getData}
+				scroll={{ x: 1800 }}
+				filterWrapClassName="px-8 pt-10 pb-8 flex-1 overflow-hidden flex flex-col min-h-0"
+				onRow={(row) => ({
+					onClick: () => {
+						handleSelectedRow(row);
+					},
+				})}
+			/>
+			<NewTransactionModal
+				open={transactionModalOpen}
+				initialProperty={transactionModalProperty}
+				onClose={() => {
+					setTransactionModalOpen(false);
+					setTransactionModalProperty(null);
+				}}
+				onSaved={() => {
+					setTransactionModalOpen(false);
+					setTransactionModalProperty(null);
+					router.push('/myTransactions');
+				}}
+			/>
+		</>
 	);
 };
+
 export default Properties;

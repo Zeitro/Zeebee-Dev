@@ -1,9 +1,9 @@
 'use client';
 
-import React, {useState} from 'react';
-import {Button, message} from 'antd';
-import {DownloadOutlined} from '@ant-design/icons';
-import {createRequest} from '../../lib/fetch';
+import React, { useState } from 'react';
+import { Button, message } from 'antd';
+import { DownloadOutlined } from '@ant-design/icons';
+import { createRequest } from '../../lib/fetch';
 
 export const DownloadFileButton = ({
 	fileUrl,

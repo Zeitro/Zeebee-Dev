@@ -11,8 +11,10 @@ import PhoneSvg from '@repo/shared-methods/assets/images/phone.svg';
 import NoOrgLogo from '@/assets/images/noOrgLogo.svg';
 import { Image } from 'antd';
 import Link from 'next/link';
+
+const CONTACT_LENDER_API = '/organization/lender/page';
 const ContactLender = () => {
-	const { cancel } = createRequest();
+	const { cancelMatch } = useMemo(() => createRequest(), []);
 	const tableFilterRef = useRef();
 	const [searchValue, setSearchValue] = useState('');
 	// const { columns, handleDelete, loading } = useContent({
@@ -31,7 +33,7 @@ const ContactLender = () => {
 			{
 				filterType: 'button',
 				onClick: () => {
-					cancel('/property/page');
+					cancelMatch(CONTACT_LENDER_API);
 					tableFilterRef?.current?.handleSearch();
 				},
 			},
@@ -41,6 +43,7 @@ const ContactLender = () => {
 				text: 'Reset',
 				icon: <ReloadOutlined />,
 				onClick: () => {
+					cancelMatch(CONTACT_LENDER_API);
 					setSearchValue('');
 					setTimeout(() => {
 						tableFilterRef?.current?.handleSearch();
@@ -48,7 +51,7 @@ const ContactLender = () => {
 				},
 			},
 		],
-		[searchValue, cancel],
+		[searchValue, cancelMatch],
 	);
 	return (
 		<FilterTableCard
@@ -57,7 +60,7 @@ const ContactLender = () => {
 			filterList={filterList}
 			hasFilterField={true}
 			// pagination={pagination}
-			api="/organization/lender/page"
+			api={CONTACT_LENDER_API}
 			typeKey="card"
 			itemClassName="w-[300px]"
 			cardTitle="Contact lender"

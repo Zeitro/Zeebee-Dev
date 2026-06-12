@@ -342,7 +342,7 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 			OrganizationId:     orgUser.OrganizationId,
 			OrganizationUserId: orgUser.Id,
 		}
-		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[req.UserType], msg)
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[req.UserType], msg)
 	})
 
 	return
@@ -595,7 +595,7 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 			Type:           userInput.Type,
 			OrganizationId: organization.Id,
 		}
-		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[userInput.Type], msg)
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[userInput.Type], msg)
 	})
 
 	return user, organizationUser, nil
@@ -756,7 +756,7 @@ func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code stri
 			Type:           userType,
 			OrganizationId: user.DefaultOrganizationId,
 		}
-		_ = l.BaseLogic.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
 	})
 
 	return

@@ -6,7 +6,7 @@
 		"rootDir": "src",
 		"paths": {
 			"@repo/shared-methods": ["./src/index.ts"],
-			"@repo/shared-methods/*": ["./src/*"],
+			"@repo/shared-methods/*": ["./src/*"]
 		}
 	},
 	"include": ["src"]

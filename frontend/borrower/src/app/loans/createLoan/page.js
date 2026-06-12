@@ -7,7 +7,7 @@ import CreateTerm from '../components/Create/term';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createLoanSteps } from '@/enum/loan';
 import { createRequest } from '@repo/shared-methods/utils';
-import { loan_pending } from '@/enum/common';
+import { loan_pending } from '@repo/shared-methods/enum';
 import { BtnPopUpModal } from '@repo/shared-methods';
 import _ from 'lodash';
 import QuoteBtn from '../components/Quote';
@@ -16,7 +16,7 @@ const CreateLoanPage = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const api = `/property/${searchParams.get('propertyId')}`;
-	const { request } = createRequest();
+	const { request } = useMemo(() => createRequest(), []);
 	const [currentStep, setCurrentStep] = useState(0);
 	const [loading, setLoading] = useState(false);
 	const [form] = Form.useForm();
@@ -28,6 +28,19 @@ const CreateLoanPage = () => {
 	});
 	const [unitInfo, setUnitInfo] = useState({});
 
+	// 从 property 详情跳转的创建 loan
+	const getProperty = useCallback(async () => {
+		const data = await request(api);
+		const newData = {
+			loan_property: {
+				unit: data.unit,
+				address: data.address,
+				borrower_property_id: Number(searchParams.get('propertyId')),
+			},
+		};
+		form.setFieldsValue(newData);
+	}, [api, form, request, searchParams]);
+
 	useEffect(() => {
 		// back时赋值
 		const item = loanData?.[currentStep];
@@ -36,11 +49,9 @@ const CreateLoanPage = () => {
 		}
 	}, [currentStep, form, loanData]);
 
-	// 获取property
 	useEffect(() => {
-		if (searchParams.has('propertyId')) getProperty();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+		if (searchParams.has('propertyId')) void getProperty();
+	}, [getProperty, searchParams]);
 
 	// next/Add loan
 	const handleNext = useCallback(async () => {
@@ -76,22 +87,6 @@ const CreateLoanPage = () => {
 	// 询价
 	const handleQuote = () => {};
 
-	// 从property详情跳转的创建loan
-	const getProperty = async () => {
-		const data = await request(api);
-		const newData = {
-			loan_property: {
-				// property_type: data.property_type,
-				// property_base: {
-				unit: data.unit,
-				address: data.address,
-				borrower_property_id: Number(searchParams.get('propertyId')),
-				// },
-			},
-		};
-		form.setFieldsValue(newData);
-	};
-
 	const stepBtn = useMemo(
 		() => (
 			<Col xs={24} sm={24} className="py-6 !flex justify-between items-center">
@@ -121,7 +116,7 @@ const CreateLoanPage = () => {
 									loanData[0]?.pending_status === 'Quoting'
 								)
 							}
-							onSave={handleNext}
+							// onSave={handleNext}
 							getRowData={async () => {
 								const values = await form.validateFields();
 								return _.merge(

@@ -154,7 +154,6 @@ func (l *OrganizationLogic) Delete(ctx context.Context, id int64) (err error) {
 		}
 
 		return innerErr
-
 	})
 	if err != nil {
 		return err
@@ -185,7 +184,6 @@ func (l *OrganizationLogic) UpdateOrder(ctx context.Context, id int64, order int
 
 // SwitchStatus changes the status of an organization.
 func (l *OrganizationLogic) SwitchStatus(ctx context.Context, input dto.OrganizationSwitchStatusRequestDto) (err error) {
-
 	// Validate status
 	newStatus := input.Status
 	err = newStatus.Validate()
@@ -262,7 +260,6 @@ func (l *OrganizationLogic) SwitchStatus(ctx context.Context, input dto.Organiza
 		_ = l.publishAuthEvent(subCtx, l.authTopicMap[organization.Type], msg)
 	})
 	return
-
 }
 
 // SelectOptions retrieves a list of organization options based on the specified type.

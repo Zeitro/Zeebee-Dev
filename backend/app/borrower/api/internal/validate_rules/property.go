@@ -76,8 +76,8 @@ func PropertyCreateRequest(sl validator.StructLevel) {
 			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
 		}
 	default:
-		if property.Unit < 1 {
-			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, " >= 1")
+		if property.Unit < 0 {
+			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, " >= 0")
 		}
 	}
 }
@@ -111,8 +111,8 @@ func PropertyUpdateRequest(sl validator.StructLevel) {
 			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, convertor.ToString(property.Unit))
 		}
 	default:
-		if property.Unit < 1 {
-			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, " >= 1")
+		if property.Unit < 0 {
+			sl.ReportError(property.Unit, "unit", "Unit", PropertyUnitTag, " >= 0")
 		}
 	}
 }
@@ -169,7 +169,6 @@ func LoanPropertyApplyEntity(sl validator.StructLevel) {
 			sl.ReportError(property.ExistingMaturityDate, "purchase date", "PurchaseDate", "datetime", property.ExistingMaturityDate)
 			return
 		}
-
 	}
 
 	if loanPurpose == string(constants.LoanPurposePurchase) {
@@ -201,5 +200,4 @@ func LoanPropertyApplyEntity(sl validator.StructLevel) {
 			return
 		}
 	}
-
 }

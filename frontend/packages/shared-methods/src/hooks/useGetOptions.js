@@ -1,7 +1,7 @@
 'use client';
-import {useOptionsStore} from '@repo/shared-methods/store';
-import {Col, Form, Radio, Select} from 'antd';
-import {useCallback, useEffect, useRef} from 'react';
+import { useOptionsStore } from '@repo/shared-methods/store';
+import { Col, Form, Radio, Select } from 'antd';
+import { useCallback, useEffect, useRef } from 'react';
 
 /**
  * 请求options下拉数据公共接口

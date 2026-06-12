@@ -27,7 +27,6 @@ func NewBorrowerApplicantAllLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 func (l *BorrowerApplicantAllLogic) BorrowerApplicantAll(req *types.EmptyRequest) (resp *types.BorrowerApplicantAllResponse, err error) {
-
 	rpcResp, err := l.svcCtx.BorrowerApplicantRpcClient.All(l.ctx, &borrower.BorrowerApplicantAllRequest{
 		Data: &borrower.BorrowerApplicantAllRequestData{},
 	})

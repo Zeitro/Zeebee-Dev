@@ -33,7 +33,7 @@ func (c TemplateCategory) Validate() error {
 		TemplateCategoryContract:
 		return nil
 	}
-	return fmt.Errorf("Invalid Template Category:%v", c)
+	return fmt.Errorf("invalid template category:%v", c)
 }
 
 type TemplateVariableSource string
@@ -53,7 +53,7 @@ func (s TemplateVariableSource) Validate() error {
 		TemplateVariableSourceTemplate:
 		return nil
 	}
-	return fmt.Errorf("Invalid Template Variable Source:%v", s)
+	return fmt.Errorf("invalid template variable source:%v", s)
 }
 
 type TemplateVariableType string
@@ -73,7 +73,7 @@ func (t TemplateVariableType) Validate() error {
 		TemplateVariableTypeObject:
 		return nil
 	}
-	return fmt.Errorf("Invalid Template Variable Type:%v", t)
+	return fmt.Errorf("invalid template variable type:%v", t)
 }
 
 type TemplateVariableFormat string
@@ -97,8 +97,7 @@ func (f TemplateVariableFormat) Validate() error {
 		TemplateVariableFormatTextArea:
 		return nil
 	}
-	return fmt.Errorf("Invalid Template Variable Format:%v", f)
-
+	return fmt.Errorf("invalid template variable format:%v", f)
 }
 
 type BaseTemplateScope string
@@ -116,7 +115,7 @@ func (s BaseTemplateScope) Validate() error {
 		BaseTemplateScopeOrganization:
 		return nil
 	}
-	return fmt.Errorf("Invalid Base Template Scope:%v", s)
+	return fmt.Errorf("invalid base template scope:%v", s)
 }
 
 func init() {

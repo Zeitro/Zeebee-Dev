@@ -12,7 +12,6 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.ApiConf) *ServiceContext {
-
 	return &ServiceContext{
 		Config: c,
 	}

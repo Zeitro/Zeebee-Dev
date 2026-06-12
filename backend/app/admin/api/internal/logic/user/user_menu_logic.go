@@ -27,7 +27,6 @@ func NewUserMenuLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserMenu
 }
 
 func (l *UserMenuLogic) UserMenu(req *types.EmptyRequest) (resp *types.ResourceTreeResponse, err error) {
-
 	resp = &types.ResourceTreeResponse{
 		List: []*types.ResourceTreeEntity{},
 	}
@@ -45,5 +44,4 @@ func (l *UserMenuLogic) UserMenu(req *types.EmptyRequest) (resp *types.ResourceT
 	return &types.ResourceTreeResponse{
 		List: *result,
 	}, err
-
 }
