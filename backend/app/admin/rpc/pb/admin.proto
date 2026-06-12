@@ -16,6 +16,13 @@ message IdRequest {
   int64 data = 1;
 }
 
+message PathIdRequest {
+  PathIdRequestData data = 1;
+}
+message PathIdRequestData {
+  int64 id = 1;
+}
+
 message AddressEntity{
   string state = 1;
   string city = 2;
@@ -1530,15 +1537,7 @@ message PricingPlanPageEntity {
   string updated_at = 11;
 }
 
-message PricingPlanPolicyEntity {
-  int64 id = 1;
-  int64 pricing_plan_id = 2;
-  double original_amount = 3;
-  double actual_amount = 4;
-  string type = 5;
-  string created_at = 6;
-  string updated_at = 7;
-}
+
 
 // PricingPlan Create
 message PricingPlanCreateRequest {
@@ -1548,15 +1547,12 @@ message PricingPlanCreateRequestData {
   string name = 1;
   string subtitle = 2;
   string description = 3;
-  string status = 4;
+  //  string status = 4;
   int32 trial_days = 5;
   int32 sort_order = 6;
   bool is_public = 7;
   string type = 8;
   string plan_type = 9;
-}
-message PricingPlanCreateResponse {
-  PricingPlanEntity data = 1;
 }
 
 // PricingPlan Update
@@ -1567,15 +1563,15 @@ message PricingPlanUpdateRequestData {
   int64 id = 1;
   string subtitle = 2;
   string description = 3;
-  string status = 4;
+  //  string status = 4;
   int32 trial_days = 5;
   int32 sort_order = 6;
   bool is_public = 7;
   string plan_type = 8;
 }
-message PricingPlanUpdateResponse {
-  PricingPlanEntity data = 1;
-}
+//message PricingPlanUpdateResponse {
+//  PricingPlanEntity data = 1;
+//}
 
 // PricingPlan Delete
 message PricingPlanDeleteRequest {
@@ -1659,6 +1655,31 @@ message PricingPlanResourceListResponse {
   repeated ResourceTreeEntity data = 1;
 }
 
+
+
+service PricingPlan {
+  rpc Create(PricingPlanCreateRequest) returns(PricingPlanDetailResponse);
+  rpc Update(PricingPlanUpdateRequest) returns(PricingPlanDetailResponse);
+  rpc Delete(PathIdRequest) returns(EmptyResponse);
+  rpc Detail(PathIdRequest) returns(PricingPlanDetailResponse);
+  rpc Page(PricingPlanPageRequest) returns(PricingPlanPageResponse);
+  rpc SwitchStatus(PricingPlanSwitchStatusRequest) returns(EmptyResponse);
+  rpc BindResources(PricingPlanBindResourcesRequest) returns(EmptyResponse);
+  rpc ResourceList(PricingPlanResourceListRequest) returns(PricingPlanResourceListResponse);
+}
+
+// ==================== pricing plan service end ====================
+
+// ==================== pricing plan policy service start ====================
+message PricingPlanPolicyEntity {
+  int64 id = 1;
+  int64 pricing_plan_id = 2;
+  double original_amount = 3;
+  double actual_amount = 4;
+  string type = 5;
+  string created_at = 6;
+  string updated_at = 7;
+}
 // PricingPlanPolicy Create
 message PricingPlanPolicyCreateRequest {
   PricingPlanPolicyCreateRequestData data = 1;
@@ -1668,9 +1689,6 @@ message PricingPlanPolicyCreateRequestData {
   double original_amount = 2;
   double actual_amount = 3;
   string type = 4;
-}
-message PricingPlanPolicyCreateResponse {
-  PricingPlanPolicyEntity data = 1;
 }
 
 // PricingPlanPolicy Update
@@ -1683,7 +1701,7 @@ message PricingPlanPolicyUpdateRequestData {
   double actual_amount = 3;
   string type = 4;
 }
-message PricingPlanPolicyUpdateResponse {
+message PricingPlanPolicyDetailResponse {
   PricingPlanPolicyEntity data = 1;
 }
 
@@ -1695,21 +1713,13 @@ message PricingPlanPolicyDeleteRequestData {
   int64 id = 1;
 }
 
-service PricingPlan {
-  rpc Create(PricingPlanCreateRequest) returns(PricingPlanCreateResponse);
-  rpc Update(PricingPlanUpdateRequest) returns(PricingPlanUpdateResponse);
-  rpc Delete(PricingPlanDeleteRequest) returns(EmptyResponse);
-  rpc Detail(PricingPlanDetailRequest) returns(PricingPlanDetailResponse);
-  rpc Page(PricingPlanPageRequest) returns(PricingPlanPageResponse);
-  rpc SwitchStatus(PricingPlanSwitchStatusRequest) returns(EmptyResponse);
-  rpc BindResources(PricingPlanBindResourcesRequest) returns(PricingPlanBindResourcesResponse);
-  rpc ResourceList(PricingPlanResourceListRequest) returns(PricingPlanResourceListResponse);
-  rpc CreatePolicy(PricingPlanPolicyCreateRequest) returns(PricingPlanPolicyCreateResponse);
-  rpc UpdatePolicy(PricingPlanPolicyUpdateRequest) returns(PricingPlanPolicyUpdateResponse);
-  rpc DeletePolicy(PricingPlanPolicyDeleteRequest) returns(EmptyResponse);
+service PricingPlanPolicy {
+  rpc Create(PricingPlanPolicyCreateRequest) returns(PricingPlanPolicyDetailResponse);
+  rpc Update(PricingPlanPolicyUpdateRequest) returns(PricingPlanPolicyDetailResponse);
+  rpc Delete(PathIdRequest) returns(EmptyResponse);
 }
 
-// ==================== pricing plan service end ====================
+// ==================== pricing plan policy service end ====================
 
 // ==================== organization subscription service start ====================
 
@@ -1752,7 +1762,7 @@ message OrganizationSubscriptionCreateRequestData {
   int64 pricing_plan_id = 1;
   int64 pricing_plan_policy_id = 2;
 }
-message OrganizationSubscriptionCreateResponse {
+message OrganizationSubscriptionDetailResponse {
   OrganizationSubscriptionEntity data = 1;
 }
 
@@ -1763,9 +1773,6 @@ message OrganizationSubscriptionRenewRequest {
 message OrganizationSubscriptionRenewRequestData {
   int64 id = 1;
   string expire_date = 2;
-}
-message OrganizationSubscriptionRenewResponse {
-  OrganizationSubscriptionEntity data = 1;
 }
 
 // SwitchStatus
@@ -1808,8 +1815,8 @@ message OrganizationSubscriptionPageResponseData {
 }
 
 service OrganizationSubscription {
-  rpc Create(OrganizationSubscriptionCreateRequest) returns(OrganizationSubscriptionCreateResponse);
-  rpc Renew(OrganizationSubscriptionRenewRequest) returns(OrganizationSubscriptionRenewResponse);
+  rpc Create(OrganizationSubscriptionCreateRequest) returns(OrganizationSubscriptionDetailResponse);
+  rpc Renew(OrganizationSubscriptionRenewRequest) returns(EmptyResponse);
   rpc SwitchStatus(OrganizationSubscriptionSwitchStatusRequest) returns(EmptyResponse);
   rpc Page(OrganizationSubscriptionPageRequest) returns(OrganizationSubscriptionPageResponse);
 }
