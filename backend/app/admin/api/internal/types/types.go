@@ -627,6 +627,7 @@ type LoanPropertyEntity struct {
 	PropertyType                 string            `json:"property_type"`
 	Unit                         int32             `json:"unit"`
 	LivingAreaSqft               float32           `json:"living_area_sqft"`
+	LotAreaSqft                  float32           `json:"lot_area_sqft"`
 	Bedrooms                     int32             `json:"bedrooms" `
 	Bathrooms                    int32             `json:"bathrooms"`
 	FuturePropertyType           string            `json:"future_property_type"`
