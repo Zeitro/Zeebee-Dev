@@ -29,7 +29,7 @@ func NewPricingPlanLogic(baseLogic *BaseLogic, authTopicMap map[constants.UserTy
 	}
 }
 
-func (l *PricingPlanLogic) Create(ctx context.Context, input dto.PricingPlanCreateDto) (result *dto.PricingPlanEntityDto, err error) {
+func (l *PricingPlanLogic) Create(ctx context.Context, input dto.PricingPlanCreateRequestDto) (result *dto.PricingPlanEntityDto, err error) {
 	var isExisted bool
 	isExisted, err = l.repos.PricingPlanRepo.IsExistedByColumns(ctx, map[string]interface{}{
 		"name": input.Name,
@@ -43,10 +43,11 @@ func (l *PricingPlanLogic) Create(ctx context.Context, input dto.PricingPlanCrea
 		return nil, errorx.New("pricing plan name already exists under this type")
 	}
 
-	planModel, err := copierx.Trans[dto.PricingPlanCreateDto, model.PricingPlan](&input)
+	planModel, err := copierx.Trans[dto.PricingPlanCreateRequestDto, model.PricingPlan](&input)
 	if err != nil {
 		return nil, err
 	}
+	planModel.Status = constants.CommonStatusActive
 
 	err = l.repos.PricingPlanRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
@@ -63,16 +64,16 @@ func (l *PricingPlanLogic) Create(ctx context.Context, input dto.PricingPlanCrea
 
 		return innerErr
 	})
-	// plan, err := l.repos.PricingPlanRepo.Create(ctx, planModel)
+
 	if err != nil {
 		return nil, err
 	}
 
-	l.publishResourceReloadEvent(ctx, planModel.Type)
+	// l.publishResourceReloadEvent(ctx, planModel.Type)
 	return l.transToDetailDto(ctx, planModel)
 }
 
-func (l *PricingPlanLogic) Update(ctx context.Context, input dto.PricingPlanUpdateDto) (result *dto.PricingPlanEntityDto, err error) {
+func (l *PricingPlanLogic) Update(ctx context.Context, input dto.PricingPlanUpdateRequestDto) (result *dto.PricingPlanEntityDto, err error) {
 
 	var plan *model.PricingPlan
 	err = l.repos.PricingPlanRepo.Transaction(ctx, func(tx *gorm.DB) error {
@@ -92,7 +93,7 @@ func (l *PricingPlanLogic) Update(ctx context.Context, input dto.PricingPlanUpda
 
 		}
 
-		innerErr = copierx.Assign[dto.PricingPlanUpdateDto, model.PricingPlan](&input, plan)
+		innerErr = copierx.Assign[dto.PricingPlanUpdateRequestDto, model.PricingPlan](&input, plan)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -110,29 +111,47 @@ func (l *PricingPlanLogic) Update(ctx context.Context, input dto.PricingPlanUpda
 	return l.transToDetailDto(ctx, plan)
 }
 
-func (l *PricingPlanLogic) Delete(ctx context.Context, id int64) error {
-	plan, err := l.repos.PricingPlanRepo.GetOne(ctx, id, nil)
+func (l *PricingPlanLogic) Delete(ctx context.Context, id int64) (err error) {
+	preloads := []gormx.Preload{
+		{Query: "Resources"},
+		{Query: "Subscriptions"},
+	}
+	plan, err := l.repos.PricingPlanRepo.GetOne(ctx, id, preloads)
 	if err != nil {
-		return errorx.Wrap(err, "pricing plan not found")
+		return errorx.Wrap(err, "fail to find pricing plan")
 	}
 
-	subscriptions, err := l.repos.OrganizationSubscriptionRepo.FindByPricingPlanId(ctx, id)
-	if err != nil {
-		return err
-	}
-	for _, sub := range subscriptions {
+	for _, sub := range plan.Subscriptions {
 		if sub.Status != constants.OrganizationSubscriptionStatusExpired {
 			return errorx.New("cannot delete pricing plan with active subscriptions")
 		}
 	}
 
-	_, err = l.repos.PricingPlanRepo.DeleteByIDWithTx(ctx, l.repos.PricingPlanRepo.GetDB(), id)
+	resourceIds := slice.Map(plan.Resources, func(index int, resource *model.Resource) int64 {
+		return resource.Id
+	})
+
+	affectedOrgIds := l.findAffectedOrgIds(ctx, plan.Subscriptions, id)
+	if len(affectedOrgIds) == 0 {
+		_, err = l.repos.PricingPlanRepo.DeleteByIDWithTx(ctx, l.repos.PricingPlanRepo.GetDB(), id)
+		return err
+	}
+
+	err = l.repos.PricingPlanRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		_, innerErr = l.repos.PricingPlanRepo.DeleteByIDWithTx(ctx, tx, id)
+		if innerErr != nil {
+			return innerErr
+		}
+
+		return l.unbindPlanResourcesFromOrgRoles(ctx, tx, affectedOrgIds, resourceIds, plan.Type)
+	})
 	if err != nil {
 		return err
 	}
 
-	l.publishResourceReloadEvent(ctx, plan.Type)
-	return nil
+	l.publishOrgRoleReloadEvents(ctx, affectedOrgIds, plan.Type)
+	return
 }
 
 func (l *PricingPlanLogic) Detail(ctx context.Context, id int64) (*dto.PricingPlanEntityDto, error) {
@@ -143,39 +162,69 @@ func (l *PricingPlanLogic) Detail(ctx context.Context, id int64) (*dto.PricingPl
 	return l.transToDetailDto(ctx, plan)
 }
 
-func (l *PricingPlanLogic) Page(ctx context.Context, req dto.PricingPlanPageRequestDto) (gormx.PageResponse[dto.PricingPlanPageEntity], error) {
+func (l *PricingPlanLogic) Page(ctx context.Context, req dto.PricingPlanPageRequestDto) (gormx.PageResponse[dto.PricingPlanPageEntityDto], error) {
 	pageResult, err := l.repos.PricingPlanRepo.Page(ctx, req)
 	if err != nil {
-		return gormx.PageResponse[dto.PricingPlanPageEntity]{}, err
+		return gormx.PageResponse[dto.PricingPlanPageEntityDto]{}, err
 	}
 
-	resultPtr, err := copierx.Trans[gormx.PageResponse[model.PricingPlan], gormx.PageResponse[dto.PricingPlanPageEntity]](&pageResult)
+	resultPtr, err := copierx.Trans[gormx.PageResponse[model.PricingPlan], gormx.PageResponse[dto.PricingPlanPageEntityDto]](&pageResult)
 	if err != nil {
-		return gormx.PageResponse[dto.PricingPlanPageEntity]{}, err
+		return gormx.PageResponse[dto.PricingPlanPageEntityDto]{}, err
 	}
 
 	return *resultPtr, nil
 }
 
-func (l *PricingPlanLogic) SwitchStatus(ctx context.Context, id int64, status constants.CommonStatus) error {
-	plan, err := l.repos.PricingPlanRepo.GetOne(ctx, id, nil)
+func (l *PricingPlanLogic) SwitchStatus(ctx context.Context, id int64, status constants.CommonStatus) (err error) {
+	preloads := []gormx.Preload{
+		{Query: "Resources"},
+		{Query: "Subscriptions"},
+	}
+	plan, err := l.repos.PricingPlanRepo.GetOne(ctx, id, preloads)
 	if err != nil {
-		return errorx.Wrap(err, "pricing plan not found")
+		return errorx.Wrap(err, "fail to find pricing plan")
 	}
 
 	if plan.Status == status {
 		return nil
 	}
 
+	isDisabling := status == constants.CommonStatusDisabled
+	resourceIds := slice.Map(plan.Resources, func(index int, resource *model.Resource) int64 {
+		return resource.Id
+	})
+
+	// pre-compute affected orgs when disabling
+	var affectedOrgIds []int64
+	if isDisabling && len(resourceIds) > 0 {
+		affectedOrgIds = l.findAffectedOrgIds(ctx, plan.Subscriptions, id)
+	}
+
 	plan.Status = status
-	_, err = l.repos.PricingPlanRepo.UpdateOneById(ctx, id, plan)
+	err = l.repos.PricingPlanRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		_, innerErr = l.repos.PricingPlanRepo.UpdateOneByIdWithTx(ctx, tx, id, plan)
+		if innerErr != nil {
+			return innerErr
+		}
+
+		if !isDisabling || len(affectedOrgIds) == 0 {
+			return nil
+		}
+
+		return l.unbindPlanResourcesFromOrgRoles(ctx, tx, affectedOrgIds, resourceIds, plan.Type)
+	})
 	if err != nil {
 		return err
 	}
 
-	l.publishResourceReloadEvent(ctx, plan.Type)
-	l.reloadSubscribedOrganizationRoles(ctx, id, plan.Type)
-	return nil
+	if isDisabling {
+		l.publishOrgRoleReloadEvents(ctx, affectedOrgIds, plan.Type)
+	} else {
+		l.reloadSubscribedOrganizationRoles(ctx, id, plan.Type)
+	}
+	return
 }
 
 func (l *PricingPlanLogic) BindResources(ctx context.Context, planId int64, resourceIds []int64) (err error) {
@@ -298,6 +347,74 @@ func resourceStubs(ids []int64) []*model.Resource {
 		stubs = append(stubs, &model.Resource{Base: model.Base{Id: id}})
 	}
 	return stubs
+}
+
+// findAffectedOrgIds returns org IDs that should be affected by plan changes.
+// For expired subs: only include orgs with no other active subscription.
+// For active subs: only include orgs whose only active sub is this plan.
+func (l *PricingPlanLogic) findAffectedOrgIds(ctx context.Context, subscriptions []*model.OrganizationSubscription, planId int64) []int64 {
+	var orgIds []int64
+	for _, sub := range subscriptions {
+		activeSubs, err := l.repos.OrganizationSubscriptionRepo.FindActiveByOrgId(ctx, sub.OrganizationId)
+		if err != nil {
+			continue
+		}
+		if sub.Status == constants.OrganizationSubscriptionStatusExpired {
+			// expired sub: affected only if org has no active subscription at all
+			if len(activeSubs) == 0 {
+				orgIds = append(orgIds, sub.OrganizationId)
+			}
+		} else {
+			// active sub: affected only if org has no other active plan
+			hasOther := false
+			for _, activeSub := range activeSubs {
+				if activeSub.PricingPlanId != planId {
+					hasOther = true
+					break
+				}
+			}
+			if !hasOther {
+				orgIds = append(orgIds, sub.OrganizationId)
+			}
+		}
+	}
+	return slice.Unique(orgIds)
+}
+
+// unbindPlanResourcesFromOrgRoles removes plan resources from all roles of the given orgs.
+func (l *PricingPlanLogic) unbindPlanResourcesFromOrgRoles(ctx context.Context, tx *gorm.DB, orgIds []int64, resourceIds []int64, userType constants.UserType) error {
+	if len(orgIds) == 0 || len(resourceIds) == 0 {
+		return nil
+	}
+	roles, err := l.repos.RoleRepo.FindByOrganizationIdsWithTx(ctx, tx, orgIds, userType)
+	if err != nil {
+		return err
+	}
+	removedResources := resourceStubs(resourceIds)
+	for _, role := range roles {
+		err = l.repos.RoleRepo.UpdateResourcesWithTx(ctx, tx, role, nil, removedResources)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// publishOrgRoleReloadEvents sends per-org RoleReload events for the given orgs.
+func (l *PricingPlanLogic) publishOrgRoleReloadEvents(ctx context.Context, orgIds []int64, userType constants.UserType) {
+	for _, orgId := range orgIds {
+		orgId := orgId
+		threading.GoSafe(func() {
+			subCtx := context.WithoutCancel(ctx)
+			msg := auth.Msg{
+				Action:         auth.ActionRoleReload,
+				Scope:          auth.ScopeOrganization,
+				Type:           userType,
+				OrganizationId: orgId,
+			}
+			_ = l.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
+		})
+	}
 }
 
 func (l *PricingPlanLogic) ResourceList(ctx context.Context, planId int64) ([]*dto.PricingPlanResourceEntityDto, error) {

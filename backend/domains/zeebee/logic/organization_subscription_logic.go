@@ -36,7 +36,7 @@ func NewOrganizationSubscriptionLogic(baseLogic *BaseLogic, authTopicMap map[con
 }
 
 func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.OrganizationSubscriptionCreateDto) (*dto.OrganizationSubscriptionEntity, error) {
-	plan, err := l.repos.PricingPlanRepo.GetOne(ctx, input.PricingPlanId)
+	plan, err := l.repos.PricingPlanRepo.GetOne(ctx, input.PricingPlanId, nil)
 	if err != nil {
 		return nil, errorx.Wrap(err, "pricing plan not found")
 	}
@@ -112,7 +112,7 @@ func (l *OrganizationSubscriptionLogic) Renew(ctx context.Context, id int64, inp
 		return nil, err
 	}
 
-	plan, _ := l.repos.PricingPlanRepo.GetOne(ctx, subscription.PricingPlanId)
+	plan, _ := l.repos.PricingPlanRepo.GetOne(ctx, subscription.PricingPlanId, nil)
 	if plan != nil {
 		l.publishRoleReloadEvent(ctx, subscription.OrganizationId, plan.Type)
 	}
@@ -143,7 +143,7 @@ func (l *OrganizationSubscriptionLogic) UpdateExpireDate(ctx context.Context, id
 		return err
 	}
 
-	plan, _ := l.repos.PricingPlanRepo.GetOne(ctx, subscription.PricingPlanId)
+	plan, _ := l.repos.PricingPlanRepo.GetOne(ctx, subscription.PricingPlanId, nil)
 	if plan != nil {
 		l.publishRoleReloadEvent(ctx, subscription.OrganizationId, plan.Type)
 	}
@@ -167,7 +167,7 @@ func (l *OrganizationSubscriptionLogic) SwitchStatus(ctx context.Context, id int
 		return err
 	}
 
-	plan, _ := l.repos.PricingPlanRepo.GetOne(ctx, subscription.PricingPlanId)
+	plan, _ := l.repos.PricingPlanRepo.GetOne(ctx, subscription.PricingPlanId, nil)
 	if plan != nil {
 		l.publishRoleReloadEvent(ctx, subscription.OrganizationId, plan.Type)
 	}
@@ -215,7 +215,7 @@ func (l *OrganizationSubscriptionLogic) transToDetailDto(ctx context.Context, su
 		result.OrganizationName = org.Name
 	}
 
-	plan, innerErr := l.repos.PricingPlanRepo.GetOne(ctx, sub.PricingPlanId)
+	plan, innerErr := l.repos.PricingPlanRepo.GetOne(ctx, sub.PricingPlanId, nil)
 	if innerErr == nil && plan != nil {
 		result.PricingPlanName = plan.Name
 	}

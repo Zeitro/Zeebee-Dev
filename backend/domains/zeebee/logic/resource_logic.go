@@ -587,7 +587,7 @@ func (l *ResourceLogic) filterByPricingPlan(ctx context.Context, organizationId 
 			continue
 		}
 
-		plan, innerErr := l.repos.PricingPlanRepo.GetOne(ctx, sub.PricingPlanId)
+		plan, innerErr := l.repos.PricingPlanRepo.GetOne(ctx, sub.PricingPlanId, nil)
 		if innerErr != nil || plan == nil || plan.Status != constants.CommonStatusActive {
 			continue
 		}

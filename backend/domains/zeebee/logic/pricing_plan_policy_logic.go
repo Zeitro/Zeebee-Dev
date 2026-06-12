@@ -19,8 +19,8 @@ func NewPricingPlanPolicyLogic(baseLogic *BaseLogic) *PricingPlanPolicyLogic {
 	}
 }
 
-func (l *PricingPlanPolicyLogic) Create(ctx context.Context, input dto.PricingPlanPolicyCreateDto) (*dto.PricingPlanPolicyEntityDto, error) {
-	_, err := l.repos.PricingPlanRepo.GetOne(ctx, input.PricingPlanId)
+func (l *PricingPlanPolicyLogic) Create(ctx context.Context, input dto.PricingPlanPolicyCreateRequestDto) (*dto.PricingPlanPolicyEntityDto, error) {
+	_, err := l.repos.PricingPlanRepo.GetOne(ctx, input.PricingPlanId, nil)
 	if err != nil {
 		return nil, errorx.Wrap(err, "pricing plan not found")
 	}
@@ -33,7 +33,7 @@ func (l *PricingPlanPolicyLogic) Create(ctx context.Context, input dto.PricingPl
 		return nil, errorx.New("pricing plan policy with same type already exists")
 	}
 
-	policyModel, err := copierx.Trans[dto.PricingPlanPolicyCreateDto, model.PricingPlanPolicy](&input)
+	policyModel, err := copierx.Trans[dto.PricingPlanPolicyCreateRequestDto, model.PricingPlanPolicy](&input)
 	if err != nil {
 		return nil, err
 	}
@@ -46,13 +46,13 @@ func (l *PricingPlanPolicyLogic) Create(ctx context.Context, input dto.PricingPl
 	return copierx.Trans[model.PricingPlanPolicy, dto.PricingPlanPolicyEntityDto](result)
 }
 
-func (l *PricingPlanPolicyLogic) Update(ctx context.Context, id int64, input dto.PricingPlanPolicyUpdateDto) (*dto.PricingPlanPolicyEntityDto, error) {
+func (l *PricingPlanPolicyLogic) Update(ctx context.Context, id int64, input dto.PricingPlanPolicyUpdateRequestDto) (*dto.PricingPlanPolicyEntityDto, error) {
 	policy, err := l.repos.PricingPlanPolicyRepo.GetOne(ctx, id)
 	if err != nil {
 		return nil, errorx.Wrap(err, "pricing plan policy not found")
 	}
 
-	err = copierx.Assign[dto.PricingPlanPolicyUpdateDto, model.PricingPlanPolicy](&input, policy)
+	err = copierx.Assign[dto.PricingPlanPolicyUpdateRequestDto, model.PricingPlanPolicy](&input, policy)
 	if err != nil {
 		return nil, err
 	}
