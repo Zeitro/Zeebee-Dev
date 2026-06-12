@@ -89,8 +89,7 @@ func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *lender.E
 		FullName:     stringx.FormatFullName(in.Data.FirstName, "", in.Data.LastName),
 	}
 
-	var organizationInput *dto.OrganizationRegisterRequestDto
-	organizationInput = &dto.OrganizationRegisterRequestDto{
+	organizationInput := &dto.OrganizationRegisterRequestDto{
 		Name:      in.Data.OrganizationName,
 		Status:    constants.OrganizationStatusActive,
 		OwnerType: constants.OrganizationOwnerTypeThirdParty,
@@ -132,7 +131,7 @@ func sendLoginUrlEmail(ctx context.Context, email string, firstName string) (err
 
 	// send login email
 	data := map[string]interface{}{
-		"url":        fmt.Sprintf("%s", global.Config.LoginUrl),
+		"url":        global.Config.LoginUrl,
 		"first_name": firstName,
 	}
 	content, err := email2.ParseTemplate(email_tpl.LoginUrlEmail, data)

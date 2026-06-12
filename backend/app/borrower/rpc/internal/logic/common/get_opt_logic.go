@@ -36,8 +36,7 @@ func (l *GetOptLogic) GetOpt(in *borrower.OptionRequest) (resp *borrower.OptionR
 	resp = &borrower.OptionResponse{
 		Data: []*borrower.OptionEntity{},
 	}
-	opts := enums.Get(in.Data.Name)
-	err = copierx.Assign[[]enums.EnumOpt, []*borrower.OptionEntity](&opts, &resp.Data)
+	err = copierx.Assign[[]enums.EnumOpt, []*borrower.OptionEntity](new(enums.Get(in.Data.Name)), &resp.Data)
 	if err != nil {
 		return nil, err
 	}

@@ -72,8 +72,11 @@ const eslintConfig = [
 			'react/no-unsafe': 'warn', //  检查不安全的生命周期（如 UNSAFE_componentWillMount）
 			'react/prop-types': 'off', // 要求使用 prop-types（在 TS 项目通常关闭）
 			'react/require-render-return': 'error', // 要求 render 方法必须返回内容
+			
 			'react-hooks/rules-of-hooks': 'error', // 检查 Hook 的规则
-			// 'react-hooks/exhaustive-deps': 'off', // useEffect 依赖检测
+			'react-hooks/exhaustive-deps': 'warn',// 检查 effect 的依赖
+			'react-hooks/set-state-in-effect': 'warn',// 不要在 effect 里同步 setState
+			'react-hooks/immutability': 'error',// 不可变 / 声明顺序与闭包
 		},
 		settings: {
 			react: {

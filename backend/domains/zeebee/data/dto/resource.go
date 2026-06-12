@@ -75,3 +75,23 @@ type ResourceUserMenuRequestDto struct {
 	OrganizationUserId int64              `json:"organization_user_id"`
 	Type               constants.UserType `json:"type"`
 }
+
+type ResourceSyncRequestDto struct {
+	Type      constants.UserType    `json:"type"`
+	Resources []ResourceSyncItemDto `json:"resources"`
+}
+
+type ResourceSyncItemDto struct {
+	ResourceType    constants.ResourceType `json:"resource_type"`
+	Name            string                 `json:"name"`
+	Path            string                 `json:"path"`
+	Icon            string                 `json:"icon"`
+	Tag             string                 `json:"tag"`
+	IsShow          bool                   `json:"is_show"`
+	Status          constants.CommonStatus `json:"status"`
+	EnableDataScope bool                   `json:"enable_data_scope"`
+	Description     string                 `json:"description"`
+	IsPublic        bool                   `json:"is_public"`
+	Children        []ResourceSyncItemDto  `json:"children"`
+	Apis            []ApiSyncItemDto       `json:"apis"`
+}

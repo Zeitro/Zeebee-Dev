@@ -1,11 +1,12 @@
-import React, {useRef, useState} from 'react';
-import {Button, Form, Input, message} from 'antd';
-import {NewModal, UploadFileButton} from '@repo/shared-methods';
-import {CloseOutlined, FileTextOutlined, InboxOutlined} from '@ant-design/icons';
+import React, { useRef, useState } from 'react';
+import { Button, Form, Input, message } from 'antd';
+import { NewModal, UploadFileButton } from '@repo/shared-methods';
+import { CloseOutlined, FileTextOutlined, InboxOutlined } from '@ant-design/icons';
 import styles from './index.module.scss';
-import {createRequest, eventBus} from '@repo/shared-methods/utils';
+import { createRequest, eventBus } from '@repo/shared-methods/utils';
 
 const UploadModal = ({ open, setOpen, isChangeType = true, record = {}, loan_id }) => {
+	const accept = '.pdf,.png,.jpg,.jpeg,.xlsx,.xls,.docx,.doc,.pptx,.ppt';
 	const [form] = Form.useForm();
 	const { request } = createRequest();
 	const uploadRef = useRef(null);
@@ -68,7 +69,7 @@ const UploadModal = ({ open, setOpen, isChangeType = true, record = {}, loan_id 
 				layout="vertical"
 				autoComplete="off"
 				size="large"
-				className="h-[400px] overflow-hidden overflow-y-auto"
+				className="h-[500px] overflow-hidden overflow-y-auto"
 				initialValues={{
 					id: record.id,
 				}}
@@ -98,12 +99,11 @@ const UploadModal = ({ open, setOpen, isChangeType = true, record = {}, loan_id 
 				<UploadFileButton
 					ref={uploadRef}
 					immediateUpload={false}
-					accept=".pdf,.png,.jpg,.jpeg"
+					accept={accept}
 					maxCount={10}
 					multiple={true}
 					onGetUploadList={setFileList}
 					className={[styles.documentUpload].join(' ')}
-					limitSize={10}
 					disabled={false}
 					itemRender={(node, file, fileList, { remove }) => {
 						return (
@@ -118,10 +118,18 @@ const UploadModal = ({ open, setOpen, isChangeType = true, record = {}, loan_id 
 						);
 					}}
 				>
-					<div className=" bg-gray-light py-4 w-full flex flex-col items-center border border-dashed border-base-border rounded-sm text-gray-light cursor-pointer hover:bg-[#E6F4FF]">
+					<div className=" bg-gray-light py-20 px-10 w-full flex flex-col items-center border border-dashed border-base-border rounded-sm text-gray-light cursor-pointer hover:bg-[#E6F4FF]">
 						<InboxOutlined style={{ fontSize: '48px', color: 'var(--base-primary)' }} />
 						<div className="text-base pt-5 pb-1 text-foreground">
 							Click or drag file to this area to upload
+						</div>
+						<div className="text-base-label text-sm pt-4">
+							<span className="font-medium">Upload requirements</span>
+							<br />
+							1. Accepted formats: PDF, PNG, JPG, JPEG, Excel (.xlsx, .xls), Word
+							(.docx, .doc), and PowerPoint (.pptx, .ppt).
+							<br />
+							2. Maximum file size: 20 MB.
 						</div>
 					</div>
 				</UploadFileButton>

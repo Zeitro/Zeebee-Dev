@@ -10,10 +10,13 @@
   },
   "lint-staged": {
     "frontend/borrower/**/*.{js,jsx,ts,tsx,json,css,scss}": [
-      "cd frontend/borrower && npm run lint:staged"
+      "cd frontend/borrower && pnpm run lint:staged"
     ],
     "frontend/lender/**/*.{js,jsx,ts,tsx,json,css,scss}": [
-      "cd frontend/lender && npm run lint:staged"
+      "cd frontend/lender && pnpm run lint:staged"
+    ],
+    "frontend/admin/**/*.{js,jsx,ts,tsx,json,css,scss}": [
+      "cd frontend/admin && pnpm run lint:staged"
     ]
   },
   "repository": {

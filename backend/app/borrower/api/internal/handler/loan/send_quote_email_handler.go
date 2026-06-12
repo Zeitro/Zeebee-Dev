@@ -51,7 +51,6 @@ func SendQuoteEmailHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			} else {
 				response.BadRequest(w, errorx.GetErrorMsg(err))
 			}
-
 		} else {
 			response.Success(w, resp)
 		}

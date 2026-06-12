@@ -1,5 +1,5 @@
-import {create} from 'zustand';
-import {getBorrowers, getLenders, getSelectOptions} from '@repo/shared-methods/api';
+import { create } from 'zustand';
+import { getBorrowers, getLenders, getSelectOptions } from '@repo/shared-methods/api';
 
 export const useOptionsStore = create((set) => ({
 	// loan创建或详情时需要的下拉选项
@@ -19,6 +19,9 @@ export const useOptionsStore = create((set) => ({
 	sexOptions: [], //applicant_sex
 	bankruptcyChapterOptions: [], //bankruptcy_chapter
 	// ---------以下为其他公共下拉选项----------
+	transactionTypeOptions: [], //borrower_property_transaction_type
+	transactionStatusOptions: [], //borrower_property_transaction_status
+	borrowerPropertyStatusOptions: [], //borrower_property_status
 	getOptions: async (name, key) => {
 		const { options } = await getSelectOptions(name);
 		return (

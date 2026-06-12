@@ -1,0 +1,37 @@
+@mixin statusSelectBase {
+	min-width: 100px;
+
+	:global(.ant-select-selector) {
+		border-radius: 2px;
+	}
+}
+
+.statusSelectPending {
+	@include statusSelectBase;
+
+	:global(.ant-select-selector) {
+		border-color: var(--orange-medium) !important;
+		background-color: var(--orange-light) !important;
+		color: var(--orange-dark) !important;
+	}
+}
+
+.statusSelectCancelled {
+	@include statusSelectBase;
+
+	:global(.ant-select-selector) {
+		border-color: var(--error-medium) !important;
+		background-color: var(--error-light) !important;
+		color: var(--base-error) !important;
+	}
+}
+
+.statusSelectClosed {
+	@include statusSelectBase;
+
+	:global(.ant-select-selector) {
+		border-color: var(--base-border) !important;
+		background-color: var(--base-text2) !important;
+		color: var(--foreground) !important;
+	}
+}

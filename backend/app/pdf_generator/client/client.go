@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -42,7 +43,6 @@ func NewClient(url string) *Client {
 
 // GeneratePdf generates pdf from html or url
 func (c *Client) GeneratePdf(ctx context.Context, payload GeneratePdfRequest) ([]byte, error) {
-
 	requestBody, err := json.Marshal(payload)
 	if err != nil {
 		return nil, err
@@ -75,7 +75,7 @@ func (c *Client) GeneratePdf(ctx context.Context, payload GeneratePdfRequest) ([
 		return nil, err
 	}
 	if generatePdfResponse.Code != http.StatusOK {
-		return nil, fmt.Errorf(generatePdfResponse.Message)
+		return nil, errors.New(generatePdfResponse.Message)
 	}
 	if generatePdfResponse.Data.Data == nil {
 		return nil, fmt.Errorf("PDF service returned empty data")

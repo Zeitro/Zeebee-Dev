@@ -1,9 +1,9 @@
 'use client';
-import React, {useState} from 'react';
-import {Button, Form, Input} from 'antd';
-import {useUserStore} from '@repo/shared-methods/store';
-import {emailRegex} from '@repo/shared-methods/utils';
-import {MailOutlined} from '@ant-design/icons';
+import React, { useState } from 'react';
+import { Button, Form, Input } from 'antd';
+import { useUserStore } from '@repo/shared-methods/store';
+import { emailRegex } from '@repo/shared-methods/utils';
+import { MailOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 
 const SendResetPasswordEmail = ({ form, setPageType }) => {
@@ -79,12 +79,7 @@ const SendResetPasswordEmail = ({ form, setPageType }) => {
 			</Form.Item>
 
 			<Form.Item label={null}>
-				<Button
-					type="link"
-					onClick={() => setPageType('signIn')}
-					className="w-full"
-					loading={loading}
-				>
+				<Button type="link" onClick={() => setPageType('signIn')} className="w-full">
 					Cancel
 				</Button>
 			</Form.Item>

@@ -14,7 +14,7 @@ STAGED_BORROWER_FILES=$(git diff --cached --name-only -- "frontend/borrower/")
 
 if [ -n "$STAGED_BORROWER_FILES" ] && [ -d "$BORROWER_DIR" ]; then
   cd "$BORROWER_DIR"
-  npm run lint:staged || {
+  pnpm run lint:staged || {
     echo "ESLint found errors, commit aborted."
     exit 1
   }

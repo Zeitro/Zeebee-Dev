@@ -1,12 +1,17 @@
 'use client';
-import {Breadcrumb} from 'antd';
-import React, {useLayoutEffect, useMemo, useState} from 'react';
-import {usePathname} from 'next/navigation';
+import { Breadcrumb } from 'antd';
+import React, { useLayoutEffect, useMemo, useState } from 'react';
+import { usePathname } from 'next/navigation';
 // import { navRouter } from '@config/routes';
 import Link from 'next/link';
-import {eventBus, flattenNavRouter, getCrumbs, getCurrentRouterItem,} from '@repo/shared-methods/utils';
-import {useDeferredSyncEffect} from '@repo/shared-methods/hooks';
-import {useUserStore} from '@repo/shared-methods/store';
+import {
+	eventBus,
+	flattenNavRouter,
+	getCrumbs,
+	getCurrentRouterItem,
+} from '@repo/shared-methods/utils';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
+import { useUserStore } from '@repo/shared-methods/store';
 
 /**
  * 面包屑导航

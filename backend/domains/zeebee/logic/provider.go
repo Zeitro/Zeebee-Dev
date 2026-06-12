@@ -17,11 +17,13 @@ type AllLogics struct {
 	OrganizationUserLogic     *OrganizationUserLogic
 	OrganizationLogic         *OrganizationLogic
 	OrganizationEmailLogic    *OrganizationEmailLogic
+	DriveLogic                *DriveLogic
 	BaseTemplateLogic         *BaseTemplateLogic
 	OrganizationTemplateLogic *OrganizationTemplateLogic
 	OrganizationSettingLogic  *OrganizationSettingLogic
 	LoanLogic                 *LoanLogic
 	LoanOperationLogic        *LoanOperationLogic
+	OperationLogic            *OperationLogic
 	AuthLogic                 *AuthLogic
 }
 
@@ -45,11 +47,13 @@ func NewAllLogics(config AllLogicConfig) *AllLogics {
 		OrganizationUserLogic:     NewOrganizationUserLogic(baseLogic, config.EmailClient, config.AuthEventTopicMap),
 		OrganizationLogic:         NewOrganizationLogic(baseLogic, config.AuthEventTopicMap),
 		OrganizationEmailLogic:    NewOrganizationEmailLogic(baseLogic),
+		DriveLogic:                NewDriveLogic(baseLogic),
 		BaseTemplateLogic:         NewBaseTemplateLogic(baseLogic),
 		OrganizationTemplateLogic: NewOrganizationTemplateLogic(baseLogic),
 		OrganizationSettingLogic:  NewOrganizationSettingLogic(baseLogic),
 		LoanLogic:                 NewLoanLogic(baseLogic),
 		LoanOperationLogic:        NewLoanOperationLogic(baseLogic),
+		OperationLogic:            NewOperationLogic(baseLogic),
 		AuthLogic:                 NewAuthLogic(baseLogic, config.JwtConfig, config.CurrentEnforcer, config.CurrentAuthEventTopic),
 	}
 }

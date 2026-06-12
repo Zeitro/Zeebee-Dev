@@ -49,3 +49,15 @@ type ApiUpdateRequestDto struct {
 	AuthRequired       bool                   `json:"auth_required"`
 	PermissionRequired bool                   `json:"permission_required"`
 }
+
+type ApiSyncRequestDto struct {
+	Type constants.UserType          `json:"type"`
+	Apis map[string][]ApiSyncItemDto `json:"apis"`
+}
+
+type ApiSyncItemDto struct {
+	Path        string `json:"path"`
+	Method      string `json:"method"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}

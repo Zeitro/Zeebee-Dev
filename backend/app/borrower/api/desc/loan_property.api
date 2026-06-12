@@ -14,6 +14,7 @@ type LoanPropertyEntity {
     PropertyType string `json:"property_type"`
     Unit int32 `json:"unit"`
     LivingAreaSqft float32 `json:"living_area_sqft"`
+    LotAreaSqft float32 `json:"lot_area_sqft"`
     Bedrooms int32 `json:"bedrooms" `
     Bathrooms int32 `json:"bathrooms"`
     FuturePropertyType string `json:"future_property_type"`
@@ -61,12 +62,12 @@ type LoanPropertyEditEntity {
     PurchaseAmount float64 `json:"purchase_amount,optional"`
     Arv float64 `json:"arv,optional"`
     PurchaseDate string `json:"purchase_date,optional"`
-    ExistingLenderCompany string `json:"existing_lender_company, optional" validate:"max=100"`
+    ExistingLenderCompany string `json:"existing_lender_company,optional" validate:"max=100"`
 }
 
 type LoanPropertyApplyEntity {
     Id int64 `json:"id,optional"`
-    BorrowerPropertyId int64 `json:"borrower_property_id" validate:"required,gt=0"`
+    BorrowerPropertyId int64 `json:"borrower_property_id,optional" validate:"gte=0"`
 
     // new fields
     FuturePropertyType string `json:"future_property_type"`
@@ -76,26 +77,26 @@ type LoanPropertyApplyEntity {
     FutureBathrooms int32 `json:"future_bathrooms"`
     Owner string `json:"owner,optional"`
 
-    ExistingLenderCompany string `json:"existing_lender_company, optional" validate:"max=200"`
-    ExistingRate float32 `json:"existing_rate, optional" validate:"gte=0"`
-    ExistingMaturityDate string `json:"existing_maturity_date, optional" `
-    PurchaseAmount float64 `json:"purchase_amount, optional" validate:"gte=0"`
-    PurchaseDate string `json:"purchase_date, optional" `
-    HasAssignmentFee bool `json:"has_assignment_fee, optional"`
-    AssignmentFeeAmount float64 `json:"assignment_fee_amount, optional" validate:"required_if=HasAssignmentFee true,gte=0"`
-    HasSubordinateDebt bool `json:"has_subordinate_debt, optional"`
-    SubordinateDebtAmount float64 `json:"subordinate_debt_amount, optional" validate:"gte=0"`
-    ScheduledCloseEscrowDate string `json:"scheduled_close_escrow_date, optional"`
-    EstPropertyValueAmount float64 `json:"est_property_value_amount, optional" validate:"gte=0"`
+    ExistingLenderCompany string `json:"existing_lender_company,optional" validate:"max=200"`
+    ExistingRate float32 `json:"existing_rate,optional" validate:"gte=0"`
+    ExistingMaturityDate string `json:"existing_maturity_date,optional" `
+    PurchaseAmount float64 `json:"purchase_amount,optional" validate:"gte=0"`
+    PurchaseDate string `json:"purchase_date,optional" `
+    HasAssignmentFee bool `json:"has_assignment_fee,optional"`
+    AssignmentFeeAmount float64 `json:"assignment_fee_amount,optional" validate:"required_if=HasAssignmentFee true,gte=0"`
+    HasSubordinateDebt bool `json:"has_subordinate_debt,optional"`
+    SubordinateDebtAmount float64 `json:"subordinate_debt_amount,optional" validate:"gte=0"`
+    ScheduledCloseEscrowDate string `json:"scheduled_close_escrow_date,optional"`
+    EstPropertyValueAmount float64 `json:"est_property_value_amount,optional" validate:"gte=0"`
     LiquidityAmount float64 `json:"liquidity_amount" validate:"gte=0"`
-    Budget *LoanBudgetEntity `json:"budget, optional"`
-    MidConstruction bool `json:"mid_construction, optional"`
-    EstYearlyRentalIncomeAmount float64 `json:"est_yearly_rental_income_amount, optional" `
-    YearlyLiabilityExpenseAmount float64 `json:"yearly_liability_expense_amount, optional" `
+    Budget *LoanBudgetEntity `json:"budget,optional"`
+    MidConstruction bool `json:"mid_construction,optional"`
+    EstYearlyRentalIncomeAmount float64 `json:"est_yearly_rental_income_amount,optional" `
+    YearlyLiabilityExpenseAmount float64 `json:"yearly_liability_expense_amount,optional" `
     Dscr float64 `json:"dscr,optional" validate:"gte=0"`
-    HasDelayedFinancing bool `json:"has_delayed_financing, optional"`
-    HasPropertiesVacant bool `json:"has_properties_vacant, optional"`
-    HasShortTermRental bool `json:"has_short_term_rental, optional"`
+    HasDelayedFinancing bool `json:"has_delayed_financing,optional"`
+    HasPropertiesVacant bool `json:"has_properties_vacant,optional"`
+    HasShortTermRental bool `json:"has_short_term_rental,optional"`
     Arv float64 `json:"arv,optional" validate:"required,gte=0"`
 }
 
@@ -104,6 +105,7 @@ type LoanPropertyApplyFormPdfEntity {
     Id int64 `json:"id,optional"`
     Unit int32 `json:"unit"`
     LivingAreaSqft float32 `json:"living_area_sqft"`
+    LotAreaSqft float32 `json:"lot_area_sqft"`
     Bedrooms int32 `json:"bedrooms" `
     Bathrooms int32 `json:"bathrooms"`
     PropertyType string `json:"property_type"`
@@ -117,33 +119,33 @@ type LoanPropertyApplyFormPdfEntity {
     FutureBathrooms int32 `json:"future_bathrooms"`
     Owner string `json:"owner,optional"`
 
-    ExistingLenderCompany string `json:"existing_lender_company, optional" validate:"max=200"`
-    ExistingRate float32 `json:"existing_rate, optional" validate:"gte=0"`
-    ExistingMaturityDate string `json:"existing_maturity_date, optional" `
-    PurchaseAmount float64 `json:"purchase_amount, optional" validate:"gte=0"`
-    PurchaseDate string `json:"purchase_date, optional" `
-    HasAssignmentFee bool `json:"has_assignment_fee, optional"`
-    AssignmentFeeAmount float64 `json:"assignment_fee_amount, optional" validate:"required_if=HasAssignmentFee true,gte=0"`
-    HasSubordinateDebt bool `json:"has_subordinate_debt, optional"`
-    SubordinateDebtAmount float64 `json:"subordinate_debt_amount, optional" validate:"gte=0"`
-    ScheduledCloseEscrowDate string `json:"scheduled_close_escrow_date, optional"`
-    EstPropertyValueAmount float64 `json:"est_property_value_amount, optional" validate:"gte=0"`
+    ExistingLenderCompany string `json:"existing_lender_company,optional" validate:"max=200"`
+    ExistingRate float32 `json:"existing_rate,optional" validate:"gte=0"`
+    ExistingMaturityDate string `json:"existing_maturity_date,optional" `
+    PurchaseAmount float64 `json:"purchase_amount,optional" validate:"gte=0"`
+    PurchaseDate string `json:"purchase_date,optional" `
+    HasAssignmentFee bool `json:"has_assignment_fee,optional"`
+    AssignmentFeeAmount float64 `json:"assignment_fee_amount,optional" validate:"required_if=HasAssignmentFee true,gte=0"`
+    HasSubordinateDebt bool `json:"has_subordinate_debt,optional"`
+    SubordinateDebtAmount float64 `json:"subordinate_debt_amount,optional" validate:"gte=0"`
+    ScheduledCloseEscrowDate string `json:"scheduled_close_escrow_date,optional"`
+    EstPropertyValueAmount float64 `json:"est_property_value_amount,optional" validate:"gte=0"`
     LiquidityAmount float64 `json:"liquidity_amount" validate:"gte=0"`
-    Budget *LoanBudgetEntity `json:"budget, optional"`
-    MidConstruction bool `json:"mid_construction, optional"`
-    EstYearlyRentalIncomeAmount float64 `json:"est_yearly_rental_income_amount, optional" `
-    YearlyLiabilityExpenseAmount float64 `json:"yearly_liability_expense_amount, optional" `
+    Budget *LoanBudgetEntity `json:"budget,optional"`
+    MidConstruction bool `json:"mid_construction,optional"`
+    EstYearlyRentalIncomeAmount float64 `json:"est_yearly_rental_income_amount,optional" `
+    YearlyLiabilityExpenseAmount float64 `json:"yearly_liability_expense_amount,optional" `
     Dscr float64 `json:"dscr,optional" validate:"gte=0"`
-    HasDelayedFinancing bool `json:"has_delayed_financing, optional"`
-    HasPropertiesVacant bool `json:"has_properties_vacant, optional"`
-    HasShortTermRental bool `json:"has_short_term_rental, optional"`
+    HasDelayedFinancing bool `json:"has_delayed_financing,optional"`
+    HasPropertiesVacant bool `json:"has_properties_vacant,optional"`
+    HasShortTermRental bool `json:"has_short_term_rental,optional"`
     HasCollateralizedBlanket bool `json:"has_collateralized_blanket,optional"`
     Arv float64 `json:"arv,optional" validate:"required,gte=0"`
 }
 
 
 type LoanPropertyPdfEntity {
-    PropertyType string `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
+    PropertyType string `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial' 'Raw Land' 'Entitled Land'"`
     Unit int32 `json:"unit" validate:"required,gt=0"`
     LivingAreaSqft float32 `json:"living_area_sqft" validate:"required,gt=0"`
     Bedrooms int32 `json:"bedrooms" validate:"required,gt=0"`

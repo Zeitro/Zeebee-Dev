@@ -1,4 +1,4 @@
-import {Spin} from 'antd';
+import { Spin } from 'antd';
 import React from 'react';
 
 const PageLoading = () => {

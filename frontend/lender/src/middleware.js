@@ -1,28 +1,18 @@
-import {NextResponse} from 'next/server';
-import {flattenNavRouter, matchRoute} from '@repo/shared-methods/lib/commonRouter';
-import {noTokenRouter} from '@config/routes';
+import { NextResponse } from 'next/server';
+import { flattenNavRouter, matchRoute } from '@repo/shared-methods/lib/commonRouter';
+import { readPermissionFromCookieStore } from '@repo/shared-methods/lib/permissionStorage';
+import { noTokenRouter } from '@config/routes';
 
 export function middleware(request) {
 	const { pathname } = request.nextUrl;
 
-	// cookie获取token/权限路由
-	const permissionStore = JSON.parse(
-		request.cookies.get(`permissionStore_${process.env.NEXT_PUBLIC_SYSTEM_TYPE}`)?.value ||
-			'{}',
-	);
-	const accessPaths = permissionStore?.state?.accessPaths || [];
-	const access = permissionStore?.state?.access;
+	const { access, accessPaths } = readPermissionFromCookieStore(request.cookies);
 	// 路由白名单
 	const noTokenList = flattenNavRouter(noTokenRouter);
 	const whiteList = noTokenList.map((item) => item.path);
 
 	if (!access && !whiteList.includes(pathname)) {
-		console.log(
-			'noToken----------middleware---===',
-			pathname,
-			'++++',
-			permissionStore?.state?.access,
-		);
+		console.log('noToken----------middleware---===', pathname, '++++', access);
 
 		// token到期且非白名单路由，重定向到登录页
 		return NextResponse.redirect(new URL('/login', request.url));
@@ -43,6 +33,6 @@ export function middleware(request) {
 export const config = {
 	// 排除Next.js内部资源、静态文件、API路径
 	matcher: [
-		'/((?!_next/static|_next/image|api/|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+		'/((?!_next/|api/|favicon.ico|robots\\.txt|sitemap\\.xml|.*\\.(?:svg|png|jpe?g|gif|ico|webp|avif|mjs|js|css|map|json|txt|xml|webmanifest|woff2?|ttf|otf|wasm|pdf|xlsx?)$).*)',
 	],
 };

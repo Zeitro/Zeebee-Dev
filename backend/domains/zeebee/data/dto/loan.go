@@ -66,8 +66,9 @@ type LoanBorrowerPageRequestDto struct {
 }
 
 type LoanBorrowerPageRequestFilter struct {
-	UserId         int64 `json:"user_id,omitempty"`
-	OrganizationId int64 `json:"organization_id"`
+	UserId                        int64 `json:"user_id,omitempty"`
+	OrganizationId                int64 `json:"organization_id"`
+	BorrowerPropertyTransactionId int64 `json:"borrower_property_transaction_id"`
 	// BorrowerOrganizationId int64    `json:"borrower_organization_id"`
 	Stage         constants.LoanStage    `json:"stage,omitempty"`
 	Keyword       string                 `json:"keyword,omitempty"`
