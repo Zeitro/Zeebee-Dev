@@ -114,3 +114,16 @@ func (repo *OrganizationSubscriptionRepo) Page(ctx context.Context, pageReq dto.
 	})
 	return page, errorx.WithStack(err)
 }
+
+// FindEffectiveByPlanIdWithTx get all affective subscription by plan id
+func (repo *OrganizationSubscriptionRepo) FindEffectiveByPlanIdWithTx(ctx context.Context, tx *gorm.DB, pricingPlanId int64) (results []*model.OrganizationSubscription, err error) {
+	err = tx.WithContext(ctx).Model(new(model.OrganizationSubscription)).
+		Where("pricing_plan_id = ? and status in ?", pricingPlanId, []constants.OrganizationSubscriptionStatus{
+			constants.OrganizationSubscriptionStatusActive,
+			constants.OrganizationSubscriptionStatusExpiring,
+			constants.OrganizationSubscriptionStatusTrialing,
+			constants.OrganizationSubscriptionStatusSuspended,
+		},
+		).Find(&results).Error
+	return results, errorx.WithStack(err)
+}
