@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button, Modal, Space, Spin, Table, Tag, Typography } from 'antd';
-import Cookie from 'js-cookie';
+import { getAccessTokenFromStorage } from '@repo/shared-methods/utils';
 
 const { Text } = Typography;
 
@@ -11,10 +11,7 @@ const DISCOVER_TIMEOUT_MS = 5 * 60 * 1000;
 async function longRequest(path, { method = 'POST', body } = {}) {
 	const base = process.env.NEXT_PUBLIC_API_URL || '';
 	const url = `${base}/api/v1${path}`;
-	const store = JSON.parse(
-		Cookie.get(`permissionStore_${process.env.NEXT_PUBLIC_SYSTEM_TYPE}`) || '{}',
-	);
-	const token = store?.state?.access?.access_token;
+	const token = getAccessTokenFromStorage();
 	const res = await fetch(url, {
 		method,
 		headers: {
@@ -215,7 +212,7 @@ export default function DiscoverPreviewModal({ open, onClose, onCommitted }) {
 					</Button>
 				</Space>
 			}
-			destroyOnClose
+			destroyOnHidden
 		>
 			{loading ? (
 				<div className="flex flex-col items-center justify-center gap-3 py-16">

@@ -81,17 +81,8 @@ func fillNodeFiles(ctx context.Context, fileRepo *repo.FileRepo, nodes []*dto.Ch
 		if len(node.Children) == 0 {
 			// leaf node: query files for this document
 			files, err := fileRepo.GetFiles(ctx, node.DocumentId, constants.FileEntityTypeDocument)
-
-			if err == nil && len(files) > 0 {
-				for _, f := range files {
-					dtoFile, err := copierx.Trans[model.File, dto.FileEntityDto](f, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToStr(timex.LayoutUsStyle))
-					if err == nil {
-						// 必须 append 到 nodes[i].Files（正在累积的切片）；
-						// node 是 range 的拷贝，node.Files 始终是初始值，
-						// 用它会导致每次覆盖、最终只剩最后一个文件。
-						nodes[i].Files = append(nodes[i].Files, *dtoFile)
-					}
-				}
+			if err != nil {
+				continue
 			}
 			dtoFiles, _ := copierx.Trans[[]*model.File, []*dto.FileEntityDto](&files, copierx.TimeToRFC3339Str())
 			if dtoFiles != nil && len(*dtoFiles) > 0 {

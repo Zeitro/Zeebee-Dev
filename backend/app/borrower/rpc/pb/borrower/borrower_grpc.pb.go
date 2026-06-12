@@ -127,7 +127,7 @@ func (UnimplementedCommonServer) GetUuid(context.Context, *EmptyRequest) (*GetUu
 	return nil, status.Error(codes.Unimplemented, "method GetUuid not implemented")
 }
 func (UnimplementedCommonServer) SyncData(context.Context, *EmptyRequest) (*EmptyResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method SyncData not implemented")
+	return nil, status.Errorf(codes.Unimplemented, "method SyncData not implemented")
 }
 func (UnimplementedCommonServer) mustEmbedUnimplementedCommonServer() {}
 func (UnimplementedCommonServer) testEmbeddedByValue()                {}

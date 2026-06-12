@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"path/filepath"
 	"strings"
 	"time"
@@ -401,10 +402,14 @@ func (l *DriveLogic) runSyncTransaction(ctx context.Context, s3Client *aws_s3.S3
 
 	result = &dto.DriveSyncTransactionResultDto{FolderWebLink: txUrl}
 
-	// 4. 平铺 checklist 子文件夹：required/optional 文档的子节点直接挂在
-	//    transaction 文件夹下，不再额外包一层 Required/Optional 目录。
-	l.syncNodes(ctx, cli, s3Client, driveId, txId, transaction.Checklist.RequiredDocuments, result)
-	l.syncNodes(ctx, cli, s3Client, driveId, txId, transaction.Checklist.OptionalDocuments, result)
+	// 4. Flatten checklist sub-folders: required/optional document nodes are placed
+	//    directly under the transaction folder (no extra Required/Optional wrapper).
+	//    Required nodes come first, then optional, so the numeric prefix added in
+	//    syncNodes keeps a continuous order across both groups.
+	nodes := make([]*dto.ChecklistNode, 0, len(transaction.Checklist.RequiredDocuments)+len(transaction.Checklist.OptionalDocuments))
+	nodes = append(nodes, transaction.Checklist.RequiredDocuments...)
+	nodes = append(nodes, transaction.Checklist.OptionalDocuments...)
+	l.syncNodes(ctx, cli, s3Client, driveId, txId, nodes, result)
 
 	return result, nil
 }
@@ -441,7 +446,9 @@ func (l *DriveLogic) buildClient(ctx context.Context, organizationId int64, orga
 func (l *DriveLogic) syncNodes(ctx context.Context, cli *client.DriveClient, s3Client *aws_s3.S3Client, driveId, parentId string, nodes []*dto.ChecklistNode, result *dto.DriveSyncTransactionResultDto) {
 	for i := range nodes {
 		node := nodes[i]
-		folderId, _, err := cli.EnsureFolder(ctx, sanitizeFolderName(node.Name), parentId, driveId)
+		// Prefix the folder name with its 1-based position so Drive's default
+		// "Name" sort reflects the checklist order (see numberedFolderName).
+		folderId, _, err := cli.EnsureFolder(ctx, numberedFolderName(i+1, node.Name), parentId, driveId)
 		if err != nil {
 			// folder creation failed: record every file under this node as failed
 			l.markNodeFilesFailed(node, result)
@@ -649,6 +656,14 @@ func formatAddress(addr model.Address) string {
 		}
 	}
 	return strings.Join(parts, ", ")
+}
+
+// numberedFolderName prefixes a folder name with its 1-based position, zero-padded
+// to two digits (e.g. "03 Insurance"). Google Drive has no API to set a custom
+// display order, and its UI sorts by name, so the numeric prefix is the only way
+// to make the folder list reflect the checklist order.
+func numberedFolderName(index int, name string) string {
+	return sanitizeFolderName(fmt.Sprintf("%02d %s", index, strings.TrimSpace(name)))
 }
 
 // sanitizeFolderName removes characters that make Drive folder paths ambiguous.
