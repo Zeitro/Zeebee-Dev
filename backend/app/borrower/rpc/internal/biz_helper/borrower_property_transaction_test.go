@@ -182,7 +182,7 @@ func TestBuildChecklistTree_FullScenario(t *testing.T) {
 	assert.Equal(t, int32(33), result.TotalDocumentCount)
 
 	// Verify Insurance node
-	var insuranceNode dto.ChecklistNode
+	var insuranceNode *dto.ChecklistNode
 	for _, n := range result.RequiredDocuments {
 		if n.Name == "Insurance" {
 			insuranceNode = n
@@ -193,7 +193,7 @@ func TestBuildChecklistTree_FullScenario(t *testing.T) {
 	assert.Equal(t, int32(1), insuranceNode.OptionalDocumentCount)
 
 	// Verify leaf nodes have 0 counts
-	var disclosuresNode dto.ChecklistNode
+	var disclosuresNode *dto.ChecklistNode
 	for _, n := range result.RequiredDocuments {
 		if n.Name == "Disclosures" {
 			disclosuresNode = n
@@ -211,13 +211,17 @@ func TestBuildChecklistTree_WithFileCounts(t *testing.T) {
 		{Base: model.Base{Id: 2}, ParentId: 1, Name: "Contract", Metadata: metaJSON(true)},
 		{Base: model.Base{Id: 3}, ParentId: 2, Name: "RPA", Metadata: metaJSON(true)},
 		{Base: model.Base{Id: 4}, ParentId: 2, Name: "Counter Offer", Metadata: metaJSON(true)},
+		{Base: model.Base{Id: 5}, ParentId: 2, Name: "Counter Offer2", Metadata: metaJSON(false)},
 	}
 
-	fileCounts := map[int64]int32{3: 2} // RPA has 2 files
+	fileCounts := map[int64]int32{
+		3: 2,
+		5: 1,
+	} // RPA has 2 files
 
 	result := BuildChecklistTree(docs, fileCounts)
 
-	assert.Equal(t, int32(1), result.TotalRequiredUpdatedDocumentCount,
+	assert.Equal(t, int32(1), result.TotalRequiredUploadedDocumentCount,
 		"1 leaf (RPA) has files uploaded")
 
 	contract := result.RequiredDocuments[0]
