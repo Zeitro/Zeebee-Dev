@@ -69,7 +69,6 @@ func (l *PricingPlanLogic) Create(ctx context.Context, input dto.PricingPlanCrea
 		return nil, err
 	}
 
-	// l.publishResourceReloadEvent(ctx, planModel.Type)
 	return l.transToDetailDto(ctx, planModel)
 }
 
@@ -107,57 +106,34 @@ func (l *PricingPlanLogic) Update(ctx context.Context, input dto.PricingPlanUpda
 		return
 	}
 
-	l.publishResourceReloadEvent(ctx, plan.Type)
 	return l.transToDetailDto(ctx, plan)
 }
 
 func (l *PricingPlanLogic) Delete(ctx context.Context, id int64) (err error) {
-	preloads := []gormx.Preload{
-		{Query: "Resources"},
-		{Query: "Subscriptions"},
-	}
-	plan, err := l.repos.PricingPlanRepo.GetOne(ctx, id, preloads)
+	_, err = l.repos.PricingPlanRepo.GetOne(ctx, id, nil)
 	if err != nil {
 		return errorx.Wrap(err, "fail to find pricing plan")
 	}
 
-	for _, sub := range plan.Subscriptions {
-		if sub.Status != constants.OrganizationSubscriptionStatusExpired {
-			return errorx.New("cannot delete pricing plan with active subscriptions")
-		}
-	}
-
-	resourceIds := slice.Map(plan.Resources, func(index int, resource *model.Resource) int64 {
-		return resource.Id
-	})
-
-	affectedOrgIds := l.findAffectedOrgIds(ctx, plan.Subscriptions, id)
-	if len(affectedOrgIds) == 0 {
-		_, err = l.repos.PricingPlanRepo.DeleteByIDWithTx(ctx, l.repos.PricingPlanRepo.GetDB(), id)
-		return err
-	}
-
-	err = l.repos.PricingPlanRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		var innerErr error
-		_, innerErr = l.repos.PricingPlanRepo.DeleteByIDWithTx(ctx, tx, id)
+	return l.repos.PricingPlanRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		// check for active subscriptions
+		effectedSubscriptions, innerErr := l.repos.OrganizationSubscriptionRepo.FindEffectiveByPlanIdWithTx(ctx, tx, id)
 		if innerErr != nil {
 			return innerErr
 		}
-
-		return l.unbindPlanResourcesFromOrgRoles(ctx, tx, affectedOrgIds, resourceIds, plan.Type)
+		if len(effectedSubscriptions) > 0 {
+			return errorx.New("cannot delete pricing plan with active subscriptions")
+		}
+		// delete plan
+		_, innerErr = l.repos.PricingPlanRepo.DeleteByIDWithTx(ctx, tx, id)
+		return innerErr
 	})
-	if err != nil {
-		return err
-	}
-
-	l.publishOrgRoleReloadEvents(ctx, affectedOrgIds, plan.Type)
-	return
 }
 
 func (l *PricingPlanLogic) Detail(ctx context.Context, id int64) (*dto.PricingPlanEntityDto, error) {
 	plan, err := l.repos.PricingPlanRepo.FindOneWithPreloadById(ctx, id, []string{"Policies"})
 	if err != nil {
-		return nil, errorx.Wrap(err, "pricing plan not found")
+		return nil, errorx.Wrap(err, "fail to find pricing plan")
 	}
 	return l.transToDetailDto(ctx, plan)
 }
@@ -179,7 +155,7 @@ func (l *PricingPlanLogic) Page(ctx context.Context, req dto.PricingPlanPageRequ
 func (l *PricingPlanLogic) SwitchStatus(ctx context.Context, id int64, status constants.CommonStatus) (err error) {
 	preloads := []gormx.Preload{
 		{Query: "Resources"},
-		{Query: "Subscriptions"},
+		// {Query: "Subscriptions"},
 	}
 	plan, err := l.repos.PricingPlanRepo.GetOne(ctx, id, preloads)
 	if err != nil {
@@ -195,67 +171,64 @@ func (l *PricingPlanLogic) SwitchStatus(ctx context.Context, id int64, status co
 		return resource.Id
 	})
 
-	// pre-compute affected orgs when disabling
-	var affectedOrgIds []int64
-	if isDisabling && len(resourceIds) > 0 {
-		affectedOrgIds = l.findAffectedOrgIds(ctx, plan.Subscriptions, id)
-	}
+	var affectedOrganizationIds []int64
 
+	var orgPolicies map[int64]*organizationPolicyChanges
 	plan.Status = status
 	err = l.repos.PricingPlanRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
+		// find affected subscriptions
+		effectedSubscriptions, innerErr := l.repos.OrganizationSubscriptionRepo.FindEffectiveByPlanIdWithTx(ctx, tx, id)
+		if innerErr != nil {
+			return innerErr
+		}
+		affectedOrganizationIds = slice.Map(effectedSubscriptions, func(index int, subscription *model.OrganizationSubscription) int64 {
+			return subscription.OrganizationId
+		})
+		affectedOrganizationIds = slice.Unique(affectedOrganizationIds)
+
 		_, innerErr = l.repos.PricingPlanRepo.UpdateOneByIdWithTx(ctx, tx, id, plan)
 		if innerErr != nil {
 			return innerErr
 		}
 
-		if !isDisabling || len(affectedOrgIds) == 0 {
+		if len(affectedOrganizationIds) == 0 {
 			return nil
 		}
-
-		return l.unbindPlanResourcesFromOrgRoles(ctx, tx, affectedOrgIds, resourceIds, plan.Type)
+		// bind/unbind resources
+		if isDisabling {
+			orgPolicies, innerErr = l.syncPlanResourcesToOrganizationRoles(ctx, tx, affectedOrganizationIds, resourceIds, plan.Type, false)
+		} else {
+			orgPolicies, innerErr = l.syncPlanResourcesToOrganizationRoles(ctx, tx, affectedOrganizationIds, resourceIds, plan.Type, true)
+		}
+		return innerErr
 	})
 	if err != nil {
 		return err
 	}
 
-	if isDisabling {
-		l.publishOrgRoleReloadEvents(ctx, affectedOrgIds, plan.Type)
-	} else {
-		l.reloadSubscribedOrganizationRoles(ctx, id, plan.Type)
-	}
+	l.publishOrgRoleReloadEvents(ctx, orgPolicies, plan.Type)
 	return
 }
 
 func (l *PricingPlanLogic) BindResources(ctx context.Context, planId int64, resourceIds []int64) (err error) {
 	preloads := []gormx.Preload{
-		{
-			Query: "Resources",
-		},
-		{
-			Query: "Subscriptions",
-		},
+		{Query: "Resources"},
+		// {Query: "Subscriptions"},
 	}
 	plan, err := l.repos.PricingPlanRepo.GetOne(ctx, planId, preloads)
 	if err != nil {
 		return errorx.Wrap(err, "fail to find pricing plan")
 	}
 
-	oldResources := plan.Resources
-	oldResourceIds := slice.Map(oldResources, func(index int, resource *model.Resource) int64 {
+	oldResourceIds := slice.Map(plan.Resources, func(index int, resource *model.Resource) int64 {
 		return resource.Id
 	})
-	var currentResourceIds []int64
 
+	var currentResourceIds []int64
 	if len(resourceIds) > 0 {
 		filters := []gormx.WhereRaw{
-			{
-				Raw: "id in ? and type = ?",
-				Args: []interface{}{
-					resourceIds,
-					plan.Type,
-				},
-			},
+			{Raw: "id in ? and type = ?", Args: []interface{}{resourceIds, plan.Type}},
 		}
 		err = l.repos.ResourceRepo.PluckByColumns(ctx, "id", &currentResourceIds, filters)
 		if err != nil {
@@ -264,51 +237,43 @@ func (l *PricingPlanLogic) BindResources(ctx context.Context, planId int64, reso
 	}
 
 	newIds, removedIds := diffResourceIds(oldResourceIds, currentResourceIds)
-	subscriptions := plan.Subscriptions
 
-	var removedPolicies [][]string
+	organizationPolicies := make(map[int64]*organizationPolicyChanges)
 	err = l.repos.PricingPlanRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
-		// update pricing plan resources
 		innerErr = l.repos.PricingPlanRepo.UpdateResourcesWithTx(ctx, tx, plan,
 			resourceStubs(newIds), resourceStubs(removedIds))
 		if innerErr != nil {
 			return innerErr
 		}
 
-		if len(removedIds) == 0 {
-			return nil
+		effectedSubscriptions, innerErr := l.repos.OrganizationSubscriptionRepo.FindEffectiveByPlanIdWithTx(ctx, tx, plan.Id)
+		if innerErr != nil {
+			return innerErr
 		}
-		// get all non-expired subscriptions
-		organizationIds := slice.FilterMap(subscriptions, func(index int, sub *model.OrganizationSubscription) (int64, bool) {
-			if sub.Status != constants.OrganizationSubscriptionStatusExpired {
-				return sub.OrganizationId, true
-			}
-			return 0, false
+		organizationIds := slice.Map(effectedSubscriptions, func(index int, subscription *model.OrganizationSubscription) int64 {
+			return subscription.OrganizationId
 		})
+		organizationIds = slice.Unique(organizationIds)
 
 		if len(organizationIds) == 0 {
 			return nil
 		}
 
-		roles, innerErr := l.repos.RoleRepo.FindByOrganizationIdsWithTx(ctx, tx, organizationIds, plan.Type)
-		if innerErr != nil {
-			return innerErr
-		}
-
-		removedResources := resourceStubs(removedIds)
-		// update role resources
-		for _, role := range roles {
-			innerErr = l.repos.RoleRepo.UpdateResourcesWithTx(ctx, tx, role, nil, removedResources)
+		if len(removedIds) > 0 {
+			removedOrgPolicies, innerErr := l.syncPlanResourcesToOrganizationRoles(ctx, tx, organizationIds, removedIds, plan.Type, false)
 			if innerErr != nil {
 				return innerErr
 			}
+			mergeOrganizationPolicies(organizationPolicies, removedOrgPolicies)
 		}
 
-		for _, role := range roles {
-			for _, resourceId := range removedIds {
-				removedPolicies = append(removedPolicies, auth.BuildPolicy(role.Id, resourceId, plan.Type))
+		if len(newIds) > 0 {
+			addedOrgPolicies, innerErr := l.syncPlanResourcesToOrganizationRoles(ctx, tx, organizationIds, newIds, plan.Type, true)
+			if innerErr != nil {
+				return innerErr
 			}
+			mergeOrganizationPolicies(organizationPolicies, addedOrgPolicies)
 		}
 
 		return nil
@@ -317,19 +282,14 @@ func (l *PricingPlanLogic) BindResources(ctx context.Context, planId int64, reso
 		return err
 	}
 
-	threading.GoSafe(func() {
-		subCtx := context.WithoutCancel(ctx)
-		msg := auth.Msg{
-			Action:          auth.ActionResourceReload,
-			Scope:           auth.ScopeGlobal,
-			Type:            plan.Type,
-			RemovedPolicies: removedPolicies,
-		}
-		_ = l.publishAuthEvent(subCtx, l.authTopicMap[plan.Type], msg)
-	})
-	l.reloadSubscribedOrganizationRoles(ctx, planId, plan.Type)
-
+	l.publishOrgRoleReloadEvents(ctx, organizationPolicies, plan.Type)
 	return
+}
+
+// orgPolicyChanges tracks per-org policy changes for auth event publishing.
+type organizationPolicyChanges struct {
+	added   [][]string
+	removed [][]string
 }
 
 // diffResourceIds computes added and removed resource IDs.
@@ -349,68 +309,68 @@ func resourceStubs(ids []int64) []*model.Resource {
 	return stubs
 }
 
-// findAffectedOrgIds returns org IDs that should be affected by plan changes.
-// For expired subs: only include orgs with no other active subscription.
-// For active subs: only include orgs whose only active sub is this plan.
-func (l *PricingPlanLogic) findAffectedOrgIds(ctx context.Context, subscriptions []*model.OrganizationSubscription, planId int64) []int64 {
-	var orgIds []int64
-	for _, sub := range subscriptions {
-		activeSubs, err := l.repos.OrganizationSubscriptionRepo.FindActiveByOrgId(ctx, sub.OrganizationId)
-		if err != nil {
-			continue
-		}
-		if sub.Status == constants.OrganizationSubscriptionStatusExpired {
-			// expired sub: affected only if org has no active subscription at all
-			if len(activeSubs) == 0 {
-				orgIds = append(orgIds, sub.OrganizationId)
-			}
-		} else {
-			// active sub: affected only if org has no other active plan
-			hasOther := false
-			for _, activeSub := range activeSubs {
-				if activeSub.PricingPlanId != planId {
-					hasOther = true
-					break
-				}
-			}
-			if !hasOther {
-				orgIds = append(orgIds, sub.OrganizationId)
-			}
-		}
+// syncPlanResourcesToOrganizationRoles binds/unbinds plan resources to organization roles.
+func (l *PricingPlanLogic) syncPlanResourcesToOrganizationRoles(ctx context.Context, tx *gorm.DB, organizationIds []int64, resourceIds []int64, userType constants.UserType, isBind bool) (map[int64]*organizationPolicyChanges, error) {
+	if len(organizationIds) == 0 || len(resourceIds) == 0 {
+		return nil, nil
 	}
-	return slice.Unique(orgIds)
-}
-
-// unbindPlanResourcesFromOrgRoles removes plan resources from all roles of the given orgs.
-func (l *PricingPlanLogic) unbindPlanResourcesFromOrgRoles(ctx context.Context, tx *gorm.DB, orgIds []int64, resourceIds []int64, userType constants.UserType) error {
-	if len(orgIds) == 0 || len(resourceIds) == 0 {
-		return nil
-	}
-	roles, err := l.repos.RoleRepo.FindByOrganizationIdsWithTx(ctx, tx, orgIds, userType)
+	roles, err := l.repos.RoleRepo.FindByOrganizationIdsWithTx(ctx, tx, organizationIds, userType)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	removedResources := resourceStubs(resourceIds)
+	var removedResources []*model.Resource
+	var addedResources []*model.Resource
+	if isBind {
+		addedResources = resourceStubs(resourceIds)
+	} else {
+		removedResources = resourceStubs(resourceIds)
+	}
+	organizationPolicies := make(map[int64]*organizationPolicyChanges)
+
 	for _, role := range roles {
-		err = l.repos.RoleRepo.UpdateResourcesWithTx(ctx, tx, role, nil, removedResources)
+		err = l.repos.RoleRepo.UpdateResourcesWithTx(ctx, tx, role, addedResources, removedResources)
 		if err != nil {
-			return err
+			return nil, err
+		}
+		if organizationPolicies[role.OrganizationId] == nil {
+			organizationPolicies[role.OrganizationId] = &organizationPolicyChanges{}
+		}
+		for _, resourceId := range resourceIds {
+			if isBind {
+				organizationPolicies[role.OrganizationId].added = append(organizationPolicies[role.OrganizationId].added, auth.BuildPolicy(role.Id, resourceId, userType))
+			} else {
+				organizationPolicies[role.OrganizationId].removed = append(organizationPolicies[role.OrganizationId].removed, auth.BuildPolicy(role.Id, resourceId, userType))
+			}
 		}
 	}
-	return nil
+	return organizationPolicies, nil
 }
 
-// publishOrgRoleReloadEvents sends per-org RoleReload events for the given orgs.
-func (l *PricingPlanLogic) publishOrgRoleReloadEvents(ctx context.Context, orgIds []int64, userType constants.UserType) {
-	for _, orgId := range orgIds {
+// mergeOrganizationPolicies merges source policies into target.
+func mergeOrganizationPolicies(target map[int64]*organizationPolicyChanges, source map[int64]*organizationPolicyChanges) {
+	for organizationId, srcChanges := range source {
+		if target[organizationId] == nil {
+			target[organizationId] = &organizationPolicyChanges{}
+		}
+		target[organizationId].added = append(target[organizationId].added, srcChanges.added...)
+		target[organizationId].removed = append(target[organizationId].removed, srcChanges.removed...)
+	}
+}
+
+// publishOrgRoleReloadEvents sends per-org RoleReload events with explicit policy changes.
+func (l *PricingPlanLogic) publishOrgRoleReloadEvents(ctx context.Context, organizationPolicies map[int64]*organizationPolicyChanges, userType constants.UserType) {
+	for orgId, changes := range organizationPolicies {
 		orgId := orgId
+		changes := changes
 		threading.GoSafe(func() {
 			subCtx := context.WithoutCancel(ctx)
 			msg := auth.Msg{
-				Action:         auth.ActionRoleReload,
-				Scope:          auth.ScopeOrganization,
-				Type:           userType,
-				OrganizationId: orgId,
+				Action:          auth.ActionRoleReload,
+				Scope:           auth.ScopeOrganization,
+				Type:            userType,
+				OrganizationId:  orgId,
+				AddedPolicies:   changes.added,
+				RemovedPolicies: changes.removed,
 			}
 			_ = l.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
 		})
@@ -440,59 +400,5 @@ func (l *PricingPlanLogic) transToDetailDto(ctx context.Context, plan *model.Pri
 	if err != nil {
 		return nil, err
 	}
-
-	// load policies if not preloaded
-	// if plan.Policies == nil {
-	// 	policies, innerErr := l.repos.PricingPlanPolicyRepo.ListByPlanId(ctx, plan.Id)
-	// 	if innerErr != nil {
-	// 		return nil, innerErr
-	// 	}
-	// 	plan.Policies = policies
-	// }
-	//
-	// policyDtos, err := copierx.Trans[[]*model.PricingPlanPolicy, []dto.PricingPlanPolicyEntityDto](&plan.Policies)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// result.Policies = *policyDtos
-
 	return result, nil
-}
-
-// reloadSubscribedOrganizationRoles triggers organization-level role reload for all orgs
-// with active subscriptions to the given plan. This ensures auth state is refreshed when
-// plan resources or status change.
-func (l *PricingPlanLogic) reloadSubscribedOrganizationRoles(ctx context.Context, planId int64, userType constants.UserType) {
-	subscriptions, err := l.repos.OrganizationSubscriptionRepo.FindByPricingPlanId(ctx, planId)
-	if err != nil {
-		return
-	}
-	for _, sub := range subscriptions {
-		if sub.Status == constants.OrganizationSubscriptionStatusExpired {
-			continue
-		}
-		threading.GoSafe(func() {
-			subCtx := context.WithoutCancel(ctx)
-			msg := auth.Msg{
-				Action:         auth.ActionRoleReload,
-				Scope:          auth.ScopeOrganization,
-				Type:           userType,
-				OrganizationId: sub.OrganizationId,
-			}
-			_ = l.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
-		})
-	}
-}
-
-func (l *PricingPlanLogic) publishResourceReloadEvent(ctx context.Context, userType constants.UserType) {
-	threading.GoSafe(func() {
-		subCtx := context.WithoutCancel(ctx)
-		msg := auth.Msg{
-			Action: auth.ActionResourceReload,
-			Scope:  auth.ScopeGlobal,
-			Type:   userType,
-		}
-		topic := l.authTopicMap[userType]
-		_ = l.publishAuthEvent(subCtx, topic, msg)
-	})
 }
