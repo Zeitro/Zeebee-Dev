@@ -891,7 +891,7 @@ func (l *Auth) loadOrganizationPlanResources(ctx context.Context, organizationId
 	resourceSet := mapx.NewMap[int64, bool]()
 	for _, sub := range activeSubs {
 		if sub.Status != constants.OrganizationSubscriptionStatusActive &&
-			sub.Status != constants.OrganizationSubscriptionStatusTrialing {
+			sub.Status != constants.OrganizationSubscriptionStatusTrialing && sub.Status != constants.OrganizationSubscriptionStatusSuspended {
 			continue
 		}
 		if sub.ExpireDate != nil && sub.ExpireDate.Valid && !sub.ExpireDate.Time.After(now) {
