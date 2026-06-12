@@ -48,7 +48,7 @@ func TestFilterByPricingPlan_WithSubscription_ReturnsIntersection(t *testing.T) 
 	require.NoError(t, db.Create(plan).Error)
 
 	// Bind resources 1, 2, 3 to plan
-	_, err := ppLogic.BindResources(ctx, plan.Id, []int64{1, 2, 3})
+	err := ppLogic.BindResources(ctx, plan.Id, []int64{1, 2, 3})
 	require.NoError(t, err)
 
 	// Seed subscription
@@ -106,7 +106,7 @@ func TestFilterByPricingPlan_WithSubscription_NoOverlap_ReturnsEmpty(t *testing.
 		Status:   constants.CommonStatusActive,
 	}
 	require.NoError(t, db.Create(plan).Error)
-	_, err := ppLogic.BindResources(ctx, plan.Id, []int64{10, 11})
+		err := ppLogic.BindResources(ctx, plan.Id, []int64{10, 11})
 	require.NoError(t, err)
 
 	// Seed subscription

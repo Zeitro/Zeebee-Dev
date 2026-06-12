@@ -126,7 +126,7 @@ func seedPricingPlan(t *testing.T, db *gorm.DB, plan *model.PricingPlan) *model.
 func seedResources(t *testing.T, db *gorm.DB, ids []int64) {
 	t.Helper()
 	for _, id := range ids {
-		err := db.Exec("INSERT INTO resources (id, name, status) VALUES (?, ?, 'Active')", id, fmt.Sprintf("Resource %d", id)).Error
+		err := db.Exec("INSERT INTO resources (id, name, status, type) VALUES (?, ?, 'Active', ?)", id, fmt.Sprintf("Resource %d", id), constants.UserTypeLender).Error
 		require.NoError(t, err)
 	}
 }
@@ -182,7 +182,7 @@ func TestPricingPlanBindResources_PlanNotFound(t *testing.T) {
 	logic, _ := setupPricingPlanLogic(t)
 	ctx := context.Background()
 
-	_, err := logic.BindResources(ctx, 99999, []int64{1, 2, 3})
+	err := logic.BindResources(ctx, 99999, []int64{1, 2, 3})
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "not found")
 }
@@ -200,13 +200,11 @@ func TestPricingPlanBindResources_ReplaceExisting(t *testing.T) {
 
 	seedResources(t, db, []int64{1, 2, 3, 4, 5})
 
-	result, err := logic.BindResources(ctx, plan.Id, []int64{1, 2, 3})
+	err := logic.BindResources(ctx, plan.Id, []int64{1, 2, 3})
 	require.NoError(t, err)
-	assert.Len(t, result, 3)
 
-	result2, err := logic.BindResources(ctx, plan.Id, []int64{4, 5})
+	err = logic.BindResources(ctx, plan.Id, []int64{4, 5})
 	require.NoError(t, err)
-	assert.Len(t, result2, 2)
 
 	var count int64
 	db.Model(&model.PricingPlanAndResource{}).Where("pricing_plan_id = ?", plan.Id).Count(&count)
@@ -226,12 +224,11 @@ func TestPricingPlanBindResources_EmptyList(t *testing.T) {
 
 	seedResources(t, db, []int64{1})
 
-	_, err := logic.BindResources(ctx, plan.Id, []int64{1})
+	err := logic.BindResources(ctx, plan.Id, []int64{1})
 	require.NoError(t, err)
 
-	result, err := logic.BindResources(ctx, plan.Id, []int64{})
+	err = logic.BindResources(ctx, plan.Id, []int64{})
 	require.NoError(t, err)
-	assert.Len(t, result, 0)
 
 	var count int64
 	db.Model(&model.PricingPlanAndResource{}).Where("pricing_plan_id = ?", plan.Id).Count(&count)
@@ -562,7 +559,7 @@ func TestPricingPlanResourceList(t *testing.T) {
 
 	seedResources(t, db, []int64{10, 20, 30})
 
-	_, err := logic.BindResources(ctx, plan.Id, []int64{10, 20, 30})
+	err := logic.BindResources(ctx, plan.Id, []int64{10, 20, 30})
 	require.NoError(t, err)
 
 	list, err := logic.ResourceList(ctx, plan.Id)
