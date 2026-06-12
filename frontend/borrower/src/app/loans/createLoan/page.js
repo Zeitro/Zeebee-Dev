@@ -4,7 +4,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import CreateLoan from '../components/Create/Loan';
 import CreateProperty from '../components/Create/property';
 import CreateTerm from '../components/Create/term';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useTabRoute } from '@/components/TabWorkspace/useTabRoute';
 import { createLoanSteps } from '@/enum/loan';
 import { createRequest } from '@repo/shared-methods/utils';
 import { loan_pending } from '@repo/shared-methods/enum';
@@ -14,7 +15,7 @@ import QuoteBtn from '../components/Quote';
 
 const CreateLoanPage = () => {
 	const router = useRouter();
-	const searchParams = useSearchParams();
+	const { searchParams } = useTabRoute();
 	const api = `/property/${searchParams.get('propertyId')}`;
 	const { request } = useMemo(() => createRequest(), []);
 	const [currentStep, setCurrentStep] = useState(0);

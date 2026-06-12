@@ -3,7 +3,8 @@
 import Image from 'next/image';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Modal, message, Tabs } from 'antd';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useTabRoute } from '@/components/TabWorkspace/useTabRoute';
 import AddModal from '@repo/shared-methods/componentsUi/SelectCard/Add/property';
 import { useProperty } from '@repo/shared-methods/componentsUi/SelectCard/Item/useCommon';
 import { useAuth } from '@repo/shared-methods/hooks';
@@ -16,7 +17,8 @@ import LoansTab from './components/LoansTab';
 import styles from './index.module.scss';
 
 const PropertiesDetails = () => {
-	const { id } = useParams();
+	const { params } = useTabRoute();
+	const { id } = params;
 	const router = useRouter();
 	const { hasPermission } = useAuth();
 	const { request } = useMemo(() => createRequest(), []);

@@ -4,7 +4,8 @@ import React, { useEffect, useRef, useState, useMemo } from 'react';
 import CreateLoan from '../components/Create/Loan';
 import CreateProperty from '../components/Create/property';
 import CreateTerm from '../components/Create/term';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useTabRoute } from '@/components/TabWorkspace/useTabRoute';
 import { createLoanSteps } from '@/enum/loan';
 import styles from './index.module.scss';
 import {
@@ -21,7 +22,8 @@ const initialValues = {
 	applicants: [{ is_primary: true, type: 'Individual' }],
 };
 const EditLoanPage = () => {
-	const { id } = useParams();
+	const { params } = useTabRoute();
+	const { id } = params;
 	const router = useRouter();
 	const [form] = Form.useForm();
 	const stage = Form.useWatch('stage', form);

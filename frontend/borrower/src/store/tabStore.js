@@ -9,6 +9,7 @@ import { getTabPolicy, TAB_MODE_SINGLE } from '@/components/TabWorkspace/tabPoli
  * @property {string} pathname
  * @property {string} search
  * @property {string} title
+ * @property {Record<string, string>} [params]
  * @property {boolean} [closable]
  */
 
@@ -28,7 +29,13 @@ export const useTabStore = create((set, get) => ({
 		if (existing) {
 			set({
 				tabs: tabs.map((item) =>
-					item.key === tab.key ? { ...item, title: tab.title || item.title } : item,
+					item.key === tab.key
+						? {
+								...item,
+								title: tab.title || item.title,
+								params: tab.params ?? item.params,
+							}
+						: item,
 				),
 				activeKey: tab.key,
 			});

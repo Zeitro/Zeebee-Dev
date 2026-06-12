@@ -1,7 +1,8 @@
 'use client';
 import { Button, Col, Form, message, Space } from 'antd';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useTabRoute } from '@/components/TabWorkspace/useTabRoute';
 import { createZeeBeeSteps, zeeBeeDetailsTabs } from '@/enum/loan';
 import {
 	assemblyAddress,
@@ -48,7 +49,7 @@ const initialValues = {
 const useCreate = (pageType = 'create') => {
 	const isDetails = pageType === 'details';
 	const router = useRouter();
-	const searchParams = useSearchParams();
+	const { searchParams } = useTabRoute();
 	const api = `/property/${searchParams.get('propertyId')}`;
 	const [form] = Form.useForm();
 	const scrollRef = useRef(null);

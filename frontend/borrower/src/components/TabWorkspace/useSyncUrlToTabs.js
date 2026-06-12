@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { useUserStore } from '@repo/shared-methods/store';
 import { useTabStore } from '@/store/tabStore';
 import { buildTabKey, resolveTabTitle } from './tabUtils';
+import { resolveRegistryMatch } from './tabRegistry';
 
 /**
  * URL → tabStore 同步：路由变化时打开/激活对应 Tab。
@@ -21,12 +22,14 @@ export function useSyncUrlToTabs() {
 
 		const key = buildTabKey(pathname, searchParams);
 		const title = resolveTabTitle(pathname, accessibleRoutes);
+		const registryMatch = resolveRegistryMatch(pathname);
 
 		syncTabFromUrl({
 			key,
 			pathname,
 			search: searchParams.toString(),
 			title,
+			params: registryMatch?.params ?? {},
 		});
 	}, [pathname, searchParams, accessibleRoutes, syncTabFromUrl]);
 }

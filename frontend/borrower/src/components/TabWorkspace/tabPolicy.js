@@ -45,3 +45,18 @@ export function getTabPolicy(pathname) {
 export function isLoanWorkspacePath(pathname) {
 	return LOAN_WORKSPACE_PATTERNS.some((pattern) => matchRoute(pattern, pathname));
 }
+
+/** Tab 保活路径前缀（含子路径） */
+export const KEEP_ALIVE_PREFIXES = ['/loans', '/management'];
+
+/**
+ * 是否对 Tab 做 DOM 保活（关闭 Tab 前不卸载）。
+ * @param {string} pathname
+ * @returns {boolean}
+ */
+export function shouldKeepAliveTab(pathname) {
+	if (isLoanWorkspacePath(pathname)) return true;
+	return KEEP_ALIVE_PREFIXES.some(
+		(prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+	);
+}

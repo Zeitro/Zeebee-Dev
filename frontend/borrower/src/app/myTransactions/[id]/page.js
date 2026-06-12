@@ -3,7 +3,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Tabs, message } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useTabRoute } from '@/components/TabWorkspace/useTabRoute';
 import {
 	createRequest,
 	displayValue,
@@ -24,9 +25,9 @@ import { PermissionSlot } from '@repo/shared-methods';
 import { PERMISSIONS } from '@config/permissions';
 
 const TransactionDetailsPage = () => {
-	const { id } = useParams();
+	const { params, searchParams } = useTabRoute();
+	const { id } = params;
 	const router = useRouter();
-	const searchParams = useSearchParams();
 	const isSearchParamsEditing = useMemo(
 		() => searchParams.get('isEditing') === 'true',
 		[searchParams],
