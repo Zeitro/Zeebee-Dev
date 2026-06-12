@@ -18,6 +18,7 @@ import "desc/us_geography.api"
 import "desc/common.api"
 import "desc/base_template.api"
 import "desc/loan.api"
+import "desc/lender_discover.api"
 
 // ============== common start =============
 @server (
@@ -131,6 +132,10 @@ service admin-api {
 	@handler OrganizationDelete
 	delete /organization/:id (PathIdRequest) returns (EmptyResponse)
 
+	@doc "update order"
+	@handler OrganizationUpdateOrder
+	patch /organization/:id/order (OrganizationUpdateOrderRequest) returns (EmptyResponse)
+
 	@doc "switch status"
 	@handler OrganizationSwitchStatus
 	patch /organization/:id/status (OrganizationSwitchStatusRequest) returns (EmptyResponse)
@@ -138,6 +143,26 @@ service admin-api {
 	@doc "select option"
 	@handler OrganizationSelectOption
 	get /organization/select_options (OrganizationSelectOptionRequest) returns (OrganizationOptionResponse)
+
+	@doc "lender discover get settings"
+	@handler OrganizationDiscoverGetSettings
+	get /organization/discover/settings (EmptyRequest) returns (LenderDiscoverSettingsResponse)
+
+	@doc "lender discover update settings"
+	@handler OrganizationDiscoverUpdateSettings
+	put /organization/discover/settings (LenderDiscoverUpdateSettingsRequest) returns (LenderDiscoverSettingsResponse)
+
+	@doc "lender discover preview (OpenAI + dedupe, no insert)"
+	@handler OrganizationDiscoverPreview
+	post /organization/discover/preview (EmptyRequest) returns (LenderDiscoverPreviewResponse)
+
+	@doc "lender discover commit selected new lenders"
+	@handler OrganizationDiscoverCommit
+	post /organization/discover/commit (LenderDiscoverCommitRequest) returns (LenderDiscoverRunResponse)
+
+	@doc "lender discover latest run"
+	@handler OrganizationDiscoverLatestRun
+	get /organization/discover/runs/latest (EmptyRequest) returns (LenderDiscoverRunResponse)
 }
 
 // ============= organization service end ============

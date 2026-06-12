@@ -22,11 +22,13 @@ import (
 
 	"zeebee-backend/app/admin/config"
 	"zeebee-backend/app/admin/rpc/internal/global"
+	"zeebee-backend/app/admin/rpc/internal/schedule"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 )
 
 type RpcServer struct {
-	s *zrpc.RpcServer
+	s      *zrpc.RpcServer
+	svcCtx *svc.ServiceContext
 }
 
 func NewRpcServer(c config.Config) (s service.Service, err error) {
@@ -55,7 +57,8 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		}
 	})
 	return &RpcServer{
-		s: rpcServer,
+		s:      rpcServer,
+		svcCtx: ctx,
 	}, nil
 }
 
@@ -63,6 +66,9 @@ func (s *RpcServer) Start() {
 	go func() {
 		s.s.Start()
 	}()
+	if s.svcCtx != nil {
+		schedule.StartLenderDiscoverScheduler(s.svcCtx)
+	}
 }
 
 func (s *RpcServer) Stop() {

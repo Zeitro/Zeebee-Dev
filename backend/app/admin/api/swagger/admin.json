@@ -3259,6 +3259,7 @@
                               "property_type",
                               "unit",
                               "living_area_sqft",
+                              "lot_area_sqft",
                               "bedrooms",
                               "bathrooms",
                               "future_property_type",
@@ -3376,6 +3377,9 @@
                                 "type": "number"
                               },
                               "living_area_sqft": {
+                                "type": "number"
+                              },
+                              "lot_area_sqft": {
                                 "type": "number"
                               },
                               "mid_construction": {
@@ -4108,6 +4112,7 @@
                         "property_type",
                         "unit",
                         "living_area_sqft",
+                        "lot_area_sqft",
                         "bedrooms",
                         "bathrooms",
                         "future_property_type",
@@ -4258,6 +4263,9 @@
                           "type": "number"
                         },
                         "living_area_sqft": {
+                          "type": "number"
+                        },
+                        "lot_area_sqft": {
                           "type": "number"
                         },
                         "mid_construction": {
@@ -4581,6 +4589,656 @@
         }
       }
     },
+    "/api/v1/organization/discover/commit": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization"
+        ],
+        "summary": "lender discover commit selected new lenders",
+        "operationId": "organizationOrganizationDiscoverCommit",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "lenders"
+              ],
+              "properties": {
+                "lenders": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "name"
+                    ],
+                    "properties": {
+                      "address": {
+                        "type": "object",
+                        "properties": {
+                          "address1": {
+                            "type": "string"
+                          },
+                          "address2": {
+                            "type": "string"
+                          },
+                          "city": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "zip_code": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "contact_email": {
+                        "type": "string"
+                      },
+                      "contact_name": {
+                        "type": "string"
+                      },
+                      "contact_phone": {
+                        "type": "string"
+                      },
+                      "lender_metadata": {
+                        "type": "object",
+                        "properties": {
+                          "loan_amount_range": {
+                            "type": "object",
+                            "properties": {
+                              "max": {
+                                "type": "number"
+                              },
+                              "min": {
+                                "type": "number"
+                              }
+                            }
+                          },
+                          "loan_point_range": {
+                            "type": "object",
+                            "properties": {
+                              "max": {
+                                "type": "number"
+                              },
+                              "min": {
+                                "type": "number"
+                              }
+                            }
+                          },
+                          "loan_rate_range": {
+                            "type": "object",
+                            "properties": {
+                              "max": {
+                                "type": "number"
+                              },
+                              "min": {
+                                "type": "number"
+                              }
+                            }
+                          },
+                          "loan_term_range": {
+                            "type": "object",
+                            "properties": {
+                              "max": {
+                                "type": "integer"
+                              },
+                              "min": {
+                                "type": "integer"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "logo": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "tagline": {
+                        "type": "string"
+                      },
+                      "website": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "trigger_type",
+                        "status",
+                        "started_at",
+                        "stats"
+                      ],
+                      "properties": {
+                        "error_message": {
+                          "type": "string"
+                        },
+                        "finished_at": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "integer"
+                        },
+                        "started_at": {
+                          "type": "string"
+                        },
+                        "stats": {
+                          "type": "object",
+                          "required": [
+                            "requested_count",
+                            "inserted_count",
+                            "skipped_duplicate_count",
+                            "error_count"
+                          ],
+                          "properties": {
+                            "error_count": {
+                              "type": "integer"
+                            },
+                            "inserted_count": {
+                              "type": "integer"
+                            },
+                            "requested_count": {
+                              "type": "integer"
+                            },
+                            "skipped_duplicate_count": {
+                              "type": "integer"
+                            }
+                          }
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "trigger_type": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organization/discover/preview": {
+      "post": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization"
+        ],
+        "summary": "lender discover preview (OpenAI + dedupe, no insert)",
+        "operationId": "organizationOrganizationDiscoverPreview",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "required": [
+                        "candidates",
+                        "new_count",
+                        "existed_count"
+                      ],
+                      "properties": {
+                        "candidates": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "dedupe_status",
+                              "normalized_key",
+                              "name"
+                            ],
+                            "properties": {
+                              "address": {
+                                "type": "object",
+                                "properties": {
+                                  "address1": {
+                                    "type": "string"
+                                  },
+                                  "address2": {
+                                    "type": "string"
+                                  },
+                                  "city": {
+                                    "type": "string"
+                                  },
+                                  "state": {
+                                    "type": "string"
+                                  },
+                                  "zip_code": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "contact_email": {
+                                "type": "string"
+                              },
+                              "contact_name": {
+                                "type": "string"
+                              },
+                              "contact_phone": {
+                                "type": "string"
+                              },
+                              "dedupe_status": {
+                                "type": "string"
+                              },
+                              "lender_metadata": {
+                                "type": "object",
+                                "properties": {
+                                  "loan_amount_range": {
+                                    "type": "object",
+                                    "properties": {
+                                      "max": {
+                                        "type": "number"
+                                      },
+                                      "min": {
+                                        "type": "number"
+                                      }
+                                    }
+                                  },
+                                  "loan_point_range": {
+                                    "type": "object",
+                                    "properties": {
+                                      "max": {
+                                        "type": "number"
+                                      },
+                                      "min": {
+                                        "type": "number"
+                                      }
+                                    }
+                                  },
+                                  "loan_rate_range": {
+                                    "type": "object",
+                                    "properties": {
+                                      "max": {
+                                        "type": "number"
+                                      },
+                                      "min": {
+                                        "type": "number"
+                                      }
+                                    }
+                                  },
+                                  "loan_term_range": {
+                                    "type": "object",
+                                    "properties": {
+                                      "max": {
+                                        "type": "integer"
+                                      },
+                                      "min": {
+                                        "type": "integer"
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "logo": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "normalized_key": {
+                                "type": "string"
+                              },
+                              "tagline": {
+                                "type": "string"
+                              },
+                              "website": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "existed_count": {
+                          "type": "integer"
+                        },
+                        "new_count": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organization/discover/runs/latest": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization"
+        ],
+        "summary": "lender discover latest run",
+        "operationId": "organizationOrganizationDiscoverLatestRun",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "trigger_type",
+                        "status",
+                        "started_at",
+                        "stats"
+                      ],
+                      "properties": {
+                        "error_message": {
+                          "type": "string"
+                        },
+                        "finished_at": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "integer"
+                        },
+                        "started_at": {
+                          "type": "string"
+                        },
+                        "stats": {
+                          "type": "object",
+                          "required": [
+                            "requested_count",
+                            "inserted_count",
+                            "skipped_duplicate_count",
+                            "error_count"
+                          ],
+                          "properties": {
+                            "error_count": {
+                              "type": "integer"
+                            },
+                            "inserted_count": {
+                              "type": "integer"
+                            },
+                            "requested_count": {
+                              "type": "integer"
+                            },
+                            "skipped_duplicate_count": {
+                              "type": "integer"
+                            }
+                          }
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "trigger_type": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organization/discover/settings": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization"
+        ],
+        "summary": "lender discover get settings",
+        "operationId": "organizationOrganizationDiscoverGetSettings",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "required": [
+                        "schedule_enabled",
+                        "interval_days",
+                        "scope_state",
+                        "scope_extra",
+                        "user_prompt",
+                        "openai_model"
+                      ],
+                      "properties": {
+                        "interval_days": {
+                          "type": "integer"
+                        },
+                        "openai_model": {
+                          "type": "string"
+                        },
+                        "schedule_enabled": {
+                          "type": "boolean"
+                        },
+                        "scope_extra": {
+                          "type": "string"
+                        },
+                        "scope_state": {
+                          "type": "string"
+                        },
+                        "user_prompt": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization"
+        ],
+        "summary": "lender discover update settings",
+        "operationId": "organizationOrganizationDiscoverUpdateSettings",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "schedule_enabled",
+                "interval_days"
+              ],
+              "properties": {
+                "interval_days": {
+                  "type": "integer"
+                },
+                "openai_model": {
+                  "type": "string"
+                },
+                "schedule_enabled": {
+                  "type": "boolean"
+                },
+                "scope_extra": {
+                  "type": "string"
+                },
+                "scope_state": {
+                  "type": "string"
+                },
+                "user_prompt": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "required": [
+                        "schedule_enabled",
+                        "interval_days",
+                        "scope_state",
+                        "scope_extra",
+                        "user_prompt",
+                        "openai_model"
+                      ],
+                      "properties": {
+                        "interval_days": {
+                          "type": "integer"
+                        },
+                        "openai_model": {
+                          "type": "string"
+                        },
+                        "schedule_enabled": {
+                          "type": "boolean"
+                        },
+                        "scope_extra": {
+                          "type": "string"
+                        },
+                        "scope_state": {
+                          "type": "string"
+                        },
+                        "user_prompt": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/organization/lender": {
       "post": {
         "consumes": [
@@ -4855,6 +5513,9 @@
                     "name": {
                       "type": "string"
                     },
+                    "order": {
+                      "type": "integer"
+                    },
                     "organization_emails": {
                       "type": "array",
                       "items": {
@@ -5189,6 +5850,9 @@
                       }
                     },
                     "owner_type": {
+                      "type": "string"
+                    },
+                    "source": {
                       "type": "string"
                     },
                     "status": {
@@ -5337,6 +6001,33 @@
                     }
                   }
                 },
+                "owner": {
+                  "type": "object",
+                  "required": [
+                    "email",
+                    "password",
+                    "confirm_password",
+                    "first_name",
+                    "last_name"
+                  ],
+                  "properties": {
+                    "confirm_password": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "first_name": {
+                      "type": "string"
+                    },
+                    "last_name": {
+                      "type": "string"
+                    },
+                    "password": {
+                      "type": "string"
+                    }
+                  }
+                },
                 "tagline": {
                   "type": "string"
                 },
@@ -5458,6 +6149,9 @@
                     },
                     "name": {
                       "type": "string"
+                    },
+                    "order": {
+                      "type": "integer"
                     },
                     "organization_emails": {
                       "type": "array",
@@ -5795,6 +6489,9 @@
                     "owner_type": {
                       "type": "string"
                     },
+                    "source": {
+                      "type": "string"
+                    },
                     "status": {
                       "type": "string"
                     },
@@ -5918,6 +6615,7 @@
                           "logo",
                           "website",
                           "tagline",
+                          "order",
                           "created_at",
                           "updated_at",
                           "owner_email",
@@ -5947,6 +6645,9 @@
                           "name": {
                             "type": "string"
                           },
+                          "order": {
+                            "type": "integer"
+                          },
                           "owner_email": {
                             "type": "string"
                           },
@@ -5960,6 +6661,9 @@
                             "type": "string"
                           },
                           "owner_type": {
+                            "type": "string"
+                          },
+                          "source": {
                             "type": "string"
                           },
                           "status": {
@@ -6209,6 +6913,9 @@
                     "name": {
                       "type": "string"
                     },
+                    "order": {
+                      "type": "integer"
+                    },
                     "organization_emails": {
                       "type": "array",
                       "items": {
@@ -6545,6 +7252,9 @@
                     "owner_type": {
                       "type": "string"
                     },
+                    "source": {
+                      "type": "string"
+                    },
                     "status": {
                       "type": "string"
                     },
@@ -6593,6 +7303,71 @@
             "name": "id",
             "in": "path",
             "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organization/{id}/order": {
+      "patch": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization"
+        ],
+        "summary": "update order",
+        "operationId": "organizationOrganizationUpdateOrder",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "order"
+              ],
+              "properties": {
+                "order": {
+                  "type": "integer"
+                }
+              }
+            }
           }
         ],
         "responses": {
@@ -11987,7 +12762,7 @@
       }
     }
   },
-  "x-date": "2026-05-29 11:26:34",
+  "x-date": "2026-06-12 10:15:08",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

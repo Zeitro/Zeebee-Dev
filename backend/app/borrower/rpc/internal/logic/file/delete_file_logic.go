@@ -16,8 +16,8 @@ import (
 )
 
 type DeleteFileLogic struct {
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx       context.Context
+	svcCtx    *svc.ServiceContext
 	logx.Logger
 	baseLogic *logic.BaseLogic
 }
@@ -46,6 +46,11 @@ func (l *DeleteFileLogic) DeleteFile(in *borrower.FileDeleteRequest) (resp *borr
 		return nil, err
 	}
 
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	file, err = l.svcCtx.FileRepo.FindOneById(l.ctx, in.Data.Id)
 	if err != nil {
 		return nil, errorx.Wrap(err, "Failed To Find File")
@@ -61,7 +66,6 @@ func (l *DeleteFileLogic) DeleteFile(in *borrower.FileDeleteRequest) (resp *borr
 	}
 
 	loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, loanDocument.LoanId, claim.OrganizationId)
-
 	if err != nil {
 		return nil, errorx.Wrap(err, "Failed To Get Loan")
 	}
