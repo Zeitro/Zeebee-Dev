@@ -44,8 +44,10 @@ const TabBar = () => {
 	}
 
 	const handleChange = (key) => {
+		if (key === activeKey) return;
 		const { pathname: nextPathname, search } = parseTabKey(key);
 		const href = search ? `${nextPathname}?${search}` : nextPathname;
+		// P0 内容仍走 Next 路由；syncTabFromUrl 会识别已存在 Tab 并保留其它标签
 		router.push(href);
 	};
 
