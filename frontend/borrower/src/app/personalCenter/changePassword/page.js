@@ -3,30 +3,36 @@
 import { Button, Form, Input, message } from 'antd';
 import { useState } from 'react';
 import { ConfirmPassWord } from '@repo/shared-methods';
-import { localStorageUtil, passwordRegex } from '@repo/shared-methods/utils';
+import { syncCredentialAfterPasswordReset } from '@repo/shared-methods/hooks';
+import { passwordRegex, setPendingLoginCredential } from '@repo/shared-methods/utils';
 import { debounce } from 'lodash';
 import { useUserStore } from '@repo/shared-methods/store';
 import { useRouter } from 'next/navigation';
 const ChangePassword = () => {
 	const router = useRouter();
-	const { changePassword } = useUserStore();
+	const { changePassword, userInfo } = useUserStore();
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState(false);
 	const [disabled, setDisabled] = useState(true);
+	const userEmail = userInfo?.email;
+
 	const onFinish = async (values) => {
 		try {
 			setLoading(true);
+			const email = userEmail;
+			const newPassword = values.new_password;
+			if (email && newPassword) {
+				await syncCredentialAfterPasswordReset(email, newPassword);
+			}
 			await changePassword(values);
+			if (email && newPassword) {
+				setPendingLoginCredential({ email, password: newPassword });
+			}
 			setLoading(false);
 			message.open({
 				type: 'success',
 				content: 'You’ve successfully changed your password. Please log in again!',
 			});
-			const account = localStorageUtil.get('account');
-			if (account) {
-				account.password = values.new_password;
-				localStorageUtil.set('account', account);
-			}
 			router.push('/login');
 		} catch {
 			setLoading(false);
@@ -37,9 +43,9 @@ const ChangePassword = () => {
 			<div className="text-3xl/10 font-medium text-black-dark pb-8">Change password</div>
 			<Form
 				form={form}
-				name="user-form"
+				name="change-password-form"
 				layout="vertical"
-				autoComplete="off"
+				autoComplete="on"
 				className="w-[355px]"
 				size="large"
 				disabled={loading}
@@ -52,6 +58,18 @@ const ChangePassword = () => {
 					setDisabled(!isSuccess);
 				}, 500)}
 			>
+				{userEmail ? (
+					<input
+						type="text"
+						name="username"
+						autoComplete="username"
+						value={userEmail}
+						readOnly
+						tabIndex={-1}
+						aria-hidden="true"
+						className="absolute h-0 w-0 overflow-hidden opacity-0 pointer-events-none"
+					/>
+				) : null}
 				<Form.Item
 					label="Old Password"
 					name="old_password"
@@ -66,9 +84,20 @@ const ChangePassword = () => {
 						},
 					]}
 				>
-					<Input.Password placeholder="Old password" className="w-full" allowClear />
+					<Input.Password
+						name="old_password"
+						autoComplete="current-password"
+						placeholder="Old password"
+						className="w-full"
+						allowClear
+					/>
 				</Form.Item>
-				<ConfirmPassWord passwordPlaceholder="New password" passwordName="new_password" />
+				<ConfirmPassWord
+					passwordPlaceholder="New password"
+					passwordName="new_password"
+					passwordAutoComplete="new-password"
+					confirmPasswordAutoComplete="new-password"
+				/>
 				<div className="pt-8 flex justify-center">
 					<Button
 						type="primary"

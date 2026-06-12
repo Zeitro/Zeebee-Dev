@@ -3,13 +3,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { ConfigProvider } from 'antd';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import { NewHeader, CommonSidebar } from '@repo/shared-methods';
-import { matchRoute } from '@repo/shared-methods/utils';
+import { matchRoute, flattenNavRouter } from '@repo/shared-methods/utils';
 // import { noNavRouter } from '@config/routes';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useUserStore, usePermissionStore } from '@repo/shared-methods/store';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 import useContent from './useContent';
 import Image from 'next/image';
+import { noTokenRouter } from '@config/routes';
 const defaultToken = {
 	colorPrimary: '#1677ff',
 	colorTextBase: 'rgba(0, 0, 0, 0.88)',
@@ -38,16 +39,14 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 	const { accessPaths, access } = usePermissionStore();
 	const [antdToken, setAntdToken] = useState({});
 	const pathname = usePathname();
-	const router = useRouter();
 	const { personalList, handleClickPersonalItem } = useContent();
 	const validateMessages = {
 		required: 'Please enter ${label}!',
 	};
 	// 没有导航栏/面包屑的纯页面（例如：login
-	// const isNoNav = useMemo(() => {
-	// 	const routerItem = getCurrentRouterItem(pathname, noNavRouter);
-	// 	return !!routerItem;
-	// }, [pathname]);
+	const isNoNav = useMemo(() => {
+		return flattenNavRouter(noTokenRouter).some((item) => matchRoute(item.path, pathname));
+	}, [pathname]);
 
 	const isPermissionPage = useMemo(() => {
 		return accessPaths?.some((path) => matchRoute(path, pathname));
@@ -55,12 +54,11 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 
 	// 处理特殊情况（有导航栏的页面遇到token到期清空了，则重新登录）
 	useEffect(() => {
-		if (isPermissionPage && (access === null || userInfo === null)) {
-			router.replace('/login');
+		if ((isPermissionPage || !isNoNav) && (!access || !userInfo)) {
+			window.location.replace('/login');
 			console.log('---退出---');
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [access, isPermissionPage, userInfo]);
+	}, [access, isPermissionPage, userInfo, isNoNav]);
 
 	useDeferredSyncEffect({
 		deferred: () => {

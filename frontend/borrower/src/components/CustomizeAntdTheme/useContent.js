@@ -11,7 +11,7 @@ import { DeleteBtn, SwitchOrganization } from '@repo/shared-methods';
 import { useRouter } from 'next/navigation';
 import { useUserStore } from '@repo/shared-methods/store';
 // import styles from './index.module.scss';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { eventBus } from '@repo/shared-methods/utils';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 import useData from '@/app/login/components/useData';
@@ -46,9 +46,15 @@ const useContent = () => {
 				break;
 		}
 	};
-	// 退出
+	// 确认登出后等 Modal 关闭动画结束再跳转，避免弹框未关完就 replace 产生卡顿感
+	const shouldLogoutRef = useRef(false);
 	const handleLogout = () => {
-		router.push('/login');
+		shouldLogoutRef.current = true;
+	};
+	const handleLogoutAfterClose = () => {
+		if (!shouldLogoutRef.current) return;
+		shouldLogoutRef.current = false;
+		window.location.replace('/login');
 	};
 
 	// 切换组织
@@ -136,6 +142,7 @@ const useContent = () => {
 					title="Are you sure you want to logout?"
 					okText="Logout"
 					onOk={handleLogout}
+					afterClose={handleLogoutAfterClose}
 				>
 					<LogoutOutlined style={{ fontSize: 14, paddingRight: 8 }} />
 					Logout
