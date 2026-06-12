@@ -83,7 +83,6 @@ func NewEnforcer(config EnforcerConfig) (*Enforcer, error) {
 		if err != nil {
 			return nil, errorx.WithStack(err)
 		}
-
 	}
 
 	e := &Enforcer{

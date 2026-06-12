@@ -71,8 +71,7 @@ func TestTimePtrToRFC3339Str(t *testing.T) {
 	converter := TimePtrToRFC3339Str()
 
 	// Test valid time pointer
-	testTime := time.Date(2024, 12, 29, 14, 30, 0, 0, time.UTC)
-	result, err := converter.Fn(&testTime)
+	result, err := converter.Fn(new(time.Date(2024, 12, 29, 14, 30, 0, 0, time.UTC)))
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
 	}
@@ -100,8 +99,7 @@ func TestTimePtrToStr(t *testing.T) {
 	converter := TimePtrToStr("2006/01/02")
 
 	// Test valid time pointer
-	testTime := time.Date(2024, 12, 29, 14, 30, 0, 0, time.UTC)
-	result, err := converter.Fn(&testTime)
+	result, err := converter.Fn(new(time.Date(2024, 12, 29, 14, 30, 0, 0, time.UTC)))
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
 	}

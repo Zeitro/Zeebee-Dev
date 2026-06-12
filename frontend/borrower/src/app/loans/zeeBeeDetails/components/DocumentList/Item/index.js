@@ -5,11 +5,15 @@ import {
 	FileImageOutlined,
 	FilePdfOutlined,
 	FileTextOutlined,
+	FileExcelOutlined,
+	FileWordOutlined,
+	FilePptOutlined,
 } from '@ant-design/icons';
 import styles from '../index.module.scss';
 import { DeleteBtn, ViewFile } from '@repo/shared-methods';
 import { createRequest, eventBus } from '@repo/shared-methods/utils';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
+
 const DocumentItem = ({ columns, item, isHide }) => {
 	const [activeKey, setActiveKey] = useState([]);
 	const [loading, setLoading] = useState(false);
@@ -49,9 +53,15 @@ const DocumentItem = ({ columns, item, isHide }) => {
 			case 'jpg':
 			case 'jpeg':
 				return <FileImageOutlined />;
+			case 'xlsx':
+			case 'xls':
+				return <FileExcelOutlined />;
 			case 'doc':
 			case 'docx':
-				return <FileTextOutlined />;
+				return <FileWordOutlined />;
+			case 'ppt':
+			case 'pptx':
+				return <FilePptOutlined />;
 			default:
 				return <FileTextOutlined />;
 		}

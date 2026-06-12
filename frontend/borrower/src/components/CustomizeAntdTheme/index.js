@@ -2,16 +2,16 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ConfigProvider } from 'antd';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
-import { getCurrentRouterItem } from '@config/common';
-import { noNavRouter, navRouter } from '@config/routes';
-import { usePathname, useRouter } from 'next/navigation';
-import { useUserStore } from '@/store/user';
-import { NewHeader, CommonSidebar } from '@repo/shared-methods';
+import { CommonSidebar, NewHeader } from '@repo/shared-methods';
 import HeaderCustomAction from '../HeaderCustomAction';
+import { matchRoute, flattenNavRouter } from '@repo/shared-methods/utils';
+import { usePathname } from 'next/navigation';
+import { usePermissionStore, useUserStore } from '@repo/shared-methods/store';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 import useContent from './useContent';
-import { sidebarIcon } from './icon';
 import Image from 'next/image';
+import { noTokenRouter } from '@config/routes';
+
 const defaultToken = {
 	colorPrimary: '#1677ff',
 	colorTextBase: 'rgba(0, 0, 0, 0.88)',
@@ -36,29 +36,30 @@ function getCssVarValue(name, key) {
  * 自定义antd主题，区分有无（导航栏和面包屑）的页面
  */
 export default function CustomizeAntdTheme({ children, fontFamily }) {
-	const { userInfo } = useUserStore();
+	const { accessibleRoutes, userInfo } = useUserStore();
+	const { accessPaths, access } = usePermissionStore();
 	const [antdToken, setAntdToken] = useState({});
 	const pathname = usePathname();
-	const router = useRouter();
 	const { personalList, handleClickPersonalItem } = useContent();
 	const validateMessages = {
 		required: 'Please enter ${label}!',
 	};
-
 	// 没有导航栏/面包屑的纯页面（例如：login
 	const isNoNav = useMemo(() => {
-		const routerItem = getCurrentRouterItem(pathname, noNavRouter);
-		return !!routerItem;
+		return flattenNavRouter(noTokenRouter).some((item) => matchRoute(item.path, pathname));
 	}, [pathname]);
 
+	const isPermissionPage = useMemo(() => {
+		return accessPaths?.some((path) => matchRoute(path, pathname));
+	}, [pathname, accessPaths]);
+
+	// 处理特殊情况（有导航栏的页面遇到token到期清空了，则重新登录）
 	useEffect(() => {
-		const haveSiderRoute = getCurrentRouterItem(pathname, navRouter);
-		if (haveSiderRoute?.path && userInfo === null) {
-			router.replace('/login');
+		if ((isPermissionPage || !isNoNav) && (!access || !userInfo)) {
+			window.location.replace('/login');
 			console.log('---退出---');
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userInfo, pathname]);
+	}, [access, isPermissionPage, userInfo, isNoNav]);
 
 	useDeferredSyncEffect({
 		deferred: () => {
@@ -84,7 +85,7 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 			});
 		},
 		deps: [],
-		delay: 0, // 放到 macrotask（可改为 useMicrotask: true）
+		isUseMicrotask: true,
 	});
 
 	return (
@@ -99,7 +100,6 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 						itemSelectedColor: 'var(--base-primary)', // 选中项文字
 						itemHoverBg: 'var(--blue-light-1)', // 悬停背景
 						itemHoverColor: 'var(--base-primary)', // 悬停文字
-						subMenuItemSelectedColor: 'var(--base-primary)',
 					},
 					Table: {
 						border: '1px solid var(--base-border)',
@@ -116,15 +116,15 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 			form={{ validateMessages }}
 		>
 			<AntdRegistry>
-				{isNoNav ? (
+				{!isPermissionPage ? (
 					children
 				) : (
 					<div className="h-full flex items-stretch customRoot">
 						<CommonSidebar
-							routerList={navRouter}
+							// routerList={navRouter}
+							routerList={accessibleRoutes}
 							personalList={personalList}
 							handleClickPersonalItem={handleClickPersonalItem}
-							sidebarIcon={sidebarIcon}
 							renderLogo={() => (
 								<Image
 									src="/images/logo.svg"

@@ -23,7 +23,7 @@ func main() {
 
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
-	logx.Infof("loand service config successfully")
+	logx.Infof("load service config successfully")
 
 	apiServer := api.NewApiServer(c)
 	rpcServer, err := rpc.NewRpcServer(c)

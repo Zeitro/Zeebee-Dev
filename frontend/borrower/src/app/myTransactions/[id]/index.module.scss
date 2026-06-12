@@ -1,0 +1,31 @@
+.transactionDetailTabs {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	overflow: hidden;
+	background-color: var(--base-text2);
+
+	// 组合符写在 :global 外，避免编译出「.hash & > .ant-tabs-nav」无效选择器
+	> :global(.ant-tabs-nav) {
+		padding: 0 24px;
+		margin: 0 !important;
+		background-color: #fff;
+
+		&::before {
+			border-color: var(--base-border);
+		}
+	}
+
+	> :global(.ant-tabs-content-holder) {
+		flex: 1 !important;
+		overflow-y: auto;
+
+		> :global(.ant-tabs-content) {
+			height: 100%;
+		}
+
+		:global(.ant-tabs-tabpane) {
+			height: 100%;
+		}
+	}
+}

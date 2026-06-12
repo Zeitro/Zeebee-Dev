@@ -1,0 +1,58 @@
+.transactionsTab {
+	:global {
+		.ant-timeline {
+			margin-top: 2px;
+		}
+
+		.ant-timeline-item {
+			padding-bottom: 16px;
+		}
+
+		.ant-timeline-item-tail {
+			inset-inline-start: 7px;
+			border-inline-start-width: 2px;
+			border-inline-start-color: var(--base-border);
+		}
+
+		.ant-timeline-item-head {
+			width: 24px !important;
+			height: 24px !important;
+			inset-inline-start: 0;
+			margin-top: 24px;
+			background-color: var(--base-text2) !important;
+			border-width: 3px;
+			border-color: var(--base-border);
+		}
+
+		.ant-timeline-item-content {
+			inset-inline-start: 0;
+			margin-inline-start: 34px !important;
+			top: 0;
+		}
+
+		.ant-timeline-item-last {
+			padding-bottom: 0;
+		}
+	}
+}
+
+.timelineDot {
+	display: inline-flex;
+	width: 24px !important;
+	height: 24px !important;
+	border-radius: 999px;
+	background-color: var(--base-text2);
+	border: 4px solid var(--base-border);
+}
+
+.timelineDotPending {
+	border-color: var(--orange-dark);
+}
+
+.timelineDotCancelled {
+	border-color: var(--base-error);
+}
+
+.timelineDotDefault {
+	border-color: var(--base-border);
+}

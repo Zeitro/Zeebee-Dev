@@ -81,7 +81,7 @@ type (
         Id int64 `form:"id,optional"`
         FirstName string `form:"first_name"`
         LastName string `form:"last_name"`
-        MidName string `form:"mid_name, optional"`
+        MidName string `form:"mid_name,optional"`
     }
 
     BorrowerApplicantCkeckExistedResponse {

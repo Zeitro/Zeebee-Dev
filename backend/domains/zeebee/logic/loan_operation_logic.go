@@ -23,7 +23,6 @@ func NewLoanOperationLogic(baseLogic *BaseLogic) *LoanOperationLogic {
 }
 
 func (l *LoanOperationLogic) CreateLoanOperationLog(ctx context.Context, tx *gorm.DB, input dto.LoanOperationCreateDto) (err error) {
-
 	operator, _ := l.repos.OrganizationUserRepo.FindOneByIdWithTx(ctx, tx, input.OperatorId)
 
 	operatorName := ""

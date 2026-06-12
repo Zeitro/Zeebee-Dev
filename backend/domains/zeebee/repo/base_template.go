@@ -50,20 +50,20 @@ func (repo *BaseTemplateRepo) Detail(ctx context.Context, id int64, withPreload 
 
 // Update updates an existing base template
 func (repo *BaseTemplateRepo) Update(ctx context.Context, data *model.BaseTemplate) (result *model.BaseTemplate, err error) {
-	updated, err := repo.BaseRepo.UpdateOneById(ctx, data.Id, data)
+	updated, err := repo.UpdateOneById(ctx, data.Id, data)
 	return updated, errorx.WithStack(err)
 }
 
 // UpdateStatus updates the status of a base template
 func (repo *BaseTemplateRepo) UpdateStatus(ctx context.Context, id int64, status constants.CommonStatus) (err error) {
-	return repo.BaseRepo.UpdateColumnsById(ctx, id, map[string]interface{}{
+	return repo.UpdateColumnsById(ctx, id, map[string]interface{}{
 		"status": status,
 	})
 }
 
 // UpdateStatusWithTx updates the status of a base template within a transaction
 func (repo *BaseTemplateRepo) UpdateStatusWithTx(ctx context.Context, tx *gorm.DB, id int64, status constants.CommonStatus) (err error) {
-	return repo.BaseRepo.UpdateColumnsByIdWithTx(ctx, tx, id, map[string]interface{}{
+	return repo.UpdateColumnsByIdWithTx(ctx, tx, id, map[string]interface{}{
 		"status": status,
 	})
 }
@@ -120,7 +120,7 @@ func (repo *BaseTemplateRepo) Page(ctx context.Context, pageReq dto.BaseTemplate
 
 // ExistsByPurpose checks if a template with the given tag exists within the same type and category
 func (repo *BaseTemplateRepo) ExistsByPurpose(ctx context.Context, purpose string, templateType constants.UserType) (exists bool, err error) {
-	return repo.BaseRepo.IsExistedByColumns(ctx, map[string]interface{}{
+	return repo.IsExistedByColumns(ctx, map[string]interface{}{
 		"purpose": purpose,
 		"type":    templateType,
 	})

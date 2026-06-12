@@ -1,5 +1,37 @@
 import { HomeOutlined } from '@ant-design/icons';
 import { formatAmount } from '@repo/shared-methods/utils';
+import { PERMISSIONS } from '@config/permissions'; // admin/lender/borrower都需要的权限
+// dashboard loan------------------------start------------------------
+export const loansSourceTypeOptions = [
+	{ value: 'All', label: 'All loans' },
+	{ value: 'ZeeBee', label: 'ZeeBee loans' },
+	{ value: '3rdParty', label: '3rd party loans' },
+];
+export const maturityAlertsStatusColor = {
+	Overdue: {
+		color: '#F5222D',
+		background: '#FFF1F0',
+		borderColor: '#FFA39E',
+	},
+	'Due Soon': {
+		color: '#FA8C16',
+		background: '#FFF7E6',
+		borderColor: '#FFD591',
+	},
+};
+export const filterTimeCountTips =
+	'Based on the selected number of days, perform a global page filter for loans that match this time period.';
+
+// loan最近天数筛选
+export const filterTimeCount = [
+	{ value: 'All', label: 'All dates' },
+	{ value: 7, label: 'Last 7 days' },
+	{ value: 15, label: 'Last 15 days' },
+	{ value: 30, label: 'Last 30 days' },
+];
+// dashboard loan------------------------end------------------------
+
+// create zeeBee loan/loan details------------------------start------------------------
 export const tinOptions = [
 	{ label: 'SSN', value: 'SSN' },
 	{ label: 'ITIN', value: 'ITIN' },
@@ -104,9 +136,9 @@ export const raceOptions = [
 		isRadio: true,
 	},
 ];
+// create zeeBee loan/loan details------------------------end------------------------
 
-// loan details
-
+// Lender、Admin端zeeBeeLoan详情菜单------------------------start------------------------
 export const createZeeBeeSteps = [
 	{
 		title: 'Borrower information',
@@ -176,18 +208,22 @@ export const pendingSteps = [
 	{
 		title: 'Quoting',
 		key: 'Quoting',
+		role: PERMISSIONS?.LOAN?.QUOTING,
 	},
 	{
 		title: 'Processing',
 		key: 'Processing',
+		role: PERMISSIONS?.LOAN?.PROCESSING,
 	},
 	{
 		title: 'Underwriting',
 		key: 'Underwriting',
+		role: PERMISSIONS?.LOAN?.UNDERWRITING,
 	},
 	{
 		title: 'Closing',
 		key: 'Closing',
+		role: PERMISSIONS?.LOAN?.CLOSING,
 	},
 ];
 
@@ -223,7 +259,9 @@ export const zeeBeeDetailsTabs = [
 		value: 'documents',
 	},
 ];
+// Lender、Admin端zeeBeeLoan详情菜单------------------------end------------------------
 
+// Loan状态阶段颜色------------------------start------------------------
 export const stageColor = {
 	Pending: 'var(--base-primary)',
 	Active: 'var(--base-success)',
@@ -253,7 +291,9 @@ export const pendingStatusColor = {
 		border: 'var(--purple-medium)',
 	},
 };
+// Loan状态阶段颜色------------------------end------------------------
 
+// zeeBeeLoan details字段------------------------start------------------------
 export const pendingFields = [
 	{ label: 'ID', value: 'code' },
 	{ label: 'Target closing date', value: 'closing_date' },
@@ -315,3 +355,4 @@ export const loanDetailsFields = {
 	Archived: archivedFields,
 	Draft: pendingFields,
 };
+// zeeBeeLoan details字段------------------------end------------------------

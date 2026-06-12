@@ -7,7 +7,6 @@ import (
 	"io"
 	"strings"
 
-	"github.com/duke-git/lancet/v2/slice"
 	"github.com/signintech/gopdf"
 
 	"zeebee-backend/app/borrower/api/internal/pdf"
@@ -166,26 +165,24 @@ func (form *ApplyForm) setBlueFont() {
 	form.pdf.SetFontColor(71, 117, 255)
 }
 
-func (form *ApplyForm) buildCheckbox(startX, startY float64, items []string) (err error) {
-
-	for _, item := range items {
-		itemLen, _ := form.pdf.MeasureTextWidth(item)
-		err = form.pdf.ImageFrom(pdf.EmptyCheckBox, startX, startY, &gopdf.Rect{W: checkBoxWidth, H: checkBoxWidth})
-		if err != nil {
-			return err
-		}
-		form.pdf.SetXY(startX+checkBoxWidth+5, startY+5)
-		_ = form.pdf.Cell(nil, item)
-		startX += itemLen + 30
-	}
-	form.pdf.SetY(startY + 17)
-	form.pdf.Br(1)
-
-	return err
-}
+// func (form *ApplyForm) buildCheckbox(startX, startY float64, items []string) (err error) {
+// 	for _, item := range items {
+// 		itemLen, _ := form.pdf.MeasureTextWidth(item)
+// 		err = form.pdf.ImageFrom(pdf.EmptyCheckBox, startX, startY, &gopdf.Rect{W: checkBoxWidth, H: checkBoxWidth})
+// 		if err != nil {
+// 			return err
+// 		}
+// 		form.pdf.SetXY(startX+checkBoxWidth+5, startY+5)
+// 		_ = form.pdf.Cell(nil, item)
+// 		startX += itemLen + 30
+// 	}
+// 	form.pdf.SetY(startY + 17)
+// 	form.pdf.Br(1)
+//
+// 	return err
+// }
 
 func (form *ApplyForm) buildRadioCheckbox(startX, startY float64, optName string, targetValue string) (err error) {
-
 	opts := enums.Get(optName)
 	currentX := startX
 	currentY := startY
@@ -214,34 +211,34 @@ func (form *ApplyForm) buildRadioCheckbox(startX, startY float64, optName string
 	return err
 }
 
-func (form *ApplyForm) buildMultiCheckbox(startX, startY float64, optName string, targetValues []string) (err error) {
-	opts := enums.Get(optName)
-	currentX := startX
-	currentY := startY
-	for _, opt := range opts {
-		itemLen, _ := form.pdf.MeasureTextWidth(opt.Label)
-		checkBox := pdf.EmptyCheckBox
-
-		if slice.Contain(targetValues, opt.Value) {
-			checkBox = pdf.SelectedCheckBox
-		}
-		if currentX+checkBoxWidth+5+itemLen > form.pdf.GetFullWidth()+form.pdf.MarginLeft() {
-			currentX = startX
-			currentY += checkBoxWidth * 1.2
-		}
-
-		err = form.pdf.ImageFrom(checkBox, currentX, currentY, &gopdf.Rect{W: checkBoxWidth, H: checkBoxWidth})
-		if err != nil {
-			return err
-		}
-		form.pdf.SetXY(currentX+checkBoxWidth+5, currentY+5)
-		_ = form.pdf.Cell(nil, opt.Label)
-		currentX += itemLen + 30
-	}
-	form.pdf.SetY(currentY + checkBoxWidth)
-	form.pdf.Br(1)
-	return err
-}
+// func (form *ApplyForm) buildMultiCheckbox(startX, startY float64, optName string, targetValues []string) (err error) {
+// 	opts := enums.Get(optName)
+// 	currentX := startX
+// 	currentY := startY
+// 	for _, opt := range opts {
+// 		itemLen, _ := form.pdf.MeasureTextWidth(opt.Label)
+// 		checkBox := pdf.EmptyCheckBox
+//
+// 		if slice.Contain(targetValues, opt.Value) {
+// 			checkBox = pdf.SelectedCheckBox
+// 		}
+// 		if currentX+checkBoxWidth+5+itemLen > form.pdf.GetFullWidth()+form.pdf.MarginLeft() {
+// 			currentX = startX
+// 			currentY += checkBoxWidth * 1.2
+// 		}
+//
+// 		err = form.pdf.ImageFrom(checkBox, currentX, currentY, &gopdf.Rect{W: checkBoxWidth, H: checkBoxWidth})
+// 		if err != nil {
+// 			return err
+// 		}
+// 		form.pdf.SetXY(currentX+checkBoxWidth+5, currentY+5)
+// 		_ = form.pdf.Cell(nil, opt.Label)
+// 		currentX += itemLen + 30
+// 	}
+// 	form.pdf.SetY(currentY + checkBoxWidth)
+// 	form.pdf.Br(1)
+// 	return err
+// }
 
 func (form *ApplyForm) buildTitleWithBg(title string, grayBgPos position, blueBgPos position) (err error) {
 	err = form.pdf.ImageFrom(pdf.GrayBg, grayBgPos.x, grayBgPos.y, &gopdf.Rect{W: grayBgPos.w, H: grayBgPos.h})
@@ -296,7 +293,6 @@ func (form *ApplyForm) buildGraySmallTitle(title string, position position) (err
 }
 
 func (form *ApplyForm) buildSignature(targetSignature []*types.SignatureEntity) (err error) {
-
 	if len(targetSignature) > 0 && len(targetSignature) != len(form.info.Applicants) {
 		err = errorx.New("Signature Number Not Match The Applicants Number")
 		return err
@@ -337,7 +333,6 @@ func (form *ApplyForm) buildSignature(targetSignature []*types.SignatureEntity) 
 		})
 		form.pdf.Br(1)
 		form.pdf.Br(40)
-
 	}
 	form.pdf.Br(1)
 	form.pdf.SetRegularFont()
@@ -406,13 +401,11 @@ OutLoop:
 			_ = form.pdf.CellWithOption(&gopdf.Rect{W: form.pdf.GetFullWidth(), H: fontHeight}, line, gopdf.CellOption{
 				Align: gopdf.Left | gopdf.Middle,
 			})
-
 		}
 	}
 	form.pdf.Br(fontHeight)
 
 	return err
-
 }
 
 func (form *ApplyForm) buildLists(lists []string, position position, fontHeight float64) (err error) {

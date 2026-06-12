@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"local": "cross-env NODE_ENV=development NEXT_PUBLIC_ENV=local next dev",
+		"local": "cross-env NODE_ENV=development NEXT_PUBLIC_ENV=local next dev -p 3000",
 		"dev": "cross-env NODE_ENV=development next start",
 		"build": "next build",
 		"start": "next start",
@@ -27,9 +27,9 @@
 		"@repo/shared-methods": "workspace:*",
 		"@svgr/webpack": "^8.1.0",
 		"antd": "^5.26.2",
-		"aws-sdk": "^2.1692.0",
 		"dayjs": "^1.11.13",
 		"events": "^3.3.0",
+		"js-cookie": "^3.0.5",
 		"lodash": "^4.17.21",
 		"next": "15.3.0",
 		"pdfjs-dist": "5.3.31",
@@ -65,6 +65,11 @@
 		"typescript": "^5"
 	},
 	"type": "module",
+	"pnpm": {
+		"publicHoistPattern": [
+			"pdfjs-dist"
+		]
+	},
 	"resolutions": {
 		"pdfjs-dist": "5.3.31"
 	}

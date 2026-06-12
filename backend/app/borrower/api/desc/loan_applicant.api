@@ -44,7 +44,7 @@ type BorrowerNamesResponse {
 type LoanApplicantApplyEntity {
     Id int64 `json:"id,optional"`
     BorrowerApplicantId int64 `json:"borrower_applicant_id" validate:"required,gt=0"`
-    IsPrimary bool `json:"is_primary, optional"`
+    IsPrimary bool `json:"is_primary,optional"`
     OwnPercent int32 `json:"own_percent" validate:"required,min=1,max=100"`
 }
 

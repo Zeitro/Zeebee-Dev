@@ -359,7 +359,8 @@ func TestSearchListings(t *testing.T) {
 
 	// Create mock server
 	mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/auth/access-token" {
+		switch r.URL.Path {
+		case "/auth/access-token":
 			// Token endpoint
 			tokenReceived = true
 			w.Header().Set("Content-Type", "application/json")
@@ -369,7 +370,7 @@ func TestSearchListings(t *testing.T) {
 				"token_type": "Bearer",
 				"expires_in": 3600
 			}`))
-		} else if r.URL.Path == "/los/openhousesearch" {
+		case "/los/openhousesearch":
 			// Search endpoint
 			authHeader := r.Header.Get("Authorization")
 			if authHeader != "Bearer mock-access-token" {
@@ -467,7 +468,8 @@ func TestSearchListings(t *testing.T) {
 func TestSearchListingsWithError(t *testing.T) {
 	// Mock server that returns error
 	mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/auth/access-token" {
+		switch r.URL.Path {
+		case "/auth/access-token":
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			w.Write([]byte(`{
@@ -475,7 +477,7 @@ func TestSearchListingsWithError(t *testing.T) {
 				"token_type": "Bearer",
 				"expires_in": 3600
 			}`))
-		} else if r.URL.Path == "/los/openhousesearch" {
+		case "/los/openhousesearch":
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(`Internal Server Error`))
 		}

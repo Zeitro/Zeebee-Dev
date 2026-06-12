@@ -260,7 +260,6 @@ func (form *ApplyForm) buildPage7TableRows(startPos page7TableLinePos, vals []pa
 		if err != nil {
 			return err
 		}
-
 	}
 	return err
 }
@@ -296,7 +295,6 @@ func (form *ApplyForm) buildPage7TableRow(txt string, pos page7TableLinePos, val
 			})
 			tmpY += pos.fontHeight
 		}
-
 	}
 	form.pdf.SetXY(pos.x+pos.col1Width, pos.y)
 	_ = form.pdf.CellWithOption(&gopdf.Rect{W: pos.col2Width, H: colHeight}, val.yes, gopdf.CellOption{
@@ -343,7 +341,6 @@ func (form *ApplyForm) buildPage7TableLine(txt string, startX float64, startY fl
 			})
 			tmpY += fontHeight
 		}
-
 	}
 	form.pdf.SetXY(startX+col1Width, startY)
 	_ = form.pdf.CellWithOption(&gopdf.Rect{W: col2Width, H: colHeight}, "", gopdf.CellOption{

@@ -264,35 +264,35 @@ func (c *Client) SearchListings(ctx context.Context, req SearchRequest) ([]Prope
 }
 
 // convertProperties converts Zeitro properties to internal model
-func (c *Client) convertProperties(properties []ZeitroProperty) []PropertyListing {
-	result := make([]PropertyListing, 0, len(properties))
-	for _, prop := range properties {
-		entity := PropertyListing{
-			FullAddress:     strings.TrimSpace(prop.FullAddress),
-			State:           strings.TrimSpace(prop.State),
-			County:          strings.TrimSpace(prop.County),
-			City:            strings.TrimSpace(prop.City),
-			ZipCode:         strings.TrimSpace(prop.ZipCode),
-			PropertyType:    strings.TrimSpace(prop.PropertyType),
-			Price:           strings.TrimSpace(prop.Price),
-			IncomeIndicator: strings.TrimSpace(prop.IncomeIndicator),
-			MinorityPercent: strings.TrimSpace(prop.MinorityPercent),
-			TotalPopulation: strings.TrimSpace(prop.TotalPopulation),
-			Hispanic:        strings.TrimSpace(prop.Hispanic),
-			Black:           strings.TrimSpace(prop.Black),
-			Asian:           strings.TrimSpace(prop.Asian),
-			Pacific:         strings.TrimSpace(prop.Pacific),
-			MsaCode:         strings.TrimSpace(prop.MsaCode),
-			DaysOnMarket:    strings.TrimSpace(prop.DaysOnMarket),
-			AgentName:       strings.TrimSpace(prop.AgentName),
-			AgentPhone:      strings.TrimSpace(prop.AgentPhone),
-			AgentEmail:      strings.TrimSpace(prop.AgentEmail),
-			Distance:        strings.TrimSpace(prop.Distance),
-		}
-		result = append(result, entity)
-	}
-	return result
-}
+// func (c *Client) convertProperties(properties []ZeitroProperty) []PropertyListing {
+// 	result := make([]PropertyListing, 0, len(properties))
+// 	for _, prop := range properties {
+// 		entity := PropertyListing{
+// 			FullAddress:     strings.TrimSpace(prop.FullAddress),
+// 			State:           strings.TrimSpace(prop.State),
+// 			County:          strings.TrimSpace(prop.County),
+// 			City:            strings.TrimSpace(prop.City),
+// 			ZipCode:         strings.TrimSpace(prop.ZipCode),
+// 			PropertyType:    strings.TrimSpace(prop.PropertyType),
+// 			Price:           strings.TrimSpace(prop.Price),
+// 			IncomeIndicator: strings.TrimSpace(prop.IncomeIndicator),
+// 			MinorityPercent: strings.TrimSpace(prop.MinorityPercent),
+// 			TotalPopulation: strings.TrimSpace(prop.TotalPopulation),
+// 			Hispanic:        strings.TrimSpace(prop.Hispanic),
+// 			Black:           strings.TrimSpace(prop.Black),
+// 			Asian:           strings.TrimSpace(prop.Asian),
+// 			Pacific:         strings.TrimSpace(prop.Pacific),
+// 			MsaCode:         strings.TrimSpace(prop.MsaCode),
+// 			DaysOnMarket:    strings.TrimSpace(prop.DaysOnMarket),
+// 			AgentName:       strings.TrimSpace(prop.AgentName),
+// 			AgentPhone:      strings.TrimSpace(prop.AgentPhone),
+// 			AgentEmail:      strings.TrimSpace(prop.AgentEmail),
+// 			Distance:        strings.TrimSpace(prop.Distance),
+// 		}
+// 		result = append(result, entity)
+// 	}
+// 	return result
+// }
 
 // formatPhone removes non-numeric characters from phone number
 func formatPhone(phone string) string {
