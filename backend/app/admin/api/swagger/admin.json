@@ -8536,7 +8536,6 @@
               "type": "object",
               "required": [
                 "name",
-                "status",
                 "is_public",
                 "is_default",
                 "type",
@@ -8560,9 +8559,6 @@
                 },
                 "sort_order": {
                   "type": "integer"
-                },
-                "status": {
-                  "type": "string"
                 },
                 "subtitle": {
                   "type": "string"
@@ -8765,151 +8761,13 @@
                                 "apis": {
                                   "type": "array",
                                   "items": {
-                                    "type": "object",
-                                    "required": [
-                                      "id",
-                                      "parent_id",
-                                      "name",
-                                      "path",
-                                      "method",
-                                      "status",
-                                      "description",
-                                      "type",
-                                      "sort_order",
-                                      "auth_required",
-                                      "permission_required",
-                                      "created_at",
-                                      "updated_at"
-                                    ],
-                                    "properties": {
-                                      "auth_required": {
-                                        "type": "boolean"
-                                      },
-                                      "created_at": {
-                                        "type": "string"
-                                      },
-                                      "description": {
-                                        "type": "string"
-                                      },
-                                      "id": {
-                                        "type": "integer"
-                                      },
-                                      "method": {
-                                        "type": "string"
-                                      },
-                                      "name": {
-                                        "type": "string"
-                                      },
-                                      "parent_id": {
-                                        "type": "integer"
-                                      },
-                                      "path": {
-                                        "type": "string"
-                                      },
-                                      "permission_required": {
-                                        "type": "boolean"
-                                      },
-                                      "sort_order": {
-                                        "type": "integer"
-                                      },
-                                      "status": {
-                                        "type": "string"
-                                      },
-                                      "type": {
-                                        "type": "string"
-                                      },
-                                      "updated_at": {
-                                        "type": "string"
-                                      }
-                                    }
+                                    "type": "object"
                                   }
                                 },
                                 "children": {
                                   "type": "array",
                                   "items": {
-                                    "type": "object",
-                                    "required": [
-                                      "id",
-                                      "parent_id",
-                                      "type",
-                                      "resource_type",
-                                      "name",
-                                      "path",
-                                      "icon",
-                                      "tag",
-                                      "is_show",
-                                      "status",
-                                      "sort_order",
-                                      "enable_data_scope",
-                                      "description",
-                                      "is_public",
-                                      "created_at",
-                                      "updated_at",
-                                      "apis",
-                                      "children"
-                                    ],
-                                    "properties": {
-                                      "apis": {
-                                        "type": "array",
-                                        "items": {
-                                          "type": "object"
-                                        }
-                                      },
-                                      "children": {
-                                        "type": "array",
-                                        "items": {
-                                          "type": "object"
-                                        }
-                                      },
-                                      "created_at": {
-                                        "type": "string"
-                                      },
-                                      "description": {
-                                        "type": "string"
-                                      },
-                                      "enable_data_scope": {
-                                        "type": "boolean"
-                                      },
-                                      "icon": {
-                                        "type": "string"
-                                      },
-                                      "id": {
-                                        "type": "integer"
-                                      },
-                                      "is_public": {
-                                        "type": "boolean"
-                                      },
-                                      "is_show": {
-                                        "type": "boolean"
-                                      },
-                                      "name": {
-                                        "type": "string"
-                                      },
-                                      "parent_id": {
-                                        "type": "integer"
-                                      },
-                                      "path": {
-                                        "type": "string"
-                                      },
-                                      "resource_type": {
-                                        "type": "string"
-                                      },
-                                      "sort_order": {
-                                        "type": "integer"
-                                      },
-                                      "status": {
-                                        "type": "string"
-                                      },
-                                      "tag": {
-                                        "type": "string"
-                                      },
-                                      "type": {
-                                        "type": "string"
-                                      },
-                                      "updated_at": {
-                                        "type": "string"
-                                      }
-                                    }
+                                    "type": "object"
                                   }
                                 },
                                 "created_at": {
@@ -9413,151 +9271,13 @@
                                 "apis": {
                                   "type": "array",
                                   "items": {
-                                    "type": "object",
-                                    "required": [
-                                      "id",
-                                      "parent_id",
-                                      "name",
-                                      "path",
-                                      "method",
-                                      "status",
-                                      "description",
-                                      "type",
-                                      "sort_order",
-                                      "auth_required",
-                                      "permission_required",
-                                      "created_at",
-                                      "updated_at"
-                                    ],
-                                    "properties": {
-                                      "auth_required": {
-                                        "type": "boolean"
-                                      },
-                                      "created_at": {
-                                        "type": "string"
-                                      },
-                                      "description": {
-                                        "type": "string"
-                                      },
-                                      "id": {
-                                        "type": "integer"
-                                      },
-                                      "method": {
-                                        "type": "string"
-                                      },
-                                      "name": {
-                                        "type": "string"
-                                      },
-                                      "parent_id": {
-                                        "type": "integer"
-                                      },
-                                      "path": {
-                                        "type": "string"
-                                      },
-                                      "permission_required": {
-                                        "type": "boolean"
-                                      },
-                                      "sort_order": {
-                                        "type": "integer"
-                                      },
-                                      "status": {
-                                        "type": "string"
-                                      },
-                                      "type": {
-                                        "type": "string"
-                                      },
-                                      "updated_at": {
-                                        "type": "string"
-                                      }
-                                    }
+                                    "type": "object"
                                   }
                                 },
                                 "children": {
                                   "type": "array",
                                   "items": {
-                                    "type": "object",
-                                    "required": [
-                                      "id",
-                                      "parent_id",
-                                      "type",
-                                      "resource_type",
-                                      "name",
-                                      "path",
-                                      "icon",
-                                      "tag",
-                                      "is_show",
-                                      "status",
-                                      "sort_order",
-                                      "enable_data_scope",
-                                      "description",
-                                      "is_public",
-                                      "created_at",
-                                      "updated_at",
-                                      "apis",
-                                      "children"
-                                    ],
-                                    "properties": {
-                                      "apis": {
-                                        "type": "array",
-                                        "items": {
-                                          "type": "object"
-                                        }
-                                      },
-                                      "children": {
-                                        "type": "array",
-                                        "items": {
-                                          "type": "object"
-                                        }
-                                      },
-                                      "created_at": {
-                                        "type": "string"
-                                      },
-                                      "description": {
-                                        "type": "string"
-                                      },
-                                      "enable_data_scope": {
-                                        "type": "boolean"
-                                      },
-                                      "icon": {
-                                        "type": "string"
-                                      },
-                                      "id": {
-                                        "type": "integer"
-                                      },
-                                      "is_public": {
-                                        "type": "boolean"
-                                      },
-                                      "is_show": {
-                                        "type": "boolean"
-                                      },
-                                      "name": {
-                                        "type": "string"
-                                      },
-                                      "parent_id": {
-                                        "type": "integer"
-                                      },
-                                      "path": {
-                                        "type": "string"
-                                      },
-                                      "resource_type": {
-                                        "type": "string"
-                                      },
-                                      "sort_order": {
-                                        "type": "integer"
-                                      },
-                                      "status": {
-                                        "type": "string"
-                                      },
-                                      "tag": {
-                                        "type": "string"
-                                      },
-                                      "type": {
-                                        "type": "string"
-                                      },
-                                      "updated_at": {
-                                        "type": "string"
-                                      }
-                                    }
+                                    "type": "object"
                                   }
                                 },
                                 "created_at": {
@@ -9721,7 +9441,6 @@
             "schema": {
               "type": "object",
               "required": [
-                "status",
                 "is_public",
                 "is_default",
                 "plan_type"
@@ -9741,9 +9460,6 @@
                 },
                 "sort_order": {
                   "type": "integer"
-                },
-                "status": {
-                  "type": "string"
                 },
                 "subtitle": {
                   "type": "string"
@@ -9943,151 +9659,13 @@
                                 "apis": {
                                   "type": "array",
                                   "items": {
-                                    "type": "object",
-                                    "required": [
-                                      "id",
-                                      "parent_id",
-                                      "name",
-                                      "path",
-                                      "method",
-                                      "status",
-                                      "description",
-                                      "type",
-                                      "sort_order",
-                                      "auth_required",
-                                      "permission_required",
-                                      "created_at",
-                                      "updated_at"
-                                    ],
-                                    "properties": {
-                                      "auth_required": {
-                                        "type": "boolean"
-                                      },
-                                      "created_at": {
-                                        "type": "string"
-                                      },
-                                      "description": {
-                                        "type": "string"
-                                      },
-                                      "id": {
-                                        "type": "integer"
-                                      },
-                                      "method": {
-                                        "type": "string"
-                                      },
-                                      "name": {
-                                        "type": "string"
-                                      },
-                                      "parent_id": {
-                                        "type": "integer"
-                                      },
-                                      "path": {
-                                        "type": "string"
-                                      },
-                                      "permission_required": {
-                                        "type": "boolean"
-                                      },
-                                      "sort_order": {
-                                        "type": "integer"
-                                      },
-                                      "status": {
-                                        "type": "string"
-                                      },
-                                      "type": {
-                                        "type": "string"
-                                      },
-                                      "updated_at": {
-                                        "type": "string"
-                                      }
-                                    }
+                                    "type": "object"
                                   }
                                 },
                                 "children": {
                                   "type": "array",
                                   "items": {
-                                    "type": "object",
-                                    "required": [
-                                      "id",
-                                      "parent_id",
-                                      "type",
-                                      "resource_type",
-                                      "name",
-                                      "path",
-                                      "icon",
-                                      "tag",
-                                      "is_show",
-                                      "status",
-                                      "sort_order",
-                                      "enable_data_scope",
-                                      "description",
-                                      "is_public",
-                                      "created_at",
-                                      "updated_at",
-                                      "apis",
-                                      "children"
-                                    ],
-                                    "properties": {
-                                      "apis": {
-                                        "type": "array",
-                                        "items": {
-                                          "type": "object"
-                                        }
-                                      },
-                                      "children": {
-                                        "type": "array",
-                                        "items": {
-                                          "type": "object"
-                                        }
-                                      },
-                                      "created_at": {
-                                        "type": "string"
-                                      },
-                                      "description": {
-                                        "type": "string"
-                                      },
-                                      "enable_data_scope": {
-                                        "type": "boolean"
-                                      },
-                                      "icon": {
-                                        "type": "string"
-                                      },
-                                      "id": {
-                                        "type": "integer"
-                                      },
-                                      "is_public": {
-                                        "type": "boolean"
-                                      },
-                                      "is_show": {
-                                        "type": "boolean"
-                                      },
-                                      "name": {
-                                        "type": "string"
-                                      },
-                                      "parent_id": {
-                                        "type": "integer"
-                                      },
-                                      "path": {
-                                        "type": "string"
-                                      },
-                                      "resource_type": {
-                                        "type": "string"
-                                      },
-                                      "sort_order": {
-                                        "type": "integer"
-                                      },
-                                      "status": {
-                                        "type": "string"
-                                      },
-                                      "tag": {
-                                        "type": "string"
-                                      },
-                                      "type": {
-                                        "type": "string"
-                                      },
-                                      "updated_at": {
-                                        "type": "string"
-                                      }
-                                    }
+                                    "type": "object"
                                   }
                                 },
                                 "created_at": {
@@ -10325,235 +9903,7 @@
                   "example": 0
                 },
                 "data": {
-                  "type": "object",
-                  "properties": {
-                    "list": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "required": [
-                          "id",
-                          "parent_id",
-                          "type",
-                          "resource_type",
-                          "name",
-                          "path",
-                          "icon",
-                          "tag",
-                          "is_show",
-                          "status",
-                          "sort_order",
-                          "enable_data_scope",
-                          "description",
-                          "is_public",
-                          "created_at",
-                          "updated_at",
-                          "apis",
-                          "children"
-                        ],
-                        "properties": {
-                          "apis": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "required": [
-                                "id",
-                                "parent_id",
-                                "name",
-                                "path",
-                                "method",
-                                "status",
-                                "description",
-                                "type",
-                                "sort_order",
-                                "auth_required",
-                                "permission_required",
-                                "created_at",
-                                "updated_at"
-                              ],
-                              "properties": {
-                                "auth_required": {
-                                  "type": "boolean"
-                                },
-                                "created_at": {
-                                  "type": "string"
-                                },
-                                "description": {
-                                  "type": "string"
-                                },
-                                "id": {
-                                  "type": "integer"
-                                },
-                                "method": {
-                                  "type": "string"
-                                },
-                                "name": {
-                                  "type": "string"
-                                },
-                                "parent_id": {
-                                  "type": "integer"
-                                },
-                                "path": {
-                                  "type": "string"
-                                },
-                                "permission_required": {
-                                  "type": "boolean"
-                                },
-                                "sort_order": {
-                                  "type": "integer"
-                                },
-                                "status": {
-                                  "type": "string"
-                                },
-                                "type": {
-                                  "type": "string"
-                                },
-                                "updated_at": {
-                                  "type": "string"
-                                }
-                              }
-                            }
-                          },
-                          "children": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "required": [
-                                "id",
-                                "parent_id",
-                                "type",
-                                "resource_type",
-                                "name",
-                                "path",
-                                "icon",
-                                "tag",
-                                "is_show",
-                                "status",
-                                "sort_order",
-                                "enable_data_scope",
-                                "description",
-                                "is_public",
-                                "created_at",
-                                "updated_at",
-                                "apis",
-                                "children"
-                              ],
-                              "properties": {
-                                "apis": {
-                                  "type": "array",
-                                  "items": {
-                                    "type": "object"
-                                  }
-                                },
-                                "children": {
-                                  "type": "array",
-                                  "items": {
-                                    "type": "object"
-                                  }
-                                },
-                                "created_at": {
-                                  "type": "string"
-                                },
-                                "description": {
-                                  "type": "string"
-                                },
-                                "enable_data_scope": {
-                                  "type": "boolean"
-                                },
-                                "icon": {
-                                  "type": "string"
-                                },
-                                "id": {
-                                  "type": "integer"
-                                },
-                                "is_public": {
-                                  "type": "boolean"
-                                },
-                                "is_show": {
-                                  "type": "boolean"
-                                },
-                                "name": {
-                                  "type": "string"
-                                },
-                                "parent_id": {
-                                  "type": "integer"
-                                },
-                                "path": {
-                                  "type": "string"
-                                },
-                                "resource_type": {
-                                  "type": "string"
-                                },
-                                "sort_order": {
-                                  "type": "integer"
-                                },
-                                "status": {
-                                  "type": "string"
-                                },
-                                "tag": {
-                                  "type": "string"
-                                },
-                                "type": {
-                                  "type": "string"
-                                },
-                                "updated_at": {
-                                  "type": "string"
-                                }
-                              }
-                            }
-                          },
-                          "created_at": {
-                            "type": "string"
-                          },
-                          "description": {
-                            "type": "string"
-                          },
-                          "enable_data_scope": {
-                            "type": "boolean"
-                          },
-                          "icon": {
-                            "type": "string"
-                          },
-                          "id": {
-                            "type": "integer"
-                          },
-                          "is_public": {
-                            "type": "boolean"
-                          },
-                          "is_show": {
-                            "type": "boolean"
-                          },
-                          "name": {
-                            "type": "string"
-                          },
-                          "parent_id": {
-                            "type": "integer"
-                          },
-                          "path": {
-                            "type": "string"
-                          },
-                          "resource_type": {
-                            "type": "string"
-                          },
-                          "sort_order": {
-                            "type": "integer"
-                          },
-                          "status": {
-                            "type": "string"
-                          },
-                          "tag": {
-                            "type": "string"
-                          },
-                          "type": {
-                            "type": "string"
-                          },
-                          "updated_at": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "type": "object"
                 },
                 "msg": {
                   "description": "business message",
@@ -14994,7 +14344,7 @@
       }
     }
   },
-  "x-date": "2026-06-10 17:50:13",
+  "x-date": "2026-06-12 17:37:40",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
