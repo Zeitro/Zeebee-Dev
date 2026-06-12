@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { DownloadOutlined, InboxOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import { DownloadFileButton, UploadFileButton, NewModal, initConfigFn } from '@repo/shared-methods';
+import { DownloadFileButton, initConfigFn, NewModal, UploadFileButton } from '@repo/shared-methods';
 import { createRequest, eventBus } from '@repo/shared-methods/utils';
 import { Modal } from 'antd';
+
 const ImportLoanModal = ({ setOpen }) => {
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [fileList, setFileList] = useState([]);
 	const [percent, setPercent] = useState(0);
 	const [reUpload, setReUpload] = useState(null);
-	const { uploadWithProgress } = createRequest();
+	const { uploadWithProgress, cancelMatch } = useMemo(() => createRequest(), []);
 	const [modal, contextHolder] = Modal.useModal();
 	const handleUpload = async () => {
 		try {
@@ -78,7 +79,10 @@ const ImportLoanModal = ({ setOpen }) => {
 				okButtonProps={{ disabled: !fileList?.length }}
 				closable={!confirmLoading}
 				onOk={handleUpload}
-				onCancel={() => setOpen(false)}
+				onCancel={() => {
+					cancelMatch('/loan/import');
+					setOpen(false);
+				}}
 			>
 				<div className="flex flex-col items-center gap-6">
 					<div className="pt-[26px] pb-[10px]">
@@ -101,6 +105,7 @@ const ImportLoanModal = ({ setOpen }) => {
 						immediateUpload={false}
 						accept=".xlsx,.xls"
 						onGetUploadList={setFileList}
+						limitSize={10}
 						// disabled={fileList?.length}
 						key={reUpload}
 					>

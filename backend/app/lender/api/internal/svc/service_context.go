@@ -28,9 +28,12 @@ type ServiceContext struct {
 	OrganizationTemplateRpcClient lender.OrganizationTemplateClient
 	OrganizationSettingRpcClient  lender.OrganizationSettingClient
 	ResourceRpcClient             lender.ResourceClient
+	ApiRpcClient                  lender.ApiClient
+
+	BorrowerApiContent string
 }
 
-func NewServiceContext(c config.ApiConf) *ServiceContext {
+func NewServiceContext(c config.ApiConf, borrowerApiContent string) *ServiceContext {
 	rpcClient := zrpc.MustNewClient(c.RpcConf)
 	authRpcClient := lender.NewAuthClient(rpcClient.Conn())
 	return &ServiceContext{
@@ -50,5 +53,7 @@ func NewServiceContext(c config.ApiConf) *ServiceContext {
 		OrganizationTemplateRpcClient: lender.NewOrganizationTemplateClient(rpcClient.Conn()),
 		OrganizationSettingRpcClient:  lender.NewOrganizationSettingClient(rpcClient.Conn()),
 		ResourceRpcClient:             lender.NewResourceClient(rpcClient.Conn()),
+		ApiRpcClient:                  lender.NewApiClient(rpcClient.Conn()),
+		BorrowerApiContent:            borrowerApiContent,
 	}
 }

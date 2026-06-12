@@ -1,26 +1,27 @@
 import { NextResponse } from 'next/server';
-import { getCurrentRouterItem, flattenNavRouter } from '@repo/shared-methods/lib/commonRouter';
-import { routers, noTokenRouter } from '@config/routes';
+import { flattenNavRouter, matchRoute } from '@repo/shared-methods/lib/commonRouter';
+import { readPermissionFromCookieStore } from '@repo/shared-methods/lib/permissionStorage';
+import { noTokenRouter } from '@config/routes';
 export function middleware(request) {
 	const { pathname } = request.nextUrl;
 
-	// 2. 获取 cookie/token
-	const token = request.cookies.get('token')?.value;
+	const { access, accessPaths } = readPermissionFromCookieStore(request.cookies);
 	// 路由白名单
 	const noTokenList = flattenNavRouter(noTokenRouter);
 	const whiteList = noTokenList.map((item) => item.path);
-	const routerItem = getCurrentRouterItem(pathname, routers);
 
-	if (!token && !whiteList.includes(pathname)) {
-		console.log('noToken----------middleware---===', pathname);
+	if (!access && !whiteList.includes(pathname)) {
+		console.log('noToken----------middleware---===', pathname, '++++', access);
 
-		// 未登录且非白名单，重定向到登录页
+		// token到期且非白名单路由，重定向到登录页
 		return NextResponse.redirect(new URL('/login', request.url));
 	}
 
-	const isAuthSuccessful = [].every((role) => routerItem?.roles?.includes(role));
-	//  其他权限逻辑（如角色判断等）
-	if (routerItem && routerItem?.roles?.length && !isAuthSuccessful) {
+	// 权限判断-排除特殊404页面
+	const isAuthSuccessful = accessPaths.some((path) => matchRoute(path, pathname));
+	if (!isAuthSuccessful && !whiteList.includes(pathname)) {
+		console.log('no permission---', pathname, isAuthSuccessful);
+
 		return NextResponse.redirect(new URL('/not-found', request.url));
 	}
 
@@ -31,6 +32,6 @@ export function middleware(request) {
 export const config = {
 	// 排除Next.js内部资源、静态文件、API路径
 	matcher: [
-		'/((?!_next/static|_next/image|api/|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+		'/((?!_next/|api/|favicon.ico|robots\\.txt|sitemap\\.xml|.*\\.(?:svg|png|jpe?g|gif|ico|webp|avif|mjs|js|css|map|json|txt|xml|webmanifest|woff2?|ttf|otf|wasm|pdf|xlsx?)$).*)',
 	],
 };

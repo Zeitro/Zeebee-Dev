@@ -4,6 +4,7 @@ import React from 'react';
 import styles from './index.module.scss';
 import useCreate from '../components/CreateZeeBee/hooks/useCreate';
 import { changeUnitByPropertyType } from '@repo/shared-methods/utils';
+
 const CreateZeeBeeLoan = () => {
 	const {
 		getTabsItem,

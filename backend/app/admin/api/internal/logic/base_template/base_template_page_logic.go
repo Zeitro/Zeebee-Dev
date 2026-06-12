@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
@@ -50,10 +51,10 @@ func (l *BaseTemplatePageLogic) BaseTemplatePage(req *types.BaseTemplatePageRequ
 
 	// Convert pb response to types
 	resp = &types.BaseTemplatePageResponse{}
-	resp.BasePageResponse.Page = rpcResp.Data.Page
-	resp.BasePageResponse.Limit = rpcResp.Data.Limit
-	resp.BasePageResponse.Total = rpcResp.Data.Total
-	resp.BasePageResponse.TotalPage = rpcResp.Data.TotalPage
+	resp.Page = rpcResp.Data.Page
+	resp.Limit = rpcResp.Data.Limit
+	resp.Total = rpcResp.Data.Total
+	resp.TotalPage = rpcResp.Data.TotalPage
 
 	// Convert list items
 	for _, item := range rpcResp.Data.List {

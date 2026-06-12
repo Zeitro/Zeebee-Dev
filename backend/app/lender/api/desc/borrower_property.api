@@ -15,6 +15,7 @@ type BorrowerPropertyEntity {
     TotalAmount float64 `json:"total_amount"`
     Unit int32 `json:"unit"`
     LivingAreaSqft float32 `json:"living_area_sqft"`
+    LotAreaSqft float32 `json:"lot_area_sqft,optional"`
     Bedrooms int32 `json:"bedrooms"`
     Bathrooms float32 `json:"bathrooms"`
     Address *AddressEntity `json:"address"`

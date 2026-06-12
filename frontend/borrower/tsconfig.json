@@ -24,6 +24,7 @@
 			"@/lib/*": ["./src/lib/*"],
 			"@/api/*": ["./src/api/*"],
 			"@/assets/*": ["./src/assets/*"],
+			"@/enum/*": ["./src/enum/*"],
 			"@config/*": ["./config/*"],
 			"@images/*": ["./public/images*"],
 			"@repo/shared-methods": ["../packages/shared-methods/src"],

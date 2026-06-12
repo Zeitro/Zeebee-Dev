@@ -43,7 +43,7 @@ RpcConf:
   EmailConf:
     Host: smtp.gmail.com
     Port: 587
-    Password: plqaccqomowwrszl
+    Password: jerburfauvmzpmnq
     Username: info@zeebeeloans.com
 
   JwtAuth:
@@ -98,6 +98,11 @@ RpcConf:
       ClientId: 808134957644-2savep4tlp45sln5v9f21hq06628vvia.apps.googleusercontent.com
       ClientSecret: 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
       CallbackUrl: https://app.zeebeeloans.com/gmailAuth
+  DriveAuthConf:
+    Google:
+      ClientId: 808134957644-2savep4tlp45sln5v9f21hq06628vvia.apps.googleusercontent.com
+      ClientSecret: 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
+      CallbackUrl: https://app.zeebeeloans.com/driveAuth
   PdfGeneratorUrl: http://127.0.0.1:10300/api/v1/pdf
   TemplateConf:
     PreApprovalLetterPdf:

@@ -27,7 +27,6 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 }
 
 func (l *LoginLogic) Login(req *types.UserLoginRequest) (resp *types.UserJwtResponse, err error) {
-
 	// call rpc
 	rpcResp, err := l.svcCtx.UserRpcClient.Login(l.ctx, &lender.UserLoginRequest{
 		Data: &lender.UserLoginRequestData{

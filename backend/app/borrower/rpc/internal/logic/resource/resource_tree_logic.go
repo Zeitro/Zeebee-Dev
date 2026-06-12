@@ -50,5 +50,4 @@ func (l *ResourceTreeLogic) ResourceTree(in *borrower.ResourceTreeRequest) (resp
 	return &borrower.ResourceTreeResponse{
 		Data: *data,
 	}, nil
-
 }

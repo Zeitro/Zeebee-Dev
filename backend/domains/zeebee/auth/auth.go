@@ -66,7 +66,6 @@ func NewAuth(repos *repo.AllRepos, redisCli *redisx.Client, jwtConfig dto.JwtCon
 
 // subscribeEvent
 func (l *Auth) subscribeEvent(ctx context.Context) {
-
 	if len(l.eventTopic) == 0 {
 		return
 	}
@@ -110,7 +109,6 @@ func (l *Auth) subscribeEvent(ctx context.Context) {
 						logx.Field("error", err.Error()),
 					).Errorf("handleAuthMsg error")
 				}
-
 			}
 		}
 		_ = subPub.Close()
@@ -147,7 +145,6 @@ func (l *Auth) handleAuthMsg(ctx context.Context, msg *redis.Message) (err error
 	}
 
 	return err
-
 }
 
 // handleApiReload
@@ -224,7 +221,6 @@ func (l *Auth) handleResourceReload(ctx context.Context, msg Msg) (err error) {
 		}
 	}
 	return nil
-
 }
 
 // handleAllPolicyReload
@@ -236,7 +232,6 @@ func (l *Auth) handleAllPolicyReload(ctx context.Context, msg Msg) (err error) {
 // It returns a response containing the status of authentication, authorization,
 // and the applicable data scope.
 func (l *Auth) AuthCheck(ctx context.Context, input dto.AuthCheckRequestDto) (result *dto.AuthCheckResponseDto, err error) {
-
 	// Initialize result with default values requiring both authentication and authorization
 	result = &dto.AuthCheckResponseDto{
 		AuthenticationRequired: true,
@@ -450,7 +445,6 @@ func (l *Auth) IsAdmin(ctx context.Context, userType constants.UserType) (isAdmi
 
 // LoadAuthenticationWhitelist load authentication whitelist for a given user type.
 func (l *Auth) LoadAuthenticationWhitelist(ctx context.Context, userType constants.UserType) (whitelist []string, err error) {
-
 	// get apis from db
 	result, err, _ := l.sf.Do(stringx.Format("AuthenticationWhitelist:%v", userType), func() (interface{}, error) {
 		apis, err := l.repos.ApiRepo.GetAuthenticationWhitelist(ctx, userType)
