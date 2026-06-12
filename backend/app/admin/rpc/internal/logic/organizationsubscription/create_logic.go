@@ -29,7 +29,7 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 	}
 }
 
-func (l *CreateLogic) Create(in *admin.OrganizationSubscriptionCreateRequest) (resp *admin.OrganizationSubscriptionCreateResponse, err error) {
+func (l *CreateLogic) Create(in *admin.OrganizationSubscriptionCreateRequest) (resp *admin.OrganizationSubscriptionDetailResponse, err error) {
 
 	// organization_id comes from API layer context, passed via request metadata
 	dtoData, err := copierx.Trans[admin.OrganizationSubscriptionCreateRequestData, dto.OrganizationSubscriptionCreateDto](in.Data)
@@ -47,5 +47,7 @@ func (l *CreateLogic) Create(in *admin.OrganizationSubscriptionCreateRequest) (r
 		return nil, err
 	}
 
-	return &admin.OrganizationSubscriptionCreateResponse{Data: protoData}, nil
+	return &admin.OrganizationSubscriptionDetailResponse{
+		Data: protoData,
+	}, nil
 }

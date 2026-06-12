@@ -23,12 +23,12 @@ func NewOrganizationSubscriptionServer(svcCtx *svc.ServiceContext) *Organization
 	}
 }
 
-func (s *OrganizationSubscriptionServer) Create(ctx context.Context, in *admin.OrganizationSubscriptionCreateRequest) (*admin.OrganizationSubscriptionCreateResponse, error) {
+func (s *OrganizationSubscriptionServer) Create(ctx context.Context, in *admin.OrganizationSubscriptionCreateRequest) (*admin.OrganizationSubscriptionDetailResponse, error) {
 	l := organizationsubscriptionlogic.NewCreateLogic(ctx, s.svcCtx)
 	return l.Create(in)
 }
 
-func (s *OrganizationSubscriptionServer) Renew(ctx context.Context, in *admin.OrganizationSubscriptionRenewRequest) (*admin.OrganizationSubscriptionRenewResponse, error) {
+func (s *OrganizationSubscriptionServer) Renew(ctx context.Context, in *admin.OrganizationSubscriptionRenewRequest) (*admin.EmptyResponse, error) {
 	l := organizationsubscriptionlogic.NewRenewLogic(ctx, s.svcCtx)
 	return l.Renew(in)
 }

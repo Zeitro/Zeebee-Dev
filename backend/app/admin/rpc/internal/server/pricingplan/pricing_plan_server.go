@@ -23,22 +23,22 @@ func NewPricingPlanServer(svcCtx *svc.ServiceContext) *PricingPlanServer {
 	}
 }
 
-func (s *PricingPlanServer) Create(ctx context.Context, in *admin.PricingPlanCreateRequest) (*admin.PricingPlanCreateResponse, error) {
+func (s *PricingPlanServer) Create(ctx context.Context, in *admin.PricingPlanCreateRequest) (*admin.PricingPlanDetailResponse, error) {
 	l := pricingplanlogic.NewCreateLogic(ctx, s.svcCtx)
 	return l.Create(in)
 }
 
-func (s *PricingPlanServer) Update(ctx context.Context, in *admin.PricingPlanUpdateRequest) (*admin.PricingPlanUpdateResponse, error) {
+func (s *PricingPlanServer) Update(ctx context.Context, in *admin.PricingPlanUpdateRequest) (*admin.PricingPlanDetailResponse, error) {
 	l := pricingplanlogic.NewUpdateLogic(ctx, s.svcCtx)
 	return l.Update(in)
 }
 
-func (s *PricingPlanServer) Delete(ctx context.Context, in *admin.PricingPlanDeleteRequest) (*admin.EmptyResponse, error) {
+func (s *PricingPlanServer) Delete(ctx context.Context, in *admin.PathIdRequest) (*admin.EmptyResponse, error) {
 	l := pricingplanlogic.NewDeleteLogic(ctx, s.svcCtx)
 	return l.Delete(in)
 }
 
-func (s *PricingPlanServer) Detail(ctx context.Context, in *admin.PricingPlanDetailRequest) (*admin.PricingPlanDetailResponse, error) {
+func (s *PricingPlanServer) Detail(ctx context.Context, in *admin.PathIdRequest) (*admin.PricingPlanDetailResponse, error) {
 	l := pricingplanlogic.NewDetailLogic(ctx, s.svcCtx)
 	return l.Detail(in)
 }
@@ -53,7 +53,7 @@ func (s *PricingPlanServer) SwitchStatus(ctx context.Context, in *admin.PricingP
 	return l.SwitchStatus(in)
 }
 
-func (s *PricingPlanServer) BindResources(ctx context.Context, in *admin.PricingPlanBindResourcesRequest) (*admin.PricingPlanBindResourcesResponse, error) {
+func (s *PricingPlanServer) BindResources(ctx context.Context, in *admin.PricingPlanBindResourcesRequest) (*admin.EmptyResponse, error) {
 	l := pricingplanlogic.NewBindResourcesLogic(ctx, s.svcCtx)
 	return l.BindResources(in)
 }
@@ -61,19 +61,4 @@ func (s *PricingPlanServer) BindResources(ctx context.Context, in *admin.Pricing
 func (s *PricingPlanServer) ResourceList(ctx context.Context, in *admin.PricingPlanResourceListRequest) (*admin.PricingPlanResourceListResponse, error) {
 	l := pricingplanlogic.NewResourceListLogic(ctx, s.svcCtx)
 	return l.ResourceList(in)
-}
-
-func (s *PricingPlanServer) CreatePolicy(ctx context.Context, in *admin.PricingPlanPolicyCreateRequest) (*admin.PricingPlanPolicyCreateResponse, error) {
-	l := pricingplanlogic.NewCreatePolicyLogic(ctx, s.svcCtx)
-	return l.CreatePolicy(in)
-}
-
-func (s *PricingPlanServer) UpdatePolicy(ctx context.Context, in *admin.PricingPlanPolicyUpdateRequest) (*admin.PricingPlanPolicyUpdateResponse, error) {
-	l := pricingplanlogic.NewUpdatePolicyLogic(ctx, s.svcCtx)
-	return l.UpdatePolicy(in)
-}
-
-func (s *PricingPlanServer) DeletePolicy(ctx context.Context, in *admin.PricingPlanPolicyDeleteRequest) (*admin.EmptyResponse, error) {
-	l := pricingplanlogic.NewDeletePolicyLogic(ctx, s.svcCtx)
-	return l.DeletePolicy(in)
 }

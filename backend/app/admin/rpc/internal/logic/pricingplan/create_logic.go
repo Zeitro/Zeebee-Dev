@@ -29,9 +29,16 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 	}
 }
 
-func (l *CreateLogic) Create(in *admin.PricingPlanCreateRequest) (resp *admin.PricingPlanCreateResponse, err error) {
-
-	dtoData, err := copierx.Trans[admin.PricingPlanCreateRequestData, dto.PricingPlanCreateDto](in.Data)
+func (l *CreateLogic) Create(in *admin.PricingPlanCreateRequest) (resp *admin.PricingPlanDetailResponse, err error) {
+	defer func() {
+		if err != nil {
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
+		}
+	}()
+	dtoData, err := copierx.Trans[admin.PricingPlanCreateRequestData, dto.PricingPlanCreateRequestDto](in.Data)
 	if err != nil {
 		return nil, err
 	}
@@ -46,5 +53,5 @@ func (l *CreateLogic) Create(in *admin.PricingPlanCreateRequest) (resp *admin.Pr
 		return nil, err
 	}
 
-	return &admin.PricingPlanCreateResponse{Data: protoData}, nil
+	return &admin.PricingPlanDetailResponse{Data: protoData}, nil
 }

@@ -29,9 +29,9 @@ func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogi
 	}
 }
 
-func (l *UpdateLogic) Update(in *admin.PricingPlanUpdateRequest) (resp *admin.PricingPlanUpdateResponse, err error) {
+func (l *UpdateLogic) Update(in *admin.PricingPlanUpdateRequest) (resp *admin.PricingPlanDetailResponse, err error) {
 
-	dtoData, err := copierx.Trans[admin.PricingPlanUpdateRequestData, dto.PricingPlanUpdateDto](in.Data)
+	dtoData, err := copierx.Trans[admin.PricingPlanUpdateRequestData, dto.PricingPlanUpdateRequestDto](in.Data)
 	if err != nil {
 		return nil, err
 	}
@@ -47,5 +47,5 @@ func (l *UpdateLogic) Update(in *admin.PricingPlanUpdateRequest) (resp *admin.Pr
 		return nil, err
 	}
 
-	return &admin.PricingPlanUpdateResponse{Data: protoData}, nil
+	return &admin.PricingPlanDetailResponse{Data: protoData}, nil
 }

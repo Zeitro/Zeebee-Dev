@@ -16,16 +16,15 @@ import (
 type (
 	EmptyResponse                               = admin.EmptyResponse
 	OrganizationSubscriptionCreateRequest       = admin.OrganizationSubscriptionCreateRequest
-	OrganizationSubscriptionCreateResponse      = admin.OrganizationSubscriptionCreateResponse
+	OrganizationSubscriptionDetailResponse      = admin.OrganizationSubscriptionDetailResponse
 	OrganizationSubscriptionPageRequest         = admin.OrganizationSubscriptionPageRequest
 	OrganizationSubscriptionPageResponse        = admin.OrganizationSubscriptionPageResponse
 	OrganizationSubscriptionRenewRequest        = admin.OrganizationSubscriptionRenewRequest
-	OrganizationSubscriptionRenewResponse       = admin.OrganizationSubscriptionRenewResponse
 	OrganizationSubscriptionSwitchStatusRequest = admin.OrganizationSubscriptionSwitchStatusRequest
 
 	OrganizationSubscription interface {
-		Create(ctx context.Context, in *OrganizationSubscriptionCreateRequest, opts ...grpc.CallOption) (*OrganizationSubscriptionCreateResponse, error)
-		Renew(ctx context.Context, in *OrganizationSubscriptionRenewRequest, opts ...grpc.CallOption) (*OrganizationSubscriptionRenewResponse, error)
+		Create(ctx context.Context, in *OrganizationSubscriptionCreateRequest, opts ...grpc.CallOption) (*OrganizationSubscriptionDetailResponse, error)
+		Renew(ctx context.Context, in *OrganizationSubscriptionRenewRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		SwitchStatus(ctx context.Context, in *OrganizationSubscriptionSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		Page(ctx context.Context, in *OrganizationSubscriptionPageRequest, opts ...grpc.CallOption) (*OrganizationSubscriptionPageResponse, error)
 	}
@@ -41,12 +40,12 @@ func NewOrganizationSubscription(cli zrpc.Client) OrganizationSubscription {
 	}
 }
 
-func (m *defaultOrganizationSubscription) Create(ctx context.Context, in *OrganizationSubscriptionCreateRequest, opts ...grpc.CallOption) (*OrganizationSubscriptionCreateResponse, error) {
+func (m *defaultOrganizationSubscription) Create(ctx context.Context, in *OrganizationSubscriptionCreateRequest, opts ...grpc.CallOption) (*OrganizationSubscriptionDetailResponse, error) {
 	client := admin.NewOrganizationSubscriptionClient(m.cli.Conn())
 	return client.Create(ctx, in, opts...)
 }
 
-func (m *defaultOrganizationSubscription) Renew(ctx context.Context, in *OrganizationSubscriptionRenewRequest, opts ...grpc.CallOption) (*OrganizationSubscriptionRenewResponse, error) {
+func (m *defaultOrganizationSubscription) Renew(ctx context.Context, in *OrganizationSubscriptionRenewRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	client := admin.NewOrganizationSubscriptionClient(m.cli.Conn())
 	return client.Renew(ctx, in, opts...)
 }

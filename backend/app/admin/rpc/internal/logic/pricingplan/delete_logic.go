@@ -27,8 +27,15 @@ func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogi
 	}
 }
 
-func (l *DeleteLogic) Delete(in *admin.PricingPlanDeleteRequest) (resp *admin.EmptyResponse, err error) {
-
+func (l *DeleteLogic) Delete(in *admin.PathIdRequest) (resp *admin.EmptyResponse, err error) {
+	defer func() {
+		if err != nil {
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
+		}
+	}()
 	err = l.baseLogic.PricingPlanLogic.Delete(l.ctx, in.Data.Id)
 	if err != nil {
 		return nil, errorx.WithStack(err)

@@ -30,7 +30,14 @@ func NewPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PageLogic {
 }
 
 func (l *PageLogic) Page(in *admin.PricingPlanPageRequest) (resp *admin.PricingPlanPageResponse, err error) {
-
+	defer func() {
+		if err != nil {
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
+		}
+	}()
 	req := dto.PricingPlanPageRequestDto{
 		BasePageRequestDto: dto.BasePageRequestDto{Page: in.Data.Page, Limit: in.Data.Limit},
 	}
@@ -51,8 +58,8 @@ func (l *PageLogic) Page(in *admin.PricingPlanPageRequest) (resp *admin.PricingP
 		return nil, errorx.WithStack(err)
 	}
 
-	pageDto := dto.PageResultDto[dto.PricingPlanPageEntity](pageResult)
-	protoData, err := copierx.Trans[dto.PageResultDto[dto.PricingPlanPageEntity], admin.PricingPlanPageResponseData](
+	pageDto := dto.PageResultDto[dto.PricingPlanPageEntityDto](pageResult)
+	protoData, err := copierx.Trans[dto.PageResultDto[dto.PricingPlanPageEntityDto], admin.PricingPlanPageResponseData](
 		&pageDto, copierx.TimeToRFC3339Str(),
 	)
 	if err != nil {

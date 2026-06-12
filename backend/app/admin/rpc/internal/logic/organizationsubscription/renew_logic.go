@@ -30,7 +30,7 @@ func NewRenewLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RenewLogic 
 	}
 }
 
-func (l *RenewLogic) Renew(in *admin.OrganizationSubscriptionRenewRequest) (resp *admin.OrganizationSubscriptionRenewResponse, err error) {
+func (l *RenewLogic) Renew(in *admin.OrganizationSubscriptionRenewRequest) (resp *admin.EmptyResponse, err error) {
 
 	dtoData, err := copierx.Trans[admin.OrganizationSubscriptionRenewRequestData, dto.OrganizationSubscriptionRenewDto](in.Data, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
@@ -42,10 +42,10 @@ func (l *RenewLogic) Renew(in *admin.OrganizationSubscriptionRenewRequest) (resp
 		return nil, errorx.WithStack(err)
 	}
 
-	protoData, err := copierx.Trans[dto.OrganizationSubscriptionEntity, admin.OrganizationSubscriptionEntity](result, copierx.TimeToRFC3339Str())
+	_, err = copierx.Trans[dto.OrganizationSubscriptionEntity, admin.OrganizationSubscriptionEntity](result, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}
 
-	return &admin.OrganizationSubscriptionRenewResponse{Data: protoData}, nil
+	return &admin.EmptyResponse{}, nil
 }

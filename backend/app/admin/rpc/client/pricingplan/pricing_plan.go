@@ -14,39 +14,27 @@ import (
 )
 
 type (
-	EmptyResponse                    = admin.EmptyResponse
-	PricingPlanBindResourcesRequest  = admin.PricingPlanBindResourcesRequest
-	PricingPlanBindResourcesResponse = admin.PricingPlanBindResourcesResponse
-	PricingPlanCreateRequest         = admin.PricingPlanCreateRequest
-	PricingPlanCreateResponse        = admin.PricingPlanCreateResponse
-	PricingPlanDeleteRequest         = admin.PricingPlanDeleteRequest
-	PricingPlanDetailRequest         = admin.PricingPlanDetailRequest
-	PricingPlanDetailResponse        = admin.PricingPlanDetailResponse
-	PricingPlanPageRequest           = admin.PricingPlanPageRequest
-	PricingPlanPageResponse          = admin.PricingPlanPageResponse
-	PricingPlanPolicyCreateRequest   = admin.PricingPlanPolicyCreateRequest
-	PricingPlanPolicyCreateResponse  = admin.PricingPlanPolicyCreateResponse
-	PricingPlanPolicyDeleteRequest   = admin.PricingPlanPolicyDeleteRequest
-	PricingPlanPolicyUpdateRequest   = admin.PricingPlanPolicyUpdateRequest
-	PricingPlanPolicyUpdateResponse  = admin.PricingPlanPolicyUpdateResponse
-	PricingPlanResourceListRequest   = admin.PricingPlanResourceListRequest
-	PricingPlanResourceListResponse  = admin.PricingPlanResourceListResponse
-	PricingPlanSwitchStatusRequest   = admin.PricingPlanSwitchStatusRequest
-	PricingPlanUpdateRequest         = admin.PricingPlanUpdateRequest
-	PricingPlanUpdateResponse        = admin.PricingPlanUpdateResponse
+	EmptyResponse                   = admin.EmptyResponse
+	PathIdRequest                   = admin.PathIdRequest
+	PricingPlanBindResourcesRequest = admin.PricingPlanBindResourcesRequest
+	PricingPlanCreateRequest        = admin.PricingPlanCreateRequest
+	PricingPlanDetailResponse       = admin.PricingPlanDetailResponse
+	PricingPlanPageRequest          = admin.PricingPlanPageRequest
+	PricingPlanPageResponse         = admin.PricingPlanPageResponse
+	PricingPlanResourceListRequest  = admin.PricingPlanResourceListRequest
+	PricingPlanResourceListResponse = admin.PricingPlanResourceListResponse
+	PricingPlanSwitchStatusRequest  = admin.PricingPlanSwitchStatusRequest
+	PricingPlanUpdateRequest        = admin.PricingPlanUpdateRequest
 
 	PricingPlan interface {
-		Create(ctx context.Context, in *PricingPlanCreateRequest, opts ...grpc.CallOption) (*PricingPlanCreateResponse, error)
-		Update(ctx context.Context, in *PricingPlanUpdateRequest, opts ...grpc.CallOption) (*PricingPlanUpdateResponse, error)
-		Delete(ctx context.Context, in *PricingPlanDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-		Detail(ctx context.Context, in *PricingPlanDetailRequest, opts ...grpc.CallOption) (*PricingPlanDetailResponse, error)
+		Create(ctx context.Context, in *PricingPlanCreateRequest, opts ...grpc.CallOption) (*PricingPlanDetailResponse, error)
+		Update(ctx context.Context, in *PricingPlanUpdateRequest, opts ...grpc.CallOption) (*PricingPlanDetailResponse, error)
+		Delete(ctx context.Context, in *PathIdRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		Detail(ctx context.Context, in *PathIdRequest, opts ...grpc.CallOption) (*PricingPlanDetailResponse, error)
 		Page(ctx context.Context, in *PricingPlanPageRequest, opts ...grpc.CallOption) (*PricingPlanPageResponse, error)
 		SwitchStatus(ctx context.Context, in *PricingPlanSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-		BindResources(ctx context.Context, in *PricingPlanBindResourcesRequest, opts ...grpc.CallOption) (*PricingPlanBindResourcesResponse, error)
+		BindResources(ctx context.Context, in *PricingPlanBindResourcesRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		ResourceList(ctx context.Context, in *PricingPlanResourceListRequest, opts ...grpc.CallOption) (*PricingPlanResourceListResponse, error)
-		CreatePolicy(ctx context.Context, in *PricingPlanPolicyCreateRequest, opts ...grpc.CallOption) (*PricingPlanPolicyCreateResponse, error)
-		UpdatePolicy(ctx context.Context, in *PricingPlanPolicyUpdateRequest, opts ...grpc.CallOption) (*PricingPlanPolicyUpdateResponse, error)
-		DeletePolicy(ctx context.Context, in *PricingPlanPolicyDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	}
 
 	defaultPricingPlan struct {
@@ -60,22 +48,22 @@ func NewPricingPlan(cli zrpc.Client) PricingPlan {
 	}
 }
 
-func (m *defaultPricingPlan) Create(ctx context.Context, in *PricingPlanCreateRequest, opts ...grpc.CallOption) (*PricingPlanCreateResponse, error) {
+func (m *defaultPricingPlan) Create(ctx context.Context, in *PricingPlanCreateRequest, opts ...grpc.CallOption) (*PricingPlanDetailResponse, error) {
 	client := admin.NewPricingPlanClient(m.cli.Conn())
 	return client.Create(ctx, in, opts...)
 }
 
-func (m *defaultPricingPlan) Update(ctx context.Context, in *PricingPlanUpdateRequest, opts ...grpc.CallOption) (*PricingPlanUpdateResponse, error) {
+func (m *defaultPricingPlan) Update(ctx context.Context, in *PricingPlanUpdateRequest, opts ...grpc.CallOption) (*PricingPlanDetailResponse, error) {
 	client := admin.NewPricingPlanClient(m.cli.Conn())
 	return client.Update(ctx, in, opts...)
 }
 
-func (m *defaultPricingPlan) Delete(ctx context.Context, in *PricingPlanDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+func (m *defaultPricingPlan) Delete(ctx context.Context, in *PathIdRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	client := admin.NewPricingPlanClient(m.cli.Conn())
 	return client.Delete(ctx, in, opts...)
 }
 
-func (m *defaultPricingPlan) Detail(ctx context.Context, in *PricingPlanDetailRequest, opts ...grpc.CallOption) (*PricingPlanDetailResponse, error) {
+func (m *defaultPricingPlan) Detail(ctx context.Context, in *PathIdRequest, opts ...grpc.CallOption) (*PricingPlanDetailResponse, error) {
 	client := admin.NewPricingPlanClient(m.cli.Conn())
 	return client.Detail(ctx, in, opts...)
 }
@@ -90,7 +78,7 @@ func (m *defaultPricingPlan) SwitchStatus(ctx context.Context, in *PricingPlanSw
 	return client.SwitchStatus(ctx, in, opts...)
 }
 
-func (m *defaultPricingPlan) BindResources(ctx context.Context, in *PricingPlanBindResourcesRequest, opts ...grpc.CallOption) (*PricingPlanBindResourcesResponse, error) {
+func (m *defaultPricingPlan) BindResources(ctx context.Context, in *PricingPlanBindResourcesRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	client := admin.NewPricingPlanClient(m.cli.Conn())
 	return client.BindResources(ctx, in, opts...)
 }
@@ -98,19 +86,4 @@ func (m *defaultPricingPlan) BindResources(ctx context.Context, in *PricingPlanB
 func (m *defaultPricingPlan) ResourceList(ctx context.Context, in *PricingPlanResourceListRequest, opts ...grpc.CallOption) (*PricingPlanResourceListResponse, error) {
 	client := admin.NewPricingPlanClient(m.cli.Conn())
 	return client.ResourceList(ctx, in, opts...)
-}
-
-func (m *defaultPricingPlan) CreatePolicy(ctx context.Context, in *PricingPlanPolicyCreateRequest, opts ...grpc.CallOption) (*PricingPlanPolicyCreateResponse, error) {
-	client := admin.NewPricingPlanClient(m.cli.Conn())
-	return client.CreatePolicy(ctx, in, opts...)
-}
-
-func (m *defaultPricingPlan) UpdatePolicy(ctx context.Context, in *PricingPlanPolicyUpdateRequest, opts ...grpc.CallOption) (*PricingPlanPolicyUpdateResponse, error) {
-	client := admin.NewPricingPlanClient(m.cli.Conn())
-	return client.UpdatePolicy(ctx, in, opts...)
-}
-
-func (m *defaultPricingPlan) DeletePolicy(ctx context.Context, in *PricingPlanPolicyDeleteRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
-	client := admin.NewPricingPlanClient(m.cli.Conn())
-	return client.DeletePolicy(ctx, in, opts...)
 }

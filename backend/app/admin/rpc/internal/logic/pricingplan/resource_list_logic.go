@@ -30,7 +30,14 @@ func NewResourceListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Reso
 }
 
 func (l *ResourceListLogic) ResourceList(in *admin.PricingPlanResourceListRequest) (resp *admin.PricingPlanResourceListResponse, err error) {
-
+	defer func() {
+		if err != nil {
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
+		}
+	}()
 	resources, err := l.baseLogic.PricingPlanLogic.ResourceList(l.ctx, in.Data.Id)
 	if err != nil {
 		return nil, errorx.WithStack(err)

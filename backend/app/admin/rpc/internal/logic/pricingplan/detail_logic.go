@@ -29,8 +29,15 @@ func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogi
 	}
 }
 
-func (l *DetailLogic) Detail(in *admin.PricingPlanDetailRequest) (resp *admin.PricingPlanDetailResponse, err error) {
-
+func (l *DetailLogic) Detail(in *admin.PathIdRequest) (resp *admin.PricingPlanDetailResponse, err error) {
+	defer func() {
+		if err != nil {
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
+		}
+	}()
 	result, err := l.baseLogic.PricingPlanLogic.Detail(l.ctx, in.Data.Id)
 	if err != nil {
 		return nil, errorx.WithStack(err)
