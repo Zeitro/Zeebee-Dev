@@ -259,7 +259,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					// update expire date
-					Method:  http.MethodPut,
+					Method:  http.MethodPatch,
 					Path:    "/organization_subscription/:id/expire_date",
 					Handler: organization_subscription.OrganizationSubscriptionUpdateExpireDateHandler(serverCtx),
 				},
@@ -271,7 +271,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					// switch status
-					Method:  http.MethodPut,
+					Method:  http.MethodPatch,
 					Path:    "/organization_subscription/:id/status",
 					Handler: organization_subscription.OrganizationSubscriptionSwitchStatusHandler(serverCtx),
 				},
