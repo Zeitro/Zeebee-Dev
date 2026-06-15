@@ -3,12 +3,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button, Progress, message } from 'antd';
 import { CloudSyncOutlined } from '@ant-design/icons';
-import { NewModal } from '@repo/shared-methods';
 import { createRequest, displayValue } from '@repo/shared-methods/utils';
 import CategoryContentPanel from './CategoryContentPanel';
 import { buildDocumentCategoriesFromChecklist, getChecklistProgress } from './checklist';
 import DocumentCategoryButton from './DocumentCategoryButton';
-import SyncResultContent from './SyncResultContent';
 
 // 同步是异步任务：POST 立即返回 job，之后轮询 status 接口直到终态。
 // 代理（undici）约 30s 会掐断长请求，所以绝不能让 HTTP 请求一直等同步结果。
@@ -21,8 +19,6 @@ const DocumentsTab = ({ rowData, onRefresh }) => {
 	// createRequest() 每次渲染返回新的 request 引用，useMemo 固定一次，避免回调失稳
 	const { request } = useMemo(() => createRequest(), []);
 	const [syncing, setSyncing] = useState(false);
-	// 同步完成结果（成功/部分失败）；用受控 NewModal 展示，与系统弹窗风格统一
-	const [syncResult, setSyncResult] = useState(null);
 	// 组件卸载后停止轮询 / 状态更新，避免切换菜单回来时遗留的异步写入已卸载组件
 	const mountedRef = useRef(true);
 	useEffect(() => {
@@ -67,18 +63,6 @@ const DocumentsTab = ({ rowData, onRefresh }) => {
 		[request],
 	);
 
-	// 展示终态结果（失败提示 / 成功弹窗）
-	const showSyncResult = useCallback((result) => {
-		if (!result) {
-			return;
-		}
-		if (result.status === 'Failed') {
-			message.error('Sync failed: ' + (result.error || 'unknown error'));
-			return;
-		}
-		setSyncResult(result);
-	}, []);
-
 	const runSync = useCallback(async () => {
 		const transactionId = rowData?.id;
 		// syncing 时直接返回：防止在状态尚未刷新的瞬间重复触发
@@ -104,9 +88,10 @@ const DocumentsTab = ({ rowData, onRefresh }) => {
 			message.info('Sync started. Syncing to Google Drive in the background…');
 
 			const result = await pollSyncStatus(transactionId, started);
-			showSyncResult(result);
-			// 同步达终态后刷新文档列表，使新同步的文件立即带上 Google Drive 标签，
-			// 无需手动刷新页面（Failed 表示整体失败、无文件落库，跳过）。
+			// On terminal status, refresh the document list so newly synced files show
+			// the Google Drive tag immediately. The full result (counts / folder link /
+			// per-file list) is recorded in the transaction Log instead of a modal.
+			// Failed means the whole run failed with nothing persisted, so skip refresh.
 			if (result && result.status !== 'Failed') {
 				onRefreshRef.current?.();
 			}
@@ -117,10 +102,11 @@ const DocumentsTab = ({ rowData, onRefresh }) => {
 				setSyncing(false);
 			}
 		}
-	}, [request, rowData?.id, syncing, pollSyncStatus, showSyncResult]);
+	}, [request, rowData?.id, syncing, pollSyncStatus]);
 
-	// 切换菜单回到本页时，若后台仍有 Running 任务，自动恢复 loading 并继续轮询，
-	// 避免按钮误显示为可点击导致重复触发同步。
+	// On returning to this page, if a Running job still exists, restore the loading
+	// state and keep polling so the button isn't shown as clickable (avoiding a
+	// duplicate sync); refresh the document list on completion to show the tags.
 	useEffect(() => {
 		const transactionId = rowData?.id;
 		if (!transactionId) {
@@ -139,11 +125,8 @@ const DocumentsTab = ({ rowData, onRefresh }) => {
 				if (current?.status === 'Running') {
 					setSyncing(true);
 					const result = await pollSyncStatus(transactionId, current);
-					if (active && mountedRef.current) {
-						showSyncResult(result);
-						if (result && result.status !== 'Failed') {
-							onRefreshRef.current?.();
-						}
+					if (active && mountedRef.current && result && result.status !== 'Failed') {
+						onRefreshRef.current?.();
 					}
 				}
 			} catch {
@@ -157,7 +140,7 @@ const DocumentsTab = ({ rowData, onRefresh }) => {
 		return () => {
 			active = false;
 		};
-	}, [rowData?.id, request, pollSyncStatus, showSyncResult]);
+	}, [rowData?.id, request, pollSyncStatus]);
 
 	const categories = useMemo(
 		() => buildDocumentCategoriesFromChecklist(rowData?.checklist),
@@ -254,26 +237,6 @@ const DocumentsTab = ({ rowData, onRefresh }) => {
 				onRefresh={onRefresh}
 				transactionId={rowData?.id}
 			/>
-
-			{syncResult && (
-				<NewModal
-					width={560}
-					title={
-						syncResult.status === 'PartialFailed'
-							? 'Sync to Google Drive completed with some failures'
-							: 'Sync to Google Drive completed'
-					}
-					onCancel={() => setSyncResult(null)}
-					footer={[
-						<span key="spacer" />,
-						<Button key="done" type="primary" onClick={() => setSyncResult(null)}>
-							Done
-						</Button>,
-					]}
-				>
-					<SyncResultContent result={syncResult} />
-				</NewModal>
-			)}
 		</div>
 	);
 };
