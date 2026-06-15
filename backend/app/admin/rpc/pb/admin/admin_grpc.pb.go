@@ -3437,10 +3437,11 @@ var PricingPlanPolicy_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	OrganizationSubscription_Create_FullMethodName       = "/admin.OrganizationSubscription/Create"
-	OrganizationSubscription_Renew_FullMethodName        = "/admin.OrganizationSubscription/Renew"
-	OrganizationSubscription_SwitchStatus_FullMethodName = "/admin.OrganizationSubscription/SwitchStatus"
-	OrganizationSubscription_Page_FullMethodName         = "/admin.OrganizationSubscription/Page"
+	OrganizationSubscription_Create_FullMethodName           = "/admin.OrganizationSubscription/Create"
+	OrganizationSubscription_Renew_FullMethodName            = "/admin.OrganizationSubscription/Renew"
+	OrganizationSubscription_UpdateExpireDate_FullMethodName = "/admin.OrganizationSubscription/UpdateExpireDate"
+	OrganizationSubscription_SwitchStatus_FullMethodName     = "/admin.OrganizationSubscription/SwitchStatus"
+	OrganizationSubscription_Page_FullMethodName             = "/admin.OrganizationSubscription/Page"
 )
 
 // OrganizationSubscriptionClient is the client API for OrganizationSubscription service.
@@ -3449,6 +3450,7 @@ const (
 type OrganizationSubscriptionClient interface {
 	Create(ctx context.Context, in *OrganizationSubscriptionCreateRequest, opts ...grpc.CallOption) (*OrganizationSubscriptionDetailResponse, error)
 	Renew(ctx context.Context, in *OrganizationSubscriptionRenewRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	UpdateExpireDate(ctx context.Context, in *OrganizationSubscriptionUpdateExpireDateRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	SwitchStatus(ctx context.Context, in *OrganizationSubscriptionSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	Page(ctx context.Context, in *OrganizationSubscriptionPageRequest, opts ...grpc.CallOption) (*OrganizationSubscriptionPageResponse, error)
 }
@@ -3481,6 +3483,16 @@ func (c *organizationSubscriptionClient) Renew(ctx context.Context, in *Organiza
 	return out, nil
 }
 
+func (c *organizationSubscriptionClient) UpdateExpireDate(ctx context.Context, in *OrganizationSubscriptionUpdateExpireDateRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, OrganizationSubscription_UpdateExpireDate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *organizationSubscriptionClient) SwitchStatus(ctx context.Context, in *OrganizationSubscriptionSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(EmptyResponse)
@@ -3507,6 +3519,7 @@ func (c *organizationSubscriptionClient) Page(ctx context.Context, in *Organizat
 type OrganizationSubscriptionServer interface {
 	Create(context.Context, *OrganizationSubscriptionCreateRequest) (*OrganizationSubscriptionDetailResponse, error)
 	Renew(context.Context, *OrganizationSubscriptionRenewRequest) (*EmptyResponse, error)
+	UpdateExpireDate(context.Context, *OrganizationSubscriptionUpdateExpireDateRequest) (*EmptyResponse, error)
 	SwitchStatus(context.Context, *OrganizationSubscriptionSwitchStatusRequest) (*EmptyResponse, error)
 	Page(context.Context, *OrganizationSubscriptionPageRequest) (*OrganizationSubscriptionPageResponse, error)
 	mustEmbedUnimplementedOrganizationSubscriptionServer()
@@ -3524,6 +3537,9 @@ func (UnimplementedOrganizationSubscriptionServer) Create(context.Context, *Orga
 }
 func (UnimplementedOrganizationSubscriptionServer) Renew(context.Context, *OrganizationSubscriptionRenewRequest) (*EmptyResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Renew not implemented")
+}
+func (UnimplementedOrganizationSubscriptionServer) UpdateExpireDate(context.Context, *OrganizationSubscriptionUpdateExpireDateRequest) (*EmptyResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateExpireDate not implemented")
 }
 func (UnimplementedOrganizationSubscriptionServer) SwitchStatus(context.Context, *OrganizationSubscriptionSwitchStatusRequest) (*EmptyResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SwitchStatus not implemented")
@@ -3589,6 +3605,24 @@ func _OrganizationSubscription_Renew_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrganizationSubscription_UpdateExpireDate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationSubscriptionUpdateExpireDateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationSubscriptionServer).UpdateExpireDate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationSubscription_UpdateExpireDate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationSubscriptionServer).UpdateExpireDate(ctx, req.(*OrganizationSubscriptionUpdateExpireDateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _OrganizationSubscription_SwitchStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(OrganizationSubscriptionSwitchStatusRequest)
 	if err := dec(in); err != nil {
@@ -3639,6 +3673,10 @@ var OrganizationSubscription_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Renew",
 			Handler:    _OrganizationSubscription_Renew_Handler,
+		},
+		{
+			MethodName: "UpdateExpireDate",
+			Handler:    _OrganizationSubscription_UpdateExpireDate_Handler,
 		},
 		{
 			MethodName: "SwitchStatus",

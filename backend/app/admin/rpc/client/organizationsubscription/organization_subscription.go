@@ -14,17 +14,19 @@ import (
 )
 
 type (
-	EmptyResponse                               = admin.EmptyResponse
-	OrganizationSubscriptionCreateRequest       = admin.OrganizationSubscriptionCreateRequest
-	OrganizationSubscriptionDetailResponse      = admin.OrganizationSubscriptionDetailResponse
-	OrganizationSubscriptionPageRequest         = admin.OrganizationSubscriptionPageRequest
-	OrganizationSubscriptionPageResponse        = admin.OrganizationSubscriptionPageResponse
-	OrganizationSubscriptionRenewRequest        = admin.OrganizationSubscriptionRenewRequest
-	OrganizationSubscriptionSwitchStatusRequest = admin.OrganizationSubscriptionSwitchStatusRequest
+	EmptyResponse                                   = admin.EmptyResponse
+	OrganizationSubscriptionCreateRequest           = admin.OrganizationSubscriptionCreateRequest
+	OrganizationSubscriptionDetailResponse          = admin.OrganizationSubscriptionDetailResponse
+	OrganizationSubscriptionPageRequest             = admin.OrganizationSubscriptionPageRequest
+	OrganizationSubscriptionPageResponse            = admin.OrganizationSubscriptionPageResponse
+	OrganizationSubscriptionRenewRequest            = admin.OrganizationSubscriptionRenewRequest
+	OrganizationSubscriptionSwitchStatusRequest     = admin.OrganizationSubscriptionSwitchStatusRequest
+	OrganizationSubscriptionUpdateExpireDateRequest = admin.OrganizationSubscriptionUpdateExpireDateRequest
 
 	OrganizationSubscription interface {
 		Create(ctx context.Context, in *OrganizationSubscriptionCreateRequest, opts ...grpc.CallOption) (*OrganizationSubscriptionDetailResponse, error)
 		Renew(ctx context.Context, in *OrganizationSubscriptionRenewRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		UpdateExpireDate(ctx context.Context, in *OrganizationSubscriptionUpdateExpireDateRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		SwitchStatus(ctx context.Context, in *OrganizationSubscriptionSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		Page(ctx context.Context, in *OrganizationSubscriptionPageRequest, opts ...grpc.CallOption) (*OrganizationSubscriptionPageResponse, error)
 	}
@@ -48,6 +50,11 @@ func (m *defaultOrganizationSubscription) Create(ctx context.Context, in *Organi
 func (m *defaultOrganizationSubscription) Renew(ctx context.Context, in *OrganizationSubscriptionRenewRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	client := admin.NewOrganizationSubscriptionClient(m.cli.Conn())
 	return client.Renew(ctx, in, opts...)
+}
+
+func (m *defaultOrganizationSubscription) UpdateExpireDate(ctx context.Context, in *OrganizationSubscriptionUpdateExpireDateRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	client := admin.NewOrganizationSubscriptionClient(m.cli.Conn())
+	return client.UpdateExpireDate(ctx, in, opts...)
 }
 
 func (m *defaultOrganizationSubscription) SwitchStatus(ctx context.Context, in *OrganizationSubscriptionSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {

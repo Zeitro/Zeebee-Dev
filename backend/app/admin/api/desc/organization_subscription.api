@@ -60,6 +60,12 @@ type OrganizationSubscriptionRenewRequest {
     ExpireDate string `json:"expire_date" validate:"required"`
 }
 
+// Update Expire Date
+type OrganizationSubscriptionUpdateExpireDateRequest {
+    Id int64 `path:"id" validate:"required,gt=0"`
+    ExpireDate string `json:"expire_date" validate:"required"`
+}
+
 // Switch Status
 type OrganizationSubscriptionSwitchStatusRequest {
     Id int64 `path:"id" validate:"required,gt=0"`

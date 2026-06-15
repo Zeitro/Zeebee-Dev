@@ -33,6 +33,11 @@ func (s *OrganizationSubscriptionServer) Renew(ctx context.Context, in *admin.Or
 	return l.Renew(in)
 }
 
+func (s *OrganizationSubscriptionServer) UpdateExpireDate(ctx context.Context, in *admin.OrganizationSubscriptionUpdateExpireDateRequest) (*admin.EmptyResponse, error) {
+	l := organizationsubscriptionlogic.NewUpdateExpireDateLogic(ctx, s.svcCtx)
+	return l.UpdateExpireDate(in)
+}
+
 func (s *OrganizationSubscriptionServer) SwitchStatus(ctx context.Context, in *admin.OrganizationSubscriptionSwitchStatusRequest) (*admin.EmptyResponse, error) {
 	l := organizationsubscriptionlogic.NewSwitchStatusLogic(ctx, s.svcCtx)
 	return l.SwitchStatus(in)

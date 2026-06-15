@@ -258,8 +258,14 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: organization_subscription.OrganizationSubscriptionCreateHandler(serverCtx),
 				},
 				{
-					// renew
+					// update expire date
 					Method:  http.MethodPut,
+					Path:    "/organization_subscription/:id/expire_date",
+					Handler: organization_subscription.OrganizationSubscriptionUpdateExpireDateHandler(serverCtx),
+				},
+				{
+					// renew
+					Method:  http.MethodPost,
 					Path:    "/organization_subscription/:id/renew",
 					Handler: organization_subscription.OrganizationSubscriptionRenewHandler(serverCtx),
 				},
@@ -360,10 +366,10 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: pricing_plan.PricingPlanBindResourcesHandler(serverCtx),
 				},
 				{
-					// resource list
-					Method:  http.MethodGet,
-					Path:    "/pricing_plan/:id/resource_list",
-					Handler: pricing_plan.PricingPlanResourceListHandler(serverCtx),
+					// switch status
+					Method:  http.MethodPatch,
+					Path:    "/pricing_plan/:id/status",
+					Handler: pricing_plan.PricingPlanSwitchStatusHandler(serverCtx),
 				},
 				{
 					// page

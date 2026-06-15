@@ -406,13 +406,16 @@ service admin-api {
 	@handler PricingPlanPage
 	post /pricing_plan/page (PricingPlanPageRequest) returns (PricingPlanPageResponse)
 
+	@doc "switch status"
+	@handler PricingPlanSwitchStatus
+	patch /pricing_plan/:id/status (PricingPlanSwitchStatusRequest) returns (EmptyResponse)
+
 	@doc "bind resources"
 	@handler PricingPlanBindResources
 	post /pricing_plan/:id/bind_resources (PricingPlanBindResourcesRequest) returns (EmptyResponse)
-
-	@doc "resource list"
-	@handler PricingPlanResourceList
-	get /pricing_plan/:id/resource_list (PathIdRequest) returns (PricingPlanResourceListResponse)
+// @doc "resource list"
+// @handler PricingPlanResourceList
+// get /pricing_plan/:id/resource_list (PathIdRequest) returns (PricingPlanResourceListResponse)
 }
 
 @server (
@@ -454,7 +457,11 @@ service admin-api {
 
 	@doc "renew"
 	@handler OrganizationSubscriptionRenew
-	put /organization_subscription/:id/renew (OrganizationSubscriptionRenewRequest) returns (OrganizationSubscriptionDetailResponse)
+	post /organization_subscription/:id/renew (OrganizationSubscriptionRenewRequest) returns (EmptyResponse)
+
+	@doc "update expire date"
+	@handler OrganizationSubscriptionUpdateExpireDate
+	put /organization_subscription/:id/expire_date (OrganizationSubscriptionUpdateExpireDateRequest) returns (EmptyResponse)
 
 	@doc "switch status"
 	@handler OrganizationSubscriptionSwitchStatus

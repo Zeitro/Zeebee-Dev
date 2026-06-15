@@ -104,3 +104,11 @@ type (
     }
 )
 
+
+// switch status
+type (
+    PricingPlanSwitchStatusRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Status string `json:"status" validate:"required,oneof=Active Disabled"`
+    }
+)

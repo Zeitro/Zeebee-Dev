@@ -780,6 +780,11 @@ type OrganizationSubscriptionSwitchStatusRequest struct {
 	Status string `json:"status" validate:"required,oneof=Trialing Active Expiring Expired Suspended"`
 }
 
+type OrganizationSubscriptionUpdateExpireDateRequest struct {
+	Id         int64  `path:"id" validate:"required,gt=0"`
+	ExpireDate string `json:"expire_date" validate:"required"`
+}
+
 type OrganizationSwitchStatusRequest struct {
 	Id     int64  `path:"id" validate:"required,min=1"`
 	Status string `json:"status" validate:"required,oneof=Active Disabled"`
@@ -965,6 +970,11 @@ type PricingPlanPolicyUpdateRequest struct {
 
 type PricingPlanResourceListResponse struct {
 	List []*ResourceTreeEntity `json:"list"`
+}
+
+type PricingPlanSwitchStatusRequest struct {
+	Id     int64  `path:"id" validate:"required,gt=0"`
+	Status string `json:"status" validate:"required,oneof=Active Disabled"`
 }
 
 type PricingPlanUpdateRequest struct {
