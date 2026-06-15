@@ -25,9 +25,10 @@ type OrganizationSubscriptionEntity struct {
 }
 
 type OrganizationSubscriptionCreateDto struct {
-	OrganizationId      int64 `json:"organization_id"`
-	PricingPlanId       int64 `json:"pricing_plan_id"`
-	PricingPlanPolicyId int64 `json:"pricing_plan_policy_id"`
+	OrganizationId      int64              `json:"organization_id"`
+	PricingPlanId       int64              `json:"pricing_plan_id"`
+	PricingPlanPolicyId int64              `json:"pricing_plan_policy_id"`
+	Type                constants.UserType `json:"type"`
 }
 
 type OrganizationSubscriptionRenewDto struct {

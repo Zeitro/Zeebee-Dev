@@ -714,8 +714,10 @@ type OrganizationSelectOptionRequest struct {
 }
 
 type OrganizationSubscriptionCreateRequest struct {
-	PricingPlanId       int64 `json:"pricing_plan_id" validate:"required,gt=0"`
-	PricingPlanPolicyId int64 `json:"pricing_plan_policy_id" validate:"required,gt=0"`
+	OrganizationId      int64  `json:"organization_id" validate:"required,gt=0"`
+	PricingPlanId       int64  `json:"pricing_plan_id" validate:"required,gt=0"`
+	PricingPlanPolicyId int64  `json:"pricing_plan_policy_id" validate:"required,gt=0"`
+	Type                string `json:"type" validate:"required,oneof=Borrower,Lender,Admin"`
 }
 
 type OrganizationSubscriptionDetailResponse struct {

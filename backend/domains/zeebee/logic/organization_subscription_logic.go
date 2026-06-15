@@ -36,18 +36,28 @@ func NewOrganizationSubscriptionLogic(baseLogic *BaseLogic, authTopicMap map[con
 	}
 }
 
-func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.OrganizationSubscriptionCreateDto) (*dto.OrganizationSubscriptionEntity, error) {
+func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.OrganizationSubscriptionCreateDto) (result *dto.OrganizationSubscriptionEntity, err error) {
 	plan, err := l.repos.PricingPlanRepo.GetOne(ctx, input.PricingPlanId, nil)
 	if err != nil {
-		return nil, errorx.Wrap(err, "pricing plan not found")
+		return nil, errorx.Wrap(err, "fail to find pricing plan")
 	}
+	if plan.Type != input.Type {
+		err = errorx.New("pricing plan type not match")
+		return
+	}
+
 	if plan.Status != constants.CommonStatusActive {
 		return nil, errorx.New("pricing plan not found or disabled")
 	}
 
 	policy, err := l.repos.PricingPlanPolicyRepo.GetOne(ctx, input.PricingPlanPolicyId)
 	if err != nil {
-		return nil, errorx.New("pricing plan policy not found")
+		return nil, errorx.New("fail to find pricing plan policy")
+	}
+
+	if policy.PricingPlanId != input.PricingPlanId {
+		err = errorx.New("pricing plan policy not match")
+		return
 	}
 
 	code := fmt.Sprintf("SU%s%s", time.Now().Format("20060102150405"), randomHex(4))
@@ -65,22 +75,23 @@ func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.Or
 	}
 
 	err = l.repos.OrganizationSubscriptionRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
 		// set active subscription to inactive
-		activeSubs, innerErr := l.repos.OrganizationSubscriptionRepo.FindActiveByOrgIdWithTx(ctx, tx, input.OrganizationId)
+		updateColumns := map[string]interface{}{
+			"status": constants.OrganizationSubscriptionStatusExpired,
+		}
+		equalFilter := map[string]interface{}{
+			"organization_id": input.OrganizationId,
+		}
+		notFilter := map[string]interface{}{
+			"status": constants.OrganizationSubscriptionStatusExpired,
+		}
+		innerErr = l.repos.OrganizationSubscriptionRepo.UpdateColumnsWithTx(ctx, tx, updateColumns, equalFilter, notFilter)
 		if innerErr != nil {
 			return innerErr
 		}
-		for _, sub := range activeSubs {
-			sub.Status = constants.OrganizationSubscriptionStatusExpired
-			_, innerErr = l.repos.OrganizationSubscriptionRepo.UpdateOneByIdWithTx(ctx, tx, sub.Id, sub)
-			if innerErr != nil {
-				return innerErr
-			}
-		}
-
-		var createErr error
-		subscription, createErr = l.repos.OrganizationSubscriptionRepo.CreateWithTx(ctx, tx, subscription, false)
-		return createErr
+		subscription, innerErr = l.repos.OrganizationSubscriptionRepo.CreateWithTx(ctx, tx, subscription, false)
+		return innerErr
 	})
 	if err != nil {
 		return nil, err
