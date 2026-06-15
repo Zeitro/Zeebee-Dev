@@ -8,7 +8,8 @@ import {
 	formatFirstLetterName,
 	formatTime,
 } from '@repo/shared-methods/utils';
-import { getActivityLogDisplayFields } from './activityLogFields';
+import { ACTIVITY_LOG_OPERATION, getActivityLogDisplayFields } from './activityLogFields';
+import DriveSyncResult from './DriveSyncResult';
 
 const formatFieldValue = (field) => {
 	const raw = field?.value;
@@ -20,6 +21,8 @@ const formatFieldValue = (field) => {
 
 const ActivityLogItem = ({ item, style }) => {
 	const fields = getActivityLogDisplayFields(item);
+	// Google Drive sync result detail is rendered directly from metadata (replaces the old success modal)
+	const isDriveSync = item?.operation === ACTIVITY_LOG_OPERATION.SYNCED_TO_DRIVE;
 
 	return (
 		<div className="flex flex-col gap-4 border-b border-base-border py-4 mb-2" style={style}>
@@ -48,19 +51,23 @@ const ActivityLogItem = ({ item, style }) => {
 					</span>
 				</div>
 			</div>
-			{fields.map((field, index) => (
-				<div
-					key={`${field?.label}-${index}`}
-					className="flex items-center gap-6 text-sm leading-[22px]"
-				>
-					<span className="w-[120px] shrink-0 text-base-gray">
-						{displayValue(field?.label)}
-					</span>
-					<span className="min-w-0 font-medium text-foreground">
-						{formatFieldValue(field)}
-					</span>
-				</div>
-			))}
+			{isDriveSync ? (
+				<DriveSyncResult result={item?.metadata} />
+			) : (
+				fields.map((field, index) => (
+					<div
+						key={`${field?.label}-${index}`}
+						className="flex items-center gap-6 text-sm leading-[22px]"
+					>
+						<span className="w-[120px] shrink-0 text-base-gray">
+							{displayValue(field?.label)}
+						</span>
+						<span className="min-w-0 font-medium text-foreground">
+							{formatFieldValue(field)}
+						</span>
+					</div>
+				))
+			)}
 		</div>
 	);
 };
