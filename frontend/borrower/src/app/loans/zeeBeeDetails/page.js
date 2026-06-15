@@ -156,7 +156,7 @@ const ZeeBeeDetails = () => {
 					>
 						<Form
 							form={form}
-							name="basic"
+							name="basic-zeebee-details"
 							layout="vertical"
 							autoComplete="off"
 							className=""

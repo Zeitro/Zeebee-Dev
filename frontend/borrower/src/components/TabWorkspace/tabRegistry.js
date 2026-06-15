@@ -3,11 +3,14 @@ import { matchRoute } from '@repo/shared-methods/utils';
 /**
  * Tab 保活页面注册表：pattern → 懒加载页面组件。
  * 更具体的路径写在前面，避免被宽泛 pattern 抢先匹配。
+ *
+ * 若页面依赖 route layout 中的副作用（如全局 CSS），请用 `tabEntry.js` 作 loader，
+ * 勿直接 import `page.js`，否则会绕过 layout。
  */
 export const tabRegistry = [
 	{
 		pattern: '/loans/createZeeBeeLoan',
-		loader: () => import('@/app/loans/createZeeBeeLoan/page'),
+		loader: () => import('@/app/loans/createZeeBeeLoan/tabEntry'),
 	},
 	{
 		pattern: '/loans/createLoan',
@@ -15,7 +18,7 @@ export const tabRegistry = [
 	},
 	{
 		pattern: '/loans/zeeBeeDetails',
-		loader: () => import('@/app/loans/zeeBeeDetails/page'),
+		loader: () => import('@/app/loans/zeeBeeDetails/tabEntry'),
 	},
 	{
 		pattern: '/loans/:id',
