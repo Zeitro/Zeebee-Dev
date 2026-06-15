@@ -152,7 +152,8 @@ func TestSubscriptionCreate_ExpireDateCalculated(t *testing.T) {
 
 	assert.NotNil(t, result.ExpireDate)
 	assert.True(t, result.ExpireDate.Valid)
-	expectedExpiry := beforeCreate.AddDate(0, 0, 30)
+	// monthly term: expire = (now - 1 day) + 1 month, clamped to month end.
+	expectedExpiry := addMonthsClamped(beforeCreate.AddDate(0, 0, -1), 1)
 	tolerance := 5 * time.Second
 	assert.WithinDuration(t, expectedExpiry, result.ExpireDate.Time, tolerance)
 }
@@ -292,13 +293,7 @@ func TestSubscriptionRenew_Success(t *testing.T) {
 	created, err := subLogic.Create(ctx, createInput)
 	require.NoError(t, err)
 
-	newExpiry := &sql.NullTime{Time: time.Now().AddDate(0, 1, 0), Valid: true}
-	renewInput := dto.OrganizationSubscriptionRenewDto{
-		Id:         created.Id,
-		ExpireDate: newExpiry,
-	}
-
-	renewed, err := subLogic.Renew(ctx, created.Id, renewInput)
+	renewed, err := subLogic.Renew(ctx, created.Id)
 	require.NoError(t, err)
 	assert.NotNil(t, renewed.ExpireDate)
 	assert.True(t, renewed.ExpireDate.Valid)
@@ -308,12 +303,7 @@ func TestSubscriptionRenew_NotFound(t *testing.T) {
 	subLogic, _ := setupSubscriptionLogic(t)
 	ctx := context.Background()
 
-	renewInput := dto.OrganizationSubscriptionRenewDto{
-		Id:         99999,
-		ExpireDate: &sql.NullTime{Time: time.Now().AddDate(0, 1, 0), Valid: true},
-	}
-
-	_, err := subLogic.Renew(ctx, 99999, renewInput)
+	_, err := subLogic.Renew(ctx, 99999)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "not found")
 }
@@ -387,4 +377,54 @@ func TestSubscriptionSwitchStatus_SameStatus_NoOp(t *testing.T) {
 
 	err := subLogic.SwitchStatus(ctx, sub.Id, constants.OrganizationSubscriptionStatusActive)
 	assert.NoError(t, err)
+}
+
+// TestCalculateExpireDate verifies the calendar-month billing logic:
+// expire = (start - 1 day) + N months, with the day clamped to the target
+// month's last day. N = 1/3/12 for monthly/quarterly/yearly.
+// Cases mirror the validated spec table.
+func TestCalculateExpireDate(t *testing.T) {
+	parseDate := func(s string) time.Time {
+		tt, err := time.ParseInLocation("2006-01-02", s, time.UTC)
+		require.NoError(t, err)
+		return tt
+	}
+
+	cases := []struct {
+		name       string
+		policyType constants.PricingPolicyType
+		start      string
+		want       string
+	}{
+		// monthly (N=1)
+		{"monthly/mid-month", constants.PricingPolicyTypeMonthly, "2026-01-15", "2026-02-14"},
+		{"monthly/month-start", constants.PricingPolicyTypeMonthly, "2026-01-01", "2026-01-31"},
+		{"monthly/month-start-feb", constants.PricingPolicyTypeMonthly, "2026-02-01", "2026-02-28"},
+		{"monthly/last-day-jan", constants.PricingPolicyTypeMonthly, "2026-01-31", "2026-02-28"},
+		{"monthly/last-day-feb", constants.PricingPolicyTypeMonthly, "2026-02-28", "2026-03-27"},
+		// quarterly (N=3)
+		{"quarterly/mid-month", constants.PricingPolicyTypeQuarterly, "2026-01-15", "2026-04-14"},
+		{"quarterly/month-start", constants.PricingPolicyTypeQuarterly, "2026-01-01", "2026-03-31"},
+		{"quarterly/month-start-feb", constants.PricingPolicyTypeQuarterly, "2026-02-01", "2026-04-30"},
+		{"quarterly/last-day-jan", constants.PricingPolicyTypeQuarterly, "2026-01-31", "2026-04-30"},
+		{"quarterly/last-day-feb", constants.PricingPolicyTypeQuarterly, "2026-02-28", "2026-05-27"},
+		{"quarterly/dec-into-short-feb", constants.PricingPolicyTypeQuarterly, "2025-12-01", "2026-02-28"},
+		{"quarterly/nov-29-into-feb", constants.PricingPolicyTypeQuarterly, "2025-11-29", "2026-02-28"},
+		{"quarterly/nov-30-into-feb", constants.PricingPolicyTypeQuarterly, "2025-11-30", "2026-02-28"},
+		// yearly (N=12)
+		{"yearly/month-start", constants.PricingPolicyTypeYearly, "2026-01-01", "2026-12-31"},
+		{"yearly/mid-month", constants.PricingPolicyTypeYearly, "2026-01-15", "2027-01-14"},
+		// Leap day clamps to Feb 28 of the next (non-leap) year.
+		{"yearly/leap-day", constants.PricingPolicyTypeYearly, "2024-02-29", "2025-02-28"},
+		{"yearly/leap-day2", constants.PricingPolicyTypeYearly, "2023-02-28", "2024-02-27"},
+	}
+
+	for _, tc := range cases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			got := calculateExpireDate(tc.policyType, parseDate(tc.start))
+			require.True(t, got.Valid, "expire date should be valid")
+			assert.Equal(t, tc.want, got.Time.Format("2006-01-02"))
+		})
+	}
 }

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/duke-git/lancet/v2/slice"
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/copierx"
@@ -50,7 +51,7 @@ func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.Or
 	}
 
 	code := fmt.Sprintf("SU%s%s", time.Now().Format("20060102150405"), randomHex(4))
-	expireDate := l.calculateExpireDate(policy.Type)
+	expireDate := calculateExpireDate(policy.Type, time.Now())
 
 	subscription := &model.OrganizationSubscription{
 		Code:                code,
@@ -89,34 +90,66 @@ func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.Or
 	return l.transToDetailDto(ctx, subscription)
 }
 
-func (l *OrganizationSubscriptionLogic) Renew(ctx context.Context, id int64, input dto.OrganizationSubscriptionRenewDto) (result *dto.OrganizationSubscriptionEntity, err error) {
+func (l *OrganizationSubscriptionLogic) Renew(ctx context.Context, id int64) (result *dto.OrganizationSubscriptionEntity, err error) {
 	subscription, err := l.repos.OrganizationSubscriptionRepo.GetOne(ctx, id)
 	if err != nil {
 		err = errorx.New("organization subscription not found")
 		return
 	}
 
-	if input.ExpireDate == nil || !input.ExpireDate.Valid {
-		err = errorx.New("invalid expire date")
+	plan, err := l.repos.PricingPlanRepo.GetOne(ctx, subscription.PricingPlanId, []gormx.Preload{{Query: "Resources"}})
+	if err != nil || plan == nil {
+		err = errorx.New("fail to find pricing plan not found or disabled")
 		return
 	}
-	subscription.ExpireDate = input.ExpireDate
-	if input.ExpireDate.Time.After(time.Now()) {
-		subscription.Status = constants.OrganizationSubscriptionStatusActive
-	} else {
-		subscription.Status = constants.OrganizationSubscriptionStatusExpired
+
+	if plan.Status != constants.CommonStatusActive {
+		return nil, errorx.New("pricing plan is disabled")
 	}
 
-	subscription, err = l.repos.OrganizationSubscriptionRepo.UpdateOneById(ctx, id, subscription)
+	policy, err := l.repos.PricingPlanPolicyRepo.GetOne(ctx, subscription.PricingPlanPolicyId)
+	if err != nil {
+		err = errorx.New("fail to find pricing plan")
+		return
+	}
+
+	oldEffective := subscriptionEffective(subscription.Status)
+	// renew base: start from now if expired, else extend from current expire date
+	base := time.Now()
+	if subscription.ExpireDate != nil && subscription.ExpireDate.Valid && subscription.ExpireDate.Time.After(base) {
+		base = subscription.ExpireDate.Time
+	}
+	subscription.ExpireDate = calculateExpireDate(policy.Type, base)
+	subscription.Status = constants.OrganizationSubscriptionStatusActive
+	newEffective := subscriptionEffective(subscription.Status)
+
+	var organizationPolicies map[int64]*organizationPolicyChanges
+	err = l.repos.OrganizationSubscriptionRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		subscription, innerErr = l.repos.OrganizationSubscriptionRepo.UpdateOneByIdWithTx(ctx, tx, id, subscription)
+		if innerErr != nil {
+			return innerErr
+		}
+		if oldEffective == newEffective {
+			return nil
+		}
+		resourceIds := planResourceIds(plan)
+		if len(resourceIds) == 0 {
+			return nil
+		}
+		organizationPolicies, innerErr = syncPlanResourcesToOrganizationRoles(ctx, l.repos, tx, planResourceSyncReq{
+			OrganizationIds: []int64{subscription.OrganizationId},
+			ResourceIds:     resourceIds,
+			UserType:        plan.Type,
+			IsBind:          newEffective,
+		})
+		return innerErr
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	plan, _ := l.repos.PricingPlanRepo.GetOne(ctx, subscription.PricingPlanId, nil)
-	if plan != nil {
-		l.publishRoleReloadEvent(ctx, subscription.OrganizationId, plan.Type)
-	}
-
+	l.publishOrgPolicyReloadEvents(ctx, organizationPolicies, plan.Type)
 	return l.transToDetailDto(ctx, subscription)
 }
 
@@ -130,22 +163,45 @@ func (l *OrganizationSubscriptionLogic) UpdateExpireDate(ctx context.Context, id
 		return nil
 	}
 
+	oldEffective := subscriptionEffective(subscription.Status)
 	subscription.ExpireDate = &sql.NullTime{Time: expireDate, Valid: true}
-
 	if expireDate.After(time.Now()) {
 		subscription.Status = constants.OrganizationSubscriptionStatusActive
 	} else {
 		subscription.Status = constants.OrganizationSubscriptionStatusExpired
 	}
+	newEffective := subscriptionEffective(subscription.Status)
 
-	_, err = l.repos.OrganizationSubscriptionRepo.UpdateOneById(ctx, id, subscription)
+	plan, _ := l.repos.PricingPlanRepo.GetOne(ctx, subscription.PricingPlanId, []gormx.Preload{{Query: "Resources"}})
+
+	var organizationPolicies map[int64]*organizationPolicyChanges
+	err = l.repos.OrganizationSubscriptionRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
+		_, innerErr = l.repos.OrganizationSubscriptionRepo.UpdateOneByIdWithTx(ctx, tx, id, subscription)
+		if innerErr != nil {
+			return innerErr
+		}
+		if plan == nil || oldEffective == newEffective {
+			return nil
+		}
+		resourceIds := planResourceIds(plan)
+		if len(resourceIds) == 0 {
+			return nil
+		}
+		organizationPolicies, innerErr = syncPlanResourcesToOrganizationRoles(ctx, l.repos, tx, planResourceSyncReq{
+			OrganizationIds: []int64{subscription.OrganizationId},
+			ResourceIds:     resourceIds,
+			UserType:        plan.Type,
+			IsBind:          newEffective,
+		})
+		return innerErr
+	})
 	if err != nil {
 		return err
 	}
 
-	plan, _ := l.repos.PricingPlanRepo.GetOne(ctx, subscription.PricingPlanId, nil)
 	if plan != nil {
-		l.publishRoleReloadEvent(ctx, subscription.OrganizationId, plan.Type)
+		l.publishOrgPolicyReloadEvents(ctx, organizationPolicies, plan.Type)
 	}
 
 	return nil
@@ -189,19 +245,40 @@ func (l *OrganizationSubscriptionLogic) Page(ctx context.Context, req dto.Organi
 	return *resultPtr, nil
 }
 
-func (l *OrganizationSubscriptionLogic) calculateExpireDate(policyType constants.PricingPolicyType) *sql.NullTime {
-	var days int
+func calculateExpireDate(policyType constants.PricingPolicyType, base time.Time) *sql.NullTime {
+	months := 1
 	switch policyType {
-	case constants.PricingPolicyTypeMonthly:
-		days = 30
 	case constants.PricingPolicyTypeQuarterly:
-		days = 90
+		months = 3
 	case constants.PricingPolicyTypeYearly:
-		days = 365
+		months = 12
 	default:
-		days = 30
+		months = 1
 	}
-	return &sql.NullTime{Time: time.Now().AddDate(0, 0, days), Valid: true}
+	// Billing term is N full calendar months inclusive of the start day:
+	// expire = (start - 1 day) + N months, day clamped to the target month's
+	// last day. e.g. monthly Jan 1 -> Jan 31, Jan 31 -> Feb 28/29.
+	expire := addMonthsClamped(base.AddDate(0, 0, -1), months)
+	return &sql.NullTime{Time: expire, Valid: true}
+}
+
+// addMonthsClamped adds months to t, clamping the day to the target month's
+// last day (Jan 31 + 1 month -> Feb 28/29). Unlike time.AddDate it never
+// overflows the day into the following month.
+func addMonthsClamped(t time.Time, months int) time.Time {
+	year, month, day := t.Date()
+	totalMonths := int(month) - 1 + months
+	year += totalMonths / 12
+	month = time.Month(totalMonths%12 + 1)
+	if last := lastDayOfMonth(year, month, t.Location()); day > last {
+		day = last
+	}
+	return time.Date(year, month, day, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
+}
+
+// lastDayOfMonth returns the last calendar day of the given year/month in loc.
+func lastDayOfMonth(year int, month time.Month, loc *time.Location) int {
+	return time.Date(year, month+1, 0, 0, 0, 0, 0, loc).Day()
 }
 
 func (l *OrganizationSubscriptionLogic) transToDetailDto(ctx context.Context, sub *model.OrganizationSubscription) (*dto.OrganizationSubscriptionEntity, error) {
@@ -236,6 +313,11 @@ func (l *OrganizationSubscriptionLogic) SubscribeDefaultPlan(ctx context.Context
 		return nil
 	}
 
+	plan, err = l.repos.PricingPlanRepo.GetOne(ctx, plan.Id, []gormx.Preload{{Query: "Resources"}})
+	if err != nil || plan == nil {
+		return nil
+	}
+
 	code := fmt.Sprintf("SU%s%s", time.Now().Format("20060102150405"), randomHex(4))
 	expireDate := &sql.NullTime{Time: time.Now().AddDate(0, 0, int(plan.TrialDays)), Valid: true}
 
@@ -250,6 +332,9 @@ func (l *OrganizationSubscriptionLogic) SubscribeDefaultPlan(ctx context.Context
 		ActualAmount:        0,
 	}
 
+	resourceIds := planResourceIds(plan)
+
+	var organizationPolicies map[int64]*organizationPolicyChanges
 	err = l.repos.OrganizationSubscriptionRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		activeSubs, innerErr := l.repos.OrganizationSubscriptionRepo.FindActiveByOrgIdWithTx(ctx, tx, organizationId)
 		if innerErr != nil {
@@ -264,13 +349,26 @@ func (l *OrganizationSubscriptionLogic) SubscribeDefaultPlan(ctx context.Context
 		}
 
 		_, createErr := l.repos.OrganizationSubscriptionRepo.CreateWithTx(ctx, tx, subscription, false)
-		return createErr
+		if createErr != nil {
+			return createErr
+		}
+
+		if len(resourceIds) == 0 {
+			return nil
+		}
+		organizationPolicies, innerErr = syncPlanResourcesToOrganizationRoles(ctx, l.repos, tx, planResourceSyncReq{
+			OrganizationIds: []int64{organizationId},
+			ResourceIds:     resourceIds,
+			UserType:        plan.Type,
+			IsBind:          true,
+		})
+		return innerErr
 	})
 	if err != nil {
 		return err
 	}
 
-	l.publishRoleReloadEvent(ctx, organizationId, plan.Type)
+	l.publishOrgPolicyReloadEvents(ctx, organizationPolicies, plan.Type)
 	return nil
 }
 
@@ -281,6 +379,42 @@ func randomHex(n int) string {
 		return "0000"
 	}
 	return hex.EncodeToString(b)
+}
+
+// subscriptionEffective reports whether a subscription status grants plan resource access.
+// Mirrors FindEffectiveByPlanIdWithTx: every status except Expired is effective.
+func subscriptionEffective(status constants.OrganizationSubscriptionStatus) bool {
+	return status != constants.OrganizationSubscriptionStatusExpired
+}
+
+// planResourceIds extracts resource IDs from a pricing plan.
+func planResourceIds(plan *model.PricingPlan) []int64 {
+	if plan == nil {
+		return nil
+	}
+	return slice.Map(plan.Resources, func(index int, resource *model.Resource) int64 {
+		return resource.Id
+	})
+}
+
+// publishOrgPolicyReloadEvents sends per-org RoleReload events with explicit policy changes.
+func (l *OrganizationSubscriptionLogic) publishOrgPolicyReloadEvents(ctx context.Context, organizationPolicies map[int64]*organizationPolicyChanges, userType constants.UserType) {
+	for orgId, changes := range organizationPolicies {
+		orgId := orgId
+		changes := changes
+		threading.GoSafe(func() {
+			subCtx := context.WithoutCancel(ctx)
+			msg := auth.Msg{
+				Action:          auth.ActionRoleReload,
+				Scope:           auth.ScopeOrganization,
+				Type:            userType,
+				OrganizationId:  orgId,
+				AddedPolicies:   changes.added,
+				RemovedPolicies: changes.removed,
+			}
+			_ = l.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
+		})
+	}
 }
 
 func (l *OrganizationSubscriptionLogic) publishRoleReloadEvent(ctx context.Context, orgId int64, userType constants.UserType) {
