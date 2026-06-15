@@ -6717,15 +6717,23 @@
             "schema": {
               "type": "object",
               "required": [
+                "organization_id",
                 "pricing_plan_id",
-                "pricing_plan_policy_id"
+                "pricing_plan_policy_id",
+                "type"
               ],
               "properties": {
+                "organization_id": {
+                  "type": "integer"
+                },
                 "pricing_plan_id": {
                   "type": "integer"
                 },
                 "pricing_plan_policy_id": {
                   "type": "integer"
+                },
+                "type": {
+                  "type": "string"
                 }
               }
             }
@@ -6953,7 +6961,7 @@
       }
     },
     "/api/v1/organization_subscription/{id}/expire_date": {
-      "put": {
+      "patch": {
         "consumes": [
           "application/json"
         ],
@@ -7083,7 +7091,7 @@
       }
     },
     "/api/v1/organization_subscription/{id}/status": {
-      "put": {
+      "patch": {
         "consumes": [
           "application/json"
         ],
@@ -8910,6 +8918,119 @@
                     },
                     "updated_at": {
                       "type": "string"
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pricing_plan/all": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "pricing_plan"
+        ],
+        "summary": "all",
+        "operationId": "pricingPlanPricingPlanAll",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "type",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "list": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name",
+                          "type",
+                          "sort_order",
+                          "policies"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "policies": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "pricing_plan_id",
+                                "original_amount",
+                                "actual_amount",
+                                "type",
+                                "created_at",
+                                "updated_at"
+                              ],
+                              "properties": {
+                                "actual_amount": {
+                                  "type": "number"
+                                },
+                                "created_at": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "original_amount": {
+                                  "type": "number"
+                                },
+                                "pricing_plan_id": {
+                                  "type": "integer"
+                                },
+                                "type": {
+                                  "type": "string"
+                                },
+                                "updated_at": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "sort_order": {
+                            "type": "integer"
+                          },
+                          "type": {
+                            "type": "string"
+                          }
+                        }
+                      }
                     }
                   }
                 },
@@ -14156,7 +14277,7 @@
       }
     }
   },
-  "x-date": "2026-06-15 16:19:51",
+  "x-date": "2026-06-15 18:20:16",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

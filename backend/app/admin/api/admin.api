@@ -390,6 +390,10 @@ service admin-api {
 	@handler PricingPlanCreate
 	post /pricing_plan (PricingPlanCreateRequest) returns (PricingPlanEntity)
 
+	@doc "all"
+	@handler PricingPlanAll
+	get /pricing_plan/all (PricingPLanAllrequest) returns (PricingPlanAllResponse)
+
 	@doc "update"
 	@handler PricingPlanUpdate
 	put /pricing_plan/:id (PricingPlanUpdateRequest) returns (PricingPlanEntity)
@@ -413,9 +417,6 @@ service admin-api {
 	@doc "bind resources"
 	@handler PricingPlanBindResources
 	post /pricing_plan/:id/bind_resources (PricingPlanBindResourcesRequest) returns (EmptyResponse)
-// @doc "resource list"
-// @handler PricingPlanResourceList
-// get /pricing_plan/:id/resource_list (PathIdRequest) returns (PricingPlanResourceListResponse)
 }
 
 @server (

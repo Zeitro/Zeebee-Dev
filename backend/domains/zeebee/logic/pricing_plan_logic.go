@@ -180,6 +180,34 @@ func (l *PricingPlanLogic) Page(ctx context.Context, req dto.PricingPlanPageRequ
 	return *resultPtr, nil
 }
 
+// All returns all active plans of the given type as option entities (id/name/type/sort_order/policies),
+// ordered by sort_order with policies sorted monthly -> quarterly -> yearly.
+func (l *PricingPlanLogic) All(ctx context.Context, planType constants.UserType, isPublic bool) ([]*dto.PricingPlanOptEntityDto, error) {
+	plans, err := l.repos.PricingPlanRepo.FindAllByType(ctx, planType, isPublic)
+	if err != nil {
+		return nil, errorx.Wrap(err, "fail to find pricing plans")
+	}
+
+	policyTypeMap := map[constants.PricingPolicyType]int{
+		constants.PricingPolicyTypeMonthly:   0,
+		constants.PricingPolicyTypeQuarterly: 1,
+		constants.PricingPolicyTypeYearly:    2,
+	}
+
+	result := make([]*dto.PricingPlanOptEntityDto, 0, len(plans))
+	for _, plan := range plans {
+		slice.SortBy(plan.Policies, func(a, b *model.PricingPlanPolicy) bool {
+			return policyTypeMap[a.Type] < policyTypeMap[b.Type]
+		})
+		opt, err := copierx.Trans[model.PricingPlan, dto.PricingPlanOptEntityDto](plan)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, opt)
+	}
+	return result, nil
+}
+
 func (l *PricingPlanLogic) SwitchStatus(ctx context.Context, id int64, status constants.CommonStatus) (err error) {
 	preloads := []gormx.Preload{
 		{Query: "Resources"},

@@ -1539,6 +1539,14 @@ message PricingPlanPageEntity {
   bool is_default = 12;
 }
 
+message PricingPlanOptEntity {
+  int64 id = 1;
+  string name = 2;
+  int32 sort_order = 3;
+  string type = 4;
+  repeated PricingPlanPolicyEntity policies = 5;
+}
+
 
 
 // PricingPlan Create
@@ -1656,6 +1664,17 @@ message PricingPlanResourceListResponse {
   repeated ResourceTreeEntity data = 1;
 }
 
+// all
+message PricingPlanAllRequest {
+  PricingPlanAllRequestData data = 1;
+}
+message PricingPlanAllRequestData {
+  string type = 1;
+}
+message PricingPlanAllResponse {
+  repeated PricingPlanOptEntity data = 1;
+}
+
 
 
 service PricingPlan {
@@ -1667,6 +1686,7 @@ service PricingPlan {
   rpc SwitchStatus(PricingPlanSwitchStatusRequest) returns(EmptyResponse);
   rpc BindResources(PricingPlanBindResourcesRequest) returns(EmptyResponse);
   rpc ResourceList(PricingPlanResourceListRequest) returns(PricingPlanResourceListResponse);
+  rpc All(PricingPlanAllRequest) returns(PricingPlanAllResponse);
 }
 
 // ==================== pricing plan service end ====================

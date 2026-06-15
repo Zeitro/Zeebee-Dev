@@ -878,6 +878,14 @@ type PathIdRequest struct {
 	Id int64 `path:"id" validate:"required,gt=0"`
 }
 
+type PricingPLanAllrequest struct {
+	Type string `form:"type" validate:"required,oneof=Borrower Lender Admin"`
+}
+
+type PricingPlanAllResponse struct {
+	List []*PricingPlanOptEntity `json:"list"`
+}
+
 type PricingPlanBindResourcesRequest struct {
 	Id          int64   `path:"id" validate:"required,gt=0"`
 	ResourceIds []int64 `json:"resource_ids" validate:"required,dive,gt=0"`
@@ -1289,4 +1297,12 @@ type UserResetPasswordRequest struct {
 	Password        string `json:"password" validate:"required,min=8,max=32,password"`
 	ConfirmPassword string `json:"confirm_password" validate:"required,eqfield=Password"`
 	Code            string `json:"code" validate:"required,len=10"`
+}
+
+type PricingPlanOptEntity struct {
+	Id        int64                      `json:"id"`
+	Name      string                     `json:"name"`
+	Type      string                     `json:"type"`
+	SortOrder int16                      `json:"sort_order"`
+	Policies  []*PricingPlanPolicyEntity `json:"policies"`
 }

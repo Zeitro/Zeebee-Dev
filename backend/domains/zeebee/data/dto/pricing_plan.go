@@ -6,6 +6,15 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 )
 
+// PricingPlanOptEntity option entity for dropdown/select lists (includes policies)
+type PricingPlanOptEntityDto struct {
+	Id        int64                        `json:"id"`
+	Name      string                       `json:"name"`
+	SortOrder int16                        `json:"sort_order"`
+	Type      string                       `json:"type"`
+	Policies  []PricingPlanPolicyEntityDto `json:"policies"`
+}
+
 // PricingPlanEntity detail entity (includes policies)
 type PricingPlanEntityDto struct {
 	Id          int64                        `json:"id"`

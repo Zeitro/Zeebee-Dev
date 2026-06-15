@@ -372,6 +372,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: pricing_plan.PricingPlanSwitchStatusHandler(serverCtx),
 				},
 				{
+					// all
+					Method:  http.MethodGet,
+					Path:    "/pricing_plan/all",
+					Handler: pricing_plan.PricingPlanAllHandler(serverCtx),
+				},
+				{
 					// page
 					Method:  http.MethodPost,
 					Path:    "/pricing_plan/page",

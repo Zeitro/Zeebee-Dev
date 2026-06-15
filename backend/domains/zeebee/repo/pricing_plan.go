@@ -52,6 +52,22 @@ func (repo *PricingPlanRepo) FindDefaultByType(ctx context.Context, planType con
 	return result, nil
 }
 
+// FindAllByType returns all active plans of the given type with policies preloaded,
+// ordered by sort_order for option/dropdown lists.
+func (repo *PricingPlanRepo) FindAllByType(ctx context.Context, planType constants.UserType, isPublic bool) (result []*model.PricingPlan, err error) {
+	query := repo.Client(ctx).
+		Select("id", "name", "status", "type", "is_public", "sort_order").
+		Where("type = ? AND status = ?", planType, constants.CommonStatusActive)
+	if isPublic {
+		query = query.Where("is_public = ?", true)
+	}
+
+	err = query.Preload("Policies").
+		Order("sort_order asc").
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+}
+
 // UpdateResourcesWithTx updates a plan's resource associations within a transaction.
 // New resources are appended, removed resources are deleted, unchanged ones are left alone.
 func (repo *PricingPlanRepo) UpdateResourcesWithTx(ctx context.Context, tx *gorm.DB, plan *model.PricingPlan, newResources []*model.Resource, removedResources []*model.Resource) error {

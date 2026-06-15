@@ -62,3 +62,8 @@ func (s *PricingPlanServer) ResourceList(ctx context.Context, in *admin.PricingP
 	l := pricingplanlogic.NewResourceListLogic(ctx, s.svcCtx)
 	return l.ResourceList(in)
 }
+
+func (s *PricingPlanServer) All(ctx context.Context, in *admin.PricingPlanAllRequest) (*admin.PricingPlanAllResponse, error) {
+	l := pricingplanlogic.NewAllLogic(ctx, s.svcCtx)
+	return l.All(in)
+}

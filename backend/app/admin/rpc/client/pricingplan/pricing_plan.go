@@ -16,6 +16,8 @@ import (
 type (
 	EmptyResponse                   = admin.EmptyResponse
 	PathIdRequest                   = admin.PathIdRequest
+	PricingPlanAllRequest           = admin.PricingPlanAllRequest
+	PricingPlanAllResponse          = admin.PricingPlanAllResponse
 	PricingPlanBindResourcesRequest = admin.PricingPlanBindResourcesRequest
 	PricingPlanCreateRequest        = admin.PricingPlanCreateRequest
 	PricingPlanDetailResponse       = admin.PricingPlanDetailResponse
@@ -35,6 +37,7 @@ type (
 		SwitchStatus(ctx context.Context, in *PricingPlanSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		BindResources(ctx context.Context, in *PricingPlanBindResourcesRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		ResourceList(ctx context.Context, in *PricingPlanResourceListRequest, opts ...grpc.CallOption) (*PricingPlanResourceListResponse, error)
+		All(ctx context.Context, in *PricingPlanAllRequest, opts ...grpc.CallOption) (*PricingPlanAllResponse, error)
 	}
 
 	defaultPricingPlan struct {
@@ -86,4 +89,9 @@ func (m *defaultPricingPlan) BindResources(ctx context.Context, in *PricingPlanB
 func (m *defaultPricingPlan) ResourceList(ctx context.Context, in *PricingPlanResourceListRequest, opts ...grpc.CallOption) (*PricingPlanResourceListResponse, error) {
 	client := admin.NewPricingPlanClient(m.cli.Conn())
 	return client.ResourceList(ctx, in, opts...)
+}
+
+func (m *defaultPricingPlan) All(ctx context.Context, in *PricingPlanAllRequest, opts ...grpc.CallOption) (*PricingPlanAllResponse, error) {
+	client := admin.NewPricingPlanClient(m.cli.Conn())
+	return client.All(ctx, in, opts...)
 }

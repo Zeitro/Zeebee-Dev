@@ -2899,6 +2899,7 @@ const (
 	PricingPlan_SwitchStatus_FullMethodName  = "/admin.PricingPlan/SwitchStatus"
 	PricingPlan_BindResources_FullMethodName = "/admin.PricingPlan/BindResources"
 	PricingPlan_ResourceList_FullMethodName  = "/admin.PricingPlan/ResourceList"
+	PricingPlan_All_FullMethodName           = "/admin.PricingPlan/All"
 )
 
 // PricingPlanClient is the client API for PricingPlan service.
@@ -2913,6 +2914,7 @@ type PricingPlanClient interface {
 	SwitchStatus(ctx context.Context, in *PricingPlanSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	BindResources(ctx context.Context, in *PricingPlanBindResourcesRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	ResourceList(ctx context.Context, in *PricingPlanResourceListRequest, opts ...grpc.CallOption) (*PricingPlanResourceListResponse, error)
+	All(ctx context.Context, in *PricingPlanAllRequest, opts ...grpc.CallOption) (*PricingPlanAllResponse, error)
 }
 
 type pricingPlanClient struct {
@@ -3003,6 +3005,16 @@ func (c *pricingPlanClient) ResourceList(ctx context.Context, in *PricingPlanRes
 	return out, nil
 }
 
+func (c *pricingPlanClient) All(ctx context.Context, in *PricingPlanAllRequest, opts ...grpc.CallOption) (*PricingPlanAllResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PricingPlanAllResponse)
+	err := c.cc.Invoke(ctx, PricingPlan_All_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PricingPlanServer is the server API for PricingPlan service.
 // All implementations must embed UnimplementedPricingPlanServer
 // for forward compatibility.
@@ -3015,6 +3027,7 @@ type PricingPlanServer interface {
 	SwitchStatus(context.Context, *PricingPlanSwitchStatusRequest) (*EmptyResponse, error)
 	BindResources(context.Context, *PricingPlanBindResourcesRequest) (*EmptyResponse, error)
 	ResourceList(context.Context, *PricingPlanResourceListRequest) (*PricingPlanResourceListResponse, error)
+	All(context.Context, *PricingPlanAllRequest) (*PricingPlanAllResponse, error)
 	mustEmbedUnimplementedPricingPlanServer()
 }
 
@@ -3048,6 +3061,9 @@ func (UnimplementedPricingPlanServer) BindResources(context.Context, *PricingPla
 }
 func (UnimplementedPricingPlanServer) ResourceList(context.Context, *PricingPlanResourceListRequest) (*PricingPlanResourceListResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ResourceList not implemented")
+}
+func (UnimplementedPricingPlanServer) All(context.Context, *PricingPlanAllRequest) (*PricingPlanAllResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method All not implemented")
 }
 func (UnimplementedPricingPlanServer) mustEmbedUnimplementedPricingPlanServer() {}
 func (UnimplementedPricingPlanServer) testEmbeddedByValue()                     {}
@@ -3214,6 +3230,24 @@ func _PricingPlan_ResourceList_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PricingPlan_All_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PricingPlanAllRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PricingPlanServer).All(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PricingPlan_All_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PricingPlanServer).All(ctx, req.(*PricingPlanAllRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PricingPlan_ServiceDesc is the grpc.ServiceDesc for PricingPlan service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -3252,6 +3286,10 @@ var PricingPlan_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ResourceList",
 			Handler:    _PricingPlan_ResourceList_Handler,
+		},
+		{
+			MethodName: "All",
+			Handler:    _PricingPlan_All_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

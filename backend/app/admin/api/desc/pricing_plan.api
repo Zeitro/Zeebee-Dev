@@ -44,6 +44,14 @@ type PricingPlanPageEntity {
     UpdatedAt string `json:"updated_at"`
 }
 
+type PricingPlanOptEntity {
+    Id int64 `json:"id"`
+    Name string `json:"name"`
+    Type string `json:"type"`
+    SortOrder int16 `json:"sort_order"`
+    Policies []*PricingPlanPolicyEntity `json:"policies"`
+}
+
 // Page
 type (
     PricingPlanFilter {
@@ -110,5 +118,15 @@ type (
     PricingPlanSwitchStatusRequest {
         Id int64 `path:"id" validate:"required,gt=0"`
         Status string `json:"status" validate:"required,oneof=Active Disabled"`
+    }
+)
+// all for selecte options
+type (
+    PricingPLanAllrequest {
+        Type string `form:"type" validate:"required,oneof=Borrower Lender Admin"`
+    }
+
+    PricingPlanAllResponse {
+        List []*PricingPlanOptEntity `json:"list"`
     }
 )
