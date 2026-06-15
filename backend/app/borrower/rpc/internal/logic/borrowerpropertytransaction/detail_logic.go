@@ -84,13 +84,29 @@ func fillNodeFiles(ctx context.Context, fileRepo *repo.FileRepo, nodes []*dto.Ch
 			if err != nil {
 				continue
 			}
-			dtoFiles, _ := copierx.Trans[[]*model.File, []*dto.FileEntityDto](&files, copierx.TimeToRFC3339Str())
-			if dtoFiles != nil && len(*dtoFiles) > 0 {
-				nodes[i].FileCount = int32(len(*dtoFiles))
-				nodes[i].Files = *dtoFiles
+			dtoFiles := toFileEntityDtos(files)
+			if len(dtoFiles) > 0 {
+				nodes[i].FileCount = int32(len(dtoFiles))
+				nodes[i].Files = dtoFiles
 			}
 		} else {
 			fillNodeFiles(ctx, fileRepo, node.Children)
 		}
 	}
+}
+
+// toFileEntityDtos converts file models into checklist DTOs. DriveSyncedAt is a
+// *sql.NullTime, so SqlTimePtrToStr is required for the Google Drive sync marker
+// to survive the conversion; without it drive_synced_at is silently dropped and
+// the UI "Google Drive" label never shows.
+func toFileEntityDtos(files []*model.File) []*dto.FileEntityDto {
+	dtoFiles, _ := copierx.Trans[[]*model.File, []*dto.FileEntityDto](
+		&files,
+		copierx.TimeToRFC3339Str(),
+		copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
+	)
+	if dtoFiles == nil {
+		return nil
+	}
+	return *dtoFiles
 }
