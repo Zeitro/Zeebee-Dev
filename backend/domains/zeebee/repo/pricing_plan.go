@@ -81,7 +81,7 @@ func (repo *PricingPlanRepo) Page(ctx context.Context, pageReq dto.PricingPlanPa
 	table := model.PricingPlan{}.TableName()
 	filter := pageReq.Filter
 
-	query := repo.GetDB().Table(table).WithContext(ctx)
+	query := repo.Client(ctx)
 
 	if len(filter.Keyword) > 0 {
 		keyword := "%" + filter.Keyword + "%"
@@ -96,7 +96,7 @@ func (repo *PricingPlanRepo) Page(ctx context.Context, pageReq dto.PricingPlanPa
 	if len(filter.PlanType) > 0 {
 		query = query.Where("plan_type = ?", filter.PlanType)
 	}
-
+	query = query.Order(fmt.Sprintf("%s.sort_order asc", table))
 	if len(pageReq.Sorter.Column) > 0 {
 		query = query.Order(fmt.Sprintf("%s.%s %s", table, pageReq.Sorter.Column, pageReq.Sorter.Sort))
 	}
@@ -108,4 +108,36 @@ func (repo *PricingPlanRepo) Page(ctx context.Context, pageReq dto.PricingPlanPa
 		CountColumn: fmt.Sprintf("%s.id", table),
 	})
 	return page, errorx.WithStack(err)
+}
+
+// DeleteWithTx deletes a pricing plan within a transaction.
+// It removes the plan's resource associations, deletes the plan's pricing
+// policies, then deletes the plan itself.
+func (repo *PricingPlanRepo) DeleteWithTx(ctx context.Context, tx *gorm.DB, plan *model.PricingPlan) (err error) {
+	if plan == nil {
+		return
+	}
+
+	// nil out loaded associations first: GORM's Association().Clear() would
+	// otherwise encode the fully-loaded Resource structs (with model.Base
+	// timestamps) into the join-table delete clause → OID 0 encoding error.
+	plan.RemoveRelationships()
+
+	// remove resource associations (join table has no soft-delete column → hard delete)
+	err = tx.WithContext(ctx).Model(plan).Association("Resources").Clear()
+	if err != nil {
+		return errorx.WithStack(err)
+	}
+
+	// delete the plan's pricing policies (soft-delete via model.Base)
+	err = tx.WithContext(ctx).
+		Where("pricing_plan_id = ?", plan.Id).
+		Delete(&model.PricingPlanPolicy{}).Error
+	if err != nil {
+		return errorx.WithStack(err)
+	}
+
+	// delete the plan (soft-delete)
+	err = tx.WithContext(ctx).Delete(plan).Error
+	return errorx.WithStack(err)
 }

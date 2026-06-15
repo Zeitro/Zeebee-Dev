@@ -87,7 +87,7 @@ func (repo *OrganizationSubscriptionRepo) Page(ctx context.Context, pageReq dto.
 	planTable := model.PricingPlan{}.TableName()
 	filter := pageReq.Filter
 
-	query := repo.GetDB().Table(subTable).WithContext(ctx).
+	query := repo.Client(ctx).
 		Select(fmt.Sprintf("%s.*, %s.name as organization_name, %s.name as pricing_plan_name", subTable, orgTable, planTable)).
 		Joins(fmt.Sprintf("LEFT JOIN %s ON %s.organization_id = %s.id", orgTable, subTable, orgTable)).
 		Joins(fmt.Sprintf("LEFT JOIN %s ON %s.pricing_plan_id = %s.id", planTable, subTable, planTable))

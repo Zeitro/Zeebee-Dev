@@ -117,8 +117,7 @@ func (repo *BorrowerPropertyTransactionRepo) Page(ctx context.Context, pageReq d
 	propTable := model.BorrowerProperty{}.TableName()
 
 	filter := pageReq.Filter
-	query := repo.GetDB().
-		Table(transTable).WithContext(ctx).
+	query := repo.Client(ctx).
 		Select(fmt.Sprintf("%s.*, %s.address", transTable, propTable)).
 		Joins(fmt.Sprintf("LEFT JOIN %s ON %s.borrower_property_id = %s.id", propTable, transTable, propTable)).
 		Where(fmt.Sprintf("%s.organization_id = ?", transTable), filter.OrganizationId).
