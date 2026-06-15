@@ -44,7 +44,7 @@ func (l *UpdateLogic) Update(in *admin.PricingPlanPolicyUpdateRequest) (resp *ad
 		return nil, err
 	}
 
-	result, err := l.baseLogic.PricingPlanPolicyLogic.Update(l.ctx, in.Data.Id, *dtoData)
+	result, err := l.baseLogic.PricingPlanPolicyLogic.Update(l.ctx, *dtoData)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}

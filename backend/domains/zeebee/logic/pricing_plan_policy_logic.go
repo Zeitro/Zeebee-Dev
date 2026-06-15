@@ -5,6 +5,7 @@ import (
 
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 )
@@ -24,8 +25,14 @@ func (l *PricingPlanPolicyLogic) Create(ctx context.Context, input dto.PricingPl
 	if err != nil {
 		return nil, errorx.Wrap(err, "pricing plan not found")
 	}
+	filters := []gormx.WhereRaw{
+		{
+			Raw:  "pricing_plan_id = ? and type = ?",
+			Args: []interface{}{input.PricingPlanId, input.Type},
+		},
+	}
 
-	exists, err := l.repos.PricingPlanPolicyRepo.ExistsByPlanIdAndType(ctx, input.PricingPlanId, string(input.Type))
+	exists, err := l.repos.PricingPlanPolicyRepo.IsExistedWithFilter(ctx, filters)
 	if err != nil {
 		return nil, err
 	}
@@ -46,10 +53,10 @@ func (l *PricingPlanPolicyLogic) Create(ctx context.Context, input dto.PricingPl
 	return copierx.Trans[model.PricingPlanPolicy, dto.PricingPlanPolicyEntityDto](result)
 }
 
-func (l *PricingPlanPolicyLogic) Update(ctx context.Context, id int64, input dto.PricingPlanPolicyUpdateRequestDto) (*dto.PricingPlanPolicyEntityDto, error) {
-	policy, err := l.repos.PricingPlanPolicyRepo.GetOne(ctx, id)
+func (l *PricingPlanPolicyLogic) Update(ctx context.Context, input dto.PricingPlanPolicyUpdateRequestDto) (*dto.PricingPlanPolicyEntityDto, error) {
+	policy, err := l.repos.PricingPlanPolicyRepo.GetOne(ctx, input.Id)
 	if err != nil {
-		return nil, errorx.Wrap(err, "pricing plan policy not found")
+		return nil, errorx.Wrap(err, "fail to find pricing plan policy")
 	}
 
 	err = copierx.Assign[dto.PricingPlanPolicyUpdateRequestDto, model.PricingPlanPolicy](&input, policy)
@@ -57,7 +64,22 @@ func (l *PricingPlanPolicyLogic) Update(ctx context.Context, id int64, input dto
 		return nil, err
 	}
 
-	policy, err = l.repos.PricingPlanPolicyRepo.UpdateOneById(ctx, id, policy)
+	// check policy type
+	filters := []gormx.WhereRaw{
+		{
+			Raw:  "pricing_plan_id = ? and type = ? and id != ?",
+			Args: []interface{}{policy.PricingPlanId, input.Type, input.Id},
+		},
+	}
+	exists, err := l.repos.PricingPlanPolicyRepo.IsExistedWithFilter(ctx, filters)
+	if err != nil {
+		return nil, err
+	}
+	if exists {
+		return nil, errorx.New("pricing plan policy with same type already exists")
+	}
+
+	policy, err = l.repos.PricingPlanPolicyRepo.UpdateOneById(ctx, input.Id, policy)
 	if err != nil {
 		return nil, err
 	}
@@ -68,9 +90,9 @@ func (l *PricingPlanPolicyLogic) Update(ctx context.Context, id int64, input dto
 func (l *PricingPlanPolicyLogic) Delete(ctx context.Context, id int64) error {
 	_, err := l.repos.PricingPlanPolicyRepo.GetOne(ctx, id)
 	if err != nil {
-		return errorx.Wrap(err, "pricing plan policy not found")
+		return errorx.Wrap(err, "fail to find pricing plan policy")
 	}
 
-	_, err = l.repos.PricingPlanPolicyRepo.DeleteByIDWithTx(ctx, l.repos.PricingPlanPolicyRepo.GetDB(), id)
+	_, err = l.repos.PricingPlanPolicyRepo.DeleteByID(ctx, id)
 	return err
 }

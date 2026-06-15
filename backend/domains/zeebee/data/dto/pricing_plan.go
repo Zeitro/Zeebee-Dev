@@ -20,6 +20,7 @@ type PricingPlanEntityDto struct {
 	Type        string                       `json:"type"`
 	PlanType    string                       `json:"plan_type"`
 	Policies    []PricingPlanPolicyEntityDto `json:"policies"`
+	Resources   []ResourceEntityDto          `json:"resources"`
 	CreatedAt   time.Time                    `json:"created_at"`
 	UpdatedAt   time.Time                    `json:"updated_at"`
 }

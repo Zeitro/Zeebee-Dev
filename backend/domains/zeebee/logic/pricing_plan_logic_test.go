@@ -137,7 +137,7 @@ func TestPricingPlanCreate_DuplicateNameUnderSameType(t *testing.T) {
 	logic, _ := setupPricingPlanLogic(t)
 	ctx := context.Background()
 
-	input := dto.PricingPlanCreateDto{
+	input := dto.PricingPlanCreateRequestDto{
 		Name:     "Pro Plan",
 		Type:     constants.UserTypeLender,
 		PlanType: constants.PricingPlanTypeStandard,
@@ -155,12 +155,12 @@ func TestPricingPlanCreate_DifferentTypeSameName_OK(t *testing.T) {
 	logic, _ := setupPricingPlanLogic(t)
 	ctx := context.Background()
 
-	input1 := dto.PricingPlanCreateDto{
+	input1 := dto.PricingPlanCreateRequestDto{
 		Name:     "Pro Plan",
 		Type:     constants.UserTypeLender,
 		PlanType: constants.PricingPlanTypeStandard,
 	}
-	input2 := dto.PricingPlanCreateDto{
+	input2 := dto.PricingPlanCreateRequestDto{
 		Name:     "Pro Plan",
 		Type:     constants.UserTypeBorrower,
 		PlanType: constants.PricingPlanTypeStandard,
@@ -241,7 +241,7 @@ func TestPricingPlanPolicyCreate_DuplicateType(t *testing.T) {
 	logic, _ := setupPricingPlanLogic(t)
 	ctx := context.Background()
 
-	planInput := dto.PricingPlanCreateDto{
+	planInput := dto.PricingPlanCreateRequestDto{
 		Name:     "Test Plan",
 		Type:     constants.UserTypeLender,
 		PlanType: constants.PricingPlanTypeStandard,
@@ -251,7 +251,7 @@ func TestPricingPlanPolicyCreate_DuplicateType(t *testing.T) {
 
 	policyLogic := NewPricingPlanPolicyLogic(logic.BaseLogic)
 
-	input1 := dto.PricingPlanPolicyCreateDto{
+	input1 := dto.PricingPlanPolicyCreateRequestDto{
 		PricingPlanId:  plan.Id,
 		OriginalAmount: 100,
 		ActualAmount:   80,
@@ -260,7 +260,7 @@ func TestPricingPlanPolicyCreate_DuplicateType(t *testing.T) {
 	_, err = policyLogic.Create(ctx, input1)
 	require.NoError(t, err)
 
-	input2 := dto.PricingPlanPolicyCreateDto{
+	input2 := dto.PricingPlanPolicyCreateRequestDto{
 		PricingPlanId:  plan.Id,
 		OriginalAmount: 200,
 		ActualAmount:   160,
@@ -275,7 +275,7 @@ func TestPricingPlanPolicyCreate_DifferentType_OK(t *testing.T) {
 	logic, _ := setupPricingPlanLogic(t)
 	ctx := context.Background()
 
-	planInput := dto.PricingPlanCreateDto{
+	planInput := dto.PricingPlanCreateRequestDto{
 		Name:     "Test Plan",
 		Type:     constants.UserTypeLender,
 		PlanType: constants.PricingPlanTypeStandard,
@@ -285,7 +285,7 @@ func TestPricingPlanPolicyCreate_DifferentType_OK(t *testing.T) {
 
 	policyLogic := NewPricingPlanPolicyLogic(logic.BaseLogic)
 
-	input1 := dto.PricingPlanPolicyCreateDto{
+	input1 := dto.PricingPlanPolicyCreateRequestDto{
 		PricingPlanId:  plan.Id,
 		OriginalAmount: 100,
 		ActualAmount:   80,
@@ -294,7 +294,7 @@ func TestPricingPlanPolicyCreate_DifferentType_OK(t *testing.T) {
 	_, err = policyLogic.Create(ctx, input1)
 	require.NoError(t, err)
 
-	input2 := dto.PricingPlanPolicyCreateDto{
+	input2 := dto.PricingPlanPolicyCreateRequestDto{
 		PricingPlanId:  plan.Id,
 		OriginalAmount: 300,
 		ActualAmount:   240,
@@ -312,7 +312,7 @@ func TestPricingPlanUpdate_NameNotChangeable(t *testing.T) {
 	logic, _ := setupPricingPlanLogic(t)
 	ctx := context.Background()
 
-	input := dto.PricingPlanCreateDto{
+	input := dto.PricingPlanCreateRequestDto{
 		Name:     "Original Name",
 		Type:     constants.UserTypeLender,
 		PlanType: constants.PricingPlanTypeStandard,
@@ -320,7 +320,7 @@ func TestPricingPlanUpdate_NameNotChangeable(t *testing.T) {
 	created, err := logic.Create(ctx, input)
 	require.NoError(t, err)
 
-	updateInput := dto.PricingPlanUpdateDto{
+	updateInput := dto.PricingPlanUpdateRequestDto{
 		Id:          created.Id,
 		Subtitle:    "Updated Subtitle",
 		Description: "Updated Description",
@@ -386,13 +386,64 @@ func TestPricingPlanDelete_ExpiredSubscription_OK(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+// T032b: Delete removes resource associations and pricing policies
+func TestPricingPlanDelete_RemovesResourcesAndPolicies(t *testing.T) {
+	logic, db := setupPricingPlanLogic(t)
+	ctx := context.Background()
+
+	plan := seedPricingPlan(t, db, &model.PricingPlan{
+		Name:     "Test Plan",
+		Type:     constants.UserTypeLender,
+		PlanType: constants.PricingPlanTypeStandard,
+		Status:   constants.CommonStatusActive,
+	})
+
+	seedResources(t, db, []int64{101, 102})
+	for _, rid := range []int64{101, 102} {
+		require.NoError(t, db.Create(&model.PricingPlanAndResource{
+			PricingPlanId: plan.Id,
+			ResourceId:    rid,
+		}).Error)
+	}
+
+	for _, ptype := range []constants.PricingPolicyType{
+		constants.PricingPolicyTypeMonthly,
+		constants.PricingPolicyTypeYearly,
+	} {
+		require.NoError(t, db.Create(&model.PricingPlanPolicy{
+			PricingPlanId:  plan.Id,
+			Type:           ptype,
+			OriginalAmount: 100,
+			ActualAmount:   80,
+		}).Error)
+	}
+
+	err := logic.Delete(ctx, plan.Id)
+	require.NoError(t, err)
+
+	var joinCount int64
+	require.NoError(t, db.Model(&model.PricingPlanAndResource{}).
+		Where("pricing_plan_id = ?", plan.Id).Count(&joinCount).Error)
+	assert.Equal(t, int64(0), joinCount, "resource associations should be removed")
+
+	var policyCount int64
+	require.NoError(t, db.Model(&model.PricingPlanPolicy{}).
+		Where("pricing_plan_id = ? AND is_del = 0", plan.Id).Count(&policyCount).Error)
+	assert.Equal(t, int64(0), policyCount, "pricing policies should be deleted")
+
+	var planCount int64
+	require.NoError(t, db.Model(&model.PricingPlan{}).
+		Where("id = ? AND is_del = 0", plan.Id).Count(&planCount).Error)
+	assert.Equal(t, int64(0), planCount, "pricing plan should be deleted")
+}
+
 // T033: UpdatePolicy/DeletePolicy tests
 func TestPricingPlanPolicyUpdate_NotFound(t *testing.T) {
 	logic, _ := setupPricingPlanLogic(t)
 	ctx := context.Background()
 	policyLogic := NewPricingPlanPolicyLogic(logic.BaseLogic)
 
-	input := dto.PricingPlanPolicyUpdateDto{
+	input := dto.PricingPlanPolicyUpdateRequestDto{
 		Id:             99999,
 		OriginalAmount: 200,
 		ActualAmount:   150,
@@ -416,7 +467,7 @@ func TestPricingPlanPolicyUpdate_Success(t *testing.T) {
 	logic, _ := setupPricingPlanLogic(t)
 	ctx := context.Background()
 
-	planInput := dto.PricingPlanCreateDto{
+	planInput := dto.PricingPlanCreateRequestDto{
 		Name:     "Test Plan",
 		Type:     constants.UserTypeLender,
 		PlanType: constants.PricingPlanTypeStandard,
@@ -426,7 +477,7 @@ func TestPricingPlanPolicyUpdate_Success(t *testing.T) {
 
 	policyLogic := NewPricingPlanPolicyLogic(logic.BaseLogic)
 
-	createInput := dto.PricingPlanPolicyCreateDto{
+	createInput := dto.PricingPlanPolicyCreateRequestDto{
 		PricingPlanId:  plan.Id,
 		OriginalAmount: 100,
 		ActualAmount:   80,
@@ -435,7 +486,7 @@ func TestPricingPlanPolicyUpdate_Success(t *testing.T) {
 	policy, err := policyLogic.Create(ctx, createInput)
 	require.NoError(t, err)
 
-	updateInput := dto.PricingPlanPolicyUpdateDto{
+	updateInput := dto.PricingPlanPolicyUpdateRequestDto{
 		Id:             policy.Id,
 		OriginalAmount: 200,
 		ActualAmount:   150,
@@ -450,7 +501,7 @@ func TestPricingPlanPolicyDelete_Success(t *testing.T) {
 	logic, _ := setupPricingPlanLogic(t)
 	ctx := context.Background()
 
-	planInput := dto.PricingPlanCreateDto{
+	planInput := dto.PricingPlanCreateRequestDto{
 		Name:     "Test Plan",
 		Type:     constants.UserTypeLender,
 		PlanType: constants.PricingPlanTypeStandard,
@@ -460,7 +511,7 @@ func TestPricingPlanPolicyDelete_Success(t *testing.T) {
 
 	policyLogic := NewPricingPlanPolicyLogic(logic.BaseLogic)
 
-	createInput := dto.PricingPlanPolicyCreateDto{
+	createInput := dto.PricingPlanPolicyCreateRequestDto{
 		PricingPlanId:  plan.Id,
 		OriginalAmount: 100,
 		ActualAmount:   80,
@@ -472,7 +523,7 @@ func TestPricingPlanPolicyDelete_Success(t *testing.T) {
 	err = policyLogic.Delete(ctx, policy.Id)
 	assert.NoError(t, err)
 
-	_, err = policyLogic.Update(ctx, policy.Id, dto.PricingPlanPolicyUpdateDto{Id: policy.Id})
+	_, err = policyLogic.Update(ctx, policy.Id, dto.PricingPlanPolicyUpdateRequestDto{Id: policy.Id})
 	assert.Error(t, err)
 }
 
@@ -482,7 +533,7 @@ func TestPricingPlanCreate_Success(t *testing.T) {
 	logic, _ := setupPricingPlanLogic(t)
 	ctx := context.Background()
 
-	input := dto.PricingPlanCreateDto{
+	input := dto.PricingPlanCreateRequestDto{
 		Name:        "Pro Plan",
 		Subtitle:    "For professionals",
 		Description: "Full featured plan",
@@ -504,7 +555,7 @@ func TestPricingPlanDetail_Success(t *testing.T) {
 	logic, _ := setupPricingPlanLogic(t)
 	ctx := context.Background()
 
-	input := dto.PricingPlanCreateDto{
+	input := dto.PricingPlanCreateRequestDto{
 		Name:     "Detail Plan",
 		Type:     constants.UserTypeLender,
 		PlanType: constants.PricingPlanTypeStandard,
@@ -530,10 +581,10 @@ func TestPricingPlanSwitchStatus_Success(t *testing.T) {
 	logic, _ := setupPricingPlanLogic(t)
 	ctx := context.Background()
 
-	input := dto.PricingPlanCreateDto{
-		Name:   "Status Plan",
-		Type:   constants.UserTypeLender,
-		Status: constants.CommonStatusActive,
+	input := dto.PricingPlanCreateRequestDto{
+		Name: "Status Plan",
+		Type: constants.UserTypeLender,
+		// Status: constants.CommonStatusActive,
 	}
 	created, err := logic.Create(ctx, input)
 	require.NoError(t, err)

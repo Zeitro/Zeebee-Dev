@@ -13,6 +13,7 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/repo"
 
 	"github.com/zeromicro/go-zero/core/threading"
 )
@@ -110,31 +111,58 @@ func (l *PricingPlanLogic) Update(ctx context.Context, input dto.PricingPlanUpda
 }
 
 func (l *PricingPlanLogic) Delete(ctx context.Context, id int64) (err error) {
-	_, err = l.repos.PricingPlanRepo.GetOne(ctx, id, nil)
+	plan, err := l.repos.PricingPlanRepo.GetOne(ctx, id, []gormx.Preload{
+		{Query: "Policies"},
+		{Query: "Resources"},
+		{Query: "Subscriptions"},
+	})
 	if err != nil {
 		return errorx.Wrap(err, "fail to find pricing plan")
 	}
 
-	return l.repos.PricingPlanRepo.Transaction(ctx, func(tx *gorm.DB) error {
+	err = l.repos.PricingPlanRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		var innerErr error
 		// check for active subscriptions
-		effectedSubscriptions, innerErr := l.repos.OrganizationSubscriptionRepo.FindEffectiveByPlanIdWithTx(ctx, tx, id)
-		if innerErr != nil {
-			return innerErr
-		}
+		// effectedSubscriptions, innerErr := l.repos.OrganizationSubscriptionRepo.FindEffectiveByPlanIdWithTx(ctx, tx, id)
+		// get active subscriptions
+		effectedSubscriptions := slice.Filter(plan.Subscriptions, func(index int, item *model.OrganizationSubscription) bool {
+			return item.Status == constants.OrganizationSubscriptionStatusActive ||
+				item.Status == constants.OrganizationSubscriptionStatusExpiring ||
+				item.Status == constants.OrganizationSubscriptionStatusSuspended ||
+				item.Status == constants.OrganizationSubscriptionStatusTrialing
+		})
+
+		// if innerErr != nil {
+		// 	return innerErr
+		// }
 		if len(effectedSubscriptions) > 0 {
 			return errorx.New("cannot delete pricing plan with active subscriptions")
 		}
 		// delete plan
-		_, innerErr = l.repos.PricingPlanRepo.DeleteByIDWithTx(ctx, tx, id)
+		innerErr = l.repos.PricingPlanRepo.DeleteWithTx(ctx, tx, plan)
 		return innerErr
 	})
+
+	return errorx.WithStack(err)
 }
 
 func (l *PricingPlanLogic) Detail(ctx context.Context, id int64) (*dto.PricingPlanEntityDto, error) {
-	plan, err := l.repos.PricingPlanRepo.FindOneWithPreloadById(ctx, id, []string{"Policies"})
+	plan, err := l.repos.PricingPlanRepo.FindOneWithPreloadById(ctx, id, []string{"Policies", "Resources"})
 	if err != nil {
 		return nil, errorx.Wrap(err, "fail to find pricing plan")
 	}
+
+	policies := plan.Policies
+	policyTypeMap := map[constants.PricingPolicyType]int{
+		constants.PricingPolicyTypeMonthly:   0,
+		constants.PricingPolicyTypeQuarterly: 1,
+		constants.PricingPolicyTypeYearly:    2,
+	}
+	slice.SortBy(policies, func(a, b *model.PricingPlanPolicy) bool {
+		return policyTypeMap[a.Type] < policyTypeMap[b.Type]
+	})
+	plan.Policies = policies
+
 	return l.transToDetailDto(ctx, plan)
 }
 
@@ -197,9 +225,19 @@ func (l *PricingPlanLogic) SwitchStatus(ctx context.Context, id int64, status co
 		}
 		// bind/unbind resources
 		if isDisabling {
-			orgPolicies, innerErr = l.syncPlanResourcesToOrganizationRoles(ctx, tx, affectedOrganizationIds, resourceIds, plan.Type, false)
+			orgPolicies, innerErr = syncPlanResourcesToOrganizationRoles(ctx, l.repos, tx, planResourceSyncReq{
+				OrganizationIds: affectedOrganizationIds,
+				ResourceIds:     resourceIds,
+				UserType:        plan.Type,
+				IsBind:          false,
+			})
 		} else {
-			orgPolicies, innerErr = l.syncPlanResourcesToOrganizationRoles(ctx, tx, affectedOrganizationIds, resourceIds, plan.Type, true)
+			orgPolicies, innerErr = syncPlanResourcesToOrganizationRoles(ctx, l.repos, tx, planResourceSyncReq{
+				OrganizationIds: affectedOrganizationIds,
+				ResourceIds:     resourceIds,
+				UserType:        plan.Type,
+				IsBind:          true,
+			})
 		}
 		return innerErr
 	})
@@ -261,7 +299,12 @@ func (l *PricingPlanLogic) BindResources(ctx context.Context, planId int64, reso
 		}
 
 		if len(removedIds) > 0 {
-			removedOrgPolicies, innerErr := l.syncPlanResourcesToOrganizationRoles(ctx, tx, organizationIds, removedIds, plan.Type, false)
+			removedOrgPolicies, innerErr := syncPlanResourcesToOrganizationRoles(ctx, l.repos, tx, planResourceSyncReq{
+				OrganizationIds: organizationIds,
+				ResourceIds:     removedIds,
+				UserType:        plan.Type,
+				IsBind:          false,
+			})
 			if innerErr != nil {
 				return innerErr
 			}
@@ -269,7 +312,12 @@ func (l *PricingPlanLogic) BindResources(ctx context.Context, planId int64, reso
 		}
 
 		if len(newIds) > 0 {
-			addedOrgPolicies, innerErr := l.syncPlanResourcesToOrganizationRoles(ctx, tx, organizationIds, newIds, plan.Type, true)
+			addedOrgPolicies, innerErr := syncPlanResourcesToOrganizationRoles(ctx, l.repos, tx, planResourceSyncReq{
+				OrganizationIds: organizationIds,
+				ResourceIds:     newIds,
+				UserType:        plan.Type,
+				IsBind:          true,
+			})
 			if innerErr != nil {
 				return innerErr
 			}
@@ -284,77 +332,6 @@ func (l *PricingPlanLogic) BindResources(ctx context.Context, planId int64, reso
 
 	l.publishOrgRoleReloadEvents(ctx, organizationPolicies, plan.Type)
 	return
-}
-
-// orgPolicyChanges tracks per-org policy changes for auth event publishing.
-type organizationPolicyChanges struct {
-	added   [][]string
-	removed [][]string
-}
-
-// diffResourceIds computes added and removed resource IDs.
-func diffResourceIds(oldIds, newIds []int64) (added, removed []int64) {
-
-	removed = slice.Difference(oldIds, newIds)
-	added = slice.Difference(newIds, oldIds)
-	return
-}
-
-// resourceStubs creates Resource stubs with only IDs set, for GORM association operations.
-func resourceStubs(ids []int64) []*model.Resource {
-	stubs := make([]*model.Resource, 0, len(ids))
-	for _, id := range ids {
-		stubs = append(stubs, &model.Resource{Base: model.Base{Id: id}})
-	}
-	return stubs
-}
-
-// syncPlanResourcesToOrganizationRoles binds/unbinds plan resources to organization roles.
-func (l *PricingPlanLogic) syncPlanResourcesToOrganizationRoles(ctx context.Context, tx *gorm.DB, organizationIds []int64, resourceIds []int64, userType constants.UserType, isBind bool) (map[int64]*organizationPolicyChanges, error) {
-	if len(organizationIds) == 0 || len(resourceIds) == 0 {
-		return nil, nil
-	}
-	roles, err := l.repos.RoleRepo.FindByOrganizationIdsWithTx(ctx, tx, organizationIds, userType)
-	if err != nil {
-		return nil, err
-	}
-	var removedResources []*model.Resource
-	var addedResources []*model.Resource
-	if isBind {
-		addedResources = resourceStubs(resourceIds)
-	} else {
-		removedResources = resourceStubs(resourceIds)
-	}
-	organizationPolicies := make(map[int64]*organizationPolicyChanges)
-
-	for _, role := range roles {
-		err = l.repos.RoleRepo.UpdateResourcesWithTx(ctx, tx, role, addedResources, removedResources)
-		if err != nil {
-			return nil, err
-		}
-		if organizationPolicies[role.OrganizationId] == nil {
-			organizationPolicies[role.OrganizationId] = &organizationPolicyChanges{}
-		}
-		for _, resourceId := range resourceIds {
-			if isBind {
-				organizationPolicies[role.OrganizationId].added = append(organizationPolicies[role.OrganizationId].added, auth.BuildPolicy(role.Id, resourceId, userType))
-			} else {
-				organizationPolicies[role.OrganizationId].removed = append(organizationPolicies[role.OrganizationId].removed, auth.BuildPolicy(role.Id, resourceId, userType))
-			}
-		}
-	}
-	return organizationPolicies, nil
-}
-
-// mergeOrganizationPolicies merges source policies into target.
-func mergeOrganizationPolicies(target map[int64]*organizationPolicyChanges, source map[int64]*organizationPolicyChanges) {
-	for organizationId, srcChanges := range source {
-		if target[organizationId] == nil {
-			target[organizationId] = &organizationPolicyChanges{}
-		}
-		target[organizationId].added = append(target[organizationId].added, srcChanges.added...)
-		target[organizationId].removed = append(target[organizationId].removed, srcChanges.removed...)
-	}
 }
 
 // publishOrgRoleReloadEvents sends per-org RoleReload events with explicit policy changes.
@@ -380,7 +357,7 @@ func (l *PricingPlanLogic) publishOrgRoleReloadEvents(ctx context.Context, organ
 func (l *PricingPlanLogic) ResourceList(ctx context.Context, planId int64) ([]*dto.PricingPlanResourceEntityDto, error) {
 	_, err := l.repos.PricingPlanRepo.GetOne(ctx, planId, nil)
 	if err != nil {
-		return nil, errorx.Wrap(err, "pricing plan not found")
+		return nil, errorx.Wrap(err, "fail to find pricing plan")
 	}
 
 	bindings, err := l.repos.PricingPlanAndResourceRepo.FindByPlanId(ctx, planId)
@@ -401,4 +378,83 @@ func (l *PricingPlanLogic) transToDetailDto(ctx context.Context, plan *model.Pri
 		return nil, err
 	}
 	return result, nil
+}
+
+// orgPolicyChanges tracks per-org policy changes for auth event publishing.
+type organizationPolicyChanges struct {
+	added   [][]string
+	removed [][]string
+}
+
+// diffResourceIds computes added and removed resource IDs.
+func diffResourceIds(oldIds, newIds []int64) (added, removed []int64) {
+
+	removed = slice.Difference(oldIds, newIds)
+	added = slice.Difference(newIds, oldIds)
+	return
+}
+
+// resourceStubs creates Resource stubs with only IDs set, for GORM association operations.
+func resourceStubs(ids []int64) []*model.Resource {
+	stubs := make([]*model.Resource, 0, len(ids))
+	for _, id := range ids {
+		stubs = append(stubs, &model.Resource{Base: model.Base{Id: id}})
+	}
+	return stubs
+}
+
+// planResourceSyncReq bundles inputs for syncPlanResourcesToOrganizationRoles.
+type planResourceSyncReq struct {
+	OrganizationIds []int64
+	ResourceIds     []int64
+	UserType        constants.UserType
+	IsBind          bool
+}
+
+// syncPlanResourcesToOrganizationRoles binds/unbinds plan resources to organization roles.
+func syncPlanResourcesToOrganizationRoles(ctx context.Context, repos *repo.AllRepos, tx *gorm.DB, req planResourceSyncReq) (map[int64]*organizationPolicyChanges, error) {
+	if len(req.OrganizationIds) == 0 || len(req.ResourceIds) == 0 {
+		return nil, nil
+	}
+	roles, err := repos.RoleRepo.FindByOrganizationIdsWithTx(ctx, tx, req.OrganizationIds, req.UserType)
+	if err != nil {
+		return nil, err
+	}
+	var removedResources []*model.Resource
+	var addedResources []*model.Resource
+	if req.IsBind {
+		addedResources = resourceStubs(req.ResourceIds)
+	} else {
+		removedResources = resourceStubs(req.ResourceIds)
+	}
+	organizationPolicies := make(map[int64]*organizationPolicyChanges)
+
+	for _, role := range roles {
+		err = repos.RoleRepo.UpdateResourcesWithTx(ctx, tx, role, addedResources, removedResources)
+		if err != nil {
+			return nil, err
+		}
+		if organizationPolicies[role.OrganizationId] == nil {
+			organizationPolicies[role.OrganizationId] = &organizationPolicyChanges{}
+		}
+		for _, resourceId := range req.ResourceIds {
+			if req.IsBind {
+				organizationPolicies[role.OrganizationId].added = append(organizationPolicies[role.OrganizationId].added, auth.BuildPolicy(role.Id, resourceId, req.UserType))
+			} else {
+				organizationPolicies[role.OrganizationId].removed = append(organizationPolicies[role.OrganizationId].removed, auth.BuildPolicy(role.Id, resourceId, req.UserType))
+			}
+		}
+	}
+	return organizationPolicies, nil
+}
+
+// mergeOrganizationPolicies merges source policies into target.
+func mergeOrganizationPolicies(target map[int64]*organizationPolicyChanges, source map[int64]*organizationPolicyChanges) {
+	for organizationId, srcChanges := range source {
+		if target[organizationId] == nil {
+			target[organizationId] = &organizationPolicyChanges{}
+		}
+		target[organizationId].added = append(target[organizationId].added, srcChanges.added...)
+		target[organizationId].removed = append(target[organizationId].removed, srcChanges.removed...)
+	}
 }

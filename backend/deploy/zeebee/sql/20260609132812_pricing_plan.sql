@@ -34,6 +34,7 @@ CREATE TABLE "public"."pricing_plan_policies"
     "id"              serial,
     "created_at"      timestamptz    NOT NULL DEFAULT now(),
     "updated_at"      timestamptz    NOT NULL DEFAULT now(),
+    "is_del"          int2           NOT NULL DEFAULT 0,
     "pricing_plan_id" int4           NOT NULL DEFAULT 0,
     "original_amount" decimal(10, 2) NOT NULL DEFAULT 0,
     "actual_amount"   decimal(10, 2) NOT NULL DEFAULT 0,
