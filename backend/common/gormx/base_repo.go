@@ -82,6 +82,36 @@ func (repo *BaseRepo[T]) IsExistedByColumnsWithTx(ctx context.Context, tx *gorm.
 	return count > 0, nil
 }
 
+// IsExistedWithFilter check is exist with filter
+func (repo *BaseRepo[T]) IsExistedWithFilter(ctx context.Context, filters []WhereRaw) (bool, error) {
+	query := repo.Client(ctx)
+
+	for _, filter := range filters {
+		query = query.Where(filter.Raw, filter.Args...)
+	}
+	var count int64
+	err := query.Count(&count).Error
+	if err != nil {
+		return false, errorx.WithStack(err)
+	}
+	return count > 0, nil
+}
+
+// IsExistedWithFilterWithTx check is exist with filter
+func (repo *BaseRepo[T]) IsExistedWithFilterWithTx(ctx context.Context, tx *gorm.DB, filters []WhereRaw) (bool, error) {
+	query := tx.WithContext(ctx).Model(new(T))
+
+	for _, filter := range filters {
+		query = query.Where(filter.Raw, filter.Args...)
+	}
+	var count int64
+	err := query.Count(&count).Error
+	if err != nil {
+		return false, errorx.WithStack(err)
+	}
+	return count > 0, nil
+}
+
 // Create create
 func (repo *BaseRepo[T]) Create(ctx context.Context, data T) (T, error) {
 	err := repo.db.WithContext(ctx).Create(&data).Error
