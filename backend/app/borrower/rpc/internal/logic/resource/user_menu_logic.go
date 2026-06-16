@@ -55,7 +55,7 @@ func (l *UserMenuLogic) UserMenu(in *borrower.EmptyRequest) (resp *borrower.Reso
 	}
 	// trans response
 	resp = &borrower.ResourceTreeResponse{}
-	menus, err := copierx.Trans[[]*dto.ResourceTreeDto, []*borrower.ResourceTreeEntity](&result)
+	menus, err := copierx.Trans[[]*dto.ResourceTreeDto, []*borrower.ResourceTreeEntity](&result, copierx.TimeToRFC3339Str())
 
 	return &borrower.ResourceTreeResponse{
 		Data: *menus,
