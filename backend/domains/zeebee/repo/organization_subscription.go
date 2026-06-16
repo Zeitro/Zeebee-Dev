@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"time"
 
@@ -92,14 +93,17 @@ func (repo *OrganizationSubscriptionRepo) Page(ctx context.Context, pageReq dto.
 		Joins(fmt.Sprintf("LEFT JOIN %s ON %s.organization_id = %s.id", orgTable, subTable, orgTable)).
 		Joins(fmt.Sprintf("LEFT JOIN %s ON %s.pricing_plan_id = %s.id", planTable, subTable, planTable))
 
-	if filter.OrganizationId > 0 {
-		query = query.Where(fmt.Sprintf("%s.organization_id = ?", subTable), filter.OrganizationId)
+	if len(filter.Keyword) > 0 {
+		query = query.Where(
+			fmt.Sprintf("%s.code LIKE @keyword OR %s.name LIKE @keyword OR %s.name LIKE @keyword", subTable, orgTable, planTable),
+			sql.Named("keyword", "%"+filter.Keyword+"%"),
+		)
 	}
-	if filter.PricingPlanId > 0 {
-		query = query.Where(fmt.Sprintf("%s.pricing_plan_id = ?", subTable), filter.PricingPlanId)
+	if len(filter.Type) > 0 {
+		query = query.Where(fmt.Sprintf("%s.type = ?", orgTable), filter.Type)
 	}
 	if len(filter.Status) > 0 {
-		query = query.Where(fmt.Sprintf("%s.status = ?", subTable), filter.Status)
+		query = query.Where(fmt.Sprintf("%s.status IN ?", subTable), filter.Status)
 	}
 
 	if len(pageReq.Sorter.Column) > 0 {

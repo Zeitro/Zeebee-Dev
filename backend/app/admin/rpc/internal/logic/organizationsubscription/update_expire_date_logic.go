@@ -2,14 +2,16 @@ package organizationsubscriptionlogic
 
 import (
 	"context"
-	"time"
+
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/timex"
+	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type UpdateExpireDateLogic struct {
@@ -38,16 +40,12 @@ func (l *UpdateExpireDateLogic) UpdateExpireDate(in *admin.OrganizationSubscript
 		}
 	}()
 
-	if in.Data.Id <= 0 {
-		return nil, errorx.New("invalid subscription id")
-	}
-
-	expireDate, err := time.Parse(time.RFC3339, in.Data.ExpireDate)
+	input, err := copierx.Trans[admin.OrganizationSubscriptionUpdateExpireDateRequestData, dto.OrganizationSubscriptionUpdateExpireDateRequestDto](in.Data, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
-		return nil, errorx.New("invalid expire date format, expected RFC3339")
+		return nil, err
 	}
 
-	err = l.baseLogic.OrganizationSubscriptionLogic.UpdateExpireDate(l.ctx, in.Data.Id, expireDate)
+	err = l.baseLogic.OrganizationSubscriptionLogic.UpdateExpireDate(l.ctx, *input)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}

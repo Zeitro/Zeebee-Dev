@@ -24,6 +24,23 @@ type OrganizationSubscriptionEntity struct {
 	UpdatedAt           time.Time              `json:"updated_at"`
 }
 
+type OrganizationSubscriptionPageEntity struct {
+	Id   int64  `json:"id"`
+	Code string `json:"code"`
+	// OrganizationId      int64         `json:"organization_id"`
+	OrganizationName string `json:"organization_name"`
+	// PricingPlanId       int64         `json:"pricing_plan_id"`
+	PricingPlanName string `json:"pricing_plan_name"`
+	// PricingPlanPolicyId int64         `json:"pricing_plan_policy_id"`
+	Status         string        `json:"status"`
+	ExpireDate     *sql.NullTime `json:"expire_date"`
+	OriginalAmount float64       `json:"original_amount"`
+	ActualAmount   float64       `json:"actual_amount"`
+	IsAutoRenew    bool          `json:"is_auto_renew"`
+	CreatedAt      time.Time     `json:"created_at"`
+	UpdatedAt      time.Time     `json:"updated_at"`
+}
+
 type OrganizationSubscriptionCreateDto struct {
 	OrganizationId      int64              `json:"organization_id"`
 	PricingPlanId       int64              `json:"pricing_plan_id"`
@@ -48,24 +65,12 @@ type OrganizationSubscriptionPageRequestDto struct {
 }
 
 type OrganizationSubscriptionPageRequestFilter struct {
-	OrganizationId int64  `json:"organization_id,omitempty"`
-	PricingPlanId  int64  `json:"pricing_plan_id,omitempty"`
-	Status         string `json:"status,omitempty"`
+	Keyword string                                     `json:"keyword,omitempty"`
+	Type    constants.UserType                         `json:"type,omitempty"`
+	Status  []constants.OrganizationSubscriptionStatus `json:"status,omitempty"`
 }
 
-type OrganizationSubscriptionPageEntity struct {
-	Id   int64  `json:"id"`
-	Code string `json:"code"`
-	// OrganizationId      int64         `json:"organization_id"`
-	OrganizationName string `json:"organization_name"`
-	// PricingPlanId       int64         `json:"pricing_plan_id"`
-	PricingPlanName string `json:"pricing_plan_name"`
-	// PricingPlanPolicyId int64         `json:"pricing_plan_policy_id"`
-	Status         string        `json:"status"`
-	ExpireDate     *sql.NullTime `json:"expire_date"`
-	OriginalAmount float64       `json:"original_amount"`
-	ActualAmount   float64       `json:"actual_amount"`
-	IsAutoRenew    bool          `json:"is_auto_renew"`
-	CreatedAt      time.Time     `json:"created_at"`
-	UpdatedAt      time.Time     `json:"updated_at"`
+type OrganizationSubscriptionUpdateExpireDateRequestDto struct {
+	Id         int64         `json:"id"`
+	ExpireDate *sql.NullTime `json:"expire_date"`
 }

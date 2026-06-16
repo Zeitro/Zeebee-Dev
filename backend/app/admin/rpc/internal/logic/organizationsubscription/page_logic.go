@@ -31,21 +31,12 @@ func NewPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PageLogic {
 
 func (l *PageLogic) Page(in *admin.OrganizationSubscriptionPageRequest) (resp *admin.OrganizationSubscriptionPageResponse, err error) {
 
-	req := dto.OrganizationSubscriptionPageRequestDto{
-		BasePageRequestDto: dto.BasePageRequestDto{Page: in.Data.Page, Limit: in.Data.Limit},
-	}
-	if in.Data.Filter != nil {
-		req.Filter = dto.OrganizationSubscriptionPageRequestFilter{
-			OrganizationId: in.Data.Filter.OrganizationId,
-			PricingPlanId:  in.Data.Filter.PricingPlanId,
-			Status:         in.Data.Filter.Status,
-		}
-	}
-	if in.Data.Sorter != nil {
-		req.Sorter = dto.BasePageSorter{Column: in.Data.Sorter.Column, Sort: in.Data.Sorter.Sort}
+	req, err := copierx.Trans[admin.OrganizationSubscriptionPageRequestData, dto.OrganizationSubscriptionPageRequestDto](in.Data)
+	if err != nil {
+		return nil, err
 	}
 
-	pageResult, err := l.baseLogic.OrganizationSubscriptionLogic.Page(l.ctx, req)
+	pageResult, err := l.baseLogic.OrganizationSubscriptionLogic.Page(l.ctx, *req)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}

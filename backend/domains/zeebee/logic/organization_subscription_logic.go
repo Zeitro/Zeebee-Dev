@@ -35,6 +35,7 @@ func NewOrganizationSubscriptionLogic(baseLogic *BaseLogic, authTopicMap map[con
 	}
 }
 
+// Create creates a new organization subscription.
 func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.OrganizationSubscriptionCreateDto) (result *dto.OrganizationSubscriptionEntity, err error) {
 	plan, err := l.repos.PricingPlanRepo.GetOne(ctx, input.PricingPlanId, nil)
 	if err != nil {
@@ -100,6 +101,7 @@ func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.Or
 	return l.transToDetailDto(ctx, subscription)
 }
 
+// Detail gets the details of an organization subscription.
 func (l *OrganizationSubscriptionLogic) Detail(ctx context.Context, id int64) (*dto.OrganizationSubscriptionEntity, error) {
 	subscription, err := l.repos.OrganizationSubscriptionRepo.GetOne(ctx, id)
 	if err != nil {
@@ -109,6 +111,7 @@ func (l *OrganizationSubscriptionLogic) Detail(ctx context.Context, id int64) (*
 	return l.transToDetailDto(ctx, subscription)
 }
 
+// Renew renews an organization subscription.
 func (l *OrganizationSubscriptionLogic) Renew(ctx context.Context, id int64) (result *dto.OrganizationSubscriptionEntity, err error) {
 	subscription, err := l.repos.OrganizationSubscriptionRepo.GetOne(ctx, id)
 	if err != nil {
@@ -172,8 +175,16 @@ func (l *OrganizationSubscriptionLogic) Renew(ctx context.Context, id int64) (re
 	return l.transToDetailDto(ctx, subscription)
 }
 
-func (l *OrganizationSubscriptionLogic) UpdateExpireDate(ctx context.Context, id int64, expireDate time.Time) error {
-	subscription, err := l.repos.OrganizationSubscriptionRepo.GetOne(ctx, id)
+// UpdateExpireDate updates the expire date of an organization subscription.
+func (l *OrganizationSubscriptionLogic) UpdateExpireDate(ctx context.Context, input dto.OrganizationSubscriptionUpdateExpireDateRequestDto) error {
+
+	if input.ExpireDate == nil {
+		return errorx.New("invalid expire date")
+	}
+
+	expireDate := input.ExpireDate.Time
+
+	subscription, err := l.repos.OrganizationSubscriptionRepo.GetOne(ctx, input.Id)
 	if err != nil {
 		return errorx.Wrap(err, "organization subscription not found")
 	}
@@ -196,7 +207,7 @@ func (l *OrganizationSubscriptionLogic) UpdateExpireDate(ctx context.Context, id
 	var organizationPolicies map[int64]*organizationPolicyChanges
 	err = l.repos.OrganizationSubscriptionRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
-		_, innerErr = l.repos.OrganizationSubscriptionRepo.UpdateOneByIdWithTx(ctx, tx, id, subscription)
+		_, innerErr = l.repos.OrganizationSubscriptionRepo.UpdateOneByIdWithTx(ctx, tx, input.Id, subscription)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -226,6 +237,7 @@ func (l *OrganizationSubscriptionLogic) UpdateExpireDate(ctx context.Context, id
 	return nil
 }
 
+// SwitchStatus switches the status of an organization subscription.
 func (l *OrganizationSubscriptionLogic) SwitchStatus(ctx context.Context, id int64, status constants.OrganizationSubscriptionStatus) error {
 	subscription, err := l.repos.OrganizationSubscriptionRepo.GetOne(ctx, id)
 	if err != nil {
@@ -250,6 +262,7 @@ func (l *OrganizationSubscriptionLogic) SwitchStatus(ctx context.Context, id int
 	return nil
 }
 
+// Page returns a page of organization subscriptions.
 func (l *OrganizationSubscriptionLogic) Page(ctx context.Context, req dto.OrganizationSubscriptionPageRequestDto) (gormx.PageResponse[dto.OrganizationSubscriptionPageEntity], error) {
 	pageResult, err := l.repos.OrganizationSubscriptionRepo.Page(ctx, req)
 	if err != nil {
