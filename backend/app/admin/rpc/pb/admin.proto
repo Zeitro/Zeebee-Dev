@@ -1539,13 +1539,13 @@ message PricingPlanPageEntity {
   bool is_default = 12;
 }
 
-message PricingPlanOptEntity {
-  int64 id = 1;
-  string name = 2;
-  int32 sort_order = 3;
-  string type = 4;
-  repeated PricingPlanPolicyEntity policies = 5;
-}
+//message PricingPlanOptEntity {
+//  int64 id = 1;
+//  string name = 2;
+//  int32 sort_order = 3;
+//  string type = 4;
+//  repeated PricingPlanPolicyEntity policies = 5;
+//}
 
 
 
@@ -1672,7 +1672,7 @@ message PricingPlanAllRequestData {
   string type = 1;
 }
 message PricingPlanAllResponse {
-  repeated PricingPlanOptEntity data = 1;
+  repeated PricingPlanEntity data = 1;
 }
 
 

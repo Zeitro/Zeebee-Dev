@@ -56,7 +56,7 @@ func (repo *PricingPlanRepo) FindDefaultByType(ctx context.Context, planType con
 // ordered by sort_order for option/dropdown lists.
 func (repo *PricingPlanRepo) FindAllByType(ctx context.Context, planType constants.UserType, isPublic bool) (result []*model.PricingPlan, err error) {
 	query := repo.Client(ctx).
-		Select("id", "name", "status", "type", "is_public", "sort_order").
+		// Select("id", "name", "status", "type", "is_public", "sort_order").
 		Where("type = ? AND status = ?", planType, constants.CommonStatusActive)
 	if isPublic {
 		query = query.Where("is_public = ?", true)

@@ -49,7 +49,7 @@ func (l *AllLogic) All(in *admin.PricingPlanAllRequest) (resp *admin.PricingPlan
 		return nil, errorx.WithStack(err)
 	}
 
-	data, err := copierx.Trans[[]*dto.PricingPlanOptEntityDto, []*admin.PricingPlanOptEntity](&plans)
+	data, err := copierx.Trans[[]*dto.PricingPlanEntityDto, []*admin.PricingPlanEntity](&plans)
 	if err != nil {
 		return nil, err
 	}

@@ -44,13 +44,13 @@ type PricingPlanPageEntity {
     UpdatedAt string `json:"updated_at"`
 }
 
-type PricingPlanOptEntity {
-    Id int64 `json:"id"`
-    Name string `json:"name"`
-    Type string `json:"type"`
-    SortOrder int16 `json:"sort_order"`
-    Policies []*PricingPlanPolicyEntity `json:"policies"`
-}
+//type PricingPlanOptEntity {
+//    Id int64 `json:"id"`
+//    Name string `json:"name"`
+//    Type string `json:"type"`
+//    SortOrder int16 `json:"sort_order"`
+//    Policies []*PricingPlanPolicyEntity `json:"policies"`
+//}
 
 // Page
 type (
@@ -127,6 +127,6 @@ type (
     }
 
     PricingPlanAllResponse {
-        List []*PricingPlanOptEntity `json:"list"`
+        List []*PricingPlanEntity `json:"list"`
     }
 )

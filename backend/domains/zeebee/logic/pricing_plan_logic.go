@@ -182,7 +182,7 @@ func (l *PricingPlanLogic) Page(ctx context.Context, req dto.PricingPlanPageRequ
 
 // All returns all active plans of the given type as option entities (id/name/type/sort_order/policies),
 // ordered by sort_order with policies sorted monthly -> quarterly -> yearly.
-func (l *PricingPlanLogic) All(ctx context.Context, planType constants.UserType, isPublic bool) ([]*dto.PricingPlanOptEntityDto, error) {
+func (l *PricingPlanLogic) All(ctx context.Context, planType constants.UserType, isPublic bool) ([]*dto.PricingPlanEntityDto, error) {
 	plans, err := l.repos.PricingPlanRepo.FindAllByType(ctx, planType, isPublic)
 	if err != nil {
 		return nil, errorx.Wrap(err, "fail to find pricing plans")
@@ -194,12 +194,12 @@ func (l *PricingPlanLogic) All(ctx context.Context, planType constants.UserType,
 		constants.PricingPolicyTypeYearly:    2,
 	}
 
-	result := make([]*dto.PricingPlanOptEntityDto, 0, len(plans))
+	result := make([]*dto.PricingPlanEntityDto, 0, len(plans))
 	for _, plan := range plans {
 		slice.SortBy(plan.Policies, func(a, b *model.PricingPlanPolicy) bool {
 			return policyTypeMap[a.Type] < policyTypeMap[b.Type]
 		})
-		opt, err := copierx.Trans[model.PricingPlan, dto.PricingPlanOptEntityDto](plan)
+		opt, err := copierx.Trans[model.PricingPlan, dto.PricingPlanEntityDto](plan)
 		if err != nil {
 			return nil, err
 		}
