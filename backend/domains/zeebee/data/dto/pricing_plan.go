@@ -41,12 +41,13 @@ type PricingPlanCreateRequestDto struct {
 	Subtitle    string `json:"subtitle,omitempty"`
 	Description string `json:"description,omitempty"`
 	// Status      constants.CommonStatus    `json:"status,omitempty"`
-	TrialDays int16                     `json:"trial_days,omitempty"`
-	SortOrder int16                     `json:"sort_order,omitempty"`
-	IsPublic  bool                      `json:"is_public,omitempty"`
-	IsDefault bool                      `json:"is_default"`
-	Type      constants.UserType        `json:"type"`
-	PlanType  constants.PricingPlanType `json:"plan_type,omitempty"`
+	TrialDays int16                        `json:"trial_days,omitempty"`
+	SortOrder int16                        `json:"sort_order,omitempty"`
+	IsPublic  bool                         `json:"is_public,omitempty"`
+	IsDefault bool                         `json:"is_default"`
+	Type      constants.UserType           `json:"type"`
+	PlanType  constants.PricingPlanType    `json:"plan_type,omitempty"`
+	Policies  []PricingPlanPolicyEntityDto `json:"policies"`
 }
 
 type PricingPlanUpdateRequestDto struct {
@@ -86,15 +87,16 @@ type PricingPlanPageEntityDto struct {
 	Name     string `json:"name"`
 	Subtitle string `json:"subtitle"`
 	// Description string    `json:"description"`
-	Status    string    `json:"status"`
-	TrialDays int16     `json:"trial_days"`
-	SortOrder int16     `json:"sort_order"`
-	IsPublic  bool      `json:"is_public"`
-	IsDefault bool      `json:"is_default"`
-	Type      string    `json:"type"`
-	PlanType  string    `json:"plan_type"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	Status    string                       `json:"status"`
+	TrialDays int16                        `json:"trial_days"`
+	SortOrder int16                        `json:"sort_order"`
+	IsPublic  bool                         `json:"is_public"`
+	IsDefault bool                         `json:"is_default"`
+	Type      string                       `json:"type"`
+	PlanType  string                       `json:"plan_type"`
+	Policies  []PricingPlanPolicyEntityDto `json:"policies"`
+	CreatedAt time.Time                    `json:"created_at"`
+	UpdatedAt time.Time                    `json:"updated_at"`
 }
 
 // PricingPlanPolicy DTOs

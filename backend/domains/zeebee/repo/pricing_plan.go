@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"fmt"
+	"sort"
 
 	"gorm.io/gorm"
 
@@ -123,7 +124,34 @@ func (repo *PricingPlanRepo) Page(ctx context.Context, pageReq dto.PricingPlanPa
 		Limit:       pageReq.Limit,
 		CountColumn: fmt.Sprintf("%s.id", table),
 	})
-	return page, errorx.WithStack(err)
+	if err != nil {
+		return page, errorx.WithStack(err)
+	}
+
+	if len(page.List) > 0 {
+		policyTypeOrder := map[constants.PricingPolicyType]int{
+			constants.PricingPolicyTypeMonthly:   0,
+			constants.PricingPolicyTypeQuarterly: 1,
+			constants.PricingPolicyTypeYearly:    2,
+		}
+		policyRepo := NewPricingPlanPolicyRepo(repo.GetDB())
+
+		for i := range page.List {
+			var policies []*model.PricingPlanPolicy
+			policyErr := policyRepo.Client(ctx).
+				Where("pricing_plan_id = ?", page.List[i].Id).
+				Find(&policies).Error
+			if policyErr != nil {
+				return page, errorx.WithStack(policyErr)
+			}
+			sort.Slice(policies, func(a, b int) bool {
+				return policyTypeOrder[policies[a].Type] < policyTypeOrder[policies[b].Type]
+			})
+			page.List[i].Policies = policies
+		}
+	}
+
+	return page, nil
 }
 
 // DeleteWithTx deletes a pricing plan within a transaction.
