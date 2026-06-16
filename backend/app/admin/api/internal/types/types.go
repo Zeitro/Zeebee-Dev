@@ -883,7 +883,7 @@ type PricingPLanAllrequest struct {
 }
 
 type PricingPlanAllResponse struct {
-	List []*PricingPlanOptEntity `json:"list"`
+	List []*PricingPlanEntity `json:"list"`
 }
 
 type PricingPlanBindResourcesRequest struct {
@@ -1297,12 +1297,4 @@ type UserResetPasswordRequest struct {
 	Password        string `json:"password" validate:"required,min=8,max=32,password"`
 	ConfirmPassword string `json:"confirm_password" validate:"required,eqfield=Password"`
 	Code            string `json:"code" validate:"required,len=10"`
-}
-
-type PricingPlanOptEntity struct {
-	Id        int64                      `json:"id"`
-	Name      string                     `json:"name"`
-	Type      string                     `json:"type"`
-	SortOrder int16                      `json:"sort_order"`
-	Policies  []*PricingPlanPolicyEntity `json:"policies"`
 }

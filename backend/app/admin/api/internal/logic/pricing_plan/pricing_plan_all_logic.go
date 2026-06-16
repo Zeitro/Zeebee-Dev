@@ -37,7 +37,7 @@ func (l *PricingPlanAllLogic) PricingPlanAll(req *types.PricingPLanAllrequest) (
 	}
 
 	// Convert pb response to types
-	list, err := copierx.Trans[[]*admin.PricingPlanOptEntity, []*types.PricingPlanOptEntity](&rpcResp.Data)
+	list, err := copierx.Trans[[]*admin.PricingPlanEntity, []*types.PricingPlanEntity](&rpcResp.Data)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

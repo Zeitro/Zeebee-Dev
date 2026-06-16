@@ -8974,15 +8974,40 @@
                         "required": [
                           "id",
                           "name",
-                          "type",
+                          "subtitle",
+                          "description",
+                          "status",
+                          "trial_days",
                           "sort_order",
-                          "policies"
+                          "is_public",
+                          "is_default",
+                          "type",
+                          "plan_type",
+                          "created_at",
+                          "updated_at",
+                          "policies",
+                          "resources"
                         ],
                         "properties": {
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
                           "id": {
                             "type": "integer"
                           },
+                          "is_default": {
+                            "type": "boolean"
+                          },
+                          "is_public": {
+                            "type": "boolean"
+                          },
                           "name": {
+                            "type": "string"
+                          },
+                          "plan_type": {
                             "type": "string"
                           },
                           "policies": {
@@ -9023,10 +9048,110 @@
                               }
                             }
                           },
+                          "resources": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "parent_id",
+                                "type",
+                                "resource_type",
+                                "name",
+                                "path",
+                                "icon",
+                                "tag",
+                                "is_show",
+                                "status",
+                                "sort_order",
+                                "enable_data_scope",
+                                "description",
+                                "is_public",
+                                "created_at",
+                                "updated_at",
+                                "apis",
+                                "children"
+                              ],
+                              "properties": {
+                                "apis": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object"
+                                  }
+                                },
+                                "children": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object"
+                                  }
+                                },
+                                "created_at": {
+                                  "type": "string"
+                                },
+                                "description": {
+                                  "type": "string"
+                                },
+                                "enable_data_scope": {
+                                  "type": "boolean"
+                                },
+                                "icon": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "is_public": {
+                                  "type": "boolean"
+                                },
+                                "is_show": {
+                                  "type": "boolean"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "parent_id": {
+                                  "type": "integer"
+                                },
+                                "path": {
+                                  "type": "string"
+                                },
+                                "resource_type": {
+                                  "type": "string"
+                                },
+                                "sort_order": {
+                                  "type": "integer"
+                                },
+                                "status": {
+                                  "type": "string"
+                                },
+                                "tag": {
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string"
+                                },
+                                "updated_at": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
                           "sort_order": {
                             "type": "integer"
                           },
+                          "status": {
+                            "type": "string"
+                          },
+                          "subtitle": {
+                            "type": "string"
+                          },
+                          "trial_days": {
+                            "type": "integer"
+                          },
                           "type": {
+                            "type": "string"
+                          },
+                          "updated_at": {
                             "type": "string"
                           }
                         }
@@ -14277,7 +14402,7 @@
       }
     }
   },
-  "x-date": "2026-06-15 18:20:16",
+  "x-date": "2026-06-16 09:45:42",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
