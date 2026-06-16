@@ -882,38 +882,40 @@ func (l *Auth) getOrganizationPlanResourceIds(ctx context.Context, organizationI
 
 // loadOrganizationPlanResources loads plan resources for an organization from DB into cache.
 func (l *Auth) loadOrganizationPlanResources(ctx context.Context, organizationId int64) (*mapx.Map[int64, bool], error) {
-	activeSubs, err := l.repos.OrganizationSubscriptionRepo.FindActiveByOrgId(ctx, organizationId)
+	activeSub, err := l.repos.OrganizationSubscriptionRepo.FindActiveByOrganizationId(ctx, organizationId)
 	if err != nil {
 		return nil, err
 	}
 
-	now := time.Now()
 	resourceSet := mapx.NewMap[int64, bool]()
-	for _, sub := range activeSubs {
-		if sub.Status != constants.OrganizationSubscriptionStatusActive &&
-			sub.Status != constants.OrganizationSubscriptionStatusTrialing && sub.Status != constants.OrganizationSubscriptionStatusSuspended {
-			continue
-		}
-		if sub.ExpireDate != nil && sub.ExpireDate.Valid && !sub.ExpireDate.Time.After(now) {
-			continue
-		}
+	if activeSub != nil &&
+		(activeSub.Status == constants.OrganizationSubscriptionStatusActive ||
+			activeSub.Status == constants.OrganizationSubscriptionStatusTrialing) &&
+		!isSubscriptionExpired(activeSub, time.Now()) {
 
-		plan, innerErr := l.repos.PricingPlanRepo.GetOne(ctx, sub.PricingPlanId, nil)
-		if innerErr != nil || plan == nil || plan.Status != constants.CommonStatusActive {
-			continue
-		}
-
-		ids, innerErr := l.repos.PricingPlanAndResourceRepo.FindResourceIdsByPlanId(ctx, sub.PricingPlanId)
-		if innerErr != nil {
-			return nil, innerErr
-		}
-		for _, id := range ids {
-			resourceSet.Set(id, true)
+		plan, innerErr := l.repos.PricingPlanRepo.GetOne(ctx, activeSub.PricingPlanId, nil)
+		if innerErr == nil && plan != nil && plan.Status == constants.CommonStatusActive {
+			ids, innerErr := l.repos.PricingPlanAndResourceRepo.FindResourceIdsByPlanId(ctx, activeSub.PricingPlanId)
+			if innerErr != nil {
+				return nil, innerErr
+			}
+			for _, id := range ids {
+				resourceSet.Set(id, true)
+			}
 		}
 	}
 
 	l.organizationPlanResourceMap.Set(organizationId, resourceSet)
 	return resourceSet, nil
+}
+
+// isSubscriptionExpired treats expire date as valid until the last second of that day
+func isSubscriptionExpired(sub *model.OrganizationSubscription, now time.Time) bool {
+	if sub.ExpireDate == nil || !sub.ExpireDate.Valid {
+		return false
+	}
+	endOfDay := sub.ExpireDate.Time.Add(24*time.Hour - time.Second)
+	return !endOfDay.After(now)
 }
 
 // Close close auth, save policy and unsubscribe from redis

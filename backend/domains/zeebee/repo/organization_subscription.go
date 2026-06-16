@@ -52,7 +52,7 @@ func (repo *OrganizationSubscriptionRepo) ExistsByCode(ctx context.Context, code
 	})
 }
 
-func (repo *OrganizationSubscriptionRepo) FindActiveByOrgId(ctx context.Context, organizationId int64) (result []*model.OrganizationSubscription, err error) {
+func (repo *OrganizationSubscriptionRepo) FindActiveByOrganizationId(ctx context.Context, organizationId int64) (result *model.OrganizationSubscription, err error) {
 	err = repo.Client(ctx).
 		Where("organization_id = ? AND status NOT IN ?",
 			organizationId,

@@ -363,9 +363,11 @@ func (l *ResourceLogic) GetUserResources(ctx context.Context, input dto.Resource
 	})
 
 	// Filter by pricing plan resource scope
-	allResources, err = l.filterByPricingPlan(ctx, input.OrganizationId, allResources)
-	if err != nil {
-		return nil, err
+	if input.Type != constants.UserTypeAdmin {
+		allResources, err = l.filterByPricingPlan(ctx, input.OrganizationId, allResources)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	// Filter root level to only menu type, collect all resource IDs
@@ -568,44 +570,41 @@ func (l *ResourceLogic) handleSyncResource(ctx context.Context, tx *gorm.DB, use
 }
 
 func (l *ResourceLogic) filterByPricingPlan(ctx context.Context, organizationId int64, resources []*model.Resource) ([]*model.Resource, error) {
-	activeSubs, err := l.repos.OrganizationSubscriptionRepo.FindActiveByOrgId(ctx, organizationId)
+	activeSub, err := l.repos.OrganizationSubscriptionRepo.FindActiveByOrganizationId(ctx, organizationId)
 	if err != nil {
 		return nil, err
 	}
-	if len(activeSubs) == 0 {
-		return []*model.Resource{}, nil
-	}
 
-	now := time.Now()
 	planResourceIds := make(map[int64]bool)
-	for _, sub := range activeSubs {
-		if sub.Status != constants.OrganizationSubscriptionStatusActive &&
-			sub.Status != constants.OrganizationSubscriptionStatusTrialing {
-			continue
-		}
-		if sub.ExpireDate != nil && sub.ExpireDate.Valid && !sub.ExpireDate.Time.After(now) {
-			continue
-		}
+	// get plan's resource ids
+	if activeSub != nil && !l.isSubscriptionExpired(activeSub, time.Now()) {
 
-		plan, innerErr := l.repos.PricingPlanRepo.GetOne(ctx, sub.PricingPlanId, nil)
-		if innerErr != nil || plan == nil || plan.Status != constants.CommonStatusActive {
-			continue
-		}
-
-		ids, innerErr := l.repos.PricingPlanAndResourceRepo.FindResourceIdsByPlanId(ctx, sub.PricingPlanId)
-		if innerErr != nil {
-			return nil, innerErr
-		}
-		for _, id := range ids {
-			planResourceIds[id] = true
+		plan, innerErr := l.repos.PricingPlanRepo.GetOne(ctx, activeSub.PricingPlanId, nil)
+		if innerErr == nil && plan != nil && plan.Status == constants.CommonStatusActive {
+			ids, innerErr := l.repos.PricingPlanAndResourceRepo.FindResourceIdsByPlanId(ctx, activeSub.PricingPlanId)
+			if innerErr != nil {
+				return nil, innerErr
+			}
+			for _, id := range ids {
+				planResourceIds[id] = true
+			}
 		}
 	}
 
-	if len(planResourceIds) == 0 {
-		return []*model.Resource{}, nil
-	}
-
+	// public resources pass through; non-public filtered by pricing plan scope
 	return slice.Filter(resources, func(index int, item *model.Resource) bool {
+		if item.IsPublic {
+			return true
+		}
 		return planResourceIds[item.Id]
 	}), nil
+}
+
+// isSubscriptionExpired treats expire date as valid until the last second of that day
+func (l *ResourceLogic) isSubscriptionExpired(sub *model.OrganizationSubscription, now time.Time) bool {
+	if sub.ExpireDate == nil || !sub.ExpireDate.Valid {
+		return false
+	}
+	endOfDay := sub.ExpireDate.Time.Add(24*time.Hour - time.Second)
+	return !endOfDay.After(now)
 }
