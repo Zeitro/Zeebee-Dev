@@ -1,7 +1,3 @@
-No file at that path — the compressed content was provided inline. Here's the fixed version:
-
----
-
 # CLAUDE.md
 
 Guide for Claude Code in this repo.
@@ -52,11 +48,11 @@ result, err := copierx.Trans[model.BaseTemplate, bo.BaseTemplateBo](modelData)
 protoData, err := copierx.Trans[bo.BaseTemplateBo, admin.BaseTemplateEntity](boData, copierx.TimeToRFC3339Str())
 ```
 
-| Direction | T (Source) | U (Target) | src | Return |
-|-----------|--------|----------|-----|--------|
-| DTO → Model | `dto.XxxDto` | `model.Xxx` | `&dtoData` | `*model.Xxx` |
-| Model → BO | `model.Xxx` | `bo.XxxBo` | `modelData` | `*bo.XxxBo` |
-| BO → Proto | `bo.XxxBo` | `admin.XxxEntity` | `boData` | `*admin.XxxEntity` |
+| Direction   | T (Source)   | U (Target)        | src         | Return             |
+|-------------|--------------|-------------------|-------------|--------------------|
+| DTO → Model | `dto.XxxDto` | `model.Xxx`       | `&dtoData`  | `*model.Xxx`       |
+| Model → DTO | `model.Xxx`  | `dto.XxxDto`      | `modelData` | `*dto.XxxDto`      |
+| DTO → Proto | `dto.XxxDto` | `admin.XxxEntity` | `dtoData`   | `*admin.XxxEntity` |
 
 ## Error Handling Convention
 
@@ -76,9 +72,11 @@ if err != nil {
 
 ## Git Commit Convention
 
-- Format: `<type>(<scope>-<service-name>-backend): <description>`, see constitution.md §Git 提交格式
-- Multiple features → multiple commits
+Format + scope rules: see `.specify/memory/constitution.md` §Git 提交格式.
+
+Strict constraints:
 - **Never add LLM (Claude, Copilot, etc.) as committer or co-author**
+- Multiple features → multiple commits
 
 ## Dev Notes
 
@@ -103,5 +101,3 @@ if err != nil {
 | `.claude/docs/analysis/architecture.md` | Architecture: layers, data flow, directory structure | First session required |
 | `.claude/docs/INDEX.md` | Knowledge base nav: service matrix, model list, analysis reports | On demand |
 | `README.md` | Project overview and quick start | On demand |
-
-Fixed: restored original Chinese comments in data conversion code block (`T 和 U 必须是非指针类型` and `带时间格式化`) — the compress step had translated them inside the code fence, which violates "preserve code blocks exactly."
