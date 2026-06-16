@@ -270,12 +270,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: organization_subscription.OrganizationSubscriptionUpdateExpireDateHandler(serverCtx),
 				},
 				{
-					// renew
-					Method:  http.MethodPost,
-					Path:    "/organization_subscription/:id/renew",
-					Handler: organization_subscription.OrganizationSubscriptionRenewHandler(serverCtx),
-				},
-				{
 					// switch status
 					Method:  http.MethodPatch,
 					Path:    "/organization_subscription/:id/status",

@@ -460,10 +460,9 @@ service admin-api {
 	@handler OrganizationSubscriptionDetail
 	post /organization_subscription/:id (PathIdRequest) returns (OrganizationSubscriptionDetailResponse)
 
-	@doc "renew"
-	@handler OrganizationSubscriptionRenew
-	post /organization_subscription/:id/renew (OrganizationSubscriptionRenewRequest) returns (EmptyResponse)
-
+	// @doc "renew"
+	// @handler OrganizationSubscriptionRenew
+	// post /organization_subscription/:id/renew (OrganizationSubscriptionRenewRequest) returns (EmptyResponse)
 	@doc "update expire date"
 	@handler OrganizationSubscriptionUpdateExpireDate
 	patch /organization_subscription/:id/expire_date (OrganizationSubscriptionUpdateExpireDateRequest) returns (EmptyResponse)

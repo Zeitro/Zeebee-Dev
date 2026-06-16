@@ -1537,6 +1537,7 @@ message PricingPlanPageEntity {
   string created_at = 10;
   string updated_at = 11;
   bool is_default = 12;
+  repeated PricingPlanPolicyEntity policies = 13;
 }
 
 //message PricingPlanOptEntity {
@@ -1827,9 +1828,9 @@ message OrganizationSubscriptionPageRequestData {
   OrganizationSubscriptionPageRequestSorter sorter = 4;
 }
 message OrganizationSubscriptionPageRequestFilter {
-  int64 organization_id = 1;
-  int64 pricing_plan_id = 2;
-  string status = 3;
+  string keyword = 1;
+  repeated string status = 2;
+  string type = 3;
 }
 message OrganizationSubscriptionPageRequestSorter {
   string column = 1;

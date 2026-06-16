@@ -742,9 +742,9 @@ type OrganizationSubscriptionEntity struct {
 }
 
 type OrganizationSubscriptionFilter struct {
-	OrganizationId int64  `json:"organization_id,optional"`
-	PricingPlanId  int64  `json:"pricing_plan_id,optional"`
-	Status         string `json:"status,optional" validate:"omitempty,oneof=Trialing Active Expiring Expired Suspended"`
+	Type    string   `json:"type,optional" validate:"omitempty,oneof=Borrower Lender Admin"`
+	Keyword string   `json:"keyword,optional"`
+	Status  []string `json:"status,optional" validate:"omitempty,dive,omitempty,oneof=Trialing Active Expiring Expired Suspended"`
 }
 
 type OrganizationSubscriptionPageEntity struct {
@@ -773,8 +773,7 @@ type OrganizationSubscriptionPageResponse struct {
 }
 
 type OrganizationSubscriptionRenewRequest struct {
-	Id         int64  `path:"id" validate:"required,gt=0"`
-	ExpireDate string `json:"expire_date" validate:"required,datetime=01/02/2006"`
+	Id int64 `path:"id" validate:"required,gt=0"`
 }
 
 type OrganizationSubscriptionSwitchStatusRequest struct {
@@ -784,7 +783,7 @@ type OrganizationSubscriptionSwitchStatusRequest struct {
 
 type OrganizationSubscriptionUpdateExpireDateRequest struct {
 	Id         int64  `path:"id" validate:"required,gt=0"`
-	ExpireDate string `json:"expire_date" validate:"required"`
+	ExpireDate string `json:"expire_date" validate:"required,datetime=01/02/2006"`
 }
 
 type OrganizationSwitchStatusRequest struct {
@@ -929,18 +928,19 @@ type PricingPlanFilter struct {
 }
 
 type PricingPlanPageEntity struct {
-	Id        int64  `json:"id"`
-	Name      string `json:"name"`
-	Subtitle  string `json:"subtitle"`
-	Status    string `json:"status"`
-	TrialDays int16  `json:"trial_days"`
-	SortOrder int16  `json:"sort_order"`
-	IsPublic  bool   `json:"is_public"`
-	IsDefault bool   `json:"is_default"`
-	Type      string `json:"type"`
-	PlanType  string `json:"plan_type"`
-	CreatedAt string `json:"created_at"`
-	UpdatedAt string `json:"updated_at"`
+	Id        int64                      `json:"id"`
+	Name      string                     `json:"name"`
+	Subtitle  string                     `json:"subtitle"`
+	Status    string                     `json:"status"`
+	TrialDays int16                      `json:"trial_days"`
+	SortOrder int16                      `json:"sort_order"`
+	IsPublic  bool                       `json:"is_public"`
+	IsDefault bool                       `json:"is_default"`
+	Type      string                     `json:"type"`
+	PlanType  string                     `json:"plan_type"`
+	Policies  []*PricingPlanPolicyEntity `json:"policies"`
+	CreatedAt string                     `json:"created_at"`
+	UpdatedAt string                     `json:"updated_at"`
 }
 
 type PricingPlanPageRequest struct {

@@ -7627,13 +7627,16 @@
                 "filter": {
                   "type": "object",
                   "properties": {
-                    "organization_id": {
-                      "type": "integer"
-                    },
-                    "pricing_plan_id": {
-                      "type": "integer"
+                    "keyword": {
+                      "type": "string"
                     },
                     "status": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "type": {
                       "type": "string"
                     }
                   }
@@ -8653,71 +8656,6 @@
         ],
         "summary": "update expire date",
         "operationId": "organizationSubscriptionOrganizationSubscriptionUpdateExpireDate",
-        "parameters": [
-          {
-            "type": "integer",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": [
-                "expire_date"
-              ],
-              "properties": {
-                "expire_date": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "type": "object"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/organization_subscription/{id}/renew": {
-      "post": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "organization_subscription"
-        ],
-        "summary": "renew",
-        "operationId": "organizationSubscriptionOrganizationSubscriptionRenew",
         "parameters": [
           {
             "type": "integer",
@@ -10941,6 +10879,7 @@
                           "is_default",
                           "type",
                           "plan_type",
+                          "policies",
                           "created_at",
                           "updated_at"
                         ],
@@ -10962,6 +10901,44 @@
                           },
                           "plan_type": {
                             "type": "string"
+                          },
+                          "policies": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "pricing_plan_id",
+                                "original_amount",
+                                "actual_amount",
+                                "type",
+                                "created_at",
+                                "updated_at"
+                              ],
+                              "properties": {
+                                "actual_amount": {
+                                  "type": "number"
+                                },
+                                "created_at": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "original_amount": {
+                                  "type": "number"
+                                },
+                                "pricing_plan_id": {
+                                  "type": "integer"
+                                },
+                                "type": {
+                                  "type": "string"
+                                },
+                                "updated_at": {
+                                  "type": "string"
+                                }
+                              }
+                            }
                           },
                           "sort_order": {
                             "type": "integer"
@@ -16079,7 +16056,7 @@
       }
     }
   },
-  "x-date": "2026-06-16 10:22:51",
+  "x-date": "2026-06-16 14:18:25",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
