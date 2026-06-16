@@ -1,39 +1,51 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { Row, Col, Form, Input, Select, InputNumber, message } from 'antd';
-import { InputNumAmount, NewModal } from '@repo/shared-methods';
-import { layoutCol, titleCol } from '@repo/shared-methods/enum';
-import { planStatusOptions, PRICING_PLAN_STATUS, upsertMockPricingPlan } from '../../constants';
+import React, { useCallback, useMemo, useState } from 'react';
+import { Row, Col, Form, Input, Select, InputNumber, Radio, message, Spin } from 'antd';
+import { NewModal } from '@repo/shared-methods';
+import { createRequest } from '@repo/shared-methods/utils';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
+import { layoutCol, systemTypeOptions, titleCol, yesNoOptions } from '@repo/shared-methods/enum';
+import { planTypeOptions, PRICING_PLAN_TYPE } from '../../constants';
 
 const { TextArea } = Input;
 
 /**
  * Add / Edit pricing plan 弹窗表单。
- * Edit 模式下 plan name 只读；monthly_price / yearly_price 为 0 时表示无需支付。
+ * 字段与 POST/PUT `/pricing_plan` body 一致；编辑时 GET `/pricing_plan/{id}` 初始化表单。
  *
  * @param {object} props
  * @param {(open: boolean) => void} props.setOpen 控制弹窗显隐
- * @param {object} [props.rowData] 有 id 时为编辑
+ * @param {object} [props.rowData] 有 id 时为编辑；新增时至少含 type（Borrower / Lender / Admin）
  * @param {() => void} [props.successCallback] 保存成功后刷新列表
  */
 const PlanFormModal = ({ setOpen, rowData = {}, successCallback }) => {
 	const isEdit = Boolean(rowData?.id);
 	const [form] = Form.useForm();
 	const [confirmLoading, setConfirmLoading] = useState(false);
+	const [loading, setLoading] = useState(false);
+	const { request } = useMemo(() => createRequest(), []);
 
-	useEffect(() => {
-		if (!isEdit) return;
-		form.setFieldsValue({
-			name: rowData.name,
-			status: rowData.status,
-			subtitle: rowData.subtitle,
-			trial_days: rowData.trial_days,
-			monthly_price: rowData.monthly_price ?? undefined,
-			yearly_price: rowData.yearly_price ?? undefined,
-			description: rowData.description,
-		});
-	}, [form, isEdit, rowData]);
+	/** 编辑时拉取详情，字段与 PUT body 一致 */
+	const getDetails = useCallback(async () => {
+		if (!rowData?.id) return;
+		try {
+			setLoading(true);
+			const res = await request(`/pricing_plan/${rowData.id}`);
+			form.setFieldsValue(res);
+		} catch {
+			// 请求失败时保留空表单，由用户关闭弹窗
+		} finally {
+			setLoading(false);
+		}
+	}, [form, request, rowData]);
+
+	useDeferredSyncEffect({
+		predicate: () => isEdit,
+		deferred: getDetails,
+		deps: [isEdit, getDetails],
+		delay: 0,
+	});
 
 	const handleSave = async () => {
 		try {
@@ -41,19 +53,16 @@ const PlanFormModal = ({ setOpen, rowData = {}, successCallback }) => {
 			const values = await form.validateFields();
 			const body = {
 				...values,
-				monthly_price: values.monthly_price ?? null,
-				yearly_price: values.yearly_price ?? null,
+				type: rowData.type,
 			};
 
-			// 接入后端后启用真实请求
-			// let api = '/pricing_plan';
-			// let method = 'POST';
-			// if (isEdit) {
-			// 	api = `/pricing_plan/${rowData.id}`;
-			// 	method = 'PUT';
-			// }
-			// await request(api, { method, body });
-			upsertMockPricingPlan(body, rowData?.id);
+			let api = '/pricing_plan';
+			let method = 'POST';
+			if (isEdit) {
+				api = `/pricing_plan/${rowData.id}`;
+				method = 'PUT';
+			}
+			await request(api, { method, body });
 
 			message.success(`Plan ${isEdit ? 'updated' : 'added'} successfully.`);
 			successCallback?.();
@@ -75,73 +84,125 @@ const PlanFormModal = ({ setOpen, rowData = {}, successCallback }) => {
 			onOk={handleSave}
 			onCancel={() => setOpen(false)}
 		>
-			<Form
-				form={form}
-				name="pricing-plan-form"
-				layout="vertical"
-				autoComplete="off"
-				size="large"
-				disabled={confirmLoading}
-				scrollToFirstError
-				initialValues={{
-					status: PRICING_PLAN_STATUS.ACTIVE,
-				}}
-			>
-				<Row gutter={16}>
-					<Col {...layoutCol}>
-						<Form.Item
-							label="Plan name"
-							name="name"
-							rules={[{ required: true, message: 'Please enter plan name' }]}
-						>
-							<Input placeholder="Enter plan name" disabled={isEdit} />
-						</Form.Item>
-					</Col>
-					<Col {...layoutCol}>
-						<Form.Item
-							label="Status"
-							name="status"
-							rules={[{ required: true, message: 'Please select status' }]}
-						>
-							<Select options={planStatusOptions} placeholder="Select status" />
-						</Form.Item>
-					</Col>
-					<Col {...layoutCol}>
-						<Form.Item label="Plan subtitle" name="subtitle">
-							<Input placeholder="Enter plan subtitle" />
-						</Form.Item>
-					</Col>
-					<Col {...layoutCol}>
-						<Form.Item
-							label="Trial days"
-							name="trial_days"
-							rules={[{ required: true, message: 'Please enter trial days' }]}
-						>
-							<InputNumber
-								className="!w-full"
-								min={0}
-								precision={0}
-								placeholder="Enter trial days"
-							/>
-						</Form.Item>
-					</Col>
-					<Col {...layoutCol}>
-						<Form.Item label="Monthly price" name="monthly_price">
-							<InputNumAmount placeholder="Enter monthly price" />
-						</Form.Item>
-					</Col>
-					<Col {...layoutCol}>
-						<Form.Item label="Yearly price" name="yearly_price">
-							<InputNumAmount placeholder="Enter yearly price" />
-						</Form.Item>
-					</Col>
-					<Col {...titleCol}>
-						<Form.Item label="Description" name="description">
-							<TextArea rows={4} placeholder="Enter description" />
-						</Form.Item>
-					</Col>
-				</Row>
-			</Form>
+			<Spin spinning={loading}>
+				<Form
+					form={form}
+					name="pricing-plan-form"
+					layout="vertical"
+					autoComplete="off"
+					size="large"
+					disabled={confirmLoading || loading}
+					scrollToFirstError
+					initialValues={
+						isEdit
+							? undefined
+							: {
+									plan_type: PRICING_PLAN_TYPE.STANDARD,
+									is_default: false,
+									is_public: true,
+									trial_days: 0,
+									sort_order: 1,
+									type: rowData?.type,
+								}
+					}
+				>
+					<Row gutter={16}>
+						<Col {...layoutCol}>
+							<Form.Item
+								label="System type"
+								name={['type']}
+								rules={[{ required: true }]}
+							>
+								<Select
+									options={systemTypeOptions}
+									placeholder="Select system type"
+									disabled={isEdit}
+								/>
+							</Form.Item>
+						</Col>
+						<Col {...layoutCol}>
+							<Form.Item
+								label="Plan type"
+								name="plan_type"
+								rules={[{ required: true, message: 'Please select plan type' }]}
+							>
+								<Select options={planTypeOptions} placeholder="Select plan type" />
+							</Form.Item>
+						</Col>
+						<Col {...layoutCol}>
+							<Form.Item
+								label="Plan name"
+								name="name"
+								rules={[{ required: true, message: 'Please enter plan name' }]}
+							>
+								<Input placeholder="Enter plan name" disabled={isEdit} />
+							</Form.Item>
+						</Col>
+						<Col {...layoutCol}>
+							<Form.Item label="Plan subtitle" name="subtitle">
+								<Input placeholder="Enter plan subtitle" />
+							</Form.Item>
+						</Col>
+						<Col {...layoutCol}>
+							<Form.Item label="Trial days" name="trial_days">
+								<InputNumber
+									className="!w-full"
+									min={0}
+									precision={0}
+									placeholder="Enter trial days"
+								/>
+							</Form.Item>
+						</Col>
+						<Col {...layoutCol}>
+							<Form.Item
+								label="Sort order"
+								name="sort_order"
+								rules={[{ required: true, message: 'Please enter sort order' }]}
+							>
+								<InputNumber
+									className="!w-full"
+									min={0}
+									precision={0}
+									placeholder="Enter sort order"
+								/>
+							</Form.Item>
+						</Col>
+						<Col {...layoutCol}>
+							<Form.Item
+								label="Default plan"
+								name="is_default"
+								rules={[{ required: true, message: 'Please select default plan' }]}
+								extra="Used for the default plan displayed after user registration. If Yes is selected here, the rest of the plan's plan will automatically be changed to No。"
+							>
+								<Radio.Group
+									options={yesNoOptions}
+									block
+									className="[&_.ant-radio-wrapper]:!justify-start"
+								/>
+							</Form.Item>
+						</Col>
+						<Col {...layoutCol}>
+							<Form.Item
+								label="Public plan"
+								name="is_public"
+								rules={[{ required: true, message: 'Please select public plan' }]}
+								extra="Whether permission details are shown to users, such as comparing all permissions across different plans. Generally, only custom models are not shown to users"
+							>
+								<Radio.Group
+									options={yesNoOptions}
+									block
+									className="[&_.ant-radio-wrapper]:!justify-start"
+								/>
+							</Form.Item>
+						</Col>
+						<Col {...titleCol}>
+							<Form.Item label="Description" name="description">
+								<TextArea rows={4} placeholder="Enter description" />
+							</Form.Item>
+						</Col>
+					</Row>
+				</Form>
+			</Spin>
 		</NewModal>
 	);
 };
