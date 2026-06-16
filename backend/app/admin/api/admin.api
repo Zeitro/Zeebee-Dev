@@ -456,6 +456,10 @@ service admin-api {
 	@handler OrganizationSubscriptionCreate
 	post /organization_subscription (OrganizationSubscriptionCreateRequest) returns (OrganizationSubscriptionDetailResponse)
 
+	@doc "detail"
+	@handler OrganizationSubscriptionDetail
+	post /organization_subscription/:id (PathIdRequest) returns (OrganizationSubscriptionDetailResponse)
+
 	@doc "renew"
 	@handler OrganizationSubscriptionRenew
 	post /organization_subscription/:id/renew (OrganizationSubscriptionRenewRequest) returns (EmptyResponse)

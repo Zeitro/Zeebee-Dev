@@ -2,10 +2,9 @@ package logic
 
 import (
 	"context"
-	"crypto/rand"
 	"database/sql"
-	"encoding/hex"
 	"fmt"
+	rand2 "math/rand/v2"
 	"time"
 
 	"github.com/duke-git/lancet/v2/slice"
@@ -60,7 +59,7 @@ func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.Or
 		return
 	}
 
-	code := fmt.Sprintf("SU%s%s", time.Now().Format("20060102150405"), randomHex(4))
+	code := l.generateCode()
 	expireDate := calculateExpireDate(policy.Type, time.Now())
 
 	subscription := &model.OrganizationSubscription{
@@ -98,6 +97,15 @@ func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.Or
 	}
 
 	// l.publishRoleReloadEvent(ctx, input.OrganizationId, plan.Type)
+	return l.transToDetailDto(ctx, subscription)
+}
+
+func (l *OrganizationSubscriptionLogic) Detail(ctx context.Context, id int64) (*dto.OrganizationSubscriptionEntity, error) {
+	subscription, err := l.repos.OrganizationSubscriptionRepo.GetOne(ctx, id)
+	if err != nil {
+		return nil, errorx.Wrap(err, "fail to find organization subscription")
+	}
+
 	return l.transToDetailDto(ctx, subscription)
 }
 
@@ -300,12 +308,20 @@ func (l *OrganizationSubscriptionLogic) transToDetailDto(ctx context.Context, su
 
 	org, innerErr := l.repos.OrganizationRepo.GetOrganizationById(ctx, sub.OrganizationId, false)
 	if innerErr == nil && org != nil {
-		result.OrganizationName = org.Name
+		orgDto, err := copierx.Trans[model.Organization, dto.OrganizationEntityDto](org)
+		if err != nil {
+			return nil, err
+		}
+		result.Organization = orgDto
 	}
 
 	plan, innerErr := l.repos.PricingPlanRepo.GetOne(ctx, sub.PricingPlanId, nil)
 	if innerErr == nil && plan != nil {
-		result.PricingPlanName = plan.Name
+		planDto, err := copierx.Trans[model.PricingPlan, dto.PricingPlanEntityDto](plan)
+		if err != nil {
+			return nil, err
+		}
+		result.PricingPlan = planDto
 	}
 
 	return result, nil
@@ -329,7 +345,7 @@ func (l *OrganizationSubscriptionLogic) SubscribeDefaultPlan(ctx context.Context
 		return nil
 	}
 
-	code := fmt.Sprintf("SU%s%s", time.Now().Format("20060102150405"), randomHex(4))
+	code := l.generateCode()
 	expireDate := &sql.NullTime{Time: time.Now().AddDate(0, 0, int(plan.TrialDays)), Valid: true}
 
 	subscription := &model.OrganizationSubscription{
@@ -383,13 +399,13 @@ func (l *OrganizationSubscriptionLogic) SubscribeDefaultPlan(ctx context.Context
 	return nil
 }
 
-// randomHex returns n random bytes as a hex-encoded string.
-func randomHex(n int) string {
-	b := make([]byte, n)
-	if _, err := rand.Read(b); err != nil {
-		return "0000"
-	}
-	return hex.EncodeToString(b)
+// generateCode
+func (l *OrganizationSubscriptionLogic) generateCode() string {
+	randN := rand2.N(99999)
+	randStr := fmt.Sprintf("%05d", randN)
+	code := fmt.Sprintf("SU%s%s", time.Now().Format("20060102150405"), randStr)
+
+	return code
 }
 
 // subscriptionEffective reports whether a subscription status grants plan resource access.

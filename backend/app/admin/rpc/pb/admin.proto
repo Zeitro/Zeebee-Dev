@@ -1748,9 +1748,9 @@ message OrganizationSubscriptionEntity {
   int64 id = 1;
   string code = 2;
   int64 organization_id = 3;
-  string organization_name = 4;
+  OrganizationEntity organization = 4;
   int64 pricing_plan_id = 5;
-  string pricing_plan_name = 6;
+  PricingPlanEntity  pricing_plan = 6;
   int64 pricing_plan_policy_id = 7;
   string status = 8;
   string expire_date = 9;
@@ -1852,6 +1852,7 @@ service OrganizationSubscription {
   rpc UpdateExpireDate(OrganizationSubscriptionUpdateExpireDateRequest) returns(EmptyResponse);
   rpc SwitchStatus(OrganizationSubscriptionSwitchStatusRequest) returns(EmptyResponse);
   rpc Page(OrganizationSubscriptionPageRequest) returns(OrganizationSubscriptionPageResponse);
+  rpc Detail(PathIdRequest) returns(OrganizationSubscriptionDetailResponse);
 }
 
 // ==================== organization subscription service end ====================

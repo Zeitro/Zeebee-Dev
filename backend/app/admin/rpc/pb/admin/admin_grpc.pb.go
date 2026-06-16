@@ -3480,6 +3480,7 @@ const (
 	OrganizationSubscription_UpdateExpireDate_FullMethodName = "/admin.OrganizationSubscription/UpdateExpireDate"
 	OrganizationSubscription_SwitchStatus_FullMethodName     = "/admin.OrganizationSubscription/SwitchStatus"
 	OrganizationSubscription_Page_FullMethodName             = "/admin.OrganizationSubscription/Page"
+	OrganizationSubscription_Detail_FullMethodName           = "/admin.OrganizationSubscription/Detail"
 )
 
 // OrganizationSubscriptionClient is the client API for OrganizationSubscription service.
@@ -3491,6 +3492,7 @@ type OrganizationSubscriptionClient interface {
 	UpdateExpireDate(ctx context.Context, in *OrganizationSubscriptionUpdateExpireDateRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	SwitchStatus(ctx context.Context, in *OrganizationSubscriptionSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	Page(ctx context.Context, in *OrganizationSubscriptionPageRequest, opts ...grpc.CallOption) (*OrganizationSubscriptionPageResponse, error)
+	Detail(ctx context.Context, in *PathIdRequest, opts ...grpc.CallOption) (*OrganizationSubscriptionDetailResponse, error)
 }
 
 type organizationSubscriptionClient struct {
@@ -3551,6 +3553,16 @@ func (c *organizationSubscriptionClient) Page(ctx context.Context, in *Organizat
 	return out, nil
 }
 
+func (c *organizationSubscriptionClient) Detail(ctx context.Context, in *PathIdRequest, opts ...grpc.CallOption) (*OrganizationSubscriptionDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationSubscriptionDetailResponse)
+	err := c.cc.Invoke(ctx, OrganizationSubscription_Detail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrganizationSubscriptionServer is the server API for OrganizationSubscription service.
 // All implementations must embed UnimplementedOrganizationSubscriptionServer
 // for forward compatibility.
@@ -3560,6 +3572,7 @@ type OrganizationSubscriptionServer interface {
 	UpdateExpireDate(context.Context, *OrganizationSubscriptionUpdateExpireDateRequest) (*EmptyResponse, error)
 	SwitchStatus(context.Context, *OrganizationSubscriptionSwitchStatusRequest) (*EmptyResponse, error)
 	Page(context.Context, *OrganizationSubscriptionPageRequest) (*OrganizationSubscriptionPageResponse, error)
+	Detail(context.Context, *PathIdRequest) (*OrganizationSubscriptionDetailResponse, error)
 	mustEmbedUnimplementedOrganizationSubscriptionServer()
 }
 
@@ -3584,6 +3597,9 @@ func (UnimplementedOrganizationSubscriptionServer) SwitchStatus(context.Context,
 }
 func (UnimplementedOrganizationSubscriptionServer) Page(context.Context, *OrganizationSubscriptionPageRequest) (*OrganizationSubscriptionPageResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Page not implemented")
+}
+func (UnimplementedOrganizationSubscriptionServer) Detail(context.Context, *PathIdRequest) (*OrganizationSubscriptionDetailResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Detail not implemented")
 }
 func (UnimplementedOrganizationSubscriptionServer) mustEmbedUnimplementedOrganizationSubscriptionServer() {
 }
@@ -3697,6 +3713,24 @@ func _OrganizationSubscription_Page_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrganizationSubscription_Detail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PathIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationSubscriptionServer).Detail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationSubscription_Detail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationSubscriptionServer).Detail(ctx, req.(*PathIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OrganizationSubscription_ServiceDesc is the grpc.ServiceDesc for OrganizationSubscription service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -3723,6 +3757,10 @@ var OrganizationSubscription_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Page",
 			Handler:    _OrganizationSubscription_Page_Handler,
+		},
+		{
+			MethodName: "Detail",
+			Handler:    _OrganizationSubscription_Detail_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -8,20 +8,20 @@ import (
 )
 
 type OrganizationSubscriptionEntity struct {
-	Id                  int64         `json:"id"`
-	Code                string        `json:"code"`
-	OrganizationId      int64         `json:"organization_id"`
-	OrganizationName    string        `json:"organization_name"`
-	PricingPlanId       int64         `json:"pricing_plan_id"`
-	PricingPlanName     string        `json:"pricing_plan_name"`
-	PricingPlanPolicyId int64         `json:"pricing_plan_policy_id"`
-	Status              string        `json:"status"`
-	ExpireDate          *sql.NullTime `json:"expire_date"`
-	OriginalAmount      float64       `json:"original_amount"`
-	ActualAmount        float64       `json:"actual_amount"`
-	IsAutoRenew         bool          `json:"is_auto_renew"`
-	CreatedAt           time.Time     `json:"created_at"`
-	UpdatedAt           time.Time     `json:"updated_at"`
+	Id                  int64                  `json:"id"`
+	Code                string                 `json:"code"`
+	OrganizationId      int64                  `json:"organization_id"`
+	Organization        *OrganizationEntityDto `json:"organization"`
+	PricingPlanId       int64                  `json:"pricing_plan_id"`
+	PricingPlan         *PricingPlanEntityDto  `json:"pricing_plan_name"`
+	PricingPlanPolicyId int64                  `json:"pricing_plan_policy_id"`
+	Status              string                 `json:"status"`
+	ExpireDate          *sql.NullTime          `json:"expire_date"`
+	OriginalAmount      float64                `json:"original_amount"`
+	ActualAmount        float64                `json:"actual_amount"`
+	IsAutoRenew         bool                   `json:"is_auto_renew"`
+	CreatedAt           time.Time              `json:"created_at"`
+	UpdatedAt           time.Time              `json:"updated_at"`
 }
 
 type OrganizationSubscriptionCreateDto struct {

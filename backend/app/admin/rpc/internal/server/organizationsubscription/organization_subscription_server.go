@@ -47,3 +47,8 @@ func (s *OrganizationSubscriptionServer) Page(ctx context.Context, in *admin.Org
 	l := organizationsubscriptionlogic.NewPageLogic(ctx, s.svcCtx)
 	return l.Page(in)
 }
+
+func (s *OrganizationSubscriptionServer) Detail(ctx context.Context, in *admin.PathIdRequest) (*admin.OrganizationSubscriptionDetailResponse, error) {
+	l := organizationsubscriptionlogic.NewDetailLogic(ctx, s.svcCtx)
+	return l.Detail(in)
+}

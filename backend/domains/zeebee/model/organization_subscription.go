@@ -9,7 +9,7 @@ import (
 type OrganizationSubscription struct {
 	Base
 
-	Code                string                                   `gorm:"column:code;type:varchar(50);not null;default:'';uniqueIndex" json:"code"`
+	Code                string                                   `gorm:"column:code;type:varchar(50);not null;default:'';uniqueIndex;<-:create" json:"code"`
 	OrganizationId      int64                                    `gorm:"column:organization_id;type:int4;not null;default:0" json:"organization_id"`
 	PricingPlanId       int64                                    `gorm:"column:pricing_plan_id;type:int4;not null;default:0" json:"pricing_plan_id"`
 	PricingPlanPolicyId int64                                    `gorm:"column:pricing_plan_policy_id;type:int4;not null;default:0" json:"pricing_plan_policy_id"`

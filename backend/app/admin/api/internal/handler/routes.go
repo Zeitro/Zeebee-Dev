@@ -258,6 +258,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: organization_subscription.OrganizationSubscriptionCreateHandler(serverCtx),
 				},
 				{
+					// detail
+					Method:  http.MethodPost,
+					Path:    "/organization_subscription/:id",
+					Handler: organization_subscription.OrganizationSubscriptionDetailHandler(serverCtx),
+				},
+				{
 					// update expire date
 					Method:  http.MethodPatch,
 					Path:    "/organization_subscription/:id/expire_date",

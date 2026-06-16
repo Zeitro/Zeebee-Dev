@@ -22,6 +22,7 @@ type (
 	OrganizationSubscriptionRenewRequest            = admin.OrganizationSubscriptionRenewRequest
 	OrganizationSubscriptionSwitchStatusRequest     = admin.OrganizationSubscriptionSwitchStatusRequest
 	OrganizationSubscriptionUpdateExpireDateRequest = admin.OrganizationSubscriptionUpdateExpireDateRequest
+	PathIdRequest                                   = admin.PathIdRequest
 
 	OrganizationSubscription interface {
 		Create(ctx context.Context, in *OrganizationSubscriptionCreateRequest, opts ...grpc.CallOption) (*OrganizationSubscriptionDetailResponse, error)
@@ -29,6 +30,7 @@ type (
 		UpdateExpireDate(ctx context.Context, in *OrganizationSubscriptionUpdateExpireDateRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		SwitchStatus(ctx context.Context, in *OrganizationSubscriptionSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		Page(ctx context.Context, in *OrganizationSubscriptionPageRequest, opts ...grpc.CallOption) (*OrganizationSubscriptionPageResponse, error)
+		Detail(ctx context.Context, in *PathIdRequest, opts ...grpc.CallOption) (*OrganizationSubscriptionDetailResponse, error)
 	}
 
 	defaultOrganizationSubscription struct {
@@ -65,4 +67,9 @@ func (m *defaultOrganizationSubscription) SwitchStatus(ctx context.Context, in *
 func (m *defaultOrganizationSubscription) Page(ctx context.Context, in *OrganizationSubscriptionPageRequest, opts ...grpc.CallOption) (*OrganizationSubscriptionPageResponse, error) {
 	client := admin.NewOrganizationSubscriptionClient(m.cli.Conn())
 	return client.Page(ctx, in, opts...)
+}
+
+func (m *defaultOrganizationSubscription) Detail(ctx context.Context, in *PathIdRequest, opts ...grpc.CallOption) (*OrganizationSubscriptionDetailResponse, error) {
+	client := admin.NewOrganizationSubscriptionClient(m.cli.Conn())
+	return client.Detail(ctx, in, opts...)
 }
