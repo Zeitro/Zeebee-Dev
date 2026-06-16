@@ -1,12 +1,25 @@
 'use client';
 
 import React, { useCallback, useMemo, useState } from 'react';
-import { Row, Col, Form, Input, Select, InputNumber, Radio, message, Spin } from 'antd';
-import { NewModal } from '@repo/shared-methods';
+import {
+	Row,
+	Col,
+	Form,
+	Input,
+	Select,
+	InputNumber,
+	Radio,
+	message,
+	Spin,
+	Drawer,
+	Button,
+	Divider,
+} from 'antd';
 import { createRequest } from '@repo/shared-methods/utils';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 import { layoutCol, systemTypeOptions, titleCol, yesNoOptions } from '@repo/shared-methods/enum';
 import { planTypeOptions, PRICING_PLAN_TYPE } from '../../constants';
+import PricingStrategyList from './PricingStrategyList.js';
 
 const { TextArea } = Input;
 
@@ -19,12 +32,15 @@ const { TextArea } = Input;
  * @param {object} [props.rowData] 有 id 时为编辑；新增时至少含 type（Borrower / Lender / Admin）
  * @param {() => void} [props.successCallback] 保存成功后刷新列表
  */
-const PlanFormModal = ({ setOpen, rowData = {}, successCallback }) => {
+const PlanFormDrawer = ({ setOpen, rowData = {}, successCallback }) => {
 	const isEdit = Boolean(rowData?.id);
 	const [form] = Form.useForm();
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [loading, setLoading] = useState(false);
+	const [existingPolicies, setExistingPolicies] = useState([]);
+	const [messageApi, contextHolder] = message.useMessage();
 	const { request } = useMemo(() => createRequest(), []);
+	const handleClose = () => setOpen(false);
 
 	/** 编辑时拉取详情，字段与 PUT body 一致 */
 	const getDetails = useCallback(async () => {
@@ -33,6 +49,7 @@ const PlanFormModal = ({ setOpen, rowData = {}, successCallback }) => {
 			setLoading(true);
 			const res = await request(`/pricing_plan/${rowData.id}`);
 			form.setFieldsValue(res);
+			setExistingPolicies(res?.policies || []);
 		} catch {
 			// 请求失败时保留空表单，由用户关闭弹窗
 		} finally {
@@ -51,8 +68,10 @@ const PlanFormModal = ({ setOpen, rowData = {}, successCallback }) => {
 		try {
 			setConfirmLoading(true);
 			const values = await form.validateFields();
+			const restValues = { ...values };
+			delete restValues.policies;
 			const body = {
-				...values,
+				...restValues,
 				type: rowData.type,
 			};
 
@@ -64,10 +83,8 @@ const PlanFormModal = ({ setOpen, rowData = {}, successCallback }) => {
 			}
 			await request(api, { method, body });
 
-			message.success(`Plan ${isEdit ? 'updated' : 'added'} successfully.`);
+			messageApi.success(`Plan ${isEdit ? 'updated' : 'added'} successfully.`);
 			successCallback?.();
-			form.resetFields();
-			setOpen(false);
 		} catch {
 			// 表单校验失败或请求异常
 		} finally {
@@ -76,14 +93,14 @@ const PlanFormModal = ({ setOpen, rowData = {}, successCallback }) => {
 	};
 
 	return (
-		<NewModal
-			width={720}
+		<Drawer
+			width={760}
 			title={`${isEdit ? 'Edit' : 'Add'} Plan`}
-			okText="Save"
-			confirmLoading={confirmLoading}
-			onOk={handleSave}
-			onCancel={() => setOpen(false)}
+			open
+			onClose={handleClose}
+			destroyOnHidden
 		>
+			{contextHolder}
 			<Spin spinning={loading}>
 				<Form
 					form={form}
@@ -106,6 +123,9 @@ const PlanFormModal = ({ setOpen, rowData = {}, successCallback }) => {
 								}
 					}
 				>
+					<div className="text-base-gray text-base font-medium mb-4">
+						Basic information
+					</div>
 					<Row gutter={16}>
 						<Col {...layoutCol}>
 							<Form.Item
@@ -200,11 +220,23 @@ const PlanFormModal = ({ setOpen, rowData = {}, successCallback }) => {
 								<TextArea rows={4} placeholder="Enter description" />
 							</Form.Item>
 						</Col>
+						<Button type="primary" loading={confirmLoading} onClick={handleSave}>
+							Save basic information
+						</Button>
+						<Divider />
 					</Row>
 				</Form>
+				<PricingStrategyList
+					request={request}
+					pricingPlanId={rowData?.id}
+					existingPolicies={existingPolicies}
+					isEdit={isEdit}
+					messageApi={messageApi}
+					successCallback={successCallback}
+				/>
 			</Spin>
-		</NewModal>
+		</Drawer>
 	);
 };
 
-export default PlanFormModal;
+export default PlanFormDrawer;

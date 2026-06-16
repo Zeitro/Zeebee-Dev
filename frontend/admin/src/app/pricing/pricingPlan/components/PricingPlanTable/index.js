@@ -11,7 +11,7 @@ import {
 	formatAmount,
 } from '@repo/shared-methods/utils';
 import { ReloadOutlined } from '@ant-design/icons';
-import PlanFormModal from '../PlanFormModal';
+import PlanFormDrawer from '../PlanFormDrawer';
 import MenuPermissionDrawer from '../MenuPermissionDrawer';
 import { planStatusOptions, planTypeOptions } from '../../constants';
 import ChangeStatus from '../ChangeStatus';
@@ -150,7 +150,7 @@ const PricingPlanTable = ({
 				ref={tableFilterRef}
 				filterList={filterList}
 				filterWrapClassName={filterWrapClassName}
-				scroll={{ x: 1600 }}
+				scroll={{ x: 1700 }}
 				columns={[
 					{
 						title: 'Plan name',
@@ -280,7 +280,7 @@ const PricingPlanTable = ({
 				}}
 			/>
 			{planModalOpen && (
-				<PlanFormModal
+				<PlanFormDrawer
 					rowData={planRowData}
 					setOpen={(value) => {
 						setPlanModalOpen(value);

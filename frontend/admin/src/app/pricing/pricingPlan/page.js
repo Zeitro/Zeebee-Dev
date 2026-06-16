@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Button, Tabs } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { eventBus } from '@repo/shared-methods/utils';
-import PlanFormModal from './components/PlanFormModal';
+import PlanFormDrawer from './components/PlanFormDrawer';
 import PricingPlanTable from './components/PricingPlanTable';
 
 const eventBusPrefix = 'searchPricingPlan-';
@@ -69,7 +69,7 @@ const PricingPlan = () => {
 				Add plan
 			</Button>
 			{open && (
-				<PlanFormModal
+				<PlanFormDrawer
 					setOpen={setOpen}
 					rowData={{ type: tabKey }}
 					successCallback={() => {
