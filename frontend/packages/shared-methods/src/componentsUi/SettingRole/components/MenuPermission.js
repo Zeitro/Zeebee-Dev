@@ -126,7 +126,7 @@ const MenuPermission = ({
 
 	// 勾选逻辑：使用 checkStrictly，让 antd 不自动联动父子；
 	// 我们手动处理：
-	// - 勾选父级：只勾选父级，不影响子级
+	// - 勾选父级：同时勾选其所有子级
 	// - 勾选子级：同时确保该子级的父级被勾选
 	const handleCheck = (checkedKeysParam, event) => {
 		const nodeKey = event?.node?.[keyName];
@@ -146,6 +146,17 @@ const MenuPermission = ({
 			while (p) {
 				newSet.add(p);
 				p = parentMap[p];
+			}
+			// 如果是父节点，则同时勾选其所有后代子节点
+			const children = childrenMap[nodeKey] || [];
+			if (children && children.length) {
+				const stack = [...children];
+				while (stack.length) {
+					const c = stack.pop();
+					newSet.add(c);
+					const cc = childrenMap[c];
+					if (cc && cc.length) stack.push(...cc);
+				}
 			}
 		} else {
 			// 取消勾选节点：移除该节点

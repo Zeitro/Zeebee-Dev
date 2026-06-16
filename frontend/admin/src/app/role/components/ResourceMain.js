@@ -4,6 +4,7 @@ import { NewModal } from '@repo/shared-methods';
 import { yesNoOptions, systemTypeOptions, titleCol, iconData } from '@repo/shared-methods/enum';
 import { createRequest, eventBus } from '@repo/shared-methods/utils';
 import useData from './useData';
+import { filterTreeNodeByNameOrPath } from './useData';
 const { TextArea } = Input;
 const ResourceMain = ({ setOpen, rowData, eventBusPrefix, api }) => {
 	const { request } = createRequest();
@@ -164,6 +165,7 @@ const ResourceMain = ({ setOpen, rowData, eventBusPrefix, api }) => {
 								treeDefaultExpandAll
 								treeData={treeData}
 								fieldNames={{ value: 'id', label: 'name' }}
+								filterTreeNode={filterTreeNodeByNameOrPath}
 							/>
 						</Form.Item>
 					</Col>
@@ -212,7 +214,7 @@ const ResourceMain = ({ setOpen, rowData, eventBusPrefix, api }) => {
 
 					<Col md={12}>
 						<Form.Item label="Icon" name={['icon']}>
-							<Select options={iconList} placeholder="Select icon" />
+							<Select options={iconList} placeholder="Select icon" allowClear />
 						</Form.Item>
 					</Col>
 
@@ -279,6 +281,7 @@ const ResourceMain = ({ setOpen, rowData, eventBusPrefix, api }) => {
 								showCheckedStrategy={TreeSelect.SHOW_CHILD}
 								maxTagCount={5}
 								fieldNames={{ value: 'id', label: 'name' }}
+								filterTreeNode={filterTreeNodeByNameOrPath}
 								treeTitleRender={(item) => {
 									return item?.path ? (
 										<>
