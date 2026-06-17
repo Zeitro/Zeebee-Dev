@@ -15700,20 +15700,21 @@ func (x *OrganizationSubscriptionEntity) GetUpdatedAt() string {
 }
 
 type OrganizationSubscriptionPageEntity struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Code             string                 `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
-	OrganizationName string                 `protobuf:"bytes,3,opt,name=organization_name,json=organizationName,proto3" json:"organization_name,omitempty"`
-	PricingPlanName  string                 `protobuf:"bytes,4,opt,name=pricing_plan_name,json=pricingPlanName,proto3" json:"pricing_plan_name,omitempty"`
-	Status           string                 `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
-	ExpireDate       string                 `protobuf:"bytes,6,opt,name=expire_date,json=expireDate,proto3" json:"expire_date,omitempty"`
-	OriginalAmount   float64                `protobuf:"fixed64,7,opt,name=original_amount,json=originalAmount,proto3" json:"original_amount,omitempty"`
-	ActualAmount     float64                `protobuf:"fixed64,8,opt,name=actual_amount,json=actualAmount,proto3" json:"actual_amount,omitempty"`
-	IsAutoRenew      bool                   `protobuf:"varint,9,opt,name=is_auto_renew,json=isAutoRenew,proto3" json:"is_auto_renew,omitempty"`
-	CreatedAt        string                 `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt        string                 `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state                 protoimpl.MessageState `protogen:"open.v1"`
+	Id                    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Code                  string                 `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
+	OrganizationName      string                 `protobuf:"bytes,3,opt,name=organization_name,json=organizationName,proto3" json:"organization_name,omitempty"`
+	PricingPlanName       string                 `protobuf:"bytes,4,opt,name=pricing_plan_name,json=pricingPlanName,proto3" json:"pricing_plan_name,omitempty"`
+	Status                string                 `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
+	ExpireDate            string                 `protobuf:"bytes,6,opt,name=expire_date,json=expireDate,proto3" json:"expire_date,omitempty"`
+	OriginalAmount        float64                `protobuf:"fixed64,7,opt,name=original_amount,json=originalAmount,proto3" json:"original_amount,omitempty"`
+	ActualAmount          float64                `protobuf:"fixed64,8,opt,name=actual_amount,json=actualAmount,proto3" json:"actual_amount,omitempty"`
+	IsAutoRenew           bool                   `protobuf:"varint,9,opt,name=is_auto_renew,json=isAutoRenew,proto3" json:"is_auto_renew,omitempty"`
+	CreatedAt             string                 `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt             string                 `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	PricingPlanPolicyType string                 `protobuf:"bytes,12,opt,name=pricing_plan_policy_type,json=pricingPlanPolicyType,proto3" json:"pricing_plan_policy_type,omitempty"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
 }
 
 func (x *OrganizationSubscriptionPageEntity) Reset() {
@@ -15819,6 +15820,13 @@ func (x *OrganizationSubscriptionPageEntity) GetCreatedAt() string {
 func (x *OrganizationSubscriptionPageEntity) GetUpdatedAt() string {
 	if x != nil {
 		return x.UpdatedAt
+	}
+	return ""
+}
+
+func (x *OrganizationSubscriptionPageEntity) GetPricingPlanPolicyType() string {
+	if x != nil {
+		return x.PricingPlanPolicyType
 	}
 	return ""
 }
@@ -17982,7 +17990,7 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\r \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\x0e \x01(\tR\tupdatedAt\"\x8a\x03\n" +
+	"updated_at\x18\x0e \x01(\tR\tupdatedAt\"\xc3\x03\n" +
 	"\"OrganizationSubscriptionPageEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\x12+\n" +
@@ -17998,7 +18006,8 @@ const file_app_admin_rpc_pb_admin_proto_rawDesc = "" +
 	"created_at\x18\n" +
 	" \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\v \x01(\tR\tupdatedAt\"m\n" +
+	"updated_at\x18\v \x01(\tR\tupdatedAt\x127\n" +
+	"\x18pricing_plan_policy_type\x18\f \x01(\tR\x15pricingPlanPolicyType\"m\n" +
 	"%OrganizationSubscriptionCreateRequest\x12D\n" +
 	"\x04data\x18\x01 \x01(\v20.admin.OrganizationSubscriptionCreateRequestDataR\x04data\"\xc5\x01\n" +
 	")OrganizationSubscriptionCreateRequestData\x12&\n" +

@@ -34,6 +34,7 @@ type (
         Code string `json:"code"`
         OrganizationName string `json:"organization_name"`
         PricingPlanName string `json:"pricing_plan_name"`
+        PricingPlanPolicyType string `json:"pricing_plan_policy_type"`
         Status string `json:"status"`
         ExpireDate string `json:"expire_date"`
         OriginalAmount float64 `json:"original_amount"`
@@ -87,7 +88,7 @@ type (
     OrganizationSubscriptionPageRequest {
         BasePageRequest
         Filter *OrganizationSubscriptionFilter `json:"filter,optional"`
-        Sort *BasePageSort `json:"sort,optional"`
+        Sorter *BasePageSort `json:"sorter,optional"`
     }
 
     OrganizationSubscriptionPageResponse {

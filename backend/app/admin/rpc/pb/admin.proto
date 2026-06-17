@@ -1774,6 +1774,7 @@ message OrganizationSubscriptionPageEntity {
   bool is_auto_renew = 9;
   string created_at = 10;
   string updated_at = 11;
+  string pricing_plan_policy_type = 12;
 }
 
 // Create

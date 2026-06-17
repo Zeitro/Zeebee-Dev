@@ -7647,7 +7647,7 @@
                 "page": {
                   "type": "integer"
                 },
-                "sort": {
+                "sorter": {
                   "type": "object",
                   "properties": {
                     "column": {
@@ -7688,6 +7688,7 @@
                           "code",
                           "organization_name",
                           "pricing_plan_name",
+                          "pricing_plan_policy_type",
                           "status",
                           "expire_date",
                           "original_amount",
@@ -7722,6 +7723,9 @@
                             "type": "number"
                           },
                           "pricing_plan_name": {
+                            "type": "string"
+                          },
+                          "pricing_plan_policy_type": {
                             "type": "string"
                           },
                           "status": {
@@ -16056,7 +16060,7 @@
       }
     }
   },
-  "x-date": "2026-06-16 14:18:25",
+  "x-date": "2026-06-17 15:20:27",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

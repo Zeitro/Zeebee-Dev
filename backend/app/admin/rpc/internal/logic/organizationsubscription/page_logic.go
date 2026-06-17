@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/data/dto"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -42,7 +43,7 @@ func (l *PageLogic) Page(in *admin.OrganizationSubscriptionPageRequest) (resp *a
 	}
 
 	pageDto := dto.PageResultDto[dto.OrganizationSubscriptionPageEntity](pageResult)
-	protoData, err := copierx.Trans[dto.PageResultDto[dto.OrganizationSubscriptionPageEntity], admin.OrganizationSubscriptionPageResponseData](&pageDto, copierx.TimeToRFC3339Str())
+	protoData, err := copierx.Trans[dto.PageResultDto[dto.OrganizationSubscriptionPageEntity], admin.OrganizationSubscriptionPageResponseData](&pageDto, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToStr(timex.LayoutUsStyle))
 	if err != nil {
 		return nil, err
 	}

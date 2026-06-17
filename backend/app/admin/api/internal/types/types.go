@@ -748,23 +748,24 @@ type OrganizationSubscriptionFilter struct {
 }
 
 type OrganizationSubscriptionPageEntity struct {
-	Id               int64   `json:"id"`
-	Code             string  `json:"code"`
-	OrganizationName string  `json:"organization_name"`
-	PricingPlanName  string  `json:"pricing_plan_name"`
-	Status           string  `json:"status"`
-	ExpireDate       string  `json:"expire_date"`
-	OriginalAmount   float64 `json:"original_amount"`
-	ActualAmount     float64 `json:"actual_amount"`
-	IsAutoRenew      bool    `json:"is_auto_renew"`
-	CreatedAt        string  `json:"created_at"`
-	UpdatedAt        string  `json:"updated_at"`
+	Id                    int64   `json:"id"`
+	Code                  string  `json:"code"`
+	OrganizationName      string  `json:"organization_name"`
+	PricingPlanName       string  `json:"pricing_plan_name"`
+	PricingPlanPolicyType string  `json:"pricing_plan_policy_type"`
+	Status                string  `json:"status"`
+	ExpireDate            string  `json:"expire_date"`
+	OriginalAmount        float64 `json:"original_amount"`
+	ActualAmount          float64 `json:"actual_amount"`
+	IsAutoRenew           bool    `json:"is_auto_renew"`
+	CreatedAt             string  `json:"created_at"`
+	UpdatedAt             string  `json:"updated_at"`
 }
 
 type OrganizationSubscriptionPageRequest struct {
 	BasePageRequest
 	Filter *OrganizationSubscriptionFilter `json:"filter,optional"`
-	Sort   *BasePageSort                   `json:"sort,optional"`
+	Sorter *BasePageSort                   `json:"sorter,optional"`
 }
 
 type OrganizationSubscriptionPageResponse struct {
