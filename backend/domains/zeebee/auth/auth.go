@@ -871,36 +871,53 @@ func (l *Auth) LoadOrganizationRoleResources(ctx context.Context, organizationId
 
 // getOrganizationPlanResourceIds returns the set of resource IDs allowed by the organization's
 // active pricing plan subscriptions. Uses in-memory cache, loading from DB on miss.
+// singleflight collapses concurrent cache-miss loads for the same org into one DB hit.
 // Returns nil if the organization has no active subscription, meaning no resources are accessible.
 func (l *Auth) getOrganizationPlanResourceIds(ctx context.Context, organizationId int64) (*mapx.Map[int64, bool], error) {
 	cached, ok := l.organizationPlanResourceMap.Get(organizationId)
 	if ok {
 		return cached, nil
 	}
-	return l.loadOrganizationPlanResources(ctx, organizationId)
+	result, err, _ := l.sf.Do(stringx.Format("OrgPlanRes:%v", organizationId), func() (interface{}, error) {
+		// re-check cache inside the singleflight call to avoid a redundant
+		// DB load when another in-flight call already populated it
+		if cached, ok := l.organizationPlanResourceMap.Get(organizationId); ok {
+			return cached, nil
+		}
+		return l.loadOrganizationPlanResources(ctx, organizationId)
+	})
+	if err != nil {
+		return nil, err
+	}
+	resourceSet, ok := result.(*mapx.Map[int64, bool])
+	if !ok {
+		return nil, errorx.New("invalid organization plan resource set")
+	}
+	return resourceSet, nil
 }
 
 // loadOrganizationPlanResources loads plan resources for an organization from DB into cache.
 func (l *Auth) loadOrganizationPlanResources(ctx context.Context, organizationId int64) (*mapx.Map[int64, bool], error) {
-	activeSub, err := l.repos.OrganizationSubscriptionRepo.FindActiveByOrganizationId(ctx, organizationId)
+	activeSubs, err := l.repos.OrganizationSubscriptionRepo.FindActiveByOrganizationId(ctx, organizationId)
 	if err != nil {
 		return nil, err
 	}
 
 	resourceSet := mapx.NewMap[int64, bool]()
-	if activeSub != nil &&
-		(activeSub.Status == constants.OrganizationSubscriptionStatusActive ||
-			activeSub.Status == constants.OrganizationSubscriptionStatusTrialing) &&
-		!isSubscriptionExpired(activeSub, time.Now()) {
+	for _, activeSub := range activeSubs {
+		if activeSub != nil &&
+			activeSub.Status.IsEffective() &&
+			!isSubscriptionExpired(activeSub, time.Now()) {
 
-		plan, innerErr := l.repos.PricingPlanRepo.GetOne(ctx, activeSub.PricingPlanId, nil)
-		if innerErr == nil && plan != nil && plan.Status == constants.CommonStatusActive {
-			ids, innerErr := l.repos.PricingPlanAndResourceRepo.FindResourceIdsByPlanId(ctx, activeSub.PricingPlanId)
-			if innerErr != nil {
-				return nil, innerErr
-			}
-			for _, id := range ids {
-				resourceSet.Set(id, true)
+			plan, innerErr := l.repos.PricingPlanRepo.GetOne(ctx, activeSub.PricingPlanId, nil)
+			if innerErr == nil && plan != nil && plan.Status == constants.CommonStatusActive {
+				ids, innerErr := l.repos.PricingPlanAndResourceRepo.FindResourceIdsByPlanId(ctx, activeSub.PricingPlanId)
+				if innerErr != nil {
+					return nil, innerErr
+				}
+				for _, id := range ids {
+					resourceSet.Set(id, true)
+				}
 			}
 		}
 	}
