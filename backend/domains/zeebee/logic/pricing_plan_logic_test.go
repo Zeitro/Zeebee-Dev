@@ -19,7 +19,11 @@ import (
 // setupTestDB creates an in-memory SQLite DB with manually created tables
 func setupTestDB(t *testing.T) *gorm.DB {
 	t.Helper()
-	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	// unique shared in-memory DB per test: cache=shared makes the schema visible
+	// across connections (transactions vs. repo reads), and the per-test name
+	// isolates it from other tests so UNIQUE keys don't collide.
+	dsn := fmt.Sprintf("file:%s?mode=memory&cache=shared", t.Name())
+	db, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{})
 	require.NoError(t, err)
 
 	sqls := []string{
@@ -75,7 +79,18 @@ func setupTestDB(t *testing.T) *gorm.DB {
 			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 			is_del INTEGER DEFAULT 0,
 			name TEXT NOT NULL DEFAULT '',
-			status TEXT NOT NULL DEFAULT 'Active'
+			status TEXT NOT NULL DEFAULT 'Active',
+			owner_id INTEGER DEFAULT 0,
+			address TEXT DEFAULT '{}',
+			contact_email TEXT DEFAULT '',
+			contact_phone TEXT DEFAULT '',
+			contact_name TEXT DEFAULT '',
+			owner_type TEXT DEFAULT '',
+			type TEXT DEFAULT '',
+			logo TEXT DEFAULT '',
+			website TEXT DEFAULT '',
+			tagline TEXT DEFAULT '',
+			metadata TEXT DEFAULT '{}'
 		)`,
 		`CREATE TABLE IF NOT EXISTS resources (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -95,6 +110,22 @@ func setupTestDB(t *testing.T) *gorm.DB {
 			enable_data_scope INTEGER DEFAULT 0,
 			description TEXT DEFAULT '',
 			is_public INTEGER DEFAULT 0
+		)`,
+		`CREATE TABLE IF NOT EXISTS roles (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			is_del INTEGER DEFAULT 0,
+			organization_id INTEGER NOT NULL DEFAULT 0,
+			name TEXT NOT NULL DEFAULT '',
+			type TEXT NOT NULL DEFAULT 'Borrower',
+			status TEXT NOT NULL DEFAULT 'Active',
+			description TEXT NOT NULL DEFAULT ''
+		)`,
+		`CREATE TABLE IF NOT EXISTS role_and_resources (
+			role_id INTEGER NOT NULL,
+			resource_id INTEGER NOT NULL,
+			PRIMARY KEY (role_id, resource_id)
 		)`,
 	}
 	for _, s := range sqls {
@@ -448,7 +479,7 @@ func TestPricingPlanPolicyUpdate_NotFound(t *testing.T) {
 		OriginalAmount: 200,
 		ActualAmount:   150,
 	}
-	_, err := policyLogic.Update(ctx, 99999, input)
+	_, err := policyLogic.Update(ctx, input)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "not found")
 }
@@ -491,7 +522,7 @@ func TestPricingPlanPolicyUpdate_Success(t *testing.T) {
 		OriginalAmount: 200,
 		ActualAmount:   150,
 	}
-	updated, err := policyLogic.Update(ctx, policy.Id, updateInput)
+	updated, err := policyLogic.Update(ctx, updateInput)
 	require.NoError(t, err)
 	assert.Equal(t, float64(200), updated.OriginalAmount)
 	assert.Equal(t, float64(150), updated.ActualAmount)
@@ -523,7 +554,7 @@ func TestPricingPlanPolicyDelete_Success(t *testing.T) {
 	err = policyLogic.Delete(ctx, policy.Id)
 	assert.NoError(t, err)
 
-	_, err = policyLogic.Update(ctx, policy.Id, dto.PricingPlanPolicyUpdateRequestDto{Id: policy.Id})
+	_, err = policyLogic.Update(ctx, dto.PricingPlanPolicyUpdateRequestDto{Id: policy.Id})
 	assert.Error(t, err)
 }
 
