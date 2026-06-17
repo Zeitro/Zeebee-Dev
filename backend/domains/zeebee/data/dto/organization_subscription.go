@@ -30,7 +30,8 @@ type OrganizationSubscriptionPageEntity struct {
 	// OrganizationId      int64         `json:"organization_id"`
 	OrganizationName string `json:"organization_name"`
 	// PricingPlanId       int64         `json:"pricing_plan_id"`
-	PricingPlanName string `json:"pricing_plan_name"`
+	PricingPlanName       string                      `json:"pricing_plan_name"`
+	PricingPlanPolicyType constants.PricingPolicyType `json:"pricing_plan_policy_type"`
 	// PricingPlanPolicyId int64         `json:"pricing_plan_policy_id"`
 	Status         string        `json:"status"`
 	ExpireDate     *sql.NullTime `json:"expire_date"`
