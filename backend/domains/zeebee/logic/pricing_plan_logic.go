@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
+	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/auth"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
@@ -53,9 +54,9 @@ func (l *PricingPlanLogic) Create(ctx context.Context, input dto.PricingPlanCrea
 	err = l.repos.PricingPlanRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 		if planModel.IsDefault {
-			// set all other plans to non-default
+			// set all other plans of the same type to non-default (default is unique per type)
 			columns := map[string]interface{}{"is_default": false}
-			filterColumns := map[string]interface{}{"is_default": true}
+			filterColumns := map[string]interface{}{"is_default": true, "type": planModel.Type}
 			innerErr = l.repos.PricingPlanRepo.UpdateColumnsWithTx(ctx, tx, columns, filterColumns, nil)
 			if innerErr != nil {
 				return innerErr
@@ -82,10 +83,10 @@ func (l *PricingPlanLogic) Update(ctx context.Context, input dto.PricingPlanUpda
 		if innerErr != nil {
 			return errorx.Wrap(innerErr, "fail to find pricing plan")
 		}
-		// set all other plans to non-default
+		// set all other plans of the same type to non-default (default is unique per type)
 		if !plan.IsDefault && input.IsDefault {
 			columns := map[string]interface{}{"is_default": false}
-			filterColumns := map[string]interface{}{"is_default": true}
+			filterColumns := map[string]interface{}{"is_default": true, "type": plan.Type}
 			innerErr = l.repos.PricingPlanRepo.UpdateColumnsWithTx(ctx, tx, columns, filterColumns, nil)
 			if innerErr != nil {
 				return innerErr
@@ -120,30 +121,48 @@ func (l *PricingPlanLogic) Delete(ctx context.Context, id int64) (err error) {
 		return errorx.Wrap(err, "fail to find pricing plan")
 	}
 
+	resourceIds := slice.Map(plan.Resources, func(index int, resource *model.Resource) int64 {
+		return resource.Id
+	})
+
+	var orgPolicies map[int64]*organizationPolicyChanges
 	err = l.repos.PricingPlanRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
-		// check for active subscriptions
-		// effectedSubscriptions, innerErr := l.repos.OrganizationSubscriptionRepo.FindEffectiveByPlanIdWithTx(ctx, tx, id)
-		// get active subscriptions
+		// block deletion while any effective subscription still references the plan
 		effectedSubscriptions := slice.Filter(plan.Subscriptions, func(index int, item *model.OrganizationSubscription) bool {
-			return item.Status == constants.OrganizationSubscriptionStatusActive ||
-				item.Status == constants.OrganizationSubscriptionStatusExpiring ||
-				item.Status == constants.OrganizationSubscriptionStatusSuspended ||
-				item.Status == constants.OrganizationSubscriptionStatusTrialing
+			return item.Status.IsEffective()
 		})
-
-		// if innerErr != nil {
-		// 	return innerErr
-		// }
 		if len(effectedSubscriptions) > 0 {
 			return errorx.New("cannot delete pricing plan with active subscriptions")
+		}
+		// remove-side cleanup: unbind the plan's resources from every org that ever
+		// subscribed, so role-resource rows and enforcer policies don't outlive the
+		// plan. Newly added resources are never auto-bound (M5), but admin-manual
+		// bindings and any legacy auto-bindings must be unwound here.
+		organizationIds := slice.Unique(slice.Map(plan.Subscriptions, func(index int, item *model.OrganizationSubscription) int64 {
+			return item.OrganizationId
+		}))
+		if len(organizationIds) > 0 && len(resourceIds) > 0 {
+			orgPolicies, innerErr = syncPlanResourcesToOrganizationRoles(ctx, l.repos, tx, planResourceSyncReq{
+				OrganizationIds: organizationIds,
+				ResourceIds:     resourceIds,
+				UserType:        plan.Type,
+				IsBind:          false,
+			})
+			if innerErr != nil {
+				return innerErr
+			}
 		}
 		// delete plan
 		innerErr = l.repos.PricingPlanRepo.DeleteWithTx(ctx, tx, plan)
 		return innerErr
 	})
+	if err != nil {
+		return errorx.WithStack(err)
+	}
 
-	return errorx.WithStack(err)
+	l.publishOrgRoleReloadEvents(ctx, orgPolicies, plan.Type)
+	return nil
 }
 
 func (l *PricingPlanLogic) Detail(ctx context.Context, id int64) (*dto.PricingPlanEntityDto, error) {
@@ -199,7 +218,7 @@ func (l *PricingPlanLogic) All(ctx context.Context, planType constants.UserType,
 		slice.SortBy(plan.Policies, func(a, b *model.PricingPlanPolicy) bool {
 			return policyTypeMap[a.Type] < policyTypeMap[b.Type]
 		})
-		opt, err := copierx.Trans[model.PricingPlan, dto.PricingPlanEntityDto](plan)
+		opt, err := copierx.Trans[model.PricingPlan, dto.PricingPlanEntityDto](plan, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToStr(timex.LayoutUsStyle))
 		if err != nil {
 			return nil, err
 		}
@@ -229,7 +248,7 @@ func (l *PricingPlanLogic) SwitchStatus(ctx context.Context, id int64, status co
 
 	var affectedOrganizationIds []int64
 
-	var orgPolicies map[int64]*organizationPolicyChanges
+	orgPolicies := make(map[int64]*organizationPolicyChanges)
 	plan.Status = status
 	err = l.repos.PricingPlanRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
@@ -251,28 +270,32 @@ func (l *PricingPlanLogic) SwitchStatus(ctx context.Context, id int64, status co
 		if len(affectedOrganizationIds) == 0 {
 			return nil
 		}
-		// bind/unbind resources
-		if isDisabling {
-			orgPolicies, innerErr = syncPlanResourcesToOrganizationRoles(ctx, l.repos, tx, planResourceSyncReq{
+		// M5: only disabling a plan unbinds its resources (remove-side). Re-enabling
+		// a plan does NOT auto-bind resources to roles — the org admin configures
+		// role-resource bindings manually.
+		if isDisabling && len(resourceIds) > 0 {
+			var disabledOrgPolicies map[int64]*organizationPolicyChanges
+			disabledOrgPolicies, innerErr = syncPlanResourcesToOrganizationRoles(ctx, l.repos, tx, planResourceSyncReq{
 				OrganizationIds: affectedOrganizationIds,
 				ResourceIds:     resourceIds,
 				UserType:        plan.Type,
 				IsBind:          false,
 			})
-		} else {
-			orgPolicies, innerErr = syncPlanResourcesToOrganizationRoles(ctx, l.repos, tx, planResourceSyncReq{
-				OrganizationIds: affectedOrganizationIds,
-				ResourceIds:     resourceIds,
-				UserType:        plan.Type,
-				IsBind:          true,
-			})
+			if innerErr != nil {
+				return innerErr
+			}
+			mergeOrganizationPolicies(orgPolicies, disabledOrgPolicies)
 		}
-		return innerErr
+		return nil
 	})
 	if err != nil {
 		return err
 	}
 
+	// M5: re-enabling a plan does not auto-bind resources, so on re-enable there
+	// is nothing to publish (the enforcer plan-resource gate is recomputed from
+	// the DB on the next RebuildPolicy). Only the disable path produced removed
+	// policies above.
 	l.publishOrgRoleReloadEvents(ctx, orgPolicies, plan.Type)
 	return
 }
@@ -305,6 +328,7 @@ func (l *PricingPlanLogic) BindResources(ctx context.Context, planId int64, reso
 	newIds, removedIds := diffResourceIds(oldResourceIds, currentResourceIds)
 
 	organizationPolicies := make(map[int64]*organizationPolicyChanges)
+	var organizationIds []int64
 	err = l.repos.PricingPlanRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 		innerErr = l.repos.PricingPlanRepo.UpdateResourcesWithTx(ctx, tx, plan,
@@ -317,17 +341,20 @@ func (l *PricingPlanLogic) BindResources(ctx context.Context, planId int64, reso
 		if innerErr != nil {
 			return innerErr
 		}
-		organizationIds := slice.Map(effectedSubscriptions, func(index int, subscription *model.OrganizationSubscription) int64 {
+		organizationIds = slice.Unique(slice.Map(effectedSubscriptions, func(index int, subscription *model.OrganizationSubscription) int64 {
 			return subscription.OrganizationId
-		})
-		organizationIds = slice.Unique(organizationIds)
+		}))
 
 		if len(organizationIds) == 0 {
 			return nil
 		}
 
+		// M5: only removed resources are unbound (remove-side). Newly added plan
+		// resources are NOT auto-bound to roles — the org admin configures
+		// role-resource bindings manually.
 		if len(removedIds) > 0 {
-			removedOrgPolicies, innerErr := syncPlanResourcesToOrganizationRoles(ctx, l.repos, tx, planResourceSyncReq{
+			var removedOrgPolicies map[int64]*organizationPolicyChanges
+			removedOrgPolicies, innerErr = syncPlanResourcesToOrganizationRoles(ctx, l.repos, tx, planResourceSyncReq{
 				OrganizationIds: organizationIds,
 				ResourceIds:     removedIds,
 				UserType:        plan.Type,
@@ -339,25 +366,14 @@ func (l *PricingPlanLogic) BindResources(ctx context.Context, planId int64, reso
 			mergeOrganizationPolicies(organizationPolicies, removedOrgPolicies)
 		}
 
-		if len(newIds) > 0 {
-			addedOrgPolicies, innerErr := syncPlanResourcesToOrganizationRoles(ctx, l.repos, tx, planResourceSyncReq{
-				OrganizationIds: organizationIds,
-				ResourceIds:     newIds,
-				UserType:        plan.Type,
-				IsBind:          true,
-			})
-			if innerErr != nil {
-				return innerErr
-			}
-			mergeOrganizationPolicies(organizationPolicies, addedOrgPolicies)
-		}
-
 		return nil
 	})
 	if err != nil {
 		return err
 	}
 
+	// M5: newly added plan resources are not auto-bound, so only the removed
+	// resources produced policy deltas above.
 	l.publishOrgRoleReloadEvents(ctx, organizationPolicies, plan.Type)
 	return
 }

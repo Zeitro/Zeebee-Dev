@@ -3,6 +3,8 @@ package logic
 import (
 	"context"
 
+	"gorm.io/gorm"
+
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
@@ -32,59 +34,67 @@ func (l *PricingPlanPolicyLogic) Create(ctx context.Context, input dto.PricingPl
 		},
 	}
 
-	exists, err := l.repos.PricingPlanPolicyRepo.IsExistedWithFilter(ctx, filters)
-	if err != nil {
-		return nil, err
-	}
-	if exists {
-		return nil, errorx.New("pricing plan policy with same type already exists")
-	}
-
 	policyModel, err := copierx.Trans[dto.PricingPlanPolicyCreateRequestDto, model.PricingPlanPolicy](&input)
 	if err != nil {
 		return nil, err
 	}
 
-	result, err := l.repos.PricingPlanPolicyRepo.Create(ctx, policyModel)
+	// duplicate-check and create run in one transaction to close the TOCTOU gap
+	err = l.repos.PricingPlanPolicyRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		exists, innerErr := l.repos.PricingPlanPolicyRepo.IsExistedWithFilterWithTx(ctx, tx, filters)
+		if innerErr != nil {
+			return innerErr
+		}
+		if exists {
+			return errorx.New("pricing plan policy with same type already exists")
+		}
+		policyModel, innerErr = l.repos.PricingPlanPolicyRepo.CreateWithTx(ctx, tx, policyModel, false)
+		return innerErr
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return copierx.Trans[model.PricingPlanPolicy, dto.PricingPlanPolicyEntityDto](policyModel)
+}
+
+func (l *PricingPlanPolicyLogic) Update(ctx context.Context, input dto.PricingPlanPolicyUpdateRequestDto) (*dto.PricingPlanPolicyEntityDto, error) {
+	var result *model.PricingPlanPolicy
+	// load, duplicate-check, and update run in one transaction to close the TOCTOU gap
+	err := l.repos.PricingPlanPolicyRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		policy, innerErr := l.repos.PricingPlanPolicyRepo.FindOneByIdWithTx(ctx, tx, input.Id)
+		if innerErr != nil {
+			return errorx.Wrap(innerErr, "fail to find pricing plan policy")
+		}
+
+		innerErr = copierx.Assign[dto.PricingPlanPolicyUpdateRequestDto, model.PricingPlanPolicy](&input, policy)
+		if innerErr != nil {
+			return innerErr
+		}
+
+		// check policy type uniqueness (excluding self)
+		filters := []gormx.WhereRaw{
+			{
+				Raw:  "pricing_plan_id = ? and type = ? and id != ?",
+				Args: []interface{}{policy.PricingPlanId, input.Type, input.Id},
+			},
+		}
+		exists, innerErr := l.repos.PricingPlanPolicyRepo.IsExistedWithFilterWithTx(ctx, tx, filters)
+		if innerErr != nil {
+			return innerErr
+		}
+		if exists {
+			return errorx.New("pricing plan policy with same type already exists")
+		}
+
+		result, innerErr = l.repos.PricingPlanPolicyRepo.UpdateOneByIdWithTx(ctx, tx, input.Id, policy)
+		return innerErr
+	})
 	if err != nil {
 		return nil, err
 	}
 
 	return copierx.Trans[model.PricingPlanPolicy, dto.PricingPlanPolicyEntityDto](result)
-}
-
-func (l *PricingPlanPolicyLogic) Update(ctx context.Context, input dto.PricingPlanPolicyUpdateRequestDto) (*dto.PricingPlanPolicyEntityDto, error) {
-	policy, err := l.repos.PricingPlanPolicyRepo.GetOne(ctx, input.Id)
-	if err != nil {
-		return nil, errorx.Wrap(err, "fail to find pricing plan policy")
-	}
-
-	err = copierx.Assign[dto.PricingPlanPolicyUpdateRequestDto, model.PricingPlanPolicy](&input, policy)
-	if err != nil {
-		return nil, err
-	}
-
-	// check policy type
-	filters := []gormx.WhereRaw{
-		{
-			Raw:  "pricing_plan_id = ? and type = ? and id != ?",
-			Args: []interface{}{policy.PricingPlanId, input.Type, input.Id},
-		},
-	}
-	exists, err := l.repos.PricingPlanPolicyRepo.IsExistedWithFilter(ctx, filters)
-	if err != nil {
-		return nil, err
-	}
-	if exists {
-		return nil, errorx.New("pricing plan policy with same type already exists")
-	}
-
-	policy, err = l.repos.PricingPlanPolicyRepo.UpdateOneById(ctx, input.Id, policy)
-	if err != nil {
-		return nil, err
-	}
-
-	return copierx.Trans[model.PricingPlanPolicy, dto.PricingPlanPolicyEntityDto](policy)
 }
 
 func (l *PricingPlanPolicyLogic) Delete(ctx context.Context, id int64) error {

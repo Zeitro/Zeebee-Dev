@@ -570,23 +570,25 @@ func (l *ResourceLogic) handleSyncResource(ctx context.Context, tx *gorm.DB, use
 }
 
 func (l *ResourceLogic) filterByPricingPlan(ctx context.Context, organizationId int64, resources []*model.Resource) ([]*model.Resource, error) {
-	activeSub, err := l.repos.OrganizationSubscriptionRepo.FindActiveByOrganizationId(ctx, organizationId)
+	activeSubs, err := l.repos.OrganizationSubscriptionRepo.FindActiveByOrganizationId(ctx, organizationId)
 	if err != nil {
 		return nil, err
 	}
 
 	planResourceIds := make(map[int64]bool)
 	// get plan's resource ids
-	if activeSub != nil && !l.isSubscriptionExpired(activeSub, time.Now()) {
+	for _, activeSub := range activeSubs {
+		if activeSub != nil && !l.isSubscriptionExpired(activeSub, time.Now()) {
 
-		plan, innerErr := l.repos.PricingPlanRepo.GetOne(ctx, activeSub.PricingPlanId, nil)
-		if innerErr == nil && plan != nil && plan.Status == constants.CommonStatusActive {
-			ids, innerErr := l.repos.PricingPlanAndResourceRepo.FindResourceIdsByPlanId(ctx, activeSub.PricingPlanId)
-			if innerErr != nil {
-				return nil, innerErr
-			}
-			for _, id := range ids {
-				planResourceIds[id] = true
+			plan, innerErr := l.repos.PricingPlanRepo.GetOne(ctx, activeSub.PricingPlanId, nil)
+			if innerErr == nil && plan != nil && plan.Status == constants.CommonStatusActive {
+				ids, innerErr := l.repos.PricingPlanAndResourceRepo.FindResourceIdsByPlanId(ctx, activeSub.PricingPlanId)
+				if innerErr != nil {
+					return nil, innerErr
+				}
+				for _, id := range ids {
+					planResourceIds[id] = true
+				}
 			}
 		}
 	}
