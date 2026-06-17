@@ -234,6 +234,13 @@ const PricingPlanTable = ({
 						},
 					},
 					{
+						title: 'Sort order',
+						dataIndex: 'sort_order',
+						key: 'sort_order',
+						width: 100,
+						render: (v) => displayValue(v),
+					},
+					{
 						title: 'Action',
 						key: 'action',
 						fixed: 'right',
@@ -274,7 +281,7 @@ const PricingPlanTable = ({
 					const body = {
 						...rest,
 						filter,
-						sort: sorter?.column ? sorter : { column: '', sort: '' },
+						sorter: sorter?.column ? sorter : { column: '', sort: '' },
 					};
 					return request(api, { method: 'POST', body });
 				}}

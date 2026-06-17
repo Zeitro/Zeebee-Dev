@@ -51,11 +51,11 @@ const SubscriptionTable = ({
 		() => [
 			{
 				filterType: 'input',
-				placeholder: 'Search by ID or organization name',
+				placeholder: 'Search by ID, Plan name or organization name',
 				paramsKey: 'keyword',
 				value: searchValue,
 				onChange: ({ target: { value } }) => setSearchValue(value),
-				style: { width: 340 },
+				style: { width: 400 },
 			},
 			{
 				filterType: 'treeSelect',
@@ -101,7 +101,7 @@ const SubscriptionTable = ({
 			ref={tableFilterRef}
 			filterList={filterList}
 			filterWrapClassName={filterWrapClassName}
-			scroll={{ x: 1200 }}
+			scroll={{ x: 1300 }}
 			columns={[
 				{
 					title: 'ID',
@@ -144,6 +144,7 @@ const SubscriptionTable = ({
 					dataIndex: 'expire_date',
 					key: 'expire_date',
 					width: 140,
+					sorter: true,
 					render: (v, record) => (
 						<EditableExpireDate
 							record={record}
@@ -183,6 +184,8 @@ const SubscriptionTable = ({
 					dataIndex: 'created_at',
 					key: 'created_at',
 					width: 160,
+					sorter: true,
+					defaultSortOrder: 'descend',
 					render: (v) => displayValue(v, formatDate),
 				},
 			]}
@@ -196,7 +199,7 @@ const SubscriptionTable = ({
 				const body = {
 					...rest,
 					filter,
-					sort: sorter?.column ? sorter : { column: '', sort: '' },
+					sorter: sorter?.column ? sorter : { column: '', sort: '' },
 				};
 				return request(api, { method: 'POST', body });
 			}}
