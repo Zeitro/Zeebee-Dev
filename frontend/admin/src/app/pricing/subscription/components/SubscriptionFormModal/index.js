@@ -223,7 +223,7 @@ const SubscriptionFormModal = ({ open, setOpen, rowData = {}, successCallback })
 									filterOption={filterSelectOption}
 									optionFilterProp="label"
 									onChange={() => {
-										form.setFieldValue('pricing_plan_policy_id', undefined);
+										form.setFieldsValue({ pricing_plan_policy_id: null });
 									}}
 								/>
 							</Form.Item>

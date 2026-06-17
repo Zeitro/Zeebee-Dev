@@ -38,6 +38,7 @@ const PlanFormDrawer = ({ setOpen, rowData = {}, successCallback }) => {
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [existingPolicies, setExistingPolicies] = useState([]);
+	const [result, setResult] = useState({});
 	const [messageApi, contextHolder] = message.useMessage();
 	const { request } = useMemo(() => createRequest(), []);
 	const handleClose = () => setOpen(false);
@@ -81,7 +82,8 @@ const PlanFormDrawer = ({ setOpen, rowData = {}, successCallback }) => {
 				api = `/pricing_plan/${rowData.id}`;
 				method = 'PUT';
 			}
-			await request(api, { method, body });
+			const res = await request(api, { method, body });
+			setResult(res);
 
 			messageApi.success(`Plan ${isEdit ? 'updated' : 'added'} successfully.`);
 			successCallback?.();
@@ -228,7 +230,7 @@ const PlanFormDrawer = ({ setOpen, rowData = {}, successCallback }) => {
 				</Form>
 				<PricingStrategyList
 					request={request}
-					pricingPlanId={rowData?.id}
+					pricingPlanId={rowData?.id || result?.id}
 					existingPolicies={existingPolicies}
 					isEdit={isEdit}
 					messageApi={messageApi}

@@ -241,6 +241,13 @@ const PricingPlanTable = ({
 						render: (v) => displayValue(v),
 					},
 					{
+						title: 'default plan',
+						dataIndex: 'is_default',
+						key: 'is_default',
+						width: 120,
+						render: (v) => (v ? 'Yes' : 'No'),
+					},
+					{
 						title: 'Action',
 						key: 'action',
 						fixed: 'right',
