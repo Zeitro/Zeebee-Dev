@@ -268,6 +268,28 @@ func (repo *BaseRepo[T]) FindOneByColumnsWithTx(ctx context.Context, tx *gorm.DB
 	return data, nil
 }
 
+func (repo *BaseRepo[T]) FindOneByFilter(ctx context.Context, filter []WhereRaw, preloads ...Preload) (T, error) {
+	query := repo.Client(ctx)
+	for _, raw := range filter {
+		query = query.Where(raw.Raw, raw.Args...)
+	}
+
+	for _, preload := range preloads {
+		args := make([]interface{}, 0, len(preload.Args))
+		for _, arg := range preload.Args {
+			args = append(args, arg)
+		}
+
+		query = query.Preload(preload.Query, args...)
+	}
+	var data T
+	err := query.First(&data).Error
+	if err != nil {
+		return data, errorx.WithStack(err)
+	}
+	return data, nil
+}
+
 // FindColumnByColumns find column by columns
 func (repo *BaseRepo[T]) FindColumnByColumns(ctx context.Context, columnName string, target interface{}, columns map[string]interface{}) error {
 	query := repo.Client(ctx).Select(columnName)

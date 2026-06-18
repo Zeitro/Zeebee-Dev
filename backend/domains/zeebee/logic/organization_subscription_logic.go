@@ -18,6 +18,7 @@ import (
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/repo"
 
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/threading"
 
 	"zeebee-backend/domains/zeebee/auth"
@@ -70,7 +71,7 @@ func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.Or
 		return
 	}
 
-	code, err := l.generateCode(ctx)
+	code, err := l.generateCode(ctx, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -459,7 +460,7 @@ func (l *OrganizationSubscriptionLogic) SubscribeDefaultPlan(ctx context.Context
 		return nil
 	}
 
-	code, err := l.generateCode(ctx)
+	code, err := l.generateCode(ctx, nil)
 	if err != nil {
 		return err
 	}
@@ -496,11 +497,211 @@ func (l *OrganizationSubscriptionLogic) SubscribeDefaultPlan(ctx context.Context
 		return err
 	}
 
-	// M5: trial plan resources are not auto-bound to roles — the org admin
-	// configures role-resource bindings manually. No auth event is needed: the
-	// enforcer plan-resource gate is recomputed from the DB on the next
-	// RebuildPolicy.
 	return nil
+}
+
+func (l *OrganizationSubscriptionLogic) UpdateStatus(ctx context.Context, organizationType constants.UserType) (err error) {
+	// default plan + its free (ActualAmount == 0) policy, used to auto-recover
+	// expired subscriptions so an org never fully loses access on expiry.
+	planFilter := []gormx.WhereRaw{
+		{
+			Raw: "is_default = ? and type = ?",
+			Args: []interface{}{
+				true,
+				organizationType,
+			},
+		},
+	}
+	planPreloads := []gormx.Preload{
+		{Query: "Policies"},
+		{Query: "Resources"},
+	}
+	recovery := expiredSubscriptionRecovery{Now: time.Now()}
+	recovery.DefaultPlan, _ = l.repos.PricingPlanRepo.FindOneByFilter(ctx, planFilter, planPreloads...)
+	if recovery.DefaultPlan != nil {
+		recovery.DefaultPolicy, _ = slice.FindBy(recovery.DefaultPlan.Policies, func(index int, item *model.PricingPlanPolicy) bool {
+			return item.ActualAmount == 0
+		})
+	}
+
+	// subscriptions still in an effective status for this user-type
+	activeSubs, err := l.repos.OrganizationSubscriptionRepo.FindActiveSubscriptions(ctx, organizationType)
+	if err != nil {
+		return
+	}
+
+	now := recovery.Now
+	expiringDate := now.AddDate(0, 0, 7)
+	for _, sub := range activeSubs {
+		if sub == nil {
+			continue
+		}
+		newStatus := sub.Status
+		expireDate := now
+		if sub.ExpireDate != nil && sub.ExpireDate.Valid {
+			expireDate = sub.ExpireDate.Time
+		}
+		switch sub.Status {
+		case constants.OrganizationSubscriptionStatusActive:
+			if now.After(expireDate) {
+				newStatus = constants.OrganizationSubscriptionStatusExpired
+			} else if expireDate.Before(expiringDate) {
+				newStatus = constants.OrganizationSubscriptionStatusExpiring
+			}
+		case constants.OrganizationSubscriptionStatusExpiring:
+			if now.After(expireDate) {
+				newStatus = constants.OrganizationSubscriptionStatusExpired
+			}
+		case constants.OrganizationSubscriptionStatusTrialing:
+			if now.After(expireDate) {
+				newStatus = constants.OrganizationSubscriptionStatusExpired
+			}
+		}
+
+		if newStatus == sub.Status {
+			continue
+		}
+		// non-Expired transition (e.g. Active -> Expiring): simple status update
+		if newStatus != constants.OrganizationSubscriptionStatusExpired {
+			_ = l.repos.OrganizationSubscriptionRepo.UpdateColumnsById(ctx, sub.Id, map[string]interface{}{
+				"status": newStatus,
+			})
+			continue
+		}
+
+		// Expired transition: recover via default plan when possible
+		orgPolicies := map[int64]*organizationPolicyChanges{}
+		txErr := l.repos.OrganizationSubscriptionRepo.Transaction(ctx, func(tx *gorm.DB) error {
+			var innerErr error
+			orgPolicies, innerErr = l.handleExpiredSubscription(ctx, tx, sub, recovery)
+			return innerErr
+		})
+		if txErr != nil {
+			logx.WithContext(ctx).WithFields(
+				logx.Field("type", "update_organization_subscription_status"),
+				logx.Field("subscription_id", sub.Id),
+				logx.Field("organization_id", sub.OrganizationId),
+				logx.Field("organization_type", organizationType),
+			).
+				Errorf("fail to handle expired subscription %d: %v", sub.Id, txErr)
+		} else {
+			l.publishOrgPolicyReloadEvents(ctx, orgPolicies, organizationType)
+		}
+	}
+
+	return
+}
+
+// expiredSubscriptionRecovery bundles the default-plan recovery context shared
+// across every expired subscription in a single UpdateStatus pass.
+type expiredSubscriptionRecovery struct {
+	DefaultPlan   *model.PricingPlan
+	DefaultPolicy *model.PricingPlanPolicy
+	Now           time.Time
+}
+
+// handleExpiredSubscription marks sub Expired, then recovers access via the
+// default plan when both a default plan and a free policy exist:
+//   - same plan: renew in place (reset to Active with a fresh expire date and
+//     the free policy). Resources are identical, so no role rebinding.
+//   - different plan: create a new Active subscription under the default plan,
+//     then unbind ONLY the resources the old plan had but the default plan
+//     lacks. Overlapping resources stay bound (no re-config needed); resources
+//     new to the default plan are left for the org admin to bind manually.
+//
+// With no default plan / free policy the subscription is simply left Expired.
+// Returns per-org removed policies so the caller can publish an auth reload for
+// this subscription's organization immediately after the transaction commits.
+func (l *OrganizationSubscriptionLogic) handleExpiredSubscription(
+	ctx context.Context,
+	tx *gorm.DB,
+	sub *model.OrganizationSubscription,
+	recovery expiredSubscriptionRecovery,
+) (map[int64]*organizationPolicyChanges, error) {
+	var err error
+	if err = l.repos.OrganizationSubscriptionRepo.UpdateColumnsByIdWithTx(ctx, tx, sub.Id, map[string]interface{}{
+		"status": constants.OrganizationSubscriptionStatusExpired,
+	}); err != nil {
+		return nil, err
+	}
+
+	if recovery.DefaultPlan == nil || recovery.DefaultPolicy == nil {
+		return nil, nil
+	}
+
+	// same plan -> renew in place
+	if sub.PricingPlanId == recovery.DefaultPlan.Id {
+		if err = l.repos.OrganizationSubscriptionRepo.UpdateColumnsByIdWithTx(ctx, tx, sub.Id, map[string]interface{}{
+			"status":                 constants.OrganizationSubscriptionStatusActive,
+			"expire_date":            calculateExpireDate(recovery.DefaultPolicy.Type, recovery.Now),
+			"pricing_plan_policy_id": recovery.DefaultPolicy.Id,
+			"original_amount":        recovery.DefaultPolicy.OriginalAmount,
+			"actual_amount":          recovery.DefaultPolicy.ActualAmount,
+		}); err != nil {
+			return nil, err
+		}
+		return nil, nil
+	}
+
+	// different plan -> create new subscription under the default plan
+	oldPlan, err := l.repos.PricingPlanRepo.GetOneWithTx(ctx, tx, sub.PricingPlanId, []gormx.Preload{{Query: "Resources"}})
+	if err != nil {
+		return nil, errorx.Wrap(err, "fail to find expired subscription pricing plan")
+	}
+
+	code, err := l.generateCode(ctx, tx)
+	if err != nil {
+		return nil, err
+	}
+	newSub := &model.OrganizationSubscription{
+		Code:                code,
+		OrganizationId:      sub.OrganizationId,
+		PricingPlanId:       recovery.DefaultPlan.Id,
+		PricingPlanPolicyId: recovery.DefaultPolicy.Id,
+		Status:              constants.OrganizationSubscriptionStatusActive,
+		ExpireDate:          calculateExpireDate(recovery.DefaultPolicy.Type, recovery.Now),
+		OriginalAmount:      recovery.DefaultPolicy.OriginalAmount,
+		ActualAmount:        recovery.DefaultPolicy.ActualAmount,
+	}
+	if _, err = l.repos.OrganizationSubscriptionRepo.CreateWithTx(ctx, tx, newSub, false); err != nil {
+		return nil, err
+	}
+
+	// unbind old-only resources; overlap kept, new-only left to admin
+	_, oldOnly := diffResourceIds(planResourceIds(oldPlan), planResourceIds(recovery.DefaultPlan))
+	if len(oldOnly) == 0 {
+		return nil, nil
+	}
+	removed, err := syncPlanResourcesToOrganizationRoles(ctx, l.repos, tx, planResourceSyncReq{
+		OrganizationIds: []int64{sub.OrganizationId},
+		ResourceIds:     oldOnly,
+		UserType:        oldPlan.Type,
+		IsBind:          false,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return removed, nil
+}
+
+// publishOrgPolicyReloadEvents sends per-org RoleReload events with explicit policy changes.
+func (l *OrganizationSubscriptionLogic) publishOrgPolicyReloadEvents(ctx context.Context, organizationPolicies map[int64]*organizationPolicyChanges, userType constants.UserType) {
+	for orgId, changes := range organizationPolicies {
+		orgId := orgId
+		changes := changes
+		threading.GoSafe(func() {
+			subCtx := context.WithoutCancel(ctx)
+			msg := auth.Msg{
+				Action:          auth.ActionRoleReload,
+				Scope:           auth.ScopeOrganization,
+				Type:            userType,
+				OrganizationId:  orgId,
+				AddedPolicies:   changes.added,
+				RemovedPolicies: changes.removed,
+			}
+			_ = l.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
+		})
+	}
 }
 
 // maxCodeRetries is the number of attempts generateCode makes to produce a
@@ -509,12 +710,23 @@ const maxCodeRetries = 5
 
 // generateCode produces a unique subscription code. It retries on collision with
 // an existing code (checked via ExistsByCode) up to maxCodeRetries times.
-func (l *OrganizationSubscriptionLogic) generateCode(ctx context.Context) (string, error) {
+func (l *OrganizationSubscriptionLogic) generateCode(ctx context.Context, tx *gorm.DB) (string, error) {
 	for i := 0; i < maxCodeRetries; i++ {
 		randN := rand2.N(99999)
 		randStr := fmt.Sprintf("%05d", randN)
 		code := fmt.Sprintf("SU%s%s", time.Now().Format("20060102150405"), randStr)
-		exists, err := l.repos.OrganizationSubscriptionRepo.ExistsByCode(ctx, code)
+		var exists bool
+		var err error
+		if tx == nil {
+			exists, err = l.repos.OrganizationSubscriptionRepo.IsExistedByColumns(ctx, map[string]interface{}{
+				"code": code,
+			})
+		} else {
+			exists, err = l.repos.OrganizationSubscriptionRepo.IsExistedByColumnsWithTx(ctx, tx, map[string]interface{}{
+				"code": code,
+			})
+		}
+		// exists, err := l.repos.OrganizationSubscriptionRepo.ExistsByCode(ctx, code)
 		if err != nil {
 			return "", err
 		}
@@ -612,24 +824,4 @@ func unbindEffectiveSubscriptions(ctx context.Context, repos *repo.AllRepos, tx 
 		mergeOrganizationPolicies(merged, orgPolicies)
 	}
 	return merged, nil
-}
-
-// publishOrgPolicyReloadEvents sends per-org RoleReload events with explicit policy changes.
-func (l *OrganizationSubscriptionLogic) publishOrgPolicyReloadEvents(ctx context.Context, organizationPolicies map[int64]*organizationPolicyChanges, userType constants.UserType) {
-	for orgId, changes := range organizationPolicies {
-		orgId := orgId
-		changes := changes
-		threading.GoSafe(func() {
-			subCtx := context.WithoutCancel(ctx)
-			msg := auth.Msg{
-				Action:          auth.ActionRoleReload,
-				Scope:           auth.ScopeOrganization,
-				Type:            userType,
-				OrganizationId:  orgId,
-				AddedPolicies:   changes.added,
-				RemovedPolicies: changes.removed,
-			}
-			_ = l.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
-		})
-	}
 }

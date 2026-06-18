@@ -76,6 +76,64 @@ func (repo *OrganizationSubscriptionRepo) FindActiveByOrgIdWithTx(ctx context.Co
 	return result, errorx.WithStack(err)
 }
 
+func (repo *OrganizationSubscriptionRepo) FindActiveSubscriptions(ctx context.Context, organizationType constants.UserType) (result []*model.OrganizationSubscription, err error) {
+	organizationRepo := NewOrganizationRepo(repo.GetDB())
+	var organizationIds []int64
+	organizationFilter := []gormx.WhereRaw{
+		{
+			Raw: "type = ?",
+			Args: []interface{}{
+				organizationType,
+			},
+		},
+	}
+	err = organizationRepo.PluckByColumns(ctx, "id", &organizationIds, organizationFilter)
+	if err != nil {
+		return result, errorx.WithStack(err)
+	}
+	if len(organizationIds) == 0 {
+		return
+	}
+
+	err = repo.Client(ctx).
+		Where("organization_id in ? AND status IN ?",
+			organizationIds,
+			constants.EffectiveStatuses,
+		).
+		Order("id desc").
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+}
+
+func (repo *OrganizationSubscriptionRepo) FindActiveSubscriptionsWithTx(ctx context.Context, tx *gorm.DB, organizationType constants.UserType) (result []*model.OrganizationSubscription, err error) {
+	organizationRepo := NewOrganizationRepo(tx)
+	var organizationIds []int64
+	organizationFilter := []gormx.WhereRaw{
+		{
+			Raw: "type = ?",
+			Args: []interface{}{
+				organizationType,
+			},
+		},
+	}
+	err = organizationRepo.PluckByColumnsWithTx(ctx, tx, "id", &organizationIds, organizationFilter)
+	if err != nil {
+		return result, errorx.WithStack(err)
+	}
+	if len(organizationIds) == 0 {
+		return
+	}
+
+	err = tx.WithContext(ctx).Model(&model.OrganizationSubscription{}).
+		Where("organization_id in ? and status IN ?",
+			organizationIds,
+			constants.EffectiveStatuses,
+		).
+		Order("id desc").
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+}
+
 func (repo *OrganizationSubscriptionRepo) FindByPricingPlanId(ctx context.Context, pricingPlanId int64) (result []*model.OrganizationSubscription, err error) {
 	err = repo.Client(ctx).
 		Where("pricing_plan_id = ?", pricingPlanId).

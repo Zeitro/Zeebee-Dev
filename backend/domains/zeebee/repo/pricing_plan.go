@@ -38,6 +38,19 @@ func (repo *PricingPlanRepo) GetOne(ctx context.Context, id int64, preloads []go
 	return result, errorx.WithStack(err)
 }
 
+func (repo *PricingPlanRepo) GetOneWithTx(ctx context.Context, tx *gorm.DB, id int64, preloads []gormx.Preload) (result *model.PricingPlan, err error) {
+	query := tx.WithContext(ctx).Model(&model.PricingPlan{}).Where("id = ?", id)
+	for i := range preloads {
+		args := make([]interface{}, 0, len(preloads[i].Args))
+		for _, arg := range preloads[i].Args {
+			args = append(args, arg)
+		}
+		query = query.Preload(preloads[i].Query, args...)
+	}
+	err = query.First(&result).Error
+	return result, errorx.WithStack(err)
+}
+
 func (repo *PricingPlanRepo) ExistsByNameAndType(ctx context.Context, name string, planType constants.UserType) (bool, error) {
 	return repo.IsExistedByColumns(ctx, map[string]interface{}{
 		"name": name,

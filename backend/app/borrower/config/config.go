@@ -45,6 +45,7 @@ type RpcConf struct {
 	PdfGeneratorUrl              string
 	TemplateConf                 map[string]TemplateConf
 	CasbinConf                   CasbinConf
+	CronTaskConf                 []CronTaskConf
 }
 
 type DbConf struct {
@@ -145,4 +146,9 @@ type CasbinWatcher struct {
 
 type CasbinEventTopic struct {
 	BorrowerTopic string
+}
+
+type CronTaskConf struct {
+	Name     string `json:"name"`
+	Schedule string `json:"schedule"`
 }
