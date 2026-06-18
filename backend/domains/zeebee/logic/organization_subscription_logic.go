@@ -139,7 +139,7 @@ func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.Or
 		return nil, err
 	}
 
-	l.publishOrgPolicyReloadEvents(ctx, organizationPolicies, plan.Type)
+	l.publishOrgPolicyRebuild(ctx, orgPolicyKeys(organizationPolicies), plan.Type)
 	return l.transToDetailDto(ctx, subscription)
 }
 
@@ -211,7 +211,7 @@ func (l *OrganizationSubscriptionLogic) Renew(ctx context.Context, id int64) (re
 		return nil, err
 	}
 
-	l.publishOrgPolicyReloadEvents(ctx, organizationPolicies, plan.Type)
+	l.publishOrgPolicyRebuild(ctx, orgPolicyKeys(organizationPolicies), plan.Type)
 	return l.transToDetailDto(ctx, subscription)
 }
 
@@ -271,7 +271,7 @@ func (l *OrganizationSubscriptionLogic) UpdateExpireDate(ctx context.Context, in
 		return err
 	}
 
-	l.publishOrgPolicyReloadEvents(ctx, organizationPolicies, plan.Type)
+	l.publishOrgPolicyRebuild(ctx, orgPolicyKeys(organizationPolicies), plan.Type)
 	return nil
 }
 
@@ -314,7 +314,7 @@ func (l *OrganizationSubscriptionLogic) SwitchStatus(ctx context.Context, id int
 		return err
 	}
 
-	l.publishOrgPolicyReloadEvents(ctx, organizationPolicies, plan.Type)
+	l.publishOrgPolicyRebuild(ctx, orgPolicyKeys(organizationPolicies), plan.Type)
 	return nil
 }
 
@@ -360,7 +360,7 @@ func (l *OrganizationSubscriptionLogic) SuspendEffectiveByOrganizationId(ctx con
 		return err
 	}
 
-	l.publishOrgPolicyReloadEvents(ctx, organizationPolicies, userType)
+	l.publishOrgPolicyRebuild(ctx, orgPolicyKeys(organizationPolicies), userType)
 	return nil
 }
 
@@ -497,6 +497,11 @@ func (l *OrganizationSubscriptionLogic) SubscribeDefaultPlan(ctx context.Context
 		return err
 	}
 
+	// The new trial subscription expanded this org's plan-resource scope, so
+	// recompute its policies immediately (otherwise the org has zero policies
+	// until the next service restart).
+	l.publishOrgPolicyRebuild(ctx, []int64{organizationId}, plan.Type)
+
 	return nil
 }
 
@@ -585,7 +590,7 @@ func (l *OrganizationSubscriptionLogic) UpdateStatus(ctx context.Context, organi
 			).
 				Errorf("fail to handle expired subscription %d: %v", sub.Id, txErr)
 		} else {
-			l.publishOrgPolicyReloadEvents(ctx, orgPolicies, organizationType)
+			l.publishOrgPolicyRebuild(ctx, orgPolicyKeys(orgPolicies), organizationType)
 		}
 	}
 
@@ -684,24 +689,39 @@ func (l *OrganizationSubscriptionLogic) handleExpiredSubscription(
 	return removed, nil
 }
 
-// publishOrgPolicyReloadEvents sends per-org RoleReload events with explicit policy changes.
-func (l *OrganizationSubscriptionLogic) publishOrgPolicyReloadEvents(ctx context.Context, organizationPolicies map[int64]*organizationPolicyChanges, userType constants.UserType) {
-	for orgId, changes := range organizationPolicies {
+// publishOrgPolicyRebuild emits a per-org ActionPolicyRebuild event for each
+// organization whose subscription state changed. Each replica that receives the
+// event recomputes that org's policies from post-commit DB state (plan gate +
+// role-resource bindings). Replaces the old ActionRoleReload path, which only
+// carried the remove side and left the enforcer unable to grow after startup.
+func (l *OrganizationSubscriptionLogic) publishOrgPolicyRebuild(ctx context.Context, affectedOrgIds []int64, userType constants.UserType) {
+	seen := map[int64]bool{}
+	for _, orgId := range affectedOrgIds {
+		if orgId <= 0 || seen[orgId] {
+			continue
+		}
+		seen[orgId] = true
 		orgId := orgId
-		changes := changes
 		threading.GoSafe(func() {
 			subCtx := context.WithoutCancel(ctx)
 			msg := auth.Msg{
-				Action:          auth.ActionRoleReload,
-				Scope:           auth.ScopeOrganization,
-				Type:            userType,
-				OrganizationId:  orgId,
-				AddedPolicies:   changes.added,
-				RemovedPolicies: changes.removed,
+				Action:         auth.ActionPolicyRebuild,
+				Scope:          auth.ScopeOrganization,
+				Type:           userType,
+				OrganizationId: orgId,
 			}
 			_ = l.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
 		})
 	}
+}
+
+// orgPolicyKeys returns the org ids tracked in an organizationPolicyChanges map.
+func orgPolicyKeys(m map[int64]*organizationPolicyChanges) []int64 {
+	out := make([]int64, 0, len(m))
+	for k := range m {
+		out = append(out, k)
+	}
+	return out
 }
 
 // maxCodeRetries is the number of attempts generateCode makes to produce a
