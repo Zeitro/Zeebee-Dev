@@ -49,7 +49,10 @@ func NewImportPendingLoansLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingLoansRequest) (resp *borrower.ImportPendingLoansResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 
@@ -135,7 +138,7 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 		return innerErr
 	})
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed To Import Pending Loan")
+		return nil, errorx.Wrap(err, "fail to import pending loan")
 	}
 
 	return &borrower.ImportPendingLoansResponse{

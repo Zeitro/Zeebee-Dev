@@ -36,7 +36,10 @@ func NewSendResetPasswordEmailLogic(ctx context.Context, svcCtx *svc.ServiceCont
 func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *lender.SendResetPasswordEmailRequest) (resp *lender.SendResetPasswordEmailResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 
@@ -86,7 +89,7 @@ func (l *SendResetPasswordEmailLogic) sendResetPwdEmail(email string, firstName 
 		code = random.RandNumeral(10)
 		err = global.GetRedis().SetExpire(ctx, redisKey, code, global.Config.ResetPwdExpireSeconds)
 		if err != nil {
-			return errorx.WithStack(errorx.Wrap(err, "Failed To Cache Reset Password Code"))
+			return errorx.WithStack(errorx.Wrap(err, "fail to cache reset password code"))
 		}
 	}
 

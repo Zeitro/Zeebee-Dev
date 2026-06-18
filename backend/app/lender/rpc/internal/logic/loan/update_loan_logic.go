@@ -14,7 +14,7 @@ import (
 	"zeebee-backend/common/timex"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
-	data2 "zeebee-backend/domains/zeebee/data"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -54,7 +54,10 @@ func NewUpdateLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender.LoanUpdateResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 	var oldLoan *model.Loan
@@ -70,14 +73,14 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 		return nil, err
 	}
 	if oldLoan.Source != constants.LoanSourceSystem && oldLoan.Source != constants.LoanSourcePreapproval {
-		return nil, errorx.WithStack(errorx.New("Invalid loan source"))
+		return nil, errorx.WithStack(errorx.New("invalid loan source"))
 	}
 
 	// oldApplicants := oldLoan.Applicants
 
 	oldLoanCopy, err = utils.Clone(oldLoan)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed To Get Copy Loan")
+		return nil, errorx.Wrap(err, "fail to get copy loan")
 	}
 
 	data, err := l.buildModelData(in.Data, oldLoanCopy)
@@ -156,12 +159,12 @@ func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender
 			func() error {
 				operatorId := claim.OrganizationUserId
 
-				fromStatus := data2.LoanOperationStatus{
+				fromStatus := dto.LoanOperationStatus{
 					Stage:         oldLoan.Stage,
 					PendingStatus: oldLoan.PendingStatus,
 				}
 
-				toStatus := data2.LoanOperationStatus{
+				toStatus := dto.LoanOperationStatus{
 					Stage:         data.loan.Stage,
 					PendingStatus: data.loan.PendingStatus,
 				}

@@ -33,7 +33,10 @@ func NewAuthCheckLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AuthChe
 func (l *AuthCheckLogic) AuthCheck(in *lender.AuthCheckRequest) (resp *lender.AuthCheckResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 	input, err := copierx.Trans[lender.AuthCheckRequestData, dto.AuthCheckRequestDto](in.Data)

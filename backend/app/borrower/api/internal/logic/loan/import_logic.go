@@ -127,14 +127,14 @@ func (l *ImportLogic) importPendingLoans(content []byte, userId int64, organizat
 	// create excelize
 	f, err := excelize.OpenReader(r)
 	if err != nil {
-		return 0, errorx.Wrap(err, "Failed To Open Excel File")
+		return 0, errorx.Wrap(err, "fail to open excel file")
 	}
 	defer f.Close()
 
 	// get rows
 	rows, err := f.GetRows(f.GetSheetName(0))
 	if err != nil {
-		return 0, errorx.Wrap(err, "Failed To Get Rows")
+		return 0, errorx.Wrap(err, "fail to get rows")
 	}
 
 	if len(rows) <= 1 {
@@ -147,7 +147,7 @@ func (l *ImportLogic) importPendingLoans(content []byte, userId int64, organizat
 	}
 	for field := range pendingLoanFields {
 		if _, ok := headerMap[field]; !ok {
-			return 0, errorx.Errorf("Field %s not found in header", field)
+			return 0, errorx.Errorf("field %s not found in header", field)
 		}
 	}
 	// get loans
@@ -184,7 +184,7 @@ func parsePendingLoans(rows [][]string, borrowerId int64, organizationId int64) 
 	}
 	v, err := validator.GetEnValidator()
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed To Get Validator")
+		return nil, errorx.Wrap(err, "fail to get validator")
 	}
 
 	for i := 1; i < len(rows); i++ {

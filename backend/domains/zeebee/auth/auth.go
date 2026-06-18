@@ -37,6 +37,7 @@ type Auth struct {
 	authorizationWhitelistMap   *mapx.Map[constants.UserType, []string] // permission api whitelist
 	apiResourceMap              *mapx.Map[constants.UserType, *mapx.Map[string, []int64]]
 	organizationRoleResourceMap *mapx.Map[int64, *mapx.Map[string, RoleResource]]
+	organizationPlanResourceMap *mapx.Map[int64, *mapx.Map[int64, bool]] // orgId -> set of plan resource IDs
 	sf                          singleflight.Group
 	eventTopic                  string
 	eventSubScribeCancelFn      context.CancelFunc
@@ -53,6 +54,7 @@ func NewAuth(repos *repo.AllRepos, redisCli *redisx.Client, jwtConfig dto.JwtCon
 		authorizationWhitelistMap:   mapx.NewMap[constants.UserType, []string](),
 		apiResourceMap:              mapx.NewMap[constants.UserType, *mapx.Map[string, []int64]](),
 		organizationRoleResourceMap: mapx.NewMap[int64, *mapx.Map[string, RoleResource]](),
+		organizationPlanResourceMap: mapx.NewMap[int64, *mapx.Map[int64, bool]](),
 		eventTopic:                  authEventTopic,
 		eventSubScribeCancelFn:      cancel,
 	}
@@ -172,6 +174,8 @@ func (l *Auth) handleRoleReload(ctx context.Context, msg Msg) (err error) {
 		if err != nil {
 			return
 		}
+		// Invalidate plan resource cache so RebuildPolicy picks up changes
+		l.organizationPlanResourceMap.Delete(msg.OrganizationId)
 	case ScopeOrganizationUser:
 		_, err = l.loadOrganizationUserRoles(ctx, msg.OrganizationUserId, msg.OrganizationId, msg.Type)
 		if err != nil {
@@ -206,6 +210,9 @@ func (l *Auth) handleResourceReload(ctx context.Context, msg Msg) (err error) {
 		if err != nil {
 			return
 		}
+		// Clear all organization plan resource caches — plan/resource changes
+		// affect all subscribed organizations
+		l.organizationPlanResourceMap.Clear()
 	}
 
 	if len(msg.AddedPolicies) > 0 {
@@ -549,21 +556,53 @@ func (l *Auth) RebuildPolicy(ctx context.Context, organizationType constants.Use
 	if err != nil {
 		return err
 	}
+
+	// Pre-load organization plan resources for all unique orgs referenced by roles
+	orgIds := make(map[int64]bool)
+	slice.ForEach(resources, func(index int, resource *model.Resource) {
+		if resource == nil {
+			return
+		}
+		slice.ForEach(resource.Roles, func(index int, role *model.Role) {
+			if role != nil && role.OrganizationId > 0 {
+				orgIds[role.OrganizationId] = true
+			}
+		})
+	})
+	for orgId := range orgIds {
+		_, err = l.getOrganizationPlanResourceIds(ctx, orgId)
+		if err != nil {
+			return err
+		}
+	}
+
 	// Initialize slices for tracking policy changes
 	var currentPolicies [][]string
 	var newPolicies [][]string
 	var removePolicies [][]string
 	currentPoliciesMap := map[string]struct{}{}
 
-	// Process each resource and generate policies
+	// Process each resource and generate policies, filtered by organization plan
 	slice.ForEach(resources, func(index int, resource *model.Resource) {
 		if resource == nil {
 			return
 		}
-		// Generate policies for each active role associated with the resource
+		// Generate policies for each active role associated with the resource.
+		// Only include role-resource pairs where the resource is in the role's organization's plan.
 		rolePolicies := slice.FilterMap(resource.Roles, func(index int, role *model.Role) ([]string, bool) {
 			if role == nil || role.Status != constants.CommonStatusActive {
 				return nil, false
+			}
+			// Check if resource is in the role's organization's pricing plan.
+			// If plan resources failed to load (nil), deny access as safe default.
+			if role.OrganizationId > 0 {
+				planResources, _ := l.organizationPlanResourceMap.Get(role.OrganizationId)
+				if planResources == nil {
+					return nil, false
+				}
+				if _, ok := planResources.Get(resource.Id); !ok {
+					return nil, false
+				}
 			}
 			// Create a policy entry for the role-resource combination
 			policy := BuildPolicy(role.Id, resource.Id, organizationType)
@@ -828,6 +867,72 @@ func (l *Auth) LoadOrganizationRoleResources(ctx context.Context, organizationId
 	})
 	l.organizationRoleResourceMap.Set(organizationId, resources)
 	return
+}
+
+// getOrganizationPlanResourceIds returns the set of resource IDs allowed by the organization's
+// active pricing plan subscriptions. Uses in-memory cache, loading from DB on miss.
+// singleflight collapses concurrent cache-miss loads for the same org into one DB hit.
+// Returns nil if the organization has no active subscription, meaning no resources are accessible.
+func (l *Auth) getOrganizationPlanResourceIds(ctx context.Context, organizationId int64) (*mapx.Map[int64, bool], error) {
+	cached, ok := l.organizationPlanResourceMap.Get(organizationId)
+	if ok {
+		return cached, nil
+	}
+	result, err, _ := l.sf.Do(stringx.Format("OrgPlanRes:%v", organizationId), func() (interface{}, error) {
+		// re-check cache inside the singleflight call to avoid a redundant
+		// DB load when another in-flight call already populated it
+		if cached, ok := l.organizationPlanResourceMap.Get(organizationId); ok {
+			return cached, nil
+		}
+		return l.loadOrganizationPlanResources(ctx, organizationId)
+	})
+	if err != nil {
+		return nil, err
+	}
+	resourceSet, ok := result.(*mapx.Map[int64, bool])
+	if !ok {
+		return nil, errorx.New("invalid organization plan resource set")
+	}
+	return resourceSet, nil
+}
+
+// loadOrganizationPlanResources loads plan resources for an organization from DB into cache.
+func (l *Auth) loadOrganizationPlanResources(ctx context.Context, organizationId int64) (*mapx.Map[int64, bool], error) {
+	activeSubs, err := l.repos.OrganizationSubscriptionRepo.FindActiveByOrganizationId(ctx, organizationId)
+	if err != nil {
+		return nil, err
+	}
+
+	resourceSet := mapx.NewMap[int64, bool]()
+	for _, activeSub := range activeSubs {
+		if activeSub != nil &&
+			activeSub.Status.IsEffective() &&
+			!isSubscriptionExpired(activeSub, time.Now()) {
+
+			plan, innerErr := l.repos.PricingPlanRepo.GetOne(ctx, activeSub.PricingPlanId, nil)
+			if innerErr == nil && plan != nil && plan.Status == constants.CommonStatusActive {
+				ids, innerErr := l.repos.PricingPlanAndResourceRepo.FindResourceIdsByPlanId(ctx, activeSub.PricingPlanId)
+				if innerErr != nil {
+					return nil, innerErr
+				}
+				for _, id := range ids {
+					resourceSet.Set(id, true)
+				}
+			}
+		}
+	}
+
+	l.organizationPlanResourceMap.Set(organizationId, resourceSet)
+	return resourceSet, nil
+}
+
+// isSubscriptionExpired treats expire date as valid until the last second of that day
+func isSubscriptionExpired(sub *model.OrganizationSubscription, now time.Time) bool {
+	if sub.ExpireDate == nil || !sub.ExpireDate.Valid {
+		return false
+	}
+	endOfDay := sub.ExpireDate.Time.Add(24*time.Hour - time.Second)
+	return !endOfDay.After(now)
 }
 
 // Close close auth, save policy and unsubscribe from redis

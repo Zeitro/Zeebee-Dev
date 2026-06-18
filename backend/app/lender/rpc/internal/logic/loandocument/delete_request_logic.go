@@ -11,7 +11,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -38,7 +38,10 @@ func NewDeleteRequestLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Del
 func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestRequest) (resp *lender.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 	var loan *model.Loan
@@ -73,22 +76,22 @@ func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestR
 		case constants.LoanDocumentCategoryExtend:
 			_, innerErr = l.svcCtx.LoanDocumentRepo.DeleteByIDWithTx(l.ctx, tx, loanDocument.Id)
 			if innerErr != nil {
-				return errorx.Wrap(innerErr, "Failed To Delete Loan Document")
+				return errorx.Wrap(innerErr, "fail to delete loan document")
 			}
 		case constants.LoanDocumentCategoryBorrower:
 			innerErr = l.svcCtx.LoanDocumentRepo.UpdateColumnsByIdWithTx(l.ctx, tx, loanDocument.Id, map[string]interface{}{
 				"status": constants.LoanDocumentStatusPendingUpload,
 			})
 			if innerErr != nil {
-				return errorx.Wrap(innerErr, "Failed To Update Loan Document Status")
+				return errorx.Wrap(innerErr, "fail to update loan document status")
 			}
 		default:
-			return errorx.WithStack(errorx.New("Invalid loan document category"))
+			return errorx.WithStack(errorx.New("invalid loan document category"))
 		}
-		operationLoanDocument := &data.OperationLoanDocument{}
-		operationLoanDocument, err = copierx.Trans[model.LoanDocument, data.OperationLoanDocument](loanDocument)
+		operationLoanDocument := &dto.OperationLoanDocument{}
+		operationLoanDocument, err = copierx.Trans[model.LoanDocument, dto.OperationLoanDocument](loanDocument)
 		if err != nil {
-			return errorx.Wrap(err, "Failed To Copy Loan Document")
+			return errorx.Wrap(err, "fail to copy loan document")
 		}
 
 		innerErr = l.baseLogic.CreateLoanOperationLog(
@@ -96,23 +99,23 @@ func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestR
 			tx,
 			loanDocument.LoanId,
 			claim.OrganizationUserId,
-			data.LoanOperationStatus{
+			dto.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			data.LoanOperationStatus{
+			dto.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			constants.LoanOperationActionDeleteDocumentRequest,
-			&data.LoanOperationMetadata{
-				LoanDocuments: []*data.OperationLoanDocument{
+			&dto.LoanOperationMetadata{
+				LoanDocuments: []*dto.OperationLoanDocument{
 					operationLoanDocument,
 				},
 			},
 		)
 		if innerErr != nil {
-			return errorx.Wrap(innerErr, "Failed To Create Operation Log")
+			return errorx.Wrap(innerErr, "fail to create operation log")
 		}
 
 		return nil

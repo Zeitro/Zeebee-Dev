@@ -63,7 +63,7 @@ export function getChecklistProgress(checklist) {
 		return { completed: 0, total: 0 };
 	}
 
-	const completed = checklist.total_required_updated_document_count ?? 0;
+	const completed = checklist.total_required_uploaded_document_count ?? 0;
 	const total = checklist.total_required_document_count ?? 0;
 
 	return { completed, total };

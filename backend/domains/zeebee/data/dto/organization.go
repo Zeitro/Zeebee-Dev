@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
 )
 
 type OrganizationEntityDto struct {
@@ -12,7 +11,7 @@ type OrganizationEntityDto struct {
 	Name                 string                          `json:"name"`
 	Status               constants.OrganizationStatus    `json:"status"`
 	OwnerId              int64                           `json:"owner_id"`
-	Address              data.Address                    `json:"address"`
+	Address              AddressDto                      `json:"address"`
 	ContactEmail         string                          `json:"contact_email"`
 	ContactPhone         string                          `json:"contact_phone"`
 	ContactName          string                          `json:"contact_name"`
@@ -34,7 +33,7 @@ type OrganizationPageEntityDto struct {
 	Id             int64                           `json:"id"`
 	Name           string                          `json:"name"`
 	Status         constants.OrganizationStatus    `json:"status"`
-	Address        data.Address                    `json:"address"`
+	Address        AddressDto                      `json:"address"`
 	ContactEmail   string                          `json:"contact_email"`
 	ContactPhone   string                          `json:"contact_phone"`
 	ContactName    string                          `json:"contact_name"`
