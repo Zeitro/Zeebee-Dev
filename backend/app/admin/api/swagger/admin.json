@@ -11931,8 +11931,6 @@
               "type": "object",
               "required": [
                 "pricing_plan_id",
-                "original_amount",
-                "actual_amount",
                 "type"
               ],
               "properties": {
@@ -12030,8 +12028,6 @@
             "schema": {
               "type": "object",
               "required": [
-                "original_amount",
-                "actual_amount",
                 "type"
               ],
               "properties": {
@@ -16060,7 +16056,7 @@
       }
     }
   },
-  "x-date": "2026-06-17 15:20:27",
+  "x-date": "2026-06-17 17:42:32",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

@@ -689,7 +689,7 @@ type OrganizationPageEntity struct {
 
 type OrganizationPageFilter struct {
 	Keyword          string `json:"keyword,optional"`
-	OrganizationType string `json:"type" validate:"required,oneof=Lender Borrower"`
+	OrganizationType string `json:"type" validate:"required,oneof=Lender Borrower Admin"`
 	Status           string `json:"status,optional"`
 }
 
@@ -710,7 +710,7 @@ type OrganizationPageResponse struct {
 }
 
 type OrganizationSelectOptionRequest struct {
-	Type string `form:"type" validate:"required,oneof=Lender Borrower"`
+	Type string `form:"type" validate:"required,oneof=Lender Borrower Admin"`
 }
 
 type OrganizationSubscriptionCreateRequest struct {
@@ -924,7 +924,7 @@ type PricingPlanEntity struct {
 type PricingPlanFilter struct {
 	Keyword  string `json:"keyword,optional"`
 	Status   string `json:"status,optional" validate:"omitempty,oneof=Active Disabled"`
-	Type     string `json:"type,optional" validate:"omitempty,oneof=Borrower Lender"`
+	Type     string `json:"type,optional" validate:"omitempty,oneof=Borrower Lender Admin"`
 	PlanType string `json:"plan_type,optional" validate:"omitempty,oneof=Standard Custom"`
 }
 
@@ -957,8 +957,8 @@ type PricingPlanPageResponse struct {
 
 type PricingPlanPolicyCreateRequest struct {
 	PricingPlanId  int64   `json:"pricing_plan_id" validate:"required,gt=0"`
-	OriginalAmount float64 `json:"original_amount" validate:"required,gte=0"`
-	ActualAmount   float64 `json:"actual_amount" validate:"required,gte=0"`
+	OriginalAmount float64 `json:"original_amount,optional" validate:"gte=0,gtecsfield=ActualAmount"`
+	ActualAmount   float64 `json:"actual_amount,optional" validate:"gte=0"`
 	Type           string  `json:"type" validate:"required,oneof=Monthly Quarterly Yearly"`
 }
 
@@ -974,8 +974,8 @@ type PricingPlanPolicyEntity struct {
 
 type PricingPlanPolicyUpdateRequest struct {
 	Id             int64   `path:"id" validate:"required,gt=0"`
-	OriginalAmount float64 `json:"original_amount" validate:"gte=0"`
-	ActualAmount   float64 `json:"actual_amount" validate:"gte=0"`
+	OriginalAmount float64 `json:"original_amount,optional" validate:"gte=0,gtecsfield=ActualAmount"`
+	ActualAmount   float64 `json:"actual_amount,optional" validate:"gte=0"`
 	Type           string  `json:"type" validate:"oneof=Monthly Quarterly Yearly"`
 }
 

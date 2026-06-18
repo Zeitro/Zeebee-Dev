@@ -58,7 +58,7 @@ type (
     PricingPlanFilter {
         Keyword string `json:"keyword,optional"`
         Status string `json:"status,optional" validate:"omitempty,oneof=Active Disabled"`
-        Type string `json:"type,optional" validate:"omitempty,oneof=Borrower Lender"`
+        Type string `json:"type,optional" validate:"omitempty,oneof=Borrower Lender Admin"`
         PlanType string `json:"plan_type,optional" validate:"omitempty,oneof=Standard Custom"`
     }
 
