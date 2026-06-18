@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Col, Form, Select, Input, message, Radio, TreeSelect, InputNumber } from 'antd';
+import { Row, Col, Form, Select, Input, message, Radio, TreeSelect, InputNumber, Tag } from 'antd';
 import { NewModal } from '@repo/shared-methods';
 import { yesNoOptions, systemTypeOptions, titleCol } from '@repo/shared-methods/enum';
 import { createRequest, eventBus } from '@repo/shared-methods/utils';
 import useData from './useData';
+import { filterTreeNodeByNameOrPath } from './useData';
 const { TextArea } = Input;
 const ApiMainModal = ({ setOpen, rowData, eventBusPrefix }) => {
 	const { request } = createRequest();
 	const [form] = Form.useForm();
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const { getApiTree, apiTreeData } = useData();
-
 	const handleSave = async () => {
 		try {
 			setConfirmLoading(true);
@@ -174,6 +174,7 @@ const ApiMainModal = ({ setOpen, rowData, eventBusPrefix }) => {
 								treeDefaultExpandAll
 								treeData={apiTreeData}
 								fieldNames={{ value: 'id', label: 'name' }}
+								filterTreeNode={filterTreeNodeByNameOrPath}
 							/>
 						</Form.Item>
 					</Col>
