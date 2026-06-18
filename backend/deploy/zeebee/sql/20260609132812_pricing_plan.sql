@@ -12,7 +12,8 @@ CREATE TABLE "public"."pricing_plans"
     "trial_days"  int2         NOT NULL DEFAULT 0,
     "sort_order"  int2         NOT NULL DEFAULT 6,
     "is_public"   bool         NOT NULL DEFAULT false,
-    "is_default"  bool         NOT NULL DEFAULT false "type"        varchar(50)  NOT NULL DEFAULT '',
+    "is_default"  bool         NOT NULL DEFAULT false,
+    "type"        varchar(50)  NOT NULL DEFAULT '',
     "plan_type"   varchar(50)  NOT NULL DEFAULT 'Standard',
     PRIMARY KEY ("id")
 );
@@ -26,7 +27,7 @@ ON COLUMN "public"."pricing_plans"."status" IS 'Active,Disabled';
 COMMENT
 ON COLUMN "public"."pricing_plans"."type" IS 'Borrower,Lender,Admin';
 COMMENT
-ON COLUMN "public"."无pricing_plans标题"."plan_type" IS 'Standard,Custom';
+ON COLUMN "public"."pricing_plans"."plan_type" IS 'Standard,Custom';
 
 -- pricing_plan_policies
 CREATE TABLE "public"."pricing_plan_policies"
