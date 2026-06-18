@@ -125,7 +125,6 @@ func (l *PricingPlanLogic) Delete(ctx context.Context, id int64) (err error) {
 		return resource.Id
 	})
 
-	var orgPolicies map[int64]*organizationPolicyChanges
 	err = l.repos.PricingPlanRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 		// block deletion while any effective subscription still references the plan
@@ -143,7 +142,7 @@ func (l *PricingPlanLogic) Delete(ctx context.Context, id int64) (err error) {
 			return item.OrganizationId
 		}))
 		if len(organizationIds) > 0 && len(resourceIds) > 0 {
-			orgPolicies, innerErr = syncPlanResourcesToOrganizationRoles(ctx, l.repos, tx, planResourceSyncReq{
+			_, innerErr = syncPlanResourcesToOrganizationRoles(ctx, l.repos, tx, planResourceSyncReq{
 				OrganizationIds: organizationIds,
 				ResourceIds:     resourceIds,
 				UserType:        plan.Type,
@@ -161,7 +160,7 @@ func (l *PricingPlanLogic) Delete(ctx context.Context, id int64) (err error) {
 		return errorx.WithStack(err)
 	}
 
-	l.publishOrgRoleReloadEvents(ctx, orgPolicies, plan.Type)
+	l.publishPlanPolicyRebuild(ctx, plan.Type)
 	return nil
 }
 
@@ -296,7 +295,7 @@ func (l *PricingPlanLogic) SwitchStatus(ctx context.Context, id int64, status co
 	// is nothing to publish (the enforcer plan-resource gate is recomputed from
 	// the DB on the next RebuildPolicy). Only the disable path produced removed
 	// policies above.
-	l.publishOrgRoleReloadEvents(ctx, orgPolicies, plan.Type)
+	l.publishPlanPolicyRebuild(ctx, plan.Type)
 	return
 }
 
@@ -374,28 +373,25 @@ func (l *PricingPlanLogic) BindResources(ctx context.Context, planId int64, reso
 
 	// M5: newly added plan resources are not auto-bound, so only the removed
 	// resources produced policy deltas above.
-	l.publishOrgRoleReloadEvents(ctx, organizationPolicies, plan.Type)
+	l.publishPlanPolicyRebuild(ctx, plan.Type)
 	return
 }
 
-// publishOrgRoleReloadEvents sends per-org RoleReload events with explicit policy changes.
-func (l *PricingPlanLogic) publishOrgRoleReloadEvents(ctx context.Context, organizationPolicies map[int64]*organizationPolicyChanges, userType constants.UserType) {
-	for orgId, changes := range organizationPolicies {
-		orgId := orgId
-		changes := changes
-		threading.GoSafe(func() {
-			subCtx := context.WithoutCancel(ctx)
-			msg := auth.Msg{
-				Action:          auth.ActionRoleReload,
-				Scope:           auth.ScopeOrganization,
-				Type:            userType,
-				OrganizationId:  orgId,
-				AddedPolicies:   changes.added,
-				RemovedPolicies: changes.removed,
-			}
-			_ = l.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
-		})
-	}
+// publishPlanPolicyRebuild emits a global ActionPolicyRebuild for the given user
+// type. Plan resource bind/unbind, status switch, and delete affect every org
+// subscribed to the plan, so a full user-type policy rebuild is required (each
+// replica recomputes all orgs of that type). Replaces the old per-org
+// ActionRoleReload path, which only carried the remove side.
+func (l *PricingPlanLogic) publishPlanPolicyRebuild(ctx context.Context, userType constants.UserType) {
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action: auth.ActionPolicyRebuild,
+			Scope:  auth.ScopeGlobal,
+			Type:   userType,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
+	})
 }
 
 func (l *PricingPlanLogic) ResourceList(ctx context.Context, planId int64) ([]*dto.PricingPlanResourceEntityDto, error) {
