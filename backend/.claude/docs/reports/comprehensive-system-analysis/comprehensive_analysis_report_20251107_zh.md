@@ -261,7 +261,10 @@ if err != nil {
 
 ```go
 // 可能暴露内部错误
-l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 ```
 
 **建议**: 清理外部响应的错误消息。

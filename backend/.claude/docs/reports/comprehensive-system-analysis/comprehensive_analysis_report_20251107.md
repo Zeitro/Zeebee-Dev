@@ -262,7 +262,10 @@ if err != nil {
 
 ```go
 // Potentially exposing internal errors
-l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 ```
 
 **Recommendation**: Sanitize error messages for external responses.

@@ -28,11 +28,6 @@ func NewOrganizationUpdateLenderLogic(ctx context.Context, svcCtx *svc.ServiceCo
 }
 
 func (l *OrganizationUpdateLenderLogic) OrganizationUpdateLender(req *types.OrganizationUpdateLenderRequest) (resp *types.OrganizationEntity, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
 
 	// Convert types to pb request
 	rpcReq := &admin.OrganizationUpdateLenderRequest{

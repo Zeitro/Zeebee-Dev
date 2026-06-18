@@ -1,5 +1,7 @@
 package gormx
 
+import "gorm.io/gorm"
+
 type WhereRaw struct {
 	Raw  string
 	Args []interface{}
@@ -49,4 +51,9 @@ func WithPreloadsOpt(preloads []string) QueryOptionFunc {
 	return func(opt *QueryOption) {
 		opt.Preloads = preloads
 	}
+}
+
+type Preload struct {
+	Query string
+	Args  []func(*gorm.DB) *gorm.DB
 }
