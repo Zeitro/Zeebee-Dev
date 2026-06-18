@@ -2,6 +2,8 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { FilterTable } from '@repo/shared-methods';
+import { useAuth, useGetOptions } from '@repo/shared-methods/hooks';
+import { PERMISSIONS } from '@config/permissions';
 import {
 	createRequest,
 	displayValue,
@@ -13,7 +15,6 @@ import {
 import { ReloadOutlined } from '@ant-design/icons';
 import ChangeStatus from '../ChangeStatus';
 import EditableExpireDate from '../EditableExpireDate';
-import { useGetOptions } from '@repo/shared-methods/hooks';
 import { useOptionsStore } from '@repo/shared-methods/store';
 
 const api = '/organization_subscription/page';
@@ -32,6 +33,7 @@ const SubscriptionTable = ({
 	filterWrapClassName = 'px-4 pb-4',
 }) => {
 	const tableFilterRef = useRef();
+	const { hasPermission } = useAuth();
 	const { request } = useMemo(() => createRequest(), []);
 	const [searchValue, setSearchValue] = useState('');
 	const [status, setStatus] = useState([]);
@@ -132,12 +134,17 @@ const SubscriptionTable = ({
 					dataIndex: 'status',
 					key: 'status',
 					width: 150,
-					render: (v, record) => (
-						<ChangeStatus
-							data={record}
-							successCallback={() => tableFilterRef?.current?.getList?.()}
-						/>
-					),
+					render: (v, record) => {
+						if (!hasPermission(PERMISSIONS.SUBSCRIPTION.CHANGE_STATUS)) {
+							return displayValue(v);
+						}
+						return (
+							<ChangeStatus
+								data={record}
+								successCallback={() => tableFilterRef?.current?.getList?.()}
+							/>
+						);
+					},
 				},
 				{
 					title: 'Expire date',
@@ -145,12 +152,17 @@ const SubscriptionTable = ({
 					key: 'expire_date',
 					width: 140,
 					sorter: true,
-					render: (v, record) => (
-						<EditableExpireDate
-							record={record}
-							successCallback={() => tableFilterRef?.current?.getList?.()}
-						/>
-					),
+					render: (v, record) => {
+						if (!hasPermission(PERMISSIONS.SUBSCRIPTION.CHANGE_EXPIRE_DATE)) {
+							return displayValue(v, formatDate);
+						}
+						return (
+							<EditableExpireDate
+								record={record}
+								successCallback={() => tableFilterRef?.current?.getList?.()}
+							/>
+						);
+					},
 				},
 				{
 					title: (

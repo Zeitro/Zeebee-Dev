@@ -2,7 +2,9 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { message, Space } from 'antd';
-import { DeleteBtn, FilterTable } from '@repo/shared-methods';
+import { DeleteBtn, FilterTable, PermissionSlot } from '@repo/shared-methods';
+import { useAuth } from '@repo/shared-methods/hooks';
+import { PERMISSIONS } from '@config/permissions';
 import {
 	createRequest,
 	displayValue,
@@ -49,6 +51,7 @@ const PricingPlanTable = ({
 	filterWrapClassName = 'px-4 pb-4',
 }) => {
 	const tableFilterRef = useRef();
+	const { hasPermission, getActiveByPermission } = useAuth();
 	const { request } = useMemo(() => createRequest(), []);
 	const [searchValue, setSearchValue] = useState('');
 	const [planType, setPlanType] = useState(null);
@@ -225,6 +228,9 @@ const PricingPlanTable = ({
 						key: 'status',
 						width: 150,
 						render: (v, record) => {
+							if (!hasPermission(PERMISSIONS.PRICING_PLAN.CHANGE_STATUS)) {
+								return displayValue(v);
+							}
 							return (
 								<ChangeStatus
 									data={record}
@@ -247,37 +253,47 @@ const PricingPlanTable = ({
 						width: 120,
 						render: (v) => (v ? 'Yes' : 'No'),
 					},
-					{
-						title: 'Action',
+					getActiveByPermission({
 						key: 'action',
 						fixed: 'right',
 						width: 260,
+						permissionList: [
+							PERMISSIONS.PRICING_PLAN.MENU_PERMISSION,
+							PERMISSIONS.PRICING_PLAN.EDIT,
+							PERMISSIONS.PRICING_PLAN.DELETE,
+						],
 						render: (_, record) => (
 							<Space>
-								<span
-									className="text-base-primary cursor-pointer pr-2"
-									onClick={() => handleAddMenu(record)}
-								>
-									Menu permission
-								</span>
-								<span
-									className="text-base-primary cursor-pointer"
-									onClick={() => handleEdit(record)}
-								>
-									Edit
-								</span>
-								<DeleteBtn
-									title="Are you sure you want to delete this pricing plan?"
-									content={record.name}
-									onOk={() => handleDelete(record)}
-									loading={deleteLoading}
-									isStopPropagation={false}
-								>
-									Delete
-								</DeleteBtn>
+								<PermissionSlot code={PERMISSIONS.PRICING_PLAN.MENU_PERMISSION}>
+									<span
+										className="text-base-primary cursor-pointer pr-2"
+										onClick={() => handleAddMenu(record)}
+									>
+										Menu permission
+									</span>
+								</PermissionSlot>
+								<PermissionSlot code={PERMISSIONS.PRICING_PLAN.EDIT}>
+									<span
+										className="text-base-primary cursor-pointer"
+										onClick={() => handleEdit(record)}
+									>
+										Edit
+									</span>
+								</PermissionSlot>
+								<PermissionSlot code={PERMISSIONS.PRICING_PLAN.DELETE}>
+									<DeleteBtn
+										title="Are you sure you want to delete this pricing plan?"
+										content={record.name}
+										onOk={() => handleDelete(record)}
+										loading={deleteLoading}
+										isStopPropagation={false}
+									>
+										Delete
+									</DeleteBtn>
+								</PermissionSlot>
 							</Space>
 						),
-					},
+					}),
 				]}
 				getData={(params) => {
 					const { sorter, ...rest } = params || {};

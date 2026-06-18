@@ -109,10 +109,12 @@ const SubscriptionFormModal = ({ open, setOpen, rowData = {}, successCallback })
 
 	useDeferredSyncEffect({
 		deferred: () => {
-			loadOrganizationOptions();
-			loadPricingPlanOptions();
+			if (open) {
+				loadOrganizationOptions();
+				loadPricingPlanOptions();
+			}
 		},
-		deps: [loadOrganizationOptions, loadPricingPlanOptions],
+		deps: [open, loadOrganizationOptions, loadPricingPlanOptions],
 		delay: 0,
 	});
 

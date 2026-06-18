@@ -40,4 +40,16 @@ export const PERMISSIONS = {
 		DETAILS: 'Loan:Details',
 		REASSIGN: 'Loan:Reassign',
 	},
+	PRICING_PLAN: {
+		ADD: 'Pricing:PricingPlan:Add',
+		EDIT: 'Pricing:PricingPlan:Edit',
+		DELETE: 'Pricing:PricingPlan:Delete',
+		CHANGE_STATUS: 'Pricing:PricingPlan:ChangeStatus',
+		MENU_PERMISSION: 'Pricing:PricingPlan:MenuPermission',
+	},
+	SUBSCRIPTION: {
+		ADD: 'Pricing:Subscription:Add',
+		CHANGE_STATUS: 'Pricing:Subscription:ChangeStatus',
+		CHANGE_EXPIRE_DATE: 'Pricing:Subscription:ChangeExpireDate',
+	},
 };

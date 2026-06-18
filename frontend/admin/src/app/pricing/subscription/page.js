@@ -3,15 +3,19 @@
 import React, { useState } from 'react';
 import { Button, Tabs } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import { useAuth } from '@repo/shared-methods/hooks';
 import { eventBus } from '@repo/shared-methods/utils';
+import { PERMISSIONS } from '@config/permissions';
 import SubscriptionFormModal from './components/SubscriptionFormModal';
 import SubscriptionTable from './components/SubscriptionTable';
 
 const eventBusPrefix = 'searchOrganizationSubscription-';
 
 const Subscription = () => {
+	const { hasPermission } = useAuth();
 	const [tabKey, setTabKey] = useState('Borrower');
 	const [open, setOpen] = useState(false);
+	const canAdd = hasPermission(PERMISSIONS.SUBSCRIPTION.ADD);
 
 	return (
 		<div className="flex-1 overflow-hidden relative flex flex-col">
@@ -59,23 +63,27 @@ const Subscription = () => {
 				destroyOnHidden
 				size="large"
 			/>
-			<Button
-				type="primary"
-				onClick={() => setOpen(true)}
-				className="!absolute right-4 top-6"
-				size="large"
-				icon={<PlusOutlined />}
-			>
-				Add subscription
-			</Button>
-			<SubscriptionFormModal
-				open={open}
-				setOpen={setOpen}
-				rowData={{ type: tabKey }}
-				successCallback={() => {
-					eventBus.emit(`${eventBusPrefix}${tabKey}`);
-				}}
-			/>
+			{canAdd && (
+				<Button
+					type="primary"
+					onClick={() => setOpen(true)}
+					className="!absolute right-4 top-6"
+					size="large"
+					icon={<PlusOutlined />}
+				>
+					Add subscription
+				</Button>
+			)}
+			{canAdd && (
+				<SubscriptionFormModal
+					open={open}
+					setOpen={setOpen}
+					rowData={{ type: tabKey }}
+					successCallback={() => {
+						eventBus.emit(`${eventBusPrefix}${tabKey}`);
+					}}
+				/>
+			)}
 		</div>
 	);
 };
