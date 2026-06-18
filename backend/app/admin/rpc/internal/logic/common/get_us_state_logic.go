@@ -28,7 +28,10 @@ func NewGetUsStateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUsS
 func (l *GetUsStateLogic) GetUsState(in *admin.EmptyRequest) (resp *admin.StringSliceResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 	states, err := l.svcCtx.UsGeographyRepo.GetStateUsps(l.ctx)

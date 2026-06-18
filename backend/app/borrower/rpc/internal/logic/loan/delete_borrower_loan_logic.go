@@ -35,7 +35,10 @@ func NewDeleteBorrowerLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 func (l *DeleteBorrowerLoanLogic) DeleteBorrowerLoan(in *borrower.LoanDeleteRequest) (resp *borrower.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 
@@ -46,15 +49,15 @@ func (l *DeleteBorrowerLoanLogic) DeleteBorrowerLoan(in *borrower.LoanDeleteRequ
 
 	loanModel, err := l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, in.Data.Id, claim.OrganizationId)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed To Get Loan")
+		return nil, errorx.Wrap(err, "fail to get loan")
 	}
 
 	if loanModel.Source != constants.LoanSourceBorrower && loanModel.Stage != constants.LoanStageDraft {
-		return nil, errorx.WithStack(errorx.New("Loan source is not 3rd party or loan is not in draft stage"))
+		return nil, errorx.WithStack(errorx.New("loan source is not 3rd party or loan is not in draft stage"))
 	}
 	// todo check organization
 	if loanModel.BorrowerOrganizationId != claim.OrganizationId {
-		return nil, errorx.WithStack(errorx.New("Loan does not belong to borrower"))
+		return nil, errorx.WithStack(errorx.New("loan does not belong to borrower"))
 	}
 
 	err = l.svcCtx.LoanRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
@@ -139,7 +142,7 @@ func (l *DeleteBorrowerLoanLogic) DeleteBorrowerLoan(in *borrower.LoanDeleteRequ
 	})
 
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed To Delete Loan")
+		return nil, errorx.Wrap(err, "fail to delete loan")
 	}
 	return &borrower.EmptyResponse{}, nil
 }

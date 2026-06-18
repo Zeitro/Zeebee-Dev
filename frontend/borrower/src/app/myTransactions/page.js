@@ -171,14 +171,14 @@ const MyTransactionsPage = () => {
 			),
 		};
 		const arr = [
-			{
-				title: 'ID',
-				dataIndex: 'code',
-				key: 'code',
-				sorter: true,
-				width: 140,
-				render: (v) => displayValue(v),
-			},
+			// {
+			// 	title: 'ID',
+			// 	dataIndex: 'code',
+			// 	key: 'code',
+			// 	sorter: true,
+			// 	width: 140,
+			// 	render: (v) => displayValue(v),
+			// },
 			{
 				title: 'Property address',
 				dataIndex: ['address', 'address1'],

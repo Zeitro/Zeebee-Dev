@@ -144,6 +144,14 @@ func (r *OrganizationRepo) UpdateOwnerOrganizationStatusWithTx(ctx context.Conte
 	return errorx.WithStack(err)
 }
 
+// FindByOwnerIdAndStatusWithTx finds organizations by owner id and status
+func (r *OrganizationRepo) FindByOwnerIdAndStatusWithTx(ctx context.Context, tx *gorm.DB, ownerId int64, orgType constants.UserType, status constants.OrganizationStatus) (result []*model.Organization, err error) {
+	err = tx.WithContext(ctx).
+		Where("owner_id = ? AND type = ? AND status = ?", ownerId, orgType, status).
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+}
+
 // GetOrganization return organization by id and type
 func (repo *OrganizationRepo) GetOrganization(ctx context.Context, id int64, organizationType constants.UserType, withPreloads bool) (result *model.Organization, err error) {
 	query := repo.Client(ctx).

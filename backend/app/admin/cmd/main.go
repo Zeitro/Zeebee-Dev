@@ -35,7 +35,7 @@ func main() {
 				logx.Field("stacks", errorx.GetErrorStack(err)),
 				logx.Field("err", err),
 			).
-			Errorf("failed to start rpc server")
+			Errorf("fail to start rpc server")
 		panic(err)
 	}
 	logx.Infof("start rpc service in %s mode", c.RpcConf.Mode)

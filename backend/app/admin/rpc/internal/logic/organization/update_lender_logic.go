@@ -39,7 +39,10 @@ func NewUpdateLenderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upda
 func (l *UpdateLenderLogic) UpdateLender(in *admin.OrganizationUpdateLenderRequest) (resp *admin.OrganizationDetailResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 
@@ -127,6 +130,11 @@ func (l *UpdateLenderLogic) UpdateLender(in *admin.OrganizationUpdateLenderReque
 
 	if attachedOwner {
 		l.baseLogic.UserLogic.PublishRoleReloadForOrganization(l.ctx, in.Data.Id, constants.UserTypeLender)
+	}
+	// Update the model
+	_, err = l.svcCtx.OrganizationRepo.UpdateOneById(l.ctx, in.Data.Id, organization)
+	if err != nil {
+		return nil, errorx.Wrap(err, "fail to update organization")
 	}
 
 	organizationBo, err := l.baseLogic.OrganizationLogic.Detail(l.ctx, in.Data.Id)

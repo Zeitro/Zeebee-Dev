@@ -19,6 +19,9 @@ import "desc/common.api"
 import "desc/base_template.api"
 import "desc/loan.api"
 import "desc/lender_discover.api"
+import "desc/pricing_plan.api"
+import "desc/pricing_plan_policy.api"
+import "desc/organization_subscription.api"
 
 // ============== common start =============
 @server (
@@ -398,3 +401,104 @@ service admin-api {
 }
 
 // ============== loan service end ============
+// ============== pricing plan service start ============
+@server (
+	desc:       "pricing plan service"
+	version:    v1
+	prefix:     /api/v1
+	group:      pricing_plan
+	middleware: AuthMiddleware
+	tags:       pricing_plan
+)
+service admin-api {
+	@doc "create"
+	@handler PricingPlanCreate
+	post /pricing_plan (PricingPlanCreateRequest) returns (PricingPlanEntity)
+
+	@doc "all"
+	@handler PricingPlanAll
+	get /pricing_plan/all (PricingPLanAllrequest) returns (PricingPlanAllResponse)
+
+	@doc "update"
+	@handler PricingPlanUpdate
+	put /pricing_plan/:id (PricingPlanUpdateRequest) returns (PricingPlanEntity)
+
+	@doc "delete"
+	@handler PricingPlanDelete
+	delete /pricing_plan/:id (PathIdRequest) returns (EmptyResponse)
+
+	@doc "detail"
+	@handler PricingPlanDetail
+	get /pricing_plan/:id (PathIdRequest) returns (PricingPlanEntity)
+
+	@doc "page"
+	@handler PricingPlanPage
+	post /pricing_plan/page (PricingPlanPageRequest) returns (PricingPlanPageResponse)
+
+	@doc "switch status"
+	@handler PricingPlanSwitchStatus
+	patch /pricing_plan/:id/status (PricingPlanSwitchStatusRequest) returns (EmptyResponse)
+
+	@doc "bind resources"
+	@handler PricingPlanBindResources
+	post /pricing_plan/:id/bind_resources (PricingPlanBindResourcesRequest) returns (EmptyResponse)
+}
+
+@server (
+	desc:       "pricing plan policy service"
+	version:    v1
+	prefix:     /api/v1
+	group:      pricing_plan_policy
+	middleware: AuthMiddleware
+	tags:       pricing_plan_policy
+)
+service admin-api {
+	@doc "create"
+	@handler PricingPlanPolicyCreate
+	post /pricing_plan_policy (PricingPlanPolicyCreateRequest) returns (PricingPlanPolicyEntity)
+
+	@doc "update"
+	@handler PricingPlanPolicyUpdate
+	put /pricing_plan_policy/:id (PricingPlanPolicyUpdateRequest) returns (PricingPlanPolicyEntity)
+
+	@doc "delete"
+	@handler PricingPlanPolicyDelete
+	delete /pricing_plan_policy/:id (PathIdRequest) returns (EmptyResponse)
+}
+
+// ============== pricing plan service end ============
+// ============== organization subscription service start ============
+@server (
+	desc:       "organization subscription service"
+	version:    v1
+	prefix:     /api/v1
+	group:      organization_subscription
+	middleware: AuthMiddleware
+	tags:       organization_subscription
+)
+service admin-api {
+	@doc "create"
+	@handler OrganizationSubscriptionCreate
+	post /organization_subscription (OrganizationSubscriptionCreateRequest) returns (OrganizationSubscriptionDetailResponse)
+
+	@doc "detail"
+	@handler OrganizationSubscriptionDetail
+	post /organization_subscription/:id (PathIdRequest) returns (OrganizationSubscriptionDetailResponse)
+
+	// @doc "renew"
+	// @handler OrganizationSubscriptionRenew
+	// post /organization_subscription/:id/renew (OrganizationSubscriptionRenewRequest) returns (EmptyResponse)
+	@doc "update expire date"
+	@handler OrganizationSubscriptionUpdateExpireDate
+	patch /organization_subscription/:id/expire_date (OrganizationSubscriptionUpdateExpireDateRequest) returns (EmptyResponse)
+
+	@doc "switch status"
+	@handler OrganizationSubscriptionSwitchStatus
+	patch /organization_subscription/:id/status (OrganizationSubscriptionSwitchStatusRequest) returns (EmptyResponse)
+
+	@doc "page"
+	@handler OrganizationSubscriptionPage
+	post /organization_subscription/page (OrganizationSubscriptionPageRequest) returns (OrganizationSubscriptionPageResponse)
+}
+
+// ============== organization subscription service end ============

@@ -28,11 +28,7 @@ func NewCreateLoanDocumentLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *CreateLoanDocumentLogic) CreateLoanDocument(req *types.LoanDocumentCreateRequest) (resp *types.LoanDocumentCreateResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+
 	resp = &types.LoanDocumentCreateResponse{
 		LoanDocuments: []*types.LoanDocumentOptEntity{},
 	}

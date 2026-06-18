@@ -33,7 +33,10 @@ func NewLoanPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoanPage
 func (l *LoanPageLogic) LoanPage(in *admin.LoanPageRequest) (resp *admin.LoanPageResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 	pageRep, err := copierx.Trans[admin.LoanPageRequestData, dto.LoanAdminPageRequestDto](in.Data)
