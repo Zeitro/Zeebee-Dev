@@ -21,13 +21,14 @@ type ApiConf struct {
 
 type RpcConf struct {
 	zrpc.RpcServerConf
-	LimiterConf LimiterConf
-	EmailConf   EmailConf
-	RedisConf   RedisConf
-	JwtAuth     types.JwtAuth `json:",optional"`
-	DbConf      DbConf
-	AwsS3Conf   AwsS3Conf
-	CasbinConf  CasbinConf
+	LimiterConf  LimiterConf
+	EmailConf    EmailConf
+	RedisConf    RedisConf
+	JwtAuth      types.JwtAuth `json:",optional"`
+	DbConf       DbConf
+	AwsS3Conf    AwsS3Conf
+	CasbinConf   CasbinConf
+	CronTaskConf []CronTaskConf
 }
 
 type DbConf struct {
@@ -84,4 +85,9 @@ type CasbinEventTopic struct {
 	AdminTopic    string
 	BorrowerTopic string
 	LenderTopic   string
+}
+
+type CronTaskConf struct {
+	Name     string `json:"name"`
+	Schedule string `json:"schedule"`
 }

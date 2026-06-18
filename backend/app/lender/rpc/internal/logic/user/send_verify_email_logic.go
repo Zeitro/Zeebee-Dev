@@ -32,7 +32,10 @@ func NewSendVerifyEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 func (l *SendVerifyEmailLogic) SendVerifyEmail(in *lender.SendVerifyEmailRequest) (resp *lender.SendVerifyEmailResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 	email := in.Data.Email

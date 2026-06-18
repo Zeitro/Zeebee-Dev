@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
 )
 
 type LoanApplicantEntityDto struct {
@@ -25,7 +24,7 @@ type LoanApplicantEntityDto struct {
 	Email               string                              `json:"email"`
 	EstCreditScore      int32                               `json:"est_credit_score"`
 	DriverLicenseNum    string                              `json:"driver_license_num"`
-	Address             data.Address                        `json:"address"`
+	Address             AddressDto                          `json:"address"`
 	LoanBorrowerId      int64                               `json:"loan_borrower_id"`
 	Phone               string                              `json:"phone"`
 	OwnPercent          int32                               `json:"own_percent"`

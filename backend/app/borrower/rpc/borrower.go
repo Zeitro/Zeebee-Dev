@@ -1,8 +1,10 @@
 package rpc
 
 import (
+	"context"
 	"time"
 
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -10,8 +12,8 @@ import (
 	"github.com/zeromicro/go-zero/core/service"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
-	borrowerApplicantServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerapplicant"
 	apiServer "zeebee-backend/app/borrower/rpc/internal/server/api"
+	borrowerApplicantServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerapplicant"
 	borrowerEntityServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerentity"
 	borrowerPropertyServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerproperty"
 	borrowerPropertyTransactionServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerpropertytransaction"
@@ -20,6 +22,8 @@ import (
 	organizationServer "zeebee-backend/app/borrower/rpc/internal/server/organization"
 	organizationEmailServer "zeebee-backend/app/borrower/rpc/internal/server/organizationemail"
 	zeitroServer "zeebee-backend/app/borrower/rpc/internal/server/zeitro"
+	"zeebee-backend/common/cron"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/templater"
 	"zeebee-backend/domains/zeebee/templater/convertor"
 	"zeebee-backend/domains/zeebee/templater/loader"
@@ -42,7 +46,8 @@ import (
 )
 
 type RpcServer struct {
-	s *zrpc.RpcServer
+	s    *zrpc.RpcServer
+	cron *cron.Engine
 }
 
 func NewRpcServer(c config.Config) (s service.Service, err error) {
@@ -89,17 +94,52 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		}
 	})
 
-	return &RpcServer{
-		s: rpcServer,
-	}, nil
+	rpcService := &RpcServer{
+		s:    rpcServer,
+		cron: cron.NewEngine(),
+	}
+	err = rpcService.RegisterCronTask(ctx, rpcConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	return rpcService, nil
 }
 
 func (s *RpcServer) Start() {
 	go func() {
 		s.s.Start()
 	}()
+	go func() {
+		s.cron.Start()
+	}()
 }
 
 func (s *RpcServer) Stop() {
 	s.s.Stop()
+	s.cron.Stop()
+}
+
+func (s *RpcServer) RegisterCronTask(svcCtx *svc.ServiceContext, conf config.RpcConf) (err error) {
+	if s.cron == nil {
+		s.cron = cron.NewEngine()
+	}
+	baseLogic := logic.GetBaseLogic(svcCtx)
+	for _, task := range conf.CronTaskConf {
+		switch task.Name {
+		case "update_organization_subscription_status":
+			err = s.cron.Register(task.Name, task.Schedule, func() {
+				ctx := context.Background()
+				taskErr := baseLogic.OrganizationSubscriptionLogic.UpdateStatus(ctx, constants.UserTypeBorrower)
+				if taskErr != nil {
+					logx.WithContext(ctx).WithFields(
+						logx.Field("type", "cron_task"),
+						logx.Field("name", task.Name),
+						logx.Field("schedule", task.Schedule),
+					).Error(taskErr)
+				}
+			})
+		}
+	}
+	return
 }
