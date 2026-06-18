@@ -11,6 +11,12 @@ export const ConfirmPassWord = ({
 	confirmPasswordPlaceholder = 'Re-enter password',
 	passwordName = 'password',
 	confirmPasswordName = 'confirm_password',
+	passwordAutoComplete,
+	confirmPasswordAutoComplete,
+	/** 注册页等：阻止浏览器用已保存登录凭据预填密码 */
+	blockAutofill = false,
+	autofillGuardReleased = true,
+	onReleaseAutofillGuard,
 	isShowRule = true,
 }) => {
 	const form = Form.useFormInstance();
@@ -64,7 +70,14 @@ export const ConfirmPassWord = ({
 					},
 				]}
 			>
-				<Input.Password placeholder={passwordPlaceholder} className="w-full" allowClear />
+				<Input.Password
+					placeholder={passwordPlaceholder}
+					className="w-full"
+					autoComplete={passwordAutoComplete}
+					readOnly={blockAutofill && !autofillGuardReleased}
+					onFocus={() => blockAutofill && onReleaseAutofillGuard?.()}
+					allowClear
+				/>
 			</Form.Item>
 			<Form.Item
 				label={confirmPasswordLabel}
@@ -88,6 +101,9 @@ export const ConfirmPassWord = ({
 				<Input.Password
 					placeholder={confirmPasswordPlaceholder}
 					className="w-full"
+					autoComplete={confirmPasswordAutoComplete}
+					readOnly={blockAutofill && !autofillGuardReleased}
+					onFocus={() => blockAutofill && onReleaseAutofillGuard?.()}
 					allowClear
 				/>
 			</Form.Item>
