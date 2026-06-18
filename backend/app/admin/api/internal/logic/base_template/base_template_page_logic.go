@@ -28,11 +28,6 @@ func NewBaseTemplatePageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *BaseTemplatePageLogic) BaseTemplatePage(req *types.BaseTemplatePageRequest) (resp *types.BaseTemplatePageResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
 
 	// Convert types to pb request
 	rpcReq := &admin.BaseTemplatePageRequest{

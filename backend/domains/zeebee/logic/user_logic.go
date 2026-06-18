@@ -605,7 +605,7 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code string, userType constants.UserType) (user *model.User, err error) {
 	var token string
 	if email == "" || code == "" {
-		return nil, errorx.New("Email and code are required")
+		return nil, errorx.New("email and code are required")
 	}
 	// Check code
 	verifyCodeKey := stringx.Format(constants.UserRegisterVerifyCode, userType, email)
@@ -615,7 +615,7 @@ func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code stri
 	}
 	// Check if code exists (expired or invalid)
 	if len(token) == 0 || token != code {
-		return nil, errorx.New("Invalid or expired code")
+		return nil, errorx.New("invalid or expired code")
 	}
 	defer func() {
 		if err == nil {
@@ -623,6 +623,7 @@ func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code stri
 		}
 	}()
 
+	var activatedOrgIds []int64
 	err = l.repos.UserRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 		// Get user
@@ -631,7 +632,7 @@ func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code stri
 			return innerErr
 		}
 		if user.Status != constants.UserStatusUnverified {
-			return errorx.New("Email is already verified")
+			return errorx.New("email is already verified")
 		}
 		// Update user status
 		innerErr = l.repos.UserRepo.UpdateColumnsByIdWithTx(ctx, tx, user.Id, map[string]interface{}{
@@ -641,7 +642,7 @@ func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code stri
 			return innerErr
 		}
 		// Update user's organization status
-		innerErr = l.handleOwnedOrganizationWithTx(ctx, tx, user)
+		activatedOrgIds, innerErr = l.handleOwnedOrganizationWithTx(ctx, tx, user)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -657,6 +658,13 @@ func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code stri
 	if err != nil {
 		return nil, err
 	}
+
+	// Subscribe default plan for newly activated organizations
+	subLogic := NewOrganizationSubscriptionLogic(l.BaseLogic, l.authTopicMap)
+	for _, orgId := range activatedOrgIds {
+		_ = subLogic.SubscribeDefaultPlan(ctx, orgId, userType)
+	}
+
 	threading.GoSafe(func() {
 		subCtx := context.WithoutCancel(ctx)
 		msg := auth.Msg{
@@ -678,12 +686,12 @@ func (l *UserLogic) ChangePassword(ctx context.Context, input dto.UserChangePass
 		return err
 	}
 	if !l.validatePassword(input.NewPassword) {
-		return errorx.New("New password is invalid")
+		return errorx.New("new password is invalid")
 	}
 
 	oldPassword := input.OldPassword
 	if !utils.CheckPassword(oldPassword, user.PasswordHash) {
-		return errorx.New("Old password is incorrect")
+		return errorx.New("old password is incorrect")
 	}
 	newPasswordHash, err := utils.HashPassword(input.NewPassword)
 	if err != nil {
@@ -706,29 +714,39 @@ func (l *UserLogic) validatePassword(password string) bool {
 	return hasLower && hasUpper && hasNumber
 }
 
-// handleOwnedOrganization
-func (l *UserLogic) handleOwnedOrganizationWithTx(ctx context.Context, tx *gorm.DB, user *model.User) (err error) {
+// handleOwnedOrganization activates owned organizations and returns IDs of newly activated orgs.
+func (l *UserLogic) handleOwnedOrganizationWithTx(ctx context.Context, tx *gorm.DB, user *model.User) (activatedOrgIds []int64, err error) {
 	if user == nil {
-		return errorx.New("User is empty")
+		return nil, errorx.New("user is empty")
 	}
+
+	// Find not-activated orgs before status update
+	notActivatedOrgs, err := l.repos.OrganizationRepo.FindByOwnerIdAndStatusWithTx(ctx, tx, user.Id, user.Type, constants.OrganizationStatusNotActivated)
+	if err != nil {
+		return nil, err
+	}
+
 	// Update owned organization status
 	err = l.repos.OrganizationRepo.UpdateOwnerOrganizationStatusWithTx(ctx, tx, user.Id, constants.OrganizationStatusActive)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	// Get owned organization ids
 	organizations, err := l.repos.OrganizationRepo.GetOrganizationsByOwnerIdWithTx(ctx, tx, user.Id, user.Type)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	// Sync owned organization templates
 	organizationTemplateLogic := NewOrganizationTemplateLogic(l.BaseLogic)
 	for index := range organizations {
 		err = organizationTemplateLogic.SyncByOrganizationIdWithTx(ctx, tx, organizations[index])
 		if err != nil {
-			return err
+			return nil, err
 		}
 	}
 
-	return err
+	for _, org := range notActivatedOrgs {
+		activatedOrgIds = append(activatedOrgIds, org.Id)
+	}
+	return activatedOrgIds, nil
 }

@@ -2,7 +2,7 @@ package model
 
 import (
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
+	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type LoanOperation struct {
@@ -12,9 +12,9 @@ type LoanOperation struct {
 	OperatorName string                              `gorm:"column:operator_name;size:50;not null;default:''" json:"operator_name"`
 	OperatorType constants.LoanOperationOperatorType `gorm:"column:operator_type;size:50;not null;default:''" json:"operator_type"`
 	Action       constants.LoanOperationAction       `gorm:"column:action;size:50;not null;default:''" json:"action"`
-	From         data.LoanOperationStatus            `gorm:"column:from;type:jsonb;not null;default:'{}';serializer:json" json:"from"`
-	To           data.LoanOperationStatus            `gorm:"column:to;type:jsonb;not null;default:'{}';serializer:json" json:"to"`
-	Metadata     *data.LoanOperationMetadata         `gorm:"column:metadata;type:jsonb;not null;default:'{}';serializer:json" json:"metadata"`
+	From         dto.LoanOperationStatus             `gorm:"column:from;type:jsonb;not null;default:'{}';serializer:json" json:"from"`
+	To           dto.LoanOperationStatus             `gorm:"column:to;type:jsonb;not null;default:'{}';serializer:json" json:"to"`
+	Metadata     *dto.LoanOperationMetadata          `gorm:"column:metadata;type:jsonb;not null;default:'{}';serializer:json" json:"metadata"`
 }
 
 func (m LoanOperation) TableName() string {

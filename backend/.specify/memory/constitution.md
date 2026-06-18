@@ -41,7 +41,7 @@
 
 ### 语言规范
 
-- **代码注释**：英文，简洁
+- **代码注释**：英文，简洁，不要使用中文
 - **Git 提交**：英文，conventional commits 格式
 - **交流沟通**：中文
 - **Markdown 文档**：中文（`README.md` 除外，用英文）
@@ -62,7 +62,6 @@ fix(document-lender-backend): fix document upload validation error
 ### AI 文档策略
 
 - **目录**：`.claude/`（分析文档、索引）、`.specify/`（功能规格）、`specs/`（实施文档）
-- **Git 状态**：已在 `.gitignore` 中忽略，不提交到仓库
 - **SpecKit 规格目录**：所有规格放 `backend/specs/`，不是项目根目录 `specs/`
 
 ## 架构治理
@@ -78,8 +77,8 @@ fix(document-lender-backend): fix document upload validation error
 
 ### 共享层
 
-- `domains/zeebee/`：共享模型(27)、仓储(27)、DTO(26)、业务逻辑
-- `common/`：20个工具包（copierx、errorx、gormx、validator 等）
+- `domains/zeebee/`：共享模型、仓储、DTO（`data/dto/`）、业务逻辑
+- `common/`：21个工具包（copierx、errorx、gormx、validator 等）
 
 详细架构设计、数据流规则、层级职责详见 `.claude/docs/analysis/architecture.md`。
 
@@ -91,7 +90,7 @@ fix(document-lender-backend): fix document upload validation error
 
 ### 合规验证
 
-- PR 通过 golangci-lint 检查
+- PR 通过 golangci-lint 检查（配置 `.golangci.yml`）
 - 新功能需单元测试，领域变更需集成测试
 - 所有类型转换使用 `copierx.Trans[T, U]`
 
@@ -118,4 +117,4 @@ Think before coding. Simplicity first. Surgical changes. Goal-driven execution.
 
 任务转为可验证目标："加验证" → "写失败测试再通过"，"修 bug" → "写复现测试再通过"。多步任务列简要计划，每步有验证点。
 
-**版本**：1.1.0 | **批准日期**：2025-12-29 | **最后修订**：2026-05-12
+**版本**：1.1.0 | **批准日期**：2025-12-29 | **最后修订**：2026-06-16

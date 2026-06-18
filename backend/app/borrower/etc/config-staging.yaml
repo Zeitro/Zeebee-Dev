@@ -43,7 +43,7 @@ RpcConf:
   EmailConf:
     Host: smtp.gmail.com
     Port: 587
-    Password: plqaccqomowwrszl
+    Password: jerburfauvmzpmnq
     Username: info@zeebeeloans.com
 
   JwtAuth:
@@ -144,3 +144,6 @@ RpcConf:
       Pwd: ''
       Tls: true
       BorrowerChannel: /borrower-channel
+  CronTaskConf:
+    - name: update_organization_subscription_status
+      schedule: "0 0 2 * * *"

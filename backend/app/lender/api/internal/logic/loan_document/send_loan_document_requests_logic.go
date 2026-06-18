@@ -28,11 +28,6 @@ func NewSendLoanDocumentRequestsLogic(ctx context.Context, svcCtx *svc.ServiceCo
 }
 
 func (l *SendLoanDocumentRequestsLogic) SendLoanDocumentRequests(req *types.LoanDocumentSendRequestsRequest) (resp *types.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
 
 	rpcReq := &lender.LoanDocumentSendRequestsRequest{
 		Data: &lender.LoanDocumentSendRequestsRequestData{},

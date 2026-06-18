@@ -28,11 +28,6 @@ func NewOrganizationSwitchStatusLogic(ctx context.Context, svcCtx *svc.ServiceCo
 }
 
 func (l *OrganizationSwitchStatusLogic) OrganizationSwitchStatus(req *types.OrganizationSwitchStatusRequest) (resp *types.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
 
 	// Convert types to pb request
 	rpcReq := &admin.OrganizationSwitchStatusRequest{

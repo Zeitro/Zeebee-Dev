@@ -33,7 +33,10 @@ func NewBorrowerLoanLenderCompaniesLogic(ctx context.Context, svcCtx *svc.Servic
 func (l *BorrowerLoanLenderCompaniesLogic) BorrowerLoanLenderCompanies(in *borrower.LoanLenderCompaniesRequest) (resp *borrower.LoanLenderCompaniesResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 
@@ -45,7 +48,7 @@ func (l *BorrowerLoanLenderCompaniesLogic) BorrowerLoanLenderCompanies(in *borro
 	var lenderCompanies []string
 	lenderCompanies, err = l.svcCtx.LoanRepo.GetLenderCompanyForBorrower(l.ctx, 0, claim.OrganizationId)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to get lender companies")
+		return nil, errorx.Wrap(err, "fail to get lender companies")
 	}
 
 	lenderCompanies = slice.Filter(lenderCompanies, func(index int, item string) bool {

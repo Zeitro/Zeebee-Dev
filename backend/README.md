@@ -1,22 +1,23 @@
 # Zeebee Backend
 
-[![Go](https://img.shields.io/badge/Go-1.24+-blue.svg)](https://golang.org)
-[![go-zero](https://img.shields.io/badge/go--zero-1.9.3-green.svg)](https://go-zero.dev/)
+[![Go](https://img.shields.io/badge/Go-1.26-blue.svg)](https://golang.org)
+[![go-zero](https://img.shields.io/badge/go--zero-1.10.1-green.svg)](https://go-zero.dev/)
 
 Microservices loan management system backend built on go-zero.
 
 ## Features
 
-- **Microservices**: Borrower, Lender, Admin + PDF Generator
+- **Microservices**: Borrower, Lender, Admin + standalone PDF Generator
+- **Single binary per service**: one `cmd/main.go` boots both API (HTTP) and RPC (gRPC)
 - **Shared Domain Layer**: Unified models, repos, logic in `domains/zeebee/`
-- **Tech Stack**: Go 1.24+, PostgreSQL, Redis, AWS S3, gRPC
+- **Tech Stack**: Go 1.26, go-zero 1.10.1, PostgreSQL, Redis, AWS S3, gRPC
 - **Code Generation**: go-zero based API/RPC scaffolding via Makefile
 
 ## Quick Start
 
 ### Prerequisites
 
-- Go 1.24.0+
+- Go 1.26+
 - PostgreSQL 14+, Redis 7+
 - goctl CLI
 
@@ -28,10 +29,11 @@ go install github.com/zeromicro/go-zero/tools/goctl@latest
 goctl env check --install --verbose --force
 go install github.com/linabellbiu/goctl-validate@latest
 
-# Start services
-cd app/borrower && go run cmd/main.go -f etc/config-local.yaml  # :10000/:10001
-cd app/lender   && go run cmd/main.go -f etc/config-local.yaml  # :11000/:11001
-cd app/admin    && go run cmd/main.go -f etc/config-local.yaml  # :12000/:12001
+# Start services (each boots API + RPC in one process)
+cd app/borrower && go run cmd/main.go -f etc/config-local.yaml  # :10000 / :10001
+cd app/lender   && go run cmd/main.go -f etc/config-local.yaml  # :11000 / :11001
+cd app/admin    && go run cmd/main.go -f etc/config-local.yaml  # :12000 / :12001
+cd app/pdf_generator && go run cmd/main.go -f etc/config.yaml   # standalone
 ```
 
 ### Code Generation
@@ -41,6 +43,7 @@ make create-service <name>       # Generate API + RPC + Swagger
 make create-api-service <name>   # Generate API service only
 make create-rpc-service <name>   # Generate RPC service only
 make create-swagger <name>       # Generate Swagger docs
+make create-sql <service> <name> # Create timestamped SQL file in deploy/<service>/sql/
 ```
 
 ## Architecture
@@ -59,7 +62,7 @@ make create-swagger <name>       # Generate Swagger docs
                     ▼
           ┌─────────────────┐
           │  domains/zeebee │  Shared Domain Layer
-          │  model/ repo/   │  (27 models, 27 repos, 26 DTOs)
+          │  model/ repo/   │  (36 models, 36 repos, 33 DTOs)
           │  logic/ dto/    │
           └────────┬────────┘
                    ▼
@@ -79,26 +82,26 @@ make create-swagger <name>       # Generate Swagger docs
 ```
 backend/
 ├── app/                    # Microservices
-│   ├── borrower/           # Borrower service (17 API modules, 18 RPC modules)
+│   ├── borrower/           # Borrower service (19 API modules, 20 RPC modules)
 │   ├── lender/             # Lender service (13 API modules, 14 RPC modules)
-│   ├── admin/              # Admin service (10 API modules, 12 RPC modules)
-│   └── pdf_generator/      # PDF generation service
+│   ├── admin/              # Admin service (13 API modules, 14 RPC modules)
+│   └── pdf_generator/      # PDF generation (standalone binary)
 ├── domains/zeebee/         # Shared domain layer
-│   ├── model/              # 27 GORM models
-│   ├── repo/               # 27 repositories + provider.go (DI)
-│   ├── data/dto/           # 26 DTOs
+│   ├── model/              # 36 GORM models
+│   ├── repo/               # 36 repositories + provider.go (DI)
+│   ├── data/dto/           # 33 DTOs
 │   ├── logic/              # Shared business logic
 │   ├── auth/               # Authentication
 │   ├── templater/          # Template engine
 │   └── zeitro/             # Zeitro API integration
-├── common/                 # 20 shared utility packages
+├── common/                 # 21 shared utility packages
 │   ├── copierx/            # Generic data conversion (copierx.Trans)
 │   ├── errorx/             # Unified error handling
 │   ├── gormx/              # GORM extensions (BaseRepo, pagination)
 │   ├── validator/          # Input validation
 │   ├── preapproval_engine/ # Pre-approval engine
-│   └── ...                 # aws_s3, email, limiter, rbac, uuid, etc.
-├── deploy/                 # Docker Compose per service
+│   └── ...                 # aws_s3, email, limiter, rbac, uuid, swagger, etc.
+├── deploy/                 # Dockerfile + docker-compose per service
 ├── scripts/                # Build and management scripts
 ├── third_party/            # Proto definitions, goctl templates
 └── Makefile                # Code generation commands
@@ -153,10 +156,11 @@ docker-compose -f deploy/{service}/docker-compose.yml up -d
 - **Architecture**: `.claude/docs/analysis/architecture.md`
 - **API Index**: `.claude/docs/guides/api_documentation_index.md`
 - **Project Structure**: `.claude/docs/guides/project_structure_guide.md`
+- **Domain Architecture**: `.claude/docs/guides/domain_architecture_guide.md`
 - **Knowledge Base**: `.claude/docs/INDEX.md`
 - **Dev Standards**: `CLAUDE.md`
 - **Swagger**: `app/{service}/api/swagger/`
 
 ---
 
-*Last updated: 2026-05-12*
+*Last updated: 2026-06-16*
