@@ -44,6 +44,7 @@ const (
 	ActionResourceReload  Action = "ResourceReload"
 	ActionRoleReload      Action = "RoleReload"
 	ActionAllPolicyReload Action = "AllPolicyReload"
+	ActionPolicyRebuild   Action = "PolicyRebuild"
 )
 
 type Scope string
