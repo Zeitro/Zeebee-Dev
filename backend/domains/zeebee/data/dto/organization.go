@@ -22,6 +22,8 @@ type OrganizationEntityDto struct {
 	Logo                 string                          `json:"logo"`
 	Website              string                          `json:"website"`
 	Tagline              string                          `json:"tagline"`
+	Source               string                          `json:"source"`
+	Order                int                             `json:"order"`
 	Metadata             *OrganizationMetadata           `json:"metadata"`
 	Owner                *UserEntityDto                  `json:"owner"`
 
@@ -42,6 +44,8 @@ type OrganizationPageEntityDto struct {
 	Logo           string                          `json:"logo"`
 	Website        string                          `json:"website"`
 	Tagline        string                          `json:"tagline"`
+	Source         string                          `json:"source"`
+	Order          int                             `json:"order"`
 	OwnerEmail     string                          `json:"owner_email"`
 	OwnerFullName  string                          `json:"owner_full_name"`
 	OwnerFirstName string                          `json:"owner_first_name"`
@@ -80,6 +84,8 @@ type OrganizationRegisterRequestDto struct {
 	Logo         string                          `json:"logo"`
 	Website      string                          `json:"website"`
 	Tagline      string                          `json:"tagline"`
+	Source       string                          `json:"source"`
+	Order        int                             `json:"order"`
 	Metadata     *OrganizationMetadata           `json:"metadata,omitempty"`
 }
 

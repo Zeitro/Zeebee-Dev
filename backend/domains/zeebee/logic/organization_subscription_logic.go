@@ -88,7 +88,6 @@ func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.Or
 		ActualAmount:        policy.ActualAmount,
 	}
 
-	var organizationPolicies map[int64]*organizationPolicyChanges
 	err = l.repos.OrganizationSubscriptionRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 		// fetch current non-expired subscriptions for the org
@@ -96,9 +95,8 @@ func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.Or
 		if innerErr != nil {
 			return innerErr
 		}
-		// unbind resources for currently effective old subscriptions
-		removedPolicies, innerErr := unbindEffectiveSubscriptions(ctx, l.repos, tx, oldSubs)
-		if innerErr != nil {
+		// unbind resources for currently effective old subscriptions (remove-side)
+		if _, innerErr = unbindEffectiveSubscriptions(ctx, l.repos, tx, oldSubs); innerErr != nil {
 			return innerErr
 		}
 		// set all non-expired subscriptions to expired
@@ -115,31 +113,22 @@ func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.Or
 		if innerErr != nil {
 			return innerErr
 		}
-		// create new active subscription
+		// create new active subscription. M5: becoming effective does not auto-bind
+		// plan resources — the org admin configures role-resource bindings manually.
 		subscription, innerErr = l.repos.OrganizationSubscriptionRepo.CreateWithTx(ctx, tx, subscription, false)
 		if innerErr != nil {
 			return innerErr
 		}
-		// bind new plan resources to org roles
-		addedPolicies, innerErr := syncSubscriptionEffect(ctx, l.repos, tx, subscriptionEffectSyncReq{
-			OrganizationId: subscription.OrganizationId,
-			Plan:           plan,
-			OldEffective:   false,
-			NewEffective:   true,
-		})
-		if innerErr != nil {
-			return innerErr
-		}
-		organizationPolicies = make(map[int64]*organizationPolicyChanges)
-		mergeOrganizationPolicies(organizationPolicies, removedPolicies)
-		mergeOrganizationPolicies(organizationPolicies, addedPolicies)
 		return nil
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	l.publishOrgPolicyReloadEvents(ctx, organizationPolicies, plan.Type)
+	// always rebuild this org's policies so the plan gate recomputes: becoming
+	// effective re-materializes existing role-resource bindings, becoming
+	// ineffective revokes them. New bindings are added by the org admin.
+	l.publishOrgPolicyRebuild(ctx, []int64{subscription.OrganizationId}, plan.Type)
 	return l.transToDetailDto(ctx, subscription)
 }
 
@@ -163,7 +152,7 @@ func (l *OrganizationSubscriptionLogic) Renew(ctx context.Context, id int64) (re
 
 	plan, err := l.repos.PricingPlanRepo.GetOne(ctx, subscription.PricingPlanId, []gormx.Preload{{Query: "Resources"}})
 	if err != nil || plan == nil {
-		err = errorx.New("fail to find pricing plan not found or disabled")
+		err = errorx.New("fail to find pricing plan")
 		return
 	}
 
@@ -192,14 +181,15 @@ func (l *OrganizationSubscriptionLogic) Renew(ctx context.Context, id int64) (re
 	subscription.Status = constants.OrganizationSubscriptionStatusActive
 	newEffective := subscription.Status.IsEffective()
 
-	var organizationPolicies map[int64]*organizationPolicyChanges
 	err = l.repos.OrganizationSubscriptionRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 		subscription, innerErr = l.repos.OrganizationSubscriptionRepo.UpdateOneByIdWithTx(ctx, tx, id, subscription)
 		if innerErr != nil {
 			return innerErr
 		}
-		organizationPolicies, innerErr = syncSubscriptionEffect(ctx, l.repos, tx, subscriptionEffectSyncReq{
+		// remove-side only: becoming ineffective unbinds plan resources; becoming
+		// effective is a no-op (M5). The rebuild below recomputes the plan gate.
+		_, innerErr = syncSubscriptionEffect(ctx, l.repos, tx, subscriptionEffectSyncReq{
 			OrganizationId: subscription.OrganizationId,
 			Plan:           plan,
 			OldEffective:   oldEffective,
@@ -211,7 +201,7 @@ func (l *OrganizationSubscriptionLogic) Renew(ctx context.Context, id int64) (re
 		return nil, err
 	}
 
-	l.publishOrgPolicyReloadEvents(ctx, organizationPolicies, plan.Type)
+	l.publishOrgPolicyRebuild(ctx, []int64{subscription.OrganizationId}, plan.Type)
 	return l.transToDetailDto(ctx, subscription)
 }
 
@@ -252,14 +242,15 @@ func (l *OrganizationSubscriptionLogic) UpdateExpireDate(ctx context.Context, in
 		return errorx.Wrap(err, "fail to find pricing plan")
 	}
 
-	var organizationPolicies map[int64]*organizationPolicyChanges
 	err = l.repos.OrganizationSubscriptionRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 		_, innerErr = l.repos.OrganizationSubscriptionRepo.UpdateOneByIdWithTx(ctx, tx, input.Id, subscription)
 		if innerErr != nil {
 			return innerErr
 		}
-		organizationPolicies, innerErr = syncSubscriptionEffect(ctx, l.repos, tx, subscriptionEffectSyncReq{
+		// remove-side only: becoming ineffective unbinds plan resources; becoming
+		// effective is a no-op (M5). The rebuild below recomputes the plan gate.
+		_, innerErr = syncSubscriptionEffect(ctx, l.repos, tx, subscriptionEffectSyncReq{
 			OrganizationId: subscription.OrganizationId,
 			Plan:           plan,
 			OldEffective:   oldEffective,
@@ -271,7 +262,7 @@ func (l *OrganizationSubscriptionLogic) UpdateExpireDate(ctx context.Context, in
 		return err
 	}
 
-	l.publishOrgPolicyReloadEvents(ctx, organizationPolicies, plan.Type)
+	l.publishOrgPolicyRebuild(ctx, []int64{subscription.OrganizationId}, plan.Type)
 	return nil
 }
 
@@ -295,14 +286,15 @@ func (l *OrganizationSubscriptionLogic) SwitchStatus(ctx context.Context, id int
 		return errorx.Wrap(err, "fail to find pricing plan")
 	}
 
-	var organizationPolicies map[int64]*organizationPolicyChanges
 	err = l.repos.OrganizationSubscriptionRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 		_, innerErr = l.repos.OrganizationSubscriptionRepo.UpdateOneByIdWithTx(ctx, tx, id, subscription)
 		if innerErr != nil {
 			return innerErr
 		}
-		organizationPolicies, innerErr = syncSubscriptionEffect(ctx, l.repos, tx, subscriptionEffectSyncReq{
+		// remove-side only: becoming ineffective unbinds plan resources; becoming
+		// effective is a no-op (M5). The rebuild below recomputes the plan gate.
+		_, innerErr = syncSubscriptionEffect(ctx, l.repos, tx, subscriptionEffectSyncReq{
 			OrganizationId: subscription.OrganizationId,
 			Plan:           plan,
 			OldEffective:   oldEffective,
@@ -314,7 +306,7 @@ func (l *OrganizationSubscriptionLogic) SwitchStatus(ctx context.Context, id int
 		return err
 	}
 
-	l.publishOrgPolicyReloadEvents(ctx, organizationPolicies, plan.Type)
+	l.publishOrgPolicyRebuild(ctx, []int64{subscription.OrganizationId}, plan.Type)
 	return nil
 }
 
@@ -360,7 +352,7 @@ func (l *OrganizationSubscriptionLogic) SuspendEffectiveByOrganizationId(ctx con
 		return err
 	}
 
-	l.publishOrgPolicyReloadEvents(ctx, organizationPolicies, userType)
+	l.publishOrgPolicyRebuild(ctx, orgPolicyKeys(organizationPolicies), userType)
 	return nil
 }
 
@@ -497,6 +489,11 @@ func (l *OrganizationSubscriptionLogic) SubscribeDefaultPlan(ctx context.Context
 		return err
 	}
 
+	// The new trial subscription expanded this org's plan-resource scope, so
+	// recompute its policies immediately (otherwise the org has zero policies
+	// until the next service restart).
+	l.publishOrgPolicyRebuild(ctx, []int64{organizationId}, plan.Type)
+
 	return nil
 }
 
@@ -570,10 +567,8 @@ func (l *OrganizationSubscriptionLogic) UpdateStatus(ctx context.Context, organi
 		}
 
 		// Expired transition: recover via default plan when possible
-		orgPolicies := map[int64]*organizationPolicyChanges{}
 		txErr := l.repos.OrganizationSubscriptionRepo.Transaction(ctx, func(tx *gorm.DB) error {
-			var innerErr error
-			orgPolicies, innerErr = l.handleExpiredSubscription(ctx, tx, sub, recovery)
+			_, innerErr := l.handleExpiredSubscription(ctx, tx, sub, recovery)
 			return innerErr
 		})
 		if txErr != nil {
@@ -585,7 +580,7 @@ func (l *OrganizationSubscriptionLogic) UpdateStatus(ctx context.Context, organi
 			).
 				Errorf("fail to handle expired subscription %d: %v", sub.Id, txErr)
 		} else {
-			l.publishOrgPolicyReloadEvents(ctx, orgPolicies, organizationType)
+			l.publishOrgPolicyRebuild(ctx, []int64{sub.OrganizationId}, organizationType)
 		}
 	}
 
@@ -684,24 +679,39 @@ func (l *OrganizationSubscriptionLogic) handleExpiredSubscription(
 	return removed, nil
 }
 
-// publishOrgPolicyReloadEvents sends per-org RoleReload events with explicit policy changes.
-func (l *OrganizationSubscriptionLogic) publishOrgPolicyReloadEvents(ctx context.Context, organizationPolicies map[int64]*organizationPolicyChanges, userType constants.UserType) {
-	for orgId, changes := range organizationPolicies {
+// publishOrgPolicyRebuild emits a per-org ActionPolicyRebuild event for each
+// organization whose subscription state changed. Each replica that receives the
+// event recomputes that org's policies from post-commit DB state (plan gate +
+// role-resource bindings). Replaces the old ActionRoleReload path, which only
+// carried the remove side and left the enforcer unable to grow after startup.
+func (l *OrganizationSubscriptionLogic) publishOrgPolicyRebuild(ctx context.Context, affectedOrgIds []int64, userType constants.UserType) {
+	seen := map[int64]bool{}
+	for _, orgId := range affectedOrgIds {
+		if orgId <= 0 || seen[orgId] {
+			continue
+		}
+		seen[orgId] = true
 		orgId := orgId
-		changes := changes
 		threading.GoSafe(func() {
 			subCtx := context.WithoutCancel(ctx)
 			msg := auth.Msg{
-				Action:          auth.ActionRoleReload,
-				Scope:           auth.ScopeOrganization,
-				Type:            userType,
-				OrganizationId:  orgId,
-				AddedPolicies:   changes.added,
-				RemovedPolicies: changes.removed,
+				Action:         auth.ActionPolicyRebuild,
+				Scope:          auth.ScopeOrganization,
+				Type:           userType,
+				OrganizationId: orgId,
 			}
 			_ = l.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
 		})
 	}
+}
+
+// orgPolicyKeys returns the org ids tracked in an organizationPolicyChanges map.
+func orgPolicyKeys(m map[int64]*organizationPolicyChanges) []int64 {
+	out := make([]int64, 0, len(m))
+	for k := range m {
+		out = append(out, k)
+	}
+	return out
 }
 
 // maxCodeRetries is the number of attempts generateCode makes to produce a

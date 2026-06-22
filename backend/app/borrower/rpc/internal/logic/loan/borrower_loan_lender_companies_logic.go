@@ -46,7 +46,7 @@ func (l *BorrowerLoanLenderCompaniesLogic) BorrowerLoanLenderCompanies(in *borro
 	}
 
 	var lenderCompanies []string
-	lenderCompanies, err = l.svcCtx.LoanRepo.GetLenderCompanyForBorrower(l.ctx, 0, claim.OrganizationId)
+	lenderCompanies, err = l.svcCtx.LoanRepo.GetLenderCompanyForBorrower(l.ctx, claim.OrganizationUserId, claim.OrganizationId)
 	if err != nil {
 		return nil, errorx.Wrap(err, "fail to get lender companies")
 	}

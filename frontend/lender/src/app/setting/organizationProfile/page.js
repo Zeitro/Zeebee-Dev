@@ -1,10 +1,9 @@
 'use client';
-import { OrgProfile, PermissionSlot } from '@repo/shared-methods';
+import { OrgProfile } from '@repo/shared-methods';
 import { Button, message } from 'antd';
 import { useRef, useState } from 'react';
-import { useUserStore } from '@repo/shared-methods/store';
+import { useUserStore } from '@/store/user';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
-import { PERMISSIONS } from '@config/permissions';
 const OrganizationProfile = () => {
 	const { getOrganization } = useUserStore();
 	const orgRef = useRef();
@@ -45,13 +44,11 @@ const OrganizationProfile = () => {
 				api="/organization/profile"
 				emailName={['owner', 'email']}
 			>
-				<PermissionSlot code={PERMISSIONS?.SETTING_ORGANIZATION_PROFILE?.SAVE}>
-					<div className="flex justify-end">
-						<Button type="primary" loading={confirmLoading} onClick={handleSave}>
-							{confirmLoading ? 'Saving...' : 'Save'}
-						</Button>
-					</div>
-				</PermissionSlot>
+				<div className="flex justify-end">
+					<Button type="primary" loading={confirmLoading} onClick={handleSave}>
+						{confirmLoading ? 'Saving...' : 'Save'}
+					</Button>
+				</div>
 			</OrgProfile>
 		</div>
 	);

@@ -2011,6 +2011,8 @@ message OrganizationEntity {
   string website = 15;
   string tagline = 16;
   OrganizationMetadataEntity metadata = 17;
+  string source = 18;
+  int32 order = 19;
 }
 
 message OrganizationMetadataEntity {

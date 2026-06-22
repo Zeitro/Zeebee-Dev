@@ -63,7 +63,7 @@ func (l *UserLogic) GetUserClaimFromCtx(ctx context.Context) (claim utils.JwtUse
 // GenerateJwtToken generate jwt token for user
 func (l *UserLogic) GenerateJwtToken(user *model.User, organizationUser *model.OrganizationUser, userType constants.UserType) (token *dto.UserJwtTokenDto, err error) {
 	if user == nil {
-		return nil, errorx.WithStack(errorx.New("User is empty"))
+		return nil, errorx.WithStack(errorx.New("user is empty"))
 	}
 	userClaim := utils.JwtUser{
 		UserId:         user.Id,
@@ -285,7 +285,7 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 			return nil, errorx.WithStack(err)
 		}
 		if loginFailedTimes >= limiter.Rate {
-			return nil, errorx.New("Login failed times exceeded, please try again later")
+			return nil, errorx.New("login failed times exceeded, please try again later")
 		}
 	}
 
@@ -294,7 +294,7 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 		return nil, errorx.WithStack(err)
 	}
 	if user == nil {
-		return nil, errorx.New("User not found")
+		return nil, errorx.New("user not found")
 	}
 
 	// Check pwd
@@ -304,7 +304,7 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 		if err != nil {
 			return nil, errorx.WithStack(err)
 		}
-		return nil, errorx.WithStack(errorx.New("The email and password you entered don't match."))
+		return nil, errorx.WithStack(errorx.New("the email and password you entered don't match."))
 	}
 
 	if limiter.Rate > 0 {
@@ -316,10 +316,10 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 
 	// Check status
 	if user.Status == constants.UserStatusInactive {
-		return nil, errorx.New("User is not active")
+		return nil, errorx.New("user is not active")
 	}
 	if user.Status == constants.UserStatusUnverified {
-		err = status.Error(codes.PermissionDenied, "User is unverified")
+		err = status.Error(codes.PermissionDenied, "user is unverified")
 		return nil, err
 	}
 
@@ -356,7 +356,7 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 		return nil, err
 	}
 	if user == nil {
-		return nil, errorx.WithStack(errorx.New("User not found"))
+		return nil, errorx.WithStack(errorx.New("user not found"))
 	}
 	if len(user.Organizations) > 0 {
 		organizationsPtr := &[]*dto.UserOrganizationDto{}
@@ -388,7 +388,7 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 		return item.OrganizationId == organizationId && item.IsDel == 0
 	})
 	if !ok {
-		err = errorx.New("Organization user not found")
+		err = errorx.New("organization user not found")
 		return nil, err
 	}
 
@@ -599,6 +599,97 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 	})
 
 	return user, organizationUser, nil
+}
+
+// ValidatePortalPassword enforces the same rules as lender portal password changes.
+func (l *UserLogic) ValidatePortalPassword(password string) bool {
+	return l.validatePassword(password)
+}
+
+// CreatePrimaryOwnerForLenderOrgWithTx creates the lender owner user for an organization
+// inserted without one (e.g. OpenAI discover). Caller must use the same transaction for the org update.
+func (l *UserLogic) CreatePrimaryOwnerForLenderOrgWithTx(ctx context.Context, tx *gorm.DB, organization *model.Organization, userInput dto.UserRegisterRequestDto) (err error) {
+	if organization == nil {
+		return errorx.New("Organization is empty")
+	}
+	if organization.Type != constants.UserTypeLender {
+		return errorx.New("Invalid organization type")
+	}
+	if organization.OwnerId != 0 {
+		return errorx.New("Organization already has an owner")
+	}
+	if organization.Source != constants.OrganizationSourceSearch {
+		return errorx.New("Owner onboarding is only allowed for search-sourced lenders")
+	}
+	if len(userInput.Email) == 0 || len(userInput.PasswordHash) == 0 {
+		return errorx.New("Owner email and password are required")
+	}
+	if len(userInput.FirstName) == 0 || len(userInput.LastName) == 0 {
+		return errorx.New("Owner first and last name are required")
+	}
+	isExisted, err := l.repos.UserRepo.IsExistedByColumnsWithTx(ctx, tx, map[string]interface{}{
+		"email": userInput.Email,
+		"type":  constants.UserTypeLender,
+	})
+	if err != nil {
+		return err
+	}
+	if isExisted {
+		return errorx.New("User already exists")
+	}
+
+	user, err := copierx.Trans[dto.UserRegisterRequestDto, model.User](&userInput)
+	if err != nil {
+		return err
+	}
+	user.PasswordHash = userInput.PasswordHash
+	user.DefaultOrganizationId = organization.Id
+	user.RemoveRelationships()
+
+	user, err = l.repos.UserRepo.CreateWithTx(ctx, tx, user, false)
+	if err != nil {
+		return err
+	}
+
+	err = l.repos.OrganizationRepo.UpdateOwnerIdWithTx(ctx, tx, organization.Id, user.Id)
+	if err != nil {
+		return err
+	}
+	organization.OwnerId = user.Id
+
+	roles := []*model.Role{
+		{
+			Name:           constants.AdminRoleName,
+			Type:           constants.UserTypeLender,
+			OrganizationId: organization.Id,
+		},
+	}
+	organizationUser := &model.OrganizationUser{
+		OrganizationId: organization.Id,
+		UserId:         user.Id,
+		FirstName:      user.FirstName,
+		MidName:        user.MidName,
+		LastName:       user.LastName,
+		Status:         constants.OrganizationUserStatusActive,
+		FullName:       user.FullName,
+		Roles:          roles,
+	}
+	_, err = l.repos.OrganizationUserRepo.CreateWithTx(ctx, tx, organizationUser, true)
+	return err
+}
+
+// PublishRoleReloadForOrganization notifies Casbin consumers after roles change for an org.
+func (l *UserLogic) PublishRoleReloadForOrganization(ctx context.Context, organizationId int64, userType constants.UserType) {
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:         auth.ActionRoleReload,
+			Scope:          auth.ScopeOrganization,
+			Type:           userType,
+			OrganizationId: organizationId,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
+	})
 }
 
 // VerifyUserEmail verity user email

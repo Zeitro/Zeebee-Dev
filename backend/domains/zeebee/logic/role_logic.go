@@ -330,7 +330,7 @@ func (l *RoleLogic) Delete(ctx context.Context, id int64, organizationId int64, 
 		return err
 	}
 	if role.Name == constants.AdminRoleName {
-		return errorx.New("Cannot delete admin role")
+		return errorx.New("cannot delete admin role")
 	}
 	var removedPolicies [][]string
 	err = l.repos.RoleRepo.Transaction(ctx, func(tx *gorm.DB) error {

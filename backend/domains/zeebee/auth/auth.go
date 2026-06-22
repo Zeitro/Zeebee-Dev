@@ -28,10 +28,22 @@ import (
 	"zeebee-backend/domains/zeebee/repo"
 )
 
+// policyEnforcer is the subset of *rbac.Enforcer used by the policy rebuild /
+// auth-check paths. Declared as an interface so tests can substitute a fake;
+// production passes the real *rbac.Enforcer (which satisfies it).
+type policyEnforcer interface {
+	AllPolicies() ([][]string, error)
+	AddPolicies([][]string) error
+	RemovePolicies([][]string) error
+	Enforce(rvals ...interface{}) (bool, error)
+	SavePolicy() error
+	LoadDefaultFilteredPolicy() error
+}
+
 type Auth struct {
 	repos                       *repo.AllRepos
 	redisCli                    *redisx.Client
-	enforcer                    *rbac.Enforcer
+	enforcer                    policyEnforcer
 	jwtConfig                   dto.JwtConfig
 	authenticationWhitelistMap  *mapx.Map[constants.UserType, []string] // login api whitelist
 	authorizationWhitelistMap   *mapx.Map[constants.UserType, []string] // permission api whitelist
@@ -64,6 +76,24 @@ func NewAuth(repos *repo.AllRepos, redisCli *redisx.Client, jwtConfig dto.JwtCon
 	}()
 
 	return auth
+}
+
+// newAuthWithEnforcer is a test seam: builds an Auth with a fake policyEnforcer
+// and no redis subscribe loop, so rebuild/auth-check logic can be unit-tested
+// without a DB or redis. Not used in production.
+func newAuthWithEnforcer(repos *repo.AllRepos, redisCli *redisx.Client, jwtConfig dto.JwtConfig, enforcer policyEnforcer, authEventTopic string) *Auth {
+	return &Auth{
+		repos:                       repos,
+		redisCli:                    redisCli,
+		jwtConfig:                   jwtConfig,
+		enforcer:                    enforcer,
+		authenticationWhitelistMap:  mapx.NewMap[constants.UserType, []string](),
+		authorizationWhitelistMap:   mapx.NewMap[constants.UserType, []string](),
+		apiResourceMap:              mapx.NewMap[constants.UserType, *mapx.Map[string, []int64]](),
+		organizationRoleResourceMap: mapx.NewMap[int64, *mapx.Map[string, RoleResource]](),
+		organizationPlanResourceMap: mapx.NewMap[int64, *mapx.Map[int64, bool]](),
+		eventTopic:                  authEventTopic,
+	}
 }
 
 // subscribeEvent
@@ -142,11 +172,31 @@ func (l *Auth) handleAuthMsg(ctx context.Context, msg *redis.Message) (err error
 		err = l.handleResourceReload(ctx, eventMsg)
 	case ActionAllPolicyReload:
 		err = l.handleAllPolicyReload(ctx, eventMsg)
+	case ActionPolicyRebuild:
+		err = l.handlePolicyRebuild(ctx, eventMsg)
 	default:
 		err = errorx.Errorf("Invalid action %v", eventMsg.Action)
 	}
 
 	return err
+}
+
+// handlePolicyRebuild recomputes policies for the scope named in the message on
+// THIS replica. Every replica of the userType service receives the same event
+// and rebuilds its own enforcer independently; AddPolicies/RemovePolicies are
+// idempotent so concurrent rebuilds converge to the same policy set.
+func (l *Auth) handlePolicyRebuild(ctx context.Context, msg Msg) (err error) {
+	switch msg.Scope {
+	case ScopeOrganization:
+		if msg.OrganizationId <= 0 {
+			return nil
+		}
+		return l.RebuildPolicyForOrganization(ctx, msg.OrganizationId, msg.Type)
+	case ScopeGlobal:
+		return l.RebuildPolicy(ctx, msg.Type)
+	default:
+		return nil
+	}
 }
 
 // handleApiReload
@@ -530,148 +580,207 @@ func (l *Auth) LoadAuthorizationWhitelist(ctx context.Context, userType constant
 	return whitelist, nil
 }
 
-// RebuildPolicy rebuilds the authorization policies for a given user type.
-// It compares the current policies with the ones derived from the resources in the database,
-// identifies new policies to be added and obsolete policies to be removed.
-// The function returns an error if any database or policy operation fails.
+// RebuildPolicy rebuilds the authorization policies for ALL organizations of the
+// given user type. It runs at service startup (see app/*/rpc/internal/logic/
+// base_logic.go). For changes after startup use RebuildPolicyForOrganization
+// (one org) or publish an ActionPolicyRebuild event (handled on every replica).
+//
+// Policies are recomputed from resource↔role bindings, gated by each org's
+// active pricing-plan resource scope, then diffed against the enforcer's current
+// policies. Only the full-rebuild path self-publishes ActionAllPolicyReload
+// (legacy fan-out); the org-scoped path relies on each replica rebuilding itself.
 func (l *Auth) RebuildPolicy(ctx context.Context, organizationType constants.UserType) (err error) {
+	return l.rebuildPolicy(ctx, organizationType, 0)
+}
+
+// RebuildPolicyForOrganization recomputes a single organization's policies for
+// the given user type. It only touches policies whose subject ("Role:<id>")
+// belongs to one of this org's roles; other orgs' policies are never modified.
+// Triggered by an ActionPolicyRebuild ScopeOrganization event on every replica.
+func (l *Auth) RebuildPolicyForOrganization(ctx context.Context, organizationId int64, organizationType constants.UserType) (err error) {
+	if organizationId <= 0 {
+		return nil
+	}
+	return l.rebuildPolicy(ctx, organizationType, organizationId)
+}
+
+// rebuildPolicy core. organizationId == 0 means full rebuild (all orgs of the
+// user type); organizationId > 0 means org-scoped. singleflight collapses
+// concurrent rebuilds for the same scope into one DB read + diff.
+//
+// Key scheme: "PolicyRebuild:<type>" (full) vs "PolicyRebuildOrg:<orgId>:<type>"
+// (org-scoped) — distinct prefixes, no overlap with whitelist/plan-resource
+// singleflight keys. Concurrent full + org-scoped rebuilds of the same type are
+// safe: both recompute from the same post-commit DB state and AddPolicies/
+// RemovePolicies are idempotent set operations, so the final state converges
+// regardless of interleaving.
+func (l *Auth) rebuildPolicy(ctx context.Context, organizationType constants.UserType, organizationId int64) (err error) {
+	sfKey := stringx.Format("PolicyRebuild:%v", organizationType)
+	if organizationId > 0 {
+		sfKey = stringx.Format("PolicyRebuildOrg:%d:%v", organizationId, organizationType)
+	}
+	_, err, _ = l.sf.Do(sfKey, func() (interface{}, error) {
+		return nil, l.doRebuild(ctx, organizationType, organizationId)
+	})
+	return err
+}
+
+func (l *Auth) doRebuild(ctx context.Context, organizationType constants.UserType, organizationId int64) (err error) {
 	buildKeyFn := func(policy []string) string {
 		return strings.Join(policy, ",")
 	}
 
-	// Get existing policies from the enforcer
+	// 1. invalidate the plan-resource cache for this scope so the rebuild reads
+	//    the latest subscription/plan state from the DB.
+	if organizationId > 0 {
+		l.organizationPlanResourceMap.Delete(organizationId)
+	} else {
+		l.organizationPlanResourceMap.Clear()
+	}
+
+	// 2. for org-scoped rebuild, fetch this org's complete role-id set. It both
+	//    scopes which existing policies may be touched AND enables orphan cleanup
+	//    (a role that lost all plan-covered resources yields no desired policy,
+	//    so any leftover policy of it falls into the remove set). RoleRepo.All
+	//    filters by organization_id, so it is only meaningful for orgId > 0
+	//    (orgId == 0 would return only global roles). The full-rebuild path does
+	//    not scope existing policies by subject, matching legacy behavior.
+	var subjectSet map[string]int64
+	if organizationId > 0 {
+		scopeRoles, scopeErr := l.repos.RoleRepo.All(ctx, organizationId, organizationType)
+		if scopeErr != nil {
+			return scopeErr
+		}
+		subjectSet = map[string]int64{}
+		slice.ForEach(scopeRoles, func(_ int, role *model.Role) {
+			if role == nil {
+				return
+			}
+			subjectSet[stringx.Format("Role:%d", role.Id)] = role.Id
+		})
+	}
+
+	// 3. resources carrying the scope's roles. AllResourcesForAuth preloads Roles
+	//    filtered to the scope (orgId>0 ⇒ only this org's active roles).
+	resources, err := l.repos.ResourceRepo.AllResourcesForAuth(ctx, organizationId, organizationType)
+	if err != nil {
+		return err
+	}
+
+	// 4. prime the plan-resource cache for the orgs we touch.
+	if organizationId > 0 {
+		if _, err = l.getOrganizationPlanResourceIds(ctx, organizationId); err != nil {
+			return err
+		}
+	} else {
+		orgIds := make(map[int64]bool)
+		slice.ForEach(resources, func(_ int, resource *model.Resource) {
+			if resource == nil {
+				return
+			}
+			slice.ForEach(resource.Roles, func(_ int, role *model.Role) {
+				if role != nil && role.OrganizationId > 0 {
+					orgIds[role.OrganizationId] = true
+				}
+			})
+		})
+		for orgId := range orgIds {
+			if _, err = l.getOrganizationPlanResourceIds(ctx, orgId); err != nil {
+				return err
+			}
+		}
+	}
+
+	// 5. desired policy set, gated by plan.
+	desired := map[string][]string{}
+	slice.ForEach(resources, func(_ int, resource *model.Resource) {
+		if resource == nil {
+			return
+		}
+		slice.ForEach(resource.Roles, func(_ int, role *model.Role) {
+			if role == nil || role.Status != constants.CommonStatusActive {
+				return
+			}
+			if role.OrganizationId > 0 {
+				planResources, _ := l.organizationPlanResourceMap.Get(role.OrganizationId)
+				// deny default: no plan entry ⇒ skip (no policy for this pair).
+				if planResources == nil {
+					return
+				}
+				if _, ok := planResources.Get(resource.Id); !ok {
+					return
+				}
+			}
+			policy := BuildPolicy(role.Id, resource.Id, organizationType)
+			desired[buildKeyFn(policy)] = policy
+		})
+	})
+
+	// 6. existing policies. Org-scoped: only those whose subject belongs to this
+	//    org (never touch another org's policies). Full: all current policies,
+	//    matching the legacy diff.
 	oldPolicies, err := l.enforcer.AllPolicies()
 	if err != nil {
 		return err
 	}
-	// Convert old policies to a map for efficient lookup
-	oldPoliciesMap := map[string]struct{}{}
-	slice.ForEach(oldPolicies, func(index int, item []string) {
-		key := buildKeyFn(item)
-		oldPoliciesMap[key] = struct{}{}
-	})
-
-	// Get all resources for the given user type
-	resources, err := l.repos.ResourceRepo.AllResourcesForAuth(ctx, 0, organizationType)
-	if err != nil {
-		return err
-	}
-
-	// Pre-load organization plan resources for all unique orgs referenced by roles
-	orgIds := make(map[int64]bool)
-	slice.ForEach(resources, func(index int, resource *model.Resource) {
-		if resource == nil {
+	existing := map[string][]string{}
+	slice.ForEach(oldPolicies, func(_ int, item []string) {
+		if len(item) == 0 {
 			return
 		}
-		slice.ForEach(resource.Roles, func(index int, role *model.Role) {
-			if role != nil && role.OrganizationId > 0 {
-				orgIds[role.OrganizationId] = true
+		if organizationId > 0 {
+			if _, ok := subjectSet[item[0]]; !ok {
+				return
 			}
-		})
-	})
-	for orgId := range orgIds {
-		_, err = l.getOrganizationPlanResourceIds(ctx, orgId)
-		if err != nil {
-			return err
 		}
-	}
+		existing[buildKeyFn(item)] = item
+	})
 
-	// Initialize slices for tracking policy changes
-	var currentPolicies [][]string
+	// 7. diff.
 	var newPolicies [][]string
 	var removePolicies [][]string
-	currentPoliciesMap := map[string]struct{}{}
-
-	// Process each resource and generate policies, filtered by organization plan
-	slice.ForEach(resources, func(index int, resource *model.Resource) {
-		if resource == nil {
-			return
+	for key, policy := range desired {
+		if _, ok := existing[key]; !ok {
+			newPolicies = append(newPolicies, policy)
 		}
-		// Generate policies for each active role associated with the resource.
-		// Only include role-resource pairs where the resource is in the role's organization's plan.
-		rolePolicies := slice.FilterMap(resource.Roles, func(index int, role *model.Role) ([]string, bool) {
-			if role == nil || role.Status != constants.CommonStatusActive {
-				return nil, false
-			}
-			// Check if resource is in the role's organization's pricing plan.
-			// If plan resources failed to load (nil), deny access as safe default.
-			if role.OrganizationId > 0 {
-				planResources, _ := l.organizationPlanResourceMap.Get(role.OrganizationId)
-				if planResources == nil {
-					return nil, false
-				}
-				if _, ok := planResources.Get(resource.Id); !ok {
-					return nil, false
-				}
-			}
-			// Create a policy entry for the role-resource combination
-			policy := BuildPolicy(role.Id, resource.Id, organizationType)
-
-			key := buildKeyFn(policy)
-			// Check if this is a new policy
-			_, ok := oldPoliciesMap[key]
-			if !ok {
-				newPolicies = append(newPolicies, policy)
-			}
-			currentPoliciesMap[key] = struct{}{}
-			return policy, true
-		})
-		if len(rolePolicies) == 0 {
-			return
+	}
+	for key, policy := range existing {
+		if _, ok := desired[key]; !ok {
+			removePolicies = append(removePolicies, policy)
 		}
-		currentPolicies = append(currentPolicies, rolePolicies...)
-	})
+	}
 
-	// Identify policies that need to be removed
-	slice.ForEach(oldPolicies, func(index int, item []string) {
-		key := buildKeyFn(item)
-		_, ok := currentPoliciesMap[key]
-		if !ok {
-			removePolicies = append(removePolicies, item)
-		}
-	})
-
-	// Execute the policy operations in parallel
+	// 8. apply (idempotent; autoSave persists; redis watcher fans out).
 	eg := errgroup.Group{}
 	eg.Go(func() error {
-		var err error
-		// Remove obsolete policies if any
 		if len(removePolicies) > 0 {
-			err = l.enforcer.RemovePolicies(removePolicies)
-			if err != nil {
-				return err
-			}
+			return l.enforcer.RemovePolicies(removePolicies)
 		}
-		return err
+		return nil
 	})
 	eg.Go(func() error {
-		var err error
-		// Add new policies if any
 		if len(newPolicies) > 0 {
-			err = l.enforcer.AddPolicies(newPolicies)
-			if err != nil {
-				return err
-			}
+			return l.enforcer.AddPolicies(newPolicies)
 		}
-		return err
+		return nil
 	})
-	err = eg.Wait()
-	if err != nil {
+	if err = eg.Wait(); err != nil {
 		return err
 	}
 
-	// check if policy is changed
-	isPolicyChanged := len(newPolicies) > 0 || len(removePolicies) > 0
-	if isPolicyChanged {
-		// send event to reload policy
+	// 9. fan-out: only the full-rebuild path self-publishes (legacy behavior for
+	//    the startup call). The org-scoped path must NOT self-publish: every
+	//    replica already received the originating ActionPolicyRebuild and rebuilt
+	//    its own enforcer, and autoSave + the redis watcher already propagate
+	//    the DB change to other replicas.
+	if organizationId == 0 && (len(newPolicies) > 0 || len(removePolicies) > 0) {
 		msg := Msg{
 			Action: ActionAllPolicyReload,
 			Scope:  ScopeGlobal,
 			Type:   organizationType,
 		}
-		err = l.redisCli.GetClient().Publish(ctx, l.eventTopic, msg.String()).Err()
-		if err != nil {
-			return errorx.WithStack(err)
+		if perr := l.redisCli.GetClient().Publish(ctx, l.eventTopic, msg.String()).Err(); perr != nil {
+			return errorx.WithStack(perr)
 		}
 	}
 

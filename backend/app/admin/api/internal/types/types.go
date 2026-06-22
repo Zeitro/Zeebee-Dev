@@ -248,6 +248,96 @@ type ImportLoanExtendEntity struct {
 	BusinessLine      string `json:"business_line,optional"`
 }
 
+type LenderDiscoverCandidate struct {
+	DedupeStatus   string                       `json:"dedupe_status"`
+	NormalizedKey  string                       `json:"normalized_key"`
+	Name           string                       `json:"name"`
+	ContactEmail   string                       `json:"contact_email,optional"`
+	ContactPhone   string                       `json:"contact_phone,optional"`
+	ContactName    string                       `json:"contact_name,optional"`
+	Website        string                       `json:"website,optional"`
+	Tagline        string                       `json:"tagline,optional"`
+	Logo           string                       `json:"logo,optional"`
+	Address        AddressEntity                `json:"address,optional"`
+	LenderMetadata LenderDiscoverLenderMetadata `json:"lender_metadata,optional"`
+}
+
+type LenderDiscoverCommitLender struct {
+	Name           string                       `json:"name" validate:"required"`
+	ContactEmail   string                       `json:"contact_email,optional"`
+	ContactPhone   string                       `json:"contact_phone,optional"`
+	ContactName    string                       `json:"contact_name,optional"`
+	Website        string                       `json:"website,optional"`
+	Tagline        string                       `json:"tagline,optional"`
+	Logo           string                       `json:"logo,optional"`
+	Address        AddressEntity                `json:"address,optional"`
+	LenderMetadata LenderDiscoverLenderMetadata `json:"lender_metadata,optional"`
+}
+
+type LenderDiscoverCommitRequest struct {
+	Lenders []LenderDiscoverCommitLender `json:"lenders"`
+}
+
+type LenderDiscoverLenderMetadata struct {
+	LoanAmountRange RangeFloat64 `json:"loan_amount_range,optional"`
+	LoanTermRange   RangeInt     `json:"loan_term_range,optional"`
+	LoanRateRange   RangeFloat64 `json:"loan_rate_range,optional"`
+	LoanPointRange  RangeFloat64 `json:"loan_point_range,optional"`
+}
+
+type LenderDiscoverPreviewData struct {
+	Candidates   []LenderDiscoverCandidate `json:"candidates"`
+	NewCount     int                       `json:"new_count"`
+	ExistedCount int                       `json:"existed_count"`
+}
+
+type LenderDiscoverPreviewResponse struct {
+	Data LenderDiscoverPreviewData `json:"data"`
+}
+
+type LenderDiscoverRunEntity struct {
+	Id           int64                  `json:"id"`
+	TriggerType  string                 `json:"trigger_type"`
+	Status       string                 `json:"status"`
+	StartedAt    string                 `json:"started_at"`
+	FinishedAt   string                 `json:"finished_at,optional"`
+	ErrorMessage string                 `json:"error_message,optional"`
+	Stats        LenderDiscoverRunStats `json:"stats"`
+}
+
+type LenderDiscoverRunResponse struct {
+	Data LenderDiscoverRunEntity `json:"data"`
+}
+
+type LenderDiscoverRunStats struct {
+	RequestedCount        int `json:"requested_count"`
+	InsertedCount         int `json:"inserted_count"`
+	SkippedDuplicateCount int `json:"skipped_duplicate_count"`
+	ErrorCount            int `json:"error_count"`
+}
+
+type LenderDiscoverSettings struct {
+	ScheduleEnabled bool   `json:"schedule_enabled"`
+	IntervalDays    int    `json:"interval_days"`
+	ScopeState      string `json:"scope_state"`
+	ScopeExtra      string `json:"scope_extra"`
+	UserPrompt      string `json:"user_prompt"`
+	OpenaiModel     string `json:"openai_model"`
+}
+
+type LenderDiscoverSettingsResponse struct {
+	Data LenderDiscoverSettings `json:"data"`
+}
+
+type LenderDiscoverUpdateSettingsRequest struct {
+	ScheduleEnabled bool   `json:"schedule_enabled"`
+	IntervalDays    int    `json:"interval_days" validate:"required,min=1"`
+	ScopeState      string `json:"scope_state,optional" validate:"omitempty,max=8"`
+	ScopeExtra      string `json:"scope_extra,optional"`
+	UserPrompt      string `json:"user_prompt,optional"`
+	OpenaiModel     string `json:"openai_model,optional"`
+}
+
 type LoanApplicantEditLoanEntity struct {
 	Id                  int64 `json:"id,omitempty,optional"`
 	BorrowerApplicantId int64 `json:"borrower_applicant_id,omitempty,optional"`
@@ -638,6 +728,8 @@ type OrganizationEntity struct {
 	Logo               string                      `json:"logo"`
 	Website            string                      `json:"website"`
 	Tagline            string                      `json:"tagline"`
+	Source             string                      `json:"source,optional"`
+	Order              int                         `json:"order"`
 	Metadata           *OrganizationMetadataEntity `json:"metadata"`
 	CreatedAt          string                      `json:"created_at"`
 	UpdatedAt          string                      `json:"updated_at"`
@@ -679,6 +771,8 @@ type OrganizationPageEntity struct {
 	Logo           string `json:"logo"`
 	Website        string `json:"website"`
 	Tagline        string `json:"tagline"`
+	Source         string `json:"source,optional"`
+	Order          int    `json:"order"`
 	CreatedAt      string `json:"created_at"`
 	UpdatedAt      string `json:"updated_at"`
 	OwnerEmail     string `json:"owner_email"`
@@ -793,15 +887,21 @@ type OrganizationSwitchStatusRequest struct {
 }
 
 type OrganizationUpdateLenderRequest struct {
-	Id           int64                             `path:"id" validate:"required,min=1"`
-	ContactEmail string                            `json:"contact_email" validate:"required,email"`
-	ContactPhone string                            `json:"contact_phone" validate:"required,min=8,max=20"`
-	ContactName  string                            `json:"contact_name" validate:"required,min=2,max=100"`
-	Address      *AddressEntity                    `json:"address" validate:"required"`
-	Logo         string                            `json:"logo" validate:"required,url"`
-	Website      string                            `json:"website,optional" validate:"omitempty,url"`
-	Tagline      string                            `json:"tagline,optional"`
-	Metadata     *OrganizationLenderMetadataEntity `json:"metadata,optional"`
+	Id           int64                               `path:"id" validate:"required,min=1"`
+	ContactEmail string                              `json:"contact_email" validate:"required,email"`
+	ContactPhone string                              `json:"contact_phone" validate:"required,min=8,max=20"`
+	ContactName  string                              `json:"contact_name" validate:"required,min=2,max=100"`
+	Address      *AddressEntity                      `json:"address" validate:"required"`
+	Logo         string                              `json:"logo" validate:"required,url"`
+	Website      string                              `json:"website,optional" validate:"omitempty,url"`
+	Tagline      string                              `json:"tagline,optional"`
+	Metadata     *OrganizationLenderMetadataEntity   `json:"metadata,optional"`
+	Owner        *OrganizationCreateLenterUserEntity `json:"owner,optional"`
+}
+
+type OrganizationUpdateOrderRequest struct {
+	Id    int64 `path:"id" validate:"required,min=1"`
+	Order int   `json:"order" validate:"min=0"`
 }
 
 type OrganizationUserCreateRequest struct {
