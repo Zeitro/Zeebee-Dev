@@ -120,9 +120,10 @@ export const generateMenuBar = (list, iconConfig, sidebarCollapsed) => {
 
 // 将多层级嵌套路由变为一层级路由，方便查找
 export function flattenNavRouter(routes = [], childName = 'router') {
-	return routes?.reduce((acc, next) => {
+	const list = routes ?? [];
+	return list.reduce((acc, next) => {
 		if (next[childName]) {
-			return [...acc, next, ...flattenNavRouter(next[childName])];
+			return [...acc, next, ...flattenNavRouter(next[childName], childName)];
 		}
 		return [...acc, next];
 	}, []);
