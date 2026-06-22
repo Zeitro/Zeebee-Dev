@@ -37,6 +37,14 @@ func (l *OrganizationUpdateLenderLogic) OrganizationUpdateLender(req *types.Orga
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
+	if req.Owner != nil {
+		rpcReq.Data.Owner = &admin.OrganizationCreateLenderUserEntity{
+			Email:     req.Owner.Email,
+			Password:  req.Owner.Password,
+			FirstName: req.Owner.FirstName,
+			LastName:  req.Owner.LastName,
+		}
+	}
 
 	lenderMetadata, err := copierx.Trans[types.OrganizationLenderMetadataEntity, admin.OrganizationLenderMetadataEntity](req.Metadata)
 	if err != nil {

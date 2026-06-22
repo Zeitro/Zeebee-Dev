@@ -76,8 +76,7 @@
 		"typescript": "^5",
 		"@wangeditor-next/editor": "^5.6.49",
 		"@wangeditor-next/editor-for-react": "^1.0.11",
-		"@monaco-editor/react": "^4.7.0",
-		"js-cookie": "^3.0.5"
+		"@monaco-editor/react": "^4.7.0"
 	},
 	"dependencies": {
 		"react-virtuoso": "^4.16.1",

@@ -1,11 +1,12 @@
 'use client';
-import React, { useEffect, forwardRef, useImperativeHandle } from 'react';
+import React, {forwardRef, useEffect, useImperativeHandle,} from 'react';
 import styles from './index.module.scss';
-import { useDisUpdateEffect } from '@repo/shared-methods/hooks';
-import { FilterTag } from '../FilterField/filterTag.js';
-import { FilterField } from '../FilterField/index';
-import { NewTable } from '../NewTable';
+import {useDisUpdateEffect} from '@repo/shared-methods/hooks';
+import {FilterTag} from '../FilterField/filterTag.js';
+import {FilterField} from '../FilterField/index';
+import {NewTable} from '../NewTable';
 import useContent from './useContent';
+
 /**
  * Form筛选 + Table
  * @param {*Boolean} hasFilterField true显示筛选/false隐藏
@@ -22,16 +23,16 @@ export const FilterTable = forwardRef(
 			dataSource,
 			dataSourceLoading,
 			filterList,
-			rowProps = {}, // 过滤搜索栏的Row配置
+			rowProps = {},
 			filterName = '',
 			hasFilterField = true, // true有过滤搜索栏
 			hasInitRequest = true, //true初始化请求接口，当有dataSource时默认‘不请求’
 			filterWrapClassName,
-			getData = () => {}, //请求接口的方法（无api时使用）
+			getData = () => {
+			}, //请求接口的方法（无api时使用）
 			hasPaginationRequest = true, // true需要请求分页接口，false不请求
 			api,
 			method = 'POST',
-			settingPagination, // 初始化修改分页请求参数
 			...props
 		},
 		ref,
@@ -42,9 +43,10 @@ export const FilterTable = forwardRef(
 			setList,
 			loading,
 			onChange,
+			pagination,
 			handleSearch,
 			getList,
-			isGetRef,
+			isGet,
 			setLoading,
 			paramsData,
 		} = useContent({
@@ -55,15 +57,81 @@ export const FilterTable = forwardRef(
 			settingPagination,
 			hasInitRequest,
 		});
+		// const isGet = useRef(true);
+		// const filterFieldRef = useRef();
+		// const { request } = createRequest();
+		// const pagination = useRef(getPagination());
+		// const sorter = useRef({
+		// 	// column: 'address',
+		// 	sort: des,
+		// });
+		// const [tableList, setTableList] = useState([]);
+		// const [loading, setLoading] = useState(false);
+
+		// const getList = useCallback(async () => {
+		// 	try {
+		// 		setLoading(true);
+		// 		const filterParams = filterFieldRef?.current?.getApiParams?.();
+		// 		const params = {
+		// 			page: pagination.current?.current,
+		// 			limit: pagination.current?.pageSize,
+		// 			filter: {
+		// 				...filterParams,
+		// 			},
+		// 		};
+		// 		if (sorter.current?.column) {
+		// 			params.sorter = sorter.current;
+		// 		}
+		// 		let res = {};
+		// 		let newApi = api;
+		// 		if (newApi) {
+		// 			if (method === 'GET') {
+		// 				const params = new URLSearchParams(params);
+		// 				newApi += `?${params}`;
+		// 				res = await request(newApi, { method });
+		// 			} else {
+		// 				res = await request(newApi, { method, body: params });
+		// 			}
+		// 		} else {
+		// 			res = await getData(params);
+		// 		}
+		// 		const { total, list } = res;
+		// 		pagination.current.total = total;
+		// 		setTableList(list);
+		// 		setLoading(false);
+		// 	} catch {
+		// 		setLoading(false);
+		// 	}
+		// 	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// }, [api, getData, method]);
+
+		// const onChange = (paginationObj, filters, { order, columnKey }) => {
+		// 	const orderObj = {
+		// 		[descend]: des,
+		// 		[ascend]: asc,
+		// 	};
+		// 	sorter.current.column = columnKey;
+		// 	sorter.current.sort = orderObj[order];
+		// 	if (paginationObj.current !== pagination.current.current) {
+		// 		pagination.current.current = paginationObj.current;
+		// 	} else {
+		// 		pagination.current.current = 1;
+		// 	}
+		// 	getList();
+		// };
+
+		// const handleSearch = () => {
+		// 	pagination.current.current = 1;
+		// 	getList();
+		// };
 
 		useEffect(() => {
 			if (dataSource && Array.isArray(dataSource)) {
 				setList(dataSource);
-			} else if (isGetRef.current) {
+			} else if (isGet.current) {
 				getList();
-				isGetRef.current = false;
+				isGet.current = false;
 			}
-			// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [dataSource, getList]);
 
 		useDisUpdateEffect(() => {
@@ -73,7 +141,6 @@ export const FilterTable = forwardRef(
 		useImperativeHandle(ref, () => ({
 			handleSearch,
 			getList,
-			getApiParams: () => filterFieldRef?.current?.getApiParams(),
 		}));
 
 		return (

@@ -31,11 +31,14 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/cron"
 	"zeebee-backend/domains/zeebee/constants"
+
+	"zeebee-backend/app/admin/rpc/internal/schedule"
 )
 
 type RpcServer struct {
-	s    *zrpc.RpcServer
-	cron *cron.Engine
+	s      *zrpc.RpcServer
+	svcCtx *svc.ServiceContext
+	cron   *cron.Engine
 }
 
 func NewRpcServer(c config.Config) (s service.Service, err error) {
@@ -67,8 +70,9 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		}
 	})
 	rpcService := &RpcServer{
-		s:    rpcServer,
-		cron: cron.NewEngine(),
+		s:      rpcServer,
+		cron:   cron.NewEngine(),
+		svcCtx: ctx,
 	}
 	err = rpcService.RegisterCronTask(ctx, rpcConfig)
 	if err != nil {
@@ -82,6 +86,9 @@ func (s *RpcServer) Start() {
 	go func() {
 		s.s.Start()
 	}()
+	if s.svcCtx != nil {
+		schedule.StartLenderDiscoverScheduler(s.svcCtx)
+	}
 	go func() {
 		s.cron.Start()
 	}()

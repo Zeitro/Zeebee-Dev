@@ -90,7 +90,9 @@ func setupTestDB(t *testing.T) *gorm.DB {
 			logo TEXT DEFAULT '',
 			website TEXT DEFAULT '',
 			tagline TEXT DEFAULT '',
-			metadata TEXT DEFAULT '{}'
+			metadata TEXT DEFAULT '{}',
+			source TEXT NOT NULL DEFAULT 'Manual',
+			"order" INTEGER NOT NULL DEFAULT 2
 		)`,
 		`CREATE TABLE IF NOT EXISTS resources (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,

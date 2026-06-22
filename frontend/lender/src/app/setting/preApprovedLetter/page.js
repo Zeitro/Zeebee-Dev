@@ -1,14 +1,13 @@
 'use client';
 import { Button, Form, message } from 'antd';
 import { useEffect, useState } from 'react';
-import { FieldTips, PermissionSlot } from '@repo/shared-methods';
+import { FieldTips } from '@repo/shared-methods';
 import { createRequest, injectHeadResources, getBodyInnerHTML } from '@repo/shared-methods/utils';
 import useContent from '../system/components/PreApprovalLetter/useContent';
 import Configuration from './components/Configuration';
 import useConfiguration from './components/Configuration/useConfiguration';
 import DownloadPdf from './components/DownloadPdf';
 import _ from 'lodash';
-import { PERMISSIONS } from '@config/permissions';
 const PreApprovedLetter = () => {
 	const { switchBtn } = useContent();
 	const { request } = createRequest();
@@ -130,13 +129,11 @@ const PreApprovedLetter = () => {
 							className="ml-1"
 						/>
 					</span>
-					<PermissionSlot code={PERMISSIONS?.SETTING_PRE_APPROVED_LETTER?.SAVE}>
-						<FieldTips title={'Reset data and get the latest configuration template.'}>
-							<Button size="small" onClick={handleReset}>
-								Reset
-							</Button>
-						</FieldTips>
-					</PermissionSlot>
+					<FieldTips title={'Reset data and get the latest configuration template.'}>
+						<Button size="small" onClick={handleReset}>
+							Reset
+						</Button>
+					</FieldTips>
 				</h2>
 				<Configuration
 					valueHtml={valueHtml}
@@ -147,56 +144,50 @@ const PreApprovedLetter = () => {
 					confirmLoading={confirmLoading}
 				/>
 				<div className="w-full flex-shrink-0 bg-background pt-1 pb-4 flex flex-col gap-3">
-					<PermissionSlot code={PERMISSIONS?.SETTING_PRE_APPROVED_LETTER?.SAVE}>
-						<Button
-							type="primary"
-							className="w-full"
-							loading={confirmLoading}
-							onClick={handleSave}
-							size="large"
-						>
-							Save
-						</Button>
-					</PermissionSlot>
-					<PermissionSlot code={PERMISSIONS?.SETTING_PRE_APPROVED_LETTER?.DOWNLOAD}>
-						<Button
-							className="w-full"
-							onClick={() => {
-								// 下载弹框内左侧设置列表全用input框，所以source改为Template
-								const v = form.getFieldsValue();
-								const newList = _.cloneDeep(v);
-								newList.variable_group_schema = newList?.variable_group_schema?.map(
-									(item) => {
-										item.variables = item.variables.map((i) => {
-											i.source = 'Template';
-											i.is_editable = true;
-											return i;
-										});
-										return item;
-									},
-								);
-								setParams(_.cloneDeep(newList));
-								setOpen(true);
-							}}
-							size="large"
-						>
-							Download
-						</Button>
-					</PermissionSlot>
-					<PermissionSlot code={PERMISSIONS?.SETTING_SYSTEM?.PRE_APPROVED_LETTER}>
-						<div className="flex items-center justify-between">
-							<div className="text-xs text-base-label font-semibold">
-								Send Pre-Approval Letter
-								<FieldTips
-									title="Note: When activated, your borrower will automatically receive the pre-approval letter configured on this page."
-									isShowDescription={true}
-									rootClassName="!max-w-[300px]"
-									className="ml-1 text-xs"
-								/>
-							</div>
-							{switchBtn}
+					<Button
+						type="primary"
+						className="w-full"
+						loading={confirmLoading}
+						onClick={handleSave}
+						size="large"
+					>
+						Save
+					</Button>
+					<Button
+						className="w-full"
+						onClick={() => {
+							// 下载弹框内左侧设置列表全用input框，所以source改为Template
+							const v = form.getFieldsValue();
+							const newList = _.cloneDeep(v);
+							newList.variable_group_schema = newList?.variable_group_schema?.map(
+								(item) => {
+									item.variables = item.variables.map((i) => {
+										i.source = 'Template';
+										i.is_editable = true;
+										return i;
+									});
+									return item;
+								},
+							);
+							setParams(_.cloneDeep(newList));
+							setOpen(true);
+						}}
+						size="large"
+					>
+						Download
+					</Button>
+					<div className="flex items-center justify-between">
+						<div className="text-xs text-base-label font-semibold">
+							Send Pre-Approval Letter
+							<FieldTips
+								title="Note: When activated, your borrower will automatically receive the pre-approval letter configured on this page."
+								isShowDescription={true}
+								rootClassName="!max-w-[300px]"
+								className="ml-1 text-xs"
+							/>
 						</div>
-					</PermissionSlot>
+						{switchBtn}
+					</div>
 				</div>
 			</div>
 

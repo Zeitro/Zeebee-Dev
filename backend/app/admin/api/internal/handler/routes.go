@@ -213,10 +213,46 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: organization.OrganizationDeleteHandler(serverCtx),
 				},
 				{
+					// update order
+					Method:  http.MethodPatch,
+					Path:    "/organization/:id/order",
+					Handler: organization.OrganizationUpdateOrderHandler(serverCtx),
+				},
+				{
 					// switch status
 					Method:  http.MethodPatch,
 					Path:    "/organization/:id/status",
 					Handler: organization.OrganizationSwitchStatusHandler(serverCtx),
+				},
+				{
+					// lender discover commit selected new lenders
+					Method:  http.MethodPost,
+					Path:    "/organization/discover/commit",
+					Handler: organization.OrganizationDiscoverCommitHandler(serverCtx),
+				},
+				{
+					// lender discover preview (OpenAI + dedupe, no insert)
+					Method:  http.MethodPost,
+					Path:    "/organization/discover/preview",
+					Handler: organization.OrganizationDiscoverPreviewHandler(serverCtx),
+				},
+				{
+					// lender discover latest run
+					Method:  http.MethodGet,
+					Path:    "/organization/discover/runs/latest",
+					Handler: organization.OrganizationDiscoverLatestRunHandler(serverCtx),
+				},
+				{
+					// lender discover get settings
+					Method:  http.MethodGet,
+					Path:    "/organization/discover/settings",
+					Handler: organization.OrganizationDiscoverGetSettingsHandler(serverCtx),
+				},
+				{
+					// lender discover update settings
+					Method:  http.MethodPut,
+					Path:    "/organization/discover/settings",
+					Handler: organization.OrganizationDiscoverUpdateSettingsHandler(serverCtx),
 				},
 				{
 					// lender create
