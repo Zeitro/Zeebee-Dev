@@ -359,7 +359,7 @@ func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.
 		return user, errorx.WithStack(err)
 	}
 	if len(code) == 0 || code != input.Code {
-		return user, errorx.New("invalid code")
+		return user, errorx.New("invitation expired")
 	}
 	var organizationUserModel *model.OrganizationUser
 	var userModel *model.User
