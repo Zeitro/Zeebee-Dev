@@ -33,6 +33,9 @@ const useContent = () => {
 	};
 	// 拿到用户token后登录
 	const loginByToken = async (access, successCallback) => {
+		if (access) {
+			updateAccess(access);
+		}
 		const org = await getOrganization();
 		// 未填写组织信息, 弹出组织相关让其填写
 		if (!org?.contact_email || !org?.contact_phone || !org?.contact_name) {

@@ -22,6 +22,7 @@ export const useOptionsStore = create((set) => ({
 	transactionTypeOptions: [], //borrower_property_transaction_type
 	transactionStatusOptions: [], //borrower_property_transaction_status
 	borrowerPropertyStatusOptions: [], //borrower_property_status
+	subscriptionStatusOptions: [], //organization_subscription_status
 	getOptions: async (name, key) => {
 		const { options } = await getSelectOptions(name);
 		return (
