@@ -128,6 +128,14 @@ func (l *OrganizationUserLogic) CreateAdminOrganizationUser(ctx context.Context,
 			if innerErr != nil {
 				return innerErr
 			}
+		} else if user.DefaultOrganizationId == 0 {
+			// Existing user without a default org: pin default to this org
+			if innerErr = l.repos.UserRepo.UpdateColumnsByIdWithTx(ctx, tx, user.Id, map[string]interface{}{
+				"default_organization_id": input.OrganizationId,
+			}); innerErr != nil {
+				return innerErr
+			}
+			user.DefaultOrganizationId = input.OrganizationId
 		}
 
 		// Create organization user
