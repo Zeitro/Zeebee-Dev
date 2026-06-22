@@ -63,7 +63,7 @@ func (l *UserLogic) GetUserClaimFromCtx(ctx context.Context) (claim utils.JwtUse
 // GenerateJwtToken generate jwt token for user
 func (l *UserLogic) GenerateJwtToken(user *model.User, organizationUser *model.OrganizationUser, userType constants.UserType) (token *dto.UserJwtTokenDto, err error) {
 	if user == nil {
-		return nil, errorx.WithStack(errorx.New("User is empty"))
+		return nil, errorx.WithStack(errorx.New("user is empty"))
 	}
 	userClaim := utils.JwtUser{
 		UserId:         user.Id,
@@ -285,7 +285,7 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 			return nil, errorx.WithStack(err)
 		}
 		if loginFailedTimes >= limiter.Rate {
-			return nil, errorx.New("Login failed times exceeded, please try again later")
+			return nil, errorx.New("login failed times exceeded, please try again later")
 		}
 	}
 
@@ -294,7 +294,7 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 		return nil, errorx.WithStack(err)
 	}
 	if user == nil {
-		return nil, errorx.New("User not found")
+		return nil, errorx.New("user not found")
 	}
 
 	// Check pwd
@@ -304,7 +304,7 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 		if err != nil {
 			return nil, errorx.WithStack(err)
 		}
-		return nil, errorx.WithStack(errorx.New("The email and password you entered don't match."))
+		return nil, errorx.WithStack(errorx.New("the email and password you entered don't match."))
 	}
 
 	if limiter.Rate > 0 {
@@ -316,10 +316,10 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 
 	// Check status
 	if user.Status == constants.UserStatusInactive {
-		return nil, errorx.New("User is not active")
+		return nil, errorx.New("user is not active")
 	}
 	if user.Status == constants.UserStatusUnverified {
-		err = status.Error(codes.PermissionDenied, "User is unverified")
+		err = status.Error(codes.PermissionDenied, "user is unverified")
 		return nil, err
 	}
 
@@ -356,7 +356,7 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 		return nil, err
 	}
 	if user == nil {
-		return nil, errorx.WithStack(errorx.New("User not found"))
+		return nil, errorx.WithStack(errorx.New("user not found"))
 	}
 	if len(user.Organizations) > 0 {
 		organizationsPtr := &[]*dto.UserOrganizationDto{}
@@ -388,7 +388,7 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 		return item.OrganizationId == organizationId && item.IsDel == 0
 	})
 	if !ok {
-		err = errorx.New("Organization user not found")
+		err = errorx.New("organization user not found")
 		return nil, err
 	}
 
