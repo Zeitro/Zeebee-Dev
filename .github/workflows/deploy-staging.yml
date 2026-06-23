@@ -42,6 +42,7 @@ jobs:
           IMAGE_NAME="${SERVICE_ENVIRONMENT}-${SERVICE_NAME}-backend"
           CONTAINER_NAME="${SERVICE_ENVIRONMENT}-${SERVICE_NAME}-backend"
           DOCKER_COMPOSE_FILE="deploy/${SERVICE_NAME}/docker-compose.yml"
+          IMAGE_TAG="${{ env.sha_short }}"
           
           echo "SERVICE_NAME=${SERVICE_NAME}" >> $GITHUB_ENV
           echo "SERVICE_ENVIRONMENT=${SERVICE_ENVIRONMENT}" >> $GITHUB_ENV
@@ -49,6 +50,7 @@ jobs:
           echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_ENV
           echo "CONTAINER_NAME=${CONTAINER_NAME}" >> $GITHUB_ENV
           echo "DOCKER_COMPOSE_FILE=${DOCKER_COMPOSE_FILE}" >> $GITHUB_ENV
+          echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
 
 
       - name: Show environment variables
@@ -59,22 +61,32 @@ jobs:
           echo "CONTAINER_NAME: ${{ env.CONTAINER_NAME }}"
           echo "IMAGE_NAME: ${{ env.IMAGE_NAME }}"
           echo "DOCKER_COMPOSE_FILE: ${{ env.DOCKER_COMPOSE_FILE }}"
+          echo "IMAGE_TAG: ${{ env.IMAGE_TAG }}"
 
-      - name: Remove old container
-        run: |
-          docker rm -f ${{ env.FULL_SERVICE_NAME }} || true
-
-      - name: Build and deploy
+      - name: Build image
         working-directory: backend
         env:
-          IMAGE_TAG: ${{ env.sha_short }}
-          SERVICE_NAME: ${{ env.SERVICE_NAME }}
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
-          CONTAINER_NAME: ${{ env.CONTAINER_NAME }}
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
         run: |
-          echo "Deploying service:  ${{ env.SERVICE_NAME }}"
-          docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} build --no-cache  ${{ env.FULL_SERVICE_NAME }}
-          docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} up -d ${{ env.FULL_SERVICE_NAME }}
+            echo "Building image..."
+            IMAGE_TAG=${{ env.IMAGE_TAG }}
+            docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} build --no-cache ${{ env.FULL_SERVICE_NAME }}
+
+      - name: Stop old container
+        run: |
+          echo "Stopping old container..."
+          docker stop ${{ env.FULL_SERVICE_NAME }} || true    
+
+      - name: Start new container
+        working-directory: backend
+        env:
+            IMAGE_TAG: ${{ env.IMAGE_TAG }}
+            SERVICE_NAME: ${{ env.SERVICE_NAME }}
+            IMAGE_NAME: ${{ env.IMAGE_NAME }}
+            CONTAINER_NAME: ${{ env.CONTAINER_NAME }}
+        run: |
+          echo "Starting new container..."
+          docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} up -d --no-build ${{ env.FULL_SERVICE_NAME }} 
 
       - name: Verify container is running
         run: |
