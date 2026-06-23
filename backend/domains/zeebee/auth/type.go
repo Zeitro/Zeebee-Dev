@@ -13,8 +13,9 @@ const (
 	organizationUserRoleFormat      = "%s:organization:%d:organizationuser:%d:roles" // <type>:organization:<organizationId>:organizationuser:<organizationUserId>:roles
 	roleResourceFormat              = "%d:%d"                                        // <roleId>:<resourceId>
 	policyRebuildFormat             = "policy:%v:rebuild"                            // policy:<type>:rebuild
-	organizationPolicyRebuildFormat = "organization:%d:olicy:%v:rebuild"             // organization:<organizationId>:policy:<type>:rebuild
+	organizationPolicyRebuildFormat = "organization:%d:policy:%v:rebuild"            // organization:<organizationId>:policy:<type>:rebuild
 	roleFormat                      = "Role:%d"                                      // Role:<roleId>
+	resourceFormat                  = "Resource:%d"                                  // Resource:<resourceId>
 	organizationPlanResourceFormat  = "organization:%d:plan_resource"                // organization:<organizationId>:plan_resource
 	authorizationWhitelistFormat    = "authorization_whitelist:%v"                   // authorization_whitelist:<type>
 	authenticationWhitelistFormat   = "authentication_whitelist:%v"                  // authentication_whitelist:<type>
