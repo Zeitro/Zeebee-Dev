@@ -68,8 +68,7 @@ jobs:
         env:
           IMAGE_TAG: ${{ env.IMAGE_TAG }}
         run: |
-            echo "Building image..."
-            IMAGE_TAG=${{ env.IMAGE_TAG }}
+            echo "Building image ${{ env.FULL_SERVICE_NAME }}:${{ env.IMAGE_TAG }}"
             docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} build --no-cache ${{ env.FULL_SERVICE_NAME }}
 
       - name: Stop old container
@@ -85,7 +84,7 @@ jobs:
             IMAGE_NAME: ${{ env.IMAGE_NAME }}
             CONTAINER_NAME: ${{ env.CONTAINER_NAME }}
         run: |
-          echo "Starting new container..."
+          echo "Starting new container for ${{ env.FULL_SERVICE_NAME }}..."
           docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} up -d --no-build ${{ env.FULL_SERVICE_NAME }} 
 
       - name: Verify container is running
