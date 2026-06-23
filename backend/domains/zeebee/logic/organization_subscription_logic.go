@@ -107,7 +107,7 @@ func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.Or
 			"organization_id": input.OrganizationId,
 		}
 		notFilter := map[string]interface{}{
-			"status": constants.OrganizationSubscriptionStatusExpired,
+			"status": []constants.OrganizationSubscriptionStatus{constants.OrganizationSubscriptionStatusExpired, constants.OrganizationSubscriptionStatusSuspended},
 		}
 		innerErr = l.repos.OrganizationSubscriptionRepo.UpdateColumnsWithTx(ctx, tx, updateColumns, equalFilter, notFilter)
 		if innerErr != nil {
