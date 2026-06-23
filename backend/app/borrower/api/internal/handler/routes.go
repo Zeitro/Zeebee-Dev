@@ -642,6 +642,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/organization_user/accept_invitation",
 					Handler: organization_user.AcceptInvitationHandler(serverCtx),
 				},
+				{
+					// check invitation
+					Method:  http.MethodGet,
+					Path:    "/organization_user/check_invitation",
+					Handler: organization_user.CheckInvitationHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithPrefix("/api/v1"),

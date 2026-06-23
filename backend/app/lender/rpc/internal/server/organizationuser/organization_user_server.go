@@ -68,6 +68,11 @@ func (s *OrganizationUserServer) AcceptInvitation(ctx context.Context, in *lende
 	return l.AcceptInvitation(in)
 }
 
+func (s *OrganizationUserServer) CheckInvitation(ctx context.Context, in *lender.OrganizationUserCheckInvitationRequest) (*lender.OrganizationUserCheckInvitationResponse, error) {
+	l := organizationuserlogic.NewCheckInvitationLogic(ctx, s.svcCtx)
+	return l.CheckInvitation(in)
+}
+
 func (s *OrganizationUserServer) AssignRoles(ctx context.Context, in *lender.OrganizationUserAssignRolesRequest) (*lender.EmptyResponse, error) {
 	l := organizationuserlogic.NewAssignRolesLogic(ctx, s.svcCtx)
 	return l.AssignRoles(in)

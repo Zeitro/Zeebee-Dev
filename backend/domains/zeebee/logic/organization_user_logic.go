@@ -339,28 +339,25 @@ func (l *OrganizationUserLogic) SendInviteEmail(ctx context.Context, input dto.O
 		err = errorx.Wrap(err, "send invite email error")
 		return err
 	}
-	// go func() {
-	// 	newCtx := context.WithoutCancel(ctx)
-	// 	err := l.sendInviteEmail(newCtx, previousInput)
-	// 	if err != nil {
-	// 		err = errorx.Wrap(err, "send invite email error")
-	// 		logx.WithContext(ctx).Error(err)
-	// 	}
-	// }()
-
 	return nil
 }
 
 // AcceptInvitation accepts organization invitation to join organization
 func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.OrganizationUserAcceptInvitationRequestDto) (user dto.UserEntityDto, err error) {
-	key := stringx.Format(constants.UserInviteCode, input.UserType, input.Email, input.OrganizationId)
-	code, err := l.redisCli.Get(ctx, key)
+	isExpired, err := l.CheckInvitationCode(ctx, dto.OrganizationUserCheckInvitationCodeRequestDto{
+		Code:           input.Code,
+		UserType:       input.UserType,
+		OrganizationId: input.OrganizationId,
+		Email:          input.Email,
+	})
+
 	if err != nil {
-		return user, errorx.WithStack(err)
+		return
 	}
-	if len(code) == 0 || code != input.Code {
+	if isExpired {
 		return user, errorx.New("invitation expired")
 	}
+
 	var organizationUserModel *model.OrganizationUser
 	var userModel *model.User
 	err = l.repos.OrganizationUserRepo.Transaction(ctx, func(tx *gorm.DB) error {
@@ -429,6 +426,43 @@ func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.
 	}
 
 	return *userPtr, nil
+}
+
+// CheckInvitationCode checks invitation code if it is valid
+func (l *OrganizationUserLogic) CheckInvitationCode(ctx context.Context, input dto.OrganizationUserCheckInvitationCodeRequestDto) (isExpired bool, err error) {
+	if len(input.Code) == 0 {
+		err = errorx.New("invalid invitation")
+		return
+	}
+
+	// check code
+	codeKey := stringx.Format(constants.UserInviteCode, input.UserType, input.Email, input.OrganizationId)
+	code, err := l.redisCli.Get(ctx, codeKey)
+	if err != nil {
+		return
+	}
+	if code == input.Code {
+		return
+	}
+
+	if len(code) > 0 {
+		err = errorx.New("invalid invitation")
+		return
+	}
+
+	// check expired code
+	expiredCodeKey := stringx.Format(constants.UserInviteCodeMarker, input.UserType, input.Email, input.OrganizationId)
+	marker, err := l.redisCli.Get(ctx, expiredCodeKey)
+	if err != nil {
+		return
+	}
+	if len(marker) == 0 {
+		err = errorx.New("invalid invitation")
+		return
+	}
+
+	isExpired = true
+	return
 }
 
 // UpdateOrganizationUser updates organization user information
@@ -555,6 +589,8 @@ func (l *OrganizationUserLogic) sendInviteEmail(ctx context.Context, input SendI
 	var code string
 	// Generate invite code
 	codeKey := stringx.Format(constants.UserInviteCode, input.UserType, input.TargetEmail, input.OrganizationId)
+	// code for checking if code is expired
+	expiredCodeKey := stringx.Format(constants.UserInviteCodeMarker, input.UserType, input.TargetEmail, input.OrganizationId)
 	code, _ = l.redisCli.Get(ctx, codeKey)
 	if len(code) == 0 {
 		code = random.RandNumeral(10)
@@ -563,6 +599,9 @@ func (l *OrganizationUserLogic) sendInviteEmail(ctx context.Context, input SendI
 			return errorx.WithStack(err)
 		}
 		input.Code = code
+		// invitation existence marker (outlives codeKey to distinguish expired vs. never-invited)
+		// expired marker's ttl is twice the code's ttl
+		_ = l.redisCli.SetExpire(ctx, expiredCodeKey, "1", input.EmailConfig.ExpireSeconds*2)
 	}
 	// Save input
 	if len(input.Pwd) > 0 {

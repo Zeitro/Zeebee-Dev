@@ -108,3 +108,10 @@ type OrganizationUserProfileEditRequestDto struct {
 	LastName       string             `json:"last_name"`
 	Phone          string             `json:"phone"`
 }
+
+type OrganizationUserCheckInvitationCodeRequestDto struct {
+	Code           string             `json:"code"`
+	UserType       constants.UserType `json:"type"`
+	Email          string             `json:"email"`
+	OrganizationId int64              `json:"organization_id"`
+}

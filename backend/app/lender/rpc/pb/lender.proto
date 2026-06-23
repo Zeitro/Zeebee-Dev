@@ -1270,6 +1270,24 @@ message OrganizationUserAcceptInvitationRequestData {
   string last_name = 5;
 }
 
+// check invitation --  request
+message OrganizationUserCheckInvitationRequest {
+  OrganizationUserCheckInvitationRequestData data = 1;
+}
+message OrganizationUserCheckInvitationRequestData {
+  string code = 1;
+  string email = 2;
+  int64 organization_id = 3;
+}
+
+// check invitation --  response
+message OrganizationUserCheckInvitationResponse {
+  OrganizationUserCheckInvitationResponseData data = 1;
+}
+message OrganizationUserCheckInvitationResponseData {
+  bool is_expired = 1;
+}
+
 // assign roles --  request
 message OrganizationUserAssignRolesRequest {
   OrganizationUserAssignRolesRequestData data = 1;
@@ -1289,6 +1307,7 @@ service OrganizationUser {
   rpc All(EmptyRequest) returns(OrganizationUserAllResponse);
   rpc SendInvitationEmail(OrganizationUserSendInvitationEmailRequest) returns(EmptyResponse);
   rpc AcceptInvitation(OrganizationUserAcceptInvitationRequest) returns(UserJwtResponse);
+  rpc CheckInvitation(OrganizationUserCheckInvitationRequest) returns(OrganizationUserCheckInvitationResponse);
   rpc AssignRoles(OrganizationUserAssignRolesRequest) returns(EmptyResponse);
 }
 

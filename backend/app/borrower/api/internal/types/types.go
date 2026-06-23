@@ -1472,6 +1472,16 @@ type OrganizationUserAssignRolesRequest struct {
 	RoleIds []int64 `json:"role_ids,optional"`
 }
 
+type OrganizationUserCheckInvitationRequest struct {
+	Code           string `json:"code" validate:"required"`
+	Email          string `json:"email" validate:"required,email"`
+	OrganizationId int64  `json:"organization_id" validate:"required"`
+}
+
+type OrganizationUserCheckInvitationResponse struct {
+	IsExpired bool `json:"is_expired"`
+}
+
 type OrganizationUserCreateRequest struct {
 	Email   string  `json:"email" validate:"required,email"`
 	Phone   string  `json:"phone,optional"`

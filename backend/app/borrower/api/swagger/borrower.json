@@ -12077,6 +12077,7 @@
                       "logo",
                       "website",
                       "tagline",
+                      "order",
                       "metadata",
                       "created_at",
                       "updated_at",
@@ -12135,6 +12136,9 @@
                       "name": {
                         "type": "string"
                       },
+                      "order": {
+                        "type": "integer"
+                      },
                       "organization_emails": {
                         "type": "array",
                         "items": {
@@ -12169,6 +12173,9 @@
                         "type": "integer"
                       },
                       "owner_type": {
+                        "type": "string"
+                      },
+                      "source": {
                         "type": "string"
                       },
                       "status": {
@@ -12388,6 +12395,9 @@
                 "name": {
                   "type": "string"
                 },
+                "order": {
+                  "type": "integer"
+                },
                 "organization_emails": {
                   "type": "array",
                   "items": {
@@ -12422,6 +12432,9 @@
                   "type": "integer"
                 },
                 "owner_type": {
+                  "type": "string"
+                },
+                "source": {
                   "type": "string"
                 },
                 "status": {
@@ -13077,6 +13090,60 @@
                       }
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organization_user/check_invitation": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization_user"
+        ],
+        "summary": "check invitation",
+        "operationId": "organizationUserCheckInvitation",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "code",
+                "email",
+                "organization_id"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "organization_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "is_expired": {
+                  "type": "boolean"
                 }
               }
             }
@@ -23635,7 +23702,7 @@
       }
     }
   },
-  "x-date": "2026-06-12 14:38:16",
+  "x-date": "2026-06-23 17:19:41",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

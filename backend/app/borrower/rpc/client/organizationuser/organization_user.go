@@ -19,6 +19,8 @@ type (
 	OrganizationUserAcceptInvitationRequest    = borrower.OrganizationUserAcceptInvitationRequest
 	OrganizationUserAllResponse                = borrower.OrganizationUserAllResponse
 	OrganizationUserAssignRolesRequest         = borrower.OrganizationUserAssignRolesRequest
+	OrganizationUserCheckInvitationRequest     = borrower.OrganizationUserCheckInvitationRequest
+	OrganizationUserCheckInvitationResponse    = borrower.OrganizationUserCheckInvitationResponse
 	OrganizationUserCreateRequest              = borrower.OrganizationUserCreateRequest
 	OrganizationUserCreateResponse             = borrower.OrganizationUserCreateResponse
 	OrganizationUserDeleteRequest              = borrower.OrganizationUserDeleteRequest
@@ -42,6 +44,7 @@ type (
 		All(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationUserAllResponse, error)
 		SendInvitationEmail(ctx context.Context, in *OrganizationUserSendInvitationEmailRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		AcceptInvitation(ctx context.Context, in *OrganizationUserAcceptInvitationRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
+		CheckInvitation(ctx context.Context, in *OrganizationUserCheckInvitationRequest, opts ...grpc.CallOption) (*OrganizationUserCheckInvitationResponse, error)
 		AssignRoles(ctx context.Context, in *OrganizationUserAssignRolesRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	}
 
@@ -99,6 +102,11 @@ func (m *defaultOrganizationUser) SendInvitationEmail(ctx context.Context, in *O
 func (m *defaultOrganizationUser) AcceptInvitation(ctx context.Context, in *OrganizationUserAcceptInvitationRequest, opts ...grpc.CallOption) (*UserLoginResponse, error) {
 	client := borrower.NewOrganizationUserClient(m.cli.Conn())
 	return client.AcceptInvitation(ctx, in, opts...)
+}
+
+func (m *defaultOrganizationUser) CheckInvitation(ctx context.Context, in *OrganizationUserCheckInvitationRequest, opts ...grpc.CallOption) (*OrganizationUserCheckInvitationResponse, error) {
+	client := borrower.NewOrganizationUserClient(m.cli.Conn())
+	return client.CheckInvitation(ctx, in, opts...)
 }
 
 func (m *defaultOrganizationUser) AssignRoles(ctx context.Context, in *OrganizationUserAssignRolesRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
