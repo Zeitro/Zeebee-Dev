@@ -28,9 +28,8 @@ import (
 	"zeebee-backend/domains/zeebee/repo"
 )
 
-// policyEnforcer is the subset of *rbac.Enforcer used by the policy rebuild /
-// auth-check paths. Declared as an interface so tests can substitute a fake;
-// production passes the real *rbac.Enforcer (which satisfies it).
+// policyEnforcer is the *rbac.Enforcer subset used by rebuild/auth-check paths.
+// Interface so tests can substitute a fake; production passes the real enforcer.
 type policyEnforcer interface {
 	AllPolicies() ([][]string, error)
 	AddPolicies([][]string) error
@@ -78,9 +77,8 @@ func NewAuth(repos *repo.AllRepos, redisCli *redisx.Client, jwtConfig dto.JwtCon
 	return auth
 }
 
-// newAuthWithEnforcer is a test seam: builds an Auth with a fake policyEnforcer
-// and no redis subscribe loop, so rebuild/auth-check logic can be unit-tested
-// without a DB or redis. Not used in production.
+// newAuthWithEnforcer is a test seam: Auth with a fake enforcer and no redis
+// loop, for unit-testing rebuild/auth-check without DB or redis.
 func newAuthWithEnforcer(repos *repo.AllRepos, redisCli *redisx.Client, jwtConfig dto.JwtConfig, enforcer policyEnforcer, authEventTopic string) *Auth {
 	return &Auth{
 		repos:                       repos,
@@ -183,10 +181,8 @@ func (l *Auth) handleAuthMsg(ctx context.Context, msg *redis.Message) (err error
 	return err
 }
 
-// handlePolicyRebuild recomputes policies for the scope named in the message on
-// THIS replica. Every replica of the userType service receives the same event
-// and rebuilds its own enforcer independently; AddPolicies/RemovePolicies are
-// idempotent so concurrent rebuilds converge to the same policy set.
+// handlePolicyRebuild recomputes policies for the message's scope on this
+// replica. All replicas rebuild independently; idempotent policy ops converge.
 func (l *Auth) handlePolicyRebuild(ctx context.Context, msg Msg) (err error) {
 	switch msg.Scope {
 	case ScopeOrganization:
@@ -441,12 +437,8 @@ func (l *Auth) CheckAuthorization(ctx context.Context, input dto.AuthCheckReques
 	return
 }
 
-// GetDataScope retrieves the data scope for a given user based on their roles and resource permissions.
-// It takes a context and an AuthCheckRequestDto as input, and returns the most restrictive data scope
-// among all applicable role-resource combinations. The function checks JWT claims, user roles,
-// organization role resources, and resource IDs to determine the appropriate data scope.
-// The data scope hierarchy is defined in the scopes map, where lower values indicate more restrictive scopes.
-// Returns the determined data scope and any error encountered during the process.
+// GetDataScope returns the most restrictive data scope across the user's
+// applicable role-resource combinations (lower Priority = more restrictive).
 func (l *Auth) GetDataScope(ctx context.Context, input dto.AuthCheckRequestDto) (dataScope constants.DataScope, err error) {
 	dataScope = constants.DataScopeOwn
 
@@ -606,15 +598,11 @@ func (l *Auth) LoadAuthorizationWhitelist(ctx context.Context, userType constant
 	return whitelist, nil
 }
 
-// RebuildPolicy rebuilds the authorization policies for ALL organizations of the
-// given user type. It runs at service startup (see app/*/rpc/internal/logic/
-// base_logic.go). For changes after startup use RebuildPolicyForOrganization
-// (one org) or publish an ActionPolicyRebuild event (handled on every replica).
-//
-// Policies are recomputed from resource↔role bindings, gated by each org's
-// active pricing-plan resource scope, then diffed against the enforcer's current
-// policies. Only the full-rebuild path self-publishes ActionAllPolicyReload
-// (legacy fan-out); the org-scoped path relies on each replica rebuilding itself.
+// RebuildPolicy rebuilds policies for ALL orgs of the given user type. Runs at
+// service startup (see app/*/rpc/internal/logic/base_logic.go); for runtime
+// changes use RebuildPolicyForOrganization or publish an ActionPolicyRebuild.
+// Recomputes from resource↔role bindings gated by each org's active plan, diffs
+// against the enforcer, and (full path only) self-publishes ActionAllPolicyReload.
 func (l *Auth) RebuildPolicy(ctx context.Context, organizationType constants.UserType) (err error) {
 	return l.rebuildPolicy(ctx, organizationType, 0)
 }
@@ -630,16 +618,9 @@ func (l *Auth) RebuildPolicyForOrganization(ctx context.Context, organizationId 
 	return l.rebuildPolicy(ctx, organizationType, organizationId)
 }
 
-// rebuildPolicy core. organizationId == 0 means full rebuild (all orgs of the
-// user type); organizationId > 0 means org-scoped. singleflight collapses
-// concurrent rebuilds for the same scope into one DB read + diff.
-//
-// Key scheme: "PolicyRebuild:<type>" (full) vs "PolicyRebuildOrg:<orgId>:<type>"
-// (org-scoped) — distinct prefixes, no overlap with whitelist/plan-resource
-// singleflight keys. Concurrent full + org-scoped rebuilds of the same type are
-// safe: both recompute from the same post-commit DB state and AddPolicies/
-// RemovePolicies are idempotent set operations, so the final state converges
-// regardless of interleaving.
+// rebuildPolicy core. orgId == 0: full rebuild; orgId > 0: org-scoped.
+// singleflight dedupes concurrent same-scope rebuilds. Distinct key prefixes
+// avoid collision; idempotent policy ops let full + org-scoped rebuilds converge.
 func (l *Auth) rebuildPolicy(ctx context.Context, organizationType constants.UserType, organizationId int64) (err error) {
 	sfKey := stringx.Format(policyRebuildFormat, organizationType)
 	if organizationId > 0 {
@@ -664,13 +645,8 @@ func (l *Auth) doRebuild(ctx context.Context, organizationType constants.UserTyp
 		l.organizationPlanResourceMap.Clear()
 	}
 
-	// 2. for org-scoped rebuild, fetch this org's complete role-id set. It both
-	//    scopes which existing policies may be touched AND enables orphan cleanup
-	//    (a role that lost all plan-covered resources yields no desired policy,
-	//    so any leftover policy of it falls into the remove set). RoleRepo.All
-	//    filters by organization_id, so it is only meaningful for orgId > 0
-	//    (orgId == 0 would return only global roles). The full-rebuild path does
-	//    not scope existing policies by subject, matching legacy behavior.
+	// 2. org-scoped rebuild: fetch this org's role-id set to scope which existing
+	//    policies may be touched and to clean orphan policies.
 	var subjectSet map[string]int64
 	if organizationId > 0 {
 		scopeRoles, scopeErr := l.repos.RoleRepo.All(ctx, organizationId, organizationType)
@@ -794,11 +770,9 @@ func (l *Auth) doRebuild(ctx context.Context, organizationType constants.UserTyp
 		return err
 	}
 
-	// 9. fan-out: only the full-rebuild path self-publishes (legacy behavior for
-	//    the startup call). The org-scoped path must NOT self-publish: every
-	//    replica already received the originating ActionPolicyRebuild and rebuilt
-	//    its own enforcer, and autoSave + the redis watcher already propagate
-	//    the DB change to other replicas.
+	// 9. only the full-rebuild path self-publishes ActionAllPolicyReload (legacy
+	//    startup fan-out). Org-scoped rebuilds don't: every replica rebuilt itself
+	//    from the originating event.
 	if organizationId == 0 && (len(newPolicies) > 0 || len(removePolicies) > 0) {
 		msg := Msg{
 			Action: ActionAllPolicyReload,
@@ -1044,8 +1018,8 @@ func (l *Auth) loadOrganizationPlanResources(ctx context.Context, organizationId
 			activeSub.Status.IsEffective() &&
 			!isSubscriptionExpired(activeSub, time.Now()) {
 
-			plan, innerErr := l.repos.PricingPlanRepo.GetOne(ctx, activeSub.PricingPlanId, nil)
-			if innerErr == nil && plan != nil && plan.Status == constants.CommonStatusActive {
+			plan, _ := l.repos.PricingPlanRepo.GetOne(ctx, activeSub.PricingPlanId, nil)
+			if plan != nil && plan.Status == constants.CommonStatusActive {
 				ids, innerErr := l.repos.PricingPlanAndResourceRepo.FindResourceIdsByPlanId(ctx, activeSub.PricingPlanId)
 				if innerErr != nil {
 					return nil, innerErr
