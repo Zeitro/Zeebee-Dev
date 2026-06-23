@@ -116,6 +116,7 @@ func (l *Auth) subscribeEvent(ctx context.Context) {
 		if err != nil {
 			logx.WithContext(ctx).WithFields(
 				logx.Field("stack", errorx.GetErrorStack(err)),
+				logx.Field("type", "auth_message_event"),
 			).Errorf("subscribeEvent error")
 			continue
 		}
@@ -138,6 +139,7 @@ func (l *Auth) subscribeEvent(ctx context.Context) {
 					logx.WithContext(ctx).WithFields(
 						logx.Field("stack", errorx.GetErrorStack(err)),
 						logx.Field("msg", msg),
+						logx.Field("type", "auth_message_event"),
 						logx.Field("error", err.Error()),
 					).Errorf("handleAuthMsg error")
 				}
@@ -156,7 +158,7 @@ func (l *Auth) subscribeEvent(ctx context.Context) {
 func (l *Auth) handleAuthMsg(ctx context.Context, msg *redis.Message) (err error) {
 	var eventMsg Msg
 	if msg == nil {
-		err = errorx.New("Auth message is nil")
+		err = errorx.New("auth message is nil")
 		return
 	}
 	eventMsg, err = ParseMsg(msg.Payload)
@@ -175,7 +177,7 @@ func (l *Auth) handleAuthMsg(ctx context.Context, msg *redis.Message) (err error
 	case ActionPolicyRebuild:
 		err = l.handlePolicyRebuild(ctx, eventMsg)
 	default:
-		err = errorx.Errorf("Invalid action %v", eventMsg.Action)
+		err = errorx.Errorf("invalid action %v", eventMsg.Action)
 	}
 
 	return err
@@ -311,22 +313,8 @@ func (l *Auth) AuthCheck(ctx context.Context, input dto.AuthCheckRequestDto) (re
 		result.AuthorizationRequired = false
 		return
 	}
-
 	// If authentication failed, return
 	if !ok {
-		return
-	}
-
-	// If user is admin, grant all permissions and full data scope
-	var isAdmin bool
-	isAdmin, err = l.IsAdmin(ctx, input.Type)
-	if err != nil {
-		return
-	}
-	if isAdmin {
-		result.Authenticated = true
-		result.Authorized = true
-		result.DataScope = constants.DataScopeAll
 		return
 	}
 
@@ -413,9 +401,38 @@ func (l *Auth) CheckAuthorization(ctx context.Context, input dto.AuthCheckReques
 	if err != nil {
 		return
 	}
-	authorized = slice.Some(roles, func(index int, item AuthRole) bool {
-		return slice.Some(resourceIds, func(index int, subItem int64) bool {
-			policy := BuildInterfacePolicy(item.RoleId, subItem, input.Type)
+	if len(resourceIds) == 0 {
+		return
+	}
+
+	// Gate resources by the organization's active pricing plan: only resources
+	// covered by the plan are eligible, regardless of role.
+	var planResources *mapx.Map[int64, bool]
+	planResources, err = l.getOrganizationPlanResourceIds(ctx, claim.OrganizationId)
+	if err != nil {
+		return
+	}
+	planResourceIds := slice.Filter(resourceIds, func(_ int, id int64) bool {
+		inPlan, _ := planResources.Get(id)
+		return inPlan
+	})
+	if len(planResourceIds) == 0 {
+		return
+	}
+
+	// Admins are authorized for any resource within their plan scope.
+	isAdmin := slice.Some(roles, func(_ int, item AuthRole) bool {
+		return item.IsAdmin
+	})
+	if isAdmin {
+		authorized = true
+		return
+	}
+
+	// Non-admins: a role-resource policy must exist for a plan-covered resource.
+	authorized = slice.Some(roles, func(_ int, item AuthRole) bool {
+		return slice.Some(planResourceIds, func(_ int, resourceId int64) bool {
+			policy := BuildInterfacePolicy(item.RoleId, resourceId, input.Type)
 			ok, _ := l.enforcer.Enforce(policy...)
 			return ok
 		})
@@ -432,6 +449,15 @@ func (l *Auth) CheckAuthorization(ctx context.Context, input dto.AuthCheckReques
 // Returns the determined data scope and any error encountered during the process.
 func (l *Auth) GetDataScope(ctx context.Context, input dto.AuthCheckRequestDto) (dataScope constants.DataScope, err error) {
 	dataScope = constants.DataScopeOwn
+
+	isAdmin, err := l.IsAdmin(ctx, input.Type)
+	if err != nil {
+		return
+	}
+	if isAdmin {
+		dataScope = constants.DataScopeAll
+		return
+	}
 
 	// Extract JWT user claims from the context
 	var claim utils.JwtUser
@@ -503,7 +529,7 @@ func (l *Auth) IsAdmin(ctx context.Context, userType constants.UserType) (isAdmi
 // LoadAuthenticationWhitelist load authentication whitelist for a given user type.
 func (l *Auth) LoadAuthenticationWhitelist(ctx context.Context, userType constants.UserType) (whitelist []string, err error) {
 	// get apis from db
-	result, err, _ := l.sf.Do(stringx.Format("AuthenticationWhitelist:%v", userType), func() (interface{}, error) {
+	result, err, _ := l.sf.Do(stringx.Format(authenticationWhitelistFormat, userType), func() (interface{}, error) {
 		apis, err := l.repos.ApiRepo.GetAuthenticationWhitelist(ctx, userType)
 		if err != nil {
 			return nil, err
@@ -535,7 +561,7 @@ func (l *Auth) LoadAuthenticationWhitelist(ctx context.Context, userType constan
 
 // LoadAuthorizationWhitelist load authorization whitelist for a given user type.
 func (l *Auth) LoadAuthorizationWhitelist(ctx context.Context, userType constants.UserType) (whitelist []string, err error) {
-	result, err, _ := l.sf.Do(stringx.Format("AuthorizationWhitelist:%v", userType), func() (interface{}, error) {
+	result, err, _ := l.sf.Do(stringx.Format(authorizationWhitelistFormat, userType), func() (interface{}, error) {
 		apis, err := l.repos.ApiRepo.GetAuthorizationWhitelist(ctx, userType)
 		if err != nil {
 			return nil, err
@@ -615,9 +641,9 @@ func (l *Auth) RebuildPolicyForOrganization(ctx context.Context, organizationId 
 // RemovePolicies are idempotent set operations, so the final state converges
 // regardless of interleaving.
 func (l *Auth) rebuildPolicy(ctx context.Context, organizationType constants.UserType, organizationId int64) (err error) {
-	sfKey := stringx.Format("PolicyRebuild:%v", organizationType)
+	sfKey := stringx.Format(policyRebuildFormat, organizationType)
 	if organizationId > 0 {
-		sfKey = stringx.Format("PolicyRebuildOrg:%d:%v", organizationId, organizationType)
+		sfKey = stringx.Format(organizationPolicyRebuildFormat, organizationId, organizationType)
 	}
 	_, err, _ = l.sf.Do(sfKey, func() (interface{}, error) {
 		return nil, l.doRebuild(ctx, organizationType, organizationId)
@@ -656,7 +682,7 @@ func (l *Auth) doRebuild(ctx context.Context, organizationType constants.UserTyp
 			if role == nil {
 				return
 			}
-			subjectSet[stringx.Format("Role:%d", role.Id)] = role.Id
+			subjectSet[stringx.Format(roleFormat, role.Id)] = role.Id
 		})
 	}
 
@@ -737,8 +763,8 @@ func (l *Auth) doRebuild(ctx context.Context, organizationType constants.UserTyp
 	})
 
 	// 7. diff.
-	var newPolicies [][]string
-	var removePolicies [][]string
+	var newPolicies = make([][]string, 0, len(desired))
+	var removePolicies = make([][]string, 0, len(existing))
 	for key, policy := range desired {
 		if _, ok := existing[key]; !ok {
 			newPolicies = append(newPolicies, policy)
@@ -791,12 +817,12 @@ func (l *Auth) GetUserClaimFromCtx(ctx context.Context) (claim utils.JwtUser, er
 	// Get from metadata
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		err = status.Error(codes.Unauthenticated, "Not login")
+		err = status.Error(codes.Unauthenticated, "not login")
 		return claim, errorx.WithStack(err)
 	}
 	tokens := md[utils.JwtTokenCtxKey]
 	if len(tokens) == 0 {
-		err = status.Error(codes.Unauthenticated, "Not login")
+		err = status.Error(codes.Unauthenticated, "not login")
 		return claim, errorx.WithStack(err)
 	}
 	token := tokens[0]
@@ -987,10 +1013,10 @@ func (l *Auth) getOrganizationPlanResourceIds(ctx context.Context, organizationI
 	if ok {
 		return cached, nil
 	}
-	result, err, _ := l.sf.Do(stringx.Format("OrgPlanRes:%v", organizationId), func() (interface{}, error) {
+	result, err, _ := l.sf.Do(stringx.Format(organizationPlanResourceFormat, organizationId), func() (interface{}, error) {
 		// re-check cache inside the singleflight call to avoid a redundant
 		// DB load when another in-flight call already populated it
-		if cached, ok := l.organizationPlanResourceMap.Get(organizationId); ok {
+		if cached, ok = l.organizationPlanResourceMap.Get(organizationId); ok {
 			return cached, nil
 		}
 		return l.loadOrganizationPlanResources(ctx, organizationId)
