@@ -55,9 +55,8 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 
 	// 处理特殊情况（有导航栏的页面遇到token到期清空了，则重新登录）
 	useEffect(() => {
-		if ((isPermissionPage || !isNoNav) && (!access || !userInfo)) {
+		if ((isPermissionPage || !isNoNav) && (!access?.access_token || !userInfo?.id)) {
 			window.location.replace('/login');
-			console.log('---退出---');
 		}
 	}, [access, isPermissionPage, userInfo, isNoNav]);
 
