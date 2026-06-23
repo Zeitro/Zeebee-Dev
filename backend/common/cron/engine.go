@@ -39,6 +39,28 @@ func (e *Engine) Register(name string, spec string, cmd func()) (err error) {
 	return e.registerLocked(name, spec, cmd)
 }
 
+// Replace replaces a named task atomically. Returns error on invalid
+// name/spec or nil cmd. The new entry is added before the old one is removed,
+// so an invalid spec leaves any existing task intact.
+func (e *Engine) Replace(name string, spec string, cmd func()) (err error) {
+	if err = validateTask(name, spec, cmd); err != nil {
+		return err
+	}
+
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	oldID, existed := e.taskMap[name]
+	id, err := e.engine.AddFunc(spec, cmd)
+	if err != nil {
+		return fmt.Errorf("task %s: invalid spec %q: %w", name, spec, err)
+	}
+	e.taskMap[name] = id
+	if existed {
+		e.engine.Remove(oldID)
+	}
+	return nil
+}
+
 // Unregister removes a named task. Returns error if the task does not exist.
 func (e *Engine) Unregister(name string) error {
 	e.mu.Lock()
