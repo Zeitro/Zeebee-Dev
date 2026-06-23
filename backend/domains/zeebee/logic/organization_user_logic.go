@@ -82,7 +82,7 @@ func (l *OrganizationUserLogic) CreateAdminOrganizationUser(ctx context.Context,
 		return nil, err
 	}
 	if isInOrganization {
-		err = errorx.New("The user is already in the organization")
+		err = errorx.New("the user is already in the organization")
 		return nil, err
 	}
 	user, err := l.repos.UserRepo.GetUserByEmail(ctx, input.Email, input.UserType)
@@ -90,7 +90,7 @@ func (l *OrganizationUserLogic) CreateAdminOrganizationUser(ctx context.Context,
 		return nil, err
 	}
 	if !l.validatePassword(input.Password) {
-		err = errorx.New("The password is invalid")
+		err = errorx.New("the password is invalid")
 		return nil, err
 	}
 
@@ -104,7 +104,7 @@ func (l *OrganizationUserLogic) CreateAdminOrganizationUser(ctx context.Context,
 			return innerErr
 		}
 		if organization.Status != constants.OrganizationStatusActive {
-			innerErr = errorx.New("The organization is not active")
+			innerErr = errorx.New("the organization is not active")
 			return innerErr
 		}
 		firstName, lastName, fullName := input.FirstName, input.LastName, stringx.FormatFullName(input.FirstName, "", input.LastName)
@@ -184,7 +184,7 @@ func (l *OrganizationUserLogic) InviteOrganizationUser(ctx context.Context, crea
 		return nil, err
 	}
 	if isInOrganization {
-		err = errorx.New("The user is already in the organization")
+		err = errorx.New("the user is already in the organization")
 		return nil, err
 	}
 
@@ -203,7 +203,7 @@ func (l *OrganizationUserLogic) InviteOrganizationUser(ctx context.Context, crea
 			return innerErr
 		}
 		if organization.Status != constants.OrganizationStatusActive {
-			innerErr = errorx.New("The organization is not active")
+			innerErr = errorx.New("the organization is not active")
 			return innerErr
 		}
 
@@ -351,7 +351,7 @@ func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.
 		return user, errorx.WithStack(err)
 	}
 	if len(code) == 0 || code != input.Code {
-		return user, errorx.New("Invalid code")
+		return user, errorx.New("invitation expired")
 	}
 	var organizationUserModel *model.OrganizationUser
 	var userModel *model.User

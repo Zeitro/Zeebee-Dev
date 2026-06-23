@@ -12,3 +12,4 @@ env
 /frontend/docker-compose-local.yml
 /frontend/Dockerfile-*-local
 .pnpm-store
+expdt
