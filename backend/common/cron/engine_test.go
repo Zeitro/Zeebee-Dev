@@ -165,8 +165,9 @@ func TestEngine_UnregisterStopsExecution(t *testing.T) {
 	}
 }
 
-// TestEngine_ConcurrentRegister confirms concurrent registration does not panic
-// and only one task ends up registered (last-writer-wins due to no engine lock).
+// TestEngine_ConcurrentRegister confirms concurrent registration does not
+// panic and only one task ends up registered (Register is atomic under e.mu,
+// so the first writer wins; the rest see "already exists").
 func TestEngine_ConcurrentRegister(t *testing.T) {
 	e := NewEngine()
 	e.Start()
