@@ -99,7 +99,7 @@ func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.Or
 		if _, innerErr = unbindEffectiveSubscriptions(ctx, l.repos, tx, oldSubs); innerErr != nil {
 			return innerErr
 		}
-		// set all non-expired subscriptions to expired
+		// set non-expired subscriptions to expired; Suspended subs preserved.
 		updateColumns := map[string]interface{}{
 			"status": constants.OrganizationSubscriptionStatusExpired,
 		}
@@ -125,9 +125,7 @@ func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.Or
 		return nil, err
 	}
 
-	// always rebuild this org's policies so the plan gate recomputes: becoming
-	// effective re-materializes existing role-resource bindings, becoming
-	// ineffective revokes them. New bindings are added by the org admin.
+	// rebuild this org's policies so the plan gate recomputes its resource scope.
 	l.publishOrgPolicyRebuild(ctx, []int64{subscription.OrganizationId}, plan.Type)
 	return l.transToDetailDto(ctx, subscription)
 }
@@ -187,8 +185,7 @@ func (l *OrganizationSubscriptionLogic) Renew(ctx context.Context, id int64) (re
 		if innerErr != nil {
 			return innerErr
 		}
-		// remove-side only: becoming ineffective unbinds plan resources; becoming
-		// effective is a no-op (M5). The rebuild below recomputes the plan gate.
+		// M5: only becoming ineffective unbinds (remove-side); the rebuild recomputes the gate.
 		_, innerErr = syncSubscriptionEffect(ctx, l.repos, tx, subscriptionEffectSyncReq{
 			OrganizationId: subscription.OrganizationId,
 			Plan:           plan,
@@ -248,8 +245,7 @@ func (l *OrganizationSubscriptionLogic) UpdateExpireDate(ctx context.Context, in
 		if innerErr != nil {
 			return innerErr
 		}
-		// remove-side only: becoming ineffective unbinds plan resources; becoming
-		// effective is a no-op (M5). The rebuild below recomputes the plan gate.
+		// M5: only becoming ineffective unbinds (remove-side); the rebuild recomputes the gate.
 		_, innerErr = syncSubscriptionEffect(ctx, l.repos, tx, subscriptionEffectSyncReq{
 			OrganizationId: subscription.OrganizationId,
 			Plan:           plan,
@@ -292,8 +288,7 @@ func (l *OrganizationSubscriptionLogic) SwitchStatus(ctx context.Context, id int
 		if innerErr != nil {
 			return innerErr
 		}
-		// remove-side only: becoming ineffective unbinds plan resources; becoming
-		// effective is a no-op (M5). The rebuild below recomputes the plan gate.
+		// M5: only becoming ineffective unbinds (remove-side); the rebuild recomputes the gate.
 		_, innerErr = syncSubscriptionEffect(ctx, l.repos, tx, subscriptionEffectSyncReq{
 			OrganizationId: subscription.OrganizationId,
 			Plan:           plan,
@@ -311,10 +306,8 @@ func (l *OrganizationSubscriptionLogic) SwitchStatus(ctx context.Context, id int
 }
 
 // SuspendEffectiveByOrganizationId suspends every effective subscription of an
-// organization in one transaction and unbinds its plan resources (remove-side).
-// Used when an organization is disabled so its plan-granted access is revoked.
-// Subscriptions are NOT deleted — the system has no delete-subscription
-// operation; re-enabling the organization requires reactivating subscriptions.
+// org and unbinds its plan resources (remove-side). Used when an org is disabled.
+// Subscriptions are suspended, not deleted (no delete op exists).
 func (l *OrganizationSubscriptionLogic) SuspendEffectiveByOrganizationId(ctx context.Context, organizationId int64, userType constants.UserType) error {
 	organizationPolicies := make(map[int64]*organizationPolicyChanges)
 	err := l.repos.OrganizationSubscriptionRepo.Transaction(ctx, func(tx *gorm.DB) error {
@@ -489,9 +482,7 @@ func (l *OrganizationSubscriptionLogic) SubscribeDefaultPlan(ctx context.Context
 		return err
 	}
 
-	// The new trial subscription expanded this org's plan-resource scope, so
-	// recompute its policies immediately (otherwise the org has zero policies
-	// until the next service restart).
+	// recompute this org's policies: the trial expanded its plan-resource scope.
 	l.publishOrgPolicyRebuild(ctx, []int64{organizationId}, plan.Type)
 
 	return nil
@@ -596,17 +587,9 @@ type expiredSubscriptionRecovery struct {
 }
 
 // handleExpiredSubscription marks sub Expired, then recovers access via the
-// default plan when both a default plan and a free policy exist:
-//   - same plan: renew in place (reset to Active with a fresh expire date and
-//     the free policy). Resources are identical, so no role rebinding.
-//   - different plan: create a new Active subscription under the default plan,
-//     then unbind ONLY the resources the old plan had but the default plan
-//     lacks. Overlapping resources stay bound (no re-config needed); resources
-//     new to the default plan are left for the org admin to bind manually.
-//
-// With no default plan / free policy the subscription is simply left Expired.
-// Returns per-org removed policies so the caller can publish an auth reload for
-// this subscription's organization immediately after the transaction commits.
+// default plan + free policy if both exist: same plan renews in place; different
+// plan creates a new sub and unbinds only old-plan-exclusive resources. Returns
+// per-org removed policies for the caller to publish after commit.
 func (l *OrganizationSubscriptionLogic) handleExpiredSubscription(
 	ctx context.Context,
 	tx *gorm.DB,
@@ -679,11 +662,9 @@ func (l *OrganizationSubscriptionLogic) handleExpiredSubscription(
 	return removed, nil
 }
 
-// publishOrgPolicyRebuild emits a per-org ActionPolicyRebuild event for each
-// organization whose subscription state changed. Each replica that receives the
-// event recomputes that org's policies from post-commit DB state (plan gate +
-// role-resource bindings). Replaces the old ActionRoleReload path, which only
-// carried the remove side and left the enforcer unable to grow after startup.
+// publishOrgPolicyRebuild emits a per-org ActionPolicyRebuild for each org whose
+// subscription state changed; each receiving replica recomputes that org's
+// policies from post-commit DB state.
 func (l *OrganizationSubscriptionLogic) publishOrgPolicyRebuild(ctx context.Context, affectedOrgIds []int64, userType constants.UserType) {
 	seen := map[int64]bool{}
 	for _, orgId := range affectedOrgIds {
@@ -766,20 +747,9 @@ type subscriptionEffectSyncReq struct {
 	NewEffective   bool
 }
 
-// syncSubscriptionEffect binds/unbinds a single organization's plan resources
-// when a subscription crosses the effective boundary (OldEffective != NewEffective).
-// No-op when effective status is unchanged or the plan has no resources.
-// Returns per-org policy changes for downstream auth reload events.
-// syncSubscriptionEffect propagates a single organization's subscription
-// effective-boundary crossing to role-resource bindings.
-//
-// M5: becoming effective (NewEffective=true) does NOT auto-bind plan resources
-// to roles — the org admin configures role-resource bindings manually. The
-// subscription only defines the available plan-resource scope; the enforcer
-// gate (organizationPlanResourceMap) is recomputed from the DB on the next
-// RebuildPolicy, so no event is needed on the bind side.
-// Becoming ineffective (NewEffective=false) unbinds the plan's resources
-// (remove-side) and collects the removed policies for immediate revocation.
+// syncSubscriptionEffect propagates a subscription's effective-boundary crossing
+// to role-resource bindings. M5: only becoming ineffective unbinds (remove-side);
+// becoming effective never auto-binds (admin configures, gate recomputes on rebuild).
 func syncSubscriptionEffect(ctx context.Context, repos *repo.AllRepos, tx *gorm.DB, req subscriptionEffectSyncReq) (map[int64]*organizationPolicyChanges, error) {
 	if req.OldEffective == req.NewEffective {
 		return nil, nil
