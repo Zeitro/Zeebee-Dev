@@ -9,9 +9,16 @@ import (
 )
 
 const (
-	routeFormat                = "%s:%s"                                        // <method>:<path>
-	organizationUserRoleFormat = "%s:organization:%d:organizationuser:%d:roles" // <type>:organization:<organizationId>:organizationuser:<organizationUserId>:roles
-	roleResourceFormat         = "%d:%d"                                        // <roleId>:<resourceId>
+	routeFormat                     = "%s:%s"                                        // <method>:<path>
+	organizationUserRoleFormat      = "%s:organization:%d:organizationuser:%d:roles" // <type>:organization:<organizationId>:organizationuser:<organizationUserId>:roles
+	roleResourceFormat              = "%d:%d"                                        // <roleId>:<resourceId>
+	policyRebuildFormat             = "policy:%v:rebuild"                            // policy:<type>:rebuild
+	organizationPolicyRebuildFormat = "organization:%d:policy:%v:rebuild"            // organization:<organizationId>:policy:<type>:rebuild
+	roleFormat                      = "Role:%d"                                      // Role:<roleId>
+	resourceFormat                  = "Resource:%d"                                  // Resource:<resourceId>
+	organizationPlanResourceFormat  = "organization:%d:plan_resource"                // organization:<organizationId>:plan_resource
+	authorizationWhitelistFormat    = "authorization_whitelist:%v"                   // authorization_whitelist:<type>
+	authenticationWhitelistFormat   = "authentication_whitelist:%v"                  // authentication_whitelist:<type>
 )
 
 const (
@@ -74,7 +81,7 @@ func ParseMsg(msg string) (Msg, error) {
 	var m Msg
 	err := json.Unmarshal([]byte(msg), &m)
 	if err != nil {
-		return m, errorx.Wrap(err, "Failed to parse auth message")
+		return m, errorx.Wrap(err, "fail to parse auth message")
 	}
 	return m, err
 }

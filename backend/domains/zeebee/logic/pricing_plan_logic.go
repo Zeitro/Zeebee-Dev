@@ -135,9 +135,7 @@ func (l *PricingPlanLogic) Delete(ctx context.Context, id int64) (err error) {
 			return errorx.New("cannot delete pricing plan with active subscriptions")
 		}
 		// remove-side cleanup: unbind the plan's resources from every org that ever
-		// subscribed, so role-resource rows and enforcer policies don't outlive the
-		// plan. Newly added resources are never auto-bound (M5), but admin-manual
-		// bindings and any legacy auto-bindings must be unwound here.
+		// subscribed, so bindings/policies don't outlive the plan.
 		organizationIds := slice.Unique(slice.Map(plan.Subscriptions, func(index int, item *model.OrganizationSubscription) int64 {
 			return item.OrganizationId
 		}))
@@ -269,9 +267,7 @@ func (l *PricingPlanLogic) SwitchStatus(ctx context.Context, id int64, status co
 		if len(affectedOrganizationIds) == 0 {
 			return nil
 		}
-		// M5: only disabling a plan unbinds its resources (remove-side). Re-enabling
-		// a plan does NOT auto-bind resources to roles — the org admin configures
-		// role-resource bindings manually.
+		// M5: only disabling unbinds resources; re-enabling never auto-binds.
 		if isDisabling && len(resourceIds) > 0 {
 			var disabledOrgPolicies map[int64]*organizationPolicyChanges
 			disabledOrgPolicies, innerErr = syncPlanResourcesToOrganizationRoles(ctx, l.repos, tx, planResourceSyncReq{
@@ -291,10 +287,7 @@ func (l *PricingPlanLogic) SwitchStatus(ctx context.Context, id int64, status co
 		return err
 	}
 
-	// M5: re-enabling a plan does not auto-bind resources, so on re-enable there
-	// is nothing to publish (the enforcer plan-resource gate is recomputed from
-	// the DB on the next RebuildPolicy). Only the disable path produced removed
-	// policies above.
+	// only the disable path produced removed policies; re-enable has nothing to publish.
 	l.publishPlanPolicyRebuild(ctx, plan.Type)
 	return
 }
@@ -348,9 +341,7 @@ func (l *PricingPlanLogic) BindResources(ctx context.Context, planId int64, reso
 			return nil
 		}
 
-		// M5: only removed resources are unbound (remove-side). Newly added plan
-		// resources are NOT auto-bound to roles — the org admin configures
-		// role-resource bindings manually.
+		// M5: only removed resources unbind; added resources never auto-bind.
 		if len(removedIds) > 0 {
 			var removedOrgPolicies map[int64]*organizationPolicyChanges
 			removedOrgPolicies, innerErr = syncPlanResourcesToOrganizationRoles(ctx, l.repos, tx, planResourceSyncReq{
@@ -377,11 +368,9 @@ func (l *PricingPlanLogic) BindResources(ctx context.Context, planId int64, reso
 	return
 }
 
-// publishPlanPolicyRebuild emits a global ActionPolicyRebuild for the given user
-// type. Plan resource bind/unbind, status switch, and delete affect every org
-// subscribed to the plan, so a full user-type policy rebuild is required (each
-// replica recomputes all orgs of that type). Replaces the old per-org
-// ActionRoleReload path, which only carried the remove side.
+// publishPlanPolicyRebuild emits a global ActionPolicyRebuild for the user type.
+// Bind/unbind, status switch, and delete affect every org subscribed to the
+// plan, so each replica recomputes all orgs of that type.
 func (l *PricingPlanLogic) publishPlanPolicyRebuild(ctx context.Context, userType constants.UserType) {
 	threading.GoSafe(func() {
 		subCtx := context.WithoutCancel(ctx)
