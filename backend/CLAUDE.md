@@ -24,7 +24,9 @@ Read in this order (first session required, subsequent on demand):
 Document relationships:
 - `constitution.md` defines **rules** (what must be done), this file provides **code examples** (how)
 - `architecture.md` defines **structure** (code organization), this file defines **conventions** (code style)
+- `.claude/docs/analysis/analysis.md` is the latest **deep audit report** (2026-06-24, 90 findings)
 - `.claude/docs/INDEX.md` is knowledge base **navigation index** (optional, consult on demand)
+- `PROJECT_INDEX.md` is the **repo index** — read for quick project overview without file scanning
 
 ## Working Directory
 
@@ -99,5 +101,7 @@ Strict constraints:
 |------|------|----------|
 | `.specify/memory/constitution.md` | Project constitution: core principles, dev standards | First session required |
 | `.claude/docs/analysis/architecture.md` | Architecture: layers, data flow, directory structure | First session required |
+| `.claude/docs/analysis/analysis.md` | Latest deep audit (2026-06-24): 90 findings, scores, roadmap | On demand |
 | `.claude/docs/INDEX.md` | Knowledge base nav: service matrix, model list, analysis reports | On demand |
+| `PROJECT_INDEX.md` | Repo index: structure, entry points, key dependencies, stats | On demand |
 | `README.md` | Project overview and quick start | On demand |
