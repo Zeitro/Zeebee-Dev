@@ -57,7 +57,7 @@ func (l *AuthorizeLogic) Authorize(in *borrower.OrganizationEmailAuthorizeReques
 
 	authCodeUrlGenerator, ok := global.EmailAuthUrlGenerator[input.EmailProvider]
 	if !ok {
-		return nil, errorx.Errorf("Invalid email provider %v", input.EmailProvider)
+		return nil, errorx.Errorf("invalid email provider %v", input.EmailProvider)
 	}
 	input.Oauth2Config = authCodeUrlGenerator.GetConfig()
 	input.UserId = claim.UserId
@@ -76,7 +76,7 @@ func (l *AuthorizeLogic) Authorize(in *borrower.OrganizationEmailAuthorizeReques
 // validate
 func (l *AuthorizeLogic) validate(input *dto.OrganizationEmailAuthorizeRequestDto, claim utils.JwtUser) (err error) {
 	if input.Code == "" {
-		return errorx.New("Code is empty")
+		return errorx.New("code is empty")
 	}
 	return err
 }

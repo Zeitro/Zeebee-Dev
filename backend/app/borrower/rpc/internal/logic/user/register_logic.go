@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/duke-git/lancet/v2/random"
 	"google.golang.org/grpc/metadata"
@@ -24,6 +25,7 @@ import (
 	email2 "zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/stringx"
+	"zeebee-backend/common/timex"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
@@ -375,8 +377,9 @@ func sendRegisterVerifyUrlEmail(ctx context.Context, email string, firstName str
 	}
 	// send verify email
 	data := map[string]interface{}{
-		"url":        fmt.Sprintf("%s?code=%s&email=%s", global.Config.VerifyEmailUrl, code, email),
-		"first_name": firstName,
+		"url":         fmt.Sprintf("%s?code=%s&email=%s", global.Config.VerifyEmailUrl, code, email),
+		"first_name":  firstName,
+		"expire_time": timex.DurationToString(time.Second*time.Duration(global.Config.VerifyEmailExpireSeconds), true),
 	}
 	content, err := email2.ParseTemplate(email_tpl.RegisterVerifyEmail, data)
 	if err != nil {
