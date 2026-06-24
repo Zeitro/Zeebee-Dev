@@ -55,7 +55,7 @@ func (l *GenerateAuthCodeUrlLogic) GenerateAuthCodeUrl(in *borrower.Organization
 
 	authCodeUrlGenerator, ok := global.EmailAuthUrlGenerator[input.EmailProvider]
 	if !ok {
-		return nil, errorx.Errorf("Invalid email provider %v", input.EmailProvider)
+		return nil, errorx.Errorf("invalid email provider %v", input.EmailProvider)
 	}
 	input.AuthCodeGenerator = authCodeUrlGenerator
 

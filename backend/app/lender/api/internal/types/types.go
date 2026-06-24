@@ -406,6 +406,7 @@ type LoanPropertyEntity struct {
 	PropertyType                 string            `json:"property_type"`
 	Unit                         int32             `json:"unit"`
 	LivingAreaSqft               float32           `json:"living_area_sqft"`
+	LotAreaSqft                  float32           `json:"lot_area_sqft,optional"`
 	Bedrooms                     int32             `json:"bedrooms" `
 	Bathrooms                    int32             `json:"bathrooms"`
 	FuturePropertyType           string            `json:"future_property_type"`
@@ -699,7 +700,7 @@ type OrganizationUpdateProfileRequest struct {
 }
 
 type OrganizationUserAcceptInvitationRequest struct {
-	Code           string `json:"code" validate:"required"`
+	Code           string `json:"code" validate:"required,max=20"`
 	Email          string `json:"email" validate:"required,email"`
 	OrganizationId int64  `json:"organization_id" validate:"required"`
 	FirstName      string `json:"first_name" validate:"required,min=2,max=100"`
@@ -713,6 +714,16 @@ type OrganizationUserAllResponse struct {
 type OrganizationUserAssignRolesRequest struct {
 	Id      int64   `path:"id" validate:"required"`
 	RoleIds []int64 `json:"role_ids,optional"`
+}
+
+type OrganizationUserCheckInvitationRequest struct {
+	Code           string `json:"code" validate:"required,max=20"`
+	Email          string `json:"email" validate:"required,email"`
+	OrganizationId int64  `json:"organization_id" validate:"required,min=1"`
+}
+
+type OrganizationUserCheckInvitationResponse struct {
+	IsExpired bool `json:"is_expired"`
 }
 
 type OrganizationUserCreateRequest struct {
