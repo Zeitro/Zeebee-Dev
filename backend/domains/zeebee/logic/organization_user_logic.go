@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"regexp"
+	"time"
 
 	"github.com/duke-git/lancet/v2/random"
 	"github.com/duke-git/lancet/v2/slice"
@@ -18,6 +19,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/common/stringx"
+	"zeebee-backend/common/timex"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/auth"
 	"zeebee-backend/domains/zeebee/constants"
@@ -278,6 +280,7 @@ func (l *OrganizationUserLogic) InviteOrganizationUser(ctx context.Context, crea
 			Operator:         createDto.Operator,
 			Logo:             organization.Logo,
 			Address:          organization.Address,
+			ExpireTime:       timex.DurationToString(time.Second*time.Duration(createDto.EmailConfig.ExpireSeconds), true),
 		})
 		if err != nil {
 			err = errorx.Wrap(err, "send invite email error")
@@ -333,6 +336,7 @@ func (l *OrganizationUserLogic) SendInviteEmail(ctx context.Context, input dto.O
 		Pwd:              pwd,
 		Logo:             organization.Logo,
 		Address:          organization.Address,
+		ExpireTime:       timex.DurationToString(time.Second*time.Duration(input.EmailConfig.ExpireSeconds), true),
 	}
 	err = l.sendInviteEmail(ctx, previousInput)
 	if err != nil {
@@ -357,6 +361,38 @@ func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.
 	if isExpired {
 		return user, errorx.New("invitation expired")
 	}
+
+	defer func() {
+		// delete invitation code
+		if err == nil {
+			// cleanup must outlive normal redis op latency
+			currentCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 3*time.Second)
+			defer cancel()
+			codeKey := stringx.Format(constants.UserInviteCode, input.UserType, input.Email, input.OrganizationId)
+			expiredCodeKey := stringx.Format(constants.UserInviteCodeMarker, input.UserType, input.Email, input.OrganizationId)
+			delErr := l.redisCli.Del(currentCtx, codeKey)
+			if delErr != nil {
+				logx.WithContext(currentCtx).WithFields(
+					logx.Field("stack", errorx.GetErrorStack(delErr)),
+					logx.Field("type", "redis_error"),
+				).Errorf("clean invite code failed: %v", delErr)
+			}
+			ttl, _ := l.redisCli.GetTTL(currentCtx, expiredCodeKey)
+			seconds := int(ttl.Round(time.Second) / time.Second)
+			// if expiredCodeKey ttl is less than 1 second, set it to 60 seconds
+			if seconds < 1 {
+				seconds = 60
+			}
+			delErr = l.redisCli.SetExpire(currentCtx, expiredCodeKey, inviteMarkerAccepted, seconds)
+			if delErr != nil {
+				logx.WithContext(currentCtx).WithFields(
+					logx.Field("stack", errorx.GetErrorStack(delErr)),
+					logx.Field("type", "redis_error"),
+				).Errorf("mark invitation accepted failed: %v", delErr)
+			}
+		}
+
+	}()
 
 	var organizationUserModel *model.OrganizationUser
 	var userModel *model.User
@@ -458,6 +494,11 @@ func (l *OrganizationUserLogic) CheckInvitationCode(ctx context.Context, input d
 	}
 	if len(marker) == 0 {
 		err = errorx.New("invalid invitation")
+		return
+	}
+
+	if marker == inviteMarkerAccepted {
+		err = errorx.New("the invitation has been accepted")
 		return
 	}
 
@@ -571,7 +612,15 @@ type SendInviteUserEmailInput struct {
 	OrganizationId   int64
 	Operator         string
 	Code             string
+	ExpireTime       string
 }
+
+const (
+	// sent invitation email and not accepted
+	inviteMarkerSent = "1"
+	// invitation accepted
+	inviteMarkerAccepted = "2"
+)
 
 // sendInviteEmail sends invite email
 func (l *OrganizationUserLogic) sendInviteEmail(ctx context.Context, input SendInviteUserEmailInput) (err error) {
@@ -601,7 +650,7 @@ func (l *OrganizationUserLogic) sendInviteEmail(ctx context.Context, input SendI
 		input.Code = code
 		// invitation existence marker (outlives codeKey to distinguish expired vs. never-invited)
 		// expired marker's ttl is twice the code's ttl
-		_ = l.redisCli.SetExpire(ctx, expiredCodeKey, "1", input.EmailConfig.ExpireSeconds*2)
+		_ = l.redisCli.SetExpire(ctx, expiredCodeKey, inviteMarkerSent, input.EmailConfig.ExpireSeconds*2)
 	}
 	// Save input
 	if len(input.Pwd) > 0 {
@@ -629,6 +678,7 @@ func (l *OrganizationUserLogic) sendInviteEmail(ctx context.Context, input SendI
 		"operator":          input.Operator,
 		"organization_name": input.OrganizationName,
 		"logo":              input.Logo,
+		"expire_time":       input.ExpireTime,
 		"address": fmt.Sprintf("%s | %s | %s, %s, %s",
 			input.OrganizationName,
 			input.Address.Address1,
