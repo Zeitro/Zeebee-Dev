@@ -1,7 +1,7 @@
 # 文档导航指南
 
 > 知识库文档导航中心，帮助快速定位所需信息。
-> 最后更新：2026-05-12
+> 最后更新：2026-06-24
 
 ---
 
@@ -44,7 +44,7 @@ domain_architecture_guide.md → domains/zeebee/model/ → domains/zeebee/dto/
 | 文件 | 说明 |
 |------|------|
 | `architecture.md` | **必读**。系统架构总览 |
-| `analysis.md` | 系统架构分析报告 |
+| `analysis.md` | 全量深度审计报告（2026-06-24） |
 | `architecture_analysis_20250124.md` | 2025-01 架构分析快照 |
 | `project-research/research_project_analysis_20251106.md` | 项目现状调研 |
 
@@ -54,8 +54,8 @@ domain_architecture_guide.md → domains/zeebee/model/ → domains/zeebee/dto/
 |------|------|
 | `project_structure_guide.md` | 项目目录结构、代码组织 |
 | `api_documentation_index.md` | API 接口文档索引 |
-| `domain_architecture_guide.md` | 共享数据层设计 |
 | `technical_architecture_overview.md` | 技术架构详解 |
+| `readme_index.md` | 各模块 README 索引 |
 | `readme_index.md` | 各模块 README 索引 |
 
 ### reports/ — 分析报告
@@ -86,10 +86,10 @@ domain_architecture_guide.md → domains/zeebee/model/ → domains/zeebee/dto/
 | borrower | 10000 | 10001 |
 | lender | 11000 | 11001 |
 | admin | 12000 | 12001 |
-| pdf_generator | — | — |
+| pdf_generator | 13000 | — |
 
-**共享数据层**：`domains/zeebee/` — 27 models, 27 repos, 26 DTOs
-**通用工具**：`common/` — 20 个工具包
+**共享数据层**：`domains/zeebee/` — 38 models, 38 repos, 26 DTOs
+**通用工具**：`common/` — 22 个工具包
 **架构模式**：DDD + 微服务 + 共享数据层（PostgreSQL）
 **分层依赖**：API → RPC → Domain → Infrastructure（单向向下）
 

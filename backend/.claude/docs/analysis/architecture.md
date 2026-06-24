@@ -36,12 +36,12 @@ Client (Web/Mobile)
 
 ## 服务矩阵
 
-| 服务 | HTTP | RPC | 职责 | 备注 |
-|------|------|-----|------|------|
-| borrower | 10000 | 10001 | 借款方操作（实体、房产、贷款、申请） | API/RPC 双层 |
-| lender | 11000 | 11001 | 贷款方操作（审核、文档、批准） | API/RPC 双层 |
-| admin | 12000 | 12001 | 管理后台（组织、模板、权限） | API/RPC 双层 |
-| pdf_generator | — | — | PDF 生成 | 独立 cmd 程序 |
+| 服务 | HTTP | RPC | 职责 | 规模 | 备注 |
+|------|------|-----|------|------|------|
+| borrower | 10000 | 10001 | 借款方操作（实体、房产、贷款、申请） | ~68k LoC | API/RPC 双层 |
+| lender | 11000 | 11001 | 贷款方操作（审核、文档、批准） | ~36k LoC | API/RPC 双层 |
+| admin | 12000 | 12001 | 管理后台（组织、模板、权限、定价计划） | ~43k LoC | API/RPC 双层 |
+| pdf_generator | 13000 | — | PDF 生成（Chromedp） | ~1k LoC | 独立 cmd 程序 |
 
 gRPC 服务发现：API 配置 `RpcConf.Endpoints` 直连 RPC 端口（`NonBlock: true`）。Etcd 在 dev 配置中默认注释关闭。
 
@@ -150,9 +150,11 @@ domains/zeebee/
 ├── repo/                     # Repository（数据访问）
 ├── logic/                    # 共享业务逻辑
 ├── data/                     # DTO 定义（data/dto/）
-├── constants/                # 业务常量
-├── auth/                     # 认证相关
+├── constants/                # 业务常量 + Redis key 格式
+├── auth/                     # 认证与 RBAC
+├── drive/                    # Drive / Google Drive 集成
 ├── email/                    # 邮件服务
+├── lenderdiscover/           # 贷款方发现逻辑
 ├── limiter/                  # 限流逻辑
 ├── templater/                # 模板引擎
 └── zeitro/                   # Zeitro 特定逻辑
@@ -162,25 +164,26 @@ domains/zeebee/
 
 ```
 common/
-├── aws_s3/                   # 文件存储（S3）
-├── conforming_loan_limit/    # 贷款限额
+├── aws_s3/                   # AWS S3 文件存储
+├── conforming_loan_limit/    # 贷款限额计算
 ├── copierx/                  # 类型转换（Trans）
+├── cron/                     # 定时任务引擎
 ├── email/                    # 邮件工具
 ├── enums/                    # 枚举定义
-├── errorx/                   # 错误处理
-├── gormx/                    # 数据库操作（BaseRepo）
+├── errorx/                   # 错误处理（Wrap/WithStack/New）
+├── gormx/                    # 数据库操作（泛型 BaseRepo）
 ├── limiter/                  # 限流
 ├── mapx/                     # Map 工具
-├── preapproval_engine/       # 预审批引擎
+├── preapproval_engine/       # 预审批规则引擎
 ├── rbac/                     # 角色权限
-├── redisx/                   # Redis 操作
-├── response/                 # 统一响应格式
+├── redisx/                   # Redis 客户端
+├── response/                 # 统一 HTTP 响应格式
 ├── routex/                   # 路由工具
-├── stringx/                  # 字符串工具
-├── swagger/                  # Swagger 文档生成
-├── timex/                    # 时间工具
+├── stringx/                  # 字符串格式化
+├── swagger/                  # Swagger 文档
+├── timex/                    # 时间解析与格式化（Duration ↔ String）
 ├── types/                    # 通用类型
-├── utils/                    # 其他工具
+├── utils/                    # JWT / 工具
 ├── uuid/                     # UUID 生成
 └── validator/                # 数据验证
 ```
@@ -276,4 +279,4 @@ make create-sql <name>                # SQL 脚本
 
 ---
 
-**最后更新**: 2026-06-16
+**最后更新**: 2026-06-24
