@@ -1456,7 +1456,7 @@ type OrganizationOptionEntity struct {
 }
 
 type OrganizationUserAcceptInvitationRequest struct {
-	Code           string `json:"code" validate:"required"`
+	Code           string `json:"code" validate:"required,max=20"`
 	Email          string `json:"email" validate:"required,email"`
 	OrganizationId int64  `json:"organization_id" validate:"required"`
 	FirstName      string `json:"first_name" validate:"required,min=2,max=100"`
@@ -1473,9 +1473,9 @@ type OrganizationUserAssignRolesRequest struct {
 }
 
 type OrganizationUserCheckInvitationRequest struct {
-	Code           string `json:"code" validate:"required"`
+	Code           string `json:"code" validate:"required,max=20"`
 	Email          string `json:"email" validate:"required,email"`
-	OrganizationId int64  `json:"organization_id" validate:"required"`
+	OrganizationId int64  `json:"organization_id" validate:"required,min=1"`
 }
 
 type OrganizationUserCheckInvitationResponse struct {

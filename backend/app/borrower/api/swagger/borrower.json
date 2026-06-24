@@ -13098,7 +13098,10 @@
       }
     },
     "/api/v1/organization_user/check_invitation": {
-      "get": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
         "produces": [
           "application/json"
         ],
@@ -23702,7 +23705,7 @@
       }
     }
   },
-  "x-date": "2026-06-23 17:19:41",
+  "x-date": "2026-06-24 09:39:27",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
