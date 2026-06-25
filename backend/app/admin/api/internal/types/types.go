@@ -1179,7 +1179,8 @@ type ResourceTreeEntity struct {
 }
 
 type ResourceTreeRequest struct {
-	Type string `form:"type" validate:"required,oneof=Borrower Lender Admin"`
+	Type  string `form:"type" validate:"required,oneof=Borrower Lender Admin"`
+	Scope string `form:"scope,optional,default=All" validate:"required,oneof=All Organization"`
 }
 
 type ResourceTreeResponse struct {

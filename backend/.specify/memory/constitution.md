@@ -30,7 +30,7 @@
 
 ### 技术栈
 
-- **语言**：Go 1.24+ | **框架**：go-zero 1.9.3
+- **语言**：Go 1.26 | **框架**：go-zero 1.10.1
 - **数据库**：PostgreSQL 14+ (GORM) | **缓存**：Redis 7+ | **存储**：AWS S3
 - **协议**：HTTP (REST) + gRPC | **认证**：JWT with RBAC
 
@@ -78,9 +78,9 @@ fix(document-lender-backend): fix document upload validation error
 ### 共享层
 
 - `domains/zeebee/`：共享模型、仓储、DTO（`data/dto/`）、业务逻辑
-- `common/`：21个工具包（copierx、errorx、gormx、validator 等）
+- `common/`：22个工具包（copierx、errorx、gormx、validator 等）
 
-详细架构设计、数据流规则、层级职责详见 `.claude/docs/analysis/architecture.md`。
+> 事实型数据（版本、模块数、模型数等）以 `go.mod` 与实际代码统计为准。权威清单见 `.claude/docs/INDEX.md`，架构详情见 `.claude/docs/analysis/architecture.md`。
 
 ## 治理
 
