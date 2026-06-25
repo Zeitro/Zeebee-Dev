@@ -13162,6 +13162,14 @@
             "name": "type",
             "in": "query",
             "required": true
+          },
+          {
+            "type": "string",
+            "default": "All",
+            "example": "All",
+            "name": "scope",
+            "in": "query",
+            "allowEmptyValue": true
           }
         ],
         "responses": {
@@ -16837,7 +16845,7 @@
       }
     }
   },
-  "x-date": "2026-06-18 15:05:39",
+  "x-date": "2026-06-25 10:31:56",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
