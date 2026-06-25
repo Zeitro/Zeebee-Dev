@@ -475,6 +475,7 @@ message ResourceTreeRequest {
 }
 message ResourceTreeRequestData {
   string type = 1;
+  string scope = 2;
 }
 // resource tree -- response
 message ResourceTreeResponse {

@@ -36,12 +36,12 @@ Client (Web/Mobile)
 
 ## 服务矩阵
 
-| 服务 | HTTP | RPC | 职责 | 备注 |
-|------|------|-----|------|------|
-| borrower | 10000 | 10001 | 借款方操作（实体、房产、贷款、申请） | API/RPC 双层 |
-| lender | 11000 | 11001 | 贷款方操作（审核、文档、批准） | API/RPC 双层 |
-| admin | 12000 | 12001 | 管理后台（组织、模板、权限） | API/RPC 双层 |
-| pdf_generator | — | — | PDF 生成 | 独立 cmd 程序 |
+| 服务 | HTTP | RPC | 职责 | 规模 | 备注 |
+|------|------|-----|------|------|------|
+| borrower | 10000 | 10001 | 借款方操作（实体、房产、贷款、申请） | ~68k LoC | API/RPC 双层 |
+| lender | 11000 | 11001 | 贷款方操作（审核、文档、批准） | ~36k LoC | API/RPC 双层 |
+| admin | 12000 | 12001 | 管理后台（组织、模板、权限、定价计划） | ~43k LoC | API/RPC 双层 |
+| pdf_generator | 13000 | — | PDF 生成（Chromedp） | ~1k LoC | 独立 cmd 程序 |
 
 gRPC 服务发现：API 配置 `RpcConf.Endpoints` 直连 RPC 端口（`NonBlock: true`）。Etcd 在 dev 配置中默认注释关闭。
 
@@ -58,15 +58,19 @@ gRPC 服务发现：API 配置 `RpcConf.Endpoints` 直连 RPC 端口（`NonBlock
 
 ### RPC 层（gRPC）
 
-- 核心业务逻辑
-- 数据库操作（通过 Repository）
+- 接收 pb 请求，转换为 Domain DTO
+- 经 `baseLogic` 调度 `domains/zeebee/logic/` 共享业务逻辑
 - 事务管理
+- **禁止**直接操作数据库（须经共享 logic → repo）
 
 目录：`app/{service}/rpc/internal/logic/`
 
 ### 共享领域层
 
-- 统一数据模型、DTO、业务逻辑
+- **model**：统一 GORM 数据模型
+- **repo**：数据访问（Repository 模式，泛型 `BaseRepo[T]`）
+- **logic**：跨服务共享业务规则（`*Logic`，RPC 经 baseLogic 调用）
+- **data/dto**：领域 DTO（RPC 层与 repo 间的数据契约）
 - 所有服务共享，避免重复代码
 - 依赖方向：只能向下（API → RPC → Domain → Infrastructure）
 
@@ -84,15 +88,23 @@ gRPC 服务发现：API 配置 `RpcConf.Endpoints` 直连 RPC 端口（`NonBlock
 ```
 Request
   → API Handler（路由分发）
-  → API Logic（参数验证、整合）
+  → API Logic（参数验证、types→pb 转换）
   → RPC Client（gRPC 调用）
-  → RPC Logic（业务逻辑）
+  → RPC Logic（pb→dto 转换，经 baseLogic 聚合调度）
+  → Domain Logic（domains/zeebee/logic/，共享业务规则）
   → Repository（数据访问）
   → Model（GORM 实体）
   → PostgreSQL
 ```
 
-类型转换链：`DTO → Model → BO → Proto Entity`，统一使用 `copierx.Trans`（详见 CLAUDE.md §数据转换规范）。
+**RPC logic 桥接模式**：RPC logic 不直接调 repo，而是经服务内 `baseLogic`（`app/{svc}/rpc/internal/logic/base_logic.go`）聚合调度 `domains/zeebee/logic/` 下的共享 `*Logic`（如 `PricingPlanLogic`），再由共享 logic 调 repo。三服务（admin/borrower/lender）均用此模式。
+
+类型转换链（各层职责不同，DTO 边界严格）：
+- **API 层**：`types ↔ pb`（经 `copierx.Trans`）
+- **RPC 层**：`pb ↔ domains/zeebee/data/dto`（RPC 内部用 Domain DTO，非直接 Model）
+- **Domain 层**：`dto ↔ Model`
+
+统一使用 `copierx.Trans`，时间字段加 `copierx.TimeToRFC3339Str()`（详见 CLAUDE.md §数据转换规范）。
 
 ## 代码组织
 
@@ -142,45 +154,72 @@ backend/app/
     └── etc/                  # 配置文件
 ```
 
+#### 模块目录命名约定（API vs RPC）
+
+API 与 RPC 的 logic 目录命名**不一致**，定位代码时须区分：
+
+| 层 | 命名规则 | 示例 |
+|----|----------|------|
+| API logic (`api/internal/logic/`) | 保留下划线 | `pricing_plan/`、`base_template/`、`loan_document/` |
+| RPC logic (`rpc/internal/logic/`) | 去掉下划线 | `pricingplan/`、`basetemplate/`、`loandocument/` |
+
+模块差异：
+- **RPC 比 API 多 `auth` 模块**（认证登录仅 RPC 实现）
+- **API 个别服务多 `pdf` 模块**（PDF 经独立 pdf_generator 服务，无对应 RPC logic）
+
+完整模块矩阵见 [INDEX.md](../INDEX.md) §服务功能矩阵。
+
+#### 端点实现范例
+
+新增端点时，参照已有的完整实现（含 copierx 转换 + errorx 错误处理 + RPC 调用全流程）：
+
+- API logic 范例：`app/admin/api/internal/logic/pricing_plan/pricing_plan_page_logic.go`
+- RPC logic 范例：`app/admin/rpc/internal/logic/pricingplan/page_logic.go`
+
+API logic 标准模式：`types → copierx.Trans → pb Request → RPC 调用 → copierx.Trans → types Response`。
+
 ### domains/zeebee/ — 共享领域层
 
 ```
 domains/zeebee/
-├── model/                    # GORM 数据模型
-├── repo/                     # Repository（数据访问）
-├── logic/                    # 共享业务逻辑
-├── data/                     # DTO 定义（data/dto/）
-├── constants/                # 业务常量
-├── auth/                     # 认证相关
+├── model/                    # GORM 数据模型（38 个）
+├── repo/                     # Repository 数据访问（38 个 + provider.go DI）
+├── logic/                    # 共享业务逻辑（*Logic，RPC 经 baseLogic 调用）
+├── data/dto/                 # 领域 DTO（RPC↔repo 数据契约，34 个）
+├── constants/                # 业务常量 + Redis key 格式
+├── auth/                     # 认证与 RBAC
+├── drive/                    # Drive / Google Drive 集成
 ├── email/                    # 邮件服务
+├── lenderdiscover/           # 贷款方发现逻辑
 ├── limiter/                  # 限流逻辑
 ├── templater/                # 模板引擎
 └── zeitro/                   # Zeitro 特定逻辑
 ```
 
-### common/ — 通用组件（21 包）
+### common/ — 通用组件（22 包）
 
 ```
 common/
-├── aws_s3/                   # 文件存储（S3）
-├── conforming_loan_limit/    # 贷款限额
+├── aws_s3/                   # AWS S3 文件存储
+├── conforming_loan_limit/    # 贷款限额计算
 ├── copierx/                  # 类型转换（Trans）
+├── cron/                     # 定时任务引擎
 ├── email/                    # 邮件工具
 ├── enums/                    # 枚举定义
-├── errorx/                   # 错误处理
-├── gormx/                    # 数据库操作（BaseRepo）
+├── errorx/                   # 错误处理（Wrap/WithStack/New）
+├── gormx/                    # 数据库操作（泛型 BaseRepo）
 ├── limiter/                  # 限流
 ├── mapx/                     # Map 工具
-├── preapproval_engine/       # 预审批引擎
+├── preapproval_engine/       # 预审批规则引擎
 ├── rbac/                     # 角色权限
-├── redisx/                   # Redis 操作
-├── response/                 # 统一响应格式
+├── redisx/                   # Redis 客户端
+├── response/                 # 统一 HTTP 响应格式
 ├── routex/                   # 路由工具
-├── stringx/                  # 字符串工具
-├── swagger/                  # Swagger 文档生成
-├── timex/                    # 时间工具
+├── stringx/                  # 字符串格式化
+├── swagger/                  # Swagger 文档
+├── timex/                    # 时间解析与格式化（Duration ↔ String）
 ├── types/                    # 通用类型
-├── utils/                    # 其他工具
+├── utils/                    # JWT / 工具
 ├── uuid/                     # UUID 生成
 └── validator/                # 数据验证
 ```
@@ -230,10 +269,11 @@ BaseRepo 通用方法（成对提供 `WithTx` 事务版本）：
 
 1. **依赖方向严格向下**：API → RPC → Domain → Infrastructure，禁止反向依赖
 2. **共享数据库**：所有服务使用同一 PostgreSQL 实例，统一模型定义在 `domains/zeebee/model/`
-3. **类型转换统一**：所有 `DTO ↔ Model ↔ BO ↔ Proto` 转换使用 `copierx.Trans`
+3. **类型转换统一**：所有跨层转换（`types ↔ pb ↔ dto ↔ Model`）使用 `copierx.Trans`
 4. **错误处理统一**：使用 `common/errorx/`，禁止裸 `errors.New`
 5. **代码生成**：使用 `Makefile` 命令生成 API/RPC 代码，不手写 handler/server
-6. **数据库访问**：RPC logic 不直接操作数据库，必须经 `domains/zeebee/repo` 层
+6. **数据库访问**：RPC logic 不直接操作数据库，须经 `baseLogic` → `domains/zeebee/logic/` → `repo`
+7. **DTO 边界**：API 层用 `types`，RPC↔Domain 用 `data/dto`，层间不混用
 
 ## 开发流程
 
@@ -274,6 +314,35 @@ make create-sql <name>                # SQL 脚本
 5. 在 `app/{service}/rpc/internal/logic/` 实现 RPC 逻辑（业务逻辑 + repo 调用）
 6. 如需新数据模型，在 `domains/zeebee/model/` 添加模型，`domains/zeebee/repo/` 添加仓储
 
+### 新增数据实体
+
+1. 在 `domains/zeebee/model/` 定义 GORM 模型（实现 `schema.Tabler`）
+2. 在 `domains/zeebee/repo/` 实现仓储，嵌入 `gormx.BaseRepo[T]` 后添加业务查询方法
+3. 在 `domains/zeebee/repo/provider.go` 注册仓储（供 DI 使用）
+4. 在需要的服务 RPC logic 中通过 `svc.ServiceContext` 注入使用
+
+服务可在共享仓储之上特化业务逻辑（复用数据访问层，叠加服务特有规则），新服务直接复用现有 `domains/zeebee/repo` 仓储。
+
+## 架构决策记录（ADR）
+
+| ADR | 决策 | 关键理由 | 代价 |
+|-----|------|----------|------|
+| ADR-001 | 选择 **go-zero** 框架 | 内置微服务支持、自动代码生成、高性能 gRPC、中间件生态 | 框架绑定、学习成本 |
+| ADR-002 | **共享数据层**（`domains/zeebee/`） | 数据一致性、代码复用最大化、维护成本适中 | 服务耦合、扩展受限 |
+| ADR-003 | **JWT** 认证 | 无状态、微服务友好、跨域支持 | 令牌管理复杂 |
+
+备选方案：go-zero（vs Gin 手工 / gRPC-Gateway / Kratos）；共享数据层（vs 每服务独立库 / 数据同步 / CQRS）；JWT（vs Session+Cookie / OAuth 2.0 / API Key）。
+
+## 共享数据层权衡
+
+| 优势 | 注意事项 |
+|------|----------|
+| 代码复用：减少重复开发与维护 | 耦合度：服务经共享层产生耦合 |
+| 一致性：统一数据模型与业务规则 | 变更影响：共享层变更波及所有服务 |
+| 可测试性：共享层可独立测试 | 跨团队协作：需协调共享层变更 |
+
+**演进方向**（如业务需要）：引入数据同步机制、读写分离（CQRS）、按业务子域拆分数据模型、事件溯源。
+
 ---
 
-**最后更新**: 2026-06-16
+**最后更新**: 2026-06-25

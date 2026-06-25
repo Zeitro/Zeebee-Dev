@@ -62,7 +62,7 @@ make create-sql <service> <name> # Create timestamped SQL file in deploy/<servic
                     ▼
           ┌─────────────────┐
           │  domains/zeebee │  Shared Domain Layer
-          │  model/ repo/   │  (36 models, 36 repos, 33 DTOs)
+          │  model/ repo/   │  (38 models, 38 repos, 34 DTOs)
           │  logic/ dto/    │
           └────────┬────────┘
                    ▼
@@ -82,19 +82,19 @@ make create-sql <service> <name> # Create timestamped SQL file in deploy/<servic
 ```
 backend/
 ├── app/                    # Microservices
-│   ├── borrower/           # Borrower service (19 API modules, 20 RPC modules)
+│   ├── borrower/           # Borrower service (20 API modules, 21 RPC modules)
 │   ├── lender/             # Lender service (13 API modules, 14 RPC modules)
 │   ├── admin/              # Admin service (13 API modules, 14 RPC modules)
 │   └── pdf_generator/      # PDF generation (standalone binary)
 ├── domains/zeebee/         # Shared domain layer
-│   ├── model/              # 36 GORM models
-│   ├── repo/               # 36 repositories + provider.go (DI)
-│   ├── data/dto/           # 33 DTOs
+│   ├── model/              # 38 GORM models
+│   ├── repo/               # 38 repositories + provider.go (DI)
+│   ├── data/dto/           # 34 DTOs
 │   ├── logic/              # Shared business logic
 │   ├── auth/               # Authentication
 │   ├── templater/          # Template engine
 │   └── zeitro/             # Zeitro API integration
-├── common/                 # 21 shared utility packages
+├── common/                 # 22 shared utility packages
 │   ├── copierx/            # Generic data conversion (copierx.Trans)
 │   ├── errorx/             # Unified error handling
 │   ├── gormx/              # GORM extensions (BaseRepo, pagination)
@@ -155,8 +155,6 @@ docker-compose -f deploy/{service}/docker-compose.yml up -d
 
 - **Architecture**: `.claude/docs/analysis/architecture.md`
 - **API Index**: `.claude/docs/guides/api_documentation_index.md`
-- **Project Structure**: `.claude/docs/guides/project_structure_guide.md`
-- **Domain Architecture**: `.claude/docs/guides/domain_architecture_guide.md`
 - **Knowledge Base**: `.claude/docs/INDEX.md`
 - **Dev Standards**: `CLAUDE.md`
 - **Swagger**: `app/{service}/api/swagger/`
