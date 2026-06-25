@@ -38,7 +38,12 @@ const MainModal = ({ setOpen, rowData, handleSearch, systemType }) => {
 	};
 
 	const handleMenuDetails = useCallback(async () => {
-		const payload = new URLSearchParams({ type: systemType });
+		let params = { type: systemType };
+		// admin端单独处理权限数据范围
+		if (systemType === 'Admin') {
+			params.scope = 'Organization';
+		}
+		const payload = new URLSearchParams(params);
 		const url = `/resource/tree?${payload}`;
 		const res = await request(url);
 		const menuInfo = updateMenuList(res?.list || []);
