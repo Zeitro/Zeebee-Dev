@@ -1,6 +1,6 @@
 # Project Index: Zeebee Backend
 
-Generated: 2026-06-24 | Go 1.23 | go-zero 1.10 | ~172k LoC
+Generated: 2026-06-25 | Go 1.26 | go-zero 1.10.1 | ~172k LoC
 
 ## 📁 Project Structure
 
@@ -83,7 +83,7 @@ app/{service}/
 | Type | Path | Purpose |
 |------|------|---------|
 | Main Makefile | `Makefile` | Code gen (`make create-service`), build, lint |
-| Go module | `go.mod` | zeebee-backend, Go 1.23, 197 deps |
+| Go module | `go.mod` | zeebee-backend, Go 1.26, 197 deps |
 | Service configs | `app/{svc}/etc/config-*.yaml` | Per-environment (local/staging/production) |
 | Deploy | `deploy/{svc}/docker-compose.yml` | Docker Compose per service |
 | Linting | `.golangci.yml` | golangci-lint rules |
@@ -130,14 +130,14 @@ app/{service}/
 
 | Metric | Value |
 |--------|-------|
-| Go source files | 1,205 |
+| Go source files | 1,238 |
 | Test files | 27 |
 | Proto definitions | 20 |
 | API definitions | 82 |
 | Generated pb.go | 6 |
 | YAML configs | 24 |
 | Docker files | 8 |
-| Markdown docs | 81 |
+| Markdown docs | 83 |
 | Common packages | 22 |
 | Domain models | 38 |
 | Domain repos | 38 |
