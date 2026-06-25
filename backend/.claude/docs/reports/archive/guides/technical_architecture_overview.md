@@ -1,9 +1,9 @@
 # 技术架构总览
 
 **文档创建时间**: 2025-12-02
+**最近更新**: 2026-06-24
 **文档类型**: 技术架构文档
 **维护状态**: 活跃
-**更新频率**: 每月或架构变更时
 
 ## 📋 概述
 
@@ -12,7 +12,7 @@ Zeebee 贷款管理系统采用现代化的微服务架构，基于 go-zero
 
 ### 核心架构特性
 
-- **微服务架构**: 借款方 (Borrower) 和贷款方 (Lender) 独立服务
+- **微服务架构**: Borrower + Lender + Admin + PDF Generator 四服务
 - **共享数据层**: 统一的领域模型和数据访问层，实现代码复用
 - **RESTful API**: 标准化的 HTTP 接口设计
 - **gRPC 通信**: 高性能的服务间通信
@@ -39,14 +39,15 @@ graph TB
 
     subgraph "应用服务层"
         BORROWER_API[Borrower API<br/>Port: 10000]
-        LENDER_API[Lender API<br/>Port: TBD]
-        ADMIN_API[Admin API<br/>Port: TBD]
+        LENDER_API[Lender API<br/>Port: 11000]
+        ADMIN_API[Admin API<br/>Port: 12000]
+        PDF_API[PDF Generator API<br/>Port: 13000]
     end
 
     subgraph "业务服务层"
         BORROWER_RPC[Borrower RPC<br/>Port: 10001]
-        LENDER_RPC[Lender RPC<br/>Port: TBD]
-        ADMIN_RPC[Admin RPC<br/>Port: TBD]
+        LENDER_RPC[Lender RPC<br/>Port: 11001]
+        ADMIN_RPC[Admin RPC<br/>Port: 12001]
     end
 
     subgraph "共享数据层"
@@ -431,7 +432,7 @@ graph TB
   - 自动代码生成
   - 内置中间件系统
   - 高性能 gRPC 支持
-版本: 1.8.4
+版本: 1.6.0+
 
 优势:
   - 开发效率高
@@ -1053,5 +1054,5 @@ CI/CD 完善:
 
 ---
 
-*本文档最后更新时间: 2025-12-02*
-*下次更新时间: 2026-01-02 或架构重大变更时*
+*本文档最后更新时间: 2026-06-24*
+*下次更新时间: 重大架构变更时*

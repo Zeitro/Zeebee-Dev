@@ -1,6 +1,6 @@
 # Zeebee 后端项目结构指南
 
-> 更新日期：2026-05-12 | 本文档反映项目当前实际结构
+> 更新日期：2026-06-24 | 本文档反映项目当前实际结构
 
 ## 1. 架构总览
 
@@ -10,7 +10,7 @@ Zeebee 是基于 **Go + go-zero** 的贷款管理微服务系统，采用 **DDD 
 ┌──────────┬──────────┬──────────┬───────────────┐
 │ Borrower │  Lender  │  Admin   │ PDF Generator │
 │ HTTP:10K │ HTTP:11K │ HTTP:12K │  (standalone) │
-│  RPC:10K1│  RPC:11K1│  RPC:12K1│               │
+│  RPC:10K1│  RPC:11K1│  RPC:12K1│  (HTTP:13K) │
 ├──────────┴──────────┴──────────┴───────────────┤
 │              API Layer (HTTP)                    │
 │       handler / logic / middleware / svc         │
@@ -22,7 +22,7 @@ Zeebee 是基于 **Go + go-zero** 的贷款管理微服务系统，采用 **DDD 
 │    domains/zeebee/ - model / repo / logic / dto  │
 ├─────────────────────────────────────────────────┤
 │           Common Layer (shared)                  │
-│          common/ - 20 个通用工具包                 │
+│          common/ - 22 个通用工具包                 │
 ├─────────────────────────────────────────────────┤
 │           Infrastructure                         │
 │      PostgreSQL (GORM) / Redis / AWS S3          │
@@ -83,7 +83,7 @@ app/{service}/
 | borrower | 10000 | 10001 |
 | lender | 11000 | 11001 |
 | admin | 12000 | 12001 |
-| pdf_generator | - | - |
+| pdf_generator | 13000 | - |
 
 ### 各服务模块一览
 
@@ -103,8 +103,8 @@ app/{service}/
 
 ```
 domains/zeebee/
-├── model/          # 27个 GORM 数据模型
-├── repo/           # 27个 Repository + provider.go (DI)
+├── model/          # 38个 GORM 数据模型
+├── repo/           # 38个 Repository + provider.go (DI)
 ├── data/dto/       # 26个 DTO
 ├── logic/          # 共享业务逻辑 + provider.go
 ├── auth/           # 认证逻辑
@@ -124,7 +124,7 @@ domains/zeebee/
 | 组织 | Organization, OrganizationUser, OrganizationEmail, OrganizationSetting, OrganizationTemplate |
 | 借款 | BorrowerApplicant, BorrowerEntity, BorrowerProperty |
 | 贷款 | Loan, LoanBorrower, LoanApplicant, LoanProperty, LoanDocument, LoanOperation, LoanExperience, LoanDemographic, LoanThirdService |
-| 其他 | File, EmailAuthorization, UsGeography, BaseTemplate |
+| 其他 | File, EmailAuthorization, UsGeography, BaseTemplate, PricingPlan, PlanPolicy, OrganizationSubscription |
 
 ## 5. 通用工具包 (common/)
 
@@ -133,10 +133,11 @@ domains/zeebee/
 | `aws_s3` | AWS S3 文件存储 |
 | `conforming_loan_limit` | 贷款额度计算 |
 | `copierx` | 泛型数据转换（核心） |
+| `cron` | 定时任务引擎 |
 | `email` | 邮件发送 |
 | `enums` | 枚举定义 |
 | `errorx` | 统一错误处理 |
-| `gormx` | GORM 扩展 |
+| `gormx` | GORM 扩展（BaseRepo） |
 | `limiter` | Redis 限流器 |
 | `mapx` | Map 工具 |
 | `preapproval_engine` | 预审批引擎 |
@@ -145,7 +146,7 @@ domains/zeebee/
 | `response` | 统一响应 |
 | `routex` | 路由工具 |
 | `stringx` | 字符串工具 |
-| `timex` | 时间工具 |
+| `timex` | 时间解析与格式化（Duration ↔ String） |
 | `types` | 类型定义 |
 | `utils` | 通用工具 |
 | `uuid` | Sonyflake ID 生成 |
