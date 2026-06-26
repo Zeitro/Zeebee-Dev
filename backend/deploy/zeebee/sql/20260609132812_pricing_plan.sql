@@ -104,8 +104,11 @@ CREATE INDEX "idx_org_subscr_policy_id" ON "public"."organization_subscriptions"
     "pricing_plan_policy_id"
     );
 
-CREATE INDEX ON "public"."organization_subscriptions" (
-    );
 
 COMMENT
 ON COLUMN "public"."organization_subscriptions"."status" IS 'Trailing,Active,Expiring,Expired,Suspended';
+
+-- organization
+ALTER TABLE "public"."organizations"
+    ADD COLUMN "source" varchar(16) NOT NULL DEFAULT 'Manual',
+    ADD COLUMN "order" int2 NOT NULL DEFAULT 2;
