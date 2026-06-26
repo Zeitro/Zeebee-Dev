@@ -34,12 +34,15 @@ func NewPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PageLogic {
 func (l *PageLogic) Page(in *lender.OrganizationTemplatePageRequest) (resp *lender.OrganizationTemplatePageResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed To Get User Claim From Context")
+		return nil, errorx.Wrap(err, "fail to Get User Claim From Context")
 	}
 
 	input, err := copierx.Trans[lender.OrganizationTemplatePageRequestData, dto.OrganizationTemplatePageRequestDto](

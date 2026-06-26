@@ -124,7 +124,7 @@ RpcConf:
   VerifyEmailUrl: https://app.zeebeeloans.com/login/verifyEmail
   ResetPwdUrl: https://app.zeebeeloans.com/login/resetPassword
   InviteUserUrl: https://app.zeebeeloans.com/login/joinOrganization
-  InviteUserExpireSeconds: 86400
+  InviteUserExpireSeconds: 259200
   SendInviteEmailPeriodSeconds: 60
   PreApprovalLoanExpireSeconds: 86400
   HighCostLimitValue: 806500
@@ -144,3 +144,6 @@ RpcConf:
       Pwd: ''
       Tls: true
       BorrowerChannel: /borrower-channel
+  CronTaskConf:
+    - name: update_organization_subscription_status
+      schedule: "0 0 2 * * *"

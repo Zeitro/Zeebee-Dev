@@ -303,14 +303,14 @@ type BorrowerPropertyTransactionAllResponse struct {
 }
 
 type BorrowerPropertyTransactionChecklist struct {
-	AllChecked                        bool                                       `json:"all_checked"`
-	TotalDocumentCount                int32                                      `json:"total_document_count"`
-	TotalRequiredDocumentCount        int32                                      `json:"total_required_document_count"`
-	TotalRequiredUpdatedDocumentCount int32                                      `json:"total_required_updated_document_count"`
-	TotalOptionalDocumentCount        int32                                      `json:"total_optional_document_count"`
-	TotalOptionalUpdatedDocumentCount int32                                      `json:"total_optional_updated_document_count"`
-	RequiredDocuments                 []BorrowerPropertyTransactionChecklistNode `json:"required_documents"`
-	OptionalDocuments                 []BorrowerPropertyTransactionChecklistNode `json:"optional_documents"`
+	AllChecked                         bool                                       `json:"all_checked"`
+	TotalDocumentCount                 int32                                      `json:"total_document_count"`
+	TotalRequiredDocumentCount         int32                                      `json:"total_required_document_count"`
+	TotalRequiredUploadedDocumentCount int32                                      `json:"total_required_uploaded_document_count"`
+	TotalOptionalDocumentCount         int32                                      `json:"total_optional_document_count"`
+	TotalOptionalUploadedDocumentCount int32                                      `json:"total_optional_uploaded_document_count"`
+	RequiredDocuments                  []BorrowerPropertyTransactionChecklistNode `json:"required_documents"`
+	OptionalDocuments                  []BorrowerPropertyTransactionChecklistNode `json:"optional_documents"`
 }
 
 type BorrowerPropertyTransactionChecklistNode struct {
@@ -1397,6 +1397,8 @@ type OrganizationEntity struct {
 	Logo               string                      `json:"logo"`
 	Website            string                      `json:"website"`
 	Tagline            string                      `json:"tagline"`
+	Source             string                      `json:"source,optional"`
+	Order              int                         `json:"order"`
 	Metadata           *OrganizationMetadataEntity `json:"metadata"`
 	CreatedAt          string                      `json:"created_at"`
 	UpdatedAt          string                      `json:"updated_at"`
@@ -1454,7 +1456,7 @@ type OrganizationOptionEntity struct {
 }
 
 type OrganizationUserAcceptInvitationRequest struct {
-	Code           string `json:"code" validate:"required"`
+	Code           string `json:"code" validate:"required,max=20"`
 	Email          string `json:"email" validate:"required,email"`
 	OrganizationId int64  `json:"organization_id" validate:"required"`
 	FirstName      string `json:"first_name" validate:"required,min=2,max=100"`
@@ -1468,6 +1470,16 @@ type OrganizationUserAllResponse struct {
 type OrganizationUserAssignRolesRequest struct {
 	Id      int64   `path:"id" validate:"required"`
 	RoleIds []int64 `json:"role_ids,optional"`
+}
+
+type OrganizationUserCheckInvitationRequest struct {
+	Code           string `json:"code" validate:"required,max=20"`
+	Email          string `json:"email" validate:"required,email"`
+	OrganizationId int64  `json:"organization_id" validate:"required,min=1"`
+}
+
+type OrganizationUserCheckInvitationResponse struct {
+	IsExpired bool `json:"is_expired"`
 }
 
 type OrganizationUserCreateRequest struct {

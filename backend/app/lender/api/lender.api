@@ -298,20 +298,6 @@ service lender-api {
 	tags:       organization_user
 )
 service lender-api {
-	@doc "accept invitation"
-	@handler OrganizationUserAcceptInvitation
-	post /organization_user/accept_invitation (OrganizationUserAcceptInvitationRequest) returns (UserJwtResponse)
-}
-
-@server (
-	desc:       "lender-api service"
-	version:    v1
-	group:      organization_user
-	prefix:     /api/v1
-	middleware: AuthMiddleware
-	tags:       organization_user
-)
-service lender-api {
 	@doc "detail"
 	@handler OrganizationUserDetail
 	get /organization_user/:id (PathIdRequest) returns (OrganizationUserEntity)
@@ -347,6 +333,14 @@ service lender-api {
 	@doc "send email"
 	@handler OrganizationUserSendEmail
 	post /organization_user/:id/send_email (PathIdRequest) returns (EmptyResponse)
+
+	@doc "accept invitation"
+	@handler OrganizationUserAcceptInvitation
+	post /organization_user/accept_invitation (OrganizationUserAcceptInvitationRequest) returns (UserJwtResponse)
+
+	@doc "check invitation"
+	@handler OrganizationUserCheckInvitation
+	post /organization_user/check_invitation (OrganizationUserCheckInvitationRequest) returns (OrganizationUserCheckInvitationResponse)
 }
 
 // ============== organization user end =============

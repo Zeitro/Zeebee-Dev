@@ -100,7 +100,7 @@ func getConformingLoanLimits(content []byte) (limits []*ConformingLoanLimit, err
 
 	// f, err := excelize.OpenFile(filePath)
 	if err != nil {
-		err = errorx.Wrap(err, "Failed To Read Excel Content")
+		err = errorx.Wrap(err, "fail to read excel content")
 		return
 	}
 
@@ -108,11 +108,11 @@ func getConformingLoanLimits(content []byte) (limits []*ConformingLoanLimit, err
 
 	rows, err := f.GetRows(f.GetSheetName(0))
 	if err != nil {
-		err = errorx.Wrap(err, "Failed To Get Rows")
+		err = errorx.Wrap(err, "fail to get rows")
 		return
 	}
 	if len(rows) < 3 {
-		err = errorx.New("No Data")
+		err = errorx.New("no data")
 		return
 	}
 	// check header fileds

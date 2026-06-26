@@ -6,10 +6,8 @@ import {
 } from '@repo/shared-methods/componentsUi/zeeBeeDetails/components/ChangeStageStatus';
 import { TableOperation } from '@repo/shared-methods';
 import { useState } from 'react';
-import { useAuth } from '@repo/shared-methods/hooks';
-import { PERMISSIONS } from '@config/permissions';
+
 export default function useColumn({ isNotAddress, successCallback, showDeleteModal, stage }) {
-	const { hasPermission, getActiveByPermission } = useAuth();
 	const [rowData, setRowData] = useState({});
 	const [openReassignLender, setOpenReassignLender] = useState(false);
 	const get3rdPartyMark = (v, { source }) => (
@@ -101,35 +99,43 @@ export default function useColumn({ isNotAddress, successCallback, showDeleteMod
 		];
 	};
 
-	const getOptRender = (_, record) => (
-		<TableOperation
-			record={record}
-			getItems={(editItem, deleteItem, detailsItem) => {
-				const arr = [];
-				if (hasPermission(PERMISSIONS.LOAN.DETAILS)) {
-					arr.push({
-						...detailsItem,
-						url: `/loans/zeeBeeDetails?id=${record?.id}`,
-					});
-				}
-				if (stage === 'Draft' && hasPermission(PERMISSIONS.LOAN.REASSIGN)) {
-					arr.push({
-						label: 'Reassign Lender',
-						key: 'reassignLender',
-					});
-				}
-				return arr;
-			}}
-			onSelect={(key) => {
-				setRowData({ ...record });
-				if (key === 'delete') {
-					showDeleteModal(record);
-				} else if (key === 'reassignLender') {
-					setOpenReassignLender(true);
-				}
-			}}
-		/>
-	);
+	const getOpt = (showDeleteModal) => {
+		return {
+			title: 'Action',
+			dataIndex: 'operation',
+			width: stage === 'Draft' ? 220 : 110,
+			align: 'left',
+			fixed: 'right',
+			render: (_, record) => (
+				<TableOperation
+					record={record}
+					getItems={(editItem, deleteItem, detailsItem) => {
+						const arr = [
+							{
+								...detailsItem,
+								url: `/loans/zeeBeeDetails?id=${record?.id}`,
+							},
+						];
+						if (stage === 'Draft') {
+							arr.push({
+								label: 'Reassign Lender',
+								key: 'reassignLender',
+							});
+						}
+						return arr;
+					}}
+					onSelect={(key) => {
+						setRowData({ ...record });
+						if (key === 'delete') {
+							showDeleteModal(record);
+						} else if (key === 'reassignLender') {
+							setOpenReassignLender(true);
+						}
+					}}
+				/>
+			),
+		};
+	};
 
 	const getStageOpt = (successCallback) => {
 		return {
@@ -250,14 +256,7 @@ export default function useColumn({ isNotAddress, successCallback, showDeleteMod
 			},
 			// ...(stage !== 'Draft' ? [getStageOpt(successCallback)] : []),
 			...(stage === 'Pending' ? [status] : []),
-			getActiveByPermission({
-				permissionList:
-					stage === 'Draft'
-						? [PERMISSIONS.LOAN.DETAILS, PERMISSIONS.LOAN.REASSIGN]
-						: [PERMISSIONS.LOAN.DETAILS],
-				render: getOptRender,
-				minWidth: 160,
-			}),
+			getOpt(showDeleteModal, stage),
 		];
 		if (spliceList) {
 			arr.splice(spliceIndex, 0, ...spliceList);
@@ -370,10 +369,7 @@ export default function useColumn({ isNotAddress, successCallback, showDeleteMod
 				render: (v) => v || '--',
 			},
 			// getStageOpt(successCallback),
-			getActiveByPermission({
-				permissionList: [PERMISSIONS.LOAN.DETAILS],
-				render: getOptRender,
-			}),
+			getOpt(showDeleteModal),
 		];
 		if (spliceList) {
 			arr.splice(spliceIndex, 0, ...spliceList);
@@ -422,10 +418,7 @@ export default function useColumn({ isNotAddress, successCallback, showDeleteMod
 				render: (v) => v || '--',
 			},
 			// getStageOpt(successCallback),
-			getActiveByPermission({
-				permissionList: [PERMISSIONS.LOAN.DETAILS],
-				render: getOptRender,
-			}),
+			getOpt(showDeleteModal),
 		];
 		if (spliceList) {
 			arr.splice(spliceIndex, 0, ...spliceList);

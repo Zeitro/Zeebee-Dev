@@ -9,7 +9,7 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -36,7 +36,10 @@ func NewUpdateCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upd
 func (l *UpdateCommentLogic) UpdateComment(in *lender.LoanDocumentUpdateCommentRequest) (resp *lender.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 	var loan *model.Loan
@@ -59,7 +62,7 @@ func (l *UpdateCommentLogic) UpdateComment(in *lender.LoanDocumentUpdateCommentR
 			"comment": in.Data.Comment,
 		})
 		if innerErr != nil {
-			return errorx.Wrap(innerErr, "Failed To Update Loan Document Comment")
+			return errorx.Wrap(innerErr, "fail to update loan document comment")
 		}
 
 		innerErr = l.baseLogic.CreateLoanOperationLog(
@@ -67,16 +70,16 @@ func (l *UpdateCommentLogic) UpdateComment(in *lender.LoanDocumentUpdateCommentR
 			tx,
 			in.Data.Id,
 			claim.OrganizationUserId,
-			data.LoanOperationStatus{
+			dto.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			data.LoanOperationStatus{
+			dto.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			constants.LoanOperationActionComment,
-			&data.LoanOperationMetadata{
+			&dto.LoanOperationMetadata{
 				Comment: in.Data.Comment,
 			},
 		)

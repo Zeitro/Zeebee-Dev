@@ -1,7 +1,7 @@
 # API 文档索引
 
 > Zeebee 后端 API 接口文档索引
-> 最后更新：2026-05-12
+> 最后更新：2026-06-24
 
 ## 概述
 
@@ -12,7 +12,7 @@
 | Borrower | 10000 | 10001 | `app/borrower/api/swagger/` |
 | Lender | 11000 | 11001 | `app/lender/api/swagger/` |
 | Admin | 12000 | 12001 | `app/admin/api/swagger/` |
-| PDF Generator | - | - | `app/pdf_generator/api/swagger/` |
+| PDF Generator | 13000 | - | `app/pdf_generator/api/swagger/` |
 
 ---
 

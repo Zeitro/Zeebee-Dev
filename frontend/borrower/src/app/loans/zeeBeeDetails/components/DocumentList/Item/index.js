@@ -1,19 +1,11 @@
 import React, { useState } from 'react';
 import { Collapse, List, Space } from 'antd';
-import {
-	DeleteOutlined,
-	FileImageOutlined,
-	FilePdfOutlined,
-	FileTextOutlined,
-	FileExcelOutlined,
-	FileWordOutlined,
-	FilePptOutlined,
-} from '@ant-design/icons';
+import { DeleteOutlined } from '@ant-design/icons';
 import styles from '../index.module.scss';
 import { DeleteBtn, ViewFile } from '@repo/shared-methods';
 import { createRequest, eventBus } from '@repo/shared-methods/utils';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
-
+import { getFileTypeIcon } from '@repo/shared-methods/enum';
 const DocumentItem = ({ columns, item, isHide }) => {
 	const [activeKey, setActiveKey] = useState([]);
 	const [loading, setLoading] = useState(false);
@@ -46,25 +38,7 @@ const DocumentItem = ({ columns, item, isHide }) => {
 	};
 
 	const getIcon = (suffix) => {
-		switch (suffix) {
-			case 'pdf':
-				return <FilePdfOutlined />;
-			case 'png':
-			case 'jpg':
-			case 'jpeg':
-				return <FileImageOutlined />;
-			case 'xlsx':
-			case 'xls':
-				return <FileExcelOutlined />;
-			case 'doc':
-			case 'docx':
-				return <FileWordOutlined />;
-			case 'ppt':
-			case 'pptx':
-				return <FilePptOutlined />;
-			default:
-				return <FileTextOutlined />;
-		}
+		return getFileTypeIcon(suffix, { className: 'w-[16px] h-[16px]' });
 	};
 	return (
 		<Collapse

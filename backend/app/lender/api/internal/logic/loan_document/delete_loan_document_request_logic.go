@@ -27,11 +27,6 @@ func NewDeleteLoanDocumentRequestLogic(ctx context.Context, svcCtx *svc.ServiceC
 }
 
 func (l *DeleteLoanDocumentRequestLogic) DeleteLoanDocumentRequest(req *types.PathIdRequest) (resp *types.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
 
 	// Call RPC method
 	_, err = l.svcCtx.LoanDocumentRpcClient.DeleteRequest(l.ctx, &lender.LoanDocumentDeleteRequestRequest{

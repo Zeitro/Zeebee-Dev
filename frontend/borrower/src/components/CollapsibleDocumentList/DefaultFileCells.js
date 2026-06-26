@@ -1,21 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-	DeleteOutlined,
-	FileExcelOutlined,
-	FileImageOutlined,
-	FilePdfOutlined,
-	FilePptOutlined,
-	FileTextOutlined,
-	FileWordOutlined,
-	FolderOpenOutlined,
-	FolderOutlined,
-} from '@ant-design/icons';
+import { DeleteOutlined, FolderOpenOutlined, FolderOutlined } from '@ant-design/icons';
 import { Space } from 'antd';
 import { DeleteBtn, ViewFile } from '@repo/shared-methods';
 import { createRequest, displayValue } from '@repo/shared-methods/utils';
-
+import { getFileTypeIcon } from '@repo/shared-methods/enum';
 function getFileSuffix(file, fileKey = 'file_url') {
 	const name = file?.[fileKey]?.split('/').pop() ?? '';
 	return name.split('.').pop()?.toLowerCase() ?? '';
@@ -23,28 +13,6 @@ function getFileSuffix(file, fileKey = 'file_url') {
 
 function getFileName(file, fileKey = 'file_url') {
 	return file?.[fileKey]?.split('/').pop() ?? '';
-}
-
-function FileTypeIcon({ suffix }) {
-	switch (suffix) {
-		case 'pdf':
-			return <FilePdfOutlined className="text-base-label" />;
-		case 'png':
-		case 'jpg':
-		case 'jpeg':
-			return <FileImageOutlined className="text-base-label" />;
-		case 'xlsx':
-		case 'xls':
-			return <FileExcelOutlined className="text-base-label" />;
-		case 'doc':
-		case 'docx':
-			return <FileWordOutlined className="text-base-label" />;
-		case 'ppt':
-		case 'pptx':
-			return <FilePptOutlined className="text-base-label" />;
-		default:
-			return <FileTextOutlined className="text-base-label" />;
-	}
 }
 
 export function DefaultParentNameCell({ record, fieldKey = 'document_type', open }) {
@@ -62,7 +30,7 @@ export function DefaultFileNameCell({ file, fileKey = 'file_url' }) {
 
 	return (
 		<div className="inline-flex h-8 max-w-full items-center gap-1 rounded-md border border-base-border bg-background px-3">
-			<FileTypeIcon suffix={suffix} />
+			{getFileTypeIcon(suffix, { className: 'w-[16px] h-[16px]' })}
 			<span className="min-w-0 truncate text-sm text-foreground">{displayValue(name)}</span>
 		</div>
 	);

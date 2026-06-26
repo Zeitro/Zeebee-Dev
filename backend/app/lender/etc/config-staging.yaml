@@ -71,7 +71,7 @@ RpcConf:
   VerifyEmailUrl: https://agent.zeebeeloans.net/login/verifyEmail
   ResetPwdUrl: https://agent.zeebeeloans.net/login/resetPassword
   InviteUserUrl: https://agent.zeebeeloans.net/login/joinOrganization
-  InviteUserExpireSeconds: 86400
+  InviteUserExpireSeconds: 259200
   SendInviteEmailPeriodSeconds: 60
 
   CasbinConf:
@@ -83,3 +83,6 @@ RpcConf:
       Pwd: ''
       Tls: true
       LenderChannel: /lender-channel
+  CronTaskConf:
+    - name: update_organization_subscription_status
+      schedule: "0 0 3 * * *"
