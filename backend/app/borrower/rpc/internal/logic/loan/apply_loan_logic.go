@@ -51,12 +51,15 @@ func NewApplyLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ApplyLo
 func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrower.LoanApplyResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
-		return nil, errorx.Wrap(err, "failed to get user claim")
+		return nil, errorx.Wrap(err, "fail to get user claim")
 	}
 
 	data, err := l.buildModelData(in.Data, nil, claim)
@@ -198,7 +201,7 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 		return innerErr
 	})
 	if err != nil {
-		return nil, errorx.Wrap(err, "failed to apply loan")
+		return nil, errorx.Wrap(err, "fail to apply loan")
 	}
 
 	return &borrower.LoanApplyResponse{
@@ -336,7 +339,7 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 	loanProperty.LivingAreaSqft = borrowerProperty.LivingAreaSqft
 	loanProperty.Address = borrowerProperty.Address
 	loanProperty.BorrowerPropertyId = reqData.LoanProperty.BorrowerPropertyId
-	if oldLoan!=nil && oldLoan.LoanProperty != nil {
+	if oldLoan != nil && oldLoan.LoanProperty != nil {
 		loanProperty.Id = oldLoan.LoanProperty.Id
 	}
 

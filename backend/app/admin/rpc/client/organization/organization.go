@@ -14,16 +14,24 @@ import (
 )
 
 type (
-	EmptyResponse                     = admin.EmptyResponse
-	IdRequest                         = admin.IdRequest
-	OrganizationCreateLenderRequest   = admin.OrganizationCreateLenderRequest
-	OrganizationDetailResponse        = admin.OrganizationDetailResponse
-	OrganizationPageRequest           = admin.OrganizationPageRequest
-	OrganizationPageResponse          = admin.OrganizationPageResponse
-	OrganizationSelectOptionsRequest  = admin.OrganizationSelectOptionsRequest
-	OrganizationSelectOptionsResponse = admin.OrganizationSelectOptionsResponse
-	OrganizationSwitchStatusRequest   = admin.OrganizationSwitchStatusRequest
-	OrganizationUpdateLenderRequest   = admin.OrganizationUpdateLenderRequest
+	EmptyRequest                        = admin.EmptyRequest
+	EmptyResponse                       = admin.EmptyResponse
+	IdRequest                           = admin.IdRequest
+	LenderDiscoverCommitRequest         = admin.LenderDiscoverCommitRequest
+	LenderDiscoverPreviewResponse       = admin.LenderDiscoverPreviewResponse
+	LenderDiscoverRunRequest            = admin.LenderDiscoverRunRequest
+	LenderDiscoverRunResponse           = admin.LenderDiscoverRunResponse
+	LenderDiscoverSettingsResponse      = admin.LenderDiscoverSettingsResponse
+	LenderDiscoverUpdateSettingsRequest = admin.LenderDiscoverUpdateSettingsRequest
+	OrganizationCreateLenderRequest     = admin.OrganizationCreateLenderRequest
+	OrganizationDetailResponse          = admin.OrganizationDetailResponse
+	OrganizationPageRequest             = admin.OrganizationPageRequest
+	OrganizationPageResponse            = admin.OrganizationPageResponse
+	OrganizationSelectOptionsRequest    = admin.OrganizationSelectOptionsRequest
+	OrganizationSelectOptionsResponse   = admin.OrganizationSelectOptionsResponse
+	OrganizationSwitchStatusRequest     = admin.OrganizationSwitchStatusRequest
+	OrganizationUpdateLenderRequest     = admin.OrganizationUpdateLenderRequest
+	OrganizationUpdateOrderRequest      = admin.OrganizationUpdateOrderRequest
 
 	Organization interface {
 		Page(ctx context.Context, in *OrganizationPageRequest, opts ...grpc.CallOption) (*OrganizationPageResponse, error)
@@ -31,8 +39,16 @@ type (
 		UpdateLender(ctx context.Context, in *OrganizationUpdateLenderRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
 		Detail(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
 		Delete(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+		UpdateOrder(ctx context.Context, in *OrganizationUpdateOrderRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		SwitchStatus(ctx context.Context, in *OrganizationSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 		SelectOptions(ctx context.Context, in *OrganizationSelectOptionsRequest, opts ...grpc.CallOption) (*OrganizationSelectOptionsResponse, error)
+		// lender discover (organization-scoped)
+		DiscoverGetSettings(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverSettingsResponse, error)
+		DiscoverUpdateSettings(ctx context.Context, in *LenderDiscoverUpdateSettingsRequest, opts ...grpc.CallOption) (*LenderDiscoverSettingsResponse, error)
+		DiscoverRun(ctx context.Context, in *LenderDiscoverRunRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error)
+		DiscoverPreview(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverPreviewResponse, error)
+		DiscoverCommit(ctx context.Context, in *LenderDiscoverCommitRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error)
+		DiscoverLatestRun(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error)
 	}
 
 	defaultOrganization struct {
@@ -71,6 +87,11 @@ func (m *defaultOrganization) Delete(ctx context.Context, in *IdRequest, opts ..
 	return client.Delete(ctx, in, opts...)
 }
 
+func (m *defaultOrganization) UpdateOrder(ctx context.Context, in *OrganizationUpdateOrderRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	client := admin.NewOrganizationClient(m.cli.Conn())
+	return client.UpdateOrder(ctx, in, opts...)
+}
+
 func (m *defaultOrganization) SwitchStatus(ctx context.Context, in *OrganizationSwitchStatusRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
 	client := admin.NewOrganizationClient(m.cli.Conn())
 	return client.SwitchStatus(ctx, in, opts...)
@@ -79,4 +100,35 @@ func (m *defaultOrganization) SwitchStatus(ctx context.Context, in *Organization
 func (m *defaultOrganization) SelectOptions(ctx context.Context, in *OrganizationSelectOptionsRequest, opts ...grpc.CallOption) (*OrganizationSelectOptionsResponse, error) {
 	client := admin.NewOrganizationClient(m.cli.Conn())
 	return client.SelectOptions(ctx, in, opts...)
+}
+
+// lender discover (organization-scoped)
+func (m *defaultOrganization) DiscoverGetSettings(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverSettingsResponse, error) {
+	client := admin.NewOrganizationClient(m.cli.Conn())
+	return client.DiscoverGetSettings(ctx, in, opts...)
+}
+
+func (m *defaultOrganization) DiscoverUpdateSettings(ctx context.Context, in *LenderDiscoverUpdateSettingsRequest, opts ...grpc.CallOption) (*LenderDiscoverSettingsResponse, error) {
+	client := admin.NewOrganizationClient(m.cli.Conn())
+	return client.DiscoverUpdateSettings(ctx, in, opts...)
+}
+
+func (m *defaultOrganization) DiscoverRun(ctx context.Context, in *LenderDiscoverRunRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error) {
+	client := admin.NewOrganizationClient(m.cli.Conn())
+	return client.DiscoverRun(ctx, in, opts...)
+}
+
+func (m *defaultOrganization) DiscoverPreview(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverPreviewResponse, error) {
+	client := admin.NewOrganizationClient(m.cli.Conn())
+	return client.DiscoverPreview(ctx, in, opts...)
+}
+
+func (m *defaultOrganization) DiscoverCommit(ctx context.Context, in *LenderDiscoverCommitRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error) {
+	client := admin.NewOrganizationClient(m.cli.Conn())
+	return client.DiscoverCommit(ctx, in, opts...)
+}
+
+func (m *defaultOrganization) DiscoverLatestRun(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error) {
+	client := admin.NewOrganizationClient(m.cli.Conn())
+	return client.DiscoverLatestRun(ctx, in, opts...)
 }

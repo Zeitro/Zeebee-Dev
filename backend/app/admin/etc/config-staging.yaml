@@ -2,7 +2,7 @@ ApiConf:
   Name: admin-api
   Host: 0.0.0.0
   Port: 10200
-  Timeout: 10000
+  Timeout: 600000
   Log:
     Stat: false
 
@@ -13,13 +13,13 @@ ApiConf:
   RpcConf:
     Endpoints:
       - 127.0.0.1:10201
-    Timeout: 10000
+    Timeout: 600000
     NonBlock: true
 
 RpcConf:
   Name: admin.rpc
   ListenOn: 0.0.0.0:10201
-  Timeout: 10000
+  Timeout: 600000
   LimiterConf:
     Login:
       Rate: 5
@@ -54,6 +54,10 @@ RpcConf:
     Bucket: zeebee-files-staging
     FileFolder: files-staging
     PreSigneUrlExpireSeconds: 60
+  OpenAIConf:
+    APIKey: "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"
+    Model: gpt-4o-mini
+    BaseURL: "https://api.openai.com"
   CasbinConf:
     ModelPath: etc/model.conf
     EventTopic:
@@ -67,3 +71,6 @@ RpcConf:
       AdminChannel: /admin-channel
       BorrowerChannel: /borrower-channel
       LenderChannel: /lender-channel
+  CronTaskConf:
+    - name: update_organization_subscription_status
+      schedule: "0 0 1 * * *"

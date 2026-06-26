@@ -33,7 +33,10 @@ func NewAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AllLogic {
 func (l *AllLogic) All(in *borrower.PropertyAllRequest) (resp *borrower.PropertyAllResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 
@@ -44,7 +47,7 @@ func (l *AllLogic) All(in *borrower.PropertyAllRequest) (resp *borrower.Property
 
 	results, err := l.svcCtx.BorrowerPropertyRepo.AllForOrganization(l.ctx, claim.OrganizationId)
 	if err != nil {
-		return nil, errorx.Wrap(err, "failed to get properties")
+		return nil, errorx.Wrap(err, "fail to get properties")
 	}
 
 	// respData := make([]*borrower.BorrowerPropertyEntity, 0, len(results))

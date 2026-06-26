@@ -4,7 +4,6 @@ import (
 	"database/sql"
 
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
 )
 
 type LoanExperienceEntityDto struct {
@@ -19,5 +18,5 @@ type LoanExperienceEntityDto struct {
 	Profit           float64                      `json:"profit"`
 	IsTenantOccupied bool                         `json:"is_tenant_occupied"`
 	Type             constants.LoanExperienceType `json:"type"`
-	Address          data.Address                 `json:"address"`
+	Address          AddressDto                   `json:"address"`
 }

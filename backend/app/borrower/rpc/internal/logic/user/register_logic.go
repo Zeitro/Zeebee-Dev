@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/duke-git/lancet/v2/random"
 	"google.golang.org/grpc/metadata"
@@ -24,6 +25,7 @@ import (
 	email2 "zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/stringx"
+	"zeebee-backend/common/timex"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
@@ -50,7 +52,10 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrower.UserRegisterResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 	// check if user already exists
@@ -372,8 +377,9 @@ func sendRegisterVerifyUrlEmail(ctx context.Context, email string, firstName str
 	}
 	// send verify email
 	data := map[string]interface{}{
-		"url":        fmt.Sprintf("%s?code=%s&email=%s", global.Config.VerifyEmailUrl, code, email),
-		"first_name": firstName,
+		"url":         fmt.Sprintf("%s?code=%s&email=%s", global.Config.VerifyEmailUrl, code, email),
+		"first_name":  firstName,
+		"expire_time": timex.DurationToString(time.Second*time.Duration(global.Config.VerifyEmailExpireSeconds), true),
 	}
 	content, err := email2.ParseTemplate(email_tpl.RegisterVerifyEmail, data)
 	if err != nil {

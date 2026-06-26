@@ -27,11 +27,6 @@ func NewOrganizationDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *OrganizationDeleteLogic) OrganizationDelete(req *types.PathIdRequest) (resp *types.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
 
 	// Call RPC server
 	_, err = l.svcCtx.OrganizationRpcClient.Delete(l.ctx, &admin.IdRequest{

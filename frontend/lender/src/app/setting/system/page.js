@@ -3,8 +3,6 @@
 // import ContactEmail from './components/ContactEmail';
 // import { FieldTips } from '@repo/shared-methods';
 import PreApprovedLetterSetting from './components/PreApprovalLetter';
-import { PERMISSIONS } from '@config/permissions';
-import { PermissionSlot } from '@repo/shared-methods';
 const SystemSetting = () => {
 	return (
 		<div className="py-6 px-8 flex-1 overflow-hidden w-full">
@@ -17,9 +15,7 @@ const SystemSetting = () => {
 			</div>
 			<ContactEmail /> */}
 			<div className="text-xl font-medium pb-4">System Settings</div>
-			<PermissionSlot code={PERMISSIONS.SETTING_SYSTEM.PRE_APPROVED_LETTER}>
-				<PreApprovedLetterSetting />
-			</PermissionSlot>
+			<PreApprovedLetterSetting />
 		</div>
 	);
 };
