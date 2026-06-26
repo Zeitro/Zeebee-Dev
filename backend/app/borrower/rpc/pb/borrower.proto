@@ -2336,9 +2336,9 @@ message BorrowerPropertyTransactionChecklistEntity {
   bool all_checked = 1;
   int32 total_document_count = 2;
   int32 total_required_document_count = 3;
-  int32 total_required_updated_document_count = 4;
+  int32 total_required_uploaded_document_count = 4;
   int32 total_optional_document_count = 5;
-  int32 total_optional_updated_document_count = 6;
+  int32 total_optional_uploaded_document_count = 6;
   repeated BorrowerPropertyTransactionChecklistNodeEntity required_documents = 7;
   repeated BorrowerPropertyTransactionChecklistNodeEntity optional_documents = 8;
 }
