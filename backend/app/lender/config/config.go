@@ -38,6 +38,7 @@ type RpcConf struct {
 	InviteUserExpireSeconds      int
 	SendInviteEmailPeriodSeconds int
 	CasbinConf                   CasbinConf
+	CronTaskConf                 []CronTaskConf
 }
 
 type DbConf struct {
@@ -93,4 +94,9 @@ type CasbinWatcher struct {
 
 type CasbinEventTopic struct {
 	LenderTopic string
+}
+
+type CronTaskConf struct {
+	Name     string `json:"name"`
+	Schedule string `json:"schedule"`
 }

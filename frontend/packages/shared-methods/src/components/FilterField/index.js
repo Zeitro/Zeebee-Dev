@@ -21,7 +21,6 @@ const { SHOW_ALL } = TreeSelect;
 export const FilterField = forwardRef(({ list, className, ...rowProps }, ref) => {
 	// selectProps用于select和input组合的select-input类型
 	const getItemDom = ({
-		hidden,
 		filterType,
 		options,
 		value = null,
@@ -137,22 +136,20 @@ export const FilterField = forwardRef(({ list, className, ...rowProps }, ref) =>
 				);
 				break;
 			case 'button':
-				filterItem = hidden
-					? null
-					: children || (
-							<Button
-								type="primary"
-								size="large"
-								icon={<SearchOutlined />}
-								onClick={debounce((e) => eventProps?.onClick(e), 300)}
-								{...(eventProps || {})}
-							>
-								{text}
-							</Button>
-						);
+				filterItem = children || (
+					<Button
+						type="primary"
+						size="large"
+						icon={<SearchOutlined />}
+						onClick={debounce((e) => eventProps?.onClick(e), 300)}
+						{...(eventProps || {})}
+					>
+						{text}
+					</Button>
+				);
 				break;
 			case 'custom':
-				filterItem = hidden ? null : children;
+				filterItem = children;
 				break;
 			default:
 				break;

@@ -13,13 +13,10 @@ import (
 
 var AdminEnforcer *rbac.Enforcer
 
-// var LenderEnforcer *rbac.Enforcer
-// var BorrowerEnforcer *rbac.Enforcer
-
 func initCasbin(cnf config.CasbinConf) (err error) {
 	policyContent, err := os.ReadFile(cnf.ModelPath)
 	if err != nil {
-		err = errorx.Wrap(err, "Read casbin model conf file error")
+		err = errorx.Wrap(err, "read casbin model conf file error")
 		return
 	}
 
@@ -43,57 +40,8 @@ func initCasbin(cnf config.CasbinConf) (err error) {
 		},
 	})
 	if err != nil {
-		err = errorx.Wrap(err, "Create admin rbac enforcer error")
+		err = errorx.Wrap(err, "create admin rbac enforcer error")
 		return
 	}
-
-	// LenderEnforcer, err = rbac.NewEnforcer(rbac.EnforcerConfig{
-	// 	DB:          GetGormDB(),
-	// 	ModelPolicy: string(policyContent),
-	// 	Watcher: rbac.WatcherConfig{
-	// 		RedisHost: cnf.Watcher.Host,
-	// 		Pwd:       cnf.Watcher.Pwd,
-	// 		Channel:   cnf.Watcher.LenderChannel,
-	// 		Tls:       cnf.Watcher.Tls,
-	// 	},
-	// 	DefaultLoadFilteredPolicy: &gormadapter.Filter{
-	// 		Ptype: []string{"p"},
-	// 		V0:    nil,
-	// 		V1:    []string{string(constants.UserTypeLender)},
-	// 		V2:    nil,
-	// 		V3:    nil,
-	// 		V4:    nil,
-	// 		V5:    nil,
-	// 	},
-	// })
-	// if err != nil {
-	// 	err = errorx.Wrap(err, "Create lender rbac enforcer error")
-	// 	return
-	// }
-
-	// BorrowerEnforcer, err = rbac.NewEnforcer(rbac.EnforcerConfig{
-	// 	DB:          GetGormDB(),
-	// 	ModelPolicy: string(policyContent),
-	// 	Watcher: rbac.WatcherConfig{
-	// 		RedisHost: cnf.Watcher.Host,
-	// 		Pwd:       cnf.Watcher.Pwd,
-	// 		Channel:   cnf.Watcher.BorrowerChannel,
-	// 		Tls:       cnf.Watcher.Tls,
-	// 	},
-	// 	DefaultLoadFilteredPolicy: &gormadapter.Filter{
-	// 		Ptype: []string{"p"},
-	// 		V0:    nil,
-	// 		V1:    []string{string(constants.UserTypeBorrower)},
-	// 		V2:    nil,
-	// 		V3:    nil,
-	// 		V4:    nil,
-	// 		V5:    nil,
-	// 	},
-	// })
-	// if err != nil {
-	// 	err = errorx.Wrap(err, "Create borrower rbac enforcer error")
-	// 	return
-	// }
-
 	return
 }

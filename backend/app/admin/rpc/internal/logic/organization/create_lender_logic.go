@@ -40,7 +40,10 @@ func NewCreateLenderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Crea
 func (l *CreateLenderLogic) CreateLender(in *admin.OrganizationCreateLenderRequest) (resp *admin.OrganizationDetailResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 
@@ -72,12 +75,24 @@ func (l *CreateLenderLogic) CreateLender(in *admin.OrganizationCreateLenderReque
 	orgInput.Status = constants.OrganizationStatusActive
 	orgInput.Type = constants.UserTypeLender
 	orgInput.OwnerType = constants.OrganizationOwnerTypeThirdParty
+	orgInput.Source = constants.OrganizationSourceManual
+
+	// Append the new lender at the end of the lender list.
+	maxOrder, err := l.svcCtx.OrganizationRepo.MaxOrderByType(l.ctx, constants.UserTypeLender)
+	if err != nil {
+		return nil, err
+	}
+	orgInput.Order = maxOrder + 1
 
 	// Register with organization
 	_, organizationUser, err := l.baseLogic.UserLogic.RegisterWithOrganization(l.ctx, *userInput, *orgInput, constants.UserTypeLender, true)
 	if err != nil {
 		return nil, err
 	}
+
+
+	// Subscribe default pricing plan (best-effort, ignore errors)
+	_ = l.baseLogic.OrganizationSubscriptionLogic.SubscribeDefaultPlan(l.ctx, organizationUser.OrganizationId, constants.UserTypeLender)
 
 	// Load organization with relations for response
 	organization, err := l.baseLogic.OrganizationLogic.DetailWithType(l.ctx, organizationUser.OrganizationId, constants.UserTypeLender)

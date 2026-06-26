@@ -28,7 +28,10 @@ func NewUpdateLoanDocumentsLogic(ctx context.Context, svcCtx *svc.ServiceContext
 func (l *UpdateLoanDocumentsLogic) UpdateLoanDocuments(in *lender.LoanUpdateDocumentsRequest) (resp *lender.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 	// todo: add your logic here and delete this line

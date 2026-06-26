@@ -22,7 +22,10 @@ func OrganizationCreateLenderHandler(svcCtx *svc.ServiceContext) http.HandlerFun
 		defer func() {
 			if err != nil {
 				logx.WithContext(r.Context()).
-					WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
+					WithFields(
+						logx.Field("stacks", errorx.GetErrorStack(err)),
+						logx.Field("service_name", svcCtx.Config.Name),
+					).
 					Error(err)
 			}
 		}()

@@ -19,8 +19,8 @@ module.exports = {
 					label: 'var(--base-label)',
 					gray: 'var(--base-gray)',
 					active: 'var(--base-active)',
-					text: 'var(--base-text)',
-					text2: 'var(--base-text2)',
+                    text: 'var(--base-text)',
+                    text2: 'var(--base-text2)',
 				},
 				black: {
 					light: 'var(--black-light)', // 浅黑色

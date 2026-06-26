@@ -27,6 +27,8 @@ type OrganizationPageEntity struct {
 	Logo           string                          `json:"logo"`
 	Website        string                          `json:"website"`
 	Tagline        string                          `json:"tagline"`
+	Source         string                          `json:"source"`
+	Order          int                             `json:"order"`
 	OwnerEmail     string                          `json:"owner_email"`
 	OwnerFullName  string                          `json:"owner_full_name"`
 	OwnerFirstName string                          `json:"owner_first_name"`
@@ -48,6 +50,82 @@ func NewOrganizationRepo(db *gorm.DB) *OrganizationRepo {
 	}
 }
 
+// UpdateOrder updates the display order of an organization and cascades the
+// existing occupants so that the target org ends up at the requested slot.
+//
+// Behavior (scoped to the same organization type):
+//   - If newOrder == oldOrder: no-op.
+//   - If newOrder <  oldOrder (moving up): every other org with order in
+//     [newOrder, oldOrder) shifts down by +1 to make room.
+//   - If newOrder >  oldOrder (moving down): every other org with order in
+//     (oldOrder, newOrder] shifts up by -1 to close the gap.
+//
+// All writes happen in a single transaction.
+func (r *OrganizationRepo) UpdateOrder(ctx context.Context, id int64, newOrder int) (err error) {
+	err = r.Transaction(ctx, func(tx *gorm.DB) error {
+		var current model.Organization
+		if innerErr := tx.WithContext(ctx).
+			Select("id", "type", `"order"`).
+			Where("id = ?", id).
+			First(&current).Error; innerErr != nil {
+			return innerErr
+		}
+
+		oldOrder := current.Order
+		if oldOrder == newOrder {
+			return nil
+		}
+
+		if newOrder < oldOrder {
+			if innerErr := tx.WithContext(ctx).
+				Model(&model.Organization{}).
+				Where(`type = ? AND id <> ? AND "order" >= ? AND "order" < ?`,
+					current.Type, id, newOrder, oldOrder).
+				UpdateColumn(`"order"`, gorm.Expr(`"order" + 1`)).Error; innerErr != nil {
+				return innerErr
+			}
+		} else {
+			if innerErr := tx.WithContext(ctx).
+				Model(&model.Organization{}).
+				Where(`type = ? AND id <> ? AND "order" > ? AND "order" <= ?`,
+					current.Type, id, oldOrder, newOrder).
+				UpdateColumn(`"order"`, gorm.Expr(`"order" - 1`)).Error; innerErr != nil {
+				return innerErr
+			}
+		}
+
+		return tx.WithContext(ctx).
+			Model(&model.Organization{}).
+			Where("id = ?", id).
+			UpdateColumn(`"order"`, newOrder).Error
+	})
+	return errorx.WithStack(err)
+}
+
+// MaxOrderByType is the non-transactional variant of MaxOrderByTypeWithTx.
+func (r *OrganizationRepo) MaxOrderByType(ctx context.Context, organizationType constants.UserType) (int, error) {
+	return r.MaxOrderByTypeWithTx(ctx, r.Client(ctx), organizationType)
+}
+
+// MaxOrderByTypeWithTx returns the largest "order" value among organizations
+// of the given type. Returns -1 when no rows exist so callers can safely use
+// (max + 1) as the next append slot (starting at 0).
+func (r *OrganizationRepo) MaxOrderByTypeWithTx(ctx context.Context, tx *gorm.DB, organizationType constants.UserType) (int, error) {
+	var max *int
+	err := tx.WithContext(ctx).
+		Model(&model.Organization{}).
+		Where("type = ?", organizationType).
+		Select(`COALESCE(MAX("order"), -1)`).
+		Scan(&max).Error
+	if err != nil {
+		return 0, errorx.WithStack(err)
+	}
+	if max == nil {
+		return -1, nil
+	}
+	return *max, nil
+}
+
 // UpdateOwnerIdWithTx update owner id with transaction
 func (r *OrganizationRepo) UpdateOwnerIdWithTx(ctx context.Context, tx *gorm.DB, id int64, ownerId int64) (err error) {
 	err = tx.WithContext(ctx).
@@ -64,6 +142,14 @@ func (r *OrganizationRepo) UpdateOwnerOrganizationStatusWithTx(ctx context.Conte
 		Where("owner_id = ?", ownerId).
 		Update("status", status).Error
 	return errorx.WithStack(err)
+}
+
+// FindByOwnerIdAndStatusWithTx finds organizations by owner id and status
+func (r *OrganizationRepo) FindByOwnerIdAndStatusWithTx(ctx context.Context, tx *gorm.DB, ownerId int64, orgType constants.UserType, status constants.OrganizationStatus) (result []*model.Organization, err error) {
+	err = tx.WithContext(ctx).
+		Where("owner_id = ? AND type = ? AND status = ?", ownerId, orgType, status).
+		Find(&result).Error
+	return result, errorx.WithStack(err)
 }
 
 // GetOrganization return organization by id and type
@@ -124,6 +210,15 @@ func (repo *OrganizationRepo) All(ctx context.Context, organizationType constant
 	return result, errorx.WithStack(err)
 }
 
+// AllByTypeAllStatuses returns all organizations of a type regardless of status (e.g. discover dedup).
+func (repo *OrganizationRepo) AllByTypeAllStatuses(ctx context.Context, organizationType constants.UserType) (result []*model.Organization, err error) {
+	err = repo.Client(ctx).
+		Where("type = ?", organizationType).
+		Order("id asc").
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+}
+
 // AllForOption all for option
 func (repo *OrganizationRepo) AllForOption(ctx context.Context, organizationType constants.UserType, status constants.OrganizationStatus) (result []*model.Organization, err error) {
 	query := repo.Client(ctx).
@@ -132,7 +227,7 @@ func (repo *OrganizationRepo) AllForOption(ctx context.Context, organizationType
 	if status != constants.OrganizationStatusNone {
 		query = query.Where("status = ?", status)
 	}
-	err = query.Order("id asc").
+	err = query.Order(`"order" asc, id asc`).
 		Find(&result).Error
 	return result, errorx.WithStack(err)
 }
@@ -155,6 +250,8 @@ func (repo *OrganizationRepo) Page(ctx context.Context, pageReq dto.Organization
 		fmt.Sprintf("%s.logo", organizationTable),
 		fmt.Sprintf("%s.website", organizationTable),
 		fmt.Sprintf("%s.tagline", organizationTable),
+		fmt.Sprintf("%s.source", organizationTable),
+		fmt.Sprintf(`%s."order"`, organizationTable),
 		fmt.Sprintf("%s.owner_id", organizationTable),
 		fmt.Sprintf("%s.created_at", organizationTable),
 		fmt.Sprintf("%s.updated_at", organizationTable),
@@ -191,7 +288,7 @@ func (repo *OrganizationRepo) Page(ctx context.Context, pageReq dto.Organization
 	if len(sorter.Column) > 0 {
 		query = query.Order(fmt.Sprintf("%s %s", sorter.Column, sorter.Sort))
 	}
-	query = query.Order(fmt.Sprintf("%s.created_at desc", organizationTable))
+	query = query.Order(fmt.Sprintf(`%s."order" asc, %s.created_at desc`, organizationTable, organizationTable))
 	page, err = gormx.Page[*OrganizationPageEntity](query, gormx.PageRequest{
 		Page:         pageReq.Page,
 		Limit:        pageReq.Limit,

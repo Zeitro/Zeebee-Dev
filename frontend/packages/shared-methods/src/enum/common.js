@@ -1,3 +1,9 @@
+import PptSvg from '@repo/shared-methods/assets/images/ppt.svg';
+import PdfSvg from '@repo/shared-methods/assets/images/pdf.svg';
+import WordSvg from '@repo/shared-methods/assets/images/word.svg';
+import XlsSvg from '@repo/shared-methods/assets/images/xls.svg';
+import ImageSvg from '@repo/shared-methods/assets/images/img.svg';
+import TextSvg from '@repo/shared-methods/assets/images/text.svg';
 export const asc = 'asc';
 export const des = 'desc';
 export const ascend = 'ascend';
@@ -5,6 +11,31 @@ export const descend = 'descend';
 export const loan_pending = 'Pending';
 export const loan_active = 'Active';
 export const loan_archived = 'Archived';
+export const getFileTypeIcon = (type, options = {}) => {
+	switch (type) {
+		case 'ppt':
+		case 'pptx':
+			return <PptSvg {...options} />;
+		case 'pdf':
+			return <PdfSvg {...options} />;
+		case 'word':
+		case 'docx':
+		case 'doc':
+			return <WordSvg {...options} />;
+		case 'xlsx':
+		case 'xls':
+			return <XlsSvg {...options} />;
+		case 'image':
+		case 'png':
+		case 'jpg':
+		case 'jpeg':
+			return <ImageSvg {...options} />;
+		case 'text':
+			return <TextSvg {...options} />;
+		default:
+			return '';
+	}
+};
 // contact email验证状态颜色
 export const authorizedColor = {
 	authorized: {
@@ -52,9 +83,3 @@ export const userStatusColor = {
 		color: 'rgba(0, 0, 0, 0.85)',
 	},
 };
-
-export const systemTypeOptions = [
-	{ value: 'Admin', label: 'Admin' },
-	{ value: 'Lender', label: 'Lender' },
-	{ value: 'Borrower', label: 'Borrower' },
-];

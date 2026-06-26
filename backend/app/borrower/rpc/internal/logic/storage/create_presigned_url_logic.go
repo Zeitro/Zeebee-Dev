@@ -34,7 +34,10 @@ func NewCreatePresignedUrlLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 func (l *CreatePresignedUrlLogic) CreatePresignedUrl(in *borrower.StorageCreatePresignedUrlRequest) (resp *borrower.StorageCreatePresignedUrlResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 	folder := global.Config.AwsS3Conf.FileFolder

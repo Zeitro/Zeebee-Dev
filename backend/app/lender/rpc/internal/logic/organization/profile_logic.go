@@ -34,14 +34,17 @@ func NewProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ProfileLo
 func (l *ProfileLogic) Profile(in *lender.EmptyRequest) (resp *lender.OrganizationProfileResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 
 	// Get current user claim from gRPC metadata (JWT token)
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to get user claim from context")
+		return nil, errorx.Wrap(err, "fail to get user claim from context")
 	}
 
 	// Validate user belongs to an organization
@@ -56,7 +59,7 @@ func (l *ProfileLogic) Profile(in *lender.EmptyRequest) (resp *lender.Organizati
 		constants.UserTypeLender,
 	)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to get organization")
+		return nil, errorx.Wrap(err, "fail to get organization")
 	}
 
 	// Convert business object to proto entity with time field conversion

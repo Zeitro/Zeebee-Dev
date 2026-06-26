@@ -69,7 +69,7 @@ func TestValidator_LoanPreApprovalRequestPropertyValidation(t *testing.T) {
 	// Create validator instance
 	v, err := NewValidator(LocalEn)
 	if err != nil {
-		t.Fatalf("Failed to create validator: %v", err)
+		t.Fatalf("fail to create validator: %v", err)
 	}
 
 	// Register LoanPreApprovalRequestProperty rule
@@ -411,7 +411,7 @@ func TestValidator_EmbeddedPropertyValidation(t *testing.T) {
 	// Create validator instance
 	v, err := NewValidator(LocalEn)
 	if err != nil {
-		t.Fatalf("Failed to create validator: %v", err)
+		t.Fatalf("fail to create validator: %v", err)
 	}
 
 	// Register LoanPreApprovalRequestProperty rule
@@ -563,7 +563,7 @@ func TestValidator_ValidateRuleMsg(t *testing.T) {
 	// Create validator instance
 	v, err := NewValidator(LocalEn)
 	if err != nil {
-		t.Fatalf("Failed to create validator: %v", err)
+		t.Fatalf("fail to create validator: %v", err)
 	}
 
 	// Register LoanPreApprovalRequestProperty rule
