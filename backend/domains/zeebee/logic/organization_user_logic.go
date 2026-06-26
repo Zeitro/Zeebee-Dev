@@ -272,7 +272,7 @@ func (l *OrganizationUserLogic) InviteOrganizationUser(ctx context.Context, crea
 			Address:          organization.Address,
 		})
 		if err != nil {
-			err = errorx.Wrap(err, "Send invite email error")
+			err = errorx.Wrap(err, "send invite email error")
 			logx.WithContext(ctx).Error(err)
 		}
 	})
@@ -290,12 +290,12 @@ func (l *OrganizationUserLogic) SendInviteEmail(ctx context.Context, input dto.O
 		return err
 	}
 	if organizationUser.Status != constants.OrganizationUserStatusNotActivated {
-		err = errorx.New("The user status is not activated")
+		err = errorx.New("the user status is not activated")
 		return err
 	}
 	user := organizationUser.User
 	if user == nil {
-		err = errorx.New("User not found")
+		err = errorx.New("user not found")
 		return err
 	}
 	// Get organization
@@ -304,7 +304,7 @@ func (l *OrganizationUserLogic) SendInviteEmail(ctx context.Context, input dto.O
 		return err
 	}
 	if organization.Status != constants.OrganizationStatusActive {
-		err = errorx.New("The organization is not active")
+		err = errorx.New("the organization is not active")
 		return err
 	}
 
@@ -326,14 +326,19 @@ func (l *OrganizationUserLogic) SendInviteEmail(ctx context.Context, input dto.O
 		Logo:             organization.Logo,
 		Address:          organization.Address,
 	}
-	go func() {
-		newCtx := context.WithoutCancel(ctx)
-		err := l.sendInviteEmail(newCtx, previousInput)
-		if err != nil {
-			err = errorx.Wrap(err, "Send invite email error")
-			logx.WithContext(ctx).Error(err)
-		}
-	}()
+	err = l.sendInviteEmail(ctx, previousInput)
+	if err != nil {
+		err = errorx.Wrap(err, "send invite email error")
+		return err
+	}
+	// go func() {
+	// 	newCtx := context.WithoutCancel(ctx)
+	// 	err := l.sendInviteEmail(newCtx, previousInput)
+	// 	if err != nil {
+	// 		err = errorx.Wrap(err, "send invite email error")
+	// 		logx.WithContext(ctx).Error(err)
+	// 	}
+	// }()
 
 	return nil
 }
@@ -361,10 +366,10 @@ func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.
 			return input.OrganizationId == item.OrganizationId
 		})
 		if !ok {
-			return errorx.New("Organization user not found")
+			return errorx.New("organization user not found")
 		}
 		if organizationUserModel.Status != constants.OrganizationUserStatusNotActivated {
-			return errorx.New("The user has been activated")
+			return errorx.New("the user has been activated")
 		}
 		// Update organization user
 		innerErr = l.repos.OrganizationUserRepo.UpdateColumnsByIdWithTx(ctx, tx, organizationUserModel.Id, map[string]interface{}{
@@ -443,7 +448,7 @@ func (l *OrganizationUserLogic) UpdateOrganizationUser(ctx context.Context, inpu
 			return innerErr
 		}
 		if organization.Status != constants.OrganizationStatusActive {
-			innerErr = errorx.New("The organization is not active")
+			innerErr = errorx.New("the organization is not active")
 			return innerErr
 		}
 		// Update organization user
@@ -531,7 +536,7 @@ func (l *OrganizationUserLogic) sendInviteEmail(ctx context.Context, input SendI
 	sendTagKey := stringx.Format(constants.UserInviteEmailSendTag, input.UserType, input.TargetEmail, input.OrganizationId)
 	isExisted, _ := l.redisCli.IsExisted(ctx, sendTagKey)
 	if isExisted {
-		err = errorx.New("The email has already been sent")
+		err = errorx.New("the email has already been sent")
 		return err
 	}
 	defer func() {
@@ -618,7 +623,7 @@ func (l *OrganizationUserLogic) Detail(ctx context.Context, id int64, organizati
 	}
 	user := organizationUser.User
 	if user == nil {
-		err = errorx.New("User not existed")
+		err = errorx.New("user not existed")
 		return nil, err
 	}
 
@@ -639,7 +644,7 @@ func (l *OrganizationUserLogic) SwitchStatus(ctx context.Context, id int64, orga
 	}
 
 	if status != constants.OrganizationUserStatusActive && organization.OwnerId == organizationUser.UserId {
-		return errorx.New("Cannot disable owner")
+		return errorx.New("cannot disable owner")
 	}
 
 	err = l.repos.OrganizationUserRepo.UpdateOrganizationUserStatus(ctx, id, organizationId, status)
@@ -711,7 +716,7 @@ func (l *OrganizationUserLogic) Delete(ctx context.Context, id int64, organizati
 			return innerErr
 		}
 		if organization.OwnerId == organizationUser.UserId {
-			innerErr = errorx.New("Cannot delete owner")
+			innerErr = errorx.New("cannot delete owner")
 			return innerErr
 		}
 		innerErr = l.repos.OrganizationUserRepo.DeleteOrganizationUserWithTx(ctx, tx, organizationUser)

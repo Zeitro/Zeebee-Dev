@@ -21,6 +21,7 @@ export const PropertyInfo = ({
 	isRequestProperty,
 	unitInfo,
 	isShowSelectCard = true,
+	hasTransactionPermission,
 }) => {
 	const form = Form.useFormInstance();
 	const borrower_property_id = Form.useWatch([name, 'borrower_property_id'], form);
@@ -86,11 +87,9 @@ export const PropertyInfo = ({
 						name={[name, 'borrower_property_id']}
 						rules={[{ required: true }]}
 					></Form.Item>
-					<Form.Item
-						noStyle
-						name={['borrower_property_transaction_id']}
-						rules={[{ required: true }]}
-					></Form.Item>
+					{hasTransactionPermission && (
+						<Form.Item noStyle name={['borrower_property_transaction_id']}></Form.Item>
+					)}
 					<Radio.Group
 						value={resolvedSelectMode}
 						onChange={(e) => handleSelectModeChange(e.target.value)}
@@ -103,13 +102,17 @@ export const PropertyInfo = ({
 						>
 							Choose a property
 						</Radio>
-						<span className="text-base text-base-gray select-none px-2">or</span>
-						<Radio
-							value={SELECT_MODE.transaction}
-							className="[&_.ant-radio-label]:!font-medium [&_.ant-radio-label]:text-base !text-base-text"
-						>
-							Choose a transaction
-						</Radio>
+						{hasTransactionPermission && (
+							<span className="text-base text-base-gray select-none px-2">or</span>
+						)}
+						{hasTransactionPermission && (
+							<Radio
+								value={SELECT_MODE.transaction}
+								className="[&_.ant-radio-label]:!font-medium [&_.ant-radio-label]:text-base !text-base-text"
+							>
+								Choose a transaction
+							</Radio>
+						)}
 					</Radio.Group>
 					<SelectCard
 						key={resolvedSelectMode}
@@ -226,6 +229,25 @@ export const PropertyInfo = ({
 						controls={false}
 						placeholder="Enter number of units"
 						disabled={true}
+					/>
+				</Form.Item>
+			</Col>
+			<Col {...layoutCol} md={12}>
+				<Form.Item
+					label="Lot area sqft"
+					name={[name, 'lot_area_sqft']}
+					rules={[
+						{
+							required: true,
+							message: 'Please enter Lot area sqft!',
+						},
+					]}
+				>
+					<InputNumber
+						style={{ width: '100%' }}
+						{...livingAreaProps}
+						placeholder="Enter Lot area sqft"
+						disabled
 					/>
 				</Form.Item>
 			</Col>

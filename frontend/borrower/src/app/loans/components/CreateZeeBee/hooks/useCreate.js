@@ -35,6 +35,8 @@ import Documents from '../../../zeeBeeDetails/components/Documents';
 // import ReviewAndSign, { contractSignatureZones } from '../ReviewAndSign';
 import _ from 'lodash';
 import { uploadAwsS3 } from '@repo/shared-methods/api';
+import { PERMISSIONS } from '@config/permissions';
+import { useAuth } from '@repo/shared-methods/hooks';
 
 const initialValues = {
 	applicants: [{ type: 'Individual', is_primary: true }],
@@ -64,7 +66,8 @@ const useCreate = (pageType = 'create') => {
 	const [loanUuid, setLoanUuid] = useState(null); // loan uuid,提前创建id用于pdf中展示
 	const isClickBackBtn = useRef(false);
 	const { request } = createRequest();
-
+	const { hasPermission } = useAuth();
+	const hasTransactionPermission = hasPermission(PERMISSIONS.TRANSACTION.PAGE);
 	// 从property详情跳转的创建loan
 	const getProperty = async () => {
 		const data = await request(api);
@@ -134,6 +137,7 @@ const useCreate = (pageType = 'create') => {
 					form={form}
 					unitInfo={unitInfo}
 					isRequestProperty={searchParams.has('propertyId') || isDetails}
+					hasTransactionPermission={hasTransactionPermission}
 				/>,
 				<LoanDetail key="1-LoanDetail" form={form} />,
 			],

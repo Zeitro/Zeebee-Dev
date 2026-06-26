@@ -10,7 +10,7 @@ export function middleware(request) {
 	const noTokenList = flattenNavRouter(noTokenRouter);
 	const whiteList = noTokenList.map((item) => item.path);
 
-	if (!access && !whiteList.includes(pathname)) {
+	if (!access?.access_token && !whiteList.includes(pathname)) {
 		console.log('noToken----------middleware---===', pathname, '++++', access);
 
 		// token到期且非白名单路由，重定向到登录页
