@@ -363,12 +363,12 @@ func (l *ResourceLogic) GetUserResources(ctx context.Context, input dto.Resource
 	})
 
 	// Filter by pricing plan resource scope
-	if input.Type != constants.UserTypeAdmin {
-		allResources, err = l.filterByPricingPlan(ctx, input.OrganizationId, allResources)
-		if err != nil {
-			return nil, err
-		}
+	// if input.Type != constants.UserTypeAdmin {
+	allResources, err = l.filterByPricingPlan(ctx, input.OrganizationId, allResources)
+	if err != nil {
+		return nil, err
 	}
+	// }
 
 	// Filter root level to only menu type, collect all resource IDs
 	rootResources := slice.Filter(allResources, func(index int, item *model.Resource) bool {
