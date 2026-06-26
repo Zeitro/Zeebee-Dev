@@ -35,7 +35,10 @@ func NewSyncDataLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncData
 func (l *SyncDataLogic) SyncData(in *lender.EmptyRequest) (resp *lender.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 	organizations, err := l.svcCtx.OrganizationRepo.FindAll(l.ctx, map[string]interface{}{

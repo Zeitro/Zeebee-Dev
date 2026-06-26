@@ -47,9 +47,9 @@ type BorrowerPropertyTransactionChecklist {
     AllChecked bool `json:"all_checked"`
     TotalDocumentCount int32 `json:"total_document_count"`
     TotalRequiredDocumentCount int32 `json:"total_required_document_count"`
-    TotalRequiredUpdatedDocumentCount int32 `json:"total_required_updated_document_count"`
+    TotalRequiredUploadedDocumentCount int32 `json:"total_required_uploaded_document_count"`
     TotalOptionalDocumentCount int32 `json:"total_optional_document_count"`
-    TotalOptionalUpdatedDocumentCount int32 `json:"total_optional_updated_document_count"`
+    TotalOptionalUploadedDocumentCount int32 `json:"total_optional_uploaded_document_count"`
     RequiredDocuments []BorrowerPropertyTransactionChecklistNode `json:"required_documents"`
     OptionalDocuments []BorrowerPropertyTransactionChecklistNode `json:"optional_documents"`
 }

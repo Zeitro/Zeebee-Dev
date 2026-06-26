@@ -42,7 +42,7 @@ func (l *OrganizationUserPageLogic) OrganizationUserPage(req *types.Organization
 	}
 
 	resp = &types.OrganizationUserPageResponse{}
-	resp, err = copierx.Trans[borrower.OrganizationUserPageResponse, types.OrganizationUserPageResponse](rpcResp, copierx.TimeToRFC3339Str())
+	resp, err = copierx.Trans[borrower.OrganizationUserPageResponseData, types.OrganizationUserPageResponse](rpcResp.Data, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

@@ -36,7 +36,7 @@ func (h *BorrowerPropertyTransaction) RecalculateBorrowerPropertyTransactionChec
 
 	allDocs, err := h.repos.DocumentRepo.GetAllByEntityDocumentIdWithTx(ctx, tx, entityDoc.Id)
 	if err != nil {
-		err = errorx.Wrap(err, "failed to load documents")
+		err = errorx.Wrap(err, "fail to load documents")
 		return
 	}
 
@@ -44,7 +44,7 @@ func (h *BorrowerPropertyTransaction) RecalculateBorrowerPropertyTransactionChec
 	leafIds := collectLeafIds(allDocs, childrenMap)
 	fileCountMap, err := h.repos.FileRepo.BatchFileCountByEntityIds(ctx, tx, leafIds, constants.FileEntityTypeDocument)
 	if err != nil {
-		err = errorx.Wrap(err, "failed to load file counts")
+		err = errorx.Wrap(err, "fail to load file counts")
 		return
 	}
 
@@ -90,15 +90,16 @@ func BuildChecklistTree(allDocs []*model.Document, fileCountMap map[int64]int32)
 		}
 		totalReqCount += node.RequiredDocumentCount
 		totalOptCount += node.OptionalDocumentCount
-		totalReqUpdatedCount += countUploadedLeaves(node)
+		totalReqUpdatedCount += countUploadedLeaves(node, true)
+		totalOptUpdatedCount += countUploadedLeaves(node, false)
 	}
 
 	return dto.ChecklistRoot{
 		TotalDocumentCount:                totalReqCount + totalOptCount,
 		TotalRequiredDocumentCount:        totalReqCount,
-		TotalRequiredUpdatedDocumentCount: totalReqUpdatedCount,
+		TotalRequiredUploadedDocumentCount: totalReqUpdatedCount,
 		TotalOptionalDocumentCount:        totalOptCount,
-		TotalOptionalUpdatedDocumentCount: totalOptUpdatedCount,
+		TotalOptionalUploadedDocumentCount: totalOptUpdatedCount,
 		RequiredDocuments:                 requiredNodes,
 		OptionalDocuments:                 optionalNodes,
 	}
@@ -127,21 +128,30 @@ func buildChecklistNode(doc *model.Document, childrenMap map[int64][]*model.Docu
 
 	children := childrenMap[doc.Id]
 	if len(children) == 0 {
+		var reqUpdated, optUpdated int32
+		if isRequired && fileCountMap[doc.Id] > 0 {
+			reqUpdated = 1
+		} else if !isRequired && fileCountMap[doc.Id] > 0 {
+			optUpdated = 1
+		}
 		return &dto.ChecklistNode{
-			Name:       doc.Name,
-			DocumentId: doc.Id,
-			IsRequired: isRequired,
-			FileCount:  fileCountMap[doc.Id],
+			Name:                              doc.Name,
+			DocumentId:                        doc.Id,
+			IsRequired:                        isRequired,
+			FileCount:                         fileCountMap[doc.Id],
+			TotalRequiredUploadedDocumentCount: reqUpdated,
+			TotalOptionalUploadedDocumentCount: optUpdated,
 		}
 	}
 
 	var childNodes []*dto.ChecklistNode
 	var subDocCount, uploadedCount, reqDocCount, optDocCount int32
+	var totalReqUpdated, totalOptUpdated int32
 	for _, child := range children {
 		childNode := buildChecklistNode(child, childrenMap, fileCountMap)
 		childNodes = append(childNodes, childNode)
 		subDocCount++
-		if childNode.FileCount > 0 || childNode.UploadedDocumentCount > 0 {
+		if childNode.IsRequired && (childNode.FileCount > 0 || childNode.UploadedDocumentCount > 0) {
 			uploadedCount++
 		}
 		if childNode.IsRequired {
@@ -149,17 +159,21 @@ func buildChecklistNode(doc *model.Document, childrenMap map[int64][]*model.Docu
 		} else {
 			optDocCount++
 		}
+		totalReqUpdated += childNode.TotalRequiredUploadedDocumentCount
+		totalOptUpdated += childNode.TotalOptionalUploadedDocumentCount
 	}
 
 	return &dto.ChecklistNode{
-		Name:                  doc.Name,
-		DocumentId:            doc.Id,
-		IsRequired:            isRequired,
-		SubDocumentCount:      subDocCount,
-		UploadedDocumentCount: uploadedCount,
-		RequiredDocumentCount: reqDocCount,
-		OptionalDocumentCount: optDocCount,
-		Children:              childNodes,
+		Name:                              doc.Name,
+		DocumentId:                        doc.Id,
+		IsRequired:                        isRequired,
+		SubDocumentCount:                  subDocCount,
+		UploadedDocumentCount:             uploadedCount,
+		RequiredDocumentCount:             reqDocCount,
+		OptionalDocumentCount:             optDocCount,
+		TotalRequiredUploadedDocumentCount: totalReqUpdated,
+		TotalOptionalUploadedDocumentCount: totalOptUpdated,
+		Children:                          childNodes,
 	}
 }
 
@@ -177,19 +191,19 @@ func collectLeafIds(allDocs []*model.Document, childrenMap map[int64][]*model.Do
 	return ids
 }
 
-func countUploadedLeaves(node *dto.ChecklistNode) int32 {
+func countUploadedLeaves(node *dto.ChecklistNode, required bool) int32 {
 	if node == nil {
 		return 0
 	}
 	if len(node.Children) == 0 {
-		if node.FileCount > 0 {
+		if node.IsRequired == required && node.FileCount > 0 {
 			return 1
 		}
 		return 0
 	}
 	var count int32
 	for _, child := range node.Children {
-		count += countUploadedLeaves(child)
+		count += countUploadedLeaves(child, required)
 	}
 	return count
 }

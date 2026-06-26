@@ -86,7 +86,7 @@ type (
     }
     OrganizationPageFilter {
         Keyword string `json:"keyword,optional"`
-        OrganizationType string `json:"type" validate:"required,oneof=Lender Borrower"`
+        OrganizationType string `json:"type" validate:"required,oneof=Lender Borrower Admin"`
         Status string `json:"status,optional"`
     }
     OrganizationPageRequestFilter {
@@ -162,7 +162,7 @@ type (
 type (
     // select option -- request
     OrganizationSelectOptionRequest {
-        Type string `form:"type" validate:"required,oneof=Lender Borrower"`
+        Type string `form:"type" validate:"required,oneof=Lender Borrower Admin"`
     }
         // select option -- response
     OrganizationOptionResponse {

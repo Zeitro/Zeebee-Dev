@@ -16,6 +16,13 @@ message IdRequest {
   int64 data = 1;
 }
 
+message PathIdRequest {
+  PathIdRequestData data = 1;
+}
+message PathIdRequestData {
+  int64 id = 1;
+}
+
 message AddressEntity{
   string state = 1;
   string city = 2;
@@ -468,6 +475,7 @@ message ResourceTreeRequest {
 }
 message ResourceTreeRequestData {
   string type = 1;
+  string scope = 2;
 }
 // resource tree -- response
 message ResourceTreeResponse {
@@ -1617,3 +1625,358 @@ message LenderDiscoverCommitLender {
 }
 
 // ========== lender discover end ====================
+
+// ==================== pricing plan service start ====================
+
+message PricingPlanEntity {
+  int64 id = 1;
+  string name = 2;
+  string subtitle = 3;
+  string description = 4;
+  string status = 5;
+  int32 trial_days = 6;
+  int32 sort_order = 7;
+  bool is_public = 8;
+  string type = 9;
+  string plan_type = 10;
+  string created_at = 11;
+  string updated_at = 12;
+  repeated PricingPlanPolicyEntity policies = 13;
+  repeated ResourceTreeEntity resources = 14;
+  bool is_default = 15;
+}
+
+message PricingPlanPageEntity {
+  int64 id = 1;
+  string name = 2;
+  string subtitle = 3;
+  string status = 4;
+  int32 trial_days = 5;
+  int32 sort_order = 6;
+  bool is_public = 7;
+  string type = 8;
+  string plan_type = 9;
+  string created_at = 10;
+  string updated_at = 11;
+  bool is_default = 12;
+  repeated PricingPlanPolicyEntity policies = 13;
+}
+
+//message PricingPlanOptEntity {
+//  int64 id = 1;
+//  string name = 2;
+//  int32 sort_order = 3;
+//  string type = 4;
+//  repeated PricingPlanPolicyEntity policies = 5;
+//}
+
+
+
+// PricingPlan Create
+message PricingPlanCreateRequest {
+  PricingPlanCreateRequestData data = 1;
+}
+message PricingPlanCreateRequestData {
+  string name = 1;
+  string subtitle = 2;
+  string description = 3;
+  //  string status = 4;
+  int32 trial_days = 5;
+  int32 sort_order = 6;
+  bool is_public = 7;
+  string type = 8;
+  string plan_type = 9;
+  bool is_default = 10;
+}
+
+// PricingPlan Update
+message PricingPlanUpdateRequest {
+  PricingPlanUpdateRequestData data = 1;
+}
+message PricingPlanUpdateRequestData {
+  int64 id = 1;
+  string subtitle = 2;
+  string description = 3;
+  //  string status = 4;
+  int32 trial_days = 5;
+  int32 sort_order = 6;
+  bool is_public = 7;
+  string plan_type = 8;
+  bool is_default = 9;
+}
+
+// PricingPlan Delete
+message PricingPlanDeleteRequest {
+  PricingPlanDeleteRequestData data = 1;
+}
+message PricingPlanDeleteRequestData {
+  int64 id = 1;
+}
+
+// PricingPlan Detail
+message PricingPlanDetailRequest {
+  PricingPlanDetailRequestData data = 1;
+}
+message PricingPlanDetailRequestData {
+  int64 id = 1;
+}
+message PricingPlanDetailResponse {
+  PricingPlanEntity data = 1;
+}
+
+// PricingPlan Page
+message PricingPlanPageRequest {
+  PricingPlanPageRequestData data = 1;
+}
+message PricingPlanPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  PricingPlanPageRequestFilter filter = 3;
+  PricingPlanPageRequestSorter sorter = 4;
+}
+message PricingPlanPageRequestFilter {
+  string keyword = 1;
+  string status = 2;
+  string type = 3;
+  string plan_type = 4;
+}
+message PricingPlanPageRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+message PricingPlanPageResponse {
+  PricingPlanPageResponseData data = 1;
+}
+message PricingPlanPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated PricingPlanPageEntity list = 5;
+}
+
+// PricingPlan SwitchStatus
+message PricingPlanSwitchStatusRequest {
+  PricingPlanSwitchStatusRequestData data = 1;
+}
+message PricingPlanSwitchStatusRequestData {
+  int64 id = 1;
+  string status = 2;
+}
+
+// PricingPlan BindResources
+message PricingPlanBindResourcesRequest {
+  PricingPlanBindResourcesRequestData data = 1;
+}
+message PricingPlanBindResourcesRequestData {
+  int64 id = 1;
+  repeated int64 resource_ids = 2;
+}
+message PricingPlanBindResourcesResponse {
+  repeated ResourceTreeEntity data = 1;
+}
+
+// PricingPlan ResourceList
+message PricingPlanResourceListRequest {
+  PricingPlanResourceListRequestData data = 1;
+}
+message PricingPlanResourceListRequestData {
+  int64 id = 1;
+}
+message PricingPlanResourceListResponse {
+  repeated ResourceTreeEntity data = 1;
+}
+
+// all
+message PricingPlanAllRequest {
+  PricingPlanAllRequestData data = 1;
+}
+message PricingPlanAllRequestData {
+  string type = 1;
+}
+message PricingPlanAllResponse {
+  repeated PricingPlanEntity data = 1;
+}
+
+
+
+service PricingPlan {
+  rpc Create(PricingPlanCreateRequest) returns(PricingPlanDetailResponse);
+  rpc Update(PricingPlanUpdateRequest) returns(PricingPlanDetailResponse);
+  rpc Delete(PathIdRequest) returns(EmptyResponse);
+  rpc Detail(PathIdRequest) returns(PricingPlanDetailResponse);
+  rpc Page(PricingPlanPageRequest) returns(PricingPlanPageResponse);
+  rpc SwitchStatus(PricingPlanSwitchStatusRequest) returns(EmptyResponse);
+  rpc BindResources(PricingPlanBindResourcesRequest) returns(EmptyResponse);
+  rpc ResourceList(PricingPlanResourceListRequest) returns(PricingPlanResourceListResponse);
+  rpc All(PricingPlanAllRequest) returns(PricingPlanAllResponse);
+}
+
+// ==================== pricing plan service end ====================
+
+// ==================== pricing plan policy service start ====================
+message PricingPlanPolicyEntity {
+  int64 id = 1;
+  int64 pricing_plan_id = 2;
+  double original_amount = 3;
+  double actual_amount = 4;
+  string type = 5;
+  string created_at = 6;
+  string updated_at = 7;
+}
+// PricingPlanPolicy Create
+message PricingPlanPolicyCreateRequest {
+  PricingPlanPolicyCreateRequestData data = 1;
+}
+message PricingPlanPolicyCreateRequestData {
+  int64 pricing_plan_id = 1;
+  double original_amount = 2;
+  double actual_amount = 3;
+  string type = 4;
+}
+
+// PricingPlanPolicy Update
+message PricingPlanPolicyUpdateRequest {
+  PricingPlanPolicyUpdateRequestData data = 1;
+}
+message PricingPlanPolicyUpdateRequestData {
+  int64 id = 1;
+  double original_amount = 2;
+  double actual_amount = 3;
+  string type = 4;
+}
+message PricingPlanPolicyDetailResponse {
+  PricingPlanPolicyEntity data = 1;
+}
+
+// PricingPlanPolicy Delete
+message PricingPlanPolicyDeleteRequest {
+  PricingPlanPolicyDeleteRequestData data = 1;
+}
+message PricingPlanPolicyDeleteRequestData {
+  int64 id = 1;
+}
+
+service PricingPlanPolicy {
+  rpc Create(PricingPlanPolicyCreateRequest) returns(PricingPlanPolicyDetailResponse);
+  rpc Update(PricingPlanPolicyUpdateRequest) returns(PricingPlanPolicyDetailResponse);
+  rpc Delete(PathIdRequest) returns(EmptyResponse);
+}
+
+// ==================== pricing plan policy service end ====================
+
+// ==================== organization subscription service start ====================
+
+message OrganizationSubscriptionEntity {
+  int64 id = 1;
+  string code = 2;
+  int64 organization_id = 3;
+  OrganizationEntity organization = 4;
+  int64 pricing_plan_id = 5;
+  PricingPlanEntity  pricing_plan = 6;
+  int64 pricing_plan_policy_id = 7;
+  string status = 8;
+  string expire_date = 9;
+  double original_amount = 10;
+  double actual_amount = 11;
+  bool is_auto_renew = 12;
+  string created_at = 13;
+  string updated_at = 14;
+}
+
+message OrganizationSubscriptionPageEntity {
+  int64 id = 1;
+  string code = 2;
+  string organization_name = 3;
+  string pricing_plan_name = 4;
+  string status = 5;
+  string expire_date = 6;
+  double original_amount = 7;
+  double actual_amount = 8;
+  bool is_auto_renew = 9;
+  string created_at = 10;
+  string updated_at = 11;
+  string pricing_plan_policy_type = 12;
+}
+
+// Create
+message OrganizationSubscriptionCreateRequest {
+  OrganizationSubscriptionCreateRequestData data = 1;
+}
+message OrganizationSubscriptionCreateRequestData {
+  int64 pricing_plan_id = 1;
+  int64 pricing_plan_policy_id = 2;
+  int64 organization_id = 3;
+  string type = 4;
+}
+message OrganizationSubscriptionDetailResponse {
+  OrganizationSubscriptionEntity data = 1;
+}
+
+// Renew
+message OrganizationSubscriptionRenewRequest {
+  OrganizationSubscriptionRenewRequestData data = 1;
+}
+message OrganizationSubscriptionRenewRequestData {
+  int64 id = 1;
+  string expire_date = 2;
+}
+
+// UpdateExpireDate
+message OrganizationSubscriptionUpdateExpireDateRequest {
+  OrganizationSubscriptionUpdateExpireDateRequestData data = 1;
+}
+message OrganizationSubscriptionUpdateExpireDateRequestData {
+  int64 id = 1;
+  string expire_date = 2;
+}
+
+// SwitchStatus
+message OrganizationSubscriptionSwitchStatusRequest {
+  OrganizationSubscriptionSwitchStatusRequestData data = 1;
+}
+message OrganizationSubscriptionSwitchStatusRequestData {
+  int64 id = 1;
+  string status = 2;
+}
+
+// Page
+message OrganizationSubscriptionPageRequest {
+  OrganizationSubscriptionPageRequestData data = 1;
+}
+message OrganizationSubscriptionPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  OrganizationSubscriptionPageRequestFilter filter = 3;
+  OrganizationSubscriptionPageRequestSorter sorter = 4;
+}
+message OrganizationSubscriptionPageRequestFilter {
+  string keyword = 1;
+  repeated string status = 2;
+  string type = 3;
+}
+message OrganizationSubscriptionPageRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+message OrganizationSubscriptionPageResponse {
+  OrganizationSubscriptionPageResponseData data = 1;
+}
+message OrganizationSubscriptionPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated OrganizationSubscriptionPageEntity list = 5;
+}
+
+service OrganizationSubscription {
+  rpc Create(OrganizationSubscriptionCreateRequest) returns(OrganizationSubscriptionDetailResponse);
+  rpc Renew(OrganizationSubscriptionRenewRequest) returns(EmptyResponse);
+  rpc UpdateExpireDate(OrganizationSubscriptionUpdateExpireDateRequest) returns(EmptyResponse);
+  rpc SwitchStatus(OrganizationSubscriptionSwitchStatusRequest) returns(EmptyResponse);
+  rpc Page(OrganizationSubscriptionPageRequest) returns(OrganizationSubscriptionPageResponse);
+  rpc Detail(PathIdRequest) returns(OrganizationSubscriptionDetailResponse);
+}
+
+// ==================== organization subscription service end ====================
