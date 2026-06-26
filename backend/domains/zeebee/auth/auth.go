@@ -295,6 +295,17 @@ func (l *Auth) AuthCheck(ctx context.Context, input dto.AuthCheckRequestDto) (re
 		Authorized:             false,
 		DataScope:              constants.DataScopeAll,
 	}
+	// skip check admin
+	// isAdmin, err := l.IsAdmin(ctx, input.Type)
+	// if err != nil {
+	// 	return
+	// }
+	// if isAdmin && input.Type == constants.UserTypeAdmin {
+	// 	result.Authenticated = true
+	// 	result.Authorized = true
+	// 	result.DataScope = constants.DataScopeAll
+	// 	return
+	// }
 
 	// Check authentication status and requirements
 	ok, isRequired, err := l.CheckAuthentication(ctx, input)
