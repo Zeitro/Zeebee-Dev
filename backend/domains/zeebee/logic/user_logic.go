@@ -43,12 +43,12 @@ func (l *UserLogic) GetUserClaimFromCtx(ctx context.Context) (claim utils.JwtUse
 	// Get from metadata
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		err = status.Error(codes.Unauthenticated, "Not login")
+		err = status.Error(codes.Unauthenticated, "not login")
 		return claim, errorx.WithStack(err)
 	}
 	tokens := md[utils.JwtTokenCtxKey]
 	if len(tokens) == 0 {
-		err = status.Error(codes.Unauthenticated, "Not login")
+		err = status.Error(codes.Unauthenticated, "not login")
 		return claim, errorx.WithStack(err)
 	}
 	token := tokens[0]
@@ -63,7 +63,7 @@ func (l *UserLogic) GetUserClaimFromCtx(ctx context.Context) (claim utils.JwtUse
 // GenerateJwtToken generate jwt token for user
 func (l *UserLogic) GenerateJwtToken(user *model.User, organizationUser *model.OrganizationUser, userType constants.UserType) (token *dto.UserJwtTokenDto, err error) {
 	if user == nil {
-		return nil, errorx.WithStack(errorx.New("User is empty"))
+		return nil, errorx.WithStack(errorx.New("user is empty"))
 	}
 	userClaim := utils.JwtUser{
 		UserId:         user.Id,
@@ -124,7 +124,7 @@ func (l *UserLogic) RefreshToken(ctx context.Context, refreshToken string, userT
 		return nil, errorx.WithStack(err)
 	}
 	if claim.UserType != userType {
-		return nil, errorx.New("User type does not match")
+		return nil, errorx.New("user type does not match")
 	}
 
 	user, err := l.repos.UserRepo.GetUser(ctx, claim.UserId, claim.UserType, false)
@@ -132,7 +132,7 @@ func (l *UserLogic) RefreshToken(ctx context.Context, refreshToken string, userT
 		return nil, errorx.WithStack(err)
 	}
 	if user.Status != constants.UserStatusActive {
-		return nil, errorx.New("User is not active")
+		return nil, errorx.New("user is not active")
 	}
 
 	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserByUserId(ctx, claim.OrganizationId, user.Id)
@@ -140,7 +140,7 @@ func (l *UserLogic) RefreshToken(ctx context.Context, refreshToken string, userT
 		return nil, err
 	}
 	if organizationUser.Status != constants.OrganizationUserStatusActive {
-		return nil, errorx.New("Organization user is not active")
+		return nil, errorx.New("organization user is not active")
 	}
 	token, err = l.GenerateJwtToken(user, organizationUser, claim.UserType)
 	return token, err
@@ -152,7 +152,7 @@ func (l *UserLogic) ResetPasswordWithEmail(ctx context.Context, input dto.UserRe
 	code := input.Code
 	newPwd := input.NewPassword
 	if email == "" || code == "" || newPwd == "" {
-		return nil, errorx.New("Email, code and new password are required")
+		return nil, errorx.New("email, code and new password are required")
 	}
 	redisKey := stringx.Format(constants.ResetPwdCode, input.UserType, email)
 	cacheToken, err := l.redisCli.Get(ctx, redisKey)
@@ -160,7 +160,7 @@ func (l *UserLogic) ResetPasswordWithEmail(ctx context.Context, input dto.UserRe
 		return nil, errorx.WithStack(err)
 	}
 	if cacheToken == "" || cacheToken != code {
-		return nil, errorx.WithStack(errorx.New("Invalid or expired code"))
+		return nil, errorx.WithStack(errorx.New("invalid or expired code"))
 	}
 
 	user, err := l.repos.UserRepo.GetUserByEmail(ctx, email, input.UserType)
@@ -168,7 +168,7 @@ func (l *UserLogic) ResetPasswordWithEmail(ctx context.Context, input dto.UserRe
 		return nil, err
 	}
 	if user == nil {
-		return nil, errorx.New("User not found")
+		return nil, errorx.New("user not found")
 	}
 
 	// Hash pwd
@@ -200,7 +200,7 @@ func (l *UserLogic) ResetPasswordWithEmail(ctx context.Context, input dto.UserRe
 // GetActiveOrganizationByUser return active organization for user
 func (l *UserLogic) GetActiveOrganizationByUser(user *model.User) (currentOrganization *model.Organization, isChanged bool, err error) {
 	if user == nil {
-		return nil, false, errorx.New("User is empty")
+		return nil, false, errorx.New("user is empty")
 	}
 	organizations := user.Organizations
 	organizationUsers := user.OrganizationUsers
@@ -285,7 +285,7 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 			return nil, errorx.WithStack(err)
 		}
 		if loginFailedTimes >= limiter.Rate {
-			return nil, errorx.New("Login failed times exceeded, please try again later")
+			return nil, errorx.New("login failed times exceeded, please try again later")
 		}
 	}
 
@@ -294,7 +294,7 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 		return nil, errorx.WithStack(err)
 	}
 	if user == nil {
-		return nil, errorx.New("User not found")
+		return nil, errorx.New("user not found")
 	}
 
 	// Check pwd
@@ -304,7 +304,7 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 		if err != nil {
 			return nil, errorx.WithStack(err)
 		}
-		return nil, errorx.WithStack(errorx.New("The email and password you entered don't match."))
+		return nil, errorx.WithStack(errorx.New("the email and password you entered don't match."))
 	}
 
 	if limiter.Rate > 0 {
@@ -316,10 +316,10 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 
 	// Check status
 	if user.Status == constants.UserStatusInactive {
-		return nil, errorx.New("User is not active")
+		return nil, errorx.New("user is not active")
 	}
 	if user.Status == constants.UserStatusUnverified {
-		err = status.Error(codes.PermissionDenied, "User is unverified")
+		err = status.Error(codes.PermissionDenied, "user is unverified")
 		return nil, err
 	}
 
@@ -356,7 +356,7 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 		return nil, err
 	}
 	if user == nil {
-		return nil, errorx.WithStack(errorx.New("User not found"))
+		return nil, errorx.WithStack(errorx.New("user not found"))
 	}
 	if len(user.Organizations) > 0 {
 		organizationsPtr := &[]*dto.UserOrganizationDto{}
@@ -388,7 +388,7 @@ func (l *UserLogic) Info(ctx context.Context, id int64, organizationId int64, us
 		return item.OrganizationId == organizationId && item.IsDel == 0
 	})
 	if !ok {
-		err = errorx.New("Organization user not found")
+		err = errorx.New("organization user not found")
 		return nil, err
 	}
 
@@ -449,7 +449,7 @@ func (l *UserLogic) SwitchOrganization(ctx context.Context, userId int64, organi
 	}
 
 	if organization.Status != constants.OrganizationStatusActive {
-		return nil, errorx.New("Organization is not active")
+		return nil, errorx.New("organization is not active")
 	}
 
 	organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserByUserId(ctx, organizationId, userModel.Id)
@@ -457,7 +457,7 @@ func (l *UserLogic) SwitchOrganization(ctx context.Context, userId int64, organi
 		return nil, err
 	}
 	if organizationUser == nil || organizationUser.Status != constants.OrganizationUserStatusActive {
-		return nil, errorx.New("User is not member of this organization")
+		return nil, errorx.New("user is not member of this organization")
 	}
 
 	userModel.DefaultOrganizationId = organizationId
@@ -484,7 +484,7 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 	var organization *model.Organization
 	// Check user exist
 	if len(userInput.FirstName) == 0 {
-		return nil, nil, errorx.New("User Is Empty")
+		return nil, nil, errorx.New("user is empty")
 	}
 	isExisted, err := l.repos.UserRepo.IsExistedByColumns(ctx, map[string]interface{}{
 		"email": userInput.Email,
@@ -494,7 +494,7 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 		return nil, nil, err
 	}
 	if isExisted {
-		return nil, nil, errorx.New("User already exists")
+		return nil, nil, errorx.New("user already exists")
 	}
 	user, err = copierx.Trans[dto.UserRegisterRequestDto, model.User](&userInput)
 	if err != nil {
@@ -503,7 +503,7 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 
 	// Check organization exist
 	if len(organizationInput.Name) == 0 {
-		return nil, nil, errorx.New("Organization name is empty")
+		return nil, nil, errorx.New("organization name is empty")
 	}
 	isExisted, err = l.repos.OrganizationRepo.IsExistedByColumns(ctx, map[string]interface{}{
 		"name": organizationInput.Name,
@@ -513,7 +513,7 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 		return nil, nil, err
 	}
 	if isExisted {
-		return nil, nil, errorx.New("Organization already exists")
+		return nil, nil, errorx.New("organization already exists")
 	}
 	organization, err = copierx.Trans[dto.OrganizationRegisterRequestDto, model.Organization](&organizationInput)
 	if err != nil {
@@ -601,11 +601,102 @@ func (l *UserLogic) RegisterWithOrganization(ctx context.Context, userInput dto.
 	return user, organizationUser, nil
 }
 
+// ValidatePortalPassword enforces the same rules as lender portal password changes.
+func (l *UserLogic) ValidatePortalPassword(password string) bool {
+	return l.validatePassword(password)
+}
+
+// CreatePrimaryOwnerForLenderOrgWithTx creates the lender owner user for an organization
+// inserted without one (e.g. OpenAI discover). Caller must use the same transaction for the org update.
+func (l *UserLogic) CreatePrimaryOwnerForLenderOrgWithTx(ctx context.Context, tx *gorm.DB, organization *model.Organization, userInput dto.UserRegisterRequestDto) (err error) {
+	if organization == nil {
+		return errorx.New("organization is empty")
+	}
+	if organization.Type != constants.UserTypeLender {
+		return errorx.New("invalid organization type")
+	}
+	if organization.OwnerId != 0 {
+		return errorx.New("organization already has an owner")
+	}
+	if organization.Source != constants.OrganizationSourceSearch {
+		return errorx.New("owner onboarding is only allowed for search-sourced lenders")
+	}
+	if len(userInput.Email) == 0 || len(userInput.PasswordHash) == 0 {
+		return errorx.New("owner email and password are required")
+	}
+	if len(userInput.FirstName) == 0 || len(userInput.LastName) == 0 {
+		return errorx.New("owner first and last name are required")
+	}
+	isExisted, err := l.repos.UserRepo.IsExistedByColumnsWithTx(ctx, tx, map[string]interface{}{
+		"email": userInput.Email,
+		"type":  constants.UserTypeLender,
+	})
+	if err != nil {
+		return err
+	}
+	if isExisted {
+		return errorx.New("user already exists")
+	}
+
+	user, err := copierx.Trans[dto.UserRegisterRequestDto, model.User](&userInput)
+	if err != nil {
+		return err
+	}
+	user.PasswordHash = userInput.PasswordHash
+	user.DefaultOrganizationId = organization.Id
+	user.RemoveRelationships()
+
+	user, err = l.repos.UserRepo.CreateWithTx(ctx, tx, user, false)
+	if err != nil {
+		return err
+	}
+
+	err = l.repos.OrganizationRepo.UpdateOwnerIdWithTx(ctx, tx, organization.Id, user.Id)
+	if err != nil {
+		return err
+	}
+	organization.OwnerId = user.Id
+
+	roles := []*model.Role{
+		{
+			Name:           constants.AdminRoleName,
+			Type:           constants.UserTypeLender,
+			OrganizationId: organization.Id,
+		},
+	}
+	organizationUser := &model.OrganizationUser{
+		OrganizationId: organization.Id,
+		UserId:         user.Id,
+		FirstName:      user.FirstName,
+		MidName:        user.MidName,
+		LastName:       user.LastName,
+		Status:         constants.OrganizationUserStatusActive,
+		FullName:       user.FullName,
+		Roles:          roles,
+	}
+	_, err = l.repos.OrganizationUserRepo.CreateWithTx(ctx, tx, organizationUser, true)
+	return err
+}
+
+// PublishRoleReloadForOrganization notifies Casbin consumers after roles change for an org.
+func (l *UserLogic) PublishRoleReloadForOrganization(ctx context.Context, organizationId int64, userType constants.UserType) {
+	threading.GoSafe(func() {
+		subCtx := context.WithoutCancel(ctx)
+		msg := auth.Msg{
+			Action:         auth.ActionRoleReload,
+			Scope:          auth.ScopeOrganization,
+			Type:           userType,
+			OrganizationId: organizationId,
+		}
+		_ = l.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
+	})
+}
+
 // VerifyUserEmail verity user email
 func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code string, userType constants.UserType) (user *model.User, err error) {
 	var token string
 	if email == "" || code == "" {
-		return nil, errorx.New("Email and code are required")
+		return nil, errorx.New("email and code are required")
 	}
 	// Check code
 	verifyCodeKey := stringx.Format(constants.UserRegisterVerifyCode, userType, email)
@@ -615,7 +706,7 @@ func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code stri
 	}
 	// Check if code exists (expired or invalid)
 	if len(token) == 0 || token != code {
-		return nil, errorx.New("Invalid or expired code")
+		return nil, errorx.New("invalid or expired code")
 	}
 	defer func() {
 		if err == nil {
@@ -623,6 +714,7 @@ func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code stri
 		}
 	}()
 
+	var activatedOrgIds []int64
 	err = l.repos.UserRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 		// Get user
@@ -631,7 +723,7 @@ func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code stri
 			return innerErr
 		}
 		if user.Status != constants.UserStatusUnverified {
-			return errorx.New("Email is already verified")
+			return errorx.New("email is already verified")
 		}
 		// Update user status
 		innerErr = l.repos.UserRepo.UpdateColumnsByIdWithTx(ctx, tx, user.Id, map[string]interface{}{
@@ -641,7 +733,7 @@ func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code stri
 			return innerErr
 		}
 		// Update user's organization status
-		innerErr = l.handleOwnedOrganizationWithTx(ctx, tx, user)
+		activatedOrgIds, innerErr = l.handleOwnedOrganizationWithTx(ctx, tx, user)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -657,6 +749,13 @@ func (l *UserLogic) VerifyUserEmail(ctx context.Context, email string, code stri
 	if err != nil {
 		return nil, err
 	}
+
+	// Subscribe default plan for newly activated organizations
+	subLogic := NewOrganizationSubscriptionLogic(l.BaseLogic, l.authTopicMap)
+	for _, orgId := range activatedOrgIds {
+		_ = subLogic.SubscribeDefaultPlan(ctx, orgId, userType)
+	}
+
 	threading.GoSafe(func() {
 		subCtx := context.WithoutCancel(ctx)
 		msg := auth.Msg{
@@ -678,12 +777,12 @@ func (l *UserLogic) ChangePassword(ctx context.Context, input dto.UserChangePass
 		return err
 	}
 	if !l.validatePassword(input.NewPassword) {
-		return errorx.New("New password is invalid")
+		return errorx.New("new password is invalid")
 	}
 
 	oldPassword := input.OldPassword
 	if !utils.CheckPassword(oldPassword, user.PasswordHash) {
-		return errorx.New("Old password is incorrect")
+		return errorx.New("old password is incorrect")
 	}
 	newPasswordHash, err := utils.HashPassword(input.NewPassword)
 	if err != nil {
@@ -706,29 +805,39 @@ func (l *UserLogic) validatePassword(password string) bool {
 	return hasLower && hasUpper && hasNumber
 }
 
-// handleOwnedOrganization
-func (l *UserLogic) handleOwnedOrganizationWithTx(ctx context.Context, tx *gorm.DB, user *model.User) (err error) {
+// handleOwnedOrganization activates owned organizations and returns IDs of newly activated orgs.
+func (l *UserLogic) handleOwnedOrganizationWithTx(ctx context.Context, tx *gorm.DB, user *model.User) (activatedOrgIds []int64, err error) {
 	if user == nil {
-		return errorx.New("User is empty")
+		return nil, errorx.New("user is empty")
 	}
+
+	// Find not-activated orgs before status update
+	notActivatedOrgs, err := l.repos.OrganizationRepo.FindByOwnerIdAndStatusWithTx(ctx, tx, user.Id, user.Type, constants.OrganizationStatusNotActivated)
+	if err != nil {
+		return nil, err
+	}
+
 	// Update owned organization status
 	err = l.repos.OrganizationRepo.UpdateOwnerOrganizationStatusWithTx(ctx, tx, user.Id, constants.OrganizationStatusActive)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	// Get owned organization ids
 	organizations, err := l.repos.OrganizationRepo.GetOrganizationsByOwnerIdWithTx(ctx, tx, user.Id, user.Type)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	// Sync owned organization templates
 	organizationTemplateLogic := NewOrganizationTemplateLogic(l.BaseLogic)
 	for index := range organizations {
 		err = organizationTemplateLogic.SyncByOrganizationIdWithTx(ctx, tx, organizations[index])
 		if err != nil {
-			return err
+			return nil, err
 		}
 	}
 
-	return err
+	for _, org := range notActivatedOrgs {
+		activatedOrgIds = append(activatedOrgIds, org.Id)
+	}
+	return activatedOrgIds, nil
 }

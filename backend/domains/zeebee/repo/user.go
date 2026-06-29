@@ -150,7 +150,10 @@ func (repo *UserRepo) GetUserByEmail(ctx context.Context, email string, userType
 	}
 	organizationRepo := NewOrganizationRepo(repo.GetDB())
 
-	organizations, _ := organizationRepo.GetUserOrganizations(ctx, res.Id, userType)
+	organizations, err := organizationRepo.GetUserOrganizations(ctx, res.Id, userType)
+	if err != nil {
+		return res, errorx.WithStack(err)
+	}
 	res.Organizations = organizations
 
 	return res, errorx.WithStack(err)
@@ -167,7 +170,10 @@ func (repo *UserRepo) GetUserByEmailWithTx(ctx context.Context, tx *gorm.DB, ema
 	}
 	organizationRepo := NewOrganizationRepo(repo.GetDB())
 
-	organizations, _ := organizationRepo.GetUserOrganizationsWithTx(ctx, tx, res.Id, userType)
+	organizations, err := organizationRepo.GetUserOrganizationsWithTx(ctx, tx, res.Id, userType)
+	if err != nil {
+		return res, errorx.WithStack(err)
+	}
 	res.Organizations = organizations
 	return res, errorx.WithStack(err)
 }

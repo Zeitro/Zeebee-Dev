@@ -102,8 +102,19 @@
 
     <div
             style="
+          padding: 48px 0 16px;
           color: rgba(0, 0, 0, 0.65);
-          padding: 48px 0;
+          font-family: Roboto, sans-serif;
+          font-size: 14px;
+        "
+    >
+        <span style="font-weight: 700;">This link expires in {{ .expire_time }}.</span> If you do not join this organization during this period, you will need to apply for a new invitation link.
+    </div>
+
+    <div
+            style="
+          color: rgba(0, 0, 0, 0.65);
+          padding: 16px 0 48px;
           font-family: Roboto, sans-serif;
           font-size: 14px;
           text-align: center;

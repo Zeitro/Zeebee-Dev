@@ -25,6 +25,8 @@ type OrganizationEntity {
     Logo string `json:"logo"`
     Website string `json:"website"`
     Tagline string `json:"tagline"`
+    Source string `json:"source,optional"`
+    Order int `json:"order"`
     Metadata *OrganizationMetadataEntity `json:"metadata"`
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
@@ -73,6 +75,8 @@ type (
         Logo string `json:"logo"`
         Website string `json:"website"`
         Tagline string `json:"tagline"`
+        Source string `json:"source,optional"`
+        Order int `json:"order"`
         CreatedAt string `json:"created_at"`
         UpdatedAt string `json:"updated_at"`
         OwnerEmail string `json:"owner_email"`
@@ -82,7 +86,7 @@ type (
     }
     OrganizationPageFilter {
         Keyword string `json:"keyword,optional"`
-        OrganizationType string `json:"type" validate:"required,oneof=Lender Borrower"`
+        OrganizationType string `json:"type" validate:"required,oneof=Lender Borrower Admin"`
         Status string `json:"status,optional"`
     }
     OrganizationPageRequestFilter {
@@ -135,6 +139,15 @@ type (
         Website string `json:"website,optional" validate:"omitempty,url"`
         Tagline string `json:"tagline,optional"`
         Metadata *OrganizationLenderMetadataEntity `json:"metadata,optional"`
+        Owner *OrganizationCreateLenterUserEntity `json:"owner,optional"`
+    }
+)
+
+type (
+    // update order -- request
+    OrganizationUpdateOrderRequest {
+        Id int64 `path:"id" validate:"required,min=1"`
+        Order int `json:"order" validate:"min=0"`
     }
 )
 
@@ -149,7 +162,7 @@ type (
 type (
     // select option -- request
     OrganizationSelectOptionRequest {
-        Type string `form:"type" validate:"required,oneof=Lender Borrower"`
+        Type string `form:"type" validate:"required,oneof=Lender Borrower Admin"`
     }
         // select option -- response
     OrganizationOptionResponse {

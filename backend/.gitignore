@@ -2,3 +2,5 @@
 specs
 .claude/docs/tasks/ref_file
 .DS_Store
+.traces
+.skillopt-sleep

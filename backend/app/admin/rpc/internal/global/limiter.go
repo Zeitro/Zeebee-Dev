@@ -16,7 +16,7 @@ func initLimiter(cnf config.RedisConf) (err error) {
 		Tls:  cnf.Tls,
 	})
 	if err != nil {
-		return errorx.Wrap(err, "Init limiter error")
+		return errorx.Wrap(err, "init limiter error")
 	}
 	AdminTryLoginLimiter = limiter.NewRedisLimiterWithRedis(rdb)
 

@@ -4,6 +4,7 @@ const (
 	UserLoginFailedTimes   = "zeebee:%v:%v:login:failed:times"
 	UserRegisterVerifyCode = "zeebee:%v:%v:register:verify:code"
 	UserInviteCode         = "zeebee:%v:%v:%v:invite:code"
+	UserInviteCodeMarker   = "zeebee:%v:%v:%v:invite:code:marker"
 	UserInviteUserPwd      = "zeebee:%v:%v:%v:invite:pwd"
 	UserInviteEmailSendTag = "zeebee:%v:%v:%v:invite:email:send:tag"
 

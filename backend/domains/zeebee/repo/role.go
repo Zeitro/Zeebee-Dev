@@ -144,6 +144,43 @@ func (repo *RoleRepo) GetRolesByOrganizationUserId(ctx context.Context, organiza
 	return result, errorx.WithStack(err)
 }
 
+// FindByOrganizationIdsWithTx returns all roles for the given organization IDs within a transaction.
+func (repo *RoleRepo) FindByOrganizationIdsWithTx(ctx context.Context, tx *gorm.DB, organizationIds []int64, roleType constants.UserType) (result []*model.Role, err error) {
+	if len(organizationIds) == 0 {
+		return []*model.Role{}, nil
+	}
+	err = tx.WithContext(ctx).
+		Where("organization_id IN ? AND type = ?", organizationIds, roleType).
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+}
+
+// UpdateResourcesWithTx updates a role's resource associations within a transaction.
+// New resources are appended, removed resources are deleted, unchanged ones are left alone.
+// Uses GORM Association to manage the role_and_resources junction table.
+func (repo *RoleRepo) UpdateResourcesWithTx(ctx context.Context, tx *gorm.DB, role *model.Role, newResources []*model.Resource, removedResources []*model.Resource) error {
+	copyRole, err := copierx.Trans[model.Role, model.Role](role)
+	if err != nil {
+		return err
+	}
+	copyRole.RemoveRelationships()
+	query := tx.WithContext(ctx).Model(copyRole)
+	if len(newResources) > 0 {
+		err = query.Association("Resources").Append(newResources)
+		if err != nil {
+			return errorx.WithStack(err)
+		}
+	}
+	copyRole.RemoveRelationships()
+	if len(removedResources) > 0 {
+		err = query.Association("Resources").Delete(removedResources)
+		if err != nil {
+			return errorx.WithStack(err)
+		}
+	}
+	return nil
+}
+
 // DeleteByIdWithTx deletes a role by its ID within a transaction.
 // It also removes all associated resources and organization users before deletion.
 // The function ensures all operations are executed within the provided transaction context.
@@ -215,7 +252,7 @@ func (repo *RoleRepo) GetOrganizationRoleWithResources(ctx context.Context, orga
 // UpdateOrganizationUsersWithTx update role's organization users with transaction
 func (repo *RoleRepo) UpdateOrganizationUsersWithTx(ctx context.Context, tx *gorm.DB, role *model.Role, newUsers []*model.OrganizationUser, removedUsers []*model.OrganizationUser) (err error) {
 	if role == nil {
-		return errorx.New("Role Is empty")
+		return errorx.New("role is empty")
 	}
 
 	copyRole, err := copierx.Trans[model.Role, model.Role](role)

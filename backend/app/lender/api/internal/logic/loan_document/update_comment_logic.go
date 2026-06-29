@@ -28,11 +28,6 @@ func NewUpdateCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upd
 }
 
 func (l *UpdateCommentLogic) UpdateComment(req *types.LoanDocumentUpdateCommentRequest) (resp *types.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
 
 	rpcReq := &lender.LoanDocumentUpdateCommentRequest{
 		Data: &lender.LoanDocumentUpdateCommentRequestData{},
