@@ -1,6 +1,8 @@
 package config
 
 import (
+	"zeebee-backend/domains/zeebee/config"
+
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -27,7 +29,7 @@ type RpcConf struct {
 	JwtAuth      types.JwtAuth `json:",optional"`
 	DbConf       DbConf
 	AwsS3Conf    AwsS3Conf
-	OpenAIConf  OpenAIConf `json:",optional"`
+	OpenAIConf   OpenAIConf `json:",optional"`
 	CasbinConf   CasbinConf
 	CronTaskConf []CronTaskConf
 }
@@ -59,12 +61,7 @@ type AwsS3Conf struct {
 }
 
 type LimiterConf struct {
-	Login LimiterItem
-}
-
-type LimiterItem struct {
-	Rate   int
-	Period int
+	Login config.LimiterItem
 }
 
 type EmailConf struct {
