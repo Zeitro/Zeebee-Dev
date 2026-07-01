@@ -46,9 +46,8 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 		UserType: constants.UserTypeBorrower,
 	}
 	limiter := dto.LoginLimiterDto{
-		Rate:     global.Config.LimiterConf.Login.Rate,
-		Period:   global.Config.LimiterConf.Login.Period,
-		RedisCli: global.GetRedis(),
+		LimiterItem: global.Config.LimiterConf.Login,
+		RedisCli:    global.GetRedis(),
 	}
 	token, err := l.baseLogic.UserLogic.Login(l.ctx, loginReq, limiter)
 	if err != nil {
