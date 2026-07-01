@@ -24,8 +24,9 @@ RpcConf:
   Timeout: 10000
   LimiterConf:
     Login:
-      Rate: 5
+      Rate: 10
       Period: 300
+      LockPeriod: 120
     SendLoginEmail:
       Rate: 5
       Period: 300
