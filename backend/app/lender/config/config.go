@@ -1,6 +1,8 @@
 package config
 
 import (
+	"zeebee-backend/domains/zeebee/config"
+
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -61,15 +63,10 @@ type AwsS3Conf struct {
 }
 
 type LimiterConf struct {
-	Login             LimiterItem
-	SendLoginEmail    LimiterItem
-	SendVerityEmail   LimiterItem
-	SendResetPwdEmail LimiterItem
-}
-
-type LimiterItem struct {
-	Rate   int
-	Period int
+	Login             config.LimiterItem
+	SendLoginEmail    config.LimiterItem
+	SendVerityEmail   config.LimiterItem
+	SendResetPwdEmail config.LimiterItem
 }
 
 type EmailConf struct {

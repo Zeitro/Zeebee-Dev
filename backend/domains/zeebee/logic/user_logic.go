@@ -3,6 +3,8 @@ package logic
 import (
 	"context"
 	"regexp"
+	"time"
+	"zeebee-backend/common/timex"
 
 	"github.com/duke-git/lancet/v2/condition"
 	"github.com/duke-git/lancet/v2/slice"
@@ -279,13 +281,17 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 	redisKey := stringx.Format(constants.UserLoginFailedTimes, req.UserType, req.Email)
 	var loginFailedTimes int
 	var orgUser *model.OrganizationUser
-	if limiter.Rate > 0 {
+
+	lockPeriod := condition.Ternary(limiter.LimiterItem.LockPeriod > 0, limiter.LimiterItem.LockPeriod, limiter.LimiterItem.Period)
+	lockTime := timex.DurationToString(time.Second*time.Duration(lockPeriod), true)
+	tooManyAttemptError := errorx.Errorf("too many failed login attempts. please try again in %s", lockTime)
+	if limiter.LimiterItem.Rate > 0 {
 		loginFailedTimes, err = limiter.RedisCli.GetInt(ctx, redisKey)
 		if err != nil {
 			return nil, errorx.WithStack(err)
 		}
-		if loginFailedTimes >= limiter.Rate {
-			return nil, errorx.New("login failed times exceeded, please try again later")
+		if loginFailedTimes >= limiter.LimiterItem.Rate {
+			return nil, tooManyAttemptError
 		}
 	}
 
@@ -299,15 +305,25 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 
 	// Check pwd
 	if !utils.CheckPassword(req.Password, user.PasswordHash) {
+		var failedTimes int64
 		// Add input wrong pwd times to redis
-		_, err = limiter.RedisCli.IncreaseExpire(ctx, redisKey, limiter.Period)
+		failedTimes, err = limiter.RedisCli.IncreaseExpire(ctx, redisKey, limiter.LimiterItem.Period)
 		if err != nil {
 			return nil, errorx.WithStack(err)
 		}
-		return nil, errorx.WithStack(errorx.New("the email and password you entered don't match."))
+		leftTimes := limiter.LimiterItem.Rate - int(failedTimes)
+		// Lock login after reach rate
+		if leftTimes <= 0 {
+			err = limiter.RedisCli.Expire(ctx, redisKey, lockPeriod)
+			return nil, tooManyAttemptError
+		}
+		return nil, errorx.Errorf(
+			"the email and password you entered don't match. %d attempts remaining",
+			leftTimes,
+		)
 	}
 
-	if limiter.Rate > 0 {
+	if limiter.LimiterItem.Rate > 0 {
 		err = limiter.RedisCli.Del(ctx, redisKey)
 		if err != nil {
 			return nil, errorx.WithStack(err)

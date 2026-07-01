@@ -22,8 +22,9 @@ RpcConf:
   Timeout: 600000
   LimiterConf:
     Login:
-      Rate: 5
+      Rate: 10
       Period: 300
+      LockPeriod: 120
 
   EmailConf:
     Host: smtp.gmail.com
