@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 
 	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
@@ -33,7 +34,10 @@ func NewLeafListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LeafList
 func (l *LeafListLogic) LeafList(in *borrower.DocumentLeafListRequest) (resp *borrower.DocumentLeafListResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 

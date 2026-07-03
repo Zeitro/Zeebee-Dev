@@ -17,7 +17,7 @@ export const FieldTips = ({
 		<Tooltip
 			title={title}
 			classNames={{
-				root: `!max-w-[300px] ${rootClassName}`,
+                root: `!max-w-[300px] ${rootClassName}`,
 			}}
 			{...props}
 		>

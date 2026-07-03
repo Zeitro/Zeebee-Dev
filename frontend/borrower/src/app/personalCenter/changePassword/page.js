@@ -6,7 +6,7 @@ import { ConfirmPassWord } from '@repo/shared-methods';
 import { syncCredentialAfterPasswordReset } from '@repo/shared-methods/hooks';
 import { passwordRegex, setPendingLoginCredential } from '@repo/shared-methods/utils';
 import { debounce } from 'lodash';
-import { useUserStore } from '@repo/shared-methods/store';
+import { useUserStore } from '@/store/user';
 import { useRouter } from 'next/navigation';
 const ChangePassword = () => {
 	const router = useRouter();

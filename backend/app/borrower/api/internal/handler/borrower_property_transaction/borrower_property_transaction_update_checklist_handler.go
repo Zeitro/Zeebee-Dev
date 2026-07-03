@@ -5,6 +5,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
+
 	"zeebee-backend/app/borrower/api/internal/logic/borrower_property_transaction"
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
@@ -21,7 +22,10 @@ func BorrowerPropertyTransactionUpdateChecklistHandler(svcCtx *svc.ServiceContex
 		defer func() {
 			if err != nil {
 				logx.WithContext(r.Context()).
-					WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
+					WithFields(
+						logx.Field("stacks", errorx.GetErrorStack(err)),
+						logx.Field("service_name", svcCtx.Config.Name),
+					).
 					Error(err)
 			}
 		}()

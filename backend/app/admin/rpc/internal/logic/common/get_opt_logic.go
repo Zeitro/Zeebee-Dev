@@ -31,7 +31,10 @@ func NewGetOptLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetOptLogi
 func (l *GetOptLogic) GetOpt(in *admin.OptionRequest) (resp *admin.OptionResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 	resp = &admin.OptionResponse{

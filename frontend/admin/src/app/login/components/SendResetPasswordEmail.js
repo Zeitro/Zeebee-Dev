@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { Button, Form, Input } from 'antd';
-import { useUserStore } from '@repo/shared-methods/store';
+import { useUserStore } from '@/store/user';
 import { emailRegex } from '@repo/shared-methods/utils';
 import { MailOutlined } from '@ant-design/icons';
 import Image from 'next/image';

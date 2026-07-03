@@ -50,22 +50,22 @@ func (m *AuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			logx.WithContext(reqCtx).
 				WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
 				Errorf("Auth check failed: %v", err)
-			response.BadRequest(w, "Authentication failed")
+			response.BadRequest(w, "authentication failed")
 			return
 		}
 
 		if rpcResp.Data == nil {
-			response.BadRequest(w, "Invalid authentication response")
+			response.BadRequest(w, "invalid authentication response")
 			return
 		}
 		result := rpcResp.Data
 		if result.AuthenticationRequired && !result.Authenticated {
-			response.Unauthorized(w, "Not Login")
+			response.Unauthorized(w, "not login")
 			return
 		}
 
 		if result.AuthorizationRequired && !result.Authorized {
-			response.Forbidden(w, "No permission")
+			response.Forbidden(w, "no permission")
 			return
 		}
 
