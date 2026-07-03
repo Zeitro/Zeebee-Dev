@@ -11,6 +11,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -50,7 +51,7 @@ func (l *SelectOptionsLogic) SelectOptions(in *admin.OrganizationSelectOptionsRe
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[[]*dto.OrganizationOptionDto, []*admin.OrganizationOptionsEntity](&organization)
+	data, err := copierx.Trans[[]*dto.OrganizationOptionDto, []*proto.OrganizationOptionsEntity](&organization)
 	if err != nil {
 		return nil, err
 	}

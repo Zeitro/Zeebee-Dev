@@ -12,6 +12,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type UpdateExpireDateLogic struct {
@@ -30,7 +31,7 @@ func NewUpdateExpireDateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-func (l *UpdateExpireDateLogic) UpdateExpireDate(in *admin.OrganizationSubscriptionUpdateExpireDateRequest) (resp *admin.EmptyResponse, err error) {
+func (l *UpdateExpireDateLogic) UpdateExpireDate(in *admin.OrganizationSubscriptionUpdateExpireDateRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -50,5 +51,5 @@ func (l *UpdateExpireDateLogic) UpdateExpireDate(in *admin.OrganizationSubscript
 		return nil, errorx.WithStack(err)
 	}
 
-	return &admin.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

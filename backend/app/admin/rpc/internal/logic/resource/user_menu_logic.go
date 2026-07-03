@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -30,7 +31,7 @@ func NewUserMenuLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserMenu
 	}
 }
 
-func (l *UserMenuLogic) UserMenu(in *admin.EmptyRequest) (resp *admin.ResourceTreeResponse, err error) {
+func (l *UserMenuLogic) UserMenu(in *proto.EmptyRequest) (resp *admin.ResourceTreeResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -55,7 +56,7 @@ func (l *UserMenuLogic) UserMenu(in *admin.EmptyRequest) (resp *admin.ResourceTr
 	}
 	// trans response
 	resp = &admin.ResourceTreeResponse{}
-	menus, err := copierx.Trans[[]*dto.ResourceTreeDto, []*admin.ResourceTreeEntity](&result, copierx.TimeToRFC3339Str())
+	menus, err := copierx.Trans[[]*dto.ResourceTreeDto, []*proto.ResourceTreeEntity](&result, copierx.TimeToRFC3339Str())
 
 	return &admin.ResourceTreeResponse{
 		Data: *menus,

@@ -7,6 +7,7 @@ import (
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -42,7 +43,7 @@ func (l *RoleAssignOrganizationUsersLogic) RoleAssignOrganizationUsers(req *type
 	}
 
 	// trans response
-	resp, err = copierx.Trans[admin.RoleEntity, types.RoleEntity](rpcResp.Data)
+	resp, err = copierx.Trans[proto.RoleEntity, types.RoleEntity](rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

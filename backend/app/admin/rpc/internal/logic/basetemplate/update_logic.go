@@ -11,6 +11,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type UpdateLogic struct {
@@ -54,7 +55,7 @@ func (l *UpdateLogic) Update(in *admin.UpdateBaseTemplateRequest) (resp *admin.U
 	}
 
 	// Convert BO to proto for response
-	protoData, err := copierx.Trans[dto.BaseTemplateEntityDto, admin.BaseTemplateEntity](result, copierx.TimeToRFC3339Str())
+	protoData, err := copierx.Trans[dto.BaseTemplateEntityDto, proto.BaseTemplateEntity](result, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -49,7 +50,7 @@ func (l *AllLogic) All(in *admin.PricingPlanAllRequest) (resp *admin.PricingPlan
 		return nil, errorx.WithStack(err)
 	}
 
-	data, err := copierx.Trans[[]*dto.PricingPlanEntityDto, []*admin.PricingPlanEntity](&plans, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[[]*dto.PricingPlanEntityDto, []*proto.PricingPlanEntity](&plans, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

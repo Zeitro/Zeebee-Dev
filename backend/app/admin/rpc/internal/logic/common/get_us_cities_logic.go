@@ -5,6 +5,7 @@ import (
 
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -25,7 +26,7 @@ func NewGetUsCitiesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 	}
 }
 
-func (l *GetUsCitiesLogic) GetUsCities(in *admin.UsCitiesRequest) (resp *admin.StringSliceResponse, err error) {
+func (l *GetUsCitiesLogic) GetUsCities(in *admin.UsCitiesRequest) (resp *proto.StringSliceResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -38,7 +39,7 @@ func (l *GetUsCitiesLogic) GetUsCities(in *admin.UsCitiesRequest) (resp *admin.S
 	if err != nil {
 		return nil, err
 	}
-	return &admin.StringSliceResponse{
+	return &proto.StringSliceResponse{
 		Data: cities,
 	}, nil
 }

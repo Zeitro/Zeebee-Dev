@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DetailLogic struct {
@@ -43,7 +44,7 @@ func (l *DetailLogic) Detail(req *types.ApiDetailRequest) (resp *types.ApiEntity
 	}
 
 	// trans response
-	resp, err = copierx.Trans[admin.ApiEntity, types.ApiEntity](rpcResp.Data)
+	resp, err = copierx.Trans[proto.ApiEntity, types.ApiEntity](rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+package admin;
+
+option go_package = "zeebee-backend/app/admin/rpc/pb/admin";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+message SyncApiRequest {
+  SyncApiRequestData data = 1;
+}
+
+message SyncApiRequestData {
+  string api_json = 1;
+}
+
+message SyncApiResponse {}
+
+
+// api tree -- request
+message ApiTreeRequest {
+  ApiTreeRequestData data = 1;
+}
+message ApiTreeRequestData {
+  int64 user_id = 1;
+  int64 organization_id = 2;
+  string type = 3;
+}
+// api tree -- response
+message ApiTreeResponse {
+  repeated proto.ApiTreeEntity data = 1;
+}
+// create -- request
+message ApiCreateRequest {
+  ApiCreateRequestData data = 1;
+}
+message ApiCreateRequestData {
+  int64 parent_id = 1;
+  string type = 2;
+  string name = 3;
+  string path = 4;
+  string method = 5;
+  string description = 6;
+  string status = 7;
+  int32 sort_order = 8;
+  bool auth_required = 9;
+  bool permission_required = 10;
+}
+
+// update -- request
+message ApiUpdateRequest {
+  ApiUpdateRequestData data = 1;
+}
+message ApiUpdateRequestData {
+  int64 id = 1;
+  int64 parent_id = 2;
+  string type = 3;
+  string name = 4;
+  string path = 5;
+  string method = 6;
+  string description = 7;
+  string status = 8;
+  int32 sort_order = 9;
+  bool auth_required = 10;
+  bool permission_required = 11;
+}
+
+//  delete -- request
+message ApiDeleteRequest {
+  ApiDeleteRequestData data = 1;
+}
+message ApiDeleteRequestData {
+  int64 id = 1;
+  string type = 2;
+}
+// detail -- request
+message ApiDetailRequest {
+  ApiDetailRequestData data = 1;
+}
+message ApiDetailRequestData {
+  int64 id = 1;
+  string type = 2;
+}
+
+// detail -- response
+message ApiDetailResponse {
+  proto.ApiEntity data = 1;
+}
+
+service api {
+  rpc ApiTree(ApiTreeRequest) returns(ApiTreeResponse);
+  rpc Create(ApiCreateRequest) returns(ApiDetailResponse);
+  rpc Update(ApiUpdateRequest) returns(ApiDetailResponse);
+  rpc Delete(ApiDeleteRequest) returns(proto.EmptyResponse);
+  rpc Detail(ApiDetailRequest) returns(ApiDetailResponse);
+  rpc SyncApi(SyncApiRequest) returns(proto.EmptyResponse);
+}

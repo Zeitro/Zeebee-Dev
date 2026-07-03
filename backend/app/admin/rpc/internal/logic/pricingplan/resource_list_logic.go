@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -43,9 +44,9 @@ func (l *ResourceListLogic) ResourceList(in *admin.PricingPlanResourceListReques
 		return nil, errorx.WithStack(err)
 	}
 
-	var list []*admin.ResourceTreeEntity
+	var list []*proto.ResourceTreeEntity
 	for _, r := range resources {
-		item, innerErr := copierx.Trans[dto.PricingPlanResourceEntityDto, admin.ResourceTreeEntity](r)
+		item, innerErr := copierx.Trans[dto.PricingPlanResourceEntityDto, proto.ResourceTreeEntity](r)
 		if innerErr != nil {
 			return nil, innerErr
 		}

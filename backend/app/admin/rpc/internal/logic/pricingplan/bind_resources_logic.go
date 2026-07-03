@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type BindResourcesLogic struct {
@@ -27,7 +28,7 @@ func NewBindResourcesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Bin
 	}
 }
 
-func (l *BindResourcesLogic) BindResources(in *admin.PricingPlanBindResourcesRequest) (resp *admin.EmptyResponse, err error) {
+func (l *BindResourcesLogic) BindResources(in *admin.PricingPlanBindResourcesRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(

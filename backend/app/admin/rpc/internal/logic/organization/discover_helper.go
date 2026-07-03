@@ -7,6 +7,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/lenderdiscover"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 func discoverConfigToProto(cfg *lenderdiscover.Config) (*admin.LenderDiscoverSettingsEntity, error) {
@@ -47,23 +48,23 @@ func discoverCandidateToProto(c *lenderdiscover.PreviewCandidate) (*admin.Lender
 
 // lenderMetadataToProto handles manual conversion due to nested pointer types
 // and int->int32 conversion that copier cannot reliably handle.
-func discoverLenderMetadataToProto(raw lenderdiscover.RawLender) *admin.OrganizationLenderMetadataEntity {
+func discoverLenderMetadataToProto(raw lenderdiscover.RawLender) *proto.OrganizationLenderMetadataEntity {
 	if raw.Metadata.Lender == nil {
 		return nil
 	}
 	ml := raw.Metadata.Lender
-	out := &admin.OrganizationLenderMetadataEntity{}
+	out := &proto.OrganizationLenderMetadataEntity{}
 	if ml.LoanAmountRange != nil {
-		out.LoanAmountRange = &admin.RangeFloat{Min: ml.LoanAmountRange.Min, Max: ml.LoanAmountRange.Max}
+		out.LoanAmountRange = &proto.RangeFloat{Min: ml.LoanAmountRange.Min, Max: ml.LoanAmountRange.Max}
 	}
 	if ml.LoanTermRange != nil {
-		out.LoanTermRange = &admin.RangeInt32{Min: int32(ml.LoanTermRange.Min), Max: int32(ml.LoanTermRange.Max)}
+		out.LoanTermRange = &proto.RangeInt32{Min: int32(ml.LoanTermRange.Min), Max: int32(ml.LoanTermRange.Max)}
 	}
 	if ml.LoanRateRange != nil {
-		out.LoanRateRange = &admin.RangeFloat{Min: ml.LoanRateRange.Min, Max: ml.LoanRateRange.Max}
+		out.LoanRateRange = &proto.RangeFloat{Min: ml.LoanRateRange.Min, Max: ml.LoanRateRange.Max}
 	}
 	if ml.LoanPointRange != nil {
-		out.LoanPointRange = &admin.RangeFloat{Min: ml.LoanPointRange.Min, Max: ml.LoanPointRange.Max}
+		out.LoanPointRange = &proto.RangeFloat{Min: ml.LoanPointRange.Min, Max: ml.LoanPointRange.Max}
 	}
 	if out.LoanAmountRange == nil && out.LoanTermRange == nil && out.LoanRateRange == nil && out.LoanPointRange == nil {
 		return nil

@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -56,7 +57,7 @@ func (l *UpdateLogic) Update(in *admin.OrganizationUserUpdateRequest) (resp *adm
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[dto.OrganizationUserEntityDto, admin.OrganizationUserEntity](result, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[dto.OrganizationUserEntityDto, proto.OrganizationUserEntity](result, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

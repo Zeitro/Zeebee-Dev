@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -30,7 +31,7 @@ func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogi
 	}
 }
 
-func (l *DetailLogic) Detail(in *admin.PathIdRequest) (resp *admin.OrganizationSubscriptionDetailResponse, err error) {
+func (l *DetailLogic) Detail(in *proto.PathIdRequest) (resp *admin.OrganizationSubscriptionDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -45,7 +46,7 @@ func (l *DetailLogic) Detail(in *admin.PathIdRequest) (resp *admin.OrganizationS
 		return nil, errorx.WithStack(err)
 	}
 
-	protoData, err := copierx.Trans[dto.OrganizationSubscriptionEntity, admin.OrganizationSubscriptionEntity](result, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToStr(timex.LayoutUsStyle))
+	protoData, err := copierx.Trans[dto.OrganizationSubscriptionEntity, proto.OrganizationSubscriptionEntity](result, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToStr(timex.LayoutUsStyle))
 	if err != nil {
 		return nil, err
 	}

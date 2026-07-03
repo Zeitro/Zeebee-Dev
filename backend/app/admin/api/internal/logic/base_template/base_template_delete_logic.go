@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type BaseTemplateDeleteLogic struct {
@@ -30,7 +31,7 @@ func (l *BaseTemplateDeleteLogic) BaseTemplateDelete(req *types.PathIdRequest) (
 
 	// Convert types to pb request
 	rpcReq := &admin.DeleteBaseTemplateRequest{
-		Data: &admin.IdRequest{Data: req.Id},
+		Data: &proto.IdRequest{Data: req.Id},
 	}
 
 	// Call RPC server

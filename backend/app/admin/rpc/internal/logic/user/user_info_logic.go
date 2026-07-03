@@ -12,6 +12,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type UserInfoLogic struct {
@@ -30,7 +31,7 @@ func NewUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserInfo
 	}
 }
 
-func (l *UserInfoLogic) UserInfo(in *admin.EmptyRequest) (resp *admin.UserinfoResponse, err error) {
+func (l *UserInfoLogic) UserInfo(in *proto.EmptyRequest) (resp *admin.UserinfoResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(

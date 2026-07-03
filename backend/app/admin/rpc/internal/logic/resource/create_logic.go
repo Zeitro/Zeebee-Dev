@@ -11,6 +11,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type CreateLogic struct {
@@ -53,7 +54,7 @@ func (l *CreateLogic) Create(in *admin.ResourceCreateRequest) (resp *admin.Resou
 		return nil, err
 	}
 
-	respData, err := copierx.Trans[dto.ResourceEntityDto, admin.ResourceEntity](result, copierx.TimeToRFC3339Str())
+	respData, err := copierx.Trans[dto.ResourceEntityDto, proto.ResourceEntity](result, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

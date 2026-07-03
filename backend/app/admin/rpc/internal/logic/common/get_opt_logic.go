@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/enums"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -38,7 +39,7 @@ func (l *GetOptLogic) GetOpt(in *admin.OptionRequest) (resp *admin.OptionRespons
 		}
 	}()
 	resp = &admin.OptionResponse{
-		Data: []*admin.OptionEntity{},
+		Data: []*proto.OptionEntity{},
 	}
 	err = copier.Copy(&resp.Data, new(enums.Get(in.Data.Name)))
 	if err != nil {

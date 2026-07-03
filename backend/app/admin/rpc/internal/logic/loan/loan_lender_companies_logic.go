@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type LoanLenderCompaniesLogic struct {
@@ -28,7 +29,7 @@ func NewLoanLenderCompaniesLogic(ctx context.Context, svcCtx *svc.ServiceContext
 	}
 }
 
-func (l *LoanLenderCompaniesLogic) LoanLenderCompanies(in *admin.EmptyRequest) (resp *admin.LoanLenderCompaniesResponse, err error) {
+func (l *LoanLenderCompaniesLogic) LoanLenderCompanies(in *proto.EmptyRequest) (resp *admin.LoanLenderCompaniesResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(

@@ -12,6 +12,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type UpdateLogic struct {
@@ -57,7 +58,7 @@ func (l *UpdateLogic) Update(in *admin.RoleUpdateRequest) (resp *admin.RoleDetai
 		return nil, err
 	}
 
-	data, err := copierx.Trans[dto.RoleEntityDto, admin.RoleEntity](role, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[dto.RoleEntityDto, proto.RoleEntity](role, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

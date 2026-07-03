@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type UpdateLogic struct {
@@ -42,7 +43,7 @@ func (l *UpdateLogic) Update(req *types.ApiUpdateRequest) (resp *types.ApiEntity
 	}
 
 	// trans response
-	resp, err = copierx.Trans[admin.ApiEntity, types.ApiEntity](rpcResp.Data)
+	resp, err = copierx.Trans[proto.ApiEntity, types.ApiEntity](rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type RoleUpdateLogic struct {
@@ -50,7 +51,7 @@ func (l *RoleUpdateLogic) RoleUpdate(req *types.RoleUpdateRequest) (resp *types.
 	}
 
 	// trans response
-	resp, err = copierx.Trans[admin.RoleEntity, types.RoleEntity](rpcResp.Data)
+	resp, err = copierx.Trans[proto.RoleEntity, types.RoleEntity](rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

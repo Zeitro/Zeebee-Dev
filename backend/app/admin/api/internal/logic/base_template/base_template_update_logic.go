@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type BaseTemplateUpdateLogic struct {
@@ -46,7 +47,7 @@ func (l *BaseTemplateUpdateLogic) BaseTemplateUpdate(req *types.BaseTemplateUpda
 
 	// Convert pb response to types
 	resp = &types.BaseTemplateDetailResponse{}
-	entity, err := copierx.Trans[admin.BaseTemplateEntity, types.BaseTemplateEntity](rpcResp.Data, copierx.TimeToRFC3339Str())
+	entity, err := copierx.Trans[proto.BaseTemplateEntity, types.BaseTemplateEntity](rpcResp.Data, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

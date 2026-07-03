@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/lenderdiscover"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DiscoverGetSettingsLogic struct {
@@ -21,7 +22,7 @@ func NewDiscoverGetSettingsLogic(ctx context.Context, svcCtx *svc.ServiceContext
 	return &DiscoverGetSettingsLogic{ctx: ctx, svcCtx: svcCtx, Logger: logx.WithContext(ctx)}
 }
 
-func (l *DiscoverGetSettingsLogic) DiscoverGetSettings(_ *admin.EmptyRequest) (resp *admin.LenderDiscoverSettingsResponse, err error) {
+func (l *DiscoverGetSettingsLogic) DiscoverGetSettings(_ *proto.EmptyRequest) (resp *admin.LenderDiscoverSettingsResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)

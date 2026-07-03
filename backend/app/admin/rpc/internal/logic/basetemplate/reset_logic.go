@@ -3,11 +3,11 @@ package basetemplatelogic
 import (
 	"context"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
-	"zeebee-backend/app/admin/rpc/pb/admin"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -28,7 +28,7 @@ func NewResetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ResetLogic 
 	}
 }
 
-func (l *ResetLogic) Reset(in *admin.IdRequest) (resp *admin.EmptyResponse, err error) {
+func (l *ResetLogic) Reset(in *proto.IdRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -39,5 +39,5 @@ func (l *ResetLogic) Reset(in *admin.IdRequest) (resp *admin.EmptyResponse, err 
 	}()
 	id := in.Data
 	err = l.baseLogic.OrganizationTemplateLogic.ResetByBaseTemplateId(l.ctx, id)
-	return &admin.EmptyResponse{}, err
+	return &proto.EmptyResponse{}, err
 }

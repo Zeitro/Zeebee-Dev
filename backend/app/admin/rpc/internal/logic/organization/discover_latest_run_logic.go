@@ -7,6 +7,7 @@ import (
 
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DiscoverLatestRunLogic struct {
@@ -20,6 +21,6 @@ func NewDiscoverLatestRunLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 // DiscoverLatestRun returns an empty stub (runs table has been removed; endpoint kept for backward compatibility).
-func (l *DiscoverLatestRunLogic) DiscoverLatestRun(_ *admin.EmptyRequest) (*admin.LenderDiscoverRunResponse, error) {
+func (l *DiscoverLatestRunLogic) DiscoverLatestRun(_ *proto.EmptyRequest) (*admin.LenderDiscoverRunResponse, error) {
 	return &admin.LenderDiscoverRunResponse{Data: &admin.LenderDiscoverRunEntity{}}, nil
 }

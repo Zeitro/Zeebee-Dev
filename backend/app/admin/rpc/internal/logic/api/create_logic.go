@@ -11,6 +11,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type CreateLogic struct {
@@ -53,7 +54,7 @@ func (l *CreateLogic) Create(in *admin.ApiCreateRequest) (resp *admin.ApiDetailR
 		return nil, err
 	}
 
-	respData, err := copierx.Trans[dto.ApiEntityDto, admin.ApiEntity](result, copierx.TimeToRFC3339Str())
+	respData, err := copierx.Trans[dto.ApiEntityDto, proto.ApiEntity](result, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

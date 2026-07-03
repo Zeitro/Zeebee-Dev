@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -50,7 +51,7 @@ func (l *CreateLogic) Create(in *admin.PricingPlanPolicyCreateRequest) (resp *ad
 		return nil, errorx.WithStack(err)
 	}
 
-	protoData, err := copierx.Trans[dto.PricingPlanPolicyEntityDto, admin.PricingPlanPolicyEntity](result, copierx.TimeToRFC3339Str())
+	protoData, err := copierx.Trans[dto.PricingPlanPolicyEntityDto, proto.PricingPlanPolicyEntity](result, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

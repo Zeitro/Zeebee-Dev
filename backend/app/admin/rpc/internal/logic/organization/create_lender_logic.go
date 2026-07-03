@@ -14,6 +14,7 @@ import (
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type CreateLenderLogic struct {
@@ -90,7 +91,6 @@ func (l *CreateLenderLogic) CreateLender(in *admin.OrganizationCreateLenderReque
 		return nil, err
 	}
 
-
 	// Subscribe default pricing plan (best-effort, ignore errors)
 	_ = l.baseLogic.OrganizationSubscriptionLogic.SubscribeDefaultPlan(l.ctx, organizationUser.OrganizationId, constants.UserTypeLender)
 
@@ -101,7 +101,7 @@ func (l *CreateLenderLogic) CreateLender(in *admin.OrganizationCreateLenderReque
 	}
 
 	// Convert to response
-	data, err := copierx.Trans[dto.OrganizationEntityDto, admin.OrganizationEntity](organization, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[dto.OrganizationEntityDto, proto.OrganizationEntity](organization, copierx.TimeToRFC3339Str())
 	return &admin.OrganizationDetailResponse{
 		Data: data,
 	}, err

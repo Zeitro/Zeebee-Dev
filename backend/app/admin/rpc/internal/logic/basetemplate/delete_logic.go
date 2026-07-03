@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DeleteLogic struct {
@@ -28,7 +29,7 @@ func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogi
 }
 
 // Delete deletes a base template by ID with cascade to organization templates
-func (l *DeleteLogic) Delete(in *admin.DeleteBaseTemplateRequest) (resp *admin.EmptyResponse, err error) {
+func (l *DeleteLogic) Delete(in *admin.DeleteBaseTemplateRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -44,5 +45,5 @@ func (l *DeleteLogic) Delete(in *admin.DeleteBaseTemplateRequest) (resp *admin.E
 		return nil, err
 	}
 
-	return &admin.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

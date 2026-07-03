@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -44,7 +45,7 @@ func (l *ApiTreeLogic) ApiTree(in *admin.ApiTreeRequest) (resp *admin.ApiTreeRes
 		return nil, err
 	}
 
-	data, err := copierx.Trans[[]*dto.ApiEntityDto, []*admin.ApiTreeEntity](&trees, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[[]*dto.ApiEntityDto, []*proto.ApiTreeEntity](&trees, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

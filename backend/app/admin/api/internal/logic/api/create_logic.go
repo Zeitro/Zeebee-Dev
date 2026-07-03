@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type CreateLogic struct {
@@ -44,7 +45,7 @@ func (l *CreateLogic) Create(req *types.ApiCreateRequest) (resp *types.ApiEntity
 	}
 
 	// trans response
-	resp, err = copierx.Trans[admin.ApiEntity, types.ApiEntity](rpcResp.Data)
+	resp, err = copierx.Trans[proto.ApiEntity, types.ApiEntity](rpcResp.Data)
 
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)

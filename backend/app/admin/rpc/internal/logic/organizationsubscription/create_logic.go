@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -43,7 +44,7 @@ func (l *CreateLogic) Create(in *admin.OrganizationSubscriptionCreateRequest) (r
 		return nil, errorx.WithStack(err)
 	}
 
-	protoData, err := copierx.Trans[dto.OrganizationSubscriptionEntity, admin.OrganizationSubscriptionEntity](result, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToStr(timex.LayoutUsStyle))
+	protoData, err := copierx.Trans[dto.OrganizationSubscriptionEntity, proto.OrganizationSubscriptionEntity](result, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToStr(timex.LayoutUsStyle))
 	if err != nil {
 		return nil, err
 	}

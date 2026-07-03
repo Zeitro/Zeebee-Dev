@@ -5,8 +5,8 @@ import (
 
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
-	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -31,7 +31,7 @@ func (l *OrganizationDiscoverPreviewLogic) LenderDiscoverPreview(_ *types.EmptyR
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	rpcResp, err := l.svcCtx.OrganizationRpcClient.DiscoverPreview(context.WithoutCancel(l.ctx), &admin.EmptyRequest{})
+	rpcResp, err := l.svcCtx.OrganizationRpcClient.DiscoverPreview(context.WithoutCancel(l.ctx), &proto.EmptyRequest{})
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}

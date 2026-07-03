@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type ResourceCreateLogic struct {
@@ -43,7 +44,7 @@ func (l *ResourceCreateLogic) ResourceCreate(req *types.ResourceCreateRequest) (
 	}
 
 	// trans response
-	resp, err = copierx.Trans[admin.ResourceEntity, types.ResourceEntity](rpcResp.Data)
+	resp, err = copierx.Trans[proto.ResourceEntity, types.ResourceEntity](rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

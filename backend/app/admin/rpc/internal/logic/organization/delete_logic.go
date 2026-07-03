@@ -7,8 +7,8 @@ import (
 
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
-	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DeleteLogic struct {
@@ -33,7 +33,7 @@ func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogi
 // 2. roles (via GORM clause.Associations cascade delete)
 // 3. organization
 // Note: Users are NOT deleted as they may belong to other organizations
-func (l *DeleteLogic) Delete(in *admin.IdRequest) (resp *admin.EmptyResponse, err error) {
+func (l *DeleteLogic) Delete(in *proto.IdRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -43,5 +43,5 @@ func (l *DeleteLogic) Delete(in *admin.IdRequest) (resp *admin.EmptyResponse, er
 		}
 	}()
 	err = l.baseLogic.OrganizationLogic.Delete(l.ctx, in.Data)
-	return &admin.EmptyResponse{}, err
+	return &proto.EmptyResponse{}, err
 }

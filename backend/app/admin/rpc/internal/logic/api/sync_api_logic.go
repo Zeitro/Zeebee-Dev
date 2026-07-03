@@ -11,6 +11,7 @@ import (
 	"zeebee-backend/common/swagger"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -31,7 +32,7 @@ func NewSyncApiLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncApiLo
 	}
 }
 
-func (l *SyncApiLogic) SyncApi(in *admin.SyncApiRequest) (resp *admin.EmptyResponse, err error) {
+func (l *SyncApiLogic) SyncApi(in *admin.SyncApiRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -68,5 +69,5 @@ func (l *SyncApiLogic) SyncApi(in *admin.SyncApiRequest) (resp *admin.EmptyRespo
 		return nil, err
 	}
 
-	return &admin.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

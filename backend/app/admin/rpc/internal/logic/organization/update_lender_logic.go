@@ -16,11 +16,12 @@ import (
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	zeebeeproto "zeebee-backend/domains/zeebee/proto"
 )
 
 type UpdateLenderLogic struct {
-	ctx       context.Context
-	svcCtx    *svc.ServiceContext
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
 	logx.Logger
 	baseLogic *logic.BaseLogic
 }
@@ -141,7 +142,7 @@ func (l *UpdateLenderLogic) UpdateLender(in *admin.OrganizationUpdateLenderReque
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[dto.OrganizationEntityDto, admin.OrganizationEntity](organizationBo, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[dto.OrganizationEntityDto, zeebeeproto.OrganizationEntity](organizationBo, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

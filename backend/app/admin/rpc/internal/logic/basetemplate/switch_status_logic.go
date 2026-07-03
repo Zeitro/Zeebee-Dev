@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type SwitchStatusLogic struct {
@@ -29,7 +30,7 @@ func NewSwitchStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Swit
 }
 
 // SwitchStatus switches the status of a base template with cascade to organization templates
-func (l *SwitchStatusLogic) SwitchStatus(in *admin.SwitchBaseTemplateStatusRequest) (resp *admin.EmptyResponse, err error) {
+func (l *SwitchStatusLogic) SwitchStatus(in *admin.SwitchBaseTemplateStatusRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -51,5 +52,5 @@ func (l *SwitchStatusLogic) SwitchStatus(in *admin.SwitchBaseTemplateStatusReque
 		return nil, err
 	}
 
-	return &admin.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

@@ -12,6 +12,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DetailLogic struct {
@@ -50,7 +51,7 @@ func (l *DetailLogic) Detail(in *admin.RoleDetailRequest) (resp *admin.RoleDetai
 		return nil, err
 	}
 
-	respData, err := copierx.Trans[dto.RoleEntityDto, admin.RoleEntity](role, copierx.TimeToRFC3339Str())
+	respData, err := copierx.Trans[dto.RoleEntityDto, proto.RoleEntity](role, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

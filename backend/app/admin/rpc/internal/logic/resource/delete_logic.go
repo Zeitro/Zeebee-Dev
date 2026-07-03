@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DeleteLogic struct {
@@ -28,7 +29,7 @@ func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogi
 	}
 }
 
-func (l *DeleteLogic) Delete(in *admin.ResourceDeleteRequest) (resp *admin.EmptyResponse, err error) {
+func (l *DeleteLogic) Delete(in *admin.ResourceDeleteRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -43,5 +44,5 @@ func (l *DeleteLogic) Delete(in *admin.ResourceDeleteRequest) (resp *admin.Empty
 		return nil, err
 	}
 
-	return &admin.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

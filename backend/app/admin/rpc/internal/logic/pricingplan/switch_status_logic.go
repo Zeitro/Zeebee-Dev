@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,7 +29,7 @@ func NewSwitchStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Swit
 	}
 }
 
-func (l *SwitchStatusLogic) SwitchStatus(in *admin.PricingPlanSwitchStatusRequest) (resp *admin.EmptyResponse, err error) {
+func (l *SwitchStatusLogic) SwitchStatus(in *admin.PricingPlanSwitchStatusRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -42,5 +43,5 @@ func (l *SwitchStatusLogic) SwitchStatus(in *admin.PricingPlanSwitchStatusReques
 		return nil, errorx.WithStack(err)
 	}
 
-	return &admin.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

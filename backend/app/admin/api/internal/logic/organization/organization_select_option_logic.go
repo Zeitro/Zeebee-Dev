@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -41,7 +42,7 @@ func (l *OrganizationSelectOptionLogic) OrganizationSelectOption(req *types.Orga
 	}
 
 	resp = &types.OrganizationOptionResponse{}
-	options, err := copierx.Trans[[]*admin.OrganizationOptionsEntity, []*types.OrganizationOptionEntity](&rpcResp.Data)
+	options, err := copierx.Trans[[]*proto.OrganizationOptionsEntity, []*types.OrganizationOptionEntity](&rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

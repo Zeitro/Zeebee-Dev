@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -42,7 +43,7 @@ func (l *UpdateLogic) Update(in *admin.PricingPlanUpdateRequest) (resp *admin.Pr
 		return nil, errorx.WithStack(err)
 	}
 
-	protoData, err := copierx.Trans[dto.PricingPlanEntityDto, admin.PricingPlanEntity](result, copierx.TimeToRFC3339Str())
+	protoData, err := copierx.Trans[dto.PricingPlanEntityDto, proto.PricingPlanEntity](result, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}
