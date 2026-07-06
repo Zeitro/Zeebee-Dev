@@ -87,6 +87,16 @@ func (r *Client) SetExpire(ctx context.Context, key string, val string, seconds 
 	return r.cli.Set(ctx, r.buildKey(key), val, time.Duration(seconds)*time.Second).Err()
 }
 
+// GetTTL gets key's ttl.
+func (r *Client) GetTTL(ctx context.Context, key string) (ttl time.Duration, err error) {
+	return r.cli.TTL(ctx, r.buildKey(key)).Result()
+}
+
+// SetNX sets key only if absent, with optional expiration.
+func (r *Client) SetNX(ctx context.Context, key string, val string, ttl time.Duration) (ok bool, err error) {
+	return r.cli.SetNX(ctx, r.buildKey(key), val, ttl).Result()
+}
+
 // Expire
 func (r *Client) Expire(ctx context.Context, key string, seconds int) (err error) {
 	return r.cli.Expire(ctx, r.buildKey(key), time.Duration(seconds)*time.Second).Err()

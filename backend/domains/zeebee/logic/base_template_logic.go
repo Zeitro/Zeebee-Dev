@@ -64,7 +64,7 @@ func (l *BaseTemplateLogic) Create(ctx context.Context, req dto.BaseTemplateCrea
 		return innerErr
 	})
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to create template")
+		return nil, errorx.Wrap(err, "fail to create template")
 	}
 
 	result, err = copierx.Trans[model.BaseTemplate, dto.BaseTemplateEntityDto](created)

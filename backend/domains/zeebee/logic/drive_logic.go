@@ -291,23 +291,7 @@ func (l *DriveLogic) runSyncJob(jobId int64, s3Client *aws_s3.S3Client, input dt
 // 事件统一为 "Synced to Google Drive"，成功/失败及统计明细放在 metadata 里：
 // 整体出错或存在文件失败（部分失败）→ outcome=failed；全部成功 → outcome=success。
 func (l *DriveLogic) recordSyncOperation(ctx context.Context, input dto.DriveSyncTransactionRequestDto, status string, result *dto.DriveSyncTransactionResultDto, syncErr error) {
-	meta := map[string]interface{}{"status": status}
-	outcome := driveSyncOutcomeSuccess
-	if syncErr != nil {
-		outcome = driveSyncOutcomeFailed
-		meta["error"] = truncateError(syncErr.Error())
-	} else if result != nil {
-		meta["total"] = result.Total
-		meta["created"] = result.Created
-		meta["replaced"] = result.Replaced
-		meta["removed"] = result.Removed
-		meta["failed"] = result.Failed
-		// 部分失败也算失败：只要有文件没同步成功，outcome 即为 failed。
-		if result.Failed > 0 {
-			outcome = driveSyncOutcomeFailed
-		}
-	}
-	meta["outcome"] = outcome
+	meta := buildSyncOperationMeta(status, result, syncErr)
 
 	metaJSON, merr := json.Marshal(meta)
 	if merr != nil {
@@ -328,6 +312,33 @@ func (l *DriveLogic) recordSyncOperation(ctx context.Context, input dto.DriveSyn
 		logx.WithContext(ctx).WithFields(logx.Field("transaction_id", input.TransactionId)).
 			Errorf("record drive sync operation failed: %v", oerr)
 	}
+}
+
+// buildSyncOperationMeta builds the operations.metadata payload for a sync run.
+// On success it carries the full result (counts, folder link, per-file list) so the
+// transaction Log can render the complete outcome; on failure it carries the error.
+// outcome=failed when the run errored or any file failed; otherwise outcome=success.
+func buildSyncOperationMeta(status string, result *dto.DriveSyncTransactionResultDto, syncErr error) map[string]interface{} {
+	meta := map[string]interface{}{"status": status}
+	outcome := driveSyncOutcomeSuccess
+	if syncErr != nil {
+		outcome = driveSyncOutcomeFailed
+		meta["error"] = truncateError(syncErr.Error())
+	} else if result != nil {
+		meta["total"] = result.Total
+		meta["created"] = result.Created
+		meta["replaced"] = result.Replaced
+		meta["removed"] = result.Removed
+		meta["failed"] = result.Failed
+		meta["folder_web_link"] = result.FolderWebLink
+		meta["files"] = result.Files
+		// Partial failure still counts as failed: any unsynced file makes outcome=failed.
+		if result.Failed > 0 {
+			outcome = driveSyncOutcomeFailed
+		}
+	}
+	meta["outcome"] = outcome
+	return meta
 }
 
 // GetSyncJobStatus returns the latest sync job for a transaction (nil if none).

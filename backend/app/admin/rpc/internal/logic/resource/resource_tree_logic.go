@@ -33,11 +33,24 @@ func NewResourceTreeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Reso
 func (l *ResourceTreeLogic) ResourceTree(in *admin.ResourceTreeRequest) (resp *admin.ResourceTreeResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
+	var trees []*dto.ResourceTreeDto
+	switch constants.ResourceTreeScope(in.Data.Scope) {
+	case constants.ResourceTreeScopeAll:
+		trees, err = l.baseLogic.ResourceLogic.ResourceTree(l.ctx, constants.UserType(in.Data.Type))
+	case constants.ResourceTreeScopeOrganization:
+		claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+		if err != nil {
+			return nil, err
+		}
+		trees, err = l.baseLogic.ResourceLogic.GetOrganizationResources(l.ctx, claim.OrganizationId, constants.UserType(in.Data.Type))
+	}
 
-	trees, err := l.baseLogic.ResourceLogic.ResourceTree(l.ctx, constants.UserType(in.Data.Type))
 	if err != nil {
 		return nil, err
 	}

@@ -31,14 +31,17 @@ func NewLoanLenderCompaniesLogic(ctx context.Context, svcCtx *svc.ServiceContext
 func (l *LoanLenderCompaniesLogic) LoanLenderCompanies(in *admin.EmptyRequest) (resp *admin.LoanLenderCompaniesResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 
 	var lenderCompanies []string
 	lenderCompanies, err = l.svcCtx.LoanRepo.GetLenderCompanyForAdmin(l.ctx)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to get lender companies")
+		return nil, errorx.Wrap(err, "fail to get lender companies")
 	}
 
 	lenderCompanies = slice.Filter(lenderCompanies, func(index int, item string) bool {
