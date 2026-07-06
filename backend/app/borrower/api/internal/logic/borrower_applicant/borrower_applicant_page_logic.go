@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type BorrowerApplicantPageLogic struct {
@@ -27,17 +28,17 @@ func NewBorrowerApplicantPageLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *BorrowerApplicantPageLogic) BorrowerApplicantPage(req *types.BorrowerApplicantPageRequest) (resp *types.BorrowerApplicantPageResponse, err error) {
-	rpcReq := &borrower.BorrowerApplicantPageRequest{
-		Data: &borrower.BorrowerApplicantPageRequestData{
-			Filter: &borrower.BorrowerApplicantPageRequestFilter{},
-			Sorter: &borrower.BorrowerApplicantPageRequestSorter{},
+	rpcReq := &proto.CommonPageRequest{
+		Data: &proto.CommonPageRequestData{
+			Filter: &proto.CommonPageFilter{},
+			Sorter: &proto.CommonPageSorter{},
 		},
 	}
 	resp = &types.BorrowerApplicantPageResponse{}
 	rpcResp := &borrower.BorrowerApplicantPageResponse{
 		Data: &borrower.BorrowerApplicantPageResponseData{},
 	}
-	rpcReq.Data, err = copierx.Trans[types.BorrowerApplicantPageRequest, borrower.BorrowerApplicantPageRequestData](req)
+	rpcReq.Data, err = copierx.Trans[types.BorrowerApplicantPageRequest, proto.CommonPageRequestData](req)
 	if err != nil {
 		return nil, err
 	}

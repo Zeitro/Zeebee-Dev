@@ -17,6 +17,7 @@ import (
 	"zeebee-backend/common/timex"
 	"zeebee-backend/common/validator"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 const (
@@ -98,7 +99,7 @@ func (l *ImportLogic) Import(fileContents []byte, stage string) (resp *types.Imp
 	// 	return nil, err
 	// }
 
-	userUserRpcRsp, err := l.svcCtx.UserRpcClient.UserInfo(l.ctx, &borrower.EmptyRequest{})
+	userUserRpcRsp, err := l.svcCtx.UserRpcClient.UserInfo(l.ctx, &proto.EmptyRequest{})
 	if err != nil {
 		return nil, err
 	}
