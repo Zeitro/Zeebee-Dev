@@ -11,6 +11,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -31,7 +32,7 @@ func NewAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AllLogic {
 	}
 }
 
-func (l *AllLogic) All(in *borrower.BorrowerEntityAllRequest) (resp *borrower.BorrowerEntityAllResponse, err error) {
+func (l *AllLogic) All(in *proto.EmptyRequest) (resp *borrower.BorrowerEntityAllResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(

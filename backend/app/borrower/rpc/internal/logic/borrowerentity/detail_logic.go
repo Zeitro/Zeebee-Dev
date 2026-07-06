@@ -11,6 +11,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -31,7 +32,7 @@ func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogi
 	}
 }
 
-func (l *DetailLogic) Detail(in *borrower.BorrowerEntityDetailRequest) (resp *borrower.BorrowerEntityDetailResponse, err error) {
+func (l *DetailLogic) Detail(in *proto.PathIdRequest) (resp *borrower.BorrowerEntityDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -46,12 +47,12 @@ func (l *DetailLogic) Detail(in *borrower.BorrowerEntityDetailRequest) (resp *bo
 		return nil, err
 	}
 
-	respData := &borrower.BorrowerEntityEntity{}
+	respData := &proto.BorrowerEntityEntity{}
 	result, err := l.svcCtx.BorrowerEntityRepo.GetOneByIdForOrganization(l.ctx, in.Data.Id, claim.OrganizationId)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-	respData, err = copierx.Trans[model.BorrowerEntity, borrower.BorrowerEntityEntity](result, copierx.TimeToRFC3339Str(),
+	respData, err = copierx.Trans[model.BorrowerEntity, proto.BorrowerEntityEntity](result, copierx.TimeToRFC3339Str(),
 		copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
 	)
 	if err != nil {

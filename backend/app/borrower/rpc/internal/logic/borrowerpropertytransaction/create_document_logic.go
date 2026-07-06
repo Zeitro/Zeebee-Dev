@@ -18,6 +18,7 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type CreateDocumentLogic struct {
@@ -36,7 +37,7 @@ func NewCreateDocumentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cr
 	}
 }
 
-func (l *CreateDocumentLogic) CreateDocument(in *borrower.DocumentCreateRequest) (resp *borrower.DocumentCreateResponse, err error) {
+func (l *CreateDocumentLogic) CreateDocument(in *borrower.BorrowerPropertyTransactionDocumentCreateRequest) (resp *borrower.BorrowerPropertyTransactionDocumentCreateResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -165,16 +166,16 @@ func (l *CreateDocumentLogic) CreateDocument(in *borrower.DocumentCreateRequest)
 		return nil, err
 	}
 
-	var protoDocs []*borrower.DocumentEntity
+	var protoDocs []*proto.DocumentEntity
 	for _, doc := range createdDocs {
-		protoDoc, transErr := copierx.Trans[model.Document, borrower.DocumentEntity](doc, copierx.TimeToRFC3339Str())
+		protoDoc, transErr := copierx.Trans[model.Document, proto.DocumentEntity](doc, copierx.TimeToRFC3339Str())
 		if transErr != nil {
 			return nil, errorx.GetFailedTransRespErr(transErr)
 		}
 		protoDocs = append(protoDocs, protoDoc)
 	}
 
-	return &borrower.DocumentCreateResponse{
+	return &borrower.BorrowerPropertyTransactionDocumentCreateResponse{
 		Data: protoDocs,
 	}, nil
 }

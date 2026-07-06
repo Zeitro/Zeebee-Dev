@@ -31,7 +31,7 @@ func NewDeleteFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delete
 	}
 }
 
-func (l *DeleteFileLogic) DeleteFile(in *borrower.FileDeleteRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *DeleteFileLogic) DeleteFile(in *borrower.FileDeleteRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -109,5 +109,5 @@ func (l *DeleteFileLogic) DeleteFile(in *borrower.FileDeleteRequest) (resp *borr
 		return nil, err
 	}
 
-	return &borrower.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

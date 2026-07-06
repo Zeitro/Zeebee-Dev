@@ -11,6 +11,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -31,7 +32,7 @@ func NewLenderPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Lender
 	}
 }
 
-func (l *LenderPageLogic) LenderPage(in *borrower.OrganizationLenderPageRequest) (resp *borrower.OrganizationLenderPageResponse, err error) {
+func (l *LenderPageLogic) LenderPage(in *proto.CommonPageRequest) (resp *borrower.OrganizationLenderPageResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -41,7 +42,7 @@ func (l *LenderPageLogic) LenderPage(in *borrower.OrganizationLenderPageRequest)
 		}
 	}()
 
-	pageReq, err := copierx.Trans[borrower.OrganizationLenderPageRequestData, dto.OrganizationPageRequestDto](in.Data)
+	pageReq, err := copierx.Trans[proto.CommonPageRequestData, dto.OrganizationPageRequestDto](in.Data)
 	if err != nil {
 		return nil, err
 	}

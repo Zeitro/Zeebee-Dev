@@ -12,13 +12,13 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/email_tpl"
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	email2 "zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/limiter"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type SendResetPasswordEmailLogic struct {
@@ -35,7 +35,7 @@ func NewSendResetPasswordEmailLogic(ctx context.Context, svcCtx *svc.ServiceCont
 	}
 }
 
-func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *borrower.SendResetPasswordEmailRequest) (resp *borrower.SendResetPasswordEmailResponse, err error) {
+func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *proto.SendResetPasswordEmailRequest) (resp *proto.SendResetPasswordEmailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -79,7 +79,7 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *borrower.SendRe
 		}
 	}()
 
-	return &borrower.SendResetPasswordEmailResponse{}, err
+	return &proto.SendResetPasswordEmailResponse{}, err
 }
 
 func (l *SendResetPasswordEmailLogic) sendResetPwdEmail(email string, firstName string) (err error) {

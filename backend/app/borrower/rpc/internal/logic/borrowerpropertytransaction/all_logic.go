@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -31,7 +32,7 @@ func NewAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AllLogic {
 	}
 }
 
-func (l *AllLogic) All(in *borrower.BorrowerPropertyTransactionAllRequest) (resp *borrower.BorrowerPropertyTransactionAllResponse, err error) {
+func (l *AllLogic) All(in *proto.EmptyRequest) (resp *borrower.BorrowerPropertyTransactionAllResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -49,8 +50,8 @@ func (l *AllLogic) All(in *borrower.BorrowerPropertyTransactionAllRequest) (resp
 	if err != nil {
 		return nil, err
 	}
-	var options *[]*borrower.BorrowerPropertyTransactionOptionEntity
-	options, err = copierx.Trans[[]*model.BorrowerPropertyTransaction, []*borrower.BorrowerPropertyTransactionOptionEntity](&transactions, copierx.SqlTimePtrToStr(timex.LayoutUsStyle), copierx.TimeToRFC3339Str())
+	var options *[]*proto.BorrowerPropertyTransactionOptionEntity
+	options, err = copierx.Trans[[]*model.BorrowerPropertyTransaction, []*proto.BorrowerPropertyTransactionOptionEntity](&transactions, copierx.SqlTimePtrToStr(timex.LayoutUsStyle), copierx.TimeToRFC3339Str())
 	if err != nil {
 		return
 	}

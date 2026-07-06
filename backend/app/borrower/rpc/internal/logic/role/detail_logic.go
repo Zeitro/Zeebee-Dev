@@ -12,6 +12,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DetailLogic struct {
@@ -30,7 +31,7 @@ func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogi
 	}
 }
 
-func (l *DetailLogic) Detail(in *borrower.RoleDetailRequest) (resp *borrower.RoleDetailResponse, err error) {
+func (l *DetailLogic) Detail(in *proto.PathIdRequest) (resp *borrower.RoleDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -50,7 +51,7 @@ func (l *DetailLogic) Detail(in *borrower.RoleDetailRequest) (resp *borrower.Rol
 		return nil, err
 	}
 
-	respData, err := copierx.Trans[dto.RoleEntityDto, borrower.RoleEntity](role, copierx.TimeToRFC3339Str())
+	respData, err := copierx.Trans[dto.RoleEntityDto, proto.RoleEntity](role, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

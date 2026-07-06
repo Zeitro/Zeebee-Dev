@@ -7,11 +7,11 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/limiter"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type SendVerifyEmailLogic struct {
@@ -28,7 +28,7 @@ func NewSendVerifyEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 	}
 }
 
-func (l *SendVerifyEmailLogic) SendVerifyEmail(in *borrower.SendVerifyEmailRequest) (resp *borrower.SendVerifyEmailResponse, err error) {
+func (l *SendVerifyEmailLogic) SendVerifyEmail(in *proto.SendVerifyEmailRequest) (resp *proto.SendVerifyEmailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -73,5 +73,5 @@ func (l *SendVerifyEmailLogic) SendVerifyEmail(in *borrower.SendVerifyEmailReque
 		}
 	}()
 
-	return &borrower.SendVerifyEmailResponse{}, nil
+	return &proto.SendVerifyEmailResponse{}, nil
 }

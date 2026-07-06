@@ -11,6 +11,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type FilesLogic struct {
@@ -57,9 +58,9 @@ func (l *FilesLogic) Files(in *borrower.DocumentFilesRequest) (resp *borrower.Do
 	}
 
 	// convert files to proto
-	result := make([]*borrower.FileEntity, 0, len(doc.Files))
+	result := make([]*proto.FileEntity, 0, len(doc.Files))
 	for _, f := range doc.Files {
-		protoFile, innerErr := copierx.Trans[model.File, borrower.FileEntity](f, copierx.TimeToRFC3339Str())
+		protoFile, innerErr := copierx.Trans[model.File, proto.FileEntity](f, copierx.TimeToRFC3339Str())
 		if innerErr != nil {
 			continue
 		}

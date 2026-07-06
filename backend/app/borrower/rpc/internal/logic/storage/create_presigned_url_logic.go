@@ -9,8 +9,8 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -31,7 +31,7 @@ func NewCreatePresignedUrlLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *CreatePresignedUrlLogic) CreatePresignedUrl(in *borrower.StorageCreatePresignedUrlRequest) (resp *borrower.StorageCreatePresignedUrlResponse, err error) {
+func (l *CreatePresignedUrlLogic) CreatePresignedUrl(in *proto.StorageCreatePresignedUrlRequest) (resp *proto.StorageCreatePresignedUrlResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -64,8 +64,8 @@ func (l *CreatePresignedUrlLogic) CreatePresignedUrl(in *borrower.StorageCreateP
 		return
 	}
 
-	return &borrower.StorageCreatePresignedUrlResponse{
-		Data: &borrower.StorageCreatePresignedUrlResponseData{
+	return &proto.StorageCreatePresignedUrlResponse{
+		Data: &proto.StorageCreatePresignedUrlResponseData{
 			Url:         req.URL,
 			FileName:    fileName,
 			StorageType: string(constants.StorageTypeAwsS3),

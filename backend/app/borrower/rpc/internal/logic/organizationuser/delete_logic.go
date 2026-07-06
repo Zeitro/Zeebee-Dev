@@ -5,7 +5,7 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -28,7 +28,7 @@ func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogi
 	}
 }
 
-func (l *DeleteLogic) Delete(in *borrower.OrganizationUserDeleteRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *DeleteLogic) Delete(in *proto.PathIdRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -46,5 +46,5 @@ func (l *DeleteLogic) Delete(in *borrower.OrganizationUserDeleteRequest) (resp *
 		return nil, err
 	}
 
-	return &borrower.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

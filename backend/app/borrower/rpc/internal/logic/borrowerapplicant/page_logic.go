@@ -13,6 +13,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type PageLogic struct {
@@ -31,7 +32,7 @@ func NewPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PageLogic {
 	}
 }
 
-func (l *PageLogic) Page(in *borrower.BorrowerApplicantPageRequest) (resp *borrower.BorrowerApplicantPageResponse, err error) {
+func (l *PageLogic) Page(in *proto.CommonPageRequest) (resp *borrower.BorrowerApplicantPageResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(

@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -49,7 +50,7 @@ func (l *ResourceTreeLogic) ResourceTree(in *borrower.ResourceTreeRequest) (resp
 		return nil, err
 	}
 
-	data, err := copierx.Trans[[]*dto.ResourceTreeDto, []*borrower.ResourceTreeEntity](&trees, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[[]*dto.ResourceTreeDto, []*proto.ResourceTreeEntity](&trees, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

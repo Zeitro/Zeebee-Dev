@@ -14,6 +14,7 @@ import (
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type UpdateLogic struct {
@@ -32,7 +33,7 @@ func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogi
 	}
 }
 
-func (l *UpdateLogic) Update(in *borrower.BorrowerApplicantUpdateRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *UpdateLogic) Update(in *borrower.BorrowerApplicantUpdateRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -71,5 +72,5 @@ func (l *UpdateLogic) Update(in *borrower.BorrowerApplicantUpdateRequest) (resp 
 
 	_, err = l.svcCtx.BorrowerApplicantRepo.UpdateOneById(l.ctx, in.Data.Id, result)
 
-	return &borrower.EmptyResponse{}, err
+	return &proto.EmptyResponse{}, err
 }

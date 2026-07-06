@@ -12,6 +12,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type CreateLogic struct {
@@ -30,7 +31,7 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 	}
 }
 
-func (l *CreateLogic) Create(in *borrower.BorrowerEntityCreateRequest) (resp *borrower.BorrowerEntityCreateResponse, err error) {
+func (l *CreateLogic) Create(in *borrower.BorrowerEntityCreateRequest) (resp *borrower.BorrowerEntityDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -45,7 +46,7 @@ func (l *CreateLogic) Create(in *borrower.BorrowerEntityCreateRequest) (resp *bo
 	}
 
 	saveData := &model.BorrowerEntity{}
-	responseData := &borrower.BorrowerEntityEntity{}
+	responseData := &proto.BorrowerEntityEntity{}
 	saveData, err = copierx.Trans[borrower.BorrowerEntityEditEntity, model.BorrowerEntity](in.Data)
 	if err != nil {
 		return nil, err
@@ -59,7 +60,7 @@ func (l *CreateLogic) Create(in *borrower.BorrowerEntityCreateRequest) (resp *bo
 	if err != nil {
 		return nil, err
 	}
-	responseData, err = copierx.Trans[model.BorrowerEntity, borrower.BorrowerEntityEntity](result,
+	responseData, err = copierx.Trans[model.BorrowerEntity, proto.BorrowerEntityEntity](result,
 		copierx.TimeToRFC3339Str(),
 		copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
 	)
@@ -67,7 +68,7 @@ func (l *CreateLogic) Create(in *borrower.BorrowerEntityCreateRequest) (resp *bo
 		return nil, err
 	}
 
-	return &borrower.BorrowerEntityCreateResponse{
+	return &borrower.BorrowerEntityDetailResponse{
 		Data: responseData,
 	}, nil
 }

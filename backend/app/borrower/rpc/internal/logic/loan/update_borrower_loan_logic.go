@@ -18,6 +18,7 @@ import (
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type UpdateBorrowerLoanLogic struct {
@@ -36,7 +37,7 @@ func NewUpdateBorrowerLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -171,7 +172,7 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 		return nil, errorx.Wrap(err, "fail to update loan")
 	}
 
-	return &borrower.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }
 
 func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateRequestData, oldLoan *model.Loan, claim utils.JwtUser) (loan *model.Loan, loanProperty *model.LoanProperty, applicants []*model.LoanApplicant, loanBorrower *model.LoanBorrower, err error) {

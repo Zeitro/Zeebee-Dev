@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -31,7 +32,7 @@ func NewAuthStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AuthSt
 	}
 }
 
-func (l *AuthStatusLogic) AuthStatus(in *borrower.EmptyRequest) (resp *borrower.DriveAuthStatusResponse, err error) {
+func (l *AuthStatusLogic) AuthStatus(in *proto.EmptyRequest) (resp *borrower.DriveAuthStatusResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)

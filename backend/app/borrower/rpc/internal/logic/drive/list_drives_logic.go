@@ -11,6 +11,7 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/drive/client"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -33,7 +34,7 @@ func NewListDrivesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListDr
 	}
 }
 
-func (l *ListDrivesLogic) ListDrives(in *borrower.EmptyRequest) (resp *borrower.DriveListDrivesResponse, err error) {
+func (l *ListDrivesLogic) ListDrives(in *proto.EmptyRequest) (resp *borrower.DriveListDrivesResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)

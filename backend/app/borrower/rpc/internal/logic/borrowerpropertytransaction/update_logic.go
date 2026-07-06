@@ -18,6 +18,7 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type UpdateLogic struct {
@@ -103,8 +104,8 @@ func (l *UpdateLogic) Update(in *borrower.BorrowerPropertyTransactionUpdateReque
 	}
 
 	detailLogic := NewDetailLogic(l.ctx, l.svcCtx)
-	detail, err := detailLogic.Detail(&borrower.BorrowerPropertyTransactionDetailRequest{
-		Data: &borrower.BorrowerPropertyTransactionDetailRequestData{
+	detail, err := detailLogic.Detail(&proto.PathIdRequest{
+		Data: &proto.PathIdRequestData{
 			Id: in.Data.Id,
 		},
 	})

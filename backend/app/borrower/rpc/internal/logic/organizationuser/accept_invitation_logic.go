@@ -13,6 +13,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -33,7 +34,7 @@ func NewAcceptInvitationLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-func (l *AcceptInvitationLogic) AcceptInvitation(in *borrower.OrganizationUserAcceptInvitationRequest) (resp *borrower.UserLoginResponse, err error) {
+func (l *AcceptInvitationLogic) AcceptInvitation(in *borrower.OrganizationUserAcceptInvitationRequest) (resp *proto.UserLoginResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -57,11 +58,11 @@ func (l *AcceptInvitationLogic) AcceptInvitation(in *borrower.OrganizationUserAc
 	if err != nil {
 		return nil, err
 	}
-	data := &borrower.UserLoginResponseData{}
+	data := &proto.UserLoginResponseData{}
 	err = copier.CopyWithOption(data, token, copier.Option{DeepCopy: true})
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
-	return &borrower.UserLoginResponse{Data: data}, nil
+	return &proto.UserLoginResponse{Data: data}, nil
 }

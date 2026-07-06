@@ -11,13 +11,13 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/email"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 	"zeebee-backend/domains/zeebee/templater"
 	"zeebee-backend/domains/zeebee/templater/loader"
 
@@ -42,7 +42,7 @@ func NewVerifyEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Verif
 	}
 }
 
-func (l *VerifyEmailLogic) VerifyEmail(in *borrower.VerifyEmailRequest) (resp *borrower.VerifyEmailResponse, err error) {
+func (l *VerifyEmailLogic) VerifyEmail(in *proto.VerifyEmailRequest) (resp *proto.VerifyEmailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -67,8 +67,8 @@ func (l *VerifyEmailLogic) VerifyEmail(in *borrower.VerifyEmailRequest) (resp *b
 	if err != nil {
 		return nil, err
 	}
-	data := &borrower.UserLoginResponseData{}
-	data, err = copierx.Trans[dto.UserJwtTokenDto, borrower.UserLoginResponseData](tokenInfo)
+	data := &proto.UserLoginResponseData{}
+	data, err = copierx.Trans[dto.UserJwtTokenDto, proto.UserLoginResponseData](tokenInfo)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func (l *VerifyEmailLogic) VerifyEmail(in *borrower.VerifyEmailRequest) (resp *b
 		}
 	}()
 
-	return &borrower.VerifyEmailResponse{
+	return &proto.VerifyEmailResponse{
 		Data: data,
 	}, nil
 }

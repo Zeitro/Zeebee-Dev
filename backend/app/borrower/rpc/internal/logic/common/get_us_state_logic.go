@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"zeebee-backend/app/borrower/rpc/internal/svc"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -25,7 +25,7 @@ func NewGetUsStateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUsS
 	}
 }
 
-func (l *GetUsStateLogic) GetUsState(in *borrower.EmptyRequest) (resp *borrower.StringSliceResponse, err error) {
+func (l *GetUsStateLogic) GetUsState(in *proto.EmptyRequest) (resp *proto.StringSliceResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -40,7 +40,7 @@ func (l *GetUsStateLogic) GetUsState(in *borrower.EmptyRequest) (resp *borrower.
 		return nil, err
 	}
 
-	return &borrower.StringSliceResponse{
+	return &proto.StringSliceResponse{
 		Data: states,
 	}, nil
 }

@@ -15,6 +15,7 @@ import (
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DetailSummaryLogic struct {
@@ -76,9 +77,9 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 	var totalRate float32
 	var loanCount int
 
-	respData.PendingLoans = make([]*borrower.LoanEntity, 0)
-	respData.ActiveLoans = make([]*borrower.LoanEntity, 0)
-	respData.ArchivedLoans = make([]*borrower.LoanEntity, 0)
+	respData.PendingLoans = make([]*proto.LoanEntity, 0)
+	respData.ActiveLoans = make([]*proto.LoanEntity, 0)
+	respData.ArchivedLoans = make([]*proto.LoanEntity, 0)
 
 	loanIdMap := make(map[int64]struct{})
 	if len(loanProperties) > 0 {
@@ -93,11 +94,11 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 				continue
 			}
 
-			loanEntry := &borrower.LoanEntity{
-				Applicants: []*borrower.LoanApplicantEntity{},
+			loanEntry := &proto.LoanEntity{
+				Applicants: []*proto.LoanApplicantEntity{},
 			}
 			loan.LoanProperty = loanProperties[i]
-			err = copierx.Assign[model.Loan, borrower.LoanEntity](loan, loanEntry,
+			err = copierx.Assign[model.Loan, proto.LoanEntity](loan, loanEntry,
 				copierx.TimeToRFC3339Str(),
 				copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
 			)
@@ -105,7 +106,7 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 				return nil, err
 			}
 
-			err = copierx.Assign[[]*model.LoanApplicant, []*borrower.LoanApplicantEntity](&loanProperty.Applicants, &loanEntry.Applicants,
+			err = copierx.Assign[[]*model.LoanApplicant, []*proto.LoanApplicantEntity](&loanProperty.Applicants, &loanEntry.Applicants,
 				copierx.TimeToRFC3339Str(),
 				copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
 			)
@@ -131,24 +132,24 @@ func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (
 			loanCount++
 		}
 	}
-	slice.SortBy(respData.PendingLoans, func(item, other *borrower.LoanEntity) bool {
+	slice.SortBy(respData.PendingLoans, func(item, other *proto.LoanEntity) bool {
 		return item.Id < other.Id
 	})
-	slice.SortBy(respData.ActiveLoans, func(item, other *borrower.LoanEntity) bool {
+	slice.SortBy(respData.ActiveLoans, func(item, other *proto.LoanEntity) bool {
 		return item.Id < other.Id
 	})
-	slice.SortBy(respData.ArchivedLoans, func(item, other *borrower.LoanEntity) bool {
+	slice.SortBy(respData.ArchivedLoans, func(item, other *proto.LoanEntity) bool {
 		return item.Id < other.Id
 	})
 
 	// remove duplicate loans
-	respData.PendingLoans = slice.UniqueBy(respData.PendingLoans, func(item *borrower.LoanEntity) int64 {
+	respData.PendingLoans = slice.UniqueBy(respData.PendingLoans, func(item *proto.LoanEntity) int64 {
 		return item.Id
 	})
-	respData.ActiveLoans = slice.UniqueBy(respData.ActiveLoans, func(item *borrower.LoanEntity) int64 {
+	respData.ActiveLoans = slice.UniqueBy(respData.ActiveLoans, func(item *proto.LoanEntity) int64 {
 		return item.Id
 	})
-	respData.ArchivedLoans = slice.UniqueBy(respData.ArchivedLoans, func(item *borrower.LoanEntity) int64 {
+	respData.ArchivedLoans = slice.UniqueBy(respData.ArchivedLoans, func(item *proto.LoanEntity) int64 {
 		return item.Id
 	})
 

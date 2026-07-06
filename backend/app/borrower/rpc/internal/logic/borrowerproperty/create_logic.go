@@ -14,6 +14,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type CreateLogic struct {
@@ -47,7 +48,7 @@ func (l *CreateLogic) Create(in *borrower.PropertyCreateRequest) (resp *borrower
 	}
 
 	saveData := &model.BorrowerProperty{}
-	responseData := &borrower.BorrowerPropertyEntity{}
+	responseData := &proto.BorrowerPropertyEntity{}
 	err = copier.CopyWithOption(saveData, in.Data, copier.Option{
 		CaseSensitive: true,
 		DeepCopy:      true,

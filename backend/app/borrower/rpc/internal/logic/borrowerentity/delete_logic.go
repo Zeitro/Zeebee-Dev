@@ -7,7 +7,7 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -28,7 +28,7 @@ func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogi
 	}
 }
 
-func (l *DeleteLogic) Delete(in *borrower.BorrowerEntityDeleteRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *DeleteLogic) Delete(in *proto.PathIdRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -53,5 +53,5 @@ func (l *DeleteLogic) Delete(in *borrower.BorrowerEntityDeleteRequest) (resp *bo
 
 	_, err = l.svcCtx.BorrowerEntityRepo.DeleteByID(l.ctx, in.Data.Id)
 
-	return &borrower.EmptyResponse{}, err
+	return &proto.EmptyResponse{}, err
 }

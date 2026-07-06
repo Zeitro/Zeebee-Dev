@@ -18,6 +18,7 @@ import (
 	"zeebee-backend/domains/zeebee/email/client"
 	"zeebee-backend/domains/zeebee/limiter"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -40,7 +41,7 @@ func NewSendQuoteEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Se
 	}
 }
 
-func (l *SendQuoteEmailLogic) SendQuoteEmail(in *borrower.LoanSendQuoteEmailRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *SendQuoteEmailLogic) SendQuoteEmail(in *borrower.LoanSendQuoteEmailRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -116,7 +117,7 @@ func (l *SendQuoteEmailLogic) SendQuoteEmail(in *borrower.LoanSendQuoteEmailRequ
 		l.WithContext(newCtx).Info("End send quote email")
 	}()
 	l.WithContext(l.ctx).Info("Finish request")
-	return &borrower.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }
 
 type quoteEmailInput struct {

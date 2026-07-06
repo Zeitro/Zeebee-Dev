@@ -5,8 +5,8 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -29,7 +29,7 @@ func NewDisconnectLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Discon
 	}
 }
 
-func (l *DisconnectLogic) Disconnect(in *borrower.EmptyRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *DisconnectLogic) Disconnect(in *proto.EmptyRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -45,5 +45,5 @@ func (l *DisconnectLogic) Disconnect(in *borrower.EmptyRequest) (resp *borrower.
 		return nil, err
 	}
 
-	return &borrower.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -30,7 +31,7 @@ func NewAllLenderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AllLend
 	}
 }
 
-func (l *AllLenderLogic) AllLender(in *borrower.EmptyRequest) (*borrower.OrganizationAllLenderResponse, error) {
+func (l *AllLenderLogic) AllLender(in *proto.EmptyRequest) (*borrower.OrganizationAllLenderResponse, error) {
 	var err error
 	var allLender []*dto.OrganizationOptionDto
 	defer func() {
@@ -45,7 +46,7 @@ func (l *AllLenderLogic) AllLender(in *borrower.EmptyRequest) (*borrower.Organiz
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[[]*dto.OrganizationOptionDto, []*borrower.OrganizationOptionsEntity](&allLender)
+	data, err := copierx.Trans[[]*dto.OrganizationOptionDto, []*proto.OrganizationOptionsEntity](&allLender)
 	if err != nil {
 		return nil, err
 	}

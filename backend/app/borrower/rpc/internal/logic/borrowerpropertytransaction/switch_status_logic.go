@@ -15,6 +15,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type SwitchStatusLogic struct {
@@ -33,7 +34,7 @@ func NewSwitchStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Swit
 	}
 }
 
-func (l *SwitchStatusLogic) SwitchStatus(in *borrower.BorrowerPropertyTransactionSwitchStatusRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *SwitchStatusLogic) SwitchStatus(in *borrower.BorrowerPropertyTransactionSwitchStatusRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -64,7 +65,7 @@ func (l *SwitchStatusLogic) SwitchStatus(in *borrower.BorrowerPropertyTransactio
 	oldStatus := existing.Status
 
 	if oldStatus == newStatus {
-		return &borrower.EmptyResponse{}, nil
+		return &proto.EmptyResponse{}, nil
 	}
 
 	err = l.svcCtx.BorrowerPropertyTransactionRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
@@ -108,5 +109,5 @@ func (l *SwitchStatusLogic) SwitchStatus(in *borrower.BorrowerPropertyTransactio
 		return nil, errorx.Wrap(err, "failed to switch status")
 	}
 
-	return &borrower.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

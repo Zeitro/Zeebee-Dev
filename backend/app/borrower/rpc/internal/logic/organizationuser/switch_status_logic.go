@@ -7,6 +7,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -29,7 +30,7 @@ func NewSwitchStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Swit
 	}
 }
 
-func (l *SwitchStatusLogic) SwitchStatus(in *borrower.OrganizationUserUpdateStatusRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *SwitchStatusLogic) SwitchStatus(in *borrower.OrganizationUserUpdateStatusRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -47,5 +48,5 @@ func (l *SwitchStatusLogic) SwitchStatus(in *borrower.OrganizationUserUpdateStat
 		return nil, err
 	}
 
-	return &borrower.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

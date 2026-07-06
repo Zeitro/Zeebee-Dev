@@ -7,6 +7,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/enums"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -37,9 +38,9 @@ func (l *GetOptLogic) GetOpt(in *borrower.OptionRequest) (resp *borrower.OptionR
 		}
 	}()
 	resp = &borrower.OptionResponse{
-		Data: []*borrower.OptionEntity{},
+		Data: []*proto.OptionEntity{},
 	}
-	err = copierx.Assign[[]enums.EnumOpt, []*borrower.OptionEntity](new(enums.Get(in.Data.Name)), &resp.Data)
+	err = copierx.Assign[[]enums.EnumOpt, []*proto.OptionEntity](new(enums.Get(in.Data.Name)), &resp.Data)
 	if err != nil {
 		return nil, err
 	}

@@ -11,6 +11,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -33,7 +34,7 @@ func NewUpdateChecklistLogic(ctx context.Context, svcCtx *svc.ServiceContext) *U
 	}
 }
 
-func (l *UpdateChecklistLogic) UpdateChecklist(in *borrower.BorrowerPropertyTransactionChecklistRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *UpdateChecklistLogic) UpdateChecklist(in *borrower.BorrowerPropertyTransactionChecklistRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -98,5 +99,5 @@ func (l *UpdateChecklistLogic) UpdateChecklist(in *borrower.BorrowerPropertyTran
 		return nil, errorx.Wrap(err, "failed to update checklist")
 	}
 
-	return &borrower.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

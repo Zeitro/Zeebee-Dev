@@ -7,9 +7,11 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type RefreshTokenLogic struct {
@@ -28,7 +30,7 @@ func NewRefreshTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Refr
 	}
 }
 
-func (l *RefreshTokenLogic) RefreshToken(in *borrower.RefreshTokenRequest) (resp *borrower.RefreshTokenResponse, err error) {
+func (l *RefreshTokenLogic) RefreshToken(in *proto.RefreshTokenRequest) (resp *proto.UserLoginResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -41,10 +43,13 @@ func (l *RefreshTokenLogic) RefreshToken(in *borrower.RefreshTokenRequest) (resp
 	if err != nil {
 		return nil, err
 	}
-	return &borrower.RefreshTokenResponse{
-		Data: &borrower.RefreshTokenResponseData{
-			AccessToken:       token.AccessToken,
-			AccessTokenExpire: token.AccessTokenExpire,
-		},
+
+	data, err := copierx.Trans[dto.UserJwtTokenDto, proto.UserLoginResponseData](token)
+	if err != nil {
+		return nil, err
+	}
+
+	return &proto.UserLoginResponse{
+		Data: data,
 	}, nil
 }

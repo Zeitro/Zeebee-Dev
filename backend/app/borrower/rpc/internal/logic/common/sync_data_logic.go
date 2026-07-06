@@ -7,8 +7,8 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +27,7 @@ func NewSyncDataLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncData
 	}
 }
 
-func (l *SyncDataLogic) SyncData(in *borrower.EmptyRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *SyncDataLogic) SyncData(in *proto.EmptyRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
@@ -37,7 +37,7 @@ func (l *SyncDataLogic) SyncData(in *borrower.EmptyRequest) (resp *borrower.Empt
 		return nil, err
 	}
 
-	return &borrower.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }
 
 func (l *SyncDataLogic) syncBorrowerPropertyStatuses() error {

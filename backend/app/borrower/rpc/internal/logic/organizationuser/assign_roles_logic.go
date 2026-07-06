@@ -7,6 +7,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -29,7 +30,7 @@ func NewAssignRolesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Assig
 	}
 }
 
-func (l *AssignRolesLogic) AssignRoles(in *borrower.OrganizationUserAssignRolesRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *AssignRolesLogic) AssignRoles(in *borrower.OrganizationUserAssignRolesRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -48,5 +49,5 @@ func (l *AssignRolesLogic) AssignRoles(in *borrower.OrganizationUserAssignRolesR
 		return nil, err
 	}
 
-	return &borrower.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

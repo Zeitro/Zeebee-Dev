@@ -12,6 +12,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type CreateLogic struct {
@@ -57,8 +58,8 @@ func (l *CreateLogic) Create(in *borrower.RoleCreateRequest) (resp *borrower.Rol
 		return nil, err
 	}
 
-	respData := &borrower.RoleEntity{}
-	respData, err = copierx.Trans[dto.RoleEntityDto, borrower.RoleEntity](role, copierx.TimeToRFC3339Str())
+	respData := &proto.RoleEntity{}
+	respData, err = copierx.Trans[dto.RoleEntityDto, proto.RoleEntity](role, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

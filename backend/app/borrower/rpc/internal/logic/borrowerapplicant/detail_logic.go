@@ -12,6 +12,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DetailLogic struct {
@@ -30,7 +31,7 @@ func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogi
 	}
 }
 
-func (l *DetailLogic) Detail(in *borrower.BorrowerApplicantDetailRequest) (resp *borrower.BorrowerApplicantDetailResponse, err error) {
+func (l *DetailLogic) Detail(in *proto.PathIdRequest) (resp *borrower.BorrowerApplicantDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -44,8 +45,8 @@ func (l *DetailLogic) Detail(in *borrower.BorrowerApplicantDetailRequest) (resp 
 		return nil, err
 	}
 
-	respData := &borrower.BorrowerApplicantEntity{}
-	// todo check organization
+	respData := &proto.BorrowerApplicantEntity{}
+
 	result, err := l.svcCtx.BorrowerApplicantRepo.FindOneByColumns(l.ctx, map[string]interface{}{
 		"id":              in.Data.Id,
 		"organization_id": claim.OrganizationId,

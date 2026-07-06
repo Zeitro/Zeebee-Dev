@@ -7,10 +7,10 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -31,7 +31,7 @@ func NewResetPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Res
 	}
 }
 
-func (l *ResetPasswordLogic) ResetPassword(in *borrower.ResetPasswordRequest) (resp *borrower.ResetPasswordResponse, err error) {
+func (l *ResetPasswordLogic) ResetPassword(in *proto.ResetPasswordRequest) (resp *proto.ResetPasswordResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -52,12 +52,12 @@ func (l *ResetPasswordLogic) ResetPassword(in *borrower.ResetPasswordRequest) (r
 	if err != nil {
 		return nil, err
 	}
-	data := &borrower.UserLoginResponseData{}
-	data, err = copierx.Trans[dto.UserJwtTokenDto, borrower.UserLoginResponseData](token)
+	data := &proto.UserLoginResponseData{}
+	data, err = copierx.Trans[dto.UserJwtTokenDto, proto.UserLoginResponseData](token)
 	if err != nil {
 		return nil, err
 	}
-	return &borrower.ResetPasswordResponse{
+	return &proto.ResetPasswordResponse{
 		Data: data,
 	}, nil
 }

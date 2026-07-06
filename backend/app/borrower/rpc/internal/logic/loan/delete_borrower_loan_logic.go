@@ -11,6 +11,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -32,7 +33,7 @@ func NewDeleteBorrowerLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 // DeleteBorrowerLoan delete borrower loan
-func (l *DeleteBorrowerLoanLogic) DeleteBorrowerLoan(in *borrower.LoanDeleteRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *DeleteBorrowerLoanLogic) DeleteBorrowerLoan(in *borrower.LoanDeleteRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -144,5 +145,5 @@ func (l *DeleteBorrowerLoanLogic) DeleteBorrowerLoan(in *borrower.LoanDeleteRequ
 	if err != nil {
 		return nil, errorx.Wrap(err, "fail to delete loan")
 	}
-	return &borrower.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

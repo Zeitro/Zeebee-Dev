@@ -11,6 +11,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -46,12 +47,12 @@ func (l *DetailLogic) Detail(in *borrower.PropertyDetailRequest) (resp *borrower
 		return nil, err
 	}
 
-	respData := &borrower.BorrowerPropertyEntity{}
+	respData := &proto.BorrowerPropertyEntity{}
 	result, err := l.svcCtx.BorrowerPropertyRepo.GetOneByIdForOrganization(l.ctx, in.Data.Id, claim.OrganizationId)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-	respData, err = copierx.Trans[model.BorrowerProperty, borrower.BorrowerPropertyEntity](result,
+	respData, err = copierx.Trans[model.BorrowerProperty, proto.BorrowerPropertyEntity](result,
 		copierx.TimeToRFC3339Str(),
 		copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
 	)

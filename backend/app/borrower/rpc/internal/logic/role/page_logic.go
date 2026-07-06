@@ -13,6 +13,7 @@ import (
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type PageLogic struct {
@@ -31,7 +32,7 @@ func NewPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PageLogic {
 	}
 }
 
-func (l *PageLogic) Page(in *borrower.RolePageRequest) (resp *borrower.RolePageResponse, err error) {
+func (l *PageLogic) Page(in *proto.CommonPageRequest) (resp *borrower.RolePageResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -46,7 +47,7 @@ func (l *PageLogic) Page(in *borrower.RolePageRequest) (resp *borrower.RolePageR
 	}
 
 	pageReq := dto.RolePageRequestDto{}
-	_ = copierx.Assign[borrower.RolePageRequestData, dto.RolePageRequestDto](in.Data, &pageReq)
+	_ = copierx.Assign[proto.CommonPageRequestData, dto.RolePageRequestDto](in.Data, &pageReq)
 
 	pageReq.Filter.RoleType = constants.UserTypeBorrower
 	pageReq.Filter.OrganizationId = claim.OrganizationId

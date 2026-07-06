@@ -21,6 +21,7 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type CreateLogic struct {
@@ -39,7 +40,7 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 	}
 }
 
-func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateRequest) (resp *borrower.BorrowerPropertyTransactionCreateResponse, err error) {
+func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateRequest) (resp *borrower.BorrowerPropertyTransactionDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -165,7 +166,7 @@ func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateReque
 	}
 
 	// convert response
-	responseEntity, err := copierx.Trans[model.BorrowerPropertyTransaction, borrower.BorrowerPropertyTransactionEntity](
+	responseEntity, err := copierx.Trans[model.BorrowerPropertyTransaction, proto.BorrowerPropertyTransactionEntity](
 		result,
 		copierx.TimeToRFC3339Str(),
 		copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
@@ -174,7 +175,7 @@ func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateReque
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
-	return &borrower.BorrowerPropertyTransactionCreateResponse{
+	return &borrower.BorrowerPropertyTransactionDetailResponse{
 		Data: responseEntity,
 	}, nil
 }

@@ -5,9 +5,9 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -30,7 +30,7 @@ func NewAuthCheckLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AuthChe
 	}
 }
 
-func (l *AuthCheckLogic) AuthCheck(in *borrower.AuthCheckRequest) (resp *borrower.AuthCheckResponse, err error) {
+func (l *AuthCheckLogic) AuthCheck(in *proto.AuthCheckRequest) (resp *proto.AuthCheckResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -39,7 +39,7 @@ func (l *AuthCheckLogic) AuthCheck(in *borrower.AuthCheckRequest) (resp *borrowe
 			).Error(err)
 		}
 	}()
-	input, err := copierx.Trans[borrower.AuthCheckRequestData, dto.AuthCheckRequestDto](in.Data)
+	input, err := copierx.Trans[proto.AuthCheckRequestData, dto.AuthCheckRequestDto](in.Data)
 	if err != nil {
 		return nil, err
 	}
@@ -47,12 +47,12 @@ func (l *AuthCheckLogic) AuthCheck(in *borrower.AuthCheckRequest) (resp *borrowe
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[dto.AuthCheckResponseDto, borrower.AuthCheckResponseData](result)
+	data, err := copierx.Trans[dto.AuthCheckResponseDto, proto.AuthCheckResponseData](result)
 	if err != nil {
 		return nil, err
 	}
 
-	return &borrower.AuthCheckResponse{
+	return &proto.AuthCheckResponse{
 		Data: data,
 	}, nil
 }

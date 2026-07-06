@@ -12,6 +12,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -32,7 +33,7 @@ func NewUpdateApplyLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *U
 	}
 }
 
-func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -231,7 +232,7 @@ func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (r
 		return innerErr
 	})
 
-	return &borrower.EmptyResponse{}, err
+	return &proto.EmptyResponse{}, err
 }
 
 func (l *UpdateApplyLoanLogic) updateApplicants(tx *gorm.DB, oldItems []*model.LoanApplicant, curItems []*model.LoanApplicant, loan *model.Loan) (err error) {

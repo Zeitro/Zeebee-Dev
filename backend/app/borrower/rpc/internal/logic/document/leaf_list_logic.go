@@ -6,6 +6,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -54,7 +55,7 @@ func (l *LeafListLogic) LeafList(in *borrower.DocumentLeafListRequest) (resp *bo
 	}
 
 	// filter leaf nodes
-	leaves := make([]*borrower.DocumentEntity, 0)
+	leaves := make([]*proto.DocumentEntity, 0)
 	fileEntityType := string(constants.FileEntityTypeDocument)
 	for _, doc := range descendants {
 		if doc.Type != "leaf" {
@@ -67,7 +68,7 @@ func (l *LeafListLogic) LeafList(in *borrower.DocumentLeafListRequest) (resp *bo
 			Where("entity_type = ? AND entity_id = ?", fileEntityType, doc.Id).
 			Count(&fileCount)
 
-		protoDoc, innerErr := copierx.Trans[model.Document, borrower.DocumentEntity](
+		protoDoc, innerErr := copierx.Trans[model.Document, proto.DocumentEntity](
 			doc,
 			copierx.TimeToRFC3339Str(),
 		)

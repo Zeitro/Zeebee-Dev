@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -31,7 +32,7 @@ func NewEditProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *EditP
 	}
 }
 
-func (l *EditProfileLogic) EditProfile(in *borrower.UserProfileEditRequest) (resp *borrower.UserinfoResponse, err error) {
+func (l *EditProfileLogic) EditProfile(in *borrower.UserProfileEditRequest) (resp *proto.UserinfoResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -61,13 +62,13 @@ func (l *EditProfileLogic) EditProfile(in *borrower.UserProfileEditRequest) (res
 	if err != nil {
 		return nil, err
 	}
-	data := &borrower.UserinfoResponseData{}
-	data, err = copierx.Trans[dto.UserinfoDto, borrower.UserinfoResponseData](token)
+	data := &proto.UserinfoResponseData{}
+	data, err = copierx.Trans[dto.UserinfoDto, proto.UserinfoResponseData](token)
 	if err != nil {
 		return nil, err
 	}
 
-	return &borrower.UserinfoResponse{
+	return &proto.UserinfoResponse{
 		Data: data,
 	}, nil
 }

@@ -11,6 +11,7 @@ import (
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -33,7 +34,7 @@ func NewAuthorizeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Authori
 	}
 }
 
-func (l *AuthorizeLogic) Authorize(in *borrower.OrganizationEmailAuthorizeRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *AuthorizeLogic) Authorize(in *borrower.OrganizationEmailAuthorizeRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -70,7 +71,7 @@ func (l *AuthorizeLogic) Authorize(in *borrower.OrganizationEmailAuthorizeReques
 		return nil, err
 	}
 	global.EmailAuthManager.Register(email, emailClient)
-	return &borrower.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }
 
 // validate

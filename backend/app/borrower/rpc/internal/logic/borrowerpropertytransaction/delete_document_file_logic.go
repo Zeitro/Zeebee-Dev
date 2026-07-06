@@ -15,6 +15,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DeleteDocumentFileLogic struct {
@@ -33,7 +34,7 @@ func NewDeleteDocumentFileLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *DeleteDocumentFileLogic) DeleteDocumentFile(in *borrower.BorrowerPropertyTransactionDocumentDeleteFileRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *DeleteDocumentFileLogic) DeleteDocumentFile(in *borrower.BorrowerPropertyTransactionDocumentDeleteFileRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -111,5 +112,5 @@ func (l *DeleteDocumentFileLogic) DeleteDocumentFile(in *borrower.BorrowerProper
 		return
 	}
 
-	return &borrower.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

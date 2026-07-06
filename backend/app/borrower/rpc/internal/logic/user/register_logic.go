@@ -31,6 +31,7 @@ import (
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/limiter"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type RegisterLogic struct {
@@ -49,7 +50,7 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 	}
 }
 
-func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrower.UserRegisterResponse, err error) {
+func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -86,9 +87,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 			}()
 		}
 
-		return &borrower.UserRegisterResponse{
-			Data: &borrower.UserRegisterResponseData{},
-		}, nil
+		return &proto.EmptyResponse{}, nil
 	}
 	var pwd string
 	pwd, err = utils.HashPassword(in.Data.Password)
@@ -183,9 +182,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 		}
 	}()
 
-	return &borrower.UserRegisterResponse{
-		Data: &borrower.UserRegisterResponseData{},
-	}, err
+	return &proto.EmptyResponse{}, err
 }
 
 func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int64, creatorName string, requestId string, borrowerOrganizationId int64, lenderOrganizationId int64) (err error) {
@@ -293,7 +290,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 				PurchaseDate:        preApproveRequest.Loan.PurchaseDate,
 				HasAssignmentFee:    preApproveRequest.Loan.HasAssignmentFee,
 				AssignmentFeeAmount: preApproveRequest.Loan.AssignmentFeeAmount,
-				Budget: &borrower.LoanBudgetEntity{
+				Budget: &proto.LoanBudgetEntity{
 					OriginalBudget: preApproveRequest.Loan.BudgetAmount,
 				},
 				EstPropertyValueAmount: preApproveRequest.Loan.EstPropertyValueAmount,

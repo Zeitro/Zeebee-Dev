@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -31,7 +32,7 @@ func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogi
 	}
 }
 
-func (l *DetailLogic) Detail(in *borrower.OrganizationUserDetailRequest) (resp *borrower.OrganizationUserDetailResponse, err error) {
+func (l *DetailLogic) Detail(in *proto.PathIdRequest) (resp *borrower.OrganizationUserDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -40,7 +41,7 @@ func (l *DetailLogic) Detail(in *borrower.OrganizationUserDetailRequest) (resp *
 			).Error(err)
 		}
 	}()
-	data := &borrower.OrganizationUserEntity{}
+	data := &proto.OrganizationUserEntity{}
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err

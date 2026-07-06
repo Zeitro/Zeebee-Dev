@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 	"zeebee-backend/domains/zeebee/repo"
 
 	"zeebee-backend/common/copierx"
@@ -34,7 +35,7 @@ func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogi
 	}
 }
 
-func (l *DetailLogic) Detail(in *borrower.BorrowerPropertyTransactionDetailRequest) (resp *borrower.BorrowerPropertyTransactionDetailResponse, err error) {
+func (l *DetailLogic) Detail(in *proto.PathIdRequest) (resp *borrower.BorrowerPropertyTransactionDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -56,7 +57,7 @@ func (l *DetailLogic) Detail(in *borrower.BorrowerPropertyTransactionDetailReque
 
 	fillChecklistNodeFiles(l.ctx, l.svcCtx.FileRepo, &result.Checklist)
 
-	entity, err := copierx.Trans[model.BorrowerPropertyTransaction, borrower.BorrowerPropertyTransactionEntity](
+	entity, err := copierx.Trans[model.BorrowerPropertyTransaction, proto.BorrowerPropertyTransactionEntity](
 		result,
 		copierx.TimeToRFC3339Str(),
 		copierx.SqlTimePtrToStr(timex.LayoutUsStyle),

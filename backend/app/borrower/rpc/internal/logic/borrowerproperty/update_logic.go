@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -30,7 +31,7 @@ func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogi
 	}
 }
 
-func (l *UpdateLogic) Update(in *borrower.PropertyUpdateRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *UpdateLogic) Update(in *borrower.PropertyUpdateRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -56,5 +57,5 @@ func (l *UpdateLogic) Update(in *borrower.PropertyUpdateRequest) (resp *borrower
 	}
 	_, err = l.svcCtx.BorrowerPropertyRepo.UpdateOne(l.ctx, in.Data.Id, result)
 
-	return &borrower.EmptyResponse{}, err
+	return &proto.EmptyResponse{}, err
 }

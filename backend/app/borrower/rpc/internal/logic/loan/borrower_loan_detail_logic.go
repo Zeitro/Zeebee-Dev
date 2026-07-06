@@ -12,6 +12,7 @@ import (
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -54,9 +55,9 @@ func (l *BorrowerLoanDetailLogic) BorrowerLoanDetail(in *borrower.LoanDetailRequ
 		return nil, err
 	}
 	resp = &borrower.LoanDetailResponse{
-		Data: &borrower.LoanEntity{},
+		Data: &proto.LoanEntity{},
 	}
-	resp.Data, err = copierx.Trans[model.Loan, borrower.LoanEntity](loan,
+	resp.Data, err = copierx.Trans[model.Loan, proto.LoanEntity](loan,
 		copierx.TimeToRFC3339Str(),
 		copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
 	)
@@ -65,11 +66,11 @@ func (l *BorrowerLoanDetailLogic) BorrowerLoanDetail(in *borrower.LoanDetailRequ
 	}
 
 	// loan experiences
-	var transExperiences []*borrower.LoanExperienceEntity
-	var realEstateExperiences []*borrower.LoanExperienceEntity
+	var transExperiences []*proto.LoanExperienceEntity
+	var realEstateExperiences []*proto.LoanExperienceEntity
 	slice.ForEach(loan.LoanExperiences, func(index int, item *model.LoanExperience) {
-		experience := &borrower.LoanExperienceEntity{}
-		experience, _ = copierx.Trans[model.LoanExperience, borrower.LoanExperienceEntity](item,
+		experience := &proto.LoanExperienceEntity{}
+		experience, _ = copierx.Trans[model.LoanExperience, proto.LoanExperienceEntity](item,
 			copierx.TimeToRFC3339Str(),
 			copierx.TimePtrToRFC3339Str(),
 			copierx.SqlTimePtrToStr(timex.LayoutUsStyle),

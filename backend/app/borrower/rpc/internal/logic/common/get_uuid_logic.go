@@ -7,6 +7,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/uuid"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +26,7 @@ func NewGetUuidLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUuidLo
 	}
 }
 
-func (l *GetUuidLogic) GetUuid(in *borrower.EmptyRequest) (resp *borrower.GetUuidResponse, err error) {
+func (l *GetUuidLogic) GetUuid(in *proto.EmptyRequest) (resp *borrower.GetUuidResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(

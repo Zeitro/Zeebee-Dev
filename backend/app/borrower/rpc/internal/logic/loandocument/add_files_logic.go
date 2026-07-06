@@ -15,6 +15,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type AddFilesLogic struct {
@@ -33,7 +34,7 @@ func NewAddFilesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddFiles
 	}
 }
 
-func (l *AddFilesLogic) AddFiles(in *borrower.LoanDocumentAddFilesRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *AddFilesLogic) AddFiles(in *borrower.LoanDocumentAddFilesRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -91,7 +92,7 @@ func (l *AddFilesLogic) AddFiles(in *borrower.LoanDocumentAddFilesRequest) (resp
 		return nil, err
 	}
 
-	return &borrower.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }
 
 // prepare
