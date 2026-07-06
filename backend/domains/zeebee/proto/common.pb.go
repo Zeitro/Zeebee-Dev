@@ -269,6 +269,440 @@ func (x *PathIdRequestData) GetId() int64 {
 	return 0
 }
 
+// Page
+type CommonPageRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          *CommonPageRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CommonPageRequest) Reset() {
+	*x = CommonPageRequest{}
+	mi := &file_proto_common_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CommonPageRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CommonPageRequest) ProtoMessage() {}
+
+func (x *CommonPageRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_common_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CommonPageRequest.ProtoReflect.Descriptor instead.
+func (*CommonPageRequest) Descriptor() ([]byte, []int) {
+	return file_proto_common_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *CommonPageRequest) GetData() *CommonPageRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type CommonPageRequestData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          int64                  `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
+	Limit         int64                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	Filter        *CommonPageFilter      `protobuf:"bytes,3,opt,name=filter,proto3" json:"filter,omitempty"`
+	Sorter        *CommonPageSorter      `protobuf:"bytes,4,opt,name=sorter,proto3" json:"sorter,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CommonPageRequestData) Reset() {
+	*x = CommonPageRequestData{}
+	mi := &file_proto_common_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CommonPageRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CommonPageRequestData) ProtoMessage() {}
+
+func (x *CommonPageRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_common_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CommonPageRequestData.ProtoReflect.Descriptor instead.
+func (*CommonPageRequestData) Descriptor() ([]byte, []int) {
+	return file_proto_common_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *CommonPageRequestData) GetPage() int64 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *CommonPageRequestData) GetLimit() int64 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *CommonPageRequestData) GetFilter() *CommonPageFilter {
+	if x != nil {
+		return x.Filter
+	}
+	return nil
+}
+
+func (x *CommonPageRequestData) GetSorter() *CommonPageSorter {
+	if x != nil {
+		return x.Sorter
+	}
+	return nil
+}
+
+type CommonPageFilter struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Keyword       string                 `protobuf:"bytes,1,opt,name=keyword,proto3" json:"keyword,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CommonPageFilter) Reset() {
+	*x = CommonPageFilter{}
+	mi := &file_proto_common_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CommonPageFilter) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CommonPageFilter) ProtoMessage() {}
+
+func (x *CommonPageFilter) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_common_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CommonPageFilter.ProtoReflect.Descriptor instead.
+func (*CommonPageFilter) Descriptor() ([]byte, []int) {
+	return file_proto_common_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *CommonPageFilter) GetKeyword() string {
+	if x != nil {
+		return x.Keyword
+	}
+	return ""
+}
+
+type CommonPageSorter struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Column        string                 `protobuf:"bytes,1,opt,name=column,proto3" json:"column,omitempty"`
+	Sort          string                 `protobuf:"bytes,2,opt,name=sort,proto3" json:"sort,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CommonPageSorter) Reset() {
+	*x = CommonPageSorter{}
+	mi := &file_proto_common_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CommonPageSorter) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CommonPageSorter) ProtoMessage() {}
+
+func (x *CommonPageSorter) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_common_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CommonPageSorter.ProtoReflect.Descriptor instead.
+func (*CommonPageSorter) Descriptor() ([]byte, []int) {
+	return file_proto_common_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *CommonPageSorter) GetColumn() string {
+	if x != nil {
+		return x.Column
+	}
+	return ""
+}
+
+func (x *CommonPageSorter) GetSort() string {
+	if x != nil {
+		return x.Sort
+	}
+	return ""
+}
+
+// Storage
+type StorageCreatePresignedUrlRequest struct {
+	state         protoimpl.MessageState                `protogen:"open.v1"`
+	Data          *StorageCreatePresignedUrlRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StorageCreatePresignedUrlRequest) Reset() {
+	*x = StorageCreatePresignedUrlRequest{}
+	mi := &file_proto_common_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StorageCreatePresignedUrlRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StorageCreatePresignedUrlRequest) ProtoMessage() {}
+
+func (x *StorageCreatePresignedUrlRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_common_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StorageCreatePresignedUrlRequest.ProtoReflect.Descriptor instead.
+func (*StorageCreatePresignedUrlRequest) Descriptor() ([]byte, []int) {
+	return file_proto_common_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *StorageCreatePresignedUrlRequest) GetData() *StorageCreatePresignedUrlRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type StorageCreatePresignedUrlRequestData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Type          string                 `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
+	FileSuffix    string                 `protobuf:"bytes,2,opt,name=file_suffix,json=fileSuffix,proto3" json:"file_suffix,omitempty"`
+	FileName      string                 `protobuf:"bytes,3,opt,name=file_name,json=fileName,proto3" json:"file_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StorageCreatePresignedUrlRequestData) Reset() {
+	*x = StorageCreatePresignedUrlRequestData{}
+	mi := &file_proto_common_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StorageCreatePresignedUrlRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StorageCreatePresignedUrlRequestData) ProtoMessage() {}
+
+func (x *StorageCreatePresignedUrlRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_common_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StorageCreatePresignedUrlRequestData.ProtoReflect.Descriptor instead.
+func (*StorageCreatePresignedUrlRequestData) Descriptor() ([]byte, []int) {
+	return file_proto_common_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *StorageCreatePresignedUrlRequestData) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *StorageCreatePresignedUrlRequestData) GetFileSuffix() string {
+	if x != nil {
+		return x.FileSuffix
+	}
+	return ""
+}
+
+func (x *StorageCreatePresignedUrlRequestData) GetFileName() string {
+	if x != nil {
+		return x.FileName
+	}
+	return ""
+}
+
+type StorageCreatePresignedUrlResponse struct {
+	state         protoimpl.MessageState                 `protogen:"open.v1"`
+	Data          *StorageCreatePresignedUrlResponseData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StorageCreatePresignedUrlResponse) Reset() {
+	*x = StorageCreatePresignedUrlResponse{}
+	mi := &file_proto_common_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StorageCreatePresignedUrlResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StorageCreatePresignedUrlResponse) ProtoMessage() {}
+
+func (x *StorageCreatePresignedUrlResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_common_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StorageCreatePresignedUrlResponse.ProtoReflect.Descriptor instead.
+func (*StorageCreatePresignedUrlResponse) Descriptor() ([]byte, []int) {
+	return file_proto_common_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *StorageCreatePresignedUrlResponse) GetData() *StorageCreatePresignedUrlResponseData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type StorageCreatePresignedUrlResponseData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Url           string                 `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
+	FileName      string                 `protobuf:"bytes,2,opt,name=file_name,json=fileName,proto3" json:"file_name,omitempty"`
+	StorageType   string                 `protobuf:"bytes,3,opt,name=storage_type,json=storageType,proto3" json:"storage_type,omitempty"`
+	ExternalId    string                 `protobuf:"bytes,4,opt,name=external_id,json=externalId,proto3" json:"external_id,omitempty"`
+	UploadType    string                 `protobuf:"bytes,5,opt,name=upload_type,json=uploadType,proto3" json:"upload_type,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StorageCreatePresignedUrlResponseData) Reset() {
+	*x = StorageCreatePresignedUrlResponseData{}
+	mi := &file_proto_common_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StorageCreatePresignedUrlResponseData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StorageCreatePresignedUrlResponseData) ProtoMessage() {}
+
+func (x *StorageCreatePresignedUrlResponseData) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_common_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StorageCreatePresignedUrlResponseData.ProtoReflect.Descriptor instead.
+func (*StorageCreatePresignedUrlResponseData) Descriptor() ([]byte, []int) {
+	return file_proto_common_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *StorageCreatePresignedUrlResponseData) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+func (x *StorageCreatePresignedUrlResponseData) GetFileName() string {
+	if x != nil {
+		return x.FileName
+	}
+	return ""
+}
+
+func (x *StorageCreatePresignedUrlResponseData) GetStorageType() string {
+	if x != nil {
+		return x.StorageType
+	}
+	return ""
+}
+
+func (x *StorageCreatePresignedUrlResponseData) GetExternalId() string {
+	if x != nil {
+		return x.ExternalId
+	}
+	return ""
+}
+
+func (x *StorageCreatePresignedUrlResponseData) GetUploadType() string {
+	if x != nil {
+		return x.UploadType
+	}
+	return ""
+}
+
 type RangeInt64 struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Min           int64                  `protobuf:"varint,1,opt,name=min,proto3" json:"min,omitempty"`
@@ -279,7 +713,7 @@ type RangeInt64 struct {
 
 func (x *RangeInt64) Reset() {
 	*x = RangeInt64{}
-	mi := &file_proto_common_proto_msgTypes[6]
+	mi := &file_proto_common_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -291,7 +725,7 @@ func (x *RangeInt64) String() string {
 func (*RangeInt64) ProtoMessage() {}
 
 func (x *RangeInt64) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_common_proto_msgTypes[6]
+	mi := &file_proto_common_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -304,7 +738,7 @@ func (x *RangeInt64) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RangeInt64.ProtoReflect.Descriptor instead.
 func (*RangeInt64) Descriptor() ([]byte, []int) {
-	return file_proto_common_proto_rawDescGZIP(), []int{6}
+	return file_proto_common_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *RangeInt64) GetMin() int64 {
@@ -331,7 +765,7 @@ type RangeInt32 struct {
 
 func (x *RangeInt32) Reset() {
 	*x = RangeInt32{}
-	mi := &file_proto_common_proto_msgTypes[7]
+	mi := &file_proto_common_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -343,7 +777,7 @@ func (x *RangeInt32) String() string {
 func (*RangeInt32) ProtoMessage() {}
 
 func (x *RangeInt32) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_common_proto_msgTypes[7]
+	mi := &file_proto_common_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -356,7 +790,7 @@ func (x *RangeInt32) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RangeInt32.ProtoReflect.Descriptor instead.
 func (*RangeInt32) Descriptor() ([]byte, []int) {
-	return file_proto_common_proto_rawDescGZIP(), []int{7}
+	return file_proto_common_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *RangeInt32) GetMin() int32 {
@@ -383,7 +817,7 @@ type RangeFloat struct {
 
 func (x *RangeFloat) Reset() {
 	*x = RangeFloat{}
-	mi := &file_proto_common_proto_msgTypes[8]
+	mi := &file_proto_common_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -395,7 +829,7 @@ func (x *RangeFloat) String() string {
 func (*RangeFloat) ProtoMessage() {}
 
 func (x *RangeFloat) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_common_proto_msgTypes[8]
+	mi := &file_proto_common_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -408,7 +842,7 @@ func (x *RangeFloat) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RangeFloat.ProtoReflect.Descriptor instead.
 func (*RangeFloat) Descriptor() ([]byte, []int) {
-	return file_proto_common_proto_rawDescGZIP(), []int{8}
+	return file_proto_common_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *RangeFloat) GetMin() float64 {
@@ -439,7 +873,36 @@ const file_proto_common_proto_rawDesc = "" +
 	"\rPathIdRequest\x12,\n" +
 	"\x04data\x18\x01 \x01(\v2\x18.proto.PathIdRequestDataR\x04data\"#\n" +
 	"\x11PathIdRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"0\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"E\n" +
+	"\x11CommonPageRequest\x120\n" +
+	"\x04data\x18\x01 \x01(\v2\x1c.proto.CommonPageRequestDataR\x04data\"\xa3\x01\n" +
+	"\x15CommonPageRequestData\x12\x12\n" +
+	"\x04page\x18\x01 \x01(\x03R\x04page\x12\x14\n" +
+	"\x05limit\x18\x02 \x01(\x03R\x05limit\x12/\n" +
+	"\x06filter\x18\x03 \x01(\v2\x17.proto.CommonPageFilterR\x06filter\x12/\n" +
+	"\x06sorter\x18\x04 \x01(\v2\x17.proto.CommonPageSorterR\x06sorter\",\n" +
+	"\x10CommonPageFilter\x12\x18\n" +
+	"\akeyword\x18\x01 \x01(\tR\akeyword\">\n" +
+	"\x10CommonPageSorter\x12\x16\n" +
+	"\x06column\x18\x01 \x01(\tR\x06column\x12\x12\n" +
+	"\x04sort\x18\x02 \x01(\tR\x04sort\"c\n" +
+	" StorageCreatePresignedUrlRequest\x12?\n" +
+	"\x04data\x18\x01 \x01(\v2+.proto.StorageCreatePresignedUrlRequestDataR\x04data\"x\n" +
+	"$StorageCreatePresignedUrlRequestData\x12\x12\n" +
+	"\x04type\x18\x01 \x01(\tR\x04type\x12\x1f\n" +
+	"\vfile_suffix\x18\x02 \x01(\tR\n" +
+	"fileSuffix\x12\x1b\n" +
+	"\tfile_name\x18\x03 \x01(\tR\bfileName\"e\n" +
+	"!StorageCreatePresignedUrlResponse\x12@\n" +
+	"\x04data\x18\x01 \x01(\v2,.proto.StorageCreatePresignedUrlResponseDataR\x04data\"\xbb\x01\n" +
+	"%StorageCreatePresignedUrlResponseData\x12\x10\n" +
+	"\x03url\x18\x01 \x01(\tR\x03url\x12\x1b\n" +
+	"\tfile_name\x18\x02 \x01(\tR\bfileName\x12!\n" +
+	"\fstorage_type\x18\x03 \x01(\tR\vstorageType\x12\x1f\n" +
+	"\vexternal_id\x18\x04 \x01(\tR\n" +
+	"externalId\x12\x1f\n" +
+	"\vupload_type\x18\x05 \x01(\tR\n" +
+	"uploadType\"0\n" +
 	"\n" +
 	"RangeInt64\x12\x10\n" +
 	"\x03min\x18\x01 \x01(\x03R\x03min\x12\x10\n" +
@@ -465,25 +928,38 @@ func file_proto_common_proto_rawDescGZIP() []byte {
 	return file_proto_common_proto_rawDescData
 }
 
-var file_proto_common_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_proto_common_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_proto_common_proto_goTypes = []any{
-	(*EmptyRequest)(nil),        // 0: proto.EmptyRequest
-	(*EmptyResponse)(nil),       // 1: proto.EmptyResponse
-	(*StringSliceResponse)(nil), // 2: proto.StringSliceResponse
-	(*IdRequest)(nil),           // 3: proto.IdRequest
-	(*PathIdRequest)(nil),       // 4: proto.PathIdRequest
-	(*PathIdRequestData)(nil),   // 5: proto.PathIdRequestData
-	(*RangeInt64)(nil),          // 6: proto.RangeInt64
-	(*RangeInt32)(nil),          // 7: proto.RangeInt32
-	(*RangeFloat)(nil),          // 8: proto.RangeFloat
+	(*EmptyRequest)(nil),                          // 0: proto.EmptyRequest
+	(*EmptyResponse)(nil),                         // 1: proto.EmptyResponse
+	(*StringSliceResponse)(nil),                   // 2: proto.StringSliceResponse
+	(*IdRequest)(nil),                             // 3: proto.IdRequest
+	(*PathIdRequest)(nil),                         // 4: proto.PathIdRequest
+	(*PathIdRequestData)(nil),                     // 5: proto.PathIdRequestData
+	(*CommonPageRequest)(nil),                     // 6: proto.CommonPageRequest
+	(*CommonPageRequestData)(nil),                 // 7: proto.CommonPageRequestData
+	(*CommonPageFilter)(nil),                      // 8: proto.CommonPageFilter
+	(*CommonPageSorter)(nil),                      // 9: proto.CommonPageSorter
+	(*StorageCreatePresignedUrlRequest)(nil),      // 10: proto.StorageCreatePresignedUrlRequest
+	(*StorageCreatePresignedUrlRequestData)(nil),  // 11: proto.StorageCreatePresignedUrlRequestData
+	(*StorageCreatePresignedUrlResponse)(nil),     // 12: proto.StorageCreatePresignedUrlResponse
+	(*StorageCreatePresignedUrlResponseData)(nil), // 13: proto.StorageCreatePresignedUrlResponseData
+	(*RangeInt64)(nil),                            // 14: proto.RangeInt64
+	(*RangeInt32)(nil),                            // 15: proto.RangeInt32
+	(*RangeFloat)(nil),                            // 16: proto.RangeFloat
 }
 var file_proto_common_proto_depIdxs = []int32{
-	5, // 0: proto.PathIdRequest.data:type_name -> proto.PathIdRequestData
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	5,  // 0: proto.PathIdRequest.data:type_name -> proto.PathIdRequestData
+	7,  // 1: proto.CommonPageRequest.data:type_name -> proto.CommonPageRequestData
+	8,  // 2: proto.CommonPageRequestData.filter:type_name -> proto.CommonPageFilter
+	9,  // 3: proto.CommonPageRequestData.sorter:type_name -> proto.CommonPageSorter
+	11, // 4: proto.StorageCreatePresignedUrlRequest.data:type_name -> proto.StorageCreatePresignedUrlRequestData
+	13, // 5: proto.StorageCreatePresignedUrlResponse.data:type_name -> proto.StorageCreatePresignedUrlResponseData
+	6,  // [6:6] is the sub-list for method output_type
+	6,  // [6:6] is the sub-list for method input_type
+	6,  // [6:6] is the sub-list for extension type_name
+	6,  // [6:6] is the sub-list for extension extendee
+	0,  // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_proto_common_proto_init() }
@@ -497,7 +973,7 @@ func file_proto_common_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_common_proto_rawDesc), len(file_proto_common_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

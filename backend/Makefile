@@ -56,14 +56,14 @@ create-rpc-service-v2:
 	@for proto in $(WORK_DIR)/app/$(SERVICE)/rpc/pb/*.proto; do \
 		[ -f "$$proto" ] || continue; \
 		name=$$(basename "$$proto" .proto); \
-		echo "  $$name"; \
+		echo "  $$proto"; \
 		goctl rpc protoc "$$proto" \
 			--go_out="$(WORK_DIR)" \
 			--go_opt=module=zeebee-backend \
 			--go-grpc_out="$(WORK_DIR)" \
 			--go-grpc_opt=module=zeebee-backend \
 			--zrpc_out="$(WORK_DIR)/app/$(SERVICE)/rpc" \
-			--proto_path="$(WORK_DIR)" \
+			--proto_path="$(WORK_DIR)/app/$(SERVICE)/rpc/pb" \
 			--proto_path="$(WORK_DIR)/domains/zeebee" \
 			--proto_path="$(WORK_DIR)/third_party" \
 			--style go_zero \
