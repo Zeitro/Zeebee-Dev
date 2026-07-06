@@ -76,7 +76,7 @@ export function getDateRange(days = 7, date = new Date(), direction = 'past') {
 			.startOf('day')
 			.toDate();
 		const endDate = base.endOf('day').toDate();
-		return {startDate: formatDate(startDate), endDate: formatDate(endDate)};
+		return { startDate: formatDate(startDate), endDate: formatDate(endDate) };
 	}
 
 	const startDate = base.startOf('day').toDate();
@@ -84,7 +84,7 @@ export function getDateRange(days = 7, date = new Date(), direction = 'past') {
 		.add(count - 1, 'day')
 		.endOf('day')
 		.toDate();
-	return {start_date: formatDate(startDate), end_date: formatDate(endDate)};
+	return { start_date: formatDate(startDate), end_date: formatDate(endDate) };
 }
 
 /**
