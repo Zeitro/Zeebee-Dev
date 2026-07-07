@@ -21,6 +21,7 @@ import (
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/limiter"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -41,7 +42,7 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 	}
 }
 
-func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *lender.EmptyResponse, err error) {
+func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -76,7 +77,7 @@ func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *lender.E
 			}()
 		}
 
-		return &lender.EmptyResponse{}, nil
+		return &proto.EmptyResponse{}, nil
 	}
 
 	var pwd string
@@ -120,7 +121,7 @@ func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *lender.E
 		}
 	}()
 
-	return &lender.EmptyResponse{}, err
+	return &proto.EmptyResponse{}, err
 }
 
 func sendLoginUrlEmail(ctx context.Context, email string, firstName string) (err error) {

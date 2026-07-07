@@ -5,9 +5,9 @@ import (
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
-	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,16 +28,16 @@ func NewRefreshTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Refr
 }
 
 func (l *RefreshTokenLogic) RefreshToken(req *types.UserRefreshTokenRequest) (resp *types.UserJwtResponse, err error) {
-	rpcResp, err := l.svcCtx.UserRpcClient.RefreshToken(l.ctx, &lender.RefreshTokenRequest{
-		Data: &lender.RefreshTokenRequestData{
+	rpcResp, err := l.svcCtx.UserRpcClient.RefreshToken(l.ctx, &proto.RefreshTokenRequest{
+		Data: &proto.RefreshTokenRequestData{
 			RefreshToken: req.RefreshToken,
 		},
 	})
 	if err != nil {
-		return nil, errorx.New("Refresh token error")
+		return nil, errorx.New("refresh token error")
 	}
 
-	resp, err = copierx.Trans[lender.UserJwtResponseData, types.UserJwtResponse](rpcResp.Data)
+	resp, err = copierx.Trans[proto.UserLoginResponseData, types.UserJwtResponse](rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

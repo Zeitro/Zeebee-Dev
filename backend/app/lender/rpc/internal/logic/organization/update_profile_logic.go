@@ -11,6 +11,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -73,5 +74,5 @@ func (l *UpdateProfileLogic) UpdateProfile(in *lender.OrganizationUpdateProfileR
 
 	// Return updated organization by calling Profile again
 	profileLogic := NewProfileLogic(l.ctx, l.svcCtx)
-	return profileLogic.Profile(&lender.EmptyRequest{})
+	return profileLogic.Profile(&proto.EmptyRequest{})
 }

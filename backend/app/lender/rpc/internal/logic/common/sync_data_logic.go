@@ -7,9 +7,9 @@ import (
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
-	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -32,7 +32,7 @@ func NewSyncDataLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncData
 	}
 }
 
-func (l *SyncDataLogic) SyncData(in *lender.EmptyRequest) (resp *lender.EmptyResponse, err error) {
+func (l *SyncDataLogic) SyncData(in *proto.EmptyRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -77,5 +77,5 @@ func (l *SyncDataLogic) SyncData(in *lender.EmptyRequest) (resp *lender.EmptyRes
 		return innerErr
 	})
 
-	return &lender.EmptyResponse{}, errorx.WithStack(err)
+	return &proto.EmptyResponse{}, errorx.WithStack(err)
 }

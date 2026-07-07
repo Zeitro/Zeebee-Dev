@@ -12,6 +12,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type UpdateLogic struct {
@@ -30,7 +31,7 @@ func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogi
 	}
 }
 
-func (l *UpdateLogic) Update(in *lender.RoleUpdateRequest) (resp *lender.RoleUpdateResponse, err error) {
+func (l *UpdateLogic) Update(in *lender.RoleUpdateRequest) (resp *lender.RoleDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -56,12 +57,12 @@ func (l *UpdateLogic) Update(in *lender.RoleUpdateRequest) (resp *lender.RoleUpd
 		return nil, err
 	}
 
-	data, err := copierx.Trans[dto.RoleEntityDto, lender.RoleEntity](role, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[dto.RoleEntityDto, proto.RoleEntity](role, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}
 
-	return &lender.RoleUpdateResponse{
+	return &lender.RoleDetailResponse{
 		Data: data,
 	}, nil
 }

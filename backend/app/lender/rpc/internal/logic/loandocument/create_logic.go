@@ -14,6 +14,7 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -46,7 +47,7 @@ func (l *CreateLogic) Create(in *lender.LoanDocumentCreateExtendTypeRequest) (re
 		}
 	}()
 	var loan *model.Loan
-	results := []*lender.LoanDocumentOptEntity{}
+	results := []*proto.LoanDocumentOptEntity{}
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
@@ -80,7 +81,7 @@ func (l *CreateLogic) Create(in *lender.LoanDocumentCreateExtendTypeRequest) (re
 			return innerErr
 		}
 
-		resultsPtr, innerErr := copierx.Trans[[]*model.LoanDocument, []*lender.LoanDocumentOptEntity](&loanDocuments)
+		resultsPtr, innerErr := copierx.Trans[[]*model.LoanDocument, []*proto.LoanDocumentOptEntity](&loanDocuments)
 		if innerErr != nil {
 			return innerErr
 		}

@@ -3,11 +3,11 @@ package user
 import (
 	"context"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
-	"zeebee-backend/app/lender/rpc/pb/lender"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type SendVerifyEmailLogic struct {
@@ -28,8 +28,8 @@ func NewSendVerifyEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 func (l *SendVerifyEmailLogic) SendVerifyEmail(req *types.UserSendVerifyEmailRequest) (resp *types.EmptyResponse, err error) {
 	resp = &types.EmptyResponse{}
 
-	_, err = l.svcCtx.UserRpcClient.SendVerifyEmail(l.ctx, &lender.SendVerifyEmailRequest{
-		Data: &lender.SendVerifyEmailRequestData{
+	_, err = l.svcCtx.UserRpcClient.SendVerifyEmail(l.ctx, &proto.SendVerifyEmailRequest{
+		Data: &proto.SendVerifyEmailRequestData{
 			Email: req.Email,
 		},
 	})

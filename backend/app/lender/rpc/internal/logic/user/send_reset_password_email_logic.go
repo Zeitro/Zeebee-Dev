@@ -10,13 +10,13 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/email_tpl"
 	"zeebee-backend/app/lender/rpc/internal/global"
 	"zeebee-backend/app/lender/rpc/internal/svc"
-	"zeebee-backend/app/lender/rpc/pb/lender"
 	email2 "zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/limiter"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -35,7 +35,7 @@ func NewSendResetPasswordEmailLogic(ctx context.Context, svcCtx *svc.ServiceCont
 	}
 }
 
-func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *lender.SendResetPasswordEmailRequest) (resp *lender.SendResetPasswordEmailResponse, err error) {
+func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *proto.SendResetPasswordEmailRequest) (resp *proto.SendResetPasswordEmailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -47,7 +47,7 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *lender.SendRese
 
 	email := in.Data.Email
 	if email == "" {
-		return nil, errorx.WithStack(errorx.New("Email is required"))
+		return nil, errorx.WithStack(errorx.New("email is required"))
 	}
 
 	// rate limit
@@ -57,7 +57,7 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *lender.SendRese
 		return nil, errorx.WithStack(err)
 	}
 	if !ok {
-		return nil, errorx.Errorf("Email %s Try Too Many Times", email)
+		return nil, errorx.Errorf("email %s try too many times", email)
 	}
 
 	// get user
@@ -66,7 +66,7 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *lender.SendRese
 		return nil, errorx.WithStack(err)
 	}
 	if user == nil {
-		return nil, errorx.WithStack(errorx.New("User not found"))
+		return nil, errorx.WithStack(errorx.New("user not found"))
 	}
 
 	go func() {
@@ -74,12 +74,12 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *lender.SendRese
 		// send email
 		err := l.sendResetPwdEmail(email, user.FirstName)
 		if err != nil {
-			err = errorx.Wrap(err, "Send Reset Password Email Error")
+			err = errorx.Wrap(err, "send reset password email error")
 			l.WithContext(ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
 
-	return &lender.SendResetPasswordEmailResponse{}, err
+	return &proto.SendResetPasswordEmailResponse{}, err
 }
 
 func (l *SendResetPasswordEmailLogic) sendResetPwdEmail(email string, firstName string) (err error) {

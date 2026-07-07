@@ -12,6 +12,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type AllLogic struct {
@@ -30,7 +31,7 @@ func NewAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AllLogic {
 	}
 }
 
-func (l *AllLogic) All(in *lender.RoleAllRequest) (resp *lender.RoleAllResponse, err error) {
+func (l *AllLogic) All(in *proto.EmptyRequest) (resp *lender.RoleAllResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -50,7 +51,7 @@ func (l *AllLogic) All(in *lender.RoleAllRequest) (resp *lender.RoleAllResponse,
 		return nil, err
 	}
 
-	data, err := copierx.Trans[[]*dto.RoleEntityDto, []*lender.RoleEntity](&result, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[[]*dto.RoleEntityDto, []*proto.RoleEntity](&result, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

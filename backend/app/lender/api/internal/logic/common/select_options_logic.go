@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/lender/api/internal/types"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type SelectOptionsLogic struct {
@@ -40,7 +41,7 @@ func (l *SelectOptionsLogic) SelectOptions(req *types.GetSelectOptionRequest) (r
 		return nil, err
 	}
 
-	optionsPtr, err := copierx.Trans[[]*lender.OptionEntity, []types.SelectOptionEntity](&rpcResp.Data)
+	optionsPtr, err := copierx.Trans[[]*proto.OptionEntity, []types.SelectOptionEntity](&rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

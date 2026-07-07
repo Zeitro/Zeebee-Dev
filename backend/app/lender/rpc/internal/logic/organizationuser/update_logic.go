@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -30,7 +31,7 @@ func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogi
 	}
 }
 
-func (l *UpdateLogic) Update(in *lender.OrganizationUserUpdateRequest) (resp *lender.OrganizationUserUpdateResponse, err error) {
+func (l *UpdateLogic) Update(in *lender.OrganizationUserUpdateRequest) (resp *lender.OrganizationUserDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -54,12 +55,12 @@ func (l *UpdateLogic) Update(in *lender.OrganizationUserUpdateRequest) (resp *le
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[dto.OrganizationUserEntityDto, lender.OrganizationUserEntity](result, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[dto.OrganizationUserEntityDto, proto.OrganizationUserEntity](result, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
-	return &lender.OrganizationUserUpdateResponse{
+	return &lender.OrganizationUserDetailResponse{
 		Data: data,
 	}, nil
 }

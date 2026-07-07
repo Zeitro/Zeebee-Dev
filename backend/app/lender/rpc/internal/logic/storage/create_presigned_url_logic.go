@@ -9,8 +9,8 @@ import (
 
 	"zeebee-backend/app/lender/rpc/internal/global"
 	"zeebee-backend/app/lender/rpc/internal/svc"
-	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -31,7 +31,7 @@ func NewCreatePresignedUrlLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *CreatePresignedUrlLogic) CreatePresignedUrl(in *lender.StorageCreatePresignedUrlRequest) (resp *lender.StorageCreatePresignedUrlResponse, err error) {
+func (l *CreatePresignedUrlLogic) CreatePresignedUrl(in *proto.StorageCreatePresignedUrlRequest) (resp *proto.StorageCreatePresignedUrlResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -47,7 +47,7 @@ func (l *CreatePresignedUrlLogic) CreatePresignedUrl(in *lender.StorageCreatePre
 	typ := in.Data.Type
 	suffix := strings.ToLower(in.Data.FileSuffix)
 	if len(typ) == 0 {
-		err = errorx.New("Type is empty")
+		err = errorx.New("type is empty")
 	}
 	name := uuid.New().String()
 
@@ -63,8 +63,8 @@ func (l *CreatePresignedUrlLogic) CreatePresignedUrl(in *lender.StorageCreatePre
 		return
 	}
 
-	return &lender.StorageCreatePresignedUrlResponse{
-		Data: &lender.StorageCreatePresignedUrlResponseData{
+	return &proto.StorageCreatePresignedUrlResponse{
+		Data: &proto.StorageCreatePresignedUrlResponseData{
 			Url:         req.URL,
 			FileName:    fileName,
 			StorageType: string(constants.StorageTypeAwsS3),

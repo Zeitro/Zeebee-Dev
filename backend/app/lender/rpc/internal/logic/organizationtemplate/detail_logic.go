@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -30,7 +31,7 @@ func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogi
 	}
 }
 
-func (l *DetailLogic) Detail(in *lender.IdRequest) (resp *lender.OrganizationTemplateDetailResponse, err error) {
+func (l *DetailLogic) Detail(in *proto.IdRequest) (resp *lender.OrganizationTemplateDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -43,7 +44,7 @@ func (l *DetailLogic) Detail(in *lender.IdRequest) (resp *lender.OrganizationTem
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[dto.OrganizationTemplateEntityDto, lender.OrganizationTemplateEntity](
+	data, err := copierx.Trans[dto.OrganizationTemplateEntityDto, proto.OrganizationTemplateEntity](
 		detail,
 		copierx.TimeToRFC3339Str(),
 	)

@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -30,7 +31,7 @@ func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogi
 	}
 }
 
-func (l *UpdateLogic) Update(in *lender.UpdateOrganizationTemplateRequest) (resp *lender.UpdateOrganizationTemplateResponse, err error) {
+func (l *UpdateLogic) Update(in *lender.UpdateOrganizationTemplateRequest) (resp *lender.OrganizationTemplateDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -55,12 +56,12 @@ func (l *UpdateLogic) Update(in *lender.UpdateOrganizationTemplateRequest) (resp
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[dto.OrganizationTemplateEntityDto, lender.OrganizationTemplateEntity](
+	data, err := copierx.Trans[dto.OrganizationTemplateEntityDto, proto.OrganizationTemplateEntity](
 		result,
 		copierx.TimeToRFC3339Str(),
 	)
 
-	return &lender.UpdateOrganizationTemplateResponse{
+	return &lender.OrganizationTemplateDetailResponse{
 		Data: data,
 	}, err
 }

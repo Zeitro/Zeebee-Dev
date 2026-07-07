@@ -5,10 +5,10 @@ import (
 
 	"zeebee-backend/app/lender/rpc/internal/global"
 	"zeebee-backend/app/lender/rpc/internal/svc"
-	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/limiter"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -29,7 +29,7 @@ func NewSendVerifyEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 	}
 }
 
-func (l *SendVerifyEmailLogic) SendVerifyEmail(in *lender.SendVerifyEmailRequest) (resp *lender.SendVerifyEmailResponse, err error) {
+func (l *SendVerifyEmailLogic) SendVerifyEmail(in *proto.SendVerifyEmailRequest) (resp *proto.SendVerifyEmailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -73,5 +73,5 @@ func (l *SendVerifyEmailLogic) SendVerifyEmail(in *lender.SendVerifyEmailRequest
 		}
 	}()
 
-	return &lender.SendVerifyEmailResponse{}, nil
+	return &proto.SendVerifyEmailResponse{}, nil
 }

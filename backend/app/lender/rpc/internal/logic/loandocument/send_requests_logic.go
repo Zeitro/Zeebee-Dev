@@ -16,6 +16,7 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -38,7 +39,7 @@ func NewSendRequestsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Send
 	}
 }
 
-func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequest) (resp *lender.EmptyResponse, err error) {
+func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -119,7 +120,7 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 	})
 
 	if len(loanDocuments) == 0 {
-		return &lender.EmptyResponse{}, nil
+		return &proto.EmptyResponse{}, nil
 	}
 
 	// send email
@@ -136,7 +137,7 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 		}
 	}()
 
-	return &lender.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }
 
 // prepare

@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type UpdateStatusLogic struct {
@@ -28,7 +29,7 @@ func NewUpdateStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upda
 	}
 }
 
-func (l *UpdateStatusLogic) UpdateStatus(in *lender.RoleUpdateStatusRequest) (resp *lender.EmptyResponse, err error) {
+func (l *UpdateStatusLogic) UpdateStatus(in *lender.RoleUpdateStatusRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -48,5 +49,5 @@ func (l *UpdateStatusLogic) UpdateStatus(in *lender.RoleUpdateStatusRequest) (re
 		return nil, err
 	}
 
-	return &lender.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

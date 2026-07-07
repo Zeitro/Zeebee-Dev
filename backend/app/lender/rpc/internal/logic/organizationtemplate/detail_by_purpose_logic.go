@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -48,7 +49,7 @@ func (l *DetailByPurposeLogic) DetailByPurpose(in *lender.OrganizationTemplateDe
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[dto.OrganizationTemplateEntityDto, lender.OrganizationTemplateEntity](
+	data, err := copierx.Trans[dto.OrganizationTemplateEntityDto, proto.OrganizationTemplateEntity](
 		detail,
 		copierx.TimeToRFC3339Str(),
 	)

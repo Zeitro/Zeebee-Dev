@@ -6,8 +6,8 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/email_tpl"
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
-	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -30,7 +30,7 @@ func NewSendInvitationEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext
 	}
 }
 
-func (l *SendInvitationEmailLogic) SendInvitationEmail(in *lender.OrganizationUserSendInvitationEmailRequest) (resp *lender.EmptyResponse, err error) {
+func (l *SendInvitationEmailLogic) SendInvitationEmail(in *proto.PathIdRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -61,5 +61,5 @@ func (l *SendInvitationEmailLogic) SendInvitationEmail(in *lender.OrganizationUs
 		return nil, err
 	}
 
-	return &lender.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

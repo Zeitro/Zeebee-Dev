@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -32,7 +33,7 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 	}
 }
 
-func (l *CreateLogic) Create(in *lender.OrganizationUserCreateRequest) (resp *lender.OrganizationUserCreateResponse, err error) {
+func (l *CreateLogic) Create(in *lender.OrganizationUserCreateRequest) (resp *lender.OrganizationUserDetailResponse, err error) {
 	defer func() {
 		if err != nil {
 			l.WithContext(l.ctx).WithFields(
@@ -66,12 +67,12 @@ func (l *CreateLogic) Create(in *lender.OrganizationUserCreateRequest) (resp *le
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[dto.OrganizationUserEntityDto, lender.OrganizationUserEntity](result, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[dto.OrganizationUserEntityDto, proto.OrganizationUserEntity](result, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
-	return &lender.OrganizationUserCreateResponse{
+	return &lender.OrganizationUserDetailResponse{
 		Data: data,
 	}, nil
 }
