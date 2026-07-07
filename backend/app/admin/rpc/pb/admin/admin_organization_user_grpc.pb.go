@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.2
 // - protoc             v7.35.1
-// source: app/admin/rpc/pb/organization_user.proto
+// source: admin_organization_user.proto
 
 package admin
 
@@ -308,5 +308,5 @@ var OrganizationUser_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "app/admin/rpc/pb/organization_user.proto",
+	Metadata: "admin_organization_user.proto",
 }

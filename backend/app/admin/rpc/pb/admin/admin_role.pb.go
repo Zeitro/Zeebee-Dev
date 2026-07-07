@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v7.35.1
-// source: app/admin/rpc/pb/role.proto
+// source: admin_role.proto
 
 package admin
 
@@ -32,7 +32,7 @@ type RolePageRequest struct {
 
 func (x *RolePageRequest) Reset() {
 	*x = RolePageRequest{}
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[0]
+	mi := &file_admin_role_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -44,7 +44,7 @@ func (x *RolePageRequest) String() string {
 func (*RolePageRequest) ProtoMessage() {}
 
 func (x *RolePageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[0]
+	mi := &file_admin_role_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -57,7 +57,7 @@ func (x *RolePageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RolePageRequest.ProtoReflect.Descriptor instead.
 func (*RolePageRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_role_proto_rawDescGZIP(), []int{0}
+	return file_admin_role_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *RolePageRequest) GetData() *RolePageRequestData {
@@ -79,7 +79,7 @@ type RolePageRequestData struct {
 
 func (x *RolePageRequestData) Reset() {
 	*x = RolePageRequestData{}
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[1]
+	mi := &file_admin_role_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -91,7 +91,7 @@ func (x *RolePageRequestData) String() string {
 func (*RolePageRequestData) ProtoMessage() {}
 
 func (x *RolePageRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[1]
+	mi := &file_admin_role_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -104,7 +104,7 @@ func (x *RolePageRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RolePageRequestData.ProtoReflect.Descriptor instead.
 func (*RolePageRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_role_proto_rawDescGZIP(), []int{1}
+	return file_admin_role_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *RolePageRequestData) GetPage() int64 {
@@ -144,7 +144,7 @@ type RolePageRequestFilter struct {
 
 func (x *RolePageRequestFilter) Reset() {
 	*x = RolePageRequestFilter{}
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[2]
+	mi := &file_admin_role_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -156,7 +156,7 @@ func (x *RolePageRequestFilter) String() string {
 func (*RolePageRequestFilter) ProtoMessage() {}
 
 func (x *RolePageRequestFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[2]
+	mi := &file_admin_role_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -169,7 +169,7 @@ func (x *RolePageRequestFilter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RolePageRequestFilter.ProtoReflect.Descriptor instead.
 func (*RolePageRequestFilter) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_role_proto_rawDescGZIP(), []int{2}
+	return file_admin_role_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *RolePageRequestFilter) GetKeyword() string {
@@ -189,7 +189,7 @@ type RolePageRequestSorter struct {
 
 func (x *RolePageRequestSorter) Reset() {
 	*x = RolePageRequestSorter{}
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[3]
+	mi := &file_admin_role_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -201,7 +201,7 @@ func (x *RolePageRequestSorter) String() string {
 func (*RolePageRequestSorter) ProtoMessage() {}
 
 func (x *RolePageRequestSorter) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[3]
+	mi := &file_admin_role_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -214,7 +214,7 @@ func (x *RolePageRequestSorter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RolePageRequestSorter.ProtoReflect.Descriptor instead.
 func (*RolePageRequestSorter) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_role_proto_rawDescGZIP(), []int{3}
+	return file_admin_role_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *RolePageRequestSorter) GetColumn() string {
@@ -241,7 +241,7 @@ type RolePageResponse struct {
 
 func (x *RolePageResponse) Reset() {
 	*x = RolePageResponse{}
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[4]
+	mi := &file_admin_role_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -253,7 +253,7 @@ func (x *RolePageResponse) String() string {
 func (*RolePageResponse) ProtoMessage() {}
 
 func (x *RolePageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[4]
+	mi := &file_admin_role_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -266,7 +266,7 @@ func (x *RolePageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RolePageResponse.ProtoReflect.Descriptor instead.
 func (*RolePageResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_role_proto_rawDescGZIP(), []int{4}
+	return file_admin_role_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *RolePageResponse) GetData() *RolePageResponseData {
@@ -289,7 +289,7 @@ type RolePageResponseData struct {
 
 func (x *RolePageResponseData) Reset() {
 	*x = RolePageResponseData{}
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[5]
+	mi := &file_admin_role_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -301,7 +301,7 @@ func (x *RolePageResponseData) String() string {
 func (*RolePageResponseData) ProtoMessage() {}
 
 func (x *RolePageResponseData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[5]
+	mi := &file_admin_role_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -314,7 +314,7 @@ func (x *RolePageResponseData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RolePageResponseData.ProtoReflect.Descriptor instead.
 func (*RolePageResponseData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_role_proto_rawDescGZIP(), []int{5}
+	return file_admin_role_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *RolePageResponseData) GetPage() int64 {
@@ -362,7 +362,7 @@ type RoleCreateRequest struct {
 
 func (x *RoleCreateRequest) Reset() {
 	*x = RoleCreateRequest{}
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[6]
+	mi := &file_admin_role_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -374,7 +374,7 @@ func (x *RoleCreateRequest) String() string {
 func (*RoleCreateRequest) ProtoMessage() {}
 
 func (x *RoleCreateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[6]
+	mi := &file_admin_role_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -387,7 +387,7 @@ func (x *RoleCreateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleCreateRequest.ProtoReflect.Descriptor instead.
 func (*RoleCreateRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_role_proto_rawDescGZIP(), []int{6}
+	return file_admin_role_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *RoleCreateRequest) GetData() *RoleCreateRequestData {
@@ -409,7 +409,7 @@ type RoleCreateRequestData struct {
 
 func (x *RoleCreateRequestData) Reset() {
 	*x = RoleCreateRequestData{}
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[7]
+	mi := &file_admin_role_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -421,7 +421,7 @@ func (x *RoleCreateRequestData) String() string {
 func (*RoleCreateRequestData) ProtoMessage() {}
 
 func (x *RoleCreateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[7]
+	mi := &file_admin_role_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -434,7 +434,7 @@ func (x *RoleCreateRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleCreateRequestData.ProtoReflect.Descriptor instead.
 func (*RoleCreateRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_role_proto_rawDescGZIP(), []int{7}
+	return file_admin_role_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *RoleCreateRequestData) GetName() string {
@@ -475,7 +475,7 @@ type RoleUpdateRequest struct {
 
 func (x *RoleUpdateRequest) Reset() {
 	*x = RoleUpdateRequest{}
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[8]
+	mi := &file_admin_role_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -487,7 +487,7 @@ func (x *RoleUpdateRequest) String() string {
 func (*RoleUpdateRequest) ProtoMessage() {}
 
 func (x *RoleUpdateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[8]
+	mi := &file_admin_role_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -500,7 +500,7 @@ func (x *RoleUpdateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleUpdateRequest.ProtoReflect.Descriptor instead.
 func (*RoleUpdateRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_role_proto_rawDescGZIP(), []int{8}
+	return file_admin_role_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *RoleUpdateRequest) GetData() *RoleUpdateRequestData {
@@ -523,7 +523,7 @@ type RoleUpdateRequestData struct {
 
 func (x *RoleUpdateRequestData) Reset() {
 	*x = RoleUpdateRequestData{}
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[9]
+	mi := &file_admin_role_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -535,7 +535,7 @@ func (x *RoleUpdateRequestData) String() string {
 func (*RoleUpdateRequestData) ProtoMessage() {}
 
 func (x *RoleUpdateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[9]
+	mi := &file_admin_role_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -548,7 +548,7 @@ func (x *RoleUpdateRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleUpdateRequestData.ProtoReflect.Descriptor instead.
 func (*RoleUpdateRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_role_proto_rawDescGZIP(), []int{9}
+	return file_admin_role_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *RoleUpdateRequestData) GetId() int64 {
@@ -597,7 +597,7 @@ type RoleAndResourceRelationEntity struct {
 
 func (x *RoleAndResourceRelationEntity) Reset() {
 	*x = RoleAndResourceRelationEntity{}
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[10]
+	mi := &file_admin_role_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -609,7 +609,7 @@ func (x *RoleAndResourceRelationEntity) String() string {
 func (*RoleAndResourceRelationEntity) ProtoMessage() {}
 
 func (x *RoleAndResourceRelationEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[10]
+	mi := &file_admin_role_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -622,7 +622,7 @@ func (x *RoleAndResourceRelationEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleAndResourceRelationEntity.ProtoReflect.Descriptor instead.
 func (*RoleAndResourceRelationEntity) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_role_proto_rawDescGZIP(), []int{10}
+	return file_admin_role_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *RoleAndResourceRelationEntity) GetRoleId() int64 {
@@ -656,7 +656,7 @@ type RoleDeleteRequest struct {
 
 func (x *RoleDeleteRequest) Reset() {
 	*x = RoleDeleteRequest{}
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[11]
+	mi := &file_admin_role_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -668,7 +668,7 @@ func (x *RoleDeleteRequest) String() string {
 func (*RoleDeleteRequest) ProtoMessage() {}
 
 func (x *RoleDeleteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[11]
+	mi := &file_admin_role_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -681,7 +681,7 @@ func (x *RoleDeleteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleDeleteRequest.ProtoReflect.Descriptor instead.
 func (*RoleDeleteRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_role_proto_rawDescGZIP(), []int{11}
+	return file_admin_role_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *RoleDeleteRequest) GetData() *RoleDeleteRequestData {
@@ -700,7 +700,7 @@ type RoleDeleteRequestData struct {
 
 func (x *RoleDeleteRequestData) Reset() {
 	*x = RoleDeleteRequestData{}
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[12]
+	mi := &file_admin_role_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -712,7 +712,7 @@ func (x *RoleDeleteRequestData) String() string {
 func (*RoleDeleteRequestData) ProtoMessage() {}
 
 func (x *RoleDeleteRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[12]
+	mi := &file_admin_role_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -725,7 +725,7 @@ func (x *RoleDeleteRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleDeleteRequestData.ProtoReflect.Descriptor instead.
 func (*RoleDeleteRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_role_proto_rawDescGZIP(), []int{12}
+	return file_admin_role_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *RoleDeleteRequestData) GetId() int64 {
@@ -745,7 +745,7 @@ type RoleDetailRequest struct {
 
 func (x *RoleDetailRequest) Reset() {
 	*x = RoleDetailRequest{}
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[13]
+	mi := &file_admin_role_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -757,7 +757,7 @@ func (x *RoleDetailRequest) String() string {
 func (*RoleDetailRequest) ProtoMessage() {}
 
 func (x *RoleDetailRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[13]
+	mi := &file_admin_role_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -770,7 +770,7 @@ func (x *RoleDetailRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleDetailRequest.ProtoReflect.Descriptor instead.
 func (*RoleDetailRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_role_proto_rawDescGZIP(), []int{13}
+	return file_admin_role_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *RoleDetailRequest) GetData() *RoleDetailRequestData {
@@ -789,7 +789,7 @@ type RoleDetailRequestData struct {
 
 func (x *RoleDetailRequestData) Reset() {
 	*x = RoleDetailRequestData{}
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[14]
+	mi := &file_admin_role_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -801,7 +801,7 @@ func (x *RoleDetailRequestData) String() string {
 func (*RoleDetailRequestData) ProtoMessage() {}
 
 func (x *RoleDetailRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[14]
+	mi := &file_admin_role_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -814,7 +814,7 @@ func (x *RoleDetailRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleDetailRequestData.ProtoReflect.Descriptor instead.
 func (*RoleDetailRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_role_proto_rawDescGZIP(), []int{14}
+	return file_admin_role_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *RoleDetailRequestData) GetId() int64 {
@@ -834,7 +834,7 @@ type RoleDetailResponse struct {
 
 func (x *RoleDetailResponse) Reset() {
 	*x = RoleDetailResponse{}
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[15]
+	mi := &file_admin_role_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -846,7 +846,7 @@ func (x *RoleDetailResponse) String() string {
 func (*RoleDetailResponse) ProtoMessage() {}
 
 func (x *RoleDetailResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[15]
+	mi := &file_admin_role_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -859,7 +859,7 @@ func (x *RoleDetailResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleDetailResponse.ProtoReflect.Descriptor instead.
 func (*RoleDetailResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_role_proto_rawDescGZIP(), []int{15}
+	return file_admin_role_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *RoleDetailResponse) GetData() *proto.RoleEntity {
@@ -879,7 +879,7 @@ type RoleSwitchStatusRequest struct {
 
 func (x *RoleSwitchStatusRequest) Reset() {
 	*x = RoleSwitchStatusRequest{}
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[16]
+	mi := &file_admin_role_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -891,7 +891,7 @@ func (x *RoleSwitchStatusRequest) String() string {
 func (*RoleSwitchStatusRequest) ProtoMessage() {}
 
 func (x *RoleSwitchStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[16]
+	mi := &file_admin_role_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -904,7 +904,7 @@ func (x *RoleSwitchStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleSwitchStatusRequest.ProtoReflect.Descriptor instead.
 func (*RoleSwitchStatusRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_role_proto_rawDescGZIP(), []int{16}
+	return file_admin_role_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *RoleSwitchStatusRequest) GetData() *RoleSwitchStatusRequestData {
@@ -924,7 +924,7 @@ type RoleSwitchStatusRequestData struct {
 
 func (x *RoleSwitchStatusRequestData) Reset() {
 	*x = RoleSwitchStatusRequestData{}
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[17]
+	mi := &file_admin_role_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -936,7 +936,7 @@ func (x *RoleSwitchStatusRequestData) String() string {
 func (*RoleSwitchStatusRequestData) ProtoMessage() {}
 
 func (x *RoleSwitchStatusRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[17]
+	mi := &file_admin_role_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -949,7 +949,7 @@ func (x *RoleSwitchStatusRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleSwitchStatusRequestData.ProtoReflect.Descriptor instead.
 func (*RoleSwitchStatusRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_role_proto_rawDescGZIP(), []int{17}
+	return file_admin_role_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *RoleSwitchStatusRequestData) GetId() int64 {
@@ -976,7 +976,7 @@ type RoleAllRequest struct {
 
 func (x *RoleAllRequest) Reset() {
 	*x = RoleAllRequest{}
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[18]
+	mi := &file_admin_role_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -988,7 +988,7 @@ func (x *RoleAllRequest) String() string {
 func (*RoleAllRequest) ProtoMessage() {}
 
 func (x *RoleAllRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[18]
+	mi := &file_admin_role_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1001,7 +1001,7 @@ func (x *RoleAllRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleAllRequest.ProtoReflect.Descriptor instead.
 func (*RoleAllRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_role_proto_rawDescGZIP(), []int{18}
+	return file_admin_role_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *RoleAllRequest) GetData() *RoleAllRequestData {
@@ -1019,7 +1019,7 @@ type RoleAllRequestData struct {
 
 func (x *RoleAllRequestData) Reset() {
 	*x = RoleAllRequestData{}
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[19]
+	mi := &file_admin_role_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1031,7 +1031,7 @@ func (x *RoleAllRequestData) String() string {
 func (*RoleAllRequestData) ProtoMessage() {}
 
 func (x *RoleAllRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[19]
+	mi := &file_admin_role_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1044,7 +1044,7 @@ func (x *RoleAllRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleAllRequestData.ProtoReflect.Descriptor instead.
 func (*RoleAllRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_role_proto_rawDescGZIP(), []int{19}
+	return file_admin_role_proto_rawDescGZIP(), []int{19}
 }
 
 // all roles -- response
@@ -1057,7 +1057,7 @@ type RoleAllResponse struct {
 
 func (x *RoleAllResponse) Reset() {
 	*x = RoleAllResponse{}
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[20]
+	mi := &file_admin_role_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1069,7 +1069,7 @@ func (x *RoleAllResponse) String() string {
 func (*RoleAllResponse) ProtoMessage() {}
 
 func (x *RoleAllResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[20]
+	mi := &file_admin_role_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1082,7 +1082,7 @@ func (x *RoleAllResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleAllResponse.ProtoReflect.Descriptor instead.
 func (*RoleAllResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_role_proto_rawDescGZIP(), []int{20}
+	return file_admin_role_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *RoleAllResponse) GetData() []*proto.RoleEntity {
@@ -1102,7 +1102,7 @@ type RoleAssignOrganizationUsersRequest struct {
 
 func (x *RoleAssignOrganizationUsersRequest) Reset() {
 	*x = RoleAssignOrganizationUsersRequest{}
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[21]
+	mi := &file_admin_role_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1114,7 +1114,7 @@ func (x *RoleAssignOrganizationUsersRequest) String() string {
 func (*RoleAssignOrganizationUsersRequest) ProtoMessage() {}
 
 func (x *RoleAssignOrganizationUsersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[21]
+	mi := &file_admin_role_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1127,7 +1127,7 @@ func (x *RoleAssignOrganizationUsersRequest) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use RoleAssignOrganizationUsersRequest.ProtoReflect.Descriptor instead.
 func (*RoleAssignOrganizationUsersRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_role_proto_rawDescGZIP(), []int{21}
+	return file_admin_role_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *RoleAssignOrganizationUsersRequest) GetData() *RoleAssignOrganizationUsersRequestData {
@@ -1147,7 +1147,7 @@ type RoleAssignOrganizationUsersRequestData struct {
 
 func (x *RoleAssignOrganizationUsersRequestData) Reset() {
 	*x = RoleAssignOrganizationUsersRequestData{}
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[22]
+	mi := &file_admin_role_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1159,7 +1159,7 @@ func (x *RoleAssignOrganizationUsersRequestData) String() string {
 func (*RoleAssignOrganizationUsersRequestData) ProtoMessage() {}
 
 func (x *RoleAssignOrganizationUsersRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_role_proto_msgTypes[22]
+	mi := &file_admin_role_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1172,7 +1172,7 @@ func (x *RoleAssignOrganizationUsersRequestData) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use RoleAssignOrganizationUsersRequestData.ProtoReflect.Descriptor instead.
 func (*RoleAssignOrganizationUsersRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_role_proto_rawDescGZIP(), []int{22}
+	return file_admin_role_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *RoleAssignOrganizationUsersRequestData) GetId() int64 {
@@ -1189,11 +1189,11 @@ func (x *RoleAssignOrganizationUsersRequestData) GetOrganizationUserIds() []int6
 	return nil
 }
 
-var File_app_admin_rpc_pb_role_proto protoreflect.FileDescriptor
+var File_admin_role_proto protoreflect.FileDescriptor
 
-const file_app_admin_rpc_pb_role_proto_rawDesc = "" +
+const file_admin_role_proto_rawDesc = "" +
 	"\n" +
-	"\x1bapp/admin/rpc/pb/role.proto\x12\x05admin\x1a\x12proto/common.proto\x1a\x12proto/entity.proto\"A\n" +
+	"\x10admin_role.proto\x12\x05admin\x1a\x12proto/common.proto\x1a\x12proto/entity.proto\"A\n" +
 	"\x0fRolePageRequest\x12.\n" +
 	"\x04data\x18\x01 \x01(\v2\x1a.admin.RolePageRequestDataR\x04data\"\xab\x01\n" +
 	"\x13RolePageRequestData\x12\x12\n" +
@@ -1272,19 +1272,19 @@ const file_app_admin_rpc_pb_role_proto_rawDesc = "" +
 	"\x17AssignOrganizationUsers\x12).admin.RoleAssignOrganizationUsersRequest\x1a\x19.admin.RoleDetailResponseB'Z%zeebee-backend/app/admin/rpc/pb/adminb\x06proto3"
 
 var (
-	file_app_admin_rpc_pb_role_proto_rawDescOnce sync.Once
-	file_app_admin_rpc_pb_role_proto_rawDescData []byte
+	file_admin_role_proto_rawDescOnce sync.Once
+	file_admin_role_proto_rawDescData []byte
 )
 
-func file_app_admin_rpc_pb_role_proto_rawDescGZIP() []byte {
-	file_app_admin_rpc_pb_role_proto_rawDescOnce.Do(func() {
-		file_app_admin_rpc_pb_role_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_role_proto_rawDesc), len(file_app_admin_rpc_pb_role_proto_rawDesc)))
+func file_admin_role_proto_rawDescGZIP() []byte {
+	file_admin_role_proto_rawDescOnce.Do(func() {
+		file_admin_role_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_admin_role_proto_rawDesc), len(file_admin_role_proto_rawDesc)))
 	})
-	return file_app_admin_rpc_pb_role_proto_rawDescData
+	return file_admin_role_proto_rawDescData
 }
 
-var file_app_admin_rpc_pb_role_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
-var file_app_admin_rpc_pb_role_proto_goTypes = []any{
+var file_admin_role_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
+var file_admin_role_proto_goTypes = []any{
 	(*RolePageRequest)(nil),                        // 0: admin.RolePageRequest
 	(*RolePageRequestData)(nil),                    // 1: admin.RolePageRequestData
 	(*RolePageRequestFilter)(nil),                  // 2: admin.RolePageRequestFilter
@@ -1311,7 +1311,7 @@ var file_app_admin_rpc_pb_role_proto_goTypes = []any{
 	(*proto.RoleEntity)(nil),                       // 23: proto.RoleEntity
 	(*proto.EmptyResponse)(nil),                    // 24: proto.EmptyResponse
 }
-var file_app_admin_rpc_pb_role_proto_depIdxs = []int32{
+var file_admin_role_proto_depIdxs = []int32{
 	1,  // 0: admin.RolePageRequest.data:type_name -> admin.RolePageRequestData
 	2,  // 1: admin.RolePageRequestData.filter:type_name -> admin.RolePageRequestFilter
 	3,  // 2: admin.RolePageRequestData.sorter:type_name -> admin.RolePageRequestSorter
@@ -1351,26 +1351,26 @@ var file_app_admin_rpc_pb_role_proto_depIdxs = []int32{
 	0,  // [0:16] is the sub-list for field type_name
 }
 
-func init() { file_app_admin_rpc_pb_role_proto_init() }
-func file_app_admin_rpc_pb_role_proto_init() {
-	if File_app_admin_rpc_pb_role_proto != nil {
+func init() { file_admin_role_proto_init() }
+func file_admin_role_proto_init() {
+	if File_admin_role_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_role_proto_rawDesc), len(file_app_admin_rpc_pb_role_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_admin_role_proto_rawDesc), len(file_admin_role_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   23,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_app_admin_rpc_pb_role_proto_goTypes,
-		DependencyIndexes: file_app_admin_rpc_pb_role_proto_depIdxs,
-		MessageInfos:      file_app_admin_rpc_pb_role_proto_msgTypes,
+		GoTypes:           file_admin_role_proto_goTypes,
+		DependencyIndexes: file_admin_role_proto_depIdxs,
+		MessageInfos:      file_admin_role_proto_msgTypes,
 	}.Build()
-	File_app_admin_rpc_pb_role_proto = out.File
-	file_app_admin_rpc_pb_role_proto_goTypes = nil
-	file_app_admin_rpc_pb_role_proto_depIdxs = nil
+	File_admin_role_proto = out.File
+	file_admin_role_proto_goTypes = nil
+	file_admin_role_proto_depIdxs = nil
 }

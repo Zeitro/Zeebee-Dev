@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v7.35.1
-// source: app/admin/rpc/pb/pricing_plan.proto
+// source: admin_pricing_plan.proto
 
 package admin
 
@@ -43,7 +43,7 @@ type PricingPlanPageEntity struct {
 
 func (x *PricingPlanPageEntity) Reset() {
 	*x = PricingPlanPageEntity{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[0]
+	mi := &file_admin_pricing_plan_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -55,7 +55,7 @@ func (x *PricingPlanPageEntity) String() string {
 func (*PricingPlanPageEntity) ProtoMessage() {}
 
 func (x *PricingPlanPageEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[0]
+	mi := &file_admin_pricing_plan_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -68,7 +68,7 @@ func (x *PricingPlanPageEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanPageEntity.ProtoReflect.Descriptor instead.
 func (*PricingPlanPageEntity) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{0}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *PricingPlanPageEntity) GetId() int64 {
@@ -172,7 +172,7 @@ type PricingPlanCreateRequest struct {
 
 func (x *PricingPlanCreateRequest) Reset() {
 	*x = PricingPlanCreateRequest{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[1]
+	mi := &file_admin_pricing_plan_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -184,7 +184,7 @@ func (x *PricingPlanCreateRequest) String() string {
 func (*PricingPlanCreateRequest) ProtoMessage() {}
 
 func (x *PricingPlanCreateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[1]
+	mi := &file_admin_pricing_plan_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -197,7 +197,7 @@ func (x *PricingPlanCreateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanCreateRequest.ProtoReflect.Descriptor instead.
 func (*PricingPlanCreateRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{1}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *PricingPlanCreateRequest) GetData() *PricingPlanCreateRequestData {
@@ -225,7 +225,7 @@ type PricingPlanCreateRequestData struct {
 
 func (x *PricingPlanCreateRequestData) Reset() {
 	*x = PricingPlanCreateRequestData{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[2]
+	mi := &file_admin_pricing_plan_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -237,7 +237,7 @@ func (x *PricingPlanCreateRequestData) String() string {
 func (*PricingPlanCreateRequestData) ProtoMessage() {}
 
 func (x *PricingPlanCreateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[2]
+	mi := &file_admin_pricing_plan_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -250,7 +250,7 @@ func (x *PricingPlanCreateRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanCreateRequestData.ProtoReflect.Descriptor instead.
 func (*PricingPlanCreateRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{2}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *PricingPlanCreateRequestData) GetName() string {
@@ -326,7 +326,7 @@ type PricingPlanUpdateRequest struct {
 
 func (x *PricingPlanUpdateRequest) Reset() {
 	*x = PricingPlanUpdateRequest{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[3]
+	mi := &file_admin_pricing_plan_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -338,7 +338,7 @@ func (x *PricingPlanUpdateRequest) String() string {
 func (*PricingPlanUpdateRequest) ProtoMessage() {}
 
 func (x *PricingPlanUpdateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[3]
+	mi := &file_admin_pricing_plan_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -351,7 +351,7 @@ func (x *PricingPlanUpdateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanUpdateRequest.ProtoReflect.Descriptor instead.
 func (*PricingPlanUpdateRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{3}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *PricingPlanUpdateRequest) GetData() *PricingPlanUpdateRequestData {
@@ -378,7 +378,7 @@ type PricingPlanUpdateRequestData struct {
 
 func (x *PricingPlanUpdateRequestData) Reset() {
 	*x = PricingPlanUpdateRequestData{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[4]
+	mi := &file_admin_pricing_plan_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -390,7 +390,7 @@ func (x *PricingPlanUpdateRequestData) String() string {
 func (*PricingPlanUpdateRequestData) ProtoMessage() {}
 
 func (x *PricingPlanUpdateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[4]
+	mi := &file_admin_pricing_plan_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -403,7 +403,7 @@ func (x *PricingPlanUpdateRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanUpdateRequestData.ProtoReflect.Descriptor instead.
 func (*PricingPlanUpdateRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{4}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *PricingPlanUpdateRequestData) GetId() int64 {
@@ -472,7 +472,7 @@ type PricingPlanDeleteRequest struct {
 
 func (x *PricingPlanDeleteRequest) Reset() {
 	*x = PricingPlanDeleteRequest{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[5]
+	mi := &file_admin_pricing_plan_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -484,7 +484,7 @@ func (x *PricingPlanDeleteRequest) String() string {
 func (*PricingPlanDeleteRequest) ProtoMessage() {}
 
 func (x *PricingPlanDeleteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[5]
+	mi := &file_admin_pricing_plan_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -497,7 +497,7 @@ func (x *PricingPlanDeleteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanDeleteRequest.ProtoReflect.Descriptor instead.
 func (*PricingPlanDeleteRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{5}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *PricingPlanDeleteRequest) GetData() *PricingPlanDeleteRequestData {
@@ -516,7 +516,7 @@ type PricingPlanDeleteRequestData struct {
 
 func (x *PricingPlanDeleteRequestData) Reset() {
 	*x = PricingPlanDeleteRequestData{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[6]
+	mi := &file_admin_pricing_plan_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -528,7 +528,7 @@ func (x *PricingPlanDeleteRequestData) String() string {
 func (*PricingPlanDeleteRequestData) ProtoMessage() {}
 
 func (x *PricingPlanDeleteRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[6]
+	mi := &file_admin_pricing_plan_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -541,7 +541,7 @@ func (x *PricingPlanDeleteRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanDeleteRequestData.ProtoReflect.Descriptor instead.
 func (*PricingPlanDeleteRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{6}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *PricingPlanDeleteRequestData) GetId() int64 {
@@ -561,7 +561,7 @@ type PricingPlanDetailRequest struct {
 
 func (x *PricingPlanDetailRequest) Reset() {
 	*x = PricingPlanDetailRequest{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[7]
+	mi := &file_admin_pricing_plan_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -573,7 +573,7 @@ func (x *PricingPlanDetailRequest) String() string {
 func (*PricingPlanDetailRequest) ProtoMessage() {}
 
 func (x *PricingPlanDetailRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[7]
+	mi := &file_admin_pricing_plan_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -586,7 +586,7 @@ func (x *PricingPlanDetailRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanDetailRequest.ProtoReflect.Descriptor instead.
 func (*PricingPlanDetailRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{7}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *PricingPlanDetailRequest) GetData() *PricingPlanDetailRequestData {
@@ -605,7 +605,7 @@ type PricingPlanDetailRequestData struct {
 
 func (x *PricingPlanDetailRequestData) Reset() {
 	*x = PricingPlanDetailRequestData{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[8]
+	mi := &file_admin_pricing_plan_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -617,7 +617,7 @@ func (x *PricingPlanDetailRequestData) String() string {
 func (*PricingPlanDetailRequestData) ProtoMessage() {}
 
 func (x *PricingPlanDetailRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[8]
+	mi := &file_admin_pricing_plan_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -630,7 +630,7 @@ func (x *PricingPlanDetailRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanDetailRequestData.ProtoReflect.Descriptor instead.
 func (*PricingPlanDetailRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{8}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *PricingPlanDetailRequestData) GetId() int64 {
@@ -649,7 +649,7 @@ type PricingPlanDetailResponse struct {
 
 func (x *PricingPlanDetailResponse) Reset() {
 	*x = PricingPlanDetailResponse{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[9]
+	mi := &file_admin_pricing_plan_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -661,7 +661,7 @@ func (x *PricingPlanDetailResponse) String() string {
 func (*PricingPlanDetailResponse) ProtoMessage() {}
 
 func (x *PricingPlanDetailResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[9]
+	mi := &file_admin_pricing_plan_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -674,7 +674,7 @@ func (x *PricingPlanDetailResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanDetailResponse.ProtoReflect.Descriptor instead.
 func (*PricingPlanDetailResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{9}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *PricingPlanDetailResponse) GetData() *proto.PricingPlanEntity {
@@ -694,7 +694,7 @@ type PricingPlanPageRequest struct {
 
 func (x *PricingPlanPageRequest) Reset() {
 	*x = PricingPlanPageRequest{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[10]
+	mi := &file_admin_pricing_plan_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -706,7 +706,7 @@ func (x *PricingPlanPageRequest) String() string {
 func (*PricingPlanPageRequest) ProtoMessage() {}
 
 func (x *PricingPlanPageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[10]
+	mi := &file_admin_pricing_plan_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -719,7 +719,7 @@ func (x *PricingPlanPageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanPageRequest.ProtoReflect.Descriptor instead.
 func (*PricingPlanPageRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{10}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *PricingPlanPageRequest) GetData() *PricingPlanPageRequestData {
@@ -741,7 +741,7 @@ type PricingPlanPageRequestData struct {
 
 func (x *PricingPlanPageRequestData) Reset() {
 	*x = PricingPlanPageRequestData{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[11]
+	mi := &file_admin_pricing_plan_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -753,7 +753,7 @@ func (x *PricingPlanPageRequestData) String() string {
 func (*PricingPlanPageRequestData) ProtoMessage() {}
 
 func (x *PricingPlanPageRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[11]
+	mi := &file_admin_pricing_plan_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -766,7 +766,7 @@ func (x *PricingPlanPageRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanPageRequestData.ProtoReflect.Descriptor instead.
 func (*PricingPlanPageRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{11}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *PricingPlanPageRequestData) GetPage() int64 {
@@ -809,7 +809,7 @@ type PricingPlanPageRequestFilter struct {
 
 func (x *PricingPlanPageRequestFilter) Reset() {
 	*x = PricingPlanPageRequestFilter{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[12]
+	mi := &file_admin_pricing_plan_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -821,7 +821,7 @@ func (x *PricingPlanPageRequestFilter) String() string {
 func (*PricingPlanPageRequestFilter) ProtoMessage() {}
 
 func (x *PricingPlanPageRequestFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[12]
+	mi := &file_admin_pricing_plan_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -834,7 +834,7 @@ func (x *PricingPlanPageRequestFilter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanPageRequestFilter.ProtoReflect.Descriptor instead.
 func (*PricingPlanPageRequestFilter) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{12}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *PricingPlanPageRequestFilter) GetKeyword() string {
@@ -875,7 +875,7 @@ type PricingPlanPageRequestSorter struct {
 
 func (x *PricingPlanPageRequestSorter) Reset() {
 	*x = PricingPlanPageRequestSorter{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[13]
+	mi := &file_admin_pricing_plan_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -887,7 +887,7 @@ func (x *PricingPlanPageRequestSorter) String() string {
 func (*PricingPlanPageRequestSorter) ProtoMessage() {}
 
 func (x *PricingPlanPageRequestSorter) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[13]
+	mi := &file_admin_pricing_plan_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -900,7 +900,7 @@ func (x *PricingPlanPageRequestSorter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanPageRequestSorter.ProtoReflect.Descriptor instead.
 func (*PricingPlanPageRequestSorter) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{13}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *PricingPlanPageRequestSorter) GetColumn() string {
@@ -926,7 +926,7 @@ type PricingPlanPageResponse struct {
 
 func (x *PricingPlanPageResponse) Reset() {
 	*x = PricingPlanPageResponse{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[14]
+	mi := &file_admin_pricing_plan_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -938,7 +938,7 @@ func (x *PricingPlanPageResponse) String() string {
 func (*PricingPlanPageResponse) ProtoMessage() {}
 
 func (x *PricingPlanPageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[14]
+	mi := &file_admin_pricing_plan_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -951,7 +951,7 @@ func (x *PricingPlanPageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanPageResponse.ProtoReflect.Descriptor instead.
 func (*PricingPlanPageResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{14}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *PricingPlanPageResponse) GetData() *PricingPlanPageResponseData {
@@ -974,7 +974,7 @@ type PricingPlanPageResponseData struct {
 
 func (x *PricingPlanPageResponseData) Reset() {
 	*x = PricingPlanPageResponseData{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[15]
+	mi := &file_admin_pricing_plan_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -986,7 +986,7 @@ func (x *PricingPlanPageResponseData) String() string {
 func (*PricingPlanPageResponseData) ProtoMessage() {}
 
 func (x *PricingPlanPageResponseData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[15]
+	mi := &file_admin_pricing_plan_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -999,7 +999,7 @@ func (x *PricingPlanPageResponseData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanPageResponseData.ProtoReflect.Descriptor instead.
 func (*PricingPlanPageResponseData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{15}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *PricingPlanPageResponseData) GetPage() int64 {
@@ -1047,7 +1047,7 @@ type PricingPlanSwitchStatusRequest struct {
 
 func (x *PricingPlanSwitchStatusRequest) Reset() {
 	*x = PricingPlanSwitchStatusRequest{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[16]
+	mi := &file_admin_pricing_plan_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1059,7 +1059,7 @@ func (x *PricingPlanSwitchStatusRequest) String() string {
 func (*PricingPlanSwitchStatusRequest) ProtoMessage() {}
 
 func (x *PricingPlanSwitchStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[16]
+	mi := &file_admin_pricing_plan_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1072,7 +1072,7 @@ func (x *PricingPlanSwitchStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanSwitchStatusRequest.ProtoReflect.Descriptor instead.
 func (*PricingPlanSwitchStatusRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{16}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *PricingPlanSwitchStatusRequest) GetData() *PricingPlanSwitchStatusRequestData {
@@ -1092,7 +1092,7 @@ type PricingPlanSwitchStatusRequestData struct {
 
 func (x *PricingPlanSwitchStatusRequestData) Reset() {
 	*x = PricingPlanSwitchStatusRequestData{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[17]
+	mi := &file_admin_pricing_plan_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1104,7 +1104,7 @@ func (x *PricingPlanSwitchStatusRequestData) String() string {
 func (*PricingPlanSwitchStatusRequestData) ProtoMessage() {}
 
 func (x *PricingPlanSwitchStatusRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[17]
+	mi := &file_admin_pricing_plan_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1117,7 +1117,7 @@ func (x *PricingPlanSwitchStatusRequestData) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use PricingPlanSwitchStatusRequestData.ProtoReflect.Descriptor instead.
 func (*PricingPlanSwitchStatusRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{17}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *PricingPlanSwitchStatusRequestData) GetId() int64 {
@@ -1144,7 +1144,7 @@ type PricingPlanBindResourcesRequest struct {
 
 func (x *PricingPlanBindResourcesRequest) Reset() {
 	*x = PricingPlanBindResourcesRequest{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[18]
+	mi := &file_admin_pricing_plan_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1156,7 +1156,7 @@ func (x *PricingPlanBindResourcesRequest) String() string {
 func (*PricingPlanBindResourcesRequest) ProtoMessage() {}
 
 func (x *PricingPlanBindResourcesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[18]
+	mi := &file_admin_pricing_plan_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1169,7 +1169,7 @@ func (x *PricingPlanBindResourcesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanBindResourcesRequest.ProtoReflect.Descriptor instead.
 func (*PricingPlanBindResourcesRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{18}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *PricingPlanBindResourcesRequest) GetData() *PricingPlanBindResourcesRequestData {
@@ -1189,7 +1189,7 @@ type PricingPlanBindResourcesRequestData struct {
 
 func (x *PricingPlanBindResourcesRequestData) Reset() {
 	*x = PricingPlanBindResourcesRequestData{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[19]
+	mi := &file_admin_pricing_plan_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1201,7 +1201,7 @@ func (x *PricingPlanBindResourcesRequestData) String() string {
 func (*PricingPlanBindResourcesRequestData) ProtoMessage() {}
 
 func (x *PricingPlanBindResourcesRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[19]
+	mi := &file_admin_pricing_plan_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1214,7 +1214,7 @@ func (x *PricingPlanBindResourcesRequestData) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use PricingPlanBindResourcesRequestData.ProtoReflect.Descriptor instead.
 func (*PricingPlanBindResourcesRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{19}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *PricingPlanBindResourcesRequestData) GetId() int64 {
@@ -1240,7 +1240,7 @@ type PricingPlanBindResourcesResponse struct {
 
 func (x *PricingPlanBindResourcesResponse) Reset() {
 	*x = PricingPlanBindResourcesResponse{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[20]
+	mi := &file_admin_pricing_plan_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1252,7 +1252,7 @@ func (x *PricingPlanBindResourcesResponse) String() string {
 func (*PricingPlanBindResourcesResponse) ProtoMessage() {}
 
 func (x *PricingPlanBindResourcesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[20]
+	mi := &file_admin_pricing_plan_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1265,7 +1265,7 @@ func (x *PricingPlanBindResourcesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanBindResourcesResponse.ProtoReflect.Descriptor instead.
 func (*PricingPlanBindResourcesResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{20}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *PricingPlanBindResourcesResponse) GetData() []*proto.ResourceTreeEntity {
@@ -1285,7 +1285,7 @@ type PricingPlanResourceListRequest struct {
 
 func (x *PricingPlanResourceListRequest) Reset() {
 	*x = PricingPlanResourceListRequest{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[21]
+	mi := &file_admin_pricing_plan_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1297,7 +1297,7 @@ func (x *PricingPlanResourceListRequest) String() string {
 func (*PricingPlanResourceListRequest) ProtoMessage() {}
 
 func (x *PricingPlanResourceListRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[21]
+	mi := &file_admin_pricing_plan_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1310,7 +1310,7 @@ func (x *PricingPlanResourceListRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanResourceListRequest.ProtoReflect.Descriptor instead.
 func (*PricingPlanResourceListRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{21}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *PricingPlanResourceListRequest) GetData() *PricingPlanResourceListRequestData {
@@ -1329,7 +1329,7 @@ type PricingPlanResourceListRequestData struct {
 
 func (x *PricingPlanResourceListRequestData) Reset() {
 	*x = PricingPlanResourceListRequestData{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[22]
+	mi := &file_admin_pricing_plan_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1341,7 +1341,7 @@ func (x *PricingPlanResourceListRequestData) String() string {
 func (*PricingPlanResourceListRequestData) ProtoMessage() {}
 
 func (x *PricingPlanResourceListRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[22]
+	mi := &file_admin_pricing_plan_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1354,7 +1354,7 @@ func (x *PricingPlanResourceListRequestData) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use PricingPlanResourceListRequestData.ProtoReflect.Descriptor instead.
 func (*PricingPlanResourceListRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{22}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *PricingPlanResourceListRequestData) GetId() int64 {
@@ -1373,7 +1373,7 @@ type PricingPlanResourceListResponse struct {
 
 func (x *PricingPlanResourceListResponse) Reset() {
 	*x = PricingPlanResourceListResponse{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[23]
+	mi := &file_admin_pricing_plan_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1385,7 +1385,7 @@ func (x *PricingPlanResourceListResponse) String() string {
 func (*PricingPlanResourceListResponse) ProtoMessage() {}
 
 func (x *PricingPlanResourceListResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[23]
+	mi := &file_admin_pricing_plan_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1398,7 +1398,7 @@ func (x *PricingPlanResourceListResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanResourceListResponse.ProtoReflect.Descriptor instead.
 func (*PricingPlanResourceListResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{23}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *PricingPlanResourceListResponse) GetData() []*proto.ResourceTreeEntity {
@@ -1418,7 +1418,7 @@ type PricingPlanAllRequest struct {
 
 func (x *PricingPlanAllRequest) Reset() {
 	*x = PricingPlanAllRequest{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[24]
+	mi := &file_admin_pricing_plan_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1430,7 +1430,7 @@ func (x *PricingPlanAllRequest) String() string {
 func (*PricingPlanAllRequest) ProtoMessage() {}
 
 func (x *PricingPlanAllRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[24]
+	mi := &file_admin_pricing_plan_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1443,7 +1443,7 @@ func (x *PricingPlanAllRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanAllRequest.ProtoReflect.Descriptor instead.
 func (*PricingPlanAllRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{24}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *PricingPlanAllRequest) GetData() *PricingPlanAllRequestData {
@@ -1462,7 +1462,7 @@ type PricingPlanAllRequestData struct {
 
 func (x *PricingPlanAllRequestData) Reset() {
 	*x = PricingPlanAllRequestData{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[25]
+	mi := &file_admin_pricing_plan_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1474,7 +1474,7 @@ func (x *PricingPlanAllRequestData) String() string {
 func (*PricingPlanAllRequestData) ProtoMessage() {}
 
 func (x *PricingPlanAllRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[25]
+	mi := &file_admin_pricing_plan_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1487,7 +1487,7 @@ func (x *PricingPlanAllRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanAllRequestData.ProtoReflect.Descriptor instead.
 func (*PricingPlanAllRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{25}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *PricingPlanAllRequestData) GetType() string {
@@ -1506,7 +1506,7 @@ type PricingPlanAllResponse struct {
 
 func (x *PricingPlanAllResponse) Reset() {
 	*x = PricingPlanAllResponse{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[26]
+	mi := &file_admin_pricing_plan_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1518,7 +1518,7 @@ func (x *PricingPlanAllResponse) String() string {
 func (*PricingPlanAllResponse) ProtoMessage() {}
 
 func (x *PricingPlanAllResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_proto_msgTypes[26]
+	mi := &file_admin_pricing_plan_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1531,7 +1531,7 @@ func (x *PricingPlanAllResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanAllResponse.ProtoReflect.Descriptor instead.
 func (*PricingPlanAllResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP(), []int{26}
+	return file_admin_pricing_plan_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *PricingPlanAllResponse) GetData() []*proto.PricingPlanEntity {
@@ -1541,11 +1541,11 @@ func (x *PricingPlanAllResponse) GetData() []*proto.PricingPlanEntity {
 	return nil
 }
 
-var File_app_admin_rpc_pb_pricing_plan_proto protoreflect.FileDescriptor
+var File_admin_pricing_plan_proto protoreflect.FileDescriptor
 
-const file_app_admin_rpc_pb_pricing_plan_proto_rawDesc = "" +
+const file_admin_pricing_plan_proto_rawDesc = "" +
 	"\n" +
-	"#app/admin/rpc/pb/pricing_plan.proto\x12\x05admin\x1a\x12proto/common.proto\x1a\x12proto/entity.proto\"\x94\x03\n" +
+	"\x18admin_pricing_plan.proto\x12\x05admin\x1a\x12proto/common.proto\x1a\x12proto/entity.proto\"\x94\x03\n" +
 	"\x15PricingPlanPageEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1a\n" +
@@ -1666,19 +1666,19 @@ const file_app_admin_rpc_pb_pricing_plan_proto_rawDesc = "" +
 	"\x03All\x12\x1c.admin.PricingPlanAllRequest\x1a\x1d.admin.PricingPlanAllResponseB'Z%zeebee-backend/app/admin/rpc/pb/adminb\x06proto3"
 
 var (
-	file_app_admin_rpc_pb_pricing_plan_proto_rawDescOnce sync.Once
-	file_app_admin_rpc_pb_pricing_plan_proto_rawDescData []byte
+	file_admin_pricing_plan_proto_rawDescOnce sync.Once
+	file_admin_pricing_plan_proto_rawDescData []byte
 )
 
-func file_app_admin_rpc_pb_pricing_plan_proto_rawDescGZIP() []byte {
-	file_app_admin_rpc_pb_pricing_plan_proto_rawDescOnce.Do(func() {
-		file_app_admin_rpc_pb_pricing_plan_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_pricing_plan_proto_rawDesc), len(file_app_admin_rpc_pb_pricing_plan_proto_rawDesc)))
+func file_admin_pricing_plan_proto_rawDescGZIP() []byte {
+	file_admin_pricing_plan_proto_rawDescOnce.Do(func() {
+		file_admin_pricing_plan_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_admin_pricing_plan_proto_rawDesc), len(file_admin_pricing_plan_proto_rawDesc)))
 	})
-	return file_app_admin_rpc_pb_pricing_plan_proto_rawDescData
+	return file_admin_pricing_plan_proto_rawDescData
 }
 
-var file_app_admin_rpc_pb_pricing_plan_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
-var file_app_admin_rpc_pb_pricing_plan_proto_goTypes = []any{
+var file_admin_pricing_plan_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
+var file_admin_pricing_plan_proto_goTypes = []any{
 	(*PricingPlanPageEntity)(nil),               // 0: admin.PricingPlanPageEntity
 	(*PricingPlanCreateRequest)(nil),            // 1: admin.PricingPlanCreateRequest
 	(*PricingPlanCreateRequestData)(nil),        // 2: admin.PricingPlanCreateRequestData
@@ -1712,7 +1712,7 @@ var file_app_admin_rpc_pb_pricing_plan_proto_goTypes = []any{
 	(*proto.PathIdRequest)(nil),                 // 30: proto.PathIdRequest
 	(*proto.EmptyResponse)(nil),                 // 31: proto.EmptyResponse
 }
-var file_app_admin_rpc_pb_pricing_plan_proto_depIdxs = []int32{
+var file_admin_pricing_plan_proto_depIdxs = []int32{
 	27, // 0: admin.PricingPlanPageEntity.policies:type_name -> proto.PricingPlanPolicyEntity
 	2,  // 1: admin.PricingPlanCreateRequest.data:type_name -> admin.PricingPlanCreateRequestData
 	4,  // 2: admin.PricingPlanUpdateRequest.data:type_name -> admin.PricingPlanUpdateRequestData
@@ -1756,26 +1756,26 @@ var file_app_admin_rpc_pb_pricing_plan_proto_depIdxs = []int32{
 	0,  // [0:18] is the sub-list for field type_name
 }
 
-func init() { file_app_admin_rpc_pb_pricing_plan_proto_init() }
-func file_app_admin_rpc_pb_pricing_plan_proto_init() {
-	if File_app_admin_rpc_pb_pricing_plan_proto != nil {
+func init() { file_admin_pricing_plan_proto_init() }
+func file_admin_pricing_plan_proto_init() {
+	if File_admin_pricing_plan_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_pricing_plan_proto_rawDesc), len(file_app_admin_rpc_pb_pricing_plan_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_admin_pricing_plan_proto_rawDesc), len(file_admin_pricing_plan_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   27,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_app_admin_rpc_pb_pricing_plan_proto_goTypes,
-		DependencyIndexes: file_app_admin_rpc_pb_pricing_plan_proto_depIdxs,
-		MessageInfos:      file_app_admin_rpc_pb_pricing_plan_proto_msgTypes,
+		GoTypes:           file_admin_pricing_plan_proto_goTypes,
+		DependencyIndexes: file_admin_pricing_plan_proto_depIdxs,
+		MessageInfos:      file_admin_pricing_plan_proto_msgTypes,
 	}.Build()
-	File_app_admin_rpc_pb_pricing_plan_proto = out.File
-	file_app_admin_rpc_pb_pricing_plan_proto_goTypes = nil
-	file_app_admin_rpc_pb_pricing_plan_proto_depIdxs = nil
+	File_admin_pricing_plan_proto = out.File
+	file_admin_pricing_plan_proto_goTypes = nil
+	file_admin_pricing_plan_proto_depIdxs = nil
 }

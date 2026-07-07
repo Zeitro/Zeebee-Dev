@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.2
 // - protoc             v7.35.1
-// source: app/admin/rpc/pb/loan.proto
+// source: admin_loan.proto
 
 package admin
 
@@ -232,5 +232,5 @@ var Loan_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "app/admin/rpc/pb/loan.proto",
+	Metadata: "admin_loan.proto",
 }

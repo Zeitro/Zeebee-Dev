@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v7.35.1
-// source: app/admin/rpc/pb/api.proto
+// source: admin_api.proto
 
 package admin
 
@@ -31,7 +31,7 @@ type SyncApiRequest struct {
 
 func (x *SyncApiRequest) Reset() {
 	*x = SyncApiRequest{}
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[0]
+	mi := &file_admin_api_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -43,7 +43,7 @@ func (x *SyncApiRequest) String() string {
 func (*SyncApiRequest) ProtoMessage() {}
 
 func (x *SyncApiRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[0]
+	mi := &file_admin_api_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -56,7 +56,7 @@ func (x *SyncApiRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncApiRequest.ProtoReflect.Descriptor instead.
 func (*SyncApiRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_api_proto_rawDescGZIP(), []int{0}
+	return file_admin_api_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *SyncApiRequest) GetData() *SyncApiRequestData {
@@ -75,7 +75,7 @@ type SyncApiRequestData struct {
 
 func (x *SyncApiRequestData) Reset() {
 	*x = SyncApiRequestData{}
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[1]
+	mi := &file_admin_api_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -87,7 +87,7 @@ func (x *SyncApiRequestData) String() string {
 func (*SyncApiRequestData) ProtoMessage() {}
 
 func (x *SyncApiRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[1]
+	mi := &file_admin_api_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -100,7 +100,7 @@ func (x *SyncApiRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncApiRequestData.ProtoReflect.Descriptor instead.
 func (*SyncApiRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_api_proto_rawDescGZIP(), []int{1}
+	return file_admin_api_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *SyncApiRequestData) GetApiJson() string {
@@ -118,7 +118,7 @@ type SyncApiResponse struct {
 
 func (x *SyncApiResponse) Reset() {
 	*x = SyncApiResponse{}
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[2]
+	mi := &file_admin_api_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -130,7 +130,7 @@ func (x *SyncApiResponse) String() string {
 func (*SyncApiResponse) ProtoMessage() {}
 
 func (x *SyncApiResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[2]
+	mi := &file_admin_api_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -143,7 +143,7 @@ func (x *SyncApiResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncApiResponse.ProtoReflect.Descriptor instead.
 func (*SyncApiResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_api_proto_rawDescGZIP(), []int{2}
+	return file_admin_api_proto_rawDescGZIP(), []int{2}
 }
 
 // api tree -- request
@@ -156,7 +156,7 @@ type ApiTreeRequest struct {
 
 func (x *ApiTreeRequest) Reset() {
 	*x = ApiTreeRequest{}
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[3]
+	mi := &file_admin_api_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -168,7 +168,7 @@ func (x *ApiTreeRequest) String() string {
 func (*ApiTreeRequest) ProtoMessage() {}
 
 func (x *ApiTreeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[3]
+	mi := &file_admin_api_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -181,7 +181,7 @@ func (x *ApiTreeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiTreeRequest.ProtoReflect.Descriptor instead.
 func (*ApiTreeRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_api_proto_rawDescGZIP(), []int{3}
+	return file_admin_api_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *ApiTreeRequest) GetData() *ApiTreeRequestData {
@@ -202,7 +202,7 @@ type ApiTreeRequestData struct {
 
 func (x *ApiTreeRequestData) Reset() {
 	*x = ApiTreeRequestData{}
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[4]
+	mi := &file_admin_api_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -214,7 +214,7 @@ func (x *ApiTreeRequestData) String() string {
 func (*ApiTreeRequestData) ProtoMessage() {}
 
 func (x *ApiTreeRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[4]
+	mi := &file_admin_api_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -227,7 +227,7 @@ func (x *ApiTreeRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiTreeRequestData.ProtoReflect.Descriptor instead.
 func (*ApiTreeRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_api_proto_rawDescGZIP(), []int{4}
+	return file_admin_api_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ApiTreeRequestData) GetUserId() int64 {
@@ -261,7 +261,7 @@ type ApiTreeResponse struct {
 
 func (x *ApiTreeResponse) Reset() {
 	*x = ApiTreeResponse{}
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[5]
+	mi := &file_admin_api_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -273,7 +273,7 @@ func (x *ApiTreeResponse) String() string {
 func (*ApiTreeResponse) ProtoMessage() {}
 
 func (x *ApiTreeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[5]
+	mi := &file_admin_api_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -286,7 +286,7 @@ func (x *ApiTreeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiTreeResponse.ProtoReflect.Descriptor instead.
 func (*ApiTreeResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_api_proto_rawDescGZIP(), []int{5}
+	return file_admin_api_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ApiTreeResponse) GetData() []*proto.ApiTreeEntity {
@@ -306,7 +306,7 @@ type ApiCreateRequest struct {
 
 func (x *ApiCreateRequest) Reset() {
 	*x = ApiCreateRequest{}
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[6]
+	mi := &file_admin_api_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -318,7 +318,7 @@ func (x *ApiCreateRequest) String() string {
 func (*ApiCreateRequest) ProtoMessage() {}
 
 func (x *ApiCreateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[6]
+	mi := &file_admin_api_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -331,7 +331,7 @@ func (x *ApiCreateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiCreateRequest.ProtoReflect.Descriptor instead.
 func (*ApiCreateRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_api_proto_rawDescGZIP(), []int{6}
+	return file_admin_api_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ApiCreateRequest) GetData() *ApiCreateRequestData {
@@ -359,7 +359,7 @@ type ApiCreateRequestData struct {
 
 func (x *ApiCreateRequestData) Reset() {
 	*x = ApiCreateRequestData{}
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[7]
+	mi := &file_admin_api_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -371,7 +371,7 @@ func (x *ApiCreateRequestData) String() string {
 func (*ApiCreateRequestData) ProtoMessage() {}
 
 func (x *ApiCreateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[7]
+	mi := &file_admin_api_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -384,7 +384,7 @@ func (x *ApiCreateRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiCreateRequestData.ProtoReflect.Descriptor instead.
 func (*ApiCreateRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_api_proto_rawDescGZIP(), []int{7}
+	return file_admin_api_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *ApiCreateRequestData) GetParentId() int64 {
@@ -467,7 +467,7 @@ type ApiUpdateRequest struct {
 
 func (x *ApiUpdateRequest) Reset() {
 	*x = ApiUpdateRequest{}
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[8]
+	mi := &file_admin_api_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -479,7 +479,7 @@ func (x *ApiUpdateRequest) String() string {
 func (*ApiUpdateRequest) ProtoMessage() {}
 
 func (x *ApiUpdateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[8]
+	mi := &file_admin_api_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -492,7 +492,7 @@ func (x *ApiUpdateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiUpdateRequest.ProtoReflect.Descriptor instead.
 func (*ApiUpdateRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_api_proto_rawDescGZIP(), []int{8}
+	return file_admin_api_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ApiUpdateRequest) GetData() *ApiUpdateRequestData {
@@ -521,7 +521,7 @@ type ApiUpdateRequestData struct {
 
 func (x *ApiUpdateRequestData) Reset() {
 	*x = ApiUpdateRequestData{}
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[9]
+	mi := &file_admin_api_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -533,7 +533,7 @@ func (x *ApiUpdateRequestData) String() string {
 func (*ApiUpdateRequestData) ProtoMessage() {}
 
 func (x *ApiUpdateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[9]
+	mi := &file_admin_api_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -546,7 +546,7 @@ func (x *ApiUpdateRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiUpdateRequestData.ProtoReflect.Descriptor instead.
 func (*ApiUpdateRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_api_proto_rawDescGZIP(), []int{9}
+	return file_admin_api_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ApiUpdateRequestData) GetId() int64 {
@@ -636,7 +636,7 @@ type ApiDeleteRequest struct {
 
 func (x *ApiDeleteRequest) Reset() {
 	*x = ApiDeleteRequest{}
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[10]
+	mi := &file_admin_api_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -648,7 +648,7 @@ func (x *ApiDeleteRequest) String() string {
 func (*ApiDeleteRequest) ProtoMessage() {}
 
 func (x *ApiDeleteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[10]
+	mi := &file_admin_api_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -661,7 +661,7 @@ func (x *ApiDeleteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiDeleteRequest.ProtoReflect.Descriptor instead.
 func (*ApiDeleteRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_api_proto_rawDescGZIP(), []int{10}
+	return file_admin_api_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ApiDeleteRequest) GetData() *ApiDeleteRequestData {
@@ -681,7 +681,7 @@ type ApiDeleteRequestData struct {
 
 func (x *ApiDeleteRequestData) Reset() {
 	*x = ApiDeleteRequestData{}
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[11]
+	mi := &file_admin_api_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -693,7 +693,7 @@ func (x *ApiDeleteRequestData) String() string {
 func (*ApiDeleteRequestData) ProtoMessage() {}
 
 func (x *ApiDeleteRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[11]
+	mi := &file_admin_api_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -706,7 +706,7 @@ func (x *ApiDeleteRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiDeleteRequestData.ProtoReflect.Descriptor instead.
 func (*ApiDeleteRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_api_proto_rawDescGZIP(), []int{11}
+	return file_admin_api_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *ApiDeleteRequestData) GetId() int64 {
@@ -733,7 +733,7 @@ type ApiDetailRequest struct {
 
 func (x *ApiDetailRequest) Reset() {
 	*x = ApiDetailRequest{}
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[12]
+	mi := &file_admin_api_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -745,7 +745,7 @@ func (x *ApiDetailRequest) String() string {
 func (*ApiDetailRequest) ProtoMessage() {}
 
 func (x *ApiDetailRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[12]
+	mi := &file_admin_api_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -758,7 +758,7 @@ func (x *ApiDetailRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiDetailRequest.ProtoReflect.Descriptor instead.
 func (*ApiDetailRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_api_proto_rawDescGZIP(), []int{12}
+	return file_admin_api_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *ApiDetailRequest) GetData() *ApiDetailRequestData {
@@ -778,7 +778,7 @@ type ApiDetailRequestData struct {
 
 func (x *ApiDetailRequestData) Reset() {
 	*x = ApiDetailRequestData{}
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[13]
+	mi := &file_admin_api_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -790,7 +790,7 @@ func (x *ApiDetailRequestData) String() string {
 func (*ApiDetailRequestData) ProtoMessage() {}
 
 func (x *ApiDetailRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[13]
+	mi := &file_admin_api_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -803,7 +803,7 @@ func (x *ApiDetailRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiDetailRequestData.ProtoReflect.Descriptor instead.
 func (*ApiDetailRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_api_proto_rawDescGZIP(), []int{13}
+	return file_admin_api_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ApiDetailRequestData) GetId() int64 {
@@ -830,7 +830,7 @@ type ApiDetailResponse struct {
 
 func (x *ApiDetailResponse) Reset() {
 	*x = ApiDetailResponse{}
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[14]
+	mi := &file_admin_api_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -842,7 +842,7 @@ func (x *ApiDetailResponse) String() string {
 func (*ApiDetailResponse) ProtoMessage() {}
 
 func (x *ApiDetailResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_api_proto_msgTypes[14]
+	mi := &file_admin_api_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -855,7 +855,7 @@ func (x *ApiDetailResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiDetailResponse.ProtoReflect.Descriptor instead.
 func (*ApiDetailResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_api_proto_rawDescGZIP(), []int{14}
+	return file_admin_api_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ApiDetailResponse) GetData() *proto.ApiEntity {
@@ -865,11 +865,11 @@ func (x *ApiDetailResponse) GetData() *proto.ApiEntity {
 	return nil
 }
 
-var File_app_admin_rpc_pb_api_proto protoreflect.FileDescriptor
+var File_admin_api_proto protoreflect.FileDescriptor
 
-const file_app_admin_rpc_pb_api_proto_rawDesc = "" +
+const file_admin_api_proto_rawDesc = "" +
 	"\n" +
-	"\x1aapp/admin/rpc/pb/api.proto\x12\x05admin\x1a\x12proto/common.proto\x1a\x12proto/entity.proto\"?\n" +
+	"\x0fadmin_api.proto\x12\x05admin\x1a\x12proto/common.proto\x1a\x12proto/entity.proto\"?\n" +
 	"\x0eSyncApiRequest\x12-\n" +
 	"\x04data\x18\x01 \x01(\v2\x19.admin.SyncApiRequestDataR\x04data\"/\n" +
 	"\x12SyncApiRequestData\x12\x19\n" +
@@ -935,19 +935,19 @@ const file_app_admin_rpc_pb_api_proto_rawDesc = "" +
 	"\aSyncApi\x12\x15.admin.SyncApiRequest\x1a\x14.proto.EmptyResponseB'Z%zeebee-backend/app/admin/rpc/pb/adminb\x06proto3"
 
 var (
-	file_app_admin_rpc_pb_api_proto_rawDescOnce sync.Once
-	file_app_admin_rpc_pb_api_proto_rawDescData []byte
+	file_admin_api_proto_rawDescOnce sync.Once
+	file_admin_api_proto_rawDescData []byte
 )
 
-func file_app_admin_rpc_pb_api_proto_rawDescGZIP() []byte {
-	file_app_admin_rpc_pb_api_proto_rawDescOnce.Do(func() {
-		file_app_admin_rpc_pb_api_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_api_proto_rawDesc), len(file_app_admin_rpc_pb_api_proto_rawDesc)))
+func file_admin_api_proto_rawDescGZIP() []byte {
+	file_admin_api_proto_rawDescOnce.Do(func() {
+		file_admin_api_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_admin_api_proto_rawDesc), len(file_admin_api_proto_rawDesc)))
 	})
-	return file_app_admin_rpc_pb_api_proto_rawDescData
+	return file_admin_api_proto_rawDescData
 }
 
-var file_app_admin_rpc_pb_api_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
-var file_app_admin_rpc_pb_api_proto_goTypes = []any{
+var file_admin_api_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
+var file_admin_api_proto_goTypes = []any{
 	(*SyncApiRequest)(nil),       // 0: admin.SyncApiRequest
 	(*SyncApiRequestData)(nil),   // 1: admin.SyncApiRequestData
 	(*SyncApiResponse)(nil),      // 2: admin.SyncApiResponse
@@ -967,7 +967,7 @@ var file_app_admin_rpc_pb_api_proto_goTypes = []any{
 	(*proto.ApiEntity)(nil),      // 16: proto.ApiEntity
 	(*proto.EmptyResponse)(nil),  // 17: proto.EmptyResponse
 }
-var file_app_admin_rpc_pb_api_proto_depIdxs = []int32{
+var file_admin_api_proto_depIdxs = []int32{
 	1,  // 0: admin.SyncApiRequest.data:type_name -> admin.SyncApiRequestData
 	4,  // 1: admin.ApiTreeRequest.data:type_name -> admin.ApiTreeRequestData
 	15, // 2: admin.ApiTreeResponse.data:type_name -> proto.ApiTreeEntity
@@ -995,26 +995,26 @@ var file_app_admin_rpc_pb_api_proto_depIdxs = []int32{
 	0,  // [0:8] is the sub-list for field type_name
 }
 
-func init() { file_app_admin_rpc_pb_api_proto_init() }
-func file_app_admin_rpc_pb_api_proto_init() {
-	if File_app_admin_rpc_pb_api_proto != nil {
+func init() { file_admin_api_proto_init() }
+func file_admin_api_proto_init() {
+	if File_admin_api_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_api_proto_rawDesc), len(file_app_admin_rpc_pb_api_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_admin_api_proto_rawDesc), len(file_admin_api_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_app_admin_rpc_pb_api_proto_goTypes,
-		DependencyIndexes: file_app_admin_rpc_pb_api_proto_depIdxs,
-		MessageInfos:      file_app_admin_rpc_pb_api_proto_msgTypes,
+		GoTypes:           file_admin_api_proto_goTypes,
+		DependencyIndexes: file_admin_api_proto_depIdxs,
+		MessageInfos:      file_admin_api_proto_msgTypes,
 	}.Build()
-	File_app_admin_rpc_pb_api_proto = out.File
-	file_app_admin_rpc_pb_api_proto_goTypes = nil
-	file_app_admin_rpc_pb_api_proto_depIdxs = nil
+	File_admin_api_proto = out.File
+	file_admin_api_proto_goTypes = nil
+	file_admin_api_proto_depIdxs = nil
 }

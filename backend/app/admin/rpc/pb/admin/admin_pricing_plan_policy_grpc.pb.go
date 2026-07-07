@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.2
 // - protoc             v7.35.1
-// source: app/admin/rpc/pb/pricing_plan_policy.proto
+// source: admin_pricing_plan_policy.proto
 
 package admin
 
@@ -194,5 +194,5 @@ var PricingPlanPolicy_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "app/admin/rpc/pb/pricing_plan_policy.proto",
+	Metadata: "admin_pricing_plan_policy.proto",
 }

@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v7.35.1
-// source: app/admin/rpc/pb/resource.proto
+// source: admin_resource.proto
 
 package admin
 
@@ -32,7 +32,7 @@ type ResourceTreeRequest struct {
 
 func (x *ResourceTreeRequest) Reset() {
 	*x = ResourceTreeRequest{}
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[0]
+	mi := &file_admin_resource_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -44,7 +44,7 @@ func (x *ResourceTreeRequest) String() string {
 func (*ResourceTreeRequest) ProtoMessage() {}
 
 func (x *ResourceTreeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[0]
+	mi := &file_admin_resource_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -57,7 +57,7 @@ func (x *ResourceTreeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceTreeRequest.ProtoReflect.Descriptor instead.
 func (*ResourceTreeRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_resource_proto_rawDescGZIP(), []int{0}
+	return file_admin_resource_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *ResourceTreeRequest) GetData() *ResourceTreeRequestData {
@@ -77,7 +77,7 @@ type ResourceTreeRequestData struct {
 
 func (x *ResourceTreeRequestData) Reset() {
 	*x = ResourceTreeRequestData{}
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[1]
+	mi := &file_admin_resource_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -89,7 +89,7 @@ func (x *ResourceTreeRequestData) String() string {
 func (*ResourceTreeRequestData) ProtoMessage() {}
 
 func (x *ResourceTreeRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[1]
+	mi := &file_admin_resource_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -102,7 +102,7 @@ func (x *ResourceTreeRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceTreeRequestData.ProtoReflect.Descriptor instead.
 func (*ResourceTreeRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_resource_proto_rawDescGZIP(), []int{1}
+	return file_admin_resource_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *ResourceTreeRequestData) GetType() string {
@@ -129,7 +129,7 @@ type ResourceTreeResponse struct {
 
 func (x *ResourceTreeResponse) Reset() {
 	*x = ResourceTreeResponse{}
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[2]
+	mi := &file_admin_resource_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -141,7 +141,7 @@ func (x *ResourceTreeResponse) String() string {
 func (*ResourceTreeResponse) ProtoMessage() {}
 
 func (x *ResourceTreeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[2]
+	mi := &file_admin_resource_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -154,7 +154,7 @@ func (x *ResourceTreeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceTreeResponse.ProtoReflect.Descriptor instead.
 func (*ResourceTreeResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_resource_proto_rawDescGZIP(), []int{2}
+	return file_admin_resource_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ResourceTreeResponse) GetData() []*proto.ResourceTreeEntity {
@@ -174,7 +174,7 @@ type ResourceCreateRequest struct {
 
 func (x *ResourceCreateRequest) Reset() {
 	*x = ResourceCreateRequest{}
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[3]
+	mi := &file_admin_resource_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -186,7 +186,7 @@ func (x *ResourceCreateRequest) String() string {
 func (*ResourceCreateRequest) ProtoMessage() {}
 
 func (x *ResourceCreateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[3]
+	mi := &file_admin_resource_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -199,7 +199,7 @@ func (x *ResourceCreateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceCreateRequest.ProtoReflect.Descriptor instead.
 func (*ResourceCreateRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_resource_proto_rawDescGZIP(), []int{3}
+	return file_admin_resource_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *ResourceCreateRequest) GetData() *ResourceCreateRequestData {
@@ -231,7 +231,7 @@ type ResourceCreateRequestData struct {
 
 func (x *ResourceCreateRequestData) Reset() {
 	*x = ResourceCreateRequestData{}
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[4]
+	mi := &file_admin_resource_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -243,7 +243,7 @@ func (x *ResourceCreateRequestData) String() string {
 func (*ResourceCreateRequestData) ProtoMessage() {}
 
 func (x *ResourceCreateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[4]
+	mi := &file_admin_resource_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -256,7 +256,7 @@ func (x *ResourceCreateRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceCreateRequestData.ProtoReflect.Descriptor instead.
 func (*ResourceCreateRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_resource_proto_rawDescGZIP(), []int{4}
+	return file_admin_resource_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ResourceCreateRequestData) GetParentId() int64 {
@@ -367,7 +367,7 @@ type ResourceUpdateRequest struct {
 
 func (x *ResourceUpdateRequest) Reset() {
 	*x = ResourceUpdateRequest{}
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[5]
+	mi := &file_admin_resource_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -379,7 +379,7 @@ func (x *ResourceUpdateRequest) String() string {
 func (*ResourceUpdateRequest) ProtoMessage() {}
 
 func (x *ResourceUpdateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[5]
+	mi := &file_admin_resource_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -392,7 +392,7 @@ func (x *ResourceUpdateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceUpdateRequest.ProtoReflect.Descriptor instead.
 func (*ResourceUpdateRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_resource_proto_rawDescGZIP(), []int{5}
+	return file_admin_resource_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ResourceUpdateRequest) GetData() *ResourceUpdateRequestData {
@@ -425,7 +425,7 @@ type ResourceUpdateRequestData struct {
 
 func (x *ResourceUpdateRequestData) Reset() {
 	*x = ResourceUpdateRequestData{}
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[6]
+	mi := &file_admin_resource_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -437,7 +437,7 @@ func (x *ResourceUpdateRequestData) String() string {
 func (*ResourceUpdateRequestData) ProtoMessage() {}
 
 func (x *ResourceUpdateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[6]
+	mi := &file_admin_resource_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -450,7 +450,7 @@ func (x *ResourceUpdateRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceUpdateRequestData.ProtoReflect.Descriptor instead.
 func (*ResourceUpdateRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_resource_proto_rawDescGZIP(), []int{6}
+	return file_admin_resource_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ResourceUpdateRequestData) GetId() int64 {
@@ -568,7 +568,7 @@ type ResourceDeleteRequest struct {
 
 func (x *ResourceDeleteRequest) Reset() {
 	*x = ResourceDeleteRequest{}
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[7]
+	mi := &file_admin_resource_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -580,7 +580,7 @@ func (x *ResourceDeleteRequest) String() string {
 func (*ResourceDeleteRequest) ProtoMessage() {}
 
 func (x *ResourceDeleteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[7]
+	mi := &file_admin_resource_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -593,7 +593,7 @@ func (x *ResourceDeleteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceDeleteRequest.ProtoReflect.Descriptor instead.
 func (*ResourceDeleteRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_resource_proto_rawDescGZIP(), []int{7}
+	return file_admin_resource_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *ResourceDeleteRequest) GetData() *ResourceDeleteRequestData {
@@ -613,7 +613,7 @@ type ResourceDeleteRequestData struct {
 
 func (x *ResourceDeleteRequestData) Reset() {
 	*x = ResourceDeleteRequestData{}
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[8]
+	mi := &file_admin_resource_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -625,7 +625,7 @@ func (x *ResourceDeleteRequestData) String() string {
 func (*ResourceDeleteRequestData) ProtoMessage() {}
 
 func (x *ResourceDeleteRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[8]
+	mi := &file_admin_resource_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -638,7 +638,7 @@ func (x *ResourceDeleteRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceDeleteRequestData.ProtoReflect.Descriptor instead.
 func (*ResourceDeleteRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_resource_proto_rawDescGZIP(), []int{8}
+	return file_admin_resource_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ResourceDeleteRequestData) GetId() int64 {
@@ -665,7 +665,7 @@ type ResourceDetailRequest struct {
 
 func (x *ResourceDetailRequest) Reset() {
 	*x = ResourceDetailRequest{}
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[9]
+	mi := &file_admin_resource_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -677,7 +677,7 @@ func (x *ResourceDetailRequest) String() string {
 func (*ResourceDetailRequest) ProtoMessage() {}
 
 func (x *ResourceDetailRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[9]
+	mi := &file_admin_resource_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -690,7 +690,7 @@ func (x *ResourceDetailRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceDetailRequest.ProtoReflect.Descriptor instead.
 func (*ResourceDetailRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_resource_proto_rawDescGZIP(), []int{9}
+	return file_admin_resource_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ResourceDetailRequest) GetData() *ResourceDetailRequestData {
@@ -710,7 +710,7 @@ type ResourceDetailRequestData struct {
 
 func (x *ResourceDetailRequestData) Reset() {
 	*x = ResourceDetailRequestData{}
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[10]
+	mi := &file_admin_resource_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -722,7 +722,7 @@ func (x *ResourceDetailRequestData) String() string {
 func (*ResourceDetailRequestData) ProtoMessage() {}
 
 func (x *ResourceDetailRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[10]
+	mi := &file_admin_resource_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -735,7 +735,7 @@ func (x *ResourceDetailRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceDetailRequestData.ProtoReflect.Descriptor instead.
 func (*ResourceDetailRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_resource_proto_rawDescGZIP(), []int{10}
+	return file_admin_resource_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ResourceDetailRequestData) GetId() int64 {
@@ -761,7 +761,7 @@ type ResourceDetailResponse struct {
 
 func (x *ResourceDetailResponse) Reset() {
 	*x = ResourceDetailResponse{}
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[11]
+	mi := &file_admin_resource_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -773,7 +773,7 @@ func (x *ResourceDetailResponse) String() string {
 func (*ResourceDetailResponse) ProtoMessage() {}
 
 func (x *ResourceDetailResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[11]
+	mi := &file_admin_resource_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -786,7 +786,7 @@ func (x *ResourceDetailResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResourceDetailResponse.ProtoReflect.Descriptor instead.
 func (*ResourceDetailResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_resource_proto_rawDescGZIP(), []int{11}
+	return file_admin_resource_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *ResourceDetailResponse) GetData() *proto.ResourceEntity {
@@ -805,7 +805,7 @@ type SyncResourceRequest struct {
 
 func (x *SyncResourceRequest) Reset() {
 	*x = SyncResourceRequest{}
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[12]
+	mi := &file_admin_resource_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -817,7 +817,7 @@ func (x *SyncResourceRequest) String() string {
 func (*SyncResourceRequest) ProtoMessage() {}
 
 func (x *SyncResourceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[12]
+	mi := &file_admin_resource_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -830,7 +830,7 @@ func (x *SyncResourceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncResourceRequest.ProtoReflect.Descriptor instead.
 func (*SyncResourceRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_resource_proto_rawDescGZIP(), []int{12}
+	return file_admin_resource_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *SyncResourceRequest) GetData() *SyncResourceRequestData {
@@ -849,7 +849,7 @@ type SyncResourceRequestData struct {
 
 func (x *SyncResourceRequestData) Reset() {
 	*x = SyncResourceRequestData{}
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[13]
+	mi := &file_admin_resource_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -861,7 +861,7 @@ func (x *SyncResourceRequestData) String() string {
 func (*SyncResourceRequestData) ProtoMessage() {}
 
 func (x *SyncResourceRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_resource_proto_msgTypes[13]
+	mi := &file_admin_resource_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -874,7 +874,7 @@ func (x *SyncResourceRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncResourceRequestData.ProtoReflect.Descriptor instead.
 func (*SyncResourceRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_resource_proto_rawDescGZIP(), []int{13}
+	return file_admin_resource_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *SyncResourceRequestData) GetResourceJson() string {
@@ -884,11 +884,11 @@ func (x *SyncResourceRequestData) GetResourceJson() string {
 	return ""
 }
 
-var File_app_admin_rpc_pb_resource_proto protoreflect.FileDescriptor
+var File_admin_resource_proto protoreflect.FileDescriptor
 
-const file_app_admin_rpc_pb_resource_proto_rawDesc = "" +
+const file_admin_resource_proto_rawDesc = "" +
 	"\n" +
-	"\x1fapp/admin/rpc/pb/resource.proto\x12\x05admin\x1a\x12proto/common.proto\x1a\x12proto/entity.proto\"I\n" +
+	"\x14admin_resource.proto\x12\x05admin\x1a\x12proto/common.proto\x1a\x12proto/entity.proto\"I\n" +
 	"\x13ResourceTreeRequest\x122\n" +
 	"\x04data\x18\x01 \x01(\v2\x1e.admin.ResourceTreeRequestDataR\x04data\"C\n" +
 	"\x17ResourceTreeRequestData\x12\x12\n" +
@@ -961,19 +961,19 @@ const file_app_admin_rpc_pb_resource_proto_rawDesc = "" +
 	"\fSyncResource\x12\x1a.admin.SyncResourceRequest\x1a\x14.proto.EmptyResponseB'Z%zeebee-backend/app/admin/rpc/pb/adminb\x06proto3"
 
 var (
-	file_app_admin_rpc_pb_resource_proto_rawDescOnce sync.Once
-	file_app_admin_rpc_pb_resource_proto_rawDescData []byte
+	file_admin_resource_proto_rawDescOnce sync.Once
+	file_admin_resource_proto_rawDescData []byte
 )
 
-func file_app_admin_rpc_pb_resource_proto_rawDescGZIP() []byte {
-	file_app_admin_rpc_pb_resource_proto_rawDescOnce.Do(func() {
-		file_app_admin_rpc_pb_resource_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_resource_proto_rawDesc), len(file_app_admin_rpc_pb_resource_proto_rawDesc)))
+func file_admin_resource_proto_rawDescGZIP() []byte {
+	file_admin_resource_proto_rawDescOnce.Do(func() {
+		file_admin_resource_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_admin_resource_proto_rawDesc), len(file_admin_resource_proto_rawDesc)))
 	})
-	return file_app_admin_rpc_pb_resource_proto_rawDescData
+	return file_admin_resource_proto_rawDescData
 }
 
-var file_app_admin_rpc_pb_resource_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
-var file_app_admin_rpc_pb_resource_proto_goTypes = []any{
+var file_admin_resource_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_admin_resource_proto_goTypes = []any{
 	(*ResourceTreeRequest)(nil),       // 0: admin.ResourceTreeRequest
 	(*ResourceTreeRequestData)(nil),   // 1: admin.ResourceTreeRequestData
 	(*ResourceTreeResponse)(nil),      // 2: admin.ResourceTreeResponse
@@ -993,7 +993,7 @@ var file_app_admin_rpc_pb_resource_proto_goTypes = []any{
 	(*proto.EmptyRequest)(nil),        // 16: proto.EmptyRequest
 	(*proto.EmptyResponse)(nil),       // 17: proto.EmptyResponse
 }
-var file_app_admin_rpc_pb_resource_proto_depIdxs = []int32{
+var file_admin_resource_proto_depIdxs = []int32{
 	1,  // 0: admin.ResourceTreeRequest.data:type_name -> admin.ResourceTreeRequestData
 	14, // 1: admin.ResourceTreeResponse.data:type_name -> proto.ResourceTreeEntity
 	4,  // 2: admin.ResourceCreateRequest.data:type_name -> admin.ResourceCreateRequestData
@@ -1023,26 +1023,26 @@ var file_app_admin_rpc_pb_resource_proto_depIdxs = []int32{
 	0,  // [0:8] is the sub-list for field type_name
 }
 
-func init() { file_app_admin_rpc_pb_resource_proto_init() }
-func file_app_admin_rpc_pb_resource_proto_init() {
-	if File_app_admin_rpc_pb_resource_proto != nil {
+func init() { file_admin_resource_proto_init() }
+func file_admin_resource_proto_init() {
+	if File_admin_resource_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_resource_proto_rawDesc), len(file_app_admin_rpc_pb_resource_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_admin_resource_proto_rawDesc), len(file_admin_resource_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_app_admin_rpc_pb_resource_proto_goTypes,
-		DependencyIndexes: file_app_admin_rpc_pb_resource_proto_depIdxs,
-		MessageInfos:      file_app_admin_rpc_pb_resource_proto_msgTypes,
+		GoTypes:           file_admin_resource_proto_goTypes,
+		DependencyIndexes: file_admin_resource_proto_depIdxs,
+		MessageInfos:      file_admin_resource_proto_msgTypes,
 	}.Build()
-	File_app_admin_rpc_pb_resource_proto = out.File
-	file_app_admin_rpc_pb_resource_proto_goTypes = nil
-	file_app_admin_rpc_pb_resource_proto_depIdxs = nil
+	File_admin_resource_proto = out.File
+	file_admin_resource_proto_goTypes = nil
+	file_admin_resource_proto_depIdxs = nil
 }

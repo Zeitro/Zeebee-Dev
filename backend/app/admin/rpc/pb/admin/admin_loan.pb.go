@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v7.35.1
-// source: app/admin/rpc/pb/loan.proto
+// source: admin_loan.proto
 
 package admin
 
@@ -32,7 +32,7 @@ type LoanPageRequest struct {
 
 func (x *LoanPageRequest) Reset() {
 	*x = LoanPageRequest{}
-	mi := &file_app_admin_rpc_pb_loan_proto_msgTypes[0]
+	mi := &file_admin_loan_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -44,7 +44,7 @@ func (x *LoanPageRequest) String() string {
 func (*LoanPageRequest) ProtoMessage() {}
 
 func (x *LoanPageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_loan_proto_msgTypes[0]
+	mi := &file_admin_loan_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -57,7 +57,7 @@ func (x *LoanPageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoanPageRequest.ProtoReflect.Descriptor instead.
 func (*LoanPageRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_loan_proto_rawDescGZIP(), []int{0}
+	return file_admin_loan_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *LoanPageRequest) GetData() *LoanPageRequestData {
@@ -77,7 +77,7 @@ type LoanPageResponse struct {
 
 func (x *LoanPageResponse) Reset() {
 	*x = LoanPageResponse{}
-	mi := &file_app_admin_rpc_pb_loan_proto_msgTypes[1]
+	mi := &file_admin_loan_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -89,7 +89,7 @@ func (x *LoanPageResponse) String() string {
 func (*LoanPageResponse) ProtoMessage() {}
 
 func (x *LoanPageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_loan_proto_msgTypes[1]
+	mi := &file_admin_loan_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -102,7 +102,7 @@ func (x *LoanPageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoanPageResponse.ProtoReflect.Descriptor instead.
 func (*LoanPageResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_loan_proto_rawDescGZIP(), []int{1}
+	return file_admin_loan_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *LoanPageResponse) GetData() *LoanPageResponseData {
@@ -127,7 +127,7 @@ type LoanPageRequestFilter struct {
 
 func (x *LoanPageRequestFilter) Reset() {
 	*x = LoanPageRequestFilter{}
-	mi := &file_app_admin_rpc_pb_loan_proto_msgTypes[2]
+	mi := &file_admin_loan_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -139,7 +139,7 @@ func (x *LoanPageRequestFilter) String() string {
 func (*LoanPageRequestFilter) ProtoMessage() {}
 
 func (x *LoanPageRequestFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_loan_proto_msgTypes[2]
+	mi := &file_admin_loan_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -152,7 +152,7 @@ func (x *LoanPageRequestFilter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoanPageRequestFilter.ProtoReflect.Descriptor instead.
 func (*LoanPageRequestFilter) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_loan_proto_rawDescGZIP(), []int{2}
+	return file_admin_loan_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *LoanPageRequestFilter) GetStage() string {
@@ -214,7 +214,7 @@ type LoanPageRequestSorter struct {
 
 func (x *LoanPageRequestSorter) Reset() {
 	*x = LoanPageRequestSorter{}
-	mi := &file_app_admin_rpc_pb_loan_proto_msgTypes[3]
+	mi := &file_admin_loan_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -226,7 +226,7 @@ func (x *LoanPageRequestSorter) String() string {
 func (*LoanPageRequestSorter) ProtoMessage() {}
 
 func (x *LoanPageRequestSorter) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_loan_proto_msgTypes[3]
+	mi := &file_admin_loan_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -239,7 +239,7 @@ func (x *LoanPageRequestSorter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoanPageRequestSorter.ProtoReflect.Descriptor instead.
 func (*LoanPageRequestSorter) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_loan_proto_rawDescGZIP(), []int{3}
+	return file_admin_loan_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *LoanPageRequestSorter) GetColumn() string {
@@ -268,7 +268,7 @@ type LoanPageRequestData struct {
 
 func (x *LoanPageRequestData) Reset() {
 	*x = LoanPageRequestData{}
-	mi := &file_app_admin_rpc_pb_loan_proto_msgTypes[4]
+	mi := &file_admin_loan_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -280,7 +280,7 @@ func (x *LoanPageRequestData) String() string {
 func (*LoanPageRequestData) ProtoMessage() {}
 
 func (x *LoanPageRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_loan_proto_msgTypes[4]
+	mi := &file_admin_loan_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -293,7 +293,7 @@ func (x *LoanPageRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoanPageRequestData.ProtoReflect.Descriptor instead.
 func (*LoanPageRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_loan_proto_rawDescGZIP(), []int{4}
+	return file_admin_loan_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *LoanPageRequestData) GetPage() int64 {
@@ -337,7 +337,7 @@ type LoanPageResponseData struct {
 
 func (x *LoanPageResponseData) Reset() {
 	*x = LoanPageResponseData{}
-	mi := &file_app_admin_rpc_pb_loan_proto_msgTypes[5]
+	mi := &file_admin_loan_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -349,7 +349,7 @@ func (x *LoanPageResponseData) String() string {
 func (*LoanPageResponseData) ProtoMessage() {}
 
 func (x *LoanPageResponseData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_loan_proto_msgTypes[5]
+	mi := &file_admin_loan_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -362,7 +362,7 @@ func (x *LoanPageResponseData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoanPageResponseData.ProtoReflect.Descriptor instead.
 func (*LoanPageResponseData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_loan_proto_rawDescGZIP(), []int{5}
+	return file_admin_loan_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *LoanPageResponseData) GetPage() int64 {
@@ -410,7 +410,7 @@ type LoanDetailResponse struct {
 
 func (x *LoanDetailResponse) Reset() {
 	*x = LoanDetailResponse{}
-	mi := &file_app_admin_rpc_pb_loan_proto_msgTypes[6]
+	mi := &file_admin_loan_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -422,7 +422,7 @@ func (x *LoanDetailResponse) String() string {
 func (*LoanDetailResponse) ProtoMessage() {}
 
 func (x *LoanDetailResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_loan_proto_msgTypes[6]
+	mi := &file_admin_loan_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -435,7 +435,7 @@ func (x *LoanDetailResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoanDetailResponse.ProtoReflect.Descriptor instead.
 func (*LoanDetailResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_loan_proto_rawDescGZIP(), []int{6}
+	return file_admin_loan_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *LoanDetailResponse) GetData() *proto.LoanEntity {
@@ -455,7 +455,7 @@ type ReassignLoanRequest struct {
 
 func (x *ReassignLoanRequest) Reset() {
 	*x = ReassignLoanRequest{}
-	mi := &file_app_admin_rpc_pb_loan_proto_msgTypes[7]
+	mi := &file_admin_loan_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -467,7 +467,7 @@ func (x *ReassignLoanRequest) String() string {
 func (*ReassignLoanRequest) ProtoMessage() {}
 
 func (x *ReassignLoanRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_loan_proto_msgTypes[7]
+	mi := &file_admin_loan_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -480,7 +480,7 @@ func (x *ReassignLoanRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReassignLoanRequest.ProtoReflect.Descriptor instead.
 func (*ReassignLoanRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_loan_proto_rawDescGZIP(), []int{7}
+	return file_admin_loan_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *ReassignLoanRequest) GetData() *ReassignLoanRequestData {
@@ -500,7 +500,7 @@ type ReassignLoanRequestData struct {
 
 func (x *ReassignLoanRequestData) Reset() {
 	*x = ReassignLoanRequestData{}
-	mi := &file_app_admin_rpc_pb_loan_proto_msgTypes[8]
+	mi := &file_admin_loan_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -512,7 +512,7 @@ func (x *ReassignLoanRequestData) String() string {
 func (*ReassignLoanRequestData) ProtoMessage() {}
 
 func (x *ReassignLoanRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_loan_proto_msgTypes[8]
+	mi := &file_admin_loan_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -525,7 +525,7 @@ func (x *ReassignLoanRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReassignLoanRequestData.ProtoReflect.Descriptor instead.
 func (*ReassignLoanRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_loan_proto_rawDescGZIP(), []int{8}
+	return file_admin_loan_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ReassignLoanRequestData) GetId() int64 {
@@ -552,7 +552,7 @@ type LoanLenderCompaniesResponse struct {
 
 func (x *LoanLenderCompaniesResponse) Reset() {
 	*x = LoanLenderCompaniesResponse{}
-	mi := &file_app_admin_rpc_pb_loan_proto_msgTypes[9]
+	mi := &file_admin_loan_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -564,7 +564,7 @@ func (x *LoanLenderCompaniesResponse) String() string {
 func (*LoanLenderCompaniesResponse) ProtoMessage() {}
 
 func (x *LoanLenderCompaniesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_loan_proto_msgTypes[9]
+	mi := &file_admin_loan_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -577,7 +577,7 @@ func (x *LoanLenderCompaniesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoanLenderCompaniesResponse.ProtoReflect.Descriptor instead.
 func (*LoanLenderCompaniesResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_loan_proto_rawDescGZIP(), []int{9}
+	return file_admin_loan_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *LoanLenderCompaniesResponse) GetData() []string {
@@ -587,11 +587,11 @@ func (x *LoanLenderCompaniesResponse) GetData() []string {
 	return nil
 }
 
-var File_app_admin_rpc_pb_loan_proto protoreflect.FileDescriptor
+var File_admin_loan_proto protoreflect.FileDescriptor
 
-const file_app_admin_rpc_pb_loan_proto_rawDesc = "" +
+const file_admin_loan_proto_rawDesc = "" +
 	"\n" +
-	"\x1bapp/admin/rpc/pb/loan.proto\x12\x05admin\x1a\x12proto/common.proto\x1a\x12proto/entity.proto\"A\n" +
+	"\x10admin_loan.proto\x12\x05admin\x1a\x12proto/common.proto\x1a\x12proto/entity.proto\"A\n" +
 	"\x0fLoanPageRequest\x12.\n" +
 	"\x04data\x18\x01 \x01(\v2\x1a.admin.LoanPageRequestDataR\x04data\"C\n" +
 	"\x10LoanPageResponse\x12/\n" +
@@ -636,19 +636,19 @@ const file_app_admin_rpc_pb_loan_proto_rawDesc = "" +
 	"\x13LoanLenderCompanies\x12\x13.proto.EmptyRequest\x1a\".admin.LoanLenderCompaniesResponseB'Z%zeebee-backend/app/admin/rpc/pb/adminb\x06proto3"
 
 var (
-	file_app_admin_rpc_pb_loan_proto_rawDescOnce sync.Once
-	file_app_admin_rpc_pb_loan_proto_rawDescData []byte
+	file_admin_loan_proto_rawDescOnce sync.Once
+	file_admin_loan_proto_rawDescData []byte
 )
 
-func file_app_admin_rpc_pb_loan_proto_rawDescGZIP() []byte {
-	file_app_admin_rpc_pb_loan_proto_rawDescOnce.Do(func() {
-		file_app_admin_rpc_pb_loan_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_loan_proto_rawDesc), len(file_app_admin_rpc_pb_loan_proto_rawDesc)))
+func file_admin_loan_proto_rawDescGZIP() []byte {
+	file_admin_loan_proto_rawDescOnce.Do(func() {
+		file_admin_loan_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_admin_loan_proto_rawDesc), len(file_admin_loan_proto_rawDesc)))
 	})
-	return file_app_admin_rpc_pb_loan_proto_rawDescData
+	return file_admin_loan_proto_rawDescData
 }
 
-var file_app_admin_rpc_pb_loan_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
-var file_app_admin_rpc_pb_loan_proto_goTypes = []any{
+var file_admin_loan_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_admin_loan_proto_goTypes = []any{
 	(*LoanPageRequest)(nil),             // 0: admin.LoanPageRequest
 	(*LoanPageResponse)(nil),            // 1: admin.LoanPageResponse
 	(*LoanPageRequestFilter)(nil),       // 2: admin.LoanPageRequestFilter
@@ -664,7 +664,7 @@ var file_app_admin_rpc_pb_loan_proto_goTypes = []any{
 	(*proto.EmptyRequest)(nil),          // 12: proto.EmptyRequest
 	(*proto.EmptyResponse)(nil),         // 13: proto.EmptyResponse
 }
-var file_app_admin_rpc_pb_loan_proto_depIdxs = []int32{
+var file_admin_loan_proto_depIdxs = []int32{
 	4,  // 0: admin.LoanPageRequest.data:type_name -> admin.LoanPageRequestData
 	5,  // 1: admin.LoanPageResponse.data:type_name -> admin.LoanPageResponseData
 	2,  // 2: admin.LoanPageRequestData.filter:type_name -> admin.LoanPageRequestFilter
@@ -687,26 +687,26 @@ var file_app_admin_rpc_pb_loan_proto_depIdxs = []int32{
 	0,  // [0:7] is the sub-list for field type_name
 }
 
-func init() { file_app_admin_rpc_pb_loan_proto_init() }
-func file_app_admin_rpc_pb_loan_proto_init() {
-	if File_app_admin_rpc_pb_loan_proto != nil {
+func init() { file_admin_loan_proto_init() }
+func file_admin_loan_proto_init() {
+	if File_admin_loan_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_loan_proto_rawDesc), len(file_app_admin_rpc_pb_loan_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_admin_loan_proto_rawDesc), len(file_admin_loan_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_app_admin_rpc_pb_loan_proto_goTypes,
-		DependencyIndexes: file_app_admin_rpc_pb_loan_proto_depIdxs,
-		MessageInfos:      file_app_admin_rpc_pb_loan_proto_msgTypes,
+		GoTypes:           file_admin_loan_proto_goTypes,
+		DependencyIndexes: file_admin_loan_proto_depIdxs,
+		MessageInfos:      file_admin_loan_proto_msgTypes,
 	}.Build()
-	File_app_admin_rpc_pb_loan_proto = out.File
-	file_app_admin_rpc_pb_loan_proto_goTypes = nil
-	file_app_admin_rpc_pb_loan_proto_depIdxs = nil
+	File_admin_loan_proto = out.File
+	file_admin_loan_proto_goTypes = nil
+	file_admin_loan_proto_depIdxs = nil
 }

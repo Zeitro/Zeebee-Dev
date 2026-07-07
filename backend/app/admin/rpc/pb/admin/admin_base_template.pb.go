@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v7.35.1
-// source: app/admin/rpc/pb/base_template.proto
+// source: admin_base_template.proto
 
 package admin
 
@@ -42,7 +42,7 @@ type BaseTemplatePageEntity struct {
 
 func (x *BaseTemplatePageEntity) Reset() {
 	*x = BaseTemplatePageEntity{}
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[0]
+	mi := &file_admin_base_template_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -54,7 +54,7 @@ func (x *BaseTemplatePageEntity) String() string {
 func (*BaseTemplatePageEntity) ProtoMessage() {}
 
 func (x *BaseTemplatePageEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[0]
+	mi := &file_admin_base_template_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -67,7 +67,7 @@ func (x *BaseTemplatePageEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BaseTemplatePageEntity.ProtoReflect.Descriptor instead.
 func (*BaseTemplatePageEntity) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_base_template_proto_rawDescGZIP(), []int{0}
+	return file_admin_base_template_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *BaseTemplatePageEntity) GetId() int64 {
@@ -157,7 +157,7 @@ type CreateBaseTemplateRequest struct {
 
 func (x *CreateBaseTemplateRequest) Reset() {
 	*x = CreateBaseTemplateRequest{}
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[1]
+	mi := &file_admin_base_template_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -169,7 +169,7 @@ func (x *CreateBaseTemplateRequest) String() string {
 func (*CreateBaseTemplateRequest) ProtoMessage() {}
 
 func (x *CreateBaseTemplateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[1]
+	mi := &file_admin_base_template_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -182,7 +182,7 @@ func (x *CreateBaseTemplateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateBaseTemplateRequest.ProtoReflect.Descriptor instead.
 func (*CreateBaseTemplateRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_base_template_proto_rawDescGZIP(), []int{1}
+	return file_admin_base_template_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *CreateBaseTemplateRequest) GetData() *CreateBaseTemplateRequestData {
@@ -210,7 +210,7 @@ type CreateBaseTemplateRequestData struct {
 
 func (x *CreateBaseTemplateRequestData) Reset() {
 	*x = CreateBaseTemplateRequestData{}
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[2]
+	mi := &file_admin_base_template_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -222,7 +222,7 @@ func (x *CreateBaseTemplateRequestData) String() string {
 func (*CreateBaseTemplateRequestData) ProtoMessage() {}
 
 func (x *CreateBaseTemplateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[2]
+	mi := &file_admin_base_template_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -235,7 +235,7 @@ func (x *CreateBaseTemplateRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateBaseTemplateRequestData.ProtoReflect.Descriptor instead.
 func (*CreateBaseTemplateRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_base_template_proto_rawDescGZIP(), []int{2}
+	return file_admin_base_template_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CreateBaseTemplateRequestData) GetName() string {
@@ -318,7 +318,7 @@ type CreateBaseTemplateResponse struct {
 
 func (x *CreateBaseTemplateResponse) Reset() {
 	*x = CreateBaseTemplateResponse{}
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[3]
+	mi := &file_admin_base_template_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -330,7 +330,7 @@ func (x *CreateBaseTemplateResponse) String() string {
 func (*CreateBaseTemplateResponse) ProtoMessage() {}
 
 func (x *CreateBaseTemplateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[3]
+	mi := &file_admin_base_template_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -343,7 +343,7 @@ func (x *CreateBaseTemplateResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateBaseTemplateResponse.ProtoReflect.Descriptor instead.
 func (*CreateBaseTemplateResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_base_template_proto_rawDescGZIP(), []int{3}
+	return file_admin_base_template_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CreateBaseTemplateResponse) GetData() *proto.BaseTemplateEntity {
@@ -363,7 +363,7 @@ type UpdateBaseTemplateRequest struct {
 
 func (x *UpdateBaseTemplateRequest) Reset() {
 	*x = UpdateBaseTemplateRequest{}
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[4]
+	mi := &file_admin_base_template_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -375,7 +375,7 @@ func (x *UpdateBaseTemplateRequest) String() string {
 func (*UpdateBaseTemplateRequest) ProtoMessage() {}
 
 func (x *UpdateBaseTemplateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[4]
+	mi := &file_admin_base_template_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -388,7 +388,7 @@ func (x *UpdateBaseTemplateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateBaseTemplateRequest.ProtoReflect.Descriptor instead.
 func (*UpdateBaseTemplateRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_base_template_proto_rawDescGZIP(), []int{4}
+	return file_admin_base_template_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *UpdateBaseTemplateRequest) GetData() *UpdateBaseTemplateRequestData {
@@ -415,7 +415,7 @@ type UpdateBaseTemplateRequestData struct {
 
 func (x *UpdateBaseTemplateRequestData) Reset() {
 	*x = UpdateBaseTemplateRequestData{}
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[5]
+	mi := &file_admin_base_template_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -427,7 +427,7 @@ func (x *UpdateBaseTemplateRequestData) String() string {
 func (*UpdateBaseTemplateRequestData) ProtoMessage() {}
 
 func (x *UpdateBaseTemplateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[5]
+	mi := &file_admin_base_template_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -440,7 +440,7 @@ func (x *UpdateBaseTemplateRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateBaseTemplateRequestData.ProtoReflect.Descriptor instead.
 func (*UpdateBaseTemplateRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_base_template_proto_rawDescGZIP(), []int{5}
+	return file_admin_base_template_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *UpdateBaseTemplateRequestData) GetId() int64 {
@@ -516,7 +516,7 @@ type UpdateBaseTemplateResponse struct {
 
 func (x *UpdateBaseTemplateResponse) Reset() {
 	*x = UpdateBaseTemplateResponse{}
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[6]
+	mi := &file_admin_base_template_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -528,7 +528,7 @@ func (x *UpdateBaseTemplateResponse) String() string {
 func (*UpdateBaseTemplateResponse) ProtoMessage() {}
 
 func (x *UpdateBaseTemplateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[6]
+	mi := &file_admin_base_template_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -541,7 +541,7 @@ func (x *UpdateBaseTemplateResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateBaseTemplateResponse.ProtoReflect.Descriptor instead.
 func (*UpdateBaseTemplateResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_base_template_proto_rawDescGZIP(), []int{6}
+	return file_admin_base_template_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *UpdateBaseTemplateResponse) GetData() *proto.BaseTemplateEntity {
@@ -561,7 +561,7 @@ type GetBaseTemplateRequest struct {
 
 func (x *GetBaseTemplateRequest) Reset() {
 	*x = GetBaseTemplateRequest{}
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[7]
+	mi := &file_admin_base_template_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -573,7 +573,7 @@ func (x *GetBaseTemplateRequest) String() string {
 func (*GetBaseTemplateRequest) ProtoMessage() {}
 
 func (x *GetBaseTemplateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[7]
+	mi := &file_admin_base_template_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -586,7 +586,7 @@ func (x *GetBaseTemplateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBaseTemplateRequest.ProtoReflect.Descriptor instead.
 func (*GetBaseTemplateRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_base_template_proto_rawDescGZIP(), []int{7}
+	return file_admin_base_template_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *GetBaseTemplateRequest) GetData() *proto.IdRequest {
@@ -606,7 +606,7 @@ type GetBaseTemplateResponse struct {
 
 func (x *GetBaseTemplateResponse) Reset() {
 	*x = GetBaseTemplateResponse{}
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[8]
+	mi := &file_admin_base_template_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -618,7 +618,7 @@ func (x *GetBaseTemplateResponse) String() string {
 func (*GetBaseTemplateResponse) ProtoMessage() {}
 
 func (x *GetBaseTemplateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[8]
+	mi := &file_admin_base_template_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -631,7 +631,7 @@ func (x *GetBaseTemplateResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBaseTemplateResponse.ProtoReflect.Descriptor instead.
 func (*GetBaseTemplateResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_base_template_proto_rawDescGZIP(), []int{8}
+	return file_admin_base_template_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *GetBaseTemplateResponse) GetData() *proto.BaseTemplateEntity {
@@ -651,7 +651,7 @@ type BaseTemplatePageRequest struct {
 
 func (x *BaseTemplatePageRequest) Reset() {
 	*x = BaseTemplatePageRequest{}
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[9]
+	mi := &file_admin_base_template_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -663,7 +663,7 @@ func (x *BaseTemplatePageRequest) String() string {
 func (*BaseTemplatePageRequest) ProtoMessage() {}
 
 func (x *BaseTemplatePageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[9]
+	mi := &file_admin_base_template_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -676,7 +676,7 @@ func (x *BaseTemplatePageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BaseTemplatePageRequest.ProtoReflect.Descriptor instead.
 func (*BaseTemplatePageRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_base_template_proto_rawDescGZIP(), []int{9}
+	return file_admin_base_template_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *BaseTemplatePageRequest) GetData() *BaseTemplatePageRequestData {
@@ -698,7 +698,7 @@ type BaseTemplatePageRequestData struct {
 
 func (x *BaseTemplatePageRequestData) Reset() {
 	*x = BaseTemplatePageRequestData{}
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[10]
+	mi := &file_admin_base_template_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -710,7 +710,7 @@ func (x *BaseTemplatePageRequestData) String() string {
 func (*BaseTemplatePageRequestData) ProtoMessage() {}
 
 func (x *BaseTemplatePageRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[10]
+	mi := &file_admin_base_template_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -723,7 +723,7 @@ func (x *BaseTemplatePageRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BaseTemplatePageRequestData.ProtoReflect.Descriptor instead.
 func (*BaseTemplatePageRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_base_template_proto_rawDescGZIP(), []int{10}
+	return file_admin_base_template_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *BaseTemplatePageRequestData) GetPage() int64 {
@@ -767,7 +767,7 @@ type BaseTemplatePageRequestFilter struct {
 
 func (x *BaseTemplatePageRequestFilter) Reset() {
 	*x = BaseTemplatePageRequestFilter{}
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[11]
+	mi := &file_admin_base_template_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -779,7 +779,7 @@ func (x *BaseTemplatePageRequestFilter) String() string {
 func (*BaseTemplatePageRequestFilter) ProtoMessage() {}
 
 func (x *BaseTemplatePageRequestFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[11]
+	mi := &file_admin_base_template_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -792,7 +792,7 @@ func (x *BaseTemplatePageRequestFilter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BaseTemplatePageRequestFilter.ProtoReflect.Descriptor instead.
 func (*BaseTemplatePageRequestFilter) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_base_template_proto_rawDescGZIP(), []int{11}
+	return file_admin_base_template_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *BaseTemplatePageRequestFilter) GetKeyword() string {
@@ -840,7 +840,7 @@ type BaseTemplatePageRequestSorter struct {
 
 func (x *BaseTemplatePageRequestSorter) Reset() {
 	*x = BaseTemplatePageRequestSorter{}
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[12]
+	mi := &file_admin_base_template_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -852,7 +852,7 @@ func (x *BaseTemplatePageRequestSorter) String() string {
 func (*BaseTemplatePageRequestSorter) ProtoMessage() {}
 
 func (x *BaseTemplatePageRequestSorter) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[12]
+	mi := &file_admin_base_template_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -865,7 +865,7 @@ func (x *BaseTemplatePageRequestSorter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BaseTemplatePageRequestSorter.ProtoReflect.Descriptor instead.
 func (*BaseTemplatePageRequestSorter) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_base_template_proto_rawDescGZIP(), []int{12}
+	return file_admin_base_template_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *BaseTemplatePageRequestSorter) GetColumn() string {
@@ -892,7 +892,7 @@ type BaseTemplatePageResponse struct {
 
 func (x *BaseTemplatePageResponse) Reset() {
 	*x = BaseTemplatePageResponse{}
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[13]
+	mi := &file_admin_base_template_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -904,7 +904,7 @@ func (x *BaseTemplatePageResponse) String() string {
 func (*BaseTemplatePageResponse) ProtoMessage() {}
 
 func (x *BaseTemplatePageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[13]
+	mi := &file_admin_base_template_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -917,7 +917,7 @@ func (x *BaseTemplatePageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BaseTemplatePageResponse.ProtoReflect.Descriptor instead.
 func (*BaseTemplatePageResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_base_template_proto_rawDescGZIP(), []int{13}
+	return file_admin_base_template_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *BaseTemplatePageResponse) GetData() *BaseTemplatePageResponseData {
@@ -940,7 +940,7 @@ type BaseTemplatePageResponseData struct {
 
 func (x *BaseTemplatePageResponseData) Reset() {
 	*x = BaseTemplatePageResponseData{}
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[14]
+	mi := &file_admin_base_template_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -952,7 +952,7 @@ func (x *BaseTemplatePageResponseData) String() string {
 func (*BaseTemplatePageResponseData) ProtoMessage() {}
 
 func (x *BaseTemplatePageResponseData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[14]
+	mi := &file_admin_base_template_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -965,7 +965,7 @@ func (x *BaseTemplatePageResponseData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BaseTemplatePageResponseData.ProtoReflect.Descriptor instead.
 func (*BaseTemplatePageResponseData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_base_template_proto_rawDescGZIP(), []int{14}
+	return file_admin_base_template_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *BaseTemplatePageResponseData) GetPage() int64 {
@@ -1013,7 +1013,7 @@ type SwitchBaseTemplateStatusRequest struct {
 
 func (x *SwitchBaseTemplateStatusRequest) Reset() {
 	*x = SwitchBaseTemplateStatusRequest{}
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[15]
+	mi := &file_admin_base_template_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1025,7 +1025,7 @@ func (x *SwitchBaseTemplateStatusRequest) String() string {
 func (*SwitchBaseTemplateStatusRequest) ProtoMessage() {}
 
 func (x *SwitchBaseTemplateStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[15]
+	mi := &file_admin_base_template_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1038,7 +1038,7 @@ func (x *SwitchBaseTemplateStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SwitchBaseTemplateStatusRequest.ProtoReflect.Descriptor instead.
 func (*SwitchBaseTemplateStatusRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_base_template_proto_rawDescGZIP(), []int{15}
+	return file_admin_base_template_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *SwitchBaseTemplateStatusRequest) GetData() *SwitchBaseTemplateStatusRequestData {
@@ -1058,7 +1058,7 @@ type SwitchBaseTemplateStatusRequestData struct {
 
 func (x *SwitchBaseTemplateStatusRequestData) Reset() {
 	*x = SwitchBaseTemplateStatusRequestData{}
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[16]
+	mi := &file_admin_base_template_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1070,7 +1070,7 @@ func (x *SwitchBaseTemplateStatusRequestData) String() string {
 func (*SwitchBaseTemplateStatusRequestData) ProtoMessage() {}
 
 func (x *SwitchBaseTemplateStatusRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[16]
+	mi := &file_admin_base_template_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1083,7 +1083,7 @@ func (x *SwitchBaseTemplateStatusRequestData) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use SwitchBaseTemplateStatusRequestData.ProtoReflect.Descriptor instead.
 func (*SwitchBaseTemplateStatusRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_base_template_proto_rawDescGZIP(), []int{16}
+	return file_admin_base_template_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *SwitchBaseTemplateStatusRequestData) GetId() int64 {
@@ -1110,7 +1110,7 @@ type DeleteBaseTemplateRequest struct {
 
 func (x *DeleteBaseTemplateRequest) Reset() {
 	*x = DeleteBaseTemplateRequest{}
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[17]
+	mi := &file_admin_base_template_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1122,7 +1122,7 @@ func (x *DeleteBaseTemplateRequest) String() string {
 func (*DeleteBaseTemplateRequest) ProtoMessage() {}
 
 func (x *DeleteBaseTemplateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[17]
+	mi := &file_admin_base_template_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1135,7 +1135,7 @@ func (x *DeleteBaseTemplateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteBaseTemplateRequest.ProtoReflect.Descriptor instead.
 func (*DeleteBaseTemplateRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_base_template_proto_rawDescGZIP(), []int{17}
+	return file_admin_base_template_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *DeleteBaseTemplateRequest) GetData() *proto.IdRequest {
@@ -1155,7 +1155,7 @@ type BaseTemplatePreviewRequest struct {
 
 func (x *BaseTemplatePreviewRequest) Reset() {
 	*x = BaseTemplatePreviewRequest{}
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[18]
+	mi := &file_admin_base_template_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1167,7 +1167,7 @@ func (x *BaseTemplatePreviewRequest) String() string {
 func (*BaseTemplatePreviewRequest) ProtoMessage() {}
 
 func (x *BaseTemplatePreviewRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[18]
+	mi := &file_admin_base_template_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1180,7 +1180,7 @@ func (x *BaseTemplatePreviewRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BaseTemplatePreviewRequest.ProtoReflect.Descriptor instead.
 func (*BaseTemplatePreviewRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_base_template_proto_rawDescGZIP(), []int{18}
+	return file_admin_base_template_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *BaseTemplatePreviewRequest) GetData() *BaseTemplatePreviewRequestData {
@@ -1202,7 +1202,7 @@ type BaseTemplatePreviewRequestData struct {
 
 func (x *BaseTemplatePreviewRequestData) Reset() {
 	*x = BaseTemplatePreviewRequestData{}
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[19]
+	mi := &file_admin_base_template_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1214,7 +1214,7 @@ func (x *BaseTemplatePreviewRequestData) String() string {
 func (*BaseTemplatePreviewRequestData) ProtoMessage() {}
 
 func (x *BaseTemplatePreviewRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[19]
+	mi := &file_admin_base_template_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1227,7 +1227,7 @@ func (x *BaseTemplatePreviewRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BaseTemplatePreviewRequestData.ProtoReflect.Descriptor instead.
 func (*BaseTemplatePreviewRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_base_template_proto_rawDescGZIP(), []int{19}
+	return file_admin_base_template_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *BaseTemplatePreviewRequestData) GetContent() string {
@@ -1268,7 +1268,7 @@ type BaseTemplatePreviewResponse struct {
 
 func (x *BaseTemplatePreviewResponse) Reset() {
 	*x = BaseTemplatePreviewResponse{}
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[20]
+	mi := &file_admin_base_template_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1280,7 +1280,7 @@ func (x *BaseTemplatePreviewResponse) String() string {
 func (*BaseTemplatePreviewResponse) ProtoMessage() {}
 
 func (x *BaseTemplatePreviewResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[20]
+	mi := &file_admin_base_template_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1293,7 +1293,7 @@ func (x *BaseTemplatePreviewResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BaseTemplatePreviewResponse.ProtoReflect.Descriptor instead.
 func (*BaseTemplatePreviewResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_base_template_proto_rawDescGZIP(), []int{20}
+	return file_admin_base_template_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *BaseTemplatePreviewResponse) GetData() *BaseTemplatePreviewResponseData {
@@ -1312,7 +1312,7 @@ type BaseTemplatePreviewResponseData struct {
 
 func (x *BaseTemplatePreviewResponseData) Reset() {
 	*x = BaseTemplatePreviewResponseData{}
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[21]
+	mi := &file_admin_base_template_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1324,7 +1324,7 @@ func (x *BaseTemplatePreviewResponseData) String() string {
 func (*BaseTemplatePreviewResponseData) ProtoMessage() {}
 
 func (x *BaseTemplatePreviewResponseData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_base_template_proto_msgTypes[21]
+	mi := &file_admin_base_template_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1337,7 +1337,7 @@ func (x *BaseTemplatePreviewResponseData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BaseTemplatePreviewResponseData.ProtoReflect.Descriptor instead.
 func (*BaseTemplatePreviewResponseData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_base_template_proto_rawDescGZIP(), []int{21}
+	return file_admin_base_template_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *BaseTemplatePreviewResponseData) GetContent() string {
@@ -1347,11 +1347,11 @@ func (x *BaseTemplatePreviewResponseData) GetContent() string {
 	return ""
 }
 
-var File_app_admin_rpc_pb_base_template_proto protoreflect.FileDescriptor
+var File_admin_base_template_proto protoreflect.FileDescriptor
 
-const file_app_admin_rpc_pb_base_template_proto_rawDesc = "" +
+const file_admin_base_template_proto_rawDesc = "" +
 	"\n" +
-	"$app/admin/rpc/pb/base_template.proto\x12\x05admin\x1a\x12proto/common.proto\x1a\x12proto/entity.proto\"\xbd\x02\n" +
+	"\x19admin_base_template.proto\x12\x05admin\x1a\x12proto/common.proto\x1a\x12proto/entity.proto\"\xbd\x02\n" +
 	"\x16BaseTemplatePageEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
@@ -1456,19 +1456,19 @@ const file_app_admin_rpc_pb_base_template_proto_rawDesc = "" +
 	"\x05Reset\x12\x10.proto.IdRequest\x1a\x14.proto.EmptyResponseB'Z%zeebee-backend/app/admin/rpc/pb/adminb\x06proto3"
 
 var (
-	file_app_admin_rpc_pb_base_template_proto_rawDescOnce sync.Once
-	file_app_admin_rpc_pb_base_template_proto_rawDescData []byte
+	file_admin_base_template_proto_rawDescOnce sync.Once
+	file_admin_base_template_proto_rawDescData []byte
 )
 
-func file_app_admin_rpc_pb_base_template_proto_rawDescGZIP() []byte {
-	file_app_admin_rpc_pb_base_template_proto_rawDescOnce.Do(func() {
-		file_app_admin_rpc_pb_base_template_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_base_template_proto_rawDesc), len(file_app_admin_rpc_pb_base_template_proto_rawDesc)))
+func file_admin_base_template_proto_rawDescGZIP() []byte {
+	file_admin_base_template_proto_rawDescOnce.Do(func() {
+		file_admin_base_template_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_admin_base_template_proto_rawDesc), len(file_admin_base_template_proto_rawDesc)))
 	})
-	return file_app_admin_rpc_pb_base_template_proto_rawDescData
+	return file_admin_base_template_proto_rawDescData
 }
 
-var file_app_admin_rpc_pb_base_template_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
-var file_app_admin_rpc_pb_base_template_proto_goTypes = []any{
+var file_admin_base_template_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
+var file_admin_base_template_proto_goTypes = []any{
 	(*BaseTemplatePageEntity)(nil),              // 0: admin.BaseTemplatePageEntity
 	(*CreateBaseTemplateRequest)(nil),           // 1: admin.CreateBaseTemplateRequest
 	(*CreateBaseTemplateRequestData)(nil),       // 2: admin.CreateBaseTemplateRequestData
@@ -1496,7 +1496,7 @@ var file_app_admin_rpc_pb_base_template_proto_goTypes = []any{
 	(*proto.IdRequest)(nil),                     // 24: proto.IdRequest
 	(*proto.EmptyResponse)(nil),                 // 25: proto.EmptyResponse
 }
-var file_app_admin_rpc_pb_base_template_proto_depIdxs = []int32{
+var file_admin_base_template_proto_depIdxs = []int32{
 	2,  // 0: admin.CreateBaseTemplateRequest.data:type_name -> admin.CreateBaseTemplateRequestData
 	22, // 1: admin.CreateBaseTemplateRequestData.variable_group_schema:type_name -> proto.TemplateVariableGroupEntity
 	23, // 2: admin.CreateBaseTemplateResponse.data:type_name -> proto.BaseTemplateEntity
@@ -1538,26 +1538,26 @@ var file_app_admin_rpc_pb_base_template_proto_depIdxs = []int32{
 	0,  // [0:18] is the sub-list for field type_name
 }
 
-func init() { file_app_admin_rpc_pb_base_template_proto_init() }
-func file_app_admin_rpc_pb_base_template_proto_init() {
-	if File_app_admin_rpc_pb_base_template_proto != nil {
+func init() { file_admin_base_template_proto_init() }
+func file_admin_base_template_proto_init() {
+	if File_admin_base_template_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_base_template_proto_rawDesc), len(file_app_admin_rpc_pb_base_template_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_admin_base_template_proto_rawDesc), len(file_admin_base_template_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   22,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_app_admin_rpc_pb_base_template_proto_goTypes,
-		DependencyIndexes: file_app_admin_rpc_pb_base_template_proto_depIdxs,
-		MessageInfos:      file_app_admin_rpc_pb_base_template_proto_msgTypes,
+		GoTypes:           file_admin_base_template_proto_goTypes,
+		DependencyIndexes: file_admin_base_template_proto_depIdxs,
+		MessageInfos:      file_admin_base_template_proto_msgTypes,
 	}.Build()
-	File_app_admin_rpc_pb_base_template_proto = out.File
-	file_app_admin_rpc_pb_base_template_proto_goTypes = nil
-	file_app_admin_rpc_pb_base_template_proto_depIdxs = nil
+	File_admin_base_template_proto = out.File
+	file_admin_base_template_proto_goTypes = nil
+	file_admin_base_template_proto_depIdxs = nil
 }

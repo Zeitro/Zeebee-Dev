@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v7.35.1
-// source: app/admin/rpc/pb/auth.proto
+// source: admin_auth.proto
 
 package admin
 
@@ -30,7 +30,7 @@ type AuthCheckRequest struct {
 
 func (x *AuthCheckRequest) Reset() {
 	*x = AuthCheckRequest{}
-	mi := &file_app_admin_rpc_pb_auth_proto_msgTypes[0]
+	mi := &file_admin_auth_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -42,7 +42,7 @@ func (x *AuthCheckRequest) String() string {
 func (*AuthCheckRequest) ProtoMessage() {}
 
 func (x *AuthCheckRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_auth_proto_msgTypes[0]
+	mi := &file_admin_auth_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -55,7 +55,7 @@ func (x *AuthCheckRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AuthCheckRequest.ProtoReflect.Descriptor instead.
 func (*AuthCheckRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_auth_proto_rawDescGZIP(), []int{0}
+	return file_admin_auth_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *AuthCheckRequest) GetData() *AuthCheckRequestData {
@@ -76,7 +76,7 @@ type AuthCheckRequestData struct {
 
 func (x *AuthCheckRequestData) Reset() {
 	*x = AuthCheckRequestData{}
-	mi := &file_app_admin_rpc_pb_auth_proto_msgTypes[1]
+	mi := &file_admin_auth_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -88,7 +88,7 @@ func (x *AuthCheckRequestData) String() string {
 func (*AuthCheckRequestData) ProtoMessage() {}
 
 func (x *AuthCheckRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_auth_proto_msgTypes[1]
+	mi := &file_admin_auth_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -101,7 +101,7 @@ func (x *AuthCheckRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AuthCheckRequestData.ProtoReflect.Descriptor instead.
 func (*AuthCheckRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_auth_proto_rawDescGZIP(), []int{1}
+	return file_admin_auth_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *AuthCheckRequestData) GetMethod() string {
@@ -134,7 +134,7 @@ type AuthCheckResponse struct {
 
 func (x *AuthCheckResponse) Reset() {
 	*x = AuthCheckResponse{}
-	mi := &file_app_admin_rpc_pb_auth_proto_msgTypes[2]
+	mi := &file_admin_auth_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -146,7 +146,7 @@ func (x *AuthCheckResponse) String() string {
 func (*AuthCheckResponse) ProtoMessage() {}
 
 func (x *AuthCheckResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_auth_proto_msgTypes[2]
+	mi := &file_admin_auth_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -159,7 +159,7 @@ func (x *AuthCheckResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AuthCheckResponse.ProtoReflect.Descriptor instead.
 func (*AuthCheckResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_auth_proto_rawDescGZIP(), []int{2}
+	return file_admin_auth_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *AuthCheckResponse) GetData() *AuthCheckResponseData {
@@ -182,7 +182,7 @@ type AuthCheckResponseData struct {
 
 func (x *AuthCheckResponseData) Reset() {
 	*x = AuthCheckResponseData{}
-	mi := &file_app_admin_rpc_pb_auth_proto_msgTypes[3]
+	mi := &file_admin_auth_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -194,7 +194,7 @@ func (x *AuthCheckResponseData) String() string {
 func (*AuthCheckResponseData) ProtoMessage() {}
 
 func (x *AuthCheckResponseData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_auth_proto_msgTypes[3]
+	mi := &file_admin_auth_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -207,7 +207,7 @@ func (x *AuthCheckResponseData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AuthCheckResponseData.ProtoReflect.Descriptor instead.
 func (*AuthCheckResponseData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_auth_proto_rawDescGZIP(), []int{3}
+	return file_admin_auth_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *AuthCheckResponseData) GetAuthenticationRequired() bool {
@@ -245,11 +245,11 @@ func (x *AuthCheckResponseData) GetAuthorized() bool {
 	return false
 }
 
-var File_app_admin_rpc_pb_auth_proto protoreflect.FileDescriptor
+var File_admin_auth_proto protoreflect.FileDescriptor
 
-const file_app_admin_rpc_pb_auth_proto_rawDesc = "" +
+const file_admin_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x1bapp/admin/rpc/pb/auth.proto\x12\x05admin\"C\n" +
+	"\x10admin_auth.proto\x12\x05admin\"C\n" +
 	"\x10AuthCheckRequest\x12/\n" +
 	"\x04data\x18\x01 \x01(\v2\x1b.admin.AuthCheckRequestDataR\x04data\"V\n" +
 	"\x14AuthCheckRequestData\x12\x16\n" +
@@ -271,25 +271,25 @@ const file_app_admin_rpc_pb_auth_proto_rawDesc = "" +
 	"\tAuthCheck\x12\x17.admin.AuthCheckRequest\x1a\x18.admin.AuthCheckResponseB'Z%zeebee-backend/app/admin/rpc/pb/adminb\x06proto3"
 
 var (
-	file_app_admin_rpc_pb_auth_proto_rawDescOnce sync.Once
-	file_app_admin_rpc_pb_auth_proto_rawDescData []byte
+	file_admin_auth_proto_rawDescOnce sync.Once
+	file_admin_auth_proto_rawDescData []byte
 )
 
-func file_app_admin_rpc_pb_auth_proto_rawDescGZIP() []byte {
-	file_app_admin_rpc_pb_auth_proto_rawDescOnce.Do(func() {
-		file_app_admin_rpc_pb_auth_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_auth_proto_rawDesc), len(file_app_admin_rpc_pb_auth_proto_rawDesc)))
+func file_admin_auth_proto_rawDescGZIP() []byte {
+	file_admin_auth_proto_rawDescOnce.Do(func() {
+		file_admin_auth_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_admin_auth_proto_rawDesc), len(file_admin_auth_proto_rawDesc)))
 	})
-	return file_app_admin_rpc_pb_auth_proto_rawDescData
+	return file_admin_auth_proto_rawDescData
 }
 
-var file_app_admin_rpc_pb_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
-var file_app_admin_rpc_pb_auth_proto_goTypes = []any{
+var file_admin_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_admin_auth_proto_goTypes = []any{
 	(*AuthCheckRequest)(nil),      // 0: admin.AuthCheckRequest
 	(*AuthCheckRequestData)(nil),  // 1: admin.AuthCheckRequestData
 	(*AuthCheckResponse)(nil),     // 2: admin.AuthCheckResponse
 	(*AuthCheckResponseData)(nil), // 3: admin.AuthCheckResponseData
 }
-var file_app_admin_rpc_pb_auth_proto_depIdxs = []int32{
+var file_admin_auth_proto_depIdxs = []int32{
 	1, // 0: admin.AuthCheckRequest.data:type_name -> admin.AuthCheckRequestData
 	3, // 1: admin.AuthCheckResponse.data:type_name -> admin.AuthCheckResponseData
 	0, // 2: admin.Auth.AuthCheck:input_type -> admin.AuthCheckRequest
@@ -301,26 +301,26 @@ var file_app_admin_rpc_pb_auth_proto_depIdxs = []int32{
 	0, // [0:2] is the sub-list for field type_name
 }
 
-func init() { file_app_admin_rpc_pb_auth_proto_init() }
-func file_app_admin_rpc_pb_auth_proto_init() {
-	if File_app_admin_rpc_pb_auth_proto != nil {
+func init() { file_admin_auth_proto_init() }
+func file_admin_auth_proto_init() {
+	if File_admin_auth_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_auth_proto_rawDesc), len(file_app_admin_rpc_pb_auth_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_admin_auth_proto_rawDesc), len(file_admin_auth_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_app_admin_rpc_pb_auth_proto_goTypes,
-		DependencyIndexes: file_app_admin_rpc_pb_auth_proto_depIdxs,
-		MessageInfos:      file_app_admin_rpc_pb_auth_proto_msgTypes,
+		GoTypes:           file_admin_auth_proto_goTypes,
+		DependencyIndexes: file_admin_auth_proto_depIdxs,
+		MessageInfos:      file_admin_auth_proto_msgTypes,
 	}.Build()
-	File_app_admin_rpc_pb_auth_proto = out.File
-	file_app_admin_rpc_pb_auth_proto_goTypes = nil
-	file_app_admin_rpc_pb_auth_proto_depIdxs = nil
+	File_admin_auth_proto = out.File
+	file_admin_auth_proto_goTypes = nil
+	file_admin_auth_proto_depIdxs = nil
 }

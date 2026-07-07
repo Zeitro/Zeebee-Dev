@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v7.35.1
-// source: app/admin/rpc/pb/pricing_plan_policy.proto
+// source: admin_pricing_plan_policy.proto
 
 package admin
 
@@ -32,7 +32,7 @@ type PricingPlanPolicyCreateRequest struct {
 
 func (x *PricingPlanPolicyCreateRequest) Reset() {
 	*x = PricingPlanPolicyCreateRequest{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_policy_proto_msgTypes[0]
+	mi := &file_admin_pricing_plan_policy_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -44,7 +44,7 @@ func (x *PricingPlanPolicyCreateRequest) String() string {
 func (*PricingPlanPolicyCreateRequest) ProtoMessage() {}
 
 func (x *PricingPlanPolicyCreateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_policy_proto_msgTypes[0]
+	mi := &file_admin_pricing_plan_policy_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -57,7 +57,7 @@ func (x *PricingPlanPolicyCreateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanPolicyCreateRequest.ProtoReflect.Descriptor instead.
 func (*PricingPlanPolicyCreateRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_policy_proto_rawDescGZIP(), []int{0}
+	return file_admin_pricing_plan_policy_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *PricingPlanPolicyCreateRequest) GetData() *PricingPlanPolicyCreateRequestData {
@@ -79,7 +79,7 @@ type PricingPlanPolicyCreateRequestData struct {
 
 func (x *PricingPlanPolicyCreateRequestData) Reset() {
 	*x = PricingPlanPolicyCreateRequestData{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_policy_proto_msgTypes[1]
+	mi := &file_admin_pricing_plan_policy_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -91,7 +91,7 @@ func (x *PricingPlanPolicyCreateRequestData) String() string {
 func (*PricingPlanPolicyCreateRequestData) ProtoMessage() {}
 
 func (x *PricingPlanPolicyCreateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_policy_proto_msgTypes[1]
+	mi := &file_admin_pricing_plan_policy_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -104,7 +104,7 @@ func (x *PricingPlanPolicyCreateRequestData) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use PricingPlanPolicyCreateRequestData.ProtoReflect.Descriptor instead.
 func (*PricingPlanPolicyCreateRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_policy_proto_rawDescGZIP(), []int{1}
+	return file_admin_pricing_plan_policy_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *PricingPlanPolicyCreateRequestData) GetPricingPlanId() int64 {
@@ -145,7 +145,7 @@ type PricingPlanPolicyUpdateRequest struct {
 
 func (x *PricingPlanPolicyUpdateRequest) Reset() {
 	*x = PricingPlanPolicyUpdateRequest{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_policy_proto_msgTypes[2]
+	mi := &file_admin_pricing_plan_policy_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -157,7 +157,7 @@ func (x *PricingPlanPolicyUpdateRequest) String() string {
 func (*PricingPlanPolicyUpdateRequest) ProtoMessage() {}
 
 func (x *PricingPlanPolicyUpdateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_policy_proto_msgTypes[2]
+	mi := &file_admin_pricing_plan_policy_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -170,7 +170,7 @@ func (x *PricingPlanPolicyUpdateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanPolicyUpdateRequest.ProtoReflect.Descriptor instead.
 func (*PricingPlanPolicyUpdateRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_policy_proto_rawDescGZIP(), []int{2}
+	return file_admin_pricing_plan_policy_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *PricingPlanPolicyUpdateRequest) GetData() *PricingPlanPolicyUpdateRequestData {
@@ -192,7 +192,7 @@ type PricingPlanPolicyUpdateRequestData struct {
 
 func (x *PricingPlanPolicyUpdateRequestData) Reset() {
 	*x = PricingPlanPolicyUpdateRequestData{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_policy_proto_msgTypes[3]
+	mi := &file_admin_pricing_plan_policy_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -204,7 +204,7 @@ func (x *PricingPlanPolicyUpdateRequestData) String() string {
 func (*PricingPlanPolicyUpdateRequestData) ProtoMessage() {}
 
 func (x *PricingPlanPolicyUpdateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_policy_proto_msgTypes[3]
+	mi := &file_admin_pricing_plan_policy_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -217,7 +217,7 @@ func (x *PricingPlanPolicyUpdateRequestData) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use PricingPlanPolicyUpdateRequestData.ProtoReflect.Descriptor instead.
 func (*PricingPlanPolicyUpdateRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_policy_proto_rawDescGZIP(), []int{3}
+	return file_admin_pricing_plan_policy_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *PricingPlanPolicyUpdateRequestData) GetId() int64 {
@@ -257,7 +257,7 @@ type PricingPlanPolicyDetailResponse struct {
 
 func (x *PricingPlanPolicyDetailResponse) Reset() {
 	*x = PricingPlanPolicyDetailResponse{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_policy_proto_msgTypes[4]
+	mi := &file_admin_pricing_plan_policy_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -269,7 +269,7 @@ func (x *PricingPlanPolicyDetailResponse) String() string {
 func (*PricingPlanPolicyDetailResponse) ProtoMessage() {}
 
 func (x *PricingPlanPolicyDetailResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_policy_proto_msgTypes[4]
+	mi := &file_admin_pricing_plan_policy_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -282,7 +282,7 @@ func (x *PricingPlanPolicyDetailResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanPolicyDetailResponse.ProtoReflect.Descriptor instead.
 func (*PricingPlanPolicyDetailResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_policy_proto_rawDescGZIP(), []int{4}
+	return file_admin_pricing_plan_policy_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *PricingPlanPolicyDetailResponse) GetData() *proto.PricingPlanPolicyEntity {
@@ -302,7 +302,7 @@ type PricingPlanPolicyDeleteRequest struct {
 
 func (x *PricingPlanPolicyDeleteRequest) Reset() {
 	*x = PricingPlanPolicyDeleteRequest{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_policy_proto_msgTypes[5]
+	mi := &file_admin_pricing_plan_policy_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -314,7 +314,7 @@ func (x *PricingPlanPolicyDeleteRequest) String() string {
 func (*PricingPlanPolicyDeleteRequest) ProtoMessage() {}
 
 func (x *PricingPlanPolicyDeleteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_policy_proto_msgTypes[5]
+	mi := &file_admin_pricing_plan_policy_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -327,7 +327,7 @@ func (x *PricingPlanPolicyDeleteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanPolicyDeleteRequest.ProtoReflect.Descriptor instead.
 func (*PricingPlanPolicyDeleteRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_policy_proto_rawDescGZIP(), []int{5}
+	return file_admin_pricing_plan_policy_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *PricingPlanPolicyDeleteRequest) GetData() *PricingPlanPolicyDeleteRequestData {
@@ -346,7 +346,7 @@ type PricingPlanPolicyDeleteRequestData struct {
 
 func (x *PricingPlanPolicyDeleteRequestData) Reset() {
 	*x = PricingPlanPolicyDeleteRequestData{}
-	mi := &file_app_admin_rpc_pb_pricing_plan_policy_proto_msgTypes[6]
+	mi := &file_admin_pricing_plan_policy_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -358,7 +358,7 @@ func (x *PricingPlanPolicyDeleteRequestData) String() string {
 func (*PricingPlanPolicyDeleteRequestData) ProtoMessage() {}
 
 func (x *PricingPlanPolicyDeleteRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_pricing_plan_policy_proto_msgTypes[6]
+	mi := &file_admin_pricing_plan_policy_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -371,7 +371,7 @@ func (x *PricingPlanPolicyDeleteRequestData) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use PricingPlanPolicyDeleteRequestData.ProtoReflect.Descriptor instead.
 func (*PricingPlanPolicyDeleteRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_pricing_plan_policy_proto_rawDescGZIP(), []int{6}
+	return file_admin_pricing_plan_policy_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *PricingPlanPolicyDeleteRequestData) GetId() int64 {
@@ -381,11 +381,11 @@ func (x *PricingPlanPolicyDeleteRequestData) GetId() int64 {
 	return 0
 }
 
-var File_app_admin_rpc_pb_pricing_plan_policy_proto protoreflect.FileDescriptor
+var File_admin_pricing_plan_policy_proto protoreflect.FileDescriptor
 
-const file_app_admin_rpc_pb_pricing_plan_policy_proto_rawDesc = "" +
+const file_admin_pricing_plan_policy_proto_rawDesc = "" +
 	"\n" +
-	"*app/admin/rpc/pb/pricing_plan_policy.proto\x12\x05admin\x1a\x12proto/common.proto\x1a\x12proto/entity.proto\"_\n" +
+	"\x1fadmin_pricing_plan_policy.proto\x12\x05admin\x1a\x12proto/common.proto\x1a\x12proto/entity.proto\"_\n" +
 	"\x1ePricingPlanPolicyCreateRequest\x12=\n" +
 	"\x04data\x18\x01 \x01(\v2).admin.PricingPlanPolicyCreateRequestDataR\x04data\"\xae\x01\n" +
 	"\"PricingPlanPolicyCreateRequestData\x12&\n" +
@@ -412,19 +412,19 @@ const file_app_admin_rpc_pb_pricing_plan_policy_proto_rawDesc = "" +
 	"\x06Delete\x12\x14.proto.PathIdRequest\x1a\x14.proto.EmptyResponseB'Z%zeebee-backend/app/admin/rpc/pb/adminb\x06proto3"
 
 var (
-	file_app_admin_rpc_pb_pricing_plan_policy_proto_rawDescOnce sync.Once
-	file_app_admin_rpc_pb_pricing_plan_policy_proto_rawDescData []byte
+	file_admin_pricing_plan_policy_proto_rawDescOnce sync.Once
+	file_admin_pricing_plan_policy_proto_rawDescData []byte
 )
 
-func file_app_admin_rpc_pb_pricing_plan_policy_proto_rawDescGZIP() []byte {
-	file_app_admin_rpc_pb_pricing_plan_policy_proto_rawDescOnce.Do(func() {
-		file_app_admin_rpc_pb_pricing_plan_policy_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_pricing_plan_policy_proto_rawDesc), len(file_app_admin_rpc_pb_pricing_plan_policy_proto_rawDesc)))
+func file_admin_pricing_plan_policy_proto_rawDescGZIP() []byte {
+	file_admin_pricing_plan_policy_proto_rawDescOnce.Do(func() {
+		file_admin_pricing_plan_policy_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_admin_pricing_plan_policy_proto_rawDesc), len(file_admin_pricing_plan_policy_proto_rawDesc)))
 	})
-	return file_app_admin_rpc_pb_pricing_plan_policy_proto_rawDescData
+	return file_admin_pricing_plan_policy_proto_rawDescData
 }
 
-var file_app_admin_rpc_pb_pricing_plan_policy_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
-var file_app_admin_rpc_pb_pricing_plan_policy_proto_goTypes = []any{
+var file_admin_pricing_plan_policy_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_admin_pricing_plan_policy_proto_goTypes = []any{
 	(*PricingPlanPolicyCreateRequest)(nil),     // 0: admin.PricingPlanPolicyCreateRequest
 	(*PricingPlanPolicyCreateRequestData)(nil), // 1: admin.PricingPlanPolicyCreateRequestData
 	(*PricingPlanPolicyUpdateRequest)(nil),     // 2: admin.PricingPlanPolicyUpdateRequest
@@ -436,7 +436,7 @@ var file_app_admin_rpc_pb_pricing_plan_policy_proto_goTypes = []any{
 	(*proto.PathIdRequest)(nil),                // 8: proto.PathIdRequest
 	(*proto.EmptyResponse)(nil),                // 9: proto.EmptyResponse
 }
-var file_app_admin_rpc_pb_pricing_plan_policy_proto_depIdxs = []int32{
+var file_admin_pricing_plan_policy_proto_depIdxs = []int32{
 	1, // 0: admin.PricingPlanPolicyCreateRequest.data:type_name -> admin.PricingPlanPolicyCreateRequestData
 	3, // 1: admin.PricingPlanPolicyUpdateRequest.data:type_name -> admin.PricingPlanPolicyUpdateRequestData
 	7, // 2: admin.PricingPlanPolicyDetailResponse.data:type_name -> proto.PricingPlanPolicyEntity
@@ -454,26 +454,26 @@ var file_app_admin_rpc_pb_pricing_plan_policy_proto_depIdxs = []int32{
 	0, // [0:4] is the sub-list for field type_name
 }
 
-func init() { file_app_admin_rpc_pb_pricing_plan_policy_proto_init() }
-func file_app_admin_rpc_pb_pricing_plan_policy_proto_init() {
-	if File_app_admin_rpc_pb_pricing_plan_policy_proto != nil {
+func init() { file_admin_pricing_plan_policy_proto_init() }
+func file_admin_pricing_plan_policy_proto_init() {
+	if File_admin_pricing_plan_policy_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_pricing_plan_policy_proto_rawDesc), len(file_app_admin_rpc_pb_pricing_plan_policy_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_admin_pricing_plan_policy_proto_rawDesc), len(file_admin_pricing_plan_policy_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_app_admin_rpc_pb_pricing_plan_policy_proto_goTypes,
-		DependencyIndexes: file_app_admin_rpc_pb_pricing_plan_policy_proto_depIdxs,
-		MessageInfos:      file_app_admin_rpc_pb_pricing_plan_policy_proto_msgTypes,
+		GoTypes:           file_admin_pricing_plan_policy_proto_goTypes,
+		DependencyIndexes: file_admin_pricing_plan_policy_proto_depIdxs,
+		MessageInfos:      file_admin_pricing_plan_policy_proto_msgTypes,
 	}.Build()
-	File_app_admin_rpc_pb_pricing_plan_policy_proto = out.File
-	file_app_admin_rpc_pb_pricing_plan_policy_proto_goTypes = nil
-	file_app_admin_rpc_pb_pricing_plan_policy_proto_depIdxs = nil
+	File_admin_pricing_plan_policy_proto = out.File
+	file_admin_pricing_plan_policy_proto_goTypes = nil
+	file_admin_pricing_plan_policy_proto_depIdxs = nil
 }

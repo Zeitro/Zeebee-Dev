@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v7.35.1
-// source: app/admin/rpc/pb/common.proto
+// source: admin_common.proto
 
 package admin
 
@@ -31,7 +31,7 @@ type OptionRequest struct {
 
 func (x *OptionRequest) Reset() {
 	*x = OptionRequest{}
-	mi := &file_app_admin_rpc_pb_common_proto_msgTypes[0]
+	mi := &file_admin_common_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -43,7 +43,7 @@ func (x *OptionRequest) String() string {
 func (*OptionRequest) ProtoMessage() {}
 
 func (x *OptionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_common_proto_msgTypes[0]
+	mi := &file_admin_common_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -56,7 +56,7 @@ func (x *OptionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OptionRequest.ProtoReflect.Descriptor instead.
 func (*OptionRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_common_proto_rawDescGZIP(), []int{0}
+	return file_admin_common_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *OptionRequest) GetData() *OptionRequestData {
@@ -75,7 +75,7 @@ type OptionRequestData struct {
 
 func (x *OptionRequestData) Reset() {
 	*x = OptionRequestData{}
-	mi := &file_app_admin_rpc_pb_common_proto_msgTypes[1]
+	mi := &file_admin_common_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -87,7 +87,7 @@ func (x *OptionRequestData) String() string {
 func (*OptionRequestData) ProtoMessage() {}
 
 func (x *OptionRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_common_proto_msgTypes[1]
+	mi := &file_admin_common_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -100,7 +100,7 @@ func (x *OptionRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OptionRequestData.ProtoReflect.Descriptor instead.
 func (*OptionRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_common_proto_rawDescGZIP(), []int{1}
+	return file_admin_common_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *OptionRequestData) GetName() string {
@@ -119,7 +119,7 @@ type OptionResponse struct {
 
 func (x *OptionResponse) Reset() {
 	*x = OptionResponse{}
-	mi := &file_app_admin_rpc_pb_common_proto_msgTypes[2]
+	mi := &file_admin_common_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -131,7 +131,7 @@ func (x *OptionResponse) String() string {
 func (*OptionResponse) ProtoMessage() {}
 
 func (x *OptionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_common_proto_msgTypes[2]
+	mi := &file_admin_common_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -144,7 +144,7 @@ func (x *OptionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OptionResponse.ProtoReflect.Descriptor instead.
 func (*OptionResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_common_proto_rawDescGZIP(), []int{2}
+	return file_admin_common_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *OptionResponse) GetData() []*proto.OptionEntity {
@@ -163,7 +163,7 @@ type UsCitiesRequest struct {
 
 func (x *UsCitiesRequest) Reset() {
 	*x = UsCitiesRequest{}
-	mi := &file_app_admin_rpc_pb_common_proto_msgTypes[3]
+	mi := &file_admin_common_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -175,7 +175,7 @@ func (x *UsCitiesRequest) String() string {
 func (*UsCitiesRequest) ProtoMessage() {}
 
 func (x *UsCitiesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_common_proto_msgTypes[3]
+	mi := &file_admin_common_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -188,7 +188,7 @@ func (x *UsCitiesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UsCitiesRequest.ProtoReflect.Descriptor instead.
 func (*UsCitiesRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_common_proto_rawDescGZIP(), []int{3}
+	return file_admin_common_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *UsCitiesRequest) GetData() *UsCitiesRequestData {
@@ -207,7 +207,7 @@ type UsCitiesRequestData struct {
 
 func (x *UsCitiesRequestData) Reset() {
 	*x = UsCitiesRequestData{}
-	mi := &file_app_admin_rpc_pb_common_proto_msgTypes[4]
+	mi := &file_admin_common_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -219,7 +219,7 @@ func (x *UsCitiesRequestData) String() string {
 func (*UsCitiesRequestData) ProtoMessage() {}
 
 func (x *UsCitiesRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_common_proto_msgTypes[4]
+	mi := &file_admin_common_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -232,7 +232,7 @@ func (x *UsCitiesRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UsCitiesRequestData.ProtoReflect.Descriptor instead.
 func (*UsCitiesRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_common_proto_rawDescGZIP(), []int{4}
+	return file_admin_common_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *UsCitiesRequestData) GetStateUsps() string {
@@ -242,11 +242,11 @@ func (x *UsCitiesRequestData) GetStateUsps() string {
 	return ""
 }
 
-var File_app_admin_rpc_pb_common_proto protoreflect.FileDescriptor
+var File_admin_common_proto protoreflect.FileDescriptor
 
-const file_app_admin_rpc_pb_common_proto_rawDesc = "" +
+const file_admin_common_proto_rawDesc = "" +
 	"\n" +
-	"\x1dapp/admin/rpc/pb/common.proto\x12\x05admin\x1a\x12proto/common.proto\x1a\x12proto/entity.proto\"=\n" +
+	"\x12admin_common.proto\x12\x05admin\x1a\x12proto/common.proto\x1a\x12proto/entity.proto\"=\n" +
 	"\rOptionRequest\x12,\n" +
 	"\x04data\x18\x01 \x01(\v2\x18.admin.OptionRequestDataR\x04data\"'\n" +
 	"\x11OptionRequestData\x12\x12\n" +
@@ -266,19 +266,19 @@ const file_app_admin_rpc_pb_common_proto_rawDesc = "" +
 	"\bSyncData\x12\x13.proto.EmptyRequest\x1a\x14.proto.EmptyResponseB'Z%zeebee-backend/app/admin/rpc/pb/adminb\x06proto3"
 
 var (
-	file_app_admin_rpc_pb_common_proto_rawDescOnce sync.Once
-	file_app_admin_rpc_pb_common_proto_rawDescData []byte
+	file_admin_common_proto_rawDescOnce sync.Once
+	file_admin_common_proto_rawDescData []byte
 )
 
-func file_app_admin_rpc_pb_common_proto_rawDescGZIP() []byte {
-	file_app_admin_rpc_pb_common_proto_rawDescOnce.Do(func() {
-		file_app_admin_rpc_pb_common_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_common_proto_rawDesc), len(file_app_admin_rpc_pb_common_proto_rawDesc)))
+func file_admin_common_proto_rawDescGZIP() []byte {
+	file_admin_common_proto_rawDescOnce.Do(func() {
+		file_admin_common_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_admin_common_proto_rawDesc), len(file_admin_common_proto_rawDesc)))
 	})
-	return file_app_admin_rpc_pb_common_proto_rawDescData
+	return file_admin_common_proto_rawDescData
 }
 
-var file_app_admin_rpc_pb_common_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
-var file_app_admin_rpc_pb_common_proto_goTypes = []any{
+var file_admin_common_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_admin_common_proto_goTypes = []any{
 	(*OptionRequest)(nil),             // 0: admin.OptionRequest
 	(*OptionRequestData)(nil),         // 1: admin.OptionRequestData
 	(*OptionResponse)(nil),            // 2: admin.OptionResponse
@@ -289,7 +289,7 @@ var file_app_admin_rpc_pb_common_proto_goTypes = []any{
 	(*proto.StringSliceResponse)(nil), // 7: proto.StringSliceResponse
 	(*proto.EmptyResponse)(nil),       // 8: proto.EmptyResponse
 }
-var file_app_admin_rpc_pb_common_proto_depIdxs = []int32{
+var file_admin_common_proto_depIdxs = []int32{
 	1, // 0: admin.OptionRequest.data:type_name -> admin.OptionRequestData
 	5, // 1: admin.OptionResponse.data:type_name -> proto.OptionEntity
 	4, // 2: admin.UsCitiesRequest.data:type_name -> admin.UsCitiesRequestData
@@ -308,26 +308,26 @@ var file_app_admin_rpc_pb_common_proto_depIdxs = []int32{
 	0, // [0:3] is the sub-list for field type_name
 }
 
-func init() { file_app_admin_rpc_pb_common_proto_init() }
-func file_app_admin_rpc_pb_common_proto_init() {
-	if File_app_admin_rpc_pb_common_proto != nil {
+func init() { file_admin_common_proto_init() }
+func file_admin_common_proto_init() {
+	if File_admin_common_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_common_proto_rawDesc), len(file_app_admin_rpc_pb_common_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_admin_common_proto_rawDesc), len(file_admin_common_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_app_admin_rpc_pb_common_proto_goTypes,
-		DependencyIndexes: file_app_admin_rpc_pb_common_proto_depIdxs,
-		MessageInfos:      file_app_admin_rpc_pb_common_proto_msgTypes,
+		GoTypes:           file_admin_common_proto_goTypes,
+		DependencyIndexes: file_admin_common_proto_depIdxs,
+		MessageInfos:      file_admin_common_proto_msgTypes,
 	}.Build()
-	File_app_admin_rpc_pb_common_proto = out.File
-	file_app_admin_rpc_pb_common_proto_goTypes = nil
-	file_app_admin_rpc_pb_common_proto_depIdxs = nil
+	File_admin_common_proto = out.File
+	file_admin_common_proto_goTypes = nil
+	file_admin_common_proto_depIdxs = nil
 }

@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v7.35.1
-// source: app/admin/rpc/pb/organization.proto
+// source: admin_organization.proto
 
 package admin
 
@@ -50,7 +50,7 @@ type OrganizationPageEntity struct {
 
 func (x *OrganizationPageEntity) Reset() {
 	*x = OrganizationPageEntity{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[0]
+	mi := &file_admin_organization_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -62,7 +62,7 @@ func (x *OrganizationPageEntity) String() string {
 func (*OrganizationPageEntity) ProtoMessage() {}
 
 func (x *OrganizationPageEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[0]
+	mi := &file_admin_organization_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -75,7 +75,7 @@ func (x *OrganizationPageEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrganizationPageEntity.ProtoReflect.Descriptor instead.
 func (*OrganizationPageEntity) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{0}
+	return file_admin_organization_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *OrganizationPageEntity) GetId() int64 {
@@ -228,7 +228,7 @@ type OrganizationPageRequest struct {
 
 func (x *OrganizationPageRequest) Reset() {
 	*x = OrganizationPageRequest{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[1]
+	mi := &file_admin_organization_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -240,7 +240,7 @@ func (x *OrganizationPageRequest) String() string {
 func (*OrganizationPageRequest) ProtoMessage() {}
 
 func (x *OrganizationPageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[1]
+	mi := &file_admin_organization_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -253,7 +253,7 @@ func (x *OrganizationPageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrganizationPageRequest.ProtoReflect.Descriptor instead.
 func (*OrganizationPageRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{1}
+	return file_admin_organization_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *OrganizationPageRequest) GetData() *OrganizationPageRequestData {
@@ -275,7 +275,7 @@ type OrganizationPageRequestData struct {
 
 func (x *OrganizationPageRequestData) Reset() {
 	*x = OrganizationPageRequestData{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[2]
+	mi := &file_admin_organization_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -287,7 +287,7 @@ func (x *OrganizationPageRequestData) String() string {
 func (*OrganizationPageRequestData) ProtoMessage() {}
 
 func (x *OrganizationPageRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[2]
+	mi := &file_admin_organization_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -300,7 +300,7 @@ func (x *OrganizationPageRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrganizationPageRequestData.ProtoReflect.Descriptor instead.
 func (*OrganizationPageRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{2}
+	return file_admin_organization_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *OrganizationPageRequestData) GetPage() int64 {
@@ -342,7 +342,7 @@ type OrganizationPageRequestFilter struct {
 
 func (x *OrganizationPageRequestFilter) Reset() {
 	*x = OrganizationPageRequestFilter{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[3]
+	mi := &file_admin_organization_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -354,7 +354,7 @@ func (x *OrganizationPageRequestFilter) String() string {
 func (*OrganizationPageRequestFilter) ProtoMessage() {}
 
 func (x *OrganizationPageRequestFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[3]
+	mi := &file_admin_organization_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -367,7 +367,7 @@ func (x *OrganizationPageRequestFilter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrganizationPageRequestFilter.ProtoReflect.Descriptor instead.
 func (*OrganizationPageRequestFilter) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{3}
+	return file_admin_organization_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *OrganizationPageRequestFilter) GetKeyword() string {
@@ -401,7 +401,7 @@ type OrganizationPageRequestSorter struct {
 
 func (x *OrganizationPageRequestSorter) Reset() {
 	*x = OrganizationPageRequestSorter{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[4]
+	mi := &file_admin_organization_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -413,7 +413,7 @@ func (x *OrganizationPageRequestSorter) String() string {
 func (*OrganizationPageRequestSorter) ProtoMessage() {}
 
 func (x *OrganizationPageRequestSorter) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[4]
+	mi := &file_admin_organization_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -426,7 +426,7 @@ func (x *OrganizationPageRequestSorter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrganizationPageRequestSorter.ProtoReflect.Descriptor instead.
 func (*OrganizationPageRequestSorter) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{4}
+	return file_admin_organization_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *OrganizationPageRequestSorter) GetColumn() string {
@@ -453,7 +453,7 @@ type OrganizationPageResponse struct {
 
 func (x *OrganizationPageResponse) Reset() {
 	*x = OrganizationPageResponse{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[5]
+	mi := &file_admin_organization_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -465,7 +465,7 @@ func (x *OrganizationPageResponse) String() string {
 func (*OrganizationPageResponse) ProtoMessage() {}
 
 func (x *OrganizationPageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[5]
+	mi := &file_admin_organization_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -478,7 +478,7 @@ func (x *OrganizationPageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrganizationPageResponse.ProtoReflect.Descriptor instead.
 func (*OrganizationPageResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{5}
+	return file_admin_organization_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *OrganizationPageResponse) GetData() *OrganizationPageResponseData {
@@ -501,7 +501,7 @@ type OrganizationPageResponseData struct {
 
 func (x *OrganizationPageResponseData) Reset() {
 	*x = OrganizationPageResponseData{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[6]
+	mi := &file_admin_organization_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -513,7 +513,7 @@ func (x *OrganizationPageResponseData) String() string {
 func (*OrganizationPageResponseData) ProtoMessage() {}
 
 func (x *OrganizationPageResponseData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[6]
+	mi := &file_admin_organization_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -526,7 +526,7 @@ func (x *OrganizationPageResponseData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrganizationPageResponseData.ProtoReflect.Descriptor instead.
 func (*OrganizationPageResponseData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{6}
+	return file_admin_organization_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *OrganizationPageResponseData) GetPage() int64 {
@@ -574,7 +574,7 @@ type OrganizationCreateLenderRequest struct {
 
 func (x *OrganizationCreateLenderRequest) Reset() {
 	*x = OrganizationCreateLenderRequest{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[7]
+	mi := &file_admin_organization_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -586,7 +586,7 @@ func (x *OrganizationCreateLenderRequest) String() string {
 func (*OrganizationCreateLenderRequest) ProtoMessage() {}
 
 func (x *OrganizationCreateLenderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[7]
+	mi := &file_admin_organization_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -599,7 +599,7 @@ func (x *OrganizationCreateLenderRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrganizationCreateLenderRequest.ProtoReflect.Descriptor instead.
 func (*OrganizationCreateLenderRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{7}
+	return file_admin_organization_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *OrganizationCreateLenderRequest) GetData() *OrganizationCreateLenderRequestData {
@@ -619,7 +619,7 @@ type OrganizationCreateLenderRequestData struct {
 
 func (x *OrganizationCreateLenderRequestData) Reset() {
 	*x = OrganizationCreateLenderRequestData{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[8]
+	mi := &file_admin_organization_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -631,7 +631,7 @@ func (x *OrganizationCreateLenderRequestData) String() string {
 func (*OrganizationCreateLenderRequestData) ProtoMessage() {}
 
 func (x *OrganizationCreateLenderRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[8]
+	mi := &file_admin_organization_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -644,7 +644,7 @@ func (x *OrganizationCreateLenderRequestData) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use OrganizationCreateLenderRequestData.ProtoReflect.Descriptor instead.
 func (*OrganizationCreateLenderRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{8}
+	return file_admin_organization_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *OrganizationCreateLenderRequestData) GetOwner() *OrganizationCreateLenderUserEntity {
@@ -673,7 +673,7 @@ type OrganizationCreateLenderUserEntity struct {
 
 func (x *OrganizationCreateLenderUserEntity) Reset() {
 	*x = OrganizationCreateLenderUserEntity{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[9]
+	mi := &file_admin_organization_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -685,7 +685,7 @@ func (x *OrganizationCreateLenderUserEntity) String() string {
 func (*OrganizationCreateLenderUserEntity) ProtoMessage() {}
 
 func (x *OrganizationCreateLenderUserEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[9]
+	mi := &file_admin_organization_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -698,7 +698,7 @@ func (x *OrganizationCreateLenderUserEntity) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use OrganizationCreateLenderUserEntity.ProtoReflect.Descriptor instead.
 func (*OrganizationCreateLenderUserEntity) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{9}
+	return file_admin_organization_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *OrganizationCreateLenderUserEntity) GetEmail() string {
@@ -746,7 +746,7 @@ type OrganizationCreateLenderOrganizationEntity struct {
 
 func (x *OrganizationCreateLenderOrganizationEntity) Reset() {
 	*x = OrganizationCreateLenderOrganizationEntity{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[10]
+	mi := &file_admin_organization_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -758,7 +758,7 @@ func (x *OrganizationCreateLenderOrganizationEntity) String() string {
 func (*OrganizationCreateLenderOrganizationEntity) ProtoMessage() {}
 
 func (x *OrganizationCreateLenderOrganizationEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[10]
+	mi := &file_admin_organization_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -771,7 +771,7 @@ func (x *OrganizationCreateLenderOrganizationEntity) ProtoReflect() protoreflect
 
 // Deprecated: Use OrganizationCreateLenderOrganizationEntity.ProtoReflect.Descriptor instead.
 func (*OrganizationCreateLenderOrganizationEntity) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{10}
+	return file_admin_organization_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *OrganizationCreateLenderOrganizationEntity) GetName() string {
@@ -847,7 +847,7 @@ type OrganizationUpdateLenderRequest struct {
 
 func (x *OrganizationUpdateLenderRequest) Reset() {
 	*x = OrganizationUpdateLenderRequest{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[11]
+	mi := &file_admin_organization_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -859,7 +859,7 @@ func (x *OrganizationUpdateLenderRequest) String() string {
 func (*OrganizationUpdateLenderRequest) ProtoMessage() {}
 
 func (x *OrganizationUpdateLenderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[11]
+	mi := &file_admin_organization_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -872,7 +872,7 @@ func (x *OrganizationUpdateLenderRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrganizationUpdateLenderRequest.ProtoReflect.Descriptor instead.
 func (*OrganizationUpdateLenderRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{11}
+	return file_admin_organization_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *OrganizationUpdateLenderRequest) GetData() *OrganizationUpdateLenderRequestData {
@@ -900,7 +900,7 @@ type OrganizationUpdateLenderRequestData struct {
 
 func (x *OrganizationUpdateLenderRequestData) Reset() {
 	*x = OrganizationUpdateLenderRequestData{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[12]
+	mi := &file_admin_organization_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -912,7 +912,7 @@ func (x *OrganizationUpdateLenderRequestData) String() string {
 func (*OrganizationUpdateLenderRequestData) ProtoMessage() {}
 
 func (x *OrganizationUpdateLenderRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[12]
+	mi := &file_admin_organization_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -925,7 +925,7 @@ func (x *OrganizationUpdateLenderRequestData) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use OrganizationUpdateLenderRequestData.ProtoReflect.Descriptor instead.
 func (*OrganizationUpdateLenderRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{12}
+	return file_admin_organization_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *OrganizationUpdateLenderRequestData) GetId() int64 {
@@ -1008,7 +1008,7 @@ type OrganizationDetailResponse struct {
 
 func (x *OrganizationDetailResponse) Reset() {
 	*x = OrganizationDetailResponse{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[13]
+	mi := &file_admin_organization_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1020,7 +1020,7 @@ func (x *OrganizationDetailResponse) String() string {
 func (*OrganizationDetailResponse) ProtoMessage() {}
 
 func (x *OrganizationDetailResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[13]
+	mi := &file_admin_organization_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1033,7 +1033,7 @@ func (x *OrganizationDetailResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrganizationDetailResponse.ProtoReflect.Descriptor instead.
 func (*OrganizationDetailResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{13}
+	return file_admin_organization_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *OrganizationDetailResponse) GetData() *proto.OrganizationEntity {
@@ -1053,7 +1053,7 @@ type OrganizationUpdateOrderRequest struct {
 
 func (x *OrganizationUpdateOrderRequest) Reset() {
 	*x = OrganizationUpdateOrderRequest{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[14]
+	mi := &file_admin_organization_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1065,7 +1065,7 @@ func (x *OrganizationUpdateOrderRequest) String() string {
 func (*OrganizationUpdateOrderRequest) ProtoMessage() {}
 
 func (x *OrganizationUpdateOrderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[14]
+	mi := &file_admin_organization_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1078,7 +1078,7 @@ func (x *OrganizationUpdateOrderRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrganizationUpdateOrderRequest.ProtoReflect.Descriptor instead.
 func (*OrganizationUpdateOrderRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{14}
+	return file_admin_organization_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *OrganizationUpdateOrderRequest) GetData() *OrganizationUpdateOrderRequestData {
@@ -1098,7 +1098,7 @@ type OrganizationUpdateOrderRequestData struct {
 
 func (x *OrganizationUpdateOrderRequestData) Reset() {
 	*x = OrganizationUpdateOrderRequestData{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[15]
+	mi := &file_admin_organization_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1110,7 +1110,7 @@ func (x *OrganizationUpdateOrderRequestData) String() string {
 func (*OrganizationUpdateOrderRequestData) ProtoMessage() {}
 
 func (x *OrganizationUpdateOrderRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[15]
+	mi := &file_admin_organization_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1123,7 +1123,7 @@ func (x *OrganizationUpdateOrderRequestData) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use OrganizationUpdateOrderRequestData.ProtoReflect.Descriptor instead.
 func (*OrganizationUpdateOrderRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{15}
+	return file_admin_organization_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *OrganizationUpdateOrderRequestData) GetId() int64 {
@@ -1149,7 +1149,7 @@ type OrganizationSwitchStatusRequest struct {
 
 func (x *OrganizationSwitchStatusRequest) Reset() {
 	*x = OrganizationSwitchStatusRequest{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[16]
+	mi := &file_admin_organization_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1161,7 +1161,7 @@ func (x *OrganizationSwitchStatusRequest) String() string {
 func (*OrganizationSwitchStatusRequest) ProtoMessage() {}
 
 func (x *OrganizationSwitchStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[16]
+	mi := &file_admin_organization_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1174,7 +1174,7 @@ func (x *OrganizationSwitchStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrganizationSwitchStatusRequest.ProtoReflect.Descriptor instead.
 func (*OrganizationSwitchStatusRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{16}
+	return file_admin_organization_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *OrganizationSwitchStatusRequest) GetData() *OrganizationSwitchStatusRequestData {
@@ -1194,7 +1194,7 @@ type OrganizationSwitchStatusRequestData struct {
 
 func (x *OrganizationSwitchStatusRequestData) Reset() {
 	*x = OrganizationSwitchStatusRequestData{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[17]
+	mi := &file_admin_organization_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1206,7 +1206,7 @@ func (x *OrganizationSwitchStatusRequestData) String() string {
 func (*OrganizationSwitchStatusRequestData) ProtoMessage() {}
 
 func (x *OrganizationSwitchStatusRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[17]
+	mi := &file_admin_organization_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1219,7 +1219,7 @@ func (x *OrganizationSwitchStatusRequestData) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use OrganizationSwitchStatusRequestData.ProtoReflect.Descriptor instead.
 func (*OrganizationSwitchStatusRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{17}
+	return file_admin_organization_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *OrganizationSwitchStatusRequestData) GetId() int64 {
@@ -1246,7 +1246,7 @@ type OrganizationSelectOptionsRequest struct {
 
 func (x *OrganizationSelectOptionsRequest) Reset() {
 	*x = OrganizationSelectOptionsRequest{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[18]
+	mi := &file_admin_organization_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1258,7 +1258,7 @@ func (x *OrganizationSelectOptionsRequest) String() string {
 func (*OrganizationSelectOptionsRequest) ProtoMessage() {}
 
 func (x *OrganizationSelectOptionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[18]
+	mi := &file_admin_organization_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1271,7 +1271,7 @@ func (x *OrganizationSelectOptionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrganizationSelectOptionsRequest.ProtoReflect.Descriptor instead.
 func (*OrganizationSelectOptionsRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{18}
+	return file_admin_organization_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *OrganizationSelectOptionsRequest) GetData() *OrganizationSelectOptionsRequestData {
@@ -1290,7 +1290,7 @@ type OrganizationSelectOptionsRequestData struct {
 
 func (x *OrganizationSelectOptionsRequestData) Reset() {
 	*x = OrganizationSelectOptionsRequestData{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[19]
+	mi := &file_admin_organization_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1302,7 +1302,7 @@ func (x *OrganizationSelectOptionsRequestData) String() string {
 func (*OrganizationSelectOptionsRequestData) ProtoMessage() {}
 
 func (x *OrganizationSelectOptionsRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[19]
+	mi := &file_admin_organization_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1315,7 +1315,7 @@ func (x *OrganizationSelectOptionsRequestData) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use OrganizationSelectOptionsRequestData.ProtoReflect.Descriptor instead.
 func (*OrganizationSelectOptionsRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{19}
+	return file_admin_organization_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *OrganizationSelectOptionsRequestData) GetType() string {
@@ -1335,7 +1335,7 @@ type OrganizationSelectOptionsResponse struct {
 
 func (x *OrganizationSelectOptionsResponse) Reset() {
 	*x = OrganizationSelectOptionsResponse{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[20]
+	mi := &file_admin_organization_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1347,7 +1347,7 @@ func (x *OrganizationSelectOptionsResponse) String() string {
 func (*OrganizationSelectOptionsResponse) ProtoMessage() {}
 
 func (x *OrganizationSelectOptionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[20]
+	mi := &file_admin_organization_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1360,7 +1360,7 @@ func (x *OrganizationSelectOptionsResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use OrganizationSelectOptionsResponse.ProtoReflect.Descriptor instead.
 func (*OrganizationSelectOptionsResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{20}
+	return file_admin_organization_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *OrganizationSelectOptionsResponse) GetData() []*proto.OrganizationOptionsEntity {
@@ -1384,7 +1384,7 @@ type LenderDiscoverSettingsEntity struct {
 
 func (x *LenderDiscoverSettingsEntity) Reset() {
 	*x = LenderDiscoverSettingsEntity{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[21]
+	mi := &file_admin_organization_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1396,7 +1396,7 @@ func (x *LenderDiscoverSettingsEntity) String() string {
 func (*LenderDiscoverSettingsEntity) ProtoMessage() {}
 
 func (x *LenderDiscoverSettingsEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[21]
+	mi := &file_admin_organization_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1409,7 +1409,7 @@ func (x *LenderDiscoverSettingsEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LenderDiscoverSettingsEntity.ProtoReflect.Descriptor instead.
 func (*LenderDiscoverSettingsEntity) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{21}
+	return file_admin_organization_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *LenderDiscoverSettingsEntity) GetScheduleEnabled() bool {
@@ -1463,7 +1463,7 @@ type LenderDiscoverSettingsResponse struct {
 
 func (x *LenderDiscoverSettingsResponse) Reset() {
 	*x = LenderDiscoverSettingsResponse{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[22]
+	mi := &file_admin_organization_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1475,7 +1475,7 @@ func (x *LenderDiscoverSettingsResponse) String() string {
 func (*LenderDiscoverSettingsResponse) ProtoMessage() {}
 
 func (x *LenderDiscoverSettingsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[22]
+	mi := &file_admin_organization_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1488,7 +1488,7 @@ func (x *LenderDiscoverSettingsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LenderDiscoverSettingsResponse.ProtoReflect.Descriptor instead.
 func (*LenderDiscoverSettingsResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{22}
+	return file_admin_organization_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *LenderDiscoverSettingsResponse) GetData() *LenderDiscoverSettingsEntity {
@@ -1507,7 +1507,7 @@ type LenderDiscoverUpdateSettingsRequest struct {
 
 func (x *LenderDiscoverUpdateSettingsRequest) Reset() {
 	*x = LenderDiscoverUpdateSettingsRequest{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[23]
+	mi := &file_admin_organization_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1519,7 +1519,7 @@ func (x *LenderDiscoverUpdateSettingsRequest) String() string {
 func (*LenderDiscoverUpdateSettingsRequest) ProtoMessage() {}
 
 func (x *LenderDiscoverUpdateSettingsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[23]
+	mi := &file_admin_organization_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1532,7 +1532,7 @@ func (x *LenderDiscoverUpdateSettingsRequest) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use LenderDiscoverUpdateSettingsRequest.ProtoReflect.Descriptor instead.
 func (*LenderDiscoverUpdateSettingsRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{23}
+	return file_admin_organization_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *LenderDiscoverUpdateSettingsRequest) GetData() *LenderDiscoverUpdateSettingsRequestData {
@@ -1557,7 +1557,7 @@ type LenderDiscoverUpdateSettingsRequestData struct {
 
 func (x *LenderDiscoverUpdateSettingsRequestData) Reset() {
 	*x = LenderDiscoverUpdateSettingsRequestData{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[24]
+	mi := &file_admin_organization_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1569,7 +1569,7 @@ func (x *LenderDiscoverUpdateSettingsRequestData) String() string {
 func (*LenderDiscoverUpdateSettingsRequestData) ProtoMessage() {}
 
 func (x *LenderDiscoverUpdateSettingsRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[24]
+	mi := &file_admin_organization_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1582,7 +1582,7 @@ func (x *LenderDiscoverUpdateSettingsRequestData) ProtoReflect() protoreflect.Me
 
 // Deprecated: Use LenderDiscoverUpdateSettingsRequestData.ProtoReflect.Descriptor instead.
 func (*LenderDiscoverUpdateSettingsRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{24}
+	return file_admin_organization_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *LenderDiscoverUpdateSettingsRequestData) GetScheduleEnabled() bool {
@@ -1643,7 +1643,7 @@ type LenderDiscoverRunRequest struct {
 
 func (x *LenderDiscoverRunRequest) Reset() {
 	*x = LenderDiscoverRunRequest{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[25]
+	mi := &file_admin_organization_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1655,7 +1655,7 @@ func (x *LenderDiscoverRunRequest) String() string {
 func (*LenderDiscoverRunRequest) ProtoMessage() {}
 
 func (x *LenderDiscoverRunRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[25]
+	mi := &file_admin_organization_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1668,7 +1668,7 @@ func (x *LenderDiscoverRunRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LenderDiscoverRunRequest.ProtoReflect.Descriptor instead.
 func (*LenderDiscoverRunRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{25}
+	return file_admin_organization_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *LenderDiscoverRunRequest) GetData() *LenderDiscoverRunRequestData {
@@ -1687,7 +1687,7 @@ type LenderDiscoverRunRequestData struct {
 
 func (x *LenderDiscoverRunRequestData) Reset() {
 	*x = LenderDiscoverRunRequestData{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[26]
+	mi := &file_admin_organization_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1699,7 +1699,7 @@ func (x *LenderDiscoverRunRequestData) String() string {
 func (*LenderDiscoverRunRequestData) ProtoMessage() {}
 
 func (x *LenderDiscoverRunRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[26]
+	mi := &file_admin_organization_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1712,7 +1712,7 @@ func (x *LenderDiscoverRunRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LenderDiscoverRunRequestData.ProtoReflect.Descriptor instead.
 func (*LenderDiscoverRunRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{26}
+	return file_admin_organization_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *LenderDiscoverRunRequestData) GetTrigger() string {
@@ -1734,7 +1734,7 @@ type LenderDiscoverRunStats struct {
 
 func (x *LenderDiscoverRunStats) Reset() {
 	*x = LenderDiscoverRunStats{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[27]
+	mi := &file_admin_organization_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1746,7 +1746,7 @@ func (x *LenderDiscoverRunStats) String() string {
 func (*LenderDiscoverRunStats) ProtoMessage() {}
 
 func (x *LenderDiscoverRunStats) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[27]
+	mi := &file_admin_organization_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1759,7 +1759,7 @@ func (x *LenderDiscoverRunStats) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LenderDiscoverRunStats.ProtoReflect.Descriptor instead.
 func (*LenderDiscoverRunStats) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{27}
+	return file_admin_organization_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *LenderDiscoverRunStats) GetRequestedCount() int32 {
@@ -1805,7 +1805,7 @@ type LenderDiscoverRunEntity struct {
 
 func (x *LenderDiscoverRunEntity) Reset() {
 	*x = LenderDiscoverRunEntity{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[28]
+	mi := &file_admin_organization_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1817,7 +1817,7 @@ func (x *LenderDiscoverRunEntity) String() string {
 func (*LenderDiscoverRunEntity) ProtoMessage() {}
 
 func (x *LenderDiscoverRunEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[28]
+	mi := &file_admin_organization_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1830,7 +1830,7 @@ func (x *LenderDiscoverRunEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LenderDiscoverRunEntity.ProtoReflect.Descriptor instead.
 func (*LenderDiscoverRunEntity) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{28}
+	return file_admin_organization_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *LenderDiscoverRunEntity) GetId() int64 {
@@ -1891,7 +1891,7 @@ type LenderDiscoverRunResponse struct {
 
 func (x *LenderDiscoverRunResponse) Reset() {
 	*x = LenderDiscoverRunResponse{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[29]
+	mi := &file_admin_organization_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1903,7 +1903,7 @@ func (x *LenderDiscoverRunResponse) String() string {
 func (*LenderDiscoverRunResponse) ProtoMessage() {}
 
 func (x *LenderDiscoverRunResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[29]
+	mi := &file_admin_organization_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1916,7 +1916,7 @@ func (x *LenderDiscoverRunResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LenderDiscoverRunResponse.ProtoReflect.Descriptor instead.
 func (*LenderDiscoverRunResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{29}
+	return file_admin_organization_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *LenderDiscoverRunResponse) GetData() *LenderDiscoverRunEntity {
@@ -1945,7 +1945,7 @@ type LenderDiscoverCandidateEntity struct {
 
 func (x *LenderDiscoverCandidateEntity) Reset() {
 	*x = LenderDiscoverCandidateEntity{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[30]
+	mi := &file_admin_organization_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1957,7 +1957,7 @@ func (x *LenderDiscoverCandidateEntity) String() string {
 func (*LenderDiscoverCandidateEntity) ProtoMessage() {}
 
 func (x *LenderDiscoverCandidateEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[30]
+	mi := &file_admin_organization_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1970,7 +1970,7 @@ func (x *LenderDiscoverCandidateEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LenderDiscoverCandidateEntity.ProtoReflect.Descriptor instead.
 func (*LenderDiscoverCandidateEntity) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{30}
+	return file_admin_organization_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *LenderDiscoverCandidateEntity) GetDedupeStatus() string {
@@ -2061,7 +2061,7 @@ type LenderDiscoverPreviewResponseData struct {
 
 func (x *LenderDiscoverPreviewResponseData) Reset() {
 	*x = LenderDiscoverPreviewResponseData{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[31]
+	mi := &file_admin_organization_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2073,7 +2073,7 @@ func (x *LenderDiscoverPreviewResponseData) String() string {
 func (*LenderDiscoverPreviewResponseData) ProtoMessage() {}
 
 func (x *LenderDiscoverPreviewResponseData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[31]
+	mi := &file_admin_organization_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2086,7 +2086,7 @@ func (x *LenderDiscoverPreviewResponseData) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use LenderDiscoverPreviewResponseData.ProtoReflect.Descriptor instead.
 func (*LenderDiscoverPreviewResponseData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{31}
+	return file_admin_organization_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *LenderDiscoverPreviewResponseData) GetCandidates() []*LenderDiscoverCandidateEntity {
@@ -2119,7 +2119,7 @@ type LenderDiscoverPreviewResponse struct {
 
 func (x *LenderDiscoverPreviewResponse) Reset() {
 	*x = LenderDiscoverPreviewResponse{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[32]
+	mi := &file_admin_organization_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2131,7 +2131,7 @@ func (x *LenderDiscoverPreviewResponse) String() string {
 func (*LenderDiscoverPreviewResponse) ProtoMessage() {}
 
 func (x *LenderDiscoverPreviewResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[32]
+	mi := &file_admin_organization_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2144,7 +2144,7 @@ func (x *LenderDiscoverPreviewResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LenderDiscoverPreviewResponse.ProtoReflect.Descriptor instead.
 func (*LenderDiscoverPreviewResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{32}
+	return file_admin_organization_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *LenderDiscoverPreviewResponse) GetData() *LenderDiscoverPreviewResponseData {
@@ -2163,7 +2163,7 @@ type LenderDiscoverCommitRequest struct {
 
 func (x *LenderDiscoverCommitRequest) Reset() {
 	*x = LenderDiscoverCommitRequest{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[33]
+	mi := &file_admin_organization_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2175,7 +2175,7 @@ func (x *LenderDiscoverCommitRequest) String() string {
 func (*LenderDiscoverCommitRequest) ProtoMessage() {}
 
 func (x *LenderDiscoverCommitRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[33]
+	mi := &file_admin_organization_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2188,7 +2188,7 @@ func (x *LenderDiscoverCommitRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LenderDiscoverCommitRequest.ProtoReflect.Descriptor instead.
 func (*LenderDiscoverCommitRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{33}
+	return file_admin_organization_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *LenderDiscoverCommitRequest) GetData() *LenderDiscoverCommitRequestData {
@@ -2207,7 +2207,7 @@ type LenderDiscoverCommitRequestData struct {
 
 func (x *LenderDiscoverCommitRequestData) Reset() {
 	*x = LenderDiscoverCommitRequestData{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[34]
+	mi := &file_admin_organization_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2219,7 +2219,7 @@ func (x *LenderDiscoverCommitRequestData) String() string {
 func (*LenderDiscoverCommitRequestData) ProtoMessage() {}
 
 func (x *LenderDiscoverCommitRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[34]
+	mi := &file_admin_organization_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2232,7 +2232,7 @@ func (x *LenderDiscoverCommitRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LenderDiscoverCommitRequestData.ProtoReflect.Descriptor instead.
 func (*LenderDiscoverCommitRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{34}
+	return file_admin_organization_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *LenderDiscoverCommitRequestData) GetLenders() []*LenderDiscoverCommitLender {
@@ -2259,7 +2259,7 @@ type LenderDiscoverCommitLender struct {
 
 func (x *LenderDiscoverCommitLender) Reset() {
 	*x = LenderDiscoverCommitLender{}
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[35]
+	mi := &file_admin_organization_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2271,7 +2271,7 @@ func (x *LenderDiscoverCommitLender) String() string {
 func (*LenderDiscoverCommitLender) ProtoMessage() {}
 
 func (x *LenderDiscoverCommitLender) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_proto_msgTypes[35]
+	mi := &file_admin_organization_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2284,7 +2284,7 @@ func (x *LenderDiscoverCommitLender) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LenderDiscoverCommitLender.ProtoReflect.Descriptor instead.
 func (*LenderDiscoverCommitLender) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_proto_rawDescGZIP(), []int{35}
+	return file_admin_organization_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *LenderDiscoverCommitLender) GetName() string {
@@ -2350,11 +2350,11 @@ func (x *LenderDiscoverCommitLender) GetLenderMetadata() *proto.OrganizationLend
 	return nil
 }
 
-var File_app_admin_rpc_pb_organization_proto protoreflect.FileDescriptor
+var File_admin_organization_proto protoreflect.FileDescriptor
 
-const file_app_admin_rpc_pb_organization_proto_rawDesc = "" +
+const file_admin_organization_proto_rawDesc = "" +
 	"\n" +
-	"#app/admin/rpc/pb/organization.proto\x12\x05admin\x1a\x12proto/common.proto\x1a\x12proto/entity.proto\"\xf3\x04\n" +
+	"\x18admin_organization.proto\x12\x05admin\x1a\x12proto/common.proto\x1a\x12proto/entity.proto\"\xf3\x04\n" +
 	"\x16OrganizationPageEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
@@ -2556,19 +2556,19 @@ const file_app_admin_rpc_pb_organization_proto_rawDesc = "" +
 	"\x11DiscoverLatestRun\x12\x13.proto.EmptyRequest\x1a .admin.LenderDiscoverRunResponseB'Z%zeebee-backend/app/admin/rpc/pb/adminb\x06proto3"
 
 var (
-	file_app_admin_rpc_pb_organization_proto_rawDescOnce sync.Once
-	file_app_admin_rpc_pb_organization_proto_rawDescData []byte
+	file_admin_organization_proto_rawDescOnce sync.Once
+	file_admin_organization_proto_rawDescData []byte
 )
 
-func file_app_admin_rpc_pb_organization_proto_rawDescGZIP() []byte {
-	file_app_admin_rpc_pb_organization_proto_rawDescOnce.Do(func() {
-		file_app_admin_rpc_pb_organization_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_organization_proto_rawDesc), len(file_app_admin_rpc_pb_organization_proto_rawDesc)))
+func file_admin_organization_proto_rawDescGZIP() []byte {
+	file_admin_organization_proto_rawDescOnce.Do(func() {
+		file_admin_organization_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_admin_organization_proto_rawDesc), len(file_admin_organization_proto_rawDesc)))
 	})
-	return file_app_admin_rpc_pb_organization_proto_rawDescData
+	return file_admin_organization_proto_rawDescData
 }
 
-var file_app_admin_rpc_pb_organization_proto_msgTypes = make([]protoimpl.MessageInfo, 36)
-var file_app_admin_rpc_pb_organization_proto_goTypes = []any{
+var file_admin_organization_proto_msgTypes = make([]protoimpl.MessageInfo, 36)
+var file_admin_organization_proto_goTypes = []any{
 	(*OrganizationPageEntity)(nil),                     // 0: admin.OrganizationPageEntity
 	(*OrganizationPageRequest)(nil),                    // 1: admin.OrganizationPageRequest
 	(*OrganizationPageRequestData)(nil),                // 2: admin.OrganizationPageRequestData
@@ -2614,7 +2614,7 @@ var file_app_admin_rpc_pb_organization_proto_goTypes = []any{
 	(*proto.EmptyRequest)(nil),                         // 42: proto.EmptyRequest
 	(*proto.EmptyResponse)(nil),                        // 43: proto.EmptyResponse
 }
-var file_app_admin_rpc_pb_organization_proto_depIdxs = []int32{
+var file_admin_organization_proto_depIdxs = []int32{
 	36, // 0: admin.OrganizationPageEntity.address:type_name -> proto.AddressEntity
 	2,  // 1: admin.OrganizationPageRequest.data:type_name -> admin.OrganizationPageRequestData
 	3,  // 2: admin.OrganizationPageRequestData.filter:type_name -> admin.OrganizationPageRequestFilter
@@ -2683,26 +2683,26 @@ var file_app_admin_rpc_pb_organization_proto_depIdxs = []int32{
 	0,  // [0:33] is the sub-list for field type_name
 }
 
-func init() { file_app_admin_rpc_pb_organization_proto_init() }
-func file_app_admin_rpc_pb_organization_proto_init() {
-	if File_app_admin_rpc_pb_organization_proto != nil {
+func init() { file_admin_organization_proto_init() }
+func file_admin_organization_proto_init() {
+	if File_admin_organization_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_organization_proto_rawDesc), len(file_app_admin_rpc_pb_organization_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_admin_organization_proto_rawDesc), len(file_admin_organization_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   36,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_app_admin_rpc_pb_organization_proto_goTypes,
-		DependencyIndexes: file_app_admin_rpc_pb_organization_proto_depIdxs,
-		MessageInfos:      file_app_admin_rpc_pb_organization_proto_msgTypes,
+		GoTypes:           file_admin_organization_proto_goTypes,
+		DependencyIndexes: file_admin_organization_proto_depIdxs,
+		MessageInfos:      file_admin_organization_proto_msgTypes,
 	}.Build()
-	File_app_admin_rpc_pb_organization_proto = out.File
-	file_app_admin_rpc_pb_organization_proto_goTypes = nil
-	file_app_admin_rpc_pb_organization_proto_depIdxs = nil
+	File_admin_organization_proto = out.File
+	file_admin_organization_proto_goTypes = nil
+	file_admin_organization_proto_depIdxs = nil
 }

@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v7.35.1
-// source: app/admin/rpc/pb/storage.proto
+// source: admin_storage.proto
 
 package admin
 
@@ -30,7 +30,7 @@ type StorageCreatePresignedUrlRequest struct {
 
 func (x *StorageCreatePresignedUrlRequest) Reset() {
 	*x = StorageCreatePresignedUrlRequest{}
-	mi := &file_app_admin_rpc_pb_storage_proto_msgTypes[0]
+	mi := &file_admin_storage_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -42,7 +42,7 @@ func (x *StorageCreatePresignedUrlRequest) String() string {
 func (*StorageCreatePresignedUrlRequest) ProtoMessage() {}
 
 func (x *StorageCreatePresignedUrlRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_storage_proto_msgTypes[0]
+	mi := &file_admin_storage_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -55,7 +55,7 @@ func (x *StorageCreatePresignedUrlRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StorageCreatePresignedUrlRequest.ProtoReflect.Descriptor instead.
 func (*StorageCreatePresignedUrlRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_storage_proto_rawDescGZIP(), []int{0}
+	return file_admin_storage_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *StorageCreatePresignedUrlRequest) GetData() *StorageCreatePresignedUrlRequestData {
@@ -76,7 +76,7 @@ type StorageCreatePresignedUrlRequestData struct {
 
 func (x *StorageCreatePresignedUrlRequestData) Reset() {
 	*x = StorageCreatePresignedUrlRequestData{}
-	mi := &file_app_admin_rpc_pb_storage_proto_msgTypes[1]
+	mi := &file_admin_storage_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -88,7 +88,7 @@ func (x *StorageCreatePresignedUrlRequestData) String() string {
 func (*StorageCreatePresignedUrlRequestData) ProtoMessage() {}
 
 func (x *StorageCreatePresignedUrlRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_storage_proto_msgTypes[1]
+	mi := &file_admin_storage_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -101,7 +101,7 @@ func (x *StorageCreatePresignedUrlRequestData) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use StorageCreatePresignedUrlRequestData.ProtoReflect.Descriptor instead.
 func (*StorageCreatePresignedUrlRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_storage_proto_rawDescGZIP(), []int{1}
+	return file_admin_storage_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *StorageCreatePresignedUrlRequestData) GetType() string {
@@ -134,7 +134,7 @@ type StorageCreatePresignedUrlResponse struct {
 
 func (x *StorageCreatePresignedUrlResponse) Reset() {
 	*x = StorageCreatePresignedUrlResponse{}
-	mi := &file_app_admin_rpc_pb_storage_proto_msgTypes[2]
+	mi := &file_admin_storage_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -146,7 +146,7 @@ func (x *StorageCreatePresignedUrlResponse) String() string {
 func (*StorageCreatePresignedUrlResponse) ProtoMessage() {}
 
 func (x *StorageCreatePresignedUrlResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_storage_proto_msgTypes[2]
+	mi := &file_admin_storage_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -159,7 +159,7 @@ func (x *StorageCreatePresignedUrlResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use StorageCreatePresignedUrlResponse.ProtoReflect.Descriptor instead.
 func (*StorageCreatePresignedUrlResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_storage_proto_rawDescGZIP(), []int{2}
+	return file_admin_storage_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *StorageCreatePresignedUrlResponse) GetData() *StorageCreatePresignedUrlResponseData {
@@ -182,7 +182,7 @@ type StorageCreatePresignedUrlResponseData struct {
 
 func (x *StorageCreatePresignedUrlResponseData) Reset() {
 	*x = StorageCreatePresignedUrlResponseData{}
-	mi := &file_app_admin_rpc_pb_storage_proto_msgTypes[3]
+	mi := &file_admin_storage_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -194,7 +194,7 @@ func (x *StorageCreatePresignedUrlResponseData) String() string {
 func (*StorageCreatePresignedUrlResponseData) ProtoMessage() {}
 
 func (x *StorageCreatePresignedUrlResponseData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_storage_proto_msgTypes[3]
+	mi := &file_admin_storage_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -207,7 +207,7 @@ func (x *StorageCreatePresignedUrlResponseData) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use StorageCreatePresignedUrlResponseData.ProtoReflect.Descriptor instead.
 func (*StorageCreatePresignedUrlResponseData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_storage_proto_rawDescGZIP(), []int{3}
+	return file_admin_storage_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *StorageCreatePresignedUrlResponseData) GetUrl() string {
@@ -245,11 +245,11 @@ func (x *StorageCreatePresignedUrlResponseData) GetUploadType() string {
 	return ""
 }
 
-var File_app_admin_rpc_pb_storage_proto protoreflect.FileDescriptor
+var File_admin_storage_proto protoreflect.FileDescriptor
 
-const file_app_admin_rpc_pb_storage_proto_rawDesc = "" +
+const file_admin_storage_proto_rawDesc = "" +
 	"\n" +
-	"\x1eapp/admin/rpc/pb/storage.proto\x12\x05admin\"c\n" +
+	"\x13admin_storage.proto\x12\x05admin\"c\n" +
 	" StorageCreatePresignedUrlRequest\x12?\n" +
 	"\x04data\x18\x01 \x01(\v2+.admin.StorageCreatePresignedUrlRequestDataR\x04data\"x\n" +
 	"$StorageCreatePresignedUrlRequestData\x12\x12\n" +
@@ -271,25 +271,25 @@ const file_app_admin_rpc_pb_storage_proto_rawDesc = "" +
 	"\x12CreatePresignedUrl\x12'.admin.StorageCreatePresignedUrlRequest\x1a(.admin.StorageCreatePresignedUrlResponseB'Z%zeebee-backend/app/admin/rpc/pb/adminb\x06proto3"
 
 var (
-	file_app_admin_rpc_pb_storage_proto_rawDescOnce sync.Once
-	file_app_admin_rpc_pb_storage_proto_rawDescData []byte
+	file_admin_storage_proto_rawDescOnce sync.Once
+	file_admin_storage_proto_rawDescData []byte
 )
 
-func file_app_admin_rpc_pb_storage_proto_rawDescGZIP() []byte {
-	file_app_admin_rpc_pb_storage_proto_rawDescOnce.Do(func() {
-		file_app_admin_rpc_pb_storage_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_storage_proto_rawDesc), len(file_app_admin_rpc_pb_storage_proto_rawDesc)))
+func file_admin_storage_proto_rawDescGZIP() []byte {
+	file_admin_storage_proto_rawDescOnce.Do(func() {
+		file_admin_storage_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_admin_storage_proto_rawDesc), len(file_admin_storage_proto_rawDesc)))
 	})
-	return file_app_admin_rpc_pb_storage_proto_rawDescData
+	return file_admin_storage_proto_rawDescData
 }
 
-var file_app_admin_rpc_pb_storage_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
-var file_app_admin_rpc_pb_storage_proto_goTypes = []any{
+var file_admin_storage_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_admin_storage_proto_goTypes = []any{
 	(*StorageCreatePresignedUrlRequest)(nil),      // 0: admin.StorageCreatePresignedUrlRequest
 	(*StorageCreatePresignedUrlRequestData)(nil),  // 1: admin.StorageCreatePresignedUrlRequestData
 	(*StorageCreatePresignedUrlResponse)(nil),     // 2: admin.StorageCreatePresignedUrlResponse
 	(*StorageCreatePresignedUrlResponseData)(nil), // 3: admin.StorageCreatePresignedUrlResponseData
 }
-var file_app_admin_rpc_pb_storage_proto_depIdxs = []int32{
+var file_admin_storage_proto_depIdxs = []int32{
 	1, // 0: admin.StorageCreatePresignedUrlRequest.data:type_name -> admin.StorageCreatePresignedUrlRequestData
 	3, // 1: admin.StorageCreatePresignedUrlResponse.data:type_name -> admin.StorageCreatePresignedUrlResponseData
 	0, // 2: admin.Storage.CreatePresignedUrl:input_type -> admin.StorageCreatePresignedUrlRequest
@@ -301,26 +301,26 @@ var file_app_admin_rpc_pb_storage_proto_depIdxs = []int32{
 	0, // [0:2] is the sub-list for field type_name
 }
 
-func init() { file_app_admin_rpc_pb_storage_proto_init() }
-func file_app_admin_rpc_pb_storage_proto_init() {
-	if File_app_admin_rpc_pb_storage_proto != nil {
+func init() { file_admin_storage_proto_init() }
+func file_admin_storage_proto_init() {
+	if File_admin_storage_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_storage_proto_rawDesc), len(file_app_admin_rpc_pb_storage_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_admin_storage_proto_rawDesc), len(file_admin_storage_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_app_admin_rpc_pb_storage_proto_goTypes,
-		DependencyIndexes: file_app_admin_rpc_pb_storage_proto_depIdxs,
-		MessageInfos:      file_app_admin_rpc_pb_storage_proto_msgTypes,
+		GoTypes:           file_admin_storage_proto_goTypes,
+		DependencyIndexes: file_admin_storage_proto_depIdxs,
+		MessageInfos:      file_admin_storage_proto_msgTypes,
 	}.Build()
-	File_app_admin_rpc_pb_storage_proto = out.File
-	file_app_admin_rpc_pb_storage_proto_goTypes = nil
-	file_app_admin_rpc_pb_storage_proto_depIdxs = nil
+	File_admin_storage_proto = out.File
+	file_admin_storage_proto_goTypes = nil
+	file_admin_storage_proto_depIdxs = nil
 }

@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v7.35.1
-// source: app/admin/rpc/pb/organization_subscription.proto
+// source: admin_organization_subscription.proto
 
 package admin
 
@@ -42,7 +42,7 @@ type OrganizationSubscriptionPageEntity struct {
 
 func (x *OrganizationSubscriptionPageEntity) Reset() {
 	*x = OrganizationSubscriptionPageEntity{}
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[0]
+	mi := &file_admin_organization_subscription_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -54,7 +54,7 @@ func (x *OrganizationSubscriptionPageEntity) String() string {
 func (*OrganizationSubscriptionPageEntity) ProtoMessage() {}
 
 func (x *OrganizationSubscriptionPageEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[0]
+	mi := &file_admin_organization_subscription_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -67,7 +67,7 @@ func (x *OrganizationSubscriptionPageEntity) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use OrganizationSubscriptionPageEntity.ProtoReflect.Descriptor instead.
 func (*OrganizationSubscriptionPageEntity) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_subscription_proto_rawDescGZIP(), []int{0}
+	return file_admin_organization_subscription_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *OrganizationSubscriptionPageEntity) GetId() int64 {
@@ -164,7 +164,7 @@ type OrganizationSubscriptionCreateRequest struct {
 
 func (x *OrganizationSubscriptionCreateRequest) Reset() {
 	*x = OrganizationSubscriptionCreateRequest{}
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[1]
+	mi := &file_admin_organization_subscription_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -176,7 +176,7 @@ func (x *OrganizationSubscriptionCreateRequest) String() string {
 func (*OrganizationSubscriptionCreateRequest) ProtoMessage() {}
 
 func (x *OrganizationSubscriptionCreateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[1]
+	mi := &file_admin_organization_subscription_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -189,7 +189,7 @@ func (x *OrganizationSubscriptionCreateRequest) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use OrganizationSubscriptionCreateRequest.ProtoReflect.Descriptor instead.
 func (*OrganizationSubscriptionCreateRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_subscription_proto_rawDescGZIP(), []int{1}
+	return file_admin_organization_subscription_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *OrganizationSubscriptionCreateRequest) GetData() *OrganizationSubscriptionCreateRequestData {
@@ -211,7 +211,7 @@ type OrganizationSubscriptionCreateRequestData struct {
 
 func (x *OrganizationSubscriptionCreateRequestData) Reset() {
 	*x = OrganizationSubscriptionCreateRequestData{}
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[2]
+	mi := &file_admin_organization_subscription_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -223,7 +223,7 @@ func (x *OrganizationSubscriptionCreateRequestData) String() string {
 func (*OrganizationSubscriptionCreateRequestData) ProtoMessage() {}
 
 func (x *OrganizationSubscriptionCreateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[2]
+	mi := &file_admin_organization_subscription_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -236,7 +236,7 @@ func (x *OrganizationSubscriptionCreateRequestData) ProtoReflect() protoreflect.
 
 // Deprecated: Use OrganizationSubscriptionCreateRequestData.ProtoReflect.Descriptor instead.
 func (*OrganizationSubscriptionCreateRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_subscription_proto_rawDescGZIP(), []int{2}
+	return file_admin_organization_subscription_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *OrganizationSubscriptionCreateRequestData) GetPricingPlanId() int64 {
@@ -276,7 +276,7 @@ type OrganizationSubscriptionDetailResponse struct {
 
 func (x *OrganizationSubscriptionDetailResponse) Reset() {
 	*x = OrganizationSubscriptionDetailResponse{}
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[3]
+	mi := &file_admin_organization_subscription_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -288,7 +288,7 @@ func (x *OrganizationSubscriptionDetailResponse) String() string {
 func (*OrganizationSubscriptionDetailResponse) ProtoMessage() {}
 
 func (x *OrganizationSubscriptionDetailResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[3]
+	mi := &file_admin_organization_subscription_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -301,7 +301,7 @@ func (x *OrganizationSubscriptionDetailResponse) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use OrganizationSubscriptionDetailResponse.ProtoReflect.Descriptor instead.
 func (*OrganizationSubscriptionDetailResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_subscription_proto_rawDescGZIP(), []int{3}
+	return file_admin_organization_subscription_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *OrganizationSubscriptionDetailResponse) GetData() *proto.OrganizationSubscriptionEntity {
@@ -321,7 +321,7 @@ type OrganizationSubscriptionRenewRequest struct {
 
 func (x *OrganizationSubscriptionRenewRequest) Reset() {
 	*x = OrganizationSubscriptionRenewRequest{}
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[4]
+	mi := &file_admin_organization_subscription_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -333,7 +333,7 @@ func (x *OrganizationSubscriptionRenewRequest) String() string {
 func (*OrganizationSubscriptionRenewRequest) ProtoMessage() {}
 
 func (x *OrganizationSubscriptionRenewRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[4]
+	mi := &file_admin_organization_subscription_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -346,7 +346,7 @@ func (x *OrganizationSubscriptionRenewRequest) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use OrganizationSubscriptionRenewRequest.ProtoReflect.Descriptor instead.
 func (*OrganizationSubscriptionRenewRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_subscription_proto_rawDescGZIP(), []int{4}
+	return file_admin_organization_subscription_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *OrganizationSubscriptionRenewRequest) GetData() *OrganizationSubscriptionRenewRequestData {
@@ -366,7 +366,7 @@ type OrganizationSubscriptionRenewRequestData struct {
 
 func (x *OrganizationSubscriptionRenewRequestData) Reset() {
 	*x = OrganizationSubscriptionRenewRequestData{}
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[5]
+	mi := &file_admin_organization_subscription_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -378,7 +378,7 @@ func (x *OrganizationSubscriptionRenewRequestData) String() string {
 func (*OrganizationSubscriptionRenewRequestData) ProtoMessage() {}
 
 func (x *OrganizationSubscriptionRenewRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[5]
+	mi := &file_admin_organization_subscription_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -391,7 +391,7 @@ func (x *OrganizationSubscriptionRenewRequestData) ProtoReflect() protoreflect.M
 
 // Deprecated: Use OrganizationSubscriptionRenewRequestData.ProtoReflect.Descriptor instead.
 func (*OrganizationSubscriptionRenewRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_subscription_proto_rawDescGZIP(), []int{5}
+	return file_admin_organization_subscription_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *OrganizationSubscriptionRenewRequestData) GetId() int64 {
@@ -418,7 +418,7 @@ type OrganizationSubscriptionUpdateExpireDateRequest struct {
 
 func (x *OrganizationSubscriptionUpdateExpireDateRequest) Reset() {
 	*x = OrganizationSubscriptionUpdateExpireDateRequest{}
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[6]
+	mi := &file_admin_organization_subscription_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -430,7 +430,7 @@ func (x *OrganizationSubscriptionUpdateExpireDateRequest) String() string {
 func (*OrganizationSubscriptionUpdateExpireDateRequest) ProtoMessage() {}
 
 func (x *OrganizationSubscriptionUpdateExpireDateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[6]
+	mi := &file_admin_organization_subscription_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -443,7 +443,7 @@ func (x *OrganizationSubscriptionUpdateExpireDateRequest) ProtoReflect() protore
 
 // Deprecated: Use OrganizationSubscriptionUpdateExpireDateRequest.ProtoReflect.Descriptor instead.
 func (*OrganizationSubscriptionUpdateExpireDateRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_subscription_proto_rawDescGZIP(), []int{6}
+	return file_admin_organization_subscription_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *OrganizationSubscriptionUpdateExpireDateRequest) GetData() *OrganizationSubscriptionUpdateExpireDateRequestData {
@@ -463,7 +463,7 @@ type OrganizationSubscriptionUpdateExpireDateRequestData struct {
 
 func (x *OrganizationSubscriptionUpdateExpireDateRequestData) Reset() {
 	*x = OrganizationSubscriptionUpdateExpireDateRequestData{}
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[7]
+	mi := &file_admin_organization_subscription_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -475,7 +475,7 @@ func (x *OrganizationSubscriptionUpdateExpireDateRequestData) String() string {
 func (*OrganizationSubscriptionUpdateExpireDateRequestData) ProtoMessage() {}
 
 func (x *OrganizationSubscriptionUpdateExpireDateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[7]
+	mi := &file_admin_organization_subscription_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -488,7 +488,7 @@ func (x *OrganizationSubscriptionUpdateExpireDateRequestData) ProtoReflect() pro
 
 // Deprecated: Use OrganizationSubscriptionUpdateExpireDateRequestData.ProtoReflect.Descriptor instead.
 func (*OrganizationSubscriptionUpdateExpireDateRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_subscription_proto_rawDescGZIP(), []int{7}
+	return file_admin_organization_subscription_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *OrganizationSubscriptionUpdateExpireDateRequestData) GetId() int64 {
@@ -515,7 +515,7 @@ type OrganizationSubscriptionSwitchStatusRequest struct {
 
 func (x *OrganizationSubscriptionSwitchStatusRequest) Reset() {
 	*x = OrganizationSubscriptionSwitchStatusRequest{}
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[8]
+	mi := &file_admin_organization_subscription_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -527,7 +527,7 @@ func (x *OrganizationSubscriptionSwitchStatusRequest) String() string {
 func (*OrganizationSubscriptionSwitchStatusRequest) ProtoMessage() {}
 
 func (x *OrganizationSubscriptionSwitchStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[8]
+	mi := &file_admin_organization_subscription_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -540,7 +540,7 @@ func (x *OrganizationSubscriptionSwitchStatusRequest) ProtoReflect() protoreflec
 
 // Deprecated: Use OrganizationSubscriptionSwitchStatusRequest.ProtoReflect.Descriptor instead.
 func (*OrganizationSubscriptionSwitchStatusRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_subscription_proto_rawDescGZIP(), []int{8}
+	return file_admin_organization_subscription_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *OrganizationSubscriptionSwitchStatusRequest) GetData() *OrganizationSubscriptionSwitchStatusRequestData {
@@ -560,7 +560,7 @@ type OrganizationSubscriptionSwitchStatusRequestData struct {
 
 func (x *OrganizationSubscriptionSwitchStatusRequestData) Reset() {
 	*x = OrganizationSubscriptionSwitchStatusRequestData{}
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[9]
+	mi := &file_admin_organization_subscription_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -572,7 +572,7 @@ func (x *OrganizationSubscriptionSwitchStatusRequestData) String() string {
 func (*OrganizationSubscriptionSwitchStatusRequestData) ProtoMessage() {}
 
 func (x *OrganizationSubscriptionSwitchStatusRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[9]
+	mi := &file_admin_organization_subscription_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -585,7 +585,7 @@ func (x *OrganizationSubscriptionSwitchStatusRequestData) ProtoReflect() protore
 
 // Deprecated: Use OrganizationSubscriptionSwitchStatusRequestData.ProtoReflect.Descriptor instead.
 func (*OrganizationSubscriptionSwitchStatusRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_subscription_proto_rawDescGZIP(), []int{9}
+	return file_admin_organization_subscription_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *OrganizationSubscriptionSwitchStatusRequestData) GetId() int64 {
@@ -612,7 +612,7 @@ type OrganizationSubscriptionPageRequest struct {
 
 func (x *OrganizationSubscriptionPageRequest) Reset() {
 	*x = OrganizationSubscriptionPageRequest{}
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[10]
+	mi := &file_admin_organization_subscription_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -624,7 +624,7 @@ func (x *OrganizationSubscriptionPageRequest) String() string {
 func (*OrganizationSubscriptionPageRequest) ProtoMessage() {}
 
 func (x *OrganizationSubscriptionPageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[10]
+	mi := &file_admin_organization_subscription_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -637,7 +637,7 @@ func (x *OrganizationSubscriptionPageRequest) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use OrganizationSubscriptionPageRequest.ProtoReflect.Descriptor instead.
 func (*OrganizationSubscriptionPageRequest) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_subscription_proto_rawDescGZIP(), []int{10}
+	return file_admin_organization_subscription_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *OrganizationSubscriptionPageRequest) GetData() *OrganizationSubscriptionPageRequestData {
@@ -659,7 +659,7 @@ type OrganizationSubscriptionPageRequestData struct {
 
 func (x *OrganizationSubscriptionPageRequestData) Reset() {
 	*x = OrganizationSubscriptionPageRequestData{}
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[11]
+	mi := &file_admin_organization_subscription_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -671,7 +671,7 @@ func (x *OrganizationSubscriptionPageRequestData) String() string {
 func (*OrganizationSubscriptionPageRequestData) ProtoMessage() {}
 
 func (x *OrganizationSubscriptionPageRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[11]
+	mi := &file_admin_organization_subscription_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -684,7 +684,7 @@ func (x *OrganizationSubscriptionPageRequestData) ProtoReflect() protoreflect.Me
 
 // Deprecated: Use OrganizationSubscriptionPageRequestData.ProtoReflect.Descriptor instead.
 func (*OrganizationSubscriptionPageRequestData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_subscription_proto_rawDescGZIP(), []int{11}
+	return file_admin_organization_subscription_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *OrganizationSubscriptionPageRequestData) GetPage() int64 {
@@ -726,7 +726,7 @@ type OrganizationSubscriptionPageRequestFilter struct {
 
 func (x *OrganizationSubscriptionPageRequestFilter) Reset() {
 	*x = OrganizationSubscriptionPageRequestFilter{}
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[12]
+	mi := &file_admin_organization_subscription_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -738,7 +738,7 @@ func (x *OrganizationSubscriptionPageRequestFilter) String() string {
 func (*OrganizationSubscriptionPageRequestFilter) ProtoMessage() {}
 
 func (x *OrganizationSubscriptionPageRequestFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[12]
+	mi := &file_admin_organization_subscription_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -751,7 +751,7 @@ func (x *OrganizationSubscriptionPageRequestFilter) ProtoReflect() protoreflect.
 
 // Deprecated: Use OrganizationSubscriptionPageRequestFilter.ProtoReflect.Descriptor instead.
 func (*OrganizationSubscriptionPageRequestFilter) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_subscription_proto_rawDescGZIP(), []int{12}
+	return file_admin_organization_subscription_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *OrganizationSubscriptionPageRequestFilter) GetKeyword() string {
@@ -785,7 +785,7 @@ type OrganizationSubscriptionPageRequestSorter struct {
 
 func (x *OrganizationSubscriptionPageRequestSorter) Reset() {
 	*x = OrganizationSubscriptionPageRequestSorter{}
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[13]
+	mi := &file_admin_organization_subscription_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -797,7 +797,7 @@ func (x *OrganizationSubscriptionPageRequestSorter) String() string {
 func (*OrganizationSubscriptionPageRequestSorter) ProtoMessage() {}
 
 func (x *OrganizationSubscriptionPageRequestSorter) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[13]
+	mi := &file_admin_organization_subscription_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -810,7 +810,7 @@ func (x *OrganizationSubscriptionPageRequestSorter) ProtoReflect() protoreflect.
 
 // Deprecated: Use OrganizationSubscriptionPageRequestSorter.ProtoReflect.Descriptor instead.
 func (*OrganizationSubscriptionPageRequestSorter) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_subscription_proto_rawDescGZIP(), []int{13}
+	return file_admin_organization_subscription_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *OrganizationSubscriptionPageRequestSorter) GetColumn() string {
@@ -836,7 +836,7 @@ type OrganizationSubscriptionPageResponse struct {
 
 func (x *OrganizationSubscriptionPageResponse) Reset() {
 	*x = OrganizationSubscriptionPageResponse{}
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[14]
+	mi := &file_admin_organization_subscription_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -848,7 +848,7 @@ func (x *OrganizationSubscriptionPageResponse) String() string {
 func (*OrganizationSubscriptionPageResponse) ProtoMessage() {}
 
 func (x *OrganizationSubscriptionPageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[14]
+	mi := &file_admin_organization_subscription_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -861,7 +861,7 @@ func (x *OrganizationSubscriptionPageResponse) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use OrganizationSubscriptionPageResponse.ProtoReflect.Descriptor instead.
 func (*OrganizationSubscriptionPageResponse) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_subscription_proto_rawDescGZIP(), []int{14}
+	return file_admin_organization_subscription_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *OrganizationSubscriptionPageResponse) GetData() *OrganizationSubscriptionPageResponseData {
@@ -884,7 +884,7 @@ type OrganizationSubscriptionPageResponseData struct {
 
 func (x *OrganizationSubscriptionPageResponseData) Reset() {
 	*x = OrganizationSubscriptionPageResponseData{}
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[15]
+	mi := &file_admin_organization_subscription_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -896,7 +896,7 @@ func (x *OrganizationSubscriptionPageResponseData) String() string {
 func (*OrganizationSubscriptionPageResponseData) ProtoMessage() {}
 
 func (x *OrganizationSubscriptionPageResponseData) ProtoReflect() protoreflect.Message {
-	mi := &file_app_admin_rpc_pb_organization_subscription_proto_msgTypes[15]
+	mi := &file_admin_organization_subscription_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -909,7 +909,7 @@ func (x *OrganizationSubscriptionPageResponseData) ProtoReflect() protoreflect.M
 
 // Deprecated: Use OrganizationSubscriptionPageResponseData.ProtoReflect.Descriptor instead.
 func (*OrganizationSubscriptionPageResponseData) Descriptor() ([]byte, []int) {
-	return file_app_admin_rpc_pb_organization_subscription_proto_rawDescGZIP(), []int{15}
+	return file_admin_organization_subscription_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *OrganizationSubscriptionPageResponseData) GetPage() int64 {
@@ -947,11 +947,11 @@ func (x *OrganizationSubscriptionPageResponseData) GetList() []*OrganizationSubs
 	return nil
 }
 
-var File_app_admin_rpc_pb_organization_subscription_proto protoreflect.FileDescriptor
+var File_admin_organization_subscription_proto protoreflect.FileDescriptor
 
-const file_app_admin_rpc_pb_organization_subscription_proto_rawDesc = "" +
+const file_admin_organization_subscription_proto_rawDesc = "" +
 	"\n" +
-	"0app/admin/rpc/pb/organization_subscription.proto\x12\x05admin\x1a\x12proto/common.proto\x1a\x12proto/entity.proto\"\xc3\x03\n" +
+	"%admin_organization_subscription.proto\x12\x05admin\x1a\x12proto/common.proto\x1a\x12proto/entity.proto\"\xc3\x03\n" +
 	"\"OrganizationSubscriptionPageEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\x12+\n" +
@@ -1027,19 +1027,19 @@ const file_app_admin_rpc_pb_organization_subscription_proto_rawDesc = "" +
 	"\x06Detail\x12\x14.proto.PathIdRequest\x1a-.admin.OrganizationSubscriptionDetailResponseB'Z%zeebee-backend/app/admin/rpc/pb/adminb\x06proto3"
 
 var (
-	file_app_admin_rpc_pb_organization_subscription_proto_rawDescOnce sync.Once
-	file_app_admin_rpc_pb_organization_subscription_proto_rawDescData []byte
+	file_admin_organization_subscription_proto_rawDescOnce sync.Once
+	file_admin_organization_subscription_proto_rawDescData []byte
 )
 
-func file_app_admin_rpc_pb_organization_subscription_proto_rawDescGZIP() []byte {
-	file_app_admin_rpc_pb_organization_subscription_proto_rawDescOnce.Do(func() {
-		file_app_admin_rpc_pb_organization_subscription_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_organization_subscription_proto_rawDesc), len(file_app_admin_rpc_pb_organization_subscription_proto_rawDesc)))
+func file_admin_organization_subscription_proto_rawDescGZIP() []byte {
+	file_admin_organization_subscription_proto_rawDescOnce.Do(func() {
+		file_admin_organization_subscription_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_admin_organization_subscription_proto_rawDesc), len(file_admin_organization_subscription_proto_rawDesc)))
 	})
-	return file_app_admin_rpc_pb_organization_subscription_proto_rawDescData
+	return file_admin_organization_subscription_proto_rawDescData
 }
 
-var file_app_admin_rpc_pb_organization_subscription_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
-var file_app_admin_rpc_pb_organization_subscription_proto_goTypes = []any{
+var file_admin_organization_subscription_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_admin_organization_subscription_proto_goTypes = []any{
 	(*OrganizationSubscriptionPageEntity)(nil),                  // 0: admin.OrganizationSubscriptionPageEntity
 	(*OrganizationSubscriptionCreateRequest)(nil),               // 1: admin.OrganizationSubscriptionCreateRequest
 	(*OrganizationSubscriptionCreateRequestData)(nil),           // 2: admin.OrganizationSubscriptionCreateRequestData
@@ -1060,7 +1060,7 @@ var file_app_admin_rpc_pb_organization_subscription_proto_goTypes = []any{
 	(*proto.PathIdRequest)(nil),                                 // 17: proto.PathIdRequest
 	(*proto.EmptyResponse)(nil),                                 // 18: proto.EmptyResponse
 }
-var file_app_admin_rpc_pb_organization_subscription_proto_depIdxs = []int32{
+var file_admin_organization_subscription_proto_depIdxs = []int32{
 	2,  // 0: admin.OrganizationSubscriptionCreateRequest.data:type_name -> admin.OrganizationSubscriptionCreateRequestData
 	16, // 1: admin.OrganizationSubscriptionDetailResponse.data:type_name -> proto.OrganizationSubscriptionEntity
 	5,  // 2: admin.OrganizationSubscriptionRenewRequest.data:type_name -> admin.OrganizationSubscriptionRenewRequestData
@@ -1090,26 +1090,26 @@ var file_app_admin_rpc_pb_organization_subscription_proto_depIdxs = []int32{
 	0,  // [0:10] is the sub-list for field type_name
 }
 
-func init() { file_app_admin_rpc_pb_organization_subscription_proto_init() }
-func file_app_admin_rpc_pb_organization_subscription_proto_init() {
-	if File_app_admin_rpc_pb_organization_subscription_proto != nil {
+func init() { file_admin_organization_subscription_proto_init() }
+func file_admin_organization_subscription_proto_init() {
+	if File_admin_organization_subscription_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_admin_rpc_pb_organization_subscription_proto_rawDesc), len(file_app_admin_rpc_pb_organization_subscription_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_admin_organization_subscription_proto_rawDesc), len(file_admin_organization_subscription_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_app_admin_rpc_pb_organization_subscription_proto_goTypes,
-		DependencyIndexes: file_app_admin_rpc_pb_organization_subscription_proto_depIdxs,
-		MessageInfos:      file_app_admin_rpc_pb_organization_subscription_proto_msgTypes,
+		GoTypes:           file_admin_organization_subscription_proto_goTypes,
+		DependencyIndexes: file_admin_organization_subscription_proto_depIdxs,
+		MessageInfos:      file_admin_organization_subscription_proto_msgTypes,
 	}.Build()
-	File_app_admin_rpc_pb_organization_subscription_proto = out.File
-	file_app_admin_rpc_pb_organization_subscription_proto_goTypes = nil
-	file_app_admin_rpc_pb_organization_subscription_proto_depIdxs = nil
+	File_admin_organization_subscription_proto = out.File
+	file_admin_organization_subscription_proto_goTypes = nil
+	file_admin_organization_subscription_proto_depIdxs = nil
 }
