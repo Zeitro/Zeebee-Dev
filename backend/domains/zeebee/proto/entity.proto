@@ -355,7 +355,7 @@ message BorrowerPropertyEntity{
   int32  unit = 4;
   float living_area_sqft = 5;
   int32 bedrooms = 6;
-  float bathrooms = 7;
+  int32 bathrooms = 7;
   AddressEntity address = 8;
   string created_at = 9;
   string updated_at = 10;
