@@ -42,16 +42,11 @@ create-proto:
 		goctl rpc -o app/$(SERVICE)/rpc/pb/$(SERVICE).proto
 
 .PHONY: create-rpc-service
-# Create RPC service:
-		$(eval SERVICE := $(filter-out $@,$(MAKECMDGOALS)))
-		goctl rpc protoc app/$(SERVICE)/rpc/pb/$(SERVICE).proto --go_out=./app/$(SERVICE)/rpc/pb --go-grpc_out=./app/$(SERVICE)/rpc/pb --zrpc_out=./app/$(SERVICE)/rpc --style go_zero -m --home third_party/goctl_template
-
-.PHONY: create-rpc-service-v2
 # Create RPC service (multi-proto, supports cross-file imports via go_package)
-create-rpc-service-v2:
+create-rpc-service:
 	$(eval SERVICE := $(filter-out $@,$(MAKECMDGOALS)))
 	@echo "==> Creating service: $(SERVICE)"
-	@test -n "$(SERVICE)" || (echo "Usage: make create-rpc-service-v2 <service-name>" && exit 1)
+	@test -n "$(SERVICE)" || (echo "Usage: make create-rpc-service <service-name>" && exit 1)
 	@test -d "$(WORK_DIR)/app/$(SERVICE)/rpc/pb" || (echo "Error: app/$(SERVICE)/rpc/pb/ not found" && exit 1)
 	@for proto in $(WORK_DIR)/app/$(SERVICE)/rpc/pb/*.proto; do \
 		[ -f "$$proto" ] || continue; \
