@@ -1,0 +1,4 @@
+services:
+  pdfgenerator-backend:
+    logging: !override
+      driver: json-file
