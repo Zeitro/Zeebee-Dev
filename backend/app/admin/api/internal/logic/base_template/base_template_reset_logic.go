@@ -20,7 +20,7 @@ type BaseTemplateResetLogic struct {
 // Reset
 func NewBaseTemplateResetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseTemplateResetLogic {
 	return &BaseTemplateResetLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

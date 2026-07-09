@@ -19,7 +19,7 @@ type LenderCompaniesLogic struct {
 // lender companies list
 func NewLenderCompaniesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LenderCompaniesLogic {
 	return &LenderCompaniesLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

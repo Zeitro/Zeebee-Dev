@@ -21,7 +21,7 @@ type RoleAssignOrganizationUsersLogic struct {
 // assign organization users
 func NewRoleAssignOrganizationUsersLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RoleAssignOrganizationUsersLogic {
 	return &RoleAssignOrganizationUsersLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

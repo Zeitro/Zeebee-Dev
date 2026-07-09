@@ -29,15 +29,15 @@ import (
 type RegisterLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RegisterLogic {
 	return &RegisterLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
@@ -45,9 +45,8 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -63,7 +62,7 @@ func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *proto.Em
 				err := sendRegisterVerifyUrlEmail(ctx, in.Data.Email, existedUser.FirstName)
 				if err != nil {
 					err = errorx.Wrap(err, "Send Verify Email Error")
-					l.WithContext(ctx).Error(err)
+					l.svcCtx.Logger.WithContext(ctx).Error(err)
 				}
 			}()
 		} else {
@@ -72,7 +71,7 @@ func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *proto.Em
 				err := sendLoginUrlEmail(ctx, in.Data.Email, existedUser.FirstName)
 				if err != nil {
 					err = errorx.Wrap(err, "Send Login Email Error")
-					l.WithContext(ctx).Error(err)
+					l.svcCtx.Logger.WithContext(ctx).Error(err)
 				}
 			}()
 		}
@@ -113,11 +112,11 @@ func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *proto.Em
 		ctx := context.WithoutCancel(newCxt)
 		err := sendRegisterVerifyUrlEmail(ctx, in.Data.Email, userModel.FirstName)
 		if err != nil {
-			l.WithContext(ctx).Error(err)
+			l.svcCtx.Logger.WithContext(ctx).Error(err)
 		}
 		if err != nil {
 			err = errorx.Wrap(err, "Send Register Verify Email Error")
-			l.WithContext(ctx).Error(err)
+			l.svcCtx.Logger.WithContext(ctx).Error(err)
 		}
 	}()
 

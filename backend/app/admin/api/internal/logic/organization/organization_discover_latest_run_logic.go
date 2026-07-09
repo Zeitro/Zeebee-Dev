@@ -19,7 +19,7 @@ type OrganizationDiscoverLatestRunLogic struct {
 
 func NewOrganizationDiscoverLatestRunLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OrganizationDiscoverLatestRunLogic {
 	return &OrganizationDiscoverLatestRunLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

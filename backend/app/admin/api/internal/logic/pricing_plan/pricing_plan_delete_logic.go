@@ -20,7 +20,7 @@ type PricingPlanDeleteLogic struct {
 // delete
 func NewPricingPlanDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PricingPlanDeleteLogic {
 	return &PricingPlanDeleteLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

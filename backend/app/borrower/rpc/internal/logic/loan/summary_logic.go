@@ -18,15 +18,15 @@ import (
 type SummaryLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewSummaryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SummaryLogic {
 	return &SummaryLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.NewBaseLogic(svcCtx),
 	}
 }
@@ -34,9 +34,8 @@ func NewSummaryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SummaryLo
 func (l *SummaryLogic) Summary(in *borrower.LoanSummaryRequest) (resp *borrower.LoanSummaryResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()

@@ -22,7 +22,7 @@ type OrganizationSubscriptionCreateLogic struct {
 // create
 func NewOrganizationSubscriptionCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OrganizationSubscriptionCreateLogic {
 	return &OrganizationSubscriptionCreateLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

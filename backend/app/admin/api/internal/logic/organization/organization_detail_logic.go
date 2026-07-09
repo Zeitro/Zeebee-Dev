@@ -21,7 +21,7 @@ type OrganizationDetailLogic struct {
 // detail
 func NewOrganizationDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OrganizationDetailLogic {
 	return &OrganizationDetailLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

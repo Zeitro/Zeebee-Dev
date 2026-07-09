@@ -22,7 +22,7 @@ type PricingPlanPolicyUpdateLogic struct {
 // update
 func NewPricingPlanPolicyUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PricingPlanPolicyUpdateLogic {
 	return &PricingPlanPolicyUpdateLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

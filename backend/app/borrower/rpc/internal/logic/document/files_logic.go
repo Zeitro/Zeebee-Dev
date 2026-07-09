@@ -17,15 +17,15 @@ import (
 type FilesLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewFilesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FilesLogic {
 	return &FilesLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
@@ -33,9 +33,8 @@ func NewFilesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FilesLogic 
 func (l *FilesLogic) Files(in *borrower.DocumentFilesRequest) (resp *borrower.DocumentFilesResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()

@@ -19,7 +19,7 @@ type OrganizationDiscoverGetSettingsLogic struct {
 
 func NewOrganizationDiscoverGetSettingsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OrganizationDiscoverGetSettingsLogic {
 	return &OrganizationDiscoverGetSettingsLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

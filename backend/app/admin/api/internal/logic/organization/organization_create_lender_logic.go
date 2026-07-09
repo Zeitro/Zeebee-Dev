@@ -22,7 +22,7 @@ type OrganizationCreateLenderLogic struct {
 // lender create
 func NewOrganizationCreateLenderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OrganizationCreateLenderLogic {
 	return &OrganizationCreateLenderLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

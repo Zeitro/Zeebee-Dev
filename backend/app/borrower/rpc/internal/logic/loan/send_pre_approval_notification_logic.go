@@ -15,23 +15,20 @@ import (
 type SendPreApprovalNotificationLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
 }
 
 func NewSendPreApprovalNotificationLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SendPreApprovalNotificationLogic {
 	return &SendPreApprovalNotificationLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
 	}
 }
 
 func (l *SendPreApprovalNotificationLogic) SendPreApprovalNotification(in *borrower.LoanSendPreApprovalNotificationRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -39,7 +36,7 @@ func (l *SendPreApprovalNotificationLogic) SendPreApprovalNotification(in *borro
 		ctx := context.WithoutCancel(l.ctx)
 		err := sendPreApprovalNotification(ctx, l.svcCtx.OrganizationRepo, in.Data.RequestId, in.Data.LenderCompanyId, true)
 		if err != nil {
-			l.WithContext(ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.svcCtx.Logger.WithContext(ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
 

@@ -22,7 +22,7 @@ type OrganizationUpdateLenderLogic struct {
 // lender update
 func NewOrganizationUpdateLenderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OrganizationUpdateLenderLogic {
 	return &OrganizationUpdateLenderLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

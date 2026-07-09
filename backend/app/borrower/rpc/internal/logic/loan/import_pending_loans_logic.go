@@ -33,15 +33,15 @@ type importPendingLoanModelData struct {
 type ImportPendingLoansLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewImportPendingLoansLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ImportPendingLoansLogic {
 	return &ImportPendingLoansLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
@@ -49,9 +49,8 @@ func NewImportPendingLoansLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingLoansRequest) (resp *borrower.ImportPendingLoansResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()

@@ -29,15 +29,15 @@ import (
 type VerifyEmailLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewVerifyEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *VerifyEmailLogic {
 	return &VerifyEmailLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
@@ -45,9 +45,8 @@ func NewVerifyEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Verif
 func (l *VerifyEmailLogic) VerifyEmail(in *proto.VerifyEmailRequest) (resp *proto.VerifyEmailResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -78,9 +77,8 @@ func (l *VerifyEmailLogic) VerifyEmail(in *proto.VerifyEmailRequest) (resp *prot
 		err := l.handlePreapprovalLoan(newCtx, user, organizationUser.OrganizationId)
 		if err != nil {
 			err = errorx.Wrap(err, "fail to handle preapproval loan")
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -96,7 +94,7 @@ func (l *VerifyEmailLogic) handlePreapprovalLoan(ctx context.Context, user *mode
 		return err
 	}
 	if borrowerOrganization == nil || borrowerOrganization.Id == 0 || borrowerOrganization.Status != constants.OrganizationStatusActive {
-		l.WithContext(ctx).Info("Borrower organization is inactive")
+		l.svcCtx.Logger.WithContext(ctx).Info("Borrower organization is inactive")
 		return nil
 	}
 
@@ -108,7 +106,7 @@ func (l *VerifyEmailLogic) handlePreapprovalLoan(ctx context.Context, user *mode
 		return err
 	}
 	if draftLoan == nil || draftLoan.Id == 0 {
-		l.WithContext(ctx).Info("Draft loan not found")
+		l.svcCtx.Logger.WithContext(ctx).Info("Draft loan not found")
 		return nil
 	}
 	lenderOrganizationId := draftLoan.LenderOrganizationId
@@ -118,7 +116,7 @@ func (l *VerifyEmailLogic) handlePreapprovalLoan(ctx context.Context, user *mode
 		return err
 	}
 	if lenderOrganization == nil || lenderOrganization.Id == 0 || lenderOrganization.Status != constants.OrganizationStatusActive {
-		l.WithContext(ctx).Info("Lender organization is inactive")
+		l.svcCtx.Logger.WithContext(ctx).Info("Lender organization is inactive")
 		return nil
 	}
 	preapprovalLetterSetting, err := l.baseLogic.OrganizationSettingLogic.DetailByPurpose(ctx, lenderOrganization.Id, constants.OrganizationPurposePreapprovalLetter)
@@ -126,7 +124,7 @@ func (l *VerifyEmailLogic) handlePreapprovalLoan(ctx context.Context, user *mode
 		return err
 	}
 	if !preapprovalLetterSetting.Enabled {
-		l.WithContext(ctx).Info("Preapproval letter is not enabled")
+		l.svcCtx.Logger.WithContext(ctx).Info("Preapproval letter is not enabled")
 		return nil
 	}
 
@@ -169,7 +167,7 @@ func (l *VerifyEmailLogic) handlePreapprovalLoan(ctx context.Context, user *mode
 	}
 	pdfContent, pdfContentType, err := global.Templater.Export(ctx, pdfTemplateConfig, renderData)
 	if errors.Is(err, loader.ErrTemplateNotActive) {
-		l.WithContext(ctx).Info("PDF template is inactive")
+		l.svcCtx.Logger.WithContext(ctx).Info("PDF template is inactive")
 		return nil
 	}
 	if err != nil {
@@ -193,7 +191,7 @@ func (l *VerifyEmailLogic) handlePreapprovalLoan(ctx context.Context, user *mode
 	}
 	emailContent, _, err := global.Templater.Export(ctx, emailTemplateConfig, renderData)
 	if errors.Is(err, loader.ErrTemplateNotActive) {
-		l.WithContext(ctx).Info("Email template is inactive")
+		l.svcCtx.Logger.WithContext(ctx).Info("Email template is inactive")
 		return nil
 	}
 	if err != nil {

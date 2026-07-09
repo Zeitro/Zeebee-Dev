@@ -21,15 +21,15 @@ import (
 type ListDrivesLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewListDrivesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListDrivesLogic {
 	return &ListDrivesLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
@@ -37,7 +37,7 @@ func NewListDrivesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListDr
 func (l *ListDrivesLogic) ListDrives(in *proto.EmptyRequest) (resp *borrower.DriveListDrivesResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)

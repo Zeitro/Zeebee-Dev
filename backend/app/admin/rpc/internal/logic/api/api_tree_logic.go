@@ -18,7 +18,7 @@ import (
 type ApiTreeLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
@@ -26,7 +26,6 @@ func NewApiTreeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ApiTreeLo
 	return &ApiTreeLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
@@ -34,9 +33,8 @@ func NewApiTreeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ApiTreeLo
 func (l *ApiTreeLogic) ApiTree(in *admin.ApiTreeRequest) (resp *admin.ApiTreeResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()

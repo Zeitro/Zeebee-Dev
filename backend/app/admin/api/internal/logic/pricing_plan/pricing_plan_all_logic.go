@@ -22,7 +22,7 @@ type PricingPlanAllLogic struct {
 // all
 func NewPricingPlanAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PricingPlanAllLogic {
 	return &PricingPlanAllLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

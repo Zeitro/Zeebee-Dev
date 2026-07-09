@@ -22,7 +22,7 @@ type BaseTemplateCreateLogic struct {
 // Create base template
 func NewBaseTemplateCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseTemplateCreateLogic {
 	return &BaseTemplateCreateLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

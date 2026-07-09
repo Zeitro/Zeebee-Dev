@@ -21,7 +21,7 @@ type BaseTemplateDeleteLogic struct {
 // Delete base template
 func NewBaseTemplateDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseTemplateDeleteLogic {
 	return &BaseTemplateDeleteLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

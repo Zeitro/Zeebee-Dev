@@ -19,7 +19,7 @@ type OrganizationDiscoverPreviewLogic struct {
 
 func NewOrganizationDiscoverPreviewLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OrganizationDiscoverPreviewLogic {
 	return &OrganizationDiscoverPreviewLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

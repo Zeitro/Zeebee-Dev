@@ -22,7 +22,7 @@ type OrganizationSelectOptionLogic struct {
 // select option
 func NewOrganizationSelectOptionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OrganizationSelectOptionLogic {
 	return &OrganizationSelectOptionLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

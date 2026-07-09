@@ -19,15 +19,15 @@ import (
 type AuthUrlLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewAuthUrlLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AuthUrlLogic {
 	return &AuthUrlLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
@@ -35,7 +35,7 @@ func NewAuthUrlLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AuthUrlLo
 func (l *AuthUrlLogic) AuthUrl(in *proto.EmptyRequest) (resp *borrower.DriveAuthUrlResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)

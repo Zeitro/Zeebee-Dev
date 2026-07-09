@@ -21,7 +21,7 @@ type TreeLogic struct {
 // tree
 func NewTreeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *TreeLogic {
 	return &TreeLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

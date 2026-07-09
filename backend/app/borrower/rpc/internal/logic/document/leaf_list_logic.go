@@ -19,15 +19,15 @@ import (
 type LeafListLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewLeafListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LeafListLogic {
 	return &LeafListLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
@@ -35,9 +35,8 @@ func NewLeafListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LeafList
 func (l *LeafListLogic) LeafList(in *borrower.DocumentLeafListRequest) (resp *borrower.DocumentLeafListResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()

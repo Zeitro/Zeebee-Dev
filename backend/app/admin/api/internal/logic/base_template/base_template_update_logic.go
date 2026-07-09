@@ -22,7 +22,7 @@ type BaseTemplateUpdateLogic struct {
 // Update base template
 func NewBaseTemplateUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseTemplateUpdateLogic {
 	return &BaseTemplateUpdateLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

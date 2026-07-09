@@ -22,7 +22,7 @@ type BaseTemplateDetailLogic struct {
 // Get base template detail
 func NewBaseTemplateDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseTemplateDetailLogic {
 	return &BaseTemplateDetailLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

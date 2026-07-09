@@ -21,7 +21,7 @@ type PricingPlanDetailLogic struct {
 // detail
 func NewPricingPlanDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PricingPlanDetailLogic {
 	return &PricingPlanDetailLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
