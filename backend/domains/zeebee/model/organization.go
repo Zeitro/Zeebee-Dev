@@ -15,21 +15,22 @@ type OrganizationLenderMetadata struct {
 
 type Organization struct {
 	Base
-	Name         string                          `gorm:"column:name;default:''" json:"name"`
-	Status       constants.OrganizationStatus    `gorm:"column:status;default:''" json:"status"`
-	OwnerId      int64                           `gorm:"column:owner_id;default:0" json:"owner_id"`
-	Address      Address                         `gorm:"column:address;type:jsonb;serializer:json" json:"address"`
-	ContactEmail string                          `gorm:"column:contact_email;default:''" json:"contact_email"`
-	ContactPhone string                          `gorm:"column:contact_phone;type:varchar(20);default:''" json:"contact_phone"`
-	ContactName  string                          `gorm:"column:contact_name;type:varchar(100);default:''" json:"contact_name"`
-	OwnerType    constants.OrganizationOwnerType `gorm:"column:owner_type;default:''" json:"owner_type"`
-	Type         constants.UserType              `gorm:"column:type;default:''" json:"type"`
-	Logo         string                          `gorm:"column:logo;type:varchar(255);default:''" json:"logo"`
-	Website      string                          `gorm:"column:website;type:varchar(255);default:''" json:"website"`
-	Tagline      string                          `gorm:"column:tagline;type:varchar(255);default:''" json:"tagline"`
-	Source       string                          `gorm:"column:source;type:varchar(16);default:'Manual'" json:"source"`
-	Order        int                             `gorm:"column:order;default:2" json:"order"`
-	Metadata     *OrganizationMetadata           `gorm:"column:metadata;type:jsonb;default:'{}';serializer:json" json:"metadata"`
+	Name             string                          `gorm:"column:name;default:''" json:"name"`
+	Status           constants.OrganizationStatus    `gorm:"column:status;default:''" json:"status"`
+	OwnerId          int64                           `gorm:"column:owner_id;default:0" json:"owner_id"`
+	Address          Address                         `gorm:"column:address;type:jsonb;serializer:json" json:"address"`
+	ContactEmail     string                          `gorm:"column:contact_email;default:''" json:"contact_email"`
+	ContactPhone     string                          `gorm:"column:contact_phone;type:varchar(20);default:''" json:"contact_phone"`
+	ContactName      string                          `gorm:"column:contact_name;type:varchar(100);default:''" json:"contact_name"`
+	OwnerType        constants.OrganizationOwnerType `gorm:"column:owner_type;default:''" json:"owner_type"`
+	Type             constants.UserType              `gorm:"column:type;default:''" json:"type"`
+	Logo             string                          `gorm:"column:logo;type:varchar(255);default:''" json:"logo"`
+	Website          string                          `gorm:"column:website;type:varchar(255);default:''" json:"website"`
+	Tagline          string                          `gorm:"column:tagline;type:varchar(255);default:''" json:"tagline"`
+	Source           string                          `gorm:"column:source;type:varchar(16);default:'Manual'" json:"source"`
+	StripeCustomerId string                          `gorm:"column:stripe_customer_id;type:varchar(64);not null;default:''" json:"stripe_customer_id"`
+	Order            int                             `gorm:"column:order;default:2" json:"order"`
+	Metadata         *OrganizationMetadata           `gorm:"column:metadata;type:jsonb;default:'{}';serializer:json" json:"metadata"`
 
 	//  relationships
 	Users                []*User                `json:"users" gorm:"many2many:organization_and_users;joinForeignKey:organization_id;joinReferences:user_id"`

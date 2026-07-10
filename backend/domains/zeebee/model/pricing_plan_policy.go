@@ -10,6 +10,8 @@ type PricingPlanPolicy struct {
 	OriginalAmount float64                     `gorm:"column:original_amount;type:decimal(10,2);not null;default:0" json:"original_amount"`
 	ActualAmount   float64                     `gorm:"column:actual_amount;type:decimal(10,2);not null;default:0" json:"actual_amount"`
 	Type           constants.PricingPolicyType `gorm:"column:type;type:varchar(20);not null;default:'Monthly'" json:"type"`
+	// StripePriceId is lazily populated on first checkout and cleared when amount/type changes.
+	StripePriceId string `gorm:"column:stripe_price_id;type:varchar(64);not null;default:''" json:"stripe_price_id"`
 
 	PricingPlan *PricingPlan `json:"pricing_plan,omitempty" gorm:"foreignKey:PricingPlanId;references:Id"`
 }
