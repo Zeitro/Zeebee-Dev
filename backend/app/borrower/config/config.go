@@ -49,6 +49,7 @@ type RpcConf struct {
 	TemplateConf                 map[string]TemplateConf
 	CasbinConf                   CasbinConf
 	CronTaskConf                 []CronTaskConf
+	StripeConf                   config.StripeConf `json:",optional"`
 }
 
 type DbConf struct {

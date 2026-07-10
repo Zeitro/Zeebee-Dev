@@ -46,6 +46,15 @@ type SubscriptionInfo struct {
 	CurrentPeriodEnd  time.Time
 }
 
+// NewGateway builds a Gateway from config, or nil when Stripe is disabled
+// (empty secret key). An invalid non-empty config returns an error.
+func NewGateway(config Config) (Gateway, error) {
+	if !config.Enabled() {
+		return nil, nil
+	}
+	return NewClient(config)
+}
+
 // Gateway abstracts the Stripe API so domain logic stays testable with fakes.
 // Ensure/lookup semantics (check DB, create, write back) live in the logic
 // layer; the gateway only wraps remote calls.

@@ -6,6 +6,7 @@ import (
 	"zeebee-backend/common/redisx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/payment"
 	"zeebee-backend/domains/zeebee/repo"
 )
 
@@ -38,6 +39,9 @@ type AllLogicConfig struct {
 	CurrentEnforcer       *rbac.Enforcer
 	CurrentAuthEventTopic string
 	AuthEventTopicMap     map[constants.UserType]string
+	// PaymentGateway is nil when Stripe is not configured for the service;
+	// payment-related endpoints then return a "payment not configured" error.
+	PaymentGateway payment.Gateway
 }
 
 func NewAllLogics(config AllLogicConfig) *AllLogics {

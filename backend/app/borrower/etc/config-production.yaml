@@ -148,3 +148,10 @@ RpcConf:
   CronTaskConf:
     - name: update_organization_subscription_status
       schedule: "0 0 2 * * *"
+
+  StripeConf:
+    SecretKey: ''
+    WebhookSecret: ''
+    SuccessUrl: https://app.zeebeeloans.com/billing/success
+    CancelUrl: https://app.zeebeeloans.com/billing/cancel
+    Currency: usd

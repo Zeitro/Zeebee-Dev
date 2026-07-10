@@ -32,6 +32,7 @@ type RpcConf struct {
 	OpenAIConf   OpenAIConf `json:",optional"`
 	CasbinConf   CasbinConf
 	CronTaskConf []CronTaskConf
+	StripeConf   config.StripeConf `json:",optional"`
 }
 
 // OpenAIConf optional keys for lender discover; prefer env OPENAI_API_KEY in production.
