@@ -28,11 +28,6 @@ func NewOrganizationUpdateLenderLogic(ctx context.Context, svcCtx *svc.ServiceCo
 }
 
 func (l *OrganizationUpdateLenderLogic) OrganizationUpdateLender(req *types.OrganizationUpdateLenderRequest) (resp *types.OrganizationEntity, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
 
 	// Convert types to pb request
 	rpcReq := &admin.OrganizationUpdateLenderRequest{
@@ -41,6 +36,14 @@ func (l *OrganizationUpdateLenderLogic) OrganizationUpdateLender(req *types.Orga
 	rpcReq.Data, err = copierx.Trans[types.OrganizationUpdateLenderRequest, admin.OrganizationUpdateLenderRequestData](req)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
+	}
+	if req.Owner != nil {
+		rpcReq.Data.Owner = &admin.OrganizationCreateLenderUserEntity{
+			Email:     req.Owner.Email,
+			Password:  req.Owner.Password,
+			FirstName: req.Owner.FirstName,
+			LastName:  req.Owner.LastName,
+		}
 	}
 
 	lenderMetadata, err := copierx.Trans[types.OrganizationLenderMetadataEntity, admin.OrganizationLenderMetadataEntity](req.Metadata)

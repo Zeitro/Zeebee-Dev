@@ -12,6 +12,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 )
@@ -35,7 +36,10 @@ func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogi
 func (l *DeleteLogic) Delete(in *borrower.BorrowerPropertyTransactionDeleteRequest) (resp *borrower.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
@@ -81,9 +85,15 @@ func (l *DeleteLogic) Delete(in *borrower.BorrowerPropertyTransactionDeleteReque
 
 		// get all document ids and delete them
 		var docIds []int64
-		innerErr = l.svcCtx.DocumentRepo.PluckByColumnsWithTx(l.ctx, tx, "id", &docIds, map[string]interface{}{
-			"entity_document_id": entityDoc.Id,
-		})
+		filters := []gormx.WhereRaw{
+			{
+				Raw: "entity_document_id = ?",
+				Args: []interface{}{
+					entityDoc.Id,
+				},
+			},
+		}
+		innerErr = l.svcCtx.DocumentRepo.PluckByColumnsWithTx(l.ctx, tx, "id", &docIds, filters)
 		if innerErr != nil {
 			return innerErr
 		}

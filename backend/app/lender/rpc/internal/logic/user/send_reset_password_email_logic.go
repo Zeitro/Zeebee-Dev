@@ -3,6 +3,7 @@ package userlogic
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/duke-git/lancet/v2/random"
 
@@ -13,6 +14,7 @@ import (
 	email2 "zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/stringx"
+	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/limiter"
 
@@ -36,7 +38,10 @@ func NewSendResetPasswordEmailLogic(ctx context.Context, svcCtx *svc.ServiceCont
 func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *lender.SendResetPasswordEmailRequest) (resp *lender.SendResetPasswordEmailResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 
@@ -86,14 +91,15 @@ func (l *SendResetPasswordEmailLogic) sendResetPwdEmail(email string, firstName 
 		code = random.RandNumeral(10)
 		err = global.GetRedis().SetExpire(ctx, redisKey, code, global.Config.ResetPwdExpireSeconds)
 		if err != nil {
-			return errorx.WithStack(errorx.Wrap(err, "Failed To Cache Reset Password Code"))
+			return errorx.WithStack(errorx.Wrap(err, "fail to cache reset password code"))
 		}
 	}
 
 	// send reset pwd email
 	data := map[string]interface{}{
-		"url":        fmt.Sprintf("%s?code=%s&email=%s", global.Config.ResetPwdUrl, code, email),
-		"first_name": firstName,
+		"url":         fmt.Sprintf("%s?code=%s&email=%s", global.Config.ResetPwdUrl, code, email),
+		"first_name":  firstName,
+		"expire_time": timex.DurationToString(time.Second*time.Duration(global.Config.ResetPwdExpireSeconds), true),
 	}
 	content, err := email2.ParseTemplate(email_tpl.ResetPwdEmail, data)
 	if err != nil {

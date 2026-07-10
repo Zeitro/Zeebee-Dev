@@ -156,7 +156,7 @@ export const findItem = ({
 	return result;
 };
 
-// 获取文件类型通过文件后缀
+// 获取文件类型通过文件后缀，用于上传文件时，根据文件后缀获取文件类型(返回的值对应后端所需字段值)
 export const getFileTypeBySuffix = (suffix) => {
 	const newSuffix = suffix?.toLowerCase();
 	switch (newSuffix) {
@@ -169,6 +169,12 @@ export const getFileTypeBySuffix = (suffix) => {
 		case 'doc':
 		case 'docx':
 			return 'doc';
+		case 'xls':
+		case 'xlsx':
+			return 'excel';
+		case 'pptx':
+		case 'ppt':
+			return 'ppt';
 		default:
 			return '';
 	}

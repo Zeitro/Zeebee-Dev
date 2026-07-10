@@ -36,7 +36,10 @@ func NewDeleteDocumentFileLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 func (l *DeleteDocumentFileLogic) DeleteDocumentFile(in *borrower.BorrowerPropertyTransactionDocumentDeleteFileRequest) (resp *borrower.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 
