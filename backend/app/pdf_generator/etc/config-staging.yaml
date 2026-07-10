@@ -1,11 +1,9 @@
 ApiConf:
-  Name: pdf-generator-api
+  Name: pdfgenerator.api
   Host: 0.0.0.0
   Port: 10300
   Mode: dev
   Timeout: 60000
   Log:
     Stat: false
-
-
-
+    ServiceName: pdfgenerator.api

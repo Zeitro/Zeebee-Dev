@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -17,25 +18,24 @@ import (
 type ResetLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewResetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ResetLogic {
 	return &ResetLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *ResetLogic) Reset(in *lender.IdRequest) (resp *lender.OrganizationTemplateDetailResponse, err error) {
+func (l *ResetLogic) Reset(in *proto.IdRequest) (resp *lender.OrganizationTemplateDetailResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -47,7 +47,7 @@ func (l *ResetLogic) Reset(in *lender.IdRequest) (resp *lender.OrganizationTempl
 	if err != nil {
 		return nil, err
 	}
-	result, err := copierx.Trans[dto.OrganizationTemplateEntityDto, lender.OrganizationTemplateEntity](
+	result, err := copierx.Trans[dto.OrganizationTemplateEntityDto, proto.OrganizationTemplateEntity](
 		organizationTemplate,
 		copierx.TimeToRFC3339Str(),
 	)

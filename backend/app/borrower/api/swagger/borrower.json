@@ -2218,7 +2218,7 @@
                             }
                           },
                           "bathrooms": {
-                            "type": "number"
+                            "type": "integer"
                           },
                           "bedrooms": {
                             "type": "integer"
@@ -14809,7 +14809,7 @@
                   }
                 },
                 "bathrooms": {
-                  "type": "number"
+                  "type": "integer"
                 },
                 "bedrooms": {
                   "type": "integer"
@@ -14857,7 +14857,7 @@
                   }
                 },
                 "bathrooms": {
-                  "type": "number"
+                  "type": "integer"
                 },
                 "bedrooms": {
                   "type": "integer"
@@ -14973,7 +14973,7 @@
                         }
                       },
                       "bathrooms": {
-                        "type": "number"
+                        "type": "integer"
                       },
                       "bedrooms": {
                         "type": "integer"
@@ -15169,7 +15169,7 @@
                         "type": "number"
                       },
                       "bathrooms": {
-                        "type": "number"
+                        "type": "integer"
                       },
                       "bedrooms": {
                         "type": "integer"
@@ -15297,7 +15297,7 @@
                   }
                 },
                 "bathrooms": {
-                  "type": "number"
+                  "type": "integer"
                 },
                 "bedrooms": {
                   "type": "integer"
@@ -15387,7 +15387,7 @@
               ],
               "properties": {
                 "bathrooms": {
-                  "type": "number"
+                  "type": "integer"
                 },
                 "bedrooms": {
                   "type": "integer"
@@ -19151,7 +19151,7 @@
                   "type": "number"
                 },
                 "bathrooms": {
-                  "type": "number"
+                  "type": "integer"
                 },
                 "bedrooms": {
                   "type": "integer"
@@ -23705,7 +23705,7 @@
       }
     }
   },
-  "x-date": "2026-06-24 09:39:27",
+  "x-date": "2026-07-10 15:05:05",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

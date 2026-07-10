@@ -5,9 +5,9 @@ import (
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,10 +28,10 @@ func NewOrganizationUserDeleteLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 func (l *OrganizationUserDeleteLogic) OrganizationUserDelete(req *types.PathIdRequest) (resp *types.EmptyResponse, err error) {
-	rpcReq := &borrower.OrganizationUserDeleteRequest{
-		Data: &borrower.OrganizationUserDeleteRequestData{},
+	rpcReq := &proto.PathIdRequest{
+		Data: &proto.PathIdRequestData{},
 	}
-	rpcReq.Data, err = copierx.Trans[types.PathIdRequest, borrower.OrganizationUserDeleteRequestData](req)
+	rpcReq.Data, err = copierx.Trans[types.PathIdRequest, proto.PathIdRequestData](req)
 	if err != nil {
 		return nil, err
 	}

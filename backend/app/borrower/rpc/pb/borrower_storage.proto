@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package borrower;
+
+option go_package = "zeebee-backend/app/borrower/rpc/pb/borrower";
+
+import "proto/common.proto";
+
+service Storage {
+  rpc CreatePresignedUrl(proto.StorageCreatePresignedUrlRequest) returns(proto.StorageCreatePresignedUrlResponse);
+}

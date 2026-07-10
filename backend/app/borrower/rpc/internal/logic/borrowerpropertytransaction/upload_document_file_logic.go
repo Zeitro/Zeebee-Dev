@@ -20,30 +20,30 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type UploadDocumentFileLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewUploadDocumentFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UploadDocumentFileLogic {
 	return &UploadDocumentFileLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerPropertyTransactionDocumentUploadFileRequest) (resp *borrower.DocumentUploadFileResponse, err error) {
+func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerPropertyTransactionDocumentUploadFileRequest) (resp *borrower.BorrowerPropertyTransactionDocumentUploadFileResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -152,12 +152,12 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 		return
 	}
 
-	protoFiles, err := copierx.Trans[[]model.File, []*borrower.FileEntity](&uploadedFiles, copierx.TimeToRFC3339Str())
+	protoFiles, err := copierx.Trans[[]model.File, []*proto.FileEntity](&uploadedFiles, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
-	return &borrower.DocumentUploadFileResponse{
+	return &borrower.BorrowerPropertyTransactionDocumentUploadFileResponse{
 		Data: *protoFiles,
 	}, nil
 }

@@ -15,17 +15,18 @@ import (
 type DiscoverUpdateSettingsLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
 }
 
 func NewDiscoverUpdateSettingsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DiscoverUpdateSettingsLogic {
-	return &DiscoverUpdateSettingsLogic{ctx: ctx, svcCtx: svcCtx, Logger: logx.WithContext(ctx)}
+	return &DiscoverUpdateSettingsLogic{ctx: ctx, svcCtx: svcCtx}
 }
 
 func (l *DiscoverUpdateSettingsLogic) DiscoverUpdateSettings(in *admin.LenderDiscoverUpdateSettingsRequest) (resp *admin.LenderDiscoverSettingsResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+			).Error(err)
 		}
 	}()
 	if in.GetData() == nil {

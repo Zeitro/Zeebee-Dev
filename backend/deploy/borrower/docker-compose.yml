@@ -1,35 +1,17 @@
 services:
-  staging-borrower-backend:
-    image: staging-borrower-backend:${IMAGE_TAG:-latest}
+  borrower-backend:
+    image: ${FULL_SERVICE_NAME}:${IMAGE_TAG:-latest}
     build:
       context: ../../
       dockerfile: deploy/borrower/Dockerfile
       args:
-        - CONFIG_ENV=staging
-    container_name: staging-borrower-backend
+        - CONFIG_ENV=${SERVICE_ENVIRONMENT}
+    container_name: ${FULL_SERVICE_NAME}
     network_mode: host
     logging:
       driver: awslogs
       options:
         awslogs-region: us-west-1
-        awslogs-group: /zeebee/borrower-staging
+        awslogs-group: /zeebee/${SERVICE_NAME}-${SERVICE_ENVIRONMENT}
         awslogs-create-group: "true"
         awslogs-stream: backend-${HOSTNAME}
-
-  prod-borrower-backend:
-    image: prod-borrower-backend:${IMAGE_TAG:-latest}
-    build:
-      context: ../../
-      dockerfile: deploy/borrower/Dockerfile
-      args:
-        - CONFIG_ENV=production
-    container_name: prod-borrower-backend
-    network_mode: host
-    logging:
-      driver: awslogs
-      options:
-        awslogs-region: us-west-1
-        awslogs-group: /zeebee/borrower-production
-        awslogs-create-group: "true"
-        awslogs-stream: backend-${HOSTNAME}
-

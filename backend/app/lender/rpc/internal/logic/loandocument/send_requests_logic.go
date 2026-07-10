@@ -16,6 +16,7 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -26,7 +27,6 @@ type SendRequestsLogic struct {
 	ctx       context.Context
 	svcCtx    *svc.ServiceContext
 	baseLogic *logic.BaseLogic
-	logx.Logger
 }
 
 func NewSendRequestsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SendRequestsLogic {
@@ -34,16 +34,14 @@ func NewSendRequestsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Send
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		baseLogic: logic.GetBaseLogic(svcCtx),
-		Logger:    logx.WithContext(ctx),
 	}
 }
 
-func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequest) (resp *lender.EmptyResponse, err error) {
+func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -119,7 +117,7 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 	})
 
 	if len(loanDocuments) == 0 {
-		return &lender.EmptyResponse{}, nil
+		return &proto.EmptyResponse{}, nil
 	}
 
 	// send email
@@ -128,7 +126,7 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 		err := l.sendDocumentRequestEmail(ctx, loan, loanDocuments)
 		if err != nil {
 			err = errorx.Wrap(err, "send document request email error")
-			l.WithContext(ctx).WithFields(
+			l.svcCtx.Logger.WithContext(ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
 				logx.Field("service_name", l.svcCtx.Config.Name),
 				logx.Field("type", "send_email"),
@@ -136,7 +134,7 @@ func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequ
 		}
 	}()
 
-	return &lender.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }
 
 // prepare

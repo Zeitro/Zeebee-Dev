@@ -14,30 +14,30 @@ import (
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type CreateLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogic {
 	return &CreateLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *CreateLogic) Create(in *borrower.BorrowerApplicantCreateRequest) (resp *borrower.BorrowerApplicantCreateResponse, err error) {
+func (l *CreateLogic) Create(in *borrower.BorrowerApplicantCreateRequest) (resp *borrower.BorrowerApplicantDetailResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -47,7 +47,7 @@ func (l *CreateLogic) Create(in *borrower.BorrowerApplicantCreateRequest) (resp 
 	}
 
 	saveData := &model.BorrowerApplicant{}
-	responseData := &borrower.BorrowerApplicantEntity{}
+	responseData := &proto.BorrowerApplicantEntity{}
 	err = copier.CopyWithOption(saveData, in.Data, copier.Option{
 		CaseSensitive: true,
 		DeepCopy:      true,
@@ -80,7 +80,7 @@ func (l *CreateLogic) Create(in *borrower.BorrowerApplicantCreateRequest) (resp 
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
-	return &borrower.BorrowerApplicantCreateResponse{
+	return &borrower.BorrowerApplicantDetailResponse{
 		Data: responseData,
 	}, nil
 }

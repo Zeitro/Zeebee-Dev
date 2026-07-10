@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -21,7 +22,7 @@ type OrganizationSubscriptionCreateLogic struct {
 // create
 func NewOrganizationSubscriptionCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OrganizationSubscriptionCreateLogic {
 	return &OrganizationSubscriptionCreateLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
@@ -43,7 +44,7 @@ func (l *OrganizationSubscriptionCreateLogic) OrganizationSubscriptionCreate(req
 	}
 
 	// Convert pb response to types
-	resp, err = copierx.Trans[admin.OrganizationSubscriptionEntity, types.OrganizationSubscriptionDetailResponse](rpcResp.Data, copierx.TimeToRFC3339Str())
+	resp, err = copierx.Trans[proto.OrganizationSubscriptionEntity, types.OrganizationSubscriptionDetailResponse](rpcResp.Data, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

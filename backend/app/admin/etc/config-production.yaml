@@ -1,10 +1,11 @@
 ApiConf:
-  Name: admin-api
+  Name: admin.api
   Host: 0.0.0.0
   Port: 10200
   Timeout: 600000
   Log:
     Stat: false
+    ServiceName: admin.api
 
   JwtAuth:
     AccessSecret: mD8sL2kS2qY2dN0fO1gT8nU7eE8sW4yY
@@ -20,6 +21,9 @@ RpcConf:
   Name: admin.rpc
   ListenOn: 0.0.0.0:10201
   Timeout: 600000
+  Log:
+    ServiceName: admin.rpc
+    Stat: false
   LimiterConf:
     Login:
       Rate: 10

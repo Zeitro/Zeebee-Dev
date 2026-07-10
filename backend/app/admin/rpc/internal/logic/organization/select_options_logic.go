@@ -11,6 +11,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -18,15 +19,15 @@ import (
 type SelectOptionsLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewSelectOptionsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SelectOptionsLogic {
 	return &SelectOptionsLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
@@ -34,9 +35,8 @@ func NewSelectOptionsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sel
 func (l *SelectOptionsLogic) SelectOptions(in *admin.OrganizationSelectOptionsRequest) (resp *admin.OrganizationSelectOptionsResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -50,7 +50,7 @@ func (l *SelectOptionsLogic) SelectOptions(in *admin.OrganizationSelectOptionsRe
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[[]*dto.OrganizationOptionDto, []*admin.OrganizationOptionsEntity](&organization)
+	data, err := copierx.Trans[[]*dto.OrganizationOptionDto, []*proto.OrganizationOptionsEntity](&organization)
 	if err != nil {
 		return nil, err
 	}
