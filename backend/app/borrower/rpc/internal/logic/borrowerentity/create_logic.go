@@ -12,30 +12,30 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type CreateLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogic {
 	return &CreateLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *CreateLogic) Create(in *borrower.BorrowerEntityCreateRequest) (resp *borrower.BorrowerEntityCreateResponse, err error) {
+func (l *CreateLogic) Create(in *borrower.BorrowerEntityCreateRequest) (resp *borrower.BorrowerEntityDetailResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -45,7 +45,7 @@ func (l *CreateLogic) Create(in *borrower.BorrowerEntityCreateRequest) (resp *bo
 	}
 
 	saveData := &model.BorrowerEntity{}
-	responseData := &borrower.BorrowerEntityEntity{}
+	responseData := &proto.BorrowerEntityEntity{}
 	saveData, err = copierx.Trans[borrower.BorrowerEntityEditEntity, model.BorrowerEntity](in.Data)
 	if err != nil {
 		return nil, err
@@ -59,7 +59,7 @@ func (l *CreateLogic) Create(in *borrower.BorrowerEntityCreateRequest) (resp *bo
 	if err != nil {
 		return nil, err
 	}
-	responseData, err = copierx.Trans[model.BorrowerEntity, borrower.BorrowerEntityEntity](result,
+	responseData, err = copierx.Trans[model.BorrowerEntity, proto.BorrowerEntityEntity](result,
 		copierx.TimeToRFC3339Str(),
 		copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
 	)
@@ -67,7 +67,7 @@ func (l *CreateLogic) Create(in *borrower.BorrowerEntityCreateRequest) (resp *bo
 		return nil, err
 	}
 
-	return &borrower.BorrowerEntityCreateResponse{
+	return &borrower.BorrowerEntityDetailResponse{
 		Data: responseData,
 	}, nil
 }

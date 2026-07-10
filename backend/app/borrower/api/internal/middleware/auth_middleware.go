@@ -14,6 +14,7 @@ import (
 	"zeebee-backend/common/routex"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type AuthMiddleware struct {
@@ -41,8 +42,8 @@ func (m *AuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		nextCtx := context.WithValue(reqCtx, utils.JwtTokenCtxKey, token)
 		nextCtx = metadata.AppendToOutgoingContext(nextCtx, utils.JwtTokenCtxKey, token)
 
-		rpcResp, err := m.authRpcClient.AuthCheck(nextCtx, &borrower.AuthCheckRequest{
-			Data: &borrower.AuthCheckRequestData{
+		rpcResp, err := m.authRpcClient.AuthCheck(nextCtx, &proto.AuthCheckRequest{
+			Data: &proto.AuthCheckRequestData{
 				Method: method,
 				Path:   routePattern,
 				Type:   string(m.userType),

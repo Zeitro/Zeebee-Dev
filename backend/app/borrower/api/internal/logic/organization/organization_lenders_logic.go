@@ -8,9 +8,9 @@ import (
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -31,7 +31,7 @@ func NewOrganizationLendersLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *OrganizationLendersLogic) OrganizationLenders(req *types.EmptyRequest) (resp *types.OrganizationLendersResponse, err error) {
-	rpcReq := &borrower.EmptyRequest{}
+	rpcReq := &proto.EmptyRequest{}
 	resp = &types.OrganizationLendersResponse{}
 
 	rpcResp, err := l.svcCtx.OrganizationRpcClient.AllLender(l.ctx, rpcReq)
@@ -39,7 +39,7 @@ func (l *OrganizationLendersLogic) OrganizationLenders(req *types.EmptyRequest) 
 		return nil, errorx.WithStack(err)
 	}
 
-	list, err := copierx.Trans[[]*borrower.OrganizationOptionsEntity, []*types.OrganizationOptionEntity](&rpcResp.Data)
+	list, err := copierx.Trans[[]*proto.OrganizationOptionsEntity, []*types.OrganizationOptionEntity](&rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

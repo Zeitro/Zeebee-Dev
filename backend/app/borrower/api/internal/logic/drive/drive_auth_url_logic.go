@@ -7,7 +7,7 @@ import (
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DriveAuthUrlLogic struct {
@@ -26,7 +26,7 @@ func NewDriveAuthUrlLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Driv
 }
 
 func (l *DriveAuthUrlLogic) DriveAuthUrl(req *types.EmptyRequest) (resp *types.DriveAuthUrlResponse, err error) {
-	rpcResp, err := l.svcCtx.DriveRpcClient.AuthUrl(l.ctx, &borrower.EmptyRequest{})
+	rpcResp, err := l.svcCtx.DriveRpcClient.AuthUrl(l.ctx, &proto.EmptyRequest{})
 	if err != nil {
 		return nil, err
 	}

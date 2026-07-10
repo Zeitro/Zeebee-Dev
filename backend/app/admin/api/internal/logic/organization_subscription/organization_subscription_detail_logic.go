@@ -5,9 +5,9 @@ import (
 
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
-	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -21,15 +21,15 @@ type OrganizationSubscriptionDetailLogic struct {
 // detail
 func NewOrganizationSubscriptionDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OrganizationSubscriptionDetailLogic {
 	return &OrganizationSubscriptionDetailLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
 func (l *OrganizationSubscriptionDetailLogic) OrganizationSubscriptionDetail(req *types.PathIdRequest) (resp *types.OrganizationSubscriptionDetailResponse, err error) {
-	rpcReq := &admin.PathIdRequest{
-		Data: &admin.PathIdRequestData{
+	rpcReq := &proto.PathIdRequest{
+		Data: &proto.PathIdRequestData{
 			Id: req.Id,
 		},
 	}
@@ -39,7 +39,7 @@ func (l *OrganizationSubscriptionDetailLogic) OrganizationSubscriptionDetail(req
 		return nil, errorx.WithStack(err)
 	}
 
-	resp, err = copierx.Trans[admin.OrganizationSubscriptionEntity, types.OrganizationSubscriptionDetailResponse](rpcResp.Data, copierx.TimeToRFC3339Str())
+	resp, err = copierx.Trans[proto.OrganizationSubscriptionEntity, types.OrganizationSubscriptionDetailResponse](rpcResp.Data, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

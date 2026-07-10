@@ -5,9 +5,9 @@ import (
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,10 +28,10 @@ func NewOrganizationUserSendEmailLogic(ctx context.Context, svcCtx *svc.ServiceC
 }
 
 func (l *OrganizationUserSendEmailLogic) OrganizationUserSendEmail(req *types.PathIdRequest) (resp *types.EmptyResponse, err error) {
-	rpcReq := &borrower.OrganizationUserSendInvitationEmailRequest{
-		Data: &borrower.OrganizationUserSendInvitationEmailRequestData{},
+	rpcReq := &proto.PathIdRequest{
+		Data: &proto.PathIdRequestData{},
 	}
-	rpcReq.Data, err = copierx.Trans[types.PathIdRequest, borrower.OrganizationUserSendInvitationEmailRequestData](req)
+	rpcReq.Data, err = copierx.Trans[types.PathIdRequest, proto.PathIdRequestData](req)
 	if err != nil {
 		return nil, err
 	}

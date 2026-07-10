@@ -21,7 +21,7 @@ type BaseTemplateSwitchStatusLogic struct {
 // Switch base template status
 func NewBaseTemplateSwitchStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseTemplateSwitchStatusLogic {
 	return &BaseTemplateSwitchStatusLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

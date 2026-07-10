@@ -18,12 +18,13 @@ import (
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type ApplyLoanLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
@@ -41,9 +42,9 @@ type applyLoanModelData struct {
 
 func NewApplyLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ApplyLoanLogic {
 	return &ApplyLoanLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
@@ -51,9 +52,8 @@ func NewApplyLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ApplyLo
 func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrower.LoanApplyResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -349,28 +349,28 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 
 	// transaction experience
 	transactionExperiences := make([]*model.LoanExperience, 0)
-	err = copierx.Assign[[]*borrower.LoanExperienceEntity, []*model.LoanExperience](&reqData.TransactionExperiences, &transactionExperiences, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
+	err = copierx.Assign[[]*proto.LoanExperienceEntity, []*model.LoanExperience](&reqData.TransactionExperiences, &transactionExperiences, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
 		return nil, err
 	}
 
 	// real_estates experience
 	realEstatesExperiences := make([]*model.LoanExperience, 0)
-	err = copierx.Assign[[]*borrower.LoanExperienceEntity, []*model.LoanExperience](&reqData.RealEstateExperiences, &realEstatesExperiences, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
+	err = copierx.Assign[[]*proto.LoanExperienceEntity, []*model.LoanExperience](&reqData.RealEstateExperiences, &realEstatesExperiences, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
 		return nil, err
 	}
 
 	// third services
 	loanThirdServices := make([]*model.LoanThirdService, 0)
-	err = copierx.Assign[[]*borrower.LoanThirdServiceEntity, []*model.LoanThirdService](&reqData.LoanThirdServices, &loanThirdServices, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
+	err = copierx.Assign[[]*proto.LoanThirdServiceEntity, []*model.LoanThirdService](&reqData.LoanThirdServices, &loanThirdServices, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
 		return nil, err
 	}
 
 	// demographic
 	loanDemographic := &model.LoanDemographic{}
-	loanDemographic, err = copierx.Trans[borrower.LoanDemographicEntity, model.LoanDemographic](reqData.LoanDemographic, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
+	loanDemographic, err = copierx.Trans[proto.LoanDemographicEntity, model.LoanDemographic](reqData.LoanDemographic, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
 		return nil, err
 	}

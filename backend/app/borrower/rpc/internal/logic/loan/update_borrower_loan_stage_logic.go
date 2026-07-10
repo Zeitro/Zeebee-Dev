@@ -7,6 +7,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -16,25 +17,24 @@ import (
 type UpdateBorrowerLoanStageLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewUpdateBorrowerLoanStageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateBorrowerLoanStageLogic {
 	return &UpdateBorrowerLoanStageLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *UpdateBorrowerLoanStageLogic) UpdateBorrowerLoanStage(in *borrower.LoanUpdateStageRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *UpdateBorrowerLoanStageLogic) UpdateBorrowerLoanStage(in *borrower.LoanUpdateStageRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -58,5 +58,5 @@ func (l *UpdateBorrowerLoanStageLogic) UpdateBorrowerLoanStage(in *borrower.Loan
 
 	err = l.svcCtx.LoanRepo.UpdateColumnsById(l.ctx, in.Data.Id, map[string]interface{}{"stage": in.Data.Stage})
 
-	return &borrower.EmptyResponse{}, err
+	return &proto.EmptyResponse{}, err
 }

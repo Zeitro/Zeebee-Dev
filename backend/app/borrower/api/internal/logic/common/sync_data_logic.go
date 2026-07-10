@@ -5,7 +5,7 @@ import (
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,7 +26,7 @@ func NewSyncDataLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncData
 }
 
 func (l *SyncDataLogic) SyncData(req *types.EmptyRequest) (resp *types.EmptyResponse, err error) {
-	_, err = l.svcCtx.CommonRpcClient.SyncData(l.ctx, &borrower.EmptyRequest{})
+	_, err = l.svcCtx.CommonRpcClient.SyncData(l.ctx, &proto.EmptyRequest{})
 	if err != nil {
 		return nil, err
 	}

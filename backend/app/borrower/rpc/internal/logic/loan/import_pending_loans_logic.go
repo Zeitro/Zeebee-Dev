@@ -33,15 +33,15 @@ type importPendingLoanModelData struct {
 type ImportPendingLoansLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewImportPendingLoansLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ImportPendingLoansLogic {
 	return &ImportPendingLoansLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
@@ -49,9 +49,8 @@ func NewImportPendingLoansLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingLoansRequest) (resp *borrower.ImportPendingLoansResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -61,11 +60,6 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 		return nil, err
 	}
 
-	// build saved data
-	models, err := l.buildImportModels(in.Data, claim)
-	if err != nil {
-		return nil, err
-	}
 	if len(in.Data) == 0 {
 		return &borrower.ImportPendingLoansResponse{
 			Data: &borrower.ImportPendingLoansResponseData{
@@ -74,11 +68,24 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 		}, nil
 	}
 
+	// build saved data
+	models, err := l.buildImportModels(in.Data, claim)
+	if err != nil {
+		return nil, err
+	}
+
 	// create  loan
-	err = l.svcCtx.LoanRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
-		var innerErr error
+	err = l.svcCtx.LoanRepo.Transaction(l.ctx, func(tx *gorm.DB) (innerErr error) {
+
+		var index int
+		defer func() {
+			if innerErr != nil {
+				innerErr = errorx.Wrapf(innerErr, "fail to import pending loan at row:%d", index)
+			}
+		}()
 
 		for i := range models {
+			index = i + 1
 			var borrowerProperty *model.BorrowerProperty
 			var uid string
 			data := models[i]
@@ -133,6 +140,9 @@ func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingL
 
 			// sync total amount and loan count
 			innerErr = l.svcCtx.BorrowerPropertyRepo.SyncTotalAmountAndLoanCountWithTx(l.ctx, tx, borrowerProperty.Id)
+			if innerErr != nil {
+				return innerErr
+			}
 		}
 
 		return innerErr
@@ -193,27 +203,30 @@ func (l *ImportPendingLoansLogic) buildImportModel(in *borrower.ImportPendingLoa
 	applicants = *applicantsPtr
 
 	if len(applicants) == 0 {
-		return nil, errorx.New("No applicant")
+		return nil, errorx.New("no applicant")
 	}
 	primaryCount := slice.CountBy(applicants, func(index int, item *model.LoanApplicant) bool {
 		return item.IsPrimary
 	})
 	if primaryCount == 0 {
-		return nil, errorx.New("No primary applicant")
+		return nil, errorx.New("no primary applicant")
 	}
 	slice.ForEach(applicants, func(index int, item *model.LoanApplicant) {
 		item.BorrowerOrganizationId = claim.OrganizationId
 		totalOwnPercent += item.OwnPercent
 	})
 	if totalOwnPercent > 100 {
-		return nil, errorx.New("Total own percent is greater than 100")
+		return nil, errorx.New("total own percent is greater than 100")
 	}
 
-	// loan property
-	loanProperty := &model.LoanProperty{}
-	loanProperty, err = copierx.Trans[borrower.ImportPendingLoansRequestData, model.LoanProperty](in, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
+	// loan property: address/owner/unit live in the nested loan_property entity, not the top-level request
+	var loanProperty *model.LoanProperty
+	loanProperty, err = copierx.Trans[borrower.ImportPendingLoanPropertyEntity, model.LoanProperty](in.LoanProperty, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
 		return nil, err
+	}
+	if loanProperty == nil {
+		loanProperty = &model.LoanProperty{}
 	}
 
 	// BorrowerProperty

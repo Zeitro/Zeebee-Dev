@@ -15,17 +15,17 @@ import (
 )
 
 type GetSyncTransactionStatusLogic struct {
-	ctx       context.Context
-	svcCtx    *svc.ServiceContext
-	logx.Logger
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewGetSyncTransactionStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetSyncTransactionStatusLogic {
 	return &GetSyncTransactionStatusLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
@@ -33,7 +33,7 @@ func NewGetSyncTransactionStatusLogic(ctx context.Context, svcCtx *svc.ServiceCo
 func (l *GetSyncTransactionStatusLogic) GetSyncTransactionStatus(in *borrower.DriveSyncTransactionRequest) (resp *borrower.DriveSyncTransactionResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
@@ -41,7 +41,7 @@ func (l *GetSyncTransactionStatusLogic) GetSyncTransactionStatus(in *borrower.Dr
 		return nil, err
 	}
 	if in.Data == nil {
-		return nil, errorx.New("Request data is empty")
+		return nil, errorx.New("request data is empty")
 	}
 
 	job, err := l.baseLogic.DriveLogic.GetSyncJobStatus(l.ctx, in.Data.TransactionId, claim.OrganizationId, constants.UserTypeBorrower)

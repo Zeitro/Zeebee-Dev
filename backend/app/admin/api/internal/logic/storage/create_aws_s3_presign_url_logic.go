@@ -20,7 +20,7 @@ type CreateAwsS3PresignUrlLogic struct {
 // create aws s3 presign url
 func NewCreateAwsS3PresignUrlLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateAwsS3PresignUrlLogic {
 	return &CreateAwsS3PresignUrlLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

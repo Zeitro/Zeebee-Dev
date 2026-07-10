@@ -14,20 +14,21 @@ import (
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type CreateLenderLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewCreateLenderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLenderLogic {
 	return &CreateLenderLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
@@ -40,9 +41,8 @@ func NewCreateLenderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Crea
 func (l *CreateLenderLogic) CreateLender(in *admin.OrganizationCreateLenderRequest) (resp *admin.OrganizationDetailResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -90,7 +90,6 @@ func (l *CreateLenderLogic) CreateLender(in *admin.OrganizationCreateLenderReque
 		return nil, err
 	}
 
-
 	// Subscribe default pricing plan (best-effort, ignore errors)
 	_ = l.baseLogic.OrganizationSubscriptionLogic.SubscribeDefaultPlan(l.ctx, organizationUser.OrganizationId, constants.UserTypeLender)
 
@@ -101,7 +100,7 @@ func (l *CreateLenderLogic) CreateLender(in *admin.OrganizationCreateLenderReque
 	}
 
 	// Convert to response
-	data, err := copierx.Trans[dto.OrganizationEntityDto, admin.OrganizationEntity](organization, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[dto.OrganizationEntityDto, proto.OrganizationEntity](organization, copierx.TimeToRFC3339Str())
 	return &admin.OrganizationDetailResponse{
 		Data: data,
 	}, err

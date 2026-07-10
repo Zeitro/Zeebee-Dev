@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -17,25 +18,24 @@ import (
 type UserMenuLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewUserMenuLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserMenuLogic {
 	return &UserMenuLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *UserMenuLogic) UserMenu(in *lender.EmptyRequest) (resp *lender.ResourceTreeResponse, err error) {
+func (l *UserMenuLogic) UserMenu(in *proto.EmptyRequest) (resp *lender.ResourceTreeResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -55,7 +55,7 @@ func (l *UserMenuLogic) UserMenu(in *lender.EmptyRequest) (resp *lender.Resource
 	}
 	// trans response
 	resp = &lender.ResourceTreeResponse{}
-	menus, err := copierx.Trans[[]*dto.ResourceTreeDto, []*lender.ResourceTreeEntity](&result, copierx.TimeToRFC3339Str())
+	menus, err := copierx.Trans[[]*dto.ResourceTreeDto, []*proto.ResourceTreeEntity](&result, copierx.TimeToRFC3339Str())
 
 	return &lender.ResourceTreeResponse{
 		Data: *menus,
