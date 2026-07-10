@@ -44,7 +44,7 @@ func (l *CreatePresignedUrlLogic) CreatePresignedUrl(in *proto.StorageCreatePres
 	typ := in.Data.Type
 	suffix := strings.ToLower(in.Data.FileSuffix)
 	if len(typ) == 0 {
-		err = errorx.New("Type is empty")
+		err = errorx.New("type is empty")
 	}
 	name := uuid.New().String()
 
