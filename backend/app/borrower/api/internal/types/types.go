@@ -1397,6 +1397,8 @@ type OrganizationEntity struct {
 	Logo               string                      `json:"logo"`
 	Website            string                      `json:"website"`
 	Tagline            string                      `json:"tagline"`
+	Source             string                      `json:"source,optional"`
+	Order              int                         `json:"order"`
 	Metadata           *OrganizationMetadataEntity `json:"metadata"`
 	CreatedAt          string                      `json:"created_at"`
 	UpdatedAt          string                      `json:"updated_at"`
@@ -1454,7 +1456,7 @@ type OrganizationOptionEntity struct {
 }
 
 type OrganizationUserAcceptInvitationRequest struct {
-	Code           string `json:"code" validate:"required"`
+	Code           string `json:"code" validate:"required,max=20"`
 	Email          string `json:"email" validate:"required,email"`
 	OrganizationId int64  `json:"organization_id" validate:"required"`
 	FirstName      string `json:"first_name" validate:"required,min=2,max=100"`
@@ -1468,6 +1470,16 @@ type OrganizationUserAllResponse struct {
 type OrganizationUserAssignRolesRequest struct {
 	Id      int64   `path:"id" validate:"required"`
 	RoleIds []int64 `json:"role_ids,optional"`
+}
+
+type OrganizationUserCheckInvitationRequest struct {
+	Code           string `json:"code" validate:"required,max=20"`
+	Email          string `json:"email" validate:"required,email"`
+	OrganizationId int64  `json:"organization_id" validate:"required,min=1"`
+}
+
+type OrganizationUserCheckInvitationResponse struct {
+	IsExpired bool `json:"is_expired"`
 }
 
 type OrganizationUserCreateRequest struct {

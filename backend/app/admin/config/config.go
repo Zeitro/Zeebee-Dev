@@ -1,6 +1,8 @@
 package config
 
 import (
+	"zeebee-backend/domains/zeebee/config"
+
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -21,13 +23,22 @@ type ApiConf struct {
 
 type RpcConf struct {
 	zrpc.RpcServerConf
-	LimiterConf LimiterConf
-	EmailConf   EmailConf
-	RedisConf   RedisConf
-	JwtAuth     types.JwtAuth `json:",optional"`
-	DbConf      DbConf
-	AwsS3Conf   AwsS3Conf
-	CasbinConf  CasbinConf
+	LimiterConf  LimiterConf
+	EmailConf    EmailConf
+	RedisConf    RedisConf
+	JwtAuth      types.JwtAuth `json:",optional"`
+	DbConf       DbConf
+	AwsS3Conf    AwsS3Conf
+	OpenAIConf   OpenAIConf `json:",optional"`
+	CasbinConf   CasbinConf
+	CronTaskConf []CronTaskConf
+}
+
+// OpenAIConf optional keys for lender discover; prefer env OPENAI_API_KEY in production.
+type OpenAIConf struct {
+	APIKey  string `json:",optional"`
+	Model   string `json:",optional"`
+	BaseURL string `json:",optional"`
 }
 
 type DbConf struct {
@@ -50,12 +61,7 @@ type AwsS3Conf struct {
 }
 
 type LimiterConf struct {
-	Login LimiterItem
-}
-
-type LimiterItem struct {
-	Rate   int
-	Period int
+	Login config.LimiterItem
 }
 
 type EmailConf struct {
@@ -84,4 +90,9 @@ type CasbinEventTopic struct {
 	AdminTopic    string
 	BorrowerTopic string
 	LenderTopic   string
+}
+
+type CronTaskConf struct {
+	Name     string `json:"name"`
+	Schedule string `json:"schedule"`
 }

@@ -3,6 +3,7 @@ package userlogic
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/duke-git/lancet/v2/random"
 
@@ -15,6 +16,7 @@ import (
 	email2 "zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/stringx"
+	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/limiter"
 )
@@ -36,13 +38,16 @@ func NewSendResetPasswordEmailLogic(ctx context.Context, svcCtx *svc.ServiceCont
 func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *borrower.SendResetPasswordEmailRequest) (resp *borrower.SendResetPasswordEmailResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 
 	email := in.Data.Email
 	if email == "" {
-		return nil, errorx.WithStack(errorx.New("Email is required"))
+		return nil, errorx.WithStack(errorx.New("email is required"))
 	}
 
 	// rate limit
@@ -52,7 +57,7 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *borrower.SendRe
 		return nil, errorx.WithStack(err)
 	}
 	if !ok {
-		return nil, errorx.Errorf("Email %s try too many times", email)
+		return nil, errorx.Errorf("email %s try too many times", email)
 	}
 
 	// get user
@@ -61,7 +66,7 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *borrower.SendRe
 		return nil, errorx.WithStack(err)
 	}
 	if user == nil {
-		return nil, errorx.WithStack(errorx.New("User not found"))
+		return nil, errorx.WithStack(errorx.New("user not found"))
 	}
 
 	go func() {
@@ -69,7 +74,7 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *borrower.SendRe
 		// send email
 		err := l.sendResetPwdEmail(email, user.FirstName)
 		if err != nil {
-			err = errorx.Wrap(err, "Send Reset Password Email Error")
+			err = errorx.Wrap(err, "fail to send reset password email")
 			l.WithContext(ctx).Error(err)
 		}
 	}()
@@ -87,14 +92,15 @@ func (l *SendResetPasswordEmailLogic) sendResetPwdEmail(email string, firstName 
 		expireSeconds := global.Config.ResetPwdExpireSeconds
 		err = global.GetRedis().SetExpire(ctx, redisKey, code, expireSeconds)
 		if err != nil {
-			return errorx.WithStack(errorx.Wrap(err, "Failed To Cache Reset Password Code"))
+			return errorx.WithStack(errorx.Wrap(err, "fail to cache reset password code"))
 		}
 	}
 
 	// send reset pwd email
 	data := map[string]interface{}{
-		"url":        fmt.Sprintf("%s?code=%s&email=%s", global.Config.ResetPwdUrl, code, email),
-		"first_name": firstName,
+		"url":         fmt.Sprintf("%s?code=%s&email=%s", global.Config.ResetPwdUrl, code, email),
+		"first_name":  firstName,
+		"expire_time": timex.DurationToString(time.Second*time.Duration(global.Config.ResetPwdExpireSeconds), true),
 	}
 	content, err := email2.ParseTemplate(email_tpl.ResetPwdEmail, data)
 	if err != nil {

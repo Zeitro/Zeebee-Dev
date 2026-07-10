@@ -13,6 +13,7 @@ export const PERMISSIONS = {
 		ASSIGN: 'Setting:Role:Assign',
 	},
 	SETTING_SYSTEM: {
+		PAGE: 'Setting:System',
 		PRE_APPROVED_LETTER: 'Setting:System:SendPreApprovalLetter',
 	},
 	SETTING_PRE_APPROVED_LETTER: {

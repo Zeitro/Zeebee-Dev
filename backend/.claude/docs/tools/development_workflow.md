@@ -922,7 +922,7 @@ go mod tidy
 
 - [go-zero 官方文档](https://go-zero.dev/)
 - [Go 官方文档](https://golang.org/doc/)
-- [项目知识库](../guides/navigation-guide.md)
+- [项目知识库](../INDEX.md)
 
 ### 团队沟通
 

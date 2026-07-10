@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"time"
 
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/zeromicro/go-zero/core/threading"
@@ -35,6 +36,22 @@ func (l *ResourceLogic) ResourceTree(ctx context.Context, resourceType constants
 	if err != nil {
 		return
 	}
+	trees = l.buildTree(results, 0)
+	return
+}
+
+// GetOrganizationResources returns resource tree filtered by the organization's active pricing plan
+func (l *ResourceLogic) GetOrganizationResources(ctx context.Context, organizationId int64, resourceType constants.UserType) (trees []*dto.ResourceTreeDto, err error) {
+	results, err := l.repos.ResourceRepo.All(ctx, resourceType, true)
+	if err != nil {
+		return
+	}
+
+	results, err = l.filterByPricingPlan(ctx, organizationId, results)
+	if err != nil {
+		return
+	}
+
 	trees = l.buildTree(results, 0)
 	return
 }
@@ -345,6 +362,14 @@ func (l *ResourceLogic) GetUserResources(ctx context.Context, input dto.Resource
 		return a.Id < b.Id
 	})
 
+	// Filter by pricing plan resource scope
+	// if input.Type != constants.UserTypeAdmin {
+	allResources, err = l.filterByPricingPlan(ctx, input.OrganizationId, allResources)
+	if err != nil {
+		return nil, err
+	}
+	// }
+
 	// Filter root level to only menu type, collect all resource IDs
 	rootResources := slice.Filter(allResources, func(index int, item *model.Resource) bool {
 		return item.ParentId == 0 && item.ResourceType == constants.ResourceTypeMenu
@@ -528,7 +553,7 @@ func (l *ResourceLogic) handleSyncResource(ctx context.Context, tx *gorm.DB, use
 		}
 		created, innerErr := resourceRepo.CreateWithTx(ctx, tx, resourceModel, true)
 		if innerErr != nil {
-			return errorx.Wrap(innerErr, "failed to create resource")
+			return errorx.Wrap(innerErr, "fail to create resource")
 		}
 		resourceId = created.Id
 	} else {
@@ -542,4 +567,46 @@ func (l *ResourceLogic) handleSyncResource(ctx context.Context, tx *gorm.DB, use
 	}
 
 	return nil
+}
+
+func (l *ResourceLogic) filterByPricingPlan(ctx context.Context, organizationId int64, resources []*model.Resource) ([]*model.Resource, error) {
+	activeSubs, err := l.repos.OrganizationSubscriptionRepo.FindActiveByOrganizationId(ctx, organizationId)
+	if err != nil {
+		return nil, err
+	}
+
+	planResourceIds := make(map[int64]bool)
+	// get plan's resource ids
+	for _, activeSub := range activeSubs {
+		if activeSub != nil && !l.isSubscriptionExpired(activeSub, time.Now()) {
+
+			plan, innerErr := l.repos.PricingPlanRepo.GetOne(ctx, activeSub.PricingPlanId, nil)
+			if innerErr == nil && plan != nil && plan.Status == constants.CommonStatusActive {
+				ids, innerErr := l.repos.PricingPlanAndResourceRepo.FindResourceIdsByPlanId(ctx, activeSub.PricingPlanId)
+				if innerErr != nil {
+					return nil, innerErr
+				}
+				for _, id := range ids {
+					planResourceIds[id] = true
+				}
+			}
+		}
+	}
+
+	// public resources pass through; non-public filtered by pricing plan scope
+	return slice.Filter(resources, func(index int, item *model.Resource) bool {
+		if item.IsPublic {
+			return true
+		}
+		return planResourceIds[item.Id]
+	}), nil
+}
+
+// isSubscriptionExpired treats expire date as valid until the last second of that day
+func (l *ResourceLogic) isSubscriptionExpired(sub *model.OrganizationSubscription, now time.Time) bool {
+	if sub.ExpireDate == nil || !sub.ExpireDate.Valid {
+		return false
+	}
+	endOfDay := sub.ExpireDate.Time.Add(24*time.Hour - time.Second)
+	return !endOfDay.After(now)
 }

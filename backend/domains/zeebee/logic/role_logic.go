@@ -75,6 +75,10 @@ func (l *RoleLogic) Create(ctx context.Context, input dto.RoleCreateRequestDto) 
 		return nil, errorx.New("Role already exists")
 	}
 
+	// C4: a new role only binds the resources the admin explicitly lists in
+	// RoleAndResources. Plan resources are NOT auto-inherited from the org's
+	// active subscription — the org admin configures role-resource bindings
+	// manually (the subscription only defines the available plan-resource scope).
 	resourceIds := slice.Map[dto.RoleAndResourceDto, int64](input.RoleAndResources, func(i int, item dto.RoleAndResourceDto) int64 {
 		return item.ResourceId
 	})
@@ -238,7 +242,12 @@ func (l *RoleLogic) Update(ctx context.Context, id int64, input dto.RoleUpdateRe
 			if innerErr != nil {
 				return innerErr
 			}
-			addPolicies = l.createRolePolicy(input.Id, input.Type, newRelations)
+			// M6: only an active role's new bindings produce AddedPolicies. A disabled
+			// role is filtered out during user-role resolution, so its policies would
+			// be inert; skip pushing them to avoid stale enforcer state.
+			if roleModel.Status == constants.CommonStatusActive {
+				addPolicies = l.createRolePolicy(input.Id, input.Type, newRelations)
+			}
 		}
 		if len(updateRelations) > 0 {
 			for _, updatedRelation := range updateRelations {
@@ -321,7 +330,7 @@ func (l *RoleLogic) Delete(ctx context.Context, id int64, organizationId int64, 
 		return err
 	}
 	if role.Name == constants.AdminRoleName {
-		return errorx.New("Cannot delete admin role")
+		return errorx.New("cannot delete admin role")
 	}
 	var removedPolicies [][]string
 	err = l.repos.RoleRepo.Transaction(ctx, func(tx *gorm.DB) error {

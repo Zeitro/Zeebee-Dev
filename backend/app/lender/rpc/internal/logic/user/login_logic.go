@@ -35,7 +35,10 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 func (l *LoginLogic) Login(in *lender.UserLoginRequest) (resp *lender.UserJwtResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 	loginReq := dto.UserLoginRequestDto{
@@ -44,9 +47,8 @@ func (l *LoginLogic) Login(in *lender.UserLoginRequest) (resp *lender.UserJwtRes
 		UserType: constants.UserTypeLender,
 	}
 	limiter := dto.LoginLimiterDto{
-		Rate:     global.Config.LimiterConf.Login.Rate,
-		Period:   global.Config.LimiterConf.Login.Period,
-		RedisCli: global.GetRedis(),
+		LimiterItem: global.Config.LimiterConf.Login,
+		RedisCli:    global.GetRedis(),
 	}
 	token, err := l.baseLogic.UserLogic.Login(l.ctx, loginReq, limiter)
 	if err != nil {
