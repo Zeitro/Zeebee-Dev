@@ -5,8 +5,8 @@ import (
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
-	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +27,7 @@ func NewOrganizationUserAllLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *OrganizationUserAllLogic) OrganizationUserAll(req *types.EmptyRequest) (resp *types.OrganizationUserAllResponse, err error) {
-	rpcReq := &lender.EmptyRequest{}
+	rpcReq := &proto.EmptyRequest{}
 
 	rpcResp, err := l.svcCtx.OrganizationUserRpcClient.All(l.ctx, rpcReq)
 	if err != nil {
@@ -36,7 +36,7 @@ func (l *OrganizationUserAllLogic) OrganizationUserAll(req *types.EmptyRequest) 
 
 	var list []*types.OrganizationUserEntity
 	for _, v := range rpcResp.Data {
-		item, err := copierx.Trans[lender.OrganizationUserEntity, types.OrganizationUserEntity](v, copierx.TimeToRFC3339Str())
+		item, err := copierx.Trans[proto.OrganizationUserEntity, types.OrganizationUserEntity](v, copierx.TimeToRFC3339Str())
 		if err != nil {
 			return nil, err
 		}

@@ -19,15 +19,15 @@ import (
 type OperationStatsLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewOperationStatsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OperationStatsLogic {
 	return &OperationStatsLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
@@ -35,9 +35,8 @@ func NewOperationStatsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Op
 func (l *OperationStatsLogic) OperationStats(in *borrower.TransactionOperationStatsRequest) (resp *borrower.TransactionOperationStatsResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()

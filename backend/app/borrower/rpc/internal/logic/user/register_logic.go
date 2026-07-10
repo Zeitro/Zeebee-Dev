@@ -31,30 +31,30 @@ import (
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/limiter"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type RegisterLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RegisterLogic {
 	return &RegisterLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrower.UserRegisterResponse, err error) {
+func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -72,7 +72,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 				err := sendRegisterVerifyUrlEmail(ctx, in.Data.Email, existedUser.FirstName)
 				if err != nil {
 					err = errorx.Wrap(err, "Send Verify Email Error")
-					l.WithContext(ctx).Error(err)
+					l.svcCtx.Logger.WithContext(ctx).Error(err)
 				}
 			}()
 		} else {
@@ -81,14 +81,12 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 				err := sendLoginUrlEmail(ctx, in.Data.Email, existedUser.FirstName)
 				if err != nil {
 					err = errorx.Wrap(err, "Send Login Email Error")
-					l.WithContext(ctx).Error(err)
+					l.svcCtx.Logger.WithContext(ctx).Error(err)
 				}
 			}()
 		}
 
-		return &borrower.UserRegisterResponse{
-			Data: &borrower.UserRegisterResponseData{},
-		}, nil
+		return &proto.EmptyResponse{}, nil
 	}
 	var pwd string
 	pwd, err = utils.HashPassword(in.Data.Password)
@@ -122,11 +120,11 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 		ctx := context.WithoutCancel(newCxt)
 		err := sendRegisterVerifyUrlEmail(ctx, in.Data.Email, userModel.FirstName)
 		if err != nil {
-			l.WithContext(ctx).Error(err)
+			l.svcCtx.Logger.WithContext(ctx).Error(err)
 		}
 		if err != nil {
 			err = errorx.Wrap(err, "Send Register Verify Email Error")
-			l.WithContext(ctx).Error(err)
+			l.svcCtx.Logger.WithContext(ctx).Error(err)
 		}
 	}()
 
@@ -144,12 +142,12 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 			panicInfo := recover()
 			if panicInfo != nil {
 				err = errorx.Wrap(panicInfo.(error), "Send Register Verify Email Panic Error")
-				l.WithContext(ctx).Error(err)
+				l.svcCtx.Logger.WithContext(ctx).Error(err)
 			}
 
 			if err != nil {
 				err = errorx.Wrap(err, "Send Register Verify Email Error")
-				l.WithContext(ctx).Error(err)
+				l.svcCtx.Logger.WithContext(ctx).Error(err)
 			}
 		}()
 		if len(in.Data.PreApprovalRequestId) == 0 || in.Data.LenderOrganizationId == 0 {
@@ -172,20 +170,18 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *borrow
 			in.Data.LenderOrganizationId)
 		if err != nil {
 			if errors.Is(err, context.Canceled) {
-				l.WithContext(ctx).
+				l.svcCtx.Logger.WithContext(ctx).
 					WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
 					Info("Pre-Approve Loan Processing Canceled")
 			} else {
-				l.WithContext(ctx).
+				l.svcCtx.Logger.WithContext(ctx).
 					WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
 					Error(err)
 			}
 		}
 	}()
 
-	return &borrower.UserRegisterResponse{
-		Data: &borrower.UserRegisterResponseData{},
-	}, err
+	return &proto.EmptyResponse{}, err
 }
 
 func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int64, creatorName string, requestId string, borrowerOrganizationId int64, lenderOrganizationId int64) (err error) {
@@ -293,7 +289,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 				PurchaseDate:        preApproveRequest.Loan.PurchaseDate,
 				HasAssignmentFee:    preApproveRequest.Loan.HasAssignmentFee,
 				AssignmentFeeAmount: preApproveRequest.Loan.AssignmentFeeAmount,
-				Budget: &borrower.LoanBudgetEntity{
+				Budget: &proto.LoanBudgetEntity{
 					OriginalBudget: preApproveRequest.Loan.BudgetAmount,
 				},
 				EstPropertyValueAmount: preApproveRequest.Loan.EstPropertyValueAmount,

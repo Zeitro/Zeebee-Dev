@@ -1,10 +1,11 @@
 ApiConf:
-  Name: borrower-api
+  Name: borrower.api
   Host: 0.0.0.0
   Port: 10000
   Timeout: 10000
   Log:
     Stat: false
+    ServiceName: borrower.api
 
   JwtAuth:
     AccessSecret: jY7hM9oD8uH2vV6gF1uS5wM8vZ5nE1lA
@@ -21,6 +22,9 @@ RpcConf:
   ListenOn: 0.0.0.0:10001
   Mode: dev
   Timeout: 10000
+  Log:
+    Stat: false
+    ServiceName: borrower.rpc
   LimiterConf:
     Login:
       Rate: 10
@@ -132,7 +136,7 @@ RpcConf:
 
   # Zeitro API configuration
   ZeitroConf:
-    Url:  https://lo.zeitro.com
+    Url: https://lo.zeitro.com
     Username: cli_hu4tKiltzCfQfheOa3
     Password: sec_8SyshMSf1ZORJrH6mT38FMtDAItSLAox8ysd
 

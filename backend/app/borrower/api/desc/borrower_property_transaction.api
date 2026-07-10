@@ -162,7 +162,7 @@ type (
         Unit int32 `json:"unit"`
         LivingAreaSqft float32 `json:"living_area_sqft"`
         Bedrooms int32 `json:"bedrooms"`
-        Bathrooms float32 `json:"bathrooms"`
+        Bathrooms int32 `json:"bathrooms"`
         Address *AddressEntity `json:"address"`
         CreatedAt string `json:"created_at"`
         UpdatedAt string `json:"updated_at"`

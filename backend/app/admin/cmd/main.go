@@ -25,6 +25,8 @@ func main() {
 
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
+	// service_name fallback for logs without request ctx (startup, cron, migrator).
+	// logx.AddGlobalFields(logx.Field("service_name", "admin"))
 	logx.Infof("load service config successfully")
 
 	apiServer := api.NewApiServer(c)

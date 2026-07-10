@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package borrower;
+
+option go_package = "zeebee-backend/app/borrower/rpc/pb/borrower";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+import "proto/user.proto";
+
+
+// register
+message UserRegisterRequest {
+  UserRegisterRequestData data = 1;
+}
+
+message UserRegisterRequestData {
+  string email = 1;
+  string password = 2;
+  string first_name = 3;
+  string last_name = 4;
+  string pre_approval_request_id = 5;
+  int64 lender_organization_id = 6;
+  string organization_name = 7;
+}
+
+// edit profile
+message UserProfileEditRequest {
+  UserProfileEditRequestData data = 1;
+}
+message UserProfileEditRequestData {
+  string first_name = 1;
+  string last_name = 2;
+  string phone = 3;
+}
+
+service user {
+  // user
+  rpc Login(proto.UserLoginRequest) returns(proto.UserLoginResponse);
+  rpc Register(UserRegisterRequest) returns(proto.EmptyResponse);
+  rpc RefreshToken(proto.RefreshTokenRequest) returns(proto.UserLoginResponse);
+  rpc UserInfo(proto.EmptyRequest) returns(proto.UserinfoResponse);
+  rpc VerifyEmail(proto.VerifyEmailRequest) returns(proto.VerifyEmailResponse);
+  rpc SendVerifyEmail(proto.SendVerifyEmailRequest) returns(proto.SendVerifyEmailResponse);
+  rpc ResetPassword(proto.ResetPasswordRequest) returns(proto.ResetPasswordResponse);
+  rpc SendResetPasswordEmail(proto.SendResetPasswordEmailRequest) returns(proto.SendResetPasswordEmailResponse);
+  rpc SwitchOrganization(proto.SwitchOrganizationRequest) returns(proto.UserLoginResponse);
+  rpc EditProfile(UserProfileEditRequest) returns(proto.UserinfoResponse);
+  rpc ChangePassword(proto.ChangePasswordRequest) returns(proto.EmptyResponse);
+}

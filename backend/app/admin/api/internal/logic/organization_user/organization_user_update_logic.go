@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -21,7 +22,7 @@ type OrganizationUserUpdateLogic struct {
 // update
 func NewOrganizationUserUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OrganizationUserUpdateLogic {
 	return &OrganizationUserUpdateLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
@@ -46,7 +47,7 @@ func (l *OrganizationUserUpdateLogic) OrganizationUserUpdate(req *types.Organiza
 
 	// trans response
 	var entity *types.OrganizationUserEntity
-	entity, err = copierx.Trans[admin.OrganizationUserEntity, types.OrganizationUserEntity](rpcResp.Data)
+	entity, err = copierx.Trans[proto.OrganizationUserEntity, types.OrganizationUserEntity](rpcResp.Data)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

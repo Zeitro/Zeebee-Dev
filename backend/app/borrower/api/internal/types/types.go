@@ -290,7 +290,7 @@ type BorrowerPropertyEntity struct {
 	LivingAreaSqft float32        `json:"living_area_sqft"`
 	LotAreaSqft    float32        `json:"lot_area_sqft"`
 	Bedrooms       int32          `json:"bedrooms"`
-	Bathrooms      float32        `json:"bathrooms"`
+	Bathrooms      int32          `json:"bathrooms"`
 	Address        *AddressEntity `json:"address"`
 	CreatedAt      string         `json:"created_at"`
 	UpdatedAt      string         `json:"updated_at"`
@@ -473,7 +473,7 @@ type BorrowerPropertyTransactionPropertyEntity struct {
 	Unit           int32          `json:"unit"`
 	LivingAreaSqft float32        `json:"living_area_sqft"`
 	Bedrooms       int32          `json:"bedrooms"`
-	Bathrooms      float32        `json:"bathrooms"`
+	Bathrooms      int32          `json:"bathrooms"`
 	Address        *AddressEntity `json:"address"`
 	CreatedAt      string         `json:"created_at"`
 	UpdatedAt      string         `json:"updated_at"`
@@ -688,7 +688,7 @@ type ImportLoanBorrowerEntity struct {
 	Id             int64         `json:"id,optional"`
 	LoanId         int64         `json:"loan_id,optional"`
 	Type           string        `json:"type,optional"`
-	Name           string        `json:"name,optional" validate:"required,min=1,max=255"`
+	Name           string        `json:"name,optional" validate:"min=0,max=255"`
 	TinType        string        `json:"tin_type,optional"`
 	Tin            string        `json:"tin,optional" `
 	MailingAddress AddressEntity `json:"mailing_address,optional" validate:"-"`
@@ -1605,7 +1605,7 @@ type PropertyCreateRequest struct {
 	LivingAreaSqft float32        `json:"living_area_sqft,optianal" validate:"gte=0"`
 	LotAreaSqft    float32        `json:"lot_area_sqft,optianal" validate:"gte=0"`
 	Bedrooms       int32          `json:"bedrooms,optianal" validate:"gte=0"`
-	Bathrooms      float32        `json:"bathrooms,optianal" validate:"gte=0"`
+	Bathrooms      int32          `json:"bathrooms,optianal" validate:"gte=0"`
 	Address        *AddressEntity `json:"address" validate:"required"`
 }
 
@@ -1631,7 +1631,7 @@ type PropertyDetailSummaryResponse struct {
 	LivingAreaSqft            float32        `json:"living_area_sqft"`
 	LotAreaSqft               float32        `json:"lot_area_sqft"`
 	Bedrooms                  int32          `json:"bedrooms"`
-	Bathrooms                 float32        `json:"bathrooms"`
+	Bathrooms                 int32          `json:"bathrooms"`
 	Address                   *AddressEntity `json:"address"`
 	TotalClosingFundAmount    float64        `json:"total_closing_fund_amount"`
 	TotalPrincipalAmount      float64        `json:"total_principal_amount"`
@@ -1650,7 +1650,7 @@ type PropertyPageEntity struct {
 	LivingAreaSqft            float32        `json:"living_area_sqft"`
 	LotAreaSqft               float32        `json:"lot_area_sqft"`
 	Bedrooms                  int32          `json:"bedrooms"`
-	Bathrooms                 float32        `json:"bathrooms"`
+	Bathrooms                 int32          `json:"bathrooms"`
 	Unit                      int32          `json:"unit"`
 	TotalAmount               float64        `json:"total_amount"`
 	Address                   *AddressEntity `json:"address"`
@@ -1701,7 +1701,7 @@ type PropertyUpdateRequest struct {
 	LivingAreaSqft float32 `json:"living_area_sqft,optianal" validate:"gte=0"`
 	LotAreaSqft    float32 `json:"lot_area_sqft,optianal" validate:"gte=0"`
 	Bedrooms       int32   `json:"bedrooms,optianal" validate:"gte=0"`
-	Bathrooms      float32 `json:"bathrooms,optianal" validate:"gte=0"`
+	Bathrooms      int32   `json:"bathrooms,optianal" validate:"gte=0"`
 }
 
 type RangeFloat64 struct {
@@ -1840,7 +1840,7 @@ type RoleUpdateStatusRequest struct {
 }
 
 type S3PresignUrlCreateRequest struct {
-	Type       string `json:"type" validate:"required,oneof=pdf image doc"`
+	Type       string `json:"type" validate:"required,oneof=pdf image doc ppt excel"`
 	FileSuffix string `json:"file_suffix" validate:"required"`
 	FileName   string `json:"file_name,optional"`
 }

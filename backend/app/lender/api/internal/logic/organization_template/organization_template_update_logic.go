@@ -7,6 +7,7 @@ import (
 	"zeebee-backend/app/lender/api/internal/types"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -38,7 +39,7 @@ func (l *OrganizationTemplateUpdateLogic) OrganizationTemplateUpdate(req *types.
 	if err != nil {
 		return
 	}
-	resp, err = copierx.Trans[lender.OrganizationTemplateEntity, types.OrganizationTemplateDetailResponse](rpcResp.Data)
+	resp, err = copierx.Trans[proto.OrganizationTemplateEntity, types.OrganizationTemplateDetailResponse](rpcResp.Data)
 
 	return resp, err
 }

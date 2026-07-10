@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -19,25 +20,24 @@ import (
 type UpdateLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogic {
 	return &UpdateLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *UpdateLogic) Update(in *borrower.OrganizationUserUpdateRequest) (resp *borrower.OrganizationUserUpdateResponse, err error) {
+func (l *UpdateLogic) Update(in *borrower.OrganizationUserUpdateRequest) (resp *borrower.OrganizationUserDetailResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -58,7 +58,7 @@ func (l *UpdateLogic) Update(in *borrower.OrganizationUserUpdateRequest) (resp *
 	if err != nil {
 		return nil, err
 	}
-	data := &borrower.OrganizationUserEntity{}
+	data := &proto.OrganizationUserEntity{}
 	err = copier.CopyWithOption(data, result, copier.Option{
 		CaseSensitive: true,
 		DeepCopy:      true,
@@ -70,7 +70,7 @@ func (l *UpdateLogic) Update(in *borrower.OrganizationUserUpdateRequest) (resp *
 		return nil, err
 	}
 
-	return &borrower.OrganizationUserUpdateResponse{
+	return &borrower.OrganizationUserDetailResponse{
 		Data: data,
 	}, nil
 }

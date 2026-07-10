@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type RoleCreateLogic struct {
@@ -49,7 +50,7 @@ func (l *RoleCreateLogic) RoleCreate(req *types.RoleCreateRequest) (resp *types.
 	}
 
 	// trans response
-	resp, err = copierx.Trans[borrower.RoleEntity, types.RoleEntity](rpcResp.Data)
+	resp, err = copierx.Trans[proto.RoleEntity, types.RoleEntity](rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

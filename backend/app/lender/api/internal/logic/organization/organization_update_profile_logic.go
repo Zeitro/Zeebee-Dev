@@ -7,6 +7,7 @@ import (
 	"zeebee-backend/app/lender/api/internal/types"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -35,14 +36,14 @@ func (l *OrganizationUpdateProfileLogic) OrganizationUpdateProfile(req *types.Or
 	if err != nil {
 		return nil, err
 	}
-	lenderMetadata, err := copierx.Trans[types.OrganizationLenderMetadataEntity, lender.OrganizationLenderMetadataEntity](
+	lenderMetadata, err := copierx.Trans[types.OrganizationLenderMetadataEntity, proto.OrganizationLenderMetadataEntity](
 		req.Metadata,
 	)
 	if err != nil {
 		return nil, err
 	}
 	if rpcReqData.Metadata == nil {
-		rpcReqData.Metadata = &lender.OrganizationMetadataEntity{}
+		rpcReqData.Metadata = &proto.OrganizationMetadataEntity{}
 	}
 	rpcReqData.Metadata.Lender = lenderMetadata
 
@@ -58,7 +59,7 @@ func (l *OrganizationUpdateProfileLogic) OrganizationUpdateProfile(req *types.Or
 	}
 
 	// Convert proto response to API types
-	resp, err = copierx.Trans[lender.OrganizationProfileEntity, types.OrganizationProfileEntity](
+	resp, err = copierx.Trans[proto.OrganizationProfileEntity, types.OrganizationProfileEntity](
 		rpcResp.Data,
 		copierx.TimeToRFC3339Str(),
 		copierx.BytesToStrMap(),

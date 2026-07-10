@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type ResourceTreeLogic struct {
@@ -20,7 +21,7 @@ type ResourceTreeLogic struct {
 // tree
 func NewResourceTreeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ResourceTreeLogic {
 	return &ResourceTreeLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
@@ -43,7 +44,7 @@ func (l *ResourceTreeLogic) ResourceTree(req *types.ResourceTreeRequest) (resp *
 	}
 
 	// trans response
-	list, err := copierx.Trans[[]*admin.ResourceTreeEntity, []*types.ResourceTreeEntity](&rpcResp.Data)
+	list, err := copierx.Trans[[]*proto.ResourceTreeEntity, []*types.ResourceTreeEntity](&rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

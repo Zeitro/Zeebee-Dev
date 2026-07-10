@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package borrower;
+
+option go_package = "zeebee-backend/app/borrower/rpc/pb/borrower";
+
+import "proto/common.proto";
+
+// save email --  request
+message OrganizationEmailSaveEmailRequest {
+  OrganizationEmailSaveEmailRequestData data = 1;
+}
+message OrganizationEmailSaveEmailRequestData {
+  string email = 1;
+  string auth_strategy = 2;
+  string purpose = 3;
+}
+// email authorize --  request
+message OrganizationEmailAuthorizeRequest {
+  OrganizationEmailAuthorizeRequestData data = 1;
+}
+message OrganizationEmailAuthorizeRequestData {
+  string code = 1;
+  string state = 2;
+  string scope = 3;
+  string email_provider = 4;
+}
+// generate email code url --  request
+message OrganizationEmailGenerateAuthCodeUrlRequest {
+  OrganizationEmailGenerateAuthCodeUrlRequestData data = 1;
+}
+message OrganizationEmailGenerateAuthCodeUrlRequestData {
+  string email_provider = 1;
+  string purpose = 2;
+}
+// generate email code url --  response
+message OrganizationEmailGenerateAuthCodeUrlResponse {
+  OrganizationEmailGenerateAuthCodeUrlResponseData data = 1;
+}
+message OrganizationEmailGenerateAuthCodeUrlResponseData {
+  string url = 1;
+}
+service OrganizationEmail {
+  rpc SaveEmail(OrganizationEmailSaveEmailRequest) returns(proto.EmptyResponse);
+  rpc Authorize(OrganizationEmailAuthorizeRequest) returns(proto.EmptyResponse);
+  rpc GenerateAuthCodeUrl(OrganizationEmailGenerateAuthCodeUrlRequest) returns(OrganizationEmailGenerateAuthCodeUrlResponse);
+}

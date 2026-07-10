@@ -17,7 +17,7 @@ import (
 	"zeebee-backend/domains/zeebee/model"
 )
 
-var ErrorInvalidRequest = errorx.New("Invalid request")
+var ErrorInvalidRequest = errorx.New("invalid request")
 
 var baseLogic *BaseLogic
 var onceBase sync.Once
@@ -25,7 +25,7 @@ var onceBase sync.Once
 type BaseLogic struct {
 	// ctx    context.Context
 	svcCtx *svc.ServiceContext
-	// logx.Logger
+	//
 	*logic.AllLogics
 }
 
@@ -62,6 +62,7 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		CurrentEnforcer:       currentEnforcer,
 		CurrentAuthEventTopic: currentAuthEventTopic,
 		AuthEventTopicMap:     authEventTopicMap,
+		Logger:                svcCtx.Logger,
 	}
 	l := &BaseLogic{
 		svcCtx:    svcCtx,
@@ -72,7 +73,7 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		ctx := context.Background()
 		err := l.AuthLogic.RebuildPolicy(ctx, constants.UserTypeAdmin)
 		if err != nil {
-			logx.WithContext(ctx).WithFields(
+			l.svcCtx.Logger.WithContext(ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
 				logx.Field("user_type", constants.UserTypeAdmin),
 			).Error("fail to rebuild admin policy")
@@ -85,7 +86,7 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 func (l *BaseLogic) CreateLoanOperationLog(ctx context.Context, tx *gorm.DB, loanId, operatorId int64, from, to dto.LoanOperationStatus, action constants.LoanOperationAction, metadata *dto.LoanOperationMetadata) (err error) {
 	defer func() {
 		if err != nil {
-			logx.WithContext(ctx).WithFields(
+			l.svcCtx.Logger.WithContext(ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
 				logx.Field("loan_id", loanId),
 				logx.Field("operator_id", operatorId),

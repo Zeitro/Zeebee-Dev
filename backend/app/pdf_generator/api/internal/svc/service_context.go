@@ -9,11 +9,13 @@ import (
 
 type ServiceContext struct {
 	Config config.ApiConf
+	Logger logx.Logger
 }
 
-func NewServiceContext(c config.ApiConf) *ServiceContext {
+func NewServiceContext(c config.ApiConf, logger logx.Logger) *ServiceContext {
 	return &ServiceContext{
 		Config: c,
+		Logger: logger,
 	}
 }
 

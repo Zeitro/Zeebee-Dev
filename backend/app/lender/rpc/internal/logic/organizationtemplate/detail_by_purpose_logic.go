@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -17,16 +18,16 @@ import (
 type DetailByPurposeLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 	// repo      *repo.AllRepos
 }
 
 func NewDetailByPurposeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailByPurposeLogic {
 	return &DetailByPurposeLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
@@ -34,9 +35,8 @@ func NewDetailByPurposeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *D
 func (l *DetailByPurposeLogic) DetailByPurpose(in *lender.OrganizationTemplateDetailByPurposeRequest) (resp *lender.OrganizationTemplateDetailResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -48,7 +48,7 @@ func (l *DetailByPurposeLogic) DetailByPurpose(in *lender.OrganizationTemplateDe
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[dto.OrganizationTemplateEntityDto, lender.OrganizationTemplateEntity](
+	data, err := copierx.Trans[dto.OrganizationTemplateEntityDto, proto.OrganizationTemplateEntity](
 		detail,
 		copierx.TimeToRFC3339Str(),
 	)
