@@ -118,11 +118,13 @@ export function createRequest() {
 			showMessage('Please log in again!', 'warning');
 			return false;
 		}
-		if (data?.code && data?.code !== 200) {
+		if (data?.code !== 200) {
 			console.log('err400', data);
-
+			const mes = data?.code
+				? `fail:${data.code}`
+				: 'The interface return format is incorrect';
 			return {
-				message: data.message || `fail:${data.code}`,
+				message: data.message || mes,
 				code: data.code,
 			};
 		}
