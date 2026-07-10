@@ -45,7 +45,7 @@ type AllLogicConfig struct {
 }
 
 func NewAllLogics(config AllLogicConfig) *AllLogics {
-	baseLogic := NewBaseLogic(config.Repos, config.RedisCli)
+	baseLogic := NewBaseLogic(config.Repos, config.RedisCli, config.PaymentGateway)
 	return &AllLogics{
 		ApiLogic:                      NewApiLogic(baseLogic, config.AuthEventTopicMap),
 		ResourceLogic:                 NewResourceLogic(baseLogic, config.AuthEventTopicMap),

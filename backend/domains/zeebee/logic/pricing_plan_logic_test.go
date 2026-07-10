@@ -41,7 +41,8 @@ func setupTestDB(t *testing.T) *gorm.DB {
 			is_public INTEGER NOT NULL DEFAULT 0,
 			is_default INTEGER NOT NULL DEFAULT 0,
 			type TEXT NOT NULL DEFAULT '',
-			plan_type TEXT NOT NULL DEFAULT 'Standard'
+			plan_type TEXT NOT NULL DEFAULT 'Standard',
+			stripe_product_id TEXT NOT NULL DEFAULT ''
 		)`,
 		`CREATE TABLE IF NOT EXISTS pricing_plan_policies (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -51,7 +52,8 @@ func setupTestDB(t *testing.T) *gorm.DB {
 			pricing_plan_id INTEGER NOT NULL DEFAULT 0,
 			original_amount REAL NOT NULL DEFAULT 0,
 			actual_amount REAL NOT NULL DEFAULT 0,
-			type TEXT NOT NULL DEFAULT 'Monthly'
+			type TEXT NOT NULL DEFAULT 'Monthly',
+			stripe_price_id TEXT NOT NULL DEFAULT ''
 		)`,
 		`CREATE TABLE IF NOT EXISTS pricing_plan_and_resources (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -71,7 +73,9 @@ func setupTestDB(t *testing.T) *gorm.DB {
 			expire_date DATE,
 			original_amount REAL NOT NULL DEFAULT 0,
 			actual_amount REAL NOT NULL DEFAULT 0,
-			is_auto_renew INTEGER NOT NULL DEFAULT 0
+			is_auto_renew INTEGER NOT NULL DEFAULT 0,
+			source TEXT NOT NULL DEFAULT 'Manual',
+			stripe_subscription_id TEXT NOT NULL DEFAULT ''
 		)`,
 		`CREATE TABLE IF NOT EXISTS organizations (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -92,6 +96,7 @@ func setupTestDB(t *testing.T) *gorm.DB {
 			tagline TEXT DEFAULT '',
 			metadata TEXT DEFAULT '{}',
 			source TEXT NOT NULL DEFAULT 'Manual',
+			stripe_customer_id TEXT NOT NULL DEFAULT '',
 			"order" INTEGER NOT NULL DEFAULT 2
 		)`,
 		`CREATE TABLE IF NOT EXISTS resources (
@@ -141,7 +146,7 @@ func setupPricingPlanLogic(t *testing.T) (*PricingPlanLogic, *gorm.DB) {
 	t.Helper()
 	db := setupTestDB(t)
 	repos := repo.NewAllRepos(db)
-	baseLogic := NewBaseLogic(repos, nil)
+	baseLogic := NewBaseLogic(repos, nil, nil)
 	authTopicMap := map[constants.UserType]string{
 		constants.UserTypeBorrower: "test-borrower-topic",
 		constants.UserTypeLender:   "test-lender-topic",

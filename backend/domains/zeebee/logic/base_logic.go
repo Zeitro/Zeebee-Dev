@@ -8,20 +8,47 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/redisx"
 	"zeebee-backend/domains/zeebee/auth"
+	"zeebee-backend/domains/zeebee/payment"
 	"zeebee-backend/domains/zeebee/repo"
 )
 
 // BaseLogic provides base business logic for all logic types
 type BaseLogic struct {
-	repos    *repo.AllRepos
-	redisCli *redisx.Client
+	repos          *repo.AllRepos
+	redisCli       *redisx.Client
+	paymentGateway payment.Gateway // nil when Stripe is not configured
 }
 
 // NewBaseLogic creates a new base logic instance
-func NewBaseLogic(repos *repo.AllRepos, redisCli *redisx.Client) *BaseLogic {
+func NewBaseLogic(repos *repo.AllRepos, redisCli *redisx.Client, paymentGateway payment.Gateway) *BaseLogic {
 	return &BaseLogic{
-		repos:    repos,
-		redisCli: redisCli,
+		repos:          repos,
+		redisCli:       redisCli,
+		paymentGateway: paymentGateway,
+	}
+}
+
+// requirePaymentGateway returns the gateway or an error when Stripe is not
+// configured for the current service.
+func (l *BaseLogic) requirePaymentGateway() (payment.Gateway, error) {
+	if l.paymentGateway == nil {
+		return nil, errorx.New("payment is not configured")
+	}
+	return l.paymentGateway, nil
+}
+
+// archiveStripePriceQuietly archives a Stripe price best-effort: failures are
+// logged but never block the caller (admin operations must not depend on
+// Stripe availability).
+func (l *BaseLogic) archiveStripePriceQuietly(ctx context.Context, priceId string) {
+	if priceId == "" || l.paymentGateway == nil {
+		return
+	}
+	if err := l.paymentGateway.ArchivePrice(ctx, priceId); err != nil {
+		logx.WithContext(ctx).WithFields(
+			logx.Field("stacks", errorx.GetErrorStack(err)),
+			logx.Field("stripe_price_id", priceId),
+		).Error("failed to archive stripe price")
 	}
 }
 

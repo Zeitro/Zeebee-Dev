@@ -22,7 +22,7 @@ func setupSubscriptionLogic(t *testing.T) (*OrganizationSubscriptionLogic, *gorm
 	db := setupTestDB(t)
 
 	repos := repo.NewAllRepos(db)
-	baseLogic := NewBaseLogic(repos, nil)
+	baseLogic := NewBaseLogic(repos, nil, nil)
 	authTopicMap := map[constants.UserType]string{
 		constants.UserTypeBorrower: "test-borrower-topic",
 		constants.UserTypeLender:   "test-lender-topic",
