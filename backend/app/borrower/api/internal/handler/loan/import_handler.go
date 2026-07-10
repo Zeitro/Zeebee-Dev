@@ -34,9 +34,14 @@ func ImportHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		_ = r.ParseMultipartForm(32 << 20)
+		err = r.ParseMultipartForm(32 << 20)
+		if err != nil {
+			response.BadRequest(w, errorx.GetErrorMsg(err))
+			return
+		}
 		f, _, err := r.FormFile("file")
 		if err != nil {
+			err = errorx.Wrap(err, "fail to parse form file")
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
 		}
