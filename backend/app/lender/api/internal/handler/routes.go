@@ -18,6 +18,7 @@ import (
 	resource "zeebee-backend/app/lender/api/internal/handler/resource"
 	role "zeebee-backend/app/lender/api/internal/handler/role"
 	storage "zeebee-backend/app/lender/api/internal/handler/storage"
+	subscription "zeebee-backend/app/lender/api/internal/handler/subscription"
 	user "zeebee-backend/app/lender/api/internal/handler/user"
 	"zeebee-backend/app/lender/api/internal/svc"
 
@@ -439,6 +440,45 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/storage/presign_url",
 					Handler: storage.CreateAwsS3PresignUrlHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// cancel auto renewal
+					Method:  http.MethodPost,
+					Path:    "/organization/subscription/cancel_renewal",
+					Handler: subscription.SubscriptionCancelRenewalHandler(serverCtx),
+				},
+				{
+					// create stripe checkout session
+					Method:  http.MethodPost,
+					Path:    "/organization/subscription/checkout",
+					Handler: subscription.SubscriptionCheckoutHandler(serverCtx),
+				},
+				{
+					// current organization subscription
+					Method:  http.MethodGet,
+					Path:    "/organization/subscription/current",
+					Handler: subscription.SubscriptionCurrentHandler(serverCtx),
+				},
+				{
+					// resume auto renewal
+					Method:  http.MethodPost,
+					Path:    "/organization/subscription/resume_renewal",
+					Handler: subscription.SubscriptionResumeRenewalHandler(serverCtx),
+				},
+				{
+					// list public pricing plans
+					Method:  http.MethodGet,
+					Path:    "/pricing_plans/public",
+					Handler: subscription.PublicPricingPlansHandler(serverCtx),
 				},
 			}...,
 		),

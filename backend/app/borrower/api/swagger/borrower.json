@@ -12458,6 +12458,290 @@
         }
       }
     },
+    "/api/v1/organization/subscription/cancel_renewal": {
+      "post": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "subscription"
+        ],
+        "summary": "cancel auto renewal",
+        "operationId": "subscriptionSubscriptionCancelRenewal",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organization/subscription/checkout": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "subscription"
+        ],
+        "summary": "create stripe checkout session",
+        "operationId": "subscriptionSubscriptionCheckout",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "pricing_plan_id",
+                "pricing_plan_policy_id"
+              ],
+              "properties": {
+                "pricing_plan_id": {
+                  "type": "integer"
+                },
+                "pricing_plan_policy_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "checkout_url": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organization/subscription/current": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "subscription"
+        ],
+        "summary": "current organization subscription",
+        "operationId": "subscriptionSubscriptionCurrent",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "subscription": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "code",
+                    "organization_id",
+                    "pricing_plan_id",
+                    "pricing_plan",
+                    "pricing_plan_policy_id",
+                    "pricing_plan_policy",
+                    "status",
+                    "expire_date",
+                    "original_amount",
+                    "actual_amount",
+                    "is_auto_renew",
+                    "source"
+                  ],
+                  "properties": {
+                    "actual_amount": {
+                      "type": "number"
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "expire_date": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "is_auto_renew": {
+                      "type": "boolean"
+                    },
+                    "organization_id": {
+                      "type": "integer"
+                    },
+                    "original_amount": {
+                      "type": "number"
+                    },
+                    "pricing_plan": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "name",
+                        "subtitle",
+                        "description",
+                        "trial_days",
+                        "sort_order",
+                        "is_default",
+                        "type",
+                        "plan_type",
+                        "policies"
+                      ],
+                      "properties": {
+                        "description": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "integer"
+                        },
+                        "is_default": {
+                          "type": "boolean"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "plan_type": {
+                          "type": "string"
+                        },
+                        "policies": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "pricing_plan_id",
+                              "original_amount",
+                              "actual_amount",
+                              "type"
+                            ],
+                            "properties": {
+                              "actual_amount": {
+                                "type": "number"
+                              },
+                              "id": {
+                                "type": "integer"
+                              },
+                              "original_amount": {
+                                "type": "number"
+                              },
+                              "pricing_plan_id": {
+                                "type": "integer"
+                              },
+                              "type": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "sort_order": {
+                          "type": "integer"
+                        },
+                        "subtitle": {
+                          "type": "string"
+                        },
+                        "trial_days": {
+                          "type": "integer"
+                        },
+                        "type": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "pricing_plan_id": {
+                      "type": "integer"
+                    },
+                    "pricing_plan_policy": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "pricing_plan_id",
+                        "original_amount",
+                        "actual_amount",
+                        "type"
+                      ],
+                      "properties": {
+                        "actual_amount": {
+                          "type": "number"
+                        },
+                        "id": {
+                          "type": "integer"
+                        },
+                        "original_amount": {
+                          "type": "number"
+                        },
+                        "pricing_plan_id": {
+                          "type": "integer"
+                        },
+                        "type": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "pricing_plan_policy_id": {
+                      "type": "integer"
+                    },
+                    "source": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organization/subscription/resume_renewal": {
+      "post": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "subscription"
+        ],
+        "summary": "resume auto renewal",
+        "operationId": "subscriptionSubscriptionResumeRenewal",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/organization_email/authorize": {
       "post": {
         "consumes": [
@@ -14750,6 +15034,108 @@
             "description": "",
             "schema": {
               "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pricing_plans/public": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "subscription"
+        ],
+        "summary": "list public pricing plans",
+        "operationId": "subscriptionPublicPricingPlans",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "plans": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "subtitle",
+                      "description",
+                      "trial_days",
+                      "sort_order",
+                      "is_default",
+                      "type",
+                      "plan_type",
+                      "policies"
+                    ],
+                    "properties": {
+                      "description": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "is_default": {
+                        "type": "boolean"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "plan_type": {
+                        "type": "string"
+                      },
+                      "policies": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "pricing_plan_id",
+                            "original_amount",
+                            "actual_amount",
+                            "type"
+                          ],
+                          "properties": {
+                            "actual_amount": {
+                              "type": "number"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "original_amount": {
+                              "type": "number"
+                            },
+                            "pricing_plan_id": {
+                              "type": "integer"
+                            },
+                            "type": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "sort_order": {
+                        "type": "integer"
+                      },
+                      "subtitle": {
+                        "type": "string"
+                      },
+                      "trial_days": {
+                        "type": "integer"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -23705,7 +24091,7 @@
       }
     }
   },
-  "x-date": "2026-06-24 09:39:27",
+  "x-date": "2026-07-10 02:31:39",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

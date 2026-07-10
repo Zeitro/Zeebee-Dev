@@ -36,6 +36,7 @@ type ServiceContext struct {
 	DocumentRpcClient                    borrower.DocumentClient
 	DriveRpcClient                       borrower.DriveClient
 	ApiRpcClient                         borrower.ApiClient
+	OrganizationSubscriptionRpcClient    borrower.OrganizationSubscriptionClient
 
 	BorrowerApiContent string
 }
@@ -68,6 +69,7 @@ func NewServiceContext(c config.ApiConf, borrowerApiContent string) *ServiceCont
 		DocumentRpcClient:                    borrower.NewDocumentClient(rpcClient.Conn()),
 		DriveRpcClient:                       borrower.NewDriveClient(rpcClient.Conn()),
 		ApiRpcClient:                         borrower.NewApiClient(rpcClient.Conn()),
+		OrganizationSubscriptionRpcClient:    borrower.NewOrganizationSubscriptionClient(rpcClient.Conn()),
 		BorrowerApiContent:                   borrowerApiContent,
 	}
 }

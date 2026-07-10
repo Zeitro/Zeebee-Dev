@@ -1,0 +1,91 @@
+syntax = "v1"
+
+info(
+    title: "subscription-api"
+    desc: "self-serve pricing plan subscription http service description"
+    version: "v1"
+)
+
+type PublicPricingPlanPolicyEntity {
+    Id int64 `json:"id"`
+    PricingPlanId int64 `json:"pricing_plan_id"`
+    OriginalAmount float64 `json:"original_amount"`
+    ActualAmount float64 `json:"actual_amount"`
+    Type string `json:"type"`
+}
+
+type PublicPricingPlanEntity {
+    Id int64 `json:"id"`
+    Name string `json:"name"`
+    Subtitle string `json:"subtitle"`
+    Description string `json:"description"`
+    TrialDays int32 `json:"trial_days"`
+    SortOrder int32 `json:"sort_order"`
+    IsDefault bool `json:"is_default"`
+    Type string `json:"type"`
+    PlanType string `json:"plan_type"`
+    Policies []*PublicPricingPlanPolicyEntity `json:"policies"`
+}
+
+type PublicPricingPlansResponse {
+    Plans []*PublicPricingPlanEntity `json:"plans"`
+}
+
+type SubscriptionCurrentEntity {
+    Id int64 `json:"id"`
+    Code string `json:"code"`
+    OrganizationId int64 `json:"organization_id"`
+    PricingPlanId int64 `json:"pricing_plan_id"`
+    PricingPlan *PublicPricingPlanEntity `json:"pricing_plan"`
+    PricingPlanPolicyId int64 `json:"pricing_plan_policy_id"`
+    PricingPlanPolicy *PublicPricingPlanPolicyEntity `json:"pricing_plan_policy"`
+    Status string `json:"status"`
+    ExpireDate string `json:"expire_date"`
+    OriginalAmount float64 `json:"original_amount"`
+    ActualAmount float64 `json:"actual_amount"`
+    IsAutoRenew bool `json:"is_auto_renew"`
+    Source string `json:"source"`
+}
+
+type SubscriptionCurrentResponse {
+    Subscription *SubscriptionCurrentEntity `json:"subscription"`
+}
+
+type SubscriptionCheckoutRequest {
+    PricingPlanId int64 `json:"pricing_plan_id" validate:"required,gt=0"`
+    PricingPlanPolicyId int64 `json:"pricing_plan_policy_id" validate:"required,gt=0"`
+}
+
+type SubscriptionCheckoutResponse {
+    CheckoutUrl string `json:"checkout_url"`
+}
+
+@server (
+    desc:       "self-serve subscription service"
+    version:    v1
+    group:      subscription
+    prefix:     /api/v1
+    middleware: AuthMiddleware
+    tags:       subscription
+)
+service lender-api {
+    @doc "list public pricing plans"
+    @handler PublicPricingPlans
+    get /pricing_plans/public (EmptyRequest) returns (PublicPricingPlansResponse)
+
+    @doc "current organization subscription"
+    @handler SubscriptionCurrent
+    get /organization/subscription/current (EmptyRequest) returns (SubscriptionCurrentResponse)
+
+    @doc "create stripe checkout session"
+    @handler SubscriptionCheckout
+    post /organization/subscription/checkout (SubscriptionCheckoutRequest) returns (SubscriptionCheckoutResponse)
+
+    @doc "cancel auto renewal"
+    @handler SubscriptionCancelRenewal
+    post /organization/subscription/cancel_renewal (EmptyRequest) returns (EmptyResponse)
+
+    @doc "resume auto renewal"
+    @handler SubscriptionResumeRenewal
+    post /organization/subscription/resume_renewal (EmptyRequest) returns (EmptyResponse)
+}

@@ -29,6 +29,7 @@ type AllLogics struct {
 	PricingPlanLogic              *PricingPlanLogic
 	PricingPlanPolicyLogic        *PricingPlanPolicyLogic
 	OrganizationSubscriptionLogic *OrganizationSubscriptionLogic
+	StripePaymentLogic            *StripePaymentLogic
 }
 
 type AllLogicConfig struct {
@@ -46,6 +47,7 @@ type AllLogicConfig struct {
 
 func NewAllLogics(config AllLogicConfig) *AllLogics {
 	baseLogic := NewBaseLogic(config.Repos, config.RedisCli, config.PaymentGateway)
+	organizationSubscriptionLogic := NewOrganizationSubscriptionLogic(baseLogic, config.AuthEventTopicMap)
 	return &AllLogics{
 		ApiLogic:                      NewApiLogic(baseLogic, config.AuthEventTopicMap),
 		ResourceLogic:                 NewResourceLogic(baseLogic, config.AuthEventTopicMap),
@@ -64,6 +66,7 @@ func NewAllLogics(config AllLogicConfig) *AllLogics {
 		AuthLogic:                     NewAuthLogic(baseLogic, config.JwtConfig, config.CurrentEnforcer, config.CurrentAuthEventTopic),
 		PricingPlanLogic:              NewPricingPlanLogic(baseLogic, config.AuthEventTopicMap),
 		PricingPlanPolicyLogic:        NewPricingPlanPolicyLogic(baseLogic),
-		OrganizationSubscriptionLogic: NewOrganizationSubscriptionLogic(baseLogic, config.AuthEventTopicMap),
+		OrganizationSubscriptionLogic: organizationSubscriptionLogic,
+		StripePaymentLogic:            NewStripePaymentLogic(baseLogic, config.AuthEventTopicMap, organizationSubscriptionLogic),
 	}
 }

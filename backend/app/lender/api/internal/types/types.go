@@ -821,6 +821,31 @@ type PathIdRequest struct {
 	Id int64 `path:"id" validate:"required,gt=0"`
 }
 
+type PublicPricingPlanEntity struct {
+	Id          int64                            `json:"id"`
+	Name        string                           `json:"name"`
+	Subtitle    string                           `json:"subtitle"`
+	Description string                           `json:"description"`
+	TrialDays   int32                            `json:"trial_days"`
+	SortOrder   int32                            `json:"sort_order"`
+	IsDefault   bool                             `json:"is_default"`
+	Type        string                           `json:"type"`
+	PlanType    string                           `json:"plan_type"`
+	Policies    []*PublicPricingPlanPolicyEntity `json:"policies"`
+}
+
+type PublicPricingPlanPolicyEntity struct {
+	Id             int64   `json:"id"`
+	PricingPlanId  int64   `json:"pricing_plan_id"`
+	OriginalAmount float64 `json:"original_amount"`
+	ActualAmount   float64 `json:"actual_amount"`
+	Type           string  `json:"type"`
+}
+
+type PublicPricingPlansResponse struct {
+	Plans []*PublicPricingPlanEntity `json:"plans"`
+}
+
 type RangeFloat64 struct {
 	Min float64 `json:"min,optional"`
 	Max float64 `json:"max,optional"`
@@ -980,6 +1005,35 @@ type S3PresignUrlCreateResponse struct {
 type SelectOptionEntity struct {
 	Label string `json:"label"`
 	Value string `json:"value"`
+}
+
+type SubscriptionCheckoutRequest struct {
+	PricingPlanId       int64 `json:"pricing_plan_id" validate:"required,gt=0"`
+	PricingPlanPolicyId int64 `json:"pricing_plan_policy_id" validate:"required,gt=0"`
+}
+
+type SubscriptionCheckoutResponse struct {
+	CheckoutUrl string `json:"checkout_url"`
+}
+
+type SubscriptionCurrentEntity struct {
+	Id                  int64                          `json:"id"`
+	Code                string                         `json:"code"`
+	OrganizationId      int64                          `json:"organization_id"`
+	PricingPlanId       int64                          `json:"pricing_plan_id"`
+	PricingPlan         *PublicPricingPlanEntity       `json:"pricing_plan"`
+	PricingPlanPolicyId int64                          `json:"pricing_plan_policy_id"`
+	PricingPlanPolicy   *PublicPricingPlanPolicyEntity `json:"pricing_plan_policy"`
+	Status              string                         `json:"status"`
+	ExpireDate          string                         `json:"expire_date"`
+	OriginalAmount      float64                        `json:"original_amount"`
+	ActualAmount        float64                        `json:"actual_amount"`
+	IsAutoRenew         bool                           `json:"is_auto_renew"`
+	Source              string                         `json:"source"`
+}
+
+type SubscriptionCurrentResponse struct {
+	Subscription *SubscriptionCurrentEntity `json:"subscription"`
 }
 
 type TemplateVariableEntity struct {

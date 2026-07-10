@@ -16,19 +16,20 @@ type ServiceContext struct {
 	AuthMiddleware rest.Middleware
 
 	// rpc client
-	UserRpcClient                 lender.UserClient
-	LoanRpcClient                 lender.LoanClient
-	CommonRpcClient               lender.CommonClient
-	StorageRpcClient              lender.StorageClient
-	FileRpcClient                 lender.FileClient
-	LoanDocumentRpcClient         lender.LoanDocumentClient
-	RoleRpcClient                 lender.RoleClient
-	OrganizationUserRpcClient     lender.OrganizationUserClient
-	OrganizationRpcClient         lender.OrganizationClient
-	OrganizationTemplateRpcClient lender.OrganizationTemplateClient
-	OrganizationSettingRpcClient  lender.OrganizationSettingClient
-	ResourceRpcClient             lender.ResourceClient
-	ApiRpcClient                  lender.ApiClient
+	UserRpcClient                     lender.UserClient
+	LoanRpcClient                     lender.LoanClient
+	CommonRpcClient                   lender.CommonClient
+	StorageRpcClient                  lender.StorageClient
+	FileRpcClient                     lender.FileClient
+	LoanDocumentRpcClient             lender.LoanDocumentClient
+	RoleRpcClient                     lender.RoleClient
+	OrganizationUserRpcClient         lender.OrganizationUserClient
+	OrganizationRpcClient             lender.OrganizationClient
+	OrganizationTemplateRpcClient     lender.OrganizationTemplateClient
+	OrganizationSettingRpcClient      lender.OrganizationSettingClient
+	ResourceRpcClient                 lender.ResourceClient
+	ApiRpcClient                      lender.ApiClient
+	OrganizationSubscriptionRpcClient lender.OrganizationSubscriptionClient
 
 	BorrowerApiContent string
 }
@@ -41,19 +42,20 @@ func NewServiceContext(c config.ApiConf, borrowerApiContent string) *ServiceCont
 		AuthMiddleware: middleware.NewAuthMiddleware(constants.UserTypeLender, authRpcClient).Handle,
 
 		// rpc client
-		UserRpcClient:                 lender.NewUserClient(rpcClient.Conn()),
-		LoanRpcClient:                 lender.NewLoanClient(rpcClient.Conn()),
-		CommonRpcClient:               lender.NewCommonClient(rpcClient.Conn()),
-		StorageRpcClient:              lender.NewStorageClient(rpcClient.Conn()),
-		FileRpcClient:                 lender.NewFileClient(rpcClient.Conn()),
-		LoanDocumentRpcClient:         lender.NewLoanDocumentClient(rpcClient.Conn()),
-		RoleRpcClient:                 lender.NewRoleClient(rpcClient.Conn()),
-		OrganizationUserRpcClient:     lender.NewOrganizationUserClient(rpcClient.Conn()),
-		OrganizationRpcClient:         lender.NewOrganizationClient(rpcClient.Conn()),
-		OrganizationTemplateRpcClient: lender.NewOrganizationTemplateClient(rpcClient.Conn()),
-		OrganizationSettingRpcClient:  lender.NewOrganizationSettingClient(rpcClient.Conn()),
-		ResourceRpcClient:             lender.NewResourceClient(rpcClient.Conn()),
-		ApiRpcClient:                  lender.NewApiClient(rpcClient.Conn()),
-		BorrowerApiContent:            borrowerApiContent,
+		UserRpcClient:                     lender.NewUserClient(rpcClient.Conn()),
+		LoanRpcClient:                     lender.NewLoanClient(rpcClient.Conn()),
+		CommonRpcClient:                   lender.NewCommonClient(rpcClient.Conn()),
+		StorageRpcClient:                  lender.NewStorageClient(rpcClient.Conn()),
+		FileRpcClient:                     lender.NewFileClient(rpcClient.Conn()),
+		LoanDocumentRpcClient:             lender.NewLoanDocumentClient(rpcClient.Conn()),
+		RoleRpcClient:                     lender.NewRoleClient(rpcClient.Conn()),
+		OrganizationUserRpcClient:         lender.NewOrganizationUserClient(rpcClient.Conn()),
+		OrganizationRpcClient:             lender.NewOrganizationClient(rpcClient.Conn()),
+		OrganizationTemplateRpcClient:     lender.NewOrganizationTemplateClient(rpcClient.Conn()),
+		OrganizationSettingRpcClient:      lender.NewOrganizationSettingClient(rpcClient.Conn()),
+		ResourceRpcClient:                 lender.NewResourceClient(rpcClient.Conn()),
+		ApiRpcClient:                      lender.NewApiClient(rpcClient.Conn()),
+		OrganizationSubscriptionRpcClient: lender.NewOrganizationSubscriptionClient(rpcClient.Conn()),
+		BorrowerApiContent:                borrowerApiContent,
 	}
 }

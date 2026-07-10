@@ -20,6 +20,7 @@ import "desc/organization.api"
 import "desc/organization_template.api"
 import "desc/organization_setting.api"
 import "desc/pdf.api"
+import "desc/subscription.api"
 
 type (
 	EmptyRequest  {}

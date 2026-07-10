@@ -80,3 +80,19 @@ CREATE INDEX "idx_payment_tx_org_id" ON "public"."payment_transactions" USING bt
 
 COMMENT
 ON COLUMN "public"."payment_transactions"."status" IS 'Paid,Failed,Refunded';
+
+-- self-serve subscription APIs: login required, but exempt from the pricing
+-- plan permission gate so owners of expired organizations can still pay.
+-- sync_api only inserts missing rows, so these flags are not overwritten.
+INSERT INTO "public"."apis" ("type", "name", "path", "method", "description", "status", "sort_order",
+                             "auth_required", "permission_required")
+VALUES ('Borrower', 'public pricing plans', '/api/v1/pricing_plans/public', 'GET', 'list public pricing plans', 'Active', 1, 't', 'f'),
+       ('Borrower', 'current subscription', '/api/v1/organization/subscription/current', 'GET', 'current organization subscription', 'Active', 2, 't', 'f'),
+       ('Borrower', 'subscription checkout', '/api/v1/organization/subscription/checkout', 'POST', 'create stripe checkout session', 'Active', 3, 't', 'f'),
+       ('Borrower', 'cancel auto renewal', '/api/v1/organization/subscription/cancel_renewal', 'POST', 'cancel auto renewal', 'Active', 4, 't', 'f'),
+       ('Borrower', 'resume auto renewal', '/api/v1/organization/subscription/resume_renewal', 'POST', 'resume auto renewal', 'Active', 5, 't', 'f'),
+       ('Lender', 'public pricing plans', '/api/v1/pricing_plans/public', 'GET', 'list public pricing plans', 'Active', 1, 't', 'f'),
+       ('Lender', 'current subscription', '/api/v1/organization/subscription/current', 'GET', 'current organization subscription', 'Active', 2, 't', 'f'),
+       ('Lender', 'subscription checkout', '/api/v1/organization/subscription/checkout', 'POST', 'create stripe checkout session', 'Active', 3, 't', 'f'),
+       ('Lender', 'cancel auto renewal', '/api/v1/organization/subscription/cancel_renewal', 'POST', 'cancel auto renewal', 'Active', 4, 't', 'f'),
+       ('Lender', 'resume auto renewal', '/api/v1/organization/subscription/resume_renewal', 'POST', 'resume auto renewal', 'Active', 5, 't', 'f');
