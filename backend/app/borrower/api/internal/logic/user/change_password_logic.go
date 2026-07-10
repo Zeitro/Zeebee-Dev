@@ -5,9 +5,9 @@ import (
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,10 +28,10 @@ func NewChangePasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ch
 }
 
 func (l *ChangePasswordLogic) ChangePassword(req *types.UserChangePasswordRequest) (resp *types.EmptyResponse, err error) {
-	rpcReq := &borrower.ChangePasswordRequest{
-		Data: &borrower.ChangePasswordRequestData{},
+	rpcReq := &proto.ChangePasswordRequest{
+		Data: &proto.ChangePasswordRequestData{},
 	}
-	rpcReq.Data, err = copierx.Trans[types.UserChangePasswordRequest, borrower.ChangePasswordRequestData](req)
+	rpcReq.Data, err = copierx.Trans[types.UserChangePasswordRequest, proto.ChangePasswordRequestData](req)
 	if err != nil {
 		return nil, err
 	}

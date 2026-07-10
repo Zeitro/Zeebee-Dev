@@ -5,8 +5,8 @@ import (
 
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
-	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -20,7 +20,7 @@ type OrganizationDeleteLogic struct {
 // delete organization
 func NewOrganizationDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OrganizationDeleteLogic {
 	return &OrganizationDeleteLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
@@ -29,7 +29,7 @@ func NewOrganizationDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 func (l *OrganizationDeleteLogic) OrganizationDelete(req *types.PathIdRequest) (resp *types.EmptyResponse, err error) {
 
 	// Call RPC server
-	_, err = l.svcCtx.OrganizationRpcClient.Delete(l.ctx, &admin.IdRequest{
+	_, err = l.svcCtx.OrganizationRpcClient.Delete(l.ctx, &proto.IdRequest{
 		Data: req.Id,
 	})
 	if err != nil {

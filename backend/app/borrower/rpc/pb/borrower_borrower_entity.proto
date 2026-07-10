@@ -1,0 +1,96 @@
+syntax = "proto3";
+
+package borrower;
+
+option go_package = "zeebee-backend/app/borrower/rpc/pb/borrower";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+
+message BorrowerEntityPageEntity {
+  int64 id = 1;
+  string created_at = 2;
+  string updated_at = 3;
+  int64 creator_id = 4;
+  string type = 5;
+  string name = 6;
+  string tin_type = 7;
+  string tin = 8;
+  string contact_email = 9;
+  string contact_name = 10;
+  string contact_phone = 11;
+  proto.AddressEntity mailing_address = 13;
+  string creator_name = 14;
+}
+
+message BorrowerEntityEditEntity {
+  string type = 1;
+  string name = 2;
+  string tin_type = 3;
+  string tin = 4;
+  proto.AddressEntity mailing_address = 5;
+  string contact_email = 6;
+  string contact_name = 7;
+  string contact_phone = 8;
+  int64 id = 9;
+}
+
+// create borrower entity
+message BorrowerEntityCreateRequest {
+  BorrowerEntityEditEntity data = 1;
+}
+
+// update borrower entity
+message BorrowerEntityUpdateRequest {
+  BorrowerEntityEditEntity data = 1;
+}
+
+// detail borrower entity
+
+message BorrowerEntityDetailResponse {
+  proto.BorrowerEntityEntity data = 1;
+}
+
+message BorrowerEntityPageResponse {
+  BorrowerEntityPageResponseData data = 1;
+}
+
+
+message BorrowerEntityPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated BorrowerEntityPageEntity list = 5;
+}
+
+// check exist
+message BorrowerEntityCheckExistedRequest {
+  BorrowerEntityCheckExistedRequestData data = 1;
+}
+message BorrowerEntityCheckExistedRequestData {
+  int64 id = 1;
+  string name = 2;
+}
+message BorrowerEntityCheckExistedResponse {
+  BorrowerEntityCheckExistedResponseData data = 1;
+}
+message BorrowerEntityCheckExistedResponseData {
+  bool is_existed = 1;
+}
+
+// all borrower entity
+message BorrowerEntityAllResponse {
+  repeated BorrowerEntityPageEntity data = 1;
+}
+
+service BorrowerEntity {
+  rpc Create(BorrowerEntityCreateRequest) returns(BorrowerEntityDetailResponse);
+  rpc Update(BorrowerEntityUpdateRequest) returns(proto.EmptyResponse);
+  rpc Detail(proto.PathIdRequest) returns(BorrowerEntityDetailResponse);
+  rpc Delete(proto.PathIdRequest) returns(proto.EmptyResponse);
+  rpc Page(proto.CommonPageRequest) returns(BorrowerEntityPageResponse);
+  rpc CheckExisted(BorrowerEntityCheckExistedRequest) returns(BorrowerEntityCheckExistedResponse);
+  rpc All(proto.EmptyRequest) returns(BorrowerEntityAllResponse);
+}

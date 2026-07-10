@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type CreateLoanDocumentLogic struct {
@@ -48,7 +49,7 @@ func (l *CreateLoanDocumentLogic) CreateLoanDocument(req *types.LoanDocumentCrea
 		return nil, errorx.WithStack(err)
 	}
 
-	documents, err := copierx.Trans[[]*lender.LoanDocumentOptEntity, []*types.LoanDocumentOptEntity](&rpcResp.Data)
+	documents, err := copierx.Trans[[]*proto.LoanDocumentOptEntity, []*types.LoanDocumentOptEntity](&rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

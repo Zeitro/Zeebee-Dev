@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DocumentUploadFileLogic struct {
@@ -38,7 +39,7 @@ func (l *DocumentUploadFileLogic) DocumentUploadFile(req *types.BorrowerProperty
 		return nil, err
 	}
 
-	files, err := copierx.Trans[[]*borrower.FileEntity, []types.DocumentFile](&rpcResp.Data)
+	files, err := copierx.Trans[[]*proto.FileEntity, []types.DocumentFile](&rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

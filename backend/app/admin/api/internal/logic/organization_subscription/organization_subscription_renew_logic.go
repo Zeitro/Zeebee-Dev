@@ -21,7 +21,7 @@ type OrganizationSubscriptionRenewLogic struct {
 // renew
 func NewOrganizationSubscriptionRenewLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OrganizationSubscriptionRenewLogic {
 	return &OrganizationSubscriptionRenewLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

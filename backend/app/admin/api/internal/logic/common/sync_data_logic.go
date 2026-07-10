@@ -7,7 +7,7 @@ import (
 
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
-	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type SyncDataLogic struct {
@@ -19,14 +19,14 @@ type SyncDataLogic struct {
 // sync data
 func NewSyncDataLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncDataLogic {
 	return &SyncDataLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
 func (l *SyncDataLogic) SyncData(req *types.EmptyRequest) (resp *types.EmptyResponse, err error) {
-	_, err = l.svcCtx.CommonRpcClient.SyncData(l.ctx, &admin.EmptyRequest{})
+	_, err = l.svcCtx.CommonRpcClient.SyncData(l.ctx, &proto.EmptyRequest{})
 	if err != nil {
 		return nil, err
 	}

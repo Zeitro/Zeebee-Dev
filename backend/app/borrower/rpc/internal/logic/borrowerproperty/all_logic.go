@@ -12,20 +12,21 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type AllLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AllLogic {
 	return &AllLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
@@ -33,9 +34,8 @@ func NewAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AllLogic {
 func (l *AllLogic) All(in *borrower.PropertyAllRequest) (resp *borrower.PropertyAllResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -50,9 +50,9 @@ func (l *AllLogic) All(in *borrower.PropertyAllRequest) (resp *borrower.Property
 		return nil, errorx.Wrap(err, "fail to get properties")
 	}
 
-	// respData := make([]*borrower.BorrowerPropertyEntity, 0, len(results))
+	// respData := make([]*proto.BorrowerPropertyEntity, 0, len(results))
 
-	data, err := copierx.Trans[[]*model.BorrowerProperty, []*borrower.BorrowerPropertyEntity](&results, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToStr(timex.LayoutUsStyle))
+	data, err := copierx.Trans[[]*model.BorrowerProperty, []*proto.BorrowerPropertyEntity](&results, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToStr(timex.LayoutUsStyle))
 	if err != nil {
 		return nil, err
 	}

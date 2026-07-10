@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package borrower;
+
+option go_package = "zeebee-backend/app/borrower/rpc/pb/borrower";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+
+// resource tree
+message ResourceTreeRequest {
+  ResourceTreeRequestData data = 1;
+}
+message ResourceTreeRequestData {
+  string type = 1;
+}
+
+message ResourceTreeResponse {
+  repeated proto.ResourceTreeEntity data = 1;
+}
+message SyncResourceRequest {
+  SyncResourceRequestData data = 1;
+}
+
+message SyncResourceRequestData {
+  string resource_json = 1;
+}
+
+service resource {
+  rpc ResourceTree(ResourceTreeRequest) returns(ResourceTreeResponse);
+  rpc UserMenu(proto.EmptyRequest) returns(ResourceTreeResponse);
+  rpc SyncResource(SyncResourceRequest) returns(proto.EmptyResponse);
+}

@@ -21,7 +21,7 @@ type OrganizationSwitchStatusLogic struct {
 // switch status
 func NewOrganizationSwitchStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OrganizationSwitchStatusLogic {
 	return &OrganizationSwitchStatusLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

@@ -10,8 +10,8 @@ import (
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
-	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -32,8 +32,8 @@ func NewSwitchOrganizationLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *SwitchOrganizationLogic) SwitchOrganization(req *types.UserSwitchOrganizationRequest) (resp *types.UserJwtResponse, err error) {
-	rpcResp, err := l.svcCtx.UserRpcClient.SwitchOrganization(l.ctx, &lender.SwitchOrganizationRequest{
-		Data: &lender.SwitchOrganizationRequestData{
+	rpcResp, err := l.svcCtx.UserRpcClient.SwitchOrganization(l.ctx, &proto.SwitchOrganizationRequest{
+		Data: &proto.SwitchOrganizationRequestData{
 			OrganizationId: req.OrganizationId,
 		},
 	})
@@ -41,7 +41,7 @@ func (l *SwitchOrganizationLogic) SwitchOrganization(req *types.UserSwitchOrgani
 		return nil, errors.WithStack(err)
 	}
 
-	resp, err = copierx.Trans[lender.UserJwtResponseData, types.UserJwtResponse](rpcResp.Data)
+	resp, err = copierx.Trans[proto.UserLoginResponseData, types.UserJwtResponse](rpcResp.Data)
 
 	return resp, err
 }

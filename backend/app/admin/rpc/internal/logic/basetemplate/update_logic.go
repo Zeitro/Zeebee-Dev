@@ -11,20 +11,21 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type UpdateLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogic {
 	return &UpdateLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
@@ -34,9 +35,8 @@ func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogi
 func (l *UpdateLogic) Update(in *admin.UpdateBaseTemplateRequest) (resp *admin.UpdateBaseTemplateResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -54,7 +54,7 @@ func (l *UpdateLogic) Update(in *admin.UpdateBaseTemplateRequest) (resp *admin.U
 	}
 
 	// Convert BO to proto for response
-	protoData, err := copierx.Trans[dto.BaseTemplateEntityDto, admin.BaseTemplateEntity](result, copierx.TimeToRFC3339Str())
+	protoData, err := copierx.Trans[dto.BaseTemplateEntityDto, proto.BaseTemplateEntity](result, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

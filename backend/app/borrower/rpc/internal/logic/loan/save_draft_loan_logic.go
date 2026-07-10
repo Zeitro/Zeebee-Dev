@@ -19,6 +19,7 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,15 +27,15 @@ import (
 type SaveDraftLoanLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewSaveDraftLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SaveDraftLoanLogic {
 	return &SaveDraftLoanLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
@@ -42,9 +43,8 @@ func NewSaveDraftLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sav
 func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp *borrower.LoanApplyResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -357,7 +357,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	var transactionExperiences []*model.LoanExperience
 	if len(reqData.TransactionExperiences) > 0 {
 		transactionExperiences = make([]*model.LoanExperience, 0)
-		transactionExperiencesPtr, err := copierx.Trans[[]*borrower.LoanExperienceEntity, []*model.LoanExperience](&reqData.TransactionExperiences, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
+		transactionExperiencesPtr, err := copierx.Trans[[]*proto.LoanExperienceEntity, []*model.LoanExperience](&reqData.TransactionExperiences, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 		if err != nil {
 			return nil, err
 		}
@@ -368,7 +368,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	var realEstatesExperiences []*model.LoanExperience
 	if len(reqData.RealEstateExperiences) > 0 {
 		realEstatesExperiences = make([]*model.LoanExperience, 0)
-		realEstatesExperiencesPtr, err := copierx.Trans[[]*borrower.LoanExperienceEntity, []*model.LoanExperience](&reqData.RealEstateExperiences, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
+		realEstatesExperiencesPtr, err := copierx.Trans[[]*proto.LoanExperienceEntity, []*model.LoanExperience](&reqData.RealEstateExperiences, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 		if err != nil {
 			return nil, err
 		}
@@ -379,7 +379,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	var loanThirdServices []*model.LoanThirdService
 	if len(reqData.LoanThirdServices) > 0 {
 		loanThirdServices = make([]*model.LoanThirdService, 0)
-		loanThirdServicesPtr, err := copierx.Trans[[]*borrower.LoanThirdServiceEntity, []*model.LoanThirdService](&reqData.LoanThirdServices, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
+		loanThirdServicesPtr, err := copierx.Trans[[]*proto.LoanThirdServiceEntity, []*model.LoanThirdService](&reqData.LoanThirdServices, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 		if err != nil {
 			return nil, err
 		}
@@ -390,7 +390,7 @@ func (l *SaveDraftLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestDa
 	var loanDemographic *model.LoanDemographic
 	if reqData.LoanDemographic != nil {
 		loanDemographic = &model.LoanDemographic{}
-		loanDemographic, err = copierx.Trans[borrower.LoanDemographicEntity, model.LoanDemographic](reqData.LoanDemographic, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
+		loanDemographic, err = copierx.Trans[proto.LoanDemographicEntity, model.LoanDemographic](reqData.LoanDemographic, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 		if err != nil {
 			return nil, err
 		}

@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type GetUsCitiesLogic struct {
@@ -26,7 +27,7 @@ func NewGetUsCitiesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 }
 
 func (l *GetUsCitiesLogic) GetUsCities(req *types.GetUsCitiesRequest) (resp *types.GetUsCitiesResponse, err error) {
-	var rpcResp *borrower.StringSliceResponse
+	var rpcResp *proto.StringSliceResponse
 	rpcResp, err = l.svcCtx.CommonRpcClient.GetUsCities(l.ctx, &borrower.UsCitiesRequest{
 		Data: &borrower.UsCitiesRequestData{
 			StateUsps: req.State,
