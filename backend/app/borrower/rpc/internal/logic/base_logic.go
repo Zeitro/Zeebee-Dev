@@ -68,7 +68,7 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 			logx.WithContext(ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
 				logx.Field("user_type", constants.UserTypeBorrower),
-			).Error("failed to rebuild borrower policy")
+			).Error("fail to rebuild borrower policy")
 		}
 	})
 

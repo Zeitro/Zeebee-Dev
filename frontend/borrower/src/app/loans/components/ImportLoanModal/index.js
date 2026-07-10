@@ -15,7 +15,7 @@ const ImportLoanModal = ({ setOpen }) => {
 		try {
 			setConfirmLoading(true);
 			const formData = new FormData();
-			formData.append('file', fileList[0]);
+			formData.append('file', fileList[0]?.originFileObj);
 			formData.append('stage', 'Pending');
 			const res = await uploadWithProgress('/loan/import', {
 				method: 'POST',

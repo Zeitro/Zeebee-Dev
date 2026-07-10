@@ -14,7 +14,6 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/logic"
 	"zeebee-backend/domains/zeebee/model"
@@ -72,7 +71,7 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 			logx.WithContext(ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
 				logx.Field("user_type", constants.UserTypeLender),
-			).Error("failed to rebuild lender policy")
+			).Error("fail to rebuild lender policy")
 		}
 	})
 	return l
@@ -85,18 +84,18 @@ func (l *BaseLogic) GetLenderLoan(ctx context.Context, loanId int64, lenderOrgan
 		return nil, err
 	}
 	if loan.LenderOrganizationId != lenderOrganizationId {
-		return nil, errorx.WithStack(errorx.New("Invalid lender company"))
+		return nil, errorx.WithStack(errorx.New("invalid lender company"))
 	}
 
 	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreapproval {
-		return nil, errorx.WithStack(errorx.New("Invalid loan source"))
+		return nil, errorx.WithStack(errorx.New("invalid loan source"))
 	}
 
 	return
 }
 
 // CreateLoanOperationLog creates a loan operation log record
-func (l *BaseLogic) CreateLoanOperationLog(ctx context.Context, tx *gorm.DB, loanId, operatorId int64, from, to data.LoanOperationStatus, action constants.LoanOperationAction, metadata *data.LoanOperationMetadata) (err error) {
+func (l *BaseLogic) CreateLoanOperationLog(ctx context.Context, tx *gorm.DB, loanId, operatorId int64, from, to dto.LoanOperationStatus, action constants.LoanOperationAction, metadata *dto.LoanOperationMetadata) (err error) {
 	defer func() {
 		if err != nil {
 			logx.WithContext(ctx).WithFields(
@@ -108,12 +107,12 @@ func (l *BaseLogic) CreateLoanOperationLog(ctx context.Context, tx *gorm.DB, loa
 				logx.Field("action", action),
 				logx.Field("metadata", metadata),
 				logx.Field("OperatorType", constants.LoanOperationOperatorTypeLender),
-			).Error("failed to create loan operation log")
+			).Error("fail to create loan operation log")
 		}
 	}()
 	operator, _ := l.svcCtx.OrganizationUserRepo.FindOneByIdWithTx(ctx, tx, operatorId)
 	// if err != nil {
-	// 	return errorx.Wrap(err, "Failed To Get Operator")
+	// 	return errorx.Wrap(err, "fail to Get Operator")
 	// }
 
 	operatorName := ""
@@ -133,7 +132,7 @@ func (l *BaseLogic) CreateLoanOperationLog(ctx context.Context, tx *gorm.DB, loa
 	}
 	_, err = l.svcCtx.LoanOperationRepo.CreateWithTx(ctx, tx, operation, false)
 	if err != nil {
-		return errorx.Wrap(err, "Failed to create operation log")
+		return errorx.Wrap(err, "fail to create operation log")
 	}
 
 	return nil
@@ -142,7 +141,7 @@ func (l *BaseLogic) CreateLoanOperationLog(ctx context.Context, tx *gorm.DB, loa
 func (l *BaseLogic) GetLoanAndDocumentByDocumentId(ctx context.Context, documentId int64, organization int64) (loan *model.Loan, loanDocument *model.LoanDocument, err error) {
 	loanDocument, err = l.svcCtx.LoanDocumentRepo.FindOneWithPreloadById(ctx, documentId, []string{"Files"})
 	if err != nil {
-		return nil, nil, errorx.Wrap(err, "Failed To Find Loan Document")
+		return nil, nil, errorx.Wrap(err, "fail to find loan document")
 	}
 
 	loan, err = l.GetLenderLoan(ctx, loanDocument.LoanId, organization, []string{"LoanBorrower"})
@@ -156,7 +155,7 @@ func (l *BaseLogic) GetLoanAndDocumentByDocumentId(ctx context.Context, document
 // GetActiveOrganizationByUser returns the active organization for the given user
 func (l *BaseLogic) GetActiveOrganizationByUser(user *model.User) (currentOrganization *model.Organization, isChanged bool, err error) {
 	if user == nil {
-		return nil, false, errorx.New("User is empty")
+		return nil, false, errorx.New("user is empty")
 	}
 	organizations := user.Organizations
 	// find current company

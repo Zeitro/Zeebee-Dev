@@ -134,6 +134,14 @@
           "permission_required": true
         },
         {
+          "path": "/api/v1/organization/:id/order",
+          "method": "PATCH",
+          "name": "update order",
+          "description": "update lender display order",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
           "path": "/api/v1/organization/:id/status",
           "method": "PATCH",
           "name": "switch status",
@@ -146,6 +154,46 @@
           "method": "GET",
           "name": "select option",
           "description": "select option",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization/discover/settings",
+          "method": "GET",
+          "name": "lender discover get settings",
+          "description": "lender discover get settings",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization/discover/settings",
+          "method": "PUT",
+          "name": "lender discover update settings",
+          "description": "lender discover update settings",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization/discover/preview",
+          "method": "POST",
+          "name": "lender discover preview",
+          "description": "lender discover preview (OpenAI + dedupe, no insert)",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization/discover/commit",
+          "method": "POST",
+          "name": "lender discover commit",
+          "description": "lender discover commit selected lenders",
+          "auth_required": true,
+          "permission_required": true
+        },
+        {
+          "path": "/api/v1/organization/discover/runs/latest",
+          "method": "GET",
+          "name": "lender discover latest run",
+          "description": "lender discover latest run",
           "auth_required": true,
           "permission_required": true
         }
@@ -478,7 +526,7 @@
           "name": "lender companies list",
           "description": "lender companies list",
           "auth_required": true,
-          "permission_required": false
+          "permission_required": true
         }
       ]
     },
@@ -1523,7 +1571,7 @@
           "name": "all",
           "description": "all",
           "auth_required": true,
-          "permission_required": false
+          "permission_required": true
         },
         {
           "path": "/api/v1/property/:id/summary",

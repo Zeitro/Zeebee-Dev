@@ -11,7 +11,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
+	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type PendingStatusReviewLogic struct {
@@ -33,7 +33,10 @@ func NewPendingStatusReviewLogic(ctx context.Context, svcCtx *svc.ServiceContext
 func (l *PendingStatusReviewLogic) PendingStatusReview(in *lender.LoanPendingStatusReviewRequest) (resp *lender.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 
@@ -89,15 +92,15 @@ func (l *PendingStatusReviewLogic) PendingStatusReview(in *lender.LoanPendingSta
 
 		// add operation
 		operatorId := claim.OrganizationUserId
-		fromStatus := data.LoanOperationStatus{
+		fromStatus := dto.LoanOperationStatus{
 			Stage:         originalStage,
 			PendingStatus: originalPendingStatus,
 		}
-		toStatus := data.LoanOperationStatus{
+		toStatus := dto.LoanOperationStatus{
 			Stage:         targetStage,
 			PendingStatus: targetStatus,
 		}
-		metadata := &data.LoanOperationMetadata{
+		metadata := &dto.LoanOperationMetadata{
 			Comment: in.Data.Comment,
 		}
 

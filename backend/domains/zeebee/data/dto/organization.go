@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
 )
 
 type OrganizationEntityDto struct {
@@ -12,7 +11,7 @@ type OrganizationEntityDto struct {
 	Name                 string                          `json:"name"`
 	Status               constants.OrganizationStatus    `json:"status"`
 	OwnerId              int64                           `json:"owner_id"`
-	Address              data.Address                    `json:"address"`
+	Address              AddressDto                      `json:"address"`
 	ContactEmail         string                          `json:"contact_email"`
 	ContactPhone         string                          `json:"contact_phone"`
 	ContactName          string                          `json:"contact_name"`
@@ -23,6 +22,8 @@ type OrganizationEntityDto struct {
 	Logo                 string                          `json:"logo"`
 	Website              string                          `json:"website"`
 	Tagline              string                          `json:"tagline"`
+	Source               string                          `json:"source"`
+	Order                int                             `json:"order"`
 	Metadata             *OrganizationMetadata           `json:"metadata"`
 	Owner                *UserEntityDto                  `json:"owner"`
 
@@ -34,7 +35,7 @@ type OrganizationPageEntityDto struct {
 	Id             int64                           `json:"id"`
 	Name           string                          `json:"name"`
 	Status         constants.OrganizationStatus    `json:"status"`
-	Address        data.Address                    `json:"address"`
+	Address        AddressDto                      `json:"address"`
 	ContactEmail   string                          `json:"contact_email"`
 	ContactPhone   string                          `json:"contact_phone"`
 	ContactName    string                          `json:"contact_name"`
@@ -43,6 +44,8 @@ type OrganizationPageEntityDto struct {
 	Logo           string                          `json:"logo"`
 	Website        string                          `json:"website"`
 	Tagline        string                          `json:"tagline"`
+	Source         string                          `json:"source"`
+	Order          int                             `json:"order"`
 	OwnerEmail     string                          `json:"owner_email"`
 	OwnerFullName  string                          `json:"owner_full_name"`
 	OwnerFirstName string                          `json:"owner_first_name"`
@@ -81,6 +84,8 @@ type OrganizationRegisterRequestDto struct {
 	Logo         string                          `json:"logo"`
 	Website      string                          `json:"website"`
 	Tagline      string                          `json:"tagline"`
+	Source       string                          `json:"source"`
+	Order        int                             `json:"order"`
 	Metadata     *OrganizationMetadata           `json:"metadata,omitempty"`
 }
 
