@@ -12,26 +12,27 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/errorx"
 	domainlenderdiscover "zeebee-backend/domains/zeebee/lenderdiscover"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DiscoverPreviewLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
 }
 
 func NewDiscoverPreviewLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DiscoverPreviewLogic {
 	return &DiscoverPreviewLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *DiscoverPreviewLogic) DiscoverPreview(_ *admin.EmptyRequest) (resp *admin.LenderDiscoverPreviewResponse, err error) {
+func (l *DiscoverPreviewLogic) DiscoverPreview(_ *proto.EmptyRequest) (resp *admin.LenderDiscoverPreviewResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+			).Error(err)
 		}
 	}()
 	bl := logic.GetBaseLogic(l.svcCtx)

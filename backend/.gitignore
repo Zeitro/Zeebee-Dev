@@ -4,3 +4,8 @@ specs
 .DS_Store
 .traces
 .skillopt-sleep
+.cache
+.specify/init-options.json
+.specify/integration.json
+.specify/integrations/*.manifest.json
+.specify/workflows/workflow-registry.json

@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -17,15 +18,15 @@ import (
 type ListByBorrowerPropertyLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewListByBorrowerPropertyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListByBorrowerPropertyLogic {
 	return &ListByBorrowerPropertyLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
@@ -33,9 +34,8 @@ func NewListByBorrowerPropertyLogic(ctx context.Context, svcCtx *svc.ServiceCont
 func (l *ListByBorrowerPropertyLogic) ListByBorrowerProperty(in *borrower.BorrowerPropertyTransactionListByPropertyRequest) (resp *borrower.BorrowerPropertyTransactionListByPropertyResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -54,7 +54,7 @@ func (l *ListByBorrowerPropertyLogic) ListByBorrowerProperty(in *borrower.Borrow
 		fillChecklistNodeFiles(l.ctx, l.svcCtx.FileRepo, &transactions[i].Checklist)
 	}
 
-	entities, err := copierx.Trans[[]*model.BorrowerPropertyTransaction, []*borrower.BorrowerPropertyTransactionEntity](
+	entities, err := copierx.Trans[[]*model.BorrowerPropertyTransaction, []*proto.BorrowerPropertyTransactionEntity](
 		&transactions,
 		copierx.TimeToRFC3339Str(),
 		copierx.SqlTimePtrToStr(timex.LayoutUsStyle),

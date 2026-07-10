@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -21,7 +22,7 @@ type OrganizationUpdateLenderLogic struct {
 // lender update
 func NewOrganizationUpdateLenderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OrganizationUpdateLenderLogic {
 	return &OrganizationUpdateLenderLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
@@ -46,11 +47,11 @@ func (l *OrganizationUpdateLenderLogic) OrganizationUpdateLender(req *types.Orga
 		}
 	}
 
-	lenderMetadata, err := copierx.Trans[types.OrganizationLenderMetadataEntity, admin.OrganizationLenderMetadataEntity](req.Metadata)
+	lenderMetadata, err := copierx.Trans[types.OrganizationLenderMetadataEntity, proto.OrganizationLenderMetadataEntity](req.Metadata)
 	if err != nil {
 		return nil, err
 	}
-	rpcReq.Data.Metadata = &admin.OrganizationMetadataEntity{
+	rpcReq.Data.Metadata = &proto.OrganizationMetadataEntity{
 		Lender: lenderMetadata,
 	}
 
@@ -61,7 +62,7 @@ func (l *OrganizationUpdateLenderLogic) OrganizationUpdateLender(req *types.Orga
 	}
 
 	// Convert pb response to types
-	resp, err = copierx.Trans[admin.OrganizationEntity, types.OrganizationEntity](rpcResp.Data, copierx.TimeToRFC3339Str())
+	resp, err = copierx.Trans[proto.OrganizationEntity, types.OrganizationEntity](rpcResp.Data, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

@@ -5,7 +5,7 @@ import (
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,8 +26,8 @@ func NewBorrowerEntityDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 func (l *BorrowerEntityDeleteLogic) BorrowerEntityDelete(req *types.PathIdRequest) (resp *types.EmptyResponse, err error) {
-	rpcReq := &borrower.BorrowerEntityDeleteRequest{
-		Data: &borrower.BorrowerEntityDeleteRequestData{
+	rpcReq := &proto.PathIdRequest{
+		Data: &proto.PathIdRequestData{
 			Id: req.Id,
 		},
 	}

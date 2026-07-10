@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,9 +29,9 @@ func NewOrganizationLenderPageLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 func (l *OrganizationLenderPageLogic) OrganizationLenderPage(req *types.OrganizationLenderPageRequest) (resp *types.OrganizationLenderPageResponse, err error) {
-	rpcReq := &borrower.OrganizationLenderPageRequest{}
+	rpcReq := &proto.CommonPageRequest{}
 
-	rpcReq.Data, err = copierx.Trans[types.OrganizationLenderPageRequest, borrower.OrganizationLenderPageRequestData](req)
+	rpcReq.Data, err = copierx.Trans[types.OrganizationLenderPageRequest, proto.CommonPageRequestData](req)
 	if err != nil {
 		return nil, err
 	}

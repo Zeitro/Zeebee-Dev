@@ -20,10 +20,9 @@ func CreateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		var err error
 		defer func() {
 			if err != nil {
-				logx.WithContext(r.Context()).
+				svcCtx.Logger.WithContext(r.Context()).
 					WithFields(
 						logx.Field("stacks", errorx.GetErrorStack(err)),
-						logx.Field("service_name", svcCtx.Config.Name),
 					).
 					Error(err)
 			}

@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package borrower;
+
+option go_package = "zeebee-backend/app/borrower/rpc/pb/borrower";
+
+import "proto/common.proto";
+// upload loan document files
+message LoanDocumentAddFilesRequest {
+  LoanDocumentAddFilesRequestData data = 1;
+}
+message LoanDocumentAddFilesRequestData {
+  int64 id = 1;
+  repeated string file_urls = 2;
+}
+service LoanDocument {
+  rpc AddFiles(LoanDocumentAddFilesRequest) returns(proto.EmptyResponse);
+}

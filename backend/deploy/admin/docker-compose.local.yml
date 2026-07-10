@@ -1,0 +1,4 @@
+services:
+  admin-backend:
+    logging: !override
+      driver: json-file
