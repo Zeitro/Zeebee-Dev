@@ -29,10 +29,10 @@ export const SwitchOrganization = ({
 				type: 'success',
 				content: `Successfully switched organization to ${organization_name}`,
 			});
+			setTimeout(() => {
+				eventBus.emit('removePortalComponent');
+			}, 300);
 		});
-		setTimeout(() => {
-			eventBus.emit('removePortalComponent');
-		}, 300);
 		// setCookie('token', access?.access_token, access?.access_token_expire * 1000);
 		// await updateAccess(access);
 		// await getUserInfo();

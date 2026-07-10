@@ -32,7 +32,10 @@ func NewUpdateBorrowerLoanPendingStatusLogic(ctx context.Context, svcCtx *svc.Se
 func (l *UpdateBorrowerLoanPendingStatusLogic) UpdateBorrowerLoanPendingStatus(in *borrower.LoanUpdatePendingStatusRequest) (resp *borrower.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("service_name", l.svcCtx.Config.Name),
+			).Error(err)
 		}
 	}()
 
@@ -47,14 +50,14 @@ func (l *UpdateBorrowerLoanPendingStatusLogic) UpdateBorrowerLoanPendingStatus(i
 		"borrower_organization_id": claim.OrganizationId,
 	})
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed To Get Loan")
+		return nil, errorx.Wrap(err, "fail to get loan")
 	}
 	if loanModel.Stage != constants.LoanStagePending {
-		return nil, errorx.New("Loan's stage should be pending")
+		return nil, errorx.New("loan's stage should be pending")
 	}
 
 	if loanModel.Source != constants.LoanSourceBorrower {
-		return nil, errorx.WithStack(errorx.New("Loan source is not 3rd party"))
+		return nil, errorx.WithStack(errorx.New("loan source is not 3rd party"))
 	}
 	err = l.svcCtx.LoanRepo.UpdateColumnsById(l.ctx, in.Data.Id, map[string]interface{}{"pending_status": in.Data.PendingStatus})
 

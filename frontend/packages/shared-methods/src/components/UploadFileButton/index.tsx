@@ -278,7 +278,7 @@ export const UploadFileButton = forwardRef<CommonUploadRef, UploadFileButtonProp
 				const uploadFile = {
 					uid: file.uid,
 					name: file.name,
-					status: 'uploading' as const,
+					// status: 'done' as const,
 					originFileObj: file,
 					thumbUrl,
 				} as UploadFile;

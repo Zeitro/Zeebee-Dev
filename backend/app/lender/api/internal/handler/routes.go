@@ -273,21 +273,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
-					// accept invitation
-					Method:  http.MethodPost,
-					Path:    "/organization_user/accept_invitation",
-					Handler: organization_user.OrganizationUserAcceptInvitationHandler(serverCtx),
-				},
-			}...,
-		),
-		rest.WithPrefix("/api/v1"),
-	)
-
-	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.AuthMiddleware},
-			[]rest.Route{
-				{
 					// create
 					Method:  http.MethodPost,
 					Path:    "/organization_user",
@@ -330,10 +315,22 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: organization_user.OrganizationUserSwitchStatusHandler(serverCtx),
 				},
 				{
+					// accept invitation
+					Method:  http.MethodPost,
+					Path:    "/organization_user/accept_invitation",
+					Handler: organization_user.OrganizationUserAcceptInvitationHandler(serverCtx),
+				},
+				{
 					// all
 					Method:  http.MethodGet,
 					Path:    "/organization_user/all",
 					Handler: organization_user.OrganizationUserAllHandler(serverCtx),
+				},
+				{
+					// check invitation
+					Method:  http.MethodPost,
+					Path:    "/organization_user/check_invitation",
+					Handler: organization_user.OrganizationUserCheckInvitationHandler(serverCtx),
 				},
 				{
 					// page

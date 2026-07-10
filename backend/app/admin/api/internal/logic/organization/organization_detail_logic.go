@@ -28,11 +28,6 @@ func NewOrganizationDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *OrganizationDetailLogic) OrganizationDetail(req *types.PathIdRequest) (resp *types.OrganizationEntity, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
 
 	// Call RPC server
 	rpcResp, err := l.svcCtx.OrganizationRpcClient.Detail(l.ctx, &admin.IdRequest{

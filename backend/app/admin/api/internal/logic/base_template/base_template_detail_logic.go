@@ -28,11 +28,6 @@ func NewBaseTemplateDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *BaseTemplateDetailLogic) BaseTemplateDetail(req *types.PathIdRequest) (resp *types.BaseTemplateDetailResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
 
 	// Convert types to pb request
 	rpcReq := &admin.GetBaseTemplateRequest{

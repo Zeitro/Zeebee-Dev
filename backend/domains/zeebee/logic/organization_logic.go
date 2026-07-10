@@ -174,6 +174,14 @@ func (l *OrganizationLogic) Delete(ctx context.Context, id int64) (err error) {
 	return nil
 }
 
+// UpdateOrder sets the display order of an organization. Lower = higher in list. Min 0.
+func (l *OrganizationLogic) UpdateOrder(ctx context.Context, id int64, order int) error {
+	if order < 0 {
+		return errorx.New("Order must be >= 0")
+	}
+	return l.repos.OrganizationRepo.UpdateOrder(ctx, id, order)
+}
+
 // SwitchStatus changes the status of an organization.
 func (l *OrganizationLogic) SwitchStatus(ctx context.Context, input dto.OrganizationSwitchStatusRequestDto) (err error) {
 	// Validate status
@@ -189,11 +197,24 @@ func (l *OrganizationLogic) SwitchStatus(ctx context.Context, input dto.Organiza
 	}
 
 	// Use transaction to update both organization and organization users
+	previousStatus := organization.Status
 	err = l.repos.OrganizationRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 
 		// Update organization status
 		organization.Status = newStatus
+
+		// When transitioning from a non-active state (e.g. discover "Not activated")
+		// to Active, append the org to the end of its type's list so it does not
+		// jump ahead of existing active orgs just because discover seeded order = 1.
+		if newStatus == constants.OrganizationStatusActive && previousStatus != constants.OrganizationStatusActive {
+			var maxOrder int
+			maxOrder, innerErr = l.repos.OrganizationRepo.MaxOrderByTypeWithTx(ctx, tx, organization.Type)
+			if innerErr != nil {
+				return innerErr
+			}
+			organization.Order = maxOrder + 1
+		}
 		_, innerErr = l.repos.OrganizationRepo.UpdateOneByIdWithTx(ctx, tx, organization.Id, organization)
 		if innerErr != nil {
 			return innerErr
@@ -226,6 +247,16 @@ func (l *OrganizationLogic) SwitchStatus(ctx context.Context, input dto.Organiza
 
 	if err != nil {
 		return
+	}
+
+	// H7: disabling an organization revokes its plan-granted access by suspending
+	// its effective subscriptions and unbinding their plan resources. The suspend
+	// logic publishes its own RoleReload with the removed policies. Re-enabling
+	// the org does NOT reactivate subscriptions (no auto-reactivation; the org
+	// admin renews/switches them explicitly).
+	if newStatus != constants.OrganizationStatusActive {
+		subLogic := NewOrganizationSubscriptionLogic(l.BaseLogic, l.authTopicMap)
+		return subLogic.SuspendEffectiveByOrganizationId(ctx, input.Id, organization.Type)
 	}
 
 	threading.GoSafe(func() {

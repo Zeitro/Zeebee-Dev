@@ -24,8 +24,9 @@ RpcConf:
   Timeout: 10000
   LimiterConf:
     Login:
-      Rate: 5
+      Rate: 10
       Period: 300
+      LockPeriod: 120
     SendLoginEmail:
       Rate: 5
       Period: 300
@@ -71,7 +72,7 @@ RpcConf:
   VerifyEmailUrl: https://agent.zeebeeloans.com/login/verifyEmail
   ResetPwdUrl: https://agent.zeebeeloans.com/login/resetPassword
   InviteUserUrl: https://agent.zeebeeloans.com/login/joinOrganization
-  InviteUserExpireSeconds: 86400
+  InviteUserExpireSeconds: 259200
   SendInviteEmailPeriodSeconds: 60
 
   CasbinConf:
@@ -83,3 +84,6 @@ RpcConf:
       Pwd: ''
       Tls: true
       LenderChannel: /lender-channel
+  CronTaskConf:
+    - name: update_organization_subscription_status
+      schedule: "0 0 3 * * *"

@@ -2,6 +2,7 @@ package dto
 
 import (
 	"time"
+	"zeebee-backend/domains/zeebee/config"
 
 	"zeebee-backend/common/redisx"
 	"zeebee-backend/domains/zeebee/constants"
@@ -72,9 +73,8 @@ type UserLoginRequestDto struct {
 }
 
 type LoginLimiterDto struct {
-	Rate     int
-	Period   int
-	RedisCli *redisx.Client
+	LimiterItem config.LimiterItem
+	RedisCli    *redisx.Client
 }
 
 type UserRegisterRequestDto struct {

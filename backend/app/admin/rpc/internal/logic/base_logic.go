@@ -12,7 +12,6 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/logic"
 	"zeebee-backend/domains/zeebee/model"
@@ -76,14 +75,14 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 			logx.WithContext(ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
 				logx.Field("user_type", constants.UserTypeAdmin),
-			).Error("failed to rebuild admin policy")
+			).Error("fail to rebuild admin policy")
 		}
 	})
 
 	return l
 }
 
-func (l *BaseLogic) CreateLoanOperationLog(ctx context.Context, tx *gorm.DB, loanId, operatorId int64, from, to data.LoanOperationStatus, action constants.LoanOperationAction, metadata *data.LoanOperationMetadata) (err error) {
+func (l *BaseLogic) CreateLoanOperationLog(ctx context.Context, tx *gorm.DB, loanId, operatorId int64, from, to dto.LoanOperationStatus, action constants.LoanOperationAction, metadata *dto.LoanOperationMetadata) (err error) {
 	defer func() {
 		if err != nil {
 			logx.WithContext(ctx).WithFields(
@@ -95,7 +94,7 @@ func (l *BaseLogic) CreateLoanOperationLog(ctx context.Context, tx *gorm.DB, loa
 				logx.Field("action", action),
 				logx.Field("metadata", metadata),
 				logx.Field("OperatorType", constants.LoanOperationOperatorTypeAdmin),
-			).Error("failed to create loan operation log")
+			).Error("fail to create loan operation log")
 		}
 	}()
 	operator, _ := l.svcCtx.OrganizationUserRepo.FindOneByIdWithTx(ctx, tx, operatorId)
@@ -117,7 +116,7 @@ func (l *BaseLogic) CreateLoanOperationLog(ctx context.Context, tx *gorm.DB, loa
 	}
 	_, err = l.svcCtx.LoanOperationRepo.CreateWithTx(ctx, tx, operation, false)
 	if err != nil {
-		return errorx.Wrap(err, "Failed to create operation log")
+		return errorx.Wrap(err, "fail to create operation log")
 	}
 
 	return nil

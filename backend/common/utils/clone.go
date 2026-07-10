@@ -10,12 +10,12 @@ func Clone[T any](src T) (T, error) {
 
 	data, err := json.Marshal(src)
 	if err != nil {
-		return dst, fmt.Errorf("Failed to marshal source object: %w", err)
+		return dst, fmt.Errorf("fail to marshal source object: %w", err)
 	}
 
 	err = json.Unmarshal(data, &dst)
 	if err != nil {
-		return dst, fmt.Errorf("Failed to unmarshal into destination object: %w", err)
+		return dst, fmt.Errorf("fail to unmarshal into destination object: %w", err)
 	}
 
 	return dst, nil

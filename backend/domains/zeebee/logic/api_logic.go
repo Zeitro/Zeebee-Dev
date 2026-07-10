@@ -239,9 +239,14 @@ func (l *ApiLogic) SyncApi(ctx context.Context, input *dto.ApiSyncRequestDto) (e
 				if existing == nil {
 					apiMaxSort++
 					apiMethod := constants.ApiMethod(api.Method)
-					if !apiMethod.IsValid() {
-						innerErr = errorx.Errorf("api[%s-%s] invalid method: %v", api.Name, api.Path, api.Method)
+					innerErr = apiMethod.Validate()
+					if innerErr != nil {
+						innerErr = errorx.Wrapf(innerErr, "api[%s-%s] invalid method: %v", api.Name, api.Path, api.Method)
+						return innerErr
 					}
+					// if !apiMethod.Validate() {
+					// 	innerErr = errorx.Errorf("api[%s-%s] invalid method: %v", api.Name, api.Path, api.Method)
+					// }
 					child := &model.Api{
 						Name:               api.Name,
 						Path:               api.Path,
