@@ -37,6 +37,22 @@ func (l *BaseLogic) requirePaymentGateway() (payment.Gateway, error) {
 	return l.paymentGateway, nil
 }
 
+// cancelStripeSubscriptionQuietly cancels a Stripe subscription best-effort.
+// Failures are logged loudly for manual follow-up but never block the caller:
+// admin operations must not be held hostage by Stripe availability, at the
+// cost of a manual-refund window when the remote cancel fails.
+func (l *BaseLogic) cancelStripeSubscriptionQuietly(ctx context.Context, stripeSubscriptionId string) {
+	if stripeSubscriptionId == "" || l.paymentGateway == nil {
+		return
+	}
+	if err := l.paymentGateway.CancelSubscription(ctx, stripeSubscriptionId); err != nil {
+		logx.WithContext(ctx).WithFields(
+			logx.Field("stacks", errorx.GetErrorStack(err)),
+			logx.Field("stripe_subscription_id", stripeSubscriptionId),
+		).Error("failed to cancel stripe subscription; manual follow-up required to stop billing")
+	}
+}
+
 // archiveStripePriceQuietly archives a Stripe price best-effort: failures are
 // logged but never block the caller (admin operations must not depend on
 // Stripe availability).

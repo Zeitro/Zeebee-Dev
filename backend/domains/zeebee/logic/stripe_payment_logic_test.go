@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"testing"
@@ -478,4 +479,87 @@ func TestSetAutoRenew_TogglesGatewayAndLocalFlag(t *testing.T) {
 	var subscription model.OrganizationSubscription
 	require.NoError(t, db.Where("code = ?", "SUBAR").First(&subscription).Error)
 	assert.False(t, subscription.IsAutoRenew)
+}
+
+// --- cron / manual-flow coordination ---
+
+func TestUpdateStatus_StripeAutoRenewGetsGraceWindow(t *testing.T) {
+	l, _, db := setupStripePaymentLogic(t)
+	ctx := context.Background()
+	plan, policy := seedPaidPlan(t, db)
+	org := seedOwnedOrg(t, db, 42)
+
+	// expired yesterday, but auto-renewing via Stripe: within the 3-day grace
+	// window the cron must neither expire nor mark it Expiring
+	require.NoError(t, db.Create(&model.OrganizationSubscription{
+		Code: "SUBGRACE", OrganizationId: org.Id, PricingPlanId: plan.Id,
+		PricingPlanPolicyId:  policy.Id,
+		Status:               constants.OrganizationSubscriptionStatusActive,
+		ExpireDate:           &sql.NullTime{Time: time.Now().AddDate(0, 0, -1), Valid: true},
+		IsAutoRenew:          true,
+		Source:               constants.OrganizationSubscriptionSourceStripe,
+		StripeSubscriptionId: "sub_grace",
+	}).Error)
+
+	require.NoError(t, l.subscriptionLogic.UpdateStatus(ctx, constants.UserTypeBorrower))
+
+	var subscription model.OrganizationSubscription
+	require.NoError(t, db.Where("code = ?", "SUBGRACE").First(&subscription).Error)
+	assert.Equal(t, constants.OrganizationSubscriptionStatusActive, subscription.Status)
+}
+
+func TestUpdateStatus_StripeAutoRenewExpiresAndCancelsAfterGrace(t *testing.T) {
+	l, gateway, db := setupStripePaymentLogic(t)
+	ctx := context.Background()
+	plan, policy := seedPaidPlan(t, db)
+	org := seedOwnedOrg(t, db, 42)
+
+	// expired beyond the grace window: cron force-expires and cancels remotely
+	require.NoError(t, db.Create(&model.OrganizationSubscription{
+		Code: "SUBLAPSE", OrganizationId: org.Id, PricingPlanId: plan.Id,
+		PricingPlanPolicyId:  policy.Id,
+		Status:               constants.OrganizationSubscriptionStatusActive,
+		ExpireDate:           &sql.NullTime{Time: time.Now().AddDate(0, 0, -(stripeAutoRenewGraceDays + 1)), Valid: true},
+		IsAutoRenew:          true,
+		Source:               constants.OrganizationSubscriptionSourceStripe,
+		StripeSubscriptionId: "sub_lapse",
+	}).Error)
+
+	require.NoError(t, l.subscriptionLogic.UpdateStatus(ctx, constants.UserTypeBorrower))
+
+	var subscription model.OrganizationSubscription
+	require.NoError(t, db.Where("code = ?", "SUBLAPSE").First(&subscription).Error)
+	assert.Equal(t, constants.OrganizationSubscriptionStatusExpired, subscription.Status)
+	assert.Contains(t, gateway.cancelled, "sub_lapse")
+}
+
+func TestAdminCreate_CancelsReplacedStripeSubscription(t *testing.T) {
+	l, gateway, db := setupStripePaymentLogic(t)
+	ctx := context.Background()
+	plan, policy := seedPaidPlan(t, db)
+	org := seedOwnedOrg(t, db, 42)
+
+	// live Stripe subscription that the admin is about to replace manually
+	require.NoError(t, db.Create(&model.OrganizationSubscription{
+		Code: "SUBOLD", OrganizationId: org.Id, PricingPlanId: plan.Id,
+		PricingPlanPolicyId:  policy.Id,
+		Status:               constants.OrganizationSubscriptionStatusActive,
+		ExpireDate:           calculateExpireDate(constants.PricingPolicyTypeMonthly, time.Now()),
+		IsAutoRenew:          true,
+		Source:               constants.OrganizationSubscriptionSourceStripe,
+		StripeSubscriptionId: "sub_replaced",
+	}).Error)
+
+	_, err := l.subscriptionLogic.Create(ctx, dto.OrganizationSubscriptionCreateDto{
+		OrganizationId:      org.Id,
+		PricingPlanId:       plan.Id,
+		PricingPlanPolicyId: policy.Id,
+		Type:                constants.UserTypeBorrower,
+	})
+	require.NoError(t, err)
+	assert.Contains(t, gateway.cancelled, "sub_replaced")
+
+	var old model.OrganizationSubscription
+	require.NoError(t, db.Where("code = ?", "SUBOLD").First(&old).Error)
+	assert.Equal(t, constants.OrganizationSubscriptionStatusExpired, old.Status)
 }
