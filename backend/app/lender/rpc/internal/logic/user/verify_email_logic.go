@@ -5,11 +5,11 @@ import (
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
-	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -19,25 +19,24 @@ import (
 type VerifyEmailLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewVerifyEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *VerifyEmailLogic {
 	return &VerifyEmailLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *VerifyEmailLogic) VerifyEmail(in *lender.VerifyEmailRequest) (resp *lender.UserJwtResponse, err error) {
+func (l *VerifyEmailLogic) VerifyEmail(in *proto.VerifyEmailRequest) (resp *proto.UserLoginResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -58,11 +57,11 @@ func (l *VerifyEmailLogic) VerifyEmail(in *lender.VerifyEmailRequest) (resp *len
 		return nil, err
 	}
 
-	data, err := copierx.Trans[dto.UserJwtTokenDto, lender.UserJwtResponseData](tokenInfo)
+	data, err := copierx.Trans[dto.UserJwtTokenDto, proto.UserLoginResponseData](tokenInfo)
 	if err != nil {
 		return nil, err
 	}
-	return &lender.UserJwtResponse{
+	return &proto.UserLoginResponse{
 		Data: data,
 	}, nil
 }

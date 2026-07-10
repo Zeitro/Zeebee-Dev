@@ -19,7 +19,7 @@ type OrganizationUpdateOrderLogic struct {
 
 func NewOrganizationUpdateOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OrganizationUpdateOrderLogic {
 	return &OrganizationUpdateOrderLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

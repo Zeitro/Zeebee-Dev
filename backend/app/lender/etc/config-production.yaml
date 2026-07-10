@@ -1,10 +1,11 @@
 ApiConf:
-  Name: lender-api
+  Name: lender.api
   Host: 0.0.0.0
   Port: 10100
   Timeout: 10000
   Log:
     Stat: false
+    ServiceName: lender.api
 
   JwtAuth:
     AccessSecret: iV6jQ7sK0mO2yZ1qX7oF9rC8oB0lW8wR
@@ -18,10 +19,13 @@ ApiConf:
   PdfGeneratorUrl: http://127.0.0.1:10300/api/v1/pdf
 
 RpcConf:
-  Name: borrower.rpc
+  Name: lender.rpc
   ListenOn: 0.0.0.0:10101
   Mode: dev
   Timeout: 10000
+  Log:
+    Stat: false
+    ServiceName: lender.rpc
   LimiterConf:
     Login:
       Rate: 10

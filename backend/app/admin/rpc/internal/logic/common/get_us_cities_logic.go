@@ -5,6 +5,7 @@ import (
 
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -14,23 +15,20 @@ import (
 type GetUsCitiesLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
 }
 
 func NewGetUsCitiesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUsCitiesLogic {
 	return &GetUsCitiesLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *GetUsCitiesLogic) GetUsCities(in *admin.UsCitiesRequest) (resp *admin.StringSliceResponse, err error) {
+func (l *GetUsCitiesLogic) GetUsCities(in *admin.UsCitiesRequest) (resp *proto.StringSliceResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -38,7 +36,7 @@ func (l *GetUsCitiesLogic) GetUsCities(in *admin.UsCitiesRequest) (resp *admin.S
 	if err != nil {
 		return nil, err
 	}
-	return &admin.StringSliceResponse{
+	return &proto.StringSliceResponse{
 		Data: cities,
 	}, nil
 }

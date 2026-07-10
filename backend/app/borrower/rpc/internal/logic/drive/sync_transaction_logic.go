@@ -18,15 +18,15 @@ import (
 type SyncTransactionLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewSyncTransactionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncTransactionLogic {
 	return &SyncTransactionLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
@@ -34,7 +34,7 @@ func NewSyncTransactionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 func (l *SyncTransactionLogic) SyncTransaction(in *borrower.DriveSyncTransactionRequest) (resp *borrower.DriveSyncTransactionResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)

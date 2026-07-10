@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type InfoLogic struct {
@@ -20,7 +21,7 @@ type InfoLogic struct {
 // info
 func NewInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *InfoLogic {
 	return &InfoLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
@@ -29,7 +30,7 @@ func NewInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *InfoLogic {
 func (l *InfoLogic) Info(req *types.EmptyRequest) (resp *types.UserInfoResponse, err error) {
 	resp = &types.UserInfoResponse{}
 
-	rpcResp, err := l.svcCtx.UserRpcClient.UserInfo(l.ctx, &admin.EmptyRequest{})
+	rpcResp, err := l.svcCtx.UserRpcClient.UserInfo(l.ctx, &proto.EmptyRequest{})
 	if err != nil {
 		return nil, err
 	}

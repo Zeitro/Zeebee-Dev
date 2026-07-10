@@ -8,35 +8,34 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type LoginLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic {
 	return &LoginLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLoginResponse, err error) {
+func (l *LoginLogic) Login(in *proto.UserLoginRequest) (resp *proto.UserLoginResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -53,12 +52,12 @@ func (l *LoginLogic) Login(in *borrower.UserLoginRequest) (resp *borrower.UserLo
 	if err != nil {
 		return nil, err
 	}
-	data := &borrower.UserLoginResponseData{}
-	data, err = copierx.Trans[dto.UserJwtTokenDto, borrower.UserLoginResponseData](token)
+	data := &proto.UserLoginResponseData{}
+	data, err = copierx.Trans[dto.UserJwtTokenDto, proto.UserLoginResponseData](token)
 	if err != nil {
 		return nil, err
 	}
-	return &borrower.UserLoginResponse{
+	return &proto.UserLoginResponse{
 		Data: data,
 	}, nil
 }

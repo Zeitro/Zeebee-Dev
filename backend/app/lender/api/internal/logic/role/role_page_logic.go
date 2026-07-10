@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type RolePageLogic struct {
@@ -28,12 +29,12 @@ func NewRolePageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RolePage
 }
 
 func (l *RolePageLogic) RolePage(req *types.RolePageRequest) (resp *types.RolePageResponse, err error) {
-	rpcReq := &lender.RolePageRequest{
-		Data: &lender.RolePageRequestData{
-			Filter: &lender.RolePageRequestFilter{},
+	rpcReq := &proto.CommonPageRequest{
+		Data: &proto.CommonPageRequestData{
+			Filter: &proto.CommonPageFilter{},
 		},
 	}
-	data, err := copierx.Trans[types.RolePageRequest, lender.RolePageRequestData](req)
+	data, err := copierx.Trans[types.RolePageRequest, proto.CommonPageRequestData](req)
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}

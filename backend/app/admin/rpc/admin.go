@@ -48,8 +48,9 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 	if err != nil {
 		return nil, err
 	}
-
-	ctx := svc.NewServiceContext(rpcConfig)
+	logger := logx.WithCallerSkip(0).
+		WithFields(logx.Field("service_name", c.RpcConf.Name))
+	ctx := svc.NewServiceContext(rpcConfig, logger)
 	rpcServer := zrpc.MustNewServer(rpcConfig.RpcServerConf, func(grpcServer *grpc.Server) {
 		admin.RegisterUserServer(grpcServer, userServer.NewUserServer(ctx))
 		admin.RegisterApiServer(grpcServer, apiServer.NewApiServer(ctx))
@@ -69,12 +70,21 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 			reflection.Register(grpcServer)
 		}
 	})
+	// tag every rpc log with service_name. grpc.UnaryInterceptor is prepended by
+	// grpc-go to the interceptor chain (outermost), so it runs above go-zero's
+	// Trace/Stat interceptors and the stat access-log line carries the field too.
+	rpcServer.AddOptions(grpc.UnaryInterceptor(func(ctx context.Context, req any,
+		info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+		ctx = logx.ContextWithFields(ctx,
+			logx.Field("service_name", c.RpcConf.Name))
+		return handler(ctx, req)
+	}))
 	rpcService := &RpcServer{
 		s:      rpcServer,
 		cron:   cron.NewEngine(),
 		svcCtx: ctx,
 	}
-	err = rpcService.RegisterCronTask(ctx, rpcConfig)
+	err = rpcService.RegisterCronTask(ctx, rpcConfig, logger)
 	if err != nil {
 		return nil, err
 	}
@@ -99,7 +109,7 @@ func (s *RpcServer) Stop() {
 	s.cron.Stop()
 }
 
-func (s *RpcServer) RegisterCronTask(svcCtx *svc.ServiceContext, conf config.RpcConf) (err error) {
+func (s *RpcServer) RegisterCronTask(svcCtx *svc.ServiceContext, conf config.RpcConf, logger logx.Logger) (err error) {
 	if s.cron == nil {
 		s.cron = cron.NewEngine()
 	}
@@ -111,7 +121,7 @@ func (s *RpcServer) RegisterCronTask(svcCtx *svc.ServiceContext, conf config.Rpc
 				ctx := context.Background()
 				taskErr := baseLogic.OrganizationSubscriptionLogic.UpdateStatus(ctx, constants.UserTypeAdmin)
 				if taskErr != nil {
-					logx.WithContext(ctx).WithFields(
+					logger.WithFields(
 						logx.Field("type", "cron_task"),
 						logx.Field("name", task.Name),
 						logx.Field("schedule", task.Schedule),

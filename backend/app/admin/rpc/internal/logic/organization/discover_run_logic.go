@@ -17,17 +17,18 @@ import (
 type DiscoverRunLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
 }
 
 func NewDiscoverRunLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DiscoverRunLogic {
-	return &DiscoverRunLogic{ctx: ctx, svcCtx: svcCtx, Logger: logx.WithContext(ctx)}
+	return &DiscoverRunLogic{ctx: ctx, svcCtx: svcCtx}
 }
 
 func (l *DiscoverRunLogic) DiscoverRun(in *admin.LenderDiscoverRunRequest) (resp *admin.LenderDiscoverRunResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+			).Error(err)
 		}
 	}()
 	trigger := domainlenderdiscover.TriggerManual

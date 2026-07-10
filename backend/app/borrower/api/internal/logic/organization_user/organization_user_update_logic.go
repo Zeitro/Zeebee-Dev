@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -42,7 +43,7 @@ func (l *OrganizationUserUpdateLogic) OrganizationUserUpdate(req *types.Organiza
 	}
 
 	resp = &types.OrganizationUserEntity{}
-	resp, err = copierx.Trans[borrower.OrganizationUserEntity, types.OrganizationUserEntity](rpcResp.Data, copierx.TimeToRFC3339Str())
+	resp, err = copierx.Trans[proto.OrganizationUserEntity, types.OrganizationUserEntity](rpcResp.Data, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

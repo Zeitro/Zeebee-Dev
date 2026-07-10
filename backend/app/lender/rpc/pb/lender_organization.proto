@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package lender;
+
+option go_package = "zeebee-backend/app/lender/rpc/pb/lender";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+// profile -- response
+message OrganizationProfileResponse {
+  proto.OrganizationProfileEntity data = 1;
+}
+
+// update profile --  request
+message OrganizationUpdateProfileRequest {
+  OrganizationUpdateProfileRequestData data = 1;
+}
+message OrganizationUpdateProfileRequestData {
+  string contact_email = 1;
+  string contact_phone = 2;
+  string contact_name = 3;
+  string logo = 4;
+  string website = 5;
+  string tagline = 6;
+  proto.OrganizationMetadataEntity metadata = 7;
+  proto.AddressEntity address = 8;
+}
+
+// create organization --  request
+message OrganizationCreateRequest {
+  OrganizationCreateRequestData data = 1;
+}
+message OrganizationCreateRequestData {
+  string name = 1;
+  string contact_email = 2;
+  string contact_phone = 3;
+  string contact_name = 4;
+  string logo = 5;
+  string website = 6;
+  string tagline = 7;
+  proto.OrganizationMetadataEntity metadata = 8;
+  proto.AddressEntity address = 9;
+}
+// create organization --  response
+message OrganizationDetailResponse {
+  proto.OrganizationEntity data = 1;
+}
+
+service Organization {
+  rpc Profile(proto.EmptyRequest) returns(OrganizationProfileResponse);
+  rpc UpdateProfile(OrganizationUpdateProfileRequest) returns(OrganizationProfileResponse);
+  rpc Create(OrganizationCreateRequest) returns(OrganizationDetailResponse);
+}

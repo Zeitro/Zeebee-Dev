@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/borrower/config"
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/domains/zeebee/repo"
@@ -12,11 +14,12 @@ import (
 
 type ServiceContext struct {
 	Config config.RpcConf
+	Logger logx.Logger
 	*repo.AllRepos
 	ZeitroClient *zeitro.Client
 }
 
-func NewServiceContext(c config.RpcConf) *ServiceContext {
+func NewServiceContext(c config.RpcConf, logger logx.Logger) *ServiceContext {
 	// Create HTTP client for Zeitro API calls with 10 second timeout
 	httpClient := &http.Client{
 		Timeout: 10 * time.Second,
@@ -39,6 +42,7 @@ func NewServiceContext(c config.RpcConf) *ServiceContext {
 
 	return &ServiceContext{
 		Config:       c,
+		Logger:       logger,
 		AllRepos:     repo.NewAllRepos(global.GetGormDB()),
 		ZeitroClient: zeitroClient,
 	}

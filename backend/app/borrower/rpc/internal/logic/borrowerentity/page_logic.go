@@ -13,30 +13,30 @@ import (
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type PageLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PageLogic {
 	return &PageLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *PageLogic) Page(in *borrower.BorrowerEntityPageRequest) (resp *borrower.BorrowerEntityPageResponse, err error) {
+func (l *PageLogic) Page(in *proto.CommonPageRequest) (resp *borrower.BorrowerEntityPageResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -47,7 +47,7 @@ func (l *PageLogic) Page(in *borrower.BorrowerEntityPageRequest) (resp *borrower
 	}
 
 	pageReq := &dto.BorrowerEntityPageRequestDto{}
-	pageReq, err = copierx.Trans[borrower.BorrowerEntityPageRequestData, dto.BorrowerEntityPageRequestDto](in.Data)
+	pageReq, err = copierx.Trans[proto.CommonPageRequestData, dto.BorrowerEntityPageRequestDto](in.Data)
 	if err != nil {
 		return nil, err
 	}

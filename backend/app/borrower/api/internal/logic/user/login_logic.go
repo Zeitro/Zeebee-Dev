@@ -7,8 +7,8 @@ import (
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type LoginLogic struct {
@@ -29,8 +29,8 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 func (l *LoginLogic) Login(req *types.UserLoginRequest) (resp *types.UserLoginResponse, err error) {
 	resp = &types.UserLoginResponse{}
 	// call rpc
-	rpcResp, err := l.svcCtx.UserRpcClient.Login(l.ctx, &borrower.UserLoginRequest{
-		Data: &borrower.UserLoginRequestData{
+	rpcResp, err := l.svcCtx.UserRpcClient.Login(l.ctx, &proto.UserLoginRequest{
+		Data: &proto.UserLoginRequestData{
 			Email:    req.Email,
 			Password: req.Password,
 		},
@@ -40,7 +40,7 @@ func (l *LoginLogic) Login(req *types.UserLoginRequest) (resp *types.UserLoginRe
 	}
 
 	// trans response
-	resp, err = copierx.Trans[borrower.UserLoginResponseData, types.UserLoginResponse](rpcResp.Data)
+	resp, err = copierx.Trans[proto.UserLoginResponseData, types.UserLoginResponse](rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package lender;
+
+option go_package = "zeebee-backend/app/lender/rpc/pb/lender";
+
+import "proto/common.proto";
+
+
+service File {
+  rpc DeleteFile(proto.PathIdRequest) returns(proto.EmptyResponse);
+}

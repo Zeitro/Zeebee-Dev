@@ -12,6 +12,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -21,25 +22,24 @@ import (
 type CreateLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogic {
 	return &CreateLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *CreateLogic) Create(in *borrower.OrganizationUserCreateRequest) (resp *borrower.OrganizationUserCreateResponse, err error) {
+func (l *CreateLogic) Create(in *borrower.OrganizationUserCreateRequest) (resp *borrower.OrganizationUserDetailResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -68,7 +68,7 @@ func (l *CreateLogic) Create(in *borrower.OrganizationUserCreateRequest) (resp *
 	if err != nil {
 		return nil, err
 	}
-	data := &borrower.OrganizationUserEntity{}
+	data := &proto.OrganizationUserEntity{}
 	err = copier.CopyWithOption(data, result, copier.Option{
 		CaseSensitive: true,
 		Converters: []copier.TypeConverter{
@@ -79,7 +79,7 @@ func (l *CreateLogic) Create(in *borrower.OrganizationUserCreateRequest) (resp *
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
-	return &borrower.OrganizationUserCreateResponse{
+	return &borrower.OrganizationUserDetailResponse{
 		Data: data,
 	}, nil
 }

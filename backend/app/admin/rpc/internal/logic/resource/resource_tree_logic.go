@@ -12,20 +12,21 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type ResourceTreeLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewResourceTreeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ResourceTreeLogic {
 	return &ResourceTreeLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
@@ -33,9 +34,8 @@ func NewResourceTreeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Reso
 func (l *ResourceTreeLogic) ResourceTree(in *admin.ResourceTreeRequest) (resp *admin.ResourceTreeResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
@@ -55,7 +55,7 @@ func (l *ResourceTreeLogic) ResourceTree(in *admin.ResourceTreeRequest) (resp *a
 		return nil, err
 	}
 
-	data, err := copierx.Trans[[]*dto.ResourceTreeDto, []*admin.ResourceTreeEntity](&trees, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[[]*dto.ResourceTreeDto, []*proto.ResourceTreeEntity](&trees, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

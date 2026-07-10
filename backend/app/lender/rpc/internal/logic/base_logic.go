@@ -25,7 +25,7 @@ var onceBase sync.Once
 type BaseLogic struct {
 	// ctx    context.Context
 	svcCtx *svc.ServiceContext
-	// logx.Logger
+	//
 	*logic.AllLogics
 }
 
@@ -57,6 +57,7 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		CurrentEnforcer:       currentEnforcer,
 		CurrentAuthEventTopic: svcCtx.Config.CasbinConf.EventTopic.LenderTopic,
 		AuthEventTopicMap:     authEventTopicMap,
+		Logger:                svcCtx.Logger,
 	}
 
 	l := &BaseLogic{
@@ -68,7 +69,7 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		ctx := context.Background()
 		err := l.AuthLogic.RebuildPolicy(ctx, constants.UserTypeLender)
 		if err != nil {
-			logx.WithContext(ctx).WithFields(
+			l.svcCtx.Logger.WithContext(ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
 				logx.Field("user_type", constants.UserTypeLender),
 			).Error("fail to rebuild lender policy")
@@ -98,7 +99,7 @@ func (l *BaseLogic) GetLenderLoan(ctx context.Context, loanId int64, lenderOrgan
 func (l *BaseLogic) CreateLoanOperationLog(ctx context.Context, tx *gorm.DB, loanId, operatorId int64, from, to dto.LoanOperationStatus, action constants.LoanOperationAction, metadata *dto.LoanOperationMetadata) (err error) {
 	defer func() {
 		if err != nil {
-			logx.WithContext(ctx).WithFields(
+			l.svcCtx.Logger.WithContext(ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
 				logx.Field("loan_id", loanId),
 				logx.Field("operator_id", operatorId),

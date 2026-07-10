@@ -7,22 +7,22 @@ import (
 
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
-	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DeleteLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogic {
 	return &DeleteLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
@@ -33,15 +33,14 @@ func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogi
 // 2. roles (via GORM clause.Associations cascade delete)
 // 3. organization
 // Note: Users are NOT deleted as they may belong to other organizations
-func (l *DeleteLogic) Delete(in *admin.IdRequest) (resp *admin.EmptyResponse, err error) {
+func (l *DeleteLogic) Delete(in *proto.IdRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
 			).Error(err)
 		}
 	}()
 	err = l.baseLogic.OrganizationLogic.Delete(l.ctx, in.Data)
-	return &admin.EmptyResponse{}, err
+	return &proto.EmptyResponse{}, err
 }
