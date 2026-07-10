@@ -1980,3 +1980,16 @@ service OrganizationSubscription {
 }
 
 // ==================== organization subscription service end ====================
+
+// ==================== stripe webhook service start ====================
+
+message StripeWebhookRequest {
+  bytes payload = 1;
+  string signature = 2;
+}
+
+service StripeWebhook {
+  rpc Handle(StripeWebhookRequest) returns(EmptyResponse);
+}
+
+// ==================== stripe webhook service end ====================

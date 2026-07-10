@@ -2,6 +2,7 @@ package payment
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -146,7 +147,7 @@ func (c *Client) ConstructEvent(payload []byte, sigHeader string) (stripe.Event,
 	event, err := webhook.ConstructEventWithOptions(payload, sigHeader, c.config.WebhookSecret,
 		webhook.ConstructEventOptions{IgnoreAPIVersionMismatch: true})
 	if err != nil {
-		return event, errorx.Wrap(err, "stripe webhook signature verification failed")
+		return event, errorx.WithStack(fmt.Errorf("%w: %v", ErrSignatureVerification, err))
 	}
 	return event, nil
 }

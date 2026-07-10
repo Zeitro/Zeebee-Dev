@@ -26,6 +26,7 @@ import (
 	resourceServer "zeebee-backend/app/admin/rpc/internal/server/resource"
 	roleServer "zeebee-backend/app/admin/rpc/internal/server/role"
 	storageServer "zeebee-backend/app/admin/rpc/internal/server/storage"
+	stripeWebhookServer "zeebee-backend/app/admin/rpc/internal/server/stripewebhook"
 	userServer "zeebee-backend/app/admin/rpc/internal/server/user"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
@@ -53,6 +54,7 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 	rpcServer := zrpc.MustNewServer(rpcConfig.RpcServerConf, func(grpcServer *grpc.Server) {
 		admin.RegisterUserServer(grpcServer, userServer.NewUserServer(ctx))
 		admin.RegisterApiServer(grpcServer, apiServer.NewApiServer(ctx))
+		admin.RegisterStripeWebhookServer(grpcServer, stripeWebhookServer.NewStripeWebhookServer(ctx))
 		admin.RegisterResourceServer(grpcServer, resourceServer.NewResourceServer(ctx))
 		admin.RegisterRoleServer(grpcServer, roleServer.NewRoleServer(ctx))
 		admin.RegisterOrganizationUserServer(grpcServer, organizationUserServer.NewOrganizationUserServer(ctx))

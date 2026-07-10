@@ -37,6 +37,7 @@ func NewApiServer(c config.Config) (s service.Service) {
 
 	// extra route
 	handler.RegisterExtraRoutes(restServer)
+	handler.RegisterStripeWebhookRoute(restServer, ctx)
 
 	return &ApiServer{
 		s: restServer,

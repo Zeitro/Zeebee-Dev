@@ -134,6 +134,33 @@ func setupTestDB(t *testing.T) *gorm.DB {
 			resource_id INTEGER NOT NULL,
 			PRIMARY KEY (role_id, resource_id)
 		)`,
+		`CREATE TABLE IF NOT EXISTS stripe_events (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			is_del INTEGER DEFAULT 0,
+			event_id TEXT NOT NULL DEFAULT '' UNIQUE,
+			event_type TEXT NOT NULL DEFAULT '',
+			status TEXT NOT NULL DEFAULT 'Processing',
+			payload TEXT NOT NULL DEFAULT '{}',
+			error TEXT NOT NULL DEFAULT ''
+		)`,
+		`CREATE TABLE IF NOT EXISTS payment_transactions (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			is_del INTEGER DEFAULT 0,
+			organization_id INTEGER NOT NULL DEFAULT 0,
+			organization_subscription_id INTEGER NOT NULL DEFAULT 0,
+			stripe_invoice_id TEXT NOT NULL DEFAULT '' UNIQUE,
+			stripe_subscription_id TEXT NOT NULL DEFAULT '',
+			amount REAL NOT NULL DEFAULT 0,
+			currency TEXT NOT NULL DEFAULT 'usd',
+			status TEXT NOT NULL DEFAULT '',
+			period_start DATE,
+			period_end DATE,
+			paid_at DATETIME
+		)`,
 	}
 	for _, s := range sqls {
 		require.NoError(t, db.Exec(s).Error)

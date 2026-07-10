@@ -2,10 +2,15 @@ package payment
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/stripe/stripe-go/v82"
 )
+
+// ErrSignatureVerification marks webhook signature failures so transport
+// layers can map them to 400 instead of 500 (Stripe should not retry these).
+var ErrSignatureVerification = errors.New("stripe webhook signature verification failed")
 
 // CustomerParams are the inputs for creating a Stripe Customer.
 type CustomerParams struct {
