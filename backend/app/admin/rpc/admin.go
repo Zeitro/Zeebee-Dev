@@ -26,6 +26,7 @@ import (
 	resourceServer "zeebee-backend/app/admin/rpc/internal/server/resource"
 	roleServer "zeebee-backend/app/admin/rpc/internal/server/role"
 	storageServer "zeebee-backend/app/admin/rpc/internal/server/storage"
+	stripeWebhookServer "zeebee-backend/app/admin/rpc/internal/server/stripewebhook"
 	userServer "zeebee-backend/app/admin/rpc/internal/server/user"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
@@ -66,6 +67,7 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		admin.RegisterPricingPlanServer(grpcServer, pricingPlanServer.NewPricingPlanServer(ctx))
 		admin.RegisterPricingPlanPolicyServer(grpcServer, pricingPlanPolicyServer.NewPricingPlanPolicyServer(ctx))
 		admin.RegisterOrganizationSubscriptionServer(grpcServer, organizationSubscriptionServer.NewOrganizationSubscriptionServer(ctx))
+		admin.RegisterStripeWebhookServer(grpcServer, stripeWebhookServer.NewStripeWebhookServer(ctx))
 		if rpcConfig.Mode == service.DevMode || rpcConfig.Mode == service.TestMode {
 			reflection.Register(grpcServer)
 		}

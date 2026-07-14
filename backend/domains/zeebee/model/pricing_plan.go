@@ -16,6 +16,8 @@ type PricingPlan struct {
 	IsDefault   bool                      `gorm:"column:is_default;type:bool;not null;default:false" json:"is_default"`
 	Type        constants.UserType        `gorm:"column:type;type:varchar(50);not null;default:''" json:"type"`
 	PlanType    constants.PricingPlanType `gorm:"column:plan_type;type:varchar(50);not null;default:'Standard'" json:"plan_type"`
+	// StripeProductId is lazily populated on first checkout of this plan.
+	StripeProductId string `gorm:"column:stripe_product_id;type:varchar(64);not null;default:''" json:"stripe_product_id"`
 
 	Policies      []*PricingPlanPolicy        `json:"policies,omitempty" gorm:"foreignKey:PricingPlanId;references:Id"`
 	Subscriptions []*OrganizationSubscription `json:"subscriptions,omitempty" gorm:"foreignKey:PricingPlanId;references:Id"`

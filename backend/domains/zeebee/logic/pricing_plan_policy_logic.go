@@ -60,16 +60,28 @@ func (l *PricingPlanPolicyLogic) Create(ctx context.Context, input dto.PricingPl
 
 func (l *PricingPlanPolicyLogic) Update(ctx context.Context, input dto.PricingPlanPolicyUpdateRequestDto) (*dto.PricingPlanPolicyEntityDto, error) {
 	var result *model.PricingPlanPolicy
+	var stalePriceId string
 	// load, duplicate-check, and update run in one transaction to close the TOCTOU gap
 	err := l.repos.PricingPlanPolicyRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		policy, innerErr := l.repos.PricingPlanPolicyRepo.FindOneByIdWithTx(ctx, tx, input.Id)
 		if innerErr != nil {
 			return errorx.Wrap(innerErr, "fail to find pricing plan policy")
 		}
+		previousAmount := policy.ActualAmount
+		previousType := policy.Type
 
 		innerErr = copierx.Assign[dto.PricingPlanPolicyUpdateRequestDto, model.PricingPlanPolicy](&input, policy)
 		if innerErr != nil {
 			return innerErr
+		}
+
+		// amount/cycle changes invalidate the Stripe price: Stripe prices are
+		// immutable, so the stale one is cleared here and archived after commit;
+		// the next checkout lazily creates a fresh price
+		if policy.StripePriceId != "" &&
+			(policy.ActualAmount != previousAmount || policy.Type != previousType) {
+			stalePriceId = policy.StripePriceId
+			policy.StripePriceId = ""
 		}
 
 		// check policy type uniqueness (excluding self)
@@ -94,15 +106,22 @@ func (l *PricingPlanPolicyLogic) Update(ctx context.Context, input dto.PricingPl
 		return nil, err
 	}
 
+	l.archiveStripePriceQuietly(ctx, stalePriceId)
+
 	return copierx.Trans[model.PricingPlanPolicy, dto.PricingPlanPolicyEntityDto](result)
 }
 
 func (l *PricingPlanPolicyLogic) Delete(ctx context.Context, id int64) error {
-	_, err := l.repos.PricingPlanPolicyRepo.GetOne(ctx, id)
+	policy, err := l.repos.PricingPlanPolicyRepo.GetOne(ctx, id)
 	if err != nil {
 		return errorx.Wrap(err, "fail to find pricing plan policy")
 	}
 
 	_, err = l.repos.PricingPlanPolicyRepo.DeleteByID(ctx, id)
-	return err
+	if err != nil {
+		return err
+	}
+
+	l.archiveStripePriceQuietly(ctx, policy.StripePriceId)
+	return nil
 }

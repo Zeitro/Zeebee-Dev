@@ -54,6 +54,10 @@ func NewApiServer(c config.Config) (s service.Service) {
 	// extra route
 	handler.RegisterExtraRoutes(restServer)
 
+	// public Stripe webhook endpoint (hand-written: needs raw body for
+	// signature verification and bypasses AuthMiddleware)
+	handler.RegisterStripeWebhookRoute(restServer, ctx)
+
 	return &ApiServer{
 		s:        restServer,
 		startOpt: startOpt,

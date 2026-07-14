@@ -32,6 +32,7 @@ type ServiceContext struct {
 	PricingPlanRpcClient              admin.PricingPlanClient
 	PricingPlanPolicyRpcClient        admin.PricingPlanPolicyClient
 	OrganizationSubscriptionRpcClient admin.OrganizationSubscriptionClient
+	StripeWebhookRpcClient            admin.StripeWebhookClient
 
 	AdminApiContent string
 }
@@ -59,6 +60,7 @@ func NewServiceContext(c config.ApiConf, logger logx.Logger, adminApiContent str
 		PricingPlanRpcClient:              admin.NewPricingPlanClient(rpcClient.Conn()),
 		PricingPlanPolicyRpcClient:        admin.NewPricingPlanPolicyClient(rpcClient.Conn()),
 		OrganizationSubscriptionRpcClient: admin.NewOrganizationSubscriptionClient(rpcClient.Conn()),
+		StripeWebhookRpcClient:            admin.NewStripeWebhookClient(rpcClient.Conn()),
 		AdminApiContent:                   adminApiContent,
 	}
 }

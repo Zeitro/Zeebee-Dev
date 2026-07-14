@@ -15,6 +15,7 @@ import (
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/logic"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/payment"
 )
 
 var ErrorInvalidRequest = errorx.New("invalid request")
@@ -54,6 +55,17 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		constants.UserTypeLender:   svcCtx.Config.CasbinConf.EventTopic.LenderTopic,
 		constants.UserTypeBorrower: svcCtx.Config.CasbinConf.EventTopic.BorrowerTopic,
 	}
+	paymentGateway, err := payment.NewGateway(payment.Config{
+		SecretKey:     svcCtx.Config.StripeConf.SecretKey,
+		WebhookSecret: svcCtx.Config.StripeConf.WebhookSecret,
+		SuccessUrl:    svcCtx.Config.StripeConf.SuccessUrl,
+		CancelUrl:     svcCtx.Config.StripeConf.CancelUrl,
+		Currency:      svcCtx.Config.StripeConf.Currency,
+	})
+	if err != nil {
+		panic(err)
+	}
+
 	logicConfig := logic.AllLogicConfig{
 		Repos:                 svcCtx.AllRepos,
 		RedisCli:              redisCli,
@@ -63,6 +75,7 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		CurrentAuthEventTopic: currentAuthEventTopic,
 		AuthEventTopicMap:     authEventTopicMap,
 		Logger:                svcCtx.Logger,
+		PaymentGateway:        paymentGateway,
 	}
 	l := &BaseLogic{
 		svcCtx:    svcCtx,

@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/common/redisx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/payment"
 	"zeebee-backend/domains/zeebee/repo"
 )
 
@@ -30,6 +31,7 @@ type AllLogics struct {
 	PricingPlanLogic              *PricingPlanLogic
 	PricingPlanPolicyLogic        *PricingPlanPolicyLogic
 	OrganizationSubscriptionLogic *OrganizationSubscriptionLogic
+	StripePaymentLogic            *StripePaymentLogic
 }
 
 type AllLogicConfig struct {
@@ -41,10 +43,14 @@ type AllLogicConfig struct {
 	CurrentAuthEventTopic string
 	AuthEventTopicMap     map[constants.UserType]string
 	Logger                logx.Logger
+	// PaymentGateway is nil when Stripe is not configured for the service;
+	// payment-related endpoints then return a "payment not configured" error.
+	PaymentGateway payment.Gateway
 }
 
 func NewAllLogics(config AllLogicConfig) *AllLogics {
-	baseLogic := NewBaseLogic(config.Repos, config.RedisCli, config.Logger)
+	baseLogic := NewBaseLogic(config.Repos, config.RedisCli, config.Logger, config.PaymentGateway)
+	organizationSubscriptionLogic := NewOrganizationSubscriptionLogic(baseLogic, config.AuthEventTopicMap)
 	return &AllLogics{
 		ApiLogic:                      NewApiLogic(baseLogic, config.AuthEventTopicMap),
 		ResourceLogic:                 NewResourceLogic(baseLogic, config.AuthEventTopicMap),
@@ -63,6 +69,7 @@ func NewAllLogics(config AllLogicConfig) *AllLogics {
 		AuthLogic:                     NewAuthLogic(baseLogic, config.JwtConfig, config.CurrentEnforcer, config.CurrentAuthEventTopic),
 		PricingPlanLogic:              NewPricingPlanLogic(baseLogic, config.AuthEventTopicMap),
 		PricingPlanPolicyLogic:        NewPricingPlanPolicyLogic(baseLogic),
-		OrganizationSubscriptionLogic: NewOrganizationSubscriptionLogic(baseLogic, config.AuthEventTopicMap),
+		OrganizationSubscriptionLogic: organizationSubscriptionLogic,
+		StripePaymentLogic:            NewStripePaymentLogic(baseLogic, config.AuthEventTopicMap, organizationSubscriptionLogic),
 	}
 }

@@ -16,6 +16,7 @@ import (
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/repo"
 
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/threading"
 )
 
@@ -77,12 +78,14 @@ func (l *PricingPlanLogic) Create(ctx context.Context, input dto.PricingPlanCrea
 func (l *PricingPlanLogic) Update(ctx context.Context, input dto.PricingPlanUpdateRequestDto) (result *dto.PricingPlanEntityDto, err error) {
 
 	var plan *model.PricingPlan
+	var previousName string
 	err = l.repos.PricingPlanRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 		plan, innerErr = l.repos.PricingPlanRepo.FindOneByIdWithTx(ctx, tx, input.Id)
 		if innerErr != nil {
 			return errorx.Wrap(innerErr, "fail to find pricing plan")
 		}
+		previousName = plan.Name
 		// set all other plans of the same type to non-default (default is unique per type)
 		if !plan.IsDefault && input.IsDefault {
 			columns := map[string]interface{}{"is_default": false}
@@ -106,6 +109,17 @@ func (l *PricingPlanLogic) Update(ctx context.Context, input dto.PricingPlanUpda
 	if err != nil {
 		err = errorx.Wrap(err, "fail to update pricing plan")
 		return
+	}
+
+	// keep the Stripe product name in sync best-effort; Stripe availability
+	// must not block admin plan updates
+	if l.paymentGateway != nil && plan.StripeProductId != "" && plan.Name != previousName {
+		if syncErr := l.paymentGateway.UpdateProductName(ctx, plan.StripeProductId, plan.Name); syncErr != nil {
+			logx.WithContext(ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(syncErr)),
+				logx.Field("stripe_product_id", plan.StripeProductId),
+			).Error("failed to sync stripe product name")
+		}
 	}
 
 	return l.transToDetailDto(ctx, plan)
