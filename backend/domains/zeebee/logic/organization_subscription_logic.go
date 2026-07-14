@@ -88,6 +88,7 @@ func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.Or
 		ActualAmount:        policy.ActualAmount,
 	}
 
+	var replacedStripeSubIds []string
 	err = l.repos.OrganizationSubscriptionRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 		// fetch current non-expired subscriptions for the org
@@ -95,6 +96,7 @@ func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.Or
 		if innerErr != nil {
 			return innerErr
 		}
+		replacedStripeSubIds = effectiveStripeSubscriptionIds(oldSubs)
 		// unbind resources for currently effective old subscriptions (remove-side)
 		if _, innerErr = unbindEffectiveSubscriptions(ctx, l.repos, tx, oldSubs); innerErr != nil {
 			return innerErr
@@ -123,6 +125,12 @@ func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.Or
 	})
 	if err != nil {
 		return nil, err
+	}
+
+	// a replaced Stripe subscription would keep charging: cancel it remotely
+	// (best-effort; failures are logged for manual follow-up)
+	for _, stripeSubId := range replacedStripeSubIds {
+		l.cancelStripeSubscriptionQuietly(ctx, stripeSubId)
 	}
 
 	// rebuild this org's policies so the plan gate recomputes its resource scope.
@@ -427,20 +435,21 @@ func (l *OrganizationSubscriptionLogic) transToDetailDto(ctx context.Context, su
 	return result, nil
 }
 
-// SubscribeDefaultPlan finds the default plan and creates a trial subscription.
-// Only applies to plans with TrialDays > 0 and Active status.
-// Creates subscription with Trialing status and expire_date based on plan.TrialDays.
+// SubscribeDefaultPlan subscribes an organization to the Active default plan:
+// with TrialDays > 0 it creates a Trialing subscription; otherwise it activates
+// the plan's free (ActualAmount == 0) policy directly so a new org still gets
+// access without a trial. No-op when neither option is available.
 func (l *OrganizationSubscriptionLogic) SubscribeDefaultPlan(ctx context.Context, organizationId int64, userType constants.UserType) error {
 	plan, err := l.repos.PricingPlanRepo.FindDefaultByType(ctx, userType)
 	if err != nil || plan == nil {
 		return nil
 	}
 
-	if plan.Status != constants.CommonStatusActive || plan.TrialDays <= 0 {
+	if plan.Status != constants.CommonStatusActive {
 		return nil
 	}
 
-	plan, err = l.repos.PricingPlanRepo.GetOne(ctx, plan.Id, []gormx.Preload{{Query: "Resources"}})
+	plan, err = l.repos.PricingPlanRepo.GetOne(ctx, plan.Id, []gormx.Preload{{Query: "Resources"}, {Query: "Policies"}})
 	if err != nil || plan == nil {
 		return nil
 	}
@@ -449,24 +458,36 @@ func (l *OrganizationSubscriptionLogic) SubscribeDefaultPlan(ctx context.Context
 	if err != nil {
 		return err
 	}
-	expireDate := &sql.NullTime{Time: time.Now().AddDate(0, 0, int(plan.TrialDays)), Valid: true}
 
 	subscription := &model.OrganizationSubscription{
-		Code:                code,
-		OrganizationId:      organizationId,
-		PricingPlanId:       plan.Id,
-		PricingPlanPolicyId: 0,
-		Status:              constants.OrganizationSubscriptionStatusTrialing,
-		ExpireDate:          expireDate,
-		OriginalAmount:      0,
-		ActualAmount:        0,
+		Code:           code,
+		OrganizationId: organizationId,
+		PricingPlanId:  plan.Id,
+	}
+	if plan.TrialDays > 0 {
+		subscription.PricingPlanPolicyId = 0
+		subscription.Status = constants.OrganizationSubscriptionStatusTrialing
+		subscription.ExpireDate = &sql.NullTime{Time: time.Now().AddDate(0, 0, int(plan.TrialDays)), Valid: true}
+	} else {
+		freePolicy, _ := slice.FindBy(plan.Policies, func(index int, item *model.PricingPlanPolicy) bool {
+			return item.ActualAmount == 0
+		})
+		if freePolicy == nil {
+			return nil
+		}
+		subscription.PricingPlanPolicyId = freePolicy.Id
+		subscription.Status = constants.OrganizationSubscriptionStatusActive
+		subscription.ExpireDate = calculateExpireDate(freePolicy.Type, time.Now())
+		subscription.OriginalAmount = freePolicy.OriginalAmount
 	}
 
+	var replacedStripeSubIds []string
 	err = l.repos.OrganizationSubscriptionRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		activeSubs, innerErr := l.repos.OrganizationSubscriptionRepo.FindActiveByOrgIdWithTx(ctx, tx, organizationId)
 		if innerErr != nil {
 			return innerErr
 		}
+		replacedStripeSubIds = effectiveStripeSubscriptionIds(activeSubs)
 		for _, sub := range activeSubs {
 			sub.Status = constants.OrganizationSubscriptionStatusExpired
 			_, innerErr = l.repos.OrganizationSubscriptionRepo.UpdateOneByIdWithTx(ctx, tx, sub.Id, sub)
@@ -482,7 +503,12 @@ func (l *OrganizationSubscriptionLogic) SubscribeDefaultPlan(ctx context.Context
 		return err
 	}
 
-	// recompute this org's policies: the trial expanded its plan-resource scope.
+	// stop remote billing for replaced Stripe subscriptions (best-effort)
+	for _, stripeSubId := range replacedStripeSubIds {
+		l.cancelStripeSubscriptionQuietly(ctx, stripeSubId)
+	}
+
+	// recompute this org's policies: the new subscription expanded its plan-resource scope.
 	l.publishOrgPolicyRebuild(ctx, []int64{organizationId}, plan.Type)
 
 	return nil
@@ -529,19 +555,28 @@ func (l *OrganizationSubscriptionLogic) UpdateStatus(ctx context.Context, organi
 		if sub.ExpireDate != nil && sub.ExpireDate.Valid {
 			expireDate = sub.ExpireDate.Time
 		}
+		// Stripe auto-renewing subscriptions are normally extended by the
+		// invoice.paid webhook before they expire. The cron only acts as a
+		// fallback: expiry gets a grace window for webhook delivery/retry,
+		// and the Expiring reminder is skipped (renewal is automatic).
+		stripeAutoRenew := sub.Source == constants.OrganizationSubscriptionSourceStripe && sub.IsAutoRenew
+		deadline := expireDate
+		if stripeAutoRenew {
+			deadline = expireDate.AddDate(0, 0, stripeAutoRenewGraceDays)
+		}
 		switch sub.Status {
 		case constants.OrganizationSubscriptionStatusActive:
-			if now.After(expireDate) {
+			if now.After(deadline) {
 				newStatus = constants.OrganizationSubscriptionStatusExpired
-			} else if expireDate.Before(expiringDate) {
+			} else if expireDate.Before(expiringDate) && !stripeAutoRenew {
 				newStatus = constants.OrganizationSubscriptionStatusExpiring
 			}
 		case constants.OrganizationSubscriptionStatusExpiring:
-			if now.After(expireDate) {
+			if now.After(deadline) {
 				newStatus = constants.OrganizationSubscriptionStatusExpired
 			}
 		case constants.OrganizationSubscriptionStatusTrialing:
-			if now.After(expireDate) {
+			if now.After(deadline) {
 				newStatus = constants.OrganizationSubscriptionStatusExpired
 			}
 		}
@@ -555,6 +590,12 @@ func (l *OrganizationSubscriptionLogic) UpdateStatus(ctx context.Context, organi
 				"status": newStatus,
 			})
 			continue
+		}
+
+		// force-expired Stripe subscription (webhook never arrived within the
+		// grace window): also cancel remotely so Stripe stops charging
+		if stripeAutoRenew && sub.StripeSubscriptionId != "" {
+			l.cancelStripeSubscriptionQuietly(ctx, sub.StripeSubscriptionId)
 		}
 
 		// Expired transition: recover via default plan when possible
@@ -726,6 +767,27 @@ func (l *OrganizationSubscriptionLogic) generateCode(ctx context.Context, tx *go
 		}
 	}
 	return "", errorx.New("fail to generate unique subscription code")
+}
+
+// stripeAutoRenewGraceDays is the window the cron leaves for the invoice.paid
+// webhook (including Stripe retries) to renew a subscription before it is
+// force-expired locally.
+const stripeAutoRenewGraceDays = 3
+
+// effectiveStripeSubscriptionIds collects the Stripe subscription ids of
+// currently effective Stripe-sourced subscriptions. Callers cancel these
+// remotely after replacing them locally, otherwise Stripe keeps charging.
+func effectiveStripeSubscriptionIds(subs []*model.OrganizationSubscription) []string {
+	var ids []string
+	for _, sub := range subs {
+		if sub == nil || !sub.Status.IsEffective() {
+			continue
+		}
+		if sub.Source == constants.OrganizationSubscriptionSourceStripe && sub.StripeSubscriptionId != "" {
+			ids = append(ids, sub.StripeSubscriptionId)
+		}
+	}
+	return ids
 }
 
 // planResourceIds extracts resource IDs from a pricing plan.

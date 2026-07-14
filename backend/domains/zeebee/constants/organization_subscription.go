@@ -35,6 +35,26 @@ func (s OrganizationSubscriptionStatus) IsEffective() bool {
 		s == OrganizationSubscriptionStatusExpiring
 }
 
+// OrganizationSubscriptionSource identifies how a subscription was created.
+// Manual subscriptions are created by admins; Stripe subscriptions are created
+// via Stripe Checkout and kept in sync by webhook events.
+type OrganizationSubscriptionSource string
+
+const OrganizationSubscriptionSourceName = "organization_subscription_source"
+
+const (
+	OrganizationSubscriptionSourceManual OrganizationSubscriptionSource = "Manual"
+	OrganizationSubscriptionSourceStripe OrganizationSubscriptionSource = "Stripe"
+)
+
+func (s OrganizationSubscriptionSource) Validate() error {
+	ranges := []OrganizationSubscriptionSource{
+		OrganizationSubscriptionSourceManual,
+		OrganizationSubscriptionSourceStripe,
+	}
+	return validateConstant(s, ranges, OrganizationSubscriptionSourceName)
+}
+
 func (s OrganizationSubscriptionStatus) Validate() error {
 	ranges := []OrganizationSubscriptionStatus{
 		OrganizationSubscriptionStatusTrialing,

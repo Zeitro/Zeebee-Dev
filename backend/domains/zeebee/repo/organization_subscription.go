@@ -180,6 +180,23 @@ func (repo *OrganizationSubscriptionRepo) Page(ctx context.Context, pageReq dto.
 	return page, errorx.WithStack(err)
 }
 
+// FindOneByStripeSubscriptionId returns the newest subscription bound to the
+// Stripe subscription id, or nil when none exists.
+func (repo *OrganizationSubscriptionRepo) FindOneByStripeSubscriptionId(ctx context.Context, stripeSubscriptionId string) (result *model.OrganizationSubscription, err error) {
+	err = repo.Client(ctx).
+		Where("stripe_subscription_id = ?", stripeSubscriptionId).
+		Order("id desc").
+		Limit(1).
+		Find(&result).Error
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+	if result == nil || result.Id == 0 {
+		return nil, nil
+	}
+	return result, nil
+}
+
 // FindEffectiveByPlanIdWithTx get all affective subscription by plan id.
 // Uses constants.EffectiveStatuses — single source of truth for "effective".
 func (repo *OrganizationSubscriptionRepo) FindEffectiveByPlanIdWithTx(ctx context.Context, tx *gorm.DB, pricingPlanId int64) (results []*model.OrganizationSubscription, err error) {

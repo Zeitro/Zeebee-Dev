@@ -31,6 +31,7 @@ require (
 	github.com/signintech/gopdf v0.36.0
 	github.com/sony/sonyflake/v2 v2.2.0
 	github.com/stretchr/testify v1.11.1
+	github.com/stripe/stripe-go/v82 v82.5.1
 	github.com/xuri/excelize/v2 v2.10.1
 	github.com/zeromicro/go-zero v1.10.1
 	github.com/zeromicro/go-zero/tools/goctl v1.10.1

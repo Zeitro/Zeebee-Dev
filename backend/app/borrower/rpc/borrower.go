@@ -21,6 +21,7 @@ import (
 	driveServer "zeebee-backend/app/borrower/rpc/internal/server/drive"
 	organizationServer "zeebee-backend/app/borrower/rpc/internal/server/organization"
 	organizationEmailServer "zeebee-backend/app/borrower/rpc/internal/server/organizationemail"
+	organizationSubscriptionServer "zeebee-backend/app/borrower/rpc/internal/server/organizationsubscription"
 	zeitroServer "zeebee-backend/app/borrower/rpc/internal/server/zeitro"
 	"zeebee-backend/common/cron"
 	"zeebee-backend/domains/zeebee/constants"
@@ -89,6 +90,7 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		borrower.RegisterDocumentServer(grpcServer, documentServer.NewDocumentServer(ctx))
 		borrower.RegisterDriveServer(grpcServer, driveServer.NewDriveServer(ctx))
 		borrower.RegisterApiServer(grpcServer, apiServer.NewApiServer(ctx))
+		borrower.RegisterOrganizationSubscriptionServer(grpcServer, organizationSubscriptionServer.NewOrganizationSubscriptionServer(ctx))
 
 		if rpcConfig.Mode == service.DevMode || rpcConfig.Mode == service.TestMode {
 			reflection.Register(grpcServer)

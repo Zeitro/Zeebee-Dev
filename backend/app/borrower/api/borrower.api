@@ -27,6 +27,7 @@ import "desc/organization_email.api"
 import "desc/drive.api"
 import "desc/zeitro.api"
 import "desc/resource.api"
+import "desc/subscription.api"
 
 type (
 	EmptyRequest  {}
