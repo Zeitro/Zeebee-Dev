@@ -4,10 +4,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stripe/stripe-go/v82"
-	"github.com/stripe/stripe-go/v82/webhook"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/stripe/stripe-go/v82"
+	"github.com/stripe/stripe-go/v82/webhook"
 )
 
 func validConfig() Config {

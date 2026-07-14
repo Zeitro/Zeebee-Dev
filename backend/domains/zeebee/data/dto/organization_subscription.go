@@ -8,12 +8,12 @@ import (
 )
 
 type OrganizationSubscriptionEntity struct {
-	Id                  int64                  `json:"id"`
-	Code                string                 `json:"code"`
-	OrganizationId      int64                  `json:"organization_id"`
-	Organization        *OrganizationEntityDto `json:"organization"`
-	PricingPlanId       int64                  `json:"pricing_plan_id"`
-	PricingPlan         *PricingPlanEntityDto  `json:"pricing_plan_name"`
+	Id                  int64                       `json:"id"`
+	Code                string                      `json:"code"`
+	OrganizationId      int64                       `json:"organization_id"`
+	Organization        *OrganizationEntityDto      `json:"organization"`
+	PricingPlanId       int64                       `json:"pricing_plan_id"`
+	PricingPlan         *PricingPlanEntityDto       `json:"pricing_plan_name"`
 	PricingPlanPolicyId int64                       `json:"pricing_plan_policy_id"`
 	PricingPlanPolicy   *PricingPlanPolicyEntityDto `json:"pricing_plan_policy,omitempty"`
 	Status              string                      `json:"status"`
