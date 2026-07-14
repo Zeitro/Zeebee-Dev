@@ -435,20 +435,21 @@ func (l *OrganizationSubscriptionLogic) transToDetailDto(ctx context.Context, su
 	return result, nil
 }
 
-// SubscribeDefaultPlan finds the default plan and creates a trial subscription.
-// Only applies to plans with TrialDays > 0 and Active status.
-// Creates subscription with Trialing status and expire_date based on plan.TrialDays.
+// SubscribeDefaultPlan subscribes an organization to the Active default plan:
+// with TrialDays > 0 it creates a Trialing subscription; otherwise it activates
+// the plan's free (ActualAmount == 0) policy directly so a new org still gets
+// access without a trial. No-op when neither option is available.
 func (l *OrganizationSubscriptionLogic) SubscribeDefaultPlan(ctx context.Context, organizationId int64, userType constants.UserType) error {
 	plan, err := l.repos.PricingPlanRepo.FindDefaultByType(ctx, userType)
 	if err != nil || plan == nil {
 		return nil
 	}
 
-	if plan.Status != constants.CommonStatusActive || plan.TrialDays <= 0 {
+	if plan.Status != constants.CommonStatusActive {
 		return nil
 	}
 
-	plan, err = l.repos.PricingPlanRepo.GetOne(ctx, plan.Id, []gormx.Preload{{Query: "Resources"}})
+	plan, err = l.repos.PricingPlanRepo.GetOne(ctx, plan.Id, []gormx.Preload{{Query: "Resources"}, {Query: "Policies"}})
 	if err != nil || plan == nil {
 		return nil
 	}
@@ -457,17 +458,27 @@ func (l *OrganizationSubscriptionLogic) SubscribeDefaultPlan(ctx context.Context
 	if err != nil {
 		return err
 	}
-	expireDate := &sql.NullTime{Time: time.Now().AddDate(0, 0, int(plan.TrialDays)), Valid: true}
 
 	subscription := &model.OrganizationSubscription{
-		Code:                code,
-		OrganizationId:      organizationId,
-		PricingPlanId:       plan.Id,
-		PricingPlanPolicyId: 0,
-		Status:              constants.OrganizationSubscriptionStatusTrialing,
-		ExpireDate:          expireDate,
-		OriginalAmount:      0,
-		ActualAmount:        0,
+		Code:           code,
+		OrganizationId: organizationId,
+		PricingPlanId:  plan.Id,
+	}
+	if plan.TrialDays > 0 {
+		subscription.PricingPlanPolicyId = 0
+		subscription.Status = constants.OrganizationSubscriptionStatusTrialing
+		subscription.ExpireDate = &sql.NullTime{Time: time.Now().AddDate(0, 0, int(plan.TrialDays)), Valid: true}
+	} else {
+		freePolicy, _ := slice.FindBy(plan.Policies, func(index int, item *model.PricingPlanPolicy) bool {
+			return item.ActualAmount == 0
+		})
+		if freePolicy == nil {
+			return nil
+		}
+		subscription.PricingPlanPolicyId = freePolicy.Id
+		subscription.Status = constants.OrganizationSubscriptionStatusActive
+		subscription.ExpireDate = calculateExpireDate(freePolicy.Type, time.Now())
+		subscription.OriginalAmount = freePolicy.OriginalAmount
 	}
 
 	var replacedStripeSubIds []string
@@ -497,7 +508,7 @@ func (l *OrganizationSubscriptionLogic) SubscribeDefaultPlan(ctx context.Context
 		l.cancelStripeSubscriptionQuietly(ctx, stripeSubId)
 	}
 
-	// recompute this org's policies: the trial expanded its plan-resource scope.
+	// recompute this org's policies: the new subscription expanded its plan-resource scope.
 	l.publishOrgPolicyRebuild(ctx, []int64{organizationId}, plan.Type)
 
 	return nil

@@ -207,6 +207,70 @@ func TestSubscriptionCreate_TrialStatus(t *testing.T) {
 	assert.NotNil(t, sub.ExpireDate)
 }
 
+func TestSubscribeDefaultPlan_NoTrialActivatesFreePolicy(t *testing.T) {
+	subLogic, db := setupSubscriptionLogic(t)
+	ctx := context.Background()
+
+	plan := &model.PricingPlan{
+		Name:      "Free Default Plan",
+		Type:      constants.UserTypeLender,
+		PlanType:  constants.PricingPlanTypeStandard,
+		Status:    constants.CommonStatusActive,
+		TrialDays: 0,
+		IsDefault: true,
+	}
+	require.NoError(t, db.Create(plan).Error)
+
+	freePolicy := &model.PricingPlanPolicy{
+		PricingPlanId:  plan.Id,
+		OriginalAmount: 5,
+		ActualAmount:   0,
+		Type:           constants.PricingPolicyTypeMonthly,
+	}
+	require.NoError(t, db.Create(freePolicy).Error)
+
+	err := subLogic.SubscribeDefaultPlan(ctx, 1, constants.UserTypeLender)
+	require.NoError(t, err)
+
+	var sub model.OrganizationSubscription
+	require.NoError(t, db.First(&sub, "organization_id = ?", 1).Error)
+	assert.Equal(t, constants.OrganizationSubscriptionStatusActive, sub.Status)
+	assert.Equal(t, freePolicy.Id, sub.PricingPlanPolicyId)
+	assert.Equal(t, float64(0), sub.ActualAmount)
+	assert.NotNil(t, sub.ExpireDate)
+	assert.True(t, sub.ExpireDate.Valid)
+}
+
+func TestSubscribeDefaultPlan_NoTrialNoFreePolicySkips(t *testing.T) {
+	subLogic, db := setupSubscriptionLogic(t)
+	ctx := context.Background()
+
+	plan := &model.PricingPlan{
+		Name:      "Paid Only Default Plan",
+		Type:      constants.UserTypeLender,
+		PlanType:  constants.PricingPlanTypeStandard,
+		Status:    constants.CommonStatusActive,
+		TrialDays: 0,
+		IsDefault: true,
+	}
+	require.NoError(t, db.Create(plan).Error)
+
+	paidPolicy := &model.PricingPlanPolicy{
+		PricingPlanId:  plan.Id,
+		OriginalAmount: 100,
+		ActualAmount:   80,
+		Type:           constants.PricingPolicyTypeMonthly,
+	}
+	require.NoError(t, db.Create(paidPolicy).Error)
+
+	err := subLogic.SubscribeDefaultPlan(ctx, 1, constants.UserTypeLender)
+	require.NoError(t, err)
+
+	var count int64
+	require.NoError(t, db.Model(&model.OrganizationSubscription{}).Where("organization_id = ?", 1).Count(&count).Error)
+	assert.Equal(t, int64(0), count)
+}
+
 func TestSubscriptionCreate_OldSubscriptionExpired(t *testing.T) {
 	subLogic, db := setupSubscriptionLogic(t)
 	ctx := context.Background()
