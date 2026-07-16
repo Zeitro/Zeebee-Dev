@@ -3,6 +3,7 @@ package borrowerpropertytransactionlogic
 import (
 	"context"
 
+	"github.com/duke-git/lancet/v2/slice"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
@@ -54,6 +55,7 @@ func (l *DetailLogic) Detail(in *proto.PathIdRequest) (resp *borrower.BorrowerPr
 		return nil, errorx.Wrap(err, "transaction not found")
 	}
 
+	// fill files into checklist leaf nodes
 	fillChecklistNodeFiles(l.ctx, l.svcCtx.FileRepo, &result.Checklist)
 
 	entity, err := copierx.Trans[model.BorrowerPropertyTransaction, proto.BorrowerPropertyTransactionEntity](
@@ -65,7 +67,25 @@ func (l *DetailLogic) Detail(in *proto.PathIdRequest) (resp *borrower.BorrowerPr
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
-	// fill files into checklist leaf nodes
+	// load property transaction escrows
+	escrows, err := l.svcCtx.PropertyTransactionEscrowRepo.FindAll(l.ctx, map[string]interface{}{
+		"borrower_property_transaction_id": in.Data.Id,
+	})
+	if err != nil {
+		return nil, errorx.Wrap(err, "fail to load escrows")
+	}
+	if len(escrows) > 0 {
+		protoEscrows, terr := copierx.Trans[[]*model.PropertyTransactionEscrow, []*proto.PropertyTransactionEscrowEntity](&escrows, copierx.TimeToRFC3339Str())
+		if terr != nil {
+			return nil, errorx.GetFailedTransRespErr(terr)
+		}
+		entity.Escrows = *protoEscrows
+	}
+	slice.SortBy(entity.Escrows, func(a, b *proto.PropertyTransactionEscrowEntity) bool {
+		return a.Id < b.Id
+	})
+
+
 
 	return &borrower.BorrowerPropertyTransactionDetailResponse{
 		Data: entity,

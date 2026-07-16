@@ -17,8 +17,13 @@ func (m DocumentTemplate) TableName() string {
 type DocumentTemplateStructureMap map[string][]DocumentTemplateStructure
 
 type DocumentTemplateStructure struct {
-	Name       string                      `json:"name"`
-	SortOrder  int32                       `json:"sort_order"`
-	IsRequired bool                        `json:"is_required"`
-	Children   []DocumentTemplateStructure `json:"children"`
+	Name            string                      `json:"name"`
+	SortOrder       int32                       `json:"sort_order"`
+	IsRequired      bool                        `json:"is_required"`
+	FileParseConfig *FileParseConfig            `json:"file_parse_config,omitempty"`
+	Children        []DocumentTemplateStructure `json:"children"`
+}
+
+type FileParseConfig struct {
+	Parser string `json:"parser"`
 }

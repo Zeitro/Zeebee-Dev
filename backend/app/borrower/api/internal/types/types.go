@@ -337,22 +337,30 @@ type BorrowerPropertyTransactionCreateRequest struct {
 }
 
 type BorrowerPropertyTransactionCreateResponse struct {
-	Id                 int64                                `json:"id"`
-	Code               string                               `json:"code"`
-	Type               string                               `json:"type"`
-	Status             string                               `json:"status"`
-	BorrowerPropertyId int64                                `json:"borrower_property_id"`
-	OrganizationId     int64                                `json:"organization_id"`
-	CoeDate            string                               `json:"coe_date"`
-	PurchaseAmount     float64                              `json:"purchase_amount"`
-	EmdAmount          float64                              `json:"emd_amount"`
-	PropertyType       string                               `json:"property_type"`
-	Pm                 string                               `json:"pm"`
-	BusinessStrategy   []string                             `json:"business_strategy"`
-	Note               string                               `json:"note"`
-	Checklist          BorrowerPropertyTransactionChecklist `json:"checklist"`
-	CreatedAt          string                               `json:"created_at"`
-	UpdatedAt          string                               `json:"updated_at"`
+	Id                     int64                                     `json:"id"`
+	Code                   string                                    `json:"code"`
+	Type                   string                                    `json:"type"`
+	Status                 string                                    `json:"status"`
+	BorrowerPropertyId     int64                                     `json:"borrower_property_id"`
+	OrganizationId         int64                                     `json:"organization_id"`
+	CoeDate                string                                    `json:"coe_date"`
+	PurchaseAmount         float64                                   `json:"purchase_amount"`
+	EmdAmount              float64                                   `json:"emd_amount"`
+	Pm                     string                                    `json:"pm"`
+	BusinessStrategy       []string                                  `json:"business_strategy"`
+	Note                   string                                    `json:"note"`
+	TitleHolder            string                                    `json:"title_holder"`
+	ContractDate           string                                    `json:"contract_date"`
+	EmdDueDate             string                                    `json:"emd_due_date"`
+	ContingencyRemovalDate string                                    `json:"contingency_removal_date"`
+	Tc                     string                                    `json:"tc"`
+	CostAllocation         string                                    `json:"cost_allocation"`
+	Escrows                []PropertyTransactionEscrow               `json:"escrows"`
+	BorrowerProperty       BorrowerPropertyTransactionPropertyEntity `json:"borrower_property"`
+	Property               PropertyTransactionPropertyEntity         `json:"property"`
+	Checklist              BorrowerPropertyTransactionChecklist      `json:"checklist"`
+	CreatedAt              string                                    `json:"created_at"`
+	UpdatedAt              string                                    `json:"updated_at"`
 }
 
 type BorrowerPropertyTransactionDeleteRequest struct {
@@ -364,22 +372,30 @@ type BorrowerPropertyTransactionDetailRequest struct {
 }
 
 type BorrowerPropertyTransactionDetailResponse struct {
-	Id                 int64                                `json:"id"`
-	Code               string                               `json:"code"`
-	Type               string                               `json:"type"`
-	Status             string                               `json:"status"`
-	BorrowerPropertyId int64                                `json:"borrower_property_id"`
-	OrganizationId     int64                                `json:"organization_id"`
-	CoeDate            string                               `json:"coe_date"`
-	PurchaseAmount     float64                              `json:"purchase_amount"`
-	EmdAmount          float64                              `json:"emd_amount"`
-	PropertyType       string                               `json:"property_type"`
-	Pm                 string                               `json:"pm"`
-	BusinessStrategy   []string                             `json:"business_strategy"`
-	Note               string                               `json:"note"`
-	Checklist          BorrowerPropertyTransactionChecklist `json:"checklist"`
-	CreatedAt          string                               `json:"created_at"`
-	UpdatedAt          string                               `json:"updated_at"`
+	Id                     int64                                `json:"id"`
+	Code                   string                               `json:"code"`
+	Type                   string                               `json:"type"`
+	Status                 string                               `json:"status"`
+	BorrowerPropertyId     int64                                `json:"borrower_property_id"`
+	OrganizationId         int64                                `json:"organization_id"`
+	CoeDate                string                               `json:"coe_date"`
+	PurchaseAmount         float64                              `json:"purchase_amount"`
+	EmdAmount              float64                              `json:"emd_amount"`
+	PropertyType           string                               `json:"property_type"`
+	Pm                     string                               `json:"pm"`
+	BusinessStrategy       []string                             `json:"business_strategy"`
+	Note                   string                               `json:"note"`
+	TitleHolder            string                               `json:"title_holder"`
+	ContractDate           string                               `json:"contract_date"`
+	EmdDueDate             string                               `json:"emd_due_date"`
+	ContingencyRemovalDate string                               `json:"contingency_removal_date"`
+	Tc                     string                               `json:"tc"`
+	CostAllocation         string                               `json:"cost_allocation"`
+	Escrows                []PropertyTransactionEscrow          `json:"escrows"`
+	Property               PropertyTransactionPropertyEntity    `json:"property"`
+	Checklist              BorrowerPropertyTransactionChecklist `json:"checklist"`
+	CreatedAt              string                               `json:"created_at"`
+	UpdatedAt              string                               `json:"updated_at"`
 }
 
 type BorrowerPropertyTransactionDocumentDeleteFileRequest struct {
@@ -394,22 +410,40 @@ type BorrowerPropertyTransactionDocumentUploadFileRequest struct {
 }
 
 type BorrowerPropertyTransactionEntity struct {
-	Id                 int64                                `json:"id"`
-	Code               string                               `json:"code"`
-	Type               string                               `json:"type"`
-	Status             string                               `json:"status"`
-	BorrowerPropertyId int64                                `json:"borrower_property_id"`
-	OrganizationId     int64                                `json:"organization_id"`
-	CoeDate            string                               `json:"coe_date"`
-	PurchaseAmount     float64                              `json:"purchase_amount"`
-	EmdAmount          float64                              `json:"emd_amount"`
-	PropertyType       string                               `json:"property_type"`
-	Pm                 string                               `json:"pm"`
-	BusinessStrategy   []string                             `json:"business_strategy"`
-	Note               string                               `json:"note"`
-	Checklist          BorrowerPropertyTransactionChecklist `json:"checklist"`
-	CreatedAt          string                               `json:"created_at"`
-	UpdatedAt          string                               `json:"updated_at"`
+	Id                     int64                                `json:"id"`
+	Code                   string                               `json:"code"`
+	Type                   string                               `json:"type"`
+	Status                 string                               `json:"status"`
+	BorrowerPropertyId     int64                                `json:"borrower_property_id"`
+	OrganizationId         int64                                `json:"organization_id"`
+	CoeDate                string                               `json:"coe_date"`
+	PurchaseAmount         float64                              `json:"purchase_amount"`
+	EmdAmount              float64                              `json:"emd_amount"`
+	PropertyType           string                               `json:"property_type"`
+	Pm                     string                               `json:"pm"`
+	BusinessStrategy       []string                             `json:"business_strategy"`
+	Note                   string                               `json:"note"`
+	TitleHolder            string                               `json:"title_holder"`
+	ContractDate           string                               `json:"contract_date"`
+	EmdDueDate             string                               `json:"emd_due_date"`
+	ContingencyRemovalDate string                               `json:"contingency_removal_date"`
+	Tc                     string                               `json:"tc"`
+	CostAllocation         string                               `json:"cost_allocation"`
+	Escrows                []PropertyTransactionEscrow          `json:"escrows"`
+	Property               PropertyTransactionPropertyEntity    `json:"property"`
+	Checklist              BorrowerPropertyTransactionChecklist `json:"checklist"`
+	CreatedAt              string                               `json:"created_at"`
+	UpdatedAt              string                               `json:"updated_at"`
+}
+
+type BorrowerPropertyTransactionEscrowsEditentity struct {
+	Id            int64                              `json:"id,optional"`
+	No            string                             `json:"no,optional"`
+	EscrowCompany string                             `json:"escrow_company,optional"`
+	OfficerName   string                             `json:"officer_name,optional"`
+	OfficerPhone  string                             `json:"officer_phone,optional"`
+	OfficerEmail  string                             `json:"officer_email,optional"`
+	Checklist     PropertyTransactionEscrowChecklist `json:"checklist,optional"`
 }
 
 type BorrowerPropertyTransactionListByPropertyRequest struct {
@@ -463,6 +497,16 @@ type BorrowerPropertyTransactionPageResponse struct {
 	List      []BorrowerPropertyTransactionPageEntity `json:"list"`
 }
 
+type BorrowerPropertyTransactionPropertyEditEntity struct {
+	Id             int64   `json:"id"`
+	Unit           int32   `json:"unit"`
+	PropertyType   string  `json:"property_type,optional" validate:"omitempty,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
+	LivingAreaSqft float64 `json:"living_area_sqft" validate:"min=0"`
+	LotAreaSqft    float64 `json:"lot_area_sqft" validate:"min=0"`
+	Bedrooms       int32   `json:"bedrooms" validate:"min=0"`
+	Bathrooms      int32   `json:"bathrooms" validate:"min=0"`
+}
+
 type BorrowerPropertyTransactionPropertyEntity struct {
 	Id             int64          `json:"id"`
 	CreatorId      int64          `json:"creator_id"`
@@ -486,14 +530,21 @@ type BorrowerPropertyTransactionSwitchStatusRequest struct {
 }
 
 type BorrowerPropertyTransactionUpdateRequest struct {
-	Id               int64    `path:"id" validate:"required,gt=0"`
-	CoeDate          string   `json:"coe_date,optional" validate:"omitempty,datetime=01/02/2006"`
-	PurchaseAmount   float64  `json:"purchase_amount,optional" validate:"min=0"`
-	EmdAmount        float64  `json:"emd_amount,optional" validate:"min=0"`
-	PropertyType     string   `json:"property_type,optional" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
-	Pm               string   `json:"pm,optional"`
-	BusinessStrategy []string `json:"business_strategy,optional" validate:"omitempty,dive,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
-	Note             string   `json:"note,optional"`
+	Id                     int64                                          `path:"id" validate:"required,gt=0"`
+	CoeDate                string                                         `json:"coe_date,optional" validate:"omitempty,datetime=01/02/2006"`
+	PurchaseAmount         float64                                        `json:"purchase_amount,optional" validate:"min=0"`
+	EmdAmount              float64                                        `json:"emd_amount,optional" validate:"min=0"`
+	Pm                     string                                         `json:"pm,optional"`
+	BusinessStrategy       []string                                       `json:"business_strategy,optional" validate:"omitempty,dive,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
+	Note                   string                                         `json:"note,optional"`
+	TitleHolder            string                                         `json:"title_holder,optional"`
+	ContractDate           string                                         `json:"contract_date,optional" validate:"omitempty,datetime=01/02/2006"`
+	EmdDueDate             string                                         `json:"emd_due_date,optional" validate:"omitempty,datetime=01/02/2006"`
+	ContingencyRemovalDate string                                         `json:"contingency_removal_date,optional" validate:"omitempty,datetime=01/02/2006"`
+	Tc                     string                                         `json:"tc,optional"`
+	CostAllocation         string                                         `json:"cost_allocation,optional"`
+	Escrows                []BorrowerPropertyTransactionEscrowsEditentity `json:"escrows,optional"`
+	Property               *BorrowerPropertyTransactionPropertyEditEntity `json:"property,optional"`
 }
 
 type DocumentCreateRequest struct {
@@ -1692,6 +1743,39 @@ type PropertyPageResponse struct {
 type PropertyPageSorter struct {
 	Column string `json:"column,optional"`
 	Sort   string `json:"sort,optional"`
+}
+
+type PropertyTransactionEscrow struct {
+	Id            int64                              `json:"id,optional"`
+	No            string                             `json:"no,optional"`
+	EscrowCompany string                             `json:"escrow_company,optional"`
+	OfficerName   string                             `json:"officer_name,optional"`
+	OfficerPhone  string                             `json:"officer_phone,optional"`
+	OfficerEmail  string                             `json:"officer_email,optional"`
+	Checklist     PropertyTransactionEscrowChecklist `json:"checklist,optional"`
+}
+
+type PropertyTransactionEscrowChecklist struct {
+	HasWireInstruction bool `json:"has_wire_instruction"`
+	HasEmdReceipt      bool `json:"has_emd_receipt"`
+	HasPrelimReport    bool `json:"has_prelim_report"`
+	HasNhd             bool `json:"has_nhd"`
+	HasColoredMap      bool `json:"has_colored_map"`
+}
+
+type PropertyTransactionPropertyEntity struct {
+	Id                            int64         `json:"id"`
+	CreatedAt                     string        `json:"created_at"`
+	UpdatedAt                     string        `json:"updated_at"`
+	BorrowerPropertyId            int64         `json:"borrower_property_id"`
+	BorrowerPropertyTransactionId int64         `json:"borrower_property_transaction_id"`
+	Unit                          int32         `json:"unit"`
+	PropertyType                  string        `json:"property_type"`
+	LivingAreaSqft                float64       `json:"living_area_sqft"`
+	LotAreaSqft                   float64       `json:"lot_area_sqft"`
+	Bedrooms                      int32         `json:"bedrooms"`
+	Bathrooms                     int32         `json:"bathrooms"`
+	Address                       AddressEntity `json:"address"`
 }
 
 type PropertyUpdateRequest struct {

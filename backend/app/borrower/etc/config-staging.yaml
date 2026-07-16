@@ -152,6 +152,18 @@ RpcConf:
   CronTaskConf:
     - name: update_organization_subscription_status
       schedule: "0 0 2 * * *"
+  # llm
+  LlmConf:
+    Providers:
+      - Name: openai
+        ApiKey: sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        BaseUrl: https://api.openai.com/v1
+      - Name: claude
+        ApiKey: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        BaseUrl: https://api.anthropic.com/v1
+    TransactionFileParseConf:
+       Provider: openai
+       Model: gpt-5.5
 
   StripeConf:
     SecretKey: 'sk_test_51Tm5drHATBZ0cr5xSjiCko1iyLdYLSghQWHGac7uvxB73yb54wOkXkcWYNYVhqjLiJilcuJLky5W4sj4O6nEoDaL00f9zdIKW4'

@@ -37,7 +37,36 @@ message BorrowerPropertyTransactionUpdateRequestData {
   string pm = 6;
   repeated string business_strategy = 7;
   string note = 8;
+  string title_holder = 9;
+  string contract_date = 10;
+  string emd_due_date = 11;
+  string contingency_removal_date = 12;
+  string tc = 13;
+  string cost_allocation = 14;
+  repeated PropertyTransactionEscrowData escrows = 15;
+  BorrowerPropertyTransactionPropertyEditEntity property = 16;
 }
+
+message PropertyTransactionEscrowData {
+  int64 id = 1;
+  string no = 2;
+  string escrow_company = 3;
+  string officer_name = 4;
+  string officer_phone = 5;
+  string officer_email = 6;
+  proto.PropertyTransactionEscrowChecklistEntity checklist = 7;
+}
+
+message BorrowerPropertyTransactionPropertyEditEntity {
+  int64 id = 1;
+  int32 unit = 2;
+  string property_type = 3;
+  double living_area_sqft = 4;
+  double lot_area_sqft = 5;
+  int32 bedrooms = 6;
+  int32 bathrooms = 7;
+}
+
 
 // switch status -- request
 message BorrowerPropertyTransactionSwitchStatusRequest {
