@@ -1537,6 +1537,86 @@
             "schema": {
               "type": "object",
               "properties": {
+                "borrower_property": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "creator_id",
+                    "creator_name",
+                    "organization_id",
+                    "property_type",
+                    "total_amount",
+                    "unit",
+                    "living_area_sqft",
+                    "bedrooms",
+                    "bathrooms",
+                    "address",
+                    "created_at",
+                    "updated_at",
+                    "loan_count"
+                  ],
+                  "properties": {
+                    "address": {
+                      "type": "object",
+                      "properties": {
+                        "address1": {
+                          "type": "string"
+                        },
+                        "address2": {
+                          "type": "string"
+                        },
+                        "city": {
+                          "type": "string"
+                        },
+                        "state": {
+                          "type": "string"
+                        },
+                        "zip_code": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "bathrooms": {
+                      "type": "integer"
+                    },
+                    "bedrooms": {
+                      "type": "integer"
+                    },
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "creator_id": {
+                      "type": "integer"
+                    },
+                    "creator_name": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "living_area_sqft": {
+                      "type": "number"
+                    },
+                    "loan_count": {
+                      "type": "integer"
+                    },
+                    "organization_id": {
+                      "type": "integer"
+                    },
+                    "property_type": {
+                      "type": "string"
+                    },
+                    "total_amount": {
+                      "type": "number"
+                    },
+                    "unit": {
+                      "type": "integer"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
+                },
                 "borrower_property_id": {
                   "type": "integer"
                 },
@@ -2105,11 +2185,76 @@
                 "coe_date": {
                   "type": "string"
                 },
+                "contingency_removal_date": {
+                  "type": "string"
+                },
+                "contract_date": {
+                  "type": "string"
+                },
+                "cost_allocation": {
+                  "type": "string"
+                },
                 "created_at": {
                   "type": "string"
                 },
                 "emd_amount": {
                   "type": "number"
+                },
+                "emd_due_date": {
+                  "type": "string"
+                },
+                "escrows": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "checklist": {
+                        "type": "object",
+                        "required": [
+                          "has_wire_instruction",
+                          "has_emd_receipt",
+                          "has_prelim_report",
+                          "has_nhd",
+                          "has_colored_map"
+                        ],
+                        "properties": {
+                          "has_colored_map": {
+                            "type": "boolean"
+                          },
+                          "has_emd_receipt": {
+                            "type": "boolean"
+                          },
+                          "has_nhd": {
+                            "type": "boolean"
+                          },
+                          "has_prelim_report": {
+                            "type": "boolean"
+                          },
+                          "has_wire_instruction": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "escrow_company": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "no": {
+                        "type": "string"
+                      },
+                      "officer_email": {
+                        "type": "string"
+                      },
+                      "officer_name": {
+                        "type": "string"
+                      },
+                      "officer_phone": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 },
                 "id": {
                   "type": "integer"
@@ -2123,13 +2268,88 @@
                 "pm": {
                   "type": "string"
                 },
-                "property_type": {
-                  "type": "string"
+                "property": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "created_at",
+                    "updated_at",
+                    "borrower_property_id",
+                    "borrower_property_transaction_id",
+                    "unit",
+                    "property_type",
+                    "living_area_sqft",
+                    "lot_area_sqft",
+                    "bedrooms",
+                    "bathrooms",
+                    "address"
+                  ],
+                  "properties": {
+                    "address": {
+                      "type": "object",
+                      "properties": {
+                        "address1": {
+                          "type": "string"
+                        },
+                        "address2": {
+                          "type": "string"
+                        },
+                        "city": {
+                          "type": "string"
+                        },
+                        "state": {
+                          "type": "string"
+                        },
+                        "zip_code": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "bathrooms": {
+                      "type": "integer"
+                    },
+                    "bedrooms": {
+                      "type": "integer"
+                    },
+                    "borrower_property_id": {
+                      "type": "integer"
+                    },
+                    "borrower_property_transaction_id": {
+                      "type": "integer"
+                    },
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "living_area_sqft": {
+                      "type": "number"
+                    },
+                    "lot_area_sqft": {
+                      "type": "number"
+                    },
+                    "property_type": {
+                      "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
                 },
                 "purchase_amount": {
                   "type": "number"
                 },
                 "status": {
+                  "type": "string"
+                },
+                "tc": {
+                  "type": "string"
+                },
+                "title_holder": {
                   "type": "string"
                 },
                 "type": {
@@ -3018,11 +3238,76 @@
                 "coe_date": {
                   "type": "string"
                 },
+                "contingency_removal_date": {
+                  "type": "string"
+                },
+                "contract_date": {
+                  "type": "string"
+                },
+                "cost_allocation": {
+                  "type": "string"
+                },
                 "created_at": {
                   "type": "string"
                 },
                 "emd_amount": {
                   "type": "number"
+                },
+                "emd_due_date": {
+                  "type": "string"
+                },
+                "escrows": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "checklist": {
+                        "type": "object",
+                        "required": [
+                          "has_wire_instruction",
+                          "has_emd_receipt",
+                          "has_prelim_report",
+                          "has_nhd",
+                          "has_colored_map"
+                        ],
+                        "properties": {
+                          "has_colored_map": {
+                            "type": "boolean"
+                          },
+                          "has_emd_receipt": {
+                            "type": "boolean"
+                          },
+                          "has_nhd": {
+                            "type": "boolean"
+                          },
+                          "has_prelim_report": {
+                            "type": "boolean"
+                          },
+                          "has_wire_instruction": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "escrow_company": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "no": {
+                        "type": "string"
+                      },
+                      "officer_email": {
+                        "type": "string"
+                      },
+                      "officer_name": {
+                        "type": "string"
+                      },
+                      "officer_phone": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 },
                 "id": {
                   "type": "integer"
@@ -3036,6 +3321,78 @@
                 "pm": {
                   "type": "string"
                 },
+                "property": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "created_at",
+                    "updated_at",
+                    "borrower_property_id",
+                    "borrower_property_transaction_id",
+                    "unit",
+                    "property_type",
+                    "living_area_sqft",
+                    "lot_area_sqft",
+                    "bedrooms",
+                    "bathrooms",
+                    "address"
+                  ],
+                  "properties": {
+                    "address": {
+                      "type": "object",
+                      "properties": {
+                        "address1": {
+                          "type": "string"
+                        },
+                        "address2": {
+                          "type": "string"
+                        },
+                        "city": {
+                          "type": "string"
+                        },
+                        "state": {
+                          "type": "string"
+                        },
+                        "zip_code": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "bathrooms": {
+                      "type": "integer"
+                    },
+                    "bedrooms": {
+                      "type": "integer"
+                    },
+                    "borrower_property_id": {
+                      "type": "integer"
+                    },
+                    "borrower_property_transaction_id": {
+                      "type": "integer"
+                    },
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "living_area_sqft": {
+                      "type": "number"
+                    },
+                    "lot_area_sqft": {
+                      "type": "number"
+                    },
+                    "property_type": {
+                      "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
+                },
                 "property_type": {
                   "type": "string"
                 },
@@ -3043,6 +3400,12 @@
                   "type": "number"
                 },
                 "status": {
+                  "type": "string"
+                },
+                "tc": {
+                  "type": "string"
+                },
+                "title_holder": {
                   "type": "string"
                 },
                 "type": {
@@ -3094,8 +3457,73 @@
                 "coe_date": {
                   "type": "string"
                 },
+                "contingency_removal_date": {
+                  "type": "string"
+                },
+                "contract_date": {
+                  "type": "string"
+                },
+                "cost_allocation": {
+                  "type": "string"
+                },
                 "emd_amount": {
                   "type": "number"
+                },
+                "emd_due_date": {
+                  "type": "string"
+                },
+                "escrows": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "checklist": {
+                        "type": "object",
+                        "required": [
+                          "has_wire_instruction",
+                          "has_emd_receipt",
+                          "has_prelim_report",
+                          "has_nhd",
+                          "has_colored_map"
+                        ],
+                        "properties": {
+                          "has_colored_map": {
+                            "type": "boolean"
+                          },
+                          "has_emd_receipt": {
+                            "type": "boolean"
+                          },
+                          "has_nhd": {
+                            "type": "boolean"
+                          },
+                          "has_prelim_report": {
+                            "type": "boolean"
+                          },
+                          "has_wire_instruction": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "escrow_company": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "no": {
+                        "type": "string"
+                      },
+                      "officer_email": {
+                        "type": "string"
+                      },
+                      "officer_name": {
+                        "type": "string"
+                      },
+                      "officer_phone": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 },
                 "note": {
                   "type": "string"
@@ -3103,11 +3531,48 @@
                 "pm": {
                   "type": "string"
                 },
-                "property_type": {
-                  "type": "string"
+                "property": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "unit",
+                    "living_area_sqft",
+                    "lot_area_sqft",
+                    "bedrooms",
+                    "bathrooms"
+                  ],
+                  "properties": {
+                    "bathrooms": {
+                      "type": "integer"
+                    },
+                    "bedrooms": {
+                      "type": "integer"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "living_area_sqft": {
+                      "type": "number"
+                    },
+                    "lot_area_sqft": {
+                      "type": "number"
+                    },
+                    "property_type": {
+                      "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
+                    }
+                  }
                 },
                 "purchase_amount": {
                   "type": "number"
+                },
+                "tc": {
+                  "type": "string"
+                },
+                "title_holder": {
+                  "type": "string"
                 }
               }
             }
@@ -3687,11 +4152,76 @@
                 "coe_date": {
                   "type": "string"
                 },
+                "contingency_removal_date": {
+                  "type": "string"
+                },
+                "contract_date": {
+                  "type": "string"
+                },
+                "cost_allocation": {
+                  "type": "string"
+                },
                 "created_at": {
                   "type": "string"
                 },
                 "emd_amount": {
                   "type": "number"
+                },
+                "emd_due_date": {
+                  "type": "string"
+                },
+                "escrows": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "checklist": {
+                        "type": "object",
+                        "required": [
+                          "has_wire_instruction",
+                          "has_emd_receipt",
+                          "has_prelim_report",
+                          "has_nhd",
+                          "has_colored_map"
+                        ],
+                        "properties": {
+                          "has_colored_map": {
+                            "type": "boolean"
+                          },
+                          "has_emd_receipt": {
+                            "type": "boolean"
+                          },
+                          "has_nhd": {
+                            "type": "boolean"
+                          },
+                          "has_prelim_report": {
+                            "type": "boolean"
+                          },
+                          "has_wire_instruction": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "escrow_company": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "no": {
+                        "type": "string"
+                      },
+                      "officer_email": {
+                        "type": "string"
+                      },
+                      "officer_name": {
+                        "type": "string"
+                      },
+                      "officer_phone": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 },
                 "id": {
                   "type": "integer"
@@ -3705,6 +4235,78 @@
                 "pm": {
                   "type": "string"
                 },
+                "property": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "created_at",
+                    "updated_at",
+                    "borrower_property_id",
+                    "borrower_property_transaction_id",
+                    "unit",
+                    "property_type",
+                    "living_area_sqft",
+                    "lot_area_sqft",
+                    "bedrooms",
+                    "bathrooms",
+                    "address"
+                  ],
+                  "properties": {
+                    "address": {
+                      "type": "object",
+                      "properties": {
+                        "address1": {
+                          "type": "string"
+                        },
+                        "address2": {
+                          "type": "string"
+                        },
+                        "city": {
+                          "type": "string"
+                        },
+                        "state": {
+                          "type": "string"
+                        },
+                        "zip_code": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "bathrooms": {
+                      "type": "integer"
+                    },
+                    "bedrooms": {
+                      "type": "integer"
+                    },
+                    "borrower_property_id": {
+                      "type": "integer"
+                    },
+                    "borrower_property_transaction_id": {
+                      "type": "integer"
+                    },
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "living_area_sqft": {
+                      "type": "number"
+                    },
+                    "lot_area_sqft": {
+                      "type": "number"
+                    },
+                    "property_type": {
+                      "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
+                },
                 "property_type": {
                   "type": "string"
                 },
@@ -3712,6 +4314,12 @@
                   "type": "number"
                 },
                 "status": {
+                  "type": "string"
+                },
+                "tc": {
+                  "type": "string"
+                },
+                "title_holder": {
                   "type": "string"
                 },
                 "type": {
@@ -7279,6 +7887,14 @@
                           "pm",
                           "business_strategy",
                           "note",
+                          "title_holder",
+                          "contract_date",
+                          "emd_due_date",
+                          "contingency_removal_date",
+                          "tc",
+                          "cost_allocation",
+                          "escrows",
+                          "property",
                           "checklist",
                           "created_at",
                           "updated_at"
@@ -7852,11 +8468,76 @@
                           "coe_date": {
                             "type": "string"
                           },
+                          "contingency_removal_date": {
+                            "type": "string"
+                          },
+                          "contract_date": {
+                            "type": "string"
+                          },
+                          "cost_allocation": {
+                            "type": "string"
+                          },
                           "created_at": {
                             "type": "string"
                           },
                           "emd_amount": {
                             "type": "number"
+                          },
+                          "emd_due_date": {
+                            "type": "string"
+                          },
+                          "escrows": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "checklist": {
+                                  "type": "object",
+                                  "required": [
+                                    "has_wire_instruction",
+                                    "has_emd_receipt",
+                                    "has_prelim_report",
+                                    "has_nhd",
+                                    "has_colored_map"
+                                  ],
+                                  "properties": {
+                                    "has_colored_map": {
+                                      "type": "boolean"
+                                    },
+                                    "has_emd_receipt": {
+                                      "type": "boolean"
+                                    },
+                                    "has_nhd": {
+                                      "type": "boolean"
+                                    },
+                                    "has_prelim_report": {
+                                      "type": "boolean"
+                                    },
+                                    "has_wire_instruction": {
+                                      "type": "boolean"
+                                    }
+                                  }
+                                },
+                                "escrow_company": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "no": {
+                                  "type": "string"
+                                },
+                                "officer_email": {
+                                  "type": "string"
+                                },
+                                "officer_name": {
+                                  "type": "string"
+                                },
+                                "officer_phone": {
+                                  "type": "string"
+                                }
+                              }
+                            }
                           },
                           "id": {
                             "type": "integer"
@@ -7870,6 +8551,78 @@
                           "pm": {
                             "type": "string"
                           },
+                          "property": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "created_at",
+                              "updated_at",
+                              "borrower_property_id",
+                              "borrower_property_transaction_id",
+                              "unit",
+                              "property_type",
+                              "living_area_sqft",
+                              "lot_area_sqft",
+                              "bedrooms",
+                              "bathrooms",
+                              "address"
+                            ],
+                            "properties": {
+                              "address": {
+                                "type": "object",
+                                "properties": {
+                                  "address1": {
+                                    "type": "string"
+                                  },
+                                  "address2": {
+                                    "type": "string"
+                                  },
+                                  "city": {
+                                    "type": "string"
+                                  },
+                                  "state": {
+                                    "type": "string"
+                                  },
+                                  "zip_code": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "bathrooms": {
+                                "type": "integer"
+                              },
+                              "bedrooms": {
+                                "type": "integer"
+                              },
+                              "borrower_property_id": {
+                                "type": "integer"
+                              },
+                              "borrower_property_transaction_id": {
+                                "type": "integer"
+                              },
+                              "created_at": {
+                                "type": "string"
+                              },
+                              "id": {
+                                "type": "integer"
+                              },
+                              "living_area_sqft": {
+                                "type": "number"
+                              },
+                              "lot_area_sqft": {
+                                "type": "number"
+                              },
+                              "property_type": {
+                                "type": "string"
+                              },
+                              "unit": {
+                                "type": "integer"
+                              },
+                              "updated_at": {
+                                "type": "string"
+                              }
+                            }
+                          },
                           "property_type": {
                             "type": "string"
                           },
@@ -7877,6 +8630,12 @@
                             "type": "number"
                           },
                           "status": {
+                            "type": "string"
+                          },
+                          "tc": {
+                            "type": "string"
+                          },
+                          "title_holder": {
                             "type": "string"
                           },
                           "type": {
@@ -9255,6 +10014,14 @@
                     "pm",
                     "business_strategy",
                     "note",
+                    "title_holder",
+                    "contract_date",
+                    "emd_due_date",
+                    "contingency_removal_date",
+                    "tc",
+                    "cost_allocation",
+                    "escrows",
+                    "property",
                     "checklist",
                     "created_at",
                     "updated_at"
@@ -9828,11 +10595,76 @@
                     "coe_date": {
                       "type": "string"
                     },
+                    "contingency_removal_date": {
+                      "type": "string"
+                    },
+                    "contract_date": {
+                      "type": "string"
+                    },
+                    "cost_allocation": {
+                      "type": "string"
+                    },
                     "created_at": {
                       "type": "string"
                     },
                     "emd_amount": {
                       "type": "number"
+                    },
+                    "emd_due_date": {
+                      "type": "string"
+                    },
+                    "escrows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "checklist": {
+                            "type": "object",
+                            "required": [
+                              "has_wire_instruction",
+                              "has_emd_receipt",
+                              "has_prelim_report",
+                              "has_nhd",
+                              "has_colored_map"
+                            ],
+                            "properties": {
+                              "has_colored_map": {
+                                "type": "boolean"
+                              },
+                              "has_emd_receipt": {
+                                "type": "boolean"
+                              },
+                              "has_nhd": {
+                                "type": "boolean"
+                              },
+                              "has_prelim_report": {
+                                "type": "boolean"
+                              },
+                              "has_wire_instruction": {
+                                "type": "boolean"
+                              }
+                            }
+                          },
+                          "escrow_company": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "no": {
+                            "type": "string"
+                          },
+                          "officer_email": {
+                            "type": "string"
+                          },
+                          "officer_name": {
+                            "type": "string"
+                          },
+                          "officer_phone": {
+                            "type": "string"
+                          }
+                        }
+                      }
                     },
                     "id": {
                       "type": "integer"
@@ -9846,6 +10678,78 @@
                     "pm": {
                       "type": "string"
                     },
+                    "property": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "created_at",
+                        "updated_at",
+                        "borrower_property_id",
+                        "borrower_property_transaction_id",
+                        "unit",
+                        "property_type",
+                        "living_area_sqft",
+                        "lot_area_sqft",
+                        "bedrooms",
+                        "bathrooms",
+                        "address"
+                      ],
+                      "properties": {
+                        "address": {
+                          "type": "object",
+                          "properties": {
+                            "address1": {
+                              "type": "string"
+                            },
+                            "address2": {
+                              "type": "string"
+                            },
+                            "city": {
+                              "type": "string"
+                            },
+                            "state": {
+                              "type": "string"
+                            },
+                            "zip_code": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "bathrooms": {
+                          "type": "integer"
+                        },
+                        "bedrooms": {
+                          "type": "integer"
+                        },
+                        "borrower_property_id": {
+                          "type": "integer"
+                        },
+                        "borrower_property_transaction_id": {
+                          "type": "integer"
+                        },
+                        "created_at": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "integer"
+                        },
+                        "living_area_sqft": {
+                          "type": "number"
+                        },
+                        "lot_area_sqft": {
+                          "type": "number"
+                        },
+                        "property_type": {
+                          "type": "string"
+                        },
+                        "unit": {
+                          "type": "integer"
+                        },
+                        "updated_at": {
+                          "type": "string"
+                        }
+                      }
+                    },
                     "property_type": {
                       "type": "string"
                     },
@@ -9853,6 +10757,12 @@
                       "type": "number"
                     },
                     "status": {
+                      "type": "string"
+                    },
+                    "tc": {
+                      "type": "string"
+                    },
+                    "title_holder": {
                       "type": "string"
                     },
                     "type": {
@@ -15495,6 +16405,14 @@
                       "pm",
                       "business_strategy",
                       "note",
+                      "title_holder",
+                      "contract_date",
+                      "emd_due_date",
+                      "contingency_removal_date",
+                      "tc",
+                      "cost_allocation",
+                      "escrows",
+                      "property",
                       "checklist",
                       "created_at",
                       "updated_at"
@@ -16068,11 +16986,76 @@
                       "coe_date": {
                         "type": "string"
                       },
+                      "contingency_removal_date": {
+                        "type": "string"
+                      },
+                      "contract_date": {
+                        "type": "string"
+                      },
+                      "cost_allocation": {
+                        "type": "string"
+                      },
                       "created_at": {
                         "type": "string"
                       },
                       "emd_amount": {
                         "type": "number"
+                      },
+                      "emd_due_date": {
+                        "type": "string"
+                      },
+                      "escrows": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "checklist": {
+                              "type": "object",
+                              "required": [
+                                "has_wire_instruction",
+                                "has_emd_receipt",
+                                "has_prelim_report",
+                                "has_nhd",
+                                "has_colored_map"
+                              ],
+                              "properties": {
+                                "has_colored_map": {
+                                  "type": "boolean"
+                                },
+                                "has_emd_receipt": {
+                                  "type": "boolean"
+                                },
+                                "has_nhd": {
+                                  "type": "boolean"
+                                },
+                                "has_prelim_report": {
+                                  "type": "boolean"
+                                },
+                                "has_wire_instruction": {
+                                  "type": "boolean"
+                                }
+                              }
+                            },
+                            "escrow_company": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "no": {
+                              "type": "string"
+                            },
+                            "officer_email": {
+                              "type": "string"
+                            },
+                            "officer_name": {
+                              "type": "string"
+                            },
+                            "officer_phone": {
+                              "type": "string"
+                            }
+                          }
+                        }
                       },
                       "id": {
                         "type": "integer"
@@ -16086,6 +17069,78 @@
                       "pm": {
                         "type": "string"
                       },
+                      "property": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "created_at",
+                          "updated_at",
+                          "borrower_property_id",
+                          "borrower_property_transaction_id",
+                          "unit",
+                          "property_type",
+                          "living_area_sqft",
+                          "lot_area_sqft",
+                          "bedrooms",
+                          "bathrooms",
+                          "address"
+                        ],
+                        "properties": {
+                          "address": {
+                            "type": "object",
+                            "properties": {
+                              "address1": {
+                                "type": "string"
+                              },
+                              "address2": {
+                                "type": "string"
+                              },
+                              "city": {
+                                "type": "string"
+                              },
+                              "state": {
+                                "type": "string"
+                              },
+                              "zip_code": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "bathrooms": {
+                            "type": "integer"
+                          },
+                          "bedrooms": {
+                            "type": "integer"
+                          },
+                          "borrower_property_id": {
+                            "type": "integer"
+                          },
+                          "borrower_property_transaction_id": {
+                            "type": "integer"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "living_area_sqft": {
+                            "type": "number"
+                          },
+                          "lot_area_sqft": {
+                            "type": "number"
+                          },
+                          "property_type": {
+                            "type": "string"
+                          },
+                          "unit": {
+                            "type": "integer"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        }
+                      },
                       "property_type": {
                         "type": "string"
                       },
@@ -16093,6 +17148,12 @@
                         "type": "number"
                       },
                       "status": {
+                        "type": "string"
+                      },
+                      "tc": {
+                        "type": "string"
+                      },
+                      "title_holder": {
                         "type": "string"
                       },
                       "type": {
@@ -16333,6 +17394,14 @@
                           "pm",
                           "business_strategy",
                           "note",
+                          "title_holder",
+                          "contract_date",
+                          "emd_due_date",
+                          "contingency_removal_date",
+                          "tc",
+                          "cost_allocation",
+                          "escrows",
+                          "property",
                           "checklist",
                           "created_at",
                           "updated_at"
@@ -16906,11 +17975,76 @@
                           "coe_date": {
                             "type": "string"
                           },
+                          "contingency_removal_date": {
+                            "type": "string"
+                          },
+                          "contract_date": {
+                            "type": "string"
+                          },
+                          "cost_allocation": {
+                            "type": "string"
+                          },
                           "created_at": {
                             "type": "string"
                           },
                           "emd_amount": {
                             "type": "number"
+                          },
+                          "emd_due_date": {
+                            "type": "string"
+                          },
+                          "escrows": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "checklist": {
+                                  "type": "object",
+                                  "required": [
+                                    "has_wire_instruction",
+                                    "has_emd_receipt",
+                                    "has_prelim_report",
+                                    "has_nhd",
+                                    "has_colored_map"
+                                  ],
+                                  "properties": {
+                                    "has_colored_map": {
+                                      "type": "boolean"
+                                    },
+                                    "has_emd_receipt": {
+                                      "type": "boolean"
+                                    },
+                                    "has_nhd": {
+                                      "type": "boolean"
+                                    },
+                                    "has_prelim_report": {
+                                      "type": "boolean"
+                                    },
+                                    "has_wire_instruction": {
+                                      "type": "boolean"
+                                    }
+                                  }
+                                },
+                                "escrow_company": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "no": {
+                                  "type": "string"
+                                },
+                                "officer_email": {
+                                  "type": "string"
+                                },
+                                "officer_name": {
+                                  "type": "string"
+                                },
+                                "officer_phone": {
+                                  "type": "string"
+                                }
+                              }
+                            }
                           },
                           "id": {
                             "type": "integer"
@@ -16924,6 +18058,78 @@
                           "pm": {
                             "type": "string"
                           },
+                          "property": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "created_at",
+                              "updated_at",
+                              "borrower_property_id",
+                              "borrower_property_transaction_id",
+                              "unit",
+                              "property_type",
+                              "living_area_sqft",
+                              "lot_area_sqft",
+                              "bedrooms",
+                              "bathrooms",
+                              "address"
+                            ],
+                            "properties": {
+                              "address": {
+                                "type": "object",
+                                "properties": {
+                                  "address1": {
+                                    "type": "string"
+                                  },
+                                  "address2": {
+                                    "type": "string"
+                                  },
+                                  "city": {
+                                    "type": "string"
+                                  },
+                                  "state": {
+                                    "type": "string"
+                                  },
+                                  "zip_code": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "bathrooms": {
+                                "type": "integer"
+                              },
+                              "bedrooms": {
+                                "type": "integer"
+                              },
+                              "borrower_property_id": {
+                                "type": "integer"
+                              },
+                              "borrower_property_transaction_id": {
+                                "type": "integer"
+                              },
+                              "created_at": {
+                                "type": "string"
+                              },
+                              "id": {
+                                "type": "integer"
+                              },
+                              "living_area_sqft": {
+                                "type": "number"
+                              },
+                              "lot_area_sqft": {
+                                "type": "number"
+                              },
+                              "property_type": {
+                                "type": "string"
+                              },
+                              "unit": {
+                                "type": "integer"
+                              },
+                              "updated_at": {
+                                "type": "string"
+                              }
+                            }
+                          },
                           "property_type": {
                             "type": "string"
                           },
@@ -16931,6 +18137,12 @@
                             "type": "number"
                           },
                           "status": {
+                            "type": "string"
+                          },
+                          "tc": {
+                            "type": "string"
+                          },
+                          "title_holder": {
                             "type": "string"
                           },
                           "type": {
@@ -17848,6 +19060,14 @@
                           "pm",
                           "business_strategy",
                           "note",
+                          "title_holder",
+                          "contract_date",
+                          "emd_due_date",
+                          "contingency_removal_date",
+                          "tc",
+                          "cost_allocation",
+                          "escrows",
+                          "property",
                           "checklist",
                           "created_at",
                           "updated_at"
@@ -18421,11 +19641,76 @@
                           "coe_date": {
                             "type": "string"
                           },
+                          "contingency_removal_date": {
+                            "type": "string"
+                          },
+                          "contract_date": {
+                            "type": "string"
+                          },
+                          "cost_allocation": {
+                            "type": "string"
+                          },
                           "created_at": {
                             "type": "string"
                           },
                           "emd_amount": {
                             "type": "number"
+                          },
+                          "emd_due_date": {
+                            "type": "string"
+                          },
+                          "escrows": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "checklist": {
+                                  "type": "object",
+                                  "required": [
+                                    "has_wire_instruction",
+                                    "has_emd_receipt",
+                                    "has_prelim_report",
+                                    "has_nhd",
+                                    "has_colored_map"
+                                  ],
+                                  "properties": {
+                                    "has_colored_map": {
+                                      "type": "boolean"
+                                    },
+                                    "has_emd_receipt": {
+                                      "type": "boolean"
+                                    },
+                                    "has_nhd": {
+                                      "type": "boolean"
+                                    },
+                                    "has_prelim_report": {
+                                      "type": "boolean"
+                                    },
+                                    "has_wire_instruction": {
+                                      "type": "boolean"
+                                    }
+                                  }
+                                },
+                                "escrow_company": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "no": {
+                                  "type": "string"
+                                },
+                                "officer_email": {
+                                  "type": "string"
+                                },
+                                "officer_name": {
+                                  "type": "string"
+                                },
+                                "officer_phone": {
+                                  "type": "string"
+                                }
+                              }
+                            }
                           },
                           "id": {
                             "type": "integer"
@@ -18439,6 +19724,78 @@
                           "pm": {
                             "type": "string"
                           },
+                          "property": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "created_at",
+                              "updated_at",
+                              "borrower_property_id",
+                              "borrower_property_transaction_id",
+                              "unit",
+                              "property_type",
+                              "living_area_sqft",
+                              "lot_area_sqft",
+                              "bedrooms",
+                              "bathrooms",
+                              "address"
+                            ],
+                            "properties": {
+                              "address": {
+                                "type": "object",
+                                "properties": {
+                                  "address1": {
+                                    "type": "string"
+                                  },
+                                  "address2": {
+                                    "type": "string"
+                                  },
+                                  "city": {
+                                    "type": "string"
+                                  },
+                                  "state": {
+                                    "type": "string"
+                                  },
+                                  "zip_code": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "bathrooms": {
+                                "type": "integer"
+                              },
+                              "bedrooms": {
+                                "type": "integer"
+                              },
+                              "borrower_property_id": {
+                                "type": "integer"
+                              },
+                              "borrower_property_transaction_id": {
+                                "type": "integer"
+                              },
+                              "created_at": {
+                                "type": "string"
+                              },
+                              "id": {
+                                "type": "integer"
+                              },
+                              "living_area_sqft": {
+                                "type": "number"
+                              },
+                              "lot_area_sqft": {
+                                "type": "number"
+                              },
+                              "property_type": {
+                                "type": "string"
+                              },
+                              "unit": {
+                                "type": "integer"
+                              },
+                              "updated_at": {
+                                "type": "string"
+                              }
+                            }
+                          },
                           "property_type": {
                             "type": "string"
                           },
@@ -18446,6 +19803,12 @@
                             "type": "number"
                           },
                           "status": {
+                            "type": "string"
+                          },
+                          "tc": {
+                            "type": "string"
+                          },
+                          "title_holder": {
                             "type": "string"
                           },
                           "type": {
@@ -19367,6 +20730,14 @@
                           "pm",
                           "business_strategy",
                           "note",
+                          "title_holder",
+                          "contract_date",
+                          "emd_due_date",
+                          "contingency_removal_date",
+                          "tc",
+                          "cost_allocation",
+                          "escrows",
+                          "property",
                           "checklist",
                           "created_at",
                           "updated_at"
@@ -19940,11 +21311,76 @@
                           "coe_date": {
                             "type": "string"
                           },
+                          "contingency_removal_date": {
+                            "type": "string"
+                          },
+                          "contract_date": {
+                            "type": "string"
+                          },
+                          "cost_allocation": {
+                            "type": "string"
+                          },
                           "created_at": {
                             "type": "string"
                           },
                           "emd_amount": {
                             "type": "number"
+                          },
+                          "emd_due_date": {
+                            "type": "string"
+                          },
+                          "escrows": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "checklist": {
+                                  "type": "object",
+                                  "required": [
+                                    "has_wire_instruction",
+                                    "has_emd_receipt",
+                                    "has_prelim_report",
+                                    "has_nhd",
+                                    "has_colored_map"
+                                  ],
+                                  "properties": {
+                                    "has_colored_map": {
+                                      "type": "boolean"
+                                    },
+                                    "has_emd_receipt": {
+                                      "type": "boolean"
+                                    },
+                                    "has_nhd": {
+                                      "type": "boolean"
+                                    },
+                                    "has_prelim_report": {
+                                      "type": "boolean"
+                                    },
+                                    "has_wire_instruction": {
+                                      "type": "boolean"
+                                    }
+                                  }
+                                },
+                                "escrow_company": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "no": {
+                                  "type": "string"
+                                },
+                                "officer_email": {
+                                  "type": "string"
+                                },
+                                "officer_name": {
+                                  "type": "string"
+                                },
+                                "officer_phone": {
+                                  "type": "string"
+                                }
+                              }
+                            }
                           },
                           "id": {
                             "type": "integer"
@@ -19958,6 +21394,78 @@
                           "pm": {
                             "type": "string"
                           },
+                          "property": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "created_at",
+                              "updated_at",
+                              "borrower_property_id",
+                              "borrower_property_transaction_id",
+                              "unit",
+                              "property_type",
+                              "living_area_sqft",
+                              "lot_area_sqft",
+                              "bedrooms",
+                              "bathrooms",
+                              "address"
+                            ],
+                            "properties": {
+                              "address": {
+                                "type": "object",
+                                "properties": {
+                                  "address1": {
+                                    "type": "string"
+                                  },
+                                  "address2": {
+                                    "type": "string"
+                                  },
+                                  "city": {
+                                    "type": "string"
+                                  },
+                                  "state": {
+                                    "type": "string"
+                                  },
+                                  "zip_code": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "bathrooms": {
+                                "type": "integer"
+                              },
+                              "bedrooms": {
+                                "type": "integer"
+                              },
+                              "borrower_property_id": {
+                                "type": "integer"
+                              },
+                              "borrower_property_transaction_id": {
+                                "type": "integer"
+                              },
+                              "created_at": {
+                                "type": "string"
+                              },
+                              "id": {
+                                "type": "integer"
+                              },
+                              "living_area_sqft": {
+                                "type": "number"
+                              },
+                              "lot_area_sqft": {
+                                "type": "number"
+                              },
+                              "property_type": {
+                                "type": "string"
+                              },
+                              "unit": {
+                                "type": "integer"
+                              },
+                              "updated_at": {
+                                "type": "string"
+                              }
+                            }
+                          },
                           "property_type": {
                             "type": "string"
                           },
@@ -19965,6 +21473,12 @@
                             "type": "number"
                           },
                           "status": {
+                            "type": "string"
+                          },
+                          "tc": {
+                            "type": "string"
+                          },
+                          "title_holder": {
                             "type": "string"
                           },
                           "type": {
@@ -23705,7 +25219,7 @@
       }
     }
   },
-  "x-date": "2026-07-10 15:05:05",
+  "x-date": "2026-07-15 17:41:40",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

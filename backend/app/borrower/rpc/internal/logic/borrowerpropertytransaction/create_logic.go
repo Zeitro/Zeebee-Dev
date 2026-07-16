@@ -88,8 +88,37 @@ func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateReque
 	err = l.svcCtx.BorrowerPropertyTransactionRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		var innerErr error
 
+		// get borrower property
+		borrowerProperty, innerErr := l.svcCtx.BorrowerPropertyRepo.GetOneByIdForOrganization(l.ctx, in.Data.BorrowerPropertyId, claim.OrganizationId)
+		if innerErr != nil {
+			return innerErr
+		}
+
 		// create transaction
 		result, innerErr = l.svcCtx.BorrowerPropertyTransactionRepo.CreateWithTx(l.ctx, tx, transactionData, false)
+		if innerErr != nil {
+			return innerErr
+		}
+
+		// seed an empty escrow row for the transaction
+		_, innerErr = l.svcCtx.PropertyTransactionEscrowRepo.CreateWithTx(l.ctx, tx, &model.PropertyTransactionEscrow{
+			BorrowerPropertyTransactionId: result.Id,
+			Checklist:                     dto.PropertyTransactionEscrowChecklist{},
+		}, false)
+		if innerErr != nil {
+			return innerErr
+		}
+
+		// create property transaction property
+		var propertyTransactionProperty *model.PropertyTransactionProperty
+		propertyTransactionProperty, innerErr = copierx.Trans[model.BorrowerProperty, model.PropertyTransactionProperty](borrowerProperty)
+		if innerErr != nil {
+			return innerErr
+		}
+		propertyTransactionProperty.Id = 0
+		propertyTransactionProperty.BorrowerPropertyTransactionId = result.Id
+		propertyTransactionProperty.BorrowerPropertyId = in.Data.BorrowerPropertyId
+		_, innerErr = l.svcCtx.PropertyTransactionPropertyRepo.CreateWithTx(l.ctx, tx, propertyTransactionProperty, false)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -216,9 +245,10 @@ func (l *CreateLogic) createDocumentNode(tx *gorm.DB, entityDocumentId int64, pa
 	}
 
 	metadata, _ := json.Marshal(map[string]interface{}{
-		"is_required": node.IsRequired,
-		"status":      constants.BorrowerPropertyTransactionStatusPending,
-		"create_type": "System",
+		"is_required":       node.IsRequired,
+		"status":            constants.BorrowerPropertyTransactionStatusPending,
+		"create_type":       "System",
+		"file_parse_config": node.FileParseConfig,
 	})
 
 	doc := &model.Document{

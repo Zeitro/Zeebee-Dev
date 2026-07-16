@@ -49,6 +49,7 @@ type RpcConf struct {
 	TemplateConf                 map[string]TemplateConf
 	CasbinConf                   CasbinConf
 	CronTaskConf                 []CronTaskConf
+	LlmConf                      LlmConf
 }
 
 type DbConf struct {
@@ -157,4 +158,10 @@ type CasbinEventTopic struct {
 type CronTaskConf struct {
 	Name     string `json:"name"`
 	Schedule string `json:"schedule"`
+}
+
+type LlmConf struct {
+	config.LlmConf
+
+	TransactionFileParseConf config.LlmBizConf
 }

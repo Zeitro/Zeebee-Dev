@@ -108,6 +108,14 @@ func (l *DeleteLogic) Delete(in *proto.PathIdRequest) (resp *proto.EmptyResponse
 			return innerErr
 		}
 
+		// delete property transaction escrows (cascade)
+		_, innerErr = l.svcCtx.PropertyTransactionEscrowRepo.DeleteWithTx(l.ctx, tx, map[string]interface{}{
+			"borrower_property_transaction_id": in.Data.Id,
+		})
+		if innerErr != nil {
+			return innerErr
+		}
+
 		// recalculate property status
 		propertyHelper := biz_helper.NewBorrowerProperty(l.svcCtx.AllRepos)
 		innerErr = propertyHelper.CalculatePropertyStatuses(l.ctx, tx, propertyId)

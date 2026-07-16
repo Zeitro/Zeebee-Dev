@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/zeromicro/go-zero/core/threading"
 	"gorm.io/gorm"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -152,6 +153,14 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 		return
 	}
 
+	// post-commit: parse uploaded files and write extracted content back (fail-silent).
+	// The upload already succeeded; parse errors are logged and swallowed.
+	newCtx := context.WithoutCancel(l.ctx)
+	threading.GoSafe(func() {
+		l.parseUploadedFiles(newCtx, in.Data.TransactionId, doc, uploadedFiles)
+	})
+	// l.parseUploadedFiles(in.Data.TransactionId, doc, uploadedFiles)
+
 	protoFiles, err := copierx.Trans[[]model.File, []*proto.FileEntity](&uploadedFiles, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
@@ -160,6 +169,22 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 	return &borrower.BorrowerPropertyTransactionDocumentUploadFileResponse{
 		Data: *protoFiles,
 	}, nil
+}
+
+// parseUploadedFiles extracts content from the just-uploaded PDFs and writes it
+// back to the transaction/escrow. Runs after the upload tx commits, in a separate
+// tx. All errors (and panics) are logged and swallowed — the upload succeeded.
+func (l *UploadDocumentFileLogic) parseUploadedFiles(ctx context.Context, transactionId int64, doc *model.Document, files []model.File) {
+	llm, err := biz_helper.NewChatClient(l.svcCtx.Config.LlmConf.Providers, l.svcCtx.Config.LlmConf.TransactionFileParseConf)
+	if err != nil {
+		l.svcCtx.Logger.WithContext(ctx).Errorf("file parse llm client init failed: %v", err)
+		return
+	}
+
+	parser := biz_helper.NewPropertyTransactionFileParser(l.svcCtx.AllRepos, llm, l.svcCtx.Logger)
+	if err := parser.ParseAndUpdateTransactionFile(ctx, transactionId, doc, files); err != nil {
+		l.svcCtx.Logger.WithContext(ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Errorf("file parse failed: %v", err)
+	}
 }
 
 func (l *UploadDocumentFileLogic) propagateLastUploadedAt(tx *gorm.DB, doc *model.Document, t *sql.NullTime) error {
