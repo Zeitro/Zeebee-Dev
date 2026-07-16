@@ -1,6 +1,6 @@
 .claude/settings.local.json
 specs
-.claude/docs/tasks/ref_file
+.claude/docs/tasks
 .DS_Store
 .traces
 .skillopt-sleep
