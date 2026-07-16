@@ -155,12 +155,9 @@ RpcConf:
   # llm
   LlmConf:
     Providers:
-      - Name: openai
-        ApiKey: sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-        BaseUrl: https://api.openai.com/v1
       - Name: claude
-        ApiKey: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-        BaseUrl: https://api.anthropic.com/v1
+        ApiKey: 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
+        BaseUrl: https://api.anthropic.com
     TransactionFileParseConf:
-       Provider: openai
-       Model: gpt-5.5
+      Provider: claude
+      Model: claude-sonnet-4-5
