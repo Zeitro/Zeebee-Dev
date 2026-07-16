@@ -23,6 +23,7 @@ import (
 	organizationEmailServer "zeebee-backend/app/borrower/rpc/internal/server/organizationemail"
 	zeitroServer "zeebee-backend/app/borrower/rpc/internal/server/zeitro"
 	"zeebee-backend/common/cron"
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/templater"
 	"zeebee-backend/domains/zeebee/templater/convertor"
@@ -101,8 +102,19 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 		ctx = logx.ContextWithFields(ctx,
 			logx.Field("service_name", c.RpcConf.Name))
-		return handler(ctx, req)
+		// Centralized error logging so individual logic methods don't each need
+		// the defer-error-log boilerplate.
+		resp, err := handler(ctx, req)
+		if err != nil {
+			logger.WithContext(ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+			).Error(err)
+		}
+		return resp, err
 	}))
+	// rpcServer.AddUnaryInterceptors(func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp any, err error){
+	//
+	// })
 
 	rpcService := &RpcServer{
 		s:    rpcServer,
