@@ -33,6 +33,9 @@ func (l *DiscoverGetSettingsLogic) DiscoverGetSettings(_ *proto.EmptyRequest) (r
 	if err != nil {
 		return nil, err
 	}
+	// model is yaml-driven now; surface the configured model on the legacy
+	// OpenaiModel field so the admin UI shows what is actually in use.
+	cfg.Model = l.svcCtx.Config.LlmConf.LenderDiscoverConf.Model
 	data, err := discoverConfigToProto(cfg)
 	if err != nil {
 		return nil, err

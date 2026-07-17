@@ -3,7 +3,6 @@ package biz_helper
 import (
 	"bytes"
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -12,19 +11,15 @@ import (
 	"sync"
 	"time"
 
-	"github.com/anthropics/anthropic-sdk-go"
-	anthopt "github.com/anthropics/anthropic-sdk-go/option"
 	"github.com/klippa-app/go-pdfium"
 	"github.com/klippa-app/go-pdfium/references"
 	"github.com/klippa-app/go-pdfium/requests"
 	"github.com/klippa-app/go-pdfium/webassembly"
-	"github.com/openai/openai-go/v3"
-	openaiopt "github.com/openai/openai-go/v3/option"
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/config"
+	"zeebee-backend/common/llm"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/repo"
@@ -39,176 +34,7 @@ const (
 	pdfPoolSize = 5
 )
 
-// ============================================================
-// LLM clients (openai / claude). Kept local until a second
-// consumer justifies promoting to its own package.
-// ============================================================
-
-// chatClient abstracts the LLM used for file content extraction so openai and
-// claude impls are interchangeable.
-type chatClient interface {
-	// ChatJSON sends a text prompt and returns raw model content (expected JSON).
-	ChatJSON(ctx context.Context, system, user string) (string, error)
-	// VisionJSON sends a text prompt plus one PNG image and returns raw content.
-	VisionJSON(ctx context.Context, system, text string, imagePNG []byte) (string, error)
-}
-
-// NewChatClient resolves the provider named by biz.Provider from the configured
-// provider list. Unknown providers fail fast.
-func NewChatClient(providers []config.LlmProvider, biz config.LlmBizConf) (chatClient, error) {
-	var prov *config.LlmProvider
-	for i := range providers {
-		if providers[i].Name == biz.Provider {
-			prov = &providers[i]
-			break
-		}
-	}
-	if prov == nil {
-		return nil, fmt.Errorf("llm provider %q not configured", biz.Provider)
-	}
-	switch prov.Name {
-	case "openai":
-		return newOpenAIClient(prov, biz.Model), nil
-	case "claude":
-		return newClaudeClient(prov, biz.Model), nil
-	default:
-		return nil, nil
-	}
-}
-
-// --- openai ---
-
-type openAIClient struct {
-	client openai.Client
-	model  openai.ChatModel
-}
-
-func newOpenAIClient(p *config.LlmProvider, model string) *openAIClient {
-	opts := []openaiopt.RequestOption{
-		openaiopt.WithAPIKey(p.ApiKey),
-		openaiopt.WithRequestTimeout(60 * time.Second),
-	}
-	// openai-go appends "/chat/completions" to base_url, so base must carry "/v1".
-	if base := strings.TrimRight(p.BaseUrl, "/"); base != "" {
-		if !strings.HasSuffix(base, "/v1") {
-			base += "/v1"
-		}
-		opts = append(opts, openaiopt.WithBaseURL(base))
-	}
-	return &openAIClient{client: openai.NewClient(opts...), model: model}
-}
-
-func (c *openAIClient) ChatJSON(ctx context.Context, system, user string) (string, error) {
-	resp, err := c.client.Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
-		Model: c.model,
-		Messages: []openai.ChatCompletionMessageParamUnion{
-			openai.SystemMessage(system),
-			openai.UserMessage(user),
-		},
-	})
-	if err != nil {
-		return "", err
-	}
-	return openAIFirstContent(resp)
-}
-
-func (c *openAIClient) VisionJSON(ctx context.Context, system, text string, imagePNG []byte) (string, error) {
-	dataURL := "data:image/png;base64," + base64.StdEncoding.EncodeToString(imagePNG)
-	resp, err := c.client.Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
-		Model: c.model,
-		Messages: []openai.ChatCompletionMessageParamUnion{
-			openai.SystemMessage(system),
-			openai.UserMessage([]openai.ChatCompletionContentPartUnionParam{
-				openai.TextContentPart(text),
-				openai.ImageContentPart(openai.ChatCompletionContentPartImageImageURLParam{
-					URL:    dataURL,
-					Detail: "high",
-				}),
-			}),
-		},
-	})
-	if err != nil {
-		return "", err
-	}
-	return openAIFirstContent(resp)
-}
-
-func openAIFirstContent(resp *openai.ChatCompletion) (string, error) {
-	if len(resp.Choices) == 0 {
-		return "", fmt.Errorf("openai returned no choices")
-	}
-	return resp.Choices[0].Message.Content, nil
-}
-
-// --- claude ---
-
-type claudeClient struct {
-	client    anthropic.Client
-	model     anthropic.Model
-	maxTokens int64
-}
-
-func newClaudeClient(p *config.LlmProvider, model string) *claudeClient {
-	opts := []anthopt.RequestOption{
-		anthopt.WithAPIKey(p.ApiKey),
-		anthopt.WithRequestTimeout(60 * time.Second),
-	}
-	if base := strings.TrimRight(p.BaseUrl, "/"); base != "" {
-		opts = append(opts, anthopt.WithBaseURL(base))
-	}
-
-	return &claudeClient{
-		client:    anthropic.NewClient(opts...),
-		model:     model,
-		maxTokens: 4096,
-	}
-}
-
-func (c *claudeClient) ChatJSON(ctx context.Context, system, user string) (string, error) {
-	resp, err := c.client.Messages.New(ctx, anthropic.MessageNewParams{
-		Model:     c.model,
-		MaxTokens: c.maxTokens,
-		System:    []anthropic.TextBlockParam{{Text: system}},
-		Messages: []anthropic.MessageParam{
-			anthropic.NewUserMessage(anthropic.NewTextBlock(user)),
-		},
-	})
-	if err != nil {
-		return "", err
-	}
-	return claudeText(resp)
-}
-
-func (c *claudeClient) VisionJSON(ctx context.Context, system, text string, imagePNG []byte) (string, error) {
-	resp, err := c.client.Messages.New(ctx, anthropic.MessageNewParams{
-		Model:     c.model,
-		MaxTokens: c.maxTokens,
-		System:    []anthropic.TextBlockParam{{Text: system}},
-		Messages: []anthropic.MessageParam{
-			anthropic.NewUserMessage(
-				anthropic.NewTextBlock(text),
-				anthropic.NewImageBlockBase64("image/png", base64.StdEncoding.EncodeToString(imagePNG)),
-			),
-		},
-	})
-	if err != nil {
-		return "", err
-	}
-	return claudeText(resp)
-}
-
-func claudeText(resp *anthropic.Message) (string, error) {
-	var sb strings.Builder
-	for _, block := range resp.Content {
-		if t := block.AsText(); t.Text != "" {
-			sb.WriteString(t.Text)
-		}
-	}
-	if sb.Len() == 0 {
-		return "", fmt.Errorf("claude returned no text")
-	}
-	return sb.String(), nil
-}
+// LLM clients live in common/llm; this package consumes llm.Client.
 
 // ============================================================
 // PDF helpers: pdfium pool, download, render, text.
@@ -383,7 +209,7 @@ func parseEscrowFields(content string) (escrowFields, error) {
 }
 
 // extractPurchasePrice pulls purchase_price (float) from page-1 text. 0 = absent.
-func extractPurchasePrice(ctx context.Context, llm chatClient, r io.ReadSeeker) (price float64, err error) {
+func extractPurchasePrice(ctx context.Context, llmClient llm.Client, r io.ReadSeeker) (price float64, err error) {
 	err = withPdfInstance(func(inst pdfium.Pdfium) error {
 		doc, cleanup, e := openPDF(inst, r)
 		if e != nil {
@@ -394,7 +220,7 @@ func extractPurchasePrice(ctx context.Context, llm chatClient, r io.ReadSeeker) 
 		if e != nil {
 			return e
 		}
-		content, e := llm.ChatJSON(ctx, extractSystemPrompt, rpaPrompt(text))
+		content, e := llmClient.ChatJSON(ctx, extractSystemPrompt, rpaPrompt(text))
 		if e != nil {
 			return e
 		}
@@ -405,7 +231,7 @@ func extractPurchasePrice(ctx context.Context, llm chatClient, r io.ReadSeeker) 
 }
 
 // extractEscrowFields vision-reads escrow fields off the rendered first page.
-func extractEscrowFields(ctx context.Context, llm chatClient, r io.ReadSeeker) (fields escrowFields, err error) {
+func extractEscrowFields(ctx context.Context, llmClient llm.Client, r io.ReadSeeker) (fields escrowFields, err error) {
 	err = withPdfInstance(func(inst pdfium.Pdfium) error {
 		doc, cleanup, e := openPDF(inst, r)
 		if e != nil {
@@ -416,7 +242,7 @@ func extractEscrowFields(ctx context.Context, llm chatClient, r io.ReadSeeker) (
 		if e != nil {
 			return e
 		}
-		content, e := llm.VisionJSON(ctx, extractSystemPrompt, escrowPrompt(), png)
+		content, e := llmClient.VisionJSON(ctx, extractSystemPrompt, escrowPrompt(), png)
 		if e != nil {
 			return e
 		}
@@ -433,16 +259,16 @@ func extractEscrowFields(ctx context.Context, llm chatClient, r io.ReadSeeker) (
 // are parsed; multi-file: first non-empty value per field wins, stop once all
 // fields are filled.
 type PropertyTransactionFileParser struct {
-	repos  *repo.AllRepos
-	llm    chatClient
-	logger logx.Logger
+	repos     *repo.AllRepos
+	llmClient llm.Client
+	logger    logx.Logger
 }
 
-func NewPropertyTransactionFileParser(repos *repo.AllRepos, llm chatClient, logger logx.Logger) *PropertyTransactionFileParser {
+func NewPropertyTransactionFileParser(repos *repo.AllRepos, llmClient llm.Client, logger logx.Logger) *PropertyTransactionFileParser {
 	return &PropertyTransactionFileParser{
-		repos:  repos,
-		llm:    llm,
-		logger: logger,
+		repos:     repos,
+		llmClient: llmClient,
+		logger:    logger,
 	}
 }
 
@@ -485,7 +311,7 @@ func (p *PropertyTransactionFileParser) parseRPA(ctx context.Context, transactio
 				Errorf("downloadPDF: %s", err)
 			continue
 		}
-		got, err := extractPurchasePrice(ctx, p.llm, data)
+		got, err := extractPurchasePrice(ctx, p.llmClient, data)
 		if err != nil {
 			p.logger.WithContext(ctx).
 				WithFields(
@@ -528,7 +354,7 @@ func (p *PropertyTransactionFileParser) parseEscrow(ctx context.Context, transac
 				Errorf("downloadPDF: %s", err)
 			continue
 		}
-		got, err := extractEscrowFields(ctx, p.llm, data)
+		got, err := extractEscrowFields(ctx, p.llmClient, data)
 		if err != nil {
 			p.logger.WithContext(ctx).
 				WithFields(

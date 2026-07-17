@@ -9,6 +9,7 @@ import (
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/llm"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/logic"
 	"zeebee-backend/domains/zeebee/model"
@@ -22,7 +23,7 @@ type Config struct {
 	ScopeState      string `json:"scope_state"`
 	ScopeExtra      string `json:"scope_extra"`
 	UserPrompt      string `json:"user_prompt"`
-	OpenaiModel     string `json:"openai_model"`
+	Model     string `json:"model"`
 }
 
 const (
@@ -36,8 +37,8 @@ func applyDiscoverConfigDefaults(cfg *Config) {
 	if cfg.IntervalDays < 1 {
 		cfg.IntervalDays = defaultIntervalDays
 	}
-	if strings.TrimSpace(cfg.OpenaiModel) == "" {
-		cfg.OpenaiModel = defaultOpenaiModel
+	if strings.TrimSpace(cfg.Model) == "" {
+		cfg.Model = defaultOpenaiModel
 	}
 	if strings.TrimSpace(cfg.UserPrompt) == "" {
 		cfg.UserPrompt = DefaultUserPrompt
@@ -49,9 +50,9 @@ func applyDiscoverConfigDefaults(cfg *Config) {
 func LoadConfig(ctx context.Context, settingRepo *repo.OrganizationSettingRepo) (*Config, int64, error) {
 	row, err := settingRepo.DetailByPurpose(ctx, constants.OrganizationIdPublicDiscoverSettings, constants.OrganizationPurposeLenderDiscover, false)
 	if err != nil {
-		return nil, 0, errorx.WithStack(err)
+		return nil, 0, err
 	}
-	cfg := &Config{IntervalDays: defaultIntervalDays, OpenaiModel: defaultOpenaiModel}
+	cfg := &Config{IntervalDays: defaultIntervalDays, Model: defaultOpenaiModel}
 	raw, jsonErr := json.Marshal(row.Setting)
 	if jsonErr != nil {
 		return nil, 0, errorx.WithStack(jsonErr)
@@ -109,8 +110,18 @@ type Runner struct {
 	Repos              *repo.AllRepos
 	TemplateLogic      *logic.OrganizationTemplateLogic
 	SettingLogic       *logic.OrganizationSettingLogic
-	OpenAIKey          string
+	LLM                llm.Client
 	PlaceholderLogoURL string
+}
+
+// RawLenderMetadata mirrors the JSON shape at metadata.lender returned by the
+// model (and sent on commit). Named (not anonymous) so copierx.Trans can map it
+// to/from the proto entity in one call.
+type RawLenderMetadata struct {
+	LoanAmountRange *model.RangeFloat64 `json:"loan_amount_range"`
+	LoanTermRange   *model.RangeInt     `json:"loan_term_range"`
+	LoanRateRange   *model.RangeFloat64 `json:"loan_rate_range"`
+	LoanPointRange  *model.RangeFloat64 `json:"loan_point_range"`
 }
 
 // RawLender matches the JSON shape returned by the model (and sent on commit).
@@ -124,12 +135,7 @@ type RawLender struct {
 	Logo         string        `json:"logo"`
 	Address      model.Address `json:"address"`
 	Metadata     struct {
-		Lender *struct {
-			LoanAmountRange *model.RangeFloat64 `json:"loan_amount_range"`
-			LoanTermRange   *model.RangeInt     `json:"loan_term_range"`
-			LoanRateRange   *model.RangeFloat64 `json:"loan_rate_range"`
-			LoanPointRange  *model.RangeFloat64 `json:"loan_point_range"`
-		} `json:"lender"`
+		Lender *RawLenderMetadata `json:"lender"`
 	} `json:"metadata"`
 }
 
@@ -186,8 +192,11 @@ Rules:
 }
 
 func (r *Runner) fetchAndParseLenders(ctx context.Context, cfg *Config) (*lendersEnvelope, error) {
+	if r.LLM == nil {
+		return nil, errorx.New("lender discover llm client not configured")
+	}
 	userPrompt := buildUserPrompt(cfg)
-	jsonStr, err := CallOpenAIJSON(ctx, r.OpenAIKey, cfg.OpenaiModel, systemPrompt, userPrompt)
+	jsonStr, err := r.LLM.ChatJSON(ctx, systemPrompt, userPrompt)
 	if err != nil {
 		return nil, err
 	}

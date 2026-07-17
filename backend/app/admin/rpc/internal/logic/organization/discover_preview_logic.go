@@ -2,12 +2,10 @@ package organizationlogic
 
 import (
 	"context"
-	"os"
-	"strings"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"zeebee-backend/app/admin/rpc/internal/logic"
+	"zeebee-backend/app/admin/rpc/internal/schedule"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/errorx"
@@ -35,18 +33,7 @@ func (l *DiscoverPreviewLogic) DiscoverPreview(_ *proto.EmptyRequest) (resp *adm
 			).Error(err)
 		}
 	}()
-	bl := logic.GetBaseLogic(l.svcCtx)
-	apiKey := strings.TrimSpace(l.svcCtx.Config.OpenAIConf.APIKey)
-	if apiKey == "" {
-		apiKey = os.Getenv("OPENAI_API_KEY")
-	}
-	rn := domainlenderdiscover.Runner{
-		Repos:              l.svcCtx.AllRepos,
-		TemplateLogic:      bl.OrganizationTemplateLogic,
-		SettingLogic:       bl.OrganizationSettingLogic,
-		OpenAIKey:          apiKey,
-		PlaceholderLogoURL: domainlenderdiscover.DefaultPlaceholderLogoURL,
-	}
+	rn := schedule.NewRunner(l.svcCtx)
 	cands, err := rn.Preview(context.WithoutCancel(l.ctx))
 	if err != nil {
 		return nil, err

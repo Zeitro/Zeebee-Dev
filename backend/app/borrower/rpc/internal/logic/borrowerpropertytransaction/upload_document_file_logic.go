@@ -18,6 +18,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/llm"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
@@ -175,13 +176,13 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 // back to the transaction/escrow. Runs after the upload tx commits, in a separate
 // tx. All errors (and panics) are logged and swallowed — the upload succeeded.
 func (l *UploadDocumentFileLogic) parseUploadedFiles(ctx context.Context, transactionId int64, doc *model.Document, files []model.File) {
-	llm, err := biz_helper.NewChatClient(l.svcCtx.Config.LlmConf.Providers, l.svcCtx.Config.LlmConf.TransactionFileParseConf)
+	client, err := llm.NewClient(l.svcCtx.Config.LlmConf.Providers, l.svcCtx.Config.LlmConf.TransactionFileParseConf)
 	if err != nil {
 		l.svcCtx.Logger.WithContext(ctx).Errorf("file parse llm client init failed: %v", err)
 		return
 	}
 
-	parser := biz_helper.NewPropertyTransactionFileParser(l.svcCtx.AllRepos, llm, l.svcCtx.Logger)
+	parser := biz_helper.NewPropertyTransactionFileParser(l.svcCtx.AllRepos, client, l.svcCtx.Logger)
 	if err := parser.ParseAndUpdateTransactionFile(ctx, transactionId, doc, files); err != nil {
 		l.svcCtx.Logger.WithContext(ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Errorf("file parse failed: %v", err)
 	}
