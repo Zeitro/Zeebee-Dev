@@ -18,7 +18,6 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/llm"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
@@ -172,20 +171,12 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 	}, nil
 }
 
-// parseUploadedFiles extracts content from the just-uploaded PDFs and writes it
-// back to the transaction/escrow. Runs after the upload tx commits, in a separate
-// tx. All errors (and panics) are logged and swallowed — the upload succeeded.
+// parseUploadedFiles dispatches async extraction on the just-uploaded files.
+// DispatchOnUpload is fire-and-forget (per-document serial queue + drainer
+// goroutine); all errors/panics inside the drainer are logged and swallowed —
+// the upload already succeeded (fail-silent, FR-019).
 func (l *UploadDocumentFileLogic) parseUploadedFiles(ctx context.Context, transactionId int64, doc *model.Document, files []model.File) {
-	client, err := llm.NewClient(l.svcCtx.Config.LlmConf.Providers, l.svcCtx.Config.LlmConf.TransactionFileParseConf)
-	if err != nil {
-		l.svcCtx.Logger.WithContext(ctx).Errorf("file parse llm client init failed: %v", err)
-		return
-	}
-
-	parser := biz_helper.NewPropertyTransactionFileParser(l.svcCtx.AllRepos, client, l.svcCtx.Logger)
-	if err := parser.ParseAndUpdateTransactionFile(ctx, transactionId, doc, files); err != nil {
-		l.svcCtx.Logger.WithContext(ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Errorf("file parse failed: %v", err)
-	}
+	l.svcCtx.FileParser.DispatchOnUpload(ctx, transactionId, doc, files)
 }
 
 func (l *UploadDocumentFileLogic) propagateLastUploadedAt(tx *gorm.DB, doc *model.Document, t *sql.NullTime) error {

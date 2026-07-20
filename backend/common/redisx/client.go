@@ -141,3 +141,26 @@ func (r *Client) buildKey(key string) string {
 	}
 	return fmt.Sprintf("%s:%s", r.prefix, key)
 }
+
+// PushBack appends val to the tail of the list at key (RPUSH).
+func (r *Client) PushBack(ctx context.Context, key, val string) error {
+	return r.cli.RPush(ctx, r.buildKey(key), val).Err()
+}
+
+// PopFront removes and returns the head element of the list at key (LPOP).
+// Returns ("", false, nil) when the list is empty.
+func (r *Client) PopFront(ctx context.Context, key string) (val string, ok bool, err error) {
+	res, err := r.cli.LPop(ctx, r.buildKey(key)).Result()
+	if err != nil {
+		if errors.Is(err, redis.Nil) {
+			return "", false, nil
+		}
+		return "", false, err
+	}
+	return res, true, nil
+}
+
+// LLen returns the length of the list at key.
+func (r *Client) LLen(ctx context.Context, key string) (int64, error) {
+	return r.cli.LLen(ctx, r.buildKey(key)).Result()
+}

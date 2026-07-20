@@ -21,9 +21,42 @@ type DocumentTemplateStructure struct {
 	SortOrder       int32                       `json:"sort_order"`
 	IsRequired      bool                        `json:"is_required"`
 	FileParseConfig *FileParseConfig            `json:"file_parse_config,omitempty"`
-	Children        []DocumentTemplateStructure `json:"children"`
+	// Tags classify the target node; copied into Document.metadata.tags at
+	// transaction creation so manual_select selectors can scope files by tag.
+	Tags     []string                    `json:"tags,omitempty"`
+	Children []DocumentTemplateStructure `json:"children"`
 }
 
+// FileParseConfig declares how a document node is parsed. Rules is the v2
+// multi-rule form; Parser is the legacy single-parser form normalized to one
+// OnUpload rule by effectiveRules (kept for back-compat with existing rows).
 type FileParseConfig struct {
-	Parser string `json:"parser"`
+	Parser string          `json:"parser,omitempty"`
+	Rules  []FileParseRule `json:"rules,omitempty"`
 }
+
+// FileParseRule binds a parser to a trigger mode. Selector is required for
+// ManualSelect (scopes files by tags); ignored otherwise.
+type FileParseRule struct {
+	Parser   string       `json:"parser"`             // Rpa | EscrowInfo
+	Mode     string       `json:"mode"`               // OnUpload | ManualTree | ManualSelect
+	Selector *TagSelector `json:"selector,omitempty"` // ManualSelect only
+}
+
+// TagSelector matches documents whose metadata.tags contain all listed tags (AND).
+type TagSelector struct {
+	Tags []string `json:"tags"`
+}
+
+// FileParseRule.Mode values.
+const (
+	FileParseModeOnUpload     = "OnUpload"
+	FileParseModeManualTree   = "ManualTree"
+	FileParseModeManualSelect = "ManualSelect"
+)
+
+// FileParseRule.Parser values.
+const (
+	FileParseParserRpa        = "Rpa"
+	FileParseParserEscrowInfo = "EscrowInfo"
+)
