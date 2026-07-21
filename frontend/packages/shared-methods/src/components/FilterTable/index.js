@@ -32,6 +32,7 @@ export const FilterTable = forwardRef(
 			api,
 			method = 'POST',
 			settingPagination, // 初始化修改分页请求参数
+			pageSizeStorageKey, // localStorage 键，默认全局 zb_table_page_size
 			...props
 		},
 		ref,
@@ -54,6 +55,7 @@ export const FilterTable = forwardRef(
 			hasPaginationRequest,
 			settingPagination,
 			hasInitRequest,
+			pageSizeStorageKey,
 		});
 
 		useEffect(() => {
