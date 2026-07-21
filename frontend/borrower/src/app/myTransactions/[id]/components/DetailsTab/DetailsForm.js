@@ -73,7 +73,7 @@ const DetailsForm = ({ rowData, propertyInfoExtra, saving = false }) => {
 								}}
 							/>
 						</Form.Item>
-						<Form.Item label="Business strategy" name="business_strategy">
+						<Form.Item label="Strategy/Business line" name="business_strategy">
 							<Select
 								size="large"
 								options={businessStrategyOptions}

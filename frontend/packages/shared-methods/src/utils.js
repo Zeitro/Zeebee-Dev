@@ -9,3 +9,4 @@ export * from './lib/local';
 export * from './lib/loginCredential';
 export * from './lib/permissionStorage';
 export * from './lib/commonRouter';
+export * from './lib/tablePagination';

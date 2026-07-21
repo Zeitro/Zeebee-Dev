@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { matchRoute } from './commonRouter';
+import { TABLE_PAGE_SIZE_OPTIONS, getDefaultTablePageSize } from './tablePagination';
 
 /**
  * 公共方法封装（格式化或验证相关写在format文件）
@@ -7,11 +8,15 @@ import { matchRoute } from './commonRouter';
 
 // 分页
 export const getPagination = (pagi = {}) => {
+	const defaultPageSize = typeof window !== 'undefined' ? getDefaultTablePageSize() : 20;
+
 	return {
 		current: 1,
-		pageSize: 10,
+		pageSize: defaultPageSize,
 		total: 0,
 		showTotal: (total) => `▶  Total ${total}`,
+		showSizeChanger: true,
+		pageSizeOptions: TABLE_PAGE_SIZE_OPTIONS,
 		...pagi,
 	};
 };

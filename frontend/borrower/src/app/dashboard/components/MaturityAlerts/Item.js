@@ -7,7 +7,7 @@ const MaturityAlertsItem = ({ item, handleGotoLoanDetails }) => {
 	};
 	return (
 		<div
-			className="border-b last-of-type:border-b-0 border-base-border py-5 hover:bg-[#f5f5f5] rounded-xl px-1 cursor-pointer"
+			className="border-b last-of-type:border-b-0 border-base-border py-5 hover:bg-[#f5f5f5] hover:rounded-xl px-1 cursor-pointer"
 			onClick={() => handleGotoLoanDetails(item)}
 		>
 			<div className="flex items-center justify-between">

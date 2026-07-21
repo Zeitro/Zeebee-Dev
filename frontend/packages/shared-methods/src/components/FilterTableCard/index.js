@@ -34,6 +34,7 @@ export const FilterTableCard = forwardRef(
 			typeKey = 'table', // table/card
 			cardTitle,
 			settingPagination, // 初始化修改分页请求参数
+			pageSizeStorageKey,
 			...props
 		},
 		ref,
@@ -58,6 +59,7 @@ export const FilterTableCard = forwardRef(
 			hasPaginationRequest,
 			settingPagination,
 			hasInitRequest,
+			pageSizeStorageKey,
 		});
 
 		const getMoreTypesContent = (type) => {
