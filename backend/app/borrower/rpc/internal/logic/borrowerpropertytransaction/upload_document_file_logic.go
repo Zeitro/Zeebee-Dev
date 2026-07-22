@@ -7,12 +7,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/zeromicro/go-zero/core/threading"
 	"gorm.io/gorm"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper"
+	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file"
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -153,13 +153,14 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 		return
 	}
 
-	// post-commit: parse uploaded files and write extracted content back (fail-silent).
-	// The upload already succeeded; parse errors are logged and swallowed.
+	// post-commit: dispatch async extraction on the just-uploaded files.
+	// Dispatch itself is fast (Redis enqueue + lock + kick drainer); the heavy
+	// LLM extract runs in the drainer goroutine, so this does not block the
+	// response. It returns the batch's requestId for progress polling (empty if
+	// no parse rule fired). Parse errors are logged and swallowed — the upload
+	// already succeeded (fail-silent, FR-019).
 	newCtx := context.WithoutCancel(l.ctx)
-	threading.GoSafe(func() {
-		l.parseUploadedFiles(newCtx, in.Data.TransactionId, doc, uploadedFiles)
-	})
-	// l.parseUploadedFiles(in.Data.TransactionId, doc, uploadedFiles)
+	requestId := l.parseUploadedFiles(newCtx, in.Data.TransactionId, doc, uploadedFiles)
 
 	protoFiles, err := copierx.Trans[[]model.File, []*proto.FileEntity](&uploadedFiles, copierx.TimeToRFC3339Str())
 	if err != nil {
@@ -167,16 +168,23 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 	}
 
 	return &borrower.BorrowerPropertyTransactionDocumentUploadFileResponse{
-		Data: *protoFiles,
+		Data:       *protoFiles,
+		RequestId:  requestId,
 	}, nil
 }
 
-// parseUploadedFiles dispatches async extraction on the just-uploaded files.
-// DispatchOnUpload is fire-and-forget (per-document serial queue + drainer
-// goroutine); all errors/panics inside the drainer are logged and swallowed —
-// the upload already succeeded (fail-silent, FR-019).
-func (l *UploadDocumentFileLogic) parseUploadedFiles(ctx context.Context, transactionId int64, doc *model.Document, files []model.File) {
-	l.svcCtx.FileParser.DispatchOnUpload(ctx, transactionId, doc, files)
+// parseUploadedFiles dispatches async extraction on the just-uploaded files and
+// returns the requestId tracking this batch (empty when nothing fired). The
+// dispatch is fail-silent: a side-channel parse error is logged inside Dispatch
+// and never blocks the upload response.
+func (l *UploadDocumentFileLogic) parseUploadedFiles(ctx context.Context, transactionId int64, doc *model.Document, files []model.File) string {
+	requestId, _ := l.svcCtx.FileParser.Dispatch(ctx, parse_file.DispatchParam{
+		TransactionId: transactionId,
+		DocumentId:    doc.Id,
+		Files:         files,
+		Trigger:       parse_file.TriggerOnUpload,
+	})
+	return requestId
 }
 
 func (l *UploadDocumentFileLogic) propagateLastUploadedAt(tx *gorm.DB, doc *model.Document, t *sql.NullTime) error {

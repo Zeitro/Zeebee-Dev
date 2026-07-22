@@ -1,4 +1,4 @@
-package parse_file
+package handler
 
 import (
 	"encoding/json"
@@ -7,6 +7,7 @@ import (
 	"gorm.io/datatypes"
 
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 )
 
@@ -22,14 +23,13 @@ func mustMeta(t *testing.T, v any) datatypes.JSON {
 func TestEffectiveRules(t *testing.T) {
 	tests := []struct {
 		name string
-		cfg  *model.FileParseConfig
+		cfg  *dto.DocumentTemplateFileParseConfig
 		want int
 	}{
 		{"nil", nil, 0},
-		{"empty", &model.FileParseConfig{}, 0},
-		{"legacy parser normalizes to on_upload", &model.FileParseConfig{Parser: model.FileParseParserEscrowInfo}, 1},
-		{"rules pass through", &model.FileParseConfig{
-			Rules: []model.FileParseRule{{Parser: model.FileParseParserRpa, Mode: model.FileParseModeManualTree}}}, 1},
+		{"empty", &dto.DocumentTemplateFileParseConfig{}, 0},
+		{"rules pass through", &dto.DocumentTemplateFileParseConfig{
+			Rules: []dto.DocumentTemplateFileParseRule{{Parser: constants.DocumentTemplateFileParseParserRpa, Source: constants.DocumentTemplateFileParseSourceDirectory}}}, 1},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
@@ -37,23 +37,18 @@ func TestEffectiveRules(t *testing.T) {
 			if len(got) != tc.want {
 				t.Fatalf("got %d rules, want %d (%+v)", len(got), tc.want, got)
 			}
-			if tc.name == "legacy parser normalizes to on_upload" {
-				if got[0].Mode != model.FileParseModeOnUpload {
-					t.Fatalf("legacy rule not normalized to OnUpload: %+v", got[0])
-				}
-			}
 		})
 	}
 }
 
 func TestOnUploadRules(t *testing.T) {
-	cfg := &model.FileParseConfig{Rules: []model.FileParseRule{
-		{Parser: model.FileParseParserEscrowInfo, Mode: model.FileParseModeOnUpload},
-		{Parser: model.FileParseParserRpa, Mode: model.FileParseModeManualTree},
+	cfg := &dto.DocumentTemplateFileParseConfig{Rules: []dto.DocumentTemplateFileParseRule{
+		{Parser: constants.DocumentTemplateFileParseParserEscrowInfo, Source: constants.DocumentTemplateFileParseSourceSingleFile},
+		{Parser: constants.DocumentTemplateFileParseParserRpa, Source: constants.DocumentTemplateFileParseSourceDirectory},
 	}}
-	got := onUploadRules(cfg)
-	if len(got) != 1 || got[0].Parser != model.FileParseParserEscrowInfo {
-		t.Fatalf("onUploadRules = %+v, want only escrow OnUpload", got)
+	got := OnUploadRules(cfg)
+	if len(got) != 1 || got[0].Parser != constants.DocumentTemplateFileParseParserEscrowInfo {
+		t.Fatalf("OnUploadRules = %+v, want only escrow SingleFile", got)
 	}
 }
 
@@ -102,15 +97,15 @@ func TestCollectBySelector(t *testing.T) {
 		doc(3, 0, constants.DocumentTypeLeaf, "signed"),
 		doc(4, 0, constants.DocumentTypeBranch, "emd"), // branch excluded
 	}
-	got := CollectBySelector(docs, &model.TagSelector{Tags: []string{"emd"}})
+	got := CollectBySelector(docs, &dto.DocumentTemplateTagSelector{Tags: []string{"emd"}})
 	if len(got) != 2 {
 		t.Fatalf("tag emd: got %d, want 2 (docs 1,2)", len(got))
 	}
-	got = CollectBySelector(docs, &model.TagSelector{Tags: []string{"emd", "signed"}})
+	got = CollectBySelector(docs, &dto.DocumentTemplateTagSelector{Tags: []string{"emd", "signed"}})
 	if len(got) != 1 || got[0].Id != 2 {
 		t.Fatalf("AND tags emd+signed: got %+v, want only doc 2", got)
 	}
-	if got := CollectBySelector(docs, &model.TagSelector{Tags: []string{}}); got != nil {
+	if got := CollectBySelector(docs, &dto.DocumentTemplateTagSelector{Tags: []string{}}); got != nil {
 		t.Fatalf("empty selector must match nothing, got %+v", got)
 	}
 	if got := CollectBySelector(docs, nil); got != nil {
@@ -125,9 +120,9 @@ func TestDocFileParseConfigAndTags(t *testing.T) {
 		},
 		"tags": []string{"emd"},
 	})}
-	cfg := docFileParseConfig(d)
+	cfg := DocFileParseConfig(d)
 	if cfg == nil || len(cfg.Rules) != 1 {
-		t.Fatalf("docFileParseConfig = %+v", cfg)
+		t.Fatalf("DocFileParseConfig = %+v", cfg)
 	}
 	tags := docTags(d)
 	if len(tags) != 1 || tags[0] != "emd" {
@@ -135,7 +130,7 @@ func TestDocFileParseConfigAndTags(t *testing.T) {
 	}
 	// empty metadata is safe
 	empty := &model.Document{}
-	if docFileParseConfig(empty) != nil || docTags(empty) != nil {
+	if DocFileParseConfig(empty) != nil || docTags(empty) != nil {
 		t.Fatal("empty doc must yield nil cfg/tags")
 	}
 }

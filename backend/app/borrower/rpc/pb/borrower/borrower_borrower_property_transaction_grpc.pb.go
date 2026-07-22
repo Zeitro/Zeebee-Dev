@@ -34,6 +34,8 @@ const (
 	BorrowerPropertyTransaction_DeleteDocumentFile_FullMethodName     = "/borrower.BorrowerPropertyTransaction/DeleteDocumentFile"
 	BorrowerPropertyTransaction_OperationStats_FullMethodName         = "/borrower.BorrowerPropertyTransaction/OperationStats"
 	BorrowerPropertyTransaction_OperationList_FullMethodName          = "/borrower.BorrowerPropertyTransaction/OperationList"
+	BorrowerPropertyTransaction_ParseFileExtract_FullMethodName       = "/borrower.BorrowerPropertyTransaction/ParseFileExtract"
+	BorrowerPropertyTransaction_GetFileExtractProgress_FullMethodName = "/borrower.BorrowerPropertyTransaction/GetFileExtractProgress"
 )
 
 // BorrowerPropertyTransactionClient is the client API for BorrowerPropertyTransaction service.
@@ -54,6 +56,8 @@ type BorrowerPropertyTransactionClient interface {
 	DeleteDocumentFile(ctx context.Context, in *BorrowerPropertyTransactionDocumentDeleteFileRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 	OperationStats(ctx context.Context, in *TransactionOperationStatsRequest, opts ...grpc.CallOption) (*TransactionOperationStatsResponse, error)
 	OperationList(ctx context.Context, in *TransactionOperationListRequest, opts ...grpc.CallOption) (*TransactionOperationListResponse, error)
+	ParseFileExtract(ctx context.Context, in *ParseFileExtractReq, opts ...grpc.CallOption) (*ParseFileExtractResp, error)
+	GetFileExtractProgress(ctx context.Context, in *GetFileExtractProgressReq, opts ...grpc.CallOption) (*GetFileExtractProgressResp, error)
 }
 
 type borrowerPropertyTransactionClient struct {
@@ -204,6 +208,26 @@ func (c *borrowerPropertyTransactionClient) OperationList(ctx context.Context, i
 	return out, nil
 }
 
+func (c *borrowerPropertyTransactionClient) ParseFileExtract(ctx context.Context, in *ParseFileExtractReq, opts ...grpc.CallOption) (*ParseFileExtractResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ParseFileExtractResp)
+	err := c.cc.Invoke(ctx, BorrowerPropertyTransaction_ParseFileExtract_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *borrowerPropertyTransactionClient) GetFileExtractProgress(ctx context.Context, in *GetFileExtractProgressReq, opts ...grpc.CallOption) (*GetFileExtractProgressResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetFileExtractProgressResp)
+	err := c.cc.Invoke(ctx, BorrowerPropertyTransaction_GetFileExtractProgress_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BorrowerPropertyTransactionServer is the server API for BorrowerPropertyTransaction service.
 // All implementations must embed UnimplementedBorrowerPropertyTransactionServer
 // for forward compatibility.
@@ -222,6 +246,8 @@ type BorrowerPropertyTransactionServer interface {
 	DeleteDocumentFile(context.Context, *BorrowerPropertyTransactionDocumentDeleteFileRequest) (*proto.EmptyResponse, error)
 	OperationStats(context.Context, *TransactionOperationStatsRequest) (*TransactionOperationStatsResponse, error)
 	OperationList(context.Context, *TransactionOperationListRequest) (*TransactionOperationListResponse, error)
+	ParseFileExtract(context.Context, *ParseFileExtractReq) (*ParseFileExtractResp, error)
+	GetFileExtractProgress(context.Context, *GetFileExtractProgressReq) (*GetFileExtractProgressResp, error)
 	mustEmbedUnimplementedBorrowerPropertyTransactionServer()
 }
 
@@ -273,6 +299,12 @@ func (UnimplementedBorrowerPropertyTransactionServer) OperationStats(context.Con
 }
 func (UnimplementedBorrowerPropertyTransactionServer) OperationList(context.Context, *TransactionOperationListRequest) (*TransactionOperationListResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method OperationList not implemented")
+}
+func (UnimplementedBorrowerPropertyTransactionServer) ParseFileExtract(context.Context, *ParseFileExtractReq) (*ParseFileExtractResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ParseFileExtract not implemented")
+}
+func (UnimplementedBorrowerPropertyTransactionServer) GetFileExtractProgress(context.Context, *GetFileExtractProgressReq) (*GetFileExtractProgressResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetFileExtractProgress not implemented")
 }
 func (UnimplementedBorrowerPropertyTransactionServer) mustEmbedUnimplementedBorrowerPropertyTransactionServer() {
 }
@@ -548,6 +580,42 @@ func _BorrowerPropertyTransaction_OperationList_Handler(srv interface{}, ctx con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BorrowerPropertyTransaction_ParseFileExtract_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ParseFileExtractReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BorrowerPropertyTransactionServer).ParseFileExtract(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BorrowerPropertyTransaction_ParseFileExtract_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BorrowerPropertyTransactionServer).ParseFileExtract(ctx, req.(*ParseFileExtractReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BorrowerPropertyTransaction_GetFileExtractProgress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetFileExtractProgressReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BorrowerPropertyTransactionServer).GetFileExtractProgress(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BorrowerPropertyTransaction_GetFileExtractProgress_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BorrowerPropertyTransactionServer).GetFileExtractProgress(ctx, req.(*GetFileExtractProgressReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BorrowerPropertyTransaction_ServiceDesc is the grpc.ServiceDesc for BorrowerPropertyTransaction service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -610,6 +678,14 @@ var BorrowerPropertyTransaction_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "OperationList",
 			Handler:    _BorrowerPropertyTransaction_OperationList_Handler,
+		},
+		{
+			MethodName: "ParseFileExtract",
+			Handler:    _BorrowerPropertyTransaction_ParseFileExtract_Handler,
+		},
+		{
+			MethodName: "GetFileExtractProgress",
+			Handler:    _BorrowerPropertyTransaction_GetFileExtractProgress_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

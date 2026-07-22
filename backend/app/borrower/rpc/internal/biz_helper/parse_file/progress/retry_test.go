@@ -1,4 +1,4 @@
-package parse_file
+package progress
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 
 func TestRetryDoSucceedsFirstAttempt(t *testing.T) {
 	calls := 0
-	err := retryDo(context.Background(), func() error {
+	err := RetryDo(context.Background(), func() error {
 		calls++
 		return nil
 	})
@@ -22,7 +22,7 @@ func TestRetryDoSucceedsAfterRetry(t *testing.T) {
 	// Second attempt succeeds — exercises one exponential backoff (~2s).
 	calls := 0
 	start := time.Now()
-	err := retryDo(context.Background(), func() error {
+	err := RetryDo(context.Background(), func() error {
 		calls++
 		if calls < 2 {
 			return errors.New("transient")
@@ -41,13 +41,13 @@ func TestRetryDoSucceedsAfterRetry(t *testing.T) {
 }
 
 func TestRetryDoContextCancelAbortsBackoff(t *testing.T) {
-	// Always-fail fn + a ctx cancelled mid-first-backoff → retryDo returns
+	// Always-fail fn + a ctx cancelled mid-first-backoff → RetryDo returns
 	// ctx.Err() quickly instead of waiting out all retries (~6s).
 	ctx, cancel := context.WithTimeout(context.Background(), 300*time.Millisecond)
 	defer cancel()
 	calls := 0
 	start := time.Now()
-	err := retryDo(ctx, func() error {
+	err := RetryDo(ctx, func() error {
 		calls++
 		return errors.New("always")
 	})

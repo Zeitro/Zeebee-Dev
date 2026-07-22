@@ -1,4 +1,4 @@
-package parse_file
+package progress
 
 import (
 	"context"
@@ -46,26 +46,6 @@ func TestDedupLockSetNX(t *testing.T) {
 	ok3, _ := pm.AcquireDedupLock(ctx, 1, "sig", "req3")
 	if !ok3 {
 		t.Fatal("re-acquire after release must succeed")
-	}
-}
-
-func TestQueueSerial(t *testing.T) {
-	pm, _ := newTestProgressManager(t)
-	ctx := context.Background()
-	for _, fid := range []string{"10", "11", "12"} {
-		if err := pm.EnqueueFile(ctx, 1, 5, fid); err != nil {
-			t.Fatalf("enqueue %s: %v", fid, err)
-		}
-	}
-	for _, want := range []string{"10", "11", "12"} {
-		got, ok, err := pm.DequeueFile(ctx, 1, 5)
-		if err != nil || !ok || got != want {
-			t.Fatalf("dequeue: got=%q ok=%v err=%v, want %q", got, ok, err, want)
-		}
-	}
-	got, ok, err := pm.DequeueFile(ctx, 1, 5)
-	if err != nil || ok || got != "" {
-		t.Fatalf("empty dequeue: got=%q ok=%v err=%v, want empty", got, ok, err)
 	}
 }
 
@@ -140,5 +120,41 @@ func TestProgressJSONRoundTrip(t *testing.T) {
 	raw, _ := json.Marshal(p)
 	if strings.Contains(string(raw), `"percent"`) {
 		t.Fatalf("progress JSON leaks percent: %s", raw)
+	}
+}
+
+// TestRecoveryScan verifies the Redis contract the recovery coordinator leans
+// on: a job persists and is scannable; an in-flight job has no done record
+// (reclaimable); the hold guarantees a single owner across nodes; once done is
+// written the job is terminal. (The tryReclaim dispatch above this is glue —
+// faking AllRepos would need an interface refactor across the repo layer.)
+func TestRecoveryScan(t *testing.T) {
+	pm, _ := newTestProgressManager(t)
+	ctx := context.Background()
+	job := &Job{RequestId: "req-recover", TransactionId: 7, RuleSig: "rpa|9", Parser: "rpa", Mode: "Directory", DocumentId: 9}
+	if err := pm.WriteJob(ctx, job); err != nil {
+		t.Fatalf("write job: %v", err)
+	}
+	jobs, err := pm.ListJobs(ctx)
+	if err != nil {
+		t.Fatalf("list jobs: %v", err)
+	}
+	if len(jobs) != 1 || jobs[0].RequestId != "req-recover" || jobs[0].DocumentId != 9 {
+		t.Fatalf("ListJobs = %+v", jobs)
+	}
+	if done, _ := pm.GetDone(ctx, "req-recover"); done != nil {
+		t.Fatal("in-flight job must have no done record (reclaimable)")
+	}
+	if ok, _ := pm.AcquireHold(ctx, "req-recover", "nodeA"); !ok {
+		t.Fatal("first hold acquire must succeed")
+	}
+	if ok, _ := pm.AcquireHold(ctx, "req-recover", "nodeB"); ok {
+		t.Fatal("second node must not steal a live hold")
+	}
+	if err := pm.WriteDone(ctx, "req-recover", StatusFinished, ""); err != nil {
+		t.Fatalf("write done: %v", err)
+	}
+	if done, _ := pm.GetDone(ctx, "req-recover"); done == nil || done.Status != StatusFinished {
+		t.Fatalf("terminal done = %+v", done)
 	}
 }

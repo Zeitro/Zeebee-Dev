@@ -44,5 +44,5 @@ func (l *DocumentUploadFileLogic) DocumentUploadFile(req *types.BorrowerProperty
 		return nil, err
 	}
 
-	return &types.DocumentUploadFileResponse{Files: *files}, nil
+	return &types.DocumentUploadFileResponse{Files: *files, RequestId: rpcResp.RequestId}, nil
 }

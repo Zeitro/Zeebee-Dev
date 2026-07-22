@@ -1,4 +1,4 @@
-package parse_file
+package handler
 
 import (
 	"testing"
@@ -37,7 +37,7 @@ func TestApplyEscrowFieldsSkipEmpty(t *testing.T) {
 		OfficerPhone:  "111",
 		No:            "OLD-NO",
 	}
-	applyEscrowFields(esc, escrowFields{
+	ApplyEscrowFields(esc, escrowFields{
 		EscrowCompany: "New Co", // overwrite
 		OfficerName:   "",       // keep Old Officer
 		OfficerEmail:  "new@x.com",

@@ -1,4 +1,4 @@
-package parse_file
+package file
 
 import (
 	"bytes"
@@ -45,7 +45,10 @@ func getPdfPool() (pdfium.Pool, error) {
 	return pdfPool, pdfPoolErr
 }
 
-func withPdfInstance(fn func(instance pdfium.Pdfium) error) error {
+// WithPdfInstance runs fn on a pooled pdfium instance. Exported so the handler
+// package (which owns the LLM step) can drive pdfium without re-importing the
+// pool plumbing.
+func WithPdfInstance(fn func(instance pdfium.Pdfium) error) error {
 	pool, err := getPdfPool()
 	if err != nil {
 		return err
@@ -61,7 +64,7 @@ func withPdfInstance(fn func(instance pdfium.Pdfium) error) error {
 // downloadPDF fetches a presigned file URL (≤10 MB) and returns a seekable
 // reader for pdfium. The body is buffered into memory because a streaming http
 // body is not seekable and pdfium seeks the xref ranges itself.
-func downloadPDF(ctx context.Context, url string) (io.ReadSeeker, error) {
+func DownloadPDF(ctx context.Context, url string) (io.ReadSeeker, error) {
 	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
@@ -90,8 +93,8 @@ func downloadPDF(ctx context.Context, url string) (io.ReadSeeker, error) {
 	return bytes.NewReader(b), nil
 }
 
-// openPDF opens a seekable reader as a pdfium document.
-func openPDF(instance pdfium.Pdfium, r io.ReadSeeker) (references.FPDF_DOCUMENT, func(), error) {
+// OpenPDF opens a seekable reader as a pdfium document.
+func OpenPDF(instance pdfium.Pdfium, r io.ReadSeeker) (references.FPDF_DOCUMENT, func(), error) {
 	size, err := r.Seek(0, io.SeekEnd)
 	if err != nil {
 		return "", nil, err
@@ -138,9 +141,9 @@ func readPageText(instance pdfium.Pdfium, doc references.FPDF_DOCUMENT, page int
 	return res.Text, nil
 }
 
-// readFirstNPages concatenates text from the first n pages (or fewer if the
+// ReadFirstNPages concatenates text from the first n pages (or fewer if the
 // document is shorter) for the rpa text-extraction path.
-func readFirstNPages(instance pdfium.Pdfium, doc references.FPDF_DOCUMENT, n int) (string, error) {
+func ReadFirstNPages(instance pdfium.Pdfium, doc references.FPDF_DOCUMENT, n int) (string, error) {
 	var b strings.Builder
 	for i := 0; i < n; i++ {
 		text, err := readPageText(instance, doc, i)
@@ -166,7 +169,8 @@ func isPageOutOfRange(err error) bool {
 	return err != nil && strings.Contains(err.Error(), "page")
 }
 
-func renderPagePNG(instance pdfium.Pdfium, doc references.FPDF_DOCUMENT, page int) ([]byte, error) {
+// RenderPagePNG renders one page to PNG bytes for the vision-extraction path.
+func RenderPagePNG(instance pdfium.Pdfium, doc references.FPDF_DOCUMENT, page int) ([]byte, error) {
 	res, err := instance.RenderToFile(&requests.RenderToFile{
 		RenderPageInDPI: &requests.RenderPageInDPI{
 			Page:       requests.Page{ByIndex: &requests.PageByIndex{Document: doc, Index: page}},
@@ -186,6 +190,6 @@ func renderPagePNG(instance pdfium.Pdfium, doc references.FPDF_DOCUMENT, page in
 }
 
 // isPDF gates parsing to PDF files only; non-PDF uploads are skipped.
-func isPDF(name string) bool {
+func IsPDF(name string) bool {
 	return strings.HasSuffix(strings.ToLower(name), ".pdf")
 }

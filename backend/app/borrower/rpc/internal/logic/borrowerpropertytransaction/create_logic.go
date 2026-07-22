@@ -208,7 +208,7 @@ func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateReque
 	}, nil
 }
 
-func (l *CreateLogic) createDocumentTree(tx *gorm.DB, entityDocumentId int64, structureMap model.DocumentTemplateStructureMap, transactionType string) (*model.Document, error) {
+func (l *CreateLogic) createDocumentTree(tx *gorm.DB, entityDocumentId int64, structureMap dto.DocumentTemplateStructureMap, transactionType string) (*model.Document, error) {
 	// merge common + per-type nodes
 	nodes := structureMap["common"]
 	typeKey := strings.ToLower(transactionType)
@@ -238,7 +238,7 @@ func (l *CreateLogic) createDocumentTree(tx *gorm.DB, entityDocumentId int64, st
 	return root, nil
 }
 
-func (l *CreateLogic) createDocumentNode(tx *gorm.DB, entityDocumentId int64, parentId int64, node model.DocumentTemplateStructure, level int32) error {
+func (l *CreateLogic) createDocumentNode(tx *gorm.DB, entityDocumentId int64, parentId int64, node dto.DocumentTemplateStructure, level int32) error {
 	docType := constants.DocumentTypeBranch
 	if len(node.Children) == 0 {
 		docType = constants.DocumentTypeLeaf
@@ -249,6 +249,7 @@ func (l *CreateLogic) createDocumentNode(tx *gorm.DB, entityDocumentId int64, pa
 		"status":            constants.BorrowerPropertyTransactionStatusPending,
 		"create_type":       "System",
 		"file_parse_config": node.FileParseConfig,
+		"tags":              node.Tags,
 	})
 
 	doc := &model.Document{

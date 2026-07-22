@@ -8,6 +8,7 @@ import (
 
 	"zeebee-backend/app/borrower/config"
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file"
+	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file/progress"
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/common/llm"
 	"zeebee-backend/domains/zeebee/repo"
@@ -25,7 +26,7 @@ type ServiceContext struct {
 	LLM      llm.Client
 	// Progress owns the bpt:parse:* Redis keys (locks, staged progress, done,
 	// reqmap, queue, job) for async parse + restart recovery.
-	Progress *parse_file.ProgressManager
+	Progress *progress.ProgressManager
 	// FileParser orchestrates async file extraction (escrow OnUpload now; rpa
 	// manual_tree/select with US2/US3). Nil-shared deps make it a no-op when
 	// LLM is unconfigured.
@@ -68,8 +69,11 @@ func NewServiceContext(c config.RpcConf, logger logx.Logger) *ServiceContext {
 		AllRepos:     repo.NewAllRepos(global.GetGormDB()),
 		ZeitroClient: zeitroClient,
 		LLM:          llmClient,
-		Progress:     parse_file.NewProgressManager(global.GetRedis(), logger),
+		Progress:     progress.NewProgressManager(global.GetRedis(), logger),
 	}
 	ctx.FileParser = parse_file.NewParser(ctx.AllRepos, llmClient, ctx.Progress, logger)
+	// Recover in-flight parses left by a previous/crashed process, then sweep
+	// periodically for abandoned jobs. No-op when LLM (parse) is disabled.
+	ctx.FileParser.StartRecovery()
 	return ctx
 }

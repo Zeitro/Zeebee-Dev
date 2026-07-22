@@ -29,7 +29,15 @@ type ChecklistNode struct {
 	Children                           []*ChecklistNode `json:"children,omitempty"`
 	FileCount                          int32            `json:"file_count,omitempty"`
 	Files                              []*FileEntityDto `json:"files,omitempty"`
+	// ParseRules are this node's file_parse_config rules, projected for the
+	// frontend (it renders ManualTree/ManualSelect buttons per rule). The
+	// backend reads source/triggered_by/selector to derive trigger behavior.
+	ParseRules []DocumentTemplateFileParseRule `json:"parse_rules,omitempty"`
+	// Tags classify the node (manual_select targets); copied from doc metadata.
+	Tags []string `json:"tags,omitempty"`
 }
+
+
 
 type BpTransactionSwitchStatusDto struct {
 	Id             int64                                       `json:"id"`
