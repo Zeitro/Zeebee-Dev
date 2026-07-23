@@ -1,3 +1,5 @@
+// Package file wraps pdfium (via wazero) for PDF download + text render and
+// gates parsing by file type. No CGO.
 package file
 
 import (
@@ -61,7 +63,7 @@ func WithPdfInstance(fn func(instance pdfium.Pdfium) error) error {
 	return fn(inst)
 }
 
-// downloadPDF fetches a presigned file URL (≤10 MB) and returns a seekable
+// DownloadPDF fetches a presigned file URL (≤10 MB) and returns a seekable
 // reader for pdfium. The body is buffered into memory because a streaming http
 // body is not seekable and pdfium seeks the xref ranges itself.
 func DownloadPDF(ctx context.Context, url string) (io.ReadSeeker, error) {
@@ -189,7 +191,7 @@ func RenderPagePNG(instance pdfium.Pdfium, doc references.FPDF_DOCUMENT, page in
 	return *res.ImageBytes, nil
 }
 
-// isPDF gates parsing to PDF files only; non-PDF uploads are skipped.
+// IsPDF gates parsing to PDF files only; non-PDF uploads are skipped.
 func IsPDF(name string) bool {
 	return strings.HasSuffix(strings.ToLower(name), ".pdf")
 }

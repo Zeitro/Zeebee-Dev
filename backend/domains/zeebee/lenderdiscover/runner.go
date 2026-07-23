@@ -23,7 +23,7 @@ type Config struct {
 	ScopeState      string `json:"scope_state"`
 	ScopeExtra      string `json:"scope_extra"`
 	UserPrompt      string `json:"user_prompt"`
-	Model     string `json:"model"`
+	Model           string `json:"model"`
 }
 
 const (

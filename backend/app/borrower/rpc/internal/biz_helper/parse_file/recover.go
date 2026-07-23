@@ -6,7 +6,6 @@ import (
 
 	"github.com/zeromicro/go-zero/core/threading"
 
-	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file/handler"
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file/progress"
 	"zeebee-backend/domains/zeebee/model"
 )
@@ -51,9 +50,12 @@ func (p *Parser) recoverJobs(ctx context.Context) {
 
 // tryReclaim takes ownership of one abandoned job: skip if finished or still
 // held, else steal the hold, re-derive the rule, and re-run through the same
-// lifecycle as a fresh dispatch. Write-back is idempotent skip-empty, so
-// re-running from scratch is safe; an escrow on_upload run resumes by draining
-// whatever remains in the persisted per-document queue.
+// lifecycle as a fresh dispatch. The rpa extract stage resumes from its
+// persisted checkpoint — it recalls already-extracted envelopes (fileId →
+// content) and skips those files — so a half-done rpa run continues without
+// re-calling the LLM for finished files or losing their results. Escrow re-runs
+// outright (idempotent per-file upsert, typically a single file). Write-back is
+// idempotent, so either path converges to the same row state.
 func (p *Parser) tryReclaim(ctx context.Context, job *progress.Job) {
 	if done, _ := p.progMgr.GetDone(ctx, job.RequestId); done != nil {
 		return
@@ -71,7 +73,7 @@ func (p *Parser) tryReclaim(ctx context.Context, job *progress.Job) {
 		_ = p.progMgr.ReleaseHold(ctx, job.RequestId)
 		return
 	}
-	rule, ok := handler.ResolveRule(handler.DocFileParseConfig(doc), job.Parser)
+	rule, ok := resolveRule(docFileParseConfig(doc), job.Parser)
 	if !ok {
 		p.finalize(ctx, job.TransactionId, job.RequestId, job.RuleSig)
 		_ = p.progMgr.WriteDone(ctx, job.RequestId, progress.StatusFailed, "rule no longer resolvable")

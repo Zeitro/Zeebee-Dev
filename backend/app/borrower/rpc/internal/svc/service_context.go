@@ -23,7 +23,7 @@ type ServiceContext struct {
 
 	// LLM is the shared single-instance client for file-parse extraction +
 	// arbitration. Nil if unconfigured (parse dispatch becomes a no-op).
-	LLM      llm.Client
+	LLM llm.Client
 	// Progress owns the bpt:parse:* Redis keys (locks, staged progress, done,
 	// reqmap, queue, job) for async parse + restart recovery.
 	Progress *progress.ProgressManager

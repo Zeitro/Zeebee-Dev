@@ -1,7 +1,11 @@
+// Package parse_file coordinates the staged async file-parse pipeline (escrow
+// on_upload, rpa manual): dedup lock, Redis-backed progress/hold, and restart
+// recovery. Per-parser workers live in package handler.
 package parse_file
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"sync"
 	"time"
@@ -56,7 +60,7 @@ func NewParser(repos *repo.AllRepos, llmClient llm.Client, progMgr *progress.Pro
 		handlers: make(map[string]handler.Handler),
 	}
 	p.Register(constants.DocumentTemplateFileParseParserEscrowInfo, handler.NewEscrowHandler(repos, logger, llmClient))
-	p.Register(constants.DocumentTemplateFileParseParserRpa, handler.NewRPAHandler(repos, logger, llmClient))
+	p.Register(constants.DocumentTemplateFileParseParserRPA, handler.NewRPAHandler(repos, logger, llmClient))
 	return p
 }
 
@@ -75,18 +79,21 @@ const (
 
 // DispatchParam carries everything Dispatch needs to route + run a parse.
 type DispatchParam struct {
-	TransactionId int64
-	DocumentId    int64
-	OrgId         int64        // manual IDOR check; ignored for on_upload
-	Files         []model.File // on_upload batch; nil for manual
-	Parser        string       // explicit parser for manual; ignored for on_upload (rule-driven)
-	Trigger       Trigger
+	TransactionId  int64
+	DocumentId     int64
+	OrganizationId int64        // manual IDOR check; ignored for on_upload
+	Files          []model.File // on_upload batch; nil for manual
+	Parser         string       // explicit parser for manual; ignored for on_upload (rule-driven)
+	Trigger        Trigger
 }
 
-// Dispatch is the single entry point for both on_upload and manual parses. It
-// routes by parser/source/trigger/rule, acquires the dedup lock, seeds
-// job/hold/progress, and kicks the async runner. On_upload is fail-silent (a
-// dispatch error is logged, not surfaced — the upload response must not be
+// Dispatch is the single entry point for both on_upload and manual parses. The
+// shared contract (FR-031): resolve the rule(s) by parser, then gate by the
+// rule's declared TriggeredBy — a rule runs only via the trigger it declares
+// (Trigger and Source are orthogonal; the gate looks only at TriggeredBy, the
+// handler resolves file scope from Source). It then acquires the dedup lock,
+// seeds job/hold/progress, and kicks the async runner. On_upload is fail-silent
+// (a dispatch error is logged, not surfaced — the upload response must not be
 // blocked by the side-channel parse); manual surfaces ErrParseInProgress on a
 // duplicate.
 func (p *Parser) Dispatch(ctx context.Context, param DispatchParam) (requestId string, err error) {
@@ -94,44 +101,65 @@ func (p *Parser) Dispatch(ctx context.Context, param DispatchParam) (requestId s
 		return "", nil
 	}
 	defer func() {
-		if err != nil && param.Trigger == TriggerOnUpload {
-			p.logger.WithContext(ctx).WithFields(logx.Field("doc_id", param.DocumentId)).
-				Errorf("dispatch on_upload parse: %s", err)
-			err = nil // fail-silent for the upload side-channel
+		if err != nil {
+			p.logger.WithContext(ctx).WithFields(logx.Field("param", param)).
+				Errorf("dispatch parse: %s", err)
 		}
 	}()
 
-	var (
-		doc      *model.Document
-		rule     dto.DocumentTemplateFileParseRule
-		ok       bool
-		onUpload = param.Trigger == TriggerOnUpload
-	)
-	if onUpload {
-		doc, err = p.repos.DocumentRepo.FindOneWithFiles(ctx, param.DocumentId)
-		if err != nil || doc == nil {
-			return "", errorx.New("document not found")
+	if param.Trigger == TriggerOnUpload {
+		return p.dispatchOnUpload(ctx, param)
+	}
+	return p.dispatchManual(ctx, param)
+}
+
+// dispatchOnUpload reads the document's parse config by DocumentId (on_upload
+// carries no parser name) and runs every Upload-triggered rule as its own async
+// parse. Distinct parsers have distinct dedup sigs, so they don't collide.
+// Fail-silent: dispatch errors are logged by the Dispatch defer, not surfaced to
+// the upload response (the upload already succeeded).
+func (p *Parser) dispatchOnUpload(ctx context.Context, param DispatchParam) (string, error) {
+	doc, e := p.repos.DocumentRepo.FindOneWithFiles(ctx, param.DocumentId)
+	if e != nil || doc == nil {
+		return "", errorx.New("document not found")
+	}
+	rules := onUploadRules(docFileParseConfig(doc)) // gate: TriggeredBy == Upload
+	var lastReq string
+	for _, rule := range rules {
+		h := p.handlers[string(rule.Parser)]
+		if h == nil {
+			continue
 		}
-		rules := handler.OnUploadRules(handler.DocFileParseConfig(doc))
-		if len(rules) == 0 {
-			return "", nil // nothing to do for this document
+		rid, e := p.start(ctx, param.TransactionId, param.DocumentId, rule, h, param.Files, true)
+		if e != nil {
+			return "", e
 		}
-		rule = rules[0]
-	} else {
-		doc, err = p.assertOwnedBranch(ctx, param.TransactionId, param.DocumentId, param.OrgId)
-		if err != nil {
-			return "", err
-		}
-		rule, ok = handler.ResolveRule(handler.DocFileParseConfig(doc), param.Parser)
-		if !ok {
-			return "", errorx.New("no matching parse rule for document")
-		}
+		lastReq = rid
+	}
+	return lastReq, nil
+}
+
+// dispatchManual resolves the single rule for the explicit parser, then gates it
+// by TriggeredBy == Manual. A parser whose only rule is Upload-triggered cannot
+// be fired manually — the trigger a rule declares is the only trigger that runs
+// it.
+func (p *Parser) dispatchManual(ctx context.Context, param DispatchParam) (string, error) {
+	doc, e := p.assertOwnedBranch(ctx, param.TransactionId, param.DocumentId, param.OrganizationId)
+	if e != nil {
+		return "", e
+	}
+	rule, ok := resolveRule(docFileParseConfig(doc), param.Parser) // by parser, trigger-agnostic
+	if !ok {
+		return "", errorx.New("no matching parse rule for document")
+	}
+	if !ruleMatchesTrigger(rule, TriggerManual) {
+		return "", errorx.New("parse rule does not apply to manual trigger")
 	}
 	h := p.handlers[string(rule.Parser)]
 	if h == nil {
 		return "", errorx.New("unknown parser")
 	}
-	return p.start(ctx, param.TransactionId, param.DocumentId, rule, h, param.Files, onUpload)
+	return p.start(ctx, param.TransactionId, param.DocumentId, rule, h, param.Files, false)
 }
 
 // start acquires the dedup lock (→ ErrParseInProgress on manual / join ongoing
@@ -177,6 +205,12 @@ func (p *Parser) run(txId, docId int64, requestId, sig string, h handler.Handler
 	defer p.finalize(ctx, txId, requestId, sig)
 
 	rep := p.reporter(requestId)
+	// A recovered run may start after the sliding progress record (ttlProgressSec)
+	// has expired: re-seed it so the handler's stage writes are visible to polls
+	// again. Fresh runs skip this (progress already seeded by start()).
+	if prog, _ := p.progMgr.GetProgress(ctx, requestId); prog == nil {
+		_ = p.progMgr.InitProgress(ctx, requestId, h.Stages(files))
+	}
 	if err := h.Parse(ctx, txId, docId, files, rule, rep); err != nil {
 		p.logger.WithContext(ctx).WithFields(
 			logx.Field("request_id", requestId),
@@ -284,6 +318,19 @@ func (r redisReporter) SetStageTotal(ctx context.Context, stage string, total in
 
 func (r redisReporter) SetStageProcessed(ctx context.Context, stage string, processed int) {
 	r.mut(ctx, stage, func(s *progress.StageState) { s.Processed = processed })
+}
+
+// StageOutput returns the stage's marshaled resume checkpoint (extract envelopes)
+// from its own job-TTL key so a recovered run recalls already-extracted results
+// even after the sliding progress record has expired.
+func (r redisReporter) StageOutput(ctx context.Context, stage string) json.RawMessage {
+	out, _ := r.progMgr.GetStageCheckpoint(ctx, r.requestId, stage)
+	return out
+}
+
+// SaveStageOutput writes the stage checkpoint to its own job-TTL key.
+func (r redisReporter) SaveStageOutput(ctx context.Context, stage string, output json.RawMessage) {
+	_ = r.progMgr.SetStageCheckpoint(ctx, r.requestId, stage, output)
 }
 
 func (r redisReporter) mut(ctx context.Context, stage string, fn func(*progress.StageState)) {

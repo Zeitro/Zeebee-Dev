@@ -193,30 +193,15 @@ func readNodeMetadata(doc *model.Document) (bool, []dto.DocumentTemplateFilePars
 	return meta.IsRequired, projectParseRules(meta.FileParseConfig), meta.Tags
 }
 
-// projectParseRules maps the stored config's rules to the lean frontend shape.
-// An absent config yields no rules.
+// projectParseRules returns the stored config's rules for the frontend
+// checklist. The full rule flows through (parser, source, triggered_by, label,
+// selector) so the UI can render each rule's trigger mode. An absent config
+// yields no rules.
 func projectParseRules(cfg *dto.DocumentTemplateFileParseConfig) []dto.DocumentTemplateFileParseRule {
 	if cfg == nil {
 		return nil
 	}
 	return cfg.Rules
-
-	// out := make([]*dto.DocumentTemplateFileParseRule, 0, len(cfg.Rules))
-	// for i, r := range cfg.Rules {
-	//
-	//
-	// 	rule := &dto.DocumentTemplateFileParseRule{
-	// 		Parser:      r.Parser,
-	// 		Source:      r.Source,
-	// 		TriggeredBy: r.TriggeredBy,
-	// 		Label:       r.Label,
-	// 	}
-	// 	if r.Selector != nil {
-	// 		rule.Selector = &dto.DocumentTemplateTagSelector{Tags: r.Selector.Tags}
-	// 	}
-	// 	out = append(out, &cfg.Rules[i])
-	// }
-	// return out
 }
 
 // collectLeafIds returns document IDs that have no children (leaf nodes)

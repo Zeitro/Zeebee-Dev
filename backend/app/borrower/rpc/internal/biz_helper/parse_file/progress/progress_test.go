@@ -12,7 +12,7 @@ import (
 	"zeebee-backend/common/redisx"
 )
 
-func newTestProgressManager(t *testing.T) (*ProgressManager, *miniredis.Miniredis) {
+func newTestProgressManager(t *testing.T) *ProgressManager {
 	t.Helper()
 	mr, err := miniredis.Run()
 	if err != nil {
@@ -23,11 +23,11 @@ func newTestProgressManager(t *testing.T) (*ProgressManager, *miniredis.Miniredi
 	if err != nil {
 		t.Fatalf("redisx: %v", err)
 	}
-	return NewProgressManager(rdb, logx.WithContext(context.Background())), mr
+	return NewProgressManager(rdb, logx.WithContext(context.Background()))
 }
 
 func TestDedupLockSetNX(t *testing.T) {
-	pm, _ := newTestProgressManager(t)
+	pm := newTestProgressManager(t)
 	ctx := context.Background()
 	ok, err := pm.AcquireDedupLock(ctx, 1, "sig", "req1")
 	if err != nil || !ok {
@@ -50,7 +50,7 @@ func TestDedupLockSetNX(t *testing.T) {
 }
 
 func TestProgressWriteReadDone(t *testing.T) {
-	pm, _ := newTestProgressManager(t)
+	pm := newTestProgressManager(t)
 	ctx := context.Background()
 	rid := "req-1"
 	stages := []StageState{
@@ -80,7 +80,7 @@ func TestProgressWriteReadDone(t *testing.T) {
 }
 
 func TestReqMap(t *testing.T) {
-	pm, _ := newTestProgressManager(t)
+	pm := newTestProgressManager(t)
 	ctx := context.Background()
 	if err := pm.SetReqMap(ctx, 1, "sig", "req-9"); err != nil {
 		t.Fatalf("set: %v", err)
@@ -92,7 +92,7 @@ func TestReqMap(t *testing.T) {
 }
 
 func TestHoldSetNX(t *testing.T) {
-	pm, _ := newTestProgressManager(t)
+	pm := newTestProgressManager(t)
 	ctx := context.Background()
 	ok, _ := pm.AcquireHold(ctx, "req", "nodeA")
 	if !ok {
@@ -105,7 +105,7 @@ func TestHoldSetNX(t *testing.T) {
 }
 
 func TestProgressJSONRoundTrip(t *testing.T) {
-	pm, _ := newTestProgressManager(t)
+	pm := newTestProgressManager(t)
 	ctx := context.Background()
 	p := &Progress{Status: StatusRunning, Stage: StageExtract,
 		Stages: []StageState{{Name: StageExtract, Status: StageStatusRunning, Processed: 1, Total: 2}}}
@@ -129,7 +129,7 @@ func TestProgressJSONRoundTrip(t *testing.T) {
 // written the job is terminal. (The tryReclaim dispatch above this is glue —
 // faking AllRepos would need an interface refactor across the repo layer.)
 func TestRecoveryScan(t *testing.T) {
-	pm, _ := newTestProgressManager(t)
+	pm := newTestProgressManager(t)
 	ctx := context.Background()
 	job := &Job{RequestId: "req-recover", TransactionId: 7, RuleSig: "rpa|9", Parser: "rpa", Mode: "Directory", DocumentId: 9}
 	if err := pm.WriteJob(ctx, job); err != nil {
@@ -156,5 +156,24 @@ func TestRecoveryScan(t *testing.T) {
 	}
 	if done, _ := pm.GetDone(ctx, "req-recover"); done == nil || done.Status != StatusFinished {
 		t.Fatalf("terminal done = %+v", done)
+	}
+}
+
+// TestProgressStageCheckpointRoundTrip verifies the extract-stage resume
+// checkpoint survives in its own job-TTL key — the contract rpa's resume leans
+// on (it must outlive the sliding progress record).
+func TestProgressStageCheckpointRoundTrip(t *testing.T) {
+	pm := newTestProgressManager(t)
+	ctx := context.Background()
+	if got, _ := pm.GetStageCheckpoint(ctx, "req", StageExtract); got != nil {
+		t.Fatalf("fresh checkpoint = %s, want nil", got)
+	}
+	out := json.RawMessage(`{"10":{"file_id":10,"fields":{"purchase_amount":1000}}}`)
+	if err := pm.SetStageCheckpoint(ctx, "req", StageExtract, out); err != nil {
+		t.Fatalf("set: %v", err)
+	}
+	got, _ := pm.GetStageCheckpoint(ctx, "req", StageExtract)
+	if string(got) != string(out) {
+		t.Fatalf("checkpoint round-trip = %q, want %q", got, out)
 	}
 }

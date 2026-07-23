@@ -31,9 +31,9 @@ type base struct {
 // so extraction needs no extra DB round-trip per file. Type-agnostic — PDF today,
 // image/doc later; the handler's extract step dispatches per type.
 type collectedFile struct {
-	FileId int64  `json:"file_id"`
-	Url    string `json:"url"`
-	Name   string `json:"name"`
+	FileId int64
+	Url    string
+	Name   string
 }
 
 // resolveFiles picks the in-scope files for a parse per rule.Source (the SCOPE),

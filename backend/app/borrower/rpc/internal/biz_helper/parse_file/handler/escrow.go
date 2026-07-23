@@ -31,11 +31,6 @@ type escrowFields struct {
 	EscrowNumber  string `json:"escrow_number"`
 }
 
-func (e escrowFields) complete() bool {
-	return e.EscrowCompany != "" && e.OfficerName != "" && e.OfficerEmail != "" &&
-		e.OfficerPhone != "" && e.EscrowNumber != ""
-}
-
 func parseEscrowFields(content string) (escrowFields, error) {
 	var f escrowFields
 	if err := json.Unmarshal([]byte(content), &f); err != nil {
@@ -45,8 +40,7 @@ func parseEscrowFields(content string) (escrowFields, error) {
 }
 
 // escrowPrompt asks for the 5 escrow fields off the rendered first page.
-func escrowPrompt() string {
-	return `Extract these fields from the attached first page of a wire/escrow instruction document.
+const escrowPrompt = `Extract these fields from the attached first page of a wire/escrow instruction document.
 - escrow_company: the escrow/title company name in standard Title Case (e.g. "Mission Escrow, Inc.").
 - officer_name: the escrow officer's full name only (e.g. "Renee Lo").
 - officer_email: the escrow officer's email address, if printed on the page.
@@ -54,7 +48,6 @@ func escrowPrompt() string {
 - escrow_number: the value next to the "Escrow No." label (e.g. "202656-RL").
 Only extract what is actually printed on the page. If a field is absent, unreadable, or uncertain, use null — never guess.
 Respond as JSON: {"escrow_company": <string|null>, "officer_name": <string|null>, "officer_email": <string|null>, "officer_phone": <string|null>, "escrow_number": <string|null>}`
-}
 
 // ExtractEscrowFields vision-reads escrow fields off the rendered first page.
 func ExtractEscrowFields(ctx context.Context, client llm.Client, r io.ReadSeeker) (fields escrowFields, err error) {
@@ -69,7 +62,7 @@ func ExtractEscrowFields(ctx context.Context, client llm.Client, r io.ReadSeeker
 		if e != nil {
 			return e
 		}
-		content, e := client.VisionJSON(ctx, extractSystemPrompt, escrowPrompt(), png)
+		content, e := client.VisionJSON(ctx, extractSystemPrompt, escrowPrompt, png)
 		if e != nil {
 			return e
 		}
@@ -119,7 +112,7 @@ func NewEscrowHandler(repos *repo.AllRepos, logger logx.Logger, client llm.Clien
 func (h *EscrowHandler) Stages(files []model.File) []progress.StageState {
 	return []progress.StageState{{
 		Name: progress.StageExtract, Status: progress.StageStatusRunning,
-		Total: len(files), Retry: progress.RetryStateFor(0),
+		Total: len(files),
 	}}
 }
 
@@ -134,15 +127,16 @@ func (h *EscrowHandler) Parse(ctx context.Context, txId, docId int64, files []mo
 	}
 	rep.SetStageTotal(ctx, progress.StageExtract, len(inScope))
 	for i, f := range inScope {
-		if !file.IsPDF(f.Name) {
-			continue // ponytail: PDF-only for now; image/doc handled in the file pkg later
+		if file.IsPDF(f.Name) {
+			if err := h.parseEscrowFile(ctx, txId, f); err != nil {
+				h.logger.WithContext(ctx).WithFields(
+					logx.Field("file", f.Name),
+					logx.Field("stacks", errorx.GetErrorStack(err)),
+				).Errorf("parse escrow file: %s", err)
+			}
 		}
-		if err := h.parseEscrowFile(ctx, txId, f); err != nil {
-			h.logger.WithContext(ctx).WithFields(
-				logx.Field("file", f.Name),
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Errorf("parse escrow file: %s", err)
-		}
+		// ponytail: PDF-only for now; image/doc handled in the file pkg later.
+		// Count every file (incl. skipped) so processed/total stays monotonic.
 		rep.SetStageProcessed(ctx, progress.StageExtract, i+1)
 	}
 	return nil

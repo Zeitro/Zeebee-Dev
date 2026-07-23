@@ -10,12 +10,13 @@ import (
 // stage counts its own attempts independently (FR-030).
 const (
 	retryMax    = 3
-	retryBaseMs = 2000 // 2s, 4s, 8s exponential backoff
+	retryBaseMs = 2000 // 2s, 4s exponential backoff (3rd attempt runs immediately)
 )
 
-// retryDo calls fn up to retryMax times with exponential backoff (2s, 4s, 8s).
-// It returns the last error once attempts are exhausted. The backoff sleeps
-// are ctx-aware so a cancelled parse does not block.
+// RetryDo calls fn up to retryMax times with exponential backoff (2s, 4s; the
+// final attempt runs without a trailing sleep). It returns the last error once
+// attempts are exhausted. The backoff sleeps are ctx-aware so a cancelled
+// parse does not block.
 func RetryDo(ctx context.Context, fn func() error) error {
 	var err error
 	for attempt := 0; attempt < retryMax; attempt++ {
@@ -34,9 +35,4 @@ func RetryDo(ctx context.Context, fn func() error) error {
 		}
 	}
 	return err
-}
-
-// retryStateFor returns the RetryState snapshot for persistence in progress.
-func RetryStateFor(attempt int) RetryState {
-	return RetryState{Count: attempt, Max: retryMax, BackoffMs: int64(retryBaseMs)}
 }

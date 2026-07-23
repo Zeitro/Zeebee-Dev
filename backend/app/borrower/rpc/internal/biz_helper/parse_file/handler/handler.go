@@ -1,7 +1,11 @@
+// Package handler holds the per-parser workers (escrow, rpa) plus the shared
+// extract/collect/write-back primitives. The coordinator in package parse_file
+// owns the run lifecycle; handlers are pure workers reporting stage progress.
 package handler
 
 import (
 	"context"
+	"encoding/json"
 
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file/progress"
 	"zeebee-backend/domains/zeebee/data/dto"
@@ -15,6 +19,12 @@ type Reporter interface {
 	MarkStage(ctx context.Context, stage, status string)
 	SetStageTotal(ctx context.Context, stage string, total int)
 	SetStageProcessed(ctx context.Context, stage string, processed int)
+	// StageOutput reads the stage's resume checkpoint — the marshaled
+	// map[int64] of already-extracted per-file results. A recovered run recalls
+	// it so it skips finished files without losing their results.
+	StageOutput(ctx context.Context, stage string) json.RawMessage
+	// SaveStageOutput writes the checkpoint after a file is processed.
+	SaveStageOutput(ctx context.Context, stage string, output json.RawMessage)
 }
 
 // Handler implements one parser's PURE file-extraction work. It owns no run

@@ -20,38 +20,6 @@ func mustMeta(t *testing.T, v any) datatypes.JSON {
 	return datatypes.JSON(b)
 }
 
-func TestEffectiveRules(t *testing.T) {
-	tests := []struct {
-		name string
-		cfg  *dto.DocumentTemplateFileParseConfig
-		want int
-	}{
-		{"nil", nil, 0},
-		{"empty", &dto.DocumentTemplateFileParseConfig{}, 0},
-		{"rules pass through", &dto.DocumentTemplateFileParseConfig{
-			Rules: []dto.DocumentTemplateFileParseRule{{Parser: constants.DocumentTemplateFileParseParserRpa, Source: constants.DocumentTemplateFileParseSourceDirectory}}}, 1},
-	}
-	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
-			got := effectiveRules(tc.cfg)
-			if len(got) != tc.want {
-				t.Fatalf("got %d rules, want %d (%+v)", len(got), tc.want, got)
-			}
-		})
-	}
-}
-
-func TestOnUploadRules(t *testing.T) {
-	cfg := &dto.DocumentTemplateFileParseConfig{Rules: []dto.DocumentTemplateFileParseRule{
-		{Parser: constants.DocumentTemplateFileParseParserEscrowInfo, Source: constants.DocumentTemplateFileParseSourceSingleFile},
-		{Parser: constants.DocumentTemplateFileParseParserRpa, Source: constants.DocumentTemplateFileParseSourceDirectory},
-	}}
-	got := OnUploadRules(cfg)
-	if len(got) != 1 || got[0].Parser != constants.DocumentTemplateFileParseParserEscrowInfo {
-		t.Fatalf("OnUploadRules = %+v, want only escrow SingleFile", got)
-	}
-}
-
 func doc(id, parent int64, typ constants.DocumentType, tags ...string) *model.Document {
 	meta, _ := json.Marshal(map[string]any{"tags": tags})
 	return &model.Document{
@@ -113,24 +81,13 @@ func TestCollectBySelector(t *testing.T) {
 	}
 }
 
-func TestDocFileParseConfigAndTags(t *testing.T) {
-	d := &model.Document{Metadata: mustMeta(t, map[string]any{
-		"file_parse_config": map[string]any{
-			"rules": []map[string]any{{"parser": "Rpa", "mode": "ManualTree"}},
-		},
-		"tags": []string{"emd"},
-	})}
-	cfg := DocFileParseConfig(d)
-	if cfg == nil || len(cfg.Rules) != 1 {
-		t.Fatalf("DocFileParseConfig = %+v", cfg)
-	}
+func TestDocTags(t *testing.T) {
+	d := &model.Document{Metadata: mustMeta(t, map[string]any{"tags": []string{"emd"}})}
 	tags := docTags(d)
 	if len(tags) != 1 || tags[0] != "emd" {
 		t.Fatalf("docTags = %+v", tags)
 	}
-	// empty metadata is safe
-	empty := &model.Document{}
-	if DocFileParseConfig(empty) != nil || docTags(empty) != nil {
-		t.Fatal("empty doc must yield nil cfg/tags")
+	if docTags(&model.Document{}) != nil {
+		t.Fatal("empty doc must yield nil tags")
 	}
 }

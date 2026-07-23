@@ -23,14 +23,14 @@ type ApiConf struct {
 
 type RpcConf struct {
 	zrpc.RpcServerConf
-	LimiterConf  LimiterConf
-	EmailConf    EmailConf
-	RedisConf    RedisConf
-	JwtAuth      types.JwtAuth `json:",optional"`
-	DbConf       DbConf
-	AwsS3Conf    AwsS3Conf
+	LimiterConf LimiterConf
+	EmailConf   EmailConf
+	RedisConf   RedisConf
+	JwtAuth     types.JwtAuth `json:",optional"`
+	DbConf      DbConf
+	AwsS3Conf   AwsS3Conf
 	// OpenAIConf   OpenAIConf `json:",optional"`
-	LlmConf      LlmConf    `json:",optional"`
+	LlmConf      LlmConf `json:",optional"`
 	CasbinConf   CasbinConf
 	CronTaskConf []CronTaskConf
 }

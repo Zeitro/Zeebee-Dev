@@ -37,8 +37,6 @@ type ChecklistNode struct {
 	Tags []string `json:"tags,omitempty"`
 }
 
-
-
 type BpTransactionSwitchStatusDto struct {
 	Id             int64                                       `json:"id"`
 	Status         constants.BorrowerPropertyTransactionStatus `json:"status"`

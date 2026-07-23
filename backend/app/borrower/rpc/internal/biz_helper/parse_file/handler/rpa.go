@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"slices"
 	"time"
 
 	"github.com/klippa-app/go-pdfium"
@@ -24,7 +25,7 @@ import (
 // ---- rpa field extraction (text path, leading N pages) ----
 
 // rpaFields is the 5 contract fields extracted from the RPA/contract text.
-// Dates are ISO yyyy-mm-dd ("" when absent); amounts are floats (0 when absent).
+// Dates are MM/DD/YYYY ("" when absent); amounts are floats (0 when absent).
 type rpaFields struct {
 	PurchaseAmount         float64 `json:"purchase_amount"`
 	CoeDate                string  `json:"coe_date"`
@@ -59,10 +60,11 @@ type rpaEnvelope struct {
 func rpaPrompt(text string) string {
 	return fmt.Sprintf(`Extract these fields from the following contract document text.
 - purchase_amount: the purchase price as a JSON number (float). Strip thousands separators (commas), currency symbols, and whitespace. Examples: "$1,750,000.00" -> 1750000. Use 0 if absent.
-- coe_date: close-of-escrow date as ISO yyyy-mm-dd (e.g. "2026-09-15"). Use null if absent.
+All dates must be output as MM/DD/YYYY (e.g. "03/26/2026"), regardless of how they appear in the document.
+- coe_date: close-of-escrow date. Use null if absent.
 - emd_amount: earnest money deposit amount as a JSON number (float). Use 0 if absent.
-- emd_due_date: EMD due date as ISO yyyy-mm-dd. Use null if absent.
-- contingency_removal_date: contingency removal date as ISO yyyy-mm-dd. Use null if absent.
+- emd_due_date: earnest money deposit due date. Use null if absent.
+- contingency_removal_date: contingency removal date. Use null if absent.
 Respond as JSON: {"purchase_amount": <number>, "coe_date": <string|null>, "emd_amount": <number>, "emd_due_date": <string|null>, "contingency_removal_date": <string|null>}
 
 Document text:
@@ -186,22 +188,24 @@ func applyRPAFields(tx *model.BorrowerPropertyTransaction, f rpaFields) {
 	if f.EmdAmount > 0 {
 		tx.EmdAmount = f.EmdAmount
 	}
-	if t, ok := parseISODate(f.CoeDate); ok {
+	if t, ok := parseDate(f.CoeDate); ok {
 		tx.CoeDate = t
 	}
-	if t, ok := parseISODate(f.EmdDueDate); ok {
+	if t, ok := parseDate(f.EmdDueDate); ok {
 		tx.EmdDueDate = t
 	}
-	if t, ok := parseISODate(f.ContingencyRemovalDate); ok {
+	if t, ok := parseDate(f.ContingencyRemovalDate); ok {
 		tx.ContingencyRemovalDate = t
 	}
 }
 
-func parseISODate(s string) (*sql.NullTime, bool) {
+// parseDate parses an MM/DD/YYYY date (the rpa LLM output contract) into a
+// NullTime. Empty/garbage → not ok, so applyRPAFields skips it.
+func parseDate(s string) (*sql.NullTime, bool) {
 	if s == "" {
 		return nil, false
 	}
-	t, err := time.Parse("2006-01-02", s)
+	t, err := time.Parse("01/02/2006", s)
 	if err != nil {
 		return nil, false
 	}
@@ -225,11 +229,10 @@ func NewRPAHandler(repos *repo.AllRepos, logger logx.Logger, client llm.Client) 
 // Stages is the 3-stage pipeline (Collect → Extract → Writeback); files is
 // unused (rpa collects its own scope per rule.Source).
 func (h *RPAHandler) Stages(_ []model.File) []progress.StageState {
-	retry := progress.RetryStateFor(0)
 	return []progress.StageState{
-		{Name: progress.StageCollect, Status: progress.StageStatusPending, Retry: retry},
-		{Name: progress.StageExtract, Status: progress.StageStatusPending, Retry: retry},
-		{Name: progress.StageWriteback, Status: progress.StageStatusPending, Retry: retry},
+		{Name: progress.StageCollect, Status: progress.StageStatusPending},
+		{Name: progress.StageExtract, Status: progress.StageStatusPending},
+		{Name: progress.StageWriteback, Status: progress.StageStatusPending},
 	}
 }
 
@@ -261,14 +264,26 @@ func (h *RPAHandler) collectStage(ctx context.Context, rep Reporter, txId, docum
 // logs and is skipped). It never returns an error — a per-file failure must
 // not abort the whole parse, so the write-back proceeds with whatever real
 // fields were collected.
+//
+// It is resumable: already-extracted envelopes (fileId → content) are recalled
+// from the stage checkpoint at entry, so a run restarted mid-stage skips the
+// finished files and their results survive the crash (rpa synthesizes across
+// all files, so those results cannot be lost). Each newly extracted file is
+// checkpointed; a failed file is left un-checkpointed so a later resume retries
+// it. Results are returned in fileId order so write-back's conflict resolution
+// (highest fileId wins) is deterministic and identical for fresh vs resumed runs.
 func (h *RPAHandler) extractStage(ctx context.Context, rep Reporter, files []collectedFile) []rpaEnvelope {
 	rep.MarkStage(ctx, progress.StageExtract, progress.StageStatusRunning)
 	rep.SetStageTotal(ctx, progress.StageExtract, len(files))
-	envelopes := make([]rpaEnvelope, 0, len(files))
+	envelopes := loadExtractEnvelopes(ctx, rep)
 	for i, f := range files {
 		if !file.IsPDF(f.Name) {
 			rep.SetStageProcessed(ctx, progress.StageExtract, i+1)
 			continue // ponytail: PDF text path only for now; image/doc land in the file pkg later
+		}
+		if _, done := envelopes[f.FileId]; done {
+			rep.SetStageProcessed(ctx, progress.StageExtract, i+1)
+			continue // already extracted in a prior (interrupted) run
 		}
 		env, err := h.extractOneFile(ctx, f)
 		if err != nil {
@@ -278,12 +293,49 @@ func (h *RPAHandler) extractStage(ctx context.Context, rep Reporter, files []col
 				logx.Field("stacks", errorx.GetErrorStack(err)),
 			).Errorf("extract rpa file: %s", err)
 		} else if env.Fields.hasAny() {
-			envelopes = append(envelopes, env)
+			envelopes[f.FileId] = env
+			checkpointExtractEnvelopes(ctx, rep, envelopes)
 		}
 		rep.SetStageProcessed(ctx, progress.StageExtract, i+1)
 	}
 	rep.MarkStage(ctx, progress.StageExtract, progress.StageStatusDone)
-	return envelopes
+	return sortedEnvelopes(envelopes)
+}
+
+// loadExtractEnvelopes recalls the extract-stage checkpoint (fileId → envelope).
+// A missing or corrupt checkpoint yields an empty map (fresh run).
+func loadExtractEnvelopes(ctx context.Context, rep Reporter) map[int64]rpaEnvelope {
+	out := make(map[int64]rpaEnvelope)
+	if raw := rep.StageOutput(ctx, progress.StageExtract); len(raw) > 0 {
+		_ = json.Unmarshal(raw, &out)
+	}
+	return out
+}
+
+// checkpointExtractEnvelopes persists the envelope map so a crash after this
+// file resumes from here.
+// ponytail: re-marshals the whole map each file (O(N²)); fine for the small
+// per-transaction file counts — switch to per-file Redis keys if N grows.
+func checkpointExtractEnvelopes(ctx context.Context, rep Reporter, envelopes map[int64]rpaEnvelope) {
+	if b, err := json.Marshal(envelopes); err == nil {
+		rep.SaveStageOutput(ctx, progress.StageExtract, b)
+	}
+}
+
+// sortedEnvelopes returns the map's envelopes ordered by fileId. A map has no
+// iteration order, so this makes write-back's conflict resolution deterministic
+// and identical whether the run was fresh or resumed.
+func sortedEnvelopes(envelopes map[int64]rpaEnvelope) []rpaEnvelope {
+	ids := make([]int64, 0, len(envelopes))
+	for id := range envelopes {
+		ids = append(ids, id)
+	}
+	slices.Sort(ids)
+	out := make([]rpaEnvelope, 0, len(ids))
+	for _, id := range ids {
+		out = append(out, envelopes[id])
+	}
+	return out
 }
 
 func (h *RPAHandler) extractOneFile(ctx context.Context, f collectedFile) (rpaEnvelope, error) {
@@ -306,10 +358,13 @@ func (h *RPAHandler) extractOneFile(ctx context.Context, f collectedFile) (rpaEn
 }
 
 // writebackStage applies every envelope's real fields into the transaction row
-// in collection order via skip-empty merge — the first real value per field
-// wins (applyRPAFields skips empty/zero), so a conflict across files resolves
-// deterministically without an arbitration step. The row is loaded + written
-// once.
+// in ascending fileId order. applyRPAFields overwrites with each non-zero /
+// parseable value and skips empty/zero ones, so: a field absent from a later
+// file never clobbers an earlier real value, but two conflicting real values
+// resolve to the HIGHEST fileId's value (the deterministic fallback now that the
+// LLM arbitration stage is removed). extractStage returns envelopes sorted by
+// fileId, so a resumed run produces the same write-back as a fresh one. The row
+// is loaded + written once.
 func (h *RPAHandler) writebackStage(ctx context.Context, rep Reporter, txId int64, envelopes []rpaEnvelope) error {
 	rep.MarkStage(ctx, progress.StageWriteback, progress.StageStatusRunning)
 	rep.SetStageTotal(ctx, progress.StageWriteback, 1)

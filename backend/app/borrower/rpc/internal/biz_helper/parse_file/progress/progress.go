@@ -46,22 +46,13 @@ const (
 	StageStatusDone    = "Done"
 )
 
-// RetryState tracks per-stage retry. Extract counts per file (transient, not
-// persisted across restart); other stages count per stage attempt.
-type RetryState struct {
-	Count     int   `json:"count"`
-	Max       int   `json:"max"`
-	BackoffMs int64 `json:"backoff_ms"`
-}
-
 // StageState is one stage of the staged pipeline: name, status, and processed/
 // total counters the frontend composes into progress (no overall percent).
 type StageState struct {
-	Name      string     `json:"name"`
-	Status    string     `json:"status"`
-	Processed int        `json:"processed"`
-	Total     int        `json:"total"`
-	Retry     RetryState `json:"retry"`
+	Name      string `json:"name"`
+	Status    string `json:"status"`
+	Processed int    `json:"processed"`
+	Total     int    `json:"total"`
 }
 
 // Progress is the single Redis record holding all stages. No overall percent —
@@ -195,6 +186,26 @@ func (m *ProgressManager) GetReqMap(ctx context.Context, txId int64, ruleSig str
 	return m.rdb.Get(ctx, reqMapKey(txId, ruleSig))
 }
 
+// ---- stage checkpoint (extract resume) ----
+// The checkpoint (marshaled map[int64] of already-extracted per-file results)
+// lives in its OWN key at job TTL (ttlJobSec), not in the sliding progress
+// record (ttlProgressSec). A crashed node's progress record can expire before
+// the recovery sweeper reclaims the job; a job-TTL checkpoint survives that
+// gap so a resumed rpa extract still skips finished files instead of re-calling
+// the LLM.
+
+func (m *ProgressManager) SetStageCheckpoint(ctx context.Context, requestId, stage string, output json.RawMessage) error {
+	return m.rdb.SetExpire(ctx, ckptKey(requestId, stage), string(output), ttlJobSec)
+}
+
+func (m *ProgressManager) GetStageCheckpoint(ctx context.Context, requestId, stage string) (json.RawMessage, error) {
+	raw, err := m.rdb.Get(ctx, ckptKey(requestId, stage))
+	if err != nil || raw == "" {
+		return nil, nil
+	}
+	return json.RawMessage(raw), nil
+}
+
 // ---- job descriptor (recovery scan) ----
 
 func (m *ProgressManager) WriteJob(ctx context.Context, job *Job) error {
@@ -254,3 +265,6 @@ func reqMapKey(txId int64, ruleSig string) string {
 	return fmt.Sprintf("bpt:parse:reqmap:%d:%s", txId, ruleSig)
 }
 func jobKey(requestId string) string { return "bpt:parse:job:" + requestId }
+func ckptKey(requestId, stage string) string {
+	return fmt.Sprintf("bpt:parse:ckpt:%s:%s", requestId, stage)
+}
