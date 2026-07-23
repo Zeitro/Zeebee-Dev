@@ -11,8 +11,6 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SyncResourceLogic struct {
@@ -32,13 +30,6 @@ func NewSyncResourceLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sync
 }
 
 func (l *SyncResourceLogic) SyncResource(in *borrower.SyncResourceRequest) (resp *proto.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
 
 	var resources []dto.ResourceSyncItemDto
 	if err = json.Unmarshal([]byte(in.Data.ResourceJson), &resources); err != nil {

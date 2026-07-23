@@ -23,13 +23,7 @@ func NewDiscoverRunLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Disco
 }
 
 func (l *DiscoverRunLogic) DiscoverRun(in *admin.LenderDiscoverRunRequest) (resp *admin.LenderDiscoverRunResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
+
 	trigger := domainlenderdiscover.TriggerManual
 	if in.GetData() != nil && in.GetData().GetTrigger() == domainlenderdiscover.TriggerScheduled {
 		trigger = domainlenderdiscover.TriggerScheduled

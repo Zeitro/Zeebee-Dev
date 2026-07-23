@@ -9,8 +9,6 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper"
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file"
 	"zeebee-backend/app/borrower/rpc/internal/logic"
@@ -41,14 +39,6 @@ func NewUploadDocumentFileLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerPropertyTransactionDocumentUploadFileRequest) (resp *borrower.BorrowerPropertyTransactionDocumentUploadFileResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
-
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
@@ -115,7 +105,7 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 			uploadedFiles = append(uploadedFiles, *created)
 		}
 
-		// FR-011: propagate last_uploaded_at to document and all ancestors
+		// propagate last_uploaded_at to document and all ancestors
 		innerErr := l.propagateLastUploadedAt(tx, doc, now)
 		if innerErr != nil {
 			return innerErr
@@ -168,8 +158,8 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 	}
 
 	return &borrower.BorrowerPropertyTransactionDocumentUploadFileResponse{
-		Data:       *protoFiles,
-		RequestId:  requestId,
+		Data:      *protoFiles,
+		RequestId: requestId,
 	}, nil
 }
 
@@ -177,8 +167,8 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 // returns the requestId tracking this batch (empty when nothing fired). The
 // dispatch is fail-silent: a side-channel parse error is logged inside Dispatch
 // and never blocks the upload response.
-func (l *UploadDocumentFileLogic) parseUploadedFiles(ctx context.Context, transactionId int64, doc *model.Document, files []model.File) string {
-	requestId, _ := l.svcCtx.FileParser.Dispatch(ctx, parse_file.DispatchParam{
+func (l *UploadDocumentFileLogic) parseUploadedFiles(ctx context.Context, transactionId int64, doc *model.Document, files []model.File) (requestId string) {
+	requestId, _ = l.svcCtx.FileParser.Dispatch(ctx, parse_file.DispatchParam{
 		TransactionId: transactionId,
 		DocumentId:    doc.Id,
 		Files:         files,

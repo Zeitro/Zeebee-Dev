@@ -3,8 +3,6 @@ package userlogic
 import (
 	"context"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/common/errorx"
@@ -27,13 +25,6 @@ func NewSendVerifyEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 }
 
 func (l *SendVerifyEmailLogic) SendVerifyEmail(in *proto.SendVerifyEmailRequest) (resp *proto.SendVerifyEmailResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
 
 	email := in.Data.Email
 	// check send email limit

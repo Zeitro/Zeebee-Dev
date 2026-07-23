@@ -7,8 +7,6 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -38,13 +36,6 @@ func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogi
 }
 
 func (l *UpdateLogic) Update(in *borrower.BorrowerPropertyTransactionUpdateRequest) (resp *borrower.BorrowerPropertyTransactionDetailResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
@@ -135,11 +126,11 @@ func (l *UpdateLogic) Update(in *borrower.BorrowerPropertyTransactionUpdateReque
 
 		type transactionMetadata struct {
 			*model.BorrowerPropertyTransaction
-			Id        int64                              `json:"-"`
-			Code      string                             `json:"-"`
-			Checklist dto.ChecklistRoot                  `json:"-"`
-			CreatedAt time.Time                          `json:"-"`
-			UpdatedAt time.Time                          `json:"-"`
+			Id        int64             `json:"-"`
+			Code      string            `json:"-"`
+			Checklist dto.ChecklistRoot `json:"-"`
+			CreatedAt time.Time         `json:"-"`
+			UpdatedAt time.Time         `json:"-"`
 		}
 
 		metadata, _ := json.Marshal(map[string]interface{}{

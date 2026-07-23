@@ -3,12 +3,9 @@ package organizationlogic
 import (
 	"context"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/admin/rpc/internal/schedule"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/common/errorx"
 	domainlenderdiscover "zeebee-backend/domains/zeebee/lenderdiscover"
 )
 
@@ -25,13 +22,7 @@ func NewDiscoverCommitLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Di
 }
 
 func (l *DiscoverCommitLogic) DiscoverCommit(in *admin.LenderDiscoverCommitRequest) (resp *admin.LenderDiscoverRunResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
+
 	var lenders []*admin.LenderDiscoverCommitLender
 	if in.GetData() != nil {
 		lenders = in.GetData().GetLenders()

@@ -9,8 +9,6 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper"
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
@@ -41,13 +39,6 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 }
 
 func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateRequest) (resp *borrower.BorrowerPropertyTransactionDetailResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
@@ -238,7 +229,7 @@ func (l *CreateLogic) createDocumentTree(tx *gorm.DB, entityDocumentId int64, st
 	return root, nil
 }
 
-func (l *CreateLogic) createDocumentNode(tx *gorm.DB, entityDocumentId int64, parentId int64, node dto.DocumentTemplateStructure, level int32) error {
+func (l *CreateLogic) createDocumentNode(tx *gorm.DB, entityDocumentId int64, parentId int64, node *dto.DocumentTemplateStructure, level int32) error {
 	docType := constants.DocumentTypeBranch
 	if len(node.Children) == 0 {
 		docType = constants.DocumentTypeLeaf
