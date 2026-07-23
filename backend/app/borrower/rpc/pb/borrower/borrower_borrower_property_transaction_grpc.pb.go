@@ -34,8 +34,8 @@ const (
 	BorrowerPropertyTransaction_DeleteDocumentFile_FullMethodName     = "/borrower.BorrowerPropertyTransaction/DeleteDocumentFile"
 	BorrowerPropertyTransaction_OperationStats_FullMethodName         = "/borrower.BorrowerPropertyTransaction/OperationStats"
 	BorrowerPropertyTransaction_OperationList_FullMethodName          = "/borrower.BorrowerPropertyTransaction/OperationList"
-	BorrowerPropertyTransaction_ParseFileExtract_FullMethodName       = "/borrower.BorrowerPropertyTransaction/ParseFileExtract"
-	BorrowerPropertyTransaction_GetFileExtractProgress_FullMethodName = "/borrower.BorrowerPropertyTransaction/GetFileExtractProgress"
+	BorrowerPropertyTransaction_ParseFile_FullMethodName              = "/borrower.BorrowerPropertyTransaction/ParseFile"
+	BorrowerPropertyTransaction_ParseFileResult_FullMethodName        = "/borrower.BorrowerPropertyTransaction/ParseFileResult"
 )
 
 // BorrowerPropertyTransactionClient is the client API for BorrowerPropertyTransaction service.
@@ -56,8 +56,8 @@ type BorrowerPropertyTransactionClient interface {
 	DeleteDocumentFile(ctx context.Context, in *BorrowerPropertyTransactionDocumentDeleteFileRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 	OperationStats(ctx context.Context, in *TransactionOperationStatsRequest, opts ...grpc.CallOption) (*TransactionOperationStatsResponse, error)
 	OperationList(ctx context.Context, in *TransactionOperationListRequest, opts ...grpc.CallOption) (*TransactionOperationListResponse, error)
-	ParseFileExtract(ctx context.Context, in *ParseFileExtractReq, opts ...grpc.CallOption) (*ParseFileExtractResp, error)
-	GetFileExtractProgress(ctx context.Context, in *GetFileExtractProgressReq, opts ...grpc.CallOption) (*GetFileExtractProgressResp, error)
+	ParseFile(ctx context.Context, in *ParseFileRequest, opts ...grpc.CallOption) (*ParseFileResponse, error)
+	ParseFileResult(ctx context.Context, in *ParseFileResultRequest, opts ...grpc.CallOption) (*ParseFileResultResponse, error)
 }
 
 type borrowerPropertyTransactionClient struct {
@@ -208,20 +208,20 @@ func (c *borrowerPropertyTransactionClient) OperationList(ctx context.Context, i
 	return out, nil
 }
 
-func (c *borrowerPropertyTransactionClient) ParseFileExtract(ctx context.Context, in *ParseFileExtractReq, opts ...grpc.CallOption) (*ParseFileExtractResp, error) {
+func (c *borrowerPropertyTransactionClient) ParseFile(ctx context.Context, in *ParseFileRequest, opts ...grpc.CallOption) (*ParseFileResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ParseFileExtractResp)
-	err := c.cc.Invoke(ctx, BorrowerPropertyTransaction_ParseFileExtract_FullMethodName, in, out, cOpts...)
+	out := new(ParseFileResponse)
+	err := c.cc.Invoke(ctx, BorrowerPropertyTransaction_ParseFile_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *borrowerPropertyTransactionClient) GetFileExtractProgress(ctx context.Context, in *GetFileExtractProgressReq, opts ...grpc.CallOption) (*GetFileExtractProgressResp, error) {
+func (c *borrowerPropertyTransactionClient) ParseFileResult(ctx context.Context, in *ParseFileResultRequest, opts ...grpc.CallOption) (*ParseFileResultResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetFileExtractProgressResp)
-	err := c.cc.Invoke(ctx, BorrowerPropertyTransaction_GetFileExtractProgress_FullMethodName, in, out, cOpts...)
+	out := new(ParseFileResultResponse)
+	err := c.cc.Invoke(ctx, BorrowerPropertyTransaction_ParseFileResult_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -246,8 +246,8 @@ type BorrowerPropertyTransactionServer interface {
 	DeleteDocumentFile(context.Context, *BorrowerPropertyTransactionDocumentDeleteFileRequest) (*proto.EmptyResponse, error)
 	OperationStats(context.Context, *TransactionOperationStatsRequest) (*TransactionOperationStatsResponse, error)
 	OperationList(context.Context, *TransactionOperationListRequest) (*TransactionOperationListResponse, error)
-	ParseFileExtract(context.Context, *ParseFileExtractReq) (*ParseFileExtractResp, error)
-	GetFileExtractProgress(context.Context, *GetFileExtractProgressReq) (*GetFileExtractProgressResp, error)
+	ParseFile(context.Context, *ParseFileRequest) (*ParseFileResponse, error)
+	ParseFileResult(context.Context, *ParseFileResultRequest) (*ParseFileResultResponse, error)
 	mustEmbedUnimplementedBorrowerPropertyTransactionServer()
 }
 
@@ -300,11 +300,11 @@ func (UnimplementedBorrowerPropertyTransactionServer) OperationStats(context.Con
 func (UnimplementedBorrowerPropertyTransactionServer) OperationList(context.Context, *TransactionOperationListRequest) (*TransactionOperationListResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method OperationList not implemented")
 }
-func (UnimplementedBorrowerPropertyTransactionServer) ParseFileExtract(context.Context, *ParseFileExtractReq) (*ParseFileExtractResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method ParseFileExtract not implemented")
+func (UnimplementedBorrowerPropertyTransactionServer) ParseFile(context.Context, *ParseFileRequest) (*ParseFileResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ParseFile not implemented")
 }
-func (UnimplementedBorrowerPropertyTransactionServer) GetFileExtractProgress(context.Context, *GetFileExtractProgressReq) (*GetFileExtractProgressResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetFileExtractProgress not implemented")
+func (UnimplementedBorrowerPropertyTransactionServer) ParseFileResult(context.Context, *ParseFileResultRequest) (*ParseFileResultResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ParseFileResult not implemented")
 }
 func (UnimplementedBorrowerPropertyTransactionServer) mustEmbedUnimplementedBorrowerPropertyTransactionServer() {
 }
@@ -580,38 +580,38 @@ func _BorrowerPropertyTransaction_OperationList_Handler(srv interface{}, ctx con
 	return interceptor(ctx, in, info, handler)
 }
 
-func _BorrowerPropertyTransaction_ParseFileExtract_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ParseFileExtractReq)
+func _BorrowerPropertyTransaction_ParseFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ParseFileRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BorrowerPropertyTransactionServer).ParseFileExtract(ctx, in)
+		return srv.(BorrowerPropertyTransactionServer).ParseFile(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: BorrowerPropertyTransaction_ParseFileExtract_FullMethodName,
+		FullMethod: BorrowerPropertyTransaction_ParseFile_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BorrowerPropertyTransactionServer).ParseFileExtract(ctx, req.(*ParseFileExtractReq))
+		return srv.(BorrowerPropertyTransactionServer).ParseFile(ctx, req.(*ParseFileRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _BorrowerPropertyTransaction_GetFileExtractProgress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetFileExtractProgressReq)
+func _BorrowerPropertyTransaction_ParseFileResult_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ParseFileResultRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BorrowerPropertyTransactionServer).GetFileExtractProgress(ctx, in)
+		return srv.(BorrowerPropertyTransactionServer).ParseFileResult(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: BorrowerPropertyTransaction_GetFileExtractProgress_FullMethodName,
+		FullMethod: BorrowerPropertyTransaction_ParseFileResult_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BorrowerPropertyTransactionServer).GetFileExtractProgress(ctx, req.(*GetFileExtractProgressReq))
+		return srv.(BorrowerPropertyTransactionServer).ParseFileResult(ctx, req.(*ParseFileResultRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -680,12 +680,12 @@ var BorrowerPropertyTransaction_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _BorrowerPropertyTransaction_OperationList_Handler,
 		},
 		{
-			MethodName: "ParseFileExtract",
-			Handler:    _BorrowerPropertyTransaction_ParseFileExtract_Handler,
+			MethodName: "ParseFile",
+			Handler:    _BorrowerPropertyTransaction_ParseFile_Handler,
 		},
 		{
-			MethodName: "GetFileExtractProgress",
-			Handler:    _BorrowerPropertyTransaction_GetFileExtractProgress_Handler,
+			MethodName: "ParseFileResult",
+			Handler:    _BorrowerPropertyTransaction_ParseFileResult_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

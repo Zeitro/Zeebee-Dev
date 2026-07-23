@@ -260,16 +260,25 @@ message BorrowerPropertyTransactionDocumentUploadFileResponse {
 
 // parse -- request. No mode field: the backend reads the triggering rule
 // (source/triggered_by/selector) straight from the document's file_parse_config.
-message ParseFileExtractReq {
-  int64  transaction_id = 1;
-  int64  document_id    = 2;  // triggering folder Document PK
-  string parser         = 3;  // rpa | escrow_info
-  // user_id / organization_id come from RPC ctx, not uploaded
+message ParseFileRequest {
+    ParseFileRequestData data = 1;
 }
+
+message ParseFileRequestData {
+  int64  transaction_id = 1;
+  int64  document_id    = 2;
+  string parser         = 3;
+}
+
 // parse -- response
-message ParseFileExtractResp {
+message ParseFileResponse {
+    ParseFileResponseData  data = 1;
+}
+
+message ParseFileResponseData {
   string request_id = 1;
 }
+
 
 // progress query by params (mode b: refresh page lost requestId)
 message ProgressByParams {
@@ -279,19 +288,31 @@ message ProgressByParams {
 }
 // progress -- request. type selects the lookup: "request_id" → use request_id
 // (mode a); "params" → use params to rebuild ruleSig → reqmap (mode b).
-message GetFileExtractProgressReq {
+message ParseFileResultRequest {
+    ParseFileResultRequestData data = 1;
+}
+
+message ParseFileResultRequestData {
   string           request_id = 1;  // mode a
   ProgressByParams params     = 2;  // mode b
   string           type       = 3;  // request_id | params
 }
+
+
 // progress -- response (no overall percent; frontend composes from stage + processed/total)
-message GetFileExtractProgressResp {
+message ParseFileResultResponse {
+  ParseFileResultResponseData data = 1;
+}
+
+message ParseFileResultResponseData {
   string status          = 1;  // Running | Finished | Failed
   string stage           = 2;  // Collect | Extract | Arbitrate | Writeback
   int32  stage_processed = 3;  // items done in current stage
   int32  stage_total     = 4;  // items in current stage
   string error           = 5;
 }
+
+
 
 service BorrowerPropertyTransaction {
   rpc Create(BorrowerPropertyTransactionCreateRequest) returns(BorrowerPropertyTransactionDetailResponse);
@@ -308,6 +329,6 @@ service BorrowerPropertyTransaction {
   rpc DeleteDocumentFile(BorrowerPropertyTransactionDocumentDeleteFileRequest) returns(proto.EmptyResponse);
   rpc OperationStats(TransactionOperationStatsRequest) returns(TransactionOperationStatsResponse);
   rpc OperationList(TransactionOperationListRequest) returns(TransactionOperationListResponse);
-  rpc ParseFileExtract(ParseFileExtractReq) returns(ParseFileExtractResp);
-  rpc GetFileExtractProgress(GetFileExtractProgressReq) returns(GetFileExtractProgressResp);
+  rpc ParseFile(ParseFileRequest) returns(ParseFileResponse);
+  rpc ParseFileResult(ParseFileResultRequest) returns(ParseFileResultResponse);
 }
