@@ -324,7 +324,7 @@ type BorrowerPropertyTransactionChecklistNode struct {
 	Children              []BorrowerPropertyTransactionChecklistNode `json:"children"`
 	FileCount             int32                                      `json:"file_count"`
 	Files                 []FileEntity                               `json:"files"`
-	FileParseRules        []FileParseRule                            `json:"file_parse_rules"`
+	FileParseConfig       *FileParseConfig                           `json:"file_parse_config"`
 	Tags                  []string                                   `json:"tags"`
 }
 
@@ -686,6 +686,10 @@ type FileEntity struct {
 	UpdatedAt     string `json:"updated_at"`
 	DriveUrl      string `json:"drive_url"`
 	DriveSyncedAt string `json:"drive_synced_at"`
+}
+
+type FileParseConfig struct {
+	Rules []*FileParseRule `json:"rules"`
 }
 
 type FileParseRule struct {

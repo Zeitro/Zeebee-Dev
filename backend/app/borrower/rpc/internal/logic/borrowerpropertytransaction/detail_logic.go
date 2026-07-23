@@ -59,7 +59,7 @@ func (l *DetailLogic) Detail(in *proto.PathIdRequest) (resp *borrower.BorrowerPr
 	}
 
 	// load property transaction escrows
-	escrows, err := l.svcCtx.PropertyTransactionEscrowRepo.FindAll(l.ctx, map[string]interface{}{
+	escrows, err := l.svcCtx.PropertyTransactionEscrowRepo.FindAll(l.ctx, map[string]any{
 		"borrower_property_transaction_id": in.Data.Id,
 	})
 	if err != nil {

@@ -559,8 +559,12 @@ message BorrowerPropertyTransactionChecklistNodeEntity {
   repeated FileEntity files = 8;
   int32 required_document_count = 9;
   int32 optional_document_count = 10;
-  repeated FileParseRule file_parse_rules = 11;
+  FileParseConfig file_parse_config = 11;
   repeated string tags = 12;
+}
+
+message FileParseConfig {
+  repeated FileParseRule rules = 1;
 }
 
 message FileParseRule {

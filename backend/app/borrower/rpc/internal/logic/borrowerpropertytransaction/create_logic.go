@@ -133,7 +133,7 @@ func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateReque
 		}
 
 		// backfill root_document_id
-		innerErr = l.svcCtx.EntityDocumentRepo.UpdateColumnsByIdWithTx(l.ctx, tx, entityDoc.Id, map[string]interface{}{
+		innerErr = l.svcCtx.EntityDocumentRepo.UpdateColumnsByIdWithTx(l.ctx, tx, entityDoc.Id, map[string]any{
 			"root_document_id": rootDoc.Id,
 		})
 		if innerErr != nil {
@@ -156,7 +156,7 @@ func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateReque
 			return innerErr
 		}
 
-		metadata, _ := json.Marshal(map[string]interface{}{
+		metadata, _ := json.Marshal(map[string]any{
 			"after": struct {
 				*model.BorrowerPropertyTransaction
 				Id        int64     `json:"-"`

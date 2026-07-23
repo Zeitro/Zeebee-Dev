@@ -117,7 +117,7 @@ func buildChildrenMap(allDocs []*model.Document) map[int64][]*model.Document {
 
 // buildChecklistNode recursively builds checklist node from in-memory maps
 func buildChecklistNode(doc *model.Document, childrenMap map[int64][]*model.Document, fileCountMap map[int64]int32) *dto.ChecklistNode {
-	isRequired, parseRules, tags := readNodeMetadata(doc)
+	isRequired, parseConfig, tags := readNodeMetadata(doc)
 
 	children := childrenMap[doc.Id]
 	if len(children) == 0 {
@@ -134,7 +134,7 @@ func buildChecklistNode(doc *model.Document, childrenMap map[int64][]*model.Docu
 			FileCount:                          fileCountMap[doc.Id],
 			TotalRequiredUploadedDocumentCount: reqUpdated,
 			TotalOptionalUploadedDocumentCount: optUpdated,
-			ParseRules:                         parseRules,
+			FileParseConfig:                    parseConfig,
 			Tags:                               tags,
 		}
 	}
@@ -169,7 +169,7 @@ func buildChecklistNode(doc *model.Document, childrenMap map[int64][]*model.Docu
 		TotalRequiredUploadedDocumentCount: totalReqUpdated,
 		TotalOptionalUploadedDocumentCount: totalOptUpdated,
 		Children:                           childNodes,
-		ParseRules:                         parseRules,
+		FileParseConfig:                    parseConfig,
 		Tags:                               tags,
 	}
 }
@@ -177,7 +177,7 @@ func buildChecklistNode(doc *model.Document, childrenMap map[int64][]*model.Docu
 // readNodeMetadata pulls is_required, the file_parse_config rules, and tags out
 // of the document's metadata jsonb in one unmarshal. Missing/unreadable
 // metadata yields the defaults (required=true, no rules, no tags).
-func readNodeMetadata(doc *model.Document) (bool, []dto.DocumentTemplateFileParseRule, []string) {
+func readNodeMetadata(doc *model.Document) (bool, *dto.DocumentTemplateFileParseConfig, []string) {
 	isRequired := true
 	if len(doc.Metadata) == 0 {
 		return isRequired, nil, nil
@@ -190,18 +190,7 @@ func readNodeMetadata(doc *model.Document) (bool, []dto.DocumentTemplateFilePars
 	if err := json.Unmarshal(doc.Metadata, &meta); err != nil {
 		return isRequired, nil, nil
 	}
-	return meta.IsRequired, projectParseRules(meta.FileParseConfig), meta.Tags
-}
-
-// projectParseRules returns the stored config's rules for the frontend
-// checklist. The full rule flows through (parser, source, triggered_by, label,
-// selector) so the UI can render each rule's trigger mode. An absent config
-// yields no rules.
-func projectParseRules(cfg *dto.DocumentTemplateFileParseConfig) []dto.DocumentTemplateFileParseRule {
-	if cfg == nil {
-		return nil
-	}
-	return cfg.Rules
+	return meta.IsRequired, meta.FileParseConfig, meta.Tags
 }
 
 // collectLeafIds returns document IDs that have no children (leaf nodes)

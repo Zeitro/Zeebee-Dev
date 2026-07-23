@@ -102,5 +102,4 @@ func (s *BorrowerPropertyTransactionServer) ParseFile(ctx context.Context, in *b
 func (s *BorrowerPropertyTransactionServer) ParseFileResult(ctx context.Context, in *borrower.ParseFileResultRequest) (*borrower.ParseFileResultResponse, error) {
 	l := borrowerpropertytransactionlogic.NewParseFileResultLogic(ctx, s.svcCtx)
 	return l.ParseFileResult(in)
-	return l.ParseFileResult(in)
 }

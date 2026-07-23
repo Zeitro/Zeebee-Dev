@@ -4618,7 +4618,7 @@ type BorrowerPropertyTransactionChecklistNodeEntity struct {
 	Files                 []*FileEntity                                     `protobuf:"bytes,8,rep,name=files,proto3" json:"files,omitempty"`
 	RequiredDocumentCount int32                                             `protobuf:"varint,9,opt,name=required_document_count,json=requiredDocumentCount,proto3" json:"required_document_count,omitempty"`
 	OptionalDocumentCount int32                                             `protobuf:"varint,10,opt,name=optional_document_count,json=optionalDocumentCount,proto3" json:"optional_document_count,omitempty"`
-	FileParseRules        []*FileParseRule                                  `protobuf:"bytes,11,rep,name=file_parse_rules,json=fileParseRules,proto3" json:"file_parse_rules,omitempty"`
+	FileParseConfig       *FileParseConfig                                  `protobuf:"bytes,11,opt,name=file_parse_config,json=fileParseConfig,proto3" json:"file_parse_config,omitempty"`
 	Tags                  []string                                          `protobuf:"bytes,12,rep,name=tags,proto3" json:"tags,omitempty"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
@@ -4724,9 +4724,9 @@ func (x *BorrowerPropertyTransactionChecklistNodeEntity) GetOptionalDocumentCoun
 	return 0
 }
 
-func (x *BorrowerPropertyTransactionChecklistNodeEntity) GetFileParseRules() []*FileParseRule {
+func (x *BorrowerPropertyTransactionChecklistNodeEntity) GetFileParseConfig() *FileParseConfig {
 	if x != nil {
-		return x.FileParseRules
+		return x.FileParseConfig
 	}
 	return nil
 }
@@ -4734,6 +4734,50 @@ func (x *BorrowerPropertyTransactionChecklistNodeEntity) GetFileParseRules() []*
 func (x *BorrowerPropertyTransactionChecklistNodeEntity) GetTags() []string {
 	if x != nil {
 		return x.Tags
+	}
+	return nil
+}
+
+type FileParseConfig struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Rules         []*FileParseRule       `protobuf:"bytes,1,rep,name=rules,proto3" json:"rules,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FileParseConfig) Reset() {
+	*x = FileParseConfig{}
+	mi := &file_proto_entity_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FileParseConfig) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FileParseConfig) ProtoMessage() {}
+
+func (x *FileParseConfig) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_entity_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FileParseConfig.ProtoReflect.Descriptor instead.
+func (*FileParseConfig) Descriptor() ([]byte, []int) {
+	return file_proto_entity_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *FileParseConfig) GetRules() []*FileParseRule {
+	if x != nil {
+		return x.Rules
 	}
 	return nil
 }
@@ -4751,7 +4795,7 @@ type FileParseRule struct {
 
 func (x *FileParseRule) Reset() {
 	*x = FileParseRule{}
-	mi := &file_proto_entity_proto_msgTypes[34]
+	mi := &file_proto_entity_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4763,7 +4807,7 @@ func (x *FileParseRule) String() string {
 func (*FileParseRule) ProtoMessage() {}
 
 func (x *FileParseRule) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_entity_proto_msgTypes[34]
+	mi := &file_proto_entity_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4776,7 +4820,7 @@ func (x *FileParseRule) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FileParseRule.ProtoReflect.Descriptor instead.
 func (*FileParseRule) Descriptor() ([]byte, []int) {
-	return file_proto_entity_proto_rawDescGZIP(), []int{34}
+	return file_proto_entity_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *FileParseRule) GetParser() string {
@@ -4823,7 +4867,7 @@ type TagSelector struct {
 
 func (x *TagSelector) Reset() {
 	*x = TagSelector{}
-	mi := &file_proto_entity_proto_msgTypes[35]
+	mi := &file_proto_entity_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4835,7 +4879,7 @@ func (x *TagSelector) String() string {
 func (*TagSelector) ProtoMessage() {}
 
 func (x *TagSelector) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_entity_proto_msgTypes[35]
+	mi := &file_proto_entity_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4848,7 +4892,7 @@ func (x *TagSelector) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TagSelector.ProtoReflect.Descriptor instead.
 func (*TagSelector) Descriptor() ([]byte, []int) {
-	return file_proto_entity_proto_rawDescGZIP(), []int{35}
+	return file_proto_entity_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *TagSelector) GetTags() []string {
@@ -4874,7 +4918,7 @@ type BorrowerPropertyTransactionOptionEntity struct {
 
 func (x *BorrowerPropertyTransactionOptionEntity) Reset() {
 	*x = BorrowerPropertyTransactionOptionEntity{}
-	mi := &file_proto_entity_proto_msgTypes[36]
+	mi := &file_proto_entity_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4886,7 +4930,7 @@ func (x *BorrowerPropertyTransactionOptionEntity) String() string {
 func (*BorrowerPropertyTransactionOptionEntity) ProtoMessage() {}
 
 func (x *BorrowerPropertyTransactionOptionEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_entity_proto_msgTypes[36]
+	mi := &file_proto_entity_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4899,7 +4943,7 @@ func (x *BorrowerPropertyTransactionOptionEntity) ProtoReflect() protoreflect.Me
 
 // Deprecated: Use BorrowerPropertyTransactionOptionEntity.ProtoReflect.Descriptor instead.
 func (*BorrowerPropertyTransactionOptionEntity) Descriptor() ([]byte, []int) {
-	return file_proto_entity_proto_rawDescGZIP(), []int{36}
+	return file_proto_entity_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *BorrowerPropertyTransactionOptionEntity) GetId() int64 {
@@ -4993,7 +5037,7 @@ type LoanApplicantEntity struct {
 
 func (x *LoanApplicantEntity) Reset() {
 	*x = LoanApplicantEntity{}
-	mi := &file_proto_entity_proto_msgTypes[37]
+	mi := &file_proto_entity_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5005,7 +5049,7 @@ func (x *LoanApplicantEntity) String() string {
 func (*LoanApplicantEntity) ProtoMessage() {}
 
 func (x *LoanApplicantEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_entity_proto_msgTypes[37]
+	mi := &file_proto_entity_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5018,7 +5062,7 @@ func (x *LoanApplicantEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoanApplicantEntity.ProtoReflect.Descriptor instead.
 func (*LoanApplicantEntity) Descriptor() ([]byte, []int) {
-	return file_proto_entity_proto_rawDescGZIP(), []int{37}
+	return file_proto_entity_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *LoanApplicantEntity) GetId() int64 {
@@ -5229,7 +5273,7 @@ type LoanExperienceEntity struct {
 
 func (x *LoanExperienceEntity) Reset() {
 	*x = LoanExperienceEntity{}
-	mi := &file_proto_entity_proto_msgTypes[38]
+	mi := &file_proto_entity_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5241,7 +5285,7 @@ func (x *LoanExperienceEntity) String() string {
 func (*LoanExperienceEntity) ProtoMessage() {}
 
 func (x *LoanExperienceEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_entity_proto_msgTypes[38]
+	mi := &file_proto_entity_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5254,7 +5298,7 @@ func (x *LoanExperienceEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoanExperienceEntity.ProtoReflect.Descriptor instead.
 func (*LoanExperienceEntity) Descriptor() ([]byte, []int) {
-	return file_proto_entity_proto_rawDescGZIP(), []int{38}
+	return file_proto_entity_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *LoanExperienceEntity) GetId() int64 {
@@ -5379,7 +5423,7 @@ type LoanDemographicEntity struct {
 
 func (x *LoanDemographicEntity) Reset() {
 	*x = LoanDemographicEntity{}
-	mi := &file_proto_entity_proto_msgTypes[39]
+	mi := &file_proto_entity_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5391,7 +5435,7 @@ func (x *LoanDemographicEntity) String() string {
 func (*LoanDemographicEntity) ProtoMessage() {}
 
 func (x *LoanDemographicEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_entity_proto_msgTypes[39]
+	mi := &file_proto_entity_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5404,7 +5448,7 @@ func (x *LoanDemographicEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoanDemographicEntity.ProtoReflect.Descriptor instead.
 func (*LoanDemographicEntity) Descriptor() ([]byte, []int) {
-	return file_proto_entity_proto_rawDescGZIP(), []int{39}
+	return file_proto_entity_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *LoanDemographicEntity) GetId() int64 {
@@ -5471,7 +5515,7 @@ type LoanDemographicPropertyEntity struct {
 
 func (x *LoanDemographicPropertyEntity) Reset() {
 	*x = LoanDemographicPropertyEntity{}
-	mi := &file_proto_entity_proto_msgTypes[40]
+	mi := &file_proto_entity_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5483,7 +5527,7 @@ func (x *LoanDemographicPropertyEntity) String() string {
 func (*LoanDemographicPropertyEntity) ProtoMessage() {}
 
 func (x *LoanDemographicPropertyEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_entity_proto_msgTypes[40]
+	mi := &file_proto_entity_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5496,7 +5540,7 @@ func (x *LoanDemographicPropertyEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoanDemographicPropertyEntity.ProtoReflect.Descriptor instead.
 func (*LoanDemographicPropertyEntity) Descriptor() ([]byte, []int) {
-	return file_proto_entity_proto_rawDescGZIP(), []int{40}
+	return file_proto_entity_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *LoanDemographicPropertyEntity) GetAsPrimaryResident() bool {
@@ -5607,7 +5651,7 @@ type LoanDemographicEthnicityEntity struct {
 
 func (x *LoanDemographicEthnicityEntity) Reset() {
 	*x = LoanDemographicEthnicityEntity{}
-	mi := &file_proto_entity_proto_msgTypes[41]
+	mi := &file_proto_entity_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5619,7 +5663,7 @@ func (x *LoanDemographicEthnicityEntity) String() string {
 func (*LoanDemographicEthnicityEntity) ProtoMessage() {}
 
 func (x *LoanDemographicEthnicityEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_entity_proto_msgTypes[41]
+	mi := &file_proto_entity_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5632,7 +5676,7 @@ func (x *LoanDemographicEthnicityEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoanDemographicEthnicityEntity.ProtoReflect.Descriptor instead.
 func (*LoanDemographicEthnicityEntity) Descriptor() ([]byte, []int) {
-	return file_proto_entity_proto_rawDescGZIP(), []int{41}
+	return file_proto_entity_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *LoanDemographicEthnicityEntity) GetValues() []string {
@@ -5662,7 +5706,7 @@ type LoanDemographicRaceEntity struct {
 
 func (x *LoanDemographicRaceEntity) Reset() {
 	*x = LoanDemographicRaceEntity{}
-	mi := &file_proto_entity_proto_msgTypes[42]
+	mi := &file_proto_entity_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5674,7 +5718,7 @@ func (x *LoanDemographicRaceEntity) String() string {
 func (*LoanDemographicRaceEntity) ProtoMessage() {}
 
 func (x *LoanDemographicRaceEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_entity_proto_msgTypes[42]
+	mi := &file_proto_entity_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5687,7 +5731,7 @@ func (x *LoanDemographicRaceEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoanDemographicRaceEntity.ProtoReflect.Descriptor instead.
 func (*LoanDemographicRaceEntity) Descriptor() ([]byte, []int) {
-	return file_proto_entity_proto_rawDescGZIP(), []int{42}
+	return file_proto_entity_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *LoanDemographicRaceEntity) GetValues() []string {
@@ -5737,7 +5781,7 @@ type LoanDemographicExtraDemographicEntity struct {
 
 func (x *LoanDemographicExtraDemographicEntity) Reset() {
 	*x = LoanDemographicExtraDemographicEntity{}
-	mi := &file_proto_entity_proto_msgTypes[43]
+	mi := &file_proto_entity_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5749,7 +5793,7 @@ func (x *LoanDemographicExtraDemographicEntity) String() string {
 func (*LoanDemographicExtraDemographicEntity) ProtoMessage() {}
 
 func (x *LoanDemographicExtraDemographicEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_entity_proto_msgTypes[43]
+	mi := &file_proto_entity_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5762,7 +5806,7 @@ func (x *LoanDemographicExtraDemographicEntity) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use LoanDemographicExtraDemographicEntity.ProtoReflect.Descriptor instead.
 func (*LoanDemographicExtraDemographicEntity) Descriptor() ([]byte, []int) {
-	return file_proto_entity_proto_rawDescGZIP(), []int{43}
+	return file_proto_entity_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *LoanDemographicExtraDemographicEntity) GetIsEthnicityCollectedByObservation() bool {
@@ -5816,7 +5860,7 @@ type LoanBorrowerEntity struct {
 
 func (x *LoanBorrowerEntity) Reset() {
 	*x = LoanBorrowerEntity{}
-	mi := &file_proto_entity_proto_msgTypes[44]
+	mi := &file_proto_entity_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5828,7 +5872,7 @@ func (x *LoanBorrowerEntity) String() string {
 func (*LoanBorrowerEntity) ProtoMessage() {}
 
 func (x *LoanBorrowerEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_entity_proto_msgTypes[44]
+	mi := &file_proto_entity_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5841,7 +5885,7 @@ func (x *LoanBorrowerEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoanBorrowerEntity.ProtoReflect.Descriptor instead.
 func (*LoanBorrowerEntity) Descriptor() ([]byte, []int) {
-	return file_proto_entity_proto_rawDescGZIP(), []int{44}
+	return file_proto_entity_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *LoanBorrowerEntity) GetId() int64 {
@@ -5961,7 +6005,7 @@ type LoanDocumentEntity struct {
 
 func (x *LoanDocumentEntity) Reset() {
 	*x = LoanDocumentEntity{}
-	mi := &file_proto_entity_proto_msgTypes[45]
+	mi := &file_proto_entity_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5973,7 +6017,7 @@ func (x *LoanDocumentEntity) String() string {
 func (*LoanDocumentEntity) ProtoMessage() {}
 
 func (x *LoanDocumentEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_entity_proto_msgTypes[45]
+	mi := &file_proto_entity_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5986,7 +6030,7 @@ func (x *LoanDocumentEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoanDocumentEntity.ProtoReflect.Descriptor instead.
 func (*LoanDocumentEntity) Descriptor() ([]byte, []int) {
-	return file_proto_entity_proto_rawDescGZIP(), []int{45}
+	return file_proto_entity_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *LoanDocumentEntity) GetId() int64 {
@@ -6070,7 +6114,7 @@ type LoanDocumentOptEntity struct {
 
 func (x *LoanDocumentOptEntity) Reset() {
 	*x = LoanDocumentOptEntity{}
-	mi := &file_proto_entity_proto_msgTypes[46]
+	mi := &file_proto_entity_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6082,7 +6126,7 @@ func (x *LoanDocumentOptEntity) String() string {
 func (*LoanDocumentOptEntity) ProtoMessage() {}
 
 func (x *LoanDocumentOptEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_entity_proto_msgTypes[46]
+	mi := &file_proto_entity_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6095,7 +6139,7 @@ func (x *LoanDocumentOptEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoanDocumentOptEntity.ProtoReflect.Descriptor instead.
 func (*LoanDocumentOptEntity) Descriptor() ([]byte, []int) {
-	return file_proto_entity_proto_rawDescGZIP(), []int{46}
+	return file_proto_entity_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *LoanDocumentOptEntity) GetId() int64 {
@@ -6140,7 +6184,7 @@ type FileEntity struct {
 
 func (x *FileEntity) Reset() {
 	*x = FileEntity{}
-	mi := &file_proto_entity_proto_msgTypes[47]
+	mi := &file_proto_entity_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6152,7 +6196,7 @@ func (x *FileEntity) String() string {
 func (*FileEntity) ProtoMessage() {}
 
 func (x *FileEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_entity_proto_msgTypes[47]
+	mi := &file_proto_entity_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6165,7 +6209,7 @@ func (x *FileEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FileEntity.ProtoReflect.Descriptor instead.
 func (*FileEntity) Descriptor() ([]byte, []int) {
-	return file_proto_entity_proto_rawDescGZIP(), []int{47}
+	return file_proto_entity_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *FileEntity) GetId() int64 {
@@ -6268,7 +6312,7 @@ type LoanThirdServiceEntity struct {
 
 func (x *LoanThirdServiceEntity) Reset() {
 	*x = LoanThirdServiceEntity{}
-	mi := &file_proto_entity_proto_msgTypes[48]
+	mi := &file_proto_entity_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6280,7 +6324,7 @@ func (x *LoanThirdServiceEntity) String() string {
 func (*LoanThirdServiceEntity) ProtoMessage() {}
 
 func (x *LoanThirdServiceEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_entity_proto_msgTypes[48]
+	mi := &file_proto_entity_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6293,7 +6337,7 @@ func (x *LoanThirdServiceEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoanThirdServiceEntity.ProtoReflect.Descriptor instead.
 func (*LoanThirdServiceEntity) Descriptor() ([]byte, []int) {
-	return file_proto_entity_proto_rawDescGZIP(), []int{48}
+	return file_proto_entity_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *LoanThirdServiceEntity) GetId() int64 {
@@ -6369,7 +6413,7 @@ type PricingPlanEntity struct {
 
 func (x *PricingPlanEntity) Reset() {
 	*x = PricingPlanEntity{}
-	mi := &file_proto_entity_proto_msgTypes[49]
+	mi := &file_proto_entity_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6381,7 +6425,7 @@ func (x *PricingPlanEntity) String() string {
 func (*PricingPlanEntity) ProtoMessage() {}
 
 func (x *PricingPlanEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_entity_proto_msgTypes[49]
+	mi := &file_proto_entity_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6394,7 +6438,7 @@ func (x *PricingPlanEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanEntity.ProtoReflect.Descriptor instead.
 func (*PricingPlanEntity) Descriptor() ([]byte, []int) {
-	return file_proto_entity_proto_rawDescGZIP(), []int{49}
+	return file_proto_entity_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *PricingPlanEntity) GetId() int64 {
@@ -6518,7 +6562,7 @@ type PricingPlanPolicyEntity struct {
 
 func (x *PricingPlanPolicyEntity) Reset() {
 	*x = PricingPlanPolicyEntity{}
-	mi := &file_proto_entity_proto_msgTypes[50]
+	mi := &file_proto_entity_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6530,7 +6574,7 @@ func (x *PricingPlanPolicyEntity) String() string {
 func (*PricingPlanPolicyEntity) ProtoMessage() {}
 
 func (x *PricingPlanPolicyEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_entity_proto_msgTypes[50]
+	mi := &file_proto_entity_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6543,7 +6587,7 @@ func (x *PricingPlanPolicyEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PricingPlanPolicyEntity.ProtoReflect.Descriptor instead.
 func (*PricingPlanPolicyEntity) Descriptor() ([]byte, []int) {
-	return file_proto_entity_proto_rawDescGZIP(), []int{50}
+	return file_proto_entity_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *PricingPlanPolicyEntity) GetId() int64 {
@@ -6618,7 +6662,7 @@ type OrganizationSubscriptionEntity struct {
 
 func (x *OrganizationSubscriptionEntity) Reset() {
 	*x = OrganizationSubscriptionEntity{}
-	mi := &file_proto_entity_proto_msgTypes[51]
+	mi := &file_proto_entity_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6630,7 +6674,7 @@ func (x *OrganizationSubscriptionEntity) String() string {
 func (*OrganizationSubscriptionEntity) ProtoMessage() {}
 
 func (x *OrganizationSubscriptionEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_entity_proto_msgTypes[51]
+	mi := &file_proto_entity_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6643,7 +6687,7 @@ func (x *OrganizationSubscriptionEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrganizationSubscriptionEntity.ProtoReflect.Descriptor instead.
 func (*OrganizationSubscriptionEntity) Descriptor() ([]byte, []int) {
-	return file_proto_entity_proto_rawDescGZIP(), []int{51}
+	return file_proto_entity_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *OrganizationSubscriptionEntity) GetId() int64 {
@@ -6763,7 +6807,7 @@ type EmailAuthorizationEntity struct {
 
 func (x *EmailAuthorizationEntity) Reset() {
 	*x = EmailAuthorizationEntity{}
-	mi := &file_proto_entity_proto_msgTypes[52]
+	mi := &file_proto_entity_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6775,7 +6819,7 @@ func (x *EmailAuthorizationEntity) String() string {
 func (*EmailAuthorizationEntity) ProtoMessage() {}
 
 func (x *EmailAuthorizationEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_entity_proto_msgTypes[52]
+	mi := &file_proto_entity_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6788,7 +6832,7 @@ func (x *EmailAuthorizationEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EmailAuthorizationEntity.ProtoReflect.Descriptor instead.
 func (*EmailAuthorizationEntity) Descriptor() ([]byte, []int) {
-	return file_proto_entity_proto_rawDescGZIP(), []int{52}
+	return file_proto_entity_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *EmailAuthorizationEntity) GetId() int64 {
@@ -6882,7 +6926,7 @@ type DocumentEntity struct {
 
 func (x *DocumentEntity) Reset() {
 	*x = DocumentEntity{}
-	mi := &file_proto_entity_proto_msgTypes[53]
+	mi := &file_proto_entity_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6894,7 +6938,7 @@ func (x *DocumentEntity) String() string {
 func (*DocumentEntity) ProtoMessage() {}
 
 func (x *DocumentEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_entity_proto_msgTypes[53]
+	mi := &file_proto_entity_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6907,7 +6951,7 @@ func (x *DocumentEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DocumentEntity.ProtoReflect.Descriptor instead.
 func (*DocumentEntity) Descriptor() ([]byte, []int) {
-	return file_proto_entity_proto_rawDescGZIP(), []int{53}
+	return file_proto_entity_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *DocumentEntity) GetId() int64 {
@@ -7549,7 +7593,7 @@ const file_proto_entity_proto_rawDesc = "" +
 	"\x1dtotal_optional_document_count\x18\x05 \x01(\x05R\x1atotalOptionalDocumentCount\x12R\n" +
 	"&total_optional_uploaded_document_count\x18\x06 \x01(\x05R\"totalOptionalUploadedDocumentCount\x12d\n" +
 	"\x12required_documents\x18\a \x03(\v25.proto.BorrowerPropertyTransactionChecklistNodeEntityR\x11requiredDocuments\x12d\n" +
-	"\x12optional_documents\x18\b \x03(\v25.proto.BorrowerPropertyTransactionChecklistNodeEntityR\x11optionalDocuments\"\xcb\x04\n" +
+	"\x12optional_documents\x18\b \x03(\v25.proto.BorrowerPropertyTransactionChecklistNodeEntityR\x11optionalDocuments\"\xcf\x04\n" +
 	".BorrowerPropertyTransactionChecklistNodeEntity\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
@@ -7564,9 +7608,11 @@ const file_proto_entity_proto_rawDesc = "" +
 	"\x05files\x18\b \x03(\v2\x11.proto.FileEntityR\x05files\x126\n" +
 	"\x17required_document_count\x18\t \x01(\x05R\x15requiredDocumentCount\x126\n" +
 	"\x17optional_document_count\x18\n" +
-	" \x01(\x05R\x15optionalDocumentCount\x12>\n" +
-	"\x10file_parse_rules\x18\v \x03(\v2\x14.proto.FileParseRuleR\x0efileParseRules\x12\x12\n" +
-	"\x04tags\x18\f \x03(\tR\x04tags\"\xa8\x01\n" +
+	" \x01(\x05R\x15optionalDocumentCount\x12B\n" +
+	"\x11file_parse_config\x18\v \x01(\v2\x16.proto.FileParseConfigR\x0ffileParseConfig\x12\x12\n" +
+	"\x04tags\x18\f \x03(\tR\x04tags\"=\n" +
+	"\x0fFileParseConfig\x12*\n" +
+	"\x05rules\x18\x01 \x03(\v2\x14.proto.FileParseRuleR\x05rules\"\xa8\x01\n" +
 	"\rFileParseRule\x12\x16\n" +
 	"\x06parser\x18\x01 \x01(\tR\x06parser\x12\x16\n" +
 	"\x06source\x18\x02 \x01(\tR\x06source\x12!\n" +
@@ -7833,7 +7879,7 @@ func file_proto_entity_proto_rawDescGZIP() []byte {
 	return file_proto_entity_proto_rawDescData
 }
 
-var file_proto_entity_proto_msgTypes = make([]protoimpl.MessageInfo, 55)
+var file_proto_entity_proto_msgTypes = make([]protoimpl.MessageInfo, 56)
 var file_proto_entity_proto_goTypes = []any{
 	(*AddressEntity)(nil),                                  // 0: proto.AddressEntity
 	(*UserEntity)(nil),                                     // 1: proto.UserEntity
@@ -7869,29 +7915,30 @@ var file_proto_entity_proto_goTypes = []any{
 	(*PropertyTransactionEscrowChecklistEntity)(nil),       // 31: proto.PropertyTransactionEscrowChecklistEntity
 	(*BorrowerPropertyTransactionChecklistEntity)(nil),     // 32: proto.BorrowerPropertyTransactionChecklistEntity
 	(*BorrowerPropertyTransactionChecklistNodeEntity)(nil), // 33: proto.BorrowerPropertyTransactionChecklistNodeEntity
-	(*FileParseRule)(nil),                                  // 34: proto.FileParseRule
-	(*TagSelector)(nil),                                    // 35: proto.TagSelector
-	(*BorrowerPropertyTransactionOptionEntity)(nil),        // 36: proto.BorrowerPropertyTransactionOptionEntity
-	(*LoanApplicantEntity)(nil),                            // 37: proto.LoanApplicantEntity
-	(*LoanExperienceEntity)(nil),                           // 38: proto.LoanExperienceEntity
-	(*LoanDemographicEntity)(nil),                          // 39: proto.LoanDemographicEntity
-	(*LoanDemographicPropertyEntity)(nil),                  // 40: proto.LoanDemographicPropertyEntity
-	(*LoanDemographicEthnicityEntity)(nil),                 // 41: proto.LoanDemographicEthnicityEntity
-	(*LoanDemographicRaceEntity)(nil),                      // 42: proto.LoanDemographicRaceEntity
-	(*LoanDemographicExtraDemographicEntity)(nil),          // 43: proto.LoanDemographicExtraDemographicEntity
-	(*LoanBorrowerEntity)(nil),                             // 44: proto.LoanBorrowerEntity
-	(*LoanDocumentEntity)(nil),                             // 45: proto.LoanDocumentEntity
-	(*LoanDocumentOptEntity)(nil),                          // 46: proto.LoanDocumentOptEntity
-	(*FileEntity)(nil),                                     // 47: proto.FileEntity
-	(*LoanThirdServiceEntity)(nil),                         // 48: proto.LoanThirdServiceEntity
-	(*PricingPlanEntity)(nil),                              // 49: proto.PricingPlanEntity
-	(*PricingPlanPolicyEntity)(nil),                        // 50: proto.PricingPlanPolicyEntity
-	(*OrganizationSubscriptionEntity)(nil),                 // 51: proto.OrganizationSubscriptionEntity
-	(*EmailAuthorizationEntity)(nil),                       // 52: proto.EmailAuthorizationEntity
-	(*DocumentEntity)(nil),                                 // 53: proto.DocumentEntity
-	nil,                                                    // 54: proto.TemplateVariableEntity.PropertiesEntry
-	(*RangeFloat)(nil),                                     // 55: proto.RangeFloat
-	(*RangeInt32)(nil),                                     // 56: proto.RangeInt32
+	(*FileParseConfig)(nil),                                // 34: proto.FileParseConfig
+	(*FileParseRule)(nil),                                  // 35: proto.FileParseRule
+	(*TagSelector)(nil),                                    // 36: proto.TagSelector
+	(*BorrowerPropertyTransactionOptionEntity)(nil),        // 37: proto.BorrowerPropertyTransactionOptionEntity
+	(*LoanApplicantEntity)(nil),                            // 38: proto.LoanApplicantEntity
+	(*LoanExperienceEntity)(nil),                           // 39: proto.LoanExperienceEntity
+	(*LoanDemographicEntity)(nil),                          // 40: proto.LoanDemographicEntity
+	(*LoanDemographicPropertyEntity)(nil),                  // 41: proto.LoanDemographicPropertyEntity
+	(*LoanDemographicEthnicityEntity)(nil),                 // 42: proto.LoanDemographicEthnicityEntity
+	(*LoanDemographicRaceEntity)(nil),                      // 43: proto.LoanDemographicRaceEntity
+	(*LoanDemographicExtraDemographicEntity)(nil),          // 44: proto.LoanDemographicExtraDemographicEntity
+	(*LoanBorrowerEntity)(nil),                             // 45: proto.LoanBorrowerEntity
+	(*LoanDocumentEntity)(nil),                             // 46: proto.LoanDocumentEntity
+	(*LoanDocumentOptEntity)(nil),                          // 47: proto.LoanDocumentOptEntity
+	(*FileEntity)(nil),                                     // 48: proto.FileEntity
+	(*LoanThirdServiceEntity)(nil),                         // 49: proto.LoanThirdServiceEntity
+	(*PricingPlanEntity)(nil),                              // 50: proto.PricingPlanEntity
+	(*PricingPlanPolicyEntity)(nil),                        // 51: proto.PricingPlanPolicyEntity
+	(*OrganizationSubscriptionEntity)(nil),                 // 52: proto.OrganizationSubscriptionEntity
+	(*EmailAuthorizationEntity)(nil),                       // 53: proto.EmailAuthorizationEntity
+	(*DocumentEntity)(nil),                                 // 54: proto.DocumentEntity
+	nil,                                                    // 55: proto.TemplateVariableEntity.PropertiesEntry
+	(*RangeFloat)(nil),                                     // 56: proto.RangeFloat
+	(*RangeInt32)(nil),                                     // 57: proto.RangeInt32
 }
 var file_proto_entity_proto_depIdxs = []int32{
 	12, // 0: proto.UserEntity.roles:type_name -> proto.RoleEntity
@@ -7901,10 +7948,10 @@ var file_proto_entity_proto_depIdxs = []int32{
 	1,  // 4: proto.OrganizationEntity.owner:type_name -> proto.UserEntity
 	9,  // 5: proto.OrganizationEntity.organization_settings:type_name -> proto.OrganizationSettingEntity
 	5,  // 6: proto.OrganizationMetadataEntity.lender:type_name -> proto.OrganizationLenderMetadataEntity
-	55, // 7: proto.OrganizationLenderMetadataEntity.loan_amount_range:type_name -> proto.RangeFloat
-	56, // 8: proto.OrganizationLenderMetadataEntity.loan_term_range:type_name -> proto.RangeInt32
-	55, // 9: proto.OrganizationLenderMetadataEntity.loan_rate_range:type_name -> proto.RangeFloat
-	55, // 10: proto.OrganizationLenderMetadataEntity.loan_point_range:type_name -> proto.RangeFloat
+	56, // 7: proto.OrganizationLenderMetadataEntity.loan_amount_range:type_name -> proto.RangeFloat
+	57, // 8: proto.OrganizationLenderMetadataEntity.loan_term_range:type_name -> proto.RangeInt32
+	56, // 9: proto.OrganizationLenderMetadataEntity.loan_rate_range:type_name -> proto.RangeFloat
+	56, // 10: proto.OrganizationLenderMetadataEntity.loan_point_range:type_name -> proto.RangeFloat
 	0,  // 11: proto.OrganizationProfileEntity.address:type_name -> proto.AddressEntity
 	8,  // 12: proto.OrganizationProfileEntity.organization_emails:type_name -> proto.OrganizationEmailEntity
 	4,  // 13: proto.OrganizationProfileEntity.metadata:type_name -> proto.OrganizationMetadataEntity
@@ -7918,19 +7965,19 @@ var file_proto_entity_proto_depIdxs = []int32{
 	14, // 21: proto.ResourceTreeEntity.children:type_name -> proto.ResourceTreeEntity
 	15, // 22: proto.ResourceTreeEntity.apis:type_name -> proto.ApiEntity
 	16, // 23: proto.ApiTreeEntity.children:type_name -> proto.ApiTreeEntity
-	54, // 24: proto.TemplateVariableEntity.properties:type_name -> proto.TemplateVariableEntity.PropertiesEntry
+	55, // 24: proto.TemplateVariableEntity.properties:type_name -> proto.TemplateVariableEntity.PropertiesEntry
 	18, // 25: proto.TemplateVariableEntity.items:type_name -> proto.TemplateVariableEntity
 	18, // 26: proto.TemplateVariableGroupEntity.variables:type_name -> proto.TemplateVariableEntity
 	19, // 27: proto.BaseTemplateEntity.variable_group_schema:type_name -> proto.TemplateVariableGroupEntity
 	24, // 28: proto.LoanEntity.loan_property:type_name -> proto.LoanPropertyEntity
-	37, // 29: proto.LoanEntity.applicants:type_name -> proto.LoanApplicantEntity
-	38, // 30: proto.LoanEntity.transaction_experiences:type_name -> proto.LoanExperienceEntity
-	38, // 31: proto.LoanEntity.real_estate_experiences:type_name -> proto.LoanExperienceEntity
-	44, // 32: proto.LoanEntity.loan_borrower:type_name -> proto.LoanBorrowerEntity
-	39, // 33: proto.LoanEntity.loan_demographic:type_name -> proto.LoanDemographicEntity
-	48, // 34: proto.LoanEntity.loan_third_services:type_name -> proto.LoanThirdServiceEntity
+	38, // 29: proto.LoanEntity.applicants:type_name -> proto.LoanApplicantEntity
+	39, // 30: proto.LoanEntity.transaction_experiences:type_name -> proto.LoanExperienceEntity
+	39, // 31: proto.LoanEntity.real_estate_experiences:type_name -> proto.LoanExperienceEntity
+	45, // 32: proto.LoanEntity.loan_borrower:type_name -> proto.LoanBorrowerEntity
+	40, // 33: proto.LoanEntity.loan_demographic:type_name -> proto.LoanDemographicEntity
+	49, // 34: proto.LoanEntity.loan_third_services:type_name -> proto.LoanThirdServiceEntity
 	23, // 35: proto.LoanEntity.extend:type_name -> proto.LoanExtendValueEntity
-	45, // 36: proto.LoanEntity.loan_documents:type_name -> proto.LoanDocumentEntity
+	46, // 36: proto.LoanEntity.loan_documents:type_name -> proto.LoanDocumentEntity
 	28, // 37: proto.LoanEntity.borrower_property_transaction:type_name -> proto.BorrowerPropertyTransactionEntity
 	25, // 38: proto.LoanPropertyEntity.borrower_property:type_name -> proto.BorrowerPropertyEntity
 	22, // 39: proto.LoanPropertyEntity.budget:type_name -> proto.LoanBudgetEntity
@@ -7947,29 +7994,30 @@ var file_proto_entity_proto_depIdxs = []int32{
 	33, // 50: proto.BorrowerPropertyTransactionChecklistEntity.required_documents:type_name -> proto.BorrowerPropertyTransactionChecklistNodeEntity
 	33, // 51: proto.BorrowerPropertyTransactionChecklistEntity.optional_documents:type_name -> proto.BorrowerPropertyTransactionChecklistNodeEntity
 	33, // 52: proto.BorrowerPropertyTransactionChecklistNodeEntity.children:type_name -> proto.BorrowerPropertyTransactionChecklistNodeEntity
-	47, // 53: proto.BorrowerPropertyTransactionChecklistNodeEntity.files:type_name -> proto.FileEntity
-	34, // 54: proto.BorrowerPropertyTransactionChecklistNodeEntity.file_parse_rules:type_name -> proto.FileParseRule
-	35, // 55: proto.FileParseRule.selector:type_name -> proto.TagSelector
-	25, // 56: proto.BorrowerPropertyTransactionOptionEntity.borrower_property:type_name -> proto.BorrowerPropertyEntity
-	0,  // 57: proto.LoanApplicantEntity.address:type_name -> proto.AddressEntity
-	0,  // 58: proto.LoanExperienceEntity.address:type_name -> proto.AddressEntity
-	40, // 59: proto.LoanDemographicEntity.property:type_name -> proto.LoanDemographicPropertyEntity
-	41, // 60: proto.LoanDemographicEntity.ethnicity:type_name -> proto.LoanDemographicEthnicityEntity
-	42, // 61: proto.LoanDemographicEntity.race:type_name -> proto.LoanDemographicRaceEntity
-	0,  // 62: proto.LoanBorrowerEntity.mailing_address:type_name -> proto.AddressEntity
-	47, // 63: proto.LoanDocumentEntity.files:type_name -> proto.FileEntity
-	50, // 64: proto.PricingPlanEntity.policies:type_name -> proto.PricingPlanPolicyEntity
-	14, // 65: proto.PricingPlanEntity.resources:type_name -> proto.ResourceTreeEntity
-	2,  // 66: proto.OrganizationSubscriptionEntity.organization:type_name -> proto.OrganizationEntity
-	49, // 67: proto.OrganizationSubscriptionEntity.pricing_plan:type_name -> proto.PricingPlanEntity
-	53, // 68: proto.DocumentEntity.children:type_name -> proto.DocumentEntity
-	47, // 69: proto.DocumentEntity.files:type_name -> proto.FileEntity
-	18, // 70: proto.TemplateVariableEntity.PropertiesEntry.value:type_name -> proto.TemplateVariableEntity
-	71, // [71:71] is the sub-list for method output_type
-	71, // [71:71] is the sub-list for method input_type
-	71, // [71:71] is the sub-list for extension type_name
-	71, // [71:71] is the sub-list for extension extendee
-	0,  // [0:71] is the sub-list for field type_name
+	48, // 53: proto.BorrowerPropertyTransactionChecklistNodeEntity.files:type_name -> proto.FileEntity
+	34, // 54: proto.BorrowerPropertyTransactionChecklistNodeEntity.file_parse_config:type_name -> proto.FileParseConfig
+	35, // 55: proto.FileParseConfig.rules:type_name -> proto.FileParseRule
+	36, // 56: proto.FileParseRule.selector:type_name -> proto.TagSelector
+	25, // 57: proto.BorrowerPropertyTransactionOptionEntity.borrower_property:type_name -> proto.BorrowerPropertyEntity
+	0,  // 58: proto.LoanApplicantEntity.address:type_name -> proto.AddressEntity
+	0,  // 59: proto.LoanExperienceEntity.address:type_name -> proto.AddressEntity
+	41, // 60: proto.LoanDemographicEntity.property:type_name -> proto.LoanDemographicPropertyEntity
+	42, // 61: proto.LoanDemographicEntity.ethnicity:type_name -> proto.LoanDemographicEthnicityEntity
+	43, // 62: proto.LoanDemographicEntity.race:type_name -> proto.LoanDemographicRaceEntity
+	0,  // 63: proto.LoanBorrowerEntity.mailing_address:type_name -> proto.AddressEntity
+	48, // 64: proto.LoanDocumentEntity.files:type_name -> proto.FileEntity
+	51, // 65: proto.PricingPlanEntity.policies:type_name -> proto.PricingPlanPolicyEntity
+	14, // 66: proto.PricingPlanEntity.resources:type_name -> proto.ResourceTreeEntity
+	2,  // 67: proto.OrganizationSubscriptionEntity.organization:type_name -> proto.OrganizationEntity
+	50, // 68: proto.OrganizationSubscriptionEntity.pricing_plan:type_name -> proto.PricingPlanEntity
+	54, // 69: proto.DocumentEntity.children:type_name -> proto.DocumentEntity
+	48, // 70: proto.DocumentEntity.files:type_name -> proto.FileEntity
+	18, // 71: proto.TemplateVariableEntity.PropertiesEntry.value:type_name -> proto.TemplateVariableEntity
+	72, // [72:72] is the sub-list for method output_type
+	72, // [72:72] is the sub-list for method input_type
+	72, // [72:72] is the sub-list for extension type_name
+	72, // [72:72] is the sub-list for extension extendee
+	0,  // [0:72] is the sub-list for field type_name
 }
 
 func init() { file_proto_entity_proto_init() }
@@ -7984,7 +8032,7 @@ func file_proto_entity_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_entity_proto_rawDesc), len(file_proto_entity_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   55,
+			NumMessages:   56,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
