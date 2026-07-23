@@ -2,17 +2,15 @@ package dto
 
 import "zeebee-backend/domains/zeebee/constants"
 
-type DocumentTemplateStructureMap map[string][]DocumentTemplateStructure
+type DocumentTemplateStructureMap map[string][]*DocumentTemplateStructure
 
 type DocumentTemplateStructure struct {
 	Name            string                           `json:"name"`
 	SortOrder       int32                            `json:"sort_order"`
 	IsRequired      bool                             `json:"is_required"`
 	FileParseConfig *DocumentTemplateFileParseConfig `json:"file_parse_config,omitempty"`
-	// Tags classify the target node; copied into Document.metadata.tags at
-	// transaction creation so manual_select selectors can scope files by tag.
-	Tags     []string                    `json:"tags,omitempty"`
-	Children []DocumentTemplateStructure `json:"children"`
+	Tags            []string                         `json:"tags,omitempty"`
+	Children        []*DocumentTemplateStructure     `json:"children,omitempty"`
 }
 
 type DocumentTemplateFileParseConfig struct {

@@ -23,7 +23,8 @@ const (
 )
 
 type DocumentTemplateParser string
+
 const (
-	DocumentTemplateFileParseParserRpa        DocumentTemplateParser = "Rpa"
+	DocumentTemplateFileParseParserRPA        DocumentTemplateParser = "RPA"
 	DocumentTemplateFileParseParserEscrowInfo DocumentTemplateParser = "EscrowInfo"
 )
