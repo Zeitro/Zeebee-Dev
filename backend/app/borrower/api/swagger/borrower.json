@@ -5036,8 +5036,8 @@
         "tags": [
           "borrower_property_transaction"
         ],
-        "summary": "parse file extract",
-        "operationId": "borrowerPropertyTransactionParseFileExtract",
+        "summary": "parse file",
+        "operationId": "borrowerPropertyTransactionParseFile",
         "parameters": [
           {
             "type": "integer",
@@ -5081,7 +5081,7 @@
         }
       }
     },
-    "/api/v1/borrower_property_transaction/{id}/parse/progress": {
+    "/api/v1/borrower_property_transaction/{id}/parse/result": {
       "get": {
         "produces": [
           "application/json"
@@ -5092,8 +5092,8 @@
         "tags": [
           "borrower_property_transaction"
         ],
-        "summary": "get file extract progress",
-        "operationId": "borrowerPropertyTransactionGetFileExtractProgress",
+        "summary": "get parse file result",
+        "operationId": "borrowerPropertyTransactionParseFileResult",
         "parameters": [
           {
             "type": "integer",
@@ -27061,7 +27061,7 @@
       }
     }
   },
-  "x-date": "2026-07-21 14:20:26",
+  "x-date": "2026-07-23 10:46:31",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

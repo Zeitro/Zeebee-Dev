@@ -719,13 +719,13 @@ service borrower-api {
 	@handler OperationList
 	get /borrower_property_transaction/:transaction_id/operations (TransactionOperationListRequest) returns (TransactionOperationListResponse)
 
-	@doc "parse file extract"
-	@handler ParseFileExtract
-	post /borrower_property_transaction/:id/parse (ParseFileExtractRequest) returns (ParseFileExtractResponse)
+	@doc "parse file"
+	@handler ParseFile
+	post /borrower_property_transaction/:id/parse (ParseFileRequest) returns (ParseFileResponse)
 
-	@doc "get file extract progress"
-	@handler GetFileExtractProgress
-	get /borrower_property_transaction/:id/parse/progress (GetFileExtractProgressRequest) returns (GetFileExtractProgressResponse)
+	@doc "get parse file result"
+	@handler ParseFileResult
+	get /borrower_property_transaction/:id/parse/result (ParseFileResultRequest) returns (ParseFileResultResponse)
 }
 
 // =============== borrower property transaction end ==============

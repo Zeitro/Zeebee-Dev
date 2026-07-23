@@ -31,10 +31,10 @@ type (
 	BorrowerPropertyTransactionPageResponse               = borrower.BorrowerPropertyTransactionPageResponse
 	BorrowerPropertyTransactionSwitchStatusRequest        = borrower.BorrowerPropertyTransactionSwitchStatusRequest
 	BorrowerPropertyTransactionUpdateRequest              = borrower.BorrowerPropertyTransactionUpdateRequest
-	GetFileExtractProgressReq                             = borrower.GetFileExtractProgressReq
-	GetFileExtractProgressResp                            = borrower.GetFileExtractProgressResp
-	ParseFileExtractReq                                   = borrower.ParseFileExtractReq
-	ParseFileExtractResp                                  = borrower.ParseFileExtractResp
+	ParseFileRequest                                      = borrower.ParseFileRequest
+	ParseFileResponse                                     = borrower.ParseFileResponse
+	ParseFileResultRequest                                = borrower.ParseFileResultRequest
+	ParseFileResultResponse                               = borrower.ParseFileResultResponse
 	TransactionOperationListRequest                       = borrower.TransactionOperationListRequest
 	TransactionOperationListResponse                      = borrower.TransactionOperationListResponse
 	TransactionOperationStatsRequest                      = borrower.TransactionOperationStatsRequest
@@ -55,8 +55,8 @@ type (
 		DeleteDocumentFile(ctx context.Context, in *BorrowerPropertyTransactionDocumentDeleteFileRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 		OperationStats(ctx context.Context, in *TransactionOperationStatsRequest, opts ...grpc.CallOption) (*TransactionOperationStatsResponse, error)
 		OperationList(ctx context.Context, in *TransactionOperationListRequest, opts ...grpc.CallOption) (*TransactionOperationListResponse, error)
-		ParseFileExtract(ctx context.Context, in *ParseFileExtractReq, opts ...grpc.CallOption) (*ParseFileExtractResp, error)
-		GetFileExtractProgress(ctx context.Context, in *GetFileExtractProgressReq, opts ...grpc.CallOption) (*GetFileExtractProgressResp, error)
+		ParseFile(ctx context.Context, in *ParseFileRequest, opts ...grpc.CallOption) (*ParseFileResponse, error)
+		ParseFileResult(ctx context.Context, in *ParseFileResultRequest, opts ...grpc.CallOption) (*ParseFileResultResponse, error)
 	}
 
 	defaultBorrowerPropertyTransaction struct {
@@ -140,12 +140,12 @@ func (m *defaultBorrowerPropertyTransaction) OperationList(ctx context.Context, 
 	return client.OperationList(ctx, in, opts...)
 }
 
-func (m *defaultBorrowerPropertyTransaction) ParseFileExtract(ctx context.Context, in *ParseFileExtractReq, opts ...grpc.CallOption) (*ParseFileExtractResp, error) {
+func (m *defaultBorrowerPropertyTransaction) ParseFile(ctx context.Context, in *ParseFileRequest, opts ...grpc.CallOption) (*ParseFileResponse, error) {
 	client := borrower.NewBorrowerPropertyTransactionClient(m.cli.Conn())
-	return client.ParseFileExtract(ctx, in, opts...)
+	return client.ParseFile(ctx, in, opts...)
 }
 
-func (m *defaultBorrowerPropertyTransaction) GetFileExtractProgress(ctx context.Context, in *GetFileExtractProgressReq, opts ...grpc.CallOption) (*GetFileExtractProgressResp, error) {
+func (m *defaultBorrowerPropertyTransaction) ParseFileResult(ctx context.Context, in *ParseFileResultRequest, opts ...grpc.CallOption) (*ParseFileResultResponse, error) {
 	client := borrower.NewBorrowerPropertyTransactionClient(m.cli.Conn())
-	return client.GetFileExtractProgress(ctx, in, opts...)
+	return client.ParseFileResult(ctx, in, opts...)
 }

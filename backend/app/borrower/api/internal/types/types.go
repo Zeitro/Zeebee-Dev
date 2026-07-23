@@ -696,22 +696,6 @@ type FileParseRule struct {
 	Selector    *TagSelector `json:"selector"`
 }
 
-type GetFileExtractProgressRequest struct {
-	Id         int64  `path:"id" validate:"required,gt=0"`
-	Type       string `form:"type" validate:"required,oneof=request_id params"`
-	RequestId  string `form:"request_id,optional"`
-	DocumentId int64  `form:"document_id,optional"`
-	Parser     string `form:"parser,optional"`
-}
-
-type GetFileExtractProgressResponse struct {
-	Status         string `json:"status"`
-	Stage          string `json:"stage"`
-	StageProcessed int32  `json:"stage_processed"`
-	StageTotal     int32  `json:"stage_total"`
-	Error          string `json:"error"`
-}
-
 type GetSelectOptionRequest struct {
 	Name string `form:"name"`
 }
@@ -1651,14 +1635,30 @@ type OrganizationUserUpdateResponse struct {
 	OrganizationUserEntity
 }
 
-type ParseFileExtractRequest struct {
+type ParseFileRequest struct {
 	Id         int64  `path:"id" validate:"required,gt=0"`
 	DocumentId int64  `json:"document_id" validate:"required,gt=0"`
 	Parser     string `json:"parser" validate:"required"`
 }
 
-type ParseFileExtractResponse struct {
+type ParseFileResponse struct {
 	RequestId string `json:"request_id"`
+}
+
+type ParseFileResultRequest struct {
+	Id         int64  `path:"id" validate:"required,gt=0"`
+	Type       string `form:"type" validate:"required,oneof=request_id params"`
+	RequestId  string `form:"request_id,optional"`
+	DocumentId int64  `form:"document_id,optional"`
+	Parser     string `form:"parser,optional"`
+}
+
+type ParseFileResultResponse struct {
+	Status         string `json:"status"`
+	Stage          string `json:"stage"`
+	StageProcessed int32  `json:"stage_processed"`
+	StageTotal     int32  `json:"stage_total"`
+	Error          string `json:"error"`
 }
 
 type PathIdRequest struct {

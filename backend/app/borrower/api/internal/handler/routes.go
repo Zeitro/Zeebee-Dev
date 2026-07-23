@@ -226,16 +226,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: borrower_property_transaction.BorrowerPropertyTransactionUpdateChecklistHandler(serverCtx),
 				},
 				{
-					// parse file extract
+					// parse file
 					Method:  http.MethodPost,
 					Path:    "/borrower_property_transaction/:id/parse",
-					Handler: borrower_property_transaction.ParseFileExtractHandler(serverCtx),
+					Handler: borrower_property_transaction.ParseFileHandler(serverCtx),
 				},
 				{
-					// get file extract progress
+					// get parse file result
 					Method:  http.MethodGet,
-					Path:    "/borrower_property_transaction/:id/parse/progress",
-					Handler: borrower_property_transaction.GetFileExtractProgressHandler(serverCtx),
+					Path:    "/borrower_property_transaction/:id/parse/result",
+					Handler: borrower_property_transaction.ParseFileResultHandler(serverCtx),
 				},
 				{
 					// switch transaction status

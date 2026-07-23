@@ -394,12 +394,12 @@ type (
 
 // file content extract (manual_tree / manual_select)
 type (
-    ParseFileExtractRequest {
+    ParseFileRequest {
         Id int64 `path:"id" validate:"required,gt=0"`
         DocumentId int64 `json:"document_id" validate:"required,gt=0"`
         Parser string `json:"parser" validate:"required"`
     }
-    ParseFileExtractResponse {
+    ParseFileResponse {
         RequestId string `json:"request_id"`
     }
 
@@ -407,14 +407,14 @@ type (
     // type selects the mode: "request_id" → use request_id (mode a);
     // "params" → use document_id+parser to rebuild ruleSig → reqmap (mode b).
     // The RPC branches on type.
-    GetFileExtractProgressRequest {
+    ParseFileResultRequest {
         Id int64 `path:"id" validate:"required,gt=0"`
         Type string `form:"type" validate:"required,oneof=request_id params"`
         RequestId string `form:"request_id,optional"`
         DocumentId int64 `form:"document_id,optional"`
         Parser string `form:"parser,optional"`
     }
-    GetFileExtractProgressResponse {
+    ParseFileResultResponse {
         Status string `json:"status"`
         Stage string `json:"stage"`
         StageProcessed int32 `json:"stage_processed"`

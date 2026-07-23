@@ -94,12 +94,13 @@ func (s *BorrowerPropertyTransactionServer) OperationList(ctx context.Context, i
 	return l.OperationList(in)
 }
 
-func (s *BorrowerPropertyTransactionServer) ParseFileExtract(ctx context.Context, in *borrower.ParseFileExtractReq) (*borrower.ParseFileExtractResp, error) {
-	l := borrowerpropertytransactionlogic.NewParseFileExtractLogic(ctx, s.svcCtx)
-	return l.ParseFileExtract(in)
+func (s *BorrowerPropertyTransactionServer) ParseFile(ctx context.Context, in *borrower.ParseFileRequest) (*borrower.ParseFileResponse, error) {
+	l := borrowerpropertytransactionlogic.NewParseFileLogic(ctx, s.svcCtx)
+	return l.ParseFile(in)
 }
 
-func (s *BorrowerPropertyTransactionServer) GetFileExtractProgress(ctx context.Context, in *borrower.GetFileExtractProgressReq) (*borrower.GetFileExtractProgressResp, error) {
-	l := borrowerpropertytransactionlogic.NewGetFileExtractProgressLogic(ctx, s.svcCtx)
-	return l.GetFileExtractProgress(in)
+func (s *BorrowerPropertyTransactionServer) ParseFileResult(ctx context.Context, in *borrower.ParseFileResultRequest) (*borrower.ParseFileResultResponse, error) {
+	l := borrowerpropertytransactionlogic.NewParseFileResultLogic(ctx, s.svcCtx)
+	return l.ParseFileResult(in)
+	return l.ParseFileResult(in)
 }
