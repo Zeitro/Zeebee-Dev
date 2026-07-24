@@ -159,21 +159,29 @@ func TestRecoveryScan(t *testing.T) {
 	}
 }
 
-// TestProgressStageCheckpointRoundTrip verifies the extract-stage resume
-// checkpoint survives in its own job-TTL key — the contract rpa's resume leans
-// on (it must outlive the sliding progress record).
-func TestProgressStageCheckpointRoundTrip(t *testing.T) {
+// TestProgressFilesCheckpointRoundTrip verifies the Extract resume checkpoint
+// (fileId → provider file id) survives in its own job-TTL key — rpa resume leans
+// on it to reuse uploaded ids instead of re-uploading.
+func TestProgressFilesCheckpointRoundTrip(t *testing.T) {
 	pm := newTestProgressManager(t)
 	ctx := context.Background()
-	if got, _ := pm.GetStageCheckpoint(ctx, "req", StageExtract); got != nil {
-		t.Fatalf("fresh checkpoint = %s, want nil", got)
+	if got, _ := pm.GetFilesCheckpoint(ctx, "req"); got != nil {
+		t.Fatalf("fresh checkpoint = %+v, want nil", got)
 	}
-	out := json.RawMessage(`{"10":{"file_id":10,"fields":{"purchase_amount":1000}}}`)
-	if err := pm.SetStageCheckpoint(ctx, "req", StageExtract, out); err != nil {
-		t.Fatalf("set: %v", err)
+	if err := pm.SaveFileCheckpoint(ctx, "req", 10, FileCheckpoint{Provider: "claude", ProviderFileID: "file-10"}); err != nil {
+		t.Fatalf("save 10: %v", err)
 	}
-	got, _ := pm.GetStageCheckpoint(ctx, "req", StageExtract)
-	if string(got) != string(out) {
-		t.Fatalf("checkpoint round-trip = %q, want %q", got, out)
+	if err := pm.SaveFileCheckpoint(ctx, "req", 11, FileCheckpoint{Provider: "claude", ProviderFileID: "file-11"}); err != nil {
+		t.Fatalf("save 11: %v", err)
+	}
+	got, _ := pm.GetFilesCheckpoint(ctx, "req")
+	if len(got) != 2 || got[10].ProviderFileID != "file-10" || got[11].Provider != "claude" {
+		t.Fatalf("checkpoint = %+v, want 2 claude entries", got)
+	}
+	if err := pm.DeleteFilesCheckpoint(ctx, "req"); err != nil {
+		t.Fatalf("delete: %v", err)
+	}
+	if got, _ := pm.GetFilesCheckpoint(ctx, "req"); got != nil {
+		t.Fatalf("after delete = %+v, want nil", got)
 	}
 }

@@ -163,5 +163,7 @@ type CronTaskConf struct {
 type LlmConf struct {
 	config.LlmConf
 
+	// TransactionFileParseConf: Provider/Model must support file upload + multimodal
+	// (file_id reference). Switching Provider invalidates uploaded ids → resume re-uploads.
 	TransactionFileParseConf config.LlmBizConf
 }

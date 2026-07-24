@@ -9,20 +9,13 @@ import (
 	"testing"
 )
 
-// These tests cover the non-pdfium parts of pdf.go: the file-type gate and the
-// download size cap / status guard. readFirstNPages / RenderPagePNG need a real
-// pdfium instance + a PDF fixture (the go-pdfium interface is too large to mock
-// cheaply), so they are exercised in integration rather than here.
+// These tests cover pdf.go + image.go: the file-type gates and the download
+// size cap / status guard. The provider reads bytes directly — no pdfium render.
 
 func TestIsPDF(t *testing.T) {
 	cases := map[string]bool{
-		"wire.pdf":     true,
-		"WIRE.PDF":     true,
-		"contract.Pdf": true,
-		"notes.docx":   false,
-		"noext":        false,
-		"pdf":          false,
-		"scan.pdf.bak": false,
+		"wire.pdf": true, "WIRE.PDF": true, "contract.Pdf": true,
+		"notes.docx": false, "noext": false, "pdf": false, "scan.pdf.bak": false,
 	}
 	for name, want := range cases {
 		if got := IsPDF(name); got != want {
@@ -48,10 +41,6 @@ func TestDownloadPDFSuccess(t *testing.T) {
 	}
 	if !bytes.Equal(got, body) {
 		t.Fatalf("body = %q, want %q", got, body)
-	}
-	// pdfium seeks the xref itself — the returned reader must be seekable.
-	if _, err := rs.Seek(0, io.SeekStart); err != nil {
-		t.Fatalf("seek: %v", err)
 	}
 }
 

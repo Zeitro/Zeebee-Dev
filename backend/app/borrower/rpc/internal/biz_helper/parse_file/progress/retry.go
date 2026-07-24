@@ -5,33 +5,41 @@ import (
 	"time"
 )
 
-// Per-stage retry policy. Extract retries per file (a bad file must not abort
-// the whole parse); Collect/Arbitrate/Writeback retry the whole stage. Each
-// stage counts its own attempts independently (FR-030).
 const (
 	retryMax    = 3
-	retryBaseMs = 2000 // 2s, 4s exponential backoff (3rd attempt runs immediately)
+	retryBaseMs = 2000 // 2s, 4s exponential backoff
 )
 
-// RetryDo calls fn up to retryMax times with exponential backoff (2s, 4s; the
-// final attempt runs without a trailing sleep). It returns the last error once
-// attempts are exhausted. The backoff sleeps are ctx-aware so a cancelled
-// parse does not block.
-func RetryDo(ctx context.Context, fn func() error) error {
+// RetryStore reads/persists a stage's retry counter (job TTL). Recovered runs continue counting.
+type RetryStore interface {
+	StageRetry(ctx context.Context, stage string) RetryState
+	SaveStageRetry(ctx context.Context, stage string, retry RetryState)
+}
+
+// RetryDo retries fn for one stage, continuing the persisted count across recovery.
+// Extract wraps the single consolidated multimodal call; Collect/Writeback wrap whole-stage redo.
+func RetryDo(ctx context.Context, store RetryStore, stage string, fn func() error) error {
+	rs := store.StageRetry(ctx, stage)
+	if rs.Max == 0 {
+		rs.Max = retryMax
+	}
 	var err error
-	for attempt := 0; attempt < retryMax; attempt++ {
+	for attempt := rs.Count; attempt < rs.Max; attempt++ {
 		err = fn()
 		if err == nil {
+			store.SaveStageRetry(ctx, stage, RetryState{Max: rs.Max}) // reset on success
 			return nil
 		}
-		if attempt == retryMax-1 {
+		rs.Count = attempt + 1
+		rs.BackoffMs = retryBaseMs << attempt
+		store.SaveStageRetry(ctx, stage, rs)
+		if attempt == rs.Max-1 {
 			break
 		}
-		backoff := time.Duration(retryBaseMs<<(attempt)) * time.Millisecond
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
-		case <-time.After(backoff):
+		case <-time.After(time.Duration(retryBaseMs<<attempt) * time.Millisecond):
 		}
 	}
 	return err

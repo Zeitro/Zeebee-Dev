@@ -7,9 +7,18 @@ import (
 	"time"
 )
 
+type memRetryStore struct{ retries map[string]RetryState }
+
+func newRetryStore() *memRetryStore { return &memRetryStore{retries: map[string]RetryState{}} }
+
+func (m *memRetryStore) StageRetry(_ context.Context, stage string) RetryState  { return m.retries[stage] }
+func (m *memRetryStore) SaveStageRetry(_ context.Context, stage string, r RetryState) {
+	m.retries[stage] = r
+}
+
 func TestRetryDoSucceedsFirstAttempt(t *testing.T) {
 	calls := 0
-	err := RetryDo(context.Background(), func() error {
+	err := RetryDo(context.Background(), newRetryStore(), StageExtract, func() error {
 		calls++
 		return nil
 	})
@@ -19,10 +28,9 @@ func TestRetryDoSucceedsFirstAttempt(t *testing.T) {
 }
 
 func TestRetryDoSucceedsAfterRetry(t *testing.T) {
-	// Second attempt succeeds — exercises one exponential backoff (~2s).
 	calls := 0
 	start := time.Now()
-	err := RetryDo(context.Background(), func() error {
+	err := RetryDo(context.Background(), newRetryStore(), StageExtract, func() error {
 		calls++
 		if calls < 2 {
 			return errors.New("transient")
@@ -41,13 +49,11 @@ func TestRetryDoSucceedsAfterRetry(t *testing.T) {
 }
 
 func TestRetryDoContextCancelAbortsBackoff(t *testing.T) {
-	// Always-fail fn + a ctx cancelled mid-first-backoff → RetryDo returns
-	// ctx.Err() quickly instead of waiting out all retries (~6s).
 	ctx, cancel := context.WithTimeout(context.Background(), 300*time.Millisecond)
 	defer cancel()
 	calls := 0
 	start := time.Now()
-	err := RetryDo(ctx, func() error {
+	err := RetryDo(ctx, newRetryStore(), StageExtract, func() error {
 		calls++
 		return errors.New("always")
 	})
@@ -57,5 +63,20 @@ func TestRetryDoContextCancelAbortsBackoff(t *testing.T) {
 	}
 	if elapsed > 2*time.Second {
 		t.Fatalf("did not abort on ctx cancel: elapsed=%v", elapsed)
+	}
+}
+
+// TestRetryDoContinuesPersistedCount: a pre-seeded count=2 means only one more
+// attempt runs (T009b) — recovery continues counting instead of restarting.
+func TestRetryDoContinuesPersistedCount(t *testing.T) {
+	store := newRetryStore()
+	store.retries[StageExtract] = RetryState{Count: 2, Max: retryMax}
+	calls := 0
+	_ = RetryDo(context.Background(), store, StageExtract, func() error {
+		calls++
+		return errors.New("still failing")
+	})
+	if calls != 1 {
+		t.Fatalf("calls=%d, want 1 (only the remaining attempt from count=2)", calls)
 	}
 }

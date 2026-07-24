@@ -12,9 +12,7 @@ import (
 	"zeebee-backend/common/redisx"
 )
 
-// TTLs (seconds). lock/progress slide per file; done/reqmap/job outlive the
-// run so late progress queries and restart recovery still resolve; hold is
-// short so a crashed node's task is reclaimable quickly.
+// TTLs (seconds). lock/progress slide per file; done/reqmap/job outlive the run.
 const (
 	ttlLockSec     = 600
 	ttlProgressSec = 600
@@ -25,53 +23,55 @@ const (
 	HoldHeartbeat  = 10 * time.Second
 )
 
-// Job-level status.
 const (
 	StatusRunning  = "Running"
 	StatusFinished = "Finished"
 	StatusFailed   = "Failed"
 )
 
-// Stage names.
 const (
 	StageCollect   = "Collect"
 	StageExtract   = "Extract"
 	StageWriteback = "Writeback"
 )
 
-// Per-stage status.
 const (
 	StageStatusPending = "Pending"
 	StageStatusRunning = "Running"
 	StageStatusDone    = "Done"
 )
 
-// StageState is one stage of the staged pipeline: name, status, and processed/
-// total counters the frontend composes into progress (no overall percent).
-type StageState struct {
-	Name      string `json:"name"`
-	Status    string `json:"status"`
-	Processed int    `json:"processed"`
-	Total     int    `json:"total"`
+// RetryState is the persisted per-stage retry counter (job TTL); recovery continues counting (T009b).
+type RetryState struct {
+	Count     int `json:"count"`
+	Max       int `json:"max"`
+	BackoffMs int `json:"backoff_ms"`
 }
 
-// Progress is the single Redis record holding all stages. No overall percent —
-// the frontend composes it from stage + processed/total.
+// StageState is one pipeline stage; State holds a stage-specific blob (Extract {uploaded,total}).
+type StageState struct {
+	Name      string          `json:"name"`
+	Status    string          `json:"status"`
+	Processed int             `json:"processed"`
+	Total     int             `json:"total"`
+	State     json.RawMessage `json:"state,omitempty"`
+	Retry     RetryState      `json:"retry"`
+}
+
+// Progress holds all stages; no overall percent — frontend composes from processed/total.
 type Progress struct {
-	Status string       `json:"status"` // Running | Finished | Failed
-	Stage  string       `json:"stage"`  // current stage name
+	Status string       `json:"status"`
+	Stage  string       `json:"stage"`
 	Stages []StageState `json:"stages"`
 	Error  string       `json:"error,omitempty"`
 }
 
-// DoneState is the long-TTL terminal record queried after the run key expires.
 type DoneState struct {
-	Status string `json:"status"` // Finished | Failed
+	Status string `json:"status"`
 	Error  string `json:"error,omitempty"`
 }
 
-// Job is the recovery descriptor scanned on startup/sweep. It carries identity
-// + collect input params only; all stage I/O lives in Progress.
+// Job is the recovery descriptor: identity + collect params only; stage I/O lives in Progress + the files checkpoint.
 type Job struct {
 	RequestId     string `json:"request_id"`
 	TransactionId int64  `json:"transaction_id"`
@@ -81,7 +81,17 @@ type Job struct {
 	DocumentId    int64  `json:"document_id"`
 }
 
-// ProgressManager owns all bpt:parse:* Redis keys.
+// FileCheckpoint is one uploaded file's provider reference; the id is provider-scoped, not portable (R11).
+type FileCheckpoint struct {
+	Provider       string `json:"provider"`
+	ProviderFileID string `json:"provider_file_id"`
+}
+
+type extractState struct {
+	Uploaded int `json:"uploaded"`
+	Total    int `json:"total"`
+}
+
 type ProgressManager struct {
 	rdb    *redisx.Client
 	logger logx.Logger
@@ -105,7 +115,7 @@ func (m *ProgressManager) ReleaseDedupLock(ctx context.Context, txId int64, rule
 	return m.rdb.Del(ctx, lockKey(txId, ruleSig))
 }
 
-// ---- hold lock (per request, heartbeat-driven, for crash detection/reclaim) ----
+// ---- hold lock (per request, heartbeat-driven, crash reclaim) ----
 
 func (m *ProgressManager) AcquireHold(ctx context.Context, requestId, nodeId string) (bool, error) {
 	return m.rdb.SetNX(ctx, holdKey(requestId), nodeId, time.Duration(ttlHoldSec)*time.Second)
@@ -135,10 +145,7 @@ func (m *ProgressManager) saveProgress(ctx context.Context, requestId string, p 
 	if err != nil {
 		return errorx.Wrap(err, "marshal progress")
 	}
-	if err := m.rdb.SetExpire(ctx, progressKey(requestId), string(b), ttlProgressSec); err != nil {
-		return err
-	}
-	return nil
+	return m.rdb.SetExpire(ctx, progressKey(requestId), string(b), ttlProgressSec)
 }
 
 func (m *ProgressManager) GetProgress(ctx context.Context, requestId string) (*Progress, error) {
@@ -186,24 +193,36 @@ func (m *ProgressManager) GetReqMap(ctx context.Context, txId int64, ruleSig str
 	return m.rdb.Get(ctx, reqMapKey(txId, ruleSig))
 }
 
-// ---- stage checkpoint (extract resume) ----
-// The checkpoint (marshaled map[int64] of already-extracted per-file results)
-// lives in its OWN key at job TTL (ttlJobSec), not in the sliding progress
-// record (ttlProgressSec). A crashed node's progress record can expire before
-// the recovery sweeper reclaims the job; a job-TTL checkpoint survives that
-// gap so a resumed rpa extract still skips finished files instead of re-calling
-// the LLM.
+// ---- Extract files checkpoint (resume: fileId → provider file id) ----
+// Own key at job TTL (survives expired progress). One run = one hold → single writer, RMW safe.
 
-func (m *ProgressManager) SetStageCheckpoint(ctx context.Context, requestId, stage string, output json.RawMessage) error {
-	return m.rdb.SetExpire(ctx, ckptKey(requestId, stage), string(output), ttlJobSec)
+func (m *ProgressManager) SaveFileCheckpoint(ctx context.Context, requestId string, fileId int64, fc FileCheckpoint) error {
+	files, _ := m.GetFilesCheckpoint(ctx, requestId)
+	if files == nil {
+		files = map[int64]FileCheckpoint{}
+	}
+	files[fileId] = fc
+	b, err := json.Marshal(files)
+	if err != nil {
+		return errorx.Wrap(err, "marshal files checkpoint")
+	}
+	return m.rdb.SetExpire(ctx, filesKey(requestId), string(b), ttlJobSec)
 }
 
-func (m *ProgressManager) GetStageCheckpoint(ctx context.Context, requestId, stage string) (json.RawMessage, error) {
-	raw, err := m.rdb.Get(ctx, ckptKey(requestId, stage))
+func (m *ProgressManager) GetFilesCheckpoint(ctx context.Context, requestId string) (map[int64]FileCheckpoint, error) {
+	raw, err := m.rdb.Get(ctx, filesKey(requestId))
 	if err != nil || raw == "" {
 		return nil, nil
 	}
-	return json.RawMessage(raw), nil
+	var files map[int64]FileCheckpoint
+	if json.Unmarshal([]byte(raw), &files) != nil {
+		return nil, nil
+	}
+	return files, nil
+}
+
+func (m *ProgressManager) DeleteFilesCheckpoint(ctx context.Context, requestId string) error {
+	return m.rdb.Del(ctx, filesKey(requestId))
 }
 
 // ---- job descriptor (recovery scan) ----
@@ -220,8 +239,7 @@ func (m *ProgressManager) DeleteJob(ctx context.Context, requestId string) error
 	return m.rdb.Del(ctx, jobKey(requestId))
 }
 
-// ListJobs scans all bpt:parse:job:* descriptors and decodes them. Used by the
-// recovery coordinator; not a hot-path call.
+// ListJobs scans all bpt:parse:job:* descriptors. Recovery-only, not hot path.
 func (m *ProgressManager) ListJobs(ctx context.Context) ([]*Job, error) {
 	keys, err := m.rdb.Scan(ctx, "bpt:parse:job:*")
 	if err != nil {
@@ -254,6 +272,12 @@ func FirstStage(stages []StageState) string {
 	return ""
 }
 
+// ExtractStateJSON marshals the Extract upload-progress State blob.
+func ExtractStateJSON(uploaded, total int) json.RawMessage {
+	b, _ := json.Marshal(extractState{Uploaded: uploaded, Total: total})
+	return b
+}
+
 // ---- key builders ----
 func lockKey(txId int64, ruleSig string) string {
 	return fmt.Sprintf("bpt:parse:lock:%d:%s", txId, ruleSig)
@@ -264,7 +288,5 @@ func holdKey(requestId string) string     { return "bpt:parse:hold:" + requestId
 func reqMapKey(txId int64, ruleSig string) string {
 	return fmt.Sprintf("bpt:parse:reqmap:%d:%s", txId, ruleSig)
 }
-func jobKey(requestId string) string { return "bpt:parse:job:" + requestId }
-func ckptKey(requestId, stage string) string {
-	return fmt.Sprintf("bpt:parse:ckpt:%s:%s", requestId, stage)
-}
+func jobKey(requestId string) string   { return "bpt:parse:job:" + requestId }
+func filesKey(requestId string) string { return "bpt:parse:files:" + requestId }
