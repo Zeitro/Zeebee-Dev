@@ -33,11 +33,11 @@ func (l *SyncApiLogic) SyncApi(in *borrower.SyncApiRequest) (resp *proto.EmptyRe
 
 	var apiGroups swagger.ApiGroup
 	if err = json.Unmarshal([]byte(in.Data.ApiJson), &apiGroups); err != nil {
-		return nil, errorx.Wrap(err, "failed to unmarshal api json")
+		return nil, errorx.Wrap(err, "fail to unmarshal api json")
 	}
 
 	syncDto := &dto.ApiSyncRequestDto{
-		Type: constants.UserTypeAdmin,
+		Type: constants.UserTypeBorrower,
 		Apis: make(map[string][]dto.ApiSyncItemDto),
 	}
 	for tag, apis := range apiGroups {
