@@ -265,7 +265,7 @@ message ParseFileRequest {
 }
 
 message ParseFileRequestData {
-  int64  transaction_id = 1;
+  int64  id = 1;
   int64  document_id    = 2;
   string parser         = 3;
 }

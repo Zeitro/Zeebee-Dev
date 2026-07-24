@@ -1652,9 +1652,9 @@ type ParseFileResponse struct {
 type ParseFileResultRequest struct {
 	Id         int64  `path:"id" validate:"required,gt=0"`
 	Type       string `form:"type" validate:"required,oneof=request_id params"`
-	RequestId  string `form:"request_id,optional"`
-	DocumentId int64  `form:"document_id,optional"`
-	Parser     string `form:"parser,optional"`
+	RequestId  string `form:"request_id,optional" validate:"required_if=Type request_id"`
+	DocumentId int64  `form:"document_id,optional" validate:"required_if=Type params"`
+	Parser     string `form:"parser,optional" validate:"required_if=Type params"`
 }
 
 type ParseFileResultResponse struct {

@@ -2368,7 +2368,7 @@ func (x *ParseFileRequest) GetData() *ParseFileRequestData {
 
 type ParseFileRequestData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TransactionId int64                  `protobuf:"varint,1,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	DocumentId    int64                  `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	Parser        string                 `protobuf:"bytes,3,opt,name=parser,proto3" json:"parser,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -2405,9 +2405,9 @@ func (*ParseFileRequestData) Descriptor() ([]byte, []int) {
 	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{40}
 }
 
-func (x *ParseFileRequestData) GetTransactionId() int64 {
+func (x *ParseFileRequestData) GetId() int64 {
 	if x != nil {
-		return x.TransactionId
+		return x.Id
 	}
 	return 0
 }
@@ -3037,9 +3037,9 @@ const file_borrower_borrower_property_transaction_proto_rawDesc = "" +
 	"\n" +
 	"request_id\x18\x02 \x01(\tR\trequestId\"F\n" +
 	"\x10ParseFileRequest\x122\n" +
-	"\x04data\x18\x01 \x01(\v2\x1e.borrower.ParseFileRequestDataR\x04data\"v\n" +
-	"\x14ParseFileRequestData\x12%\n" +
-	"\x0etransaction_id\x18\x01 \x01(\x03R\rtransactionId\x12\x1f\n" +
+	"\x04data\x18\x01 \x01(\v2\x1e.borrower.ParseFileRequestDataR\x04data\"_\n" +
+	"\x14ParseFileRequestData\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
 	"documentId\x12\x16\n" +
 	"\x06parser\x18\x03 \x01(\tR\x06parser\"H\n" +
