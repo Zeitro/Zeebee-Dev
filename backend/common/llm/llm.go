@@ -1,19 +1,14 @@
 // Package llm provides a small provider-agnostic chat client (openai / claude)
-// used for structured (JSON) text and vision extraction. Shared by file parsing
-// and lender discover so both run on the same provider/config plumbing.
+// used for structured (JSON) text and multimodal file extraction. Shared by file
+// parsing and lender discover so both run on the same provider/config plumbing.
 package llm
 
 import (
 	"context"
-	"encoding/base64"
 	"fmt"
+	"io"
 	"strings"
 	"time"
-
-	"github.com/anthropics/anthropic-sdk-go"
-	anthopt "github.com/anthropics/anthropic-sdk-go/option"
-	"github.com/openai/openai-go/v3"
-	openaiopt "github.com/openai/openai-go/v3/option"
 
 	"zeebee-backend/domains/zeebee/config"
 )
@@ -23,13 +18,51 @@ const (
 	defaultTimeoutSec = 60
 )
 
-// Client abstracts the LLM used for structured extraction so openai and claude
-// implementations are interchangeable.
+// Attachment is a provider-agnostic file reference passed into a Chat call.
+// Set exactly one of FileID (an already-uploaded provider file) or Base64
+// (inline content); Filename + ContentType describe it for every provider. This
+// lets claude and openai share one call surface — each maps an attachment to its
+// own multimodal API. Both upload-based (fileId, for resume reuse + terminal
+// delete) and upload-free (base64) flows go through the same type.
+type Attachment struct {
+	FileID      string // provider file id from a prior UploadFile
+	Base64      string // inline base64-encoded content (no upload needed)
+	Filename    string
+	ContentType string // mime type, e.g. application/pdf, image/png
+}
+
+// chatConfig holds the optional attachments collected from ChatOptions.
+type chatConfig struct {
+	attachments []Attachment
+}
+
+// ChatOption configures optional file attachments on a Chat call.
+type ChatOption func(*chatConfig)
+
+// WithAttachment attaches one file (fileId or base64) to the next Chat call.
+func WithAttachment(a Attachment) ChatOption {
+	return func(c *chatConfig) { c.attachments = append(c.attachments, a) }
+}
+
+// Client abstracts the LLM so openai and claude are interchangeable. The single
+// Chat entry point takes optional file attachments; no attachment = plain text.
 type Client interface {
-	// ChatJSON sends a text prompt and returns raw model content (expected JSON).
-	ChatJSON(ctx context.Context, system, user string) (string, error)
-	// VisionJSON sends a text prompt plus one PNG image and returns raw content.
-	VisionJSON(ctx context.Context, system, text string, imagePNG []byte) (string, error)
+	// Provider returns this client's provider name (claude, openai). An uploaded
+	// file id is provider-scoped, so callers match it on resume (research R11).
+	Provider() string
+	// Chat sends system+user with optional file attachments. No attachments is a
+	// plain text chat; each provider maps attachments (fileId or base64 +
+	// filename + contentType) to its own multimodal API.
+	Chat(ctx context.Context, system, user string, opts ...ChatOption) (string, error)
+	// UploadFile stores a binary at the provider and returns the provider name +
+	// id to reference later (resume reuse, terminal delete). The id is NOT
+	// portable across providers (research R11): a provider switch invalidates
+	// prior ids, so callers persist the provider alongside the id and re-upload
+	// on mismatch.
+	UploadFile(ctx context.Context, reader io.Reader, filename, contentType string) (provider, fileID string, err error)
+	// DeleteFile removes an uploaded provider file. Called at the terminal state
+	// to stop billing; failures are logged, never blocking.
+	DeleteFile(ctx context.Context, fileID string) error
 }
 
 // NewClient resolves the provider named by biz.Provider from the configured
@@ -46,9 +79,9 @@ func NewClient(providers []config.LlmProvider, biz config.LlmBizConf) (Client, e
 		return nil, fmt.Errorf("llm provider %q not configured", biz.Provider)
 	}
 	switch prov.Name {
-	case "openai":
+	case openAiProvider:
 		return newOpenAIClient(prov, biz), nil
-	case "claude":
+	case claudeProvider:
 		return newClaudeClient(prov, biz), nil
 	default:
 		return nil, fmt.Errorf("llm provider %q not supported", prov.Name)
@@ -69,138 +102,8 @@ func timeoutOf(biz config.LlmBizConf) time.Duration {
 	return time.Duration(defaultTimeoutSec) * time.Second
 }
 
-// --- openai ---
-
-type openAIClient struct {
-	client openai.Client
-	model  openai.ChatModel
-}
-
-func newOpenAIClient(p *config.LlmProvider, biz config.LlmBizConf) *openAIClient {
-	opts := []openaiopt.RequestOption{
-		openaiopt.WithAPIKey(p.ApiKey),
-		openaiopt.WithRequestTimeout(timeoutOf(biz)),
-	}
-	// openai-go appends "/chat/completions" to base_url, so base must carry "/v1".
-	if base := strings.TrimRight(p.BaseUrl, "/"); base != "" {
-		if !strings.HasSuffix(base, "/v1") {
-			base += "/v1"
-		}
-		opts = append(opts, openaiopt.WithBaseURL(base))
-	}
-	return &openAIClient{client: openai.NewClient(opts...), model: openai.ChatModel(biz.Model)}
-}
-
-func (c *openAIClient) ChatJSON(ctx context.Context, system, user string) (string, error) {
-	resp, err := c.client.Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
-		Model: c.model,
-		Messages: []openai.ChatCompletionMessageParamUnion{
-			openai.SystemMessage(system),
-			openai.UserMessage(user),
-		},
-	})
-	if err != nil {
-		return "", err
-	}
-	return openAIFirstContent(resp)
-}
-
-func (c *openAIClient) VisionJSON(ctx context.Context, system, text string, imagePNG []byte) (string, error) {
-	dataURL := "data:image/png;base64," + base64.StdEncoding.EncodeToString(imagePNG)
-	resp, err := c.client.Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
-		Model: c.model,
-		Messages: []openai.ChatCompletionMessageParamUnion{
-			openai.SystemMessage(system),
-			openai.UserMessage([]openai.ChatCompletionContentPartUnionParam{
-				openai.TextContentPart(text),
-				openai.ImageContentPart(openai.ChatCompletionContentPartImageImageURLParam{
-					URL:    dataURL,
-					Detail: "high",
-				}),
-			}),
-		},
-	})
-	if err != nil {
-		return "", err
-	}
-	return openAIFirstContent(resp)
-}
-
-func openAIFirstContent(resp *openai.ChatCompletion) (string, error) {
-	if len(resp.Choices) == 0 {
-		return "", fmt.Errorf("openai returned no choices")
-	}
-	return resp.Choices[0].Message.Content, nil
-}
-
-// --- claude ---
-
-type claudeClient struct {
-	client    anthropic.Client
-	model     anthropic.Model
-	maxTokens int64
-}
-
-func newClaudeClient(p *config.LlmProvider, biz config.LlmBizConf) *claudeClient {
-	opts := []anthopt.RequestOption{
-		anthopt.WithAPIKey(p.ApiKey),
-		anthopt.WithRequestTimeout(timeoutOf(biz)),
-	}
-	if base := strings.TrimRight(p.BaseUrl, "/"); base != "" {
-		opts = append(opts, anthopt.WithBaseURL(base))
-	}
-	return &claudeClient{
-		client:    anthropic.NewClient(opts...),
-		model:     anthropic.Model(biz.Model),
-		maxTokens: maxTokensOf(biz),
-	}
-}
-
-func (c *claudeClient) ChatJSON(ctx context.Context, system, user string) (string, error) {
-	resp, err := c.client.Messages.New(ctx, anthropic.MessageNewParams{
-		Model:     c.model,
-		MaxTokens: c.maxTokens,
-		System:    []anthropic.TextBlockParam{{Text: system}},
-		Messages: []anthropic.MessageParam{
-			anthropic.NewUserMessage(anthropic.NewTextBlock(user)),
-		},
-	})
-	if err != nil {
-		return "", err
-	}
-	return claudeText(resp)
-}
-
-func (c *claudeClient) VisionJSON(ctx context.Context, system, text string, imagePNG []byte) (string, error) {
-	resp, err := c.client.Messages.New(ctx, anthropic.MessageNewParams{
-		Model:     c.model,
-		MaxTokens: c.maxTokens,
-		System:    []anthropic.TextBlockParam{{Text: system}},
-		Messages: []anthropic.MessageParam{
-			anthropic.NewUserMessage(
-				anthropic.NewTextBlock(text),
-				anthropic.NewImageBlockBase64("image/png", base64.StdEncoding.EncodeToString(imagePNG)),
-			),
-		},
-	})
-	if err != nil {
-		return "", err
-	}
-	return claudeText(resp)
-}
-
-func claudeText(resp *anthropic.Message) (string, error) {
-	var sb strings.Builder
-	for _, block := range resp.Content {
-		if t := block.AsText(); t.Text != "" {
-			sb.WriteString(t.Text)
-		}
-	}
-	if sb.Len() == 0 {
-		return "", fmt.Errorf("claude returned no text")
-	}
-	return cleanJSON(sb.String()), nil
-}
+// isImage reports whether a content type is an image attachment.
+func isImage(contentType string) bool { return strings.HasPrefix(contentType, "image/") }
 
 // cleanJSON strips markdown code fences (```json ... ```) and surrounding prose
 // that claude may emit since it has no native json_object response format.
