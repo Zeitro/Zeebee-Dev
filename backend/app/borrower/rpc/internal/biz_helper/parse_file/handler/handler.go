@@ -12,19 +12,21 @@ import (
 	"zeebee-backend/domains/zeebee/model"
 )
 
-// Reporter is a handler's narrow window onto run progress: it reports stage
-// granularity while staying free of any Redis/lifecycle knowledge. The
-// coordinator (parent parse_file package) supplies the Redis-backed impl.
+// Reporter is a handler's window onto run progress: stage granularity + the
+// Extract files checkpoint + persisted retry. Free of Redis/lifecycle knowledge;
+// the coordinator supplies the Redis-backed impl.
 type Reporter interface {
 	MarkStage(ctx context.Context, stage, status string)
 	SetStageTotal(ctx context.Context, stage string, total int)
 	SetStageProcessed(ctx context.Context, stage string, processed int)
-	// StageOutput reads the stage's resume checkpoint — the marshaled
-	// map[int64] of already-extracted per-file results. A recovered run recalls
-	// it so it skips finished files without losing their results.
-	StageOutput(ctx context.Context, stage string) json.RawMessage
-	// SaveStageOutput writes the checkpoint after a file is processed.
-	SaveStageOutput(ctx context.Context, stage string, output json.RawMessage)
+	// SetStageState writes a stage-specific blob (Extract: {uploaded,total}).
+	SetStageState(ctx context.Context, stage string, state json.RawMessage)
+	// StageRetry/SaveStageRetry: persisted retry counter (T009b) — recovery continues counting.
+	StageRetry(ctx context.Context, stage string) progress.RetryState
+	SaveStageRetry(ctx context.Context, stage string, retry progress.RetryState)
+	// SaveFile/Files: Extract resume checkpoint (fileId → provider file id).
+	SaveFile(ctx context.Context, fileId int64, fc progress.FileCheckpoint)
+	Files(ctx context.Context) map[int64]progress.FileCheckpoint
 }
 
 // Handler implements one parser's PURE file-extraction work. It owns no run

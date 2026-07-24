@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper"
@@ -111,8 +112,8 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 			return innerErr
 		}
 
-		metadata, _ := json.Marshal(map[string]interface{}{
-			"after": map[string]interface{}{
+		metadata, _ := json.Marshal(map[string]any{
+			"after": map[string]any{
 				"files": uploadedFiles,
 			},
 		})
@@ -135,7 +136,7 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 
 		transHelper := biz_helper.NewBorrowerPropertyTransaction(l.svcCtx.AllRepos)
 
-		// FR-017a: recalculate checklist
+		// recalculate checklist
 		_, innerErr = transHelper.RecalculateBorrowerPropertyTransactionChecklist(l.ctx, tx, in.Data.TransactionId)
 		return innerErr
 	})
@@ -143,12 +144,7 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 		return
 	}
 
-	// post-commit: dispatch async extraction on the just-uploaded files.
-	// Dispatch itself is fast (Redis enqueue + lock + kick drainer); the heavy
-	// LLM extract runs in the drainer goroutine, so this does not block the
-	// response. It returns the batch's requestId for progress polling (empty if
-	// no parse rule fired). Parse errors are logged and swallowed — the upload
-	// already succeeded (fail-silent, FR-019).
+	// dispatch async extraction on the just-uploaded files.
 	newCtx := context.WithoutCancel(l.ctx)
 	requestId := l.parseUploadedFiles(newCtx, in.Data.TransactionId, doc, uploadedFiles)
 
@@ -164,11 +160,16 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 }
 
 // parseUploadedFiles dispatches async extraction on the just-uploaded files and
-// returns the requestId tracking this batch (empty when nothing fired). The
-// dispatch is fail-silent: a side-channel parse error is logged inside Dispatch
-// and never blocks the upload response.
+// returns the requestId tracking this batch (empty when nothing fired).
 func (l *UploadDocumentFileLogic) parseUploadedFiles(ctx context.Context, transactionId int64, doc *model.Document, files []model.File) (requestId string) {
-	requestId, _ = l.svcCtx.FileParser.Dispatch(ctx, parse_file.DispatchParam{
+	var err error
+	defer func() {
+		if err != nil {
+			l.svcCtx.Logger.WithContext(ctx).WithFields(
+				logx.Field("stack", errorx.GetErrorStack(err))).Error("fail to parse uploaded files")
+		}
+	}()
+	requestId, err = l.svcCtx.FileParser.Dispatch(ctx, parse_file.DispatchParam{
 		TransactionId: transactionId,
 		DocumentId:    doc.Id,
 		Files:         files,
@@ -178,7 +179,7 @@ func (l *UploadDocumentFileLogic) parseUploadedFiles(ctx context.Context, transa
 }
 
 func (l *UploadDocumentFileLogic) propagateLastUploadedAt(tx *gorm.DB, doc *model.Document, t *sql.NullTime) error {
-	err := l.svcCtx.DocumentRepo.UpdateColumnsByIdWithTx(l.ctx, tx, doc.Id, map[string]interface{}{
+	err := l.svcCtx.DocumentRepo.UpdateColumnsByIdWithTx(l.ctx, tx, doc.Id, map[string]any{
 		"last_uploaded_at": t,
 	})
 	if err != nil {

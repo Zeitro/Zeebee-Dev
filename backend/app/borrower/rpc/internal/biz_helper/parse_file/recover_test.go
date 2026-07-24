@@ -14,6 +14,7 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file/handler"
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file/progress"
+	"zeebee-backend/common/llm"
 	"zeebee-backend/common/redisx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
@@ -102,7 +103,7 @@ func setupRecoverParser(t *testing.T) (*gorm.DB, *Parser, *progress.ProgressMana
 		t.Fatalf("redisx: %v", err)
 	}
 	pm := progress.NewProgressManager(rdb, logx.WithContext(context.Background()))
-	return db, NewParser(repos, stubLLM{}, pm, logx.WithContext(context.Background())), pm
+	return db, NewParser(repos, &llm.MockClient{}, pm, logx.WithContext(context.Background())), pm
 }
 
 // seedParseDoc inserts a document whose metadata resolves to the given parser,

@@ -16,6 +16,7 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file/handler"
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file/progress"
+	"zeebee-backend/common/llm"
 	"zeebee-backend/common/redisx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
@@ -29,15 +30,7 @@ import (
 // layer (only handlers do), so no DB/S3/PDF fixture is needed. Per-parser
 // extract/arbitrate behavior is covered in package handler.
 
-// stubLLM is a no-op llm.Client so the coordinator builds without a provider.
-type stubLLM struct{}
-
-func (stubLLM) ChatJSON(context.Context, string, string) (string, error) {
-	return "{}", nil
-}
-func (stubLLM) VisionJSON(context.Context, string, string, []byte) (string, error) {
-	return "{}", nil
-}
+// stubLLM removed: tests use llm.MockClient (implements the full Client iface).
 
 // fakeHandler is a handler.Handler that reports canned stage progress and can
 // block (to hold a run in flight for dedup tests) or return an error. It owns
@@ -81,7 +74,7 @@ func newTestParser(t *testing.T) (*Parser, *progress.ProgressManager) {
 	}
 	logger := logx.WithContext(context.Background())
 	pm := progress.NewProgressManager(rdb, logger)
-	return NewParser(nil, stubLLM{}, pm, logger), pm
+	return NewParser(nil, &llm.MockClient{}, pm, logger), pm
 }
 
 func rpaDirectoryRule() dto.DocumentTemplateFileParseRule {
@@ -261,25 +254,20 @@ func TestDispatchOnUploadRunsAndFinishes(t *testing.T) {
 	}
 }
 
-// TestReporterStageOutputRoundTrip verifies the Redis-backed reporter persists
-// the extract-stage resume checkpoint (envelope map) so a recovered run can
-// recall already-extracted results.
-func TestReporterStageOutputRoundTrip(t *testing.T) {
+// TestReporterFilesCheckpointRoundTrip verifies the Redis-backed reporter
+// persists the Extract files checkpoint (fileId → provider file id) so a
+// recovered run reuses uploaded ids.
+func TestReporterFilesCheckpointRoundTrip(t *testing.T) {
 	_, pm := newTestParser(t)
 	ctx := context.Background()
-	if err := pm.InitProgress(ctx, "req", []progress.StageState{
-		{Name: progress.StageExtract, Status: progress.StageStatusRunning},
-	}); err != nil {
-		t.Fatalf("init: %v", err)
-	}
 	rep := redisReporter{progMgr: pm, requestId: "req"}
 
-	if raw := rep.StageOutput(ctx, progress.StageExtract); raw != nil {
-		t.Fatalf("fresh stage output = %s, want nil", raw)
+	if files := rep.Files(ctx); files != nil {
+		t.Fatalf("fresh files = %+v, want nil", files)
 	}
-	payload := json.RawMessage(`{"10":{"file_id":10}}`)
-	rep.SaveStageOutput(ctx, progress.StageExtract, payload)
-	if got := rep.StageOutput(ctx, progress.StageExtract); string(got) != string(payload) {
-		t.Fatalf("round-trip = %s, want %s", got, payload)
+	rep.SaveFile(ctx, 10, progress.FileCheckpoint{Provider: "claude", ProviderFileID: "file-10"})
+	files := rep.Files(ctx)
+	if len(files) != 1 || files[10].ProviderFileID != "file-10" {
+		t.Fatalf("round-trip = %+v, want file-10", files)
 	}
 }

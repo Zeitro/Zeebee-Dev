@@ -46,6 +46,7 @@ type Parser struct {
 	repos    *repo.AllRepos
 	progMgr  *progress.ProgressManager
 	logger   logx.Logger
+	llm      llm.Client
 	nodeId   string
 	handlers map[string]handler.Handler
 }
@@ -56,6 +57,7 @@ func NewParser(repos *repo.AllRepos, llmClient llm.Client, progMgr *progress.Pro
 		repos:    repos,
 		progMgr:  progMgr,
 		logger:   logger,
+		llm:      llmClient,
 		nodeId:   nodeName(),
 		handlers: make(map[string]handler.Handler),
 	}
@@ -100,12 +102,12 @@ func (p *Parser) Dispatch(ctx context.Context, param DispatchParam) (requestId s
 	if p == nil {
 		return "", nil
 	}
-	defer func() {
-		if err != nil {
-			p.logger.WithContext(ctx).WithFields(logx.Field("param", param)).
-				Errorf("dispatch parse: %s", err)
-		}
-	}()
+	// defer func() {
+	// 	if err != nil {
+	// 		p.logger.WithContext(ctx).WithFields(logx.Field("param", param)).
+	// 			Errorf("dispatch parse: %s", err)
+	// 	}
+	// }()
 
 	if param.Trigger == TriggerOnUpload {
 		return p.dispatchOnUpload(ctx, param)
@@ -202,6 +204,7 @@ func (p *Parser) run(txId, docId int64, requestId, sig string, h handler.Handler
 	defer cancel()
 	stopHeart := p.startHeartbeat(ctx, txId, requestId, sig)
 	defer stopHeart()
+	defer p.cleanupFiles(ctx, requestId)
 	defer p.finalize(ctx, txId, requestId, sig)
 
 	rep := p.reporter(requestId)
@@ -285,6 +288,23 @@ func (p *Parser) finalize(ctx context.Context, txId int64, requestId, sig string
 	_ = p.progMgr.DeleteJob(ctx, requestId)
 }
 
+// cleanupFiles deletes every uploaded provider file at terminal state (cost
+// control), then clears the files checkpoint. Failures are logged, never blocking.
+func (p *Parser) cleanupFiles(ctx context.Context, requestId string) {
+	files, _ := p.progMgr.GetFilesCheckpoint(ctx, requestId)
+	for _, fc := range files {
+		if fc.ProviderFileID == "" || p.llm == nil {
+			continue
+		}
+		if err := p.llm.DeleteFile(ctx, fc.ProviderFileID); err != nil {
+			p.logger.WithContext(ctx).
+				WithFields(logx.Field("request_id", requestId)).
+				Errorf("delete provider file %s: %s", fc.ProviderFileID, err)
+		}
+	}
+	_ = p.progMgr.DeleteFilesCheckpoint(ctx, requestId)
+}
+
 // reporter wraps the ProgressManager into the narrow handler.Reporter interface
 // so handlers report stage granularity without touching Redis directly.
 func (p *Parser) reporter(requestId string) handler.Reporter {
@@ -320,17 +340,34 @@ func (r redisReporter) SetStageProcessed(ctx context.Context, stage string, proc
 	r.mut(ctx, stage, func(s *progress.StageState) { s.Processed = processed })
 }
 
-// StageOutput returns the stage's marshaled resume checkpoint (extract envelopes)
-// from its own job-TTL key so a recovered run recalls already-extracted results
-// even after the sliding progress record has expired.
-func (r redisReporter) StageOutput(ctx context.Context, stage string) json.RawMessage {
-	out, _ := r.progMgr.GetStageCheckpoint(ctx, r.requestId, stage)
-	return out
+func (r redisReporter) SetStageState(ctx context.Context, stage string, state json.RawMessage) {
+	r.mut(ctx, stage, func(s *progress.StageState) { s.State = state })
 }
 
-// SaveStageOutput writes the stage checkpoint to its own job-TTL key.
-func (r redisReporter) SaveStageOutput(ctx context.Context, stage string, output json.RawMessage) {
-	_ = r.progMgr.SetStageCheckpoint(ctx, r.requestId, stage, output)
+func (r redisReporter) StageRetry(ctx context.Context, stage string) progress.RetryState {
+	prog, err := r.progMgr.GetProgress(ctx, r.requestId)
+	if err != nil || prog == nil {
+		return progress.RetryState{}
+	}
+	for _, s := range prog.Stages {
+		if s.Name == stage {
+			return s.Retry
+		}
+	}
+	return progress.RetryState{}
+}
+
+func (r redisReporter) SaveStageRetry(ctx context.Context, stage string, retry progress.RetryState) {
+	r.mut(ctx, stage, func(s *progress.StageState) { s.Retry = retry })
+}
+
+func (r redisReporter) SaveFile(ctx context.Context, fileId int64, fc progress.FileCheckpoint) {
+	_ = r.progMgr.SaveFileCheckpoint(ctx, r.requestId, fileId, fc)
+}
+
+func (r redisReporter) Files(ctx context.Context) map[int64]progress.FileCheckpoint {
+	files, _ := r.progMgr.GetFilesCheckpoint(ctx, r.requestId)
+	return files
 }
 
 func (r redisReporter) mut(ctx context.Context, stage string, fn func(*progress.StageState)) {

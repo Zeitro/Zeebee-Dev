@@ -4,11 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
-
-	"github.com/klippa-app/go-pdfium"
-	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
+
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file/file"
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file/progress"
@@ -19,10 +17,7 @@ import (
 	"zeebee-backend/domains/zeebee/repo"
 )
 
-// ---- escrow field extraction (vision path, first page) ----
-
-// escrowFields is the vision-extracted escrow row. Empty fields mean "absent"
-// and are skipped on write-back (skip-empty merge).
+// escrowFields is the extracted escrow row. Empty fields = absent, skipped on write-back.
 type escrowFields struct {
 	EscrowCompany string `json:"escrow_company"`
 	OfficerName   string `json:"officer_name"`
@@ -39,41 +34,17 @@ func parseEscrowFields(content string) (escrowFields, error) {
 	return f, nil
 }
 
-// escrowPrompt asks for the 5 escrow fields off the rendered first page.
-const escrowPrompt = `Extract these fields from the attached first page of a wire/escrow instruction document.
+// escrowPrompt asks for the 5 escrow fields off the attached file.
+const escrowPrompt = `Extract these fields from the attached wire/escrow instruction document.
 - escrow_company: the escrow/title company name in standard Title Case (e.g. "Mission Escrow, Inc.").
 - officer_name: the escrow officer's full name only (e.g. "Renee Lo").
-- officer_email: the escrow officer's email address, if printed on the page.
-- officer_phone: the escrow officer's phone number as DIGITS ONLY — strip spaces, parentheses, dashes, dots, plus signs (e.g. "(408) 513-6005" becomes "4085136005").
+- officer_email: the escrow officer's email address, if printed.
+- officer_phone: the escrow officer's phone number as DIGITS ONLY — strip spaces, parentheses, dashes, dots, plus signs.
 - escrow_number: the value next to the "Escrow No." label (e.g. "202656-RL").
-Only extract what is actually printed on the page. If a field is absent, unreadable, or uncertain, use null — never guess.
+Only extract what is actually present. If a field is absent, unreadable, or uncertain, use null — never guess.
 Respond as JSON: {"escrow_company": <string|null>, "officer_name": <string|null>, "officer_email": <string|null>, "officer_phone": <string|null>, "escrow_number": <string|null>}`
 
-// ExtractEscrowFields vision-reads escrow fields off the rendered first page.
-func ExtractEscrowFields(ctx context.Context, client llm.Client, r io.ReadSeeker) (fields escrowFields, err error) {
-	err = file.WithPdfInstance(func(inst pdfium.Pdfium) error {
-		doc, cleanup, e := file.OpenPDF(inst, r)
-		if e != nil {
-			return e
-		}
-
-		defer cleanup()
-		png, e := file.RenderPagePNG(inst, doc, 0)
-		if e != nil {
-			return e
-		}
-		content, e := client.VisionJSON(ctx, extractSystemPrompt, escrowPrompt, png)
-		if e != nil {
-			return e
-		}
-		fields, e = parseEscrowFields(content)
-		return e
-	})
-	return fields, err
-}
-
-// ApplyEscrowFields copies only non-empty extracted fields (skip-empty merge),
-// preserving any real value already on the row.
+// ApplyEscrowFields copies only non-empty extracted fields (skip-empty merge).
 func ApplyEscrowFields(esc *model.PropertyTransactionEscrow, f escrowFields) {
 	if f.EscrowCompany != "" {
 		esc.EscrowCompany = f.EscrowCompany
@@ -92,12 +63,9 @@ func ApplyEscrowFields(esc *model.PropertyTransactionEscrow, f escrowFields) {
 	}
 }
 
-// ---- handler ----
-
-// EscrowHandler serves the escrow parser. It is a pure worker: the coordinator
-// hands it the rule + files in scope, and this handler resolves scope, then
-// downloads + vision-extracts + skip-empty upserts each file. No locks, no
-// goroutines, no Redis writes — the coordinator owns all of that.
+// EscrowHandler serves the escrow parser (on_upload). Pure worker: the
+// coordinator hands it the rule + files; this handler uploads each file, runs a
+// single consolidated call per file, and skip-empty upserts into the escrow row.
 type EscrowHandler struct {
 	base
 }
@@ -106,9 +74,7 @@ func NewEscrowHandler(repos *repo.AllRepos, logger logx.Logger, client llm.Clien
 	return &EscrowHandler{base{repos: repos, logger: logger, llm: client}}
 }
 
-// Stages is the single Extract stage. Total is seeded from the passed batch
-// (on_upload SingleFile/Files); for collected scopes the handler sets the real
-// total via the reporter once it has resolved the file set.
+// Stages returns a single Extract stage; total is seeded from the upload batch.
 func (h *EscrowHandler) Stages(files []model.File) []progress.StageState {
 	return []progress.StageState{{
 		Name: progress.StageExtract, Status: progress.StageStatusRunning,
@@ -116,48 +82,50 @@ func (h *EscrowHandler) Stages(files []model.File) []progress.StageState {
 	}}
 }
 
-// Parse resolves the in-scope files per rule.Source, then extracts + writes
-// back each (fail-soft per file: one bad file logs and continues). File-type
-// filtering lives here in the extract step (PDF today), not in scope resolution
-// — image/doc support lands later without changing the scope contract.
+// Parse resolves in-scope files per rule.Source, then for each PDF/image: upload
+// → single consolidated call ([fileId]) → skip-empty upsert. Fail-soft per file.
 func (h *EscrowHandler) Parse(ctx context.Context, txId, docId int64, files []model.File, rule dto.DocumentTemplateFileParseRule, rep Reporter) error {
 	inScope, err := h.resolveFiles(ctx, txId, docId, files, rule)
 	if err != nil {
 		return err
 	}
 	rep.SetStageTotal(ctx, progress.StageExtract, len(inScope))
+	rep.SetStageState(ctx, progress.StageExtract, progress.ExtractStateJSON(0, len(inScope)))
+	uploaded := 0
 	for i, f := range inScope {
-		if file.IsPDF(f.Name) {
-			if err := h.parseEscrowFile(ctx, txId, f); err != nil {
-				h.logger.WithContext(ctx).WithFields(
-					logx.Field("file", f.Name),
-					logx.Field("stacks", errorx.GetErrorStack(err)),
-				).Errorf("parse escrow file: %s", err)
-			}
+		if !file.IsPDF(f.Name) && !file.IsImage(f.Name) {
+			rep.SetStageProcessed(ctx, progress.StageExtract, i+1)
+			continue // Word/other excluded from scope
 		}
-		// ponytail: PDF-only for now; image/doc handled in the file pkg later.
-		// Count every file (incl. skipped) so processed/total stays monotonic.
+		if err := h.parseEscrowFile(ctx, txId, rep, f); err != nil {
+			h.logger.WithContext(ctx).WithFields(
+				logx.Field("file", f.Name),
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+			).Errorf("parse escrow file: %s", err)
+		}
+		uploaded++
+		rep.SetStageState(ctx, progress.StageExtract, progress.ExtractStateJSON(uploaded, len(inScope)))
 		rep.SetStageProcessed(ctx, progress.StageExtract, i+1)
 	}
 	return nil
 }
 
-// parseEscrowFile downloads + vision-extracts one PDF and writes non-empty
-// fields into the primary escrow row (skip-empty merge). Per-file retry wraps
-// the extract; a download failure aborts just this file.
-func (h *EscrowHandler) parseEscrowFile(ctx context.Context, txId int64, f collectedFile) error {
-	reader, err := file.DownloadPDF(ctx, f.Url)
+// parseEscrowFile uploads one file, runs the consolidated call, skip-empty upserts.
+func (h *EscrowHandler) parseEscrowFile(ctx context.Context, txId int64, rep Reporter, f collectedFile) error {
+	fc, err := h.uploadOne(ctx, rep, f)
 	if err != nil {
-		return errorx.Wrap(err, "download pdf")
+		return err
 	}
 	var fields escrowFields
-	if err := progress.RetryDo(ctx, func() error {
-		if _, e := reader.Seek(0, io.SeekStart); e != nil {
+	if err := progress.RetryDo(ctx, rep, progress.StageExtract, func() error {
+		content, e := h.llm.Chat(ctx, extractSystemPrompt, escrowPrompt, llm.WithAttachment(llm.Attachment{
+			FileID: fc.ProviderFileID, ContentType: fileContentType(f.Name),
+		}))
+		if e != nil {
 			return e
 		}
-		var extractErr error
-		fields, extractErr = ExtractEscrowFields(ctx, h.llm, reader)
-		return extractErr
+		fields, e = parseEscrowFields(content)
+		return e
 	}); err != nil {
 		return errorx.Wrap(err, "extract escrow fields")
 	}
@@ -169,9 +137,7 @@ func (h *EscrowHandler) parseEscrowFile(ctx context.Context, txId int64, f colle
 	})
 }
 
-// upsertEscrowWithTx updates the primary (min-id) escrow row with non-empty
-// fields, creating one if none exists (create_logic seeds an empty row, so this
-// usually updates the seed).
+// upsertEscrowWithTx updates the primary (min-id) escrow row, creating one if none.
 func (h *EscrowHandler) upsertEscrowWithTx(ctx context.Context, tx *gorm.DB, txId int64, f escrowFields) error {
 	rows, err := h.repos.PropertyTransactionEscrowRepo.FindAllWithTx(ctx, tx, map[string]interface{}{
 		"borrower_property_transaction_id": txId,
@@ -194,4 +160,12 @@ func (h *EscrowHandler) upsertEscrowWithTx(ctx context.Context, tx *gorm.DB, txI
 	ApplyEscrowFields(escrow, f)
 	_, err = h.repos.PropertyTransactionEscrowRepo.UpdateOneByIdWithTx(ctx, tx, escrow.Id, escrow)
 	return err
+}
+
+// fileContentType maps a filename to its MIME type (pdf vs image) for the attachment.
+func fileContentType(name string) string {
+	if file.IsPDF(name) {
+		return "application/pdf"
+	}
+	return file.ImageContentType(name)
 }

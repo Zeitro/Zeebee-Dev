@@ -8,11 +8,11 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file/progress"
+	"zeebee-backend/common/llm"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
@@ -46,20 +46,15 @@ func TestRPAFieldsHasAny(t *testing.T) {
 	}
 }
 
-// TestApplyRPAFieldsSkipEmpty verifies the authoritative-replace write-back
-// (FR-014): non-zero amounts and parseable dates overwrite; zero/empty/unparseable
-// values preserve any existing real or manual value on the row.
+// TestApplyRPAFieldsSkipEmpty: non-zero amounts + parseable dates overwrite; zero/empty skip.
 func TestApplyRPAFieldsSkipEmpty(t *testing.T) {
-	tx := &model.BorrowerPropertyTransaction{
-		PurchaseAmount: 1000000,
-		EmdAmount:      2000,
-	}
+	tx := &model.BorrowerPropertyTransaction{PurchaseAmount: 1000000, EmdAmount: 2000}
 	applyRPAFields(tx, rpaFields{
-		PurchaseAmount:         1750000, // overwrite
+		PurchaseAmount:         1750000,
 		CoeDate:                "09/15/2026",
-		EmdAmount:              0,            // keep 2000
-		EmdDueDate:             "",           // keep nil
-		ContingencyRemovalDate: "not-a-date", // unparseable → skip
+		EmdAmount:              0,
+		EmdDueDate:             "",
+		ContingencyRemovalDate: "not-a-date",
 	})
 	if tx.PurchaseAmount != 1750000 {
 		t.Errorf("PurchaseAmount = %v, want 1750000", tx.PurchaseAmount)
@@ -68,13 +63,13 @@ func TestApplyRPAFieldsSkipEmpty(t *testing.T) {
 		t.Errorf("EmdAmount = %v, want 2000 (skip-zero)", tx.EmdAmount)
 	}
 	if tx.CoeDate == nil || !tx.CoeDate.Valid {
-		t.Error("CoeDate must be set from parseable date")
+		t.Error("CoeDate must be set")
 	}
 	if tx.EmdDueDate != nil {
 		t.Error("EmdDueDate must stay nil (empty extracted)")
 	}
 	if tx.ContingencyRemovalDate != nil {
-		t.Error("ContingencyRemovalDate must stay nil (unparseable extracted)")
+		t.Error("ContingencyRemovalDate must stay nil (unparseable)")
 	}
 }
 
@@ -83,7 +78,7 @@ func TestParseDate(t *testing.T) {
 		t.Fatalf("valid date not parsed: %+v", t1)
 	}
 	if _, ok := parseDate(""); ok {
-		t.Fatal("empty string must not parse")
+		t.Fatal("empty must not parse")
 	}
 	if _, ok := parseDate("garbage"); ok {
 		t.Fatal("garbage must not parse")
@@ -91,12 +86,14 @@ func TestParseDate(t *testing.T) {
 	_ = sql.NullTime{}
 }
 
-// memReporter is an in-memory handler.Reporter for extract-stage tests.
+// memReporter is an in-memory handler.Reporter for handler tests.
 type memStage struct {
 	status    string
 	total     int
 	processed int
-	output    json.RawMessage
+	state     json.RawMessage
+	retry     progress.RetryState
+	files     map[int64]progress.FileCheckpoint
 }
 
 type memReporter struct {
@@ -114,85 +111,47 @@ func (m *memReporter) stage(name string) *memStage {
 	return s
 }
 
-func (m *memReporter) MarkStage(_ context.Context, stage, status string) {
-	m.stage(stage).status = status
-}
+func (m *memReporter) MarkStage(_ context.Context, stage, status string) { m.stage(stage).status = status }
 func (m *memReporter) SetStageTotal(_ context.Context, stage string, total int) {
 	m.stage(stage).total = total
 }
 func (m *memReporter) SetStageProcessed(_ context.Context, stage string, processed int) {
 	m.stage(stage).processed = processed
 }
-func (m *memReporter) StageOutput(_ context.Context, stage string) json.RawMessage {
-	return m.stage(stage).output
+func (m *memReporter) SetStageState(_ context.Context, stage string, state json.RawMessage) {
+	m.stage(stage).state = state
 }
-func (m *memReporter) SaveStageOutput(_ context.Context, stage string, output json.RawMessage) {
-	m.stage(stage).output = output
+func (m *memReporter) StageRetry(_ context.Context, stage string) progress.RetryState {
+	return m.stage(stage).retry
 }
-
-// TestExtractStageResumesFromCheckpoint verifies a restarted extract stage
-// recalls the persisted envelope map and skips already-extracted files (no
-// re-extraction / no LLM call) while returning their recalled content — so rpa
-// synthesis across all files survives an interrupt. Files here are all
-// pre-checkpointed, so extractOneFile (pdfium + LLM) is never reached and the
-// handler's nil deps are safe.
-func TestExtractStageResumesFromCheckpoint(t *testing.T) {
-	rep := newMemReporter()
-	pre := map[int64]rpaEnvelope{
-		10: {FileId: 10, Fields: rpaFields{PurchaseAmount: 1750000}},
-		11: {FileId: 11, Fields: rpaFields{CoeDate: "09/15/2026"}},
+func (m *memReporter) SaveStageRetry(_ context.Context, stage string, retry progress.RetryState) {
+	m.stage(stage).retry = retry
+}
+func (m *memReporter) SaveFile(_ context.Context, fileId int64, fc progress.FileCheckpoint) {
+	s := m.stage(progress.StageExtract)
+	if s.files == nil {
+		s.files = map[int64]progress.FileCheckpoint{}
 	}
-	raw, _ := json.Marshal(pre)
-	rep.SaveStageOutput(context.Background(), progress.StageExtract, raw)
-
-	h := &RPAHandler{}
-	got := h.extractStage(context.Background(), rep, []collectedFile{
-		{FileId: 10, Name: "a.pdf"}, {FileId: 11, Name: "b.pdf"},
-	})
-	if len(got) != 2 {
-		t.Fatalf("got %d envelopes, want 2 (recalled, not re-extracted)", len(got))
-	}
-	if got[0].FileId != 10 || got[1].FileId != 11 {
-		t.Fatalf("order = [%d,%d], want fileId-sorted [10,11]", got[0].FileId, got[1].FileId)
-	}
-	if got[0].Fields.PurchaseAmount != 1750000 || got[1].Fields.CoeDate != "09/15/2026" {
-		t.Fatalf("recalled content wrong: %+v", got)
-	}
+	s.files[fileId] = fc
+}
+func (m *memReporter) Files(_ context.Context) map[int64]progress.FileCheckpoint {
+	return m.stage(progress.StageExtract).files
 }
 
-// seqChatLLM is an llm.Client whose ChatJSON returns one canned rpa JSON per
-// call (in order), so a multi-file rpa run synthesizes across files without a
-// real provider.
-type seqChatLLM struct {
-	responses []string
-	n         int
-}
-
-func (s *seqChatLLM) ChatJSON(context.Context, string, string) (string, error) {
-	if s.n >= len(s.responses) {
-		return "{}", nil
-	}
-	r := s.responses[s.n]
-	s.n++
-	return r, nil
-}
-
-func (seqChatLLM) VisionJSON(context.Context, string, string, []byte) (string, error) {
-	return "{}", nil
-}
-
-// TestRPAParseSynthesizesAndWritebacks drives the full manual_tree rpa pipeline
-// (quickstart scenario B): collect subtree → extract each PDF (real pdfium text
-// path, mock LLM) → skip-empty synthesis into the transaction row. Two files
-// agree on purchase_amount and conflict on coe_date; write-back's
-// first-non-empty-wins in fileId order takes the lower fileId's date, and an
-// existing manual purchase_amount is authoritatively replaced.
-func TestRPAParseSynthesizesAndWritebacks(t *testing.T) {
+// byteServer serves fixed bytes over http for download-driven tests.
+func byteServer(t *testing.T, b []byte) *httptest.Server {
+	t.Helper()
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		_, _ = w.Write(minimalPDF())
+		_, _ = w.Write(b)
 	}))
 	t.Cleanup(srv.Close)
+	return srv
+}
 
+// TestRPAParseConsolidated drives the manual_tree path: collect subtree → upload
+// both PDFs → ONE consolidated call (in-call arbitration) → authoritative write-back.
+func TestRPAParseConsolidated(t *testing.T) {
+	srv := byteServer(t, []byte("pdf bytes"))
 	db, repos := setupResolveDB(t)
 	if err := db.Exec(`CREATE TABLE borrower_property_transactions (
 		id INTEGER PRIMARY KEY AUTOINCREMENT, created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -202,31 +161,23 @@ func TestRPAParseSynthesizesAndWritebacks(t *testing.T) {
 	)`).Error; err != nil {
 		t.Fatalf("ddl tx: %v", err)
 	}
-	// contract branch 10 (root) + two PDF leaves under it.
-	leaves := []int64{20, 21}
 	if err := db.Exec(`INSERT INTO documents (id, entity_document_id, parent_id, type, name) VALUES (10, 1, 0, 'Branch', 'Contract')`).Error; err != nil {
 		t.Fatalf("seed branch: %v", err)
 	}
-	for _, lid := range leaves {
-		if err := db.Exec(`INSERT INTO documents (id, entity_document_id, parent_id, type, name) VALUES (?, 1, 10, 'Leaf', ?)`,
-			lid, fmt.Sprintf("leaf-%d", lid)).Error; err != nil {
+	for _, lid := range []int64{20, 21} {
+		if err := db.Exec(`INSERT INTO documents (id, entity_document_id, parent_id, type, name) VALUES (?, 1, 10, 'Leaf', ?)`, lid, fmt.Sprintf("leaf-%d", lid)).Error; err != nil {
 			t.Fatalf("seed leaf %d: %v", lid, err)
 		}
-		if err := db.Exec(`INSERT INTO files (id, entity_type, entity_id, file_url, file_name) VALUES (?, 'Document', ?, ?, ?)`,
-			lid, lid, srv.URL, fmt.Sprintf("%d.pdf", lid)).Error; err != nil {
+		if err := db.Exec(`INSERT INTO files (id, entity_type, entity_id, file_url, file_name) VALUES (?, 'Document', ?, ?, ?)`, lid, lid, srv.URL, fmt.Sprintf("%d.pdf", lid)).Error; err != nil {
 			t.Fatalf("seed file %d: %v", lid, err)
 		}
 	}
-	// existing manual purchase_amount → must be authoritatively replaced.
 	if err := db.Exec(`INSERT INTO borrower_property_transactions (id, purchase_amount) VALUES (7, 1000000)`).Error; err != nil {
 		t.Fatalf("seed tx: %v", err)
 	}
 
-	llm := &seqChatLLM{responses: []string{
-		`{"purchase_amount":1750000,"coe_date":"09/15/2026","emd_amount":5000}`, // leaf 20 (lower fileId)
-		`{"purchase_amount":1750000,"coe_date":"10/01/2026","emd_amount":0}`,    // leaf 21 (conflict date)
-	}}
-	h := &RPAHandler{base{repos: repos, logger: logx.WithContext(context.Background()), llm: llm}}
+	mock := &llm.MockClient{ChatContent: `{"purchase_amount":1750000,"coe_date":"09/15/2026","emd_amount":5000}`}
+	h := &RPAHandler{base{repos: repos, logger: logx.WithContext(context.Background()), llm: mock}}
 	rule := dto.DocumentTemplateFileParseRule{Source: constants.DocumentTemplateFileParseSourceDirectory}
 
 	if err := h.Parse(context.Background(), 7, 10, nil, rule, newMemReporter()); err != nil {
@@ -238,19 +189,87 @@ func TestRPAParseSynthesizesAndWritebacks(t *testing.T) {
 		t.Fatalf("load tx: %v", err)
 	}
 	if tx.PurchaseAmount != 1750000 {
-		t.Errorf("PurchaseAmount = %v, want 1750000 (agreed across files, replaced manual)", tx.PurchaseAmount)
+		t.Errorf("PurchaseAmount = %v, want 1750000 (authoritative replace)", tx.PurchaseAmount)
 	}
 	if tx.EmdAmount != 5000 {
-		t.Errorf("EmdAmount = %v, want 5000 (only leaf 20 carried it)", tx.EmdAmount)
+		t.Errorf("EmdAmount = %v, want 5000", tx.EmdAmount)
 	}
-	// coe_date conflict: envelopes apply in ascending fileId order and each
-	// non-empty value overwrites, so the HIGHEST fileId's value is final — the
-	// deterministic fallback now that LLM arbitration is removed.
 	if tx.CoeDate == nil || !tx.CoeDate.Valid {
-		t.Fatalf("CoeDate must be set; got %+v", tx.CoeDate)
+		t.Fatalf("CoeDate must be set")
 	}
-	wantCOE, _ := time.Parse("01/02/2006", "10/01/2026")
-	if !tx.CoeDate.Time.Equal(wantCOE) {
-		t.Errorf("CoeDate = %v, want 10/01/2026 (highest fileId wins conflict)", tx.CoeDate.Time)
+	// one consolidated call over both uploaded files
+	atts := mock.Attachments()
+	if len(atts) != 2 {
+		t.Errorf("want 2 attachments in the single consolidated call, got %d", len(atts))
+	}
+	if len(mock.UploadedFiles) != 2 {
+		t.Errorf("want 2 uploads, got %d", len(mock.UploadedFiles))
+	}
+}
+
+// TestUploadOneReusesCachedFileID: a pre-checkpointed matching-provider id is
+// reused (no re-upload) — the resume reuse path.
+func TestUploadOneReusesCachedFileID(t *testing.T) {
+	mock := &llm.MockClient{ChatContent: "{}"}
+	b := &base{logger: logx.WithContext(context.Background()), llm: mock}
+	rep := newMemReporter()
+	rep.SaveFile(context.Background(), 42, progress.FileCheckpoint{Provider: "mock", ProviderFileID: "existing-1"})
+
+	fc, err := b.uploadOne(context.Background(), rep, collectedFile{FileId: 42, Name: "x.pdf"})
+	if err != nil {
+		t.Fatalf("uploadOne: %v", err)
+	}
+	if fc.ProviderFileID != "existing-1" {
+		t.Fatalf("expected reuse of existing-1, got %s", fc.ProviderFileID)
+	}
+	if len(mock.UploadedFiles) != 0 {
+		t.Fatalf("expected no re-upload, got %v", mock.UploadedFiles)
+	}
+}
+
+// TestExtractStageExcludesNonPdfImage: scenario H — a Word file in scope is filtered
+// out (no upload, no consolidated call, no error); only PDF/image are parsed.
+func TestExtractStageExcludesNonPdfImage(t *testing.T) {
+	mock := &llm.MockClient{ChatContent: "{}"}
+	h := &RPAHandler{base{logger: logx.WithContext(context.Background()), llm: mock}}
+	rep := newMemReporter()
+	files := []collectedFile{
+		{FileId: 1, Name: "notes.docx"},
+		{FileId: 2, Name: "scan.png", Url: byteServer(t, []byte("png")).URL},
+	}
+
+	fields, err := h.extractStage(context.Background(), rep, files)
+	if err != nil {
+		t.Fatalf("extractStage: %v", err)
+	}
+	if fields.hasAny() {
+		t.Fatal("empty mock response → no fields")
+	}
+	if len(mock.UploadedFiles) != 1 {
+		t.Fatalf("want 1 upload (png only, docx excluded), got %v", mock.UploadedFiles)
+	}
+	if atts := mock.Attachments(); len(atts) != 1 || atts[0].ContentType != "image/png" {
+		t.Fatalf("want 1 png attachment, got %+v", atts)
+	}
+}
+
+// TestUploadOneReuploadsOnProviderMismatch: a cached id under a different provider
+// is NOT reused (provider switch invalidates old ids) — the file is re-uploaded.
+func TestUploadOneReuploadsOnProviderMismatch(t *testing.T) {
+	srv := byteServer(t, []byte("pdf bytes"))
+	mock := &llm.MockClient{} // Provider() == "mock"
+	b := &base{logger: logx.WithContext(context.Background()), llm: mock}
+	rep := newMemReporter()
+	rep.SaveFile(context.Background(), 42, progress.FileCheckpoint{Provider: "claude", ProviderFileID: "old-claude-id"})
+
+	fc, err := b.uploadOne(context.Background(), rep, collectedFile{FileId: 42, Name: "x.pdf", Url: srv.URL})
+	if err != nil {
+		t.Fatalf("uploadOne: %v", err)
+	}
+	if fc.ProviderFileID == "old-claude-id" {
+		t.Fatal("must not reuse id from a different provider")
+	}
+	if len(mock.UploadedFiles) != 1 {
+		t.Fatalf("want 1 re-upload on provider mismatch, got %v", mock.UploadedFiles)
 	}
 }

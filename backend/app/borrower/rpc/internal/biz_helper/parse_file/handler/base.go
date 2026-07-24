@@ -1,10 +1,14 @@
 package handler
 
 import (
+	"bytes"
 	"context"
+	"io"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
+	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file/file"
+	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file/progress"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/llm"
 	"zeebee-backend/domains/zeebee/constants"
@@ -13,18 +17,56 @@ import (
 	"zeebee-backend/domains/zeebee/repo"
 )
 
-// extractSystemPrompt is the shared system prompt every extraction/arbitration
-// call uses: force a single raw JSON object, no fences, no prose.
+// extractSystemPrompt forces a single raw JSON object — no fences, no prose.
 const extractSystemPrompt = "You extract data from documents. Your entire response MUST be a single raw JSON object and nothing else: start with { and end with }. Do NOT wrap it in markdown code fences (no ```json, no ```). Do NOT add prose, explanations, backticks, or any text before or after the JSON."
 
-// base holds the parsing-only deps every handler shares: repos, logger, llm. It
-// deliberately holds NO progress manager and NO nodeId — the coordinator (parent
-// parse_file package) owns the run lifecycle (lock/job/hold/heartbeat/finalize/
-// progress). Embedding base keeps a handler focused on extraction + writeback.
+// base holds the parsing-only deps every handler shares. No progress manager,
+// no nodeId — the coordinator owns the run lifecycle.
 type base struct {
 	repos  *repo.AllRepos
 	logger logx.Logger
 	llm    llm.Client
+}
+
+// uploadOne uploads one in-scope file and returns its provider file reference.
+// A cached checkpoint entry is reused only when its provider still matches the
+// current client (provider switch invalidates old ids → re-upload). Single run
+// owns one hold → one writer → checkpoint RMW is safe.
+func (b *base) uploadOne(ctx context.Context, rep Reporter, f collectedFile) (progress.FileCheckpoint, error) {
+	if cached, ok := rep.Files(ctx)[f.FileId]; ok && cached.Provider == b.llm.Provider() {
+		return cached, nil
+	}
+	reader, contentType, err := b.fileStream(ctx, f)
+	if err != nil {
+		return progress.FileCheckpoint{}, err
+	}
+	provider, fileID, err := b.llm.UploadFile(ctx, reader, f.Name, contentType)
+	if err != nil {
+		return progress.FileCheckpoint{}, errorx.Wrap(err, "upload file")
+	}
+	fc := progress.FileCheckpoint{Provider: provider, ProviderFileID: fileID}
+	rep.SaveFile(ctx, f.FileId, fc)
+	return fc, nil
+}
+
+// fileStream fetches one file's bytes + content type by extension (pdf/image).
+// Word/other types are excluded from parsing scope.
+func (b *base) fileStream(ctx context.Context, f collectedFile) (io.Reader, string, error) {
+	switch {
+	case file.IsPDF(f.Name):
+		reader, err := file.DownloadPDF(ctx, f.Url)
+		if err != nil {
+			return nil, "", errorx.Wrap(err, "download pdf")
+		}
+		return reader, "application/pdf", nil
+	case file.IsImage(f.Name):
+		img, err := file.DownloadImage(ctx, f.Url)
+		if err != nil {
+			return nil, "", errorx.Wrap(err, "download image")
+		}
+		return bytes.NewReader(*img), file.ImageContentType(f.Name), nil
+	}
+	return nil, "", errorx.New("unsupported file type")
 }
 
 // collectedFile is the flat file list handed from scope resolution to extraction

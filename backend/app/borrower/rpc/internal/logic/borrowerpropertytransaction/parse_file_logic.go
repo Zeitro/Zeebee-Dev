@@ -57,13 +57,13 @@ func (l *ParseFileLogic) ParseFile(in *borrower.ParseFileRequest) (resp *borrowe
 		err = errorx.New("document does not belong to your organization")
 		return
 	}
-	if entityDocument.EntityId != in.Data.TransactionId || entityDocument.EntityType != constants.EntityDocumentTypeBorrowerPropertyTransaction {
-		err = errorx.New("transaction does not belong to your organization")
+	if entityDocument.EntityId != in.Data.Id || entityDocument.EntityType != constants.EntityDocumentTypeBorrowerPropertyTransaction {
+		err = errorx.New("document dose not belong to the transaction")
 		return
 	}
 
 	requestId, err := l.svcCtx.FileParser.Dispatch(l.ctx, parse_file.DispatchParam{
-		TransactionId:  in.Data.TransactionId,
+		TransactionId:  in.Data.Id,
 		DocumentId:     in.Data.DocumentId,
 		OrganizationId: claim.OrganizationId,
 		Parser:         in.Data.Parser,
