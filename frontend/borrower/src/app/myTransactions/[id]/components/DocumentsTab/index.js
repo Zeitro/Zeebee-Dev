@@ -7,18 +7,22 @@ import { createRequest, displayValue } from '@repo/shared-methods/utils';
 import CategoryContentPanel from './CategoryContentPanel';
 import { buildDocumentCategoriesFromChecklist, getChecklistProgress } from './checklist';
 import DocumentCategoryButton from './DocumentCategoryButton';
-
 // 同步是异步任务：POST 立即返回 job，之后轮询 status 接口直到终态。
 // 代理（undici）约 30s 会掐断长请求，所以绝不能让 HTTP 请求一直等同步结果。
 const SYNC_POLL_INTERVAL = 2000;
 const SYNC_POLL_MAX_MS = 10 * 60 * 1000; // 与后端 driveSyncJobTimeout 对齐
 const SYNC_TERMINAL_STATUSES = ['Success', 'PartialFailed', 'Failed'];
+const PARSE_POLL_INTERVAL = 5000; // 每 5 秒请求一次 parse/result
+const PARSE_POLL_MAX_MS = 60 * 60 * 1000; // 最长轮询 1 小时，超时则停止并提示
+/** 解析任务终态；Running 为进行中，Finished / Failed 为终态 */
+const PARSE_TERMINAL_STATUSES = ['Finished', 'Failed'];
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const DocumentsTab = ({ rowData, onRefresh }) => {
 	// createRequest() 每次渲染返回新的 request 引用，useMemo 固定一次，避免回调失稳
 	const { request } = useMemo(() => createRequest(), []);
 	const [syncing, setSyncing] = useState(false);
+	const [messageApi, contextHolder] = message.useMessage();
 	// 组件卸载后停止轮询 / 状态更新，避免切换菜单回来时遗留的异步写入已卸载组件
 	const mountedRef = useRef(true);
 	useEffect(() => {
@@ -33,6 +37,52 @@ const DocumentsTab = ({ rowData, onRefresh }) => {
 	useEffect(() => {
 		onRefreshRef.current = onRefresh;
 	}, [onRefresh]);
+
+	/**
+	 * 轮询 GET /borrower_property_transaction/{id}/parse/result?request_id= 直到终态。
+	 * 必须用 getState() 读最新 params：updateParseFileParams 是同步写入，
+	 * 但 useCallback 闭包里的 parseFileParams 仍是旧快照，会导致刚写入却读不到。
+	 * @param {number|string} transactionId
+	 * @param {number|string} documentId
+	 * @returns {Promise<object|null>}
+	 */
+	const pollParseStatus = useCallback(
+		async (transactionId, documentId, params) => {
+			if (!transactionId || !documentId) return null;
+
+			const deadline = Date.now() + PARSE_POLL_MAX_MS;
+			let result = null;
+
+			while (!result || !PARSE_TERMINAL_STATUSES.includes(result?.status)) {
+				if (!mountedRef.current || Date.now() > deadline) {
+					return null;
+				}
+
+				const query = new URLSearchParams({
+					...params,
+					type: 'request_id',
+				}).toString();
+				result = await request(
+					`/borrower_property_transaction/${transactionId}/parse/result?${query}`,
+					{ method: 'GET' },
+				);
+
+				if (PARSE_TERMINAL_STATUSES.includes(result?.status)) {
+					if (result?.status === 'Finished') {
+						messageApi.success('AI parsing completed');
+					} else {
+						messageApi.error('AI parsing failed');
+					}
+					return result;
+				}
+
+				await sleep(PARSE_POLL_INTERVAL);
+			}
+
+			return result;
+		},
+		[messageApi, request],
+	);
 
 	// 轮询任务状态直到终态；shouldStop 为真或组件卸载时提前退出。返回终态结果或 null。
 	const pollSyncStatus = useCallback(
@@ -170,6 +220,7 @@ const DocumentsTab = ({ rowData, onRefresh }) => {
 
 	return (
 		<div className="flex gap-4 p-4">
+			{contextHolder}
 			<div className="flex w-[311px] shrink-0 flex-col gap-2">
 				<div className="flex gap-2">
 					{/* Import 按钮本期不需要，先隐藏 */}
@@ -236,6 +287,7 @@ const DocumentsTab = ({ rowData, onRefresh }) => {
 				category={activeCategory}
 				onRefresh={onRefresh}
 				transactionId={rowData?.id}
+				pollParseStatus={pollParseStatus}
 			/>
 		</div>
 	);
