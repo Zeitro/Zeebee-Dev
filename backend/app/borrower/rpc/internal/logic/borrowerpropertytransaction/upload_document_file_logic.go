@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -204,24 +205,30 @@ func (l *UploadDocumentFileLogic) propagateLastUploadedAt(tx *gorm.DB, doc *mode
 
 // updateEscrowChecklist flags escrow checklist items by uploaded doc name.
 func (l *UploadDocumentFileLogic) updateEscrowChecklist(tx *gorm.DB, transactionId int64, doc *model.Document) (err error) {
-	escrow, _ := l.svcCtx.PropertyTransactionEscrowRepo.FindOneByColumnsWithTx(l.ctx, tx, map[string]interface{}{
+	escrow, err := l.svcCtx.PropertyTransactionEscrowRepo.FindOneByColumnsWithTx(l.ctx, tx, map[string]any{
 		"borrower_property_transaction_id": transactionId,
 	})
-	if escrow == nil || escrow.Id == 0 {
-		return
+	if err != nil {
+		// no escrow yet is valid (skip); any other lookup error fails the tx.
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil
+		}
+		return err
 	}
 	checklist := escrow.Checklist
 	switch strings.ToLower(doc.Name) {
-	case "wire instruction":
+	case "wire instructions":
 		checklist.HasWireInstruction = true
 	case "emd receipt":
 		checklist.HasEmdReceipt = true
 	case "prelim report":
 		checklist.HasPrelimReport = true
-	case "nhd":
+	case "nhd report":
 		checklist.HasNhd = true
 	case "colored map":
 		checklist.HasColoredMap = true
+	default:
+		return nil
 	}
 	escrow.Checklist = checklist
 	_, err = l.svcCtx.PropertyTransactionEscrowRepo.UpdateOneByIdWithTx(l.ctx, tx, escrow.Id, escrow)
