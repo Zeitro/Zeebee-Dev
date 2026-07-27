@@ -65,6 +65,20 @@ func TestClaudeBetaBlockMapsByKind(t *testing.T) {
 	assert.NotNil(t, b.OfImage)
 }
 
+func TestOpenAIInputPartMapsByKind(t *testing.T) {
+	// fileId document (pdf) -> input_file by id
+	p := openaiInputPart(Attachment{FileID: "f1", ContentType: "application/pdf"})
+	assert.NotNil(t, p.OfInputFile)
+	// fileId image -> input_image by id
+	p = openaiInputPart(Attachment{FileID: "f2", ContentType: "image/png"})
+	assert.NotNil(t, p.OfInputImage)
+	// base64 pdf -> input_file with inline data
+	p = openaiInputPart(Attachment{Base64: "AA", ContentType: "application/pdf", Filename: "x.pdf"})
+	assert.NotNil(t, p.OfInputFile)
+	// base64 image -> input_image with data url
+	p = openaiInputPart(Attachment{Base64: "AA", ContentType: "image/jpeg"})
+	assert.NotNil(t, p.OfInputImage)
+}
 
 func TestNewClient(t *testing.T) {
 	providers := []config.LlmProvider{
