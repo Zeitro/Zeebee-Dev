@@ -114,7 +114,7 @@ func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateReque
 			return innerErr
 		}
 
-		// create entity_document binding first (root_document_id=0, backfilled later)
+		// create entity_document binding first
 		entityDoc := &model.EntityDocument{
 			EntityType:     constants.EntityDocumentTypeBorrowerPropertyTransaction,
 			OrganizationId: claim.OrganizationId,
