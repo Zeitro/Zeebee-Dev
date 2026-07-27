@@ -135,7 +135,7 @@ func TestRecoverReclaimsAbandonedJob(t *testing.T) {
 	ctx := context.Background()
 	job := &progress.Job{
 		RequestId: "req-recover", TransactionId: 7, RuleSig: "RPA|100",
-		Parser: string(constants.DocumentTemplateFileParseParserRPA), Mode: "ManualTree", DocumentId: 100,
+		Parser: string(constants.DocumentTemplateFileParseParserRPA), Source: "ManualTree", DocumentId: 100,
 	}
 	if err := pm.WriteJob(ctx, job); err != nil {
 		t.Fatalf("write job: %v", err)
@@ -163,7 +163,7 @@ func TestRecoverSkipsTerminalJob(t *testing.T) {
 	ctx := context.Background()
 	if err := pm.WriteJob(ctx, &progress.Job{
 		RequestId: "req-done", TransactionId: 7, RuleSig: "RPA|200",
-		Parser: string(constants.DocumentTemplateFileParseParserRPA), Mode: "ManualTree", DocumentId: 200,
+		Parser: string(constants.DocumentTemplateFileParseParserRPA), Source: "ManualTree", DocumentId: 200,
 	}); err != nil {
 		t.Fatalf("write job: %v", err)
 	}

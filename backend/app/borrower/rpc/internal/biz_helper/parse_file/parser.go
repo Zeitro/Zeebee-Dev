@@ -102,12 +102,6 @@ func (p *Parser) Dispatch(ctx context.Context, param DispatchParam) (requestId s
 	if p == nil {
 		return "", nil
 	}
-	// defer func() {
-	// 	if err != nil {
-	// 		p.logger.WithContext(ctx).WithFields(logx.Field("param", param)).
-	// 			Errorf("dispatch parse: %s", err)
-	// 	}
-	// }()
 
 	if param.Trigger == TriggerOnUpload {
 		return p.dispatchOnUpload(ctx, param)
@@ -181,15 +175,19 @@ func (p *Parser) start(ctx context.Context, txId, docId int64, rule dto.Document
 		return "", ErrParseInProgress
 	}
 	job := &progress.Job{
-		RequestId: requestId, TransactionId: txId, RuleSig: sig,
-		Parser: string(rule.Parser), Mode: string(rule.Source), DocumentId: docId,
+		RequestId:     requestId,
+		TransactionId: txId,
+		RuleSig:       sig,
+		Parser:        string(rule.Parser),
+		Source:        string(rule.Source),
+		DocumentId:    docId,
 	}
 	if err := p.seed(ctx, requestId, job, sig, h.Stages(files)); err != nil {
 		_ = p.progMgr.ReleaseDedupLock(ctx, txId, sig)
 		return "", err
 	}
 	threading.GoSafe(func() {
-		p.run(txId, docId, requestId, sig, h, rule, files)
+		p.run(ctx, txId, docId, requestId, sig, h, rule, files)
 	})
 	return requestId, nil
 }
@@ -199,8 +197,8 @@ func (p *Parser) start(ctx context.Context, txId, docId int64, rule dto.Document
 // the handler decides whether to use the passed files or collect its own scope
 // from the DB (per rule.Source). Trigger and scope stay orthogonal here — this
 // function does not branch on either.
-func (p *Parser) run(txId, docId int64, requestId, sig string, h handler.Handler, rule dto.DocumentTemplateFileParseRule, files []model.File) {
-	ctx, cancel := context.WithCancel(context.Background())
+func (p *Parser) run(ctx context.Context, txId, docId int64, requestId, sig string, h handler.Handler, rule dto.DocumentTemplateFileParseRule, files []model.File) {
+	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 	stopHeart := p.startHeartbeat(ctx, txId, requestId, sig)
 	defer stopHeart()
@@ -217,6 +215,7 @@ func (p *Parser) run(txId, docId int64, requestId, sig string, h handler.Handler
 	if err := h.Parse(ctx, txId, docId, files, rule, rep); err != nil {
 		p.logger.WithContext(ctx).WithFields(
 			logx.Field("request_id", requestId),
+			logx.Field("type", "parse_file"),
 			logx.Field("stacks", errorx.GetErrorStack(err)),
 		).Errorf("parse run: %s", err)
 		_ = p.progMgr.WriteDone(ctx, requestId, progress.StatusFailed, err.Error())
@@ -298,7 +297,11 @@ func (p *Parser) cleanupFiles(ctx context.Context, requestId string) {
 		}
 		if err := p.llm.DeleteFile(ctx, fc.ProviderFileID); err != nil {
 			p.logger.WithContext(ctx).
-				WithFields(logx.Field("request_id", requestId)).
+				WithFields(
+					logx.Field("request_id", requestId),
+					logx.Field("type", "parse_file"),
+					logx.Field("stacks", errorx.GetErrorStack(err)),
+				).
 				Errorf("delete provider file %s: %s", fc.ProviderFileID, err)
 		}
 	}

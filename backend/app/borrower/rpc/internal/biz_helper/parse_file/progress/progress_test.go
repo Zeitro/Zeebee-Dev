@@ -131,7 +131,7 @@ func TestProgressJSONRoundTrip(t *testing.T) {
 func TestRecoveryScan(t *testing.T) {
 	pm := newTestProgressManager(t)
 	ctx := context.Background()
-	job := &Job{RequestId: "req-recover", TransactionId: 7, RuleSig: "rpa|9", Parser: "rpa", Mode: "Directory", DocumentId: 9}
+	job := &Job{RequestId: "req-recover", TransactionId: 7, RuleSig: "rpa|9", Parser: "rpa", Source: "Directory", DocumentId: 9}
 	if err := pm.WriteJob(ctx, job); err != nil {
 		t.Fatalf("write job: %v", err)
 	}

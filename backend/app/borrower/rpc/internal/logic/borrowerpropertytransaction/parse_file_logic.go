@@ -61,8 +61,8 @@ func (l *ParseFileLogic) ParseFile(in *borrower.ParseFileRequest) (resp *borrowe
 		err = errorx.New("document dose not belong to the transaction")
 		return
 	}
-
-	requestId, err := l.svcCtx.FileParser.Dispatch(l.ctx, parse_file.DispatchParam{
+	newCtx := context.WithoutCancel(l.ctx)
+	requestId, err := l.svcCtx.FileParser.Dispatch(newCtx, parse_file.DispatchParam{
 		TransactionId:  in.Data.Id,
 		DocumentId:     in.Data.DocumentId,
 		OrganizationId: claim.OrganizationId,

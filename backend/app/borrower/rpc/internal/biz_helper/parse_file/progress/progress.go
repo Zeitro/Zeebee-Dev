@@ -77,7 +77,7 @@ type Job struct {
 	TransactionId int64  `json:"transaction_id"`
 	RuleSig       string `json:"rule_sig"`
 	Parser        string `json:"parser"`
-	Mode          string `json:"mode"`
+	Source        string `json:"source"`
 	DocumentId    int64  `json:"document_id"`
 }
 

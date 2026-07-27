@@ -145,8 +145,8 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 	}
 
 	// dispatch async extraction on the just-uploaded files.
-	newCtx := context.WithoutCancel(l.ctx)
-	requestId := l.parseUploadedFiles(newCtx, in.Data.TransactionId, doc, uploadedFiles)
+
+	requestId := l.parseUploadedFiles(in.Data.TransactionId, doc, uploadedFiles)
 
 	protoFiles, err := copierx.Trans[[]model.File, []*proto.FileEntity](&uploadedFiles, copierx.TimeToRFC3339Str())
 	if err != nil {
@@ -161,15 +161,16 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 
 // parseUploadedFiles dispatches async extraction on the just-uploaded files and
 // returns the requestId tracking this batch (empty when nothing fired).
-func (l *UploadDocumentFileLogic) parseUploadedFiles(ctx context.Context, transactionId int64, doc *model.Document, files []model.File) (requestId string) {
+func (l *UploadDocumentFileLogic) parseUploadedFiles(transactionId int64, doc *model.Document, files []model.File) (requestId string) {
 	var err error
+	newCtx := context.WithoutCancel(l.ctx)
 	defer func() {
 		if err != nil {
-			l.svcCtx.Logger.WithContext(ctx).WithFields(
+			l.svcCtx.Logger.WithContext(newCtx).WithFields(
 				logx.Field("stack", errorx.GetErrorStack(err))).Error("fail to parse uploaded files")
 		}
 	}()
-	requestId, err = l.svcCtx.FileParser.Dispatch(ctx, parse_file.DispatchParam{
+	requestId, err = l.svcCtx.FileParser.Dispatch(newCtx, parse_file.DispatchParam{
 		TransactionId: transactionId,
 		DocumentId:    doc.Id,
 		Files:         files,

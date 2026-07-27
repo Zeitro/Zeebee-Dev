@@ -92,6 +92,6 @@ func (p *Parser) tryReclaim(ctx context.Context, job *progress.Job) {
 		files = append(files, *f)
 	}
 	threading.GoSafe(func() {
-		p.run(job.TransactionId, job.DocumentId, job.RequestId, job.RuleSig, h, rule, files)
+		p.run(ctx, job.TransactionId, job.DocumentId, job.RequestId, job.RuleSig, h, rule, files)
 	})
 }
