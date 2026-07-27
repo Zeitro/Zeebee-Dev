@@ -11,6 +11,7 @@ export const getPagination = (pagi = {}) => {
 		current: 1,
 		pageSize: 10,
 		total: 0,
+		showSizeChanger: false, // antd 默认 total > 50 时会显示「条数 / page」下拉
 		showTotal: (total) => `▶  Total ${total}`,
 		...pagi,
 	};
