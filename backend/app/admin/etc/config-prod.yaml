@@ -59,10 +59,16 @@ RpcConf:
     Bucket: zeebee-files-production
     FileFolder: files-production
     PreSigneUrlExpireSeconds: 60
-  OpenAIConf:
-    APIKey: "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"
-    Model: gpt-4o-mini
-    BaseURL: "https://api.openai.com"
+  LlmConf:
+    Providers:
+      - Name: claude
+        ApiKey: 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
+        BaseUrl: https://api.anthropic.com
+    LenderDiscoverConf:
+      Provider: claude
+      Model: claude-sonnet-4-5
+      MaxTokens: 16384
+      TimeoutSeconds: 480
   CasbinConf:
     ModelPath: etc/model.conf
     EventTopic:

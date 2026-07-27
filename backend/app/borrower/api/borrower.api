@@ -719,6 +719,14 @@ service borrower-api {
 	@doc "transaction operation list"
 	@handler OperationList
 	get /borrower_property_transaction/:transaction_id/operations (TransactionOperationListRequest) returns (TransactionOperationListResponse)
+
+	@doc "parse file"
+	@handler ParseFile
+	post /borrower_property_transaction/:id/parse (ParseFileRequest) returns (ParseFileResponse)
+
+	@doc "get parse file result"
+	@handler ParseFileResult
+	get /borrower_property_transaction/:id/parse/result (ParseFileResultRequest) returns (ParseFileResultResponse)
 }
 
 // =============== borrower property transaction end ==============

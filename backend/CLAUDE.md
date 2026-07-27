@@ -2,6 +2,8 @@
 
 > Zeebee Backend 工作入口。**代码风格**（项目无关）见 constitution，**结构**见 architecture，**事实**见 INDEX。本文件仅含项目特定规范与可执行示例。
 > 改任何 `.api`/`.proto` 后须 `make create-service <service-name>` 重生成。
+> 
+> `.specify/memory/constitution.md` constitution是必须加载并遵循的。
 
 ## 文档指针
 
@@ -84,6 +86,16 @@
 - **lint**：PR 必过 golangci-lint（`.golangci.yml`）
 - **配置**：YAML 文件，禁止硬编码敏感信息
 - **函数签名**：≤4 参，≤3 返回值（风格细节见 constitution §函数约束）
+- **注释**：简洁扼要。一行能说清不写多行；不复述代码、不写废话铺垫；只写「为什么」和非显而易见的意图。
+
+### 配置中的密钥（HARDCODED_SECRETS 例外）
+
+本仓库为**私有仓库**，`app/*/etc/*.yaml` 是服务启动时加载的运行时配置文件。将 LLM / 第三方服务的 `ApiKey` 直接写在 `etc/*.yaml` 的 `Providers[*].ApiKey` 字段是**有意为之**的部署模式（非泄露），安全扫描对该模式报 `HARDCODED_SECRETS` 可视为**预期告警、按已接受处理**，无需每次修复或上报。
+
+- 仅适用于 `app/*/etc/*.yaml` 的 `ApiKey`（及等价凭证字段）；其他位置的硬编码密钥仍禁止。
+- `config-local.yaml` 通常不入库或保留空值；`config-prod.yaml` / `config-staging.yaml` 由部署流程或人工填入真实 key。
+- 若确有 key 被误提交且仓库可见性变更（转公开），须立刻轮换。
+- 日志中仍禁止打印密钥（见上一条「日志」约束），`SENSITIVE-TO-OBSERVABILITY` 类告警与此例外无关，单独评估。
 
 ## Working Directory
 
@@ -156,3 +168,6 @@ feat | fix | refactor | docs | style | perf | test
 feat(applicant-borrower-backend): add loan application endpoint
 fix(document-lender-backend): fix document upload validation error
 ```
+
+## code extract
+codebase-memory-mcp > codegraph > grep

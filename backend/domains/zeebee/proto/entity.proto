@@ -559,6 +559,24 @@ message BorrowerPropertyTransactionChecklistNodeEntity {
   repeated FileEntity files = 8;
   int32 required_document_count = 9;
   int32 optional_document_count = 10;
+  FileParseConfig file_parse_config = 11;
+  repeated string tags = 12;
+}
+
+message FileParseConfig {
+  repeated FileParseRule rules = 1;
+}
+
+message FileParseRule {
+  string parser = 1;
+  string source = 2;            // SingleFile | Files | Directory | TagFiltered
+  string triggered_by = 3;      // Upload | Manual
+  string label = 4;             // button label
+  TagSelector selector = 5;     // TagFiltered only
+}
+
+message TagSelector {
+  repeated string tags = 1;          // AND semantics
 }
 
 message BorrowerPropertyTransactionOptionEntity {

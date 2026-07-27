@@ -9,8 +9,6 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SwitchStatusLogic struct {
@@ -30,13 +28,7 @@ func NewSwitchStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Swit
 }
 
 func (l *SwitchStatusLogic) SwitchStatus(in *admin.PricingPlanSwitchStatusRequest) (resp *proto.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
+
 	err = l.baseLogic.PricingPlanLogic.SwitchStatus(l.ctx, in.Data.Id, constants.CommonStatus(in.Data.Status))
 	if err != nil {
 		return nil, errorx.WithStack(err)

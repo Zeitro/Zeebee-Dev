@@ -227,6 +227,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: borrower_property_transaction.BorrowerPropertyTransactionUpdateChecklistHandler(serverCtx),
 				},
 				{
+					// parse file
+					Method:  http.MethodPost,
+					Path:    "/borrower_property_transaction/:id/parse",
+					Handler: borrower_property_transaction.ParseFileHandler(serverCtx),
+				},
+				{
+					// get parse file result
+					Method:  http.MethodGet,
+					Path:    "/borrower_property_transaction/:id/parse/result",
+					Handler: borrower_property_transaction.ParseFileResultHandler(serverCtx),
+				},
+				{
 					// switch transaction status
 					Method:  http.MethodPatch,
 					Path:    "/borrower_property_transaction/:id/status",

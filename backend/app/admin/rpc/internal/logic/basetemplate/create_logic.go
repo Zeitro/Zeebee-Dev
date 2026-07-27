@@ -3,8 +3,6 @@ package basetemplatelogic
 import (
 	"context"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
@@ -32,13 +30,6 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 
 // Create creates a new base template with validation
 func (l *CreateLogic) Create(in *admin.CreateBaseTemplateRequest) (resp *admin.CreateBaseTemplateResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
 
 	// Convert proto request to DTO
 	dtoData, err := copierx.Trans[admin.CreateBaseTemplateRequestData, dto.BaseTemplateCreateDto](in.Data)

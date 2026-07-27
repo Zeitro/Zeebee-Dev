@@ -324,6 +324,8 @@ type BorrowerPropertyTransactionChecklistNode struct {
 	Children              []BorrowerPropertyTransactionChecklistNode `json:"children"`
 	FileCount             int32                                      `json:"file_count"`
 	Files                 []FileEntity                               `json:"files"`
+	FileParseConfig       *FileParseConfig                           `json:"file_parse_config"`
+	Tags                  []string                                   `json:"tags"`
 }
 
 type BorrowerPropertyTransactionChecklistRequest struct {
@@ -601,7 +603,8 @@ type DocumentUploadFileItem struct {
 }
 
 type DocumentUploadFileResponse struct {
-	Files []DocumentFile `json:"files"`
+	Files     []DocumentFile `json:"files"`
+	RequestId string         `json:"request_id"`
 }
 
 type DriveAuthUrlResponse struct {
@@ -683,6 +686,18 @@ type FileEntity struct {
 	UpdatedAt     string `json:"updated_at"`
 	DriveUrl      string `json:"drive_url"`
 	DriveSyncedAt string `json:"drive_synced_at"`
+}
+
+type FileParseConfig struct {
+	Rules []*FileParseRule `json:"rules"`
+}
+
+type FileParseRule struct {
+	Parser      string       `json:"parser"`
+	Source      string       `json:"source"`
+	TriggeredBy string       `json:"triggered_by"`
+	Label       string       `json:"label"`
+	Selector    *TagSelector `json:"selector"`
 }
 
 type GetSelectOptionRequest struct {
@@ -1624,6 +1639,32 @@ type OrganizationUserUpdateResponse struct {
 	OrganizationUserEntity
 }
 
+type ParseFileRequest struct {
+	Id         int64  `path:"id" validate:"required,gt=0"`
+	DocumentId int64  `json:"document_id" validate:"required,gt=0"`
+	Parser     string `json:"parser" validate:"required"`
+}
+
+type ParseFileResponse struct {
+	RequestId string `json:"request_id"`
+}
+
+type ParseFileResultRequest struct {
+	Id         int64  `path:"id" validate:"required,gt=0"`
+	Type       string `form:"type" validate:"required,oneof=request_id params"`
+	RequestId  string `form:"request_id,optional" validate:"required_if=Type request_id"`
+	DocumentId int64  `form:"document_id,optional" validate:"required_if=Type params"`
+	Parser     string `form:"parser,optional" validate:"required_if=Type params"`
+}
+
+type ParseFileResultResponse struct {
+	Status         string `json:"status"`
+	Stage          string `json:"stage"`
+	StageProcessed int32  `json:"stage_processed"`
+	StageTotal     int32  `json:"stage_total"`
+	Error          string `json:"error"`
+}
+
 type PathIdRequest struct {
 	Id int64 `path:"id" validate:"required,gt=0"`
 }
@@ -2029,6 +2070,10 @@ type SubscriptionCurrentEntity struct {
 
 type SubscriptionCurrentResponse struct {
 	Subscription *SubscriptionCurrentEntity `json:"subscription"`
+}
+
+type TagSelector struct {
+	Tags []string `json:"tags"`
 }
 
 type ThirdPartyLoanApplicantEntity struct {

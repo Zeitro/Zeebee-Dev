@@ -97,15 +97,21 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 			reflection.Register(grpcServer)
 		}
 	})
-	// tag every rpc log with service_name. grpc.UnaryInterceptor is prepended by
-	// grpc-go to the interceptor chain (outermost), so it runs above go-zero's
-	// Trace/Stat interceptors and the stat access-log line carries the field too.
+	// Outermost interceptor: tag every rpc ctx with service_name. grpc.UnaryInterceptor
+	// is prepended by grpc-go to the chain (outermost), so it runs above go-zero's
+	// stat interceptor and the stat access-log line carries the field.
 	rpcServer.AddOptions(grpc.UnaryInterceptor(func(ctx context.Context, req any,
 		info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
-		ctx = logx.ContextWithFields(ctx,
-			logx.Field("service_name", c.RpcConf.Name))
-		// Centralized error logging so individual logic methods don't each need
-		// the defer-error-log boilerplate.
+		ctx = logx.ContextWithFields(ctx, logx.Field("service_name", c.RpcConf.Name))
+		return handler(ctx, req)
+	}))
+	// Centralized error logging. Registered via AddUnaryInterceptors so it sits at
+	// the tail of go-zero's chain — INSIDE the tracing interceptor — and the ctx
+	// here already carries trace+span (from tracing) plus service_name (from the
+	// outer interceptor above). Logging in the outermost interceptor instead loses
+	// trace/span because tracing has not run yet at that layer.
+	rpcServer.AddUnaryInterceptors(func(ctx context.Context, req any,
+		info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 		resp, err := handler(ctx, req)
 		if err != nil {
 			logger.WithContext(ctx).WithFields(
@@ -113,10 +119,7 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 			).Error(err)
 		}
 		return resp, err
-	}))
-	// rpcServer.AddUnaryInterceptors(func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp any, err error){
-	//
-	// })
+	})
 
 	rpcService := &RpcServer{
 		s:    rpcServer,

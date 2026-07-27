@@ -3,8 +3,6 @@ package basetemplatelogic
 import (
 	"context"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
@@ -31,13 +29,6 @@ func NewSwitchStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Swit
 
 // SwitchStatus switches the status of a base template with cascade to organization templates
 func (l *SwitchStatusLogic) SwitchStatus(in *admin.SwitchBaseTemplateStatusRequest) (resp *proto.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
 
 	// Validate status
 	newStatus := constants.CommonStatus(in.Data.Status)

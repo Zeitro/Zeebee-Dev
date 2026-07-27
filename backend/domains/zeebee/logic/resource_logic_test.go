@@ -106,7 +106,7 @@ func TestFilterByPricingPlan_WithSubscription_NoOverlap_ReturnsEmpty(t *testing.
 		Status:   constants.CommonStatusActive,
 	}
 	require.NoError(t, db.Create(plan).Error)
-		err := ppLogic.BindResources(ctx, plan.Id, []int64{10, 11})
+	err := ppLogic.BindResources(ctx, plan.Id, []int64{10, 11})
 	require.NoError(t, err)
 
 	// Seed subscription
