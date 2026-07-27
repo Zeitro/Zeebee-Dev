@@ -2,6 +2,7 @@ package borrowerpropertytransactionlogic
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"gorm.io/gorm"
@@ -77,6 +78,11 @@ func (l *DeleteDocumentFileLogic) DeleteDocumentFile(in *borrower.BorrowerProper
 			return innerErr
 		}
 
+		innerErr = l.updateEscrowChecklist(tx, in.Data.TransactionId, fileDoc.Id, fileDoc.Name)
+		if innerErr != nil {
+			return innerErr
+		}
+
 		// operation log
 		innerErr = l.baseLogic.OperationLogic.CreateOperationLog(l.ctx, tx, dto.OperationCreateDto{
 			EntityId:       in.Data.TransactionId,
@@ -92,7 +98,7 @@ func (l *DeleteDocumentFileLogic) DeleteDocumentFile(in *borrower.BorrowerProper
 			return innerErr
 		}
 
-		// FR-017a: recalculate checklist
+		// recalculate checklist
 		transHelper := biz_helper.NewBorrowerPropertyTransaction(l.svcCtx.AllRepos)
 		_, innerErr = transHelper.RecalculateBorrowerPropertyTransactionChecklist(l.ctx, tx, in.Data.TransactionId)
 		return innerErr
@@ -102,4 +108,35 @@ func (l *DeleteDocumentFileLogic) DeleteDocumentFile(in *borrower.BorrowerProper
 	}
 
 	return &proto.EmptyResponse{}, nil
+}
+
+// updateEscrowChecklist clears the escrow flag once the last file of an escrow
+// document is deleted. Soft-delete already ran in tx, so the count reflects
+// post-delete state. Skips when no escrow exists or the doc isn't an escrow doc.
+func (l *DeleteDocumentFileLogic) updateEscrowChecklist(tx *gorm.DB, transactionId, docId int64, docName string) (err error) {
+	escrow, err := l.svcCtx.PropertyTransactionEscrowRepo.FindOneByColumnsWithTx(l.ctx, tx, map[string]any{
+		"borrower_property_transaction_id": transactionId,
+	})
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil
+		}
+		return err
+	}
+
+	count, err := l.svcCtx.FileRepo.GetFileCountByEntityIdWithTx(l.ctx, tx, docId, constants.FileEntityTypeDocument)
+	if err != nil {
+		return err
+	}
+	if count > 0 {
+		return nil
+	}
+
+	checklist := escrow.Checklist
+	if !checklist.SetByName(docName, false) {
+		return nil // not an escrow doc
+	}
+	escrow.Checklist = checklist
+	_, err = l.svcCtx.PropertyTransactionEscrowRepo.UpdateOneByIdWithTx(l.ctx, tx, escrow.Id, escrow)
+	return err
 }
