@@ -121,6 +121,10 @@ const DetailsTab = ({ rowData, transactionId, onRefresh, isSearchParamsEditing }
 	}, [form, rowData]);
 
 	useEffect(() => {
+		onRefresh();
+	}, [onRefresh]);
+
+	useEffect(() => {
 		if (isEditing) {
 			syncFormValues();
 		}

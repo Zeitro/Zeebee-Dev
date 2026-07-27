@@ -78,11 +78,6 @@ const TransactionDetailsPage = () => {
 			params.set('tab', key);
 			setTabFromUrl(key);
 		}
-		// 仅 Details 用父级 rowData，切回时刷新交易详情；
-		// Loan / Log 靠 destroyOnHidden remount 自行请求，不必调 getDetails
-		if (key === 'details') {
-			getDetails();
-		}
 		const query = params.toString();
 		router.replace(query ? `/myTransactions/${id}?${query}` : `/myTransactions/${id}`, {
 			scroll: false,
