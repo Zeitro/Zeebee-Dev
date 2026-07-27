@@ -223,7 +223,7 @@ func (h *RPAHandler) extractStage(ctx context.Context, rep Reporter, files []col
 	rep.SetStageTotal(ctx, progress.StageExtract, len(files))
 	rep.SetStageState(ctx, progress.StageExtract, progress.ExtractStateJSON(0, len(files)))
 
-	type uploaded struct{ id, contentType string }
+	type uploaded struct{ id, contentType, name string }
 	atts := make([]uploaded, 0, len(files))
 	uploadedCount := 0
 	for _, f := range files {
@@ -238,7 +238,7 @@ func (h *RPAHandler) extractStage(ctx context.Context, rep Reporter, files []col
 			).Errorf("upload rpa file: %s", err)
 			continue
 		}
-		atts = append(atts, uploaded{id: fc.ProviderFileID, contentType: fileContentType(f.Name)})
+		atts = append(atts, uploaded{id: fc.ProviderFileID, contentType: fileContentType(f.Name), name: f.Name})
 		uploadedCount++
 		rep.SetStageState(ctx, progress.StageExtract, progress.ExtractStateJSON(uploadedCount, len(files)))
 	}
@@ -251,7 +251,7 @@ func (h *RPAHandler) extractStage(ctx context.Context, rep Reporter, files []col
 	err := progress.RetryDo(ctx, rep, progress.StageExtract, func() error {
 		opts := make([]llm.ChatOption, 0, len(atts))
 		for _, a := range atts {
-			opts = append(opts, llm.WithAttachment(llm.Attachment{FileID: a.id, ContentType: a.contentType}))
+			opts = append(opts, llm.WithAttachment(llm.Attachment{FileID: a.id, ContentType: a.contentType, Filename: a.name}))
 		}
 		content, e := h.llm.Chat(ctx, extractSystemPrompt, rpaConsolidatedPrompt, opts...)
 		if e != nil {
