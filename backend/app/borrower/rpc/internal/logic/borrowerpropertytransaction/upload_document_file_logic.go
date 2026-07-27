@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -216,19 +215,8 @@ func (l *UploadDocumentFileLogic) updateEscrowChecklist(tx *gorm.DB, transaction
 		return err
 	}
 	checklist := escrow.Checklist
-	switch strings.ToLower(doc.Name) {
-	case "wire instructions":
-		checklist.HasWireInstruction = true
-	case "emd receipt":
-		checklist.HasEmdReceipt = true
-	case "prelim report":
-		checklist.HasPrelimReport = true
-	case "nhd report":
-		checklist.HasNhd = true
-	case "colored map":
-		checklist.HasColoredMap = true
-	default:
-		return nil
+	if !checklist.SetByName(doc.Name, true) {
+		return nil // not an escrow doc
 	}
 	escrow.Checklist = checklist
 	_, err = l.svcCtx.PropertyTransactionEscrowRepo.UpdateOneByIdWithTx(l.ctx, tx, escrow.Id, escrow)
