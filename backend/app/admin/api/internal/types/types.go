@@ -305,6 +305,10 @@ type LenderDiscoverRunEntity struct {
 	Stats        LenderDiscoverRunStats `json:"stats"`
 }
 
+type LenderDiscoverRunRequest struct {
+	Trigger string `json:"trigger,optional"`
+}
+
 type LenderDiscoverRunResponse struct {
 	Data LenderDiscoverRunEntity `json:"data"`
 }

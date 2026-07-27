@@ -3,8 +3,6 @@ package organizationlogic
 import (
 	"context"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -12,8 +10,6 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
-
-	"zeebee-backend/common/errorx"
 )
 
 type LenderPageLogic struct {
@@ -33,13 +29,6 @@ func NewLenderPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Lender
 }
 
 func (l *LenderPageLogic) LenderPage(in *proto.CommonPageRequest) (resp *borrower.OrganizationLenderPageResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
 
 	pageReq, err := copierx.Trans[proto.CommonPageRequestData, dto.OrganizationPageRequestDto](in.Data)
 	if err != nil {

@@ -4,15 +4,15 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
-	"github.com/zeromicro/go-zero/core/threading"
+	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper"
+	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file"
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -41,14 +41,6 @@ func NewUploadDocumentFileLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerPropertyTransactionDocumentUploadFileRequest) (resp *borrower.BorrowerPropertyTransactionDocumentUploadFileResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
-
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
@@ -115,14 +107,19 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 			uploadedFiles = append(uploadedFiles, *created)
 		}
 
-		// FR-011: propagate last_uploaded_at to document and all ancestors
+		// propagate last_uploaded_at to document and all ancestors
 		innerErr := l.propagateLastUploadedAt(tx, doc, now)
 		if innerErr != nil {
 			return innerErr
 		}
 
-		metadata, _ := json.Marshal(map[string]interface{}{
-			"after": map[string]interface{}{
+		innerErr = l.updateEscrowChecklist(tx, in.Data.TransactionId, doc)
+		if innerErr != nil {
+			return innerErr
+		}
+
+		metadata, _ := json.Marshal(map[string]any{
+			"after": map[string]any{
 				"files": uploadedFiles,
 			},
 		})
@@ -143,9 +140,8 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 			return innerErr
 		}
 
+		// recalculate checklist
 		transHelper := biz_helper.NewBorrowerPropertyTransaction(l.svcCtx.AllRepos)
-
-		// FR-017a: recalculate checklist
 		_, innerErr = transHelper.RecalculateBorrowerPropertyTransactionChecklist(l.ctx, tx, in.Data.TransactionId)
 		return innerErr
 	})
@@ -153,13 +149,9 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 		return
 	}
 
-	// post-commit: parse uploaded files and write extracted content back (fail-silent).
-	// The upload already succeeded; parse errors are logged and swallowed.
-	newCtx := context.WithoutCancel(l.ctx)
-	threading.GoSafe(func() {
-		l.parseUploadedFiles(newCtx, in.Data.TransactionId, doc, uploadedFiles)
-	})
-	// l.parseUploadedFiles(in.Data.TransactionId, doc, uploadedFiles)
+	// dispatch async extraction on the just-uploaded files.
+
+	requestId := l.parseUploadedFiles(in.Data.TransactionId, doc, uploadedFiles)
 
 	protoFiles, err := copierx.Trans[[]model.File, []*proto.FileEntity](&uploadedFiles, copierx.TimeToRFC3339Str())
 	if err != nil {
@@ -167,28 +159,33 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 	}
 
 	return &borrower.BorrowerPropertyTransactionDocumentUploadFileResponse{
-		Data: *protoFiles,
+		Data:      *protoFiles,
+		RequestId: requestId,
 	}, nil
 }
 
-// parseUploadedFiles extracts content from the just-uploaded PDFs and writes it
-// back to the transaction/escrow. Runs after the upload tx commits, in a separate
-// tx. All errors (and panics) are logged and swallowed — the upload succeeded.
-func (l *UploadDocumentFileLogic) parseUploadedFiles(ctx context.Context, transactionId int64, doc *model.Document, files []model.File) {
-	llm, err := biz_helper.NewChatClient(l.svcCtx.Config.LlmConf.Providers, l.svcCtx.Config.LlmConf.TransactionFileParseConf)
-	if err != nil {
-		l.svcCtx.Logger.WithContext(ctx).Errorf("file parse llm client init failed: %v", err)
-		return
-	}
-
-	parser := biz_helper.NewPropertyTransactionFileParser(l.svcCtx.AllRepos, llm, l.svcCtx.Logger)
-	if err := parser.ParseAndUpdateTransactionFile(ctx, transactionId, doc, files); err != nil {
-		l.svcCtx.Logger.WithContext(ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Errorf("file parse failed: %v", err)
-	}
+// parseUploadedFiles dispatches async extraction on the just-uploaded files and
+// returns the requestId tracking this batch (empty when nothing fired).
+func (l *UploadDocumentFileLogic) parseUploadedFiles(transactionId int64, doc *model.Document, files []model.File) (requestId string) {
+	var err error
+	newCtx := context.WithoutCancel(l.ctx)
+	defer func() {
+		if err != nil {
+			l.svcCtx.Logger.WithContext(newCtx).WithFields(
+				logx.Field("stack", errorx.GetErrorStack(err))).Error("fail to parse uploaded files")
+		}
+	}()
+	requestId, err = l.svcCtx.FileParser.Dispatch(newCtx, parse_file.DispatchParam{
+		TransactionId: transactionId,
+		DocumentId:    doc.Id,
+		Files:         files,
+		Trigger:       parse_file.TriggerOnUpload,
+	})
+	return requestId
 }
 
 func (l *UploadDocumentFileLogic) propagateLastUploadedAt(tx *gorm.DB, doc *model.Document, t *sql.NullTime) error {
-	err := l.svcCtx.DocumentRepo.UpdateColumnsByIdWithTx(l.ctx, tx, doc.Id, map[string]interface{}{
+	err := l.svcCtx.DocumentRepo.UpdateColumnsByIdWithTx(l.ctx, tx, doc.Id, map[string]any{
 		"last_uploaded_at": t,
 	})
 	if err != nil {
@@ -203,4 +200,26 @@ func (l *UploadDocumentFileLogic) propagateLastUploadedAt(tx *gorm.DB, doc *mode
 		return l.propagateLastUploadedAt(tx, parent, t)
 	}
 	return nil
+}
+
+// updateEscrowChecklist flags escrow checklist items by uploaded doc name.
+func (l *UploadDocumentFileLogic) updateEscrowChecklist(tx *gorm.DB, transactionId int64, doc *model.Document) (err error) {
+	escrow, err := l.svcCtx.PropertyTransactionEscrowRepo.FindOneByColumnsWithTx(l.ctx, tx, map[string]any{
+		"borrower_property_transaction_id": transactionId,
+	})
+	if err != nil {
+		// no escrow yet is valid (skip); any other lookup error fails the tx.
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil
+		}
+		return err
+	}
+	checklist := escrow.Checklist
+	if !checklist.SetByName(doc.Name, true) {
+		return nil // not an escrow doc
+	}
+	escrow.Checklist = checklist
+	_, err = l.svcCtx.PropertyTransactionEscrowRepo.UpdateOneByIdWithTx(l.ctx, tx, escrow.Id, escrow)
+
+	return
 }

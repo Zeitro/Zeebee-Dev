@@ -8,10 +8,6 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/enums"
 	"zeebee-backend/domains/zeebee/proto"
-
-	"github.com/zeromicro/go-zero/core/logx"
-
-	"zeebee-backend/common/errorx"
 )
 
 type GetOptLogic struct {
@@ -27,13 +23,7 @@ func NewGetOptLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetOptLogi
 }
 
 func (l *GetOptLogic) GetOpt(in *lender.OptionRequest) (resp *lender.OptionResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
+
 	resp = &lender.OptionResponse{
 		Data: []*proto.OptionEntity{},
 	}

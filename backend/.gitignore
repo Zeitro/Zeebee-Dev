@@ -7,5 +7,6 @@ specs
 .cache
 .specify/init-options.json
 .specify/integration.json
+.specify/feature.json
 .specify/integrations/*.manifest.json
 .specify/workflows/workflow-registry.json

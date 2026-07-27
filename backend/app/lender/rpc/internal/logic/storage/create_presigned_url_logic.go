@@ -12,8 +12,6 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/common/errorx"
 )
 
@@ -30,13 +28,7 @@ func NewCreatePresignedUrlLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *CreatePresignedUrlLogic) CreatePresignedUrl(in *proto.StorageCreatePresignedUrlRequest) (resp *proto.StorageCreatePresignedUrlResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
+
 	folder := global.Config.AwsS3Conf.FileFolder
 	expireSeconds := global.Config.AwsS3Conf.PreSigneUrlExpireSeconds
 

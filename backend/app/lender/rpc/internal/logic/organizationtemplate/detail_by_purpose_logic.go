@@ -3,16 +3,12 @@ package organizationtemplatelogic
 import (
 	"context"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
-
-	"zeebee-backend/common/errorx"
 )
 
 type DetailByPurposeLogic struct {
@@ -33,13 +29,7 @@ func NewDetailByPurposeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *D
 }
 
 func (l *DetailByPurposeLogic) DetailByPurpose(in *lender.OrganizationTemplateDetailByPurposeRequest) (resp *lender.OrganizationTemplateDetailResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
+
 	claims, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
