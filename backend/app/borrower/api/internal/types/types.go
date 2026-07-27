@@ -2043,10 +2043,6 @@ type Signatures struct {
 	BorrowerAuthorization []*SignatureEntity `json:"borrower_authorization,optional"`
 }
 
-type TagSelector struct {
-	Tags []string `json:"tags"`
-}
-
 type SubscriptionCheckoutRequest struct {
 	PricingPlanId       int64 `json:"pricing_plan_id" validate:"required,gt=0"`
 	PricingPlanPolicyId int64 `json:"pricing_plan_policy_id" validate:"required,gt=0"`
@@ -2074,6 +2070,10 @@ type SubscriptionCurrentEntity struct {
 
 type SubscriptionCurrentResponse struct {
 	Subscription *SubscriptionCurrentEntity `json:"subscription"`
+}
+
+type TagSelector struct {
+	Tags []string `json:"tags"`
 }
 
 type ThirdPartyLoanApplicantEntity struct {
