@@ -25,6 +25,7 @@ type rpaFields struct {
 	CoeDate                string  `json:"coe_date"`
 	EmdAmount              float64 `json:"emd_amount"`
 	EmdDueDate             string  `json:"emd_due_date"`
+	ContractDate           string  `json:"contract_date"`
 	ContingencyRemovalDate string  `json:"contingency_removal_date"`
 }
 
@@ -47,9 +48,14 @@ func parseRPAFields(content string) (rpaFields, error) {
 const rpaConsolidatedPrompt = `You are given one or more contract documents (PDF/image). Read ALL of them and extract these fields, arbitrating across files when they disagree:
 - purchase_amount: purchase price as a JSON number (float). Strip thousands separators/currency. 0 if absent.
 - emd_amount: earnest money deposit as a JSON number (float). 0 if absent.
-- coe_date, emd_due_date, contingency_removal_date: MM/DD/YYYY, or null if absent.
+- contract_date: MM/DD/YYYY, or null if absent.
+- coe_date: closing of escrow date as MM/DD/YYYY, or null if absent.
+- emd_due_date: earnest money deposit due date as MM/DD/YYYY, or null if absent.
+- contingency_removal_date: contingency removal date as MM/DD/YYYY, or null if absent.
 When files conflict, choose the most authoritative (e.g. signed contract over a draft); if you cannot determine which is correct, return null for that field — never guess. Output every date as MM/DD/YYYY regardless of source format.
-Respond as JSON: {"purchase_amount": <number>, "coe_date": <string|null>, "emd_amount": <number>, "emd_due_date": <string|null>, "contingency_removal_date": <string|null>}`
+
+CRITICAL — output format: your ENTIRE response must be exactly this JSON object and NOTHING else. Start with { and end with }. Do NOT wrap it in markdown code fences. Do NOT add any explanation, reasoning, notes, or text before or after the JSON:
+{"purchase_amount": <number>, "coe_date": <string|null>, "emd_amount": <number>, "emd_due_date": <string|null>, "contingency_removal_date": <string|null>, "contract_date": <string|null>}`
 
 // ---- collect (in-scope leaves by rule.Source) ----
 
@@ -145,6 +151,9 @@ func applyRPAFields(tx *model.BorrowerPropertyTransaction, f rpaFields) {
 	}
 	if t, ok := parseDate(f.ContingencyRemovalDate); ok {
 		tx.ContingencyRemovalDate = t
+	}
+	if t, ok := parseDate(f.ContractDate); ok {
+		tx.ContractDate = t
 	}
 }
 

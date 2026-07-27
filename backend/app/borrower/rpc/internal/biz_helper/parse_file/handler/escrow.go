@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	"gorm.io/gorm"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -42,7 +43,9 @@ const escrowPrompt = `Extract these fields from the attached wire/escrow instruc
 - officer_phone: the escrow officer's phone number as DIGITS ONLY — strip spaces, parentheses, dashes, dots, plus signs.
 - escrow_number: the value next to the "Escrow No." label (e.g. "202656-RL").
 Only extract what is actually present. If a field is absent, unreadable, or uncertain, use null — never guess.
-Respond as JSON: {"escrow_company": <string|null>, "officer_name": <string|null>, "officer_email": <string|null>, "officer_phone": <string|null>, "escrow_number": <string|null>}`
+
+CRITICAL — output format: your ENTIRE response must be exactly this JSON object and NOTHING else. Start with an open brace and end with a close brace. Do NOT wrap it in markdown code fences. Do NOT add any explanation, reasoning, notes, or text before or after the JSON:
+{"escrow_company": <string|null>, "officer_name": <string|null>, "officer_email": <string|null>, "officer_phone": <string|null>, "escrow_number": <string|null>}`
 
 // ApplyEscrowFields copies only non-empty extracted fields (skip-empty merge).
 func ApplyEscrowFields(esc *model.PropertyTransactionEscrow, f escrowFields) {
@@ -119,7 +122,9 @@ func (h *EscrowHandler) parseEscrowFile(ctx context.Context, txId int64, rep Rep
 	var fields escrowFields
 	if err := progress.RetryDo(ctx, rep, progress.StageExtract, func() error {
 		content, e := h.llm.Chat(ctx, extractSystemPrompt, escrowPrompt, llm.WithAttachment(llm.Attachment{
-			FileID: fc.ProviderFileID, ContentType: fileContentType(f.Name),
+			FileID:      fc.ProviderFileID,
+			ContentType: fileContentType(f.Name),
+			Filename:    f.Name,
 		}))
 		if e != nil {
 			return e
