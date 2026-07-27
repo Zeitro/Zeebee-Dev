@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -112,6 +113,11 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 			return innerErr
 		}
 
+		innerErr = l.updateEscrowChecklist(tx, in.Data.TransactionId, doc)
+		if innerErr != nil {
+			return innerErr
+		}
+
 		metadata, _ := json.Marshal(map[string]any{
 			"after": map[string]any{
 				"files": uploadedFiles,
@@ -134,9 +140,8 @@ func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerProper
 			return innerErr
 		}
 
-		transHelper := biz_helper.NewBorrowerPropertyTransaction(l.svcCtx.AllRepos)
-
 		// recalculate checklist
+		transHelper := biz_helper.NewBorrowerPropertyTransaction(l.svcCtx.AllRepos)
 		_, innerErr = transHelper.RecalculateBorrowerPropertyTransactionChecklist(l.ctx, tx, in.Data.TransactionId)
 		return innerErr
 	})
@@ -195,4 +200,31 @@ func (l *UploadDocumentFileLogic) propagateLastUploadedAt(tx *gorm.DB, doc *mode
 		return l.propagateLastUploadedAt(tx, parent, t)
 	}
 	return nil
+}
+
+// updateEscrowChecklist flags escrow checklist items by uploaded doc name.
+func (l *UploadDocumentFileLogic) updateEscrowChecklist(tx *gorm.DB, transactionId int64, doc *model.Document) (err error) {
+	escrow, _ := l.svcCtx.PropertyTransactionEscrowRepo.FindOneByColumnsWithTx(l.ctx, tx, map[string]interface{}{
+		"borrower_property_transaction_id": transactionId,
+	})
+	if escrow == nil || escrow.Id == 0 {
+		return
+	}
+	checklist := escrow.Checklist
+	switch strings.ToLower(doc.Name) {
+	case "wire instruction":
+		checklist.HasWireInstruction = true
+	case "emd receipt":
+		checklist.HasEmdReceipt = true
+	case "prelim report":
+		checklist.HasPrelimReport = true
+	case "nhd":
+		checklist.HasNhd = true
+	case "colored map":
+		checklist.HasColoredMap = true
+	}
+	escrow.Checklist = checklist
+	_, err = l.svcCtx.PropertyTransactionEscrowRepo.UpdateOneByIdWithTx(l.ctx, tx, escrow.Id, escrow)
+
+	return
 }
