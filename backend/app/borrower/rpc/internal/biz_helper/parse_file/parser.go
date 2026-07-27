@@ -1,5 +1,5 @@
 // Package parse_file coordinates the staged async file-parse pipeline (escrow
-// on_upload, rpa manual): dedup lock, Redis-backed progress/hold, and restart
+// on_upload, rpa manual): dedup lock, Redis-backed progress/hold, restart
 // recovery. Per-parser workers live in package handler.
 package parse_file
 
@@ -26,22 +26,19 @@ import (
 	"zeebee-backend/domains/zeebee/repo"
 )
 
-// ErrParseInProgress is returned when a manual parse for the same
-// (parser, document) is already in flight. Surfaced as gRPC AlreadyExists so
-// the API layer maps it to HTTP 409.
+// ErrParseInProgress: a manual parse for the same (parser, document) is in flight.
+// gRPC AlreadyExists → HTTP 409.
 var ErrParseInProgress = status.Error(codes.AlreadyExists, "parse in progress")
 
-// RuleSig is the dedup-lock + reqmap key, scoped per parser+document. Exported
-// so the progress-by-params query rebuilds the same key.
+// RuleSig is the dedup-lock + reqmap key (parser+document); exported so the
+// progress query rebuilds the same key.
 func RuleSig(documentId int64, parser constants.DocumentTemplateParser) string {
 	return fmt.Sprintf("%s|%d", parser, documentId)
 }
 
-// Parser is the coordinator: it routes a request to the right Handler by
-// (parser, source, trigger, rule), then owns the full run lifecycle — dedup
-// lock, job/hold/reqmap, heartbeat, finalize, terminal Done, and progress
-// persistence. Handlers are pure workers (extract + writeback) and report stage
-// granularity back through a Reporter.
+// Parser is the coordinator: routes a request to the right Handler by (parser,
+// source, trigger, rule) and owns the run lifecycle (dedup lock, job/hold/reqmap,
+// heartbeat, finalize, terminal Done, progress). Handlers are pure workers.
 type Parser struct {
 	repos    *repo.AllRepos
 	progMgr  *progress.ProgressManager
@@ -89,15 +86,12 @@ type DispatchParam struct {
 	Trigger        Trigger
 }
 
-// Dispatch is the single entry point for both on_upload and manual parses. The
-// shared contract (FR-031): resolve the rule(s) by parser, then gate by the
-// rule's declared TriggeredBy — a rule runs only via the trigger it declares
-// (Trigger and Source are orthogonal; the gate looks only at TriggeredBy, the
-// handler resolves file scope from Source). It then acquires the dedup lock,
-// seeds job/hold/progress, and kicks the async runner. On_upload is fail-silent
-// (a dispatch error is logged, not surfaced — the upload response must not be
-// blocked by the side-channel parse); manual surfaces ErrParseInProgress on a
-// duplicate.
+// Dispatch is the single entry for on_upload and manual parses. Contract
+// (FR-031): resolve rule(s) by parser, gate by rule.TriggeredBy (Trigger and
+// Source are orthogonal — the gate ignores Source), acquire the dedup lock,
+// seed job/hold/progress, kick the runner. on_upload is fail-silent (parse
+// errors logged, never block the upload response); manual surfaces
+// ErrParseInProgress on a duplicate.
 func (p *Parser) Dispatch(ctx context.Context, param DispatchParam) (requestId string, err error) {
 	if p == nil {
 		return "", nil
@@ -109,11 +103,8 @@ func (p *Parser) Dispatch(ctx context.Context, param DispatchParam) (requestId s
 	return p.dispatchManual(ctx, param)
 }
 
-// dispatchOnUpload reads the document's parse config by DocumentId (on_upload
-// carries no parser name) and runs every Upload-triggered rule as its own async
-// parse. Distinct parsers have distinct dedup sigs, so they don't collide.
-// Fail-silent: dispatch errors are logged by the Dispatch defer, not surfaced to
-// the upload response (the upload already succeeded).
+// dispatchOnUpload runs every Upload-triggered rule as its own async parse
+// (distinct parsers → distinct dedup sigs, no collision). Fail-silent.
 func (p *Parser) dispatchOnUpload(ctx context.Context, param DispatchParam) (string, error) {
 	doc, e := p.repos.DocumentRepo.FindOneWithFiles(ctx, param.DocumentId)
 	if e != nil || doc == nil {
@@ -135,10 +126,8 @@ func (p *Parser) dispatchOnUpload(ctx context.Context, param DispatchParam) (str
 	return lastReq, nil
 }
 
-// dispatchManual resolves the single rule for the explicit parser, then gates it
-// by TriggeredBy == Manual. A parser whose only rule is Upload-triggered cannot
-// be fired manually — the trigger a rule declares is the only trigger that runs
-// it.
+// dispatchManual resolves the single rule for the explicit parser and gates it
+// by TriggeredBy == Manual.
 func (p *Parser) dispatchManual(ctx context.Context, param DispatchParam) (string, error) {
 	doc, e := p.assertOwnedBranch(ctx, param.TransactionId, param.DocumentId, param.OrganizationId)
 	if e != nil {
@@ -193,10 +182,8 @@ func (p *Parser) start(ctx context.Context, txId, docId int64, rule dto.Document
 }
 
 // run drives one parse through the shared lifecycle (heartbeat + finalize +
-// terminal Done). It hands the rule + in-scope files straight to the handler;
-// the handler decides whether to use the passed files or collect its own scope
-// from the DB (per rule.Source). Trigger and scope stay orthogonal here — this
-// function does not branch on either.
+// terminal Done). Hands rule + files to the handler; the handler picks scope by
+// rule.Source. This function branches on neither trigger nor scope.
 func (p *Parser) run(ctx context.Context, txId, docId int64, requestId, sig string, h handler.Handler, rule dto.DocumentTemplateFileParseRule, files []model.File) {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
@@ -206,9 +193,8 @@ func (p *Parser) run(ctx context.Context, txId, docId int64, requestId, sig stri
 	defer p.finalize(ctx, txId, requestId, sig)
 
 	rep := p.reporter(requestId)
-	// A recovered run may start after the sliding progress record (ttlProgressSec)
-	// has expired: re-seed it so the handler's stage writes are visible to polls
-	// again. Fresh runs skip this (progress already seeded by start()).
+	// A recovered run may outlive the sliding progress record: re-seed so stage
+	// writes are visible to polls. Fresh runs skip (start() already seeded).
 	if prog, _ := p.progMgr.GetProgress(ctx, requestId); prog == nil {
 		_ = p.progMgr.InitProgress(ctx, requestId, h.Stages(files))
 	}
@@ -224,9 +210,8 @@ func (p *Parser) run(ctx context.Context, txId, docId int64, requestId, sig stri
 	_ = p.progMgr.WriteDone(ctx, requestId, progress.StatusFinished, "")
 }
 
-// assertOwnedBranch verifies the transaction belongs to orgId, the document
-// exists, is a Branch attached to that transaction, and returns the document
-// for rule resolution.
+// assertOwnedBranch: transaction belongs to orgId, document exists and is a
+// Branch attached to it. Returns the document for rule resolution.
 func (p *Parser) assertOwnedBranch(ctx context.Context, txId, documentId, orgId int64) (*model.Document, error) {
 	tx, err := p.repos.BorrowerPropertyTransactionRepo.GetOrganizationTransaction(ctx, txId, orgId)
 	if err != nil || tx == nil {
@@ -246,8 +231,8 @@ func (p *Parser) assertOwnedBranch(ctx context.Context, txId, documentId, orgId 
 	return doc, nil
 }
 
-// seed writes the recovery job, params→requestId map, hold lock, and initial
-// staged progress so the first poll sees Running and a restart can reclaim.
+// seed writes recovery job, params→requestId map, hold lock, and initial staged
+// progress so the first poll sees Running and restart can reclaim.
 func (p *Parser) seed(ctx context.Context, requestId string, job *progress.Job, sig string, stages []progress.StageState) error {
 	if err := p.progMgr.WriteJob(ctx, job); err != nil {
 		return errorx.Wrap(err, "write job")
@@ -287,8 +272,8 @@ func (p *Parser) finalize(ctx context.Context, txId int64, requestId, sig string
 	_ = p.progMgr.DeleteJob(ctx, requestId)
 }
 
-// cleanupFiles deletes every uploaded provider file at terminal state (cost
-// control), then clears the files checkpoint. Failures are logged, never blocking.
+// cleanupFiles deletes uploaded provider files at terminal state (cost control),
+// then clears the checkpoint. Failures logged, never blocking.
 func (p *Parser) cleanupFiles(ctx context.Context, requestId string) {
 	files, _ := p.progMgr.GetFilesCheckpoint(ctx, requestId)
 	for _, fc := range files {
@@ -308,8 +293,7 @@ func (p *Parser) cleanupFiles(ctx context.Context, requestId string) {
 	_ = p.progMgr.DeleteFilesCheckpoint(ctx, requestId)
 }
 
-// reporter wraps the ProgressManager into the narrow handler.Reporter interface
-// so handlers report stage granularity without touching Redis directly.
+// reporter wraps ProgressManager into the handler.Reporter interface.
 func (p *Parser) reporter(requestId string) handler.Reporter {
 	return redisReporter{progMgr: p.progMgr, requestId: requestId}
 }

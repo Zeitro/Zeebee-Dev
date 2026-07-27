@@ -8,16 +8,12 @@ import (
 	"zeebee-backend/domains/zeebee/model"
 )
 
-// This file holds the rule/file-parse-config ROUTING the dispatcher uses to
-// decide which handler a request routes to and which rules fire on upload. It is
-// the only routing surface; per-parser collect/extract/writeback logic lives in
-// package handler.
-//
-// Trigger (when a rule fires) and Source (which files it scopes to) are
-// independent dimensions: upload-filtering is by TriggeredBy, never by Source.
+// Rule/file-parse-config ROUTING for the dispatcher. Only routing surface;
+// per-parser logic lives in package handler. Trigger (when a rule fires) and
+// Source (which files) are independent — upload-filtering is by TriggeredBy,
+// never Source.
 
-// effectiveRules returns the rule list from a FileParseConfig. An absent or empty
-// config yields no rules.
+// effectiveRules returns the config's rule list; absent/empty → nil.
 func effectiveRules(cfg *dto.DocumentTemplateFileParseConfig) []dto.DocumentTemplateFileParseRule {
 	if cfg == nil {
 		return nil
@@ -25,10 +21,8 @@ func effectiveRules(cfg *dto.DocumentTemplateFileParseConfig) []dto.DocumentTemp
 	return cfg.Rules
 }
 
-// ruleMatchesTrigger is the single routing gate (FR-031): a rule may run only
-// via the trigger it declares. Trigger (when a rule fires) and Source (which
-// files it scopes to) are orthogonal — this looks only at TriggeredBy, never at
-// Source. Both dispatch paths resolve a rule by parser first, then apply this.
+// ruleMatchesTrigger is the single routing gate (FR-031): a rule runs only via
+// the trigger it declares. Looks only at TriggeredBy, not Source.
 func ruleMatchesTrigger(rule dto.DocumentTemplateFileParseRule, trigger Trigger) bool {
 	want := constants.FileParseTriggeredTypeManual
 	if trigger == TriggerOnUpload {
@@ -37,9 +31,8 @@ func ruleMatchesTrigger(rule dto.DocumentTemplateFileParseRule, trigger Trigger)
 	return rule.TriggeredBy == want
 }
 
-// onUploadRules returns the rules that auto-fire on file upload — gated by
-// ruleMatchesTrigger(Upload), not by Source. An Upload-triggered rule fires on
-// upload regardless of whether its scope is SingleFile or Directory.
+// onUploadRules returns rules that auto-fire on upload (gated by
+// ruleMatchesTrigger(Upload), not Source).
 func onUploadRules(cfg *dto.DocumentTemplateFileParseConfig) []dto.DocumentTemplateFileParseRule {
 	var out []dto.DocumentTemplateFileParseRule
 	for _, r := range effectiveRules(cfg) {
@@ -50,9 +43,8 @@ func onUploadRules(cfg *dto.DocumentTemplateFileParseConfig) []dto.DocumentTempl
 	return out
 }
 
-// resolveRule returns the first rule matching parser (ok=false if none). Used by
-// the manual dispatcher and by recovery. Trigger-agnostic: a recovered job only
-// carries its parser, not its trigger, so this matches on parser alone.
+// resolveRule returns the first rule matching parser. Trigger-agnostic (a
+// recovered job carries only its parser).
 func resolveRule(cfg *dto.DocumentTemplateFileParseConfig, parser string) (dto.DocumentTemplateFileParseRule, bool) {
 	for _, r := range effectiveRules(cfg) {
 		if string(r.Parser) == parser {
@@ -62,8 +54,7 @@ func resolveRule(cfg *dto.DocumentTemplateFileParseConfig, parser string) (dto.D
 	return dto.DocumentTemplateFileParseRule{}, false
 }
 
-// docFileParseConfig reads file_parse_config from a document's metadata jsonb.
-// Missing/unreadable metadata yields nil.
+// docFileParseConfig reads file_parse_config from document metadata jsonb; missing/unreadable → nil.
 func docFileParseConfig(doc *model.Document) *dto.DocumentTemplateFileParseConfig {
 	if doc == nil || len(doc.Metadata) == 0 {
 		return nil

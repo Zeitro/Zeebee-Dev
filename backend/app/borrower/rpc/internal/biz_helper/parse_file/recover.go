@@ -10,15 +10,13 @@ import (
 	"zeebee-backend/domains/zeebee/model"
 )
 
-// recoverSweepInterval is how often the background sweeper re-scans for
-// abandoned jobs. Short enough that a crashed node's work is reclaimed quickly,
-// long enough not to load Redis on an idle cluster.
+// recoverSweepInterval: how often the sweeper re-scans for abandoned jobs —
+// short enough to reclaim a crashed node fast, long enough to idle quietly.
 const recoverSweepInterval = 30 * time.Second
 
-// StartRecovery launches the background coordinator: an immediate scan on
-// startup (so a restart resumes in-flight parses — including a half-drained
-// escrow on_upload queue) plus a periodic sweep that reclaims work from crashed
-// nodes. It runs for the life of the process.
+// StartRecovery runs the background coordinator: an immediate scan on startup
+// (resume in-flight parses, incl. a half-drained escrow queue) + periodic sweep
+// reclaiming crashed-node work. Runs for the life of the process.
 func (p *Parser) StartRecovery() {
 	if p == nil {
 		return
@@ -34,9 +32,8 @@ func (p *Parser) StartRecovery() {
 	})
 }
 
-// recoverJobs scans all job descriptors and tries to reclaim each that has no
-// terminal done record and no live hold. SetNX on the hold guarantees a single
-// owner across nodes.
+// recoverJobs scans all jobs and reclaims each with no terminal Done and no live
+// hold. SetNX on the hold guarantees one owner across nodes.
 func (p *Parser) recoverJobs(ctx context.Context) {
 	jobs, err := p.progMgr.ListJobs(ctx)
 	if err != nil {
@@ -48,14 +45,11 @@ func (p *Parser) recoverJobs(ctx context.Context) {
 	}
 }
 
-// tryReclaim takes ownership of one abandoned job: skip if finished or still
-// held, else steal the hold, re-derive the rule, and re-run through the same
-// lifecycle as a fresh dispatch. The rpa extract stage resumes from its
-// persisted checkpoint — it recalls already-extracted envelopes (fileId →
-// content) and skips those files — so a half-done rpa run continues without
-// re-calling the LLM for finished files or losing their results. Escrow re-runs
-// outright (idempotent per-file upsert, typically a single file). Write-back is
-// idempotent, so either path converges to the same row state.
+// tryReclaim steals one abandoned job: skip if finished or still held, else take
+// the hold, re-derive the rule, re-run via the same lifecycle. RPA extract
+// resumes from its checkpoint (recalls extracted envelopes, skips those files);
+// escrow re-runs outright (idempotent per-file upsert). Write-back idempotent →
+// both converge.
 func (p *Parser) tryReclaim(ctx context.Context, job *progress.Job) {
 	if done, _ := p.progMgr.GetDone(ctx, job.RequestId); done != nil {
 		return
@@ -84,9 +78,8 @@ func (p *Parser) tryReclaim(ctx context.Context, job *progress.Job) {
 		p.finalize(ctx, job.TransactionId, job.RequestId, job.RuleSig)
 		return
 	}
-	// Hand the document's current files to the run: a passed-file scope
-	// (SingleFile/Files) re-parses them; a collected scope (Directory/TagFiltered)
-	// ignores them and re-gathers from the DB.
+	// Pass the doc's current files: passed-file scope re-parses them; collected
+	// scope ignores them and re-gathers from the DB.
 	files := make([]model.File, 0, len(doc.Files))
 	for _, f := range doc.Files {
 		files = append(files, *f)
