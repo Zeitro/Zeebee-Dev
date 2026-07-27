@@ -85,6 +85,8 @@ type Job struct {
 type FileCheckpoint struct {
 	Provider       string `json:"provider"`
 	ProviderFileID string `json:"provider_file_id"`
+	// MaxPages: slice cap (0 = whole file); a change invalidates the cached id.
+	MaxPages int `json:"max_pages"`
 }
 
 type extractState struct {

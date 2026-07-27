@@ -15,7 +15,7 @@ import (
 // uploaded ids (in-call arbitration), not one call per file (SC-003). Reports the
 // single-call latency at each scale.
 func TestSC003RPAConsolidatedSingleCall(t *testing.T) {
-	srv := byteServer(t, []byte("pdf bytes"))
+	srv := byteServer(t, buildPDF(t, 2))
 	for _, n := range []int{5, 10} {
 		t.Run(fmt.Sprintf("files=%d", n), func(t *testing.T) {
 			mock := &llm.MockClient{ChatContent: `{"purchase_amount":1750000,"coe_date":"09/15/2026"}`}

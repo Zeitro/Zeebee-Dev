@@ -6,7 +6,10 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
+
+	"github.com/signintech/gopdf"
 )
 
 // These tests cover pdf.go + image.go: the file-type gates and the download
@@ -68,5 +71,53 @@ func TestDownloadPDFBadStatus(t *testing.T) {
 
 	if _, err := DownloadPDF(context.Background(), srv.URL); err == nil {
 		t.Fatal("non-2xx download must error")
+	}
+}
+
+// buildPDF renders an N empty-page PDF (no font needed) for slicing tests.
+func buildPDF(t *testing.T, pages int) []byte {
+	t.Helper()
+	pdf := gopdf.GoPdf{}
+	pdf.Start(gopdf.Config{PageSize: *gopdf.PageSizeA4})
+	for i := 0; i < pages; i++ {
+		pdf.AddPage()
+	}
+	var buf bytes.Buffer
+	if _, err := pdf.WriteTo(&buf); err != nil {
+		t.Fatalf("gopdf write: %v", err)
+	}
+	return buf.Bytes()
+}
+
+func TestFirstPagesPDFShortReturnsNil(t *testing.T) {
+	got, err := FirstPagesPDF(bytes.NewReader(buildPDF(t, MaxRPAPages-1)), MaxRPAPages)
+	if err != nil {
+		t.Fatalf("err: %v", err)
+	}
+	if got != nil {
+		t.Errorf("≤cap must return nil (whole file), got %d bytes", len(got))
+	}
+}
+
+func TestFirstPagesPDFSlicesToCap(t *testing.T) {
+	full := buildPDF(t, 11)
+	sliced, err := FirstPagesPDF(bytes.NewReader(full), MaxRPAPages)
+	if err != nil {
+		t.Fatalf("slice: %v", err)
+	}
+	if sliced == nil {
+		t.Fatal("11-page PDF must be sliced")
+	}
+	if !bytes.HasPrefix(sliced, []byte("%PDF")) {
+		t.Fatalf("sliced output not a PDF: %q", sliced[:8])
+	}
+	if len(sliced) >= len(full) {
+		t.Fatalf("slice must shrink: %d >= %d", len(sliced), len(full))
+	}
+}
+
+func TestFirstPagesPDFBadInput(t *testing.T) {
+	if _, err := FirstPagesPDF(strings.NewReader("garbage"), MaxRPAPages); err == nil {
+		t.Fatal("garbage must error")
 	}
 }

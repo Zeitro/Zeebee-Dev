@@ -112,7 +112,7 @@ func (h *EscrowHandler) Parse(ctx context.Context, txId, docId int64, files []mo
 
 // parseEscrowFile uploads one file, runs the consolidated call, skip-empty upserts.
 func (h *EscrowHandler) parseEscrowFile(ctx context.Context, txId int64, rep Reporter, f collectedFile) error {
-	fc, err := h.uploadOne(ctx, rep, f)
+	fc, err := h.uploadOne(ctx, rep, f, 0)
 	if err != nil {
 		return err
 	}

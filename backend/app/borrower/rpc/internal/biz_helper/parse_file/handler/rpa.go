@@ -221,7 +221,7 @@ func (h *RPAHandler) extractStage(ctx context.Context, rep Reporter, files []col
 		if !file.IsPDF(f.Name) && !file.IsImage(f.Name) {
 			continue // Word/other excluded
 		}
-		fc, err := h.uploadOne(ctx, rep, f)
+		fc, err := h.uploadOne(ctx, rep, f, file.MaxRPAPages)
 		if err != nil {
 			h.logger.WithContext(ctx).WithFields(
 				logx.Field("file", f.Name),

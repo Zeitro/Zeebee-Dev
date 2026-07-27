@@ -28,25 +28,46 @@ type base struct {
 	llm    llm.Client
 }
 
-// uploadOne uploads one in-scope file and returns its provider file reference.
-// A cached checkpoint entry is reused only when its provider still matches the
-// current client (provider switch invalidates old ids → re-upload). Single run
-// owns one hold → one writer → checkpoint RMW is safe.
-func (b *base) uploadOne(ctx context.Context, rep Reporter, f collectedFile) (progress.FileCheckpoint, error) {
-	if cached, ok := rep.Files(ctx)[f.FileId]; ok && cached.Provider == b.llm.Provider() {
+// uploadOne slices PDFs over maxPages (0 = whole file) before upload. Cache hit
+// needs provider+MaxPages match so a cap change re-slices; one hold → RMW-safe.
+func (b *base) uploadOne(ctx context.Context, rep Reporter, f collectedFile, maxPages int) (progress.FileCheckpoint, error) {
+	expected := maxPagesForFile(f.Name, maxPages)
+	if cached, ok := rep.Files(ctx)[f.FileId]; ok && cached.Provider == b.llm.Provider() && cached.MaxPages == expected {
 		return cached, nil
 	}
 	reader, contentType, err := b.fileStream(ctx, f)
 	if err != nil {
 		return progress.FileCheckpoint{}, err
 	}
-	provider, fileID, err := b.llm.UploadFile(ctx, reader, f.Name, contentType)
+	full, err := io.ReadAll(reader)
+	if err != nil {
+		return progress.FileCheckpoint{}, errorx.Wrap(err, "read file")
+	}
+
+	uploadBytes := full
+	if file.IsPDF(f.Name) && maxPages > 0 {
+		if sliced, serr := file.FirstPagesPDF(bytes.NewReader(full), maxPages); serr != nil {
+			return progress.FileCheckpoint{}, errorx.Wrap(serr, "slice pdf")
+		} else if sliced != nil {
+			uploadBytes = sliced
+		}
+	}
+
+	provider, fileID, err := b.llm.UploadFile(ctx, bytes.NewReader(uploadBytes), f.Name, contentType)
 	if err != nil {
 		return progress.FileCheckpoint{}, errorx.Wrap(err, "upload file")
 	}
-	fc := progress.FileCheckpoint{Provider: provider, ProviderFileID: fileID}
+	fc := progress.FileCheckpoint{Provider: provider, ProviderFileID: fileID, MaxPages: expected}
 	rep.SaveFile(ctx, f.FileId, fc)
 	return fc, nil
+}
+
+// maxPagesForFile: cap for PDFs, 0 for images (cap-agnostic).
+func maxPagesForFile(name string, cap int) int {
+	if file.IsPDF(name) {
+		return cap
+	}
+	return 0
 }
 
 // fileStream fetches one file's bytes + content type by extension (pdf/image).

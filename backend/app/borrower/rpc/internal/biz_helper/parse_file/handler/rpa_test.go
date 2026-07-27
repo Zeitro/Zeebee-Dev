@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"bytes"
 	"context"
 	"database/sql"
 	"encoding/json"
@@ -9,8 +10,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/signintech/gopdf"
 	"github.com/zeromicro/go-zero/core/logx"
 
+	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file/file"
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file/progress"
 	"zeebee-backend/common/llm"
 	"zeebee-backend/domains/zeebee/constants"
@@ -138,6 +141,21 @@ func (m *memReporter) Files(_ context.Context) map[int64]progress.FileCheckpoint
 	return m.stage(progress.StageExtract).files
 }
 
+// buildPDF renders an N empty-page PDF for parse tests (pdfium needs real input).
+func buildPDF(t *testing.T, pages int) []byte {
+	t.Helper()
+	pdf := gopdf.GoPdf{}
+	pdf.Start(gopdf.Config{PageSize: *gopdf.PageSizeA4})
+	for i := 0; i < pages; i++ {
+		pdf.AddPage()
+	}
+	var buf bytes.Buffer
+	if _, err := pdf.WriteTo(&buf); err != nil {
+		t.Fatalf("gopdf write: %v", err)
+	}
+	return buf.Bytes()
+}
+
 // byteServer serves fixed bytes over http for download-driven tests.
 func byteServer(t *testing.T, b []byte) *httptest.Server {
 	t.Helper()
@@ -151,7 +169,7 @@ func byteServer(t *testing.T, b []byte) *httptest.Server {
 // TestRPAParseConsolidated drives the manual_tree path: collect subtree → upload
 // both PDFs → ONE consolidated call (in-call arbitration) → authoritative write-back.
 func TestRPAParseConsolidated(t *testing.T) {
-	srv := byteServer(t, []byte("pdf bytes"))
+	srv := byteServer(t, buildPDF(t, 2))
 	db, repos := setupResolveDB(t)
 	if err := db.Exec(`CREATE TABLE borrower_property_transactions (
 		id INTEGER PRIMARY KEY AUTOINCREMENT, created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -215,7 +233,7 @@ func TestUploadOneReusesCachedFileID(t *testing.T) {
 	rep := newMemReporter()
 	rep.SaveFile(context.Background(), 42, progress.FileCheckpoint{Provider: "mock", ProviderFileID: "existing-1"})
 
-	fc, err := b.uploadOne(context.Background(), rep, collectedFile{FileId: 42, Name: "x.pdf"})
+	fc, err := b.uploadOne(context.Background(), rep, collectedFile{FileId: 42, Name: "x.pdf"}, 0)
 	if err != nil {
 		t.Fatalf("uploadOne: %v", err)
 	}
@@ -262,7 +280,7 @@ func TestUploadOneReuploadsOnProviderMismatch(t *testing.T) {
 	rep := newMemReporter()
 	rep.SaveFile(context.Background(), 42, progress.FileCheckpoint{Provider: "claude", ProviderFileID: "old-claude-id"})
 
-	fc, err := b.uploadOne(context.Background(), rep, collectedFile{FileId: 42, Name: "x.pdf", Url: srv.URL})
+	fc, err := b.uploadOne(context.Background(), rep, collectedFile{FileId: 42, Name: "x.pdf", Url: srv.URL}, 0)
 	if err != nil {
 		t.Fatalf("uploadOne: %v", err)
 	}
@@ -271,5 +289,36 @@ func TestUploadOneReuploadsOnProviderMismatch(t *testing.T) {
 	}
 	if len(mock.UploadedFiles) != 1 {
 		t.Fatalf("want 1 re-upload on provider mismatch, got %v", mock.UploadedFiles)
+	}
+}
+
+// TestUploadOneOpenAIProviderSlices: under an openai-named provider, a >cap PDF
+// is still sliced before upload and the checkpoint records provider + cap. Proves
+// the slicing path is provider-agnostic through the changed uploadOne.
+func TestUploadOneOpenAIProviderSlices(t *testing.T) {
+	srv := byteServer(t, buildPDF(t, 11))
+	mock := &llm.MockClient{UploadProvider: "openai", ChatContent: "{}"}
+	b := &base{logger: logx.WithContext(context.Background()), llm: mock}
+	rep := newMemReporter()
+
+	fc, err := b.uploadOne(context.Background(), rep, collectedFile{FileId: 1, Name: "big.pdf", Url: srv.URL}, file.MaxRPAPages)
+	if err != nil {
+		t.Fatalf("uploadOne: %v", err)
+	}
+	if fc.Provider != "openai" {
+		t.Errorf("Provider = %s, want openai", fc.Provider)
+	}
+	if fc.MaxPages != file.MaxRPAPages {
+		t.Errorf("MaxPages = %d, want %d", fc.MaxPages, file.MaxRPAPages)
+	}
+	if len(mock.UploadedFiles) != 1 {
+		t.Fatalf("want 1 sliced upload, got %v", mock.UploadedFiles)
+	}
+	// cached now → second call reuses (same provider + cap), no re-upload.
+	if _, err := b.uploadOne(context.Background(), rep, collectedFile{FileId: 1, Name: "big.pdf"}, file.MaxRPAPages); err != nil {
+		t.Fatalf("reuse: %v", err)
+	}
+	if len(mock.UploadedFiles) != 1 {
+		t.Fatalf("want reuse (still 1 upload), got %v", mock.UploadedFiles)
 	}
 }
