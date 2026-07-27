@@ -1,6 +1,5 @@
-// Package llm provides a small provider-agnostic chat client (openai / claude)
-// used for structured (JSON) text and multimodal file extraction. Shared by file
-// parsing and lender discover so both run on the same provider/config plumbing.
+// Package llm is a provider-agnostic chat client (openai/claude) for structured
+// text and multimodal file extraction. Shared by file parsing and lender discover.
 package llm
 
 import (
@@ -18,12 +17,9 @@ const (
 	defaultTimeoutSec = 60
 )
 
-// Attachment is a provider-agnostic file reference passed into a Chat call.
-// Set exactly one of FileID (an already-uploaded provider file) or Base64
-// (inline content); Filename + ContentType describe it for every provider. This
-// lets claude and openai share one call surface — each maps an attachment to its
-// own multimodal API. Both upload-based (fileId, for resume reuse + terminal
-// delete) and upload-free (base64) flows go through the same type.
+// Attachment is a provider-agnostic file reference for a Chat call. Set exactly
+// one of FileID (prior UploadFile) or Base64 (inline); claude and openai each
+// map it to their own multimodal API.
 type Attachment struct {
 	FileID      string // provider file id from a prior UploadFile
 	Base64      string // inline base64-encoded content (no upload needed)
@@ -31,9 +27,15 @@ type Attachment struct {
 	ContentType string // mime type, e.g. application/pdf, image/png
 }
 
-// chatConfig holds the optional attachments collected from ChatOptions.
 type chatConfig struct {
 	attachments []Attachment
+}
+
+// Usage is the provider-agnostic token accounting returned by Chat.
+type Usage struct {
+	InputTokens       int64 `json:"input_tokens"`
+	OutputTokens      int64 `json:"output_tokens"`
+	InputCachedTokens int64 `json:"input_cached_tokens"`
 }
 
 // ChatOption configures optional file attachments on a Chat call.
@@ -44,24 +46,19 @@ func WithAttachment(a Attachment) ChatOption {
 	return func(c *chatConfig) { c.attachments = append(c.attachments, a) }
 }
 
-// Client abstracts the LLM so openai and claude are interchangeable. The single
-// Chat entry point takes optional file attachments; no attachment = plain text.
+// Client abstracts the LLM so providers are interchangeable.
 type Client interface {
-	// Provider returns this client's provider name (claude, openai). An uploaded
-	// file id is provider-scoped, so callers match it on resume (research R11).
+	// Provider returns the provider name (claude, openai); file ids are
+	// provider-scoped, so callers match it on resume.
 	Provider() string
-	// Chat sends system+user with optional file attachments. No attachments is a
-	// plain text chat; each provider maps attachments (fileId or base64 +
-	// filename + contentType) to its own multimodal API.
-	Chat(ctx context.Context, system, user string, opts ...ChatOption) (string, error)
-	// UploadFile stores a binary at the provider and returns the provider name +
-	// id to reference later (resume reuse, terminal delete). The id is NOT
-	// portable across providers (research R11): a provider switch invalidates
-	// prior ids, so callers persist the provider alongside the id and re-upload
-	// on mismatch.
+	// Chat sends system+user with optional file attachments; no attachments = plain text.
+	Chat(ctx context.Context, system, user string, opts ...ChatOption) (string, Usage, error)
+	// UploadFile stores a binary and returns provider + id to reference later
+	// (resume reuse, terminal delete). The id is NOT portable across providers —
+	// persist the provider alongside and re-upload on mismatch.
 	UploadFile(ctx context.Context, reader io.Reader, filename, contentType string) (provider, fileID string, err error)
-	// DeleteFile removes an uploaded provider file. Called at the terminal state
-	// to stop billing; failures are logged, never blocking.
+	// DeleteFile removes an uploaded file; called at terminal state to stop
+	// billing. Failures logged, never blocking.
 	DeleteFile(ctx context.Context, fileID string) error
 }
 
@@ -102,11 +99,9 @@ func timeoutOf(biz config.LlmBizConf) time.Duration {
 	return time.Duration(defaultTimeoutSec) * time.Second
 }
 
-// isImage reports whether a content type is an image attachment.
 func isImage(contentType string) bool { return strings.HasPrefix(contentType, "image/") }
 
-// cleanJSON strips markdown code fences (```json ... ```) and surrounding prose
-// that claude may emit since it has no native json_object response format.
+// cleanJSON strips markdown fences and prose: claude has no json_object format.
 func cleanJSON(s string) string {
 	s = strings.TrimSpace(s)
 	if !strings.HasPrefix(s, "```") {

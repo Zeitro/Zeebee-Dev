@@ -121,7 +121,7 @@ func (h *EscrowHandler) parseEscrowFile(ctx context.Context, txId int64, rep Rep
 	}
 	var fields escrowFields
 	if err := progress.RetryDo(ctx, rep, progress.StageExtract, func() error {
-		content, e := h.llm.Chat(ctx, extractSystemPrompt, escrowPrompt, llm.WithAttachment(llm.Attachment{
+		content, usage, e := h.llm.Chat(ctx, extractSystemPrompt, escrowPrompt, llm.WithAttachment(llm.Attachment{
 			FileID:      fc.ProviderFileID,
 			ContentType: fileContentType(f.Name),
 			Filename:    f.Name,
@@ -129,6 +129,12 @@ func (h *EscrowHandler) parseEscrowFile(ctx context.Context, txId int64, rep Rep
 		if e != nil {
 			return e
 		}
+		h.logger.WithContext(ctx).WithFields(
+			logx.Field("biz", "escrow"),
+			logx.Field("provider", h.llm.Provider()),
+			logx.Field("usage", usage),
+			logx.Field("file", f),
+		).Info("llm token usage")
 		fields, e = parseEscrowFields(content)
 		return e
 	}); err != nil {

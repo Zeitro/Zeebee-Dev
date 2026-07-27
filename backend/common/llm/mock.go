@@ -40,7 +40,7 @@ func (m *MockClient) Provider() string {
 }
 
 // Chat records the attachments from opts and returns the canned content.
-func (m *MockClient) Chat(_ context.Context, _, _ string, opts ...ChatOption) (string, error) {
+func (m *MockClient) Chat(_ context.Context, _, _ string, opts ...ChatOption) (string, Usage, error) {
 	cfg := &chatConfig{}
 	for _, o := range opts {
 		o(cfg)
@@ -50,12 +50,12 @@ func (m *MockClient) Chat(_ context.Context, _, _ string, opts ...ChatOption) (s
 	m.chatCalls++
 	m.mu.Unlock()
 	if m.ChatErr != nil {
-		return "", m.ChatErr
+		return "", Usage{}, m.ChatErr
 	}
 	if m.ChatContent != "" {
-		return m.ChatContent, nil
+		return m.ChatContent, Usage{}, nil
 	}
-	return "{}", nil
+	return "{}", Usage{}, nil
 }
 
 // UploadFile returns the configured provider + a distinct file id per call.

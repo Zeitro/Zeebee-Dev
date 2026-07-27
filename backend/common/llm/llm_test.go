@@ -27,7 +27,7 @@ func TestMockClientUploadReturnsProviderAndID(t *testing.T) {
 
 func TestMockClientChatPassesAttachments(t *testing.T) {
 	m := &MockClient{ChatContent: `{"k":"v"}`}
-	got, err := m.Chat(context.Background(), "sys", "user",
+	got, _, err := m.Chat(context.Background(), "sys", "user",
 		WithAttachment(Attachment{FileID: "file-1", ContentType: "application/pdf"}),
 		WithAttachment(Attachment{Base64: "AAAA", ContentType: "image/png", Filename: "x.png"}),
 	)
@@ -40,7 +40,7 @@ func TestMockClientChatPassesAttachments(t *testing.T) {
 	assert.Equal(t, "AAAA", atts[1].Base64)
 
 	// no-attachment Chat still works (plain text path) and records nothing.
-	_, _ = m.Chat(context.Background(), "sys", "user")
+	_, _, _ = m.Chat(context.Background(), "sys", "user")
 	assert.Len(t, m.Attachments(), 2)
 }
 

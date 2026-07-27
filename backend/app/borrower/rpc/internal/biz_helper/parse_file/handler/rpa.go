@@ -253,10 +253,16 @@ func (h *RPAHandler) extractStage(ctx context.Context, rep Reporter, files []col
 		for _, a := range atts {
 			opts = append(opts, llm.WithAttachment(llm.Attachment{FileID: a.id, ContentType: a.contentType, Filename: a.name}))
 		}
-		content, e := h.llm.Chat(ctx, extractSystemPrompt, rpaConsolidatedPrompt, opts...)
+		content, usage, e := h.llm.Chat(ctx, extractSystemPrompt, rpaConsolidatedPrompt, opts...)
 		if e != nil {
 			return e
 		}
+		h.logger.WithContext(ctx).WithFields(
+			logx.Field("biz", "rpa"),
+			logx.Field("provider", h.llm.Provider()),
+			logx.Field("usage", usage),
+			logx.Field("files", atts),
+		).Info("llm token usage")
 		fields, e = parseRPAFields(content)
 		return e
 	})
