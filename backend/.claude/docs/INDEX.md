@@ -1,8 +1,8 @@
 # Zeebee 后端知识库索引
 
-> 本文件为知识库导航中心。架构设计、分层职责、数据流详见 [architecture.md](analysis/architecture.md)；核心原则、技术栈、开发标准详见 `.specify/memory/constitution.md`。
+> 本文件为知识库导航中心。架构设计、分层职责、数据流详见 [architecture.md](analysis/architecture.md)；代码风格（项目无关）详见 `.specify/memory/constitution.md`；技术栈、核心原则、服务矩阵详见 `CLAUDE.md`。
 >
-> **最后更新**: 2026-06-25 | **项目状态**: 开发阶段
+> **最后更新**: 2026-07-13 | **项目状态**: 开发阶段
 
 ---
 
@@ -10,7 +10,7 @@
 
 | 角色 / 场景 | 阅读路径 |
 |-------------|----------|
-| 新手入门 | `INDEX.md` → [architecture.md](analysis/architecture.md) → `CLAUDE.md` |
+| 新手入门 | `CLAUDE.md`（规范）→ `.specify/memory/constitution.md`（风格）→ [architecture.md](analysis/architecture.md)（结构） |
 | API 开发 | [API 文档索引](guides/api_documentation_index.md) → `CLAUDE.md`（数据转换规范） → [architecture.md](analysis/architecture.md) |
 | 领域建模 | [architecture.md](analysis/architecture.md) §代码组织 → `domains/zeebee/model/` → `domains/zeebee/data/dto/` |
 | 安全/性能审查 | `reports/security/security_deep_analysis_20260226.md`、`reports/performance/performance_deep_analysis_20260226.md` |
@@ -25,7 +25,7 @@
 | 目录 | 内容 |
 |------|------|
 | `analysis/` | 系统分析：[architecture.md](analysis/architecture.md)（必读架构）、[analysis.md](analysis/analysis.md)（全量审计）、历史快照 |
-| `guides/` | 开发指导：[API 文档索引](guides/api_documentation_index.md)、项目结构、域架构、技术架构总览 |
+| `guides/` | 开发指导：[API 文档索引](guides/api_documentation_index.md)（项目结构/域架构/技术架构总览已归档至 `reports/archive/guides/`） |
 | `reports/` | 时间点分析报告：`architecture/`、`code-quality/`、`security/`、`performance/` |
 | `planning/` | 项目规划：进度跟踪、路线图 |
 | `tasks/` | 功能开发任务记录 |
@@ -38,10 +38,10 @@
 
 | 文档 | 用途 |
 |------|------|
-| [CLAUDE.md](../../CLAUDE.md) | 开发规范、代码示例、文档阅读流程 |
+| [CLAUDE.md](../../CLAUDE.md) | 项目规范、技术栈、核心原则、copierx/errorx 示例、scope 格式 |
 | [architecture.md](analysis/architecture.md) | 架构设计、分层职责、目录结构、开发流程 |
 | [analysis.md](analysis/analysis.md) | 全量深度审计报告（2026-06-24） |
-| `.specify/memory/constitution.md` | 项目宪章、核心原则、技术栈、Git 规范 |
+| `.specify/memory/constitution.md` | 代码风格规范（项目无关，可迁移） |
 
 ## 分析报告
 
@@ -86,12 +86,7 @@
 
 ## 服务功能矩阵
 
-| 服务 | HTTP | RPC | LoC |
-|------|------|-----|-----|
-| Borrower | 10000 | 10001 | ~68k |
-| Lender | 11000 | 11001 | ~36k |
-| Admin | 12000 | 12001 | ~43k |
-| PDF Generator | 13000 | — | ~1k |
+服务总览（端口/职责/规模）见 [architecture.md](analysis/architecture.md) §服务矩阵。以下为各服务模块级清单：
 
 ### Borrower 服务（21 个模块）
 
@@ -217,6 +212,8 @@ common/
 ```
 
 ## 部署配置
+
+> 上述计数（模型 / DTO / 组件 / 模块数）为时点快照，随代码演进。当前值以 `domains/zeebee/`、`common/`、`app/{svc}/` 实际目录为准。
 
 | 服务 | Docker Compose | 环境 |
 |------|---------------|------|

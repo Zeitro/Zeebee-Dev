@@ -7,7 +7,7 @@ package server
 import (
 	"context"
 
-	"zeebee-backend/app/admin/rpc/internal/logic/common"
+	commonlogic "zeebee-backend/app/admin/rpc/internal/logic/common"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/domains/zeebee/proto"

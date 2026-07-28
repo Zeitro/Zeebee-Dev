@@ -6,23 +6,23 @@ import (
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
-// Response 统一响应结构
+// Response represents the response structure
 type Response struct {
-	Code    int         `json:"code"`
-	Message string      `json:"message"`
-	Data    interface{} `json:"data,omitempty"`
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+	Data    any    `json:"data,omitempty"`
 }
 
-// Success 成功响应
-func Success(w http.ResponseWriter, data interface{}) {
+// Success returns with status code 200
+func Success(w http.ResponseWriter, data any) {
 	httpx.WriteJson(w, http.StatusOK, Response{
-		Code:    200,
+		Code:    http.StatusOK,
 		Message: "Success",
 		Data:    data,
 	})
 }
 
-// Error 错误响应
+// Error returns with status code 200
 func Error(w http.ResponseWriter, code int, message string) {
 	httpx.WriteJson(w, http.StatusOK, Response{
 		Code:    code,
@@ -30,7 +30,7 @@ func Error(w http.ResponseWriter, code int, message string) {
 	})
 }
 
-// BadRequest 400错误
+// BadRequest returns with status code 400
 func BadRequest(w http.ResponseWriter, message string) {
 	Error(w, http.StatusBadRequest, message)
 }
@@ -42,22 +42,22 @@ func BadRequestWithCode(w http.ResponseWriter, code int, message string) {
 	})
 }
 
-// Unauthorized 401错误
+// Unauthorized returns with status code 401
 func Unauthorized(w http.ResponseWriter, message string) {
 	Error(w, http.StatusUnauthorized, message)
 }
 
-// Forbidden 403错误
+// Forbidden returns with status code 403
 func Forbidden(w http.ResponseWriter, message string) {
 	Error(w, http.StatusForbidden, message)
 }
 
-// NotFound 404错误
+// NotFound returns with status code 404
 func NotFound(w http.ResponseWriter, message string) {
 	Error(w, http.StatusNotFound, message)
 }
 
-// InternalServerError 500错误
+// InternalServerError returns with status code 500
 func InternalServerError(w http.ResponseWriter, message string) {
 	Error(w, http.StatusInternalServerError, message)
 }

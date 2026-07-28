@@ -10,8 +10,6 @@ import (
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/common/errorx"
 )
 
@@ -32,13 +30,7 @@ func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogi
 }
 
 func (l *UpdateLogic) Update(in *admin.PricingPlanPolicyUpdateRequest) (resp *admin.PricingPlanPolicyDetailResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
+
 	dtoData, err := copierx.Trans[admin.PricingPlanPolicyUpdateRequestData, dto.PricingPlanPolicyUpdateRequestDto](in.Data)
 	if err != nil {
 		return nil, err

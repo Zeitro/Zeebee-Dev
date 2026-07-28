@@ -11,8 +11,6 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/proto"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/common/errorx"
 )
 
@@ -33,13 +31,7 @@ func NewAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AllLogic {
 }
 
 func (l *AllLogic) All(in *proto.EmptyRequest) (resp *borrower.OrganizationUserAllResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
+
 	claimUser, err := l.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err

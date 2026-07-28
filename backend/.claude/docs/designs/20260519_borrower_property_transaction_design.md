@@ -1,4 +1,6 @@
-# Borrower Property Transaction 技术设计方案
+# Borrower Property Transaction 方案设计
+
+> 来源：tasks/20260519_borrower_transaction.md（重组为规范设计，内容实质保留）
 
 | 字段 | 值 |
 |------|-----|
@@ -45,9 +47,11 @@ Zeebee 平台为贷款经纪人（Loan Officer）管理借款人（Borrower）�
 
 ---
 
-## 2. 模块功能要点
+## 2. 总体方案
 
-### 2.1 Transaction 管理
+### 2.1 模块功能要点
+
+#### 2.1.1 Transaction 管理
 
 | 操作 | 说明 | 约束 |
 |------|------|------|
@@ -65,7 +69,7 @@ Zeebee 平台为贷款经纪人（Loan Officer）管理借款人（Borrower）�
 
 **Code 规则**: `TC` + 年份2位 + base62(毫秒时间戳)，例: `TC26ttdhd10`
 
-### 2.2 Document 管理（通用文档系统）
+#### 2.1.2 Document 管理（通用文档系统）
 
 | 操作 | 说明 | 约束 |
 |------|------|------|
@@ -77,28 +81,24 @@ Zeebee 平台为贷款经纪人（Loan Officer）管理借款人（Borrower）�
 
 **模板机制**: 创建 Transaction 时从 `document_templates` 按 type 加载 structure，合并 common + per-type 模板后递归创建文档目录树。
 
-### 2.3 Checklist 管理
+#### 2.1.3 Checklist 管理
 
 - 自动统计 required/optional 分组的文档上传进度
 - 每次文件操作（上传/删除/创建 document）自动重算
 - `all_checked` 为手动确认字段，计算时保留原值
 
-### 2.4 Loan 关联
+#### 2.1.4 Loan 关联
 
 - Apply Loan: property 与 transaction 二选一（XOR），同时提供以transaction为准
 - Draft Loan: 灵活策略，可只提供其中一个或都不提供
 
-### 2.5 操作日志
+#### 2.1.5 操作日志
 
 - 统一 `operations` 表，通过 `entity_type` + `entity_id` 多态关联
 - 支持 Transaction 和 Loan 两种实体类型
 - 提供 Stats（统计）和 List（列表）两种查询接口
 
----
-
-## 3. 技术架构
-
-### 3.1 系统架构
+### 2.2 系统架构
 
 本模块遵循项目整体分层架构:
 
@@ -132,7 +132,7 @@ Client (Web/Mobile)
 └─────────────────────────────────────────────┘
 ```
 
-### 3.2 模块依赖关系
+### 2.3 模块划分与依赖关系
 
 ```
 borrower-api
@@ -168,7 +168,7 @@ domains/zeebee
       └── operation_logic.go (新增)
 ```
 
-### 3.3 技术选型
+### 2.4 技术选型
 
 | 组件 | 技术 | 说明 |
 |------|------|------|
@@ -181,163 +181,27 @@ domains/zeebee
 | ID 生成 | Serial (PG) | 自增主键 |
 | Code 生成 | base62 | Transaction 唯一标识 |
 
----
+### 2.5 核心决策
 
-## 4. 流程设计
-
-### 4.1 创建 Transaction 流程
-
-```
-API: POST /borrower_property_transaction
-         │
-         ▼
-    ┌─────────────┐
-    │ 验证 Property │  ← 检查存在性 + 组织归属
-    └──────┬──────┘
-           │
-           ▼
-    ┌─────────────────┐
-    │ 生成 Code        │  ← TC + 年份2位 + base62(毫秒)
-    └──────┬──────────┘
-           │
-           ▼
-    ┌─────────────────┐
-    │ 创建 Transaction │  ← status=Pending
-    └──────┬──────────┘
-           │
-           ▼
-    ┌──────────────────────┐
-    │ 加载 DocumentTemplate │  ← common + per-type 合并
-    └──────┬───────────────┘
-           │
-           ▼
-    ┌───────────────────┐
-    │ 递归创建文档目录树    │  ← 设置 metadata.is_required
-    └──────┬────────────┘
-           │
-           ▼
-    ┌──────────────────┐
-    │ 创建 EntityDocument│  ← 绑定 transaction ↔ root document
-    └──────┬───────────┘
-           │
-           ▼
-    ┌────────────────────┐
-    │ 初始化 Checklist     │  ← RecalculateChecklist
-    └──────┬─────────────┘
-           │
-           ▼
-    ┌──────────────┐
-    │ 记录操作日志   │  ← OperationLogic
-    └──────────────┘
-```
-
-### 4.2 文件上传流程
-
-前端直传 S3，后端仅负责生成 Presigned URL 和记录文件信息。
-
-```
-Step 1: 前端请求上传 URL
-API: POST /borrower_property_transaction/:tid/document/:did/file
-         │
-         ▼
-    ┌───────────────────┐
-    │ 验证 Document 归属  │  ← 属于该 Transaction 的文档树
-    └──────┬────────────┘
-           │
-           ▼
-    ┌─────────────┐
-    │ 验证叶子节点  │  ← 只能上传到叶子 Document
-    └──────┬──────┘
-           │
-           ▼
-    ┌──────────────────────────┐
-    │ 生成 S3 Presigned PUT URL │  ← 返回给前端
-    └──────────────────────────┘
-
-Step 2: 前端直传文件到 S3（后端不参与）
-
-Step 3: 前端确认上传（同一 API 的回调/确认机制）
-         │
-         ▼
-    ┌──────────────────┐
-    │ 创建 File 记录     │  ← storage_type=Aws S3, upload_type=Manual
-    └──────┬───────────┘
-           │
-           ▼
-    ┌──────────────────────────┐
-    │ 更新 Document last_uploaded_at │  ← 同时更新所有 parent
-    └──────┬───────────────────┘
-           │
-           ▼
-    ┌─────────────────────┐
-    │ RecalculateChecklist │  ← 重算统计
-    └──────┬──────────────┘
-           │
-           ▼
-    ┌──────────────┐
-    │ 记录操作日志   │
-    └──────────────┘
-```
-
-### 4.3 Checklist 计算流程
-
-```
-RecalculateChecklist(transactionId)
-         │
-         ▼
-    ┌─────────────────────┐
-    │ 获取 EntityDocument   │  ← entity_type + entity_id
-    └──────┬──────────────┘
-           │
-           ▼
-    ┌───────────────────┐
-    │ 获取根 Document     │
-    └──────┬────────────┘
-           │
-           ▼
-    ┌───────────────────────┐
-    │ 递归遍历文档树          │
-    │ 按 metadata.is_required │
-    │ 分组统计:               │
-    │ - required: total, updated │
-    │ - optional: total, updated │
-    └──────┬────────────────┘
-           │
-           ▼
-    ┌───────────────────────┐
-    │ 合并原 all_checked 值   │  ← 保留手动确认状态
-    └──────┬────────────────┘
-           │
-           ▼
-    ┌───────────────────────┐
-    │ 写入 transaction.checklist │
-    └───────────────────────┘
-```
-
-### 4.4 Loan Apply 二选一流程
-
-```
-ApplyLoan(propertyId, transactionId)
-         │
-         ▼
-    ┌────────────────────────────┐
-    │ propertyId 和 transactionId │
-    │ 是否恰好只有一个有值?         │
-    └──────┬──────────┬─────────┘
-           │          │
-        是 │          │ 否
-           │          │
-           ▼          ▼
-    ┌──────────┐  ┌────────────┐
-    │ 继续处理   │  │ 返回参数错误 │
-    └──────────┘  └────────────┘
-```
+| ID | 决策 | 备选方案 | 拒绝原因 |
+|----|------|----------|----------|
+| R1 | 新建独立 operations 表 | 复用 loan_operations | 通用设计，支持多 entity_type |
+| R2 | 模板递归创建文档树 | — | — |
+| R3 | Presigned URL 直传 S3 | 服务端中转 | 避免服务端瓶颈 |
+| R4 | base62(毫秒时间戳)生成 Code | UUID | 更短、可读性更好 |
+| R5 | 仅允许叶子节点同级扩展 | 开放任意层级创建 | 保持树深度不变 |
+| R6 | 保留旧 loan_operations 不动 | 迁移到 operations | 避免迁移风险 |
+| R7 | write-on-update 计算 Checklist | 实时计算 / 定时批处理 | 实时开销大，批处理有延迟 |
+| R8 | metadata jsonb 存 is_required | 独立列 | 避免 schema 频繁变更 |
+| R9 | common + per-type 模板结构 | 单一模板 | 不同 type 需差异化文档 |
+| R10 | Apply XOR / Draft 灵活 | 统一策略 | Apply 需严格，Draft 需灵活 |
+| R11 | Stats + List 拆分两个接口 | 单一接口 | 前端两种展示需求 |
 
 ---
 
-## 5. 数据库设计
+## 3. 数据模型
 
-### 5.1 Entity 关系图
+### 3.1 Entity 关系图
 
 ```
 BorrowerProperty 1───* BorrowerPropertyTransaction
@@ -361,7 +225,7 @@ DocumentTemplate (static reference, no FK relationship)
   structure: DocumentTemplateStructureMap (map[string][]DocumentTemplateStructure)
 ```
 
-### 5.2 新增表
+### 3.2 新增表
 
 #### borrower_property_transactions
 
@@ -472,7 +336,7 @@ CREATE TABLE "public"."document_templates" (
 );
 ```
 
-### 5.3 修改的表
+### 3.3 修改的表
 
 ```sql
 -- files 表扩展
@@ -489,7 +353,7 @@ ALTER TABLE public.loans
 CREATE INDEX idx_loan_borrower_property_trans_id ON public.loans (borrower_property_transaction_id);
 ```
 
-### 5.4 状态机
+### 3.4 状态机
 
 ```
                     ┌──────────┐
@@ -506,13 +370,13 @@ CREATE INDEX idx_loan_borrower_property_trans_id ON public.loans (borrower_prope
 
 三状态（Pending/Closed/Cancelled）可任意双向切换，无前置约束。
 
-### 5.5 Checklist JSONB 结构
+### 3.5 Checklist JSONB 结构
 
 ```json
 {"all_checked": true, "optional_documents": [{"name": "1031", "children": [{"name": "1031 Exchange Documents", "document_id": 301, "is_required": false, "sub_document_count": 0, "uploaded_document_count": 0}], "document_id": 300, "is_required": false, "sub_document_count": 1, "uploaded_document_count": 0}, {"name": "Lease", "children": [{"name": "Lease Agreement", "document_id": 303, "is_required": false, "sub_document_count": 0, "uploaded_document_count": 0}, {"name": "TENANT ESTOPPEL CERTIFICATE", "document_id": 304, "is_required": false, "sub_document_count": 0, "uploaded_document_count": 0}], "document_id": 302, "is_required": false, "sub_document_count": 2, "uploaded_document_count": 0}, {"name": "HOA", "children": [{"name": "See \"HOA\" Sheet", "document_id": 306, "is_required": false, "sub_document_count": 0, "uploaded_document_count": 0}], "document_id": 305, "is_required": false, "sub_document_count": 1, "uploaded_document_count": 0}, {"name": "Solar", "children": [{"name": "See \"Solar\" Sheet", "document_id": 308, "is_required": false, "sub_document_count": 0, "uploaded_document_count": 0}], "document_id": 307, "is_required": false, "sub_document_count": 1, "uploaded_document_count": 0}], "required_documents": [{"name": "Contract", "children": [{"name": "Original RPA", "document_id": 267, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}, {"name": "Assignment Agreement AOAA", "document_id": 268, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}, {"name": "Counter Offer", "document_id": 269, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}, {"name": "Addendum (Extension)", "document_id": 270, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}, {"name": "Seller financing Docs", "document_id": 271, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}, {"name": "JV Agreement", "document_id": 272, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}], "document_id": 266, "is_required": true, "sub_document_count": 6, "uploaded_document_count": 0}, {"name": "Escrow", "children": [{"name": "Wire Instructions", "document_id": 274, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}, {"name": "EMD Payment Proof", "document_id": 275, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}, {"name": "EMD Receipt", "document_id": 276, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}, {"name": "Prelim Report", "document_id": 277, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}, {"name": "NHD Report", "document_id": 278, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}, {"name": "Colored map", "document_id": 279, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}, {"name": "FinCen", "document_id": 280, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}, {"name": "Buyer Open Package", "document_id": 281, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}, {"name": "LOI", "document_id": 282, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}], "document_id": 273, "is_required": true, "sub_document_count": 9, "uploaded_document_count": 0}, {"name": "Disclosures", "document_id": 283, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}, {"name": "Loan", "children": [{"name": "Application Form", "document_id": 285, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}, {"name": "Loan Document", "document_id": 286, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}, {"name": "Contact form", "document_id": 287, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}, {"name": "Appraisal Report (Appraisal Payment confirmation and receipt)", "document_id": 288, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}], "document_id": 284, "is_required": true, "sub_document_count": 4, "uploaded_document_count": 0}, {"name": "Insurance", "children": [{"name": "EOI", "document_id": 290, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}, {"name": "Payment Receipt", "document_id": 291, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}, {"name": "Full Policy", "document_id": 292, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}, {"name": "Flood Insurance", "document_id": 293, "is_required": false, "sub_document_count": 0, "uploaded_document_count": 0}], "document_id": 289, "is_required": true, "sub_document_count": 4, "uploaded_document_count": 0}, {"name": "Closing Package", "children": [{"name": "Buyer Estimated Statement", "document_id": 295, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}, {"name": "Final Buyer Statement", "document_id": 296, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}, {"name": "All Signed Documents", "document_id": 297, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}, {"name": "Recorded GD", "document_id": 298, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}, {"name": "Recorded DOT", "document_id": 299, "is_required": true, "sub_document_count": 0, "uploaded_document_count": 0}], "document_id": 294, "is_required": true, "sub_document_count": 5, "uploaded_document_count": 0}], "total_document_count": 34, "total_optional_document_count": 5, "total_required_document_count": 29, "total_optional_updated_document_count": 0, "total_required_updated_document_count": 0}
 ```
 
-### 5.6 Document metadata JSONB 结构
+### 3.6 Document metadata JSONB 结构
 
 ```json
 {
@@ -524,9 +388,9 @@ CREATE INDEX idx_loan_borrower_property_trans_id ON public.loans (borrower_prope
 
 ---
 
-## 6. 接口设计
+## 4. 接口设计
 
-### 6.1 Transaction Service
+### 4.1 Transaction Service
 
 Proto Service: `BorrowerPropertyTransaction`
 
@@ -630,7 +494,7 @@ RPC: BorrowerPropertyTransaction.OperationList
 
 响应: 操作记录列表，按 created_at DESC 排序
 
-### 6.2 Document Service
+### 4.2 Document Service
 
 Proto Service: `Document`
 
@@ -644,7 +508,7 @@ Proto Service: `Document`
 
 **路由策略**: 读操作使用独立路由（通用，可复用于其他 entity_type），写操作嵌套在 transaction 路由下（便于权限校验和操作日志记录）。
 
-### 6.3 Loan 变更
+### 4.3 Loan 变更
 
 | 接口 | 变更 | 说明 |
 |------|------|------|
@@ -654,9 +518,161 @@ Proto Service: `Document`
 
 ---
 
-## 7. 风险提示与应对
+## 5. 核心流程
 
-### 7.1 数据一致性
+### 5.1 创建 Transaction 流程
+
+```
+API: POST /borrower_property_transaction
+         │
+         ▼
+    ┌─────────────┐
+    │ 验证 Property │  ← 检查存在性 + 组织归属
+    └──────┬──────┘
+           │
+           ▼
+    ┌─────────────────┐
+    │ 生成 Code        │  ← TC + 年份2位 + base62(毫秒)
+    └──────┬──────────┘
+           │
+           ▼
+    ┌─────────────────┐
+    │ 创建 Transaction │  ← status=Pending
+    └──────┬──────────┘
+           │
+           ▼
+    ┌──────────────────────┐
+    │ 加载 DocumentTemplate │  ← common + per-type 合并
+    └──────┬───────────────┘
+           │
+           ▼
+    ┌───────────────────┐
+    │ 递归创建文档目录树    │  ← 设置 metadata.is_required
+    └──────┬────────────┘
+           │
+           ▼
+    ┌──────────────────┐
+    │ 创建 EntityDocument│  ← 绑定 transaction ↔ root document
+    └──────┬───────────┘
+           │
+           ▼
+    ┌────────────────────┐
+    │ 初始化 Checklist     │  ← RecalculateChecklist
+    └──────┬─────────────┘
+           │
+           ▼
+    ┌──────────────┐
+    │ 记录操作日志   │  ← OperationLogic
+    └──────────────┘
+```
+
+### 5.2 文件上传流程
+
+前端直传 S3，后端仅负责生成 Presigned URL 和记录文件信息。
+
+```
+Step 1: 前端请求上传 URL
+API: POST /borrower_property_transaction/:tid/document/:did/file
+         │
+         ▼
+    ┌───────────────────┐
+    │ 验证 Document 归属  │  ← 属于该 Transaction 的文档树
+    └──────┬────────────┘
+           │
+           ▼
+    ┌─────────────┐
+    │ 验证叶子节点  │  ← 只能上传到叶子 Document
+    └──────┬──────┘
+           │
+           ▼
+    ┌──────────────────────────┐
+    │ 生成 S3 Presigned PUT URL │  ← 返回给前端
+    └──────────────────────────┘
+
+Step 2: 前端直传文件到 S3（后端不参与）
+
+Step 3: 前端确认上传（同一 API 的回调/确认机制）
+         │
+         ▼
+    ┌──────────────────┐
+    │ 创建 File 记录     │  ← storage_type=Aws S3, upload_type=Manual
+    └──────┬───────────┘
+           │
+           ▼
+    ┌──────────────────────────┐
+    │ 更新 Document last_uploaded_at │  ← 同时更新所有 parent
+    └──────┬───────────────────┘
+           │
+           ▼
+    ┌─────────────────────┐
+    │ RecalculateChecklist │  ← 重算统计
+    └──────┬──────────────┘
+           │
+           ▼
+    ┌──────────────┐
+    │ 记录操作日志   │
+    └──────────────┘
+```
+
+### 5.3 Checklist 计算流程
+
+```
+RecalculateChecklist(transactionId)
+         │
+         ▼
+    ┌─────────────────────┐
+    │ 获取 EntityDocument   │  ← entity_type + entity_id
+    └──────┬──────────────┘
+           │
+           ▼
+    ┌───────────────────┐
+    │ 获取根 Document     │
+    └──────┬────────────┘
+           │
+           ▼
+    ┌───────────────────────┐
+    │ 递归遍历文档树          │
+    │ 按 metadata.is_required │
+    │ 分组统计:               │
+    │ - required: total, updated │
+    │ - optional: total, updated │
+    └──────┬────────────────┘
+           │
+           ▼
+    ┌───────────────────────┐
+    │ 合并原 all_checked 值   │  ← 保留手动确认状态
+    └──────┬────────────────┘
+           │
+           ▼
+    ┌───────────────────────┐
+    │ 写入 transaction.checklist │
+    └───────────────────────┘
+```
+
+### 5.4 Loan Apply 二选一流程
+
+```
+ApplyLoan(propertyId, transactionId)
+         │
+         ▼
+    ┌────────────────────────────┐
+    │ propertyId 和 transactionId │
+    │ 是否恰好只有一个有值?         │
+    └──────┬──────────┬─────────┘
+           │          │
+        是 │          │ 否
+           │          │
+           ▼          ▼
+    ┌──────────┐  ┌────────────┐
+    │ 继续处理   │  │ 返回参数错误 │
+    └──────────┘  └────────────┘
+```
+
+---
+
+## 6. 风险与权衡
+
+### 6.1 数据一致性
 
 | 风险 | 等级 | 说明 | 应对 |
 |------|------|------|------|
@@ -664,7 +680,7 @@ Proto Service: `Document`
 | Checklist 统计不准 | 中 | 并发文件操作可能导致统计偏差 | 当前阶段并发低，write-on-update 策略可接受。后续可加乐观锁 |
 | Code 碰撞 | 低 | base62(毫秒时间戳) 理论上可能碰撞 | UNIQUE 索引兜底，插入失败重试 |
 
-### 7.2 性能
+### 6.2 性能
 
 | 风险 | 等级 | 说明 | 应对 |
 |------|------|------|------|
@@ -672,7 +688,7 @@ Proto Service: `Document`
 | 分页搜索 JOIN | 低 | LEFT JOIN borrower_properties 匹配地址 | JSONB 地址字段无索引，大数据量时需评估 GIN 索引 |
 | Checklist 递归计算 | 低 | 每次文件操作触发全树遍历 | 文件操作频率低，树深度有限 |
 
-### 7.3 兼容性
+### 6.3 兼容性
 
 | 风险 | 等级 | 说明 | 应对 |
 |------|------|------|------|
@@ -680,25 +696,35 @@ Proto Service: `Document`
 | 现有 loan_operations | 低 | 新 operations 表与旧表并存 | 不迁移旧数据，新旧表独立使用 |
 | File 表扩展 | 低 | 新增列 DEFAULT 值，不影响现有数据 | ALTER TABLE ADD COLUMN DEFAULT 无锁 |
 
-### 7.4 运维
+### 6.4 运维
 
 | 风险 | 等级 | 说明 | 应对 |
 |------|------|------|------|
 | 种子数据更新 | 低 | 模板结构变更需更新种子 SQL | 开发环境重新 seed，生产环境需单独 migration |
 | S3 文件清理 | 中 | 删除 File 记录后需同步删除 S3 对象 | 软删除 + 异步清理策略，避免阻塞请求 |
 
+### 6.5 澄清记录
+
+| 日期 | 议题 | 结论 |
+|------|------|------|
+| 2026-05-19 | 初始需求 | 确定 Transaction 基本功能和 Document 模板结构 |
+| 2026-05-20 | Document 树约束 | 允许叶子节点同级追加，checklist 分组统计 |
+| 2026-05-22 | 分页搜索设计 | property 地址返回完整对象，keyword 模糊匹配 address1/city/state |
+| 2026-05-25 | Loan 二选一 | Apply XOR，Draft 灵活 |
+| 2026-05-26 | 操作记录 API | 拆分 Stats + List，模板使用 common + per-type map |
+
 ---
 
-## 8. 实施状态
+## 7. 实现要点 / 测试
 
-### 8.1 完成统计
+### 7.1 实施状态
 
 | 状态 | Phase 数 | 任务数 |
 |------|---------|-------|
 | 已完成 | Phase 1-13 | T001-T038 |
 | 待完成 | Phase 14 (验证) | T039-T062 |
 
-### 8.2 关键文件索引
+### 7.2 关键文件索引
 
 | 层 | 路径 |
 |----|------|
@@ -714,33 +740,3 @@ Proto Service: `Document`
 | Transaction Constants | `domains/zeebee/constants/borrower_property_transaction.go` |
 | RPC Logic | `app/borrower/rpc/internal/logic/borrowerpropertytransaction/` |
 | API Handler | `app/borrower/api/internal/handler/borrowerpropertytransaction/` |
-
----
-
-## 9. 研究决策摘要
-
-| ID | 决策 | 备选方案 | 拒绝原因 |
-|----|------|----------|----------|
-| R1 | 新建独立 operations 表 | 复用 loan_operations | 通用设计，支持多 entity_type |
-| R2 | 模板递归创建文档树 | — | — |
-| R3 | Presigned URL 直传 S3 | 服务端中转 | 避免服务端瓶颈 |
-| R4 | base62(毫秒时间戳)生成 Code | UUID | 更短、可读性更好 |
-| R5 | 仅允许叶子节点同级扩展 | 开放任意层级创建 | 保持树深度不变 |
-| R6 | 保留旧 loan_operations 不动 | 迁移到 operations | 避免迁移风险 |
-| R7 | write-on-update 计算 Checklist | 实时计算 / 定时批处理 | 实时开销大，批处理有延迟 |
-| R8 | metadata jsonb 存 is_required | 独立列 | 避免 schema 频繁变更 |
-| R9 | common + per-type 模板结构 | 单一模板 | 不同 type 需差异化文档 |
-| R10 | Apply XOR / Draft 灵活 | 统一策略 | Apply 需严格，Draft 需灵活 |
-| R11 | Stats + List 拆分两个接口 | 单一接口 | 前端两种展示需求 |
-
----
-
-## 10. 澄清记录
-
-| 日期 | 议题 | 结论 |
-|------|------|------|
-| 2026-05-19 | 初始需求 | 确定 Transaction 基本功能和 Document 模板结构 |
-| 2026-05-20 | Document 树约束 | 允许叶子节点同级追加，checklist 分组统计 |
-| 2026-05-22 | 分页搜索设计 | property 地址返回完整对象，keyword 模糊匹配 address1/city/state |
-| 2026-05-25 | Loan 二选一 | Apply XOR，Draft 灵活 |
-| 2026-05-26 | 操作记录 API | 拆分 Stats + List，模板使用 common + per-type map |

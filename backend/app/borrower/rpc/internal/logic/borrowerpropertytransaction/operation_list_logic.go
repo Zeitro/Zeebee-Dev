@@ -10,8 +10,6 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/model"
@@ -34,14 +32,6 @@ func NewOperationListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ope
 }
 
 func (l *OperationListLogic) OperationList(in *borrower.TransactionOperationListRequest) (resp *borrower.TransactionOperationListResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
-
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, errorx.Wrap(err, "failed to get user claim")
@@ -54,8 +44,7 @@ func (l *OperationListLogic) OperationList(in *borrower.TransactionOperationList
 		return
 	}
 
-	input := &dto.OperationListRequestDto{}
-	input, err = copierx.Trans[borrower.TransactionOperationListRequestData, dto.OperationListRequestDto](in.Data, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
+	input, err := copierx.Trans[borrower.TransactionOperationListRequestData, dto.OperationListRequestDto](in.Data, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
 		return nil, err
 	}

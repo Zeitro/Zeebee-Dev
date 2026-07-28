@@ -211,17 +211,25 @@ func (x *BorrowerPropertyTransactionUpdateRequest) GetData() *BorrowerPropertyTr
 }
 
 type BorrowerPropertyTransactionUpdateRequestData struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	CoeDate          string                 `protobuf:"bytes,2,opt,name=coe_date,json=coeDate,proto3" json:"coe_date,omitempty"`
-	PurchaseAmount   float64                `protobuf:"fixed64,3,opt,name=purchase_amount,json=purchaseAmount,proto3" json:"purchase_amount,omitempty"`
-	EmdAmount        float64                `protobuf:"fixed64,4,opt,name=emd_amount,json=emdAmount,proto3" json:"emd_amount,omitempty"`
-	PropertyType     string                 `protobuf:"bytes,5,opt,name=property_type,json=propertyType,proto3" json:"property_type,omitempty"`
-	Pm               string                 `protobuf:"bytes,6,opt,name=pm,proto3" json:"pm,omitempty"`
-	BusinessStrategy []string               `protobuf:"bytes,7,rep,name=business_strategy,json=businessStrategy,proto3" json:"business_strategy,omitempty"`
-	Note             string                 `protobuf:"bytes,8,opt,name=note,proto3" json:"note,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state                  protoimpl.MessageState                         `protogen:"open.v1"`
+	Id                     int64                                          `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	CoeDate                string                                         `protobuf:"bytes,2,opt,name=coe_date,json=coeDate,proto3" json:"coe_date,omitempty"`
+	PurchaseAmount         float64                                        `protobuf:"fixed64,3,opt,name=purchase_amount,json=purchaseAmount,proto3" json:"purchase_amount,omitempty"`
+	EmdAmount              float64                                        `protobuf:"fixed64,4,opt,name=emd_amount,json=emdAmount,proto3" json:"emd_amount,omitempty"`
+	PropertyType           string                                         `protobuf:"bytes,5,opt,name=property_type,json=propertyType,proto3" json:"property_type,omitempty"`
+	Pm                     string                                         `protobuf:"bytes,6,opt,name=pm,proto3" json:"pm,omitempty"`
+	BusinessStrategy       []string                                       `protobuf:"bytes,7,rep,name=business_strategy,json=businessStrategy,proto3" json:"business_strategy,omitempty"`
+	Note                   string                                         `protobuf:"bytes,8,opt,name=note,proto3" json:"note,omitempty"`
+	TitleHolder            string                                         `protobuf:"bytes,9,opt,name=title_holder,json=titleHolder,proto3" json:"title_holder,omitempty"`
+	ContractDate           string                                         `protobuf:"bytes,10,opt,name=contract_date,json=contractDate,proto3" json:"contract_date,omitempty"`
+	EmdDueDate             string                                         `protobuf:"bytes,11,opt,name=emd_due_date,json=emdDueDate,proto3" json:"emd_due_date,omitempty"`
+	ContingencyRemovalDate string                                         `protobuf:"bytes,12,opt,name=contingency_removal_date,json=contingencyRemovalDate,proto3" json:"contingency_removal_date,omitempty"`
+	Tc                     string                                         `protobuf:"bytes,13,opt,name=tc,proto3" json:"tc,omitempty"`
+	CostAllocation         string                                         `protobuf:"bytes,14,opt,name=cost_allocation,json=costAllocation,proto3" json:"cost_allocation,omitempty"`
+	Escrows                []*PropertyTransactionEscrowData               `protobuf:"bytes,15,rep,name=escrows,proto3" json:"escrows,omitempty"`
+	Property               *BorrowerPropertyTransactionPropertyEditEntity `protobuf:"bytes,16,opt,name=property,proto3" json:"property,omitempty"`
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *BorrowerPropertyTransactionUpdateRequestData) Reset() {
@@ -310,6 +318,246 @@ func (x *BorrowerPropertyTransactionUpdateRequestData) GetNote() string {
 	return ""
 }
 
+func (x *BorrowerPropertyTransactionUpdateRequestData) GetTitleHolder() string {
+	if x != nil {
+		return x.TitleHolder
+	}
+	return ""
+}
+
+func (x *BorrowerPropertyTransactionUpdateRequestData) GetContractDate() string {
+	if x != nil {
+		return x.ContractDate
+	}
+	return ""
+}
+
+func (x *BorrowerPropertyTransactionUpdateRequestData) GetEmdDueDate() string {
+	if x != nil {
+		return x.EmdDueDate
+	}
+	return ""
+}
+
+func (x *BorrowerPropertyTransactionUpdateRequestData) GetContingencyRemovalDate() string {
+	if x != nil {
+		return x.ContingencyRemovalDate
+	}
+	return ""
+}
+
+func (x *BorrowerPropertyTransactionUpdateRequestData) GetTc() string {
+	if x != nil {
+		return x.Tc
+	}
+	return ""
+}
+
+func (x *BorrowerPropertyTransactionUpdateRequestData) GetCostAllocation() string {
+	if x != nil {
+		return x.CostAllocation
+	}
+	return ""
+}
+
+func (x *BorrowerPropertyTransactionUpdateRequestData) GetEscrows() []*PropertyTransactionEscrowData {
+	if x != nil {
+		return x.Escrows
+	}
+	return nil
+}
+
+func (x *BorrowerPropertyTransactionUpdateRequestData) GetProperty() *BorrowerPropertyTransactionPropertyEditEntity {
+	if x != nil {
+		return x.Property
+	}
+	return nil
+}
+
+type PropertyTransactionEscrowData struct {
+	state         protoimpl.MessageState                          `protogen:"open.v1"`
+	Id            int64                                           `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	No            string                                          `protobuf:"bytes,2,opt,name=no,proto3" json:"no,omitempty"`
+	EscrowCompany string                                          `protobuf:"bytes,3,opt,name=escrow_company,json=escrowCompany,proto3" json:"escrow_company,omitempty"`
+	OfficerName   string                                          `protobuf:"bytes,4,opt,name=officer_name,json=officerName,proto3" json:"officer_name,omitempty"`
+	OfficerPhone  string                                          `protobuf:"bytes,5,opt,name=officer_phone,json=officerPhone,proto3" json:"officer_phone,omitempty"`
+	OfficerEmail  string                                          `protobuf:"bytes,6,opt,name=officer_email,json=officerEmail,proto3" json:"officer_email,omitempty"`
+	Checklist     *proto.PropertyTransactionEscrowChecklistEntity `protobuf:"bytes,7,opt,name=checklist,proto3" json:"checklist,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PropertyTransactionEscrowData) Reset() {
+	*x = PropertyTransactionEscrowData{}
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PropertyTransactionEscrowData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PropertyTransactionEscrowData) ProtoMessage() {}
+
+func (x *PropertyTransactionEscrowData) ProtoReflect() protoreflect.Message {
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PropertyTransactionEscrowData.ProtoReflect.Descriptor instead.
+func (*PropertyTransactionEscrowData) Descriptor() ([]byte, []int) {
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *PropertyTransactionEscrowData) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *PropertyTransactionEscrowData) GetNo() string {
+	if x != nil {
+		return x.No
+	}
+	return ""
+}
+
+func (x *PropertyTransactionEscrowData) GetEscrowCompany() string {
+	if x != nil {
+		return x.EscrowCompany
+	}
+	return ""
+}
+
+func (x *PropertyTransactionEscrowData) GetOfficerName() string {
+	if x != nil {
+		return x.OfficerName
+	}
+	return ""
+}
+
+func (x *PropertyTransactionEscrowData) GetOfficerPhone() string {
+	if x != nil {
+		return x.OfficerPhone
+	}
+	return ""
+}
+
+func (x *PropertyTransactionEscrowData) GetOfficerEmail() string {
+	if x != nil {
+		return x.OfficerEmail
+	}
+	return ""
+}
+
+func (x *PropertyTransactionEscrowData) GetChecklist() *proto.PropertyTransactionEscrowChecklistEntity {
+	if x != nil {
+		return x.Checklist
+	}
+	return nil
+}
+
+type BorrowerPropertyTransactionPropertyEditEntity struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Unit           int32                  `protobuf:"varint,2,opt,name=unit,proto3" json:"unit,omitempty"`
+	PropertyType   string                 `protobuf:"bytes,3,opt,name=property_type,json=propertyType,proto3" json:"property_type,omitempty"`
+	LivingAreaSqft float64                `protobuf:"fixed64,4,opt,name=living_area_sqft,json=livingAreaSqft,proto3" json:"living_area_sqft,omitempty"`
+	LotAreaSqft    float64                `protobuf:"fixed64,5,opt,name=lot_area_sqft,json=lotAreaSqft,proto3" json:"lot_area_sqft,omitempty"`
+	Bedrooms       int32                  `protobuf:"varint,6,opt,name=bedrooms,proto3" json:"bedrooms,omitempty"`
+	Bathrooms      int32                  `protobuf:"varint,7,opt,name=bathrooms,proto3" json:"bathrooms,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *BorrowerPropertyTransactionPropertyEditEntity) Reset() {
+	*x = BorrowerPropertyTransactionPropertyEditEntity{}
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BorrowerPropertyTransactionPropertyEditEntity) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BorrowerPropertyTransactionPropertyEditEntity) ProtoMessage() {}
+
+func (x *BorrowerPropertyTransactionPropertyEditEntity) ProtoReflect() protoreflect.Message {
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BorrowerPropertyTransactionPropertyEditEntity.ProtoReflect.Descriptor instead.
+func (*BorrowerPropertyTransactionPropertyEditEntity) Descriptor() ([]byte, []int) {
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *BorrowerPropertyTransactionPropertyEditEntity) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *BorrowerPropertyTransactionPropertyEditEntity) GetUnit() int32 {
+	if x != nil {
+		return x.Unit
+	}
+	return 0
+}
+
+func (x *BorrowerPropertyTransactionPropertyEditEntity) GetPropertyType() string {
+	if x != nil {
+		return x.PropertyType
+	}
+	return ""
+}
+
+func (x *BorrowerPropertyTransactionPropertyEditEntity) GetLivingAreaSqft() float64 {
+	if x != nil {
+		return x.LivingAreaSqft
+	}
+	return 0
+}
+
+func (x *BorrowerPropertyTransactionPropertyEditEntity) GetLotAreaSqft() float64 {
+	if x != nil {
+		return x.LotAreaSqft
+	}
+	return 0
+}
+
+func (x *BorrowerPropertyTransactionPropertyEditEntity) GetBedrooms() int32 {
+	if x != nil {
+		return x.Bedrooms
+	}
+	return 0
+}
+
+func (x *BorrowerPropertyTransactionPropertyEditEntity) GetBathrooms() int32 {
+	if x != nil {
+		return x.Bathrooms
+	}
+	return 0
+}
+
 // switch status -- request
 type BorrowerPropertyTransactionSwitchStatusRequest struct {
 	state         protoimpl.MessageState                              `protogen:"open.v1"`
@@ -320,7 +568,7 @@ type BorrowerPropertyTransactionSwitchStatusRequest struct {
 
 func (x *BorrowerPropertyTransactionSwitchStatusRequest) Reset() {
 	*x = BorrowerPropertyTransactionSwitchStatusRequest{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[5]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -332,7 +580,7 @@ func (x *BorrowerPropertyTransactionSwitchStatusRequest) String() string {
 func (*BorrowerPropertyTransactionSwitchStatusRequest) ProtoMessage() {}
 
 func (x *BorrowerPropertyTransactionSwitchStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[5]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -345,7 +593,7 @@ func (x *BorrowerPropertyTransactionSwitchStatusRequest) ProtoReflect() protoref
 
 // Deprecated: Use BorrowerPropertyTransactionSwitchStatusRequest.ProtoReflect.Descriptor instead.
 func (*BorrowerPropertyTransactionSwitchStatusRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{5}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *BorrowerPropertyTransactionSwitchStatusRequest) GetData() *BorrowerPropertyTransactionSwitchStatusRequestData {
@@ -365,7 +613,7 @@ type BorrowerPropertyTransactionSwitchStatusRequestData struct {
 
 func (x *BorrowerPropertyTransactionSwitchStatusRequestData) Reset() {
 	*x = BorrowerPropertyTransactionSwitchStatusRequestData{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[6]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -377,7 +625,7 @@ func (x *BorrowerPropertyTransactionSwitchStatusRequestData) String() string {
 func (*BorrowerPropertyTransactionSwitchStatusRequestData) ProtoMessage() {}
 
 func (x *BorrowerPropertyTransactionSwitchStatusRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[6]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -390,7 +638,7 @@ func (x *BorrowerPropertyTransactionSwitchStatusRequestData) ProtoReflect() prot
 
 // Deprecated: Use BorrowerPropertyTransactionSwitchStatusRequestData.ProtoReflect.Descriptor instead.
 func (*BorrowerPropertyTransactionSwitchStatusRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{6}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *BorrowerPropertyTransactionSwitchStatusRequestData) GetId() int64 {
@@ -417,7 +665,7 @@ type BorrowerPropertyTransactionAllResponse struct {
 
 func (x *BorrowerPropertyTransactionAllResponse) Reset() {
 	*x = BorrowerPropertyTransactionAllResponse{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[7]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -429,7 +677,7 @@ func (x *BorrowerPropertyTransactionAllResponse) String() string {
 func (*BorrowerPropertyTransactionAllResponse) ProtoMessage() {}
 
 func (x *BorrowerPropertyTransactionAllResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[7]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -442,7 +690,7 @@ func (x *BorrowerPropertyTransactionAllResponse) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use BorrowerPropertyTransactionAllResponse.ProtoReflect.Descriptor instead.
 func (*BorrowerPropertyTransactionAllResponse) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{7}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *BorrowerPropertyTransactionAllResponse) GetData() []*proto.BorrowerPropertyTransactionOptionEntity {
@@ -462,7 +710,7 @@ type BorrowerPropertyTransactionListByPropertyRequest struct {
 
 func (x *BorrowerPropertyTransactionListByPropertyRequest) Reset() {
 	*x = BorrowerPropertyTransactionListByPropertyRequest{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[8]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -474,7 +722,7 @@ func (x *BorrowerPropertyTransactionListByPropertyRequest) String() string {
 func (*BorrowerPropertyTransactionListByPropertyRequest) ProtoMessage() {}
 
 func (x *BorrowerPropertyTransactionListByPropertyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[8]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -487,7 +735,7 @@ func (x *BorrowerPropertyTransactionListByPropertyRequest) ProtoReflect() protor
 
 // Deprecated: Use BorrowerPropertyTransactionListByPropertyRequest.ProtoReflect.Descriptor instead.
 func (*BorrowerPropertyTransactionListByPropertyRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{8}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *BorrowerPropertyTransactionListByPropertyRequest) GetData() *BorrowerPropertyTransactionListByPropertyRequestData {
@@ -506,7 +754,7 @@ type BorrowerPropertyTransactionListByPropertyRequestData struct {
 
 func (x *BorrowerPropertyTransactionListByPropertyRequestData) Reset() {
 	*x = BorrowerPropertyTransactionListByPropertyRequestData{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[9]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -518,7 +766,7 @@ func (x *BorrowerPropertyTransactionListByPropertyRequestData) String() string {
 func (*BorrowerPropertyTransactionListByPropertyRequestData) ProtoMessage() {}
 
 func (x *BorrowerPropertyTransactionListByPropertyRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[9]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -531,7 +779,7 @@ func (x *BorrowerPropertyTransactionListByPropertyRequestData) ProtoReflect() pr
 
 // Deprecated: Use BorrowerPropertyTransactionListByPropertyRequestData.ProtoReflect.Descriptor instead.
 func (*BorrowerPropertyTransactionListByPropertyRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{9}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *BorrowerPropertyTransactionListByPropertyRequestData) GetBorrowerPropertyId() int64 {
@@ -551,7 +799,7 @@ type BorrowerPropertyTransactionListByPropertyResponse struct {
 
 func (x *BorrowerPropertyTransactionListByPropertyResponse) Reset() {
 	*x = BorrowerPropertyTransactionListByPropertyResponse{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[10]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -563,7 +811,7 @@ func (x *BorrowerPropertyTransactionListByPropertyResponse) String() string {
 func (*BorrowerPropertyTransactionListByPropertyResponse) ProtoMessage() {}
 
 func (x *BorrowerPropertyTransactionListByPropertyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[10]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -576,7 +824,7 @@ func (x *BorrowerPropertyTransactionListByPropertyResponse) ProtoReflect() proto
 
 // Deprecated: Use BorrowerPropertyTransactionListByPropertyResponse.ProtoReflect.Descriptor instead.
 func (*BorrowerPropertyTransactionListByPropertyResponse) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{10}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *BorrowerPropertyTransactionListByPropertyResponse) GetData() []*proto.BorrowerPropertyTransactionEntity {
@@ -596,7 +844,7 @@ type BorrowerPropertyTransactionChecklistRequest struct {
 
 func (x *BorrowerPropertyTransactionChecklistRequest) Reset() {
 	*x = BorrowerPropertyTransactionChecklistRequest{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[11]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -608,7 +856,7 @@ func (x *BorrowerPropertyTransactionChecklistRequest) String() string {
 func (*BorrowerPropertyTransactionChecklistRequest) ProtoMessage() {}
 
 func (x *BorrowerPropertyTransactionChecklistRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[11]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -621,7 +869,7 @@ func (x *BorrowerPropertyTransactionChecklistRequest) ProtoReflect() protoreflec
 
 // Deprecated: Use BorrowerPropertyTransactionChecklistRequest.ProtoReflect.Descriptor instead.
 func (*BorrowerPropertyTransactionChecklistRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{11}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *BorrowerPropertyTransactionChecklistRequest) GetData() *BorrowerPropertyTransactionChecklistRequestData {
@@ -643,7 +891,7 @@ type BorrowerPropertyTransactionChecklistRequestData struct {
 
 func (x *BorrowerPropertyTransactionChecklistRequestData) Reset() {
 	*x = BorrowerPropertyTransactionChecklistRequestData{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[12]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -655,7 +903,7 @@ func (x *BorrowerPropertyTransactionChecklistRequestData) String() string {
 func (*BorrowerPropertyTransactionChecklistRequestData) ProtoMessage() {}
 
 func (x *BorrowerPropertyTransactionChecklistRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[12]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -668,7 +916,7 @@ func (x *BorrowerPropertyTransactionChecklistRequestData) ProtoReflect() protore
 
 // Deprecated: Use BorrowerPropertyTransactionChecklistRequestData.ProtoReflect.Descriptor instead.
 func (*BorrowerPropertyTransactionChecklistRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{12}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *BorrowerPropertyTransactionChecklistRequestData) GetId() int64 {
@@ -709,7 +957,7 @@ type BorrowerPropertyTransactionPageRequest struct {
 
 func (x *BorrowerPropertyTransactionPageRequest) Reset() {
 	*x = BorrowerPropertyTransactionPageRequest{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[13]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -721,7 +969,7 @@ func (x *BorrowerPropertyTransactionPageRequest) String() string {
 func (*BorrowerPropertyTransactionPageRequest) ProtoMessage() {}
 
 func (x *BorrowerPropertyTransactionPageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[13]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -734,7 +982,7 @@ func (x *BorrowerPropertyTransactionPageRequest) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use BorrowerPropertyTransactionPageRequest.ProtoReflect.Descriptor instead.
 func (*BorrowerPropertyTransactionPageRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{13}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *BorrowerPropertyTransactionPageRequest) GetData() *BorrowerPropertyTransactionPageRequestData {
@@ -756,7 +1004,7 @@ type BorrowerPropertyTransactionPageRequestData struct {
 
 func (x *BorrowerPropertyTransactionPageRequestData) Reset() {
 	*x = BorrowerPropertyTransactionPageRequestData{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[14]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -768,7 +1016,7 @@ func (x *BorrowerPropertyTransactionPageRequestData) String() string {
 func (*BorrowerPropertyTransactionPageRequestData) ProtoMessage() {}
 
 func (x *BorrowerPropertyTransactionPageRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[14]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -781,7 +1029,7 @@ func (x *BorrowerPropertyTransactionPageRequestData) ProtoReflect() protoreflect
 
 // Deprecated: Use BorrowerPropertyTransactionPageRequestData.ProtoReflect.Descriptor instead.
 func (*BorrowerPropertyTransactionPageRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{14}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *BorrowerPropertyTransactionPageRequestData) GetPage() int64 {
@@ -823,7 +1071,7 @@ type BorrowerPropertyTransactionPageRequestFilter struct {
 
 func (x *BorrowerPropertyTransactionPageRequestFilter) Reset() {
 	*x = BorrowerPropertyTransactionPageRequestFilter{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[15]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -835,7 +1083,7 @@ func (x *BorrowerPropertyTransactionPageRequestFilter) String() string {
 func (*BorrowerPropertyTransactionPageRequestFilter) ProtoMessage() {}
 
 func (x *BorrowerPropertyTransactionPageRequestFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[15]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -848,7 +1096,7 @@ func (x *BorrowerPropertyTransactionPageRequestFilter) ProtoReflect() protorefle
 
 // Deprecated: Use BorrowerPropertyTransactionPageRequestFilter.ProtoReflect.Descriptor instead.
 func (*BorrowerPropertyTransactionPageRequestFilter) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{15}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *BorrowerPropertyTransactionPageRequestFilter) GetKeyword() string {
@@ -882,7 +1130,7 @@ type BorrowerPropertyTransactionPageResponse struct {
 
 func (x *BorrowerPropertyTransactionPageResponse) Reset() {
 	*x = BorrowerPropertyTransactionPageResponse{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[16]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -894,7 +1142,7 @@ func (x *BorrowerPropertyTransactionPageResponse) String() string {
 func (*BorrowerPropertyTransactionPageResponse) ProtoMessage() {}
 
 func (x *BorrowerPropertyTransactionPageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[16]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -907,7 +1155,7 @@ func (x *BorrowerPropertyTransactionPageResponse) ProtoReflect() protoreflect.Me
 
 // Deprecated: Use BorrowerPropertyTransactionPageResponse.ProtoReflect.Descriptor instead.
 func (*BorrowerPropertyTransactionPageResponse) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{16}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *BorrowerPropertyTransactionPageResponse) GetData() *BorrowerPropertyTransactionPageResponseData {
@@ -930,7 +1178,7 @@ type BorrowerPropertyTransactionPageResponseData struct {
 
 func (x *BorrowerPropertyTransactionPageResponseData) Reset() {
 	*x = BorrowerPropertyTransactionPageResponseData{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[17]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -942,7 +1190,7 @@ func (x *BorrowerPropertyTransactionPageResponseData) String() string {
 func (*BorrowerPropertyTransactionPageResponseData) ProtoMessage() {}
 
 func (x *BorrowerPropertyTransactionPageResponseData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[17]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -955,7 +1203,7 @@ func (x *BorrowerPropertyTransactionPageResponseData) ProtoReflect() protoreflec
 
 // Deprecated: Use BorrowerPropertyTransactionPageResponseData.ProtoReflect.Descriptor instead.
 func (*BorrowerPropertyTransactionPageResponseData) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{17}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *BorrowerPropertyTransactionPageResponseData) GetPage() int64 {
@@ -1010,7 +1258,7 @@ type BorrowerPropertyTransactionPageEntity struct {
 
 func (x *BorrowerPropertyTransactionPageEntity) Reset() {
 	*x = BorrowerPropertyTransactionPageEntity{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[18]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1022,7 +1270,7 @@ func (x *BorrowerPropertyTransactionPageEntity) String() string {
 func (*BorrowerPropertyTransactionPageEntity) ProtoMessage() {}
 
 func (x *BorrowerPropertyTransactionPageEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[18]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1035,7 +1283,7 @@ func (x *BorrowerPropertyTransactionPageEntity) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use BorrowerPropertyTransactionPageEntity.ProtoReflect.Descriptor instead.
 func (*BorrowerPropertyTransactionPageEntity) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{18}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *BorrowerPropertyTransactionPageEntity) GetId() int64 {
@@ -1111,7 +1359,7 @@ type BorrowerPropertyTransactionDocumentUploadFileRequest struct {
 
 func (x *BorrowerPropertyTransactionDocumentUploadFileRequest) Reset() {
 	*x = BorrowerPropertyTransactionDocumentUploadFileRequest{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[19]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1123,7 +1371,7 @@ func (x *BorrowerPropertyTransactionDocumentUploadFileRequest) String() string {
 func (*BorrowerPropertyTransactionDocumentUploadFileRequest) ProtoMessage() {}
 
 func (x *BorrowerPropertyTransactionDocumentUploadFileRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[19]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1136,7 +1384,7 @@ func (x *BorrowerPropertyTransactionDocumentUploadFileRequest) ProtoReflect() pr
 
 // Deprecated: Use BorrowerPropertyTransactionDocumentUploadFileRequest.ProtoReflect.Descriptor instead.
 func (*BorrowerPropertyTransactionDocumentUploadFileRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{19}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *BorrowerPropertyTransactionDocumentUploadFileRequest) GetData() *BorrowerPropertyTransactionDocumentUploadFileRequestData {
@@ -1158,7 +1406,7 @@ type FileUploadItem struct {
 
 func (x *FileUploadItem) Reset() {
 	*x = FileUploadItem{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[20]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1170,7 +1418,7 @@ func (x *FileUploadItem) String() string {
 func (*FileUploadItem) ProtoMessage() {}
 
 func (x *FileUploadItem) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[20]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1183,7 +1431,7 @@ func (x *FileUploadItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FileUploadItem.ProtoReflect.Descriptor instead.
 func (*FileUploadItem) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{20}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *FileUploadItem) GetFileName() string {
@@ -1225,7 +1473,7 @@ type BorrowerPropertyTransactionDocumentUploadFileRequestData struct {
 
 func (x *BorrowerPropertyTransactionDocumentUploadFileRequestData) Reset() {
 	*x = BorrowerPropertyTransactionDocumentUploadFileRequestData{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[21]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1237,7 +1485,7 @@ func (x *BorrowerPropertyTransactionDocumentUploadFileRequestData) String() stri
 func (*BorrowerPropertyTransactionDocumentUploadFileRequestData) ProtoMessage() {}
 
 func (x *BorrowerPropertyTransactionDocumentUploadFileRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[21]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1250,7 +1498,7 @@ func (x *BorrowerPropertyTransactionDocumentUploadFileRequestData) ProtoReflect(
 
 // Deprecated: Use BorrowerPropertyTransactionDocumentUploadFileRequestData.ProtoReflect.Descriptor instead.
 func (*BorrowerPropertyTransactionDocumentUploadFileRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{21}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *BorrowerPropertyTransactionDocumentUploadFileRequestData) GetTransactionId() int64 {
@@ -1284,7 +1532,7 @@ type BorrowerPropertyTransactionDocumentDeleteFileRequest struct {
 
 func (x *BorrowerPropertyTransactionDocumentDeleteFileRequest) Reset() {
 	*x = BorrowerPropertyTransactionDocumentDeleteFileRequest{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[22]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1296,7 +1544,7 @@ func (x *BorrowerPropertyTransactionDocumentDeleteFileRequest) String() string {
 func (*BorrowerPropertyTransactionDocumentDeleteFileRequest) ProtoMessage() {}
 
 func (x *BorrowerPropertyTransactionDocumentDeleteFileRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[22]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1309,7 +1557,7 @@ func (x *BorrowerPropertyTransactionDocumentDeleteFileRequest) ProtoReflect() pr
 
 // Deprecated: Use BorrowerPropertyTransactionDocumentDeleteFileRequest.ProtoReflect.Descriptor instead.
 func (*BorrowerPropertyTransactionDocumentDeleteFileRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{22}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *BorrowerPropertyTransactionDocumentDeleteFileRequest) GetData() *BorrowerPropertyTransactionDocumentDeleteFileRequestData {
@@ -1329,7 +1577,7 @@ type BorrowerPropertyTransactionDocumentDeleteFileRequestData struct {
 
 func (x *BorrowerPropertyTransactionDocumentDeleteFileRequestData) Reset() {
 	*x = BorrowerPropertyTransactionDocumentDeleteFileRequestData{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[23]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1341,7 +1589,7 @@ func (x *BorrowerPropertyTransactionDocumentDeleteFileRequestData) String() stri
 func (*BorrowerPropertyTransactionDocumentDeleteFileRequestData) ProtoMessage() {}
 
 func (x *BorrowerPropertyTransactionDocumentDeleteFileRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[23]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1354,7 +1602,7 @@ func (x *BorrowerPropertyTransactionDocumentDeleteFileRequestData) ProtoReflect(
 
 // Deprecated: Use BorrowerPropertyTransactionDocumentDeleteFileRequestData.ProtoReflect.Descriptor instead.
 func (*BorrowerPropertyTransactionDocumentDeleteFileRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{23}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *BorrowerPropertyTransactionDocumentDeleteFileRequestData) GetTransactionId() int64 {
@@ -1381,7 +1629,7 @@ type TransactionOperationStatsRequest struct {
 
 func (x *TransactionOperationStatsRequest) Reset() {
 	*x = TransactionOperationStatsRequest{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[24]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1393,7 +1641,7 @@ func (x *TransactionOperationStatsRequest) String() string {
 func (*TransactionOperationStatsRequest) ProtoMessage() {}
 
 func (x *TransactionOperationStatsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[24]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1406,7 +1654,7 @@ func (x *TransactionOperationStatsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TransactionOperationStatsRequest.ProtoReflect.Descriptor instead.
 func (*TransactionOperationStatsRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{24}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *TransactionOperationStatsRequest) GetData() *TransactionOperationStatsRequestData {
@@ -1427,7 +1675,7 @@ type TransactionOperationStatsRequestData struct {
 
 func (x *TransactionOperationStatsRequestData) Reset() {
 	*x = TransactionOperationStatsRequestData{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[25]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1439,7 +1687,7 @@ func (x *TransactionOperationStatsRequestData) String() string {
 func (*TransactionOperationStatsRequestData) ProtoMessage() {}
 
 func (x *TransactionOperationStatsRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[25]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1452,7 +1700,7 @@ func (x *TransactionOperationStatsRequestData) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use TransactionOperationStatsRequestData.ProtoReflect.Descriptor instead.
 func (*TransactionOperationStatsRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{25}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *TransactionOperationStatsRequestData) GetTransactionId() int64 {
@@ -1486,7 +1734,7 @@ type TransactionOperationStatsResponse struct {
 
 func (x *TransactionOperationStatsResponse) Reset() {
 	*x = TransactionOperationStatsResponse{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[26]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1498,7 +1746,7 @@ func (x *TransactionOperationStatsResponse) String() string {
 func (*TransactionOperationStatsResponse) ProtoMessage() {}
 
 func (x *TransactionOperationStatsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[26]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1511,7 +1759,7 @@ func (x *TransactionOperationStatsResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use TransactionOperationStatsResponse.ProtoReflect.Descriptor instead.
 func (*TransactionOperationStatsResponse) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{26}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *TransactionOperationStatsResponse) GetData() *TransactionOperationStatsResponseData {
@@ -1531,7 +1779,7 @@ type TransactionOperationStatsResponseData struct {
 
 func (x *TransactionOperationStatsResponseData) Reset() {
 	*x = TransactionOperationStatsResponseData{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[27]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1543,7 +1791,7 @@ func (x *TransactionOperationStatsResponseData) String() string {
 func (*TransactionOperationStatsResponseData) ProtoMessage() {}
 
 func (x *TransactionOperationStatsResponseData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[27]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1556,7 +1804,7 @@ func (x *TransactionOperationStatsResponseData) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use TransactionOperationStatsResponseData.ProtoReflect.Descriptor instead.
 func (*TransactionOperationStatsResponseData) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{27}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *TransactionOperationStatsResponseData) GetTotal() int64 {
@@ -1583,7 +1831,7 @@ type OperationStatsItem struct {
 
 func (x *OperationStatsItem) Reset() {
 	*x = OperationStatsItem{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[28]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1595,7 +1843,7 @@ func (x *OperationStatsItem) String() string {
 func (*OperationStatsItem) ProtoMessage() {}
 
 func (x *OperationStatsItem) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[28]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1608,7 +1856,7 @@ func (x *OperationStatsItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OperationStatsItem.ProtoReflect.Descriptor instead.
 func (*OperationStatsItem) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{28}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *OperationStatsItem) GetType() string {
@@ -1635,7 +1883,7 @@ type TransactionOperationListRequest struct {
 
 func (x *TransactionOperationListRequest) Reset() {
 	*x = TransactionOperationListRequest{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[29]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1647,7 +1895,7 @@ func (x *TransactionOperationListRequest) String() string {
 func (*TransactionOperationListRequest) ProtoMessage() {}
 
 func (x *TransactionOperationListRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[29]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1660,7 +1908,7 @@ func (x *TransactionOperationListRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TransactionOperationListRequest.ProtoReflect.Descriptor instead.
 func (*TransactionOperationListRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{29}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *TransactionOperationListRequest) GetData() *TransactionOperationListRequestData {
@@ -1682,7 +1930,7 @@ type TransactionOperationListRequestData struct {
 
 func (x *TransactionOperationListRequestData) Reset() {
 	*x = TransactionOperationListRequestData{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[30]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1694,7 +1942,7 @@ func (x *TransactionOperationListRequestData) String() string {
 func (*TransactionOperationListRequestData) ProtoMessage() {}
 
 func (x *TransactionOperationListRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[30]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1707,7 +1955,7 @@ func (x *TransactionOperationListRequestData) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use TransactionOperationListRequestData.ProtoReflect.Descriptor instead.
 func (*TransactionOperationListRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{30}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *TransactionOperationListRequestData) GetTransactionId() int64 {
@@ -1748,7 +1996,7 @@ type TransactionOperationListResponse struct {
 
 func (x *TransactionOperationListResponse) Reset() {
 	*x = TransactionOperationListResponse{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[31]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1760,7 +2008,7 @@ func (x *TransactionOperationListResponse) String() string {
 func (*TransactionOperationListResponse) ProtoMessage() {}
 
 func (x *TransactionOperationListResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[31]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1773,7 +2021,7 @@ func (x *TransactionOperationListResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TransactionOperationListResponse.ProtoReflect.Descriptor instead.
 func (*TransactionOperationListResponse) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{31}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *TransactionOperationListResponse) GetData() *TransactionOperationListResponseData {
@@ -1792,7 +2040,7 @@ type TransactionOperationListResponseData struct {
 
 func (x *TransactionOperationListResponseData) Reset() {
 	*x = TransactionOperationListResponseData{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[32]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1804,7 +2052,7 @@ func (x *TransactionOperationListResponseData) String() string {
 func (*TransactionOperationListResponseData) ProtoMessage() {}
 
 func (x *TransactionOperationListResponseData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[32]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1817,7 +2065,7 @@ func (x *TransactionOperationListResponseData) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use TransactionOperationListResponseData.ProtoReflect.Descriptor instead.
 func (*TransactionOperationListResponseData) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{32}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *TransactionOperationListResponseData) GetList() []*OperationListItem {
@@ -1843,7 +2091,7 @@ type OperationListItem struct {
 
 func (x *OperationListItem) Reset() {
 	*x = OperationListItem{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[33]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1855,7 +2103,7 @@ func (x *OperationListItem) String() string {
 func (*OperationListItem) ProtoMessage() {}
 
 func (x *OperationListItem) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[33]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1868,7 +2116,7 @@ func (x *OperationListItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OperationListItem.ProtoReflect.Descriptor instead.
 func (*OperationListItem) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{33}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *OperationListItem) GetId() int64 {
@@ -1937,7 +2185,7 @@ type BorrowerPropertyTransactionDocumentCreateRequest struct {
 
 func (x *BorrowerPropertyTransactionDocumentCreateRequest) Reset() {
 	*x = BorrowerPropertyTransactionDocumentCreateRequest{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[34]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1949,7 +2197,7 @@ func (x *BorrowerPropertyTransactionDocumentCreateRequest) String() string {
 func (*BorrowerPropertyTransactionDocumentCreateRequest) ProtoMessage() {}
 
 func (x *BorrowerPropertyTransactionDocumentCreateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[34]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1962,7 +2210,7 @@ func (x *BorrowerPropertyTransactionDocumentCreateRequest) ProtoReflect() protor
 
 // Deprecated: Use BorrowerPropertyTransactionDocumentCreateRequest.ProtoReflect.Descriptor instead.
 func (*BorrowerPropertyTransactionDocumentCreateRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{34}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *BorrowerPropertyTransactionDocumentCreateRequest) GetData() *BorrowerPropertyTransactionDocumentCreateRequest_DocumentCreateRequestData {
@@ -1982,7 +2230,7 @@ type BorrowerPropertyTransactionDocumentCreateResponse struct {
 
 func (x *BorrowerPropertyTransactionDocumentCreateResponse) Reset() {
 	*x = BorrowerPropertyTransactionDocumentCreateResponse{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[35]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1994,7 +2242,7 @@ func (x *BorrowerPropertyTransactionDocumentCreateResponse) String() string {
 func (*BorrowerPropertyTransactionDocumentCreateResponse) ProtoMessage() {}
 
 func (x *BorrowerPropertyTransactionDocumentCreateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[35]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2007,7 +2255,7 @@ func (x *BorrowerPropertyTransactionDocumentCreateResponse) ProtoReflect() proto
 
 // Deprecated: Use BorrowerPropertyTransactionDocumentCreateResponse.ProtoReflect.Descriptor instead.
 func (*BorrowerPropertyTransactionDocumentCreateResponse) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{35}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *BorrowerPropertyTransactionDocumentCreateResponse) GetData() []*proto.DocumentEntity {
@@ -2019,15 +2267,18 @@ func (x *BorrowerPropertyTransactionDocumentCreateResponse) GetData() []*proto.D
 
 // document upload -- response
 type BorrowerPropertyTransactionDocumentUploadFileResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          []*proto.FileEntity    `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Data  []*proto.FileEntity    `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty"`
+	// request_id tracks the async parse run triggered by this upload batch (one
+	// run per upload). Empty when no parse rule fired.
+	RequestId     string `protobuf:"bytes,2,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *BorrowerPropertyTransactionDocumentUploadFileResponse) Reset() {
 	*x = BorrowerPropertyTransactionDocumentUploadFileResponse{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[36]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2039,7 +2290,7 @@ func (x *BorrowerPropertyTransactionDocumentUploadFileResponse) String() string 
 func (*BorrowerPropertyTransactionDocumentUploadFileResponse) ProtoMessage() {}
 
 func (x *BorrowerPropertyTransactionDocumentUploadFileResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[36]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2052,7 +2303,7 @@ func (x *BorrowerPropertyTransactionDocumentUploadFileResponse) ProtoReflect() p
 
 // Deprecated: Use BorrowerPropertyTransactionDocumentUploadFileResponse.ProtoReflect.Descriptor instead.
 func (*BorrowerPropertyTransactionDocumentUploadFileResponse) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{36}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *BorrowerPropertyTransactionDocumentUploadFileResponse) GetData() []*proto.FileEntity {
@@ -2060,6 +2311,496 @@ func (x *BorrowerPropertyTransactionDocumentUploadFileResponse) GetData() []*pro
 		return x.Data
 	}
 	return nil
+}
+
+func (x *BorrowerPropertyTransactionDocumentUploadFileResponse) GetRequestId() string {
+	if x != nil {
+		return x.RequestId
+	}
+	return ""
+}
+
+// parse -- request. No mode field: the backend reads the triggering rule
+// (source/triggered_by/selector) straight from the document's file_parse_config.
+type ParseFileRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          *ParseFileRequestData  `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ParseFileRequest) Reset() {
+	*x = ParseFileRequest{}
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[39]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ParseFileRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ParseFileRequest) ProtoMessage() {}
+
+func (x *ParseFileRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[39]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ParseFileRequest.ProtoReflect.Descriptor instead.
+func (*ParseFileRequest) Descriptor() ([]byte, []int) {
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{39}
+}
+
+func (x *ParseFileRequest) GetData() *ParseFileRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type ParseFileRequestData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	DocumentId    int64                  `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	Parser        string                 `protobuf:"bytes,3,opt,name=parser,proto3" json:"parser,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ParseFileRequestData) Reset() {
+	*x = ParseFileRequestData{}
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[40]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ParseFileRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ParseFileRequestData) ProtoMessage() {}
+
+func (x *ParseFileRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[40]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ParseFileRequestData.ProtoReflect.Descriptor instead.
+func (*ParseFileRequestData) Descriptor() ([]byte, []int) {
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{40}
+}
+
+func (x *ParseFileRequestData) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *ParseFileRequestData) GetDocumentId() int64 {
+	if x != nil {
+		return x.DocumentId
+	}
+	return 0
+}
+
+func (x *ParseFileRequestData) GetParser() string {
+	if x != nil {
+		return x.Parser
+	}
+	return ""
+}
+
+// parse -- response
+type ParseFileResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          *ParseFileResponseData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ParseFileResponse) Reset() {
+	*x = ParseFileResponse{}
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[41]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ParseFileResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ParseFileResponse) ProtoMessage() {}
+
+func (x *ParseFileResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[41]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ParseFileResponse.ProtoReflect.Descriptor instead.
+func (*ParseFileResponse) Descriptor() ([]byte, []int) {
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{41}
+}
+
+func (x *ParseFileResponse) GetData() *ParseFileResponseData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type ParseFileResponseData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RequestId     string                 `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ParseFileResponseData) Reset() {
+	*x = ParseFileResponseData{}
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[42]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ParseFileResponseData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ParseFileResponseData) ProtoMessage() {}
+
+func (x *ParseFileResponseData) ProtoReflect() protoreflect.Message {
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[42]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ParseFileResponseData.ProtoReflect.Descriptor instead.
+func (*ParseFileResponseData) Descriptor() ([]byte, []int) {
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{42}
+}
+
+func (x *ParseFileResponseData) GetRequestId() string {
+	if x != nil {
+		return x.RequestId
+	}
+	return ""
+}
+
+// progress query by params (mode b: refresh page lost requestId)
+type ProgressByParams struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TransactionId int64                  `protobuf:"varint,1,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`
+	DocumentId    int64                  `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	Parser        string                 `protobuf:"bytes,3,opt,name=parser,proto3" json:"parser,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProgressByParams) Reset() {
+	*x = ProgressByParams{}
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[43]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProgressByParams) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProgressByParams) ProtoMessage() {}
+
+func (x *ProgressByParams) ProtoReflect() protoreflect.Message {
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[43]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProgressByParams.ProtoReflect.Descriptor instead.
+func (*ProgressByParams) Descriptor() ([]byte, []int) {
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{43}
+}
+
+func (x *ProgressByParams) GetTransactionId() int64 {
+	if x != nil {
+		return x.TransactionId
+	}
+	return 0
+}
+
+func (x *ProgressByParams) GetDocumentId() int64 {
+	if x != nil {
+		return x.DocumentId
+	}
+	return 0
+}
+
+func (x *ProgressByParams) GetParser() string {
+	if x != nil {
+		return x.Parser
+	}
+	return ""
+}
+
+// progress -- request. type selects the lookup: "request_id" → use request_id
+// (mode a); "params" → use params to rebuild ruleSig → reqmap (mode b).
+type ParseFileResultRequest struct {
+	state         protoimpl.MessageState      `protogen:"open.v1"`
+	Data          *ParseFileResultRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ParseFileResultRequest) Reset() {
+	*x = ParseFileResultRequest{}
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[44]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ParseFileResultRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ParseFileResultRequest) ProtoMessage() {}
+
+func (x *ParseFileResultRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[44]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ParseFileResultRequest.ProtoReflect.Descriptor instead.
+func (*ParseFileResultRequest) Descriptor() ([]byte, []int) {
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{44}
+}
+
+func (x *ParseFileResultRequest) GetData() *ParseFileResultRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type ParseFileResultRequestData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RequestId     string                 `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"` // mode a
+	Params        *ProgressByParams      `protobuf:"bytes,2,opt,name=params,proto3" json:"params,omitempty"`                        // mode b
+	Type          string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`                            // request_id | params
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ParseFileResultRequestData) Reset() {
+	*x = ParseFileResultRequestData{}
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[45]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ParseFileResultRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ParseFileResultRequestData) ProtoMessage() {}
+
+func (x *ParseFileResultRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[45]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ParseFileResultRequestData.ProtoReflect.Descriptor instead.
+func (*ParseFileResultRequestData) Descriptor() ([]byte, []int) {
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{45}
+}
+
+func (x *ParseFileResultRequestData) GetRequestId() string {
+	if x != nil {
+		return x.RequestId
+	}
+	return ""
+}
+
+func (x *ParseFileResultRequestData) GetParams() *ProgressByParams {
+	if x != nil {
+		return x.Params
+	}
+	return nil
+}
+
+func (x *ParseFileResultRequestData) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+// progress -- response (no overall percent; frontend composes from stage + processed/total)
+type ParseFileResultResponse struct {
+	state         protoimpl.MessageState       `protogen:"open.v1"`
+	Data          *ParseFileResultResponseData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ParseFileResultResponse) Reset() {
+	*x = ParseFileResultResponse{}
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[46]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ParseFileResultResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ParseFileResultResponse) ProtoMessage() {}
+
+func (x *ParseFileResultResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[46]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ParseFileResultResponse.ProtoReflect.Descriptor instead.
+func (*ParseFileResultResponse) Descriptor() ([]byte, []int) {
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{46}
+}
+
+func (x *ParseFileResultResponse) GetData() *ParseFileResultResponseData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type ParseFileResultResponseData struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Status         string                 `protobuf:"bytes,1,opt,name=status,proto3" json:"status,omitempty"`                                        // Running | Finished | Failed
+	Stage          string                 `protobuf:"bytes,2,opt,name=stage,proto3" json:"stage,omitempty"`                                          // Collect | Extract | Arbitrate | Writeback
+	StageProcessed int32                  `protobuf:"varint,3,opt,name=stage_processed,json=stageProcessed,proto3" json:"stage_processed,omitempty"` // items done in current stage
+	StageTotal     int32                  `protobuf:"varint,4,opt,name=stage_total,json=stageTotal,proto3" json:"stage_total,omitempty"`             // items in current stage
+	Error          string                 `protobuf:"bytes,5,opt,name=error,proto3" json:"error,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *ParseFileResultResponseData) Reset() {
+	*x = ParseFileResultResponseData{}
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[47]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ParseFileResultResponseData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ParseFileResultResponseData) ProtoMessage() {}
+
+func (x *ParseFileResultResponseData) ProtoReflect() protoreflect.Message {
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[47]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ParseFileResultResponseData.ProtoReflect.Descriptor instead.
+func (*ParseFileResultResponseData) Descriptor() ([]byte, []int) {
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{47}
+}
+
+func (x *ParseFileResultResponseData) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *ParseFileResultResponseData) GetStage() string {
+	if x != nil {
+		return x.Stage
+	}
+	return ""
+}
+
+func (x *ParseFileResultResponseData) GetStageProcessed() int32 {
+	if x != nil {
+		return x.StageProcessed
+	}
+	return 0
+}
+
+func (x *ParseFileResultResponseData) GetStageTotal() int32 {
+	if x != nil {
+		return x.StageTotal
+	}
+	return 0
+}
+
+func (x *ParseFileResultResponseData) GetError() string {
+	if x != nil {
+		return x.Error
+	}
+	return ""
 }
 
 type BorrowerPropertyTransactionDocumentCreateRequest_DocumentCreateRequestData struct {
@@ -2073,7 +2814,7 @@ type BorrowerPropertyTransactionDocumentCreateRequest_DocumentCreateRequestData 
 
 func (x *BorrowerPropertyTransactionDocumentCreateRequest_DocumentCreateRequestData) Reset() {
 	*x = BorrowerPropertyTransactionDocumentCreateRequest_DocumentCreateRequestData{}
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[37]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2085,7 +2826,7 @@ func (x *BorrowerPropertyTransactionDocumentCreateRequest_DocumentCreateRequestD
 func (*BorrowerPropertyTransactionDocumentCreateRequest_DocumentCreateRequestData) ProtoMessage() {}
 
 func (x *BorrowerPropertyTransactionDocumentCreateRequest_DocumentCreateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[37]
+	mi := &file_borrower_borrower_property_transaction_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2098,7 +2839,7 @@ func (x *BorrowerPropertyTransactionDocumentCreateRequest_DocumentCreateRequestD
 
 // Deprecated: Use BorrowerPropertyTransactionDocumentCreateRequest_DocumentCreateRequestData.ProtoReflect.Descriptor instead.
 func (*BorrowerPropertyTransactionDocumentCreateRequest_DocumentCreateRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{34, 0}
+	return file_borrower_borrower_property_transaction_proto_rawDescGZIP(), []int{36, 0}
 }
 
 func (x *BorrowerPropertyTransactionDocumentCreateRequest_DocumentCreateRequestData) GetTransactionId() int64 {
@@ -2135,7 +2876,7 @@ const file_borrower_borrower_property_transaction_proto_rawDesc = "" +
 	")BorrowerPropertyTransactionDetailResponse\x12<\n" +
 	"\x04data\x18\x01 \x01(\v2(.proto.BorrowerPropertyTransactionEntityR\x04data\"v\n" +
 	"(BorrowerPropertyTransactionUpdateRequest\x12J\n" +
-	"\x04data\x18\x01 \x01(\v26.borrower.BorrowerPropertyTransactionUpdateRequestDataR\x04data\"\x97\x02\n" +
+	"\x04data\x18\x01 \x01(\v26.borrower.BorrowerPropertyTransactionUpdateRequestDataR\x04data\"\x8c\x05\n" +
 	",BorrowerPropertyTransactionUpdateRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\bcoe_date\x18\x02 \x01(\tR\acoeDate\x12'\n" +
@@ -2145,7 +2886,33 @@ const file_borrower_borrower_property_transaction_proto_rawDesc = "" +
 	"\rproperty_type\x18\x05 \x01(\tR\fpropertyType\x12\x0e\n" +
 	"\x02pm\x18\x06 \x01(\tR\x02pm\x12+\n" +
 	"\x11business_strategy\x18\a \x03(\tR\x10businessStrategy\x12\x12\n" +
-	"\x04note\x18\b \x01(\tR\x04note\"\x82\x01\n" +
+	"\x04note\x18\b \x01(\tR\x04note\x12!\n" +
+	"\ftitle_holder\x18\t \x01(\tR\vtitleHolder\x12#\n" +
+	"\rcontract_date\x18\n" +
+	" \x01(\tR\fcontractDate\x12 \n" +
+	"\femd_due_date\x18\v \x01(\tR\n" +
+	"emdDueDate\x128\n" +
+	"\x18contingency_removal_date\x18\f \x01(\tR\x16contingencyRemovalDate\x12\x0e\n" +
+	"\x02tc\x18\r \x01(\tR\x02tc\x12'\n" +
+	"\x0fcost_allocation\x18\x0e \x01(\tR\x0ecostAllocation\x12A\n" +
+	"\aescrows\x18\x0f \x03(\v2'.borrower.PropertyTransactionEscrowDataR\aescrows\x12S\n" +
+	"\bproperty\x18\x10 \x01(\v27.borrower.BorrowerPropertyTransactionPropertyEditEntityR\bproperty\"\xa2\x02\n" +
+	"\x1dPropertyTransactionEscrowData\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x0e\n" +
+	"\x02no\x18\x02 \x01(\tR\x02no\x12%\n" +
+	"\x0eescrow_company\x18\x03 \x01(\tR\rescrowCompany\x12!\n" +
+	"\fofficer_name\x18\x04 \x01(\tR\vofficerName\x12#\n" +
+	"\rofficer_phone\x18\x05 \x01(\tR\fofficerPhone\x12#\n" +
+	"\rofficer_email\x18\x06 \x01(\tR\fofficerEmail\x12M\n" +
+	"\tchecklist\x18\a \x01(\v2/.proto.PropertyTransactionEscrowChecklistEntityR\tchecklist\"\x80\x02\n" +
+	"-BorrowerPropertyTransactionPropertyEditEntity\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
+	"\x04unit\x18\x02 \x01(\x05R\x04unit\x12#\n" +
+	"\rproperty_type\x18\x03 \x01(\tR\fpropertyType\x12(\n" +
+	"\x10living_area_sqft\x18\x04 \x01(\x01R\x0elivingAreaSqft\x12\"\n" +
+	"\rlot_area_sqft\x18\x05 \x01(\x01R\vlotAreaSqft\x12\x1a\n" +
+	"\bbedrooms\x18\x06 \x01(\x05R\bbedrooms\x12\x1c\n" +
+	"\tbathrooms\x18\a \x01(\x05R\tbathrooms\"\x82\x01\n" +
 	".BorrowerPropertyTransactionSwitchStatusRequest\x12P\n" +
 	"\x04data\x18\x01 \x01(\v2<.borrower.BorrowerPropertyTransactionSwitchStatusRequestDataR\x04data\"\\\n" +
 	"2BorrowerPropertyTransactionSwitchStatusRequestData\x12\x0e\n" +
@@ -2264,9 +3031,44 @@ const file_borrower_borrower_property_transaction_proto_rawDesc = "" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x14\n" +
 	"\x05names\x18\x03 \x03(\tR\x05names\"^\n" +
 	"1BorrowerPropertyTransactionDocumentCreateResponse\x12)\n" +
-	"\x04data\x18\x01 \x03(\v2\x15.proto.DocumentEntityR\x04data\"^\n" +
+	"\x04data\x18\x01 \x03(\v2\x15.proto.DocumentEntityR\x04data\"}\n" +
 	"5BorrowerPropertyTransactionDocumentUploadFileResponse\x12%\n" +
-	"\x04data\x18\x01 \x03(\v2\x11.proto.FileEntityR\x04data2\x80\f\n" +
+	"\x04data\x18\x01 \x03(\v2\x11.proto.FileEntityR\x04data\x12\x1d\n" +
+	"\n" +
+	"request_id\x18\x02 \x01(\tR\trequestId\"F\n" +
+	"\x10ParseFileRequest\x122\n" +
+	"\x04data\x18\x01 \x01(\v2\x1e.borrower.ParseFileRequestDataR\x04data\"_\n" +
+	"\x14ParseFileRequestData\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
+	"\vdocument_id\x18\x02 \x01(\x03R\n" +
+	"documentId\x12\x16\n" +
+	"\x06parser\x18\x03 \x01(\tR\x06parser\"H\n" +
+	"\x11ParseFileResponse\x123\n" +
+	"\x04data\x18\x01 \x01(\v2\x1f.borrower.ParseFileResponseDataR\x04data\"6\n" +
+	"\x15ParseFileResponseData\x12\x1d\n" +
+	"\n" +
+	"request_id\x18\x01 \x01(\tR\trequestId\"r\n" +
+	"\x10ProgressByParams\x12%\n" +
+	"\x0etransaction_id\x18\x01 \x01(\x03R\rtransactionId\x12\x1f\n" +
+	"\vdocument_id\x18\x02 \x01(\x03R\n" +
+	"documentId\x12\x16\n" +
+	"\x06parser\x18\x03 \x01(\tR\x06parser\"R\n" +
+	"\x16ParseFileResultRequest\x128\n" +
+	"\x04data\x18\x01 \x01(\v2$.borrower.ParseFileResultRequestDataR\x04data\"\x83\x01\n" +
+	"\x1aParseFileResultRequestData\x12\x1d\n" +
+	"\n" +
+	"request_id\x18\x01 \x01(\tR\trequestId\x122\n" +
+	"\x06params\x18\x02 \x01(\v2\x1a.borrower.ProgressByParamsR\x06params\x12\x12\n" +
+	"\x04type\x18\x03 \x01(\tR\x04type\"T\n" +
+	"\x17ParseFileResultResponse\x129\n" +
+	"\x04data\x18\x01 \x01(\v2%.borrower.ParseFileResultResponseDataR\x04data\"\xab\x01\n" +
+	"\x1bParseFileResultResponseData\x12\x16\n" +
+	"\x06status\x18\x01 \x01(\tR\x06status\x12\x14\n" +
+	"\x05stage\x18\x02 \x01(\tR\x05stage\x12'\n" +
+	"\x0fstage_processed\x18\x03 \x01(\x05R\x0estageProcessed\x12\x1f\n" +
+	"\vstage_total\x18\x04 \x01(\x05R\n" +
+	"stageTotal\x12\x14\n" +
+	"\x05error\x18\x05 \x01(\tR\x05error2\x9e\r\n" +
 	"\x1bBorrowerPropertyTransaction\x12q\n" +
 	"\x06Create\x122.borrower.BorrowerPropertyTransactionCreateRequest\x1a3.borrower.BorrowerPropertyTransactionDetailResponse\x12S\n" +
 	"\x06Detail\x12\x14.proto.PathIdRequest\x1a3.borrower.BorrowerPropertyTransactionDetailResponse\x12q\n" +
@@ -2281,7 +3083,9 @@ const file_borrower_borrower_property_transaction_proto_rawDesc = "" +
 	"\x12UploadDocumentFile\x12>.borrower.BorrowerPropertyTransactionDocumentUploadFileRequest\x1a?.borrower.BorrowerPropertyTransactionDocumentUploadFileResponse\x12j\n" +
 	"\x12DeleteDocumentFile\x12>.borrower.BorrowerPropertyTransactionDocumentDeleteFileRequest\x1a\x14.proto.EmptyResponse\x12i\n" +
 	"\x0eOperationStats\x12*.borrower.TransactionOperationStatsRequest\x1a+.borrower.TransactionOperationStatsResponse\x12f\n" +
-	"\rOperationList\x12).borrower.TransactionOperationListRequest\x1a*.borrower.TransactionOperationListResponseB-Z+zeebee-backend/app/borrower/rpc/pb/borrowerb\x06proto3"
+	"\rOperationList\x12).borrower.TransactionOperationListRequest\x1a*.borrower.TransactionOperationListResponse\x12D\n" +
+	"\tParseFile\x12\x1a.borrower.ParseFileRequest\x1a\x1b.borrower.ParseFileResponse\x12V\n" +
+	"\x0fParseFileResult\x12 .borrower.ParseFileResultRequest\x1a!.borrower.ParseFileResultResponseB-Z+zeebee-backend/app/borrower/rpc/pb/borrowerb\x06proto3"
 
 var (
 	file_borrower_borrower_property_transaction_proto_rawDescOnce sync.Once
@@ -2295,116 +3099,140 @@ func file_borrower_borrower_property_transaction_proto_rawDescGZIP() []byte {
 	return file_borrower_borrower_property_transaction_proto_rawDescData
 }
 
-var file_borrower_borrower_property_transaction_proto_msgTypes = make([]protoimpl.MessageInfo, 38)
+var file_borrower_borrower_property_transaction_proto_msgTypes = make([]protoimpl.MessageInfo, 49)
 var file_borrower_borrower_property_transaction_proto_goTypes = []any{
 	(*BorrowerPropertyTransactionCreateRequest)(nil),                                   // 0: borrower.BorrowerPropertyTransactionCreateRequest
 	(*BorrowerPropertyTransactionCreateRequestData)(nil),                               // 1: borrower.BorrowerPropertyTransactionCreateRequestData
 	(*BorrowerPropertyTransactionDetailResponse)(nil),                                  // 2: borrower.BorrowerPropertyTransactionDetailResponse
 	(*BorrowerPropertyTransactionUpdateRequest)(nil),                                   // 3: borrower.BorrowerPropertyTransactionUpdateRequest
 	(*BorrowerPropertyTransactionUpdateRequestData)(nil),                               // 4: borrower.BorrowerPropertyTransactionUpdateRequestData
-	(*BorrowerPropertyTransactionSwitchStatusRequest)(nil),                             // 5: borrower.BorrowerPropertyTransactionSwitchStatusRequest
-	(*BorrowerPropertyTransactionSwitchStatusRequestData)(nil),                         // 6: borrower.BorrowerPropertyTransactionSwitchStatusRequestData
-	(*BorrowerPropertyTransactionAllResponse)(nil),                                     // 7: borrower.BorrowerPropertyTransactionAllResponse
-	(*BorrowerPropertyTransactionListByPropertyRequest)(nil),                           // 8: borrower.BorrowerPropertyTransactionListByPropertyRequest
-	(*BorrowerPropertyTransactionListByPropertyRequestData)(nil),                       // 9: borrower.BorrowerPropertyTransactionListByPropertyRequestData
-	(*BorrowerPropertyTransactionListByPropertyResponse)(nil),                          // 10: borrower.BorrowerPropertyTransactionListByPropertyResponse
-	(*BorrowerPropertyTransactionChecklistRequest)(nil),                                // 11: borrower.BorrowerPropertyTransactionChecklistRequest
-	(*BorrowerPropertyTransactionChecklistRequestData)(nil),                            // 12: borrower.BorrowerPropertyTransactionChecklistRequestData
-	(*BorrowerPropertyTransactionPageRequest)(nil),                                     // 13: borrower.BorrowerPropertyTransactionPageRequest
-	(*BorrowerPropertyTransactionPageRequestData)(nil),                                 // 14: borrower.BorrowerPropertyTransactionPageRequestData
-	(*BorrowerPropertyTransactionPageRequestFilter)(nil),                               // 15: borrower.BorrowerPropertyTransactionPageRequestFilter
-	(*BorrowerPropertyTransactionPageResponse)(nil),                                    // 16: borrower.BorrowerPropertyTransactionPageResponse
-	(*BorrowerPropertyTransactionPageResponseData)(nil),                                // 17: borrower.BorrowerPropertyTransactionPageResponseData
-	(*BorrowerPropertyTransactionPageEntity)(nil),                                      // 18: borrower.BorrowerPropertyTransactionPageEntity
-	(*BorrowerPropertyTransactionDocumentUploadFileRequest)(nil),                       // 19: borrower.BorrowerPropertyTransactionDocumentUploadFileRequest
-	(*FileUploadItem)(nil),                                                             // 20: borrower.FileUploadItem
-	(*BorrowerPropertyTransactionDocumentUploadFileRequestData)(nil),                   // 21: borrower.BorrowerPropertyTransactionDocumentUploadFileRequestData
-	(*BorrowerPropertyTransactionDocumentDeleteFileRequest)(nil),                       // 22: borrower.BorrowerPropertyTransactionDocumentDeleteFileRequest
-	(*BorrowerPropertyTransactionDocumentDeleteFileRequestData)(nil),                   // 23: borrower.BorrowerPropertyTransactionDocumentDeleteFileRequestData
-	(*TransactionOperationStatsRequest)(nil),                                           // 24: borrower.TransactionOperationStatsRequest
-	(*TransactionOperationStatsRequestData)(nil),                                       // 25: borrower.TransactionOperationStatsRequestData
-	(*TransactionOperationStatsResponse)(nil),                                          // 26: borrower.TransactionOperationStatsResponse
-	(*TransactionOperationStatsResponseData)(nil),                                      // 27: borrower.TransactionOperationStatsResponseData
-	(*OperationStatsItem)(nil),                                                         // 28: borrower.OperationStatsItem
-	(*TransactionOperationListRequest)(nil),                                            // 29: borrower.TransactionOperationListRequest
-	(*TransactionOperationListRequestData)(nil),                                        // 30: borrower.TransactionOperationListRequestData
-	(*TransactionOperationListResponse)(nil),                                           // 31: borrower.TransactionOperationListResponse
-	(*TransactionOperationListResponseData)(nil),                                       // 32: borrower.TransactionOperationListResponseData
-	(*OperationListItem)(nil),                                                          // 33: borrower.OperationListItem
-	(*BorrowerPropertyTransactionDocumentCreateRequest)(nil),                           // 34: borrower.BorrowerPropertyTransactionDocumentCreateRequest
-	(*BorrowerPropertyTransactionDocumentCreateResponse)(nil),                          // 35: borrower.BorrowerPropertyTransactionDocumentCreateResponse
-	(*BorrowerPropertyTransactionDocumentUploadFileResponse)(nil),                      // 36: borrower.BorrowerPropertyTransactionDocumentUploadFileResponse
-	(*BorrowerPropertyTransactionDocumentCreateRequest_DocumentCreateRequestData)(nil), // 37: borrower.BorrowerPropertyTransactionDocumentCreateRequest.DocumentCreateRequestData
-	(*proto.BorrowerPropertyTransactionEntity)(nil),                                    // 38: proto.BorrowerPropertyTransactionEntity
-	(*proto.BorrowerPropertyTransactionOptionEntity)(nil),                              // 39: proto.BorrowerPropertyTransactionOptionEntity
-	(*proto.CommonPageSorter)(nil),                                                     // 40: proto.CommonPageSorter
-	(*proto.AddressEntity)(nil),                                                        // 41: proto.AddressEntity
-	(*proto.DocumentEntity)(nil),                                                       // 42: proto.DocumentEntity
-	(*proto.FileEntity)(nil),                                                           // 43: proto.FileEntity
-	(*proto.PathIdRequest)(nil),                                                        // 44: proto.PathIdRequest
-	(*proto.EmptyRequest)(nil),                                                         // 45: proto.EmptyRequest
-	(*proto.EmptyResponse)(nil),                                                        // 46: proto.EmptyResponse
+	(*PropertyTransactionEscrowData)(nil),                                              // 5: borrower.PropertyTransactionEscrowData
+	(*BorrowerPropertyTransactionPropertyEditEntity)(nil),                              // 6: borrower.BorrowerPropertyTransactionPropertyEditEntity
+	(*BorrowerPropertyTransactionSwitchStatusRequest)(nil),                             // 7: borrower.BorrowerPropertyTransactionSwitchStatusRequest
+	(*BorrowerPropertyTransactionSwitchStatusRequestData)(nil),                         // 8: borrower.BorrowerPropertyTransactionSwitchStatusRequestData
+	(*BorrowerPropertyTransactionAllResponse)(nil),                                     // 9: borrower.BorrowerPropertyTransactionAllResponse
+	(*BorrowerPropertyTransactionListByPropertyRequest)(nil),                           // 10: borrower.BorrowerPropertyTransactionListByPropertyRequest
+	(*BorrowerPropertyTransactionListByPropertyRequestData)(nil),                       // 11: borrower.BorrowerPropertyTransactionListByPropertyRequestData
+	(*BorrowerPropertyTransactionListByPropertyResponse)(nil),                          // 12: borrower.BorrowerPropertyTransactionListByPropertyResponse
+	(*BorrowerPropertyTransactionChecklistRequest)(nil),                                // 13: borrower.BorrowerPropertyTransactionChecklistRequest
+	(*BorrowerPropertyTransactionChecklistRequestData)(nil),                            // 14: borrower.BorrowerPropertyTransactionChecklistRequestData
+	(*BorrowerPropertyTransactionPageRequest)(nil),                                     // 15: borrower.BorrowerPropertyTransactionPageRequest
+	(*BorrowerPropertyTransactionPageRequestData)(nil),                                 // 16: borrower.BorrowerPropertyTransactionPageRequestData
+	(*BorrowerPropertyTransactionPageRequestFilter)(nil),                               // 17: borrower.BorrowerPropertyTransactionPageRequestFilter
+	(*BorrowerPropertyTransactionPageResponse)(nil),                                    // 18: borrower.BorrowerPropertyTransactionPageResponse
+	(*BorrowerPropertyTransactionPageResponseData)(nil),                                // 19: borrower.BorrowerPropertyTransactionPageResponseData
+	(*BorrowerPropertyTransactionPageEntity)(nil),                                      // 20: borrower.BorrowerPropertyTransactionPageEntity
+	(*BorrowerPropertyTransactionDocumentUploadFileRequest)(nil),                       // 21: borrower.BorrowerPropertyTransactionDocumentUploadFileRequest
+	(*FileUploadItem)(nil),                                                             // 22: borrower.FileUploadItem
+	(*BorrowerPropertyTransactionDocumentUploadFileRequestData)(nil),                   // 23: borrower.BorrowerPropertyTransactionDocumentUploadFileRequestData
+	(*BorrowerPropertyTransactionDocumentDeleteFileRequest)(nil),                       // 24: borrower.BorrowerPropertyTransactionDocumentDeleteFileRequest
+	(*BorrowerPropertyTransactionDocumentDeleteFileRequestData)(nil),                   // 25: borrower.BorrowerPropertyTransactionDocumentDeleteFileRequestData
+	(*TransactionOperationStatsRequest)(nil),                                           // 26: borrower.TransactionOperationStatsRequest
+	(*TransactionOperationStatsRequestData)(nil),                                       // 27: borrower.TransactionOperationStatsRequestData
+	(*TransactionOperationStatsResponse)(nil),                                          // 28: borrower.TransactionOperationStatsResponse
+	(*TransactionOperationStatsResponseData)(nil),                                      // 29: borrower.TransactionOperationStatsResponseData
+	(*OperationStatsItem)(nil),                                                         // 30: borrower.OperationStatsItem
+	(*TransactionOperationListRequest)(nil),                                            // 31: borrower.TransactionOperationListRequest
+	(*TransactionOperationListRequestData)(nil),                                        // 32: borrower.TransactionOperationListRequestData
+	(*TransactionOperationListResponse)(nil),                                           // 33: borrower.TransactionOperationListResponse
+	(*TransactionOperationListResponseData)(nil),                                       // 34: borrower.TransactionOperationListResponseData
+	(*OperationListItem)(nil),                                                          // 35: borrower.OperationListItem
+	(*BorrowerPropertyTransactionDocumentCreateRequest)(nil),                           // 36: borrower.BorrowerPropertyTransactionDocumentCreateRequest
+	(*BorrowerPropertyTransactionDocumentCreateResponse)(nil),                          // 37: borrower.BorrowerPropertyTransactionDocumentCreateResponse
+	(*BorrowerPropertyTransactionDocumentUploadFileResponse)(nil),                      // 38: borrower.BorrowerPropertyTransactionDocumentUploadFileResponse
+	(*ParseFileRequest)(nil),                                                           // 39: borrower.ParseFileRequest
+	(*ParseFileRequestData)(nil),                                                       // 40: borrower.ParseFileRequestData
+	(*ParseFileResponse)(nil),                                                          // 41: borrower.ParseFileResponse
+	(*ParseFileResponseData)(nil),                                                      // 42: borrower.ParseFileResponseData
+	(*ProgressByParams)(nil),                                                           // 43: borrower.ProgressByParams
+	(*ParseFileResultRequest)(nil),                                                     // 44: borrower.ParseFileResultRequest
+	(*ParseFileResultRequestData)(nil),                                                 // 45: borrower.ParseFileResultRequestData
+	(*ParseFileResultResponse)(nil),                                                    // 46: borrower.ParseFileResultResponse
+	(*ParseFileResultResponseData)(nil),                                                // 47: borrower.ParseFileResultResponseData
+	(*BorrowerPropertyTransactionDocumentCreateRequest_DocumentCreateRequestData)(nil), // 48: borrower.BorrowerPropertyTransactionDocumentCreateRequest.DocumentCreateRequestData
+	(*proto.BorrowerPropertyTransactionEntity)(nil),                                    // 49: proto.BorrowerPropertyTransactionEntity
+	(*proto.PropertyTransactionEscrowChecklistEntity)(nil),                             // 50: proto.PropertyTransactionEscrowChecklistEntity
+	(*proto.BorrowerPropertyTransactionOptionEntity)(nil),                              // 51: proto.BorrowerPropertyTransactionOptionEntity
+	(*proto.CommonPageSorter)(nil),                                                     // 52: proto.CommonPageSorter
+	(*proto.AddressEntity)(nil),                                                        // 53: proto.AddressEntity
+	(*proto.DocumentEntity)(nil),                                                       // 54: proto.DocumentEntity
+	(*proto.FileEntity)(nil),                                                           // 55: proto.FileEntity
+	(*proto.PathIdRequest)(nil),                                                        // 56: proto.PathIdRequest
+	(*proto.EmptyRequest)(nil),                                                         // 57: proto.EmptyRequest
+	(*proto.EmptyResponse)(nil),                                                        // 58: proto.EmptyResponse
 }
 var file_borrower_borrower_property_transaction_proto_depIdxs = []int32{
 	1,  // 0: borrower.BorrowerPropertyTransactionCreateRequest.data:type_name -> borrower.BorrowerPropertyTransactionCreateRequestData
-	38, // 1: borrower.BorrowerPropertyTransactionDetailResponse.data:type_name -> proto.BorrowerPropertyTransactionEntity
+	49, // 1: borrower.BorrowerPropertyTransactionDetailResponse.data:type_name -> proto.BorrowerPropertyTransactionEntity
 	4,  // 2: borrower.BorrowerPropertyTransactionUpdateRequest.data:type_name -> borrower.BorrowerPropertyTransactionUpdateRequestData
-	6,  // 3: borrower.BorrowerPropertyTransactionSwitchStatusRequest.data:type_name -> borrower.BorrowerPropertyTransactionSwitchStatusRequestData
-	39, // 4: borrower.BorrowerPropertyTransactionAllResponse.data:type_name -> proto.BorrowerPropertyTransactionOptionEntity
-	9,  // 5: borrower.BorrowerPropertyTransactionListByPropertyRequest.data:type_name -> borrower.BorrowerPropertyTransactionListByPropertyRequestData
-	38, // 6: borrower.BorrowerPropertyTransactionListByPropertyResponse.data:type_name -> proto.BorrowerPropertyTransactionEntity
-	12, // 7: borrower.BorrowerPropertyTransactionChecklistRequest.data:type_name -> borrower.BorrowerPropertyTransactionChecklistRequestData
-	14, // 8: borrower.BorrowerPropertyTransactionPageRequest.data:type_name -> borrower.BorrowerPropertyTransactionPageRequestData
-	15, // 9: borrower.BorrowerPropertyTransactionPageRequestData.filter:type_name -> borrower.BorrowerPropertyTransactionPageRequestFilter
-	40, // 10: borrower.BorrowerPropertyTransactionPageRequestData.sorter:type_name -> proto.CommonPageSorter
-	17, // 11: borrower.BorrowerPropertyTransactionPageResponse.data:type_name -> borrower.BorrowerPropertyTransactionPageResponseData
-	18, // 12: borrower.BorrowerPropertyTransactionPageResponseData.list:type_name -> borrower.BorrowerPropertyTransactionPageEntity
-	41, // 13: borrower.BorrowerPropertyTransactionPageEntity.address:type_name -> proto.AddressEntity
-	21, // 14: borrower.BorrowerPropertyTransactionDocumentUploadFileRequest.data:type_name -> borrower.BorrowerPropertyTransactionDocumentUploadFileRequestData
-	20, // 15: borrower.BorrowerPropertyTransactionDocumentUploadFileRequestData.files:type_name -> borrower.FileUploadItem
-	23, // 16: borrower.BorrowerPropertyTransactionDocumentDeleteFileRequest.data:type_name -> borrower.BorrowerPropertyTransactionDocumentDeleteFileRequestData
-	25, // 17: borrower.TransactionOperationStatsRequest.data:type_name -> borrower.TransactionOperationStatsRequestData
-	27, // 18: borrower.TransactionOperationStatsResponse.data:type_name -> borrower.TransactionOperationStatsResponseData
-	28, // 19: borrower.TransactionOperationStatsResponseData.items:type_name -> borrower.OperationStatsItem
-	30, // 20: borrower.TransactionOperationListRequest.data:type_name -> borrower.TransactionOperationListRequestData
-	32, // 21: borrower.TransactionOperationListResponse.data:type_name -> borrower.TransactionOperationListResponseData
-	33, // 22: borrower.TransactionOperationListResponseData.list:type_name -> borrower.OperationListItem
-	37, // 23: borrower.BorrowerPropertyTransactionDocumentCreateRequest.data:type_name -> borrower.BorrowerPropertyTransactionDocumentCreateRequest.DocumentCreateRequestData
-	42, // 24: borrower.BorrowerPropertyTransactionDocumentCreateResponse.data:type_name -> proto.DocumentEntity
-	43, // 25: borrower.BorrowerPropertyTransactionDocumentUploadFileResponse.data:type_name -> proto.FileEntity
-	0,  // 26: borrower.BorrowerPropertyTransaction.Create:input_type -> borrower.BorrowerPropertyTransactionCreateRequest
-	44, // 27: borrower.BorrowerPropertyTransaction.Detail:input_type -> proto.PathIdRequest
-	3,  // 28: borrower.BorrowerPropertyTransaction.Update:input_type -> borrower.BorrowerPropertyTransactionUpdateRequest
-	44, // 29: borrower.BorrowerPropertyTransaction.Delete:input_type -> proto.PathIdRequest
-	5,  // 30: borrower.BorrowerPropertyTransaction.SwitchStatus:input_type -> borrower.BorrowerPropertyTransactionSwitchStatusRequest
-	45, // 31: borrower.BorrowerPropertyTransaction.All:input_type -> proto.EmptyRequest
-	8,  // 32: borrower.BorrowerPropertyTransaction.ListByBorrowerProperty:input_type -> borrower.BorrowerPropertyTransactionListByPropertyRequest
-	11, // 33: borrower.BorrowerPropertyTransaction.UpdateChecklist:input_type -> borrower.BorrowerPropertyTransactionChecklistRequest
-	13, // 34: borrower.BorrowerPropertyTransaction.Page:input_type -> borrower.BorrowerPropertyTransactionPageRequest
-	34, // 35: borrower.BorrowerPropertyTransaction.CreateDocument:input_type -> borrower.BorrowerPropertyTransactionDocumentCreateRequest
-	19, // 36: borrower.BorrowerPropertyTransaction.UploadDocumentFile:input_type -> borrower.BorrowerPropertyTransactionDocumentUploadFileRequest
-	22, // 37: borrower.BorrowerPropertyTransaction.DeleteDocumentFile:input_type -> borrower.BorrowerPropertyTransactionDocumentDeleteFileRequest
-	24, // 38: borrower.BorrowerPropertyTransaction.OperationStats:input_type -> borrower.TransactionOperationStatsRequest
-	29, // 39: borrower.BorrowerPropertyTransaction.OperationList:input_type -> borrower.TransactionOperationListRequest
-	2,  // 40: borrower.BorrowerPropertyTransaction.Create:output_type -> borrower.BorrowerPropertyTransactionDetailResponse
-	2,  // 41: borrower.BorrowerPropertyTransaction.Detail:output_type -> borrower.BorrowerPropertyTransactionDetailResponse
-	2,  // 42: borrower.BorrowerPropertyTransaction.Update:output_type -> borrower.BorrowerPropertyTransactionDetailResponse
-	46, // 43: borrower.BorrowerPropertyTransaction.Delete:output_type -> proto.EmptyResponse
-	46, // 44: borrower.BorrowerPropertyTransaction.SwitchStatus:output_type -> proto.EmptyResponse
-	7,  // 45: borrower.BorrowerPropertyTransaction.All:output_type -> borrower.BorrowerPropertyTransactionAllResponse
-	10, // 46: borrower.BorrowerPropertyTransaction.ListByBorrowerProperty:output_type -> borrower.BorrowerPropertyTransactionListByPropertyResponse
-	46, // 47: borrower.BorrowerPropertyTransaction.UpdateChecklist:output_type -> proto.EmptyResponse
-	16, // 48: borrower.BorrowerPropertyTransaction.Page:output_type -> borrower.BorrowerPropertyTransactionPageResponse
-	35, // 49: borrower.BorrowerPropertyTransaction.CreateDocument:output_type -> borrower.BorrowerPropertyTransactionDocumentCreateResponse
-	36, // 50: borrower.BorrowerPropertyTransaction.UploadDocumentFile:output_type -> borrower.BorrowerPropertyTransactionDocumentUploadFileResponse
-	46, // 51: borrower.BorrowerPropertyTransaction.DeleteDocumentFile:output_type -> proto.EmptyResponse
-	26, // 52: borrower.BorrowerPropertyTransaction.OperationStats:output_type -> borrower.TransactionOperationStatsResponse
-	31, // 53: borrower.BorrowerPropertyTransaction.OperationList:output_type -> borrower.TransactionOperationListResponse
-	40, // [40:54] is the sub-list for method output_type
-	26, // [26:40] is the sub-list for method input_type
-	26, // [26:26] is the sub-list for extension type_name
-	26, // [26:26] is the sub-list for extension extendee
-	0,  // [0:26] is the sub-list for field type_name
+	5,  // 3: borrower.BorrowerPropertyTransactionUpdateRequestData.escrows:type_name -> borrower.PropertyTransactionEscrowData
+	6,  // 4: borrower.BorrowerPropertyTransactionUpdateRequestData.property:type_name -> borrower.BorrowerPropertyTransactionPropertyEditEntity
+	50, // 5: borrower.PropertyTransactionEscrowData.checklist:type_name -> proto.PropertyTransactionEscrowChecklistEntity
+	8,  // 6: borrower.BorrowerPropertyTransactionSwitchStatusRequest.data:type_name -> borrower.BorrowerPropertyTransactionSwitchStatusRequestData
+	51, // 7: borrower.BorrowerPropertyTransactionAllResponse.data:type_name -> proto.BorrowerPropertyTransactionOptionEntity
+	11, // 8: borrower.BorrowerPropertyTransactionListByPropertyRequest.data:type_name -> borrower.BorrowerPropertyTransactionListByPropertyRequestData
+	49, // 9: borrower.BorrowerPropertyTransactionListByPropertyResponse.data:type_name -> proto.BorrowerPropertyTransactionEntity
+	14, // 10: borrower.BorrowerPropertyTransactionChecklistRequest.data:type_name -> borrower.BorrowerPropertyTransactionChecklistRequestData
+	16, // 11: borrower.BorrowerPropertyTransactionPageRequest.data:type_name -> borrower.BorrowerPropertyTransactionPageRequestData
+	17, // 12: borrower.BorrowerPropertyTransactionPageRequestData.filter:type_name -> borrower.BorrowerPropertyTransactionPageRequestFilter
+	52, // 13: borrower.BorrowerPropertyTransactionPageRequestData.sorter:type_name -> proto.CommonPageSorter
+	19, // 14: borrower.BorrowerPropertyTransactionPageResponse.data:type_name -> borrower.BorrowerPropertyTransactionPageResponseData
+	20, // 15: borrower.BorrowerPropertyTransactionPageResponseData.list:type_name -> borrower.BorrowerPropertyTransactionPageEntity
+	53, // 16: borrower.BorrowerPropertyTransactionPageEntity.address:type_name -> proto.AddressEntity
+	23, // 17: borrower.BorrowerPropertyTransactionDocumentUploadFileRequest.data:type_name -> borrower.BorrowerPropertyTransactionDocumentUploadFileRequestData
+	22, // 18: borrower.BorrowerPropertyTransactionDocumentUploadFileRequestData.files:type_name -> borrower.FileUploadItem
+	25, // 19: borrower.BorrowerPropertyTransactionDocumentDeleteFileRequest.data:type_name -> borrower.BorrowerPropertyTransactionDocumentDeleteFileRequestData
+	27, // 20: borrower.TransactionOperationStatsRequest.data:type_name -> borrower.TransactionOperationStatsRequestData
+	29, // 21: borrower.TransactionOperationStatsResponse.data:type_name -> borrower.TransactionOperationStatsResponseData
+	30, // 22: borrower.TransactionOperationStatsResponseData.items:type_name -> borrower.OperationStatsItem
+	32, // 23: borrower.TransactionOperationListRequest.data:type_name -> borrower.TransactionOperationListRequestData
+	34, // 24: borrower.TransactionOperationListResponse.data:type_name -> borrower.TransactionOperationListResponseData
+	35, // 25: borrower.TransactionOperationListResponseData.list:type_name -> borrower.OperationListItem
+	48, // 26: borrower.BorrowerPropertyTransactionDocumentCreateRequest.data:type_name -> borrower.BorrowerPropertyTransactionDocumentCreateRequest.DocumentCreateRequestData
+	54, // 27: borrower.BorrowerPropertyTransactionDocumentCreateResponse.data:type_name -> proto.DocumentEntity
+	55, // 28: borrower.BorrowerPropertyTransactionDocumentUploadFileResponse.data:type_name -> proto.FileEntity
+	40, // 29: borrower.ParseFileRequest.data:type_name -> borrower.ParseFileRequestData
+	42, // 30: borrower.ParseFileResponse.data:type_name -> borrower.ParseFileResponseData
+	45, // 31: borrower.ParseFileResultRequest.data:type_name -> borrower.ParseFileResultRequestData
+	43, // 32: borrower.ParseFileResultRequestData.params:type_name -> borrower.ProgressByParams
+	47, // 33: borrower.ParseFileResultResponse.data:type_name -> borrower.ParseFileResultResponseData
+	0,  // 34: borrower.BorrowerPropertyTransaction.Create:input_type -> borrower.BorrowerPropertyTransactionCreateRequest
+	56, // 35: borrower.BorrowerPropertyTransaction.Detail:input_type -> proto.PathIdRequest
+	3,  // 36: borrower.BorrowerPropertyTransaction.Update:input_type -> borrower.BorrowerPropertyTransactionUpdateRequest
+	56, // 37: borrower.BorrowerPropertyTransaction.Delete:input_type -> proto.PathIdRequest
+	7,  // 38: borrower.BorrowerPropertyTransaction.SwitchStatus:input_type -> borrower.BorrowerPropertyTransactionSwitchStatusRequest
+	57, // 39: borrower.BorrowerPropertyTransaction.All:input_type -> proto.EmptyRequest
+	10, // 40: borrower.BorrowerPropertyTransaction.ListByBorrowerProperty:input_type -> borrower.BorrowerPropertyTransactionListByPropertyRequest
+	13, // 41: borrower.BorrowerPropertyTransaction.UpdateChecklist:input_type -> borrower.BorrowerPropertyTransactionChecklistRequest
+	15, // 42: borrower.BorrowerPropertyTransaction.Page:input_type -> borrower.BorrowerPropertyTransactionPageRequest
+	36, // 43: borrower.BorrowerPropertyTransaction.CreateDocument:input_type -> borrower.BorrowerPropertyTransactionDocumentCreateRequest
+	21, // 44: borrower.BorrowerPropertyTransaction.UploadDocumentFile:input_type -> borrower.BorrowerPropertyTransactionDocumentUploadFileRequest
+	24, // 45: borrower.BorrowerPropertyTransaction.DeleteDocumentFile:input_type -> borrower.BorrowerPropertyTransactionDocumentDeleteFileRequest
+	26, // 46: borrower.BorrowerPropertyTransaction.OperationStats:input_type -> borrower.TransactionOperationStatsRequest
+	31, // 47: borrower.BorrowerPropertyTransaction.OperationList:input_type -> borrower.TransactionOperationListRequest
+	39, // 48: borrower.BorrowerPropertyTransaction.ParseFile:input_type -> borrower.ParseFileRequest
+	44, // 49: borrower.BorrowerPropertyTransaction.ParseFileResult:input_type -> borrower.ParseFileResultRequest
+	2,  // 50: borrower.BorrowerPropertyTransaction.Create:output_type -> borrower.BorrowerPropertyTransactionDetailResponse
+	2,  // 51: borrower.BorrowerPropertyTransaction.Detail:output_type -> borrower.BorrowerPropertyTransactionDetailResponse
+	2,  // 52: borrower.BorrowerPropertyTransaction.Update:output_type -> borrower.BorrowerPropertyTransactionDetailResponse
+	58, // 53: borrower.BorrowerPropertyTransaction.Delete:output_type -> proto.EmptyResponse
+	58, // 54: borrower.BorrowerPropertyTransaction.SwitchStatus:output_type -> proto.EmptyResponse
+	9,  // 55: borrower.BorrowerPropertyTransaction.All:output_type -> borrower.BorrowerPropertyTransactionAllResponse
+	12, // 56: borrower.BorrowerPropertyTransaction.ListByBorrowerProperty:output_type -> borrower.BorrowerPropertyTransactionListByPropertyResponse
+	58, // 57: borrower.BorrowerPropertyTransaction.UpdateChecklist:output_type -> proto.EmptyResponse
+	18, // 58: borrower.BorrowerPropertyTransaction.Page:output_type -> borrower.BorrowerPropertyTransactionPageResponse
+	37, // 59: borrower.BorrowerPropertyTransaction.CreateDocument:output_type -> borrower.BorrowerPropertyTransactionDocumentCreateResponse
+	38, // 60: borrower.BorrowerPropertyTransaction.UploadDocumentFile:output_type -> borrower.BorrowerPropertyTransactionDocumentUploadFileResponse
+	58, // 61: borrower.BorrowerPropertyTransaction.DeleteDocumentFile:output_type -> proto.EmptyResponse
+	28, // 62: borrower.BorrowerPropertyTransaction.OperationStats:output_type -> borrower.TransactionOperationStatsResponse
+	33, // 63: borrower.BorrowerPropertyTransaction.OperationList:output_type -> borrower.TransactionOperationListResponse
+	41, // 64: borrower.BorrowerPropertyTransaction.ParseFile:output_type -> borrower.ParseFileResponse
+	46, // 65: borrower.BorrowerPropertyTransaction.ParseFileResult:output_type -> borrower.ParseFileResultResponse
+	50, // [50:66] is the sub-list for method output_type
+	34, // [34:50] is the sub-list for method input_type
+	34, // [34:34] is the sub-list for extension type_name
+	34, // [34:34] is the sub-list for extension extendee
+	0,  // [0:34] is the sub-list for field type_name
 }
 
 func init() { file_borrower_borrower_property_transaction_proto_init() }
@@ -2418,7 +3246,7 @@ func file_borrower_borrower_property_transaction_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_borrower_borrower_property_transaction_proto_rawDesc), len(file_borrower_borrower_property_transaction_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   38,
+			NumMessages:   49,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

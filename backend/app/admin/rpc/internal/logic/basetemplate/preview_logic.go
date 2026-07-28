@@ -8,10 +8,6 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/data/dto"
-
-	"github.com/zeromicro/go-zero/core/logx"
-
-	"zeebee-backend/common/errorx"
 )
 
 type PreviewLogic struct {
@@ -31,13 +27,7 @@ func NewPreviewLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PreviewLo
 }
 
 func (l *PreviewLogic) Preview(in *admin.BaseTemplatePreviewRequest) (resp *admin.BaseTemplatePreviewResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
+
 	// Convert proto request to DTO
 	req, err := copierx.Trans[admin.BaseTemplatePreviewRequestData, dto.BaseTemplatePreviewDto](in.Data)
 	if err != nil {
