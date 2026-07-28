@@ -90,7 +90,7 @@ func buildPDF(t *testing.T, pages int) []byte {
 }
 
 func TestFirstPagesPDFShortReturnsNil(t *testing.T) {
-	got, err := FirstPagesPDF(bytes.NewReader(buildPDF(t, MaxRPAPages-1)), MaxRPAPages)
+	got, err := FirstPagesPDF(bytes.NewReader(buildPDF(t, 10-1)), 10)
 	if err != nil {
 		t.Fatalf("err: %v", err)
 	}
@@ -101,7 +101,7 @@ func TestFirstPagesPDFShortReturnsNil(t *testing.T) {
 
 func TestFirstPagesPDFSlicesToCap(t *testing.T) {
 	full := buildPDF(t, 11)
-	sliced, err := FirstPagesPDF(bytes.NewReader(full), MaxRPAPages)
+	sliced, err := FirstPagesPDF(bytes.NewReader(full), 10)
 	if err != nil {
 		t.Fatalf("slice: %v", err)
 	}
@@ -117,7 +117,7 @@ func TestFirstPagesPDFSlicesToCap(t *testing.T) {
 }
 
 func TestFirstPagesPDFBadInput(t *testing.T) {
-	if _, err := FirstPagesPDF(strings.NewReader("garbage"), MaxRPAPages); err == nil {
+	if _, err := FirstPagesPDF(strings.NewReader("garbage"), 10); err == nil {
 		t.Fatal("garbage must error")
 	}
 }

@@ -196,7 +196,7 @@ func (r *Runner) fetchAndParseLenders(ctx context.Context, cfg *Config) (*lender
 		return nil, errorx.New("lender discover llm client not configured")
 	}
 	userPrompt := buildUserPrompt(cfg)
-	jsonStr, err := r.LLM.Chat(ctx, systemPrompt, userPrompt)
+	jsonStr, _, err := r.LLM.Chat(ctx, systemPrompt, userPrompt)
 	if err != nil {
 		return nil, err
 	}

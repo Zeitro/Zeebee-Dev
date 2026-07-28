@@ -40,7 +40,7 @@ func (m *MockClient) Provider() string {
 }
 
 // Chat records the attachments from opts and returns the canned content.
-func (m *MockClient) Chat(_ context.Context, _, _ string, opts ...ChatOption) (string, error) {
+func (m *MockClient) Chat(_ context.Context, _, _ string, opts ...ChatOption) (string, Usage, error) {
 	cfg := &chatConfig{}
 	for _, o := range opts {
 		o(cfg)
@@ -50,12 +50,12 @@ func (m *MockClient) Chat(_ context.Context, _, _ string, opts ...ChatOption) (s
 	m.chatCalls++
 	m.mu.Unlock()
 	if m.ChatErr != nil {
-		return "", m.ChatErr
+		return "", Usage{}, m.ChatErr
 	}
 	if m.ChatContent != "" {
-		return m.ChatContent, nil
+		return m.ChatContent, Usage{}, nil
 	}
-	return "{}", nil
+	return "{}", Usage{}, nil
 }
 
 // UploadFile returns the configured provider + a distinct file id per call.
@@ -84,6 +84,40 @@ func (m *MockClient) DeleteFile(_ context.Context, fileID string) error {
 	defer m.mu.Unlock()
 	m.DeletedFiles = append(m.DeletedFiles, fileID)
 	return m.DeleteErr
+}
+
+// ListFiles returns one page of UploadedFiles, mirroring provider cursor paging:
+// afterID selects the start position (empty = first page), limit caps the page
+// size (<=0 = all remaining), hasMore is set when items remain beyond the page.
+// An afterID not present in UploadedFiles yields an empty page (cursor exhausted).
+func (m *MockClient) ListFiles(_ context.Context, limit int, afterID string) ([]FileInfo, bool, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	start := 0
+	if afterID != "" {
+		idx := -1
+		for i, id := range m.UploadedFiles {
+			if id == afterID {
+				idx = i
+				break
+			}
+		}
+		if idx < 0 {
+			return nil, false, nil
+		}
+		start = idx + 1
+	}
+	rest := m.UploadedFiles[start:]
+	hasMore := false
+	if limit > 0 && len(rest) > limit {
+		rest = rest[:limit]
+		hasMore = true
+	}
+	out := make([]FileInfo, len(rest))
+	for i, id := range rest {
+		out[i] = FileInfo{ID: id}
+	}
+	return out, hasMore, nil
 }
 
 // Attachments returns a copy of every attachment seen by Chat.

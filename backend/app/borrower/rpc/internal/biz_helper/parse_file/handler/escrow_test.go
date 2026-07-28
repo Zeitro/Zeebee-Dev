@@ -81,7 +81,7 @@ func setupEscrowDB(t *testing.T) *gorm.DB {
 // TestEscrowParseEndToEnd (T016): on_upload path — download → UploadFile → single
 // consolidated Chat([fileId]) → skip-empty upsert. Mock file-client; no provider.
 func TestEscrowParseEndToEnd(t *testing.T) {
-	srv := byteServer(t, []byte("wire instructions bytes"))
+	srv := byteServer(t, buildPDF(t, 1))
 	db := setupEscrowDB(t)
 	if err := db.Exec(`INSERT INTO property_transaction_escrows (id, borrower_property_transaction_id) VALUES (1, 7)`).Error; err != nil {
 		t.Fatalf("seed: %v", err)

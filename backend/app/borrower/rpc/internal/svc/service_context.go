@@ -54,10 +54,12 @@ func NewServiceContext(c config.RpcConf, logger logx.Logger) *ServiceContext {
 		panic(err)
 	}
 
-	// Shared LLM client (single instance) for file-parse extraction. Optional:
-	// if unconfigured the parse dispatcher no-ops rather than blocking startup.
+	// Shared LLM client (single instance) for file-parse extraction. c.Mode tags
+	// uploaded filenames (env-<mode>-) so files from several envs sharing one
+	// provider account are distinguishable in ListFiles. Optional: if unconfigured
+	// the parse dispatcher no-ops rather than blocking startup.
 	var llmClient llm.Client
-	if lc, lerr := llm.NewClient(c.LlmConf.Providers, c.LlmConf.TransactionFileParseConf); lerr != nil {
+	if lc, lerr := llm.NewClient(c.LlmConf.Providers, c.LlmConf.TransactionFileParseConf, c.Mode); lerr != nil {
 		logger.Errorf("init llm client for file parse failed (parse disabled): %v", lerr)
 	} else {
 		llmClient = lc

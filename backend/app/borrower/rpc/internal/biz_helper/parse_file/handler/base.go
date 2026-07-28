@@ -20,16 +20,16 @@ import (
 // extractSystemPrompt forces a single raw JSON object — no fences, no prose.
 const extractSystemPrompt = "You extract data from documents. Your entire response MUST be a single raw JSON object and nothing else: start with { and end with }. Do NOT wrap it in markdown code fences (no ```json, no ```). Do NOT add prose, explanations, backticks, or any text before or after the JSON."
 
-// base holds the parsing-only deps every handler shares. No progress manager,
-// no nodeId — the coordinator owns the run lifecycle.
+// base holds the parsing-only deps every handler shares; the coordinator owns
+// the run lifecycle.
 type base struct {
 	repos  *repo.AllRepos
 	logger logx.Logger
 	llm    llm.Client
 }
 
-// uploadOne slices PDFs over maxPages (0 = whole file) before upload. Cache hit
-// needs provider+MaxPages match so a cap change re-slices; one hold → RMW-safe.
+// uploadOne slices PDFs over maxPages (0 = whole) then uploads. Cache hit needs
+// provider+MaxPages match (a cap change re-slices); one hold → RMW-safe.
 func (b *base) uploadOne(ctx context.Context, rep Reporter, f collectedFile, maxPages int) (progress.FileCheckpoint, error) {
 	expected := maxPagesForFile(f.Name, maxPages)
 	if cached, ok := rep.Files(ctx)[f.FileId]; ok && cached.Provider == b.llm.Provider() && cached.MaxPages == expected {
@@ -62,7 +62,6 @@ func (b *base) uploadOne(ctx context.Context, rep Reporter, f collectedFile, max
 	return fc, nil
 }
 
-// maxPagesForFile: cap for PDFs, 0 for images (cap-agnostic).
 func maxPagesForFile(name string, cap int) int {
 	if file.IsPDF(name) {
 		return cap
@@ -71,7 +70,6 @@ func maxPagesForFile(name string, cap int) int {
 }
 
 // fileStream fetches one file's bytes + content type by extension (pdf/image).
-// Word/other types are excluded from parsing scope.
 func (b *base) fileStream(ctx context.Context, f collectedFile) (io.Reader, string, error) {
 	switch {
 	case file.IsPDF(f.Name):
@@ -91,24 +89,18 @@ func (b *base) fileStream(ctx context.Context, f collectedFile) (io.Reader, stri
 }
 
 // collectedFile is the flat file list handed from scope resolution to extraction
-// so extraction needs no extra DB round-trip per file. Type-agnostic — PDF today,
-// image/doc later; the handler's extract step dispatches per type.
+// (avoids a DB round-trip per file). Type-agnostic; extract dispatches per type.
 type collectedFile struct {
-	FileId int64
-	Url    string
-	Name   string
+	FileId int64 `json:"file_id"`
+	Url    string `json:"url"`
+	Name   string `json:"name"`
 }
 
-// resolveFiles picks the in-scope files for a parse per rule.Source (the SCOPE),
-// independent of how the run was triggered and of file type:
-//   - SingleFile / Files → the batch the dispatcher passed in (an upload batch;
-//     a manual trigger passes the document's current files);
-//   - Directory          → leaf files under the anchor document's subtree;
-//   - TagFiltered        → leaf files across the transaction tagged with every
-//     selector tag.
-//
-// Shared so every handler resolves scope the same way; a handler only owns its
-// extract + writeback (and dispatches per file type there).
+// resolveFiles picks in-scope files by rule.Source (SCOPE), independent of
+// trigger and file type:
+//   - SingleFile/Files → the passed batch (upload batch, or the doc's current files on manual);
+//   - Directory → leaf files under the anchor's subtree;
+//   - TagFiltered → leaves tagged with every selector tag (AND).
 func (b *base) resolveFiles(ctx context.Context, txId, docId int64, files []model.File, rule dto.DocumentTemplateFileParseRule) ([]collectedFile, error) {
 	switch rule.Source {
 	case constants.DocumentTemplateFileParseSourceTagFiltered:
@@ -124,7 +116,6 @@ func (b *base) resolveFiles(ctx context.Context, txId, docId int64, files []mode
 	}
 }
 
-// collectSubtree gathers leaf files under the anchor document's subtree.
 func (b *base) collectSubtree(ctx context.Context, txId, anchorId int64) ([]collectedFile, error) {
 	docs, err := b.loadTxDocs(ctx, txId)
 	if err != nil {
@@ -133,8 +124,7 @@ func (b *base) collectSubtree(ctx context.Context, txId, anchorId int64) ([]coll
 	return b.gatherFiles(ctx, CollectSubtree(docs, anchorId)), nil
 }
 
-// collectBySelector gathers leaf files across the transaction whose tags contain
-// every selector tag (AND); can span subtrees.
+// collectBySelector: leaves across the transaction tagged with every selector tag (AND).
 func (b *base) collectBySelector(ctx context.Context, txId int64, selector *dto.DocumentTemplateTagSelector) ([]collectedFile, error) {
 	docs, err := b.loadTxDocs(ctx, txId)
 	if err != nil {
@@ -143,9 +133,7 @@ func (b *base) collectBySelector(ctx context.Context, txId int64, selector *dto.
 	return b.gatherFiles(ctx, CollectBySelector(docs, selector)), nil
 }
 
-// gatherFiles loads each leaf's files, logging (not failing) on a per-document
-// load error. Type-agnostic — it returns every file; per-type handling is the
-// extract step's job.
+// gatherFiles loads each leaf's files, fail-soft per document. Type-agnostic.
 func (b *base) gatherFiles(ctx context.Context, leaves []*model.Document) []collectedFile {
 	var out []collectedFile
 	for _, d := range leaves {
@@ -161,7 +149,6 @@ func (b *base) gatherFiles(ctx context.Context, leaves []*model.Document) []coll
 	return out
 }
 
-// loadTxDocs returns all documents attached to the transaction's entity document.
 func (b *base) loadTxDocs(ctx context.Context, txId int64) ([]*model.Document, error) {
 	entDoc, err := b.repos.EntityDocumentRepo.GetByEntity(ctx, constants.EntityDocumentTypeBorrowerPropertyTransaction, txId)
 	if err != nil {

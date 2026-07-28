@@ -27,7 +27,7 @@ func TestMockClientUploadReturnsProviderAndID(t *testing.T) {
 
 func TestMockClientChatPassesAttachments(t *testing.T) {
 	m := &MockClient{ChatContent: `{"k":"v"}`}
-	got, err := m.Chat(context.Background(), "sys", "user",
+	got, _, err := m.Chat(context.Background(), "sys", "user",
 		WithAttachment(Attachment{FileID: "file-1", ContentType: "application/pdf"}),
 		WithAttachment(Attachment{Base64: "AAAA", ContentType: "image/png", Filename: "x.png"}),
 	)
@@ -40,7 +40,7 @@ func TestMockClientChatPassesAttachments(t *testing.T) {
 	assert.Equal(t, "AAAA", atts[1].Base64)
 
 	// no-attachment Chat still works (plain text path) and records nothing.
-	_, _ = m.Chat(context.Background(), "sys", "user")
+	_, _, _ = m.Chat(context.Background(), "sys", "user")
 	assert.Len(t, m.Attachments(), 2)
 }
 
@@ -48,6 +48,81 @@ func TestMockClientDeleteRecorded(t *testing.T) {
 	m := &MockClient{}
 	assert.NoError(t, m.DeleteFile(context.Background(), "file-9"))
 	assert.Equal(t, []string{"file-9"}, m.DeletedFiles)
+}
+
+func TestMockClientListFilesReflectsUploads(t *testing.T) {
+	m := &MockClient{}
+	_, _, _ = m.UploadFile(context.Background(), bytes.NewReader([]byte("a")), "a.pdf", "application/pdf")
+	_, _, _ = m.UploadFile(context.Background(), bytes.NewReader([]byte("b")), "b.pdf", "application/pdf")
+
+	got, _, err := m.ListFiles(context.Background(), 0, "")
+	assert.NoError(t, err)
+	assert.Len(t, got, 2)
+	assert.Equal(t, "file-1", got[0].ID)
+	assert.Equal(t, "file-2", got[1].ID)
+}
+
+func TestMockClientListFilesPaginates(t *testing.T) {
+	m := &MockClient{}
+	for range 5 {
+		_, _, _ = m.UploadFile(context.Background(), bytes.NewReader([]byte("x")), "f.pdf", "application/pdf")
+	}
+	ids := func(fs []FileInfo) []string {
+		out := make([]string, len(fs))
+		for i, f := range fs {
+			out[i] = f.ID
+		}
+		return out
+	}
+
+	// first page of 2
+	got, hasMore, err := m.ListFiles(context.Background(), 2, "")
+	assert.NoError(t, err)
+	assert.Equal(t, []string{"file-1", "file-2"}, ids(got))
+	assert.True(t, hasMore)
+
+	// next page, cursor = last id of prior page
+	got, hasMore, err = m.ListFiles(context.Background(), 2, "file-2")
+	assert.NoError(t, err)
+	assert.Equal(t, []string{"file-3", "file-4"}, ids(got))
+	assert.True(t, hasMore)
+
+	// final partial page, no more
+	got, hasMore, err = m.ListFiles(context.Background(), 2, "file-4")
+	assert.NoError(t, err)
+	assert.Equal(t, []string{"file-5"}, ids(got))
+	assert.False(t, hasMore)
+
+	// unknown cursor -> empty terminal page
+	got, hasMore, err = m.ListFiles(context.Background(), 2, "nope")
+	assert.NoError(t, err)
+	assert.Empty(t, got)
+	assert.False(t, hasMore)
+}
+
+func TestOpenAIListParams(t *testing.T) {
+	p := openAIListParams(50, "file-x")
+	assert.True(t, p.Limit.Valid())
+	assert.Equal(t, int64(50), p.Limit.Value)
+	assert.True(t, p.After.Valid())
+	assert.Equal(t, "file-x", p.After.Value)
+
+	// zeros/empty = provider default, no opts set
+	p = openAIListParams(0, "")
+	assert.False(t, p.Limit.Valid())
+	assert.False(t, p.After.Valid())
+}
+
+func TestClaudeListParams(t *testing.T) {
+	p := claudeListParams(50, "file-x")
+	assert.True(t, p.Limit.Valid())
+	assert.Equal(t, int64(50), p.Limit.Value)
+	assert.True(t, p.AfterID.Valid())
+	assert.Equal(t, "file-x", p.AfterID.Value)
+
+	p = claudeListParams(0, "")
+	assert.False(t, p.Limit.Valid())
+	assert.False(t, p.AfterID.Valid())
 }
 
 func TestClaudeBetaBlockMapsByKind(t *testing.T) {
@@ -86,20 +161,25 @@ func TestNewClient(t *testing.T) {
 		{Name: "claude", ApiKey: "k", BaseUrl: "https://api.anthropic.com"},
 	}
 
-	c, err := NewClient(providers, config.LlmBizConf{Provider: "openai", Model: "gpt-4o"})
+	c, err := NewClient(providers, config.LlmBizConf{Provider: "openai", Model: "gpt-4o"}, "")
 	assert.NoError(t, err)
 	assert.NotNil(t, c)
 
-	_, err = NewClient(providers, config.LlmBizConf{Provider: "claude", Model: "claude-3"})
+	_, err = NewClient(providers, config.LlmBizConf{Provider: "claude", Model: "claude-3"}, "")
 	assert.NoError(t, err)
 
 	// provider not in the configured list
-	_, err = NewClient(providers, config.LlmBizConf{Provider: "gemini", Model: "x"})
+	_, err = NewClient(providers, config.LlmBizConf{Provider: "gemini", Model: "x"}, "")
 	assert.Error(t, err)
 
 	// empty provider list
-	_, err = NewClient(nil, config.LlmBizConf{Provider: "openai", Model: "x"})
+	_, err = NewClient(nil, config.LlmBizConf{Provider: "openai", Model: "x"}, "")
 	assert.Error(t, err)
+}
+
+func TestEnvFilename(t *testing.T) {
+	assert.Equal(t, "a.pdf", EnvFilename("", "a.pdf"))            // empty env = untagged
+	assert.Equal(t, "env-dev-a.pdf", EnvFilename("dev", "a.pdf")) // tags for shared-account visibility
 }
 
 func TestOpenAIFirstContent(t *testing.T) {

@@ -3,6 +3,7 @@ ApiConf:
   Host: 0.0.0.0
   Port: 10200
   Timeout: 600000
+  Mode: pre
   Log:
     Stat: false
     ServiceName: admin.api
@@ -21,6 +22,7 @@ RpcConf:
   Name: admin.rpc
   ListenOn: 0.0.0.0:10201
   Timeout: 600000
+  Mode: pre
   Log:
     ServiceName: admin.rpc
     Stat: false
@@ -61,12 +63,12 @@ RpcConf:
     PreSigneUrlExpireSeconds: 60
   LlmConf:
     Providers:
-      - Name: claude
-        ApiKey: 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
-        BaseUrl: https://api.anthropic.com
+      - Name: openai
+        ApiKey: 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
+        BaseUrl: https://api.openai.com/v1
     LenderDiscoverConf:
-      Provider: claude
-      Model: claude-sonnet-4-5
+      Provider: openai
+      Model: gpt-5.4
       MaxTokens: 16384
       TimeoutSeconds: 480
   CasbinConf:
