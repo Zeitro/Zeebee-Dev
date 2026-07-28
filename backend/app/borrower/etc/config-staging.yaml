@@ -157,7 +157,7 @@ RpcConf:
   LlmConf:
     Providers:
       - Name: openai
-        ApiKey: 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
+        ApiKey: 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
         BaseUrl: https://api.openai.com/v1
     TransactionFileParseConf:
       Provider: openai
