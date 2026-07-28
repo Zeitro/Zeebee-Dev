@@ -18,6 +18,8 @@ import (
 	"zeebee-backend/domains/zeebee/repo"
 )
 
+const maxEscrowPages = 1
+
 // escrowFields is the extracted escrow row. Empty fields = absent, skipped on write-back.
 type escrowFields struct {
 	EscrowCompany string `json:"escrow_company"`
@@ -115,7 +117,7 @@ func (h *EscrowHandler) Parse(ctx context.Context, txId, docId int64, files []mo
 
 // parseEscrowFile uploads one file, runs the consolidated call, skip-empty upserts.
 func (h *EscrowHandler) parseEscrowFile(ctx context.Context, txId int64, rep Reporter, f collectedFile) error {
-	fc, err := h.uploadOne(ctx, rep, f, 0)
+	fc, err := h.uploadOne(ctx, rep, f, maxEscrowPages)
 	if err != nil {
 		return err
 	}

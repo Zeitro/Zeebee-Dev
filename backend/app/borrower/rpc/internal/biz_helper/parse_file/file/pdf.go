@@ -21,8 +21,6 @@ import (
 const (
 	// maxPDFBytes caps a downloaded file at 10 MB.
 	maxPDFBytes = 10 * 1024 * 1024
-	// MaxRPAPages: leading pages of each RPA PDF uploaded to provider. Cost cap, rpa-only.
-	MaxRPAPages = 10
 )
 
 // wazero WebAssembly: no CGO, no libpdfium. CGO_ENABLED=0 alpine build unchanged.

@@ -19,6 +19,7 @@ import (
 	"zeebee-backend/domains/zeebee/repo"
 )
 
+const maxRPAPages = 10
 // rpaFields: 5 contract fields. Dates MM/DD/YYYY ("" absent); amounts float (0 absent).
 type rpaFields struct {
 	PurchaseAmount         float64 `json:"purchase_amount"`
@@ -230,7 +231,7 @@ func (h *RPAHandler) extractStage(ctx context.Context, rep Reporter, files []col
 		if !file.IsPDF(f.Name) && !file.IsImage(f.Name) {
 			continue // Word/other excluded
 		}
-		fc, err := h.uploadOne(ctx, rep, f, file.MaxRPAPages)
+		fc, err := h.uploadOne(ctx, rep, f, maxRPAPages)
 		if err != nil {
 			h.logger.WithContext(ctx).WithFields(
 				logx.Field("file", f.Name),

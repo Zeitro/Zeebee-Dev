@@ -13,7 +13,6 @@ import (
 	"github.com/signintech/gopdf"
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file/file"
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file/progress"
 	"zeebee-backend/common/llm"
 	"zeebee-backend/domains/zeebee/constants"
@@ -301,21 +300,21 @@ func TestUploadOneOpenAIProviderSlices(t *testing.T) {
 	b := &base{logger: logx.WithContext(context.Background()), llm: mock}
 	rep := newMemReporter()
 
-	fc, err := b.uploadOne(context.Background(), rep, collectedFile{FileId: 1, Name: "big.pdf", Url: srv.URL}, file.MaxRPAPages)
+	fc, err := b.uploadOne(context.Background(), rep, collectedFile{FileId: 1, Name: "big.pdf", Url: srv.URL}, maxRPAPages)
 	if err != nil {
 		t.Fatalf("uploadOne: %v", err)
 	}
 	if fc.Provider != "openai" {
 		t.Errorf("Provider = %s, want openai", fc.Provider)
 	}
-	if fc.MaxPages != file.MaxRPAPages {
-		t.Errorf("MaxPages = %d, want %d", fc.MaxPages, file.MaxRPAPages)
+	if fc.MaxPages != maxRPAPages {
+		t.Errorf("MaxPages = %d, want %d", fc.MaxPages, maxRPAPages)
 	}
 	if len(mock.UploadedFiles) != 1 {
 		t.Fatalf("want 1 sliced upload, got %v", mock.UploadedFiles)
 	}
 	// cached now → second call reuses (same provider + cap), no re-upload.
-	if _, err := b.uploadOne(context.Background(), rep, collectedFile{FileId: 1, Name: "big.pdf"}, file.MaxRPAPages); err != nil {
+	if _, err := b.uploadOne(context.Background(), rep, collectedFile{FileId: 1, Name: "big.pdf"}, maxRPAPages); err != nil {
 		t.Fatalf("reuse: %v", err)
 	}
 	if len(mock.UploadedFiles) != 1 {
