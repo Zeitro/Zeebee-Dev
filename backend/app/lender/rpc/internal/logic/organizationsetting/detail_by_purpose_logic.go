@@ -10,8 +10,6 @@ import (
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/common/errorx"
 )
 
@@ -32,13 +30,7 @@ func NewDetailByPurposeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *D
 }
 
 func (l *DetailByPurposeLogic) DetailByPurpose(in *lender.OrganizationSettingDetailByPurposeRequest) (resp *lender.OrganizationSettingDetailResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
+
 	if in.Data == nil {
 		return nil, errorx.New("data is required")
 	}

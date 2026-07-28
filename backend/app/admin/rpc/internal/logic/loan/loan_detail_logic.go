@@ -12,10 +12,6 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/proto"
-
-	"github.com/zeromicro/go-zero/core/logx"
-
-	"zeebee-backend/common/errorx"
 )
 
 type LoanDetailLogic struct {
@@ -31,13 +27,6 @@ func NewLoanDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoanDe
 }
 
 func (l *LoanDetailLogic) LoanDetail(in *proto.IdRequest) (resp *admin.LoanDetailResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
 
 	loan, err := l.svcCtx.LoanRepo.Detail(l.ctx, in.Data, true)
 	if err != nil {

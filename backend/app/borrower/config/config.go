@@ -49,6 +49,7 @@ type RpcConf struct {
 	TemplateConf                 map[string]TemplateConf
 	CasbinConf                   CasbinConf
 	CronTaskConf                 []CronTaskConf
+	LlmConf                      LlmConf
 }
 
 type DbConf struct {
@@ -157,4 +158,12 @@ type CasbinEventTopic struct {
 type CronTaskConf struct {
 	Name     string `json:"name"`
 	Schedule string `json:"schedule"`
+}
+
+type LlmConf struct {
+	config.LlmConf
+
+	// TransactionFileParseConf: Provider/Model must support file upload + multimodal
+	// (file_id reference). Switching Provider invalidates uploaded ids → resume re-uploads.
+	TransactionFileParseConf config.LlmBizConf
 }

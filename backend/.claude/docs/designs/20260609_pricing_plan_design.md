@@ -1,8 +1,9 @@
-# 套餐管理技术方法
+# 套餐管理 方案设计
+> 来源：tasks/20260609_pricing_plan.md（重组为规范设计）
 
-## 背景与目标
+## 1. 背景与目标
 
-### 背景
+### 1.1 业务背景
 
 现有 SaaS 系统包含 Borrower / Lender / Admin 三端，已有角色与资源权限管理。为提升组织管理和产品灵活性，需要新增 套餐管理模块，实现：
 
@@ -12,14 +13,18 @@
 4. 权限同步：套餐或订阅变更后及时通知各端，保证权限一致性。
 5. 自动化支付与试用期支持：支持0元试用策略，自动切换组织状态为 Trial。
 
-### 目标
+### 1.2 目标
 
 1. 为 SaaS 系统增加 套餐与订阅管理能力。
 2. 保证权限管理 实时、可控且与角色权限交集计算。
 3. 通过 Redis + Casbin 高效管理权限。
 4. 支持自动/手动订阅续费(目前未接入支付接口，仅支持 0元试用，续期为admin端手动操作)。
 
-## 技术架构与功能架构
+### 1.3 范围边界
+
+（本设计未涉及）
+
+## 2. 总体方案
 
 ### 技术架构
 
@@ -69,7 +74,19 @@
     - 资源树获取（菜单/按钮）。
     - 套餐限制范围内返回用户可访问资源。
 
-## entity 关系
+### 模块划分
+
+- 套餐管理服务 (Pricing Plan)
+- 订阅管理服务 (Subscription)
+- 资源管理服务 (Resource)
+
+### 核心决策
+
+（本设计未涉及）
+
+## 3. 数据模型
+
+### entity 关系
 
 ```plantuml
 @startuml
@@ -140,7 +157,7 @@ pricing_plan_policies "1" *--o{ organization_subscriptions
 * is_auto_renew 标识订阅是否自动续费。
 * 用户权限最终来源 = 角色资源 ∩ 套餐资源。
 
-## 数据库设计
+### 数据库表结构
 
 ```sql
 -- pricing_plans
@@ -254,7 +271,7 @@ COMMENT
 ON COLUMN "public"."organization_subscriptions"."status" IS 'Trailing,Active,Expiring,Expired,Suspended';
 ```
 
-## 接口设计与变更
+## 4. 接口设计
 
 ### pricing plan
 
@@ -308,7 +325,7 @@ ON COLUMN "public"."organization_subscriptions"."status" IS 'Trailing,Active,Exp
 
 - post /api/v1/organization/lender 创建lender组织
 
-## 核心流程
+## 5. 核心流程
 
 > - pricing plan 是订阅的计费计划，分为标准版与定制版，付费方式分为月付，季付，年付。每个plan都可以自定义付费方式，但是同一种付费方式只能有一种，比如说只能有一个月付的付费方式
 > - pricing plan 的属性有：名称，副标题，状态，trial_days，排序，是否公开，类型，付费方式，在同一个type内名称唯一，编辑时名称不可修改，删除时需要判断当前的plan都已经过期，没有可用的plan
@@ -333,3 +350,11 @@ ON COLUMN "public"."organization_subscriptions"."status" IS 'Trailing,Active,Exp
 **用户菜单获取**
 
 * 限制在套餐范围内的资源。
+
+## 6. 风险与权衡
+
+（本设计未涉及）
+
+## 7. 实现要点 / 测试
+
+（本设计未涉及）

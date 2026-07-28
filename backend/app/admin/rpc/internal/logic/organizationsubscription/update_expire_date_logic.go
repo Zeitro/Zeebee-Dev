@@ -3,8 +3,6 @@ package organizationsubscriptionlogic
 import (
 	"context"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
@@ -32,13 +30,6 @@ func NewUpdateExpireDateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *UpdateExpireDateLogic) UpdateExpireDate(in *admin.OrganizationSubscriptionUpdateExpireDateRequest) (resp *proto.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
 
 	input, err := copierx.Trans[admin.OrganizationSubscriptionUpdateExpireDateRequestData, dto.OrganizationSubscriptionUpdateExpireDateRequestDto](in.Data, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {

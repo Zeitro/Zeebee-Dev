@@ -1,7 +1,7 @@
 # Zeebee Backend Architecture
 
 > **必读文档** — 开始开发前必须理解本文档内容。
-> 技术栈版本、服务端口详见 `.specify/memory/constitution.md` §架构治理。
+> 技术栈版本详见 `CLAUDE.md` §技术栈；服务端口见本文 §服务矩阵；代码风格见 `.specify/memory/constitution.md`。
 
 ## 架构概览
 
@@ -36,12 +36,12 @@ Client (Web/Mobile)
 
 ## 服务矩阵
 
-| 服务 | HTTP | RPC | 职责 | 规模 | 备注 |
-|------|------|-----|------|------|------|
-| borrower | 10000 | 10001 | 借款方操作（实体、房产、贷款、申请） | ~68k LoC | API/RPC 双层 |
-| lender | 11000 | 11001 | 贷款方操作（审核、文档、批准） | ~36k LoC | API/RPC 双层 |
-| admin | 12000 | 12001 | 管理后台（组织、模板、权限、定价计划） | ~43k LoC | API/RPC 双层 |
-| pdf_generator | 13000 | — | PDF 生成（Chromedp） | ~1k LoC | 独立 cmd 程序 |
+| 服务 | HTTP | RPC | 职责 | 备注 |
+|------|------|-----|------|------|
+| borrower | 10000 | 10001 | 借款方操作（实体、房产、贷款、申请） | API/RPC 双层 |
+| lender | 11000 | 11001 | 贷款方操作（审核、文档、批准） | API/RPC 双层 |
+| admin | 12000 | 12001 | 管理后台（组织、模板、权限、定价计划） | API/RPC 双层 |
+| pdf_generator | 13000 | — | PDF 生成（Chromedp） | 独立 cmd 程序 |
 
 gRPC 服务发现：API 配置 `RpcConf.Endpoints` 直连 RPC 端口（`NonBlock: true`）。Etcd 在 dev 配置中默认注释关闭。
 
@@ -182,10 +182,10 @@ API logic 标准模式：`types → copierx.Trans → pb Request → RPC 调用 
 
 ```
 domains/zeebee/
-├── model/                    # GORM 数据模型（38 个）
-├── repo/                     # Repository 数据访问（38 个 + provider.go DI）
+├── model/                    # GORM 数据模型
+├── repo/                     # Repository 数据访问（+ provider.go DI 容器）
 ├── logic/                    # 共享业务逻辑（*Logic，RPC 经 baseLogic 调用）
-├── data/dto/                 # 领域 DTO（RPC↔repo 数据契约，34 个）
+├── data/dto/                 # 领域 DTO（RPC↔repo 数据契约）
 ├── constants/                # 业务常量 + Redis key 格式
 ├── auth/                     # 认证与 RBAC
 ├── drive/                    # Drive / Google Drive 集成
@@ -196,33 +196,9 @@ domains/zeebee/
 └── zeitro/                   # Zeitro 特定逻辑
 ```
 
-### common/ — 通用组件（22 包）
+### common/ — 通用组件
 
-```
-common/
-├── aws_s3/                   # AWS S3 文件存储
-├── conforming_loan_limit/    # 贷款限额计算
-├── copierx/                  # 类型转换（Trans）
-├── cron/                     # 定时任务引擎
-├── email/                    # 邮件工具
-├── enums/                    # 枚举定义
-├── errorx/                   # 错误处理（Wrap/WithStack/New）
-├── gormx/                    # 数据库操作（泛型 BaseRepo）
-├── limiter/                  # 限流
-├── mapx/                     # Map 工具
-├── preapproval_engine/       # 预审批规则引擎
-├── rbac/                     # 角色权限
-├── redisx/                   # Redis 客户端
-├── response/                 # 统一 HTTP 响应格式
-├── routex/                   # 路由工具
-├── stringx/                  # 字符串格式化
-├── swagger/                  # Swagger 文档
-├── timex/                    # 时间解析与格式化（Duration ↔ String）
-├── types/                    # 通用类型
-├── utils/                    # JWT / 工具
-├── uuid/                     # UUID 生成
-└── validator/                # 数据验证
-```
+通用工具包（copierx、errorx、gormx、validator 等）。**完整清单见 [INDEX.md](../INDEX.md) §通用组件**，此处不重复维护。
 
 ### 其他目录
 

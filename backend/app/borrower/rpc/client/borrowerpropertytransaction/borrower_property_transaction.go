@@ -31,6 +31,10 @@ type (
 	BorrowerPropertyTransactionPageResponse               = borrower.BorrowerPropertyTransactionPageResponse
 	BorrowerPropertyTransactionSwitchStatusRequest        = borrower.BorrowerPropertyTransactionSwitchStatusRequest
 	BorrowerPropertyTransactionUpdateRequest              = borrower.BorrowerPropertyTransactionUpdateRequest
+	ParseFileRequest                                      = borrower.ParseFileRequest
+	ParseFileResponse                                     = borrower.ParseFileResponse
+	ParseFileResultRequest                                = borrower.ParseFileResultRequest
+	ParseFileResultResponse                               = borrower.ParseFileResultResponse
 	TransactionOperationListRequest                       = borrower.TransactionOperationListRequest
 	TransactionOperationListResponse                      = borrower.TransactionOperationListResponse
 	TransactionOperationStatsRequest                      = borrower.TransactionOperationStatsRequest
@@ -51,6 +55,8 @@ type (
 		DeleteDocumentFile(ctx context.Context, in *BorrowerPropertyTransactionDocumentDeleteFileRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 		OperationStats(ctx context.Context, in *TransactionOperationStatsRequest, opts ...grpc.CallOption) (*TransactionOperationStatsResponse, error)
 		OperationList(ctx context.Context, in *TransactionOperationListRequest, opts ...grpc.CallOption) (*TransactionOperationListResponse, error)
+		ParseFile(ctx context.Context, in *ParseFileRequest, opts ...grpc.CallOption) (*ParseFileResponse, error)
+		ParseFileResult(ctx context.Context, in *ParseFileResultRequest, opts ...grpc.CallOption) (*ParseFileResultResponse, error)
 	}
 
 	defaultBorrowerPropertyTransaction struct {
@@ -132,4 +138,14 @@ func (m *defaultBorrowerPropertyTransaction) OperationStats(ctx context.Context,
 func (m *defaultBorrowerPropertyTransaction) OperationList(ctx context.Context, in *TransactionOperationListRequest, opts ...grpc.CallOption) (*TransactionOperationListResponse, error) {
 	client := borrower.NewBorrowerPropertyTransactionClient(m.cli.Conn())
 	return client.OperationList(ctx, in, opts...)
+}
+
+func (m *defaultBorrowerPropertyTransaction) ParseFile(ctx context.Context, in *ParseFileRequest, opts ...grpc.CallOption) (*ParseFileResponse, error) {
+	client := borrower.NewBorrowerPropertyTransactionClient(m.cli.Conn())
+	return client.ParseFile(ctx, in, opts...)
+}
+
+func (m *defaultBorrowerPropertyTransaction) ParseFileResult(ctx context.Context, in *ParseFileResultRequest, opts ...grpc.CallOption) (*ParseFileResultResponse, error) {
+	client := borrower.NewBorrowerPropertyTransactionClient(m.cli.Conn())
+	return client.ParseFileResult(ctx, in, opts...)
 }

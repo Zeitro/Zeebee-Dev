@@ -11,8 +11,6 @@ import (
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/proto"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type ListByBorrowerPropertyLogic struct {
@@ -32,14 +30,6 @@ func NewListByBorrowerPropertyLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 func (l *ListByBorrowerPropertyLogic) ListByBorrowerProperty(in *borrower.BorrowerPropertyTransactionListByPropertyRequest) (resp *borrower.BorrowerPropertyTransactionListByPropertyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
-
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err

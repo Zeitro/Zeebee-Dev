@@ -39,13 +39,6 @@ func NewPreApprovalLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *P
 }
 
 func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalRequest) (resp *borrower.LoanPreApprovalResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
 
 	if in.Data.Property == nil || in.Data.Property.Address == nil {
 		return nil, errorx.New("Invalid property address")
