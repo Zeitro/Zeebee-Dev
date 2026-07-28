@@ -2,6 +2,7 @@ ApiConf:
   Name: borrower.api
   Host: 0.0.0.0
   Port: 10000
+  Mode: pre
   Timeout: 10000
   Log:
     Stat: false
@@ -20,7 +21,7 @@ ApiConf:
 RpcConf:
   Name: borrower.rpc
   ListenOn: 0.0.0.0:10001
-  Mode: dev
+  Mode: pre
   Timeout: 10000
   Log:
     Stat: false

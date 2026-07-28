@@ -86,6 +86,40 @@ func (m *MockClient) DeleteFile(_ context.Context, fileID string) error {
 	return m.DeleteErr
 }
 
+// ListFiles returns one page of UploadedFiles, mirroring provider cursor paging:
+// afterID selects the start position (empty = first page), limit caps the page
+// size (<=0 = all remaining), hasMore is set when items remain beyond the page.
+// An afterID not present in UploadedFiles yields an empty page (cursor exhausted).
+func (m *MockClient) ListFiles(_ context.Context, limit int, afterID string) ([]FileInfo, bool, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	start := 0
+	if afterID != "" {
+		idx := -1
+		for i, id := range m.UploadedFiles {
+			if id == afterID {
+				idx = i
+				break
+			}
+		}
+		if idx < 0 {
+			return nil, false, nil
+		}
+		start = idx + 1
+	}
+	rest := m.UploadedFiles[start:]
+	hasMore := false
+	if limit > 0 && len(rest) > limit {
+		rest = rest[:limit]
+		hasMore = true
+	}
+	out := make([]FileInfo, len(rest))
+	for i, id := range rest {
+		out[i] = FileInfo{ID: id}
+	}
+	return out, hasMore, nil
+}
+
 // Attachments returns a copy of every attachment seen by Chat.
 func (m *MockClient) Attachments() []Attachment {
 	m.mu.Lock()

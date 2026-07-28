@@ -2,6 +2,7 @@ ApiConf:
   Name: admin.api
   Host: 0.0.0.0
   Port: 10200
+  Mode: pro
   Timeout: 600000
   Log:
     Stat: false
@@ -21,6 +22,7 @@ RpcConf:
   Name: admin.rpc
   ListenOn: 0.0.0.0:10201
   Timeout: 600000
+  Mode: pro
   Log:
     ServiceName: admin.rpc
     Stat: false

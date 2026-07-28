@@ -8,6 +8,7 @@ import (
 
 	"github.com/anthropics/anthropic-sdk-go"
 	"github.com/anthropics/anthropic-sdk-go/option"
+	"github.com/anthropics/anthropic-sdk-go/packages/param"
 
 	"zeebee-backend/domains/zeebee/config"
 )
@@ -18,20 +19,22 @@ type claudeClient struct {
 	client    anthropic.Client
 	model     anthropic.Model
 	maxTokens int64
+	env       string // tags uploaded filenames so shared-account files are distinguishable
 }
 
-func newClaudeClient(p *config.LlmProvider, biz config.LlmBizConf) *claudeClient {
+func newClaudeClient(p *config.LlmProvider, conf config.LlmBizConf, env string) *claudeClient {
 	opts := []option.RequestOption{
 		option.WithAPIKey(p.ApiKey),
-		option.WithRequestTimeout(timeoutOf(biz)),
+		option.WithRequestTimeout(timeoutOf(conf)),
 	}
 	if base := strings.TrimRight(p.BaseUrl, "/"); base != "" {
 		opts = append(opts, option.WithBaseURL(base))
 	}
 	return &claudeClient{
 		client:    anthropic.NewClient(opts...),
-		model:     biz.Model,
-		maxTokens: maxTokensOf(biz),
+		model:     conf.Model,
+		maxTokens: maxTokensOf(conf),
+		env:       env,
 	}
 }
 func (c *claudeClient) Provider() string { return claudeProvider }
@@ -120,9 +123,12 @@ func claudeBetaBlock(a Attachment) anthropic.BetaContentBlockParamUnion {
 }
 
 // UploadFile stores a binary via the beta Files API; Chat references the id later.
+// The reader is wrapped in namedReader so apiform sets the multipart filename —
+// otherwise claude stores a generic name and the env tag (and any caller name) is lost.
 func (c *claudeClient) UploadFile(ctx context.Context, reader io.Reader, filename, contentType string) (string, string, error) {
-	_ = contentType // claude infers type from the uploaded filename/bytes
-	resp, err := c.client.Beta.Files.Upload(ctx, anthropic.BetaFileUploadParams{File: reader})
+	resp, err := c.client.Beta.Files.Upload(ctx, anthropic.BetaFileUploadParams{
+		File: &namedReader{Reader: reader, filename: EnvFilename(c.env, filename), contentType: contentType},
+	})
 	if err != nil {
 		return "", "", err
 	}
@@ -132,6 +138,24 @@ func (c *claudeClient) UploadFile(ctx context.Context, reader io.Reader, filenam
 func (c *claudeClient) DeleteFile(ctx context.Context, fileID string) error {
 	_, err := c.client.Beta.Files.Delete(ctx, fileID, anthropic.BetaFileDeleteParams{})
 	return err
+}
+
+// ListFiles returns one page of uploaded files via the beta Files API.
+func (c *claudeClient) ListFiles(ctx context.Context, limit int, afterID string) ([]FileInfo, bool, error) {
+	page, err := c.client.Beta.Files.List(ctx, claudeListParams(limit, afterID))
+	if err != nil {
+		return nil, false, err
+	}
+	out := make([]FileInfo, len(page.Data))
+	for i, f := range page.Data {
+		out[i] = FileInfo{
+			ID:        f.ID,
+			Filename:  f.Filename,
+			Bytes:     f.SizeBytes,
+			CreatedAt: f.CreatedAt,
+		}
+	}
+	return out, page.HasMore, nil
 }
 
 func claudeText(resp *anthropic.Message) (string, error) {
@@ -145,6 +169,19 @@ func claudeText(resp *anthropic.Message) (string, error) {
 		return "", fmt.Errorf("claude returned no text")
 	}
 	return cleanJSON(sb.String()), nil
+}
+
+// claudeListParams builds the beta Files list query: limit<=0 and empty
+// afterID fall back to the provider default (no opt set).
+func claudeListParams(limit int, afterID string) anthropic.BetaFileListParams {
+	params := anthropic.BetaFileListParams{}
+	if limit > 0 {
+		params.Limit = param.NewOpt(int64(limit))
+	}
+	if afterID != "" {
+		params.AfterID = param.NewOpt(afterID)
+	}
+	return params
 }
 
 func betaClaudeText(resp *anthropic.BetaMessage) (string, error) {

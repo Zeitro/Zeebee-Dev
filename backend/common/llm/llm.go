@@ -38,6 +38,16 @@ type Usage struct {
 	InputCachedTokens int64 `json:"input_cached_tokens"`
 }
 
+// FileInfo is the provider-agnostic metadata for one uploaded file, returned by
+// ListFiles. Filename is best-effort — some providers don't persist the caller's
+// name, so don't rely on it as a key.
+type FileInfo struct {
+	ID        string
+	Filename  string
+	Bytes     int64
+	CreatedAt time.Time
+}
+
 // ChatOption configures optional file attachments on a Chat call.
 type ChatOption func(*chatConfig)
 
@@ -60,26 +70,33 @@ type Client interface {
 	// DeleteFile removes an uploaded file; called at terminal state to stop
 	// billing. Failures logged, never blocking.
 	DeleteFile(ctx context.Context, fileID string) error
+	// ListFiles enumerates one page of files still held by the provider (for
+	// reconciliation and batch cleanup). limit<=0 uses the provider default page
+	// size; afterID is the last id from the prior page (empty = first page).
+	// hasMore is true when another page is available.
+	ListFiles(ctx context.Context, limit int, afterID string) (files []FileInfo, hasMore bool, err error)
 }
 
-// NewClient resolves the provider named by biz.Provider from the configured
-// provider list. Unknown providers fail fast.
-func NewClient(providers []config.LlmProvider, biz config.LlmBizConf) (Client, error) {
+// NewClient resolves the provider named by conf.Provider from the configured
+// provider list. Unknown providers fail fast. env tags uploaded filenames
+// (env-<env>- prefix) so files from several envs sharing one provider account
+// are distinguishable in ListFiles; empty env = untagged.
+func NewClient(providers []config.LlmProvider, conf config.LlmBizConf, env string) (Client, error) {
 	var prov *config.LlmProvider
 	for i := range providers {
-		if providers[i].Name == biz.Provider {
+		if providers[i].Name == conf.Provider {
 			prov = &providers[i]
 			break
 		}
 	}
 	if prov == nil {
-		return nil, fmt.Errorf("llm provider %q not configured", biz.Provider)
+		return nil, fmt.Errorf("llm provider %q not configured", conf.Provider)
 	}
 	switch prov.Name {
 	case openAiProvider:
-		return newOpenAIClient(prov, biz), nil
+		return newOpenAIClient(prov, conf, env), nil
 	case claudeProvider:
-		return newClaudeClient(prov, biz), nil
+		return newClaudeClient(prov, conf, env), nil
 	default:
 		return nil, fmt.Errorf("llm provider %q not supported", prov.Name)
 	}
