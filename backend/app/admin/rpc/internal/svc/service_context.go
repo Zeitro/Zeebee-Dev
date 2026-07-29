@@ -19,7 +19,7 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.RpcConf, logger logx.Logger) *ServiceContext {
-	discoverLLM, err := llm.NewClient(c.LlmConf.Providers, c.LlmConf.LenderDiscoverConf)
+	discoverLLM, err := llm.NewClient(c.LlmConf.Providers, c.LlmConf.LenderDiscoverConf, c.Mode)
 	if err != nil {
 		logger.Errorf("lender discover llm client not initialized: %v", err)
 	}
