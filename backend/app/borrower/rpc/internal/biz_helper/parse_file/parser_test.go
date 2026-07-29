@@ -74,7 +74,7 @@ func newTestParser(t *testing.T) (*Parser, *progress.ProgressManager) {
 	}
 	logger := logx.WithContext(context.Background())
 	pm := progress.NewProgressManager(rdb, logger)
-	return NewParser(nil, &llm.MockClient{}, pm, logger), pm
+	return NewParser(nil, &llm.MockClient{}, pm, nil, logger), pm
 }
 
 func rpaDirectoryRule() dto.DocumentTemplateFileParseRule {

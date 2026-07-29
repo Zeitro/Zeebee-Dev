@@ -18,6 +18,7 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file/handler"
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file/progress"
+	"zeebee-backend/app/pdf_generator/client"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/llm"
 	"zeebee-backend/domains/zeebee/constants"
@@ -49,7 +50,7 @@ type Parser struct {
 }
 
 // NewParser builds the coordinator and registers the built-in handlers.
-func NewParser(repos *repo.AllRepos, llmClient llm.Client, progMgr *progress.ProgressManager, logger logx.Logger) *Parser {
+func NewParser(repos *repo.AllRepos, llmClient llm.Client, progMgr *progress.ProgressManager, pdfClient *client.Client, logger logx.Logger) *Parser {
 	p := &Parser{
 		repos:    repos,
 		progMgr:  progMgr,
@@ -58,8 +59,8 @@ func NewParser(repos *repo.AllRepos, llmClient llm.Client, progMgr *progress.Pro
 		nodeId:   nodeName(),
 		handlers: make(map[string]handler.Handler),
 	}
-	p.Register(constants.DocumentTemplateFileParseParserEscrowInfo, handler.NewEscrowHandler(repos, logger, llmClient))
-	p.Register(constants.DocumentTemplateFileParseParserRPA, handler.NewRPAHandler(repos, logger, llmClient))
+	p.Register(constants.DocumentTemplateFileParseParserEscrowInfo, handler.NewEscrowHandler(repos, logger, llmClient, pdfClient))
+	p.Register(constants.DocumentTemplateFileParseParserRPA, handler.NewRPAHandler(repos, logger, llmClient, pdfClient))
 	return p
 }
 
