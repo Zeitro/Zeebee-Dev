@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -19,7 +20,14 @@ type GeneratePdfRequest struct {
 	Text string `json:"text"`
 }
 
-type GeneratePdfResponse struct {
+type docToPdfRequest struct {
+	Type string `json:"type"`
+	Url  string `json:"url,omitempty"`
+	Data []byte `json:"data,omitempty"`
+	Ext  string `json:"ext"`
+}
+
+type generateResponse struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 	Data    struct {
@@ -27,33 +35,38 @@ type GeneratePdfResponse struct {
 	} `json:"data"`
 }
 
+// ErrOverload marks a transient pdf_generator overload (pool+queue full → 503);
+// callers retry with backoff.
+var ErrOverload = errors.New("pdf generator overloaded")
+
 type Client struct {
-	url    string
-	client *http.Client
+	baseUrl string
+	client  *http.Client
 }
 
-func NewClient(url string) *Client {
+// NewClient takes the pdf_generator base URL (e.g. http://host:port/api/v1);
+// endpoints are appended per method.
+func NewClient(baseUrl string) *Client {
 	return &Client{
-		url: url,
+		baseUrl: baseUrl,
 		client: &http.Client{
 			Timeout: 100 * time.Second,
 		},
 	}
 }
 
-// GeneratePdf generates pdf from html or url
-func (c *Client) GeneratePdf(ctx context.Context, payload GeneratePdfRequest) ([]byte, error) {
-	requestBody, err := json.Marshal(payload)
+func (c *Client) endpoint(path string) string {
+	return strings.TrimRight(c.baseUrl, "/") + path
+}
+
+// postJSON sends payload, decodes the standard {code,message,data} body, and maps
+// a 503 code to ErrOverload so callers can retry transient overloads.
+func (c *Client) postJSON(ctx context.Context, path string, payload any) ([]byte, error) {
+	body, err := json.Marshal(payload)
 	if err != nil {
 		return nil, err
 	}
-
-	req, err := http.NewRequestWithContext(
-		ctx,
-		http.MethodPost,
-		c.url,
-		bytes.NewReader(requestBody),
-	)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.endpoint(path), bytes.NewReader(body))
 	if err != nil {
 		return nil, err
 	}
@@ -63,22 +76,39 @@ func (c *Client) GeneratePdf(ctx context.Context, payload GeneratePdfRequest) ([
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
-
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("PDF service returned status %d", resp.StatusCode)
+		return nil, fmt.Errorf("pdf service returned status %d", resp.StatusCode)
 	}
 
-	var generatePdfResponse GeneratePdfResponse
-	err = json.NewDecoder(resp.Body).Decode(&generatePdfResponse)
-	if err != nil {
+	var out generateResponse
+	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
 		return nil, err
 	}
-	if generatePdfResponse.Code != http.StatusOK {
-		return nil, errors.New(generatePdfResponse.Message)
+	if out.Code == http.StatusServiceUnavailable {
+		return nil, ErrOverload
 	}
-	if generatePdfResponse.Data.Data == nil {
-		return nil, fmt.Errorf("PDF service returned empty data")
+	if out.Code != http.StatusOK {
+		return nil, errors.New(out.Message)
 	}
-	return generatePdfResponse.Data.Data, nil
+	if out.Data.Data == nil {
+		return nil, fmt.Errorf("pdf service returned empty data")
+	}
+	return out.Data.Data, nil
+}
+
+// GeneratePdf generates pdf from html or url.
+func (c *Client) GeneratePdf(ctx context.Context, payload GeneratePdfRequest) ([]byte, error) {
+	return c.postJSON(ctx, "/pdf", payload)
+}
+
+// DocToPdf converts a doc/docx to pdf. typ is SourceTypeUrl (pass url) or
+// SourceTypeData (pass data bytes); ext is "doc" or "docx". Returns pdf bytes.
+func (c *Client) DocToPdf(ctx context.Context, typ, url string, data []byte, ext string) ([]byte, error) {
+	return c.postJSON(ctx, "/doc_to_pdf", docToPdfRequest{
+		Type: typ,
+		Url:  url,
+		Data: data,
+		Ext:  ext,
+	})
 }
