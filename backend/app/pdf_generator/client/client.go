@@ -13,6 +13,7 @@ import (
 
 const SourceTypeText = "Text"
 const SourceTypeUrl = "Url"
+const SourceTypeData = "Data"
 
 type GeneratePdfRequest struct {
 	Type string `json:"type"`

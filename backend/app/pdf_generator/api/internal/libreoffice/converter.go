@@ -130,21 +130,6 @@ func (c *Converter) spawnWorker() {
 		}()
 		c.runWorker()
 	})
-	// go func() {
-	// 	defer c.wg.Done()
-	// 	defer func() {
-	// 		if r := recover(); r != nil {
-	// 			c.restarts.Add(1)
-	// 			logx.Errorf("libreoffice worker panicked: %v — restarting", r)
-	// 			select {
-	// 			case <-c.stop:
-	// 			default:
-	// 				c.spawnWorker()
-	// 			}
-	// 		}
-	// 	}()
-	// 	c.runWorker()
-	// }()
 }
 
 func (c *Converter) runWorker() {
