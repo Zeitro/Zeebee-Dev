@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -83,7 +84,7 @@ func (l *DocToPdfLogic) sourceBytes(req *types.DocToPdfRequest, ext string) ([]b
 		if err != nil {
 			return nil, "", errorx.Wrap(err, "download source")
 		}
-		return b, req.Url, nil
+		return b, redactURL(req.Url), nil
 	}
 }
 
@@ -99,7 +100,7 @@ func fetchURL(ctx context.Context, url string, maxBytes int) ([]byte, error) {
 	}
 	defer func() { _ = res.Body.Close() }()
 	if res.StatusCode < 200 || res.StatusCode >= 300 {
-		return nil, fmt.Errorf("fail to download file %s with http status %d", url, res.StatusCode)
+		return nil, fmt.Errorf("fail to download file %s with http status %d", redactURL(url), res.StatusCode)
 	}
 	b, err := io.ReadAll(io.LimitReader(res.Body, int64(maxBytes)+1))
 	if err != nil {
@@ -109,4 +110,16 @@ func fetchURL(ctx context.Context, url string, maxBytes int) ([]byte, error) {
 		return nil, fmt.Errorf("source exceeds %d bytes", maxBytes)
 	}
 	return b, nil
+}
+
+// redactURL strips query and fragment (presigned S3 urls carry signing params
+// that must not reach logs/errors). Keeps scheme+host+path for debug.
+func redactURL(s string) string {
+	u, err := url.Parse(s)
+	if err != nil {
+		return "<invalid url>"
+	}
+	u.RawQuery = ""
+	u.Fragment = ""
+	return u.String()
 }
