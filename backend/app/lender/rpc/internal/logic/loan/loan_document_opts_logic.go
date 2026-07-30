@@ -9,10 +9,6 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
 	"zeebee-backend/domains/zeebee/repo"
-
-	"github.com/zeromicro/go-zero/core/logx"
-
-	"zeebee-backend/common/errorx"
 )
 
 type LoanDocumentOptsLogic struct {
@@ -28,13 +24,7 @@ func NewLoanDocumentOptsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *LoanDocumentOptsLogic) LoanDocumentOpts(in *lender.LoanDocumentOptsRequest) (resp *lender.LoanDocumentOptsResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
+
 	opts := []repo.LoanDocumentOption{}
 	resultOpts := []*proto.LoanDocumentOptEntity{}
 

@@ -6,10 +6,6 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/domains/zeebee/proto"
-
-	"github.com/zeromicro/go-zero/core/logx"
-
-	"zeebee-backend/common/errorx"
 )
 
 type UpdateLoanDocumentsLogic struct {
@@ -25,13 +21,7 @@ func NewUpdateLoanDocumentsLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *UpdateLoanDocumentsLogic) UpdateLoanDocuments(in *lender.LoanUpdateDocumentsRequest) (resp *proto.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
+
 	// todo: add your logic here and delete this line
 
 	return &proto.EmptyResponse{}, nil

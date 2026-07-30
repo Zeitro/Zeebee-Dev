@@ -42,13 +42,7 @@ func NewSendQuoteEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Se
 }
 
 func (l *SendQuoteEmailLogic) SendQuoteEmail(in *borrower.LoanSendQuoteEmailRequest) (resp *proto.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
+
 	if len(in.Data.LenderIds) == 0 {
 		return nil, errorx.New("Lender is required")
 	}

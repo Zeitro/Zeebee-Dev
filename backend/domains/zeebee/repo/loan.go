@@ -223,6 +223,8 @@ func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq dto.LoanBorro
 	if len(sortColumns) == 0 {
 		sortColumns = append(sortColumns, fmt.Sprintf("%s.created_at desc", loanTable))
 	}
+	sortColumns = append(sortColumns, fmt.Sprintf("%s.id desc", loanTable))
+
 	for _, column := range sortColumns {
 		query = query.Order(column)
 	}
@@ -372,6 +374,7 @@ func (repo *LoanRepo) PageForLender(ctx context.Context, pageReq dto.LoanLenderP
 	if len(sortColumns) == 0 {
 		sortColumns = append(sortColumns, fmt.Sprintf("%s.created_at desc", loanTable))
 	}
+	sortColumns = append(sortColumns, fmt.Sprintf("%s.id desc", loanTable))
 	for _, column := range sortColumns {
 		query = query.Order(column)
 	}
@@ -497,6 +500,8 @@ func (repo *LoanRepo) PageForAdmin(ctx context.Context, pageReq dto.LoanAdminPag
 	if len(sortColumns) == 0 {
 		sortColumns = append(sortColumns, fmt.Sprintf("%s.created_at desc", loanTable))
 	}
+	sortColumns = append(sortColumns, fmt.Sprintf("%s.id desc", loanTable))
+
 	for _, column := range sortColumns {
 		query = query.Order(column)
 	}
