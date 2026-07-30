@@ -1,12 +1,10 @@
-.claude/settings.local.json
+# AI agent & plugin layer — local only, not version-controlled
+.claude/
+.specify/
+
+# generated / local artifacts
 specs
-.claude/docs/tasks
 .DS_Store
 .traces
 .skillopt-sleep
 .cache
-.specify/init-options.json
-.specify/integration.json
-.specify/feature.json
-.specify/integrations/*.manifest.json
-.specify/workflows/workflow-registry.json
