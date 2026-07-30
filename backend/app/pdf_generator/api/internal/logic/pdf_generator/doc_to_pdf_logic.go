@@ -63,6 +63,12 @@ func (l *DocToPdfLogic) DocToPdf(req *types.DocToPdfRequest) (resp *types.Create
 
 // sourceBytes fetches Url-mode bytes (capped) or returns Data-mode bytes inline.
 func (l *DocToPdfLogic) sourceBytes(req *types.DocToPdfRequest, ext string) ([]byte, string, error) {
+	switch ext {
+	case "doc", "docx":
+	default:
+		return nil, "", errorx.Errorf("invalid file extension: %s", ext)
+	}
+
 	switch strings.ToLower(req.Type) {
 	case "data":
 		if len(req.Data) == 0 {
@@ -93,7 +99,7 @@ func fetchURL(ctx context.Context, url string, maxBytes int) ([]byte, error) {
 	}
 	defer func() { _ = res.Body.Close() }()
 	if res.StatusCode < 200 || res.StatusCode >= 300 {
-		return nil, fmt.Errorf("download http %d", res.StatusCode)
+		return nil, fmt.Errorf("fail to download file %s with http status %d", url, res.StatusCode)
 	}
 	b, err := io.ReadAll(io.LimitReader(res.Body, int64(maxBytes)+1))
 	if err != nil {
