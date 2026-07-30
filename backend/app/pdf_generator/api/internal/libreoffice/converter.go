@@ -8,7 +8,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"sync"
-	"sync/atomic"
 	"syscall"
 	"time"
 
@@ -21,11 +20,11 @@ import (
 
 var (
 	// ErrOverload: all workers busy and the job queue is full — transient,
-	// caller retries (→ 503).
+	// caller retries
 	ErrOverload = errors.New("libreoffice converter overloaded")
-	// ErrSofficeNotFound: soffice binary missing — doc-to-pdf unavailable (→ 500).
+	// ErrSofficeNotFound: soffice binary missing — doc-to-pdf unavailable
 	ErrSofficeNotFound = errors.New("soffice binary not found")
-	// ErrInvalidInput: bad type/ext/size — caller error (→ 400).
+	// ErrInvalidInput: bad type/ext/size — caller error
 	ErrInvalidInput = errors.New("invalid doc-to-pdf input")
 )
 
@@ -51,11 +50,10 @@ type result struct {
 // exec) needs a UNO sidecar — infeasible in pure Go without adding python-uno
 // to the image. Persistent worker profiles capture most of the cold-start win.
 type Converter struct {
-	jobs     chan job
-	stop     chan struct{}
-	wg       sync.WaitGroup
-	timeout  time.Duration
-	restarts atomic.Int64
+	jobs    chan job
+	stop    chan struct{}
+	wg      sync.WaitGroup
+	timeout time.Duration
 }
 
 // NewConverter starts `cap` workers, each with its own profile. Missing soffice
@@ -101,25 +99,20 @@ func (c *Converter) Convert(ctx context.Context, srcBytes []byte, ext string) ([
 	}
 }
 
-// Restarts reports how many workers have been re-spawned after a panic
-// (crash-recovery health signal).
-func (c *Converter) Restarts() int64 { return c.restarts.Load() }
-
 // Close stops workers and removes their profile dirs; call on shutdown.
 func (c *Converter) Close() {
 	close(c.stop)
 	c.wg.Wait()
 }
 
-// spawnWorker runs one worker; on panic it logs, counts the restart, and
-// re-spawns a replacement (unless shutting down).
+// spawnWorker runs one worker; on panic it logs and re-spawns a replacement
+// (unless shutting down).
 func (c *Converter) spawnWorker() {
 	c.wg.Add(1)
 	threading.GoSafe(func() {
 		defer c.wg.Done()
 		defer func() {
 			if r := recover(); r != nil {
-				c.restarts.Add(1)
 				logx.Errorf("libreoffice worker panicked: %v — restarting", r)
 				select {
 				case <-c.stop:
@@ -140,8 +133,18 @@ func (c *Converter) runWorker() {
 	for {
 		select {
 		case <-c.stop:
+			if len(c.jobs) > 0 {
+				close(c.jobs)
+				for j := range c.jobs {
+					err := errorx.New("doc trans worker stopped")
+					j.res <- result{pdf: nil, err: err}
+				}
+			}
 			return
-		case j := <-c.jobs:
+		case j, ok := <-c.jobs:
+			if !ok {
+				return
+			}
 			if initErr != nil {
 				j.res <- result{err: initErr}
 				continue

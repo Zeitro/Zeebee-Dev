@@ -36,10 +36,6 @@ type generateResponse struct {
 	} `json:"data"`
 }
 
-// ErrOverload marks a transient pdf_generator overload (pool+queue full → 503);
-// callers retry with backoff.
-var ErrOverload = errors.New("pdf generator overloaded")
-
 type Client struct {
 	baseUrl string
 	client  *http.Client
@@ -85,9 +81,6 @@ func (c *Client) postJSON(ctx context.Context, path string, payload any) ([]byte
 	var out generateResponse
 	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
 		return nil, err
-	}
-	if out.Code == http.StatusServiceUnavailable {
-		return nil, ErrOverload
 	}
 	if out.Code != http.StatusOK {
 		return nil, errors.New(out.Message)

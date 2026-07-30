@@ -55,13 +55,17 @@ type base struct {
 // uploadOne slices PDFs over maxPages (0 = whole) then uploads, retrying the
 // convert+upload on transient failures (overload/timeout). Cache hit needs
 // provider+MaxPages match (a cap change re-slices); one hold → RMW-safe.
+//
+// Retry is unconditional (not gated on error type): pdf_generator does not
+// distinguish overload from permanent failures in its response code, so any
+// convert/upload error is retried up to uploadMaxRetry then fail-soft skipped.
 func (b *base) uploadOne(ctx context.Context, rep Reporter, f collectedFile, maxPages int) (progress.FileCheckpoint, error) {
 	expected := maxPagesForFile(f.Name, maxPages)
 	if cached, ok := rep.Files(ctx)[f.FileId]; ok && cached.Provider == b.llm.Provider() && cached.MaxPages == expected {
 		return cached, nil
 	}
 	var lastErr error
-	for attempt := 0; attempt < uploadMaxRetry; attempt++ {
+	for attempt := range uploadMaxRetry {
 		fc, err := b.convertAndUpload(ctx, rep, f, maxPages, expected)
 		if err == nil {
 			return fc, nil

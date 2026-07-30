@@ -22,16 +22,13 @@ const safeProfileXcu = `<?xml version="1.0" encoding="UTF-8"?>
 `
 
 // ensureSafeProfile writes the hardened registrymodifications.xcu into the slot's
-// UserInstallation dir. Idempotent — skipped once present so a reused slot pays
-// the write only at pool warm-up.
+// UserInstallation dir. Each slot owns a fresh temp profile, so this runs once
+// per worker spawn.
 func ensureSafeProfile(profileDir string) error {
 	userDir := filepath.Join(profileDir, "user")
 	if err := os.MkdirAll(userDir, 0o750); err != nil {
 		return err
 	}
 	xcu := filepath.Join(userDir, "registrymodifications.xcu")
-	if _, err := os.Stat(xcu); err == nil {
-		return nil
-	}
 	return os.WriteFile(xcu, []byte(safeProfileXcu), 0o600)
 }
