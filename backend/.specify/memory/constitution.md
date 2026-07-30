@@ -198,10 +198,14 @@ func HandleOrder() {
 ```
 
 ### 注释：解释为什么，而不是是什么
-> 注释应该解释为什么这样做，而不是是什么这样做。
+> 注释解释「为什么这样设计」，不解释「这段代码做了什么」。业务规则为何存在、workaround 绕过哪个第三方 bug、魔法数字的来源、非显而易见的意图——这些写注释；代码本身能表达的意图，交给命名和结构。
 >
-> 注释用来解释"为什么这样设计"（比如这个特殊的业务规则为什么存在，或者这个 workaround 是为了绕过哪个第三方库的 bug），而不是解释"这段代码做了什么"。 公共 API（如包、函数、类型的声明）当然需要注释来生成文档，但那是另一回事。对于实现细节，优先考虑用代码本身来表达意图。
-
+> 公共 API（包/函数/类型声明）的文档注释另算，那是给 godoc 用的，必须写。
+>
+> 原则：**简洁扼要，一行能说清就不写多行；不复述代码；不写废话铺垫；只写「为什么」和非显而易见的意图。**
+> - 不复述代码：别写 `// 遍历订单计算总额` 紧跟一个求和循环，代码已经说了。
+> - 不写废话铺垫：删掉 `// 这里我们...`、`// 为了更好地...`、`// 开始处理订单` 这类零信息开场。
+> - 一行优先：一行能说清的「为什么」绝不展开成多行；多行只在真正复杂的权衡时才用。
 
 **坏味道**
 ```go
@@ -210,13 +214,31 @@ if user.Points > 1000 && user.Age > 18 && !user.IsBlocked {
     // 应用 15% 折扣
     price = price * 0.85
 }
+
+// 遍历订单列表，计算总金额
+total := 0.0
+for _, item := range order.Items {
+    total += item.Price * float64(item.Quantity)
+}
+
+// 这里我们先校验订单，然后保存到数据库，最后发邮件通知用户
+// 整个流程需要保证顺序，不能乱序执行，所以按下面步骤来...
+func processOrder(order *Order) error { ... }
 ```
 
 **好味道**
 ```go
+// 名字已说明意图，无需注释。
 if user.IsEligibleForPremiumDiscount() {
-    price = price.ApplyDiscount(0.85)
+    price = price.ApplyDiscount(loyaltyDiscount)
 }
+
+// 0.85: loyalty tier discount per contract #2087; do not change without finance sign-off.
+const loyaltyDiscount = 0.85
+
+// Setpgid: kill the whole process group on timeout so soffice's oosplash child
+// doesn't outlive the parent and leak under load.
+cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 ```
 
 ## 函数约束
@@ -267,4 +289,4 @@ Think before coding. Simplicity first. Surgical changes. Goal-driven execution.
 
 ---
 
-**版本**：2.0.0 | **最后修订**：2026-07-13
+**版本**：2.1.0 | **最后修订**：2026-07-30
