@@ -1,6 +1,8 @@
 package config
 
 import (
+	"zeebee-backend/domains/zeebee/config"
+
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -17,7 +19,7 @@ type ApiConf struct {
 	rest.RestConf
 	JwtAuth         types.JwtAuth      `json:",optional"`
 	RpcConf         zrpc.RpcClientConf `json:",optional"`
-	PdfGeneratorUrl string
+	PdfGeneratorBaseUrl string
 }
 
 type RpcConf struct {
@@ -38,6 +40,7 @@ type RpcConf struct {
 	InviteUserExpireSeconds      int
 	SendInviteEmailPeriodSeconds int
 	CasbinConf                   CasbinConf
+	CronTaskConf                 []CronTaskConf
 }
 
 type DbConf struct {
@@ -60,15 +63,10 @@ type AwsS3Conf struct {
 }
 
 type LimiterConf struct {
-	Login             LimiterItem
-	SendLoginEmail    LimiterItem
-	SendVerityEmail   LimiterItem
-	SendResetPwdEmail LimiterItem
-}
-
-type LimiterItem struct {
-	Rate   int
-	Period int
+	Login             config.LimiterItem
+	SendLoginEmail    config.LimiterItem
+	SendVerityEmail   config.LimiterItem
+	SendResetPwdEmail config.LimiterItem
 }
 
 type EmailConf struct {
@@ -93,4 +91,9 @@ type CasbinWatcher struct {
 
 type CasbinEventTopic struct {
 	LenderTopic string
+}
+
+type CronTaskConf struct {
+	Name     string `json:"name"`
+	Schedule string `json:"schedule"`
 }

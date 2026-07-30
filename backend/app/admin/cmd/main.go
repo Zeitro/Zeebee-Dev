@@ -25,6 +25,8 @@ func main() {
 
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
+	// service_name fallback for logs without request ctx (startup, cron, migrator).
+	// logx.AddGlobalFields(logx.Field("service_name", "admin"))
 	logx.Infof("load service config successfully")
 
 	apiServer := api.NewApiServer(c)
@@ -35,7 +37,7 @@ func main() {
 				logx.Field("stacks", errorx.GetErrorStack(err)),
 				logx.Field("err", err),
 			).
-			Errorf("failed to start rpc server")
+			Errorf("fail to start rpc server")
 		panic(err)
 	}
 	logx.Infof("start rpc service in %s mode", c.RpcConf.Mode)

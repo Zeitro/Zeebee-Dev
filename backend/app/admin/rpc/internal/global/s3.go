@@ -13,7 +13,6 @@ func GetS3Client() *aws_s3.S3Client {
 }
 
 func initS3Client(cnf config.AwsS3Conf) (err error) {
-
 	cli, err := aws_s3.NewS3Client(&aws_s3.Config{
 		Bucket:       cnf.Bucket,
 		Region:       cnf.Region,
@@ -22,7 +21,7 @@ func initS3Client(cnf config.AwsS3Conf) (err error) {
 	})
 
 	if err != nil {
-		return errorx.Wrap(err, "Init S3 Client Error")
+		return errorx.Wrap(err, "init S3 client error")
 	}
 	s3Client = cli
 	return err

@@ -15,13 +15,15 @@ import (
 type BaseLogic struct {
 	repos    *repo.AllRepos
 	redisCli *redisx.Client
+	logger   logx.Logger
 }
 
 // NewBaseLogic creates a new base logic instance
-func NewBaseLogic(repos *repo.AllRepos, redisCli *redisx.Client) *BaseLogic {
+func NewBaseLogic(repos *repo.AllRepos, redisCli *redisx.Client, logger logx.Logger) *BaseLogic {
 	return &BaseLogic{
 		repos:    repos,
 		redisCli: redisCli,
+		logger:   logger,
 	}
 }
 
@@ -32,17 +34,17 @@ func (l *BaseLogic) publishAuthEvent(ctx context.Context, topic string, event au
 				logx.Field("stacks", errorx.GetErrorStack(err)),
 				logx.Field("topic", topic),
 				logx.Field("event", event),
-			).Error("Failed to publish auth event")
+			).Error("failed to publish auth event")
 		}
 	}()
 
 	if l.redisCli == nil {
-		err = errorx.New("Redis client is nil")
+		err = errorx.New("redis client is nil")
 		return
 	}
 
 	if len(topic) == 0 {
-		err = errorx.New("Topic is empty")
+		err = errorx.New("topic is empty")
 		return
 	}
 	err = l.redisCli.GetClient().Publish(ctx, topic, event.String()).Err()

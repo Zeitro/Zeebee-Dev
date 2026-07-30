@@ -64,7 +64,7 @@ func (l *BaseTemplateLogic) Create(ctx context.Context, req dto.BaseTemplateCrea
 		return innerErr
 	})
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to create template")
+		return nil, errorx.Wrap(err, "fail to create template")
 	}
 
 	result, err = copierx.Trans[model.BaseTemplate, dto.BaseTemplateEntityDto](created)
@@ -283,7 +283,6 @@ func (l *BaseTemplateLogic) Preview(_ context.Context, req dto.BaseTemplatePrevi
 		}
 	}
 	for _, groupDto := range req.VariableGroupSchema {
-
 		for _, variableDto := range groupDto.Variables {
 			if variableDto.Source == constants.TemplateVariableSourceFixed || variableDto.Source == constants.TemplateVariableSourceTemplate {
 				key := strings.Trim(variableDto.Key, ".")

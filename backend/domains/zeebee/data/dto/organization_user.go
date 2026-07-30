@@ -75,10 +75,11 @@ type OrganizationUserPageRequestDto struct {
 
 type OrganizationUserPageRequestFilter struct {
 	BasePageFilter
-	OrganizationId int64              `json:"organization_id"`
-	UserId         int64              `json:"user_id"`
-	UserType       constants.UserType `json:"user_type"`
-	RoleId         int64              `json:"role_id"`
+	OrganizationId int64                `json:"organization_id"`
+	UserId         int64                `json:"user_id"`
+	UserType       constants.UserType   `json:"user_type"`
+	RoleId         int64                `json:"role_id"`
+	Status         constants.UserStatus `json:"status"`
 }
 
 type SendInviteUserEmailConfig struct {
@@ -106,4 +107,11 @@ type OrganizationUserProfileEditRequestDto struct {
 	MidName        string             `json:"mid_name"`
 	LastName       string             `json:"last_name"`
 	Phone          string             `json:"phone"`
+}
+
+type OrganizationUserCheckInvitationCodeRequestDto struct {
+	Code           string             `json:"code"`
+	UserType       constants.UserType `json:"type"`
+	Email          string             `json:"email"`
+	OrganizationId int64              `json:"organization_id"`
 }

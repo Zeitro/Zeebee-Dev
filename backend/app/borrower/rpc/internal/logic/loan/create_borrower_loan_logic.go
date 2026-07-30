@@ -16,32 +16,26 @@ import (
 	"zeebee-backend/common/uuid"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type CreateBorrowerLoanLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewCreateBorrowerLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateBorrowerLoanLogic {
 	return &CreateBorrowerLoanLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
 func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequest) (resp *borrower.LoanCreateResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
@@ -50,6 +44,15 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 	loan, loanProperty, applicants, loanBorrower, err := l.buildCreateModels(in.Data, claim)
 	if err != nil {
 		return nil, err
+	}
+
+	// set transaction binding if provided
+	if in.Data.BorrowerPropertyTransactionId > 0 {
+		_, err = l.svcCtx.BorrowerPropertyTransactionRepo.GetOne(l.ctx, in.Data.BorrowerPropertyTransactionId)
+		if err != nil {
+			return nil, errorx.Wrap(err, "Transaction not found")
+		}
+		loan.BorrowerPropertyTransactionId = in.Data.BorrowerPropertyTransactionId
 	}
 
 	// create loan
@@ -99,7 +102,7 @@ func (l *CreateBorrowerLoanLogic) CreateBorrowerLoan(in *borrower.LoanCreateRequ
 		return innerErr
 	})
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed To Create Loan")
+		return nil, errorx.Wrap(err, "fail to create loan")
 	}
 
 	return &borrower.LoanCreateResponse{

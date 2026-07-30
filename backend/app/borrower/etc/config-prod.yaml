@@ -1,0 +1,165 @@
+ApiConf:
+  Name: borrower.api
+  Host: 0.0.0.0
+  Port: 10000
+  Mode: pro
+  Timeout: 10000
+  Log:
+    Stat: false
+    ServiceName: borrower.api
+
+  JwtAuth:
+    AccessSecret: nR1oP0lP2zF5cE9cW2eY2qN6pP4bX5mA
+    AccessExpire: 86000
+
+  RpcConf:
+    Endpoints:
+      - 127.0.0.1:10001
+    Timeout: 10000
+    NonBlock: true
+
+RpcConf:
+  Name: borrower.rpc
+  ListenOn: 0.0.0.0:10001
+  Mode: pro
+  Timeout: 10000
+  Log:
+    Stat: false
+    ServiceName: borrower.rpc
+
+  LimiterConf:
+    Login:
+      Rate: 10
+      Period: 300
+      LockPeriod: 120
+    SendLoginEmail:
+      Rate: 5
+      Period: 300
+    SendVerityEmail:
+      Rate: 5
+      Period: 300
+    SendResetPwdEmail:
+      Rate: 5
+      Period: 300
+    SendLoanQuoteEmail:
+      Rate: 1
+      Period: 60
+  VerifyEmailExpireSeconds: 86400
+  ResetPwdExpireSeconds: 3600
+  PreApproveLoanExpireSeconds: 86400
+  EmailConf:
+    Host: smtp.gmail.com
+    Port: 587
+    Password: jerburfauvmzpmnq
+    Username: info@zeebeeloans.com
+
+  JwtAuth:
+    AccessSecret: nR1oP0lP2zF5cE9cW2eY2qN6pP4bX5mA
+    AccessExpire: 864000
+    RefreshSecret: kQ8qH6kK7mZ1wV5zM7tI4cM3fR5dF6wH
+    RefreshExpire: 864000
+
+  RedisConf:
+    Host: zeebee-backend-redis-pro-001.zeebee-backend-redis-pro.uwixeb.usw1.cache.amazonaws.com:6379
+    Type: node
+    Prefix: zeebee
+    Tls: true
+    PingTimeout: 10s
+
+  DbConf:
+    dsn: "host=database-2.cj0ksq4g8d6c.us-west-1.rds.amazonaws.com user=zeebee_user password=zeebee_password dbname=zeebee port=5432 sslmode=require TimeZone=UTC"
+
+  AwsS3Conf:
+    AccessKey: AKIA4RT6FLQ5X2TPIFEV
+    AccessSecret: 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
+    Region: us-west-1
+    Bucket: zeebee-files-production
+    FileFolder: files-production
+    PreSigneUrlExpireSeconds: 60
+
+  PreApprovalLoanConf:
+    - LenderCompanyId: 2
+      LenderCompanyName: "RBI Private Lending"
+      TotalAmount:
+        Min: 75000
+        Max: 500000
+      Rate:
+        Min: 9
+        Max: 12
+      LoanTerm:
+        Min: 3
+        Max: 24
+    - LenderCompanyId: 3
+      LenderCompanyName: "Anchor Loans"
+      TotalAmount:
+        Min: 500000
+        Max: 5000000
+      Rate:
+        Min: 8
+        Max: 13
+      LoanTerm:
+        Min: 6
+        Max: 18
+  EmailAuthConf:
+    Gmail:
+      ClientId: 808134957644-2savep4tlp45sln5v9f21hq06628vvia.apps.googleusercontent.com
+      ClientSecret: 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
+      CallbackUrl: https://app.zeebeeloans.com/gmailAuth
+  DriveAuthConf:
+    Google:
+      ClientId: 808134957644-2savep4tlp45sln5v9f21hq06628vvia.apps.googleusercontent.com
+      ClientSecret: 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
+      CallbackUrl: https://app.zeebeeloans.com/driveAuth
+  PdfGeneratorBaseUrl: http://127.0.0.1:10300/api/v1
+  TemplateConf:
+    PreApprovalLetterPdf:
+      Purpose: preApprovedLetter
+      Scope: Organization
+      Category: Contract
+      FileType: Pdf
+      Title: "Pre-Approval Letter.pdf"
+
+    PreApprovalLetterEmail:
+      Purpose: preApprovedLetterEmailTemplate
+      Scope: Organization
+      Category: Email
+      FileType: Html
+      Title: "Pre-Approval Letter"
+  ZeebeeAgentEmail: loan@alphax-capital.com
+  LoginUrl: https://app.zeebeeloans.com/login
+  LenderUrl: https://agent.zeebeeloans.com
+  VerifyEmailUrl: https://app.zeebeeloans.com/login/verifyEmail
+  ResetPwdUrl: https://app.zeebeeloans.com/login/resetPassword
+  InviteUserUrl: https://app.zeebeeloans.com/login/joinOrganization
+  InviteUserExpireSeconds: 259200
+  SendInviteEmailPeriodSeconds: 60
+  PreApprovalLoanExpireSeconds: 86400
+  HighCostLimitValue: 806500
+
+  # Zeitro API configuration
+  ZeitroConf:
+    Url: https://lo.zeitro.com
+    Username: cli_hu4tKiltzCfQfheOa3
+    Password: sec_8SyshMSf1ZORJrH6mT38FMtDAItSLAox8ysd
+
+  CasbinConf:
+    ModelPath: etc/model.conf
+    EventTopic:
+      BorrowerTopic: /borrower-rbac-event
+    Watcher:
+      Host: zeebee-backend-redis-pro-001.zeebee-backend-redis-pro.uwixeb.usw1.cache.amazonaws.com:6379
+      Pwd: ''
+      Tls: true
+      BorrowerChannel: /borrower-channel
+  CronTaskConf:
+    - name: update_organization_subscription_status
+      schedule: "0 0 2 * * *"
+  # llm
+  LlmConf:
+    Providers:
+      - Name: openai
+        ApiKey: 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
+        BaseUrl: https://api.openai.com/v1
+    TransactionFileParseConf:
+      Provider: openai
+      Model: gpt-5.4

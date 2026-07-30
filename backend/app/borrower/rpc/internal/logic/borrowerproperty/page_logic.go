@@ -3,59 +3,57 @@ package borrowerpropertylogic
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"time"
 
 	"github.com/duke-git/lancet/v2/datetime"
+	"github.com/duke-git/lancet/v2/mathutil"
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/jinzhu/copier"
-
-	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/model"
 )
 
 type PageLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PageLogic {
 	return &PageLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
 func (l *PageLogic) Page(in *borrower.PropertyPageRequest) (resp *borrower.PropertyPageResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
 
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	pageReq := dto.BorrowerPropertyPageRequestDto{}
-	_ = copier.CopyWithOption(&pageReq, in.Data, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+	pageReq, err := copierx.Trans[borrower.PropertyPageRequestData, dto.BorrowerPropertyPageRequestDto](in.Data)
+	if err != nil {
+		return nil, err
+	}
+	if pageReq == nil {
+		pageReq = &dto.BorrowerPropertyPageRequestDto{}
+	}
+
 	pageReq.Filter.OrganizationId = claim.OrganizationId
 	pageReq.Filter.UserId = claim.OrganizationUserId
 
-	borrowerPropertyPageResult, err := l.svcCtx.BorrowerPropertyRepo.PageForBorrower(l.ctx, pageReq)
+	borrowerPropertyPageResult, err := l.svcCtx.BorrowerPropertyRepo.PageForBorrower(l.ctx, *pageReq)
 	if err != nil {
 		return nil, err
 	}
@@ -64,15 +62,25 @@ func (l *PageLogic) Page(in *borrower.PropertyPageRequest) (resp *borrower.Prope
 	properties := make([]*borrower.PropertyPageEntity, len(borrowerPropertyPageResult.List))
 	now := datetime.BeginOfDay(time.Now())
 	for i, borrowerProperty := range borrowerPropertyPageResult.List {
-
 		propertyPageEntry := &borrower.PropertyPageEntity{}
-		err = copier.CopyWithOption(propertyPageEntry, borrowerProperty, copier.Option{
-			DeepCopy:      true,
-			CaseSensitive: true,
-		})
+		propertyPageEntry, err = copierx.Trans[model.BorrowerProperty, borrower.PropertyPageEntity](borrowerProperty)
+
 		if err != nil {
-			return nil, errorx.GetFailedTransReqErr(err)
+			return nil, err
 		}
+		// handle transaction status
+		var transactionStatus []string
+		for _, transaction := range borrowerProperty.Transactions {
+			if transaction.Status != constants.BorrowerPropertyTransactionStatusCancelled {
+				transactionStatus = append(transactionStatus, fmt.Sprintf("%s %s", transaction.Type, transaction.Status))
+			}
+		}
+		transactionStatus = slice.Unique(transactionStatus)
+		slice.Sort(transactionStatus)
+		propertyPageEntry.TransactionStatus = transactionStatus
+
+		propertyPageEntry.Status = borrowerProperty.Status
+		slice.Sort(propertyPageEntry.Status)
 		var maturityDate *sql.NullTime
 		var totalRate float32 = 0.0
 		for _, loan := range borrowerProperty.Loans {
@@ -100,10 +108,10 @@ func (l *PageLogic) Page(in *borrower.PropertyPageRequest) (resp *borrower.Prope
 			case constants.LoanStageArchived:
 				propertyPageEntry.ArchivedLoanCount++
 			}
-
 		}
-		if totalRate > 0 {
-			propertyPageEntry.AvgRate = totalRate / float32(len(borrowerProperty.Loans))
+		if totalRate > 0 && propertyPageEntry.ActiveLoanCount > 0 {
+			propertyPageEntry.AvgRate = totalRate / float32(propertyPageEntry.ActiveLoanCount)
+			propertyPageEntry.AvgRate = float32(mathutil.RoundToFloat(propertyPageEntry.AvgRate, 2))
 		}
 		if maturityDate != nil && maturityDate.Valid {
 			propertyPageEntry.NearestMaturityDate = maturityDate.Time.Format("01/02/2006")
@@ -111,7 +119,6 @@ func (l *PageLogic) Page(in *borrower.PropertyPageRequest) (resp *borrower.Prope
 		propertyPageEntry.Applicants = slice.Unique(propertyPageEntry.Applicants)
 		propertyPageEntry.Lenders = slice.Unique(propertyPageEntry.Lenders)
 		properties[i] = propertyPageEntry
-
 	}
 
 	return &borrower.PropertyPageResponse{

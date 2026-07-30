@@ -11,8 +11,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -20,25 +19,21 @@ import (
 type AcceptInvitationLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewAcceptInvitationLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AcceptInvitationLogic {
 	return &AcceptInvitationLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *AcceptInvitationLogic) AcceptInvitation(in *lender.OrganizationUserAcceptInvitationRequest) (resp *lender.UserJwtResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+func (l *AcceptInvitationLogic) AcceptInvitation(in *lender.OrganizationUserAcceptInvitationRequest) (resp *proto.UserLoginResponse, err error) {
+
 	input := dto.OrganizationUserAcceptInvitationRequestDto{}
 	err = copier.Copy(&input, &in.Data)
 	if err != nil {
@@ -53,12 +48,12 @@ func (l *AcceptInvitationLogic) AcceptInvitation(in *lender.OrganizationUserAcce
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[dto.UserJwtTokenDto, lender.UserJwtResponseData](token)
+	data, err := copierx.Trans[dto.UserJwtTokenDto, proto.UserLoginResponseData](token)
 	if err != nil {
 		return nil, err
 	}
 
-	return &lender.UserJwtResponse{
+	return &proto.UserLoginResponse{
 		Data: data,
 	}, nil
 }

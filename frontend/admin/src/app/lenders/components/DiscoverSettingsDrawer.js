@@ -1,8 +1,8 @@
 'use client';
 
-import {useEffect, useRef, useState} from 'react';
-import {Button, Drawer, Form, Input, InputNumber, message, Space, Switch} from 'antd';
-import {createRequest} from '@repo/shared-methods/utils';
+import { useEffect, useRef, useState } from 'react';
+import { Button, Drawer, Form, Input, InputNumber, message, Space, Switch } from 'antd';
+import { createRequest } from '@repo/shared-methods/utils';
 
 const { TextArea } = Input;
 
@@ -23,7 +23,7 @@ const DiscoverSettingsDrawer = ({ open, onClose }) => {
 		(async () => {
 			try {
 				setLoading(true);
-				const res = await requestRef.current('/lender_discover/settings');
+				const res = await requestRef.current('/organization/discover/settings');
 				if (!cancelled) {
 					form.setFieldsValue(res?.data || {});
 					setLoading(false);
@@ -41,7 +41,7 @@ const DiscoverSettingsDrawer = ({ open, onClose }) => {
 		try {
 			const values = await form.validateFields();
 			setSaving(true);
-			await request('/lender_discover/settings', {
+			await request('/organization/discover/settings', {
 				method: 'PUT',
 				body: values,
 			});

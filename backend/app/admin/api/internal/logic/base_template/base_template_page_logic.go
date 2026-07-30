@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
@@ -20,18 +21,13 @@ type BaseTemplatePageLogic struct {
 // Base template page list
 func NewBaseTemplatePageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseTemplatePageLogic {
 	return &BaseTemplatePageLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
 func (l *BaseTemplatePageLogic) BaseTemplatePage(req *types.BaseTemplatePageRequest) (resp *types.BaseTemplatePageResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
 
 	// Convert types to pb request
 	rpcReq := &admin.BaseTemplatePageRequest{
@@ -50,10 +46,10 @@ func (l *BaseTemplatePageLogic) BaseTemplatePage(req *types.BaseTemplatePageRequ
 
 	// Convert pb response to types
 	resp = &types.BaseTemplatePageResponse{}
-	resp.BasePageResponse.Page = rpcResp.Data.Page
-	resp.BasePageResponse.Limit = rpcResp.Data.Limit
-	resp.BasePageResponse.Total = rpcResp.Data.Total
-	resp.BasePageResponse.TotalPage = rpcResp.Data.TotalPage
+	resp.Page = rpcResp.Data.Page
+	resp.Limit = rpcResp.Data.Limit
+	resp.Total = rpcResp.Data.Total
+	resp.TotalPage = rpcResp.Data.TotalPage
 
 	// Convert list items
 	for _, item := range rpcResp.Data.List {

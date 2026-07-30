@@ -15,6 +15,13 @@ const (
 	OrganizationOwnerTypePartner    OrganizationOwnerType = "Partner"
 )
 
+// OrganizationSource records how the lender org was created (admin UI vs discover).
+// Values use PascalCase to match OrganizationOwnerType / OrganizationStatus.
+const (
+	OrganizationSourceManual = "Manual"
+	OrganizationSourceSearch = "Search"
+)
+
 type OrganizationStatus string
 
 var OrganizationStatusName = "organization_status"
@@ -119,5 +126,4 @@ func init() {
 			Value: string(OrganizationUserStatusDisabled),
 		},
 	})
-
 }

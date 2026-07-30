@@ -1,12 +1,12 @@
 'use client';
-import React, {useMemo, useState} from 'react';
-import {Button, Checkbox, Col, Form, Input, Row} from 'antd';
-import {useRouter, useSearchParams} from 'next/navigation';
-import {useUserStore} from '@repo/shared-methods/store';
-import {capitalizeFirstLetter, emailRegex, validateRule} from '@repo/shared-methods/utils';
+import React, { useMemo, useState } from 'react';
+import { Button, Checkbox, Col, Form, Input, Row } from 'antd';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useUserStore } from '@repo/shared-methods/store';
+import { capitalizeFirstLetter, emailRegex, validateRule } from '@repo/shared-methods/utils';
 import styles from '../index.module.scss';
-import ConfirmPassWord from '../components/ConfirmPassword';
-import {throttle} from 'lodash';
+import { ConfirmPassWord } from '@repo/shared-methods';
+import { throttle } from 'lodash';
 
 const Register = () => {
 	const [form] = Form.useForm();
@@ -15,6 +15,8 @@ const Register = () => {
 	const newEmail = Form.useWatch('email', form);
 	const { registerAndSendEmail } = useUserStore();
 	const [loading, setLoading] = useState(false);
+	const [autofillGuardReleased, setAutofillGuardReleased] = useState(false);
+	const emailFromUrl = searchParams.get('email');
 
 	// 从官网pre-approved页面跳转过来
 	const perApprovedInfo = useMemo(() => {
@@ -75,7 +77,7 @@ const Register = () => {
 					boxShadow:
 						'0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02)',
 				}}
-				initialValues={{ email: searchParams.get('email') }}
+				initialValues={emailFromUrl ? { email: emailFromUrl } : undefined}
 			>
 				<div className="text-3xl/10 font-medium">
 					{perApprovedInfo.isPerApproved ? (
@@ -155,9 +157,23 @@ const Register = () => {
 						},
 					]}
 				>
-					<Input placeholder="Email" className="w-full" allowClear />
+					<Input
+						autoComplete="off"
+						readOnly={!autofillGuardReleased}
+						onFocus={() => setAutofillGuardReleased(true)}
+						placeholder="Email"
+						className="w-full"
+						allowClear
+					/>
 				</Form.Item>
-				<ConfirmPassWord form={form} />
+				<ConfirmPassWord
+					form={form}
+					blockAutofill
+					autofillGuardReleased={autofillGuardReleased}
+					onReleaseAutofillGuard={() => setAutofillGuardReleased(true)}
+					passwordAutoComplete="new-password"
+					confirmPasswordAutoComplete="new-password"
+				/>
 				<Form.Item
 					name="agreement"
 					rules={[

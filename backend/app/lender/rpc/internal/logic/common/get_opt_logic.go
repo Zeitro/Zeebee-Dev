@@ -7,37 +7,27 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/enums"
-
-	"github.com/zeromicro/go-zero/core/logx"
-
-	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type GetOptLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
 }
 
 func NewGetOptLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetOptLogic {
 	return &GetOptLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
 	}
 }
 
 func (l *GetOptLogic) GetOpt(in *lender.OptionRequest) (resp *lender.OptionResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+
 	resp = &lender.OptionResponse{
-		Data: []*lender.OptionEntity{},
+		Data: []*proto.OptionEntity{},
 	}
-	opts := enums.Get(in.Data.Name)
-	optsPtr, err := copierx.Trans[[]enums.EnumOpt, []*lender.OptionEntity](&opts)
+	optsPtr, err := copierx.Trans[[]enums.EnumOpt, []*proto.OptionEntity](new(enums.Get(in.Data.Name)))
 	if err != nil {
 		return nil, err
 	}

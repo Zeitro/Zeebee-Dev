@@ -1,4 +1,22 @@
 import dayjs from 'dayjs';
+import advancedFormat from 'dayjs/plugin/advancedFormat';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import localeData from 'dayjs/plugin/localeData';
+import quarterOfYear from 'dayjs/plugin/quarterOfYear';
+import weekOfYear from 'dayjs/plugin/weekOfYear';
+import weekYear from 'dayjs/plugin/weekYear';
+import weekday from 'dayjs/plugin/weekday';
+
+dayjs.extend(customParseFormat);
+dayjs.extend(weekday);
+dayjs.extend(localeData);
+dayjs.extend(weekOfYear);
+dayjs.extend(weekYear);
+dayjs.extend(advancedFormat);
+dayjs.extend(quarterOfYear);
+
+/** 与 antd DatePicker / RangePicker 兼容的 dayjs 实例 */
+export { dayjs };
 
 export const formatStr = 'MM/DD/YYYY';
 export const formatTimeStr = 'MM/DD/YYYY HH:mm:ss';
@@ -58,7 +76,7 @@ export function getDateRange(days = 7, date = new Date(), direction = 'past') {
 			.startOf('day')
 			.toDate();
 		const endDate = base.endOf('day').toDate();
-		return { startDate: formatDate(startDate), endDate: formatDate(endDate) };
+		return {startDate: formatDate(startDate), endDate: formatDate(endDate)};
 	}
 
 	const startDate = base.startOf('day').toDate();
@@ -66,7 +84,7 @@ export function getDateRange(days = 7, date = new Date(), direction = 'past') {
 		.add(count - 1, 'day')
 		.endOf('day')
 		.toDate();
-	return { start_date: formatDate(startDate), end_date: formatDate(endDate) };
+	return {start_date: formatDate(startDate), end_date: formatDate(endDate)};
 }
 
 /**

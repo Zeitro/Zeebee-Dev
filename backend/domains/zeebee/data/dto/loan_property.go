@@ -4,14 +4,15 @@ import (
 	"database/sql"
 
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
 )
 
 type LoanPropertyEntityDto struct {
 	Id                           int64                  `json:"id"`
 	PropertyType                 constants.PropertyType `json:"property_type"`
 	BorrowerProperty             BorrowerPropertyDto    `json:"borrower_property"`
+	BorrowerPropertyId           int64                  `json:"borrower_property_id"`
 	LivingAreaSqft               float32                `json:"living_area_sqft"`
+	LotAreaSqft                  float32                `json:"lot_area_sqft"`
 	Bedrooms                     int32                  `json:"bedrooms"`
 	Bathrooms                    int32                  `json:"bathrooms"`
 	FuturePropertyType           constants.PropertyType `json:"future_property_type"`
@@ -32,7 +33,7 @@ type LoanPropertyEntityDto struct {
 	SubordinateDebtAmount        float64                `json:"subordinate_debt_amount"`
 	ScheduledCloseEscrowDate     *sql.NullTime          `json:"scheduled_close_escrow_date"`
 	LiquidityAmount              float64                `json:"liquidity_amount"`
-	Budget                       data.LoanBudgetEntity  `json:"budget"`
+	Budget                       LoanBudgetEntityDto    `json:"budget"`
 	MidConstruction              bool                   `json:"mid_construction"`
 	EstYearlyRentalIncomeAmount  float64                `json:"est_yearly_rental_income_amount"`
 	YearlyLiabilityExpenseAmount float64                `json:"yearly_liability_expense_amount"`
@@ -42,6 +43,6 @@ type LoanPropertyEntityDto struct {
 	HasPropertiesVacant          bool                   `json:"has_properties_vacant"`
 	HasShortTermRental           bool                   `json:"has_short_term_rental"`
 	EstPropertyValueAmount       float64                `json:"est_property_value_amount"`
-	Address                      data.Address           `json:"address"`
+	Address                      AddressDto             `json:"address"`
 	Arv                          float64                `json:"arv"`
 }

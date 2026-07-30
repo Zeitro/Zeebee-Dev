@@ -1,7 +1,11 @@
-import {Col, Form, InputNumber, Radio, Row} from 'antd';
-import {CommonFormDate, InputNumAmount} from '@repo/shared-methods';
-import {layoutCol, titleCol, yesNoOptions} from '@/enum/common';
-import {maxTerm_zeeBee, minTerm_zeeBee, validateAssignmentFeeAmount,} from '@repo/shared-methods/utils';
+import { Col, Form, InputNumber, Radio, Row } from 'antd';
+import { CommonFormDate, InputNumAmount } from '@repo/shared-methods';
+import { layoutCol, titleCol, yesNoOptions } from '@repo/shared-methods/enum';
+import {
+	maxTerm_zeeBee,
+	minTerm_zeeBee,
+	validateAssignmentFeeAmount,
+} from '@repo/shared-methods/utils';
 
 const LoanInfo = ({ gutter = 24, loan_purpose, loan_type }) => {
 	const form = Form.useFormInstance();

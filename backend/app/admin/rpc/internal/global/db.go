@@ -14,10 +14,9 @@ func GetGormDB() *gorm.DB {
 }
 
 func initDB(dsn string, isDebug bool) (err error) {
-
 	gormDB, err := gormx.GetDB(dsn, isDebug, gormx.DBTypePgsql)
 	if err != nil {
-		return errorx.Wrap(err, "Init DB error")
+		return errorx.Wrap(err, "init DB error")
 	}
 	db = gormDB
 	return nil

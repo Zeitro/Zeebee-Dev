@@ -11,12 +11,10 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/static"
 	"zeebee-backend/app/admin/rpc/internal/svc"
-	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -24,25 +22,21 @@ import (
 type SyncDataLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewSyncDataLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncDataLogic {
 	return &SyncDataLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *SyncDataLogic) SyncData(_ *admin.EmptyRequest) (resp *admin.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+func (l *SyncDataLogic) SyncData(_ *proto.EmptyRequest) (resp *proto.EmptyResponse, err error) {
+
 	err = l.syncApi()
 	if err != nil {
 		return nil, err
@@ -57,7 +51,7 @@ func (l *SyncDataLogic) SyncData(_ *admin.EmptyRequest) (resp *admin.EmptyRespon
 		return nil, err
 	}
 
-	return &admin.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }
 
 // ========== sync api start ==========
@@ -138,7 +132,6 @@ func (l *SyncDataLogic) syncApi() (err error) {
 // ========== sync api end ==========
 
 // ========== create button for menu ==========
-
 func (l *SyncDataLogic) createMenuButton() (err error) {
 	types := []constants.UserType{
 		constants.UserTypeLender,
@@ -309,7 +302,6 @@ func (l *SyncDataLogic) syncResource() (err error) {
 				return err
 			}
 		}
-
 	}
 
 	return err

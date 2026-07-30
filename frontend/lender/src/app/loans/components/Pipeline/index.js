@@ -1,11 +1,11 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import PaidSvg from '@/assets/images/paid.svg';
 import AccountCircle from '@/assets/images/account_circle.svg';
 import SellSvg from '@/assets/images/sell.svg';
 import Calender from '@/assets/images/calendar_today.svg';
 import { MultiVirtuosoDndKit } from '@repo/shared-methods';
-import { pendingStatusColor } from '@/enum/loan';
+import { pendingStatusColor } from '@repo/shared-methods/enum';
 import {
 	assemblyAddress,
 	createRequest,
@@ -15,12 +15,9 @@ import {
 import { message } from 'antd';
 import { useRouter } from 'next/navigation';
 import { throttle } from 'lodash';
-import { PERMISSIONS } from '@config/permissions';
-import { useAuth } from '@repo/shared-methods/hooks';
 const Pipeline = () => {
-	const { hasPermission } = useAuth();
 	const router = useRouter();
-	const { request } = createRequest();
+	const { request } = useMemo(() => createRequest(), []);
 	const [items, setItems] = useState([
 		{ value: 'Quoting', label: 'Quoting', total: 0, totalAmount: 0, list: [] },
 		{ value: 'Processing', label: 'Processing', total: 0, totalAmount: 0, list: [] },
@@ -43,7 +40,6 @@ const Pipeline = () => {
 		(e, item) => {
 			e.preventDefault();
 			e.stopPropagation();
-			if (!hasPermission(PERMISSIONS?.LOAN?.DETAILS)) return;
 			router.push(`/loans/zeeBeeDetails?id=${item?.id}`);
 		},
 		1000,

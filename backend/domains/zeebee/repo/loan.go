@@ -47,6 +47,7 @@ func (repo *LoanRepo) getDetailByQuery(query *gorm.DB, withPreload bool) (result
 		}).
 			Preload("LoanProperty").
 			Preload("LoanBorrower").
+			Preload("BorrowerPropertyTransaction").
 			Preload("LoanExperiences", func(db *gorm.DB) *gorm.DB {
 				return db.Order("loan_experiences.id asc")
 			}).
@@ -124,8 +125,8 @@ func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq dto.LoanBorro
 	loanTable := model.Loan{}.TableName()
 	loanPropertyTable := model.LoanProperty{}.TableName()
 	applicantTable := model.LoanApplicant{}.TableName()
-	loanPropertyRepo := NewLoanPropertyRepo(repo.BaseRepo.GetDB())
-	applicantRepo := NewLoanApplicantRepo(repo.BaseRepo.GetDB())
+	loanPropertyRepo := NewLoanPropertyRepo(repo.GetDB())
+	applicantRepo := NewLoanApplicantRepo(repo.GetDB())
 
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
@@ -137,7 +138,6 @@ func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq dto.LoanBorro
 		Preload("Applicants")
 	if len(filter.Stage) > 0 {
 		query = query.Where(fmt.Sprintf("%s.stage = ?", loanTable), filter.Stage)
-
 	}
 	hasJoinProperty := false
 
@@ -191,6 +191,10 @@ func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq dto.LoanBorro
 		endDate := datetime.EndOfDay(filter.EndDate.Time)
 		query = query.Where(fmt.Sprintf("%s.%s <= ?", loanTable, dateField), endDate)
 	}
+	// borrower property transaction id
+	if filter.BorrowerPropertyTransactionId > 0 {
+		query = query.Where(fmt.Sprintf("%s.borrower_property_transaction_id = ?", loanTable), filter.BorrowerPropertyTransactionId)
+	}
 
 	if isMaturityDate {
 		today := datetime.BeginOfDay(time.Now())
@@ -219,6 +223,8 @@ func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq dto.LoanBorro
 	if len(sortColumns) == 0 {
 		sortColumns = append(sortColumns, fmt.Sprintf("%s.created_at desc", loanTable))
 	}
+	sortColumns = append(sortColumns, fmt.Sprintf("%s.id desc", loanTable))
+
 	for _, column := range sortColumns {
 		query = query.Order(column)
 	}
@@ -246,9 +252,7 @@ func (repo *LoanRepo) PageForBorrower(ctx context.Context, pageReq dto.LoanBorro
 
 // SummaryForBorrower
 func (repo *LoanRepo) SummaryForBorrower(ctx context.Context, req dto.LoanSummaryRequestDto) (result *dto.LoanSummaryResponseDto, err error) {
-
 	dateField, _ := repo.mapDateField(req.DateType)
-
 	query := repo.Client(ctx).
 		Where("borrower_organization_id = ?", req.OrganizationId)
 	if len(req.Source) > 0 {
@@ -286,8 +290,8 @@ func (repo *LoanRepo) PageForLender(ctx context.Context, pageReq dto.LoanLenderP
 	loanTable := model.Loan{}.TableName()
 	loanPropertyTable := model.LoanProperty{}.TableName()
 	applicantTable := model.LoanApplicant{}.TableName()
-	loanPropertyRepo := NewLoanPropertyRepo(repo.BaseRepo.GetDB())
-	applicantRepo := NewLoanApplicantRepo(repo.BaseRepo.GetDB())
+	loanPropertyRepo := NewLoanPropertyRepo(repo.GetDB())
+	applicantRepo := NewLoanApplicantRepo(repo.GetDB())
 
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
@@ -370,6 +374,7 @@ func (repo *LoanRepo) PageForLender(ctx context.Context, pageReq dto.LoanLenderP
 	if len(sortColumns) == 0 {
 		sortColumns = append(sortColumns, fmt.Sprintf("%s.created_at desc", loanTable))
 	}
+	sortColumns = append(sortColumns, fmt.Sprintf("%s.id desc", loanTable))
 	for _, column := range sortColumns {
 		query = query.Order(column)
 	}
@@ -399,8 +404,8 @@ func (repo *LoanRepo) PageForAdmin(ctx context.Context, pageReq dto.LoanAdminPag
 	loanPropertyTable := model.LoanProperty{}.TableName()
 	applicantTable := model.LoanApplicant{}.TableName()
 	// organizationTable := model.Organization{}.TableName()
-	loanPropertyRepo := NewLoanPropertyRepo(repo.BaseRepo.GetDB())
-	applicantRepo := NewLoanApplicantRepo(repo.BaseRepo.GetDB())
+	loanPropertyRepo := NewLoanPropertyRepo(repo.GetDB())
+	applicantRepo := NewLoanApplicantRepo(repo.GetDB())
 
 	filter := pageReq.Filter
 	sorter := pageReq.Sorter
@@ -495,6 +500,8 @@ func (repo *LoanRepo) PageForAdmin(ctx context.Context, pageReq dto.LoanAdminPag
 	if len(sortColumns) == 0 {
 		sortColumns = append(sortColumns, fmt.Sprintf("%s.created_at desc", loanTable))
 	}
+	sortColumns = append(sortColumns, fmt.Sprintf("%s.id desc", loanTable))
+
 	for _, column := range sortColumns {
 		query = query.Order(column)
 	}
@@ -562,7 +569,6 @@ func (repo *LoanRepo) GetByBorrowerPropertyId(ctx context.Context, borrowerPrope
 
 // mapDateField
 func (repo *LoanRepo) mapDateField(dateType string) (dateField string, isMaturityDate bool) {
-
 	switch dateType {
 	case "maturity_date":
 		dateField = "maturity_date"

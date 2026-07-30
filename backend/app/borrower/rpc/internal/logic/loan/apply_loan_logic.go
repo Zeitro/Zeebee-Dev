@@ -7,8 +7,6 @@ import (
 	"github.com/duke-git/lancet/v2/slice"
 	"gorm.io/gorm"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -18,12 +16,13 @@ import (
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type ApplyLoanLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
@@ -41,22 +40,18 @@ type applyLoanModelData struct {
 
 func NewApplyLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ApplyLoanLogic {
 	return &ApplyLoanLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
 func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrower.LoanApplyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed To Get User Claim")
+		return nil, errorx.Wrap(err, "fail to get user claim")
 	}
 
 	data, err := l.buildModelData(in.Data, nil, claim)
@@ -73,16 +68,15 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 
 		// check loan
 		if len(data.loan.Code) == 0 {
-			innerErr = errorx.WithStack(errorx.New("Code is empty"))
+			innerErr = errorx.WithStack(errorx.New("code is empty"))
 		}
 		isExisted, innerErr := l.svcCtx.LoanRepo.IsExistedByColumnsWithTx(l.ctx, tx, map[string]interface{}{"code": data.loan.Code})
 		if innerErr != nil {
 			return innerErr
 		}
 		if isExisted {
-			return errorx.WithStack(errorx.New("Code already exists"))
+			return errorx.WithStack(errorx.New("code already exists"))
 		}
-		// todo check code whether generate by system
 
 		// save loan
 		loan, innerErr = l.svcCtx.LoanRepo.CreateWithTx(l.ctx, tx, data.loan, false)
@@ -199,7 +193,7 @@ func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrowe
 		return innerErr
 	})
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed To Apply Loan")
+		return nil, errorx.Wrap(err, "fail to apply loan")
 	}
 
 	return &borrower.LoanApplyResponse{
@@ -214,14 +208,28 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 	var borrowerProperty *model.BorrowerProperty
 
 	if reqData == nil {
-		return nil, errorx.New("Invalid request data")
+		return nil, errorx.New("invalid request data")
 	}
+
+	// When BorrowerPropertyTransactionId is provided, derive property from transaction
+	if reqData.BorrowerPropertyTransactionId > 0 {
+		transaction, txErr := l.svcCtx.BorrowerPropertyTransactionRepo.GetOrganizationTransaction(l.ctx, reqData.BorrowerPropertyTransactionId, claim.OrganizationId)
+		if txErr != nil {
+			return nil, errorx.Wrap(txErr, "invalid transaction")
+		}
+		// Override loan property to use transaction's property
+		if reqData.LoanProperty == nil {
+			reqData.LoanProperty = &borrower.LoanPropertyApplyEntity{}
+		}
+		reqData.LoanProperty.BorrowerPropertyId = transaction.BorrowerPropertyId
+	}
+
 	if reqData.LoanProperty == nil {
-		return nil, errorx.New("Invalid loan property")
+		return nil, errorx.New("invalid loan property")
 	}
 
 	if reqData.LoanProperty.BorrowerPropertyId == 0 {
-		return nil, errorx.New("Invalid borrower property")
+		return nil, errorx.New("invalid borrower property")
 	}
 
 	// loan
@@ -257,7 +265,7 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 	// LoanBorrower
 	loanBorrowerData := reqData.LoanBorrower
 	if loanBorrowerData == nil {
-		return nil, errorx.WithStack(errorx.New("Invalid loan borrower"))
+		return nil, errorx.WithStack(errorx.New("invalid loan borrower"))
 	}
 	loanBorrower, err := l.svcCtx.BorrowerEntityRepo.TranToLoanBorrowerWithId(l.ctx, loanBorrowerData.BorrowerEntityId, claim.OrganizationId)
 	if err != nil {
@@ -323,34 +331,38 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 	loanProperty.LivingAreaSqft = borrowerProperty.LivingAreaSqft
 	loanProperty.Address = borrowerProperty.Address
 	loanProperty.BorrowerPropertyId = reqData.LoanProperty.BorrowerPropertyId
+	if oldLoan != nil && oldLoan.LoanProperty != nil {
+		loanProperty.Id = oldLoan.LoanProperty.Id
+	}
+
 	if loanProperty.YearlyLiabilityExpenseAmount > 0 {
 		loanProperty.Dscr = mathutil.RoundToFloat((loanProperty.EstYearlyRentalIncomeAmount/loanProperty.YearlyLiabilityExpenseAmount)*100, 2)
 	}
 
 	// transaction experience
 	transactionExperiences := make([]*model.LoanExperience, 0)
-	err = copierx.Assign[[]*borrower.LoanExperienceEntity, []*model.LoanExperience](&reqData.TransactionExperiences, &transactionExperiences, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
+	err = copierx.Assign[[]*proto.LoanExperienceEntity, []*model.LoanExperience](&reqData.TransactionExperiences, &transactionExperiences, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
 		return nil, err
 	}
 
 	// real_estates experience
 	realEstatesExperiences := make([]*model.LoanExperience, 0)
-	err = copierx.Assign[[]*borrower.LoanExperienceEntity, []*model.LoanExperience](&reqData.RealEstateExperiences, &realEstatesExperiences, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
+	err = copierx.Assign[[]*proto.LoanExperienceEntity, []*model.LoanExperience](&reqData.RealEstateExperiences, &realEstatesExperiences, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
 		return nil, err
 	}
 
 	// third services
 	loanThirdServices := make([]*model.LoanThirdService, 0)
-	err = copierx.Assign[[]*borrower.LoanThirdServiceEntity, []*model.LoanThirdService](&reqData.LoanThirdServices, &loanThirdServices, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
+	err = copierx.Assign[[]*proto.LoanThirdServiceEntity, []*model.LoanThirdService](&reqData.LoanThirdServices, &loanThirdServices, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
 		return nil, err
 	}
 
 	// demographic
 	loanDemographic := &model.LoanDemographic{}
-	loanDemographic, err = copierx.Trans[borrower.LoanDemographicEntity, model.LoanDemographic](reqData.LoanDemographic, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
+	loanDemographic, err = copierx.Trans[proto.LoanDemographicEntity, model.LoanDemographic](reqData.LoanDemographic, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
 		return nil, err
 	}

@@ -1,4 +1,4 @@
-import {Button, Modal} from 'antd';
+import { Button, Modal } from 'antd';
 import React from 'react';
 import styles from './index.module.scss';
 

@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type RolePageLogic struct {
@@ -28,12 +29,12 @@ func NewRolePageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RolePage
 
 func (l *RolePageLogic) RolePage(req *types.RolePageRequest) (resp *types.RolePageResponse, err error) {
 	resp = &types.RolePageResponse{}
-	rpcReq := &borrower.RolePageRequest{
-		Data: &borrower.RolePageRequestData{
-			Filter: &borrower.RolePageRequestFilter{},
+	rpcReq := &proto.CommonPageRequest{
+		Data: &proto.CommonPageRequestData{
+			Filter: &proto.CommonPageFilter{},
 		},
 	}
-	rpcReq.Data, err = copierx.Trans[types.RolePageRequest, borrower.RolePageRequestData](req)
+	rpcReq.Data, err = copierx.Trans[types.RolePageRequest, proto.CommonPageRequestData](req)
 	if err != nil {
 		return nil, err
 	}

@@ -15,6 +15,52 @@
   },
   "basePath": "/",
   "paths": {
+    "/api/v1/common/sync_api": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "common"
+        ],
+        "summary": "sync api",
+        "operationId": "commonSyncApi",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/common/sync_resource": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "common"
+        ],
+        "summary": "sync resource",
+        "operationId": "commonSyncResource",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/file/{id}": {
       "delete": {
         "consumes": [
@@ -751,6 +797,9 @@
                             "type": "number"
                           },
                           "living_area_sqft": {
+                            "type": "number"
+                          },
+                          "lot_area_sqft": {
                             "type": "number"
                           },
                           "mid_construction": {
@@ -1620,6 +1669,9 @@
                     "living_area_sqft": {
                       "type": "number"
                     },
+                    "lot_area_sqft": {
+                      "type": "number"
+                    },
                     "mid_construction": {
                       "type": "boolean"
                     },
@@ -1896,19 +1948,13 @@
             "schema": {
               "type": "object",
               "required": [
-                "stage",
-                "maturity_date"
+                "stage"
               ],
               "properties": {
                 "applicants": {
                   "type": "array",
                   "items": {
                     "type": "object",
-                    "required": [
-                      "borrower_applicant_id",
-                      "is_primary",
-                      "own_percent"
-                    ],
                     "properties": {
                       "borrower_applicant_id": {
                         "type": "integer"
@@ -2511,7 +2557,6 @@
               "type": "object",
               "required": [
                 "action",
-                "comment",
                 "current_pending_status"
               ],
               "properties": {
@@ -3101,6 +3146,9 @@
                 "name": {
                   "type": "string"
                 },
+                "order": {
+                  "type": "integer"
+                },
                 "organization_emails": {
                   "type": "array",
                   "items": {
@@ -3214,6 +3262,9 @@
                   }
                 },
                 "owner_type": {
+                  "type": "string"
+                },
+                "source": {
                   "type": "string"
                 },
                 "status": {
@@ -3360,6 +3411,9 @@
                 "name": {
                   "type": "string"
                 },
+                "order": {
+                  "type": "integer"
+                },
                 "organization_emails": {
                   "type": "array",
                   "items": {
@@ -3477,6 +3531,9 @@
                   }
                 },
                 "owner_type": {
+                  "type": "string"
+                },
+                "source": {
                   "type": "string"
                 },
                 "status": {
@@ -3733,6 +3790,9 @@
                 "name": {
                   "type": "string"
                 },
+                "order": {
+                  "type": "integer"
+                },
                 "organization_emails": {
                   "type": "array",
                   "items": {
@@ -3846,6 +3906,9 @@
                   }
                 },
                 "owner_type": {
+                  "type": "string"
+                },
+                "source": {
                   "type": "string"
                 },
                 "status": {
@@ -4222,9 +4285,6 @@
             "required": true,
             "schema": {
               "type": "object",
-              "required": [
-                "page"
-              ],
               "properties": {
                 "filter": {
                   "type": "object",
@@ -5708,6 +5768,63 @@
         }
       }
     },
+    "/api/v1/organization_user/check_invitation": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization_user"
+        ],
+        "summary": "check invitation",
+        "operationId": "organizationUserOrganizationUserCheckInvitation",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "code",
+                "email",
+                "organization_id"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "organization_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "is_expired": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/organization_user/page": {
       "post": {
         "consumes": [
@@ -6184,9 +6301,7 @@
               "type": "object",
               "required": [
                 "first_name",
-                "last_name",
-                "phone",
-                "remark"
+                "last_name"
               ],
               "properties": {
                 "first_name": {
@@ -7389,9 +7504,6 @@
               "properties": {
                 "filter": {
                   "type": "object",
-                  "required": [
-                    "keyword"
-                  ],
                   "properties": {
                     "keyword": {
                       "type": "string"
@@ -7410,10 +7522,6 @@
                 },
                 "sort": {
                   "type": "object",
-                  "required": [
-                    "column",
-                    "sort"
-                  ],
                   "properties": {
                     "column": {
                       "type": "string"
@@ -8454,6 +8562,9 @@
                 "file_suffix"
               ],
               "properties": {
+                "file_name": {
+                  "type": "string"
+                },
                 "file_suffix": {
                   "type": "string"
                 },
@@ -8470,6 +8581,18 @@
             "schema": {
               "type": "object",
               "properties": {
+                "external_id": {
+                  "type": "string"
+                },
+                "file_name": {
+                  "type": "string"
+                },
+                "storage_type": {
+                  "type": "string"
+                },
+                "upload_type": {
+                  "type": "string"
+                },
                 "url": {
                   "type": "string"
                 }
@@ -9370,9 +9493,9 @@
       }
     }
   },
-  "x-date": "2026-03-18 10:51:23",
+  "x-date": "2026-07-10 15:05:23",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
-  "x-goctl-version": "1.9.2"
+  "x-goctl-version": "1.10.1"
 }

@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
-import { usePermissionStore } from '@repo/shared-methods/store';
+import { usePermissionTagsStore } from '@repo/shared-methods/store';
 export const useAuth = () => {
-	const { permissionTags } = usePermissionStore();
+	const permissionTags = usePermissionTagsStore((s) => s.permissionTags);
 
 	// 检查单个权限
 	const hasPermission = useCallback(
@@ -57,6 +57,9 @@ export const useAuth = () => {
 				}
 				const widths = buttonOptions.map((item) => {
 					if (item?.permission && hasPermission(item?.permission)) {
+						return item.width;
+					}
+					if (!item?.permission && item?.width) {
 						return item.width;
 					}
 					return 0;

@@ -7,8 +7,6 @@ import (
 	"github.com/duke-git/lancet/v2/slice"
 	"gorm.io/gorm"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -18,30 +16,27 @@ import (
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type UpdateBorrowerLoanLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewUpdateBorrowerLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateBorrowerLoanLogic {
 	return &UpdateBorrowerLoanLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequest) (resp *borrower.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequest) (resp *proto.EmptyResponse, err error) {
+
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
@@ -103,7 +98,6 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 			if innerErr != nil {
 				return innerErr
 			}
-
 		}
 
 		// handle applicant
@@ -166,14 +160,13 @@ func (l *UpdateBorrowerLoanLogic) UpdateBorrowerLoan(in *borrower.LoanUpdateRequ
 		return innerErr
 	})
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed To Update Loan")
+		return nil, errorx.Wrap(err, "fail to update loan")
 	}
 
-	return &borrower.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }
 
 func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateRequestData, oldLoan *model.Loan, claim utils.JwtUser) (loan *model.Loan, loanProperty *model.LoanProperty, applicants []*model.LoanApplicant, loanBorrower *model.LoanBorrower, err error) {
-
 	// build applicants
 	var totalOwnPercent int32
 	for _, applicant := range in.Applicants {
@@ -231,7 +224,7 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 		return nil, nil, nil, nil, err
 	}
 
-	loanProperty, err = copierx.Trans[borrower.ThirdPartyLoanPropertyEditEntity, model.LoanProperty](in.LoanProperty, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
+	err = copierx.Assign[borrower.ThirdPartyLoanPropertyEditEntity, model.LoanProperty](in.LoanProperty, loanProperty, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
@@ -247,7 +240,7 @@ func (l *UpdateBorrowerLoanLogic) buildUpdateModels(in *borrower.LoanUpdateReque
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
-	loan, err = copierx.Trans[borrower.LoanUpdateRequestData, model.Loan](in, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
+	err = copierx.Assign[borrower.LoanUpdateRequestData, model.Loan](in, loan, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}

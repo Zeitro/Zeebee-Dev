@@ -3,67 +3,52 @@ package borrowerpropertylogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
+	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type AllLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AllLogic {
 	return &AllLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
 func (l *AllLogic) All(in *borrower.PropertyAllRequest) (resp *borrower.PropertyAllResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
 
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	// todo check organization
 	results, err := l.svcCtx.BorrowerPropertyRepo.AllForOrganization(l.ctx, claim.OrganizationId)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, errorx.Wrap(err, "fail to get properties")
 	}
 
-	respData := make([]*borrower.BorrowerPropertyEntity, 0, len(results))
+	// respData := make([]*proto.BorrowerPropertyEntity, 0, len(results))
 
-	err = copier.CopyWithOption(&respData, &results, copier.Option{
-		CaseSensitive: true,
-		DeepCopy:      true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-			copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
-		},
-	})
+	data, err := copierx.Trans[[]*model.BorrowerProperty, []*proto.BorrowerPropertyEntity](&results, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToStr(timex.LayoutUsStyle))
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
 	return &borrower.PropertyAllResponse{
-		Data: respData,
+		Data: *data,
 	}, nil
 }

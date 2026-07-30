@@ -14,7 +14,6 @@ import (
 	"zeebee-backend/common/timex"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 )
@@ -67,17 +66,17 @@ func (l *LoanLogic) ReassignLender(ctx context.Context, id int64, lenderOrganiza
 		input := dto.LoanOperationCreateDto{
 			LoanId:     loan.Id,
 			OperatorId: claim.OrganizationUserId,
-			From: data.LoanOperationStatus{
+			From: dto.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			To: data.LoanOperationStatus{
+			To: dto.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			Action:        constants.LoanOperationActionReassignLender,
 			OperationType: constants.LoanOperationOperatorTypeAdmin,
-			Metadata: &data.LoanOperationMetadata{
+			Metadata: &dto.LoanOperationMetadata{
 				Comment:                      "Admin reassign lender",
 				OriginalLenderOrganizationId: originalLenderOrganizationId,
 				NewLenderOrganizationId:      lenderOrganizationId,
@@ -184,5 +183,4 @@ func (l *LoanLogic) handleDueInfo(items []*dto.LoanEntityDto, days int) {
 			item.DueDays = int32(datetime.DaysBetween(today, maturityDate))
 		}
 	}
-
 }

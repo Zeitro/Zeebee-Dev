@@ -3,8 +3,6 @@ package loanlogic
 import (
 	"context"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
@@ -14,14 +12,12 @@ import (
 type LoanBaseLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
 }
 
 func NewLoanBaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoanBaseLogic {
 	return &LoanBaseLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
 	}
 }
 
@@ -67,7 +63,6 @@ var loanPendingStatusTransMap = map[constants.LoanPendingStatus]loanPendingStatu
 }
 
 func (l *LoanBaseLogic) GetNextPendingStatus(currentStatus constants.LoanPendingStatus, action constants.LoanOperationAction) (nextStatus constants.LoanPendingStatus, err error) {
-
 	trans, ok := loanPendingStatusTransMap[currentStatus]
 	if !ok {
 		return constants.LoanPendingStatusNone, errorx.Errorf("Invalid Current Status %v", currentStatus)

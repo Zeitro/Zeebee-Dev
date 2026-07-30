@@ -1,11 +1,11 @@
-import {Button, Space, Spin} from 'antd';
+import { Button, Space, Spin } from 'antd';
 import MaturityAlertsItem from './Item';
 import ListModal from './ListModal';
 import SettingModal from './SettingModal';
-import {useCallback, useEffect, useState} from 'react';
-import {SettingOutlined} from '@ant-design/icons';
-import {createRequest} from '@repo/shared-methods/utils';
-import {NoData} from '@repo/shared-methods';
+import { useCallback, useEffect, useState } from 'react';
+import { SettingOutlined } from '@ant-design/icons';
+import { createRequest } from '@repo/shared-methods/utils';
+import { NoData } from '@repo/shared-methods';
 
 const MaturityAlerts = ({ list, source, handleGotoLoanDetails }) => {
 	const [open, setOpen] = useState(false);
@@ -56,7 +56,7 @@ const MaturityAlerts = ({ list, source, handleGotoLoanDetails }) => {
 		const loadFn = () => loadInitList();
 		loadFn();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [source]);
 
 	return (
 		<div className="border rounded-lg border-base-border lg:col-span-1 p-4 bg-background">
@@ -65,11 +65,11 @@ const MaturityAlerts = ({ list, source, handleGotoLoanDetails }) => {
 					Maturity alerts({total})
 				</div>
 				<Space size={8}>
-                    {total > 0 && (
-                        <Button size="small" onClick={() => setOpen(true)}>
-                            View all
-                        </Button>
-                    )}
+					{total > 0 && (
+						<Button size="small" onClick={() => setOpen(true)}>
+							View all
+						</Button>
+					)}
 					<Button
 						size="small"
 						icon={<SettingOutlined />}
@@ -78,17 +78,17 @@ const MaturityAlerts = ({ list, source, handleGotoLoanDetails }) => {
 				</Space>
 			</div>
 			<Spin spinning={loading}>
-                {total > 0 ? (
-                    maturityList.map((item) => (
-                        <MaturityAlertsItem
-                            key={item.id}
-                            item={item}
-                            handleGotoLoanDetails={handleGotoLoanDetails}
-                        />
-                    ))
-                ) : (
-                    <NoData imageProps={{style: {width: 80, height: 80}}}/>
-                )}
+				{total > 0 ? (
+					maturityList.map((item) => (
+						<MaturityAlertsItem
+							key={item.id}
+							item={item}
+							handleGotoLoanDetails={handleGotoLoanDetails}
+						/>
+					))
+				) : (
+					<NoData imageProps={{ style: { width: 80, height: 80 } }} />
+				)}
 			</Spin>
 			{open && (
 				<ListModal

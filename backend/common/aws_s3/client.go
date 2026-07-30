@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -40,6 +41,10 @@ var ContentTypeMap = map[string]string{
 	"txt":  "text/plain",
 	"doc":  "application/msword",
 	"docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+	"xls":  "application/vnd.ms-excel",
+	"xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+	"ppt":  "application/vnd.ms-powerpoint",
+	"pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
 }
 
 func NewS3Client(conf *Config) (client *S3Client, err error) {
@@ -61,7 +66,7 @@ func (c *S3Client) GetPresignUrl(ctx context.Context, objectName string, expire 
 	suffix = strings.ToLower(suffix)
 	contentType, ok := ContentTypeMap[suffix]
 	if !ok {
-		err = errorx.Errorf("Invalid file type:%s", suffix)
+		err = errorx.Errorf("invalid file type:%s", suffix)
 		return nil, err
 	}
 
@@ -97,7 +102,6 @@ func (c *S3Client) UploadFile(ctx context.Context, presignedReq *v4.PresignedHTT
 		for _, v := range strings {
 			req.Header.Add(s, v)
 		}
-
 	}
 
 	client := &http.Client{}
@@ -108,7 +112,7 @@ func (c *S3Client) UploadFile(ctx context.Context, presignedReq *v4.PresignedHTT
 	req.Header.Set("Content-Length", strconv.Itoa(buf.Len()))
 	defer resp.Body.Close()
 
-	// failed to upload
+	// fail to upload
 	if resp.StatusCode != http.StatusOK {
 		// get error response
 		content, readErr := io.ReadAll(resp.Body)
@@ -123,4 +127,39 @@ func (c *S3Client) UploadFile(ctx context.Context, presignedReq *v4.PresignedHTT
 	// return url
 	url = fmt.Sprintf("https://%s.s3.%s.amazonaws.com/%s", c.config.Bucket, c.config.Region, strings.TrimPrefix(req.URL.Path, "/"))
 	return url, nil
+}
+
+// GetObject downloads an object by key. The caller is responsible for closing the
+// returned Body.
+func (c *S3Client) GetObject(ctx context.Context, key string) (out *s3.GetObjectOutput, err error) {
+	out, err = c.client.GetObject(ctx, &s3.GetObjectInput{
+		Bucket: aws.String(c.config.Bucket),
+		Key:    aws.String(key),
+	})
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+	return out, nil
+}
+
+// ParseKeyFromUrl extracts the S3 object key from a URL produced by UploadFile.
+// It handles both virtual-hosted (bucket.s3[.region].amazonaws.com/<key>) and
+// path-style (s3[.region].amazonaws.com/<bucket>/<key>) forms. If the URL cannot
+// be recognized it is returned unchanged.
+func (c *S3Client) ParseKeyFromUrl(rawUrl string) string {
+	parsed, err := url.Parse(rawUrl)
+	if err != nil || parsed.Host == "" {
+		return rawUrl
+	}
+	path := strings.TrimPrefix(parsed.Path, "/")
+
+	// virtual-hosted style: host begins with "<bucket>."
+	if strings.HasPrefix(parsed.Host, c.config.Bucket+".") {
+		return path
+	}
+	// path-style: leading "<bucket>/" segment
+	if strings.HasPrefix(path, c.config.Bucket+"/") {
+		return strings.TrimPrefix(path, c.config.Bucket+"/")
+	}
+	return path
 }

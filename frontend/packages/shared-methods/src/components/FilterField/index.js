@@ -1,11 +1,11 @@
 'use client';
-import {Button, Col, Input, Row, Select, Space, TreeSelect} from 'antd';
-import React, {forwardRef, useImperativeHandle} from 'react';
-import {SearchOutlined} from '@ant-design/icons';
+import { Button, Col, Input, Row, Select, Space, TreeSelect } from 'antd';
+import React, { forwardRef, useImperativeHandle } from 'react';
+import { SearchOutlined } from '@ant-design/icons';
 import styles from './index.module.scss';
-import {debounce} from 'lodash';
+import { debounce } from 'lodash';
 
-const {Search} = Input;
+const { Search } = Input;
 const { SHOW_ALL } = TreeSelect;
 /**
  * Form过滤数据组件，配合table使用
@@ -21,7 +21,6 @@ const { SHOW_ALL } = TreeSelect;
 export const FilterField = forwardRef(({ list, className, ...rowProps }, ref) => {
 	// selectProps用于select和input组合的select-input类型
 	const getItemDom = ({
-		hidden,
 		filterType,
 		options,
 		value = null,
@@ -137,22 +136,20 @@ export const FilterField = forwardRef(({ list, className, ...rowProps }, ref) =>
 				);
 				break;
 			case 'button':
-				filterItem = hidden
-					? null
-					: children || (
-							<Button
-								type="primary"
-								size="large"
-								icon={<SearchOutlined />}
-								onClick={debounce((e) => eventProps?.onClick(e), 300)}
-								{...(eventProps || {})}
-							>
-								{text}
-							</Button>
-						);
+				filterItem = children || (
+					<Button
+						type="primary"
+						size="large"
+						icon={<SearchOutlined />}
+						onClick={debounce((e) => eventProps?.onClick(e), 300)}
+						{...(eventProps || {})}
+					>
+						{text}
+					</Button>
+				);
 				break;
 			case 'custom':
-				filterItem = hidden ? null : children;
+				filterItem = children;
 				break;
 			default:
 				break;

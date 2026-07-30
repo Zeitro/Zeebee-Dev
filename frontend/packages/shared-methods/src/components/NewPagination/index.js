@@ -1,4 +1,4 @@
-import {Pagination} from 'antd';
+import { Pagination } from 'antd';
 import React from 'react';
 import styles from './index.module.scss';
 

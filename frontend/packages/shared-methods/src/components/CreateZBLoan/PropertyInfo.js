@@ -1,7 +1,7 @@
 'use client';
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import styles from './index.module.scss';
-import { Row, Col, Form, Select, InputNumber } from 'antd';
+import { Row, Col, Form, Select, InputNumber, Radio } from 'antd';
 import AddressForm from '../GoogleAutoComplete/AddressForm';
 import { useGetOptions } from '@repo/shared-methods/hooks';
 import { layoutCol, titleCol } from '@repo/shared-methods/enum';
@@ -9,15 +9,27 @@ import { livingAreaProps } from '../../lib/format';
 // import SelectCard from '@/components/SelectCard/index';
 import { SelectCard } from '@repo/shared-methods';
 let name = 'loan_property';
+
+const SELECT_MODE = {
+	property: 'property',
+	transaction: 'transaction',
+};
+
 export const PropertyInfo = ({
 	gutter = 24,
 	addressProps,
 	isRequestProperty,
 	unitInfo,
 	isShowSelectCard = true,
+	hasTransactionPermission,
 }) => {
 	const form = Form.useFormInstance();
 	const borrower_property_id = Form.useWatch([name, 'borrower_property_id'], form);
+	const borrower_property_transaction_id = Form.useWatch(
+		['borrower_property_transaction_id'],
+		form,
+	);
+	const [manualSelectMode, setManualSelectMode] = useState(null);
 	const { loanPurposeOptions, loanTypeOptions, propertyTypeOptions } = useGetOptions([
 		{
 			key: 'loan_purpose',
@@ -33,24 +45,104 @@ export const PropertyInfo = ({
 		},
 	]);
 
+	const resolvedSelectMode =
+		manualSelectMode ||
+		(borrower_property_transaction_id ? SELECT_MODE.transaction : SELECT_MODE.property);
+	const isTransactionMode = resolvedSelectMode === SELECT_MODE.transaction;
+
+	const selectCardProps = useMemo(() => {
+		if (isTransactionMode) {
+			return {
+				type: 'transaction',
+				api: '/borrower_property_transaction/all',
+				viewMoreTitle: 'View all transactions',
+				formFieldName: ['borrower_property_transaction_id'],
+				selectedId: borrower_property_transaction_id,
+				isHideAddBtn: true,
+				title: '',
+			};
+		}
+		return {
+			type: 'property',
+			api: '/property/all',
+			title: '',
+			addTitle: 'Add a property',
+			formFieldName: [name, 'borrower_property_id'],
+			selectedId: borrower_property_id,
+		};
+	}, [isTransactionMode, borrower_property_id, borrower_property_transaction_id]);
+
+	const handleSelectModeChange = (mode) => {
+		setManualSelectMode(mode);
+	};
 	return (
 		<Row className={styles.createZeeBee} gutter={gutter}>
 			<Col {...titleCol} className="!text-2xl/8 font-medium text-[#000000a6] pb-8">
 				Property information
 			</Col>
 			{isShowSelectCard && (
-				<SelectCard
-					className="mb-8"
-					changeFormValue={(values) => {
-						const property = {
-							[name]: { ...values, borrower_property_id: values.id },
-						};
-						form.setFieldsValue(property);
-					}}
-					name={[name, 'borrower_property_id']}
-					id={borrower_property_id}
-					disabled={isRequestProperty}
-				/>
+				<Col span={24}>
+					<Form.Item
+						noStyle
+						name={[name, 'borrower_property_id']}
+						rules={[{ required: true }]}
+					></Form.Item>
+					{hasTransactionPermission && (
+						<Form.Item noStyle name={['borrower_property_transaction_id']}></Form.Item>
+					)}
+					<Radio.Group
+						value={resolvedSelectMode}
+						onChange={(e) => handleSelectModeChange(e.target.value)}
+						disabled={isRequestProperty}
+						size="large"
+					>
+						<Radio
+							value={SELECT_MODE.property}
+							className="[&_.ant-radio-label]:!font-medium [&_.ant-radio-label]:text-base !text-base-text"
+						>
+							Choose a property
+						</Radio>
+						{hasTransactionPermission && (
+							<span className="text-base text-base-gray select-none px-2">or</span>
+						)}
+						{hasTransactionPermission && (
+							<Radio
+								value={SELECT_MODE.transaction}
+								className="[&_.ant-radio-label]:!font-medium [&_.ant-radio-label]:text-base !text-base-text"
+							>
+								Choose a transaction
+							</Radio>
+						)}
+					</Radio.Group>
+					<SelectCard
+						key={resolvedSelectMode}
+						className="mb-8"
+						type={selectCardProps.type}
+						api={selectCardProps.api}
+						title={selectCardProps.title}
+						addTitle={selectCardProps.addTitle}
+						name={selectCardProps.formFieldName}
+						id={selectCardProps.selectedId}
+						isHideAddBtn={selectCardProps.isHideAddBtn}
+						changeFormValue={(values) => {
+							if (isTransactionMode) {
+								form.setFieldsValue({
+									borrower_property_transaction_id: values.id,
+									[name]: {
+										borrower_property_id: values.borrower_property_id,
+										...values?.borrower_property,
+									},
+								});
+								return;
+							}
+							form.setFieldsValue({
+								borrower_property_transaction_id: null,
+								[name]: { ...values, borrower_property_id: values.id },
+							});
+						}}
+						disabled={isRequestProperty}
+					/>
+				</Col>
 			)}
 			<AddressForm
 				{...addressProps}
@@ -137,6 +229,25 @@ export const PropertyInfo = ({
 						controls={false}
 						placeholder="Enter number of units"
 						disabled={true}
+					/>
+				</Form.Item>
+			</Col>
+			<Col {...layoutCol} md={12}>
+				<Form.Item
+					label="Lot area sqft"
+					name={[name, 'lot_area_sqft']}
+					rules={[
+						{
+							required: true,
+							message: 'Please enter Lot area sqft!',
+						},
+					]}
+				>
+					<InputNumber
+						style={{ width: '100%' }}
+						{...livingAreaProps}
+						placeholder="Enter Lot area sqft"
+						disabled
 					/>
 				</Form.Item>
 			</Col>

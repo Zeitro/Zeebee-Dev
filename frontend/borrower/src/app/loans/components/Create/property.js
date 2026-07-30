@@ -1,10 +1,10 @@
 'use client';
-import {Col, Form, Input, InputNumber, Row, Select} from 'antd';
+import { Col, Form, Input, InputNumber, Row, Select } from 'antd';
 import styles from './index.module.scss';
-import {useGetOptions} from '@repo/shared-methods/hooks';
+import { useGetOptions } from '@repo/shared-methods/hooks';
 import AddressForm from '@/components/GoogleAutoComplete/AddressForm';
-import {loan_pending} from '@/enum/common';
-import {CommonFormDate, InputNumAmount} from '@repo/shared-methods';
+import { loan_pending } from '@repo/shared-methods/enum';
+import { CommonFormDate, InputNumAmount } from '@repo/shared-methods';
 import SelectCard from '@repo/shared-methods/componentsUi/SelectCard';
 
 const layoutCol = {
@@ -115,12 +115,6 @@ const CreateProperty = ({
 				<Form.Item
 					label="Estimated after repair value (ARV)" // 修复后预计估值
 					name={['loan_property', 'arv']}
-					rules={[
-						{
-							required: true,
-							message: 'Please enter estimated ARV!',
-						},
-					]}
 				>
 					<InputNumAmount placeholder="Enter estimated ARV" />
 				</Form.Item>

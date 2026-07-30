@@ -5,8 +5,8 @@ import (
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
-	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -31,13 +31,13 @@ func (l *UserMenuLogic) UserMenu(req *types.EmptyRequest) (resp *types.ResourceT
 		List: []*types.ResourceTreeEntity{},
 	}
 
-	rpcResp, err := l.svcCtx.ResourceRpcClient.UserMenu(l.ctx, &lender.EmptyRequest{})
+	rpcResp, err := l.svcCtx.ResourceRpcClient.UserMenu(l.ctx, &proto.EmptyRequest{})
 	if err != nil {
 		return nil, err
 	}
 
 	// trans response
-	result, err := copierx.Trans[[]*lender.ResourceTreeEntity, []*types.ResourceTreeEntity](&rpcResp.Data)
+	result, err := copierx.Trans[[]*proto.ResourceTreeEntity, []*types.ResourceTreeEntity](&rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

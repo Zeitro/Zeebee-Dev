@@ -12,10 +12,9 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -24,7 +23,6 @@ type AddFilesLogic struct {
 	ctx       context.Context
 	svcCtx    *svc.ServiceContext
 	baseLogic *logic.BaseLogic
-	logx.Logger
 }
 
 func NewAddFilesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddFilesLogic {
@@ -32,16 +30,10 @@ func NewAddFilesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddFiles
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		baseLogic: logic.GetBaseLogic(svcCtx),
-		Logger:    logx.WithContext(ctx),
 	}
 }
 
-func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *lender.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *proto.EmptyResponse, err error) {
 
 	var loan *model.Loan
 	var loanDocument *model.LoanDocument
@@ -72,7 +64,7 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 		if len(files) > 0 {
 			files, innerErr = l.svcCtx.FileRepo.BatchCreateWithTx(l.ctx, tx, files, false)
 			if innerErr != nil {
-				return errorx.Wrap(innerErr, "Failed To Create File Records")
+				return errorx.Wrap(innerErr, "fail to create file records")
 			}
 		}
 
@@ -81,12 +73,12 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 			"status": constants.LoanDocumentStatusReadyForReview,
 		})
 		if innerErr != nil {
-			return errorx.Wrap(innerErr, "Failed To Update Loan Document Status")
+			return errorx.Wrap(innerErr, "fail to update loan document status")
 		}
 
 		// convert files
-		operationFiles := make([]*data.OperationFile, 0, len(files))
-		operationFilesPtr, err := copierx.Trans[[]*model.File, []*data.OperationFile](&files)
+		operationFiles := make([]*dto.OperationFile, 0, len(files))
+		operationFilesPtr, err := copierx.Trans[[]*model.File, []*dto.OperationFile](&files)
 		if err != nil {
 			return err
 		}
@@ -98,17 +90,17 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 			tx,
 			in.Data.Id,
 			claim.OrganizationUserId,
-			data.LoanOperationStatus{
+			dto.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			data.LoanOperationStatus{
+			dto.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			constants.LoanOperationActionUploadDocumentFile,
-			&data.LoanOperationMetadata{
-				LoanDocuments: []*data.OperationLoanDocument{
+			&dto.LoanOperationMetadata{
+				LoanDocuments: []*dto.OperationLoanDocument{
 					{
 						Category: loanDocument.Category,
 						FileType: loanDocument.FileType,
@@ -119,7 +111,7 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 			},
 		)
 		if innerErr != nil {
-			return errorx.Wrap(innerErr, "Failed To Create Operation Log")
+			return errorx.Wrap(innerErr, "fail to create operation log")
 		}
 
 		// upload loan document upload time
@@ -134,21 +126,21 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 		return nil, err
 	}
 
-	return &lender.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }
 
 // prepare
 func (l *AddFilesLogic) prepare(in *lender.LoanDocumentAddFilesRequest, claim utils.JwtUser) (loan *model.Loan, loanDocument *model.LoanDocument, err error) {
 	loanDocument, err = l.svcCtx.LoanDocumentRepo.FindOneWithPreloadById(l.ctx, in.Data.Id, []string{"Files"})
 	if err != nil {
-		return nil, nil, errorx.Wrap(err, "Failed To Find Loan Document")
+		return nil, nil, errorx.Wrap(err, "fail to find loan document")
 	}
 
 	// Validate file count - existing files + new files should not exceed 10
 	existingFileCount := int64(len(loanDocument.Files))
 	newFileCount := int64(len(in.Data.FileUrls))
 	if existingFileCount+newFileCount > 10 {
-		return nil, nil, errorx.WithStack(errorx.New("Total number of files (existing + new) cannot exceed 10"))
+		return nil, nil, errorx.WithStack(errorx.New("total number of files (existing + new) cannot exceed 10"))
 	}
 
 	loan, err = l.baseLogic.GetLenderLoan(l.ctx, loanDocument.LoanId, claim.OrganizationId, nil)

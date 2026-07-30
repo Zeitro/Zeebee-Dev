@@ -1,6 +1,7 @@
 package svc
 
 import (
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
 
@@ -12,6 +13,8 @@ import (
 
 type ServiceContext struct {
 	Config config.ApiConf
+	// Logger
+	Logger logx.Logger
 	// middleware
 	AuthMiddleware rest.Middleware
 
@@ -28,13 +31,17 @@ type ServiceContext struct {
 	OrganizationTemplateRpcClient lender.OrganizationTemplateClient
 	OrganizationSettingRpcClient  lender.OrganizationSettingClient
 	ResourceRpcClient             lender.ResourceClient
+	ApiRpcClient                  lender.ApiClient
+
+	BorrowerApiContent string
 }
 
-func NewServiceContext(c config.ApiConf) *ServiceContext {
+func NewServiceContext(c config.ApiConf, logger logx.Logger, borrowerApiContent string) *ServiceContext {
 	rpcClient := zrpc.MustNewClient(c.RpcConf)
 	authRpcClient := lender.NewAuthClient(rpcClient.Conn())
 	return &ServiceContext{
 		Config:         c,
+		Logger:         logger,
 		AuthMiddleware: middleware.NewAuthMiddleware(constants.UserTypeLender, authRpcClient).Handle,
 
 		// rpc client
@@ -50,5 +57,7 @@ func NewServiceContext(c config.ApiConf) *ServiceContext {
 		OrganizationTemplateRpcClient: lender.NewOrganizationTemplateClient(rpcClient.Conn()),
 		OrganizationSettingRpcClient:  lender.NewOrganizationSettingClient(rpcClient.Conn()),
 		ResourceRpcClient:             lender.NewResourceClient(rpcClient.Conn()),
+		ApiRpcClient:                  lender.NewApiClient(rpcClient.Conn()),
+		BorrowerApiContent:            borrowerApiContent,
 	}
 }
