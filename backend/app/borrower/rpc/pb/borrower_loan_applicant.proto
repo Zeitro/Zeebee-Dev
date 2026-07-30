@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package borrower;
+
+option go_package = "zeebee-backend/app/borrower/rpc/pb/borrower";
+
+import "proto/common.proto";
+
+message BorrowerNamesResponse {
+  repeated string data = 1;
+}
+
+service LoanApplicant {
+  rpc BorrowerNames(proto.EmptyRequest) returns(BorrowerNamesResponse);
+}

@@ -5,8 +5,8 @@ import (
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
-	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,8 +27,8 @@ func NewOrganizationUserDetailLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 func (l *OrganizationUserDetailLogic) OrganizationUserDetail(req *types.PathIdRequest) (resp *types.OrganizationUserEntity, err error) {
-	rpcReq := &lender.OrganizationUserDetailRequest{
-		Data: &lender.OrganizationUserDetailRequestData{
+	rpcReq := &proto.PathIdRequest{
+		Data: &proto.PathIdRequestData{
 			Id: req.Id,
 		},
 	}
@@ -38,7 +38,7 @@ func (l *OrganizationUserDetailLogic) OrganizationUserDetail(req *types.PathIdRe
 		return nil, err
 	}
 
-	resp, err = copierx.Trans[lender.OrganizationUserEntity, types.OrganizationUserEntity](rpcResp.Data, copierx.TimeToRFC3339Str())
+	resp, err = copierx.Trans[proto.OrganizationUserEntity, types.OrganizationUserEntity](rpcResp.Data, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

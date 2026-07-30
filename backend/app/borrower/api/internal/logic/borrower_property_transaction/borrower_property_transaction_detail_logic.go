@@ -7,8 +7,8 @@ import (
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type BorrowerPropertyTransactionDetailLogic struct {
@@ -27,8 +27,8 @@ func NewBorrowerPropertyTransactionDetailLogic(ctx context.Context, svcCtx *svc.
 }
 
 func (l *BorrowerPropertyTransactionDetailLogic) BorrowerPropertyTransactionDetail(req *types.BorrowerPropertyTransactionDetailRequest) (resp *types.BorrowerPropertyTransactionDetailResponse, err error) {
-	rpcResp, err := l.svcCtx.BorrowerPropertyTransactionRpcClient.Detail(l.ctx, &borrower.BorrowerPropertyTransactionDetailRequest{
-		Data: &borrower.BorrowerPropertyTransactionDetailRequestData{
+	rpcResp, err := l.svcCtx.BorrowerPropertyTransactionRpcClient.Detail(l.ctx, &proto.PathIdRequest{
+		Data: &proto.PathIdRequestData{
 			Id: req.Id,
 		},
 	})
@@ -37,7 +37,7 @@ func (l *BorrowerPropertyTransactionDetailLogic) BorrowerPropertyTransactionDeta
 	}
 
 	resp = &types.BorrowerPropertyTransactionDetailResponse{}
-	resp, err = copierx.Trans[borrower.BorrowerPropertyTransactionEntity, types.BorrowerPropertyTransactionDetailResponse](rpcResp.Data)
+	resp, err = copierx.Trans[proto.BorrowerPropertyTransactionEntity, types.BorrowerPropertyTransactionDetailResponse](rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

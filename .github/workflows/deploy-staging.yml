@@ -18,48 +18,28 @@ jobs:
           clean: true
 
       - name: Get Git Commit ID
-        id: vars
-        run: |
-          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
       - name: Set environment variables
-        id: set_env
         run: |
-          if [[ "${{ github.ref }}" == "refs/heads/staging-borrower-backend" ]]; then
-             SERVICE_NAME=borrower
-          elif [[ "${{ github.ref }}" == "refs/heads/staging-lender-backend" ]]; then
-            SERVICE_NAME=lender
-          elif [[ "${{ github.ref }}" == "refs/heads/staging-admin-backend" ]]; then
-            SERVICE_NAME=admin
-          elif [[ "${{ github.ref }}" == "refs/heads/staging-pdfgenerator-backend" ]]; then
-            SERVICE_NAME=pdfgenerator
-          else
-            echo "Invalid Branch ${{ github.ref }}"
-            exit 1
-          fi
-          SERVICE_ENVIRONMENT="staging"
+          short="${GITHUB_REF##*/}"                 # staging-borrower-backend
+          SERVICE_NAME="${short#*-}"                # borrower-backend
+          SERVICE_NAME="${SERVICE_NAME%-backend}"   # borrower
+          case "$SERVICE_NAME" in borrower|lender|admin|pdfgenerator) ;; *) echo "Invalid branch $GITHUB_REF"; exit 1;; esac
+          if [ "${ACT}" = "true" ]; then SERVICE_ENVIRONMENT=local; else SERVICE_ENVIRONMENT=staging; fi
           FULL_SERVICE_NAME="${SERVICE_ENVIRONMENT}-${SERVICE_NAME}-backend"
-          IMAGE_NAME="${SERVICE_ENVIRONMENT}-${SERVICE_NAME}-backend"
-          CONTAINER_NAME="${SERVICE_ENVIRONMENT}-${SERVICE_NAME}-backend"
-          DOCKER_COMPOSE_FILE="deploy/${SERVICE_NAME}/docker-compose.yml"
-          IMAGE_TAG="${{ env.sha_short }}"
-          
           echo "SERVICE_NAME=${SERVICE_NAME}" >> $GITHUB_ENV
           echo "SERVICE_ENVIRONMENT=${SERVICE_ENVIRONMENT}" >> $GITHUB_ENV
           echo "FULL_SERVICE_NAME=${FULL_SERVICE_NAME}" >> $GITHUB_ENV
-          echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_ENV
-          echo "CONTAINER_NAME=${CONTAINER_NAME}" >> $GITHUB_ENV
-          echo "DOCKER_COMPOSE_FILE=${DOCKER_COMPOSE_FILE}" >> $GITHUB_ENV
-          echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
-
+          echo "DOCKER_COMPOSE_FILE=deploy/${SERVICE_NAME}/docker-compose.yml" >> $GITHUB_ENV
+          echo "IMAGE_TAG=${{ env.sha_short }}" >> $GITHUB_ENV
 
       - name: Show environment variables
         run: |
           echo "Branch: ${{ github.ref }}"
           echo "SERVICE_NAME: ${{ env.SERVICE_NAME }}"
           echo "SERVICE_ENVIRONMENT: ${{ env.SERVICE_ENVIRONMENT }}"
-          echo "CONTAINER_NAME: ${{ env.CONTAINER_NAME }}"
-          echo "IMAGE_NAME: ${{ env.IMAGE_NAME }}"
+          echo "FULL_SERVICE_NAME: ${{ env.FULL_SERVICE_NAME }}"
           echo "DOCKER_COMPOSE_FILE: ${{ env.DOCKER_COMPOSE_FILE }}"
           echo "IMAGE_TAG: ${{ env.IMAGE_TAG }}"
 
@@ -67,51 +47,57 @@ jobs:
         working-directory: backend
         env:
           IMAGE_TAG: ${{ env.IMAGE_TAG }}
+          SERVICE_NAME: ${{ env.SERVICE_NAME }}
+          FULL_SERVICE_NAME: ${{ env.FULL_SERVICE_NAME }}
+          SERVICE_ENVIRONMENT: ${{ env.SERVICE_ENVIRONMENT }}
         run: |
-            echo "Building image ${{ env.FULL_SERVICE_NAME }}:${{ env.IMAGE_TAG }}"
-            docker compose -f ${{ env.DOCKER_COMPOSE_FILE }} build --no-cache ${{ env.FULL_SERVICE_NAME }}
+          echo "Building image ${{ env.FULL_SERVICE_NAME }}:${{ env.IMAGE_TAG }}"
+          docker compose -f ${{ env.DOCKER_COMPOSE_FILE }} build --no-cache ${{ env.SERVICE_NAME }}-backend
 
       - name: Stop old container
         run: |
           echo "Stopping old container..."
-          docker stop ${{ env.FULL_SERVICE_NAME }} || true    
+          docker stop ${{ env.FULL_SERVICE_NAME }} || true
 
       - name: Start new container
         working-directory: backend
         env:
-            IMAGE_TAG: ${{ env.IMAGE_TAG }}
-            SERVICE_NAME: ${{ env.SERVICE_NAME }}
-            IMAGE_NAME: ${{ env.IMAGE_NAME }}
-            CONTAINER_NAME: ${{ env.CONTAINER_NAME }}
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
+          SERVICE_NAME: ${{ env.SERVICE_NAME }}
+          FULL_SERVICE_NAME: ${{ env.FULL_SERVICE_NAME }}
+          SERVICE_ENVIRONMENT: ${{ env.SERVICE_ENVIRONMENT }}
         run: |
           echo "Starting new container for ${{ env.FULL_SERVICE_NAME }}..."
-          docker compose -f ${{ env.DOCKER_COMPOSE_FILE }} up -d --no-build ${{ env.FULL_SERVICE_NAME }} 
+          files="-f ${{ env.DOCKER_COMPOSE_FILE }}"
+          # ponytail: local act has no AWS creds; override awslogs logging driver
+          [ "$ACT" = "true" ] && files="$files -f deploy/${{ env.SERVICE_NAME }}/docker-compose.local.yml"
+          docker compose $files up -d --no-build ${{ env.SERVICE_NAME }}-backend
 
       - name: Verify container is running
         run: |
-          echo "Checking container status for ${{ env.CONTAINER_NAME }}..."
+          echo "Checking container status for ${{ env.FULL_SERVICE_NAME }}..."
           for i in {1..12}; do
-            status=$(docker inspect -f '{{.State.Status}}' ${{ env.CONTAINER_NAME }} 2>/dev/null || echo "not_found")
+            status=$(docker inspect -f '{{.State.Status}}' ${{ env.FULL_SERVICE_NAME }} 2>/dev/null || echo "not_found")
             if [ "$status" = "running" ]; then
-              echo "✅ Container ${{ env.CONTAINER_NAME }} is running."
+              echo "✅ Container ${{ env.FULL_SERVICE_NAME }} is running."
               exit 0
             fi
             echo "⏳ Waiting for container to start... ($i/12)"
             sleep 5
           done
 
-          echo "❌ Container ${{ env.CONTAINER_NAME }} failed to start."
+          echo "❌ Container ${{ env.FULL_SERVICE_NAME }} failed to start."
           echo "------ Container Logs ------"
-          docker logs ${{ env.CONTAINER_NAME }} || echo "No logs available"
+          docker logs ${{ env.FULL_SERVICE_NAME }} || echo "No logs available"
           echo "-----------------------------"
           exit 1
 
       - name: Remove old images
         run: |
-          images=$(docker images --filter "reference=${{ env.IMAGE_NAME }}:*" --format "{{.Repository}}:{{.Tag}}")
+          images=$(docker images --filter "reference=${{ env.FULL_SERVICE_NAME }}:*" --format "{{.Repository}}:{{.Tag}}")
           count=$(echo "$images" | wc -l)
           if [ "$count" -gt 10 ]; then
-            delete_count=$(expr $count - 10)
+            delete_count=$((count - 10))
             echo "Found $count images. Deleting the oldest $delete_count..."
             echo "$images" | tail -n $delete_count | xargs -r docker rmi
           else
@@ -119,5 +105,4 @@ jobs:
           fi
 
       - name: Remove dangling images
-        run: |
-          docker image prune -f
+        run: docker image prune -f

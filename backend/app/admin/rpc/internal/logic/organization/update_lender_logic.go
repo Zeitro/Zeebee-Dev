@@ -3,7 +3,6 @@ package organizationlogic
 import (
 	"context"
 
-	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/protobuf/proto"
 	"gorm.io/gorm"
 
@@ -16,20 +15,21 @@ import (
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	zeebeeproto "zeebee-backend/domains/zeebee/proto"
 )
 
 type UpdateLenderLogic struct {
-	ctx       context.Context
-	svcCtx    *svc.ServiceContext
-	logx.Logger
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewUpdateLenderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLenderLogic {
 	return &UpdateLenderLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
@@ -37,14 +37,6 @@ func NewUpdateLenderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upda
 // UpdateLender updates editable fields of a Lender organization.
 // When activating a search-sourced org without an owner, request must include owner credentials.
 func (l *UpdateLenderLogic) UpdateLender(in *admin.OrganizationUpdateLenderRequest) (resp *admin.OrganizationDetailResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
-			).Error(err)
-		}
-	}()
 
 	organization, err := l.svcCtx.OrganizationRepo.GetOrganization(l.ctx, in.Data.Id, constants.UserTypeLender, false)
 	if err != nil {
@@ -141,7 +133,7 @@ func (l *UpdateLenderLogic) UpdateLender(in *admin.OrganizationUpdateLenderReque
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[dto.OrganizationEntityDto, admin.OrganizationEntity](organizationBo, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[dto.OrganizationEntityDto, zeebeeproto.OrganizationEntity](organizationBo, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

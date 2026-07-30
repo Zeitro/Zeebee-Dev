@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type PropertyAllLogic struct {
@@ -36,7 +37,7 @@ func (l *PropertyAllLogic) PropertyAll(req *types.EmptyRequest) (resp *types.Pro
 
 	resp = &types.PropertyAllResponse{}
 	resp.Lists = make([]*types.BorrowerPropertyEntity, 0, len(rpcResp.Data))
-	listPtr, err := copierx.Trans[[]*borrower.BorrowerPropertyEntity, []*types.BorrowerPropertyEntity](&rpcResp.Data)
+	listPtr, err := copierx.Trans[[]*proto.BorrowerPropertyEntity, []*types.BorrowerPropertyEntity](&rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

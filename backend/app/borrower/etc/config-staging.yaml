@@ -1,10 +1,12 @@
 ApiConf:
-  Name: borrower-api
+  Name: borrower.api
   Host: 0.0.0.0
   Port: 10000
+  Mode: pre
   Timeout: 10000
   Log:
     Stat: false
+    ServiceName: borrower.api
 
   JwtAuth:
     AccessSecret: jY7hM9oD8uH2vV6gF1uS5wM8vZ5nE1lA
@@ -19,8 +21,11 @@ ApiConf:
 RpcConf:
   Name: borrower.rpc
   ListenOn: 0.0.0.0:10001
-  Mode: dev
+  Mode: pre
   Timeout: 10000
+  Log:
+    Stat: false
+    ServiceName: borrower.rpc
   LimiterConf:
     Login:
       Rate: 10
@@ -104,7 +109,7 @@ RpcConf:
       ClientId: 808134957644-2savep4tlp45sln5v9f21hq06628vvia.apps.googleusercontent.com
       ClientSecret: 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
       CallbackUrl: https://app.zeebeeloans.net/driveAuth
-  PdfGeneratorUrl: http://127.0.0.1:10300/api/v1/pdf
+  PdfGeneratorBaseUrl: http://127.0.0.1:10300/api/v1
   TemplateConf:
     PreApprovalLetterPdf:
       Purpose: preApprovedLetter
@@ -132,7 +137,7 @@ RpcConf:
 
   # Zeitro API configuration
   ZeitroConf:
-    Url:  https://lo.zeitro.com
+    Url: https://lo.zeitro.com
     Username: cli_hu4tKiltzCfQfheOa3
     Password: sec_8SyshMSf1ZORJrH6mT38FMtDAItSLAox8ysd
 
@@ -148,3 +153,12 @@ RpcConf:
   CronTaskConf:
     - name: update_organization_subscription_status
       schedule: "0 0 2 * * *"
+  # llm
+  LlmConf:
+    Providers:
+      - Name: openai
+        ApiKey: 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
+        BaseUrl: https://api.openai.com/v1
+    TransactionFileParseConf:
+      Provider: openai
+      Model: gpt-5.4

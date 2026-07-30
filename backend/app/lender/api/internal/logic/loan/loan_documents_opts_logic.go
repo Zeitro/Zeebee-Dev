@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type LoanDocumentsOptsLogic struct {
@@ -40,7 +41,7 @@ func (l *LoanDocumentsOptsLogic) LoanDocumentsOpts(req *types.PathIdRequest) (re
 
 	// Convert RPC response to API response
 	resp = &types.LoanDocumentOptResponse{}
-	options, err := copierx.Trans[[]*lender.LoanDocumentOptEntity, []types.LoanDocumentOptEntity](&rpcResp.Data)
+	options, err := copierx.Trans[[]*proto.LoanDocumentOptEntity, []types.LoanDocumentOptEntity](&rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

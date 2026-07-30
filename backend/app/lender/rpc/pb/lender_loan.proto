@@ -1,0 +1,199 @@
+syntax = "proto3";
+
+package lender;
+
+option go_package = "zeebee-backend/app/lender/rpc/pb/lender";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+
+
+message BorrowerEditApplicantEntity {
+  string name = 1 [deprecated = true];
+  string type = 2;
+  bool is_primary = 3;
+  int64 id = 4;
+  string first_name = 5;
+  string last_name = 6;
+  string mid_name = 7;
+}
+
+// detail -- response
+message LoanDetailResponse {
+  proto.LoanEntity data = 1;
+}
+
+// page -- request
+message LoanPageRequest {
+  LoanPageRequestData data = 1;
+}
+message LoanPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  LoanPageRequestFilter filter = 3;
+  proto.CommonPageSorter sorter = 4;
+}
+
+message  LoanPageRequestFilter {
+  //  int64 organization_id = 1;
+  string stage = 2;
+  string keyword = 3;
+  string keyword_type = 4;
+  repeated string loan_purpose = 5;
+  repeated string loan_type = 6;
+  repeated string pending_status = 7;
+}
+
+// page -- response
+message LoanPageResponse {
+  LoanPageResponseData data = 1;
+}
+
+message LoanPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated proto.LoanEntity list = 5;
+}
+
+//  update --  request
+message LoanUpdateRequest {
+  LoanUpdateRequestData data = 1;
+}
+message LoanUpdateRequestData {
+  message LoanPropertyEditEntity{
+    int64 id = 1;
+    //  int64 borrower_property_id = 2;
+    string future_property_type = 3;
+    int32  future_unit = 4;
+    float future_living_area_sqft = 5;
+    int32 future_bedrooms = 6;
+    int32 future_bathrooms = 7;
+    string owner = 8;
+    //
+    string existing_lender_company = 9;
+    float existing_rate = 10;
+    string existing_maturity_date = 11;
+    double purchase_amount = 12;
+    string purchase_date = 13;
+    bool has_assignment_fee = 14;
+    double assignment_fee_amount = 15;
+    bool has_subordinate_debt = 16;
+    double subordinate_debt_amount = 17;
+    string scheduled_close_escrow_date = 18;
+    double liquidity_amount = 19;
+    proto.LoanBudgetEntity budget = 20;
+    bool mid_construction = 21;
+    double est_yearly_rental_income_amount = 22;
+    double yearly_liability_expense_amount = 23;
+    //  double dscr = 24;
+    bool has_delayed_financing = 25;
+    bool has_collateralized_blanket = 26;
+    bool has_properties_vacant = 27;
+    bool has_short_term_rental = 28;
+    double est_property_value_amount = 29;
+    double arv = 30;
+  }
+
+  message LoanApplicantLoanEditEntity{
+    int64 id = 1;
+    int64 borrower_applicant_id = 2;
+    bool is_primary = 3;
+    int32 own_percent = 4;
+  }
+
+  string loan_purpose = 1;
+  string loan_type = 2;
+  double total_amount = 3;
+  double initial_amount = 4;
+  LoanPropertyEditEntity loan_property = 5;
+  double holdback_amount = 6;
+  double principal_amount = 7;
+  int32 prepayment_penalty = 9;
+  repeated string business_strategy = 11;
+  repeated LoanApplicantLoanEditEntity applicants = 12;
+  int32 loan_term = 13;
+  //  double ltv = 14;
+  int32 est_credit_score = 15;
+  double reserves_amount = 16;
+  repeated proto.LoanExperienceEntity transaction_experiences = 17;
+  repeated proto.LoanExperienceEntity real_estate_experiences = 18;
+  proto.LoanDemographicEntity loan_demographic = 19;
+  repeated proto.LoanThirdServiceEntity loan_third_services = 20;
+  int64 id = 21;
+
+  string stage = 23;
+  string pending_status = 24;
+}
+// update -- response
+message LoanUpdateResponse {
+  LoanUpdateResponseData data = 1;
+}
+message LoanUpdateResponseData {
+  int64 id = 1;
+}
+
+// update documents --  request
+message LoanUpdateDocumentsRequest {
+  LoanUpdateDocumentsRequestData data = 1;
+}
+message LoanUpdateDocumentsRequestData {
+  int64 id = 1;
+  int64 borrower_id = 2;
+  repeated proto.FileEntity documents = 3;
+}
+
+// update stage -- request
+message LoanUpdateStageRequest {
+  LoanUpdateStageRequestData data = 1;
+}
+message LoanUpdateStageRequestData {
+  int64 id = 1;
+  string stage = 2;
+}
+
+// update pending status -- request
+message LoanUpdatePendingStatusRequest {
+  LoanUpdatePendingStatusRequestData data = 1;
+}
+message LoanUpdatePendingStatusRequestData {
+  int64 id = 1;
+  string pending_status = 2;
+}
+// pending status review -- request
+message LoanPendingStatusReviewRequest {
+  LoanPendingStatusReviewRequestData data = 1;
+}
+message LoanPendingStatusReviewRequestData {
+  int64 id = 1;
+  int64 user_id = 2;
+  int64 organization_id = 3;
+  string current_pending_status = 4;
+  string action = 5;
+  string comment = 6;
+}
+
+// loan document opts -- request
+message LoanDocumentOptsRequest {
+  LoanDocumentOptsRequestData data = 1;
+}
+message LoanDocumentOptsRequestData {
+  int64 id = 1;
+}
+// loan document opts -- response
+message LoanDocumentOptsResponse {
+  repeated proto.LoanDocumentOptEntity data = 1;
+}
+
+service Loan {
+  rpc LoanDetail(proto.PathIdRequest) returns(LoanDetailResponse);
+  rpc LoanPage(LoanPageRequest) returns(LoanPageResponse);
+  rpc UpdateLoan(LoanUpdateRequest) returns(LoanUpdateResponse);
+  rpc UpdateLoanDocuments(LoanUpdateDocumentsRequest) returns(proto.EmptyResponse);
+  rpc UpdateLoanStage(LoanUpdateStageRequest) returns(proto.EmptyResponse);
+  rpc UpdateLoanPendingStatus(LoanUpdatePendingStatusRequest) returns(proto.EmptyResponse);
+  rpc PendingStatusReview(LoanPendingStatusReviewRequest) returns(proto.EmptyResponse);
+  rpc LoanDocumentOpts(LoanDocumentOptsRequest) returns(LoanDocumentOptsResponse);
+}

@@ -1,0 +1,334 @@
+syntax = "proto3";
+
+package borrower;
+
+option go_package = "zeebee-backend/app/borrower/rpc/pb/borrower";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+// create -- request
+message BorrowerPropertyTransactionCreateRequest {
+  BorrowerPropertyTransactionCreateRequestData data = 1;
+}
+
+// create -- response
+message BorrowerPropertyTransactionCreateRequestData {
+  int64 borrower_property_id = 1;
+  string type = 2;
+}
+
+// detail -- response
+message BorrowerPropertyTransactionDetailResponse {
+  proto.BorrowerPropertyTransactionEntity data = 1;
+}
+
+// update -- request
+message BorrowerPropertyTransactionUpdateRequest {
+  BorrowerPropertyTransactionUpdateRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionUpdateRequestData {
+  int64 id = 1;
+  string coe_date = 2;
+  double purchase_amount = 3;
+  double emd_amount = 4;
+  string property_type = 5;
+  string pm = 6;
+  repeated string business_strategy = 7;
+  string note = 8;
+  string title_holder = 9;
+  string contract_date = 10;
+  string emd_due_date = 11;
+  string contingency_removal_date = 12;
+  string tc = 13;
+  string cost_allocation = 14;
+  repeated PropertyTransactionEscrowData escrows = 15;
+  BorrowerPropertyTransactionPropertyEditEntity property = 16;
+}
+
+message PropertyTransactionEscrowData {
+  int64 id = 1;
+  string no = 2;
+  string escrow_company = 3;
+  string officer_name = 4;
+  string officer_phone = 5;
+  string officer_email = 6;
+  proto.PropertyTransactionEscrowChecklistEntity checklist = 7;
+}
+
+message BorrowerPropertyTransactionPropertyEditEntity {
+  int64 id = 1;
+  int32 unit = 2;
+  string property_type = 3;
+  double living_area_sqft = 4;
+  double lot_area_sqft = 5;
+  int32 bedrooms = 6;
+  int32 bathrooms = 7;
+}
+
+
+// switch status -- request
+message BorrowerPropertyTransactionSwitchStatusRequest {
+  BorrowerPropertyTransactionSwitchStatusRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionSwitchStatusRequestData {
+  int64 id = 1;
+  string status = 2;
+}
+
+//  all -- response
+message BorrowerPropertyTransactionAllResponse {
+  repeated proto.BorrowerPropertyTransactionOptionEntity data = 1;
+}
+
+// list -- request
+message BorrowerPropertyTransactionListByPropertyRequest {
+  BorrowerPropertyTransactionListByPropertyRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionListByPropertyRequestData {
+  int64 borrower_property_id = 1;
+}
+// list -- response
+message BorrowerPropertyTransactionListByPropertyResponse {
+  repeated proto.BorrowerPropertyTransactionEntity data = 1;
+}
+
+// checklist -- request
+message BorrowerPropertyTransactionChecklistRequest {
+  BorrowerPropertyTransactionChecklistRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionChecklistRequestData {
+  int64 id = 1;
+  string status_key = 2;
+  bool all_checked = 3;
+  int64 document_id = 4;
+}
+
+// page -- request
+message BorrowerPropertyTransactionPageRequest {
+  BorrowerPropertyTransactionPageRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  BorrowerPropertyTransactionPageRequestFilter filter = 3;
+  proto.CommonPageSorter sorter = 4;
+}
+
+message BorrowerPropertyTransactionPageRequestFilter {
+  string keyword = 1;
+  string type = 2;
+  string status = 3;
+}
+
+// page -- response
+message BorrowerPropertyTransactionPageResponse {
+  BorrowerPropertyTransactionPageResponseData data = 1;
+}
+
+message BorrowerPropertyTransactionPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated BorrowerPropertyTransactionPageEntity list = 5;
+}
+
+message BorrowerPropertyTransactionPageEntity {
+  int64 id = 1;
+  string code = 2;
+  string type = 3;
+  string status = 4;
+  string coe_date = 5;
+  string created_at = 6;
+  string updated_at = 7;
+  proto.AddressEntity address = 8;
+  int64 borrower_property_id = 9;
+}
+
+// document upload -- request
+message BorrowerPropertyTransactionDocumentUploadFileRequest {
+  BorrowerPropertyTransactionDocumentUploadFileRequestData data = 1;
+}
+
+message FileUploadItem {
+  string file_name = 1;
+  string file_url = 2;
+  string storage_type = 3;
+  string upload_type = 4;
+}
+
+message BorrowerPropertyTransactionDocumentUploadFileRequestData {
+  int64 transaction_id = 1;
+  int64 document_id = 2;
+  repeated FileUploadItem files = 3;
+}
+// document delete -- request
+message BorrowerPropertyTransactionDocumentDeleteFileRequest {
+  BorrowerPropertyTransactionDocumentDeleteFileRequestData data = 1;
+}
+
+message BorrowerPropertyTransactionDocumentDeleteFileRequestData {
+  int64 transaction_id = 1;
+  int64 file_id = 2;
+}
+
+// operation stats -- request
+message TransactionOperationStatsRequest {
+  TransactionOperationStatsRequestData data = 1;
+}
+
+message TransactionOperationStatsRequestData {
+  int64 transaction_id = 1;
+  string  start_date = 2;
+  string  end_date = 3;
+}
+// operation stats -- response
+message TransactionOperationStatsResponse {
+  TransactionOperationStatsResponseData data = 1;
+}
+
+message TransactionOperationStatsResponseData {
+  int64 total = 1;
+  repeated OperationStatsItem items = 2;
+}
+
+message OperationStatsItem {
+  string type = 1;
+  int64 count = 2;
+}
+// operation list -- request
+message TransactionOperationListRequest {
+  TransactionOperationListRequestData data = 1;
+}
+
+message TransactionOperationListRequestData {
+  int64 transaction_id = 1;
+  string operation_type = 2;
+  string  start_date = 3;
+  string  end_date = 4;
+}
+
+// operation list -- response
+message TransactionOperationListResponse {
+  TransactionOperationListResponseData data = 1;
+}
+
+message TransactionOperationListResponseData {
+  repeated OperationListItem list = 1;
+}
+
+message OperationListItem {
+  int64 id = 1;
+  string operation = 2;
+  int64 operator_id = 3;
+  string operator_name = 4;
+  string operator_type = 5;
+  string note = 6;
+  string metadata = 7;
+  string created_at = 8;
+}
+
+// document create -- request
+message BorrowerPropertyTransactionDocumentCreateRequest {
+  message DocumentCreateRequestData {
+    int64 transaction_id = 1;
+    int64 parent_id = 2;
+    repeated string names = 3;
+  }
+
+  DocumentCreateRequestData data = 1;
+}
+// document create -- response
+message BorrowerPropertyTransactionDocumentCreateResponse {
+  repeated proto.DocumentEntity data = 1;
+}
+// document upload -- response
+message BorrowerPropertyTransactionDocumentUploadFileResponse {
+  repeated proto.FileEntity data = 1;
+  // request_id tracks the async parse run triggered by this upload batch (one
+  // run per upload). Empty when no parse rule fired.
+  string request_id = 2;
+}
+
+// ---- file content extraction (manual_tree / manual_select) ----
+
+// parse -- request. No mode field: the backend reads the triggering rule
+// (source/triggered_by/selector) straight from the document's file_parse_config.
+message ParseFileRequest {
+    ParseFileRequestData data = 1;
+}
+
+message ParseFileRequestData {
+  int64  id = 1;
+  int64  document_id    = 2;
+  string parser         = 3;
+}
+
+// parse -- response
+message ParseFileResponse {
+    ParseFileResponseData  data = 1;
+}
+
+message ParseFileResponseData {
+  string request_id = 1;
+}
+
+
+// progress query by params (mode b: refresh page lost requestId)
+message ProgressByParams {
+  int64  transaction_id = 1;
+  int64  document_id    = 2;
+  string parser         = 3;
+}
+// progress -- request. type selects the lookup: "request_id" → use request_id
+// (mode a); "params" → use params to rebuild ruleSig → reqmap (mode b).
+message ParseFileResultRequest {
+    ParseFileResultRequestData data = 1;
+}
+
+message ParseFileResultRequestData {
+  string           request_id = 1;  // mode a
+  ProgressByParams params     = 2;  // mode b
+  string           type       = 3;  // request_id | params
+}
+
+
+// progress -- response (no overall percent; frontend composes from stage + processed/total)
+message ParseFileResultResponse {
+  ParseFileResultResponseData data = 1;
+}
+
+message ParseFileResultResponseData {
+  string status          = 1;  // Running | Finished | Failed
+  string stage           = 2;  // Collect | Extract | Arbitrate | Writeback
+  int32  stage_processed = 3;  // items done in current stage
+  int32  stage_total     = 4;  // items in current stage
+  string error           = 5;
+}
+
+
+
+service BorrowerPropertyTransaction {
+  rpc Create(BorrowerPropertyTransactionCreateRequest) returns(BorrowerPropertyTransactionDetailResponse);
+  rpc Detail(proto.PathIdRequest) returns(BorrowerPropertyTransactionDetailResponse);
+  rpc Update(BorrowerPropertyTransactionUpdateRequest) returns(BorrowerPropertyTransactionDetailResponse);
+  rpc Delete(proto.PathIdRequest) returns(proto.EmptyResponse);
+  rpc SwitchStatus(BorrowerPropertyTransactionSwitchStatusRequest) returns(proto.EmptyResponse);
+  rpc All(proto.EmptyRequest) returns(BorrowerPropertyTransactionAllResponse);
+  rpc ListByBorrowerProperty(BorrowerPropertyTransactionListByPropertyRequest) returns(BorrowerPropertyTransactionListByPropertyResponse);
+  rpc UpdateChecklist(BorrowerPropertyTransactionChecklistRequest) returns(proto.EmptyResponse);
+  rpc Page(BorrowerPropertyTransactionPageRequest) returns(BorrowerPropertyTransactionPageResponse);
+  rpc CreateDocument(BorrowerPropertyTransactionDocumentCreateRequest) returns(BorrowerPropertyTransactionDocumentCreateResponse);
+  rpc UploadDocumentFile(BorrowerPropertyTransactionDocumentUploadFileRequest) returns(BorrowerPropertyTransactionDocumentUploadFileResponse);
+  rpc DeleteDocumentFile(BorrowerPropertyTransactionDocumentDeleteFileRequest) returns(proto.EmptyResponse);
+  rpc OperationStats(TransactionOperationStatsRequest) returns(TransactionOperationStatsResponse);
+  rpc OperationList(TransactionOperationListRequest) returns(TransactionOperationListResponse);
+  rpc ParseFile(ParseFileRequest) returns(ParseFileResponse);
+  rpc ParseFileResult(ParseFileResultRequest) returns(ParseFileResultResponse);
+}

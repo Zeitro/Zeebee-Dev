@@ -7,8 +7,8 @@ import (
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type SwitchOrganizationLogic struct {
@@ -28,8 +28,8 @@ func NewSwitchOrganizationLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 func (l *SwitchOrganizationLogic) SwitchOrganization(req *types.UserSwitchOrganizationRequest) (resp *types.UserLoginResponse, err error) {
 	resp = &types.UserLoginResponse{}
-	rpcReq := &borrower.SwitchOrganizationRequest{
-		Data: &borrower.SwitchOrganizationRequestData{},
+	rpcReq := &proto.SwitchOrganizationRequest{
+		Data: &proto.SwitchOrganizationRequestData{},
 	}
 	rpcReq.Data.OrganizationId = req.OrganizationId
 
@@ -37,7 +37,7 @@ func (l *SwitchOrganizationLogic) SwitchOrganization(req *types.UserSwitchOrgani
 	if err != nil {
 		return nil, err
 	}
-	resp, err = copierx.Trans[borrower.UserLoginResponseData, types.UserLoginResponse](rpcResp.Data)
+	resp, err = copierx.Trans[proto.UserLoginResponseData, types.UserLoginResponse](rpcResp.Data)
 
 	if err != nil {
 		return nil, err

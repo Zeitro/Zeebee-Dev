@@ -1,0 +1,528 @@
+syntax = "proto3";
+
+package borrower;
+
+option go_package = "zeebee-backend/app/borrower/rpc/pb/borrower";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+message LoanCreateRequest {
+  LoanCreateRequestData data = 1;
+}
+
+message ThirdPartyLoanPropertyEditEntity {
+  int64 id = 1;
+  int64 borrower_property_id = 2;
+  string owner = 3;
+  string purchase_date = 4;
+  double purchase_amount = 5;
+  string  existing_lender_company = 6;
+  double arv = 7;
+}
+message ThirdPartyLoanApplicantEditEntity {
+  int64 id = 1;
+  bool is_primary = 2;
+  int64 borrower_applicant_id = 3;
+  int32 own_percent = 4;
+
+}
+
+message LoanApplicantApplyEntity {
+  int64 id = 1;
+  bool is_primary = 2;
+  int64 borrower_applicant_id = 3;
+  int32 own_percent = 4;
+}
+
+// loan create
+message LoanCreateRequestData {
+  string stage = 1;
+  string pending_status = 2;
+  string loan_purpose = 3;
+  string loan_type = 4;
+  double total_amount = 5;
+  double initial_amount = 6;
+  ThirdPartyLoanPropertyEditEntity loan_property = 7;
+  repeated ThirdPartyLoanApplicantEditEntity applicants = 8;
+  string lender_company = 9;
+  string closing_date = 10;
+  double holdback_amount = 11;
+  float rate = 12;
+  double closing_fund = 13;
+  double principal_amount = 14;
+  double monthly_payment = 15;
+  string lien_position = 16;
+  string maturity_date = 17;
+  int32 prepayment_penalty = 18;
+  string service_company = 19;
+  string paid_off_date = 20;
+  repeated string business_strategy = 21;
+  LoanExtendValueEntity extend = 22;
+  string original_contract_date = 23;
+  string extension_date = 24;
+  string loan_processor = 25;
+  int64 borrower_property_transaction_id = 26;
+}
+
+message LoanCreateResponse {
+  LoanCreateResponseData data = 1;
+}
+
+message LoanCreateResponseData {
+  int64 id = 1;
+}
+
+// loan  update
+message LoanUpdateRequest {
+  LoanUpdateRequestData data = 1;
+}
+
+message LoanUpdateRequestData {
+  string stage = 1;
+  string pending_status = 2;
+  string loan_purpose = 3;
+  string loan_type = 4;
+  double total_amount = 5;
+  double initial_amount = 6;
+  ThirdPartyLoanPropertyEditEntity loan_property = 7;
+  repeated ThirdPartyLoanApplicantEditEntity applicants = 8;
+  string lender_company = 9;
+  string closing_date = 10;
+  double holdback_amount = 11;
+  float rate = 12;
+  double closing_fund = 13;
+  double principal_amount = 14;
+  double monthly_payment = 15;
+  string lien_position = 16;
+  string maturity_date = 17;
+  int32 prepayment_penalty = 18;
+  string service_company = 19;
+  string paid_off_date = 20;
+  repeated string business_strategy = 21;
+  int64 id = 22;
+  LoanExtendValueEntity extend = 23;
+  string original_contract_date = 24;
+  string extension_date = 25;
+  string loan_processor = 26;
+}
+
+
+message LoanDetailRequest {
+  LoanDetailRequestData data = 1;
+}
+
+message LoanDetailRequestData {
+  int64 id = 1;
+}
+
+message LoanDetailResponse {
+  proto.LoanEntity data = 1;
+}
+
+message LoanUpdatePendingStatusRequest {
+  LoanUpdatePendingStatusRequestData data = 1;
+}
+message LoanUpdatePendingStatusRequestData {
+  int64 id = 1;
+  string pending_status = 2;
+}
+
+message LoanUpdateStageRequest {
+  LoanUpdateStageRequestData data = 1;
+}
+message LoanUpdateStageRequestData {
+  int64 id = 1;
+  string stage = 2;
+}
+
+message LoanDeleteRequest {
+  LoanDeleteRequestData data = 1;
+}
+message LoanDeleteRequestData {
+  int64 id = 1;
+}
+
+message LoanPageRequest {
+  LoanPageRequestData data = 1;
+}
+
+message LoanPageResponse {
+  LoanPageResponseData data = 1;
+}
+
+message  LoanPageRequestFilter {
+  string stage = 1;
+  string keyword = 2;
+  string keyword_type = 3;
+  repeated string loan_purpose = 4;
+  repeated string loan_type = 5;
+  repeated string lender = 6;
+  repeated string pending_status = 7;
+  repeated string source = 8;
+  string date_type = 9;
+  int32 due_in_days = 10;
+  string start_date = 11;
+  string end_date = 12;
+  int64 borrower_property_transaction_id = 13;
+}
+
+message  LoanPageRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+
+message LoanPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  LoanPageRequestFilter filter = 3;
+  LoanPageRequestSorter sorter = 4;
+}
+
+message LoanPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated proto.LoanEntity list = 5;
+}
+
+message LoanLenderCompaniesRequest {
+  LoanLenderCompaniesRequestData data = 1;
+}
+
+message LoanLenderCompaniesRequestData {
+}
+
+message LoanLenderCompaniesResponse {
+  repeated string data = 1;
+}
+message LoanApplyRequest {
+  LoanApplyRequestData data = 1;
+}
+message LoanApplyRequestData {
+  string loan_purpose = 1;
+  string loan_type = 2;
+  double total_amount = 3;
+  double initial_amount = 4;
+  LoanPropertyApplyEntity loan_property = 5;
+  double holdback_amount = 6;
+  double principal_amount = 7;
+  int32 prepayment_penalty = 8;
+  int64 lender_company_id = 9;
+  repeated string business_strategy = 10;
+  repeated LoanApplicantApplyEntity applicants = 11;
+  int32 loan_term = 12;
+  double ltv = 13;
+  int32 est_credit_score = 14;
+  double reserves_amount = 15;
+  repeated proto.LoanExperienceEntity transaction_experiences = 16;
+  repeated proto.LoanExperienceEntity real_estate_experiences = 17;
+  LoanBorrowerLoanEditEntity loan_borrower = 18;
+  proto.LoanDemographicEntity loan_demographic = 19;
+  repeated proto.LoanThirdServiceEntity loan_third_services = 20;
+  int64 id = 21;
+  string apply_form_file = 22;
+  bool is_preapprove_loan = 23;
+  string code = 24;
+  LoanPreapproveInfo loan_preapprove_info = 25;
+  int64 borrower_property_transaction_id = 26;
+}
+
+message LoanBorrowerLoanEditEntity{
+  int64 id = 1;
+  int64 borrower_entity_id = 2;
+}
+
+message LoanPropertyApplyEntity{
+  int64 id = 1;
+  int64 borrower_property_id = 2;
+  string future_property_type = 3;
+  int32  future_unit = 4;
+  float future_living_area_sqft = 5;
+  int32 future_bedrooms = 6;
+  int32 future_bathrooms = 7;
+  string owner = 8;
+  //
+  string existing_lender_company = 9;
+  float existing_rate = 10;
+  string existing_maturity_date = 11;
+  double purchase_amount = 12;
+  string purchase_date = 13;
+  bool has_assignment_fee = 14;
+  double assignment_fee_amount = 15;
+  bool has_subordinate_debt = 16;
+  double subordinate_debt_amount = 17;
+  string scheduled_close_escrow_date = 18;
+  double liquidity_amount = 19;
+  proto.LoanBudgetEntity budget = 20;
+  bool mid_construction = 21;
+  double est_yearly_rental_income_amount = 22;
+  double yearly_liability_expense_amount = 23;
+  double dscr = 24;
+  bool has_delayed_financing = 25;
+  bool has_collateralized_blanket = 26;
+  bool has_properties_vacant = 27;
+  bool has_short_term_rental = 28;
+  double est_property_value_amount = 29;
+  double arv = 30;
+}
+
+message LoanPreapproveInfo {
+  LoanPreApprovalRequestData input = 1;
+  LoanPreapproveResult result = 2;
+}
+message LoanPreapproveResult {
+  string lender_organization_name = 1;
+  int64 lender_organization_id = 2;
+  bool is_approved = 3;
+  string reject_reason = 4;
+  double total_amount = 5;
+  double interest_reserved_amount = 6;
+  float rate = 7;
+  double monthly_payment = 8;
+  double cash_to_close = 9;
+  double initial_amount = 10;
+  double holdback_amount = 11;
+  int32 loan_term = 12;
+  float ltv = 13;
+  float ltc = 14;
+  float ltarv = 15;
+  string experience_level = 16;
+}
+
+message LoanApplyResponse {
+  LoanApplyResponseData data = 1;
+}
+message LoanApplyResponseData {
+  int64 id = 1;
+}
+
+message ImportPendingLoansRequest {
+  repeated ImportPendingLoansRequestData data = 1;
+}
+message ImportPendingLoansRequestData {
+  string loan_type = 1;
+  double total_amount = 2;
+  ImportPendingLoanPropertyEntity loan_property = 3;
+  proto.LoanBorrowerEntity loan_borrower = 4;
+  float purchase_amount = 5;
+  string purchase_date = 6;
+  string maturity_date = 7;
+  double closing_fund = 8;
+  string lender_company = 9;
+  LoanExtendValueEntity extend = 10;
+  double holdback_amount = 11;
+  string original_contract_date = 12;
+  string extension_date = 13;
+  string loan_processor = 14;
+  repeated ImportPendingLoanApplicantEntity applicants = 15;
+  string closing_date = 16;
+}
+
+message ImportPendingLoanPropertyEntity {
+  string property_type = 1;
+  int32 unit = 2;
+  double living_area_sqft = 3;
+  int32 bedrooms = 4;
+  int32 bathrooms = 5;
+  string future_property_type = 6;
+  int32 future_unit = 7;
+  double future_living_area_sqft = 8;
+  int32 future_bedrooms = 9;
+  string future_bathrooms = 10;
+  string owner = 11;
+  proto.AddressEntity address = 12;
+  string existing_lender_company = 13;
+  double purchase_amount = 14;
+  string purchase_date = 15;
+
+}
+
+message ImportPendingLoanApplicantEntity {
+  string first_name = 1;
+  bool is_primary = 2;
+  int32 own_percent = 3;
+}
+
+message ImportPendingLoansResponse {
+  ImportPendingLoansResponseData data = 1;
+}
+message ImportPendingLoansResponseData {
+  int64 record_count = 1;
+}
+
+message LoanExtendValueEntity {
+  string  pricing = 1;
+  string loan_status_updates = 2;
+  string meeting_notes = 3;
+  string action_list = 4;
+  string business_line = 5;
+}
+
+// pre approve
+message LoanPreApprovalRequest {
+  LoanPreApprovalRequestData data = 1;
+}
+message LoanPreApprovalRequestData {
+  message Borrower {
+    string name = 1;
+    string email = 2;
+    string phone = 3;
+    int32 est_credit_score = 4;
+    int32 flip_property_count = 5;
+    int32 purchase_rental_property_count = 6;
+  }
+
+  message Property {
+    proto.AddressEntity address = 1;
+    string property_type = 2;
+    bool is_permit_ready = 3;
+    int32 unit = 4;
+  }
+
+  message Loan {
+    int32 loan_term = 1;
+    double est_property_value_amount = 2;
+    double arv = 3;
+    double total_amount = 4;
+    double principal_amount = 5;
+    string purchase_date = 6;
+    double purchase_amount = 7;
+    double cost_spent_to_date_amount = 8;
+    double budget_amount = 9;
+    double initial_amount = 10;
+    double holdback_amount = 11;
+    int32 interest_reserve_months = 12;
+    string loan_purpose = 13;
+    string loan_type = 14;
+    bool has_assignment_fee = 15;
+    double assignment_fee_amount = 16;
+  }
+
+  Borrower borrower = 1;
+  Property property = 2;
+  Loan loan = 3;
+  string request_id = 4;
+}
+
+message LoanPreApprovalResponse {
+  LoanPreApprovalResponseData data = 1;
+}
+message LoanPreApprovalResponseData {
+  PrimaryLoanPreApproval primary = 1;
+  repeated SecondaryLoanPreApproval secondaries = 2;
+}
+
+message PrimaryLoanPreApproval {
+  bool is_approved = 1;
+  double total_amount = 2;
+  float rate = 3;
+  double monthly_payment = 4;
+  double cash_to_close = 5;
+  double initial_amount = 6;
+  double holdback_amount = 7;
+  int32 loan_term = 8;
+  float ltv = 9;
+  float ltc = 10;
+  float ltarv = 11;
+  string reject_reason = 12;
+  string request_id = 13;
+  int64 lender_company_id = 14;
+  string lender_company_name = 15;
+}
+
+message SecondaryLoanPreApproval {
+  message RangeFloat {
+    double min = 1;
+    double max = 2;
+  }
+
+  message RangeInt {
+    int32 min = 1;
+    int32 max = 2;
+  }
+
+  int64 lender_company_id = 1;
+  string lender_company_name = 2;
+  RangeFloat total_amount = 3;
+  RangeFloat rate = 4;
+  RangeInt loan_term = 5;
+}
+
+// send preapproval loan notification
+message LoanSendPreApprovalNotificationRequest {
+  LoanSendPreApprovalNotificationRequestData data = 1;
+}
+message LoanSendPreApprovalNotificationRequestData {
+  string request_id = 1;
+  int64 lender_company_id = 2;
+}
+
+// send quote email
+message LoanSendQuoteEmailRequest {
+  LoanSendQuoteEmailRequestData data = 1;
+}
+message LoanSendQuoteEmailRequestData {
+  string stage = 1;
+  string pending_status = 2;
+  string loan_purpose = 3;
+  string loan_type = 4;
+  double total_amount = 5;
+  ThirdPartyLoanPropertyEditEntity loan_property = 6;
+  string closing_date = 7;
+  double holdback_amount = 8;
+  double principal_amount = 9;
+  repeated string business_strategy = 10;
+  repeated int64 lender_ids = 11;
+  repeated ThirdPartyLoanApplicantEditEntity applicants = 12;
+}
+
+// loan summary -- request
+message LoanSummaryRequest {
+  LoanSummaryRequestData data = 1;
+}
+message LoanSummaryRequestData {
+  string  start_date = 1;
+  string  end_date = 2;
+  repeated string  source = 3;
+  int32 due_in_days = 4;
+  LoanPageRequestSorter sorter = 5;
+  string stage = 6;
+  string date_type = 7;
+}
+
+message LoanSummaryResponse {
+  LoanSummaryResponseData data = 1;
+}
+message LoanSummaryResponseData {
+  double total_loan_amount = 1;
+  double total_principal_amount = 2;
+  double total_holdback_amount = 3;
+  double total_closing_fund_amount = 4;
+  double total_monthly_payment_amount = 5;
+  double total_release_holdback_amount = 6;
+  double total_remaining_holdback_amount = 7;
+  int64 total_loan_count = 8;
+  double average_rate = 9;
+  repeated proto.LoanEntity list = 10;
+}
+
+service Loan {
+  rpc CreateBorrowerLoan(LoanCreateRequest) returns(LoanCreateResponse);
+  rpc UpdateBorrowerLoan(LoanUpdateRequest) returns(proto.EmptyResponse);
+  rpc UpdateBorrowerLoanPendingStatus(LoanUpdatePendingStatusRequest) returns(proto.EmptyResponse);
+  rpc UpdateBorrowerLoanStage(LoanUpdateStageRequest) returns(proto.EmptyResponse);
+  rpc DeleteBorrowerLoan(LoanDeleteRequest) returns(proto.EmptyResponse);
+  rpc BorrowerLoanDetail(LoanDetailRequest) returns(LoanDetailResponse);
+  rpc BorrowerLoanPage(LoanPageRequest) returns(LoanPageResponse);
+  rpc BorrowerLoanLenderCompanies(LoanLenderCompaniesRequest) returns(LoanLenderCompaniesResponse);
+  rpc ApplyLoan(LoanApplyRequest) returns(LoanApplyResponse);
+  rpc SaveDraftLoan(LoanApplyRequest) returns(LoanApplyResponse);
+  rpc UpdateApplyLoan(LoanApplyRequest) returns(proto.EmptyResponse);
+  rpc ImportPendingLoans(ImportPendingLoansRequest) returns(ImportPendingLoansResponse);
+  rpc PreApprovalLoan(LoanPreApprovalRequest) returns(LoanPreApprovalResponse);
+  rpc SendPreApprovalNotification(LoanSendPreApprovalNotificationRequest) returns(proto.EmptyResponse);
+  rpc SendQuoteEmail(LoanSendQuoteEmailRequest) returns(proto.EmptyResponse);
+  rpc Summary(LoanSummaryRequest) returns(LoanSummaryResponse);
+}

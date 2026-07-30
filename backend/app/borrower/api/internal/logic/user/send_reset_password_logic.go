@@ -5,7 +5,7 @@ import (
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,8 +27,8 @@ func NewSendResetPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 func (l *SendResetPasswordLogic) SendResetPassword(req *types.UserSendResetPasswordEmailRequest) (resp *types.EmptyResponse, err error) {
 	resp = &types.EmptyResponse{}
-	_, err = l.svcCtx.UserRpcClient.SendResetPasswordEmail(l.ctx, &borrower.SendResetPasswordEmailRequest{
-		Data: &borrower.SendResetPasswordEmailRequestData{
+	_, err = l.svcCtx.UserRpcClient.SendResetPasswordEmail(l.ctx, &proto.SendResetPasswordEmailRequest{
+		Data: &proto.SendResetPasswordEmailRequestData{
 			Email: req.Email,
 		},
 	})
