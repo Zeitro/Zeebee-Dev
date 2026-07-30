@@ -11,6 +11,7 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file/file"
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file/progress"
+	pdfclient "zeebee-backend/app/pdf_generator/client"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/llm"
 	"zeebee-backend/domains/zeebee/data/dto"
@@ -75,8 +76,8 @@ type EscrowHandler struct {
 	base
 }
 
-func NewEscrowHandler(repos *repo.AllRepos, logger logx.Logger, client llm.Client) *EscrowHandler {
-	return &EscrowHandler{base{repos: repos, logger: logger, llm: client}}
+func NewEscrowHandler(repos *repo.AllRepos, logger logx.Logger, client llm.Client, pdfClient *pdfclient.Client) *EscrowHandler {
+	return &EscrowHandler{base{repos: repos, logger: logger, llm: client, pdfClient: pdfClient}}
 }
 
 // Stages returns a single Extract stage; total is seeded from the upload batch.
@@ -98,9 +99,9 @@ func (h *EscrowHandler) Parse(ctx context.Context, txId, docId int64, files []mo
 	rep.SetStageState(ctx, progress.StageExtract, progress.ExtractStateJSON(0, len(inScope)))
 	uploaded := 0
 	for i, f := range inScope {
-		if !file.IsPDF(f.Name) && !file.IsImage(f.Name) {
+		if !file.IsPDF(f.Name) && !file.IsImage(f.Name) && !file.IsWord(f.Name) {
 			rep.SetStageProcessed(ctx, progress.StageExtract, i+1)
-			continue // Word/other excluded from scope
+			continue // unsupported type excluded from scope
 		}
 		if err := h.parseEscrowFile(ctx, txId, rep, f); err != nil {
 			h.logger.WithContext(ctx).WithFields(
@@ -126,7 +127,7 @@ func (h *EscrowHandler) parseEscrowFile(ctx context.Context, txId int64, rep Rep
 		content, usage, e := h.llm.Chat(ctx, extractSystemPrompt, escrowPrompt, llm.WithAttachment(llm.Attachment{
 			FileID:      fc.ProviderFileID,
 			ContentType: fileContentType(f.Name),
-			Filename:    f.Name,
+			Filename:    file.PdfDisplayName(f.Name),
 		}))
 		if e != nil {
 			return e
@@ -175,9 +176,10 @@ func (h *EscrowHandler) upsertEscrowWithTx(ctx context.Context, tx *gorm.DB, txI
 	return err
 }
 
-// fileContentType maps a filename to its MIME type (pdf vs image) for the attachment.
+// fileContentType maps a filename to its MIME type for the attachment. Word
+// files upload as the converted pdf, so they report application/pdf.
 func fileContentType(name string) string {
-	if file.IsPDF(name) {
+	if file.IsPDF(name) || file.IsWord(name) {
 		return "application/pdf"
 	}
 	return file.ImageContentType(name)

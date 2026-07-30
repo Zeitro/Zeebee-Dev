@@ -66,7 +66,7 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 
 	baseLogic := logic.NewBaseLogic(ctx)
 	tplLoader := loader.NewDefaultTemplateLoader(baseLogic.BaseTemplateLogic, baseLogic.OrganizationTemplateLogic)
-	tplConvertor := convertor.NewDefaultConvertor(rpcConfig.PdfGeneratorUrl)
+	tplConvertor := convertor.NewDefaultConvertor(rpcConfig.PdfGeneratorBaseUrl)
 	tpl := templater.NewEngine(tplLoader, tplConvertor)
 	global.Templater = tpl
 

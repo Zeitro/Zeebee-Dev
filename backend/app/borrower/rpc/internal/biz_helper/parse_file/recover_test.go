@@ -103,7 +103,7 @@ func setupRecoverParser(t *testing.T) (*gorm.DB, *Parser, *progress.ProgressMana
 		t.Fatalf("redisx: %v", err)
 	}
 	pm := progress.NewProgressManager(rdb, logx.WithContext(context.Background()))
-	return db, NewParser(repos, &llm.MockClient{}, pm, logx.WithContext(context.Background())), pm
+	return db, NewParser(repos, &llm.MockClient{}, pm, nil, logx.WithContext(context.Background())), pm
 }
 
 // seedParseDoc inserts a document whose metadata resolves to the given parser,

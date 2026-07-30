@@ -3,35 +3,36 @@
 > Zeebee Backend 工作入口。**代码风格**（项目无关）见 constitution，**结构**见 architecture，**事实**见 INDEX。本文件仅含项目特定规范与可执行示例。
 > 改任何 `.api`/`.proto` 后须 `make create-service <service-name>` 重生成。
 > 
-> `.specify/memory/constitution.md` constitution是必须加载并遵循的。
+> `docs/constitution.md` 为必须加载并遵循的代码风格宪章。
 
 ## 文档指针
 
-- **代码风格（项目无关，可迁移）**：`.specify/memory/constitution.md`
-- **架构结构**：`.claude/docs/analysis/architecture.md`（分层职责、数据流、目录组织、服务矩阵、ADR，required reading）
-- **事实清单**：`.claude/docs/INDEX.md`（服务模块矩阵、模型/DTO 清单、通用组件、目录速查）
-- **最新审计**：`.claude/docs/analysis/analysis.md`（2026-06-24，90 个发现）
+- **代码风格（项目无关，可迁移）**：`docs/constitution.md`
+- **架构结构**：`docs/guides/architecture.md`（分层职责、数据流、目录组织、服务矩阵、ADR，required reading）
+- **事实清单**：`docs/INDEX.md`（服务模块矩阵、模型/DTO 清单、通用组件、目录速查）
 - **规则**（技术栈、命名、目录）= 本文件
+- **项目配置定义文件**：`app/<service>/config/config.go`
+- **项目配置文件**：`app/<service>/etc/config-<env>.yaml`
 
 ### Document Reading Order
 
 首次会话必读（按序）：
 
 1. **本文件** — 项目规范、代码示例
-2. **`.specify/memory/constitution.md`** — 代码风格（项目无关）
-3. **`.claude/docs/analysis/architecture.md`** — 架构结构
+2. **`docs/constitution.md`** — 代码风格（项目无关）
+3. **`docs/guides/architecture.md`** — 架构结构
 
 ### 任务路由（按需加载，避免全量读取）
 
 | 任务 | 只读 |
 |------|------|
-| 加/改 HTTP 端点 | 本文件 §核心原则 + [architecture](.claude/docs/analysis/architecture.md) §开发流程 / §端点实现范例 |
-| 定位代码（model/repo/dto/模块） | [INDEX](.claude/docs/INDEX.md) §按目录定位速查 / §服务功能矩阵 |
-| 代码风格、命名、注释 | [constitution](.specify/memory/constitution.md) |
+| 加/改 HTTP 端点 | 本文件 §核心原则 + [architecture](docs/guides/architecture.md) §开发流程 / §端点实现范例 |
+| 定位代码（model/repo/dto/模块） | [INDEX](docs/INDEX.md) §按目录定位速查 / §服务功能矩阵 |
+| 代码风格、命名、注释 | [constitution](docs/constitution.md) |
 | 数据转换 / 错误处理写法 | 本文件 §Data Conversion / §Error Handling |
-| 服务端口 / 职责 | [architecture](.claude/docs/analysis/architecture.md) §服务矩阵 |
-| 模型 / DTO / 组件清单 | [INDEX](.claude/docs/INDEX.md) §领域模型 / §DTO / §通用组件 |
-| 提交格式 | 本文件 §Git Commit + [constitution](.specify/memory/constitution.md) §Git 提交 |
+| 服务端口 / 职责 | [architecture](docs/guides/architecture.md) §服务矩阵 |
+| 模型 / DTO / 组件清单 | [INDEX](docs/INDEX.md) §领域模型 / §DTO / §通用组件 |
+| 提交格式 | 本文件 §Git Commit + [constitution](docs/constitution.md) §Git 提交 |
 
 > 按任务取用。规则类事实单一来源（见各表项）；计数 / 版本等易变值以代码为准，文档不重复维护。
 
@@ -59,7 +60,7 @@
 
 ### V. 类型安全与测试
 
-强类型贯穿全代码库。`common/` 工具必须有单元测试，领域逻辑变更需集成测试。覆盖率目标 80%+。
+强类型贯穿全代码库。测试要求（单元/集成/覆盖率）见 [constitution](docs/constitution.md) §测试原则。
 
 ## 技术栈
 
@@ -71,14 +72,14 @@
 
 服务矩阵（端口/职责/规模）、模块清单、`domains/zeebee/` 模型仓储、`common/` 22 工具包 — 单一来源，不在此重复维护：
 
-- [`.claude/docs/analysis/architecture.md`](.claude/docs/analysis/architecture.md) §服务矩阵 / §代码组织（结构与目录）
-- [`.claude/docs/INDEX.md`](.claude/docs/INDEX.md) §服务功能矩阵（模块级）/ §通用组件（common/ 清单）/ §按目录定位速查
+- [`docs/guides/architecture.md`](docs/guides/architecture.md) §服务矩阵 / §代码组织（结构与目录）
+- [`docs/INDEX.md`](docs/INDEX.md) §服务功能矩阵（模块级）/ §通用组件（common/ 清单）/ §按目录定位速查
 
 > 事实型数据以 `go.mod` 与实际代码统计为准。
 
 ## 代码约束
 
-- **数据库操作**：logic 不直接操作数据库，必须经 `domains/zeebee/repo` 层
+- **数据库访问**：RPC logic 不直接操作数据库，须经 `baseLogic` → `domains/zeebee/logic/` → `repo`（详见 [architecture](docs/guides/architecture.md) §关键约束）
 - **错误处理**：`common/errorx/`
 - **校验**：`common/validator/`
 - **类型转换**：`common/copierx`
@@ -86,7 +87,7 @@
 - **lint**：PR 必过 golangci-lint（`.golangci.yml`）
 - **配置**：YAML 文件，禁止硬编码敏感信息
 - **函数签名**：≤4 参，≤3 返回值（风格细节见 constitution §函数约束）
-- **注释**：简洁扼要。一行能说清不写多行；不复述代码、不写废话铺垫；只写「为什么」和非显而易见的意图。
+- **注释**：简洁扼要、只写「为什么」（详见 [constitution](docs/constitution.md) §注释）
 
 ### 配置中的密钥（HARDCODED_SECRETS 例外）
 
@@ -101,10 +102,10 @@
 
 Monorepo。工作范围限 `backend/`。Specs 入 `backend/specs/`（非项目根 `specs/`）。
 
-## AI 文档策略
+## 文档策略
 
-- `.claude/`：分析文档、索引
-- `.specify/`：功能规格
+- `docs/`：项目知识库（constitution、architecture、INDEX、designs），纳入版本管理，工具无关
+- `.claude/`、`.specify/`：AI agent 与插件层（skills、speckit 工具链、本地分析报告），本地保留，不入版本管理
 - `backend/specs/`：SpecKit 实施规格（非项目根 `specs/`）
 
 ## Data Conversion Convention — `copierx.Trans`
@@ -156,7 +157,7 @@ if err != nil {
 
 提交 commit 前先检查是否在项目根目录，如果不在的根目录，请先 cd 到项目根目录。
 
-格式与通用约束（conventional commits、co-author 禁令、多 commit 拆分）见 `.specify/memory/constitution.md` §Git 提交。
+格式与通用约束（conventional commits、co-author 禁令、多 commit 拆分）见 `docs/constitution.md` §Git 提交。
 
 本项目 scope 格式：
 

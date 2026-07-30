@@ -45,7 +45,7 @@ type RpcConf struct {
 	PreApprovalLoanConf          []PreApprovalLoanConf
 	ZeebeeAgentEmail             string
 	ZeitroConf                   ZeitroConf
-	PdfGeneratorUrl              string
+	PdfGeneratorBaseUrl          string
 	TemplateConf                 map[string]TemplateConf
 	CasbinConf                   CasbinConf
 	CronTaskConf                 []CronTaskConf

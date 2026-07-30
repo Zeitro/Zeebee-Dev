@@ -8,8 +8,14 @@ RUN if [ "$CONFIG_ENV" = "local" ]; then export GOPROXY=https://goproxy.cn; fi &
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o pdfgenerator /app/app/pdf_generator/cmd/main.go
 
 FROM alpine:3.20 AS final
-RUN apk add  ca-certificates \
+
+# isntall ca-certificates chromium libreoffice
+RUN apk add --no-cache \
+    ca-certificates \
     chromium \
+    libreoffice-writer \
+    font-liberation \
+    ttf-dejavu \
     && update-ca-certificates
 
 ARG CONFIG_ENV=staging

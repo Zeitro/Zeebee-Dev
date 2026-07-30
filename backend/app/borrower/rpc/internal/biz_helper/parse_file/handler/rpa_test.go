@@ -244,14 +244,15 @@ func TestUploadOneReusesCachedFileID(t *testing.T) {
 	}
 }
 
-// TestExtractStageExcludesNonPdfImage: scenario H — a Word file in scope is filtered
-// out (no upload, no consolidated call, no error); only PDF/image are parsed.
-func TestExtractStageExcludesNonPdfImage(t *testing.T) {
+// TestExtractStageIncludesWord (US2): a mixed batch (docx + png) — the docx is
+// converted to pdf and uploaded as <base>.pdf; both reach the consolidated call.
+func TestExtractStageIncludesWord(t *testing.T) {
+	fc := &fakePdfConverter{pdf: buildPDF(t, 1)}
 	mock := &llm.MockClient{ChatContent: "{}"}
-	h := &RPAHandler{base{logger: logx.WithContext(context.Background()), llm: mock}}
+	h := &RPAHandler{base{logger: logx.WithContext(context.Background()), llm: mock, pdfClient: fc}}
 	rep := newMemReporter()
 	files := []collectedFile{
-		{FileId: 1, Name: "notes.docx"},
+		{FileId: 1, Name: "notes.docx", Url: "https://s3/notes.docx"},
 		{FileId: 2, Name: "scan.png", Url: byteServer(t, []byte("png")).URL},
 	}
 
@@ -262,11 +263,18 @@ func TestExtractStageExcludesNonPdfImage(t *testing.T) {
 	if fields.hasAny() {
 		t.Fatal("empty mock response → no fields")
 	}
-	if len(mock.UploadedFiles) != 1 {
-		t.Fatalf("want 1 upload (png only, docx excluded), got %v", mock.UploadedFiles)
+	if len(mock.UploadedFiles) != 2 {
+		t.Fatalf("want 2 uploads (docx→pdf + png), got %v", mock.UploadedFiles)
 	}
-	if atts := mock.Attachments(); len(atts) != 1 || atts[0].ContentType != "image/png" {
-		t.Fatalf("want 1 png attachment, got %+v", atts)
+	if len(mock.UploadedNames) != 2 || mock.UploadedNames[0] != "notes.pdf" {
+		t.Errorf("uploaded names = %v, want notes.pdf first", mock.UploadedNames)
+	}
+	atts := mock.Attachments()
+	if len(atts) != 2 {
+		t.Fatalf("want 2 consolidated attachments, got %d", len(atts))
+	}
+	if atts[0].Filename != "notes.pdf" || atts[0].ContentType != "application/pdf" {
+		t.Errorf("docx attachment = %+v, want notes.pdf/application/pdf", atts[0])
 	}
 }
 
