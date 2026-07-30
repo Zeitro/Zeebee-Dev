@@ -109,7 +109,7 @@ RpcConf:
       ClientId: 808134957644-2savep4tlp45sln5v9f21hq06628vvia.apps.googleusercontent.com
       ClientSecret: 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
       CallbackUrl: https://app.zeebeeloans.net/driveAuth
-  PdfGeneratorUrl: http://127.0.0.1:10300/api/v1/pdf
+  PdfGeneratorBaseUrl: http://127.0.0.1:10300/api/v1
   TemplateConf:
     PreApprovalLetterPdf:
       Purpose: preApprovedLetter
