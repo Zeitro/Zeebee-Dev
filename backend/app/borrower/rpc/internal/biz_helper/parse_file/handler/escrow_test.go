@@ -122,3 +122,43 @@ func TestEscrowParseEndToEnd(t *testing.T) {
 		t.Fatalf("want 1 chat attachment with the uploaded file id, got %+v", atts)
 	}
 }
+
+// TestEscrowParseWord (US1): a .docx in scope is converted to pdf, uploaded as
+// <base>.pdf, and its escrow fields are extracted — equivalent to the pdf path.
+func TestEscrowParseWord(t *testing.T) {
+	db := setupEscrowDB(t)
+	if err := db.Exec(`INSERT INTO property_transaction_escrows (id, borrower_property_transaction_id) VALUES (1, 7)`).Error; err != nil {
+		t.Fatalf("seed: %v", err)
+	}
+	mock := &llm.MockClient{ChatContent: `{"escrow_company":"Mission Escrow","escrow_number":"202656-RL"}`}
+	fc := &fakePdfConverter{pdf: buildPDF(t, 1)}
+	h := &EscrowHandler{base{
+		repos:     repo.NewAllRepos(db),
+		logger:    logx.WithContext(context.Background()),
+		llm:       mock,
+		pdfClient: fc,
+	}}
+	files := []model.File{{Base: model.Base{Id: 1}, FileUrl: "https://s3/wire.docx", FileName: "wire.docx"}}
+	rule := dto.DocumentTemplateFileParseRule{Source: constants.DocumentTemplateFileParseSourceSingleFile}
+
+	if err := h.Parse(context.Background(), 7, 100, files, rule, newMemReporter()); err != nil {
+		t.Fatalf("parse: %v", err)
+	}
+	if fc.calls != 1 {
+		t.Errorf("DocToPdf calls = %d, want 1", fc.calls)
+	}
+	if len(mock.UploadedNames) != 1 || mock.UploadedNames[0] != "wire.pdf" {
+		t.Errorf("uploaded names = %v, want [wire.pdf]", mock.UploadedNames)
+	}
+	atts := mock.Attachments()
+	if len(atts) != 1 || atts[0].Filename != "wire.pdf" || atts[0].ContentType != "application/pdf" {
+		t.Errorf("attachment = %+v, want Filename=wire.pdf ContentType=application/pdf", atts)
+	}
+	var esc model.PropertyTransactionEscrow
+	if err := db.First(&esc, 1).Error; err != nil {
+		t.Fatalf("load escrow: %v", err)
+	}
+	if esc.EscrowCompany != "Mission Escrow" || esc.No != "202656-RL" {
+		t.Errorf("escrow fields not extracted: %+v", esc)
+	}
+}
