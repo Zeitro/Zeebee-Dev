@@ -160,7 +160,7 @@ func (repo *ApiRepo) GetOrCreateApiWithTx(ctx context.Context, tx *gorm.DB, api 
 	return api, errorx.WithStack(err)
 }
 
-// FindApiCategoryByNameAndTypeWithTx finds a category by name and type (path='' AND method='')
+// FindApiCategoryByNameAndTypeWithTx finds a category by name and type (path=” AND method=”)
 func (repo *ApiRepo) FindApiCategoryByNameAndTypeWithTx(ctx context.Context, tx *gorm.DB, name string, apiType constants.UserType) (result *model.Api, err error) {
 	err = tx.WithContext(ctx).Model(&model.Api{}).
 		Where("name = ? AND type = ? AND path = '' AND method = ''", name, apiType).

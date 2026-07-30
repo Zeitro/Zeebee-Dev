@@ -9,10 +9,6 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
-
-	"github.com/zeromicro/go-zero/core/logx"
-
-	"zeebee-backend/common/errorx"
 )
 
 type CheckInvitationLogic struct {
@@ -32,13 +28,7 @@ func NewCheckInvitationLogic(ctx context.Context, svcCtx *svc.ServiceContext) *C
 }
 
 func (l *CheckInvitationLogic) CheckInvitation(in *borrower.OrganizationUserCheckInvitationRequest) (resp *borrower.OrganizationUserCheckInvitationResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
+
 	input, err := copierx.Trans[borrower.OrganizationUserCheckInvitationRequestData, dto.OrganizationUserCheckInvitationCodeRequestDto](in.Data)
 	if err != nil {
 		return

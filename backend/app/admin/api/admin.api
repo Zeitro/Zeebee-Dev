@@ -163,6 +163,10 @@ service admin-api {
 	@handler OrganizationDiscoverCommit
 	post /organization/discover/commit (LenderDiscoverCommitRequest) returns (LenderDiscoverRunResponse)
 
+	@doc "lender discover run (scheduled trigger only; manual flow uses preview + commit)"
+	@handler OrganizationDiscoverRun
+	post /organization/discover/run (LenderDiscoverRunRequest) returns (LenderDiscoverRunResponse)
+
 	@doc "lender discover latest run"
 	@handler OrganizationDiscoverLatestRun
 	get /organization/discover/runs/latest (EmptyRequest) returns (LenderDiscoverRunResponse)

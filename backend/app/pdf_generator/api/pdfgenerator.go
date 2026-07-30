@@ -17,9 +17,9 @@ import (
 )
 
 type ApiServer struct {
-	s         *rest.Server
-	svcCtx    *svc.ServiceContext
-	startOpt  rest.StartOption
+	s        *rest.Server
+	svcCtx   *svc.ServiceContext
+	startOpt rest.StartOption
 }
 
 func NewApiServer(c config.Config) (s service.Service, err error) {
@@ -62,9 +62,9 @@ func NewApiServer(c config.Config) (s service.Service, err error) {
 	handler.RegisterExtraRoutes(restServer)
 
 	return &ApiServer{
-		s:         restServer,
-		svcCtx:    ctx,
-		startOpt:  startOpt,
+		s:        restServer,
+		svcCtx:   ctx,
+		startOpt: startOpt,
 	}, nil
 }
 
