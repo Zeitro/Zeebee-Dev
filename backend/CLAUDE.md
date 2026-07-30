@@ -60,7 +60,7 @@
 
 ### V. 类型安全与测试
 
-强类型贯穿全代码库。`common/` 工具必须有单元测试，领域逻辑变更需集成测试。覆盖率目标 80%+。
+强类型贯穿全代码库。测试要求（单元/集成/覆盖率）见 [constitution](docs/constitution.md) §测试原则。
 
 ## 技术栈
 
@@ -79,7 +79,7 @@
 
 ## 代码约束
 
-- **数据库操作**：logic 不直接操作数据库，必须经 `domains/zeebee/repo` 层
+- **数据库访问**：RPC logic 不直接操作数据库，须经 `baseLogic` → `domains/zeebee/logic/` → `repo`（详见 [architecture](docs/guides/architecture.md) §关键约束）
 - **错误处理**：`common/errorx/`
 - **校验**：`common/validator/`
 - **类型转换**：`common/copierx`
@@ -87,7 +87,7 @@
 - **lint**：PR 必过 golangci-lint（`.golangci.yml`）
 - **配置**：YAML 文件，禁止硬编码敏感信息
 - **函数签名**：≤4 参，≤3 返回值（风格细节见 constitution §函数约束）
-- **注释**：简洁扼要。一行能说清不写多行；不复述代码、不写废话铺垫；只写「为什么」和非显而易见的意图。
+- **注释**：简洁扼要、只写「为什么」（详见 [constitution](docs/constitution.md) §注释）
 
 ### 配置中的密钥（HARDCODED_SECRETS 例外）
 
