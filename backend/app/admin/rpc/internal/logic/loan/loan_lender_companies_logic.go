@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
@@ -30,13 +29,6 @@ func NewLoanLenderCompaniesLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *LoanLenderCompaniesLogic) LoanLenderCompanies(in *proto.EmptyRequest) (resp *admin.LoanLenderCompaniesResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
 
 	var lenderCompanies []string
 	lenderCompanies, err = l.svcCtx.LoanRepo.GetLenderCompanyForAdmin(l.ctx)

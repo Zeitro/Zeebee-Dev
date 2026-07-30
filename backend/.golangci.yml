@@ -50,6 +50,7 @@ linters:
       excludes:
         - G107
         - G101
+        - G115 # int→int32 narrowing on bounded counts (len/sortOrder/stage totals); go-zero proto-int32 pattern, false positive at this scale
 
     whitespace:
       multi-if: true
@@ -70,7 +71,7 @@ linters:
       check-exported: false
 
     staticcheck:
-      checks: [ "all", "-SA5008" ]
+      checks: [ "all", "-SA5008","-ST1003","-ST1000" ]
 
 # 问题过滤与排除
 issues:

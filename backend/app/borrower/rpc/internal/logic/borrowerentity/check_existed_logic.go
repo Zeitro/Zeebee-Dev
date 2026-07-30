@@ -6,13 +6,9 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-
-	"zeebee-backend/common/errorx"
 )
 
 type CheckExistedLogic struct {
@@ -32,13 +28,6 @@ func NewCheckExistedLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Chec
 }
 
 func (l *CheckExistedLogic) CheckExisted(in *borrower.BorrowerEntityCheckExistedRequest) (resp *borrower.BorrowerEntityCheckExistedResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
 
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {

@@ -24,6 +24,14 @@ type BorrowerPropertyTransactionEntity {
     Pm string `json:"pm"`
     BusinessStrategy []string `json:"business_strategy"`
     Note string `json:"note"`
+    TitleHolder string `json:"title_holder"`
+    ContractDate string `json:"contract_date"`
+    EmdDueDate string `json:"emd_due_date"`
+    ContingencyRemovalDate string `json:"contingency_removal_date"`
+    Tc string `json:"tc"`
+    CostAllocation string `json:"cost_allocation"`
+    Escrows []PropertyTransactionEscrow `json:"escrows"`
+    Property PropertyTransactionPropertyEntity `json:"property"`
     Checklist BorrowerPropertyTransactionChecklist `json:"checklist"`
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
@@ -41,6 +49,26 @@ type BorrowerPropertyTransactionChecklistNode {
     Children []BorrowerPropertyTransactionChecklistNode `json:"children"`
     FileCount int32 `json:"file_count"`
     Files []FileEntity `json:"files"`
+    FileParseConfig *FileParseConfig `json:"file_parse_config"`
+    Tags []string `json:"tags"`
+}
+
+// file parse rule projected to the frontend. The backend derives trigger
+// behavior from source/triggered_by; selector is set only for TagFiltered.
+type FileParseConfig {
+    Rules []*FileParseRule `json:"rules"`
+}
+
+type FileParseRule {
+    Parser string `json:"parser"`
+    Source string `json:"source"`
+    TriggeredBy string `json:"triggered_by"`
+    Label string `json:"label"`
+    Selector *TagSelector `json:"selector"`
+}
+
+type TagSelector {
+    Tags []string `json:"tags"`
 }
 
 type BorrowerPropertyTransactionChecklist {
@@ -52,6 +80,40 @@ type BorrowerPropertyTransactionChecklist {
     TotalOptionalUploadedDocumentCount int32 `json:"total_optional_uploaded_document_count"`
     RequiredDocuments []BorrowerPropertyTransactionChecklistNode `json:"required_documents"`
     OptionalDocuments []BorrowerPropertyTransactionChecklistNode `json:"optional_documents"`
+}
+
+// escrow
+type PropertyTransactionEscrowChecklist {
+    HasWireInstruction bool `json:"has_wire_instruction"`
+    HasEmdReceipt bool `json:"has_emd_receipt"`
+    HasPrelimReport bool `json:"has_prelim_report"`
+    HasNhd bool `json:"has_nhd"`
+    HasColoredMap bool `json:"has_colored_map"`
+}
+
+type PropertyTransactionEscrow {
+    Id int64 `json:"id,optional"`
+    No string `json:"no,optional"`
+    EscrowCompany string `json:"escrow_company,optional"`
+    OfficerName string `json:"officer_name,optional"`
+    OfficerPhone string `json:"officer_phone,optional"`
+    OfficerEmail string `json:"officer_email,optional"`
+    Checklist PropertyTransactionEscrowChecklist `json:"checklist,optional"`
+}
+
+type PropertyTransactionPropertyEntity {
+    Id int64 `json:"id"`
+    CreatedAt string `json:"created_at"`
+    UpdatedAt string `json:"updated_at"`
+    BorrowerPropertyId int64 `json:"borrower_property_id"`
+    BorrowerPropertyTransactionId int64 `json:"borrower_property_transaction_id"`
+    Unit int32 `json:"unit"`
+    PropertyType string `json:"property_type"`
+    LivingAreaSqft float64 `json:"living_area_sqft"`
+    LotAreaSqft float64 `json:"lot_area_sqft"`
+    Bedrooms int32 `json:"bedrooms"`
+    Bathrooms int32 `json:"bathrooms"`
+    Address AddressEntity `json:"address"`
 }
 
 // create
@@ -70,10 +132,19 @@ type (
         CoeDate string `json:"coe_date"`
         PurchaseAmount float64 `json:"purchase_amount"`
         EmdAmount float64 `json:"emd_amount"`
-        PropertyType string `json:"property_type"`
+        //        PropertyType string `json:"property_type"`
         Pm string `json:"pm"`
         BusinessStrategy []string `json:"business_strategy"`
         Note string `json:"note"`
+        TitleHolder string `json:"title_holder"`
+        ContractDate string `json:"contract_date"`
+        EmdDueDate string `json:"emd_due_date"`
+        ContingencyRemovalDate string `json:"contingency_removal_date"`
+        Tc string `json:"tc"`
+        CostAllocation string `json:"cost_allocation"`
+        Escrows []PropertyTransactionEscrow `json:"escrows"`
+        BorrowerProperty BorrowerPropertyTransactionPropertyEntity `json:"borrower_property"`
+        Property PropertyTransactionPropertyEntity `json:"property"`
         Checklist BorrowerPropertyTransactionChecklist `json:"checklist"`
         CreatedAt string `json:"created_at"`
         UpdatedAt string `json:"updated_at"`
@@ -87,10 +158,38 @@ type (
         CoeDate string `json:"coe_date,optional" validate:"omitempty,datetime=01/02/2006"`
         PurchaseAmount float64 `json:"purchase_amount,optional" validate:"min=0"`
         EmdAmount float64 `json:"emd_amount,optional" validate:"min=0"`
-        PropertyType string `json:"property_type,optional" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
+        //        PropertyType string `json:"property_type,optional" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
         Pm string `json:"pm,optional"`
         BusinessStrategy []string `json:"business_strategy,optional" validate:"omitempty,dive,oneof=Rental Sale Flip ADU/Addition 'Single Lot SFR' 'SB9 lot split' 'Conforming lot split' 'New Condo/TH' 'Community development (>3 units)' Commercial"`
         Note string `json:"note,optional"`
+        TitleHolder string `json:"title_holder,optional"`
+        ContractDate string `json:"contract_date,optional" validate:"omitempty,datetime=01/02/2006"`
+        EmdDueDate string `json:"emd_due_date,optional" validate:"omitempty,datetime=01/02/2006"`
+        ContingencyRemovalDate string `json:"contingency_removal_date,optional" validate:"omitempty,datetime=01/02/2006"`
+        Tc string `json:"tc,optional"`
+        CostAllocation string `json:"cost_allocation,optional"`
+        Escrows []BorrowerPropertyTransactionEscrowsEditentity `json:"escrows,optional"`
+        Property *BorrowerPropertyTransactionPropertyEditEntity `json:"property,optional"`
+    }
+
+    BorrowerPropertyTransactionEscrowsEditentity {
+        Id int64 `json:"id,optional"`
+        No string `json:"no,optional"`
+        EscrowCompany string `json:"escrow_company,optional"`
+        OfficerName string `json:"officer_name,optional"`
+        OfficerPhone string `json:"officer_phone,optional"`
+        OfficerEmail string `json:"officer_email,optional"`
+        Checklist PropertyTransactionEscrowChecklist `json:"checklist,optional"`
+    }
+
+    BorrowerPropertyTransactionPropertyEditEntity {
+        Id int64 `json:"id"`
+        Unit int32 `json:"unit"`
+        PropertyType string `json:"property_type,optional" validate:"omitempty,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
+        LivingAreaSqft float64 `json:"living_area_sqft" validate:"min=0"`
+        LotAreaSqft float64 `json:"lot_area_sqft" validate:"min=0"`
+        Bedrooms int32 `json:"bedrooms" validate:"min=0"`
+        Bathrooms int32 `json:"bathrooms" validate:"min=0"`
     }
 )
 
@@ -128,6 +227,15 @@ type (
         Pm string `json:"pm"`
         BusinessStrategy []string `json:"business_strategy"`
         Note string `json:"note"`
+        TitleHolder string `json:"title_holder"`
+        ContractDate string `json:"contract_date"`
+        EmdDueDate string `json:"emd_due_date"`
+        ContingencyRemovalDate string `json:"contingency_removal_date"`
+        Tc string `json:"tc"`
+        CostAllocation string `json:"cost_allocation"`
+        Escrows []PropertyTransactionEscrow `json:"escrows"`
+        //        BorrowerProperty BorrowerPropertyTransactionPropertyEntity `json:"borrower_property"`
+        Property PropertyTransactionPropertyEntity `json:"property"`
         Checklist BorrowerPropertyTransactionChecklist `json:"checklist"`
         CreatedAt string `json:"created_at"`
         UpdatedAt string `json:"updated_at"`
@@ -225,6 +333,7 @@ type (
     }
     DocumentUploadFileResponse {
         Files []DocumentFile `json:"files"`
+        RequestId string `json:"request_id"`
     }
 )
 
@@ -284,5 +393,32 @@ type (
     }
     BorrowerPropertyTransactionListByPropertyResponse {
         List []BorrowerPropertyTransactionEntity `json:"list"`
+    }
+)
+
+// file content extract (manual_tree / manual_select)
+type (
+    ParseFileRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        DocumentId int64 `json:"document_id" validate:"required,gt=0"`
+        Parser string `json:"parser" validate:"required"`
+    }
+    ParseFileResponse {
+        RequestId string `json:"request_id"`
+    }
+
+    ParseFileResultRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Type string `form:"type" validate:"required,oneof=request_id params"`
+        RequestId string `form:"request_id,optional" validate:"required_if=Type request_id"`
+        DocumentId int64 `form:"document_id,optional" validate:"required_if=Type params"`
+        Parser string `form:"parser,optional" validate:"required_if=Type params"`
+    }
+    ParseFileResultResponse {
+        Status string `json:"status"`
+        Stage string `json:"stage"`
+        StageProcessed int32 `json:"stage_processed"`
+        StageTotal int32 `json:"stage_total"`
+        Error string `json:"error"`
     }
 )
