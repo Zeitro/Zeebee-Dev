@@ -3,21 +3,19 @@ package apilogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type ApiTreeLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
@@ -25,28 +23,23 @@ func NewApiTreeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ApiTreeLo
 	return &ApiTreeLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
 func (l *ApiTreeLogic) ApiTree(in *admin.ApiTreeRequest) (resp *admin.ApiTreeResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+
 	trees, err := l.baseLogic.ApiLogic.ApiTree(l.ctx, constants.UserType(in.Data.Type))
 	if err != nil {
 		return nil, err
 	}
-	data := []*admin.ApiTreeEntity{}
-	err = copier.CopyWithOption(&data, &trees, copier.Option{DeepCopy: true})
+
+	data, err := copierx.Trans[[]*dto.ApiEntityDto, []*proto.ApiTreeEntity](&trees, copierx.TimeToRFC3339Str())
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
 	return &admin.ApiTreeResponse{
-		Data: data,
+		Data: *data,
 	}, nil
 }

@@ -35,7 +35,8 @@ export const FilterTableCard = forwardRef(
 			filterList,
 			rowProps = {},
 			filterName = '',
-			hasFilterField = true,
+			hasFilterField = true, // 有过滤搜索栏
+			hasInitRequest = true, //true初始化请求接口，当有dataSource时默认‘不请求’
 			filterWrapClassName,
 			getData = () => {},
 			api,
@@ -66,6 +67,9 @@ export const FilterTableCard = forwardRef(
 			api,
 			method,
 			getData,
+			hasPaginationRequest,
+			settingPagination,
+			hasInitRequest,
 		});
 		// const scrollRef = useRef();
 		// const isGet = useRef(true);

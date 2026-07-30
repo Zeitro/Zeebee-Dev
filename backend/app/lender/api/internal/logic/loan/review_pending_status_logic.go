@@ -3,12 +3,12 @@ package loan
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 )
 
@@ -28,19 +28,13 @@ func NewReviewPendingStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *ReviewPendingStatusLogic) ReviewPendingStatus(req *types.ReviewLoanPendingStatusRequest) (resp *types.EmptyResponse, err error) {
-
 	rpcReq := &lender.LoanPendingStatusReviewRequest{
 		Data: &lender.LoanPendingStatusReviewRequestData{},
 	}
-	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{
-		IgnoreEmpty:   false,
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+	rpcReq.Data, err = copierx.Trans[types.ReviewLoanPendingStatusRequest, lender.LoanPendingStatusReviewRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
-
 	_, err = l.svcCtx.LoanRpcClient.PendingStatusReview(l.ctx, rpcReq)
 	if err != nil {
 		return nil, errorx.WithStack(err)

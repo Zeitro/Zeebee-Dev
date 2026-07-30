@@ -34,7 +34,6 @@ func registerSwaggerRoutes(server *rest.Server) {
 }
 
 func registerPprofRoutes(server *rest.Server) {
-
 	// pprof routes
 	server.AddRoute(rest.Route{
 		Method:  http.MethodGet,
@@ -91,5 +90,4 @@ func registerPprofRoutes(server *rest.Server) {
 		Path:    "/debug/pprof/threadcreate",
 		Handler: pprof.Handler("threadcreate").ServeHTTP,
 	})
-
 }

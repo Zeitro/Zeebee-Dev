@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/jinzhu/copier"
-	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
@@ -17,25 +16,21 @@ import (
 type AllLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AllLogic {
 	return &AllLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
 func (l *AllLogic) All(in *borrower.BorrowerApplicantAllRequest) (resp *borrower.BorrowerApplicantAllResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err

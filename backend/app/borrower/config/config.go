@@ -1,6 +1,8 @@
 package config
 
 import (
+	"zeebee-backend/domains/zeebee/config"
+
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -27,6 +29,7 @@ type RpcConf struct {
 	HighCostLimitValue           int64
 	EmailConf                    EmailConf
 	EmailAuthConf                EmailAuthConf
+	DriveAuthConf                DriveAuthConf
 	RedisConf                    RedisConf
 	JwtAuth                      types.JwtAuth `json:",optional"`
 	DbConf                       DbConf
@@ -42,8 +45,11 @@ type RpcConf struct {
 	PreApprovalLoanConf          []PreApprovalLoanConf
 	ZeebeeAgentEmail             string
 	ZeitroConf                   ZeitroConf
-	PdfGeneratorUrl              string
+	PdfGeneratorBaseUrl          string
 	TemplateConf                 map[string]TemplateConf
+	CasbinConf                   CasbinConf
+	CronTaskConf                 []CronTaskConf
+	LlmConf                      LlmConf
 }
 
 type DbConf struct {
@@ -66,16 +72,11 @@ type AwsS3Conf struct {
 }
 
 type LimiterConf struct {
-	Login              LimiterItem
-	SendLoginEmail     LimiterItem
-	SendVerityEmail    LimiterItem
-	SendResetPwdEmail  LimiterItem
-	SendLoanQuoteEmail LimiterItem
-}
-
-type LimiterItem struct {
-	Rate   int
-	Period int
+	Login              config.LimiterItem
+	SendLoginEmail     config.LimiterItem
+	SendVerityEmail    config.LimiterItem
+	SendResetPwdEmail  config.LimiterItem
+	SendLoanQuoteEmail config.LimiterItem
 }
 
 type EmailConf struct {
@@ -115,6 +116,14 @@ type EmailAuthConf struct {
 	}
 }
 
+type DriveAuthConf struct {
+	Google struct {
+		ClientId     string
+		ClientSecret string
+		CallbackUrl  string
+	}
+}
+
 type TemplateConf struct {
 	Purpose  string
 	Scope    string
@@ -127,4 +136,34 @@ type ZeitroConf struct {
 	Url      string
 	Username string
 	Password string
+}
+
+type CasbinConf struct {
+	ModelPath  string
+	Watcher    CasbinWatcher
+	EventTopic CasbinEventTopic
+}
+
+type CasbinWatcher struct {
+	Host            string
+	Pwd             string
+	BorrowerChannel string
+	Tls             bool `json:",default=false"`
+}
+
+type CasbinEventTopic struct {
+	BorrowerTopic string
+}
+
+type CronTaskConf struct {
+	Name     string `json:"name"`
+	Schedule string `json:"schedule"`
+}
+
+type LlmConf struct {
+	config.LlmConf
+
+	// TransactionFileParseConf: Provider/Model must support file upload + multimodal
+	// (file_id reference). Switching Provider invalidates uploaded ids → resume re-uploads.
+	TransactionFileParseConf config.LlmBizConf
 }

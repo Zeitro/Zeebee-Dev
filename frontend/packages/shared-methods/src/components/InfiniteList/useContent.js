@@ -29,12 +29,26 @@ const useContent = ({ items, setItems, onDragEnd, isSort, list, setList }) => {
 	};
 
 	// 列表项
-	const SortableItem = ({ id, item, index, renderItem, style, itemHeight }) => {
+	const SortableItem = ({
+		id,
+		item,
+		index,
+		renderItem,
+		style,
+		itemHeight,
+		minItemHeight,
+		isFixedHeight,
+	}) => {
 		const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
 			useSortable({
 				id,
 				data: item,
 			});
+		const sizeStyle = isFixedHeight
+			? { height: itemHeight, minHeight: itemHeight, boxSizing: 'border-box' }
+			: minItemHeight != null
+				? { minHeight: minItemHeight }
+				: {};
 		return renderItem(item, index, {
 			ref: setNodeRef,
 			...attributes,
@@ -43,7 +57,7 @@ const useContent = ({ items, setItems, onDragEnd, isSort, list, setList }) => {
 				...style,
 				transform: CSS.Transform.toString(transform),
 				transition,
-				minHeight: itemHeight,
+				...sizeStyle,
 				zIndex: isDragging ? 9999 : 'auto',
 				userSelect: 'none',
 				opacity: isDragging ? 0.7 : 1,

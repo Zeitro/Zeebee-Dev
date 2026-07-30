@@ -1,48 +1,64 @@
 package svc
 
 import (
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
 
+	"zeebee-backend/app/admin/api/internal/middleware"
 	"zeebee-backend/app/admin/config"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/middleware"
 )
 
 type ServiceContext struct {
 	Config config.ApiConf
+	// Logger
+	Logger logx.Logger
 	// middleware
 	AuthMiddleware rest.Middleware
 
 	// rpc client
-	UserRpcClient             admin.UserClient
-	ApiRpcClient              admin.ApiClient
-	ResourceRpcClient         admin.ResourceClient
-	RoleRpcClient             admin.RoleClient
-	OrganizationUserRpcClient admin.OrganizationUserClient
-	OrganizationRpcClient     admin.OrganizationClient
-	StorageRpcClient          admin.StorageClient
-	CommonRpcClient           admin.CommonClient
-	BaseTemplateRpcClient     admin.BaseTemplateClient
-	LoanRpcClient             admin.LoanClient
+	UserRpcClient                     admin.UserClient
+	ApiRpcClient                      admin.ApiClient
+	ResourceRpcClient                 admin.ResourceClient
+	RoleRpcClient                     admin.RoleClient
+	OrganizationUserRpcClient         admin.OrganizationUserClient
+	OrganizationRpcClient             admin.OrganizationClient
+	StorageRpcClient                  admin.StorageClient
+	CommonRpcClient                   admin.CommonClient
+	BaseTemplateRpcClient             admin.BaseTemplateClient
+	LoanRpcClient                     admin.LoanClient
+	PricingPlanRpcClient              admin.PricingPlanClient
+	PricingPlanPolicyRpcClient        admin.PricingPlanPolicyClient
+	OrganizationSubscriptionRpcClient admin.OrganizationSubscriptionClient
+
+	AdminApiContent string
 }
 
-func NewServiceContext(c config.ApiConf) *ServiceContext {
+func NewServiceContext(c config.ApiConf, logger logx.Logger, adminApiContent string) *ServiceContext {
+	rpcClient := zrpc.MustNewClient(c.RpcConf)
+
+	authRpcClient := admin.NewAuthClient(rpcClient.Conn())
 	return &ServiceContext{
 		Config:         c,
-		AuthMiddleware: middleware.NewHttpAuthMiddleware(c.JwtAuth.AccessSecret, constants.UserTypeAdmin).Handle,
+		AuthMiddleware: middleware.NewAuthMiddleware(constants.UserTypeAdmin, authRpcClient).Handle,
+		Logger:         logger,
 
 		// rpc client
-		UserRpcClient:             admin.NewUserClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		ApiRpcClient:              admin.NewApiClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		ResourceRpcClient:         admin.NewResourceClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		RoleRpcClient:             admin.NewRoleClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		OrganizationUserRpcClient: admin.NewOrganizationUserClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		OrganizationRpcClient:     admin.NewOrganizationClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		StorageRpcClient:          admin.NewStorageClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		CommonRpcClient:           admin.NewCommonClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		BaseTemplateRpcClient:     admin.NewBaseTemplateClient(zrpc.MustNewClient(c.RpcConf).Conn()),
-		LoanRpcClient:             admin.NewLoanClient(zrpc.MustNewClient(c.RpcConf).Conn()),
+		UserRpcClient:                     admin.NewUserClient(rpcClient.Conn()),
+		ApiRpcClient:                      admin.NewApiClient(rpcClient.Conn()),
+		ResourceRpcClient:                 admin.NewResourceClient(rpcClient.Conn()),
+		RoleRpcClient:                     admin.NewRoleClient(rpcClient.Conn()),
+		OrganizationUserRpcClient:         admin.NewOrganizationUserClient(rpcClient.Conn()),
+		OrganizationRpcClient:             admin.NewOrganizationClient(rpcClient.Conn()),
+		StorageRpcClient:                  admin.NewStorageClient(rpcClient.Conn()),
+		CommonRpcClient:                   admin.NewCommonClient(rpcClient.Conn()),
+		BaseTemplateRpcClient:             admin.NewBaseTemplateClient(rpcClient.Conn()),
+		LoanRpcClient:                     admin.NewLoanClient(rpcClient.Conn()),
+		PricingPlanRpcClient:              admin.NewPricingPlanClient(rpcClient.Conn()),
+		PricingPlanPolicyRpcClient:        admin.NewPricingPlanPolicyClient(rpcClient.Conn()),
+		OrganizationSubscriptionRpcClient: admin.NewOrganizationSubscriptionClient(rpcClient.Conn()),
+		AdminApiContent:                   adminApiContent,
 	}
 }

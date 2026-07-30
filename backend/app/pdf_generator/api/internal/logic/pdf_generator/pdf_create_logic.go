@@ -43,7 +43,7 @@ func (l *PdfCreateLogic) PdfCreate(req *types.CreatePdfRequest) (resp *types.Cre
 	pdfContent, err = global.ChromePool.GeneratePDF(ctx, pdfType, l.getContent(req))
 
 	if err != nil {
-		err = errorx.Wrap(err, "failed to create pdf")
+		err = errorx.Wrap(err, "fail to create pdf")
 		return
 	}
 

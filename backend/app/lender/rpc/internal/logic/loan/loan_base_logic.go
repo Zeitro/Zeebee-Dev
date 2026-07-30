@@ -3,8 +3,6 @@ package loanlogic
 import (
 	"context"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
@@ -14,14 +12,12 @@ import (
 type LoanBaseLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
 }
 
 func NewLoanBaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoanBaseLogic {
 	return &LoanBaseLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
 	}
 }
 
@@ -41,37 +37,6 @@ func (l *LoanBaseLogic) GetLenderLoan(loanId int64, lenderOrganizationId int64, 
 
 	return
 }
-
-// CreateLoanOperationLog creates a loan operation log record
-// func (l *LoanBaseLogic) CreateLoanOperationLog(tx *gorm.DB, loanId, operatorId int64, from, to model.LoanOperationStatus, action constants.LoanOperationAction, metadata *model.LoanOperationMetadata) (err error) {
-// 	// operator, err := l.svcCtx.UserRepo.FindOneByIdWithTx(l.ctx, tx, operatorId)
-// 	operator, err := l.svcCtx.OrganizationUserRepo.FindOneByIdWithTx(l.ctx, tx, operatorId)
-// 	if err != nil {
-// 		return errors.Wrap(err, "Failed To Get Operator")
-// 	}
-//
-// 	operatorName := ""
-// 	if operator != nil {
-// 		operatorName = operator.FullName
-// 	}
-//
-// 	operation := &model.LoanOperation{
-// 		LoanId:       loanId,
-// 		OperatorId:   operatorId,
-// 		OperatorName: operatorName,
-// 		OperatorType: constants.LoanOperationOperatorTypeLender,
-// 		Action:       action,
-// 		From:         from,
-// 		To:           to,
-// 		Metadata:     metadata,
-// 	}
-// 	_, err = l.svcCtx.LoanOperationRepo.CreateWithTx(l.ctx, tx, operation, false)
-// 	if err != nil {
-// 		return errors.Wrap(err, "Failed To Create Operation Log")
-// 	}
-//
-// 	return nil
-// }
 
 type loanPendingStatusTransition struct {
 	rejectTarget  constants.LoanPendingStatus
@@ -98,7 +63,6 @@ var loanPendingStatusTransMap = map[constants.LoanPendingStatus]loanPendingStatu
 }
 
 func (l *LoanBaseLogic) GetNextPendingStatus(currentStatus constants.LoanPendingStatus, action constants.LoanOperationAction) (nextStatus constants.LoanPendingStatus, err error) {
-
 	trans, ok := loanPendingStatusTransMap[currentStatus]
 	if !ok {
 		return constants.LoanPendingStatusNone, errorx.Errorf("Invalid Current Status %v", currentStatus)

@@ -3,14 +3,14 @@ package loan
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type LoanDocumentsOptsLogic struct {
@@ -41,14 +41,11 @@ func (l *LoanDocumentsOptsLogic) LoanDocumentsOpts(req *types.PathIdRequest) (re
 
 	// Convert RPC response to API response
 	resp = &types.LoanDocumentOptResponse{}
-	err = copier.CopyWithOption(&resp.Options, rpcResp.Data, copier.Option{
-		IgnoreEmpty:   false,
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+	options, err := copierx.Trans[[]*proto.LoanDocumentOptEntity, []types.LoanDocumentOptEntity](&rpcResp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransErr(err)
+		return nil, err
 	}
+	resp.Options = *options
 
 	return resp, nil
 }

@@ -6,9 +6,9 @@ import (
 	"zeebee-backend/common/redisx"
 )
 
-var redisDB *redisx.Redisx
+var redisDB *redisx.Client
 
-func GetRedis() *redisx.Redisx {
+func GetRedis() *redisx.Client {
 	return redisDB
 }
 
@@ -21,7 +21,7 @@ func initRedis(cnf config.RedisConf) (err error) {
 		Prefix: cnf.Prefix,
 	})
 	if err != nil {
-		return errorx.Wrap(err, "Init Redis Error")
+		return errorx.Wrap(err, "init redis error")
 	}
 	redisDB = rds
 	return err

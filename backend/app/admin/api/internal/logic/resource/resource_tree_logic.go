@@ -3,14 +3,13 @@ package resource
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/common/errorx"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type ResourceTreeLogic struct {
@@ -22,7 +21,7 @@ type ResourceTreeLogic struct {
 // tree
 func NewResourceTreeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ResourceTreeLogic {
 	return &ResourceTreeLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
@@ -33,9 +32,10 @@ func (l *ResourceTreeLogic) ResourceTree(req *types.ResourceTreeRequest) (resp *
 	rpcReq := &admin.ResourceTreeRequest{
 		Data: &admin.ResourceTreeRequestData{},
 	}
-	err = copier.CopyWithOption(rpcReq.Data, req, copier.Option{DeepCopy: true})
+
+	rpcReq.Data, err = copierx.Trans[types.ResourceTreeRequest, admin.ResourceTreeRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
 
 	rpcResp, err := l.svcCtx.ResourceRpcClient.ResourceTree(l.ctx, rpcReq)
@@ -44,9 +44,11 @@ func (l *ResourceTreeLogic) ResourceTree(req *types.ResourceTreeRequest) (resp *
 	}
 
 	// trans response
-	err = copier.CopyWithOption(&resp.List, &rpcResp.Data, copier.Option{DeepCopy: true})
+	list, err := copierx.Trans[[]*proto.ResourceTreeEntity, []*types.ResourceTreeEntity](&rpcResp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
+	resp.List = *list
+
 	return resp, err
 }

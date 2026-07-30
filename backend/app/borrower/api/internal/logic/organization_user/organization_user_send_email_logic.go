@@ -3,12 +3,11 @@ package organization_user
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,15 +28,11 @@ func NewOrganizationUserSendEmailLogic(ctx context.Context, svcCtx *svc.ServiceC
 }
 
 func (l *OrganizationUserSendEmailLogic) OrganizationUserSendEmail(req *types.PathIdRequest) (resp *types.EmptyResponse, err error) {
-	rpcReq := &borrower.OrganizationUserSendInvitationEmailRequest{
-		Data: &borrower.OrganizationUserSendInvitationEmailRequestData{},
+	rpcReq := &proto.PathIdRequest{
+		Data: &proto.PathIdRequestData{},
 	}
-	err = copier.CopyWithOption(rpcReq.Data, req, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+	rpcReq.Data, err = copierx.Trans[types.PathIdRequest, proto.PathIdRequestData](req)
 	if err != nil {
-		err = errorx.GetFailedTransReqErr(err)
 		return nil, err
 	}
 

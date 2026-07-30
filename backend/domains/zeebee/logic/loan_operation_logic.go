@@ -8,23 +8,21 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
-	"zeebee-backend/domains/zeebee/repo"
 )
 
+// LoanOperationLogic provides loan operation business logic
 type LoanOperationLogic struct {
-	repos *repo.AllRepos
+	*BaseLogic
 }
 
-// NewLoanOperationLogic creates a new instance of LoanOperationLogic.
-// It initializes the logic with the provided repository dependencies.
-func NewLoanOperationLogic(repos *repo.AllRepos) *LoanOperationLogic {
+// NewLoanOperationLogic creates a new loan operation logic instance
+func NewLoanOperationLogic(baseLogic *BaseLogic) *LoanOperationLogic {
 	return &LoanOperationLogic{
-		repos: repos,
+		BaseLogic: baseLogic,
 	}
 }
 
 func (l *LoanOperationLogic) CreateLoanOperationLog(ctx context.Context, tx *gorm.DB, input dto.LoanOperationCreateDto) (err error) {
-
 	operator, _ := l.repos.OrganizationUserRepo.FindOneByIdWithTx(ctx, tx, input.OperatorId)
 
 	operatorName := ""
@@ -44,7 +42,7 @@ func (l *LoanOperationLogic) CreateLoanOperationLog(ctx context.Context, tx *gor
 	}
 	_, err = l.repos.LoanOperationRepo.CreateWithTx(ctx, tx, operation, false)
 	if err != nil {
-		return errorx.Wrap(err, "Failed to create operation log")
+		return errorx.Wrap(err, "fail to create operation log")
 	}
 
 	return nil

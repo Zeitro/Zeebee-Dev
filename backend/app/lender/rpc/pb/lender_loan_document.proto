@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package lender;
+
+option go_package = "zeebee-backend/app/lender/rpc/pb/lender";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+
+// update loan document comment -- request
+message LoanDocumentUpdateCommentRequest {
+  LoanDocumentUpdateCommentRequestData data = 1;
+}
+message LoanDocumentUpdateCommentRequestData {
+  int64 id = 1;
+  string comment = 2;
+}
+
+// delete loan document file -- request
+message LoanDocumentDeleteFileRequest {
+  LoanDocumentDeleteFileRequestData data = 1;
+}
+message LoanDocumentDeleteFileRequestData {
+  int64 id = 1;
+  int64 file_id = 2;
+}
+
+// send document requests --  request
+message LoanDocumentSendRequestsRequest {
+  LoanDocumentSendRequestsRequestData data = 1;
+}
+message LoanDocumentSendRequestsRequestData {
+  repeated SendDocumentRequestEntity documents = 3;
+}
+
+message SendDocumentRequestEntity {
+  int64 id = 1;
+  string comment = 2;
+}
+
+// create loan document type -- request
+message LoanDocumentCreateExtendTypeRequest {
+  LoanDocumentCreateExtendTypeRequestData data = 1;
+}
+message LoanDocumentCreateExtendTypeRequestData {
+  int64 loan_id = 1;
+  repeated string file_types = 4;
+  string category = 5;
+}
+
+// create loan document type -- response
+message LoanDocumentCreateExtendTypeResponse {
+  repeated proto.LoanDocumentOptEntity  data = 1;
+}
+
+// upload loan document files -- request
+message LoanDocumentAddFilesRequest {
+  LoanDocumentAddFilesRequestData data = 1;
+}
+message LoanDocumentAddFilesRequestData {
+  int64 id = 1;
+  repeated string file_urls = 4;
+}
+
+service LoanDocument {
+  rpc Create(LoanDocumentCreateExtendTypeRequest) returns(LoanDocumentCreateExtendTypeResponse);
+  rpc SendRequests(LoanDocumentSendRequestsRequest) returns(proto.EmptyResponse);
+  rpc DeleteFile(LoanDocumentDeleteFileRequest) returns(proto.EmptyResponse);
+  rpc DeleteRequest(proto.PathIdRequest) returns(proto.EmptyResponse);
+  rpc UpdateComment(LoanDocumentUpdateCommentRequest) returns(proto.EmptyResponse);
+  rpc AddFiles(LoanDocumentAddFilesRequest) returns(proto.EmptyResponse);
+}

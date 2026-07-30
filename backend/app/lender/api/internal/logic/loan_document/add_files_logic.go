@@ -3,12 +3,12 @@ package loan_document
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 )
 
@@ -28,24 +28,15 @@ func NewAddFilesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddFiles
 }
 
 func (l *AddFilesLogic) AddFiles(req *types.LoanDocumentAddFilesRequest) (resp *types.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
 
 	rpcReq := &lender.LoanDocumentAddFilesRequest{
 		Data: &lender.LoanDocumentAddFilesRequestData{},
 	}
 
 	// Copy data from API request to RPC request
-	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{
-		IgnoreEmpty:   false,
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+	rpcReq.Data, err = copierx.Trans[types.LoanDocumentAddFilesRequest, lender.LoanDocumentAddFilesRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
 
 	// Call RPC method

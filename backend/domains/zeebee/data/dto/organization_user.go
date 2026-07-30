@@ -1,8 +1,28 @@
 package dto
 
 import (
+	"time"
+
 	"zeebee-backend/domains/zeebee/constants"
 )
+
+type OrganizationUserEntityDto struct {
+	Id             int64                            `json:"id"`
+	OrganizationId int64                            `json:"organization_id"`
+	UserId         int64                            `json:"user_id"`
+	Status         constants.OrganizationUserStatus `json:"status"`
+	FirstName      string                           `json:"first_name"`
+	MidName        string                           `json:"mid_name"`
+	LastName       string                           `json:"last_name"`
+	FullName       string                           `json:"full_name"`
+	Phone          string                           `json:"phone"`
+	Remark         string                           `json:"remark"`
+	CreatedAt      time.Time                        `json:"created_at"`
+	UpdatedAt      time.Time                        `json:"updated_at"`
+	Email          string                           `json:"email"`
+	IsOwner        bool                             `json:"is_owner"`
+	Roles          []*RoleEntityDto                 `json:"roles"`
+}
 
 type OrganizationUserCreateRequestDto struct {
 	Email          string                    `json:"email"`
@@ -55,10 +75,11 @@ type OrganizationUserPageRequestDto struct {
 
 type OrganizationUserPageRequestFilter struct {
 	BasePageFilter
-	OrganizationId int64              `json:"organization_id"`
-	UserId         int64              `json:"user_id"`
-	UserType       constants.UserType `json:"user_type"`
-	RoleId         int64              `json:"role_id"`
+	OrganizationId int64                `json:"organization_id"`
+	UserId         int64                `json:"user_id"`
+	UserType       constants.UserType   `json:"user_type"`
+	RoleId         int64                `json:"role_id"`
+	Status         constants.UserStatus `json:"status"`
 }
 
 type SendInviteUserEmailConfig struct {
@@ -86,4 +107,11 @@ type OrganizationUserProfileEditRequestDto struct {
 	MidName        string             `json:"mid_name"`
 	LastName       string             `json:"last_name"`
 	Phone          string             `json:"phone"`
+}
+
+type OrganizationUserCheckInvitationCodeRequestDto struct {
+	Code           string             `json:"code"`
+	UserType       constants.UserType `json:"type"`
+	Email          string             `json:"email"`
+	OrganizationId int64              `json:"organization_id"`
 }

@@ -3,13 +3,12 @@ package organization_user
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -33,12 +32,8 @@ func (l *OrganizationUserCreateLogic) OrganizationUserCreate(req *types.Organiza
 	rpcReq := &borrower.OrganizationUserCreateRequest{
 		Data: &borrower.OrganizationUserCreateRequestData{},
 	}
-	err = copier.CopyWithOption(rpcReq.Data, req, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+	rpcReq.Data, err = copierx.Trans[types.OrganizationUserCreateRequest, borrower.OrganizationUserCreateRequestData](req)
 	if err != nil {
-		err = errorx.GetFailedTransReqErr(err)
 		return nil, err
 	}
 
@@ -48,15 +43,9 @@ func (l *OrganizationUserCreateLogic) OrganizationUserCreate(req *types.Organiza
 	}
 
 	resp = &types.OrganizationUserEntity{}
-	err = copier.CopyWithOption(resp, rpcResp.Data, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
+	resp, err = copierx.Trans[proto.OrganizationUserEntity, types.OrganizationUserEntity](rpcResp.Data, copierx.TimeToRFC3339Str())
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
 	return resp, nil

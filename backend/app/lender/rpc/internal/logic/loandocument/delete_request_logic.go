@@ -4,17 +4,15 @@ import (
 	"context"
 
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
-	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -23,24 +21,18 @@ type DeleteRequestLogic struct {
 	ctx       context.Context
 	svcCtx    *svc.ServiceContext
 	baseLogic *logic.BaseLogic
-	logx.Logger
 }
 
 func NewDeleteRequestLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteRequestLogic {
 	return &DeleteRequestLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
-		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestRequest) (resp *lender.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+func (l *DeleteRequestLogic) DeleteRequest(in *proto.PathIdRequest) (resp *proto.EmptyResponse, err error) {
+
 	var loan *model.Loan
 	var loanDocument *model.LoanDocument
 
@@ -73,49 +65,46 @@ func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestR
 		case constants.LoanDocumentCategoryExtend:
 			_, innerErr = l.svcCtx.LoanDocumentRepo.DeleteByIDWithTx(l.ctx, tx, loanDocument.Id)
 			if innerErr != nil {
-				return errorx.Wrap(innerErr, "Failed To Delete Loan Document")
+				return errorx.Wrap(innerErr, "fail to delete loan document")
 			}
 		case constants.LoanDocumentCategoryBorrower:
 			innerErr = l.svcCtx.LoanDocumentRepo.UpdateColumnsByIdWithTx(l.ctx, tx, loanDocument.Id, map[string]interface{}{
 				"status": constants.LoanDocumentStatusPendingUpload,
 			})
 			if innerErr != nil {
-				return errorx.Wrap(innerErr, "Failed To Update Loan Document Status")
+				return errorx.Wrap(innerErr, "fail to update loan document status")
 			}
 		default:
-			return errorx.WithStack(errorx.New("Invalid loan document category"))
-
+			return errorx.WithStack(errorx.New("invalid loan document category"))
 		}
-		operationLoanDocument := &data.OperationLoanDocument{}
-		innerErr = copier.CopyWithOption(operationLoanDocument, loanDocument, copier.Option{
-			CaseSensitive: true,
-			DeepCopy:      true,
-		})
-		if innerErr != nil {
-			return errorx.GetFailedTransErr(innerErr)
+		operationLoanDocument := &dto.OperationLoanDocument{}
+		operationLoanDocument, err = copierx.Trans[model.LoanDocument, dto.OperationLoanDocument](loanDocument)
+		if err != nil {
+			return errorx.Wrap(err, "fail to copy loan document")
 		}
 
 		innerErr = l.baseLogic.CreateLoanOperationLog(
+			l.ctx,
 			tx,
 			loanDocument.LoanId,
 			claim.OrganizationUserId,
-			data.LoanOperationStatus{
+			dto.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			data.LoanOperationStatus{
+			dto.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			constants.LoanOperationActionDeleteDocumentRequest,
-			&data.LoanOperationMetadata{
-				LoanDocuments: []*data.OperationLoanDocument{
+			&dto.LoanOperationMetadata{
+				LoanDocuments: []*dto.OperationLoanDocument{
 					operationLoanDocument,
 				},
 			},
 		)
 		if innerErr != nil {
-			return errorx.Wrap(innerErr, "Failed To Create Operation Log")
+			return errorx.Wrap(innerErr, "fail to create operation log")
 		}
 
 		return nil
@@ -125,10 +114,9 @@ func (l *DeleteRequestLogic) DeleteRequest(in *lender.LoanDocumentDeleteRequestR
 		return nil, err
 	}
 
-	return &lender.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }
 
-func (l *DeleteRequestLogic) prepare(in *lender.LoanDocumentDeleteRequestRequest, organizationId int64) (loan *model.Loan, loanDocument *model.LoanDocument, err error) {
-
-	return l.baseLogic.GetLoanAndDocumentByDocumentId(in.Data.Id, organizationId)
+func (l *DeleteRequestLogic) prepare(in *proto.PathIdRequest, organizationId int64) (loan *model.Loan, loanDocument *model.LoanDocument, err error) {
+	return l.baseLogic.GetLoanAndDocumentByDocumentId(l.ctx, in.Data.Id, organizationId)
 }

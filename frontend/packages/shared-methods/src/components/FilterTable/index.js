@@ -1,21 +1,12 @@
 'use client';
-import React, {
-	useEffect,
-	useRef,
-	useState,
-	forwardRef,
-	useImperativeHandle,
-	useCallback,
-} from 'react';
+import React, {forwardRef, useEffect, useImperativeHandle,} from 'react';
 import styles from './index.module.scss';
-import { createRequest } from '../../lib/fetch';
-import { getPagination } from '../../lib/common';
-import { asc, des, ascend, descend } from '@repo/shared-methods/enum';
-import { useDisUpdateEffect } from '@repo/shared-methods/hooks';
-import { FilterTag } from '../FilterField/filterTag.js';
-import { FilterField } from '../FilterField/index';
-import { NewTable } from '../NewTable';
+import {useDisUpdateEffect} from '@repo/shared-methods/hooks';
+import {FilterTag} from '../FilterField/filterTag.js';
+import {FilterField} from '../FilterField/index';
+import {NewTable} from '../NewTable';
 import useContent from './useContent';
+
 /**
  * Form筛选 + Table
  * @param {*Boolean} hasFilterField true显示筛选/false隐藏
@@ -34,9 +25,12 @@ export const FilterTable = forwardRef(
 			filterList,
 			rowProps = {},
 			filterName = '',
-			hasFilterField = true,
+			hasFilterField = true, // true有过滤搜索栏
+			hasInitRequest = true, //true初始化请求接口，当有dataSource时默认‘不请求’
 			filterWrapClassName,
-			getData = () => {},
+			getData = () => {
+			}, //请求接口的方法（无api时使用）
+			hasPaginationRequest = true, // true需要请求分页接口，false不请求
 			api,
 			method = 'POST',
 			...props
@@ -59,6 +53,9 @@ export const FilterTable = forwardRef(
 			api,
 			method,
 			getData,
+			hasPaginationRequest,
+			settingPagination,
+			hasInitRequest,
 		});
 		// const isGet = useRef(true);
 		// const filterFieldRef = useRef();

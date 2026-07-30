@@ -3,38 +3,32 @@ package userlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
-	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type UserInfoLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserInfoLogic {
 	return &UserInfoLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *UserInfoLogic) UserInfo(in *lender.UserInfoRequest) (resp *lender.UserinfoResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+func (l *UserInfoLogic) UserInfo(in *proto.EmptyRequest) (resp *proto.UserinfoResponse, err error) {
+
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
@@ -44,15 +38,12 @@ func (l *UserInfoLogic) UserInfo(in *lender.UserInfoRequest) (resp *lender.Useri
 	if err != nil {
 		return nil, err
 	}
-	data := &lender.UserinfoResponseData{}
-	err = copier.CopyWithOption(data, user, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+
+	data, err := copierx.Trans[dto.UserinfoDto, proto.UserinfoResponseData](user)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
-	userInfo := &lender.UserinfoResponse{
+	userInfo := &proto.UserinfoResponse{
 		Data: data,
 	}
 	return userInfo, nil

@@ -1,4 +1,5 @@
 import React from 'react';
+
 const colorInfo = {
 	Requested: {
 		border: '1px solid #91D5FF',

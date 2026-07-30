@@ -3,14 +3,12 @@ package borrower_entity
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/errorx"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type BorrowerEntityDetailLogic struct {
@@ -29,8 +27,8 @@ func NewBorrowerEntityDetailLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 func (l *BorrowerEntityDetailLogic) BorrowerEntityDetail(req *types.PathIdRequest) (resp *types.BorrowerEntityDetailResponse, err error) {
-	rpcReq := &borrower.BorrowerEntityDetailRequest{
-		Data: &borrower.BorrowerEntityDetailRequestData{
+	rpcReq := &proto.PathIdRequest{
+		Data: &proto.PathIdRequestData{
 			Id: req.Id,
 		},
 	}
@@ -41,10 +39,11 @@ func (l *BorrowerEntityDetailLogic) BorrowerEntityDetail(req *types.PathIdReques
 	}
 
 	resp = &types.BorrowerEntityDetailResponse{}
-	err = copier.CopyWithOption(&resp.BorrowerEntityEntity, &rpcResp.Data, copier.Option{DeepCopy: true})
+	entity, err := copierx.Trans[proto.BorrowerEntityEntity, types.BorrowerEntityEntity](rpcResp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
+	resp.BorrowerEntityEntity = *entity
 
 	return resp, nil
 }

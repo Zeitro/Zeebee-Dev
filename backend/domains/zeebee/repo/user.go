@@ -60,68 +60,66 @@ func NewUserRepo(db *gorm.DB) *UserRepo {
 }
 
 // Page returns paginated users
-func (repo *UserRepo) Page(ctx context.Context, pageReq *UserPageRequest) (page gormx.PageResponse[*UserPageEntity], err error) {
-	userTable := model.User{}.TableName()
-	organizationUserTable := model.OrganizationUser{}.TableName()
-	filter := pageReq.Filter
-	sorter := pageReq.Sorter
-
-	query := repo.Client(ctx).Model(&model.User{}).
-		Joins(fmt.Sprintf("left join %s on %s.user_id = %s.id", organizationUserTable, organizationUserTable, userTable)).
-		Where(fmt.Sprintf("%s.type = ?", userTable), filter.UserType).
-		Where(fmt.Sprintf("%s.organization_id = ? and is_del = 0", organizationUserTable), filter.OrganizationId)
-
-	if len(filter.Keyword) > 0 {
-		query = query.Where(fmt.Sprintf("%s.email like ? or %s.full_name like ? or %s.phone like ?", userTable, userTable, userTable),
-			"%"+filter.Keyword+"%",
-			"%"+filter.Keyword+"%",
-			"%"+filter.Keyword+"%",
-		)
-	}
-	if len(filter.Status) > 0 {
-		query = query.Where(fmt.Sprintf("%s.status = ?", organizationUserTable), filter.Status)
-	}
-
-	if len(sorter.Column) == 0 {
-		sorter.Column = fmt.Sprintf("%s.id", userTable)
-	}
-	if len(sorter.Sort) == 0 {
-		sorter.Sort = "desc"
-	}
-	fields := []string{
-		fmt.Sprintf("%s.id", userTable),
-		fmt.Sprintf("%s.type", userTable),
-		fmt.Sprintf("%s.email", userTable),
-		fmt.Sprintf("%s.first_name", userTable),
-		fmt.Sprintf("%s.last_name", userTable),
-		fmt.Sprintf("%s.full_name", userTable),
-		fmt.Sprintf("%s.phone", userTable),
-		fmt.Sprintf("%s.status as pivot_organization_status", organizationUserTable),
-		fmt.Sprintf("%s.created_at", userTable),
-		fmt.Sprintf("%s.updated_at", userTable),
-	}
-
-	query = query.Select(fields).Order(fmt.Sprintf("%s %s", sorter.Column, sorter.Sort))
-	page, err = gormx.Page[*UserPageEntity](query, gormx.PageRequest{
-		Page:        pageReq.Page,
-		Limit:       pageReq.Limit,
-		CountColumn: fmt.Sprintf("%s.id", userTable),
-	})
-	roleRepo := NewRoleRepo(repo.BaseRepo.Client(ctx))
-	for i, _ := range page.List {
-		roles, err := roleRepo.GetOrganizationUserRoles(ctx, filter.OrganizationId)
-		if err != nil {
-			return page, err
-		}
-		page.List[i].Roles = roles
-	}
-	return page, errorx.WithStack(err)
-}
+// func (repo *UserRepo) Page(ctx context.Context, pageReq *UserPageRequest) (page gormx.PageResponse[*UserPageEntity], err error) {
+// 	userTable := model.User{}.TableName()
+// 	organizationUserTable := model.OrganizationUser{}.TableName()
+// 	filter := pageReq.Filter
+// 	sorter := pageReq.Sorter
+//
+// 	query := repo.Client(ctx).Model(&model.User{}).
+// 		Joins(fmt.Sprintf("left join %s on %s.user_id = %s.id", organizationUserTable, organizationUserTable, userTable)).
+// 		Where(fmt.Sprintf("%s.type = ?", userTable), filter.UserType).
+// 		Where(fmt.Sprintf("%s.organization_id = ? and is_del = 0", organizationUserTable), filter.OrganizationId)
+//
+// 	if len(filter.Keyword) > 0 {
+// 		query = query.Where(fmt.Sprintf("%s.email like ? or %s.full_name like ? or %s.phone like ?", userTable, userTable, userTable),
+// 			"%"+filter.Keyword+"%",
+// 			"%"+filter.Keyword+"%",
+// 			"%"+filter.Keyword+"%",
+// 		)
+// 	}
+// 	if len(filter.Status) > 0 {
+// 		query = query.Where(fmt.Sprintf("%s.status = ?", organizationUserTable), filter.Status)
+// 	}
+//
+// 	if len(sorter.Column) == 0 {
+// 		sorter.Column = fmt.Sprintf("%s.id", userTable)
+// 	}
+// 	if len(sorter.Sort) == 0 {
+// 		sorter.Sort = "desc"
+// 	}
+// 	fields := []string{
+// 		fmt.Sprintf("%s.id", userTable),
+// 		fmt.Sprintf("%s.type", userTable),
+// 		fmt.Sprintf("%s.email", userTable),
+// 		fmt.Sprintf("%s.first_name", userTable),
+// 		fmt.Sprintf("%s.last_name", userTable),
+// 		fmt.Sprintf("%s.full_name", userTable),
+// 		fmt.Sprintf("%s.phone", userTable),
+// 		fmt.Sprintf("%s.status as pivot_organization_status", organizationUserTable),
+// 		fmt.Sprintf("%s.created_at", userTable),
+// 		fmt.Sprintf("%s.updated_at", userTable),
+// 	}
+//
+// 	query = query.Select(fields).Order(fmt.Sprintf("%s %s", sorter.Column, sorter.Sort))
+// 	page, err = gormx.Page[*UserPageEntity](query, gormx.PageRequest{
+// 		Page:        pageReq.Page,
+// 		Limit:       pageReq.Limit,
+// 		CountColumn: fmt.Sprintf("%s.id", userTable),
+// 	})
+// 	roleRepo := NewRoleRepo(repo.BaseRepo.Client(ctx))
+// 	for i, _ := range page.List {
+// 		roles, err := roleRepo.GetRolesByOrganizationUserId(ctx, filter.OrganizationUserId)
+// 		if err != nil {
+// 			return page, err
+// 		}
+// 		page.List[i].Roles = roles
+// 	}
+// 	return page, errorx.WithStack(err)
+// }
 
 // GetUser return user by id
 func (repo *UserRepo) GetUser(ctx context.Context, id int64, userType constants.UserType, withPreloads bool) (res *model.User, err error) {
-	// organizationUserTable := model.OrganizationUser{}.TableName()
-	// organizationTable := model.Organization{}.TableName()
 	query := repo.BaseRepo.Client(ctx).
 		Where("id = ? and type = ?", id, userType)
 	if withPreloads {
@@ -152,7 +150,10 @@ func (repo *UserRepo) GetUserByEmail(ctx context.Context, email string, userType
 	}
 	organizationRepo := NewOrganizationRepo(repo.GetDB())
 
-	organizations, _ := organizationRepo.GetUserOrganizations(ctx, res.Id, userType)
+	organizations, err := organizationRepo.GetUserOrganizations(ctx, res.Id, userType)
+	if err != nil {
+		return res, errorx.WithStack(err)
+	}
 	res.Organizations = organizations
 
 	return res, errorx.WithStack(err)
@@ -169,7 +170,10 @@ func (repo *UserRepo) GetUserByEmailWithTx(ctx context.Context, tx *gorm.DB, ema
 	}
 	organizationRepo := NewOrganizationRepo(repo.GetDB())
 
-	organizations, _ := organizationRepo.GetUserOrganizationsWithTx(ctx, tx, res.Id, userType)
+	organizations, err := organizationRepo.GetUserOrganizationsWithTx(ctx, tx, res.Id, userType)
+	if err != nil {
+		return res, errorx.WithStack(err)
+	}
 	res.Organizations = organizations
 	return res, errorx.WithStack(err)
 }

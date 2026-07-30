@@ -3,13 +3,13 @@ package role
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type RoleAllLogic struct {
@@ -21,7 +21,7 @@ type RoleAllLogic struct {
 // all
 func NewRoleAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RoleAllLogic {
 	return &RoleAllLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
@@ -42,10 +42,11 @@ func (l *RoleAllLogic) RoleAll(req *types.EmptyRequest) (resp *types.RoleAllResp
 	}
 
 	// trans response
-	err = copier.CopyWithOption(&resp.List, &rpcResp.Data, copier.Option{DeepCopy: true})
+	list, err := copierx.Trans[[]*proto.RoleEntity, []*types.RoleEntity](&rpcResp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
+	resp.List = *list
 
-	return resp, nil
+	return resp, err
 }

@@ -3,63 +3,47 @@ package borrowerpropertylogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/model"
-
-	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type UpdateLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogic {
 	return &UpdateLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *UpdateLogic) Update(in *borrower.PropertyUpdateRequest) (resp *borrower.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+func (l *UpdateLogic) Update(in *borrower.PropertyUpdateRequest) (resp *proto.EmptyResponse, err error) {
 
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	// todo check organization
 	var result *model.BorrowerProperty
 	result, err = l.svcCtx.BorrowerPropertyRepo.GetOneByIdForOrganization(l.ctx, in.Data.Id, claim.OrganizationId)
 	if err != nil {
 		return nil, err
 	}
-
-	err = copier.CopyWithOption(result, in.Data, copier.Option{
-		CaseSensitive: true,
-		DeepCopy:      true,
-		Converters:    []copier.TypeConverter{},
-	})
+	err = copierx.Assign[borrower.PropertyUpdateRequestData, model.BorrowerProperty](in.Data, result)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
-
 	_, err = l.svcCtx.BorrowerPropertyRepo.UpdateOne(l.ctx, in.Data.Id, result)
 
-	return &borrower.EmptyResponse{}, err
+	return &proto.EmptyResponse{}, err
 }

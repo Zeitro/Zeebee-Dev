@@ -13,27 +13,25 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
-	"zeebee-backend/domains/zeebee/repo"
 	"zeebee-backend/domains/zeebee/templater/convertor"
 )
 
 // BaseTemplateLogic provides base template business logic
 type BaseTemplateLogic struct {
-	repos *repo.AllRepos
+	*BaseLogic
 }
 
 // NewBaseTemplateLogic creates a new base template logic instance
-func NewBaseTemplateLogic(repos *repo.AllRepos) *BaseTemplateLogic {
+func NewBaseTemplateLogic(baseLogic *BaseLogic) *BaseTemplateLogic {
 	return &BaseTemplateLogic{
-		repos: repos,
+		BaseLogic: baseLogic,
 	}
 }
 
 // Create creates a new base template
-func (l *BaseTemplateLogic) Create(ctx context.Context, req dto.BaseTemplateCreateDto) (result *bo.BaseTemplateBo, err error) {
+func (l *BaseTemplateLogic) Create(ctx context.Context, req dto.BaseTemplateCreateDto) (result *dto.BaseTemplateEntityDto, err error) {
 	// check tag uniqueness within the same type
 	exists, err := l.ExistsByPurpose(ctx, req.Purpose, req.Type)
 	if err != nil {
@@ -66,10 +64,10 @@ func (l *BaseTemplateLogic) Create(ctx context.Context, req dto.BaseTemplateCrea
 		return innerErr
 	})
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to create template")
+		return nil, errorx.Wrap(err, "fail to create template")
 	}
 
-	result, err = copierx.Trans[model.BaseTemplate, bo.BaseTemplateBo](created)
+	result, err = copierx.Trans[model.BaseTemplate, dto.BaseTemplateEntityDto](created)
 	if err != nil {
 		return nil, err
 	}
@@ -77,12 +75,12 @@ func (l *BaseTemplateLogic) Create(ctx context.Context, req dto.BaseTemplateCrea
 }
 
 // Detail retrieves base template details by ID
-func (l *BaseTemplateLogic) Detail(ctx context.Context, id int64) (result *bo.BaseTemplateBo, err error) {
+func (l *BaseTemplateLogic) Detail(ctx context.Context, id int64) (result *dto.BaseTemplateEntityDto, err error) {
 	template, err := l.repos.BaseTemplateRepo.Detail(ctx, id, false)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	result, err = copierx.Trans[model.BaseTemplate, bo.BaseTemplateBo](template)
+	result, err = copierx.Trans[model.BaseTemplate, dto.BaseTemplateEntityDto](template)
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +88,7 @@ func (l *BaseTemplateLogic) Detail(ctx context.Context, id int64) (result *bo.Ba
 }
 
 // DetailByPurpose retrieves base template's content by purpose and type
-func (l *BaseTemplateLogic) DetailByPurpose(ctx context.Context, purpose string, tplType constants.UserType) (result *bo.BaseTemplateBo, err error) {
+func (l *BaseTemplateLogic) DetailByPurpose(ctx context.Context, purpose string, tplType constants.UserType) (result *dto.BaseTemplateEntityDto, err error) {
 	template, err := l.repos.BaseTemplateRepo.FindOneByColumns(ctx, map[string]interface{}{
 		"purpose": purpose,
 		"type":    tplType,
@@ -98,7 +96,7 @@ func (l *BaseTemplateLogic) DetailByPurpose(ctx context.Context, purpose string,
 	if err != nil {
 		return nil, err
 	}
-	result, err = copierx.Trans[model.BaseTemplate, bo.BaseTemplateBo](template)
+	result, err = copierx.Trans[model.BaseTemplate, dto.BaseTemplateEntityDto](template)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +104,7 @@ func (l *BaseTemplateLogic) DetailByPurpose(ctx context.Context, purpose string,
 }
 
 // Update updates an existing base template
-func (l *BaseTemplateLogic) Update(ctx context.Context, req dto.BaseTemplateUpdateDto) (result *bo.BaseTemplateBo, err error) {
+func (l *BaseTemplateLogic) Update(ctx context.Context, req dto.BaseTemplateUpdateDto) (result *dto.BaseTemplateEntityDto, err error) {
 	// Get existing template
 	existing, err := l.repos.BaseTemplateRepo.Detail(ctx, req.Id, false)
 	if err != nil {
@@ -155,7 +153,7 @@ func (l *BaseTemplateLogic) Update(ctx context.Context, req dto.BaseTemplateUpda
 		return nil, errorx.WithStack(err)
 	}
 
-	result, err = copierx.Trans[model.BaseTemplate, bo.BaseTemplateBo](updated)
+	result, err = copierx.Trans[model.BaseTemplate, dto.BaseTemplateEntityDto](updated)
 	if err != nil {
 		return nil, err
 	}
@@ -163,7 +161,7 @@ func (l *BaseTemplateLogic) Update(ctx context.Context, req dto.BaseTemplateUpda
 }
 
 // Page retrieves paginated base template list
-func (l *BaseTemplateLogic) Page(ctx context.Context, pageReq dto.BaseTemplatePageRequestDto) (page bo.PageResultBo[bo.BaseTemplatePageBo], err error) {
+func (l *BaseTemplateLogic) Page(ctx context.Context, pageReq dto.BaseTemplatePageRequestDto) (page dto.PageResultDto[dto.BaseTemplatePageEntityDto], err error) {
 	results, err := l.repos.BaseTemplateRepo.Page(ctx, pageReq)
 	if err != nil {
 		return page, err
@@ -176,7 +174,7 @@ func (l *BaseTemplateLogic) Page(ctx context.Context, pageReq dto.BaseTemplatePa
 
 	// Convert each item
 	for _, item := range results.List {
-		itemBo, err := copierx.Trans[model.BaseTemplate, bo.BaseTemplatePageBo](item)
+		itemBo, err := copierx.Trans[model.BaseTemplate, dto.BaseTemplatePageEntityDto](item)
 		if err != nil {
 			return page, err
 		}
@@ -233,7 +231,7 @@ func (l *BaseTemplateLogic) SwitchStatus(ctx context.Context, id int64, status c
 				organizationTemplates = append(organizationTemplates, organizationTemplate)
 			}
 			// Create organization templates
-			organizationTemplateLogic := NewOrganizationTemplateLogic(l.repos)
+			organizationTemplateLogic := NewOrganizationTemplateLogic(l.BaseLogic)
 			innerErr = organizationTemplateLogic.BatchCreateWithTx(ctx, tx, organizationTemplates, false)
 		}
 		return innerErr
@@ -259,7 +257,7 @@ func (l *BaseTemplateLogic) Delete(ctx context.Context, id int64) (err error) {
 	return nil
 }
 
-// ExistsByTag checks if a template tag exists within the same type and category
+// ExistsByPurpose checks if a template tag exists within the same type and category
 func (l *BaseTemplateLogic) ExistsByPurpose(ctx context.Context, purpose string, templateType constants.UserType) (exists bool, err error) {
 	return l.repos.BaseTemplateRepo.ExistsByPurpose(ctx, purpose, templateType)
 }
@@ -280,16 +278,15 @@ func (l *BaseTemplateLogic) Preview(_ context.Context, req dto.BaseTemplatePrevi
 			return
 		}
 		for k, v := range exampleData {
-			k := strings.Trim(k, ".")
-			data[k] = v
+			key := strings.Trim(k, ".")
+			data[key] = v
 		}
 	}
 	for _, groupDto := range req.VariableGroupSchema {
-
 		for _, variableDto := range groupDto.Variables {
 			if variableDto.Source == constants.TemplateVariableSourceFixed || variableDto.Source == constants.TemplateVariableSourceTemplate {
-				k := strings.Trim(variableDto.Key, ".")
-				data[k] = variableDto.FixedValue
+				key := strings.Trim(variableDto.Key, ".")
+				data[key] = variableDto.FixedValue
 			}
 		}
 	}
@@ -332,7 +329,7 @@ func (l *BaseTemplateLogic) syncOrganizationTemplates(ctx context.Context, tx *g
 		organizationTemplates = append(organizationTemplates, organizationTemplate)
 	}
 	// Create organization templates
-	organizationTemplateLogic := NewOrganizationTemplateLogic(l.repos)
+	organizationTemplateLogic := NewOrganizationTemplateLogic(l.BaseLogic)
 	err = organizationTemplateLogic.BatchCreateWithTx(ctx, tx, organizationTemplates, checkExisted)
 	return err
 }

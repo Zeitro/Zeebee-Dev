@@ -7,9 +7,8 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/domains/zeebee/data/bo"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -17,27 +16,23 @@ import (
 type DetailByPurposeLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewDetailByPurposeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailByPurposeLogic {
 	return &DetailByPurposeLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
 func (l *DetailByPurposeLogic) DetailByPurpose(in *lender.OrganizationSettingDetailByPurposeRequest) (resp *lender.OrganizationSettingDetailResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+
 	if in.Data == nil {
-		return nil, errorx.New("Data is required")
+		return nil, errorx.New("data is required")
 	}
 
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
@@ -49,7 +44,7 @@ func (l *DetailByPurposeLogic) DetailByPurpose(in *lender.OrganizationSettingDet
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[bo.OrganizationSettingBo, lender.OrganizationSettingEntity](result, copierx.TimeToRFC3339Str(), copierx.StrMapToBytes())
+	data, err := copierx.Trans[dto.OrganizationSettingEntityDto, proto.OrganizationSettingEntity](result, copierx.TimeToRFC3339Str(), copierx.StrMapToBytes())
 	if err != nil {
 		return nil, err
 	}

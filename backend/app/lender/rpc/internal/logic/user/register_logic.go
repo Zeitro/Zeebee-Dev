@@ -3,6 +3,7 @@ package userlogic
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/duke-git/lancet/v2/random"
 
@@ -14,37 +15,33 @@ import (
 	email2 "zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/stringx"
+	"zeebee-backend/common/timex"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/limiter"
 	"zeebee-backend/domains/zeebee/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type RegisterLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RegisterLogic {
 	return &RegisterLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *lender.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *proto.EmptyResponse, err error) {
+
 	// check if user already exists
 	var existedUser *model.User
 	existedUser, _ = l.svcCtx.UserRepo.GetUserByEmail(l.ctx, in.Data.Email, constants.UserTypeLender)
@@ -57,7 +54,7 @@ func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *lender.E
 				err := sendRegisterVerifyUrlEmail(ctx, in.Data.Email, existedUser.FirstName)
 				if err != nil {
 					err = errorx.Wrap(err, "Send Verify Email Error")
-					l.WithContext(ctx).Error(err)
+					l.svcCtx.Logger.WithContext(ctx).Error(err)
 				}
 			}()
 		} else {
@@ -66,12 +63,12 @@ func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *lender.E
 				err := sendLoginUrlEmail(ctx, in.Data.Email, existedUser.FirstName)
 				if err != nil {
 					err = errorx.Wrap(err, "Send Login Email Error")
-					l.WithContext(ctx).Error(err)
+					l.svcCtx.Logger.WithContext(ctx).Error(err)
 				}
 			}()
 		}
 
-		return &lender.EmptyResponse{}, nil
+		return &proto.EmptyResponse{}, nil
 	}
 
 	var pwd string
@@ -89,8 +86,7 @@ func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *lender.E
 		FullName:     stringx.FormatFullName(in.Data.FirstName, "", in.Data.LastName),
 	}
 
-	var organizationInput *dto.OrganizationRegisterRequestDto
-	organizationInput = &dto.OrganizationRegisterRequestDto{
+	organizationInput := &dto.OrganizationRegisterRequestDto{
 		Name:      in.Data.OrganizationName,
 		Status:    constants.OrganizationStatusActive,
 		OwnerType: constants.OrganizationOwnerTypeThirdParty,
@@ -108,15 +104,15 @@ func (l *RegisterLogic) Register(in *lender.UserRegisterRequest) (resp *lender.E
 		ctx := context.WithoutCancel(newCxt)
 		err := sendRegisterVerifyUrlEmail(ctx, in.Data.Email, userModel.FirstName)
 		if err != nil {
-			l.WithContext(ctx).Error(err)
+			l.svcCtx.Logger.WithContext(ctx).Error(err)
 		}
 		if err != nil {
 			err = errorx.Wrap(err, "Send Register Verify Email Error")
-			l.WithContext(ctx).Error(err)
+			l.svcCtx.Logger.WithContext(ctx).Error(err)
 		}
 	}()
 
-	return &lender.EmptyResponse{}, err
+	return &proto.EmptyResponse{}, err
 }
 
 func sendLoginUrlEmail(ctx context.Context, email string, firstName string) (err error) {
@@ -132,7 +128,7 @@ func sendLoginUrlEmail(ctx context.Context, email string, firstName string) (err
 
 	// send login email
 	data := map[string]interface{}{
-		"url":        fmt.Sprintf("%s", global.Config.LoginUrl),
+		"url":        global.Config.LoginUrl,
 		"first_name": firstName,
 	}
 	content, err := email2.ParseTemplate(email_tpl.LoginUrlEmail, data)
@@ -165,8 +161,9 @@ func sendRegisterVerifyUrlEmail(ctx context.Context, email string, firstName str
 	}
 	// send verify email
 	data := map[string]interface{}{
-		"url":        fmt.Sprintf("%s?code=%s&email=%s", global.Config.VerifyEmailUrl, code, email),
-		"first_name": firstName,
+		"url":         fmt.Sprintf("%s?code=%s&email=%s", global.Config.VerifyEmailUrl, code, email),
+		"first_name":  firstName,
+		"expire_time": timex.DurationToString(time.Second*time.Duration(global.Config.VerifyEmailExpireSeconds), true),
 	}
 	content, err := email2.ParseTemplate(email_tpl.RegisterVerifyEmail, data)
 	if err != nil {

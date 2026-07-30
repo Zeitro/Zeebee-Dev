@@ -3,14 +3,12 @@ package resource
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/common/errorx"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/common/copierx"
 )
 
 type ResourceDeleteLogic struct {
@@ -22,7 +20,7 @@ type ResourceDeleteLogic struct {
 // delete
 func NewResourceDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ResourceDeleteLogic {
 	return &ResourceDeleteLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
@@ -33,11 +31,10 @@ func (l *ResourceDeleteLogic) ResourceDelete(req *types.ResourceDeleteRequest) (
 	rpcReq := &admin.ResourceDeleteRequest{
 		Data: &admin.ResourceDeleteRequestData{},
 	}
-	err = copier.CopyWithOption(rpcReq.Data, req, copier.Option{DeepCopy: true})
+	rpcReq.Data, err = copierx.Trans[types.ResourceDeleteRequest, admin.ResourceDeleteRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
-
 	_, err = l.svcCtx.ResourceRpcClient.Delete(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err

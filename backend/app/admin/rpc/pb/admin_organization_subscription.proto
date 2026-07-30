@@ -1,0 +1,104 @@
+syntax = "proto3";
+
+package admin;
+
+option go_package = "zeebee-backend/app/admin/rpc/pb/admin";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+
+message OrganizationSubscriptionPageEntity {
+  int64 id = 1;
+  string code = 2;
+  string organization_name = 3;
+  string pricing_plan_name = 4;
+  string status = 5;
+  string expire_date = 6;
+  double original_amount = 7;
+  double actual_amount = 8;
+  bool is_auto_renew = 9;
+  string created_at = 10;
+  string updated_at = 11;
+  string pricing_plan_policy_type = 12;
+}
+
+// Create
+message OrganizationSubscriptionCreateRequest {
+  OrganizationSubscriptionCreateRequestData data = 1;
+}
+message OrganizationSubscriptionCreateRequestData {
+  int64 pricing_plan_id = 1;
+  int64 pricing_plan_policy_id = 2;
+  int64 organization_id = 3;
+  string type = 4;
+}
+message OrganizationSubscriptionDetailResponse {
+  proto.OrganizationSubscriptionEntity data = 1;
+}
+
+// Renew
+message OrganizationSubscriptionRenewRequest {
+  OrganizationSubscriptionRenewRequestData data = 1;
+}
+message OrganizationSubscriptionRenewRequestData {
+  int64 id = 1;
+  string expire_date = 2;
+}
+
+// UpdateExpireDate
+message OrganizationSubscriptionUpdateExpireDateRequest {
+  OrganizationSubscriptionUpdateExpireDateRequestData data = 1;
+}
+message OrganizationSubscriptionUpdateExpireDateRequestData {
+  int64 id = 1;
+  string expire_date = 2;
+}
+
+// SwitchStatus
+message OrganizationSubscriptionSwitchStatusRequest {
+  OrganizationSubscriptionSwitchStatusRequestData data = 1;
+}
+message OrganizationSubscriptionSwitchStatusRequestData {
+  int64 id = 1;
+  string status = 2;
+}
+
+// Page
+message OrganizationSubscriptionPageRequest {
+  OrganizationSubscriptionPageRequestData data = 1;
+}
+message OrganizationSubscriptionPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  OrganizationSubscriptionPageRequestFilter filter = 3;
+  OrganizationSubscriptionPageRequestSorter sorter = 4;
+}
+message OrganizationSubscriptionPageRequestFilter {
+  string keyword = 1;
+  repeated string status = 2;
+  string type = 3;
+}
+message OrganizationSubscriptionPageRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+message OrganizationSubscriptionPageResponse {
+  OrganizationSubscriptionPageResponseData data = 1;
+}
+message OrganizationSubscriptionPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated OrganizationSubscriptionPageEntity list = 5;
+}
+
+service OrganizationSubscription {
+  rpc Create(OrganizationSubscriptionCreateRequest) returns(OrganizationSubscriptionDetailResponse);
+  rpc Renew(OrganizationSubscriptionRenewRequest) returns(proto.EmptyResponse);
+  rpc UpdateExpireDate(OrganizationSubscriptionUpdateExpireDateRequest) returns(proto.EmptyResponse);
+  rpc SwitchStatus(OrganizationSubscriptionSwitchStatusRequest) returns(proto.EmptyResponse);
+  rpc Page(OrganizationSubscriptionPageRequest) returns(OrganizationSubscriptionPageResponse);
+  rpc Detail(proto.PathIdRequest) returns(OrganizationSubscriptionDetailResponse);
+}

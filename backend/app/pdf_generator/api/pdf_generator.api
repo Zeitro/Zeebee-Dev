@@ -1,32 +1,43 @@
 syntax = "v1"
 
-info(
-    title: "pdf-generator-api http service"
-    desc: "pdf-generator-api http service description"
-    author: "Wei Zeng"
-    email: "wei@yeelee-capital.com"
+info (
+	title:  "pdf-generator-api http service"
+	desc:   "pdf-generator-api http service description"
+	author: "Wei Zeng"
+	email:  "wei@yeelee-capital.com"
 )
 
 type CreatePdfRequest {
-    Type string `json:"type" validate:"required,oneof=Url Text"`
-    Url string `json:"url,optional" validate:"required_if=Type Url,omitempty,url"`
-    Text string `json:"text,optional" validate:"required_if=Type Text"`
+	Type string `json:"type" validate:"required,oneof=Url Text"`
+	Url  string `json:"url,optional" validate:"required_if=Type Url,omitempty,url"`
+	Text string `json:"text,optional" validate:"required_if=Type Text"`
 }
 
 type CreatePdfResponse {
-    Data []byte `json: "data"`
+	Data []byte `json:"data"`
 }
 
-@server(
-    desc: "pdf-generator-api service"
-    version: v1
-    prefix:  /api/v1
-    group: pdf_generator
-    tags: pdf_generator
+type DocToPdfRequest {
+	Type string `json:"type" validate:"required,oneof=Url Data"`
+	Url  string `json:"url,optional" validate:"required_if=Type Url,omitempty,url"`
+	Data []byte `json:"data,optional"`
+	Ext  string `json:"ext" validate:"required,oneof=doc docx"`
+}
+
+@server (
+	desc:    "pdf-generator-api service"
+	version: v1
+	prefix:  /api/v1
+	group:   pdf_generator
+	tags:    pdf_generator
 )
 service pdfgenerator-api {
-    @doc "Generate Pdf"
-    @handler PdfCreate
-    post /pdf (CreatePdfRequest) returns (CreatePdfResponse)
+	@doc "Generate Pdf"
+	@handler PdfCreate
+	post /pdf (CreatePdfRequest) returns (CreatePdfResponse)
+
+	@doc "Convert doc/docx to Pdf"
+	@handler DocToPdf
+	post /doc_to_pdf (DocToPdfRequest) returns (CreatePdfResponse)
 }
 

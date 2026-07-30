@@ -2,47 +2,91 @@ package logic
 
 import (
 	"context"
+	"sync"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/threading"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/admin/rpc/internal/global"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/logic"
 	"zeebee-backend/domains/zeebee/model"
 )
 
+var ErrorInvalidRequest = errorx.New("invalid request")
+
+var baseLogic *BaseLogic
+var onceBase sync.Once
+
 type BaseLogic struct {
-	ctx    context.Context
+	// ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+	//
 	*logic.AllLogics
 }
 
-func NewBaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseLogic {
+func GetBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
+	onceBase.Do(func() {
+		baseLogic = NewBaseLogic(svcCtx)
+	})
+	return baseLogic
+}
+
+func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 	redisCli := global.GetRedis()
-	jwtConfig := logic.JwtConfig{
+	jwtConfig := dto.JwtConfig{
 		AccessSecret:  svcCtx.Config.JwtAuth.AccessSecret,
 		AccessExpire:  svcCtx.Config.JwtAuth.AccessExpire,
 		RefreshSecret: svcCtx.Config.JwtAuth.RefreshSecret,
 		RefreshExpire: svcCtx.Config.JwtAuth.RefreshExpire,
 	}
 	emailClient := global.EmailClient
-	return &BaseLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
-		AllLogics: logic.NewAllLogics(svcCtx.AllRepos, redisCli, jwtConfig, emailClient),
+
+	currentEnforcer := global.AdminEnforcer
+
+	currentAuthEventTopic := svcCtx.Config.CasbinConf.EventTopic.AdminTopic
+	authEventTopicMap := map[constants.UserType]string{
+		constants.UserTypeAdmin:    svcCtx.Config.CasbinConf.EventTopic.AdminTopic,
+		constants.UserTypeLender:   svcCtx.Config.CasbinConf.EventTopic.LenderTopic,
+		constants.UserTypeBorrower: svcCtx.Config.CasbinConf.EventTopic.BorrowerTopic,
 	}
+	logicConfig := logic.AllLogicConfig{
+		Repos:                 svcCtx.AllRepos,
+		RedisCli:              redisCli,
+		JwtConfig:             jwtConfig,
+		EmailClient:           emailClient,
+		CurrentEnforcer:       currentEnforcer,
+		CurrentAuthEventTopic: currentAuthEventTopic,
+		AuthEventTopicMap:     authEventTopicMap,
+		Logger:                svcCtx.Logger,
+	}
+	l := &BaseLogic{
+		svcCtx:    svcCtx,
+		AllLogics: logic.NewAllLogics(logicConfig),
+	}
+
+	threading.GoSafe(func() {
+		ctx := context.Background()
+		err := l.AuthLogic.RebuildPolicy(ctx, constants.UserTypeAdmin)
+		if err != nil {
+			l.svcCtx.Logger.WithContext(ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+				logx.Field("user_type", constants.UserTypeAdmin),
+			).Error("fail to rebuild admin policy")
+		}
+	})
+
+	return l
 }
 
-func (l *BaseLogic) CreateLoanOperationLog(tx *gorm.DB, loanId, operatorId int64, from, to data.LoanOperationStatus, action constants.LoanOperationAction, metadata *data.LoanOperationMetadata) (err error) {
+func (l *BaseLogic) CreateLoanOperationLog(ctx context.Context, tx *gorm.DB, loanId, operatorId int64, from, to dto.LoanOperationStatus, action constants.LoanOperationAction, metadata *dto.LoanOperationMetadata) (err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(
+			l.svcCtx.Logger.WithContext(ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
 				logx.Field("loan_id", loanId),
 				logx.Field("operator_id", operatorId),
@@ -51,10 +95,10 @@ func (l *BaseLogic) CreateLoanOperationLog(tx *gorm.DB, loanId, operatorId int64
 				logx.Field("action", action),
 				logx.Field("metadata", metadata),
 				logx.Field("OperatorType", constants.LoanOperationOperatorTypeAdmin),
-			).Error("failed to create loan operation log")
+			).Error("fail to create loan operation log")
 		}
 	}()
-	operator, _ := l.svcCtx.OrganizationUserRepo.FindOneByIdWithTx(l.ctx, tx, operatorId)
+	operator, _ := l.svcCtx.OrganizationUserRepo.FindOneByIdWithTx(ctx, tx, operatorId)
 
 	operatorName := ""
 	if operator != nil {
@@ -71,9 +115,9 @@ func (l *BaseLogic) CreateLoanOperationLog(tx *gorm.DB, loanId, operatorId int64
 		To:           to,
 		Metadata:     metadata,
 	}
-	_, err = l.svcCtx.LoanOperationRepo.CreateWithTx(l.ctx, tx, operation, false)
+	_, err = l.svcCtx.LoanOperationRepo.CreateWithTx(ctx, tx, operation, false)
 	if err != nil {
-		return errorx.Wrap(err, "Failed to create operation log")
+		return errorx.Wrap(err, "fail to create operation log")
 	}
 
 	return nil

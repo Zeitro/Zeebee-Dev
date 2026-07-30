@@ -21,8 +21,10 @@ func OrganizationTemplateDetailByPurposeHandler(svcCtx *svc.ServiceContext) http
 		var err error
 		defer func() {
 			if err != nil {
-				logx.WithContext(r.Context()).
-					WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
+				svcCtx.Logger.WithContext(r.Context()).
+					WithFields(
+						logx.Field("stacks", errorx.GetErrorStack(err)),
+					).
 					Error(err)
 			}
 		}()

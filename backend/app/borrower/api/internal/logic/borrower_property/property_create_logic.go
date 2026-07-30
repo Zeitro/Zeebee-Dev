@@ -3,14 +3,13 @@ package borrower_property
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/errorx"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type PropertyCreateLogic struct {
@@ -32,14 +31,9 @@ func (l *PropertyCreateLogic) PropertyCreate(req *types.PropertyCreateRequest) (
 	rpcReq := &borrower.PropertyCreateRequest{
 		Data: &borrower.PropertyCreateRequestData{},
 	}
-
-	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{
-		DeepCopy:      true,
-		IgnoreEmpty:   true,
-		CaseSensitive: true,
-	})
+	rpcReq.Data, err = copierx.Trans[types.PropertyCreateRequest, borrower.PropertyCreateRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
 
 	rpcResp, err := l.svcCtx.BorrowerPropertyRpcClient.Create(l.ctx, rpcReq)
@@ -48,9 +42,9 @@ func (l *PropertyCreateLogic) PropertyCreate(req *types.PropertyCreateRequest) (
 	}
 
 	resp = &types.PropertyCreateResponse{}
-	err = copier.CopyWithOption(resp, &rpcResp.Data, copier.Option{DeepCopy: true})
+	resp, err = copierx.Trans[proto.BorrowerPropertyEntity, types.PropertyCreateResponse](rpcResp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
 	return resp, nil

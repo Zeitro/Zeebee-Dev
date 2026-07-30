@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package borrower;
+
+option go_package = "zeebee-backend/app/borrower/rpc/pb/borrower";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+// info --  response
+message OrganizationInfoResponse {
+  proto.OrganizationEntity   data = 1;
+}
+// all lender--  response
+message OrganizationAllLenderResponse {
+  repeated proto.OrganizationOptionsEntity data = 1;
+}
+// lender page --  response
+message OrganizationLenderPageResponse {
+  OrganizationLenderPageResponseData data = 1;
+}
+message OrganizationLenderPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated proto.OrganizationEntity list = 5;
+}
+
+service Organization {
+  rpc Profile(proto.EmptyRequest) returns(OrganizationInfoResponse);
+  rpc AllLender(proto.EmptyRequest) returns(OrganizationAllLenderResponse);
+  rpc LenderPage(proto.CommonPageRequest) returns(OrganizationLenderPageResponse);
+}

@@ -21,7 +21,7 @@ type OrganizationPageLogic struct {
 // page
 func NewOrganizationPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OrganizationPageLogic {
 	return &OrganizationPageLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

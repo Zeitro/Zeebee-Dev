@@ -1,0 +1,1216 @@
+package common
+
+import (
+	"context"
+	"encoding/json"
+
+	"zeebee-backend/app/borrower/api/internal/svc"
+	"zeebee-backend/app/borrower/api/internal/types"
+	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/data/dto"
+
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+type SyncResourceLogic struct {
+	logx.Logger
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+}
+
+// sync resource
+func NewSyncResourceLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncResourceLogic {
+	return &SyncResourceLogic{
+		Logger: logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+	}
+}
+
+func (l *SyncResourceLogic) SyncResource(req *types.EmptyRequest) (resp *types.EmptyResponse, err error) {
+	var resourceList []dto.ResourceSyncItemDto
+	err = json.Unmarshal(resourceBytes, &resourceList)
+	if err != nil {
+		return nil, errorx.Wrap(err, "failed to unmarshal resources")
+	}
+	if len(resourceList) == 0 {
+		return nil, errorx.New("no resources found")
+	}
+	resourceContent, err := json.Marshal(resourceList)
+	if err != nil {
+		return nil, errorx.Wrap(err, "failed to marshal resource content")
+	}
+
+	_, err = l.svcCtx.ResourceRpcClient.SyncResource(l.ctx, &borrower.SyncResourceRequest{
+		Data: &borrower.SyncResourceRequestData{
+			ResourceJson: string(resourceContent),
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.EmptyResponse{}, nil
+}
+
+var resourceBytes []byte = []byte(`[
+	{
+		"id": 141,
+		"parent_id": 0,
+		"type": "Borrower",
+		"resource_type": "Menu",
+		"name": "My transactions",
+		"path": "/myTransactions",
+		"icon": "transaction",
+		"tag": "Transactions",
+		"is_show": true,
+		"status": "Active",
+		"sort_order": 3,
+		"enable_data_scope": false,
+		"description": "",
+		"is_public": false,
+		"created_at": "2026-05-26T02:51:35Z",
+		"updated_at": "2026-05-29T05:55:58Z",
+		"apis": [
+			{
+				"id": 402,
+				"parent_id": 394,
+				"name": "page transactions",
+				"path": "/api/v1/borrower_property_transaction/page",
+				"method": "POST",
+				"status": "Active",
+				"description": "page transactions",
+				"type": "Borrower",
+				"sort_order": 8,
+				"auth_required": true,
+				"permission_required": true,
+				"created_at": "2026-05-28T03:18:25Z",
+				"updated_at": "2026-05-28T03:18:25Z"
+			}
+		],
+		"children": [
+			{
+				"id": 143,
+				"parent_id": 141,
+				"type": "Borrower",
+				"resource_type": "Button",
+				"name": "Delete",
+				"path": "",
+				"icon": "transaction",
+				"tag": "Transactions:Delete",
+				"is_show": false,
+				"status": "Active",
+				"sort_order": 2,
+				"enable_data_scope": false,
+				"description": "",
+				"is_public": false,
+				"created_at": "2026-05-29T05:31:42Z",
+				"updated_at": "2026-05-29T05:31:42Z",
+				"apis": [
+					{
+						"id": 398,
+						"parent_id": 394,
+						"name": "delete transaction",
+						"path": "/api/v1/borrower_property_transaction/:id",
+						"method": "DELETE",
+						"status": "Active",
+						"description": "delete transaction",
+						"type": "Borrower",
+						"sort_order": 4,
+						"auth_required": true,
+						"permission_required": true,
+						"created_at": "2026-05-28T03:18:25Z",
+						"updated_at": "2026-05-28T03:18:25Z"
+					}
+				]
+			},
+			{
+				"id": 147,
+				"parent_id": 141,
+				"type": "Borrower",
+				"resource_type": "Button",
+				"name": "Add",
+				"path": "",
+				"icon": "",
+				"tag": "Transactions:Add",
+				"is_show": false,
+				"status": "Active",
+				"sort_order": 2,
+				"enable_data_scope": false,
+				"description": "",
+				"is_public": false,
+				"created_at": "2026-05-29T05:33:58Z",
+				"updated_at": "2026-05-29T05:33:58Z",
+				"apis": [
+					{
+						"id": 305,
+						"parent_id": 303,
+						"name": "all",
+						"path": "/api/v1/property/all",
+						"method": "GET",
+						"status": "Active",
+						"description": "all",
+						"type": "Borrower",
+						"sort_order": 2,
+						"auth_required": true,
+						"permission_required": true,
+						"created_at": "2026-03-11T07:44:46Z",
+						"updated_at": "2026-03-11T07:44:46Z"
+					},
+					{
+						"id": 395,
+						"parent_id": 394,
+						"name": "create transaction",
+						"path": "/api/v1/borrower_property_transaction",
+						"method": "POST",
+						"status": "Active",
+						"description": "create transaction",
+						"type": "Borrower",
+						"sort_order": 1,
+						"auth_required": true,
+						"permission_required": true,
+						"created_at": "2026-05-28T03:18:25Z",
+						"updated_at": "2026-05-28T03:18:25Z"
+					}
+				]
+			},
+			{
+				"id": 148,
+				"parent_id": 141,
+				"type": "Borrower",
+				"resource_type": "Button",
+				"name": "Edit",
+				"path": "",
+				"icon": "",
+				"tag": "Transactions:Edit",
+				"is_show": false,
+				"status": "Active",
+				"sort_order": 3,
+				"enable_data_scope": false,
+				"description": "",
+				"is_public": false,
+				"created_at": "2026-05-29T05:36:32Z",
+				"updated_at": "2026-05-29T05:36:32Z",
+				"apis": [
+					{
+						"id": 305,
+						"parent_id": 303,
+						"name": "all",
+						"path": "/api/v1/property/all",
+						"method": "GET",
+						"status": "Active",
+						"description": "all",
+						"type": "Borrower",
+						"sort_order": 2,
+						"auth_required": true,
+						"permission_required": true,
+						"created_at": "2026-03-11T07:44:46Z",
+						"updated_at": "2026-03-11T07:44:46Z"
+					},
+					{
+						"id": 396,
+						"parent_id": 394,
+						"name": "transaction detail",
+						"path": "/api/v1/borrower_property_transaction/:id",
+						"method": "GET",
+						"status": "Active",
+						"description": "transaction detail",
+						"type": "Borrower",
+						"sort_order": 2,
+						"auth_required": true,
+						"permission_required": true,
+						"created_at": "2026-05-28T03:18:25Z",
+						"updated_at": "2026-05-28T03:18:25Z"
+					},
+					{
+						"id": 397,
+						"parent_id": 394,
+						"name": "update transaction",
+						"path": "/api/v1/borrower_property_transaction/:id",
+						"method": "PUT",
+						"status": "Active",
+						"description": "update transaction",
+						"type": "Borrower",
+						"sort_order": 3,
+						"auth_required": true,
+						"permission_required": true,
+						"created_at": "2026-05-28T03:18:25Z",
+						"updated_at": "2026-05-28T03:18:25Z"
+					}
+				]
+			},
+			{
+				"id": 142,
+				"parent_id": 141,
+				"type": "Borrower",
+				"resource_type": "Menu",
+				"name": "Details",
+				"path": "/myTransactions/:id",
+				"icon": "",
+				"tag": "Transactions:Details",
+				"is_show": false,
+				"status": "Active",
+				"sort_order": 4,
+				"enable_data_scope": false,
+				"description": "",
+				"is_public": false,
+				"created_at": "2026-05-26T03:19:52Z",
+				"updated_at": "2026-05-29T05:53:16Z",
+				"apis": [
+					{
+						"id": 291,
+						"parent_id": 286,
+						"name": "update pending status",
+						"path": "/api/v1/loan/:id/pending_status",
+						"method": "PATCH",
+						"status": "Active",
+						"description": "update pending status",
+						"type": "Borrower",
+						"sort_order": 5,
+						"auth_required": true,
+						"permission_required": true,
+						"created_at": "2026-03-11T07:44:46Z",
+						"updated_at": "2026-03-11T07:44:46Z"
+					},
+					{
+						"id": 292,
+						"parent_id": 286,
+						"name": "delete",
+						"path": "/api/v1/loan/:id",
+						"method": "DELETE",
+						"status": "Active",
+						"description": "delete",
+						"type": "Borrower",
+						"sort_order": 6,
+						"auth_required": true,
+						"permission_required": true,
+						"created_at": "2026-03-11T07:44:46Z",
+						"updated_at": "2026-03-11T07:44:46Z"
+					},
+					{
+						"id": 294,
+						"parent_id": 286,
+						"name": "detail",
+						"path": "/api/v1/loan/:id",
+						"method": "GET",
+						"status": "Active",
+						"description": "detail",
+						"type": "Borrower",
+						"sort_order": 8,
+						"auth_required": true,
+						"permission_required": true,
+						"created_at": "2026-03-11T07:44:46Z",
+						"updated_at": "2026-03-11T07:44:46Z"
+					},
+					{
+						"id": 295,
+						"parent_id": 286,
+						"name": "page",
+						"path": "/api/v1/loan/page",
+						"method": "POST",
+						"status": "Active",
+						"description": "page",
+						"type": "Borrower",
+						"sort_order": 9,
+						"auth_required": true,
+						"permission_required": true,
+						"created_at": "2026-03-11T07:44:46Z",
+						"updated_at": "2026-03-11T07:44:46Z"
+					},
+					{
+						"id": 332,
+						"parent_id": 331,
+						"name": "create aws s3 presign url",
+						"path": "/api/v1/storage/presign_url",
+						"method": "POST",
+						"status": "Active",
+						"description": "create aws s3 presign url",
+						"type": "Borrower",
+						"sort_order": 1,
+						"auth_required": true,
+						"permission_required": false,
+						"created_at": "2026-03-11T07:44:46Z",
+						"updated_at": "2026-03-11T07:44:46Z"
+					},
+					{
+						"id": 390,
+						"parent_id": 286,
+						"name": "update stage",
+						"path": "/api/v1/loan/:id/stage",
+						"method": "PATCH",
+						"status": "Active",
+						"description": "update third party loan's stage",
+						"type": "Borrower",
+						"sort_order": 7,
+						"auth_required": true,
+						"permission_required": true,
+						"created_at": "2026-05-22T11:17:55Z",
+						"updated_at": "2026-05-22T11:17:55Z"
+					},
+					{
+						"id": 392,
+						"parent_id": 391,
+						"name": "document files",
+						"path": "/api/v1/document/:id/files",
+						"method": "GET",
+						"status": "Active",
+						"description": "document files",
+						"type": "Borrower",
+						"sort_order": 1,
+						"auth_required": true,
+						"permission_required": true,
+						"created_at": "2026-05-28T03:18:25Z",
+						"updated_at": "2026-05-28T03:18:25Z"
+					},
+					{
+						"id": 396,
+						"parent_id": 394,
+						"name": "transaction detail",
+						"path": "/api/v1/borrower_property_transaction/:id",
+						"method": "GET",
+						"status": "Active",
+						"description": "transaction detail",
+						"type": "Borrower",
+						"sort_order": 2,
+						"auth_required": true,
+						"permission_required": true,
+						"created_at": "2026-05-28T03:18:25Z",
+						"updated_at": "2026-05-28T03:18:25Z"
+					},
+					{
+						"id": 399,
+						"parent_id": 394,
+						"name": "switch transaction status",
+						"path": "/api/v1/borrower_property_transaction/:id/status",
+						"method": "PATCH",
+						"status": "Active",
+						"description": "switch transaction status",
+						"type": "Borrower",
+						"sort_order": 5,
+						"auth_required": true,
+						"permission_required": true,
+						"created_at": "2026-05-28T03:18:25Z",
+						"updated_at": "2026-05-28T03:18:25Z"
+					},
+					{
+						"id": 403,
+						"parent_id": 394,
+						"name": "upload file to document",
+						"path": "/api/v1/borrower_property_transaction/:transaction_id/document/:document_id/file",
+						"method": "POST",
+						"status": "Active",
+						"description": "upload file to document",
+						"type": "Borrower",
+						"sort_order": 9,
+						"auth_required": true,
+						"permission_required": true,
+						"created_at": "2026-05-28T03:18:25Z",
+						"updated_at": "2026-05-28T03:18:25Z"
+					},
+					{
+						"id": 404,
+						"parent_id": 394,
+						"name": "delete document file",
+						"path": "/api/v1/borrower_property_transaction/:transaction_id/file/:file_id",
+						"method": "DELETE",
+						"status": "Active",
+						"description": "delete document file",
+						"type": "Borrower",
+						"sort_order": 10,
+						"auth_required": true,
+						"permission_required": true,
+						"created_at": "2026-05-28T03:18:25Z",
+						"updated_at": "2026-05-28T03:18:25Z"
+					},
+					{
+						"id": 405,
+						"parent_id": 394,
+						"name": "create leaf document",
+						"path": "/api/v1/borrower_property_transaction/:transaction_id/document",
+						"method": "POST",
+						"status": "Active",
+						"description": "create leaf document",
+						"type": "Borrower",
+						"sort_order": 11,
+						"auth_required": true,
+						"permission_required": true,
+						"created_at": "2026-05-28T03:18:25Z",
+						"updated_at": "2026-05-28T03:18:25Z"
+					},
+					{
+						"id": 406,
+						"parent_id": 394,
+						"name": "transaction operation stats",
+						"path": "/api/v1/borrower_property_transaction/:transaction_id/operations/stats",
+						"method": "GET",
+						"status": "Active",
+						"description": "transaction operation stats",
+						"type": "Borrower",
+						"sort_order": 12,
+						"auth_required": true,
+						"permission_required": true,
+						"created_at": "2026-05-28T03:18:25Z",
+						"updated_at": "2026-05-28T03:18:25Z"
+					},
+					{
+						"id": 407,
+						"parent_id": 394,
+						"name": "transaction operation list",
+						"path": "/api/v1/borrower_property_transaction/:transaction_id/operations",
+						"method": "GET",
+						"status": "Active",
+						"description": "transaction operation list",
+						"type": "Borrower",
+						"sort_order": 13,
+						"auth_required": true,
+						"permission_required": true,
+						"created_at": "2026-05-28T03:18:25Z",
+						"updated_at": "2026-05-28T03:18:25Z"
+					}
+				]
+			}
+		]
+	},
+{
+    "id": 91,
+    "parent_id": 0,
+    "type": "Borrower",
+    "resource_type": "Menu",
+    "name": "Setting",
+    "path": "setting",
+    "icon": "setting",
+    "tag": "Setting",
+    "is_show": true,
+    "status": "Active",
+    "sort_order": 5,
+    "enable_data_scope": false,
+    "description": "",
+    "is_public": false,
+    "created_at": "2026-03-19T07:36:20Z",
+    "updated_at": "2026-03-20T02:41:42Z",
+    "children": [
+      {
+        "id": 92,
+        "parent_id": 91,
+        "type": "Borrower",
+        "resource_type": "Menu",
+        "name": "User",
+        "path": "/setting/user",
+        "icon": "",
+        "tag": "Setting:User",
+        "is_show": true,
+        "status": "Active",
+        "sort_order": 6,
+        "enable_data_scope": false,
+        "description": "",
+        "is_public": false,
+        "created_at": "2026-03-19T07:36:20Z",
+        "updated_at": "2026-03-19T07:36:20Z",
+        "apis": [
+          {
+            "id": 248,
+            "parent_id": 245,
+            "name": "page",
+            "path": "/api/v1/organization_user/page",
+            "method": "POST",
+            "status": "Active",
+            "description": "page",
+            "type": "Borrower",
+            "sort_order": 3,
+            "auth_required": true,
+            "permission_required": true,
+            "created_at": "2026-03-19T07:18:03Z",
+            "updated_at": "2026-03-19T07:18:03Z"
+          },
+          {
+            "id": 249,
+            "parent_id": 245,
+            "name": "all",
+            "path": "/api/v1/organization_user/all",
+            "method": "GET",
+            "status": "Active",
+            "description": "all",
+            "type": "Borrower",
+            "sort_order": 4,
+            "auth_required": true,
+            "permission_required": false,
+            "created_at": "2026-03-19T07:18:03Z",
+            "updated_at": "2026-03-19T07:18:03Z"
+          }
+        ],
+        "children": [
+          {
+            "id": 93,
+            "parent_id": 92,
+            "type": "Borrower",
+            "resource_type": "Button",
+            "name": "Add",
+            "path": "",
+            "icon": "",
+            "tag": "Setting:User:Add",
+            "is_show": false,
+            "status": "Active",
+            "sort_order": 1,
+            "enable_data_scope": false,
+            "description": "",
+            "is_public": false,
+            "created_at": "2026-03-19T07:36:20Z",
+            "updated_at": "2026-03-19T07:36:20Z",
+            "apis": [
+              {
+                "id": 250,
+                "parent_id": 245,
+                "name": "create",
+                "path": "/api/v1/organization_user",
+                "method": "POST",
+                "status": "Active",
+                "description": "create",
+                "type": "Borrower",
+                "sort_order": 5,
+                "auth_required": true,
+                "permission_required": true,
+                "created_at": "2026-03-19T07:18:03Z",
+                "updated_at": "2026-03-19T07:18:03Z"
+              }
+            ]
+          },
+          {
+            "id": 94,
+            "parent_id": 92,
+            "type": "Borrower",
+            "resource_type": "Button",
+            "name": "Edit",
+            "path": "",
+            "icon": "",
+            "tag": "Setting:User:Edit",
+            "is_show": false,
+            "status": "Active",
+            "sort_order": 2,
+            "enable_data_scope": false,
+            "description": "",
+            "is_public": false,
+            "created_at": "2026-03-19T07:36:20Z",
+            "updated_at": "2026-03-19T07:36:20Z",
+            "apis": [
+              {
+                "id": 247,
+                "parent_id": 245,
+                "name": "detail",
+                "path": "/api/v1/organization_user/:id",
+                "method": "GET",
+                "status": "Active",
+                "description": "detail",
+                "type": "Borrower",
+                "sort_order": 2,
+                "auth_required": true,
+                "permission_required": true,
+                "created_at": "2026-03-19T07:18:03Z",
+                "updated_at": "2026-03-19T07:18:03Z"
+              },
+              {
+                "id": 251,
+                "parent_id": 245,
+                "name": "update",
+                "path": "/api/v1/organization_user/:id",
+                "method": "PUT",
+                "status": "Active",
+                "description": "update",
+                "type": "Borrower",
+                "sort_order": 6,
+                "auth_required": true,
+                "permission_required": true,
+                "created_at": "2026-03-19T07:18:03Z",
+                "updated_at": "2026-03-19T07:18:03Z"
+              }
+            ]
+          },
+          {
+            "id": 95,
+            "parent_id": 92,
+            "type": "Borrower",
+            "resource_type": "Button",
+            "name": "Delete",
+            "path": "",
+            "icon": "",
+            "tag": "Setting:User:Delete",
+            "is_show": false,
+            "status": "Active",
+            "sort_order": 3,
+            "enable_data_scope": false,
+            "description": "",
+            "is_public": false,
+            "created_at": "2026-03-19T07:36:20Z",
+            "updated_at": "2026-03-19T07:36:20Z",
+            "apis": [
+              {
+                "id": 252,
+                "parent_id": 245,
+                "name": "delete",
+                "path": "/api/v1/organization_user/:id",
+                "method": "DELETE",
+                "status": "Active",
+                "description": "delete",
+                "type": "Borrower",
+                "sort_order": 7,
+                "auth_required": true,
+                "permission_required": true,
+                "created_at": "2026-03-19T07:18:03Z",
+                "updated_at": "2026-03-19T07:18:03Z"
+              }
+            ]
+          },
+          {
+            "id": 96,
+            "parent_id": 92,
+            "type": "Borrower",
+            "resource_type": "Button",
+            "name": "SendInvitation",
+            "path": "",
+            "icon": "",
+            "tag": "Setting:User:SendInvitation",
+            "is_show": false,
+            "status": "Active",
+            "sort_order": 6,
+            "enable_data_scope": false,
+            "description": "",
+            "is_public": false,
+            "created_at": "2026-03-19T07:36:20Z",
+            "updated_at": "2026-03-19T07:36:20Z",
+            "apis": [
+              {
+                "id": 255,
+                "parent_id": 245,
+                "name": "send email",
+                "path": "/api/v1/organization_user/:id/send_email",
+                "method": "POST",
+                "status": "Active",
+                "description": "send email",
+                "type": "Borrower",
+                "sort_order": 10,
+                "auth_required": true,
+                "permission_required": true,
+                "created_at": "2026-03-19T07:18:03Z",
+                "updated_at": "2026-03-19T07:18:03Z"
+              }
+            ]
+          },
+          {
+            "id": 97,
+            "parent_id": 92,
+            "type": "Borrower",
+            "resource_type": "Button",
+            "name": "ChangeStatus",
+            "path": "",
+            "icon": "",
+            "tag": "Setting:User:ChangeStatus",
+            "is_show": false,
+            "status": "Active",
+            "sort_order": 6,
+            "enable_data_scope": false,
+            "description": "",
+            "is_public": false,
+            "created_at": "2026-03-19T07:36:20Z",
+            "updated_at": "2026-03-19T07:36:20Z",
+            "apis": [
+              {
+                "id": 253,
+                "parent_id": 245,
+                "name": "switch status",
+                "path": "/api/v1/organization_user/:id/status",
+                "method": "PATCH",
+                "status": "Active",
+                "description": "switch status",
+                "type": "Borrower",
+                "sort_order": 8,
+                "auth_required": true,
+                "permission_required": true,
+                "created_at": "2026-03-19T07:18:03Z",
+                "updated_at": "2026-03-19T07:18:03Z"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 98,
+        "parent_id": 91,
+        "type": "Borrower",
+        "resource_type": "Menu",
+        "name": "System",
+        "path": "/setting/system",
+        "icon": "",
+        "tag": "Setting:System",
+        "is_show": true,
+        "status": "Active",
+        "sort_order": 6,
+        "enable_data_scope": false,
+        "description": "",
+        "is_public": false,
+        "created_at": "2026-03-19T07:36:20Z",
+        "updated_at": "2026-03-19T07:36:20Z",
+        "apis": [
+          {
+            "id": 171,
+            "parent_id": 170,
+            "name": "register",
+            "path": "/api/v1/user/register",
+            "method": "POST",
+            "status": "Active",
+            "description": "register",
+            "type": "Borrower",
+            "sort_order": 1,
+            "auth_required": false,
+            "permission_required": false,
+            "created_at": "2026-03-19T07:18:03Z",
+            "updated_at": "2026-03-19T07:18:03Z"
+          }
+        ],
+        "children": [
+          {
+            "id": 99,
+            "parent_id": 98,
+            "type": "Borrower",
+            "resource_type": "Button",
+            "name": "ContactEmail",
+            "path": "",
+            "icon": "",
+            "tag": "Setting:System:ContactEmail",
+            "is_show": false,
+            "status": "Active",
+            "sort_order": 1,
+            "enable_data_scope": false,
+            "description": "Authorized personal gmail, currently used to request a quote from Lenders.",
+            "is_public": true,
+            "created_at": "2026-03-19T07:36:20Z",
+            "updated_at": "2026-03-19T07:36:20Z",
+            "apis": [
+              {
+                "id": 257,
+                "parent_id": 256,
+                "name": "profile",
+                "path": "/api/v1/organization/profile",
+                "method": "GET",
+                "status": "Active",
+                "description": "profile",
+                "type": "Borrower",
+                "sort_order": 1,
+                "auth_required": true,
+                "permission_required": false,
+                "created_at": "2026-03-19T07:18:03Z",
+                "updated_at": "2026-03-19T07:18:03Z"
+              },
+              {
+                "id": 261,
+                "parent_id": 260,
+                "name": "generate auth code url",
+                "path": "/api/v1/organization_email/generate_auth_code_url",
+                "method": "GET",
+                "status": "Active",
+                "description": "generate auth code url",
+                "type": "Borrower",
+                "sort_order": 1,
+                "auth_required": true,
+                "permission_required": true,
+                "created_at": "2026-03-19T07:18:03Z",
+                "updated_at": "2026-03-19T07:18:03Z"
+              },
+              {
+                "id": 262,
+                "parent_id": 260,
+                "name": "save email",
+                "path": "/api/v1/organization_email/save_email",
+                "method": "POST",
+                "status": "Active",
+                "description": "save email",
+                "type": "Borrower",
+                "sort_order": 2,
+                "auth_required": true,
+                "permission_required": true,
+                "created_at": "2026-03-19T07:18:03Z",
+                "updated_at": "2026-03-19T07:18:03Z"
+              },
+              {
+                "id": 263,
+                "parent_id": 260,
+                "name": "email authorize",
+                "path": "/api/v1/organization_email/authorize",
+                "method": "POST",
+                "status": "Active",
+                "description": "email authorize",
+                "type": "Borrower",
+                "sort_order": 3,
+                "auth_required": true,
+                "permission_required": true,
+                "created_at": "2026-03-19T07:18:03Z",
+                "updated_at": "2026-03-19T07:18:03Z"
+              }
+            ]
+          },
+          {
+            "id": 133,
+            "parent_id": 98,
+            "type": "Borrower",
+            "resource_type": "Button",
+            "name": "Google Drive",
+            "path": "",
+            "icon": "",
+            "tag": "Setting:System:GoogleDrive",
+            "is_show": false,
+            "status": "Active",
+            "sort_order": 6,
+            "enable_data_scope": false,
+            "description": "",
+            "is_public": false,
+            "created_at": "2026-06-22T08:38:49Z",
+            "updated_at": "2026-06-22T08:38:49Z",
+            "apis": [
+              {
+                "id": 338,
+                "parent_id": 337,
+                "name": "drive auth status",
+                "path": "/api/v1/drive/auth_status",
+                "method": "GET",
+                "status": "Active",
+                "description": "drive auth status",
+                "type": "Borrower",
+                "sort_order": 1,
+                "auth_required": true,
+                "permission_required": true,
+                "created_at": "2026-06-22T08:29:41Z",
+                "updated_at": "2026-06-22T08:29:41Z"
+              },
+              {
+                "id": 339,
+                "parent_id": 337,
+                "name": "drive auth url",
+                "path": "/api/v1/drive/auth_url",
+                "method": "GET",
+                "status": "Active",
+                "description": "drive auth url",
+                "type": "Borrower",
+                "sort_order": 2,
+                "auth_required": true,
+                "permission_required": true,
+                "created_at": "2026-06-22T08:29:41Z",
+                "updated_at": "2026-06-22T08:29:41Z"
+              },
+              {
+                "id": 340,
+                "parent_id": 337,
+                "name": "drive authorize",
+                "path": "/api/v1/drive/authorize",
+                "method": "POST",
+                "status": "Active",
+                "description": "drive authorize",
+                "type": "Borrower",
+                "sort_order": 3,
+                "auth_required": true,
+                "permission_required": true,
+                "created_at": "2026-06-22T08:29:41Z",
+                "updated_at": "2026-06-22T08:29:41Z"
+              },
+              {
+                "id": 341,
+                "parent_id": 337,
+                "name": "list shared drives",
+                "path": "/api/v1/drive/drives",
+                "method": "GET",
+                "status": "Active",
+                "description": "list shared drives",
+                "type": "Borrower",
+                "sort_order": 4,
+                "auth_required": true,
+                "permission_required": true,
+                "created_at": "2026-06-22T08:29:41Z",
+                "updated_at": "2026-06-22T08:29:41Z"
+              },
+              {
+                "id": 342,
+                "parent_id": 337,
+                "name": "update drive selection",
+                "path": "/api/v1/drive/selection",
+                "method": "PUT",
+                "status": "Active",
+                "description": "update drive selection",
+                "type": "Borrower",
+                "sort_order": 5,
+                "auth_required": true,
+                "permission_required": true,
+                "created_at": "2026-06-22T08:29:41Z",
+                "updated_at": "2026-06-22T08:29:41Z"
+              },
+              {
+                "id": 343,
+                "parent_id": 337,
+                "name": "update folder name",
+                "path": "/api/v1/drive/folder",
+                "method": "PUT",
+                "status": "Active",
+                "description": "update folder name",
+                "type": "Borrower",
+                "sort_order": 6,
+                "auth_required": true,
+                "permission_required": true,
+                "created_at": "2026-06-22T08:29:41Z",
+                "updated_at": "2026-06-22T08:29:41Z"
+              },
+              {
+                "id": 344,
+                "parent_id": 337,
+                "name": "disconnect drive",
+                "path": "/api/v1/drive/disconnect",
+                "method": "POST",
+                "status": "Active",
+                "description": "disconnect drive",
+                "type": "Borrower",
+                "sort_order": 7,
+                "auth_required": true,
+                "permission_required": true,
+                "created_at": "2026-06-22T08:29:41Z",
+                "updated_at": "2026-06-22T08:29:41Z"
+              },
+              {
+                "id": 345,
+                "parent_id": 337,
+                "name": "sync transaction documents to drive",
+                "path": "/api/v1/borrower_property_transaction/:id/sync_to_drive",
+                "method": "POST",
+                "status": "Active",
+                "description": "sync transaction documents to drive",
+                "type": "Borrower",
+                "sort_order": 8,
+                "auth_required": true,
+                "permission_required": true,
+                "created_at": "2026-06-22T08:29:41Z",
+                "updated_at": "2026-06-22T08:29:41Z"
+              },
+              {
+                "id": 346,
+                "parent_id": 337,
+                "name": "get latest drive sync job status for a transaction",
+                "path": "/api/v1/borrower_property_transaction/:id/sync_to_drive/status",
+                "method": "GET",
+                "status": "Active",
+                "description": "get latest drive sync job status for a transaction",
+                "type": "Borrower",
+                "sort_order": 9,
+                "auth_required": true,
+                "permission_required": true,
+                "created_at": "2026-06-22T08:29:41Z",
+                "updated_at": "2026-06-22T08:29:41Z"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 100,
+        "parent_id": 91,
+        "type": "Borrower",
+        "resource_type": "Menu",
+        "name": "Role",
+        "path": "/setting/role",
+        "icon": "",
+        "tag": "Setting:Role",
+        "is_show": true,
+        "status": "Active",
+        "sort_order": 6,
+        "enable_data_scope": false,
+        "description": "",
+        "is_public": false,
+        "created_at": "2026-03-19T07:36:20Z",
+        "updated_at": "2026-03-19T07:36:20Z",
+        "apis": [
+          {
+            "id": 238,
+            "parent_id": 236,
+            "name": "page",
+            "path": "/api/v1/role/page",
+            "method": "POST",
+            "status": "Active",
+            "description": "page",
+            "type": "Borrower",
+            "sort_order": 2,
+            "auth_required": true,
+            "permission_required": true,
+            "created_at": "2026-03-19T07:18:03Z",
+            "updated_at": "2026-03-19T07:18:03Z"
+          },
+          {
+            "id": 239,
+            "parent_id": 236,
+            "name": "all",
+            "path": "/api/v1/role/all",
+            "method": "GET",
+            "status": "Active",
+            "description": "all",
+            "type": "Borrower",
+            "sort_order": 3,
+            "auth_required": true,
+            "permission_required": false,
+            "created_at": "2026-03-19T07:18:03Z",
+            "updated_at": "2026-03-19T07:18:03Z"
+          }
+        ],
+        "children": [
+          {
+            "id": 101,
+            "parent_id": 100,
+            "type": "Borrower",
+            "resource_type": "Button",
+            "name": "Add",
+            "path": "",
+            "icon": "",
+            "tag": "Setting:Role:Add",
+            "is_show": false,
+            "status": "Active",
+            "sort_order": 1,
+            "enable_data_scope": false,
+            "description": "",
+            "is_public": false,
+            "created_at": "2026-03-19T07:36:20Z",
+            "updated_at": "2026-03-19T07:36:20Z",
+            "apis": [
+              {
+                "id": 240,
+                "parent_id": 236,
+                "name": "create",
+                "path": "/api/v1/role",
+                "method": "POST",
+                "status": "Active",
+                "description": "create",
+                "type": "Borrower",
+                "sort_order": 4,
+                "auth_required": true,
+                "permission_required": true,
+                "created_at": "2026-03-19T07:18:03Z",
+                "updated_at": "2026-03-19T07:18:03Z"
+              }
+            ]
+          },
+          {
+            "id": 102,
+            "parent_id": 100,
+            "type": "Borrower",
+            "resource_type": "Button",
+            "name": "Edit",
+            "path": "",
+            "icon": "",
+            "tag": "Setting:Role:Edit",
+            "is_show": false,
+            "status": "Active",
+            "sort_order": 2,
+            "enable_data_scope": false,
+            "description": "",
+            "is_public": false,
+            "created_at": "2026-03-19T07:36:20Z",
+            "updated_at": "2026-03-19T07:36:20Z",
+            "apis": [
+              {
+                "id": 237,
+                "parent_id": 236,
+                "name": "detail",
+                "path": "/api/v1/role/:id",
+                "method": "GET",
+                "status": "Active",
+                "description": "detail",
+                "type": "Borrower",
+                "sort_order": 1,
+                "auth_required": true,
+                "permission_required": true,
+                "created_at": "2026-03-19T07:18:03Z",
+                "updated_at": "2026-03-19T07:18:03Z"
+              },
+              {
+                "id": 241,
+                "parent_id": 236,
+                "name": "update",
+                "path": "/api/v1/role/:id",
+                "method": "PUT",
+                "status": "Active",
+                "description": "update",
+                "type": "Borrower",
+                "sort_order": 5,
+                "auth_required": true,
+                "permission_required": true,
+                "created_at": "2026-03-19T07:18:03Z",
+                "updated_at": "2026-03-19T07:18:03Z"
+              }
+            ]
+          },
+          {
+            "id": 103,
+            "parent_id": 100,
+            "type": "Borrower",
+            "resource_type": "Button",
+            "name": "Delete",
+            "path": "",
+            "icon": "",
+            "tag": "Setting:Role:Delete",
+            "is_show": false,
+            "status": "Active",
+            "sort_order": 3,
+            "enable_data_scope": false,
+            "description": "",
+            "is_public": false,
+            "created_at": "2026-03-19T07:36:20Z",
+            "updated_at": "2026-03-19T07:36:20Z",
+            "apis": [
+              {
+                "id": 242,
+                "parent_id": 236,
+                "name": "delete",
+                "path": "/api/v1/role/:id",
+                "method": "DELETE",
+                "status": "Active",
+                "description": "delete",
+                "type": "Borrower",
+                "sort_order": 6,
+                "auth_required": true,
+                "permission_required": true,
+                "created_at": "2026-03-19T07:18:03Z",
+                "updated_at": "2026-03-19T07:18:03Z"
+              }
+            ]
+          },
+          {
+            "id": 104,
+            "parent_id": 100,
+            "type": "Borrower",
+            "resource_type": "Button",
+            "name": "Assign",
+            "path": "",
+            "icon": "",
+            "tag": "Setting:Role:Assign",
+            "is_show": false,
+            "status": "Active",
+            "sort_order": 6,
+            "enable_data_scope": false,
+            "description": "Multiple permissions can be assigned to multiple users.",
+            "is_public": false,
+            "created_at": "2026-03-19T07:36:20Z",
+            "updated_at": "2026-03-19T07:36:20Z",
+            "apis": [
+              {
+                "id": 244,
+                "parent_id": 236,
+                "name": "assign organization users",
+                "path": "/api/v1/role/:id/assign_organization_users",
+                "method": "POST",
+                "status": "Active",
+                "description": "assign organization users",
+                "type": "Borrower",
+                "sort_order": 8,
+                "auth_required": true,
+                "permission_required": true,
+                "created_at": "2026-03-19T07:18:03Z",
+                "updated_at": "2026-03-19T07:18:03Z"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]`)

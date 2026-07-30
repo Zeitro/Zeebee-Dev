@@ -3,14 +3,13 @@ package resource
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/common/errorx"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type ResourceCreateLogic struct {
@@ -22,20 +21,21 @@ type ResourceCreateLogic struct {
 // create
 func NewResourceCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ResourceCreateLogic {
 	return &ResourceCreateLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *ResourceCreateLogic) ResourceCreate(req *types.ResourceCreateRequest) (resp *types.ResourceTreeEntity, err error) {
-	resp = &types.ResourceTreeEntity{}
+func (l *ResourceCreateLogic) ResourceCreate(req *types.ResourceCreateRequest) (resp *types.ResourceEntity, err error) {
+	resp = &types.ResourceEntity{}
 	rpcReq := &admin.ResourceCreateRequest{
 		Data: &admin.ResourceCreateRequestData{},
 	}
-	err = copier.CopyWithOption(rpcReq.Data, req, copier.Option{DeepCopy: true})
+
+	rpcReq.Data, err = copierx.Trans[types.ResourceCreateRequest, admin.ResourceCreateRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
 
 	rpcResp, err := l.svcCtx.ResourceRpcClient.Create(l.ctx, rpcReq)
@@ -44,9 +44,9 @@ func (l *ResourceCreateLogic) ResourceCreate(req *types.ResourceCreateRequest) (
 	}
 
 	// trans response
-	err = copier.CopyWithOption(resp, &rpcResp.Data, copier.Option{DeepCopy: true})
+	resp, err = copierx.Trans[proto.ResourceEntity, types.ResourceEntity](rpcResp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
 	return resp, err
 }

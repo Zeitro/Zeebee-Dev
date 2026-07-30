@@ -3,14 +3,13 @@ package resource
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/common/errorx"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type ResourceUpdateLogic struct {
@@ -22,20 +21,21 @@ type ResourceUpdateLogic struct {
 // update
 func NewResourceUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ResourceUpdateLogic {
 	return &ResourceUpdateLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *ResourceUpdateLogic) ResourceUpdate(req *types.ResourceUpdateRequest) (resp *types.ResourceTreeEntity, err error) {
-	resp = &types.ResourceTreeEntity{}
+func (l *ResourceUpdateLogic) ResourceUpdate(req *types.ResourceUpdateRequest) (resp *types.ResourceEntity, err error) {
+	resp = &types.ResourceEntity{}
 	rpcReq := &admin.ResourceUpdateRequest{
 		Data: &admin.ResourceUpdateRequestData{},
 	}
-	err = copier.CopyWithOption(rpcReq.Data, req, copier.Option{DeepCopy: true})
+
+	rpcReq.Data, err = copierx.Trans[types.ResourceUpdateRequest, admin.ResourceUpdateRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
 
 	rpcResp, err := l.svcCtx.ResourceRpcClient.Update(l.ctx, rpcReq)
@@ -44,9 +44,9 @@ func (l *ResourceUpdateLogic) ResourceUpdate(req *types.ResourceUpdateRequest) (
 	}
 
 	// trans response
-	err = copier.CopyWithOption(resp, &rpcResp.Data, copier.Option{DeepCopy: true})
+	resp, err = copierx.Trans[proto.ResourceEntity, types.ResourceEntity](rpcResp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
 	return resp, err
 }

@@ -3,12 +3,11 @@ package user
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,15 +28,11 @@ func NewChangePasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ch
 }
 
 func (l *ChangePasswordLogic) ChangePassword(req *types.UserChangePasswordRequest) (resp *types.EmptyResponse, err error) {
-	rpcReq := &borrower.ChangePasswordRequest{
-		Data: &borrower.ChangePasswordRequestData{},
+	rpcReq := &proto.ChangePasswordRequest{
+		Data: &proto.ChangePasswordRequestData{},
 	}
-	err = copier.CopyWithOption(rpcReq.Data, req, copier.Option{
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+	rpcReq.Data, err = copierx.Trans[types.UserChangePasswordRequest, proto.ChangePasswordRequestData](req)
 	if err != nil {
-		err = errorx.GetFailedTransReqErr(err)
 		return nil, err
 	}
 

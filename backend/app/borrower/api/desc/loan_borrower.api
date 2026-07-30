@@ -27,7 +27,7 @@ type ImportLoanBorrowerEntity {
     Id int64 `json:"id,optional"`
     LoanId int64 `json:"loan_id,optional"`
     Type string `json:"type,optional"`
-    Name string `json:"name,optional" validate:"required,min=1,max=255"`
+    Name string `json:"name,optional" validate:"min=0,max=255"`
     TinType string `json:"tin_type,optional"`
     Tin string `json:"tin,optional" `
     MailingAddress AddressEntity `json:"mailing_address,optional" validate:"-"`

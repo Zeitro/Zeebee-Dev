@@ -21,8 +21,10 @@ func SendQuoteEmailHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		var err error
 		defer func() {
 			if err != nil {
-				logx.WithContext(r.Context()).
-					WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
+				svcCtx.Logger.WithContext(r.Context()).
+					WithFields(
+						logx.Field("stacks", errorx.GetErrorStack(err)),
+					).
 					Error(err)
 			}
 		}()
@@ -51,7 +53,6 @@ func SendQuoteEmailHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			} else {
 				response.BadRequest(w, errorx.GetErrorMsg(err))
 			}
-
 		} else {
 			response.Success(w, resp)
 		}

@@ -3,13 +3,12 @@ package role
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type RoleAllLogic struct {
@@ -32,20 +31,17 @@ func (l *RoleAllLogic) RoleAll(req *types.EmptyRequest) (resp *types.RoleAllResp
 		List: make([]*types.RoleEntity, 0),
 	}
 
-	rpcReq := &borrower.RoleAllRequest{
-		Data: &borrower.RoleAllRequestData{},
-	}
-
-	rpcResp, err := l.svcCtx.RoleRpcClient.All(l.ctx, rpcReq)
+	rpcResp, err := l.svcCtx.RoleRpcClient.All(l.ctx, &proto.EmptyRequest{})
 	if err != nil {
 		return nil, err
 	}
 
 	// trans response
-	err = copier.CopyWithOption(&resp.List, &rpcResp.Data, copier.Option{DeepCopy: true})
+	listPtr, err := copierx.Trans[[]*proto.RoleEntity, []*types.RoleEntity](&rpcResp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
+	resp.List = *listPtr
 
 	return resp, nil
 }

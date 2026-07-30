@@ -3,14 +3,13 @@ package api
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/common/errorx"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DetailLogic struct {
@@ -22,20 +21,21 @@ type DetailLogic struct {
 // detail
 func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogic {
 	return &DetailLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *DetailLogic) Detail(req *types.ApiDetailRequest) (resp *types.ApiTreeEntity, err error) {
-	resp = &types.ApiTreeEntity{}
+func (l *DetailLogic) Detail(req *types.ApiDetailRequest) (resp *types.ApiEntity, err error) {
+	resp = &types.ApiEntity{}
 	rpcReq := &admin.ApiDetailRequest{
 		Data: &admin.ApiDetailRequestData{},
 	}
-	err = copier.CopyWithOption(rpcReq.Data, req, copier.Option{DeepCopy: true})
+
+	rpcReq.Data, err = copierx.Trans[types.ApiDetailRequest, admin.ApiDetailRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
 
 	rpcResp, err := l.svcCtx.ApiRpcClient.Detail(l.ctx, rpcReq)
@@ -44,9 +44,10 @@ func (l *DetailLogic) Detail(req *types.ApiDetailRequest) (resp *types.ApiTreeEn
 	}
 
 	// trans response
-	err = copier.CopyWithOption(resp, &rpcResp.Data, copier.Option{DeepCopy: true})
+	resp, err = copierx.Trans[proto.ApiEntity, types.ApiEntity](rpcResp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
+
 	return resp, err
 }

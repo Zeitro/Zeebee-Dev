@@ -65,7 +65,6 @@ func (mgr *StateHighCostLimitMgr) IsHighCostZone(state string, county string) (i
 	_, isExisted = stateHighCostLimit.CountyLimits[county]
 
 	return isExisted
-
 }
 
 func ParseHighCostLimit(content []byte, limitAmount int64) (mgr *StateHighCostLimitMgr, err error) {
@@ -90,20 +89,18 @@ func ParseHighCostLimit(content []byte, limitAmount int64) (mgr *StateHighCostLi
 		if limit.OneUnitLimit > limitAmount {
 			stateHighCostLimit.CountyLimits[limit.CountyName] = limit
 		}
-
 	}
 
 	return
 }
 
 func getConformingLoanLimits(content []byte) (limits []*ConformingLoanLimit, err error) {
-
 	r := bytes.NewReader(content)
 	f, err := excelize.OpenReader(r)
 
 	// f, err := excelize.OpenFile(filePath)
 	if err != nil {
-		err = errorx.Wrap(err, "Failed To Read Excel Content")
+		err = errorx.Wrap(err, "fail to read excel content")
 		return
 	}
 
@@ -111,11 +108,11 @@ func getConformingLoanLimits(content []byte) (limits []*ConformingLoanLimit, err
 
 	rows, err := f.GetRows(f.GetSheetName(0))
 	if err != nil {
-		err = errorx.Wrap(err, "Failed To Get Rows")
+		err = errorx.Wrap(err, "fail to get rows")
 		return
 	}
 	if len(rows) < 3 {
-		err = errorx.New("No Data")
+		err = errorx.New("no data")
 		return
 	}
 	// check header fileds
@@ -201,5 +198,5 @@ func parseUsaCurrency(s string) (result int64, err error) {
 	if err != nil {
 		return 0, errorx.Wrapf(err, "failed to parse int %s", s)
 	}
-	return int64(val), nil
+	return val, nil
 }

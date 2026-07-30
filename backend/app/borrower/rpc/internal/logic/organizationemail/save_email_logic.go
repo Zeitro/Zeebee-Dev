@@ -9,34 +9,27 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
-
-	"github.com/zeromicro/go-zero/core/logx"
-
-	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type SaveEmailLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewSaveEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SaveEmailLogic {
 	return &SaveEmailLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *SaveEmailLogic) SaveEmail(in *borrower.OrganizationEmailSaveEmailRequest) (resp *borrower.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+func (l *SaveEmailLogic) SaveEmail(in *borrower.OrganizationEmailSaveEmailRequest) (resp *proto.EmptyResponse, err error) {
+
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
@@ -56,5 +49,5 @@ func (l *SaveEmailLogic) SaveEmail(in *borrower.OrganizationEmailSaveEmailReques
 		return nil, err
 	}
 
-	return &borrower.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

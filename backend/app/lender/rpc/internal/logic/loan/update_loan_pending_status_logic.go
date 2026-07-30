@@ -5,38 +5,30 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
+	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type UpdateLoanPendingStatusLogic struct {
 	ctx       context.Context
 	svcCtx    *svc.ServiceContext
 	baseLogic *logic.BaseLogic
-	logx.Logger
 }
 
 func NewUpdateLoanPendingStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLoanPendingStatusLogic {
 	return &UpdateLoanPendingStatusLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
-		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *UpdateLoanPendingStatusLogic) UpdateLoanPendingStatus(in *lender.LoanUpdatePendingStatusRequest) (resp *lender.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+func (l *UpdateLoanPendingStatusLogic) UpdateLoanPendingStatus(in *lender.LoanUpdatePendingStatusRequest) (resp *proto.EmptyResponse, err error) {
 
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
@@ -46,15 +38,15 @@ func (l *UpdateLoanPendingStatusLogic) UpdateLoanPendingStatus(in *lender.LoanUp
 	// Get loan
 	loan, err := l.svcCtx.LoanRepo.GetLenderLoan(l.ctx, in.Data.Id, claim.OrganizationId, false)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed To Get Loan")
+		return nil, errorx.Wrap(err, "fail to get loan")
 	}
 
 	// Validate loan is in pending stage
 	if loan.Stage != constants.LoanStagePending {
-		return nil, errorx.New("Loan is not in pending stage")
+		return nil, errorx.New("loan is not in pending stage")
 	}
 	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreapproval {
-		return nil, errorx.WithStack(errorx.New("Invalid loan source"))
+		return nil, errorx.WithStack(errorx.New("invalid loan source"))
 	}
 	// Save original status for operation log
 	originalStage := loan.Stage
@@ -74,34 +66,34 @@ func (l *UpdateLoanPendingStatusLogic) UpdateLoanPendingStatus(in *lender.LoanUp
 		case constants.LoanPendingStatusClosing:
 			// Closing is the final status, can be set directly
 		default:
-			return errorx.Errorf("Invalid Pending Status: %s", pendingStatus)
+			return errorx.Errorf("invalid Pending Status: %s", pendingStatus)
 		}
 
 		err = l.svcCtx.LoanRepo.UpdatePendingStatusWithTx(l.ctx, tx, in.Data.Id, pendingStatus, loan.Stage)
 		if err != nil {
-			return errorx.Wrap(err, "Failed To Update Loan")
+			return errorx.Wrap(err, "fail to update loan")
 		}
 
 		// Create operation log
 		operatorId := claim.OrganizationUserId
 
-		fromStatus := data.LoanOperationStatus{
+		fromStatus := dto.LoanOperationStatus{
 			Stage:         originalStage,
 			PendingStatus: originalPendingStatus,
 		}
 
-		toStatus := data.LoanOperationStatus{
+		toStatus := dto.LoanOperationStatus{
 			Stage:         loan.Stage,
 			PendingStatus: pendingStatus,
 		}
 
 		// loanBaseLogic := NewLoanBaseLogic(l.ctx, l.svcCtx)
-		return l.baseLogic.CreateLoanOperationLog(tx, loan.Id, operatorId, fromStatus, toStatus, constants.LoanOperationActionUpdate, nil)
+		return l.baseLogic.CreateLoanOperationLog(l.ctx, tx, loan.Id, operatorId, fromStatus, toStatus, constants.LoanOperationActionUpdate, nil)
 	})
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &lender.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

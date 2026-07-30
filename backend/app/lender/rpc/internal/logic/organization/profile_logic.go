@@ -8,9 +8,8 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/bo"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -19,29 +18,22 @@ type ProfileLogic struct {
 	ctx       context.Context
 	svcCtx    *svc.ServiceContext
 	baseLogic *logic.BaseLogic
-	logx.Logger
 }
 
 func NewProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ProfileLogic {
 	return &ProfileLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
-		Logger:    logx.WithContext(ctx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *ProfileLogic) Profile(in *lender.EmptyRequest) (resp *lender.OrganizationProfileResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+func (l *ProfileLogic) Profile(in *proto.EmptyRequest) (resp *lender.OrganizationProfileResponse, err error) {
 
 	// Get current user claim from gRPC metadata (JWT token)
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to get user claim from context")
+		return nil, errorx.Wrap(err, "fail to get user claim from context")
 	}
 
 	// Validate user belongs to an organization
@@ -56,11 +48,11 @@ func (l *ProfileLogic) Profile(in *lender.EmptyRequest) (resp *lender.Organizati
 		constants.UserTypeLender,
 	)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to get organization")
+		return nil, errorx.Wrap(err, "fail to get organization")
 	}
 
 	// Convert business object to proto entity with time field conversion
-	data, err := copierx.Trans[bo.OrganizationBo, lender.OrganizationProfileEntity](
+	data, err := copierx.Trans[dto.OrganizationEntityDto, proto.OrganizationProfileEntity](
 		organization,
 		copierx.TimeToRFC3339Str(),
 		copierx.StrMapToBytes(),
@@ -73,16 +65,14 @@ func (l *ProfileLogic) Profile(in *lender.EmptyRequest) (resp *lender.Organizati
 	}
 	for _, setting := range data.OrganizationSettings {
 		if setting.Purpose == constants.OrganizationPurposePreapprovalLetter {
-			preapprovalLetterTemplate, err := l.svcCtx.AllRepos.OrganizationTemplateRepo.DetailByPurpose(l.ctx, claim.OrganizationId, constants.OrganizationPurposePreapprovalLetter, false)
+			preapprovalLetterTemplate, err := l.svcCtx.OrganizationTemplateRepo.DetailByPurpose(l.ctx, claim.OrganizationId, constants.OrganizationPurposePreapprovalLetter, false)
 			if err != nil {
 				return nil, err
 			}
 			setting.HasConfigured = preapprovalLetterTemplate.HasConfigured
-
 		} else {
 			setting.HasConfigured = true
 		}
-
 	}
 
 	return &lender.OrganizationProfileResponse{

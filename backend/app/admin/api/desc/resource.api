@@ -21,8 +21,12 @@ type ResourceTreeEntity {
     IsShow bool `json:"is_show"`
     Status string `json:"status"`
     SortOrder int32 `json:"sort_order"`
+    EnableDataScope bool `json:"enable_data_scope"`
+    Description string `json:"description"`
+    IsPublic bool `json:"is_public"`
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
+    Apis []*ApiEntity `json:"apis,omitempty"`
     Children []*ResourceTreeEntity `json:"children,omitempty"`
 }
 
@@ -38,14 +42,18 @@ type ResourceEntity {
     IsShow bool `json:"is_show"`
     Status string `json:"status"`
     SortOrder int32 `json:"sort_order"`
+    EnableDataScope bool `json:"enable_data_scope"`
+    Description string `json:"description"`
+    IsPublic bool `json:"is_public"`
     CreatedAt string `json:"created_at"`
     UpdatedAt string `json:"updated_at"`
     Apis []*ApiEntity `json:"apis,omitempty"`
-    PivotRoleDataScope string `json:"pivot_role_data_scope,omitempty"`
+    DataScope string `json:"data_scope,omitempty"`
 }
 
 type ResourceTreeRequest {
     Type string `form:"type" validate:"required,oneof=Borrower Lender Admin"`
+    Scope string `form:"scope,optional,default=All" validate:"required,oneof=All Organization"`
 }
 
 type ResourceTreeResponse {
@@ -53,32 +61,38 @@ type ResourceTreeResponse {
 }
 
 type ResourceCreateRequest {
-    ParentId int64 `json:"parent_id" validate:"min=0"`
+    ParentId int64 `json:"parent_id,optional" validate:"min=0"`
     Type string `json:"type" validate:"required,oneof=Borrower Lender Admin"`
     ResourceType string `json:"resource_type" validate:"required,oneof=Menu Button"`
     Name string `json:"name" validate:"required,min=2,max=100"`
-    Path string `json:"path" validate:"max=100,required_if=ResourceType Menu"`
-    Icon string `json:"icon" validate:"max=100"`
+    Path string `json:"path,optional" validate:"max=100,required_if=ResourceType Menu"`
+    Icon string `json:"icon,optional" validate:"max=100"`
     Tag string `json:"tag" validate:"max=100,required_if=ResourceType Button"`
-    IsShow bool `json:"is_show"`
-    Status string `json:"status" validate:"required,oneof=Active Inactive"`
+    IsShow bool `json:"is_show,optional"`
+    Status string `json:"status" validate:"required,oneof=Active Disabled"`
     SortOrder int32 `json:"sort_order" validate:"min=0"`
-    ApiIds []int64 `json:"api_ids"`
+    EnableDataScope bool `json:"enable_data_scope"`
+    Description string `json:"description,optional" validate:"max=255"`
+    IsPublic bool `json:"is_public"`
+    ApiIds []int64 `json:"api_ids,optional"`
 }
 
 type ResourceUpdateRequest {
     Id int64 `path:"id" validate:"required,gt=0"`
-    ParentId int64 `json:"parent_id" validate:"min=0"`
+    ParentId int64 `json:"parent_id,optional" validate:"min=0"`
     Type string `json:"type" validate:"required,oneof=Borrower Lender Admin"`
     ResourceType string `json:"resource_type" validate:"required,oneof=Menu Button"`
     Name string `json:"name" validate:"required,min=2,max=100"`
-    Path string `json:"path" validate:"max=100,required_if=ResourceType Menu"`
-    Icon string `json:"icon" validate:"max=100"`
+    Path string `json:"path,optional" validate:"max=100,required_if=ResourceType Menu"`
+    Icon string `json:"icon,optional" validate:"max=100"`
     Tag string `json:"tag" validate:"max=100,required_if=ResourceType Button"`
-    IsShow bool `json:"is_show"`
-    Status string `json:"status" validate:"required,oneof=Active Inactive"`
+    IsShow bool `json:"is_show,optional"`
+    Status string `json:"status" validate:"required,oneof=Active Disabled"`
     SortOrder int32 `json:"sort_order" validate:"min=0"`
-    ApiIds []int64 `json:"api_ids"`
+    Description string `json:"description,optional" validate:"max=255"`
+    IsPublic bool `json:"is_public"`
+    EnableDataScope bool `json:"enable_data_scope"`
+    ApiIds []int64 `json:"api_ids,optional"`
 }
 
 type ResourceDeleteRequest {

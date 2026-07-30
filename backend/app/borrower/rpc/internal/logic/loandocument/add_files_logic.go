@@ -7,38 +7,32 @@ import (
 	"github.com/duke-git/lancet/v2/slice"
 	"gorm.io/gorm"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type AddFilesLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewAddFilesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddFilesLogic {
 	return &AddFilesLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *AddFilesLogic) AddFiles(in *borrower.LoanDocumentAddFilesRequest) (resp *borrower.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+func (l *AddFilesLogic) AddFiles(in *borrower.LoanDocumentAddFilesRequest) (resp *proto.EmptyResponse, err error) {
 
 	// var loan *model.Loan
 	var loanDocument *model.LoanDocument
@@ -64,7 +58,7 @@ func (l *AddFilesLogic) AddFiles(in *borrower.LoanDocumentAddFilesRequest) (resp
 		if len(files) > 0 {
 			files, innerErr = l.svcCtx.FileRepo.BatchCreateWithTx(l.ctx, tx, files, false)
 			if innerErr != nil {
-				return errorx.Wrap(innerErr, "Failed To Create File Records")
+				return errorx.Wrap(innerErr, "fail to create file records")
 			}
 		}
 
@@ -73,7 +67,7 @@ func (l *AddFilesLogic) AddFiles(in *borrower.LoanDocumentAddFilesRequest) (resp
 			"status": constants.LoanDocumentStatusReadyForReview,
 		})
 		if innerErr != nil {
-			return errorx.Wrap(innerErr, "Failed To Update Loan Document Status")
+			return errorx.Wrap(innerErr, "fail to update loan document status")
 		}
 
 		// upload loan document upload time
@@ -88,21 +82,21 @@ func (l *AddFilesLogic) AddFiles(in *borrower.LoanDocumentAddFilesRequest) (resp
 		return nil, err
 	}
 
-	return &borrower.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }
 
 // prepare
 func (l *AddFilesLogic) prepare(in *borrower.LoanDocumentAddFilesRequest) (loan *model.Loan, loanDocument *model.LoanDocument, err error) {
 	loanDocument, err = l.svcCtx.LoanDocumentRepo.FindOneWithPreloadById(l.ctx, in.Data.Id, []string{"Files"})
 	if err != nil {
-		return nil, nil, errorx.Wrap(err, "Failed To Find Loan Document")
+		return nil, nil, errorx.Wrap(err, "fail to find loan document")
 	}
 
 	// Validate file count - existing files + new files should not exceed 10
 	existingFileCount := int64(len(loanDocument.Files))
 	newFileCount := int64(len(in.Data.FileUrls))
 	if existingFileCount+newFileCount > 10 {
-		return nil, nil, errorx.WithStack(errorx.New("Total number of files (existing + new) cannot exceed 10"))
+		return nil, nil, errorx.WithStack(errorx.New("total number of files (existing + new) cannot exceed 10"))
 	}
 
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
@@ -112,22 +106,22 @@ func (l *AddFilesLogic) prepare(in *borrower.LoanDocumentAddFilesRequest) (loan 
 
 	loan, err = l.svcCtx.LoanRepo.GetBorrowerLoan(l.ctx, loanDocument.LoanId, claim.OrganizationId)
 	if err != nil {
-		return nil, nil, errorx.Wrap(err, "Failed To Get Loan")
+		return nil, nil, errorx.Wrap(err, "fail to get loan")
 	}
 
 	if loan == nil || loanDocument == nil {
-		return nil, nil, errorx.WithStack(errorx.New("Loan or loan document not found"))
+		return nil, nil, errorx.WithStack(errorx.New("loan or loan document not found"))
 	}
 	validCategories := []constants.LoanDocumentCategory{
 		constants.LoanDocumentCategoryBorrower,
 		constants.LoanDocumentCategoryExtend,
 	}
 	if !slice.Contain(validCategories, loanDocument.Category) {
-		return nil, nil, errorx.WithStack(errorx.New("Loan document category not supported"))
+		return nil, nil, errorx.WithStack(errorx.New("loan document category not supported"))
 	}
 
 	if loanDocument.Status != constants.LoanDocumentStatusRequested && loanDocument.Status != constants.LoanDocumentStatusReadyForReview {
-		return nil, nil, errorx.WithStack(errorx.New("Loan document is not in requested or ready for review status"))
+		return nil, nil, errorx.WithStack(errorx.New("loan document is not in requested or ready for review status"))
 	}
 
 	if loan.Stage != constants.LoanStagePending {

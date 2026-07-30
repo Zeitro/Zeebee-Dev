@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package admin;
+
+option go_package = "zeebee-backend/app/admin/rpc/pb/admin";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+// loan page --- request
+message LoanPageRequest {
+  LoanPageRequestData data = 1;
+}
+// loan page --- response
+message LoanPageResponse {
+  LoanPageResponseData data = 1;
+}
+
+message  LoanPageRequestFilter {
+  string stage = 2;
+  string keyword = 3;
+  string keyword_type = 4;
+  repeated string loan_purpose = 5;
+  repeated string loan_type = 6;
+  repeated string pending_status = 7;
+  repeated string lender = 8;
+}
+
+message  LoanPageRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+
+message LoanPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  LoanPageRequestFilter filter = 3;
+  LoanPageRequestSorter sorter = 4;
+}
+
+message LoanPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated proto.LoanEntity list = 5;
+}
+
+// detail ---- response
+message LoanDetailResponse {
+  proto.LoanEntity data = 1;
+}
+
+// reassign --  request
+message ReassignLoanRequest {
+  ReassignLoanRequestData data = 1;
+}
+message ReassignLoanRequestData {
+  int64 id = 1;
+  int64 lender_organization_id = 2;
+}
+
+// loan lender companies ---- response
+message LoanLenderCompaniesResponse {
+  repeated string data = 1;
+}
+
+
+service Loan {
+  rpc LoanPage(LoanPageRequest) returns(LoanPageResponse);
+  rpc LoanDetail(proto.IdRequest) returns(LoanDetailResponse);
+  rpc ReassignLoan(ReassignLoanRequest) returns(proto.EmptyResponse);
+  rpc LoanLenderCompanies(proto.EmptyRequest) returns(LoanLenderCompaniesResponse);
+}

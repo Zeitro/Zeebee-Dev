@@ -19,12 +19,14 @@ type (
         TotalAmount float64 `json:"total_amount"`
         Unit int32 `json:"unit"`
         LivingAreaSqft float32 `json:"living_area_sqft"`
+        LotAreaSqft float32 `json:"lot_area_sqft"`
         Bedrooms int32 `json:"bedrooms"`
-        Bathrooms float32 `json:"bathrooms"`
+        Bathrooms int32 `json:"bathrooms"`
         Address *AddressEntity `json:"address"`
         CreatedAt string `json:"created_at"`
         UpdatedAt string `json:"updated_at"`
         LoanCount int32 `json:"loan_count"`
+        Status []string `json:"status"`
     }
 )
 
@@ -36,8 +38,9 @@ type (
         CreatorName string `json:"creator_name"`
         PropertyType string `json:"property_type"`
         LivingAreaSqft float32 `json:"living_area_sqft"`
+        LotAreaSqft float32 `json:"lot_area_sqft"`
         Bedrooms int32 `json:"bedrooms"`
-        Bathrooms float32 `json:"bathrooms"`
+        Bathrooms int32 `json:"bathrooms"`
         Unit int32 `json:"unit"`
         TotalAmount float64 `json:"total_amount"`
         Address *AddressEntity `json:"address"`
@@ -51,11 +54,14 @@ type (
         ActiveLoanCount int64 `json:"active_loan_count"`
         ArchivedLoanCount int64 `json:"archived_loan_count"`
         LoanCount int32 `json:"loan_count"`
+        Status []string `json:"status"`
+        TransactionStatus []string `json:"transaction_status"`
     }
 
     PropertyPageFilter {
         Keyword string `json:"keyword,optional"`
         Applicant []string `json:"applicant,optional"`
+        Status []string `json:"status,optional" validate:"omitempty,dive,oneof='Active' 'Purchase Pending' 'Re-finance Pending' 'Change Title Pending' 'Sale Pending' 'Assignment Pending' 'Sold'"`
     }
 
     PropertyPageSorter {
@@ -93,8 +99,9 @@ type (
         TotalAmount float64 `json:"total_amount"`
         Unit int32 `json:"unit"`
         LivingAreaSqft float32 `json:"living_area_sqft"`
+        LotAreaSqft float32 `json:"lot_area_sqft"`
         Bedrooms int32 `json:"bedrooms"`
-        Bathrooms float32 `json:"bathrooms"`
+        Bathrooms int32 `json:"bathrooms"`
         Address *AddressEntity `json:"address"`
         TotalClosingFundAmount float64 `json:"total_closing_fund_amount"`
         TotalPrincipalAmount float64 `json:"total_principal_amount"`
@@ -116,11 +123,12 @@ type (
 //  create
 type (
     PropertyCreateRequest {
-        PropertyType string `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
-        Unit int32 `json:"unit" validate:"required,gt=0"`
-        LivingAreaSqft float32 `json:"living_area_sqft" validate:"required,gt=0"`
-        Bedrooms int32 `json:"bedrooms" validate:"required,gt=0"`
-        Bathrooms float32 `json:"bathrooms" validate:"required,gt=0"`
+        PropertyType string `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial' 'Raw Land' 'Entitled Land'"`
+        Unit int32 `json:"unit" validate:"gte=0"`
+        LivingAreaSqft float32 `json:"living_area_sqft,optianal" validate:"gte=0"`
+        LotAreaSqft float32 `json:"lot_area_sqft,optianal" validate:"gte=0"`
+        Bedrooms int32 `json:"bedrooms,optianal" validate:"gte=0"`
+        Bathrooms int32 `json:"bathrooms,optianal" validate:"gte=0"`
         Address *AddressEntity `json:"address" validate:"required"`
     }
     PropertyCreateResponse {
@@ -132,11 +140,12 @@ type (
 type (
     PropertyUpdateRequest {
         Id int64 `path:"id" validate:"required,gt=0"`
-        PropertyType string `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial'"`
-        Unit int32 `json:"unit" validate:"required,gt=0"`
-        LivingAreaSqft float32 `json:"living_area_sqft" validate:"required,gt=0"`
-        Bedrooms int32 `json:"bedrooms" validate:"required,gt=0"`
-        Bathrooms float32 `json:"bathrooms" validate:"required,gt=0"`
+        PropertyType string `json:"property_type" validate:"required,oneof='Single Family Residence' '2 unit' '3 unit' '4 unit' '4+ Multi' 'Townhouse' 'PUD/Condominium' 'Mixed Use' 'Commercial' 'Raw Land' 'Entitled Land'"`
+        Unit int32 `json:"unit,optianal" validate:"gte=0"`
+        LivingAreaSqft float32 `json:"living_area_sqft,optianal" validate:"gte=0"`
+        LotAreaSqft float32 `json:"lot_area_sqft,optianal" validate:"gte=0"`
+        Bedrooms int32 `json:"bedrooms,optianal" validate:"gte=0"`
+        Bathrooms int32 `json:"bathrooms,optianal" validate:"gte=0"`
     }
 )
 // all properties

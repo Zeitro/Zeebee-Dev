@@ -4,24 +4,24 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createZeeBeeSteps, zeeBeeDetailsTabs } from '@/enum/loan';
 import {
-	createRequest,
-	flattenObjectPaths,
-	eventBus,
 	assemblyAddress,
+	createRequest,
+	eventBus,
+	flattenObjectPaths,
 } from '@repo/shared-methods/utils';
 // import ApplicantInfo from '../ApplicantInfo';
 import {
 	ApplicantInfo,
 	BorrowerInfo,
-	PropertyInfo,
-	LoanDetail,
-	Experience,
-	ThirdPartyService,
+	contractSignatureZones,
 	Declaration,
 	Demographics,
-	ReviewAndSign,
-	contractSignatureZones,
+	Experience,
 	LeaveAndSaveDraftBtn,
+	LoanDetail,
+	PropertyInfo,
+	ReviewAndSign,
+	ThirdPartyService,
 } from '@repo/shared-methods';
 // import BorrowerInfo from '../BorrowerInfo';
 // import PropertyInfo from '../PropertyInfo';
@@ -35,6 +35,9 @@ import Documents from '../../../zeeBeeDetails/components/Documents';
 // import ReviewAndSign, { contractSignatureZones } from '../ReviewAndSign';
 import _ from 'lodash';
 import { uploadAwsS3 } from '@repo/shared-methods/api';
+import { PERMISSIONS } from '@config/permissions';
+import { useAuth } from '@repo/shared-methods/hooks';
+
 const initialValues = {
 	applicants: [{ type: 'Individual', is_primary: true }],
 };
@@ -54,7 +57,7 @@ const useCreate = (pageType = 'create') => {
 	const [loading, setLoading] = useState(false);
 	const [isChange, setIsChange] = useState(true); // 记录是否操作过form,暂时不记录
 	const [confirmLoading, setConfirmLoading] = useState(false); // 保存草稿
-	const [detailsLoading, setDetailsLoading] = useState(false);
+	const [detailsLoading, setDetailsLoading] = useState(() => searchParams.has('id'));
 	const [rowData, setRowData] = useState({}); // loan详情
 	const [unitInfo, setUnitInfo] = useState({
 		// unit: {},
@@ -63,7 +66,8 @@ const useCreate = (pageType = 'create') => {
 	const [loanUuid, setLoanUuid] = useState(null); // loan uuid,提前创建id用于pdf中展示
 	const isClickBackBtn = useRef(false);
 	const { request } = createRequest();
-
+	const { hasPermission } = useAuth();
+	const hasTransactionPermission = hasPermission(PERMISSIONS.TRANSACTION.PAGE);
 	// 从property详情跳转的创建loan
 	const getProperty = async () => {
 		const data = await request(api);
@@ -81,7 +85,6 @@ const useCreate = (pageType = 'create') => {
 	// 获取详情
 	const getLoanDetail = async () => {
 		try {
-			setDetailsLoading(true);
 			const res = await request(`/loan/${searchParams.get('id')}`);
 			const str = assemblyAddress(res?.loan_property?.address);
 			eventBus.emit('changeCrumbs', {
@@ -94,9 +97,15 @@ const useCreate = (pageType = 'create') => {
 			if (!res?.applicants?.length) {
 				res.applicants = initialValues.applicants;
 			}
+			res.borrower_property_transaction_id = res?.borrower_property_transaction?.id;
 			setRowData(res);
-			form.setFieldsValue(res);
 			setDetailsLoading(false);
+			// 详情页 Form 在 Skeleton 内，需等卸载后再回填
+			const applyValues = () => form.setFieldsValue(res);
+			if (isDetails) {
+				//在下一帧绘制前执行回调（通常约 16ms，跟屏幕刷新率有关）,因为此时form还未挂载上，所以需要使用requestAnimationFrame
+				window.requestAnimationFrame(applyValues);
+			} else applyValues();
 		} catch {
 			setDetailsLoading(false);
 		}
@@ -104,13 +113,18 @@ const useCreate = (pageType = 'create') => {
 
 	// 获取property/loan详情
 	useEffect(() => {
-		if (searchParams.has('propertyId')) getProperty();
-		if (searchParams.has('id')) getLoanDetail();
+		let cancelled = false;
+		(async () => {
+			if (cancelled) return;
+			if (searchParams.has('propertyId')) await getProperty();
+			if (searchParams.has('id')) await getLoanDetail();
+		})();
 		eventBus.on('getLoanDetail', getLoanDetail);
-		return () => eventBus.off('getLoanDetail', getLoanDetail);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		return () => {
+			cancelled = true;
+			eventBus.off('getLoanDetail', getLoanDetail);
+		};
 	}, []);
-
 	const stepContent = useMemo(
 		() => [
 			[
@@ -123,6 +137,7 @@ const useCreate = (pageType = 'create') => {
 					form={form}
 					unitInfo={unitInfo}
 					isRequestProperty={searchParams.has('propertyId') || isDetails}
+					hasTransactionPermission={hasTransactionPermission}
 				/>,
 				<LoanDetail key="1-LoanDetail" form={form} />,
 			],
@@ -321,6 +336,7 @@ const useCreate = (pageType = 'create') => {
 				['loan_property', 'future_unit'],
 				['loan_property', 'future_bedrooms'],
 				['loan_property', 'future_bathrooms'],
+				['loan_property', 'borrower_property_id'],
 			],
 			'1-1': [],
 			'2-0': ['transaction_experiences', 'real_estate_experiences'],

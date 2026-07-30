@@ -3,12 +3,12 @@ package loan_document
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 )
 
@@ -28,31 +28,16 @@ func NewSendLoanDocumentRequestsLogic(ctx context.Context, svcCtx *svc.ServiceCo
 }
 
 func (l *SendLoanDocumentRequestsLogic) SendLoanDocumentRequests(req *types.LoanDocumentSendRequestsRequest) (resp *types.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
 
 	rpcReq := &lender.LoanDocumentSendRequestsRequest{
 		Data: &lender.LoanDocumentSendRequestsRequestData{},
 	}
 
 	// Copy data from API request to RPC request
-	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{
-		IgnoreEmpty:   false,
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+	rpcReq.Data, err = copierx.Trans[types.LoanDocumentSendRequestsRequest, lender.LoanDocumentSendRequestsRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
-
-	// Get lender company id and employee id from context
-	// rpcReq.Data.OrganizationId, rpcReq.Data.UserId, err = utils.GetOrganizationAndUserId(l.ctx)
-	// if err != nil {
-	// 	return nil, errorx.WithStack(err)
-	// }
 
 	// Call RPC method
 	_, err = l.svcCtx.LoanDocumentRpcClient.SendRequests(l.ctx, rpcReq)

@@ -1,19 +1,28 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Form } from 'antd';
 import styles from './index.module.scss';
 import SignIn from './components/SignIn';
 import SendResetPasswordEmail, {
 	ResetPasswordEmailTips,
 } from './components/SendResetPasswordEmail';
+
 const Login = () => {
 	const [form] = Form.useForm();
 	const [pageType, setPageType] = useState('signIn');
-
+	const signInFinishRef = useRef(null);
 	const getContent = () => {
 		switch (pageType) {
 			case 'signIn':
-				return <SignIn form={form} setPageType={setPageType} />;
+				return (
+					<SignIn
+						form={form}
+						setPageType={setPageType}
+						registerFinish={(fn) => {
+							signInFinishRef.current = fn;
+						}}
+					/>
+				);
 			case 'sendResetPasswordEmail':
 				return <SendResetPasswordEmail form={form} setPageType={setPageType} />;
 			case 'resetPasswordEmailTips':
@@ -34,7 +43,12 @@ const Login = () => {
 					name="basic"
 					size="large"
 					layout="vertical"
-					autoComplete="off"
+					autoComplete={pageType === 'signIn' ? 'on' : 'off'}
+					onFinish={(values) => {
+						if (pageType === 'signIn') {
+							return signInFinishRef.current?.(values);
+						}
+					}}
 					form={form}
 					style={{
 						boxShadow:

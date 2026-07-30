@@ -1,1 +1,10 @@
-.claude/settings.local.json
+# AI agent & plugin layer — local only, not version-controlled
+.claude/
+.specify/
+
+# generated / local artifacts
+specs
+.DS_Store
+.traces
+.skillopt-sleep
+.cache

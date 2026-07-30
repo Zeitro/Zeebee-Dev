@@ -13,28 +13,25 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
-	"zeebee-backend/domains/zeebee/data/bo"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
-	"zeebee-backend/domains/zeebee/repo"
 )
 
-// OrganizationTemplateLogic provides base template business logic
+// OrganizationTemplateLogic provides organization template business logic
 type OrganizationTemplateLogic struct {
-	repos *repo.AllRepos
+	*BaseLogic
 }
 
-// NewOrganizationTemplateLogic creates a new base template logic instance
-func NewOrganizationTemplateLogic(repos *repo.AllRepos) *OrganizationTemplateLogic {
+// NewOrganizationTemplateLogic creates a new organization template logic instance
+func NewOrganizationTemplateLogic(baseLogic *BaseLogic) *OrganizationTemplateLogic {
 	return &OrganizationTemplateLogic{
-		repos: repos,
+		BaseLogic: baseLogic,
 	}
 }
 
 // Detail retrieves detailed information about an organization template by its ID.
 // It fetches the template from the repository and converts it to a business object.
-func (l *OrganizationTemplateLogic) Detail(ctx context.Context, id int64) (result *bo.OrganizationTemplateBo, err error) {
+func (l *OrganizationTemplateLogic) Detail(ctx context.Context, id int64) (result *dto.OrganizationTemplateEntityDto, err error) {
 	organizationTemplate, err := l.repos.OrganizationTemplateRepo.Detail(ctx, id, true)
 	if err != nil {
 		return nil, errorx.WithStack(err)
@@ -43,7 +40,7 @@ func (l *OrganizationTemplateLogic) Detail(ctx context.Context, id int64) (resul
 	if err != nil {
 		return nil, err
 	}
-	result, err = copierx.Trans[model.OrganizationTemplate, bo.OrganizationTemplateBo](organizationTemplate)
+	result, err = copierx.Trans[model.OrganizationTemplate, dto.OrganizationTemplateEntityDto](organizationTemplate)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +48,7 @@ func (l *OrganizationTemplateLogic) Detail(ctx context.Context, id int64) (resul
 }
 
 // DetailByPurpose retrieves an organization template by its purpose and organization ID.
-func (l *OrganizationTemplateLogic) DetailByPurpose(ctx context.Context, organizationId int64, purpose string) (result *bo.OrganizationTemplateBo, err error) {
+func (l *OrganizationTemplateLogic) DetailByPurpose(ctx context.Context, organizationId int64, purpose string) (result *dto.OrganizationTemplateEntityDto, err error) {
 	organizationTemplate, err := l.repos.OrganizationTemplateRepo.DetailByPurpose(ctx, organizationId, purpose, true)
 	if err != nil {
 		return nil, err
@@ -62,14 +59,14 @@ func (l *OrganizationTemplateLogic) DetailByPurpose(ctx context.Context, organiz
 		return nil, err
 	}
 
-	result, err = copierx.Trans[model.OrganizationTemplate, bo.OrganizationTemplateBo](organizationTemplate)
+	result, err = copierx.Trans[model.OrganizationTemplate, dto.OrganizationTemplateEntityDto](organizationTemplate)
 	if err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (l *OrganizationTemplateLogic) UpdateVariableGroup(ctx context.Context, req dto.OrganizationTemplateUpdateVariableGroupDto) (result *bo.OrganizationTemplateBo, err error) {
+func (l *OrganizationTemplateLogic) UpdateVariableGroup(ctx context.Context, req dto.OrganizationTemplateUpdateVariableGroupDto) (result *dto.OrganizationTemplateEntityDto, err error) {
 	// Get existing template
 	existing, err := l.repos.OrganizationTemplateRepo.Detail(ctx, req.Id, false)
 	if err != nil {
@@ -85,8 +82,8 @@ func (l *OrganizationTemplateLogic) UpdateVariableGroup(ctx context.Context, req
 		return nil, errorx.Errorf("Variable group number not match: expected %d, got %d", len(oldGroups), len(groups))
 	}
 	// Check variable group
-	var checkVariableFn func(oldVariable *data.TemplateVariable, newVariable *data.TemplateVariable) (err error)
-	checkVariableFn = func(oldVariable *data.TemplateVariable, newVariable *data.TemplateVariable) (err error) {
+	var checkVariableFn func(oldVariable *dto.TemplateVariable, newVariable *dto.TemplateVariable) (err error)
+	checkVariableFn = func(oldVariable *dto.TemplateVariable, newVariable *dto.TemplateVariable) (err error) {
 		if oldVariable == nil {
 			return nil
 		}
@@ -127,7 +124,7 @@ func (l *OrganizationTemplateLogic) UpdateVariableGroup(ctx context.Context, req
 				return errorx.Errorf("Variable %s Item Number Not Match", oldVariable.Label)
 			}
 			for _, oldItem := range oldVariable.Items {
-				newItem, ok := slice.FindBy(newVariable.Items, func(index int, item *data.TemplateVariable) bool {
+				newItem, ok := slice.FindBy(newVariable.Items, func(index int, item *dto.TemplateVariable) bool {
 					return oldItem.Key == item.Key &&
 						oldItem.Label == item.Label &&
 						oldItem.IsRequired == item.IsRequired &&
@@ -147,7 +144,7 @@ func (l *OrganizationTemplateLogic) UpdateVariableGroup(ctx context.Context, req
 		return newVariable.ValidateRequiredField()
 	}
 	for _, oldGroup := range oldGroups {
-		newGroup, ok := slice.FindBy(groups, func(index int, item *data.TemplateVariableGroup) bool {
+		newGroup, ok := slice.FindBy(groups, func(index int, item *dto.TemplateVariableGroup) bool {
 			return oldGroup.Name == item.Name
 		})
 		if !ok {
@@ -158,7 +155,7 @@ func (l *OrganizationTemplateLogic) UpdateVariableGroup(ctx context.Context, req
 		}
 
 		for _, oldVariable := range oldGroup.Variables {
-			newVariable, ok := slice.FindBy(newGroup.Variables, func(index int, item *data.TemplateVariable) bool {
+			newVariable, ok := slice.FindBy(newGroup.Variables, func(index int, item *dto.TemplateVariable) bool {
 				return oldVariable.Key == item.Key &&
 					oldVariable.Label == item.Label &&
 					oldVariable.IsRequired == item.IsRequired &&
@@ -192,20 +189,20 @@ func (l *OrganizationTemplateLogic) UpdateVariableGroup(ctx context.Context, req
 		return nil, err
 	}
 
-	result, err = copierx.Trans[model.OrganizationTemplate, bo.OrganizationTemplateBo](updated)
+	result, err = copierx.Trans[model.OrganizationTemplate, dto.OrganizationTemplateEntityDto](updated)
 	if err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (l *OrganizationTemplateLogic) Page(ctx context.Context, pageReq dto.OrganizationTemplatePageRequestDto) (page bo.PageResultBo[bo.OrganizationTemplatePageBo], err error) {
+func (l *OrganizationTemplateLogic) Page(ctx context.Context, pageReq dto.OrganizationTemplatePageRequestDto) (page dto.PageResultDto[dto.OrganizationTemplatePageEntityDto], err error) {
 	pageResult, err := l.repos.OrganizationTemplateRepo.Page(ctx, pageReq)
 	if err != nil {
 		return page, err
 	}
 
-	pagePtr, err := copierx.Trans[gormx.PageResponse[*model.OrganizationTemplate], bo.PageResultBo[bo.OrganizationTemplatePageBo]](&pageResult)
+	pagePtr, err := copierx.Trans[gormx.PageResponse[*model.OrganizationTemplate], dto.PageResultDto[dto.OrganizationTemplatePageEntityDto]](&pageResult)
 	if err != nil {
 		return page, err
 	}
@@ -213,7 +210,7 @@ func (l *OrganizationTemplateLogic) Page(ctx context.Context, pageReq dto.Organi
 }
 
 // Reset resets an organization template to its base template settings.
-func (l *OrganizationTemplateLogic) Reset(ctx context.Context, id int64, organizationId int64) (result *bo.OrganizationTemplateBo, err error) {
+func (l *OrganizationTemplateLogic) Reset(ctx context.Context, id int64, organizationId int64) (result *dto.OrganizationTemplateEntityDto, err error) {
 	// Retrieve the template details with full information
 	template, err := l.repos.OrganizationTemplateRepo.Detail(ctx, id, true)
 	if err != nil {
@@ -256,7 +253,7 @@ func (l *OrganizationTemplateLogic) Reset(ctx context.Context, id int64, organiz
 	}
 
 	// Convert the updated model to the business object format
-	result, err = copierx.Trans[model.OrganizationTemplate, bo.OrganizationTemplateBo](updated)
+	result, err = copierx.Trans[model.OrganizationTemplate, dto.OrganizationTemplateEntityDto](updated)
 	if err != nil {
 		return nil, err
 	}
@@ -376,7 +373,7 @@ func (l *OrganizationTemplateLogic) renderOrganizationSystemInfo(organizationTem
 			Delims("[[", "]]").
 			Parse(organizationTemplate.Content)
 		if err != nil {
-			return nil, errorx.Wrap(err, "Failed to parse template")
+			return nil, errorx.Wrap(err, "fail to parse template")
 		}
 		now := time.Now()
 		renderData := map[string]interface{}{
@@ -398,15 +395,15 @@ func (l *OrganizationTemplateLogic) renderOrganizationSystemInfo(organizationTem
 }
 
 // mergeTemplateVariables merges template variables from different sources
-func (l *OrganizationTemplateLogic) mergeTemplateVariableGroup(oldVariableGroup, newVariableGroup []*data.TemplateVariableGroup) (result []*data.TemplateVariableGroup) {
+func (l *OrganizationTemplateLogic) mergeTemplateVariableGroup(oldVariableGroup, newVariableGroup []*dto.TemplateVariableGroup) (result []*dto.TemplateVariableGroup) {
 	if len(oldVariableGroup) == 0 {
 		return newVariableGroup
 	}
-	result = make([]*data.TemplateVariableGroup, 0, len(newVariableGroup))
+	result = make([]*dto.TemplateVariableGroup, 0, len(newVariableGroup))
 	for _, newGroup := range newVariableGroup {
 		newGroup := newGroup
 
-		oldGroup, ok := slice.FindBy(oldVariableGroup, func(index int, item *data.TemplateVariableGroup) bool {
+		oldGroup, ok := slice.FindBy(oldVariableGroup, func(index int, item *dto.TemplateVariableGroup) bool {
 			return newGroup.Name == item.Name
 		})
 		if !ok || oldGroup == nil || oldGroup.Variables == nil {
@@ -414,10 +411,10 @@ func (l *OrganizationTemplateLogic) mergeTemplateVariableGroup(oldVariableGroup,
 			continue
 		}
 
-		mergedVariables := make([]*data.TemplateVariable, 0, len(newGroup.Variables))
+		mergedVariables := make([]*dto.TemplateVariable, 0, len(newGroup.Variables))
 		for _, newVariable := range newGroup.Variables {
 			newVariable := newVariable
-			oldVar, ok := slice.FindBy(oldGroup.Variables, func(index int, item *data.TemplateVariable) bool {
+			oldVar, ok := slice.FindBy(oldGroup.Variables, func(index int, item *dto.TemplateVariable) bool {
 				return newVariable.Key == item.Key &&
 					newVariable.Type == item.Type &&
 					newVariable.Format == item.Format
@@ -431,7 +428,7 @@ func (l *OrganizationTemplateLogic) mergeTemplateVariableGroup(oldVariableGroup,
 			mergedVariables = append(mergedVariables, mergedVar)
 		}
 
-		mergedGroup := &data.TemplateVariableGroup{
+		mergedGroup := &dto.TemplateVariableGroup{
 			Name:      newGroup.Name,
 			Variables: mergedVariables,
 		}
@@ -441,12 +438,12 @@ func (l *OrganizationTemplateLogic) mergeTemplateVariableGroup(oldVariableGroup,
 	return result
 }
 
-func (l *OrganizationTemplateLogic) mergeVariable(newVar *data.TemplateVariable, oldVar *data.TemplateVariable) (result *data.TemplateVariable) {
+func (l *OrganizationTemplateLogic) mergeVariable(newVar *dto.TemplateVariable, oldVar *dto.TemplateVariable) (result *dto.TemplateVariable) {
 	if oldVar == nil || newVar == nil {
 		return newVar
 	}
 
-	result, _ = copierx.Trans[data.TemplateVariable, data.TemplateVariable](newVar)
+	result, _ = copierx.Trans[dto.TemplateVariable, dto.TemplateVariable](newVar)
 	if !newVar.IsEditable {
 		return result
 	}
@@ -459,7 +456,7 @@ func (l *OrganizationTemplateLogic) mergeVariable(newVar *data.TemplateVariable,
 
 	if result.Type == constants.TemplateVariableTypeObject {
 		if oldVar.Properties == nil {
-			oldVar.Properties = make(map[string]*data.TemplateVariable)
+			oldVar.Properties = make(map[string]*dto.TemplateVariable)
 		}
 
 		for key := range result.Properties {
@@ -469,7 +466,7 @@ func (l *OrganizationTemplateLogic) mergeVariable(newVar *data.TemplateVariable,
 
 	if result.Type == constants.TemplateVariableTypeArray {
 		for key := range result.Items {
-			subOldVar, ok := slice.FindBy(oldVar.Items, func(index int, item *data.TemplateVariable) bool {
+			subOldVar, ok := slice.FindBy(oldVar.Items, func(index int, item *dto.TemplateVariable) bool {
 				return result.Items[key].Key == item.Key &&
 					result.Items[key].Type == item.Type &&
 					result.Items[key].Format == item.Format

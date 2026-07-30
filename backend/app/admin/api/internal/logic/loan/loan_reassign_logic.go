@@ -21,7 +21,7 @@ type LoanReassignLogic struct {
 // reassign
 func NewLoanReassignLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoanReassignLogic {
 	return &LoanReassignLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

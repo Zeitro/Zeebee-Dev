@@ -6,43 +6,37 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-
-	"github.com/zeromicro/go-zero/core/logx"
-
-	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type AssignRolesLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewAssignRolesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AssignRolesLogic {
 	return &AssignRolesLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *AssignRolesLogic) AssignRoles(in *lender.OrganizationUserAssignRolesRequest) (resp *lender.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+func (l *AssignRolesLogic) AssignRoles(in *lender.OrganizationUserAssignRolesRequest) (resp *proto.EmptyResponse, err error) {
+
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	err = l.baseLogic.OrganizationUserLogic.AssignRoles(l.ctx, in.Data.Id, claim.OrganizationId, in.Data.RoleIds)
+	err = l.baseLogic.OrganizationUserLogic.AssignRoles(l.ctx, in.Data.Id, claim.OrganizationId, in.Data.RoleIds, constants.UserTypeLender)
 	if err != nil {
 		return nil, err
 	}
 
-	return &lender.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

@@ -3,13 +3,12 @@ package loan
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 )
 
@@ -34,22 +33,10 @@ func (l *UpdateStageLogic) UpdateStage(req *types.UpdateLoanStageRequest) (resp 
 	}
 	resp = &types.EmptyResponse{}
 
-	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{
-		IgnoreEmpty:   false,
-		DeepCopy:      true,
-		CaseSensitive: true,
-	})
+	rpcReq.Data, err = copierx.Trans[types.UpdateLoanStageRequest, lender.LoanUpdateStageRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
-
-	// claim, err := utils.GetUserClaimFromCtx(l.ctx)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// rpcReq.Data.OrganizationId = claim.OrganizationId
-	// rpcReq.Data.UserId = claim.UserId
-
 	_, err = l.svcCtx.LoanRpcClient.UpdateLoanStage(l.ctx, rpcReq)
 	if err != nil {
 		return nil, errorx.WithStack(err)

@@ -7,6 +7,7 @@ info(
 )
 
 import "role.api"
+import "common.api"
 
 
 type OrganizationUserEntity {
@@ -44,26 +45,13 @@ type OrganizationUserPageEntity {
 // page
 type (
     OrganizationUserPageRequest {
-        Page int64 `json:"page,optional"`
-        Limit int64 `json:"limit,optional"`
-        Filter *OrganizationUserPageRequestFilter `json:"filter,optional"`
-        Sorter *OrganizationUserPageRequestSorter `json:"sorter,optional"`
+        BasePageRequest
+        Filter BasePageFilter `json:"filter,optional"`
+        Sorter BasePageSort `json:"sorter,optional"`
     }
     OrganizationUserPageResponse {
-        Page int64 `json:"page"`
-        Limit int64 `json:"limit"`
-        Total int64 `json:"total"`
-        TotalPage int64 `json:"total_page"`
+        BasePageResponse
         List []*OrganizationUserPageEntity `json:"list"`
-    }
-
-    OrganizationUserPageRequestFilter {
-        Keyword string `json:"keyword,optional"`
-    }
-
-    OrganizationUserPageRequestSorter {
-        Column string `json:"column,optional"`
-        Sort string `json:"sort,optional"`
     }
 )
 // create
@@ -73,11 +61,8 @@ type (
         Password string `json:"password" validate:"required,min=8,max=32,password"`
         FirstName string `json:"first_name" validate:"required,min=2,max=100"`
         LastName string `json:"last_name" validate:"min=2,max=100"`
-        Phone string `json:"phone, optional" validate:"omitempty"`
+        Phone string `json:"phone,optional" validate:"omitempty"`
         RoleIds []int64 `json:"role_ids,optional"`
-    }
-    OrganizationUserCreateResponse {
-        OrganizationUserEntity
     }
 )
 // update
@@ -86,12 +71,9 @@ type (
         Id int64 `path:"id" validate:"required"`
         FirstName string `json:"first_name" validate:"required,min=2,max=100"`
         LastName string `json:"last_name" validate:"min=2,max=100"`
-        Phone string `json:"phone, optional"`
+        Phone string `json:"phone,optional"`
         //        Password string `json:"password,optional" validate:"omitempty,password"`
         RoleIds []int64 `json:"role_ids,optional"`
-    }
-    OrganizationUserUpdateResponse {
-        OrganizationUserEntity
     }
 )
 

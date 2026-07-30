@@ -1,0 +1,4 @@
+services:
+  lender-backend:
+    logging: !override
+      driver: json-file

@@ -80,9 +80,14 @@ func (repo *OrganizationUserRepo) Page(ctx context.Context, pageReq dto.Organiza
 			Where(fmt.Sprintf("%s.role_id = ?", organizationUserAndRoleTable), filter.RoleId)
 	}
 
+	if len(filter.Status) > 0 {
+		query = query.Where(fmt.Sprintf("%s.status = ?", organizationUserTable), filter.Status)
+	}
+
 	if len(sorter.Column) > 0 {
 		query = query.Order(fmt.Sprintf("%s.%s %s", organizationUserTable, sorter.Column, sorter.Sort))
 	}
+
 	query = query.Order(fmt.Sprintf("case %s.status when '%s' then 1 when '%s' then 2 when '%s' then 3 else 4 end", organizationUserTable,
 		constants.OrganizationUserStatusActive,
 		constants.OrganizationUserStatusDisabled,
@@ -137,6 +142,22 @@ func (repo *OrganizationUserRepo) GetOrganizationUserByIdWithTx(ctx context.Cont
 	return result, errorx.WithStack(err)
 }
 
+// GetOrganizationUsersByIdsWithTx return organization users by ids with transaction
+func (repo *OrganizationUserRepo) GetOrganizationUsersByIdsWithTx(ctx context.Context, tx *gorm.DB, organizationId int64, organizationUserIds []int64) (result []*model.OrganizationUser, err error) {
+	err = tx.WithContext(ctx).Model(&model.OrganizationUser{}).
+		Where("id in (?) and organization_id = ?", organizationUserIds, organizationId).
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+}
+
+// GetOrganizationUsersByOrganizationId get organization users by organizationId
+func (repo *OrganizationUserRepo) GetOrganizationUsersByOrganizationId(ctx context.Context, organizationId int64) (result []*model.OrganizationUser, err error) {
+	err = repo.Client(ctx).Model(&model.OrganizationUser{}).
+		Where(" organization_id = ?", organizationId).
+		Find(&result).Error
+	return result, errorx.WithStack(err)
+}
+
 func (repo *OrganizationUserRepo) DeleteOrganizationUserWithTx(ctx context.Context, tx *gorm.DB, organizationUser *model.OrganizationUser) (err error) {
 	query := tx.WithContext(ctx).Model(organizationUser)
 	err = query.Association("Roles").Clear()
@@ -171,8 +192,9 @@ func (repo *OrganizationUserRepo) CheckOrganizationUserExistedByEmail(ctx contex
 // AllOrganizationUsers return all organization users by organizationId
 func (repo *OrganizationUserRepo) AllOrganizationUsers(ctx context.Context, organizationId int64) (results []*model.OrganizationUser, err error) {
 	err = repo.Client(ctx).
-		Where("organization_id = ? and status = ?", organizationId, constants.OrganizationStatusActive).
+		Where("organization_id = ? and status = ?", organizationId, constants.OrganizationUserStatusActive).
 		Preload("User").
+		Preload("Roles").
 		Find(&results).Error
 	return results, errorx.WithStack(err)
 }
@@ -233,4 +255,36 @@ func (repo *OrganizationUserRepo) DeleteByOrganizationIdWithTx(ctx context.Conte
 	}
 
 	return errorx.WithStack(err)
+}
+
+// GetOwnerId get owner id
+func (repo *OrganizationUserRepo) GetOwnerId(ctx context.Context, organizationId int64, userType constants.UserType) (ownerId int64, err error) {
+	organizationTable := model.Organization{}.TableName()
+	organizationUserTable := model.OrganizationUser{}.TableName()
+	type Owner struct {
+		OrganizationOwnerId int64 `json:"organization_owner_id"`
+	}
+	fields := []string{
+		fmt.Sprintf("%s.id as id", organizationTable),
+		fmt.Sprintf("%s.owner_id as owner_id", organizationTable),
+
+		fmt.Sprintf("%s.id as organization_owner_id", organizationUserTable),
+		fmt.Sprintf("%s.user_id as user_id", organizationUserTable),
+	}
+	var result Owner
+
+	err = repo.Client(ctx).
+		Select(fields).
+		Joins(fmt.Sprintf("left join %s on %s.organization_id = %s.id", organizationTable, organizationUserTable, organizationTable)).
+		Where(
+			fmt.Sprintf("%s.organization_id = ? and %s.owner_id = %s.user_id and %s.type = ?", organizationUserTable, organizationTable, organizationUserTable, organizationTable),
+			organizationId, userType).
+		Scan(&result).Error
+	if err != nil {
+		return 0, errorx.WithStack(err)
+	}
+	if result.OrganizationOwnerId == 0 {
+		return 0, errorx.New("Organization owner not found")
+	}
+	return result.OrganizationOwnerId, errorx.WithStack(err)
 }

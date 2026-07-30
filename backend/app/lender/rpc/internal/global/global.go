@@ -4,34 +4,37 @@ import (
 	"time"
 
 	"github.com/zeromicro/go-zero/core/service"
-	"golang.org/x/sync/errgroup"
 
 	"zeebee-backend/app/lender/config"
+	"zeebee-backend/common/errorx"
 )
 
 func InitGlobal(c config.RpcConf) (err error) {
 	SetGlobalConfig(c)
-	eg := errgroup.Group{}
+	eg := errorx.NewErrorGroup()
 
-	eg.Go(func() error {
+	eg.Do(func() error {
 		return initTime()
 	})
 
-	eg.Go(func() error {
+	eg.Do(func() error {
 		return initDB(Config.DbConf.Dsn, Config.Mode != service.ProMode)
 	})
-	eg.Go(func() error {
+	eg.Do(func() error {
 		return initRedis(c.RedisConf)
 	})
-	eg.Go(func() error {
+	eg.Do(func() error {
 		return initLimiter(c)
 	})
 
-	eg.Go(func() error {
+	eg.Do(func() error {
 		return initS3Client(c.AwsS3Conf)
 	})
-	eg.Go(func() error {
+	eg.Do(func() error {
 		return initEmailClient(c.EmailConf)
+	})
+	eg.Do(func() error {
+		return initCasbin(c.CasbinConf)
 	})
 
 	err = eg.Wait()

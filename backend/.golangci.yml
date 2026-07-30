@@ -7,19 +7,11 @@ version: 2
 run:
   timeout: 5m
   concurrency: 2
-  tests: true  # 检查测试文件（默认 true）
-  #  skip-dirs:
-  #    - vendor
-  #    - docs
-  #    - examples
-  # 并发数（可选，默认为 CPU 数）
-  # concurrency: 4
+  tests: true
   fix: true
 
 # Linter 配置
 linters:
-  # 默认使用标准集（可选，但你显式启用了多个，可设为 false）
-  # default: standard  # 注：golangci-lint v2 中无此字段，应移除或忽略
   enable:
     - govet
     - errcheck
@@ -34,98 +26,73 @@ linters:
     - unconvert
     - unparam
     - whitespace
-  disable:
-  # 可显式禁用不需要的 linter
-  # 例如：golint 已被移除，使用 revive 替代
 
   # Linter 的详细设置
   settings:
-  gofmt:
-    # 启用简化（gofmt -s）
-    simplify: true
+    gofmt:
+      simplify: true
 
-  goimports:
+    goimports:
 
-  revive:
-    rules:
-      - name: var-naming
-        exclude: [ "" ]
-        arguments:
-          - ^[A-Z][a-zA-Z0-9]*$
-          - ^[a-z][a-zA-Z0-9]*$
+    revive:
+      rules:
+        - name: var-naming
+          exclude: [ "" ]
+          arguments:
+            - ^[A-Z][a-zA-Z0-9]*$
+            - ^[a-z][a-zA-Z0-9]*$
 
-  cyclop:
-    # 设置圈复杂度阈值
-    max-complexity: 30
-    # 设置包级别的平均复杂度阈值
-    package-average: 10.0
+    cyclop:
+      max-complexity: 30
+      package-average: 10.0
 
-  gosec:
-    excludes:
-      - G107
-      - G101
+    gosec:
+      excludes:
+        - G107
+        - G101
+        - G115 # int→int32 narrowing on bounded counts (len/sortOrder/stage totals); go-zero proto-int32 pattern, false positive at this scale
 
-  whitespace:
-    multi-if: true
-    multi-func: true
-  # misspell：拼写检查
-  misspell:
-    # 常见拼写错误纠正
-    corrections:
-      - from: "hte"
-        to: "the"
-      - from: "adn"
-        to: "and"
-      - from: "si"
-        to: "is"
-      - from: "teh"
-        to: "the"
+    whitespace:
+      multi-if: true
+      multi-func: true
 
-  # unparam：检查未使用的函数参数
-  unparam:
-    # 是否检查导出函数
-    check-exported: false
+    misspell:
+      corrections:
+        - from: "hte"
+          to: "the"
+        - from: "adn"
+          to: "and"
+        - from: "si"
+          to: "is"
+        - from: "teh"
+          to: "the"
 
-  # staticcheck：静态分析
-  staticcheck:
-    # 启用所有 SA 类检查（默认已启用）
-    checks: [ "all" ]
+    unparam:
+      check-exported: false
 
-# 格式化器（输出格式，非 linter）
-# 注意：golangci-lint 不支持 "formatter" 字段，但支持通过 `run.fix` 启用修复
-# 要启用自动修复，请使用命令行：golangci-lint run --fix
-# 以下设置通过 linters-settings 已配置 gofmt/goimports 修复
+    staticcheck:
+      checks: [ "all", "-SA5008","-ST1003","-ST1000" ]
 
 # 问题过滤与排除
 issues:
-  # 排除规则
   exclude-rules:
-    # 在 _test.go 文件中忽略 errcheck 和 maligned
     - path: '.*_test\.go'
       linters:
         - errcheck
-        - maligned  # 虽未启用，但防止未来启用时报错
+        - maligned
 
-    # 忽略 staticcheck 的 SA5008（未知 JSON tag 选项）
     - linters:
         - staticcheck
-      text: "SA5008: unknown JSON option"
+      text: "SA5008"
 
-  # 排除目录（也可在 run.skip-dirs 中设置，效果一致）
   exclude-dirs:
     - vendor
     - docs
     - examples
 
-  # 其他 issue 控制
   max-issues-per-linter: 50
   max-same-issues: 10
 
-# 输出格式（可选）
+# 输出格式
 output:
-  # 支持: colored-line-number, tab, json, checkstyle, etc.
   format: colored-line-number
-
-# 是否启用自动修复（需命令行传入 --fix，依赖 gofmt/goimports 的 fix: true）
-# 注意：golangci-lint 不通过配置文件启用 --fix，而是通过命令行
-# 使用方式：golangci-lint run --fix

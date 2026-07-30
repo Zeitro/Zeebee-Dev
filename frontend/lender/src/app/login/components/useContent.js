@@ -1,17 +1,25 @@
 'use client';
-import { useUserStore } from '@/store/user';
-import { setCookie, eventBus } from '@repo/shared-methods/utils';
+import { useUserStore, usePermissionStore } from '@repo/shared-methods/store';
+import { eventBus } from '@repo/shared-methods/utils';
 import { useRouter } from 'next/navigation';
 import MainModal from '@/app/setting/organizationProfile/components/Main';
+import { menuSetting } from '@config/routes';
 const useContent = () => {
 	const router = useRouter();
-	const { getUserInfo, getOrganization, setOrganization } = useUserStore();
+	const { getUserInfo, getOrganization, setOrganization, getUserMenus } = useUserStore();
+	const { setPermissionTags, setAccessPaths, updateAccess } = usePermissionStore();
 
 	// 组织信息完整后登录
-	const getInfoGoLogin = async (access, setLoadingFn, org) => {
+	const getUserPermissions = async (access, successCallback, org) => {
+		if (access) {
+			updateAccess(access);
+			// 	setCookie('token', access?.access_token, access?.access_token_expire * 1000);
+		}
 		await getUserInfo();
-		setCookie('token', access?.access_token, access?.access_token_expire * 1000);
-		setLoadingFn?.(false);
+		const result = await getUserMenus(menuSetting);
+		setPermissionTags(result?.permissionTags);
+		setAccessPaths(result?.accessPaths);
+		successCallback?.(false);
 		if (!org) return;
 		const list = org?.organization_settings;
 		const preSetting = list?.find((item) => item.purpose === 'preApprovedLetter');
@@ -24,13 +32,13 @@ const useContent = () => {
 		}
 	};
 	// 拿到用户token后登录
-	const loginByToken = async (access, options) => {
+	const loginByToken = async (access, successCallback) => {
 		const org = await getOrganization();
 		// 未填写组织信息, 弹出组织相关让其填写
 		if (!org?.contact_email || !org?.contact_phone || !org?.contact_name) {
 			// 清空本地存储，避免未填写orgProfile信息，刷新页面后就登录进去了
 			setOrganization(null);
-			options?.setLoading?.(false);
+			successCallback?.(false);
 			eventBus.emit(
 				'appendPortalComponent',
 				<MainModal
@@ -38,13 +46,13 @@ const useContent = () => {
 					setOpen={() => eventBus.emit('removePortalComponent')}
 					successCallback={async (setLoadingFn) => {
 						let newOrg = await getOrganization();
-						getInfoGoLogin(access, setLoadingFn, newOrg);
+						getUserPermissions(access, setLoadingFn, newOrg);
 					}}
 				/>,
 			);
 			return;
 		}
-		getInfoGoLogin(access, options?.setLoading, org);
+		getUserPermissions(access, successCallback, org);
 	};
 	return {
 		loginByToken,

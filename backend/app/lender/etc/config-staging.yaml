@@ -1,10 +1,11 @@
 ApiConf:
-  Name: lender-api
+  Name: lender.api
   Host: 0.0.0.0
   Port: 10100
   Timeout: 10000
   Log:
     Stat: false
+    ServiceName: lender.api
 
   JwtAuth:
     AccessSecret: bL0iP5yE4jS4mT0nY0uJ0iG1yP6lI9gY
@@ -15,17 +16,21 @@ ApiConf:
       - 127.0.0.1:10101
     Timeout: 10000
     NonBlock: true
-  PdfGeneratorUrl: http://127.0.0.1:10300/api/v1/pdf
+  PdfGeneratorBaseUrl: http://127.0.0.1:10300/api/v1
 
 RpcConf:
-  Name: borrower.rpc
+  Name: lender.rpc
   ListenOn: 0.0.0.0:10101
   Mode: dev
   Timeout: 10000
+  Log:
+    Stat: false
+    ServiceName: lender.rpc
   LimiterConf:
     Login:
-      Rate: 5
+      Rate: 10
       Period: 300
+      LockPeriod: 120
     SendLoginEmail:
       Rate: 5
       Period: 300
@@ -40,7 +45,7 @@ RpcConf:
   EmailConf:
     Host: smtp.gmail.com
     Port: 587
-    Password: plqaccqomowwrszl
+    Password: jerburfauvmzpmnq
     Username: info@zeebeeloans.com
 
   JwtAuth:
@@ -71,5 +76,18 @@ RpcConf:
   VerifyEmailUrl: https://agent.zeebeeloans.net/login/verifyEmail
   ResetPwdUrl: https://agent.zeebeeloans.net/login/resetPassword
   InviteUserUrl: https://agent.zeebeeloans.net/login/joinOrganization
-  InviteUserExpireSeconds: 86400
+  InviteUserExpireSeconds: 259200
   SendInviteEmailPeriodSeconds: 60
+
+  CasbinConf:
+    ModelPath: etc/model.conf
+    EventTopic:
+      LenderTopic: /lender-rbac-event
+    Watcher:
+      Host: zeebee-backend-redis-single-001.zeebee-backend-redis-single.uwixeb.usw1.cache.amazonaws.com:6379
+      Pwd: ''
+      Tls: true
+      LenderChannel: /lender-channel
+  CronTaskConf:
+    - name: update_organization_subscription_status
+      schedule: "0 0 3 * * *"

@@ -1,9 +1,42 @@
 package dto
 
 import (
+	"time"
+
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
 )
+
+type BaseTemplateEntityDto struct {
+	Id                  int64                       `json:"id"`
+	Name                string                      `json:"name"`
+	Type                constants.UserType          `json:"type"`
+	Category            constants.TemplateCategory  `json:"category"`
+	Purpose             string                      `json:"purpose"`
+	Content             string                      `json:"content"`
+	VariableGroupSchema []*TemplateVariableGroup    `json:"variable_group_schema"`
+	Status              constants.CommonStatus      `json:"status"`
+	Scope               constants.BaseTemplateScope `json:"scope"`
+	Description         string                      `json:"description"`
+	ExampleVariables    string                      `json:"example_variables"`
+	IsConfigurable      bool                        `json:"is_configurable"`
+	CreatedAt           time.Time                   `json:"created_at"`
+	UpdatedAt           time.Time                   `json:"updated_at"`
+}
+
+// BaseTemplatePageBo represents a base template in page list
+type BaseTemplatePageEntityDto struct {
+	Id             int64                       `json:"id"`
+	Name           string                      `json:"name"`
+	Type           constants.UserType          `json:"type"`
+	Category       constants.TemplateCategory  `json:"category"`
+	Purpose        string                      `json:"purpose"`
+	Status         constants.CommonStatus      `json:"status"`
+	Scope          constants.BaseTemplateScope `json:"scope"`
+	IsConfigurable bool                        `json:"is_configurable"`
+	Description    string                      `json:"description"`
+	CreatedAt      time.Time                   `json:"created_at"`
+	UpdatedAt      time.Time                   `json:"updated_at"`
+}
 
 // BaseTemplatePageRequestDto represents the request for paginated base template list
 type BaseTemplatePageRequestDto struct {
@@ -23,34 +56,34 @@ type BaseTemplatePageFilter struct {
 
 // BaseTemplateCreateDto represents the request for creating a base template
 type BaseTemplateCreateDto struct {
-	Name                string                        `json:"name"`
-	Type                constants.UserType            `json:"type"`
-	Category            constants.TemplateCategory    `json:"category"`
-	Purpose             string                        `json:"purpose"`
-	Content             string                        `json:"content"`
-	VariableGroupSchema []*data.TemplateVariableGroup `json:"variable_group_schema"`
-	ExampleVariables    string                        `json:"example_variables"`
-	Description         string                        `json:"description"`
-	Scope               constants.BaseTemplateScope   `json:"scope"`
-	IsConfigurable      bool                          `json:"is_configurable"`
+	Name                string                      `json:"name"`
+	Type                constants.UserType          `json:"type"`
+	Category            constants.TemplateCategory  `json:"category"`
+	Purpose             string                      `json:"purpose"`
+	Content             string                      `json:"content"`
+	VariableGroupSchema []*TemplateVariableGroup    `json:"variable_group_schema"`
+	ExampleVariables    string                      `json:"example_variables"`
+	Description         string                      `json:"description"`
+	Scope               constants.BaseTemplateScope `json:"scope"`
+	IsConfigurable      bool                        `json:"is_configurable"`
 }
 
 // BaseTemplateUpdateDto represents the request for updating a base template
 type BaseTemplateUpdateDto struct {
-	Id                  int64                         `json:"id"`
-	Name                string                        `json:"name"`
-	Category            constants.TemplateCategory    `json:"category"`
-	Content             string                        `json:"content"`
-	VariableGroupSchema []*data.TemplateVariableGroup `json:"variable_group_schema"`
-	Description         string                        `json:"description"`
-	ExampleVariables    string                        `json:"example_variables"`
-	IsConfigurable      bool                          `json:"is_configurable"`
-	Scope               constants.BaseTemplateScope   `json:"scope"`
+	Id                  int64                       `json:"id"`
+	Name                string                      `json:"name"`
+	Category            constants.TemplateCategory  `json:"category"`
+	Content             string                      `json:"content"`
+	VariableGroupSchema []*TemplateVariableGroup    `json:"variable_group_schema"`
+	Description         string                      `json:"description"`
+	ExampleVariables    string                      `json:"example_variables"`
+	IsConfigurable      bool                        `json:"is_configurable"`
+	Scope               constants.BaseTemplateScope `json:"scope"`
 }
 
 type BaseTemplatePreviewDto struct {
-	Name                string                        `json:"name"`
-	Content             string                        `json:"content"`
-	VariableGroupSchema []*data.TemplateVariableGroup `json:"variable_group_schema"`
-	ExampleVariables    string                        `json:"example_variables"`
+	Name                string                   `json:"name"`
+	Content             string                   `json:"content"`
+	VariableGroupSchema []*TemplateVariableGroup `json:"variable_group_schema"`
+	ExampleVariables    string                   `json:"example_variables"`
 }

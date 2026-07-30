@@ -5,36 +5,28 @@ import (
 
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
-	"zeebee-backend/app/admin/rpc/pb/admin"
-
-	"github.com/zeromicro/go-zero/core/logx"
-
-	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type ResetLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewResetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ResetLogic {
 	return &ResetLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
-		baseLogic: logic.NewBaseLogic(ctx, svcCtx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *ResetLogic) Reset(in *admin.IdRequest) (resp *admin.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+func (l *ResetLogic) Reset(in *proto.IdRequest) (resp *proto.EmptyResponse, err error) {
+
 	id := in.Data
 	err = l.baseLogic.OrganizationTemplateLogic.ResetByBaseTemplateId(l.ctx, id)
-	return &admin.EmptyResponse{}, err
+	return &proto.EmptyResponse{}, err
 }

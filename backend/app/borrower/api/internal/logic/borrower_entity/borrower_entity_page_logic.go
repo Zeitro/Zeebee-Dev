@@ -3,14 +3,13 @@ package borrower_entity
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/errorx"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type BorrowerEntityPageLogic struct {
@@ -29,28 +28,28 @@ func NewBorrowerEntityPageLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *BorrowerEntityPageLogic) BorrowerEntityPage(req *types.BorrowerEntityPageRequest) (resp *types.BorrowerEntityPageResponse, err error) {
-	rpcReq := &borrower.BorrowerEntityPageRequest{
-		Data: &borrower.BorrowerEntityPageRequestData{
-			Filter: &borrower.BorrowerEntityPageRequestFilter{},
-			Sorter: &borrower.BorrowerEntityPageRequestSorter{},
+	rpcReq := &proto.CommonPageRequest{
+		Data: &proto.CommonPageRequestData{
+			Filter: &proto.CommonPageFilter{},
+			Sorter: &proto.CommonPageSorter{},
 		},
 	}
 	resp = &types.BorrowerEntityPageResponse{}
 	rpcResp := &borrower.BorrowerEntityPageResponse{
 		Data: &borrower.BorrowerEntityPageResponseData{},
 	}
-
-	err = copier.CopyWithOption(&rpcReq.Data, req, copier.Option{DeepCopy: true})
+	rpcReq.Data, err = copierx.Trans[types.BorrowerEntityPageRequest, proto.CommonPageRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransReqErr(err)
+		return nil, err
 	}
+
 	rpcResp, err = l.svcCtx.BorrowerEntityRpcClient.Page(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err
 	}
-	err = copier.Copy(resp, &rpcResp.Data)
+	resp, err = copierx.Trans[borrower.BorrowerEntityPageResponseData, types.BorrowerEntityPageResponse](rpcResp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return resp, err
 }

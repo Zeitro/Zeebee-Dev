@@ -46,7 +46,7 @@ export const LoanStage = ({ data, successCallback, ...props }) => {
 			statusKey="stage"
 			api={`/loan/${data.id}/stage`}
 			{...props}
-			className={[styles?.[data?.stage], props?.className].join(' ')}
+			className={[styles.stage, styles?.[data?.stage], props?.className].join(' ')}
 		/>
 	);
 };
