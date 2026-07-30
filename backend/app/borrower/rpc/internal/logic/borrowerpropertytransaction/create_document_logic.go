@@ -7,8 +7,6 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper"
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
@@ -38,14 +36,6 @@ func NewCreateDocumentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cr
 }
 
 func (l *CreateDocumentLogic) CreateDocument(in *borrower.BorrowerPropertyTransactionDocumentCreateRequest) (resp *borrower.BorrowerPropertyTransactionDocumentCreateResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
-
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err

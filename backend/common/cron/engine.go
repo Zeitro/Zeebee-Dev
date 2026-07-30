@@ -7,6 +7,27 @@ import (
 	"github.com/robfig/cron/v3"
 )
 
+var defaultEngine = NewEngine()
+
+func Start() {
+	defaultEngine.Start()
+}
+func Stop() {
+	defaultEngine.Stop()
+}
+func Register(name string, spec string, cmd func()) error {
+	return defaultEngine.Register(name, spec, cmd)
+}
+func Unregister(name string) error {
+	return defaultEngine.Unregister(name)
+}
+func Replace(name string, spec string, cmd func()) error {
+	return defaultEngine.Replace(name, spec, cmd)
+}
+func IsExisted(name string) bool {
+	return defaultEngine.IsExisted(name)
+}
+
 type Engine struct {
 	engine  *cron.Cron
 	mu      sync.RWMutex

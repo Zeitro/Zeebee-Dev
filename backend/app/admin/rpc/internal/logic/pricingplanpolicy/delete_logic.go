@@ -3,8 +3,6 @@ package pricingplanpolicylogic
 import (
 	"context"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/domains/zeebee/proto"
@@ -29,13 +27,7 @@ func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogi
 }
 
 func (l *DeleteLogic) Delete(in *proto.PathIdRequest) (resp *proto.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
+
 	err = l.baseLogic.PricingPlanPolicyLogic.Delete(l.ctx, in.Data.Id)
 	if err != nil {
 		return nil, errorx.WithStack(err)

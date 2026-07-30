@@ -8,8 +8,6 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/zeitro"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/common/errorx"
 )
 
@@ -26,13 +24,6 @@ func NewZeitroListingSearchLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *ZeitroListingSearchLogic) ZeitroListingSearch(in *borrower.ZeitroListingSearchRequest) (resp *borrower.ZeitroListingSearchResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
 
 	// Call Zeitro client to search listings
 	listings, err := l.svcCtx.ZeitroClient.SearchListings(l.ctx, zeitro.SearchRequest{

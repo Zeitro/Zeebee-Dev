@@ -7,7 +7,7 @@ package server
 import (
 	"context"
 
-	"zeebee-backend/app/admin/rpc/internal/logic/storage"
+	storagelogic "zeebee-backend/app/admin/rpc/internal/logic/storage"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 )

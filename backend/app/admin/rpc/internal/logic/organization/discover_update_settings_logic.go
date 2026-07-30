@@ -3,11 +3,11 @@ package organizationlogic
 import (
 	"context"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
+	"zeebee-backend/app/admin/rpc/internal/schedule"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/common/cron"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/lenderdiscover"
 )
@@ -22,13 +22,7 @@ func NewDiscoverUpdateSettingsLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 func (l *DiscoverUpdateSettingsLogic) DiscoverUpdateSettings(in *admin.LenderDiscoverUpdateSettingsRequest) (resp *admin.LenderDiscoverSettingsResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
+
 	if in.GetData() == nil {
 		return nil, errorx.New("Request data is required")
 	}
@@ -47,9 +41,22 @@ func (l *DiscoverUpdateSettingsLogic) DiscoverUpdateSettings(in *admin.LenderDis
 	if err = lenderdiscover.SaveConfig(l.ctx, l.svcCtx.OrganizationSettingRepo, rowId, cfg); err != nil {
 		return nil, err
 	}
+	syncDiscoverCron(l.svcCtx, cfg)
 	data, err := discoverConfigToProto(cfg)
 	if err != nil {
 		return nil, err
 	}
 	return &admin.LenderDiscoverSettingsResponse{Data: data}, nil
+}
+
+// syncDiscoverCron re-arms the lender discover cron task to match the just-saved
+// config: Replace with the new interval when enabled, Unregister when disabled.
+func syncDiscoverCron(svcCtx *svc.ServiceContext, cfg *lenderdiscover.Config) {
+	if cfg.ScheduleEnabled {
+		_ = cron.Replace(schedule.TaskName, schedule.SpecFromInterval(cfg.IntervalDays), func() {
+			schedule.RunScheduled(context.Background(), svcCtx)
+		})
+	} else {
+		_ = cron.Unregister(schedule.TaskName)
+	}
 }

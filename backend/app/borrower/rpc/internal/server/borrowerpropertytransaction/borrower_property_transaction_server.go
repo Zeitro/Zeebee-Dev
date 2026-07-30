@@ -93,3 +93,13 @@ func (s *BorrowerPropertyTransactionServer) OperationList(ctx context.Context, i
 	l := borrowerpropertytransactionlogic.NewOperationListLogic(ctx, s.svcCtx)
 	return l.OperationList(in)
 }
+
+func (s *BorrowerPropertyTransactionServer) ParseFile(ctx context.Context, in *borrower.ParseFileRequest) (*borrower.ParseFileResponse, error) {
+	l := borrowerpropertytransactionlogic.NewParseFileLogic(ctx, s.svcCtx)
+	return l.ParseFile(in)
+}
+
+func (s *BorrowerPropertyTransactionServer) ParseFileResult(ctx context.Context, in *borrower.ParseFileResultRequest) (*borrower.ParseFileResultResponse, error) {
+	l := borrowerpropertytransactionlogic.NewParseFileResultLogic(ctx, s.svcCtx)
+	return l.ParseFileResult(in)
+}

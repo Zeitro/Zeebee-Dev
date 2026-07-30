@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/jinzhu/copier"
-	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
@@ -32,13 +31,7 @@ func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogi
 }
 
 func (l *DetailLogic) Detail(in *proto.PathIdRequest) (resp *borrower.BorrowerApplicantDetailResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
+
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
