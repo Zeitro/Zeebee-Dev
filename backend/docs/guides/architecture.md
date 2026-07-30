@@ -39,9 +39,9 @@ Client (Web/Mobile)
 | 服务 | HTTP | RPC | 职责 | 备注 |
 |------|------|-----|------|------|
 | borrower | 10000 | 10001 | 借款方操作（实体、房产、贷款、申请） | API/RPC 双层 |
-| lender | 11000 | 11001 | 贷款方操作（审核、文档、批准） | API/RPC 双层 |
-| admin | 12000 | 12001 | 管理后台（组织、模板、权限、定价计划） | API/RPC 双层 |
-| pdf_generator | 13000 | — | PDF 生成（Chromedp） | 独立 cmd 程序 |
+| lender | 10100 | 10101 | 贷款方操作（审核、文档、批准） | API/RPC 双层 |
+| admin | 10200 | 10201 | 管理后台（组织、模板、权限、定价计划） | API/RPC 双层 |
+| pdf_generator | 10300 | — | PDF 生成（Chromedp + LibreOffice） | 仅 HTTP，无 RPC |
 
 gRPC 服务发现：API 配置 `RpcConf.Endpoints` 直连 RPC 端口（`NonBlock: true`）。Etcd 在 dev 配置中默认注释关闭。
 
@@ -153,6 +153,15 @@ backend/app/
     ├── config/               # 配置结构
     └── etc/                  # 配置文件
 ```
+
+### 服务启动入口（`cmd/main.go`）
+
+每个服务由 `app/<service>/cmd/main.go` 启动；goctl 生成的 `api/<svc>.go`、`rpc/<svc>.go` 仅是 server 构造桩，非入口。
+
+- **borrower / lender / admin**（双层）：加载配置 → 构造 `api.NewApiServer(c)` + `rpc.NewRpcServer(c)` → 加入同一 `service.Group` 并发启动（HTTP + gRPC 同进程）→ 监听 SIGINT/SIGTERM 优雅停止。
+- **pdf_generator**（单层）：仅构造 `api.NewApiServer(c)`，无 RPC。
+
+启动：`go run app/<service>/cmd/main.go -f app/<service>/etc/config-<env>.yaml`（`-f` 默认 `etc/config.yaml`）。配置结构定义在 `app/<service>/config/`。
 
 #### 模块目录命名约定（API vs RPC）
 

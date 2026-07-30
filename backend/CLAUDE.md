@@ -3,7 +3,7 @@
 > Zeebee Backend 工作入口。**代码风格**（项目无关）见 constitution，**结构**见 architecture，**事实**见 INDEX。本文件仅含项目特定规范与可执行示例。
 > 改任何 `.api`/`.proto` 后须 `make create-service <service-name>` 重生成。
 > 
-> `docs/constitution.md` constitution是必须加载并遵循的。
+> `docs/constitution.md` 为必须加载并遵循的代码风格宪章。
 
 ## 文档指针
 
