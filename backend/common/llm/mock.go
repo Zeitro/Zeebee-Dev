@@ -28,6 +28,7 @@ type MockClient struct {
 	chatCalls     int          // Chat invocations — proves single vs per-file call
 	UploadCount   int
 	UploadedFiles []string // reader-driven uploads (content read for fidelity)
+	UploadedNames []string // filename passed to each UploadFile (rename assertions)
 	DeletedFiles  []string
 }
 
@@ -59,7 +60,7 @@ func (m *MockClient) Chat(_ context.Context, _, _ string, opts ...ChatOption) (s
 }
 
 // UploadFile returns the configured provider + a distinct file id per call.
-func (m *MockClient) UploadFile(_ context.Context, _ io.Reader, _, _ string) (string, string, error) {
+func (m *MockClient) UploadFile(_ context.Context, _ io.Reader, filename, _ string) (string, string, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.UploadCount++
@@ -75,6 +76,7 @@ func (m *MockClient) UploadFile(_ context.Context, _ io.Reader, _, _ string) (st
 		id = fmt.Sprintf("file-%d", m.UploadCount)
 	}
 	m.UploadedFiles = append(m.UploadedFiles, id)
+	m.UploadedNames = append(m.UploadedNames, filename)
 	return provider, id, nil
 }
 

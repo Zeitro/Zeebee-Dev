@@ -19,7 +19,7 @@ type ApiConf struct {
 	rest.RestConf
 	JwtAuth         types.JwtAuth      `json:",optional"`
 	RpcConf         zrpc.RpcClientConf `json:",optional"`
-	PdfGeneratorUrl string
+	PdfGeneratorBaseUrl string
 }
 
 type RpcConf struct {

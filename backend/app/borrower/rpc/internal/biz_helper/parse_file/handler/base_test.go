@@ -1,14 +1,17 @@
 package handler
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"io"
 	"testing"
 
 	"github.com/glebarez/sqlite"
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
 
+	"zeebee-backend/common/llm"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/repo"
@@ -122,5 +125,87 @@ func TestResolveFilesTagFiltered(t *testing.T) {
 	}
 	if len(got) != 1 || got[0].FileId != 20 {
 		t.Fatalf("got %+v, want only the emd-tagged file (id 20)", got)
+	}
+}
+
+// fakePdfConverter is a stand-in pdfConverter that returns canned pdf bytes and
+// records the DocToPdf args (no live pdf_generator needed).
+type fakePdfConverter struct {
+	pdf            []byte
+	err            error
+	gotTyp, gotExt string
+	calls          int
+}
+
+func (f *fakePdfConverter) DocToPdf(_ context.Context, typ, _ string, _ []byte, ext string) ([]byte, error) {
+	f.calls++
+	f.gotTyp, f.gotExt = typ, ext
+	return f.pdf, f.err
+}
+
+// TestFileStream_WordBranch: a .docx converts to application/pdf + <base>.pdf,
+// with the reader carrying the converted bytes.
+func TestFileStream_WordBranch(t *testing.T) {
+	pdf := []byte("%PDF-1.4 fake body")
+	fc := &fakePdfConverter{pdf: pdf}
+	b := &base{pdfClient: fc, logger: logx.WithContext(context.Background())}
+
+	res, err := b.fileStream(context.Background(), collectedFile{Name: "wire.docx", Url: "https://s3/wire.docx"})
+	if err != nil {
+		t.Fatalf("fileStream: %v", err)
+	}
+	if res.ContentType != "application/pdf" {
+		t.Errorf("ContentType = %q, want application/pdf", res.ContentType)
+	}
+	if res.DisplayName != "wire.pdf" {
+		t.Errorf("DisplayName = %q, want wire.pdf", res.DisplayName)
+	}
+	if fc.gotExt != "docx" || fc.gotTyp != "Url" {
+		t.Errorf("DocToPdf args: typ=%q ext=%q", fc.gotTyp, fc.gotExt)
+	}
+	got, _ := io.ReadAll(res.Reader)
+	if !bytes.Equal(got, pdf) {
+		t.Errorf("reader bytes mismatch: %q", got)
+	}
+}
+
+// TestFileStream_WordNoClient: absent pdf client → error (caller fail-soft skips).
+func TestFileStream_WordNoClient(t *testing.T) {
+	b := &base{logger: logx.WithContext(context.Background())}
+	if _, err := b.fileStream(context.Background(), collectedFile{Name: "wire.docx"}); err == nil {
+		t.Fatal("expected error when pdf client is nil")
+	}
+}
+
+// TestMaxPagesForFile_Word: Word files get the cap (so cache key + slicing apply).
+func TestMaxPagesForFile_Word(t *testing.T) {
+	if maxPagesForFile("wire.docx", 1) != 1 {
+		t.Error("docx should map to cap")
+	}
+	if maxPagesForFile("wire.doc", 5) != 5 {
+		t.Error("doc should map to cap")
+	}
+	if maxPagesForFile("photo.png", 5) != 0 {
+		t.Error("image should map to 0")
+	}
+}
+
+// TestUploadOne_WordRename: uploading a Word file passes the .pdf display name
+// to the provider (R6 — name/format must match the converted bytes).
+func TestUploadOne_WordRename(t *testing.T) {
+	fc := &fakePdfConverter{pdf: []byte("%PDF-1.4 body")}
+	mc := &llm.MockClient{}
+	b := &base{pdfClient: fc, llm: mc, logger: logx.WithContext(context.Background())}
+	rep := newMemReporter()
+
+	ckpt, err := b.uploadOne(context.Background(), rep, collectedFile{FileId: 1, Name: "wire.docx", Url: "s3://wire.docx"}, 0)
+	if err != nil {
+		t.Fatalf("uploadOne: %v", err)
+	}
+	if len(mc.UploadedNames) != 1 || mc.UploadedNames[0] != "wire.pdf" {
+		t.Errorf("uploaded names = %v, want [wire.pdf]", mc.UploadedNames)
+	}
+	if ckpt.MaxPages != 0 { // maxPages 0 → whole file
+		t.Errorf("checkpoint MaxPages = %d, want 0", ckpt.MaxPages)
 	}
 }

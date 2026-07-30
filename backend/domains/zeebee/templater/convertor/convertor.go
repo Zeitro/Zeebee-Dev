@@ -15,15 +15,12 @@ type Convertor interface {
 }
 
 type DefaultConvertor struct {
-	// pdfGeneratorUrl string
-
 	pdfClient *client.Client
 }
 
-func NewDefaultConvertor(pdfGeneratorUrl string) *DefaultConvertor {
+func NewDefaultConvertor(pdfGeneratorBaseUrl string) *DefaultConvertor {
 	return &DefaultConvertor{
-		// pdfGeneratorUrl: pdfGeneratorUrl,
-		pdfClient: client.NewClient(pdfGeneratorUrl),
+		pdfClient: client.NewClient(pdfGeneratorBaseUrl),
 	}
 }
 

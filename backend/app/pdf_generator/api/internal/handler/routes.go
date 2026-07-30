@@ -16,6 +16,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
+				// Convert doc/docx to Pdf
+				Method:  http.MethodPost,
+				Path:    "/doc_to_pdf",
+				Handler: pdf_generator.DocToPdfHandler(serverCtx),
+			},
+			{
 				// Generate Pdf
 				Method:  http.MethodPost,
 				Path:    "/pdf",

@@ -11,6 +11,7 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file/file"
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file/progress"
+	pdfclient "zeebee-backend/app/pdf_generator/client"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/llm"
 	"zeebee-backend/domains/zeebee/constants"
@@ -178,8 +179,8 @@ type RPAHandler struct {
 	base
 }
 
-func NewRPAHandler(repos *repo.AllRepos, logger logx.Logger, client llm.Client) *RPAHandler {
-	return &RPAHandler{base{repos: repos, logger: logger, llm: client}}
+func NewRPAHandler(repos *repo.AllRepos, logger logx.Logger, client llm.Client, pdfClient *pdfclient.Client) *RPAHandler {
+	return &RPAHandler{base{repos: repos, logger: logger, llm: client, pdfClient: pdfClient}}
 }
 
 // Stages returns the 3-stage pipeline (Collect → Extract → Writeback).
@@ -228,8 +229,8 @@ func (h *RPAHandler) extractStage(ctx context.Context, rep Reporter, files []col
 	atts := make([]uploaded, 0, len(files))
 	uploadedCount := 0
 	for _, f := range files {
-		if !file.IsPDF(f.Name) && !file.IsImage(f.Name) {
-			continue // Word/other excluded
+		if !file.IsPDF(f.Name) && !file.IsImage(f.Name) && !file.IsWord(f.Name) {
+			continue // unsupported type excluded
 		}
 		fc, err := h.uploadOne(ctx, rep, f, maxRPAPages)
 		if err != nil {
@@ -239,7 +240,7 @@ func (h *RPAHandler) extractStage(ctx context.Context, rep Reporter, files []col
 			).Errorf("upload rpa file: %s", err)
 			continue
 		}
-		atts = append(atts, uploaded{id: fc.ProviderFileID, contentType: fileContentType(f.Name), name: f.Name})
+		atts = append(atts, uploaded{id: fc.ProviderFileID, contentType: fileContentType(f.Name), name: file.PdfDisplayName(f.Name)})
 		uploadedCount++
 		rep.SetStageState(ctx, progress.StageExtract, progress.ExtractStateJSON(uploadedCount, len(files)))
 	}
