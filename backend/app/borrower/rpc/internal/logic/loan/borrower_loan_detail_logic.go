@@ -12,37 +12,26 @@ import (
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
-
-	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type BorrowerLoanDetailLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewBorrowerLoanDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BorrowerLoanDetailLogic {
 	return &BorrowerLoanDetailLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
 func (l *BorrowerLoanDetailLogic) BorrowerLoanDetail(in *borrower.LoanDetailRequest) (resp *borrower.LoanDetailResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
-			).Error(err)
-		}
-	}()
 
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
@@ -54,9 +43,9 @@ func (l *BorrowerLoanDetailLogic) BorrowerLoanDetail(in *borrower.LoanDetailRequ
 		return nil, err
 	}
 	resp = &borrower.LoanDetailResponse{
-		Data: &borrower.LoanEntity{},
+		Data: &proto.LoanEntity{},
 	}
-	resp.Data, err = copierx.Trans[model.Loan, borrower.LoanEntity](loan,
+	resp.Data, err = copierx.Trans[model.Loan, proto.LoanEntity](loan,
 		copierx.TimeToRFC3339Str(),
 		copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
 	)
@@ -65,11 +54,11 @@ func (l *BorrowerLoanDetailLogic) BorrowerLoanDetail(in *borrower.LoanDetailRequ
 	}
 
 	// loan experiences
-	var transExperiences []*borrower.LoanExperienceEntity
-	var realEstateExperiences []*borrower.LoanExperienceEntity
+	var transExperiences []*proto.LoanExperienceEntity
+	var realEstateExperiences []*proto.LoanExperienceEntity
 	slice.ForEach(loan.LoanExperiences, func(index int, item *model.LoanExperience) {
-		experience := &borrower.LoanExperienceEntity{}
-		experience, _ = copierx.Trans[model.LoanExperience, borrower.LoanExperienceEntity](item,
+		experience := &proto.LoanExperienceEntity{}
+		experience, _ = copierx.Trans[model.LoanExperience, proto.LoanExperienceEntity](item,
 			copierx.TimeToRFC3339Str(),
 			copierx.TimePtrToRFC3339Str(),
 			copierx.SqlTimePtrToStr(timex.LayoutUsStyle),

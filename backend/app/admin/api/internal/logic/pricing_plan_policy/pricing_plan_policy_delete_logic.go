@@ -5,8 +5,8 @@ import (
 
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
-	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -20,7 +20,7 @@ type PricingPlanPolicyDeleteLogic struct {
 // delete
 func NewPricingPlanPolicyDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PricingPlanPolicyDeleteLogic {
 	return &PricingPlanPolicyDeleteLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
@@ -29,8 +29,8 @@ func NewPricingPlanPolicyDeleteLogic(ctx context.Context, svcCtx *svc.ServiceCon
 func (l *PricingPlanPolicyDeleteLogic) PricingPlanPolicyDelete(req *types.PathIdRequest) (resp *types.EmptyResponse, err error) {
 
 	// Call RPC server
-	_, err = l.svcCtx.PricingPlanPolicyRpcClient.Delete(l.ctx, &admin.PathIdRequest{
-		Data: &admin.PathIdRequestData{Id: req.Id},
+	_, err = l.svcCtx.PricingPlanPolicyRpcClient.Delete(l.ctx, &proto.PathIdRequest{
+		Data: &proto.PathIdRequestData{Id: req.Id},
 	})
 	if err != nil {
 		return nil, errorx.WithStack(err)

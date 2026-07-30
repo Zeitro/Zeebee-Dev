@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package admin;
+
+option go_package = "zeebee-backend/app/admin/rpc/pb/admin";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+
+message OptionRequest {
+  OptionRequestData data = 1;
+}
+
+message OptionRequestData {
+  string name = 1;
+}
+
+message OptionResponse {
+  repeated proto.OptionEntity data = 1;
+}
+
+message UsCitiesRequest {
+  UsCitiesRequestData data = 1;
+}
+
+message UsCitiesRequestData {
+  string state_usps = 1;
+}
+
+service common {
+  rpc GetOpt(OptionRequest) returns(OptionResponse);
+  rpc GetUsState(proto.EmptyRequest) returns(proto.StringSliceResponse);
+  rpc GetUsCities(UsCitiesRequest) returns(proto.StringSliceResponse);
+  rpc SyncData(proto.EmptyRequest) returns(proto.EmptyResponse);
+}

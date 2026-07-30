@@ -1,6 +1,7 @@
 package errorx
 
 import (
+	"fmt"
 	"sync"
 	"sync/atomic"
 )
@@ -272,6 +273,6 @@ func stringifyPanic(v interface{}) string {
 	case string:
 		return v
 	default:
-		return "Unknown panic"
+		return fmt.Sprintf("%v", v)
 	}
 }

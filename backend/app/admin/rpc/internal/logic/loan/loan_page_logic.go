@@ -11,34 +11,23 @@ import (
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/common/errorx"
 )
 
 type LoanPageLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
 }
 
 func NewLoanPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoanPageLogic {
 	return &LoanPageLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
 	}
 }
 
 func (l *LoanPageLogic) LoanPage(in *admin.LoanPageRequest) (resp *admin.LoanPageResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
-			).Error(err)
-		}
-	}()
+
 	pageRep, err := copierx.Trans[admin.LoanPageRequestData, dto.LoanAdminPageRequestDto](in.Data)
 	if err != nil {
 		return nil, err

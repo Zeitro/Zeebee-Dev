@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type EditProfileLogic struct {
@@ -42,7 +43,7 @@ func (l *EditProfileLogic) EditProfile(req *types.UserEditProfileRequest) (resp 
 	if err != nil {
 		return nil, err
 	}
-	resp, err = copierx.Trans[borrower.UserinfoResponseData, types.UserInfoResponse](rpcResp.Data)
+	resp, err = copierx.Trans[proto.UserinfoResponseData, types.UserInfoResponse](rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

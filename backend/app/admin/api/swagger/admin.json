@@ -4969,6 +4969,117 @@
         }
       }
     },
+    "/api/v1/organization/discover/run": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "organization"
+        ],
+        "summary": "lender discover run (scheduled trigger only; manual flow uses preview + commit)",
+        "operationId": "organizationOrganizationDiscoverRun",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "trigger": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "trigger_type",
+                        "status",
+                        "started_at",
+                        "stats"
+                      ],
+                      "properties": {
+                        "error_message": {
+                          "type": "string"
+                        },
+                        "finished_at": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "integer"
+                        },
+                        "started_at": {
+                          "type": "string"
+                        },
+                        "stats": {
+                          "type": "object",
+                          "required": [
+                            "requested_count",
+                            "inserted_count",
+                            "skipped_duplicate_count",
+                            "error_count"
+                          ],
+                          "properties": {
+                            "error_count": {
+                              "type": "integer"
+                            },
+                            "inserted_count": {
+                              "type": "integer"
+                            },
+                            "requested_count": {
+                              "type": "integer"
+                            },
+                            "skipped_duplicate_count": {
+                              "type": "integer"
+                            }
+                          }
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "trigger_type": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/organization/discover/runs/latest": {
       "get": {
         "produces": [
@@ -16845,7 +16956,7 @@
       }
     }
   },
-  "x-date": "2026-06-25 10:31:56",
+  "x-date": "2026-07-17 10:09:52",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

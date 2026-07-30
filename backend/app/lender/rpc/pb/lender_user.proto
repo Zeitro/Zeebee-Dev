@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package lender;
+
+option go_package = "zeebee-backend/app/lender/rpc/pb/lender";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+import "proto/user.proto";
+
+// register -- request
+message UserRegisterRequest {
+  UserRegisterRequestData data = 1;
+}
+
+message UserRegisterRequestData {
+  string email = 1;
+  string password = 2;
+  string first_name = 3;
+  string last_name = 4;
+  string organization_name = 5;
+}
+
+
+// user service
+service user {
+  rpc Login(proto.UserLoginRequest) returns(proto.UserLoginResponse);
+  rpc Register(UserRegisterRequest) returns(proto.EmptyResponse);
+  rpc RefreshToken(proto.RefreshTokenRequest) returns(proto.UserLoginResponse);
+  rpc ResetPassword(proto.ResetPasswordRequest) returns(proto.UserLoginResponse);
+  rpc SendResetPasswordEmail(proto.SendResetPasswordEmailRequest) returns(proto.SendResetPasswordEmailResponse);
+  rpc VerifyEmail(proto.VerifyEmailRequest) returns(proto.UserLoginResponse);
+  rpc SendVerifyEmail(proto.SendVerifyEmailRequest) returns(proto.SendVerifyEmailResponse);
+  rpc UserInfo(proto.EmptyRequest) returns(proto.UserinfoResponse);
+  rpc SwitchOrganization(proto.SwitchOrganizationRequest) returns(proto.UserLoginResponse);
+}

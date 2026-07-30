@@ -21,7 +21,7 @@ type PricingPlanPageLogic struct {
 // page
 func NewPricingPlanPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PricingPlanPageLogic {
 	return &PricingPlanPageLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

@@ -7,7 +7,7 @@ import (
 
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
-	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type LenderCompaniesLogic struct {
@@ -19,14 +19,14 @@ type LenderCompaniesLogic struct {
 // lender companies list
 func NewLenderCompaniesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LenderCompaniesLogic {
 	return &LenderCompaniesLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
 func (l *LenderCompaniesLogic) LenderCompanies(req *types.EmptyRequest) (resp *types.LoanLenderCompanyResponse, err error) {
-	rpcResp, err := l.svcCtx.LoanRpcClient.LoanLenderCompanies(l.ctx, &admin.EmptyRequest{})
+	rpcResp, err := l.svcCtx.LoanRpcClient.LoanLenderCompanies(l.ctx, &proto.EmptyRequest{})
 	if err != nil {
 		return nil, err
 	}

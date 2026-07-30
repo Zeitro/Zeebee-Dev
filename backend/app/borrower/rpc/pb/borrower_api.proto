@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package borrower;
+
+option go_package = "zeebee-backend/app/borrower/rpc/pb/borrower";
+
+import "proto/common.proto";
+
+
+message SyncApiRequest {
+  SyncApiRequestData data = 1;
+}
+
+message SyncApiRequestData {
+  string api_json = 1;
+}
+
+service api {
+  rpc SyncApi(SyncApiRequest) returns(proto.EmptyResponse);
+}

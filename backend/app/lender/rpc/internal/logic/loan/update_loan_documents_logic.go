@@ -5,36 +5,24 @@ import (
 
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-
-	"github.com/zeromicro/go-zero/core/logx"
-
-	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type UpdateLoanDocumentsLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
 }
 
 func NewUpdateLoanDocumentsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLoanDocumentsLogic {
 	return &UpdateLoanDocumentsLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *UpdateLoanDocumentsLogic) UpdateLoanDocuments(in *lender.LoanUpdateDocumentsRequest) (resp *lender.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
-			).Error(err)
-		}
-	}()
+func (l *UpdateLoanDocumentsLogic) UpdateLoanDocuments(in *lender.LoanUpdateDocumentsRequest) (resp *proto.EmptyResponse, err error) {
+
 	// todo: add your logic here and delete this line
 
-	return &lender.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

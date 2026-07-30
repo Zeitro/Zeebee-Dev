@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package borrower;
+
+option go_package = "zeebee-backend/app/borrower/rpc/pb/borrower";
+
+import "proto/auth.proto";
+
+
+service Auth {
+  rpc AuthCheck(proto.AuthCheckRequest) returns (proto.AuthCheckResponse);
+}

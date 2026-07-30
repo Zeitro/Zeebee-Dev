@@ -18,7 +18,7 @@ type OrganizationDiscoverCommitLogic struct {
 
 func NewOrganizationDiscoverCommitLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OrganizationDiscoverCommitLogic {
 	return &OrganizationDiscoverCommitLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

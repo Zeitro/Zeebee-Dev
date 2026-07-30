@@ -21,7 +21,7 @@ type PricingPlanBindResourcesLogic struct {
 // bind resources
 func NewPricingPlanBindResourcesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PricingPlanBindResourcesLogic {
 	return &PricingPlanBindResourcesLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

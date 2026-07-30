@@ -3,11 +3,12 @@ package organization_user
 import (
 	"net/http"
 
-	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/rest/httpx"
 	"zeebee-backend/app/lender/api/internal/logic/organization_user"
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
+
+	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/rest/httpx"
 
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/response"
@@ -20,10 +21,9 @@ func OrganizationUserCheckInvitationHandler(svcCtx *svc.ServiceContext) http.Han
 		var err error
 		defer func() {
 			if err != nil {
-				logx.WithContext(r.Context()).
+				svcCtx.Logger.WithContext(r.Context()).
 					WithFields(
 						logx.Field("stacks", errorx.GetErrorStack(err)),
-						logx.Field("service_name", svcCtx.Config.Name),
 					).
 					Error(err)
 			}

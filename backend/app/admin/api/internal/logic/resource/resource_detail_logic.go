@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type ResourceDetailLogic struct {
@@ -20,7 +21,7 @@ type ResourceDetailLogic struct {
 // detail
 func NewResourceDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ResourceDetailLogic {
 	return &ResourceDetailLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
@@ -43,7 +44,7 @@ func (l *ResourceDetailLogic) ResourceDetail(req *types.ResourceDetailRequest) (
 	}
 
 	// trans response
-	resp, err = copierx.Trans[admin.ResourceEntity, types.ResourceEntity](rpcResp.Data)
+	resp, err = copierx.Trans[proto.ResourceEntity, types.ResourceEntity](rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}
