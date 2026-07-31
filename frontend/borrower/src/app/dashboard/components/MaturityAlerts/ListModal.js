@@ -31,14 +31,14 @@ const ListModal = ({ setOpen, getLoanList, handleGotoLoanDetails }) => {
 	}, [pagination.current, pagination.pageSize]);
 	return (
 		<NewModal
-			width={572}
+			width={800}
 			title="Maturity Alerts"
 			onCancel={() => setOpen(false)}
 			footer={null}
 			className="[&_.ant-modal-content_.ant-modal-body]:!pt-0 [&_.ant-modal-header]:!mb-0"
 		>
 			<Spin spinning={loading}>
-				<div className="flex flex-col gap-6 h-[500px] overflow-hidden overflow-y-auto">
+				<div className="flex flex-col gap-6 h-[60vh] min-h-[400px] max-h-[900px] overflow-hidden overflow-y-auto">
 					{maturityList?.map((item, index) => (
 						<Item
 							key={index}
