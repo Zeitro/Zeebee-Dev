@@ -2,7 +2,7 @@ import { Button, Space, Spin } from 'antd';
 import MaturityAlertsItem from './Item';
 import ListModal from './ListModal';
 import SettingModal from './SettingModal';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { SettingOutlined } from '@ant-design/icons';
 import { createRequest } from '@repo/shared-methods/utils';
 import { NoData } from '@repo/shared-methods';
@@ -14,7 +14,7 @@ const MaturityAlerts = ({ list, source, handleGotoLoanDetails }) => {
 	const [maturityList, setMaturityList] = useState([]);
 	const [total, setTotal] = useState(0);
 	const [dueDay, setDueDay] = useState(60); // 默认60天来计算到期时间
-	const { request } = createRequest();
+	const { request } = useMemo(() => createRequest(), []);
 	// const [pagination, setPagination] = useState(getPagination());
 	const getLoanList = useCallback(
 		async ({ page, limit }) => {
@@ -23,10 +23,10 @@ const MaturityAlerts = ({ list, source, handleGotoLoanDetails }) => {
 				body: {
 					page,
 					limit,
-					// sorter: {
-					// 	column: 'maturity_date',
-					// 	sort: 'desc',
-					// },
+					sorter: {
+						column: 'maturity_date',
+						sort: 'asc',
+					},
 					filter: {
 						source,
 						due_in_days: dueDay,
@@ -36,7 +36,7 @@ const MaturityAlerts = ({ list, source, handleGotoLoanDetails }) => {
 			});
 			return res;
 		},
-		[dueDay, source],
+		[dueDay, request, source],
 	);
 
 	const loadInitList = async () => {
