@@ -31,6 +31,7 @@ const MaturityAlerts = ({ list, source, handleGotoLoanDetails }) => {
 						source,
 						due_in_days: dueDay,
 						date_type: 'maturity_date',
+						stage: 'Active',
 					},
 				},
 			});
