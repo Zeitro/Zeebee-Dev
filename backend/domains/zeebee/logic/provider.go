@@ -49,7 +49,7 @@ func NewAllLogics(config AllLogicConfig) *AllLogics {
 		ApiLogic:                      NewApiLogic(baseLogic, config.AuthEventTopicMap),
 		ResourceLogic:                 NewResourceLogic(baseLogic, config.AuthEventTopicMap),
 		RoleLogic:                     NewRoleLogic(baseLogic, config.AuthEventTopicMap),
-		UserLogic:                     NewUserLogic(baseLogic, config.JwtConfig, config.AuthEventTopicMap),
+		UserLogic:                     NewUserLogic(baseLogic, config.AuthEventTopicMap),
 		OrganizationUserLogic:         NewOrganizationUserLogic(baseLogic, config.EmailClient, config.AuthEventTopicMap),
 		OrganizationLogic:             NewOrganizationLogic(baseLogic, config.AuthEventTopicMap),
 		OrganizationEmailLogic:        NewOrganizationEmailLogic(baseLogic),
