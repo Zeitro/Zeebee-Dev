@@ -23,7 +23,7 @@ func NewSummaryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SummaryLo
 		ctx:    ctx,
 		svcCtx: svcCtx,
 
-		baseLogic: logic.NewBaseLogic(svcCtx),
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
