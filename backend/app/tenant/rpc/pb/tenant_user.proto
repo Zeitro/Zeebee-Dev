@@ -1,0 +1,172 @@
+syntax = "proto3";
+
+package tenant;
+
+option go_package = "zeebee-backend/app/tenant/rpc/pb/tenant";
+
+import "proto/common.proto";
+import "proto/user.proto";
+
+// Identity issuance. tenant is the sole token-issuance authority.
+// email is unique per userType (UserRepo.GetUserByEmail takes userType), and each
+// platform signs with its own JWT secret -> every identity request carries user_type.
+// Responses maximize reuse of shared proto.* (UserLoginResponse / UserinfoResponse / ...).
+
+// --- Token response reused: proto.UserLoginResponse ---
+
+// Login
+message LoginRequest {
+  LoginRequestData data = 1;
+}
+message LoginRequestData {
+  string user_type = 1;   // borrower | lender | admin
+  string email = 2;
+  string password = 3;
+}
+
+// Register (identity build only; borrower pre-approval side effects stay at borrower backend)
+message RegisterRequest {
+  RegisterRequestData data = 1;
+}
+message RegisterRequestData {
+  string user_type = 1;
+  string email = 2;
+  string password = 3;
+  string first_name = 4;
+  string last_name = 5;
+  string organization_name = 6;
+  string owner_type = 7;                      // lender company classification; borrower = none
+  string borrower_pre_approval_json = 8;      // opaque pass-through for borrower backend
+}
+message RegisterResponse {
+  RegisterResponseData data = 1;
+}
+message RegisterResponseData {
+  int64 user_id = 1;
+  int64 organization_id = 2;
+  string status = 3;
+}
+
+// Verify email (returns TokenSet)
+message VerifyEmailRequest {
+  VerifyEmailRequestData data = 1;
+}
+message VerifyEmailRequestData {
+  string user_type = 1;
+  string email = 2;
+  string code = 3;
+}
+
+// Send verify email
+message SendVerifyEmailRequest {
+  SendVerifyEmailRequestData data = 1;
+}
+message SendVerifyEmailRequestData {
+  string user_type = 1;
+  string email = 2;
+}
+
+// Send reset-password email
+message SendResetPasswordEmailRequest {
+  SendResetPasswordEmailRequestData data = 1;
+}
+message SendResetPasswordEmailRequestData {
+  string user_type = 1;
+  string email = 2;
+}
+
+// Reset password by one-time code
+message ResetPasswordByCodeRequest {
+  ResetPasswordByCodeRequestData data = 1;
+}
+message ResetPasswordByCodeRequestData {
+  string user_type = 1;
+  string email = 2;
+  string code = 3;
+  string new_password = 4;
+}
+
+// Change password (verify old)
+message ChangePasswordRequest {
+  ChangePasswordRequestData data = 1;
+}
+message ChangePasswordRequestData {
+  string user_type = 1;
+  int64 user_id = 2;
+  string old_password = 3;
+  string new_password = 4;
+}
+
+// Refresh token (admin returns full TokenSet, ODD-6)
+message RefreshTokenRequest {
+  RefreshTokenRequestData data = 1;
+}
+message RefreshTokenRequestData {
+  string user_type = 1;
+  string refresh_token = 2;
+}
+
+// Switch organization (re-issue token)
+message SwitchOrganizationRequest {
+  SwitchOrganizationRequestData data = 1;
+}
+message SwitchOrganizationRequestData {
+  string user_type = 1;
+  int64 user_id = 2;
+  int64 organization_id = 3;
+}
+
+// User info
+message UserInfoRequest {
+  UserInfoRequestData data = 1;
+}
+message UserInfoRequestData {
+  string user_type = 1;
+  int64 user_id = 2;
+}
+
+// Edit profile
+message EditProfileRequest {
+  EditProfileRequestData data = 1;
+}
+message EditProfileRequestData {
+  string user_type = 1;
+  int64 user_id = 2;
+  string first_name = 3;
+  string last_name = 4;
+  string mid_name = 5;
+}
+
+// Admin provisioning (ODD-4): super-admin creates admin-backend user
+message CreateAdminUserRequest {
+  CreateAdminUserRequestData data = 1;
+}
+message CreateAdminUserRequestData {
+  string email = 1;
+  string password = 2;
+  string first_name = 3;
+  string last_name = 4;
+  int64 organization_id = 5;
+  repeated int64 role_ids = 6;
+}
+message CreateAdminUserResponse {
+  CreateAdminUserResponseData data = 1;
+}
+message CreateAdminUserResponseData {
+  int64 user_id = 1;
+}
+
+service user {
+  rpc Login(LoginRequest) returns (proto.UserLoginResponse);
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+  rpc VerifyEmail(VerifyEmailRequest) returns (proto.UserLoginResponse);
+  rpc SendVerifyEmail(SendVerifyEmailRequest) returns (proto.SendVerifyEmailResponse);
+  rpc SendResetPasswordEmail(SendResetPasswordEmailRequest) returns (proto.SendResetPasswordEmailResponse);
+  rpc ResetPasswordByCode(ResetPasswordByCodeRequest) returns (proto.UserLoginResponse);
+  rpc ChangePassword(ChangePasswordRequest) returns (proto.EmptyResponse);
+  rpc RefreshToken(RefreshTokenRequest) returns (proto.UserLoginResponse);
+  rpc SwitchOrganization(SwitchOrganizationRequest) returns (proto.UserLoginResponse);
+  rpc UserInfo(UserInfoRequest) returns (proto.UserinfoResponse);
+  rpc EditProfile(EditProfileRequest) returns (proto.UserinfoResponse);
+  rpc CreateAdminUser(CreateAdminUserRequest) returns (CreateAdminUserResponse);
+}

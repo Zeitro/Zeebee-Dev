@@ -1,0 +1,103 @@
+RpcConf:
+  Name: tenant.rpc
+  ListenOn: 0.0.0.0:10401
+  Mode: dev
+  # Dev: direct connect (no Etcd). Backends reach tenant via RpcConf.Endpoints tenant:10401.
+
+  DbConf:
+    dsn: "host=127.0.0.1 user=dev_user password=dev_password dbname=zeebee_dev port=5432 sslmode=disable TimeZone=UTC"
+
+  RedisConf:
+    Host: 127.0.0.1:6379
+    Type: node
+    Prefix: tenant
+
+  LimiterConf:
+    Login:             { Rate: 10, Period: 300, LockPeriod: 120 }
+    SendLoginEmail:    { Rate: 5, Period: 300 }
+    SendVerifyEmail:   { Rate: 5, Period: 300 }
+    SendResetPwdEmail: { Rate: 5, Period: 300 }
+
+  CasbinConf:
+    ModelPath: etc/model.conf
+    Watcher:
+      Host: 127.0.0.1:6379
+      Pwd: ""
+      Channel: /tenant-channel
+      Tls: false
+
+  # Per-platform config. JwtAuth secrets MUST match each backend's JwtAuth so that
+  # backend validates tenant-issued tokens locally. Values mirror each platform's
+  # config-local.yaml during the coexistence period (ODD-5).
+  PlatformConf:
+    Borrower:
+      JwtAuth:
+        AccessSecret: jY7hM9oD8uH2vV6gF1uS5wM8vZ5nE1l9
+        AccessExpire: 86400000
+        RefreshSecret: gT5xX4lX7oS5eD8sP7rS9hY4mS5wP2xX
+        RefreshExpire: 86400000
+      EmailConf:
+        Gmail:
+          ClientId: 808134957644-2savep4tlp45sln5v9f21hq06628vvia.apps.googleusercontent.com
+          ClientSecret: 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
+          CallbackUrl: http://localhost:3000/gmailAuth
+      LoginUrl: http://192.168.100.111:3000/login
+      LenderUrl: http://192.168.100.111:3001
+      VerifyEmailUrl: http://192.168.100.111:3000/login/verifyEmail
+      ResetPwdUrl: http://192.168.100.111:3000/login/resetPassword
+      InviteUserUrl: http://192.168.100.111:3000/login/joinOrganization
+      VerifyEmailExpireSeconds: 86400
+      ResetPwdExpireSeconds: 3600
+      InviteUserExpireSeconds: 259200
+      SendInviteEmailPeriodSeconds: 60
+      LogoUrl: ""
+      FooterAddress: ""
+      SenderName: "Zeebee"
+      SenderEmail: "info@zeebeeloans.com"
+    Lender:
+      JwtAuth:
+        AccessSecret: bL0iP5yE4jS4mT0nY0uJ0iG1yP6lI9g8
+        AccessExpire: 86400000
+        RefreshSecret: fQ4rU4iR7vL1uH7iH3jB0gO5oV1uD1rP
+        RefreshExpire: 86400000
+      EmailConf:
+        Host: smtp.gmail.com
+        Port: 587
+        Password: jerburfauvmzpmnq
+        Username: info@zeebeeloans.com
+      LoginUrl: http://localhost:3000/login
+      BorrowerLoginUrl: http://localhost:3000/login
+      VerifyEmailUrl: http://localhost:3000/login/verifyEmail
+      ResetPwdUrl: http://localhost:3000/login/resetPassword
+      InviteUserUrl: http://192.168.100.111:3000/login/joinOrganization
+      VerifyEmailExpireSeconds: 86400
+      ResetPwdExpireSeconds: 3600
+      InviteUserExpireSeconds: 259200
+      SendInviteEmailPeriodSeconds: 60
+      LogoUrl: ""
+      FooterAddress: ""
+      SenderName: "Zeebee"
+      SenderEmail: "info@zeebeeloans.com"
+    Admin:
+      JwtAuth:
+        AccessSecret: qO1oH7qF2cD0dT8tD7uJ2gV1tI4aE1fZ
+        AccessExpire: 86400000
+        RefreshSecret: tC3eQ3sR6yR3fH9iK1uW8zA7aS1rZ9qS
+        RefreshExpire: 86400000
+      EmailConf:
+        Host: smtp.gmail.com
+        Port: 587
+        Password: jerburfauvmzpmnq
+        Username: info@zeebeeloans.com
+      LoginUrl: ""
+      VerifyEmailUrl: ""
+      ResetPwdUrl: ""
+      InviteUserUrl: ""
+      VerifyEmailExpireSeconds: 86400
+      ResetPwdExpireSeconds: 3600
+      InviteUserExpireSeconds: 259200
+      SendInviteEmailPeriodSeconds: 60
+      LogoUrl: ""
+      FooterAddress: ""
+      SenderName: "Zeebee"
+      SenderEmail: "info@zeebeeloans.com"
