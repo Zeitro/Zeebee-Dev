@@ -34,10 +34,6 @@ func (l *ResetPasswordByCodeLogic) ResetPasswordByCode(in *tenant.ResetPasswordB
 	if err != nil {
 		return nil, err
 	}
-	jwtCfg, err := l.baseLogic.JwtConfigFor(userType)
-	if err != nil {
-		return nil, err
-	}
 
 	input, err := copierx.Trans[tenant.ResetPasswordByCodeRequestData, dto.UserResetPasswordByEmailRequestDto](in.Data)
 	if err != nil {
@@ -45,7 +41,7 @@ func (l *ResetPasswordByCodeLogic) ResetPasswordByCode(in *tenant.ResetPasswordB
 	}
 	input.UserType = userType
 
-	token, err := l.baseLogic.UserLogic.ResetPasswordWithEmail(l.ctx, *input, jwtCfg)
+	token, err := l.baseLogic.UserLogic.ResetPasswordWithEmail(l.ctx, *input)
 	if err != nil {
 		return nil, err
 	}

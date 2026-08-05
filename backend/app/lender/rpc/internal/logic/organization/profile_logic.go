@@ -31,7 +31,7 @@ func NewProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ProfileLo
 func (l *ProfileLogic) Profile(in *proto.EmptyRequest) (resp *lender.OrganizationProfileResponse, err error) {
 
 	// Get current user claim from gRPC metadata (JWT token)
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeLender)
 	if err != nil {
 		return nil, errorx.Wrap(err, "fail to get user claim from context")
 	}

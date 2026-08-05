@@ -31,7 +31,7 @@ func NewPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PageLogic {
 
 func (l *PageLogic) Page(in *lender.OrganizationTemplatePageRequest) (resp *lender.OrganizationTemplatePageResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeLender)
 	if err != nil {
 		return nil, errorx.Wrap(err, "fail to Get User Claim From Context")
 	}

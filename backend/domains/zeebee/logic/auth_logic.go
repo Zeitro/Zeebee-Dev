@@ -15,11 +15,12 @@ type AuthLogic struct {
 	auth *auth.Auth
 }
 
-// NewAuthLogic creates a new authentication logic instance
-func NewAuthLogic(baseLogic *BaseLogic, jwtConfig dto.JwtConfig, enforcer *rbac.Enforcer, authEventTopic string) *AuthLogic {
+// NewAuthLogic creates a new authentication logic instance.
+// jwtConfigs come from the embedded BaseLogic (one entry per platform the process serves).
+func NewAuthLogic(baseLogic *BaseLogic, enforcer *rbac.Enforcer, authEventTopic string) *AuthLogic {
 	l := &AuthLogic{
 		BaseLogic: baseLogic,
-		auth:      auth.NewAuth(baseLogic.repos, baseLogic.redisCli, jwtConfig, enforcer, authEventTopic),
+		auth:      auth.NewAuth(baseLogic.repos, baseLogic.redisCli, baseLogic.jwtConfigs, enforcer, authEventTopic),
 	}
 	return l
 }
@@ -35,5 +36,5 @@ func (l *AuthLogic) AuthCheck(ctx context.Context, input dto.AuthCheckRequestDto
 func (l *AuthLogic) RebuildPolicy(ctx context.Context, organizationType constants.UserType) (err error) {
 	err = l.auth.RebuildPolicy(ctx, organizationType)
 
-	return nil
+	return
 }

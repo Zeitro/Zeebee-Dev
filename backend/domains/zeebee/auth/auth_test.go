@@ -158,7 +158,7 @@ func newAuthForTest(t *testing.T) (*Auth, *fakeEnforcer, *gorm.DB) {
 	db := setupAuthTestDB(t)
 	repos := repo.NewAllRepos(db)
 	fake := newFakeEnforcer()
-	a := newAuthWithEnforcer(repos, nil, dto.JwtConfig{}, fake, "")
+	a := newAuthWithEnforcer(repos, nil, nil, fake, "")
 	return a, fake, db
 }
 
@@ -173,7 +173,7 @@ func newAuthzForTest(t *testing.T) (*Auth, *fakeEnforcer, *gorm.DB, *miniredis.M
 	require.NoError(t, err)
 	repos := repo.NewAllRepos(db)
 	fake := newFakeEnforcer()
-	a := newAuthWithEnforcer(repos, rds, dto.JwtConfig{AccessSecret: "secret"}, fake, "")
+	a := newAuthWithEnforcer(repos, rds, map[constants.UserType]dto.JwtConfig{constants.UserTypeLender: {AccessSecret: "secret"}}, fake, "")
 	return a, fake, db, mr
 }
 
@@ -240,12 +240,14 @@ func seedAuthzBaseline(t *testing.T, db *gorm.DB) {
 // GetUserClaimFromCtx / IsAdmin resolve inside CheckAuthorization.
 func ctxWithClaim(t *testing.T, a *Auth, userType constants.UserType, orgID, orgUserID int64) context.Context {
 	t.Helper()
+	jc, err := a.JwtConfigFor(userType)
+	require.NoError(t, err)
 	tok, err := utils.GenerateToken(utils.JwtUser{
 		UserId:             1,
 		OrganizationId:     orgID,
 		OrganizationUserId: orgUserID,
 		UserType:           userType,
-	}, a.jwtConfig.AccessSecret, 3600)
+	}, jc.AccessSecret, 3600)
 	require.NoError(t, err)
 	return metadata.NewIncomingContext(context.Background(), metadata.Pairs(utils.JwtTokenCtxKey, tok))
 }
@@ -271,7 +273,7 @@ func authzReq() dto.AuthCheckRequestDto {
 // satisfies the policyEnforcer interface and behaves correctly.
 func Test_newAuthWithEnforcer_seam(t *testing.T) {
 	fake := newFakeEnforcer()
-	a := newAuthWithEnforcer(nil, nil, dto.JwtConfig{}, fake, "")
+	a := newAuthWithEnforcer(nil, nil, nil, fake, "")
 	require.NotNil(t, a)
 
 	fake.seed([][]string{

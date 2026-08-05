@@ -30,7 +30,7 @@ func NewAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AllLogic {
 
 func (l *AllLogic) All(in *admin.RoleAllRequest) (resp *admin.RoleAllResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeAdmin)
 	if err != nil {
 		return nil, err
 	}

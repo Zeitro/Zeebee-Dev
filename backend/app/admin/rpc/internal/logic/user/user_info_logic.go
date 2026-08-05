@@ -30,7 +30,7 @@ func NewUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserInfo
 
 func (l *UserInfoLogic) UserInfo(in *proto.EmptyRequest) (resp *admin.UserinfoResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeAdmin)
 	if err != nil {
 		return nil, err
 	}

@@ -34,10 +34,6 @@ func (l *LoginLogic) Login(in *tenant.LoginRequest) (resp *proto.UserLoginRespon
 	if err != nil {
 		return nil, err
 	}
-	jwtCfg, err := l.baseLogic.JwtConfigFor(userType)
-	if err != nil {
-		return nil, err
-	}
 
 	loginReq, err := copierx.Trans[tenant.LoginRequestData, dto.UserLoginRequestDto](in.Data)
 	if err != nil {
@@ -49,7 +45,7 @@ func (l *LoginLogic) Login(in *tenant.LoginRequest) (resp *proto.UserLoginRespon
 		RedisCli:    l.svcCtx.RedisCli,
 	}
 
-	token, err := l.baseLogic.UserLogic.Login(l.ctx, *loginReq, limiter, jwtCfg)
+	token, err := l.baseLogic.UserLogic.Login(l.ctx, *loginReq, limiter)
 	if err != nil {
 		return nil, err
 	}

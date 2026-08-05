@@ -45,7 +45,7 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 	var loanBorrower *model.LoanBorrower
 	var loanProperty *model.LoanProperty
 	var oldBorrowerPropertyId int64
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}

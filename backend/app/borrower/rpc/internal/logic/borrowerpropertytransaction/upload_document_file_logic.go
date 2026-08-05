@@ -41,7 +41,7 @@ func NewUploadDocumentFileLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *UploadDocumentFileLogic) UploadDocumentFile(in *borrower.BorrowerPropertyTransactionDocumentUploadFileRequest) (resp *borrower.BorrowerPropertyTransactionDocumentUploadFileResponse, err error) {
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}

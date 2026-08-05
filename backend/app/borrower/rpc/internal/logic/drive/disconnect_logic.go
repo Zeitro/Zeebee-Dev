@@ -35,7 +35,7 @@ func (l *DisconnectLogic) Disconnect(in *proto.EmptyRequest) (resp *proto.EmptyR
 			l.svcCtx.Logger.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}

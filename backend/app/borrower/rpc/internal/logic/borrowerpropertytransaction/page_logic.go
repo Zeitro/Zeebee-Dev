@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/common/timex"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/repo"
 )
@@ -30,7 +31,7 @@ func NewPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PageLogic {
 }
 
 func (l *PageLogic) Page(in *borrower.BorrowerPropertyTransactionPageRequest) (resp *borrower.BorrowerPropertyTransactionPageResponse, err error) {
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}

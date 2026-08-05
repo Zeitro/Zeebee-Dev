@@ -34,7 +34,7 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 func (l *CreateLogic) Create(in *lender.OrganizationCreateRequest) (resp *lender.OrganizationDetailResponse, err error) {
 
 	// Get current user claim (creator will become owner)
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeLender)
 	if err != nil {
 		return nil, errorx.Wrap(err, "fail to get user claim from context")
 	}

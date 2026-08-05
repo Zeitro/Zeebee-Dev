@@ -31,7 +31,7 @@ func NewOperationStatsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Op
 }
 
 func (l *OperationStatsLogic) OperationStats(in *borrower.TransactionOperationStatsRequest) (resp *borrower.TransactionOperationStatsResponse, err error) {
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, errorx.Wrap(err, "failed to get user claim")
 	}

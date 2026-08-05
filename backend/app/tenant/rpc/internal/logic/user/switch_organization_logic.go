@@ -34,17 +34,13 @@ func (l *SwitchOrganizationLogic) SwitchOrganization(in *tenant.SwitchOrganizati
 	if err != nil {
 		return nil, err
 	}
-	jwtCfg, err := l.baseLogic.JwtConfigFor(userType)
-	if err != nil {
-		return nil, err
-	}
 
 	user, err := l.baseLogic.UserLogic.SwitchOrganization(l.ctx, in.Data.UserId, in.Data.OrganizationId, userType)
 	if err != nil {
 		return nil, err
 	}
 
-	token, err := l.baseLogic.UserLogic.GenerateJwtTokenById(l.ctx, user.Id, user.DefaultOrganizationId, userType, jwtCfg)
+	token, err := l.baseLogic.UserLogic.GenerateJwtTokenById(l.ctx, user.Id, user.DefaultOrganizationId, userType)
 	if err != nil {
 		return nil, err
 	}

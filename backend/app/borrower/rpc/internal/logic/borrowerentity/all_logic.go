@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/timex"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/proto"
 
@@ -32,7 +33,7 @@ func NewAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AllLogic {
 
 func (l *AllLogic) All(in *proto.EmptyRequest) (resp *borrower.BorrowerEntityAllResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}

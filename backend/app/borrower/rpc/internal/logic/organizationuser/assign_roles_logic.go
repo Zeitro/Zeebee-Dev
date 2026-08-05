@@ -28,7 +28,7 @@ func NewAssignRolesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Assig
 
 func (l *AssignRolesLogic) AssignRoles(in *borrower.OrganizationUserAssignRolesRequest) (resp *proto.EmptyResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}

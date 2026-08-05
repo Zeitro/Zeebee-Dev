@@ -30,7 +30,7 @@ func NewSaveEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SaveEma
 
 func (l *SaveEmailLogic) SaveEmail(in *borrower.OrganizationEmailSaveEmailRequest) (resp *proto.EmptyResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}

@@ -36,7 +36,7 @@ func NewCreateDocumentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cr
 }
 
 func (l *CreateDocumentLogic) CreateDocument(in *borrower.BorrowerPropertyTransactionDocumentCreateRequest) (resp *borrower.BorrowerPropertyTransactionDocumentCreateResponse, err error) {
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}

@@ -37,7 +37,7 @@ func (l *ParseFileLogic) ParseFile(in *borrower.ParseFileRequest) (resp *borrowe
 		return
 	}
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}

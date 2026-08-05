@@ -6,6 +6,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/email_tpl"
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
 )
@@ -28,7 +29,7 @@ func NewSendInvitationEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext
 
 func (l *SendInvitationEmailLogic) SendInvitationEmail(in *proto.PathIdRequest) (resp *proto.EmptyResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}

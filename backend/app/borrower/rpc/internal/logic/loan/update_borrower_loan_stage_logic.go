@@ -30,7 +30,7 @@ func NewUpdateBorrowerLoanStageLogic(ctx context.Context, svcCtx *svc.ServiceCon
 
 func (l *UpdateBorrowerLoanStageLogic) UpdateBorrowerLoanStage(in *borrower.LoanUpdateStageRequest) (resp *proto.EmptyResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}

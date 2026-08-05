@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 type CheckExistedLogic struct {
@@ -29,7 +30,7 @@ func NewCheckExistedLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Chec
 
 func (l *CheckExistedLogic) CheckExisted(in *borrower.BorrowerApplicantCheckExistedRequest) (resp *borrower.BorrowerApplicantCheckExistedResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}

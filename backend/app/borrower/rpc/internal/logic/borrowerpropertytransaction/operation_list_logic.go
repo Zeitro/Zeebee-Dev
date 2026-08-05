@@ -32,7 +32,7 @@ func NewOperationListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ope
 }
 
 func (l *OperationListLogic) OperationList(in *borrower.TransactionOperationListRequest) (resp *borrower.TransactionOperationListResponse, err error) {
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, errorx.Wrap(err, "failed to get user claim")
 	}

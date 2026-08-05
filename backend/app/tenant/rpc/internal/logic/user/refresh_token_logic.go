@@ -34,12 +34,8 @@ func (l *RefreshTokenLogic) RefreshToken(in *tenant.RefreshTokenRequest) (resp *
 	if err != nil {
 		return nil, err
 	}
-	jwtCfg, err := l.baseLogic.JwtConfigFor(userType)
-	if err != nil {
-		return nil, err
-	}
 
-	token, err := l.baseLogic.UserLogic.RefreshToken(l.ctx, in.Data.RefreshToken, userType, jwtCfg)
+	token, err := l.baseLogic.UserLogic.RefreshToken(l.ctx, in.Data.RefreshToken, userType)
 	if err != nil {
 		return nil, err
 	}

@@ -7,16 +7,12 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/threading"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/metadata"
-	"google.golang.org/grpc/status"
 
 	"zeebee-backend/app/tenant/config"
 	"zeebee-backend/app/tenant/rpc/internal/svc"
 	"zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/types"
-	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	logicpkg "zeebee-backend/domains/zeebee/logic"
@@ -25,14 +21,13 @@ import (
 var baseLogic *BaseLogic
 var onceBase sync.Once
 
-// BaseLogic is the tenant logic entrypoint. It embeds ONE shared AllLogics (used
-// for non-token operations) and owns the per-platform concerns tenant must handle
-// itself because the shared layer is single-platform: jwtConfigs (issuance),
-// claim resolution, and user_type parsing.
+// BaseLogic is the tenant logic entrypoint. It embeds ONE shared AllLogics and
+// owns the per-platform concerns tenant must handle itself: platform profiles
+// (brand / URLs / expiry) and SMTP clients. JWT signing keys live in the shared
+// domain BaseLogic (via AllLogicConfig.JwtConfigs) and are resolved by userType.
 type BaseLogic struct {
 	svcCtx *svc.ServiceContext
 	*logicpkg.AllLogics
-	jwtConfigs   map[constants.UserType]dto.JwtConfig
 	platforms    map[constants.UserType]config.PlatformProfile
 	emailClients map[constants.UserType]*email.Email
 }
@@ -44,16 +39,35 @@ func GetBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 	return baseLogic
 }
 
+// ResetBaseLogicForTest clears the cached singleton so each test wires its own
+// ServiceContext. Test-only; production always uses the once-cached instance.
+func ResetBaseLogicForTest() {
+	baseLogic = nil
+	onceBase = sync.Once{}
+}
+
 func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
+	// tenant runs ONE unfiltered Casbin enforcer (central authority). All platforms
+	// publish role-reload events to the same watcher channel so the enforcer reloads
+	// regardless of which platform's data changed.
+	topic := svcCtx.Config.CasbinConf.Watcher.Channel
+	authTopicMap := map[constants.UserType]string{
+		constants.UserTypeBorrower: topic,
+		constants.UserTypeLender:   topic,
+		constants.UserTypeAdmin:    topic,
+	}
+
 	l := &BaseLogic{
 		svcCtx: svcCtx,
 		AllLogics: logicpkg.NewAllLogics(logicpkg.AllLogicConfig{
-			Repos:           svcCtx.AllRepos,
-			RedisCli:        svcCtx.RedisCli,
-			CurrentEnforcer: svcCtx.Enforcer,
-			Logger:          svcCtx.Logger,
+			Repos:                 svcCtx.AllRepos,
+			RedisCli:              svcCtx.RedisCli,
+			JwtConfigs:            buildJwtConfigs(svcCtx.Config.PlatformConf),
+			CurrentEnforcer:       svcCtx.Enforcer,
+			CurrentAuthEventTopic: topic,
+			AuthEventTopicMap:     authTopicMap,
+			Logger:                svcCtx.Logger,
 		}),
-		jwtConfigs:   buildJwtConfigs(svcCtx.Config.PlatformConf),
 		platforms:    buildPlatforms(svcCtx.Config.PlatformConf),
 		emailClients: buildEmailClients(svcCtx.Config.PlatformConf),
 	}
@@ -89,15 +103,6 @@ func toJwtConfig(j types.JwtAuth) dto.JwtConfig {
 		RefreshSecret: j.RefreshSecret,
 		RefreshExpire: j.RefreshExpire,
 	}
-}
-
-// JwtConfigFor returns the platform JwtConfig; a missing entry is a config error.
-func (l *BaseLogic) JwtConfigFor(userType constants.UserType) (dto.JwtConfig, error) {
-	c, ok := l.jwtConfigs[userType]
-	if !ok {
-		return dto.JwtConfig{}, errorx.New("jwt config not configured for user type: " + string(userType))
-	}
-	return c, nil
 }
 
 func buildPlatforms(pc config.PlatformConf) map[constants.UserType]config.PlatformProfile {
@@ -157,29 +162,4 @@ func ParseUserType(s string) (constants.UserType, error) {
 	default:
 		return "", errorx.New("invalid user type")
 	}
-}
-
-// GetUserClaimFromCtx resolves the current user from the incoming gRPC token
-// metadata. tenant serves all platforms, so it tries each platform's access
-// secret and returns the claim that parses.
-func (l *BaseLogic) GetUserClaimFromCtx(ctx context.Context, userType constants.UserType) (jwtUser utils.JwtUser, err error) {
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		return utils.JwtUser{}, errorx.WithStack(status.Error(codes.Unauthenticated, "not login"))
-	}
-	tokens := md[utils.JwtTokenCtxKey]
-	if len(tokens) == 0 {
-		return utils.JwtUser{}, errorx.WithStack(status.Error(codes.Unauthenticated, "not login"))
-	}
-	token := tokens[0]
-	jwtConf, err := l.JwtConfigFor(userType)
-	if err != nil {
-		return utils.JwtUser{}, errorx.WithStack(status.Error(codes.InvalidArgument, err.Error()))
-	}
-	claim, err := utils.ParseToken(token, jwtConf.AccessSecret)
-	if err != nil {
-		err = errorx.WithStack(status.Error(codes.InvalidArgument, err.Error()))
-	}
-	jwtUser = claim.JwtUser
-	return
 }

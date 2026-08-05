@@ -30,7 +30,7 @@ func NewEditProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *EditP
 
 func (l *EditProfileLogic) EditProfile(in *borrower.UserProfileEditRequest) (resp *proto.UserinfoResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}

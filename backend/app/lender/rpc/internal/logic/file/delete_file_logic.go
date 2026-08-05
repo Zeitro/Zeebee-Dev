@@ -35,7 +35,7 @@ func (l *DeleteFileLogic) DeleteFile(in *proto.PathIdRequest) (resp *proto.Empty
 	var loanDocument *model.LoanDocument
 	var file *model.File
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeLender)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}

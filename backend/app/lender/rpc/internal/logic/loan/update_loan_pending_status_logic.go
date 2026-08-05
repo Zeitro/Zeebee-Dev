@@ -30,7 +30,7 @@ func NewUpdateLoanPendingStatusLogic(ctx context.Context, svcCtx *svc.ServiceCon
 
 func (l *UpdateLoanPendingStatusLogic) UpdateLoanPendingStatus(in *lender.LoanUpdatePendingStatusRequest) (resp *proto.EmptyResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeLender)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}

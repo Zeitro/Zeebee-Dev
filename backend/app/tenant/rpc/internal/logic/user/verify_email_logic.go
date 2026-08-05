@@ -35,10 +35,6 @@ func (l *VerifyEmailLogic) VerifyEmail(in *tenant.VerifyEmailRequest) (resp *pro
 	if err != nil {
 		return nil, err
 	}
-	jwtCfg, err := l.baseLogic.JwtConfigFor(userType)
-	if err != nil {
-		return nil, err
-	}
 
 	user, err := l.baseLogic.UserLogic.VerifyUserEmail(l.ctx, in.Data.Email, in.Data.Code, userType)
 	if err != nil {
@@ -49,7 +45,7 @@ func (l *VerifyEmailLogic) VerifyEmail(in *tenant.VerifyEmailRequest) (resp *pro
 		return nil, err
 	}
 
-	token, err := l.baseLogic.UserLogic.GenerateJwtToken(user, orgUser, userType, jwtCfg)
+	token, err := l.baseLogic.UserLogic.GenerateJwtToken(user, orgUser, userType)
 	if err != nil {
 		return nil, err
 	}

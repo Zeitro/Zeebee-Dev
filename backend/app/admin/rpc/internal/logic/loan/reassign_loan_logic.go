@@ -6,6 +6,7 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
@@ -29,7 +30,7 @@ func NewReassignLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Reas
 
 func (l *ReassignLoanLogic) ReassignLoan(in *admin.ReassignLoanRequest) (resp *proto.EmptyResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeAdmin)
 	if err != nil {
 		return nil, err
 	}

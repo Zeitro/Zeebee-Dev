@@ -7,7 +7,7 @@ package server
 import (
 	"context"
 
-	"zeebee-backend/app/borrower/rpc/internal/logic/organizationemail"
+	organizationemaillogic "zeebee-backend/app/borrower/rpc/internal/logic/organizationemail"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/domains/zeebee/proto"

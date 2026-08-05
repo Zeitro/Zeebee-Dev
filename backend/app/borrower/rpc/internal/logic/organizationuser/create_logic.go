@@ -35,7 +35,7 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 
 func (l *CreateLogic) Create(in *borrower.OrganizationUserCreateRequest) (resp *borrower.OrganizationUserDetailResponse, err error) {
 
-	claimUser, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claimUser, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}

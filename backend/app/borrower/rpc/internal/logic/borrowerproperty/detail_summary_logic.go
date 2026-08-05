@@ -35,7 +35,7 @@ func NewDetailSummaryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Det
 
 func (l *DetailSummaryLogic) DetailSummary(in *borrower.PropertyDetailRequest) (resp *borrower.PropertyDetailSummaryResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}

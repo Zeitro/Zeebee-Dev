@@ -43,7 +43,7 @@ type Auth struct {
 	repos                       *repo.AllRepos
 	redisCli                    *redisx.Client
 	enforcer                    policyEnforcer
-	jwtConfig                   dto.JwtConfig
+	jwtConfigs                  map[constants.UserType]dto.JwtConfig
 	authenticationWhitelistMap  *mapx.Map[constants.UserType, []string] // login api whitelist
 	authorizationWhitelistMap   *mapx.Map[constants.UserType, []string] // permission api whitelist
 	apiResourceMap              *mapx.Map[constants.UserType, *mapx.Map[string, []int64]]
@@ -54,12 +54,12 @@ type Auth struct {
 	eventSubScribeCancelFn      context.CancelFunc
 }
 
-func NewAuth(repos *repo.AllRepos, redisCli *redisx.Client, jwtConfig dto.JwtConfig, enforcer *rbac.Enforcer, authEventTopic string) *Auth {
+func NewAuth(repos *repo.AllRepos, redisCli *redisx.Client, jwtConfigs map[constants.UserType]dto.JwtConfig, enforcer *rbac.Enforcer, authEventTopic string) *Auth {
 	ctx, cancel := context.WithCancel(context.Background())
 	auth := &Auth{
 		repos:                       repos,
 		redisCli:                    redisCli,
-		jwtConfig:                   jwtConfig,
+		jwtConfigs:                  jwtConfigs,
 		enforcer:                    enforcer,
 		authenticationWhitelistMap:  mapx.NewMap[constants.UserType, []string](),
 		authorizationWhitelistMap:   mapx.NewMap[constants.UserType, []string](),
@@ -79,11 +79,11 @@ func NewAuth(repos *repo.AllRepos, redisCli *redisx.Client, jwtConfig dto.JwtCon
 
 // newAuthWithEnforcer is a test seam: Auth with a fake enforcer and no redis
 // loop, for unit-testing rebuild/auth-check without DB or redis.
-func newAuthWithEnforcer(repos *repo.AllRepos, redisCli *redisx.Client, jwtConfig dto.JwtConfig, enforcer policyEnforcer, authEventTopic string) *Auth {
+func newAuthWithEnforcer(repos *repo.AllRepos, redisCli *redisx.Client, jwtConfigs map[constants.UserType]dto.JwtConfig, enforcer policyEnforcer, authEventTopic string) *Auth {
 	return &Auth{
 		repos:                       repos,
 		redisCli:                    redisCli,
-		jwtConfig:                   jwtConfig,
+		jwtConfigs:                  jwtConfigs,
 		enforcer:                    enforcer,
 		authenticationWhitelistMap:  mapx.NewMap[constants.UserType, []string](),
 		authorizationWhitelistMap:   mapx.NewMap[constants.UserType, []string](),
@@ -368,7 +368,7 @@ func (l *Auth) CheckAuthentication(ctx context.Context, input dto.AuthCheckReque
 		authenticationRequired = false
 		return
 	}
-	_, err = l.GetUserClaimFromCtx(ctx)
+	_, err = l.GetUserClaimFromCtx(ctx, input.Type)
 	if err == nil {
 		authenticated = true
 	}
@@ -379,7 +379,7 @@ func (l *Auth) CheckAuthentication(ctx context.Context, input dto.AuthCheckReque
 // It first checks if the request path is in the authorization whitelist.
 // If not, it verifies the user's roles and permissions using an enforcer.
 func (l *Auth) CheckAuthorization(ctx context.Context, input dto.AuthCheckRequestDto) (authorized bool, authorizationRequired bool, err error) {
-	claim, err := l.GetUserClaimFromCtx(ctx)
+	claim, err := l.GetUserClaimFromCtx(ctx, input.Type)
 	if err != nil {
 		return
 	}
@@ -464,7 +464,7 @@ func (l *Auth) GetDataScope(ctx context.Context, input dto.AuthCheckRequestDto) 
 
 	// Extract JWT user claims from the context
 	var claim utils.JwtUser
-	claim, err = l.GetUserClaimFromCtx(ctx)
+	claim, err = l.GetUserClaimFromCtx(ctx, input.Type)
 	if err != nil {
 		return
 	}
@@ -508,7 +508,7 @@ func (l *Auth) GetDataScope(ctx context.Context, input dto.AuthCheckRequestDto) 
 
 // IsAdmin checks if the current user is an admin.
 func (l *Auth) IsAdmin(ctx context.Context, userType constants.UserType) (isAdmin bool, err error) {
-	claim, err := l.GetUserClaimFromCtx(ctx)
+	claim, err := l.GetUserClaimFromCtx(ctx, userType)
 	if err != nil {
 		return false, nil
 	}
@@ -798,7 +798,16 @@ func (l *Auth) doRebuild(ctx context.Context, organizationType constants.UserTyp
 	return nil
 }
 
-func (l *Auth) GetUserClaimFromCtx(ctx context.Context) (claim utils.JwtUser, err error) {
+// JwtConfigFor returns the JwtConfig for the given userType; missing = config error.
+func (l *Auth) JwtConfigFor(userType constants.UserType) (dto.JwtConfig, error) {
+	c, ok := l.jwtConfigs[userType]
+	if !ok {
+		return dto.JwtConfig{}, errorx.New("jwt config not configured for user type: " + string(userType))
+	}
+	return c, nil
+}
+
+func (l *Auth) GetUserClaimFromCtx(ctx context.Context, userType constants.UserType) (claim utils.JwtUser, err error) {
 	// Get from metadata
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
@@ -811,7 +820,11 @@ func (l *Auth) GetUserClaimFromCtx(ctx context.Context) (claim utils.JwtUser, er
 		return claim, errorx.WithStack(err)
 	}
 	token := tokens[0]
-	jwtClaim, err := utils.ParseToken(token, l.jwtConfig.AccessSecret)
+	jwtConf, err := l.JwtConfigFor(userType)
+	if err != nil {
+		return claim, errorx.WithStack(status.Error(codes.InvalidArgument, err.Error()))
+	}
+	jwtClaim, err := utils.ParseToken(token, jwtConf.AccessSecret)
 	if err != nil {
 		err = status.Error(codes.InvalidArgument, err.Error())
 		return claim, errorx.WithStack(err)

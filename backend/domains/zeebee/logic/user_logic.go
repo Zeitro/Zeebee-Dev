@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"errors"
 	"regexp"
 	"time"
 
@@ -41,8 +42,9 @@ func NewUserLogic(baseLogic *BaseLogic, authTopicMap map[constants.UserType]stri
 	}
 }
 
-// GetUserClaimFromCtx get user claim from context
-func (l *UserLogic) GetUserClaimFromCtx(ctx context.Context, jwtConfig dto.JwtConfig) (claim utils.JwtUser, err error) {
+// GetUserClaimFromCtx get user claim from context. userType selects the platform
+// jwtConfig used to parse the token (each platform signs with its own secret).
+func (l *UserLogic) GetUserClaimFromCtx(ctx context.Context, userType constants.UserType) (claim utils.JwtUser, err error) {
 	// Get from metadata
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
@@ -55,7 +57,11 @@ func (l *UserLogic) GetUserClaimFromCtx(ctx context.Context, jwtConfig dto.JwtCo
 		return claim, errorx.WithStack(err)
 	}
 	token := tokens[0]
-	jwtClaim, err := utils.ParseToken(token, jwtConfig.AccessSecret)
+	jwtConf, err := l.JwtConfigFor(userType)
+	if err != nil {
+		return claim, errorx.WithStack(status.Error(codes.InvalidArgument, err.Error()))
+	}
+	jwtClaim, err := utils.ParseToken(token, jwtConf.AccessSecret)
 	if err != nil {
 		err = status.Error(codes.InvalidArgument, err.Error())
 		return claim, errorx.WithStack(err)
@@ -64,9 +70,13 @@ func (l *UserLogic) GetUserClaimFromCtx(ctx context.Context, jwtConfig dto.JwtCo
 }
 
 // GenerateJwtToken generate jwt token for user
-func (l *UserLogic) GenerateJwtToken(user *model.User, organizationUser *model.OrganizationUser, userType constants.UserType, jwtConfig dto.JwtConfig) (token *dto.UserJwtTokenDto, err error) {
+func (l *UserLogic) GenerateJwtToken(user *model.User, organizationUser *model.OrganizationUser, userType constants.UserType) (token *dto.UserJwtTokenDto, err error) {
 	if user == nil {
 		return nil, errorx.WithStack(errorx.New("user is empty"))
+	}
+	jwtConfig, err := l.JwtConfigFor(userType)
+	if err != nil {
+		return nil, err
 	}
 	userClaim := utils.JwtUser{
 		UserId:         user.Id,
@@ -106,7 +116,7 @@ func (l *UserLogic) GenerateJwtToken(user *model.User, organizationUser *model.O
 	return
 }
 
-func (l *UserLogic) GenerateJwtTokenById(ctx context.Context, userId int64, organizationId int64, userType constants.UserType, jwtConfig dto.JwtConfig) (token *dto.UserJwtTokenDto, err error) {
+func (l *UserLogic) GenerateJwtTokenById(ctx context.Context, userId int64, organizationId int64, userType constants.UserType) (token *dto.UserJwtTokenDto, err error) {
 	user, err := l.repos.UserRepo.GetUser(ctx, userId, userType, false)
 	if err != nil {
 		return nil, errorx.WithStack(err)
@@ -115,12 +125,16 @@ func (l *UserLogic) GenerateJwtTokenById(ctx context.Context, userId int64, orga
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	token, err = l.GenerateJwtToken(user, organizationUser, userType, jwtConfig)
+	token, err = l.GenerateJwtToken(user, organizationUser, userType)
 	return token, err
 }
 
 // RefreshToken refresh token
-func (l *UserLogic) RefreshToken(ctx context.Context, refreshToken string, userType constants.UserType, jwtConfig dto.JwtConfig) (token *dto.UserJwtTokenDto, err error) {
+func (l *UserLogic) RefreshToken(ctx context.Context, refreshToken string, userType constants.UserType) (token *dto.UserJwtTokenDto, err error) {
+	jwtConfig, err := l.JwtConfigFor(userType)
+	if err != nil {
+		return nil, err
+	}
 	// Parse refresh token
 	claim, err := utils.ParseToken(refreshToken, jwtConfig.RefreshSecret)
 	if err != nil {
@@ -145,12 +159,12 @@ func (l *UserLogic) RefreshToken(ctx context.Context, refreshToken string, userT
 	if organizationUser.Status != constants.OrganizationUserStatusActive {
 		return nil, errorx.New("organization user is not active")
 	}
-	token, err = l.GenerateJwtToken(user, organizationUser, claim.UserType, jwtConfig)
+	token, err = l.GenerateJwtToken(user, organizationUser, claim.UserType)
 	return token, err
 }
 
 // ResetPasswordWithEmail reset password with email
-func (l *UserLogic) ResetPasswordWithEmail(ctx context.Context, input dto.UserResetPasswordByEmailRequestDto, jwtConfig dto.JwtConfig) (token *dto.UserJwtTokenDto, err error) {
+func (l *UserLogic) ResetPasswordWithEmail(ctx context.Context, input dto.UserResetPasswordByEmailRequestDto) (token *dto.UserJwtTokenDto, err error) {
 	email := input.Email
 	code := input.Code
 	newPwd := input.NewPassword
@@ -191,7 +205,7 @@ func (l *UserLogic) ResetPasswordWithEmail(ctx context.Context, input dto.UserRe
 		return nil, err
 	}
 
-	token, err = l.GenerateJwtToken(user, organizationUser, input.UserType, jwtConfig)
+	token, err = l.GenerateJwtToken(user, organizationUser, input.UserType)
 	if err != nil {
 		return nil, err
 	}
@@ -278,7 +292,7 @@ func (l *UserLogic) CheckAndUpdateActiveOrganizationByUser(ctx context.Context, 
 }
 
 // Login
-func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limiter dto.LoginLimiterDto, jwtConfig dto.JwtConfig) (token *dto.UserJwtTokenDto, err error) {
+func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limiter dto.LoginLimiterDto) (token *dto.UserJwtTokenDto, err error) {
 	redisKey := stringx.Format(constants.UserLoginFailedTimes, req.UserType, req.Email)
 	var loginFailedTimes int
 	var orgUser *model.OrganizationUser
@@ -298,6 +312,9 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 
 	user, err := l.repos.UserRepo.GetUserByEmail(ctx, req.Email, req.UserType)
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errorx.New("user not found")
+		}
 		return nil, errorx.WithStack(err)
 	}
 	if user == nil {
@@ -345,7 +362,7 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 		return nil, errorx.WithStack(err)
 	}
 
-	token, err = l.GenerateJwtToken(user, orgUser, req.UserType, jwtConfig)
+	token, err = l.GenerateJwtToken(user, orgUser, req.UserType)
 	if err != nil {
 		return nil, err
 	}

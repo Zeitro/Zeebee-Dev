@@ -20,18 +20,18 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	User_Login_FullMethodName                  = "/tenant.user/Login"
-	User_Register_FullMethodName               = "/tenant.user/Register"
-	User_VerifyEmail_FullMethodName            = "/tenant.user/VerifyEmail"
-	User_SendVerifyEmail_FullMethodName        = "/tenant.user/SendVerifyEmail"
-	User_SendResetPasswordEmail_FullMethodName = "/tenant.user/SendResetPasswordEmail"
-	User_ResetPasswordByCode_FullMethodName    = "/tenant.user/ResetPasswordByCode"
-	User_ChangePassword_FullMethodName         = "/tenant.user/ChangePassword"
-	User_RefreshToken_FullMethodName           = "/tenant.user/RefreshToken"
-	User_SwitchOrganization_FullMethodName     = "/tenant.user/SwitchOrganization"
-	User_UserInfo_FullMethodName               = "/tenant.user/UserInfo"
-	User_EditProfile_FullMethodName            = "/tenant.user/EditProfile"
-	User_CreateAdminUser_FullMethodName        = "/tenant.user/CreateAdminUser"
+	User_Login_FullMethodName                  = "/tenant.User/Login"
+	User_Register_FullMethodName               = "/tenant.User/Register"
+	User_VerifyEmail_FullMethodName            = "/tenant.User/VerifyEmail"
+	User_SendVerifyEmail_FullMethodName        = "/tenant.User/SendVerifyEmail"
+	User_SendResetPasswordEmail_FullMethodName = "/tenant.User/SendResetPasswordEmail"
+	User_ResetPasswordByCode_FullMethodName    = "/tenant.User/ResetPasswordByCode"
+	User_ChangePassword_FullMethodName         = "/tenant.User/ChangePassword"
+	User_RefreshToken_FullMethodName           = "/tenant.User/RefreshToken"
+	User_SwitchOrganization_FullMethodName     = "/tenant.User/SwitchOrganization"
+	User_UserInfo_FullMethodName               = "/tenant.User/UserInfo"
+	User_EditProfile_FullMethodName            = "/tenant.User/EditProfile"
+	User_CreateAdminUser_FullMethodName        = "/tenant.User/CreateAdminUser"
 )
 
 // UserClient is the client API for User service.
@@ -483,7 +483,7 @@ func _User_CreateAdminUser_Handler(srv interface{}, ctx context.Context, dec fun
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var User_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "tenant.user",
+	ServiceName: "tenant.User",
 	HandlerType: (*UserServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

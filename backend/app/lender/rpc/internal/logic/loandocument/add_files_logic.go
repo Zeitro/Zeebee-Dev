@@ -38,7 +38,7 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 	var loan *model.Loan
 	var loanDocument *model.LoanDocument
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeLender)
 	if err != nil {
 		return nil, err
 	}

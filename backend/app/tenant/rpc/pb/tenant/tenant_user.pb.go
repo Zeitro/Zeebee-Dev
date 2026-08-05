@@ -1637,7 +1637,7 @@ const file_tenant_user_proto_rawDesc = "" +
 	"\x04data\x18\x01 \x01(\v2#.tenant.CreateAdminUserResponseDataR\x04data\"6\n" +
 	"\x1bCreateAdminUserResponseData\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId2\x8a\a\n" +
-	"\x04user\x127\n" +
+	"\x04User\x127\n" +
 	"\x05Login\x12\x14.tenant.LoginRequest\x1a\x18.proto.UserLoginResponse\x12=\n" +
 	"\bRegister\x12\x17.tenant.RegisterRequest\x1a\x18.tenant.RegisterResponse\x12C\n" +
 	"\vVerifyEmail\x12\x1a.tenant.VerifyEmailRequest\x1a\x18.proto.UserLoginResponse\x12Q\n" +
@@ -1714,30 +1714,30 @@ var file_tenant_user_proto_depIdxs = []int32{
 	23, // 11: tenant.EditProfileRequest.data:type_name -> tenant.EditProfileRequestData
 	25, // 12: tenant.CreateAdminUserRequest.data:type_name -> tenant.CreateAdminUserRequestData
 	27, // 13: tenant.CreateAdminUserResponse.data:type_name -> tenant.CreateAdminUserResponseData
-	0,  // 14: tenant.user.Login:input_type -> tenant.LoginRequest
-	2,  // 15: tenant.user.Register:input_type -> tenant.RegisterRequest
-	6,  // 16: tenant.user.VerifyEmail:input_type -> tenant.VerifyEmailRequest
-	8,  // 17: tenant.user.SendVerifyEmail:input_type -> tenant.SendVerifyEmailRequest
-	10, // 18: tenant.user.SendResetPasswordEmail:input_type -> tenant.SendResetPasswordEmailRequest
-	12, // 19: tenant.user.ResetPasswordByCode:input_type -> tenant.ResetPasswordByCodeRequest
-	14, // 20: tenant.user.ChangePassword:input_type -> tenant.ChangePasswordRequest
-	16, // 21: tenant.user.RefreshToken:input_type -> tenant.RefreshTokenRequest
-	18, // 22: tenant.user.SwitchOrganization:input_type -> tenant.SwitchOrganizationRequest
-	20, // 23: tenant.user.UserInfo:input_type -> tenant.UserInfoRequest
-	22, // 24: tenant.user.EditProfile:input_type -> tenant.EditProfileRequest
-	24, // 25: tenant.user.CreateAdminUser:input_type -> tenant.CreateAdminUserRequest
-	28, // 26: tenant.user.Login:output_type -> proto.UserLoginResponse
-	4,  // 27: tenant.user.Register:output_type -> tenant.RegisterResponse
-	28, // 28: tenant.user.VerifyEmail:output_type -> proto.UserLoginResponse
-	29, // 29: tenant.user.SendVerifyEmail:output_type -> proto.SendVerifyEmailResponse
-	30, // 30: tenant.user.SendResetPasswordEmail:output_type -> proto.SendResetPasswordEmailResponse
-	28, // 31: tenant.user.ResetPasswordByCode:output_type -> proto.UserLoginResponse
-	31, // 32: tenant.user.ChangePassword:output_type -> proto.EmptyResponse
-	28, // 33: tenant.user.RefreshToken:output_type -> proto.UserLoginResponse
-	28, // 34: tenant.user.SwitchOrganization:output_type -> proto.UserLoginResponse
-	32, // 35: tenant.user.UserInfo:output_type -> proto.UserinfoResponse
-	32, // 36: tenant.user.EditProfile:output_type -> proto.UserinfoResponse
-	26, // 37: tenant.user.CreateAdminUser:output_type -> tenant.CreateAdminUserResponse
+	0,  // 14: tenant.User.Login:input_type -> tenant.LoginRequest
+	2,  // 15: tenant.User.Register:input_type -> tenant.RegisterRequest
+	6,  // 16: tenant.User.VerifyEmail:input_type -> tenant.VerifyEmailRequest
+	8,  // 17: tenant.User.SendVerifyEmail:input_type -> tenant.SendVerifyEmailRequest
+	10, // 18: tenant.User.SendResetPasswordEmail:input_type -> tenant.SendResetPasswordEmailRequest
+	12, // 19: tenant.User.ResetPasswordByCode:input_type -> tenant.ResetPasswordByCodeRequest
+	14, // 20: tenant.User.ChangePassword:input_type -> tenant.ChangePasswordRequest
+	16, // 21: tenant.User.RefreshToken:input_type -> tenant.RefreshTokenRequest
+	18, // 22: tenant.User.SwitchOrganization:input_type -> tenant.SwitchOrganizationRequest
+	20, // 23: tenant.User.UserInfo:input_type -> tenant.UserInfoRequest
+	22, // 24: tenant.User.EditProfile:input_type -> tenant.EditProfileRequest
+	24, // 25: tenant.User.CreateAdminUser:input_type -> tenant.CreateAdminUserRequest
+	28, // 26: tenant.User.Login:output_type -> proto.UserLoginResponse
+	4,  // 27: tenant.User.Register:output_type -> tenant.RegisterResponse
+	28, // 28: tenant.User.VerifyEmail:output_type -> proto.UserLoginResponse
+	29, // 29: tenant.User.SendVerifyEmail:output_type -> proto.SendVerifyEmailResponse
+	30, // 30: tenant.User.SendResetPasswordEmail:output_type -> proto.SendResetPasswordEmailResponse
+	28, // 31: tenant.User.ResetPasswordByCode:output_type -> proto.UserLoginResponse
+	31, // 32: tenant.User.ChangePassword:output_type -> proto.EmptyResponse
+	28, // 33: tenant.User.RefreshToken:output_type -> proto.UserLoginResponse
+	28, // 34: tenant.User.SwitchOrganization:output_type -> proto.UserLoginResponse
+	32, // 35: tenant.User.UserInfo:output_type -> proto.UserinfoResponse
+	32, // 36: tenant.User.EditProfile:output_type -> proto.UserinfoResponse
+	26, // 37: tenant.User.CreateAdminUser:output_type -> tenant.CreateAdminUserResponse
 	26, // [26:38] is the sub-list for method output_type
 	14, // [14:26] is the sub-list for method input_type
 	14, // [14:14] is the sub-list for extension type_name

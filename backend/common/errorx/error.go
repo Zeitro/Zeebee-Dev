@@ -14,6 +14,10 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+var (
+	ErrorEmptyRequestData = New("request data is empty")
+)
+
 // stackDepth is the max number of frames captured per error.
 const stackDepth = 32
 

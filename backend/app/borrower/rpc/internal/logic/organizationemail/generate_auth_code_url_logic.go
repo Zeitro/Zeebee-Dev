@@ -32,7 +32,7 @@ func NewGenerateAuthCodeUrlLogic(ctx context.Context, svcCtx *svc.ServiceContext
 
 func (l *GenerateAuthCodeUrlLogic) GenerateAuthCodeUrl(in *borrower.OrganizationEmailGenerateAuthCodeUrlRequest) (resp *borrower.OrganizationEmailGenerateAuthCodeUrlResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}
