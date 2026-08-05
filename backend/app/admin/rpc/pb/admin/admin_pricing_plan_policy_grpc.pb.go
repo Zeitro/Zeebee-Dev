@@ -8,10 +8,11 @@ package admin
 
 import (
 	context "context"
+	proto "zeebee-backend/domains/zeebee/proto"
+
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	proto "zeebee-backend/domains/zeebee/proto"
 )
 
 // This is a compile-time assertion to ensure that this generated file

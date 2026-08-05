@@ -20,8 +20,6 @@ import (
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/proto"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SaveDraftLoanLogic struct {
@@ -41,13 +39,7 @@ func NewSaveDraftLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sav
 }
 
 func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp *borrower.LoanApplyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
+
 	var loan *model.Loan
 	var oldApplicants []*model.LoanApplicant
 	var loanBorrower *model.LoanBorrower

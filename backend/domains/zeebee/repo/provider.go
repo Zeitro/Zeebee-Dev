@@ -30,6 +30,8 @@ type AllRepos struct {
 	OrganizationTemplateRepo        *OrganizationTemplateRepo
 	OrganizationSettingRepo         *OrganizationSettingRepo
 	BorrowerPropertyTransactionRepo *BorrowerPropertyTransactionRepo
+	PropertyTransactionEscrowRepo   *PropertyTransactionEscrowRepo
+	PropertyTransactionPropertyRepo *PropertyTransactionPropertyRepo
 	OperationRepo                   *OperationRepo
 	DocumentRepo                    *DocumentRepo
 	EntityDocumentRepo              *EntityDocumentRepo
@@ -76,6 +78,8 @@ func NewAllRepos(db *gorm.DB) *AllRepos {
 		OrganizationTemplateRepo:        NewOrganizationTemplateRepo(db),
 		OrganizationSettingRepo:         NewOrganizationSettingRepo(db),
 		BorrowerPropertyTransactionRepo: NewBorrowerPropertyTransactionRepo(db),
+		PropertyTransactionEscrowRepo:   NewPropertyTransactionEscrowRepo(db),
+		PropertyTransactionPropertyRepo: NewPropertyTransactionPropertyRepo(db),
 		OperationRepo:                   NewOperationRepo(db),
 		DocumentRepo:                    NewDocumentRepo(db),
 		EntityDocumentRepo:              NewEntityDocumentRepo(db),

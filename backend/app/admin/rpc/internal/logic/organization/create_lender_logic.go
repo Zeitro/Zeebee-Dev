@@ -3,8 +3,6 @@ package organizationlogic
 import (
 	"context"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
@@ -39,13 +37,6 @@ func NewCreateLenderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Crea
 // - Validates organization name uniqueness (Lender type)
 // - Validates owner email uniqueness (Lender type)
 func (l *CreateLenderLogic) CreateLender(in *admin.OrganizationCreateLenderRequest) (resp *admin.OrganizationDetailResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
 
 	if in.Data == nil || in.Data.Owner == nil || in.Data.Organization == nil {
 		return nil, errorx.New("Request data is required")

@@ -29,10 +29,12 @@ const TransactionCardExpandedContent = ({ transactionId, initialRowData, onRefre
 				key: 'documents',
 				label: 'Document',
 				children: <DocumentsTab rowData={rowData} onRefresh={handleRefresh} />,
+				destroyOnHidden: false,
 			},
 			{
 				key: 'details',
 				label: 'Details',
+				destroyOnHidden: true,
 				children: (
 					<div className="px-6 py-6">
 						<DetailsTab
@@ -46,6 +48,7 @@ const TransactionCardExpandedContent = ({ transactionId, initialRowData, onRefre
 			{
 				key: 'loans',
 				label: 'Loan',
+				destroyOnHidden: true,
 				children: (
 					<LoansTab rowData={rowData} loading={loading} onRefresh={handleRefresh} />
 				),
@@ -53,6 +56,7 @@ const TransactionCardExpandedContent = ({ transactionId, initialRowData, onRefre
 			{
 				key: 'log',
 				label: 'Log',
+				destroyOnHidden: true,
 				children: <LogTab transactionId={transactionId} />,
 			},
 		],
@@ -71,7 +75,6 @@ const TransactionCardExpandedContent = ({ transactionId, initialRowData, onRefre
 					onChange={setActiveTab}
 					items={tabItems}
 					className={styles.transactionCardTabs}
-					destroyOnHidden={false}
 				/>
 			</Spin>
 		</div>

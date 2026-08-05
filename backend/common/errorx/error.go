@@ -5,6 +5,7 @@ package errorx
 
 import (
 	"bytes"
+	"errors"
 	stderrors "errors"
 	"fmt"
 	"runtime"
@@ -138,7 +139,8 @@ func GetErrorStack(err error) []string {
 	}
 
 	// 1. Our *Error: render the stack captured at construction.
-	if our, ok := err.(*Error); ok && our != nil {
+	var our *Error
+	if errors.As(err, &our) && our != nil {
 		if s := our.Stack(); s != "" {
 			return splitStackLines(s)
 		}
@@ -152,7 +154,7 @@ func GetErrorStack(err error) []string {
 	// split lines with \n
 	lines := bytes.Split(buf[:n], []byte("\n"))
 	lineArr := []string{}
-	for i := 0; i < len(lines); i++ {
+	for i := range lines {
 		if i == 0 {
 			continue
 		}
@@ -164,7 +166,7 @@ func GetErrorStack(err error) []string {
 // splitStackLines splits a rendered stack block into non-empty lines.
 func splitStackLines(s string) []string {
 	var out []string
-	for _, line := range strings.Split(s, "\n") {
+	for line := range strings.SplitSeq(s, "\n") {
 		if line == "" {
 			continue
 		}

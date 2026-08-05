@@ -15,6 +15,71 @@
   },
   "basePath": "/",
   "paths": {
+    "/api/v1/doc_to_pdf": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "pdf_generator"
+        ],
+        "summary": "Convert doc/docx to Pdf",
+        "operationId": "pdfGeneratorDocToPdf",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "type",
+                "ext"
+              ],
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "ext": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/pdf": {
       "post": {
         "consumes": [
@@ -61,7 +126,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "Data": {
+                "data": {
                   "type": "array",
                   "items": {
                     "type": "integer"
@@ -74,9 +139,9 @@
       }
     }
   },
-  "x-date": "2026-01-28 16:27:06",
+  "x-date": "2026-07-29 16:02:53",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
-  "x-goctl-version": "1.9.2"
+  "x-goctl-version": "1.10.1"
 }

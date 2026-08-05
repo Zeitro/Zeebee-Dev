@@ -18,8 +18,8 @@ import (
 var borrowerApiContent string
 
 type ApiServer struct {
-	s         *rest.Server
-	startOpt  rest.StartOption
+	s        *rest.Server
+	startOpt rest.StartOption
 }
 
 func NewApiServer(c config.Config) (s service.Service) {

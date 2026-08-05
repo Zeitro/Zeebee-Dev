@@ -3,7 +3,6 @@ package organizationlogic
 import (
 	"context"
 
-	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/protobuf/proto"
 	"gorm.io/gorm"
 
@@ -38,13 +37,6 @@ func NewUpdateLenderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upda
 // UpdateLender updates editable fields of a Lender organization.
 // When activating a search-sourced org without an owner, request must include owner credentials.
 func (l *UpdateLenderLogic) UpdateLender(in *admin.OrganizationUpdateLenderRequest) (resp *admin.OrganizationDetailResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
 
 	organization, err := l.svcCtx.OrganizationRepo.GetOrganization(l.ctx, in.Data.Id, constants.UserTypeLender, false)
 	if err != nil {

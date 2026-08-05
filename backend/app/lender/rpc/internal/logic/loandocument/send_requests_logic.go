@@ -38,13 +38,7 @@ func NewSendRequestsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Send
 }
 
 func (l *SendRequestsLogic) SendRequests(in *lender.LoanDocumentSendRequestsRequest) (resp *proto.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
+
 	var loan *model.Loan
 
 	var loanDocuments []*model.LoanDocument

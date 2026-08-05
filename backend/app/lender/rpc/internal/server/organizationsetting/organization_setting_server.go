@@ -7,7 +7,7 @@ package server
 import (
 	"context"
 
-	"zeebee-backend/app/lender/rpc/internal/logic/organizationsetting"
+	organizationsettinglogic "zeebee-backend/app/lender/rpc/internal/logic/organizationsetting"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 )
