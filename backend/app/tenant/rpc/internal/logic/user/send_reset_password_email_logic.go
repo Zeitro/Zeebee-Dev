@@ -2,12 +2,14 @@ package userlogic
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
 	"github.com/duke-git/lancet/v2/random"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/threading"
+	"gorm.io/gorm"
 
 	"zeebee-backend/app/tenant/rpc/internal/email_tpl"
 	"zeebee-backend/app/tenant/rpc/internal/logic"
@@ -61,6 +63,9 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *tenant.SendRese
 
 	user, err := l.svcCtx.UserRepo.GetUserByEmail(l.ctx, emailAddr, userType)
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errorx.New("user not found")
+		}
 		return nil, errorx.WithStack(err)
 	}
 	if user == nil {
@@ -84,11 +89,9 @@ func (l *SendResetPasswordEmailLogic) sendResetPwdEmail(ctx context.Context, use
 	if err != nil {
 		return err
 	}
-	client, err := l.baseLogic.EmailClientFor(userType)
-	if err != nil {
-		return err
-	}
 
+	// Cache the one-time code before resolving the SMTP client so a client
+	// outage does not block reset (and tests observe the code without SMTP).
 	codeKey := stringx.Format(constants.ResetPwdCode, userType, emailAddr)
 	code, _ := l.svcCtx.RedisCli.Get(ctx, codeKey)
 	if len(code) == 0 {
@@ -96,6 +99,11 @@ func (l *SendResetPasswordEmailLogic) sendResetPwdEmail(ctx context.Context, use
 		if err := l.svcCtx.RedisCli.SetExpire(ctx, codeKey, code, profile.ResetPwdExpireSeconds); err != nil {
 			return errorx.WithStack(err)
 		}
+	}
+
+	client, err := l.baseLogic.EmailClientFor(userType)
+	if err != nil {
+		return err
 	}
 
 	content, err := email.ParseTemplate(email_tpl.ResetPwdEmail, map[string]interface{}{
