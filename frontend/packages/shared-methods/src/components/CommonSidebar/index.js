@@ -7,6 +7,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { RightCircleTwoTone, LeftCircleTwoTone } from '@ant-design/icons';
 import { useUserStore } from '@repo/shared-methods/store';
 import UserInfo from './UserInfo';
+import TrialBanner from './TrialBanner';
 import { useDeferredSyncEffect, useElementSize } from '@repo/shared-methods/hooks';
 import { findItem, generateMenuBar } from '@repo/shared-methods/utils';
 import { iconData } from '@repo/shared-methods/enum';
@@ -15,12 +16,19 @@ const homePathname = '/';
 const initTwoToneColor = ['var(--base-label)', 'var(--gray-light)'];
 /**
  * 侧边栏组件
+ *
+ * @param {object} props
+ * @param {number} [props.trialDaysRemaining] 试用剩余天数；>0 时在用户区上方展示提示条
  */
 export const CommonSidebar = ({
 	routerList,
 	personalList,
 	handleClickPersonalItem,
 	renderLogo,
+	planName,
+	currentPlanId,
+	pricingProps,
+	trialDaysRemaining,
 }) => {
 	const router = useRouter();
 	const pathname = usePathname();
@@ -29,6 +37,7 @@ export const CommonSidebar = ({
 	const [selectedKey, setSelectedKey] = useState('');
 	const [openKey, setOpenKey] = useState('');
 	const [twoToneColor, setTwoToneColor] = useState(initTwoToneColor);
+	const [pricingOpen, setPricingOpen] = useState(false);
 	const [rect, rectDom] = useElementSize();
 
 	// 获取当前路由的配置
@@ -114,11 +123,21 @@ export const CommonSidebar = ({
 					return customRoot;
 				}}
 			/>
+			<TrialBanner
+				trialDaysRemaining={trialDaysRemaining}
+				sidebarCollapsed={sidebarCollapsed}
+				onUpgradeClick={() => setPricingOpen(true)}
+			/>
 			<UserInfo
 				userInfo={userInfo}
 				sidebarCollapsed={sidebarCollapsed}
 				personalList={personalList}
 				handleClickPersonalItem={handleClickPersonalItem}
+				planName={planName}
+				currentPlanId={currentPlanId}
+				pricingProps={pricingProps}
+				pricingOpen={pricingOpen}
+				onPricingOpenChange={setPricingOpen}
 			/>
 			<div
 				className="absolute right-[-8px] top-[18px] cursor-pointer"

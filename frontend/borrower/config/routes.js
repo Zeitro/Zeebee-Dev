@@ -176,6 +176,12 @@ export const noTokenRouter = [
 		hideCrumbs: true,
 	},
 	{
+		path: '/pricing',
+		title: 'Pricing',
+		hideMenu: true,
+		hideCrumbs: true,
+	},
+	{
 		path: '/not-found',
 		title: '404',
 		hideCrumbs: true,
