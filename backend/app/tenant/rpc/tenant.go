@@ -5,12 +5,17 @@ import (
 	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/health"
-	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 
 	"zeebee-backend/app/tenant/config"
-	authzServer "zeebee-backend/app/tenant/rpc/internal/server/authz"
+	apiServer "zeebee-backend/app/tenant/rpc/internal/server/api"
+	authServer "zeebee-backend/app/tenant/rpc/internal/server/auth"
+	organizationServer "zeebee-backend/app/tenant/rpc/internal/server/organization"
+	organizationEmailServer "zeebee-backend/app/tenant/rpc/internal/server/organizationemail"
+	organizationSettingServer "zeebee-backend/app/tenant/rpc/internal/server/organizationsetting"
+	organizationSubscriptionServer "zeebee-backend/app/tenant/rpc/internal/server/organizationsubscription"
+	organizationTemplateServer "zeebee-backend/app/tenant/rpc/internal/server/organizationtemplate"
+	organizationUserServer "zeebee-backend/app/tenant/rpc/internal/server/organizationuser"
 	userServer "zeebee-backend/app/tenant/rpc/internal/server/user"
 	"zeebee-backend/app/tenant/rpc/internal/svc"
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
@@ -35,11 +40,20 @@ func NewRpcServer(c config.Config) (service.Service, error) {
 	}
 
 	rpcServer := zrpc.MustNewServer(rpcConfig.RpcServerConf, func(grpcServer *grpc.Server) {
-		tenant.RegisterAuthzServer(grpcServer, authzServer.NewAuthzServer(ctx))
+		// Identity issuance + per-request authorization (direction B).
+		tenant.RegisterAuthServer(grpcServer, authServer.NewAuthServer(ctx))
 		tenant.RegisterUserServer(grpcServer, userServer.NewUserServer(ctx))
 
-		// gRPC health probe (grpc_health_v1) for k8s/deploy liveness (T008).
-		healthpb.RegisterHealthServer(grpcServer, health.NewServer())
+		// RBAC object registry (api endpoints / resources / roles / policies).
+		tenant.RegisterApiServer(grpcServer, apiServer.NewApiServer(ctx))
+
+		// Organization modules (consolidated from admin / lender / borrower).
+		tenant.RegisterOrganizationServer(grpcServer, organizationServer.NewOrganizationServer(ctx))
+		tenant.RegisterOrganizationUserServer(grpcServer, organizationUserServer.NewOrganizationUserServer(ctx))
+		tenant.RegisterOrganizationEmailServer(grpcServer, organizationEmailServer.NewOrganizationEmailServer(ctx))
+		tenant.RegisterOrganizationSettingServer(grpcServer, organizationSettingServer.NewOrganizationSettingServer(ctx))
+		tenant.RegisterOrganizationSubscriptionServer(grpcServer, organizationSubscriptionServer.NewOrganizationSubscriptionServer(ctx))
+		tenant.RegisterOrganizationTemplateServer(grpcServer, organizationTemplateServer.NewOrganizationTemplateServer(ctx))
 
 		if rpcConfig.Mode == service.DevMode || rpcConfig.Mode == service.TestMode {
 			reflection.Register(grpcServer)

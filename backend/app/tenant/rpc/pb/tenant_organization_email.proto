@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package tenant;
+
+option go_package = "zeebee-backend/app/tenant/rpc/pb/tenant";
+
+import "proto/common.proto";
+
+// Organization-level sender credentials (SMTP / Gmail OAuth), consolidated from
+// the borrower backend. SaveEmail persists SMTP/strategy config.
+// GenerateAuthCodeUrl drives Gmail OAuth consent — Gmail OAuth sending is deferred
+// (SMTP-first scope), so the tenant wrapper returns an explicit "not configured"
+// error until OAuth client config is wired (see contracts §2.6).
+// EmailAuthorize is not exposed (returns a runtime email client.Client handle).
+
+message OrganizationEmailSaveEmailRequest {
+  OrganizationEmailSaveEmailRequestData data = 1;
+}
+message OrganizationEmailSaveEmailRequestData {
+  string user_type = 1;            // organization_type
+  int64 organization_id = 2;
+  int64 user_id = 3;
+  string email = 4;
+  string purpose = 5;              // contact | ...
+  string auth_strategy = 6;        // organization | user | ...
+}
+
+message OrganizationEmailGenerateAuthCodeUrlRequest {
+  OrganizationEmailGenerateAuthCodeUrlRequestData data = 1;
+}
+message OrganizationEmailGenerateAuthCodeUrlRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+  int64 user_id = 3;
+  string email_provider = 4;       // gmail | ...
+  string purpose = 5;
+}
+
+message OrganizationEmailGenerateAuthCodeUrlResponse {
+  OrganizationEmailGenerateAuthCodeUrlResponseData data = 1;
+}
+message OrganizationEmailGenerateAuthCodeUrlResponseData {
+  string url = 1;
+}
+
+service OrganizationEmail {
+  rpc SaveEmail(OrganizationEmailSaveEmailRequest) returns (proto.EmptyResponse);
+  rpc GenerateAuthCodeUrl(OrganizationEmailGenerateAuthCodeUrlRequest) returns (OrganizationEmailGenerateAuthCodeUrlResponse);
+}

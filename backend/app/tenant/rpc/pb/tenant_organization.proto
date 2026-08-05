@@ -1,0 +1,150 @@
+syntax = "proto3";
+
+package tenant;
+
+option go_package = "zeebee-backend/app/tenant/rpc/pb/tenant";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+// Organization CRUD + ordering + status, consolidated from admin / lender / borrower.
+// tenant is a thin wrapper over the shared OrganizationLogic (9 methods).
+
+message OrganizationPageRequest {
+  OrganizationPageRequestData data = 1;
+}
+message OrganizationPageRequestFilter {
+  string keyword = 1;
+  string organization_type = 2;
+  string status = 3;
+}
+message OrganizationPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  OrganizationPageRequestFilter filter = 3;
+  proto.CommonPageSorter sorter = 4;
+  string user_type = 5;
+}
+
+message OrganizationPageEntity {
+  int64 id = 1;
+  string name = 2;
+  string status = 3;
+  proto.AddressEntity address = 4;
+  string contact_email = 5;
+  string contact_phone = 6;
+  string contact_name = 7;
+  string owner_type = 8;
+  string type = 9;
+  string logo = 10;
+  string website = 11;
+  string tagline = 12;
+  string source = 13;
+  int32 order = 14;
+  string owner_email = 15;
+  string owner_full_name = 16;
+  string owner_first_name = 17;
+  string owner_mid_name = 18;
+  string owner_last_name = 19;
+  string created_at = 20;
+  string updated_at = 21;
+}
+
+message OrganizationPageResponse {
+  OrganizationPageResponseData data = 1;
+}
+message OrganizationPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated OrganizationPageEntity list = 5;
+}
+
+message OrganizationDetailRequest {
+  OrganizationDetailRequestData data = 1;
+}
+message OrganizationDetailRequestData {
+  string user_type = 1;
+  int64 id = 2;
+}
+
+message OrganizationDetailWithTypeRequest {
+  OrganizationDetailWithTypeRequestData data = 1;
+}
+message OrganizationDetailWithTypeRequestData {
+  string user_type = 1;
+  int64 id = 2;
+}
+
+message OrganizationDetailResponse {
+  proto.OrganizationEntity data = 1;
+}
+
+message OrganizationAllRequest {
+  OrganizationAllRequestData data = 1;
+}
+message OrganizationAllRequestData {
+  string user_type = 1;
+}
+
+message OrganizationAllResponse {
+  repeated proto.OrganizationEntity data = 1;
+}
+
+message OrganizationAllForOptionRequest {
+  OrganizationAllForOptionRequestData data = 1;
+}
+message OrganizationAllForOptionRequestData {
+  string user_type = 1;
+  string status = 2;
+}
+
+message OrganizationSelectOptionsRequest {
+  OrganizationSelectOptionsRequestData data = 1;
+}
+message OrganizationSelectOptionsRequestData {
+  string user_type = 1;
+}
+
+message OrganizationOptionsResponse {
+  repeated proto.OrganizationOptionsEntity data = 1;
+}
+
+message OrganizationDeleteRequest {
+  OrganizationDeleteRequestData data = 1;
+}
+message OrganizationDeleteRequestData {
+  string user_type = 1;
+  int64 id = 2;
+}
+
+message OrganizationUpdateOrderRequest {
+  OrganizationUpdateOrderRequestData data = 1;
+}
+message OrganizationUpdateOrderRequestData {
+  string user_type = 1;
+  int64 id = 2;
+  int32 order = 3;
+}
+
+message OrganizationSwitchStatusRequest {
+  OrganizationSwitchStatusRequestData data = 1;
+}
+message OrganizationSwitchStatusRequestData {
+  string user_type = 1;
+  int64 id = 2;
+  string status = 3;
+}
+
+service Organization {
+  rpc Page(OrganizationPageRequest) returns (OrganizationPageResponse);
+  rpc Detail(OrganizationDetailRequest) returns (OrganizationDetailResponse);
+  rpc DetailWithType(OrganizationDetailWithTypeRequest) returns (OrganizationDetailResponse);
+  rpc All(OrganizationAllRequest) returns (OrganizationAllResponse);
+  rpc AllForOption(OrganizationAllForOptionRequest) returns (OrganizationOptionsResponse);
+  rpc SelectOptions(OrganizationSelectOptionsRequest) returns (OrganizationOptionsResponse);
+  rpc Delete(OrganizationDeleteRequest) returns (proto.EmptyResponse);
+  rpc UpdateOrder(OrganizationUpdateOrderRequest) returns (proto.EmptyResponse);
+  rpc SwitchStatus(OrganizationSwitchStatusRequest) returns (proto.EmptyResponse);
+}
