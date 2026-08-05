@@ -2,15 +2,14 @@ package userlogic
 
 import (
 	"context"
+	"strings"
 
-	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/threading"
 
 	"zeebee-backend/app/tenant/rpc/internal/logic"
 	"zeebee-backend/app/tenant/rpc/internal/svc"
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
@@ -35,12 +34,37 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 
 // Register builds the identity (user + organization) only. Borrower pre-approval
 // side effects stay at the borrower backend (it consumes user_id / organization_id
-// from the response). The verify-email send is handled by SendVerifyEmail / the
-// caller; tenant does not yet own per-platform email delivery.
+// from the response, and keeps the pre-approval JSON in its own request). Email
+// is normalized to lowercase; an existing user gets the verify or login-guidance
+// email resent instead of a duplicate-creation error.
 func (l *RegisterLogic) Register(in *tenant.RegisterRequest) (resp *tenant.RegisterResponse, err error) {
 	userType, err := logic.ParseUserType(in.Data.UserType)
 	if err != nil {
 		return nil, err
+	}
+	emailAddr := strings.ToLower(in.Data.Email)
+
+	existedUser, _ := l.svcCtx.UserRepo.GetUserByEmail(l.ctx, emailAddr, userType)
+	if existedUser != nil && existedUser.Id > 0 {
+		threading.GoSafe(func() {
+			ctx := context.WithoutCancel(l.ctx)
+			if existedUser.Status == constants.UserStatusUnverified {
+				if err := sendVerifyEmail(ctx, l.baseLogic, l.svcCtx, userType, emailAddr, existedUser.FirstName); err != nil {
+					logSendError(l.svcCtx, ctx, "fail to resend register verify email", err)
+				}
+			} else {
+				if err := sendLoginUrlEmail(ctx, l.baseLogic, l.svcCtx, userType, emailAddr, existedUser.FirstName); err != nil {
+					logSendError(l.svcCtx, ctx, "fail to send login url email", err)
+				}
+			}
+		})
+		return &tenant.RegisterResponse{
+			Data: &tenant.RegisterResponseData{
+				UserId:         existedUser.Id,
+				OrganizationId: existedUser.DefaultOrganizationId,
+				Status:         string(existedUser.Status),
+			},
+		}, nil
 	}
 
 	pwdHash, err := utils.HashPassword(in.Data.Password)
@@ -55,12 +79,19 @@ func (l *RegisterLogic) Register(in *tenant.RegisterRequest) (resp *tenant.Regis
 	userInput.PasswordHash = pwdHash
 	userInput.Status = constants.UserStatusUnverified
 	userInput.Type = userType
+	userInput.Email = emailAddr
 	userInput.FullName = stringx.FormatFullName(in.Data.FirstName, "", in.Data.LastName)
 
+	ownerType := constants.OrganizationOwnerType(in.Data.OwnerType)
+	if userType == constants.UserTypeBorrower {
+		ownerType = constants.OrganizationOwnerTypeNone
+	} else if ownerType == "" {
+		ownerType = constants.OrganizationOwnerTypeThirdParty
+	}
 	organizationInput := dto.OrganizationRegisterRequestDto{
 		Name:      in.Data.OrganizationName,
 		Type:      userType,
-		OwnerType: constants.OrganizationOwnerType(in.Data.OwnerType),
+		OwnerType: ownerType,
 	}
 
 	userModel, _, err := l.baseLogic.UserLogic.RegisterWithOrganization(l.ctx, *userInput, organizationInput, userType, false)
@@ -71,10 +102,8 @@ func (l *RegisterLogic) Register(in *tenant.RegisterRequest) (resp *tenant.Regis
 	// Send the verify email asynchronously using the platform's SMTP client + brand config.
 	threading.GoSafe(func() {
 		ctx := context.WithoutCancel(l.ctx)
-		if err := sendVerifyEmail(ctx, l.baseLogic, l.svcCtx, userType, in.Data.Email, userModel.FirstName); err != nil {
-			l.svcCtx.Logger.WithContext(ctx).
-				WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
-				Error("fail to send register verify email")
+		if err := sendVerifyEmail(ctx, l.baseLogic, l.svcCtx, userType, emailAddr, userModel.FirstName); err != nil {
+			logSendError(l.svcCtx, ctx, "fail to send register verify email", err)
 		}
 	})
 

@@ -80,10 +80,19 @@ func (l *SendVerifyEmailLogic) SendVerifyEmail(in *tenant.SendVerifyEmailRequest
 	return &proto.SendVerifyEmailResponse{}, nil
 }
 
-// sendVerifyEmail generates (or reuses) the one-time verify code, caches it, and
-// mails the verify link using the platform's SMTP client + brand config. Shared
-// by SendVerifyEmail and Register.
-func sendVerifyEmail(ctx context.Context, baseLogic *logic.BaseLogic, svcCtx *svc.ServiceContext, userType constants.UserType, emailAddr, firstName string) error {
+// sendLoginUrlEmail rate-limits and mails the platform login link to an already
+// registered (active) user who re-submitted registration. Mirrors the borrower /
+// lender "already activated" path with tenant-owned brand/URL config.
+func sendLoginUrlEmail(ctx context.Context, baseLogic *logic.BaseLogic, svcCtx *svc.ServiceContext, userType constants.UserType, emailAddr, firstName string) error {
+	key := stringx.Format(constants.LoginEmail, userType, emailAddr)
+	ok, err := svcCtx.LimiterMgr.Limit(ctx, limiter.StrategySendLoginEmail, key)
+	if err != nil {
+		return errorx.WithStack(err)
+	}
+	if !ok {
+		return errorx.Errorf("email %s try too many times", emailAddr)
+	}
+
 	profile, err := baseLogic.PlatformFor(userType)
 	if err != nil {
 		return err
@@ -93,6 +102,43 @@ func sendVerifyEmail(ctx context.Context, baseLogic *logic.BaseLogic, svcCtx *sv
 		return err
 	}
 
+	content, err := email.ParseTemplate(email_tpl.LoginUrlEmail, map[string]interface{}{
+		"url":        profile.LoginUrl,
+		"first_name": firstName,
+	})
+	if err != nil {
+		return errorx.WithStack(err)
+	}
+
+	return client.SendEmail(email.Message{
+		Subject: "Login to your account",
+		From:    senderOf(profile),
+		To:      []string{emailAddr},
+		Body:    content,
+		IsHTML:  true,
+	})
+}
+
+// logSendError records an async account-email failure with its stack for
+// observability without failing the request that triggered the send.
+func logSendError(svcCtx *svc.ServiceContext, ctx context.Context, msg string, err error) {
+	svcCtx.Logger.WithContext(ctx).
+		WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
+		Error(msg)
+}
+
+// sendVerifyEmail generates (or reuses) the one-time verify code, caches it, and
+// mails the verify link using the platform's SMTP client + brand config. Shared
+// by SendVerifyEmail and Register.
+func sendVerifyEmail(ctx context.Context, baseLogic *logic.BaseLogic, svcCtx *svc.ServiceContext, userType constants.UserType, emailAddr, firstName string) error {
+	profile, err := baseLogic.PlatformFor(userType)
+	if err != nil {
+		return err
+	}
+
+	// Generate and cache the one-time code before resolving the SMTP client so a
+	// client outage does not block verification (and tests observe the code even
+	// when no SMTP is configured).
 	codeKey := stringx.Format(constants.UserRegisterVerifyCode, userType, emailAddr)
 	code, _ := svcCtx.RedisCli.Get(ctx, codeKey)
 	if len(code) == 0 {
@@ -100,6 +146,11 @@ func sendVerifyEmail(ctx context.Context, baseLogic *logic.BaseLogic, svcCtx *sv
 		if err := svcCtx.RedisCli.SetExpire(ctx, codeKey, code, profile.VerifyEmailExpireSeconds); err != nil {
 			return errorx.WithStack(err)
 		}
+	}
+
+	client, err := baseLogic.EmailClientFor(userType)
+	if err != nil {
+		return err
 	}
 
 	content, err := email.ParseTemplate(email_tpl.RegisterVerifyEmail, map[string]interface{}{
