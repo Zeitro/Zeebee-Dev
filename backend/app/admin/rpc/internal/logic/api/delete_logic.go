@@ -6,11 +6,8 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type DeleteLogic struct {
@@ -30,13 +27,6 @@ func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogi
 }
 
 func (l *DeleteLogic) Delete(in *admin.ApiDeleteRequest) (resp *proto.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
 
 	err = l.baseLogic.ApiLogic.DeleteApi(l.ctx, in.Data.Id, constants.UserType(in.Data.Type))
 	if err != nil {

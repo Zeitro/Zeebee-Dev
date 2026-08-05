@@ -22,3 +22,61 @@
 	line-height: 20px;
 	color: var(--base-label);
 }
+
+.parseStatusBar {
+	padding: 14px 24px;
+	border-bottom: 1px solid var(--base-border);
+	background: var(--gray-light);
+}
+
+.parseSteps {
+	:global {
+		.ant-steps-item-title {
+			font-size: 13px !important;
+			font-weight: 500;
+			line-height: 22px !important;
+		}
+
+		.ant-steps-item-icon {
+			width: 28px !important;
+			height: 28px !important;
+			line-height: 28px !important;
+			font-size: 14px !important;
+		}
+
+		.ant-steps-item-wait .ant-steps-item-icon {
+			background: var(--background);
+			border-color: var(--base-border);
+			color: var(--base-label);
+		}
+
+		.ant-steps-item-process .ant-steps-item-icon {
+			background: var(--base-active);
+			border-color: var(--base-primary);
+			color: var(--base-primary);
+		}
+
+		.ant-steps-item-process .ant-steps-item-title {
+			color: var(--base-primary) !important;
+		}
+
+		.ant-steps-item-finish .ant-steps-item-icon {
+			background: var(--green-light);
+			border-color: var(--base-success);
+			color: var(--base-success);
+		}
+
+		.ant-steps-item-finish .ant-steps-item-title {
+			color: var(--base-success) !important;
+		}
+
+		.ant-steps-item-finish > .ant-steps-item-container > .ant-steps-item-tail::after {
+			background-color: var(--base-success);
+		}
+
+		.ant-steps-item-process > .ant-steps-item-container > .ant-steps-item-tail::after,
+		.ant-steps-item-wait > .ant-steps-item-container > .ant-steps-item-tail::after {
+			background-color: var(--base-border);
+		}
+	}
+}

@@ -9,8 +9,6 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/data/dto"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type PageLogic struct {
@@ -30,13 +28,7 @@ func NewPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PageLogic {
 }
 
 func (l *PageLogic) Page(in *admin.PricingPlanPageRequest) (resp *admin.PricingPlanPageResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
+
 	req := dto.PricingPlanPageRequestDto{
 		BasePageRequestDto: dto.BasePageRequestDto{Page: in.Data.Page, Limit: in.Data.Limit},
 	}

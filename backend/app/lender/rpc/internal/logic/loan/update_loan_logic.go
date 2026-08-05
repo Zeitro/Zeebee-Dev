@@ -18,8 +18,6 @@ import (
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/proto"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/common/errorx"
 )
 
@@ -53,13 +51,7 @@ func NewUpdateLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 
 // UpdateLoan updates a loan
 func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender.LoanUpdateResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
+
 	var oldLoan *model.Loan
 	var oldLoanCopy *model.Loan
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)

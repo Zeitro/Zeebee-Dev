@@ -7,3 +7,8 @@ ApiConf:
   Log:
     Stat: false
     ServiceName: pdfgenerator.api
+  # doc/docx → pdf conversion (LibreOffice headless). Absent soffice → doc-to-pdf 500.
+  LibreOffice:
+    ConcurrentCap: 4
+    TimeoutSec: 90
+    MaxInputBytes: 10485760   # 10MB

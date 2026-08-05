@@ -3,8 +3,6 @@ package organizationlogic
 import (
 	"context"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
@@ -33,13 +31,7 @@ func NewSelectOptionsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sel
 }
 
 func (l *SelectOptionsLogic) SelectOptions(in *admin.OrganizationSelectOptionsRequest) (resp *admin.OrganizationSelectOptionsResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
+
 	if in.Data == nil {
 		return nil, errorx.New("Data is required")
 	}

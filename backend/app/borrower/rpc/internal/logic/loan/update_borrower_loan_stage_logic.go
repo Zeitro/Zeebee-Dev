@@ -9,8 +9,6 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/common/errorx"
 )
 
@@ -31,13 +29,6 @@ func NewUpdateBorrowerLoanStageLogic(ctx context.Context, svcCtx *svc.ServiceCon
 }
 
 func (l *UpdateBorrowerLoanStageLogic) UpdateBorrowerLoanStage(in *borrower.LoanUpdateStageRequest) (resp *proto.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
 
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {

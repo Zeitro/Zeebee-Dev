@@ -8,10 +8,6 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/data/dto"
-
-	"github.com/zeromicro/go-zero/core/logx"
-
-	"zeebee-backend/common/errorx"
 )
 
 type AuthCheckLogic struct {
@@ -31,13 +27,6 @@ func NewAuthCheckLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AuthChe
 }
 
 func (l *AuthCheckLogic) AuthCheck(in *admin.AuthCheckRequest) (resp *admin.AuthCheckResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
 
 	input, err := copierx.Trans[admin.AuthCheckRequestData, dto.AuthCheckRequestDto](in.Data)
 	if err != nil {

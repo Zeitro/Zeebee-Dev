@@ -45,11 +45,12 @@ type RpcConf struct {
 	PreApprovalLoanConf          []PreApprovalLoanConf
 	ZeebeeAgentEmail             string
 	ZeitroConf                   ZeitroConf
-	PdfGeneratorUrl              string
+	PdfGeneratorBaseUrl          string
 	TemplateConf                 map[string]TemplateConf
 	CasbinConf                   CasbinConf
 	CronTaskConf                 []CronTaskConf
 	StripeConf                   config.StripeConf `json:",optional"`
+	LlmConf                      LlmConf
 }
 
 type DbConf struct {
@@ -158,4 +159,12 @@ type CasbinEventTopic struct {
 type CronTaskConf struct {
 	Name     string `json:"name"`
 	Schedule string `json:"schedule"`
+}
+
+type LlmConf struct {
+	config.LlmConf
+
+	// TransactionFileParseConf: Provider/Model must support file upload + multimodal
+	// (file_id reference). Switching Provider invalidates uploaded ids → resume re-uploads.
+	TransactionFileParseConf config.LlmBizConf
 }

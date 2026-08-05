@@ -10,6 +10,7 @@ import (
 func isDescendantOf(ctx context.Context, repo interface {
 	FindOneById(context.Context, int64) (*model.Document, error)
 }, doc *model.Document, rootDocId int64) bool {
+
 	current := doc
 	maxDepth := 20
 	depth := 0
