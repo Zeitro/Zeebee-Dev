@@ -43,6 +43,7 @@ type Env struct {
 func NewEnv(t *testing.T) *Env {
 	t.Helper()
 	mr := miniredis.RunT(t)
+	conf := TestRpcConf()
 
 	dsn := fmt.Sprintf("file:%s?mode=memory&cache=shared", t.Name())
 	db, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{})
@@ -53,7 +54,7 @@ func NewEnv(t *testing.T) *Env {
 	redisCli, err := redisx.GetRedis(redisx.Opt{Host: mr.Addr(), Prefix: "tenant-test"})
 	require.NoError(t, err)
 
-	enforcer, err := newTestEnforcer(t, db, mr)
+	enforcer, err := newTestEnforcer(t, db, mr, conf.CasbinConf.Watcher.Channel)
 	require.NoError(t, err)
 
 	limiterRdb, err := commonlimiter.GetLimiterRedisClient(commonlimiter.LimiterRedisConf{Host: mr.Addr()})
@@ -64,7 +65,7 @@ func NewEnv(t *testing.T) *Env {
 	)
 
 	svcCtx := &svc.ServiceContext{
-		Config:     TestRpcConf(),
+		Config:     conf,
 		Logger:     logx.WithContext(context.Background()),
 		AllRepos:   repo.NewAllRepos(db),
 		RedisCli:   redisCli,
@@ -92,7 +93,7 @@ func rewritePgDefaultsForSQLite(db *gorm.DB) {
 	})
 }
 
-func newTestEnforcer(t *testing.T, db *gorm.DB, mr *miniredis.Miniredis) (*rbac.Enforcer, error) {
+func newTestEnforcer(t *testing.T, db *gorm.DB, mr *miniredis.Miniredis, channel string) (*rbac.Enforcer, error) {
 	t.Helper()
 	modelPath := filepath.Join(repoRoot(t), "app", "tenant", "etc", "model.conf")
 	modelPolicy, err := os.ReadFile(modelPath)
@@ -104,7 +105,7 @@ func newTestEnforcer(t *testing.T, db *gorm.DB, mr *miniredis.Miniredis) (*rbac.
 		ModelPolicy: string(modelPolicy),
 		Watcher: rbac.WatcherConfig{
 			RedisHost: mr.Addr(),
-			Channel:   "test-channel",
+			Channel:   channel,
 		},
 	})
 }
@@ -185,6 +186,9 @@ func TestRpcConf() config.RpcConf {
 		}
 	}
 	return config.RpcConf{
+		CasbinConf: config.CasbinConf{
+			Watcher: config.CasbinWatcher{Channel: "tenant-test-events"},
+		},
 		LimiterConf: config.LimiterConf{
 			Login:             domainConf.LimiterItem{Rate: 10, Period: 300, LockPeriod: 120},
 			SendLoginEmail:    domainConf.LimiterItem{Rate: 5, Period: 300},
