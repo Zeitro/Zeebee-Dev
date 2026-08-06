@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { matchRoute } from './commonRouter';
+import { TABLE_PAGE_SIZE_OPTIONS, getDefaultTablePageSize } from './tablePagination';
 
 /**
  * 公共方法封装（格式化或验证相关写在format文件）
@@ -7,11 +8,15 @@ import { matchRoute } from './commonRouter';
 
 // 分页
 export const getPagination = (pagi = {}) => {
+	const defaultPageSize = typeof window !== 'undefined' ? getDefaultTablePageSize() : 20;
+
 	return {
 		current: 1,
-		pageSize: 10,
+		pageSize: defaultPageSize,
 		total: 0,
 		showTotal: (total) => `▶  Total ${total}`,
+		showSizeChanger: true,
+		pageSizeOptions: TABLE_PAGE_SIZE_OPTIONS,
 		...pagi,
 	};
 };
@@ -156,7 +161,7 @@ export const findItem = ({
 	return result;
 };
 
-// 获取文件类型通过文件后缀
+// 获取文件类型通过文件后缀，用于上传文件时，根据文件后缀获取文件类型(返回的值对应后端所需字段值)
 export const getFileTypeBySuffix = (suffix) => {
 	const newSuffix = suffix?.toLowerCase();
 	switch (newSuffix) {
@@ -169,6 +174,12 @@ export const getFileTypeBySuffix = (suffix) => {
 		case 'doc':
 		case 'docx':
 			return 'doc';
+		case 'xls':
+		case 'xlsx':
+			return 'excel';
+		case 'pptx':
+		case 'ppt':
+			return 'ppt';
 		default:
 			return '';
 	}

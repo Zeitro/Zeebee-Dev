@@ -7,7 +7,7 @@ import { matchRoute, flattenNavRouter } from '@repo/shared-methods/utils';
 // import { noNavRouter } from '@config/routes';
 import { usePathname } from 'next/navigation';
 import { useUserStore, usePermissionStore } from '@repo/shared-methods/store';
-import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
+import { useDeferredSyncEffect, usePersistStoresHydrated } from '@repo/shared-methods/hooks';
 import useContent from './useContent';
 import Image from 'next/image';
 import { noTokenRouter } from '@config/routes';
@@ -37,6 +37,7 @@ function getCssVarValue(name, key) {
 export default function CustomizeAntdTheme({ children, fontFamily }) {
 	const { accessibleRoutes, userInfo } = useUserStore();
 	const { accessPaths, access } = usePermissionStore();
+	const isPersistHydrated = usePersistStoresHydrated();
 	const [antdToken, setAntdToken] = useState({});
 	const pathname = usePathname();
 	const { personalList, handleClickPersonalItem } = useContent();
@@ -52,13 +53,15 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 		return accessPaths?.some((path) => matchRoute(path, pathname));
 	}, [pathname, accessPaths]);
 
-	// 处理特殊情况（有导航栏的页面遇到token到期清空了，则重新登录）
+	// 处理特殊情况（有导航栏的页面遇到 token 到期 / userInfo 清空，则重新登录）
 	useEffect(() => {
-		if ((isPermissionPage || !isNoNav) && (!access || !userInfo)) {
+		// 须等 persist 水合完成后再判断，避免刷新首帧 store 尚未恢复而误跳登录
+		if (!isPersistHydrated) return;
+
+		if ((isPermissionPage || !isNoNav) && (!access?.access_token || !userInfo?.id)) {
 			window.location.replace('/login');
-			console.log('---退出---');
 		}
-	}, [access, isPermissionPage, userInfo, isNoNav]);
+	}, [access, isPermissionPage, isPersistHydrated, isNoNav, userInfo]);
 
 	useDeferredSyncEffect({
 		deferred: () => {

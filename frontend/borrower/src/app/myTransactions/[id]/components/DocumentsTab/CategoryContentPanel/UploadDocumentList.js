@@ -47,6 +47,25 @@ const UploadDocumentList = ({ category, onRefresh, transactionId }) => {
 			rowPlacement: 'both',
 			// 父级展示类型名；子级走组件默认（文件名 + 图标 pill），无需 fileRender
 		},
+		// {
+		// 	title: 'Parse status',
+		// 	key: 'parse_status',
+		// 	width: 140,
+		// 	rowPlacement: 'both',
+		// 	dataIndex: 'file_parse_config',
+		// 	render: (value, record, file) => {
+		// 		const syncedAt = value?.rules;
+		// 		if (!value) {
+		// 			return '';
+		// 		}
+		// 		return (
+		// 			<Tag icon={<GoogleOutlined />} color="green" className="m-0">
+		// 				Parsing
+		// 			</Tag>
+		// 		);
+		// 	},
+		// 	fileRender: () => '',
+		// },
 		{
 			title: 'Update date',
 			key: 'updated_at',
