@@ -103,8 +103,10 @@ func sendLoginUrlEmail(ctx context.Context, baseLogic *logic.BaseLogic, svcCtx *
 	}
 
 	content, err := email.ParseTemplate(email_tpl.LoginUrlEmail, map[string]interface{}{
-		"url":        profile.LoginUrl,
-		"first_name": firstName,
+		"url":            profile.LoginUrl,
+		"first_name":     firstName,
+		"logo_url":       profile.LogoUrl,
+		"footer_address": profile.FooterAddress,
 	})
 	if err != nil {
 		return errorx.WithStack(err)
