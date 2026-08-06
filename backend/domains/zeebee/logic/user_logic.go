@@ -42,9 +42,10 @@ func NewUserLogic(baseLogic *BaseLogic, authTopicMap map[constants.UserType]stri
 	}
 }
 
-// GetUserClaimFromCtx get user claim from context. userType selects the platform
-// jwtConfig used to parse the token (each platform signs with its own secret).
-func (l *UserLogic) GetUserClaimFromCtx(ctx context.Context, userType constants.UserType) (claim utils.JwtUser, err error) {
+// GetUserClaimFromCtx get user claim from context. The shared jwtConfig parses the
+// token (single unified key); userType is kept for API symmetry — the real type
+// lives in the claim.
+func (l *UserLogic) GetUserClaimFromCtx(ctx context.Context) (claim utils.JwtUser, err error) {
 	// Get from metadata
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
@@ -57,10 +58,7 @@ func (l *UserLogic) GetUserClaimFromCtx(ctx context.Context, userType constants.
 		return claim, errorx.WithStack(err)
 	}
 	token := tokens[0]
-	jwtConf, err := l.JwtConfigFor(userType)
-	if err != nil {
-		return claim, errorx.WithStack(status.Error(codes.InvalidArgument, err.Error()))
-	}
+	jwtConf := l.jwtConfig
 	jwtClaim, err := utils.ParseToken(token, jwtConf.AccessSecret)
 	if err != nil {
 		err = status.Error(codes.InvalidArgument, err.Error())
@@ -70,20 +68,17 @@ func (l *UserLogic) GetUserClaimFromCtx(ctx context.Context, userType constants.
 }
 
 // GenerateJwtToken generate jwt token for user
-func (l *UserLogic) GenerateJwtToken(user *model.User, organizationUser *model.OrganizationUser, userType constants.UserType) (token *dto.UserJwtTokenDto, err error) {
+func (l *UserLogic) GenerateJwtToken(user *model.User, organizationUser *model.OrganizationUser) (token *dto.UserJwtTokenDto, err error) {
 	if user == nil {
 		return nil, errorx.WithStack(errorx.New("user is empty"))
 	}
-	jwtConfig, err := l.JwtConfigFor(userType)
-	if err != nil {
-		return nil, err
-	}
+	jwtConfig := l.jwtConfig
 	userClaim := utils.JwtUser{
 		UserId:         user.Id,
 		OrganizationId: user.DefaultOrganizationId,
 		Username:       user.FullName,
 		Role:           nil,
-		UserType:       userType,
+		UserType:       user.Type,
 	}
 	if organizationUser != nil {
 		userClaim.OrganizationId = organizationUser.OrganizationId
@@ -125,23 +120,16 @@ func (l *UserLogic) GenerateJwtTokenById(ctx context.Context, userId int64, orga
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	token, err = l.GenerateJwtToken(user, organizationUser, userType)
+	token, err = l.GenerateJwtToken(user, organizationUser)
 	return token, err
 }
 
 // RefreshToken refresh token
-func (l *UserLogic) RefreshToken(ctx context.Context, refreshToken string, userType constants.UserType) (token *dto.UserJwtTokenDto, err error) {
-	jwtConfig, err := l.JwtConfigFor(userType)
-	if err != nil {
-		return nil, err
-	}
-	// Parse refresh token
-	claim, err := utils.ParseToken(refreshToken, jwtConfig.RefreshSecret)
+func (l *UserLogic) RefreshToken(ctx context.Context, refreshToken string) (token *dto.UserJwtTokenDto, err error) {
+	// Verify the refresh token signature with the single shared secret.
+	claim, err := utils.ParseToken(refreshToken, l.jwtConfig.RefreshSecret)
 	if err != nil {
 		return nil, errorx.WithStack(err)
-	}
-	if claim.UserType != userType {
-		return nil, errorx.New("user type does not match")
 	}
 
 	user, err := l.repos.UserRepo.GetUser(ctx, claim.UserId, claim.UserType, false)
@@ -159,7 +147,7 @@ func (l *UserLogic) RefreshToken(ctx context.Context, refreshToken string, userT
 	if organizationUser.Status != constants.OrganizationUserStatusActive {
 		return nil, errorx.New("organization user is not active")
 	}
-	token, err = l.GenerateJwtToken(user, organizationUser, claim.UserType)
+	token, err = l.GenerateJwtToken(user, organizationUser)
 	return token, err
 }
 
@@ -205,7 +193,7 @@ func (l *UserLogic) ResetPasswordWithEmail(ctx context.Context, input dto.UserRe
 		return nil, err
 	}
 
-	token, err = l.GenerateJwtToken(user, organizationUser, input.UserType)
+	token, err = l.GenerateJwtToken(user, organizationUser)
 	if err != nil {
 		return nil, err
 	}
@@ -362,7 +350,7 @@ func (l *UserLogic) Login(ctx context.Context, req dto.UserLoginRequestDto, limi
 		return nil, errorx.WithStack(err)
 	}
 
-	token, err = l.GenerateJwtToken(user, orgUser, req.UserType)
+	token, err = l.GenerateJwtToken(user, orgUser)
 	if err != nil {
 		return nil, err
 	}

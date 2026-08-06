@@ -15,7 +15,7 @@ type Config struct {
 
 	DbConf    DbConf
 	RedisConf RedisConf
-	JwtAuth   types.JwtAuth `json:",optional"`
+	JwtConf   types.JwtConf `json:",optional"`
 	EmailConf EmailConf
 
 	// Configurable rate-limit policy (FR-003: not hardcoded).

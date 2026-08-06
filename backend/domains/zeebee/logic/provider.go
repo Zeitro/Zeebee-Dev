@@ -35,7 +35,7 @@ type AllLogics struct {
 type AllLogicConfig struct {
 	Repos                 *repo.AllRepos
 	RedisCli              *redisx.Client
-	JwtConfigs            map[constants.UserType]dto.JwtConfig
+	JwtConfig             dto.JwtConfig
 	EmailClient           *email.Email
 	CurrentEnforcer       *rbac.Enforcer
 	CurrentAuthEventTopic string
@@ -44,7 +44,7 @@ type AllLogicConfig struct {
 }
 
 func NewAllLogics(config AllLogicConfig) *AllLogics {
-	baseLogic := NewBaseLogic(config.Repos, config.RedisCli, config.Logger, config.JwtConfigs)
+	baseLogic := NewBaseLogic(config.Repos, config.RedisCli, config.Logger, config.JwtConfig)
 	return &AllLogics{
 		ApiLogic:                      NewApiLogic(baseLogic, config.AuthEventTopicMap),
 		ResourceLogic:                 NewResourceLogic(baseLogic, config.AuthEventTopicMap),

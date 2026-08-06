@@ -148,7 +148,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *proto.
 			return
 		}
 
-		tokenInfo, err = l.baseLogic.UserLogic.GenerateJwtToken(userModel, organizationUserModel, constants.UserTypeBorrower)
+		tokenInfo, err = l.baseLogic.UserLogic.GenerateJwtToken(userModel, organizationUserModel)
 		if err != nil {
 			return
 		}

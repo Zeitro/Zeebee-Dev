@@ -17,19 +17,20 @@ type Config struct {
 
 type ApiConf struct {
 	rest.RestConf
-	JwtAuth         types.JwtAuth      `json:",optional"`
-	RpcConf         zrpc.RpcClientConf `json:",optional"`
+	JwtConf             types.JwtConf      `json:",optional"`
+	RpcConf             zrpc.RpcClientConf `json:",optional"`
 	PdfGeneratorBaseUrl string
 }
 
 type RpcConf struct {
 	zrpc.RpcServerConf
+	RpcServiceConf               RpcServiceConf
 	LimiterConf                  LimiterConf
 	VerifyEmailExpireSeconds     int
 	ResetPwdExpireSeconds        int
 	EmailConf                    EmailConf
 	RedisConf                    RedisConf
-	JwtAuth                      types.JwtAuth `json:",optional"`
+	JwtConf                      types.JwtConf `json:",optional"`
 	DbConf                       DbConf
 	AwsS3Conf                    AwsS3Conf
 	LoginUrl                     string
@@ -41,6 +42,12 @@ type RpcConf struct {
 	SendInviteEmailPeriodSeconds int
 	CasbinConf                   CasbinConf
 	CronTaskConf                 []CronTaskConf
+}
+
+// RpcServiceConf holds outbound RPC clients. Tenant is the identity + authz
+// authority (direction B); backends reach it via direct endpoints (no Etcd in dev).
+type RpcServiceConf struct {
+	Tenant zrpc.RpcClientConf
 }
 
 type DbConf struct {

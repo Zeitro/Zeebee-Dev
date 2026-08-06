@@ -29,7 +29,13 @@ type RpcConf struct {
 	// Casbin: tenant is the sole runtime executor (direction B).
 	CasbinConf CasbinConf
 
-	// Per-platform brand + JWT + front-end URLs + expiry (ODD-7).
+	// JwtConf is the single shared JWT signing config across all platforms
+	// (borrower/lender/admin). userType is carried in the token payload, so one
+	// key signs and verifies every token (ODD-5: single unified key).
+	JwtConf types.JwtConf
+
+	// Per-platform brand + front-end URLs + expiry (ODD-7). JWT signing is shared
+	// (see JwtConf above); only brand / URLs / email differ per platform.
 	PlatformConf PlatformConf
 }
 
@@ -80,11 +86,9 @@ type CasbinWatcher struct {
 	Tls     bool `json:",default=false"`
 }
 
-// PlatformConf groups every per-userType concern: JWT signing, brand, front-end URLs,
-// and one-time token expiry. Each platform keeps its own values (borrower/lender/admin
-// differ). tenant signs each platform's tokens with that platform's secret so the
-// matching backend validates locally (per-platform shared key, ODD-5).
-// Borrower emails must not point at test-environment URLs (ODD-7).
+// PlatformConf groups per-userType brand, front-end URLs, and one-time token expiry.
+// JWT signing is shared (RpcConf.JwtConf); only brand / URLs / email differ per
+// platform. Borrower emails must not point at test-environment URLs (ODD-7).
 type PlatformConf struct {
 	Borrower PlatformProfile
 	Lender   PlatformProfile
@@ -92,8 +96,6 @@ type PlatformConf struct {
 }
 
 type PlatformProfile struct {
-	JwtAuth types.JwtAuth
-
 	// EmailConf is per-platform: SMTP creds and/or Gmail OAuth. A platform uses
 	// whichever it is configured for (account emails: registration / reset / invite).
 	EmailConf EmailConf

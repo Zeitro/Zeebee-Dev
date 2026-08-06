@@ -8,8 +8,9 @@ import "proto/common.proto";
 import "proto/user.proto";
 
 // Identity issuance. tenant is the sole token-issuance authority.
-// email is unique per userType (UserRepo.GetUserByEmail takes userType), and each
-// platform signs with its own JWT secret -> every identity request carries user_type.
+// email is unique per userType (UserRepo.GetUserByEmail takes userType), and
+// anonymous flows (login / register / verify / reset) carry user_type. Authenticated
+// self-service methods resolve userType from the caller's JWT claim.
 // Responses maximize reuse of shared proto.* (UserLoginResponse / UserinfoResponse / ...).
 
 // --- Token response reused: proto.UserLoginResponse ---
@@ -91,10 +92,9 @@ message ChangePasswordRequest {
   ChangePasswordRequestData data = 1;
 }
 message ChangePasswordRequestData {
-  string user_type = 1;
-  int64 user_id = 2;
-  string old_password = 3;
-  string new_password = 4;
+  int64 user_id = 1;
+  string old_password = 2;
+  string new_password = 3;
 }
 
 // Refresh token (admin returns full TokenSet, ODD-6)
@@ -102,8 +102,7 @@ message RefreshTokenRequest {
   RefreshTokenRequestData data = 1;
 }
 message RefreshTokenRequestData {
-  string user_type = 1;
-  string refresh_token = 2;
+  string refresh_token = 1;
 }
 
 // Switch organization (re-issue token)
@@ -111,9 +110,8 @@ message SwitchOrganizationRequest {
   SwitchOrganizationRequestData data = 1;
 }
 message SwitchOrganizationRequestData {
-  string user_type = 1;
-  int64 user_id = 2;
-  int64 organization_id = 3;
+  int64 user_id = 1;
+  int64 organization_id = 2;
 }
 
 // User info
@@ -121,8 +119,7 @@ message UserInfoRequest {
   UserInfoRequestData data = 1;
 }
 message UserInfoRequestData {
-  string user_type = 1;
-  int64 user_id = 2;
+  int64 user_id = 1;
 }
 
 // Edit profile
@@ -130,11 +127,10 @@ message EditProfileRequest {
   EditProfileRequestData data = 1;
 }
 message EditProfileRequestData {
-  string user_type = 1;
-  int64 user_id = 2;
-  string first_name = 3;
-  string last_name = 4;
-  string mid_name = 5;
+  int64 user_id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string mid_name = 4;
 }
 
 // Admin provisioning (ODD-4): super-admin creates admin-backend user

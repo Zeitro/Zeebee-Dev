@@ -28,19 +28,19 @@ func NewSwitchOrganizationLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 // SwitchOrganization changes the user's default organization and re-issues a
-// TokenSet signed with the platform key.
+// TokenSet. The platform comes from the caller's JWT claim.
 func (l *SwitchOrganizationLogic) SwitchOrganization(in *tenant.SwitchOrganizationRequest) (resp *proto.UserLoginResponse, err error) {
-	userType, err := logic.ParseUserType(in.Data.UserType)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	user, err := l.baseLogic.UserLogic.SwitchOrganization(l.ctx, in.Data.UserId, in.Data.OrganizationId, userType)
+	user, err := l.baseLogic.UserLogic.SwitchOrganization(l.ctx, in.Data.UserId, in.Data.OrganizationId, claim.UserType)
 	if err != nil {
 		return nil, err
 	}
 
-	token, err := l.baseLogic.UserLogic.GenerateJwtTokenById(l.ctx, user.Id, user.DefaultOrganizationId, userType)
+	token, err := l.baseLogic.UserLogic.GenerateJwtTokenById(l.ctx, user.Id, user.DefaultOrganizationId, claim.UserType)
 	if err != nil {
 		return nil, err
 	}

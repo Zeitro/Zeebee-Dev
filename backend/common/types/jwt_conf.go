@@ -1,6 +1,6 @@
 package types
 
-type JwtAuth struct {
+type JwtConf struct {
 	AccessSecret  string `json:",default=accessSecret"`
 	AccessExpire  int64  `json:",default=3600"`
 	RefreshSecret string `json:",default=refreshSecret"`

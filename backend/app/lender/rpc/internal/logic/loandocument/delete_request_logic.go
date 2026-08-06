@@ -36,7 +36,7 @@ func (l *DeleteRequestLogic) DeleteRequest(in *proto.PathIdRequest) (resp *proto
 	var loan *model.Loan
 	var loanDocument *model.LoanDocument
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeLender)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}

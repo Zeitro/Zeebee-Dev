@@ -43,7 +43,7 @@ type Auth struct {
 	repos                       *repo.AllRepos
 	redisCli                    *redisx.Client
 	enforcer                    policyEnforcer
-	jwtConfigs                  map[constants.UserType]dto.JwtConfig
+	jwtConfig                   dto.JwtConfig
 	authenticationWhitelistMap  *mapx.Map[constants.UserType, []string] // login api whitelist
 	authorizationWhitelistMap   *mapx.Map[constants.UserType, []string] // permission api whitelist
 	apiResourceMap              *mapx.Map[constants.UserType, *mapx.Map[string, []int64]]
@@ -54,12 +54,12 @@ type Auth struct {
 	eventSubScribeCancelFn      context.CancelFunc
 }
 
-func NewAuth(repos *repo.AllRepos, redisCli *redisx.Client, jwtConfigs map[constants.UserType]dto.JwtConfig, enforcer *rbac.Enforcer, authEventTopic string) *Auth {
+func NewAuth(repos *repo.AllRepos, redisCli *redisx.Client, jwtConfig dto.JwtConfig, enforcer *rbac.Enforcer, authEventTopic string) *Auth {
 	ctx, cancel := context.WithCancel(context.Background())
 	auth := &Auth{
 		repos:                       repos,
 		redisCli:                    redisCli,
-		jwtConfigs:                  jwtConfigs,
+		jwtConfig:                   jwtConfig,
 		enforcer:                    enforcer,
 		authenticationWhitelistMap:  mapx.NewMap[constants.UserType, []string](),
 		authorizationWhitelistMap:   mapx.NewMap[constants.UserType, []string](),
@@ -79,11 +79,11 @@ func NewAuth(repos *repo.AllRepos, redisCli *redisx.Client, jwtConfigs map[const
 
 // newAuthWithEnforcer is a test seam: Auth with a fake enforcer and no redis
 // loop, for unit-testing rebuild/auth-check without DB or redis.
-func newAuthWithEnforcer(repos *repo.AllRepos, redisCli *redisx.Client, jwtConfigs map[constants.UserType]dto.JwtConfig, enforcer policyEnforcer, authEventTopic string) *Auth {
+func newAuthWithEnforcer(repos *repo.AllRepos, redisCli *redisx.Client, jwtConfig dto.JwtConfig, enforcer policyEnforcer, authEventTopic string) *Auth {
 	return &Auth{
 		repos:                       repos,
 		redisCli:                    redisCli,
-		jwtConfigs:                  jwtConfigs,
+		jwtConfig:                   jwtConfig,
 		enforcer:                    enforcer,
 		authenticationWhitelistMap:  mapx.NewMap[constants.UserType, []string](),
 		authorizationWhitelistMap:   mapx.NewMap[constants.UserType, []string](),
@@ -798,15 +798,6 @@ func (l *Auth) doRebuild(ctx context.Context, organizationType constants.UserTyp
 	return nil
 }
 
-// JwtConfigFor returns the JwtConfig for the given userType; missing = config error.
-func (l *Auth) JwtConfigFor(userType constants.UserType) (dto.JwtConfig, error) {
-	c, ok := l.jwtConfigs[userType]
-	if !ok {
-		return dto.JwtConfig{}, errorx.New("jwt config not configured for user type: " + string(userType))
-	}
-	return c, nil
-}
-
 func (l *Auth) GetUserClaimFromCtx(ctx context.Context, userType constants.UserType) (claim utils.JwtUser, err error) {
 	// Get from metadata
 	md, ok := metadata.FromIncomingContext(ctx)
@@ -820,10 +811,7 @@ func (l *Auth) GetUserClaimFromCtx(ctx context.Context, userType constants.UserT
 		return claim, errorx.WithStack(err)
 	}
 	token := tokens[0]
-	jwtConf, err := l.JwtConfigFor(userType)
-	if err != nil {
-		return claim, errorx.WithStack(status.Error(codes.InvalidArgument, err.Error()))
-	}
+	jwtConf := l.jwtConfig
 	jwtClaim, err := utils.ParseToken(token, jwtConf.AccessSecret)
 	if err != nil {
 		err = status.Error(codes.InvalidArgument, err.Error())

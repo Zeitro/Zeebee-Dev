@@ -17,22 +17,29 @@ type Config struct {
 
 type ApiConf struct {
 	rest.RestConf
-	JwtAuth types.JwtAuth      `json:",optional"`
+	JwtConf types.JwtConf      `json:",optional"`
 	RpcConf zrpc.RpcClientConf `json:",optional"`
 }
 
 type RpcConf struct {
 	zrpc.RpcServerConf
-	LimiterConf LimiterConf
-	EmailConf   EmailConf
-	RedisConf   RedisConf
-	JwtAuth     types.JwtAuth `json:",optional"`
-	DbConf      DbConf
-	AwsS3Conf   AwsS3Conf
+	RpcServiceConf RpcServiceConf
+	LimiterConf    LimiterConf
+	EmailConf      EmailConf
+	RedisConf      RedisConf
+	JwtConf        types.JwtConf `json:",optional"`
+	DbConf         DbConf
+	AwsS3Conf      AwsS3Conf
 	// OpenAIConf   OpenAIConf `json:",optional"`
 	LlmConf      LlmConf `json:",optional"`
 	CasbinConf   CasbinConf
 	CronTaskConf []CronTaskConf
+}
+
+// RpcServiceConf holds outbound RPC clients. Tenant is the identity + authz
+// authority (direction B); backends reach it via direct endpoints (no Etcd in dev).
+type RpcServiceConf struct {
+	Tenant zrpc.RpcClientConf
 }
 
 // OpenAIConf optional keys for lender discover; prefer env OPENAI_API_KEY in production.

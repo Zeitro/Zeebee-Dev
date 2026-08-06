@@ -30,7 +30,7 @@ func NewAssignOrganizationUsersLogic(ctx context.Context, svcCtx *svc.ServiceCon
 
 func (l *AssignOrganizationUsersLogic) AssignOrganizationUsers(in *admin.RoleAssignOrganizationUsersRequest) (resp *admin.RoleDetailResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeAdmin)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}

@@ -9,7 +9,6 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/common/timex"
-	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 
@@ -34,7 +33,7 @@ func NewLoanPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoanPage
 
 func (l *LoanPageLogic) LoanPage(in *lender.LoanPageRequest) (resp *lender.LoanPageResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeLender)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}

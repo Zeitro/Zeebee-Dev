@@ -23,8 +23,8 @@ var onceBase sync.Once
 
 // BaseLogic is the tenant logic entrypoint. It embeds ONE shared AllLogics and
 // owns the per-platform concerns tenant must handle itself: platform profiles
-// (brand / URLs / expiry) and SMTP clients. JWT signing keys live in the shared
-// domain BaseLogic (via AllLogicConfig.JwtConfigs) and are resolved by userType.
+// (brand / URLs / expiry) and SMTP clients. JWT signing uses the single shared
+// key (AllLogicConfig.JwtConfig); userType lives in the token claim.
 type BaseLogic struct {
 	svcCtx *svc.ServiceContext
 	*logicpkg.AllLogics
@@ -62,7 +62,7 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		AllLogics: logicpkg.NewAllLogics(logicpkg.AllLogicConfig{
 			Repos:                 svcCtx.AllRepos,
 			RedisCli:              svcCtx.RedisCli,
-			JwtConfigs:            buildJwtConfigs(svcCtx.Config.PlatformConf),
+			JwtConfig:             toJwtConfig(svcCtx.Config.JwtConf),
 			CurrentEnforcer:       svcCtx.Enforcer,
 			CurrentAuthEventTopic: topic,
 			AuthEventTopicMap:     authTopicMap,
@@ -88,15 +88,7 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 	return l
 }
 
-func buildJwtConfigs(pc config.PlatformConf) map[constants.UserType]dto.JwtConfig {
-	return map[constants.UserType]dto.JwtConfig{
-		constants.UserTypeBorrower: toJwtConfig(pc.Borrower.JwtAuth),
-		constants.UserTypeLender:   toJwtConfig(pc.Lender.JwtAuth),
-		constants.UserTypeAdmin:    toJwtConfig(pc.Admin.JwtAuth),
-	}
-}
-
-func toJwtConfig(j types.JwtAuth) dto.JwtConfig {
+func toJwtConfig(j types.JwtConf) dto.JwtConfig {
 	return dto.JwtConfig{
 		AccessSecret:  j.AccessSecret,
 		AccessExpire:  j.AccessExpire,

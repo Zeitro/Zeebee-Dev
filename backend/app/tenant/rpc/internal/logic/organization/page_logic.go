@@ -8,7 +8,6 @@ import (
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 )
 
@@ -32,17 +31,15 @@ func (l *PageLogic) Page(in *tenant.OrganizationPageRequest) (resp *tenant.Organ
 		return
 	}
 
-	pageReq := dto.OrganizationPageRequestDto{
-		BasePageRequestDto: dto.BasePageRequestDto{Page: in.Data.Page, Limit: in.Data.Limit},
-		Sorter:             dto.BasePageSorter{Column: in.Data.Sorter.Column, Sort: in.Data.Sorter.Sort},
-		Filter: dto.OrganizationPageFilter{
-			Keyword:          in.Data.Filter.Keyword,
-			OrganizationType: userType,
-			Status:           constants.OrganizationStatus(in.Data.Filter.Status),
-		},
+	// copierx maps page/limit/filter/sorter by name and tolerates a request
+	// that omits search (filter) or sort settings (they map to zero values).
+	pageReq, err := copierx.Trans[tenant.OrganizationPageRequestData, dto.OrganizationPageRequestDto](in.Data)
+	if err != nil {
+		return
 	}
+	pageReq.Filter.OrganizationType = userType
 
-	page, err := l.baseLogic.OrganizationLogic.Page(l.ctx, pageReq)
+	page, err := l.baseLogic.OrganizationLogic.Page(l.ctx, *pageReq)
 	if err != nil {
 		return
 	}

@@ -3,11 +3,22 @@ services:
     image: ${FULL_SERVICE_NAME}:${IMAGE_TAG:-latest}
     build:
       context: ../../
-      dockerfile: deploy/lender/Dockerfile
+      dockerfile: deploy/tenant/Dockerfile
       args:
         - CONFIG_ENV=${SERVICE_ENVIRONMENT}
     container_name: ${FULL_SERVICE_NAME}
     network_mode: host
+    healthcheck:
+      test: ["CMD", "/grpc_health_probe", "-addr=localhost:10401"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+    deploy:
+      # NFR-001: tenant is a per-request critical path -> at least 2 replicas.
+      # container_name + host network are single-instance helpers; the real
+      # replica count is enforced by the orchestrator (ECS task count / --scale).
+      replicas: 2
     logging:
       driver: awslogs
       options:

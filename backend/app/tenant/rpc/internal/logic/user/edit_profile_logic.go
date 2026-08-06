@@ -32,11 +32,11 @@ func NewEditProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *EditP
 // profile contract is name-only); organization_id is resolved from the user's
 // default organization.
 func (l *EditProfileLogic) EditProfile(in *tenant.EditProfileRequest) (resp *proto.UserinfoResponse, err error) {
-	userType, err := logic.ParseUserType(in.Data.UserType)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	user, err := l.svcCtx.UserRepo.GetUser(l.ctx, in.Data.UserId, userType, false)
+	user, err := l.svcCtx.UserRepo.GetUser(l.ctx, in.Data.UserId, claim.UserType, false)
 	if err != nil {
 		return nil, err
 	}
@@ -54,14 +54,14 @@ func (l *EditProfileLogic) EditProfile(in *tenant.EditProfileRequest) (resp *pro
 	}
 	input.OrganizationId = user.DefaultOrganizationId
 	input.UserId = in.Data.UserId
-	input.UserType = userType
+	input.UserType = claim.UserType
 	input.Phone = orgUser.Phone // preserve — tenant profile edit is name-only
 
 	if err = l.baseLogic.OrganizationUserLogic.UpdateProfile(l.ctx, *input); err != nil {
 		return nil, err
 	}
 
-	info, err := l.baseLogic.UserLogic.Info(l.ctx, in.Data.UserId, user.DefaultOrganizationId, userType)
+	info, err := l.baseLogic.UserLogic.Info(l.ctx, in.Data.UserId, user.DefaultOrganizationId, claim.UserType)
 	if err != nil {
 		return nil, err
 	}

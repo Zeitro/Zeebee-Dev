@@ -33,21 +33,23 @@ func (l *PageLogic) Page(in *tenant.OrganizationSubscriptionPageRequest) (resp *
 		return
 	}
 
-	statuses := make([]constants.OrganizationSubscriptionStatus, 0, len(in.Data.Filter.Status))
-	for _, s := range in.Data.Filter.Status {
-		statuses = append(statuses, constants.OrganizationSubscriptionStatus(s))
+	// copierx maps page/limit/sorter/keyword and tolerates a request that omits
+	// the filter or sorter (they map to zero values).
+	pageReq, err := copierx.Trans[tenant.OrganizationSubscriptionPageRequestData, dto.OrganizationSubscriptionPageRequestDto](in.Data)
+	if err != nil {
+		return
 	}
-	pageReq := dto.OrganizationSubscriptionPageRequestDto{
-		BasePageRequestDto: dto.BasePageRequestDto{Page: in.Data.Page, Limit: in.Data.Limit},
-		Sorter:             dto.BasePageSorter{Column: in.Data.Sorter.Column, Sort: in.Data.Sorter.Sort},
-		Filter: dto.OrganizationSubscriptionPageRequestFilter{
-			Keyword: in.Data.Filter.Keyword,
-			Type:    userType,
-			Status:  statuses,
-		},
+	pageReq.Filter.Type = userType
+	// Status crosses a repeated-string -> []OrganizationSubscriptionStatus
+	// boundary, so derive it explicitly (nil filter => no status filter).
+	pageReq.Filter.Status = nil
+	if in.Data.Filter != nil {
+		for _, s := range in.Data.Filter.Status {
+			pageReq.Filter.Status = append(pageReq.Filter.Status, constants.OrganizationSubscriptionStatus(s))
+		}
 	}
 
-	page, err := l.baseLogic.OrganizationSubscriptionLogic.Page(l.ctx, pageReq)
+	page, err := l.baseLogic.OrganizationSubscriptionLogic.Page(l.ctx, *pageReq)
 	if err != nil {
 		return
 	}

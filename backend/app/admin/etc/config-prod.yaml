@@ -8,7 +8,7 @@ ApiConf:
     Stat: false
     ServiceName: admin.api
 
-  JwtAuth:
+  JwtConf:
     AccessSecret: mD8sL2kS2qY2dN0fO1gT8nU7eE8sW4yY
     AccessExpire: 86000
 
@@ -19,6 +19,11 @@ ApiConf:
     NonBlock: true
 
 RpcConf:
+  RpcServiceConf:
+    Tenant:
+      ServiceName: tenant.rpc
+      Endpoints:
+        - 127.0.0.1:10401
   Name: admin.rpc
   ListenOn: 0.0.0.0:10201
   Timeout: 600000
@@ -38,7 +43,7 @@ RpcConf:
     Password: jerburfauvmzpmnq
     Username: info@zeebeeloans.com
 
-  JwtAuth:
+  JwtConf:
     AccessSecret: mD8sL2kS2qY2dN0fO1gT8nU7eE8sW4yY
     AccessExpire: 864000
     RefreshSecret: qI8kK9mX8kW0yZ1uG5pQ3qS7kT4xD9uD

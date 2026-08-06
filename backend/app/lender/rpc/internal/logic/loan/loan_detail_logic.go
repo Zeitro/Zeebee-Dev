@@ -33,7 +33,7 @@ func NewLoanDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoanDe
 
 func (l *LoanDetailLogic) LoanDetail(in *proto.PathIdRequest) (resp *lender.LoanDetailResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeLender)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}

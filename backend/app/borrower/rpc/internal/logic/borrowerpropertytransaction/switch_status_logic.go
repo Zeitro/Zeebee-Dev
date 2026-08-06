@@ -33,7 +33,7 @@ func NewSwitchStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Swit
 }
 
 func (l *SwitchStatusLogic) SwitchStatus(in *borrower.BorrowerPropertyTransactionSwitchStatusRequest) (resp *proto.EmptyResponse, err error) {
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeBorrower)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}

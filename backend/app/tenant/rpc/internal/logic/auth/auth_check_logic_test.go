@@ -124,15 +124,7 @@ func seedAuthzGranted(t *testing.T, env *testutil.Env, ut constants.UserType, ro
 // metadata, as a backend would forward it to tenant.
 func ctxWithToken(t *testing.T, env *testutil.Env, ut constants.UserType, f authzFixture) context.Context {
 	t.Helper()
-	var secret string
-	switch ut {
-	case constants.UserTypeBorrower:
-		secret = env.SvcCtx.Config.PlatformConf.Borrower.JwtAuth.AccessSecret
-	case constants.UserTypeLender:
-		secret = env.SvcCtx.Config.PlatformConf.Lender.JwtAuth.AccessSecret
-	case constants.UserTypeAdmin:
-		secret = env.SvcCtx.Config.PlatformConf.Admin.JwtAuth.AccessSecret
-	}
+	secret := env.SvcCtx.Config.JwtConf.AccessSecret
 	tok, err := utils.GenerateToken(utils.JwtUser{
 		UserId:             f.userId,
 		OrganizationId:     f.orgId,

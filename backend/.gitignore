@@ -1,5 +1,6 @@
 # AI agent & plugin layer — local only, not version-controlled
 .claude/
+.agents
 .specify/
 
 # generated / local artifacts
@@ -8,3 +9,9 @@ specs
 .traces
 .skillopt-sleep
 .cache
+
+# Go build artifacts
+*.exe
+*.test
+vendor/
+*.out

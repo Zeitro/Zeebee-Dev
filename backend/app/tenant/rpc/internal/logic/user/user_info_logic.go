@@ -29,14 +29,14 @@ func NewUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserInfo
 }
 
 // UserInfo returns the user profile for the active organization. organization_id
-// is resolved from the user's default organization (tenant requests carry
-// user_type + user_id only).
+// is resolved from the user's default organization; the user type comes from the
+// caller's JWT claim.
 func (l *UserInfoLogic) UserInfo(in *tenant.UserInfoRequest) (resp *proto.UserinfoResponse, err error) {
-	userType, err := logic.ParseUserType(in.Data.UserType)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	user, err := l.svcCtx.UserRepo.GetUser(l.ctx, in.Data.UserId, userType, false)
+	user, err := l.svcCtx.UserRepo.GetUser(l.ctx, in.Data.UserId, claim.UserType, false)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func (l *UserInfoLogic) UserInfo(in *tenant.UserInfoRequest) (resp *proto.Userin
 		return nil, errorx.New("user not found")
 	}
 
-	info, err := l.baseLogic.UserLogic.Info(l.ctx, in.Data.UserId, user.DefaultOrganizationId, userType)
+	info, err := l.baseLogic.UserLogic.Info(l.ctx, in.Data.UserId, user.DefaultOrganizationId, claim.UserType)
 	if err != nil {
 		return nil, err
 	}

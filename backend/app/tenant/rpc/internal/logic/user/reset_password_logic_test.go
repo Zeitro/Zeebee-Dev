@@ -132,9 +132,8 @@ func TestChangePassword_WrongOldPassword(t *testing.T) {
 	email := "change-wrong@test.local"
 
 	userId, _ := seedLoginUser(t, env, userType, email, testPassword)
-	l := NewChangePasswordLogic(context.Background(), env.SvcCtx)
+	l := NewChangePasswordLogic(ctxWithUserClaim(t, env, userType, userId, 0), env.SvcCtx)
 	_, err := l.ChangePassword(&tenant.ChangePasswordRequest{Data: &tenant.ChangePasswordRequestData{
-		UserType:    string(userType),
 		UserId:      userId,
 		OldPassword: "WrongPass!1",
 		NewPassword: newPassword,
@@ -150,9 +149,8 @@ func TestChangePassword_Success(t *testing.T) {
 	email := "change-ok@test.local"
 
 	userId, _ := seedLoginUser(t, env, userType, email, testPassword)
-	l := NewChangePasswordLogic(context.Background(), env.SvcCtx)
+	l := NewChangePasswordLogic(ctxWithUserClaim(t, env, userType, userId, 0), env.SvcCtx)
 	_, err := l.ChangePassword(&tenant.ChangePasswordRequest{Data: &tenant.ChangePasswordRequestData{
-		UserType:    string(userType),
 		UserId:      userId,
 		OldPassword: testPassword,
 		NewPassword: newPassword,

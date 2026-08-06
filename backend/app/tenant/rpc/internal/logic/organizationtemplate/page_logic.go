@@ -31,18 +31,26 @@ func (l *PageLogic) Page(in *tenant.OrganizationTemplatePageRequest) (resp *tena
 		return
 	}
 
-	pageReq := dto.OrganizationTemplatePageRequestDto{
-		OrganizationPageRequestDto: dto.OrganizationPageRequestDto{
-			BasePageRequestDto: dto.BasePageRequestDto{Page: in.Data.Page, Limit: in.Data.Limit},
-		},
-		Sorter: dto.BasePageSorter{Column: in.Data.Sorter.Column, Sort: in.Data.Sorter.Sort},
-		Filter: dto.OrganizationTemplatePageFilter{
+	sorter := dto.BasePageSorter{}
+	if in.Data.Sorter != nil {
+		sorter = dto.BasePageSorter{Column: in.Data.Sorter.Column, Sort: in.Data.Sorter.Sort}
+	}
+	filter := dto.OrganizationTemplatePageFilter{}
+	if in.Data.Filter != nil {
+		filter = dto.OrganizationTemplatePageFilter{
 			Keyword:        in.Data.Filter.Keyword,
 			Type:           constants.UserType(in.Data.Filter.Type),
 			Category:       constants.TemplateCategory(in.Data.Filter.Category),
 			Status:         constants.CommonStatus(in.Data.Filter.Status),
 			OrganizationId: in.Data.Filter.OrganizationId,
+		}
+	}
+	pageReq := dto.OrganizationTemplatePageRequestDto{
+		OrganizationPageRequestDto: dto.OrganizationPageRequestDto{
+			BasePageRequestDto: dto.BasePageRequestDto{Page: in.Data.Page, Limit: in.Data.Limit},
 		},
+		Sorter: sorter,
+		Filter: filter,
 	}
 
 	page, err := l.baseLogic.OrganizationTemplateLogic.Page(l.ctx, pageReq)

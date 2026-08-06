@@ -34,7 +34,7 @@ func NewUpdateApplyLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *U
 func (l *UpdateApplyLoanLogic) UpdateApplyLoan(in *borrower.LoanApplyRequest) (resp *proto.EmptyResponse, err error) {
 
 	var loan *model.Loan
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeBorrower)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}

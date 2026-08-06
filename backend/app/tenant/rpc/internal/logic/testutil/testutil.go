@@ -155,34 +155,29 @@ func testLimiterRates() map[domainlimiter.LimiterStrategy]redis_rate.Limit {
 		return redis_rate.Limit{Rate: rate, Burst: rate, Period: time.Duration(seconds) * time.Second}
 	}
 	return map[domainlimiter.LimiterStrategy]redis_rate.Limit{
-		domainlimiter.StrategyLogin:          per(10, 300),
-		domainlimiter.StrategySendLoginEmail: per(5, 300),
-		domainlimiter.StrategySendVerifyEmail: per(5, 300),
+		domainlimiter.StrategyLogin:             per(10, 300),
+		domainlimiter.StrategySendLoginEmail:    per(5, 300),
+		domainlimiter.StrategySendVerifyEmail:   per(5, 300),
 		domainlimiter.StrategySendResetPwdEmail: per(5, 300),
 	}
 }
 
-// TestRpcConf returns a tenant config with per-platform JWT / URL / expiry
-// profiles and no SMTP (tests exercise DB + redis paths, not real sending).
+// TestRpcConf returns a tenant config with a single shared JWT key (userType in
+// the payload) and per-platform URL / expiry profiles; no SMTP (tests exercise
+// DB + redis paths, not real sending).
 func TestRpcConf() config.RpcConf {
-	profile := func(accessSecret, refreshSecret string) config.PlatformProfile {
+	profile := func() config.PlatformProfile {
 		return config.PlatformProfile{
-			JwtAuth: types.JwtAuth{
-				AccessSecret:  accessSecret,
-				AccessExpire:  3600,
-				RefreshSecret: refreshSecret,
-				RefreshExpire: 86400,
-			},
-			LoginUrl:                    "http://test.local/login",
-			VerifyEmailUrl:              "http://test.local/verify-email",
-			ResetPwdUrl:                 "http://test.local/reset-password",
-			InviteUserUrl:               "http://test.local/invite",
-			VerifyEmailExpireSeconds:    86400,
-			ResetPwdExpireSeconds:       3600,
-			InviteUserExpireSeconds:     259200,
+			LoginUrl:                     "http://test.local/login",
+			VerifyEmailUrl:               "http://test.local/verify-email",
+			ResetPwdUrl:                  "http://test.local/reset-password",
+			InviteUserUrl:                "http://test.local/invite",
+			VerifyEmailExpireSeconds:     86400,
+			ResetPwdExpireSeconds:        3600,
+			InviteUserExpireSeconds:      259200,
 			SendInviteEmailPeriodSeconds: 60,
-			SenderName:                  "Zeebee",
-			SenderEmail:                 "info@test.local",
+			SenderName:                   "Zeebee",
+			SenderEmail:                  "info@test.local",
 		}
 	}
 	return config.RpcConf{
@@ -195,10 +190,16 @@ func TestRpcConf() config.RpcConf {
 			SendVerifyEmail:   domainConf.LimiterItem{Rate: 5, Period: 300},
 			SendResetPwdEmail: domainConf.LimiterItem{Rate: 5, Period: 300},
 		},
+		JwtConf: types.JwtConf{
+			AccessSecret:  "test-access-secret",
+			AccessExpire:  3600,
+			RefreshSecret: "test-refresh-secret",
+			RefreshExpire: 86400,
+		},
 		PlatformConf: config.PlatformConf{
-			Borrower: profile("borrower-access-secret", "borrower-refresh-secret"),
-			Lender:   profile("lender-access-secret", "lender-refresh-secret"),
-			Admin:    profile("admin-access-secret", "admin-refresh-secret"),
+			Borrower: profile(),
+			Lender:   profile(),
+			Admin:    profile(),
 		},
 	}
 }

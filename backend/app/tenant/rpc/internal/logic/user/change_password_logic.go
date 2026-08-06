@@ -29,12 +29,12 @@ func NewChangePasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ch
 }
 
 // ChangePassword verifies the old password and sets the new one. Identity comes
-// from the request (user_type + user_id); tenant is the identity authority.
+// from the caller's JWT claim; tenant is the identity authority.
 func (l *ChangePasswordLogic) ChangePassword(in *tenant.ChangePasswordRequest) (resp *proto.EmptyResponse, err error) {
 	if in.Data == nil {
 		return nil, errorx.New("request data is nil")
 	}
-	userType, err := logic.ParseUserType(in.Data.UserType)
+	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func (l *ChangePasswordLogic) ChangePassword(in *tenant.ChangePasswordRequest) (
 	if err != nil {
 		return nil, err
 	}
-	input.UserType = userType
+	input.UserType = claim.UserType
 
 	if err = l.baseLogic.UserLogic.ChangePassword(l.ctx, *input); err != nil {
 		return nil, err

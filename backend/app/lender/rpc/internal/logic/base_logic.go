@@ -38,13 +38,11 @@ func GetBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 
 func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 	redisCli := global.GetRedis()
-	jwtConfigs := map[constants.UserType]dto.JwtConfig{
-		constants.UserTypeLender: {
-			AccessSecret:  svcCtx.Config.JwtAuth.AccessSecret,
-			AccessExpire:  svcCtx.Config.JwtAuth.AccessExpire,
-			RefreshSecret: svcCtx.Config.JwtAuth.RefreshSecret,
-			RefreshExpire: svcCtx.Config.JwtAuth.RefreshExpire,
-		},
+	jwtConfig := dto.JwtConfig{
+		AccessSecret:  svcCtx.Config.JwtConf.AccessSecret,
+		AccessExpire:  svcCtx.Config.JwtConf.AccessExpire,
+		RefreshSecret: svcCtx.Config.JwtConf.RefreshSecret,
+		RefreshExpire: svcCtx.Config.JwtConf.RefreshExpire,
 	}
 	currentEnforcer := global.LenderEnforcer
 	authEventTopicMap := map[constants.UserType]string{
@@ -54,7 +52,7 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 	logicConfig := logic.AllLogicConfig{
 		Repos:                 svcCtx.AllRepos,
 		RedisCli:              redisCli,
-		JwtConfigs:            jwtConfigs,
+		JwtConfig:             jwtConfig,
 		EmailClient:           global.EmailClient,
 		CurrentEnforcer:       currentEnforcer,
 		CurrentAuthEventTopic: svcCtx.Config.CasbinConf.EventTopic.LenderTopic,

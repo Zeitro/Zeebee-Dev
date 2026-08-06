@@ -45,7 +45,7 @@ func (l *VerifyEmailLogic) VerifyEmail(in *tenant.VerifyEmailRequest) (resp *pro
 		return nil, err
 	}
 
-	token, err := l.baseLogic.UserLogic.GenerateJwtToken(user, orgUser, userType)
+	token, err := l.baseLogic.UserLogic.GenerateJwtToken(user, orgUser)
 	if err != nil {
 		return nil, err
 	}

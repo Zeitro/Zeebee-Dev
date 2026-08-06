@@ -35,7 +35,7 @@ func (l *ResourceTreeLogic) ResourceTree(in *admin.ResourceTreeRequest) (resp *a
 	case constants.ResourceTreeScopeAll:
 		trees, err = l.baseLogic.ResourceLogic.ResourceTree(l.ctx, constants.UserType(in.Data.Type))
 	case constants.ResourceTreeScopeOrganization:
-		claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx, constants.UserTypeAdmin)
+		claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 		if err != nil {
 			return nil, err
 		}

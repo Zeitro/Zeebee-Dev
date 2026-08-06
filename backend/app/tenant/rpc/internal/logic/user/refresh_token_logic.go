@@ -28,14 +28,9 @@ func NewRefreshTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Refr
 }
 
 // RefreshToken re-issues a TokenSet from a refresh token. admin returns the full
-// TokenSet (ODD-6); the platform key comes from user_type.
+// TokenSet (ODD-6); the platform comes from the refresh token claim.
 func (l *RefreshTokenLogic) RefreshToken(in *tenant.RefreshTokenRequest) (resp *proto.UserLoginResponse, err error) {
-	userType, err := logic.ParseUserType(in.Data.UserType)
-	if err != nil {
-		return nil, err
-	}
-
-	token, err := l.baseLogic.UserLogic.RefreshToken(l.ctx, in.Data.RefreshToken, userType)
+	token, err := l.baseLogic.UserLogic.RefreshToken(l.ctx, in.Data.RefreshToken)
 	if err != nil {
 		return nil, err
 	}

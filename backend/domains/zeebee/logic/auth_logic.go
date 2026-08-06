@@ -16,11 +16,11 @@ type AuthLogic struct {
 }
 
 // NewAuthLogic creates a new authentication logic instance.
-// jwtConfigs come from the embedded BaseLogic (one entry per platform the process serves).
+// jwtConfig comes from the embedded BaseLogic (single shared key).
 func NewAuthLogic(baseLogic *BaseLogic, enforcer *rbac.Enforcer, authEventTopic string) *AuthLogic {
 	l := &AuthLogic{
 		BaseLogic: baseLogic,
-		auth:      auth.NewAuth(baseLogic.repos, baseLogic.redisCli, baseLogic.jwtConfigs, enforcer, authEventTopic),
+		auth:      auth.NewAuth(baseLogic.repos, baseLogic.redisCli, baseLogic.jwtConfig, enforcer, authEventTopic),
 	}
 	return l
 }

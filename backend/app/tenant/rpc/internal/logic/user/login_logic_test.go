@@ -7,6 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/grpc/metadata"
 
 	"zeebee-backend/app/tenant/rpc/internal/logic"
 	"zeebee-backend/app/tenant/rpc/internal/logic/testutil"
@@ -51,6 +52,19 @@ func seedLoginUser(t *testing.T, env *testutil.Env, userType constants.UserType,
 	return user.Id, org.Id
 }
 
+// ctxWithUserClaim signs a JWT for the fixture user and carries it in gRPC
+// metadata, as a backend would forward it to tenant.
+func ctxWithUserClaim(t *testing.T, env *testutil.Env, userType constants.UserType, userId, orgId int64) context.Context {
+	t.Helper()
+	tok, err := utils.GenerateToken(utils.JwtUser{
+		UserId:         userId,
+		OrganizationId: orgId,
+		UserType:       userType,
+	}, env.SvcCtx.Config.JwtConf.AccessSecret, 3600)
+	require.NoError(t, err)
+	return metadata.NewIncomingContext(context.Background(), metadata.Pairs(utils.JwtTokenCtxKey, tok))
+}
+
 // T013 US-1: three user types log in and receive a token set signed with the
 // matching platform key; wrong password fails; repeated failures are throttled.
 func TestLogin_SuccessThreeTypes(t *testing.T) {
@@ -81,12 +95,7 @@ func TestLogin_SuccessThreeTypes(t *testing.T) {
 			assert.NotEmpty(t, resp.GetData().GetRefreshToken())
 			assert.Greater(t, resp.GetData().GetAccessTokenExpire(), int64(0))
 
-			secret := env.SvcCtx.Config.PlatformConf.Borrower.JwtAuth.AccessSecret
-			if tc.userType == constants.UserTypeLender {
-				secret = env.SvcCtx.Config.PlatformConf.Lender.JwtAuth.AccessSecret
-			} else if tc.userType == constants.UserTypeAdmin {
-				secret = env.SvcCtx.Config.PlatformConf.Admin.JwtAuth.AccessSecret
-			}
+			secret := env.SvcCtx.Config.JwtConf.AccessSecret
 			claims, err := utils.ParseToken(resp.GetData().GetAccessToken(), secret)
 			require.NoError(t, err)
 			assert.Equal(t, userId, claims.UserId)
