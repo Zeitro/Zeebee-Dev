@@ -19,6 +19,7 @@ type ApiConf struct {
 	rest.RestConf
 	JwtConf             types.JwtConf      `json:",optional"`
 	RpcConf             zrpc.RpcClientConf `json:",optional"`
+	TenantRpc           zrpc.RpcClientConf `json:",optional"`
 	PdfGeneratorBaseUrl string
 }
 

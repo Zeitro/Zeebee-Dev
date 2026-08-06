@@ -17,6 +17,11 @@ ApiConf:
       - 127.0.0.1:10201
     Timeout: 600000
     NonBlock: true
+  TenantRpc:
+    Endpoints:
+      - 127.0.0.1:10401
+    Timeout: 10000
+    NonBlock: true
 
 RpcConf:
   RpcServiceConf:
