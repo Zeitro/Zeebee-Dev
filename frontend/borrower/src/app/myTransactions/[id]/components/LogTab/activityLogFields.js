@@ -6,6 +6,10 @@
 /** 与后端 operations 列表项 operation 字段一致 */
 export const ACTIVITY_LOG_OPERATION = {
 	STATUS_CHANGED: 'Status changed',
+	// Google Drive sync: the detail shape is special (counts/folder link/per-file list),
+	// so it does not use the generic metadata.after label/value and is rendered
+	// dedicatedly by ActivityLogItem.
+	SYNCED_TO_DRIVE: 'Synced to Google Drive',
 };
 
 /**

@@ -163,9 +163,9 @@ RpcConf:
       Provider: openai
       Model: gpt-5.4
 
-    StripeConf:
-      SecretKey: 'sk_test_51Tm5drHATBZ0cr5xSjiCko1iyLdYLSghQWHGac7uvxB73yb54wOkXkcWYNYVhqjLiJilcuJLky5W4sj4O6nEoDaL00f9zdIKW4'
-      WebhookSecret: 'whsec_329sijZgVjG22LxGqlPLNgc7MVlThXsa'
-      SuccessUrl: https://app.zeebeeloans.net/billing/success
-      CancelUrl: https://app.zeebeeloans.net/billing/cancel
-      Currency: usd
+  StripeConf:
+    SecretKey: 'sk_test_51Tm5drHATBZ0cr5xSjiCko1iyLdYLSghQWHGac7uvxB73yb54wOkXkcWYNYVhqjLiJilcuJLky5W4sj4O6nEoDaL00f9zdIKW4'
+    WebhookSecret: 'whsec_329sijZgVjG22LxGqlPLNgc7MVlThXsa'
+    SuccessUrl: https://app.zeebeeloans.net/billing/success
+    CancelUrl: https://app.zeebeeloans.net/billing/cancel
+    Currency: usd

@@ -1,0 +1,30 @@
+/** organization_subscription status；对应 API 字段 status */
+.Trialing :global(.ant-btn) {
+	color: var(--blue-dark) !important;
+	background-color: var(--blue-light-1) !important;
+	border-color: var(--blue-light) !important;
+}
+
+.Active :global(.ant-btn) {
+	color: var(--green-medium) !important;
+	background-color: var(--green-light) !important;
+	border-color: var(--green-light-100) !important;
+}
+
+.Expiring :global(.ant-btn) {
+	color: var(--orange-dark) !important;
+	background-color: var(--orange-light) !important;
+	border-color: var(--orange-medium) !important;
+}
+
+.Expired :global(.ant-btn) {
+	color: var(--gray-medium) !important;
+	background-color: var(--gray-light) !important;
+	border-color: var(--base-border) !important;
+}
+
+.Suspended :global(.ant-btn) {
+	color: var(--gray-medium) !important;
+	background-color: var(--gray-light) !important;
+	border-color: var(--base-border) !important;
+}

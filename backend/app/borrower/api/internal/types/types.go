@@ -2043,6 +2043,7 @@ type Signatures struct {
 	BorrowerAuthorization []*SignatureEntity `json:"borrower_authorization,optional"`
 }
 
+<<<<<<<<< Temporary merge branch 1
 type SubscriptionCheckoutRequest struct {
 	PricingPlanId       int64 `json:"pricing_plan_id" validate:"required,gt=0"`
 	PricingPlanPolicyId int64 `json:"pricing_plan_policy_id" validate:"required,gt=0"`
