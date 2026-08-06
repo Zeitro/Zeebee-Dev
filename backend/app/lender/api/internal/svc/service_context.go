@@ -5,9 +5,10 @@ import (
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
 
-	"zeebee-backend/app/lender/api/internal/middleware"
 	"zeebee-backend/app/lender/config"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	tenantauth "zeebee-backend/app/tenant/rpc/client/auth"
+	"zeebee-backend/app/tenant/rpc/middleware"
 	"zeebee-backend/domains/zeebee/constants"
 )
 
@@ -38,11 +39,10 @@ type ServiceContext struct {
 
 func NewServiceContext(c config.ApiConf, logger logx.Logger, borrowerApiContent string) *ServiceContext {
 	rpcClient := zrpc.MustNewClient(c.RpcConf)
-	authRpcClient := lender.NewAuthClient(rpcClient.Conn())
 	return &ServiceContext{
 		Config:         c,
 		Logger:         logger,
-		AuthMiddleware: middleware.NewAuthMiddleware(constants.UserTypeLender, authRpcClient).Handle,
+		AuthMiddleware: middleware.NewAuthMiddleware(constants.UserTypeLender, tenantauth.NewAuth(zrpc.MustNewClient(c.TenantRpc)), c.JwtConf.AccessSecret).Handle,
 
 		// rpc client
 		UserRpcClient:                 lender.NewUserClient(rpcClient.Conn()),
