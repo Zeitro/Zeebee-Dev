@@ -12,8 +12,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file/progress"
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/pdf_generator/client"
-	tenantauth "zeebee-backend/app/tenant/rpc/client/auth"
-	tenantuser "zeebee-backend/app/tenant/rpc/client/user"
+	tenantclient "zeebee-backend/app/tenant/rpc/client"
 	"zeebee-backend/common/llm"
 	"zeebee-backend/domains/zeebee/repo"
 	"zeebee-backend/domains/zeebee/zeitro"
@@ -38,10 +37,9 @@ type ServiceContext struct {
 	// PdfGenerator converts doc/docx → pdf so Word files reuse the PDF parse
 	// pipeline. Nil-safe: an empty base URL makes Word parsing fail-soft.
 	PdfGenerator *client.Client
-	// TenantUser / TenantAuth are outbound clients to the tenant service
-	// (identity + authz authority, direction B); used by the US-12 cutover.
-	TenantUser tenantuser.User
-	TenantAuth tenantauth.Auth
+	// TenantClient bundles tenant's outbound RPC clients (identity + authz +
+	// org/role/resource/...); used by the US-12 cutover.
+	TenantClient *tenantclient.Client
 }
 
 func NewServiceContext(c config.RpcConf, logger logx.Logger) *ServiceContext {
@@ -84,9 +82,8 @@ func NewServiceContext(c config.RpcConf, logger logx.Logger) *ServiceContext {
 		ZeitroClient: zeitroClient,
 		LLM:          llmClient,
 		Progress:     progress.NewProgressManager(global.GetRedis(), logger),
-		PdfGenerator: client.NewClient(c.PdfGeneratorBaseUrl),
-		TenantUser:   tenantuser.NewUser(tenantCli),
-		TenantAuth:   tenantauth.NewAuth(tenantCli),
+		PdfGenerator:  client.NewClient(c.PdfGeneratorBaseUrl),
+		TenantClient:  tenantclient.New(tenantCli),
 	}
 	ctx.FileParser = parse_file.NewParser(ctx.AllRepos, llmClient, ctx.Progress, ctx.PdfGenerator, logger)
 	// Recover in-flight parses left by a previous/crashed process, then sweep

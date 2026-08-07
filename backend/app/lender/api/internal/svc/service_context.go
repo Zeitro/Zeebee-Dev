@@ -7,7 +7,7 @@ import (
 
 	"zeebee-backend/app/lender/config"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	tenantauth "zeebee-backend/app/tenant/rpc/client/auth"
+	tenantclient "zeebee-backend/app/tenant/rpc/client"
 	"zeebee-backend/app/tenant/rpc/middleware"
 	"zeebee-backend/domains/zeebee/constants"
 )
@@ -42,7 +42,7 @@ func NewServiceContext(c config.ApiConf, logger logx.Logger, borrowerApiContent 
 	return &ServiceContext{
 		Config:         c,
 		Logger:         logger,
-		AuthMiddleware: middleware.NewAuthMiddleware(constants.UserTypeLender, tenantauth.NewAuth(zrpc.MustNewClient(c.TenantRpc)), c.JwtConf.AccessSecret).Handle,
+		AuthMiddleware: middleware.NewAuthMiddleware(constants.UserTypeLender, tenantclient.New(zrpc.MustNewClient(c.TenantRpc)).Auth, c.JwtConf.AccessSecret).Handle,
 
 		// rpc client
 		UserRpcClient:                 lender.NewUserClient(rpcClient.Conn()),

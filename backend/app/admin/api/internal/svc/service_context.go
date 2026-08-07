@@ -7,7 +7,7 @@ import (
 
 	"zeebee-backend/app/admin/config"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	tenantauth "zeebee-backend/app/tenant/rpc/client/auth"
+	tenantclient "zeebee-backend/app/tenant/rpc/client"
 	"zeebee-backend/app/tenant/rpc/middleware"
 	"zeebee-backend/domains/zeebee/constants"
 )
@@ -42,7 +42,7 @@ func NewServiceContext(c config.ApiConf, logger logx.Logger, adminApiContent str
 
 	return &ServiceContext{
 		Config:         c,
-		AuthMiddleware: middleware.NewAuthMiddleware(constants.UserTypeAdmin, tenantauth.NewAuth(zrpc.MustNewClient(c.TenantRpc)), c.JwtConf.AccessSecret).Handle,
+		AuthMiddleware: middleware.NewAuthMiddleware(constants.UserTypeAdmin, tenantclient.New(zrpc.MustNewClient(c.TenantRpc)).Auth, c.JwtConf.AccessSecret).Handle,
 		Logger:         logger,
 
 		// rpc client

@@ -6,8 +6,7 @@ import (
 
 	"zeebee-backend/app/lender/config"
 	"zeebee-backend/app/lender/rpc/internal/global"
-	tenantauth "zeebee-backend/app/tenant/rpc/client/auth"
-	tenantuser "zeebee-backend/app/tenant/rpc/client/user"
+	tenantclient "zeebee-backend/app/tenant/rpc/client"
 	"zeebee-backend/domains/zeebee/repo"
 )
 
@@ -15,10 +14,9 @@ type ServiceContext struct {
 	Config config.RpcConf
 	Logger logx.Logger
 	*repo.AllRepos
-	// TenantUser / TenantAuth are outbound clients to the tenant service
-	// (identity + authz authority, direction B); used by the US-12 cutover.
-	TenantUser tenantuser.User
-	TenantAuth tenantauth.Auth
+	// TenantClient bundles tenant's outbound RPC clients (identity + authz +
+	// org/role/resource/...); used by the US-12 cutover.
+	TenantClient *tenantclient.Client
 }
 
 func NewServiceContext(c config.RpcConf, logger logx.Logger) *ServiceContext {
@@ -26,8 +24,7 @@ func NewServiceContext(c config.RpcConf, logger logx.Logger) *ServiceContext {
 	return &ServiceContext{
 		Config:     c,
 		Logger:     logger,
-		AllRepos:   repo.NewAllRepos(global.GetGormDB()),
-		TenantUser: tenantuser.NewUser(tenantCli),
-		TenantAuth: tenantauth.NewAuth(tenantCli),
+		AllRepos:     repo.NewAllRepos(global.GetGormDB()),
+		TenantClient: tenantclient.New(tenantCli),
 	}
 }

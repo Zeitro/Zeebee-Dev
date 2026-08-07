@@ -6,8 +6,7 @@ import (
 
 	"zeebee-backend/app/admin/config"
 	"zeebee-backend/app/admin/rpc/internal/global"
-	tenantauth "zeebee-backend/app/tenant/rpc/client/auth"
-	tenantuser "zeebee-backend/app/tenant/rpc/client/user"
+	tenantclient "zeebee-backend/app/tenant/rpc/client"
 	"zeebee-backend/common/llm"
 	"zeebee-backend/domains/zeebee/repo"
 )
@@ -19,10 +18,9 @@ type ServiceContext struct {
 	// DiscoverLLM is the lender-discover LLM client (built from LlmConf).
 	// nil if the provider is unconfigured; discover calls then fail at runtime.
 	DiscoverLLM llm.Client
-	// TenantUser / TenantAuth are outbound clients to the tenant service
-	// (identity + authz authority, direction B); used by the US-12 cutover.
-	TenantUser tenantuser.User
-	TenantAuth tenantauth.Auth
+	// TenantClient bundles tenant's outbound RPC clients (identity + authz +
+	// org/role/resource/...); used by the US-12 cutover.
+	TenantClient *tenantclient.Client
 }
 
 func NewServiceContext(c config.RpcConf, logger logx.Logger) *ServiceContext {
@@ -35,8 +33,7 @@ func NewServiceContext(c config.RpcConf, logger logx.Logger) *ServiceContext {
 		Config:      c,
 		Logger:      logger,
 		AllRepos:    repo.NewAllRepos(global.GetGormDB()),
-		DiscoverLLM: discoverLLM,
-		TenantUser:  tenantuser.NewUser(tenantCli),
-		TenantAuth:  tenantauth.NewAuth(tenantCli),
+		DiscoverLLM:   discoverLLM,
+		TenantClient:  tenantclient.New(tenantCli),
 	}
 }
