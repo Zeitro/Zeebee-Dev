@@ -1,17 +1,19 @@
 'use client';
 
 import React, { useCallback, useMemo, useState } from 'react';
-import { Dropdown } from 'antd';
+import { Button, Dropdown } from 'antd';
 import { RocketOutlined } from '@ant-design/icons';
 import { displayValue, formatFirstLetterName } from '@repo/shared-methods/utils';
 import { useUserStore } from '@repo/shared-methods/store';
 import { usePathname } from 'next/navigation';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 import PricingModal from '../../componentsUi/Pricing/PricingModal';
+import CurrentPlanModal from '../../componentsUi/Pricing/CurrentPlanModal';
 
 /**
  * 侧栏底部用户区：常显姓名、当前工作区、套餐；
- * 下拉顶部为账号信息区（姓名 / 邮箱 + Upgrade 同栏，参考 Cursor 账号菜单），点击 Upgrade 打开 PricingModal。
+ * 下拉顶部为账号信息区（姓名 / 邮箱 + Upgrade 同栏）；Upgrade 打开 PricingModal，
+ * 套餐徽章打开 CurrentPlanModal。
  *
  * @param {object} props
  * @param {object} props.userInfo
@@ -20,25 +22,30 @@ import PricingModal from '../../componentsUi/Pricing/PricingModal';
  * @param {(info: { key: string, domEvent: Event }) => void} props.handleClickPersonalItem
  * @param {string} [props.planName] 当前套餐名（后端未接时默认 Base）
  * @param {number|string} [props.currentPlanId] 透传 PricingModal
+ * @param {boolean} [props.isLoggedIn] 是否已登录，透传 Pricing
  * @param {object} [props.pricingProps] 透传 PricingModal.pricingProps
  * @param {boolean} [props.pricingOpen] 受控：PricingModal 显隐
  * @param {(open: boolean) => void} [props.onPricingOpenChange] 受控变更回调
+ * @param {object} [props.currentPlan] 当前订阅，透传 CurrentPlanModal
  */
 const Userinfo = ({
 	userInfo,
 	sidebarCollapsed,
 	personalList,
 	handleClickPersonalItem,
-	planName = 'Base',
+	planName = '',
 	currentPlanId,
+	isLoggedIn,
 	pricingProps = {},
 	pricingOpen: pricingOpenProp,
 	onPricingOpenChange,
+	currentPlan,
 }) => {
 	const pathname = usePathname();
 	const organization = useUserStore((state) => state.organization);
 	const [selectedKey, setSelectedKey] = useState('');
 	const [pricingOpenInner, setPricingOpenInner] = useState(false);
+	const [currentPlanOpen, setCurrentPlanOpen] = useState(false);
 	const isPricingControlled = typeof onPricingOpenChange === 'function';
 	const pricingOpen = isPricingControlled ? Boolean(pricingOpenProp) : pricingOpenInner;
 
@@ -63,8 +70,6 @@ const Userinfo = ({
 		? `${userInfo.first_name} ${userInfo.last_name || ''}`.trim()
 		: '';
 
-	const planLabel = displayValue(planName);
-
 	useDeferredSyncEffect({
 		deferred: () => {
 			const selected = personalList.some((i) => i.key === pathname);
@@ -80,10 +85,17 @@ const Userinfo = ({
 		(e) => {
 			e?.preventDefault?.();
 			e?.stopPropagation?.();
+			setCurrentPlanOpen(false);
 			setPricingOpen(true);
 		},
 		[setPricingOpen],
 	);
+
+	const openCurrentPlan = useCallback((e) => {
+		e?.preventDefault?.();
+		e?.stopPropagation?.();
+		setCurrentPlanOpen(true);
+	}, []);
 
 	const menuItems = useMemo(() => {
 		/** 去掉应用侧的邮箱行，改由顶部账号区统一展示 */
@@ -113,20 +125,21 @@ const Userinfo = ({
 					>
 						{displayValue(userInfo?.email)}
 					</div>
-					<button
-						type="button"
-						className="mt-2.5 flex w-full items-center justify-center gap-1.5 rounded-lg border border-base-border bg-white px-3 py-1.5 text-sm font-medium text-base-text hover:border-base-primary hover:text-base-primary"
-						onClick={openPricing}
-					>
-						<RocketOutlined className="text-xs" />
-						Upgrade plan
-					</button>
+					{!!currentPlan?.id && (
+						<Button
+							className="mt-2.5 flex w-full items-center justify-center gap-1.5 rounded-lg border border-base-border bg-white px-3 py-1.5 text-sm font-medium text-base-text hover:border-base-primary hover:text-base-primary"
+							onClick={openPricing}
+						>
+							<RocketOutlined className="text-xs" />
+							Upgrade plan
+						</Button>
+					)}
 				</div>
 			),
 		};
 
 		return [accountHeader, { type: 'divider' }, ...trimmedRest];
-	}, [displayName, openPricing, personalList, userInfo?.email]);
+	}, [currentPlan?.id, displayName, openPricing, personalList, userInfo?.email]);
 
 	const handleMenuClick = (info) => {
 		if (info.key === 'account-header') {
@@ -177,14 +190,16 @@ const Userinfo = ({
 									{displayValue(userInfo?.email)}
 								</span>
 							)}
-							<button
-								type="button"
-								className="shrink-0 rounded border border-base-border bg-gray-light px-1.5 py-0 text-[11px] leading-5 text-base-gray hover:border-base-primary hover:text-base-primary"
-								title="Upgrade plan"
-								onClick={openPricing}
-							>
-								{planLabel}
-							</button>
+							{planName && (
+								<button
+									type="button"
+									className="shrink-0 rounded border border-base-border bg-gray-light px-1.5 py-0 text-[11px] leading-5 text-base-gray hover:border-base-primary hover:text-base-primary"
+									title="View current plan"
+									onClick={openCurrentPlan}
+								>
+									{planName}
+								</button>
+							)}
 						</div>
 					</div>
 				</div>
@@ -195,7 +210,18 @@ const Userinfo = ({
 				onCancel={() => setPricingOpen(false)}
 				pricingProps={{
 					currentPlanId,
+					isLoggedIn,
 					...pricingProps,
+				}}
+			/>
+
+			<CurrentPlanModal
+				open={currentPlanOpen}
+				onCancel={() => setCurrentPlanOpen(false)}
+				subscription={currentPlan}
+				onUpgrade={() => {
+					setCurrentPlanOpen(false);
+					setPricingOpen(true);
 				}}
 			/>
 		</>

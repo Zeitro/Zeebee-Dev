@@ -19,7 +19,7 @@ const TrialBanner = ({ trialDaysRemaining = 7, sidebarCollapsed, onUpgradeClick 
 		return null;
 	}
 
-	const isUrgent = days <= 7;
+	const isUrgent = true;
 	const dayLabel = days === 1 ? '1 day left' : `${days} days left`;
 
 	const toneClass = isUrgent

@@ -1,25 +1,51 @@
 'use client';
 
 import React from 'react';
-import { Button } from 'antd';
+import { Button, Popover } from 'antd';
+import { CheckCircleFilled, ClockCircleOutlined } from '@ant-design/icons';
 import { displayValue, formatAmount } from '@repo/shared-methods/utils';
-import { getPlanCta, getPolicyByCycle, hasTrial, isCustomPlan, isHighlightedPlan } from './utils';
+import ContactSalesContent from './ContactSalesContent';
+import { DEFAULT_SALES_EMAIL, DEFAULT_SALES_PHONE } from './constants';
+import {
+	getPlanCta,
+	getPolicyByCycle,
+	hasTrial,
+	isCurrentPlanLocked,
+	isCustomPlan,
+	isHighlightedPlan,
+} from './utils';
 
 /**
  * 单档套餐卡片：价格、描述、试用提示与 CTA。
+ * Custom 档 CTA 点击展开 Contact Sales Popover（邮箱 + 电话），不跳转 mailto。
  *
  * @param {object} props
- * @param {object} props.plan 套餐数据（与 admin pricing_plan 字段一致）
+ * @param {object} props.plan 套餐数据（与 pricing_plans/public 字段一致）
  * @param {string} props.billingCycle 当前计费周期 Monthly / Yearly
- * @param {boolean} [props.isCurrentPlan] 是否为当前订阅
+ * @param {boolean} [props.isCurrentPlan] 是否为当前订阅档
+ * @param {boolean} [props.isLoggedIn] 是否已登录
+ * @param {boolean} [props.isCurrentPlanPaid] 当前档是否已付费（由订阅 status 推导）
  * @param {boolean} [props.loading] CTA loading
  * @param {(plan: object) => void} props.onAction 点击 CTA
+ * @param {string} [props.salesEmail] 销售邮箱（Custom Popover）
+ * @param {string} [props.salesPhone] 销售电话（Custom Popover）
  */
-const PlanCard = ({ plan, billingCycle, isCurrentPlan = false, loading = false, onAction }) => {
+const PlanCard = ({
+	plan,
+	billingCycle,
+	isCurrentPlan = false,
+	isLoggedIn = false,
+	isCurrentPlanPaid = false,
+	loading = false,
+	onAction,
+	salesEmail = DEFAULT_SALES_EMAIL,
+	salesPhone = DEFAULT_SALES_PHONE,
+}) => {
 	const isCustom = isCustomPlan(plan);
 	const isHighlighted = isHighlightedPlan(plan);
+	const isLocked = isCurrentPlanLocked(isCurrentPlan, isCurrentPlanPaid);
 	const policy = getPolicyByCycle(plan, billingCycle);
-	const ctaLabel = isCurrentPlan ? 'Current plan' : getPlanCta(plan);
+	const ctaLabel = getPlanCta(plan, { isLoggedIn, isCurrentPlan, isCurrentPlanPaid });
 
 	const renderPrice = () => {
 		if (isCustom) {
@@ -35,11 +61,6 @@ const PlanCard = ({ plan, billingCycle, isCurrentPlan = false, loading = false, 
 
 		const actualAmount = displayValue(policy?.actual_amount, formatAmount);
 		const originalAmount = displayValue(policy?.original_amount, formatAmount);
-		const showOriginal =
-			policy?.original_amount != null &&
-			policy?.actual_amount != null &&
-			Number(policy.original_amount) > Number(policy.actual_amount) &&
-			originalAmount !== actualAmount;
 
 		return (
 			<div className="mt-6 min-h-[72px]">
@@ -49,7 +70,7 @@ const PlanCard = ({ plan, billingCycle, isCurrentPlan = false, loading = false, 
 					</span>
 					<span className="pb-1 text-sm text-base-label">/ month</span>
 				</div>
-				{showOriginal ? (
+				{originalAmount ? (
 					<p className="m-0 mt-1 text-sm text-base-label line-through">
 						{originalAmount}
 					</p>
@@ -61,17 +82,38 @@ const PlanCard = ({ plan, billingCycle, isCurrentPlan = false, loading = false, 
 	return (
 		<div
 			className={[
-				'flex h-full flex-col rounded-xl border bg-white p-6',
-				isHighlighted ? 'border-base-primary shadow-sm' : 'border-base-border',
+				'flex h-full flex-col rounded-xl border p-6',
+				isCurrentPlan
+					? 'border-base-primary bg-base-active shadow-sm'
+					: isHighlighted
+						? 'border-base-primary bg-white shadow-sm'
+						: 'border-base-border bg-white',
 			].join(' ')}
 		>
-			{isHighlighted ? (
-				<span className="mb-3 inline-flex w-fit rounded-full bg-base-active px-3 py-0.5 text-xs font-medium text-base-primary">
-					Most popular
-				</span>
-			) : (
-				<span className="mb-3 inline-flex h-[22px]" aria-hidden />
-			)}
+			<div className="mb-3 inline-flex h-[22px] gap-x-1">
+				{isCurrentPlan && (
+					<span
+						className={[
+							'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium leading-[18px]',
+							isCurrentPlanPaid
+								? 'border-[var(--green-light-100)] bg-[var(--green-light)] text-[var(--green-medium)]'
+								: 'border-[var(--orange-medium)] bg-[var(--orange-light)] text-[var(--orange-dark)]',
+						].join(' ')}
+					>
+						{isCurrentPlanPaid ? (
+							<CheckCircleFilled className="text-[11px]" />
+						) : (
+							<ClockCircleOutlined className="text-[11px]" />
+						)}
+						{isCurrentPlanPaid ? 'Current plan' : 'Free trial'}
+					</span>
+				)}
+				{isHighlighted && (
+					<span className="inline-flex w-fit rounded-full bg-base-active px-3 py-0.5 text-xs font-medium leading-[18px] text-base-primary border border-base-primary">
+						Most popular
+					</span>
+				)}
+			</div>
 
 			<h3 className="m-0 text-xl font-medium leading-7 text-base-text">
 				{displayValue(plan?.name)}
@@ -86,23 +128,47 @@ const PlanCard = ({ plan, billingCycle, isCurrentPlan = false, loading = false, 
 				{displayValue(plan?.description)}
 			</p>
 
-			{hasTrial(plan) ? (
+			{hasTrial(plan) && !isCurrentPlanPaid ? (
 				<p className="m-0 mt-4 text-sm font-medium text-base-primary">
 					{plan.trial_days}-day free trial
 				</p>
 			) : null}
 
-			<Button
-				type={isHighlighted ? 'primary' : 'default'}
-				size="large"
-				block
-				className="mt-4"
-				loading={loading}
-				disabled={isCurrentPlan}
-				onClick={() => onAction?.(plan)}
-			>
-				{ctaLabel}
-			</Button>
+			{isCustom ? (
+				<Popover
+					trigger="click"
+					placement="bottom"
+					arrow={false}
+					content={<ContactSalesContent email={salesEmail} phone={salesPhone} />}
+					styles={{ body: { padding: 0, background: 'transparent' } }}
+					getPopupContainer={() => document.body}
+				>
+					<Button
+						type={isHighlighted || hasTrial(plan) ? 'primary' : 'default'}
+						size="large"
+						block
+						className="mt-4"
+						loading={loading}
+						disabled={isLocked}
+						onClick={() => onAction?.(plan)}
+					>
+						{ctaLabel}
+					</Button>
+				</Popover>
+			) : (
+				<Button
+					type={isHighlighted || hasTrial(plan) ? 'primary' : 'default'}
+					size="large"
+					block
+					className="mt-4"
+					loading={loading}
+					disabled={isLocked}
+					ghost={hasTrial(plan) && !isCurrentPlan}
+					onClick={() => onAction?.(plan)}
+				>
+					{ctaLabel}
+				</Button>
+			)}
 		</div>
 	);
 };

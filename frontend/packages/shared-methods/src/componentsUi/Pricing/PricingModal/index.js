@@ -17,7 +17,7 @@ import Pricing from '../index';
 const PricingModal = ({
 	open,
 	onCancel,
-	title = 'Choose your plan',
+	title = 'Adjust your plan',
 	width = 960,
 	pricingProps = {},
 }) => {

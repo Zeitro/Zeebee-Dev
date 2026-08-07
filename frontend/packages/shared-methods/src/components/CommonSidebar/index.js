@@ -9,7 +9,7 @@ import { useUserStore } from '@repo/shared-methods/store';
 import UserInfo from './UserInfo';
 import TrialBanner from './TrialBanner';
 import { useDeferredSyncEffect, useElementSize } from '@repo/shared-methods/hooks';
-import { findItem, generateMenuBar } from '@repo/shared-methods/utils';
+import { findItem, generateMenuBar, getRemainingDaysUntilExpire } from '@repo/shared-methods/utils';
 import { iconData } from '@repo/shared-methods/enum';
 
 const homePathname = '/';
@@ -19,6 +19,7 @@ const initTwoToneColor = ['var(--base-label)', 'var(--gray-light)'];
  *
  * @param {object} props
  * @param {number} [props.trialDaysRemaining] 试用剩余天数；>0 时在用户区上方展示提示条
+ * @param {boolean} [props.isLoggedIn] 是否已登录，透传 Pricing
  */
 export const CommonSidebar = ({
 	routerList,
@@ -27,8 +28,9 @@ export const CommonSidebar = ({
 	renderLogo,
 	planName,
 	currentPlanId,
+	isLoggedIn,
 	pricingProps,
-	trialDaysRemaining,
+	currentPlan,
 }) => {
 	const router = useRouter();
 	const pathname = usePathname();
@@ -123,11 +125,13 @@ export const CommonSidebar = ({
 					return customRoot;
 				}}
 			/>
-			<TrialBanner
-				trialDaysRemaining={trialDaysRemaining}
-				sidebarCollapsed={sidebarCollapsed}
-				onUpgradeClick={() => setPricingOpen(true)}
-			/>
+			{currentPlan?.status === 'Trialing' && currentPlan?.expire_date && (
+				<TrialBanner
+					trialDaysRemaining={getRemainingDaysUntilExpire(currentPlan?.expire_date)}
+					sidebarCollapsed={sidebarCollapsed}
+					onUpgradeClick={() => setPricingOpen(true)}
+				/>
+			)}
 			<UserInfo
 				userInfo={userInfo}
 				sidebarCollapsed={sidebarCollapsed}
@@ -135,9 +139,11 @@ export const CommonSidebar = ({
 				handleClickPersonalItem={handleClickPersonalItem}
 				planName={planName}
 				currentPlanId={currentPlanId}
+				isLoggedIn={isLoggedIn}
 				pricingProps={pricingProps}
 				pricingOpen={pricingOpen}
 				onPricingOpenChange={setPricingOpen}
+				currentPlan={currentPlan}
 			/>
 			<div
 				className="absolute right-[-8px] top-[18px] cursor-pointer"
