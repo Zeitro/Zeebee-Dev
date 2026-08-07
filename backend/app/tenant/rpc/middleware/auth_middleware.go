@@ -62,7 +62,10 @@ func (m *AuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			}
 		}
 		nextCtx := context.WithValue(reqCtx, utils.JwtTokenCtxKey, token)
-		nextCtx = metadata.AppendToOutgoingContext(nextCtx, utils.JwtTokenCtxKey, token)
+		nextCtx = metadata.AppendToOutgoingContext(nextCtx,
+			utils.JwtTokenCtxKey, token,
+			utils.UserTypeCtxKey, string(m.userType),
+		)
 
 		rpcResp, err := m.checker.AuthCheck(nextCtx, &proto.AuthCheckRequest{
 			Data: &proto.AuthCheckRequestData{

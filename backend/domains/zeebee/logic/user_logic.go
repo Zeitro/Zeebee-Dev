@@ -42,9 +42,13 @@ func NewUserLogic(baseLogic *BaseLogic, authTopicMap map[constants.UserType]stri
 	}
 }
 
-// GetUserClaimFromCtx get user claim from context. The shared jwtConfig parses the
-// token (single unified key); userType is kept for API symmetry — the real type
-// lives in the claim.
+// GetUserClaimFromCtx parses the caller's JWT from gRPC metadata and returns
+// the claim. The shared jwtConfig parses the token (single unified key). When
+// the api auth middleware declares the platform user_type in metadata, it is
+// checked against the type embedded in the token — a mismatch (a token minted
+// for one platform replayed against another) is rejected as an invalid token.
+// When user_type is absent (e.g. internal calls that skip the middleware) the
+// parsed token remains the sole authority.
 func (l *UserLogic) GetUserClaimFromCtx(ctx context.Context) (claim utils.JwtUser, err error) {
 	// Get from metadata
 	md, ok := metadata.FromIncomingContext(ctx)
@@ -63,6 +67,16 @@ func (l *UserLogic) GetUserClaimFromCtx(ctx context.Context) (claim utils.JwtUse
 	if err != nil {
 		err = status.Error(codes.InvalidArgument, err.Error())
 		return claim, errorx.WithStack(err)
+	}
+	// Defense-in-depth: verify the platform type declared in metadata matches
+	// the type embedded in the token. The api auth middleware already enforces
+	// this at the edge; re-checking here catches a token replayed across
+	// platforms via a path that bypasses the middleware.
+	if ctxUserTypes := md[utils.UserTypeCtxKey]; len(ctxUserTypes) > 0 {
+		if ctxUserTypes[0] != string(jwtClaim.UserType) {
+			err = status.Error(codes.Unauthenticated, "invalid token")
+			return claim, errorx.WithStack(err)
+		}
 	}
 	return jwtClaim.JwtUser, nil
 }
