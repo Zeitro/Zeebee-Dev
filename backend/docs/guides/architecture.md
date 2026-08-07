@@ -19,6 +19,12 @@ Client (Web/Mobile)
 │ RPC Layer (Business Logic)                   │
 │  borrower-rpc : lender-rpc : admin-rpc       │
 └──────────────┬──────────────────────────────┘
+               │ gRPC（身份/RBAC/权益 → tenant，首个跨服务 RPC）
+               ▼
+┌─────────────────────────────────────────────┐
+│ tenant-rpc（10401 · RPC-only）                    │
+│  身份签发 + AuthzCheck（casbin 唯一执行者）          │
+└──────────────┬──────────────────────────────┘
                │
                ▼
 ┌─────────────────────────────────────────────┐
@@ -31,7 +37,7 @@ Client (Web/Mobile)
 │ Infrastructure (PostgreSQL / Redis / S3)     │
 └─────────────────────────────────────────────┘
 
-注：app/pdf_generator 为独立二进制服务（cmd/bin/client），不走 API/RPC 双层。
+注：app/pdf_generator 为独立二进制服务（cmd/bin/client），不走 API/RPC 双层；tenant 为 RPC-only 内部服务（无 API 层）。
 ```
 
 ## 服务矩阵
@@ -42,8 +48,9 @@ Client (Web/Mobile)
 | lender | 10100 | 10101 | 贷款方操作（审核、文档、批准） | API/RPC 双层 |
 | admin | 10200 | 10201 | 管理后台（组织、模板、权限、定价计划） | API/RPC 双层 |
 | pdf_generator | 10300 | — | PDF 生成（Chromedp + LibreOffice） | 仅 HTTP，无 RPC |
+| tenant | — | 10401 | 身份与权限（用户/组织/角色/资源/API/订阅/定价计划）单一权威 | RPC-only 内部服务，无 HTTP；三端身份/RBAC 经 gRPC 薄代理 |
 
-gRPC 服务发现：API 配置 `RpcConf.Endpoints` 直连 RPC 端口（`NonBlock: true`）。Etcd 在 dev 配置中默认注释关闭。
+gRPC 服务发现：API 配置 `RpcConf.Endpoints` 直连 RPC 端口（`NonBlock: true`）。Etcd 在 dev 配置中默认注释关闭。三端另经 `RpcConf.TenantRpc`（API 层）与 `RpcServiceConf.Tenant`（RPC 层）直连 tenant `10401`。
 
 ## 分层职责
 
@@ -64,6 +71,8 @@ gRPC 服务发现：API 配置 `RpcConf.Endpoints` 直连 RPC 端口（`NonBlock
 - **禁止**直接操作数据库（须经共享 logic → repo）
 
 目录：`app/{service}/rpc/internal/logic/`
+
+身份 / RBAC / 权益模块的三端 RPC logic 为 tenant 薄代理（转发 + 响应包装）；casbin 执行已收敛到 tenant 一处（`app/tenant/rpc/`），三端本地 enforcer 已移除。
 
 ### 共享领域层
 
@@ -91,6 +100,8 @@ Request
   → API Logic（参数验证、types→pb 转换）
   → RPC Client（gRPC 调用）
   → RPC Logic（pb→dto 转换，经 baseLogic 聚合调度）
+  → [身份/鉴权] tenant RPC（gRPC 薄代理调用 tenant 10401）
+  → tenant RPC Logic（AuthzCheck / 身份逻辑）
   → Domain Logic（domains/zeebee/logic/，共享业务规则）
   → Repository（数据访问）
   → Model（GORM 实体）
@@ -145,6 +156,8 @@ backend/app/
 │           └── types/        # 类型定义
 ├── lender/                   # 贷款方服务（结构同 borrower）
 ├── admin/                    # 管理后台服务（结构同 borrower）
+├── tenant/                   # 身份与权限服务（RPC-only，无 api/）
+│   └── rpc/                  # gRPC 层（身份签发 + RBAC/权益单一权威）
 └── pdf_generator/            # PDF 生成（独立程序）
     ├── api/                  # API schema
     ├── bin/                  # 构建产物
@@ -160,6 +173,7 @@ backend/app/
 
 - **borrower / lender / admin**（双层）：加载配置 → 构造 `api.NewApiServer(c)` + `rpc.NewRpcServer(c)` → 加入同一 `service.Group` 并发启动（HTTP + gRPC 同进程）→ 监听 SIGINT/SIGTERM 优雅停止。
 - **pdf_generator**（单层）：仅构造 `api.NewApiServer(c)`，无 RPC。
+- **tenant**（RPC-only）：仅构造 `rpc.NewRpcServer(c)`，无 API 层，gRPC 监听 `10401`。
 
 启动：`go run app/<service>/cmd/main.go -f app/<service>/etc/config-<env>.yaml`（`-f` 默认 `etc/config.yaml`）。配置结构定义在 `app/<service>/config/`。
 
@@ -246,9 +260,9 @@ BaseRepo 通用方法（成对提供 `WithTx` 事务版本）：
 ## 服务通信
 
 - **API → RPC**：gRPC 直连（类型安全、高性能）
-- **服务间依赖**：`borrower-api → borrower-rpc`，`lender-api → lender-rpc`，`admin-api → admin-rpc`
+- **服务间依赖**：`borrower-api → borrower-rpc`，`lender-api → lender-rpc`，`admin-api → admin-rpc`；三端（API 与 RPC）→ `tenant-rpc`（身份/RBAC/权益）
 - **共享层依赖**：所有 RPC 服务 → `domains/zeebee/`；所有服务 → `common/`
-- **当前无跨服务 RPC 调用**（lender-rpc 不直接调用 borrower-rpc）
+- **首个跨服务 RPC 先例**：三端 → tenant `10401`。鉴权为**每请求实时判定**（`tenant.Auth.AuthCheck`，方向 B）；casbin 执行已收敛到 tenant 一处，三端本地 enforcer（`global/casbin.go`）已移除。
 
 ## 关键约束
 
@@ -315,6 +329,7 @@ make create-sql <name>                # SQL 脚本
 | ADR-001 | 选择 **go-zero** 框架 | 内置微服务支持、自动代码生成、高性能 gRPC、中间件生态 | 框架绑定、学习成本 |
 | ADR-002 | **共享数据层**（`domains/zeebee/`） | 数据一致性、代码复用最大化、维护成本适中 | 服务耦合、扩展受限 |
 | ADR-003 | **JWT** 认证 | 无状态、微服务友好、跨域支持 | 令牌管理复杂 |
+| ADR-004 | 抽取 **tenant** 身份与权限服务（RPC-only） | 身份/RBAC/权益单点维护、消除三份重复、casbin 唯一执行者 | 新增服务与首个跨服务 gRPC 调用（每请求鉴权一跳） |
 
 备选方案：go-zero（vs Gin 手工 / gRPC-Gateway / Kratos）；共享数据层（vs 每服务独立库 / 数据同步 / CQRS）；JWT（vs Session+Cookie / OAuth 2.0 / API Key）。
 
@@ -330,4 +345,4 @@ make create-sql <name>                # SQL 脚本
 
 ---
 
-**最后更新**: 2026-06-25
+**最后更新**: 2026-08-07
