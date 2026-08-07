@@ -49,7 +49,9 @@ func setupAuthTestDB(t *testing.T) *gorm.DB {
 			resource_type TEXT DEFAULT 'Menu',
 			name TEXT DEFAULT '',
 			path TEXT DEFAULT '',
+			tag TEXT DEFAULT '',
 			is_public INTEGER DEFAULT 0,
+			enable_data_scope INTEGER DEFAULT 0,
 			status TEXT DEFAULT 'Active',
 			sort_order INTEGER DEFAULT 10,
 			description TEXT DEFAULT ''
@@ -89,6 +91,7 @@ func setupAuthTestDB(t *testing.T) *gorm.DB {
 		`CREATE TABLE role_and_resources (
 			role_id INTEGER NOT NULL,
 			resource_id INTEGER NOT NULL,
+			data_scope TEXT DEFAULT 'All',
 			PRIMARY KEY (role_id, resource_id)
 		)`,
 		`CREATE TABLE organization_users (
@@ -621,4 +624,110 @@ func TestCheckAuthorization_Whitelist_NotRequired(t *testing.T) {
 	require.NoError(t, err)
 	assert.False(t, isRequired, "whitelisted API must not require authorization")
 	assert.False(t, ok, "authorized flag stays false when authorization is not required")
+}
+
+// =============================================================================
+// CheckAuthentication tests (auth_required whitelist + authentication cells)
+// =============================================================================
+
+// seedAuthzApi rebuilds the baseline fixture but controls the widget API's
+// auth_required flag, so CheckAuthentication's whitelist branch is exercised
+// deterministically. permission_required stays 1 (protected) so only the
+// authentication layer varies.
+func seedAuthzApi(t *testing.T, db *gorm.DB, authRequired bool) {
+	t.Helper()
+	seedAuthzBaseline(t, db)
+	require.NoError(t, db.Exec(`UPDATE apis SET auth_required = ? WHERE id = 1000`, authRequired).Error)
+}
+
+// An API marked auth_required=false is on the authentication whitelist: no
+// login is required, and the caller is reported unauthenticated without error.
+func TestCheckAuthentication_AuthWhitelist_NotRequired(t *testing.T) {
+	a, _, db, _ := newAuthzForTest(t)
+	seedAuthzApi(t, db, false)
+
+	authenticated, isRequired, err := a.CheckAuthentication(context.Background(), authzReq())
+	require.NoError(t, err)
+	assert.False(t, isRequired, "auth_required=false API must not require authentication")
+	assert.False(t, authenticated, "whitelist request is never authenticated")
+}
+
+// A protected API with no token in the context surfaces an Unauthenticated
+// error (CheckAuthentication propagates GetUserClaimFromCtx's error); the
+// orchestrator maps that to a 401. authenticationRequired stays true and the
+// caller is not authenticated.
+func TestCheckAuthentication_ProtectedNoToken_NotAuthenticated(t *testing.T) {
+	a, _, db, _ := newAuthzForTest(t)
+	seedAuthzApi(t, db, true)
+
+	authenticated, isRequired, err := a.CheckAuthentication(context.Background(), authzReq())
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "not login")
+	assert.True(t, isRequired, "protected API must require authentication")
+	assert.False(t, authenticated, "request without a token must not authenticate")
+}
+
+// A protected API with a valid token requires authentication and authenticates.
+func TestCheckAuthentication_ProtectedValidToken_Authenticated(t *testing.T) {
+	a, _, db, _ := newAuthzForTest(t)
+	seedAuthzApi(t, db, true)
+
+	authenticated, isRequired, err := a.CheckAuthentication(ctxWithClaim(t, a, constants.UserTypeLender, 1, 50), authzReq())
+	require.NoError(t, err)
+	assert.True(t, isRequired)
+	assert.True(t, authenticated, "valid token must authenticate")
+}
+
+// =============================================================================
+// GetDataScope tests (data-scope resolution per role-resource binding)
+// =============================================================================
+//
+// GetDataScope defaults to Own and takes the least-restrictive binding it finds
+// for the caller's roles against the route's resources (All=Priority 1 wins over
+// Own=Priority 2). Admins short-circuit to All. These pin that behavior so the
+// US-12 cutover preserves data-scope semantics.
+
+// An admin resolves to DataScopeAll regardless of bindings.
+func TestGetDataScope_Admin_All(t *testing.T) {
+	a, _, db, _ := newAuthzForTest(t)
+	seedAuthzBaseline(t, db)
+	makeAdmin(t, db)
+
+	scope, err := a.GetDataScope(ctxWithClaim(t, a, constants.UserTypeLender, 1, 50), authzReq())
+	require.NoError(t, err)
+	assert.Equal(t, constants.DataScopeAll, scope, "admin must resolve to DataScopeAll")
+}
+
+// A non-admin with no role-resource binding for the route keeps the Own default.
+func TestGetDataScope_NonAdmin_NoBinding_Own(t *testing.T) {
+	a, _, db, _ := newAuthzForTest(t)
+	seedAuthzBaseline(t, db) // staff role 11, no role_and_resources row
+
+	scope, err := a.GetDataScope(ctxWithClaim(t, a, constants.UserTypeLender, 1, 50), authzReq())
+	require.NoError(t, err)
+	assert.Equal(t, constants.DataScopeOwn, scope, "no binding must keep the Own default")
+}
+
+// A non-admin whose binding is DataScopeOwn stays Own (Own is not less
+// restrictive than the default).
+func TestGetDataScope_NonAdmin_OwnBinding_Own(t *testing.T) {
+	a, _, db, _ := newAuthzForTest(t)
+	seedAuthzBaseline(t, db)
+	require.NoError(t, db.Exec(`INSERT INTO role_and_resources (role_id, resource_id, data_scope) VALUES (11, 100, ?)`, constants.DataScopeOwn).Error)
+
+	scope, err := a.GetDataScope(ctxWithClaim(t, a, constants.UserTypeLender, 1, 50), authzReq())
+	require.NoError(t, err)
+	assert.Equal(t, constants.DataScopeOwn, scope, "Own binding must keep Own")
+}
+
+// A non-admin whose binding is DataScopeAll upgrades to All (less restrictive
+// than the Own default).
+func TestGetDataScope_NonAdmin_AllBinding_All(t *testing.T) {
+	a, _, db, _ := newAuthzForTest(t)
+	seedAuthzBaseline(t, db)
+	require.NoError(t, db.Exec(`INSERT INTO role_and_resources (role_id, resource_id, data_scope) VALUES (11, 100, ?)`, constants.DataScopeAll).Error)
+
+	scope, err := a.GetDataScope(ctxWithClaim(t, a, constants.UserTypeLender, 1, 50), authzReq())
+	require.NoError(t, err)
+	assert.Equal(t, constants.DataScopeAll, scope, "All binding must upgrade scope to All")
 }
