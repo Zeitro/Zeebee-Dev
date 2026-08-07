@@ -6,7 +6,6 @@ import (
 	"zeebee-backend/app/tenant/rpc/internal/logic"
 	"zeebee-backend/app/tenant/rpc/internal/svc"
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
-	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
@@ -28,8 +27,8 @@ func NewChangePasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ch
 	}
 }
 
-// ChangePassword verifies the old password and sets the new one. Identity comes
-// from the caller's JWT claim; tenant is the identity authority.
+// ChangePassword verifies the old password and sets the new one. user_id and
+// user type come from the caller's JWT claim; tenant is the identity authority.
 func (l *ChangePasswordLogic) ChangePassword(in *tenant.ChangePasswordRequest) (resp *proto.EmptyResponse, err error) {
 	if in.Data == nil {
 		return nil, errorx.New("request data is nil")
@@ -39,13 +38,14 @@ func (l *ChangePasswordLogic) ChangePassword(in *tenant.ChangePasswordRequest) (
 		return nil, err
 	}
 
-	input, err := copierx.Trans[tenant.ChangePasswordRequestData, dto.UserChangePasswordRequestDto](in.Data)
-	if err != nil {
-		return nil, err
+	input := dto.UserChangePasswordRequestDto{
+		UserId:      claim.UserId,
+		UserType:    claim.UserType,
+		OldPassword: in.Data.OldPassword,
+		NewPassword: in.Data.NewPassword,
 	}
-	input.UserType = claim.UserType
 
-	if err = l.baseLogic.UserLogic.ChangePassword(l.ctx, *input); err != nil {
+	if err = l.baseLogic.UserLogic.ChangePassword(l.ctx, input); err != nil {
 		return nil, err
 	}
 	return &proto.EmptyResponse{}, nil

@@ -28,40 +28,37 @@ func NewEditProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *EditP
 	}
 }
 
-// EditProfile updates the user's name fields. Phone is preserved (the tenant
-// profile contract is name-only); organization_id is resolved from the user's
-// default organization.
+// EditProfile updates the caller's name and phone fields. user_id comes from
+// the caller's JWT claim; organization_id is resolved from the user's default
+// organization.
 func (l *EditProfileLogic) EditProfile(in *tenant.EditProfileRequest) (resp *proto.UserinfoResponse, err error) {
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	user, err := l.svcCtx.UserRepo.GetUser(l.ctx, in.Data.UserId, claim.UserType, false)
+	user, err := l.svcCtx.UserRepo.GetUser(l.ctx, claim.UserId, claim.UserType, false)
 	if err != nil {
 		return nil, err
 	}
 	if user == nil {
 		return nil, errorx.New("user not found")
 	}
-	orgUser, err := l.svcCtx.OrganizationUserRepo.GetOrganizationUserByUserId(l.ctx, user.DefaultOrganizationId, in.Data.UserId)
-	if err != nil {
+
+	input := dto.OrganizationUserProfileEditRequestDto{
+		OrganizationId: user.DefaultOrganizationId,
+		UserId:         claim.UserId,
+		UserType:       claim.UserType,
+		FirstName:      in.Data.FirstName,
+		MidName:        in.Data.MidName,
+		LastName:       in.Data.LastName,
+		Phone:          in.Data.Phone,
+	}
+
+	if err = l.baseLogic.OrganizationUserLogic.UpdateProfile(l.ctx, input); err != nil {
 		return nil, err
 	}
 
-	input, err := copierx.Trans[tenant.EditProfileRequestData, dto.OrganizationUserProfileEditRequestDto](in.Data)
-	if err != nil {
-		return nil, err
-	}
-	input.OrganizationId = user.DefaultOrganizationId
-	input.UserId = in.Data.UserId
-	input.UserType = claim.UserType
-	input.Phone = orgUser.Phone // preserve — tenant profile edit is name-only
-
-	if err = l.baseLogic.OrganizationUserLogic.UpdateProfile(l.ctx, *input); err != nil {
-		return nil, err
-	}
-
-	info, err := l.baseLogic.UserLogic.Info(l.ctx, in.Data.UserId, user.DefaultOrganizationId, claim.UserType)
+	info, err := l.baseLogic.UserLogic.Info(l.ctx, claim.UserId, user.DefaultOrganizationId, claim.UserType)
 	if err != nil {
 		return nil, err
 	}

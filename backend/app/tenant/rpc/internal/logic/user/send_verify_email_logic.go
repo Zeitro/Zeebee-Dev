@@ -102,7 +102,7 @@ func sendLoginUrlEmail(ctx context.Context, baseLogic *logic.BaseLogic, svcCtx *
 		return err
 	}
 
-	content, err := email.ParseTemplate(email_tpl.LoginUrlEmail, map[string]interface{}{
+	content, err := email.ParseTemplate(email_tpl.LoginUrlEmail, map[string]any{
 		"url":            profile.LoginUrl,
 		"first_name":     firstName,
 		"logo_url":       profile.LogoUrl,
@@ -155,7 +155,7 @@ func sendVerifyEmail(ctx context.Context, baseLogic *logic.BaseLogic, svcCtx *sv
 		return err
 	}
 
-	content, err := email.ParseTemplate(email_tpl.RegisterVerifyEmail, map[string]interface{}{
+	content, err := email.ParseTemplate(email_tpl.RegisterVerifyEmail, map[string]any{
 		"url":            fmt.Sprintf("%s?code=%s&email=%s", profile.VerifyEmailUrl, code, emailAddr),
 		"first_name":     firstName,
 		"expire_time":    timex.DurationToString(time.Second*time.Duration(profile.VerifyEmailExpireSeconds), true),

@@ -835,9 +835,8 @@ func (x *ChangePasswordRequest) GetData() *ChangePasswordRequestData {
 
 type ChangePasswordRequestData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OldPassword   string                 `protobuf:"bytes,2,opt,name=old_password,json=oldPassword,proto3" json:"old_password,omitempty"`
-	NewPassword   string                 `protobuf:"bytes,3,opt,name=new_password,json=newPassword,proto3" json:"new_password,omitempty"`
+	OldPassword   string                 `protobuf:"bytes,1,opt,name=old_password,json=oldPassword,proto3" json:"old_password,omitempty"`
+	NewPassword   string                 `protobuf:"bytes,2,opt,name=new_password,json=newPassword,proto3" json:"new_password,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -870,13 +869,6 @@ func (x *ChangePasswordRequestData) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ChangePasswordRequestData.ProtoReflect.Descriptor instead.
 func (*ChangePasswordRequestData) Descriptor() ([]byte, []int) {
 	return file_tenant_user_proto_rawDescGZIP(), []int{15}
-}
-
-func (x *ChangePasswordRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 func (x *ChangePasswordRequestData) GetOldPassword() string {
@@ -1029,8 +1021,7 @@ func (x *SwitchOrganizationRequest) GetData() *SwitchOrganizationRequestData {
 
 type SwitchOrganizationRequestData struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	UserId         int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrganizationId int64                  `protobuf:"varint,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	OrganizationId int64                  `protobuf:"varint,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -1063,13 +1054,6 @@ func (x *SwitchOrganizationRequestData) ProtoReflect() protoreflect.Message {
 // Deprecated: Use SwitchOrganizationRequestData.ProtoReflect.Descriptor instead.
 func (*SwitchOrganizationRequestData) Descriptor() ([]byte, []int) {
 	return file_tenant_user_proto_rawDescGZIP(), []int{19}
-}
-
-func (x *SwitchOrganizationRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 func (x *SwitchOrganizationRequestData) GetOrganizationId() int64 {
@@ -1126,7 +1110,6 @@ func (x *UserInfoRequest) GetData() *UserInfoRequestData {
 
 type UserInfoRequestData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1159,13 +1142,6 @@ func (x *UserInfoRequestData) ProtoReflect() protoreflect.Message {
 // Deprecated: Use UserInfoRequestData.ProtoReflect.Descriptor instead.
 func (*UserInfoRequestData) Descriptor() ([]byte, []int) {
 	return file_tenant_user_proto_rawDescGZIP(), []int{21}
-}
-
-func (x *UserInfoRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 // Edit profile
@@ -1215,10 +1191,10 @@ func (x *EditProfileRequest) GetData() *EditProfileRequestData {
 
 type EditProfileRequestData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	FirstName     string                 `protobuf:"bytes,2,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
-	LastName      string                 `protobuf:"bytes,3,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
-	MidName       string                 `protobuf:"bytes,4,opt,name=mid_name,json=midName,proto3" json:"mid_name,omitempty"`
+	FirstName     string                 `protobuf:"bytes,1,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	LastName      string                 `protobuf:"bytes,2,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
+	MidName       string                 `protobuf:"bytes,3,opt,name=mid_name,json=midName,proto3" json:"mid_name,omitempty"`
+	Phone         string                 `protobuf:"bytes,4,opt,name=phone,proto3" json:"phone,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1253,13 +1229,6 @@ func (*EditProfileRequestData) Descriptor() ([]byte, []int) {
 	return file_tenant_user_proto_rawDescGZIP(), []int{23}
 }
 
-func (x *EditProfileRequestData) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
 func (x *EditProfileRequestData) GetFirstName() string {
 	if x != nil {
 		return x.FirstName
@@ -1277,6 +1246,13 @@ func (x *EditProfileRequestData) GetLastName() string {
 func (x *EditProfileRequestData) GetMidName() string {
 	if x != nil {
 		return x.MidName
+	}
+	return ""
+}
+
+func (x *EditProfileRequestData) GetPhone() string {
+	if x != nil {
+		return x.Phone
 	}
 	return ""
 }
@@ -1552,32 +1528,29 @@ const file_tenant_user_proto_rawDesc = "" +
 	"\x04code\x18\x03 \x01(\tR\x04code\x12!\n" +
 	"\fnew_password\x18\x04 \x01(\tR\vnewPassword\"N\n" +
 	"\x15ChangePasswordRequest\x125\n" +
-	"\x04data\x18\x01 \x01(\v2!.tenant.ChangePasswordRequestDataR\x04data\"z\n" +
-	"\x19ChangePasswordRequestData\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12!\n" +
-	"\fold_password\x18\x02 \x01(\tR\voldPassword\x12!\n" +
-	"\fnew_password\x18\x03 \x01(\tR\vnewPassword\"J\n" +
+	"\x04data\x18\x01 \x01(\v2!.tenant.ChangePasswordRequestDataR\x04data\"a\n" +
+	"\x19ChangePasswordRequestData\x12!\n" +
+	"\fold_password\x18\x01 \x01(\tR\voldPassword\x12!\n" +
+	"\fnew_password\x18\x02 \x01(\tR\vnewPassword\"J\n" +
 	"\x13RefreshTokenRequest\x123\n" +
 	"\x04data\x18\x01 \x01(\v2\x1f.tenant.RefreshTokenRequestDataR\x04data\">\n" +
 	"\x17RefreshTokenRequestData\x12#\n" +
 	"\rrefresh_token\x18\x01 \x01(\tR\frefreshToken\"V\n" +
 	"\x19SwitchOrganizationRequest\x129\n" +
-	"\x04data\x18\x01 \x01(\v2%.tenant.SwitchOrganizationRequestDataR\x04data\"a\n" +
-	"\x1dSwitchOrganizationRequestData\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12'\n" +
-	"\x0forganization_id\x18\x02 \x01(\x03R\x0eorganizationId\"B\n" +
+	"\x04data\x18\x01 \x01(\v2%.tenant.SwitchOrganizationRequestDataR\x04data\"H\n" +
+	"\x1dSwitchOrganizationRequestData\x12'\n" +
+	"\x0forganization_id\x18\x01 \x01(\x03R\x0eorganizationId\"B\n" +
 	"\x0fUserInfoRequest\x12/\n" +
-	"\x04data\x18\x01 \x01(\v2\x1b.tenant.UserInfoRequestDataR\x04data\".\n" +
-	"\x13UserInfoRequestData\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"H\n" +
+	"\x04data\x18\x01 \x01(\v2\x1b.tenant.UserInfoRequestDataR\x04data\"\x15\n" +
+	"\x13UserInfoRequestData\"H\n" +
 	"\x12EditProfileRequest\x122\n" +
-	"\x04data\x18\x01 \x01(\v2\x1e.tenant.EditProfileRequestDataR\x04data\"\x88\x01\n" +
-	"\x16EditProfileRequestData\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1d\n" +
+	"\x04data\x18\x01 \x01(\v2\x1e.tenant.EditProfileRequestDataR\x04data\"\x85\x01\n" +
+	"\x16EditProfileRequestData\x12\x1d\n" +
 	"\n" +
-	"first_name\x18\x02 \x01(\tR\tfirstName\x12\x1b\n" +
-	"\tlast_name\x18\x03 \x01(\tR\blastName\x12\x19\n" +
-	"\bmid_name\x18\x04 \x01(\tR\amidName\"P\n" +
+	"first_name\x18\x01 \x01(\tR\tfirstName\x12\x1b\n" +
+	"\tlast_name\x18\x02 \x01(\tR\blastName\x12\x19\n" +
+	"\bmid_name\x18\x03 \x01(\tR\amidName\x12\x14\n" +
+	"\x05phone\x18\x04 \x01(\tR\x05phone\"P\n" +
 	"\x16CreateAdminUserRequest\x126\n" +
 	"\x04data\x18\x01 \x01(\v2\".tenant.CreateAdminUserRequestDataR\x04data\"\xce\x01\n" +
 	"\x1aCreateAdminUserRequestData\x12\x14\n" +

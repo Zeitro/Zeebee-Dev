@@ -56,7 +56,6 @@ func TestSwitchOrganization_ReissuesTokenForMember(t *testing.T) {
 	userId, _ := seedMemberInOrgs(t, env, userType, "switch@test.local", orgA, orgB)
 
 	resp, err := NewSwitchOrganizationLogic(ctxWithUserClaim(t, env, userType, userId, orgA.Id), env.SvcCtx).SwitchOrganization(&tenant.SwitchOrganizationRequest{Data: &tenant.SwitchOrganizationRequestData{
-		UserId:         userId,
 		OrganizationId: orgB.Id,
 	}})
 	require.NoError(t, err)
@@ -83,7 +82,6 @@ func TestSwitchOrganization_RejectsNonMember(t *testing.T) {
 	userId, _ := seedMemberInOrgs(t, env, userType, "nonmember@test.local", orgA)
 
 	_, err := NewSwitchOrganizationLogic(ctxWithUserClaim(t, env, userType, userId, orgA.Id), env.SvcCtx).SwitchOrganization(&tenant.SwitchOrganizationRequest{Data: &tenant.SwitchOrganizationRequestData{
-		UserId:         userId,
 		OrganizationId: notMember.Id,
 	}})
 	require.Error(t, err)
@@ -99,7 +97,6 @@ func TestSwitchOrganization_RejectsInactiveOrg(t *testing.T) {
 	userId, _ := seedMemberInOrgs(t, env, userType, "inactive@test.local", orgA, inactive)
 
 	_, err := NewSwitchOrganizationLogic(ctxWithUserClaim(t, env, userType, userId, orgA.Id), env.SvcCtx).SwitchOrganization(&tenant.SwitchOrganizationRequest{Data: &tenant.SwitchOrganizationRequestData{
-		UserId:         userId,
 		OrganizationId: inactive.Id,
 	}})
 	require.Error(t, err)

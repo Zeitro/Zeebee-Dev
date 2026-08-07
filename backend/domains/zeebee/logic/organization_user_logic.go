@@ -636,6 +636,11 @@ const (
 
 // sendInviteEmail sends invite email
 func (l *OrganizationUserLogic) sendInviteEmail(ctx context.Context, input SendInviteUserEmailInput) (err error) {
+	if l.emailClient == nil {
+		err = errorx.New("email client is not initialized")
+		return
+	}
+
 	sendTagKey := stringx.Format(constants.UserInviteEmailSendTag, input.UserType, input.TargetEmail, input.OrganizationId)
 	isExisted, _ := l.redisCli.IsExisted(ctx, sendTagKey)
 	if isExisted {
@@ -675,7 +680,7 @@ func (l *OrganizationUserLogic) sendInviteEmail(ctx context.Context, input SendI
 	}
 
 	// Send invite email
-	data := map[string]interface{}{
+	data := map[string]any{
 		"url": fmt.Sprintf("%s?code=%s&email=%s&first_name=%s&last_name=%s&organization_name=%s&organization_id=%v",
 			input.EmailConfig.Url,
 			code,
@@ -711,6 +716,7 @@ func (l *OrganizationUserLogic) sendInviteEmail(ctx context.Context, input SendI
 		IsHTML:  true,
 	}
 	err = l.emailClient.SendEmail(msg)
+
 	return errorx.WithStack(err)
 }
 

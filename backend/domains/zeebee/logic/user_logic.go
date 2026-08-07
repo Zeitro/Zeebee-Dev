@@ -72,11 +72,14 @@ func (l *UserLogic) GetUserClaimFromCtx(ctx context.Context) (claim utils.JwtUse
 	// the type embedded in the token. The api auth middleware already enforces
 	// this at the edge; re-checking here catches a token replayed across
 	// platforms via a path that bypasses the middleware.
-	if ctxUserTypes := md[utils.UserTypeCtxKey]; len(ctxUserTypes) > 0 {
-		if ctxUserTypes[0] != string(jwtClaim.UserType) {
-			err = status.Error(codes.Unauthenticated, "invalid token")
-			return claim, errorx.WithStack(err)
-		}
+	ctxUserTypes, ok := md[utils.UserTypeCtxKey]
+	if !ok || len(ctxUserTypes) == 0 {
+		err = status.Error(codes.Unauthenticated, "invalid token")
+		return claim, errorx.WithStack(err)
+	}
+	if ctxUserTypes[0] != string(jwtClaim.UserType) {
+		err = status.Error(codes.Unauthenticated, "invalid token")
+		return claim, errorx.WithStack(err)
 	}
 	return jwtClaim.JwtUser, nil
 }

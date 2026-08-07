@@ -92,9 +92,8 @@ message ChangePasswordRequest {
   ChangePasswordRequestData data = 1;
 }
 message ChangePasswordRequestData {
-  int64 user_id = 1;
-  string old_password = 2;
-  string new_password = 3;
+  string old_password = 1;
+  string new_password = 2;
 }
 
 // Refresh token (admin returns full TokenSet, ODD-6)
@@ -110,8 +109,7 @@ message SwitchOrganizationRequest {
   SwitchOrganizationRequestData data = 1;
 }
 message SwitchOrganizationRequestData {
-  int64 user_id = 1;
-  int64 organization_id = 2;
+  int64 organization_id = 1;
 }
 
 // User info
@@ -119,7 +117,6 @@ message UserInfoRequest {
   UserInfoRequestData data = 1;
 }
 message UserInfoRequestData {
-  int64 user_id = 1;
 }
 
 // Edit profile
@@ -127,10 +124,10 @@ message EditProfileRequest {
   EditProfileRequestData data = 1;
 }
 message EditProfileRequestData {
-  int64 user_id = 1;
-  string first_name = 2;
-  string last_name = 3;
-  string mid_name = 4;
+  string first_name = 1;
+  string last_name = 2;
+  string mid_name = 3;
+  string phone = 4;
 }
 
 // Admin provisioning (ODD-4): super-admin creates admin-backend user

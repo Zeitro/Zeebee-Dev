@@ -62,7 +62,10 @@ func ctxWithUserClaim(t *testing.T, env *testutil.Env, userType constants.UserTy
 		UserType:       userType,
 	}, env.SvcCtx.Config.JwtConf.AccessSecret, 3600)
 	require.NoError(t, err)
-	return metadata.NewIncomingContext(context.Background(), metadata.Pairs(utils.JwtTokenCtxKey, tok))
+	return metadata.NewIncomingContext(context.Background(), metadata.Pairs(
+		utils.JwtTokenCtxKey, tok,
+		utils.UserTypeCtxKey, string(userType),
+	))
 }
 
 // T013 US-1: three user types log in and receive a token set signed with the
