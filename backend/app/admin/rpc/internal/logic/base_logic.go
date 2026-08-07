@@ -5,7 +5,6 @@ import (
 	"sync"
 
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/threading"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/admin/rpc/internal/global"
@@ -46,8 +45,6 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 	}
 	emailClient := global.EmailClient
 
-	currentEnforcer := global.AdminEnforcer
-
 	currentAuthEventTopic := svcCtx.Config.CasbinConf.EventTopic.AdminTopic
 	authEventTopicMap := map[constants.UserType]string{
 		constants.UserTypeAdmin:    svcCtx.Config.CasbinConf.EventTopic.AdminTopic,
@@ -59,7 +56,9 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		RedisCli:              redisCli,
 		JwtConfig:             jwtConfig,
 		EmailClient:           emailClient,
-		CurrentEnforcer:       currentEnforcer,
+		// US-12: tenant is the sole casbin executor; admin no longer runs a
+		// local enforcer (AuthLogic is never invoked here anymore).
+		CurrentEnforcer:       nil,
 		CurrentAuthEventTopic: currentAuthEventTopic,
 		AuthEventTopicMap:     authEventTopicMap,
 		Logger:                svcCtx.Logger,
@@ -68,17 +67,6 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		svcCtx:    svcCtx,
 		AllLogics: logic.NewAllLogics(logicConfig),
 	}
-
-	threading.GoSafe(func() {
-		ctx := context.Background()
-		err := l.AuthLogic.RebuildPolicy(ctx, constants.UserTypeAdmin)
-		if err != nil {
-			l.svcCtx.Logger.WithContext(ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("user_type", constants.UserTypeAdmin),
-			).Error("fail to rebuild admin policy")
-		}
-	})
 
 	return l
 }

@@ -1,15 +1,10 @@
 package logic
 
 import (
-	"context"
 	"sync"
-
-	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/threading"
 
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
-	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/logic"
@@ -39,7 +34,6 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		RefreshSecret: svcCtx.Config.JwtConf.RefreshSecret,
 		RefreshExpire: svcCtx.Config.JwtConf.RefreshExpire,
 	}
-	currentEnforcer := global.BorrowerEnforcer
 	authEventTopicMap := map[constants.UserType]string{
 		constants.UserTypeBorrower: svcCtx.Config.CasbinConf.EventTopic.BorrowerTopic,
 	}
@@ -49,7 +43,9 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		RedisCli:              redisCli,
 		JwtConfig:             jwtConfig,
 		EmailClient:           global.EmailClient,
-		CurrentEnforcer:       currentEnforcer,
+		// US-12: tenant is the sole casbin executor; borrower no longer runs a
+		// local enforcer (AuthLogic is never invoked here anymore).
+		CurrentEnforcer:       nil,
 		CurrentAuthEventTopic: svcCtx.Config.CasbinConf.EventTopic.BorrowerTopic,
 		AuthEventTopicMap:     authEventTopicMap,
 		Logger:                svcCtx.Logger,
@@ -60,17 +56,6 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		svcCtx:    svcCtx,
 		AllLogics: logic.NewAllLogics(logicConfig),
 	}
-
-	threading.GoSafe(func() {
-		ctx := context.Background()
-		err := l.AuthLogic.RebuildPolicy(ctx, constants.UserTypeBorrower)
-		if err != nil {
-			l.svcCtx.Logger.WithContext(ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("user_type", constants.UserTypeBorrower),
-			).Error("fail to rebuild borrower policy")
-		}
-	})
 
 	return l
 }

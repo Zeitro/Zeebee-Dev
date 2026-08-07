@@ -7,7 +7,6 @@ import (
 	"github.com/duke-git/lancet/v2/condition"
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/threading"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/lender/rpc/internal/global"
@@ -44,7 +43,6 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		RefreshSecret: svcCtx.Config.JwtConf.RefreshSecret,
 		RefreshExpire: svcCtx.Config.JwtConf.RefreshExpire,
 	}
-	currentEnforcer := global.LenderEnforcer
 	authEventTopicMap := map[constants.UserType]string{
 		constants.UserTypeLender: svcCtx.Config.CasbinConf.EventTopic.LenderTopic,
 	}
@@ -54,7 +52,9 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		RedisCli:              redisCli,
 		JwtConfig:             jwtConfig,
 		EmailClient:           global.EmailClient,
-		CurrentEnforcer:       currentEnforcer,
+		// US-12: tenant is the sole casbin executor; lender no longer runs a
+		// local enforcer (AuthLogic is never invoked here anymore).
+		CurrentEnforcer:       nil,
 		CurrentAuthEventTopic: svcCtx.Config.CasbinConf.EventTopic.LenderTopic,
 		AuthEventTopicMap:     authEventTopicMap,
 		Logger:                svcCtx.Logger,
@@ -65,16 +65,6 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		AllLogics: logic.NewAllLogics(logicConfig),
 	}
 
-	threading.GoSafe(func() {
-		ctx := context.Background()
-		err := l.AuthLogic.RebuildPolicy(ctx, constants.UserTypeLender)
-		if err != nil {
-			l.svcCtx.Logger.WithContext(ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("user_type", constants.UserTypeLender),
-			).Error("fail to rebuild lender policy")
-		}
-	})
 	return l
 }
 

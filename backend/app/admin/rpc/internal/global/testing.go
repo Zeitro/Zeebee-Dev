@@ -4,7 +4,6 @@ import (
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/email"
-	"zeebee-backend/common/rbac"
 	"zeebee-backend/common/redisx"
 )
 
@@ -18,9 +17,6 @@ func SetRedis(cli *redisx.Client) { redisDB = cli }
 
 // SetGormDB replaces the package gorm DB. Test-only.
 func SetGormDB(d *gorm.DB) { db = d }
-
-// SetAdminEnforcer replaces the package Casbin enforcer. Test-only.
-func SetAdminEnforcer(e *rbac.Enforcer) { AdminEnforcer = e }
 
 // SetEmailClient replaces the package email client. Test-only.
 func SetEmailClient(e *email.Email) { EmailClient = e }

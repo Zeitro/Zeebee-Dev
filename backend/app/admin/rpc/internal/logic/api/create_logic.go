@@ -3,52 +3,32 @@ package apilogic
 import (
 	"context"
 
-	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/proto"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 type CreateLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-
-	baseLogic *logic.BaseLogic
 }
 
 func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogic {
-	return &CreateLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-
-		baseLogic: logic.GetBaseLogic(svcCtx),
-	}
+	return &CreateLogic{ctx: ctx, svcCtx: svcCtx}
 }
 
+// Create proxies to tenant; tenant is the RBAC single authority.
 func (l *CreateLogic) Create(in *admin.ApiCreateRequest) (resp *admin.ApiDetailResponse, err error) {
-
-	data := in.Data
-	if data == nil {
-		return nil, logic.ErrorInvalidRequest
-	}
-	input, err := copierx.Trans[admin.ApiCreateRequestData, dto.ApiCreateRequestDto](data)
+	data, err := copierx.Trans[admin.ApiCreateRequestData, tenant.ApiCreateRequestData](in.Data)
 	if err != nil {
 		return nil, err
 	}
-
-	result, err := l.baseLogic.ApiLogic.CreateApi(l.ctx, input)
+	data.UserType = string(constants.UserTypeAdmin)
+	tenantResp, err := l.svcCtx.TenantClient.Api.Create(l.ctx, &tenant.ApiCreateRequest{Data: data})
 	if err != nil {
 		return nil, err
 	}
-
-	respData, err := copierx.Trans[dto.ApiEntityDto, proto.ApiEntity](result, copierx.TimeToRFC3339Str())
-	if err != nil {
-		return nil, err
-	}
-
-	return &admin.ApiDetailResponse{
-		Data: respData,
-	}, nil
+	return &admin.ApiDetailResponse{Data: tenantResp.Data}, nil
 }

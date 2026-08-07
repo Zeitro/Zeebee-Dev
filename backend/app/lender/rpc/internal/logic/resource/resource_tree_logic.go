@@ -6,45 +6,37 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/copierx"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/proto"
 )
 
 type ResourceTreeLogic struct {
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
-
+	ctx       context.Context
+	svcCtx    *svc.ServiceContext
 	baseLogic *logic.BaseLogic
 }
 
 func NewResourceTreeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ResourceTreeLogic {
-	return &ResourceTreeLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-
-		baseLogic: logic.GetBaseLogic(svcCtx),
-	}
+	return &ResourceTreeLogic{ctx: ctx, svcCtx: svcCtx, baseLogic: logic.GetBaseLogic(svcCtx)}
 }
 
+// ResourceTree proxies to tenant; tenant is the RBAC single authority. Lender
+// resources are always scoped to the caller's organization.
 func (l *ResourceTreeLogic) ResourceTree(in *lender.ResourceTreeRequest) (resp *lender.ResourceTreeResponse, err error) {
-
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	trees, err := l.baseLogic.ResourceLogic.GetOrganizationResources(l.ctx, claim.OrganizationId, constants.UserType(in.Data.Type))
+	tenantResp, err := l.svcCtx.TenantClient.Resource.ResourceTree(l.ctx, &tenant.ResourceTreeRequest{
+		Data: &tenant.ResourceTreeRequestData{
+			UserType:       string(constants.UserTypeLender),
+			Type:           in.Data.Type,
+			Scope:          string(constants.ResourceTreeScopeOrganization),
+			OrganizationId: claim.OrganizationId,
+		},
+	})
 	if err != nil {
 		return nil, err
 	}
-
-	data, err := copierx.Trans[[]*dto.ResourceTreeDto, []*proto.ResourceTreeEntity](&trees, copierx.TimeToRFC3339Str())
-	if err != nil {
-		return nil, err
-	}
-
-	return &lender.ResourceTreeResponse{
-		Data: *data,
-	}, nil
+	return &lender.ResourceTreeResponse{Data: tenantResp.Data}, nil
 }
