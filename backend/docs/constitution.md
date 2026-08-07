@@ -28,6 +28,8 @@ feat | fix | refactor | docs | style | perf | test | chore
 - **多功能 → 多 commit**：按功能分批提交。同一类功能（纯文档整理、纯重构）合并为一个 commit，body 逐项列出文件变化，不拆得过细
 - 不同 type 必须分开：一个 `feat` 代码改动 + 一个 `docs` 文档整理 = 2 个 commit
 - 代码风格，命名方式必须统一，不可混用
+- 注释必须准确、简练扼要，太长的注释会分散注意力，注释最好保持在20个字以内
+- 设计要有扩展性、易读性，保持低耦合高内聚，不要过度设计
 
 ## 整洁代码
 
@@ -224,6 +226,21 @@ for _, item := range order.Items {
 // 这里我们先校验订单，然后保存到数据库，最后发邮件通知用户
 // 整个流程需要保证顺序，不能乱序执行，所以按下面步骤来...
 func processOrder(order *Order) error { ... }
+
+
+// Defense-in-depth: verify the platform type declared in metadata matches
+// the type embedded in the token. The api auth middleware already enforces
+// this at the edge; re-checking here catches a token replayed across
+// platforms via a path that bypasses the middleware.
+ctxUserTypes, ok := md[utils.UserTypeCtxKey]
+if !ok || len(ctxUserTypes) == 0 {
+err = status.Error(codes.Unauthenticated, "invalid token")
+return claim, errorx.WithStack(err)
+}
+if ctxUserTypes[0] != string(jwtClaim.UserType) {
+err = status.Error(codes.Unauthenticated, "invalid token")
+return claim, errorx.WithStack(err)
+}
 ```
 
 **好味道**
@@ -239,6 +256,17 @@ const loyaltyDiscount = 0.85
 // Setpgid: kill the whole process group on timeout so soffice's oosplash child
 // doesn't outlive the parent and leak under load.
 cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+
+// check user type
+ctxUserTypes, ok := md[utils.UserTypeCtxKey]
+if !ok || len(ctxUserTypes) == 0 {
+err = status.Error(codes.Unauthenticated, "invalid token")
+return claim, errorx.WithStack(err)
+}
+if ctxUserTypes[0] != string(jwtClaim.UserType) {
+err = status.Error(codes.Unauthenticated, "invalid token")
+return claim, errorx.WithStack(err)
+}
 ```
 
 ## 函数约束
