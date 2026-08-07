@@ -3,39 +3,25 @@ package userlogic
 import (
 	"context"
 
-	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
-	"zeebee-backend/common/copierx"
-	"zeebee-backend/domains/zeebee/data/dto"
+	tenantpb "zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
 type RefreshTokenLogic struct {
-	ctx       context.Context
-	svcCtx    *svc.ServiceContext
-	baseLogic *logic.BaseLogic
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
 }
 
 func NewRefreshTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RefreshTokenLogic {
-	return &RefreshTokenLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		baseLogic: logic.GetBaseLogic(svcCtx),
-	}
+	return &RefreshTokenLogic{ctx: ctx, svcCtx: svcCtx}
 }
 
+// RefreshToken proxies to tenant; tenant resolves userType from the refresh token.
 func (l *RefreshTokenLogic) RefreshToken(in *proto.RefreshTokenRequest) (resp *proto.UserLoginResponse, err error) {
-
-	token, err := l.baseLogic.UserLogic.RefreshToken(l.ctx, in.Data.RefreshToken)
-	if err != nil {
-		return nil, err
-	}
-	data, err := copierx.Trans[dto.UserJwtTokenDto, proto.UserLoginResponseData](token)
-	if err != nil {
-		return nil, err
-	}
-
-	return &proto.UserLoginResponse{
-		Data: data,
-	}, nil
+	return l.svcCtx.TenantClient.User.RefreshToken(l.ctx, &tenantpb.RefreshTokenRequest{
+		Data: &tenantpb.RefreshTokenRequestData{
+			RefreshToken: in.Data.RefreshToken,
+		},
+	})
 }
