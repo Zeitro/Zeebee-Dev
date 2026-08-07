@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type RoleUpdateLogic struct {
@@ -50,7 +51,7 @@ func (l *RoleUpdateLogic) RoleUpdate(req *types.RoleUpdateRequest) (resp *types.
 	}
 
 	// trans response
-	resp, err = copierx.Trans[lender.RoleEntity, types.RoleEntity](rpcResp.Data, copierx.TimeToRFC3339Str())
+	resp, err = copierx.Trans[proto.RoleEntity, types.RoleEntity](rpcResp.Data, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransReqErr(err)
 	}

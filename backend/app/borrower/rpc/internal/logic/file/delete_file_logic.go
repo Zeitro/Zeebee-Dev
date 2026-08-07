@@ -7,39 +7,29 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DeleteFileLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewDeleteFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteFileLogic {
 	return &DeleteFileLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *DeleteFileLogic) DeleteFile(in *borrower.FileDeleteRequest) (resp *borrower.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
-			).Error(err)
-		}
-	}()
+func (l *DeleteFileLogic) DeleteFile(in *proto.PathIdRequest) (resp *proto.EmptyResponse, err error) {
 
 	var loan *model.Loan
 	var loanDocument *model.LoanDocument
@@ -109,5 +99,5 @@ func (l *DeleteFileLogic) DeleteFile(in *borrower.FileDeleteRequest) (resp *borr
 		return nil, err
 	}
 
-	return &borrower.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

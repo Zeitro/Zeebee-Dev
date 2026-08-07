@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+package borrower;
+
+option go_package = "zeebee-backend/app/borrower/rpc/pb/borrower";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+message BorrowerApplicantPageEntity {
+  int64 id = 1;
+  string created_at = 2;
+  string updated_at = 3;
+  int64 creator_id = 4;
+  string first_name = 5;
+  string mid_name = 6;
+  string last_name = 7;
+  string full_name = 8;
+  string ssn = 9;
+  string dob = 10;
+  string marital_status = 11;
+  string email = 12;
+  int32 est_credit_score = 13;
+  string driver_license_num = 14;
+  string phone = 15;
+  proto.AddressEntity address = 16;
+  string creator_name = 17;
+}
+message BorrowerApplicantEditEntity {
+  string first_name = 1;
+  string mid_name = 2;
+  string last_name = 3;
+  string ssn = 4;
+  string dob = 5;
+  string marital_status = 6;
+  string email = 7;
+  int32 est_credit_score = 8;
+  string driver_license_num = 9;
+  proto.AddressEntity address = 10;
+  int64 id = 11;
+  string phone = 12;
+}
+
+// create borrower applicant
+message BorrowerApplicantCreateRequest {
+  BorrowerApplicantEditEntity data = 1;
+}
+
+// update borrower applicant
+message BorrowerApplicantUpdateRequest {
+  BorrowerApplicantEditEntity data = 1;
+}
+
+message BorrowerApplicantDetailResponse {
+  proto.BorrowerApplicantEntity data = 1;
+}
+
+// page borrower applicant
+message BorrowerApplicantPageResponse {
+  BorrowerApplicantPageResponseData data = 1;
+}
+message BorrowerApplicantPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated BorrowerApplicantPageEntity list = 5;
+}
+// check exist
+message BorrowerApplicantCheckExistedRequest {
+  BorrowerApplicantCheckExistedRequestData data = 1;
+}
+message BorrowerApplicantCheckExistedRequestData {
+  int64 id = 1;
+  string first_name = 2;
+  string mid_name = 3;
+  string last_name = 4;
+}
+message BorrowerApplicantCheckExistedResponse {
+  BorrowerApplicantCheckExistedResponseData data = 1;
+}
+message BorrowerApplicantCheckExistedResponseData {
+  bool is_existed = 1;
+}
+// all borrower applicant
+message BorrowerApplicantAllRequest {
+  BorrowerApplicantAllRequestData data = 1;
+}
+message BorrowerApplicantAllRequestData {
+}
+message BorrowerApplicantAllResponse {
+  repeated BorrowerApplicantPageEntity data = 1;
+}
+
+service BorrowerApplicant {
+  rpc Create(BorrowerApplicantCreateRequest) returns(BorrowerApplicantDetailResponse);
+  rpc Update(BorrowerApplicantUpdateRequest) returns(proto.EmptyResponse);
+  rpc Detail(proto.PathIdRequest) returns(BorrowerApplicantDetailResponse);
+  rpc Delete(proto.PathIdRequest) returns(proto.EmptyResponse);
+  rpc Page(proto.CommonPageRequest) returns(BorrowerApplicantPageResponse);
+  rpc CheckExisted(BorrowerApplicantCheckExistedRequest) returns(BorrowerApplicantCheckExistedResponse);
+  rpc All(BorrowerApplicantAllRequest) returns(BorrowerApplicantAllResponse);
+}

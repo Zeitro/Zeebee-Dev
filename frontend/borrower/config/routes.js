@@ -176,6 +176,24 @@ export const noTokenRouter = [
 		hideCrumbs: true,
 	},
 	{
+		path: '/pricing',
+		title: 'Pricing',
+		hideMenu: true,
+		hideCrumbs: true,
+	},
+	{
+		path: '/billing/success',
+		title: 'Billing Success',
+		hideMenu: true,
+		hideCrumbs: true,
+	},
+	{
+		path: '/billing/cancel',
+		title: 'Billing Cancelled',
+		hideMenu: true,
+		hideCrumbs: true,
+	},
+	{
 		path: '/not-found',
 		title: '404',
 		hideCrumbs: true,
@@ -209,6 +227,14 @@ export const menuSetting = {
 		hideSidebar: true,
 	},
 	'/driveAuth': {
+		hideCrumbs: true,
+		hideSidebar: true,
+	},
+	'/billing/success': {
+		hideCrumbs: true,
+		hideSidebar: true,
+	},
+	'/billing/cancel': {
 		hideCrumbs: true,
 		hideSidebar: true,
 	},

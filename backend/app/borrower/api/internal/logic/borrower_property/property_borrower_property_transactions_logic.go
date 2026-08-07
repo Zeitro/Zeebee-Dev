@@ -7,6 +7,7 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -37,7 +38,7 @@ func (l *PropertyBorrowerPropertyTransactionsLogic) PropertyBorrowerPropertyTran
 	}
 
 	resp = &types.BorrowerPropertyTransactionListByPropertyResponse{}
-	list, err := copierx.Trans[[]*borrower.BorrowerPropertyTransactionEntity, []types.BorrowerPropertyTransactionEntity](&rpcResp.Data)
+	list, err := copierx.Trans[[]*proto.BorrowerPropertyTransactionEntity, []types.BorrowerPropertyTransactionEntity](&rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

@@ -2,12 +2,11 @@ package organizationlogic
 
 import (
 	"context"
-	"os"
-	"strings"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/threading"
 
-	"zeebee-backend/app/admin/rpc/internal/logic"
+	"zeebee-backend/app/admin/rpc/internal/schedule"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/errorx"
@@ -17,19 +16,14 @@ import (
 type DiscoverRunLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
 }
 
 func NewDiscoverRunLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DiscoverRunLogic {
-	return &DiscoverRunLogic{ctx: ctx, svcCtx: svcCtx, Logger: logx.WithContext(ctx)}
+	return &DiscoverRunLogic{ctx: ctx, svcCtx: svcCtx}
 }
 
 func (l *DiscoverRunLogic) DiscoverRun(in *admin.LenderDiscoverRunRequest) (resp *admin.LenderDiscoverRunResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+
 	trigger := domainlenderdiscover.TriggerManual
 	if in.GetData() != nil && in.GetData().GetTrigger() == domainlenderdiscover.TriggerScheduled {
 		trigger = domainlenderdiscover.TriggerScheduled
@@ -37,22 +31,26 @@ func (l *DiscoverRunLogic) DiscoverRun(in *admin.LenderDiscoverRunRequest) (resp
 	if trigger != domainlenderdiscover.TriggerScheduled {
 		return nil, errorx.New("manual discover: use Preview then Commit from the admin UI")
 	}
-
-	bl := logic.GetBaseLogic(l.svcCtx)
-	apiKey := strings.TrimSpace(l.svcCtx.Config.OpenAIConf.APIKey)
-	if apiKey == "" {
-		apiKey = os.Getenv("OPENAI_API_KEY")
-	}
-	rn := domainlenderdiscover.Runner{
-		Repos:              l.svcCtx.AllRepos,
-		TemplateLogic:      bl.OrganizationTemplateLogic,
-		SettingLogic:       bl.OrganizationSettingLogic,
-		OpenAIKey:          apiKey,
-		PlaceholderLogoURL: domainlenderdiscover.DefaultPlaceholderLogoURL,
-	}
-	result, err := rn.Run(context.WithoutCancel(l.ctx), trigger)
-	if err != nil {
-		return nil, err
-	}
-	return &admin.LenderDiscoverRunResponse{Data: discoverRunResultToProto(result)}, nil
+	newCtx := context.WithoutCancel(l.ctx)
+	threading.GoSafe(func() {
+		var err error
+		defer func() {
+			if err != nil {
+				l.svcCtx.Logger.WithContext(newCtx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error("fail to run discover lender")
+			}
+		}()
+		rn := schedule.NewRunner(l.svcCtx)
+		result, err := rn.Run(newCtx, trigger)
+		if err != nil {
+			return
+		}
+		data, err := discoverRunResultToProto(result)
+		if err != nil {
+			return
+		}
+		l.svcCtx.Logger.WithContext(newCtx).WithFields(
+			logx.Field("data", data),
+		).Info("success ro run discover lender")
+	})
+	return &admin.LenderDiscoverRunResponse{}, nil
 }

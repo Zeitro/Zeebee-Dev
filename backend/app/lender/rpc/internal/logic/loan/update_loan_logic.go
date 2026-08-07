@@ -16,8 +16,7 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -37,29 +36,22 @@ type updateLoanModelData struct {
 type UpdateLoanLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewUpdateLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLoanLogic {
 	return &UpdateLoanLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
 // UpdateLoan updates a loan
 func (l *UpdateLoanLogic) UpdateLoan(in *lender.LoanUpdateRequest) (resp *lender.LoanUpdateResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
-			).Error(err)
-		}
-	}()
+
 	var oldLoan *model.Loan
 	var oldLoanCopy *model.Loan
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
@@ -335,7 +327,7 @@ func (l *UpdateLoanLogic) buildModelData(reqData *lender.LoanUpdateRequestData, 
 		loanProperty, _ = copierx.Trans[model.LoanProperty, model.LoanProperty](oldLoan.LoanProperty)
 	}
 
-	loanProperty, err = copierx.Trans[lender.LoanPropertyEditEntity, model.LoanProperty](reqData.LoanProperty, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
+	loanProperty, err = copierx.Trans[lender.LoanUpdateRequestData_LoanPropertyEditEntity, model.LoanProperty](reqData.LoanProperty, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
 		return nil, err
 	}
@@ -363,7 +355,7 @@ func (l *UpdateLoanLogic) buildModelData(reqData *lender.LoanUpdateRequestData, 
 
 	// transaction experience
 	transactionExperiences := make([]*model.LoanExperience, 0)
-	transactionExperiencesPtr, err := copierx.Trans[[]*lender.LoanExperienceEntity, []*model.LoanExperience](&reqData.TransactionExperiences,
+	transactionExperiencesPtr, err := copierx.Trans[[]*proto.LoanExperienceEntity, []*model.LoanExperience](&reqData.TransactionExperiences,
 		copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
 	)
 	if err != nil {
@@ -373,7 +365,7 @@ func (l *UpdateLoanLogic) buildModelData(reqData *lender.LoanUpdateRequestData, 
 
 	// real_estates experience
 	realEstatesExperiences := make([]*model.LoanExperience, 0)
-	realEstatesExperiencesPtr, err := copierx.Trans[[]*lender.LoanExperienceEntity, []*model.LoanExperience](&reqData.RealEstateExperiences,
+	realEstatesExperiencesPtr, err := copierx.Trans[[]*proto.LoanExperienceEntity, []*model.LoanExperience](&reqData.RealEstateExperiences,
 		copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
 	)
 	if err != nil {
@@ -383,7 +375,7 @@ func (l *UpdateLoanLogic) buildModelData(reqData *lender.LoanUpdateRequestData, 
 
 	// third services
 	loanThirdServices := make([]*model.LoanThirdService, 0)
-	loanThirdServicesPtr, err := copierx.Trans[[]*lender.LoanThirdServiceEntity, []*model.LoanThirdService](&reqData.LoanThirdServices,
+	loanThirdServicesPtr, err := copierx.Trans[[]*proto.LoanThirdServiceEntity, []*model.LoanThirdService](&reqData.LoanThirdServices,
 		copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
 	)
 	if err != nil {
@@ -393,7 +385,7 @@ func (l *UpdateLoanLogic) buildModelData(reqData *lender.LoanUpdateRequestData, 
 
 	// demographic
 	loanDemographic := &model.LoanDemographic{}
-	loanDemographic, err = copierx.Trans[lender.LoanDemographicEntity, model.LoanDemographic](reqData.LoanDemographic,
+	loanDemographic, err = copierx.Trans[proto.LoanDemographicEntity, model.LoanDemographic](reqData.LoanDemographic,
 		copierx.StrToSqlTimePtr(timex.LayoutUsStyle),
 	)
 	if err != nil {

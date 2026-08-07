@@ -54,7 +54,7 @@ var pdfClientOnce sync.Once
 
 func getPdfClient() *client.Client {
 	pdfClientOnce.Do(func() {
-		pdfClient = client.NewClient(global.Config.PdfGeneratorUrl)
+		pdfClient = client.NewClient(global.Config.PdfGeneratorBaseUrl)
 	})
 	return pdfClient
 }

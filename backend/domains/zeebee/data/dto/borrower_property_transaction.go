@@ -17,18 +17,20 @@ type ChecklistRoot struct {
 }
 
 type ChecklistNode struct {
-	Name                               string           `json:"name"`
-	DocumentId                         int64            `json:"document_id"`
-	IsRequired                         bool             `json:"is_required"`
-	SubDocumentCount                   int32            `json:"sub_document_count"`
-	UploadedDocumentCount              int32            `json:"uploaded_document_count"`
-	RequiredDocumentCount              int32            `json:"required_document_count"`
-	OptionalDocumentCount              int32            `json:"optional_document_count"`
-	TotalRequiredUploadedDocumentCount int32            `json:"total_required_uploaded_document_count"`
-	TotalOptionalUploadedDocumentCount int32            `json:"total_optional_uploaded_document_count"`
-	Children                           []*ChecklistNode `json:"children,omitempty"`
-	FileCount                          int32            `json:"file_count,omitempty"`
-	Files                              []*FileEntityDto `json:"files,omitempty"`
+	Name                               string                           `json:"name"`
+	DocumentId                         int64                            `json:"document_id"`
+	IsRequired                         bool                             `json:"is_required"`
+	SubDocumentCount                   int32                            `json:"sub_document_count"`
+	UploadedDocumentCount              int32                            `json:"uploaded_document_count"`
+	RequiredDocumentCount              int32                            `json:"required_document_count"`
+	OptionalDocumentCount              int32                            `json:"optional_document_count"`
+	TotalRequiredUploadedDocumentCount int32                            `json:"total_required_uploaded_document_count"`
+	TotalOptionalUploadedDocumentCount int32                            `json:"total_optional_uploaded_document_count"`
+	Children                           []*ChecklistNode                 `json:"children,omitempty"`
+	FileCount                          int32                            `json:"file_count,omitempty"`
+	Files                              []*FileEntityDto                 `json:"files,omitempty"`
+	FileParseConfig                    *DocumentTemplateFileParseConfig `json:"file_parse_config,omitempty"`
+	Tags                               []string                         `json:"tags,omitempty"`
 }
 
 type BpTransactionSwitchStatusDto struct {

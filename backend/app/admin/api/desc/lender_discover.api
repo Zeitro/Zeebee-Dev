@@ -98,3 +98,7 @@ type LenderDiscoverCommitLender {
 type LenderDiscoverCommitRequest {
     Lenders []LenderDiscoverCommitLender `json:"lenders"`
 }
+
+type LenderDiscoverRunRequest {
+    Trigger string `json:"trigger,optional"`
+}

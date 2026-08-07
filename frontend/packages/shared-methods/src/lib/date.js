@@ -39,6 +39,22 @@ export function diffDays(date1, date2) {
 	return Math.abs(d1.diff(d2, 'day'));
 }
 
+/**
+ * 计算 expire_date 距今天剩余天数（按自然日，不含负数）。
+ * @param {string|Date} expireDate API 字段 expire_date
+ * @returns {number|null}
+ */
+export function getRemainingDaysUntilExpire(expireDate) {
+	if (!expireDate) {
+		return null;
+	}
+	const expire = dayjs(expireDate).startOf('day');
+	if (!expire.isValid()) {
+		return null;
+	}
+	return Math.max(0, expire.diff(dayjs().startOf('day'), 'day'));
+}
+
 //  判断日期1是否在日期2之前
 export function isBefore(date1, date2) {
 	return dayjs(date1).isBefore(dayjs(date2));

@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package borrower;
+
+option go_package = "zeebee-backend/app/borrower/rpc/pb/borrower";
+
+message ZeitroPropertyEntity {
+  string full_address = 1;
+  string state = 2;
+  string county = 3;
+  string city = 4;
+  string zip_code = 5;
+  string property_type = 6;
+  string price = 7;
+  string income_indicator = 8;
+  string minority_percent = 9;
+  string total_population = 10;
+  string hispanic = 11;
+  string black = 12;
+  string asian = 13;
+  string pacific = 14;
+  string msa_code = 15;
+  string days_on_market = 16;
+  string agent_name = 17;
+  string agent_phone = 18;
+  string agent_email = 19;
+  string distance = 20;
+}
+
+// Zeitro ListingSearch --  request
+message ZeitroListingSearchRequest {
+  double lat = 1;
+  double lon = 2;
+  double dist = 3;
+  string addr = 4;
+}
+
+// Zeitro ListingSearch --  response
+message ZeitroListingSearchResponse {
+  repeated ZeitroPropertyEntity data = 1;
+}
+
+service Zeitro {
+  rpc ZeitroListingSearch(ZeitroListingSearchRequest) returns(ZeitroListingSearchResponse);
+}

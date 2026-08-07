@@ -7,18 +7,17 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/swagger"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/common/errorx"
 )
 
 type SyncApiLogic struct {
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
-	logx.Logger
+	ctx       context.Context
+	svcCtx    *svc.ServiceContext
 	baseLogic *logic.BaseLogic
 }
 
@@ -26,24 +25,15 @@ func NewSyncApiLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncApiLo
 	return &SyncApiLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *SyncApiLogic) SyncApi(in *borrower.SyncApiRequest) (resp *borrower.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
-			).Error(err)
-		}
-	}()
+func (l *SyncApiLogic) SyncApi(in *borrower.SyncApiRequest) (resp *proto.EmptyResponse, err error) {
 
 	var apiGroups swagger.ApiGroup
 	if err = json.Unmarshal([]byte(in.Data.ApiJson), &apiGroups); err != nil {
-		return nil, errorx.Wrap(err, "failed to unmarshal api json")
+		return nil, errorx.Wrap(err, "fail to unmarshal api json")
 	}
 
 	syncDto := &dto.ApiSyncRequestDto{
@@ -68,5 +58,5 @@ func (l *SyncApiLogic) SyncApi(in *borrower.SyncApiRequest) (resp *borrower.Empt
 		return nil, err
 	}
 
-	return &borrower.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

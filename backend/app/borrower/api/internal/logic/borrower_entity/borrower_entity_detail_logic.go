@@ -7,8 +7,8 @@ import (
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type BorrowerEntityDetailLogic struct {
@@ -27,8 +27,8 @@ func NewBorrowerEntityDetailLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 func (l *BorrowerEntityDetailLogic) BorrowerEntityDetail(req *types.PathIdRequest) (resp *types.BorrowerEntityDetailResponse, err error) {
-	rpcReq := &borrower.BorrowerEntityDetailRequest{
-		Data: &borrower.BorrowerEntityDetailRequestData{
+	rpcReq := &proto.PathIdRequest{
+		Data: &proto.PathIdRequestData{
 			Id: req.Id,
 		},
 	}
@@ -39,7 +39,7 @@ func (l *BorrowerEntityDetailLogic) BorrowerEntityDetail(req *types.PathIdReques
 	}
 
 	resp = &types.BorrowerEntityDetailResponse{}
-	entity, err := copierx.Trans[borrower.BorrowerEntityEntity, types.BorrowerEntityEntity](rpcResp.Data)
+	entity, err := copierx.Trans[proto.BorrowerEntityEntity, types.BorrowerEntityEntity](rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

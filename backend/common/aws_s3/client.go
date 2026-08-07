@@ -41,6 +41,10 @@ var ContentTypeMap = map[string]string{
 	"txt":  "text/plain",
 	"doc":  "application/msword",
 	"docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+	"xls":  "application/vnd.ms-excel",
+	"xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+	"ppt":  "application/vnd.ms-powerpoint",
+	"pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
 }
 
 func NewS3Client(conf *Config) (client *S3Client, err error) {
@@ -62,7 +66,7 @@ func (c *S3Client) GetPresignUrl(ctx context.Context, objectName string, expire 
 	suffix = strings.ToLower(suffix)
 	contentType, ok := ContentTypeMap[suffix]
 	if !ok {
-		err = errorx.Errorf("Invalid file type:%s", suffix)
+		err = errorx.Errorf("invalid file type:%s", suffix)
 		return nil, err
 	}
 

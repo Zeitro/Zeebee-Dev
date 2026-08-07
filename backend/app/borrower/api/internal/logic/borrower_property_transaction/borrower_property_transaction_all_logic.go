@@ -7,8 +7,8 @@ import (
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type BorrowerPropertyTransactionAllLogic struct {
@@ -27,15 +27,14 @@ func NewBorrowerPropertyTransactionAllLogic(ctx context.Context, svcCtx *svc.Ser
 }
 
 func (l *BorrowerPropertyTransactionAllLogic) BorrowerPropertyTransactionAll(req *types.EmptyRequest) (resp *types.BorrowerPropertyTransactionAllResponse, err error) {
-	rpcResp, err := l.svcCtx.BorrowerPropertyTransactionRpcClient.All(l.ctx, &borrower.BorrowerPropertyTransactionAllRequest{})
+	rpcResp, err := l.svcCtx.BorrowerPropertyTransactionRpcClient.All(l.ctx, &proto.EmptyRequest{})
 	if err != nil {
 		return nil, err
 	}
-	l.Infof("data:%+v", rpcResp.Data)
 
 	resp = &types.BorrowerPropertyTransactionAllResponse{}
 
-	listPtr, err := copierx.Trans[[]*borrower.BorrowerPropertyTransactionOptionEntity, []types.BorrowerPropertyTransactionOption](&rpcResp.Data)
+	listPtr, err := copierx.Trans[[]*proto.BorrowerPropertyTransactionOptionEntity, []types.BorrowerPropertyTransactionOption](&rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +43,6 @@ func (l *BorrowerPropertyTransactionAllLogic) BorrowerPropertyTransactionAll(req
 	}
 
 	resp.Lists = *listPtr
-	l.Infof("list:%+v", resp.Lists)
 
 	return resp, nil
 }

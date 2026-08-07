@@ -9,35 +9,27 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/data/dto"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type CreateLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogic {
 	return &CreateLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
 func (l *CreateLogic) Create(in *admin.PricingPlanCreateRequest) (resp *admin.PricingPlanDetailResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
-			).Error(err)
-		}
-	}()
+
 	dtoData, err := copierx.Trans[admin.PricingPlanCreateRequestData, dto.PricingPlanCreateRequestDto](in.Data)
 	if err != nil {
 		return nil, err
@@ -48,7 +40,7 @@ func (l *CreateLogic) Create(in *admin.PricingPlanCreateRequest) (resp *admin.Pr
 		return nil, errorx.WithStack(err)
 	}
 
-	protoData, err := copierx.Trans[dto.PricingPlanEntityDto, admin.PricingPlanEntity](result, copierx.TimeToRFC3339Str())
+	protoData, err := copierx.Trans[dto.PricingPlanEntityDto, proto.PricingPlanEntity](result, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

@@ -8,37 +8,25 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/data/dto"
-
-	"github.com/zeromicro/go-zero/core/logx"
-
-	"zeebee-backend/common/errorx"
 )
 
 type AuthCheckLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewAuthCheckLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AuthCheckLogic {
 	return &AuthCheckLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
 func (l *AuthCheckLogic) AuthCheck(in *admin.AuthCheckRequest) (resp *admin.AuthCheckResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
-			).Error(err)
-		}
-	}()
 
 	input, err := copierx.Trans[admin.AuthCheckRequestData, dto.AuthCheckRequestDto](in.Data)
 	if err != nil {

@@ -23,6 +23,7 @@ import (
 	organizationEmailServer "zeebee-backend/app/borrower/rpc/internal/server/organizationemail"
 	zeitroServer "zeebee-backend/app/borrower/rpc/internal/server/zeitro"
 	"zeebee-backend/common/cron"
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/templater"
 	"zeebee-backend/domains/zeebee/templater/convertor"
@@ -58,12 +59,13 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		return nil, err
 	}
 	zrpc.SetClientSlowThreshold(time.Second * 2)
-
-	ctx := svc.NewServiceContext(rpcConfig)
+	logger := logx.WithCallerSkip(0).
+		WithFields(logx.Field("service_name", c.RpcConf.Name))
+	ctx := svc.NewServiceContext(rpcConfig, logger)
 
 	baseLogic := logic.NewBaseLogic(ctx)
 	tplLoader := loader.NewDefaultTemplateLoader(baseLogic.BaseTemplateLogic, baseLogic.OrganizationTemplateLogic)
-	tplConvertor := convertor.NewDefaultConvertor(rpcConfig.PdfGeneratorUrl)
+	tplConvertor := convertor.NewDefaultConvertor(rpcConfig.PdfGeneratorBaseUrl)
 	tpl := templater.NewEngine(tplLoader, tplConvertor)
 	global.Templater = tpl
 
@@ -93,12 +95,35 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 			reflection.Register(grpcServer)
 		}
 	})
+	// Outermost interceptor: tag every rpc ctx with service_name. grpc.UnaryInterceptor
+	// is prepended by grpc-go to the chain (outermost), so it runs above go-zero's
+	// stat interceptor and the stat access-log line carries the field.
+	rpcServer.AddOptions(grpc.UnaryInterceptor(func(ctx context.Context, req any,
+		info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+		ctx = logx.ContextWithFields(ctx, logx.Field("service_name", c.RpcConf.Name))
+		return handler(ctx, req)
+	}))
+	// Centralized error logging. Registered via AddUnaryInterceptors so it sits at
+	// the tail of go-zero's chain — INSIDE the tracing interceptor — and the ctx
+	// here already carries trace+span (from tracing) plus service_name (from the
+	// outer interceptor above). Logging in the outermost interceptor instead loses
+	// trace/span because tracing has not run yet at that layer.
+	rpcServer.AddUnaryInterceptors(func(ctx context.Context, req any,
+		info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+		resp, err := handler(ctx, req)
+		if err != nil {
+			logger.WithContext(ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+			).Error(err)
+		}
+		return resp, err
+	})
 
 	rpcService := &RpcServer{
 		s:    rpcServer,
 		cron: cron.NewEngine(),
 	}
-	err = rpcService.RegisterCronTask(ctx, rpcConfig)
+	err = rpcService.RegisterCronTask(ctx, rpcConfig, logger)
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +145,7 @@ func (s *RpcServer) Stop() {
 	s.cron.Stop()
 }
 
-func (s *RpcServer) RegisterCronTask(svcCtx *svc.ServiceContext, conf config.RpcConf) (err error) {
+func (s *RpcServer) RegisterCronTask(svcCtx *svc.ServiceContext, conf config.RpcConf, logger logx.Logger) (err error) {
 	if s.cron == nil {
 		s.cron = cron.NewEngine()
 	}
@@ -132,7 +157,7 @@ func (s *RpcServer) RegisterCronTask(svcCtx *svc.ServiceContext, conf config.Rpc
 				ctx := context.Background()
 				taskErr := baseLogic.OrganizationSubscriptionLogic.UpdateStatus(ctx, constants.UserTypeBorrower)
 				if taskErr != nil {
-					logx.WithContext(ctx).WithFields(
+					logger.WithFields(
 						logx.Field("type", "cron_task"),
 						logx.Field("name", task.Name),
 						logx.Field("schedule", task.Schedule),

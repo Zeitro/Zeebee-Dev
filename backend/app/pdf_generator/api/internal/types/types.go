@@ -12,3 +12,10 @@ type CreatePdfRequest struct {
 type CreatePdfResponse struct {
 	Data []byte `json:"data"`
 }
+
+type DocToPdfRequest struct {
+	Type string `json:"type" validate:"required,oneof=Url Data"`
+	Url  string `json:"url,optional" validate:"required_if=Type Url,omitempty,url"`
+	Data []byte `json:"data,optional"`
+	Ext  string `json:"ext" validate:"required,oneof=doc docx"`
+}

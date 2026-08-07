@@ -3,41 +3,32 @@ package basetemplatelogic
 import (
 	"context"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type SwitchStatusLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewSwitchStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SwitchStatusLogic {
 	return &SwitchStatusLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
 // SwitchStatus switches the status of a base template with cascade to organization templates
-func (l *SwitchStatusLogic) SwitchStatus(in *admin.SwitchBaseTemplateStatusRequest) (resp *admin.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
-			).Error(err)
-		}
-	}()
+func (l *SwitchStatusLogic) SwitchStatus(in *admin.SwitchBaseTemplateStatusRequest) (resp *proto.EmptyResponse, err error) {
 
 	// Validate status
 	newStatus := constants.CommonStatus(in.Data.Status)
@@ -51,5 +42,5 @@ func (l *SwitchStatusLogic) SwitchStatus(in *admin.SwitchBaseTemplateStatusReque
 		return nil, err
 	}
 
-	return &admin.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

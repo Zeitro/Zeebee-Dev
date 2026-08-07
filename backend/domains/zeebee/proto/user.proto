@@ -1,0 +1,137 @@
+syntax = "proto3";
+
+package proto;
+option go_package = "zeebee-backend/domains/zeebee/proto";
+
+import "proto/common.proto";
+
+
+// Login
+message UserLoginRequest {
+  UserLoginRequestData data = 1;
+}
+message UserLoginResponse {
+  UserLoginResponseData data = 1;
+}
+
+message UserLoginRequestData {
+  string email = 1;
+  string password = 2;
+}
+
+message UserLoginResponseData {
+  string access_token = 1;
+  string refresh_token = 2;
+  int64 access_token_expire = 3;
+  int64 refresh_token_expire = 4;
+}
+
+// Refresh Token
+message RefreshTokenRequest {
+  RefreshTokenRequestData data = 1;
+}
+
+message RefreshTokenRequestData {
+  string refresh_token = 1;
+}
+
+//message RefreshTokenResponse {
+//  RefreshTokenResponseData data = 1;
+//}
+//
+//message RefreshTokenResponseData {
+//  string access_token = 1;
+//  int64 access_token_expire = 2;
+//}
+
+// Verify email
+message VerifyEmailRequest {
+  VerifyEmailRequestData data = 1;
+}
+message VerifyEmailResponse {
+  UserLoginResponseData data = 1;
+}
+message VerifyEmailRequestData {
+  string email = 1;
+  string code = 2;
+}
+
+// send Verify Email
+message SendVerifyEmailRequest {
+  SendVerifyEmailRequestData data = 1;
+}
+message SendVerifyEmailResponse {
+  EmptyResponse data = 1;
+}
+message SendVerifyEmailRequestData {
+  string email = 1;
+}
+
+// Reset Password
+message ResetPasswordRequest {
+  ResetPasswordRequestData data = 1;
+}
+message ResetPasswordResponse {
+  proto.UserLoginResponseData data = 1;
+}
+
+// Send Reset Password Email
+message SendResetPasswordEmailRequest {
+  SendResetPasswordEmailRequestData data = 1;
+}
+message SendResetPasswordEmailResponse {
+  proto.EmptyResponse data = 1;
+}
+message SendResetPasswordEmailRequestData {
+  string email = 1;
+}
+
+message ResetPasswordRequestData {
+  string password = 1;
+  string code = 2;
+  string email = 3;
+}
+
+// Userinfo
+message UserinfoResponse {
+  UserinfoResponseData data = 1;
+}
+
+message UserinfoResponseData {
+  message Organization {
+    int64 id = 1;
+    string name = 2;
+    string status = 3;
+    bool is_default = 4;
+  }
+
+  int64 id = 1;
+  string email = 2;
+  string first_name = 3;
+  string last_name = 4;
+  string full_name = 5;
+  int64 organization_id = 6;
+  string organization_name = 7;
+  string status = 8;
+  repeated Organization organizations = 9;
+  bool is_owner = 10;
+  bool is_admin = 11;
+  int64 organization_user_id = 12;
+}
+
+// Switch Organization
+message SwitchOrganizationRequest {
+  SwitchOrganizationRequestData data = 1;
+}
+message SwitchOrganizationRequestData {
+  int64 organization_id = 1;
+}
+
+// Change Password
+message ChangePasswordRequest {
+  ChangePasswordRequestData data = 1;
+}
+message ChangePasswordRequestData {
+  string old_password = 1;
+  string new_password = 2;
+}

@@ -7,8 +7,8 @@ import (
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DeleteLogic struct {
@@ -28,8 +28,8 @@ func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogi
 
 func (l *DeleteLogic) Delete(req *types.PathIdRequest) (resp *types.EmptyResponse, err error) {
 	// Call RPC to delete file
-	_, err = l.svcCtx.FileRpcClient.DeleteFile(l.ctx, &borrower.FileDeleteRequest{
-		Data: &borrower.FileDeleteRequestData{
+	_, err = l.svcCtx.FileRpcClient.DeleteFile(l.ctx, &proto.PathIdRequest{
+		Data: &proto.PathIdRequestData{
 			Id: req.Id,
 		},
 	})

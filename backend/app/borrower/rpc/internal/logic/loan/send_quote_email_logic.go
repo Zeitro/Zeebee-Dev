@@ -18,6 +18,7 @@ import (
 	"zeebee-backend/domains/zeebee/email/client"
 	"zeebee-backend/domains/zeebee/limiter"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -27,28 +28,21 @@ import (
 type SendQuoteEmailLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewSendQuoteEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SendQuoteEmailLogic {
 	return &SendQuoteEmailLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *SendQuoteEmailLogic) SendQuoteEmail(in *borrower.LoanSendQuoteEmailRequest) (resp *borrower.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
-			).Error(err)
-		}
-	}()
+func (l *SendQuoteEmailLogic) SendQuoteEmail(in *borrower.LoanSendQuoteEmailRequest) (resp *proto.EmptyResponse, err error) {
+
 	if len(in.Data.LenderIds) == 0 {
 		return nil, errorx.New("Lender is required")
 	}
@@ -87,7 +81,7 @@ func (l *SendQuoteEmailLogic) SendQuoteEmail(in *borrower.LoanSendQuoteEmailRequ
 
 	go func() {
 		newCtx := context.WithoutCancel(l.ctx)
-		l.WithContext(newCtx).WithFields(logx.Field("lender ids", in.Data.LenderIds)).Info("Start send quote email")
+		l.svcCtx.Logger.WithContext(newCtx).WithFields(logx.Field("lender ids", in.Data.LenderIds)).Info("Start send quote email")
 		tplVars := map[string]interface{}{
 			"borrower_name":           borrowerOrganization.Name,
 			"borrower_applicant_name": strings.Join(borrowerApplicantNames, ","),
@@ -110,13 +104,13 @@ func (l *SendQuoteEmailLogic) SendQuoteEmail(in *borrower.LoanSendQuoteEmailRequ
 			}
 			err := l.sendEmail(newCtx, input, claim)
 			if err != nil {
-				l.WithContext(newCtx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+				l.svcCtx.Logger.WithContext(newCtx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 			}
 		}
-		l.WithContext(newCtx).Info("End send quote email")
+		l.svcCtx.Logger.WithContext(newCtx).Info("End send quote email")
 	}()
-	l.WithContext(l.ctx).Info("Finish request")
-	return &borrower.EmptyResponse{}, nil
+	l.svcCtx.Logger.WithContext(l.ctx).Info("Finish request")
+	return &proto.EmptyResponse{}, nil
 }
 
 type quoteEmailInput struct {
@@ -168,7 +162,7 @@ func (l *SendQuoteEmailLogic) sendEmail(ctx context.Context, input quoteEmailInp
 	if err != nil {
 		return errorx.WithStack(err)
 	}
-	l.WithContext(ctx).WithFields(
+	l.svcCtx.Logger.WithContext(ctx).WithFields(
 		logx.Field("sender", input.senderEmail),
 		logx.Field("receiver", lender.ContactEmail),
 	).Info("Send quote email success")

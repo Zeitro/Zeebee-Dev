@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+package lender;
+
+option go_package = "zeebee-backend/app/lender/rpc/pb/lender";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+
+//  page --  response
+message RolePageResponse {
+  RolePageResponseData data = 1;
+}
+
+message RolePageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated proto.RoleEntity list = 5;
+}
+
+//  create --  request
+message RoleCreateRequest {
+  RoleCreateRequestData data = 1;
+}
+message RoleCreateRequestData {
+  string name = 1;
+  string description = 2;
+  string status = 3;
+  repeated RoleAndResourceRelationEntity role_and_resources = 4;
+}
+
+//  create --  response
+message RoleCreateResponse {
+  proto.RoleEntity data = 1;
+}
+//  update --  request
+message RoleUpdateRequest {
+  RoleUpdateRequestData data = 1;
+}
+message RoleUpdateRequestData {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  string status = 4;
+  repeated RoleAndResourceRelationEntity role_and_resources = 5;
+}
+
+message RoleAndResourceRelationEntity{
+  int64 role_id = 1;
+  int64 resource_id = 2;
+  string data_scope = 3;
+}
+
+
+//  detail -- response
+message RoleDetailResponse {
+  proto.RoleEntity data = 1;
+}
+// update status --  request
+message RoleUpdateStatusRequest {
+  RoleUpdateStatusRequestData data = 1;
+}
+message RoleUpdateStatusRequestData {
+  int64 id = 1;
+  string status = 2;
+}
+
+// all -- response
+message RoleAllResponse {
+  repeated proto.RoleEntity  data = 1;
+}
+
+// assign organization users -- request
+message RoleAssignOrganizationUsersRequest {
+  RoleAssignOrganizationUsersRequestData data = 1;
+}
+message RoleAssignOrganizationUsersRequestData {
+  int64 id = 1;
+  repeated int64 organization_user_ids = 2;
+}
+
+service role {
+  rpc Page(proto.CommonPageRequest) returns(RolePageResponse);
+  rpc Create(RoleCreateRequest) returns(RoleCreateResponse);
+  rpc Update(RoleUpdateRequest) returns(RoleDetailResponse);
+  rpc Delete(proto.PathIdRequest) returns(proto.EmptyResponse);
+  rpc Detail(proto.PathIdRequest) returns(RoleDetailResponse);
+  rpc UpdateStatus(RoleUpdateStatusRequest) returns(proto.EmptyResponse);
+  rpc All(proto.EmptyRequest) returns(RoleAllResponse);
+  rpc AssignOrganizationUsers(RoleAssignOrganizationUsersRequest) returns(RoleDetailResponse);
+}

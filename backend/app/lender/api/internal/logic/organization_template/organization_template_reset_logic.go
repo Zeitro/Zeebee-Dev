@@ -5,8 +5,8 @@ import (
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
-	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,13 +27,13 @@ func NewOrganizationTemplateResetLogic(ctx context.Context, svcCtx *svc.ServiceC
 }
 
 func (l *OrganizationTemplateResetLogic) OrganizationTemplateReset(req *types.PathIdRequest) (resp *types.OrganizationTemplateDetailResponse, err error) {
-	rpcReq := &lender.IdRequest{Data: req.Id}
+	rpcReq := &proto.IdRequest{Data: req.Id}
 
 	rpcResp, err := l.svcCtx.OrganizationTemplateRpcClient.Reset(l.ctx, rpcReq)
 	if err != nil {
 		return
 	}
-	resp, err = copierx.Trans[lender.OrganizationTemplateEntity, types.OrganizationTemplateDetailResponse](rpcResp.Data)
+	resp, err = copierx.Trans[proto.OrganizationTemplateEntity, types.OrganizationTemplateDetailResponse](rpcResp.Data)
 
 	return resp, err
 }

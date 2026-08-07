@@ -7,8 +7,8 @@ import (
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type CreateAwsS3PresignUrlLogic struct {
@@ -27,9 +27,9 @@ func NewCreateAwsS3PresignUrlLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *CreateAwsS3PresignUrlLogic) CreateAwsS3PresignUrl(req *types.S3PresignUrlCreateRequest) (resp *types.S3PresignUrlCreateResponse, err error) {
-	rpcReq := &borrower.StorageCreatePresignedUrlRequest{}
+	rpcReq := &proto.StorageCreatePresignedUrlRequest{}
 
-	rpcReq.Data, err = copierx.Trans[types.S3PresignUrlCreateRequest, borrower.StorageCreatePresignedUrlRequestData](req)
+	rpcReq.Data, err = copierx.Trans[types.S3PresignUrlCreateRequest, proto.StorageCreatePresignedUrlRequestData](req)
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +39,7 @@ func (l *CreateAwsS3PresignUrlLogic) CreateAwsS3PresignUrl(req *types.S3PresignU
 		return nil, err
 	}
 
-	resp, err = copierx.Trans[borrower.StorageCreatePresignedUrlResponseData, types.S3PresignUrlCreateResponse](rpcResp.Data)
+	resp, err = copierx.Trans[proto.StorageCreatePresignedUrlResponseData, types.S3PresignUrlCreateResponse](rpcResp.Data)
 
 	return
 }

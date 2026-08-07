@@ -15,13 +15,15 @@ import (
 type BaseLogic struct {
 	repos    *repo.AllRepos
 	redisCli *redisx.Client
+	logger   logx.Logger
 }
 
 // NewBaseLogic creates a new base logic instance
-func NewBaseLogic(repos *repo.AllRepos, redisCli *redisx.Client) *BaseLogic {
+func NewBaseLogic(repos *repo.AllRepos, redisCli *redisx.Client, logger logx.Logger) *BaseLogic {
 	return &BaseLogic{
 		repos:    repos,
 		redisCli: redisCli,
+		logger:   logger,
 	}
 }
 

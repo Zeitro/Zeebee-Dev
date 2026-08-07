@@ -3,42 +3,31 @@ package organizationuserlogic
 import (
 	"context"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/data/dto"
-
-	"zeebee-backend/common/errorx"
 )
 
 type PageLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PageLogic {
 	return &PageLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
 func (l *PageLogic) Page(in *admin.OrganizationUserPageRequest) (resp *admin.OrganizationUserPageResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
-			).Error(err)
-		}
-	}()
+
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
