@@ -52,8 +52,7 @@ func (m *AuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		if token != "" {
 			claim, err := utils.ParseToken(token, m.jwtSecret)
 			if err != nil {
-				// response.Unauthorized(w, "invalid token")
-				response.BadRequest(w, "authentication failed")
+				response.Unauthorized(w, "invalid token")
 				return
 			}
 			if claim.UserType != m.userType {
