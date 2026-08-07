@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
 	"testing"
 	"time"
 
@@ -159,6 +160,41 @@ func TestAuthzCheck_AllowForGrantedUser(t *testing.T) {
 			assert.True(t, resp.GetData().GetAuthorized())
 		})
 	}
+}
+
+// Regression: tenant runs ONE shared unfiltered enforcer holding every
+// platform's policies. A full rebuild for one type must only diff its own
+// domain policies; otherwise rebuilding Lender removes Borrower's policies
+// (and vice versa), flipping live AuthzCheck to deny. T059 found this as a
+// startup race (three per-type rebuilds run concurrently in NewBaseLogic).
+func TestAuthzCheck_RebuildIsScopedPerType(t *testing.T) {
+	env := newAuthTestEnv(t)
+	fL := seedAuthzGranted(t, env, constants.UserTypeLender, "Staff")
+	fB := seedAuthzGranted(t, env, constants.UserTypeBorrower, "Staff")
+	require.NoError(t, env.SvcCtx.Enforcer.Enforcer.LoadPolicy())
+
+	base := logic.GetBaseLogic(env.SvcCtx)
+	for _, ut := range []constants.UserType{constants.UserTypeLender, constants.UserTypeBorrower} {
+		require.NoError(t, base.AuthLogic.RebuildPolicy(context.Background(), ut))
+	}
+
+	policies, err := env.SvcCtx.Enforcer.AllPolicies()
+	require.NoError(t, err)
+	have := make(map[string]bool, len(policies))
+	for _, p := range policies {
+		have[strings.Join(p, ",")] = true
+	}
+	assert.True(t, have[strings.Join(auth.BuildPolicy(fL.roleId, fL.resId, constants.UserTypeLender), ",")], "lender policy should survive borrower rebuild")
+	assert.True(t, have[strings.Join(auth.BuildPolicy(fB.roleId, fB.resId, constants.UserTypeBorrower), ",")], "borrower policy should survive lender rebuild")
+
+	// Live decisions stay granted after both rebuilds.
+	respL, err := NewAuthCheckLogic(ctxWithToken(t, env, constants.UserTypeLender, fL), env.SvcCtx).AuthCheck(authzCheckReq(constants.UserTypeLender))
+	require.NoError(t, err)
+	assert.True(t, respL.GetData().GetAuthorized())
+
+	respB, err := NewAuthCheckLogic(ctxWithToken(t, env, constants.UserTypeBorrower, fB), env.SvcCtx).AuthCheck(authzCheckReq(constants.UserTypeBorrower))
+	require.NoError(t, err)
+	assert.True(t, respB.GetData().GetAuthorized())
 }
 
 // T019 US-4: revoking the casbin policy flips the next request to denied

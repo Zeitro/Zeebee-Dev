@@ -730,8 +730,10 @@ func (l *Auth) doRebuild(ctx context.Context, organizationType constants.UserTyp
 	})
 
 	// 6. existing policies. Org-scoped: only those whose subject belongs to this
-	//    org (never touch another org's policies). Full: all current policies,
-	//    matching the legacy diff.
+	//    org (never touch another org's policies). Full: only this type's domain
+	//    policies — tenant runs ONE shared unfiltered enforcer holding every
+	//    platform's policies, so a per-type rebuild must not diff (and remove)
+	//    another type's policies.
 	oldPolicies, err := l.enforcer.AllPolicies()
 	if err != nil {
 		return err
@@ -745,6 +747,8 @@ func (l *Auth) doRebuild(ctx context.Context, organizationType constants.UserTyp
 			if _, ok := subjectSet[item[0]]; !ok {
 				return
 			}
+		} else if len(item) < 2 || item[1] != string(organizationType) {
+			return
 		}
 		existing[buildKeyFn(item)] = item
 	})
