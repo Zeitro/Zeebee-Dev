@@ -5,25 +5,23 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/duke-git/lancet/v2/mathutil"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
-	"zeebee-backend/common/copierx"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/email"
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/proto"
 	"zeebee-backend/domains/zeebee/templater"
 	"zeebee-backend/domains/zeebee/templater/loader"
-
-	"github.com/zeromicro/go-zero/core/logx"
-
-	"zeebee-backend/common/errorx"
 )
 
 type VerifyEmailLogic struct {
@@ -35,51 +33,40 @@ type VerifyEmailLogic struct {
 
 func NewVerifyEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *VerifyEmailLogic {
 	return &VerifyEmailLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-
+		ctx:       ctx,
+		svcCtx:    svcCtx,
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
+// VerifyEmail proxies activation to tenant (sole identity authority) and keeps
+// the borrower-only pre-approval letter side effect local. Side-effect failure
+// never fails the activation response.
 func (l *VerifyEmailLogic) VerifyEmail(in *proto.VerifyEmailRequest) (resp *proto.VerifyEmailResponse, err error) {
-
-	var user *model.User
-	email := in.Data.Email
-	code := in.Data.Code
-	user, err = l.baseLogic.UserLogic.VerifyUserEmail(l.ctx, email, code, constants.UserTypeBorrower)
-	if err != nil {
-		return nil, err
-	}
-	organizationUser, err := l.svcCtx.OrganizationUserRepo.GetOrganizationUserByUserId(l.ctx, user.DefaultOrganizationId, user.Id)
-	if err != nil {
-		return nil, err
-	}
-
-	tokenInfo, err := l.baseLogic.UserLogic.GenerateJwtToken(user, organizationUser)
-	if err != nil {
-		return nil, err
-	}
-	data := &proto.UserLoginResponseData{}
-	data, err = copierx.Trans[dto.UserJwtTokenDto, proto.UserLoginResponseData](tokenInfo)
+	loginResp, err := l.svcCtx.TenantClient.User.VerifyEmail(l.ctx, &tenant.VerifyEmailRequest{
+		Data: &tenant.VerifyEmailRequestData{
+			UserType: string(constants.UserTypeBorrower),
+			Email:    in.Data.Email,
+			Code:     in.Data.Code,
+		},
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	go func() {
-		newCtx := context.WithoutCancel(l.ctx)
-		err := l.handlePreapprovalLoan(newCtx, user, organizationUser.OrganizationId)
-		if err != nil {
-			err = errorx.Wrap(err, "fail to handle preapproval loan")
-			l.svcCtx.Logger.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-			).Error(err)
-		}
-	}()
+	user, uerr := l.svcCtx.UserRepo.GetUserByEmail(l.ctx, strings.ToLower(in.Data.Email), constants.UserTypeBorrower)
+	if uerr == nil && user != nil {
+		go func() {
+			ctx := context.WithoutCancel(l.ctx)
+			if err := l.handlePreapprovalLoan(ctx, user, user.DefaultOrganizationId); err != nil {
+				l.svcCtx.Logger.WithContext(ctx).
+					WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
+					Error(err)
+			}
+		}()
+	}
 
-	return &proto.VerifyEmailResponse{
-		Data: data,
-	}, nil
+	return &proto.VerifyEmailResponse{Data: loginResp.Data}, nil
 }
 
 func (l *VerifyEmailLogic) handlePreapprovalLoan(ctx context.Context, user *model.User, borrowerOrganizationId int64) (err error) {
@@ -137,9 +124,7 @@ func (l *VerifyEmailLogic) handlePreapprovalLoan(ctx context.Context, user *mode
 	}
 
 	// Get PDF
-	// now := time.Now()
 	renderData := map[string]interface{}{
-		// "pdfCreateTime": now.Month().String() + now.Format(" 02,2006"),
 		"loanBorrower":  user.FirstName,
 		"salesPrice":    stringx.FormatUsDollarCurrency(preapprovalInput.Loan.PurchaseAmount),
 		"maxLoanAmount": stringx.FormatUsDollarCurrency(preapprovalResult.TotalAmount),

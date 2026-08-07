@@ -7,13 +7,12 @@
 package admin
 
 import (
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
 	proto "zeebee-backend/domains/zeebee/proto"
-
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -368,11 +367,13 @@ func (x *RefreshTokenResponse) GetData() *RefreshTokenResponseData {
 }
 
 type RefreshTokenResponseData struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	AccessToken       string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
-	AccessTokenExpire int64                  `protobuf:"varint,2,opt,name=access_token_expire,json=accessTokenExpire,proto3" json:"access_token_expire,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	AccessToken        string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	RefreshToken       string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+	AccessTokenExpire  int64                  `protobuf:"varint,3,opt,name=access_token_expire,json=accessTokenExpire,proto3" json:"access_token_expire,omitempty"`
+	RefreshTokenExpire int64                  `protobuf:"varint,4,opt,name=refresh_token_expire,json=refreshTokenExpire,proto3" json:"refresh_token_expire,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *RefreshTokenResponseData) Reset() {
@@ -412,9 +413,23 @@ func (x *RefreshTokenResponseData) GetAccessToken() string {
 	return ""
 }
 
+func (x *RefreshTokenResponseData) GetRefreshToken() string {
+	if x != nil {
+		return x.RefreshToken
+	}
+	return ""
+}
+
 func (x *RefreshTokenResponseData) GetAccessTokenExpire() int64 {
 	if x != nil {
 		return x.AccessTokenExpire
+	}
+	return 0
+}
+
+func (x *RefreshTokenResponseData) GetRefreshTokenExpire() int64 {
+	if x != nil {
+		return x.RefreshTokenExpire
 	}
 	return 0
 }
@@ -1098,10 +1113,12 @@ const file_admin_user_proto_rawDesc = "" +
 	"\x17RefreshTokenRequestData\x12#\n" +
 	"\rrefresh_token\x18\x01 \x01(\tR\frefreshToken\"K\n" +
 	"\x14RefreshTokenResponse\x123\n" +
-	"\x04data\x18\x01 \x01(\v2\x1f.admin.RefreshTokenResponseDataR\x04data\"m\n" +
+	"\x04data\x18\x01 \x01(\v2\x1f.admin.RefreshTokenResponseDataR\x04data\"\xc4\x01\n" +
 	"\x18RefreshTokenResponseData\x12!\n" +
-	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12.\n" +
-	"\x13access_token_expire\x18\x02 \x01(\x03R\x11accessTokenExpire\"K\n" +
+	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
+	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\x12.\n" +
+	"\x13access_token_expire\x18\x03 \x01(\x03R\x11accessTokenExpire\x120\n" +
+	"\x14refresh_token_expire\x18\x04 \x01(\x03R\x12refreshTokenExpire\"K\n" +
 	"\x14ResetPasswordRequest\x123\n" +
 	"\x04data\x18\x01 \x01(\v2\x1f.admin.ResetPasswordRequestDataR\x04data\"`\n" +
 	"\x18ResetPasswordRequestData\x12\x1a\n" +

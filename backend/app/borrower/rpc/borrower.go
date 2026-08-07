@@ -7,6 +7,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/reflection"
 
 	"github.com/zeromicro/go-zero/core/service"
@@ -33,7 +34,6 @@ import (
 
 	"zeebee-backend/app/borrower/config"
 	"zeebee-backend/app/borrower/rpc/internal/global"
-	authServer "zeebee-backend/app/borrower/rpc/internal/server/auth"
 	commonServer "zeebee-backend/app/borrower/rpc/internal/server/common"
 	loanServer "zeebee-backend/app/borrower/rpc/internal/server/loan"
 	loanDocumentServer "zeebee-backend/app/borrower/rpc/internal/server/loandocument"
@@ -84,7 +84,6 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		borrower.RegisterOrganizationServer(grpcServer, organizationServer.NewOrganizationServer(ctx))
 		borrower.RegisterOrganizationEmailServer(grpcServer, organizationEmailServer.NewOrganizationEmailServer(ctx))
 		borrower.RegisterZeitroServer(grpcServer, zeitroServer.NewZeitroServer(ctx))
-		borrower.RegisterAuthServer(grpcServer, authServer.NewAuthServer(ctx))
 		borrower.RegisterResourceServer(grpcServer, resourceServer.NewResourceServer(ctx))
 		borrower.RegisterBorrowerPropertyTransactionServer(grpcServer, borrowerPropertyTransactionServer.NewBorrowerPropertyTransactionServer(ctx))
 		borrower.RegisterDocumentServer(grpcServer, documentServer.NewDocumentServer(ctx))
@@ -95,12 +94,19 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 			reflection.Register(grpcServer)
 		}
 	})
-	// Outermost interceptor: tag every rpc ctx with service_name. grpc.UnaryInterceptor
-	// is prepended by grpc-go to the chain (outermost), so it runs above go-zero's
-	// stat interceptor and the stat access-log line carries the field.
+	// Outermost interceptor: tag every rpc ctx with service_name, and propagate
+	// incoming gRPC metadata (jwt_token / user_type / data_scope) to the outgoing
+	// context so the US-12 proxy calls to tenant rpc carry the caller's identity
+	// across the hop. grpc.UnaryInterceptor is prepended by grpc-go to the chain
+	// (outermost), so it runs above go-zero's stat interceptor and the access-log
+	// line carries the field. gRPC does not mirror incoming→outgoing metadata
+	// automatically; go-zero only forwards trace headers.
 	rpcServer.AddOptions(grpc.UnaryInterceptor(func(ctx context.Context, req any,
 		info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 		ctx = logx.ContextWithFields(ctx, logx.Field("service_name", c.RpcConf.Name))
+		if md, ok := metadata.FromIncomingContext(ctx); ok {
+			ctx = metadata.NewOutgoingContext(ctx, md.Copy())
+		}
 		return handler(ctx, req)
 	}))
 	// Centralized error logging. Registered via AddUnaryInterceptors so it sits at
