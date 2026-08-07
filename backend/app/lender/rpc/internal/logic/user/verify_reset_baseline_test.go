@@ -113,3 +113,33 @@ func TestBaselineResetPassword_InvalidCode(t *testing.T) {
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "invalid or expired code")
 }
+
+// VerifyEmail with a valid code activates an unverified user and issues a token;
+// the verify code is consumed.
+func TestBaselineVerifyEmail_Success(t *testing.T) {
+	env := newBaselineEnv(t)
+	email := "verify-ok@test.local"
+	userId, _ := seedLenderUser(t, env, email, baselinePassword)
+	require.NoError(t, env.DB.Model(&model.User{}).Where("id = ?", userId).
+		Update("status", constants.UserStatusUnverified).Error)
+	setVerifyCode(t, email, "1234567890")
+
+	l := NewVerifyEmailLogic(context.Background(), env.SvcCtx)
+	resp, err := l.VerifyEmail(&proto.VerifyEmailRequest{Data: &proto.VerifyEmailRequestData{
+		Email: email,
+		Code:  "1234567890",
+	}})
+	require.NoError(t, err)
+	require.NotNil(t, resp.GetData())
+	assert.NotEmpty(t, resp.GetData().GetAccessToken())
+
+	// user activated.
+	var user model.User
+	require.NoError(t, env.DB.Where("id = ?", userId).First(&user).Error)
+	assert.Equal(t, constants.UserStatusActive, user.Status)
+
+	// code consumed.
+	codeKey := stringx.Format(constants.UserRegisterVerifyCode, constants.UserTypeLender, email)
+	stored, _ := global.GetRedis().Get(context.Background(), codeKey)
+	assert.Empty(t, stored, "verify code must be consumed after use")
+}
