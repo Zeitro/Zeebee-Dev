@@ -48,16 +48,16 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 	}
 
 	logicConfig := logic.AllLogicConfig{
-		Repos:                 svcCtx.AllRepos,
-		RedisCli:              redisCli,
-		JwtConfig:             jwtConfig,
-		EmailClient:           global.EmailClient,
+		Repos:             svcCtx.AllRepos,
+		RedisCli:          redisCli,
+		JwtConfig:         jwtConfig,
+		EmailClient:       global.EmailClient,
 		// US-12: tenant is the sole casbin executor; lender no longer runs a
-		// local enforcer (AuthLogic is never invoked here anymore).
-		CurrentEnforcer:       nil,
-		CurrentAuthEventTopic: svcCtx.Config.CasbinConf.EventTopic.LenderTopic,
-		AuthEventTopicMap:     authEventTopicMap,
-		Logger:                svcCtx.Logger,
+		// local enforcer, so it subscribes to no reload channel (AuthLogic is
+		// never invoked here anymore).
+		CurrentEnforcer:   nil,
+		AuthEventTopicMap: authEventTopicMap,
+		Logger:            svcCtx.Logger,
 	}
 
 	l := &BaseLogic{

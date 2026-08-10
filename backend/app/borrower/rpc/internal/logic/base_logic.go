@@ -44,9 +44,9 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		JwtConfig:             jwtConfig,
 		EmailClient:           global.EmailClient,
 		// US-12: tenant is the sole casbin executor; borrower no longer runs a
-		// local enforcer (AuthLogic is never invoked here anymore).
+		// local enforcer, so it subscribes to no reload channel (AuthLogic is
+		// never invoked here anymore).
 		CurrentEnforcer:       nil,
-		CurrentAuthEventTopic: svcCtx.Config.CasbinConf.EventTopic.BorrowerTopic,
 		AuthEventTopicMap:     authEventTopicMap,
 		Logger:                svcCtx.Logger,
 	}

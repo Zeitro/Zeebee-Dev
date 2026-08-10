@@ -65,7 +65,7 @@ func (l *UserLogic) GetUserClaimFromCtx(ctx context.Context) (claim utils.JwtUse
 	jwtConf := l.jwtConfig
 	jwtClaim, err := utils.ParseToken(token, jwtConf.AccessSecret)
 	if err != nil {
-		err = status.Error(codes.InvalidArgument, err.Error())
+		err = status.Error(codes.Unauthenticated, "invalid token")
 		return claim, errorx.WithStack(err)
 	}
 	// Defense-in-depth: verify the platform type declared in metadata matches

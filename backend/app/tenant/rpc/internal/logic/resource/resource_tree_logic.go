@@ -34,16 +34,24 @@ func (l *ResourceTreeLogic) ResourceTree(in *tenant.ResourceTreeRequest) (resp *
 	if in.Data == nil {
 		return nil, errorx.ErrorEmptyRequestData
 	}
-	if _, err = logic.ParseUserType(in.Data.UserType); err != nil {
+	userType, err := logic.ParseUserType(in.Data.UserType)
+	if err != nil {
 		return nil, err
+	}
+	targetType, err := logic.ParseUserType(in.Data.Type)
+	if err != nil {
+		return nil, err
+	}
+	if userType != constants.UserTypeAdmin && targetType != userType {
+		return nil, errorx.New("resource type must match caller platform")
 	}
 
 	var trees []*dto.ResourceTreeDto
 	switch constants.ResourceTreeScope(in.Data.Scope) {
 	case constants.ResourceTreeScopeAll:
-		trees, err = l.baseLogic.ResourceLogic.ResourceTree(l.ctx, constants.UserType(in.Data.Type))
+		trees, err = l.baseLogic.ResourceLogic.ResourceTree(l.ctx, targetType)
 	case constants.ResourceTreeScopeOrganization:
-		trees, err = l.baseLogic.ResourceLogic.GetOrganizationResources(l.ctx, in.Data.OrganizationId, constants.UserType(in.Data.Type))
+		trees, err = l.baseLogic.ResourceLogic.GetOrganizationResources(l.ctx, in.Data.OrganizationId, targetType)
 	default:
 		return nil, errorx.New("invalid resource tree scope")
 	}

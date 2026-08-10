@@ -56,3 +56,15 @@ func TestResourceCRUD(t *testing.T) {
 	}})
 	require.NoError(t, err)
 }
+
+func TestResourceTree_RejectsCrossPlatformScope(t *testing.T) {
+	logic := &ResourceTreeLogic{}
+
+	_, err := logic.ResourceTree(&tenant.ResourceTreeRequest{Data: &tenant.ResourceTreeRequestData{
+		UserType: string(constants.UserTypeLender),
+		Type:     string(constants.UserTypeBorrower),
+		Scope:    string(constants.ResourceTreeScopeAll),
+	}})
+
+	require.EqualError(t, err, "resource type must match caller platform")
+}

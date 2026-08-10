@@ -42,7 +42,7 @@ func NewServiceContext(c config.ApiConf, logger logx.Logger, borrowerApiContent 
 	return &ServiceContext{
 		Config:         c,
 		Logger:         logger,
-		AuthMiddleware: middleware.NewAuthMiddleware(constants.UserTypeLender, tenantclient.New(zrpc.MustNewClient(c.TenantRpc)).Auth, c.JwtConf.AccessSecret).Handle,
+		AuthMiddleware: middleware.NewAuthMiddleware(constants.UserTypeLender, tenantclient.New(zrpc.MustNewClient(c.TenantRpc)).Auth).Handle,
 
 		// rpc client
 		UserRpcClient:                 lender.NewUserClient(rpcClient.Conn()),

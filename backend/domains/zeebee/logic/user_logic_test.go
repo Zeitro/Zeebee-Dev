@@ -6,7 +6,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
@@ -61,4 +63,19 @@ func TestGetUserClaimFromCtx_UserTypeMatch_OK(t *testing.T) {
 	claim, err := ul.GetUserClaimFromCtx(ctx)
 	require.NoError(t, err)
 	assert.Equal(t, constants.UserTypeLender, claim.UserType)
+}
+
+func TestGetUserClaimFromCtx_InvalidSignature_Unauthenticated(t *testing.T) {
+	ul := newClaimTestUserLogic(t, "test-secret")
+	tok, err := utils.GenerateToken(utils.JwtUser{UserId: 1, UserType: constants.UserTypeLender}, "other-secret", 3600)
+	require.NoError(t, err)
+
+	ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(
+		utils.JwtTokenCtxKey, tok,
+		utils.UserTypeCtxKey, string(constants.UserTypeLender),
+	))
+
+	_, err = ul.GetUserClaimFromCtx(ctx)
+	require.Error(t, err)
+	assert.Equal(t, codes.Unauthenticated, status.Code(err))
 }

@@ -17,10 +17,12 @@ type AuthLogic struct {
 
 // NewAuthLogic creates a new authentication logic instance.
 // jwtConfig comes from the embedded BaseLogic (single shared key).
-func NewAuthLogic(baseLogic *BaseLogic, enforcer *rbac.Enforcer, authEventTopic string) *AuthLogic {
+// subscribeTopics are the redis channels this replica listens on for reload
+// events; publishTopics routes a userType to its broadcast channel.
+func NewAuthLogic(baseLogic *BaseLogic, enforcer *rbac.Enforcer, subscribeTopics []string, publishTopics map[constants.UserType]string) *AuthLogic {
 	l := &AuthLogic{
 		BaseLogic: baseLogic,
-		auth:      auth.NewAuth(baseLogic.repos, baseLogic.redisCli, baseLogic.jwtConfig, enforcer, authEventTopic),
+		auth:      auth.NewAuth(baseLogic.repos, baseLogic.redisCli, baseLogic.jwtConfig, enforcer, auth.AuthTopics{Subscribe: subscribeTopics, Publish: publishTopics}),
 	}
 	return l
 }

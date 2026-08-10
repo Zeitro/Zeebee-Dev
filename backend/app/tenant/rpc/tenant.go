@@ -16,6 +16,10 @@ import (
 	organizationSubscriptionServer "zeebee-backend/app/tenant/rpc/internal/server/organizationsubscription"
 	organizationTemplateServer "zeebee-backend/app/tenant/rpc/internal/server/organizationtemplate"
 	organizationUserServer "zeebee-backend/app/tenant/rpc/internal/server/organizationuser"
+	pricingPlanServer "zeebee-backend/app/tenant/rpc/internal/server/pricingplan"
+	pricingPlanPolicyServer "zeebee-backend/app/tenant/rpc/internal/server/pricingplanpolicy"
+	resourceServer "zeebee-backend/app/tenant/rpc/internal/server/resource"
+	roleServer "zeebee-backend/app/tenant/rpc/internal/server/role"
 	userServer "zeebee-backend/app/tenant/rpc/internal/server/user"
 	"zeebee-backend/app/tenant/rpc/internal/svc"
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
@@ -46,6 +50,10 @@ func NewRpcServer(c config.Config) (service.Service, error) {
 
 		// RBAC object registry (api endpoints / resources / roles / policies).
 		tenant.RegisterApiServer(grpcServer, apiServer.NewApiServer(ctx))
+		tenant.RegisterResourceServer(grpcServer, resourceServer.NewResourceServer(ctx))
+		tenant.RegisterRoleServer(grpcServer, roleServer.NewRoleServer(ctx))
+		tenant.RegisterPricingPlanServer(grpcServer, pricingPlanServer.NewPricingPlanServer(ctx))
+		tenant.RegisterPricingPlanPolicyServer(grpcServer, pricingPlanPolicyServer.NewPricingPlanPolicyServer(ctx))
 
 		// Organization modules (consolidated from admin / lender / borrower).
 		tenant.RegisterOrganizationServer(grpcServer, organizationServer.NewOrganizationServer(ctx))

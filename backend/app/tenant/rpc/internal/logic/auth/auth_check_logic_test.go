@@ -234,6 +234,15 @@ func TestAuthzCheck_ImmediateEffectAfterRoleChange(t *testing.T) {
 	// RoleReload event the assign/revoke write path emits.
 	require.NoError(t, env.DB.Exec(`DELETE FROM organization_user_and_roles WHERE organization_user_id = ?`, f.orgUserId).Error)
 	require.NoError(t, env.DB.Exec(`DELETE FROM casbin_rule WHERE v0 = ?`, fmt.Sprintf("Role:%d", f.roleId)).Error)
+	topic := ""
+	switch ut {
+	case constants.UserTypeBorrower:
+		topic = env.SvcCtx.Config.CasbinConf.EventTopic.BorrowerTopic
+	case constants.UserTypeLender:
+		topic = env.SvcCtx.Config.CasbinConf.EventTopic.LenderTopic
+	case constants.UserTypeAdmin:
+		topic = env.SvcCtx.Config.CasbinConf.EventTopic.AdminTopic
+	}
 	msg := auth.Msg{
 		Action:             auth.ActionRoleReload,
 		Scope:              auth.ScopeOrganizationUser,
@@ -245,7 +254,7 @@ func TestAuthzCheck_ImmediateEffectAfterRoleChange(t *testing.T) {
 		}},
 	}
 	require.NoError(t, env.SvcCtx.RedisCli.GetClient().
-		Publish(context.Background(), env.SvcCtx.Config.CasbinConf.Watcher.Channel, msg.String()).Err())
+		Publish(context.Background(), topic, msg.String()).Err())
 
 	deadline := time.Now().Add(3 * time.Second)
 	for time.Now().Before(deadline) {

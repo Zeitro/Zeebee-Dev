@@ -75,8 +75,20 @@ type LimiterConf struct {
 }
 
 type CasbinConf struct {
-	ModelPath string
-	Watcher   CasbinWatcher
+	ModelPath  string
+	Watcher    CasbinWatcher
+	EventTopic CasbinEventTopic
+}
+
+// CasbinEventTopic holds one redis pub/sub channel per platform. tenant is the
+// sole executor and subscribes to all three; each platform's mutations publish
+// to its own channel only, so a borrower change never wakes lender/admin
+// subscribers. (The Watcher channel above is the casbin enforcer's own
+// cross-replica sync bus, separate from these policy-event channels.)
+type CasbinEventTopic struct {
+	BorrowerTopic string
+	LenderTopic   string
+	AdminTopic    string
 }
 
 type CasbinWatcher struct {

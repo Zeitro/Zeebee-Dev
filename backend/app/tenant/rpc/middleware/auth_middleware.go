@@ -26,19 +26,18 @@ type AuthChecker interface {
 }
 
 // AuthMiddleware enforces identity + authorization for protected routes. It
-// forwards the caller's JWT to the auth checker (tenant.AuthzCheck) and, before
-// any decision, verifies locally that the claim's userType matches this
-// service's platform type. Checker failures are mapped to business codes in the
+// forwards the caller's JWT and platform type to the tenant auth checker, which
+// is the sole authority for both token verification and authorization. Checker
+// failures are mapped to business codes in the
 // standard response body (HTTP stays 200, matching the frontend convention);
 // callers tell a network outage (503) from an auth denial (401/403) by code.
 type AuthMiddleware struct {
-	userType  constants.UserType
-	checker   AuthChecker
-	jwtSecret string
+	userType constants.UserType
+	checker  AuthChecker
 }
 
-func NewAuthMiddleware(userType constants.UserType, checker AuthChecker, jwtSecret string) *AuthMiddleware {
-	return &AuthMiddleware{userType: userType, checker: checker, jwtSecret: jwtSecret}
+func NewAuthMiddleware(userType constants.UserType, checker AuthChecker) *AuthMiddleware {
+	return &AuthMiddleware{userType: userType, checker: checker}
 }
 
 func (m *AuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
@@ -49,17 +48,6 @@ func (m *AuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 
 		// get user info from header
 		token := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
-		if token != "" {
-			claim, err := utils.ParseToken(token, m.jwtSecret)
-			if err != nil {
-				response.Unauthorized(w, "invalid token")
-				return
-			}
-			if claim.UserType != m.userType {
-				response.Unauthorized(w, "user type mismatch")
-				return
-			}
-		}
 		nextCtx := context.WithValue(reqCtx, utils.JwtTokenCtxKey, token)
 		nextCtx = metadata.AppendToOutgoingContext(nextCtx,
 			utils.JwtTokenCtxKey, token,

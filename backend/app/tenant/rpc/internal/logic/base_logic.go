@@ -10,12 +10,14 @@ import (
 
 	"zeebee-backend/app/tenant/config"
 	"zeebee-backend/app/tenant/rpc/internal/svc"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/types"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	logicpkg "zeebee-backend/domains/zeebee/logic"
+	"zeebee-backend/domains/zeebee/model"
 )
 
 var baseLogic *BaseLogic
@@ -47,26 +49,28 @@ func ResetBaseLogicForTest() {
 }
 
 func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
-	// tenant runs ONE unfiltered Casbin enforcer (central authority). All platforms
-	// publish role-reload events to the same watcher channel so the enforcer reloads
-	// regardless of which platform's data changed.
-	topic := svcCtx.Config.CasbinConf.Watcher.Channel
+	// tenant runs ONE unfiltered Casbin enforcer (central authority) and is the
+	// sole policy executor, so it subscribes to every platform's reload channel.
+	// Each platform still publishes on its OWN channel — a borrower change never
+	// wakes lender/admin subscribers. Reloads are scoped per msg.Type, so cross-
+	// platform noise is bounded even though one enforcer holds all policies.
+	eventTopic := svcCtx.Config.CasbinConf.EventTopic
 	authTopicMap := map[constants.UserType]string{
-		constants.UserTypeBorrower: topic,
-		constants.UserTypeLender:   topic,
-		constants.UserTypeAdmin:    topic,
+		constants.UserTypeBorrower: eventTopic.BorrowerTopic,
+		constants.UserTypeLender:   eventTopic.LenderTopic,
+		constants.UserTypeAdmin:    eventTopic.AdminTopic,
 	}
 
 	l := &BaseLogic{
 		svcCtx: svcCtx,
 		AllLogics: logicpkg.NewAllLogics(logicpkg.AllLogicConfig{
-			Repos:                 svcCtx.AllRepos,
-			RedisCli:              svcCtx.RedisCli,
-			JwtConfig:             toJwtConfig(svcCtx.Config.JwtConf),
-			CurrentEnforcer:       svcCtx.Enforcer,
-			CurrentAuthEventTopic: topic,
-			AuthEventTopicMap:     authTopicMap,
-			Logger:                svcCtx.Logger,
+			Repos:                  svcCtx.AllRepos,
+			RedisCli:               svcCtx.RedisCli,
+			JwtConfig:              toJwtConfig(svcCtx.Config.JwtConf),
+			CurrentEnforcer:        svcCtx.Enforcer,
+			CurrentAuthEventTopics: []string{eventTopic.BorrowerTopic, eventTopic.LenderTopic, eventTopic.AdminTopic},
+			AuthEventTopicMap:      authTopicMap,
+			Logger:                 svcCtx.Logger,
 		}),
 		platforms:    buildPlatforms(svcCtx.Config.PlatformConf),
 		emailClients: buildEmailClients(svcCtx.Config.PlatformConf),
@@ -140,6 +144,51 @@ func (l *BaseLogic) EmailClientFor(userType constants.UserType) (*email.Email, e
 		return nil, errorx.New("email client not configured for user type: " + string(userType))
 	}
 	return c, nil
+}
+
+// RecordAudit writes a security audit event to the Operation table (NFR-003).
+// Async + best-effort: runs on a detached context so the request returning (and
+// canceling its ctx) cannot abort the write, and a store failure is logged but
+// never returned. Callers stay synchronous — no goroutine needed at call sites.
+func (l *BaseLogic) RecordAudit(ctx context.Context, input dto.OperationCreateDto) {
+	auditCtx := context.WithoutCancel(ctx)
+	threading.GoSafe(func() {
+		op, err := copierx.Trans[dto.OperationCreateDto, model.Operation](&input)
+		if err != nil {
+			l.svcCtx.Logger.WithContext(auditCtx).
+				WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
+				Error("fail to map audit record")
+			return
+		}
+		if _, err := l.svcCtx.OperationRepo.Create(auditCtx, op); err != nil {
+			l.svcCtx.Logger.WithContext(auditCtx).
+				WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
+				WithFields(logx.Field("action", input.Operation)).
+				Error("fail to record audit")
+		}
+	})
+}
+
+// RecordAuditFromClaim records an audit event attributed to the caller in ctx
+// (operator id/type resolved from the JWT claim). Best-effort: a missing claim
+// or store failure is logged, never returned, and never blocks the caller. Use
+// RecordAudit directly for pre-auth events (login) where there is no claim yet.
+func (l *BaseLogic) RecordAuditFromClaim(ctx context.Context, entityType constants.OperationEntityType, entityId int64, operation constants.OperationAction) {
+	claim, err := l.UserLogic.GetUserClaimFromCtx(ctx)
+	if err != nil {
+		l.svcCtx.Logger.WithContext(ctx).
+			WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
+			WithFields(logx.Field("operation", operation)).
+			Error("fail to resolve audit operator from claim")
+		return
+	}
+	l.RecordAudit(ctx, dto.OperationCreateDto{
+		EntityType:   entityType,
+		EntityId:     entityId,
+		OperatorId:   claim.UserId,
+		OperatorType: claim.UserType,
+		Operation:    operation,
+	})
 }
 
 // ParseUserType maps the request user_type string (case-insensitive) to a constants.UserType.

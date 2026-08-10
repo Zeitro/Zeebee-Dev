@@ -37,9 +37,9 @@ type AllLogicConfig struct {
 	RedisCli              *redisx.Client
 	JwtConfig             dto.JwtConfig
 	EmailClient           *email.Email
-	CurrentEnforcer       *rbac.Enforcer
-	CurrentAuthEventTopic string
-	AuthEventTopicMap     map[constants.UserType]string
+	CurrentEnforcer        *rbac.Enforcer
+	CurrentAuthEventTopics []string
+	AuthEventTopicMap      map[constants.UserType]string
 	Logger                logx.Logger
 }
 
@@ -60,7 +60,7 @@ func NewAllLogics(config AllLogicConfig) *AllLogics {
 		LoanLogic:                     NewLoanLogic(baseLogic),
 		LoanOperationLogic:            NewLoanOperationLogic(baseLogic),
 		OperationLogic:                NewOperationLogic(baseLogic),
-		AuthLogic:                     NewAuthLogic(baseLogic, config.CurrentEnforcer, config.CurrentAuthEventTopic),
+		AuthLogic:                     NewAuthLogic(baseLogic, config.CurrentEnforcer, config.CurrentAuthEventTopics, config.AuthEventTopicMap),
 		PricingPlanLogic:              NewPricingPlanLogic(baseLogic, config.AuthEventTopicMap),
 		PricingPlanPolicyLogic:        NewPricingPlanPolicyLogic(baseLogic),
 		OrganizationSubscriptionLogic: NewOrganizationSubscriptionLogic(baseLogic, config.AuthEventTopicMap),

@@ -10,7 +10,9 @@ import (
 	"github.com/glebarez/sqlite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/redisx"
@@ -161,8 +163,22 @@ func newAuthForTest(t *testing.T) (*Auth, *fakeEnforcer, *gorm.DB) {
 	db := setupAuthTestDB(t)
 	repos := repo.NewAllRepos(db)
 	fake := newFakeEnforcer()
-	a := newAuthWithEnforcer(repos, nil, dto.JwtConfig{}, fake, "")
+	a := newAuthWithEnforcer(repos, nil, dto.JwtConfig{}, fake, AuthTopics{})
 	return a, fake, db
+}
+
+func TestGetUserClaimFromCtx_InvalidToken_Unauthenticated(t *testing.T) {
+	a, _, _ := newAuthForTest(t)
+
+	for _, token := range []string{"", "invalid-token"} {
+		t.Run(token, func(t *testing.T) {
+			ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(utils.JwtTokenCtxKey, token))
+
+			_, err := a.GetUserClaimFromCtx(ctx, constants.UserTypeLender)
+			require.Error(t, err)
+			assert.Equal(t, codes.Unauthenticated, status.Code(err))
+		})
+	}
 }
 
 // newAuthzForTest wires an Auth backed by sqlite + miniredis + fake enforcer.
@@ -176,7 +192,7 @@ func newAuthzForTest(t *testing.T) (*Auth, *fakeEnforcer, *gorm.DB, *miniredis.M
 	require.NoError(t, err)
 	repos := repo.NewAllRepos(db)
 	fake := newFakeEnforcer()
-	a := newAuthWithEnforcer(repos, rds, dto.JwtConfig{AccessSecret: "secret"}, fake, "")
+	a := newAuthWithEnforcer(repos, rds, dto.JwtConfig{AccessSecret: "secret"}, fake, AuthTopics{})
 	return a, fake, db, mr
 }
 
@@ -275,7 +291,7 @@ func authzReq() dto.AuthCheckRequestDto {
 // satisfies the policyEnforcer interface and behaves correctly.
 func Test_newAuthWithEnforcer_seam(t *testing.T) {
 	fake := newFakeEnforcer()
-	a := newAuthWithEnforcer(nil, nil, dto.JwtConfig{}, fake, "")
+	a := newAuthWithEnforcer(nil, nil, dto.JwtConfig{}, fake, AuthTopics{})
 	require.NotNil(t, a)
 
 	fake.seed([][]string{
@@ -473,6 +489,41 @@ func TestRebuild_OrgScopedIsolation(t *testing.T) {
 	ok, err := fake.Enforce(BuildInterfacePolicy(20, 200, ut)...)
 	require.NoError(t, err)
 	assert.True(t, ok, "org-scoped rebuild must not remove another org's policies")
+}
+
+// Global (orgId==0) rebuild takes a Redis lock per organizationType so that
+// across replicas only one node pays the compute cost. A sibling that finds the
+// lock held must SKIP — its enforcer converges later via the casbin watcher.
+
+func rebuildLockKey(ut constants.UserType) string {
+	return fmt.Sprintf("policy:%s:rebuild:lock", ut)
+}
+
+func TestRebuild_GlobalLockHeld_Skips(t *testing.T) {
+	a, fake, db, mr := newAuthzForTest(t)
+	f := seedGranted(t, db)
+	// Another node already holds the lock for this platform.
+	mr.Set(rebuildLockKey(f.userType), "other-node")
+
+	require.NoError(t, a.RebuildPolicy(context.Background(), f.userType))
+
+	pols, err := fake.AllPolicies()
+	require.NoError(t, err)
+	assert.Empty(t, pols, "global rebuild must skip while another node holds the lock")
+}
+
+func TestRebuild_GlobalLockAcquired_RebuildsAndReleases(t *testing.T) {
+	a, fake, db, mr := newAuthzForTest(t)
+	f := seedGranted(t, db)
+	key := rebuildLockKey(f.userType)
+	require.False(t, mr.Exists(key), "lock must be free before rebuild")
+
+	require.NoError(t, a.RebuildPolicy(context.Background(), f.userType))
+
+	pols, err := fake.AllPolicies()
+	require.NoError(t, err)
+	assert.NotEmpty(t, pols, "holder must run the rebuild and add policies")
+	assert.False(t, mr.Exists(key), "holder must release the lock when done")
 }
 
 // --- subscription expiry-by-date (not status): past expire_date is ineffective ---

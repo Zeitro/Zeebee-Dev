@@ -42,7 +42,7 @@ func NewServiceContext(c config.ApiConf, logger logx.Logger, adminApiContent str
 
 	return &ServiceContext{
 		Config:         c,
-		AuthMiddleware: middleware.NewAuthMiddleware(constants.UserTypeAdmin, tenantclient.New(zrpc.MustNewClient(c.TenantRpc)).Auth, c.JwtConf.AccessSecret).Handle,
+		AuthMiddleware: middleware.NewAuthMiddleware(constants.UserTypeAdmin, tenantclient.New(zrpc.MustNewClient(c.TenantRpc)).Auth).Handle,
 		Logger:         logger,
 
 		// rpc client
