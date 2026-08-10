@@ -6,11 +6,9 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/common/copierx"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/proto"
 )
 
 type AllLogic struct {
@@ -35,15 +33,13 @@ func (l *AllLogic) All(in *admin.PricingPlanAllRequest) (resp *admin.PricingPlan
 		return nil, errorx.New("invalid request: data is required")
 	}
 
-	plans, err := l.baseLogic.PricingPlanLogic.All(l.ctx, constants.UserType(in.Data.Type), false)
+	plans, err := l.svcCtx.TenantClient.PricingPlan.All(l.ctx, &tenant.PricingPlanAllRequest{Data: &tenant.PricingPlanAllRequestData{
+		UserType: string(constants.UserTypeAdmin),
+		Type:     in.Data.Type,
+	}})
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
 
-	data, err := copierx.Trans[[]*dto.PricingPlanEntityDto, []*proto.PricingPlanEntity](&plans, copierx.TimeToRFC3339Str())
-	if err != nil {
-		return nil, err
-	}
-
-	return &admin.PricingPlanAllResponse{Data: *data}, nil
+	return &admin.PricingPlanAllResponse{Data: plans.Data}, nil
 }

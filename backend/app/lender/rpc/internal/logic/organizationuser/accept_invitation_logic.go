@@ -3,17 +3,14 @@ package organizationuserlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
-
-	"zeebee-backend/common/errorx"
 )
 
 type AcceptInvitationLogic struct {
@@ -34,17 +31,16 @@ func NewAcceptInvitationLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 func (l *AcceptInvitationLogic) AcceptInvitation(in *lender.OrganizationUserAcceptInvitationRequest) (resp *proto.UserLoginResponse, err error) {
 
-	input := dto.OrganizationUserAcceptInvitationRequestDto{}
-	err = copier.Copy(&input, &in.Data)
-	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
-	}
-	input.UserType = constants.UserTypeLender
-	userBo, err := l.baseLogic.OrganizationUserLogic.AcceptInvitation(l.ctx, input)
+	input, err := copierx.Trans[lender.OrganizationUserAcceptInvitationRequestData, tenant.OrganizationUserAcceptInvitationRequestData](in.Data)
 	if err != nil {
 		return nil, err
 	}
-	token, err := l.baseLogic.UserLogic.GenerateJwtTokenById(l.ctx, userBo.Id, userBo.DefaultOrganizationId, constants.UserTypeLender)
+	input.UserType = string(constants.UserTypeLender)
+	user, err := l.svcCtx.TenantClient.OrganizationUser.AcceptInvitation(l.ctx, &tenant.OrganizationUserAcceptInvitationRequest{Data: input})
+	if err != nil {
+		return nil, err
+	}
+	token, err := l.baseLogic.UserLogic.GenerateJwtTokenById(l.ctx, user.Data.Id, user.Data.DefaultOrganizationId, constants.UserTypeLender)
 	if err != nil {
 		return nil, err
 	}

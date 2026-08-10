@@ -6,10 +6,9 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/proto"
 )
 
 type CreateLogic struct {
@@ -34,24 +33,19 @@ func (l *CreateLogic) Create(in *lender.RoleCreateRequest) (resp *lender.RoleCre
 	if err != nil {
 		return nil, err
 	}
-	input, err := copierx.Trans[lender.RoleCreateRequestData, dto.RoleCreateRequestDto](in.Data)
+	input, err := copierx.Trans[lender.RoleCreateRequestData, tenant.RoleCreateRequestData](in.Data)
 	if err != nil {
 		return nil, err
 	}
-	input.Type = constants.UserTypeLender
+	input.UserType = string(constants.UserTypeLender)
 	input.OrganizationId = claim.OrganizationId
 
-	role, err := l.baseLogic.RoleLogic.Create(l.ctx, *input)
-	if err != nil {
-		return nil, err
-	}
-
-	data, err := copierx.Trans[dto.RoleEntityDto, proto.RoleEntity](role, copierx.TimeToRFC3339Str())
+	role, err := l.svcCtx.TenantClient.Role.Create(l.ctx, &tenant.RoleCreateRequest{Data: input})
 	if err != nil {
 		return nil, err
 	}
 
 	return &lender.RoleCreateResponse{
-		Data: data,
+		Data: role.Data,
 	}, nil
 }

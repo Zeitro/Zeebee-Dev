@@ -6,6 +6,7 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
 )
@@ -33,10 +34,9 @@ func (l *DeleteLogic) Delete(in *admin.RoleDeleteRequest) (resp *proto.EmptyResp
 		return nil, err
 	}
 
-	err = l.baseLogic.RoleLogic.Delete(l.ctx, in.Data.Id, claim.OrganizationId, constants.UserTypeAdmin)
-	if err != nil {
-		return nil, err
-	}
-
-	return &proto.EmptyResponse{}, nil
+	return l.svcCtx.TenantClient.Role.Delete(l.ctx, &tenant.RoleDeleteRequest{Data: &tenant.RoleDeleteRequestData{
+		UserType:       string(constants.UserTypeAdmin),
+		OrganizationId: claim.OrganizationId,
+		Id:             in.Data.Id,
+	}})
 }

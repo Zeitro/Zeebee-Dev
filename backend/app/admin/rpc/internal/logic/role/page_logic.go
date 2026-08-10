@@ -6,10 +6,9 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type PageLogic struct {
@@ -35,21 +34,20 @@ func (l *PageLogic) Page(in *admin.RolePageRequest) (resp *admin.RolePageRespons
 		return nil, err
 	}
 
-	pageReq, err := copierx.Trans[admin.RolePageRequestData, dto.RolePageRequestDto](in.Data)
+	pageReq, err := copierx.Trans[admin.RolePageRequestData, tenant.RolePageRequestData](in.Data)
 	if err != nil {
 		return nil, err
 	}
 
-	pageReq.Filter.RoleType = constants.UserTypeAdmin
-	pageReq.Filter.OrganizationId = claim.OrganizationId
-	// pageReq.Filter.UserId = claim.OrganizationUserId
+	pageReq.UserType = string(constants.UserTypeAdmin)
+	pageReq.OrganizationId = claim.OrganizationId
 
-	result, err := l.baseLogic.RoleLogic.Page(l.ctx, *pageReq)
+	result, err := l.svcCtx.TenantClient.Role.Page(l.ctx, &tenant.RolePageRequest{Data: pageReq})
 	if err != nil {
 		return nil, err
 	}
 
-	data, err := copierx.Trans[gormx.PageResponse[dto.RoleEntityDto], admin.RolePageResponseData](&result, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[tenant.RolePageResponseData, admin.RolePageResponseData](result.Data, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

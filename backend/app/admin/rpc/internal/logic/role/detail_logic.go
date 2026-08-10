@@ -6,10 +6,8 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/common/copierx"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DetailLogic struct {
@@ -35,17 +33,16 @@ func (l *DetailLogic) Detail(in *admin.RoleDetailRequest) (resp *admin.RoleDetai
 		return nil, err
 	}
 
-	role, err := l.baseLogic.RoleLogic.Detail(l.ctx, in.Data.Id, claim.OrganizationId, constants.UserTypeAdmin)
-	if err != nil {
-		return nil, err
-	}
-
-	respData, err := copierx.Trans[dto.RoleEntityDto, proto.RoleEntity](role, copierx.TimeToRFC3339Str())
+	role, err := l.svcCtx.TenantClient.Role.Detail(l.ctx, &tenant.RoleDetailRequest{Data: &tenant.RoleDetailRequestData{
+		UserType:       string(constants.UserTypeAdmin),
+		OrganizationId: claim.OrganizationId,
+		Id:             in.Data.Id,
+	}})
 	if err != nil {
 		return nil, err
 	}
 
 	return &admin.RoleDetailResponse{
-		Data: respData,
+		Data: role.Data,
 	}, nil
 }

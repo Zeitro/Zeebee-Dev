@@ -6,10 +6,9 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/proto"
 )
 
 type UpdateLogic struct {
@@ -35,24 +34,19 @@ func (l *UpdateLogic) Update(in *admin.RoleUpdateRequest) (resp *admin.RoleDetai
 		return nil, err
 	}
 
-	input, err := copierx.Trans[admin.RoleUpdateRequestData, dto.RoleUpdateRequestDto](in.Data)
+	input, err := copierx.Trans[admin.RoleUpdateRequestData, tenant.RoleUpdateRequestData](in.Data)
 	if err != nil {
 		return nil, err
 	}
-	input.Type = constants.UserTypeAdmin
+	input.UserType = string(constants.UserTypeAdmin)
 	input.OrganizationId = claim.OrganizationId
 
-	role, err := l.baseLogic.RoleLogic.Update(l.ctx, in.Data.Id, *input)
-	if err != nil {
-		return nil, err
-	}
-
-	data, err := copierx.Trans[dto.RoleEntityDto, proto.RoleEntity](role, copierx.TimeToRFC3339Str())
+	role, err := l.svcCtx.TenantClient.Role.Update(l.ctx, &tenant.RoleUpdateRequest{Data: input})
 	if err != nil {
 		return nil, err
 	}
 
 	return &admin.RoleDetailResponse{
-		Data: data,
+		Data: role.Data,
 	}, nil
 }

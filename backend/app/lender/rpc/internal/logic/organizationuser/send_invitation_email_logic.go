@@ -3,10 +3,10 @@ package organizationuserlogic
 import (
 	"context"
 
-	"zeebee-backend/app/lender/rpc/internal/email_tpl"
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
-	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
@@ -32,23 +32,16 @@ func (l *SendInvitationEmailLogic) SendInvitationEmail(in *proto.PathIdRequest) 
 	if err != nil {
 		return nil, err
 	}
-	input := dto.OrganizationUserSendInviteEmailRequestDto{
-		Id:             in.Data.Id,
-		UserType:       claim.UserType,
+	return l.svcCtx.TenantClient.OrganizationUser.SendInviteEmail(l.ctx, &tenant.OrganizationUserSendInviteEmailRequest{Data: &tenant.OrganizationUserSendInviteEmailRequestData{
+		UserType:       string(constants.UserTypeLender),
 		OrganizationId: claim.OrganizationId,
-		EmailConfig: dto.SendInviteUserEmailConfig{
+		Id:             in.Data.Id,
+		Operator:       claim.Username,
+		EmailConfig: &tenant.OrganizationUserInviteEmailConfig{
 			HostEmail:         l.svcCtx.Config.EmailConf.Username,
-			TplName:           email_tpl.UserInviteEmail,
-			ExpireSeconds:     l.svcCtx.Config.InviteUserExpireSeconds,
+			ExpireSeconds:     int32(l.svcCtx.Config.InviteUserExpireSeconds),
 			Url:               l.svcCtx.Config.InviteUserUrl,
-			SendPeriodSeconds: l.svcCtx.Config.SendInviteEmailPeriodSeconds,
+			SendPeriodSeconds: int32(l.svcCtx.Config.SendInviteEmailPeriodSeconds),
 		},
-		Operator: claim.Username,
-	}
-	err = l.baseLogic.OrganizationUserLogic.SendInviteEmail(l.ctx, input)
-	if err != nil {
-		return nil, err
-	}
-
-	return &proto.EmptyResponse{}, nil
+	}})
 }

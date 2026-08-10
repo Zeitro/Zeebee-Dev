@@ -6,6 +6,7 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
 )
@@ -33,10 +34,10 @@ func (l *UpdateStatusLogic) UpdateStatus(in *lender.RoleUpdateStatusRequest) (re
 		return nil, err
 	}
 
-	err = l.baseLogic.RoleLogic.SwitchStatus(l.ctx, in.Data.Id, claim.OrganizationId, constants.UserTypeLender, constants.CommonStatus(in.Data.Status))
-	if err != nil {
-		return nil, err
-	}
-
-	return &proto.EmptyResponse{}, nil
+	return l.svcCtx.TenantClient.Role.SwitchStatus(l.ctx, &tenant.RoleSwitchStatusRequest{Data: &tenant.RoleSwitchStatusRequestData{
+		UserType:       string(constants.UserTypeLender),
+		OrganizationId: claim.OrganizationId,
+		Id:             in.Data.Id,
+		Status:         in.Data.Status,
+	}})
 }

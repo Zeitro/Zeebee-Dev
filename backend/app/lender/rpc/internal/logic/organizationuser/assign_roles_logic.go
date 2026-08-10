@@ -6,6 +6,7 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
 )
@@ -33,10 +34,10 @@ func (l *AssignRolesLogic) AssignRoles(in *lender.OrganizationUserAssignRolesReq
 		return nil, err
 	}
 
-	err = l.baseLogic.OrganizationUserLogic.AssignRoles(l.ctx, in.Data.Id, claim.OrganizationId, in.Data.RoleIds, constants.UserTypeLender)
-	if err != nil {
-		return nil, err
-	}
-
-	return &proto.EmptyResponse{}, nil
+	return l.svcCtx.TenantClient.OrganizationUser.AssignRoles(l.ctx, &tenant.OrganizationUserAssignRolesRequest{Data: &tenant.OrganizationUserAssignRolesRequestData{
+		UserType:       string(constants.UserTypeLender),
+		OrganizationId: claim.OrganizationId,
+		Id:             in.Data.Id,
+		RoleIds:        in.Data.RoleIds,
+	}})
 }

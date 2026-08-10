@@ -3,17 +3,14 @@ package organizationuserlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
-
-	"zeebee-backend/common/errorx"
 )
 
 type AcceptInvitationLogic struct {
@@ -34,24 +31,23 @@ func NewAcceptInvitationLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 func (l *AcceptInvitationLogic) AcceptInvitation(in *borrower.OrganizationUserAcceptInvitationRequest) (resp *proto.UserLoginResponse, err error) {
 
-	input, err := copierx.Trans[borrower.OrganizationUserAcceptInvitationRequestData, dto.OrganizationUserAcceptInvitationRequestDto](in.Data)
+	input, err := copierx.Trans[borrower.OrganizationUserAcceptInvitationRequestData, tenant.OrganizationUserAcceptInvitationRequestData](in.Data)
 	if err != nil {
 		return nil, err
 	}
 
-	input.UserType = constants.UserTypeBorrower
-	userBo, err := l.baseLogic.OrganizationUserLogic.AcceptInvitation(l.ctx, *input)
+	input.UserType = string(constants.UserTypeBorrower)
+	user, err := l.svcCtx.TenantClient.OrganizationUser.AcceptInvitation(l.ctx, &tenant.OrganizationUserAcceptInvitationRequest{Data: input})
 	if err != nil {
 		return nil, err
 	}
-	token, err := l.baseLogic.UserLogic.GenerateJwtTokenById(l.ctx, userBo.Id, userBo.DefaultOrganizationId, constants.UserTypeBorrower)
+	token, err := l.baseLogic.UserLogic.GenerateJwtTokenById(l.ctx, user.Data.Id, user.Data.DefaultOrganizationId, constants.UserTypeBorrower)
 	if err != nil {
 		return nil, err
 	}
-	data := &proto.UserLoginResponseData{}
-	err = copier.CopyWithOption(data, token, copier.Option{DeepCopy: true})
+	data, err := copierx.Trans[dto.UserJwtTokenDto, proto.UserLoginResponseData](token)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 
 	return &proto.UserLoginResponse{Data: data}, nil

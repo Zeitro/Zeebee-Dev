@@ -6,8 +6,9 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type PageLogic struct {
@@ -32,25 +33,30 @@ func (l *PageLogic) Page(in *admin.OrganizationUserPageRequest) (resp *admin.Org
 	if err != nil {
 		return nil, err
 	}
-	// pageReq := dto.OrganizationUserPageRequestDto{}
-	pageReq, err := copierx.Trans[admin.OrganizationUserPageRequestData, dto.OrganizationUserPageRequestDto](in.Data)
-	if err != nil {
-		return nil, err
-	}
-	if pageReq == nil {
+	if in.Data == nil {
 		return nil, logic.ErrorInvalidRequest
 	}
-
-	pageReq.Filter.UserType = claim.UserType
-	pageReq.Filter.OrganizationId = claim.OrganizationId
-	pageReq.Filter.UserId = claim.UserId
-
-	results, err := l.baseLogic.OrganizationUserLogic.Page(l.ctx, *pageReq)
+	request := &tenant.OrganizationUserPageRequest{Data: &tenant.OrganizationUserPageRequestData{
+		Page:     in.Data.Page,
+		Limit:    in.Data.Limit,
+		UserType: string(claim.UserType),
+		Filter: &tenant.OrganizationUserPageRequestFilter{
+			OrganizationId: claim.OrganizationId,
+			UserId:         claim.UserId,
+		},
+	}}
+	if in.Data.Filter != nil {
+		request.Data.Filter.Keyword = in.Data.Filter.Keyword
+	}
+	if in.Data.Sorter != nil {
+		request.Data.Sorter = &proto.CommonPageSorter{Column: in.Data.Sorter.Column, Sort: in.Data.Sorter.Sort}
+	}
+	results, err := l.svcCtx.TenantClient.OrganizationUser.Page(l.ctx, request)
 	if err != nil {
 		return nil, err
 	}
 
-	data, err := copierx.Trans[dto.PageResultDto[*dto.OrganizationUserEntityDto], admin.OrganizationUserPageResponseData](&results, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[tenant.OrganizationUserPageResponseData, admin.OrganizationUserPageResponseData](results.Data, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

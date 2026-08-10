@@ -6,10 +6,9 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/timex"
-	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 type PageLogic struct {
@@ -30,18 +29,20 @@ func NewPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PageLogic {
 
 func (l *PageLogic) Page(in *admin.OrganizationSubscriptionPageRequest) (resp *admin.OrganizationSubscriptionPageResponse, err error) {
 
-	req, err := copierx.Trans[admin.OrganizationSubscriptionPageRequestData, dto.OrganizationSubscriptionPageRequestDto](in.Data)
+	req, err := copierx.Trans[admin.OrganizationSubscriptionPageRequestData, tenant.OrganizationSubscriptionPageRequestData](in.Data)
 	if err != nil {
 		return nil, err
 	}
 
-	pageResult, err := l.baseLogic.OrganizationSubscriptionLogic.Page(l.ctx, *req)
-	if err != nil {
-		return nil, errorx.WithStack(err)
+	req.UserType = string(constants.UserTypeAdmin)
+	if req.Filter != nil && req.Filter.Type != "" {
+		req.UserType = req.Filter.Type
 	}
-
-	pageDto := dto.PageResultDto[dto.OrganizationSubscriptionPageEntity](pageResult)
-	protoData, err := copierx.Trans[dto.PageResultDto[dto.OrganizationSubscriptionPageEntity], admin.OrganizationSubscriptionPageResponseData](&pageDto, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToStr(timex.LayoutUsStyle))
+	pageResult, err := l.svcCtx.TenantClient.OrganizationSubscription.Page(l.ctx, &tenant.OrganizationSubscriptionPageRequest{Data: req})
+	if err != nil {
+		return nil, err
+	}
+	protoData, err := copierx.Trans[tenant.OrganizationSubscriptionPageResponseData, admin.OrganizationSubscriptionPageResponseData](pageResult.Data, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

@@ -6,9 +6,8 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/copierx"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
@@ -35,19 +34,15 @@ func (l *AllLogic) All(in *proto.EmptyRequest) (resp *borrower.RoleAllResponse, 
 		return nil, err
 	}
 
-	result, err := l.baseLogic.RoleLogic.All(l.ctx, claim.OrganizationId, constants.UserTypeBorrower)
+	result, err := l.svcCtx.TenantClient.Role.All(l.ctx, &tenant.RoleAllRequest{Data: &tenant.RoleAllRequestData{
+		UserType:       string(constants.UserTypeBorrower),
+		OrganizationId: claim.OrganizationId,
+	}})
 	if err != nil {
 		return nil, err
 	}
-
-	respData := []*proto.RoleEntity{}
-	respDataPtr, err := copierx.Trans[[]*dto.RoleEntityDto, []*proto.RoleEntity](&result, copierx.TimeToRFC3339Str())
-	if err != nil {
-		return nil, err
-	}
-	respData = *respDataPtr
 
 	return &borrower.RoleAllResponse{
-		Data: respData,
+		Data: result.Data,
 	}, nil
 }

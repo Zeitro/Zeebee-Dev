@@ -6,10 +6,9 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/proto"
 )
 
 type AssignOrganizationUsersLogic struct {
@@ -34,23 +33,19 @@ func (l *AssignOrganizationUsersLogic) AssignOrganizationUsers(in *lender.RoleAs
 	if err != nil {
 		return nil, err
 	}
-	input, err := copierx.Trans[lender.RoleAssignOrganizationUsersRequestData, dto.RoleAssignOrganizationUsersRequestDto](in.Data)
+	input, err := copierx.Trans[lender.RoleAssignOrganizationUsersRequestData, tenant.RoleAssignOrganizationUsersRequestData](in.Data)
 	if err != nil {
 		return nil, err
 	}
-	input.Type = constants.UserTypeLender
+	input.UserType = string(constants.UserTypeLender)
 	input.OrganizationId = claim.OrganizationId
 
-	role, err := l.baseLogic.RoleLogic.AssignOrganizationUsers(l.ctx, *input)
+	role, err := l.svcCtx.TenantClient.Role.AssignOrganizationUsers(l.ctx, &tenant.RoleAssignOrganizationUsersRequest{Data: input})
 	if err != nil {
 		return nil, err
 	}
 
-	data, err := copierx.Trans[dto.RoleEntityDto, proto.RoleEntity](role, copierx.TimeToRFC3339Str())
-	if err != nil {
-		return nil, err
-	}
 	return &lender.RoleDetailResponse{
-		Data: data,
+		Data: role.Data,
 	}, nil
 }

@@ -6,9 +6,8 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/proto"
 )
 
 type CreateLogic struct {
@@ -34,23 +33,19 @@ func (l *CreateLogic) Create(in *admin.OrganizationUserCreateRequest) (resp *adm
 		return nil, err
 	}
 
-	input, err := copierx.Trans[admin.OrganizationUserCreateRequestData, dto.OrganizationUserCreateAdminRequestDto](in.Data)
+	input, err := copierx.Trans[admin.OrganizationUserCreateRequestData, tenant.OrganizationUserCreateAdminRequestData](in.Data)
 	if err != nil {
 		return nil, err
 	}
 
-	input.UserType = claim.UserType
+	input.UserType = string(claim.UserType)
 	input.OrganizationId = claim.OrganizationId
-	user, err := l.baseLogic.OrganizationUserLogic.CreateAdminOrganizationUser(l.ctx, *input)
+	user, err := l.svcCtx.TenantClient.OrganizationUser.CreateAdminOrganizationUser(l.ctx, &tenant.OrganizationUserCreateAdminRequest{Data: input})
 	if err != nil {
 		return nil, err
 	}
 
-	data, err := copierx.Trans[dto.OrganizationUserEntityDto, proto.OrganizationUserEntity](user, copierx.TimeToRFC3339Str())
-	if err != nil {
-		return nil, err
-	}
 	return &admin.OrganizationUserDetailResponse{
-		Data: data,
+		Data: user.Data,
 	}, nil
 }

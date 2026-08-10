@@ -30,7 +30,7 @@ func (l *ResourceTreeLogic) ResourceTree(in *lender.ResourceTreeRequest) (resp *
 	tenantResp, err := l.svcCtx.TenantClient.Resource.ResourceTree(l.ctx, &tenant.ResourceTreeRequest{
 		Data: &tenant.ResourceTreeRequestData{
 			UserType:       string(constants.UserTypeLender),
-			Type:           in.Data.Type,
+			Type:           string(constants.UserTypeLender),
 			Scope:          string(constants.ResourceTreeScopeOrganization),
 			OrganizationId: claim.OrganizationId,
 		},
