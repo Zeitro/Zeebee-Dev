@@ -320,7 +320,7 @@ const CurrentPlanModal = ({
 								{isOwnerAdmin ? (
 									renewButton
 								) : (
-									<Tooltip title="Only the organization owner can manage auto-renewal">
+									<Tooltip title="Only the organization owner or admin can manage auto-renewal">
 										<span className="block">{renewButton}</span>
 									</Tooltip>
 								)}

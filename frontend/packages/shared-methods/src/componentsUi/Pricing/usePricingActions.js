@@ -3,12 +3,13 @@
 import { useCallback, useState } from 'react';
 import { message } from 'antd';
 import { useRouter } from 'next/navigation';
+import { useUserStore } from '@repo/shared-methods/store';
 import { createSubscriptionCheckout } from '../../api/pricing';
 import { DEFAULT_REGISTER_PATH } from './constants';
 import { getPolicyByCycle, isCustomPlan } from './utils';
 
 /**
- * Pricing CTA 行为：未登录跳转注册；已登录调 checkout 并跳转 Stripe；
+ * Pricing CTA 行为：未登录跳转注册；已登录且 owner/admin 调 checkout 并跳转 Stripe；
  * Custom 由 PlanCard Popover 展示联系方式，此处仅转发 onContactSales。
  *
  * @param {object} options
@@ -26,6 +27,7 @@ export default function usePricingActions({
 	isLoggedIn,
 }) {
 	const router = useRouter();
+	const userInfo = useUserStore((state) => state.userInfo);
 	const [loadingPlanId, setLoadingPlanId] = useState(null);
 
 	const handleContactSales = useCallback(
@@ -87,10 +89,25 @@ export default function usePricingActions({
 				return;
 			}
 
+			// 与 PlanCard / 后端约定一致：仅组织 owner / admin 可发起支付
+			if (!(userInfo?.is_owner || userInfo?.is_admin)) {
+				message.warning('Only the organization owner or admin can subscribe.');
+				return;
+			}
+
 			const policy = getPolicyByCycle(plan, billingCycle);
 			await handleCheckout(plan, policy);
 		},
-		[billingCycle, handleCheckout, handleContactSales, isLoggedIn, registerPath, router],
+		[
+			billingCycle,
+			handleCheckout,
+			handleContactSales,
+			isLoggedIn,
+			registerPath,
+			router,
+			userInfo?.is_admin,
+			userInfo?.is_owner,
+		],
 	);
 
 	return {

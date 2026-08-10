@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
-import { Button, Popover } from 'antd';
+import { Button, Popover, Tooltip } from 'antd';
 import { CheckCircleFilled, ClockCircleOutlined } from '@ant-design/icons';
+import { useUserStore } from '@repo/shared-methods/store';
 import { displayValue, formatAmount } from '@repo/shared-methods/utils';
 import ContactSalesContent from './ContactSalesContent';
 import { DEFAULT_SALES_EMAIL, DEFAULT_SALES_PHONE } from './constants';
@@ -15,9 +16,13 @@ import {
 	isHighlightedPlan,
 } from './utils';
 
+/** 与 CurrentPlanModal 一致：仅组织 owner / admin 可发起付费订阅 */
+const BILLING_RESTRICTED_TIP = 'Only the organization owner or admin can subscribe';
+
 /**
  * 单档套餐卡片：价格、描述、试用提示与 CTA。
  * Custom 档 CTA 点击展开 Contact Sales Popover（邮箱 + 电话），不跳转 mailto。
+ * 已登录时，付费 CTA 仅 owner / admin 可点；其余角色禁用并 Tooltip 提示。
  *
  * @param {object} props
  * @param {object} props.plan 套餐数据（与 pricing_plans/public 字段一致）
@@ -41,9 +46,14 @@ const PlanCard = ({
 	salesEmail = DEFAULT_SALES_EMAIL,
 	salesPhone = DEFAULT_SALES_PHONE,
 }) => {
+	const userInfo = useUserStore((state) => state.userInfo);
+	const isOwnerAdmin = Boolean(userInfo?.is_owner || userInfo?.is_admin);
+	/** 已登录且非 owner/admin：不可发起支付（未登录仍可点，走注册） */
+	const isBillingRestricted = Boolean(isLoggedIn) && !isOwnerAdmin;
 	const isCustom = isCustomPlan(plan);
 	const isHighlighted = isHighlightedPlan(plan);
 	const isLocked = isCurrentPlanLocked(isCurrentPlan, isCurrentPlanPaid);
+	const isPayDisabled = isLocked || isBillingRestricted;
 	const policy = getPolicyByCycle(plan, billingCycle);
 	const ctaLabel = getPlanCta(plan, { isLoggedIn, isCurrentPlan, isCurrentPlanPaid });
 
@@ -155,6 +165,21 @@ const PlanCard = ({
 						{ctaLabel}
 					</Button>
 				</Popover>
+			) : isBillingRestricted ? (
+				<Tooltip title={BILLING_RESTRICTED_TIP}>
+					<span className="mt-4 block">
+						<Button
+							type={isHighlighted || hasTrial(plan) ? 'primary' : 'default'}
+							size="large"
+							block
+							loading={loading}
+							disabled={isPayDisabled}
+							ghost={hasTrial(plan) && !isCurrentPlan}
+						>
+							{ctaLabel}
+						</Button>
+					</span>
+				</Tooltip>
 			) : (
 				<Button
 					type={isHighlighted || hasTrial(plan) ? 'primary' : 'default'}
@@ -162,7 +187,7 @@ const PlanCard = ({
 					block
 					className="mt-4"
 					loading={loading}
-					disabled={isLocked}
+					disabled={isPayDisabled}
 					ghost={hasTrial(plan) && !isCurrentPlan}
 					onClick={() => onAction?.(plan)}
 				>
