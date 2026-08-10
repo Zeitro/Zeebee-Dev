@@ -7,6 +7,7 @@ import (
 	"zeebee-backend/app/tenant/rpc/internal/svc"
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
 )
@@ -47,8 +48,20 @@ func (l *LoginLogic) Login(in *tenant.LoginRequest) (resp *proto.UserLoginRespon
 
 	token, err := l.baseLogic.UserLogic.Login(l.ctx, *loginReq, limiter)
 	if err != nil {
+		l.baseLogic.RecordAudit(l.ctx, dto.OperationCreateDto{
+			EntityType:   constants.OperationEntityTypeUser,
+			OperatorName: in.Data.Email,
+			OperatorType: userType,
+			Operation:    constants.OperationActionUserLoginFailed,
+		})
 		return nil, err
 	}
+	l.baseLogic.RecordAudit(l.ctx, dto.OperationCreateDto{
+		EntityType:   constants.OperationEntityTypeUser,
+		OperatorName: in.Data.Email,
+		OperatorType: userType,
+		Operation:    constants.OperationActionUserLogin,
+	})
 
 	data, err := copierx.Trans[dto.UserJwtTokenDto, proto.UserLoginResponseData](token)
 	if err != nil {

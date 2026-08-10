@@ -33,5 +33,6 @@ func (l *SwitchStatusLogic) SwitchStatus(in *tenant.OrganizationSubscriptionSwit
 	if err = l.baseLogic.OrganizationSubscriptionLogic.SwitchStatus(l.ctx, in.Data.Id, constants.OrganizationSubscriptionStatus(in.Data.Status)); err != nil {
 		return
 	}
+	l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypeOrganizationSubscription, in.Data.Id, constants.OperationActionSubscriptionStatusSwitch)
 	return &proto.EmptyResponse{}, nil
 }

@@ -40,5 +40,6 @@ func (l *SwitchStatusLogic) SwitchStatus(in *tenant.RoleSwitchStatusRequest) (re
 	if err = l.baseLogic.RoleLogic.SwitchStatus(l.ctx, in.Data.Id, in.Data.OrganizationId, userType, constants.CommonStatus(in.Data.Status)); err != nil {
 		return nil, err
 	}
+	l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypeRole, in.Data.Id, constants.OperationActionRoleStatusSwitch)
 	return &proto.EmptyResponse{}, nil
 }

@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 type BindResourcesLogic struct {
@@ -37,6 +38,7 @@ func (l *BindResourcesLogic) BindResources(in *tenant.PricingPlanBindResourcesRe
 	if err = l.baseLogic.PricingPlanLogic.BindResources(l.ctx, in.Data.Id, in.Data.ResourceIds); err != nil {
 		return nil, errorx.WithStack(err)
 	}
+	l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypePricingPlan, in.Data.Id, constants.OperationActionPlanBindResources)
 
 	return &proto.EmptyResponse{}, nil
 }

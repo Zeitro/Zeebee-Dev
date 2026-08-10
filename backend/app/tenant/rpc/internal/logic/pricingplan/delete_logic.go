@@ -6,6 +6,7 @@ import (
 	"zeebee-backend/app/tenant/rpc/internal/logic"
 	"zeebee-backend/app/tenant/rpc/internal/svc"
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
@@ -37,6 +38,7 @@ func (l *DeleteLogic) Delete(in *tenant.PricingPlanDeleteRequest) (resp *proto.E
 	if err = l.baseLogic.PricingPlanLogic.Delete(l.ctx, in.Data.Id); err != nil {
 		return nil, errorx.WithStack(err)
 	}
+	l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypePricingPlan, in.Data.Id, constants.OperationActionPlanDelete)
 
 	return &proto.EmptyResponse{}, nil
 }

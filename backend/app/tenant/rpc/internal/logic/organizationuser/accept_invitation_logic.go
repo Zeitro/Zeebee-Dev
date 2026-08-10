@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
 )
@@ -44,6 +45,14 @@ func (l *AcceptInvitationLogic) AcceptInvitation(in *tenant.OrganizationUserAcce
 	if err != nil {
 		return
 	}
+	l.baseLogic.RecordAudit(l.ctx, dto.OperationCreateDto{
+		EntityId:     user.Id,
+		EntityType:   constants.OperationEntityTypeOrganizationUser,
+		OperatorId:   user.Id,
+		OperatorName: in.Data.Email,
+		OperatorType: userType,
+		Operation:    constants.OperationActionMemberAcceptInvitation,
+	})
 
 	data, err := copierx.Trans[dto.UserEntityDto, proto.UserEntity](&user, copierx.TimeToRFC3339Str())
 	if err != nil {

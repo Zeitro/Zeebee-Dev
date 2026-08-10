@@ -7,6 +7,7 @@ import (
 	"zeebee-backend/app/tenant/rpc/internal/svc"
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
@@ -38,5 +39,6 @@ func (l *DeleteLogic) Delete(in *tenant.RoleDeleteRequest) (resp *proto.EmptyRes
 	if err = l.baseLogic.RoleLogic.Delete(l.ctx, in.Data.Id, in.Data.OrganizationId, userType); err != nil {
 		return nil, err
 	}
+	l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypeRole, in.Data.Id, constants.OperationActionRoleDelete)
 	return &proto.EmptyResponse{}, nil
 }

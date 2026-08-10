@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
 )
@@ -48,6 +49,7 @@ func (l *UpdateLogic) Update(in *tenant.RoleUpdateRequest) (resp *tenant.RoleDet
 	if err != nil {
 		return nil, err
 	}
+	l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypeRole, role.Id, constants.OperationActionRoleUpdate)
 
 	data, err := copierx.Trans[dto.RoleEntityDto, proto.RoleEntity](role, copierx.TimeToRFC3339Str())
 	if err != nil {

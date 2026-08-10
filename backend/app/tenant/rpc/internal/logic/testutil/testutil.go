@@ -147,6 +147,7 @@ func tenantModels() []any {
 		&model.BaseTemplate{},
 		&model.OrganizationEmail{},
 		&model.EmailAuthorization{},
+		&model.Operation{},
 	}
 }
 
@@ -182,7 +183,8 @@ func TestRpcConf() config.RpcConf {
 	}
 	return config.RpcConf{
 		CasbinConf: config.CasbinConf{
-			Watcher: config.CasbinWatcher{Channel: "tenant-test-events"},
+			Watcher:    config.CasbinWatcher{Channel: "tenant-test-events"},
+			EventTopic: config.CasbinEventTopic{BorrowerTopic: "tenant-test-borrower", LenderTopic: "tenant-test-lender", AdminTopic: "tenant-test-admin"},
 		},
 		LimiterConf: config.LimiterConf{
 			Login:             domainConf.LimiterItem{Rate: 10, Period: 300, LockPeriod: 120},

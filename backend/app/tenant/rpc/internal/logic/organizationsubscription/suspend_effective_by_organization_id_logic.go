@@ -7,6 +7,7 @@ import (
 	"zeebee-backend/app/tenant/rpc/internal/svc"
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
@@ -34,5 +35,6 @@ func (l *SuspendEffectiveByOrganizationIdLogic) SuspendEffectiveByOrganizationId
 	if err = l.baseLogic.OrganizationSubscriptionLogic.SuspendEffectiveByOrganizationId(l.ctx, in.Data.OrganizationId, userType); err != nil {
 		return
 	}
+	l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypeOrganizationSubscription, in.Data.OrganizationId, constants.OperationActionSubscriptionSuspend)
 	return &proto.EmptyResponse{}, nil
 }

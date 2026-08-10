@@ -38,6 +38,7 @@ func (l *SwitchStatusLogic) SwitchStatus(in *tenant.PricingPlanSwitchStatusReque
 	if err = l.baseLogic.PricingPlanLogic.SwitchStatus(l.ctx, in.Data.Id, constants.CommonStatus(in.Data.Status)); err != nil {
 		return nil, errorx.WithStack(err)
 	}
+	l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypePricingPlan, in.Data.Id, constants.OperationActionPlanStatusSwitch)
 
 	return &proto.EmptyResponse{}, nil
 }

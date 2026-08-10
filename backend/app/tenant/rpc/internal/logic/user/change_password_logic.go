@@ -7,6 +7,7 @@ import (
 	"zeebee-backend/app/tenant/rpc/internal/svc"
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
 )
@@ -48,5 +49,12 @@ func (l *ChangePasswordLogic) ChangePassword(in *tenant.ChangePasswordRequest) (
 	if err = l.baseLogic.UserLogic.ChangePassword(l.ctx, input); err != nil {
 		return nil, err
 	}
+	l.baseLogic.RecordAudit(l.ctx, dto.OperationCreateDto{
+		EntityType:   constants.OperationEntityTypeUser,
+		EntityId:     claim.UserId,
+		OperatorId:   claim.UserId,
+		OperatorType: claim.UserType,
+		Operation:    constants.OperationActionUserPasswordEdit,
+	})
 	return &proto.EmptyResponse{}, nil
 }
