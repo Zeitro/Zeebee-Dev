@@ -1,5 +1,10 @@
 import { Pricing } from '@repo/shared-methods';
+import PricingPageShell from './components/PricingPageShell';
 
 export default function PricingPage() {
-	return <Pricing variant="page" />;
+	return (
+		<PricingPageShell>
+			<Pricing variant="page" />
+		</PricingPageShell>
+	);
 }
