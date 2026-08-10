@@ -7,6 +7,7 @@ on:
       - prod-lender-backend
       - prod-admin-backend
       - prod-pdfgenerator-backend
+      - prod-tenant-backend
 
 jobs:
   deploy:

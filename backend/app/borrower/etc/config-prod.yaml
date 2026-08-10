@@ -64,9 +64,9 @@ RpcConf:
     Username: info@zeebeeloans.com
 
   JwtConf:
-    AccessSecret: nR1oP0lP2zF5cE9cW2eY2qN6pP4bX5mA
+    AccessSecret: iV6jQ7sK0mO2yZ1qX7oF9rC8oB0lW8wR
     AccessExpire: 864000
-    RefreshSecret: kQ8qH6kK7mZ1wV5zM7tI4cM3fR5dF6wH
+    RefreshSecret: iT0jA2bW3hM6iS6wB3dR2pD1dD4gQ8xS
     RefreshExpire: 864000
 
   RedisConf:

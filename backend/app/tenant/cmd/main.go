@@ -14,7 +14,7 @@ import (
 	"zeebee-backend/app/tenant/rpc"
 )
 
-var configFile = flag.String("f", "etc/tenant.yaml", "the config file")
+var configFile = flag.String("f", "etc/config.yaml", "the config file")
 
 func main() {
 	flag.Parse()
