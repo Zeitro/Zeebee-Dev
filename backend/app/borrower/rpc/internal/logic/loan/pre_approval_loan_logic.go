@@ -93,7 +93,7 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 		Primary:     &borrower.PrimaryLoanPreApproval{},
 		Secondaries: []*borrower.SecondaryLoanPreApproval{},
 	}
-	_ = copierx.Assign[preapproval_engine.CalculatePreApprovalLoanAmountResult, borrower.PrimaryLoanPreApproval](result, responseData.Primary)
+	err = copierx.Assign[preapproval_engine.CalculatePreApprovalLoanAmountResult, borrower.PrimaryLoanPreApproval](result, responseData.Primary)
 	if err != nil {
 		return nil, err
 	}

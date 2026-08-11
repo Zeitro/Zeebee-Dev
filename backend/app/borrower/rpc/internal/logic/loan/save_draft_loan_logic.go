@@ -187,6 +187,9 @@ func (l *SaveDraftLoanLogic) SaveDraftLoan(in *borrower.LoanApplyRequest) (resp 
 		innerErr = eg.Wait()
 		return innerErr
 	})
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
 
 	return &borrower.LoanApplyResponse{
 		Data: &borrower.LoanApplyResponseData{

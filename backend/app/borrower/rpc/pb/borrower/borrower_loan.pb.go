@@ -2561,7 +2561,7 @@ type LoanPreapproveResult struct {
 	Ltv                    float32                `protobuf:"fixed32,13,opt,name=ltv,proto3" json:"ltv,omitempty"`
 	Ltc                    float32                `protobuf:"fixed32,14,opt,name=ltc,proto3" json:"ltc,omitempty"`
 	Ltarv                  float32                `protobuf:"fixed32,15,opt,name=ltarv,proto3" json:"ltarv,omitempty"`
-	ExperienceLevel        string                 `protobuf:"bytes,16,opt,name=experience_level,json=experienceLevel,proto3" json:"experience_level,omitempty"`
+	ExperienceLevel        int32                  `protobuf:"varint,16,opt,name=experience_level,json=experienceLevel,proto3" json:"experience_level,omitempty"`
 	unknownFields          protoimpl.UnknownFields
 	sizeCache              protoimpl.SizeCache
 }
@@ -2701,11 +2701,11 @@ func (x *LoanPreapproveResult) GetLtarv() float32 {
 	return 0
 }
 
-func (x *LoanPreapproveResult) GetExperienceLevel() string {
+func (x *LoanPreapproveResult) GetExperienceLevel() int32 {
 	if x != nil {
 		return x.ExperienceLevel
 	}
-	return ""
+	return 0
 }
 
 type LoanApplyResponse struct {
@@ -5061,7 +5061,7 @@ const file_borrower_loan_proto_rawDesc = "" +
 	"\x03ltv\x18\r \x01(\x02R\x03ltv\x12\x10\n" +
 	"\x03ltc\x18\x0e \x01(\x02R\x03ltc\x12\x14\n" +
 	"\x05ltarv\x18\x0f \x01(\x02R\x05ltarv\x12)\n" +
-	"\x10experience_level\x18\x10 \x01(\tR\x0fexperienceLevel\"H\n" +
+	"\x10experience_level\x18\x10 \x01(\x05R\x0fexperienceLevel\"H\n" +
 	"\x11LoanApplyResponse\x123\n" +
 	"\x04data\x18\x01 \x01(\v2\x1f.borrower.LoanApplyResponseDataR\x04data\"'\n" +
 	"\x15LoanApplyResponseData\x12\x0e\n" +
