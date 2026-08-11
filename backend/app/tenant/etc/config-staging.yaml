@@ -13,6 +13,17 @@ RpcConf:
     Tls: true
     PingTimeout: 10s
 
+  LlmConf:
+    Providers:
+      - Name: openai
+        ApiKey: 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
+        BaseUrl: https://api.openai.com/v1
+    LenderDiscoverConf:
+      Provider: openai
+      Model: gpt-5.4
+      MaxTokens: 16384
+      TimeoutSeconds: 480
+
   LimiterConf:
     Login:             { Rate: 10, Period: 300, LockPeriod: 120 }
     SendLoginEmail:    { Rate: 5, Period: 300 }
@@ -20,12 +31,12 @@ RpcConf:
     SendResetPwdEmail: { Rate: 5, Period: 300 }
 
   CronTaskConf:
-    - name: update_admin_organization_subscription_status
-      schedule: "0 0 1 * * *"
-    - name: update_borrower_organization_subscription_status
-      schedule: "0 0 2 * * *"
-    - name: update_lender_organization_subscription_status
-      schedule: "0 0 3 * * *"
+    - name: update_admin_subscription_status
+      schedule: "0 0 0 * * *"
+    - name: update_borrower_subscription_status
+      schedule: "0 10 0 * * *"
+    - name: update_lender_subscription_status
+      schedule: "0 20 0 * * *"
 
   CasbinConf:
     ModelPath: etc/model.conf

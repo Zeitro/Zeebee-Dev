@@ -42,7 +42,7 @@ type RpcConf struct {
 	InviteUserExpireSeconds      int
 	SendInviteEmailPeriodSeconds int
 	CasbinConf                   CasbinConf
-	CronTaskConf                 []CronTaskConf
+	// CronTaskConf                 []CronTaskConf
 }
 
 // RpcServiceConf holds outbound RPC clients. Tenant is the identity + authz

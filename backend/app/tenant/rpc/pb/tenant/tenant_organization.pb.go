@@ -1994,6 +1994,986 @@ func (x *OrganizationSwitchStatusRequestData) GetStatus() string {
 	return ""
 }
 
+type LenderDiscoverSettingsEntity struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	ScheduleEnabled bool                   `protobuf:"varint,1,opt,name=schedule_enabled,json=scheduleEnabled,proto3" json:"schedule_enabled,omitempty"`
+	IntervalDays    int32                  `protobuf:"varint,2,opt,name=interval_days,json=intervalDays,proto3" json:"interval_days,omitempty"`
+	ScopeState      string                 `protobuf:"bytes,3,opt,name=scope_state,json=scopeState,proto3" json:"scope_state,omitempty"`
+	ScopeExtra      string                 `protobuf:"bytes,4,opt,name=scope_extra,json=scopeExtra,proto3" json:"scope_extra,omitempty"`
+	UserPrompt      string                 `protobuf:"bytes,5,opt,name=user_prompt,json=userPrompt,proto3" json:"user_prompt,omitempty"`
+	OpenaiModel     string                 `protobuf:"bytes,6,opt,name=openai_model,json=openaiModel,proto3" json:"openai_model,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *LenderDiscoverSettingsEntity) Reset() {
+	*x = LenderDiscoverSettingsEntity{}
+	mi := &file_tenant_organization_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LenderDiscoverSettingsEntity) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LenderDiscoverSettingsEntity) ProtoMessage() {}
+
+func (x *LenderDiscoverSettingsEntity) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LenderDiscoverSettingsEntity.ProtoReflect.Descriptor instead.
+func (*LenderDiscoverSettingsEntity) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *LenderDiscoverSettingsEntity) GetScheduleEnabled() bool {
+	if x != nil {
+		return x.ScheduleEnabled
+	}
+	return false
+}
+
+func (x *LenderDiscoverSettingsEntity) GetIntervalDays() int32 {
+	if x != nil {
+		return x.IntervalDays
+	}
+	return 0
+}
+
+func (x *LenderDiscoverSettingsEntity) GetScopeState() string {
+	if x != nil {
+		return x.ScopeState
+	}
+	return ""
+}
+
+func (x *LenderDiscoverSettingsEntity) GetScopeExtra() string {
+	if x != nil {
+		return x.ScopeExtra
+	}
+	return ""
+}
+
+func (x *LenderDiscoverSettingsEntity) GetUserPrompt() string {
+	if x != nil {
+		return x.UserPrompt
+	}
+	return ""
+}
+
+func (x *LenderDiscoverSettingsEntity) GetOpenaiModel() string {
+	if x != nil {
+		return x.OpenaiModel
+	}
+	return ""
+}
+
+type LenderDiscoverSettingsResponse struct {
+	state         protoimpl.MessageState        `protogen:"open.v1"`
+	Data          *LenderDiscoverSettingsEntity `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LenderDiscoverSettingsResponse) Reset() {
+	*x = LenderDiscoverSettingsResponse{}
+	mi := &file_tenant_organization_proto_msgTypes[32]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LenderDiscoverSettingsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LenderDiscoverSettingsResponse) ProtoMessage() {}
+
+func (x *LenderDiscoverSettingsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_proto_msgTypes[32]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LenderDiscoverSettingsResponse.ProtoReflect.Descriptor instead.
+func (*LenderDiscoverSettingsResponse) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_proto_rawDescGZIP(), []int{32}
+}
+
+func (x *LenderDiscoverSettingsResponse) GetData() *LenderDiscoverSettingsEntity {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type LenderDiscoverUpdateSettingsRequest struct {
+	state         protoimpl.MessageState                   `protogen:"open.v1"`
+	Data          *LenderDiscoverUpdateSettingsRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LenderDiscoverUpdateSettingsRequest) Reset() {
+	*x = LenderDiscoverUpdateSettingsRequest{}
+	mi := &file_tenant_organization_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LenderDiscoverUpdateSettingsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LenderDiscoverUpdateSettingsRequest) ProtoMessage() {}
+
+func (x *LenderDiscoverUpdateSettingsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LenderDiscoverUpdateSettingsRequest.ProtoReflect.Descriptor instead.
+func (*LenderDiscoverUpdateSettingsRequest) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *LenderDiscoverUpdateSettingsRequest) GetData() *LenderDiscoverUpdateSettingsRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type LenderDiscoverUpdateSettingsRequestData struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	ScheduleEnabled bool                   `protobuf:"varint,1,opt,name=schedule_enabled,json=scheduleEnabled,proto3" json:"schedule_enabled,omitempty"`
+	IntervalDays    int32                  `protobuf:"varint,2,opt,name=interval_days,json=intervalDays,proto3" json:"interval_days,omitempty"`
+	ScopeState      string                 `protobuf:"bytes,3,opt,name=scope_state,json=scopeState,proto3" json:"scope_state,omitempty"`
+	ScopeExtra      string                 `protobuf:"bytes,4,opt,name=scope_extra,json=scopeExtra,proto3" json:"scope_extra,omitempty"`
+	UserPrompt      string                 `protobuf:"bytes,5,opt,name=user_prompt,json=userPrompt,proto3" json:"user_prompt,omitempty"`
+	OpenaiModel     string                 `protobuf:"bytes,6,opt,name=openai_model,json=openaiModel,proto3" json:"openai_model,omitempty"`
+	UpdatedByUserId int64                  `protobuf:"varint,7,opt,name=updated_by_user_id,json=updatedByUserId,proto3" json:"updated_by_user_id,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *LenderDiscoverUpdateSettingsRequestData) Reset() {
+	*x = LenderDiscoverUpdateSettingsRequestData{}
+	mi := &file_tenant_organization_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LenderDiscoverUpdateSettingsRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LenderDiscoverUpdateSettingsRequestData) ProtoMessage() {}
+
+func (x *LenderDiscoverUpdateSettingsRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LenderDiscoverUpdateSettingsRequestData.ProtoReflect.Descriptor instead.
+func (*LenderDiscoverUpdateSettingsRequestData) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *LenderDiscoverUpdateSettingsRequestData) GetScheduleEnabled() bool {
+	if x != nil {
+		return x.ScheduleEnabled
+	}
+	return false
+}
+
+func (x *LenderDiscoverUpdateSettingsRequestData) GetIntervalDays() int32 {
+	if x != nil {
+		return x.IntervalDays
+	}
+	return 0
+}
+
+func (x *LenderDiscoverUpdateSettingsRequestData) GetScopeState() string {
+	if x != nil {
+		return x.ScopeState
+	}
+	return ""
+}
+
+func (x *LenderDiscoverUpdateSettingsRequestData) GetScopeExtra() string {
+	if x != nil {
+		return x.ScopeExtra
+	}
+	return ""
+}
+
+func (x *LenderDiscoverUpdateSettingsRequestData) GetUserPrompt() string {
+	if x != nil {
+		return x.UserPrompt
+	}
+	return ""
+}
+
+func (x *LenderDiscoverUpdateSettingsRequestData) GetOpenaiModel() string {
+	if x != nil {
+		return x.OpenaiModel
+	}
+	return ""
+}
+
+func (x *LenderDiscoverUpdateSettingsRequestData) GetUpdatedByUserId() int64 {
+	if x != nil {
+		return x.UpdatedByUserId
+	}
+	return 0
+}
+
+type LenderDiscoverRunRequest struct {
+	state         protoimpl.MessageState        `protogen:"open.v1"`
+	Data          *LenderDiscoverRunRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LenderDiscoverRunRequest) Reset() {
+	*x = LenderDiscoverRunRequest{}
+	mi := &file_tenant_organization_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LenderDiscoverRunRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LenderDiscoverRunRequest) ProtoMessage() {}
+
+func (x *LenderDiscoverRunRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LenderDiscoverRunRequest.ProtoReflect.Descriptor instead.
+func (*LenderDiscoverRunRequest) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *LenderDiscoverRunRequest) GetData() *LenderDiscoverRunRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type LenderDiscoverRunRequestData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Trigger       string                 `protobuf:"bytes,1,opt,name=trigger,proto3" json:"trigger,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LenderDiscoverRunRequestData) Reset() {
+	*x = LenderDiscoverRunRequestData{}
+	mi := &file_tenant_organization_proto_msgTypes[36]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LenderDiscoverRunRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LenderDiscoverRunRequestData) ProtoMessage() {}
+
+func (x *LenderDiscoverRunRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_proto_msgTypes[36]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LenderDiscoverRunRequestData.ProtoReflect.Descriptor instead.
+func (*LenderDiscoverRunRequestData) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_proto_rawDescGZIP(), []int{36}
+}
+
+func (x *LenderDiscoverRunRequestData) GetTrigger() string {
+	if x != nil {
+		return x.Trigger
+	}
+	return ""
+}
+
+type LenderDiscoverRunStats struct {
+	state                 protoimpl.MessageState `protogen:"open.v1"`
+	RequestedCount        int32                  `protobuf:"varint,1,opt,name=requested_count,json=requestedCount,proto3" json:"requested_count,omitempty"`
+	InsertedCount         int32                  `protobuf:"varint,2,opt,name=inserted_count,json=insertedCount,proto3" json:"inserted_count,omitempty"`
+	SkippedDuplicateCount int32                  `protobuf:"varint,3,opt,name=skipped_duplicate_count,json=skippedDuplicateCount,proto3" json:"skipped_duplicate_count,omitempty"`
+	ErrorCount            int32                  `protobuf:"varint,4,opt,name=error_count,json=errorCount,proto3" json:"error_count,omitempty"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
+}
+
+func (x *LenderDiscoverRunStats) Reset() {
+	*x = LenderDiscoverRunStats{}
+	mi := &file_tenant_organization_proto_msgTypes[37]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LenderDiscoverRunStats) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LenderDiscoverRunStats) ProtoMessage() {}
+
+func (x *LenderDiscoverRunStats) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_proto_msgTypes[37]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LenderDiscoverRunStats.ProtoReflect.Descriptor instead.
+func (*LenderDiscoverRunStats) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_proto_rawDescGZIP(), []int{37}
+}
+
+func (x *LenderDiscoverRunStats) GetRequestedCount() int32 {
+	if x != nil {
+		return x.RequestedCount
+	}
+	return 0
+}
+
+func (x *LenderDiscoverRunStats) GetInsertedCount() int32 {
+	if x != nil {
+		return x.InsertedCount
+	}
+	return 0
+}
+
+func (x *LenderDiscoverRunStats) GetSkippedDuplicateCount() int32 {
+	if x != nil {
+		return x.SkippedDuplicateCount
+	}
+	return 0
+}
+
+func (x *LenderDiscoverRunStats) GetErrorCount() int32 {
+	if x != nil {
+		return x.ErrorCount
+	}
+	return 0
+}
+
+type LenderDiscoverRunEntity struct {
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	Id            int64                   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TriggerType   string                  `protobuf:"bytes,2,opt,name=trigger_type,json=triggerType,proto3" json:"trigger_type,omitempty"`
+	Status        string                  `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
+	StartedAt     string                  `protobuf:"bytes,4,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
+	FinishedAt    string                  `protobuf:"bytes,5,opt,name=finished_at,json=finishedAt,proto3" json:"finished_at,omitempty"`
+	ErrorMessage  string                  `protobuf:"bytes,6,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
+	Stats         *LenderDiscoverRunStats `protobuf:"bytes,7,opt,name=stats,proto3" json:"stats,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LenderDiscoverRunEntity) Reset() {
+	*x = LenderDiscoverRunEntity{}
+	mi := &file_tenant_organization_proto_msgTypes[38]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LenderDiscoverRunEntity) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LenderDiscoverRunEntity) ProtoMessage() {}
+
+func (x *LenderDiscoverRunEntity) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_proto_msgTypes[38]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LenderDiscoverRunEntity.ProtoReflect.Descriptor instead.
+func (*LenderDiscoverRunEntity) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_proto_rawDescGZIP(), []int{38}
+}
+
+func (x *LenderDiscoverRunEntity) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *LenderDiscoverRunEntity) GetTriggerType() string {
+	if x != nil {
+		return x.TriggerType
+	}
+	return ""
+}
+
+func (x *LenderDiscoverRunEntity) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *LenderDiscoverRunEntity) GetStartedAt() string {
+	if x != nil {
+		return x.StartedAt
+	}
+	return ""
+}
+
+func (x *LenderDiscoverRunEntity) GetFinishedAt() string {
+	if x != nil {
+		return x.FinishedAt
+	}
+	return ""
+}
+
+func (x *LenderDiscoverRunEntity) GetErrorMessage() string {
+	if x != nil {
+		return x.ErrorMessage
+	}
+	return ""
+}
+
+func (x *LenderDiscoverRunEntity) GetStats() *LenderDiscoverRunStats {
+	if x != nil {
+		return x.Stats
+	}
+	return nil
+}
+
+type LenderDiscoverRunResponse struct {
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Data          *LenderDiscoverRunEntity `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LenderDiscoverRunResponse) Reset() {
+	*x = LenderDiscoverRunResponse{}
+	mi := &file_tenant_organization_proto_msgTypes[39]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LenderDiscoverRunResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LenderDiscoverRunResponse) ProtoMessage() {}
+
+func (x *LenderDiscoverRunResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_proto_msgTypes[39]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LenderDiscoverRunResponse.ProtoReflect.Descriptor instead.
+func (*LenderDiscoverRunResponse) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_proto_rawDescGZIP(), []int{39}
+}
+
+func (x *LenderDiscoverRunResponse) GetData() *LenderDiscoverRunEntity {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type LenderDiscoverCandidateEntity struct {
+	state          protoimpl.MessageState                  `protogen:"open.v1"`
+	DedupeStatus   string                                  `protobuf:"bytes,1,opt,name=dedupe_status,json=dedupeStatus,proto3" json:"dedupe_status,omitempty"`
+	NormalizedKey  string                                  `protobuf:"bytes,2,opt,name=normalized_key,json=normalizedKey,proto3" json:"normalized_key,omitempty"`
+	Name           string                                  `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	ContactEmail   string                                  `protobuf:"bytes,4,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
+	ContactPhone   string                                  `protobuf:"bytes,5,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"`
+	ContactName    string                                  `protobuf:"bytes,6,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`
+	Website        string                                  `protobuf:"bytes,7,opt,name=website,proto3" json:"website,omitempty"`
+	Tagline        string                                  `protobuf:"bytes,8,opt,name=tagline,proto3" json:"tagline,omitempty"`
+	Logo           string                                  `protobuf:"bytes,9,opt,name=logo,proto3" json:"logo,omitempty"`
+	Address        *proto.AddressEntity                    `protobuf:"bytes,10,opt,name=address,proto3" json:"address,omitempty"`
+	LenderMetadata *proto.OrganizationLenderMetadataEntity `protobuf:"bytes,11,opt,name=lender_metadata,json=lenderMetadata,proto3" json:"lender_metadata,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *LenderDiscoverCandidateEntity) Reset() {
+	*x = LenderDiscoverCandidateEntity{}
+	mi := &file_tenant_organization_proto_msgTypes[40]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LenderDiscoverCandidateEntity) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LenderDiscoverCandidateEntity) ProtoMessage() {}
+
+func (x *LenderDiscoverCandidateEntity) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_proto_msgTypes[40]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LenderDiscoverCandidateEntity.ProtoReflect.Descriptor instead.
+func (*LenderDiscoverCandidateEntity) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_proto_rawDescGZIP(), []int{40}
+}
+
+func (x *LenderDiscoverCandidateEntity) GetDedupeStatus() string {
+	if x != nil {
+		return x.DedupeStatus
+	}
+	return ""
+}
+
+func (x *LenderDiscoverCandidateEntity) GetNormalizedKey() string {
+	if x != nil {
+		return x.NormalizedKey
+	}
+	return ""
+}
+
+func (x *LenderDiscoverCandidateEntity) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *LenderDiscoverCandidateEntity) GetContactEmail() string {
+	if x != nil {
+		return x.ContactEmail
+	}
+	return ""
+}
+
+func (x *LenderDiscoverCandidateEntity) GetContactPhone() string {
+	if x != nil {
+		return x.ContactPhone
+	}
+	return ""
+}
+
+func (x *LenderDiscoverCandidateEntity) GetContactName() string {
+	if x != nil {
+		return x.ContactName
+	}
+	return ""
+}
+
+func (x *LenderDiscoverCandidateEntity) GetWebsite() string {
+	if x != nil {
+		return x.Website
+	}
+	return ""
+}
+
+func (x *LenderDiscoverCandidateEntity) GetTagline() string {
+	if x != nil {
+		return x.Tagline
+	}
+	return ""
+}
+
+func (x *LenderDiscoverCandidateEntity) GetLogo() string {
+	if x != nil {
+		return x.Logo
+	}
+	return ""
+}
+
+func (x *LenderDiscoverCandidateEntity) GetAddress() *proto.AddressEntity {
+	if x != nil {
+		return x.Address
+	}
+	return nil
+}
+
+func (x *LenderDiscoverCandidateEntity) GetLenderMetadata() *proto.OrganizationLenderMetadataEntity {
+	if x != nil {
+		return x.LenderMetadata
+	}
+	return nil
+}
+
+type LenderDiscoverPreviewResponseData struct {
+	state         protoimpl.MessageState           `protogen:"open.v1"`
+	Candidates    []*LenderDiscoverCandidateEntity `protobuf:"bytes,1,rep,name=candidates,proto3" json:"candidates,omitempty"`
+	NewCount      int32                            `protobuf:"varint,2,opt,name=new_count,json=newCount,proto3" json:"new_count,omitempty"`
+	ExistedCount  int32                            `protobuf:"varint,3,opt,name=existed_count,json=existedCount,proto3" json:"existed_count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LenderDiscoverPreviewResponseData) Reset() {
+	*x = LenderDiscoverPreviewResponseData{}
+	mi := &file_tenant_organization_proto_msgTypes[41]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LenderDiscoverPreviewResponseData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LenderDiscoverPreviewResponseData) ProtoMessage() {}
+
+func (x *LenderDiscoverPreviewResponseData) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_proto_msgTypes[41]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LenderDiscoverPreviewResponseData.ProtoReflect.Descriptor instead.
+func (*LenderDiscoverPreviewResponseData) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_proto_rawDescGZIP(), []int{41}
+}
+
+func (x *LenderDiscoverPreviewResponseData) GetCandidates() []*LenderDiscoverCandidateEntity {
+	if x != nil {
+		return x.Candidates
+	}
+	return nil
+}
+
+func (x *LenderDiscoverPreviewResponseData) GetNewCount() int32 {
+	if x != nil {
+		return x.NewCount
+	}
+	return 0
+}
+
+func (x *LenderDiscoverPreviewResponseData) GetExistedCount() int32 {
+	if x != nil {
+		return x.ExistedCount
+	}
+	return 0
+}
+
+type LenderDiscoverPreviewResponse struct {
+	state         protoimpl.MessageState             `protogen:"open.v1"`
+	Data          *LenderDiscoverPreviewResponseData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LenderDiscoverPreviewResponse) Reset() {
+	*x = LenderDiscoverPreviewResponse{}
+	mi := &file_tenant_organization_proto_msgTypes[42]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LenderDiscoverPreviewResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LenderDiscoverPreviewResponse) ProtoMessage() {}
+
+func (x *LenderDiscoverPreviewResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_proto_msgTypes[42]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LenderDiscoverPreviewResponse.ProtoReflect.Descriptor instead.
+func (*LenderDiscoverPreviewResponse) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_proto_rawDescGZIP(), []int{42}
+}
+
+func (x *LenderDiscoverPreviewResponse) GetData() *LenderDiscoverPreviewResponseData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type LenderDiscoverCommitRequest struct {
+	state         protoimpl.MessageState           `protogen:"open.v1"`
+	Data          *LenderDiscoverCommitRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LenderDiscoverCommitRequest) Reset() {
+	*x = LenderDiscoverCommitRequest{}
+	mi := &file_tenant_organization_proto_msgTypes[43]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LenderDiscoverCommitRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LenderDiscoverCommitRequest) ProtoMessage() {}
+
+func (x *LenderDiscoverCommitRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_proto_msgTypes[43]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LenderDiscoverCommitRequest.ProtoReflect.Descriptor instead.
+func (*LenderDiscoverCommitRequest) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_proto_rawDescGZIP(), []int{43}
+}
+
+func (x *LenderDiscoverCommitRequest) GetData() *LenderDiscoverCommitRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type LenderDiscoverCommitRequestData struct {
+	state         protoimpl.MessageState        `protogen:"open.v1"`
+	Lenders       []*LenderDiscoverCommitLender `protobuf:"bytes,1,rep,name=lenders,proto3" json:"lenders,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LenderDiscoverCommitRequestData) Reset() {
+	*x = LenderDiscoverCommitRequestData{}
+	mi := &file_tenant_organization_proto_msgTypes[44]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LenderDiscoverCommitRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LenderDiscoverCommitRequestData) ProtoMessage() {}
+
+func (x *LenderDiscoverCommitRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_proto_msgTypes[44]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LenderDiscoverCommitRequestData.ProtoReflect.Descriptor instead.
+func (*LenderDiscoverCommitRequestData) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_proto_rawDescGZIP(), []int{44}
+}
+
+func (x *LenderDiscoverCommitRequestData) GetLenders() []*LenderDiscoverCommitLender {
+	if x != nil {
+		return x.Lenders
+	}
+	return nil
+}
+
+type LenderDiscoverCommitLender struct {
+	state          protoimpl.MessageState                  `protogen:"open.v1"`
+	Name           string                                  `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	ContactEmail   string                                  `protobuf:"bytes,2,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
+	ContactPhone   string                                  `protobuf:"bytes,3,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"`
+	ContactName    string                                  `protobuf:"bytes,4,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`
+	Website        string                                  `protobuf:"bytes,5,opt,name=website,proto3" json:"website,omitempty"`
+	Tagline        string                                  `protobuf:"bytes,6,opt,name=tagline,proto3" json:"tagline,omitempty"`
+	Logo           string                                  `protobuf:"bytes,7,opt,name=logo,proto3" json:"logo,omitempty"`
+	Address        *proto.AddressEntity                    `protobuf:"bytes,8,opt,name=address,proto3" json:"address,omitempty"`
+	LenderMetadata *proto.OrganizationLenderMetadataEntity `protobuf:"bytes,9,opt,name=lender_metadata,json=lenderMetadata,proto3" json:"lender_metadata,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *LenderDiscoverCommitLender) Reset() {
+	*x = LenderDiscoverCommitLender{}
+	mi := &file_tenant_organization_proto_msgTypes[45]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LenderDiscoverCommitLender) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LenderDiscoverCommitLender) ProtoMessage() {}
+
+func (x *LenderDiscoverCommitLender) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_proto_msgTypes[45]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LenderDiscoverCommitLender.ProtoReflect.Descriptor instead.
+func (*LenderDiscoverCommitLender) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_proto_rawDescGZIP(), []int{45}
+}
+
+func (x *LenderDiscoverCommitLender) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *LenderDiscoverCommitLender) GetContactEmail() string {
+	if x != nil {
+		return x.ContactEmail
+	}
+	return ""
+}
+
+func (x *LenderDiscoverCommitLender) GetContactPhone() string {
+	if x != nil {
+		return x.ContactPhone
+	}
+	return ""
+}
+
+func (x *LenderDiscoverCommitLender) GetContactName() string {
+	if x != nil {
+		return x.ContactName
+	}
+	return ""
+}
+
+func (x *LenderDiscoverCommitLender) GetWebsite() string {
+	if x != nil {
+		return x.Website
+	}
+	return ""
+}
+
+func (x *LenderDiscoverCommitLender) GetTagline() string {
+	if x != nil {
+		return x.Tagline
+	}
+	return ""
+}
+
+func (x *LenderDiscoverCommitLender) GetLogo() string {
+	if x != nil {
+		return x.Logo
+	}
+	return ""
+}
+
+func (x *LenderDiscoverCommitLender) GetAddress() *proto.AddressEntity {
+	if x != nil {
+		return x.Address
+	}
+	return nil
+}
+
+func (x *LenderDiscoverCommitLender) GetLenderMetadata() *proto.OrganizationLenderMetadataEntity {
+	if x != nil {
+		return x.LenderMetadata
+	}
+	return nil
+}
+
 var File_tenant_organization_proto protoreflect.FileDescriptor
 
 const file_tenant_organization_proto_rawDesc = "" +
@@ -2147,7 +3127,89 @@ const file_tenant_organization_proto_rawDesc = "" +
 	"#OrganizationSwitchStatusRequestData\x12\x1b\n" +
 	"\tuser_type\x18\x01 \x01(\tR\buserType\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\x12\x16\n" +
-	"\x06status\x18\x03 \x01(\tR\x06status2\xfd\a\n" +
+	"\x06status\x18\x03 \x01(\tR\x06status\"\xf4\x01\n" +
+	"\x1cLenderDiscoverSettingsEntity\x12)\n" +
+	"\x10schedule_enabled\x18\x01 \x01(\bR\x0fscheduleEnabled\x12#\n" +
+	"\rinterval_days\x18\x02 \x01(\x05R\fintervalDays\x12\x1f\n" +
+	"\vscope_state\x18\x03 \x01(\tR\n" +
+	"scopeState\x12\x1f\n" +
+	"\vscope_extra\x18\x04 \x01(\tR\n" +
+	"scopeExtra\x12\x1f\n" +
+	"\vuser_prompt\x18\x05 \x01(\tR\n" +
+	"userPrompt\x12!\n" +
+	"\fopenai_model\x18\x06 \x01(\tR\vopenaiModel\"Z\n" +
+	"\x1eLenderDiscoverSettingsResponse\x128\n" +
+	"\x04data\x18\x01 \x01(\v2$.tenant.LenderDiscoverSettingsEntityR\x04data\"j\n" +
+	"#LenderDiscoverUpdateSettingsRequest\x12C\n" +
+	"\x04data\x18\x01 \x01(\v2/.tenant.LenderDiscoverUpdateSettingsRequestDataR\x04data\"\xac\x02\n" +
+	"'LenderDiscoverUpdateSettingsRequestData\x12)\n" +
+	"\x10schedule_enabled\x18\x01 \x01(\bR\x0fscheduleEnabled\x12#\n" +
+	"\rinterval_days\x18\x02 \x01(\x05R\fintervalDays\x12\x1f\n" +
+	"\vscope_state\x18\x03 \x01(\tR\n" +
+	"scopeState\x12\x1f\n" +
+	"\vscope_extra\x18\x04 \x01(\tR\n" +
+	"scopeExtra\x12\x1f\n" +
+	"\vuser_prompt\x18\x05 \x01(\tR\n" +
+	"userPrompt\x12!\n" +
+	"\fopenai_model\x18\x06 \x01(\tR\vopenaiModel\x12+\n" +
+	"\x12updated_by_user_id\x18\a \x01(\x03R\x0fupdatedByUserId\"T\n" +
+	"\x18LenderDiscoverRunRequest\x128\n" +
+	"\x04data\x18\x01 \x01(\v2$.tenant.LenderDiscoverRunRequestDataR\x04data\"8\n" +
+	"\x1cLenderDiscoverRunRequestData\x12\x18\n" +
+	"\atrigger\x18\x01 \x01(\tR\atrigger\"\xc1\x01\n" +
+	"\x16LenderDiscoverRunStats\x12'\n" +
+	"\x0frequested_count\x18\x01 \x01(\x05R\x0erequestedCount\x12%\n" +
+	"\x0einserted_count\x18\x02 \x01(\x05R\rinsertedCount\x126\n" +
+	"\x17skipped_duplicate_count\x18\x03 \x01(\x05R\x15skippedDuplicateCount\x12\x1f\n" +
+	"\verror_count\x18\x04 \x01(\x05R\n" +
+	"errorCount\"\xff\x01\n" +
+	"\x17LenderDiscoverRunEntity\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12!\n" +
+	"\ftrigger_type\x18\x02 \x01(\tR\vtriggerType\x12\x16\n" +
+	"\x06status\x18\x03 \x01(\tR\x06status\x12\x1d\n" +
+	"\n" +
+	"started_at\x18\x04 \x01(\tR\tstartedAt\x12\x1f\n" +
+	"\vfinished_at\x18\x05 \x01(\tR\n" +
+	"finishedAt\x12#\n" +
+	"\rerror_message\x18\x06 \x01(\tR\ferrorMessage\x124\n" +
+	"\x05stats\x18\a \x01(\v2\x1e.tenant.LenderDiscoverRunStatsR\x05stats\"P\n" +
+	"\x19LenderDiscoverRunResponse\x123\n" +
+	"\x04data\x18\x01 \x01(\v2\x1f.tenant.LenderDiscoverRunEntityR\x04data\"\xb6\x03\n" +
+	"\x1dLenderDiscoverCandidateEntity\x12#\n" +
+	"\rdedupe_status\x18\x01 \x01(\tR\fdedupeStatus\x12%\n" +
+	"\x0enormalized_key\x18\x02 \x01(\tR\rnormalizedKey\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12#\n" +
+	"\rcontact_email\x18\x04 \x01(\tR\fcontactEmail\x12#\n" +
+	"\rcontact_phone\x18\x05 \x01(\tR\fcontactPhone\x12!\n" +
+	"\fcontact_name\x18\x06 \x01(\tR\vcontactName\x12\x18\n" +
+	"\awebsite\x18\a \x01(\tR\awebsite\x12\x18\n" +
+	"\atagline\x18\b \x01(\tR\atagline\x12\x12\n" +
+	"\x04logo\x18\t \x01(\tR\x04logo\x12.\n" +
+	"\aaddress\x18\n" +
+	" \x01(\v2\x14.proto.AddressEntityR\aaddress\x12P\n" +
+	"\x0flender_metadata\x18\v \x01(\v2'.proto.OrganizationLenderMetadataEntityR\x0elenderMetadata\"\xac\x01\n" +
+	"!LenderDiscoverPreviewResponseData\x12E\n" +
+	"\n" +
+	"candidates\x18\x01 \x03(\v2%.tenant.LenderDiscoverCandidateEntityR\n" +
+	"candidates\x12\x1b\n" +
+	"\tnew_count\x18\x02 \x01(\x05R\bnewCount\x12#\n" +
+	"\rexisted_count\x18\x03 \x01(\x05R\fexistedCount\"^\n" +
+	"\x1dLenderDiscoverPreviewResponse\x12=\n" +
+	"\x04data\x18\x01 \x01(\v2).tenant.LenderDiscoverPreviewResponseDataR\x04data\"Z\n" +
+	"\x1bLenderDiscoverCommitRequest\x12;\n" +
+	"\x04data\x18\x01 \x01(\v2'.tenant.LenderDiscoverCommitRequestDataR\x04data\"_\n" +
+	"\x1fLenderDiscoverCommitRequestData\x12<\n" +
+	"\alenders\x18\x01 \x03(\v2\".tenant.LenderDiscoverCommitLenderR\alenders\"\xe7\x02\n" +
+	"\x1aLenderDiscoverCommitLender\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12#\n" +
+	"\rcontact_email\x18\x02 \x01(\tR\fcontactEmail\x12#\n" +
+	"\rcontact_phone\x18\x03 \x01(\tR\fcontactPhone\x12!\n" +
+	"\fcontact_name\x18\x04 \x01(\tR\vcontactName\x12\x18\n" +
+	"\awebsite\x18\x05 \x01(\tR\awebsite\x12\x18\n" +
+	"\atagline\x18\x06 \x01(\tR\atagline\x12\x12\n" +
+	"\x04logo\x18\a \x01(\tR\x04logo\x12.\n" +
+	"\aaddress\x18\b \x01(\v2\x14.proto.AddressEntityR\aaddress\x12P\n" +
+	"\x0flender_metadata\x18\t \x01(\v2'.proto.OrganizationLenderMetadataEntityR\x0elenderMetadata2\x8a\f\n" +
 	"\fOrganization\x12O\n" +
 	"\x06Create\x12!.tenant.OrganizationCreateRequest\x1a\".tenant.OrganizationDetailResponse\x12]\n" +
 	"\rUpdateProfile\x12(.tenant.OrganizationUpdateProfileRequest\x1a\".tenant.OrganizationDetailResponse\x12[\n" +
@@ -2160,7 +3222,13 @@ const file_tenant_organization_proto_rawDesc = "" +
 	"\rSelectOptions\x12(.tenant.OrganizationSelectOptionsRequest\x1a#.tenant.OrganizationOptionsResponse\x12A\n" +
 	"\x06Delete\x12!.tenant.OrganizationDeleteRequest\x1a\x14.proto.EmptyResponse\x12K\n" +
 	"\vUpdateOrder\x12&.tenant.OrganizationUpdateOrderRequest\x1a\x14.proto.EmptyResponse\x12M\n" +
-	"\fSwitchStatus\x12'.tenant.OrganizationSwitchStatusRequest\x1a\x14.proto.EmptyResponseB)Z'zeebee-backend/app/tenant/rpc/pb/tenantb\x06proto3"
+	"\fSwitchStatus\x12'.tenant.OrganizationSwitchStatusRequest\x1a\x14.proto.EmptyResponse\x12R\n" +
+	"\x13DiscoverGetSettings\x12\x13.proto.EmptyRequest\x1a&.tenant.LenderDiscoverSettingsResponse\x12m\n" +
+	"\x16DiscoverUpdateSettings\x12+.tenant.LenderDiscoverUpdateSettingsRequest\x1a&.tenant.LenderDiscoverSettingsResponse\x12R\n" +
+	"\vDiscoverRun\x12 .tenant.LenderDiscoverRunRequest\x1a!.tenant.LenderDiscoverRunResponse\x12M\n" +
+	"\x0fDiscoverPreview\x12\x13.proto.EmptyRequest\x1a%.tenant.LenderDiscoverPreviewResponse\x12X\n" +
+	"\x0eDiscoverCommit\x12#.tenant.LenderDiscoverCommitRequest\x1a!.tenant.LenderDiscoverRunResponse\x12K\n" +
+	"\x11DiscoverLatestRun\x12\x13.proto.EmptyRequest\x1a!.tenant.LenderDiscoverRunResponseB)Z'zeebee-backend/app/tenant/rpc/pb/tenantb\x06proto3"
 
 var (
 	file_tenant_organization_proto_rawDescOnce sync.Once
@@ -2174,102 +3242,144 @@ func file_tenant_organization_proto_rawDescGZIP() []byte {
 	return file_tenant_organization_proto_rawDescData
 }
 
-var file_tenant_organization_proto_msgTypes = make([]protoimpl.MessageInfo, 31)
+var file_tenant_organization_proto_msgTypes = make([]protoimpl.MessageInfo, 46)
 var file_tenant_organization_proto_goTypes = []any{
-	(*OrganizationPageRequest)(nil),               // 0: tenant.OrganizationPageRequest
-	(*OrganizationPageRequestFilter)(nil),         // 1: tenant.OrganizationPageRequestFilter
-	(*OrganizationPageRequestData)(nil),           // 2: tenant.OrganizationPageRequestData
-	(*OrganizationPageEntity)(nil),                // 3: tenant.OrganizationPageEntity
-	(*OrganizationPageResponse)(nil),              // 4: tenant.OrganizationPageResponse
-	(*OrganizationPageResponseData)(nil),          // 5: tenant.OrganizationPageResponseData
-	(*OrganizationDetailRequest)(nil),             // 6: tenant.OrganizationDetailRequest
-	(*OrganizationDetailRequestData)(nil),         // 7: tenant.OrganizationDetailRequestData
-	(*OrganizationDetailWithTypeRequest)(nil),     // 8: tenant.OrganizationDetailWithTypeRequest
-	(*OrganizationDetailWithTypeRequestData)(nil), // 9: tenant.OrganizationDetailWithTypeRequestData
-	(*OrganizationDetailResponse)(nil),            // 10: tenant.OrganizationDetailResponse
-	(*OrganizationCreateRequest)(nil),             // 11: tenant.OrganizationCreateRequest
-	(*OrganizationCreateRequestData)(nil),         // 12: tenant.OrganizationCreateRequestData
-	(*OrganizationUpdateProfileRequest)(nil),      // 13: tenant.OrganizationUpdateProfileRequest
-	(*OrganizationUpdateProfileRequestData)(nil),  // 14: tenant.OrganizationUpdateProfileRequestData
-	(*OrganizationUpdateLenderRequest)(nil),       // 15: tenant.OrganizationUpdateLenderRequest
-	(*OrganizationUpdateLenderRequestData)(nil),   // 16: tenant.OrganizationUpdateLenderRequestData
-	(*OrganizationAllRequest)(nil),                // 17: tenant.OrganizationAllRequest
-	(*OrganizationAllRequestData)(nil),            // 18: tenant.OrganizationAllRequestData
-	(*OrganizationAllResponse)(nil),               // 19: tenant.OrganizationAllResponse
-	(*OrganizationAllForOptionRequest)(nil),       // 20: tenant.OrganizationAllForOptionRequest
-	(*OrganizationAllForOptionRequestData)(nil),   // 21: tenant.OrganizationAllForOptionRequestData
-	(*OrganizationSelectOptionsRequest)(nil),      // 22: tenant.OrganizationSelectOptionsRequest
-	(*OrganizationSelectOptionsRequestData)(nil),  // 23: tenant.OrganizationSelectOptionsRequestData
-	(*OrganizationOptionsResponse)(nil),           // 24: tenant.OrganizationOptionsResponse
-	(*OrganizationDeleteRequest)(nil),             // 25: tenant.OrganizationDeleteRequest
-	(*OrganizationDeleteRequestData)(nil),         // 26: tenant.OrganizationDeleteRequestData
-	(*OrganizationUpdateOrderRequest)(nil),        // 27: tenant.OrganizationUpdateOrderRequest
-	(*OrganizationUpdateOrderRequestData)(nil),    // 28: tenant.OrganizationUpdateOrderRequestData
-	(*OrganizationSwitchStatusRequest)(nil),       // 29: tenant.OrganizationSwitchStatusRequest
-	(*OrganizationSwitchStatusRequestData)(nil),   // 30: tenant.OrganizationSwitchStatusRequestData
-	(*proto.CommonPageSorter)(nil),                // 31: proto.CommonPageSorter
-	(*proto.AddressEntity)(nil),                   // 32: proto.AddressEntity
-	(*proto.OrganizationEntity)(nil),              // 33: proto.OrganizationEntity
-	(*proto.OrganizationMetadataEntity)(nil),      // 34: proto.OrganizationMetadataEntity
-	(*proto.OrganizationOptionsEntity)(nil),       // 35: proto.OrganizationOptionsEntity
-	(*proto.EmptyResponse)(nil),                   // 36: proto.EmptyResponse
+	(*OrganizationPageRequest)(nil),                 // 0: tenant.OrganizationPageRequest
+	(*OrganizationPageRequestFilter)(nil),           // 1: tenant.OrganizationPageRequestFilter
+	(*OrganizationPageRequestData)(nil),             // 2: tenant.OrganizationPageRequestData
+	(*OrganizationPageEntity)(nil),                  // 3: tenant.OrganizationPageEntity
+	(*OrganizationPageResponse)(nil),                // 4: tenant.OrganizationPageResponse
+	(*OrganizationPageResponseData)(nil),            // 5: tenant.OrganizationPageResponseData
+	(*OrganizationDetailRequest)(nil),               // 6: tenant.OrganizationDetailRequest
+	(*OrganizationDetailRequestData)(nil),           // 7: tenant.OrganizationDetailRequestData
+	(*OrganizationDetailWithTypeRequest)(nil),       // 8: tenant.OrganizationDetailWithTypeRequest
+	(*OrganizationDetailWithTypeRequestData)(nil),   // 9: tenant.OrganizationDetailWithTypeRequestData
+	(*OrganizationDetailResponse)(nil),              // 10: tenant.OrganizationDetailResponse
+	(*OrganizationCreateRequest)(nil),               // 11: tenant.OrganizationCreateRequest
+	(*OrganizationCreateRequestData)(nil),           // 12: tenant.OrganizationCreateRequestData
+	(*OrganizationUpdateProfileRequest)(nil),        // 13: tenant.OrganizationUpdateProfileRequest
+	(*OrganizationUpdateProfileRequestData)(nil),    // 14: tenant.OrganizationUpdateProfileRequestData
+	(*OrganizationUpdateLenderRequest)(nil),         // 15: tenant.OrganizationUpdateLenderRequest
+	(*OrganizationUpdateLenderRequestData)(nil),     // 16: tenant.OrganizationUpdateLenderRequestData
+	(*OrganizationAllRequest)(nil),                  // 17: tenant.OrganizationAllRequest
+	(*OrganizationAllRequestData)(nil),              // 18: tenant.OrganizationAllRequestData
+	(*OrganizationAllResponse)(nil),                 // 19: tenant.OrganizationAllResponse
+	(*OrganizationAllForOptionRequest)(nil),         // 20: tenant.OrganizationAllForOptionRequest
+	(*OrganizationAllForOptionRequestData)(nil),     // 21: tenant.OrganizationAllForOptionRequestData
+	(*OrganizationSelectOptionsRequest)(nil),        // 22: tenant.OrganizationSelectOptionsRequest
+	(*OrganizationSelectOptionsRequestData)(nil),    // 23: tenant.OrganizationSelectOptionsRequestData
+	(*OrganizationOptionsResponse)(nil),             // 24: tenant.OrganizationOptionsResponse
+	(*OrganizationDeleteRequest)(nil),               // 25: tenant.OrganizationDeleteRequest
+	(*OrganizationDeleteRequestData)(nil),           // 26: tenant.OrganizationDeleteRequestData
+	(*OrganizationUpdateOrderRequest)(nil),          // 27: tenant.OrganizationUpdateOrderRequest
+	(*OrganizationUpdateOrderRequestData)(nil),      // 28: tenant.OrganizationUpdateOrderRequestData
+	(*OrganizationSwitchStatusRequest)(nil),         // 29: tenant.OrganizationSwitchStatusRequest
+	(*OrganizationSwitchStatusRequestData)(nil),     // 30: tenant.OrganizationSwitchStatusRequestData
+	(*LenderDiscoverSettingsEntity)(nil),            // 31: tenant.LenderDiscoverSettingsEntity
+	(*LenderDiscoverSettingsResponse)(nil),          // 32: tenant.LenderDiscoverSettingsResponse
+	(*LenderDiscoverUpdateSettingsRequest)(nil),     // 33: tenant.LenderDiscoverUpdateSettingsRequest
+	(*LenderDiscoverUpdateSettingsRequestData)(nil), // 34: tenant.LenderDiscoverUpdateSettingsRequestData
+	(*LenderDiscoverRunRequest)(nil),                // 35: tenant.LenderDiscoverRunRequest
+	(*LenderDiscoverRunRequestData)(nil),            // 36: tenant.LenderDiscoverRunRequestData
+	(*LenderDiscoverRunStats)(nil),                  // 37: tenant.LenderDiscoverRunStats
+	(*LenderDiscoverRunEntity)(nil),                 // 38: tenant.LenderDiscoverRunEntity
+	(*LenderDiscoverRunResponse)(nil),               // 39: tenant.LenderDiscoverRunResponse
+	(*LenderDiscoverCandidateEntity)(nil),           // 40: tenant.LenderDiscoverCandidateEntity
+	(*LenderDiscoverPreviewResponseData)(nil),       // 41: tenant.LenderDiscoverPreviewResponseData
+	(*LenderDiscoverPreviewResponse)(nil),           // 42: tenant.LenderDiscoverPreviewResponse
+	(*LenderDiscoverCommitRequest)(nil),             // 43: tenant.LenderDiscoverCommitRequest
+	(*LenderDiscoverCommitRequestData)(nil),         // 44: tenant.LenderDiscoverCommitRequestData
+	(*LenderDiscoverCommitLender)(nil),              // 45: tenant.LenderDiscoverCommitLender
+	(*proto.CommonPageSorter)(nil),                  // 46: proto.CommonPageSorter
+	(*proto.AddressEntity)(nil),                     // 47: proto.AddressEntity
+	(*proto.OrganizationEntity)(nil),                // 48: proto.OrganizationEntity
+	(*proto.OrganizationMetadataEntity)(nil),        // 49: proto.OrganizationMetadataEntity
+	(*proto.OrganizationOptionsEntity)(nil),         // 50: proto.OrganizationOptionsEntity
+	(*proto.OrganizationLenderMetadataEntity)(nil),  // 51: proto.OrganizationLenderMetadataEntity
+	(*proto.EmptyRequest)(nil),                      // 52: proto.EmptyRequest
+	(*proto.EmptyResponse)(nil),                     // 53: proto.EmptyResponse
 }
 var file_tenant_organization_proto_depIdxs = []int32{
 	2,  // 0: tenant.OrganizationPageRequest.data:type_name -> tenant.OrganizationPageRequestData
 	1,  // 1: tenant.OrganizationPageRequestData.filter:type_name -> tenant.OrganizationPageRequestFilter
-	31, // 2: tenant.OrganizationPageRequestData.sorter:type_name -> proto.CommonPageSorter
-	32, // 3: tenant.OrganizationPageEntity.address:type_name -> proto.AddressEntity
+	46, // 2: tenant.OrganizationPageRequestData.sorter:type_name -> proto.CommonPageSorter
+	47, // 3: tenant.OrganizationPageEntity.address:type_name -> proto.AddressEntity
 	5,  // 4: tenant.OrganizationPageResponse.data:type_name -> tenant.OrganizationPageResponseData
 	3,  // 5: tenant.OrganizationPageResponseData.list:type_name -> tenant.OrganizationPageEntity
 	7,  // 6: tenant.OrganizationDetailRequest.data:type_name -> tenant.OrganizationDetailRequestData
 	9,  // 7: tenant.OrganizationDetailWithTypeRequest.data:type_name -> tenant.OrganizationDetailWithTypeRequestData
-	33, // 8: tenant.OrganizationDetailResponse.data:type_name -> proto.OrganizationEntity
+	48, // 8: tenant.OrganizationDetailResponse.data:type_name -> proto.OrganizationEntity
 	12, // 9: tenant.OrganizationCreateRequest.data:type_name -> tenant.OrganizationCreateRequestData
-	34, // 10: tenant.OrganizationCreateRequestData.metadata:type_name -> proto.OrganizationMetadataEntity
-	32, // 11: tenant.OrganizationCreateRequestData.address:type_name -> proto.AddressEntity
+	49, // 10: tenant.OrganizationCreateRequestData.metadata:type_name -> proto.OrganizationMetadataEntity
+	47, // 11: tenant.OrganizationCreateRequestData.address:type_name -> proto.AddressEntity
 	14, // 12: tenant.OrganizationUpdateProfileRequest.data:type_name -> tenant.OrganizationUpdateProfileRequestData
-	34, // 13: tenant.OrganizationUpdateProfileRequestData.metadata:type_name -> proto.OrganizationMetadataEntity
-	32, // 14: tenant.OrganizationUpdateProfileRequestData.address:type_name -> proto.AddressEntity
+	49, // 13: tenant.OrganizationUpdateProfileRequestData.metadata:type_name -> proto.OrganizationMetadataEntity
+	47, // 14: tenant.OrganizationUpdateProfileRequestData.address:type_name -> proto.AddressEntity
 	16, // 15: tenant.OrganizationUpdateLenderRequest.data:type_name -> tenant.OrganizationUpdateLenderRequestData
-	34, // 16: tenant.OrganizationUpdateLenderRequestData.metadata:type_name -> proto.OrganizationMetadataEntity
-	32, // 17: tenant.OrganizationUpdateLenderRequestData.address:type_name -> proto.AddressEntity
+	49, // 16: tenant.OrganizationUpdateLenderRequestData.metadata:type_name -> proto.OrganizationMetadataEntity
+	47, // 17: tenant.OrganizationUpdateLenderRequestData.address:type_name -> proto.AddressEntity
 	18, // 18: tenant.OrganizationAllRequest.data:type_name -> tenant.OrganizationAllRequestData
-	33, // 19: tenant.OrganizationAllResponse.data:type_name -> proto.OrganizationEntity
+	48, // 19: tenant.OrganizationAllResponse.data:type_name -> proto.OrganizationEntity
 	21, // 20: tenant.OrganizationAllForOptionRequest.data:type_name -> tenant.OrganizationAllForOptionRequestData
 	23, // 21: tenant.OrganizationSelectOptionsRequest.data:type_name -> tenant.OrganizationSelectOptionsRequestData
-	35, // 22: tenant.OrganizationOptionsResponse.data:type_name -> proto.OrganizationOptionsEntity
+	50, // 22: tenant.OrganizationOptionsResponse.data:type_name -> proto.OrganizationOptionsEntity
 	26, // 23: tenant.OrganizationDeleteRequest.data:type_name -> tenant.OrganizationDeleteRequestData
 	28, // 24: tenant.OrganizationUpdateOrderRequest.data:type_name -> tenant.OrganizationUpdateOrderRequestData
 	30, // 25: tenant.OrganizationSwitchStatusRequest.data:type_name -> tenant.OrganizationSwitchStatusRequestData
-	11, // 26: tenant.Organization.Create:input_type -> tenant.OrganizationCreateRequest
-	13, // 27: tenant.Organization.UpdateProfile:input_type -> tenant.OrganizationUpdateProfileRequest
-	15, // 28: tenant.Organization.UpdateLender:input_type -> tenant.OrganizationUpdateLenderRequest
-	0,  // 29: tenant.Organization.Page:input_type -> tenant.OrganizationPageRequest
-	6,  // 30: tenant.Organization.Detail:input_type -> tenant.OrganizationDetailRequest
-	8,  // 31: tenant.Organization.DetailWithType:input_type -> tenant.OrganizationDetailWithTypeRequest
-	17, // 32: tenant.Organization.All:input_type -> tenant.OrganizationAllRequest
-	20, // 33: tenant.Organization.AllForOption:input_type -> tenant.OrganizationAllForOptionRequest
-	22, // 34: tenant.Organization.SelectOptions:input_type -> tenant.OrganizationSelectOptionsRequest
-	25, // 35: tenant.Organization.Delete:input_type -> tenant.OrganizationDeleteRequest
-	27, // 36: tenant.Organization.UpdateOrder:input_type -> tenant.OrganizationUpdateOrderRequest
-	29, // 37: tenant.Organization.SwitchStatus:input_type -> tenant.OrganizationSwitchStatusRequest
-	10, // 38: tenant.Organization.Create:output_type -> tenant.OrganizationDetailResponse
-	10, // 39: tenant.Organization.UpdateProfile:output_type -> tenant.OrganizationDetailResponse
-	10, // 40: tenant.Organization.UpdateLender:output_type -> tenant.OrganizationDetailResponse
-	4,  // 41: tenant.Organization.Page:output_type -> tenant.OrganizationPageResponse
-	10, // 42: tenant.Organization.Detail:output_type -> tenant.OrganizationDetailResponse
-	10, // 43: tenant.Organization.DetailWithType:output_type -> tenant.OrganizationDetailResponse
-	19, // 44: tenant.Organization.All:output_type -> tenant.OrganizationAllResponse
-	24, // 45: tenant.Organization.AllForOption:output_type -> tenant.OrganizationOptionsResponse
-	24, // 46: tenant.Organization.SelectOptions:output_type -> tenant.OrganizationOptionsResponse
-	36, // 47: tenant.Organization.Delete:output_type -> proto.EmptyResponse
-	36, // 48: tenant.Organization.UpdateOrder:output_type -> proto.EmptyResponse
-	36, // 49: tenant.Organization.SwitchStatus:output_type -> proto.EmptyResponse
-	38, // [38:50] is the sub-list for method output_type
-	26, // [26:38] is the sub-list for method input_type
-	26, // [26:26] is the sub-list for extension type_name
-	26, // [26:26] is the sub-list for extension extendee
-	0,  // [0:26] is the sub-list for field type_name
+	31, // 26: tenant.LenderDiscoverSettingsResponse.data:type_name -> tenant.LenderDiscoverSettingsEntity
+	34, // 27: tenant.LenderDiscoverUpdateSettingsRequest.data:type_name -> tenant.LenderDiscoverUpdateSettingsRequestData
+	36, // 28: tenant.LenderDiscoverRunRequest.data:type_name -> tenant.LenderDiscoverRunRequestData
+	37, // 29: tenant.LenderDiscoverRunEntity.stats:type_name -> tenant.LenderDiscoverRunStats
+	38, // 30: tenant.LenderDiscoverRunResponse.data:type_name -> tenant.LenderDiscoverRunEntity
+	47, // 31: tenant.LenderDiscoverCandidateEntity.address:type_name -> proto.AddressEntity
+	51, // 32: tenant.LenderDiscoverCandidateEntity.lender_metadata:type_name -> proto.OrganizationLenderMetadataEntity
+	40, // 33: tenant.LenderDiscoverPreviewResponseData.candidates:type_name -> tenant.LenderDiscoverCandidateEntity
+	41, // 34: tenant.LenderDiscoverPreviewResponse.data:type_name -> tenant.LenderDiscoverPreviewResponseData
+	44, // 35: tenant.LenderDiscoverCommitRequest.data:type_name -> tenant.LenderDiscoverCommitRequestData
+	45, // 36: tenant.LenderDiscoverCommitRequestData.lenders:type_name -> tenant.LenderDiscoverCommitLender
+	47, // 37: tenant.LenderDiscoverCommitLender.address:type_name -> proto.AddressEntity
+	51, // 38: tenant.LenderDiscoverCommitLender.lender_metadata:type_name -> proto.OrganizationLenderMetadataEntity
+	11, // 39: tenant.Organization.Create:input_type -> tenant.OrganizationCreateRequest
+	13, // 40: tenant.Organization.UpdateProfile:input_type -> tenant.OrganizationUpdateProfileRequest
+	15, // 41: tenant.Organization.UpdateLender:input_type -> tenant.OrganizationUpdateLenderRequest
+	0,  // 42: tenant.Organization.Page:input_type -> tenant.OrganizationPageRequest
+	6,  // 43: tenant.Organization.Detail:input_type -> tenant.OrganizationDetailRequest
+	8,  // 44: tenant.Organization.DetailWithType:input_type -> tenant.OrganizationDetailWithTypeRequest
+	17, // 45: tenant.Organization.All:input_type -> tenant.OrganizationAllRequest
+	20, // 46: tenant.Organization.AllForOption:input_type -> tenant.OrganizationAllForOptionRequest
+	22, // 47: tenant.Organization.SelectOptions:input_type -> tenant.OrganizationSelectOptionsRequest
+	25, // 48: tenant.Organization.Delete:input_type -> tenant.OrganizationDeleteRequest
+	27, // 49: tenant.Organization.UpdateOrder:input_type -> tenant.OrganizationUpdateOrderRequest
+	29, // 50: tenant.Organization.SwitchStatus:input_type -> tenant.OrganizationSwitchStatusRequest
+	52, // 51: tenant.Organization.DiscoverGetSettings:input_type -> proto.EmptyRequest
+	33, // 52: tenant.Organization.DiscoverUpdateSettings:input_type -> tenant.LenderDiscoverUpdateSettingsRequest
+	35, // 53: tenant.Organization.DiscoverRun:input_type -> tenant.LenderDiscoverRunRequest
+	52, // 54: tenant.Organization.DiscoverPreview:input_type -> proto.EmptyRequest
+	43, // 55: tenant.Organization.DiscoverCommit:input_type -> tenant.LenderDiscoverCommitRequest
+	52, // 56: tenant.Organization.DiscoverLatestRun:input_type -> proto.EmptyRequest
+	10, // 57: tenant.Organization.Create:output_type -> tenant.OrganizationDetailResponse
+	10, // 58: tenant.Organization.UpdateProfile:output_type -> tenant.OrganizationDetailResponse
+	10, // 59: tenant.Organization.UpdateLender:output_type -> tenant.OrganizationDetailResponse
+	4,  // 60: tenant.Organization.Page:output_type -> tenant.OrganizationPageResponse
+	10, // 61: tenant.Organization.Detail:output_type -> tenant.OrganizationDetailResponse
+	10, // 62: tenant.Organization.DetailWithType:output_type -> tenant.OrganizationDetailResponse
+	19, // 63: tenant.Organization.All:output_type -> tenant.OrganizationAllResponse
+	24, // 64: tenant.Organization.AllForOption:output_type -> tenant.OrganizationOptionsResponse
+	24, // 65: tenant.Organization.SelectOptions:output_type -> tenant.OrganizationOptionsResponse
+	53, // 66: tenant.Organization.Delete:output_type -> proto.EmptyResponse
+	53, // 67: tenant.Organization.UpdateOrder:output_type -> proto.EmptyResponse
+	53, // 68: tenant.Organization.SwitchStatus:output_type -> proto.EmptyResponse
+	32, // 69: tenant.Organization.DiscoverGetSettings:output_type -> tenant.LenderDiscoverSettingsResponse
+	32, // 70: tenant.Organization.DiscoverUpdateSettings:output_type -> tenant.LenderDiscoverSettingsResponse
+	39, // 71: tenant.Organization.DiscoverRun:output_type -> tenant.LenderDiscoverRunResponse
+	42, // 72: tenant.Organization.DiscoverPreview:output_type -> tenant.LenderDiscoverPreviewResponse
+	39, // 73: tenant.Organization.DiscoverCommit:output_type -> tenant.LenderDiscoverRunResponse
+	39, // 74: tenant.Organization.DiscoverLatestRun:output_type -> tenant.LenderDiscoverRunResponse
+	57, // [57:75] is the sub-list for method output_type
+	39, // [39:57] is the sub-list for method input_type
+	39, // [39:39] is the sub-list for extension type_name
+	39, // [39:39] is the sub-list for extension extendee
+	0,  // [0:39] is the sub-list for field type_name
 }
 
 func init() { file_tenant_organization_proto_init() }
@@ -2283,7 +3393,7 @@ func file_tenant_organization_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_tenant_organization_proto_rawDesc), len(file_tenant_organization_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   31,
+			NumMessages:   46,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

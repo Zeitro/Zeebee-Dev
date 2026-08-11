@@ -20,18 +20,24 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Organization_Create_FullMethodName         = "/tenant.Organization/Create"
-	Organization_UpdateProfile_FullMethodName  = "/tenant.Organization/UpdateProfile"
-	Organization_UpdateLender_FullMethodName   = "/tenant.Organization/UpdateLender"
-	Organization_Page_FullMethodName           = "/tenant.Organization/Page"
-	Organization_Detail_FullMethodName         = "/tenant.Organization/Detail"
-	Organization_DetailWithType_FullMethodName = "/tenant.Organization/DetailWithType"
-	Organization_All_FullMethodName            = "/tenant.Organization/All"
-	Organization_AllForOption_FullMethodName   = "/tenant.Organization/AllForOption"
-	Organization_SelectOptions_FullMethodName  = "/tenant.Organization/SelectOptions"
-	Organization_Delete_FullMethodName         = "/tenant.Organization/Delete"
-	Organization_UpdateOrder_FullMethodName    = "/tenant.Organization/UpdateOrder"
-	Organization_SwitchStatus_FullMethodName   = "/tenant.Organization/SwitchStatus"
+	Organization_Create_FullMethodName                 = "/tenant.Organization/Create"
+	Organization_UpdateProfile_FullMethodName          = "/tenant.Organization/UpdateProfile"
+	Organization_UpdateLender_FullMethodName           = "/tenant.Organization/UpdateLender"
+	Organization_Page_FullMethodName                   = "/tenant.Organization/Page"
+	Organization_Detail_FullMethodName                 = "/tenant.Organization/Detail"
+	Organization_DetailWithType_FullMethodName         = "/tenant.Organization/DetailWithType"
+	Organization_All_FullMethodName                    = "/tenant.Organization/All"
+	Organization_AllForOption_FullMethodName           = "/tenant.Organization/AllForOption"
+	Organization_SelectOptions_FullMethodName          = "/tenant.Organization/SelectOptions"
+	Organization_Delete_FullMethodName                 = "/tenant.Organization/Delete"
+	Organization_UpdateOrder_FullMethodName            = "/tenant.Organization/UpdateOrder"
+	Organization_SwitchStatus_FullMethodName           = "/tenant.Organization/SwitchStatus"
+	Organization_DiscoverGetSettings_FullMethodName    = "/tenant.Organization/DiscoverGetSettings"
+	Organization_DiscoverUpdateSettings_FullMethodName = "/tenant.Organization/DiscoverUpdateSettings"
+	Organization_DiscoverRun_FullMethodName            = "/tenant.Organization/DiscoverRun"
+	Organization_DiscoverPreview_FullMethodName        = "/tenant.Organization/DiscoverPreview"
+	Organization_DiscoverCommit_FullMethodName         = "/tenant.Organization/DiscoverCommit"
+	Organization_DiscoverLatestRun_FullMethodName      = "/tenant.Organization/DiscoverLatestRun"
 )
 
 // OrganizationClient is the client API for Organization service.
@@ -50,6 +56,12 @@ type OrganizationClient interface {
 	Delete(ctx context.Context, in *OrganizationDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 	UpdateOrder(ctx context.Context, in *OrganizationUpdateOrderRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 	SwitchStatus(ctx context.Context, in *OrganizationSwitchStatusRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
+	DiscoverGetSettings(ctx context.Context, in *proto.EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverSettingsResponse, error)
+	DiscoverUpdateSettings(ctx context.Context, in *LenderDiscoverUpdateSettingsRequest, opts ...grpc.CallOption) (*LenderDiscoverSettingsResponse, error)
+	DiscoverRun(ctx context.Context, in *LenderDiscoverRunRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error)
+	DiscoverPreview(ctx context.Context, in *proto.EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverPreviewResponse, error)
+	DiscoverCommit(ctx context.Context, in *LenderDiscoverCommitRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error)
+	DiscoverLatestRun(ctx context.Context, in *proto.EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error)
 }
 
 type organizationClient struct {
@@ -180,6 +192,66 @@ func (c *organizationClient) SwitchStatus(ctx context.Context, in *OrganizationS
 	return out, nil
 }
 
+func (c *organizationClient) DiscoverGetSettings(ctx context.Context, in *proto.EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverSettingsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LenderDiscoverSettingsResponse)
+	err := c.cc.Invoke(ctx, Organization_DiscoverGetSettings_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationClient) DiscoverUpdateSettings(ctx context.Context, in *LenderDiscoverUpdateSettingsRequest, opts ...grpc.CallOption) (*LenderDiscoverSettingsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LenderDiscoverSettingsResponse)
+	err := c.cc.Invoke(ctx, Organization_DiscoverUpdateSettings_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationClient) DiscoverRun(ctx context.Context, in *LenderDiscoverRunRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LenderDiscoverRunResponse)
+	err := c.cc.Invoke(ctx, Organization_DiscoverRun_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationClient) DiscoverPreview(ctx context.Context, in *proto.EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverPreviewResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LenderDiscoverPreviewResponse)
+	err := c.cc.Invoke(ctx, Organization_DiscoverPreview_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationClient) DiscoverCommit(ctx context.Context, in *LenderDiscoverCommitRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LenderDiscoverRunResponse)
+	err := c.cc.Invoke(ctx, Organization_DiscoverCommit_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationClient) DiscoverLatestRun(ctx context.Context, in *proto.EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LenderDiscoverRunResponse)
+	err := c.cc.Invoke(ctx, Organization_DiscoverLatestRun_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrganizationServer is the server API for Organization service.
 // All implementations must embed UnimplementedOrganizationServer
 // for forward compatibility.
@@ -196,6 +268,12 @@ type OrganizationServer interface {
 	Delete(context.Context, *OrganizationDeleteRequest) (*proto.EmptyResponse, error)
 	UpdateOrder(context.Context, *OrganizationUpdateOrderRequest) (*proto.EmptyResponse, error)
 	SwitchStatus(context.Context, *OrganizationSwitchStatusRequest) (*proto.EmptyResponse, error)
+	DiscoverGetSettings(context.Context, *proto.EmptyRequest) (*LenderDiscoverSettingsResponse, error)
+	DiscoverUpdateSettings(context.Context, *LenderDiscoverUpdateSettingsRequest) (*LenderDiscoverSettingsResponse, error)
+	DiscoverRun(context.Context, *LenderDiscoverRunRequest) (*LenderDiscoverRunResponse, error)
+	DiscoverPreview(context.Context, *proto.EmptyRequest) (*LenderDiscoverPreviewResponse, error)
+	DiscoverCommit(context.Context, *LenderDiscoverCommitRequest) (*LenderDiscoverRunResponse, error)
+	DiscoverLatestRun(context.Context, *proto.EmptyRequest) (*LenderDiscoverRunResponse, error)
 	mustEmbedUnimplementedOrganizationServer()
 }
 
@@ -241,6 +319,24 @@ func (UnimplementedOrganizationServer) UpdateOrder(context.Context, *Organizatio
 }
 func (UnimplementedOrganizationServer) SwitchStatus(context.Context, *OrganizationSwitchStatusRequest) (*proto.EmptyResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SwitchStatus not implemented")
+}
+func (UnimplementedOrganizationServer) DiscoverGetSettings(context.Context, *proto.EmptyRequest) (*LenderDiscoverSettingsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DiscoverGetSettings not implemented")
+}
+func (UnimplementedOrganizationServer) DiscoverUpdateSettings(context.Context, *LenderDiscoverUpdateSettingsRequest) (*LenderDiscoverSettingsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DiscoverUpdateSettings not implemented")
+}
+func (UnimplementedOrganizationServer) DiscoverRun(context.Context, *LenderDiscoverRunRequest) (*LenderDiscoverRunResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DiscoverRun not implemented")
+}
+func (UnimplementedOrganizationServer) DiscoverPreview(context.Context, *proto.EmptyRequest) (*LenderDiscoverPreviewResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DiscoverPreview not implemented")
+}
+func (UnimplementedOrganizationServer) DiscoverCommit(context.Context, *LenderDiscoverCommitRequest) (*LenderDiscoverRunResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DiscoverCommit not implemented")
+}
+func (UnimplementedOrganizationServer) DiscoverLatestRun(context.Context, *proto.EmptyRequest) (*LenderDiscoverRunResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DiscoverLatestRun not implemented")
 }
 func (UnimplementedOrganizationServer) mustEmbedUnimplementedOrganizationServer() {}
 func (UnimplementedOrganizationServer) testEmbeddedByValue()                      {}
@@ -479,6 +575,114 @@ func _Organization_SwitchStatus_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Organization_DiscoverGetSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto.EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServer).DiscoverGetSettings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Organization_DiscoverGetSettings_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServer).DiscoverGetSettings(ctx, req.(*proto.EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Organization_DiscoverUpdateSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LenderDiscoverUpdateSettingsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServer).DiscoverUpdateSettings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Organization_DiscoverUpdateSettings_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServer).DiscoverUpdateSettings(ctx, req.(*LenderDiscoverUpdateSettingsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Organization_DiscoverRun_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LenderDiscoverRunRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServer).DiscoverRun(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Organization_DiscoverRun_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServer).DiscoverRun(ctx, req.(*LenderDiscoverRunRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Organization_DiscoverPreview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto.EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServer).DiscoverPreview(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Organization_DiscoverPreview_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServer).DiscoverPreview(ctx, req.(*proto.EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Organization_DiscoverCommit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LenderDiscoverCommitRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServer).DiscoverCommit(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Organization_DiscoverCommit_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServer).DiscoverCommit(ctx, req.(*LenderDiscoverCommitRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Organization_DiscoverLatestRun_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto.EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServer).DiscoverLatestRun(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Organization_DiscoverLatestRun_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServer).DiscoverLatestRun(ctx, req.(*proto.EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Organization_ServiceDesc is the grpc.ServiceDesc for Organization service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -533,6 +737,30 @@ var Organization_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SwitchStatus",
 			Handler:    _Organization_SwitchStatus_Handler,
+		},
+		{
+			MethodName: "DiscoverGetSettings",
+			Handler:    _Organization_DiscoverGetSettings_Handler,
+		},
+		{
+			MethodName: "DiscoverUpdateSettings",
+			Handler:    _Organization_DiscoverUpdateSettings_Handler,
+		},
+		{
+			MethodName: "DiscoverRun",
+			Handler:    _Organization_DiscoverRun_Handler,
+		},
+		{
+			MethodName: "DiscoverPreview",
+			Handler:    _Organization_DiscoverPreview_Handler,
+		},
+		{
+			MethodName: "DiscoverCommit",
+			Handler:    _Organization_DiscoverCommit_Handler,
+		},
+		{
+			MethodName: "DiscoverLatestRun",
+			Handler:    _Organization_DiscoverLatestRun_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

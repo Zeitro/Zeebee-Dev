@@ -83,3 +83,33 @@ func (s *OrganizationServer) SwitchStatus(ctx context.Context, in *tenant.Organi
 	l := organizationlogic.NewSwitchStatusLogic(ctx, s.svcCtx)
 	return l.SwitchStatus(in)
 }
+
+func (s *OrganizationServer) DiscoverGetSettings(ctx context.Context, in *proto.EmptyRequest) (*tenant.LenderDiscoverSettingsResponse, error) {
+	l := organizationlogic.NewDiscoverGetSettingsLogic(ctx, s.svcCtx)
+	return l.DiscoverGetSettings(in)
+}
+
+func (s *OrganizationServer) DiscoverUpdateSettings(ctx context.Context, in *tenant.LenderDiscoverUpdateSettingsRequest) (*tenant.LenderDiscoverSettingsResponse, error) {
+	l := organizationlogic.NewDiscoverUpdateSettingsLogic(ctx, s.svcCtx)
+	return l.DiscoverUpdateSettings(in)
+}
+
+func (s *OrganizationServer) DiscoverRun(ctx context.Context, in *tenant.LenderDiscoverRunRequest) (*tenant.LenderDiscoverRunResponse, error) {
+	l := organizationlogic.NewDiscoverRunLogic(ctx, s.svcCtx)
+	return l.DiscoverRun(in)
+}
+
+func (s *OrganizationServer) DiscoverPreview(ctx context.Context, in *proto.EmptyRequest) (*tenant.LenderDiscoverPreviewResponse, error) {
+	l := organizationlogic.NewDiscoverPreviewLogic(ctx, s.svcCtx)
+	return l.DiscoverPreview(in)
+}
+
+func (s *OrganizationServer) DiscoverCommit(ctx context.Context, in *tenant.LenderDiscoverCommitRequest) (*tenant.LenderDiscoverRunResponse, error) {
+	l := organizationlogic.NewDiscoverCommitLogic(ctx, s.svcCtx)
+	return l.DiscoverCommit(in)
+}
+
+func (s *OrganizationServer) DiscoverLatestRun(ctx context.Context, in *proto.EmptyRequest) (*tenant.LenderDiscoverRunResponse, error) {
+	l := organizationlogic.NewDiscoverLatestRunLogic(ctx, s.svcCtx)
+	return l.DiscoverLatestRun(in)
+}

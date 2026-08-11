@@ -197,6 +197,102 @@ message OrganizationSwitchStatusRequestData {
   string status = 3;
 }
 
+message LenderDiscoverSettingsEntity {
+  bool schedule_enabled = 1;
+  int32 interval_days = 2;
+  string scope_state = 3;
+  string scope_extra = 4;
+  string user_prompt = 5;
+  string openai_model = 6;
+}
+
+message LenderDiscoverSettingsResponse {
+  LenderDiscoverSettingsEntity data = 1;
+}
+
+message LenderDiscoverUpdateSettingsRequest {
+  LenderDiscoverUpdateSettingsRequestData data = 1;
+}
+message LenderDiscoverUpdateSettingsRequestData {
+  bool schedule_enabled = 1;
+  int32 interval_days = 2;
+  string scope_state = 3;
+  string scope_extra = 4;
+  string user_prompt = 5;
+  string openai_model = 6;
+  int64 updated_by_user_id = 7;
+}
+
+message LenderDiscoverRunRequest {
+  LenderDiscoverRunRequestData data = 1;
+}
+message LenderDiscoverRunRequestData {
+  string trigger = 1;
+}
+
+message LenderDiscoverRunStats {
+  int32 requested_count = 1;
+  int32 inserted_count = 2;
+  int32 skipped_duplicate_count = 3;
+  int32 error_count = 4;
+}
+
+message LenderDiscoverRunEntity {
+  int64 id = 1;
+  string trigger_type = 2;
+  string status = 3;
+  string started_at = 4;
+  string finished_at = 5;
+  string error_message = 6;
+  LenderDiscoverRunStats stats = 7;
+}
+
+message LenderDiscoverRunResponse {
+  LenderDiscoverRunEntity data = 1;
+}
+
+message LenderDiscoverCandidateEntity {
+  string dedupe_status = 1;
+  string normalized_key = 2;
+  string name = 3;
+  string contact_email = 4;
+  string contact_phone = 5;
+  string contact_name = 6;
+  string website = 7;
+  string tagline = 8;
+  string logo = 9;
+  proto.AddressEntity address = 10;
+  proto.OrganizationLenderMetadataEntity lender_metadata = 11;
+}
+
+message LenderDiscoverPreviewResponseData {
+  repeated LenderDiscoverCandidateEntity candidates = 1;
+  int32 new_count = 2;
+  int32 existed_count = 3;
+}
+
+message LenderDiscoverPreviewResponse {
+  LenderDiscoverPreviewResponseData data = 1;
+}
+
+message LenderDiscoverCommitRequest {
+  LenderDiscoverCommitRequestData data = 1;
+}
+message LenderDiscoverCommitRequestData {
+  repeated LenderDiscoverCommitLender lenders = 1;
+}
+message LenderDiscoverCommitLender {
+  string name = 1;
+  string contact_email = 2;
+  string contact_phone = 3;
+  string contact_name = 4;
+  string website = 5;
+  string tagline = 6;
+  string logo = 7;
+  proto.AddressEntity address = 8;
+  proto.OrganizationLenderMetadataEntity lender_metadata = 9;
+}
+
 service Organization {
   rpc Create(OrganizationCreateRequest) returns (OrganizationDetailResponse);
   rpc UpdateProfile(OrganizationUpdateProfileRequest) returns (OrganizationDetailResponse);
@@ -210,4 +306,10 @@ service Organization {
   rpc Delete(OrganizationDeleteRequest) returns (proto.EmptyResponse);
   rpc UpdateOrder(OrganizationUpdateOrderRequest) returns (proto.EmptyResponse);
   rpc SwitchStatus(OrganizationSwitchStatusRequest) returns (proto.EmptyResponse);
+  rpc DiscoverGetSettings(proto.EmptyRequest) returns (LenderDiscoverSettingsResponse);
+  rpc DiscoverUpdateSettings(LenderDiscoverUpdateSettingsRequest) returns (LenderDiscoverSettingsResponse);
+  rpc DiscoverRun(LenderDiscoverRunRequest) returns (LenderDiscoverRunResponse);
+  rpc DiscoverPreview(proto.EmptyRequest) returns (LenderDiscoverPreviewResponse);
+  rpc DiscoverCommit(LenderDiscoverCommitRequest) returns (LenderDiscoverRunResponse);
+  rpc DiscoverLatestRun(proto.EmptyRequest) returns (LenderDiscoverRunResponse);
 }

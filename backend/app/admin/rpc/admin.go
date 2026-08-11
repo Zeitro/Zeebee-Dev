@@ -28,11 +28,7 @@ import (
 	userServer "zeebee-backend/app/admin/rpc/internal/server/user"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/common/cron"
 	"zeebee-backend/common/errorx"
-	domainlenderdiscover "zeebee-backend/domains/zeebee/lenderdiscover"
-
-	"zeebee-backend/app/admin/rpc/internal/schedule"
 )
 
 type RpcServer struct {
@@ -102,11 +98,6 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		s:      rpcServer,
 		svcCtx: ctx,
 	}
-	err = RegisterCronTask(ctx, rpcConfig, logger)
-	if err != nil {
-		return nil, err
-	}
-
 	return rpcService, nil
 }
 
@@ -114,25 +105,8 @@ func (s *RpcServer) Start() {
 	go func() {
 		s.s.Start()
 	}()
-	cron.Start()
 }
 
 func (s *RpcServer) Stop() {
 	s.s.Stop()
-	cron.Stop()
-}
-
-func RegisterCronTask(svcCtx *svc.ServiceContext, conf config.RpcConf, logger logx.Logger) (err error) {
-	// lender discover: spec derived from DB config. DiscoverUpdateSettings calls
-	// cron.Replace/Unregister to keep the timer in sync on config change.
-	if cfg, _, cfgErr := domainlenderdiscover.LoadConfig(context.Background(), svcCtx.OrganizationSettingRepo); cfgErr != nil {
-		logger.Errorf("lender discover cron register: load settings: %v", cfgErr)
-	} else if cfg.ScheduleEnabled {
-		if regErr := cron.Register(schedule.TaskName, schedule.SpecFromInterval(cfg.IntervalDays), func() {
-			schedule.RunScheduled(context.Background(), svcCtx)
-		}); regErr != nil {
-			logger.Errorf("lender discover cron register: %v", regErr)
-		}
-	}
-	return
 }

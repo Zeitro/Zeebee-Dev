@@ -7,10 +7,12 @@ import (
 	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/reflection"
 
 	"zeebee-backend/app/tenant/config"
 	"zeebee-backend/app/tenant/rpc/internal/logic"
+	"zeebee-backend/app/tenant/rpc/internal/schedule"
 	apiServer "zeebee-backend/app/tenant/rpc/internal/server/api"
 	authServer "zeebee-backend/app/tenant/rpc/internal/server/auth"
 	organizationServer "zeebee-backend/app/tenant/rpc/internal/server/organization"
@@ -27,7 +29,9 @@ import (
 	"zeebee-backend/app/tenant/rpc/internal/svc"
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/cron"
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
+	domainlenderdiscover "zeebee-backend/domains/zeebee/lenderdiscover"
 )
 
 // RpcServer wraps the tenant gRPC server.
@@ -73,12 +77,33 @@ func NewRpcServer(c config.Config) (service.Service, error) {
 			reflection.Register(grpcServer)
 		}
 	})
+	// set service name for log and copy metadata to outgoing ctx
+	rpcServer.AddOptions(grpc.UnaryInterceptor(func(ctx context.Context, req any,
+		info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+		ctx = logx.ContextWithFields(ctx, logx.Field("service_name", c.RpcConf.Name))
+		if md, ok := metadata.FromIncomingContext(ctx); ok {
+			ctx = metadata.NewOutgoingContext(ctx, md.Copy())
+		}
+		return handler(ctx, req)
+	}))
+	// set err log stack
+	rpcServer.AddUnaryInterceptors(func(ctx context.Context, req any,
+		info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+		resp, err := handler(ctx, req)
+		if err != nil {
+			logger.WithContext(ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+			).Error(err)
+		}
+		return resp, err
+	})
 
 	server := &RpcServer{
 		s:      rpcServer,
 		svcCtx: ctx,
 		cron:   cron.NewEngine(),
 	}
+	ctx.Cron = server.cron
 	if err := server.RegisterCronTask(ctx, rpcConfig, logger); err != nil {
 		return nil, err
 	}
@@ -102,11 +127,11 @@ func (s *RpcServer) RegisterCronTask(svcCtx *svc.ServiceContext, conf config.Rpc
 	for _, task := range conf.CronTaskConf {
 		var userType constants.UserType
 		switch task.Name {
-		case "update_admin_organization_subscription_status":
+		case "update_admin_subscription_status":
 			userType = constants.UserTypeAdmin
-		case "update_lender_organization_subscription_status":
+		case "update_lender_subscription_status":
 			userType = constants.UserTypeLender
-		case "update_borrower_organization_subscription_status":
+		case "update_borrower_subscription_status":
 			userType = constants.UserTypeBorrower
 		default:
 			continue
@@ -118,6 +143,15 @@ func (s *RpcServer) RegisterCronTask(svcCtx *svc.ServiceContext, conf config.Rpc
 			}
 		}); err != nil {
 			return err
+		}
+	}
+	if cfg, _, err := domainlenderdiscover.LoadConfig(context.Background(), svcCtx.OrganizationSettingRepo); err != nil {
+		logger.Errorf("lender discover cron register: load settings: %v", err)
+	} else if cfg.ScheduleEnabled {
+		if err := s.cron.Register(schedule.TaskName, schedule.SpecFromInterval(cfg.IntervalDays), func() {
+			schedule.RunScheduled(context.Background(), svcCtx)
+		}); err != nil {
+			logger.Errorf("lender discover cron register: %v", err)
 		}
 	}
 	return nil

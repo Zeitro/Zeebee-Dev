@@ -50,7 +50,7 @@ type RpcConf struct {
 	PdfGeneratorBaseUrl          string
 	TemplateConf                 map[string]TemplateConf
 	CasbinConf                   CasbinConf
-	CronTaskConf                 []CronTaskConf
+	CronTaskConf                 []CronTaskConf `json:",optional"`
 	LlmConf                      LlmConf
 }
 

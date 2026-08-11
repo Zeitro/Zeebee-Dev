@@ -16,22 +16,28 @@ import (
 )
 
 type (
-	OrganizationAllForOptionRequest   = tenant.OrganizationAllForOptionRequest
-	OrganizationAllRequest            = tenant.OrganizationAllRequest
-	OrganizationAllResponse           = tenant.OrganizationAllResponse
-	OrganizationCreateRequest         = tenant.OrganizationCreateRequest
-	OrganizationDeleteRequest         = tenant.OrganizationDeleteRequest
-	OrganizationDetailRequest         = tenant.OrganizationDetailRequest
-	OrganizationDetailResponse        = tenant.OrganizationDetailResponse
-	OrganizationDetailWithTypeRequest = tenant.OrganizationDetailWithTypeRequest
-	OrganizationOptionsResponse       = tenant.OrganizationOptionsResponse
-	OrganizationPageRequest           = tenant.OrganizationPageRequest
-	OrganizationPageResponse          = tenant.OrganizationPageResponse
-	OrganizationSelectOptionsRequest  = tenant.OrganizationSelectOptionsRequest
-	OrganizationSwitchStatusRequest   = tenant.OrganizationSwitchStatusRequest
-	OrganizationUpdateLenderRequest   = tenant.OrganizationUpdateLenderRequest
-	OrganizationUpdateOrderRequest    = tenant.OrganizationUpdateOrderRequest
-	OrganizationUpdateProfileRequest  = tenant.OrganizationUpdateProfileRequest
+	LenderDiscoverCommitRequest         = tenant.LenderDiscoverCommitRequest
+	LenderDiscoverPreviewResponse       = tenant.LenderDiscoverPreviewResponse
+	LenderDiscoverRunRequest            = tenant.LenderDiscoverRunRequest
+	LenderDiscoverRunResponse           = tenant.LenderDiscoverRunResponse
+	LenderDiscoverSettingsResponse      = tenant.LenderDiscoverSettingsResponse
+	LenderDiscoverUpdateSettingsRequest = tenant.LenderDiscoverUpdateSettingsRequest
+	OrganizationAllForOptionRequest     = tenant.OrganizationAllForOptionRequest
+	OrganizationAllRequest              = tenant.OrganizationAllRequest
+	OrganizationAllResponse             = tenant.OrganizationAllResponse
+	OrganizationCreateRequest           = tenant.OrganizationCreateRequest
+	OrganizationDeleteRequest           = tenant.OrganizationDeleteRequest
+	OrganizationDetailRequest           = tenant.OrganizationDetailRequest
+	OrganizationDetailResponse          = tenant.OrganizationDetailResponse
+	OrganizationDetailWithTypeRequest   = tenant.OrganizationDetailWithTypeRequest
+	OrganizationOptionsResponse         = tenant.OrganizationOptionsResponse
+	OrganizationPageRequest             = tenant.OrganizationPageRequest
+	OrganizationPageResponse            = tenant.OrganizationPageResponse
+	OrganizationSelectOptionsRequest    = tenant.OrganizationSelectOptionsRequest
+	OrganizationSwitchStatusRequest     = tenant.OrganizationSwitchStatusRequest
+	OrganizationUpdateLenderRequest     = tenant.OrganizationUpdateLenderRequest
+	OrganizationUpdateOrderRequest      = tenant.OrganizationUpdateOrderRequest
+	OrganizationUpdateProfileRequest    = tenant.OrganizationUpdateProfileRequest
 
 	Organization interface {
 		Create(ctx context.Context, in *OrganizationCreateRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
@@ -46,6 +52,12 @@ type (
 		Delete(ctx context.Context, in *OrganizationDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 		UpdateOrder(ctx context.Context, in *OrganizationUpdateOrderRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 		SwitchStatus(ctx context.Context, in *OrganizationSwitchStatusRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
+		DiscoverGetSettings(ctx context.Context, in *proto.EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverSettingsResponse, error)
+		DiscoverUpdateSettings(ctx context.Context, in *LenderDiscoverUpdateSettingsRequest, opts ...grpc.CallOption) (*LenderDiscoverSettingsResponse, error)
+		DiscoverRun(ctx context.Context, in *LenderDiscoverRunRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error)
+		DiscoverPreview(ctx context.Context, in *proto.EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverPreviewResponse, error)
+		DiscoverCommit(ctx context.Context, in *LenderDiscoverCommitRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error)
+		DiscoverLatestRun(ctx context.Context, in *proto.EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error)
 	}
 
 	defaultOrganization struct {
@@ -117,4 +129,34 @@ func (m *defaultOrganization) UpdateOrder(ctx context.Context, in *OrganizationU
 func (m *defaultOrganization) SwitchStatus(ctx context.Context, in *OrganizationSwitchStatusRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
 	client := tenant.NewOrganizationClient(m.cli.Conn())
 	return client.SwitchStatus(ctx, in, opts...)
+}
+
+func (m *defaultOrganization) DiscoverGetSettings(ctx context.Context, in *proto.EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverSettingsResponse, error) {
+	client := tenant.NewOrganizationClient(m.cli.Conn())
+	return client.DiscoverGetSettings(ctx, in, opts...)
+}
+
+func (m *defaultOrganization) DiscoverUpdateSettings(ctx context.Context, in *LenderDiscoverUpdateSettingsRequest, opts ...grpc.CallOption) (*LenderDiscoverSettingsResponse, error) {
+	client := tenant.NewOrganizationClient(m.cli.Conn())
+	return client.DiscoverUpdateSettings(ctx, in, opts...)
+}
+
+func (m *defaultOrganization) DiscoverRun(ctx context.Context, in *LenderDiscoverRunRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error) {
+	client := tenant.NewOrganizationClient(m.cli.Conn())
+	return client.DiscoverRun(ctx, in, opts...)
+}
+
+func (m *defaultOrganization) DiscoverPreview(ctx context.Context, in *proto.EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverPreviewResponse, error) {
+	client := tenant.NewOrganizationClient(m.cli.Conn())
+	return client.DiscoverPreview(ctx, in, opts...)
+}
+
+func (m *defaultOrganization) DiscoverCommit(ctx context.Context, in *LenderDiscoverCommitRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error) {
+	client := tenant.NewOrganizationClient(m.cli.Conn())
+	return client.DiscoverCommit(ctx, in, opts...)
+}
+
+func (m *defaultOrganization) DiscoverLatestRun(ctx context.Context, in *proto.EmptyRequest, opts ...grpc.CallOption) (*LenderDiscoverRunResponse, error) {
+	client := tenant.NewOrganizationClient(m.cli.Conn())
+	return client.DiscoverLatestRun(ctx, in, opts...)
 }

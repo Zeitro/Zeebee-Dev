@@ -25,6 +25,7 @@ type RpcConf struct {
 
 	// Configurable rate-limit policy (FR-003: not hardcoded).
 	LimiterConf LimiterConf
+	LlmConf     LlmConf `json:",optional"`
 
 	// Casbin: tenant is the sole runtime executor (direction B).
 	CasbinConf   CasbinConf
@@ -84,6 +85,11 @@ type CasbinConf struct {
 type CronTaskConf struct {
 	Name     string `json:"name"`
 	Schedule string `json:"schedule"`
+}
+
+type LlmConf struct {
+	domainConf.LlmConf
+	LenderDiscoverConf domainConf.LlmBizConf
 }
 
 // CasbinEventTopic holds one redis pub/sub channel per platform. tenant is the
