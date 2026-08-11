@@ -206,7 +206,7 @@ func sendPreApprovalNotification(ctx context.Context, tenantClient *tenantclient
 	cacheData.ResultData.Ltarv = float32(mathutil.RoundToFloat(cacheData.ResultData.Ltarv*100.0, 2))
 
 	// parse template
-	tplVars := map[string]interface{}{
+	tplVars := map[string]any{
 		"request":        cacheData.RequestData,
 		"result":         cacheData.ResultData,
 		"company":        organization.Data.Name,
