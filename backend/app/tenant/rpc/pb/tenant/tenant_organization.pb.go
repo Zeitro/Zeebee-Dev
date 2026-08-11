@@ -762,6 +762,574 @@ func (x *OrganizationDetailResponse) GetData() *proto.OrganizationEntity {
 	return nil
 }
 
+type OrganizationCreateRequest struct {
+	state         protoimpl.MessageState         `protogen:"open.v1"`
+	Data          *OrganizationCreateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrganizationCreateRequest) Reset() {
+	*x = OrganizationCreateRequest{}
+	mi := &file_tenant_organization_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrganizationCreateRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrganizationCreateRequest) ProtoMessage() {}
+
+func (x *OrganizationCreateRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrganizationCreateRequest.ProtoReflect.Descriptor instead.
+func (*OrganizationCreateRequest) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *OrganizationCreateRequest) GetData() *OrganizationCreateRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type OrganizationCreateRequestData struct {
+	state          protoimpl.MessageState            `protogen:"open.v1"`
+	UserType       string                            `protobuf:"bytes,1,opt,name=user_type,json=userType,proto3" json:"user_type,omitempty"`
+	Name           string                            `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	ContactEmail   string                            `protobuf:"bytes,3,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
+	ContactPhone   string                            `protobuf:"bytes,4,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"`
+	ContactName    string                            `protobuf:"bytes,5,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`
+	Logo           string                            `protobuf:"bytes,6,opt,name=logo,proto3" json:"logo,omitempty"`
+	Website        string                            `protobuf:"bytes,7,opt,name=website,proto3" json:"website,omitempty"`
+	Tagline        string                            `protobuf:"bytes,8,opt,name=tagline,proto3" json:"tagline,omitempty"`
+	Metadata       *proto.OrganizationMetadataEntity `protobuf:"bytes,9,opt,name=metadata,proto3" json:"metadata,omitempty"`
+	Address        *proto.AddressEntity              `protobuf:"bytes,10,opt,name=address,proto3" json:"address,omitempty"`
+	Status         string                            `protobuf:"bytes,11,opt,name=status,proto3" json:"status,omitempty"`
+	OwnerType      string                            `protobuf:"bytes,12,opt,name=owner_type,json=ownerType,proto3" json:"owner_type,omitempty"`
+	Source         string                            `protobuf:"bytes,13,opt,name=source,proto3" json:"source,omitempty"`
+	Order          int32                             `protobuf:"varint,14,opt,name=order,proto3" json:"order,omitempty"`
+	OwnerEmail     string                            `protobuf:"bytes,15,opt,name=owner_email,json=ownerEmail,proto3" json:"owner_email,omitempty"`
+	OwnerPassword  string                            `protobuf:"bytes,16,opt,name=owner_password,json=ownerPassword,proto3" json:"owner_password,omitempty"`
+	OwnerFirstName string                            `protobuf:"bytes,17,opt,name=owner_first_name,json=ownerFirstName,proto3" json:"owner_first_name,omitempty"`
+	OwnerLastName  string                            `protobuf:"bytes,18,opt,name=owner_last_name,json=ownerLastName,proto3" json:"owner_last_name,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *OrganizationCreateRequestData) Reset() {
+	*x = OrganizationCreateRequestData{}
+	mi := &file_tenant_organization_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrganizationCreateRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrganizationCreateRequestData) ProtoMessage() {}
+
+func (x *OrganizationCreateRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrganizationCreateRequestData.ProtoReflect.Descriptor instead.
+func (*OrganizationCreateRequestData) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *OrganizationCreateRequestData) GetUserType() string {
+	if x != nil {
+		return x.UserType
+	}
+	return ""
+}
+
+func (x *OrganizationCreateRequestData) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *OrganizationCreateRequestData) GetContactEmail() string {
+	if x != nil {
+		return x.ContactEmail
+	}
+	return ""
+}
+
+func (x *OrganizationCreateRequestData) GetContactPhone() string {
+	if x != nil {
+		return x.ContactPhone
+	}
+	return ""
+}
+
+func (x *OrganizationCreateRequestData) GetContactName() string {
+	if x != nil {
+		return x.ContactName
+	}
+	return ""
+}
+
+func (x *OrganizationCreateRequestData) GetLogo() string {
+	if x != nil {
+		return x.Logo
+	}
+	return ""
+}
+
+func (x *OrganizationCreateRequestData) GetWebsite() string {
+	if x != nil {
+		return x.Website
+	}
+	return ""
+}
+
+func (x *OrganizationCreateRequestData) GetTagline() string {
+	if x != nil {
+		return x.Tagline
+	}
+	return ""
+}
+
+func (x *OrganizationCreateRequestData) GetMetadata() *proto.OrganizationMetadataEntity {
+	if x != nil {
+		return x.Metadata
+	}
+	return nil
+}
+
+func (x *OrganizationCreateRequestData) GetAddress() *proto.AddressEntity {
+	if x != nil {
+		return x.Address
+	}
+	return nil
+}
+
+func (x *OrganizationCreateRequestData) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *OrganizationCreateRequestData) GetOwnerType() string {
+	if x != nil {
+		return x.OwnerType
+	}
+	return ""
+}
+
+func (x *OrganizationCreateRequestData) GetSource() string {
+	if x != nil {
+		return x.Source
+	}
+	return ""
+}
+
+func (x *OrganizationCreateRequestData) GetOrder() int32 {
+	if x != nil {
+		return x.Order
+	}
+	return 0
+}
+
+func (x *OrganizationCreateRequestData) GetOwnerEmail() string {
+	if x != nil {
+		return x.OwnerEmail
+	}
+	return ""
+}
+
+func (x *OrganizationCreateRequestData) GetOwnerPassword() string {
+	if x != nil {
+		return x.OwnerPassword
+	}
+	return ""
+}
+
+func (x *OrganizationCreateRequestData) GetOwnerFirstName() string {
+	if x != nil {
+		return x.OwnerFirstName
+	}
+	return ""
+}
+
+func (x *OrganizationCreateRequestData) GetOwnerLastName() string {
+	if x != nil {
+		return x.OwnerLastName
+	}
+	return ""
+}
+
+type OrganizationUpdateProfileRequest struct {
+	state         protoimpl.MessageState                `protogen:"open.v1"`
+	Data          *OrganizationUpdateProfileRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrganizationUpdateProfileRequest) Reset() {
+	*x = OrganizationUpdateProfileRequest{}
+	mi := &file_tenant_organization_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrganizationUpdateProfileRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrganizationUpdateProfileRequest) ProtoMessage() {}
+
+func (x *OrganizationUpdateProfileRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrganizationUpdateProfileRequest.ProtoReflect.Descriptor instead.
+func (*OrganizationUpdateProfileRequest) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *OrganizationUpdateProfileRequest) GetData() *OrganizationUpdateProfileRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type OrganizationUpdateProfileRequestData struct {
+	state         protoimpl.MessageState            `protogen:"open.v1"`
+	UserType      string                            `protobuf:"bytes,1,opt,name=user_type,json=userType,proto3" json:"user_type,omitempty"`
+	ContactEmail  string                            `protobuf:"bytes,2,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
+	ContactPhone  string                            `protobuf:"bytes,3,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"`
+	ContactName   string                            `protobuf:"bytes,4,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`
+	Logo          string                            `protobuf:"bytes,5,opt,name=logo,proto3" json:"logo,omitempty"`
+	Website       string                            `protobuf:"bytes,6,opt,name=website,proto3" json:"website,omitempty"`
+	Tagline       string                            `protobuf:"bytes,7,opt,name=tagline,proto3" json:"tagline,omitempty"`
+	Metadata      *proto.OrganizationMetadataEntity `protobuf:"bytes,8,opt,name=metadata,proto3" json:"metadata,omitempty"`
+	Address       *proto.AddressEntity              `protobuf:"bytes,9,opt,name=address,proto3" json:"address,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrganizationUpdateProfileRequestData) Reset() {
+	*x = OrganizationUpdateProfileRequestData{}
+	mi := &file_tenant_organization_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrganizationUpdateProfileRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrganizationUpdateProfileRequestData) ProtoMessage() {}
+
+func (x *OrganizationUpdateProfileRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrganizationUpdateProfileRequestData.ProtoReflect.Descriptor instead.
+func (*OrganizationUpdateProfileRequestData) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *OrganizationUpdateProfileRequestData) GetUserType() string {
+	if x != nil {
+		return x.UserType
+	}
+	return ""
+}
+
+func (x *OrganizationUpdateProfileRequestData) GetContactEmail() string {
+	if x != nil {
+		return x.ContactEmail
+	}
+	return ""
+}
+
+func (x *OrganizationUpdateProfileRequestData) GetContactPhone() string {
+	if x != nil {
+		return x.ContactPhone
+	}
+	return ""
+}
+
+func (x *OrganizationUpdateProfileRequestData) GetContactName() string {
+	if x != nil {
+		return x.ContactName
+	}
+	return ""
+}
+
+func (x *OrganizationUpdateProfileRequestData) GetLogo() string {
+	if x != nil {
+		return x.Logo
+	}
+	return ""
+}
+
+func (x *OrganizationUpdateProfileRequestData) GetWebsite() string {
+	if x != nil {
+		return x.Website
+	}
+	return ""
+}
+
+func (x *OrganizationUpdateProfileRequestData) GetTagline() string {
+	if x != nil {
+		return x.Tagline
+	}
+	return ""
+}
+
+func (x *OrganizationUpdateProfileRequestData) GetMetadata() *proto.OrganizationMetadataEntity {
+	if x != nil {
+		return x.Metadata
+	}
+	return nil
+}
+
+func (x *OrganizationUpdateProfileRequestData) GetAddress() *proto.AddressEntity {
+	if x != nil {
+		return x.Address
+	}
+	return nil
+}
+
+type OrganizationUpdateLenderRequest struct {
+	state         protoimpl.MessageState               `protogen:"open.v1"`
+	Data          *OrganizationUpdateLenderRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrganizationUpdateLenderRequest) Reset() {
+	*x = OrganizationUpdateLenderRequest{}
+	mi := &file_tenant_organization_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrganizationUpdateLenderRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrganizationUpdateLenderRequest) ProtoMessage() {}
+
+func (x *OrganizationUpdateLenderRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrganizationUpdateLenderRequest.ProtoReflect.Descriptor instead.
+func (*OrganizationUpdateLenderRequest) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *OrganizationUpdateLenderRequest) GetData() *OrganizationUpdateLenderRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type OrganizationUpdateLenderRequestData struct {
+	state          protoimpl.MessageState            `protogen:"open.v1"`
+	UserType       string                            `protobuf:"bytes,1,opt,name=user_type,json=userType,proto3" json:"user_type,omitempty"`
+	Id             int64                             `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	ContactEmail   string                            `protobuf:"bytes,3,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
+	ContactPhone   string                            `protobuf:"bytes,4,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"`
+	ContactName    string                            `protobuf:"bytes,5,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`
+	Logo           string                            `protobuf:"bytes,6,opt,name=logo,proto3" json:"logo,omitempty"`
+	Website        string                            `protobuf:"bytes,7,opt,name=website,proto3" json:"website,omitempty"`
+	Tagline        string                            `protobuf:"bytes,8,opt,name=tagline,proto3" json:"tagline,omitempty"`
+	Metadata       *proto.OrganizationMetadataEntity `protobuf:"bytes,9,opt,name=metadata,proto3" json:"metadata,omitempty"`
+	Address        *proto.AddressEntity              `protobuf:"bytes,10,opt,name=address,proto3" json:"address,omitempty"`
+	OwnerEmail     string                            `protobuf:"bytes,11,opt,name=owner_email,json=ownerEmail,proto3" json:"owner_email,omitempty"`
+	OwnerPassword  string                            `protobuf:"bytes,12,opt,name=owner_password,json=ownerPassword,proto3" json:"owner_password,omitempty"`
+	OwnerFirstName string                            `protobuf:"bytes,13,opt,name=owner_first_name,json=ownerFirstName,proto3" json:"owner_first_name,omitempty"`
+	OwnerLastName  string                            `protobuf:"bytes,14,opt,name=owner_last_name,json=ownerLastName,proto3" json:"owner_last_name,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *OrganizationUpdateLenderRequestData) Reset() {
+	*x = OrganizationUpdateLenderRequestData{}
+	mi := &file_tenant_organization_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrganizationUpdateLenderRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrganizationUpdateLenderRequestData) ProtoMessage() {}
+
+func (x *OrganizationUpdateLenderRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrganizationUpdateLenderRequestData.ProtoReflect.Descriptor instead.
+func (*OrganizationUpdateLenderRequestData) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *OrganizationUpdateLenderRequestData) GetUserType() string {
+	if x != nil {
+		return x.UserType
+	}
+	return ""
+}
+
+func (x *OrganizationUpdateLenderRequestData) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *OrganizationUpdateLenderRequestData) GetContactEmail() string {
+	if x != nil {
+		return x.ContactEmail
+	}
+	return ""
+}
+
+func (x *OrganizationUpdateLenderRequestData) GetContactPhone() string {
+	if x != nil {
+		return x.ContactPhone
+	}
+	return ""
+}
+
+func (x *OrganizationUpdateLenderRequestData) GetContactName() string {
+	if x != nil {
+		return x.ContactName
+	}
+	return ""
+}
+
+func (x *OrganizationUpdateLenderRequestData) GetLogo() string {
+	if x != nil {
+		return x.Logo
+	}
+	return ""
+}
+
+func (x *OrganizationUpdateLenderRequestData) GetWebsite() string {
+	if x != nil {
+		return x.Website
+	}
+	return ""
+}
+
+func (x *OrganizationUpdateLenderRequestData) GetTagline() string {
+	if x != nil {
+		return x.Tagline
+	}
+	return ""
+}
+
+func (x *OrganizationUpdateLenderRequestData) GetMetadata() *proto.OrganizationMetadataEntity {
+	if x != nil {
+		return x.Metadata
+	}
+	return nil
+}
+
+func (x *OrganizationUpdateLenderRequestData) GetAddress() *proto.AddressEntity {
+	if x != nil {
+		return x.Address
+	}
+	return nil
+}
+
+func (x *OrganizationUpdateLenderRequestData) GetOwnerEmail() string {
+	if x != nil {
+		return x.OwnerEmail
+	}
+	return ""
+}
+
+func (x *OrganizationUpdateLenderRequestData) GetOwnerPassword() string {
+	if x != nil {
+		return x.OwnerPassword
+	}
+	return ""
+}
+
+func (x *OrganizationUpdateLenderRequestData) GetOwnerFirstName() string {
+	if x != nil {
+		return x.OwnerFirstName
+	}
+	return ""
+}
+
+func (x *OrganizationUpdateLenderRequestData) GetOwnerLastName() string {
+	if x != nil {
+		return x.OwnerLastName
+	}
+	return ""
+}
+
 type OrganizationAllRequest struct {
 	state         protoimpl.MessageState      `protogen:"open.v1"`
 	Data          *OrganizationAllRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -771,7 +1339,7 @@ type OrganizationAllRequest struct {
 
 func (x *OrganizationAllRequest) Reset() {
 	*x = OrganizationAllRequest{}
-	mi := &file_tenant_organization_proto_msgTypes[11]
+	mi := &file_tenant_organization_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -783,7 +1351,7 @@ func (x *OrganizationAllRequest) String() string {
 func (*OrganizationAllRequest) ProtoMessage() {}
 
 func (x *OrganizationAllRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_tenant_organization_proto_msgTypes[11]
+	mi := &file_tenant_organization_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -796,7 +1364,7 @@ func (x *OrganizationAllRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrganizationAllRequest.ProtoReflect.Descriptor instead.
 func (*OrganizationAllRequest) Descriptor() ([]byte, []int) {
-	return file_tenant_organization_proto_rawDescGZIP(), []int{11}
+	return file_tenant_organization_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *OrganizationAllRequest) GetData() *OrganizationAllRequestData {
@@ -815,7 +1383,7 @@ type OrganizationAllRequestData struct {
 
 func (x *OrganizationAllRequestData) Reset() {
 	*x = OrganizationAllRequestData{}
-	mi := &file_tenant_organization_proto_msgTypes[12]
+	mi := &file_tenant_organization_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -827,7 +1395,7 @@ func (x *OrganizationAllRequestData) String() string {
 func (*OrganizationAllRequestData) ProtoMessage() {}
 
 func (x *OrganizationAllRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_tenant_organization_proto_msgTypes[12]
+	mi := &file_tenant_organization_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -840,7 +1408,7 @@ func (x *OrganizationAllRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrganizationAllRequestData.ProtoReflect.Descriptor instead.
 func (*OrganizationAllRequestData) Descriptor() ([]byte, []int) {
-	return file_tenant_organization_proto_rawDescGZIP(), []int{12}
+	return file_tenant_organization_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *OrganizationAllRequestData) GetUserType() string {
@@ -859,7 +1427,7 @@ type OrganizationAllResponse struct {
 
 func (x *OrganizationAllResponse) Reset() {
 	*x = OrganizationAllResponse{}
-	mi := &file_tenant_organization_proto_msgTypes[13]
+	mi := &file_tenant_organization_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -871,7 +1439,7 @@ func (x *OrganizationAllResponse) String() string {
 func (*OrganizationAllResponse) ProtoMessage() {}
 
 func (x *OrganizationAllResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_tenant_organization_proto_msgTypes[13]
+	mi := &file_tenant_organization_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -884,7 +1452,7 @@ func (x *OrganizationAllResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrganizationAllResponse.ProtoReflect.Descriptor instead.
 func (*OrganizationAllResponse) Descriptor() ([]byte, []int) {
-	return file_tenant_organization_proto_rawDescGZIP(), []int{13}
+	return file_tenant_organization_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *OrganizationAllResponse) GetData() []*proto.OrganizationEntity {
@@ -903,7 +1471,7 @@ type OrganizationAllForOptionRequest struct {
 
 func (x *OrganizationAllForOptionRequest) Reset() {
 	*x = OrganizationAllForOptionRequest{}
-	mi := &file_tenant_organization_proto_msgTypes[14]
+	mi := &file_tenant_organization_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -915,7 +1483,7 @@ func (x *OrganizationAllForOptionRequest) String() string {
 func (*OrganizationAllForOptionRequest) ProtoMessage() {}
 
 func (x *OrganizationAllForOptionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_tenant_organization_proto_msgTypes[14]
+	mi := &file_tenant_organization_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -928,7 +1496,7 @@ func (x *OrganizationAllForOptionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrganizationAllForOptionRequest.ProtoReflect.Descriptor instead.
 func (*OrganizationAllForOptionRequest) Descriptor() ([]byte, []int) {
-	return file_tenant_organization_proto_rawDescGZIP(), []int{14}
+	return file_tenant_organization_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *OrganizationAllForOptionRequest) GetData() *OrganizationAllForOptionRequestData {
@@ -948,7 +1516,7 @@ type OrganizationAllForOptionRequestData struct {
 
 func (x *OrganizationAllForOptionRequestData) Reset() {
 	*x = OrganizationAllForOptionRequestData{}
-	mi := &file_tenant_organization_proto_msgTypes[15]
+	mi := &file_tenant_organization_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -960,7 +1528,7 @@ func (x *OrganizationAllForOptionRequestData) String() string {
 func (*OrganizationAllForOptionRequestData) ProtoMessage() {}
 
 func (x *OrganizationAllForOptionRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_tenant_organization_proto_msgTypes[15]
+	mi := &file_tenant_organization_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -973,7 +1541,7 @@ func (x *OrganizationAllForOptionRequestData) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use OrganizationAllForOptionRequestData.ProtoReflect.Descriptor instead.
 func (*OrganizationAllForOptionRequestData) Descriptor() ([]byte, []int) {
-	return file_tenant_organization_proto_rawDescGZIP(), []int{15}
+	return file_tenant_organization_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *OrganizationAllForOptionRequestData) GetUserType() string {
@@ -999,7 +1567,7 @@ type OrganizationSelectOptionsRequest struct {
 
 func (x *OrganizationSelectOptionsRequest) Reset() {
 	*x = OrganizationSelectOptionsRequest{}
-	mi := &file_tenant_organization_proto_msgTypes[16]
+	mi := &file_tenant_organization_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1011,7 +1579,7 @@ func (x *OrganizationSelectOptionsRequest) String() string {
 func (*OrganizationSelectOptionsRequest) ProtoMessage() {}
 
 func (x *OrganizationSelectOptionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_tenant_organization_proto_msgTypes[16]
+	mi := &file_tenant_organization_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1024,7 +1592,7 @@ func (x *OrganizationSelectOptionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrganizationSelectOptionsRequest.ProtoReflect.Descriptor instead.
 func (*OrganizationSelectOptionsRequest) Descriptor() ([]byte, []int) {
-	return file_tenant_organization_proto_rawDescGZIP(), []int{16}
+	return file_tenant_organization_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *OrganizationSelectOptionsRequest) GetData() *OrganizationSelectOptionsRequestData {
@@ -1043,7 +1611,7 @@ type OrganizationSelectOptionsRequestData struct {
 
 func (x *OrganizationSelectOptionsRequestData) Reset() {
 	*x = OrganizationSelectOptionsRequestData{}
-	mi := &file_tenant_organization_proto_msgTypes[17]
+	mi := &file_tenant_organization_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1055,7 +1623,7 @@ func (x *OrganizationSelectOptionsRequestData) String() string {
 func (*OrganizationSelectOptionsRequestData) ProtoMessage() {}
 
 func (x *OrganizationSelectOptionsRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_tenant_organization_proto_msgTypes[17]
+	mi := &file_tenant_organization_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1068,7 +1636,7 @@ func (x *OrganizationSelectOptionsRequestData) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use OrganizationSelectOptionsRequestData.ProtoReflect.Descriptor instead.
 func (*OrganizationSelectOptionsRequestData) Descriptor() ([]byte, []int) {
-	return file_tenant_organization_proto_rawDescGZIP(), []int{17}
+	return file_tenant_organization_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *OrganizationSelectOptionsRequestData) GetUserType() string {
@@ -1087,7 +1655,7 @@ type OrganizationOptionsResponse struct {
 
 func (x *OrganizationOptionsResponse) Reset() {
 	*x = OrganizationOptionsResponse{}
-	mi := &file_tenant_organization_proto_msgTypes[18]
+	mi := &file_tenant_organization_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1099,7 +1667,7 @@ func (x *OrganizationOptionsResponse) String() string {
 func (*OrganizationOptionsResponse) ProtoMessage() {}
 
 func (x *OrganizationOptionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_tenant_organization_proto_msgTypes[18]
+	mi := &file_tenant_organization_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1112,7 +1680,7 @@ func (x *OrganizationOptionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrganizationOptionsResponse.ProtoReflect.Descriptor instead.
 func (*OrganizationOptionsResponse) Descriptor() ([]byte, []int) {
-	return file_tenant_organization_proto_rawDescGZIP(), []int{18}
+	return file_tenant_organization_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *OrganizationOptionsResponse) GetData() []*proto.OrganizationOptionsEntity {
@@ -1131,7 +1699,7 @@ type OrganizationDeleteRequest struct {
 
 func (x *OrganizationDeleteRequest) Reset() {
 	*x = OrganizationDeleteRequest{}
-	mi := &file_tenant_organization_proto_msgTypes[19]
+	mi := &file_tenant_organization_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1143,7 +1711,7 @@ func (x *OrganizationDeleteRequest) String() string {
 func (*OrganizationDeleteRequest) ProtoMessage() {}
 
 func (x *OrganizationDeleteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_tenant_organization_proto_msgTypes[19]
+	mi := &file_tenant_organization_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1156,7 +1724,7 @@ func (x *OrganizationDeleteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrganizationDeleteRequest.ProtoReflect.Descriptor instead.
 func (*OrganizationDeleteRequest) Descriptor() ([]byte, []int) {
-	return file_tenant_organization_proto_rawDescGZIP(), []int{19}
+	return file_tenant_organization_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *OrganizationDeleteRequest) GetData() *OrganizationDeleteRequestData {
@@ -1176,7 +1744,7 @@ type OrganizationDeleteRequestData struct {
 
 func (x *OrganizationDeleteRequestData) Reset() {
 	*x = OrganizationDeleteRequestData{}
-	mi := &file_tenant_organization_proto_msgTypes[20]
+	mi := &file_tenant_organization_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1188,7 +1756,7 @@ func (x *OrganizationDeleteRequestData) String() string {
 func (*OrganizationDeleteRequestData) ProtoMessage() {}
 
 func (x *OrganizationDeleteRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_tenant_organization_proto_msgTypes[20]
+	mi := &file_tenant_organization_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1201,7 +1769,7 @@ func (x *OrganizationDeleteRequestData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrganizationDeleteRequestData.ProtoReflect.Descriptor instead.
 func (*OrganizationDeleteRequestData) Descriptor() ([]byte, []int) {
-	return file_tenant_organization_proto_rawDescGZIP(), []int{20}
+	return file_tenant_organization_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *OrganizationDeleteRequestData) GetUserType() string {
@@ -1227,7 +1795,7 @@ type OrganizationUpdateOrderRequest struct {
 
 func (x *OrganizationUpdateOrderRequest) Reset() {
 	*x = OrganizationUpdateOrderRequest{}
-	mi := &file_tenant_organization_proto_msgTypes[21]
+	mi := &file_tenant_organization_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1239,7 +1807,7 @@ func (x *OrganizationUpdateOrderRequest) String() string {
 func (*OrganizationUpdateOrderRequest) ProtoMessage() {}
 
 func (x *OrganizationUpdateOrderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_tenant_organization_proto_msgTypes[21]
+	mi := &file_tenant_organization_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1252,7 +1820,7 @@ func (x *OrganizationUpdateOrderRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrganizationUpdateOrderRequest.ProtoReflect.Descriptor instead.
 func (*OrganizationUpdateOrderRequest) Descriptor() ([]byte, []int) {
-	return file_tenant_organization_proto_rawDescGZIP(), []int{21}
+	return file_tenant_organization_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *OrganizationUpdateOrderRequest) GetData() *OrganizationUpdateOrderRequestData {
@@ -1273,7 +1841,7 @@ type OrganizationUpdateOrderRequestData struct {
 
 func (x *OrganizationUpdateOrderRequestData) Reset() {
 	*x = OrganizationUpdateOrderRequestData{}
-	mi := &file_tenant_organization_proto_msgTypes[22]
+	mi := &file_tenant_organization_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1285,7 +1853,7 @@ func (x *OrganizationUpdateOrderRequestData) String() string {
 func (*OrganizationUpdateOrderRequestData) ProtoMessage() {}
 
 func (x *OrganizationUpdateOrderRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_tenant_organization_proto_msgTypes[22]
+	mi := &file_tenant_organization_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1298,7 +1866,7 @@ func (x *OrganizationUpdateOrderRequestData) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use OrganizationUpdateOrderRequestData.ProtoReflect.Descriptor instead.
 func (*OrganizationUpdateOrderRequestData) Descriptor() ([]byte, []int) {
-	return file_tenant_organization_proto_rawDescGZIP(), []int{22}
+	return file_tenant_organization_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *OrganizationUpdateOrderRequestData) GetUserType() string {
@@ -1331,7 +1899,7 @@ type OrganizationSwitchStatusRequest struct {
 
 func (x *OrganizationSwitchStatusRequest) Reset() {
 	*x = OrganizationSwitchStatusRequest{}
-	mi := &file_tenant_organization_proto_msgTypes[23]
+	mi := &file_tenant_organization_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1343,7 +1911,7 @@ func (x *OrganizationSwitchStatusRequest) String() string {
 func (*OrganizationSwitchStatusRequest) ProtoMessage() {}
 
 func (x *OrganizationSwitchStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_tenant_organization_proto_msgTypes[23]
+	mi := &file_tenant_organization_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1356,7 +1924,7 @@ func (x *OrganizationSwitchStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrganizationSwitchStatusRequest.ProtoReflect.Descriptor instead.
 func (*OrganizationSwitchStatusRequest) Descriptor() ([]byte, []int) {
-	return file_tenant_organization_proto_rawDescGZIP(), []int{23}
+	return file_tenant_organization_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *OrganizationSwitchStatusRequest) GetData() *OrganizationSwitchStatusRequestData {
@@ -1377,7 +1945,7 @@ type OrganizationSwitchStatusRequestData struct {
 
 func (x *OrganizationSwitchStatusRequestData) Reset() {
 	*x = OrganizationSwitchStatusRequestData{}
-	mi := &file_tenant_organization_proto_msgTypes[24]
+	mi := &file_tenant_organization_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1389,7 +1957,7 @@ func (x *OrganizationSwitchStatusRequestData) String() string {
 func (*OrganizationSwitchStatusRequestData) ProtoMessage() {}
 
 func (x *OrganizationSwitchStatusRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_tenant_organization_proto_msgTypes[24]
+	mi := &file_tenant_organization_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1402,7 +1970,7 @@ func (x *OrganizationSwitchStatusRequestData) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use OrganizationSwitchStatusRequestData.ProtoReflect.Descriptor instead.
 func (*OrganizationSwitchStatusRequestData) Descriptor() ([]byte, []int) {
-	return file_tenant_organization_proto_rawDescGZIP(), []int{24}
+	return file_tenant_organization_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *OrganizationSwitchStatusRequestData) GetUserType() string {
@@ -1490,7 +2058,62 @@ const file_tenant_organization_proto_rawDesc = "" +
 	"\tuser_type\x18\x01 \x01(\tR\buserType\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\"K\n" +
 	"\x1aOrganizationDetailResponse\x12-\n" +
-	"\x04data\x18\x01 \x01(\v2\x19.proto.OrganizationEntityR\x04data\"P\n" +
+	"\x04data\x18\x01 \x01(\v2\x19.proto.OrganizationEntityR\x04data\"V\n" +
+	"\x19OrganizationCreateRequest\x129\n" +
+	"\x04data\x18\x01 \x01(\v2%.tenant.OrganizationCreateRequestDataR\x04data\"\xf3\x04\n" +
+	"\x1dOrganizationCreateRequestData\x12\x1b\n" +
+	"\tuser_type\x18\x01 \x01(\tR\buserType\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12#\n" +
+	"\rcontact_email\x18\x03 \x01(\tR\fcontactEmail\x12#\n" +
+	"\rcontact_phone\x18\x04 \x01(\tR\fcontactPhone\x12!\n" +
+	"\fcontact_name\x18\x05 \x01(\tR\vcontactName\x12\x12\n" +
+	"\x04logo\x18\x06 \x01(\tR\x04logo\x12\x18\n" +
+	"\awebsite\x18\a \x01(\tR\awebsite\x12\x18\n" +
+	"\atagline\x18\b \x01(\tR\atagline\x12=\n" +
+	"\bmetadata\x18\t \x01(\v2!.proto.OrganizationMetadataEntityR\bmetadata\x12.\n" +
+	"\aaddress\x18\n" +
+	" \x01(\v2\x14.proto.AddressEntityR\aaddress\x12\x16\n" +
+	"\x06status\x18\v \x01(\tR\x06status\x12\x1d\n" +
+	"\n" +
+	"owner_type\x18\f \x01(\tR\townerType\x12\x16\n" +
+	"\x06source\x18\r \x01(\tR\x06source\x12\x14\n" +
+	"\x05order\x18\x0e \x01(\x05R\x05order\x12\x1f\n" +
+	"\vowner_email\x18\x0f \x01(\tR\n" +
+	"ownerEmail\x12%\n" +
+	"\x0eowner_password\x18\x10 \x01(\tR\rownerPassword\x12(\n" +
+	"\x10owner_first_name\x18\x11 \x01(\tR\x0eownerFirstName\x12&\n" +
+	"\x0fowner_last_name\x18\x12 \x01(\tR\rownerLastName\"d\n" +
+	" OrganizationUpdateProfileRequest\x12@\n" +
+	"\x04data\x18\x01 \x01(\v2,.tenant.OrganizationUpdateProfileRequestDataR\x04data\"\xe7\x02\n" +
+	"$OrganizationUpdateProfileRequestData\x12\x1b\n" +
+	"\tuser_type\x18\x01 \x01(\tR\buserType\x12#\n" +
+	"\rcontact_email\x18\x02 \x01(\tR\fcontactEmail\x12#\n" +
+	"\rcontact_phone\x18\x03 \x01(\tR\fcontactPhone\x12!\n" +
+	"\fcontact_name\x18\x04 \x01(\tR\vcontactName\x12\x12\n" +
+	"\x04logo\x18\x05 \x01(\tR\x04logo\x12\x18\n" +
+	"\awebsite\x18\x06 \x01(\tR\awebsite\x12\x18\n" +
+	"\atagline\x18\a \x01(\tR\atagline\x12=\n" +
+	"\bmetadata\x18\b \x01(\v2!.proto.OrganizationMetadataEntityR\bmetadata\x12.\n" +
+	"\aaddress\x18\t \x01(\v2\x14.proto.AddressEntityR\aaddress\"b\n" +
+	"\x1fOrganizationUpdateLenderRequest\x12?\n" +
+	"\x04data\x18\x01 \x01(\v2+.tenant.OrganizationUpdateLenderRequestDataR\x04data\"\x90\x04\n" +
+	"#OrganizationUpdateLenderRequestData\x12\x1b\n" +
+	"\tuser_type\x18\x01 \x01(\tR\buserType\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\x12#\n" +
+	"\rcontact_email\x18\x03 \x01(\tR\fcontactEmail\x12#\n" +
+	"\rcontact_phone\x18\x04 \x01(\tR\fcontactPhone\x12!\n" +
+	"\fcontact_name\x18\x05 \x01(\tR\vcontactName\x12\x12\n" +
+	"\x04logo\x18\x06 \x01(\tR\x04logo\x12\x18\n" +
+	"\awebsite\x18\a \x01(\tR\awebsite\x12\x18\n" +
+	"\atagline\x18\b \x01(\tR\atagline\x12=\n" +
+	"\bmetadata\x18\t \x01(\v2!.proto.OrganizationMetadataEntityR\bmetadata\x12.\n" +
+	"\aaddress\x18\n" +
+	" \x01(\v2\x14.proto.AddressEntityR\aaddress\x12\x1f\n" +
+	"\vowner_email\x18\v \x01(\tR\n" +
+	"ownerEmail\x12%\n" +
+	"\x0eowner_password\x18\f \x01(\tR\rownerPassword\x12(\n" +
+	"\x10owner_first_name\x18\r \x01(\tR\x0eownerFirstName\x12&\n" +
+	"\x0fowner_last_name\x18\x0e \x01(\tR\rownerLastName\"P\n" +
 	"\x16OrganizationAllRequest\x126\n" +
 	"\x04data\x18\x01 \x01(\v2\".tenant.OrganizationAllRequestDataR\x04data\"9\n" +
 	"\x1aOrganizationAllRequestData\x12\x1b\n" +
@@ -1524,8 +2147,11 @@ const file_tenant_organization_proto_rawDesc = "" +
 	"#OrganizationSwitchStatusRequestData\x12\x1b\n" +
 	"\tuser_type\x18\x01 \x01(\tR\buserType\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\x12\x16\n" +
-	"\x06status\x18\x03 \x01(\tR\x06status2\xf0\x05\n" +
-	"\fOrganization\x12I\n" +
+	"\x06status\x18\x03 \x01(\tR\x06status2\xfd\a\n" +
+	"\fOrganization\x12O\n" +
+	"\x06Create\x12!.tenant.OrganizationCreateRequest\x1a\".tenant.OrganizationDetailResponse\x12]\n" +
+	"\rUpdateProfile\x12(.tenant.OrganizationUpdateProfileRequest\x1a\".tenant.OrganizationDetailResponse\x12[\n" +
+	"\fUpdateLender\x12'.tenant.OrganizationUpdateLenderRequest\x1a\".tenant.OrganizationDetailResponse\x12I\n" +
 	"\x04Page\x12\x1f.tenant.OrganizationPageRequest\x1a .tenant.OrganizationPageResponse\x12O\n" +
 	"\x06Detail\x12!.tenant.OrganizationDetailRequest\x1a\".tenant.OrganizationDetailResponse\x12_\n" +
 	"\x0eDetailWithType\x12).tenant.OrganizationDetailWithTypeRequest\x1a\".tenant.OrganizationDetailResponse\x12F\n" +
@@ -1548,7 +2174,7 @@ func file_tenant_organization_proto_rawDescGZIP() []byte {
 	return file_tenant_organization_proto_rawDescData
 }
 
-var file_tenant_organization_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
+var file_tenant_organization_proto_msgTypes = make([]protoimpl.MessageInfo, 31)
 var file_tenant_organization_proto_goTypes = []any{
 	(*OrganizationPageRequest)(nil),               // 0: tenant.OrganizationPageRequest
 	(*OrganizationPageRequestFilter)(nil),         // 1: tenant.OrganizationPageRequestFilter
@@ -1561,67 +2187,89 @@ var file_tenant_organization_proto_goTypes = []any{
 	(*OrganizationDetailWithTypeRequest)(nil),     // 8: tenant.OrganizationDetailWithTypeRequest
 	(*OrganizationDetailWithTypeRequestData)(nil), // 9: tenant.OrganizationDetailWithTypeRequestData
 	(*OrganizationDetailResponse)(nil),            // 10: tenant.OrganizationDetailResponse
-	(*OrganizationAllRequest)(nil),                // 11: tenant.OrganizationAllRequest
-	(*OrganizationAllRequestData)(nil),            // 12: tenant.OrganizationAllRequestData
-	(*OrganizationAllResponse)(nil),               // 13: tenant.OrganizationAllResponse
-	(*OrganizationAllForOptionRequest)(nil),       // 14: tenant.OrganizationAllForOptionRequest
-	(*OrganizationAllForOptionRequestData)(nil),   // 15: tenant.OrganizationAllForOptionRequestData
-	(*OrganizationSelectOptionsRequest)(nil),      // 16: tenant.OrganizationSelectOptionsRequest
-	(*OrganizationSelectOptionsRequestData)(nil),  // 17: tenant.OrganizationSelectOptionsRequestData
-	(*OrganizationOptionsResponse)(nil),           // 18: tenant.OrganizationOptionsResponse
-	(*OrganizationDeleteRequest)(nil),             // 19: tenant.OrganizationDeleteRequest
-	(*OrganizationDeleteRequestData)(nil),         // 20: tenant.OrganizationDeleteRequestData
-	(*OrganizationUpdateOrderRequest)(nil),        // 21: tenant.OrganizationUpdateOrderRequest
-	(*OrganizationUpdateOrderRequestData)(nil),    // 22: tenant.OrganizationUpdateOrderRequestData
-	(*OrganizationSwitchStatusRequest)(nil),       // 23: tenant.OrganizationSwitchStatusRequest
-	(*OrganizationSwitchStatusRequestData)(nil),   // 24: tenant.OrganizationSwitchStatusRequestData
-	(*proto.CommonPageSorter)(nil),                // 25: proto.CommonPageSorter
-	(*proto.AddressEntity)(nil),                   // 26: proto.AddressEntity
-	(*proto.OrganizationEntity)(nil),              // 27: proto.OrganizationEntity
-	(*proto.OrganizationOptionsEntity)(nil),       // 28: proto.OrganizationOptionsEntity
-	(*proto.EmptyResponse)(nil),                   // 29: proto.EmptyResponse
+	(*OrganizationCreateRequest)(nil),             // 11: tenant.OrganizationCreateRequest
+	(*OrganizationCreateRequestData)(nil),         // 12: tenant.OrganizationCreateRequestData
+	(*OrganizationUpdateProfileRequest)(nil),      // 13: tenant.OrganizationUpdateProfileRequest
+	(*OrganizationUpdateProfileRequestData)(nil),  // 14: tenant.OrganizationUpdateProfileRequestData
+	(*OrganizationUpdateLenderRequest)(nil),       // 15: tenant.OrganizationUpdateLenderRequest
+	(*OrganizationUpdateLenderRequestData)(nil),   // 16: tenant.OrganizationUpdateLenderRequestData
+	(*OrganizationAllRequest)(nil),                // 17: tenant.OrganizationAllRequest
+	(*OrganizationAllRequestData)(nil),            // 18: tenant.OrganizationAllRequestData
+	(*OrganizationAllResponse)(nil),               // 19: tenant.OrganizationAllResponse
+	(*OrganizationAllForOptionRequest)(nil),       // 20: tenant.OrganizationAllForOptionRequest
+	(*OrganizationAllForOptionRequestData)(nil),   // 21: tenant.OrganizationAllForOptionRequestData
+	(*OrganizationSelectOptionsRequest)(nil),      // 22: tenant.OrganizationSelectOptionsRequest
+	(*OrganizationSelectOptionsRequestData)(nil),  // 23: tenant.OrganizationSelectOptionsRequestData
+	(*OrganizationOptionsResponse)(nil),           // 24: tenant.OrganizationOptionsResponse
+	(*OrganizationDeleteRequest)(nil),             // 25: tenant.OrganizationDeleteRequest
+	(*OrganizationDeleteRequestData)(nil),         // 26: tenant.OrganizationDeleteRequestData
+	(*OrganizationUpdateOrderRequest)(nil),        // 27: tenant.OrganizationUpdateOrderRequest
+	(*OrganizationUpdateOrderRequestData)(nil),    // 28: tenant.OrganizationUpdateOrderRequestData
+	(*OrganizationSwitchStatusRequest)(nil),       // 29: tenant.OrganizationSwitchStatusRequest
+	(*OrganizationSwitchStatusRequestData)(nil),   // 30: tenant.OrganizationSwitchStatusRequestData
+	(*proto.CommonPageSorter)(nil),                // 31: proto.CommonPageSorter
+	(*proto.AddressEntity)(nil),                   // 32: proto.AddressEntity
+	(*proto.OrganizationEntity)(nil),              // 33: proto.OrganizationEntity
+	(*proto.OrganizationMetadataEntity)(nil),      // 34: proto.OrganizationMetadataEntity
+	(*proto.OrganizationOptionsEntity)(nil),       // 35: proto.OrganizationOptionsEntity
+	(*proto.EmptyResponse)(nil),                   // 36: proto.EmptyResponse
 }
 var file_tenant_organization_proto_depIdxs = []int32{
 	2,  // 0: tenant.OrganizationPageRequest.data:type_name -> tenant.OrganizationPageRequestData
 	1,  // 1: tenant.OrganizationPageRequestData.filter:type_name -> tenant.OrganizationPageRequestFilter
-	25, // 2: tenant.OrganizationPageRequestData.sorter:type_name -> proto.CommonPageSorter
-	26, // 3: tenant.OrganizationPageEntity.address:type_name -> proto.AddressEntity
+	31, // 2: tenant.OrganizationPageRequestData.sorter:type_name -> proto.CommonPageSorter
+	32, // 3: tenant.OrganizationPageEntity.address:type_name -> proto.AddressEntity
 	5,  // 4: tenant.OrganizationPageResponse.data:type_name -> tenant.OrganizationPageResponseData
 	3,  // 5: tenant.OrganizationPageResponseData.list:type_name -> tenant.OrganizationPageEntity
 	7,  // 6: tenant.OrganizationDetailRequest.data:type_name -> tenant.OrganizationDetailRequestData
 	9,  // 7: tenant.OrganizationDetailWithTypeRequest.data:type_name -> tenant.OrganizationDetailWithTypeRequestData
-	27, // 8: tenant.OrganizationDetailResponse.data:type_name -> proto.OrganizationEntity
-	12, // 9: tenant.OrganizationAllRequest.data:type_name -> tenant.OrganizationAllRequestData
-	27, // 10: tenant.OrganizationAllResponse.data:type_name -> proto.OrganizationEntity
-	15, // 11: tenant.OrganizationAllForOptionRequest.data:type_name -> tenant.OrganizationAllForOptionRequestData
-	17, // 12: tenant.OrganizationSelectOptionsRequest.data:type_name -> tenant.OrganizationSelectOptionsRequestData
-	28, // 13: tenant.OrganizationOptionsResponse.data:type_name -> proto.OrganizationOptionsEntity
-	20, // 14: tenant.OrganizationDeleteRequest.data:type_name -> tenant.OrganizationDeleteRequestData
-	22, // 15: tenant.OrganizationUpdateOrderRequest.data:type_name -> tenant.OrganizationUpdateOrderRequestData
-	24, // 16: tenant.OrganizationSwitchStatusRequest.data:type_name -> tenant.OrganizationSwitchStatusRequestData
-	0,  // 17: tenant.Organization.Page:input_type -> tenant.OrganizationPageRequest
-	6,  // 18: tenant.Organization.Detail:input_type -> tenant.OrganizationDetailRequest
-	8,  // 19: tenant.Organization.DetailWithType:input_type -> tenant.OrganizationDetailWithTypeRequest
-	11, // 20: tenant.Organization.All:input_type -> tenant.OrganizationAllRequest
-	14, // 21: tenant.Organization.AllForOption:input_type -> tenant.OrganizationAllForOptionRequest
-	16, // 22: tenant.Organization.SelectOptions:input_type -> tenant.OrganizationSelectOptionsRequest
-	19, // 23: tenant.Organization.Delete:input_type -> tenant.OrganizationDeleteRequest
-	21, // 24: tenant.Organization.UpdateOrder:input_type -> tenant.OrganizationUpdateOrderRequest
-	23, // 25: tenant.Organization.SwitchStatus:input_type -> tenant.OrganizationSwitchStatusRequest
-	4,  // 26: tenant.Organization.Page:output_type -> tenant.OrganizationPageResponse
-	10, // 27: tenant.Organization.Detail:output_type -> tenant.OrganizationDetailResponse
-	10, // 28: tenant.Organization.DetailWithType:output_type -> tenant.OrganizationDetailResponse
-	13, // 29: tenant.Organization.All:output_type -> tenant.OrganizationAllResponse
-	18, // 30: tenant.Organization.AllForOption:output_type -> tenant.OrganizationOptionsResponse
-	18, // 31: tenant.Organization.SelectOptions:output_type -> tenant.OrganizationOptionsResponse
-	29, // 32: tenant.Organization.Delete:output_type -> proto.EmptyResponse
-	29, // 33: tenant.Organization.UpdateOrder:output_type -> proto.EmptyResponse
-	29, // 34: tenant.Organization.SwitchStatus:output_type -> proto.EmptyResponse
-	26, // [26:35] is the sub-list for method output_type
-	17, // [17:26] is the sub-list for method input_type
-	17, // [17:17] is the sub-list for extension type_name
-	17, // [17:17] is the sub-list for extension extendee
-	0,  // [0:17] is the sub-list for field type_name
+	33, // 8: tenant.OrganizationDetailResponse.data:type_name -> proto.OrganizationEntity
+	12, // 9: tenant.OrganizationCreateRequest.data:type_name -> tenant.OrganizationCreateRequestData
+	34, // 10: tenant.OrganizationCreateRequestData.metadata:type_name -> proto.OrganizationMetadataEntity
+	32, // 11: tenant.OrganizationCreateRequestData.address:type_name -> proto.AddressEntity
+	14, // 12: tenant.OrganizationUpdateProfileRequest.data:type_name -> tenant.OrganizationUpdateProfileRequestData
+	34, // 13: tenant.OrganizationUpdateProfileRequestData.metadata:type_name -> proto.OrganizationMetadataEntity
+	32, // 14: tenant.OrganizationUpdateProfileRequestData.address:type_name -> proto.AddressEntity
+	16, // 15: tenant.OrganizationUpdateLenderRequest.data:type_name -> tenant.OrganizationUpdateLenderRequestData
+	34, // 16: tenant.OrganizationUpdateLenderRequestData.metadata:type_name -> proto.OrganizationMetadataEntity
+	32, // 17: tenant.OrganizationUpdateLenderRequestData.address:type_name -> proto.AddressEntity
+	18, // 18: tenant.OrganizationAllRequest.data:type_name -> tenant.OrganizationAllRequestData
+	33, // 19: tenant.OrganizationAllResponse.data:type_name -> proto.OrganizationEntity
+	21, // 20: tenant.OrganizationAllForOptionRequest.data:type_name -> tenant.OrganizationAllForOptionRequestData
+	23, // 21: tenant.OrganizationSelectOptionsRequest.data:type_name -> tenant.OrganizationSelectOptionsRequestData
+	35, // 22: tenant.OrganizationOptionsResponse.data:type_name -> proto.OrganizationOptionsEntity
+	26, // 23: tenant.OrganizationDeleteRequest.data:type_name -> tenant.OrganizationDeleteRequestData
+	28, // 24: tenant.OrganizationUpdateOrderRequest.data:type_name -> tenant.OrganizationUpdateOrderRequestData
+	30, // 25: tenant.OrganizationSwitchStatusRequest.data:type_name -> tenant.OrganizationSwitchStatusRequestData
+	11, // 26: tenant.Organization.Create:input_type -> tenant.OrganizationCreateRequest
+	13, // 27: tenant.Organization.UpdateProfile:input_type -> tenant.OrganizationUpdateProfileRequest
+	15, // 28: tenant.Organization.UpdateLender:input_type -> tenant.OrganizationUpdateLenderRequest
+	0,  // 29: tenant.Organization.Page:input_type -> tenant.OrganizationPageRequest
+	6,  // 30: tenant.Organization.Detail:input_type -> tenant.OrganizationDetailRequest
+	8,  // 31: tenant.Organization.DetailWithType:input_type -> tenant.OrganizationDetailWithTypeRequest
+	17, // 32: tenant.Organization.All:input_type -> tenant.OrganizationAllRequest
+	20, // 33: tenant.Organization.AllForOption:input_type -> tenant.OrganizationAllForOptionRequest
+	22, // 34: tenant.Organization.SelectOptions:input_type -> tenant.OrganizationSelectOptionsRequest
+	25, // 35: tenant.Organization.Delete:input_type -> tenant.OrganizationDeleteRequest
+	27, // 36: tenant.Organization.UpdateOrder:input_type -> tenant.OrganizationUpdateOrderRequest
+	29, // 37: tenant.Organization.SwitchStatus:input_type -> tenant.OrganizationSwitchStatusRequest
+	10, // 38: tenant.Organization.Create:output_type -> tenant.OrganizationDetailResponse
+	10, // 39: tenant.Organization.UpdateProfile:output_type -> tenant.OrganizationDetailResponse
+	10, // 40: tenant.Organization.UpdateLender:output_type -> tenant.OrganizationDetailResponse
+	4,  // 41: tenant.Organization.Page:output_type -> tenant.OrganizationPageResponse
+	10, // 42: tenant.Organization.Detail:output_type -> tenant.OrganizationDetailResponse
+	10, // 43: tenant.Organization.DetailWithType:output_type -> tenant.OrganizationDetailResponse
+	19, // 44: tenant.Organization.All:output_type -> tenant.OrganizationAllResponse
+	24, // 45: tenant.Organization.AllForOption:output_type -> tenant.OrganizationOptionsResponse
+	24, // 46: tenant.Organization.SelectOptions:output_type -> tenant.OrganizationOptionsResponse
+	36, // 47: tenant.Organization.Delete:output_type -> proto.EmptyResponse
+	36, // 48: tenant.Organization.UpdateOrder:output_type -> proto.EmptyResponse
+	36, // 49: tenant.Organization.SwitchStatus:output_type -> proto.EmptyResponse
+	38, // [38:50] is the sub-list for method output_type
+	26, // [26:38] is the sub-list for method input_type
+	26, // [26:26] is the sub-list for extension type_name
+	26, // [26:26] is the sub-list for extension extendee
+	0,  // [0:26] is the sub-list for field type_name
 }
 
 func init() { file_tenant_organization_proto_init() }
@@ -1635,7 +2283,7 @@ func file_tenant_organization_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_tenant_organization_proto_rawDesc), len(file_tenant_organization_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   25,
+			NumMessages:   31,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

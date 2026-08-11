@@ -20,6 +20,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	Organization_Create_FullMethodName         = "/tenant.Organization/Create"
+	Organization_UpdateProfile_FullMethodName  = "/tenant.Organization/UpdateProfile"
+	Organization_UpdateLender_FullMethodName   = "/tenant.Organization/UpdateLender"
 	Organization_Page_FullMethodName           = "/tenant.Organization/Page"
 	Organization_Detail_FullMethodName         = "/tenant.Organization/Detail"
 	Organization_DetailWithType_FullMethodName = "/tenant.Organization/DetailWithType"
@@ -35,6 +38,9 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OrganizationClient interface {
+	Create(ctx context.Context, in *OrganizationCreateRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
+	UpdateProfile(ctx context.Context, in *OrganizationUpdateProfileRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
+	UpdateLender(ctx context.Context, in *OrganizationUpdateLenderRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
 	Page(ctx context.Context, in *OrganizationPageRequest, opts ...grpc.CallOption) (*OrganizationPageResponse, error)
 	Detail(ctx context.Context, in *OrganizationDetailRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
 	DetailWithType(ctx context.Context, in *OrganizationDetailWithTypeRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
@@ -52,6 +58,36 @@ type organizationClient struct {
 
 func NewOrganizationClient(cc grpc.ClientConnInterface) OrganizationClient {
 	return &organizationClient{cc}
+}
+
+func (c *organizationClient) Create(ctx context.Context, in *OrganizationCreateRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationDetailResponse)
+	err := c.cc.Invoke(ctx, Organization_Create_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationClient) UpdateProfile(ctx context.Context, in *OrganizationUpdateProfileRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationDetailResponse)
+	err := c.cc.Invoke(ctx, Organization_UpdateProfile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationClient) UpdateLender(ctx context.Context, in *OrganizationUpdateLenderRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationDetailResponse)
+	err := c.cc.Invoke(ctx, Organization_UpdateLender_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *organizationClient) Page(ctx context.Context, in *OrganizationPageRequest, opts ...grpc.CallOption) (*OrganizationPageResponse, error) {
@@ -148,6 +184,9 @@ func (c *organizationClient) SwitchStatus(ctx context.Context, in *OrganizationS
 // All implementations must embed UnimplementedOrganizationServer
 // for forward compatibility.
 type OrganizationServer interface {
+	Create(context.Context, *OrganizationCreateRequest) (*OrganizationDetailResponse, error)
+	UpdateProfile(context.Context, *OrganizationUpdateProfileRequest) (*OrganizationDetailResponse, error)
+	UpdateLender(context.Context, *OrganizationUpdateLenderRequest) (*OrganizationDetailResponse, error)
 	Page(context.Context, *OrganizationPageRequest) (*OrganizationPageResponse, error)
 	Detail(context.Context, *OrganizationDetailRequest) (*OrganizationDetailResponse, error)
 	DetailWithType(context.Context, *OrganizationDetailWithTypeRequest) (*OrganizationDetailResponse, error)
@@ -167,6 +206,15 @@ type OrganizationServer interface {
 // pointer dereference when methods are called.
 type UnimplementedOrganizationServer struct{}
 
+func (UnimplementedOrganizationServer) Create(context.Context, *OrganizationCreateRequest) (*OrganizationDetailResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedOrganizationServer) UpdateProfile(context.Context, *OrganizationUpdateProfileRequest) (*OrganizationDetailResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateProfile not implemented")
+}
+func (UnimplementedOrganizationServer) UpdateLender(context.Context, *OrganizationUpdateLenderRequest) (*OrganizationDetailResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateLender not implemented")
+}
 func (UnimplementedOrganizationServer) Page(context.Context, *OrganizationPageRequest) (*OrganizationPageResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Page not implemented")
 }
@@ -213,6 +261,60 @@ func RegisterOrganizationServer(s grpc.ServiceRegistrar, srv OrganizationServer)
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&Organization_ServiceDesc, srv)
+}
+
+func _Organization_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationCreateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Organization_Create_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServer).Create(ctx, req.(*OrganizationCreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Organization_UpdateProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationUpdateProfileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServer).UpdateProfile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Organization_UpdateProfile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServer).UpdateProfile(ctx, req.(*OrganizationUpdateProfileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Organization_UpdateLender_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationUpdateLenderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServer).UpdateLender(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Organization_UpdateLender_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServer).UpdateLender(ctx, req.(*OrganizationUpdateLenderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Organization_Page_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -384,6 +486,18 @@ var Organization_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "tenant.Organization",
 	HandlerType: (*OrganizationServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Create",
+			Handler:    _Organization_Create_Handler,
+		},
+		{
+			MethodName: "UpdateProfile",
+			Handler:    _Organization_UpdateProfile_Handler,
+		},
+		{
+			MethodName: "UpdateLender",
+			Handler:    _Organization_UpdateLender_Handler,
+		},
 		{
 			MethodName: "Page",
 			Handler:    _Organization_Page_Handler,

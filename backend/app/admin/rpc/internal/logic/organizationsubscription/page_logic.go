@@ -35,9 +35,6 @@ func (l *PageLogic) Page(in *admin.OrganizationSubscriptionPageRequest) (resp *a
 	}
 
 	req.UserType = string(constants.UserTypeAdmin)
-	if req.Filter != nil && req.Filter.Type != "" {
-		req.UserType = req.Filter.Type
-	}
 	pageResult, err := l.svcCtx.TenantClient.OrganizationSubscription.Page(l.ctx, &tenant.OrganizationSubscriptionPageRequest{Data: req})
 	if err != nil {
 		return nil, err

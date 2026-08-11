@@ -25,8 +25,9 @@ message OrganizationSubscriptionDetailRequest {
   OrganizationSubscriptionDetailRequestData data = 1;
 }
 message OrganizationSubscriptionDetailRequestData {
-  string user_type = 1;
+  string user_type = 1;       // caller platform; admin may manage all organizations
   int64 id = 2;
+  int64 organization_id = 3; // required for lender/borrower callers
 }
 
 message OrganizationSubscriptionDetailResponse {
@@ -72,7 +73,8 @@ message OrganizationSubscriptionPageRequestData {
   int64 limit = 2;
   OrganizationSubscriptionPageRequestFilter filter = 3;
   proto.CommonPageSorter sorter = 4;
-  string user_type = 5;
+  string user_type = 5;       // caller platform; admin may page all organizations
+  int64 organization_id = 6; // required for lender/borrower callers
 }
 
 message OrganizationSubscriptionPageEntity {

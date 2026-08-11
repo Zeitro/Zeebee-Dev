@@ -60,6 +60,8 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		constants.UserTypeLender:   eventTopic.LenderTopic,
 		constants.UserTypeAdmin:    eventTopic.AdminTopic,
 	}
+	platforms := buildPlatforms(svcCtx.Config.PlatformConf)
+	emailClients := buildEmailClients(svcCtx.Config.PlatformConf)
 
 	l := &BaseLogic{
 		svcCtx: svcCtx,
@@ -67,13 +69,14 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 			Repos:                  svcCtx.AllRepos,
 			RedisCli:               svcCtx.RedisCli,
 			JwtConfig:              toJwtConfig(svcCtx.Config.JwtConf),
+			EmailClients:           emailClients,
 			CurrentEnforcer:        svcCtx.Enforcer,
 			CurrentAuthEventTopics: []string{eventTopic.BorrowerTopic, eventTopic.LenderTopic, eventTopic.AdminTopic},
 			AuthEventTopicMap:      authTopicMap,
 			Logger:                 svcCtx.Logger,
 		}),
-		platforms:    buildPlatforms(svcCtx.Config.PlatformConf),
-		emailClients: buildEmailClients(svcCtx.Config.PlatformConf),
+		platforms:    platforms,
+		emailClients: emailClients,
 	}
 
 	// Rebuild each platform's policy in the background (central authority loads all).

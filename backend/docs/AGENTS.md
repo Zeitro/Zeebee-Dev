@@ -16,6 +16,15 @@
 - **项目配置定义文件**：`app/<service>/config/config.go`
 - **项目配置文件**：`app/<service>/etc/config-<env>.yaml`
 
+### 配置文件加载路径（必须遵守）
+
+- 适用于所有服务：配置定义先看 `app/<service>/config/config.go`，运行时配置再看该服务实际加载的 `app/<service>/etc/config-<env>.yaml`。
+- 当前服务入口为 `app/<service>/cmd/main.go`；各入口默认 `-f etc/config.yaml`，配置路径按进程当前工作目录解析，不能只凭目录名称推断。
+- 从服务目录启动时使用 `-f etc/config-local.yaml`；从 backend 根目录启动时使用 `-f app/<service>/etc/config-local.yaml`。staging/prod 同理替换环境名。
+- 检查任何服务前，必须先读取对应的 `cmd/main.go` 和实际启动命令，确认 `-f` 指向的文件；包括 borrower、lender、admin、tenant、pdf_generator。
+- **不要把 `app/<service>/rpc/etc/`、`app/<service>/api/etc/` 或代码生成产生的其他 `etc/` 目录当作运行时配置来源**，除非对应入口明确通过 `-f` 加载它。
+- 修改或检查配置项（包括 LogoUrl、FooterAddress）时，必须以入口实际加载的配置文件为准，并同时检查是否存在其他服务/目录中的重复配置。
+
 ### Document Reading Order
 
 首次会话必读（按序）：

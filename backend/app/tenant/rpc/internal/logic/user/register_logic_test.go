@@ -46,6 +46,7 @@ func TestRegister_CreatesLenderIdentity(t *testing.T) {
 	require.NotNil(t, resp.GetData())
 	require.Greater(t, resp.GetData().GetUserId(), int64(0))
 	assert.Equal(t, string(constants.UserStatusUnverified), resp.GetData().GetStatus())
+	assert.NotEmpty(t, resp.GetData().GetAccessToken())
 
 	var user model.User
 	require.NoError(t, env.DB.First(&user, resp.GetData().GetUserId()).Error)
@@ -77,13 +78,13 @@ func TestRegister_CreatesBorrowerIdentityWithPreApprovalCtx(t *testing.T) {
 	l := NewRegisterLogic(context.Background(), env.SvcCtx)
 
 	resp, err := l.Register(&tenant.RegisterRequest{Data: &tenant.RegisterRequestData{
-		UserType:               string(constants.UserTypeBorrower),
-		Email:                  "Borrower@Test.LOCAL",
-		Password:               testPassword,
-		FirstName:              "Borrower",
-		LastName:               "Two",
-		OrganizationName:       "Borrower Org",
-		OwnerType:              "Self", // must be forced to None for borrower
+		UserType:                string(constants.UserTypeBorrower),
+		Email:                   "Borrower@Test.LOCAL",
+		Password:                testPassword,
+		FirstName:               "Borrower",
+		LastName:                "Two",
+		OrganizationName:        "Borrower Org",
+		OwnerType:               "Self", // must be forced to None for borrower
 		BorrowerPreApprovalJson: `{"request_id":"req-123","lender_org_id":42}`,
 	}})
 	require.NoError(t, err)

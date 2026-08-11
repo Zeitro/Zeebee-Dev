@@ -18,6 +18,7 @@ message OrganizationTemplateDetailRequest {
 message OrganizationTemplateDetailRequestData {
   string user_type = 1;
   int64 id = 2;
+  int64 organization_id = 3; // required for lender/borrower callers
 }
 
 message OrganizationTemplateDetailByPurposeRequest {

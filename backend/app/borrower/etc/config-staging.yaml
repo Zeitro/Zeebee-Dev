@@ -160,9 +160,6 @@ RpcConf:
       Pwd: ''
       Tls: true
       BorrowerChannel: /borrower-channel
-  CronTaskConf:
-    - name: update_organization_subscription_status
-      schedule: "0 0 2 * * *"
   # llm
   LlmConf:
     Providers:

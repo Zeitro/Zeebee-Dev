@@ -7,7 +7,6 @@ import (
 	"zeebee-backend/app/tenant/rpc/internal/svc"
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
@@ -31,11 +30,16 @@ func (l *DeleteLogic) Delete(in *tenant.ApiDeleteRequest) (resp *proto.EmptyResp
 	if in.Data == nil {
 		return nil, errorx.ErrorEmptyRequestData
 	}
-	if _, err = logic.ParseUserType(in.Data.UserType); err != nil {
+	callerType, err := logic.ParseUserType(in.Data.UserType)
+	if err != nil {
+		return nil, err
+	}
+	targetType, err := targetType(callerType, in.Data.Type)
+	if err != nil {
 		return nil, err
 	}
 
-	if err = l.baseLogic.ApiLogic.DeleteApi(l.ctx, in.Data.Id, constants.UserType(in.Data.Type)); err != nil {
+	if err = l.baseLogic.ApiLogic.DeleteApi(l.ctx, in.Data.Id, targetType); err != nil {
 		return nil, err
 	}
 	return &proto.EmptyResponse{}, nil

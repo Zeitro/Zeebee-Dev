@@ -33,14 +33,16 @@ type OrganizationUserLogic struct {
 	*BaseLogic
 	authTopicMap map[constants.UserType]string
 	emailClient  *email2.Email
+	emailClients map[constants.UserType]*email2.Email
 }
 
 // NewOrganizationUserLogic creates a new organization user logic instance
-func NewOrganizationUserLogic(baseLogic *BaseLogic, emailClient *email2.Email, authTopicMap map[constants.UserType]string) *OrganizationUserLogic {
+func NewOrganizationUserLogic(baseLogic *BaseLogic, emailClient *email2.Email, emailClients map[constants.UserType]*email2.Email, authTopicMap map[constants.UserType]string) *OrganizationUserLogic {
 	return &OrganizationUserLogic{
 		BaseLogic:    baseLogic,
 		authTopicMap: authTopicMap,
 		emailClient:  emailClient,
+		emailClients: emailClients,
 	}
 }
 
@@ -290,8 +292,7 @@ func (l *OrganizationUserLogic) InviteOrganizationUser(ctx context.Context, crea
 			OrganizationName: organization.Name,
 			OrganizationId:   organizationUser.OrganizationId,
 			Operator:         createDto.Operator,
-			Logo:             organization.Logo,
-			Address:          organization.Address,
+			Logo:             createDto.EmailConfig.Logo,
 			ExpireTime:       timex.DurationToString(time.Second*time.Duration(createDto.EmailConfig.ExpireSeconds), true),
 		})
 		if err != nil {
@@ -346,8 +347,7 @@ func (l *OrganizationUserLogic) SendInviteEmail(ctx context.Context, input dto.O
 		OrganizationId:   input.OrganizationId,
 		Operator:         input.Operator,
 		Pwd:              pwd,
-		Logo:             organization.Logo,
-		Address:          organization.Address,
+		Logo:             input.EmailConfig.Logo,
 		ExpireTime:       timex.DurationToString(time.Second*time.Duration(input.EmailConfig.ExpireSeconds), true),
 	}
 	err = l.sendInviteEmail(ctx, previousInput)
@@ -617,7 +617,6 @@ type SendInviteUserEmailInput struct {
 	TargetEmail string
 	UserType    constants.UserType
 	Logo        string
-	Address     model.Address
 	// HasPwd           bool
 	Pwd              string
 	OrganizationName string
@@ -636,7 +635,11 @@ const (
 
 // sendInviteEmail sends invite email
 func (l *OrganizationUserLogic) sendInviteEmail(ctx context.Context, input SendInviteUserEmailInput) (err error) {
-	if l.emailClient == nil {
+	emailClient := l.emailClient
+	if l.emailClients != nil {
+		emailClient = l.emailClients[input.UserType]
+	}
+	if emailClient == nil {
 		err = errorx.New("email client is not initialized")
 		return
 	}
@@ -696,13 +699,7 @@ func (l *OrganizationUserLogic) sendInviteEmail(ctx context.Context, input SendI
 		"organization_name": input.OrganizationName,
 		"logo":              input.Logo,
 		"expire_time":       input.ExpireTime,
-		"address": fmt.Sprintf("%s | %s | %s, %s, %s",
-			input.OrganizationName,
-			input.Address.Address1,
-			input.Address.City,
-			input.Address.State,
-			input.Address.ZipCode,
-		),
+		"address":           input.EmailConfig.Address,
 	}
 	content, err := email2.ParseTemplate(input.EmailConfig.TplName, data)
 	if err != nil {
@@ -715,7 +712,7 @@ func (l *OrganizationUserLogic) sendInviteEmail(ctx context.Context, input SendI
 		Body:    content,
 		IsHTML:  true,
 	}
-	err = l.emailClient.SendEmail(msg)
+	err = emailClient.SendEmail(msg)
 
 	return errorx.WithStack(err)
 }

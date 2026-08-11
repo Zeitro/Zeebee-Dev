@@ -7,6 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"zeebee-backend/app/tenant/config"
+	_ "zeebee-backend/app/tenant/rpc/internal/email_tpl"
 	"zeebee-backend/app/tenant/rpc/internal/logic"
 	"zeebee-backend/app/tenant/rpc/internal/logic/testutil"
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
@@ -443,4 +445,93 @@ func TestSendInviteEmail_RejectsActiveMember(t *testing.T) {
 	}})
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "not activated")
+}
+
+func TestSendInviteEmail_UsesPlatformEmailClient(t *testing.T) {
+	env := newTestEnv(t)
+	env.SvcCtx.Config.PlatformConf.Borrower.EmailConf = config.EmailConf{
+		Host: "127.0.0.1", Port: 1, Username: "noreply@test.local",
+	}
+	organization, _ := seedActiveOrganization(t, env, constants.UserTypeBorrower)
+	user := testutil.SeedUser(t, env.DB, &model.User{
+		Type:   constants.UserTypeBorrower,
+		Email:  "pending@test.local",
+		Status: constants.UserStatusUnverified,
+	})
+	member := testutil.SeedOrganizationUser(t, env.DB, &model.OrganizationUser{
+		OrganizationId: organization.Id,
+		UserId:         user.Id,
+		Status:         constants.OrganizationUserStatusNotActivated,
+	})
+
+	_, err := NewSendInviteEmailLogic(context.Background(), env.SvcCtx).SendInviteEmail(&tenant.OrganizationUserSendInviteEmailRequest{Data: &tenant.OrganizationUserSendInviteEmailRequestData{
+		UserType: string(constants.UserTypeBorrower), OrganizationId: organization.Id, Id: member.Id,
+		Operator: "Owner", EmailConfig: inviteEmailConfig(),
+	}})
+	require.Error(t, err)
+	assert.NotContains(t, err.Error(), "email client is not initialized")
+}
+
+func TestSendInviteEmail_DefaultsToInviteTemplate(t *testing.T) {
+	env := newTestEnv(t)
+	env.SvcCtx.Config.PlatformConf.Borrower.EmailConf = config.EmailConf{
+		Host: "127.0.0.1", Port: 1, Username: "noreply@test.local",
+	}
+	organization, _ := seedActiveOrganization(t, env, constants.UserTypeBorrower)
+	user := testutil.SeedUser(t, env.DB, &model.User{
+		Type:   constants.UserTypeBorrower,
+		Email:  "pending-template@test.local",
+		Status: constants.UserStatusUnverified,
+	})
+	member := testutil.SeedOrganizationUser(t, env.DB, &model.OrganizationUser{
+		OrganizationId: organization.Id,
+		UserId:         user.Id,
+		Status:         constants.OrganizationUserStatusNotActivated,
+	})
+
+	_, err := NewSendInviteEmailLogic(context.Background(), env.SvcCtx).SendInviteEmail(&tenant.OrganizationUserSendInviteEmailRequest{Data: &tenant.OrganizationUserSendInviteEmailRequestData{
+		UserType: string(constants.UserTypeBorrower), OrganizationId: organization.Id, Id: member.Id,
+		Operator: "Owner", EmailConfig: &tenant.OrganizationUserInviteEmailConfig{
+			HostEmail: "noreply@test.local", ExpireSeconds: 3600, SendPeriodSeconds: 60,
+			Url: "http://test.local/invite",
+		},
+	}})
+	require.Error(t, err)
+	assert.NotContains(t, err.Error(), "Email template not found")
+}
+
+func TestToInviteEmailConfig_UsesPlatformDefaults(t *testing.T) {
+	logo := "https://cdn.zeebee.com/logo.png"
+	address := "Zeebee | 1 Market Street | San Francisco, CA, 94105"
+	profile := config.PlatformProfile{
+		EmailConf:                    config.EmailConf{Username: "noreply@test.local"},
+		InviteUserUrl:                "http://test.local/invite",
+		InviteUserExpireSeconds:      3600,
+		SendInviteEmailPeriodSeconds: 60,
+		LogoUrl:                      logo,
+		FooterAddress:                address,
+	}
+
+	got := toInviteEmailConfig(nil, profile)
+	assert.Equal(t, "noreply@test.local", got.HostEmail)
+	assert.Equal(t, 3600, got.ExpireSeconds)
+	assert.Equal(t, 60, got.SendPeriodSeconds)
+	assert.Equal(t, "http://test.local/invite", got.Url)
+	assert.Equal(t, logo, got.Logo)
+	assert.Equal(t, address, got.Address)
+
+	got = toInviteEmailConfig(&tenant.OrganizationUserInviteEmailConfig{
+		HostEmail:         "client@test.local",
+		ExpireSeconds:     7200,
+		SendPeriodSeconds: 120,
+		Url:               "http://client.test/invite",
+		Logo:              "https://client.example/logo.png",
+		Address:           "Client address",
+	}, profile)
+	assert.Equal(t, "client@test.local", got.HostEmail)
+	assert.Equal(t, 7200, got.ExpireSeconds)
+	assert.Equal(t, 120, got.SendPeriodSeconds)
+	assert.Equal(t, "http://client.test/invite", got.Url)
+	assert.Equal(t, "https://client.example/logo.png", got.Logo)
+	assert.Equal(t, "Client address", got.Address)
 }

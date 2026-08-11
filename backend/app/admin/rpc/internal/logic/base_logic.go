@@ -5,11 +5,16 @@ import (
 	"sync"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/admin/rpc/internal/global"
 	"zeebee-backend/app/admin/rpc/internal/svc"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/logic"
@@ -51,10 +56,10 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		constants.UserTypeBorrower: svcCtx.Config.CasbinConf.EventTopic.BorrowerTopic,
 	}
 	logicConfig := logic.AllLogicConfig{
-		Repos:             svcCtx.AllRepos,
-		RedisCli:          redisCli,
-		JwtConfig:         jwtConfig,
-		EmailClient:       emailClient,
+		Repos:       svcCtx.AllRepos,
+		RedisCli:    redisCli,
+		JwtConfig:   jwtConfig,
+		EmailClient: emailClient,
 		// US-12: tenant is the sole casbin executor; admin no longer runs a
 		// local enforcer, so it subscribes to no reload channel (AuthLogic is
 		// never invoked here anymore).
@@ -68,6 +73,28 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 	}
 
 	return l
+}
+
+func (l *BaseLogic) GetUserClaimFromCtx(ctx context.Context) (utils.JwtUser, error) {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok || len(md.Get(utils.JwtTokenCtxKey)) == 0 || len(md.Get(utils.UserTypeCtxKey)) == 0 {
+		return utils.JwtUser{}, status.Error(codes.Unauthenticated, "not login")
+	}
+	claim, err := l.svcCtx.TenantClient.User.GetClaim(ctx, &tenant.GetClaimRequest{Data: &tenant.GetClaimRequestData{
+		AccessToken: md.Get(utils.JwtTokenCtxKey)[0],
+		UserType:    md.Get(utils.UserTypeCtxKey)[0],
+	}})
+	if err != nil {
+		return utils.JwtUser{}, err
+	}
+	if claim.Data == nil {
+		return utils.JwtUser{}, status.Error(codes.Unauthenticated, "invalid token")
+	}
+	return utils.JwtUser{
+		UserId: claim.Data.UserId, OrganizationId: claim.Data.OrganizationId,
+		OrganizationUserId: claim.Data.OrganizationUserId, Username: claim.Data.Username,
+		Role: claim.Data.Role, UserType: constants.UserType(claim.Data.UserType),
+	}, nil
 }
 
 func (l *BaseLogic) CreateLoanOperationLog(ctx context.Context, tx *gorm.DB, loanId, operatorId int64, from, to dto.LoanOperationStatus, action constants.LoanOperationAction, metadata *dto.LoanOperationMetadata) (err error) {
@@ -85,11 +112,9 @@ func (l *BaseLogic) CreateLoanOperationLog(ctx context.Context, tx *gorm.DB, loa
 			).Error("fail to create loan operation log")
 		}
 	}()
-	operator, _ := l.svcCtx.OrganizationUserRepo.FindOneByIdWithTx(ctx, tx, operatorId)
-
 	operatorName := ""
-	if operator != nil {
-		operatorName = operator.FullName
+	if claim, claimErr := l.GetUserClaimFromCtx(ctx); claimErr == nil && claim.OrganizationUserId == operatorId {
+		operatorName = claim.Username
 	}
 
 	operation := &model.LoanOperation{

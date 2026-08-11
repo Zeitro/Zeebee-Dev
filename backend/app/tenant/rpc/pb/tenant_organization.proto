@@ -8,7 +8,8 @@ import "proto/common.proto";
 import "proto/entity.proto";
 
 // Organization CRUD + ordering + status, consolidated from admin / lender / borrower.
-// tenant is a thin wrapper over the shared OrganizationLogic (9 methods).
+// tenant is a thin wrapper over the shared OrganizationLogic plus organization
+// provisioning flows used by admin and lender.
 
 message OrganizationPageRequest {
   OrganizationPageRequestData data = 1;
@@ -81,6 +82,65 @@ message OrganizationDetailResponse {
   proto.OrganizationEntity data = 1;
 }
 
+message OrganizationCreateRequest {
+  OrganizationCreateRequestData data = 1;
+}
+message OrganizationCreateRequestData {
+  string user_type = 1;
+  string name = 2;
+  string contact_email = 3;
+  string contact_phone = 4;
+  string contact_name = 5;
+  string logo = 6;
+  string website = 7;
+  string tagline = 8;
+  proto.OrganizationMetadataEntity metadata = 9;
+  proto.AddressEntity address = 10;
+  string status = 11;
+  string owner_type = 12;
+  string source = 13;
+  int32 order = 14;
+  string owner_email = 15;
+  string owner_password = 16;
+  string owner_first_name = 17;
+  string owner_last_name = 18;
+}
+
+message OrganizationUpdateProfileRequest {
+  OrganizationUpdateProfileRequestData data = 1;
+}
+message OrganizationUpdateProfileRequestData {
+  string user_type = 1;
+  string contact_email = 2;
+  string contact_phone = 3;
+  string contact_name = 4;
+  string logo = 5;
+  string website = 6;
+  string tagline = 7;
+  proto.OrganizationMetadataEntity metadata = 8;
+  proto.AddressEntity address = 9;
+}
+
+message OrganizationUpdateLenderRequest {
+  OrganizationUpdateLenderRequestData data = 1;
+}
+message OrganizationUpdateLenderRequestData {
+  string user_type = 1;
+  int64 id = 2;
+  string contact_email = 3;
+  string contact_phone = 4;
+  string contact_name = 5;
+  string logo = 6;
+  string website = 7;
+  string tagline = 8;
+  proto.OrganizationMetadataEntity metadata = 9;
+  proto.AddressEntity address = 10;
+  string owner_email = 11;
+  string owner_password = 12;
+  string owner_first_name = 13;
+  string owner_last_name = 14;
+}
+
 message OrganizationAllRequest {
   OrganizationAllRequestData data = 1;
 }
@@ -138,6 +198,9 @@ message OrganizationSwitchStatusRequestData {
 }
 
 service Organization {
+  rpc Create(OrganizationCreateRequest) returns (OrganizationDetailResponse);
+  rpc UpdateProfile(OrganizationUpdateProfileRequest) returns (OrganizationDetailResponse);
+  rpc UpdateLender(OrganizationUpdateLenderRequest) returns (OrganizationDetailResponse);
   rpc Page(OrganizationPageRequest) returns (OrganizationPageResponse);
   rpc Detail(OrganizationDetailRequest) returns (OrganizationDetailResponse);
   rpc DetailWithType(OrganizationDetailWithTypeRequest) returns (OrganizationDetailResponse);

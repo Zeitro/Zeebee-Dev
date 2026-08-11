@@ -56,3 +56,13 @@ func TestApiCRUD(t *testing.T) {
 	}})
 	require.NoError(t, err)
 }
+
+func TestApiRejectsCrossPlatformTarget(t *testing.T) {
+	env := newTestEnv(t)
+
+	_, err := NewApiTreeLogic(context.Background(), env.SvcCtx).ApiTree(&tenant.ApiTreeRequest{Data: &tenant.ApiTreeRequestData{
+		UserType: string(constants.UserTypeLender), Type: string(constants.UserTypeBorrower),
+	}})
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "cannot manage another platform api")
+}

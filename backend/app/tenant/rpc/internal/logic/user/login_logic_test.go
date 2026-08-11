@@ -107,6 +107,28 @@ func TestLogin_SuccessThreeTypes(t *testing.T) {
 	}
 }
 
+func TestGetClaim_ValidatesTokenType(t *testing.T) {
+	env := newTestEnv(t)
+	token, err := utils.GenerateToken(utils.JwtUser{
+		UserId: 7, OrganizationId: 8, OrganizationUserId: 9, Username: "Ada",
+		Role: []string{"admin"}, UserType: constants.UserTypeBorrower,
+	}, env.SvcCtx.Config.JwtConf.AccessSecret, 3600)
+	require.NoError(t, err)
+
+	resp, err := NewGetClaimLogic(context.Background(), env.SvcCtx).GetClaim(&tenant.GetClaimRequest{Data: &tenant.GetClaimRequestData{
+		AccessToken: token, UserType: string(constants.UserTypeBorrower),
+	}})
+	require.NoError(t, err)
+	assert.Equal(t, int64(7), resp.Data.UserId)
+	assert.Equal(t, int64(8), resp.Data.OrganizationId)
+	assert.Equal(t, []string{"admin"}, resp.Data.Role)
+
+	_, err = NewGetClaimLogic(context.Background(), env.SvcCtx).GetClaim(&tenant.GetClaimRequest{Data: &tenant.GetClaimRequestData{
+		AccessToken: token, UserType: string(constants.UserTypeLender),
+	}})
+	require.Error(t, err)
+}
+
 func TestLogin_WrongPasswordAndThrottle(t *testing.T) {
 	env := newTestEnv(t)
 	email := "throttle@test.local"

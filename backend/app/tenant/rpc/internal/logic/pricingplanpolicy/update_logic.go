@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
 )
@@ -44,6 +45,7 @@ func (l *UpdateLogic) Update(in *tenant.PricingPlanPolicyUpdateRequest) (resp *t
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
+	l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypePricingPlanPolicy, result.Id, constants.OperationActionPlanPolicyUpdate)
 	data, err := copierx.Trans[dto.PricingPlanPolicyEntityDto, proto.PricingPlanPolicyEntity](result, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err

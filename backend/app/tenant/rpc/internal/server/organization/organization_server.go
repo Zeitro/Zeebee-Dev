@@ -24,6 +24,21 @@ func NewOrganizationServer(svcCtx *svc.ServiceContext) *OrganizationServer {
 	}
 }
 
+func (s *OrganizationServer) Create(ctx context.Context, in *tenant.OrganizationCreateRequest) (*tenant.OrganizationDetailResponse, error) {
+	l := organizationlogic.NewCreateLogic(ctx, s.svcCtx)
+	return l.Create(in)
+}
+
+func (s *OrganizationServer) UpdateProfile(ctx context.Context, in *tenant.OrganizationUpdateProfileRequest) (*tenant.OrganizationDetailResponse, error) {
+	l := organizationlogic.NewUpdateProfileLogic(ctx, s.svcCtx)
+	return l.UpdateProfile(in)
+}
+
+func (s *OrganizationServer) UpdateLender(ctx context.Context, in *tenant.OrganizationUpdateLenderRequest) (*tenant.OrganizationDetailResponse, error) {
+	l := organizationlogic.NewUpdateLenderLogic(ctx, s.svcCtx)
+	return l.UpdateLender(in)
+}
+
 func (s *OrganizationServer) Page(ctx context.Context, in *tenant.OrganizationPageRequest) (*tenant.OrganizationPageResponse, error) {
 	l := organizationlogic.NewPageLogic(ctx, s.svcCtx)
 	return l.Page(in)

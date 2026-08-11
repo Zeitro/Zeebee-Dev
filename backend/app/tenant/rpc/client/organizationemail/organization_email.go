@@ -16,13 +16,18 @@ import (
 )
 
 type (
+	OrganizationEmailAuthorizeRequest            = tenant.OrganizationEmailAuthorizeRequest
 	OrganizationEmailGenerateAuthCodeUrlRequest  = tenant.OrganizationEmailGenerateAuthCodeUrlRequest
 	OrganizationEmailGenerateAuthCodeUrlResponse = tenant.OrganizationEmailGenerateAuthCodeUrlResponse
+	OrganizationEmailGetAuthorizationRequest     = tenant.OrganizationEmailGetAuthorizationRequest
+	OrganizationEmailGetAuthorizationResponse    = tenant.OrganizationEmailGetAuthorizationResponse
 	OrganizationEmailSaveEmailRequest            = tenant.OrganizationEmailSaveEmailRequest
 
 	OrganizationEmail interface {
 		SaveEmail(ctx context.Context, in *OrganizationEmailSaveEmailRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 		GenerateAuthCodeUrl(ctx context.Context, in *OrganizationEmailGenerateAuthCodeUrlRequest, opts ...grpc.CallOption) (*OrganizationEmailGenerateAuthCodeUrlResponse, error)
+		Authorize(ctx context.Context, in *OrganizationEmailAuthorizeRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
+		GetAuthorization(ctx context.Context, in *OrganizationEmailGetAuthorizationRequest, opts ...grpc.CallOption) (*OrganizationEmailGetAuthorizationResponse, error)
 	}
 
 	defaultOrganizationEmail struct {
@@ -44,4 +49,14 @@ func (m *defaultOrganizationEmail) SaveEmail(ctx context.Context, in *Organizati
 func (m *defaultOrganizationEmail) GenerateAuthCodeUrl(ctx context.Context, in *OrganizationEmailGenerateAuthCodeUrlRequest, opts ...grpc.CallOption) (*OrganizationEmailGenerateAuthCodeUrlResponse, error) {
 	client := tenant.NewOrganizationEmailClient(m.cli.Conn())
 	return client.GenerateAuthCodeUrl(ctx, in, opts...)
+}
+
+func (m *defaultOrganizationEmail) Authorize(ctx context.Context, in *OrganizationEmailAuthorizeRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
+	client := tenant.NewOrganizationEmailClient(m.cli.Conn())
+	return client.Authorize(ctx, in, opts...)
+}
+
+func (m *defaultOrganizationEmail) GetAuthorization(ctx context.Context, in *OrganizationEmailGetAuthorizationRequest, opts ...grpc.CallOption) (*OrganizationEmailGetAuthorizationResponse, error) {
+	client := tenant.NewOrganizationEmailClient(m.cli.Conn())
+	return client.GetAuthorization(ctx, in, opts...)
 }

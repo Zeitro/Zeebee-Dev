@@ -19,6 +19,7 @@ type (
 	OrganizationAllForOptionRequest   = tenant.OrganizationAllForOptionRequest
 	OrganizationAllRequest            = tenant.OrganizationAllRequest
 	OrganizationAllResponse           = tenant.OrganizationAllResponse
+	OrganizationCreateRequest         = tenant.OrganizationCreateRequest
 	OrganizationDeleteRequest         = tenant.OrganizationDeleteRequest
 	OrganizationDetailRequest         = tenant.OrganizationDetailRequest
 	OrganizationDetailResponse        = tenant.OrganizationDetailResponse
@@ -28,9 +29,14 @@ type (
 	OrganizationPageResponse          = tenant.OrganizationPageResponse
 	OrganizationSelectOptionsRequest  = tenant.OrganizationSelectOptionsRequest
 	OrganizationSwitchStatusRequest   = tenant.OrganizationSwitchStatusRequest
+	OrganizationUpdateLenderRequest   = tenant.OrganizationUpdateLenderRequest
 	OrganizationUpdateOrderRequest    = tenant.OrganizationUpdateOrderRequest
+	OrganizationUpdateProfileRequest  = tenant.OrganizationUpdateProfileRequest
 
 	Organization interface {
+		Create(ctx context.Context, in *OrganizationCreateRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
+		UpdateProfile(ctx context.Context, in *OrganizationUpdateProfileRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
+		UpdateLender(ctx context.Context, in *OrganizationUpdateLenderRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
 		Page(ctx context.Context, in *OrganizationPageRequest, opts ...grpc.CallOption) (*OrganizationPageResponse, error)
 		Detail(ctx context.Context, in *OrganizationDetailRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
 		DetailWithType(ctx context.Context, in *OrganizationDetailWithTypeRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error)
@@ -51,6 +57,21 @@ func NewOrganization(cli zrpc.Client) Organization {
 	return &defaultOrganization{
 		cli: cli,
 	}
+}
+
+func (m *defaultOrganization) Create(ctx context.Context, in *OrganizationCreateRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error) {
+	client := tenant.NewOrganizationClient(m.cli.Conn())
+	return client.Create(ctx, in, opts...)
+}
+
+func (m *defaultOrganization) UpdateProfile(ctx context.Context, in *OrganizationUpdateProfileRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error) {
+	client := tenant.NewOrganizationClient(m.cli.Conn())
+	return client.UpdateProfile(ctx, in, opts...)
+}
+
+func (m *defaultOrganization) UpdateLender(ctx context.Context, in *OrganizationUpdateLenderRequest, opts ...grpc.CallOption) (*OrganizationDetailResponse, error) {
+	client := tenant.NewOrganizationClient(m.cli.Conn())
+	return client.UpdateLender(ctx, in, opts...)
 }
 
 func (m *defaultOrganization) Page(ctx context.Context, in *OrganizationPageRequest, opts ...grpc.CallOption) (*OrganizationPageResponse, error) {

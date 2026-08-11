@@ -685,6 +685,8 @@ type OrganizationUserInviteEmailConfig struct {
 	ExpireSeconds     int32                  `protobuf:"varint,3,opt,name=expire_seconds,json=expireSeconds,proto3" json:"expire_seconds,omitempty"`
 	SendPeriodSeconds int32                  `protobuf:"varint,4,opt,name=send_period_seconds,json=sendPeriodSeconds,proto3" json:"send_period_seconds,omitempty"`
 	Url               string                 `protobuf:"bytes,5,opt,name=url,proto3" json:"url,omitempty"`
+	Logo              string                 `protobuf:"bytes,6,opt,name=logo,proto3" json:"logo,omitempty"`
+	Address           string                 `protobuf:"bytes,7,opt,name=address,proto3" json:"address,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -750,6 +752,20 @@ func (x *OrganizationUserInviteEmailConfig) GetSendPeriodSeconds() int32 {
 func (x *OrganizationUserInviteEmailConfig) GetUrl() string {
 	if x != nil {
 		return x.Url
+	}
+	return ""
+}
+
+func (x *OrganizationUserInviteEmailConfig) GetLogo() string {
+	if x != nil {
+		return x.Logo
+	}
+	return ""
+}
+
+func (x *OrganizationUserInviteEmailConfig) GetAddress() string {
+	if x != nil {
+		return x.Address
 	}
 	return ""
 }
@@ -1003,8 +1019,9 @@ func (x *OrganizationUserAcceptInvitationRequestData) GetLastName() string {
 }
 
 type OrganizationUserAcceptInvitationResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          *proto.UserEntity      `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Data          *proto.UserEntity        `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	Token         *proto.UserLoginResponse `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1042,6 +1059,13 @@ func (*OrganizationUserAcceptInvitationResponse) Descriptor() ([]byte, []int) {
 func (x *OrganizationUserAcceptInvitationResponse) GetData() *proto.UserEntity {
 	if x != nil {
 		return x.Data
+	}
+	return nil
+}
+
+func (x *OrganizationUserAcceptInvitationResponse) GetToken() *proto.UserLoginResponse {
+	if x != nil {
+		return x.Token
 	}
 	return nil
 }
@@ -2066,7 +2090,7 @@ var File_tenant_organization_user_proto protoreflect.FileDescriptor
 
 const file_tenant_organization_user_proto_rawDesc = "" +
 	"\n" +
-	"\x1etenant_organization_user.proto\x12\x06tenant\x1a\x12proto/common.proto\x1a\x12proto/entity.proto\"Z\n" +
+	"\x1etenant_organization_user.proto\x12\x06tenant\x1a\x12proto/common.proto\x1a\x12proto/entity.proto\x1a\x10proto/user.proto\"Z\n" +
 	"\x1bOrganizationUserPageRequest\x12;\n" +
 	"\x04data\x18\x01 \x01(\v2'.tenant.OrganizationUserPageRequestDataR\x04data\"\xb0\x01\n" +
 	"!OrganizationUserPageRequestFilter\x12\x18\n" +
@@ -2115,14 +2139,16 @@ const file_tenant_organization_user_proto_rawDesc = "" +
 	"\x06remark\x18\x05 \x01(\tR\x06remark\x12\x19\n" +
 	"\brole_ids\x18\x06 \x03(\x03R\aroleIds\x12\x1a\n" +
 	"\boperator\x18\a \x01(\tR\boperator\x12L\n" +
-	"\femail_config\x18\b \x01(\v2).tenant.OrganizationUserInviteEmailConfigR\vemailConfig\"\xc6\x01\n" +
+	"\femail_config\x18\b \x01(\v2).tenant.OrganizationUserInviteEmailConfigR\vemailConfig\"\xf4\x01\n" +
 	"!OrganizationUserInviteEmailConfig\x12\x1d\n" +
 	"\n" +
 	"host_email\x18\x01 \x01(\tR\thostEmail\x12\x19\n" +
 	"\btpl_name\x18\x02 \x01(\tR\atplName\x12%\n" +
 	"\x0eexpire_seconds\x18\x03 \x01(\x05R\rexpireSeconds\x12.\n" +
 	"\x13send_period_seconds\x18\x04 \x01(\x05R\x11sendPeriodSeconds\x12\x10\n" +
-	"\x03url\x18\x05 \x01(\tR\x03url\"p\n" +
+	"\x03url\x18\x05 \x01(\tR\x03url\x12\x12\n" +
+	"\x04logo\x18\x06 \x01(\tR\x04logo\x12\x18\n" +
+	"\aaddress\x18\a \x01(\tR\aaddress\"p\n" +
 	"&OrganizationUserSendInviteEmailRequest\x12F\n" +
 	"\x04data\x18\x01 \x01(\v22.tenant.OrganizationUserSendInviteEmailRequestDataR\x04data\"\xec\x01\n" +
 	"*OrganizationUserSendInviteEmailRequestData\x12\x1b\n" +
@@ -2140,9 +2166,10 @@ const file_tenant_organization_user_proto_rawDesc = "" +
 	"\x05email\x18\x04 \x01(\tR\x05email\x12\x1d\n" +
 	"\n" +
 	"first_name\x18\x05 \x01(\tR\tfirstName\x12\x1b\n" +
-	"\tlast_name\x18\x06 \x01(\tR\blastName\"Q\n" +
+	"\tlast_name\x18\x06 \x01(\tR\blastName\"\x81\x01\n" +
 	"(OrganizationUserAcceptInvitationResponse\x12%\n" +
-	"\x04data\x18\x01 \x01(\v2\x11.proto.UserEntityR\x04data\"x\n" +
+	"\x04data\x18\x01 \x01(\v2\x11.proto.UserEntityR\x04data\x12.\n" +
+	"\x05token\x18\x02 \x01(\v2\x18.proto.UserLoginResponseR\x05token\"x\n" +
 	"*OrganizationUserCheckInvitationCodeRequest\x12J\n" +
 	"\x04data\x18\x01 \x01(\v26.tenant.OrganizationUserCheckInvitationCodeRequestDataR\x04data\"\xa0\x01\n" +
 	".OrganizationUserCheckInvitationCodeRequestData\x12\x1b\n" +
@@ -2277,7 +2304,8 @@ var file_tenant_organization_user_proto_goTypes = []any{
 	(*proto.CommonPageSorter)(nil),                          // 34: proto.CommonPageSorter
 	(*proto.OrganizationUserEntity)(nil),                    // 35: proto.OrganizationUserEntity
 	(*proto.UserEntity)(nil),                                // 36: proto.UserEntity
-	(*proto.EmptyResponse)(nil),                             // 37: proto.EmptyResponse
+	(*proto.UserLoginResponse)(nil),                         // 37: proto.UserLoginResponse
+	(*proto.EmptyResponse)(nil),                             // 38: proto.EmptyResponse
 }
 var file_tenant_organization_user_proto_depIdxs = []int32{
 	2,  // 0: tenant.OrganizationUserPageRequest.data:type_name -> tenant.OrganizationUserPageRequestData
@@ -2293,46 +2321,47 @@ var file_tenant_organization_user_proto_depIdxs = []int32{
 	10, // 10: tenant.OrganizationUserSendInviteEmailRequestData.email_config:type_name -> tenant.OrganizationUserInviteEmailConfig
 	14, // 11: tenant.OrganizationUserAcceptInvitationRequest.data:type_name -> tenant.OrganizationUserAcceptInvitationRequestData
 	36, // 12: tenant.OrganizationUserAcceptInvitationResponse.data:type_name -> proto.UserEntity
-	17, // 13: tenant.OrganizationUserCheckInvitationCodeRequest.data:type_name -> tenant.OrganizationUserCheckInvitationCodeRequestData
-	20, // 14: tenant.OrganizationUserUpdateRequest.data:type_name -> tenant.OrganizationUserUpdateRequestData
-	22, // 15: tenant.OrganizationUserUpdateProfileRequest.data:type_name -> tenant.OrganizationUserUpdateProfileRequestData
-	24, // 16: tenant.OrganizationUserAllOrganizationUsersRequest.data:type_name -> tenant.OrganizationUserAllOrganizationUsersRequestData
-	35, // 17: tenant.OrganizationUserAllOrganizationUsersResponse.data:type_name -> proto.OrganizationUserEntity
-	27, // 18: tenant.OrganizationUserDetailRequest.data:type_name -> tenant.OrganizationUserDetailRequestData
-	29, // 19: tenant.OrganizationUserSwitchStatusRequest.data:type_name -> tenant.OrganizationUserSwitchStatusRequestData
-	31, // 20: tenant.OrganizationUserAssignRolesRequest.data:type_name -> tenant.OrganizationUserAssignRolesRequestData
-	33, // 21: tenant.OrganizationUserDeleteRequest.data:type_name -> tenant.OrganizationUserDeleteRequestData
-	0,  // 22: tenant.OrganizationUser.Page:input_type -> tenant.OrganizationUserPageRequest
-	5,  // 23: tenant.OrganizationUser.CreateAdminOrganizationUser:input_type -> tenant.OrganizationUserCreateAdminRequest
-	8,  // 24: tenant.OrganizationUser.InviteOrganizationUser:input_type -> tenant.OrganizationUserInviteRequest
-	11, // 25: tenant.OrganizationUser.SendInviteEmail:input_type -> tenant.OrganizationUserSendInviteEmailRequest
-	13, // 26: tenant.OrganizationUser.AcceptInvitation:input_type -> tenant.OrganizationUserAcceptInvitationRequest
-	16, // 27: tenant.OrganizationUser.CheckInvitationCode:input_type -> tenant.OrganizationUserCheckInvitationCodeRequest
-	19, // 28: tenant.OrganizationUser.UpdateOrganizationUser:input_type -> tenant.OrganizationUserUpdateRequest
-	21, // 29: tenant.OrganizationUser.UpdateProfile:input_type -> tenant.OrganizationUserUpdateProfileRequest
-	23, // 30: tenant.OrganizationUser.AllOrganizationUsers:input_type -> tenant.OrganizationUserAllOrganizationUsersRequest
-	26, // 31: tenant.OrganizationUser.Detail:input_type -> tenant.OrganizationUserDetailRequest
-	28, // 32: tenant.OrganizationUser.SwitchStatus:input_type -> tenant.OrganizationUserSwitchStatusRequest
-	30, // 33: tenant.OrganizationUser.AssignRoles:input_type -> tenant.OrganizationUserAssignRolesRequest
-	32, // 34: tenant.OrganizationUser.Delete:input_type -> tenant.OrganizationUserDeleteRequest
-	3,  // 35: tenant.OrganizationUser.Page:output_type -> tenant.OrganizationUserPageResponse
-	7,  // 36: tenant.OrganizationUser.CreateAdminOrganizationUser:output_type -> tenant.OrganizationUserDetailResponse
-	7,  // 37: tenant.OrganizationUser.InviteOrganizationUser:output_type -> tenant.OrganizationUserDetailResponse
-	37, // 38: tenant.OrganizationUser.SendInviteEmail:output_type -> proto.EmptyResponse
-	15, // 39: tenant.OrganizationUser.AcceptInvitation:output_type -> tenant.OrganizationUserAcceptInvitationResponse
-	18, // 40: tenant.OrganizationUser.CheckInvitationCode:output_type -> tenant.OrganizationUserCheckInvitationCodeResponse
-	7,  // 41: tenant.OrganizationUser.UpdateOrganizationUser:output_type -> tenant.OrganizationUserDetailResponse
-	37, // 42: tenant.OrganizationUser.UpdateProfile:output_type -> proto.EmptyResponse
-	25, // 43: tenant.OrganizationUser.AllOrganizationUsers:output_type -> tenant.OrganizationUserAllOrganizationUsersResponse
-	7,  // 44: tenant.OrganizationUser.Detail:output_type -> tenant.OrganizationUserDetailResponse
-	37, // 45: tenant.OrganizationUser.SwitchStatus:output_type -> proto.EmptyResponse
-	37, // 46: tenant.OrganizationUser.AssignRoles:output_type -> proto.EmptyResponse
-	37, // 47: tenant.OrganizationUser.Delete:output_type -> proto.EmptyResponse
-	35, // [35:48] is the sub-list for method output_type
-	22, // [22:35] is the sub-list for method input_type
-	22, // [22:22] is the sub-list for extension type_name
-	22, // [22:22] is the sub-list for extension extendee
-	0,  // [0:22] is the sub-list for field type_name
+	37, // 13: tenant.OrganizationUserAcceptInvitationResponse.token:type_name -> proto.UserLoginResponse
+	17, // 14: tenant.OrganizationUserCheckInvitationCodeRequest.data:type_name -> tenant.OrganizationUserCheckInvitationCodeRequestData
+	20, // 15: tenant.OrganizationUserUpdateRequest.data:type_name -> tenant.OrganizationUserUpdateRequestData
+	22, // 16: tenant.OrganizationUserUpdateProfileRequest.data:type_name -> tenant.OrganizationUserUpdateProfileRequestData
+	24, // 17: tenant.OrganizationUserAllOrganizationUsersRequest.data:type_name -> tenant.OrganizationUserAllOrganizationUsersRequestData
+	35, // 18: tenant.OrganizationUserAllOrganizationUsersResponse.data:type_name -> proto.OrganizationUserEntity
+	27, // 19: tenant.OrganizationUserDetailRequest.data:type_name -> tenant.OrganizationUserDetailRequestData
+	29, // 20: tenant.OrganizationUserSwitchStatusRequest.data:type_name -> tenant.OrganizationUserSwitchStatusRequestData
+	31, // 21: tenant.OrganizationUserAssignRolesRequest.data:type_name -> tenant.OrganizationUserAssignRolesRequestData
+	33, // 22: tenant.OrganizationUserDeleteRequest.data:type_name -> tenant.OrganizationUserDeleteRequestData
+	0,  // 23: tenant.OrganizationUser.Page:input_type -> tenant.OrganizationUserPageRequest
+	5,  // 24: tenant.OrganizationUser.CreateAdminOrganizationUser:input_type -> tenant.OrganizationUserCreateAdminRequest
+	8,  // 25: tenant.OrganizationUser.InviteOrganizationUser:input_type -> tenant.OrganizationUserInviteRequest
+	11, // 26: tenant.OrganizationUser.SendInviteEmail:input_type -> tenant.OrganizationUserSendInviteEmailRequest
+	13, // 27: tenant.OrganizationUser.AcceptInvitation:input_type -> tenant.OrganizationUserAcceptInvitationRequest
+	16, // 28: tenant.OrganizationUser.CheckInvitationCode:input_type -> tenant.OrganizationUserCheckInvitationCodeRequest
+	19, // 29: tenant.OrganizationUser.UpdateOrganizationUser:input_type -> tenant.OrganizationUserUpdateRequest
+	21, // 30: tenant.OrganizationUser.UpdateProfile:input_type -> tenant.OrganizationUserUpdateProfileRequest
+	23, // 31: tenant.OrganizationUser.AllOrganizationUsers:input_type -> tenant.OrganizationUserAllOrganizationUsersRequest
+	26, // 32: tenant.OrganizationUser.Detail:input_type -> tenant.OrganizationUserDetailRequest
+	28, // 33: tenant.OrganizationUser.SwitchStatus:input_type -> tenant.OrganizationUserSwitchStatusRequest
+	30, // 34: tenant.OrganizationUser.AssignRoles:input_type -> tenant.OrganizationUserAssignRolesRequest
+	32, // 35: tenant.OrganizationUser.Delete:input_type -> tenant.OrganizationUserDeleteRequest
+	3,  // 36: tenant.OrganizationUser.Page:output_type -> tenant.OrganizationUserPageResponse
+	7,  // 37: tenant.OrganizationUser.CreateAdminOrganizationUser:output_type -> tenant.OrganizationUserDetailResponse
+	7,  // 38: tenant.OrganizationUser.InviteOrganizationUser:output_type -> tenant.OrganizationUserDetailResponse
+	38, // 39: tenant.OrganizationUser.SendInviteEmail:output_type -> proto.EmptyResponse
+	15, // 40: tenant.OrganizationUser.AcceptInvitation:output_type -> tenant.OrganizationUserAcceptInvitationResponse
+	18, // 41: tenant.OrganizationUser.CheckInvitationCode:output_type -> tenant.OrganizationUserCheckInvitationCodeResponse
+	7,  // 42: tenant.OrganizationUser.UpdateOrganizationUser:output_type -> tenant.OrganizationUserDetailResponse
+	38, // 43: tenant.OrganizationUser.UpdateProfile:output_type -> proto.EmptyResponse
+	25, // 44: tenant.OrganizationUser.AllOrganizationUsers:output_type -> tenant.OrganizationUserAllOrganizationUsersResponse
+	7,  // 45: tenant.OrganizationUser.Detail:output_type -> tenant.OrganizationUserDetailResponse
+	38, // 46: tenant.OrganizationUser.SwitchStatus:output_type -> proto.EmptyResponse
+	38, // 47: tenant.OrganizationUser.AssignRoles:output_type -> proto.EmptyResponse
+	38, // 48: tenant.OrganizationUser.Delete:output_type -> proto.EmptyResponse
+	36, // [36:49] is the sub-list for method output_type
+	23, // [23:36] is the sub-list for method input_type
+	23, // [23:23] is the sub-list for extension type_name
+	23, // [23:23] is the sub-list for extension extendee
+	0,  // [0:23] is the sub-list for field type_name
 }
 
 func init() { file_tenant_organization_user_proto_init() }

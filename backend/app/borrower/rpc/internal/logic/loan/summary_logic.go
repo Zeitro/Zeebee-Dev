@@ -29,7 +29,7 @@ func NewSummaryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SummaryLo
 
 func (l *SummaryLogic) Summary(in *borrower.LoanSummaryRequest) (resp *borrower.LoanSummaryResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}

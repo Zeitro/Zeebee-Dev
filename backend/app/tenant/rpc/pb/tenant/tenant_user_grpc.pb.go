@@ -32,6 +32,7 @@ const (
 	User_UserInfo_FullMethodName               = "/tenant.User/UserInfo"
 	User_EditProfile_FullMethodName            = "/tenant.User/EditProfile"
 	User_CreateAdminUser_FullMethodName        = "/tenant.User/CreateAdminUser"
+	User_GetClaim_FullMethodName               = "/tenant.User/GetClaim"
 )
 
 // UserClient is the client API for User service.
@@ -50,6 +51,7 @@ type UserClient interface {
 	UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*proto.UserinfoResponse, error)
 	EditProfile(ctx context.Context, in *EditProfileRequest, opts ...grpc.CallOption) (*proto.UserinfoResponse, error)
 	CreateAdminUser(ctx context.Context, in *CreateAdminUserRequest, opts ...grpc.CallOption) (*CreateAdminUserResponse, error)
+	GetClaim(ctx context.Context, in *GetClaimRequest, opts ...grpc.CallOption) (*GetClaimResponse, error)
 }
 
 type userClient struct {
@@ -180,6 +182,16 @@ func (c *userClient) CreateAdminUser(ctx context.Context, in *CreateAdminUserReq
 	return out, nil
 }
 
+func (c *userClient) GetClaim(ctx context.Context, in *GetClaimRequest, opts ...grpc.CallOption) (*GetClaimResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetClaimResponse)
+	err := c.cc.Invoke(ctx, User_GetClaim_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility.
@@ -196,6 +208,7 @@ type UserServer interface {
 	UserInfo(context.Context, *UserInfoRequest) (*proto.UserinfoResponse, error)
 	EditProfile(context.Context, *EditProfileRequest) (*proto.UserinfoResponse, error)
 	CreateAdminUser(context.Context, *CreateAdminUserRequest) (*CreateAdminUserResponse, error)
+	GetClaim(context.Context, *GetClaimRequest) (*GetClaimResponse, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -241,6 +254,9 @@ func (UnimplementedUserServer) EditProfile(context.Context, *EditProfileRequest)
 }
 func (UnimplementedUserServer) CreateAdminUser(context.Context, *CreateAdminUserRequest) (*CreateAdminUserResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateAdminUser not implemented")
+}
+func (UnimplementedUserServer) GetClaim(context.Context, *GetClaimRequest) (*GetClaimResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetClaim not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 func (UnimplementedUserServer) testEmbeddedByValue()              {}
@@ -479,6 +495,24 @@ func _User_CreateAdminUser_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _User_GetClaim_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetClaimRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).GetClaim(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_GetClaim_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).GetClaim(ctx, req.(*GetClaimRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -533,6 +567,10 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateAdminUser",
 			Handler:    _User_CreateAdminUser_Handler,
+		},
+		{
+			MethodName: "GetClaim",
+			Handler:    _User_GetClaim_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

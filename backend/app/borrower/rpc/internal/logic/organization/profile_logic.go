@@ -6,9 +6,8 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/copierx"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
@@ -30,20 +29,18 @@ func NewProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ProfileLo
 
 func (l *ProfileLogic) Profile(in *proto.EmptyRequest) (resp *borrower.OrganizationInfoResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	organization, err := l.baseLogic.OrganizationLogic.DetailWithType(l.ctx, claim.OrganizationId, constants.UserTypeBorrower)
+	organization, err := l.svcCtx.TenantClient.Organization.DetailWithType(l.ctx, &tenant.OrganizationDetailWithTypeRequest{Data: &tenant.OrganizationDetailWithTypeRequestData{
+		UserType: string(constants.UserTypeBorrower),
+		Id:       claim.OrganizationId,
+	}})
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[dto.OrganizationEntityDto, proto.OrganizationEntity](organization, copierx.TimeToRFC3339Str())
-	if err != nil {
-		return nil, err
-	}
-
 	return &borrower.OrganizationInfoResponse{
-		Data: data,
+		Data: organization.Data,
 	}, nil
 }

@@ -67,11 +67,12 @@ func (x *OrganizationTemplateDetailRequest) GetData() *OrganizationTemplateDetai
 }
 
 type OrganizationTemplateDetailRequestData struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserType      string                 `protobuf:"bytes,1,opt,name=user_type,json=userType,proto3" json:"user_type,omitempty"`
-	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	UserType       string                 `protobuf:"bytes,1,opt,name=user_type,json=userType,proto3" json:"user_type,omitempty"`
+	Id             int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	OrganizationId int64                  `protobuf:"varint,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"` // required for lender/borrower callers
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *OrganizationTemplateDetailRequestData) Reset() {
@@ -114,6 +115,13 @@ func (x *OrganizationTemplateDetailRequestData) GetUserType() string {
 func (x *OrganizationTemplateDetailRequestData) GetId() int64 {
 	if x != nil {
 		return x.Id
+	}
+	return 0
+}
+
+func (x *OrganizationTemplateDetailRequestData) GetOrganizationId() int64 {
+	if x != nil {
+		return x.OrganizationId
 	}
 	return 0
 }
@@ -1016,10 +1024,11 @@ const file_tenant_organization_template_proto_rawDesc = "" +
 	"\n" +
 	"\"tenant_organization_template.proto\x12\x06tenant\x1a\x12proto/common.proto\x1a\x12proto/entity.proto\"f\n" +
 	"!OrganizationTemplateDetailRequest\x12A\n" +
-	"\x04data\x18\x01 \x01(\v2-.tenant.OrganizationTemplateDetailRequestDataR\x04data\"T\n" +
+	"\x04data\x18\x01 \x01(\v2-.tenant.OrganizationTemplateDetailRequestDataR\x04data\"}\n" +
 	"%OrganizationTemplateDetailRequestData\x12\x1b\n" +
 	"\tuser_type\x18\x01 \x01(\tR\buserType\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"x\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\x12'\n" +
+	"\x0forganization_id\x18\x03 \x01(\x03R\x0eorganizationId\"x\n" +
 	"*OrganizationTemplateDetailByPurposeRequest\x12J\n" +
 	"\x04data\x18\x01 \x01(\v26.tenant.OrganizationTemplateDetailByPurposeRequestDataR\x04data\"\x90\x01\n" +
 	".OrganizationTemplateDetailByPurposeRequestData\x12\x1b\n" +

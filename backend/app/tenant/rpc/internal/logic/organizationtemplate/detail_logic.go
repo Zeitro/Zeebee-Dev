@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
 )
@@ -27,13 +28,17 @@ func (l *DetailLogic) Detail(in *tenant.OrganizationTemplateDetailRequest) (resp
 	if in.Data == nil {
 		return nil, errorx.ErrorEmptyRequestData
 	}
-	if _, err = logic.ParseUserType(in.Data.UserType); err != nil {
+	userType, err := logic.ParseUserType(in.Data.UserType)
+	if err != nil {
 		return
 	}
 
 	result, err := l.baseLogic.OrganizationTemplateLogic.Detail(l.ctx, in.Data.Id)
 	if err != nil {
 		return
+	}
+	if userType != constants.UserTypeAdmin && result.OrganizationId != in.Data.OrganizationId {
+		return nil, errorx.New("template does not belong to organization")
 	}
 
 	data, err := copierx.Trans[dto.OrganizationTemplateEntityDto, proto.OrganizationTemplateEntity](result, copierx.TimeToRFC3339Str())

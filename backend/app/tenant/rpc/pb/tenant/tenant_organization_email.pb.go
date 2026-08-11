@@ -358,6 +358,382 @@ func (x *OrganizationEmailGenerateAuthCodeUrlResponseData) GetUrl() string {
 	return ""
 }
 
+type OrganizationEmailAuthorizeRequest struct {
+	state         protoimpl.MessageState                 `protogen:"open.v1"`
+	Data          *OrganizationEmailAuthorizeRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrganizationEmailAuthorizeRequest) Reset() {
+	*x = OrganizationEmailAuthorizeRequest{}
+	mi := &file_tenant_organization_email_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrganizationEmailAuthorizeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrganizationEmailAuthorizeRequest) ProtoMessage() {}
+
+func (x *OrganizationEmailAuthorizeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_email_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrganizationEmailAuthorizeRequest.ProtoReflect.Descriptor instead.
+func (*OrganizationEmailAuthorizeRequest) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_email_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *OrganizationEmailAuthorizeRequest) GetData() *OrganizationEmailAuthorizeRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type OrganizationEmailAuthorizeRequestData struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	UserType       string                 `protobuf:"bytes,1,opt,name=user_type,json=userType,proto3" json:"user_type,omitempty"`
+	OrganizationId int64                  `protobuf:"varint,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	UserId         int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Code           string                 `protobuf:"bytes,4,opt,name=code,proto3" json:"code,omitempty"`
+	State          string                 `protobuf:"bytes,5,opt,name=state,proto3" json:"state,omitempty"`
+	Scope          string                 `protobuf:"bytes,6,opt,name=scope,proto3" json:"scope,omitempty"`
+	EmailProvider  string                 `protobuf:"bytes,7,opt,name=email_provider,json=emailProvider,proto3" json:"email_provider,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *OrganizationEmailAuthorizeRequestData) Reset() {
+	*x = OrganizationEmailAuthorizeRequestData{}
+	mi := &file_tenant_organization_email_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrganizationEmailAuthorizeRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrganizationEmailAuthorizeRequestData) ProtoMessage() {}
+
+func (x *OrganizationEmailAuthorizeRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_email_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrganizationEmailAuthorizeRequestData.ProtoReflect.Descriptor instead.
+func (*OrganizationEmailAuthorizeRequestData) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_email_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *OrganizationEmailAuthorizeRequestData) GetUserType() string {
+	if x != nil {
+		return x.UserType
+	}
+	return ""
+}
+
+func (x *OrganizationEmailAuthorizeRequestData) GetOrganizationId() int64 {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return 0
+}
+
+func (x *OrganizationEmailAuthorizeRequestData) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *OrganizationEmailAuthorizeRequestData) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+func (x *OrganizationEmailAuthorizeRequestData) GetState() string {
+	if x != nil {
+		return x.State
+	}
+	return ""
+}
+
+func (x *OrganizationEmailAuthorizeRequestData) GetScope() string {
+	if x != nil {
+		return x.Scope
+	}
+	return ""
+}
+
+func (x *OrganizationEmailAuthorizeRequestData) GetEmailProvider() string {
+	if x != nil {
+		return x.EmailProvider
+	}
+	return ""
+}
+
+type OrganizationEmailGetAuthorizationRequest struct {
+	state         protoimpl.MessageState                        `protogen:"open.v1"`
+	Data          *OrganizationEmailGetAuthorizationRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrganizationEmailGetAuthorizationRequest) Reset() {
+	*x = OrganizationEmailGetAuthorizationRequest{}
+	mi := &file_tenant_organization_email_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrganizationEmailGetAuthorizationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrganizationEmailGetAuthorizationRequest) ProtoMessage() {}
+
+func (x *OrganizationEmailGetAuthorizationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_email_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrganizationEmailGetAuthorizationRequest.ProtoReflect.Descriptor instead.
+func (*OrganizationEmailGetAuthorizationRequest) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_email_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *OrganizationEmailGetAuthorizationRequest) GetData() *OrganizationEmailGetAuthorizationRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type OrganizationEmailGetAuthorizationRequestData struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	OrganizationId int64                  `protobuf:"varint,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	UserId         int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Purpose        string                 `protobuf:"bytes,3,opt,name=purpose,proto3" json:"purpose,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *OrganizationEmailGetAuthorizationRequestData) Reset() {
+	*x = OrganizationEmailGetAuthorizationRequestData{}
+	mi := &file_tenant_organization_email_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrganizationEmailGetAuthorizationRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrganizationEmailGetAuthorizationRequestData) ProtoMessage() {}
+
+func (x *OrganizationEmailGetAuthorizationRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_email_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrganizationEmailGetAuthorizationRequestData.ProtoReflect.Descriptor instead.
+func (*OrganizationEmailGetAuthorizationRequestData) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_email_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *OrganizationEmailGetAuthorizationRequestData) GetOrganizationId() int64 {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return 0
+}
+
+func (x *OrganizationEmailGetAuthorizationRequestData) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *OrganizationEmailGetAuthorizationRequestData) GetPurpose() string {
+	if x != nil {
+		return x.Purpose
+	}
+	return ""
+}
+
+type OrganizationEmailGetAuthorizationResponse struct {
+	state         protoimpl.MessageState                         `protogen:"open.v1"`
+	Data          *OrganizationEmailGetAuthorizationResponseData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrganizationEmailGetAuthorizationResponse) Reset() {
+	*x = OrganizationEmailGetAuthorizationResponse{}
+	mi := &file_tenant_organization_email_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrganizationEmailGetAuthorizationResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrganizationEmailGetAuthorizationResponse) ProtoMessage() {}
+
+func (x *OrganizationEmailGetAuthorizationResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_email_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrganizationEmailGetAuthorizationResponse.ProtoReflect.Descriptor instead.
+func (*OrganizationEmailGetAuthorizationResponse) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_email_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *OrganizationEmailGetAuthorizationResponse) GetData() *OrganizationEmailGetAuthorizationResponseData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type OrganizationEmailGetAuthorizationResponseData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	EmailProvider string                 `protobuf:"bytes,2,opt,name=email_provider,json=emailProvider,proto3" json:"email_provider,omitempty"`
+	IsAuthorized  bool                   `protobuf:"varint,3,opt,name=is_authorized,json=isAuthorized,proto3" json:"is_authorized,omitempty"`
+	AccessToken   string                 `protobuf:"bytes,4,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	RefreshToken  string                 `protobuf:"bytes,5,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+	TokenType     string                 `protobuf:"bytes,6,opt,name=token_type,json=tokenType,proto3" json:"token_type,omitempty"`
+	Expiry        string                 `protobuf:"bytes,7,opt,name=expiry,proto3" json:"expiry,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrganizationEmailGetAuthorizationResponseData) Reset() {
+	*x = OrganizationEmailGetAuthorizationResponseData{}
+	mi := &file_tenant_organization_email_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrganizationEmailGetAuthorizationResponseData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrganizationEmailGetAuthorizationResponseData) ProtoMessage() {}
+
+func (x *OrganizationEmailGetAuthorizationResponseData) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_email_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrganizationEmailGetAuthorizationResponseData.ProtoReflect.Descriptor instead.
+func (*OrganizationEmailGetAuthorizationResponseData) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_email_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *OrganizationEmailGetAuthorizationResponseData) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *OrganizationEmailGetAuthorizationResponseData) GetEmailProvider() string {
+	if x != nil {
+		return x.EmailProvider
+	}
+	return ""
+}
+
+func (x *OrganizationEmailGetAuthorizationResponseData) GetIsAuthorized() bool {
+	if x != nil {
+		return x.IsAuthorized
+	}
+	return false
+}
+
+func (x *OrganizationEmailGetAuthorizationResponseData) GetAccessToken() string {
+	if x != nil {
+		return x.AccessToken
+	}
+	return ""
+}
+
+func (x *OrganizationEmailGetAuthorizationResponseData) GetRefreshToken() string {
+	if x != nil {
+		return x.RefreshToken
+	}
+	return ""
+}
+
+func (x *OrganizationEmailGetAuthorizationResponseData) GetTokenType() string {
+	if x != nil {
+		return x.TokenType
+	}
+	return ""
+}
+
+func (x *OrganizationEmailGetAuthorizationResponseData) GetExpiry() string {
+	if x != nil {
+		return x.Expiry
+	}
+	return ""
+}
+
 var File_tenant_organization_email_proto protoreflect.FileDescriptor
 
 const file_tenant_organization_email_proto_rawDesc = "" +
@@ -383,10 +759,39 @@ const file_tenant_organization_email_proto_rawDesc = "" +
 	",OrganizationEmailGenerateAuthCodeUrlResponse\x12L\n" +
 	"\x04data\x18\x01 \x01(\v28.tenant.OrganizationEmailGenerateAuthCodeUrlResponseDataR\x04data\"D\n" +
 	"0OrganizationEmailGenerateAuthCodeUrlResponseData\x12\x10\n" +
-	"\x03url\x18\x01 \x01(\tR\x03url2\xe4\x01\n" +
+	"\x03url\x18\x01 \x01(\tR\x03url\"f\n" +
+	"!OrganizationEmailAuthorizeRequest\x12A\n" +
+	"\x04data\x18\x01 \x01(\v2-.tenant.OrganizationEmailAuthorizeRequestDataR\x04data\"\xed\x01\n" +
+	"%OrganizationEmailAuthorizeRequestData\x12\x1b\n" +
+	"\tuser_type\x18\x01 \x01(\tR\buserType\x12'\n" +
+	"\x0forganization_id\x18\x02 \x01(\x03R\x0eorganizationId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x12\n" +
+	"\x04code\x18\x04 \x01(\tR\x04code\x12\x14\n" +
+	"\x05state\x18\x05 \x01(\tR\x05state\x12\x14\n" +
+	"\x05scope\x18\x06 \x01(\tR\x05scope\x12%\n" +
+	"\x0eemail_provider\x18\a \x01(\tR\remailProvider\"t\n" +
+	"(OrganizationEmailGetAuthorizationRequest\x12H\n" +
+	"\x04data\x18\x01 \x01(\v24.tenant.OrganizationEmailGetAuthorizationRequestDataR\x04data\"\x8a\x01\n" +
+	",OrganizationEmailGetAuthorizationRequestData\x12'\n" +
+	"\x0forganization_id\x18\x01 \x01(\x03R\x0eorganizationId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x18\n" +
+	"\apurpose\x18\x03 \x01(\tR\apurpose\"v\n" +
+	")OrganizationEmailGetAuthorizationResponse\x12I\n" +
+	"\x04data\x18\x01 \x01(\v25.tenant.OrganizationEmailGetAuthorizationResponseDataR\x04data\"\x90\x02\n" +
+	"-OrganizationEmailGetAuthorizationResponseData\x12\x14\n" +
+	"\x05email\x18\x01 \x01(\tR\x05email\x12%\n" +
+	"\x0eemail_provider\x18\x02 \x01(\tR\remailProvider\x12#\n" +
+	"\ris_authorized\x18\x03 \x01(\bR\fisAuthorized\x12!\n" +
+	"\faccess_token\x18\x04 \x01(\tR\vaccessToken\x12#\n" +
+	"\rrefresh_token\x18\x05 \x01(\tR\frefreshToken\x12\x1d\n" +
+	"\n" +
+	"token_type\x18\x06 \x01(\tR\ttokenType\x12\x16\n" +
+	"\x06expiry\x18\a \x01(\tR\x06expiry2\xab\x03\n" +
 	"\x11OrganizationEmail\x12L\n" +
 	"\tSaveEmail\x12).tenant.OrganizationEmailSaveEmailRequest\x1a\x14.proto.EmptyResponse\x12\x80\x01\n" +
-	"\x13GenerateAuthCodeUrl\x123.tenant.OrganizationEmailGenerateAuthCodeUrlRequest\x1a4.tenant.OrganizationEmailGenerateAuthCodeUrlResponseB)Z'zeebee-backend/app/tenant/rpc/pb/tenantb\x06proto3"
+	"\x13GenerateAuthCodeUrl\x123.tenant.OrganizationEmailGenerateAuthCodeUrlRequest\x1a4.tenant.OrganizationEmailGenerateAuthCodeUrlResponse\x12L\n" +
+	"\tAuthorize\x12).tenant.OrganizationEmailAuthorizeRequest\x1a\x14.proto.EmptyResponse\x12w\n" +
+	"\x10GetAuthorization\x120.tenant.OrganizationEmailGetAuthorizationRequest\x1a1.tenant.OrganizationEmailGetAuthorizationResponseB)Z'zeebee-backend/app/tenant/rpc/pb/tenantb\x06proto3"
 
 var (
 	file_tenant_organization_email_proto_rawDescOnce sync.Once
@@ -400,7 +805,7 @@ func file_tenant_organization_email_proto_rawDescGZIP() []byte {
 	return file_tenant_organization_email_proto_rawDescData
 }
 
-var file_tenant_organization_email_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_tenant_organization_email_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_tenant_organization_email_proto_goTypes = []any{
 	(*OrganizationEmailSaveEmailRequest)(nil),                // 0: tenant.OrganizationEmailSaveEmailRequest
 	(*OrganizationEmailSaveEmailRequestData)(nil),            // 1: tenant.OrganizationEmailSaveEmailRequestData
@@ -408,21 +813,34 @@ var file_tenant_organization_email_proto_goTypes = []any{
 	(*OrganizationEmailGenerateAuthCodeUrlRequestData)(nil),  // 3: tenant.OrganizationEmailGenerateAuthCodeUrlRequestData
 	(*OrganizationEmailGenerateAuthCodeUrlResponse)(nil),     // 4: tenant.OrganizationEmailGenerateAuthCodeUrlResponse
 	(*OrganizationEmailGenerateAuthCodeUrlResponseData)(nil), // 5: tenant.OrganizationEmailGenerateAuthCodeUrlResponseData
-	(*proto.EmptyResponse)(nil),                              // 6: proto.EmptyResponse
+	(*OrganizationEmailAuthorizeRequest)(nil),                // 6: tenant.OrganizationEmailAuthorizeRequest
+	(*OrganizationEmailAuthorizeRequestData)(nil),            // 7: tenant.OrganizationEmailAuthorizeRequestData
+	(*OrganizationEmailGetAuthorizationRequest)(nil),         // 8: tenant.OrganizationEmailGetAuthorizationRequest
+	(*OrganizationEmailGetAuthorizationRequestData)(nil),     // 9: tenant.OrganizationEmailGetAuthorizationRequestData
+	(*OrganizationEmailGetAuthorizationResponse)(nil),        // 10: tenant.OrganizationEmailGetAuthorizationResponse
+	(*OrganizationEmailGetAuthorizationResponseData)(nil),    // 11: tenant.OrganizationEmailGetAuthorizationResponseData
+	(*proto.EmptyResponse)(nil),                              // 12: proto.EmptyResponse
 }
 var file_tenant_organization_email_proto_depIdxs = []int32{
-	1, // 0: tenant.OrganizationEmailSaveEmailRequest.data:type_name -> tenant.OrganizationEmailSaveEmailRequestData
-	3, // 1: tenant.OrganizationEmailGenerateAuthCodeUrlRequest.data:type_name -> tenant.OrganizationEmailGenerateAuthCodeUrlRequestData
-	5, // 2: tenant.OrganizationEmailGenerateAuthCodeUrlResponse.data:type_name -> tenant.OrganizationEmailGenerateAuthCodeUrlResponseData
-	0, // 3: tenant.OrganizationEmail.SaveEmail:input_type -> tenant.OrganizationEmailSaveEmailRequest
-	2, // 4: tenant.OrganizationEmail.GenerateAuthCodeUrl:input_type -> tenant.OrganizationEmailGenerateAuthCodeUrlRequest
-	6, // 5: tenant.OrganizationEmail.SaveEmail:output_type -> proto.EmptyResponse
-	4, // 6: tenant.OrganizationEmail.GenerateAuthCodeUrl:output_type -> tenant.OrganizationEmailGenerateAuthCodeUrlResponse
-	5, // [5:7] is the sub-list for method output_type
-	3, // [3:5] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	1,  // 0: tenant.OrganizationEmailSaveEmailRequest.data:type_name -> tenant.OrganizationEmailSaveEmailRequestData
+	3,  // 1: tenant.OrganizationEmailGenerateAuthCodeUrlRequest.data:type_name -> tenant.OrganizationEmailGenerateAuthCodeUrlRequestData
+	5,  // 2: tenant.OrganizationEmailGenerateAuthCodeUrlResponse.data:type_name -> tenant.OrganizationEmailGenerateAuthCodeUrlResponseData
+	7,  // 3: tenant.OrganizationEmailAuthorizeRequest.data:type_name -> tenant.OrganizationEmailAuthorizeRequestData
+	9,  // 4: tenant.OrganizationEmailGetAuthorizationRequest.data:type_name -> tenant.OrganizationEmailGetAuthorizationRequestData
+	11, // 5: tenant.OrganizationEmailGetAuthorizationResponse.data:type_name -> tenant.OrganizationEmailGetAuthorizationResponseData
+	0,  // 6: tenant.OrganizationEmail.SaveEmail:input_type -> tenant.OrganizationEmailSaveEmailRequest
+	2,  // 7: tenant.OrganizationEmail.GenerateAuthCodeUrl:input_type -> tenant.OrganizationEmailGenerateAuthCodeUrlRequest
+	6,  // 8: tenant.OrganizationEmail.Authorize:input_type -> tenant.OrganizationEmailAuthorizeRequest
+	8,  // 9: tenant.OrganizationEmail.GetAuthorization:input_type -> tenant.OrganizationEmailGetAuthorizationRequest
+	12, // 10: tenant.OrganizationEmail.SaveEmail:output_type -> proto.EmptyResponse
+	4,  // 11: tenant.OrganizationEmail.GenerateAuthCodeUrl:output_type -> tenant.OrganizationEmailGenerateAuthCodeUrlResponse
+	12, // 12: tenant.OrganizationEmail.Authorize:output_type -> proto.EmptyResponse
+	10, // 13: tenant.OrganizationEmail.GetAuthorization:output_type -> tenant.OrganizationEmailGetAuthorizationResponse
+	10, // [10:14] is the sub-list for method output_type
+	6,  // [6:10] is the sub-list for method input_type
+	6,  // [6:6] is the sub-list for extension type_name
+	6,  // [6:6] is the sub-list for extension extendee
+	0,  // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_tenant_organization_email_proto_init() }
@@ -436,7 +854,7 @@ func file_tenant_organization_email_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_tenant_organization_email_proto_rawDesc), len(file_tenant_organization_email_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

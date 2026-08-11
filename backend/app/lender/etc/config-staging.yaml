@@ -98,6 +98,3 @@ RpcConf:
       Pwd: ''
       Tls: true
       LenderChannel: /lender-channel
-  CronTaskConf:
-    - name: update_organization_subscription_status
-      schedule: "0 0 3 * * *"

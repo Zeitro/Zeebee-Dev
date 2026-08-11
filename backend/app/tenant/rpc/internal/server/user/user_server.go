@@ -83,3 +83,8 @@ func (s *UserServer) CreateAdminUser(ctx context.Context, in *tenant.CreateAdmin
 	l := userlogic.NewCreateAdminUserLogic(ctx, s.svcCtx)
 	return l.CreateAdminUser(in)
 }
+
+func (s *UserServer) GetClaim(ctx context.Context, in *tenant.GetClaimRequest) (*tenant.GetClaimResponse, error) {
+	l := userlogic.NewGetClaimLogic(ctx, s.svcCtx)
+	return l.GetClaim(in)
+}

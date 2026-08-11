@@ -12,7 +12,6 @@ import (
 
 	"github.com/zeromicro/go-zero/core/service"
 
-	"zeebee-backend/app/borrower/rpc/internal/logic"
 	apiServer "zeebee-backend/app/borrower/rpc/internal/server/api"
 	borrowerApplicantServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerapplicant"
 	borrowerEntityServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerentity"
@@ -23,17 +22,15 @@ import (
 	organizationServer "zeebee-backend/app/borrower/rpc/internal/server/organization"
 	organizationEmailServer "zeebee-backend/app/borrower/rpc/internal/server/organizationemail"
 	zeitroServer "zeebee-backend/app/borrower/rpc/internal/server/zeitro"
-	"zeebee-backend/common/cron"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/templater"
 	"zeebee-backend/domains/zeebee/templater/convertor"
-	"zeebee-backend/domains/zeebee/templater/loader"
 
 	loanApplicantServer "zeebee-backend/app/borrower/rpc/internal/server/loanapplicant"
 
 	"zeebee-backend/app/borrower/config"
 	"zeebee-backend/app/borrower/rpc/internal/global"
+	"zeebee-backend/app/borrower/rpc/internal/logic"
 	commonServer "zeebee-backend/app/borrower/rpc/internal/server/common"
 	loanServer "zeebee-backend/app/borrower/rpc/internal/server/loan"
 	loanDocumentServer "zeebee-backend/app/borrower/rpc/internal/server/loandocument"
@@ -43,12 +40,12 @@ import (
 	storageServer "zeebee-backend/app/borrower/rpc/internal/server/storage"
 	userServer "zeebee-backend/app/borrower/rpc/internal/server/user"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
+	"zeebee-backend/app/borrower/rpc/internal/template_loader"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 )
 
 type RpcServer struct {
-	s    *zrpc.RpcServer
-	cron *cron.Engine
+	s *zrpc.RpcServer
 }
 
 func NewRpcServer(c config.Config) (s service.Service, err error) {
@@ -64,7 +61,7 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 	ctx := svc.NewServiceContext(rpcConfig, logger)
 
 	baseLogic := logic.NewBaseLogic(ctx)
-	tplLoader := loader.NewDefaultTemplateLoader(baseLogic.BaseTemplateLogic, baseLogic.OrganizationTemplateLogic)
+	tplLoader := template_loader.New(baseLogic.BaseTemplateLogic, ctx.TenantClient)
 	tplConvertor := convertor.NewDefaultConvertor(rpcConfig.PdfGeneratorBaseUrl)
 	tpl := templater.NewEngine(tplLoader, tplConvertor)
 	global.Templater = tpl
@@ -126,14 +123,8 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 	})
 
 	rpcService := &RpcServer{
-		s:    rpcServer,
-		cron: cron.NewEngine(),
+		s: rpcServer,
 	}
-	err = rpcService.RegisterCronTask(ctx, rpcConfig, logger)
-	if err != nil {
-		return nil, err
-	}
-
 	return rpcService, nil
 }
 
@@ -141,36 +132,8 @@ func (s *RpcServer) Start() {
 	go func() {
 		s.s.Start()
 	}()
-	go func() {
-		s.cron.Start()
-	}()
 }
 
 func (s *RpcServer) Stop() {
 	s.s.Stop()
-	s.cron.Stop()
-}
-
-func (s *RpcServer) RegisterCronTask(svcCtx *svc.ServiceContext, conf config.RpcConf, logger logx.Logger) (err error) {
-	if s.cron == nil {
-		s.cron = cron.NewEngine()
-	}
-	baseLogic := logic.GetBaseLogic(svcCtx)
-	for _, task := range conf.CronTaskConf {
-		switch task.Name {
-		case "update_organization_subscription_status":
-			err = s.cron.Register(task.Name, task.Schedule, func() {
-				ctx := context.Background()
-				taskErr := baseLogic.OrganizationSubscriptionLogic.UpdateStatus(ctx, constants.UserTypeBorrower)
-				if taskErr != nil {
-					logger.WithFields(
-						logx.Field("type", "cron_task"),
-						logx.Field("name", task.Name),
-						logx.Field("schedule", task.Schedule),
-					).Error(taskErr)
-				}
-			})
-		}
-	}
-	return
 }

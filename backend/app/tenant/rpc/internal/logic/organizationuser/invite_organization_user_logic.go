@@ -32,6 +32,10 @@ func (l *InviteOrganizationUserLogic) InviteOrganizationUser(in *tenant.Organiza
 	if err != nil {
 		return
 	}
+	profile, err := l.baseLogic.PlatformFor(userType)
+	if err != nil {
+		return
+	}
 
 	input := dto.OrganizationUserCreateRequestDto{
 		Email:          in.Data.Email,
@@ -40,7 +44,7 @@ func (l *InviteOrganizationUserLogic) InviteOrganizationUser(in *tenant.Organiza
 		RoleIds:        in.Data.RoleIds,
 		UserType:       userType,
 		OrganizationId: in.Data.OrganizationId,
-		EmailConfig:    toInviteEmailConfig(in.Data.EmailConfig),
+		EmailConfig:    toInviteEmailConfig(in.Data.EmailConfig, profile),
 		Operator:       in.Data.Operator,
 	}
 	result, err := l.baseLogic.OrganizationUserLogic.InviteOrganizationUser(l.ctx, input)

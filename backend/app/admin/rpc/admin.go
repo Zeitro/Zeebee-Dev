@@ -13,7 +13,6 @@ import (
 
 	"zeebee-backend/app/admin/config"
 	"zeebee-backend/app/admin/rpc/internal/global"
-	"zeebee-backend/app/admin/rpc/internal/logic"
 	apiServer "zeebee-backend/app/admin/rpc/internal/server/api"
 	baseTemplateServer "zeebee-backend/app/admin/rpc/internal/server/basetemplate"
 	commonServer "zeebee-backend/app/admin/rpc/internal/server/common"
@@ -31,7 +30,6 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/cron"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/constants"
 	domainlenderdiscover "zeebee-backend/domains/zeebee/lenderdiscover"
 
 	"zeebee-backend/app/admin/rpc/internal/schedule"
@@ -125,24 +123,6 @@ func (s *RpcServer) Stop() {
 }
 
 func RegisterCronTask(svcCtx *svc.ServiceContext, conf config.RpcConf, logger logx.Logger) (err error) {
-	baseLogic := logic.GetBaseLogic(svcCtx)
-	for _, task := range conf.CronTaskConf {
-		switch task.Name {
-		case "update_organization_subscription_status":
-			err = cron.Register(task.Name, task.Schedule, func() {
-				ctx := context.Background()
-				taskErr := baseLogic.OrganizationSubscriptionLogic.UpdateStatus(ctx, constants.UserTypeAdmin)
-				if taskErr != nil {
-					logger.WithFields(
-						logx.Field("type", "cron_task"),
-						logx.Field("name", task.Name),
-						logx.Field("schedule", task.Schedule),
-					).Error(taskErr)
-				}
-			})
-		}
-	}
-
 	// lender discover: spec derived from DB config. DiscoverUpdateSettings calls
 	// cron.Replace/Unregister to keep the timer in sync on config change.
 	if cfg, _, cfgErr := domainlenderdiscover.LoadConfig(context.Background(), svcCtx.OrganizationSettingRepo); cfgErr != nil {

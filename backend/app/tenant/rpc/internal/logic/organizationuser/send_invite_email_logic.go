@@ -3,6 +3,8 @@ package organizationuserlogic
 import (
 	"context"
 
+	"zeebee-backend/app/tenant/config"
+	"zeebee-backend/app/tenant/rpc/internal/email_tpl"
 	"zeebee-backend/app/tenant/rpc/internal/logic"
 	"zeebee-backend/app/tenant/rpc/internal/svc"
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
@@ -31,12 +33,16 @@ func (l *SendInviteEmailLogic) SendInviteEmail(in *tenant.OrganizationUserSendIn
 	if err != nil {
 		return
 	}
+	profile, err := l.baseLogic.PlatformFor(userType)
+	if err != nil {
+		return
+	}
 
 	input := dto.OrganizationUserSendInviteEmailRequestDto{
 		Id:             in.Data.Id,
 		UserType:       userType,
 		OrganizationId: in.Data.OrganizationId,
-		EmailConfig:    toInviteEmailConfig(in.Data.EmailConfig),
+		EmailConfig:    toInviteEmailConfig(in.Data.EmailConfig, profile),
 		Operator:       in.Data.Operator,
 	}
 	if err = l.baseLogic.OrganizationUserLogic.SendInviteEmail(l.ctx, input); err != nil {
@@ -47,15 +53,39 @@ func (l *SendInviteEmailLogic) SendInviteEmail(in *tenant.OrganizationUserSendIn
 }
 
 // toInviteEmailConfig maps the proto invite-email config to the shared dto.
-func toInviteEmailConfig(c *tenant.OrganizationUserInviteEmailConfig) dto.SendInviteUserEmailConfig {
-	cfg := dto.SendInviteUserEmailConfig{}
+func toInviteEmailConfig(c *tenant.OrganizationUserInviteEmailConfig, profile config.PlatformProfile) dto.SendInviteUserEmailConfig {
+	cfg := dto.SendInviteUserEmailConfig{
+		HostEmail:         profile.EmailConf.Username,
+		ExpireSeconds:     profile.InviteUserExpireSeconds,
+		SendPeriodSeconds: profile.SendInviteEmailPeriodSeconds,
+		Url:               profile.InviteUserUrl,
+		Logo:              profile.LogoUrl,
+		Address:           profile.FooterAddress,
+	}
+	cfg.TplName = email_tpl.UserInviteEmail
 	if c == nil {
 		return cfg
 	}
-	cfg.HostEmail = c.HostEmail
-	cfg.TplName = c.TplName
-	cfg.ExpireSeconds = int(c.ExpireSeconds)
-	cfg.SendPeriodSeconds = int(c.SendPeriodSeconds)
-	cfg.Url = c.Url
+	if c.HostEmail != "" {
+		cfg.HostEmail = c.HostEmail
+	}
+	if c.Logo != "" {
+		cfg.Logo = c.Logo
+	}
+	if c.Address != "" {
+		cfg.Address = c.Address
+	}
+	if c.TplName != "" {
+		cfg.TplName = c.TplName
+	}
+	if c.ExpireSeconds > 0 {
+		cfg.ExpireSeconds = int(c.ExpireSeconds)
+	}
+	if c.SendPeriodSeconds > 0 {
+		cfg.SendPeriodSeconds = int(c.SendPeriodSeconds)
+	}
+	if c.Url != "" {
+		cfg.Url = c.Url
+	}
 	return cfg
 }

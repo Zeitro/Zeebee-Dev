@@ -107,11 +107,25 @@ func TestDetail_ReturnsSubscription(t *testing.T) {
 	sub := seedSubscription(t, env, org, plan, constants.OrganizationSubscriptionStatusActive)
 
 	resp, err := NewDetailLogic(context.Background(), env.SvcCtx).Detail(&tenant.OrganizationSubscriptionDetailRequest{Data: &tenant.OrganizationSubscriptionDetailRequestData{
-		UserType: string(constants.UserTypeLender), Id: sub.Id,
+		UserType: string(constants.UserTypeLender), Id: sub.Id, OrganizationId: org.Id,
 	}})
 	require.NoError(t, err)
 	require.NotNil(t, resp.GetData())
 	assert.Equal(t, sub.Id, resp.GetData().GetId())
+}
+
+func TestDetail_RejectsAnotherOrganization(t *testing.T) {
+	env := newTestEnv(t)
+	org := seedOrg(t, env, constants.UserTypeLender)
+	otherOrg := testutil.SeedOrganization(t, env.DB, &model.Organization{Name: "Other", Status: constants.OrganizationStatusActive, Type: constants.UserTypeLender})
+	plan := seedPlan(t, env, constants.UserTypeLender, "Plan")
+	sub := seedSubscription(t, env, org, plan, constants.OrganizationSubscriptionStatusActive)
+
+	_, err := NewDetailLogic(context.Background(), env.SvcCtx).Detail(&tenant.OrganizationSubscriptionDetailRequest{Data: &tenant.OrganizationSubscriptionDetailRequestData{
+		UserType: string(constants.UserTypeLender), Id: sub.Id, OrganizationId: otherOrg.Id,
+	}})
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "does not belong")
 }
 
 // T037 US-10: SwitchStatus suspends a subscription.
@@ -138,9 +152,11 @@ func TestPage_ListsSubscriptions(t *testing.T) {
 	plan := seedPlan(t, env, constants.UserTypeLender, "Plan")
 	seedSubscription(t, env, org, plan, constants.OrganizationSubscriptionStatusActive)
 	seedSubscription(t, env, org, plan, constants.OrganizationSubscriptionStatusActive)
+	otherOrg := testutil.SeedOrganization(t, env.DB, &model.Organization{Name: "Other", Status: constants.OrganizationStatusActive, Type: constants.UserTypeLender})
+	seedSubscription(t, env, otherOrg, plan, constants.OrganizationSubscriptionStatusActive)
 
 	resp, err := NewPageLogic(context.Background(), env.SvcCtx).Page(&tenant.OrganizationSubscriptionPageRequest{Data: &tenant.OrganizationSubscriptionPageRequestData{
-		Page: 1, Limit: 10, UserType: string(constants.UserTypeLender),
+		Page: 1, Limit: 10, UserType: string(constants.UserTypeLender), OrganizationId: org.Id,
 		// Filter and Sorter intentionally omitted.
 	}})
 	require.NoError(t, err)

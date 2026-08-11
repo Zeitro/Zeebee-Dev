@@ -14,6 +14,7 @@ import (
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/model"
 )
 
 type RegisterLogic struct {
@@ -58,13 +59,7 @@ func (l *RegisterLogic) Register(in *tenant.RegisterRequest) (resp *tenant.Regis
 				}
 			}
 		})
-		return &tenant.RegisterResponse{
-			Data: &tenant.RegisterResponseData{
-				UserId:         existedUser.Id,
-				OrganizationId: existedUser.DefaultOrganizationId,
-				Status:         string(existedUser.Status),
-			},
-		}, nil
+		return l.registerResponse(existedUser, nil)
 	}
 
 	pwdHash, err := utils.HashPassword(in.Data.Password)
@@ -94,7 +89,7 @@ func (l *RegisterLogic) Register(in *tenant.RegisterRequest) (resp *tenant.Regis
 		OwnerType: ownerType,
 	}
 
-	userModel, _, err := l.baseLogic.UserLogic.RegisterWithOrganization(l.ctx, *userInput, organizationInput, userType, false)
+	userModel, organizationUser, err := l.baseLogic.UserLogic.RegisterWithOrganization(l.ctx, *userInput, organizationInput, userType, false)
 	if err != nil {
 		return nil, err
 	}
@@ -107,11 +102,20 @@ func (l *RegisterLogic) Register(in *tenant.RegisterRequest) (resp *tenant.Regis
 		}
 	})
 
-	return &tenant.RegisterResponse{
-		Data: &tenant.RegisterResponseData{
-			UserId:         userModel.Id,
-			OrganizationId: userModel.DefaultOrganizationId,
-			Status:         string(userModel.Status),
-		},
-	}, nil
+	return l.registerResponse(userModel, organizationUser)
+}
+
+func (l *RegisterLogic) registerResponse(user *model.User, organizationUser *model.OrganizationUser) (*tenant.RegisterResponse, error) {
+	if organizationUser == nil && user.DefaultOrganizationId > 0 {
+		organizationUser, _ = l.svcCtx.OrganizationUserRepo.GetOrganizationUserByUserId(l.ctx, user.DefaultOrganizationId, user.Id)
+	}
+	accessToken := ""
+	if organizationUser != nil {
+		if token, err := l.baseLogic.UserLogic.GenerateJwtToken(user, organizationUser); err == nil {
+			accessToken = token.AccessToken
+		}
+	}
+	return &tenant.RegisterResponse{Data: &tenant.RegisterResponseData{
+		UserId: user.Id, OrganizationId: user.DefaultOrganizationId, Status: string(user.Status), AccessToken: accessToken,
+	}}, nil
 }

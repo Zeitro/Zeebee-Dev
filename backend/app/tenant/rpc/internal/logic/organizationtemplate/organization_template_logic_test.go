@@ -53,10 +53,15 @@ func TestTemplateLifecycle(t *testing.T) {
 	require.NoError(t, env.DB.Create(tpl).Error)
 
 	detailResp, err := NewDetailLogic(context.Background(), env.SvcCtx).Detail(&tenant.OrganizationTemplateDetailRequest{Data: &tenant.OrganizationTemplateDetailRequestData{
-		UserType: string(constants.UserTypeLender), Id: tpl.Id,
+		UserType: string(constants.UserTypeLender), Id: tpl.Id, OrganizationId: org.Id,
 	}})
 	require.NoError(t, err)
 	assert.Equal(t, tpl.Id, detailResp.GetData().GetId())
+
+	_, err = NewDetailLogic(context.Background(), env.SvcCtx).Detail(&tenant.OrganizationTemplateDetailRequest{Data: &tenant.OrganizationTemplateDetailRequestData{
+		UserType: string(constants.UserTypeLender), Id: tpl.Id, OrganizationId: org.Id + 1,
+	}})
+	require.Error(t, err)
 
 	byPurposeResp, err := NewDetailByPurposeLogic(context.Background(), env.SvcCtx).DetailByPurpose(&tenant.OrganizationTemplateDetailByPurposeRequest{Data: &tenant.OrganizationTemplateDetailByPurposeRequestData{
 		UserType: string(constants.UserTypeLender), OrganizationId: org.Id,

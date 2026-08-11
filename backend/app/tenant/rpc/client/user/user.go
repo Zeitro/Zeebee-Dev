@@ -20,6 +20,8 @@ type (
 	CreateAdminUserRequest        = tenant.CreateAdminUserRequest
 	CreateAdminUserResponse       = tenant.CreateAdminUserResponse
 	EditProfileRequest            = tenant.EditProfileRequest
+	GetClaimRequest               = tenant.GetClaimRequest
+	GetClaimResponse              = tenant.GetClaimResponse
 	LoginRequest                  = tenant.LoginRequest
 	RefreshTokenRequest           = tenant.RefreshTokenRequest
 	RegisterRequest               = tenant.RegisterRequest
@@ -44,6 +46,7 @@ type (
 		UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*proto.UserinfoResponse, error)
 		EditProfile(ctx context.Context, in *EditProfileRequest, opts ...grpc.CallOption) (*proto.UserinfoResponse, error)
 		CreateAdminUser(ctx context.Context, in *CreateAdminUserRequest, opts ...grpc.CallOption) (*CreateAdminUserResponse, error)
+		GetClaim(ctx context.Context, in *GetClaimRequest, opts ...grpc.CallOption) (*GetClaimResponse, error)
 	}
 
 	defaultUser struct {
@@ -115,4 +118,9 @@ func (m *defaultUser) EditProfile(ctx context.Context, in *EditProfileRequest, o
 func (m *defaultUser) CreateAdminUser(ctx context.Context, in *CreateAdminUserRequest, opts ...grpc.CallOption) (*CreateAdminUserResponse, error) {
 	client := tenant.NewUserClient(m.cli.Conn())
 	return client.CreateAdminUser(ctx, in, opts...)
+}
+
+func (m *defaultUser) GetClaim(ctx context.Context, in *GetClaimRequest, opts ...grpc.CallOption) (*GetClaimResponse, error) {
+	client := tenant.NewUserClient(m.cli.Conn())
+	return client.GetClaim(ctx, in, opts...)
 }

@@ -46,6 +46,7 @@ message RegisterResponseData {
   int64 user_id = 1;
   int64 organization_id = 2;
   string status = 3;
+  string access_token = 4; // internal borrower side effects use tenant-issued identity
 }
 
 // Verify email (returns TokenSet)
@@ -149,6 +150,27 @@ message CreateAdminUserResponseData {
   int64 user_id = 1;
 }
 
+// GetClaim validates an access token for the declared platform and returns its
+// identity payload. tenant is the single JWT verification authority.
+message GetClaimRequest {
+  GetClaimRequestData data = 1;
+}
+message GetClaimRequestData {
+  string access_token = 1;
+  string user_type = 2;
+}
+message GetClaimResponse {
+  GetClaimResponseData data = 1;
+}
+message GetClaimResponseData {
+  int64 user_id = 1;
+  int64 organization_id = 2;
+  int64 organization_user_id = 3;
+  string username = 4;
+  repeated string role = 5;
+  string user_type = 6;
+}
+
 service User {
   rpc Login(LoginRequest) returns (proto.UserLoginResponse);
   rpc Register(RegisterRequest) returns (RegisterResponse);
@@ -162,4 +184,5 @@ service User {
   rpc UserInfo(UserInfoRequest) returns (proto.UserinfoResponse);
   rpc EditProfile(EditProfileRequest) returns (proto.UserinfoResponse);
   rpc CreateAdminUser(CreateAdminUserRequest) returns (CreateAdminUserResponse);
+  rpc GetClaim(GetClaimRequest) returns (GetClaimResponse);
 }

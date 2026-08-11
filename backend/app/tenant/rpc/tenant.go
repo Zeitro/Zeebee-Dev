@@ -1,6 +1,8 @@
 package rpc
 
 import (
+	"context"
+
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -8,6 +10,7 @@ import (
 	"google.golang.org/grpc/reflection"
 
 	"zeebee-backend/app/tenant/config"
+	"zeebee-backend/app/tenant/rpc/internal/logic"
 	apiServer "zeebee-backend/app/tenant/rpc/internal/server/api"
 	authServer "zeebee-backend/app/tenant/rpc/internal/server/auth"
 	organizationServer "zeebee-backend/app/tenant/rpc/internal/server/organization"
@@ -23,12 +26,15 @@ import (
 	userServer "zeebee-backend/app/tenant/rpc/internal/server/user"
 	"zeebee-backend/app/tenant/rpc/internal/svc"
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
+	"zeebee-backend/common/cron"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 // RpcServer wraps the tenant gRPC server.
 type RpcServer struct {
 	s      *zrpc.RpcServer
 	svcCtx *svc.ServiceContext
+	cron   *cron.Engine
 }
 
 // NewRpcServer constructs the tenant RPC server.
@@ -68,18 +74,51 @@ func NewRpcServer(c config.Config) (service.Service, error) {
 		}
 	})
 
-	return &RpcServer{
+	server := &RpcServer{
 		s:      rpcServer,
 		svcCtx: ctx,
-	}, nil
+		cron:   cron.NewEngine(),
+	}
+	if err := server.RegisterCronTask(ctx, rpcConfig, logger); err != nil {
+		return nil, err
+	}
+	return server, nil
 }
 
 func (s *RpcServer) Start() {
 	go func() {
 		s.s.Start()
 	}()
+	s.cron.Start()
 }
 
 func (s *RpcServer) Stop() {
 	s.s.Stop()
+	s.cron.Stop()
+}
+
+func (s *RpcServer) RegisterCronTask(svcCtx *svc.ServiceContext, conf config.RpcConf, logger logx.Logger) error {
+	baseLogic := logic.GetBaseLogic(svcCtx)
+	for _, task := range conf.CronTaskConf {
+		var userType constants.UserType
+		switch task.Name {
+		case "update_admin_organization_subscription_status":
+			userType = constants.UserTypeAdmin
+		case "update_lender_organization_subscription_status":
+			userType = constants.UserTypeLender
+		case "update_borrower_organization_subscription_status":
+			userType = constants.UserTypeBorrower
+		default:
+			continue
+		}
+		name, schedule, statusUserType := task.Name, task.Schedule, userType
+		if err := s.cron.Register(name, schedule, func() {
+			if taskErr := baseLogic.OrganizationSubscriptionLogic.UpdateStatus(context.Background(), statusUserType); taskErr != nil {
+				logger.WithFields(logx.Field("type", "cron_task"), logx.Field("name", name), logx.Field("schedule", schedule)).Error(taskErr)
+			}
+		}); err != nil {
+			return err
+		}
+	}
+	return nil
 }

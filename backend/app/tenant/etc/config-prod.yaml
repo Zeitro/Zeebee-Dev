@@ -19,6 +19,14 @@ RpcConf:
     SendVerifyEmail:   { Rate: 5, Period: 300 }
     SendResetPwdEmail: { Rate: 5, Period: 300 }
 
+  CronTaskConf:
+    - name: update_admin_organization_subscription_status
+      schedule: "0 0 1 * * *"
+    - name: update_borrower_organization_subscription_status
+      schedule: "0 0 2 * * *"
+    - name: update_lender_organization_subscription_status
+      schedule: "0 0 3 * * *"
+
   CasbinConf:
     ModelPath: etc/model.conf
     EventTopic:
@@ -40,6 +48,10 @@ RpcConf:
   PlatformConf:
     Borrower:
       EmailConf:
+        Host: smtp.gmail.com
+        Port: 587
+        Password: jerburfauvmzpmnq
+        Username: info@zeebeeloans.com
         Gmail:
           ClientId: 808134957644-2savep4tlp45sln5v9f21hq06628vvia.apps.googleusercontent.com
           ClientSecret: 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
@@ -55,6 +67,8 @@ RpcConf:
       SendInviteEmailPeriodSeconds: 60
       SenderName: Zeebee
       SenderEmail: info@zeebeeloans.com
+      LogoUrl: "https://zeebee-files-staging.s3.us-west-1.amazonaws.com/files-dev/logo.png"
+      FooterAddress: "ZeeBee | 123 Business St | San Francisco, CA, 94105"
     Lender:
       EmailConf:
         Host: smtp.gmail.com
@@ -72,6 +86,8 @@ RpcConf:
       SendInviteEmailPeriodSeconds: 60
       SenderName: Zeebee
       SenderEmail: info@zeebeeloans.com
+      LogoUrl: "https://zeebee-files-staging.s3.us-west-1.amazonaws.com/files-dev/logo.png"
+      FooterAddress: "ZeeBee | 123 Business St | San Francisco, CA, 94105"
     Admin:
       EmailConf:
         Host: smtp.gmail.com
@@ -84,3 +100,5 @@ RpcConf:
       SendInviteEmailPeriodSeconds: 60
       SenderName: Zeebee
       SenderEmail: info@zeebeeloans.com
+      LogoUrl: "https://zeebee-files-staging.s3.us-west-1.amazonaws.com/files-dev/logo.png"
+      FooterAddress: "ZeeBee | 123 Business St | San Francisco, CA, 94105"

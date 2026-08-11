@@ -39,7 +39,19 @@ func (l *PageLogic) Page(in *tenant.OrganizationSubscriptionPageRequest) (resp *
 	if err != nil {
 		return
 	}
-	pageReq.Filter.Type = userType
+	if userType == constants.UserTypeAdmin {
+		if in.Data.Filter != nil && in.Data.Filter.Type != "" {
+			if _, err = logic.ParseUserType(in.Data.Filter.Type); err != nil {
+				return
+			}
+		}
+	} else {
+		if in.Data.OrganizationId <= 0 {
+			return nil, errorx.New("organization id is required")
+		}
+		pageReq.Filter.Type = userType
+		pageReq.Filter.OrganizationId = in.Data.OrganizationId
+	}
 	// Status crosses a repeated-string -> []OrganizationSubscriptionStatus
 	// boundary, so derive it explicitly (nil filter => no status filter).
 	pageReq.Filter.Status = nil

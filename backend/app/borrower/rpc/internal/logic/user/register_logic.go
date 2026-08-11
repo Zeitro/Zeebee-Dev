@@ -64,10 +64,9 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *proto.
 		return nil, err
 	}
 
-	if len(in.Data.PreApprovalRequestId) > 0 && in.Data.LenderOrganizationId > 0 {
+	if len(in.Data.PreApprovalRequestId) > 0 && in.Data.LenderOrganizationId > 0 && registerResp.Data.AccessToken != "" {
 		go l.handlePreapproveLoanSideEffect(
-			registerResp.Data.UserId,
-			registerResp.Data.OrganizationId,
+			registerResp.Data.AccessToken,
 			in.Data.PreApprovalRequestId,
 			in.Data.LenderOrganizationId,
 		)
@@ -78,7 +77,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *proto.
 
 // handlePreapproveLoanSideEffect fetches the just-created identity and creates
 // the draft pre-approval loan. Fire-and-forget; errors are logged only.
-func (l *RegisterLogic) handlePreapproveLoanSideEffect(userId, organizationId int64, requestId string, lenderOrganizationId int64) {
+func (l *RegisterLogic) handlePreapproveLoanSideEffect(accessToken, requestId string, lenderOrganizationId int64) {
 	ctx := context.WithoutCancel(l.ctx)
 	defer func() {
 		if panicInfo := recover(); panicInfo != nil {
@@ -88,31 +87,18 @@ func (l *RegisterLogic) handlePreapproveLoanSideEffect(userId, organizationId in
 		}
 	}()
 
-	user, err := l.svcCtx.UserRepo.GetUser(ctx, userId, constants.UserTypeBorrower, false)
-	if err != nil {
-		l.svcCtx.Logger.WithContext(ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		return
-	}
-	orgUser, err := l.svcCtx.OrganizationUserRepo.GetOrganizationUserByUserId(ctx, organizationId, userId)
-	if err != nil || orgUser == nil {
-		l.svcCtx.Logger.WithContext(ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		return
-	}
-	// The shared JWT secret lets this internal side-effect flow mint a token so
-	// the draft-loan logic can read the caller claim; tenant remains the
-	// issuance authority for every external identity flow.
-	tokenInfo, err := l.baseLogic.UserLogic.GenerateJwtToken(user, orgUser)
-	if err != nil {
-		l.svcCtx.Logger.WithContext(ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		return
-	}
 	md, _ := metadata.FromIncomingContext(ctx)
 	newMd := md.Copy()
-	newMd.Set(utils.JwtTokenCtxKey, tokenInfo.AccessToken)
+	newMd.Set(utils.JwtTokenCtxKey, accessToken)
 	newMd.Set(utils.UserTypeCtxKey, string(constants.UserTypeBorrower))
 	ctx = metadata.NewIncomingContext(ctx, newMd)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(ctx)
+	if err != nil {
+		l.svcCtx.Logger.WithContext(ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+		return
+	}
 
-	if err = l.handlePreapproveLoan(ctx, orgUser.Id, orgUser.FullName, requestId, organizationId, lenderOrganizationId); err != nil {
+	if err = l.handlePreapproveLoan(ctx, claim.OrganizationUserId, claim.Username, requestId, claim.OrganizationId, lenderOrganizationId); err != nil {
 		l.svcCtx.Logger.WithContext(ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 	}
 }
@@ -149,18 +135,20 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 	}
 
 	// get lender company
-	lenderOrganization, err := l.svcCtx.OrganizationRepo.FindOneById(ctx, lenderOrganizationId)
+	lenderOrganization, err := l.svcCtx.TenantClient.Organization.DetailWithType(ctx, &tenant.OrganizationDetailWithTypeRequest{Data: &tenant.OrganizationDetailWithTypeRequestData{
+		UserType: string(constants.UserTypeLender), Id: lenderOrganizationId,
+	}})
 	if err != nil {
-		return errorx.WithStack(err)
+		return err
 	}
 
-	if lenderOrganization.Status != constants.OrganizationStatusActive {
+	if lenderOrganization.Data == nil || lenderOrganization.Data.Status != string(constants.OrganizationStatusActive) {
 		return errorx.WithStack(errorx.New("Lender organization is not active"))
 	}
 	// prepare data
 	var borrowerProperty *model.BorrowerProperty
 	var borrowerApplicant *model.BorrowerApplicant
-	err = l.svcCtx.UserRepo.Transaction(ctx, func(tx *gorm.DB) error {
+	err = l.svcCtx.BorrowerPropertyRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 
 		eg := errorx.NewErrorGroup()

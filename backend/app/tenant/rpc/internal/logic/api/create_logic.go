@@ -32,7 +32,11 @@ func (l *CreateLogic) Create(in *tenant.ApiCreateRequest) (resp *tenant.ApiDetai
 	if in.Data == nil {
 		return nil, errorx.ErrorEmptyRequestData
 	}
-	if _, err = logic.ParseUserType(in.Data.UserType); err != nil {
+	callerType, err := logic.ParseUserType(in.Data.UserType)
+	if err != nil {
+		return nil, err
+	}
+	if _, err = targetType(callerType, in.Data.Type); err != nil {
 		return nil, err
 	}
 

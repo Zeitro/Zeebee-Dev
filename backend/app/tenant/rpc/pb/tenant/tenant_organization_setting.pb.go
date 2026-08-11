@@ -282,6 +282,86 @@ func (x *OrganizationSettingDetailResponse) GetData() *proto.OrganizationSetting
 	return nil
 }
 
+type OrganizationSettingSyncLenderDefaultsRequest struct {
+	state         protoimpl.MessageState                            `protogen:"open.v1"`
+	Data          *OrganizationSettingSyncLenderDefaultsRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrganizationSettingSyncLenderDefaultsRequest) Reset() {
+	*x = OrganizationSettingSyncLenderDefaultsRequest{}
+	mi := &file_tenant_organization_setting_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrganizationSettingSyncLenderDefaultsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrganizationSettingSyncLenderDefaultsRequest) ProtoMessage() {}
+
+func (x *OrganizationSettingSyncLenderDefaultsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_setting_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrganizationSettingSyncLenderDefaultsRequest.ProtoReflect.Descriptor instead.
+func (*OrganizationSettingSyncLenderDefaultsRequest) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_setting_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *OrganizationSettingSyncLenderDefaultsRequest) GetData() *OrganizationSettingSyncLenderDefaultsRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type OrganizationSettingSyncLenderDefaultsRequestData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrganizationSettingSyncLenderDefaultsRequestData) Reset() {
+	*x = OrganizationSettingSyncLenderDefaultsRequestData{}
+	mi := &file_tenant_organization_setting_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrganizationSettingSyncLenderDefaultsRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrganizationSettingSyncLenderDefaultsRequestData) ProtoMessage() {}
+
+func (x *OrganizationSettingSyncLenderDefaultsRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_organization_setting_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrganizationSettingSyncLenderDefaultsRequestData.ProtoReflect.Descriptor instead.
+func (*OrganizationSettingSyncLenderDefaultsRequestData) Descriptor() ([]byte, []int) {
+	return file_tenant_organization_setting_proto_rawDescGZIP(), []int{6}
+}
+
 var File_tenant_organization_setting_proto protoreflect.FileDescriptor
 
 const file_tenant_organization_setting_proto_rawDesc = "" +
@@ -301,10 +381,14 @@ const file_tenant_organization_setting_proto_rawDesc = "" +
 	"\x0forganization_id\x18\x03 \x01(\x03R\x0eorganizationId\x12\x18\n" +
 	"\aenabled\x18\x04 \x01(\bR\aenabled\"Y\n" +
 	"!OrganizationSettingDetailResponse\x124\n" +
-	"\x04data\x18\x01 \x01(\v2 .proto.OrganizationSettingEntityR\x04data2\xdc\x01\n" +
+	"\x04data\x18\x01 \x01(\v2 .proto.OrganizationSettingEntityR\x04data\"|\n" +
+	",OrganizationSettingSyncLenderDefaultsRequest\x12L\n" +
+	"\x04data\x18\x01 \x01(\v28.tenant.OrganizationSettingSyncLenderDefaultsRequestDataR\x04data\"2\n" +
+	"0OrganizationSettingSyncLenderDefaultsRequestData2\xbe\x02\n" +
 	"\x13OrganizationSetting\x12o\n" +
 	"\x0fDetailByPurpose\x121.tenant.OrganizationSettingDetailByPurposeRequest\x1a).tenant.OrganizationSettingDetailResponse\x12T\n" +
-	"\fSwitchStatus\x12..tenant.OrganizationSettingSwitchStatusRequest\x1a\x14.proto.EmptyResponseB)Z'zeebee-backend/app/tenant/rpc/pb/tenantb\x06proto3"
+	"\fSwitchStatus\x12..tenant.OrganizationSettingSwitchStatusRequest\x1a\x14.proto.EmptyResponse\x12`\n" +
+	"\x12SyncLenderDefaults\x124.tenant.OrganizationSettingSyncLenderDefaultsRequest\x1a\x14.proto.EmptyResponseB)Z'zeebee-backend/app/tenant/rpc/pb/tenantb\x06proto3"
 
 var (
 	file_tenant_organization_setting_proto_rawDescOnce sync.Once
@@ -318,29 +402,34 @@ func file_tenant_organization_setting_proto_rawDescGZIP() []byte {
 	return file_tenant_organization_setting_proto_rawDescData
 }
 
-var file_tenant_organization_setting_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_tenant_organization_setting_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_tenant_organization_setting_proto_goTypes = []any{
-	(*OrganizationSettingDetailByPurposeRequest)(nil),     // 0: tenant.OrganizationSettingDetailByPurposeRequest
-	(*OrganizationSettingDetailByPurposeRequestData)(nil), // 1: tenant.OrganizationSettingDetailByPurposeRequestData
-	(*OrganizationSettingSwitchStatusRequest)(nil),        // 2: tenant.OrganizationSettingSwitchStatusRequest
-	(*OrganizationSettingSwitchStatusRequestData)(nil),    // 3: tenant.OrganizationSettingSwitchStatusRequestData
-	(*OrganizationSettingDetailResponse)(nil),             // 4: tenant.OrganizationSettingDetailResponse
-	(*proto.OrganizationSettingEntity)(nil),               // 5: proto.OrganizationSettingEntity
-	(*proto.EmptyResponse)(nil),                           // 6: proto.EmptyResponse
+	(*OrganizationSettingDetailByPurposeRequest)(nil),        // 0: tenant.OrganizationSettingDetailByPurposeRequest
+	(*OrganizationSettingDetailByPurposeRequestData)(nil),    // 1: tenant.OrganizationSettingDetailByPurposeRequestData
+	(*OrganizationSettingSwitchStatusRequest)(nil),           // 2: tenant.OrganizationSettingSwitchStatusRequest
+	(*OrganizationSettingSwitchStatusRequestData)(nil),       // 3: tenant.OrganizationSettingSwitchStatusRequestData
+	(*OrganizationSettingDetailResponse)(nil),                // 4: tenant.OrganizationSettingDetailResponse
+	(*OrganizationSettingSyncLenderDefaultsRequest)(nil),     // 5: tenant.OrganizationSettingSyncLenderDefaultsRequest
+	(*OrganizationSettingSyncLenderDefaultsRequestData)(nil), // 6: tenant.OrganizationSettingSyncLenderDefaultsRequestData
+	(*proto.OrganizationSettingEntity)(nil),                  // 7: proto.OrganizationSettingEntity
+	(*proto.EmptyResponse)(nil),                              // 8: proto.EmptyResponse
 }
 var file_tenant_organization_setting_proto_depIdxs = []int32{
 	1, // 0: tenant.OrganizationSettingDetailByPurposeRequest.data:type_name -> tenant.OrganizationSettingDetailByPurposeRequestData
 	3, // 1: tenant.OrganizationSettingSwitchStatusRequest.data:type_name -> tenant.OrganizationSettingSwitchStatusRequestData
-	5, // 2: tenant.OrganizationSettingDetailResponse.data:type_name -> proto.OrganizationSettingEntity
-	0, // 3: tenant.OrganizationSetting.DetailByPurpose:input_type -> tenant.OrganizationSettingDetailByPurposeRequest
-	2, // 4: tenant.OrganizationSetting.SwitchStatus:input_type -> tenant.OrganizationSettingSwitchStatusRequest
-	4, // 5: tenant.OrganizationSetting.DetailByPurpose:output_type -> tenant.OrganizationSettingDetailResponse
-	6, // 6: tenant.OrganizationSetting.SwitchStatus:output_type -> proto.EmptyResponse
-	5, // [5:7] is the sub-list for method output_type
-	3, // [3:5] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	7, // 2: tenant.OrganizationSettingDetailResponse.data:type_name -> proto.OrganizationSettingEntity
+	6, // 3: tenant.OrganizationSettingSyncLenderDefaultsRequest.data:type_name -> tenant.OrganizationSettingSyncLenderDefaultsRequestData
+	0, // 4: tenant.OrganizationSetting.DetailByPurpose:input_type -> tenant.OrganizationSettingDetailByPurposeRequest
+	2, // 5: tenant.OrganizationSetting.SwitchStatus:input_type -> tenant.OrganizationSettingSwitchStatusRequest
+	5, // 6: tenant.OrganizationSetting.SyncLenderDefaults:input_type -> tenant.OrganizationSettingSyncLenderDefaultsRequest
+	4, // 7: tenant.OrganizationSetting.DetailByPurpose:output_type -> tenant.OrganizationSettingDetailResponse
+	8, // 8: tenant.OrganizationSetting.SwitchStatus:output_type -> proto.EmptyResponse
+	8, // 9: tenant.OrganizationSetting.SyncLenderDefaults:output_type -> proto.EmptyResponse
+	7, // [7:10] is the sub-list for method output_type
+	4, // [4:7] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_tenant_organization_setting_proto_init() }
@@ -354,7 +443,7 @@ func file_tenant_organization_setting_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_tenant_organization_setting_proto_rawDesc), len(file_tenant_organization_setting_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

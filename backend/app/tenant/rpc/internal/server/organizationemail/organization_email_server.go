@@ -33,3 +33,13 @@ func (s *OrganizationEmailServer) GenerateAuthCodeUrl(ctx context.Context, in *t
 	l := organizationemaillogic.NewGenerateAuthCodeUrlLogic(ctx, s.svcCtx)
 	return l.GenerateAuthCodeUrl(in)
 }
+
+func (s *OrganizationEmailServer) Authorize(ctx context.Context, in *tenant.OrganizationEmailAuthorizeRequest) (*proto.EmptyResponse, error) {
+	l := organizationemaillogic.NewAuthorizeLogic(ctx, s.svcCtx)
+	return l.Authorize(in)
+}
+
+func (s *OrganizationEmailServer) GetAuthorization(ctx context.Context, in *tenant.OrganizationEmailGetAuthorizationRequest) (*tenant.OrganizationEmailGetAuthorizationResponse, error) {
+	l := organizationemaillogic.NewGetAuthorizationLogic(ctx, s.svcCtx)
+	return l.GetAuthorization(in)
+}

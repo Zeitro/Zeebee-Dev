@@ -6,11 +6,9 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/copierx"
-	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
-
-	"zeebee-backend/common/errorx"
 )
 
 type AllLogic struct {
@@ -31,21 +29,22 @@ func NewAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AllLogic {
 
 func (l *AllLogic) All(in *proto.EmptyRequest) (resp *lender.OrganizationUserAllResponse, err error) {
 
-	claimUser, err := l.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claimUser, err := l.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	results, err := l.svcCtx.OrganizationUserRepo.AllOrganizationUsers(l.ctx, claimUser.OrganizationId)
+	results, err := l.svcCtx.TenantClient.OrganizationUser.AllOrganizationUsers(l.ctx, &tenant.OrganizationUserAllOrganizationUsersRequest{
+		Data: &tenant.OrganizationUserAllOrganizationUsersRequestData{
+			UserType:       string(constants.UserTypeLender),
+			OrganizationId: claimUser.OrganizationId,
+		},
+	})
 	if err != nil {
 		return nil, err
-	}
-	data, err := copierx.Trans[[]*model.OrganizationUser, []*proto.OrganizationUserEntity](&results, copierx.TimeToRFC3339Str())
-	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
 	return &lender.OrganizationUserAllResponse{
-		Data: *data,
+		Data: results.Data,
 	}, nil
 }

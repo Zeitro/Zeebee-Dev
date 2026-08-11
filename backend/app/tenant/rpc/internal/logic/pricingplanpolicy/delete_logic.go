@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 type DeleteLogic struct {
@@ -37,6 +38,7 @@ func (l *DeleteLogic) Delete(in *tenant.PricingPlanPolicyDeleteRequest) (resp *p
 	if err = l.baseLogic.PricingPlanPolicyLogic.Delete(l.ctx, in.Data.Id); err != nil {
 		return nil, errorx.WithStack(err)
 	}
+	l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypePricingPlanPolicy, in.Data.Id, constants.OperationActionPlanPolicyDelete)
 
 	return &proto.EmptyResponse{}, nil
 }

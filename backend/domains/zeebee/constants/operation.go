@@ -10,6 +10,7 @@ const (
 	OperationEntityTypeOrganizationUser            OperationEntityType = "OrganizationUser"
 	OperationEntityTypeOrganizationSubscription    OperationEntityType = "OrganizationSubscription"
 	OperationEntityTypePricingPlan                 OperationEntityType = "PricingPlan"
+	OperationEntityTypePricingPlanPolicy           OperationEntityType = "PricingPlanPolicy"
 )
 
 type OperationAction string
@@ -68,6 +69,9 @@ const (
 	OperationActionPlanDelete         OperationAction = "Plan Delete"
 	OperationActionPlanStatusSwitch   OperationAction = "Plan Status Switch"
 	OperationActionPlanBindResources  OperationAction = "Plan Bind Resources"
+	OperationActionPlanPolicyCreate   OperationAction = "Plan Policy Create"
+	OperationActionPlanPolicyUpdate   OperationAction = "Plan Policy Update"
+	OperationActionPlanPolicyDelete   OperationAction = "Plan Policy Delete"
 )
 
 type StorageType string

@@ -13,7 +13,6 @@ import (
 
 	"zeebee-backend/app/lender/config"
 	"zeebee-backend/app/lender/rpc/internal/global"
-	"zeebee-backend/app/lender/rpc/internal/logic"
 	apiServer "zeebee-backend/app/lender/rpc/internal/server/api"
 	commonServer "zeebee-backend/app/lender/rpc/internal/server/common"
 	fileServer "zeebee-backend/app/lender/rpc/internal/server/file"
@@ -29,14 +28,11 @@ import (
 	userServer "zeebee-backend/app/lender/rpc/internal/server/user"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/cron"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/constants"
 )
 
 type RpcServer struct {
-	s    *zrpc.RpcServer
-	cron *cron.Engine
+	s *zrpc.RpcServer
 }
 
 func NewRpcServer(c config.Config) (s service.Service, err error) {
@@ -99,14 +95,8 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		return resp, err
 	})
 	rpcService := &RpcServer{
-		s:    rpcServer,
-		cron: cron.NewEngine(),
+		s: rpcServer,
 	}
-	err = rpcService.RegisterCronTask(ctx, rpcConfig, logger)
-	if err != nil {
-		return nil, err
-	}
-
 	return rpcService, nil
 }
 
@@ -114,36 +104,8 @@ func (s *RpcServer) Start() {
 	go func() {
 		s.s.Start()
 	}()
-	go func() {
-		s.cron.Start()
-	}()
 }
 
 func (s *RpcServer) Stop() {
 	s.s.Stop()
-	s.cron.Stop()
-}
-
-func (s *RpcServer) RegisterCronTask(svcCtx *svc.ServiceContext, conf config.RpcConf, logger logx.Logger) (err error) {
-	if s.cron == nil {
-		s.cron = cron.NewEngine()
-	}
-	baseLogic := logic.GetBaseLogic(svcCtx)
-	for _, task := range conf.CronTaskConf {
-		switch task.Name {
-		case "update_organization_subscription_status":
-			err = s.cron.Register(task.Name, task.Schedule, func() {
-				ctx := context.Background()
-				taskErr := baseLogic.OrganizationSubscriptionLogic.UpdateStatus(ctx, constants.UserTypeLender)
-				if taskErr != nil {
-					logger.WithFields(
-						logx.Field("type", "cron_task"),
-						logx.Field("name", task.Name),
-						logx.Field("schedule", task.Schedule),
-					).Error(taskErr)
-				}
-			})
-		}
-	}
-	return
 }

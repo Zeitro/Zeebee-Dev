@@ -41,6 +41,7 @@
 | 文档 | 用途 |
 |------|------|
 | [API 文档索引](guides/api_documentation_index.md) | API 接口导航（含模块端点清单） |
+| [Tenant 部署检查清单](guides/tenant-deployment-checklist.md) | tenant 内网访问与订阅任务上线检查 |
 
 > 架构、目录结构、共享层、ADR 已统一收编至 [architecture.md](guides/architecture.md)。
 

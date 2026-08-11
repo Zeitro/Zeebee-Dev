@@ -31,7 +31,7 @@ func (l *ResourceTreeLogic) ResourceTree(in *admin.ResourceTreeRequest) (resp *a
 		},
 	}
 	if constants.ResourceTreeScope(in.Data.Scope) == constants.ResourceTreeScopeOrganization {
-		claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+		claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 		if err != nil {
 			return nil, err
 		}

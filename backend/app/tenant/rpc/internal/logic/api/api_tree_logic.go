@@ -8,7 +8,6 @@ import (
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
 )
@@ -33,11 +32,16 @@ func (l *ApiTreeLogic) ApiTree(in *tenant.ApiTreeRequest) (resp *tenant.ApiTreeR
 	if in.Data == nil {
 		return nil, errorx.ErrorEmptyRequestData
 	}
-	if _, err = logic.ParseUserType(in.Data.UserType); err != nil {
+	callerType, err := logic.ParseUserType(in.Data.UserType)
+	if err != nil {
+		return nil, err
+	}
+	targetType, err := targetType(callerType, in.Data.Type)
+	if err != nil {
 		return nil, err
 	}
 
-	trees, err := l.baseLogic.ApiLogic.ApiTree(l.ctx, constants.UserType(in.Data.Type))
+	trees, err := l.baseLogic.ApiLogic.ApiTree(l.ctx, targetType)
 	if err != nil {
 		return nil, err
 	}

@@ -22,6 +22,8 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	OrganizationEmail_SaveEmail_FullMethodName           = "/tenant.OrganizationEmail/SaveEmail"
 	OrganizationEmail_GenerateAuthCodeUrl_FullMethodName = "/tenant.OrganizationEmail/GenerateAuthCodeUrl"
+	OrganizationEmail_Authorize_FullMethodName           = "/tenant.OrganizationEmail/Authorize"
+	OrganizationEmail_GetAuthorization_FullMethodName    = "/tenant.OrganizationEmail/GetAuthorization"
 )
 
 // OrganizationEmailClient is the client API for OrganizationEmail service.
@@ -30,6 +32,8 @@ const (
 type OrganizationEmailClient interface {
 	SaveEmail(ctx context.Context, in *OrganizationEmailSaveEmailRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 	GenerateAuthCodeUrl(ctx context.Context, in *OrganizationEmailGenerateAuthCodeUrlRequest, opts ...grpc.CallOption) (*OrganizationEmailGenerateAuthCodeUrlResponse, error)
+	Authorize(ctx context.Context, in *OrganizationEmailAuthorizeRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
+	GetAuthorization(ctx context.Context, in *OrganizationEmailGetAuthorizationRequest, opts ...grpc.CallOption) (*OrganizationEmailGetAuthorizationResponse, error)
 }
 
 type organizationEmailClient struct {
@@ -60,12 +64,34 @@ func (c *organizationEmailClient) GenerateAuthCodeUrl(ctx context.Context, in *O
 	return out, nil
 }
 
+func (c *organizationEmailClient) Authorize(ctx context.Context, in *OrganizationEmailAuthorizeRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(proto.EmptyResponse)
+	err := c.cc.Invoke(ctx, OrganizationEmail_Authorize_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationEmailClient) GetAuthorization(ctx context.Context, in *OrganizationEmailGetAuthorizationRequest, opts ...grpc.CallOption) (*OrganizationEmailGetAuthorizationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrganizationEmailGetAuthorizationResponse)
+	err := c.cc.Invoke(ctx, OrganizationEmail_GetAuthorization_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrganizationEmailServer is the server API for OrganizationEmail service.
 // All implementations must embed UnimplementedOrganizationEmailServer
 // for forward compatibility.
 type OrganizationEmailServer interface {
 	SaveEmail(context.Context, *OrganizationEmailSaveEmailRequest) (*proto.EmptyResponse, error)
 	GenerateAuthCodeUrl(context.Context, *OrganizationEmailGenerateAuthCodeUrlRequest) (*OrganizationEmailGenerateAuthCodeUrlResponse, error)
+	Authorize(context.Context, *OrganizationEmailAuthorizeRequest) (*proto.EmptyResponse, error)
+	GetAuthorization(context.Context, *OrganizationEmailGetAuthorizationRequest) (*OrganizationEmailGetAuthorizationResponse, error)
 	mustEmbedUnimplementedOrganizationEmailServer()
 }
 
@@ -81,6 +107,12 @@ func (UnimplementedOrganizationEmailServer) SaveEmail(context.Context, *Organiza
 }
 func (UnimplementedOrganizationEmailServer) GenerateAuthCodeUrl(context.Context, *OrganizationEmailGenerateAuthCodeUrlRequest) (*OrganizationEmailGenerateAuthCodeUrlResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GenerateAuthCodeUrl not implemented")
+}
+func (UnimplementedOrganizationEmailServer) Authorize(context.Context, *OrganizationEmailAuthorizeRequest) (*proto.EmptyResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Authorize not implemented")
+}
+func (UnimplementedOrganizationEmailServer) GetAuthorization(context.Context, *OrganizationEmailGetAuthorizationRequest) (*OrganizationEmailGetAuthorizationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAuthorization not implemented")
 }
 func (UnimplementedOrganizationEmailServer) mustEmbedUnimplementedOrganizationEmailServer() {}
 func (UnimplementedOrganizationEmailServer) testEmbeddedByValue()                           {}
@@ -139,6 +171,42 @@ func _OrganizationEmail_GenerateAuthCodeUrl_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrganizationEmail_Authorize_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationEmailAuthorizeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationEmailServer).Authorize(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationEmail_Authorize_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationEmailServer).Authorize(ctx, req.(*OrganizationEmailAuthorizeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationEmail_GetAuthorization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationEmailGetAuthorizationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationEmailServer).GetAuthorization(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationEmail_GetAuthorization_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationEmailServer).GetAuthorization(ctx, req.(*OrganizationEmailGetAuthorizationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OrganizationEmail_ServiceDesc is the grpc.ServiceDesc for OrganizationEmail service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -153,6 +221,14 @@ var OrganizationEmail_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GenerateAuthCodeUrl",
 			Handler:    _OrganizationEmail_GenerateAuthCodeUrl_Handler,
+		},
+		{
+			MethodName: "Authorize",
+			Handler:    _OrganizationEmail_Authorize_Handler,
+		},
+		{
+			MethodName: "GetAuthorization",
+			Handler:    _OrganizationEmail_GetAuthorization_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

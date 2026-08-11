@@ -5,10 +5,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/duke-git/lancet/v2/mathutil"
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/grpc/metadata"
 
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/logic"
@@ -17,8 +17,8 @@ import (
 	"zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/stringx"
+	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/proto"
 	"zeebee-backend/domains/zeebee/templater"
 	"zeebee-backend/domains/zeebee/templater/loader"
@@ -54,11 +54,15 @@ func (l *VerifyEmailLogic) VerifyEmail(in *proto.VerifyEmailRequest) (resp *prot
 		return nil, err
 	}
 
-	user, uerr := l.svcCtx.UserRepo.GetUserByEmail(l.ctx, strings.ToLower(in.Data.Email), constants.UserTypeBorrower)
-	if uerr == nil && user != nil {
+	ctx := context.WithoutCancel(l.ctx)
+	ctx = metadata.NewIncomingContext(ctx, metadata.Pairs(
+		utils.JwtTokenCtxKey, loginResp.Data.AccessToken,
+		utils.UserTypeCtxKey, string(constants.UserTypeBorrower),
+	))
+	user, uerr := l.svcCtx.TenantClient.User.UserInfo(ctx, &tenant.UserInfoRequest{Data: &tenant.UserInfoRequestData{}})
+	if uerr == nil && user.Data != nil {
 		go func() {
-			ctx := context.WithoutCancel(l.ctx)
-			if err := l.handlePreapprovalLoan(ctx, user, user.DefaultOrganizationId); err != nil {
+			if err := l.handlePreapprovalLoan(ctx, user.Data.Email, user.Data.FirstName, user.Data.OrganizationId); err != nil {
 				l.svcCtx.Logger.WithContext(ctx).
 					WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
 					Error(err)
@@ -69,12 +73,15 @@ func (l *VerifyEmailLogic) VerifyEmail(in *proto.VerifyEmailRequest) (resp *prot
 	return &proto.VerifyEmailResponse{Data: loginResp.Data}, nil
 }
 
-func (l *VerifyEmailLogic) handlePreapprovalLoan(ctx context.Context, user *model.User, borrowerOrganizationId int64) (err error) {
-	borrowerOrganization, err := l.svcCtx.OrganizationRepo.FindOneById(ctx, borrowerOrganizationId)
+func (l *VerifyEmailLogic) handlePreapprovalLoan(ctx context.Context, userEmail, userFirstName string, borrowerOrganizationId int64) (err error) {
+	borrowerOrganization, err := l.svcCtx.TenantClient.Organization.DetailWithType(ctx, &tenant.OrganizationDetailWithTypeRequest{Data: &tenant.OrganizationDetailWithTypeRequestData{
+		UserType: string(constants.UserTypeBorrower),
+		Id:       borrowerOrganizationId,
+	}})
 	if err != nil {
 		return err
 	}
-	if borrowerOrganization == nil || borrowerOrganization.Id == 0 || borrowerOrganization.Status != constants.OrganizationStatusActive {
+	if borrowerOrganization.Data == nil || borrowerOrganization.Data.Id == 0 || borrowerOrganization.Data.Status != string(constants.OrganizationStatusActive) {
 		l.svcCtx.Logger.WithContext(ctx).Info("Borrower organization is inactive")
 		return nil
 	}
@@ -92,19 +99,26 @@ func (l *VerifyEmailLogic) handlePreapprovalLoan(ctx context.Context, user *mode
 	}
 	lenderOrganizationId := draftLoan.LenderOrganizationId
 
-	lenderOrganization, err := l.svcCtx.OrganizationRepo.FindOneById(ctx, lenderOrganizationId)
+	lenderOrganization, err := l.svcCtx.TenantClient.Organization.DetailWithType(ctx, &tenant.OrganizationDetailWithTypeRequest{Data: &tenant.OrganizationDetailWithTypeRequestData{
+		UserType: string(constants.UserTypeLender),
+		Id:       lenderOrganizationId,
+	}})
 	if err != nil {
 		return err
 	}
-	if lenderOrganization == nil || lenderOrganization.Id == 0 || lenderOrganization.Status != constants.OrganizationStatusActive {
+	if lenderOrganization.Data == nil || lenderOrganization.Data.Id == 0 || lenderOrganization.Data.Status != string(constants.OrganizationStatusActive) {
 		l.svcCtx.Logger.WithContext(ctx).Info("Lender organization is inactive")
 		return nil
 	}
-	preapprovalLetterSetting, err := l.baseLogic.OrganizationSettingLogic.DetailByPurpose(ctx, lenderOrganization.Id, constants.OrganizationPurposePreapprovalLetter)
+	preapprovalLetterSetting, err := l.svcCtx.TenantClient.OrganizationSetting.DetailByPurpose(ctx, &tenant.OrganizationSettingDetailByPurposeRequest{Data: &tenant.OrganizationSettingDetailByPurposeRequestData{
+		UserType:       string(constants.UserTypeLender),
+		OrganizationId: lenderOrganizationId,
+		Purpose:        constants.OrganizationPurposePreapprovalLetter,
+	}})
 	if err != nil {
 		return err
 	}
-	if !preapprovalLetterSetting.Enabled {
+	if preapprovalLetterSetting.Data == nil || !preapprovalLetterSetting.Data.Enabled {
 		l.svcCtx.Logger.WithContext(ctx).Info("Preapproval letter is not enabled")
 		return nil
 	}
@@ -125,7 +139,7 @@ func (l *VerifyEmailLogic) handlePreapprovalLoan(ctx context.Context, user *mode
 
 	// Get PDF
 	renderData := map[string]interface{}{
-		"loanBorrower":  user.FirstName,
+		"loanBorrower":  userFirstName,
 		"salesPrice":    stringx.FormatUsDollarCurrency(preapprovalInput.Loan.PurchaseAmount),
 		"maxLoanAmount": stringx.FormatUsDollarCurrency(preapprovalResult.TotalAmount),
 		"terms":         preapprovalResult.LoanTerm,
@@ -154,7 +168,7 @@ func (l *VerifyEmailLogic) handlePreapprovalLoan(ctx context.Context, user *mode
 	}
 	// Get email
 	renderData = map[string]interface{}{
-		"borrowerName": user.FirstName,
+		"borrowerName": userFirstName,
 	}
 	emailConfig, ok := global.Config.TemplateConf[constants.BorrowerPreapprovalLetterEmailName]
 	if !ok {
@@ -179,7 +193,7 @@ func (l *VerifyEmailLogic) handlePreapprovalLoan(ctx context.Context, user *mode
 	emailMsg := email.Message{
 		Subject: emailConfig.Title,
 		From:    global.Config.EmailConf.Username,
-		To:      []string{user.Email},
+		To:      []string{userEmail},
 		Body:    string(emailContent),
 		Cc:      nil,
 		Attachments: []email.Attachment{

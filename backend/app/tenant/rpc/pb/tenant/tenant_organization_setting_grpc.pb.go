@@ -20,8 +20,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	OrganizationSetting_DetailByPurpose_FullMethodName = "/tenant.OrganizationSetting/DetailByPurpose"
-	OrganizationSetting_SwitchStatus_FullMethodName    = "/tenant.OrganizationSetting/SwitchStatus"
+	OrganizationSetting_DetailByPurpose_FullMethodName    = "/tenant.OrganizationSetting/DetailByPurpose"
+	OrganizationSetting_SwitchStatus_FullMethodName       = "/tenant.OrganizationSetting/SwitchStatus"
+	OrganizationSetting_SyncLenderDefaults_FullMethodName = "/tenant.OrganizationSetting/SyncLenderDefaults"
 )
 
 // OrganizationSettingClient is the client API for OrganizationSetting service.
@@ -30,6 +31,7 @@ const (
 type OrganizationSettingClient interface {
 	DetailByPurpose(ctx context.Context, in *OrganizationSettingDetailByPurposeRequest, opts ...grpc.CallOption) (*OrganizationSettingDetailResponse, error)
 	SwitchStatus(ctx context.Context, in *OrganizationSettingSwitchStatusRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
+	SyncLenderDefaults(ctx context.Context, in *OrganizationSettingSyncLenderDefaultsRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 }
 
 type organizationSettingClient struct {
@@ -60,12 +62,23 @@ func (c *organizationSettingClient) SwitchStatus(ctx context.Context, in *Organi
 	return out, nil
 }
 
+func (c *organizationSettingClient) SyncLenderDefaults(ctx context.Context, in *OrganizationSettingSyncLenderDefaultsRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(proto.EmptyResponse)
+	err := c.cc.Invoke(ctx, OrganizationSetting_SyncLenderDefaults_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrganizationSettingServer is the server API for OrganizationSetting service.
 // All implementations must embed UnimplementedOrganizationSettingServer
 // for forward compatibility.
 type OrganizationSettingServer interface {
 	DetailByPurpose(context.Context, *OrganizationSettingDetailByPurposeRequest) (*OrganizationSettingDetailResponse, error)
 	SwitchStatus(context.Context, *OrganizationSettingSwitchStatusRequest) (*proto.EmptyResponse, error)
+	SyncLenderDefaults(context.Context, *OrganizationSettingSyncLenderDefaultsRequest) (*proto.EmptyResponse, error)
 	mustEmbedUnimplementedOrganizationSettingServer()
 }
 
@@ -81,6 +94,9 @@ func (UnimplementedOrganizationSettingServer) DetailByPurpose(context.Context, *
 }
 func (UnimplementedOrganizationSettingServer) SwitchStatus(context.Context, *OrganizationSettingSwitchStatusRequest) (*proto.EmptyResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SwitchStatus not implemented")
+}
+func (UnimplementedOrganizationSettingServer) SyncLenderDefaults(context.Context, *OrganizationSettingSyncLenderDefaultsRequest) (*proto.EmptyResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SyncLenderDefaults not implemented")
 }
 func (UnimplementedOrganizationSettingServer) mustEmbedUnimplementedOrganizationSettingServer() {}
 func (UnimplementedOrganizationSettingServer) testEmbeddedByValue()                             {}
@@ -139,6 +155,24 @@ func _OrganizationSetting_SwitchStatus_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrganizationSetting_SyncLenderDefaults_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrganizationSettingSyncLenderDefaultsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationSettingServer).SyncLenderDefaults(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationSetting_SyncLenderDefaults_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationSettingServer).SyncLenderDefaults(ctx, req.(*OrganizationSettingSyncLenderDefaultsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OrganizationSetting_ServiceDesc is the grpc.ServiceDesc for OrganizationSetting service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -153,6 +187,10 @@ var OrganizationSetting_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SwitchStatus",
 			Handler:    _OrganizationSetting_SwitchStatus_Handler,
+		},
+		{
+			MethodName: "SyncLenderDefaults",
+			Handler:    _OrganizationSetting_SyncLenderDefaults_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

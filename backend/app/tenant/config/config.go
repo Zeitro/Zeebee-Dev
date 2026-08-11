@@ -27,7 +27,8 @@ type RpcConf struct {
 	LimiterConf LimiterConf
 
 	// Casbin: tenant is the sole runtime executor (direction B).
-	CasbinConf CasbinConf
+	CasbinConf   CasbinConf
+	CronTaskConf []CronTaskConf
 
 	// JwtConf is the single shared JWT signing config across all platforms
 	// (borrower/lender/admin). userType is carried in the token payload, so one
@@ -78,6 +79,11 @@ type CasbinConf struct {
 	ModelPath  string
 	Watcher    CasbinWatcher
 	EventTopic CasbinEventTopic
+}
+
+type CronTaskConf struct {
+	Name     string `json:"name"`
+	Schedule string `json:"schedule"`
 }
 
 // CasbinEventTopic holds one redis pub/sub channel per platform. tenant is the

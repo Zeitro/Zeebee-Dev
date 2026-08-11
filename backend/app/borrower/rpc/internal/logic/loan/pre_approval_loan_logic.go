@@ -16,14 +16,14 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	tenantclient "zeebee-backend/app/tenant/rpc/client"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/preapproval_engine"
 	"zeebee-backend/common/uuid"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/model"
-	"zeebee-backend/domains/zeebee/repo"
 )
 
 type PreApprovalLoanLogic struct {
@@ -132,16 +132,23 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 		return nil, errorx.WithStack(err)
 	}
 
-	selfOrganization, err := l.svcCtx.OrganizationRepo.FindOneByColumns(l.ctx, map[string]interface{}{
-		"owner_type": constants.OrganizationOwnerTypeSelf,
-		"type":       constants.UserTypeLender,
-	})
+	organizations, err := l.svcCtx.TenantClient.Organization.All(l.ctx, &tenant.OrganizationAllRequest{Data: &tenant.OrganizationAllRequestData{UserType: string(constants.UserTypeLender)}})
 	if err != nil {
-		return nil, errorx.WithStack(err)
+		return nil, err
+	}
+	var selfOrganizationId int64
+	for _, organization := range organizations.Data {
+		if organization.OwnerType == string(constants.OrganizationOwnerTypeSelf) {
+			selfOrganizationId = organization.Id
+			break
+		}
+	}
+	if selfOrganizationId == 0 {
+		return nil, errorx.New("self lender organization not found")
 	}
 	go func() {
 		ctx := context.WithoutCancel(l.ctx)
-		err := sendPreApprovalNotification(ctx, l.svcCtx.OrganizationRepo, requestId, selfOrganization.Id, false)
+		err := sendPreApprovalNotification(ctx, l.svcCtx.TenantClient, requestId, selfOrganizationId, false)
 		if err != nil {
 			logx.WithContext(ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
@@ -152,8 +159,7 @@ func (l *PreApprovalLoanLogic) PreApprovalLoan(in *borrower.LoanPreApprovalReque
 	}, nil
 }
 
-func sendPreApprovalNotification(ctx context.Context, repo *repo.OrganizationRepo, requestId string, organizationId int64, isThirdParty bool) (err error) {
-	var organization *model.Organization
+func sendPreApprovalNotification(ctx context.Context, tenantClient *tenantclient.Client, requestId string, organizationId int64, isThirdParty bool) (err error) {
 	// check if send already
 	sendKey := fmt.Sprintf(constants.BorrowerSendAprApprovalNotificationKey, organizationId, requestId)
 	isSend, err := global.GetRedis().IsExisted(ctx, sendKey)
@@ -164,11 +170,13 @@ func sendPreApprovalNotification(ctx context.Context, repo *repo.OrganizationRep
 		return nil
 	}
 	// check company status
-	organization, err = repo.FindOneById(ctx, organizationId)
+	organization, err := tenantClient.Organization.DetailWithType(ctx, &tenant.OrganizationDetailWithTypeRequest{Data: &tenant.OrganizationDetailWithTypeRequestData{
+		UserType: string(constants.UserTypeLender), Id: organizationId,
+	}})
 	if err != nil {
-		return errorx.WithStack(err)
+		return err
 	}
-	if len(organization.ContactEmail) == 0 || organization.Status != constants.OrganizationStatusActive {
+	if organization.Data == nil || organization.Data.ContactEmail == "" || organization.Data.Status != string(constants.OrganizationStatusActive) {
 		return nil
 	}
 
@@ -201,7 +209,7 @@ func sendPreApprovalNotification(ctx context.Context, repo *repo.OrganizationRep
 	tplVars := map[string]interface{}{
 		"request":        cacheData.RequestData,
 		"result":         cacheData.ResultData,
-		"company":        organization.Name,
+		"company":        organization.Data.Name,
 		"url":            global.Config.LenderUrl,
 		"is_third_party": isThirdParty,
 	}
@@ -212,7 +220,7 @@ func sendPreApprovalNotification(ctx context.Context, repo *repo.OrganizationRep
 		return errorx.WithStack(err)
 	}
 
-	targetEmail := organization.ContactEmail
+	targetEmail := organization.Data.ContactEmail
 	if isThirdParty {
 		targetEmail = global.Config.ZeebeeAgentEmail
 	}

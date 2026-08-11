@@ -33,3 +33,8 @@ func (s *OrganizationSettingServer) SwitchStatus(ctx context.Context, in *tenant
 	l := organizationsettinglogic.NewSwitchStatusLogic(ctx, s.svcCtx)
 	return l.SwitchStatus(in)
 }
+
+func (s *OrganizationSettingServer) SyncLenderDefaults(ctx context.Context, in *tenant.OrganizationSettingSyncLenderDefaultsRequest) (*proto.EmptyResponse, error) {
+	l := organizationsettinglogic.NewSyncLenderDefaultsLogic(ctx, s.svcCtx)
+	return l.SyncLenderDefaults(in)
+}

@@ -24,7 +24,7 @@ func NewUserMenuLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserMenu
 // UserMenu proxies to tenant; the caller's organization/membership come from the
 // locally verified JWT claim.
 func (l *UserMenuLogic) UserMenu(in *proto.EmptyRequest) (resp *lender.ResourceTreeResponse, err error) {
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}

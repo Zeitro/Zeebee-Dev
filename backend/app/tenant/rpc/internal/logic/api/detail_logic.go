@@ -8,7 +8,6 @@ import (
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
 )
@@ -33,11 +32,16 @@ func (l *DetailLogic) Detail(in *tenant.ApiDetailRequest) (resp *tenant.ApiDetai
 	if in.Data == nil {
 		return nil, errorx.ErrorEmptyRequestData
 	}
-	if _, err = logic.ParseUserType(in.Data.UserType); err != nil {
+	callerType, err := logic.ParseUserType(in.Data.UserType)
+	if err != nil {
+		return nil, err
+	}
+	targetType, err := targetType(callerType, in.Data.Type)
+	if err != nil {
 		return nil, err
 	}
 
-	result, err := l.baseLogic.ApiLogic.Detail(l.ctx, in.Data.Id, constants.UserType(in.Data.Type))
+	result, err := l.baseLogic.ApiLogic.Detail(l.ctx, in.Data.Id, targetType)
 	if err != nil {
 		return nil, err
 	}

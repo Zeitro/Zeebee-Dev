@@ -35,7 +35,14 @@ message OrganizationSettingDetailResponse {
   proto.OrganizationSettingEntity data = 1;
 }
 
+message OrganizationSettingSyncLenderDefaultsRequest {
+  OrganizationSettingSyncLenderDefaultsRequestData data = 1;
+}
+message OrganizationSettingSyncLenderDefaultsRequestData {
+}
+
 service OrganizationSetting {
   rpc DetailByPurpose(OrganizationSettingDetailByPurposeRequest) returns (OrganizationSettingDetailResponse);
   rpc SwitchStatus(OrganizationSettingSwitchStatusRequest) returns (proto.EmptyResponse);
+  rpc SyncLenderDefaults(OrganizationSettingSyncLenderDefaultsRequest) returns (proto.EmptyResponse);
 }

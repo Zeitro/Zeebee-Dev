@@ -16,13 +16,15 @@ import (
 )
 
 type (
-	OrganizationSettingDetailByPurposeRequest = tenant.OrganizationSettingDetailByPurposeRequest
-	OrganizationSettingDetailResponse         = tenant.OrganizationSettingDetailResponse
-	OrganizationSettingSwitchStatusRequest    = tenant.OrganizationSettingSwitchStatusRequest
+	OrganizationSettingDetailByPurposeRequest    = tenant.OrganizationSettingDetailByPurposeRequest
+	OrganizationSettingDetailResponse            = tenant.OrganizationSettingDetailResponse
+	OrganizationSettingSwitchStatusRequest       = tenant.OrganizationSettingSwitchStatusRequest
+	OrganizationSettingSyncLenderDefaultsRequest = tenant.OrganizationSettingSyncLenderDefaultsRequest
 
 	OrganizationSetting interface {
 		DetailByPurpose(ctx context.Context, in *OrganizationSettingDetailByPurposeRequest, opts ...grpc.CallOption) (*OrganizationSettingDetailResponse, error)
 		SwitchStatus(ctx context.Context, in *OrganizationSettingSwitchStatusRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
+		SyncLenderDefaults(ctx context.Context, in *OrganizationSettingSyncLenderDefaultsRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 	}
 
 	defaultOrganizationSetting struct {
@@ -44,4 +46,9 @@ func (m *defaultOrganizationSetting) DetailByPurpose(ctx context.Context, in *Or
 func (m *defaultOrganizationSetting) SwitchStatus(ctx context.Context, in *OrganizationSettingSwitchStatusRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
 	client := tenant.NewOrganizationSettingClient(m.cli.Conn())
 	return client.SwitchStatus(ctx, in, opts...)
+}
+
+func (m *defaultOrganizationSetting) SyncLenderDefaults(ctx context.Context, in *OrganizationSettingSyncLenderDefaultsRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
+	client := tenant.NewOrganizationSettingClient(m.cli.Conn())
+	return client.SyncLenderDefaults(ctx, in, opts...)
 }

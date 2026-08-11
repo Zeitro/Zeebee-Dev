@@ -179,11 +179,12 @@ func (x *OrganizationSubscriptionDetailRequest) GetData() *OrganizationSubscript
 }
 
 type OrganizationSubscriptionDetailRequestData struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserType      string                 `protobuf:"bytes,1,opt,name=user_type,json=userType,proto3" json:"user_type,omitempty"`
-	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	UserType       string                 `protobuf:"bytes,1,opt,name=user_type,json=userType,proto3" json:"user_type,omitempty"` // caller platform; admin may manage all organizations
+	Id             int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	OrganizationId int64                  `protobuf:"varint,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"` // required for lender/borrower callers
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *OrganizationSubscriptionDetailRequestData) Reset() {
@@ -226,6 +227,13 @@ func (x *OrganizationSubscriptionDetailRequestData) GetUserType() string {
 func (x *OrganizationSubscriptionDetailRequestData) GetId() int64 {
 	if x != nil {
 		return x.Id
+	}
+	return 0
+}
+
+func (x *OrganizationSubscriptionDetailRequestData) GetOrganizationId() int64 {
+	if x != nil {
+		return x.OrganizationId
 	}
 	return 0
 }
@@ -683,14 +691,15 @@ func (x *OrganizationSubscriptionPageRequestFilter) GetStatus() []string {
 }
 
 type OrganizationSubscriptionPageRequestData struct {
-	state         protoimpl.MessageState                     `protogen:"open.v1"`
-	Page          int64                                      `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
-	Limit         int64                                      `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
-	Filter        *OrganizationSubscriptionPageRequestFilter `protobuf:"bytes,3,opt,name=filter,proto3" json:"filter,omitempty"`
-	Sorter        *proto.CommonPageSorter                    `protobuf:"bytes,4,opt,name=sorter,proto3" json:"sorter,omitempty"`
-	UserType      string                                     `protobuf:"bytes,5,opt,name=user_type,json=userType,proto3" json:"user_type,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState                     `protogen:"open.v1"`
+	Page           int64                                      `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
+	Limit          int64                                      `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	Filter         *OrganizationSubscriptionPageRequestFilter `protobuf:"bytes,3,opt,name=filter,proto3" json:"filter,omitempty"`
+	Sorter         *proto.CommonPageSorter                    `protobuf:"bytes,4,opt,name=sorter,proto3" json:"sorter,omitempty"`
+	UserType       string                                     `protobuf:"bytes,5,opt,name=user_type,json=userType,proto3" json:"user_type,omitempty"`                    // caller platform; admin may page all organizations
+	OrganizationId int64                                      `protobuf:"varint,6,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"` // required for lender/borrower callers
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *OrganizationSubscriptionPageRequestData) Reset() {
@@ -756,6 +765,13 @@ func (x *OrganizationSubscriptionPageRequestData) GetUserType() string {
 		return x.UserType
 	}
 	return ""
+}
+
+func (x *OrganizationSubscriptionPageRequestData) GetOrganizationId() int64 {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return 0
 }
 
 type OrganizationSubscriptionPageEntity struct {
@@ -1215,10 +1231,11 @@ const file_tenant_organization_subscription_proto_rawDesc = "" +
 	"\x0fpricing_plan_id\x18\x03 \x01(\x03R\rpricingPlanId\x123\n" +
 	"\x16pricing_plan_policy_id\x18\x04 \x01(\x03R\x13pricingPlanPolicyId\"n\n" +
 	"%OrganizationSubscriptionDetailRequest\x12E\n" +
-	"\x04data\x18\x01 \x01(\v21.tenant.OrganizationSubscriptionDetailRequestDataR\x04data\"X\n" +
+	"\x04data\x18\x01 \x01(\v21.tenant.OrganizationSubscriptionDetailRequestDataR\x04data\"\x81\x01\n" +
 	")OrganizationSubscriptionDetailRequestData\x12\x1b\n" +
 	"\tuser_type\x18\x01 \x01(\tR\buserType\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"c\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\x12'\n" +
+	"\x0forganization_id\x18\x03 \x01(\x03R\x0eorganizationId\"c\n" +
 	"&OrganizationSubscriptionDetailResponse\x129\n" +
 	"\x04data\x18\x01 \x01(\v2%.proto.OrganizationSubscriptionEntityR\x04data\"l\n" +
 	"$OrganizationSubscriptionRenewRequest\x12D\n" +
@@ -1244,13 +1261,14 @@ const file_tenant_organization_subscription_proto_rawDesc = "" +
 	")OrganizationSubscriptionPageRequestFilter\x12\x18\n" +
 	"\akeyword\x18\x01 \x01(\tR\akeyword\x12\x12\n" +
 	"\x04type\x18\x02 \x01(\tR\x04type\x12\x16\n" +
-	"\x06status\x18\x03 \x03(\tR\x06status\"\xec\x01\n" +
+	"\x06status\x18\x03 \x03(\tR\x06status\"\x95\x02\n" +
 	"'OrganizationSubscriptionPageRequestData\x12\x12\n" +
 	"\x04page\x18\x01 \x01(\x03R\x04page\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x03R\x05limit\x12I\n" +
 	"\x06filter\x18\x03 \x01(\v21.tenant.OrganizationSubscriptionPageRequestFilterR\x06filter\x12/\n" +
 	"\x06sorter\x18\x04 \x01(\v2\x17.proto.CommonPageSorterR\x06sorter\x12\x1b\n" +
-	"\tuser_type\x18\x05 \x01(\tR\buserType\"\xc3\x03\n" +
+	"\tuser_type\x18\x05 \x01(\tR\buserType\x12'\n" +
+	"\x0forganization_id\x18\x06 \x01(\x03R\x0eorganizationId\"\xc3\x03\n" +
 	"\"OrganizationSubscriptionPageEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\x12+\n" +

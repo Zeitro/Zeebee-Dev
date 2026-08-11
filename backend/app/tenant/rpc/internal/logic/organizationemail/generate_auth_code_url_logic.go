@@ -7,6 +7,8 @@ import (
 	"zeebee-backend/app/tenant/rpc/internal/svc"
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type GenerateAuthCodeUrlLogic struct {
@@ -23,16 +25,28 @@ func NewGenerateAuthCodeUrlLogic(ctx context.Context, svcCtx *svc.ServiceContext
 	}
 }
 
-// GenerateAuthCodeUrl builds the Gmail OAuth consent URL. Gmail OAuth sending is
-// deferred (SMTP-first scope); the tenant wrapper returns an explicit error until
-// OAuth client config is wired (see contracts §2.6).
 func (l *GenerateAuthCodeUrlLogic) GenerateAuthCodeUrl(in *tenant.OrganizationEmailGenerateAuthCodeUrlRequest) (resp *tenant.OrganizationEmailGenerateAuthCodeUrlResponse, err error) {
 	if in.Data == nil {
 		return nil, errorx.ErrorEmptyRequestData
 	}
-	if _, err = logic.ParseUserType(in.Data.UserType); err != nil {
+	userType, err := logic.ParseUserType(in.Data.UserType)
+	if err != nil {
 		return
 	}
-
-	return nil, errorx.New("gmail oauth not configured in tenant (deferred)")
+	generator, err := gmailAuthCodeGenerator(l.baseLogic, userType)
+	if err != nil {
+		return nil, err
+	}
+	url, err := l.baseLogic.OrganizationEmailLogic.GenerateAuthCodeUrl(l.ctx, dto.OrganizationEmailGenerateAuthCodeUrlRequestDto{
+		OrganizationId:    in.Data.OrganizationId,
+		UserId:            in.Data.UserId,
+		EmailProvider:     constants.EmailProvider(in.Data.EmailProvider),
+		Purpose:           constants.EmailPurpose(in.Data.Purpose),
+		OrganizationType:  userType,
+		AuthCodeGenerator: generator,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &tenant.OrganizationEmailGenerateAuthCodeUrlResponse{Data: &tenant.OrganizationEmailGenerateAuthCodeUrlResponseData{Url: url}}, nil
 }

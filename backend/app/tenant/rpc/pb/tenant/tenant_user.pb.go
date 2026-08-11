@@ -321,6 +321,7 @@ type RegisterResponseData struct {
 	UserId         int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	OrganizationId int64                  `protobuf:"varint,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
 	Status         string                 `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
+	AccessToken    string                 `protobuf:"bytes,4,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"` // internal borrower side effects use tenant-issued identity
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -372,6 +373,13 @@ func (x *RegisterResponseData) GetOrganizationId() int64 {
 func (x *RegisterResponseData) GetStatus() string {
 	if x != nil {
 		return x.Status
+	}
+	return ""
+}
+
+func (x *RegisterResponseData) GetAccessToken() string {
+	if x != nil {
+		return x.AccessToken
 	}
 	return ""
 }
@@ -1474,6 +1482,232 @@ func (x *CreateAdminUserResponseData) GetUserId() int64 {
 	return 0
 }
 
+// GetClaim validates an access token for the declared platform and returns its
+// identity payload. tenant is the single JWT verification authority.
+type GetClaimRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          *GetClaimRequestData   `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetClaimRequest) Reset() {
+	*x = GetClaimRequest{}
+	mi := &file_tenant_user_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetClaimRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetClaimRequest) ProtoMessage() {}
+
+func (x *GetClaimRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_user_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetClaimRequest.ProtoReflect.Descriptor instead.
+func (*GetClaimRequest) Descriptor() ([]byte, []int) {
+	return file_tenant_user_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *GetClaimRequest) GetData() *GetClaimRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type GetClaimRequestData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AccessToken   string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	UserType      string                 `protobuf:"bytes,2,opt,name=user_type,json=userType,proto3" json:"user_type,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetClaimRequestData) Reset() {
+	*x = GetClaimRequestData{}
+	mi := &file_tenant_user_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetClaimRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetClaimRequestData) ProtoMessage() {}
+
+func (x *GetClaimRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_user_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetClaimRequestData.ProtoReflect.Descriptor instead.
+func (*GetClaimRequestData) Descriptor() ([]byte, []int) {
+	return file_tenant_user_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *GetClaimRequestData) GetAccessToken() string {
+	if x != nil {
+		return x.AccessToken
+	}
+	return ""
+}
+
+func (x *GetClaimRequestData) GetUserType() string {
+	if x != nil {
+		return x.UserType
+	}
+	return ""
+}
+
+type GetClaimResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          *GetClaimResponseData  `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetClaimResponse) Reset() {
+	*x = GetClaimResponse{}
+	mi := &file_tenant_user_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetClaimResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetClaimResponse) ProtoMessage() {}
+
+func (x *GetClaimResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_user_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetClaimResponse.ProtoReflect.Descriptor instead.
+func (*GetClaimResponse) Descriptor() ([]byte, []int) {
+	return file_tenant_user_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *GetClaimResponse) GetData() *GetClaimResponseData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type GetClaimResponseData struct {
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	UserId             int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	OrganizationId     int64                  `protobuf:"varint,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	OrganizationUserId int64                  `protobuf:"varint,3,opt,name=organization_user_id,json=organizationUserId,proto3" json:"organization_user_id,omitempty"`
+	Username           string                 `protobuf:"bytes,4,opt,name=username,proto3" json:"username,omitempty"`
+	Role               []string               `protobuf:"bytes,5,rep,name=role,proto3" json:"role,omitempty"`
+	UserType           string                 `protobuf:"bytes,6,opt,name=user_type,json=userType,proto3" json:"user_type,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *GetClaimResponseData) Reset() {
+	*x = GetClaimResponseData{}
+	mi := &file_tenant_user_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetClaimResponseData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetClaimResponseData) ProtoMessage() {}
+
+func (x *GetClaimResponseData) ProtoReflect() protoreflect.Message {
+	mi := &file_tenant_user_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetClaimResponseData.ProtoReflect.Descriptor instead.
+func (*GetClaimResponseData) Descriptor() ([]byte, []int) {
+	return file_tenant_user_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *GetClaimResponseData) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *GetClaimResponseData) GetOrganizationId() int64 {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return 0
+}
+
+func (x *GetClaimResponseData) GetOrganizationUserId() int64 {
+	if x != nil {
+		return x.OrganizationUserId
+	}
+	return 0
+}
+
+func (x *GetClaimResponseData) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
+}
+
+func (x *GetClaimResponseData) GetRole() []string {
+	if x != nil {
+		return x.Role
+	}
+	return nil
+}
+
+func (x *GetClaimResponseData) GetUserType() string {
+	if x != nil {
+		return x.UserType
+	}
+	return ""
+}
+
 var File_tenant_user_proto protoreflect.FileDescriptor
 
 const file_tenant_user_proto_rawDesc = "" +
@@ -1499,11 +1733,12 @@ const file_tenant_user_proto_rawDesc = "" +
 	"owner_type\x18\a \x01(\tR\townerType\x12;\n" +
 	"\x1aborrower_pre_approval_json\x18\b \x01(\tR\x17borrowerPreApprovalJson\"D\n" +
 	"\x10RegisterResponse\x120\n" +
-	"\x04data\x18\x01 \x01(\v2\x1c.tenant.RegisterResponseDataR\x04data\"p\n" +
+	"\x04data\x18\x01 \x01(\v2\x1c.tenant.RegisterResponseDataR\x04data\"\x93\x01\n" +
 	"\x14RegisterResponseData\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\x03R\x0eorganizationId\x12\x16\n" +
-	"\x06status\x18\x03 \x01(\tR\x06status\"H\n" +
+	"\x06status\x18\x03 \x01(\tR\x06status\x12!\n" +
+	"\faccess_token\x18\x04 \x01(\tR\vaccessToken\"H\n" +
 	"\x12VerifyEmailRequest\x122\n" +
 	"\x04data\x18\x01 \x01(\v2\x1e.tenant.VerifyEmailRequestDataR\x04data\"_\n" +
 	"\x16VerifyEmailRequestData\x12\x1b\n" +
@@ -1564,7 +1799,21 @@ const file_tenant_user_proto_rawDesc = "" +
 	"\x17CreateAdminUserResponse\x127\n" +
 	"\x04data\x18\x01 \x01(\v2#.tenant.CreateAdminUserResponseDataR\x04data\"6\n" +
 	"\x1bCreateAdminUserResponseData\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId2\x8a\a\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"B\n" +
+	"\x0fGetClaimRequest\x12/\n" +
+	"\x04data\x18\x01 \x01(\v2\x1b.tenant.GetClaimRequestDataR\x04data\"U\n" +
+	"\x13GetClaimRequestData\x12!\n" +
+	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12\x1b\n" +
+	"\tuser_type\x18\x02 \x01(\tR\buserType\"D\n" +
+	"\x10GetClaimResponse\x120\n" +
+	"\x04data\x18\x01 \x01(\v2\x1c.tenant.GetClaimResponseDataR\x04data\"\xd7\x01\n" +
+	"\x14GetClaimResponseData\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12'\n" +
+	"\x0forganization_id\x18\x02 \x01(\x03R\x0eorganizationId\x120\n" +
+	"\x14organization_user_id\x18\x03 \x01(\x03R\x12organizationUserId\x12\x1a\n" +
+	"\busername\x18\x04 \x01(\tR\busername\x12\x12\n" +
+	"\x04role\x18\x05 \x03(\tR\x04role\x12\x1b\n" +
+	"\tuser_type\x18\x06 \x01(\tR\buserType2\xc9\a\n" +
 	"\x04User\x127\n" +
 	"\x05Login\x12\x14.tenant.LoginRequest\x1a\x18.proto.UserLoginResponse\x12=\n" +
 	"\bRegister\x12\x17.tenant.RegisterRequest\x1a\x18.tenant.RegisterResponse\x12C\n" +
@@ -1577,7 +1826,8 @@ const file_tenant_user_proto_rawDesc = "" +
 	"\x12SwitchOrganization\x12!.tenant.SwitchOrganizationRequest\x1a\x18.proto.UserLoginResponse\x12<\n" +
 	"\bUserInfo\x12\x17.tenant.UserInfoRequest\x1a\x17.proto.UserinfoResponse\x12B\n" +
 	"\vEditProfile\x12\x1a.tenant.EditProfileRequest\x1a\x17.proto.UserinfoResponse\x12R\n" +
-	"\x0fCreateAdminUser\x12\x1e.tenant.CreateAdminUserRequest\x1a\x1f.tenant.CreateAdminUserResponseB)Z'zeebee-backend/app/tenant/rpc/pb/tenantb\x06proto3"
+	"\x0fCreateAdminUser\x12\x1e.tenant.CreateAdminUserRequest\x1a\x1f.tenant.CreateAdminUserResponse\x12=\n" +
+	"\bGetClaim\x12\x17.tenant.GetClaimRequest\x1a\x18.tenant.GetClaimResponseB)Z'zeebee-backend/app/tenant/rpc/pb/tenantb\x06proto3"
 
 var (
 	file_tenant_user_proto_rawDescOnce sync.Once
@@ -1591,7 +1841,7 @@ func file_tenant_user_proto_rawDescGZIP() []byte {
 	return file_tenant_user_proto_rawDescData
 }
 
-var file_tenant_user_proto_msgTypes = make([]protoimpl.MessageInfo, 28)
+var file_tenant_user_proto_msgTypes = make([]protoimpl.MessageInfo, 32)
 var file_tenant_user_proto_goTypes = []any{
 	(*LoginRequest)(nil),                         // 0: tenant.LoginRequest
 	(*LoginRequestData)(nil),                     // 1: tenant.LoginRequestData
@@ -1621,11 +1871,15 @@ var file_tenant_user_proto_goTypes = []any{
 	(*CreateAdminUserRequestData)(nil),           // 25: tenant.CreateAdminUserRequestData
 	(*CreateAdminUserResponse)(nil),              // 26: tenant.CreateAdminUserResponse
 	(*CreateAdminUserResponseData)(nil),          // 27: tenant.CreateAdminUserResponseData
-	(*proto.UserLoginResponse)(nil),              // 28: proto.UserLoginResponse
-	(*proto.SendVerifyEmailResponse)(nil),        // 29: proto.SendVerifyEmailResponse
-	(*proto.SendResetPasswordEmailResponse)(nil), // 30: proto.SendResetPasswordEmailResponse
-	(*proto.EmptyResponse)(nil),                  // 31: proto.EmptyResponse
-	(*proto.UserinfoResponse)(nil),               // 32: proto.UserinfoResponse
+	(*GetClaimRequest)(nil),                      // 28: tenant.GetClaimRequest
+	(*GetClaimRequestData)(nil),                  // 29: tenant.GetClaimRequestData
+	(*GetClaimResponse)(nil),                     // 30: tenant.GetClaimResponse
+	(*GetClaimResponseData)(nil),                 // 31: tenant.GetClaimResponseData
+	(*proto.UserLoginResponse)(nil),              // 32: proto.UserLoginResponse
+	(*proto.SendVerifyEmailResponse)(nil),        // 33: proto.SendVerifyEmailResponse
+	(*proto.SendResetPasswordEmailResponse)(nil), // 34: proto.SendResetPasswordEmailResponse
+	(*proto.EmptyResponse)(nil),                  // 35: proto.EmptyResponse
+	(*proto.UserinfoResponse)(nil),               // 36: proto.UserinfoResponse
 }
 var file_tenant_user_proto_depIdxs = []int32{
 	1,  // 0: tenant.LoginRequest.data:type_name -> tenant.LoginRequestData
@@ -1642,35 +1896,39 @@ var file_tenant_user_proto_depIdxs = []int32{
 	23, // 11: tenant.EditProfileRequest.data:type_name -> tenant.EditProfileRequestData
 	25, // 12: tenant.CreateAdminUserRequest.data:type_name -> tenant.CreateAdminUserRequestData
 	27, // 13: tenant.CreateAdminUserResponse.data:type_name -> tenant.CreateAdminUserResponseData
-	0,  // 14: tenant.User.Login:input_type -> tenant.LoginRequest
-	2,  // 15: tenant.User.Register:input_type -> tenant.RegisterRequest
-	6,  // 16: tenant.User.VerifyEmail:input_type -> tenant.VerifyEmailRequest
-	8,  // 17: tenant.User.SendVerifyEmail:input_type -> tenant.SendVerifyEmailRequest
-	10, // 18: tenant.User.SendResetPasswordEmail:input_type -> tenant.SendResetPasswordEmailRequest
-	12, // 19: tenant.User.ResetPasswordByCode:input_type -> tenant.ResetPasswordByCodeRequest
-	14, // 20: tenant.User.ChangePassword:input_type -> tenant.ChangePasswordRequest
-	16, // 21: tenant.User.RefreshToken:input_type -> tenant.RefreshTokenRequest
-	18, // 22: tenant.User.SwitchOrganization:input_type -> tenant.SwitchOrganizationRequest
-	20, // 23: tenant.User.UserInfo:input_type -> tenant.UserInfoRequest
-	22, // 24: tenant.User.EditProfile:input_type -> tenant.EditProfileRequest
-	24, // 25: tenant.User.CreateAdminUser:input_type -> tenant.CreateAdminUserRequest
-	28, // 26: tenant.User.Login:output_type -> proto.UserLoginResponse
-	4,  // 27: tenant.User.Register:output_type -> tenant.RegisterResponse
-	28, // 28: tenant.User.VerifyEmail:output_type -> proto.UserLoginResponse
-	29, // 29: tenant.User.SendVerifyEmail:output_type -> proto.SendVerifyEmailResponse
-	30, // 30: tenant.User.SendResetPasswordEmail:output_type -> proto.SendResetPasswordEmailResponse
-	28, // 31: tenant.User.ResetPasswordByCode:output_type -> proto.UserLoginResponse
-	31, // 32: tenant.User.ChangePassword:output_type -> proto.EmptyResponse
-	28, // 33: tenant.User.RefreshToken:output_type -> proto.UserLoginResponse
-	28, // 34: tenant.User.SwitchOrganization:output_type -> proto.UserLoginResponse
-	32, // 35: tenant.User.UserInfo:output_type -> proto.UserinfoResponse
-	32, // 36: tenant.User.EditProfile:output_type -> proto.UserinfoResponse
-	26, // 37: tenant.User.CreateAdminUser:output_type -> tenant.CreateAdminUserResponse
-	26, // [26:38] is the sub-list for method output_type
-	14, // [14:26] is the sub-list for method input_type
-	14, // [14:14] is the sub-list for extension type_name
-	14, // [14:14] is the sub-list for extension extendee
-	0,  // [0:14] is the sub-list for field type_name
+	29, // 14: tenant.GetClaimRequest.data:type_name -> tenant.GetClaimRequestData
+	31, // 15: tenant.GetClaimResponse.data:type_name -> tenant.GetClaimResponseData
+	0,  // 16: tenant.User.Login:input_type -> tenant.LoginRequest
+	2,  // 17: tenant.User.Register:input_type -> tenant.RegisterRequest
+	6,  // 18: tenant.User.VerifyEmail:input_type -> tenant.VerifyEmailRequest
+	8,  // 19: tenant.User.SendVerifyEmail:input_type -> tenant.SendVerifyEmailRequest
+	10, // 20: tenant.User.SendResetPasswordEmail:input_type -> tenant.SendResetPasswordEmailRequest
+	12, // 21: tenant.User.ResetPasswordByCode:input_type -> tenant.ResetPasswordByCodeRequest
+	14, // 22: tenant.User.ChangePassword:input_type -> tenant.ChangePasswordRequest
+	16, // 23: tenant.User.RefreshToken:input_type -> tenant.RefreshTokenRequest
+	18, // 24: tenant.User.SwitchOrganization:input_type -> tenant.SwitchOrganizationRequest
+	20, // 25: tenant.User.UserInfo:input_type -> tenant.UserInfoRequest
+	22, // 26: tenant.User.EditProfile:input_type -> tenant.EditProfileRequest
+	24, // 27: tenant.User.CreateAdminUser:input_type -> tenant.CreateAdminUserRequest
+	28, // 28: tenant.User.GetClaim:input_type -> tenant.GetClaimRequest
+	32, // 29: tenant.User.Login:output_type -> proto.UserLoginResponse
+	4,  // 30: tenant.User.Register:output_type -> tenant.RegisterResponse
+	32, // 31: tenant.User.VerifyEmail:output_type -> proto.UserLoginResponse
+	33, // 32: tenant.User.SendVerifyEmail:output_type -> proto.SendVerifyEmailResponse
+	34, // 33: tenant.User.SendResetPasswordEmail:output_type -> proto.SendResetPasswordEmailResponse
+	32, // 34: tenant.User.ResetPasswordByCode:output_type -> proto.UserLoginResponse
+	35, // 35: tenant.User.ChangePassword:output_type -> proto.EmptyResponse
+	32, // 36: tenant.User.RefreshToken:output_type -> proto.UserLoginResponse
+	32, // 37: tenant.User.SwitchOrganization:output_type -> proto.UserLoginResponse
+	36, // 38: tenant.User.UserInfo:output_type -> proto.UserinfoResponse
+	36, // 39: tenant.User.EditProfile:output_type -> proto.UserinfoResponse
+	26, // 40: tenant.User.CreateAdminUser:output_type -> tenant.CreateAdminUserResponse
+	30, // 41: tenant.User.GetClaim:output_type -> tenant.GetClaimResponse
+	29, // [29:42] is the sub-list for method output_type
+	16, // [16:29] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_tenant_user_proto_init() }
@@ -1684,7 +1942,7 @@ func file_tenant_user_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_tenant_user_proto_rawDesc), len(file_tenant_user_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   28,
+			NumMessages:   32,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

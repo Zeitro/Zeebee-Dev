@@ -28,7 +28,7 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 
 func (l *CreateLogic) Create(in *borrower.OrganizationUserCreateRequest) (resp *borrower.OrganizationUserDetailResponse, err error) {
 
-	claimUser, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claimUser, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -40,12 +40,6 @@ func (l *CreateLogic) Create(in *borrower.OrganizationUserCreateRequest) (resp *
 		Remark:         in.Data.Remark,
 		RoleIds:        in.Data.RoleIds,
 		Operator:       claimUser.Username,
-		EmailConfig: &tenant.OrganizationUserInviteEmailConfig{
-			HostEmail:         l.svcCtx.Config.EmailConf.Username,
-			ExpireSeconds:     int32(l.svcCtx.Config.InviteUserExpireSeconds),
-			Url:               l.svcCtx.Config.InviteUserUrl,
-			SendPeriodSeconds: int32(l.svcCtx.Config.SendInviteEmailPeriodSeconds),
-		},
 	}
 	result, err := l.svcCtx.TenantClient.OrganizationUser.InviteOrganizationUser(l.ctx, &tenant.OrganizationUserInviteRequest{Data: input})
 	if err != nil {

@@ -23,7 +23,7 @@ func NewResourceTreeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Reso
 // ResourceTree proxies to tenant; tenant is the RBAC single authority. Lender
 // resources are always scoped to the caller's organization.
 func (l *ResourceTreeLogic) ResourceTree(in *lender.ResourceTreeRequest) (resp *lender.ResourceTreeResponse, err error) {
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}

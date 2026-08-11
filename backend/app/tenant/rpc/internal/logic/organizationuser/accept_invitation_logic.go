@@ -58,5 +58,16 @@ func (l *AcceptInvitationLogic) AcceptInvitation(in *tenant.OrganizationUserAcce
 	if err != nil {
 		return
 	}
-	return &tenant.OrganizationUserAcceptInvitationResponse{Data: data}, nil
+	jwt, err := l.baseLogic.UserLogic.GenerateJwtTokenById(l.ctx, user.Id, user.DefaultOrganizationId, userType)
+	if err != nil {
+		return nil, err
+	}
+	tokenData, err := copierx.Trans[dto.UserJwtTokenDto, proto.UserLoginResponseData](jwt)
+	if err != nil {
+		return nil, err
+	}
+	return &tenant.OrganizationUserAcceptInvitationResponse{
+		Data:  data,
+		Token: &proto.UserLoginResponse{Data: tokenData},
+	}, nil
 }
