@@ -15,7 +15,6 @@ import (
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
-	"zeebee-backend/domains/zeebee/proto"
 )
 
 // Invitation marker values mirror the unexported domain vars in
@@ -314,7 +313,6 @@ func TestPage_ListsMembers(t *testing.T) {
 	resp, err := NewPageLogic(context.Background(), env.SvcCtx).Page(&tenant.OrganizationUserPageRequest{Data: &tenant.OrganizationUserPageRequestData{
 		Page: 1, Limit: 10, UserType: string(constants.UserTypeLender),
 		Filter: &tenant.OrganizationUserPageRequestFilter{OrganizationId: organization.Id},
-		Sorter: &proto.CommonPageSorter{},
 	}})
 	require.NoError(t, err)
 	require.NotNil(t, resp.GetData())

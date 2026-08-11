@@ -8,7 +8,6 @@ import (
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 )
 
@@ -32,20 +31,13 @@ func (l *PageLogic) Page(in *tenant.OrganizationUserPageRequest) (resp *tenant.O
 		return
 	}
 
-	pageReq := dto.OrganizationUserPageRequestDto{
-		BasePageRequestDto: dto.BasePageRequestDto{Page: in.Data.Page, Limit: in.Data.Limit},
-		Sorter:             dto.BasePageSorter{Column: in.Data.Sorter.Column, Sort: in.Data.Sorter.Sort},
-		Filter: dto.OrganizationUserPageRequestFilter{
-			BasePageFilter: dto.BasePageFilter{Keyword: in.Data.Filter.Keyword},
-			OrganizationId: in.Data.Filter.OrganizationId,
-			UserId:         in.Data.Filter.UserId,
-			UserType:       userType,
-			RoleId:         in.Data.Filter.RoleId,
-			Status:         constants.UserStatus(in.Data.Filter.Status),
-		},
+	pageReq, err := copierx.Trans[tenant.OrganizationUserPageRequestData, dto.OrganizationUserPageRequestDto](in.Data)
+	if err != nil {
+		return
 	}
+	pageReq.Filter.UserType = userType
 
-	page, err := l.baseLogic.OrganizationUserLogic.Page(l.ctx, pageReq)
+	page, err := l.baseLogic.OrganizationUserLogic.Page(l.ctx, *pageReq)
 	if err != nil {
 		return
 	}
