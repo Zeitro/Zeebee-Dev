@@ -43,12 +43,11 @@ func NewUserLogic(baseLogic *BaseLogic, authTopicMap map[constants.UserType]stri
 }
 
 // GetUserClaimFromCtx parses the caller's JWT from gRPC metadata and returns
-// the claim. The shared jwtConfig parses the token (single unified key). When
-// the api auth middleware declares the platform user_type in metadata, it is
-// checked against the type embedded in the token — a mismatch (a token minted
-// for one platform replayed against another) is rejected as an invalid token.
-// When user_type is absent (e.g. internal calls that skip the middleware) the
-// parsed token remains the sole authority.
+// the claim. The shared jwtConfig parses the token (single unified key). The
+// platform user_type MUST be present in metadata and is checked against the
+// type embedded in the token — an absent or mismatched user_type (a token
+// minted for one platform and replayed against another) is rejected as an
+// invalid token.
 func (l *UserLogic) GetUserClaimFromCtx(ctx context.Context) (claim utils.JwtUser, err error) {
 	// Get from metadata
 	md, ok := metadata.FromIncomingContext(ctx)
