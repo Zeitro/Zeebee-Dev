@@ -146,7 +146,7 @@ func (l *SendRequestsLogic) sendDocumentRequestEmail(ctx context.Context, loan *
 		return errorx.New("no contact email found for the loan")
 	}
 
-	emailData := map[string]interface{}{
+	emailData := map[string]any{
 		"first_name":         loan.LoanBorrower.ContactName,
 		"borrower_login_url": global.Config.BorrowerLoginUrl,
 		"loan_documents":     loanDocuments,
