@@ -127,7 +127,7 @@ func (l *BaseLogic) CreateLoanOperationLog(ctx context.Context, tx *gorm.DB, loa
 		}
 	}()
 	operatorName := ""
-	if claim, claimErr := l.GetUserClaimFromCtx(ctx); claimErr == nil && claim.OrganizationUserId == operatorId {
+	if claim, claimErr := l.GetUserClaimFromCtx(ctx); claimErr == nil {
 		operatorName = claim.Username
 	}
 
