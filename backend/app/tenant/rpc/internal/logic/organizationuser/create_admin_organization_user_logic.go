@@ -8,7 +8,6 @@ import (
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
 )
@@ -48,7 +47,8 @@ func (l *CreateAdminOrganizationUserLogic) CreateAdminOrganizationUser(in *tenan
 	if err != nil {
 		return
 	}
-	l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypeOrganizationUser, result.Id, constants.OperationActionMemberCreate)
+	// Temporarily disabled; re-enable when tenant audit logging is needed.
+	// l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypeOrganizationUser, result.Id, constants.OperationActionMemberCreate)
 
 	data, err := copierx.Trans[dto.OrganizationUserEntityDto, proto.OrganizationUserEntity](result, copierx.TimeToRFC3339Str())
 	if err != nil {

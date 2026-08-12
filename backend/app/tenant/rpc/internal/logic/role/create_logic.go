@@ -8,7 +8,6 @@ import (
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
 )
@@ -49,7 +48,8 @@ func (l *CreateLogic) Create(in *tenant.RoleCreateRequest) (resp *tenant.RoleDet
 	if err != nil {
 		return nil, err
 	}
-	l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypeRole, role.Id, constants.OperationActionRoleCreate)
+	// Temporarily disabled; re-enable when tenant audit logging is needed.
+	// l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypeRole, role.Id, constants.OperationActionRoleCreate, logic.AuditChange{After: role})
 
 	data, err := copierx.Trans[dto.RoleEntityDto, proto.RoleEntity](role, copierx.TimeToRFC3339Str())
 	if err != nil {

@@ -9,7 +9,6 @@ import (
 	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/constants"
 )
 
 type BindResourcesLogic struct {
@@ -35,10 +34,13 @@ func (l *BindResourcesLogic) BindResources(in *tenant.PricingPlanBindResourcesRe
 	if _, err = logic.ParseUserType(in.Data.UserType); err != nil {
 		return nil, err
 	}
+	// before, _ := l.baseLogic.PricingPlanLogic.Detail(l.ctx, in.Data.Id)
 	if err = l.baseLogic.PricingPlanLogic.BindResources(l.ctx, in.Data.Id, in.Data.ResourceIds); err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypePricingPlan, in.Data.Id, constants.OperationActionPlanBindResources)
+	// after, _ := l.baseLogic.PricingPlanLogic.Detail(l.ctx, in.Data.Id)
+	// Temporarily disabled; re-enable when tenant audit logging is needed.
+	// l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypePricingPlan, in.Data.Id, constants.OperationActionPlanBindResources, logic.AuditChange{Before: before, After: after})
 
 	return &proto.EmptyResponse{}, nil
 }

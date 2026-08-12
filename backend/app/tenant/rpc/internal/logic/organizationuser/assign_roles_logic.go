@@ -7,7 +7,6 @@ import (
 	"zeebee-backend/app/tenant/rpc/internal/svc"
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
@@ -34,6 +33,7 @@ func (l *AssignRolesLogic) AssignRoles(in *tenant.OrganizationUserAssignRolesReq
 	if err = l.baseLogic.OrganizationUserLogic.AssignRoles(l.ctx, in.Data.Id, in.Data.OrganizationId, in.Data.RoleIds, userType); err != nil {
 		return
 	}
-	l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypeOrganizationUser, in.Data.Id, constants.OperationActionMemberAssignRoles)
+	// Temporarily disabled; re-enable when tenant audit logging is needed.
+	// l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypeOrganizationUser, in.Data.Id, constants.OperationActionMemberAssignRoles)
 	return &proto.EmptyResponse{}, nil
 }

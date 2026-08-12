@@ -35,10 +35,13 @@ func (l *SwitchStatusLogic) SwitchStatus(in *tenant.PricingPlanSwitchStatusReque
 	if _, err = logic.ParseUserType(in.Data.UserType); err != nil {
 		return nil, err
 	}
+	// before, _ := l.baseLogic.PricingPlanLogic.Detail(l.ctx, in.Data.Id)
 	if err = l.baseLogic.PricingPlanLogic.SwitchStatus(l.ctx, in.Data.Id, constants.CommonStatus(in.Data.Status)); err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypePricingPlan, in.Data.Id, constants.OperationActionPlanStatusSwitch)
+	// after, _ := l.baseLogic.PricingPlanLogic.Detail(l.ctx, in.Data.Id)
+	// Temporarily disabled; re-enable when tenant audit logging is needed.
+	// l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypePricingPlan, in.Data.Id, constants.OperationActionPlanStatusSwitch, logic.AuditChange{Before: before, After: after})
 
 	return &proto.EmptyResponse{}, nil
 }

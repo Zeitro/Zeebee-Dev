@@ -9,7 +9,6 @@ import (
 	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/constants"
 )
 
 type DeleteLogic struct {
@@ -35,10 +34,12 @@ func (l *DeleteLogic) Delete(in *tenant.PricingPlanPolicyDeleteRequest) (resp *p
 	if _, err = logic.ParseUserType(in.Data.UserType); err != nil {
 		return nil, err
 	}
+	// before, _ := l.baseLogic.PricingPlanPolicyLogic.Detail(l.ctx, in.Data.Id)
 	if err = l.baseLogic.PricingPlanPolicyLogic.Delete(l.ctx, in.Data.Id); err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypePricingPlanPolicy, in.Data.Id, constants.OperationActionPlanPolicyDelete)
+	// Temporarily disabled; re-enable when tenant audit logging is needed.
+	// l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypePricingPlanPolicy, in.Data.Id, constants.OperationActionPlanPolicyDelete, logic.AuditChange{Before: before})
 
 	return &proto.EmptyResponse{}, nil
 }

@@ -9,7 +9,6 @@ import (
 	"zeebee-backend/app/tenant/rpc/internal/svc"
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
 )
@@ -45,9 +44,12 @@ func (l *UpdateExpireDateLogic) UpdateExpireDate(in *tenant.OrganizationSubscrip
 		Id:         in.Data.Id,
 		ExpireDate: &expireDate,
 	}
+	// before, _ := l.baseLogic.OrganizationSubscriptionLogic.Detail(l.ctx, in.Data.Id)
 	if err = l.baseLogic.OrganizationSubscriptionLogic.UpdateExpireDate(l.ctx, input); err != nil {
 		return
 	}
-	l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypeOrganizationSubscription, in.Data.Id, constants.OperationActionSubscriptionExpireUpdate)
+	// after, _ := l.baseLogic.OrganizationSubscriptionLogic.Detail(l.ctx, in.Data.Id)
+	// Temporarily disabled; re-enable when tenant audit logging is needed.
+	// l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypeOrganizationSubscription, in.Data.Id, constants.OperationActionSubscriptionExpireUpdate, logic.AuditChange{Before: before, After: after})
 	return &proto.EmptyResponse{}, nil
 }

@@ -7,7 +7,6 @@ import (
 	"zeebee-backend/app/tenant/rpc/internal/svc"
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
 )
@@ -46,12 +45,13 @@ func (l *ResetPasswordByCodeLogic) ResetPasswordByCode(in *tenant.ResetPasswordB
 	if err != nil {
 		return nil, err
 	}
-	l.baseLogic.RecordAudit(l.ctx, dto.OperationCreateDto{
-		EntityType:   constants.OperationEntityTypeUser,
-		OperatorName: in.Data.Email,
-		OperatorType: userType,
-		Operation:    constants.OperationActionUserPasswordReset,
-	})
+	// Temporarily disabled; re-enable when tenant audit logging is needed.
+	// l.baseLogic.RecordAudit(l.ctx, dto.OperationCreateDto{
+	// 	EntityType:   constants.OperationEntityTypeUser,
+	// 	OperatorName: in.Data.Email,
+	// 	OperatorType: userType,
+	// 	Operation:    constants.OperationActionUserPasswordReset,
+	// })
 
 	data, err := copierx.Trans[dto.UserJwtTokenDto, proto.UserLoginResponseData](token)
 	if err != nil {

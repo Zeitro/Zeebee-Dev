@@ -2,11 +2,13 @@ package logic
 
 import (
 	"context"
+	"encoding/json"
 	"strings"
 	"sync"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/threading"
+	"gorm.io/datatypes"
 
 	"zeebee-backend/app/tenant/config"
 	"zeebee-backend/app/tenant/rpc/internal/svc"
@@ -173,10 +175,16 @@ func (l *BaseLogic) RecordAudit(ctx context.Context, input dto.OperationCreateDt
 }
 
 // RecordAuditFromClaim records an audit event attributed to the caller in ctx
-// (operator id/type resolved from the JWT claim). Best-effort: a missing claim
-// or store failure is logged, never returned, and never blocks the caller. Use
-// RecordAudit directly for pre-auth events (login) where there is no claim yet.
-func (l *BaseLogic) RecordAuditFromClaim(ctx context.Context, entityType constants.OperationEntityType, entityId int64, operation constants.OperationAction) {
+// (operator id/type/organization resolved from the JWT claim). Best-effort: a
+// missing claim or store failure is logged, never returned, and never blocks the
+// caller. Use RecordAudit directly for pre-auth events (login) where there is no
+// claim yet.
+//
+// For data-mutating operations (create/update/delete/status-switch) pass an
+// AuditChange carrying the before/after snapshots; it is serialized into the
+// operation's metadata JSON so the audit trail shows what changed. Omit it for
+// actions with no meaningful payload.
+func (l *BaseLogic) RecordAuditFromClaim(ctx context.Context, entityType constants.OperationEntityType, entityId int64, operation constants.OperationAction, changes ...AuditChange) {
 	claim, err := l.UserLogic.GetUserClaimFromCtx(ctx)
 	if err != nil {
 		l.svcCtx.Logger.WithContext(ctx).
@@ -185,13 +193,46 @@ func (l *BaseLogic) RecordAuditFromClaim(ctx context.Context, entityType constan
 			Error("fail to resolve audit operator from claim")
 		return
 	}
+	var metadata datatypes.JSON
+	if len(changes) > 0 {
+		metadata = buildAuditMetadata(changes[0])
+	}
 	l.RecordAudit(ctx, dto.OperationCreateDto{
-		EntityType:   entityType,
-		EntityId:     entityId,
-		OperatorId:   claim.UserId,
-		OperatorType: claim.UserType,
-		Operation:    operation,
+		EntityType:     entityType,
+		EntityId:       entityId,
+		OperatorId:     claim.UserId,
+		OperatorType:   claim.UserType,
+		OperatorName:   claim.Username,
+		Operation:      operation,
+		OrganizationId: claim.OrganizationId,
+		Metadata:       metadata,
 	})
+}
+
+// AuditChange captures the before/after snapshots of a data-mutating operation
+// (create/update/delete/status-switch). Either side may be nil: a create has no
+// Before, a delete has no After.
+type AuditChange struct {
+	Before any
+	After  any
+}
+
+// buildAuditMetadata serializes an AuditChange into the operations.metadata JSON
+// {"before":..., "after":...}. It never errors: a marshal failure degrades to
+// "{}" so audit recording is never blocked by serialization.
+func buildAuditMetadata(c AuditChange) datatypes.JSON {
+	payload := make(map[string]any, 2)
+	if c.Before != nil {
+		payload["before"] = c.Before
+	}
+	if c.After != nil {
+		payload["after"] = c.After
+	}
+	b, err := json.Marshal(payload)
+	if err != nil {
+		return datatypes.JSON("{}")
+	}
+	return datatypes.JSON(b)
 }
 
 // ParseUserType maps the request user_type string (case-insensitive) to a constants.UserType.

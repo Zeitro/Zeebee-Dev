@@ -9,7 +9,6 @@ import (
 	"zeebee-backend/app/tenant/rpc/internal/svc"
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
 )
@@ -48,7 +47,8 @@ func (l *SendInviteEmailLogic) SendInviteEmail(in *tenant.OrganizationUserSendIn
 	if err = l.baseLogic.OrganizationUserLogic.SendInviteEmail(l.ctx, input); err != nil {
 		return
 	}
-	l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypeOrganizationUser, in.Data.Id, constants.OperationActionMemberInviteEmailSent)
+	// Temporarily disabled; re-enable when tenant audit logging is needed.
+	// l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypeOrganizationUser, in.Data.Id, constants.OperationActionMemberInviteEmailSent)
 	return &proto.EmptyResponse{}, nil
 }
 

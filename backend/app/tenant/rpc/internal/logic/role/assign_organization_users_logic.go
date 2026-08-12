@@ -8,7 +8,6 @@ import (
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
 )
@@ -45,11 +44,13 @@ func (l *AssignOrganizationUsersLogic) AssignOrganizationUsers(in *tenant.RoleAs
 	input.Type = userType
 	input.OrganizationId = in.Data.OrganizationId
 
+	// before, _ := l.baseLogic.RoleLogic.Detail(l.ctx, input.Id, input.OrganizationId, userType)
 	role, err := l.baseLogic.RoleLogic.AssignOrganizationUsers(l.ctx, *input)
 	if err != nil {
 		return nil, err
 	}
-	l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypeRole, role.Id, constants.OperationActionRoleAssignUsers)
+	// Temporarily disabled; re-enable when tenant audit logging is needed.
+	// l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypeRole, role.Id, constants.OperationActionRoleAssignUsers, logic.AuditChange{Before: before, After: role})
 
 	data, err := copierx.Trans[dto.RoleEntityDto, proto.RoleEntity](role, copierx.TimeToRFC3339Str())
 	if err != nil {

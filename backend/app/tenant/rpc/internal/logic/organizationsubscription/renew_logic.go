@@ -8,7 +8,6 @@ import (
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
 )
@@ -32,11 +31,13 @@ func (l *RenewLogic) Renew(in *tenant.OrganizationSubscriptionRenewRequest) (res
 		return
 	}
 
+	// before, _ := l.baseLogic.OrganizationSubscriptionLogic.Detail(l.ctx, in.Data.Id)
 	result, err := l.baseLogic.OrganizationSubscriptionLogic.Renew(l.ctx, in.Data.Id)
 	if err != nil {
 		return
 	}
-	l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypeOrganizationSubscription, result.Id, constants.OperationActionSubscriptionRenew)
+	// Temporarily disabled; re-enable when tenant audit logging is needed.
+	// l.baseLogic.RecordAuditFromClaim(l.ctx, constants.OperationEntityTypeOrganizationSubscription, result.Id, constants.OperationActionSubscriptionRenew, logic.AuditChange{Before: before, After: result})
 
 	data, err := copierx.Trans[dto.OrganizationSubscriptionEntity, proto.OrganizationSubscriptionEntity](result, copierx.TimeToRFC3339Str())
 	if err != nil {
