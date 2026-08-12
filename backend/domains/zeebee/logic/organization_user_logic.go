@@ -429,7 +429,7 @@ func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.
 			"status":     constants.OrganizationUserStatusActive,
 			"first_name": input.FirstName,
 			"last_name":  input.LastName,
-			"full_name":  stringx.FormatFullName(input.FirstName, "", input.LastName),
+			"full_name":  stringx.FormatFullName(input.FirstName, " ", input.LastName),
 		})
 		if innerErr != nil {
 			return innerErr
@@ -440,7 +440,7 @@ func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.
 		if len(userModel.FirstName) == 0 {
 			userModel.FirstName = input.FirstName
 			userModel.LastName = input.LastName
-			userModel.FullName = stringx.FormatFullName(input.FirstName, "", input.LastName)
+			userModel.FullName = stringx.FormatFullName(input.FirstName, " ", input.LastName)
 		}
 		if userModel.Status == constants.UserStatusUnverified {
 			userModel.Status = constants.UserStatusActive
