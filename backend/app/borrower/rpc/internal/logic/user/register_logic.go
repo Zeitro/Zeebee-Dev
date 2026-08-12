@@ -56,7 +56,7 @@ func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *proto.
 			FirstName:               in.Data.FirstName,
 			LastName:                in.Data.LastName,
 			OrganizationName:        in.Data.OrganizationName,
-			OwnerType:               string(constants.OrganizationOwnerTypeNone),
+			OwnerType:               string(constants.OrganizationOwnerTypeThirdParty),
 			BorrowerPreApprovalJson: string(preApprovalJSON),
 		},
 	})
@@ -112,7 +112,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 	}
 
 	if len(cacheDataStr) == 0 {
-		return errorx.WithStack(errorx.New("Pre-approve loan data not found in cache"))
+		return errorx.WithStack(errorx.New("pre-approve loan data not found in cache"))
 	}
 
 	defer func() {
@@ -135,15 +135,17 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 	}
 
 	// get lender company
-	lenderOrganization, err := l.svcCtx.TenantClient.Organization.DetailWithType(ctx, &tenant.OrganizationDetailWithTypeRequest{Data: &tenant.OrganizationDetailWithTypeRequestData{
-		UserType: string(constants.UserTypeLender), Id: lenderOrganizationId,
-	}})
+	lenderOrganization, err := l.svcCtx.TenantClient.Organization.DetailWithType(ctx, &tenant.OrganizationDetailWithTypeRequest{
+		Data: &tenant.OrganizationDetailWithTypeRequestData{
+			UserType: string(constants.UserTypeLender),
+			Id:       lenderOrganizationId,
+		}})
 	if err != nil {
 		return err
 	}
 
 	if lenderOrganization.Data == nil || lenderOrganization.Data.Status != string(constants.OrganizationStatusActive) {
-		return errorx.WithStack(errorx.New("Lender organization is not active"))
+		return errorx.WithStack(errorx.New("lender organization is not active"))
 	}
 	// prepare data
 	var borrowerProperty *model.BorrowerProperty
@@ -191,11 +193,11 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 	loanPreapprovalInfo := &borrower.LoanPreapproveInfo{}
 	loanPreapprovalInfo.Input, err = copierx.Trans[types.LoanPreApprovalRequest, borrower.LoanPreApprovalRequestData](&preApproveRequest)
 	if err != nil {
-		return errorx.WithStack(err)
+		return err
 	}
 	loanPreapprovalInfo.Result, err = copierx.Trans[types.LoanPreApprovalResult, borrower.LoanPreapproveResult](&calcResult)
 	if err != nil {
-		return errorx.WithStack(err)
+		return err
 	}
 
 	// create draft loan
