@@ -1,0 +1,15 @@
+{
+	"meta": {
+		"title": "Zeebee project",
+		"description": "Zeebee project management system"
+	},
+	"common": {
+		"language": "Language",
+		"save": "Save",
+		"cancel": "Cancel",
+		"confirm": "Confirm"
+	},
+	"home": {
+		"title": "Zeebee project management system"
+	}
+}

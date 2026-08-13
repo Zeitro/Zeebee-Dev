@@ -25,10 +25,11 @@
 			"@/api/*": ["./src/api/*"],
 			"@/assets/*": ["./src/assets/*"],
 			"@/enum/*": ["./src/enum/*"],
-			"@config/*": ["./config/*"],
-			"@images/*": ["./public/images*"],
-			"@repo/shared-methods": ["../packages/shared-methods/src"],
-			"@repo/shared-methods/*": ["../packages/shared-methods/src/*"]
+			"@/config/*": ["./config/*"],
+			"@/components/*": ["./src/components/*"],
+			"@/i18n/*": ["./src/i18n/*"],
+			"@repo/platform-core": ["../packages/platform-core/src"],
+			"@repo/platform-core/*": ["../packages/platform-core/src/*"]
 		}
 	},
 	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
