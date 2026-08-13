@@ -2,6 +2,7 @@ packages:
   - "frontend/borrower"
   - "frontend/lender"
   - "frontend/admin"
+  - "frontend/project"
   - "frontend/packages/*"
 allowBuilds:
   '@parcel/watcher': true
