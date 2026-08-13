@@ -1,5 +1,5 @@
 ---
-description: Zeebee-Dev 前端 monorepo — Next 15、antd 5、Tailwind、workspace 共享包与开发约定
+description: Zeebee-Dev 前端 monorepo — 公共约定、三端 shared-methods、project / platform-core
 alwaysApply: true
 ---
 
@@ -7,19 +7,15 @@ alwaysApply: true
 
 面向 `frontend/**` 下的开发与排错；版本与脚本以各应用 `package.json` 为准。
 
+**如何选用本节**：先读 **「一、公共规则」**；再按当前应用读 **「二、admin / lender / borrower」** 或 **「三、project」**。共享包选型以目标应用所属分组为准，勿把三端专用能力塞进 `project`，也勿让 `project` 依赖 `@repo/shared-methods`。
+
+---
+
+## 一、公共规则（任意 `frontend/*` 应用）
+
 ### 工作范围边界（纯前端）
 
 - 只改 **`frontend/**`**（含 **`frontend/packages/*`**）；**禁改 `backend/**`**（含 SQL/部署脚本等），除非用户明确要求全栈。
-- 侧栏与 **`middleware` accessPaths** 来自后端菜单（如 **`/user/menu`**）；新路径未登记则无入口或访问被拒，由后端/运维配置，**勿在仓库写 SQL 代配**。
-
-### 命名与体量（与本仓库一致）
-
-- **`src/app/` 路由目录**：多词用 **camelCase**（如 `myTransactions`、`marketTools`），勿用 kebab-case；URL 与目录名一致。
-- **封装组件文件**：**PascalCase**；单文件建议 **≤300 行**，逻辑拆子组件或 hooks。
-- **页面组件拆分**（详情页 / 多 Tab 页）：`page.js` 只做**路由壳**——读 params、拉共享数据、Tab 切换、全局 Actions / Modal；每个 Tab 或独立区块拆到同路由下的 **`components/<TabName>/`**（如 `components/DetailsTab/index.js`）。Tab 内再拆 **`DetailField`**、**`TransactionCard`** 等展示原子组件；字段配置放同目录 **`constants.js`**；样式实现遵循 **Tailwind 优先**，仅在 Tailwind 不易表达（复杂伪元素、深层全局覆写、第三方组件强覆盖）时才落 **`index.module.scss`**。子 Tab **自己管自己的请求与列定义**（除非数据必须由父级统一拉取）；父传 **`rowData` / `id` + 回调**（`onRefresh`、`onEdit`），避免在父组件堆业务 UI。仅当 **2+ feature 复用** 时再上收到 **`@repo/shared-methods`**。
-- **布尔**用 `is` / `has` / `can` / `should` 前缀；**ref 对象**以 `Ref` 结尾；样式规则为 **Tailwind 第一选择，`index.module.scss` 第二选择**。
-- **约定 vs 工具**：本仓库前端规范写在本文件；查 Next/antd 等**官方文档**用 **Context7 等 MCP**；重复脚手架流程可做成 **Cursor Skill**。
-- **列表（筛选 + 表格）**：对话中可 @ Skill **`filter-table`**；说明见 `.cursor/skills/filter-table/SKILL.md`（优先 `FilterTable` / `FilterTableCard`，勿手写 `FilterField`+`NewTable` 重复流水线）。
 
 ### Monorepo 布局
 
@@ -27,79 +23,125 @@ alwaysApply: true
 Zeebee-Dev/
 ├── backend/                 # Go + go-zero，详见 backend/CLAUDE.md
 ├── frontend/
-│   ├── admin/               # 管理端 Next 应用（next-admin）
-│   ├── borrower/          # 借款方 Next 应用（next-borrower）
-│   ├── lender/            # 贷款方 Next 应用（lender）
-│   └── packages/          # 前端 workspace 包（如共享逻辑与组件）
-├── env/                     # 环境配置
-├── pnpm-workspace.yaml      # pnpm 工作区定义（以仓库实际内容为准）
-└── CLAUDE.md                # 全仓任务类型与目录切换路由
+│   ├── admin/               # 管理端（与 lender / borrower 同组）
+│   ├── borrower/            # 借款方
+│   ├── lender/              # 贷款方
+│   ├── project/             # 独立新应用（与上述三端无业务耦合）
+│   └── packages/
+│       ├── platform-core/   # @repo/platform-core — 全前端通用
+│       └── shared-methods/  # @repo/shared-methods — 仅三端；可中转 platform-core
+├── env/
+├── pnpm-workspace.yaml
+└── CLAUDE.md
 ```
 
-## 框架与包管理
+### 共享包总览（选型先看这里）
 
-### 运行时栈（各应用以 `package.json` 为准）
+| 包 | 包名 | 谁用 | 放什么 |
+|---|---|---|---|
+| **platform-core** | `@repo/platform-core` | **任意**前端应用（含 `project`、以及后续被三端经 `shared-methods` 中转引用） | 与业务域无关的通用能力：`lib`（如 `format` / `fetch` / `cookie`）、通用 `hooks` 等 |
+| **shared-methods** | `@repo/shared-methods` | **仅** `admin` / `lender` / `borrower` | 三端业务 UI、枚举、store、api、组件等；**不**给 `project` 用 |
 
-- **Next.js 15**（App Router）、**React 19**。
-- **UI / 数据展示**：**antd 5**、**@ant-design/icons**；与 Next/React 19 集成时沿用各应用已有的 **`@ant-design/nextjs-registry`**、**`@ant-design/v5-patch-for-react-19`** 等配置。
-- **样式**：**Tailwind CSS 3**；按需 **Sass**；SVG 处理以各应用 `next.config` 为准（如 `@svgr/webpack`）。
-- **通用能力**：**dayjs**（与 antd 5 日期配套）、**zustand**（状态）；其余依赖（如 `lodash`、`js-cookie`）按业务文件现有用法引入。
+**迁移约定（进行中）**：
 
-### 语言与代码形态
+- 从 `shared-methods` 抽出「任一前端都可复用」的部分 → 落到 **`platform-core`**，供 `project`（及未来其它新应用）直接依赖。
+- 后续在 **`shared-methods` 内 re-export / 引用 `platform-core`**，作三端中转，**避免立刻改动三端大量 import**。
+- 当前阶段：**不必**做完全量中转；先保证公共能力在 `platform-core`、且 `project` 只依赖 `platform-core`。三端可继续从 `shared-methods` 引用（即使实现已迁到 `platform-core`，也优先在 `shared-methods` 做中转后再切三端）。
 
-- 业务页面多为 **`.js` / `.jsx`**，与 **TypeScript** 混存；**新增或修改时与所在目录、同 feature 文件保持一致**（不要强行把整页改成 TS 除非任务要求）。
+**新代码归属判断**：
 
-### pnpm 与工作区
+1. 无三端业务语义、可被任意应用复用 → **`@repo/platform-core`**
+2. 仅三端（贷款/借款/管理）业务相关 → **`@repo/shared-methods`**（或该应用 `src`）
+3. 仅某一应用 → 该应用目录，不强行上收
 
-- 全仓使用 **pnpm**；工作区定义在根目录 **`pnpm-workspace.yaml`**（当前通常包含 `frontend/borrower`、`frontend/lender`、`frontend/packages/*`）。
-- **依赖安装**：在**仓库根目录**执行 `pnpm install`，以便解析各包之间的 **`workspace:*`**（如 `@repo/shared-methods`）。
-- **日常开发**：进入目标应用目录执行脚本（常见如 **`pnpm run local`** / **`npm run local`**，以该目录 `package.json` 的 `scripts` 为准），勿混淆根目录与子包脚本。
+### 命名与体量
 
-## 共享包 `@repo/shared-methods`
+- **`src/app/` 路由目录**：多词用 **camelCase**（如 `myTransactions`、`marketTools`），勿用 kebab-case；URL 与目录名一致。
+- **封装组件文件**：**PascalCase**；单文件建议 **≤300 行**，逻辑拆子组件或 hooks。
+- **页面组件拆分**（详情页 / 多 Tab 页）：`page.js` 只做**路由壳**——读 params、拉共享数据、Tab 切换、全局 Actions / Modal；每个 Tab 或独立区块拆到同路由下的 **`components/<TabName>/`**（如 `components/DetailsTab/index.js`）。Tab 内再拆展示原子组件；字段配置放同目录 **`constants.js`**；样式 **Tailwind 优先**，仅在 Tailwind 不易表达时才落 **`index.module.scss`**。子 Tab **自己管自己的请求与列定义**（除非数据必须由父级统一拉取）；父传 **`rowData` / `id` + 回调**（`onRefresh`、`onEdit`）。跨 feature 复用时：先按上文归属判断进 **`platform-core`** 或分组共享包，勿默认塞进错误的包。
+- **布尔**用 `is` / `has` / `can` / `should` 前缀；**ref 对象**以 `Ref` 结尾；样式 **Tailwind 第一，`index.module.scss` 第二**。
+- **约定 vs 工具**：本仓库前端规范写在本文件；查 Next/antd 等**官方文档**用 **Context7 等 MCP**；重复脚手架流程可做成 **Cursor Skill**。
 
-- 路径：`frontend/packages/shared-methods`，包名 **`@repo/shared-methods`**。
-- 跨应用复用的 **hooks、api、组件、enum、工具** 等放这里；避免在 admin / borrower / lender 之间复制同一段逻辑。
-- **生成页面 / 新增功能时的选型顺序（先查共享包，再写应用内代码）**
-  - **新建 hooks / 工具方法 / 请求封装/ UI 组件/ 枚举与展示用常量**：在某一应用 `src` 内落新文件前，**优先判断**该逻辑是否适合放进 **`@repo/shared-methods`**（无强绑定单应用路由或环境、可被 **admin / borrower / lender** 或多 feature 复用、或适合集中维护接口与类型）。适合则新增到 **`hooks/*`**、**`lib/*`**、**`api/*`**、**`components/*`**、**`enum/*`** 等与职责匹配的目录，并视需要写入 **`package.json` → `exports`**；仅当确认单应用专属时再写在当前应用对应目录，避免默认「先写应用内、再在应用间复制」。
-  - **UI 组件**：在页面或业务组件里直接使用 **antd** 前，先检索 **`@repo/shared-methods/components/*`** 与 **`@repo/shared-methods/componentsUi/*`**（源码目录 `src/components/`、`src/componentsUi/`；可先浏览包内目录，再在仓库内搜既有 `import`）。已有封装（含组合表单、表格、弹层、上传等）**必须复用**；仅当确认无合适封装时，再使用 **antd** 原生组件。列表「筛选 + 表格」仍优先 **Skill `filter-table`**（`FilterTable` / `FilterTableCard`），勿手写 `FilterField` + `NewTable` 流水线。
-  - **枚举与展示用常量**：先查 **`@repo/shared-methods/enum/*`** 及既有聚合导出。若无定义，再判断该值是否会被 **admin / borrower / lender** 或多 feature 复用：**会** → 新增到共享包 **`enum`**，并视需要在 **`package.json` → `exports`** 增加子路径；**不会** → 放在当前应用的 **`enum/`**（或与同 feature 既有常量文件并列），避免把仅单应用使用的值塞进公共包。命名与后端字段、全站既有习惯对齐。
-  - **hooks**：先查 **`@repo/shared-methods/hooks/*`** 与当前应用内是否已有等价 hook；跨应用复用则抽到共享包并在 **`exports`** 声明，禁止在三个应用各复制一份实现。
-  - **展示类格式化**：先查 **`@repo/shared-methods/utils`**（实现于 **`lib/date.js`**、**`lib/format.js`**），优先 **`formatDate` / `formatTime` / `formatAmount` / `formatPhone`** 等，勿在业务里手写与全站不一致的 `dayjs(...).format(...)`（与 antd 表单配套的日期仍可用 **dayjs**）。
-  - **API / 请求与通用逻辑**：先查 **`@repo/shared-methods/api/*`**、**`lib/*`**、**`utils`**（及对外的 **`@repo/shared-methods/utils`**），避免重复封装 `fetch`、鉴权拼接、重复工具函数。
-  - **全局或跨页面状态（如 zustand store、跨路由 context）**：先查共享包与各应用是否已有等价模块；**明确跨应用**的抽到共享包；**仅单应用**的保留在该应用既有 `store` / `context` 目录（或与邻近 feature 一致），不强行上收公共包。
-- 新增对外入口时，在包的 **`package.json` → `exports`** 中声明子路径；以 **TS** 为主，各 Next 应用需 **`transpilePackages`**（或等价）包含该包名，否则构建可能报错。
+### 框架与包管理
 
+- **运行时栈**（各应用以 `package.json` 为准）：**Next.js 15**（App Router）、**React 19**；**antd 5**、**@ant-design/icons**；沿用各应用已有的 **`@ant-design/nextjs-registry`**、**`@ant-design/v5-patch-for-react-19`** 等；**Tailwind CSS 3**；按需 **Sass**；**dayjs**、**zustand** 等按现有用法。
+- **语言**：业务多为 **`.js` / `.jsx`**，与 TS 混存；**新增或修改与所在目录、同 feature 保持一致**（勿强行整页改 TS，除非任务要求）。
+- **pnpm**：全仓 **pnpm**；工作区见根目录 **`pnpm-workspace.yaml`**（含 `frontend/admin|borrower|lender|project`、`frontend/packages/*`）。在**仓库根目录** `pnpm install` 以解析 `workspace:*`。日常开发进入**目标应用目录**跑脚本（如 `pnpm run local`），勿混淆根目录与子包脚本。
+- 依赖 workspace 包的 Next 应用需在 **`transpilePackages`**（或等价）中声明对应包名。
 
-## UI
+### UI（跨应用共性）
 
-- **交互组件**（Form、Table、Modal、Message 等）：遵循上文共享包 **「UI 组件」** 的查找顺序——**先 `@repo/shared-methods` 封装，再 Ant Design 5.x**；并沿用各应用根布局里已有的 **AntdRegistry / ConfigProvider** 接入方式。
-- **布局、间距、响应式**用 **Tailwind 3.x**；避免与 antd 强耦合的重复样式。
-- **颜色 token**（全站，含 Tailwind class 与行内 `style`）：写**文字色 / 背景色 / 边框色**前，先查当前应用的 **`src/app/globals.css`**（`:root` 里 `--*` 变量）与同应用 **`tailwind.config.js`** → `theme.extend.colors` 的对应关系（admin / borrower / lender 三端结构应对齐）。**已在 Tailwind 注册**的 token 优先用 utility class，规则为 `{css属性前缀}-{token路径}`：`--base-primary` → `text-base-primary` / `bg-base-primary` / `border-base-primary`； 等。**仅在 `globals.css` 有、Tailwind 未注册**的变量（如 `--orange-dark`），行内样式写 `color: 'var(--orange-dark)'`（或 `backgroundColor` / `borderColor`）。**禁止**硬编码与 token 等价的 `#1677ff`、`rgba(0,0,0,0.45)`、`text-[rgba(...)]`、`bg-[#...]` 等；确无 token 时再评估是否新增 `--*` 与 `tailwind.config.js` 映射。
+- **交互组件**：优先当前应用应对的共享包封装（见二 / 三），再 Ant Design 5.x；沿用各应用根布局的 **AntdRegistry / ConfigProvider**。
+- **布局、间距、响应式**：Tailwind 3.x；避免与 antd 强耦合的重复样式。
+- **颜色 token**：写文字色 / 背景色 / 边框色前，先查**当前应用** `src/app/globals.css`（`:root` 的 `--*`）与同应用 `tailwind.config.js` → `theme.extend.colors`。已注册 token 用 utility（如 `--base-primary` → `text-base-primary`）；仅 CSS 有、Tailwind 未注册的用 `var(--*)`。**禁止**硬编码与 token 等价的色值；确无 token 再评估新增。
 - **图标**：`@ant-design/icons`；**日期**与 antd 5 对齐 **dayjs**。
-- **空值展示**（全站统一，不限页面/组件类型）：凡向用户**展示字段值**（表格列、`render`、详情 `DetailField`、卡片、描述列表、Tab 内只读文本等），无有效数据时一律显示 **`--`**（两个 ASCII 连字符）。**禁止**手写 `'--'`、`value ?? '--'`、`v || '--'` 以及 `—`、`N/A`、单字符 `-` 等其它占位。实现上**必须**使用 `@repo/shared-methods/utils` 的 **`displayValue(value, formatter?)`**；仅需常量时引用 **`EMPTY_DISPLAY`**（均来自 `lib/format.js`）。`displayValue` 已覆盖 `null` / `undefined` / `''`、格式化后为空、以及 `formatAmount` 返回的 `$ --` 等情形；有 formatter 时写 `displayValue(raw, formatAmount)`，展示组件内写 `displayValue(value)`，勿在业务层重复判空逻辑。
+- **空值展示**：向用户展示的字段无有效数据时一律 **`--`**（两个 ASCII 连字符）。**禁止**手写 `'--'` / `?? '--'` / `—` / `N/A` 等。使用对应共享包的 **`displayValue(value, formatter?)`** / **`EMPTY_DISPLAY`**（实现于 `lib/format.js`）；具体 import 路径见二 / 三。
 
-## 质量与提交
+### 质量、注释与 Agent 方式
 
-- 提交前遵循仓库的 lint/format 配置，遵守配置好的 **ESLint 9** 与 **Prettier 3.x** 规则，新增文件保持与邻近平文件一致的风格。
-- 根目录 **husky / lint-staged** 只覆盖前端项目；以 **`frontend/<app>/package.json`** 与根 `package.json` 实际配置为准。
+- 提交前遵循各应用 / 根目录的 **ESLint 9**、**Prettier 3.x**；新增文件风格与邻近文件一致。根 **husky / lint-staged** 覆盖范围以实际配置为准。
+- **注释**：代码自解释优先；模块 / 工具文件顶部写职责与约定；非显而易见函数与导出函数用 JSDoc（`@param` / `@returns`）；中文简述「做什么 + 关键约定」；禁止废代码注释与逐行翻译。细则与示例见既有习惯及 `code-comments` 用户规则。
+- **Agent**：**最小必要改动**；默认只动当前 `frontend/<app>` 或相关 `frontend/packages/*`；跨应用同步需明确需求；纯前端勿动 `backend/`；风格以邻近文件为准。
 
-## 代码注释（可维护性）
+---
 
-- **原则**：代码应能自解释；**仅在**读者难以从命名一眼看懂时再写注释，避免复述变量名。
-- **必须写注释**（Agent 生成或修改时默认带上）：
-  - **模块 / 工具文件顶部的文件级注释**：说明该文件职责、输入输出形态、与 API / 父组件的关系（如「纯 UI 映射，不改 rowData」）。
-  - **非显而易见的函数**：数据映射、状态派生、多步业务判断、与后端字段名不一致的转换、正则 / 算法类工具函数。
-  - **导出函数**：用 JSDoc 写 `@param` / `@returns`（类型可写 JS 习惯写法，如 `object|null`）。
-  - **复杂对象字段**：返回给 UI 的结构体中，字段含义不直观时，在映射处或类型旁用行内/块注释说明（如 `pendingCount` 如何计算）。
-- **可不写**：简单 JSX 布局、一眼能看懂的 getter、与 antd 文档一致的常规 props。
-- **风格**：与同 feature 邻近文件一致，优先 **`/** ... */`（JSDoc）**；中文简述「做什么 + 关键约定」，一行能说清则不扩写；涉及后端字段时注明 API 字段名（如 `rowData.checklist`、`uploaded_document_count`）。
-- **禁止**：注释掉的废代码、与实现矛盾的过期注释、逐行翻译代码的无信息注释。
+## 二、admin / lender / borrower（三端共用）
 
-## Agent 工作方式
+三端共享同一套业务壳与菜单权限模型；**共享包用 `@repo/shared-methods`**。`project` **不适用**本节。
 
-- **最小必要改动**，不做无关重构。
-- **默认只动** `frontend/<app>` 或 `frontend/packages/*`；跨应用同步需有明确需求；纯前端勿动 `backend/`。
-- **风格以邻近文件为准**（引号、组件拆分、antd 写法、Tailwind 密度）。
-- **注释**：遵循上文 **「代码注释（可维护性）」**；新增工具函数、映射层、hooks 时按该节默认补充说明。
-- 业务枚举、贷款状态等与域相关的常量：**遵循**共享包章节 **「枚举与展示用常量」**；与后端字段保持已有命名习惯。
+### 菜单与路由权限
 
+- 侧栏与 **`middleware` accessPaths** 来自后端菜单（如 **`/user/menu`**）；新路径未登记则无入口或访问被拒，由后端/运维配置，**勿在仓库写 SQL 代配**。
+
+### 共享包 `@repo/shared-methods`
+
+- 路径：`frontend/packages/shared-methods`。
+- **职责**：三端复用的业务 **hooks、api、组件、enum、store、工具** 等；避免在 admin / borrower / lender 之间复制。
+- **与 platform-core**：通用、无三端语义的实现应逐步落到 `platform-core`；三端应用**暂时仍可只 import `@repo/shared-methods`**，由 `shared-methods` 中转 `platform-core`（迁移未完成前，勿强制三端改 import 到 `platform-core`）。
+- **禁止**：把仅三端使用的 UI / 枚举 / store 放进 `platform-core`；**禁止** `project` 依赖本包。
+
+**生成页面 / 新增功能时的选型顺序（先查共享包，再写应用内代码）**
+
+- **新建 hooks / 工具 / 请求 / UI / 枚举**：先判断归属——全前端通用 → 实现进 **`platform-core`**，并在 **`shared-methods` 中转导出**（迁移期）；仅三端复用 → **`shared-methods`**；单应用 → 当前应用 `src`。
+- **UI 组件**：直接用 antd 前，先查 **`@repo/shared-methods/components/*`** 与 **`@repo/shared-methods/componentsUi/*`**（源码 `src/components/`、`src/componentsUi/`）。已有封装必须复用；列表「筛选 + 表格」优先 Skill **`filter-table`**（`FilterTable` / `FilterTableCard`），说明见 `.cursor/skills/filter-table/SKILL.md`，勿手写 `FilterField`+`NewTable` 流水线。
+- **枚举与展示常量**：先查 **`@repo/shared-methods/enum/*`**。会被三端或多 feature 复用 → 进共享包 `enum` 并视需要补 `exports`；仅单应用 → 该应用 `enum/` 或 feature 常量文件。命名与后端字段、全站习惯对齐。
+- **hooks**：先查 **`@repo/shared-methods/hooks/*`**；跨三端则抽到共享包并声明 `exports`，禁止三端各复制一份。若属通用非业务 hook，优先实现在 **`platform-core`** 再经本包中转。
+- **展示类格式化 / 空值**：三端业务代码优先 **`@repo/shared-methods/utils`**（`formatDate` / `formatTime` / `formatAmount` / `formatPhone` / **`displayValue`** / **`EMPTY_DISPLAY`** 等）。实现若已迁到 `platform-core`，由 `shared-methods` 再导出，三端 import 路径可暂不变。
+- **API / 请求与通用逻辑**：先查 **`@repo/shared-methods/api/*`**、`lib/*`、`utils`；纯通用请求基建优先落在 / 中转自 **`platform-core`**。
+- **全局或跨页面状态**：跨三端 → `shared-methods`；仅单应用 → 该应用 `store` / `context`。勿把三端业务 store 放进 `platform-core`。
+- 新增对外入口时在包 **`package.json` → `exports`** 声明子路径；各三端 Next 应用 **`transpilePackages`** 含 `@repo/shared-methods`（及若直接依赖则含 `@repo/platform-core`）。
+
+### UI 补充（三端）
+
+- 颜色 token：admin / borrower / lender 的 `globals.css` 与 `tailwind.config.js` **结构应对齐**。
+- 交互组件查找顺序：先 **`@repo/shared-methods`**，再 antd。
+
+### Agent 补充（三端）
+
+- 业务枚举、贷款状态等：遵循本节「枚举与展示用常量」；与后端字段保持已有命名习惯。
+- 默认改动范围：`frontend/admin|borrower|lender` 与 `frontend/packages/shared-methods`（以及为中转而改的 `platform-core`）；**不要**为三端需求去改 `frontend/project`，除非用户明确要求。
+
+---
+
+## 三、project（独立应用）
+
+`frontend/project` 与 admin / lender / borrower **无业务关联**；**只依赖 `@repo/platform-core`**，**不要**依赖或引用 `@repo/shared-methods`（含 tailwind `content`、tsconfig paths、业务 import）。
+
+### 共享包 `@repo/platform-core`
+
+- 路径：`frontend/packages/platform-core`。
+- **职责**：全前端通用的 **lib / hooks / utils**（如 `format`、`fetch`、`cookie`、`commonRouter`、`permissionStorage` 等已迁入内容）；**不含**三端业务 UI、贷款/借款枚举、三端专用 store。
+- **选型顺序**：应用内落文件前，先查 **`@repo/platform-core`**（`utils`、`lib/*`、`hooks` / `hooks/*`）。缺通用能力且确实全前端可复用 → 新增到 `platform-core` 并补 `exports`；仅 project 使用 → 留在 `frontend/project`。
+- **展示类格式化 / 空值**：用 **`@repo/platform-core/utils`**（或 `lib/format`）的 **`displayValue` / `EMPTY_DISPLAY`** 及 `formatDate` / `formatAmount` 等，勿手写不一致的日期/金额/`'--'`。
+- **UI**：本包当前以 lib/hooks 为主；页面组件直接用 **antd**（及 project 应用内封装）。**不要**为了用三端的 `FilterTable` 等而去依赖 `shared-methods`；若确需同类能力，在 `platform-core` 或 `project` 内按通用方式实现/抽离，而不是拷贝三端业务组件。
+- Next：**`transpilePackages: ['@repo/platform-core']`**；`package.json` 依赖 **`@repo/platform-core`: `workspace:*`**。
+
+### 与三端的边界
+
+- 勿假设后端菜单 `/user/menu`、三端 accessPaths、贷款域枚举等在 project 同样适用；以 project 自身 middleware / 权限与 API 为准。
+- 改 `platform-core` 时考虑**所有**消费者（含未来经 `shared-methods` 中转的三端）；保持 API 稳定、避免塞入三端语义。
+
+### Agent 补充（project）
+
+- 默认改动范围：`frontend/project` 与 `frontend/packages/platform-core`。
+- 需要「以前在 shared-methods 里的通用方法」时：到 **`platform-core`** 找或迁入，而不是让 project 去引 `shared-methods`。
