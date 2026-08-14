@@ -6,7 +6,7 @@ packages:
   - "frontend/packages/*"
 allowBuilds:
   '@parcel/watcher': true
-  '@swc/core': set this to true or false
+  '@swc/core': true
   es5-ext: true
   sharp: true
   unrs-resolver: true

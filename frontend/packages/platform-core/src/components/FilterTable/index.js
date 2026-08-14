@@ -5,12 +5,10 @@ import { useDisUpdateEffect } from '@repo/platform-core/hooks';
 import { FilterTag } from '../FilterField/filterTag.js';
 import { FilterField } from '../FilterField/index';
 import useContent from './useContent';
-import { useResolvedTableComponent } from './FilterTableUiContext';
-
-export { FilterTableProvider } from './FilterTableUiContext';
+import { useResolvedUiComponent } from '../../context/AppUiContext';
 
 /**
- * Form筛选 + Table（Table 由应用注入，不依赖 platform-core 内的 NewTable）
+ * Form筛选 + Table（Table 由 AppUiProvider 注入，不依赖 platform-core 内的 NewTable）
  * @param {React.ComponentType} [TableComponent] 覆盖 Context 中的表格组件
  * @param {boolean} hasFilterField true显示筛选/false隐藏
  * @param {function} getData table list接口请求函数
@@ -42,7 +40,7 @@ export const FilterTable = forwardRef(
 		},
 		ref,
 	) => {
-		const Table = useResolvedTableComponent(TableComponent);
+		const Table = useResolvedUiComponent('Table', TableComponent);
 		const {
 			filterFieldRef,
 			list,

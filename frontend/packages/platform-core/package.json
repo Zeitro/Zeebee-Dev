@@ -8,6 +8,7 @@
 		"./lib/*": "./src/lib/*.js",
 		"./hooks": "./src/hooks/index.js",
 		"./hooks/*": "./src/hooks/*",
+		"./context/*": "./src/context/*",
 		"./components/*": "./src/components/*",
 		"./enum/*": "./src/enum/*"
 	},

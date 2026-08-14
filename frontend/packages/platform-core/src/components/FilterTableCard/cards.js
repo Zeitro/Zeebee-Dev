@@ -2,7 +2,7 @@
 import React from 'react';
 import { Spin } from 'antd';
 import { NoData } from '../NoData/index.js';
-import { useResolvedPaginationComponent } from '../FilterTable/FilterTableUiContext';
+import { useResolvedUiComponent } from '../../context/AppUiContext';
 
 /**
  * FilterTableCard 的卡片列表 + 分页；分页组件由应用注入。
@@ -19,7 +19,7 @@ export const Cards = ({
 	handleChangePagination,
 	cardTitle,
 }) => {
-	const Pagination = useResolvedPaginationComponent(PaginationComponent);
+	const Pagination = useResolvedUiComponent('Pagination', PaginationComponent);
 
 	return (
 		<>

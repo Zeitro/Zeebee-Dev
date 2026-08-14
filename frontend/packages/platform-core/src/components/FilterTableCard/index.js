@@ -6,11 +6,11 @@ import { FilterField } from '../FilterField/index';
 import { Cards } from './cards.js';
 import styles from './index.module.scss';
 import useContent from '../FilterTable/useContent';
-import { useResolvedTableComponent } from '../FilterTable/FilterTableUiContext';
+import { useResolvedUiComponent } from '../../context/AppUiContext';
 
 /**
  * Form筛选 + Table/Card（两个可切换）
- * 与FilterTable传一样的参数；Table / Pagination 由 FilterTableProvider 或 props 注入
+ * 与FilterTable传一样的参数；Table / Pagination 由 AppUiProvider 或 props 注入
  */
 export const FilterTableCard = forwardRef(
 	(
@@ -41,7 +41,7 @@ export const FilterTableCard = forwardRef(
 		},
 		ref,
 	) => {
-		const Table = useResolvedTableComponent(TableComponent);
+		const Table = useResolvedUiComponent('Table', TableComponent);
 		const {
 			filterFieldRef,
 			list,

@@ -1,6 +1,6 @@
 /**
  * 客户端全局 Provider：同步 antd / dayjs 与当前 next-intl locale；
- * 并向 platform-core FilterTable / FilterTableCard 注入应用侧 NewTable、NewPagination。
+ * 并向 platform-core 注入应用侧 NewTable / NewPagination / NewModal。
  */
 'use client';
 
@@ -12,9 +12,10 @@ import zhCN from 'antd/locale/zh_CN';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en';
 import 'dayjs/locale/zh-cn';
-import { FilterTableProvider } from '@repo/platform-core';
+import { AppUiProvider } from '@repo/platform-core';
 import { NewTable } from '@/components/NewTable';
 import { NewPagination } from '@/components/NewPagination';
+import { NewModal } from '@/components/NewModal';
 
 const antdLocales = {
 	en: enUS,
@@ -32,9 +33,9 @@ export default function AppProviders({ locale, children }) {
 	return (
 		<ConfigProvider locale={antdLocales[locale] || enUS}>
 			<AntdRegistry>
-				<FilterTableProvider TableComponent={NewTable} PaginationComponent={NewPagination}>
+				<AppUiProvider Table={NewTable} Pagination={NewPagination} Modal={NewModal}>
 					{children}
-				</FilterTableProvider>
+				</AppUiProvider>
 			</AntdRegistry>
 		</ConfigProvider>
 	);
