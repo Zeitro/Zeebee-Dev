@@ -1,0 +1,55 @@
+.NewModal {
+	:global {
+		.ant-modal-header {
+			padding: 15px 24px !important;
+			border-radius: 2px 2px 0 0 !important;
+			border-bottom: 1px solid var(--base-border) !important;
+		}
+
+		.ant-modal-footer {
+			padding: 10px 16px !important;
+			border-top: 1px solid var(--base-border) !important;
+			height: auto;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-top: 0;
+			.ant-btn {
+				border-radius: 6px;
+			}
+		}
+		.ant-modal-content {
+			padding: 0 !important;
+			border-radius: 2px !important;
+		}
+		.ant-modal-body {
+			padding: 12px 24px !important;
+		}
+		.ant-modal-title {
+			font-weight: 500 !important;
+		}
+
+		// form中label高度
+		.ant-form-item-label {
+			padding-bottom: 0 !important;
+			> label {
+				color: #000 !important;
+				height: 22px !important;
+			}
+		}
+	}
+}
+
+.NewModal_padding {
+	:global {
+		.ant-modal-content {
+			padding-bottom: 24px !important;
+		}
+		.ant-modal-footer {
+			padding-bottom: 0 !important;
+		}
+		.ant-modal-body {
+			padding: 0px 30px 0px !important;
+		}
+	}
+}
