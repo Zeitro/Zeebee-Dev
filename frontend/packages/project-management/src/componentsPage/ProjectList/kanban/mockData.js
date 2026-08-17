@@ -222,3 +222,112 @@ export function getMockKanbanMembers(projectId) {
 		taskTypes: MOCK_TASK_TYPES,
 	};
 }
+
+/** @type {Record<number, object[]>} */
+const MOCK_TASK_DEPENDENCIES = {
+	1004: [
+		{
+			id: 1,
+			task_id: 1004,
+			depends_on_task_id: 1003,
+			dependency_type: 'finish_to_start',
+			depends_on_task: { id: 1003, title: '实现 FilterTableCard 集成' },
+		},
+	],
+};
+
+/** @type {Record<number, object[]>} */
+const MOCK_TASK_DEPENDENTS = {
+	1003: [
+		{
+			id: 1,
+			task_id: 1003,
+			depends_on_task_id: 1003,
+			dependency_type: 'finish_to_start',
+			task: { id: 1004, title: '看板拖拽联调' },
+		},
+	],
+};
+
+/** @type {Record<number, object[]>} */
+const MOCK_TASK_ACTIVITIES = {
+	1001: [
+		{
+			id: 1,
+			task_id: 1001,
+			user_id: 1001,
+			action: 'created',
+			field: '',
+			old_value: '',
+			new_value: '',
+			created_at: '2026-08-15T10:00:00Z',
+		},
+		{
+			id: 2,
+			task_id: 1001,
+			user_id: 1002,
+			action: 'updated',
+			field: 'priority',
+			old_value: '1',
+			new_value: '2',
+			created_at: '2026-08-16T14:30:00Z',
+		},
+	],
+	1003: [
+		{
+			id: 3,
+			task_id: 1003,
+			user_id: 1001,
+			action: 'transitioned',
+			field: 'workflow_state',
+			old_value: '待办',
+			new_value: '进行中',
+			created_at: '2026-08-17T09:00:00Z',
+		},
+	],
+};
+
+/**
+ * @param {number|string} taskId
+ * @returns {object[]}
+ */
+export function getMockTaskDependencies(taskId) {
+	return MOCK_TASK_DEPENDENCIES[Number(taskId)] || [];
+}
+
+/**
+ * @param {number|string} taskId
+ * @returns {object[]}
+ */
+export function getMockTaskDependents(taskId) {
+	const id = Number(taskId);
+	return (MOCK_TASK_DEPENDENTS[id] || []).map((item) => ({
+		...item,
+		task_id: item.task?.id,
+	}));
+}
+
+/**
+ * @param {number|string} taskId
+ * @returns {object[]}
+ */
+export function getMockTaskActivities(taskId) {
+	return MOCK_TASK_ACTIVITIES[Number(taskId)] || [];
+}
+
+/**
+ * @param {object[]} tasks
+ * @returns {object[]}
+ */
+export function getMockProjectActivities(tasks) {
+	const all = [];
+	(tasks || []).forEach((task) => {
+		const items = getMockTaskActivities(task.id).map((act) => ({
+			...act,
+			task_id: task.id,
+		}));
+		all.push(...items);
+	});
+	all.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+	return all;
+}

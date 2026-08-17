@@ -17,8 +17,12 @@ import {
 import { displayValue } from '@repo/shared-methods/utils';
 import CreateTaskModal from './components/CreateTaskModal';
 import { EmptyWorkflow } from './components/EmptyWorkflow';
+import { InviteMemberModal } from './components/InviteMemberModal';
 import { KanbanColumn } from './components/KanbanColumn';
 import { KanbanHeader } from './components/KanbanHeader';
+import { ProjectActivityDrawer } from './components/ProjectActivityDrawer';
+import { ProjectMemberListDrawer } from './components/ProjectMemberListDrawer';
+import { TaskActivityDrawer } from './components/TaskActivityDrawer';
 import { TaskDetailDrawer } from './components/TaskDetailDrawer';
 import { useKanbanBoard } from './hooks/useKanbanBoard';
 
@@ -39,6 +43,7 @@ export function ProjectKanban() {
 		taskTypes,
 		loading,
 		activeTask,
+		userId,
 		openTask,
 		closeTask,
 		transitionTask,
@@ -47,12 +52,33 @@ export function ProjectKanban() {
 		saveTask,
 		saveTitle,
 		deleteTask,
+		inviteProjectMembers,
+		removeProjectMember,
+		updateProjectMemberRole,
+		fetchProjectActivities,
+		fetchTaskActivities,
+		fetchTaskDependencies,
+		fetchTaskDependents,
+		addTaskDependency,
+		addTaskDependent,
+		updateTaskDependency,
+		updateTaskDependent,
+		deleteTaskDependency,
+		deleteTaskDependent,
 	} = useKanbanBoard(projectId, queryTaskId);
 
 	const [draggedTask, setDraggedTask] = useState(null);
 	const [createOpen, setCreateOpen] = useState(false);
 	const [createParent, setCreateParent] = useState(null);
 	const [targetStateId, setTargetStateId] = useState(null);
+	const [memberListOpen, setMemberListOpen] = useState(false);
+	const [memberSearch, setMemberSearch] = useState('');
+	const [inviteOpen, setInviteOpen] = useState(false);
+	const [inviteLoading, setInviteLoading] = useState(false);
+	const [projectActivityOpen, setProjectActivityOpen] = useState(false);
+	const [projectActivities, setProjectActivities] = useState([]);
+	const [taskLogOpen, setTaskLogOpen] = useState(false);
+	const [taskActivities, setTaskActivities] = useState([]);
 
 	const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 	const states = useMemo(
@@ -60,6 +86,10 @@ export function ProjectKanban() {
 			[...(workflow?.states || [])].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0)),
 		[workflow],
 	);
+
+	const currentProjectRole = projectMembers.find((item) => item.user_id === userId)?.role;
+	// const canManageMembers = userId === project?.owner_id || currentProjectRole === 'admin';
+	const canManageMembers = true;
 
 	const setTaskQuery = useCallback(
 		(taskId) => {
@@ -83,6 +113,7 @@ export function ProjectKanban() {
 	const handleDrawerClose = useCallback(() => {
 		closeTask();
 		setTaskQuery();
+		setTaskLogOpen(false);
 	}, [closeTask, setTaskQuery]);
 
 	const openCreate = useCallback((stateId, parent) => {
@@ -106,6 +137,32 @@ export function ProjectKanban() {
 		[tasks, transitionTask],
 	);
 
+	const handleOpenProjectActivity = useCallback(async () => {
+		setProjectActivityOpen(true);
+		const activities = await fetchProjectActivities();
+		setProjectActivities(activities);
+	}, [fetchProjectActivities]);
+
+	const handleOpenTaskLog = useCallback(async () => {
+		if (!activeTask) return;
+		setTaskLogOpen(true);
+		const activities = await fetchTaskActivities(activeTask.id);
+		setTaskActivities(activities);
+	}, [activeTask, fetchTaskActivities]);
+
+	const handleInviteMembers = useCallback(
+		async (userIds) => {
+			setInviteLoading(true);
+			try {
+				await inviteProjectMembers(userIds);
+				setInviteOpen(false);
+			} finally {
+				setInviteLoading(false);
+			}
+		},
+		[inviteProjectMembers],
+	);
+
 	if (loading) {
 		return (
 			<div className="flex items-center justify-center py-24">
@@ -125,7 +182,14 @@ export function ProjectKanban() {
 				taskCount={tasks.length}
 				members={members}
 				projectMembers={projectMembers}
+				canManageMembers={canManageMembers}
 				onCreateTask={() => openCreate(null)}
+				onMembersClick={() => {
+					setMemberSearch('');
+					setMemberListOpen(true);
+				}}
+				onInviteClick={() => setInviteOpen(true)}
+				onActivityClick={handleOpenProjectActivity}
 			/>
 			<div className="flex-1 overflow-x-auto p-4 bg-white">
 				<DndContext
@@ -179,6 +243,41 @@ export function ProjectKanban() {
 					}}
 				/>
 			) : null}
+			<InviteMemberModal
+				open={inviteOpen}
+				members={members}
+				projectMembers={projectMembers}
+				loading={inviteLoading}
+				onCancel={() => setInviteOpen(false)}
+				onInvite={handleInviteMembers}
+			/>
+			<ProjectMemberListDrawer
+				open={memberListOpen}
+				project={project}
+				members={members}
+				projectMembers={projectMembers}
+				canManage={canManageMembers}
+				search={memberSearch}
+				onSearchChange={setMemberSearch}
+				onClose={() => setMemberListOpen(false)}
+				onInvite={() => {
+					setMemberListOpen(false);
+					setInviteOpen(true);
+				}}
+				onRemove={removeProjectMember}
+				onRoleChange={updateProjectMemberRole}
+			/>
+			<ProjectActivityDrawer
+				open={projectActivityOpen}
+				activities={projectActivities}
+				tasks={tasks}
+				members={members}
+				onClose={() => setProjectActivityOpen(false)}
+				onTaskClick={(task) => {
+					setProjectActivityOpen(false);
+					handleTaskClick(task);
+				}}
+			/>
 			<TaskDetailDrawer
 				open={Boolean(activeTask)}
 				task={activeTask}
@@ -195,6 +294,21 @@ export function ProjectKanban() {
 				onPersistAssignees={persistAssignees}
 				onSave={saveTask}
 				onDelete={() => deleteTask(handleDrawerClose)}
+				onOpenLog={handleOpenTaskLog}
+				fetchTaskDependencies={fetchTaskDependencies}
+				fetchTaskDependents={fetchTaskDependents}
+				onAddDependency={addTaskDependency}
+				onAddDependent={addTaskDependent}
+				onUpdateDependency={updateTaskDependency}
+				onUpdateDependent={updateTaskDependent}
+				onDeleteDependency={deleteTaskDependency}
+				onDeleteDependent={deleteTaskDependent}
+			/>
+			<TaskActivityDrawer
+				open={taskLogOpen}
+				activities={taskActivities}
+				members={members}
+				onClose={() => setTaskLogOpen(false)}
 			/>
 		</div>
 	);

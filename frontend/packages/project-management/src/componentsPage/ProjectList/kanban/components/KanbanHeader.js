@@ -1,10 +1,16 @@
 /**
- * 看板顶栏：返回项目列表、项目名与任务数、成员头像、新建任务。
+ * 看板顶栏：返回、项目名、成员、邀请、项目动态、新建任务（不含工作流配置）。
  */
 'use client';
 
-import { ArrowLeftOutlined, PlusOutlined, SettingOutlined, TeamOutlined } from '@ant-design/icons';
-import { Avatar, Button, Tooltip } from 'antd';
+import {
+	ArrowLeftOutlined,
+	MessageOutlined,
+	PlusOutlined,
+	SettingOutlined,
+	TeamOutlined,
+} from '@ant-design/icons';
+import { Avatar, Button, Divider, Tooltip } from 'antd';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { displayValue } from '@repo/shared-methods/utils';
@@ -16,7 +22,11 @@ import { getMemberInitial, getMemberLabel } from './helpers';
  *   taskCount?: number,
  *   members?: Array,
  *   projectMembers?: Array,
+ *   canManageMembers?: boolean,
  *   onCreateTask?: () => void,
+ *   onMembersClick?: () => void,
+ *   onInviteClick?: () => void,
+ *   onActivityClick?: () => void,
  *   showCreate?: boolean,
  * }} props
  */
@@ -25,7 +35,11 @@ export function KanbanHeader({
 	taskCount = 0,
 	members = [],
 	projectMembers = [],
+	canManageMembers = false,
 	onCreateTask,
+	onMembersClick,
+	onInviteClick,
+	onActivityClick,
 	showCreate = true,
 }) {
 	const t = useTranslations();
@@ -49,7 +63,12 @@ export function KanbanHeader({
 				</h2>
 			</div>
 			<div className="flex items-center gap-3 shrink-0">
-				<div className="flex items-center gap-1.5" title={t('kanban.members')}>
+				<button
+					type="button"
+					className="flex items-center gap-1.5 cursor-pointer border-0 bg-transparent p-0"
+					title={t('kanban.viewAllMembers')}
+					onClick={onMembersClick}
+				>
 					<TeamOutlined className="text-base-label" />
 					<Avatar.Group
 						max={{
@@ -81,7 +100,16 @@ export function KanbanHeader({
 							);
 						})}
 					</Avatar.Group>
-				</div>
+				</button>
+				{canManageMembers ? (
+					<Button size="small" icon={<PlusOutlined />} onClick={onInviteClick}>
+						{t('kanban.invite')}
+					</Button>
+				) : null}
+				<Divider type="vertical" className="h-6" />
+				<Button icon={<MessageOutlined />} onClick={onActivityClick}>
+					{t('kanban.projectActivity')}
+				</Button>
 				{projectId != null ? (
 					<Button
 						icon={<SettingOutlined />}

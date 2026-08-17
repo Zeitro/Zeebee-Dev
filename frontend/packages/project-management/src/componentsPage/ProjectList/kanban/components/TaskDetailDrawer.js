@@ -1,9 +1,9 @@
 /**
- * 任务详情抽屉：标题失焦保存；状态走 transition；执行者即时落库；其余点保存。
+ * 任务详情抽屉：标题失焦保存；状态走 transition；执行者即时落库；依赖/附件/日志。
  */
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { CalendarOutlined, PlusOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, DatePicker, Divider, Drawer, Form, Input, InputNumber, Select } from 'antd';
 import { useTranslations } from 'next-intl';
@@ -18,6 +18,8 @@ import { AssigneeChips } from './AssigneeChips';
 import { getAssigneeIds } from './helpers';
 import { PriorityIcon } from './PriorityIcon';
 import { SubtaskList } from './SubtaskList';
+import { TaskAttachments } from './TaskAttachments';
+import { TaskDependencies } from './TaskDependencies';
 import { TaskDrawerHeader } from './TaskDrawerHeader';
 
 /**
@@ -37,6 +39,15 @@ import { TaskDrawerHeader } from './TaskDrawerHeader';
  *   onPersistAssignees: (ids: number[]) => void,
  *   onSave: (values: object) => Promise<void>,
  *   onDelete: () => void,
+ *   onOpenLog?: () => void,
+ *   fetchTaskDependencies: (taskId: number) => Promise<Array>,
+ *   fetchTaskDependents: (taskId: number) => Promise<Array>,
+ *   onAddDependency: (taskId: number, dependsOnTaskId: number) => Promise<void>,
+ *   onAddDependent: (taskId: number, dependentTaskId: number) => Promise<void>,
+ *   onUpdateDependency: (taskId: number, dependencyId: number, type: string) => Promise<void>,
+ *   onUpdateDependent: (taskId: number, dependencyId: number, type: string) => Promise<void>,
+ *   onDeleteDependency: (taskId: number, dependencyId: number) => Promise<void>,
+ *   onDeleteDependent: (taskId: number, dependencyId: number) => Promise<void>,
  * }} props
  */
 export function TaskDetailDrawer({
@@ -55,10 +66,22 @@ export function TaskDetailDrawer({
 	onPersistAssignees,
 	onSave,
 	onDelete,
+	onOpenLog,
+	fetchTaskDependencies,
+	fetchTaskDependents,
+	onAddDependency,
+	onAddDependent,
+	onUpdateDependency,
+	onUpdateDependent,
+	onDeleteDependency,
+	onDeleteDependent,
 }) {
 	const t = useTranslations();
 	const [form] = Form.useForm();
+	const [dependencyFocusMode, setDependencyFocusMode] = useState(null);
 	const parentTask = tasks.find((item) => item.id === task?.parent_id);
+	const watchedAssigneeIds = Form.useWatch('assignee_ids', form);
+	const liveAssigneeIds = watchedAssigneeIds ?? getAssigneeIds(task);
 
 	const priorityOptions = useMemo(
 		() =>
@@ -76,6 +99,7 @@ export function TaskDetailDrawer({
 
 	useEffect(() => {
 		if (!task || !open) return;
+		setDependencyFocusMode(null);
 		form.setFieldsValue({
 			title: task.title,
 			description: task.description,
@@ -108,9 +132,13 @@ export function TaskDetailDrawer({
 						task={task}
 						project={project}
 						parentTask={parentTask}
+						assigneeIds={liveAssigneeIds}
+						members={members}
 						onTaskClick={onTaskClick}
 						onTitleBlur={onTitleBlur}
 						onDelete={onDelete}
+						onOpenLog={onOpenLog}
+						onAddDependency={setDependencyFocusMode}
 					/>
 					<div className="flex-1 overflow-y-auto px-6 py-4">
 						<Form
@@ -211,6 +239,23 @@ export function TaskDetailDrawer({
 									<AssigneeChips options={memberOptions} fallbacks={members} />
 								</Form.Item>
 							</div>
+							<TaskDependencies
+								key={`${task.id}-${dependencyFocusMode || 'idle'}`}
+								task={task}
+								tasks={tasks}
+								workflow={workflow}
+								members={members}
+								onTaskClick={onTaskClick}
+								fetchDependencies={fetchTaskDependencies}
+								fetchDependents={fetchTaskDependents}
+								onAddDependency={onAddDependency}
+								onAddDependent={onAddDependent}
+								onUpdateDependency={onUpdateDependency}
+								onUpdateDependent={onUpdateDependent}
+								onDeleteDependency={onDeleteDependency}
+								onDeleteDependent={onDeleteDependent}
+								initialAddingMode={dependencyFocusMode}
+							/>
 							<Button
 								className="mb-4"
 								icon={<PlusOutlined />}
@@ -230,6 +275,12 @@ export function TaskDetailDrawer({
 									placeholder={t('kanban.descriptionPlaceholder')}
 								/>
 							</Form.Item>
+							<TaskAttachments
+								key={task.id}
+								taskId={task.id}
+								projectId={project?.id}
+								members={members}
+							/>
 							<div className="mt-4">
 								<Button type="primary" onClick={handleSave}>
 									{t('common.save')}

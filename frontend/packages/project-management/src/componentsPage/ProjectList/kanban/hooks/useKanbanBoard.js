@@ -10,9 +10,18 @@ import { useUserStore } from '@repo/shared-methods/store';
 import { createRequest } from '@repo/shared-methods/utils';
 // MOCK: 接口就绪后恢复下方 import
 // import { MEMBER_API } from '@repo/project-management/api/member';
-// import { getProjectApi, getProjectMembersApi } from '@repo/project-management/api/project';
 import {
+	getProjectMemberApi,
+	getProjectMemberRoleApi,
+	getProjectMembersApi,
+} from '@repo/project-management/api/project';
+import {
+	getTaskActivitiesApi,
 	getTaskApi,
+	getTaskDependenciesApi,
+	getTaskDependencyApi,
+	getTaskDependentApi,
+	getTaskDependentsApi,
 	getTaskTransitionApi,
 	TASK_API,
 	// TASK_TYPES_API,
@@ -20,8 +29,15 @@ import {
 // import { getProjectWorkflowApi } from '@repo/project-management/api/workflow';
 import { isInitialState } from '@repo/project-management/enum/workflow';
 // import { TASK_LIST_PAGE_SIZE } from '../components/constants';
-import { toIsoDateTime /* , buildQuery, unwrapList */ } from '../components/helpers';
-import { getMockKanbanBoard, getMockKanbanMembers } from '../mockData';
+import { toIsoDateTime, buildQuery, unwrapList } from '../components/helpers';
+import {
+	getMockKanbanBoard,
+	getMockKanbanMembers,
+	getMockProjectActivities,
+	getMockTaskActivities,
+	getMockTaskDependencies,
+	getMockTaskDependents,
+} from '../mockData';
 
 /**
  * @param {number|string|undefined} projectId
@@ -213,6 +229,38 @@ export function useKanbanBoard(projectId, queryTaskId) {
 		[fetchBoard, projectId, request, t, taskTypes, userId, workflow],
 	);
 
+	const refreshProjectMembers = useCallback(async () => {
+		await fetchMembers();
+	}, [fetchMembers]);
+
+	const syncAssigneeParticipants = useCallback(
+		async (assigneeIds) => {
+			if (!projectId || !Array.isArray(assigneeIds)) return;
+			const existingMemberIds = new Set(projectMembers.map((item) => item.user_id));
+			let memberAdded = false;
+			for (const uid of assigneeIds) {
+				if (!existingMemberIds.has(uid)) {
+					try {
+						await request(getProjectMembersApi(projectId), {
+							method: 'POST',
+							isHideTips: true,
+							body: {
+								operator_id: userId || 0,
+								user_id: uid,
+								role: 'executor',
+							},
+						});
+						memberAdded = true;
+					} catch {
+						/* 无权限或已是成员 */
+					}
+				}
+			}
+			if (memberAdded) await refreshProjectMembers();
+		},
+		[projectId, projectMembers, refreshProjectMembers, request, userId],
+	);
+
 	const persistAssignees = useCallback(
 		async (ids) => {
 			if (!activeTask) return;
@@ -227,11 +275,224 @@ export function useKanbanBoard(projectId, queryTaskId) {
 						? { ...prev, assignee_ids: ids, assignee_id: ids[0] || null }
 						: prev,
 				);
+				await syncAssigneeParticipants(ids);
 			} catch {
 				message.error(t('kanban.assigneeSaveFailed'));
 			}
 		},
-		[activeTask, request, t, userId],
+		[activeTask, request, syncAssigneeParticipants, t, userId],
+	);
+
+	const inviteProjectMembers = useCallback(
+		async (userIds) => {
+			if (!projectId || !userIds?.length) return { successCount: 0, failCount: 0 };
+			let successCount = 0;
+			let failCount = 0;
+			for (const uid of userIds) {
+				try {
+					await request(getProjectMembersApi(projectId), {
+						method: 'POST',
+						isHideTips: true,
+						body: {
+							operator_id: userId || 0,
+							user_id: uid,
+							role: 'member',
+						},
+					});
+					successCount += 1;
+				} catch {
+					failCount += 1;
+				}
+			}
+			if (successCount > 0) {
+				message.success(t('kanban.inviteSuccess', { count: successCount }));
+				await refreshProjectMembers();
+			}
+			if (failCount > 0) message.error(t('kanban.inviteFailed', { count: failCount }));
+			return { successCount, failCount };
+		},
+		[projectId, refreshProjectMembers, request, t, userId],
+	);
+
+	const removeProjectMember = useCallback(
+		async (memberUserId) => {
+			if (!projectId) return;
+			try {
+				await request(
+					`${getProjectMemberApi(projectId, memberUserId)}${buildQuery({
+						operator_id: userId || 0,
+					})}`,
+					{ method: 'DELETE', isHideTips: true },
+				);
+				message.success(t('kanban.memberRemoved'));
+				await refreshProjectMembers();
+			} catch (error) {
+				message.error(error?.message || t('kanban.memberRemoveFailed'));
+			}
+		},
+		[projectId, refreshProjectMembers, request, t, userId],
+	);
+
+	const updateProjectMemberRole = useCallback(
+		async (memberUserId, role) => {
+			if (!projectId) return;
+			try {
+				await request(getProjectMemberRoleApi(projectId, memberUserId), {
+					method: 'PUT',
+					isHideTips: true,
+					body: { user_id: userId || 0, role },
+				});
+				message.success(t('kanban.memberRoleUpdated'));
+				await refreshProjectMembers();
+			} catch (error) {
+				message.error(error?.message || t('kanban.memberRoleUpdateFailed'));
+			}
+		},
+		[projectId, refreshProjectMembers, request, t, userId],
+	);
+
+	const fetchProjectActivities = useCallback(async () => {
+		// MOCK: 接口就绪后改为逐任务 request(getTaskActivitiesApi)
+		return getMockProjectActivities(tasks);
+		/*
+		const all = [];
+		for (const task of tasks) {
+			try {
+				const data = await request(getTaskActivitiesApi(task.id), {
+					method: 'GET',
+					isHideTips: true,
+				});
+				const items = unwrapList(data).map((act) => ({ ...act, task_id: task.id }));
+				all.push(...items);
+			} catch {
+				// ignore per-task errors
+			}
+		}
+		all.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+		return all;
+		*/
+	}, [tasks]);
+
+	const fetchTaskActivities = useCallback(
+		async (taskId) => {
+			if (!taskId) return [];
+			try {
+				const data = await request(getTaskActivitiesApi(taskId), {
+					method: 'GET',
+					isHideTips: true,
+				}).catch(() => getMockTaskActivities(taskId));
+				return unwrapList(data);
+			} catch {
+				return getMockTaskActivities(taskId);
+			}
+		},
+		[request],
+	);
+
+	const fetchTaskDependencies = useCallback(
+		async (taskId) => {
+			if (!taskId) return [];
+			try {
+				const data = await request(getTaskDependenciesApi(taskId), {
+					method: 'GET',
+					isHideTips: true,
+				}).catch(() => getMockTaskDependencies(taskId));
+				return unwrapList(data);
+			} catch {
+				return getMockTaskDependencies(taskId);
+			}
+		},
+		[request],
+	);
+
+	const fetchTaskDependents = useCallback(
+		async (taskId) => {
+			if (!taskId) return [];
+			try {
+				const data = await request(getTaskDependentsApi(taskId), {
+					method: 'GET',
+					isHideTips: true,
+				}).catch(() => getMockTaskDependents(taskId));
+				return unwrapList(data);
+			} catch {
+				return getMockTaskDependents(taskId);
+			}
+		},
+		[request],
+	);
+
+	const addTaskDependency = useCallback(
+		async (taskId, dependsOnTaskId) => {
+			await request(getTaskDependenciesApi(taskId), {
+				method: 'POST',
+				isHideTips: true,
+				body: {
+					depends_on_task_id: dependsOnTaskId,
+					dependency_type: 'finish_to_start',
+				},
+			});
+			message.success(t('kanban.dependencyAdded'));
+		},
+		[request, t],
+	);
+
+	const addTaskDependent = useCallback(
+		async (taskId, dependentTaskId) => {
+			await request(getTaskDependentsApi(taskId), {
+				method: 'POST',
+				isHideTips: true,
+				body: {
+					dependent_task_id: dependentTaskId,
+					dependency_type: 'finish_to_start',
+				},
+			});
+			message.success(t('kanban.dependencyAdded'));
+		},
+		[request, t],
+	);
+
+	const updateTaskDependency = useCallback(
+		async (taskId, dependencyId, dependencyType) => {
+			await request(getTaskDependencyApi(taskId, dependencyId), {
+				method: 'PUT',
+				isHideTips: true,
+				body: { dependency_type: dependencyType },
+			});
+		},
+		[request],
+	);
+
+	const updateTaskDependent = useCallback(
+		async (taskId, dependencyId, dependencyType) => {
+			await request(getTaskDependentApi(taskId, dependencyId), {
+				method: 'PUT',
+				isHideTips: true,
+				body: { dependency_type: dependencyType },
+			});
+		},
+		[request],
+	);
+
+	const deleteTaskDependency = useCallback(
+		async (taskId, dependencyId) => {
+			await request(getTaskDependencyApi(taskId, dependencyId), {
+				method: 'DELETE',
+				isHideTips: true,
+			});
+			message.success(t('kanban.dependencyRemoved'));
+		},
+		[request, t],
+	);
+
+	const deleteTaskDependent = useCallback(
+		async (taskId, dependencyId) => {
+			await request(getTaskDependentApi(taskId, dependencyId), {
+				method: 'DELETE',
+				isHideTips: true,
+			});
+			message.success(t('kanban.dependencyRemoved'));
+		},
+		[request, t],
 	);
 
 	const saveTask = useCallback(
@@ -326,6 +587,7 @@ export function useKanbanBoard(projectId, queryTaskId) {
 		taskTypes,
 		loading,
 		activeTask,
+		userId,
 		openTask,
 		closeTask,
 		transitionTask,
@@ -334,5 +596,19 @@ export function useKanbanBoard(projectId, queryTaskId) {
 		saveTask,
 		saveTitle,
 		deleteTask,
+		refreshProjectMembers,
+		inviteProjectMembers,
+		removeProjectMember,
+		updateProjectMemberRole,
+		fetchProjectActivities,
+		fetchTaskActivities,
+		fetchTaskDependencies,
+		fetchTaskDependents,
+		addTaskDependency,
+		addTaskDependent,
+		updateTaskDependency,
+		updateTaskDependent,
+		deleteTaskDependency,
+		deleteTaskDependent,
 	};
 }

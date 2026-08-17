@@ -114,7 +114,7 @@ Zeebee-Dev/
 **生成页面 / 新增功能时的选型顺序（先查共享包，再写应用内代码）**
 
 - **新建 hooks / 工具 / 请求 / UI / 枚举**：先判断归属——全前端通用 → **`platform-core`**，并在 **`shared-methods` 中转导出**（迁移期）；三端通用、非 PM → **`shared-methods`**；**项目管理** → **`project-management`**；单应用独有 → 当前应用 `src`。
-- **UI 组件**：直接用 antd 前，先按「封装组件放置」判断归属——通用无业务语义查 **`@repo/platform-core`**；三端非 PM 业务封装查 **`@repo/shared-methods/components/*`** 与 **`@repo/shared-methods/componentsUi/*`**；**PM 域**查 **`@repo/project-management/components/*`**。已有封装必须复用。列表「筛选 + 表格」优先 Skill **`filter-table`**（`FilterTable` / `FilterTableCard`），说明见 `.cursor/skills/filter-table/SKILL.md`，勿手写 `FilterField`+`NewTable` 流水线。
+- **UI 组件**：直接用 antd 前，**先查 `@repo/shared-methods`**（`components/*`、`componentsUi/*`，含经其中转的 **`platform-core`** 通用能力）；**PM 域**再查 **`@repo/project-management/components/*`**。已有封装必须复用。列表「筛选 + 表格」优先 Skill **`filter-table`**（`FilterTable` / `FilterTableCard`），说明见 `.cursor/skills/filter-table/SKILL.md`，勿手写 `FilterField`+`NewTable` 流水线。
 - **枚举与展示常量**：三端非 PM → **`@repo/shared-methods/enum/*`**；PM 域 → **`@repo/project-management/enum/*`**。会被多 feature 复用则进对应包的 `enum` 并补 `exports`。
 - **hooks**：三端非 PM → **`@repo/shared-methods/hooks/*`**；PM → **`@repo/project-management/hooks/*`**。跨三端则抽到 `shared-methods`；跨 PM feature 则抽到 `project-management`。通用非业务 hook 优先 **`platform-core`** 再经 `shared-methods` 中转。
 - **展示类格式化 / 空值**：优先 **`@repo/shared-methods/utils`**（`formatDate` / `formatTime` / `formatAmount` / `formatPhone` / **`displayValue`** / **`EMPTY_DISPLAY`** 等）。`project-management` 复用同一套，勿在包内手写不一致格式。
@@ -128,12 +128,15 @@ Zeebee-Dev/
 - **职责**：borrower **项目管理**功能的页面、组件、hooks、api、enum、i18n（如 **`messages/*`**、`./i18n`）等；与 borrower 其它贷款业务**代码隔离**，便于后期抽成独立应用。
 - **集成方式**：borrower 的 `package.json` 依赖 **`@repo/project-management`: `workspace:*`**；App Router 路由壳在 **`frontend/borrower`**，从包内 import 页面 / 布局 / Provider（如 **`ProjectIntlProvider`**）；**勿**把 PM 大段实现复制或合并进 `borrower/src`。
 - **依赖边界**：可依赖 **`@repo/shared-methods`**（及经其中转的 **`platform-core`**）以复用三端基建与格式工具；**勿**依赖 admin / lender 应用代码；**勿**把 PM 独有逻辑塞进 `shared-methods`。
+- **复用优先（写代码前必查）**：在 `project-management` 内新增 / 修改功能时，**先查 `@repo/shared-methods`**（及经其中转的 **`platform-core`**）是否已有可复用的 **组件**（`components/*`、`componentsUi/*`）、**hooks**、**工具函数**、**enum**、**api** 等；**已有则直接 import 复用**，勿在本包重复实现。仅 PM 域独有、且无三端通用语义时再落盘本包（见上文「封装组件放置」与「生成页面 / 新增功能时的选型顺序」）。
+- **UI 组件（antd 优先）**：写交互 UI 时**优先用 Ant Design 5**（如 `Input`、`Button`、`Select`、`Modal`、`Form` 等）；**禁止**用原生 `<input>`、`<button>`、`<select>`、`<textarea>` 等替代 antd 同类组件（除非 antd 无对应能力且邻近文件已有先例）。样式用 Tailwind token，勿手写与 antd 重复的交互样式。
+- **antd 用法**：版本以宿主应用（如 **borrower**）`package.json` 为准（当前 **antd 5**）；使用 antd 组件或 API 前，用 **Context7 等 MCP** 查阅**当前版本**官方文档，确认 props / API 仍有效；**禁止**使用已废弃（deprecated）的属性或写法。
 - **独立化预留**：包内保持「可挂载到任意 Next 壳」的结构（路由由宿主 app 提供，包导出 feature 模块）；未来若 PM 独立成应用，主要改 borrower 集成层与部署，而非大规模搬代码。
 
 ### UI 补充（三端与 PM）
 
 - 颜色 token：admin / borrower / lender 的 `globals.css` 与 `tailwind.config.js` **结构应对齐**；`project-management` 组件样式优先沿用 **borrower** token（宿主应用），Tailwind `content` 需覆盖包路径。
-- 交互组件查找顺序：通用 → **`platform-core`**；三端非 PM → **`shared-methods`**；PM → **`project-management`**；仅本应用 → 该应用 `src/components/`；再 antd。
+- 交互组件 / hooks / 工具查找顺序：**admin / lender / borrower / project-management** 写 UI 或抽逻辑时，**一律先查 `@repo/shared-methods`**（`components/*`、`componentsUi/*`、`hooks/*`、`utils`、`api/*` 等）。**`platform-core`** 自 `shared-methods` 抽出的通用实现；迁移期仍经 `shared-methods` 中转引用，后续会把包内相同实现替换为 `platform-core` re-export，**当前勿跳过 shared-methods 直接查 platform-core**。PM 域独有 → **`project-management`**；仅本应用 → 该应用 `src/components/`；**再 antd**（勿原生表单控件，用法见上文 PM「antd 优先 / antd 用法」）。
 
 ### Agent 补充（三端与 PM）
 

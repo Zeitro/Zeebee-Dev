@@ -21,3 +21,21 @@ export function getProjectApi(id) {
 export function getProjectMembersApi(id) {
 	return `${PROJECT_API}/${id}/members`;
 }
+
+/**
+ * @param {number|string} projectId
+ * @param {number|string} userId
+ * @returns {string}
+ */
+export function getProjectMemberApi(projectId, userId) {
+	return `${PROJECT_API}/${projectId}/members/${userId}`;
+}
+
+/**
+ * @param {number|string} projectId
+ * @param {number|string} userId
+ * @returns {string}
+ */
+export function getProjectMemberRoleApi(projectId, userId) {
+	return `${PROJECT_API}/${projectId}/members/${userId}/role`;
+}
