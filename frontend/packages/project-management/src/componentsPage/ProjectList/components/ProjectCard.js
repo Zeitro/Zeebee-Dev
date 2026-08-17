@@ -19,7 +19,7 @@ export function ProjectCard({ row }) {
 
 	const goKanban = () => {
 		if (projectId == null) return;
-		router.push(`/project/${projectId}/kanban`);
+		router.push(`/project/projectList/${projectId}`);
 	};
 
 	const goSettings = () => {

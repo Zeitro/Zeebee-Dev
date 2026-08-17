@@ -8,18 +8,20 @@ import { Modal, message } from 'antd';
 import { useTranslations } from 'next-intl';
 import { useUserStore } from '@repo/shared-methods/store';
 import { createRequest } from '@repo/shared-methods/utils';
-import { MEMBER_API } from '@repo/project-management/api/member';
-import { getProjectApi, getProjectMembersApi } from '@repo/project-management/api/project';
+// MOCK: 接口就绪后恢复下方 import
+// import { MEMBER_API } from '@repo/project-management/api/member';
+// import { getProjectApi, getProjectMembersApi } from '@repo/project-management/api/project';
 import {
 	getTaskApi,
 	getTaskTransitionApi,
 	TASK_API,
-	TASK_TYPES_API,
+	// TASK_TYPES_API,
 } from '@repo/project-management/api/task';
-import { getProjectWorkflowApi } from '@repo/project-management/api/workflow';
+// import { getProjectWorkflowApi } from '@repo/project-management/api/workflow';
 import { isInitialState } from '@repo/project-management/enum/workflow';
-import { TASK_LIST_PAGE_SIZE } from '../components/constants';
-import { buildQuery, toIsoDateTime, unwrapList } from '../components/helpers';
+// import { TASK_LIST_PAGE_SIZE } from '../components/constants';
+import { toIsoDateTime /* , buildQuery, unwrapList */ } from '../components/helpers';
+import { getMockKanbanBoard, getMockKanbanMembers } from '../mockData';
 
 /**
  * @param {number|string|undefined} projectId
@@ -42,6 +44,27 @@ export function useKanbanBoard(projectId, queryTaskId) {
 	const fetchBoard = useCallback(async () => {
 		if (!projectId) return;
 		try {
+			// MOCK: start — 接口就绪后删除本段并恢复下方 API
+			const {
+				project: mockProject,
+				workflow: mockWorkflow,
+				tasks: mockTasks,
+			} = getMockKanbanBoard(projectId);
+			setWorkflow(mockWorkflow);
+			setTasks(mockTasks);
+			setProject(mockProject);
+			setActiveTask((prev) => {
+				const targetId = prev?.id || queryTaskIdRef.current;
+				if (!targetId) return prev;
+				const fresh = mockTasks.find((item) => item.id === targetId);
+				if (!fresh) return prev;
+				return {
+					...fresh,
+					assignments: fresh.assignments ?? prev?.assignments,
+					assignee_ids: fresh.assignee_ids ?? prev?.assignee_ids,
+				};
+			});
+			/* API:
 			const [workflowRes, taskRes, projectRes] = await Promise.all([
 				request(getProjectWorkflowApi(projectId), {
 					method: 'GET',
@@ -76,17 +99,28 @@ export function useKanbanBoard(projectId, queryTaskId) {
 					assignee_ids: fresh.assignee_ids ?? prev?.assignee_ids,
 				};
 			});
+			*/
 		} catch {
 			message.error(t('kanban.loadFailed'));
 			setTasks([]);
 		} finally {
 			setLoading(false);
 		}
-	}, [projectId, request, t, userId]);
+	}, [projectId, t]);
 
 	const fetchMembers = useCallback(async () => {
 		if (!projectId) return;
 		try {
+			// MOCK: start — 接口就绪后删除本段并恢复下方 API
+			const {
+				members: mockMembers,
+				projectMembers: mockProjectMembers,
+				taskTypes: mockTaskTypes,
+			} = getMockKanbanMembers(projectId);
+			setMembers(mockMembers);
+			setProjectMembers(mockProjectMembers);
+			setTaskTypes(mockTaskTypes);
+			/* API:
 			const [memberRes, projectMemberRes, typeRes] = await Promise.all([
 				request(MEMBER_API, { method: 'GET', isHideTips: true }).catch(() => []),
 				request(getProjectMembersApi(projectId), { method: 'GET', isHideTips: true }).catch(
@@ -98,12 +132,13 @@ export function useKanbanBoard(projectId, queryTaskId) {
 			setMembers(allMembers.filter((item) => !item.status || item.status === 'active'));
 			setProjectMembers(unwrapList(projectMemberRes));
 			setTaskTypes(unwrapList(typeRes));
+			*/
 		} catch {
 			setMembers([]);
 			setProjectMembers([]);
 			setTaskTypes([]);
 		}
-	}, [projectId, request]);
+	}, [projectId]);
 
 	useEffect(() => {
 		queryTaskIdRef.current = queryTaskId;

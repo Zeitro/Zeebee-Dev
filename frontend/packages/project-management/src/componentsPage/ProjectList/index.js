@@ -14,6 +14,7 @@ import { PROJECT_PRIORITY_FILTER_VALUES, PROJECT_PRIORITY_I18N_KEY } from '../..
 import { CREATE_PROJECT_ITEM, isCreateProjectItem } from './components/constants';
 import { CreateProjectCard } from './components/CreateProjectCard';
 import { ProjectCard } from './components/ProjectCard';
+import { getMockProjectPage } from './mockData';
 
 const PROJECT_CARD_ITEM_CLASS =
 	'!p-0 w-[280px] min-h-[280px] overflow-hidden rounded-xl hover:border-base-primary';
@@ -99,25 +100,30 @@ export const ProjectList = () => {
 				} else {
 					delete filter.priority;
 				}
-				try {
-					const res = await request(PROJECT_PAGE_API, {
-						method: 'POST',
-						body: {
-							...params,
-							filter,
-						},
-					});
-					const list = res?.list ?? res?.data ?? [];
-					return {
-						list: [CREATE_PROJECT_ITEM, ...list],
-						total: res?.total ?? 0,
-					};
-				} catch {
-					return {
-						list: [CREATE_PROJECT_ITEM],
-						total: 0,
-					};
-				}
+				// try {
+				// 	const res = await request(PROJECT_PAGE_API, {
+				// 		method: 'POST',
+				// 		body: {
+				// 			...params,
+				// 			filter,
+				// 		},
+				// 	});
+				// 	const list = res?.list ?? res?.data ?? [];
+				// 	return {
+				// 		list: [CREATE_PROJECT_ITEM, ...list],
+				// 		total: res?.total ?? 0,
+				// 	};
+				// } catch {
+				// 	return {
+				// 		list: [CREATE_PROJECT_ITEM],
+				// 		total: 0,
+				// 	};
+				// }
+				const { list, total } = getMockProjectPage({ ...params, filter });
+				return {
+					list: [CREATE_PROJECT_ITEM, ...list],
+					total,
+				};
 			}}
 			renderItem={(row) =>
 				isCreateProjectItem(row) ? (
