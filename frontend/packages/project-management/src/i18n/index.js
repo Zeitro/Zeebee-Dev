@@ -6,6 +6,7 @@ export {
 	locales,
 	defaultLocale,
 	PROJECT_LOCALE_COOKIE,
+	PROJECT_TIMEZONE,
 	localeLabels,
 	resolveProjectLocale,
 } from './config';

@@ -215,4 +215,7 @@ export const menuSetting = {
 	'/dashboard': {
 		hideCrumbs: true,
 	},
+	'/project/projectList': {
+		hideCrumbs: true,
+	},
 };

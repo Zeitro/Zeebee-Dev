@@ -12,6 +12,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/en';
 import 'dayjs/locale/zh-cn';
 import { NextIntlClientProvider } from 'next-intl';
+import { PROJECT_TIMEZONE } from './config';
 
 /** @type {Record<'en' | 'zh', typeof enUS>} */
 const antdLocales = {
@@ -37,11 +38,12 @@ export default function ProjectIntlProvider({ locale, messages, children }) {
 	}, [locale]);
 
 	return (
-		<NextIntlClientProvider locale={locale} messages={messages}>
+		<NextIntlClientProvider locale={locale} messages={messages} timeZone={PROJECT_TIMEZONE}>
 			<ConfigProvider
 				locale={antdLocales[locale] || enUS}
 				form={{
-					validateMessages: validateMessagesByLocale[locale] || validateMessagesByLocale.en,
+					validateMessages:
+						validateMessagesByLocale[locale] || validateMessagesByLocale.en,
 				}}
 			>
 				{children}

@@ -525,9 +525,9 @@ importers:
       '@next/eslint-plugin-next':
         specifier: ^15.5.6
         version: 15.5.11
-      '@repo/platform-core':
+      '@repo/shared-methods':
         specifier: workspace:*
-        version: link:../platform-core
+        version: link:../shared-methods
       '@svgr/webpack':
         specifier: ^8.1.0
         version: 8.1.0(typescript@5.9.3)

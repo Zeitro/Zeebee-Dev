@@ -2,7 +2,8 @@ module.exports = {
 	content: [
 		'./src/**/*.{js,ts,jsx,tsx}', // 根据你的项目结构调整
 		'./src/**/*.{css,scss}',
-		'../packages/shared-methods/src/**/*.{js,jsx,ts,tsx}'
+		'../packages/shared-methods/src/**/*.{js,jsx,ts,tsx}',
+		'../packages/project-management/src/**/*.{js,jsx,ts,tsx}',
 	],
 	theme: {
 		extend: {

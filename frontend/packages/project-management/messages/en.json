@@ -7,9 +7,40 @@
 		"language": "Language",
 		"save": "Save",
 		"cancel": "Cancel",
-		"confirm": "Confirm"
+		"confirm": "Confirm",
+		"search": "Search",
+		"reset": "Reset"
 	},
 	"home": {
 		"title": "Zeebee project management system"
+	},
+	"projectList": {
+		"cardTitle": "Projects",
+		"searchPlaceholder": "Search by project name",
+		"priority": "Priority",
+		"status": "Status",
+		"updatedAt": "Updated",
+		"addProject": "Add project",
+		"createTitle": "Create project",
+		"name": "Project name",
+		"namePlaceholder": "Enter project name",
+		"description": "Description",
+		"descriptionPlaceholder": "Enter description",
+		"createSuccess": "Project created",
+		"openKanban": "Open board",
+		"openSettings": "Open settings"
+	},
+	"priority": {
+		"low": "Low",
+		"medium": "Medium",
+		"high": "High",
+		"urgent": "Urgent"
+	},
+	"status": {
+		"planning": "Planning",
+		"active": "Active",
+		"onHold": "On hold",
+		"completed": "Completed",
+		"archived": "Archived"
 	}
 }

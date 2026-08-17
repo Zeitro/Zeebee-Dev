@@ -7,9 +7,40 @@
 		"language": "语言",
 		"save": "保存",
 		"cancel": "取消",
-		"confirm": "确认"
+		"confirm": "确认",
+		"search": "搜索",
+		"reset": "重置"
 	},
 	"home": {
 		"title": "Zeebee 项目管理系统"
+	},
+	"projectList": {
+		"cardTitle": "项目",
+		"searchPlaceholder": "按项目名称搜索",
+		"priority": "优先级",
+		"status": "状态",
+		"updatedAt": "更新时间",
+		"addProject": "新建项目",
+		"createTitle": "创建项目",
+		"name": "项目名称",
+		"namePlaceholder": "请输入项目名称",
+		"description": "项目描述",
+		"descriptionPlaceholder": "请输入项目描述",
+		"createSuccess": "项目已创建",
+		"openKanban": "打开看板",
+		"openSettings": "打开设置"
+	},
+	"priority": {
+		"low": "低",
+		"medium": "中",
+		"high": "高",
+		"urgent": "紧急"
+	},
+	"status": {
+		"planning": "规划中",
+		"active": "进行中",
+		"onHold": "已暂停",
+		"completed": "已完成",
+		"archived": "已归档"
 	}
 }

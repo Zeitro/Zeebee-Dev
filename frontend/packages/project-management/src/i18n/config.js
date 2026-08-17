@@ -12,6 +12,9 @@ export const defaultLocale = 'en';
 /** 与 setProjectLocaleAction / layout 读取共用的 Cookie 名 */
 export const PROJECT_LOCALE_COOKIE = 'project_locale';
 
+/** next-intl 日期格式时区，避免 Client/Server 环境差导致 markup mismatch */
+export const PROJECT_TIMEZONE = 'UTC';
+
 export const localeLabels = {
 	en: 'English',
 	zh: '中文',
