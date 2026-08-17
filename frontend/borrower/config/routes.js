@@ -218,4 +218,7 @@ export const menuSetting = {
 	'/project/projectList': {
 		hideCrumbs: true,
 	},
+	'/project/projectList/:id': {
+		hideCrumbs: true,
+	},
 };

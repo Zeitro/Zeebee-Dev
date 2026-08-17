@@ -9,7 +9,10 @@
 		"cancel": "Cancel",
 		"confirm": "Confirm",
 		"search": "Search",
-		"reset": "Reset"
+		"reset": "Reset",
+		"back": "Back",
+		"create": "Create",
+		"delete": "Delete"
 	},
 	"home": {
 		"title": "Zeebee project management system"
@@ -42,5 +45,42 @@
 		"onHold": "On hold",
 		"completed": "Completed",
 		"archived": "Archived"
+	},
+	"kanban": {
+		"taskCount": "({count} tasks)",
+		"newTask": "New task",
+		"newSubtask": "New subtask",
+		"parentTask": "Parent: {title}",
+		"emptyWorkflow": "This project has no workflow yet",
+		"configureWorkflow": "Configure workflow",
+		"loadFailed": "Failed to load board",
+		"transitionSuccess": "Status updated",
+		"transitionFailed": "Status transition failed",
+		"createSuccess": "Task created",
+		"createFailed": "Failed to create task",
+		"saveSuccess": "Saved",
+		"saveFailed": "Failed to save",
+		"assigneeSaveFailed": "Failed to save assignees",
+		"deleteSuccess": "Task deleted",
+		"deleteConfirmTitle": "Delete task",
+		"deleteConfirmContent": "Delete task \"{title}\"? This cannot be undone.",
+		"deleteConfirmOk": "Delete",
+		"title": "Title",
+		"titlePlaceholder": "Enter task title",
+		"description": "Description",
+		"descriptionPlaceholder": "Enter task description",
+		"type": "Type",
+		"assignee": "Assignee",
+		"assigneePlaceholder": "Select assignee",
+		"startDate": "Start date",
+		"dueDate": "Due date",
+		"estimatedHours": "Estimated hours",
+		"hoursSuffix": "h",
+		"addSubtask": "Add subtask",
+		"subtasks": "Subtasks",
+		"parentLink": "Parent: {title}",
+		"backToParent": "Back to parent",
+		"members": "Members",
+		"owner": "Owner"
 	}
 }

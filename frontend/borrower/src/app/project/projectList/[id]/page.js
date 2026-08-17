@@ -1,6 +1,7 @@
 'use client';
 
-import { ProjectList } from '@repo/project-management';
-export default function ProjectListPage() {
-	return <ProjectList />;
+import { ProjectKanban } from '@repo/project-management';
+
+export default function ProjectKanbanPage() {
+	return <ProjectKanban />;
 }

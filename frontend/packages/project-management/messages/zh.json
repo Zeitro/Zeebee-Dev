@@ -9,7 +9,10 @@
 		"cancel": "取消",
 		"confirm": "确认",
 		"search": "搜索",
-		"reset": "重置"
+		"reset": "重置",
+		"back": "返回",
+		"create": "创建",
+		"delete": "删除"
 	},
 	"home": {
 		"title": "Zeebee 项目管理系统"
@@ -42,5 +45,42 @@
 		"onHold": "已暂停",
 		"completed": "已完成",
 		"archived": "已归档"
+	},
+	"kanban": {
+		"taskCount": "（{count} 个任务）",
+		"newTask": "新建任务",
+		"newSubtask": "新建子任务",
+		"parentTask": "父任务：{title}",
+		"emptyWorkflow": "该项目还没有配置工作流",
+		"configureWorkflow": "配置工作流",
+		"loadFailed": "加载看板失败",
+		"transitionSuccess": "状态已更新",
+		"transitionFailed": "状态转换失败",
+		"createSuccess": "任务已创建",
+		"createFailed": "创建任务失败",
+		"saveSuccess": "已保存",
+		"saveFailed": "保存失败",
+		"assigneeSaveFailed": "执行者保存失败",
+		"deleteSuccess": "任务已删除",
+		"deleteConfirmTitle": "确认删除",
+		"deleteConfirmContent": "确定要删除任务「{title}」吗？此操作不可撤销。",
+		"deleteConfirmOk": "确认删除",
+		"title": "标题",
+		"titlePlaceholder": "输入任务标题",
+		"description": "描述",
+		"descriptionPlaceholder": "输入任务描述",
+		"type": "类型",
+		"assignee": "执行者",
+		"assigneePlaceholder": "选择执行者",
+		"startDate": "开始日期",
+		"dueDate": "截止日期",
+		"estimatedHours": "预估工时",
+		"hoursSuffix": "h",
+		"addSubtask": "添加子任务",
+		"subtasks": "子任务",
+		"parentLink": "父任务：{title}",
+		"backToParent": "返回上级任务",
+		"members": "成员",
+		"owner": "创建者"
 	}
 }

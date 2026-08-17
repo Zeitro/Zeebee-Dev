@@ -6,8 +6,8 @@
 		"rootDir": "src",
 		"resolveJsonModule": true,
 		"paths": {
-			"@repo/platform-core": ["../platform-core/src/index.ts"],
-			"@repo/platform-core/*": ["../platform-core/src/*"]
+			"@repo/project-management": ["./src/index.ts"],
+			"@repo/project-management/*": ["./src/*"]
 		}
 	},
 	"include": ["src", "messages"]

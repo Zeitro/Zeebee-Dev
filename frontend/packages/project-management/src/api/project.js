@@ -5,3 +5,19 @@
 
 export const PROJECT_PAGE_API = '/projects/page';
 export const PROJECT_API = '/projects';
+
+/**
+ * @param {number|string} id
+ * @returns {string}
+ */
+export function getProjectApi(id) {
+	return `${PROJECT_API}/${id}`;
+}
+
+/**
+ * @param {number|string} id
+ * @returns {string}
+ */
+export function getProjectMembersApi(id) {
+	return `${PROJECT_API}/${id}/members`;
+}
