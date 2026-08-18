@@ -16541,6 +16541,3773 @@
         }
       }
     },
+    "/api/v1/project_management/my_task/page": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "page my project tasks",
+        "operationId": "projectManagementProjectManagementMyTaskPage",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "page",
+                "limit"
+              ],
+              "properties": {
+                "filter": {
+                  "type": "object",
+                  "properties": {
+                    "assignee_id": {
+                      "type": "integer"
+                    },
+                    "keyword": {
+                      "type": "string"
+                    },
+                    "overdue": {
+                      "type": "boolean"
+                    },
+                    "project_id": {
+                      "type": "integer"
+                    },
+                    "stage_id": {
+                      "type": "integer"
+                    },
+                    "task_type_id": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "limit": {
+                  "type": "integer",
+                  "default": 20,
+                  "example": 20
+                },
+                "page": {
+                  "type": "integer",
+                  "default": 1,
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "type": "integer"
+                },
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "project_id",
+                      "parent_task_id",
+                      "stage_id",
+                      "creator_id",
+                      "creator_name",
+                      "title",
+                      "description",
+                      "priority",
+                      "start_at",
+                      "end_at",
+                      "task_type",
+                      "assignees",
+                      "overdue",
+                      "overdue_seconds"
+                    ],
+                    "properties": {
+                      "assignees": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "organization_user_id",
+                            "organization_user_name"
+                          ],
+                          "properties": {
+                            "organization_user_id": {
+                              "type": "integer"
+                            },
+                            "organization_user_name": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "creator_id": {
+                        "type": "integer"
+                      },
+                      "creator_name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "end_at": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "overdue": {
+                        "type": "boolean"
+                      },
+                      "overdue_seconds": {
+                        "type": "integer"
+                      },
+                      "parent_task_id": {
+                        "type": "integer"
+                      },
+                      "priority": {
+                        "type": "string"
+                      },
+                      "project_id": {
+                        "type": "integer"
+                      },
+                      "stage_id": {
+                        "type": "integer"
+                      },
+                      "start_at": {
+                        "type": "string"
+                      },
+                      "task_type": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name",
+                          "description",
+                          "color"
+                        ],
+                        "properties": {
+                          "color": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "title": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "total": {
+                  "type": "integer"
+                },
+                "total_page": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/project": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "create project",
+        "operationId": "projectManagementProjectManagementProjectCreate",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "workflow_template_id"
+              ],
+              "properties": {
+                "cover_url": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "property_id": {
+                  "type": "integer"
+                },
+                "workflow_template_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "cover_url": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "owner_id": {
+                  "type": "integer"
+                },
+                "property_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/project/page": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "page projects",
+        "operationId": "projectManagementProjectManagementProjectPage",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "page",
+                "limit"
+              ],
+              "properties": {
+                "filter": {
+                  "type": "object",
+                  "properties": {
+                    "keyword": {
+                      "type": "string"
+                    },
+                    "property_id": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "limit": {
+                  "type": "integer",
+                  "default": 20,
+                  "example": 20
+                },
+                "page": {
+                  "type": "integer",
+                  "default": 1,
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "type": "integer"
+                },
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "property_id",
+                      "name",
+                      "description",
+                      "cover_url",
+                      "owner_id"
+                    ],
+                    "properties": {
+                      "cover_url": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "owner_id": {
+                        "type": "integer"
+                      },
+                      "property_id": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "total": {
+                  "type": "integer"
+                },
+                "total_page": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/project/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "get project",
+        "operationId": "projectManagementProjectManagementProjectDetail",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "cover_url": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "owner_id": {
+                  "type": "integer"
+                },
+                "property_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "update project",
+        "operationId": "projectManagementProjectManagementProjectUpdate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "name"
+              ],
+              "properties": {
+                "cover_url": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "cover_url": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "owner_id": {
+                  "type": "integer"
+                },
+                "property_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "delete project",
+        "operationId": "projectManagementProjectManagementProjectDelete",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "confirm"
+              ],
+              "properties": {
+                "confirm": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/project/{id}/member": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "add project members",
+        "operationId": "projectManagementProjectManagementMemberAdd",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "members"
+              ],
+              "properties": {
+                "members": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "organization_user_id",
+                      "role"
+                    ],
+                    "properties": {
+                      "organization_user_id": {
+                        "type": "integer"
+                      },
+                      "role": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/project/{id}/member/candidate": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "list project member candidates",
+        "operationId": "projectManagementProjectManagementMemberCandidate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "keyword",
+            "in": "query",
+            "allowEmptyValue": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "project_id",
+                      "organization_user_id",
+                      "role",
+                      "full_name",
+                      "email"
+                    ],
+                    "properties": {
+                      "email": {
+                        "type": "string"
+                      },
+                      "full_name": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "organization_user_id": {
+                        "type": "integer"
+                      },
+                      "project_id": {
+                        "type": "integer"
+                      },
+                      "role": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/project/{id}/member/page": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "page project members",
+        "operationId": "projectManagementProjectManagementMemberPage",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "page",
+                "limit"
+              ],
+              "properties": {
+                "filter": {
+                  "type": "object",
+                  "properties": {
+                    "keyword": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "limit": {
+                  "type": "integer",
+                  "default": 20,
+                  "example": 20
+                },
+                "page": {
+                  "type": "integer",
+                  "default": 1,
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "type": "integer"
+                },
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "project_id",
+                      "organization_user_id",
+                      "role",
+                      "full_name",
+                      "email"
+                    ],
+                    "properties": {
+                      "email": {
+                        "type": "string"
+                      },
+                      "full_name": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "organization_user_id": {
+                        "type": "integer"
+                      },
+                      "project_id": {
+                        "type": "integer"
+                      },
+                      "role": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "total": {
+                  "type": "integer"
+                },
+                "total_page": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/project/{id}/member/{user_id}": {
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "update project member",
+        "operationId": "projectManagementProjectManagementMemberUpdate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "role": {
+                  "type": "string"
+                },
+                "transfer_owner_to_user_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "delete": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "remove project member",
+        "operationId": "projectManagementProjectManagementMemberDelete",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/project/{id}/operation/page": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "page project operation timeline",
+        "operationId": "projectManagementProjectManagementOperationPage",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "page",
+                "limit"
+              ],
+              "properties": {
+                "filter": {
+                  "type": "object",
+                  "properties": {
+                    "operation_type": {
+                      "type": "string"
+                    },
+                    "task_id": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "limit": {
+                  "type": "integer",
+                  "default": 20,
+                  "example": 20
+                },
+                "page": {
+                  "type": "integer",
+                  "default": 1,
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "type": "integer"
+                },
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "project_id",
+                      "task_id",
+                      "operator_id",
+                      "operator_name",
+                      "operation",
+                      "created_at"
+                    ],
+                    "properties": {
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "operation": {
+                        "type": "string"
+                      },
+                      "operator_id": {
+                        "type": "integer"
+                      },
+                      "operator_name": {
+                        "type": "string"
+                      },
+                      "project_id": {
+                        "type": "integer"
+                      },
+                      "task_id": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "total": {
+                  "type": "integer"
+                },
+                "total_page": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/project/{id}/task": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "create project task",
+        "operationId": "projectManagementProjectManagementTaskCreate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "title"
+              ],
+              "properties": {
+                "assignee_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "description": {
+                  "type": "string"
+                },
+                "end_at": {
+                  "type": "string"
+                },
+                "parent_task_id": {
+                  "type": "integer"
+                },
+                "priority": {
+                  "type": "string"
+                },
+                "start_at": {
+                  "type": "string"
+                },
+                "task_type_id": {
+                  "type": "integer"
+                },
+                "title": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "assignees": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "organization_user_id",
+                      "organization_user_name"
+                    ],
+                    "properties": {
+                      "organization_user_id": {
+                        "type": "integer"
+                      },
+                      "organization_user_name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "creator_id": {
+                  "type": "integer"
+                },
+                "creator_name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "end_at": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "overdue": {
+                  "type": "boolean"
+                },
+                "overdue_seconds": {
+                  "type": "integer"
+                },
+                "parent_task_id": {
+                  "type": "integer"
+                },
+                "priority": {
+                  "type": "string"
+                },
+                "project_id": {
+                  "type": "integer"
+                },
+                "stage_id": {
+                  "type": "integer"
+                },
+                "start_at": {
+                  "type": "string"
+                },
+                "task_type": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "description",
+                    "color"
+                  ],
+                  "properties": {
+                    "color": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "title": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/project/{id}/task/page": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "page project tasks",
+        "operationId": "projectManagementProjectManagementTaskPage",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "page",
+                "limit"
+              ],
+              "properties": {
+                "filter": {
+                  "type": "object",
+                  "properties": {
+                    "assignee_id": {
+                      "type": "integer"
+                    },
+                    "keyword": {
+                      "type": "string"
+                    },
+                    "overdue": {
+                      "type": "boolean"
+                    },
+                    "stage_id": {
+                      "type": "integer"
+                    },
+                    "task_type_id": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "limit": {
+                  "type": "integer",
+                  "default": 20,
+                  "example": 20
+                },
+                "page": {
+                  "type": "integer",
+                  "default": 1,
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "type": "integer"
+                },
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "project_id",
+                      "parent_task_id",
+                      "stage_id",
+                      "creator_id",
+                      "creator_name",
+                      "title",
+                      "description",
+                      "priority",
+                      "start_at",
+                      "end_at",
+                      "task_type",
+                      "assignees",
+                      "overdue",
+                      "overdue_seconds"
+                    ],
+                    "properties": {
+                      "assignees": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "organization_user_id",
+                            "organization_user_name"
+                          ],
+                          "properties": {
+                            "organization_user_id": {
+                              "type": "integer"
+                            },
+                            "organization_user_name": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "creator_id": {
+                        "type": "integer"
+                      },
+                      "creator_name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "end_at": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "overdue": {
+                        "type": "boolean"
+                      },
+                      "overdue_seconds": {
+                        "type": "integer"
+                      },
+                      "parent_task_id": {
+                        "type": "integer"
+                      },
+                      "priority": {
+                        "type": "string"
+                      },
+                      "project_id": {
+                        "type": "integer"
+                      },
+                      "stage_id": {
+                        "type": "integer"
+                      },
+                      "start_at": {
+                        "type": "string"
+                      },
+                      "task_type": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name",
+                          "description",
+                          "color"
+                        ],
+                        "properties": {
+                          "color": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "title": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "total": {
+                  "type": "integer"
+                },
+                "total_page": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/project/{id}/workflow": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "get project workflow",
+        "operationId": "projectManagementProjectManagementProjectWorkflowDetail",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "is_default": {
+                  "type": "boolean"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "source_template_id": {
+                  "type": "integer"
+                },
+                "source_template_name": {
+                  "type": "string"
+                },
+                "stages": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "phase",
+                      "sort_order"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "phase": {
+                        "type": "string"
+                      },
+                      "sort_order": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "transitions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "from_stage_id",
+                      "to_stage_id",
+                      "allowed_actor_types"
+                    ],
+                    "properties": {
+                      "allowed_actor_types": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "from_stage_id": {
+                        "type": "integer"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "to_stage_id": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "update project workflow",
+        "operationId": "projectManagementProjectManagementProjectWorkflowUpdate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "stages"
+              ],
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "stages": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "phase",
+                      "sort_order"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "phase": {
+                        "type": "string"
+                      },
+                      "sort_order": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "transitions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "from_stage_id",
+                      "to_stage_id",
+                      "allowed_actor_types"
+                    ],
+                    "properties": {
+                      "allowed_actor_types": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "from_stage_id": {
+                        "type": "integer"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "to_stage_id": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "is_default": {
+                  "type": "boolean"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "source_template_id": {
+                  "type": "integer"
+                },
+                "source_template_name": {
+                  "type": "string"
+                },
+                "stages": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "phase",
+                      "sort_order"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "phase": {
+                        "type": "string"
+                      },
+                      "sort_order": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "transitions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "from_stage_id",
+                      "to_stage_id",
+                      "allowed_actor_types"
+                    ],
+                    "properties": {
+                      "allowed_actor_types": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "from_stage_id": {
+                        "type": "integer"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "to_stage_id": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/task/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "get project task",
+        "operationId": "projectManagementProjectManagementTaskDetail",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "assignees": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "organization_user_id",
+                      "organization_user_name"
+                    ],
+                    "properties": {
+                      "organization_user_id": {
+                        "type": "integer"
+                      },
+                      "organization_user_name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "creator_id": {
+                  "type": "integer"
+                },
+                "creator_name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "end_at": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "overdue": {
+                  "type": "boolean"
+                },
+                "overdue_seconds": {
+                  "type": "integer"
+                },
+                "parent_task_id": {
+                  "type": "integer"
+                },
+                "priority": {
+                  "type": "string"
+                },
+                "project_id": {
+                  "type": "integer"
+                },
+                "stage_id": {
+                  "type": "integer"
+                },
+                "start_at": {
+                  "type": "string"
+                },
+                "task_type": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "description",
+                    "color"
+                  ],
+                  "properties": {
+                    "color": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "title": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "update project task",
+        "operationId": "projectManagementProjectManagementTaskUpdate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "title"
+              ],
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "end_at": {
+                  "type": "string"
+                },
+                "priority": {
+                  "type": "string"
+                },
+                "start_at": {
+                  "type": "string"
+                },
+                "task_type_id": {
+                  "type": "integer"
+                },
+                "title": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "assignees": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "organization_user_id",
+                      "organization_user_name"
+                    ],
+                    "properties": {
+                      "organization_user_id": {
+                        "type": "integer"
+                      },
+                      "organization_user_name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "creator_id": {
+                  "type": "integer"
+                },
+                "creator_name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "end_at": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "overdue": {
+                  "type": "boolean"
+                },
+                "overdue_seconds": {
+                  "type": "integer"
+                },
+                "parent_task_id": {
+                  "type": "integer"
+                },
+                "priority": {
+                  "type": "string"
+                },
+                "project_id": {
+                  "type": "integer"
+                },
+                "stage_id": {
+                  "type": "integer"
+                },
+                "start_at": {
+                  "type": "string"
+                },
+                "task_type": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "description",
+                    "color"
+                  ],
+                  "properties": {
+                    "color": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "title": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "delete project task",
+        "operationId": "projectManagementProjectManagementTaskDelete",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "confirm"
+              ],
+              "properties": {
+                "confirm": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/task/{id}/assignee": {
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "replace project task assignees",
+        "operationId": "projectManagementProjectManagementTaskAssigneeUpdate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "assignee_ids"
+              ],
+              "properties": {
+                "assignee_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "assignees": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "organization_user_id",
+                      "organization_user_name"
+                    ],
+                    "properties": {
+                      "organization_user_id": {
+                        "type": "integer"
+                      },
+                      "organization_user_name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "creator_id": {
+                  "type": "integer"
+                },
+                "creator_name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "end_at": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "overdue": {
+                  "type": "boolean"
+                },
+                "overdue_seconds": {
+                  "type": "integer"
+                },
+                "parent_task_id": {
+                  "type": "integer"
+                },
+                "priority": {
+                  "type": "string"
+                },
+                "project_id": {
+                  "type": "integer"
+                },
+                "stage_id": {
+                  "type": "integer"
+                },
+                "start_at": {
+                  "type": "string"
+                },
+                "task_type": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "description",
+                    "color"
+                  ],
+                  "properties": {
+                    "color": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "title": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/task/{id}/attachment": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "register project task attachment",
+        "operationId": "projectManagementProjectManagementAttachmentCreate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "file_url"
+              ],
+              "properties": {
+                "file_name": {
+                  "type": "string"
+                },
+                "file_url": {
+                  "type": "string"
+                },
+                "storage_type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "file_id": {
+                  "type": "integer"
+                },
+                "file_name": {
+                  "type": "string"
+                },
+                "file_url": {
+                  "type": "string"
+                },
+                "storage_type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/task/{id}/attachment/page": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "page project task attachments",
+        "operationId": "projectManagementProjectManagementAttachmentPage",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "page",
+                "limit"
+              ],
+              "properties": {
+                "limit": {
+                  "type": "integer",
+                  "default": 20,
+                  "example": 20
+                },
+                "page": {
+                  "type": "integer",
+                  "default": 1,
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "type": "integer"
+                },
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "file_id",
+                      "file_name",
+                      "file_url",
+                      "storage_type"
+                    ],
+                    "properties": {
+                      "file_id": {
+                        "type": "integer"
+                      },
+                      "file_name": {
+                        "type": "string"
+                      },
+                      "file_url": {
+                        "type": "string"
+                      },
+                      "storage_type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "total": {
+                  "type": "integer"
+                },
+                "total_page": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/task/{id}/attachment/{file_id}": {
+      "delete": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "delete project task attachment",
+        "operationId": "projectManagementProjectManagementAttachmentDelete",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "file_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/task/{id}/dependency": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "create task dependency",
+        "operationId": "projectManagementProjectManagementDependencyCreate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "predecessor_task_id",
+                "dependency_type"
+              ],
+              "properties": {
+                "dependency_type": {
+                  "type": "string"
+                },
+                "predecessor_task_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dependency_type": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "predecessor_task_id": {
+                  "type": "integer"
+                },
+                "successor_task_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/task/{id}/dependency/page": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "page task dependencies",
+        "operationId": "projectManagementProjectManagementDependencyPage",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "page",
+                "limit"
+              ],
+              "properties": {
+                "limit": {
+                  "type": "integer",
+                  "default": 20,
+                  "example": 20
+                },
+                "page": {
+                  "type": "integer",
+                  "default": 1,
+                  "example": 1
+                },
+                "predecessor": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "type": "integer"
+                },
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "successor_task_id",
+                      "predecessor_task_id",
+                      "dependency_type"
+                    ],
+                    "properties": {
+                      "dependency_type": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "predecessor_task_id": {
+                        "type": "integer"
+                      },
+                      "successor_task_id": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "total": {
+                  "type": "integer"
+                },
+                "total_page": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/task/{id}/dependency/{dependency_id}": {
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "update task dependency",
+        "operationId": "projectManagementProjectManagementDependencyUpdate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "dependency_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "dependency_type"
+              ],
+              "properties": {
+                "dependency_type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dependency_type": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "predecessor_task_id": {
+                  "type": "integer"
+                },
+                "successor_task_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "delete task dependency",
+        "operationId": "projectManagementProjectManagementDependencyDelete",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "dependency_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/task/{id}/transition": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "transition task",
+        "operationId": "projectManagementProjectManagementTaskTransition",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "target_stage_id"
+              ],
+              "properties": {
+                "target_stage_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "assignees": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "organization_user_id",
+                      "organization_user_name"
+                    ],
+                    "properties": {
+                      "organization_user_id": {
+                        "type": "integer"
+                      },
+                      "organization_user_name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "creator_id": {
+                  "type": "integer"
+                },
+                "creator_name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "end_at": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "overdue": {
+                  "type": "boolean"
+                },
+                "overdue_seconds": {
+                  "type": "integer"
+                },
+                "parent_task_id": {
+                  "type": "integer"
+                },
+                "priority": {
+                  "type": "string"
+                },
+                "project_id": {
+                  "type": "integer"
+                },
+                "stage_id": {
+                  "type": "integer"
+                },
+                "start_at": {
+                  "type": "string"
+                },
+                "task_type": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "description",
+                    "color"
+                  ],
+                  "properties": {
+                    "color": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "title": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/task_type": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "create project task type",
+        "operationId": "projectManagementProjectManagementTaskTypeCreate",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "enabled"
+              ],
+              "properties": {
+                "color": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "color": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/task_type/page": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "page project task types",
+        "operationId": "projectManagementProjectManagementTaskTypePage",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "page",
+                "limit"
+              ],
+              "properties": {
+                "filter": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean"
+                    },
+                    "keyword": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "limit": {
+                  "type": "integer",
+                  "default": 20,
+                  "example": 20
+                },
+                "page": {
+                  "type": "integer",
+                  "default": 1,
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "type": "integer"
+                },
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "description",
+                      "color",
+                      "enabled"
+                    ],
+                    "properties": {
+                      "color": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "enabled": {
+                        "type": "boolean"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "total": {
+                  "type": "integer"
+                },
+                "total_page": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/task_type/{id}": {
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "update project task type",
+        "operationId": "projectManagementProjectManagementTaskTypeUpdate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "enabled"
+              ],
+              "properties": {
+                "color": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "color": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "delete project task type",
+        "operationId": "projectManagementProjectManagementTaskTypeDelete",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/workflow": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "create project workflow",
+        "operationId": "projectManagementProjectManagementWorkflowCreate",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "enabled",
+                "is_default",
+                "stages"
+              ],
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "is_default": {
+                  "type": "boolean"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "stages": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "phase",
+                      "sort_order"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "phase": {
+                        "type": "string"
+                      },
+                      "sort_order": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "transitions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "from_stage_id",
+                      "to_stage_id",
+                      "allowed_actor_types"
+                    ],
+                    "properties": {
+                      "allowed_actor_types": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "from_stage_id": {
+                        "type": "integer"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "to_stage_id": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "is_default": {
+                  "type": "boolean"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "source_template_id": {
+                  "type": "integer"
+                },
+                "source_template_name": {
+                  "type": "string"
+                },
+                "stages": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "phase",
+                      "sort_order"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "phase": {
+                        "type": "string"
+                      },
+                      "sort_order": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "transitions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "from_stage_id",
+                      "to_stage_id",
+                      "allowed_actor_types"
+                    ],
+                    "properties": {
+                      "allowed_actor_types": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "from_stage_id": {
+                        "type": "integer"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "to_stage_id": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/workflow/all": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "list enabled project workflows",
+        "operationId": "projectManagementProjectManagementWorkflowAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "description",
+                      "enabled",
+                      "is_default",
+                      "stages",
+                      "transitions",
+                      "source_template_id",
+                      "source_template_name"
+                    ],
+                    "properties": {
+                      "description": {
+                        "type": "string"
+                      },
+                      "enabled": {
+                        "type": "boolean"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "is_default": {
+                        "type": "boolean"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "source_template_id": {
+                        "type": "integer"
+                      },
+                      "source_template_name": {
+                        "type": "string"
+                      },
+                      "stages": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "name",
+                            "phase",
+                            "sort_order"
+                          ],
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "phase": {
+                              "type": "string"
+                            },
+                            "sort_order": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      },
+                      "transitions": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "from_stage_id",
+                            "to_stage_id",
+                            "allowed_actor_types"
+                          ],
+                          "properties": {
+                            "allowed_actor_types": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "from_stage_id": {
+                              "type": "integer"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "to_stage_id": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/workflow/page": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "page project workflows",
+        "operationId": "projectManagementProjectManagementWorkflowPage",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "page",
+                "limit"
+              ],
+              "properties": {
+                "filter": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean"
+                    },
+                    "keyword": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "limit": {
+                  "type": "integer",
+                  "default": 20,
+                  "example": 20
+                },
+                "page": {
+                  "type": "integer",
+                  "default": 1,
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "type": "integer"
+                },
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "description",
+                      "enabled",
+                      "is_default"
+                    ],
+                    "properties": {
+                      "description": {
+                        "type": "string"
+                      },
+                      "enabled": {
+                        "type": "boolean"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "is_default": {
+                        "type": "boolean"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "total": {
+                  "type": "integer"
+                },
+                "total_page": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/workflow/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "get project workflow",
+        "operationId": "projectManagementProjectManagementWorkflowDetail",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "is_default": {
+                  "type": "boolean"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "source_template_id": {
+                  "type": "integer"
+                },
+                "source_template_name": {
+                  "type": "string"
+                },
+                "stages": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "phase",
+                      "sort_order"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "phase": {
+                        "type": "string"
+                      },
+                      "sort_order": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "transitions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "from_stage_id",
+                      "to_stage_id",
+                      "allowed_actor_types"
+                    ],
+                    "properties": {
+                      "allowed_actor_types": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "from_stage_id": {
+                        "type": "integer"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "to_stage_id": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "update project workflow",
+        "operationId": "projectManagementProjectManagementWorkflowUpdate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "enabled",
+                "is_default",
+                "stages"
+              ],
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "is_default": {
+                  "type": "boolean"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "stages": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "phase",
+                      "sort_order"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "phase": {
+                        "type": "string"
+                      },
+                      "sort_order": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "transitions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "from_stage_id",
+                      "to_stage_id",
+                      "allowed_actor_types"
+                    ],
+                    "properties": {
+                      "allowed_actor_types": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "from_stage_id": {
+                        "type": "integer"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "to_stage_id": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "is_default": {
+                  "type": "boolean"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "source_template_id": {
+                  "type": "integer"
+                },
+                "source_template_name": {
+                  "type": "string"
+                },
+                "stages": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "phase",
+                      "sort_order"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "phase": {
+                        "type": "string"
+                      },
+                      "sort_order": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "transitions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "from_stage_id",
+                      "to_stage_id",
+                      "allowed_actor_types"
+                    ],
+                    "properties": {
+                      "allowed_actor_types": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "from_stage_id": {
+                        "type": "integer"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "to_stage_id": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management"
+        ],
+        "summary": "delete project workflow",
+        "operationId": "projectManagementProjectManagementWorkflowDelete",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/property": {
       "post": {
         "consumes": [
@@ -26535,7 +30302,7 @@
       }
     }
   },
-  "x-date": "2026-07-24 15:43:22",
+  "x-date": "2026-08-18 16:12:47",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

@@ -1,0 +1,617 @@
+syntax = "proto3";
+
+package borrower;
+
+option go_package = "zeebee-backend/app/borrower/rpc/pb/borrower";
+
+import "proto/common.proto";
+
+message ProjectManagementWorkflowEntity {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  bool enabled = 4;
+  bool is_default = 5;
+  repeated ProjectManagementWorkflowStageEntity stages = 6;
+  repeated ProjectManagementWorkflowTransitionEntity transitions = 7;
+	int64 source_template_id = 8;
+	string source_template_name = 9;
+}
+
+message ProjectManagementWorkflowStageEntity {
+  int64 id = 1;
+  string name = 2;
+  string phase = 3;
+  int32 sort_order = 4;
+}
+
+message ProjectManagementWorkflowTransitionEntity {
+  int64 id = 1;
+  int64 from_stage_id = 2;
+  int64 to_stage_id = 3;
+  repeated string allowed_actor_types = 4;
+}
+
+message ProjectManagementWorkflowAllRequest {
+  ProjectManagementWorkflowAllRequestData data = 1;
+}
+
+message ProjectManagementWorkflowAllRequestData {}
+
+message ProjectManagementWorkflowAllResponse {
+  repeated ProjectManagementWorkflowEntity data = 1;
+}
+
+message ProjectManagementWorkflowPageRequest {
+  ProjectManagementWorkflowPageRequestData data = 1;
+}
+message ProjectManagementWorkflowPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  ProjectManagementWorkflowPageRequestFilter filter = 3;
+}
+message ProjectManagementWorkflowPageRequestFilter {
+  string keyword = 1;
+  optional bool enabled = 2;
+}
+message ProjectManagementWorkflowPageEntity {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  bool enabled = 4;
+  bool is_default = 5;
+}
+message ProjectManagementWorkflowPageResponse {
+  ProjectManagementWorkflowPageResponseData data = 1;
+}
+message ProjectManagementWorkflowPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated ProjectManagementWorkflowPageEntity list = 5;
+}
+message ProjectManagementWorkflowDetailRequest {
+  ProjectManagementWorkflowDetailRequestData data = 1;
+}
+message ProjectManagementWorkflowDetailRequestData {
+  int64 id = 1;
+}
+message ProjectManagementWorkflowDetailResponse {
+  ProjectManagementWorkflowEntity data = 1;
+}
+message ProjectManagementWorkflowCreateRequest {
+  ProjectManagementWorkflowCreateRequestData data = 1;
+}
+message ProjectManagementWorkflowCreateRequestData {
+  string name = 1;
+  string description = 2;
+  bool enabled = 3;
+  bool is_default = 4;
+  repeated ProjectManagementWorkflowStageEntity stages = 5;
+  repeated ProjectManagementWorkflowTransitionEntity transitions = 6;
+}
+message ProjectManagementWorkflowUpdateRequest {
+  ProjectManagementWorkflowUpdateRequestData data = 1;
+}
+message ProjectManagementWorkflowUpdateRequestData {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  bool enabled = 4;
+  bool is_default = 5;
+  repeated ProjectManagementWorkflowStageEntity stages = 6;
+  repeated ProjectManagementWorkflowTransitionEntity transitions = 7;
+}
+message ProjectManagementWorkflowDeleteRequest {
+  ProjectManagementWorkflowDeleteRequestData data = 1;
+}
+message ProjectManagementWorkflowDeleteRequestData {
+  int64 id = 1;
+}
+
+message ProjectManagementTaskTypeEntity {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  string color = 4;
+  bool enabled = 5;
+}
+
+message ProjectManagementTaskTypePageRequest {
+  ProjectManagementTaskTypePageRequestData data = 1;
+}
+message ProjectManagementTaskTypePageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  ProjectManagementTaskTypePageRequestFilter filter = 3;
+}
+message ProjectManagementTaskTypePageRequestFilter {
+  string keyword = 1;
+  optional bool enabled = 2;
+}
+message ProjectManagementTaskTypePageResponse {
+  ProjectManagementTaskTypePageResponseData data = 1;
+}
+message ProjectManagementTaskTypePageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated ProjectManagementTaskTypeEntity list = 5;
+}
+
+message ProjectManagementTaskTypeCreateRequest {
+  ProjectManagementTaskTypeCreateRequestData data = 1;
+}
+message ProjectManagementTaskTypeCreateRequestData {
+  string name = 1;
+  string description = 2;
+  string color = 3;
+  bool enabled = 4;
+}
+message ProjectManagementTaskTypeUpdateRequest {
+  ProjectManagementTaskTypeUpdateRequestData data = 1;
+}
+message ProjectManagementTaskTypeUpdateRequestData {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  string color = 4;
+  bool enabled = 5;
+}
+message ProjectManagementTaskTypeDetailResponse {
+  ProjectManagementTaskTypeEntity data = 1;
+}
+message ProjectManagementTaskTypeDeleteRequest {
+  ProjectManagementTaskTypeDeleteRequestData data = 1;
+}
+message ProjectManagementTaskTypeDeleteRequestData {
+  int64 id = 1;
+}
+
+message ProjectManagementProjectEntity {
+  int64 id = 1;
+  int64 property_id = 2;
+  string name = 3;
+  string description = 4;
+  string cover_url = 5;
+  int64 owner_id = 6;
+}
+
+message ProjectManagementProjectPageRequest {
+  ProjectManagementProjectPageRequestData data = 1;
+}
+message ProjectManagementProjectPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  ProjectManagementProjectPageRequestFilter filter = 3;
+}
+message ProjectManagementProjectPageRequestFilter {
+  string keyword = 1;
+  int64 property_id = 2;
+}
+message ProjectManagementProjectPageResponse {
+  ProjectManagementProjectPageResponseData data = 1;
+}
+message ProjectManagementProjectPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated ProjectManagementProjectEntity list = 5;
+}
+message ProjectManagementProjectDetailRequest {
+  ProjectManagementProjectDetailRequestData data = 1;
+}
+message ProjectManagementProjectDetailRequestData {
+  int64 id = 1;
+}
+message ProjectManagementProjectDetailResponse {
+  ProjectManagementProjectEntity data = 1;
+}
+message ProjectManagementProjectCreateRequest {
+  ProjectManagementProjectCreateRequestData data = 1;
+}
+message ProjectManagementProjectCreateRequestData {
+  int64 property_id = 1;
+  string name = 2;
+  string description = 3;
+  string cover_url = 4;
+  int64 workflow_template_id = 5;
+}
+message ProjectManagementProjectUpdateRequest {
+  ProjectManagementProjectUpdateRequestData data = 1;
+}
+message ProjectManagementProjectUpdateRequestData {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  string cover_url = 4;
+}
+message ProjectManagementProjectDeleteRequest {
+  ProjectManagementProjectDeleteRequestData data = 1;
+}
+message ProjectManagementProjectDeleteRequestData {
+  int64 id = 1;
+  bool confirm = 2;
+}
+
+message ProjectManagementMemberEntity {
+  int64 id = 1;
+  int64 project_id = 2;
+  int64 organization_user_id = 3;
+  string role = 4;
+  string full_name = 5;
+  string email = 6;
+}
+message ProjectManagementMemberInput {
+  int64 organization_user_id = 1;
+  string role = 2;
+}
+message ProjectManagementMemberPageRequest {
+  ProjectManagementMemberPageRequestData data = 1;
+}
+message ProjectManagementMemberPageRequestData {
+  int64 project_id = 1;
+  int64 page = 2;
+  int64 limit = 3;
+  ProjectManagementMemberPageRequestFilter filter = 4;
+}
+message ProjectManagementMemberPageRequestFilter {
+  string keyword = 1;
+  string role = 2;
+}
+message ProjectManagementMemberPageResponse {
+  ProjectManagementMemberPageResponseData data = 1;
+}
+message ProjectManagementMemberPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated ProjectManagementMemberEntity list = 5;
+}
+message ProjectManagementMemberCandidateRequest {
+  ProjectManagementMemberCandidateRequestData data = 1;
+}
+message ProjectManagementMemberCandidateRequestData {
+  int64 project_id = 1;
+  string keyword = 2;
+}
+message ProjectManagementMemberCandidateResponse {
+  repeated ProjectManagementMemberEntity data = 1;
+}
+message ProjectManagementMemberAddRequest {
+  ProjectManagementMemberAddRequestData data = 1;
+}
+message ProjectManagementMemberAddRequestData {
+  int64 project_id = 1;
+  repeated ProjectManagementMemberInput members = 2;
+}
+message ProjectManagementMemberUpdateRequest {
+  ProjectManagementMemberUpdateRequestData data = 1;
+}
+message ProjectManagementMemberUpdateRequestData {
+  int64 project_id = 1;
+  int64 organization_user_id = 2;
+  string role = 3;
+  int64 transfer_owner_to_user_id = 4;
+}
+message ProjectManagementMemberDeleteRequest {
+  ProjectManagementMemberDeleteRequestData data = 1;
+}
+message ProjectManagementMemberDeleteRequestData {
+  int64 project_id = 1;
+  int64 organization_user_id = 2;
+}
+
+message ProjectManagementProjectWorkflowDetailRequest {
+  ProjectManagementProjectWorkflowDetailRequestData data = 1;
+}
+message ProjectManagementProjectWorkflowDetailRequestData {
+  int64 project_id = 1;
+}
+message ProjectManagementProjectWorkflowUpdateRequest {
+  ProjectManagementProjectWorkflowUpdateRequestData data = 1;
+}
+message ProjectManagementProjectWorkflowUpdateRequestData {
+  int64 project_id = 1;
+  string name = 2;
+  string description = 3;
+  repeated ProjectManagementWorkflowStageEntity stages = 4;
+  repeated ProjectManagementWorkflowTransitionEntity transitions = 5;
+}
+
+message ProjectManagementTaskTypeSnapshotEntity {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  string color = 4;
+}
+message ProjectManagementTaskAssigneeEntity {
+  int64 organization_user_id = 1;
+  string organization_user_name = 2;
+}
+message ProjectManagementTaskEntity {
+  int64 id = 1;
+  int64 project_id = 2;
+  int64 parent_task_id = 3;
+  int64 stage_id = 4;
+  int64 creator_id = 5;
+  string creator_name = 6;
+  string title = 7;
+  string description = 8;
+  string priority = 9;
+  string start_at = 10;
+  string end_at = 11;
+  ProjectManagementTaskTypeSnapshotEntity task_type = 12;
+  repeated ProjectManagementTaskAssigneeEntity assignees = 13;
+  bool overdue = 14;
+  int64 overdue_seconds = 15;
+}
+message ProjectManagementTaskPageRequest {
+  ProjectManagementTaskPageRequestData data = 1;
+}
+message ProjectManagementTaskPageRequestData {
+  int64 project_id = 1;
+  int64 page = 2;
+  int64 limit = 3;
+  ProjectManagementTaskPageRequestFilter filter = 4;
+}
+message ProjectManagementTaskPageRequestFilter {
+  int64 stage_id = 1;
+  int64 task_type_id = 2;
+  int64 assignee_id = 3;
+  string keyword = 4;
+  optional bool overdue = 5;
+}
+message ProjectManagementTaskPageResponse {
+  ProjectManagementTaskPageResponseData data = 1;
+}
+message ProjectManagementTaskPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated ProjectManagementTaskEntity list = 5;
+}
+message ProjectManagementTaskCreateRequest {
+  ProjectManagementTaskCreateRequestData data = 1;
+}
+message ProjectManagementTaskCreateRequestData {
+  int64 project_id = 1;
+  int64 parent_task_id = 2;
+  string title = 3;
+  string description = 4;
+  string priority = 5;
+  string start_at = 6;
+  string end_at = 7;
+  int64 task_type_id = 8;
+  repeated int64 assignee_ids = 9;
+}
+message ProjectManagementTaskDetailRequest {
+  ProjectManagementTaskDetailRequestData data = 1;
+}
+message ProjectManagementTaskDetailRequestData {
+  int64 id = 1;
+}
+message ProjectManagementTaskDetailResponse {
+  ProjectManagementTaskEntity data = 1;
+}
+message ProjectManagementTaskUpdateRequest {
+  ProjectManagementTaskUpdateRequestData data = 1;
+}
+message ProjectManagementTaskUpdateRequestData {
+  int64 id = 1;
+  string title = 2;
+  string description = 3;
+  string priority = 4;
+  string start_at = 5;
+  string end_at = 6;
+  int64 task_type_id = 7;
+}
+message ProjectManagementTaskDeleteRequest {
+  ProjectManagementTaskDeleteRequestData data = 1;
+}
+message ProjectManagementTaskDeleteRequestData {
+  int64 id = 1;
+  bool confirm = 2;
+}
+message ProjectManagementMyTaskPageRequest {
+  ProjectManagementMyTaskPageRequestData data = 1;
+}
+message ProjectManagementMyTaskPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  ProjectManagementMyTaskPageFilter filter = 3;
+}
+message ProjectManagementMyTaskPageFilter {
+  int64 project_id = 1;
+  int64 stage_id = 2;
+  int64 task_type_id = 3;
+  int64 assignee_id = 4;
+  string keyword = 5;
+  optional bool overdue = 6;
+}
+message ProjectManagementOperationEntity {
+  int64 id = 1;
+  int64 project_id = 2;
+  int64 task_id = 3;
+  int64 operator_id = 4;
+  string operator_name = 5;
+  string operation = 6;
+  string created_at = 7;
+}
+message ProjectManagementOperationPageRequest {
+  ProjectManagementOperationPageRequestData data = 1;
+}
+message ProjectManagementOperationPageRequestData {
+  int64 project_id = 1;
+  int64 page = 2;
+  int64 limit = 3;
+  ProjectManagementOperationPageRequestFilter filter = 4;
+}
+message ProjectManagementOperationPageRequestFilter {
+  int64 task_id = 1;
+  string operation_type = 2;
+}
+message ProjectManagementOperationPageResponse {
+  ProjectManagementOperationPageResponseData data = 1;
+}
+message ProjectManagementOperationPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated ProjectManagementOperationEntity list = 5;
+}
+message ProjectManagementTaskAssigneeUpdateRequest {
+  ProjectManagementTaskAssigneeUpdateRequestData data = 1;
+}
+message ProjectManagementTaskAssigneeUpdateRequestData {
+  int64 task_id = 1;
+  repeated int64 assignee_ids = 2;
+}
+message ProjectManagementAttachmentEntity {
+  int64 file_id = 1;
+  string file_name = 2;
+  string file_url = 3;
+  string storage_type = 4;
+}
+message ProjectManagementAttachmentPageRequest {
+  ProjectManagementAttachmentPageRequestData data = 1;
+}
+message ProjectManagementAttachmentPageRequestData {
+  int64 task_id = 1;
+  int64 page = 2;
+  int64 limit = 3;
+}
+message ProjectManagementAttachmentPageResponse {
+  ProjectManagementAttachmentPageResponseData data = 1;
+}
+message ProjectManagementAttachmentPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated ProjectManagementAttachmentEntity list = 5;
+}
+message ProjectManagementAttachmentCreateRequest {
+  ProjectManagementAttachmentCreateRequestData data = 1;
+}
+message ProjectManagementAttachmentCreateRequestData {
+  int64 task_id = 1;
+  string file_name = 2;
+  string file_url = 3;
+  string storage_type = 4;
+}
+message ProjectManagementAttachmentDetailResponse {
+  ProjectManagementAttachmentEntity data = 1;
+}
+message ProjectManagementAttachmentDeleteRequest {
+  ProjectManagementAttachmentDeleteRequestData data = 1;
+}
+message ProjectManagementAttachmentDeleteRequestData {
+  int64 task_id = 1;
+  int64 file_id = 2;
+}
+
+message ProjectManagementTaskDependencyEntity {
+  int64 id = 1;
+  int64 successor_task_id = 2;
+  int64 predecessor_task_id = 3;
+  string dependency_type = 4;
+}
+message ProjectManagementDependencyPageRequest {
+  ProjectManagementDependencyPageRequestData data = 1;
+}
+message ProjectManagementDependencyPageRequestData {
+  int64 task_id = 1;
+  int64 page = 2;
+  int64 limit = 3;
+  bool predecessor = 4;
+}
+message ProjectManagementDependencyPageResponse {
+  ProjectManagementDependencyPageResponseData data = 1;
+}
+message ProjectManagementDependencyPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated ProjectManagementTaskDependencyEntity list = 5;
+}
+message ProjectManagementDependencyCreateRequest {
+  ProjectManagementDependencyCreateRequestData data = 1;
+}
+message ProjectManagementDependencyCreateRequestData {
+  int64 successor_task_id = 1;
+  int64 predecessor_task_id = 2;
+  string dependency_type = 3;
+}
+message ProjectManagementDependencyDetailResponse {
+  ProjectManagementTaskDependencyEntity data = 1;
+}
+message ProjectManagementDependencyUpdateRequest {
+  ProjectManagementDependencyUpdateRequestData data = 1;
+}
+message ProjectManagementDependencyUpdateRequestData {
+  int64 dependency_id = 1;
+  string dependency_type = 2;
+}
+message ProjectManagementDependencyDeleteRequest {
+  ProjectManagementDependencyDeleteRequestData data = 1;
+}
+message ProjectManagementDependencyDeleteRequestData {
+  int64 dependency_id = 1;
+}
+message ProjectManagementTaskTransitionRequest {
+  ProjectManagementTaskTransitionRequestData data = 1;
+}
+message ProjectManagementTaskTransitionRequestData {
+  int64 task_id = 1;
+  int64 target_stage_id = 2;
+}
+
+// ProjectManagement owns borrower project management RPC methods.
+service ProjectManagement {
+  rpc WorkflowAll(ProjectManagementWorkflowAllRequest) returns(ProjectManagementWorkflowAllResponse);
+  rpc WorkflowPage(ProjectManagementWorkflowPageRequest) returns(ProjectManagementWorkflowPageResponse);
+  rpc WorkflowDetail(ProjectManagementWorkflowDetailRequest) returns(ProjectManagementWorkflowDetailResponse);
+  rpc WorkflowCreate(ProjectManagementWorkflowCreateRequest) returns(ProjectManagementWorkflowDetailResponse);
+  rpc WorkflowUpdate(ProjectManagementWorkflowUpdateRequest) returns(ProjectManagementWorkflowDetailResponse);
+  rpc WorkflowDelete(ProjectManagementWorkflowDeleteRequest) returns(proto.EmptyResponse);
+  rpc TaskTypePage(ProjectManagementTaskTypePageRequest) returns(ProjectManagementTaskTypePageResponse);
+  rpc TaskTypeCreate(ProjectManagementTaskTypeCreateRequest) returns(ProjectManagementTaskTypeDetailResponse);
+  rpc TaskTypeUpdate(ProjectManagementTaskTypeUpdateRequest) returns(ProjectManagementTaskTypeDetailResponse);
+  rpc TaskTypeDelete(ProjectManagementTaskTypeDeleteRequest) returns(proto.EmptyResponse);
+  rpc ProjectPage(ProjectManagementProjectPageRequest) returns(ProjectManagementProjectPageResponse);
+  rpc ProjectDetail(ProjectManagementProjectDetailRequest) returns(ProjectManagementProjectDetailResponse);
+  rpc ProjectCreate(ProjectManagementProjectCreateRequest) returns(ProjectManagementProjectDetailResponse);
+  rpc ProjectUpdate(ProjectManagementProjectUpdateRequest) returns(ProjectManagementProjectDetailResponse);
+  rpc ProjectDelete(ProjectManagementProjectDeleteRequest) returns(proto.EmptyResponse);
+  rpc MemberPage(ProjectManagementMemberPageRequest) returns(ProjectManagementMemberPageResponse);
+  rpc MemberCandidate(ProjectManagementMemberCandidateRequest) returns(ProjectManagementMemberCandidateResponse);
+  rpc MemberAdd(ProjectManagementMemberAddRequest) returns(proto.EmptyResponse);
+  rpc MemberUpdate(ProjectManagementMemberUpdateRequest) returns(proto.EmptyResponse);
+  rpc MemberDelete(ProjectManagementMemberDeleteRequest) returns(proto.EmptyResponse);
+  rpc ProjectWorkflowDetail(ProjectManagementProjectWorkflowDetailRequest) returns(ProjectManagementWorkflowDetailResponse);
+  rpc ProjectWorkflowUpdate(ProjectManagementProjectWorkflowUpdateRequest) returns(ProjectManagementWorkflowDetailResponse);
+  rpc TaskPage(ProjectManagementTaskPageRequest) returns(ProjectManagementTaskPageResponse);
+  rpc TaskCreate(ProjectManagementTaskCreateRequest) returns(ProjectManagementTaskDetailResponse);
+  rpc TaskDetail(ProjectManagementTaskDetailRequest) returns(ProjectManagementTaskDetailResponse);
+  rpc TaskUpdate(ProjectManagementTaskUpdateRequest) returns(ProjectManagementTaskDetailResponse);
+  rpc TaskDelete(ProjectManagementTaskDeleteRequest) returns(proto.EmptyResponse);
+  rpc MyTaskPage(ProjectManagementMyTaskPageRequest) returns(ProjectManagementTaskPageResponse);
+  rpc TaskAssigneeUpdate(ProjectManagementTaskAssigneeUpdateRequest) returns(ProjectManagementTaskDetailResponse);
+  rpc AttachmentPage(ProjectManagementAttachmentPageRequest) returns(ProjectManagementAttachmentPageResponse);
+  rpc AttachmentCreate(ProjectManagementAttachmentCreateRequest) returns(ProjectManagementAttachmentDetailResponse);
+  rpc AttachmentDelete(ProjectManagementAttachmentDeleteRequest) returns(proto.EmptyResponse);
+  rpc DependencyPage(ProjectManagementDependencyPageRequest) returns(ProjectManagementDependencyPageResponse);
+  rpc DependencyCreate(ProjectManagementDependencyCreateRequest) returns(ProjectManagementDependencyDetailResponse);
+  rpc DependencyUpdate(ProjectManagementDependencyUpdateRequest) returns(ProjectManagementDependencyDetailResponse);
+  rpc DependencyDelete(ProjectManagementDependencyDeleteRequest) returns(proto.EmptyResponse);
+  rpc TaskTransition(ProjectManagementTaskTransitionRequest) returns(ProjectManagementTaskDetailResponse);
+  rpc OperationPage(ProjectManagementOperationPageRequest) returns(ProjectManagementOperationPageResponse);
+}

@@ -831,6 +831,10 @@ func (l *OrganizationUserLogic) Delete(ctx context.Context, id int64, organizati
 			innerErr = errorx.New("cannot delete owner")
 			return innerErr
 		}
+		innerErr = l.repos.ProjectManagementProjectRepo.DeleteByOrganizationUserWithTx(ctx, tx, organizationUser.Id)
+		if innerErr != nil {
+			return innerErr
+		}
 		innerErr = l.repos.OrganizationUserRepo.DeleteOrganizationUserWithTx(ctx, tx, organizationUser)
 		return innerErr
 	})

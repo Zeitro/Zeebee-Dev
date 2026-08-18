@@ -148,6 +148,7 @@ func tenantModels() []any {
 		&model.OrganizationEmail{},
 		&model.EmailAuthorization{},
 		&model.Operation{},
+		&model.ProjectManagementProjectMember{},
 	}
 }
 

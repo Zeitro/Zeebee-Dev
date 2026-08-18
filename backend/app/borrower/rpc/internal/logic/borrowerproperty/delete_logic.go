@@ -46,6 +46,9 @@ func (l *DeleteLogic) Delete(in *borrower.PropertyDeleteRequest) (resp *proto.Em
 	if result.LoanCount > 0 {
 		return nil, errorx.GetFailedTransRespErr(errorx.New("You cannot delete a property that has loans"))
 	}
+	if err = l.baseLogic.ProjectManagementLogic.RequirePropertyDeletable(l.ctx, result.Id); err != nil {
+		return nil, errorx.GetFailedTransRespErr(err)
+	}
 	_, err = l.svcCtx.BorrowerPropertyRepo.DeleteByID(l.ctx, in.Data.Id)
 
 	return &proto.EmptyResponse{}, err

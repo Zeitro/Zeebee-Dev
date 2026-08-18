@@ -31,6 +31,7 @@ type bodyCode struct {
 type fakeChecker struct {
 	called bool
 	ctx    context.Context
+	in     *proto.AuthCheckRequest
 	resp   *proto.AuthCheckResponse
 	err    error
 }
@@ -48,6 +49,7 @@ func (s authCheckServer) AuthCheck(ctx context.Context, _ *proto.AuthCheckReques
 func (f *fakeChecker) AuthCheck(ctx context.Context, in *proto.AuthCheckRequest, opts ...grpc.CallOption) (*proto.AuthCheckResponse, error) {
 	f.called = true
 	f.ctx = ctx
+	f.in = in
 	return f.resp, f.err
 }
 
@@ -154,4 +156,28 @@ func TestAuthMiddleware_PermissionDenied(t *testing.T) {
 	require.Equal(t, http.StatusOK, rec.Code)
 	require.Equal(t, http.StatusForbidden, bodyCodeOf(t, rec))
 	require.True(t, checker.called)
+}
+
+func TestAuthMiddleware_ProjectManagementDeniedBeforeHandler(t *testing.T) {
+	checker := &fakeChecker{resp: &proto.AuthCheckResponse{Data: &proto.AuthCheckResponseData{
+		AuthenticationRequired: true,
+		Authenticated:          true,
+		AuthorizationRequired:  true,
+		Authorized:             false,
+	}}}
+	mw := NewAuthMiddleware(constants.UserTypeBorrower, checker)
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/project_management/workflow/all", nil)
+	req.Header.Set("Authorization", "Bearer tenant-issued-token")
+	rec := httptest.NewRecorder()
+	handled := false
+
+	mw.Handle(func(http.ResponseWriter, *http.Request) { handled = true })(rec, req)
+
+	require.Equal(t, http.StatusOK, rec.Code)
+	require.Equal(t, http.StatusForbidden, bodyCodeOf(t, rec))
+	require.False(t, handled)
+	require.True(t, checker.called)
+	require.Equal(t, http.MethodGet, checker.in.GetData().GetMethod())
+	require.Equal(t, "/api/v1/project_management/workflow/all", checker.in.GetData().GetPath())
+	require.Equal(t, string(constants.UserTypeBorrower), checker.in.GetData().GetType())
 }

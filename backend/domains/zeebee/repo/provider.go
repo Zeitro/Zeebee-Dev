@@ -42,6 +42,11 @@ type AllRepos struct {
 	PricingPlanPolicyRepo           *PricingPlanPolicyRepo
 	PricingPlanAndResourceRepo      *PricingPlanAndResourceRepo
 	OrganizationSubscriptionRepo    *OrganizationSubscriptionRepo
+	ProjectManagementWorkflowRepo   *ProjectManagementWorkflowRepo
+	ProjectManagementProjectRepo    *ProjectManagementProjectRepo
+	ProjectManagementTaskRepo       *ProjectManagementTaskRepo
+	ProjectManagementTaskTypeRepo   *ProjectManagementTaskTypeRepo
+	ProjectManagementDependencyRepo *ProjectManagementDependencyRepo
 }
 
 // NewAllRepos creates a new AllRepos instance with all repository implementations initialized.
@@ -88,5 +93,10 @@ func NewAllRepos(db *gorm.DB) *AllRepos {
 		PricingPlanPolicyRepo:           NewPricingPlanPolicyRepo(db),
 		PricingPlanAndResourceRepo:      NewPricingPlanAndResourceRepo(db),
 		OrganizationSubscriptionRepo:    NewOrganizationSubscriptionRepo(db),
+		ProjectManagementWorkflowRepo:   NewProjectManagementWorkflowRepo(db),
+		ProjectManagementProjectRepo:    NewProjectManagementProjectRepo(db),
+		ProjectManagementTaskRepo:       NewProjectManagementTaskRepo(db),
+		ProjectManagementTaskTypeRepo:   NewProjectManagementTaskTypeRepo(db),
+		ProjectManagementDependencyRepo: NewProjectManagementDependencyRepo(db),
 	}
 }

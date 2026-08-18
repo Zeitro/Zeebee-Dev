@@ -1,0 +1,636 @@
+syntax = "v1"
+
+info(
+    title: "borrower-project-management-api"
+    desc: "borrower project management api"
+    version: "v1"
+)
+
+type (
+    ProjectManagementWorkflowEntity {
+        Id int64 `json:"id"`
+        Name string `json:"name"`
+        Description string `json:"description"`
+        Enabled bool `json:"enabled"`
+        IsDefault bool `json:"is_default"`
+        Stages []*ProjectManagementWorkflowStageEntity `json:"stages"`
+        Transitions []*ProjectManagementWorkflowTransitionEntity `json:"transitions"`
+        SourceTemplateId int64 `json:"source_template_id"`
+        SourceTemplateName string `json:"source_template_name"`
+    }
+
+    ProjectManagementWorkflowStageEntity {
+        Id int64 `json:"id"`
+        Name string `json:"name"`
+        Phase string `json:"phase"`
+        SortOrder int `json:"sort_order"`
+    }
+
+    ProjectManagementWorkflowTransitionEntity {
+        Id int64 `json:"id"`
+        FromStageId int64 `json:"from_stage_id"`
+        ToStageId int64 `json:"to_stage_id"`
+        AllowedActorTypes []string `json:"allowed_actor_types"`
+    }
+
+    ProjectManagementWorkflowAllResponse {
+        Data []*ProjectManagementWorkflowEntity `json:"data"`
+    }
+
+    ProjectManagementWorkflowPageFilter {
+        Keyword string `json:"keyword,optional"`
+        Enabled *bool `json:"enabled,optional"`
+    }
+
+    ProjectManagementWorkflowPageRequest {
+        Page int64 `json:"page,default=1"`
+        Limit int64 `json:"limit,default=20"`
+        Filter ProjectManagementWorkflowPageFilter `json:"filter,optional"`
+    }
+
+    ProjectManagementWorkflowPageEntity {
+        Id int64 `json:"id"`
+        Name string `json:"name"`
+        Description string `json:"description"`
+        Enabled bool `json:"enabled"`
+        IsDefault bool `json:"is_default"`
+    }
+
+    ProjectManagementWorkflowPageResponse {
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+        Total int64 `json:"total"`
+        TotalPage int64 `json:"total_page"`
+        List []*ProjectManagementWorkflowPageEntity `json:"list"`
+    }
+
+    ProjectManagementWorkflowDetailRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+    }
+
+    ProjectManagementWorkflowCreateRequest {
+        Name string `json:"name" validate:"required,max=100"`
+        Description string `json:"description,optional" validate:"max=500"`
+        Enabled bool `json:"enabled"`
+        IsDefault bool `json:"is_default"`
+        Stages []*ProjectManagementWorkflowStageEntity `json:"stages" validate:"required,min=1,dive"`
+        Transitions []*ProjectManagementWorkflowTransitionEntity `json:"transitions,optional" validate:"dive"`
+    }
+
+    ProjectManagementWorkflowUpdateRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Name string `json:"name" validate:"required,max=100"`
+        Description string `json:"description,optional" validate:"max=500"`
+        Enabled bool `json:"enabled"`
+        IsDefault bool `json:"is_default"`
+        Stages []*ProjectManagementWorkflowStageEntity `json:"stages" validate:"required,min=1,dive"`
+        Transitions []*ProjectManagementWorkflowTransitionEntity `json:"transitions,optional" validate:"dive"`
+    }
+
+    ProjectManagementWorkflowDeleteRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+    }
+
+    ProjectManagementTaskTypeEntity {
+        Id int64 `json:"id"`
+        Name string `json:"name"`
+        Description string `json:"description"`
+        Color string `json:"color"`
+        Enabled bool `json:"enabled"`
+    }
+
+    ProjectManagementTaskTypePageFilter {
+        Keyword string `json:"keyword,optional"`
+        Enabled *bool `json:"enabled,optional"`
+    }
+
+    ProjectManagementTaskTypePageRequest {
+        Page int64 `json:"page,default=1"`
+        Limit int64 `json:"limit,default=20"`
+        Filter ProjectManagementTaskTypePageFilter `json:"filter,optional"`
+    }
+
+    ProjectManagementTaskTypePageResponse {
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+        Total int64 `json:"total"`
+        TotalPage int64 `json:"total_page"`
+        List []*ProjectManagementTaskTypeEntity `json:"list"`
+    }
+
+    ProjectManagementTaskTypeCreateRequest {
+        Name string `json:"name" validate:"required,max=100"`
+        Description string `json:"description,optional" validate:"max=500"`
+        Color string `json:"color,optional" validate:"max=32"`
+        Enabled bool `json:"enabled"`
+    }
+
+    ProjectManagementTaskTypeUpdateRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Name string `json:"name" validate:"required,max=100"`
+        Description string `json:"description,optional" validate:"max=500"`
+        Color string `json:"color,optional" validate:"max=32"`
+        Enabled bool `json:"enabled"`
+    }
+
+    ProjectManagementTaskTypeDeleteRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+    }
+
+    ProjectManagementProjectEntity {
+        Id int64 `json:"id"`
+        PropertyId int64 `json:"property_id"`
+        Name string `json:"name"`
+        Description string `json:"description"`
+        CoverUrl string `json:"cover_url"`
+        OwnerId int64 `json:"owner_id"`
+    }
+
+    ProjectManagementProjectPageFilter {
+        Keyword string `json:"keyword,optional"`
+        PropertyId int64 `json:"property_id,optional"`
+    }
+
+    ProjectManagementProjectPageRequest {
+        Page int64 `json:"page,default=1"`
+        Limit int64 `json:"limit,default=20"`
+        Filter ProjectManagementProjectPageFilter `json:"filter,optional"`
+    }
+
+    ProjectManagementProjectPageResponse {
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+        Total int64 `json:"total"`
+        TotalPage int64 `json:"total_page"`
+        List []*ProjectManagementProjectEntity `json:"list"`
+    }
+
+    ProjectManagementProjectDetailRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+    }
+
+    ProjectManagementProjectCreateRequest {
+        PropertyId int64 `json:"property_id,optional"`
+        Name string `json:"name" validate:"required,max=100"`
+        Description string `json:"description,optional" validate:"max=500"`
+        CoverUrl string `json:"cover_url,optional" validate:"max=255"`
+        WorkflowTemplateId int64 `json:"workflow_template_id" validate:"required,gt=0"`
+    }
+
+    ProjectManagementProjectUpdateRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Name string `json:"name" validate:"required,max=100"`
+        Description string `json:"description,optional" validate:"max=500"`
+        CoverUrl string `json:"cover_url,optional" validate:"max=255"`
+    }
+
+    ProjectManagementProjectDeleteRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Confirm bool `json:"confirm" validate:"required"`
+    }
+
+    ProjectManagementMemberEntity {
+        Id int64 `json:"id"`
+        ProjectId int64 `json:"project_id"`
+        OrganizationUserId int64 `json:"organization_user_id"`
+        Role string `json:"role"`
+        FullName string `json:"full_name"`
+        Email string `json:"email"`
+    }
+
+    ProjectManagementMemberInput {
+        OrganizationUserId int64 `json:"organization_user_id" validate:"required,gt=0"`
+        Role string `json:"role" validate:"required,oneof=ProjectAdmin TaskExecutor"`
+    }
+
+    ProjectManagementMemberPageFilter {
+        Keyword string `json:"keyword,optional"`
+        Role string `json:"role,optional" validate:"omitempty,oneof=ProjectOwner ProjectAdmin TaskExecutor"`
+    }
+
+    ProjectManagementMemberPageRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Page int64 `json:"page,default=1"`
+        Limit int64 `json:"limit,default=20"`
+        Filter ProjectManagementMemberPageFilter `json:"filter,optional"`
+    }
+
+    ProjectManagementMemberPageResponse {
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+        Total int64 `json:"total"`
+        TotalPage int64 `json:"total_page"`
+        List []*ProjectManagementMemberEntity `json:"list"`
+    }
+
+    ProjectManagementMemberCandidateRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Keyword string `form:"keyword,optional"`
+    }
+
+    ProjectManagementMemberCandidateResponse {
+        Data []*ProjectManagementMemberEntity `json:"data"`
+    }
+
+    ProjectManagementMemberAddRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Members []*ProjectManagementMemberInput `json:"members" validate:"required,min=1,dive"`
+    }
+
+    ProjectManagementMemberUpdateRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        UserId int64 `path:"user_id" validate:"required,gt=0"`
+        Role string `json:"role,optional" validate:"omitempty,oneof=ProjectAdmin TaskExecutor"`
+        TransferOwnerToUserId int64 `json:"transfer_owner_to_user_id,optional"`
+    }
+
+    ProjectManagementMemberDeleteRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        UserId int64 `path:"user_id" validate:"required,gt=0"`
+    }
+
+    ProjectManagementProjectWorkflowDetailRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+    }
+
+    ProjectManagementProjectWorkflowUpdateRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Name string `json:"name" validate:"required,max=100"`
+        Description string `json:"description,optional" validate:"max=500"`
+        Stages []*ProjectManagementWorkflowStageEntity `json:"stages" validate:"required,min=1,dive"`
+        Transitions []*ProjectManagementWorkflowTransitionEntity `json:"transitions,optional" validate:"dive"`
+    }
+
+    ProjectManagementTaskTypeSnapshotEntity {
+        Id int64 `json:"id"`
+        Name string `json:"name"`
+        Description string `json:"description"`
+        Color string `json:"color"`
+    }
+
+    ProjectManagementTaskAssigneeEntity {
+        OrganizationUserId int64 `json:"organization_user_id"`
+        OrganizationUserName string `json:"organization_user_name"`
+    }
+
+    ProjectManagementTaskEntity {
+        Id int64 `json:"id"`
+        ProjectId int64 `json:"project_id"`
+        ParentTaskId int64 `json:"parent_task_id"`
+        StageId int64 `json:"stage_id"`
+        CreatorId int64 `json:"creator_id"`
+        CreatorName string `json:"creator_name"`
+        Title string `json:"title"`
+        Description string `json:"description"`
+        Priority string `json:"priority"`
+        StartAt string `json:"start_at"`
+        EndAt string `json:"end_at"`
+        TaskType *ProjectManagementTaskTypeSnapshotEntity `json:"task_type"`
+        Assignees []*ProjectManagementTaskAssigneeEntity `json:"assignees"`
+        Overdue bool `json:"overdue"`
+        OverdueSeconds int64 `json:"overdue_seconds"`
+    }
+
+    ProjectManagementTaskPageFilter {
+        StageId int64 `json:"stage_id,optional"`
+        TaskTypeId int64 `json:"task_type_id,optional"`
+        AssigneeId int64 `json:"assignee_id,optional"`
+        Keyword string `json:"keyword,optional"`
+        Overdue *bool `json:"overdue,optional"`
+    }
+
+    ProjectManagementTaskPageRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Page int64 `json:"page,default=1"`
+        Limit int64 `json:"limit,default=20"`
+        Filter ProjectManagementTaskPageFilter `json:"filter,optional"`
+    }
+
+    ProjectManagementTaskPageResponse {
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+        Total int64 `json:"total"`
+        TotalPage int64 `json:"total_page"`
+        List []*ProjectManagementTaskEntity `json:"list"`
+    }
+
+    ProjectManagementTaskCreateRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        ParentTaskId int64 `json:"parent_task_id,optional"`
+        Title string `json:"title" validate:"required,max=255"`
+        Description string `json:"description,optional"`
+        Priority string `json:"priority,optional" validate:"max=32"`
+        StartAt string `json:"start_at,optional"`
+        EndAt string `json:"end_at,optional"`
+        TaskTypeId int64 `json:"task_type_id,optional"`
+        AssigneeIds []int64 `json:"assignee_ids,optional"`
+    }
+
+    ProjectManagementTaskDetailRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+    }
+
+    ProjectManagementTaskUpdateRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Title string `json:"title" validate:"required,max=255"`
+        Description string `json:"description,optional"`
+        Priority string `json:"priority,optional" validate:"max=32"`
+        StartAt string `json:"start_at,optional"`
+        EndAt string `json:"end_at,optional"`
+        TaskTypeId int64 `json:"task_type_id,optional"`
+    }
+
+    ProjectManagementTaskDeleteRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Confirm bool `json:"confirm" validate:"required"`
+    }
+
+    ProjectManagementMyTaskPageRequest {
+        Page int64 `json:"page,default=1"`
+        Limit int64 `json:"limit,default=20"`
+        Filter ProjectManagementMyTaskPageFilter `json:"filter,optional"`
+    }
+
+    ProjectManagementMyTaskPageFilter {
+        ProjectId int64 `json:"project_id,optional"`
+        StageId int64 `json:"stage_id,optional"`
+        TaskTypeId int64 `json:"task_type_id,optional"`
+        AssigneeId int64 `json:"assignee_id,optional"`
+        Keyword string `json:"keyword,optional"`
+        Overdue *bool `json:"overdue,optional"`
+    }
+
+    ProjectManagementOperationEntity {
+        Id int64 `json:"id"`
+        ProjectId int64 `json:"project_id"`
+        TaskId int64 `json:"task_id"`
+        OperatorId int64 `json:"operator_id"`
+        OperatorName string `json:"operator_name"`
+        Operation string `json:"operation"`
+        CreatedAt string `json:"created_at"`
+    }
+
+    ProjectManagementOperationPageFilter {
+        TaskId int64 `json:"task_id,optional"`
+        OperationType string `json:"operation_type,optional"`
+    }
+
+    ProjectManagementOperationPageRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Page int64 `json:"page,default=1"`
+        Limit int64 `json:"limit,default=20"`
+        Filter ProjectManagementOperationPageFilter `json:"filter,optional"`
+    }
+
+    ProjectManagementOperationPageResponse {
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+        Total int64 `json:"total"`
+        TotalPage int64 `json:"total_page"`
+        List []*ProjectManagementOperationEntity `json:"list"`
+    }
+
+    ProjectManagementTaskAssigneeUpdateRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        AssigneeIds []int64 `json:"assignee_ids"`
+    }
+
+    ProjectManagementAttachmentEntity {
+        FileId int64 `json:"file_id"`
+        FileName string `json:"file_name"`
+        FileUrl string `json:"file_url"`
+        StorageType string `json:"storage_type"`
+    }
+
+    ProjectManagementAttachmentPageRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Page int64 `json:"page,default=1"`
+        Limit int64 `json:"limit,default=20"`
+    }
+
+    ProjectManagementAttachmentPageResponse {
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+        Total int64 `json:"total"`
+        TotalPage int64 `json:"total_page"`
+        List []*ProjectManagementAttachmentEntity `json:"list"`
+    }
+
+    ProjectManagementAttachmentCreateRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        FileName string `json:"file_name,optional" validate:"max=255"`
+        FileUrl string `json:"file_url" validate:"required,max=255"`
+        StorageType string `json:"storage_type,optional" validate:"max=20"`
+    }
+
+    ProjectManagementAttachmentDeleteRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        FileId int64 `path:"file_id" validate:"required,gt=0"`
+    }
+
+    ProjectManagementTaskDependencyEntity {
+        Id int64 `json:"id"`
+        SuccessorTaskId int64 `json:"successor_task_id"`
+        PredecessorTaskId int64 `json:"predecessor_task_id"`
+        DependencyType string `json:"dependency_type"`
+    }
+
+    ProjectManagementDependencyPageRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Page int64 `json:"page,default=1"`
+        Limit int64 `json:"limit,default=20"`
+        Predecessor bool `json:"predecessor,optional"`
+    }
+
+    ProjectManagementDependencyPageResponse {
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+        Total int64 `json:"total"`
+        TotalPage int64 `json:"total_page"`
+        List []*ProjectManagementTaskDependencyEntity `json:"list"`
+    }
+
+    ProjectManagementDependencyCreateRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        PredecessorTaskId int64 `json:"predecessor_task_id" validate:"required,gt=0"`
+        DependencyType string `json:"dependency_type" validate:"required,oneof=FS FF SS SF"`
+    }
+
+    ProjectManagementDependencyUpdateRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        DependencyId int64 `path:"dependency_id" validate:"required,gt=0"`
+        DependencyType string `json:"dependency_type" validate:"required,oneof=FS FF SS SF"`
+    }
+
+    ProjectManagementDependencyDeleteRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        DependencyId int64 `path:"dependency_id" validate:"required,gt=0"`
+    }
+
+    ProjectManagementTaskTransitionRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        TargetStageId int64 `json:"target_stage_id" validate:"required,gt=0"`
+    }
+)
+
+@server (
+    desc: "borrower project management"
+    version: v1
+    group: project_management
+    prefix: /api/v1
+    middleware: AuthMiddleware
+    tags: project_management
+)
+service borrower-api {
+    @doc "list enabled project workflows"
+    @handler ProjectManagementWorkflowAll
+    get /project_management/workflow/all (EmptyRequest) returns (ProjectManagementWorkflowAllResponse)
+
+    @doc "page project workflows"
+    @handler ProjectManagementWorkflowPage
+    post /project_management/workflow/page (ProjectManagementWorkflowPageRequest) returns (ProjectManagementWorkflowPageResponse)
+
+    @doc "get project workflow"
+    @handler ProjectManagementWorkflowDetail
+    get /project_management/workflow/:id (ProjectManagementWorkflowDetailRequest) returns (ProjectManagementWorkflowEntity)
+
+    @doc "create project workflow"
+    @handler ProjectManagementWorkflowCreate
+    post /project_management/workflow (ProjectManagementWorkflowCreateRequest) returns (ProjectManagementWorkflowEntity)
+
+    @doc "update project workflow"
+    @handler ProjectManagementWorkflowUpdate
+    put /project_management/workflow/:id (ProjectManagementWorkflowUpdateRequest) returns (ProjectManagementWorkflowEntity)
+
+    @doc "delete project workflow"
+    @handler ProjectManagementWorkflowDelete
+    delete /project_management/workflow/:id (ProjectManagementWorkflowDeleteRequest) returns (EmptyResponse)
+
+    @doc "page project task types"
+    @handler ProjectManagementTaskTypePage
+    post /project_management/task_type/page (ProjectManagementTaskTypePageRequest) returns (ProjectManagementTaskTypePageResponse)
+
+    @doc "create project task type"
+    @handler ProjectManagementTaskTypeCreate
+    post /project_management/task_type (ProjectManagementTaskTypeCreateRequest) returns (ProjectManagementTaskTypeEntity)
+
+    @doc "update project task type"
+    @handler ProjectManagementTaskTypeUpdate
+    put /project_management/task_type/:id (ProjectManagementTaskTypeUpdateRequest) returns (ProjectManagementTaskTypeEntity)
+
+    @doc "delete project task type"
+    @handler ProjectManagementTaskTypeDelete
+    delete /project_management/task_type/:id (ProjectManagementTaskTypeDeleteRequest) returns (EmptyResponse)
+
+    @doc "page projects"
+    @handler ProjectManagementProjectPage
+    post /project_management/project/page (ProjectManagementProjectPageRequest) returns (ProjectManagementProjectPageResponse)
+
+    @doc "get project"
+    @handler ProjectManagementProjectDetail
+    get /project_management/project/:id (ProjectManagementProjectDetailRequest) returns (ProjectManagementProjectEntity)
+
+    @doc "create project"
+    @handler ProjectManagementProjectCreate
+    post /project_management/project (ProjectManagementProjectCreateRequest) returns (ProjectManagementProjectEntity)
+
+    @doc "update project"
+    @handler ProjectManagementProjectUpdate
+    put /project_management/project/:id (ProjectManagementProjectUpdateRequest) returns (ProjectManagementProjectEntity)
+
+    @doc "delete project"
+    @handler ProjectManagementProjectDelete
+    delete /project_management/project/:id (ProjectManagementProjectDeleteRequest) returns (EmptyResponse)
+
+    @doc "page project members"
+    @handler ProjectManagementMemberPage
+    post /project_management/project/:id/member/page (ProjectManagementMemberPageRequest) returns (ProjectManagementMemberPageResponse)
+
+    @doc "list project member candidates"
+    @handler ProjectManagementMemberCandidate
+    get /project_management/project/:id/member/candidate (ProjectManagementMemberCandidateRequest) returns (ProjectManagementMemberCandidateResponse)
+
+    @doc "add project members"
+    @handler ProjectManagementMemberAdd
+    post /project_management/project/:id/member (ProjectManagementMemberAddRequest) returns (EmptyResponse)
+
+    @doc "update project member"
+    @handler ProjectManagementMemberUpdate
+    put /project_management/project/:id/member/:user_id (ProjectManagementMemberUpdateRequest) returns (EmptyResponse)
+
+    @doc "remove project member"
+    @handler ProjectManagementMemberDelete
+    delete /project_management/project/:id/member/:user_id (ProjectManagementMemberDeleteRequest) returns (EmptyResponse)
+
+    @doc "get project workflow"
+    @handler ProjectManagementProjectWorkflowDetail
+    get /project_management/project/:id/workflow (ProjectManagementProjectWorkflowDetailRequest) returns (ProjectManagementWorkflowEntity)
+
+    @doc "update project workflow"
+    @handler ProjectManagementProjectWorkflowUpdate
+    put /project_management/project/:id/workflow (ProjectManagementProjectWorkflowUpdateRequest) returns (ProjectManagementWorkflowEntity)
+
+    @doc "page project tasks"
+    @handler ProjectManagementTaskPage
+    post /project_management/project/:id/task/page (ProjectManagementTaskPageRequest) returns (ProjectManagementTaskPageResponse)
+
+    @doc "create project task"
+    @handler ProjectManagementTaskCreate
+    post /project_management/project/:id/task (ProjectManagementTaskCreateRequest) returns (ProjectManagementTaskEntity)
+
+    @doc "get project task"
+    @handler ProjectManagementTaskDetail
+    get /project_management/task/:id (ProjectManagementTaskDetailRequest) returns (ProjectManagementTaskEntity)
+
+    @doc "update project task"
+    @handler ProjectManagementTaskUpdate
+    put /project_management/task/:id (ProjectManagementTaskUpdateRequest) returns (ProjectManagementTaskEntity)
+
+    @doc "delete project task"
+    @handler ProjectManagementTaskDelete
+    delete /project_management/task/:id (ProjectManagementTaskDeleteRequest) returns (EmptyResponse)
+
+    @doc "replace project task assignees"
+    @handler ProjectManagementTaskAssigneeUpdate
+    put /project_management/task/:id/assignee (ProjectManagementTaskAssigneeUpdateRequest) returns (ProjectManagementTaskEntity)
+
+    @doc "page project task attachments"
+    @handler ProjectManagementAttachmentPage
+    post /project_management/task/:id/attachment/page (ProjectManagementAttachmentPageRequest) returns (ProjectManagementAttachmentPageResponse)
+
+    @doc "register project task attachment"
+    @handler ProjectManagementAttachmentCreate
+    post /project_management/task/:id/attachment (ProjectManagementAttachmentCreateRequest) returns (ProjectManagementAttachmentEntity)
+
+    @doc "delete project task attachment"
+    @handler ProjectManagementAttachmentDelete
+    delete /project_management/task/:id/attachment/:file_id (ProjectManagementAttachmentDeleteRequest) returns (EmptyResponse)
+
+    @doc "page task dependencies"
+    @handler ProjectManagementDependencyPage
+    post /project_management/task/:id/dependency/page (ProjectManagementDependencyPageRequest) returns (ProjectManagementDependencyPageResponse)
+
+    @doc "create task dependency"
+    @handler ProjectManagementDependencyCreate
+    post /project_management/task/:id/dependency (ProjectManagementDependencyCreateRequest) returns (ProjectManagementTaskDependencyEntity)
+
+    @doc "update task dependency"
+    @handler ProjectManagementDependencyUpdate
+    put /project_management/task/:id/dependency/:dependency_id (ProjectManagementDependencyUpdateRequest) returns (ProjectManagementTaskDependencyEntity)
+
+    @doc "delete task dependency"
+    @handler ProjectManagementDependencyDelete
+    delete /project_management/task/:id/dependency/:dependency_id (ProjectManagementDependencyDeleteRequest) returns (EmptyResponse)
+
+    @doc "transition task"
+    @handler ProjectManagementTaskTransition
+    post /project_management/task/:id/transition (ProjectManagementTaskTransitionRequest) returns (ProjectManagementTaskEntity)
+
+    @doc "page my project tasks"
+    @handler ProjectManagementMyTaskPage
+    post /project_management/my_task/page (ProjectManagementMyTaskPageRequest) returns (ProjectManagementTaskPageResponse)
+
+    @doc "page project operation timeline"
+    @handler ProjectManagementOperationPage
+    post /project_management/project/:id/operation/page (ProjectManagementOperationPageRequest) returns (ProjectManagementOperationPageResponse)
+}

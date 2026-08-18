@@ -2,17 +2,30 @@ package repo
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/duke-git/lancet/v2/datetime"
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/gormx"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 )
 
 type OperationRepo struct {
 	*gormx.BaseRepo[*model.Operation]
+}
+
+func (repo *OperationRepo) PageProjectManagementOperations(ctx context.Context, organizationId int64, input dto.ProjectManagementOperationPageRequestDto) (gormx.PageResponse[*model.Operation], error) {
+	query := repo.Client(ctx).Where("entity_id = ? AND entity_type = ? AND organization_id = ?", input.Filter.ProjectId, constants.OperationEntityTypeProjectManagementProject, organizationId).Order("created_at DESC, id DESC")
+	if input.Filter.OperationType != "" {
+		query = query.Where("operation = ?", input.Filter.OperationType)
+	}
+	if input.Filter.TaskId != 0 {
+		query = query.Where(fmt.Sprintf("CAST(metadata->>'task_id' AS TEXT) = CAST(? AS TEXT)"), input.Filter.TaskId)
+	}
+	return repo.BaseRepo.Page(query, gormx.PageRequest{Page: input.Page, Limit: input.Limit})
 }
 
 func NewOperationRepo(db *gorm.DB) *OperationRepo {
