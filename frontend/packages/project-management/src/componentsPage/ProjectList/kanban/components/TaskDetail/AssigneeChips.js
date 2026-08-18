@@ -6,7 +6,7 @@
 import { CheckOutlined, CloseOutlined, PlusOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Button, Dropdown } from 'antd';
 import { displayValue } from '@repo/shared-methods/utils';
-import { getMemberInitial, getMemberLabel } from './helpers';
+import { getMemberInitial, getMemberLabel } from '../helpers';
 
 /**
  * @param {{

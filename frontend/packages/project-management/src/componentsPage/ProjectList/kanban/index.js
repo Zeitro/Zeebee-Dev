@@ -22,8 +22,7 @@ import { KanbanColumn } from './components/KanbanColumn';
 import { KanbanHeader } from './components/KanbanHeader';
 import { ProjectActivityDrawer } from './components/ProjectActivityDrawer';
 import { ProjectMemberListDrawer } from './components/ProjectMemberListDrawer';
-import { TaskActivityDrawer } from './components/TaskActivityDrawer';
-import { TaskDetailDrawer } from './components/TaskDetailDrawer';
+import { TaskActivityDrawer, TaskDetailDrawer } from './components/TaskDetail';
 import { useKanbanBoard } from './hooks/useKanbanBoard';
 
 export function ProjectKanban() {

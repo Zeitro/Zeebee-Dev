@@ -6,8 +6,8 @@
 import { Button, Tag } from 'antd';
 import { useTranslations } from 'next-intl';
 import { displayValue } from '@repo/shared-methods/utils';
-import { isTerminalState } from '../../../../enum/workflow';
-import { getSubtasks } from './helpers';
+import { isTerminalState } from '../../../../../enum/workflow';
+import { getSubtasks } from '../helpers';
 
 /**
  * @param {{

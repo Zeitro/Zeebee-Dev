@@ -14,7 +14,7 @@ import {
 import { Avatar, Button, Dropdown, Input, Tooltip } from 'antd';
 import { useTranslations } from 'next-intl';
 import { displayValue } from '@repo/shared-methods/utils';
-import { getMemberInitial, getMemberLabel } from './helpers';
+import { getMemberInitial, getMemberLabel } from '../helpers';
 
 /**
  * @param {{

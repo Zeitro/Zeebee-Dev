@@ -6,7 +6,7 @@
 import { Drawer, Empty, Timeline } from 'antd';
 import { useTranslations } from 'next-intl';
 import { dayjs } from '@repo/shared-methods/utils';
-import { formatActivityDescription, getMemberLabel } from './helpers';
+import { formatActivityDescription, getMemberLabel } from '../helpers';
 
 /**
  * @param {{

@@ -9,8 +9,8 @@ import { Avatar, Button, Dropdown, Input, Select, Tag, Tooltip, message } from '
 import { useTranslations } from 'next-intl';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 import { displayValue } from '@repo/shared-methods/utils';
-import { DEPENDENCY_TYPE_OPTIONS } from './constants';
-import { getMemberInitial, getMemberLabel } from './helpers';
+import { DEPENDENCY_TYPE_OPTIONS } from '../constants';
+import { getMemberInitial, getMemberLabel } from '../helpers';
 
 /**
  * @param {{

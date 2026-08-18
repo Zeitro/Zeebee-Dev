@@ -15,8 +15,8 @@ import { useTranslations } from 'next-intl';
 import { NewModal, UploadFileButton } from '@repo/shared-methods';
 import { dayjs } from '@repo/shared-methods/utils';
 import { useUserStore } from '@repo/shared-methods/store';
-import { IMAGE_FILE_EXTENSIONS } from './constants';
-import { dataUrlToBlob, formatFileSize, getFileExtension, getMemberLabel } from './helpers';
+import { IMAGE_FILE_EXTENSIONS } from '../constants';
+import { dataUrlToBlob, formatFileSize, getFileExtension, getMemberLabel } from '../helpers';
 
 /**
  * @param {{

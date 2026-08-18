@@ -1,5 +1,5 @@
 /**
- * 任务详情抽屉：标题失焦保存；状态走 transition；执行者即时落库；依赖/附件/日志。
+ * 任务详情抽屉（本目录入口）：标题失焦保存；状态走 transition；执行者即时落库；依赖/附件/日志。
  */
 'use client';
 
@@ -12,16 +12,18 @@ import { dayjs } from '@repo/shared-methods/utils';
 import {
 	PROJECT_PRIORITY_FILTER_VALUES,
 	PROJECT_PRIORITY_I18N_KEY,
-} from '../../../../enum/project';
-import { getWorkflowStateColor } from '../../../../enum/workflow';
-import { TASK_DETAIL_DRAWER_WIDTH } from './constants';
+} from '../../../../../enum/project';
+import { getWorkflowStateColor } from '../../../../../enum/workflow';
+import { TASK_DETAIL_DRAWER_WIDTH } from '../constants';
+import { getAssigneeIds } from '../helpers';
 import { AssigneeChips } from './AssigneeChips';
-import { getAssigneeIds } from './helpers';
 import { PriorityIcon } from './PriorityIcon';
 import { SubtaskList } from './SubtaskList';
 import { TaskAttachments } from './TaskAttachments';
 import { TaskDependencies } from './TaskDependencies';
 import { TaskDrawerHeader } from './TaskDrawerHeader';
+
+export { TaskActivityDrawer } from './TaskActivityDrawer';
 
 /**
  * @param {{
@@ -300,3 +302,4 @@ export function TaskDetailDrawer({
 		</Drawer>
 	);
 }
+

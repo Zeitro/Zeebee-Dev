@@ -94,7 +94,9 @@ export function ProjectMemberListDrawer({
 								</Avatar>
 								<div className="min-w-0">
 									<div className="font-medium text-sm truncate">{name}</div>
-									<div className="text-xs text-base-label truncate">{member?.email}</div>
+									<div className="text-xs text-base-label truncate">
+										{member?.email}
+									</div>
 								</div>
 							</div>
 							<div className="flex items-center gap-1 shrink-0">
@@ -122,7 +124,12 @@ export function ProjectMemberListDrawer({
 										okText={t('common.confirm')}
 										cancelText={t('common.cancel')}
 									>
-										<Button type="text" size="small" danger icon={<DeleteOutlined />} />
+										<Button
+											type="text"
+											size="small"
+											danger
+											icon={<DeleteOutlined />}
+										/>
 									</Popconfirm>
 								) : null}
 							</div>
