@@ -3,10 +3,11 @@
  */
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { DeleteOutlined, LinkOutlined, PlusOutlined } from '@ant-design/icons';
 import { Avatar, Button, Dropdown, Input, Select, Tag, Tooltip, message } from 'antd';
 import { useTranslations } from 'next-intl';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 import { displayValue } from '@repo/shared-methods/utils';
 import { DEPENDENCY_TYPE_OPTIONS } from './constants';
 import { getMemberInitial, getMemberLabel } from './helpers';
@@ -68,13 +69,16 @@ export function TaskDependencies({
 		]);
 		setDependencies(depRows);
 		setDependents(dependentRows);
-	}, [fetchDependencies, fetchDependents, task?.id]);
+	}, [fetchDependencies, fetchDependents, task]);
 
-	useEffect(() => {
-		reload();
-		setAddingMode(initialAddingMode);
-		setSearch('');
-	}, [initialAddingMode, reload, task?.id]);
+	// 父级 key 随 task / initialAddingMode 变化 remount；此处仅异步拉依赖列表
+	useDeferredSyncEffect({
+		deferred: () => {
+			reload();
+		},
+		deps: [reload, task?.id],
+		isUseMicrotask: true,
+	});
 
 	const candidateTasks = useMemo(() => {
 		const keyword = search.trim().toLowerCase();
@@ -119,8 +123,16 @@ export function TaskDependencies({
 				<Dropdown
 					menu={{
 						items: [
-							{ key: 'predecessor', label: t('kanban.predecessor'), icon: <LinkOutlined /> },
-							{ key: 'successor', label: t('kanban.successor'), icon: <LinkOutlined /> },
+							{
+								key: 'predecessor',
+								label: t('kanban.predecessor'),
+								icon: <LinkOutlined />,
+							},
+							{
+								key: 'successor',
+								label: t('kanban.successor'),
+								icon: <LinkOutlined />,
+							},
 						],
 						onClick: ({ key }) => {
 							setAddingMode(key);
@@ -136,7 +148,9 @@ export function TaskDependencies({
 			{addingMode ? (
 				<div className="mb-2">
 					<div className="text-xs text-base-gray mb-1.5">
-						{addingMode === 'predecessor' ? t('kanban.predecessor') : t('kanban.successor')}
+						{addingMode === 'predecessor'
+							? t('kanban.predecessor')
+							: t('kanban.successor')}
 					</div>
 					<Input
 						size="small"
@@ -149,7 +163,9 @@ export function TaskDependencies({
 					/>
 					<div className="border border-base-border rounded-md bg-white shadow-sm max-h-80 overflow-y-auto">
 						<div className="px-4 py-2 text-xs text-base-label border-b border-base-border bg-base-bg">
-							{search.trim() ? t('kanban.searchResults') : t('kanban.selectableTasks')}
+							{search.trim()
+								? t('kanban.searchResults')
+								: t('kanban.selectableTasks')}
 						</div>
 						{candidateTasks.length === 0 ? (
 							<div className="px-4 py-3 text-[13px] text-base-disabled">
@@ -160,7 +176,9 @@ export function TaskDependencies({
 								const stateObj = workflow?.states?.find(
 									(state) => state.id === item.workflow_state_id,
 								);
-								const assignee = members.find((member) => member.id === item.assignee_id);
+								const assignee = members.find(
+									(member) => member.id === item.assignee_id,
+								);
 								return (
 									<div
 										key={item.id}
@@ -168,7 +186,9 @@ export function TaskDependencies({
 										onClick={() => handleAdd(item)}
 									>
 										<span className="text-base-label text-xs">#{item.id}</span>
-										<span className="flex-1 truncate">{displayValue(item.title)}</span>
+										<span className="flex-1 truncate">
+											{displayValue(item.title)}
+										</span>
 										{stateObj ? (
 											<Tag className="m-0 text-[11px] leading-[18px] px-1.5">
 												{stateObj.name}
@@ -178,7 +198,9 @@ export function TaskDependencies({
 											<Tooltip title={getMemberLabel(assignee)}>
 												<Avatar
 													size={20}
-													style={{ backgroundColor: 'var(--blue-medium)' }}
+													style={{
+														backgroundColor: 'var(--blue-medium)',
+													}}
 													className="text-[10px] shrink-0"
 												>
 													{getMemberInitial(assignee)}
@@ -213,17 +235,18 @@ export function TaskDependencies({
 							className="flex items-center gap-2 px-2.5 py-1.5 bg-base-bg rounded-md border border-base-border mb-1.5"
 						>
 							<LinkOutlined className="text-base-disabled text-xs" />
-							<button
-								type="button"
-								className="flex-1 text-left text-[13px] text-blue-medium truncate"
+							<Button
+								type="link"
+								className="flex-1 text-left text-[13px] truncate h-auto p-0 justify-start"
 								onClick={() => {
-									const depTask = tasks.find((item) => item.id === dep.depends_on_task_id);
+									const depTask = tasks.find(
+										(item) => item.id === dep.depends_on_task_id,
+									);
 									if (depTask) onTaskClick(depTask);
 								}}
 							>
-								#{dep.depends_on_task_id}{' '}
-								{displayValue(dep.depends_on_task?.title)}
-							</button>
+								#{dep.depends_on_task_id} {displayValue(dep.depends_on_task?.title)}
+							</Button>
 							<Select
 								size="small"
 								value={dep.dependency_type}
@@ -280,16 +303,16 @@ export function TaskDependencies({
 									}
 								}}
 							/>
-							<button
-								type="button"
-								className="flex-1 text-left text-[13px] text-blue-medium truncate"
+							<Button
+								type="link"
+								className="flex-1 text-left text-[13px] truncate h-auto p-0 justify-start"
 								onClick={() => {
 									const depTask = tasks.find((item) => item.id === dep.task_id);
 									if (depTask) onTaskClick(depTask);
 								}}
 							>
 								#{dep.task_id} {displayValue(dep.task?.title)}
-							</button>
+							</Button>
 							<Button
 								size="small"
 								type="text"

@@ -3,7 +3,7 @@
  */
 'use client';
 
-import { Tag } from 'antd';
+import { Button, Tag } from 'antd';
 import { useTranslations } from 'next-intl';
 import { displayValue } from '@repo/shared-methods/utils';
 import { isTerminalState } from '../../../../enum/workflow';
@@ -41,10 +41,11 @@ export function SubtaskList({ parentId, tasks = [], workflow, onTaskClick }) {
 						(row) => row.id === item.workflow_state_id,
 					);
 					return (
-						<button
+						<Button
 							key={item.id}
-							type="button"
-							className="w-full flex items-center gap-2 px-3 py-1.5 text-left text-[13px] hover:bg-base-text2"
+							type="text"
+							block
+							className="flex items-center gap-2 px-3 py-1.5 h-auto text-left text-[13px] hover:bg-base-text2 rounded-none"
 							onClick={() => onTaskClick(item)}
 						>
 							<span className="flex-1 truncate">
@@ -54,7 +55,7 @@ export function SubtaskList({ parentId, tasks = [], workflow, onTaskClick }) {
 								</span>
 							</span>
 							{state?.name ? <Tag className="m-0">{state.name}</Tag> : null}
-						</button>
+						</Button>
 					);
 				})}
 			</div>

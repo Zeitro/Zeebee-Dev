@@ -4,8 +4,9 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Avatar, Button, Checkbox, Empty, Input, Modal } from 'antd';
+import { Avatar, Button, Checkbox, Empty, Input } from 'antd';
 import { useTranslations } from 'next-intl';
+import { NewModal } from '@repo/shared-methods';
 import { getMemberInitial, getMemberLabel } from './helpers';
 
 /**
@@ -59,32 +60,37 @@ export function InviteMemberModal({
 		onCancel();
 	};
 
+	const handleInvite = async () => {
+		await onInvite([...selected]);
+		setSelected(new Set());
+		setSearch('');
+	};
+
+	if (!open) return null;
+
 	return (
-		<Modal
+		<NewModal
 			title={t('kanban.inviteMembers')}
-			open={open}
+			width={480}
+			destroyOnHidden
 			onCancel={handleClose}
 			footer={
 				<div className="flex items-center justify-between">
 					<span className="text-[13px] text-base-label">
-						{selected.size > 0 ? t('kanban.inviteSelected', { count: selected.size }) : ''}
+						{selected.size > 0
+							? t('kanban.inviteSelected', { count: selected.size })
+							: ''}
 					</span>
 					<Button
 						type="primary"
 						loading={loading}
 						disabled={selected.size === 0}
-						onClick={async () => {
-							await onInvite([...selected]);
-							setSelected(new Set());
-							setSearch('');
-						}}
+						onClick={handleInvite}
 					>
 						{t('kanban.inviteAdd')}
 					</Button>
 				</div>
 			}
-			width={480}
-			destroyOnHidden
 		>
 			<Input.Search
 				placeholder={t('kanban.inviteSearchPlaceholder')}
@@ -95,7 +101,10 @@ export function InviteMemberModal({
 			/>
 			<div className="max-h-[360px] overflow-y-auto">
 				{filteredMembers.length === 0 ? (
-					<Empty description={t('kanban.inviteEmpty')} image={Empty.PRESENTED_IMAGE_SIMPLE} />
+					<Empty
+						description={t('kanban.inviteEmpty')}
+						image={Empty.PRESENTED_IMAGE_SIMPLE}
+					/>
 				) : (
 					filteredMembers.map((item) => (
 						<div
@@ -111,7 +120,11 @@ export function InviteMemberModal({
 									onChange={() => toggleSelection(item.id)}
 									onClick={(event) => event.stopPropagation()}
 								/>
-								<Avatar size={36} style={{ backgroundColor: 'var(--blue-medium)' }} className="shrink-0">
+								<Avatar
+									size={36}
+									style={{ backgroundColor: 'var(--blue-medium)' }}
+									className="shrink-0"
+								>
 									{getMemberInitial(item)}
 								</Avatar>
 								<div>
@@ -123,6 +136,6 @@ export function InviteMemberModal({
 					))
 				)}
 			</div>
-		</Modal>
+		</NewModal>
 	);
 }

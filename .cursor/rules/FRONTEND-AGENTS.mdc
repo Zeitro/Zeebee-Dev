@@ -91,6 +91,15 @@ Zeebee-Dev/
 
 - 提交前遵循各应用 / 根目录的 **ESLint 9**、**Prettier 3.x**；新增文件风格与邻近文件一致。根 **husky / lint-staged** 覆盖范围以实际配置为准。
 - **注释**：代码自解释优先；模块 / 工具文件顶部写职责与约定；非显而易见函数与导出函数用 JSDoc（`@param` / `@returns`）；中文简述「做什么 + 关键约定」；禁止废代码注释与逐行翻译。细则与示例见既有习惯及 `code-comments` 用户规则。
+- **写法与封装**：新代码用**当前栈的惯用写法**（React 19 / Next 15 / antd 5 / Es6以上 等），**不写废代码**（注释掉的旧实现、未引用的 export、仅为占位而存在的函数）。**勿过度封装 trivial 数据逻辑**——一行能表达清楚的取值 / 展示就地写，例如 `displayValue(row.name)`，**勿**再包一层 `getRowName(row)`。**DOM 绑定的事件 / 回调**则相反：即便只用一处，逻辑稍多也应抽成 `handleXxx` 等，让 JSX 保持简洁可读。仅当**数据映射 / 工具逻辑**复用 ≥2 处、多步非显而易见、或需单测隔离时才抽独立函数；组件 / hook 按 UI 与状态边界拆分，不因「只用一次」而强行内联复杂交互。
+- **`react-hooks/set-state-in-effect`**（borrower / project 等为 **error**）：报错 *Calling setState synchronously within an effect can trigger cascading renders* 时，**优先改结构，勿默认 `eslint-disable`**。按序选用：
+  1. **可派生则不存 state**——由 props / 其它 state 算出的值在 render 或 `useMemo` 中直接计算，勿 `useEffect` + 同步 `setState` 做「镜像 state」。
+  2. **随 prop / id 重置**——父级给子组件加 **`key`**（如 `key={taskId}`）触发 remount，或用 `useState` 惰性初值；勿在 effect 里同步把 state 重置成与 prop 相同。
+  3. **外部数据源**（`localStorage`、订阅等）——优先 **`useSyncExternalStore`**；或读写封装进事件 / 异步回调，避免 effect 开头同步 `setLoading(true)` 等纯派生 loading。
+  4. **多处关联 state 同批更新**——合并为单对象 state 或 **`useReducer`**，一次 dispatch 代替 effect 内多次 `setState`。
+  5. **允许的模式**——effect / `useLayoutEffect` 内 **异步** 再 `setState`（`fetch().then`、`setTimeout`、事件回调）；**基于 ref 的 DOM 测量**后 `setState`（见 [React 文档](https://react.dev/reference/eslint-plugin-react-hooks/lints/set-state-in-effect)）。
+  6. **确 unavoidable**（如挂载时拉数且内部同步 setState、与 demo 一致的 localStorage 同步等）——单行 `// eslint-disable-next-line react-hooks/set-state-in-effect -- 中文简述原因`，与 `useKanbanBoard.js` 同类写法一致；禁止无说明的 disable。
+  7. **实在无法改结构时**——用 **`@repo/shared-methods/hooks`** 的 **`useDeferredSyncEffect`** / **`useDeferredSyncEffects`**：须 effect 触发的 **`setState` 放 `deferred`**（微任务 / `setTimeout` 异步执行，规避同步 setState 报错）；须同步更新的外部系统（如 **`form.setFieldsValue`**）放 **`immediate`**；可选 **`predicate`** 控制是否执行；多条规则用 **`useDeferredSyncEffects`**。PM 域同样经 shared-methods 引用，**勿**在包内再抄一份。
 - **Agent**：**最小必要改动**；默认只动当前 `frontend/<app>` 或相关 `frontend/packages/*`；跨应用同步需明确需求；纯前端勿动 `backend/`；风格以邻近文件为准。
 
 ---

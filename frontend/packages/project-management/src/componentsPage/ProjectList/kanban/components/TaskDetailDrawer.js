@@ -3,10 +3,11 @@
  */
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { CalendarOutlined, PlusOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, DatePicker, Divider, Drawer, Form, Input, InputNumber, Select } from 'antd';
 import { useTranslations } from 'next-intl';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 import { dayjs } from '@repo/shared-methods/utils';
 import {
 	PROJECT_PRIORITY_FILTER_VALUES,
@@ -97,21 +98,27 @@ export function TaskDetailDrawer({
 		[t],
 	);
 
-	useEffect(() => {
-		if (!task || !open) return;
-		setDependencyFocusMode(null);
-		form.setFieldsValue({
-			title: task.title,
-			description: task.description,
-			priority: task.priority,
-			type: task.type,
-			workflow_state_id: task.workflow_state_id,
-			assignee_ids: getAssigneeIds(task),
-			start_date: task.start_date ? dayjs(task.start_date) : undefined,
-			due_date: task.due_date ? dayjs(task.due_date) : undefined,
-			estimated_hours: task.estimated_hours,
-		});
-	}, [form, open, task]);
+	useDeferredSyncEffect({
+		predicate: () => Boolean(task && open),
+		immediate: () => {
+			form.setFieldsValue({
+				title: task.title,
+				description: task.description,
+				priority: task.priority,
+				type: task.type,
+				workflow_state_id: task.workflow_state_id,
+				assignee_ids: getAssigneeIds(task),
+				start_date: task.start_date ? dayjs(task.start_date) : undefined,
+				due_date: task.due_date ? dayjs(task.due_date) : undefined,
+				estimated_hours: task.estimated_hours,
+			});
+		},
+		deferred: () => {
+			setDependencyFocusMode(null);
+		},
+		deps: [form, open, task],
+		isUseMicrotask: true,
+	});
 
 	const handleSave = async () => {
 		const values = form.getFieldsValue();
@@ -276,7 +283,7 @@ export function TaskDetailDrawer({
 								/>
 							</Form.Item>
 							<TaskAttachments
-								key={task.id}
+								key={`${project?.id ?? 'default'}-${task.id}`}
 								taskId={task.id}
 								projectId={project?.id}
 								members={members}

@@ -4,7 +4,7 @@
 'use client';
 
 import { CheckOutlined, CloseOutlined, PlusOutlined, UserOutlined } from '@ant-design/icons';
-import { Avatar, Dropdown } from 'antd';
+import { Avatar, Button, Dropdown } from 'antd';
 import { displayValue } from '@repo/shared-methods/utils';
 import { getMemberInitial, getMemberLabel } from './helpers';
 
@@ -59,30 +59,33 @@ export function AssigneeChips({ value, onChange, options = [], fallbacks = [] })
 							</Avatar>
 							<span className="font-medium text-[13px]">{displayValue(name)}</span>
 						</span>
-						<button
-							type="button"
-							className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-white border border-base-border inline-flex items-center justify-center z-[1]"
+						<Button
+							type="text"
+							size="small"
+							shape="circle"
+							className="absolute -top-1.5 -right-1.5 w-4 h-4 min-w-4 bg-white border border-base-border z-[1]"
+							icon={<CloseOutlined className="text-[8px] text-base-label" />}
 							onClick={(event) => {
 								event.stopPropagation();
 								onChange?.(ids.filter((item) => item !== id));
 							}}
-						>
-							<CloseOutlined className="text-[8px] text-base-label" />
-						</button>
+						/>
 					</span>
 				);
 			})}
 			<Dropdown menu={{ items: menuItems }} trigger={['click']} placement="bottomLeft">
-				<button
-					type="button"
-					className="w-[26px] h-[26px] rounded-full bg-base-text2 inline-flex items-center justify-center shrink-0"
-				>
-					{menuItems.length ? (
-						<PlusOutlined className="text-xs text-base-gray" />
-					) : (
-						<UserOutlined className="text-xs text-base-gray" />
-					)}
-				</button>
+				<Button
+					type="text"
+					shape="circle"
+					className="w-[26px] h-[26px] min-w-[26px] bg-base-text2 shrink-0"
+					icon={
+						menuItems.length ? (
+							<PlusOutlined className="text-xs text-base-gray" />
+						) : (
+							<UserOutlined className="text-xs text-base-gray" />
+						)
+					}
+				/>
 			</Dropdown>
 		</div>
 	);

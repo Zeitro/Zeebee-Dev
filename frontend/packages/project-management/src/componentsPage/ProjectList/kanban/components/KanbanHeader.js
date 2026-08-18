@@ -63,9 +63,8 @@ export function KanbanHeader({
 				</h2>
 			</div>
 			<div className="flex items-center gap-3 shrink-0">
-				<button
-					type="button"
-					className="flex items-center gap-1.5 cursor-pointer border-0 bg-transparent p-0"
+				<div
+					className="flex items-center gap-1.5 h-auto p-0 cursor-pointer"
 					title={t('kanban.viewAllMembers')}
 					onClick={onMembersClick}
 				>
@@ -100,7 +99,7 @@ export function KanbanHeader({
 							);
 						})}
 					</Avatar.Group>
-				</button>
+				</div>
 				{canManageMembers ? (
 					<Button size="small" icon={<PlusOutlined />} onClick={onInviteClick}>
 						{t('kanban.invite')}

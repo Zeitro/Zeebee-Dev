@@ -3,15 +3,16 @@
  */
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import {
 	DeleteOutlined,
 	DownloadOutlined,
 	PaperClipOutlined,
 	UploadOutlined,
 } from '@ant-design/icons';
-import { Button, Input, Modal, Popconfirm, message } from 'antd';
+import { Button, Image, Input, Popconfirm, message } from 'antd';
 import { useTranslations } from 'next-intl';
+import { NewModal, UploadFileButton } from '@repo/shared-methods';
 import { dayjs } from '@repo/shared-methods/utils';
 import { useUserStore } from '@repo/shared-methods/store';
 import { IMAGE_FILE_EXTENSIONS } from './constants';
@@ -36,17 +37,8 @@ export function TaskAttachments({ taskId, projectId, members = [] }) {
 			return [];
 		}
 	});
-	const fileInputRef = useRef(null);
 	const [previewItem, setPreviewItem] = useState(null);
-
-	useEffect(() => {
-		if (typeof window === 'undefined') return;
-		try {
-			setItems(JSON.parse(localStorage.getItem(storageKey) || '[]'));
-		} catch {
-			setItems([]);
-		}
-	}, [storageKey]);
+	const uploadRef = useRef(null);
 
 	const persist = (next) => {
 		setItems(next);
@@ -67,28 +59,41 @@ export function TaskAttachments({ taskId, projectId, members = [] }) {
 		}
 	};
 
-	const handleFileChange = (event) => {
-		const file = event.target.files?.[0];
-		event.target.value = '';
-		if (!file) return;
-		const reader = new FileReader();
-		reader.onload = () => {
-			persist([
-				{
-					id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-					name: file.name,
-					dataUrl: String(reader.result),
-					size: file.size,
-					uploaderId: userInfo?.id || 0,
-					uploaderName: userInfo?.name || userInfo?.email || t('kanban.unknownUser'),
-					uploadedAt: new Date().toISOString(),
-					note: '',
-				},
-				...items,
-			]);
-		};
-		reader.readAsDataURL(file);
-	};
+	const handleUploadListChange = useCallback(
+		(fileList) => {
+			const file = fileList[fileList.length - 1]?.originFileObj;
+			if (!file) return;
+
+			const reader = new FileReader();
+			reader.onload = () => {
+				setItems((prev) => {
+					const next = [
+						{
+							id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+							name: file.name,
+							dataUrl: String(reader.result),
+							size: file.size,
+							uploaderId: userInfo?.id || 0,
+							uploaderName:
+								userInfo?.name || userInfo?.email || t('kanban.unknownUser'),
+							uploadedAt: new Date().toISOString(),
+							note: '',
+						},
+						...prev,
+					];
+					try {
+						localStorage.setItem(storageKey, JSON.stringify(next));
+					} catch {
+						message.error(t('kanban.attachmentSaveFailed'));
+					}
+					return next;
+				});
+				uploadRef.current?.clearFileList();
+			};
+			reader.readAsDataURL(file);
+		},
+		[storageKey, t, userInfo?.email, userInfo?.id, userInfo?.name],
+	);
 
 	const handleNoteChange = (id, note) => {
 		const next = items.map((item) => (item.id === id ? { ...item, note } : item));
@@ -105,19 +110,16 @@ export function TaskAttachments({ taskId, projectId, members = [] }) {
 			<div className="flex items-center gap-2">
 				<PaperClipOutlined className="text-base-label text-xs" />
 				<span className="font-medium text-[13px]">{t('kanban.attachments')}</span>
-				<Button
-					size="small"
-					icon={<UploadOutlined />}
-					onClick={() => fileInputRef.current?.click()}
+				<UploadFileButton
+					ref={uploadRef}
+					showUploadList={false}
+					immediateUpload={false}
+					onGetUploadList={handleUploadListChange}
 				>
-					{t('kanban.uploadAttachment')}
-				</Button>
-				{/* <input
-					ref={fileInputRef}
-					type="file"
-					className="hidden"
-					onChange={handleFileChange}
-				/> */}
+					<Button size="small" icon={<UploadOutlined />}>
+						{t('kanban.uploadAttachment')}
+					</Button>
+				</UploadFileButton>
 			</div>
 			{items.length > 0 ? (
 				<div className="mt-2 border border-base-border rounded-md overflow-hidden">
@@ -128,21 +130,23 @@ export function TaskAttachments({ taskId, projectId, members = [] }) {
 								key={item.id}
 								className="flex items-center gap-2.5 px-2.5 py-1.5 border-b border-base-border last:border-b-0 text-xs"
 							>
-								<button
-									type="button"
-									className="text-base-primary font-medium truncate max-w-[220px] text-left"
+								<Button
+									type="link"
+									size="small"
+									className="font-medium truncate max-w-[220px] !px-0"
 									title={t('kanban.attachmentPreview', { name: item.name })}
 									onClick={() => handleOpen(item)}
 								>
 									{item.name}
-								</button>
-								<a
+								</Button>
+								<Button
+									type="link"
+									size="small"
+									icon={<DownloadOutlined className="text-blue-medium" />}
 									href={item.dataUrl}
 									download={item.name}
 									title={t('kanban.download')}
-								>
-									<DownloadOutlined className="text-blue-medium" />
-								</a>
+								/>
 								<span className="text-base-label shrink-0">
 									{dayjs(item.uploadedAt).format('YYYY-MM-DD HH:mm')}{' '}
 									{t('kanban.uploadedBy', {
@@ -185,29 +189,28 @@ export function TaskAttachments({ taskId, projectId, members = [] }) {
 					})}
 				</div>
 			) : null}
-			<Modal
-				open={Boolean(previewItem)}
-				title={previewItem?.name}
-				footer={null}
-				width={800}
-				onCancel={() => setPreviewItem(null)}
-			>
-				{previewItem ? (
-					getFileExtension(previewItem.name) === 'pdf' ? (
+			{previewItem ? (
+				<NewModal
+					title={previewItem.name}
+					footer={null}
+					width={800}
+					onCancel={() => setPreviewItem(null)}
+				>
+					{getFileExtension(previewItem.name) === 'pdf' ? (
 						<iframe
 							src={previewItem.dataUrl}
 							title={previewItem.name}
 							className="w-full h-[70vh] border-0"
 						/>
 					) : (
-						<img
+						<Image
 							src={previewItem.dataUrl}
 							alt={previewItem.name}
 							className="max-w-full block mx-auto"
 						/>
-					)
-				) : null}
-			</Modal>
+					)}
+				</NewModal>
+			) : null}
 		</div>
 	);
 }

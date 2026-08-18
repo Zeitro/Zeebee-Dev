@@ -4,6 +4,7 @@
 'use client';
 
 import { AppstoreOutlined, SettingOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { displayValue } from '@repo/shared-methods/utils';
@@ -50,23 +51,21 @@ export function ProjectCard({ row }) {
 				</div>
 			</div>
 			<div className="mt-auto flex items-stretch border-t border-base-border">
-				<button
-					type="button"
-					className="flex-1 py-3 text-base-gray hover:text-base-primary"
+				<Button
+					type="text"
+					className="flex-1 py-3 h-auto rounded-none text-base-gray hover:text-base-primary"
 					aria-label={t('openKanban')}
+					icon={<AppstoreOutlined />}
 					onClick={goKanban}
-				>
-					<AppstoreOutlined />
-				</button>
+				/>
 				<span className="w-px bg-base-border" />
-				<button
-					type="button"
-					className="flex-1 py-3 text-base-gray hover:text-base-primary"
+				<Button
+					type="text"
+					className="flex-1 py-3 h-auto rounded-none text-base-gray hover:text-base-primary"
 					aria-label={t('openSettings')}
+					icon={<SettingOutlined />}
 					onClick={goSettings}
-				>
-					<SettingOutlined />
-				</button>
+				/>
 			</div>
 		</div>
 	);

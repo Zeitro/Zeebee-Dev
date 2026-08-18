@@ -3,7 +3,7 @@
  */
 'use client';
 
-import { Drawer, Empty, Timeline } from 'antd';
+import { Button, Drawer, Empty, Timeline } from 'antd';
 import { useTranslations } from 'next-intl';
 import { dayjs } from '@repo/shared-methods/utils';
 import { formatActivityDescription, getMemberLabel } from './helpers';
@@ -42,13 +42,18 @@ export function ProjectActivityDrawer({
 			onClose={onClose}
 		>
 			{activities.length === 0 ? (
-				<Empty description={t('kanban.activityEmptyList')} image={Empty.PRESENTED_IMAGE_SIMPLE} />
+				<Empty
+					description={t('kanban.activityEmptyList')}
+					image={Empty.PRESENTED_IMAGE_SIMPLE}
+				/>
 			) : (
 				<Timeline
 					className="mt-3"
 					items={activities.map((act) => {
 						const task = tasks.find((item) => item.id === act.task_id);
-						const userName = act.user_id ? resolveUserName(act.user_id) : t('kanban.system');
+						const userName = act.user_id
+							? resolveUserName(act.user_id)
+							: t('kanban.system');
 						const description = formatActivityDescription(act, t, resolveUserName);
 						return {
 							children: (
@@ -56,13 +61,14 @@ export function ProjectActivityDrawer({
 									<div className="text-xs">
 										<strong>{userName}</strong> {description}
 										{task ? (
-											<button
-												type="button"
-												className="ml-2 text-blue-medium hover:underline"
+											<Button
+												type="link"
+												size="small"
+												className="ml-2 p-0 h-auto text-blue-medium"
 												onClick={() => onTaskClick?.(task)}
 											>
 												#{task.id} {task.title}
-											</button>
+											</Button>
 										) : null}
 									</div>
 									<div className="text-xs text-base-label mt-0.5">
