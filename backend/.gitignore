@@ -6,6 +6,11 @@
 # generated / local artifacts
 specs
 .DS_Store
+Thumbs.db
+*.tmp
+*.swp
+.vscode/
+.idea/
 .traces
 .skillopt-sleep
 .cache
