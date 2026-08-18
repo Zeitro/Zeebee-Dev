@@ -7,7 +7,7 @@ package server
 import (
 	"context"
 
-	userlogic "zeebee-backend/app/borrower/rpc/internal/logic/user"
+	"zeebee-backend/app/borrower/rpc/internal/logic/user"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/domains/zeebee/proto"

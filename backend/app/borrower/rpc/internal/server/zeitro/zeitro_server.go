@@ -7,7 +7,7 @@ package server
 import (
 	"context"
 
-	zeitrologic "zeebee-backend/app/borrower/rpc/internal/logic/zeitro"
+	"zeebee-backend/app/borrower/rpc/internal/logic/zeitro"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 )
