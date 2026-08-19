@@ -32,7 +32,7 @@ func (l *ProjectManagementDependencyCreateLogic) ProjectManagementDependencyCrea
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-	data.SuccessorTaskId = req.Id
+	data.TaskId = req.Id
 	rpcResp, err := l.svcCtx.ProjectManagementRpcClient.DependencyCreate(l.ctx, &borrower.ProjectManagementDependencyCreateRequest{Data: data})
 	if err != nil {
 		return nil, errorx.WithStack(err)

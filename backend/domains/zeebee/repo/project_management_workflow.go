@@ -135,11 +135,9 @@ func (r *ProjectManagementWorkflowRepo) DemoteDefaultWithTx(ctx context.Context,
 }
 
 func (r *ProjectManagementWorkflowRepo) UpdateTemplateWithTx(ctx context.Context, tx *gorm.DB, workflow *model.ProjectManagementWorkflow) error {
-	err := tx.WithContext(ctx).Model(&model.ProjectManagementWorkflow{}).
+	err := tx.WithContext(ctx).Model(workflow).
 		Where("id = ? AND organization_id = ? AND kind = ?", workflow.Id, workflow.OrganizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).
-		Updates(map[string]interface{}{
-			"name": workflow.Name, "description": workflow.Description, "enabled": workflow.Enabled, "is_default": workflow.IsDefault,
-		}).Error
+		Select("name", "description", "enabled", "is_default").Updates(workflow).Error
 	return errorx.WithStack(err)
 }
 
@@ -173,9 +171,9 @@ func (r *ProjectManagementWorkflowRepo) ReplaceTemplateDefinitionWithTx(ctx cont
 }
 
 func (r *ProjectManagementWorkflowRepo) UpdateProjectWithTx(ctx context.Context, tx *gorm.DB, workflow *model.ProjectManagementWorkflow) error {
-	err := tx.WithContext(ctx).Model(&model.ProjectManagementWorkflow{}).
+	err := tx.WithContext(ctx).Model(workflow).
 		Where("id = ? AND organization_id = ? AND kind = ?", workflow.Id, workflow.OrganizationId, constants.ProjectManagementWorkflowKindProject).
-		Updates(map[string]interface{}{"name": workflow.Name, "description": workflow.Description}).Error
+		Select("name", "description").Updates(workflow).Error
 	return errorx.WithStack(err)
 }
 
@@ -198,8 +196,8 @@ func (r *ProjectManagementWorkflowRepo) ReplaceProjectDefinitionWithTx(ctx conte
 			if _, ok := existingById[referenceId]; !ok {
 				return errorx.New("workflow stage does not belong to the project workflow")
 			}
-			if err := tx.WithContext(ctx).Model(&model.ProjectManagementWorkflowStage{}).Where("id = ?", referenceId).
-				Updates(map[string]interface{}{"name": stage.Name, "phase": stage.Phase, "sort_order": stage.SortOrder}).Error; err != nil {
+			if err := tx.WithContext(ctx).Model(stage).Where("id = ?", referenceId).
+				Select("name", "phase", "sort_order").Updates(stage).Error; err != nil {
 				return errorx.WithStack(err)
 			}
 			stageIds[referenceId], retained[referenceId] = referenceId, struct{}{}

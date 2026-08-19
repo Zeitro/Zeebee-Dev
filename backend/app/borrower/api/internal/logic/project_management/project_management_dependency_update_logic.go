@@ -32,6 +32,7 @@ func (l *ProjectManagementDependencyUpdateLogic) ProjectManagementDependencyUpda
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
+	data.TaskId = req.Id
 	rpcResp, err := l.svcCtx.ProjectManagementRpcClient.DependencyUpdate(l.ctx, &borrower.ProjectManagementDependencyUpdateRequest{Data: data})
 	if err != nil {
 		return nil, errorx.WithStack(err)

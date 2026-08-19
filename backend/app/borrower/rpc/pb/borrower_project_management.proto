@@ -172,11 +172,13 @@ message ProjectManagementTaskTypeDeleteRequestData {
 
 message ProjectManagementProjectEntity {
   int64 id = 1;
-  int64 property_id = 2;
+  int64 entity_id = 2;
   string name = 3;
   string description = 4;
   string cover_url = 5;
   int64 owner_id = 6;
+  string entity_type = 7;
+  string owner_name = 8;
 }
 
 message ProjectManagementProjectPageRequest {
@@ -189,7 +191,8 @@ message ProjectManagementProjectPageRequestData {
 }
 message ProjectManagementProjectPageRequestFilter {
   string keyword = 1;
-  int64 property_id = 2;
+  int64 entity_id = 2;
+  string entity_type = 3;
 }
 message ProjectManagementProjectPageResponse {
   ProjectManagementProjectPageResponseData data = 1;
@@ -214,11 +217,12 @@ message ProjectManagementProjectCreateRequest {
   ProjectManagementProjectCreateRequestData data = 1;
 }
 message ProjectManagementProjectCreateRequestData {
-  int64 property_id = 1;
+  int64 entity_id = 1;
   string name = 2;
   string description = 3;
   string cover_url = 4;
   int64 workflow_template_id = 5;
+  string entity_type = 6;
 }
 message ProjectManagementProjectUpdateRequest {
   ProjectManagementProjectUpdateRequestData data = 1;
@@ -519,9 +523,10 @@ message ProjectManagementAttachmentDeleteRequestData {
 
 message ProjectManagementTaskDependencyEntity {
   int64 id = 1;
-  int64 successor_task_id = 2;
-  int64 predecessor_task_id = 3;
+  int64 task_id = 2;
+  int64 dependency_task_id = 3;
   string dependency_type = 4;
+  string dependency_rule = 5;
 }
 message ProjectManagementDependencyPageRequest {
   ProjectManagementDependencyPageRequestData data = 1;
@@ -546,9 +551,10 @@ message ProjectManagementDependencyCreateRequest {
   ProjectManagementDependencyCreateRequestData data = 1;
 }
 message ProjectManagementDependencyCreateRequestData {
-  int64 successor_task_id = 1;
-  int64 predecessor_task_id = 2;
+  int64 task_id = 1;
+  int64 dependency_task_id = 2;
   string dependency_type = 3;
+  string dependency_rule = 4;
 }
 message ProjectManagementDependencyDetailResponse {
   ProjectManagementTaskDependencyEntity data = 1;
@@ -559,6 +565,8 @@ message ProjectManagementDependencyUpdateRequest {
 message ProjectManagementDependencyUpdateRequestData {
   int64 dependency_id = 1;
   string dependency_type = 2;
+  string dependency_rule = 3;
+  int64 task_id = 4;
 }
 message ProjectManagementDependencyDeleteRequest {
   ProjectManagementDependencyDeleteRequestData data = 1;

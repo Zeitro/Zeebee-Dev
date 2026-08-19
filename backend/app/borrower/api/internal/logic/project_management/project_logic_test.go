@@ -8,14 +8,14 @@ import (
 	"zeebee-backend/common/copierx"
 )
 
-func TestProjectConvertersKeepPropertyOwnerAndMemberRole(t *testing.T) {
+func TestProjectConvertersKeepEntityOwnerAndMemberRole(t *testing.T) {
 	data, err := copierx.Trans[types.ProjectManagementProjectCreateRequest, borrower.ProjectManagementProjectCreateRequestData](&types.ProjectManagementProjectCreateRequest{
-		PropertyId: 7, Name: "Renovation", Description: "Kitchen", CoverUrl: "cover", WorkflowTemplateId: 9,
+		EntityId: 7, EntityType: "Transaction", Name: "Renovation", Description: "Kitchen", CoverUrl: "cover", WorkflowTemplateId: 9,
 	})
 	if err != nil {
 		t.Fatal(err)
 	}
-	if data.PropertyId != 7 || data.WorkflowTemplateId != 9 || data.Name != "Renovation" {
+	if data.EntityId != 7 || data.EntityType != "Transaction" || data.WorkflowTemplateId != 9 || data.Name != "Renovation" {
 		t.Fatalf("project request lost data: %#v", data)
 	}
 

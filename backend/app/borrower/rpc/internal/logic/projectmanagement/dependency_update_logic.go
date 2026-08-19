@@ -32,7 +32,7 @@ func (l *DependencyUpdateLogic) DependencyUpdate(in *borrower.ProjectManagementD
 	if err != nil {
 		return nil, err
 	}
-	dependency, err := base.ProjectManagementLogic.UpdateTaskDependency(l.ctx, actor, in.Data.DependencyId, constants.ProjectManagementDependencyType(in.Data.DependencyType))
+	dependency, err := base.ProjectManagementLogic.UpdateTaskDependency(l.ctx, actor, in.Data.TaskId, in.Data.DependencyId, constants.ProjectManagementDependencyType(in.Data.DependencyType), constants.ProjectManagementDependencyRule(in.Data.DependencyRule))
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

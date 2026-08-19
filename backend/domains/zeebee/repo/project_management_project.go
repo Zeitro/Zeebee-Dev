@@ -36,8 +36,11 @@ func (r *ProjectManagementProjectRepo) Page(ctx context.Context, organizationId 
 	if input.Filter.Keyword != "" {
 		query = query.Where("name ILIKE ?", "%"+input.Filter.Keyword+"%")
 	}
-	if input.Filter.PropertyId != 0 {
-		query = query.Where("property_id = ?", input.Filter.PropertyId)
+	if input.Filter.EntityId != 0 {
+		query = query.Where("entity_id = ?", input.Filter.EntityId)
+	}
+	if input.Filter.EntityType != "" {
+		query = query.Where("entity_type = ?", input.Filter.EntityType)
 	}
 	return r.BaseRepo.Page(query, gormx.PageRequest{Page: input.Page, Limit: input.Limit})
 }
@@ -79,7 +82,7 @@ func (r *ProjectManagementProjectRepo) CandidateMembers(ctx context.Context, org
 	return candidates, errorx.WithStack(err)
 }
 
-func (r *ProjectManagementProjectRepo) HasUnfinishedTasksForProperty(ctx context.Context, propertyId int64) (bool, error) {
+func (r *ProjectManagementProjectRepo) HasUnfinishedTasksForEntity(ctx context.Context, entityId int64, entityType string) (bool, error) {
 	projectsTable := model.ProjectManagementProject{}.TableName()
 	tasksTable := model.ProjectManagementTask{}.TableName()
 	stagesTable := model.ProjectManagementWorkflowStage{}.TableName()
@@ -87,7 +90,7 @@ func (r *ProjectManagementProjectRepo) HasUnfinishedTasksForProperty(ctx context
 	err := r.Client(ctx).Table(projectsTable).
 		Joins(fmt.Sprintf("JOIN %s ON %s.project_id = %s.id AND %s.is_del = 0", tasksTable, tasksTable, projectsTable, tasksTable)).
 		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.stage_id AND %s.is_del = 0", stagesTable, stagesTable, tasksTable, stagesTable)).
-		Where(fmt.Sprintf("%s.property_id = ? AND %s.is_del = 0 AND %s.phase <> ?", projectsTable, projectsTable, stagesTable), propertyId, constants.ProjectManagementStagePhaseFinished).
+		Where(fmt.Sprintf("%s.entity_id = ? AND %s.entity_type = ? AND %s.is_del = 0 AND %s.phase <> ?", projectsTable, projectsTable, projectsTable, stagesTable), entityId, entityType, constants.ProjectManagementStagePhaseFinished).
 		Count(&count).Error
 	return count > 0, errorx.WithStack(err)
 }
@@ -98,9 +101,10 @@ func (r *ProjectManagementProjectRepo) FindByOrganization(ctx context.Context, i
 	return project, errorx.WithStack(err)
 }
 
-func (r *ProjectManagementProjectRepo) UpdateByOrganization(ctx context.Context, id, organizationId int64, columns map[string]interface{}) error {
-	err := r.Client(ctx).Model(&model.ProjectManagementProject{}).
-		Where("id = ? AND organization_id = ?", id, organizationId).Updates(columns).Error
+func (r *ProjectManagementProjectRepo) UpdateByOrganization(ctx context.Context, id, organizationId int64, project *model.ProjectManagementProject) error {
+	err := r.Client(ctx).Model(project).
+		Where("id = ? AND organization_id = ?", id, organizationId).
+		Select("name", "description", "cover_url").Updates(project).Error
 	return errorx.WithStack(err)
 }
 
@@ -143,13 +147,15 @@ func (r *ProjectManagementProjectRepo) CreateMemberWithTx(ctx context.Context, t
 	return errorx.WithStack(err)
 }
 
-func (r *ProjectManagementProjectRepo) UpdateOwnerWithTx(ctx context.Context, tx *gorm.DB, projectId, ownerId int64) error {
-	err := tx.WithContext(ctx).Model(&model.ProjectManagementProject{}).Where("id = ?", projectId).Update("owner_id", ownerId).Error
+func (r *ProjectManagementProjectRepo) UpdateMemberRoleWithTx(ctx context.Context, tx *gorm.DB, member *model.ProjectManagementProjectMember, role constants.ProjectManagementMemberRole) error {
+	member.Role = role
+	err := tx.WithContext(ctx).Model(member).Select("role").Updates(member).Error
 	return errorx.WithStack(err)
 }
 
-func (r *ProjectManagementProjectRepo) UpdateMemberRoleWithTx(ctx context.Context, tx *gorm.DB, member *model.ProjectManagementProjectMember, role constants.ProjectManagementMemberRole) error {
-	err := tx.WithContext(ctx).Model(member).Update("role", role).Error
+func (r *ProjectManagementProjectRepo) UpdateOwnerWithTx(ctx context.Context, tx *gorm.DB, projectId, ownerId int64, ownerName string) error {
+	err := tx.WithContext(ctx).Model(&model.ProjectManagementProject{}).Where("id = ?", projectId).
+		Select("owner_id", "owner_name").Updates(&model.ProjectManagementProject{Base: model.Base{Id: projectId}, OwnerId: ownerId, OwnerName: ownerName}).Error
 	return errorx.WithStack(err)
 }
 

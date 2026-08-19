@@ -6,8 +6,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"gorm.io/datatypes"
-
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	domainlogic "zeebee-backend/domains/zeebee/logic"
@@ -17,7 +15,7 @@ import (
 
 func TestProjectManagementDependencyPostgresOppositeEdges(t *testing.T) {
 	db := projectManagementPostgresDB(t)
-	project := &model.ProjectManagementProject{OrganizationId: 1, Name: "Renovation", OwnerId: 1}
+	project := &model.ProjectManagementProject{OrganizationId: 1, Name: "Renovation", OwnerId: 1, OwnerName: "Owner"}
 	require.NoError(t, db.Create(project).Error)
 	require.NoError(t, db.Create(&model.ProjectManagementProjectMember{
 		ProjectId: project.Id, OrganizationUserId: 1, Role: constants.ProjectManagementMemberRoleTaskExecutor,
@@ -25,8 +23,8 @@ func TestProjectManagementDependencyPostgresOppositeEdges(t *testing.T) {
 	stage := &model.ProjectManagementWorkflowStage{WorkflowId: 1, Name: "Pending", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 10}
 	require.NoError(t, db.Create(stage).Error)
 	tasks := []*model.ProjectManagementTask{
-		{ProjectId: project.Id, OrganizationId: 1, StageId: stage.Id, CreatorId: 1, Title: "First", TaskType: datatypes.JSON([]byte(`{}`))},
-		{ProjectId: project.Id, OrganizationId: 1, StageId: stage.Id, CreatorId: 1, Title: "Second", TaskType: datatypes.JSON([]byte(`{}`))},
+		{ProjectId: project.Id, OrganizationId: 1, StageId: stage.Id, CreatorId: 1, Title: "First", TaskType: &dto.ProjectManagementTaskTypeSnapshotDto{}},
+		{ProjectId: project.Id, OrganizationId: 1, StageId: stage.Id, CreatorId: 1, Title: "Second", TaskType: &dto.ProjectManagementTaskTypeSnapshotDto{}},
 	}
 	require.NoError(t, db.Create(&tasks).Error)
 
@@ -37,8 +35,8 @@ func TestProjectManagementDependencyPostgresOppositeEdges(t *testing.T) {
 	start := make(chan struct{})
 	errs := make(chan error, 2)
 	inputs := []dto.ProjectManagementTaskDependencyDto{
-		{SuccessorTaskId: tasks[0].Id, PredecessorTaskId: tasks[1].Id, DependencyType: constants.ProjectManagementDependencyTypeFS},
-		{SuccessorTaskId: tasks[1].Id, PredecessorTaskId: tasks[0].Id, DependencyType: constants.ProjectManagementDependencyTypeFS},
+		{TaskId: tasks[0].Id, DependencyTaskId: tasks[1].Id, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS},
+		{TaskId: tasks[1].Id, DependencyTaskId: tasks[0].Id, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS},
 	}
 	var wg sync.WaitGroup
 	for _, input := range inputs {

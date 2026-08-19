@@ -41,11 +41,11 @@ func TestDeleteRejectsPropertyWithUnfinishedProjectTask(t *testing.T) {
 	require.NoError(t, err)
 	for _, statement := range []string{
 		"CREATE TABLE borrower_properties (id integer primary key, is_del integer not null default 0, organization_id integer not null default 0, loan_count integer not null default 0)",
-		"CREATE TABLE project_management_projects (id integer primary key, is_del integer not null default 0, property_id integer not null default 0)",
+		"CREATE TABLE project_management_projects (id integer primary key, is_del integer not null default 0, entity_id integer not null default 0, entity_type text not null default '')",
 		"CREATE TABLE project_management_workflow_stages (id integer primary key, is_del integer not null default 0, phase text not null default '')",
 		"CREATE TABLE project_management_tasks (id integer primary key, is_del integer not null default 0, project_id integer not null default 0, stage_id integer not null default 0)",
 		"INSERT INTO borrower_properties (id, organization_id) VALUES (1, 1)",
-		"INSERT INTO project_management_projects (id, property_id) VALUES (1, 1)",
+		"INSERT INTO project_management_projects (id, entity_id, entity_type) VALUES (1, 1, 'Property')",
 		"INSERT INTO project_management_workflow_stages (id, phase) VALUES (1, 'InProgress')",
 		"INSERT INTO project_management_tasks (id, project_id, stage_id) VALUES (1, 1, 1)",
 	} {

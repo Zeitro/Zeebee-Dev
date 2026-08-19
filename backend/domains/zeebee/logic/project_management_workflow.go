@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/lib/pq"
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/copierx"
@@ -221,12 +220,6 @@ func projectManagementTemplateModels(input dto.ProjectManagementWorkflowDto) (*m
 	transitions, err := copierx.Trans[[]dto.ProjectManagementWorkflowTransitionDto, []*model.ProjectManagementWorkflowTransition](&input.Transitions)
 	if err != nil {
 		return nil, nil, nil, err
-	}
-	for i, transition := range input.Transitions {
-		(*transitions)[i].AllowedActorTypes = pq.StringArray(make([]string, len(transition.AllowedActorTypes)))
-		for j, actorType := range transition.AllowedActorTypes {
-			(*transitions)[i].AllowedActorTypes[j] = string(actorType)
-		}
 	}
 	return workflow, *stages, *transitions, nil
 }

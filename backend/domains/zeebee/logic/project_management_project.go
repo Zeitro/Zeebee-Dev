@@ -53,7 +53,7 @@ func (l *ProjectManagementLogic) CandidateProjectMembers(ctx context.Context, ac
 }
 
 func (l *ProjectManagementLogic) RequirePropertyDeletable(ctx context.Context, propertyId int64) error {
-	blocked, err := l.repos.ProjectManagementProjectRepo.HasUnfinishedTasksForProperty(ctx, propertyId)
+	blocked, err := l.repos.ProjectManagementProjectRepo.HasUnfinishedTasksForEntity(ctx, propertyId, constants.ProjectManagementEntityTypeProperty)
 	if err != nil {
 		return err
 	}
@@ -79,16 +79,11 @@ func (l *ProjectManagementLogic) CreateProject(ctx context.Context, actor *dto.P
 	if err = validateProjectManagementProjectCreate(input); err != nil {
 		return nil, err
 	}
-	if input.PropertyId != 0 {
-		if _, err = l.repos.BorrowerPropertyRepo.GetOneByIdForOrganization(ctx, input.PropertyId, actor.OrganizationId); err != nil {
-			return nil, projectManagementNotFound(err, "property not found")
-		}
-	}
 	project, err = copierx.Trans[dto.ProjectManagementProjectDto, model.ProjectManagementProject](&input.ProjectManagementProjectDto)
 	if err != nil {
 		return nil, err
 	}
-	project.OrganizationId, project.OwnerId = actor.OrganizationId, actor.OrganizationUserId
+	project.OrganizationId, project.OwnerId, project.OwnerName = actor.OrganizationId, actor.OrganizationUserId, actor.Name
 	err = l.repos.ProjectManagementProjectRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		project, err = l.repos.ProjectManagementProjectRepo.CreateWithTx(ctx, tx, project, false)
 		if err != nil {
@@ -119,7 +114,7 @@ func (l *ProjectManagementLogic) UpdateProject(ctx context.Context, actor *dto.P
 	if err = copierx.Assign(&input, project); err != nil {
 		return nil, err
 	}
-	if err = l.repos.ProjectManagementProjectRepo.UpdateByOrganization(ctx, projectId, actor.OrganizationId, map[string]interface{}{"name": project.Name, "description": project.Description, "cover_url": project.CoverUrl}); err != nil {
+	if err = l.repos.ProjectManagementProjectRepo.UpdateByOrganization(ctx, projectId, actor.OrganizationId, &model.ProjectManagementProject{Name: project.Name, Description: project.Description, CoverUrl: project.CoverUrl}); err != nil {
 		return nil, err
 	}
 	err = l.repos.ProjectManagementProjectRepo.Transaction(ctx, func(tx *gorm.DB) error {

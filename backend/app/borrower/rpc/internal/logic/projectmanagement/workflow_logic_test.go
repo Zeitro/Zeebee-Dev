@@ -3,8 +3,6 @@ package projectmanagementlogic
 import (
 	"testing"
 
-	"github.com/lib/pq"
-
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
@@ -25,7 +23,7 @@ func TestWorkflowConvertersKeepDefinitionSnapshots(t *testing.T) {
 	entity, err := workflowEntity(&model.ProjectManagementWorkflow{
 		Base: model.Base{Id: 1}, Name: "Project workflow", SourceTemplateId: 9, SourceTemplateName: "Template",
 		Stages:      []*model.ProjectManagementWorkflowStage{{Base: model.Base{Id: 2}, Name: "Pending", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 10}},
-		Transitions: []*model.ProjectManagementWorkflowTransition{{Base: model.Base{Id: 3}, FromStageId: 2, ToStageId: 4, AllowedActorTypes: pq.StringArray{"ProjectAdmin", "TaskCreator"}}},
+		Transitions: []*model.ProjectManagementWorkflowTransition{{Base: model.Base{Id: 3}, FromStageId: 2, ToStageId: 4, AllowedActorTypes: []constants.ProjectManagementMemberRole{constants.ProjectManagementMemberRoleProjectAdmin, constants.ProjectManagementMemberRoleTaskCreator}}},
 	})
 	if err != nil {
 		t.Fatal(err)

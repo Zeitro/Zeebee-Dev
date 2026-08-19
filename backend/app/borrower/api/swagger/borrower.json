@@ -16769,11 +16769,14 @@
                 "description": {
                   "type": "string"
                 },
-                "name": {
+                "entity_id": {
+                  "type": "integer"
+                },
+                "entity_type": {
                   "type": "string"
                 },
-                "property_id": {
-                  "type": "integer"
+                "name": {
+                  "type": "string"
                 },
                 "workflow_template_id": {
                   "type": "integer"
@@ -16794,6 +16797,12 @@
                 "description": {
                   "type": "string"
                 },
+                "entity_id": {
+                  "type": "integer"
+                },
+                "entity_type": {
+                  "type": "string"
+                },
                 "id": {
                   "type": "integer"
                 },
@@ -16803,8 +16812,8 @@
                 "owner_id": {
                   "type": "integer"
                 },
-                "property_id": {
-                  "type": "integer"
+                "owner_name": {
+                  "type": "string"
                 }
               }
             }
@@ -16843,11 +16852,14 @@
                 "filter": {
                   "type": "object",
                   "properties": {
-                    "keyword": {
+                    "entity_id": {
+                      "type": "integer"
+                    },
+                    "entity_type": {
                       "type": "string"
                     },
-                    "property_id": {
-                      "type": "integer"
+                    "keyword": {
+                      "type": "string"
                     }
                   }
                 },
@@ -16880,17 +16892,25 @@
                     "type": "object",
                     "required": [
                       "id",
-                      "property_id",
+                      "entity_id",
+                      "entity_type",
                       "name",
                       "description",
                       "cover_url",
-                      "owner_id"
+                      "owner_id",
+                      "owner_name"
                     ],
                     "properties": {
                       "cover_url": {
                         "type": "string"
                       },
                       "description": {
+                        "type": "string"
+                      },
+                      "entity_id": {
+                        "type": "integer"
+                      },
+                      "entity_type": {
                         "type": "string"
                       },
                       "id": {
@@ -16902,8 +16922,8 @@
                       "owner_id": {
                         "type": "integer"
                       },
-                      "property_id": {
-                        "type": "integer"
+                      "owner_name": {
+                        "type": "string"
                       }
                     }
                   }
@@ -16956,6 +16976,12 @@
                 "description": {
                   "type": "string"
                 },
+                "entity_id": {
+                  "type": "integer"
+                },
+                "entity_type": {
+                  "type": "string"
+                },
                 "id": {
                   "type": "integer"
                 },
@@ -16965,8 +16991,8 @@
                 "owner_id": {
                   "type": "integer"
                 },
-                "property_id": {
-                  "type": "integer"
+                "owner_name": {
+                  "type": "string"
                 }
               }
             }
@@ -17030,6 +17056,12 @@
                 "description": {
                   "type": "string"
                 },
+                "entity_id": {
+                  "type": "integer"
+                },
+                "entity_type": {
+                  "type": "string"
+                },
                 "id": {
                   "type": "integer"
                 },
@@ -17039,8 +17071,8 @@
                 "owner_id": {
                   "type": "integer"
                 },
-                "property_id": {
-                  "type": "integer"
+                "owner_name": {
+                  "type": "string"
                 }
               }
             }
@@ -18892,15 +18924,19 @@
             "schema": {
               "type": "object",
               "required": [
-                "predecessor_task_id",
-                "dependency_type"
+                "dependency_task_id",
+                "dependency_type",
+                "dependency_rule"
               ],
               "properties": {
-                "dependency_type": {
+                "dependency_rule": {
                   "type": "string"
                 },
-                "predecessor_task_id": {
+                "dependency_task_id": {
                   "type": "integer"
+                },
+                "dependency_type": {
+                  "type": "string"
                 }
               }
             }
@@ -18912,16 +18948,19 @@
             "schema": {
               "type": "object",
               "properties": {
+                "dependency_rule": {
+                  "type": "string"
+                },
+                "dependency_task_id": {
+                  "type": "integer"
+                },
                 "dependency_type": {
                   "type": "string"
                 },
                 "id": {
                   "type": "integer"
                 },
-                "predecessor_task_id": {
-                  "type": "integer"
-                },
-                "successor_task_id": {
+                "task_id": {
                   "type": "integer"
                 }
               }
@@ -18996,21 +19035,25 @@
                     "type": "object",
                     "required": [
                       "id",
-                      "successor_task_id",
-                      "predecessor_task_id",
-                      "dependency_type"
+                      "task_id",
+                      "dependency_task_id",
+                      "dependency_type",
+                      "dependency_rule"
                     ],
                     "properties": {
+                      "dependency_rule": {
+                        "type": "string"
+                      },
+                      "dependency_task_id": {
+                        "type": "integer"
+                      },
                       "dependency_type": {
                         "type": "string"
                       },
                       "id": {
                         "type": "integer"
                       },
-                      "predecessor_task_id": {
-                        "type": "integer"
-                      },
-                      "successor_task_id": {
+                      "task_id": {
                         "type": "integer"
                       }
                     }
@@ -19067,9 +19110,13 @@
             "schema": {
               "type": "object",
               "required": [
-                "dependency_type"
+                "dependency_type",
+                "dependency_rule"
               ],
               "properties": {
+                "dependency_rule": {
+                  "type": "string"
+                },
                 "dependency_type": {
                   "type": "string"
                 }
@@ -19083,16 +19130,19 @@
             "schema": {
               "type": "object",
               "properties": {
+                "dependency_rule": {
+                  "type": "string"
+                },
+                "dependency_task_id": {
+                  "type": "integer"
+                },
                 "dependency_type": {
                   "type": "string"
                 },
                 "id": {
                   "type": "integer"
                 },
-                "predecessor_task_id": {
-                  "type": "integer"
-                },
-                "successor_task_id": {
+                "task_id": {
                   "type": "integer"
                 }
               }
@@ -30302,7 +30352,7 @@
       }
     }
   },
-  "x-date": "2026-08-18 16:12:47",
+  "x-date": "2026-08-19 14:59:54",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

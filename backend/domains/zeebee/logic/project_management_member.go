@@ -95,16 +95,23 @@ func (l *ProjectManagementLogic) TransferProjectOwner(ctx context.Context, actor
 		if project.OwnerId != actor.OrganizationUserId {
 			return errorx.New("only project owner can transfer ownership")
 		}
-		if targetOrganizationUserId == actor.OrganizationUserId {
-			return errorx.New("target member is already project owner")
-		}
 		currentOwner, err := l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, projectId, actor.OrganizationUserId)
 		if err != nil {
 			return projectManagementNotFound(err, "project owner member not found")
 		}
+		if currentOwner.Role != constants.ProjectManagementMemberRoleProjectOwner {
+			return errorx.New("only project owner can transfer ownership")
+		}
+		if targetOrganizationUserId == actor.OrganizationUserId {
+			return errorx.New("target member is already project owner")
+		}
 		target, err := l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, projectId, targetOrganizationUserId)
 		if err != nil {
 			return projectManagementNotFound(err, "target project member not found")
+		}
+		targetOrganizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserByIdWithTx(ctx, tx, targetOrganizationUserId, actor.OrganizationId)
+		if err != nil {
+			return projectManagementNotFound(err, "target organization member not found")
 		}
 		if err = l.repos.ProjectManagementProjectRepo.UpdateMemberRoleWithTx(ctx, tx, currentOwner, constants.ProjectManagementMemberRoleProjectAdmin); err != nil {
 			return err
@@ -112,7 +119,7 @@ func (l *ProjectManagementLogic) TransferProjectOwner(ctx context.Context, actor
 		if err = l.repos.ProjectManagementProjectRepo.UpdateMemberRoleWithTx(ctx, tx, target, constants.ProjectManagementMemberRoleProjectOwner); err != nil {
 			return err
 		}
-		if err = l.repos.ProjectManagementProjectRepo.UpdateOwnerWithTx(ctx, tx, projectId, targetOrganizationUserId); err != nil {
+		if err = l.repos.ProjectManagementProjectRepo.UpdateOwnerWithTx(ctx, tx, projectId, targetOrganizationUserId, targetOrganizationUser.FullName); err != nil {
 			return err
 		}
 		return l.recordProjectMemberOperation(ctx, tx, actor, projectId, constants.OperationActionProjectManagementOwnerTransfer, targetOrganizationUserId)

@@ -29,7 +29,8 @@ func TestProjectMemberTransferRemoveAndHistoricalSnapshots(t *testing.T) {
 	for _, statement := range []string{
 		"CREATE TABLE users (id INTEGER PRIMARY KEY, is_del INTEGER NOT NULL DEFAULT 0, email TEXT NOT NULL DEFAULT '')",
 		"CREATE TABLE organization_users (id INTEGER PRIMARY KEY, is_del INTEGER NOT NULL DEFAULT 0, organization_id INTEGER NOT NULL DEFAULT 0, user_id INTEGER NOT NULL DEFAULT 0, full_name TEXT NOT NULL DEFAULT '', status TEXT NOT NULL DEFAULT '')",
-		"CREATE TABLE project_management_projects (id INTEGER PRIMARY KEY, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, is_del INTEGER NOT NULL DEFAULT 0, organization_id INTEGER NOT NULL DEFAULT 0, property_id INTEGER NOT NULL DEFAULT 0, name TEXT NOT NULL DEFAULT '', description TEXT NOT NULL DEFAULT '', cover_url TEXT NOT NULL DEFAULT '', owner_id INTEGER NOT NULL DEFAULT 0)",
+		"CREATE TABLE organization_user_and_roles (organization_user_id INTEGER NOT NULL, role_id INTEGER NOT NULL)",
+		"CREATE TABLE project_management_projects (id INTEGER PRIMARY KEY, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, is_del INTEGER NOT NULL DEFAULT 0, organization_id INTEGER NOT NULL DEFAULT 0, entity_id INTEGER NOT NULL DEFAULT 0, entity_type TEXT NOT NULL DEFAULT '', name TEXT NOT NULL DEFAULT '', description TEXT NOT NULL DEFAULT '', cover_url TEXT NOT NULL DEFAULT '', owner_id INTEGER NOT NULL DEFAULT 0, owner_name TEXT NOT NULL DEFAULT '')",
 		"CREATE TABLE project_management_project_members (id INTEGER PRIMARY KEY, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, is_del INTEGER NOT NULL DEFAULT 0, project_id INTEGER NOT NULL DEFAULT 0, organization_user_id INTEGER NOT NULL DEFAULT 0, role TEXT NOT NULL DEFAULT '')",
 		"CREATE TABLE project_management_tasks (id INTEGER PRIMARY KEY, is_del INTEGER NOT NULL DEFAULT 0, project_id INTEGER NOT NULL DEFAULT 0, organization_id INTEGER NOT NULL DEFAULT 0, stage_id INTEGER NOT NULL DEFAULT 0, creator_id INTEGER NOT NULL DEFAULT 0, creator_name TEXT NOT NULL DEFAULT '', title TEXT NOT NULL DEFAULT '')",
 		"CREATE TABLE project_management_task_assignees (id INTEGER PRIMARY KEY, is_del INTEGER NOT NULL DEFAULT 0, task_id INTEGER NOT NULL DEFAULT 0, organization_user_id INTEGER NOT NULL DEFAULT 0, organization_user_name TEXT NOT NULL DEFAULT '')",
@@ -57,6 +58,7 @@ func TestProjectMemberTransferRemoveAndHistoricalSnapshots(t *testing.T) {
 	var project model.ProjectManagementProject
 	require.NoError(t, db.First(&project, 1).Error)
 	require.Equal(t, int64(11), project.OwnerId)
+	require.Equal(t, "Admin", project.OwnerName)
 	var formerOwner model.ProjectManagementProjectMember
 	require.ErrorIs(t, db.Where("project_id = ? AND organization_user_id = ?", 1, 10).First(&formerOwner).Error, gorm.ErrRecordNotFound)
 	var task model.ProjectManagementTask

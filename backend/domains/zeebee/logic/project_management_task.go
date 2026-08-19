@@ -7,7 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"gorm.io/datatypes"
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/copierx"
@@ -33,7 +32,7 @@ func (l *ProjectManagementLogic) CreateTask(ctx context.Context, actor *dto.Proj
 	}
 	task.OrganizationId, task.CreatorId, task.CreatorName = actor.OrganizationId, actor.OrganizationUserId, actor.Name
 	task.StartAt, task.EndAt = projectManagementNullTime(input.StartAt), projectManagementNullTime(input.EndAt)
-	task.TaskType = datatypes.JSON([]byte("{}"))
+	task.TaskType = &dto.ProjectManagementTaskTypeSnapshotDto{}
 	err = l.repos.ProjectManagementTaskRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		if _, err = l.repos.ProjectManagementProjectRepo.LockByOrganizationWithTx(ctx, tx, input.ProjectId, actor.OrganizationId); err != nil {
 			return projectManagementNotFound(err, "project not found")
@@ -68,10 +67,7 @@ func (l *ProjectManagementLogic) CreateTask(ctx context.Context, actor *dto.Proj
 			if err != nil {
 				return projectManagementNotFound(err, "enabled task type not found")
 			}
-			task.TaskType, err = ProjectManagementTaskTypeSnapshot(taskType)
-			if err != nil {
-				return err
-			}
+			task.TaskType = ProjectManagementTaskTypeSnapshot(taskType)
 		}
 		task, err = l.repos.ProjectManagementTaskRepo.CreateWithTx(ctx, tx, task, false)
 		if err != nil {
@@ -154,10 +150,7 @@ func (l *ProjectManagementLogic) UpdateTask(ctx context.Context, actor *dto.Proj
 			if err != nil {
 				return projectManagementNotFound(err, "enabled task type not found")
 			}
-			task.TaskType, err = ProjectManagementTaskTypeSnapshot(taskType)
-			if err != nil {
-				return err
-			}
+			task.TaskType = ProjectManagementTaskTypeSnapshot(taskType)
 		}
 		if err = tx.WithContext(ctx).Model(&model.ProjectManagementTask{}).Where("id = ?", task.Id).Updates(map[string]interface{}{"title": task.Title, "description": task.Description, "priority": task.Priority, "start_at": task.StartAt, "end_at": task.EndAt, "task_type": task.TaskType}).Error; err != nil {
 			return errorx.WithStack(err)

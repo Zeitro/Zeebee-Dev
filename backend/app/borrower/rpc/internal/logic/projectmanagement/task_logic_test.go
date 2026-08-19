@@ -5,9 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"gorm.io/datatypes"
-
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 )
 
@@ -16,7 +15,7 @@ func TestTaskEntityKeepsTypeAndAssigneeSnapshots(t *testing.T) {
 	task := &model.ProjectManagementTask{
 		ProjectId: 1, CreatorId: 2, CreatorName: "Former creator", Title: "Task",
 		StartAt:   &sql.NullTime{Time: now, Valid: true},
-		TaskType:  datatypes.JSON([]byte(`{"id":3,"name":"Inspection","description":"Historical type","color":"#fff"}`)),
+		TaskType:  &dto.ProjectManagementTaskTypeSnapshotDto{Id: 3, Name: "Inspection", Description: "Historical type", Color: "#fff"},
 		Assignees: []*model.ProjectManagementTaskAssignee{{OrganizationUserId: 4, OrganizationUserName: "Former executor"}},
 		Overdue:   true, OverdueSeconds: 3600,
 	}

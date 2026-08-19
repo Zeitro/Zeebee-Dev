@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"strings"
 
-	"gorm.io/datatypes"
 	"gorm.io/gorm"
 
 	"zeebee-backend/common/copierx"
@@ -16,13 +15,13 @@ import (
 	"zeebee-backend/domains/zeebee/model"
 )
 
-func ProjectManagementTaskTypeSnapshot(taskType *model.ProjectManagementTaskType) (datatypes.JSON, error) {
-	return json.Marshal(dto.ProjectManagementTaskTypeSnapshotDto{
+func ProjectManagementTaskTypeSnapshot(taskType *model.ProjectManagementTaskType) *dto.ProjectManagementTaskTypeSnapshotDto {
+	return &dto.ProjectManagementTaskTypeSnapshotDto{
 		Id:          taskType.Id,
 		Name:        taskType.Name,
 		Description: taskType.Description,
 		Color:       taskType.Color,
-	})
+	}
 }
 
 func (l *ProjectManagementLogic) CreateTaskType(ctx context.Context, actor *dto.ProjectManagementActor, input dto.ProjectManagementTaskTypeDto) (taskType *model.ProjectManagementTaskType, err error) {
@@ -56,8 +55,8 @@ func (l *ProjectManagementLogic) UpdateTaskType(ctx context.Context, actor *dto.
 		return nil, projectManagementNotFound(err, "task type not found")
 	}
 	err := l.repos.ProjectManagementTaskTypeRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		if err := l.repos.ProjectManagementTaskTypeRepo.UpdateByOrganization(ctx, id, actor.OrganizationId, map[string]interface{}{
-			"name": input.Name, "description": input.Description, "color": input.Color, "enabled": input.Enabled,
+		if err := l.repos.ProjectManagementTaskTypeRepo.UpdateByOrganization(ctx, id, actor.OrganizationId, &model.ProjectManagementTaskType{
+			Name: input.Name, Description: input.Description, Color: input.Color, Enabled: input.Enabled,
 		}); err != nil {
 			return err
 		}

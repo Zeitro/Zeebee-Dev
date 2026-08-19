@@ -1,7 +1,6 @@
 package logic
 
 import (
-	"encoding/json"
 	"testing"
 
 	"zeebee-backend/domains/zeebee/data/dto"
@@ -10,18 +9,11 @@ import (
 
 func TestProjectManagementTaskTypeSnapshot(t *testing.T) {
 	taskType := &model.ProjectManagementTaskType{Base: model.Base{Id: 9}, Name: "Inspection", Description: "Initial visit", Color: "#123456"}
-	snapshot, err := ProjectManagementTaskTypeSnapshot(taskType)
-	if err != nil {
-		t.Fatalf("snapshot: %v", err)
-	}
+	snapshot := ProjectManagementTaskTypeSnapshot(taskType)
 	taskType.Name = "Changed"
 
-	var got map[string]any
-	if err := json.Unmarshal(snapshot, &got); err != nil {
-		t.Fatalf("unmarshal snapshot: %v", err)
-	}
-	if got["id"] != float64(9) || got["name"] != "Inspection" || got["description"] != "Initial visit" || got["color"] != "#123456" {
-		t.Fatalf("snapshot changed: %#v", got)
+	if snapshot.Id != 9 || snapshot.Name != "Inspection" || snapshot.Description != "Initial visit" || snapshot.Color != "#123456" {
+		t.Fatalf("snapshot changed: %#v", snapshot)
 	}
 }
 

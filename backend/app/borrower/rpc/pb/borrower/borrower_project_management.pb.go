@@ -1945,11 +1945,13 @@ func (x *ProjectManagementTaskTypeDeleteRequestData) GetId() int64 {
 type ProjectManagementProjectEntity struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	PropertyId    int64                  `protobuf:"varint,2,opt,name=property_id,json=propertyId,proto3" json:"property_id,omitempty"`
+	EntityId      int64                  `protobuf:"varint,2,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
 	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	Description   string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
 	CoverUrl      string                 `protobuf:"bytes,5,opt,name=cover_url,json=coverUrl,proto3" json:"cover_url,omitempty"`
 	OwnerId       int64                  `protobuf:"varint,6,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
+	EntityType    string                 `protobuf:"bytes,7,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"`
+	OwnerName     string                 `protobuf:"bytes,8,opt,name=owner_name,json=ownerName,proto3" json:"owner_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1991,9 +1993,9 @@ func (x *ProjectManagementProjectEntity) GetId() int64 {
 	return 0
 }
 
-func (x *ProjectManagementProjectEntity) GetPropertyId() int64 {
+func (x *ProjectManagementProjectEntity) GetEntityId() int64 {
 	if x != nil {
-		return x.PropertyId
+		return x.EntityId
 	}
 	return 0
 }
@@ -2024,6 +2026,20 @@ func (x *ProjectManagementProjectEntity) GetOwnerId() int64 {
 		return x.OwnerId
 	}
 	return 0
+}
+
+func (x *ProjectManagementProjectEntity) GetEntityType() string {
+	if x != nil {
+		return x.EntityType
+	}
+	return ""
+}
+
+func (x *ProjectManagementProjectEntity) GetOwnerName() string {
+	if x != nil {
+		return x.OwnerName
+	}
+	return ""
 }
 
 type ProjectManagementProjectPageRequest struct {
@@ -2133,7 +2149,8 @@ func (x *ProjectManagementProjectPageRequestData) GetFilter() *ProjectManagement
 type ProjectManagementProjectPageRequestFilter struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Keyword       string                 `protobuf:"bytes,1,opt,name=keyword,proto3" json:"keyword,omitempty"`
-	PropertyId    int64                  `protobuf:"varint,2,opt,name=property_id,json=propertyId,proto3" json:"property_id,omitempty"`
+	EntityId      int64                  `protobuf:"varint,2,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
+	EntityType    string                 `protobuf:"bytes,3,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2175,11 +2192,18 @@ func (x *ProjectManagementProjectPageRequestFilter) GetKeyword() string {
 	return ""
 }
 
-func (x *ProjectManagementProjectPageRequestFilter) GetPropertyId() int64 {
+func (x *ProjectManagementProjectPageRequestFilter) GetEntityId() int64 {
 	if x != nil {
-		return x.PropertyId
+		return x.EntityId
 	}
 	return 0
+}
+
+func (x *ProjectManagementProjectPageRequestFilter) GetEntityType() string {
+	if x != nil {
+		return x.EntityType
+	}
+	return ""
 }
 
 type ProjectManagementProjectPageResponse struct {
@@ -2480,11 +2504,12 @@ func (x *ProjectManagementProjectCreateRequest) GetData() *ProjectManagementProj
 
 type ProjectManagementProjectCreateRequestData struct {
 	state              protoimpl.MessageState `protogen:"open.v1"`
-	PropertyId         int64                  `protobuf:"varint,1,opt,name=property_id,json=propertyId,proto3" json:"property_id,omitempty"`
+	EntityId           int64                  `protobuf:"varint,1,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
 	Name               string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Description        string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	CoverUrl           string                 `protobuf:"bytes,4,opt,name=cover_url,json=coverUrl,proto3" json:"cover_url,omitempty"`
 	WorkflowTemplateId int64                  `protobuf:"varint,5,opt,name=workflow_template_id,json=workflowTemplateId,proto3" json:"workflow_template_id,omitempty"`
+	EntityType         string                 `protobuf:"bytes,6,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -2519,9 +2544,9 @@ func (*ProjectManagementProjectCreateRequestData) Descriptor() ([]byte, []int) {
 	return file_borrower_project_management_proto_rawDescGZIP(), []int{44}
 }
 
-func (x *ProjectManagementProjectCreateRequestData) GetPropertyId() int64 {
+func (x *ProjectManagementProjectCreateRequestData) GetEntityId() int64 {
 	if x != nil {
-		return x.PropertyId
+		return x.EntityId
 	}
 	return 0
 }
@@ -2552,6 +2577,13 @@ func (x *ProjectManagementProjectCreateRequestData) GetWorkflowTemplateId() int6
 		return x.WorkflowTemplateId
 	}
 	return 0
+}
+
+func (x *ProjectManagementProjectCreateRequestData) GetEntityType() string {
+	if x != nil {
+		return x.EntityType
+	}
+	return ""
 }
 
 type ProjectManagementProjectUpdateRequest struct {
@@ -6139,13 +6171,14 @@ func (x *ProjectManagementAttachmentDeleteRequestData) GetFileId() int64 {
 }
 
 type ProjectManagementTaskDependencyEntity struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	Id                int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	SuccessorTaskId   int64                  `protobuf:"varint,2,opt,name=successor_task_id,json=successorTaskId,proto3" json:"successor_task_id,omitempty"`
-	PredecessorTaskId int64                  `protobuf:"varint,3,opt,name=predecessor_task_id,json=predecessorTaskId,proto3" json:"predecessor_task_id,omitempty"`
-	DependencyType    string                 `protobuf:"bytes,4,opt,name=dependency_type,json=dependencyType,proto3" json:"dependency_type,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TaskId           int64                  `protobuf:"varint,2,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
+	DependencyTaskId int64                  `protobuf:"varint,3,opt,name=dependency_task_id,json=dependencyTaskId,proto3" json:"dependency_task_id,omitempty"`
+	DependencyType   string                 `protobuf:"bytes,4,opt,name=dependency_type,json=dependencyType,proto3" json:"dependency_type,omitempty"`
+	DependencyRule   string                 `protobuf:"bytes,5,opt,name=dependency_rule,json=dependencyRule,proto3" json:"dependency_rule,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *ProjectManagementTaskDependencyEntity) Reset() {
@@ -6185,16 +6218,16 @@ func (x *ProjectManagementTaskDependencyEntity) GetId() int64 {
 	return 0
 }
 
-func (x *ProjectManagementTaskDependencyEntity) GetSuccessorTaskId() int64 {
+func (x *ProjectManagementTaskDependencyEntity) GetTaskId() int64 {
 	if x != nil {
-		return x.SuccessorTaskId
+		return x.TaskId
 	}
 	return 0
 }
 
-func (x *ProjectManagementTaskDependencyEntity) GetPredecessorTaskId() int64 {
+func (x *ProjectManagementTaskDependencyEntity) GetDependencyTaskId() int64 {
 	if x != nil {
-		return x.PredecessorTaskId
+		return x.DependencyTaskId
 	}
 	return 0
 }
@@ -6202,6 +6235,13 @@ func (x *ProjectManagementTaskDependencyEntity) GetPredecessorTaskId() int64 {
 func (x *ProjectManagementTaskDependencyEntity) GetDependencyType() string {
 	if x != nil {
 		return x.DependencyType
+	}
+	return ""
+}
+
+func (x *ProjectManagementTaskDependencyEntity) GetDependencyRule() string {
+	if x != nil {
+		return x.DependencyRule
 	}
 	return ""
 }
@@ -6483,12 +6523,13 @@ func (x *ProjectManagementDependencyCreateRequest) GetData() *ProjectManagementD
 }
 
 type ProjectManagementDependencyCreateRequestData struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	SuccessorTaskId   int64                  `protobuf:"varint,1,opt,name=successor_task_id,json=successorTaskId,proto3" json:"successor_task_id,omitempty"`
-	PredecessorTaskId int64                  `protobuf:"varint,2,opt,name=predecessor_task_id,json=predecessorTaskId,proto3" json:"predecessor_task_id,omitempty"`
-	DependencyType    string                 `protobuf:"bytes,3,opt,name=dependency_type,json=dependencyType,proto3" json:"dependency_type,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	TaskId           int64                  `protobuf:"varint,1,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
+	DependencyTaskId int64                  `protobuf:"varint,2,opt,name=dependency_task_id,json=dependencyTaskId,proto3" json:"dependency_task_id,omitempty"`
+	DependencyType   string                 `protobuf:"bytes,3,opt,name=dependency_type,json=dependencyType,proto3" json:"dependency_type,omitempty"`
+	DependencyRule   string                 `protobuf:"bytes,4,opt,name=dependency_rule,json=dependencyRule,proto3" json:"dependency_rule,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *ProjectManagementDependencyCreateRequestData) Reset() {
@@ -6521,16 +6562,16 @@ func (*ProjectManagementDependencyCreateRequestData) Descriptor() ([]byte, []int
 	return file_borrower_project_management_proto_rawDescGZIP(), []int{113}
 }
 
-func (x *ProjectManagementDependencyCreateRequestData) GetSuccessorTaskId() int64 {
+func (x *ProjectManagementDependencyCreateRequestData) GetTaskId() int64 {
 	if x != nil {
-		return x.SuccessorTaskId
+		return x.TaskId
 	}
 	return 0
 }
 
-func (x *ProjectManagementDependencyCreateRequestData) GetPredecessorTaskId() int64 {
+func (x *ProjectManagementDependencyCreateRequestData) GetDependencyTaskId() int64 {
 	if x != nil {
-		return x.PredecessorTaskId
+		return x.DependencyTaskId
 	}
 	return 0
 }
@@ -6538,6 +6579,13 @@ func (x *ProjectManagementDependencyCreateRequestData) GetPredecessorTaskId() in
 func (x *ProjectManagementDependencyCreateRequestData) GetDependencyType() string {
 	if x != nil {
 		return x.DependencyType
+	}
+	return ""
+}
+
+func (x *ProjectManagementDependencyCreateRequestData) GetDependencyRule() string {
+	if x != nil {
+		return x.DependencyRule
 	}
 	return ""
 }
@@ -6634,6 +6682,8 @@ type ProjectManagementDependencyUpdateRequestData struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	DependencyId   int64                  `protobuf:"varint,1,opt,name=dependency_id,json=dependencyId,proto3" json:"dependency_id,omitempty"`
 	DependencyType string                 `protobuf:"bytes,2,opt,name=dependency_type,json=dependencyType,proto3" json:"dependency_type,omitempty"`
+	DependencyRule string                 `protobuf:"bytes,3,opt,name=dependency_rule,json=dependencyRule,proto3" json:"dependency_rule,omitempty"`
+	TaskId         int64                  `protobuf:"varint,4,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -6680,6 +6730,20 @@ func (x *ProjectManagementDependencyUpdateRequestData) GetDependencyType() strin
 		return x.DependencyType
 	}
 	return ""
+}
+
+func (x *ProjectManagementDependencyUpdateRequestData) GetDependencyRule() string {
+	if x != nil {
+		return x.DependencyRule
+	}
+	return ""
+}
+
+func (x *ProjectManagementDependencyUpdateRequestData) GetTaskId() int64 {
+	if x != nil {
+		return x.TaskId
+	}
+	return 0
 }
 
 type ProjectManagementDependencyDeleteRequest struct {
@@ -7002,25 +7066,29 @@ const file_borrower_project_management_proto_rawDesc = "" +
 	"&ProjectManagementTaskTypeDeleteRequest\x12H\n" +
 	"\x04data\x18\x01 \x01(\v24.borrower.ProjectManagementTaskTypeDeleteRequestDataR\x04data\"<\n" +
 	"*ProjectManagementTaskTypeDeleteRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\xbf\x01\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xfb\x01\n" +
 	"\x1eProjectManagementProjectEntity\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
-	"\vproperty_id\x18\x02 \x01(\x03R\n" +
-	"propertyId\x12\x12\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\tentity_id\x18\x02 \x01(\x03R\bentityId\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x04 \x01(\tR\vdescription\x12\x1b\n" +
 	"\tcover_url\x18\x05 \x01(\tR\bcoverUrl\x12\x19\n" +
-	"\bowner_id\x18\x06 \x01(\x03R\aownerId\"l\n" +
+	"\bowner_id\x18\x06 \x01(\x03R\aownerId\x12\x1f\n" +
+	"\ventity_type\x18\a \x01(\tR\n" +
+	"entityType\x12\x1d\n" +
+	"\n" +
+	"owner_name\x18\b \x01(\tR\townerName\"l\n" +
 	"#ProjectManagementProjectPageRequest\x12E\n" +
 	"\x04data\x18\x01 \x01(\v21.borrower.ProjectManagementProjectPageRequestDataR\x04data\"\xa0\x01\n" +
 	"'ProjectManagementProjectPageRequestData\x12\x12\n" +
 	"\x04page\x18\x01 \x01(\x03R\x04page\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x03R\x05limit\x12K\n" +
-	"\x06filter\x18\x03 \x01(\v23.borrower.ProjectManagementProjectPageRequestFilterR\x06filter\"f\n" +
+	"\x06filter\x18\x03 \x01(\v23.borrower.ProjectManagementProjectPageRequestFilterR\x06filter\"\x83\x01\n" +
 	")ProjectManagementProjectPageRequestFilter\x12\x18\n" +
-	"\akeyword\x18\x01 \x01(\tR\akeyword\x12\x1f\n" +
-	"\vproperty_id\x18\x02 \x01(\x03R\n" +
-	"propertyId\"n\n" +
+	"\akeyword\x18\x01 \x01(\tR\akeyword\x12\x1b\n" +
+	"\tentity_id\x18\x02 \x01(\x03R\bentityId\x12\x1f\n" +
+	"\ventity_type\x18\x03 \x01(\tR\n" +
+	"entityType\"n\n" +
 	"$ProjectManagementProjectPageResponse\x12F\n" +
 	"\x04data\x18\x01 \x01(\v22.borrower.ProjectManagementProjectPageResponseDataR\x04data\"\xc7\x01\n" +
 	"(ProjectManagementProjectPageResponseData\x12\x12\n" +
@@ -7037,14 +7105,15 @@ const file_borrower_project_management_proto_rawDesc = "" +
 	"&ProjectManagementProjectDetailResponse\x12<\n" +
 	"\x04data\x18\x01 \x01(\v2(.borrower.ProjectManagementProjectEntityR\x04data\"p\n" +
 	"%ProjectManagementProjectCreateRequest\x12G\n" +
-	"\x04data\x18\x01 \x01(\v23.borrower.ProjectManagementProjectCreateRequestDataR\x04data\"\xd1\x01\n" +
-	")ProjectManagementProjectCreateRequestData\x12\x1f\n" +
-	"\vproperty_id\x18\x01 \x01(\x03R\n" +
-	"propertyId\x12\x12\n" +
+	"\x04data\x18\x01 \x01(\v23.borrower.ProjectManagementProjectCreateRequestDataR\x04data\"\xee\x01\n" +
+	")ProjectManagementProjectCreateRequestData\x12\x1b\n" +
+	"\tentity_id\x18\x01 \x01(\x03R\bentityId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x1b\n" +
 	"\tcover_url\x18\x04 \x01(\tR\bcoverUrl\x120\n" +
-	"\x14workflow_template_id\x18\x05 \x01(\x03R\x12workflowTemplateId\"p\n" +
+	"\x14workflow_template_id\x18\x05 \x01(\x03R\x12workflowTemplateId\x12\x1f\n" +
+	"\ventity_type\x18\x06 \x01(\tR\n" +
+	"entityType\"p\n" +
 	"%ProjectManagementProjectUpdateRequest\x12G\n" +
 	"\x04data\x18\x01 \x01(\v23.borrower.ProjectManagementProjectUpdateRequestDataR\x04data\"\x8e\x01\n" +
 	")ProjectManagementProjectUpdateRequestData\x12\x0e\n" +
@@ -7307,12 +7376,13 @@ const file_borrower_project_management_proto_rawDesc = "" +
 	"\x04data\x18\x01 \x01(\v26.borrower.ProjectManagementAttachmentDeleteRequestDataR\x04data\"`\n" +
 	",ProjectManagementAttachmentDeleteRequestData\x12\x17\n" +
 	"\atask_id\x18\x01 \x01(\x03R\x06taskId\x12\x17\n" +
-	"\afile_id\x18\x02 \x01(\x03R\x06fileId\"\xbc\x01\n" +
+	"\afile_id\x18\x02 \x01(\x03R\x06fileId\"\xd0\x01\n" +
 	"%ProjectManagementTaskDependencyEntity\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12*\n" +
-	"\x11successor_task_id\x18\x02 \x01(\x03R\x0fsuccessorTaskId\x12.\n" +
-	"\x13predecessor_task_id\x18\x03 \x01(\x03R\x11predecessorTaskId\x12'\n" +
-	"\x0fdependency_type\x18\x04 \x01(\tR\x0edependencyType\"r\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
+	"\atask_id\x18\x02 \x01(\x03R\x06taskId\x12,\n" +
+	"\x12dependency_task_id\x18\x03 \x01(\x03R\x10dependencyTaskId\x12'\n" +
+	"\x0fdependency_type\x18\x04 \x01(\tR\x0edependencyType\x12'\n" +
+	"\x0fdependency_rule\x18\x05 \x01(\tR\x0edependencyRule\"r\n" +
 	"&ProjectManagementDependencyPageRequest\x12H\n" +
 	"\x04data\x18\x01 \x01(\v24.borrower.ProjectManagementDependencyPageRequestDataR\x04data\"\x91\x01\n" +
 	"*ProjectManagementDependencyPageRequestData\x12\x17\n" +
@@ -7330,18 +7400,21 @@ const file_borrower_project_management_proto_rawDesc = "" +
 	"total_page\x18\x04 \x01(\x03R\ttotalPage\x12C\n" +
 	"\x04list\x18\x05 \x03(\v2/.borrower.ProjectManagementTaskDependencyEntityR\x04list\"v\n" +
 	"(ProjectManagementDependencyCreateRequest\x12J\n" +
-	"\x04data\x18\x01 \x01(\v26.borrower.ProjectManagementDependencyCreateRequestDataR\x04data\"\xb3\x01\n" +
-	",ProjectManagementDependencyCreateRequestData\x12*\n" +
-	"\x11successor_task_id\x18\x01 \x01(\x03R\x0fsuccessorTaskId\x12.\n" +
-	"\x13predecessor_task_id\x18\x02 \x01(\x03R\x11predecessorTaskId\x12'\n" +
-	"\x0fdependency_type\x18\x03 \x01(\tR\x0edependencyType\"p\n" +
+	"\x04data\x18\x01 \x01(\v26.borrower.ProjectManagementDependencyCreateRequestDataR\x04data\"\xc7\x01\n" +
+	",ProjectManagementDependencyCreateRequestData\x12\x17\n" +
+	"\atask_id\x18\x01 \x01(\x03R\x06taskId\x12,\n" +
+	"\x12dependency_task_id\x18\x02 \x01(\x03R\x10dependencyTaskId\x12'\n" +
+	"\x0fdependency_type\x18\x03 \x01(\tR\x0edependencyType\x12'\n" +
+	"\x0fdependency_rule\x18\x04 \x01(\tR\x0edependencyRule\"p\n" +
 	")ProjectManagementDependencyDetailResponse\x12C\n" +
 	"\x04data\x18\x01 \x01(\v2/.borrower.ProjectManagementTaskDependencyEntityR\x04data\"v\n" +
 	"(ProjectManagementDependencyUpdateRequest\x12J\n" +
-	"\x04data\x18\x01 \x01(\v26.borrower.ProjectManagementDependencyUpdateRequestDataR\x04data\"|\n" +
+	"\x04data\x18\x01 \x01(\v26.borrower.ProjectManagementDependencyUpdateRequestDataR\x04data\"\xbe\x01\n" +
 	",ProjectManagementDependencyUpdateRequestData\x12#\n" +
 	"\rdependency_id\x18\x01 \x01(\x03R\fdependencyId\x12'\n" +
-	"\x0fdependency_type\x18\x02 \x01(\tR\x0edependencyType\"v\n" +
+	"\x0fdependency_type\x18\x02 \x01(\tR\x0edependencyType\x12'\n" +
+	"\x0fdependency_rule\x18\x03 \x01(\tR\x0edependencyRule\x12\x17\n" +
+	"\atask_id\x18\x04 \x01(\x03R\x06taskId\"v\n" +
 	"(ProjectManagementDependencyDeleteRequest\x12J\n" +
 	"\x04data\x18\x01 \x01(\v26.borrower.ProjectManagementDependencyDeleteRequestDataR\x04data\"S\n" +
 	",ProjectManagementDependencyDeleteRequestData\x12#\n" +

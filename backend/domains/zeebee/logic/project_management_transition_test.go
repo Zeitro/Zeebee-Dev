@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/glebarez/sqlite"
-	"github.com/lib/pq"
 	"gorm.io/gorm"
 
 	"zeebee-backend/domains/zeebee/constants"
@@ -15,7 +14,7 @@ import (
 	"zeebee-backend/domains/zeebee/repo"
 )
 
-func setupProjectManagementTransitionTest(t *testing.T, dependencyType constants.ProjectManagementDependencyType, predecessorPhase constants.ProjectManagementStagePhase) (*ProjectManagementLogic, *gorm.DB) {
+func setupProjectManagementTransitionTest(t *testing.T, dependencyRule constants.ProjectManagementDependencyRule, predecessorPhase constants.ProjectManagementStagePhase) (*ProjectManagementLogic, *gorm.DB) {
 	t.Helper()
 	db, err := gorm.Open(sqlite.Open(fmt.Sprintf("file:%s?mode=memory&cache=shared", t.Name())), &gorm.Config{})
 	if err != nil {
@@ -24,7 +23,7 @@ func setupProjectManagementTransitionTest(t *testing.T, dependencyType constants
 	for _, statement := range []string{
 		"CREATE TABLE project_management_tasks (id integer primary key, is_del integer not null default 0, project_id integer not null default 0, organization_id integer not null default 0, parent_task_id integer not null default 0, stage_id integer not null default 0, creator_id integer not null default 0, creator_name text not null default '', title text not null default '')",
 		"CREATE TABLE project_management_workflow_stages (id integer primary key, is_del integer not null default 0, workflow_id integer not null default 0, name text not null default '', phase text not null default '', sort_order integer not null default 0)",
-		"CREATE TABLE project_management_task_dependencies (id integer primary key, is_del integer not null default 0, successor_task_id integer not null, predecessor_task_id integer not null, dependency_type text not null default 'FS')",
+		"CREATE TABLE project_management_task_dependencies (id integer primary key, is_del integer not null default 0, task_id integer not null, dependency_task_id integer not null, dependency_type text not null default 'PreTask', dependency_rule text not null default 'FS')",
 		"CREATE TABLE project_management_task_assignees (id integer primary key, is_del integer not null default 0, task_id integer not null, organization_user_id integer not null, organization_user_name text not null default '')",
 	} {
 		if err := db.Exec(statement).Error; err != nil {
@@ -42,8 +41,8 @@ func setupProjectManagementTransitionTest(t *testing.T, dependencyType constants
 	if err := db.Exec("INSERT INTO project_management_tasks (id, project_id, organization_id, stage_id) VALUES (10, 1, 1, 100), (20, 1, 1, 100)").Error; err != nil {
 		t.Fatal(err)
 	}
-	if dependencyType != "" {
-		if err := db.Exec("INSERT INTO project_management_task_dependencies (id, successor_task_id, predecessor_task_id, dependency_type) VALUES (1, 10, 20, ?)", dependencyType).Error; err != nil {
+	if dependencyRule != "" {
+		if err := db.Exec("INSERT INTO project_management_task_dependencies (id, task_id, dependency_task_id, dependency_type, dependency_rule) VALUES (1, 10, 20, 'PreTask', ?)", dependencyRule).Error; err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -64,15 +63,15 @@ func setupProjectManagementTransitionTest(t *testing.T, dependencyType constants
 func TestTransitionDependencyRules(t *testing.T) {
 	cases := []struct {
 		name       string
-		dependency constants.ProjectManagementDependencyType
+		dependency constants.ProjectManagementDependencyRule
 		target     constants.ProjectManagementStagePhase
 		blocked    bool
 	}{
-		{"FS blocks in progress", constants.ProjectManagementDependencyTypeFS, constants.ProjectManagementStagePhaseInProgress, true},
-		{"SS blocks in progress", constants.ProjectManagementDependencyTypeSS, constants.ProjectManagementStagePhaseInProgress, true},
-		{"FF blocks finished", constants.ProjectManagementDependencyTypeFF, constants.ProjectManagementStagePhaseFinished, true},
-		{"SF blocks finished", constants.ProjectManagementDependencyTypeSF, constants.ProjectManagementStagePhaseFinished, true},
-		{"direct finish ignores FS", constants.ProjectManagementDependencyTypeFS, constants.ProjectManagementStagePhaseFinished, false},
+		{"FS blocks in progress", constants.ProjectManagementDependencyRuleFS, constants.ProjectManagementStagePhaseInProgress, true},
+		{"SS blocks in progress", constants.ProjectManagementDependencyRuleSS, constants.ProjectManagementStagePhaseInProgress, true},
+		{"FF blocks finished", constants.ProjectManagementDependencyRuleFF, constants.ProjectManagementStagePhaseFinished, true},
+		{"SF blocks finished", constants.ProjectManagementDependencyRuleSF, constants.ProjectManagementStagePhaseFinished, true},
+		{"direct finish ignores FS", constants.ProjectManagementDependencyRuleFS, constants.ProjectManagementStagePhaseFinished, false},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -99,9 +98,9 @@ func TestTransitionActorAndChildRules(t *testing.T) {
 	logic, db := setupProjectManagementTransitionTest(t, "", constants.ProjectManagementStagePhasePending)
 	actor := &dto.ProjectManagementActor{OrganizationUserId: 7}
 	task := &model.ProjectManagementTask{Base: model.Base{Id: 10}}
-	project := &model.ProjectManagementProject{OwnerId: 1}
+	project := &model.ProjectManagementProject{OwnerId: 1, OwnerName: "Owner"}
 	member := &model.ProjectManagementProjectMember{Role: constants.ProjectManagementMemberRoleProjectAdmin}
-	transition := &model.ProjectManagementWorkflowTransition{AllowedActorTypes: pq.StringArray{string(constants.ProjectManagementMemberRoleTaskExecutor)}}
+	transition := &model.ProjectManagementWorkflowTransition{AllowedActorTypes: []constants.ProjectManagementMemberRole{constants.ProjectManagementMemberRoleTaskExecutor}}
 	if err := db.Transaction(func(tx *gorm.DB) error {
 		return logic.requireTransitionActor(context.Background(), tx, task, project, member, actor, transition)
 	}); err == nil {

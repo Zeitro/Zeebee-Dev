@@ -19,7 +19,7 @@ func TestTaskCascadeDeleteAndHistoricalSnapshots(t *testing.T) {
 	for _, statement := range []string{
 		"CREATE TABLE project_management_tasks (id integer primary key, is_del integer not null default 0, project_id integer not null, organization_id integer not null, parent_task_id integer not null default 0, stage_id integer not null default 0, creator_id integer not null default 0, creator_name text not null default '', title text not null default '')",
 		"CREATE TABLE project_management_task_assignees (id integer primary key, is_del integer not null default 0, task_id integer not null, organization_user_id integer not null, organization_user_name text not null default '')",
-		"CREATE TABLE project_management_task_dependencies (id integer primary key, is_del integer not null default 0, successor_task_id integer not null, predecessor_task_id integer not null)",
+		"CREATE TABLE project_management_task_dependencies (id integer primary key, is_del integer not null default 0, task_id integer not null, dependency_task_id integer not null, dependency_type text not null default 'PreTask', dependency_rule text not null default 'FS')",
 		"CREATE TABLE files (id integer primary key, is_del integer not null default 0, entity_id integer not null, entity_type text not null)",
 		"CREATE TABLE project_management_project_members (id integer primary key, is_del integer not null default 0, project_id integer not null, organization_user_id integer not null, role text not null default '')",
 		"CREATE TABLE operations (id integer primary key, is_del integer not null default 0, entity_id integer not null, entity_type text not null, operation text not null default '')",
@@ -49,7 +49,7 @@ func TestTaskCascadeDeleteAndHistoricalSnapshots(t *testing.T) {
 		"INSERT INTO project_management_tasks (id, project_id, organization_id, parent_task_id, stage_id, creator_id, creator_name, title) VALUES (11, 10, 1, 0, 100, 8, 'Creator', 'Parent')",
 		"INSERT INTO project_management_tasks (id, project_id, organization_id, parent_task_id, stage_id, creator_id, creator_name, title) VALUES (12, 10, 1, 11, 100, 8, 'Creator', 'Child')",
 		"INSERT INTO project_management_task_assignees (id, task_id, organization_user_id, organization_user_name) VALUES (13, 12, 9, 'Executor')",
-		"INSERT INTO project_management_task_dependencies (id, successor_task_id, predecessor_task_id) VALUES (14, 12, 11)",
+		"INSERT INTO project_management_task_dependencies (id, task_id, dependency_task_id) VALUES (14, 12, 11)",
 		"INSERT INTO files (id, entity_id, entity_type) VALUES (15, 12, 'ProjectManagementTask')",
 		"INSERT INTO operations (id, entity_id, entity_type, operation) VALUES (16, 10, 'ProjectManagementProject', 'Project task deleted')",
 	} {

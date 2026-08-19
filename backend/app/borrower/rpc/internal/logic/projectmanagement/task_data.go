@@ -34,12 +34,8 @@ func taskEntity(task *model.ProjectManagementTask) (*borrower.ProjectManagementT
 	if task.EndAt != nil && task.EndAt.Valid {
 		entity.EndAt = task.EndAt.Time.Format(time.RFC3339)
 	}
-	var snapshot dto.ProjectManagementTaskTypeSnapshotDto
-	if len(task.TaskType) > 0 && string(task.TaskType) != "{}" {
-		if err := json.Unmarshal(task.TaskType, &snapshot); err != nil {
-			return nil, errorx.WithStack(err)
-		}
-		entity.TaskType, err = copierx.Trans[dto.ProjectManagementTaskTypeSnapshotDto, borrower.ProjectManagementTaskTypeSnapshotEntity](&snapshot)
+	if task.TaskType != nil && task.TaskType.Id != 0 {
+		entity.TaskType, err = copierx.Trans[dto.ProjectManagementTaskTypeSnapshotDto, borrower.ProjectManagementTaskTypeSnapshotEntity](task.TaskType)
 		if err != nil {
 			return nil, err
 		}

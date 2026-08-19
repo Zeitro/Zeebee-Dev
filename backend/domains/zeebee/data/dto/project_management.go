@@ -78,11 +78,13 @@ type ProjectManagementTaskTypePageRequestDto struct {
 type ProjectManagementProjectDto struct {
 	Id             int64
 	OrganizationId int64
-	PropertyId     int64
+	EntityId       int64
+	EntityType     string
 	Name           string
 	Description    string
 	CoverUrl       string
 	OwnerId        int64
+	OwnerName      string
 }
 
 type ProjectManagementProjectCreateDto struct {
@@ -98,7 +100,8 @@ type ProjectManagementProjectUpdateDto struct {
 
 type ProjectManagementProjectFilterDto struct {
 	Keyword    string
-	PropertyId int64
+	EntityId   int64
+	EntityType string
 }
 
 type ProjectManagementProjectPageRequestDto struct {
@@ -171,10 +174,11 @@ type ProjectManagementTaskAssigneeDto struct {
 }
 
 type ProjectManagementTaskDependencyDto struct {
-	Id                int64
-	SuccessorTaskId   int64
-	PredecessorTaskId int64
-	DependencyType    constants.ProjectManagementDependencyType
+	Id               int64
+	TaskId           int64
+	DependencyTaskId int64
+	DependencyType   constants.ProjectManagementDependencyType
+	DependencyRule   constants.ProjectManagementDependencyRule
 }
 
 type ProjectManagementTaskDependencyPageRequestDto struct {

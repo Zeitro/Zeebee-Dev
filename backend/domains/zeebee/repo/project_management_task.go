@@ -134,7 +134,7 @@ func (r *ProjectManagementTaskRepo) DeleteByProjectWithTx(ctx context.Context, t
 		if err := tx.WithContext(ctx).Where("task_id IN ?", taskIds).Delete(&model.ProjectManagementTaskAssignee{}).Error; err != nil {
 			return errorx.WithStack(err)
 		}
-		if err := tx.WithContext(ctx).Where("successor_task_id IN ? OR predecessor_task_id IN ?", taskIds, taskIds).Delete(&model.ProjectManagementTaskDependency{}).Error; err != nil {
+		if err := tx.WithContext(ctx).Where("task_id IN ? OR dependency_task_id IN ?", taskIds, taskIds).Delete(&model.ProjectManagementTaskDependency{}).Error; err != nil {
 			return errorx.WithStack(err)
 		}
 	}
@@ -176,7 +176,7 @@ func (r *ProjectManagementTaskRepo) DeleteByIdsWithTx(ctx context.Context, tx *g
 	if err := tx.WithContext(ctx).Where("task_id IN ?", taskIds).Delete(&model.ProjectManagementTaskAssignee{}).Error; err != nil {
 		return errorx.WithStack(err)
 	}
-	if err := tx.WithContext(ctx).Where("successor_task_id IN ? OR predecessor_task_id IN ?", taskIds, taskIds).Delete(&model.ProjectManagementTaskDependency{}).Error; err != nil {
+	if err := tx.WithContext(ctx).Where("task_id IN ? OR dependency_task_id IN ?", taskIds, taskIds).Delete(&model.ProjectManagementTaskDependency{}).Error; err != nil {
 		return errorx.WithStack(err)
 	}
 	err := tx.WithContext(ctx).Where("id IN ?", taskIds).Delete(&model.ProjectManagementTask{}).Error

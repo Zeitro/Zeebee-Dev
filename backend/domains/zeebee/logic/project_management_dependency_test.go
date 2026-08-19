@@ -14,14 +14,14 @@ import (
 )
 
 func TestValidateProjectManagementDependency(t *testing.T) {
-	valid := dto.ProjectManagementTaskDependencyDto{SuccessorTaskId: 2, PredecessorTaskId: 1, DependencyType: constants.ProjectManagementDependencyTypeFS}
+	valid := dto.ProjectManagementTaskDependencyDto{TaskId: 2, DependencyTaskId: 1, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}
 	if err := validateProjectManagementDependency(valid); err != nil {
 		t.Fatalf("valid dependency rejected: %v", err)
 	}
 	for _, invalid := range []dto.ProjectManagementTaskDependencyDto{
 		{},
-		{SuccessorTaskId: 1, PredecessorTaskId: 1, DependencyType: constants.ProjectManagementDependencyTypeFS},
-		{SuccessorTaskId: 2, PredecessorTaskId: 1, DependencyType: "invalid"},
+		{TaskId: 1, DependencyTaskId: 1, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS},
+		{TaskId: 2, DependencyTaskId: 1, DependencyType: "invalid", DependencyRule: constants.ProjectManagementDependencyRuleFS},
 	} {
 		if err := validateProjectManagementDependency(invalid); err == nil {
 			t.Fatalf("invalid dependency accepted: %#v", invalid)
@@ -38,7 +38,7 @@ func TestCreateTaskDependencyRules(t *testing.T) {
 		"CREATE TABLE project_management_tasks (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, project_id integer not null, organization_id integer not null, parent_task_id integer not null default 0, stage_id integer not null, creator_id integer not null default 0, creator_name text not null default '', title text not null default '', description text not null default '', priority text not null default '', task_type json not null default '{}')",
 		"CREATE TABLE project_management_project_members (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, project_id integer not null, organization_user_id integer not null, role text not null default 'TaskExecutor')",
 		"CREATE TABLE project_management_workflow_stages (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, workflow_id integer not null default 0, name text not null default '', phase text not null, sort_order integer not null default 0)",
-		"CREATE TABLE project_management_task_dependencies (id integer primary key autoincrement, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, successor_task_id integer not null, predecessor_task_id integer not null, dependency_type text not null)",
+		"CREATE TABLE project_management_task_dependencies (id integer primary key autoincrement, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, task_id integer not null, dependency_task_id integer not null, dependency_type text not null, dependency_rule text not null)",
 		"CREATE TABLE operations (id integer primary key autoincrement, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, entity_id integer not null, entity_type text not null, operator_id integer not null, operator_name text not null default '', operator_type text not null, operation text not null, note text not null default '', metadata json not null default '{}', organization_id integer not null)",
 	} {
 		if err := db.Exec(statement).Error; err != nil {
@@ -47,7 +47,7 @@ func TestCreateTaskDependencyRules(t *testing.T) {
 	}
 	for _, statement := range []string{
 		"INSERT INTO project_management_workflow_stages (id, phase) VALUES (100, 'Pending'), (101, 'InProgress')",
-		"INSERT INTO project_management_tasks (id, project_id, organization_id, stage_id, title) VALUES (1, 10, 1, 100, 'Predecessor'), (2, 10, 1, 100, 'Successor'), (3, 11, 1, 100, 'Other project')",
+		"INSERT INTO project_management_tasks (id, project_id, organization_id, stage_id, title) VALUES (1, 10, 1, 100, 'Predecessor'), (2, 10, 1, 100, 'Successor'), (3, 11, 1, 100, 'Other project'), (4, 10, 1, 100, 'Post task')",
 		"INSERT INTO project_management_project_members (id, project_id, organization_user_id) VALUES (1, 10, 7)",
 	} {
 		if err := db.Exec(statement).Error; err != nil {
@@ -56,25 +56,34 @@ func TestCreateTaskDependencyRules(t *testing.T) {
 	}
 	logic := NewProjectManagementLogic(NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}))
 	actor := &dto.ProjectManagementActor{OrganizationId: 1, OrganizationUserId: 7, Name: "Actor"}
-	input := dto.ProjectManagementTaskDependencyDto{SuccessorTaskId: 2, PredecessorTaskId: 1, DependencyType: constants.ProjectManagementDependencyTypeFS}
+	input := dto.ProjectManagementTaskDependencyDto{TaskId: 2, DependencyTaskId: 1, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}
 
 	dependency, err := logic.CreateTaskDependency(context.Background(), actor, input)
 	if err != nil || dependency == nil || dependency.Id == 0 {
 		t.Fatalf("valid dependency rejected: %#v, %v", dependency, err)
 	}
+	if _, err = logic.CreateTaskDependency(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 2, DependencyTaskId: 4, DependencyType: constants.ProjectManagementDependencyTypePostTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}); err != nil {
+		t.Fatalf("mixed post-task dependency rejected: %v", err)
+	}
+	if _, err = logic.CreateTaskDependency(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 1, DependencyTaskId: 4, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}); err == nil {
+		t.Fatal("mixed pre/post dependency cycle accepted")
+	}
 	if _, err = logic.CreateTaskDependency(context.Background(), actor, input); err == nil {
 		t.Fatal("duplicate dependency accepted")
 	}
-	if _, err = logic.CreateTaskDependency(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{SuccessorTaskId: 1, PredecessorTaskId: 2, DependencyType: constants.ProjectManagementDependencyTypeFS}); err == nil {
+	if _, err = logic.CreateTaskDependency(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 1, DependencyTaskId: 2, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}); err == nil {
 		t.Fatal("dependency cycle accepted")
 	}
-	if _, err = logic.CreateTaskDependency(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{SuccessorTaskId: 2, PredecessorTaskId: 3, DependencyType: constants.ProjectManagementDependencyTypeFS}); err == nil {
+	if _, err = logic.CreateTaskDependency(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 2, DependencyTaskId: 1, DependencyType: constants.ProjectManagementDependencyTypePostTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}); err == nil {
+		t.Fatal("post-task dependency cycle accepted")
+	}
+	if _, err = logic.CreateTaskDependency(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 2, DependencyTaskId: 3, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}); err == nil {
 		t.Fatal("cross-project dependency accepted")
 	}
 	if err = db.Exec("UPDATE project_management_tasks SET stage_id = 101 WHERE id = 2").Error; err != nil {
 		t.Fatal(err)
 	}
-	if _, err = logic.CreateTaskDependency(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{SuccessorTaskId: 2, PredecessorTaskId: 1, DependencyType: constants.ProjectManagementDependencyTypeFF}); err == nil {
+	if _, err = logic.CreateTaskDependency(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 2, DependencyTaskId: 1, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFF}); err == nil {
 		t.Fatal("dependency added after successor left pending")
 	}
 }

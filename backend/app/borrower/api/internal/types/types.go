@@ -1721,9 +1721,10 @@ type ProjectManagementAttachmentPageResponse struct {
 }
 
 type ProjectManagementDependencyCreateRequest struct {
-	Id                int64  `path:"id" validate:"required,gt=0"`
-	PredecessorTaskId int64  `json:"predecessor_task_id" validate:"required,gt=0"`
-	DependencyType    string `json:"dependency_type" validate:"required,oneof=FS FF SS SF"`
+	Id               int64  `path:"id" validate:"required,gt=0"`
+	DependencyTaskId int64  `json:"dependency_task_id" validate:"required,gt=0"`
+	DependencyType   string `json:"dependency_type" validate:"required,oneof=PreTask PostTask"`
+	DependencyRule   string `json:"dependency_rule" validate:"required,oneof=FS FF SS SF"`
 }
 
 type ProjectManagementDependencyDeleteRequest struct {
@@ -1749,7 +1750,8 @@ type ProjectManagementDependencyPageResponse struct {
 type ProjectManagementDependencyUpdateRequest struct {
 	Id             int64  `path:"id" validate:"required,gt=0"`
 	DependencyId   int64  `path:"dependency_id" validate:"required,gt=0"`
-	DependencyType string `json:"dependency_type" validate:"required,oneof=FS FF SS SF"`
+	DependencyType string `json:"dependency_type" validate:"required,oneof=PreTask PostTask"`
+	DependencyRule string `json:"dependency_rule" validate:"required,oneof=FS FF SS SF"`
 }
 
 type ProjectManagementMemberAddRequest struct {
@@ -1858,7 +1860,8 @@ type ProjectManagementOperationPageResponse struct {
 }
 
 type ProjectManagementProjectCreateRequest struct {
-	PropertyId         int64  `json:"property_id,optional"`
+	EntityId           int64  `json:"entity_id,optional"`
+	EntityType         string `json:"entity_type,optional"`
 	Name               string `json:"name" validate:"required,max=100"`
 	Description        string `json:"description,optional" validate:"max=500"`
 	CoverUrl           string `json:"cover_url,optional" validate:"max=255"`
@@ -1876,16 +1879,19 @@ type ProjectManagementProjectDetailRequest struct {
 
 type ProjectManagementProjectEntity struct {
 	Id          int64  `json:"id"`
-	PropertyId  int64  `json:"property_id"`
+	EntityId    int64  `json:"entity_id"`
+	EntityType  string `json:"entity_type"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	CoverUrl    string `json:"cover_url"`
 	OwnerId     int64  `json:"owner_id"`
+	OwnerName   string `json:"owner_name"`
 }
 
 type ProjectManagementProjectPageFilter struct {
 	Keyword    string `json:"keyword,optional"`
-	PropertyId int64  `json:"property_id,optional"`
+	EntityId   int64  `json:"entity_id,optional"`
+	EntityType string `json:"entity_type,optional"`
 }
 
 type ProjectManagementProjectPageRequest struct {
@@ -1949,10 +1955,11 @@ type ProjectManagementTaskDeleteRequest struct {
 }
 
 type ProjectManagementTaskDependencyEntity struct {
-	Id                int64  `json:"id"`
-	SuccessorTaskId   int64  `json:"successor_task_id"`
-	PredecessorTaskId int64  `json:"predecessor_task_id"`
-	DependencyType    string `json:"dependency_type"`
+	Id               int64  `json:"id"`
+	TaskId           int64  `json:"task_id"`
+	DependencyTaskId int64  `json:"dependency_task_id"`
+	DependencyType   string `json:"dependency_type"`
+	DependencyRule   string `json:"dependency_rule"`
 }
 
 type ProjectManagementTaskDetailRequest struct {

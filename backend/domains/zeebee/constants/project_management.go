@@ -4,6 +4,7 @@ type ProjectManagementWorkflowKind string
 type ProjectManagementStagePhase string
 type ProjectManagementMemberRole string
 type ProjectManagementDependencyType string
+type ProjectManagementDependencyRule string
 
 const (
 	ProjectManagementWorkflowKindOrganizationTemplate ProjectManagementWorkflowKind = "OrganizationTemplate"
@@ -18,10 +19,15 @@ const (
 	ProjectManagementMemberRoleTaskExecutor ProjectManagementMemberRole = "TaskExecutor"
 	ProjectManagementMemberRoleTaskCreator  ProjectManagementMemberRole = "TaskCreator"
 
-	ProjectManagementDependencyTypeFS ProjectManagementDependencyType = "FS"
-	ProjectManagementDependencyTypeFF ProjectManagementDependencyType = "FF"
-	ProjectManagementDependencyTypeSS ProjectManagementDependencyType = "SS"
-	ProjectManagementDependencyTypeSF ProjectManagementDependencyType = "SF"
+	ProjectManagementDependencyTypePreTask  ProjectManagementDependencyType = "PreTask"
+	ProjectManagementDependencyTypePostTask ProjectManagementDependencyType = "PostTask"
+
+	ProjectManagementDependencyRuleFS ProjectManagementDependencyRule = "FS"
+	ProjectManagementDependencyRuleFF ProjectManagementDependencyRule = "FF"
+	ProjectManagementDependencyRuleSS ProjectManagementDependencyRule = "SS"
+	ProjectManagementDependencyRuleSF ProjectManagementDependencyRule = "SF"
+
+	ProjectManagementEntityTypeProperty = "Property"
 
 	OperationEntityTypeProjectManagementOrganization OperationEntityType = "ProjectManagementOrganization"
 	OperationEntityTypeProjectManagementProject      OperationEntityType = "ProjectManagementProject"

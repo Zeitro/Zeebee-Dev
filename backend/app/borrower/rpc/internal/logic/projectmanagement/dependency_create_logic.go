@@ -33,7 +33,7 @@ func (l *DependencyCreateLogic) DependencyCreate(in *borrower.ProjectManagementD
 	if err != nil {
 		return nil, err
 	}
-	dependency, err := base.ProjectManagementLogic.CreateTaskDependency(l.ctx, actor, dto.ProjectManagementTaskDependencyDto{SuccessorTaskId: in.Data.SuccessorTaskId, PredecessorTaskId: in.Data.PredecessorTaskId, DependencyType: constants.ProjectManagementDependencyType(in.Data.DependencyType)})
+	dependency, err := base.ProjectManagementLogic.CreateTaskDependency(l.ctx, actor, dto.ProjectManagementTaskDependencyDto{TaskId: in.Data.TaskId, DependencyTaskId: in.Data.DependencyTaskId, DependencyType: constants.ProjectManagementDependencyType(in.Data.DependencyType), DependencyRule: constants.ProjectManagementDependencyRule(in.Data.DependencyRule)})
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

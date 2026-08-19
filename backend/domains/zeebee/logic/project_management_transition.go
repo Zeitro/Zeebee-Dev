@@ -107,7 +107,8 @@ func (l *ProjectManagementLogic) validateTransitionDependencies(ctx context.Cont
 		return err
 	}
 	for _, dependency := range dependencies {
-		predecessor, err := l.repos.ProjectManagementTaskRepo.LockWithTx(ctx, tx, dependency.PredecessorTaskId)
+		_, predecessorTaskId := dependencyEndpoints(dependency.TaskId, dependency.DependencyTaskId, dependency.DependencyType)
+		predecessor, err := l.repos.ProjectManagementTaskRepo.LockWithTx(ctx, tx, predecessorTaskId)
 		if err != nil {
 			return projectManagementNotFound(err, "dependency predecessor task not found")
 		}
@@ -116,10 +117,10 @@ func (l *ProjectManagementLogic) validateTransitionDependencies(ctx context.Cont
 			return projectManagementNotFound(err, "dependency predecessor stage not found")
 		}
 		finished, started := stage.Phase == constants.ProjectManagementStagePhaseFinished, stage.Phase != constants.ProjectManagementStagePhasePending
-		if targetStage.Phase == constants.ProjectManagementStagePhaseInProgress && ((dependency.DependencyType == constants.ProjectManagementDependencyTypeFS && !finished) || (dependency.DependencyType == constants.ProjectManagementDependencyTypeSS && !started)) {
+		if targetStage.Phase == constants.ProjectManagementStagePhaseInProgress && ((dependency.DependencyRule == constants.ProjectManagementDependencyRuleFS && !finished) || (dependency.DependencyRule == constants.ProjectManagementDependencyRuleSS && !started)) {
 			return errorx.New("task dependency blocks transition to in progress")
 		}
-		if targetStage.Phase == constants.ProjectManagementStagePhaseFinished && ((dependency.DependencyType == constants.ProjectManagementDependencyTypeFF && !finished) || (dependency.DependencyType == constants.ProjectManagementDependencyTypeSF && !started)) {
+		if targetStage.Phase == constants.ProjectManagementStagePhaseFinished && ((dependency.DependencyRule == constants.ProjectManagementDependencyRuleFF && !finished) || (dependency.DependencyRule == constants.ProjectManagementDependencyRuleSF && !started)) {
 			return errorx.New("task dependency blocks transition to finished")
 		}
 	}

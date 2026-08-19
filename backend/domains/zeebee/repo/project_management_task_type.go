@@ -27,7 +27,7 @@ func (r *ProjectManagementTaskTypeRepo) FindEnabledByOrganization(ctx context.Co
 
 func (r *ProjectManagementTaskTypeRepo) FindEnabledByOrganizationWithTx(ctx context.Context, tx *gorm.DB, id, organizationId int64) (*model.ProjectManagementTaskType, error) {
 	taskType := new(model.ProjectManagementTaskType)
-	err := tx.WithContext(ctx).Where("id = ? AND organization_id = ? AND enabled = true", id, organizationId).First(taskType).Error
+	err := tx.WithContext(ctx).Where("id = ? AND organization_id = ? AND enabled = ?", id, organizationId, true).First(taskType).Error
 	return taskType, errorx.WithStack(err)
 }
 
@@ -48,8 +48,10 @@ func (r *ProjectManagementTaskTypeRepo) Page(ctx context.Context, organizationId
 	return r.BaseRepo.Page(query, gormx.PageRequest{Page: input.Page, Limit: input.Limit})
 }
 
-func (r *ProjectManagementTaskTypeRepo) UpdateByOrganization(ctx context.Context, id, organizationId int64, columns map[string]interface{}) error {
-	err := r.Client(ctx).Where("id = ? AND organization_id = ?", id, organizationId).Updates(columns).Error
+func (r *ProjectManagementTaskTypeRepo) UpdateByOrganization(ctx context.Context, id, organizationId int64, taskType *model.ProjectManagementTaskType) error {
+	err := r.Client(ctx).Model(taskType).
+		Where("id = ? AND organization_id = ?", id, organizationId).
+		Select("name", "description", "color", "enabled").Updates(taskType).Error
 	return errorx.WithStack(err)
 }
 

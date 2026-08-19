@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"fmt"
 	"sort"
 
 	"gorm.io/gorm"
@@ -37,7 +38,11 @@ func (r *ProjectManagementDependencyRepo) LockTasksWithTx(ctx context.Context, t
 
 func (r *ProjectManagementDependencyRepo) FindByTasksWithTx(ctx context.Context, tx *gorm.DB, successorTaskId, predecessorTaskId int64) (*model.ProjectManagementTaskDependency, error) {
 	dependency := new(model.ProjectManagementTaskDependency)
-	err := tx.WithContext(ctx).Where("successor_task_id = ? AND predecessor_task_id = ?", successorTaskId, predecessorTaskId).First(dependency).Error
+	err := tx.WithContext(ctx).Where(
+		"(task_id = ? AND dependency_task_id = ? AND dependency_type = ?) OR (task_id = ? AND dependency_task_id = ? AND dependency_type = ?)",
+		successorTaskId, predecessorTaskId, constants.ProjectManagementDependencyTypePreTask,
+		predecessorTaskId, successorTaskId, constants.ProjectManagementDependencyTypePostTask,
+	).First(dependency).Error
 	return dependency, errorx.WithStack(err)
 }
 
@@ -47,13 +52,26 @@ func (r *ProjectManagementDependencyRepo) LockWithTx(ctx context.Context, tx *go
 	return dependency, errorx.WithStack(err)
 }
 
-func (r *ProjectManagementDependencyRepo) HasPathWithTx(ctx context.Context, tx *gorm.DB, fromTaskId, toTaskId int64) (bool, error) {
+func (r *ProjectManagementDependencyRepo) HasPathWithTx(ctx context.Context, tx *gorm.DB, fromTaskId, toTaskId int64, excludedDependencyId ...int64) (bool, error) {
 	var found bool
-	err := tx.WithContext(ctx).Raw(`WITH RECURSIVE reachable(id) AS (
-    SELECT predecessor_task_id FROM project_management_task_dependencies WHERE successor_task_id = ? AND is_del = 0
+	excludedId := int64(0)
+	if len(excludedDependencyId) > 0 {
+		excludedId = excludedDependencyId[0]
+	}
+	err := tx.WithContext(ctx).Raw(`WITH RECURSIVE edges(from_task_id, to_task_id) AS (
+    SELECT dependency_task_id, task_id
+    FROM project_management_task_dependencies
+    WHERE dependency_type = ? AND is_del = 0 AND (? = 0 OR id <> ?)
+    UNION ALL
+    SELECT task_id, dependency_task_id
+    FROM project_management_task_dependencies
+    WHERE dependency_type = ? AND is_del = 0 AND (? = 0 OR id <> ?)
+), reachable(id) AS (
+    SELECT to_task_id FROM edges WHERE from_task_id = ?
     UNION
-    SELECT dependency.predecessor_task_id FROM project_management_task_dependencies dependency JOIN reachable ON dependency.successor_task_id = reachable.id WHERE dependency.is_del = 0
-) SELECT EXISTS (SELECT 1 FROM reachable WHERE id = ?)`, fromTaskId, toTaskId).Scan(&found).Error
+    SELECT edges.to_task_id FROM edges JOIN reachable ON edges.from_task_id = reachable.id
+)
+SELECT EXISTS (SELECT 1 FROM reachable WHERE id = ?)`, constants.ProjectManagementDependencyTypePreTask, excludedId, excludedId, constants.ProjectManagementDependencyTypePostTask, excludedId, excludedId, fromTaskId, toTaskId).Scan(&found).Error
 	return found, errorx.WithStack(err)
 }
 
@@ -64,24 +82,39 @@ func (r *ProjectManagementDependencyRepo) CreateWithTx(ctx context.Context, tx *
 	return dependency, nil
 }
 
-func (r *ProjectManagementDependencyRepo) UpdateTypeWithTx(ctx context.Context, tx *gorm.DB, dependency *model.ProjectManagementTaskDependency, dependencyType constants.ProjectManagementDependencyType) error {
-	err := tx.WithContext(ctx).Model(dependency).Update("dependency_type", dependencyType).Error
+func (r *ProjectManagementDependencyRepo) UpdateWithTx(ctx context.Context, tx *gorm.DB, dependency *model.ProjectManagementTaskDependency) error {
+	err := tx.WithContext(ctx).Model(dependency).
+		Select("task_id", "dependency_task_id", "dependency_type", "dependency_rule").
+		Updates(dependency).Error
 	return errorx.WithStack(err)
 }
 
 func (r *ProjectManagementDependencyRepo) ListBySuccessorWithTx(ctx context.Context, tx *gorm.DB, taskId int64) ([]*model.ProjectManagementTaskDependency, error) {
 	dependencies := make([]*model.ProjectManagementTaskDependency, 0)
-	err := tx.WithContext(ctx).Where("successor_task_id = ?", taskId).Order("id ASC").Find(&dependencies).Error
+	err := tx.WithContext(ctx).Where(
+		"(task_id = ? AND dependency_type = ?) OR (dependency_task_id = ? AND dependency_type = ?)",
+		taskId, constants.ProjectManagementDependencyTypePreTask,
+		taskId, constants.ProjectManagementDependencyTypePostTask,
+	).Order("id ASC").Find(&dependencies).Error
 	return dependencies, errorx.WithStack(err)
 }
 
 func (r *ProjectManagementDependencyRepo) PageByTask(ctx context.Context, taskId int64, predecessor bool, pageReq gormx.PageRequest) (gormx.PageResponse[*model.ProjectManagementTaskDependency], error) {
-	column := "predecessor_task_id"
-	if predecessor {
-		column = "successor_task_id"
+	direction := constants.ProjectManagementDependencyTypePreTask
+	reverseDirection := constants.ProjectManagementDependencyTypePostTask
+	if !predecessor {
+		direction, reverseDirection = reverseDirection, direction
 	}
-	query := r.Client(ctx).Where(column+" = ?", taskId).Order("id DESC")
-	return r.BaseRepo.Page(query, pageReq)
+	table := model.ProjectManagementTaskDependency{}.TableName()
+	query := r.Client(ctx).Table("(?) AS dependencies", r.Client(ctx).Raw(fmt.Sprintf(`
+SELECT id, task_id, dependency_task_id, dependency_type, dependency_rule
+FROM %s
+WHERE task_id = ? AND dependency_type = ? AND is_del = 0
+UNION ALL
+SELECT id, ? AS task_id, task_id AS dependency_task_id, ? AS dependency_type, dependency_rule
+FROM %s
+WHERE dependency_task_id = ? AND dependency_type = ? AND is_del = 0`, table, table), taskId, direction, taskId, direction, taskId, reverseDirection)).Order("id DESC")
+	return gormx.Page[*model.ProjectManagementTaskDependency](query, pageReq)
 }
 
 func (r *ProjectManagementDependencyRepo) DeleteWithTx(ctx context.Context, tx *gorm.DB, dependency *model.ProjectManagementTaskDependency) error {
