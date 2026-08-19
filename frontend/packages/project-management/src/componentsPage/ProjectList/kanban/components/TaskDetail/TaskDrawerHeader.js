@@ -136,7 +136,8 @@ export function TaskDrawerHeader({
 							],
 							onClick: ({ key }) => {
 								if (key === 'delete') onDelete();
-								else if (key === 'add-predecessor') onAddDependency?.('predecessor');
+								else if (key === 'add-predecessor')
+									onAddDependency?.('predecessor');
 								else if (key === 'add-successor') onAddDependency?.('successor');
 							},
 						}}

@@ -25,7 +25,7 @@ export function ProjectCard({ row }) {
 
 	const goSettings = () => {
 		if (projectId == null) return;
-		router.push(`/project/${projectId}/settings`);
+		router.push(`/project/projectList/settings?id=${projectId}`);
 	};
 
 	return (

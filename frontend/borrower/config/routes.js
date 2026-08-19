@@ -221,4 +221,19 @@ export const menuSetting = {
 	'/project/projectList/:id': {
 		hideCrumbs: true,
 	},
+	'/project/projectList/settings': {
+		hideCrumbs: true,
+	},
+	'/project/workflow': {
+		hideCrumbs: true,
+	},
+	'/project/workflow/:id': {
+		hideCrumbs: true,
+	},
+	'/project/taskType': {
+		hideCrumbs: true,
+	},
+	'/project/myTask': {
+		hideCrumbs: true,
+	},
 };

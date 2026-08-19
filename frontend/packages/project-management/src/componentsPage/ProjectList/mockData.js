@@ -86,3 +86,37 @@ export function getMockProjectPage(params) {
 		total,
 	};
 }
+
+/**
+ * @param {number|string|undefined} projectId
+ * @returns {object|null}
+ */
+export function getMockProject(projectId) {
+	if (projectId == null || projectId === '') return null;
+	const item = MOCK_PROJECT_LIST.find((row) => String(row.id) === String(projectId));
+	return item ? { ...item } : null;
+}
+
+/**
+ * 就地更新 mock 列表，便于设置页保存后列表/看板读到同一份数据。
+ * @param {number|string} projectId
+ * @param {object} patch
+ * @returns {object|null}
+ */
+export function updateMockProject(projectId, patch) {
+	const item = MOCK_PROJECT_LIST.find((row) => String(row.id) === String(projectId));
+	if (!item) return null;
+	Object.assign(item, patch, { updated_at: new Date().toISOString() });
+	return { ...item };
+}
+
+/**
+ * @param {number|string} projectId
+ * @returns {boolean}
+ */
+export function deleteMockProject(projectId) {
+	const index = MOCK_PROJECT_LIST.findIndex((row) => String(row.id) === String(projectId));
+	if (index < 0) return false;
+	MOCK_PROJECT_LIST.splice(index, 1);
+	return true;
+}

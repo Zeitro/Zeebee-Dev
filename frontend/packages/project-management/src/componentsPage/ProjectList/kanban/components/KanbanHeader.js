@@ -112,7 +112,7 @@ export function KanbanHeader({
 				{projectId != null ? (
 					<Button
 						icon={<SettingOutlined />}
-						onClick={() => router.push(`/project/${projectId}/settings`)}
+						onClick={() => router.push(`/project/workflow/${projectId}`)}
 					>
 						{t('projectList.openSettings')}
 					</Button>

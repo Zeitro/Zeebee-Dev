@@ -67,7 +67,16 @@ Zeebee-Dev/
 ### 命名与体量
 
 - **`src/app/` 路由目录**：多词用 **camelCase**（如 `myTransactions`、`marketTools`），勿用 kebab-case；URL 与目录名一致。
-- **封装组件文件**：**PascalCase**；单文件建议 **≤300 行**，逻辑拆子组件或 hooks。
+- **封装组件文件**：**PascalCase**；单文件 **300 行左右，尽量小一点**（硬上限）；逻辑拆 **`hooks/`** 或 **`components/<子功能>/`**。
+- **复杂 feature 目录结构**（编辑器、多 Tab 详情、带 Modal/Drawer 的列表等）：
+  - **页面 / 路由壳**（`page.js` 或包内 `*Page` / `*Editor` 入口）：**只做编排**（读 params、调 hooks、拼子组件），目标 **≤150 行**。
+  - **业务逻辑**：进同 feature 下 **`hooks/useXxx.js`**（请求、表单、CRUD、拖拽等）；单 hook 建议 **≤350 行**，超出按职责再拆（如 `useXxxInteraction` / `useXxxOptions`）。
+  - **UI 区块**：每个 Modal / Drawer / Tab / 独立面板各一文件，放 **`components/<子功能>/`**；纯工具 / 布局算法放 **`lib/`** 或 **`constants.js`** / **`flowLayout.js`** 等同目录工具文件。
+  - **禁止**从 demo / 参考项目（如 `pm-frontend`）**整文件复制**进仓库；移植时必须按上文拆分，并在首屏 PR 内完成，不得先合入再「后续 refactor」。
+- **拆分触发条件**（满足任一即必须拆）：
+  1. 单文件 **>300 行**
+  2. 单文件 **>150 行** 且含 **≥2 个** 独立 UI 区块（Modal、Drawer、Tab、侧栏面板等）
+  3. 单文件含 **≥3 个** `useState` / `useReducer` 分组域（如「列表 + 编辑表单 + 流程图交互」应分 hook）
 - **页面组件拆分**（详情页 / 多 Tab 页）：`page.js` 只做**路由壳**——读 params、拉共享数据、Tab 切换、全局 Actions / Modal；每个 Tab 或独立区块拆到同路由下的 **`components/<TabName>/`**（如 `components/DetailsTab/index.js`）。Tab 内再拆展示原子组件；字段配置放同目录 **`constants.js`**；样式 **Tailwind 优先**，仅在 Tailwind 不易表达时才落 **`index.module.scss`**。子 Tab **自己管自己的请求与列定义**（除非数据必须由父级统一拉取）；父传 **`rowData` / `id` + 回调**（`onRefresh`、`onEdit`）。跨 feature 复用时：先按上文归属判断进对应共享包，勿默认塞进错误的包。
 - **布尔**用 `is` / `has` / `can` / `should` 前缀；**ref 对象**以 `Ref` 结尾；样式 **Tailwind 第一，`index.module.scss` 第二**。
 - **约定 vs 工具**：本仓库前端规范写在本文件；查 Next/antd 等**官方文档**用 **Context7 等 MCP**；重复脚手架流程可做成 **Cursor Skill**。

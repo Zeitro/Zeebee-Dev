@@ -33,12 +33,17 @@ export function TaskActivityDrawer({ open, activities = [], members = [], onClos
 			onClose={onClose}
 		>
 			{activities.length === 0 ? (
-				<Empty description={t('kanban.activityEmptyList')} image={Empty.PRESENTED_IMAGE_SIMPLE} />
+				<Empty
+					description={t('kanban.activityEmptyList')}
+					image={Empty.PRESENTED_IMAGE_SIMPLE}
+				/>
 			) : (
 				<Timeline
 					className="mt-3"
 					items={activities.map((act) => {
-						const userName = act.user_id ? resolveUserName(act.user_id) : t('kanban.system');
+						const userName = act.user_id
+							? resolveUserName(act.user_id)
+							: t('kanban.system');
 						return {
 							children: (
 								<div>
