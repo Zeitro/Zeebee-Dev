@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -25,6 +26,8 @@ type ProjectManagementProjectMemberEntity struct {
 	Role               constants.ProjectManagementMemberRole `gorm:"column:role" json:"role"`
 	FullName           string                                `gorm:"column:full_name" json:"full_name"`
 	Email              string                                `gorm:"column:email" json:"email"`
+	CreatedAt          time.Time                             `gorm:"column:created_at" json:"created_at"`
+	UpdatedAt          time.Time                             `gorm:"column:updated_at" json:"updated_at"`
 }
 
 func NewProjectManagementProjectRepo(db *gorm.DB) *ProjectManagementProjectRepo {
@@ -50,7 +53,7 @@ func (r *ProjectManagementProjectRepo) PageMembers(ctx context.Context, projectI
 	organizationUsersTable := model.OrganizationUser{}.TableName()
 	usersTable := model.User{}.TableName()
 	query := r.Client(ctx).Table(membersTable).
-		Select(fmt.Sprintf("%s.id, %s.project_id, %s.organization_user_id, %s.role, %s.full_name, %s.email", membersTable, membersTable, membersTable, membersTable, organizationUsersTable, usersTable)).
+		Select(fmt.Sprintf("%s.id, %s.project_id, %s.organization_user_id, %s.role, %s.full_name, %s.email, %s.created_at, %s.updated_at", membersTable, membersTable, membersTable, membersTable, organizationUsersTable, usersTable, membersTable, membersTable)).
 		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.organization_user_id", organizationUsersTable, organizationUsersTable, membersTable)).
 		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.user_id", usersTable, usersTable, organizationUsersTable)).
 		Where(fmt.Sprintf("%s.project_id = ?", membersTable), projectId).

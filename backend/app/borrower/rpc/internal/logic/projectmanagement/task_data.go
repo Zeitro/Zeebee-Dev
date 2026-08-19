@@ -1,6 +1,7 @@
 package projectmanagementlogic
 
 import (
+	"context"
 	"encoding/json"
 	"strings"
 	"time"
@@ -9,6 +10,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/data/dto"
+	domainlogic "zeebee-backend/domains/zeebee/logic"
 	"zeebee-backend/domains/zeebee/model"
 )
 
@@ -23,7 +25,14 @@ func taskTime(value string) (*time.Time, error) {
 	return &parsed, nil
 }
 
-func taskEntity(task *model.ProjectManagementTask) (*borrower.ProjectManagementTaskEntity, error) {
+func formatEntityTime(value time.Time) string {
+	if value.IsZero() {
+		return ""
+	}
+	return value.Format(time.RFC3339)
+}
+
+func taskEntity(task *model.ProjectManagementTask, overdue *dto.ProjectManagementTaskOverdueDto) (*borrower.ProjectManagementTaskEntity, error) {
 	entity, err := copierx.Trans[model.ProjectManagementTask, borrower.ProjectManagementTaskEntity](task)
 	if err != nil {
 		return nil, err
@@ -34,18 +43,34 @@ func taskEntity(task *model.ProjectManagementTask) (*borrower.ProjectManagementT
 	if task.EndAt != nil && task.EndAt.Valid {
 		entity.EndAt = task.EndAt.Time.Format(time.RFC3339)
 	}
+	entity.CreatedAt, entity.UpdatedAt = formatEntityTime(task.CreatedAt), formatEntityTime(task.UpdatedAt)
 	if task.TaskType != nil && task.TaskType.Id != 0 {
 		entity.TaskType, err = copierx.Trans[dto.ProjectManagementTaskTypeSnapshotDto, borrower.ProjectManagementTaskTypeSnapshotEntity](task.TaskType)
 		if err != nil {
 			return nil, err
 		}
 	}
+	if overdue != nil {
+		entity.Overdue, entity.OverdueSeconds = overdue.Overdue, overdue.OverdueSeconds
+	}
 	assignees, err := copierx.Trans[[]*model.ProjectManagementTaskAssignee, []*borrower.ProjectManagementTaskAssigneeEntity](&task.Assignees)
 	if err != nil {
 		return nil, err
 	}
 	entity.Assignees = *assignees
+	for index, assignee := range task.Assignees {
+		entity.Assignees[index].CreatedAt = formatEntityTime(assignee.CreatedAt)
+		entity.Assignees[index].UpdatedAt = formatEntityTime(assignee.UpdatedAt)
+	}
 	return entity, nil
+}
+
+func taskEntityWithOverdue(ctx context.Context, taskLogic *domainlogic.ProjectManagementLogic, task *model.ProjectManagementTask) (*borrower.ProjectManagementTaskEntity, error) {
+	overdue, err := taskLogic.TaskOverdue(ctx, task)
+	if err != nil {
+		return nil, err
+	}
+	return taskEntity(task, overdue)
 }
 
 func attachmentEntity(file *model.File) (*borrower.ProjectManagementAttachmentEntity, error) {
@@ -54,11 +79,17 @@ func attachmentEntity(file *model.File) (*borrower.ProjectManagementAttachmentEn
 		return nil, err
 	}
 	entity.FileId = file.Id
+	entity.CreatedAt, entity.UpdatedAt = formatEntityTime(file.CreatedAt), formatEntityTime(file.UpdatedAt)
 	return entity, nil
 }
 
 func dependencyEntity(dependency *model.ProjectManagementTaskDependency) (*borrower.ProjectManagementTaskDependencyEntity, error) {
-	return copierx.Trans[model.ProjectManagementTaskDependency, borrower.ProjectManagementTaskDependencyEntity](dependency)
+	entity, err := copierx.Trans[model.ProjectManagementTaskDependency, borrower.ProjectManagementTaskDependencyEntity](dependency)
+	if err != nil {
+		return nil, err
+	}
+	entity.CreatedAt, entity.UpdatedAt = formatEntityTime(dependency.CreatedAt), formatEntityTime(dependency.UpdatedAt)
+	return entity, nil
 }
 
 func operationEntity(operation *model.Operation) (*borrower.ProjectManagementOperationEntity, error) {
@@ -66,7 +97,8 @@ func operationEntity(operation *model.Operation) (*borrower.ProjectManagementOpe
 	if err != nil {
 		return nil, err
 	}
-	entity.ProjectId, entity.CreatedAt = operation.EntityId, operation.CreatedAt.Format(time.RFC3339)
+	entity.ProjectId = operation.EntityId
+	entity.CreatedAt, entity.UpdatedAt = formatEntityTime(operation.CreatedAt), formatEntityTime(operation.UpdatedAt)
 	var metadata map[string]int64
 	if len(operation.Metadata) > 0 && json.Unmarshal(operation.Metadata, &metadata) == nil {
 		entity.TaskId = metadata["task_id"]

@@ -8,9 +8,7 @@ import (
 
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/model"
 )
 
 type WorkflowPageLogic struct {
@@ -43,9 +41,13 @@ func (l *WorkflowPageLogic) WorkflowPage(in *borrower.ProjectManagementWorkflowP
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-	result, err := copierx.Trans[gormx.PageResponse[*model.ProjectManagementWorkflow], borrower.ProjectManagementWorkflowPageResponseData](&page)
-	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+	result := &borrower.ProjectManagementWorkflowPageResponseData{Page: page.Page, Limit: page.Limit, Total: page.Total, TotalPage: page.TotalPage, List: make([]*borrower.ProjectManagementWorkflowPageEntity, 0, len(page.List))}
+	for _, workflow := range page.List {
+		entity, err := workflowPageEntity(workflow)
+		if err != nil {
+			return nil, errorx.GetFailedTransRespErr(err)
+		}
+		result.List = append(result.List, entity)
 	}
 	return &borrower.ProjectManagementWorkflowPageResponse{Data: result}, nil
 }

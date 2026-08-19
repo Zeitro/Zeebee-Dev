@@ -103,9 +103,6 @@ func (l *ProjectManagementLogic) GetTask(ctx context.Context, actor *dto.Project
 	if _, err = l.RequireMember(ctx, task.ProjectId, actor.OrganizationUserId); err != nil {
 		return nil, err
 	}
-	if err = l.fillProjectManagementTaskOverdue(ctx, []*model.ProjectManagementTask{task}); err != nil {
-		return nil, err
-	}
 	return task, nil
 }
 
@@ -119,9 +116,6 @@ func (l *ProjectManagementLogic) PageProjectTasks(ctx context.Context, actor *dt
 	page, err := l.repos.ProjectManagementTaskRepo.PageByProject(ctx, actor.OrganizationId, input)
 	if err != nil {
 		return page, err
-	}
-	if err = l.fillProjectManagementTaskOverdue(ctx, page.List); err != nil {
-		return gormx.PageResponse[*model.ProjectManagementTask]{}, err
 	}
 	return page, nil
 }

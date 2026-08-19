@@ -10,7 +10,6 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/model"
 )
 
 type TaskTypeCreateLogic struct {
@@ -46,7 +45,7 @@ func (l *TaskTypeCreateLogic) TaskTypeCreate(in *borrower.ProjectManagementTaskT
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-	data, err := copierx.Trans[model.ProjectManagementTaskType, borrower.ProjectManagementTaskTypeEntity](taskType)
+	data, err := taskTypeEntity(taskType)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

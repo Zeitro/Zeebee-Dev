@@ -16,6 +16,8 @@ message ProjectManagementWorkflowEntity {
   repeated ProjectManagementWorkflowTransitionEntity transitions = 7;
 	int64 source_template_id = 8;
 	string source_template_name = 9;
+  string created_at = 10;
+  string updated_at = 11;
 }
 
 message ProjectManagementWorkflowStageEntity {
@@ -23,6 +25,8 @@ message ProjectManagementWorkflowStageEntity {
   string name = 2;
   string phase = 3;
   int32 sort_order = 4;
+  string created_at = 5;
+  string updated_at = 6;
 }
 
 message ProjectManagementWorkflowTransitionEntity {
@@ -30,6 +34,8 @@ message ProjectManagementWorkflowTransitionEntity {
   int64 from_stage_id = 2;
   int64 to_stage_id = 3;
   repeated string allowed_actor_types = 4;
+  string created_at = 5;
+  string updated_at = 6;
 }
 
 message ProjectManagementWorkflowAllRequest {
@@ -60,6 +66,8 @@ message ProjectManagementWorkflowPageEntity {
   string description = 3;
   bool enabled = 4;
   bool is_default = 5;
+  string created_at = 6;
+  string updated_at = 7;
 }
 message ProjectManagementWorkflowPageResponse {
   ProjectManagementWorkflowPageResponseData data = 1;
@@ -116,6 +124,8 @@ message ProjectManagementTaskTypeEntity {
   string description = 3;
   string color = 4;
   bool enabled = 5;
+  string created_at = 6;
+  string updated_at = 7;
 }
 
 message ProjectManagementTaskTypePageRequest {
@@ -179,6 +189,8 @@ message ProjectManagementProjectEntity {
   int64 owner_id = 6;
   string entity_type = 7;
   string owner_name = 8;
+  string created_at = 9;
+  string updated_at = 10;
 }
 
 message ProjectManagementProjectPageRequest {
@@ -248,6 +260,8 @@ message ProjectManagementMemberEntity {
   string role = 4;
   string full_name = 5;
   string email = 6;
+  string created_at = 7;
+  string updated_at = 8;
 }
 message ProjectManagementMemberInput {
   int64 organization_user_id = 1;
@@ -336,6 +350,8 @@ message ProjectManagementTaskTypeSnapshotEntity {
 message ProjectManagementTaskAssigneeEntity {
   int64 organization_user_id = 1;
   string organization_user_name = 2;
+  string created_at = 3;
+  string updated_at = 4;
 }
 message ProjectManagementTaskEntity {
   int64 id = 1;
@@ -353,6 +369,8 @@ message ProjectManagementTaskEntity {
   repeated ProjectManagementTaskAssigneeEntity assignees = 13;
   bool overdue = 14;
   int64 overdue_seconds = 15;
+  string created_at = 16;
+  string updated_at = 17;
 }
 message ProjectManagementTaskPageRequest {
   ProjectManagementTaskPageRequestData data = 1;
@@ -446,6 +464,7 @@ message ProjectManagementOperationEntity {
   string operator_name = 5;
   string operation = 6;
   string created_at = 7;
+  string updated_at = 8;
 }
 message ProjectManagementOperationPageRequest {
   ProjectManagementOperationPageRequestData data = 1;
@@ -482,6 +501,8 @@ message ProjectManagementAttachmentEntity {
   string file_name = 2;
   string file_url = 3;
   string storage_type = 4;
+  string created_at = 5;
+  string updated_at = 6;
 }
 message ProjectManagementAttachmentPageRequest {
   ProjectManagementAttachmentPageRequestData data = 1;
@@ -527,6 +548,8 @@ message ProjectManagementTaskDependencyEntity {
   int64 dependency_task_id = 3;
   string dependency_type = 4;
   string dependency_rule = 5;
+  string created_at = 6;
+  string updated_at = 7;
 }
 message ProjectManagementDependencyPageRequest {
   ProjectManagementDependencyPageRequestData data = 1;

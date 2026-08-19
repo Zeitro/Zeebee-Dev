@@ -1,0 +1,71 @@
+syntax = "v1"
+
+info(
+    title: "borrower-project-management-member-api"
+    desc: "borrower project management member types"
+    version: "v1"
+)
+
+type (
+    ProjectManagementMemberEntity {
+        Id int64 `json:"id"`
+        ProjectId int64 `json:"project_id"`
+        OrganizationUserId int64 `json:"organization_user_id"`
+        Role string `json:"role"`
+        FullName string `json:"full_name"`
+        Email string `json:"email"`
+        CreatedAt string `json:"created_at"`
+        UpdatedAt string `json:"updated_at"`
+    }
+
+    ProjectManagementMemberInput {
+        OrganizationUserId int64 `json:"organization_user_id" validate:"required,gt=0"`
+        Role string `json:"role" validate:"required,oneof=ProjectAdmin TaskExecutor"`
+    }
+
+    ProjectManagementMemberPageFilter {
+        Keyword string `json:"keyword,optional"`
+        Role string `json:"role,optional" validate:"omitempty,oneof=ProjectOwner ProjectAdmin TaskExecutor"`
+    }
+
+    ProjectManagementMemberPageRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Page int64 `json:"page,default=1"`
+        Limit int64 `json:"limit,default=20"`
+        Filter ProjectManagementMemberPageFilter `json:"filter,optional"`
+    }
+
+    ProjectManagementMemberPageResponse {
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+        Total int64 `json:"total"`
+        TotalPage int64 `json:"total_page"`
+        List []*ProjectManagementMemberEntity `json:"list"`
+    }
+
+    ProjectManagementMemberCandidateRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Keyword string `form:"keyword,optional"`
+    }
+
+    ProjectManagementMemberCandidateResponse {
+        Data []*ProjectManagementMemberEntity `json:"data"`
+    }
+
+    ProjectManagementMemberAddRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Members []*ProjectManagementMemberInput `json:"members" validate:"required,min=1,dive"`
+    }
+
+    ProjectManagementMemberUpdateRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        UserId int64 `path:"user_id" validate:"required,gt=0"`
+        Role string `json:"role,optional" validate:"omitempty,oneof=ProjectAdmin TaskExecutor"`
+        TransferOwnerToUserId int64 `json:"transfer_owner_to_user_id,optional"`
+    }
+
+    ProjectManagementMemberDeleteRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        UserId int64 `path:"user_id" validate:"required,gt=0"`
+    }
+)

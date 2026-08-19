@@ -9,7 +9,6 @@ import (
 
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/data/dto"
 )
 
@@ -44,9 +43,13 @@ func (l *MemberPageLogic) MemberPage(in *borrower.ProjectManagementMemberPageReq
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[gormx.PageResponse[*dto.ProjectManagementMemberDetailDto], borrower.ProjectManagementMemberPageResponseData](&page)
-	if err != nil {
-		return nil, err
+	data := &borrower.ProjectManagementMemberPageResponseData{Page: page.Page, Limit: page.Limit, Total: page.Total, TotalPage: page.TotalPage, List: make([]*borrower.ProjectManagementMemberEntity, 0, len(page.List))}
+	for _, member := range page.List {
+		entity, err := memberEntity(member)
+		if err != nil {
+			return nil, err
+		}
+		data.List = append(data.List, entity)
 	}
 	return &borrower.ProjectManagementMemberPageResponse{Data: data}, nil
 }

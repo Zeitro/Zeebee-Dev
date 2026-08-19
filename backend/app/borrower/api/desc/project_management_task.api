@@ -1,0 +1,145 @@
+syntax = "v1"
+
+info(
+    title: "borrower-project-management-task-api"
+    desc: "borrower project management task types"
+    version: "v1"
+)
+
+type (
+    ProjectManagementTaskAssigneeEntity {
+        OrganizationUserId int64 `json:"organization_user_id"`
+        OrganizationUserName string `json:"organization_user_name"`
+        CreatedAt string `json:"created_at"`
+        UpdatedAt string `json:"updated_at"`
+    }
+
+    ProjectManagementTaskEntity {
+        Id int64 `json:"id"`
+        ProjectId int64 `json:"project_id"`
+        ParentTaskId int64 `json:"parent_task_id"`
+        StageId int64 `json:"stage_id"`
+        CreatorId int64 `json:"creator_id"`
+        CreatorName string `json:"creator_name"`
+        Title string `json:"title"`
+        Description string `json:"description"`
+        Priority string `json:"priority"`
+        StartAt string `json:"start_at"`
+        EndAt string `json:"end_at"`
+        TaskType *ProjectManagementTaskTypeSnapshotEntity `json:"task_type"`
+        Assignees []*ProjectManagementTaskAssigneeEntity `json:"assignees"`
+        Overdue bool `json:"overdue"`
+        OverdueSeconds int64 `json:"overdue_seconds"`
+        CreatedAt string `json:"created_at"`
+        UpdatedAt string `json:"updated_at"`
+    }
+
+    ProjectManagementTaskPageFilter {
+        StageId int64 `json:"stage_id,optional"`
+        TaskTypeId int64 `json:"task_type_id,optional"`
+        AssigneeId int64 `json:"assignee_id,optional"`
+        Keyword string `json:"keyword,optional"`
+        Overdue *bool `json:"overdue,optional"`
+    }
+
+    ProjectManagementTaskPageRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Page int64 `json:"page,default=1"`
+        Limit int64 `json:"limit,default=20"`
+        Filter ProjectManagementTaskPageFilter `json:"filter,optional"`
+    }
+
+    ProjectManagementTaskPageResponse {
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+        Total int64 `json:"total"`
+        TotalPage int64 `json:"total_page"`
+        List []*ProjectManagementTaskEntity `json:"list"`
+    }
+
+    ProjectManagementTaskCreateRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        ParentTaskId int64 `json:"parent_task_id,optional"`
+        Title string `json:"title" validate:"required,max=255"`
+        Description string `json:"description,optional"`
+        Priority string `json:"priority,optional" validate:"max=32"`
+        StartAt string `json:"start_at,optional"`
+        EndAt string `json:"end_at,optional"`
+        TaskTypeId int64 `json:"task_type_id,optional"`
+        AssigneeIds []int64 `json:"assignee_ids,optional"`
+    }
+
+    ProjectManagementTaskDetailRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+    }
+
+    ProjectManagementTaskUpdateRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Title string `json:"title" validate:"required,max=255"`
+        Description string `json:"description,optional"`
+        Priority string `json:"priority,optional" validate:"max=32"`
+        StartAt string `json:"start_at,optional"`
+        EndAt string `json:"end_at,optional"`
+        TaskTypeId int64 `json:"task_type_id,optional"`
+    }
+
+    ProjectManagementTaskDeleteRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Confirm bool `json:"confirm" validate:"required"`
+    }
+
+    ProjectManagementMyTaskPageRequest {
+        Page int64 `json:"page,default=1"`
+        Limit int64 `json:"limit,default=20"`
+        Filter ProjectManagementMyTaskPageFilter `json:"filter,optional"`
+    }
+
+    ProjectManagementMyTaskPageFilter {
+        ProjectId int64 `json:"project_id,optional"`
+        StageId int64 `json:"stage_id,optional"`
+        TaskTypeId int64 `json:"task_type_id,optional"`
+        AssigneeId int64 `json:"assignee_id,optional"`
+        Keyword string `json:"keyword,optional"`
+        Overdue *bool `json:"overdue,optional"`
+    }
+
+    ProjectManagementTaskAssigneeUpdateRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        AssigneeIds []int64 `json:"assignee_ids"`
+    }
+
+    ProjectManagementAttachmentEntity {
+        FileId int64 `json:"file_id"`
+        FileName string `json:"file_name"`
+        FileUrl string `json:"file_url"`
+        StorageType string `json:"storage_type"`
+        CreatedAt string `json:"created_at"`
+        UpdatedAt string `json:"updated_at"`
+    }
+
+    ProjectManagementAttachmentPageRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Page int64 `json:"page,default=1"`
+        Limit int64 `json:"limit,default=20"`
+    }
+
+    ProjectManagementAttachmentPageResponse {
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+        Total int64 `json:"total"`
+        TotalPage int64 `json:"total_page"`
+        List []*ProjectManagementAttachmentEntity `json:"list"`
+    }
+
+    ProjectManagementAttachmentCreateRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        FileName string `json:"file_name,optional" validate:"max=255"`
+        FileUrl string `json:"file_url" validate:"required,max=255"`
+        StorageType string `json:"storage_type,optional" validate:"max=20"`
+    }
+
+    ProjectManagementAttachmentDeleteRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        FileId int64 `path:"file_id" validate:"required,gt=0"`
+    }
+)

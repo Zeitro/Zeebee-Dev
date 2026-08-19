@@ -33,6 +33,8 @@ type ProjectManagementWorkflowEntity struct {
 	Transitions        []*ProjectManagementWorkflowTransitionEntity `protobuf:"bytes,7,rep,name=transitions,proto3" json:"transitions,omitempty"`
 	SourceTemplateId   int64                                        `protobuf:"varint,8,opt,name=source_template_id,json=sourceTemplateId,proto3" json:"source_template_id,omitempty"`
 	SourceTemplateName string                                       `protobuf:"bytes,9,opt,name=source_template_name,json=sourceTemplateName,proto3" json:"source_template_name,omitempty"`
+	CreatedAt          string                                       `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt          string                                       `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -130,12 +132,28 @@ func (x *ProjectManagementWorkflowEntity) GetSourceTemplateName() string {
 	return ""
 }
 
+func (x *ProjectManagementWorkflowEntity) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *ProjectManagementWorkflowEntity) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
 type ProjectManagementWorkflowStageEntity struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Phase         string                 `protobuf:"bytes,3,opt,name=phase,proto3" json:"phase,omitempty"`
 	SortOrder     int32                  `protobuf:"varint,4,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	CreatedAt     string                 `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     string                 `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -198,12 +216,28 @@ func (x *ProjectManagementWorkflowStageEntity) GetSortOrder() int32 {
 	return 0
 }
 
+func (x *ProjectManagementWorkflowStageEntity) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *ProjectManagementWorkflowStageEntity) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
 type ProjectManagementWorkflowTransitionEntity struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	Id                int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	FromStageId       int64                  `protobuf:"varint,2,opt,name=from_stage_id,json=fromStageId,proto3" json:"from_stage_id,omitempty"`
 	ToStageId         int64                  `protobuf:"varint,3,opt,name=to_stage_id,json=toStageId,proto3" json:"to_stage_id,omitempty"`
 	AllowedActorTypes []string               `protobuf:"bytes,4,rep,name=allowed_actor_types,json=allowedActorTypes,proto3" json:"allowed_actor_types,omitempty"`
+	CreatedAt         string                 `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt         string                 `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -264,6 +298,20 @@ func (x *ProjectManagementWorkflowTransitionEntity) GetAllowedActorTypes() []str
 		return x.AllowedActorTypes
 	}
 	return nil
+}
+
+func (x *ProjectManagementWorkflowTransitionEntity) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *ProjectManagementWorkflowTransitionEntity) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
 }
 
 type ProjectManagementWorkflowAllRequest struct {
@@ -553,6 +601,8 @@ type ProjectManagementWorkflowPageEntity struct {
 	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	Enabled       bool                   `protobuf:"varint,4,opt,name=enabled,proto3" json:"enabled,omitempty"`
 	IsDefault     bool                   `protobuf:"varint,5,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
+	CreatedAt     string                 `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     string                 `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -620,6 +670,20 @@ func (x *ProjectManagementWorkflowPageEntity) GetIsDefault() bool {
 		return x.IsDefault
 	}
 	return false
+}
+
+func (x *ProjectManagementWorkflowPageEntity) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *ProjectManagementWorkflowPageEntity) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
 }
 
 type ProjectManagementWorkflowPageResponse struct {
@@ -1233,6 +1297,8 @@ type ProjectManagementTaskTypeEntity struct {
 	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	Color         string                 `protobuf:"bytes,4,opt,name=color,proto3" json:"color,omitempty"`
 	Enabled       bool                   `protobuf:"varint,5,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	CreatedAt     string                 `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     string                 `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1300,6 +1366,20 @@ func (x *ProjectManagementTaskTypeEntity) GetEnabled() bool {
 		return x.Enabled
 	}
 	return false
+}
+
+func (x *ProjectManagementTaskTypeEntity) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *ProjectManagementTaskTypeEntity) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
 }
 
 type ProjectManagementTaskTypePageRequest struct {
@@ -1952,6 +2032,8 @@ type ProjectManagementProjectEntity struct {
 	OwnerId       int64                  `protobuf:"varint,6,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
 	EntityType    string                 `protobuf:"bytes,7,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"`
 	OwnerName     string                 `protobuf:"bytes,8,opt,name=owner_name,json=ownerName,proto3" json:"owner_name,omitempty"`
+	CreatedAt     string                 `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     string                 `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2038,6 +2120,20 @@ func (x *ProjectManagementProjectEntity) GetEntityType() string {
 func (x *ProjectManagementProjectEntity) GetOwnerName() string {
 	if x != nil {
 		return x.OwnerName
+	}
+	return ""
+}
+
+func (x *ProjectManagementProjectEntity) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *ProjectManagementProjectEntity) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
 	}
 	return ""
 }
@@ -2802,6 +2898,8 @@ type ProjectManagementMemberEntity struct {
 	Role               string                 `protobuf:"bytes,4,opt,name=role,proto3" json:"role,omitempty"`
 	FullName           string                 `protobuf:"bytes,5,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
 	Email              string                 `protobuf:"bytes,6,opt,name=email,proto3" json:"email,omitempty"`
+	CreatedAt          string                 `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt          string                 `protobuf:"bytes,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -2874,6 +2972,20 @@ func (x *ProjectManagementMemberEntity) GetFullName() string {
 func (x *ProjectManagementMemberEntity) GetEmail() string {
 	if x != nil {
 		return x.Email
+	}
+	return ""
+}
+
+func (x *ProjectManagementMemberEntity) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *ProjectManagementMemberEntity) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
 	}
 	return ""
 }
@@ -3938,6 +4050,8 @@ type ProjectManagementTaskAssigneeEntity struct {
 	state                protoimpl.MessageState `protogen:"open.v1"`
 	OrganizationUserId   int64                  `protobuf:"varint,1,opt,name=organization_user_id,json=organizationUserId,proto3" json:"organization_user_id,omitempty"`
 	OrganizationUserName string                 `protobuf:"bytes,2,opt,name=organization_user_name,json=organizationUserName,proto3" json:"organization_user_name,omitempty"`
+	CreatedAt            string                 `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt            string                 `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -3986,6 +4100,20 @@ func (x *ProjectManagementTaskAssigneeEntity) GetOrganizationUserName() string {
 	return ""
 }
 
+func (x *ProjectManagementTaskAssigneeEntity) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *ProjectManagementTaskAssigneeEntity) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
 type ProjectManagementTaskEntity struct {
 	state          protoimpl.MessageState                   `protogen:"open.v1"`
 	Id             int64                                    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -4003,6 +4131,8 @@ type ProjectManagementTaskEntity struct {
 	Assignees      []*ProjectManagementTaskAssigneeEntity   `protobuf:"bytes,13,rep,name=assignees,proto3" json:"assignees,omitempty"`
 	Overdue        bool                                     `protobuf:"varint,14,opt,name=overdue,proto3" json:"overdue,omitempty"`
 	OverdueSeconds int64                                    `protobuf:"varint,15,opt,name=overdue_seconds,json=overdueSeconds,proto3" json:"overdue_seconds,omitempty"`
+	CreatedAt      string                                   `protobuf:"bytes,16,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt      string                                   `protobuf:"bytes,17,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -4140,6 +4270,20 @@ func (x *ProjectManagementTaskEntity) GetOverdueSeconds() int64 {
 		return x.OverdueSeconds
 	}
 	return 0
+}
+
+func (x *ProjectManagementTaskEntity) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *ProjectManagementTaskEntity) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
 }
 
 type ProjectManagementTaskPageRequest struct {
@@ -5163,6 +5307,7 @@ type ProjectManagementOperationEntity struct {
 	OperatorName  string                 `protobuf:"bytes,5,opt,name=operator_name,json=operatorName,proto3" json:"operator_name,omitempty"`
 	Operation     string                 `protobuf:"bytes,6,opt,name=operation,proto3" json:"operation,omitempty"`
 	CreatedAt     string                 `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     string                 `protobuf:"bytes,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5242,6 +5387,13 @@ func (x *ProjectManagementOperationEntity) GetOperation() string {
 func (x *ProjectManagementOperationEntity) GetCreatedAt() string {
 	if x != nil {
 		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *ProjectManagementOperationEntity) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
 	}
 	return ""
 }
@@ -5632,6 +5784,8 @@ type ProjectManagementAttachmentEntity struct {
 	FileName      string                 `protobuf:"bytes,2,opt,name=file_name,json=fileName,proto3" json:"file_name,omitempty"`
 	FileUrl       string                 `protobuf:"bytes,3,opt,name=file_url,json=fileUrl,proto3" json:"file_url,omitempty"`
 	StorageType   string                 `protobuf:"bytes,4,opt,name=storage_type,json=storageType,proto3" json:"storage_type,omitempty"`
+	CreatedAt     string                 `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     string                 `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5690,6 +5844,20 @@ func (x *ProjectManagementAttachmentEntity) GetFileUrl() string {
 func (x *ProjectManagementAttachmentEntity) GetStorageType() string {
 	if x != nil {
 		return x.StorageType
+	}
+	return ""
+}
+
+func (x *ProjectManagementAttachmentEntity) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *ProjectManagementAttachmentEntity) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
 	}
 	return ""
 }
@@ -6177,6 +6345,8 @@ type ProjectManagementTaskDependencyEntity struct {
 	DependencyTaskId int64                  `protobuf:"varint,3,opt,name=dependency_task_id,json=dependencyTaskId,proto3" json:"dependency_task_id,omitempty"`
 	DependencyType   string                 `protobuf:"bytes,4,opt,name=dependency_type,json=dependencyType,proto3" json:"dependency_type,omitempty"`
 	DependencyRule   string                 `protobuf:"bytes,5,opt,name=dependency_rule,json=dependencyRule,proto3" json:"dependency_rule,omitempty"`
+	CreatedAt        string                 `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt        string                 `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -6242,6 +6412,20 @@ func (x *ProjectManagementTaskDependencyEntity) GetDependencyType() string {
 func (x *ProjectManagementTaskDependencyEntity) GetDependencyRule() string {
 	if x != nil {
 		return x.DependencyRule
+	}
+	return ""
+}
+
+func (x *ProjectManagementTaskDependencyEntity) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *ProjectManagementTaskDependencyEntity) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
 	}
 	return ""
 }
@@ -6934,7 +7118,7 @@ var File_borrower_project_management_proto protoreflect.FileDescriptor
 
 const file_borrower_project_management_proto_rawDesc = "" +
 	"\n" +
-	"!borrower_project_management.proto\x12\bborrower\x1a\x12proto/common.proto\"\x9f\x03\n" +
+	"!borrower_project_management.proto\x12\bborrower\x1a\x12proto/common.proto\"\xdd\x03\n" +
 	"\x1fProjectManagementWorkflowEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
@@ -6945,18 +7129,31 @@ const file_borrower_project_management_proto_rawDesc = "" +
 	"\x06stages\x18\x06 \x03(\v2..borrower.ProjectManagementWorkflowStageEntityR\x06stages\x12U\n" +
 	"\vtransitions\x18\a \x03(\v23.borrower.ProjectManagementWorkflowTransitionEntityR\vtransitions\x12,\n" +
 	"\x12source_template_id\x18\b \x01(\x03R\x10sourceTemplateId\x120\n" +
-	"\x14source_template_name\x18\t \x01(\tR\x12sourceTemplateName\"\x7f\n" +
+	"\x14source_template_name\x18\t \x01(\tR\x12sourceTemplateName\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\n" +
+	" \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\v \x01(\tR\tupdatedAt\"\xbd\x01\n" +
 	"$ProjectManagementWorkflowStageEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
 	"\x05phase\x18\x03 \x01(\tR\x05phase\x12\x1d\n" +
 	"\n" +
-	"sort_order\x18\x04 \x01(\x05R\tsortOrder\"\xaf\x01\n" +
+	"sort_order\x18\x04 \x01(\x05R\tsortOrder\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\x05 \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\x06 \x01(\tR\tupdatedAt\"\xed\x01\n" +
 	")ProjectManagementWorkflowTransitionEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\"\n" +
 	"\rfrom_stage_id\x18\x02 \x01(\x03R\vfromStageId\x12\x1e\n" +
 	"\vto_stage_id\x18\x03 \x01(\x03R\ttoStageId\x12.\n" +
-	"\x13allowed_actor_types\x18\x04 \x03(\tR\x11allowedActorTypes\"l\n" +
+	"\x13allowed_actor_types\x18\x04 \x03(\tR\x11allowedActorTypes\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\x05 \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\x06 \x01(\tR\tupdatedAt\"l\n" +
 	"#ProjectManagementWorkflowAllRequest\x12E\n" +
 	"\x04data\x18\x01 \x01(\v21.borrower.ProjectManagementWorkflowAllRequestDataR\x04data\")\n" +
 	"'ProjectManagementWorkflowAllRequestData\"e\n" +
@@ -6972,14 +7169,18 @@ const file_borrower_project_management_proto_rawDesc = "" +
 	"\akeyword\x18\x01 \x01(\tR\akeyword\x12\x1d\n" +
 	"\aenabled\x18\x02 \x01(\bH\x00R\aenabled\x88\x01\x01B\n" +
 	"\n" +
-	"\b_enabled\"\xa4\x01\n" +
+	"\b_enabled\"\xe2\x01\n" +
 	"#ProjectManagementWorkflowPageEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x18\n" +
 	"\aenabled\x18\x04 \x01(\bR\aenabled\x12\x1d\n" +
 	"\n" +
-	"is_default\x18\x05 \x01(\bR\tisDefault\"p\n" +
+	"is_default\x18\x05 \x01(\bR\tisDefault\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\x06 \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\a \x01(\tR\tupdatedAt\"p\n" +
 	"%ProjectManagementWorkflowPageResponse\x12G\n" +
 	"\x04data\x18\x01 \x01(\v23.borrower.ProjectManagementWorkflowPageResponseDataR\x04data\"\xcd\x01\n" +
 	")ProjectManagementWorkflowPageResponseData\x12\x12\n" +
@@ -7019,13 +7220,17 @@ const file_borrower_project_management_proto_rawDesc = "" +
 	"&ProjectManagementWorkflowDeleteRequest\x12H\n" +
 	"\x04data\x18\x01 \x01(\v24.borrower.ProjectManagementWorkflowDeleteRequestDataR\x04data\"<\n" +
 	"*ProjectManagementWorkflowDeleteRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\x97\x01\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xd5\x01\n" +
 	"\x1fProjectManagementTaskTypeEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x14\n" +
 	"\x05color\x18\x04 \x01(\tR\x05color\x12\x18\n" +
-	"\aenabled\x18\x05 \x01(\bR\aenabled\"n\n" +
+	"\aenabled\x18\x05 \x01(\bR\aenabled\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\x06 \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\a \x01(\tR\tupdatedAt\"n\n" +
 	"$ProjectManagementTaskTypePageRequest\x12F\n" +
 	"\x04data\x18\x01 \x01(\v22.borrower.ProjectManagementTaskTypePageRequestDataR\x04data\"\xa2\x01\n" +
 	"(ProjectManagementTaskTypePageRequestData\x12\x12\n" +
@@ -7066,7 +7271,7 @@ const file_borrower_project_management_proto_rawDesc = "" +
 	"&ProjectManagementTaskTypeDeleteRequest\x12H\n" +
 	"\x04data\x18\x01 \x01(\v24.borrower.ProjectManagementTaskTypeDeleteRequestDataR\x04data\"<\n" +
 	"*ProjectManagementTaskTypeDeleteRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\xfb\x01\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xb9\x02\n" +
 	"\x1eProjectManagementProjectEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tentity_id\x18\x02 \x01(\x03R\bentityId\x12\x12\n" +
@@ -7077,7 +7282,12 @@ const file_borrower_project_management_proto_rawDesc = "" +
 	"\ventity_type\x18\a \x01(\tR\n" +
 	"entityType\x12\x1d\n" +
 	"\n" +
-	"owner_name\x18\b \x01(\tR\townerName\"l\n" +
+	"owner_name\x18\b \x01(\tR\townerName\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\t \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\n" +
+	" \x01(\tR\tupdatedAt\"l\n" +
 	"#ProjectManagementProjectPageRequest\x12E\n" +
 	"\x04data\x18\x01 \x01(\v21.borrower.ProjectManagementProjectPageRequestDataR\x04data\"\xa0\x01\n" +
 	"'ProjectManagementProjectPageRequestData\x12\x12\n" +
@@ -7125,7 +7335,7 @@ const file_borrower_project_management_proto_rawDesc = "" +
 	"\x04data\x18\x01 \x01(\v23.borrower.ProjectManagementProjectDeleteRequestDataR\x04data\"U\n" +
 	")ProjectManagementProjectDeleteRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x18\n" +
-	"\aconfirm\x18\x02 \x01(\bR\aconfirm\"\xc7\x01\n" +
+	"\aconfirm\x18\x02 \x01(\bR\aconfirm\"\x85\x02\n" +
 	"\x1dProjectManagementMemberEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -7133,7 +7343,11 @@ const file_borrower_project_management_proto_rawDesc = "" +
 	"\x14organization_user_id\x18\x03 \x01(\x03R\x12organizationUserId\x12\x12\n" +
 	"\x04role\x18\x04 \x01(\tR\x04role\x12\x1b\n" +
 	"\tfull_name\x18\x05 \x01(\tR\bfullName\x12\x14\n" +
-	"\x05email\x18\x06 \x01(\tR\x05email\"d\n" +
+	"\x05email\x18\x06 \x01(\tR\x05email\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\a \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\b \x01(\tR\tupdatedAt\"d\n" +
 	"\x1cProjectManagementMemberInput\x120\n" +
 	"\x14organization_user_id\x18\x01 \x01(\x03R\x12organizationUserId\x12\x12\n" +
 	"\x04role\x18\x02 \x01(\tR\x04role\"j\n" +
@@ -7203,10 +7417,14 @@ const file_borrower_project_management_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x14\n" +
-	"\x05color\x18\x04 \x01(\tR\x05color\"\x8d\x01\n" +
+	"\x05color\x18\x04 \x01(\tR\x05color\"\xcb\x01\n" +
 	"#ProjectManagementTaskAssigneeEntity\x120\n" +
 	"\x14organization_user_id\x18\x01 \x01(\x03R\x12organizationUserId\x124\n" +
-	"\x16organization_user_name\x18\x02 \x01(\tR\x14organizationUserName\"\xb5\x04\n" +
+	"\x16organization_user_name\x18\x02 \x01(\tR\x14organizationUserName\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\x03 \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\x04 \x01(\tR\tupdatedAt\"\xf3\x04\n" +
 	"\x1bProjectManagementTaskEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -7225,7 +7443,11 @@ const file_borrower_project_management_proto_rawDesc = "" +
 	"\ttask_type\x18\f \x01(\v21.borrower.ProjectManagementTaskTypeSnapshotEntityR\btaskType\x12K\n" +
 	"\tassignees\x18\r \x03(\v2-.borrower.ProjectManagementTaskAssigneeEntityR\tassignees\x12\x18\n" +
 	"\aoverdue\x18\x0e \x01(\bR\aoverdue\x12'\n" +
-	"\x0foverdue_seconds\x18\x0f \x01(\x03R\x0eoverdueSeconds\"f\n" +
+	"\x0foverdue_seconds\x18\x0f \x01(\x03R\x0eoverdueSeconds\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\x10 \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\x11 \x01(\tR\tupdatedAt\"f\n" +
 	" ProjectManagementTaskPageRequest\x12B\n" +
 	"\x04data\x18\x01 \x01(\v2..borrower.ProjectManagementTaskPageRequestDataR\x04data\"\xb9\x01\n" +
 	"$ProjectManagementTaskPageRequestData\x12\x1d\n" +
@@ -7306,7 +7528,7 @@ const file_borrower_project_management_proto_rawDesc = "" +
 	"\akeyword\x18\x05 \x01(\tR\akeyword\x12\x1d\n" +
 	"\aoverdue\x18\x06 \x01(\bH\x00R\aoverdue\x88\x01\x01B\n" +
 	"\n" +
-	"\b_overdue\"\xed\x01\n" +
+	"\b_overdue\"\x8c\x02\n" +
 	" ProjectManagementOperationEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -7317,7 +7539,9 @@ const file_borrower_project_management_proto_rawDesc = "" +
 	"\roperator_name\x18\x05 \x01(\tR\foperatorName\x12\x1c\n" +
 	"\toperation\x18\x06 \x01(\tR\toperation\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\a \x01(\tR\tcreatedAt\"p\n" +
+	"created_at\x18\a \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\b \x01(\tR\tupdatedAt\"p\n" +
 	"%ProjectManagementOperationPageRequest\x12G\n" +
 	"\x04data\x18\x01 \x01(\v23.borrower.ProjectManagementOperationPageRequestDataR\x04data\"\xc3\x01\n" +
 	")ProjectManagementOperationPageRequestData\x12\x1d\n" +
@@ -7342,12 +7566,16 @@ const file_borrower_project_management_proto_rawDesc = "" +
 	"\x04data\x18\x01 \x01(\v28.borrower.ProjectManagementTaskAssigneeUpdateRequestDataR\x04data\"l\n" +
 	".ProjectManagementTaskAssigneeUpdateRequestData\x12\x17\n" +
 	"\atask_id\x18\x01 \x01(\x03R\x06taskId\x12!\n" +
-	"\fassignee_ids\x18\x02 \x03(\x03R\vassigneeIds\"\x97\x01\n" +
+	"\fassignee_ids\x18\x02 \x03(\x03R\vassigneeIds\"\xd5\x01\n" +
 	"!ProjectManagementAttachmentEntity\x12\x17\n" +
 	"\afile_id\x18\x01 \x01(\x03R\x06fileId\x12\x1b\n" +
 	"\tfile_name\x18\x02 \x01(\tR\bfileName\x12\x19\n" +
 	"\bfile_url\x18\x03 \x01(\tR\afileUrl\x12!\n" +
-	"\fstorage_type\x18\x04 \x01(\tR\vstorageType\"r\n" +
+	"\fstorage_type\x18\x04 \x01(\tR\vstorageType\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\x05 \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\x06 \x01(\tR\tupdatedAt\"r\n" +
 	"&ProjectManagementAttachmentPageRequest\x12H\n" +
 	"\x04data\x18\x01 \x01(\v24.borrower.ProjectManagementAttachmentPageRequestDataR\x04data\"o\n" +
 	"*ProjectManagementAttachmentPageRequestData\x12\x17\n" +
@@ -7376,13 +7604,17 @@ const file_borrower_project_management_proto_rawDesc = "" +
 	"\x04data\x18\x01 \x01(\v26.borrower.ProjectManagementAttachmentDeleteRequestDataR\x04data\"`\n" +
 	",ProjectManagementAttachmentDeleteRequestData\x12\x17\n" +
 	"\atask_id\x18\x01 \x01(\x03R\x06taskId\x12\x17\n" +
-	"\afile_id\x18\x02 \x01(\x03R\x06fileId\"\xd0\x01\n" +
+	"\afile_id\x18\x02 \x01(\x03R\x06fileId\"\x8e\x02\n" +
 	"%ProjectManagementTaskDependencyEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\atask_id\x18\x02 \x01(\x03R\x06taskId\x12,\n" +
 	"\x12dependency_task_id\x18\x03 \x01(\x03R\x10dependencyTaskId\x12'\n" +
 	"\x0fdependency_type\x18\x04 \x01(\tR\x0edependencyType\x12'\n" +
-	"\x0fdependency_rule\x18\x05 \x01(\tR\x0edependencyRule\"r\n" +
+	"\x0fdependency_rule\x18\x05 \x01(\tR\x0edependencyRule\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\x06 \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\a \x01(\tR\tupdatedAt\"r\n" +
 	"&ProjectManagementDependencyPageRequest\x12H\n" +
 	"\x04data\x18\x01 \x01(\v24.borrower.ProjectManagementDependencyPageRequestDataR\x04data\"\x91\x01\n" +
 	"*ProjectManagementDependencyPageRequestData\x12\x17\n" +

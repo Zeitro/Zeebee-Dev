@@ -21,9 +21,7 @@ type ProjectManagementTask struct {
 	EndAt          *sql.NullTime                             `gorm:"column:end_at;type:timestamptz" json:"end_at"`
 	TaskType       *dto.ProjectManagementTaskTypeSnapshotDto `gorm:"column:task_type;type:jsonb;not null;default:'{}';serializer:json" json:"task_type"`
 	// relationships
-	Assignees      []*ProjectManagementTaskAssignee `gorm:"foreignKey:TaskId" json:"assignees"`
-	// Overdue        bool                             `gorm:"-" json:"overdue"`
-	// OverdueSeconds int64                            `gorm:"-" json:"overdue_seconds"`
+	Assignees []*ProjectManagementTaskAssignee `gorm:"foreignKey:TaskId" json:"assignees"`
 }
 
 func (ProjectManagementTask) TableName() string { return "project_management_tasks" }

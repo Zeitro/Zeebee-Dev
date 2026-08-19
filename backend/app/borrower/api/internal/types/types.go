@@ -1704,6 +1704,8 @@ type ProjectManagementAttachmentEntity struct {
 	FileName    string `json:"file_name"`
 	FileUrl     string `json:"file_url"`
 	StorageType string `json:"storage_type"`
+	CreatedAt   string `json:"created_at"`
+	UpdatedAt   string `json:"updated_at"`
 }
 
 type ProjectManagementAttachmentPageRequest struct {
@@ -1780,6 +1782,8 @@ type ProjectManagementMemberEntity struct {
 	Role               string `json:"role"`
 	FullName           string `json:"full_name"`
 	Email              string `json:"email"`
+	CreatedAt          string `json:"created_at"`
+	UpdatedAt          string `json:"updated_at"`
 }
 
 type ProjectManagementMemberInput struct {
@@ -1837,6 +1841,7 @@ type ProjectManagementOperationEntity struct {
 	OperatorName string `json:"operator_name"`
 	Operation    string `json:"operation"`
 	CreatedAt    string `json:"created_at"`
+	UpdatedAt    string `json:"updated_at"`
 }
 
 type ProjectManagementOperationPageFilter struct {
@@ -1886,6 +1891,8 @@ type ProjectManagementProjectEntity struct {
 	CoverUrl    string `json:"cover_url"`
 	OwnerId     int64  `json:"owner_id"`
 	OwnerName   string `json:"owner_name"`
+	CreatedAt   string `json:"created_at"`
+	UpdatedAt   string `json:"updated_at"`
 }
 
 type ProjectManagementProjectPageFilter struct {
@@ -1930,6 +1937,8 @@ type ProjectManagementProjectWorkflowUpdateRequest struct {
 type ProjectManagementTaskAssigneeEntity struct {
 	OrganizationUserId   int64  `json:"organization_user_id"`
 	OrganizationUserName string `json:"organization_user_name"`
+	CreatedAt            string `json:"created_at"`
+	UpdatedAt            string `json:"updated_at"`
 }
 
 type ProjectManagementTaskAssigneeUpdateRequest struct {
@@ -1960,6 +1969,8 @@ type ProjectManagementTaskDependencyEntity struct {
 	DependencyTaskId int64  `json:"dependency_task_id"`
 	DependencyType   string `json:"dependency_type"`
 	DependencyRule   string `json:"dependency_rule"`
+	CreatedAt        string `json:"created_at"`
+	UpdatedAt        string `json:"updated_at"`
 }
 
 type ProjectManagementTaskDetailRequest struct {
@@ -1982,6 +1993,8 @@ type ProjectManagementTaskEntity struct {
 	Assignees      []*ProjectManagementTaskAssigneeEntity   `json:"assignees"`
 	Overdue        bool                                     `json:"overdue"`
 	OverdueSeconds int64                                    `json:"overdue_seconds"`
+	CreatedAt      string                                   `json:"created_at"`
+	UpdatedAt      string                                   `json:"updated_at"`
 }
 
 type ProjectManagementTaskPageFilter struct {
@@ -2029,6 +2042,8 @@ type ProjectManagementTaskTypeEntity struct {
 	Description string `json:"description"`
 	Color       string `json:"color"`
 	Enabled     bool   `json:"enabled"`
+	CreatedAt   string `json:"created_at"`
+	UpdatedAt   string `json:"updated_at"`
 }
 
 type ProjectManagementTaskTypePageFilter struct {
@@ -2106,6 +2121,8 @@ type ProjectManagementWorkflowEntity struct {
 	Transitions        []*ProjectManagementWorkflowTransitionEntity `json:"transitions"`
 	SourceTemplateId   int64                                        `json:"source_template_id"`
 	SourceTemplateName string                                       `json:"source_template_name"`
+	CreatedAt          string                                       `json:"created_at"`
+	UpdatedAt          string                                       `json:"updated_at"`
 }
 
 type ProjectManagementWorkflowPageEntity struct {
@@ -2114,6 +2131,8 @@ type ProjectManagementWorkflowPageEntity struct {
 	Description string `json:"description"`
 	Enabled     bool   `json:"enabled"`
 	IsDefault   bool   `json:"is_default"`
+	CreatedAt   string `json:"created_at"`
+	UpdatedAt   string `json:"updated_at"`
 }
 
 type ProjectManagementWorkflowPageFilter struct {
@@ -2140,6 +2159,8 @@ type ProjectManagementWorkflowStageEntity struct {
 	Name      string `json:"name"`
 	Phase     string `json:"phase"`
 	SortOrder int    `json:"sort_order"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
 }
 
 type ProjectManagementWorkflowTransitionEntity struct {
@@ -2147,6 +2168,8 @@ type ProjectManagementWorkflowTransitionEntity struct {
 	FromStageId       int64    `json:"from_stage_id"`
 	ToStageId         int64    `json:"to_stage_id"`
 	AllowedActorTypes []string `json:"allowed_actor_types"`
+	CreatedAt         string   `json:"created_at"`
+	UpdatedAt         string   `json:"updated_at"`
 }
 
 type ProjectManagementWorkflowUpdateRequest struct {

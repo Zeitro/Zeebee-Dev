@@ -1,0 +1,40 @@
+syntax = "v1"
+
+info(
+    title: "borrower-project-management-operation-api"
+    desc: "borrower project management operation types"
+    version: "v1"
+)
+
+type (
+    ProjectManagementOperationEntity {
+        Id int64 `json:"id"`
+        ProjectId int64 `json:"project_id"`
+        TaskId int64 `json:"task_id"`
+        OperatorId int64 `json:"operator_id"`
+        OperatorName string `json:"operator_name"`
+        Operation string `json:"operation"`
+        CreatedAt string `json:"created_at"`
+        UpdatedAt string `json:"updated_at"`
+    }
+
+    ProjectManagementOperationPageFilter {
+        TaskId int64 `json:"task_id,optional"`
+        OperationType string `json:"operation_type,optional"`
+    }
+
+    ProjectManagementOperationPageRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Page int64 `json:"page,default=1"`
+        Limit int64 `json:"limit,default=20"`
+        Filter ProjectManagementOperationPageFilter `json:"filter,optional"`
+    }
+
+    ProjectManagementOperationPageResponse {
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+        Total int64 `json:"total"`
+        TotalPage int64 `json:"total_page"`
+        List []*ProjectManagementOperationEntity `json:"list"`
+    }
+)

@@ -47,7 +47,7 @@ func (l *MyTaskPageLogic) MyTaskPage(in *borrower.ProjectManagementMyTaskPageReq
 	}
 	data := &borrower.ProjectManagementTaskPageResponseData{Page: page.Page, Limit: page.Limit, Total: page.Total, TotalPage: page.TotalPage, List: make([]*borrower.ProjectManagementTaskEntity, 0, len(page.List))}
 	for _, task := range page.List {
-		entity, err := taskEntity(task)
+		entity, err := taskEntityWithOverdue(l.ctx, base.ProjectManagementLogic, task)
 		if err != nil {
 			return nil, errorx.GetFailedTransRespErr(err)
 		}

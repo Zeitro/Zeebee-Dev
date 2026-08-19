@@ -20,5 +20,27 @@ func workflowDto(name, description string, enabled, isDefault bool, stages []*bo
 }
 
 func workflowEntity(workflow *model.ProjectManagementWorkflow) (*borrower.ProjectManagementWorkflowEntity, error) {
-	return copierx.Trans[model.ProjectManagementWorkflow, borrower.ProjectManagementWorkflowEntity](workflow)
+	entity, err := copierx.Trans[model.ProjectManagementWorkflow, borrower.ProjectManagementWorkflowEntity](workflow)
+	if err != nil {
+		return nil, err
+	}
+	entity.CreatedAt, entity.UpdatedAt = formatEntityTime(workflow.CreatedAt), formatEntityTime(workflow.UpdatedAt)
+	for index, stage := range workflow.Stages {
+		entity.Stages[index].CreatedAt = formatEntityTime(stage.CreatedAt)
+		entity.Stages[index].UpdatedAt = formatEntityTime(stage.UpdatedAt)
+	}
+	for index, transition := range workflow.Transitions {
+		entity.Transitions[index].CreatedAt = formatEntityTime(transition.CreatedAt)
+		entity.Transitions[index].UpdatedAt = formatEntityTime(transition.UpdatedAt)
+	}
+	return entity, nil
+}
+
+func workflowPageEntity(workflow *model.ProjectManagementWorkflow) (*borrower.ProjectManagementWorkflowPageEntity, error) {
+	entity, err := copierx.Trans[model.ProjectManagementWorkflow, borrower.ProjectManagementWorkflowPageEntity](workflow)
+	if err != nil {
+		return nil, err
+	}
+	entity.CreatedAt, entity.UpdatedAt = formatEntityTime(workflow.CreatedAt), formatEntityTime(workflow.UpdatedAt)
+	return entity, nil
 }

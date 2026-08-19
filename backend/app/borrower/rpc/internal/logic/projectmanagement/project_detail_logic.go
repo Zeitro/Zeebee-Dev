@@ -7,9 +7,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 
-	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/model"
 )
 
 type ProjectDetailLogic struct {
@@ -42,7 +40,7 @@ func (l *ProjectDetailLogic) ProjectDetail(in *borrower.ProjectManagementProject
 	if _, err = l.baseLogic.ProjectManagementLogic.RequireMember(l.ctx, project.Id, actor.OrganizationUserId); err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[model.ProjectManagementProject, borrower.ProjectManagementProjectEntity](project)
+	data, err := projectEntity(project)
 	if err != nil {
 		return nil, err
 	}

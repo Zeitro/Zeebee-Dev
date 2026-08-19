@@ -740,11 +740,83 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
-					// page my project tasks
+					// create project workflow
 					Method:  http.MethodPost,
-					Path:    "/project_management/my_task/page",
-					Handler: project_management.ProjectManagementMyTaskPageHandler(serverCtx),
+					Path:    "/project_management/workflow",
+					Handler: project_management.ProjectManagementWorkflowCreateHandler(serverCtx),
 				},
+				{
+					// get project workflow
+					Method:  http.MethodGet,
+					Path:    "/project_management/workflow/:id",
+					Handler: project_management.ProjectManagementWorkflowDetailHandler(serverCtx),
+				},
+				{
+					// update project workflow
+					Method:  http.MethodPut,
+					Path:    "/project_management/workflow/:id",
+					Handler: project_management.ProjectManagementWorkflowUpdateHandler(serverCtx),
+				},
+				{
+					// delete project workflow
+					Method:  http.MethodDelete,
+					Path:    "/project_management/workflow/:id",
+					Handler: project_management.ProjectManagementWorkflowDeleteHandler(serverCtx),
+				},
+				{
+					// list enabled project workflows
+					Method:  http.MethodGet,
+					Path:    "/project_management/workflow/all",
+					Handler: project_management.ProjectManagementWorkflowAllHandler(serverCtx),
+				},
+				{
+					// page project workflows
+					Method:  http.MethodPost,
+					Path:    "/project_management/workflow/page",
+					Handler: project_management.ProjectManagementWorkflowPageHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					// create project task type
+					Method:  http.MethodPost,
+					Path:    "/project_management/task_type",
+					Handler: project_management.ProjectManagementTaskTypeCreateHandler(serverCtx),
+				},
+				{
+					// update project task type
+					Method:  http.MethodPut,
+					Path:    "/project_management/task_type/:id",
+					Handler: project_management.ProjectManagementTaskTypeUpdateHandler(serverCtx),
+				},
+				{
+					// delete project task type
+					Method:  http.MethodDelete,
+					Path:    "/project_management/task_type/:id",
+					Handler: project_management.ProjectManagementTaskTypeDeleteHandler(serverCtx),
+				},
+				{
+					// page project task types
+					Method:  http.MethodPost,
+					Path:    "/project_management/task_type/page",
+					Handler: project_management.ProjectManagementTaskTypePageHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
 				{
 					// create project
 					Method:  http.MethodPost,
@@ -769,6 +841,33 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/project_management/project/:id",
 					Handler: project_management.ProjectManagementProjectDeleteHandler(serverCtx),
 				},
+				{
+					// get project workflow
+					Method:  http.MethodGet,
+					Path:    "/project_management/project/:id/workflow",
+					Handler: project_management.ProjectManagementProjectWorkflowDetailHandler(serverCtx),
+				},
+				{
+					// update project workflow
+					Method:  http.MethodPut,
+					Path:    "/project_management/project/:id/workflow",
+					Handler: project_management.ProjectManagementProjectWorkflowUpdateHandler(serverCtx),
+				},
+				{
+					// page projects
+					Method:  http.MethodPost,
+					Path:    "/project_management/project/page",
+					Handler: project_management.ProjectManagementProjectPageHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
 				{
 					// add project members
 					Method:  http.MethodPost,
@@ -799,11 +898,20 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/project_management/project/:id/member/page",
 					Handler: project_management.ProjectManagementMemberPageHandler(serverCtx),
 				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
 				{
-					// page project operation timeline
+					// page my project tasks
 					Method:  http.MethodPost,
-					Path:    "/project_management/project/:id/operation/page",
-					Handler: project_management.ProjectManagementOperationPageHandler(serverCtx),
+					Path:    "/project_management/my_task/page",
+					Handler: project_management.ProjectManagementMyTaskPageHandler(serverCtx),
 				},
 				{
 					// create project task
@@ -816,24 +924,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/project_management/project/:id/task/page",
 					Handler: project_management.ProjectManagementTaskPageHandler(serverCtx),
-				},
-				{
-					// get project workflow
-					Method:  http.MethodGet,
-					Path:    "/project_management/project/:id/workflow",
-					Handler: project_management.ProjectManagementProjectWorkflowDetailHandler(serverCtx),
-				},
-				{
-					// update project workflow
-					Method:  http.MethodPut,
-					Path:    "/project_management/project/:id/workflow",
-					Handler: project_management.ProjectManagementProjectWorkflowUpdateHandler(serverCtx),
-				},
-				{
-					// page projects
-					Method:  http.MethodPost,
-					Path:    "/project_management/project/page",
-					Handler: project_management.ProjectManagementProjectPageHandler(serverCtx),
 				},
 				{
 					// get project task
@@ -877,6 +967,15 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/project_management/task/:id/attachment/page",
 					Handler: project_management.ProjectManagementAttachmentPageHandler(serverCtx),
 				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
 				{
 					// create task dependency
 					Method:  http.MethodPost,
@@ -907,65 +1006,20 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/project_management/task/:id/transition",
 					Handler: project_management.ProjectManagementTaskTransitionHandler(serverCtx),
 				},
+			}...,
+		),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthMiddleware},
+			[]rest.Route{
 				{
-					// create project task type
+					// page project operation timeline
 					Method:  http.MethodPost,
-					Path:    "/project_management/task_type",
-					Handler: project_management.ProjectManagementTaskTypeCreateHandler(serverCtx),
-				},
-				{
-					// update project task type
-					Method:  http.MethodPut,
-					Path:    "/project_management/task_type/:id",
-					Handler: project_management.ProjectManagementTaskTypeUpdateHandler(serverCtx),
-				},
-				{
-					// delete project task type
-					Method:  http.MethodDelete,
-					Path:    "/project_management/task_type/:id",
-					Handler: project_management.ProjectManagementTaskTypeDeleteHandler(serverCtx),
-				},
-				{
-					// page project task types
-					Method:  http.MethodPost,
-					Path:    "/project_management/task_type/page",
-					Handler: project_management.ProjectManagementTaskTypePageHandler(serverCtx),
-				},
-				{
-					// create project workflow
-					Method:  http.MethodPost,
-					Path:    "/project_management/workflow",
-					Handler: project_management.ProjectManagementWorkflowCreateHandler(serverCtx),
-				},
-				{
-					// get project workflow
-					Method:  http.MethodGet,
-					Path:    "/project_management/workflow/:id",
-					Handler: project_management.ProjectManagementWorkflowDetailHandler(serverCtx),
-				},
-				{
-					// update project workflow
-					Method:  http.MethodPut,
-					Path:    "/project_management/workflow/:id",
-					Handler: project_management.ProjectManagementWorkflowUpdateHandler(serverCtx),
-				},
-				{
-					// delete project workflow
-					Method:  http.MethodDelete,
-					Path:    "/project_management/workflow/:id",
-					Handler: project_management.ProjectManagementWorkflowDeleteHandler(serverCtx),
-				},
-				{
-					// list enabled project workflows
-					Method:  http.MethodGet,
-					Path:    "/project_management/workflow/all",
-					Handler: project_management.ProjectManagementWorkflowAllHandler(serverCtx),
-				},
-				{
-					// page project workflows
-					Method:  http.MethodPost,
-					Path:    "/project_management/workflow/page",
-					Handler: project_management.ProjectManagementWorkflowPageHandler(serverCtx),
+					Path:    "/project_management/project/:id/operation/page",
+					Handler: project_management.ProjectManagementOperationPageHandler(serverCtx),
 				},
 			}...,
 		),

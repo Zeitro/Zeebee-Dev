@@ -17,24 +17,19 @@ func projectManagementTaskOverdue(task *model.ProjectManagementTask, phase const
 	return true, int64(now.Sub(task.EndAt.Time).Seconds())
 }
 
-func (l *ProjectManagementLogic) fillProjectManagementTaskOverdue(ctx context.Context, tasks []*model.ProjectManagementTask) error {
-	for _, task := range tasks {
-		stage, err := l.repos.ProjectManagementWorkflowRepo.FindStage(ctx, task.StageId)
-		if err != nil {
-			return projectManagementNotFound(err, "task stage not found")
-		}
-		task.Overdue, task.OverdueSeconds = projectManagementTaskOverdue(task, stage.Phase, time.Now())
+func (l *ProjectManagementLogic) TaskOverdue(ctx context.Context, task *model.ProjectManagementTask) (*dto.ProjectManagementTaskOverdueDto, error) {
+	stage, err := l.repos.ProjectManagementWorkflowRepo.FindStage(ctx, task.StageId)
+	if err != nil {
+		return nil, projectManagementNotFound(err, "task stage not found")
 	}
-	return nil
+	overdue, overdueSeconds := projectManagementTaskOverdue(task, stage.Phase, time.Now())
+	return &dto.ProjectManagementTaskOverdueDto{Overdue: overdue, OverdueSeconds: overdueSeconds}, nil
 }
 
 func (l *ProjectManagementLogic) PageMyTasks(ctx context.Context, actor *dto.ProjectManagementActor, input dto.ProjectManagementMyTaskPageRequestDto) (gormx.PageResponse[*model.ProjectManagementTask], error) {
 	page, err := l.repos.ProjectManagementTaskRepo.PageMine(ctx, actor.OrganizationId, actor.OrganizationUserId, input)
 	if err != nil {
 		return page, err
-	}
-	if err = l.fillProjectManagementTaskOverdue(ctx, page.List); err != nil {
-		return gormx.PageResponse[*model.ProjectManagementTask]{}, err
 	}
 	return page, nil
 }

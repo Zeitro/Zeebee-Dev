@@ -7,9 +7,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 
-	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type MemberCandidateLogic struct {
@@ -39,9 +37,13 @@ func (l *MemberCandidateLogic) MemberCandidate(in *borrower.ProjectManagementMem
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[[]*dto.ProjectManagementMemberDetailDto, []*borrower.ProjectManagementMemberEntity](&members)
-	if err != nil {
-		return nil, err
+	data := make([]*borrower.ProjectManagementMemberEntity, 0, len(members))
+	for _, member := range members {
+		entity, err := memberEntity(member)
+		if err != nil {
+			return nil, err
+		}
+		data = append(data, entity)
 	}
-	return &borrower.ProjectManagementMemberCandidateResponse{Data: *data}, nil
+	return &borrower.ProjectManagementMemberCandidateResponse{Data: data}, nil
 }

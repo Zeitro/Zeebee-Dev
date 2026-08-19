@@ -7,9 +7,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 
-	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/model"
 )
 
 type WorkflowAllLogic struct {
@@ -42,11 +40,15 @@ func (l *WorkflowAllLogic) WorkflowAll(in *borrower.ProjectManagementWorkflowAll
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
-	data, err := copierx.Trans[[]*model.ProjectManagementWorkflow, []*borrower.ProjectManagementWorkflowEntity](&workflows)
-	if err != nil {
-		return nil, err
+	data := make([]*borrower.ProjectManagementWorkflowEntity, 0, len(workflows))
+	for _, workflow := range workflows {
+		entity, err := workflowEntity(workflow)
+		if err != nil {
+			return nil, err
+		}
+		data = append(data, entity)
 	}
-	resp = &borrower.ProjectManagementWorkflowAllResponse{Data: *data}
+	resp = &borrower.ProjectManagementWorkflowAllResponse{Data: data}
 
 	return resp, nil
 }

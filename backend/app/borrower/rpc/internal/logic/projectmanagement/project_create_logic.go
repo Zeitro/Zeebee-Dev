@@ -10,7 +10,6 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/model"
 )
 
 type ProjectCreateLogic struct {
@@ -44,7 +43,7 @@ func (l *ProjectCreateLogic) ProjectCreate(in *borrower.ProjectManagementProject
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[model.ProjectManagementProject, borrower.ProjectManagementProjectEntity](project)
+	data, err := projectEntity(project)
 	if err != nil {
 		return nil, err
 	}

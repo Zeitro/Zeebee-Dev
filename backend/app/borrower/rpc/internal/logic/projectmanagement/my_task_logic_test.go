@@ -11,8 +11,9 @@ import (
 
 func TestOperationEntityKeepsProjectTaskContext(t *testing.T) {
 	now := time.Date(2026, 8, 18, 12, 0, 0, 0, time.UTC)
+	updatedAt := now.Add(time.Hour)
 	operation := &model.Operation{
-		Base:         model.Base{Id: 1, CreatedAt: now},
+		Base:         model.Base{Id: 1, CreatedAt: now, UpdatedAt: updatedAt},
 		EntityId:     2,
 		OperatorId:   3,
 		OperatorName: "Operator",
@@ -23,7 +24,7 @@ func TestOperationEntityKeepsProjectTaskContext(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if entity.ProjectId != 2 || entity.TaskId != 4 || entity.OperatorId != 3 || entity.CreatedAt != now.Format(time.RFC3339) {
+	if entity.ProjectId != 2 || entity.TaskId != 4 || entity.OperatorId != 3 || entity.CreatedAt != now.Format(time.RFC3339) || entity.UpdatedAt != updatedAt.Format(time.RFC3339) {
 		t.Fatalf("operation context lost: %#v", entity)
 	}
 }

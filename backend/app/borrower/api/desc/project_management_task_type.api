@@ -1,0 +1,64 @@
+syntax = "v1"
+
+info(
+    title: "borrower-project-management-task-type-api"
+    desc: "borrower project management task type types"
+    version: "v1"
+)
+
+type (
+    ProjectManagementTaskTypeEntity {
+        Id int64 `json:"id"`
+        Name string `json:"name"`
+        Description string `json:"description"`
+        Color string `json:"color"`
+        Enabled bool `json:"enabled"`
+        CreatedAt string `json:"created_at"`
+        UpdatedAt string `json:"updated_at"`
+    }
+
+    ProjectManagementTaskTypeSnapshotEntity {
+        Id int64 `json:"id"`
+        Name string `json:"name"`
+        Description string `json:"description"`
+        Color string `json:"color"`
+    }
+
+    ProjectManagementTaskTypePageFilter {
+        Keyword string `json:"keyword,optional"`
+        Enabled *bool `json:"enabled,optional"`
+    }
+
+    ProjectManagementTaskTypePageRequest {
+        Page int64 `json:"page,default=1"`
+        Limit int64 `json:"limit,default=20"`
+        Filter ProjectManagementTaskTypePageFilter `json:"filter,optional"`
+    }
+
+    ProjectManagementTaskTypePageResponse {
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+        Total int64 `json:"total"`
+        TotalPage int64 `json:"total_page"`
+        List []*ProjectManagementTaskTypeEntity `json:"list"`
+    }
+
+    ProjectManagementTaskTypeCreateRequest {
+        Name string `json:"name" validate:"required,max=100"`
+        Description string `json:"description,optional" validate:"max=500"`
+        Color string `json:"color,optional" validate:"max=32"`
+        Enabled bool `json:"enabled"`
+    }
+
+    ProjectManagementTaskTypeUpdateRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Name string `json:"name" validate:"required,max=100"`
+        Description string `json:"description,optional" validate:"max=500"`
+        Color string `json:"color,optional" validate:"max=32"`
+        Enabled bool `json:"enabled"`
+    }
+
+    ProjectManagementTaskTypeDeleteRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+    }
+)

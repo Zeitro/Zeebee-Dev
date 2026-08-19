@@ -1,0 +1,79 @@
+syntax = "v1"
+
+info(
+    title: "borrower-project-management-project-api"
+    desc: "borrower project management project types"
+    version: "v1"
+)
+
+type (
+    ProjectManagementProjectEntity {
+        Id int64 `json:"id"`
+        EntityId int64 `json:"entity_id"`
+        EntityType string `json:"entity_type"`
+        Name string `json:"name"`
+        Description string `json:"description"`
+        CoverUrl string `json:"cover_url"`
+        OwnerId int64 `json:"owner_id"`
+        OwnerName string `json:"owner_name"`
+        CreatedAt string `json:"created_at"`
+        UpdatedAt string `json:"updated_at"`
+    }
+
+    ProjectManagementProjectPageFilter {
+        Keyword string `json:"keyword,optional"`
+        EntityId int64 `json:"entity_id,optional"`
+        EntityType string `json:"entity_type,optional"`
+    }
+
+    ProjectManagementProjectPageRequest {
+        Page int64 `json:"page,default=1"`
+        Limit int64 `json:"limit,default=20"`
+        Filter ProjectManagementProjectPageFilter `json:"filter,optional"`
+    }
+
+    ProjectManagementProjectPageResponse {
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+        Total int64 `json:"total"`
+        TotalPage int64 `json:"total_page"`
+        List []*ProjectManagementProjectEntity `json:"list"`
+    }
+
+    ProjectManagementProjectDetailRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+    }
+
+    ProjectManagementProjectCreateRequest {
+        EntityId int64 `json:"entity_id,optional"`
+        EntityType string `json:"entity_type,optional"`
+        Name string `json:"name" validate:"required,max=100"`
+        Description string `json:"description,optional" validate:"max=500"`
+        CoverUrl string `json:"cover_url,optional" validate:"max=255"`
+        WorkflowTemplateId int64 `json:"workflow_template_id" validate:"required,gt=0"`
+    }
+
+    ProjectManagementProjectUpdateRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Name string `json:"name" validate:"required,max=100"`
+        Description string `json:"description,optional" validate:"max=500"`
+        CoverUrl string `json:"cover_url,optional" validate:"max=255"`
+    }
+
+    ProjectManagementProjectDeleteRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Confirm bool `json:"confirm" validate:"required"`
+    }
+
+    ProjectManagementProjectWorkflowDetailRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+    }
+
+    ProjectManagementProjectWorkflowUpdateRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        Name string `json:"name" validate:"required,max=100"`
+        Description string `json:"description,optional" validate:"max=500"`
+        Stages []*ProjectManagementWorkflowStageEntity `json:"stages" validate:"required,min=1,dive"`
+        Transitions []*ProjectManagementWorkflowTransitionEntity `json:"transitions,optional" validate:"dive"`
+    }
+)

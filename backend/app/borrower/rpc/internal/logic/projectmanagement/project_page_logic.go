@@ -9,9 +9,7 @@ import (
 
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/model"
 )
 
 type ProjectPageLogic struct {
@@ -45,9 +43,13 @@ func (l *ProjectPageLogic) ProjectPage(in *borrower.ProjectManagementProjectPage
 	if err != nil {
 		return nil, err
 	}
-	result, err := copierx.Trans[gormx.PageResponse[*model.ProjectManagementProject], borrower.ProjectManagementProjectPageResponseData](&page)
-	if err != nil {
-		return nil, err
+	result := &borrower.ProjectManagementProjectPageResponseData{Page: page.Page, Limit: page.Limit, Total: page.Total, TotalPage: page.TotalPage, List: make([]*borrower.ProjectManagementProjectEntity, 0, len(page.List))}
+	for _, project := range page.List {
+		entity, err := projectEntity(project)
+		if err != nil {
+			return nil, err
+		}
+		result.List = append(result.List, entity)
 	}
 	return &borrower.ProjectManagementProjectPageResponse{Data: result}, nil
 }

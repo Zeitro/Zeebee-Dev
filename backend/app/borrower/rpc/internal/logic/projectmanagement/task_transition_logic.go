@@ -35,7 +35,7 @@ func (l *TaskTransitionLogic) TaskTransition(in *borrower.ProjectManagementTaskT
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-	data, err := taskEntity(task)
+	data, err := taskEntityWithOverdue(l.ctx, logic.GetBaseLogic(l.svcCtx).ProjectManagementLogic, task)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

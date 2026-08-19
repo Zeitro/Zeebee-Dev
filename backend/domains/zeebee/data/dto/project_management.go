@@ -123,6 +123,8 @@ type ProjectManagementMemberDetailDto struct {
 	Role               constants.ProjectManagementMemberRole
 	FullName           string
 	Email              string
+	CreatedAt          time.Time
+	UpdatedAt          time.Time
 }
 
 type ProjectManagementMemberFilterDto struct {
@@ -150,6 +152,11 @@ type ProjectManagementTaskDto struct {
 	StartAt        *time.Time
 	EndAt          *time.Time
 	TaskType       *ProjectManagementTaskTypeSnapshotDto
+}
+
+type ProjectManagementTaskOverdueDto struct {
+	Overdue        bool
+	OverdueSeconds int64
 }
 
 type ProjectManagementTaskCreateDto struct {

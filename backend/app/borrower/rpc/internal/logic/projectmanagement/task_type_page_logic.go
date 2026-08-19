@@ -9,9 +9,7 @@ import (
 
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/model"
 )
 
 type TaskTypePageLogic struct {
@@ -47,9 +45,13 @@ func (l *TaskTypePageLogic) TaskTypePage(in *borrower.ProjectManagementTaskTypeP
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-	data, err := copierx.Trans[gormx.PageResponse[*model.ProjectManagementTaskType], borrower.ProjectManagementTaskTypePageResponseData](&page)
-	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+	data := &borrower.ProjectManagementTaskTypePageResponseData{Page: page.Page, Limit: page.Limit, Total: page.Total, TotalPage: page.TotalPage, List: make([]*borrower.ProjectManagementTaskTypeEntity, 0, len(page.List))}
+	for _, taskType := range page.List {
+		entity, err := taskTypeEntity(taskType)
+		if err != nil {
+			return nil, errorx.GetFailedTransRespErr(err)
+		}
+		data.List = append(data.List, entity)
 	}
 	return &borrower.ProjectManagementTaskTypePageResponse{Data: data}, nil
 }
