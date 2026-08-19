@@ -10,53 +10,49 @@ help:
 	@echo "  create-sql <service> <name> Create SQL file with timestamp"
 
 WORK_DIR := $(shell pwd)
+SERVICE_NAME = $(if $(SERVICE),$(SERVICE),$(filter-out $@,$(MAKECMDGOALS)))
+
+.DEFAULT:
+	@test -d "app/$@" || { echo "make: *** No rule to make target '$@'. Stop."; exit 2; }
 
 .PHONY: create-server
 create-server:
-	@service="$(if $(SERVICE),$(SERVICE),borrower)"; \
-		test -f "app/$$service/api/$$service.api" || (echo "Error: app/$$service/api/$$service.api not found" && exit 1); \
-		echo "create api server: $$service"; \
-		goctl api go --api "app/$$service/api/$$service.api" --dir "app/$$service/api" --style go_zero --home third_party/goctl_template; \
-		goctl api swagger --api "app/$$service/api/$$service.api" --dir "app/$$service/api/swagger"
+	$(MAKE) create-api-service SERVICE=$(if $(SERVICE),$(SERVICE),borrower)
+	$(MAKE) create-swagger SERVICE=$(if $(SERVICE),$(SERVICE),borrower)
 
 .PHONY: create-api
 # Create API Service
 create-api:
-		$(eval SERVICE := $(filter-out $@,$(MAKECMDGOALS)))
-		@echo "create api file: $(SERVICE)"
-		@if [ ! -d "app/$(SERVICE)/api" ]; then \
-			mkdir -p app/$(SERVICE)/api; \
+		@echo "create api file: $(SERVICE_NAME)"
+		@if [ ! -d "app/$(SERVICE_NAME)/api" ]; then \
+			mkdir -p app/$(SERVICE_NAME)/api; \
 		fi
-		goctl api -o=app/$(SERVICE)/api/$(SERVICE).api --home third_party/goctl_template
+		goctl api -o=app/$(SERVICE_NAME)/api/$(SERVICE_NAME).api --home third_party/goctl_template
 
 .PHONY: create-swagger
 # Create API Swagger
 create-swagger:
-		$(eval SERVICE := $(filter-out $@,$(MAKECMDGOALS)))
-		@echo "create api swagger: $(SERVICE)"
-		goctl api swagger --api app/$(SERVICE)/api/$(SERVICE).api --dir app/$(SERVICE)/api/swagger
+		@echo "create api swagger: $(SERVICE_NAME)"
+		goctl api swagger --api app/$(SERVICE_NAME)/api/$(SERVICE_NAME).api --dir app/$(SERVICE_NAME)/api/swagger
 
 .PHONY: create-api-service
 # Create API Service
 create-api-service:
-		$(eval SERVICE := $(filter-out $@,$(MAKECMDGOALS)))
-		@echo "create api server: $(SERVICE)"
-		goctl api go --api app/$(SERVICE)/api/$(SERVICE).api --dir app/$(SERVICE)/api --style go_zero --home third_party/goctl_template
+		@echo "create api server: $(SERVICE_NAME)"
+		goctl api go --api app/$(SERVICE_NAME)/api/$(SERVICE_NAME).api --dir app/$(SERVICE_NAME)/api --style go_zero --home third_party/goctl_template
 
 .PHONY: create-proto
 # Create proto file
 create-proto:
-		$(eval SERVICE := $(filter-out $@,$(MAKECMDGOALS)))
-		goctl rpc -o app/$(SERVICE)/rpc/pb/$(SERVICE).proto
+		goctl rpc -o app/$(SERVICE_NAME)/rpc/pb/$(SERVICE_NAME).proto
 
 .PHONY: create-rpc-service
 # Create RPC service (multi-proto, supports cross-file imports via go_package)
 create-rpc-service:
-	$(eval SERVICE := $(filter-out $@,$(MAKECMDGOALS)))
-	@echo "==> Creating service: $(SERVICE)"
-	@test -n "$(SERVICE)" || (echo "Usage: make create-rpc-service <service-name>" && exit 1)
-	@test -d "$(WORK_DIR)/app/$(SERVICE)/rpc/pb" || (echo "Error: app/$(SERVICE)/rpc/pb/ not found" && exit 1)
-	@for proto in $(WORK_DIR)/app/$(SERVICE)/rpc/pb/*.proto; do \
+	@echo "==> Creating service: $(SERVICE_NAME)"
+	@test -n "$(SERVICE_NAME)" || (echo "Usage: make create-rpc-service <service-name>" && exit 1)
+	@test -d "$(WORK_DIR)/app/$(SERVICE_NAME)/rpc/pb" || (echo "Error: app/$(SERVICE_NAME)/rpc/pb/ not found" && exit 1)
+	@for proto in $(WORK_DIR)/app/$(SERVICE_NAME)/rpc/pb/*.proto; do \
 		[ -f "$$proto" ] || continue; \
 		name=$$(basename "$$proto" .proto); \
 		echo "  $$proto"; \
@@ -65,24 +61,23 @@ create-rpc-service:
 			--go_opt=module=zeebee-backend \
 			--go-grpc_out="$(WORK_DIR)" \
 			--go-grpc_opt=module=zeebee-backend \
-			--zrpc_out="$(WORK_DIR)/app/$(SERVICE)/rpc" \
-			--proto_path="$(WORK_DIR)/app/$(SERVICE)/rpc/pb" \
+			--zrpc_out="$(WORK_DIR)/app/$(SERVICE_NAME)/rpc" \
+			--proto_path="$(WORK_DIR)/app/$(SERVICE_NAME)/rpc/pb" \
 			--proto_path="$(WORK_DIR)/domains/zeebee" \
 			--proto_path="$(WORK_DIR)/third_party" \
 			--style go_zero \
 			-m \
 			--home $(WORK_DIR)/third_party/goctl_template; \
 	done
-	@echo "==> Done: $(SERVICE)"
+	@echo "==> Done: $(SERVICE_NAME)"
 
 
 .PHONY: create-service
 # Create service
 create-service:
-	$(eval SERVICE := $(filter-out $@,$(MAKECMDGOALS)))
-	$(MAKE) create-api-service SERVICE=$(SERVICE)
-	$(MAKE) create-rpc-service SERVICE=$(SERVICE)
-	$(MAKE) create-swagger SERVICE=$(SERVICE)
+	$(MAKE) create-api-service SERVICE=$(SERVICE_NAME)
+	$(MAKE) create-rpc-service SERVICE=$(SERVICE_NAME)
+	$(MAKE) create-swagger SERVICE=$(SERVICE_NAME)
 
 .PHONY: create-sql
 # Create SQL file with timestamp
