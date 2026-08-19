@@ -6,17 +6,9 @@ info(
     version: "v1"
 )
 
-type (
-    ProjectManagementTaskDependencyEntity {
-        Id int64 `json:"id"`
-        TaskId int64 `json:"task_id"`
-        DependencyTaskId int64 `json:"dependency_task_id"`
-        DependencyType string `json:"dependency_type"`
-        DependencyRule string `json:"dependency_rule"`
-        CreatedAt string `json:"created_at"`
-        UpdatedAt string `json:"updated_at"`
-    }
+import "../../../../domains/zeebee/api/project_management_entity.api"
 
+type (
     ProjectManagementDependencyPageRequest {
         Id int64 `path:"id" validate:"required,gt=0"`
         Page int64 `json:"page,default=1"`

@@ -6,18 +6,9 @@ info(
     version: "v1"
 )
 
-type (
-    ProjectManagementOperationEntity {
-        Id int64 `json:"id"`
-        ProjectId int64 `json:"project_id"`
-        TaskId int64 `json:"task_id"`
-        OperatorId int64 `json:"operator_id"`
-        OperatorName string `json:"operator_name"`
-        Operation string `json:"operation"`
-        CreatedAt string `json:"created_at"`
-        UpdatedAt string `json:"updated_at"`
-    }
+import "../../../../domains/zeebee/api/project_management_entity.api"
 
+type (
     ProjectManagementOperationPageFilter {
         TaskId int64 `json:"task_id,optional"`
         OperationType string `json:"operation_type,optional"`

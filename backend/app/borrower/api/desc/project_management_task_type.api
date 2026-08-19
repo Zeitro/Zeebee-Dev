@@ -6,24 +6,9 @@ info(
     version: "v1"
 )
 
+import "../../../../domains/zeebee/api/project_management_entity.api"
+
 type (
-    ProjectManagementTaskTypeEntity {
-        Id int64 `json:"id"`
-        Name string `json:"name"`
-        Description string `json:"description"`
-        Color string `json:"color"`
-        Enabled bool `json:"enabled"`
-        CreatedAt string `json:"created_at"`
-        UpdatedAt string `json:"updated_at"`
-    }
-
-    ProjectManagementTaskTypeSnapshotEntity {
-        Id int64 `json:"id"`
-        Name string `json:"name"`
-        Description string `json:"description"`
-        Color string `json:"color"`
-    }
-
     ProjectManagementTaskTypePageFilter {
         Keyword string `json:"keyword,optional"`
         Enabled *bool `json:"enabled,optional"`

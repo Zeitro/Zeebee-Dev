@@ -6,18 +6,9 @@ info(
     version: "v1"
 )
 
-type (
-    ProjectManagementMemberEntity {
-        Id int64 `json:"id"`
-        ProjectId int64 `json:"project_id"`
-        OrganizationUserId int64 `json:"organization_user_id"`
-        Role string `json:"role"`
-        FullName string `json:"full_name"`
-        Email string `json:"email"`
-        CreatedAt string `json:"created_at"`
-        UpdatedAt string `json:"updated_at"`
-    }
+import "../../../../domains/zeebee/api/project_management_entity.api"
 
+type (
     ProjectManagementMemberInput {
         OrganizationUserId int64 `json:"organization_user_id" validate:"required,gt=0"`
         Role string `json:"role" validate:"required,oneof=ProjectAdmin TaskExecutor"`

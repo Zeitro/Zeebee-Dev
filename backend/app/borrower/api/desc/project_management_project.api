@@ -6,20 +6,9 @@ info(
     version: "v1"
 )
 
-type (
-    ProjectManagementProjectEntity {
-        Id int64 `json:"id"`
-        EntityId int64 `json:"entity_id"`
-        EntityType string `json:"entity_type"`
-        Name string `json:"name"`
-        Description string `json:"description"`
-        CoverUrl string `json:"cover_url"`
-        OwnerId int64 `json:"owner_id"`
-        OwnerName string `json:"owner_name"`
-        CreatedAt string `json:"created_at"`
-        UpdatedAt string `json:"updated_at"`
-    }
+import "../../../../domains/zeebee/api/project_management_entity.api"
 
+type (
     ProjectManagementProjectPageFilter {
         Keyword string `json:"keyword,optional"`
         EntityId int64 `json:"entity_id,optional"`
