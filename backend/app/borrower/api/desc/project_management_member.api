@@ -60,3 +60,33 @@ type (
         UserId int64 `path:"user_id" validate:"required,gt=0"`
     }
 )
+
+@server (
+    desc: "borrower project management"
+    version: v1
+    group: project_management
+    prefix: /api/v1
+    middleware: AuthMiddleware
+    tags: project_management
+)
+service borrower-api {
+    @doc "page project members"
+    @handler ProjectManagementMemberPage
+    post /project_management/project/:id/member/page (ProjectManagementMemberPageRequest) returns (ProjectManagementMemberPageResponse)
+
+    @doc "list project member candidates"
+    @handler ProjectManagementMemberCandidate
+    get /project_management/project/:id/member/candidate (ProjectManagementMemberCandidateRequest) returns (ProjectManagementMemberCandidateResponse)
+
+    @doc "add project members"
+    @handler ProjectManagementMemberAdd
+    post /project_management/project/:id/member (ProjectManagementMemberAddRequest) returns (EmptyResponse)
+
+    @doc "update project member"
+    @handler ProjectManagementMemberUpdate
+    put /project_management/project/:id/member/:user_id (ProjectManagementMemberUpdateRequest) returns (EmptyResponse)
+
+    @doc "remove project member"
+    @handler ProjectManagementMemberDelete
+    delete /project_management/project/:id/member/:user_id (ProjectManagementMemberDeleteRequest) returns (EmptyResponse)
+}

@@ -59,3 +59,37 @@ type (
         Id int64 `path:"id" validate:"required,gt=0"`
     }
 )
+
+@server (
+    desc: "borrower project management"
+    version: v1
+    group: project_management
+    prefix: /api/v1
+    middleware: AuthMiddleware
+    tags: project_management
+)
+service borrower-api {
+    @doc "list enabled project workflows"
+    @handler ProjectManagementWorkflowAll
+    get /project_management/workflow/all (EmptyRequest) returns (ProjectManagementWorkflowAllResponse)
+
+    @doc "page project workflows"
+    @handler ProjectManagementWorkflowPage
+    post /project_management/workflow/page (ProjectManagementWorkflowPageRequest) returns (ProjectManagementWorkflowPageResponse)
+
+    @doc "get project workflow"
+    @handler ProjectManagementWorkflowDetail
+    get /project_management/workflow/:id (ProjectManagementWorkflowDetailRequest) returns (ProjectManagementWorkflowEntity)
+
+    @doc "create project workflow"
+    @handler ProjectManagementWorkflowCreate
+    post /project_management/workflow (ProjectManagementWorkflowCreateRequest) returns (ProjectManagementWorkflowEntity)
+
+    @doc "update project workflow"
+    @handler ProjectManagementWorkflowUpdate
+    put /project_management/workflow/:id (ProjectManagementWorkflowUpdateRequest) returns (ProjectManagementWorkflowEntity)
+
+    @doc "delete project workflow"
+    @handler ProjectManagementWorkflowDelete
+    delete /project_management/workflow/:id (ProjectManagementWorkflowDeleteRequest) returns (EmptyResponse)
+}

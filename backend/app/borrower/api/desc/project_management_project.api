@@ -66,3 +66,41 @@ type (
         Transitions []*ProjectManagementWorkflowTransitionEntity `json:"transitions,optional" validate:"dive"`
     }
 )
+
+@server (
+    desc: "borrower project management"
+    version: v1
+    group: project_management
+    prefix: /api/v1
+    middleware: AuthMiddleware
+    tags: project_management
+)
+service borrower-api {
+    @doc "page projects"
+    @handler ProjectManagementProjectPage
+    post /project_management/project/page (ProjectManagementProjectPageRequest) returns (ProjectManagementProjectPageResponse)
+
+    @doc "get project"
+    @handler ProjectManagementProjectDetail
+    get /project_management/project/:id (ProjectManagementProjectDetailRequest) returns (ProjectManagementProjectEntity)
+
+    @doc "create project"
+    @handler ProjectManagementProjectCreate
+    post /project_management/project (ProjectManagementProjectCreateRequest) returns (ProjectManagementProjectEntity)
+
+    @doc "update project"
+    @handler ProjectManagementProjectUpdate
+    put /project_management/project/:id (ProjectManagementProjectUpdateRequest) returns (ProjectManagementProjectEntity)
+
+    @doc "delete project"
+    @handler ProjectManagementProjectDelete
+    delete /project_management/project/:id (ProjectManagementProjectDeleteRequest) returns (EmptyResponse)
+
+    @doc "get project workflow"
+    @handler ProjectManagementProjectWorkflowDetail
+    get /project_management/project/:id/workflow (ProjectManagementProjectWorkflowDetailRequest) returns (ProjectManagementWorkflowEntity)
+
+    @doc "update project workflow"
+    @handler ProjectManagementProjectWorkflowUpdate
+    put /project_management/project/:id/workflow (ProjectManagementProjectWorkflowUpdateRequest) returns (ProjectManagementWorkflowEntity)
+}

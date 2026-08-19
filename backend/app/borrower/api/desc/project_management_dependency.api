@@ -48,3 +48,33 @@ type (
         TargetStageId int64 `json:"target_stage_id" validate:"required,gt=0"`
     }
 )
+
+@server (
+    desc: "borrower project management"
+    version: v1
+    group: project_management
+    prefix: /api/v1
+    middleware: AuthMiddleware
+    tags: project_management
+)
+service borrower-api {
+    @doc "page task dependencies"
+    @handler ProjectManagementDependencyPage
+    post /project_management/task/:id/dependency/page (ProjectManagementDependencyPageRequest) returns (ProjectManagementDependencyPageResponse)
+
+    @doc "create task dependency"
+    @handler ProjectManagementDependencyCreate
+    post /project_management/task/:id/dependency (ProjectManagementDependencyCreateRequest) returns (ProjectManagementTaskDependencyEntity)
+
+    @doc "update task dependency"
+    @handler ProjectManagementDependencyUpdate
+    put /project_management/task/:id/dependency/:dependency_id (ProjectManagementDependencyUpdateRequest) returns (ProjectManagementTaskDependencyEntity)
+
+    @doc "delete task dependency"
+    @handler ProjectManagementDependencyDelete
+    delete /project_management/task/:id/dependency/:dependency_id (ProjectManagementDependencyDeleteRequest) returns (EmptyResponse)
+
+    @doc "transition task"
+    @handler ProjectManagementTaskTransition
+    post /project_management/task/:id/transition (ProjectManagementTaskTransitionRequest) returns (ProjectManagementTaskEntity)
+}

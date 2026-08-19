@@ -3,13 +3,21 @@ help:
 	@echo "Targets:"
 	@echo "  create-api <service>        Create API file"
 	@echo "  create-swagger <service>    Create API Swagger"
-	@echo "  create-api-server <service> Create API Service"
+	@echo "  create-server [SERVICE=name] Generate API server and Swagger (default: borrower)"
 	@echo "  create-api-validate <service> Create API validate"
 	@echo "  create-proto <service>      Create proto file"
 	@echo "  create-rpc-service <service> Create RPC service"
 	@echo "  create-sql <service> <name> Create SQL file with timestamp"
 
 WORK_DIR := $(shell pwd)
+
+.PHONY: create-server
+create-server:
+	@service="$(if $(SERVICE),$(SERVICE),borrower)"; \
+		test -f "app/$$service/api/$$service.api" || (echo "Error: app/$$service/api/$$service.api not found" && exit 1); \
+		echo "create api server: $$service"; \
+		goctl api go --api "app/$$service/api/$$service.api" --dir "app/$$service/api" --style go_zero --home third_party/goctl_template; \
+		goctl api swagger --api "app/$$service/api/$$service.api" --dir "app/$$service/api/swagger"
 
 .PHONY: create-api
 # Create API Service

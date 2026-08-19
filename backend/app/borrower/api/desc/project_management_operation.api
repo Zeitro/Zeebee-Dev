@@ -29,3 +29,17 @@ type (
         List []*ProjectManagementOperationEntity `json:"list"`
     }
 )
+
+@server (
+    desc: "borrower project management"
+    version: v1
+    group: project_management
+    prefix: /api/v1
+    middleware: AuthMiddleware
+    tags: project_management
+)
+service borrower-api {
+    @doc "page project operation timeline"
+    @handler ProjectManagementOperationPage
+    post /project_management/project/:id/operation/page (ProjectManagementOperationPageRequest) returns (ProjectManagementOperationPageResponse)
+}

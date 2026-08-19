@@ -47,3 +47,29 @@ type (
         Id int64 `path:"id" validate:"required,gt=0"`
     }
 )
+
+@server (
+    desc: "borrower project management"
+    version: v1
+    group: project_management
+    prefix: /api/v1
+    middleware: AuthMiddleware
+    tags: project_management
+)
+service borrower-api {
+    @doc "page project task types"
+    @handler ProjectManagementTaskTypePage
+    post /project_management/task_type/page (ProjectManagementTaskTypePageRequest) returns (ProjectManagementTaskTypePageResponse)
+
+    @doc "create project task type"
+    @handler ProjectManagementTaskTypeCreate
+    post /project_management/task_type (ProjectManagementTaskTypeCreateRequest) returns (ProjectManagementTaskTypeEntity)
+
+    @doc "update project task type"
+    @handler ProjectManagementTaskTypeUpdate
+    put /project_management/task_type/:id (ProjectManagementTaskTypeUpdateRequest) returns (ProjectManagementTaskTypeEntity)
+
+    @doc "delete project task type"
+    @handler ProjectManagementTaskTypeDelete
+    delete /project_management/task_type/:id (ProjectManagementTaskTypeDeleteRequest) returns (EmptyResponse)
+}
