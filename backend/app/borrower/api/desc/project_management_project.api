@@ -7,6 +7,7 @@ info(
 )
 
 import "../../../../domains/zeebee/api/project_management_entity.api"
+import "base.api"
 
 type (
     ProjectManagementProjectPageFilter {
@@ -54,6 +55,11 @@ type (
         Confirm bool `json:"confirm" validate:"required"`
     }
 
+    ProjectManagementProjectOwnerTransferRequest {
+        ProjectId int64 `path:"id" validate:"required,gt=0"`
+        MemberId int64 `json:"member_id" validate:"required,gt=0"`
+    }
+
     ProjectManagementProjectWorkflowDetailRequest {
         Id int64 `path:"id" validate:"required,gt=0"`
     }
@@ -68,39 +74,43 @@ type (
 )
 
 @server (
-    desc: "borrower project management"
+    desc: "borrower project management project"
     version: v1
-    group: project_management
+    group: project_management_project
     prefix: /api/v1
     middleware: AuthMiddleware
-    tags: project_management
+    tags: project_management_project
 )
 service borrower-api {
-    @doc "page projects"
-    @handler ProjectManagementProjectPage
+    @doc "page"
+    @handler Page
     post /project_management/project/page (ProjectManagementProjectPageRequest) returns (ProjectManagementProjectPageResponse)
 
-    @doc "get project"
-    @handler ProjectManagementProjectDetail
+    @doc "detail"
+    @handler Detail
     get /project_management/project/:id (ProjectManagementProjectDetailRequest) returns (ProjectManagementProjectEntity)
 
-    @doc "create project"
-    @handler ProjectManagementProjectCreate
+    @doc "create"
+    @handler Create
     post /project_management/project (ProjectManagementProjectCreateRequest) returns (ProjectManagementProjectEntity)
 
-    @doc "update project"
-    @handler ProjectManagementProjectUpdate
+    @doc "update"
+    @handler Update
     put /project_management/project/:id (ProjectManagementProjectUpdateRequest) returns (ProjectManagementProjectEntity)
 
-    @doc "delete project"
-    @handler ProjectManagementProjectDelete
+    @doc "delete"
+    @handler Delete
     delete /project_management/project/:id (ProjectManagementProjectDeleteRequest) returns (EmptyResponse)
 
-    @doc "get project workflow"
-    @handler ProjectManagementProjectWorkflowDetail
+    @doc "transfer owner"
+    @handler TransferOwner
+    post /project_management/project/:id/owner (ProjectManagementProjectOwnerTransferRequest) returns (EmptyResponse)
+
+    @doc "workflow detail"
+    @handler WorkflowDetail
     get /project_management/project/:id/workflow (ProjectManagementProjectWorkflowDetailRequest) returns (ProjectManagementWorkflowEntity)
 
-    @doc "update project workflow"
-    @handler ProjectManagementProjectWorkflowUpdate
+    @doc "workflow update"
+    @handler WorkflowUpdate
     put /project_management/project/:id/workflow (ProjectManagementProjectWorkflowUpdateRequest) returns (ProjectManagementWorkflowEntity)
 }

@@ -1,6 +1,6 @@
 syntax = "v1"
 
-info(
+info (
     title: "borrower-project-management-workflow-api"
     desc: "borrower project management workflow types"
     version: "v1"
@@ -8,50 +8,47 @@ info(
 
 import "../../../../domains/zeebee/api/project_management_entity.api"
 
-type (
-    ProjectManagementWorkflowAllResponse {
-        Data []*ProjectManagementWorkflowEntity `json:"data"`
-    }
+import "base.api"
 
+type (
+    ProjectManagementWorkflowAllRequest {}
+    ProjectManagementWorkflowAllResponse {
+        Lists []*ProjectManagementWorkflowEntity `json:"lists"`
+    }
     ProjectManagementWorkflowPageFilter {
         Keyword string `json:"keyword,optional"`
-        Enabled *bool `json:"enabled,optional"`
+        Enabled *bool  `json:"enabled,optional"`
     }
-
     ProjectManagementWorkflowPageRequest {
-        Page int64 `json:"page,default=1"`
-        Limit int64 `json:"limit,default=20"`
-        Filter ProjectManagementWorkflowPageFilter `json:"filter,optional"`
+        Page   int64                               `json:"page,default=1"`
+        Limit  int64                               `json:"limit,default=20"`
+        Filter ProjectManagementWorkflowPageFilter `json:"filter" validate:"required"`
     }
-
     ProjectManagementWorkflowPageResponse {
-        Page int64 `json:"page"`
-        Limit int64 `json:"limit"`
-        Total int64 `json:"total"`
-        TotalPage int64 `json:"total_page"`
-        List []*ProjectManagementWorkflowPageEntity `json:"list"`
+        Page      int64                                  `json:"page"`
+        Limit     int64                                  `json:"limit"`
+        Total     int64                                  `json:"total"`
+        TotalPage int64                                  `json:"total_page"`
+        List      []*ProjectManagementWorkflowPageEntity `json:"list"`
     }
-
     ProjectManagementWorkflowDetailRequest {
         Id int64 `path:"id" validate:"required,gt=0"`
     }
-
     ProjectManagementWorkflowCreateRequest {
-        Name string `json:"name" validate:"required,max=100"`
-        Description string `json:"description,optional" validate:"max=500"`
-        Enabled bool `json:"enabled"`
-        IsDefault bool `json:"is_default"`
-        Stages []*ProjectManagementWorkflowStageEntity `json:"stages" validate:"required,min=1,dive"`
+        Name        string                                       `json:"name" validate:"required,max=100"`
+        Description string                                       `json:"description,optional" validate:"max=500"`
+        Enabled     bool                                         `json:"enabled"`
+        IsDefault   bool                                         `json:"is_default"`
+        Stages      []*ProjectManagementWorkflowStageEntity      `json:"stages" validate:"required,min=1,dive"`
         Transitions []*ProjectManagementWorkflowTransitionEntity `json:"transitions,optional" validate:"dive"`
     }
-
     ProjectManagementWorkflowUpdateRequest {
-        Id int64 `path:"id" validate:"required,gt=0"`
-        Name string `json:"name" validate:"required,max=100"`
-        Description string `json:"description,optional" validate:"max=500"`
-        Enabled bool `json:"enabled"`
-        IsDefault bool `json:"is_default"`
-        Stages []*ProjectManagementWorkflowStageEntity `json:"stages" validate:"required,min=1,dive"`
+        Id          int64                                        `path:"id" validate:"required,gt=0"`
+        Name        string                                       `json:"name" validate:"required,max=100"`
+        Description string                                       `json:"description,optional" validate:"max=500"`
+        Enabled     bool                                         `json:"enabled"`
+        IsDefault   bool                                         `json:"is_default"`
+        Stages      []*ProjectManagementWorkflowStageEntity      `json:"stages" validate:"required,min=1,dive"`
         Transitions []*ProjectManagementWorkflowTransitionEntity `json:"transitions,optional" validate:"dive"`
     }
 
@@ -61,35 +58,36 @@ type (
 )
 
 @server (
-    desc: "borrower project management"
+    desc: "borrower project management workflow"
     version: v1
-    group: project_management
+    group: project_management_workflow
     prefix: /api/v1
     middleware: AuthMiddleware
-    tags: project_management
+    tags: project_management_workflow
 )
 service borrower-api {
-    @doc "list enabled project workflows"
-    @handler ProjectManagementWorkflowAll
-    get /project_management/workflow/all (EmptyRequest) returns (ProjectManagementWorkflowAllResponse)
+    @doc "all"
+    @handler All
+    get /project_management/workflow/all (ProjectManagementWorkflowAllRequest) returns (ProjectManagementWorkflowAllResponse)
 
-    @doc "page project workflows"
-    @handler ProjectManagementWorkflowPage
+    @doc "page"
+    @handler Page
     post /project_management/workflow/page (ProjectManagementWorkflowPageRequest) returns (ProjectManagementWorkflowPageResponse)
 
-    @doc "get project workflow"
-    @handler ProjectManagementWorkflowDetail
+    @doc "detail"
+    @handler Detail
     get /project_management/workflow/:id (ProjectManagementWorkflowDetailRequest) returns (ProjectManagementWorkflowEntity)
 
-    @doc "create project workflow"
-    @handler ProjectManagementWorkflowCreate
+    @doc "create organization workflow"
+    @handler Create
     post /project_management/workflow (ProjectManagementWorkflowCreateRequest) returns (ProjectManagementWorkflowEntity)
 
-    @doc "update project workflow"
-    @handler ProjectManagementWorkflowUpdate
+    @doc "update"
+    @handler Update
     put /project_management/workflow/:id (ProjectManagementWorkflowUpdateRequest) returns (ProjectManagementWorkflowEntity)
 
-    @doc "delete project workflow"
-    @handler ProjectManagementWorkflowDelete
+    @doc "delete organization workflow"
+    @handler Delete
     delete /project_management/workflow/:id (ProjectManagementWorkflowDeleteRequest) returns (EmptyResponse)
+
 }

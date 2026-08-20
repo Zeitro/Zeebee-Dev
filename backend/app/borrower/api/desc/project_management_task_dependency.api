@@ -1,0 +1,74 @@
+syntax = "v1"
+
+info(
+    title: "borrower-project-management-dependency-api"
+    desc: "borrower project management task dependency types"
+    version: "v1"
+)
+
+import "../../../../domains/zeebee/api/project_management_entity.api"
+import "base.api"
+
+type (
+    ProjectManagementDependencyPageRequest {
+        TaskId int64 `path:"id" validate:"required,gt=0"`
+        Page int64 `json:"page,default=1"`
+        Limit int64 `json:"limit,default=20"`
+        Predecessor bool `json:"predecessor,optional"`
+    }
+
+    ProjectManagementDependencyPageResponse {
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+        Total int64 `json:"total"`
+        TotalPage int64 `json:"total_page"`
+        List []*ProjectManagementTaskDependencyEntity `json:"list"`
+    }
+
+    ProjectManagementDependencyCreateRequest {
+        TaskId int64 `path:"id" validate:"required,gt=0"`
+        DependencyTaskId int64 `json:"dependency_task_id" validate:"required,gt=0"`
+        DependencyType string `json:"dependency_type" validate:"required,oneof=PreTask PostTask"`
+        DependencyRule string `json:"dependency_rule" validate:"required,oneof=FS FF SS SF"`
+    }
+
+    ProjectManagementDependencyUpdateRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        TaskId int64 `path:"task_id" validate:"required,gt=0"`
+        DependencyType string `json:"dependency_type" validate:"required,oneof=PreTask PostTask"`
+        DependencyRule string `json:"dependency_rule" validate:"required,oneof=FS FF SS SF"`
+    }
+
+    ProjectManagementDependencyDeleteRequest {
+        TaskId int64 `path:"id" validate:"required,gt=0"`
+        Id int64 `path:"dependency_id" validate:"required,gt=0"`
+    }
+
+)
+
+@server (
+    desc: "borrower project management task dependency"
+    version: v1
+    group: project_management_task_dependency
+    prefix: /api/v1
+    middleware: AuthMiddleware
+    tags: project_management_task_dependency
+)
+service borrower-api {
+    @doc "page"
+    @handler Page
+    post /project_management/task/:id/task_dependency/page (ProjectManagementDependencyPageRequest) returns (ProjectManagementDependencyPageResponse)
+
+    @doc "create"
+    @handler Create
+    post /project_management/task/:id/task_dependency (ProjectManagementDependencyCreateRequest) returns (ProjectManagementTaskDependencyEntity)
+
+    @doc "update"
+    @handler Update
+    put /project_management/task/:task_id/task_dependency/:id (ProjectManagementDependencyUpdateRequest) returns (ProjectManagementTaskDependencyEntity)
+
+    @doc "delete"
+    @handler Delete
+    delete /project_management/task/:id/task_dependency/:dependency_id (ProjectManagementDependencyDeleteRequest) returns (EmptyResponse)
+
+}

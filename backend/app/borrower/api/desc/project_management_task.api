@@ -7,6 +7,7 @@ info(
 )
 
 import "../../../../domains/zeebee/api/project_management_entity.api"
+import "base.api"
 
 type (
     ProjectManagementTaskPageFilter {
@@ -18,7 +19,7 @@ type (
     }
 
     ProjectManagementTaskPageRequest {
-        Id int64 `path:"id" validate:"required,gt=0"`
+        ProjectId int64 `json:"project_id" validate:"required,gt=0"`
         Page int64 `json:"page,default=1"`
         Limit int64 `json:"limit,default=20"`
         Filter ProjectManagementTaskPageFilter `json:"filter,optional"`
@@ -33,7 +34,7 @@ type (
     }
 
     ProjectManagementTaskCreateRequest {
-        Id int64 `path:"id" validate:"required,gt=0"`
+        ProjectId int64 `json:"project_id" validate:"required,gt=0"`
         ParentTaskId int64 `json:"parent_task_id,optional"`
         Title string `json:"title" validate:"required,max=255"`
         Description string `json:"description,optional"`
@@ -46,10 +47,12 @@ type (
 
     ProjectManagementTaskDetailRequest {
         Id int64 `path:"id" validate:"required,gt=0"`
+        ProjectId int64 `form:"project_id" validate:"required,gt=0"`
     }
 
     ProjectManagementTaskUpdateRequest {
         Id int64 `path:"id" validate:"required,gt=0"`
+        ProjectId int64 `json:"project_id" validate:"required,gt=0"`
         Title string `json:"title" validate:"required,max=255"`
         Description string `json:"description,optional"`
         Priority string `json:"priority,optional" validate:"max=32"`
@@ -58,8 +61,15 @@ type (
         TaskTypeId int64 `json:"task_type_id,optional"`
     }
 
+    ProjectManagementTaskTransitionRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        ProjectId int64 `json:"project_id" validate:"required,gt=0"`
+        TargetStageId int64 `json:"target_stage_id" validate:"required,gt=0"`
+    }
+
     ProjectManagementTaskDeleteRequest {
         Id int64 `path:"id" validate:"required,gt=0"`
+        ProjectId int64 `json:"project_id" validate:"required,gt=0"`
         Confirm bool `json:"confirm" validate:"required"`
     }
 
@@ -70,7 +80,7 @@ type (
     }
 
     ProjectManagementMyTaskPageFilter {
-        ProjectId int64 `json:"project_id,optional"`
+        ProjectId int64 `json:"project_id" validate:"required,gt=0"`
         StageId int64 `json:"stage_id,optional"`
         TaskTypeId int64 `json:"task_type_id,optional"`
         AssigneeId int64 `json:"assignee_id,optional"`
@@ -80,11 +90,13 @@ type (
 
     ProjectManagementTaskAssigneeUpdateRequest {
         Id int64 `path:"id" validate:"required,gt=0"`
+        ProjectId int64 `json:"project_id" validate:"required,gt=0"`
         AssigneeIds []int64 `json:"assignee_ids"`
     }
 
     ProjectManagementAttachmentPageRequest {
         Id int64 `path:"id" validate:"required,gt=0"`
+        ProjectId int64 `json:"project_id" validate:"required,gt=0"`
         Page int64 `json:"page,default=1"`
         Limit int64 `json:"limit,default=20"`
     }
@@ -99,6 +111,7 @@ type (
 
     ProjectManagementAttachmentCreateRequest {
         Id int64 `path:"id" validate:"required,gt=0"`
+        ProjectId int64 `json:"project_id" validate:"required,gt=0"`
         FileName string `json:"file_name,optional" validate:"max=255"`
         FileUrl string `json:"file_url" validate:"required,max=255"`
         StorageType string `json:"storage_type,optional" validate:"max=20"`
@@ -106,56 +119,61 @@ type (
 
     ProjectManagementAttachmentDeleteRequest {
         Id int64 `path:"id" validate:"required,gt=0"`
+        ProjectId int64 `json:"project_id" validate:"required,gt=0"`
         FileId int64 `path:"file_id" validate:"required,gt=0"`
     }
 )
 
 @server (
-    desc: "borrower project management"
+    desc: "borrower project management task"
     version: v1
-    group: project_management
+    group: project_management_task
     prefix: /api/v1
     middleware: AuthMiddleware
-    tags: project_management
+    tags: project_management_task
 )
 service borrower-api {
-    @doc "page project tasks"
-    @handler ProjectManagementTaskPage
-    post /project_management/project/:id/task/page (ProjectManagementTaskPageRequest) returns (ProjectManagementTaskPageResponse)
+    @doc "page"
+    @handler Page
+    post /project_management/task/page (ProjectManagementTaskPageRequest) returns (ProjectManagementTaskPageResponse)
 
-    @doc "create project task"
-    @handler ProjectManagementTaskCreate
-    post /project_management/project/:id/task (ProjectManagementTaskCreateRequest) returns (ProjectManagementTaskEntity)
+    @doc "create"
+    @handler Create
+    post /project_management/task (ProjectManagementTaskCreateRequest) returns (ProjectManagementTaskEntity)
 
-    @doc "get project task"
-    @handler ProjectManagementTaskDetail
+    @doc "detail"
+    @handler Detail
     get /project_management/task/:id (ProjectManagementTaskDetailRequest) returns (ProjectManagementTaskEntity)
 
-    @doc "update project task"
-    @handler ProjectManagementTaskUpdate
+    @doc "update"
+    @handler Update
     put /project_management/task/:id (ProjectManagementTaskUpdateRequest) returns (ProjectManagementTaskEntity)
 
-    @doc "delete project task"
-    @handler ProjectManagementTaskDelete
+    @doc "transition"
+    @handler Transition
+    post /project_management/task/:id/transition (ProjectManagementTaskTransitionRequest) returns (ProjectManagementTaskEntity)
+
+    @doc "delete"
+    @handler Delete
     delete /project_management/task/:id (ProjectManagementTaskDeleteRequest) returns (EmptyResponse)
 
-    @doc "replace project task assignees"
-    @handler ProjectManagementTaskAssigneeUpdate
+    @doc "assignee"
+    @handler AssigneeUpdate
     put /project_management/task/:id/assignee (ProjectManagementTaskAssigneeUpdateRequest) returns (ProjectManagementTaskEntity)
 
-    @doc "page project task attachments"
-    @handler ProjectManagementAttachmentPage
+    @doc "attachment page"
+    @handler AttachmentPage
     post /project_management/task/:id/attachment/page (ProjectManagementAttachmentPageRequest) returns (ProjectManagementAttachmentPageResponse)
 
-    @doc "register project task attachment"
-    @handler ProjectManagementAttachmentCreate
+    @doc "attachment create"
+    @handler AttachmentCreate
     post /project_management/task/:id/attachment (ProjectManagementAttachmentCreateRequest) returns (ProjectManagementAttachmentEntity)
 
-    @doc "delete project task attachment"
-    @handler ProjectManagementAttachmentDelete
+    @doc "attachment delete"
+    @handler AttachmentDelete
     delete /project_management/task/:id/attachment/:file_id (ProjectManagementAttachmentDeleteRequest) returns (EmptyResponse)
 
-    @doc "page my project tasks"
-    @handler ProjectManagementMyTaskPage
-    post /project_management/my_task/page (ProjectManagementMyTaskPageRequest) returns (ProjectManagementTaskPageResponse)
+    @doc "my task"
+    @handler MyTask
+    post /project_management/task/my (ProjectManagementMyTaskPageRequest) returns (ProjectManagementTaskPageResponse)
 }

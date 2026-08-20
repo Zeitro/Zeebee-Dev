@@ -1,0 +1,46 @@
+package project_management_project_member
+
+import (
+	"context"
+
+	"zeebee-backend/app/borrower/api/internal/svc"
+	"zeebee-backend/app/borrower/api/internal/types"
+	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
+	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
+
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+type CandidateLogic struct {
+	logx.Logger
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+}
+
+// list project member candidates
+func NewCandidateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CandidateLogic {
+	return &CandidateLogic{
+		Logger: logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+	}
+}
+
+func (l *CandidateLogic) Candidate(req *types.ProjectManagementMemberCandidateRequest) (resp *types.ProjectManagementMemberCandidateResponse, err error) {
+	data, err := copierx.Trans[types.ProjectManagementMemberCandidateRequest, borrower.ProjectManagementMemberCandidateRequestData](req)
+	if err != nil {
+		return nil, errorx.GetFailedTransRespErr(err)
+	}
+	data.ProjectId = req.ProjectId
+	rpcResp, err := l.svcCtx.ProjectManagementProjectMemberRpcClient.Candidate(l.ctx, &borrower.ProjectManagementMemberCandidateRequest{Data: data})
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+	listData, err := copierx.Trans[[]*proto.ProjectManagementMemberEntity, []*types.ProjectManagementMemberEntity](&rpcResp.Data)
+	if err != nil {
+		return nil, errorx.GetFailedTransRespErr(err)
+	}
+	return &types.ProjectManagementMemberCandidateResponse{Lists: *listData}, nil
+}

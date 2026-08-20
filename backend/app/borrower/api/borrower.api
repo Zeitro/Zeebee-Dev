@@ -30,19 +30,11 @@ import "desc/resource.api"
 import "desc/project_management_workflow.api"
 import "desc/project_management_task_type.api"
 import "desc/project_management_project.api"
-import "desc/project_management_member.api"
+import "desc/project_management_project_member.api"
 import "desc/project_management_task.api"
-import "desc/project_management_dependency.api"
-import "desc/project_management_operation.api"
-
-type (
-	EmptyRequest  {}
-	EmptyResponse  {}
-)
-
-type PathIdRequest {
-	id int64 `path:"id" validate:"required,gt=0"`
-}
+import "desc/project_management_task_dependency.api"
+import "desc/operation.api"
+import "desc/base.api"
 
 // ============== common start =============
 @server (
