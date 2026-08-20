@@ -4,12 +4,7 @@
 'use client';
 
 import { useCallback, useRef, useState } from 'react';
-import {
-	DeleteOutlined,
-	DownloadOutlined,
-	PaperClipOutlined,
-	UploadOutlined,
-} from '@ant-design/icons';
+import { DeleteOutlined, DownloadOutlined, InboxOutlined, UploadOutlined } from '@ant-design/icons';
 import { Button, Image, Input, Popconfirm, message } from 'antd';
 import { useTranslations } from 'next-intl';
 import { NewModal, UploadFileButton } from '@repo/shared-methods';
@@ -17,6 +12,7 @@ import { dayjs } from '@repo/shared-methods/utils';
 import { useUserStore } from '@repo/shared-methods/store';
 import { IMAGE_FILE_EXTENSIONS } from '../constants';
 import { dataUrlToBlob, formatFileSize, getFileExtension, getMemberLabel } from '../helpers';
+import { TaskDetailPanel, TaskDetailPanelAction } from './TaskDetailPanel';
 
 /**
  * @param {{
@@ -105,90 +101,82 @@ export function TaskAttachments({ taskId, projectId, members = [] }) {
 		}
 	};
 
+	const uploadButton = (
+		<UploadFileButton
+			ref={uploadRef}
+			showUploadList={false}
+			immediateUpload={false}
+			onGetUploadList={handleUploadListChange}
+		>
+			<TaskDetailPanelAction title={t('kanban.uploadAttachment')} icon={<UploadOutlined />} />
+		</UploadFileButton>
+	);
+
 	return (
-		<div className="mb-3">
-			<div className="flex items-center gap-2">
-				<PaperClipOutlined className="text-base-label text-xs" />
-				<span className="font-medium text-[13px]">{t('kanban.attachments')}</span>
-				<UploadFileButton
-					ref={uploadRef}
-					showUploadList={false}
-					immediateUpload={false}
-					onGetUploadList={handleUploadListChange}
-				>
-					<Button size="small" icon={<UploadOutlined />}>
-						{t('kanban.uploadAttachment')}
-					</Button>
-				</UploadFileButton>
-			</div>
-			{items.length > 0 ? (
-				<div className="mt-2 border border-base-border rounded-md overflow-hidden">
-					{items.map((item) => {
-						const uploader = members.find((member) => member.id === item.uploaderId);
-						return (
-							<div
-								key={item.id}
-								className="flex items-center gap-2.5 px-2.5 py-1.5 border-b border-base-border last:border-b-0 text-xs"
+		<>
+			<TaskDetailPanel
+				title={t('kanban.attachments')}
+				action={uploadButton}
+				isEmpty={items.length === 0}
+				emptyText={t('kanban.attachmentsEmpty')}
+			>
+				{items.map((item) => {
+					const uploader = members.find((member) => member.id === item.uploaderId);
+					return (
+						<div
+							key={item.id}
+							className="flex items-center gap-2.5 px-4 py-2.5 border-b border-base-border/60 last:border-b-0 text-xs hover:bg-base-active transition-colors"
+						>
+							<Button
+								type="link"
+								size="small"
+								className="font-medium truncate max-w-[220px] !px-0"
+								title={t('kanban.attachmentPreview', { name: item.name })}
+								onClick={() => handleOpen(item)}
 							>
-								<Button
-									type="link"
-									size="small"
-									className="font-medium truncate max-w-[220px] !px-0"
-									title={t('kanban.attachmentPreview', { name: item.name })}
-									onClick={() => handleOpen(item)}
-								>
-									{item.name}
-								</Button>
-								<Button
-									type="link"
-									size="small"
-									icon={<DownloadOutlined className="text-blue-medium" />}
-									href={item.dataUrl}
-									download={item.name}
-									title={t('kanban.download')}
-								/>
-								<span className="text-base-label shrink-0">
-									{dayjs(item.uploadedAt).format('YYYY-MM-DD HH:mm')}{' '}
-									{t('kanban.uploadedBy', {
-										name:
-											getMemberLabel(uploader) ||
-											item.uploaderName ||
-											t('kanban.unknownUser'),
-									})}
-								</span>
-								<span className="text-base-disabled shrink-0">
-									{formatFileSize(item.size)}
-								</span>
-								<Input
-									size="small"
-									variant="borderless"
-									placeholder={t('kanban.attachmentNote')}
-									value={item.note}
-									onChange={(event) =>
-										handleNoteChange(item.id, event.target.value)
-									}
-									className="flex-1 min-w-[60px] !px-1"
-								/>
-								<Popconfirm
-									title={t('kanban.attachmentDeleteConfirm')}
-									okText={t('common.confirm')}
-									cancelText={t('common.cancel')}
-									onConfirm={() =>
-										persist(items.filter((row) => row.id !== item.id))
-									}
-								>
-									<Button
-										type="text"
-										size="small"
-										danger
-										icon={<DeleteOutlined />}
-									/>
-								</Popconfirm>
-							</div>
-						);
-					})}
-				</div>
-			) : null}
+								{item.name}
+							</Button>
+							<Button
+								type="link"
+								size="small"
+								icon={<DownloadOutlined className="text-blue-medium" />}
+								href={item.dataUrl}
+								download={item.name}
+								title={t('kanban.download')}
+							/>
+							<span className="text-base-label shrink-0">
+								{dayjs(item.uploadedAt).format('YYYY-MM-DD HH:mm')}{' '}
+								{t('kanban.uploadedBy', {
+									name:
+										getMemberLabel(uploader) ||
+										item.uploaderName ||
+										t('kanban.unknownUser'),
+								})}
+							</span>
+							<span className="text-base-disabled shrink-0">
+								{formatFileSize(item.size)}
+							</span>
+							<Input
+								size="small"
+								variant="borderless"
+								placeholder={t('kanban.attachmentNote')}
+								value={item.note}
+								onChange={(event) => handleNoteChange(item.id, event.target.value)}
+								className="flex-1 min-w-[60px] !px-1"
+							/>
+							<Popconfirm
+								title={t('kanban.attachmentDeleteConfirm')}
+								okText={t('common.confirm')}
+								cancelText={t('common.cancel')}
+								onConfirm={() => persist(items.filter((row) => row.id !== item.id))}
+							>
+								<Button type="text" size="small" danger icon={<DeleteOutlined />} />
+							</Popconfirm>
+						</div>
+					);
+				})}
+			</TaskDetailPanel>
+
 			{previewItem ? (
 				<NewModal
 					title={previewItem.name}
@@ -211,6 +199,6 @@ export function TaskAttachments({ taskId, projectId, members = [] }) {
 					)}
 				</NewModal>
 			) : null}
-		</div>
+		</>
 	);
 }

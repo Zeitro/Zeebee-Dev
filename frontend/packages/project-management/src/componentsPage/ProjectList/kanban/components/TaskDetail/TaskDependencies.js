@@ -11,6 +11,7 @@ import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 import { displayValue } from '@repo/shared-methods/utils';
 import { DEPENDENCY_TYPE_OPTIONS } from '../constants';
 import { getMemberInitial, getMemberLabel } from '../helpers';
+import { TaskDetailPanel, TaskDetailPanelAction } from './TaskDetailPanel';
 
 /**
  * @param {{
@@ -117,9 +118,15 @@ export function TaskDependencies({
 		}
 	};
 
+	const hasDependencies = dependencies.length > 0 || dependents.length > 0;
+	const showEmpty = !hasDependencies && !addingMode;
+
 	return (
-		<div className="mb-4">
-			<div className="flex gap-2 mb-3">
+		<TaskDetailPanel
+			title={t('kanban.dependencies')}
+			isEmpty={showEmpty}
+			emptyText={t('kanban.dependenciesEmpty')}
+			action={
 				<Dropdown
 					menu={{
 						items: [
@@ -141,13 +148,16 @@ export function TaskDependencies({
 					}}
 					trigger={['click']}
 				>
-					<Button icon={<PlusOutlined />}>{t('kanban.addDependency')}</Button>
+					<TaskDetailPanelAction
+						title={t('kanban.addDependencyTask')}
+						icon={<PlusOutlined />}
+					/>
 				</Dropdown>
-			</div>
-
+			}
+		>
 			{addingMode ? (
-				<div className="mb-2">
-					<div className="text-xs text-base-gray mb-1.5">
+				<div className="px-4 py-3 border-b border-base-border/60">
+					<div className="text-xs text-base-label mb-2">
 						{addingMode === 'predecessor'
 							? t('kanban.predecessor')
 							: t('kanban.successor')}
@@ -159,16 +169,16 @@ export function TaskDependencies({
 						value={search}
 						onChange={(event) => setSearch(event.target.value)}
 						allowClear
-						className="mb-1.5"
+						className="mb-2"
 					/>
-					<div className="border border-base-border rounded-md bg-white shadow-sm max-h-80 overflow-y-auto">
-						<div className="px-4 py-2 text-xs text-base-label border-b border-base-border bg-base-bg">
+					<div className="border border-base-border rounded-lg bg-base-text2 max-h-60 overflow-y-auto">
+						<div className="px-3 py-2 text-xs text-base-label border-b border-base-border bg-white rounded-t-lg">
 							{search.trim()
 								? t('kanban.searchResults')
 								: t('kanban.selectableTasks')}
 						</div>
 						{candidateTasks.length === 0 ? (
-							<div className="px-4 py-3 text-[13px] text-base-disabled">
+							<div className="px-3 py-3 text-[13px] text-base-disabled">
 								{t('kanban.noMatchingTasks')}
 							</div>
 						) : (
@@ -182,7 +192,7 @@ export function TaskDependencies({
 								return (
 									<div
 										key={item.id}
-										className="flex items-center gap-2.5 px-4 py-2 text-[13px] border-b border-base-border last:border-b-0 cursor-pointer hover:bg-base-bg"
+										className="flex items-center gap-2.5 px-3 py-2 text-[13px] border-b border-base-border last:border-b-0 cursor-pointer hover:bg-base-active transition-colors"
 										onClick={() => handleAdd(item)}
 									>
 										<span className="text-base-label text-xs">#{item.id}</span>
@@ -215,7 +225,7 @@ export function TaskDependencies({
 					<Button
 						size="small"
 						type="text"
-						className="text-base-label mt-0.5"
+						className="text-base-label mt-1 !px-0"
 						onClick={() => {
 							setAddingMode(null);
 							setSearch('');
@@ -227,12 +237,14 @@ export function TaskDependencies({
 			) : null}
 
 			{dependencies.length > 0 ? (
-				<div className="mb-3">
-					<div className="text-xs text-base-gray mb-1">{t('kanban.predecessor')}</div>
+				<div className="px-4 py-3 border-b border-base-border/60 last:border-b-0">
+					<div className="text-xs font-medium text-base-label mb-2">
+						{t('kanban.predecessor')}
+					</div>
 					{dependencies.map((dep) => (
 						<div
 							key={dep.id}
-							className="flex items-center gap-2 px-2.5 py-1.5 bg-base-bg rounded-md border border-base-border mb-1.5"
+							className="flex items-center gap-2 px-3 py-2 bg-base-text2 rounded-lg mb-2 last:mb-0"
 						>
 							<LinkOutlined className="text-base-disabled text-xs" />
 							<Button
@@ -281,12 +293,14 @@ export function TaskDependencies({
 			) : null}
 
 			{dependents.length > 0 ? (
-				<div>
-					<div className="text-xs text-base-gray mb-1">{t('kanban.successor')}</div>
+				<div className="px-4 py-3">
+					<div className="text-xs font-medium text-base-label mb-2">
+						{t('kanban.successor')}
+					</div>
 					{dependents.map((dep) => (
 						<div
 							key={dep.id}
-							className="flex items-center gap-2 px-2.5 py-1.5 bg-base-bg rounded-md border border-base-border mb-1.5"
+							className="flex items-center gap-2 px-3 py-2 bg-base-text2 rounded-lg mb-2 last:mb-0"
 						>
 							<LinkOutlined className="text-base-disabled text-xs" />
 							<Select
@@ -331,6 +345,6 @@ export function TaskDependencies({
 					))}
 				</div>
 			) : null}
-		</div>
+		</TaskDetailPanel>
 	);
 }

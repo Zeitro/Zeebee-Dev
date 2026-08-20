@@ -4,23 +4,26 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { CalendarOutlined, PlusOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, DatePicker, Divider, Drawer, Form, Input, InputNumber, Select } from 'antd';
-import { useTranslations } from 'next-intl';
+import { PlusOutlined } from '@ant-design/icons';
+import { Button, Drawer, Form } from 'antd';
+import { useLocale, useTranslations } from 'next-intl';
 import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 import { dayjs } from '@repo/shared-methods/utils';
 import {
 	PROJECT_PRIORITY_FILTER_VALUES,
 	PROJECT_PRIORITY_I18N_KEY,
 } from '../../../../../enum/project';
-import { getWorkflowStateColor } from '../../../../../enum/workflow';
 import { TASK_DETAIL_DRAWER_WIDTH } from '../constants';
-import { getAssigneeIds } from '../helpers';
-import { AssigneeChips } from './AssigneeChips';
+import { getAssigneeIds, getSubtasks, normalizeRichTextValue } from '../helpers';
+import { isTerminalState } from '../../../../../enum/workflow';
 import { PriorityIcon } from './PriorityIcon';
 import { SubtaskList } from './SubtaskList';
 import { TaskAttachments } from './TaskAttachments';
 import { TaskDependencies } from './TaskDependencies';
+import { TaskDetailPanel, TaskDetailPanelAction } from './TaskDetailPanel';
+import { TaskDetailProperties } from './TaskDetailProperties';
+import { TaskDetailSection } from './TaskDetailSection';
+import { TaskDescription } from './TaskDescription';
 import { TaskDrawerHeader } from './TaskDrawerHeader';
 
 export { TaskActivityDrawer } from './TaskActivityDrawer';
@@ -80,9 +83,18 @@ export function TaskDetailDrawer({
 	onDeleteDependent,
 }) {
 	const t = useTranslations();
+	const locale = useLocale();
 	const [form] = Form.useForm();
 	const [dependencyFocusMode, setDependencyFocusMode] = useState(null);
 	const parentTask = tasks.find((item) => item.id === task?.parent_id);
+	const { subtasks, subtaskCompletedCount } = useMemo(() => {
+		const list = task?.id ? getSubtasks(tasks, task.id) : [];
+		const completed = list.filter((item) => {
+			const state = workflow?.states?.find((row) => row.id === item.workflow_state_id);
+			return isTerminalState(state);
+		}).length;
+		return { subtasks: list, subtaskCompletedCount: completed };
+	}, [task, tasks, workflow?.states]);
 	const watchedAssigneeIds = Form.useWatch('assignee_ids', form);
 	const liveAssigneeIds = watchedAssigneeIds ?? getAssigneeIds(task);
 
@@ -133,10 +145,10 @@ export function TaskDetailDrawer({
 			width={TASK_DETAIL_DRAWER_WIDTH}
 			open={open}
 			onClose={onClose}
-			styles={{ body: { padding: 0 } }}
+			styles={{ body: { padding: 0, background: 'var(--base-text2)' } }}
 		>
 			{task ? (
-				<div className="flex flex-col h-full">
+				<div className="flex flex-col h-full bg-base-text2">
 					<TaskDrawerHeader
 						task={task}
 						project={project}
@@ -149,7 +161,8 @@ export function TaskDetailDrawer({
 						onOpenLog={onOpenLog}
 						onAddDependency={setDependencyFocusMode}
 					/>
-					<div className="flex-1 overflow-y-auto px-6 py-4">
+
+					<div className="flex-1 overflow-y-auto px-6 py-5 pb-24">
 						<Form
 							form={form}
 							layout="vertical"
@@ -159,95 +172,29 @@ export function TaskDetailDrawer({
 								}
 							}}
 						>
-							<div className="flex items-center gap-0.5 mb-3 flex-wrap">
-								<Form.Item name="workflow_state_id" noStyle>
-									<Select
-										variant="borderless"
-										size="small"
-										className="min-w-[100px]"
-									>
-										{(workflow?.states || []).map((state) => (
-											<Select.Option key={state.id} value={state.id}>
-												<span
-													className="inline-block w-2 h-2 rounded-full mr-1.5 align-middle"
-													style={{
-														background: getWorkflowStateColor(
-															state.color,
-														),
-													}}
-												/>
-												{state.name}
-											</Select.Option>
-										))}
-									</Select>
-								</Form.Item>
-								<Divider type="vertical" className="h-4" />
-								<Form.Item name="type" noStyle>
-									<Select
-										variant="borderless"
-										size="small"
-										className="min-w-20"
-										allowClear
-									>
-										{taskTypes.map((item) => (
-											<Select.Option key={item.id} value={item.name}>
-												{item.name}
-											</Select.Option>
-										))}
-									</Select>
-								</Form.Item>
-								<Divider type="vertical" className="h-4" />
-								<Form.Item name="priority" noStyle>
-									<Select
-										variant="borderless"
-										size="small"
-										className="min-w-[90px]"
-										options={priorityOptions}
+							<TaskDetailProperties
+								t={t}
+								workflow={workflow}
+								taskTypes={taskTypes}
+								priorityOptions={priorityOptions}
+								memberOptions={memberOptions}
+								members={members}
+							/>
+
+							<TaskDetailSection title={t('kanban.description')}>
+								<Form.Item
+									name="description"
+									noStyle
+									getValueFromEvent={normalizeRichTextValue}
+								>
+									<TaskDescription
+										key={`${task.id}-${open}`}
+										locale={locale}
+										placeholder={t('kanban.descriptionPlaceholder')}
 									/>
 								</Form.Item>
-								<Divider type="vertical" className="h-4" />
-								<Form.Item name="start_date" noStyle>
-									<DatePicker
-										variant="borderless"
-										size="small"
-										placeholder={t('kanban.startDate')}
-										prefix={<CalendarOutlined className="text-base-disabled" />}
-										suffixIcon={null}
-										className="w-[150px]"
-									/>
-								</Form.Item>
-								<Form.Item name="due_date" noStyle>
-									<DatePicker
-										variant="borderless"
-										size="small"
-										placeholder={t('kanban.dueDate')}
-										prefix={<CalendarOutlined className="text-base-disabled" />}
-										suffixIcon={null}
-										className="w-[150px]"
-									/>
-								</Form.Item>
-								<Divider type="vertical" className="h-4" />
-								<Form.Item name="estimated_hours" noStyle>
-									<InputNumber
-										variant="borderless"
-										size="small"
-										placeholder={t('kanban.estimatedHours')}
-										min={0}
-										step={0.5}
-										suffix={t('kanban.hoursSuffix')}
-										className="w-[90px]"
-									/>
-								</Form.Item>
-							</div>
-							<div className="flex items-center gap-2 mb-3">
-								<span className="text-[13px] text-base-gray shrink-0">
-									<UserOutlined className="mr-1.5 text-base-label" />
-									{t('kanban.assignee')}
-								</span>
-								<Form.Item name="assignee_ids" noStyle>
-									<AssigneeChips options={memberOptions} fallbacks={members} />
-								</Form.Item>
-							</div>
+							</TaskDetailSection>
+
 							<TaskDependencies
 								key={`${task.id}-${dependencyFocusMode || 'idle'}`}
 								task={task}
@@ -265,37 +212,47 @@ export function TaskDetailDrawer({
 								onDeleteDependent={onDeleteDependent}
 								initialAddingMode={dependencyFocusMode}
 							/>
-							<Button
-								className="mb-4"
-								icon={<PlusOutlined />}
-								onClick={() => onCreateSubtask(task)}
+
+							<TaskDetailPanel
+								title={t('kanban.subtasks')}
+								titleSuffix={
+									subtasks.length > 0
+										? `${subtaskCompletedCount}/${subtasks.length}`
+										: undefined
+								}
+								isEmpty={subtasks.length === 0}
+								emptyText={t('kanban.subtasksEmpty')}
+								action={
+									<TaskDetailPanelAction
+										title={t('kanban.addSubtask')}
+										icon={<PlusOutlined />}
+										onClick={() => onCreateSubtask(task)}
+									/>
+								}
 							>
-								{t('kanban.addSubtask')}
-							</Button>
-							<SubtaskList
-								parentId={task.id}
-								tasks={tasks}
-								workflow={workflow}
-								onTaskClick={onTaskClick}
-							/>
-							<Form.Item name="description" noStyle>
-								<Input.TextArea
-									rows={6}
-									placeholder={t('kanban.descriptionPlaceholder')}
+								<SubtaskList
+									parentId={task.id}
+									tasks={tasks}
+									workflow={workflow}
+									onTaskClick={onTaskClick}
 								/>
-							</Form.Item>
+							</TaskDetailPanel>
+
 							<TaskAttachments
 								key={`${project?.id ?? 'default'}-${task.id}`}
 								taskId={task.id}
 								projectId={project?.id}
 								members={members}
 							/>
-							<div className="mt-4">
-								<Button type="primary" onClick={handleSave}>
-									{t('common.save')}
-								</Button>
-							</div>
 						</Form>
+					</div>
+
+					<div className="sticky bottom-0 shrink-0 px-6 py-3 border-t border-base-border bg-white/90 backdrop-blur-sm">
+						<div className="flex justify-end">
+							<Button type="primary" onClick={handleSave}>
+								{t('common.save')}
+							</Button>
+						</div>
 					</div>
 				</div>
 			) : null}

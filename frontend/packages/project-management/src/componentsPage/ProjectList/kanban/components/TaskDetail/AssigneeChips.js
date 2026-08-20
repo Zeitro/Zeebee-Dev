@@ -1,9 +1,9 @@
 /**
- * 多执行者芯片：Form.Item 受控 value/onChange；选项来自项目成员（不含 viewer）。
+ * 多执行者芯片：胶囊 chip + 右上角圆形删除；右侧圆形「+」打开成员菜单。
  */
 'use client';
 
-import { CheckOutlined, CloseOutlined, PlusOutlined, UserOutlined } from '@ant-design/icons';
+import { CheckOutlined, CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import { Avatar, Button, Dropdown } from 'antd';
 import { displayValue } from '@repo/shared-methods/utils';
 import { getMemberInitial, getMemberLabel } from '../helpers';
@@ -27,15 +27,21 @@ export function AssigneeChips({ value, onChange, options = [], fallbacks = [] })
 		return {
 			key: String(member.id),
 			label: (
-				<span className="inline-flex items-center gap-2 min-w-[140px]">
+				<span className="inline-flex items-center gap-2.5 min-w-[160px] py-0.5">
 					<Avatar
-						size={20}
-						style={{ backgroundColor: 'var(--blue-medium)', fontSize: 10 }}
+						size={22}
+						style={{ backgroundColor: 'var(--blue-medium)', fontSize: 11 }}
 					>
 						{getMemberInitial(member)}
 					</Avatar>
-					{displayValue(name)}
-					{selected ? <CheckOutlined className="text-base-primary ml-auto" /> : null}
+					<span className="flex-1 truncate text-[13px] text-base-text">
+						{displayValue(name)}
+					</span>
+					{selected ? (
+						<CheckOutlined className="text-base-primary shrink-0 text-[12px]" />
+					) : (
+						<span className="w-3 shrink-0" />
+					)}
 				</span>
 			),
 			onClick: () =>
@@ -44,47 +50,51 @@ export function AssigneeChips({ value, onChange, options = [], fallbacks = [] })
 	});
 
 	return (
-		<div className="flex items-center gap-1.5 flex-wrap">
+		<div className="flex items-center gap-2 flex-wrap">
 			{ids.map((id) => {
 				const member = findMember(id);
 				const name = getMemberLabel(member, id);
 				return (
-					<span key={id} className="relative inline-flex">
-						<span className="inline-flex items-center gap-1.5 bg-base-text2 border border-base-border rounded-2xl py-0.5 pr-2.5 pl-1">
+					<span key={id} className="relative inline-flex mt-1 mr-1">
+						<span className="inline-flex items-center gap-1.5 rounded-full bg-base-text2 py-[3px] pl-[3px] pr-2.5">
 							<Avatar
 								size={22}
 								style={{ backgroundColor: 'var(--blue-medium)', fontSize: 11 }}
 							>
 								{getMemberInitial(member, id)}
 							</Avatar>
-							<span className="font-medium text-[13px]">{displayValue(name)}</span>
+							<span className="text-[13px] text-base-text leading-none max-w-[100px] truncate">
+								{displayValue(name)}
+							</span>
 						</span>
-						<Button
-							type="text"
-							size="small"
-							shape="circle"
-							className="absolute -top-1.5 -right-1.5 w-4 h-4 min-w-4 bg-white border border-base-border z-[1]"
-							icon={<CloseOutlined className="text-[8px] text-base-label" />}
+						<button
+							type="button"
+							aria-label="remove"
+							className="absolute -top-1 -right-1 z-[1] flex h-[14px] w-[14px] items-center justify-center rounded-full border border-base-border bg-white text-base-label shadow-sm hover:border-base-error hover:text-base-error cursor-pointer p-0 leading-none"
 							onClick={(event) => {
 								event.stopPropagation();
 								onChange?.(ids.filter((item) => item !== id));
 							}}
-						/>
+						>
+							<CloseOutlined className="text-[8px]" />
+						</button>
 					</span>
 				);
 			})}
-			<Dropdown menu={{ items: menuItems }} trigger={['click']} placement="bottomLeft">
+
+			<Dropdown
+				menu={{ items: menuItems }}
+				trigger={['click']}
+				placement="bottomLeft"
+				disabled={menuItems.length === 0}
+			>
 				<Button
 					type="text"
 					shape="circle"
-					className="w-[26px] h-[26px] min-w-[26px] bg-base-text2 shrink-0"
-					icon={
-						menuItems.length ? (
-							<PlusOutlined className="text-xs text-base-gray" />
-						) : (
-							<UserOutlined className="text-xs text-base-gray" />
-						)
-					}
+					size="small"
+					disabled={menuItems.length === 0}
+					className="!w-7 !h-7 !min-w-7 !p-0 bg-base-text2 hover:!bg-base-border/40 text-base-gray shrink-0"
+					icon={<PlusOutlined className="text-xs" />}
 				/>
 			</Dropdown>
 		</div>

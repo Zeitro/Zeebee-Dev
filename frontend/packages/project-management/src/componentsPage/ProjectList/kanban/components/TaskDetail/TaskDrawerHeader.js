@@ -9,7 +9,6 @@ import {
 	FileTextOutlined,
 	LinkOutlined,
 	MoreOutlined,
-	ProjectOutlined,
 } from '@ant-design/icons';
 import { Avatar, Button, Dropdown, Input, Tooltip } from 'antd';
 import { useTranslations } from 'next-intl';
@@ -58,24 +57,32 @@ export function TaskDrawerHeader({
 	});
 
 	return (
-		<div className="px-6 pt-[18px] pb-2.5">
-			<div className="flex items-center justify-between mb-1.5">
-				<div className="flex items-center gap-1.5 text-xs text-base-label">
+		<div className="shrink-0 px-6 pt-5 pb-4 border-b border-base-border bg-white">
+			<div className="flex items-center justify-between gap-3 mb-4">
+				<div className="flex items-center gap-2 min-w-0 flex-wrap">
 					{parentTask ? (
 						<Button
 							type="text"
 							size="small"
 							icon={<ArrowLeftOutlined />}
+							className="!text-base-label hover:!text-base-primary"
 							onClick={() => onTaskClick(parentTask)}
 						>
 							{t('kanban.backToParent')}
 						</Button>
 					) : null}
-					<span>{displayValue(project?.name)}</span>
-					<span>/</span>
-					<span>#{task.id}</span>
+					<span className="inline-flex items-center gap-1.5 text-xs text-base-label min-w-0">
+						<span className="px-2 py-0.5 rounded-md bg-base-text2 text-base-gray truncate max-w-[180px]">
+							{displayValue(project?.name)}
+						</span>
+						<span className="text-base-disabled">/</span>
+						<span className="font-mono text-[11px] px-1.5 py-0.5 rounded bg-base-active text-base-primary">
+							#{task.id}
+						</span>
+					</span>
 				</div>
-				<div className="flex items-center gap-1">
+
+				<div className="flex items-center gap-0.5 shrink-0">
 					{participantItems.length > 0 ? (
 						<Avatar.Group
 							max={{
@@ -83,6 +90,7 @@ export function TaskDrawerHeader({
 								style: { backgroundColor: 'var(--blue-medium)', fontSize: 12 },
 							}}
 							size={28}
+							className="mr-1"
 						>
 							{participantItems.map((item) => {
 								const member = members.find((row) => row.id === item.userId);
@@ -101,6 +109,7 @@ export function TaskDrawerHeader({
 						type="text"
 						size="small"
 						icon={<FileTextOutlined />}
+						className="!text-base-label"
 						onClick={onOpenLog}
 					>
 						{t('kanban.taskLog')}
@@ -146,18 +155,15 @@ export function TaskDrawerHeader({
 					</Dropdown>
 				</div>
 			</div>
+
 			<Input
 				key={task.id}
 				variant="borderless"
 				defaultValue={task.title}
 				onBlur={(event) => onTitleBlur(event.target.value.trim())}
 				onPressEnter={(event) => event.currentTarget.blur()}
-				className="!px-0 font-semibold text-xl"
+				className="!px-0 !py-0 font-semibold text-[22px] leading-snug text-base-text"
 			/>
-			<div className="flex items-center gap-2 mt-1.5 text-[13px] text-base-label">
-				<ProjectOutlined />
-				<span>{displayValue(project?.name)}</span>
-			</div>
 		</div>
 	);
 }

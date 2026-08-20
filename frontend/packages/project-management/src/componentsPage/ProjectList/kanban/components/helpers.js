@@ -216,3 +216,26 @@ export function formatActivityDescription(act, t, resolveUserName) {
 	}
 	return act.new_value || act.action;
 }
+
+/** 富文本是否无有效文本内容 */
+export function isRichTextEmpty(html) {
+	if (!html) return true;
+	return html.replace(/<[^>]+>/g, '').trim() === '';
+}
+
+/** 富文本空内容（如 `<p><br></p>`）归一化为空字符串 */
+export function normalizeRichTextValue(html) {
+	if (!html) return '';
+	return isRichTextEmpty(html) ? '' : html;
+}
+
+/** 纯文本或 HTML 转为预览 HTML；legacy 纯文本保留换行 */
+export function toRichTextPreviewHtml(value) {
+	if (!value) return '';
+	if (/<[a-z][\s\S]*>/i.test(value)) return value;
+	return value
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/\n/g, '<br>');
+}
