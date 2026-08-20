@@ -1,186 +1,128 @@
-# AGENTS.md
+# Zeebee Backend Agent Guide
 
-> Zeebee Backend 工作入口。**本文件为 Claude 与 Codex 共用的唯一项目规范文档**：Claude 经根目录 `CLAUDE.md` 入口加载，Codex 经根目录 `AGENTS.md` 入口加载，切换工具无需重复编写规范文档。
->
-> **代码风格**（项目无关）见 constitution，**结构**见 architecture，**事实**见 INDEX。本文件仅含项目特定规范与可执行示例。
-> 改任何 `.api`/`.proto` 后须 `make create-service <service-name>` 重生成。
->
-> `constitution.md` 为必须加载并遵循的代码风格宪章。
+本文件是 `backend/` 的项目工作入口。根目录 `AGENTS.md`、`CLAUDE.md` 只负责把 Agent 引到这里；项目规则不要在入口文件重复维护。
 
-## 文档指针
+## 1. 必读文档与优先级
 
-- **代码风格（项目无关，可迁移）**：`constitution.md`
-- **架构结构**：`guides/architecture.md`（分层职责、数据流、目录组织、服务矩阵、ADR，required reading）
-- **事实清单**：`INDEX.md`（服务模块矩阵、模型/DTO 清单、通用组件、目录速查）
-- **规则**（技术栈、命名、目录）= 本文件
-- **项目配置定义文件**：`app/<service>/config/config.go`
-- **项目配置文件**：`app/<service>/etc/config-<env>.yaml`
+开始任何后端任务前，按以下顺序读取：
 
-### 配置文件加载路径（必须遵守）
+1. 本文件：项目流程与技术约束。
+2. [`constitution.md`](constitution.md)：代码风格与工程行为宪章，**每个任务都必须读取并遵守**。
+3. [`guides/architecture.md`](guides/architecture.md)：代码变更必读，说明分层、数据流、目录和架构决策。
+4. [`INDEX.md`](INDEX.md)：只在需要定位模块、组件或服务事实时读取。
 
-- 适用于所有服务：配置定义先看 `app/<service>/config/config.go`，运行时配置再看该服务实际加载的 `app/<service>/etc/config-<env>.yaml`。
-- 当前服务入口为 `app/<service>/cmd/main.go`；各入口默认 `-f etc/config.yaml`，配置路径按进程当前工作目录解析，不能只凭目录名称推断。
-- 从服务目录启动时使用 `-f etc/config-local.yaml`；从 backend 根目录启动时使用 `-f app/<service>/etc/config-local.yaml`。staging/prod 同理替换环境名。
-- 检查任何服务前，必须先读取对应的 `cmd/main.go` 和实际启动命令，确认 `-f` 指向的文件；包括 borrower、lender、admin、tenant、pdf_generator。
-- **不要把 `app/<service>/rpc/etc/`、`app/<service>/api/etc/` 或代码生成产生的其他 `etc/` 目录当作运行时配置来源**，除非对应入口明确通过 `-f` 加载它。
-- 修改或检查配置项（包括 LogoUrl、FooterAddress）时，必须以入口实际加载的配置文件为准，并同时检查是否存在其他服务/目录中的重复配置。
+若上下文被压缩、任务切换或继续旧任务，重新读取 `constitution.md` 和本文件中与当前任务相关的章节；不要依赖之前的记忆。若规则冲突，用户明确要求优先；未明确覆盖时，`constitution.md` 优先于本文件，本文件优先于索引性文档和现有习惯。
 
-### Document Reading Order
+## 2. 开始任务
 
-首次会话必读（按序）：
+先把需求写成可验证目标，再开始修改：
 
-1. **本文件** — 项目规范、代码示例
-2. **`constitution.md`** — 代码风格（项目无关）
-3. **`guides/architecture.md`** — 架构结构
+1. 确定服务、模块和层次：HTTP API、RPC、domain、repository、model、配置或文档。
+2. 判断目标文件是否由 `.api`、`.proto`、模板或脚本生成。
+3. 用 codebase-memory 的 `search_graph` 查找定义和相邻实现；需要调用关系时用 `trace_path`，需要源代码时先搜索再用 `get_code_snippet`。字符串、配置、脚本和 Markdown 才使用文本搜索。
+4. 先找可复用的类型、转换器、错误处理和实现范例，再决定是否新增文件或抽象。
+5. 明确验证方式：受影响包的测试、构建、代码生成检查或文档检查。
 
-### 任务路由（按需加载，避免全量读取）
+只改完成目标所需的文件。不要为了“以后可能需要”增加接口、配置、抽象或兼容层。
 
-| 任务 | 只读 |
-|------|------|
-| 需求开发 / 功能新增 | 本文件 §需求开发流程（SpecKit）|
-| 加/改 HTTP 端点 | 本文件 §核心原则 + [architecture](guides/architecture.md) §开发流程 / §端点实现范例 |
-| 定位代码（model/repo/dto/模块） | [INDEX](INDEX.md) §按目录定位速查 / §服务功能矩阵 |
-| 代码风格、命名、注释 | [constitution](constitution.md) |
-| 数据转换 / 错误处理写法 | 本文件 §Data Conversion / §Error Handling |
-| 服务端口 / 职责 | [architecture](guides/architecture.md) §服务矩阵 |
-| 模型 / DTO / 组件清单 | [INDEX](INDEX.md) §领域模型 / §DTO / §通用组件 |
-| 提交格式 | 本文件 §Git Commit + [constitution](constitution.md) §Git 提交 |
+## 3. 分层边界
 
-> 按任务取用。规则类事实单一来源（见各表项）；计数 / 版本等易变值以代码为准，文档不重复维护。
+标准数据流：
 
-## 项目角色
-
-资深 Go 后端工程师，专精 go-zero 微服务架构与 goroutine/channel、GORM、gRPC/Protobuf、PostgreSQL 调优、pprof/trace 性能分析。
-
-## 核心原则
-
-### I. 共享领域优先
-
-功能从共享领域层开始设计。领域模型与仓储放 `domains/zeebee/`，共享代码独立可测试且有文档。不允许仅为了组织而抽象。
-
-### II. API/RPC 分离
-
-双层架构：API 层（HTTP）处理验证和路由，RPC 层（gRPC）处理业务逻辑。数据流：`API Handler → API Logic → RPC Call → RPC Logic → Repository → Model → Database`。
-
-### III. 代码生成强制
-
-使用 `Makefile` 封装的命令生成代码，如 `make create-service lender`。不手写 handler/server。
-
-### IV. 数据转换标准
-
-所有类型转换使用 `copierx.Trans[T, U]`（T、U 为非指针类型，src 为 `*T`）。时间字段需 `copierx.TimeToRFC3339Str()` 选项。
-
-### V. 类型安全与测试
-
-强类型贯穿全代码库。测试要求（单元/集成/覆盖率）见 [constitution](constitution.md) §测试原则。
-
-## 技术栈
-
-- **语言**：Go 1.26 | **框架**：go-zero 1.10.1
-- **数据库**：PostgreSQL 14+ (GORM) | **缓存**：Redis 7+ | **存储**：AWS S3
-- **协议**：HTTP (REST) + gRPC | **认证**：JWT with RBAC
-
-## 服务与共享层
-
-服务矩阵（端口/职责/规模）、模块清单、`domains/zeebee/` 模型仓储、`common/` 22 工具包 — 单一来源，不在此重复维护：
-
-- [`guides/architecture.md`](guides/architecture.md) §服务矩阵 / §代码组织（结构与目录）
-- [`INDEX.md`](INDEX.md) §服务功能矩阵（模块级）/ §通用组件（common/ 清单）/ §按目录定位速查
-
-> 事实型数据以 `go.mod` 与实际代码统计为准。
-
-## 代码约束
-
-- **数据库访问**：RPC logic 不直接操作数据库，须经 `baseLogic` → `domains/zeebee/logic/` → `repo`（详见 [architecture](guides/architecture.md) §关键约束）
-- **错误处理**：`common/errorx/`
-- **校验**：`common/validator/`
-- **类型转换**：`common/copierx`
-- **日志**：go-zero logx，禁止硬编码敏感信息
-- **lint**：PR 必过 golangci-lint（`.golangci.yml`）
-- **配置**：YAML 文件，禁止硬编码敏感信息
-- **函数签名**：≤4 参，≤3 返回值（风格细节见 constitution §函数约束）
-- **注释**：简洁扼要、只写「为什么」（详见 [constitution](constitution.md) §注释）
-
-### 配置中的密钥（HARDCODED_SECRETS 例外）
-
-本仓库为**私有仓库**，`app/*/etc/*.yaml` 是服务启动时加载的运行时配置文件。将 LLM / 第三方服务的 `ApiKey` 直接写在 `etc/*.yaml` 的 `Providers[*].ApiKey` 字段是**有意为之**的部署模式（非泄露），安全扫描对该模式报 `HARDCODED_SECRETS` 可视为**预期告警、按已接受处理**，无需每次修复或上报。
-
-- 仅适用于 `app/*/etc/*.yaml` 的 `ApiKey`（及等价凭证字段）；其他位置的硬编码密钥仍禁止。
-- `config-local.yaml` 通常不入库或保留空值；`config-prod.yaml` / `config-staging.yaml` 由部署流程或人工填入真实 key。
-- 若确有 key 被误提交且仓库可见性变更（转公开），须立刻轮换。
-- 日志中仍禁止打印密钥（见上一条「日志」约束），`SENSITIVE-TO-OBSERVABILITY` 类告警与此例外无关，单独评估。
-
-## Working Directory
-
-Monorepo。工作范围限 `backend/`。Specs 入 `backend/specs/`（非项目根 `specs/`）。
-
-## 文档策略
-
-- `docs/`：项目知识库（constitution、architecture、INDEX、designs），纳入版本管理，工具无关
-- `.agents/`（Codex 技能）、`.claude/`（Claude 技能）、`.specify/`：AI agent 与插件层（skills、speckit 工具链、本地分析报告），本地保留，不入版本管理
-- `backend/specs/`：SpecKit 实施规格（非项目根 `specs/`；工具无关，Claude/Codex 共用），本地保留，不入版本管理
-
-## Data Conversion Convention — `copierx.Trans`
-
-所有类型转换统一用 `copierx.Trans`（**唯一示例源**，constitution/architecture 仅指针引用此处）。
-
-```go
-// func Trans[T, U any](src *T, opts ...copier.TypeConverter) (dist *U, err error)
-// ⚠️ T 和 U 必须是非指针类型，src 是 *T，返回 *U
-
-// DTO → Model
-data, err := copierx.Trans[dto.BaseTemplateCreateDto, model.BaseTemplate](&req)
-
-// Model → BO
-result, err := copierx.Trans[model.BaseTemplate, bo.BaseTemplateBo](modelData)
-
-// BO → Proto Entity（带时间格式化）
-protoData, err := copierx.Trans[bo.BaseTemplateBo, admin.BaseTemplateEntity](boData, copierx.TimeToRFC3339Str())
-
-// Slice 转换同样适用
-items, err := copierx.Trans[[]dto.Item, []model.Item](&dtoSlice)
+```text
+HTTP Handler → API Logic → RPC Client → RPC Logic → Domain Logic → Repository → Model → Database
 ```
 
-| Direction   | T (Source)   | U (Target)        | src         | Return             |
-|-------------|--------------|-------------------|-------------|--------------------|
-| DTO → Model | `dto.XxxDto` | `model.Xxx`       | `&dtoData`  | `*model.Xxx`       |
-| Model → DTO | `model.Xxx`  | `dto.XxxDto`      | `modelData` | `*dto.XxxDto`      |
-| DTO → Proto | `dto.XxxDto` | `admin.XxxEntity` | `dtoData`   | `*admin.XxxEntity` |
+- API 层负责 HTTP 参数绑定、边界校验、调用 RPC 和响应转换。
+- RPC 层负责鉴权、业务编排和跨服务调用；RPC logic 不直接访问数据库。
+- 领域层负责可复用业务规则；repository 负责 GORM 查询和持久化；model 只描述数据库模型。
+- HTTP `types`、Proto message、domain DTO、BO 和 model 不能跨层混用。
+- 数据库访问必须经过 `baseLogic → domains/zeebee/logic → repo`，不要在 RPC logic 中绕过领域层。
 
-## Error Handling Convention
+## 4. API、Proto 与代码生成
 
-```go
-defer func() {
-    if err != nil {
-        logx.WithContext(r.Context()).
-            WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
-            Error(err)
-    }
-}()
+生成文件的定义源只有 schema：HTTP 使用 `.api`，gRPC 使用 `.proto`。先改定义，再生成，再填写 logic；生成器输出不能手工仿写或补齐。
 
-if err != nil {
-    return nil, errorx.NewDefaultError("invalid input parameters")
-}
+### HTTP
+
+- 模块化 API 放在 `app/<service>/api/desc/<module>.api`，由 `app/<service>/api/<service>.api` 导入。
+- 请求、响应和 entity 属于 `.api`；不要手写生成的 `internal/types`、handler、routes 或 Swagger。
+- 修改 `.api` 后运行 `make create-api-service <service>`。
+- 需要同时生成 HTTP 服务与 Swagger 时运行 `make create-server SERVICE=<service>`；该命令不生成 RPC。
+
+### RPC
+
+- 模块方法和不可复用 message 放在 `app/<service>/rpc/pb/*.proto`。
+- 可复用的公共 entity 放在 `domains/zeebee/proto/entity.proto`；服务 proto 只保留不可复用的 message 和 service 定义。
+- Proto 响应按项目约定统一包裹 `data`；列表是否直接为 repeated field 以现有模块约定为准，不自行发明另一层 `lists`。
+- 修改 `.proto` 后运行 `make create-rpc-service <service>`。
+- 不要手写或修改生成的 pb、grpc client、server 文件；生成的 `rpc/internal/logic/*_logic.go` 是实现模板，只在生成后填充业务逻辑。
+
+### 两层同时变更
+
+需要 API、RPC 和 Swagger 全部更新时运行：
+
+```bash
+make create-service <service>
 ```
 
-禁止裸 `errors.New`，统一用 `common/errorx/`。
+没有对应 schema 变更时不要为了完成清单而运行生成命令。`create-api-service`、`create-rpc-service`、`create-service` 和 `create-server` 的既有行为必须保持不变。
 
-## Git Commit Convention
+## 5. 类型转换与错误处理
 
-提交 commit 前先检查是否在项目根目录，如果不在的根目录，请先 cd 到项目根目录。
+- 跨层结构体和切片转换统一使用 `common/copierx` 的 `copierx.Trans[T, U]`；`T`、`U` 使用非指针类型，源值按函数签名传入。
+- 时间字段转字符串时使用 `copierx.TimeToRFC3339Str()`。
+- 只有在 copierx 无法表达特殊业务转换时才手工处理，并把原因留在代码结构或短注释中。
+- 输入在 HTTP/RPC 边界校验；错误使用 `common/errorx`，保留堆栈和上下文，不向外暴露敏感实现细节。
+- 日志使用 go-zero `logx`，不打印 token、密钥或个人敏感信息。
 
-格式与通用约束（conventional commits、co-author 禁令、多 commit 拆分）见 `constitution.md` §Git 提交。
+## 6. 配置与服务入口
 
-本项目 scope 格式：
+检查配置前先读 `app/<service>/cmd/main.go` 和实际启动命令，确认 `-f` 指向的运行时 YAML；配置结构看 `app/<service>/config/config.go`，运行值看入口实际加载的 `app/<service>/etc/config-<env>.yaml`。不要仅凭目录名猜配置来源，也不要把生成目录下的 `etc/` 当成运行时配置。
 
-```
+## 7. 完成任务
+
+按变更风险选择最小验证集：
+
+- Go 代码：`gofmt`、受影响包的 `go test`；跨包、生成或接口变更再补 `go build`。
+- API/Proto：确认 schema 已生成，检查生成文件和 logic 是否匹配，必要时运行对应服务构建。
+- 领域逻辑、权限、持久化或跨服务行为：补充回归/集成测试，并运行相关测试。
+- 纯文档：检查链接、代码块和前后规则一致性，不强制运行代码生成。
+- 所有任务：检查 `git diff --check`，确认没有越界文件、临时文件或手工生成代码。
+
+完成标准不是“文件已修改”，而是目标、生成顺序、测试和差异检查都已满足；无法验证的项要明确说明原因。
+
+## 8. Git
+
+提交前确认当前目录是 `backend/` 仓库根目录。提交遵守 `constitution.md` 的 Conventional Commits 和多 commit 规则；本项目 scope 使用：
+
+```text
 <type>(<scope>-<service-name>-backend): <description>
+```
 
-feat | fix | refactor | docs | style | perf | test
-# 示例
+示例：
+
+```text
 feat(applicant-borrower-backend): add loan application endpoint
 fix(document-lender-backend): fix document upload validation error
 ```
 
-## code extract
-codebase-memory-mcp > codegraph > grep
+不要把 Claude、Codex、Copilot 或其他 LLM 写成 committer/co-author。
+
+## 9. 快速定位
+
+| 需求 | 位置 |
+|------|------|
+| HTTP 定义 | `app/<service>/api/desc/`、`app/<service>/api/<service>.api` |
+| API logic | `app/<service>/api/internal/logic/` |
+| RPC 定义 | `app/<service>/rpc/pb/`、`domains/zeebee/proto/` |
+| RPC logic | `app/<service>/rpc/internal/logic/` |
+| 领域逻辑 | `domains/zeebee/logic/` |
+| DTO | `domains/zeebee/data/dto/` |
+| Repository | `domains/zeebee/repo/` |
+| Model | `domains/zeebee/model/` |
+| 公共转换 | `common/copierx/` |
+| 统一错误 | `common/errorx/` |
+| 服务入口 | `app/<service>/cmd/main.go` |
+
+项目服务矩阵、目录细节和完整范例见 `guides/architecture.md`；模块事实和组件索引见 `INDEX.md`，不要在本文件复制维护易变清单。

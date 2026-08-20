@@ -1,7 +1,7 @@
 # Zeebee Backend Architecture
 
 > **必读文档** — 开始开发前必须理解本文档内容。
-> 技术栈版本详见 [CLAUDE.md](../../CLAUDE.md) §技术栈；服务端口见本文 §服务矩阵；代码风格见 [constitution.md](../constitution.md)。
+> 技术栈以 `go.mod`、`Makefile` 和实际代码为准；服务端口见本文 §服务矩阵；代码风格见 [constitution.md](../constitution.md)。
 
 ## 架构概览
 
@@ -115,7 +115,7 @@ Request
 - **RPC 层**：`pb ↔ domains/zeebee/data/dto`（RPC 内部用 Domain DTO，非直接 Model）
 - **Domain 层**：`dto ↔ Model`
 
-统一使用 `copierx.Trans`，时间字段加 `copierx.TimeToRFC3339Str()`（详见 CLAUDE.md §数据转换规范）。
+统一使用 `copierx.Trans`，时间字段加 `copierx.TimeToRFC3339Str()`（详见 [AGENTS.md](../AGENTS.md) §类型转换与错误处理）。
 
 ## 代码组织
 
@@ -308,9 +308,9 @@ make create-sql <name>                # SQL 脚本
 
 1. 在 `app/{service}/api/desc/` 添加 API 消息体定义
 2. 在 `app/{service}/rpc/pb/` 添加 Proto 消息和方法定义
-3. 运行 `make create-service <service>`（或分别 `create-api-service` + `create-rpc-service`）生成代码
+3. 按变更范围运行生成命令：只改 HTTP 用 `create-api-service`，只改 RPC 用 `create-rpc-service`，HTTP 加 Swagger 用 `create-server`，两层都改用 `create-service`；完整顺序见 [AGENTS.md](../AGENTS.md)
 4. 在 `app/{service}/api/internal/logic/` 实现 API 逻辑（参数验证 + RPC 调用）
-5. 在 `app/{service}/rpc/internal/logic/` 实现 RPC 逻辑（业务逻辑 + repo 调用）
+5. 在 `app/{service}/rpc/internal/logic/` 实现 RPC 逻辑（业务编排 + Domain 调用）
 6. 如需新数据模型，在 `domains/zeebee/model/` 添加模型，`domains/zeebee/repo/` 添加仓储
 
 ### 新增数据实体
@@ -345,4 +345,4 @@ make create-sql <name>                # SQL 脚本
 
 ---
 
-**最后更新**: 2026-08-07
+**最后更新**: 2026-08-20

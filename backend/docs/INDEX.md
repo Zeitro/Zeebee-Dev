@@ -1,8 +1,8 @@
 # Zeebee 后端知识库索引
 
-> 本文件为知识库导航中心。架构设计、分层职责、数据流详见 [architecture.md](guides/architecture.md)；代码风格（项目无关）详见 [constitution.md](constitution.md)；技术栈、核心原则、服务矩阵详见 [CLAUDE.md](../CLAUDE.md)。
+> 本文件为知识库导航中心。项目流程见 [AGENTS.md](AGENTS.md)；架构设计、分层职责、数据流详见 [architecture.md](guides/architecture.md)；代码风格（项目无关）详见 [constitution.md](constitution.md)。
 >
-> **最后更新**: 2026-08-07 | **项目状态**: 开发阶段
+> **最后更新**: 2026-08-20 | **项目状态**: 开发阶段
 
 ---
 
@@ -10,8 +10,8 @@
 
 | 角色 / 场景 | 阅读路径 |
 |-------------|----------|
-| 新手入门 | [CLAUDE.md](../CLAUDE.md)（规范）→ [constitution.md](constitution.md)（风格）→ [architecture.md](guides/architecture.md)（结构） |
-| API 开发 | [API 文档索引](guides/api_documentation_index.md) → [CLAUDE.md](../CLAUDE.md)（数据转换规范） → [architecture.md](guides/architecture.md) |
+| 新手入门 | [AGENTS.md](AGENTS.md)（流程）→ [constitution.md](constitution.md)（风格）→ [architecture.md](guides/architecture.md)（结构） |
+| API 开发 | [API 文档索引](guides/api_documentation_index.md) → [AGENTS.md](AGENTS.md)（生成与转换）→ [architecture.md](guides/architecture.md) |
 | 领域建模 | [architecture.md](guides/architecture.md) §代码组织 → `domains/zeebee/model/` → `domains/zeebee/data/dto/` |
 
 ---

@@ -1,320 +1,71 @@
-# 代码风格宪章 (Code Style Constitution)
+# 代码风格宪章（Code Style Constitution）
 
-> 项目无关的代码风格与工程行为规范。适用于任何项目，可原样迁移。
-> 项目特定规范（技术栈、目录、命名、scope 格式）见各项目入口规范文档。
+> 本文是项目无关的工程规范，适用于所有 Zeebee 仓库。后端 Agent 开始任何任务都必须读取并遵守。项目技术栈、目录、生成命令和服务规则由各项目入口文档补充。
 
-## 语言规范
+## 语言
 
-- **代码注释**：英文，简洁，不使用中文
-- **Git 提交**：英文，conventional commits 格式
-- **交流沟通**：中文
-- **Markdown 文档**：中文（`README.md` 除外，用英文）
-- **LLM 中间文档**（plan、analysis、design）：中文
+- 代码注释使用简洁英文；公共包、函数和类型仍需满足 Go 文档注释要求。
+- Git commit 使用英文 Conventional Commits。
+- Agent 与开发者沟通使用中文。
+- Markdown 文档使用中文；`README.md` 可使用英文。
 
-## Git 提交
+## Git
 
-### 格式
+格式：
 
-```
+```text
 <type>(<scope>): <description>
-
-feat | fix | refactor | docs | style | perf | test | chore
 ```
 
-### 约束
+允许的 type：`feat`、`fix`、`refactor`、`docs`、`style`、`perf`、`test`、`chore`。
 
-- 提交前确认在项目根目录，不在则先 `cd` 到根目录
-- **禁止将 LLM（Claude、Copilot 等）列为 committer 或 co-author**
-- **多功能 → 多 commit**：按功能分批提交。同一类功能（纯文档整理、纯重构）合并为一个 commit，body 逐项列出文件变化，不拆得过细
-- 不同 type 必须分开：一个 `feat` 代码改动 + 一个 `docs` 文档整理 = 2 个 commit
-- 代码风格，命名方式必须统一，不可混用
-- 注释必须准确、简练扼要，太长的注释会分散注意力，注释最好保持在20个字以内
-- 设计要有扩展性、易读性，保持低耦合高内聚，不要过度设计
+- 提交前确认位于项目仓库根目录。
+- 不把 LLM（Claude、Codex、Copilot 等）写成 committer 或 co-author。
+- 不同功能分开提交；同一类纯文档整理或纯重构可合并。
+- 不同 type 分开提交，例如代码功能与文档整理不能放在同一个 commit。
 
-## 整洁代码
+## 设计与命名
 
-> 开发团队的代码质量是团队的代码质量，所以要写整洁的代码。
->
-> 简单 > 抽象，组合 > 继承，可读 > 优雅，显式 > 魔法
-> 
-> 注释要简练准确，不要废话
+- 先确认需求和现有实现，再做最小改动；删除不需要的代码优先于增加抽象。
+- 复用现有类型、辅助函数和依赖；不要为单一实现增加接口、工厂或配置层。
+- 一个函数保持单一职责，优先提前返回，减少嵌套。
+- 命名短而准确；同一概念在全项目使用同一名称。`ctx`、`req`、`resp`、`db`、`tx` 等社区通用缩写可以使用。
+- 函数默认不超过 4 个参数；20 行以内最佳，40 行可接受，超过 80 行应拆分。确有理由的例外要保持可读并说明原因。
 
-### 命名: 名字就是最好的注释
-> 好的命名就是最好的文档。days 比 d 好一万倍。如果发现一个变量名或函数名需要额外注释来解释，那通常是名字取得不对。在 Go 的哲学里，省下敲键盘的时间，远不如省下读代码的人理解的时间重要。
->
-> 命名要短但准确
-**坏味道**
-```go
-func get(d []string) map[string]string { // 返回用户ID到名字的映射
-    m := make(map[string]string)
-    for _, id := range d {
-        // 从数据库查名字...
-        m[id] = name
-    }
-    return m
-}
+## 注释
 
-func CreateUser(u User){
-	
-}
-// tmp1 tmp2 aaa bbb 这样的变量/参数缩写，命名不好，代码可读性差
-```
-**好味道**
-```go
-// 不需要注释，名字本身说明一切
-func getUserNameMap(userIDs []string) map[string]string {
-nameMap := make(map[string]string)
-for _, id := range userIDs {
-// 从数据库查名字...
-nameMap[id] = name
-}
-return nameMap
-}
+注释解释 WHY，不复述代码已经表达的 WHAT。只为业务约束、设计权衡、第三方 workaround、魔法值来源或非显而易见的安全意图写注释；能用命名表达的内容不要写注释。
 
-func CreateUser(user User) error {
-	
-}
+## 错误与安全
 
-// cfg ctx tx db req resp 这些是受社区接受的变量/参数缩写
-```
+- 错误保留来源和上下文，避免裸返回底层错误。
+- 对外错误消息不泄露数据库、内部路径、凭证或其他敏感实现细节。
+- 在信任边界校验输入；不要为了“容错”吞掉错误或绕过权限校验。
+- 日志只记录排障所需信息，不记录 token、密钥和个人敏感数据。
 
-### 保持一致
-> 函数，参数，变量，常量，包等命名应该保持一致，一致性比最优命名更重要。
-> 不要一会一用大写字母，一会用小写字母，一会用下划线
-> 整个项目用CreateUser DeleteUser UpdateUser，就不要突然用 InsertUser
+## 测试
 
-### 函数：函数应该有单一职责
-> 一个函数应该只做一件事情。
->
-> 小而精的函数是代码可读性和可测试性的基石。
+- 行为变更应有可重复的验证；修复 bug 时优先增加能复现问题的回归测试。
+- 公共工具和领域规则需要单元测试；持久化、权限、跨服务和关键流程变更需要集成测试。
+- 生成代码、纯适配代码和纯文档不强制新增测试，但必须运行与变更风险相匹配的检查。
+- 覆盖率是质量信号，不是脱离上下文的全局硬门槛；新增核心逻辑应尽量达到项目约定的覆盖水平。
 
-**坏味道**
-```go
-func processOrder(order *Order) error {
-    if !order.IsValid() {
-        return errors.New("invalid order")
-    }
-    // 计算总额
-    total := 0.0
-    for _, item := range order.Items {
-        total += item.Price * float64(item.Quantity)
-    }
-    order.Total = total
+## 工程行为
 
-    // 保存到数据库
-    if err := db.Save(order); err != nil {
-        return err
-    }
+每次任务遵循：
 
-    // 发送邮件
-    return email.SendConfirmation(order)
-}
-```
-**好味道**
-```go
-func processOrder(order *Order) error {
-    if err := validateOrder(order); err != nil {
-        return err
-    }
-    if err := calculateTotal(order); err != nil {
-        return err
-    }
-    if err := saveOrder(order); err != nil {
-        return err
-    }
-    return sendConfirmation(order)
-}
+1. 明确目标、假设和完成标准；存在会改变实现的歧义时先澄清。
+2. 查找现有实现和调用方，选择最小可行改动。
+3. 让改动保持局部、可回滚、可验证，不顺手重构无关代码。
+4. 用测试、构建、lint 或文档检查证明完成；无法执行时说明阻塞原因。
 
-func calculateTotal(order *Order) error {
-    total := 0.0
-    for _, item := range order.Items {
-        total += item.Price * float64(item.Quantity)
-    }
-    order.Total = total
-    return nil
-}
-```
-### 提前返回
-> 提前返回可以提高代码可读性，并减少嵌套。
-> 主线逻辑是清晰的、平铺的。每个 if 都是一个"卫语句"（Guard Clause），处理完特殊情况就立即返回，让你专注于核心的、"快乐路径"（Happy Path）的逻辑。代码的缩进层次代表了逻辑的嵌套深度，缩进越少，心智负担越小。
-
-**坏味道**
-```go
-func getDiscount(user *User) string {
-    if user != nil {
-        if user.IsPremium() {
-            if user.Age() > 60 {
-                return "20%"
-            } else {
-                return "10%"
-            }
-        } else {
-            return "0%"
-        }
-    }
-    return "0%"
-}
-```
-
-**好味道**
-```go
-func getDiscount(user *User) string {
-    if user == nil {
-        return "0%"
-    }
-    if !user.IsPremium() {
-        return "0%"
-    }
-    if user.Age() > 60 {
-        return "20%"
-    }
-    return "10%"
-}
-```
-
-### 函数不要太长
-> 20 行以内最好
->
-> 40 行还能接受
->
-> 超过 80 行就应该考虑拆
-
-**坏味道**
-```go
-func HandleOrder() {
-    ...
-    200 行
-}
-```
-**好味道**
-```go
-func HandleOrder() {
-    order := loadOrder()
-
-    check(order)
-
-    pay(order)
-
-    notify(order)
-}
-```
-
-### 注释：解释为什么，而不是是什么
-> 注释解释「为什么这样设计」，不解释「这段代码做了什么」。业务规则为何存在、workaround 绕过哪个第三方 bug、魔法数字的来源、非显而易见的意图——这些写注释；代码本身能表达的意图，交给命名和结构。
->
-> 公共 API（包/函数/类型声明）的文档注释另算，那是给 godoc 用的，必须写。
->
-> 原则：**简洁扼要，一行能说清就不写多行；不复述代码；不写废话铺垫；只写「为什么」和非显而易见的意图。**
-> - 不复述代码：别写 `// 遍历订单计算总额` 紧跟一个求和循环，代码已经说了。
-> - 不写废话铺垫：删掉 `// 这里我们...`、`// 为了更好地...`、`// 开始处理订单` 这类零信息开场。
-> - 一行优先：一行能说清的「为什么」绝不展开成多行；多行只在真正复杂的权衡时才用。
-
-**坏味道**
-```go
-// 检查用户是否有资格获得高级折扣
-if user.Points > 1000 && user.Age > 18 && !user.IsBlocked {
-    // 应用 15% 折扣
-    price = price * 0.85
-}
-
-// 遍历订单列表，计算总金额
-total := 0.0
-for _, item := range order.Items {
-    total += item.Price * float64(item.Quantity)
-}
-
-// 这里我们先校验订单，然后保存到数据库，最后发邮件通知用户
-// 整个流程需要保证顺序，不能乱序执行，所以按下面步骤来...
-func processOrder(order *Order) error { ... }
-
-
-// Defense-in-depth: verify the platform type declared in metadata matches
-// the type embedded in the token. The api auth middleware already enforces
-// this at the edge; re-checking here catches a token replayed across
-// platforms via a path that bypasses the middleware.
-ctxUserTypes, ok := md[utils.UserTypeCtxKey]
-if !ok || len(ctxUserTypes) == 0 {
-err = status.Error(codes.Unauthenticated, "invalid token")
-return claim, errorx.WithStack(err)
-}
-if ctxUserTypes[0] != string(jwtClaim.UserType) {
-err = status.Error(codes.Unauthenticated, "invalid token")
-return claim, errorx.WithStack(err)
-}
-```
-
-**好味道**
-```go
-// 名字已说明意图，无需注释。
-if user.IsEligibleForPremiumDiscount() {
-    price = price.ApplyDiscount(loyaltyDiscount)
-}
-
-// 0.85: loyalty tier discount per contract #2087; do not change without finance sign-off.
-const loyaltyDiscount = 0.85
-
-// Setpgid: kill the whole process group on timeout so soffice's oosplash child
-// doesn't outlive the parent and leak under load.
-cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
-
-// check user type
-ctxUserTypes, ok := md[utils.UserTypeCtxKey]
-if !ok || len(ctxUserTypes) == 0 {
-err = status.Error(codes.Unauthenticated, "invalid token")
-return claim, errorx.WithStack(err)
-}
-if ctxUserTypes[0] != string(jwtClaim.UserType) {
-err = status.Error(codes.Unauthenticated, "invalid token")
-return claim, errorx.WithStack(err)
-}
-```
-
-## 函数约束
-
-- 签名：≤4 参数，≤3 返回值
-- 单函数长度：20 行最佳，40 行可接受，80 行必拆
-
-## 错误处理原则
-
-- 禁止裸 `errors.New` / 裸返回底层错误，统一封装为带上下文的错误类型
-- 错误需携带堆栈与来源信息，便于排查
-- 错误发生处用结构化日志记录，包含足够定位信息
-- 对外错误消息对调用方友好，不泄露实现细节与敏感信息
-
-## 测试原则
-
-- **TDD**：先写失败测试，再写实现使其通过
-- 工具/公共函数须有单元测试
-- 领域逻辑变更须集成测试
-- 覆盖率目标 80%+
-
-## 工程行为准则
-
-Think before coding. Simplicity first. Surgical changes. Goal-driven execution.
-
-### Think Before Coding
-
-- 显式声明假设，不确定就问
-- 存在多种理解时，列出选项而非静默选择
-- 有更简方案就说出来，该反驳就反驳
-- 不清楚就停，指出困惑点
-
-### Simplicity First
-
-只写解决问题的最少代码，不做推测性设计。不添加未被要求的功能、抽象、灵活性或不可能场景的错误处理。200 行能减到 50 行就重写。
-
-### Surgical Changes
-
-只改必须改的。不改相邻代码/注释/格式，不重构没坏的东西。匹配现有风格。你的变更导致的孤立代码（unused imports/variables）才删除。
-
-### Goal-Driven Execution
-
-任务转为可验证目标："加验证" → "写失败测试再通过"，"修 bug" → "写复现测试再通过"。多步任务列简要计划，每步有验证点。
+不要为了未来需求、极端假设或“看起来更完整”增加未要求的功能、抽象和错误分支。
 
 ## 治理
 
-本宪章为代码风格的权威来源，优先于个人偏好。修订需文档说明。
+本宪章是代码风格和工程行为的权威来源。项目特定规范可以补充实现方式，但不能静默削弱本宪章；修订本宪章时必须在文档变更中说明修改原因。
 
 ---
 
-**版本**：2.1.0 | **最后修订**：2026-07-30
+版本：2.2.0  
+最后修订：2026-08-20

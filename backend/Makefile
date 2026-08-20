@@ -2,11 +2,12 @@ help:
 	@echo "Usage: make <target>"
 	@echo "Targets:"
 	@echo "  create-api <service>        Create API file"
+	@echo "  create-api-service <service> Create API service"
 	@echo "  create-swagger <service>    Create API Swagger"
 	@echo "  create-server [SERVICE=name] Generate API server and Swagger (default: borrower)"
-	@echo "  create-api-validate <service> Create API validate"
 	@echo "  create-proto <service>      Create proto file"
 	@echo "  create-rpc-service <service> Create RPC service"
+	@echo "  create-service <service>    Create API, RPC and Swagger"
 	@echo "  create-sql <service> <name> Create SQL file with timestamp"
 
 WORK_DIR := $(shell pwd)
