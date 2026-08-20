@@ -12,16 +12,23 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
+	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 )
 
-func (l *ProjectManagementLogic) CreateTask(ctx context.Context, actor *dto.ProjectManagementActor, input dto.ProjectManagementTaskCreateDto) (task *model.ProjectManagementTask, err error) {
+type ProjectManagementTaskLogic struct{ *BaseLogic }
+
+func NewProjectManagementTaskLogic(baseLogic *BaseLogic) *ProjectManagementTaskLogic {
+	return &ProjectManagementTaskLogic{BaseLogic: baseLogic}
+}
+
+func (l *ProjectManagementTaskLogic) Create(ctx context.Context, claim *utils.JwtUser, input dto.ProjectManagementTaskCreateDto) (task *model.ProjectManagementTask, err error) {
 	if err = validateProjectManagementTaskCreate(input); err != nil {
 		return nil, err
 	}
-	if _, err = l.RequireMember(ctx, input.ProjectId, actor.OrganizationUserId); err != nil {
+	if _, err = l.projectManagementAccess().RequireMember(ctx, input.ProjectId, claim.OrganizationUserId); err != nil {
 		return nil, err
 	}
 	taskData := input.ProjectManagementTaskDto
@@ -30,14 +37,14 @@ func (l *ProjectManagementLogic) CreateTask(ctx context.Context, actor *dto.Proj
 	if err != nil {
 		return nil, err
 	}
-	task.OrganizationId, task.CreatorId, task.CreatorName = actor.OrganizationId, actor.OrganizationUserId, actor.Name
+	task.OrganizationId, task.CreatorId, task.CreatorName = claim.OrganizationId, claim.OrganizationUserId, claim.Username
 	task.StartAt, task.EndAt = projectManagementNullTime(input.StartAt), projectManagementNullTime(input.EndAt)
 	task.TaskType = &dto.ProjectManagementTaskTypeSnapshotDto{}
 	err = l.repos.ProjectManagementTaskRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		if _, err = l.repos.ProjectManagementProjectRepo.LockByOrganizationWithTx(ctx, tx, input.ProjectId, actor.OrganizationId); err != nil {
+		if _, err = l.repos.ProjectManagementProjectRepo.LockByOrganizationWithTx(ctx, tx, input.ProjectId, claim.OrganizationId); err != nil {
 			return projectManagementNotFound(err, "project not found")
 		}
-		workflow, err := l.repos.ProjectManagementWorkflowRepo.FindProjectDefinitionWithTx(ctx, tx, input.ProjectId, actor.OrganizationId)
+		workflow, err := l.repos.ProjectManagementWorkflowRepo.FindProjectDefinitionWithTx(ctx, tx, input.ProjectId, claim.OrganizationId)
 		if err != nil {
 			return projectManagementNotFound(err, "project workflow not found")
 		}
@@ -63,7 +70,7 @@ func (l *ProjectManagementLogic) CreateTask(ctx context.Context, actor *dto.Proj
 		}
 		task.StageId = pendingStage.Id
 		if input.TaskTypeId != 0 {
-			taskType, err := l.repos.ProjectManagementTaskTypeRepo.FindEnabledByOrganizationWithTx(ctx, tx, input.TaskTypeId, actor.OrganizationId)
+			taskType, err := l.repos.ProjectManagementTaskTypeRepo.FindEnabledByOrganizationWithTx(ctx, tx, input.TaskTypeId, claim.OrganizationId)
 			if err != nil {
 				return projectManagementNotFound(err, "enabled task type not found")
 			}
@@ -73,19 +80,30 @@ func (l *ProjectManagementLogic) CreateTask(ctx context.Context, actor *dto.Proj
 		if err != nil {
 			return err
 		}
-		assignees, err := l.projectManagementTaskAssignees(ctx, tx, input.ProjectId, task.Id, actor.OrganizationId, input.AssigneeIds)
+		assignees, err := l.projectManagementTaskAssignees(ctx, tx, input.ProjectId, task.Id, claim.OrganizationId, input.AssigneeIds)
 		if err != nil {
 			return err
 		}
 		if err = l.repos.ProjectManagementTaskRepo.CreateAssigneesWithTx(ctx, tx, assignees); err != nil {
 			return err
 		}
-		return l.recordProjectTaskOperation(ctx, tx, actor, task.ProjectId, task.Id, constants.OperationActionProjectManagementTaskCreate)
+		return l.recordProjectTaskOperation(ctx, tx, claim, task.ProjectId, task.Id, constants.OperationActionProjectManagementTaskCreate)
 	})
 	if err != nil {
 		return nil, err
 	}
-	return l.GetTask(ctx, actor, task.Id)
+	return l.Detail(ctx, claim, task.Id)
+}
+
+func (l *ProjectManagementTaskLogic) DetailForProject(ctx context.Context, claim *utils.JwtUser, projectId, taskId int64) (*model.ProjectManagementTask, error) {
+	task, err := l.Detail(ctx, claim, taskId)
+	if err != nil {
+		return nil, err
+	}
+	if task.ProjectId != projectId {
+		return nil, errorx.New("task not found")
+	}
+	return task, nil
 }
 
 func validateProjectManagementTaskCreate(input dto.ProjectManagementTaskCreateDto) error {
@@ -95,32 +113,32 @@ func validateProjectManagementTaskCreate(input dto.ProjectManagementTaskCreateDt
 	return nil
 }
 
-func (l *ProjectManagementLogic) GetTask(ctx context.Context, actor *dto.ProjectManagementActor, taskId int64) (*model.ProjectManagementTask, error) {
-	task, err := l.repos.ProjectManagementTaskRepo.FindDetailByOrganization(ctx, taskId, actor.OrganizationId)
+func (l *ProjectManagementTaskLogic) Detail(ctx context.Context, claim *utils.JwtUser, taskId int64) (*model.ProjectManagementTask, error) {
+	task, err := l.repos.ProjectManagementTaskRepo.FindDetailByOrganization(ctx, taskId, claim.OrganizationId)
 	if err != nil {
 		return nil, projectManagementNotFound(err, "task not found")
 	}
-	if _, err = l.RequireMember(ctx, task.ProjectId, actor.OrganizationUserId); err != nil {
+	if _, err = l.projectManagementAccess().RequireMember(ctx, task.ProjectId, claim.OrganizationUserId); err != nil {
 		return nil, err
 	}
 	return task, nil
 }
 
-func (l *ProjectManagementLogic) PageProjectTasks(ctx context.Context, actor *dto.ProjectManagementActor, input dto.ProjectManagementTaskPageRequestDto) (gormx.PageResponse[*model.ProjectManagementTask], error) {
-	if _, err := l.RequireProject(ctx, input.Filter.ProjectId, actor.OrganizationId); err != nil {
+func (l *ProjectManagementTaskLogic) Page(ctx context.Context, claim *utils.JwtUser, input dto.ProjectManagementTaskPageRequestDto) (gormx.PageResponse[*model.ProjectManagementTask], error) {
+	if _, err := l.projectManagementAccess().RequireProject(ctx, input.Filter.ProjectId, claim.OrganizationId); err != nil {
 		return gormx.PageResponse[*model.ProjectManagementTask]{}, err
 	}
-	if _, err := l.RequireMember(ctx, input.Filter.ProjectId, actor.OrganizationUserId); err != nil {
+	if _, err := l.projectManagementAccess().RequireMember(ctx, input.Filter.ProjectId, claim.OrganizationUserId); err != nil {
 		return gormx.PageResponse[*model.ProjectManagementTask]{}, err
 	}
-	page, err := l.repos.ProjectManagementTaskRepo.PageByProject(ctx, actor.OrganizationId, input)
+	page, err := l.repos.ProjectManagementTaskRepo.PageByProject(ctx, claim.OrganizationId, input)
 	if err != nil {
 		return page, err
 	}
 	return page, nil
 }
 
-func (l *ProjectManagementLogic) UpdateTask(ctx context.Context, actor *dto.ProjectManagementActor, taskId int64, input dto.ProjectManagementTaskUpdateDto) (*model.ProjectManagementTask, error) {
+func (l *ProjectManagementTaskLogic) Update(ctx context.Context, claim *utils.JwtUser, taskId int64, input dto.ProjectManagementTaskUpdateDto) (*model.ProjectManagementTask, error) {
 	if strings.TrimSpace(input.Title) == "" {
 		return nil, errorx.New("task title is required")
 	}
@@ -131,16 +149,16 @@ func (l *ProjectManagementLogic) UpdateTask(ctx context.Context, actor *dto.Proj
 		if err != nil {
 			return projectManagementNotFound(err, "task not found")
 		}
-		if task.OrganizationId != actor.OrganizationId {
+		if task.OrganizationId != claim.OrganizationId {
 			return errorx.New("task not found")
 		}
-		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.ProjectId, actor.OrganizationUserId); err != nil {
+		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.ProjectId, claim.OrganizationUserId); err != nil {
 			return projectManagementNotFound(err, "project member required")
 		}
 		task.Title, task.Description, task.Priority = input.Title, input.Description, input.Priority
 		task.StartAt, task.EndAt = projectManagementNullTime(input.StartAt), projectManagementNullTime(input.EndAt)
 		if input.TaskTypeId != 0 {
-			taskType, err := l.repos.ProjectManagementTaskTypeRepo.FindEnabledByOrganizationWithTx(ctx, tx, input.TaskTypeId, actor.OrganizationId)
+			taskType, err := l.repos.ProjectManagementTaskTypeRepo.FindEnabledByOrganizationWithTx(ctx, tx, input.TaskTypeId, claim.OrganizationId)
 			if err != nil {
 				return projectManagementNotFound(err, "enabled task type not found")
 			}
@@ -149,42 +167,42 @@ func (l *ProjectManagementLogic) UpdateTask(ctx context.Context, actor *dto.Proj
 		if err = tx.WithContext(ctx).Model(&model.ProjectManagementTask{}).Where("id = ?", task.Id).Updates(map[string]interface{}{"title": task.Title, "description": task.Description, "priority": task.Priority, "start_at": task.StartAt, "end_at": task.EndAt, "task_type": task.TaskType}).Error; err != nil {
 			return errorx.WithStack(err)
 		}
-		return l.recordProjectTaskOperation(ctx, tx, actor, task.ProjectId, task.Id, constants.OperationActionProjectManagementTaskUpdate)
+		return l.recordProjectTaskOperation(ctx, tx, claim, task.ProjectId, task.Id, constants.OperationActionProjectManagementTaskUpdate)
 	})
 	if err != nil {
 		return nil, err
 	}
-	return l.GetTask(ctx, actor, task.Id)
+	return l.Detail(ctx, claim, task.Id)
 }
 
-func (l *ProjectManagementLogic) ReplaceTaskAssignees(ctx context.Context, actor *dto.ProjectManagementActor, taskId int64, organizationUserIds []int64) (*model.ProjectManagementTask, error) {
+func (l *ProjectManagementTaskLogic) UpdateAssignees(ctx context.Context, claim *utils.JwtUser, taskId int64, organizationUserIds []int64) (*model.ProjectManagementTask, error) {
 	err := l.repos.ProjectManagementTaskRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		task, err := l.repos.ProjectManagementTaskRepo.LockWithTx(ctx, tx, taskId)
 		if err != nil {
 			return projectManagementNotFound(err, "task not found")
 		}
-		if task.OrganizationId != actor.OrganizationId {
+		if task.OrganizationId != claim.OrganizationId {
 			return errorx.New("task not found")
 		}
-		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.ProjectId, actor.OrganizationUserId); err != nil {
+		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.ProjectId, claim.OrganizationUserId); err != nil {
 			return projectManagementNotFound(err, "project member required")
 		}
-		assignees, err := l.projectManagementTaskAssignees(ctx, tx, task.ProjectId, task.Id, actor.OrganizationId, organizationUserIds)
+		assignees, err := l.projectManagementTaskAssignees(ctx, tx, task.ProjectId, task.Id, claim.OrganizationId, organizationUserIds)
 		if err != nil {
 			return err
 		}
 		if err = l.repos.ProjectManagementTaskRepo.ReplaceAssigneesWithTx(ctx, tx, task.Id, assignees); err != nil {
 			return err
 		}
-		return l.recordProjectTaskOperation(ctx, tx, actor, task.ProjectId, task.Id, constants.OperationActionProjectManagementTaskAssignees)
+		return l.recordProjectTaskOperation(ctx, tx, claim, task.ProjectId, task.Id, constants.OperationActionProjectManagementTaskAssignees)
 	})
 	if err != nil {
 		return nil, err
 	}
-	return l.GetTask(ctx, actor, taskId)
+	return l.Detail(ctx, claim, taskId)
 }
 
-func (l *ProjectManagementLogic) DeleteTask(ctx context.Context, actor *dto.ProjectManagementActor, taskId int64, confirm bool) error {
+func (l *ProjectManagementTaskLogic) Delete(ctx context.Context, claim *utils.JwtUser, taskId int64, confirm bool) error {
 	if err := validateProjectManagementTaskDelete(confirm); err != nil {
 		return err
 	}
@@ -193,10 +211,10 @@ func (l *ProjectManagementLogic) DeleteTask(ctx context.Context, actor *dto.Proj
 		if err != nil {
 			return projectManagementNotFound(err, "task not found")
 		}
-		if task.OrganizationId != actor.OrganizationId {
+		if task.OrganizationId != claim.OrganizationId {
 			return errorx.New("task not found")
 		}
-		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.ProjectId, actor.OrganizationUserId); err != nil {
+		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.ProjectId, claim.OrganizationUserId); err != nil {
 			return projectManagementNotFound(err, "project member required")
 		}
 		taskIds, err := l.repos.ProjectManagementTaskRepo.DescendantIdsWithTx(ctx, tx, taskId)
@@ -209,7 +227,7 @@ func (l *ProjectManagementLogic) DeleteTask(ctx context.Context, actor *dto.Proj
 		if err = l.repos.ProjectManagementTaskRepo.DeleteByIdsWithTx(ctx, tx, taskIds); err != nil {
 			return err
 		}
-		return l.recordProjectTaskOperation(ctx, tx, actor, task.ProjectId, task.Id, constants.OperationActionProjectManagementTaskDelete)
+		return l.recordProjectTaskOperation(ctx, tx, claim, task.ProjectId, task.Id, constants.OperationActionProjectManagementTaskDelete)
 	})
 }
 
@@ -227,7 +245,7 @@ func projectManagementNullTime(value *time.Time) *sql.NullTime {
 	return &sql.NullTime{Time: *value, Valid: true}
 }
 
-func (l *ProjectManagementLogic) projectManagementTaskAssignees(ctx context.Context, tx *gorm.DB, projectId, taskId, organizationId int64, organizationUserIds []int64) ([]*model.ProjectManagementTaskAssignee, error) {
+func (l *ProjectManagementTaskLogic) projectManagementTaskAssignees(ctx context.Context, tx *gorm.DB, projectId, taskId, organizationId int64, organizationUserIds []int64) ([]*model.ProjectManagementTaskAssignee, error) {
 	result := make([]*model.ProjectManagementTaskAssignee, 0, len(organizationUserIds))
 	seen := make(map[int64]struct{}, len(organizationUserIds))
 	for _, organizationUserId := range organizationUserIds {
@@ -250,10 +268,10 @@ func (l *ProjectManagementLogic) projectManagementTaskAssignees(ctx context.Cont
 	return result, nil
 }
 
-func (l *ProjectManagementLogic) recordProjectTaskOperation(ctx context.Context, tx *gorm.DB, actor *dto.ProjectManagementActor, projectId, taskId int64, operation constants.OperationAction) error {
+func (l *ProjectManagementTaskLogic) recordProjectTaskOperation(ctx context.Context, tx *gorm.DB, claim *utils.JwtUser, projectId, taskId int64, operation constants.OperationAction) error {
 	metadata, err := json.Marshal(map[string]int64{"project_id": projectId, "task_id": taskId})
 	if err != nil {
 		return errorx.WithStack(err)
 	}
-	return NewOperationLogic(l.BaseLogic).CreateOperationLog(ctx, tx, dto.OperationCreateDto{EntityId: projectId, EntityType: constants.OperationEntityTypeProjectManagementProject, OperatorId: actor.OrganizationUserId, OperatorName: actor.Name, OperatorType: constants.UserTypeBorrower, Operation: operation, Metadata: metadata, OrganizationId: actor.OrganizationId})
+	return NewOperationLogic(l.BaseLogic).CreateOperationLog(ctx, tx, dto.OperationCreateDto{EntityId: projectId, EntityType: constants.OperationEntityTypeProjectManagementProject, OperatorId: claim.OrganizationUserId, OperatorName: claim.Username, OperatorType: constants.UserTypeBorrower, Operation: operation, Metadata: metadata, OrganizationId: claim.OrganizationId})
 }

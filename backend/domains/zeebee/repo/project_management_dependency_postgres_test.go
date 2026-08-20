@@ -5,12 +5,14 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	domainlogic "zeebee-backend/domains/zeebee/logic"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/repo"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestProjectManagementDependencyPostgresOppositeEdges(t *testing.T) {
@@ -28,10 +30,10 @@ func TestProjectManagementDependencyPostgresOppositeEdges(t *testing.T) {
 	}
 	require.NoError(t, db.Create(&tasks).Error)
 
-	projectLogic := domainlogic.NewProjectManagementLogic(
+	projectLogic := domainlogic.NewProjectManagementDependencyLogic(
 		domainlogic.NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}),
 	)
-	actor := &dto.ProjectManagementActor{OrganizationId: 1, OrganizationUserId: 1, Name: "Executor"}
+	actor := &utils.JwtUser{OrganizationId: 1, OrganizationUserId: 1, Username: "Executor"}
 	start := make(chan struct{})
 	errs := make(chan error, 2)
 	inputs := []dto.ProjectManagementTaskDependencyDto{
@@ -44,7 +46,7 @@ func TestProjectManagementDependencyPostgresOppositeEdges(t *testing.T) {
 		go func(input dto.ProjectManagementTaskDependencyDto) {
 			defer wg.Done()
 			<-start
-			_, err := projectLogic.CreateTaskDependency(context.Background(), actor, input)
+			_, err := projectLogic.Create(context.Background(), actor, input)
 			errs <- err
 		}(input)
 	}

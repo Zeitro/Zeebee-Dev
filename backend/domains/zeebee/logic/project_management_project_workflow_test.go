@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
+	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
@@ -50,12 +51,12 @@ func TestUpdateProjectWorkflowRequiresProjectManager(t *testing.T) {
 	require.NoError(t, db.Exec("INSERT INTO project_management_workflows (id, kind, organization_id, project_id, name) VALUES (100, ?, 1, 1, 'Workflow')", constants.ProjectManagementWorkflowKindProject).Error)
 	require.NoError(t, db.Exec("INSERT INTO project_management_workflow_stages (id, workflow_id, name, phase, sort_order) VALUES (101, 100, 'Pending', ?, 1)", constants.ProjectManagementStagePhasePending).Error)
 
-	logic := NewProjectManagementLogic(NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}))
+	logic := NewProjectManagementWorkflowLogic(NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}))
 	input := dto.ProjectManagementWorkflowDto{
 		Name:   "Updated workflow",
 		Stages: []dto.ProjectManagementWorkflowStageDto{{Id: 101, Name: "Pending", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 1}},
 	}
-	_, err = logic.UpdateProjectWorkflow(context.Background(), &dto.ProjectManagementActor{OrganizationId: 1, OrganizationUserId: 20}, 1, input)
+	_, err = logic.ProjectUpdate(context.Background(), &utils.JwtUser{OrganizationId: 1, OrganizationUserId: 20}, 1, input)
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "project member role is not allowed")
 

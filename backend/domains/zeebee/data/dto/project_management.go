@@ -6,12 +6,6 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 )
 
-type ProjectManagementActor struct {
-	OrganizationId     int64
-	OrganizationUserId int64
-	Name               string
-}
-
 type ProjectManagementWorkflowStageDto struct {
 	Id        int64
 	Name      string
@@ -112,6 +106,7 @@ type ProjectManagementProjectPageRequestDto struct {
 
 type ProjectManagementMemberDto struct {
 	ProjectId          int64
+	MemberId           int64
 	OrganizationUserId int64
 	Role               constants.ProjectManagementMemberRole
 }

@@ -9,19 +9,26 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
+	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 )
 
-func (l *ProjectManagementLogic) PageTaskAttachments(ctx context.Context, actor *dto.ProjectManagementActor, taskId int64, input dto.ProjectManagementAttachmentPageRequestDto) (gormx.PageResponse[*model.File], error) {
-	if _, err := l.GetTask(ctx, actor, taskId); err != nil {
+type ProjectManagementAttachmentLogic struct{ *BaseLogic }
+
+func NewProjectManagementAttachmentLogic(baseLogic *BaseLogic) *ProjectManagementAttachmentLogic {
+	return &ProjectManagementAttachmentLogic{BaseLogic: baseLogic}
+}
+
+func (l *ProjectManagementAttachmentLogic) Page(ctx context.Context, claim *utils.JwtUser, taskId int64, input dto.ProjectManagementAttachmentPageRequestDto) (gormx.PageResponse[*model.File], error) {
+	if _, err := NewProjectManagementTaskLogic(l.BaseLogic).Detail(ctx, claim, taskId); err != nil {
 		return gormx.PageResponse[*model.File]{}, err
 	}
 	return l.repos.FileRepo.PageByEntity(ctx, taskId, constants.FileEntityTypeProjectManagementTask, gormx.PageRequest{Page: input.Page, Limit: input.Limit})
 }
 
-func (l *ProjectManagementLogic) RegisterTaskAttachment(ctx context.Context, actor *dto.ProjectManagementActor, input dto.ProjectManagementAttachmentCreateDto) (file *model.File, err error) {
+func (l *ProjectManagementAttachmentLogic) Create(ctx context.Context, claim *utils.JwtUser, input dto.ProjectManagementAttachmentCreateDto) (file *model.File, err error) {
 	if input.TaskId == 0 || strings.TrimSpace(input.FileUrl) == "" {
 		return nil, errorx.New("task and file url are required")
 	}
@@ -36,10 +43,10 @@ func (l *ProjectManagementLogic) RegisterTaskAttachment(ctx context.Context, act
 		if err != nil {
 			return projectManagementNotFound(err, "task not found")
 		}
-		if task.OrganizationId != actor.OrganizationId {
+		if task.OrganizationId != claim.OrganizationId {
 			return errorx.New("task not found")
 		}
-		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.ProjectId, actor.OrganizationUserId); err != nil {
+		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.ProjectId, claim.OrganizationUserId); err != nil {
 			return projectManagementNotFound(err, "project member required")
 		}
 		file, err = copierx.Trans[dto.ProjectManagementAttachmentCreateDto, model.File](&input)
@@ -51,21 +58,21 @@ func (l *ProjectManagementLogic) RegisterTaskAttachment(ctx context.Context, act
 		if err != nil {
 			return err
 		}
-		return l.recordProjectTaskOperation(ctx, tx, actor, task.ProjectId, task.Id, constants.OperationActionProjectManagementAttachmentAdd)
+		return NewProjectManagementTaskLogic(l.BaseLogic).recordProjectTaskOperation(ctx, tx, claim, task.ProjectId, task.Id, constants.OperationActionProjectManagementAttachmentAdd)
 	})
 	return file, err
 }
 
-func (l *ProjectManagementLogic) DeleteTaskAttachment(ctx context.Context, actor *dto.ProjectManagementActor, taskId, fileId int64) error {
+func (l *ProjectManagementAttachmentLogic) Delete(ctx context.Context, claim *utils.JwtUser, taskId, fileId int64) error {
 	return l.repos.FileRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		task, err := l.repos.ProjectManagementTaskRepo.LockWithTx(ctx, tx, taskId)
 		if err != nil {
 			return projectManagementNotFound(err, "task not found")
 		}
-		if task.OrganizationId != actor.OrganizationId {
+		if task.OrganizationId != claim.OrganizationId {
 			return errorx.New("task not found")
 		}
-		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.ProjectId, actor.OrganizationUserId); err != nil {
+		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.ProjectId, claim.OrganizationUserId); err != nil {
 			return projectManagementNotFound(err, "project member required")
 		}
 		file, err := l.repos.FileRepo.FindOneByIdWithTx(ctx, tx, fileId)
@@ -78,6 +85,6 @@ func (l *ProjectManagementLogic) DeleteTaskAttachment(ctx context.Context, actor
 		if _, err = l.repos.FileRepo.DeleteByIDWithTx(ctx, tx, file.Id); err != nil {
 			return err
 		}
-		return l.recordProjectTaskOperation(ctx, tx, actor, task.ProjectId, task.Id, constants.OperationActionProjectManagementAttachmentDelete)
+		return NewProjectManagementTaskLogic(l.BaseLogic).recordProjectTaskOperation(ctx, tx, claim, task.ProjectId, task.Id, constants.OperationActionProjectManagementAttachmentDelete)
 	})
 }

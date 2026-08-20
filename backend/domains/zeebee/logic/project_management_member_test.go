@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
+	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
@@ -45,15 +46,15 @@ func TestProjectMemberTransferRemoveAndHistoricalSnapshots(t *testing.T) {
 	require.NoError(t, db.Exec("INSERT INTO project_management_tasks (id, project_id, organization_id, stage_id, creator_id, creator_name, title) VALUES (1, 1, 1, 1, 10, 'Former owner', 'Historical task')").Error)
 	require.NoError(t, db.Exec("INSERT INTO project_management_task_assignees (id, task_id, organization_user_id, organization_user_name) VALUES (1, 1, 10, 'Former owner')").Error)
 
-	logic := NewProjectManagementLogic(NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}))
-	actor := &dto.ProjectManagementActor{OrganizationId: 1, OrganizationUserId: 10, Name: "Owner"}
-	candidates, err := logic.repos.ProjectManagementProjectRepo.CandidateMembers(context.Background(), 1, 1, "")
+	logic := NewProjectManagementMemberLogic(NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}))
+	actor := &utils.JwtUser{OrganizationId: 1, OrganizationUserId: 10, Username: "Owner"}
+	candidates, err := logic.repos.ProjectManagementProjectRepo.CandidateMembers(context.Background(), 1, 1, "", false)
 	require.NoError(t, err)
 	require.Len(t, candidates, 1)
 	require.Equal(t, int64(12), candidates[0].OrganizationUserId)
 
-	require.NoError(t, logic.TransferProjectOwner(context.Background(), actor, 1, 11))
-	require.NoError(t, logic.RemoveProjectMember(context.Background(), &dto.ProjectManagementActor{OrganizationId: 1, OrganizationUserId: 11, Name: "Admin"}, 1, 10))
+	require.NoError(t, logic.TransferOwner(context.Background(), actor, 1, 11))
+	require.NoError(t, logic.Delete(context.Background(), &utils.JwtUser{OrganizationId: 1, OrganizationUserId: 11, Username: "Admin"}, 1, 1))
 
 	var project model.ProjectManagementProject
 	require.NoError(t, db.First(&project, 1).Error)

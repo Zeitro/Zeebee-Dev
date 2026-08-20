@@ -49,11 +49,7 @@ func TestProjectManagementAccessScopeAndRemovedMember(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	logic := NewProjectManagementLogic(NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}))
-	actor, err := logic.RequireActor(context.Background(), 1, 99)
-	if err != nil || actor.OrganizationUserId != 20 || actor.Name != "Member" {
-		t.Fatalf("organization actor lookup failed: %#v, %v", actor, err)
-	}
+	logic := NewProjectManagementAccessLogic(NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}))
 	if _, err = logic.RequireProject(context.Background(), 10, 2); err == nil {
 		t.Fatal("cross-organization project accepted")
 	}

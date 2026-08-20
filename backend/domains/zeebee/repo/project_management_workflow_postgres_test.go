@@ -46,7 +46,7 @@ func projectManagementPostgresDB(t *testing.T) *gorm.DB {
 
 func TestProjectManagementWorkflowPostgresConcurrencyAndConstraints(t *testing.T) {
 	db := projectManagementPostgresDB(t)
-	projectLogic := domainlogic.NewProjectManagementLogic(
+	projectLogic := domainlogic.NewProjectManagementWorkflowLogic(
 		domainlogic.NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}),
 	)
 	var wg sync.WaitGroup
@@ -55,7 +55,7 @@ func TestProjectManagementWorkflowPostgresConcurrencyAndConstraints(t *testing.T
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			_, err := projectLogic.ListEnabledWorkflows(context.Background(), 1)
+			_, err := projectLogic.ListEnabled(context.Background(), 1)
 			errs <- err
 		}()
 	}

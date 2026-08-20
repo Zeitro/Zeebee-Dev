@@ -127,6 +127,14 @@ func (r *ProjectManagementWorkflowRepo) LockTemplateWithTx(ctx context.Context, 
 	return workflow, errorx.WithStack(err)
 }
 
+func (r *ProjectManagementWorkflowRepo) LockTemplatesWithTx(ctx context.Context, tx *gorm.DB, organizationId int64) ([]*model.ProjectManagementWorkflow, error) {
+	workflows := make([]*model.ProjectManagementWorkflow, 0)
+	err := tx.WithContext(ctx).Clauses(clause.Locking{Strength: "UPDATE"}).
+		Where("organization_id = ? AND kind = ?", organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).
+		Order("id ASC").Find(&workflows).Error
+	return workflows, errorx.WithStack(err)
+}
+
 func (r *ProjectManagementWorkflowRepo) DemoteDefaultWithTx(ctx context.Context, tx *gorm.DB, organizationId, exceptId int64) error {
 	err := tx.WithContext(ctx).Model(&model.ProjectManagementWorkflow{}).
 		Where("organization_id = ? AND kind = ? AND id <> ?", organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate, exceptId).

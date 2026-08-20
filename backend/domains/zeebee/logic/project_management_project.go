@@ -10,21 +10,28 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
+	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/repo"
 )
 
-func (l *ProjectManagementLogic) PageProjects(ctx context.Context, actor *dto.ProjectManagementActor, input dto.ProjectManagementProjectPageRequestDto) (gormx.PageResponse[*model.ProjectManagementProject], error) {
-	return l.repos.ProjectManagementProjectRepo.Page(ctx, actor.OrganizationId, input)
+type ProjectManagementProjectLogic struct{ *BaseLogic }
+
+func NewProjectManagementProjectLogic(baseLogic *BaseLogic) *ProjectManagementProjectLogic {
+	return &ProjectManagementProjectLogic{BaseLogic: baseLogic}
 }
 
-func (l *ProjectManagementLogic) PageProjectMembers(ctx context.Context, actor *dto.ProjectManagementActor, projectId int64, input dto.ProjectManagementMemberPageRequestDto) (gormx.PageResponse[*dto.ProjectManagementMemberDetailDto], error) {
-	if _, err := l.RequireProject(ctx, projectId, actor.OrganizationId); err != nil {
+func (l *ProjectManagementProjectLogic) Page(ctx context.Context, claim *utils.JwtUser, input dto.ProjectManagementProjectPageRequestDto) (gormx.PageResponse[*model.ProjectManagementProject], error) {
+	return l.repos.ProjectManagementProjectRepo.Page(ctx, claim.OrganizationId, input)
+}
+
+func (l *ProjectManagementMemberLogic) Page(ctx context.Context, claim *utils.JwtUser, projectId int64, input dto.ProjectManagementMemberPageRequestDto) (gormx.PageResponse[*dto.ProjectManagementMemberDetailDto], error) {
+	if _, err := l.projectManagementAccess().RequireProject(ctx, projectId, claim.OrganizationId); err != nil {
 		return gormx.PageResponse[*dto.ProjectManagementMemberDetailDto]{}, err
 	}
-	if _, err := l.RequireMember(ctx, projectId, actor.OrganizationUserId); err != nil {
+	if _, err := l.projectManagementAccess().RequireMember(ctx, projectId, claim.OrganizationUserId); err != nil {
 		return gormx.PageResponse[*dto.ProjectManagementMemberDetailDto]{}, err
 	}
 	page, err := l.repos.ProjectManagementProjectRepo.PageMembers(ctx, projectId, input)
@@ -38,21 +45,21 @@ func (l *ProjectManagementLogic) PageProjectMembers(ctx context.Context, actor *
 	return gormx.PageResponse[*dto.ProjectManagementMemberDetailDto]{Page: page.Page, Limit: page.Limit, Total: page.Total, TotalPage: page.TotalPage, List: list}, nil
 }
 
-func (l *ProjectManagementLogic) CandidateProjectMembers(ctx context.Context, actor *dto.ProjectManagementActor, projectId int64, keyword string) ([]*dto.ProjectManagementMemberDetailDto, error) {
-	if _, err := l.RequireProject(ctx, projectId, actor.OrganizationId); err != nil {
+func (l *ProjectManagementMemberLogic) Candidate(ctx context.Context, claim *utils.JwtUser, projectId int64, keyword string, needAll bool) ([]*dto.ProjectManagementMemberDetailDto, error) {
+	if _, err := l.projectManagementAccess().RequireProject(ctx, projectId, claim.OrganizationId); err != nil {
 		return nil, err
 	}
-	if _, err := l.RequireMemberRole(ctx, projectId, actor.OrganizationUserId, constants.ProjectManagementMemberRoleProjectOwner, constants.ProjectManagementMemberRoleProjectAdmin); err != nil {
+	if _, err := l.projectManagementAccess().RequireMemberRole(ctx, projectId, claim.OrganizationUserId, constants.ProjectManagementMemberRoleProjectOwner, constants.ProjectManagementMemberRoleProjectAdmin); err != nil {
 		return nil, err
 	}
-	candidates, err := l.repos.ProjectManagementProjectRepo.CandidateMembers(ctx, actor.OrganizationId, projectId, keyword)
+	candidates, err := l.repos.ProjectManagementProjectRepo.CandidateMembers(ctx, claim.OrganizationId, projectId, keyword, needAll)
 	if err != nil {
 		return nil, err
 	}
 	return projectManagementMemberDtos(candidates)
 }
 
-func (l *ProjectManagementLogic) RequirePropertyDeletable(ctx context.Context, propertyId int64) error {
+func (l *ProjectManagementProjectLogic) RequirePropertyDeletable(ctx context.Context, propertyId int64) error {
 	blocked, err := l.repos.ProjectManagementProjectRepo.HasUnfinishedTasksForEntity(ctx, propertyId, constants.ProjectManagementEntityTypeProperty)
 	if err != nil {
 		return err
@@ -75,7 +82,7 @@ func projectManagementMemberDtos(models []*repo.ProjectManagementProjectMemberEn
 	return result, nil
 }
 
-func (l *ProjectManagementLogic) CreateProject(ctx context.Context, actor *dto.ProjectManagementActor, input dto.ProjectManagementProjectCreateDto) (project *model.ProjectManagementProject, err error) {
+func (l *ProjectManagementProjectLogic) Create(ctx context.Context, claim *utils.JwtUser, input dto.ProjectManagementProjectCreateDto) (project *model.ProjectManagementProject, err error) {
 	if err = validateProjectManagementProjectCreate(input); err != nil {
 		return nil, err
 	}
@@ -83,52 +90,52 @@ func (l *ProjectManagementLogic) CreateProject(ctx context.Context, actor *dto.P
 	if err != nil {
 		return nil, err
 	}
-	project.OrganizationId, project.OwnerId, project.OwnerName = actor.OrganizationId, actor.OrganizationUserId, actor.Name
+	project.OrganizationId, project.OwnerId, project.OwnerName = claim.OrganizationId, claim.OrganizationUserId, claim.Username
 	err = l.repos.ProjectManagementProjectRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		project, err = l.repos.ProjectManagementProjectRepo.CreateWithTx(ctx, tx, project, false)
 		if err != nil {
 			return err
 		}
-		if err = l.repos.ProjectManagementProjectRepo.CreateMemberWithTx(ctx, tx, &model.ProjectManagementProjectMember{ProjectId: project.Id, OrganizationUserId: actor.OrganizationUserId, Role: constants.ProjectManagementMemberRoleProjectOwner}); err != nil {
+		if err = l.repos.ProjectManagementProjectRepo.CreateMemberWithTx(ctx, tx, &model.ProjectManagementProjectMember{ProjectId: project.Id, OrganizationUserId: claim.OrganizationUserId, Role: constants.ProjectManagementMemberRoleProjectOwner}); err != nil {
 			return err
 		}
-		if err = l.repos.ProjectManagementWorkflowRepo.CloneTemplateToProjectWithTx(ctx, tx, input.WorkflowTemplateId, actor.OrganizationId, project.Id); err != nil {
+		if err = l.repos.ProjectManagementWorkflowRepo.CloneTemplateToProjectWithTx(ctx, tx, input.WorkflowTemplateId, claim.OrganizationId, project.Id); err != nil {
 			return projectManagementNotFound(err, "enabled workflow template not found")
 		}
-		return l.recordProjectCreateOperation(ctx, tx, actor, project.Id)
+		return l.recordCreateOperation(ctx, tx, claim, project.Id)
 	})
 	return project, err
 }
 
-func (l *ProjectManagementLogic) UpdateProject(ctx context.Context, actor *dto.ProjectManagementActor, projectId int64, input dto.ProjectManagementProjectUpdateDto) (*model.ProjectManagementProject, error) {
+func (l *ProjectManagementProjectLogic) Update(ctx context.Context, claim *utils.JwtUser, projectId int64, input dto.ProjectManagementProjectUpdateDto) (*model.ProjectManagementProject, error) {
 	if err := validateProjectManagementProjectUpdate(input); err != nil {
 		return nil, err
 	}
-	project, err := l.RequireProject(ctx, projectId, actor.OrganizationId)
+	project, err := l.projectManagementAccess().RequireProject(ctx, projectId, claim.OrganizationId)
 	if err != nil {
 		return nil, err
 	}
-	if _, err = l.RequireMemberRole(ctx, projectId, actor.OrganizationUserId, constants.ProjectManagementMemberRoleProjectOwner, constants.ProjectManagementMemberRoleProjectAdmin); err != nil {
+	if _, err = l.projectManagementAccess().RequireMemberRole(ctx, projectId, claim.OrganizationUserId, constants.ProjectManagementMemberRoleProjectOwner, constants.ProjectManagementMemberRoleProjectAdmin); err != nil {
 		return nil, err
 	}
 	if err = copierx.Assign(&input, project); err != nil {
 		return nil, err
 	}
-	if err = l.repos.ProjectManagementProjectRepo.UpdateByOrganization(ctx, projectId, actor.OrganizationId, &model.ProjectManagementProject{Name: project.Name, Description: project.Description, CoverUrl: project.CoverUrl}); err != nil {
+	if err = l.repos.ProjectManagementProjectRepo.UpdateByOrganization(ctx, projectId, claim.OrganizationId, &model.ProjectManagementProject{Name: project.Name, Description: project.Description, CoverUrl: project.CoverUrl}); err != nil {
 		return nil, err
 	}
 	err = l.repos.ProjectManagementProjectRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		return l.recordProjectOperation(ctx, tx, actor, projectId, constants.OperationActionProjectManagementProjectUpdate)
+		return l.recordOperation(ctx, tx, claim, projectId, constants.OperationActionProjectManagementProjectUpdate)
 	})
 	return project, err
 }
 
-func (l *ProjectManagementLogic) DeleteProject(ctx context.Context, actor *dto.ProjectManagementActor, projectId int64, confirm bool) error {
+func (l *ProjectManagementProjectLogic) Delete(ctx context.Context, claim *utils.JwtUser, projectId int64, confirm bool) error {
 	if err := validateProjectManagementProjectDelete(confirm); err != nil {
 		return err
 	}
 	return l.repos.ProjectManagementProjectRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		if _, err := l.requireProjectManagerWithTx(ctx, tx, actor, projectId); err != nil {
+		if _, err := l.projectManagementAccess().requireProjectManagerWithTx(ctx, tx, claim, projectId); err != nil {
 			return err
 		}
 		taskIds, err := l.repos.ProjectManagementTaskRepo.IdsByProjectWithTx(ctx, tx, projectId)
@@ -147,7 +154,7 @@ func (l *ProjectManagementLogic) DeleteProject(ctx context.Context, actor *dto.P
 		if err = l.repos.ProjectManagementProjectRepo.DeleteProjectWithTx(ctx, tx, projectId); err != nil {
 			return err
 		}
-		return l.recordProjectOperation(ctx, tx, actor, projectId, constants.OperationActionProjectManagementProjectDelete)
+		return l.recordOperation(ctx, tx, claim, projectId, constants.OperationActionProjectManagementProjectDelete)
 	})
 }
 
@@ -172,14 +179,14 @@ func validateProjectManagementProjectDelete(confirm bool) error {
 	return nil
 }
 
-func (l *ProjectManagementLogic) recordProjectCreateOperation(ctx context.Context, tx *gorm.DB, actor *dto.ProjectManagementActor, projectId int64) error {
-	return l.recordProjectOperation(ctx, tx, actor, projectId, constants.OperationActionProjectManagementProjectCreate)
+func (l *ProjectManagementProjectLogic) recordCreateOperation(ctx context.Context, tx *gorm.DB, claim *utils.JwtUser, projectId int64) error {
+	return l.recordOperation(ctx, tx, claim, projectId, constants.OperationActionProjectManagementProjectCreate)
 }
 
-func (l *ProjectManagementLogic) recordProjectOperation(ctx context.Context, tx *gorm.DB, actor *dto.ProjectManagementActor, projectId int64, operation constants.OperationAction) error {
+func (l *ProjectManagementProjectLogic) recordOperation(ctx context.Context, tx *gorm.DB, claim *utils.JwtUser, projectId int64, operation constants.OperationAction) error {
 	metadata, err := json.Marshal(map[string]int64{"project_id": projectId})
 	if err != nil {
 		return errorx.WithStack(err)
 	}
-	return NewOperationLogic(l.BaseLogic).CreateOperationLog(ctx, tx, dto.OperationCreateDto{EntityId: projectId, EntityType: constants.OperationEntityTypeProjectManagementProject, OperatorId: actor.OrganizationUserId, OperatorName: actor.Name, OperatorType: constants.UserTypeBorrower, Operation: operation, Metadata: metadata, OrganizationId: actor.OrganizationId})
+	return NewOperationLogic(l.BaseLogic).CreateOperationLog(ctx, tx, dto.OperationCreateDto{EntityId: projectId, EntityType: constants.OperationEntityTypeProjectManagementProject, OperatorId: claim.OrganizationUserId, OperatorName: claim.Username, OperatorType: constants.UserTypeBorrower, Operation: operation, Metadata: metadata, OrganizationId: claim.OrganizationId})
 }

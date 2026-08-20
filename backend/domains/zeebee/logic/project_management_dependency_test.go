@@ -8,6 +8,7 @@ import (
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 
+	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/repo"
@@ -54,36 +55,36 @@ func TestCreateTaskDependencyRules(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	logic := NewProjectManagementLogic(NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}))
-	actor := &dto.ProjectManagementActor{OrganizationId: 1, OrganizationUserId: 7, Name: "Actor"}
+	logic := NewProjectManagementDependencyLogic(NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}))
+	actor := &utils.JwtUser{OrganizationId: 1, OrganizationUserId: 7, Username: "Actor"}
 	input := dto.ProjectManagementTaskDependencyDto{TaskId: 2, DependencyTaskId: 1, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}
 
-	dependency, err := logic.CreateTaskDependency(context.Background(), actor, input)
+	dependency, err := logic.Create(context.Background(), actor, input)
 	if err != nil || dependency == nil || dependency.Id == 0 {
 		t.Fatalf("valid dependency rejected: %#v, %v", dependency, err)
 	}
-	if _, err = logic.CreateTaskDependency(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 2, DependencyTaskId: 4, DependencyType: constants.ProjectManagementDependencyTypePostTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}); err != nil {
+	if _, err = logic.Create(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 2, DependencyTaskId: 4, DependencyType: constants.ProjectManagementDependencyTypePostTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}); err != nil {
 		t.Fatalf("mixed post-task dependency rejected: %v", err)
 	}
-	if _, err = logic.CreateTaskDependency(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 1, DependencyTaskId: 4, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}); err == nil {
+	if _, err = logic.Create(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 1, DependencyTaskId: 4, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}); err == nil {
 		t.Fatal("mixed pre/post dependency cycle accepted")
 	}
-	if _, err = logic.CreateTaskDependency(context.Background(), actor, input); err == nil {
+	if _, err = logic.Create(context.Background(), actor, input); err == nil {
 		t.Fatal("duplicate dependency accepted")
 	}
-	if _, err = logic.CreateTaskDependency(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 1, DependencyTaskId: 2, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}); err == nil {
+	if _, err = logic.Create(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 1, DependencyTaskId: 2, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}); err == nil {
 		t.Fatal("dependency cycle accepted")
 	}
-	if _, err = logic.CreateTaskDependency(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 2, DependencyTaskId: 1, DependencyType: constants.ProjectManagementDependencyTypePostTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}); err == nil {
+	if _, err = logic.Create(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 2, DependencyTaskId: 1, DependencyType: constants.ProjectManagementDependencyTypePostTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}); err == nil {
 		t.Fatal("post-task dependency cycle accepted")
 	}
-	if _, err = logic.CreateTaskDependency(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 2, DependencyTaskId: 3, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}); err == nil {
+	if _, err = logic.Create(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 2, DependencyTaskId: 3, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}); err == nil {
 		t.Fatal("cross-project dependency accepted")
 	}
 	if err = db.Exec("UPDATE project_management_tasks SET stage_id = 101 WHERE id = 2").Error; err != nil {
 		t.Fatal(err)
 	}
-	if _, err = logic.CreateTaskDependency(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 2, DependencyTaskId: 1, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFF}); err == nil {
+	if _, err = logic.Create(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 2, DependencyTaskId: 1, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFF}); err == nil {
 		t.Fatal("dependency added after successor left pending")
 	}
 }

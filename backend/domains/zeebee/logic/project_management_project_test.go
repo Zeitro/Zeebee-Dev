@@ -8,6 +8,7 @@ import (
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 
+	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
@@ -39,9 +40,9 @@ func TestCreateProjectClonesTemplateAndRollsBack(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	logic := NewProjectManagementLogic(NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}))
-	actor := &dto.ProjectManagementActor{OrganizationId: 1, OrganizationUserId: 7, Name: "Owner"}
-	project, err := logic.CreateProject(context.Background(), actor, dto.ProjectManagementProjectCreateDto{ProjectManagementProjectDto: dto.ProjectManagementProjectDto{Name: "Renovation", EntityId: 50, EntityType: "Property"}, WorkflowTemplateId: 100})
+	logic := NewProjectManagementProjectLogic(NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}))
+	actor := &utils.JwtUser{OrganizationId: 1, OrganizationUserId: 7, Username: "Owner"}
+	project, err := logic.Create(context.Background(), actor, dto.ProjectManagementProjectCreateDto{ProjectManagementProjectDto: dto.ProjectManagementProjectDto{Name: "Renovation", EntityId: 50, EntityType: "Property"}, WorkflowTemplateId: 100})
 	if err != nil {
 		t.Fatalf("project creation rejected: %v", err)
 	}
@@ -62,11 +63,11 @@ func TestCreateProjectClonesTemplateAndRollsBack(t *testing.T) {
 	if workflow.SourceTemplateId != 100 || workflow.SourceTemplateName != "Inspection" {
 		t.Fatalf("unexpected workflow snapshot: %#v", workflow)
 	}
-	transactionProject, err := logic.CreateProject(context.Background(), actor, dto.ProjectManagementProjectCreateDto{ProjectManagementProjectDto: dto.ProjectManagementProjectDto{Name: "Transaction project", EntityId: 51, EntityType: "Transaction"}, WorkflowTemplateId: 100})
+	transactionProject, err := logic.Create(context.Background(), actor, dto.ProjectManagementProjectCreateDto{ProjectManagementProjectDto: dto.ProjectManagementProjectDto{Name: "Transaction project", EntityId: 51, EntityType: "Transaction"}, WorkflowTemplateId: 100})
 	if err != nil || transactionProject.EntityId != 51 || transactionProject.EntityType != "Transaction" {
 		t.Fatalf("transaction binding was rejected: %#v, %v", transactionProject, err)
 	}
-	if _, err := logic.CreateProject(context.Background(), actor, dto.ProjectManagementProjectCreateDto{ProjectManagementProjectDto: dto.ProjectManagementProjectDto{Name: "Rejected"}, WorkflowTemplateId: 999}); err == nil {
+	if _, err := logic.Create(context.Background(), actor, dto.ProjectManagementProjectCreateDto{ProjectManagementProjectDto: dto.ProjectManagementProjectDto{Name: "Rejected"}, WorkflowTemplateId: 999}); err == nil {
 		t.Fatal("project with missing template was created")
 	}
 	var count int64

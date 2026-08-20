@@ -10,20 +10,12 @@ import (
 	"zeebee-backend/domains/zeebee/model"
 )
 
-type ProjectManagementLogic struct {
-	*BaseLogic
-}
-
-func NewProjectManagementLogic(baseLogic *BaseLogic) *ProjectManagementLogic {
-	return &ProjectManagementLogic{BaseLogic: baseLogic}
-}
-
-func (l *ProjectManagementLogic) ListEnabledWorkflows(ctx context.Context, organizationId int64) ([]*model.ProjectManagementWorkflow, error) {
+func (l *ProjectManagementWorkflowLogic) ListEnabled(ctx context.Context, organizationId int64) ([]*model.ProjectManagementWorkflow, error) {
 	workflows, err := l.repos.ProjectManagementWorkflowRepo.ListEnabledByOrganization(ctx, organizationId)
 	if err != nil || len(workflows) > 0 {
 		return workflows, err
 	}
-	if err = l.ensureDefaultWorkflow(ctx, organizationId); err != nil {
+	if err = l.ensureDefault(ctx, organizationId); err != nil {
 		workflows, retryErr := l.repos.ProjectManagementWorkflowRepo.ListEnabledByOrganization(ctx, organizationId)
 		if retryErr == nil && len(workflows) > 0 {
 			return workflows, nil
@@ -33,7 +25,7 @@ func (l *ProjectManagementLogic) ListEnabledWorkflows(ctx context.Context, organ
 	return l.repos.ProjectManagementWorkflowRepo.ListEnabledByOrganization(ctx, organizationId)
 }
 
-func (l *ProjectManagementLogic) ensureDefaultWorkflow(ctx context.Context, organizationId int64) error {
+func (l *ProjectManagementWorkflowLogic) ensureDefault(ctx context.Context, organizationId int64) error {
 	return l.repos.ProjectManagementWorkflowRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		workflow, err := l.repos.ProjectManagementWorkflowRepo.CreateWithTx(ctx, tx, &model.ProjectManagementWorkflow{
 			Kind:           constants.ProjectManagementWorkflowKindOrganizationTemplate,

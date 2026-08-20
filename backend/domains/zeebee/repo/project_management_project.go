@@ -67,7 +67,7 @@ func (r *ProjectManagementProjectRepo) PageMembers(ctx context.Context, projectI
 	return gormx.Page[*ProjectManagementProjectMemberEntity](query, gormx.PageRequest{Page: input.Page, Limit: input.Limit, CountColumn: fmt.Sprintf("%s.id", membersTable)})
 }
 
-func (r *ProjectManagementProjectRepo) CandidateMembers(ctx context.Context, organizationId, projectId int64, keyword string) ([]*ProjectManagementProjectMemberEntity, error) {
+func (r *ProjectManagementProjectRepo) CandidateMembers(ctx context.Context, organizationId, projectId int64, keyword string, needAll bool) ([]*ProjectManagementProjectMemberEntity, error) {
 	membersTable := model.ProjectManagementProjectMember{}.TableName()
 	organizationUsersTable := model.OrganizationUser{}.TableName()
 	usersTable := model.User{}.TableName()
@@ -75,8 +75,10 @@ func (r *ProjectManagementProjectRepo) CandidateMembers(ctx context.Context, org
 		Select(fmt.Sprintf("%s.id AS organization_user_id, %s.full_name, %s.email", organizationUsersTable, organizationUsersTable, usersTable)).
 		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.user_id", usersTable, usersTable, organizationUsersTable)).
 		Where(fmt.Sprintf("%s.organization_id = ? AND %s.status = ? AND %s.is_del = 0", organizationUsersTable, organizationUsersTable, usersTable), organizationId, constants.OrganizationUserStatusActive).
-		Where(fmt.Sprintf("NOT EXISTS (SELECT 1 FROM %s WHERE %s.project_id = ? AND %s.organization_user_id = %s.id AND %s.is_del = 0)", membersTable, membersTable, membersTable, organizationUsersTable, membersTable), projectId).
 		Order(fmt.Sprintf("%s.full_name ASC, %s.id ASC", organizationUsersTable, organizationUsersTable))
+	if !needAll {
+		query = query.Where(fmt.Sprintf("NOT EXISTS (SELECT 1 FROM %s WHERE %s.project_id = ? AND %s.organization_user_id = %s.id AND %s.is_del = 0)", membersTable, membersTable, membersTable, organizationUsersTable, membersTable), projectId)
+	}
 	if keyword != "" {
 		query = query.Where(fmt.Sprintf("%s.full_name ILIKE ? OR %s.email ILIKE ?", organizationUsersTable, usersTable), "%"+keyword+"%", "%"+keyword+"%")
 	}
@@ -118,6 +120,13 @@ func (r *ProjectManagementProjectRepo) FindMember(ctx context.Context, projectId
 	return member, errorx.WithStack(err)
 }
 
+func (r *ProjectManagementProjectRepo) FindMemberById(ctx context.Context, projectId, memberId int64) (*model.ProjectManagementProjectMember, error) {
+	member := new(model.ProjectManagementProjectMember)
+	err := r.Client(ctx).Model(&model.ProjectManagementProjectMember{}).
+		Where("id = ? AND project_id = ?", memberId, projectId).First(member).Error
+	return member, errorx.WithStack(err)
+}
+
 func (r *ProjectManagementProjectRepo) LockWithTx(ctx context.Context, tx *gorm.DB, id int64) (*model.ProjectManagementProject, error) {
 	project := new(model.ProjectManagementProject)
 	err := tx.WithContext(ctx).Clauses(clause.Locking{Strength: "UPDATE"}).First(project, id).Error
@@ -135,6 +144,13 @@ func (r *ProjectManagementProjectRepo) LockMemberWithTx(ctx context.Context, tx 
 	member := new(model.ProjectManagementProjectMember)
 	err := tx.WithContext(ctx).Clauses(clause.Locking{Strength: "UPDATE"}).
 		Where("project_id = ? AND organization_user_id = ?", projectId, organizationUserId).First(member).Error
+	return member, errorx.WithStack(err)
+}
+
+func (r *ProjectManagementProjectRepo) LockMemberByIdWithTx(ctx context.Context, tx *gorm.DB, projectId, memberId int64) (*model.ProjectManagementProjectMember, error) {
+	member := new(model.ProjectManagementProjectMember)
+	err := tx.WithContext(ctx).Clauses(clause.Locking{Strength: "UPDATE"}).
+		Where("id = ? AND project_id = ?", memberId, projectId).First(member).Error
 	return member, errorx.WithStack(err)
 }
 

@@ -9,10 +9,17 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
+	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 )
+
+type ProjectManagementDependencyLogic struct{ *BaseLogic }
+
+func NewProjectManagementDependencyLogic(baseLogic *BaseLogic) *ProjectManagementDependencyLogic {
+	return &ProjectManagementDependencyLogic{BaseLogic: baseLogic}
+}
 
 func validateProjectManagementDependency(input dto.ProjectManagementTaskDependencyDto) error {
 	if input.TaskId == 0 || input.DependencyTaskId == 0 {
@@ -49,7 +56,7 @@ func dependencyTasks(tasks []*model.ProjectManagementTask, taskId, dependencyTas
 	return task, dependencyTask
 }
 
-func (l *ProjectManagementLogic) CreateTaskDependency(ctx context.Context, actor *dto.ProjectManagementActor, input dto.ProjectManagementTaskDependencyDto) (*model.ProjectManagementTaskDependency, error) {
+func (l *ProjectManagementDependencyLogic) Create(ctx context.Context, claim *utils.JwtUser, input dto.ProjectManagementTaskDependencyDto) (*model.ProjectManagementTaskDependency, error) {
 	if err := validateProjectManagementDependency(input); err != nil {
 		return nil, err
 	}
@@ -68,10 +75,10 @@ func (l *ProjectManagementLogic) CreateTaskDependency(ctx context.Context, actor
 		if successor.Id != successorTaskId {
 			successor, predecessor = predecessor, successor
 		}
-		if successor.OrganizationId != actor.OrganizationId || predecessor.OrganizationId != actor.OrganizationId || successor.ProjectId != predecessor.ProjectId {
+		if successor.OrganizationId != claim.OrganizationId || predecessor.OrganizationId != claim.OrganizationId || successor.ProjectId != predecessor.ProjectId {
 			return errorx.New("dependency tasks must belong to the same project")
 		}
-		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, successor.ProjectId, actor.OrganizationUserId); err != nil {
+		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, successor.ProjectId, claim.OrganizationUserId); err != nil {
 			return projectManagementNotFound(err, "project member required")
 		}
 		stage, err := l.repos.ProjectManagementWorkflowRepo.FindStageWithTx(ctx, tx, successor.StageId)
@@ -101,19 +108,19 @@ func (l *ProjectManagementLogic) CreateTaskDependency(ctx context.Context, actor
 		if err != nil {
 			return err
 		}
-		return l.recordProjectDependencyOperation(ctx, tx, actor, successor.ProjectId, dependency, constants.OperationActionProjectManagementDependencyCreate)
+		return l.recordOperation(ctx, tx, claim, successor.ProjectId, dependency, constants.OperationActionProjectManagementDependencyCreate)
 	})
 	return dependency, err
 }
 
-func (l *ProjectManagementLogic) PageTaskDependencies(ctx context.Context, actor *dto.ProjectManagementActor, input dto.ProjectManagementTaskDependencyPageRequestDto) (gormx.PageResponse[*model.ProjectManagementTaskDependency], error) {
-	if _, err := l.GetTask(ctx, actor, input.TaskId); err != nil {
+func (l *ProjectManagementDependencyLogic) Page(ctx context.Context, claim *utils.JwtUser, input dto.ProjectManagementTaskDependencyPageRequestDto) (gormx.PageResponse[*model.ProjectManagementTaskDependency], error) {
+	if _, err := NewProjectManagementTaskLogic(l.BaseLogic).Detail(ctx, claim, input.TaskId); err != nil {
 		return gormx.PageResponse[*model.ProjectManagementTaskDependency]{}, err
 	}
 	return l.repos.ProjectManagementDependencyRepo.PageByTask(ctx, input.TaskId, input.Predecessor, gormx.PageRequest{Page: input.Page, Limit: input.Limit})
 }
 
-func (l *ProjectManagementLogic) UpdateTaskDependency(ctx context.Context, actor *dto.ProjectManagementActor, taskId, id int64, dependencyType constants.ProjectManagementDependencyType, dependencyRule constants.ProjectManagementDependencyRule) (*model.ProjectManagementTaskDependency, error) {
+func (l *ProjectManagementDependencyLogic) Update(ctx context.Context, claim *utils.JwtUser, taskId, id int64, dependencyType constants.ProjectManagementDependencyType, dependencyRule constants.ProjectManagementDependencyRule) (*model.ProjectManagementTaskDependency, error) {
 	var dependency *model.ProjectManagementTaskDependency
 	err := l.repos.ProjectManagementDependencyRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var err error
@@ -145,10 +152,10 @@ func (l *ProjectManagementLogic) UpdateTaskDependency(ctx context.Context, actor
 		if successor.Id != successorTaskId {
 			successor, predecessor = predecessor, successor
 		}
-		if successor == nil || predecessor == nil || successor.OrganizationId != actor.OrganizationId || predecessor.OrganizationId != actor.OrganizationId || successor.ProjectId != predecessor.ProjectId {
+		if successor == nil || predecessor == nil || successor.OrganizationId != claim.OrganizationId || predecessor.OrganizationId != claim.OrganizationId || successor.ProjectId != predecessor.ProjectId {
 			return errorx.New("task dependency not found")
 		}
-		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, successor.ProjectId, actor.OrganizationUserId); err != nil {
+		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, successor.ProjectId, claim.OrganizationUserId); err != nil {
 			return projectManagementNotFound(err, "project member required")
 		}
 		stage, err := l.repos.ProjectManagementWorkflowRepo.FindStageWithTx(ctx, tx, successor.StageId)
@@ -177,12 +184,12 @@ func (l *ProjectManagementLogic) UpdateTaskDependency(ctx context.Context, actor
 		if err = l.repos.ProjectManagementDependencyRepo.UpdateWithTx(ctx, tx, dependency); err != nil {
 			return err
 		}
-		return l.recordProjectDependencyOperation(ctx, tx, actor, successor.ProjectId, dependency, constants.OperationActionProjectManagementDependencyUpdate)
+		return l.recordOperation(ctx, tx, claim, successor.ProjectId, dependency, constants.OperationActionProjectManagementDependencyUpdate)
 	})
 	return dependency, err
 }
 
-func (l *ProjectManagementLogic) DeleteTaskDependency(ctx context.Context, actor *dto.ProjectManagementActor, id int64) error {
+func (l *ProjectManagementDependencyLogic) Delete(ctx context.Context, claim *utils.JwtUser, id int64) error {
 	return l.repos.ProjectManagementDependencyRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		dependency, err := l.repos.ProjectManagementDependencyRepo.LockWithTx(ctx, tx, id)
 		if err != nil {
@@ -201,24 +208,24 @@ func (l *ProjectManagementLogic) DeleteTaskDependency(ctx context.Context, actor
 		if successor.Id != successorTaskId {
 			successor, predecessor = predecessor, successor
 		}
-		if successor == nil || predecessor == nil || successor.OrganizationId != actor.OrganizationId {
+		if successor == nil || predecessor == nil || successor.OrganizationId != claim.OrganizationId {
 			return errorx.New("task dependency not found")
 		}
-		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, successor.ProjectId, actor.OrganizationUserId); err != nil {
+		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, successor.ProjectId, claim.OrganizationUserId); err != nil {
 			return projectManagementNotFound(err, "project member required")
 		}
 		if err = l.repos.ProjectManagementDependencyRepo.DeleteWithTx(ctx, tx, dependency); err != nil {
 			return err
 		}
-		return l.recordProjectDependencyOperation(ctx, tx, actor, successor.ProjectId, dependency, constants.OperationActionProjectManagementDependencyDelete)
+		return l.recordOperation(ctx, tx, claim, successor.ProjectId, dependency, constants.OperationActionProjectManagementDependencyDelete)
 	})
 }
 
-func (l *ProjectManagementLogic) recordProjectDependencyOperation(ctx context.Context, tx *gorm.DB, actor *dto.ProjectManagementActor, projectId int64, dependency *model.ProjectManagementTaskDependency, operation constants.OperationAction) error {
+func (l *ProjectManagementDependencyLogic) recordOperation(ctx context.Context, tx *gorm.DB, claim *utils.JwtUser, projectId int64, dependency *model.ProjectManagementTaskDependency, operation constants.OperationAction) error {
 	successorTaskId, _ := dependencyEndpoints(dependency.TaskId, dependency.DependencyTaskId, dependency.DependencyType)
 	metadata, err := json.Marshal(map[string]int64{"project_id": projectId, "task_id": successorTaskId, "dependency_id": dependency.Id})
 	if err != nil {
 		return errorx.WithStack(err)
 	}
-	return NewOperationLogic(l.BaseLogic).CreateOperationLog(ctx, tx, dto.OperationCreateDto{EntityId: projectId, EntityType: constants.OperationEntityTypeProjectManagementProject, OperatorId: actor.OrganizationUserId, OperatorName: actor.Name, OperatorType: constants.UserTypeBorrower, Operation: operation, Metadata: metadata, OrganizationId: actor.OrganizationId})
+	return NewOperationLogic(l.BaseLogic).CreateOperationLog(ctx, tx, dto.OperationCreateDto{EntityId: projectId, EntityType: constants.OperationEntityTypeProjectManagementProject, OperatorId: claim.OrganizationUserId, OperatorName: claim.Username, OperatorType: constants.UserTypeBorrower, Operation: operation, Metadata: metadata, OrganizationId: claim.OrganizationId})
 }

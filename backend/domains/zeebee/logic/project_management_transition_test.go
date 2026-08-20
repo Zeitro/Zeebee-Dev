@@ -8,13 +8,14 @@ import (
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 
+	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/repo"
 )
 
-func setupProjectManagementTransitionTest(t *testing.T, dependencyRule constants.ProjectManagementDependencyRule, predecessorPhase constants.ProjectManagementStagePhase) (*ProjectManagementLogic, *gorm.DB) {
+func setupProjectManagementTransitionTest(t *testing.T, dependencyRule constants.ProjectManagementDependencyRule, predecessorPhase constants.ProjectManagementStagePhase) (*ProjectManagementTaskLogic, *gorm.DB) {
 	t.Helper()
 	db, err := gorm.Open(sqlite.Open(fmt.Sprintf("file:%s?mode=memory&cache=shared", t.Name())), &gorm.Config{})
 	if err != nil {
@@ -57,7 +58,7 @@ func setupProjectManagementTransitionTest(t *testing.T, dependencyRule constants
 		t.Fatal(err)
 	}
 	base := NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{})
-	return NewProjectManagementLogic(base), db
+	return NewProjectManagementTaskLogic(base), db
 }
 
 func TestTransitionDependencyRules(t *testing.T) {
@@ -96,7 +97,7 @@ func TestTransitionDependencyRules(t *testing.T) {
 
 func TestTransitionActorAndChildRules(t *testing.T) {
 	logic, db := setupProjectManagementTransitionTest(t, "", constants.ProjectManagementStagePhasePending)
-	actor := &dto.ProjectManagementActor{OrganizationUserId: 7}
+	actor := &utils.JwtUser{OrganizationUserId: 7}
 	task := &model.ProjectManagementTask{Base: model.Base{Id: 10}}
 	project := &model.ProjectManagementProject{OwnerId: 1, OwnerName: "Owner"}
 	member := &model.ProjectManagementProjectMember{Role: constants.ProjectManagementMemberRoleProjectAdmin}

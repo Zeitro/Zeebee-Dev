@@ -8,6 +8,7 @@ import (
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 
+	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
@@ -131,17 +132,17 @@ func TestProjectManagementWorkflowDefaultRules(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	logic := NewProjectManagementLogic(NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}))
-	actor := &dto.ProjectManagementActor{OrganizationId: 1, OrganizationUserId: 7, Name: "Admin"}
+	logic := NewProjectManagementWorkflowLogic(NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}))
+	actor := &utils.JwtUser{OrganizationId: 1, OrganizationUserId: 7, Username: "Admin"}
 	defaultInput := dto.ProjectManagementWorkflowDto{Name: "Default", Enabled: true, Stages: []dto.ProjectManagementWorkflowStageDto{{Id: 11, Name: "Pending", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 1}}}
-	if _, err := logic.UpdateWorkflow(context.Background(), actor, 1, defaultInput); err == nil {
+	if _, err := logic.Update(context.Background(), actor, 1, defaultInput); err == nil {
 		t.Fatal("default workflow was unset without a replacement")
 	}
-	if err := logic.DeleteWorkflow(context.Background(), actor, 1); err == nil {
+	if err := logic.Delete(context.Background(), actor, 1); err == nil {
 		t.Fatal("default workflow was deleted")
 	}
 	replacement := dto.ProjectManagementWorkflowDto{Name: "Other", Enabled: true, IsDefault: true, Stages: []dto.ProjectManagementWorkflowStageDto{{Id: 21, Name: "Pending", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 1}}}
-	if _, err := logic.UpdateWorkflow(context.Background(), actor, 2, replacement); err != nil {
+	if _, err := logic.Update(context.Background(), actor, 2, replacement); err != nil {
 		t.Fatalf("default workflow replacement rejected: %v", err)
 	}
 	var defaultCount int64
@@ -150,5 +151,23 @@ func TestProjectManagementWorkflowDefaultRules(t *testing.T) {
 	}
 	if defaultCount != 1 {
 		t.Fatalf("expected one default workflow, got %d", defaultCount)
+	}
+	if err := db.Model(&model.ProjectManagementWorkflow{}).Where("id = ?", 2).Update("enabled", false).Error; err != nil {
+		t.Fatal(err)
+	}
+	if err := logic.Delete(context.Background(), actor, 1); err == nil {
+		t.Fatal("last enabled workflow was deleted")
+	}
+	if err := db.Model(&model.ProjectManagementWorkflow{}).Where("id = ?", 2).Update("enabled", true).Error; err != nil {
+		t.Fatal(err)
+	}
+	if err := logic.Delete(context.Background(), actor, 1); err != nil {
+		t.Fatalf("non-default workflow deletion rejected: %v", err)
+	}
+	if err := db.Exec("INSERT INTO project_management_workflows (id, kind, organization_id, project_id, name, enabled) VALUES (3, 'Project', 1, 9, 'Project workflow', true)").Error; err != nil {
+		t.Fatal(err)
+	}
+	if err := logic.Delete(context.Background(), actor, 3); err == nil {
+		t.Fatal("project workflow was deleted")
 	}
 }

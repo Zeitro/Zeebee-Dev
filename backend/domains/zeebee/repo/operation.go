@@ -28,6 +28,23 @@ func (repo *OperationRepo) PageProjectManagementOperations(ctx context.Context, 
 	return repo.BaseRepo.Page(query, gormx.PageRequest{Page: input.Page, Limit: input.Limit})
 }
 
+func (repo *OperationRepo) PageOperations(ctx context.Context, organizationId int64, input dto.OperationPageRequestDto) (gormx.PageResponse[*model.Operation], error) {
+	query := repo.Client(ctx).Where("organization_id = ?", organizationId).Order("created_at DESC, id DESC")
+	if input.Filter.EntityId != 0 {
+		query = query.Where("entity_id = ?", input.Filter.EntityId)
+	}
+	if input.Filter.EntityType != "" {
+		query = query.Where("entity_type = ?", input.Filter.EntityType)
+	}
+	if input.Filter.OperationType != "" {
+		query = query.Where("operation = ?", input.Filter.OperationType)
+	}
+	if input.Filter.TaskId != 0 {
+		query = query.Where(fmt.Sprintf("CAST(metadata->>'task_id' AS TEXT) = CAST(? AS TEXT)"), input.Filter.TaskId)
+	}
+	return repo.BaseRepo.Page(query, gormx.PageRequest{Page: input.Page, Limit: input.Limit})
+}
+
 func NewOperationRepo(db *gorm.DB) *OperationRepo {
 	return &OperationRepo{
 		BaseRepo: gormx.NewBaseRepo[*model.Operation](db),
