@@ -9,6 +9,7 @@ import (
 
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 )
@@ -91,9 +92,9 @@ func (r *ProjectManagementTaskRepo) PageMine(ctx context.Context, organizationId
 	}
 	if input.Filter.Overdue != nil {
 		if *input.Filter.Overdue {
-			query = query.Where(fmt.Sprintf("%s.end_at IS NOT NULL AND %s.end_at < CURRENT_TIMESTAMP AND %s.phase <> ?", tasksTable, tasksTable, stagesTable), "finished")
+			query = query.Where(fmt.Sprintf("%s.end_at IS NOT NULL AND %s.end_at < CURRENT_TIMESTAMP AND %s.phase <> ?", tasksTable, tasksTable, stagesTable), constants.ProjectManagementStagePhaseFinished)
 		} else {
-			query = query.Where(fmt.Sprintf("(%s.end_at IS NULL OR %s.end_at >= CURRENT_TIMESTAMP OR %s.phase = ?)", tasksTable, tasksTable, stagesTable), "finished")
+			query = query.Where(fmt.Sprintf("(%s.end_at IS NULL OR %s.end_at >= CURRENT_TIMESTAMP OR %s.phase = ?)", tasksTable, tasksTable, stagesTable), constants.ProjectManagementStagePhaseFinished)
 		}
 	}
 	query = query.Preload("Assignees", func(db *gorm.DB) *gorm.DB { return db.Order("id ASC") })
