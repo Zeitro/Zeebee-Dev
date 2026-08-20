@@ -19,9 +19,15 @@ import (
 	borrowerPropertyTransactionServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerpropertytransaction"
 	documentServer "zeebee-backend/app/borrower/rpc/internal/server/document"
 	driveServer "zeebee-backend/app/borrower/rpc/internal/server/drive"
+	operationServer "zeebee-backend/app/borrower/rpc/internal/server/operation"
 	organizationServer "zeebee-backend/app/borrower/rpc/internal/server/organization"
 	organizationEmailServer "zeebee-backend/app/borrower/rpc/internal/server/organizationemail"
-	projectManagementServer "zeebee-backend/app/borrower/rpc/internal/server/projectmanagement"
+	projectManagementProjectServer "zeebee-backend/app/borrower/rpc/internal/server/projectmanagementproject"
+	projectManagementProjectMemberServer "zeebee-backend/app/borrower/rpc/internal/server/projectmanagementprojectmember"
+	projectManagementTaskServer "zeebee-backend/app/borrower/rpc/internal/server/projectmanagementtask"
+	projectManagementTaskDependencyServer "zeebee-backend/app/borrower/rpc/internal/server/projectmanagementtaskdependency"
+	projectManagementTaskTypeServer "zeebee-backend/app/borrower/rpc/internal/server/projectmanagementtasktype"
+	projectManagementWorkflowServer "zeebee-backend/app/borrower/rpc/internal/server/projectmanagementworkflow"
 	zeitroServer "zeebee-backend/app/borrower/rpc/internal/server/zeitro"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/templater"
@@ -87,7 +93,13 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		borrower.RegisterDocumentServer(grpcServer, documentServer.NewDocumentServer(ctx))
 		borrower.RegisterDriveServer(grpcServer, driveServer.NewDriveServer(ctx))
 		borrower.RegisterApiServer(grpcServer, apiServer.NewApiServer(ctx))
-		borrower.RegisterProjectManagementServer(grpcServer, projectManagementServer.NewProjectManagementServer(ctx))
+		borrower.RegisterProjectManagementWorkflowServer(grpcServer, projectManagementWorkflowServer.NewProjectManagementWorkflowServer(ctx))
+		borrower.RegisterProjectManagementTaskTypeServer(grpcServer, projectManagementTaskTypeServer.NewProjectManagementTaskTypeServer(ctx))
+		borrower.RegisterProjectManagementProjectServer(grpcServer, projectManagementProjectServer.NewProjectManagementProjectServer(ctx))
+		borrower.RegisterProjectManagementProjectMemberServer(grpcServer, projectManagementProjectMemberServer.NewProjectManagementProjectMemberServer(ctx))
+		borrower.RegisterProjectManagementTaskServer(grpcServer, projectManagementTaskServer.NewProjectManagementTaskServer(ctx))
+		borrower.RegisterProjectManagementTaskDependencyServer(grpcServer, projectManagementTaskDependencyServer.NewProjectManagementTaskDependencyServer(ctx))
+		borrower.RegisterOperationServer(grpcServer, operationServer.NewOperationServer(ctx))
 
 		if rpcConfig.Mode == service.DevMode || rpcConfig.Mode == service.TestMode {
 			reflection.Register(grpcServer)

@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package borrower;
+
+option go_package = "zeebee-backend/app/borrower/rpc/pb/borrower";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+message ProjectManagementTaskTypePageRequest {
+  ProjectManagementTaskTypePageRequestData data = 1;
+}
+message ProjectManagementTaskTypePageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  ProjectManagementTaskTypePageRequestFilter filter = 3;
+}
+message ProjectManagementTaskTypePageRequestFilter {
+  string keyword = 1;
+  optional bool enabled = 2;
+}
+message ProjectManagementTaskTypePageResponse {
+  ProjectManagementTaskTypePageResponseData data = 1;
+}
+message ProjectManagementTaskTypePageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated proto.ProjectManagementTaskTypeEntity list = 5;
+}
+
+message ProjectManagementTaskTypeCreateRequest {
+  ProjectManagementTaskTypeCreateRequestData data = 1;
+}
+message ProjectManagementTaskTypeCreateRequestData {
+  string name = 1;
+  string description = 2;
+  string color = 3;
+  bool enabled = 4;
+}
+
+message ProjectManagementTaskTypeUpdateRequest {
+  ProjectManagementTaskTypeUpdateRequestData data = 1;
+}
+message ProjectManagementTaskTypeUpdateRequestData {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  string color = 4;
+  bool enabled = 5;
+}
+
+message ProjectManagementTaskTypeDetailResponse {
+  proto.ProjectManagementTaskTypeEntity data = 1;
+}
+message ProjectManagementTaskTypeDeleteRequest {
+  ProjectManagementTaskTypeDeleteRequestData data = 1;
+}
+message ProjectManagementTaskTypeDeleteRequestData {
+  int64 id = 1;
+}
+
+service ProjectManagementTaskType {
+  rpc Page(ProjectManagementTaskTypePageRequest) returns(ProjectManagementTaskTypePageResponse);
+  rpc Create(ProjectManagementTaskTypeCreateRequest) returns(ProjectManagementTaskTypeDetailResponse);
+  rpc Update(ProjectManagementTaskTypeUpdateRequest) returns(ProjectManagementTaskTypeDetailResponse);
+  rpc Delete(ProjectManagementTaskTypeDeleteRequest) returns(proto.EmptyResponse);
+}

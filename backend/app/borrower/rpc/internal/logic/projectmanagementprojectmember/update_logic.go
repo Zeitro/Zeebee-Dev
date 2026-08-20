@@ -1,0 +1,49 @@
+package projectmanagementprojectmemberlogic
+
+import (
+	"context"
+
+	"zeebee-backend/app/borrower/rpc/internal/logic"
+	"zeebee-backend/app/borrower/rpc/internal/svc"
+	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/domains/zeebee/proto"
+
+	"zeebee-backend/common/copierx"
+	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/data/dto"
+)
+
+type UpdateLogic struct {
+	ctx       context.Context
+	svcCtx    *svc.ServiceContext
+	baseLogic *logic.BaseLogic
+}
+
+func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogic {
+	return &UpdateLogic{
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		baseLogic: logic.GetBaseLogic(svcCtx),
+	}
+}
+
+func (l *UpdateLogic) Update(in *borrower.ProjectManagementMemberUpdateRequest) (resp *proto.EmptyResponse, err error) {
+	if in.Data == nil {
+		err = errorx.New("request data is nil")
+		return
+	}
+	claimValue, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	claim := &claimValue
+	input, convertErr := copierx.Trans[borrower.ProjectManagementMemberUpdateRequestData, dto.ProjectManagementMemberDto](in.Data)
+	if convertErr != nil {
+		return nil, convertErr
+	}
+	err = l.baseLogic.ProjectManagementMemberLogic.Update(l.ctx, claim, *input)
+	if err != nil {
+		return nil, err
+	}
+	return &proto.EmptyResponse{}, nil
+}

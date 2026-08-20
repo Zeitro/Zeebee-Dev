@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package borrower;
+
+option go_package = "zeebee-backend/app/borrower/rpc/pb/borrower";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+message ProjectManagementDependencyPageRequest {
+  ProjectManagementDependencyPageRequestData data = 1;
+}
+message ProjectManagementDependencyPageRequestData {
+  int64 task_id = 1;
+  int64 page = 2;
+  int64 limit = 3;
+  bool predecessor = 4;
+}
+message ProjectManagementDependencyPageResponse {
+  ProjectManagementDependencyPageResponseData data = 1;
+}
+message ProjectManagementDependencyPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated proto.ProjectManagementTaskDependencyEntity list = 5;
+}
+
+message ProjectManagementDependencyCreateRequest {
+  ProjectManagementDependencyCreateRequestData data = 1;
+}
+message ProjectManagementDependencyCreateRequestData {
+  int64 task_id = 1;
+  int64 dependency_task_id = 2;
+  string dependency_type = 3;
+  string dependency_rule = 4;
+}
+message ProjectManagementDependencyDetailResponse {
+  proto.ProjectManagementTaskDependencyEntity data = 1;
+}
+
+message ProjectManagementDependencyUpdateRequest {
+  ProjectManagementDependencyUpdateRequestData data = 1;
+}
+message ProjectManagementDependencyUpdateRequestData {
+  int64 id = 1;
+  string dependency_type = 2;
+  string dependency_rule = 3;
+  int64 task_id = 4;
+}
+message ProjectManagementDependencyDeleteRequest {
+  ProjectManagementDependencyDeleteRequestData data = 1;
+}
+message ProjectManagementDependencyDeleteRequestData {
+  int64 id = 1;
+  int64 task_id = 2;
+}
+
+service ProjectManagementTaskDependency {
+  rpc Page(ProjectManagementDependencyPageRequest) returns(ProjectManagementDependencyPageResponse);
+  rpc Create(ProjectManagementDependencyCreateRequest) returns(ProjectManagementDependencyDetailResponse);
+  rpc Update(ProjectManagementDependencyUpdateRequest) returns(ProjectManagementDependencyDetailResponse);
+  rpc Delete(ProjectManagementDependencyDeleteRequest) returns(proto.EmptyResponse);
+}
