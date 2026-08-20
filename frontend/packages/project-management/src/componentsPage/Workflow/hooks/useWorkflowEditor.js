@@ -9,6 +9,7 @@ import { useSensor, useSensors, PointerSensor } from '@dnd-kit/core';
 import { useTranslations } from 'next-intl';
 import { useUserStore } from '@repo/shared-methods/store';
 import { createRequest, createWorkflowApi } from '@repo/project-management/api/workflow';
+import { getMockWorkflowDetail } from '../mockData';
 import { useWorkflowEditorOptions } from './useWorkflowEditorOptions';
 
 /**
@@ -47,8 +48,11 @@ export function useWorkflowEditor(workflowId) {
 	const fetchWorkflow = useCallback(async () => {
 		try {
 			setLoading(true);
-			const wf = await workflowApi.get(workflowId);
+			// MOCK: start — 接口就绪后删除本段并恢复 GET
+			const wf = getMockWorkflowDetail(workflowId);
 			setWorkflow(wf || null);
+			// const wf = await workflowApi.get(workflowId);
+			// setWorkflow(wf || null);
 		} catch {
 			messageApi.error(t('workflow.editor.loadFailed'));
 		} finally {

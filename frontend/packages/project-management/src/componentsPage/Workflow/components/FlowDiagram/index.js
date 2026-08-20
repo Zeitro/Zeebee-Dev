@@ -5,6 +5,7 @@
 'use client';
 
 import { useFlowDiagram } from './hooks/useFlowDiagram';
+import { DEFAULT_ZOOM } from './hooks/useFlowDiagramInteraction';
 import FlowDiagramToolbar from './FlowDiagramToolbar';
 import FlowDiagramCanvas from './FlowDiagramCanvas';
 import FlowTransitionPanel from './FlowTransitionPanel';
@@ -67,7 +68,7 @@ function FlowDiagramInner({
 				onZoomOut={() => flow.setZoom((z) => Math.max(0.2, z - 0.1))}
 				onZoomIn={() => flow.setZoom((z) => Math.min(2, z + 0.1))}
 				onZoomReset={() => {
-					flow.setZoom(0.5);
+					flow.setZoom(DEFAULT_ZOOM);
 					flow.setPan({ x: 0, y: 0 });
 				}}
 				t={flow.t}

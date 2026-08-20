@@ -4,6 +4,9 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 
+/** 画布初始 / 重置缩放比例 */
+export const DEFAULT_ZOOM = 0.7;
+
 /**
  * @param {object} params
  * @param {import('antd/es/message/interface').MessageInstance} params.messageApi
@@ -45,7 +48,7 @@ export function useFlowDiagramInteraction({
 	const [connecting, setConnecting] = useState(null);
 	const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
-	const [zoom, setZoom] = useState(0.5);
+	const [zoom, setZoom] = useState(DEFAULT_ZOOM);
 	const [pan, setPan] = useState({ x: 0, y: 0 });
 	const [isPanning, setIsPanning] = useState(false);
 	const panStart = useRef({ x: 0, y: 0, panX: 0, panY: 0 });

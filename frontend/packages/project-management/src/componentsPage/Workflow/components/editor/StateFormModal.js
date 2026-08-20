@@ -1,6 +1,7 @@
 'use client';
 
-import { Modal, Form, Input, Select } from 'antd';
+import { Form, Input, Select } from 'antd';
+import { NewModal } from '@repo/shared-methods';
 import { useTranslations } from 'next-intl';
 
 /**
@@ -17,18 +18,23 @@ export function StateFormModal({
 }) {
 	const t = useTranslations();
 
+	if (!open) return null;
+
 	return (
-		<Modal
+		<NewModal
+			width={520}
 			title={
 				editingState
 					? t('workflow.editor.editStateTitle')
 					: t('workflow.editor.addStateTitle')
 			}
-			open={open}
+			okText={t('common.save')}
+			cancelText={t('common.cancel')}
 			onCancel={onCancel}
 			onOk={() => form.submit()}
+			destroyOnHidden
 		>
-			<Form form={form} layout="vertical" onFinish={onSubmit}>
+			<Form form={form} layout="vertical" className="mt-4" onFinish={onSubmit}>
 				<Form.Item
 					name="name"
 					label={t('workflow.editor.stateNameLabel')}
@@ -83,6 +89,6 @@ export function StateFormModal({
 					<Input.TextArea rows={2} />
 				</Form.Item>
 			</Form>
-		</Modal>
+		</NewModal>
 	);
 }

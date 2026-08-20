@@ -1,8 +1,11 @@
 'use client';
 
-import { Input, Modal, Select } from 'antd';
+import { Input, Select } from 'antd';
+import { NewModal } from '@repo/shared-methods';
 
 /**
+ * 流程图连线后添加流转弹窗。
+ *
  * @param {object} props
  */
 export default function FlowAddTransitionModal({
@@ -17,28 +20,30 @@ export default function FlowAddTransitionModal({
 	onTransTriggerChange,
 	t,
 }) {
+	if (!open) return null;
+
+	const fromName = states.find((s) => s.id === newTransition?.from)?.name;
+	const toName = states.find((s) => s.id === newTransition?.to)?.name;
+
 	return (
-		<Modal
+		<NewModal
+			width={520}
 			title={t('workflow.editor.addTransitionTitle')}
-			open={open}
-			onCancel={onCancel}
-			onOk={onOk}
 			okText={t('workflow.editor.addTransitionOk')}
 			cancelText={t('common.cancel')}
+			onCancel={onCancel}
+			onOk={onOk}
+			destroyOnHidden
 		>
-			<div style={{ marginBottom: 16 }}>
-				<div style={{ marginBottom: 8 }}>
-					<strong>
-						{states.find((s) => s.id === newTransition?.from)?.name}
-						{' → '}
-						{states.find((s) => s.id === newTransition?.to)?.name}
-					</strong>
-				</div>
+			<div className="mt-4 mb-4">
+				<strong>
+					{fromName}
+					{' → '}
+					{toName}
+				</strong>
 			</div>
-			<div style={{ marginBottom: 12 }}>
-				<div style={{ marginBottom: 4, fontSize: 13 }}>
-					{t('workflow.editor.transitionNameLabel')}
-				</div>
+			<div className="mb-3">
+				<div className="mb-1 text-sm">{t('workflow.editor.transitionNameLabel')}</div>
 				<Input
 					placeholder={t('workflow.editor.transitionNamePlaceholder')}
 					value={transName}
@@ -46,20 +51,14 @@ export default function FlowAddTransitionModal({
 				/>
 			</div>
 			<div>
-				<div style={{ marginBottom: 4, fontSize: 13 }}>
-					{t('workflow.editor.triggerTypeLabel')}
-				</div>
-				<Select
-					value={transTrigger}
-					onChange={onTransTriggerChange}
-					style={{ width: '100%' }}
-				>
+				<div className="mb-1 text-sm">{t('workflow.editor.triggerTypeLabel')}</div>
+				<Select value={transTrigger} onChange={onTransTriggerChange} className="w-full">
 					<Select.Option value="manual">
 						{t('workflow.editor.triggerManual')}
 					</Select.Option>
 					<Select.Option value="auto">{t('workflow.editor.triggerAuto')}</Select.Option>
 				</Select>
 			</div>
-		</Modal>
+		</NewModal>
 	);
 }

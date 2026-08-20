@@ -1,6 +1,7 @@
 'use client';
 
-import { Modal, Form, Select, Switch } from 'antd';
+import { Form, Select, Switch } from 'antd';
+import { NewModal } from '@repo/shared-methods';
 import { useTranslations } from 'next-intl';
 
 /**
@@ -9,14 +10,19 @@ import { useTranslations } from 'next-intl';
 export function TransitionConditionModal({ open, form, memberOptions, onCancel, onSubmit }) {
 	const t = useTranslations();
 
+	if (!open) return null;
+
 	return (
-		<Modal
+		<NewModal
+			width={520}
 			title={t('workflow.editor.conditionModalTitle')}
-			open={open}
+			okText={t('common.save')}
+			cancelText={t('common.cancel')}
 			onCancel={onCancel}
 			onOk={() => form.submit()}
+			destroyOnHidden
 		>
-			<Form form={form} layout="vertical" onFinish={onSubmit}>
+			<Form form={form} layout="vertical" className="mt-4" onFinish={onSubmit}>
 				<Form.Item name="allowed_members" label={t('workflow.editor.allowedMembersLabel')}>
 					<Select
 						mode="multiple"
@@ -46,6 +52,6 @@ export function TransitionConditionModal({ open, form, memberOptions, onCancel, 
 					</span>
 				</Form.Item>
 			</Form>
-		</Modal>
+		</NewModal>
 	);
 }

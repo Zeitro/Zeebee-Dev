@@ -29,7 +29,7 @@ export function WorkflowEditorHeader({
 	const t = useTranslations();
 
 	return (
-		<div className="flex items-center justify-between mb-4">
+		<div className="flex items-center justify-between mb-4 flex-shrink-0">
 			<Space>
 				<Button icon={<ArrowLeftOutlined />} onClick={onBack}>
 					{t('workflow.editor.back')}

@@ -1,6 +1,7 @@
 'use client';
 
-import { Modal, Form, Input, Select } from 'antd';
+import { Form, Input, Select } from 'antd';
+import { NewModal } from '@repo/shared-methods';
 import { useTranslations } from 'next-intl';
 
 /**
@@ -18,14 +19,19 @@ export function TransitionFormModal({
 }) {
 	const t = useTranslations();
 
+	if (!open) return null;
+
 	return (
-		<Modal
+		<NewModal
+			width={520}
 			title={t('workflow.editor.addTransitionTitle', { from: fromState?.name || '' })}
-			open={open}
+			okText={t('workflow.editor.addTransitionOk')}
+			cancelText={t('common.cancel')}
 			onCancel={onCancel}
 			onOk={() => form.submit()}
+			destroyOnHidden
 		>
-			<Form form={form} layout="vertical" onFinish={onSubmit}>
+			<Form form={form} layout="vertical" className="mt-4" onFinish={onSubmit}>
 				<Form.Item
 					name="to_state_id"
 					label={t('workflow.editor.targetStateLabel')}
@@ -52,6 +58,6 @@ export function TransitionFormModal({
 					<Select options={triggerOptions} />
 				</Form.Item>
 			</Form>
-		</Modal>
+		</NewModal>
 	);
 }

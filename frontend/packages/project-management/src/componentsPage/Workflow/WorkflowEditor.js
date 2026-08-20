@@ -58,7 +58,7 @@ export function WorkflowEditor({ workflowId }) {
 	);
 
 	return (
-		<div>
+		<div className="flex-1 overflow-hidden rounded-lg p-6">
 			{editor.contextHolder}
 			<WorkflowEditorHeader
 				workflowName={editor.workflow?.name}
@@ -76,7 +76,7 @@ export function WorkflowEditor({ workflowId }) {
 			/>
 
 			{editor.viewMode === 'flow' ? (
-				<div className="flex gap-6">
+				<div className="flex gap-6 flex-1">
 					<div className="flex-1 min-w-0">
 						<FlowDiagram
 							layoutKey={editor.flowDiagramKey}
@@ -92,7 +92,7 @@ export function WorkflowEditor({ workflowId }) {
 					<div className="w-80 shrink-0">{detailsPanel}</div>
 				</div>
 			) : (
-				<div className="flex gap-6">
+				<div className="flex gap-6 flex-1">
 					<div className="flex-1">
 						<StateListView
 							states={editor.states}
