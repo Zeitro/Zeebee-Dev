@@ -33,7 +33,7 @@ func TestProjectManagementDependencyPostgresOppositeEdges(t *testing.T) {
 	projectLogic := domainlogic.NewProjectManagementDependencyLogic(
 		domainlogic.NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}),
 	)
-	actor := &utils.JwtUser{OrganizationId: 1, OrganizationUserId: 1, Username: "Executor"}
+	actor := utils.JwtUser{OrganizationId: 1, OrganizationUserId: 1, Username: "Executor"}
 	start := make(chan struct{})
 	errs := make(chan error, 2)
 	inputs := []dto.ProjectManagementTaskDependencyDto{

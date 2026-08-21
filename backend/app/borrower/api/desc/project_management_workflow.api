@@ -15,22 +15,6 @@ type (
     ProjectManagementWorkflowAllResponse {
         Lists []*ProjectManagementWorkflowEntity `json:"lists"`
     }
-    ProjectManagementWorkflowPageFilter {
-        Keyword string `json:"keyword,optional"`
-        Enabled *bool  `json:"enabled,optional"`
-    }
-    ProjectManagementWorkflowPageRequest {
-        Page   int64                               `json:"page,default=1"`
-        Limit  int64                               `json:"limit,default=20"`
-        Filter ProjectManagementWorkflowPageFilter `json:"filter" validate:"required"`
-    }
-    ProjectManagementWorkflowPageResponse {
-        Page      int64                                  `json:"page"`
-        Limit     int64                                  `json:"limit"`
-        Total     int64                                  `json:"total"`
-        TotalPage int64                                  `json:"total_page"`
-        List      []*ProjectManagementWorkflowPageEntity `json:"list"`
-    }
     ProjectManagementWorkflowDetailResponse {
         ProjectManagementWorkflowEntity
     }
@@ -59,15 +43,15 @@ service borrower-api {
     @handler All
     get /project_management/workflow/all (ProjectManagementWorkflowAllRequest) returns (ProjectManagementWorkflowAllResponse)
 
-    @doc "page"
-    @handler Page
-    post /project_management/workflow/page (ProjectManagementWorkflowPageRequest) returns (ProjectManagementWorkflowPageResponse)
+    @doc "set default workflow"
+    @handler Default
+    put /project_management/workflow/:id/default (PathIdRequest) returns (EmptyResponse)
 
     @doc "detail"
     @handler Detail
     get /project_management/workflow/:id (PathIdRequest) returns (ProjectManagementWorkflowDetailResponse)
 
-    @doc "create organization workflow"
+    @doc "create"
     @handler Create
     post /project_management/workflow (ProjectManagementWorkflowCreateRequest) returns (ProjectManagementWorkflowDetailResponse)
 
@@ -75,7 +59,7 @@ service borrower-api {
     @handler Update
     put /project_management/workflow/:id (ProjectManagementWorkflowUpdateRequest) returns (ProjectManagementWorkflowDetailResponse)
 
-    @doc "delete organization workflow"
+    @doc "delete"
     @handler Delete
     delete /project_management/workflow/:id (PathIdRequest) returns (EmptyResponse)
 

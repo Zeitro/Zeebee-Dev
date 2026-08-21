@@ -2,8 +2,6 @@ package repo
 
 import (
 	"context"
-	"strings"
-
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
@@ -37,28 +35,15 @@ func (r *ProjectManagementWorkflowRepo) FindDefinitionByOrganization(ctx context
 	return workflow, errorx.WithStack(err)
 }
 
-func (r *ProjectManagementWorkflowRepo) ListEnabledByOrganization(ctx context.Context, organizationId int64) ([]*model.ProjectManagementWorkflow, error) {
+func (r *ProjectManagementWorkflowRepo) ListByOrganization(ctx context.Context, organizationId int64) ([]*model.ProjectManagementWorkflow, error) {
 	workflows := make([]*model.ProjectManagementWorkflow, 0)
 	err := r.Client(ctx).
 		Preload("Stages", func(db *gorm.DB) *gorm.DB { return db.Order("sort_order ASC, id ASC") }).
 		// Preload("Transitions", func(db *gorm.DB) *gorm.DB { return db.Order("id ASC") }).
-		Where("organization_id = ? AND kind = ? AND enabled = true", organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).
+		Where("organization_id = ? AND kind = ?", organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).
 		Order("is_default DESC, id ASC").
 		Find(&workflows).Error
 	return workflows, errorx.WithStack(err)
-}
-
-func (r *ProjectManagementWorkflowRepo) Page(ctx context.Context, organizationId int64, pageReq gormx.PageRequest, keyword string, enabled *bool) (gormx.PageResponse[*model.ProjectManagementWorkflow], error) {
-	query := r.Client(ctx).
-		Where("organization_id = ? AND kind = ?", organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).
-		Order("is_default DESC, id DESC")
-	if strings.TrimSpace(keyword) != "" {
-		query = query.Where("name ILIKE ?", "%"+keyword+"%")
-	}
-	if enabled != nil {
-		query = query.Where("enabled = ?", *enabled)
-	}
-	return r.BaseRepo.Page(query, pageReq)
 }
 
 func (r *ProjectManagementWorkflowRepo) FindPendingStageWithTx(ctx context.Context, tx *gorm.DB, workflowId int64) (*model.ProjectManagementWorkflowStage, error) {
@@ -149,6 +134,13 @@ func (r *ProjectManagementWorkflowRepo) DemoteDefaultWithTx(ctx context.Context,
 	err := tx.WithContext(ctx).Model(&model.ProjectManagementWorkflow{}).
 		Where("organization_id = ? AND kind = ? AND id <> ?", organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate, exceptId).
 		Update("is_default", false).Error
+	return errorx.WithStack(err)
+}
+
+func (r *ProjectManagementWorkflowRepo) SetDefaultWithTx(ctx context.Context, tx *gorm.DB, id, organizationId int64) error {
+	err := tx.WithContext(ctx).Model(&model.ProjectManagementWorkflow{}).
+		Where("id = ? AND organization_id = ? AND kind = ?", id, organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).
+		Update("is_default", true).Error
 	return errorx.WithStack(err)
 }
 
@@ -293,12 +285,12 @@ func (r *ProjectManagementWorkflowRepo) CloneTemplateToProjectWithTx(ctx context
 	err := tx.WithContext(ctx).Clauses(clause.Locking{Strength: "UPDATE"}).
 		Preload("Stages", func(db *gorm.DB) *gorm.DB { return db.Order("sort_order ASC, id ASC") }).
 		Preload("Transitions", func(db *gorm.DB) *gorm.DB { return db.Order("id ASC") }).
-		Where("id = ? AND organization_id = ? AND kind = ? AND enabled = true", templateId, organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).
+		Where("id = ? AND organization_id = ? AND kind = ?", templateId, organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).
 		First(template).Error
 	if err != nil {
 		return errorx.WithStack(err)
 	}
-	workflow := &model.ProjectManagementWorkflow{Kind: constants.ProjectManagementWorkflowKindProject, OrganizationId: organizationId, ProjectId: projectId, Name: template.Name, Description: template.Description, Enabled: true, SourceTemplateId: template.Id, SourceTemplateName: template.Name}
+	workflow := &model.ProjectManagementWorkflow{Kind: constants.ProjectManagementWorkflowKindProject, OrganizationId: organizationId, ProjectId: projectId, Name: template.Name, Description: template.Description, SourceTemplateId: template.Id, SourceTemplateName: template.Name}
 	if err = tx.WithContext(ctx).Create(workflow).Error; err != nil {
 		return errorx.WithStack(err)
 	}

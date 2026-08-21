@@ -24,23 +24,11 @@ type ProjectManagementWorkflowDto struct {
 	Id                 int64
 	Name               string
 	Description        string
-	Enabled            bool
 	IsDefault          bool
 	SourceTemplateId   int64
 	SourceTemplateName string
 	Stages             []ProjectManagementWorkflowStageDto
 	Transitions        []ProjectManagementWorkflowTransitionDto
-}
-
-type ProjectManagementWorkflowFilterDto struct {
-	Keyword string
-	Enabled *bool
-}
-
-type ProjectManagementWorkflowPageRequestDto struct {
-	Page   int64
-	Limit  int64
-	Filter ProjectManagementWorkflowFilterDto
 }
 
 type ProjectManagementTaskTypeSnapshotDto struct {

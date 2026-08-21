@@ -11,7 +11,6 @@ CREATE TABLE "public"."project_management_workflows" (
     "project_id" int4 NOT NULL DEFAULT 0,
     "name" varchar(100) NOT NULL DEFAULT '',
     "description" varchar(500) NOT NULL DEFAULT '',
-    "enabled" bool NOT NULL DEFAULT true,
     "is_default" bool NOT NULL DEFAULT false,
     "source_template_id" int4 NOT NULL DEFAULT 0,
     "source_template_name" varchar(100) NOT NULL DEFAULT ''

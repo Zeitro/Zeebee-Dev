@@ -2127,7 +2127,6 @@ type ProjectManagementWorkflowEntity struct {
 	Id                 int64                                        `json:"id"`
 	Name               string                                       `json:"name"`
 	Description        string                                       `json:"description"`
-	Enabled            bool                                         `json:"enabled"`
 	IsDefault          bool                                         `json:"is_default"`
 	Stages             []*ProjectManagementWorkflowStageEntity      `json:"stages"`
 	Transitions        []*ProjectManagementWorkflowTransitionEntity `json:"transitions"`
@@ -2135,35 +2134,6 @@ type ProjectManagementWorkflowEntity struct {
 	SourceTemplateName string                                       `json:"source_template_name"`
 	CreatedAt          string                                       `json:"created_at"`
 	UpdatedAt          string                                       `json:"updated_at"`
-}
-
-type ProjectManagementWorkflowPageEntity struct {
-	Id          int64  `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Enabled     bool   `json:"enabled"`
-	IsDefault   bool   `json:"is_default"`
-	CreatedAt   string `json:"created_at"`
-	UpdatedAt   string `json:"updated_at"`
-}
-
-type ProjectManagementWorkflowPageFilter struct {
-	Keyword string `json:"keyword,optional"`
-	Enabled *bool  `json:"enabled,optional"`
-}
-
-type ProjectManagementWorkflowPageRequest struct {
-	Page   int64                               `json:"page,default=1"`
-	Limit  int64                               `json:"limit,default=20"`
-	Filter ProjectManagementWorkflowPageFilter `json:"filter" validate:"required"`
-}
-
-type ProjectManagementWorkflowPageResponse struct {
-	Page      int64                                  `json:"page"`
-	Limit     int64                                  `json:"limit"`
-	Total     int64                                  `json:"total"`
-	TotalPage int64                                  `json:"total_page"`
-	List      []*ProjectManagementWorkflowPageEntity `json:"list"`
 }
 
 type ProjectManagementWorkflowStageEntity struct {

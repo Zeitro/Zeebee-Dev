@@ -10,20 +10,28 @@ import (
 	"zeebee-backend/domains/zeebee/model"
 )
 
-func (l *ProjectManagementWorkflowLogic) ListEnabled(ctx context.Context, organizationId int64) ([]*model.ProjectManagementWorkflow, error) {
-	workflows, err := l.repos.ProjectManagementWorkflowRepo.ListEnabledByOrganization(ctx, organizationId)
-	if err != nil || len(workflows) > 0 {
+func (l *ProjectManagementWorkflowLogic) List(ctx context.Context, organizationId int64) ([]*model.ProjectManagementWorkflow, error) {
+	workflows, err := l.repos.ProjectManagementWorkflowRepo.ListByOrganization(ctx, organizationId)
+	if err != nil {
 		return workflows, err
 	}
-	// If no workflows found, try to create a default one
-	if err = l.ensureDefault(ctx, organizationId); err != nil {
-		workflows, retryErr := l.repos.ProjectManagementWorkflowRepo.ListEnabledByOrganization(ctx, organizationId)
-		if retryErr == nil && len(workflows) > 0 {
+	for _, workflow := range workflows {
+		if workflow.IsDefault {
 			return workflows, nil
+		}
+	}
+	if err = l.ensureDefault(ctx, organizationId); err != nil {
+		workflows, retryErr := l.repos.ProjectManagementWorkflowRepo.ListByOrganization(ctx, organizationId)
+		if retryErr == nil {
+			for _, workflow := range workflows {
+				if workflow.IsDefault {
+					return workflows, nil
+				}
+			}
 		}
 		return nil, err
 	}
-	return l.repos.ProjectManagementWorkflowRepo.ListEnabledByOrganization(ctx, organizationId)
+	return l.repos.ProjectManagementWorkflowRepo.ListByOrganization(ctx, organizationId)
 }
 
 func (l *ProjectManagementWorkflowLogic) ensureDefault(ctx context.Context, organizationId int64) error {
@@ -32,7 +40,6 @@ func (l *ProjectManagementWorkflowLogic) ensureDefault(ctx context.Context, orga
 			Kind:           constants.ProjectManagementWorkflowKindOrganizationTemplate,
 			OrganizationId: organizationId,
 			Name:           "Default workflow",
-			Enabled:        true,
 			IsDefault:      true,
 		}, false)
 		if err != nil {

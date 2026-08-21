@@ -17180,9 +17180,6 @@
                 "description": {
                   "type": "string"
                 },
-                "enabled": {
-                  "type": "boolean"
-                },
                 "id": {
                   "type": "integer"
                 },
@@ -17402,9 +17399,6 @@
                 },
                 "description": {
                   "type": "string"
-                },
-                "enabled": {
-                  "type": "boolean"
                 },
                 "id": {
                   "type": "integer"
@@ -20087,9 +20081,6 @@
                 "description": {
                   "type": "string"
                 },
-                "enabled": {
-                  "type": "boolean"
-                },
                 "id": {
                   "type": "integer"
                 },
@@ -20212,7 +20203,6 @@
                       "id",
                       "name",
                       "description",
-                      "enabled",
                       "is_default",
                       "stages",
                       "transitions",
@@ -20227,9 +20217,6 @@
                       },
                       "description": {
                         "type": "string"
-                      },
-                      "enabled": {
-                        "type": "boolean"
                       },
                       "id": {
                         "type": "integer"
@@ -20329,122 +20316,6 @@
         }
       }
     },
-    "/api/v1/project_management/workflow/page": {
-      "post": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "project_management_workflow"
-        ],
-        "summary": "page",
-        "operationId": "projectManagementWorkflowPage",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": [
-                "page",
-                "limit",
-                "filter"
-              ],
-              "properties": {
-                "filter": {
-                  "type": "object",
-                  "properties": {
-                    "enabled": {
-                      "type": "boolean"
-                    },
-                    "keyword": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "limit": {
-                  "type": "integer",
-                  "default": 20,
-                  "example": 20
-                },
-                "page": {
-                  "type": "integer",
-                  "default": 1,
-                  "example": 1
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "limit": {
-                  "type": "integer"
-                },
-                "list": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "required": [
-                      "id",
-                      "name",
-                      "description",
-                      "enabled",
-                      "is_default",
-                      "created_at",
-                      "updated_at"
-                    ],
-                    "properties": {
-                      "created_at": {
-                        "type": "string"
-                      },
-                      "description": {
-                        "type": "string"
-                      },
-                      "enabled": {
-                        "type": "boolean"
-                      },
-                      "id": {
-                        "type": "integer"
-                      },
-                      "is_default": {
-                        "type": "boolean"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "updated_at": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "page": {
-                  "type": "integer"
-                },
-                "total": {
-                  "type": "integer"
-                },
-                "total_page": {
-                  "type": "integer"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/project_management/workflow/{id}": {
       "get": {
         "produces": [
@@ -20477,9 +20348,6 @@
                 },
                 "description": {
                   "type": "string"
-                },
-                "enabled": {
-                  "type": "boolean"
                 },
                 "id": {
                   "type": "integer"
@@ -20629,9 +20497,6 @@
                 "description": {
                   "type": "string"
                 },
-                "enabled": {
-                  "type": "boolean"
-                },
                 "id": {
                   "type": "integer"
                 },
@@ -20741,6 +20606,40 @@
         ],
         "summary": "delete organization workflow",
         "operationId": "projectManagementWorkflowDelete",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/workflow/{id}/default": {
+      "put": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management_workflow"
+        ],
+        "summary": "set default workflow",
+        "operationId": "projectManagementWorkflowDefault",
         "parameters": [
           {
             "type": "integer",
@@ -30753,7 +30652,7 @@
       }
     }
   },
-  "x-date": "2026-08-20 17:16:32",
+  "x-date": "2026-08-21 10:56:05",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

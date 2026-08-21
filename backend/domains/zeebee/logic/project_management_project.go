@@ -106,7 +106,7 @@ func (l *ProjectManagementProjectLogic) Create(ctx context.Context, claim utils.
 			return err
 		}
 		if err = l.repos.ProjectManagementWorkflowRepo.CloneTemplateToProjectWithTx(ctx, tx, input.WorkflowTemplateId, claim.OrganizationId, project.Id); err != nil {
-			return projectManagementNotFound(err, "enabled workflow template not found")
+			return projectManagementNotFound(err, "workflow template not found")
 		}
 		return l.recordOperation(ctx, tx, projectManagementProjectOperation{claim: claim, projectId: project.Id, action: constants.OperationActionProjectManagementProjectCreate})
 	})

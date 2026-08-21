@@ -20,12 +20,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ProjectManagementWorkflow_All_FullMethodName    = "/borrower.ProjectManagementWorkflow/All"
-	ProjectManagementWorkflow_Page_FullMethodName   = "/borrower.ProjectManagementWorkflow/Page"
-	ProjectManagementWorkflow_Detail_FullMethodName = "/borrower.ProjectManagementWorkflow/Detail"
-	ProjectManagementWorkflow_Create_FullMethodName = "/borrower.ProjectManagementWorkflow/Create"
-	ProjectManagementWorkflow_Update_FullMethodName = "/borrower.ProjectManagementWorkflow/Update"
-	ProjectManagementWorkflow_Delete_FullMethodName = "/borrower.ProjectManagementWorkflow/Delete"
+	ProjectManagementWorkflow_All_FullMethodName     = "/borrower.ProjectManagementWorkflow/All"
+	ProjectManagementWorkflow_Detail_FullMethodName  = "/borrower.ProjectManagementWorkflow/Detail"
+	ProjectManagementWorkflow_Create_FullMethodName  = "/borrower.ProjectManagementWorkflow/Create"
+	ProjectManagementWorkflow_Update_FullMethodName  = "/borrower.ProjectManagementWorkflow/Update"
+	ProjectManagementWorkflow_Default_FullMethodName = "/borrower.ProjectManagementWorkflow/Default"
+	ProjectManagementWorkflow_Delete_FullMethodName  = "/borrower.ProjectManagementWorkflow/Delete"
 )
 
 // ProjectManagementWorkflowClient is the client API for ProjectManagementWorkflow service.
@@ -33,10 +33,10 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProjectManagementWorkflowClient interface {
 	All(ctx context.Context, in *proto.EmptyRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowAllResponse, error)
-	Page(ctx context.Context, in *ProjectManagementWorkflowPageRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowPageResponse, error)
 	Detail(ctx context.Context, in *ProjectManagementWorkflowDetailRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error)
 	Create(ctx context.Context, in *ProjectManagementWorkflowCreateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error)
 	Update(ctx context.Context, in *ProjectManagementWorkflowUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error)
+	Default(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 	Delete(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 }
 
@@ -52,16 +52,6 @@ func (c *projectManagementWorkflowClient) All(ctx context.Context, in *proto.Emp
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ProjectManagementWorkflowAllResponse)
 	err := c.cc.Invoke(ctx, ProjectManagementWorkflow_All_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *projectManagementWorkflowClient) Page(ctx context.Context, in *ProjectManagementWorkflowPageRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowPageResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ProjectManagementWorkflowPageResponse)
-	err := c.cc.Invoke(ctx, ProjectManagementWorkflow_Page_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -98,6 +88,16 @@ func (c *projectManagementWorkflowClient) Update(ctx context.Context, in *Projec
 	return out, nil
 }
 
+func (c *projectManagementWorkflowClient) Default(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(proto.EmptyResponse)
+	err := c.cc.Invoke(ctx, ProjectManagementWorkflow_Default_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *projectManagementWorkflowClient) Delete(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(proto.EmptyResponse)
@@ -113,10 +113,10 @@ func (c *projectManagementWorkflowClient) Delete(ctx context.Context, in *proto.
 // for forward compatibility.
 type ProjectManagementWorkflowServer interface {
 	All(context.Context, *proto.EmptyRequest) (*ProjectManagementWorkflowAllResponse, error)
-	Page(context.Context, *ProjectManagementWorkflowPageRequest) (*ProjectManagementWorkflowPageResponse, error)
 	Detail(context.Context, *ProjectManagementWorkflowDetailRequest) (*ProjectManagementWorkflowDetailResponse, error)
 	Create(context.Context, *ProjectManagementWorkflowCreateRequest) (*ProjectManagementWorkflowDetailResponse, error)
 	Update(context.Context, *ProjectManagementWorkflowUpdateRequest) (*ProjectManagementWorkflowDetailResponse, error)
+	Default(context.Context, *proto.PathIdRequest) (*proto.EmptyResponse, error)
 	Delete(context.Context, *proto.PathIdRequest) (*proto.EmptyResponse, error)
 	mustEmbedUnimplementedProjectManagementWorkflowServer()
 }
@@ -131,9 +131,6 @@ type UnimplementedProjectManagementWorkflowServer struct{}
 func (UnimplementedProjectManagementWorkflowServer) All(context.Context, *proto.EmptyRequest) (*ProjectManagementWorkflowAllResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method All not implemented")
 }
-func (UnimplementedProjectManagementWorkflowServer) Page(context.Context, *ProjectManagementWorkflowPageRequest) (*ProjectManagementWorkflowPageResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method Page not implemented")
-}
 func (UnimplementedProjectManagementWorkflowServer) Detail(context.Context, *ProjectManagementWorkflowDetailRequest) (*ProjectManagementWorkflowDetailResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Detail not implemented")
 }
@@ -142,6 +139,9 @@ func (UnimplementedProjectManagementWorkflowServer) Create(context.Context, *Pro
 }
 func (UnimplementedProjectManagementWorkflowServer) Update(context.Context, *ProjectManagementWorkflowUpdateRequest) (*ProjectManagementWorkflowDetailResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedProjectManagementWorkflowServer) Default(context.Context, *proto.PathIdRequest) (*proto.EmptyResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Default not implemented")
 }
 func (UnimplementedProjectManagementWorkflowServer) Delete(context.Context, *proto.PathIdRequest) (*proto.EmptyResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
@@ -182,24 +182,6 @@ func _ProjectManagementWorkflow_All_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ProjectManagementWorkflowServer).All(ctx, req.(*proto.EmptyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProjectManagementWorkflow_Page_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ProjectManagementWorkflowPageRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProjectManagementWorkflowServer).Page(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ProjectManagementWorkflow_Page_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectManagementWorkflowServer).Page(ctx, req.(*ProjectManagementWorkflowPageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -258,6 +240,24 @@ func _ProjectManagementWorkflow_Update_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProjectManagementWorkflow_Default_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto.PathIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectManagementWorkflowServer).Default(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProjectManagementWorkflow_Default_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectManagementWorkflowServer).Default(ctx, req.(*proto.PathIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ProjectManagementWorkflow_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(proto.PathIdRequest)
 	if err := dec(in); err != nil {
@@ -288,10 +288,6 @@ var ProjectManagementWorkflow_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ProjectManagementWorkflow_All_Handler,
 		},
 		{
-			MethodName: "Page",
-			Handler:    _ProjectManagementWorkflow_Page_Handler,
-		},
-		{
 			MethodName: "Detail",
 			Handler:    _ProjectManagementWorkflow_Detail_Handler,
 		},
@@ -302,6 +298,10 @@ var ProjectManagementWorkflow_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Update",
 			Handler:    _ProjectManagementWorkflow_Update_Handler,
+		},
+		{
+			MethodName: "Default",
+			Handler:    _ProjectManagementWorkflow_Default_Handler,
 		},
 		{
 			MethodName: "Delete",

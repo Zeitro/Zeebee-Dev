@@ -11,7 +11,6 @@ type ProjectManagementWorkflow struct {
 	ProjectId          int64                                   `gorm:"column:project_id;not null;default:0" json:"project_id"`
 	Name               string                                  `gorm:"column:name;type:varchar(100);not null;default:''" json:"name"`
 	Description        string                                  `gorm:"column:description;type:varchar(500);not null;default:''" json:"description"`
-	Enabled            bool                                    `gorm:"column:enabled;not null;default:true" json:"enabled"`
 	IsDefault          bool                                    `gorm:"column:is_default;not null;default:false" json:"is_default"`
 	SourceTemplateId   int64                                   `gorm:"column:source_template_id;not null;default:0" json:"source_template_id"`
 	SourceTemplateName string                                  `gorm:"column:source_template_name;type:varchar(100);not null;default:''" json:"source_template_name"`

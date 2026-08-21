@@ -35,7 +35,7 @@ func (l *AllLogic) All(in *proto.EmptyRequest) (resp *borrower.ProjectManagement
 		return nil, err
 	}
 	claim := claimValue
-	workflows, err := l.baseLogic.ProjectManagementWorkflowLogic.ListEnabled(l.ctx, claim.OrganizationId)
+	workflows, err := l.baseLogic.ProjectManagementWorkflowLogic.List(l.ctx, claim.OrganizationId)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

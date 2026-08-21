@@ -14,8 +14,8 @@ import (
 	"zeebee-backend/common/validator"
 )
 
-// page
-func PageHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+// set default workflow
+func DefaultHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -27,7 +27,7 @@ func PageHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 					Error(err)
 			}
 		}()
-		var req types.ProjectManagementWorkflowPageRequest
+		var req types.PathIdRequest
 		if err = httpx.Parse(r, &req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
@@ -44,8 +44,8 @@ func PageHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := project_management_workflow.NewPageLogic(r.Context(), svcCtx)
-		resp, err := l.Page(&req)
+		l := project_management_workflow.NewDefaultLogic(r.Context(), svcCtx)
+		resp, err := l.Default(&req)
 		if err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 		} else {

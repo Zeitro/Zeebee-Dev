@@ -1034,16 +1034,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: project_management_workflow.DeleteHandler(serverCtx),
 				},
 				{
+					// set default workflow
+					Method:  http.MethodPut,
+					Path:    "/project_management/workflow/:id/default",
+					Handler: project_management_workflow.DefaultHandler(serverCtx),
+				},
+				{
 					// all
 					Method:  http.MethodGet,
 					Path:    "/project_management/workflow/all",
 					Handler: project_management_workflow.AllHandler(serverCtx),
-				},
-				{
-					// page
-					Method:  http.MethodPost,
-					Path:    "/project_management/workflow/page",
-					Handler: project_management_workflow.PageHandler(serverCtx),
 				},
 			}...,
 		),

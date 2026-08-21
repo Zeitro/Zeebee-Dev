@@ -20,16 +20,14 @@ type (
 	ProjectManagementWorkflowCreateRequest  = borrower.ProjectManagementWorkflowCreateRequest
 	ProjectManagementWorkflowDetailRequest  = borrower.ProjectManagementWorkflowDetailRequest
 	ProjectManagementWorkflowDetailResponse = borrower.ProjectManagementWorkflowDetailResponse
-	ProjectManagementWorkflowPageRequest    = borrower.ProjectManagementWorkflowPageRequest
-	ProjectManagementWorkflowPageResponse   = borrower.ProjectManagementWorkflowPageResponse
 	ProjectManagementWorkflowUpdateRequest  = borrower.ProjectManagementWorkflowUpdateRequest
 
 	ProjectManagementWorkflow interface {
 		All(ctx context.Context, in *proto.EmptyRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowAllResponse, error)
-		Page(ctx context.Context, in *ProjectManagementWorkflowPageRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowPageResponse, error)
 		Detail(ctx context.Context, in *ProjectManagementWorkflowDetailRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error)
 		Create(ctx context.Context, in *ProjectManagementWorkflowCreateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error)
 		Update(ctx context.Context, in *ProjectManagementWorkflowUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error)
+		Default(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 		Delete(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 	}
 
@@ -49,11 +47,6 @@ func (m *defaultProjectManagementWorkflow) All(ctx context.Context, in *proto.Em
 	return client.All(ctx, in, opts...)
 }
 
-func (m *defaultProjectManagementWorkflow) Page(ctx context.Context, in *ProjectManagementWorkflowPageRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowPageResponse, error) {
-	client := borrower.NewProjectManagementWorkflowClient(m.cli.Conn())
-	return client.Page(ctx, in, opts...)
-}
-
 func (m *defaultProjectManagementWorkflow) Detail(ctx context.Context, in *ProjectManagementWorkflowDetailRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error) {
 	client := borrower.NewProjectManagementWorkflowClient(m.cli.Conn())
 	return client.Detail(ctx, in, opts...)
@@ -67,6 +60,11 @@ func (m *defaultProjectManagementWorkflow) Create(ctx context.Context, in *Proje
 func (m *defaultProjectManagementWorkflow) Update(ctx context.Context, in *ProjectManagementWorkflowUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error) {
 	client := borrower.NewProjectManagementWorkflowClient(m.cli.Conn())
 	return client.Update(ctx, in, opts...)
+}
+
+func (m *defaultProjectManagementWorkflow) Default(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
+	client := borrower.NewProjectManagementWorkflowClient(m.cli.Conn())
+	return client.Default(ctx, in, opts...)
 }
 
 func (m *defaultProjectManagementWorkflow) Delete(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {

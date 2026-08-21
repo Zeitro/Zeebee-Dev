@@ -10,7 +10,6 @@ import (
 
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/gormx"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
@@ -89,10 +88,6 @@ func ValidateProjectManagementWorkflow(workflow dto.ProjectManagementWorkflowDto
 	return nil
 }
 
-func (l *ProjectManagementWorkflowLogic) Page(ctx context.Context, organizationId int64, input dto.ProjectManagementWorkflowPageRequestDto) (gormx.PageResponse[*model.ProjectManagementWorkflow], error) {
-	return l.repos.ProjectManagementWorkflowRepo.Page(ctx, organizationId, gormx.PageRequest{Page: input.Page, Limit: input.Limit}, input.Filter.Keyword, input.Filter.Enabled)
-}
-
 func (l *ProjectManagementWorkflowLogic) Detail(ctx context.Context, organizationId, id int64) (*model.ProjectManagementWorkflow, error) {
 	workflow, err := l.repos.ProjectManagementWorkflowRepo.FindDefinitionByOrganization(ctx, id, organizationId)
 	if err != nil {
@@ -105,7 +100,7 @@ func (l *ProjectManagementWorkflowLogic) Create(ctx context.Context, claim utils
 	if err = validateProjectManagementWorkflowDetails(input); err != nil {
 		return nil, err
 	}
-	if _, err = l.ListEnabled(ctx, claim.OrganizationId); err != nil {
+	if _, err = l.List(ctx, claim.OrganizationId); err != nil {
 		return nil, err
 	}
 	err = l.repos.ProjectManagementWorkflowRepo.Transaction(ctx, func(tx *gorm.DB) error {
@@ -118,7 +113,6 @@ func (l *ProjectManagementWorkflowLogic) Create(ctx context.Context, claim utils
 			OrganizationId: claim.OrganizationId,
 			Name:           input.Name,
 			Description:    input.Description,
-			Enabled:        true,
 		}
 		workflow, err = l.repos.ProjectManagementWorkflowRepo.CreateWithTx(ctx, tx, workflow, false)
 		if err != nil {
@@ -158,6 +152,31 @@ func (l *ProjectManagementWorkflowLogic) Update(ctx context.Context, claim utils
 	return l.Detail(ctx, claim.OrganizationId, id)
 }
 
+func (l *ProjectManagementWorkflowLogic) SetDefault(ctx context.Context, claim utils.JwtUser, id int64) error {
+	return l.repos.ProjectManagementWorkflowRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		workflows, err := l.repos.ProjectManagementWorkflowRepo.LockTemplatesWithTx(ctx, tx, claim.OrganizationId)
+		if err != nil {
+			return err
+		}
+		for _, workflow := range workflows {
+			if workflow.Id != id {
+				continue
+			}
+			if workflow.IsDefault {
+				return nil
+			}
+			if err = l.repos.ProjectManagementWorkflowRepo.DemoteDefaultWithTx(ctx, tx, claim.OrganizationId, id); err != nil {
+				return err
+			}
+			if err = l.repos.ProjectManagementWorkflowRepo.SetDefaultWithTx(ctx, tx, id, claim.OrganizationId); err != nil {
+				return err
+			}
+			return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: id, action: constants.OperationActionProjectManagementWorkflowUpdate})
+		}
+		return errorx.New("workflow not found")
+	})
+}
+
 func (l *ProjectManagementWorkflowLogic) Delete(ctx context.Context, claim utils.JwtUser, id int64) error {
 	return l.repos.ProjectManagementWorkflowRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		workflows, err := l.repos.ProjectManagementWorkflowRepo.LockTemplatesWithTx(ctx, tx, claim.OrganizationId)
@@ -165,13 +184,9 @@ func (l *ProjectManagementWorkflowLogic) Delete(ctx context.Context, claim utils
 			return err
 		}
 		var workflow *model.ProjectManagementWorkflow
-		enabledCount := 0
 		for _, item := range workflows {
 			if item.Id == id {
 				workflow = item
-			}
-			if item.Enabled {
-				enabledCount++
 			}
 		}
 		if workflow == nil {
@@ -179,9 +194,6 @@ func (l *ProjectManagementWorkflowLogic) Delete(ctx context.Context, claim utils
 		}
 		if workflow.IsDefault {
 			return errorx.New("default workflow cannot be deleted")
-		}
-		if workflow.Enabled && enabledCount <= 1 {
-			return errorx.New("at least one enabled workflow is required")
 		}
 		if err := l.repos.ProjectManagementWorkflowRepo.DeleteTemplateWithTx(ctx, tx, id); err != nil {
 			return err

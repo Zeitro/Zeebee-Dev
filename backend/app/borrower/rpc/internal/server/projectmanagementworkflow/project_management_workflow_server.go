@@ -29,11 +29,6 @@ func (s *ProjectManagementWorkflowServer) All(ctx context.Context, in *proto.Emp
 	return l.All(in)
 }
 
-func (s *ProjectManagementWorkflowServer) Page(ctx context.Context, in *borrower.ProjectManagementWorkflowPageRequest) (*borrower.ProjectManagementWorkflowPageResponse, error) {
-	l := projectmanagementworkflowlogic.NewPageLogic(ctx, s.svcCtx)
-	return l.Page(in)
-}
-
 func (s *ProjectManagementWorkflowServer) Detail(ctx context.Context, in *borrower.ProjectManagementWorkflowDetailRequest) (*borrower.ProjectManagementWorkflowDetailResponse, error) {
 	l := projectmanagementworkflowlogic.NewDetailLogic(ctx, s.svcCtx)
 	return l.Detail(in)
@@ -47,6 +42,11 @@ func (s *ProjectManagementWorkflowServer) Create(ctx context.Context, in *borrow
 func (s *ProjectManagementWorkflowServer) Update(ctx context.Context, in *borrower.ProjectManagementWorkflowUpdateRequest) (*borrower.ProjectManagementWorkflowDetailResponse, error) {
 	l := projectmanagementworkflowlogic.NewUpdateLogic(ctx, s.svcCtx)
 	return l.Update(in)
+}
+
+func (s *ProjectManagementWorkflowServer) Default(ctx context.Context, in *proto.PathIdRequest) (*proto.EmptyResponse, error) {
+	l := projectmanagementworkflowlogic.NewDefaultLogic(ctx, s.svcCtx)
+	return l.Default(in)
 }
 
 func (s *ProjectManagementWorkflowServer) Delete(ctx context.Context, in *proto.PathIdRequest) (*proto.EmptyResponse, error) {

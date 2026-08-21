@@ -835,7 +835,7 @@ message ProjectManagementWorkflowEntity {
   int64 id = 1;
   string name = 2;
   string description = 3;
-  bool enabled = 4;
+  reserved 4;
   bool is_default = 5;
   repeated ProjectManagementWorkflowStageEntity stages = 6;
   repeated ProjectManagementWorkflowTransitionEntity transitions = 7;
@@ -861,16 +861,6 @@ message ProjectManagementWorkflowTransitionEntity {
   repeated string allowed_actor_types = 4;
   string created_at = 5;
   string updated_at = 6;
-}
-
-message ProjectManagementWorkflowPageEntity {
-  int64 id = 1;
-  string name = 2;
-  string description = 3;
-  bool enabled = 4;
-  bool is_default = 5;
-  string created_at = 6;
-  string updated_at = 7;
 }
 
 message ProjectManagementTaskTypeEntity {

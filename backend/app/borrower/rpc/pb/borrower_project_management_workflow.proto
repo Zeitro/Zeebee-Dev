@@ -11,28 +11,6 @@ message ProjectManagementWorkflowAllResponse {
   repeated proto.ProjectManagementWorkflowEntity data = 1;
 }
 
-message ProjectManagementWorkflowPageRequest {
-  ProjectManagementWorkflowPageRequestData data = 1;
-}
-message ProjectManagementWorkflowPageRequestData {
-  int64 page = 1;
-  int64 limit = 2;
-  ProjectManagementWorkflowPageRequestFilter filter = 3;
-}
-message ProjectManagementWorkflowPageRequestFilter {
-  string keyword = 1;
-  optional bool enabled = 2;
-}
-message ProjectManagementWorkflowPageResponse {
-  ProjectManagementWorkflowPageResponseData data = 1;
-}
-message ProjectManagementWorkflowPageResponseData {
-  int64 page = 1;
-  int64 limit = 2;
-  int64 total = 3;
-  int64 total_page = 4;
-  repeated proto.ProjectManagementWorkflowPageEntity list = 5;
-}
 message ProjectManagementWorkflowDetailRequest {
   ProjectManagementWorkflowDetailRequestData data = 1;
 }
@@ -50,7 +28,7 @@ message ProjectManagementWorkflowCreateRequest {
 message ProjectManagementWorkflowCreateRequestData {
   string name = 1;
   string description = 2;
-  bool enabled = 3;
+  reserved 3;
   bool is_default = 4;
   repeated proto.ProjectManagementWorkflowStageEntity stages = 5;
   repeated proto.ProjectManagementWorkflowTransitionEntity transitions = 6;
@@ -63,7 +41,7 @@ message ProjectManagementWorkflowUpdateRequestData {
   int64 id = 1;
   string name = 2;
   string description = 3;
-  bool enabled = 4;
+  reserved 4;
   bool is_default = 5;
   repeated proto.ProjectManagementWorkflowStageEntity stages = 6;
   repeated proto.ProjectManagementWorkflowTransitionEntity transitions = 7;
@@ -72,9 +50,9 @@ message ProjectManagementWorkflowUpdateRequestData {
 
 service ProjectManagementWorkflow {
   rpc All(proto.EmptyRequest) returns(ProjectManagementWorkflowAllResponse);
-  rpc Page(ProjectManagementWorkflowPageRequest) returns(ProjectManagementWorkflowPageResponse);
   rpc Detail(ProjectManagementWorkflowDetailRequest) returns(ProjectManagementWorkflowDetailResponse);
   rpc Create(ProjectManagementWorkflowCreateRequest) returns(ProjectManagementWorkflowDetailResponse);
   rpc Update(ProjectManagementWorkflowUpdateRequest) returns(ProjectManagementWorkflowDetailResponse);
+  rpc Default(proto.PathIdRequest) returns(proto.EmptyResponse);
   rpc Delete(proto.PathIdRequest) returns(proto.EmptyResponse);
 }

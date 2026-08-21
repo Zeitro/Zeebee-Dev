@@ -11,7 +11,6 @@ type (
         Id int64 `json:"id"`
         Name string `json:"name"`
         Description string `json:"description"`
-        Enabled bool `json:"enabled"`
         IsDefault bool `json:"is_default"`
         Stages []*ProjectManagementWorkflowStageEntity `json:"stages"`
         Transitions []*ProjectManagementWorkflowTransitionEntity `json:"transitions"`
@@ -35,16 +34,6 @@ type (
         FromStageId int64 `json:"from_stage_id"`
         ToStageId int64 `json:"to_stage_id"`
         AllowedActorTypes []string `json:"allowed_actor_types"`
-        CreatedAt string `json:"created_at"`
-        UpdatedAt string `json:"updated_at"`
-    }
-
-    ProjectManagementWorkflowPageEntity {
-        Id int64 `json:"id"`
-        Name string `json:"name"`
-        Description string `json:"description"`
-        Enabled bool `json:"enabled"`
-        IsDefault bool `json:"is_default"`
         CreatedAt string `json:"created_at"`
         UpdatedAt string `json:"updated_at"`
     }

@@ -55,7 +55,7 @@ func TestProjectManagementWorkflowPostgresConcurrencyAndConstraints(t *testing.T
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			_, err := projectLogic.ListEnabled(context.Background(), 1)
+			_, err := projectLogic.List(context.Background(), 1)
 			errs <- err
 		}()
 	}
@@ -71,7 +71,7 @@ func TestProjectManagementWorkflowPostgresConcurrencyAndConstraints(t *testing.T
 		Count(&count).Error)
 	require.EqualValues(t, 1, count)
 
-	workflow := &model.ProjectManagementWorkflow{Kind: constants.ProjectManagementWorkflowKindOrganizationTemplate, OrganizationId: 2, Name: "Constraint workflow", Enabled: true}
+	workflow := &model.ProjectManagementWorkflow{Kind: constants.ProjectManagementWorkflowKindOrganizationTemplate, OrganizationId: 2, Name: "Constraint workflow"}
 	require.NoError(t, db.Create(workflow).Error)
 	pending := &model.ProjectManagementWorkflowStage{WorkflowId: workflow.Id, Name: "Pending", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 10}
 	inProgress := &model.ProjectManagementWorkflowStage{WorkflowId: workflow.Id, Name: "In progress", Phase: constants.ProjectManagementStagePhaseInProgress, SortOrder: 20}
