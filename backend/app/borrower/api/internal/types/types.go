@@ -2192,9 +2192,10 @@ type ProjectManagementWorkflowTransitionAllResponse struct {
 
 type ProjectManagementWorkflowTransitionCreateRequest struct {
 	WorkflowId        int64    `path:"workflow_id" validate:"required,gt=0"`
-	FromStageId       int64    `path:"from_stage_id" validate:"required,gt=0"`
+	FromStageId       int64    `json:"from_stage_id" validate:"required,gt=0"`
+	Name              string   `json:"name" validate:"required"`
 	ToStageId         int64    `json:"to_stage_id" validate:"required,gt=0"`
-	AllowedActorTypes []string `json:"allowed_actor_types"`
+	AllowedActorTypes []string `json:"allowed_actor_types" validate:"omitempty,dive,oneof=ProjectOwner ProjectAdmin TaskExecutor TaskCreator"`
 }
 
 type ProjectManagementWorkflowTransitionDetailRequest struct {
@@ -2207,19 +2208,24 @@ type ProjectManagementWorkflowTransitionDetailResponse struct {
 }
 
 type ProjectManagementWorkflowTransitionEntity struct {
-	Id                int64    `json:"id"`
-	FromStageId       int64    `json:"from_stage_id"`
-	ToStageId         int64    `json:"to_stage_id"`
-	AllowedActorTypes []string `json:"allowed_actor_types"`
-	CreatedAt         string   `json:"created_at"`
-	UpdatedAt         string   `json:"updated_at"`
+	Id                int64                                 `json:"id"`
+	Name              string                                `json:"name"`
+	FromStageId       int64                                 `json:"from_stage_id"`
+	ToStageId         int64                                 `json:"to_stage_id"`
+	AllowedActorTypes []string                              `json:"allowed_actor_types"`
+	CreatedAt         string                                `json:"created_at"`
+	UpdatedAt         string                                `json:"updated_at"`
+	FromStage         *ProjectManagementWorkflowStageEntity `json:"from_stage"`
+	ToStage           *ProjectManagementWorkflowStageEntity `json:"to_stage"`
 }
 
 type ProjectManagementWorkflowTransitionUpdateRequest struct {
 	WorkflowId        int64    `path:"workflow_id" validate:"required,gt=0"`
 	Id                int64    `path:"id" validate:"required,gt=0"`
+	Name              string   `json:"name" validate:"required"`
+	FromStageId       int64    `json:"from_stage_id" validate:"required,gt=0"`
 	ToStageId         int64    `json:"to_stage_id" validate:"required,gt=0"`
-	AllowedActorTypes []string `json:"allowed_actor_types"`
+	AllowedActorTypes []string `json:"allowed_actor_types" validate:"omitempty,dive,oneof=ProjectOwner ProjectAdmin TaskExecutor TaskCreator"`
 }
 
 type ProjectManagementWorkflowUpdateRequest struct {

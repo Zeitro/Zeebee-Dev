@@ -16,6 +16,7 @@ type ProjectManagementWorkflowStageDto struct {
 
 type ProjectManagementWorkflowTransitionDto struct {
 	Id                int64
+	Name              string
 	FromStageId       int64
 	ToStageId         int64
 	AllowedActorTypes []constants.ProjectManagementMemberRole

@@ -212,6 +212,7 @@ type ProjectManagementWorkflowTransitionCreateRequestData struct {
 	FromStageId       int64                  `protobuf:"varint,2,opt,name=from_stage_id,json=fromStageId,proto3" json:"from_stage_id,omitempty"`
 	ToStageId         int64                  `protobuf:"varint,3,opt,name=to_stage_id,json=toStageId,proto3" json:"to_stage_id,omitempty"`
 	AllowedActorTypes []string               `protobuf:"bytes,4,rep,name=allowed_actor_types,json=allowedActorTypes,proto3" json:"allowed_actor_types,omitempty"`
+	Name              string                 `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -274,6 +275,13 @@ func (x *ProjectManagementWorkflowTransitionCreateRequestData) GetAllowedActorTy
 	return nil
 }
 
+func (x *ProjectManagementWorkflowTransitionCreateRequestData) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
 type ProjectManagementWorkflowTransitionUpdateRequest struct {
 	state         protoimpl.MessageState                                `protogen:"open.v1"`
 	Data          *ProjectManagementWorkflowTransitionUpdateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -324,6 +332,8 @@ type ProjectManagementWorkflowTransitionUpdateRequestData struct {
 	Id                int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	ToStageId         int64                  `protobuf:"varint,3,opt,name=to_stage_id,json=toStageId,proto3" json:"to_stage_id,omitempty"`
 	AllowedActorTypes []string               `protobuf:"bytes,4,rep,name=allowed_actor_types,json=allowedActorTypes,proto3" json:"allowed_actor_types,omitempty"`
+	Name              string                 `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	FromStageId       int64                  `protobuf:"varint,6,opt,name=from_stage_id,json=fromStageId,proto3" json:"from_stage_id,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -384,6 +394,20 @@ func (x *ProjectManagementWorkflowTransitionUpdateRequestData) GetAllowedActorTy
 		return x.AllowedActorTypes
 	}
 	return nil
+}
+
+func (x *ProjectManagementWorkflowTransitionUpdateRequestData) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *ProjectManagementWorkflowTransitionUpdateRequestData) GetFromStageId() int64 {
+	if x != nil {
+		return x.FromStageId
+	}
+	return 0
 }
 
 type ProjectManagementWorkflowTransitionDetailRequest struct {
@@ -540,21 +564,24 @@ const file_borrower_project_management_workflow_transition_proto_rawDesc = "" +
 	".ProjectManagementWorkflowTransitionAllResponse\x12D\n" +
 	"\x04data\x18\x01 \x03(\v20.proto.ProjectManagementWorkflowTransitionEntityR\x04data\"\x86\x01\n" +
 	"0ProjectManagementWorkflowTransitionCreateRequest\x12R\n" +
-	"\x04data\x18\x01 \x01(\v2>.borrower.ProjectManagementWorkflowTransitionCreateRequestDataR\x04data\"\xcb\x01\n" +
+	"\x04data\x18\x01 \x01(\v2>.borrower.ProjectManagementWorkflowTransitionCreateRequestDataR\x04data\"\xdf\x01\n" +
 	"4ProjectManagementWorkflowTransitionCreateRequestData\x12\x1f\n" +
 	"\vworkflow_id\x18\x01 \x01(\x03R\n" +
 	"workflowId\x12\"\n" +
 	"\rfrom_stage_id\x18\x02 \x01(\x03R\vfromStageId\x12\x1e\n" +
 	"\vto_stage_id\x18\x03 \x01(\x03R\ttoStageId\x12.\n" +
-	"\x13allowed_actor_types\x18\x04 \x03(\tR\x11allowedActorTypes\"\x86\x01\n" +
+	"\x13allowed_actor_types\x18\x04 \x03(\tR\x11allowedActorTypes\x12\x12\n" +
+	"\x04name\x18\x05 \x01(\tR\x04name\"\x86\x01\n" +
 	"0ProjectManagementWorkflowTransitionUpdateRequest\x12R\n" +
-	"\x04data\x18\x01 \x01(\v2>.borrower.ProjectManagementWorkflowTransitionUpdateRequestDataR\x04data\"\xb7\x01\n" +
+	"\x04data\x18\x01 \x01(\v2>.borrower.ProjectManagementWorkflowTransitionUpdateRequestDataR\x04data\"\xef\x01\n" +
 	"4ProjectManagementWorkflowTransitionUpdateRequestData\x12\x1f\n" +
 	"\vworkflow_id\x18\x01 \x01(\x03R\n" +
 	"workflowId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\x12\x1e\n" +
 	"\vto_stage_id\x18\x03 \x01(\x03R\ttoStageId\x12.\n" +
-	"\x13allowed_actor_types\x18\x04 \x03(\tR\x11allowedActorTypes\"\x86\x01\n" +
+	"\x13allowed_actor_types\x18\x04 \x03(\tR\x11allowedActorTypes\x12\x12\n" +
+	"\x04name\x18\x05 \x01(\tR\x04name\x12\"\n" +
+	"\rfrom_stage_id\x18\x06 \x01(\x03R\vfromStageId\"\x86\x01\n" +
 	"0ProjectManagementWorkflowTransitionDetailRequest\x12R\n" +
 	"\x04data\x18\x01 \x01(\v2>.borrower.ProjectManagementWorkflowTransitionDetailRequestDataR\x04data\"g\n" +
 	"4ProjectManagementWorkflowTransitionDetailRequestData\x12\x1f\n" +

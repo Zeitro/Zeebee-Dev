@@ -6318,69 +6318,6 @@
         }
       }
     },
-    "/api/v1/project_management/workflow/{workflow_id}/stage/{from_stage_id}/transition": {
-      "post": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "project_management_workflow_transition"
-        ],
-        "summary": "create",
-        "operationId": "projectManagementWorkflowTransitionCreate",
-        "parameters": [
-          {
-            "type": "integer",
-            "name": "workflow_id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "integer",
-            "name": "from_stage_id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/ProjectManagementWorkflowTransitionCreateRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/ProjectManagementWorkflowTransitionDetailResponse"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/project_management/workflow/{workflow_id}/stage/{from_stage_id}/transition/all": {
       "get": {
         "produces": [
@@ -6587,6 +6524,63 @@
                 },
                 "data": {
                   "$ref": "#/definitions/EmptyResponse"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/workflow/{workflow_id}/transition": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management_workflow_transition"
+        ],
+        "summary": "create",
+        "operationId": "projectManagementWorkflowTransitionCreate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "workflow_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ProjectManagementWorkflowTransitionCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "business code",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/ProjectManagementWorkflowTransitionDetailResponse"
                 },
                 "msg": {
                   "description": "business message",
@@ -20118,6 +20112,8 @@
     "ProjectManagementWorkflowTransitionCreateRequest": {
       "type": "object",
       "required": [
+        "from_stage_id",
+        "name",
         "to_stage_id",
         "allowed_actor_types"
       ],
@@ -20127,6 +20123,12 @@
           "items": {
             "type": "string"
           }
+        },
+        "from_stage_id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
         },
         "to_stage_id": {
           "type": "integer"
@@ -20140,11 +20142,14 @@
       "type": "object",
       "required": [
         "id",
+        "name",
         "from_stage_id",
         "to_stage_id",
         "allowed_actor_types",
         "created_at",
-        "updated_at"
+        "updated_at",
+        "from_stage",
+        "to_stage"
       ],
       "properties": {
         "allowed_actor_types": {
@@ -20156,11 +20161,110 @@
         "created_at": {
           "type": "string"
         },
+        "from_stage": {
+          "type": "object",
+          "required": [
+            "id",
+            "name",
+            "phase",
+            "color",
+            "sort_order",
+            "created_at",
+            "updated_at",
+            "transitions"
+          ],
+          "properties": {
+            "color": {
+              "type": "string"
+            },
+            "created_at": {
+              "type": "string"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "phase": {
+              "type": "string",
+              "enum": [
+                "Pending",
+                "InProgress",
+                "Finished"
+              ]
+            },
+            "sort_order": {
+              "type": "integer"
+            },
+            "transitions": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ProjectManagementWorkflowTransitionEntity"
+              }
+            },
+            "updated_at": {
+              "type": "string"
+            }
+          },
+          "$ref": "#/definitions/ProjectManagementWorkflowStageEntity"
+        },
         "from_stage_id": {
           "type": "integer"
         },
         "id": {
           "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "to_stage": {
+          "type": "object",
+          "required": [
+            "id",
+            "name",
+            "phase",
+            "color",
+            "sort_order",
+            "created_at",
+            "updated_at",
+            "transitions"
+          ],
+          "properties": {
+            "color": {
+              "type": "string"
+            },
+            "created_at": {
+              "type": "string"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "phase": {
+              "type": "string",
+              "enum": [
+                "Pending",
+                "InProgress",
+                "Finished"
+              ]
+            },
+            "sort_order": {
+              "type": "integer"
+            },
+            "transitions": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ProjectManagementWorkflowTransitionEntity"
+              }
+            },
+            "updated_at": {
+              "type": "string"
+            }
+          },
+          "$ref": "#/definitions/ProjectManagementWorkflowStageEntity"
         },
         "to_stage_id": {
           "type": "integer"
@@ -20174,11 +20278,14 @@
       "type": "object",
       "required": [
         "id",
+        "name",
         "from_stage_id",
         "to_stage_id",
         "allowed_actor_types",
         "created_at",
-        "updated_at"
+        "updated_at",
+        "from_stage",
+        "to_stage"
       ],
       "properties": {
         "allowed_actor_types": {
@@ -20190,11 +20297,110 @@
         "created_at": {
           "type": "string"
         },
+        "from_stage": {
+          "type": "object",
+          "required": [
+            "id",
+            "name",
+            "phase",
+            "color",
+            "sort_order",
+            "created_at",
+            "updated_at",
+            "transitions"
+          ],
+          "properties": {
+            "color": {
+              "type": "string"
+            },
+            "created_at": {
+              "type": "string"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "phase": {
+              "type": "string",
+              "enum": [
+                "Pending",
+                "InProgress",
+                "Finished"
+              ]
+            },
+            "sort_order": {
+              "type": "integer"
+            },
+            "transitions": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ProjectManagementWorkflowTransitionEntity"
+              }
+            },
+            "updated_at": {
+              "type": "string"
+            }
+          },
+          "$ref": "#/definitions/ProjectManagementWorkflowStageEntity"
+        },
         "from_stage_id": {
           "type": "integer"
         },
         "id": {
           "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "to_stage": {
+          "type": "object",
+          "required": [
+            "id",
+            "name",
+            "phase",
+            "color",
+            "sort_order",
+            "created_at",
+            "updated_at",
+            "transitions"
+          ],
+          "properties": {
+            "color": {
+              "type": "string"
+            },
+            "created_at": {
+              "type": "string"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "phase": {
+              "type": "string",
+              "enum": [
+                "Pending",
+                "InProgress",
+                "Finished"
+              ]
+            },
+            "sort_order": {
+              "type": "integer"
+            },
+            "transitions": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ProjectManagementWorkflowTransitionEntity"
+              }
+            },
+            "updated_at": {
+              "type": "string"
+            }
+          },
+          "$ref": "#/definitions/ProjectManagementWorkflowStageEntity"
         },
         "to_stage_id": {
           "type": "integer"
@@ -20207,6 +20413,8 @@
     "ProjectManagementWorkflowTransitionUpdateRequest": {
       "type": "object",
       "required": [
+        "name",
+        "from_stage_id",
         "to_stage_id",
         "allowed_actor_types"
       ],
@@ -20216,6 +20424,12 @@
           "items": {
             "type": "string"
           }
+        },
+        "from_stage_id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
         },
         "to_stage_id": {
           "type": "integer"
@@ -22254,7 +22468,7 @@
       }
     }
   },
-  "x-date": "2026-08-21 15:44:37",
+  "x-date": "2026-08-21 18:07:24",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

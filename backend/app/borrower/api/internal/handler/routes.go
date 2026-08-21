@@ -1096,16 +1096,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
-					// create
-					Method:  http.MethodPost,
-					Path:    "/project_management/workflow/:workflow_id/stage/:from_stage_id/transition",
-					Handler: project_management_workflow_transition.CreateHandler(serverCtx),
-				},
-				{
 					// all
 					Method:  http.MethodGet,
 					Path:    "/project_management/workflow/:workflow_id/stage/:from_stage_id/transition/all",
 					Handler: project_management_workflow_transition.AllHandler(serverCtx),
+				},
+				{
+					// create
+					Method:  http.MethodPost,
+					Path:    "/project_management/workflow/:workflow_id/transition",
+					Handler: project_management_workflow_transition.CreateHandler(serverCtx),
 				},
 				{
 					// detail

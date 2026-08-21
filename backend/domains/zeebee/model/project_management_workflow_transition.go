@@ -5,6 +5,7 @@ import "zeebee-backend/domains/zeebee/constants"
 type ProjectManagementWorkflowTransition struct {
 	Base
 	WorkflowId        int64                                   `gorm:"column:workflow_id;not null;default:0" json:"workflow_id"`
+	Name              string                                  `gorm:"column:name;not null;default:''" json:"name"`
 	FromStageId       int64                                   `gorm:"column:from_stage_id;not null;default:0" json:"from_stage_id"`
 	ToStageId         int64                                   `gorm:"column:to_stage_id;not null;default:0" json:"to_stage_id"`
 	AllowedActorTypes []constants.ProjectManagementMemberRole `gorm:"column:allowed_actor_types;type:jsonb;not null;default:'[]';serializer:json" json:"allowed_actor_types"`

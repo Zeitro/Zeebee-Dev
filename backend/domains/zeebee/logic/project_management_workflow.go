@@ -352,23 +352,29 @@ func (l *ProjectManagementWorkflowLogic) TransitionUpdate(ctx context.Context, c
 		if err != nil {
 			return projectManagementNotFound(err, "workflow transition not found")
 		}
-		input.FromStageId = transition.FromStageId
 		if err = validateProjectManagementWorkflowTransition(input); err != nil {
 			return err
 		}
+		fromStage, err := l.repos.ProjectManagementWorkflowRepo.FindTemplateStageWithTx(ctx, tx, input.FromStageId, workflowId, claim.OrganizationId)
+		if err != nil {
+			return projectManagementNotFound(err, "workflow stage not found")
+		}
 		toStage, err := l.repos.ProjectManagementWorkflowRepo.FindStageWithTx(ctx, tx, input.ToStageId)
-		if err != nil || toStage.WorkflowId != transition.WorkflowId {
+		if err != nil || toStage.WorkflowId != fromStage.WorkflowId {
 			return errorx.New("workflow transition target stage is invalid")
 		}
-		duplicate, duplicateErr := l.repos.ProjectManagementWorkflowRepo.FindTransitionWithTx(ctx, tx, transition.WorkflowId, transition.FromStageId, input.ToStageId)
+		duplicate, duplicateErr := l.repos.ProjectManagementWorkflowRepo.FindTransitionWithTx(ctx, tx, transition.WorkflowId, input.FromStageId, input.ToStageId)
 		if duplicateErr == nil && duplicate.Id != id {
 			return errorx.New("workflow transition already exists")
 		}
 		if duplicateErr != nil && !errors.Is(duplicateErr, gorm.ErrRecordNotFound) {
 			return duplicateErr
 		}
-		transition.ToStageId = input.ToStageId
-		transition.AllowedActorTypes = input.AllowedActorTypes
+		transitionId := transition.Id
+		if err = copierx.Assign(&input, transition); err != nil {
+			return err
+		}
+		transition.Id = transitionId
 		if err = l.repos.ProjectManagementWorkflowRepo.UpdateTemplateTransitionWithTx(ctx, tx, transition); err != nil {
 			return err
 		}
@@ -433,6 +439,9 @@ func validateProjectManagementWorkflowStage(input dto.ProjectManagementWorkflowS
 }
 
 func validateProjectManagementWorkflowTransition(input dto.ProjectManagementWorkflowTransitionDto) error {
+	if strings.TrimSpace(input.Name) == "" {
+		return errorx.New("workflow transition name is required")
+	}
 	if input.FromStageId == 0 || input.ToStageId == 0 || input.FromStageId == input.ToStageId {
 		return errorx.New("workflow transition stages are invalid")
 	}

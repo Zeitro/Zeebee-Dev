@@ -863,6 +863,9 @@ message ProjectManagementWorkflowTransitionEntity {
   repeated string allowed_actor_types = 4;
   string created_at = 5;
   string updated_at = 6;
+  string name = 7;
+  ProjectManagementWorkflowStageEntity from_stage = 8;
+  ProjectManagementWorkflowStageEntity to_stage = 9;
 }
 
 message ProjectManagementTaskTypeEntity {

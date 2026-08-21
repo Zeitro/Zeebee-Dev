@@ -2,7 +2,9 @@ package repo
 
 import (
 	"context"
+	"encoding/json"
 
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
@@ -115,13 +117,22 @@ func (r *ProjectManagementWorkflowRepo) FindTemplateStageWithTx(ctx context.Cont
 
 func (r *ProjectManagementWorkflowRepo) ListTransitionsByFromStage(ctx context.Context, fromStageId int64) ([]*model.ProjectManagementWorkflowTransition, error) {
 	transitions := make([]*model.ProjectManagementWorkflowTransition, 0)
-	err := r.transitionRepo.Client(ctx).Where("from_stage_id = ?", fromStageId).Order("id ASC").Find(&transitions).Error
+	err := r.transitionRepo.Client(ctx).
+		Preload("FromStage").
+		Preload("ToStage").
+		Where("from_stage_id = ?", fromStageId).
+		Order("id ASC").
+		Find(&transitions).Error
 	return transitions, errorx.WithStack(err)
 }
 
 func (r *ProjectManagementWorkflowRepo) FindTemplateTransition(ctx context.Context, id, workflowId, organizationId int64) (*model.ProjectManagementWorkflowTransition, error) {
 	transition := new(model.ProjectManagementWorkflowTransition)
-	err := r.transitionRepo.Client(ctx).Where("id = ? AND workflow_id = ? AND EXISTS (SELECT 1 FROM project_management_workflows WHERE id = project_management_workflow_transitions.workflow_id AND organization_id = ? AND kind = ?)", id, workflowId, organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).First(transition).Error
+	err := r.transitionRepo.Client(ctx).
+		Preload("FromStage").
+		Preload("ToStage").
+		Where("id = ? AND workflow_id = ? AND EXISTS (SELECT 1 FROM project_management_workflows WHERE id = project_management_workflow_transitions.workflow_id AND organization_id = ? AND kind = ?)", id, workflowId, organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).
+		First(transition).Error
 	return transition, errorx.WithStack(err)
 }
 
@@ -148,8 +159,12 @@ func (r *ProjectManagementWorkflowRepo) CreateTemplateTransitionWithTx(ctx conte
 }
 
 func (r *ProjectManagementWorkflowRepo) UpdateTemplateTransitionWithTx(ctx context.Context, tx *gorm.DB, transition *model.ProjectManagementWorkflowTransition) error {
+	allowedActorTypes, err := json.Marshal(transition.AllowedActorTypes)
+	if err != nil {
+		return errorx.WithStack(err)
+	}
 	return r.transitionRepo.UpdateColumnsWithTx(ctx, tx,
-		map[string]any{"to_stage_id": transition.ToStageId, "allowed_actor_types": transition.AllowedActorTypes},
+		map[string]any{"name": transition.Name, "from_stage_id": transition.FromStageId, "to_stage_id": transition.ToStageId, "allowed_actor_types": datatypes.JSON(allowedActorTypes)},
 		map[string]any{"id": transition.Id, "workflow_id": transition.WorkflowId}, nil)
 }
 
@@ -384,7 +399,7 @@ func (r *ProjectManagementWorkflowRepo) CloneTemplateToProjectWithTx(ctx context
 		stageIds[stage.Id] = copy.Id
 	}
 	for _, transition := range template.Transitions {
-		copy := &model.ProjectManagementWorkflowTransition{WorkflowId: workflow.Id, FromStageId: stageIds[transition.FromStageId], ToStageId: stageIds[transition.ToStageId], AllowedActorTypes: transition.AllowedActorTypes}
+		copy := &model.ProjectManagementWorkflowTransition{WorkflowId: workflow.Id, Name: transition.Name, FromStageId: stageIds[transition.FromStageId], ToStageId: stageIds[transition.ToStageId], AllowedActorTypes: transition.AllowedActorTypes}
 		if _, err = r.transitionRepo.CreateWithTx(ctx, tx, copy, false); err != nil {
 			return err
 		}

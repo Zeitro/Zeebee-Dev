@@ -48,6 +48,7 @@ CREATE TABLE "public"."project_management_workflow_transitions" (
     "updated_at" timestamptz NOT NULL DEFAULT now(),
     "is_del" int2 NOT NULL DEFAULT 0,
     "workflow_id" int4 NOT NULL DEFAULT 0,
+    "name" varchar(100) NOT NULL DEFAULT '',
     "from_stage_id" int4 NOT NULL DEFAULT 0,
     "to_stage_id" int4 NOT NULL DEFAULT 0,
     "allowed_actor_types" jsonb NOT NULL DEFAULT '[]'

@@ -24,7 +24,7 @@ func TestValidateProjectManagementProjectWorkflow(t *testing.T) {
 			{Id: -1, Name: "In progress", Phase: constants.ProjectManagementStagePhaseInProgress, SortOrder: 20},
 			{Id: -2, Name: "Finished", Phase: constants.ProjectManagementStagePhaseFinished, SortOrder: 30},
 		},
-		Transitions: []dto.ProjectManagementWorkflowTransitionDto{{FromStageId: 12, ToStageId: -1}},
+		Transitions: []dto.ProjectManagementWorkflowTransitionDto{{Name: "Start", FromStageId: 12, ToStageId: -1}},
 	}
 	if err := validateProjectManagementProjectWorkflow(workflow); err != nil {
 		t.Fatalf("valid workflow replacement rejected: %v", err)
@@ -43,7 +43,7 @@ func TestUpdateProjectWorkflowRequiresProjectManager(t *testing.T) {
 		"CREATE TABLE project_management_project_members (id INTEGER PRIMARY KEY, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, is_del INTEGER NOT NULL DEFAULT 0, project_id INTEGER NOT NULL, organization_user_id INTEGER NOT NULL, role TEXT NOT NULL)",
 		"CREATE TABLE project_management_workflows (id INTEGER PRIMARY KEY, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, is_del INTEGER NOT NULL DEFAULT 0, kind TEXT NOT NULL, organization_id INTEGER NOT NULL, project_id INTEGER NOT NULL DEFAULT 0, name TEXT NOT NULL DEFAULT '', description TEXT NOT NULL DEFAULT '', is_default BOOLEAN NOT NULL DEFAULT FALSE, source_template_id INTEGER NOT NULL DEFAULT 0, source_template_name TEXT NOT NULL DEFAULT '')",
 		"CREATE TABLE project_management_workflow_stages (id INTEGER PRIMARY KEY, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, is_del INTEGER NOT NULL DEFAULT 0, workflow_id INTEGER NOT NULL, name TEXT NOT NULL DEFAULT '', phase TEXT NOT NULL, color TEXT NOT NULL DEFAULT '', sort_order INTEGER NOT NULL)",
-		"CREATE TABLE project_management_workflow_transitions (id INTEGER PRIMARY KEY, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, is_del INTEGER NOT NULL DEFAULT 0, workflow_id INTEGER NOT NULL, from_stage_id INTEGER NOT NULL, to_stage_id INTEGER NOT NULL, allowed_actor_types JSON NOT NULL DEFAULT '[]')",
+		"CREATE TABLE project_management_workflow_transitions (id INTEGER PRIMARY KEY, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, is_del INTEGER NOT NULL DEFAULT 0, workflow_id INTEGER NOT NULL, name TEXT NOT NULL DEFAULT '', from_stage_id INTEGER NOT NULL, to_stage_id INTEGER NOT NULL, allowed_actor_types JSON NOT NULL DEFAULT '[]')",
 	} {
 		require.NoError(t, db.Exec(statement).Error)
 	}

@@ -28,15 +28,18 @@ type (
     }
     ProjectManagementWorkflowTransitionCreateRequest {
         WorkflowId int64 `path:"workflow_id" validate:"required,gt=0"`
-        FromStageId int64 `path:"from_stage_id" validate:"required,gt=0"`
+        FromStageId int64 `json:"from_stage_id" validate:"required,gt=0"`
+        Name string `json:"name" validate:"required"`
         ToStageId int64 `json:"to_stage_id" validate:"required,gt=0"`
-        AllowedActorTypes []string `json:"allowed_actor_types"`
+        AllowedActorTypes []string `json:"allowed_actor_types" validate:"omitempty,dive,oneof=ProjectOwner ProjectAdmin TaskExecutor TaskCreator"`
     }
     ProjectManagementWorkflowTransitionUpdateRequest {
         WorkflowId int64 `path:"workflow_id" validate:"required,gt=0"`
         Id int64 `path:"id" validate:"required,gt=0"`
+        Name string `json:"name" validate:"required"`
+        FromStageId int64 `json:"from_stage_id" validate:"required,gt=0"`
         ToStageId int64 `json:"to_stage_id" validate:"required,gt=0"`
-        AllowedActorTypes []string `json:"allowed_actor_types"`
+        AllowedActorTypes []string `json:"allowed_actor_types" validate:"omitempty,dive,oneof=ProjectOwner ProjectAdmin TaskExecutor TaskCreator"`
     }
 )
 
@@ -55,7 +58,7 @@ service borrower-api {
 
     @doc "create"
     @handler Create
-    post /project_management/workflow/:workflow_id/stage/:from_stage_id/transition (ProjectManagementWorkflowTransitionCreateRequest) returns (ProjectManagementWorkflowTransitionDetailResponse)
+    post /project_management/workflow/:workflow_id/transition (ProjectManagementWorkflowTransitionCreateRequest) returns (ProjectManagementWorkflowTransitionDetailResponse)
 
     @doc "detail"
     @handler Detail

@@ -7256,13 +7256,16 @@ func (x *ProjectManagementWorkflowStageEntity) GetTransitions() []*ProjectManage
 }
 
 type ProjectManagementWorkflowTransitionEntity struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	Id                int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	FromStageId       int64                  `protobuf:"varint,2,opt,name=from_stage_id,json=fromStageId,proto3" json:"from_stage_id,omitempty"`
-	ToStageId         int64                  `protobuf:"varint,3,opt,name=to_stage_id,json=toStageId,proto3" json:"to_stage_id,omitempty"`
-	AllowedActorTypes []string               `protobuf:"bytes,4,rep,name=allowed_actor_types,json=allowedActorTypes,proto3" json:"allowed_actor_types,omitempty"`
-	CreatedAt         string                 `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt         string                 `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	state             protoimpl.MessageState                `protogen:"open.v1"`
+	Id                int64                                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	FromStageId       int64                                 `protobuf:"varint,2,opt,name=from_stage_id,json=fromStageId,proto3" json:"from_stage_id,omitempty"`
+	ToStageId         int64                                 `protobuf:"varint,3,opt,name=to_stage_id,json=toStageId,proto3" json:"to_stage_id,omitempty"`
+	AllowedActorTypes []string                              `protobuf:"bytes,4,rep,name=allowed_actor_types,json=allowedActorTypes,proto3" json:"allowed_actor_types,omitempty"`
+	CreatedAt         string                                `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt         string                                `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Name              string                                `protobuf:"bytes,7,opt,name=name,proto3" json:"name,omitempty"`
+	FromStage         *ProjectManagementWorkflowStageEntity `protobuf:"bytes,8,opt,name=from_stage,json=fromStage,proto3" json:"from_stage,omitempty"`
+	ToStage           *ProjectManagementWorkflowStageEntity `protobuf:"bytes,9,opt,name=to_stage,json=toStage,proto3" json:"to_stage,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -7337,6 +7340,27 @@ func (x *ProjectManagementWorkflowTransitionEntity) GetUpdatedAt() string {
 		return x.UpdatedAt
 	}
 	return ""
+}
+
+func (x *ProjectManagementWorkflowTransitionEntity) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *ProjectManagementWorkflowTransitionEntity) GetFromStage() *ProjectManagementWorkflowStageEntity {
+	if x != nil {
+		return x.FromStage
+	}
+	return nil
+}
+
+func (x *ProjectManagementWorkflowTransitionEntity) GetToStage() *ProjectManagementWorkflowStageEntity {
+	if x != nil {
+		return x.ToStage
+	}
+	return nil
 }
 
 type ProjectManagementTaskTypeEntity struct {
@@ -9017,7 +9041,7 @@ const file_proto_entity_proto_rawDesc = "" +
 	"created_at\x18\x06 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
 	"updated_at\x18\a \x01(\tR\tupdatedAt\x12R\n" +
-	"\vtransitions\x18\b \x03(\v20.proto.ProjectManagementWorkflowTransitionEntityR\vtransitions\"\xed\x01\n" +
+	"\vtransitions\x18\b \x03(\v20.proto.ProjectManagementWorkflowTransitionEntityR\vtransitions\"\x95\x03\n" +
 	")ProjectManagementWorkflowTransitionEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\"\n" +
 	"\rfrom_stage_id\x18\x02 \x01(\x03R\vfromStageId\x12\x1e\n" +
@@ -9026,7 +9050,11 @@ const file_proto_entity_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x05 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\x06 \x01(\tR\tupdatedAt\"\xda\x01\n" +
+	"updated_at\x18\x06 \x01(\tR\tupdatedAt\x12\x12\n" +
+	"\x04name\x18\a \x01(\tR\x04name\x12J\n" +
+	"\n" +
+	"from_stage\x18\b \x01(\v2+.proto.ProjectManagementWorkflowStageEntityR\tfromStage\x12F\n" +
+	"\bto_stage\x18\t \x01(\v2+.proto.ProjectManagementWorkflowStageEntityR\atoStage\"\xda\x01\n" +
 	"\x1fProjectManagementTaskTypeEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
@@ -9288,14 +9316,16 @@ var file_proto_entity_proto_depIdxs = []int32{
 	56, // 71: proto.ProjectManagementWorkflowEntity.stages:type_name -> proto.ProjectManagementWorkflowStageEntity
 	57, // 72: proto.ProjectManagementWorkflowEntity.transitions:type_name -> proto.ProjectManagementWorkflowTransitionEntity
 	57, // 73: proto.ProjectManagementWorkflowStageEntity.transitions:type_name -> proto.ProjectManagementWorkflowTransitionEntity
-	61, // 74: proto.ProjectManagementTaskEntity.task_type:type_name -> proto.ProjectManagementTaskTypeSnapshotEntity
-	62, // 75: proto.ProjectManagementTaskEntity.assignees:type_name -> proto.ProjectManagementTaskAssigneeEntity
-	18, // 76: proto.TemplateVariableEntity.PropertiesEntry.value:type_name -> proto.TemplateVariableEntity
-	77, // [77:77] is the sub-list for method output_type
-	77, // [77:77] is the sub-list for method input_type
-	77, // [77:77] is the sub-list for extension type_name
-	77, // [77:77] is the sub-list for extension extendee
-	0,  // [0:77] is the sub-list for field type_name
+	56, // 74: proto.ProjectManagementWorkflowTransitionEntity.from_stage:type_name -> proto.ProjectManagementWorkflowStageEntity
+	56, // 75: proto.ProjectManagementWorkflowTransitionEntity.to_stage:type_name -> proto.ProjectManagementWorkflowStageEntity
+	61, // 76: proto.ProjectManagementTaskEntity.task_type:type_name -> proto.ProjectManagementTaskTypeSnapshotEntity
+	62, // 77: proto.ProjectManagementTaskEntity.assignees:type_name -> proto.ProjectManagementTaskAssigneeEntity
+	18, // 78: proto.TemplateVariableEntity.PropertiesEntry.value:type_name -> proto.TemplateVariableEntity
+	79, // [79:79] is the sub-list for method output_type
+	79, // [79:79] is the sub-list for method input_type
+	79, // [79:79] is the sub-list for extension type_name
+	79, // [79:79] is the sub-list for extension extendee
+	0,  // [0:79] is the sub-list for field type_name
 }
 
 func init() { file_proto_entity_proto_init() }

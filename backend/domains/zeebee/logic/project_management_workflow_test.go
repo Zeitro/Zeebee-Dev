@@ -21,7 +21,7 @@ func TestValidateProjectManagementWorkflow(t *testing.T) {
 			{Id: 1, Name: "Pending", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 1},
 			{Id: 2, Name: "Finished", Phase: constants.ProjectManagementStagePhaseFinished, SortOrder: 2},
 		},
-		Transitions: []dto.ProjectManagementWorkflowTransitionDto{{FromStageId: 1, ToStageId: 2}},
+		Transitions: []dto.ProjectManagementWorkflowTransitionDto{{Name: "Finish", FromStageId: 1, ToStageId: 2}},
 	}
 	if err := ValidateProjectManagementWorkflow(valid); err != nil {
 		t.Fatalf("valid workflow rejected: %v", err)
@@ -49,9 +49,17 @@ func TestValidateProjectManagementWorkflow(t *testing.T) {
 		{Id: 1, Name: "Pending", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 1},
 		{Id: 2, Name: "Finished", Phase: constants.ProjectManagementStagePhaseFinished, SortOrder: 2},
 	}
-	valid.Transitions = []dto.ProjectManagementWorkflowTransitionDto{{FromStageId: 1, ToStageId: 3}}
+	valid.Transitions = []dto.ProjectManagementWorkflowTransitionDto{{Name: "Invalid", FromStageId: 1, ToStageId: 3}}
 	if err := ValidateProjectManagementWorkflow(valid); err == nil {
 		t.Fatal("workflow transition to an unknown stage accepted")
+	}
+
+	valid.Transitions = []dto.ProjectManagementWorkflowTransitionDto{
+		{Name: "Finish", FromStageId: 1, ToStageId: 2},
+		{Name: "Finish again", FromStageId: 1, ToStageId: 2},
+	}
+	if err := ValidateProjectManagementWorkflow(valid); err == nil {
+		t.Fatal("duplicate workflow transition accepted")
 	}
 }
 
@@ -63,14 +71,14 @@ func TestProjectManagementTemplateModels(t *testing.T) {
 			{Id: -2, Name: "Finished", Phase: constants.ProjectManagementStagePhaseFinished, SortOrder: 2},
 		},
 		Transitions: []dto.ProjectManagementWorkflowTransitionDto{{
-			FromStageId: -1, ToStageId: -2, AllowedActorTypes: []constants.ProjectManagementMemberRole{constants.ProjectManagementMemberRoleProjectOwner},
+			Name: "Finish", FromStageId: -1, ToStageId: -2, AllowedActorTypes: []constants.ProjectManagementMemberRole{constants.ProjectManagementMemberRoleProjectOwner},
 		}},
 	}
 	workflow, stages, transitions, err := projectManagementTemplateModels(input)
 	if err != nil {
 		t.Fatalf("models: %v", err)
 	}
-	if workflow.Name != input.Name || len(stages) != 2 || len(transitions) != 1 || transitions[0].AllowedActorTypes[0] != "ProjectOwner" {
+	if workflow.Name != input.Name || len(stages) != 2 || len(transitions) != 1 || transitions[0].Name != "Finish" || transitions[0].AllowedActorTypes[0] != "ProjectOwner" {
 		t.Fatalf("unexpected models: %#v %#v %#v", workflow, stages, transitions)
 	}
 }
@@ -92,7 +100,7 @@ func TestProjectManagementWorkflowCreateCopiesDefaultAndUpdatePreservesDefinitio
 	for _, statement := range []string{
 		"CREATE TABLE project_management_workflows (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, kind text not null, organization_id integer not null, project_id integer not null default 0, name text not null default '', description text not null default '', is_default boolean not null default false, source_template_id integer not null default 0, source_template_name text not null default '')",
 		"CREATE TABLE project_management_workflow_stages (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, workflow_id integer not null, name text not null default '', phase text not null, color text not null default '', sort_order integer not null)",
-		"CREATE TABLE project_management_workflow_transitions (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, workflow_id integer not null, from_stage_id integer not null, to_stage_id integer not null, allowed_actor_types json not null default '[]')",
+		"CREATE TABLE project_management_workflow_transitions (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, workflow_id integer not null, name text not null default '', from_stage_id integer not null, to_stage_id integer not null, allowed_actor_types json not null default '[]')",
 		"CREATE TABLE operations (id integer primary key autoincrement, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, entity_id integer not null, entity_type text not null, operator_id integer not null, operator_name text not null default '', operator_type text not null, operation text not null, note text not null default '', metadata json not null default '{}', organization_id integer not null)",
 	} {
 		if err := db.Exec(statement).Error; err != nil {
@@ -102,7 +110,7 @@ func TestProjectManagementWorkflowCreateCopiesDefaultAndUpdatePreservesDefinitio
 	for _, statement := range []string{
 		"INSERT INTO project_management_workflows (id, kind, organization_id, name, is_default) VALUES (1, 'OrganizationTemplate', 1, 'Default', true)",
 		"INSERT INTO project_management_workflow_stages (id, workflow_id, name, phase, color, sort_order) VALUES (11, 1, 'Pending', 'Pending', '#3b82f6', 1), (12, 1, 'Finished', 'Finished', '#22c55e', 2)",
-		"INSERT INTO project_management_workflow_transitions (id, workflow_id, from_stage_id, to_stage_id, allowed_actor_types) VALUES (13, 1, 11, 12, '[\"ProjectOwner\"]')",
+		"INSERT INTO project_management_workflow_transitions (id, workflow_id, name, from_stage_id, to_stage_id, allowed_actor_types) VALUES (13, 1, 'Finish', 11, 12, '[\"ProjectOwner\"]')",
 	} {
 		if err := db.Exec(statement).Error; err != nil {
 			t.Fatal(err)
@@ -158,7 +166,7 @@ func TestWorkflowStageAndTransitionRequireMatchingWorkflow(t *testing.T) {
 	for _, statement := range []string{
 		"CREATE TABLE project_management_workflows (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, kind text not null, organization_id integer not null, project_id integer not null default 0, name text not null default '', description text not null default '', is_default boolean not null default false, source_template_id integer not null default 0, source_template_name text not null default '')",
 		"CREATE TABLE project_management_workflow_stages (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, workflow_id integer not null, name text not null default '', phase text not null, color text not null default '', sort_order integer not null)",
-		"CREATE TABLE project_management_workflow_transitions (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, workflow_id integer not null, from_stage_id integer not null, to_stage_id integer not null, allowed_actor_types json not null default '[]')",
+		"CREATE TABLE project_management_workflow_transitions (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, workflow_id integer not null, name text not null default '', from_stage_id integer not null, to_stage_id integer not null, allowed_actor_types json not null default '[]')",
 		"CREATE TABLE project_management_tasks (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, stage_id integer not null)",
 		"CREATE TABLE operations (id integer primary key autoincrement, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, entity_id integer not null, entity_type text not null, operator_id integer not null, operator_name text not null default '', operator_type text not null, operation text not null, note text not null default '', metadata json not null default '{}', organization_id integer not null)",
 	} {
@@ -169,7 +177,7 @@ func TestWorkflowStageAndTransitionRequireMatchingWorkflow(t *testing.T) {
 	for _, statement := range []string{
 		"INSERT INTO project_management_workflows (id, kind, organization_id, name) VALUES (1, 'OrganizationTemplate', 1, 'One'), (2, 'OrganizationTemplate', 1, 'Two')",
 		"INSERT INTO project_management_workflow_stages (id, workflow_id, name, phase, sort_order) VALUES (11, 1, 'Pending', 'Pending', 1), (12, 1, 'Done', 'Finished', 2), (21, 2, 'Pending', 'Pending', 1)",
-		"INSERT INTO project_management_workflow_transitions (id, workflow_id, from_stage_id, to_stage_id, allowed_actor_types) VALUES (31, 1, 11, 12, '[]')",
+		"INSERT INTO project_management_workflow_transitions (id, workflow_id, name, from_stage_id, to_stage_id, allowed_actor_types) VALUES (31, 1, 'Finish', 11, 12, '[]')",
 	} {
 		if err := db.Exec(statement).Error; err != nil {
 			t.Fatal(err)

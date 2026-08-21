@@ -33,11 +33,14 @@ type (
 
     ProjectManagementWorkflowTransitionEntity {
         Id int64 `json:"id"`
+        Name string `json:"name"`
         FromStageId int64 `json:"from_stage_id"`
         ToStageId int64 `json:"to_stage_id"`
         AllowedActorTypes []string `json:"allowed_actor_types"`
         CreatedAt string `json:"created_at"`
         UpdatedAt string `json:"updated_at"`
+        FromStage *ProjectManagementWorkflowStageEntity `json:"from_stage"`
+        ToStage *ProjectManagementWorkflowStageEntity `json:"to_stage"`
     }
 
     ProjectManagementTaskTypeEntity {
