@@ -11,6 +11,7 @@ import (
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/config"
 	"zeebee-backend/common/response"
+	"zeebee-backend/common/routex"
 )
 
 type ApiServer struct {
@@ -48,6 +49,7 @@ func NewApiServer(c config.Config) (s service.Service) {
 
 	// extra route
 	handler.RegisterExtraRoutes(restServer)
+	routex.RegisterRoutes(restServer.Routes())
 
 	return &ApiServer{
 		s:        restServer,

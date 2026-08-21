@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/config"
 	"zeebee-backend/common/response"
+	"zeebee-backend/common/routex"
 
 	"github.com/zeromicro/go-zero/rest"
 )
@@ -49,6 +50,7 @@ func NewApiServer(c config.Config) (s service.Service) {
 
 	// extra route
 	handler.RegisterExtraRoutes(restServer)
+	routex.RegisterRoutes(restServer.Routes())
 
 	return &ApiServer{
 		s:        restServer,
