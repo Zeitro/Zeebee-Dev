@@ -10,6 +10,7 @@ type ProjectManagementWorkflowStageDto struct {
 	Id        int64
 	Name      string
 	Phase     constants.ProjectManagementStagePhase
+	Color     string
 	SortOrder int
 }
 

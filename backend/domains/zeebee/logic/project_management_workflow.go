@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -34,7 +35,7 @@ func ValidateProjectManagementWorkflow(workflow dto.ProjectManagementWorkflowDto
 	}
 	stageIDs := make(map[int64]struct{}, len(workflow.Stages))
 	sortOrders := make(map[int]struct{}, len(workflow.Stages))
-	pendingCount := 0
+	pendingCount, finishedCount := 0, 0
 	for _, stage := range workflow.Stages {
 		if stage.Id == 0 || strings.TrimSpace(stage.Name) == "" {
 			return errorx.New("workflow stage id and name are required")
@@ -53,9 +54,15 @@ func ValidateProjectManagementWorkflow(workflow dto.ProjectManagementWorkflowDto
 		if stage.Phase == constants.ProjectManagementStagePhasePending {
 			pendingCount++
 		}
+		if stage.Phase == constants.ProjectManagementStagePhaseFinished {
+			finishedCount++
+		}
 	}
 	if pendingCount != 1 {
 		return errorx.New("workflow must have exactly one pending stage")
+	}
+	if finishedCount == 0 {
+		return errorx.New("workflow must have at least one finished stage")
 	}
 
 	edges := make(map[string]struct{}, len(workflow.Transitions))
@@ -200,6 +207,246 @@ func (l *ProjectManagementWorkflowLogic) Delete(ctx context.Context, claim utils
 		}
 		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: id, action: constants.OperationActionProjectManagementWorkflowDelete})
 	})
+}
+
+func (l *ProjectManagementWorkflowLogic) StageAll(ctx context.Context, organizationId, workflowId int64) ([]*model.ProjectManagementWorkflowStage, error) {
+	if _, err := l.Detail(ctx, organizationId, workflowId); err != nil {
+		return nil, err
+	}
+	return l.repos.ProjectManagementWorkflowRepo.ListTemplateStages(ctx, workflowId, organizationId)
+}
+
+func (l *ProjectManagementWorkflowLogic) StageDetail(ctx context.Context, organizationId, workflowId, id int64) (*model.ProjectManagementWorkflowStage, error) {
+	stage, err := l.repos.ProjectManagementWorkflowRepo.FindTemplateStage(ctx, id, workflowId, organizationId)
+	if err != nil {
+		return nil, projectManagementNotFound(err, "workflow stage not found")
+	}
+	return stage, nil
+}
+
+func (l *ProjectManagementWorkflowLogic) StageCreate(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementWorkflowStageDto, workflowId int64) (stage *model.ProjectManagementWorkflowStage, err error) {
+	if err = validateProjectManagementWorkflowStage(input); err != nil {
+		return nil, err
+	}
+	stage, err = copierx.Trans[dto.ProjectManagementWorkflowStageDto, model.ProjectManagementWorkflowStage](&input)
+	if err != nil {
+		return nil, err
+	}
+	stage.WorkflowId = workflowId
+	err = l.repos.ProjectManagementWorkflowRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		if _, err = l.repos.ProjectManagementWorkflowRepo.LockTemplateWithTx(ctx, tx, workflowId, claim.OrganizationId); err != nil {
+			return projectManagementNotFound(err, "workflow not found")
+		}
+		if err = l.repos.ProjectManagementWorkflowRepo.CreateTemplateStageWithTx(ctx, tx, stage); err != nil {
+			return err
+		}
+		if err = l.validateWorkflowStages(ctx, tx, workflowId); err != nil {
+			return err
+		}
+		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: workflowId, action: constants.OperationActionProjectManagementWorkflowUpdate})
+	})
+	return stage, err
+}
+
+func (l *ProjectManagementWorkflowLogic) StageUpdate(ctx context.Context, claim utils.JwtUser, workflowId, id int64, input dto.ProjectManagementWorkflowStageDto) (stage *model.ProjectManagementWorkflowStage, err error) {
+	if err = validateProjectManagementWorkflowStage(input); err != nil {
+		return nil, err
+	}
+	stage, err = copierx.Trans[dto.ProjectManagementWorkflowStageDto, model.ProjectManagementWorkflowStage](&input)
+	if err != nil {
+		return nil, err
+	}
+	stage.Id = id
+	err = l.repos.ProjectManagementWorkflowRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		existing, err := l.repos.ProjectManagementWorkflowRepo.FindTemplateStageWithTx(ctx, tx, id, workflowId, claim.OrganizationId)
+		if err != nil {
+			return projectManagementNotFound(err, "workflow stage not found")
+		}
+		stage.WorkflowId = existing.WorkflowId
+		if err = l.repos.ProjectManagementWorkflowRepo.UpdateTemplateStageWithTx(ctx, tx, stage); err != nil {
+			return err
+		}
+		if err = l.validateWorkflowStages(ctx, tx, stage.WorkflowId); err != nil {
+			return err
+		}
+		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: stage.WorkflowId, action: constants.OperationActionProjectManagementWorkflowUpdate})
+	})
+	if err != nil {
+		return nil, err
+	}
+	return l.StageDetail(ctx, claim.OrganizationId, workflowId, id)
+}
+
+func (l *ProjectManagementWorkflowLogic) StageDelete(ctx context.Context, claim utils.JwtUser, workflowId, id int64) error {
+	return l.repos.ProjectManagementWorkflowRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		stage, err := l.repos.ProjectManagementWorkflowRepo.FindTemplateStageWithTx(ctx, tx, id, workflowId, claim.OrganizationId)
+		if err != nil {
+			return projectManagementNotFound(err, "workflow stage not found")
+		}
+		occupied, err := l.repos.ProjectManagementTaskRepo.IsExistedByColumnsWithTx(ctx, tx, map[string]any{"stage_id": stage.Id})
+		if err != nil {
+			return err
+		}
+		if occupied {
+			return errorx.New("workflow stage is referenced by a task")
+		}
+		if err := l.repos.ProjectManagementWorkflowRepo.DeleteTemplateStageWithTx(ctx, tx, stage); err != nil {
+			return err
+		}
+		if err := l.validateWorkflowStages(ctx, tx, stage.WorkflowId); err != nil {
+			return err
+		}
+		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: stage.WorkflowId, action: constants.OperationActionProjectManagementWorkflowUpdate})
+	})
+}
+
+func (l *ProjectManagementWorkflowLogic) TransitionAll(ctx context.Context, organizationId, workflowId, fromStageId int64) ([]*model.ProjectManagementWorkflowTransition, error) {
+	if _, err := l.StageDetail(ctx, organizationId, workflowId, fromStageId); err != nil {
+		return nil, err
+	}
+	return l.repos.ProjectManagementWorkflowRepo.ListTransitionsByFromStage(ctx, fromStageId)
+}
+
+func (l *ProjectManagementWorkflowLogic) TransitionDetail(ctx context.Context, organizationId, workflowId, id int64) (*model.ProjectManagementWorkflowTransition, error) {
+	transition, err := l.repos.ProjectManagementWorkflowRepo.FindTemplateTransition(ctx, id, workflowId, organizationId)
+	if err != nil {
+		return nil, projectManagementNotFound(err, "workflow transition not found")
+	}
+	return transition, nil
+}
+
+func (l *ProjectManagementWorkflowLogic) TransitionCreate(ctx context.Context, claim utils.JwtUser, workflowId int64, input dto.ProjectManagementWorkflowTransitionDto) (transition *model.ProjectManagementWorkflowTransition, err error) {
+	if err = validateProjectManagementWorkflowTransition(input); err != nil {
+		return nil, err
+	}
+	transition, err = copierx.Trans[dto.ProjectManagementWorkflowTransitionDto, model.ProjectManagementWorkflowTransition](&input)
+	if err != nil {
+		return nil, err
+	}
+	err = l.repos.ProjectManagementWorkflowRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		fromStage, err := l.repos.ProjectManagementWorkflowRepo.FindTemplateStageWithTx(ctx, tx, input.FromStageId, workflowId, claim.OrganizationId)
+		if err != nil {
+			return projectManagementNotFound(err, "workflow stage not found")
+		}
+		toStage, err := l.repos.ProjectManagementWorkflowRepo.FindStageWithTx(ctx, tx, input.ToStageId)
+		if err != nil || toStage.WorkflowId != fromStage.WorkflowId {
+			return errorx.New("workflow transition target stage is invalid")
+		}
+		if _, err = l.repos.ProjectManagementWorkflowRepo.FindTransitionWithTx(ctx, tx, fromStage.WorkflowId, input.FromStageId, input.ToStageId); err == nil {
+			return errorx.New("workflow transition already exists")
+		} else if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return err
+		}
+		transition.WorkflowId = fromStage.WorkflowId
+		if err = l.repos.ProjectManagementWorkflowRepo.CreateTemplateTransitionWithTx(ctx, tx, transition); err != nil {
+			return err
+		}
+		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: transition.WorkflowId, action: constants.OperationActionProjectManagementWorkflowUpdate})
+	})
+	return transition, err
+}
+
+func (l *ProjectManagementWorkflowLogic) TransitionUpdate(ctx context.Context, claim utils.JwtUser, workflowId, id int64, input dto.ProjectManagementWorkflowTransitionDto) (transition *model.ProjectManagementWorkflowTransition, err error) {
+	err = l.repos.ProjectManagementWorkflowRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		transition, err = l.repos.ProjectManagementWorkflowRepo.FindTemplateTransitionWithTx(ctx, tx, id, workflowId, claim.OrganizationId)
+		if err != nil {
+			return projectManagementNotFound(err, "workflow transition not found")
+		}
+		input.FromStageId = transition.FromStageId
+		if err = validateProjectManagementWorkflowTransition(input); err != nil {
+			return err
+		}
+		toStage, err := l.repos.ProjectManagementWorkflowRepo.FindStageWithTx(ctx, tx, input.ToStageId)
+		if err != nil || toStage.WorkflowId != transition.WorkflowId {
+			return errorx.New("workflow transition target stage is invalid")
+		}
+		duplicate, duplicateErr := l.repos.ProjectManagementWorkflowRepo.FindTransitionWithTx(ctx, tx, transition.WorkflowId, transition.FromStageId, input.ToStageId)
+		if duplicateErr == nil && duplicate.Id != id {
+			return errorx.New("workflow transition already exists")
+		}
+		if duplicateErr != nil && !errors.Is(duplicateErr, gorm.ErrRecordNotFound) {
+			return duplicateErr
+		}
+		transition.ToStageId = input.ToStageId
+		transition.AllowedActorTypes = input.AllowedActorTypes
+		if err = l.repos.ProjectManagementWorkflowRepo.UpdateTemplateTransitionWithTx(ctx, tx, transition); err != nil {
+			return err
+		}
+		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: transition.WorkflowId, action: constants.OperationActionProjectManagementWorkflowUpdate})
+	})
+	if err != nil {
+		return nil, err
+	}
+	return l.TransitionDetail(ctx, claim.OrganizationId, workflowId, id)
+}
+
+func (l *ProjectManagementWorkflowLogic) TransitionDelete(ctx context.Context, claim utils.JwtUser, workflowId, id int64) error {
+	return l.repos.ProjectManagementWorkflowRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		transition, err := l.repos.ProjectManagementWorkflowRepo.FindTemplateTransitionWithTx(ctx, tx, id, workflowId, claim.OrganizationId)
+		if err != nil {
+			return projectManagementNotFound(err, "workflow transition not found")
+		}
+		if err := l.repos.ProjectManagementWorkflowRepo.DeleteTemplateTransitionWithTx(ctx, tx, transition); err != nil {
+			return err
+		}
+		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: transition.WorkflowId, action: constants.OperationActionProjectManagementWorkflowUpdate})
+	})
+}
+
+func (l *ProjectManagementWorkflowLogic) validateWorkflowStages(ctx context.Context, tx *gorm.DB, workflowId int64) error {
+	stages, err := l.repos.ProjectManagementWorkflowRepo.ListStagesWithTx(ctx, tx, workflowId)
+	if err != nil {
+		return err
+	}
+	pendingCount, finishedCount := 0, 0
+	for _, stage := range stages {
+		if !isProjectManagementStagePhase(stage.Phase) {
+			return errorx.New("invalid workflow stage phase")
+		}
+		switch stage.Phase {
+		case constants.ProjectManagementStagePhasePending:
+			pendingCount++
+		case constants.ProjectManagementStagePhaseFinished:
+			finishedCount++
+		}
+	}
+	if pendingCount != 1 {
+		return errorx.New("workflow must have exactly one pending stage")
+	}
+	if finishedCount == 0 {
+		return errorx.New("workflow must have at least one finished stage")
+	}
+	return nil
+}
+
+func validateProjectManagementWorkflowStage(input dto.ProjectManagementWorkflowStageDto) error {
+	if strings.TrimSpace(input.Name) == "" {
+		return errorx.New("workflow stage name is required")
+	}
+	if !isProjectManagementStagePhase(input.Phase) {
+		return errorx.New("invalid workflow stage phase")
+	}
+	if input.SortOrder < 0 {
+		return errorx.New("workflow stage sort order must be >= 0")
+	}
+	return nil
+}
+
+func validateProjectManagementWorkflowTransition(input dto.ProjectManagementWorkflowTransitionDto) error {
+	if input.FromStageId == 0 || input.ToStageId == 0 || input.FromStageId == input.ToStageId {
+		return errorx.New("workflow transition stages are invalid")
+	}
+	roles := make(map[constants.ProjectManagementMemberRole]struct{}, len(input.AllowedActorTypes))
+	for _, role := range input.AllowedActorTypes {
+		if !isProjectManagementMemberRole(role) {
+			return errorx.New("invalid workflow transition claim type")
+		}
+		if _, exists := roles[role]; exists {
+			return errorx.New("workflow transition claim type must be unique")
+		}
+		roles[role] = struct{}{}
+	}
+	return nil
 }
 
 func validateProjectManagementWorkflowDetails(input dto.ProjectManagementWorkflowDto) error {

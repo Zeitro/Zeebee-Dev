@@ -28,6 +28,8 @@ import (
 	projectManagementTaskDependencyServer "zeebee-backend/app/borrower/rpc/internal/server/projectmanagementtaskdependency"
 	projectManagementTaskTypeServer "zeebee-backend/app/borrower/rpc/internal/server/projectmanagementtasktype"
 	projectManagementWorkflowServer "zeebee-backend/app/borrower/rpc/internal/server/projectmanagementworkflow"
+	projectManagementWorkflowStageServer "zeebee-backend/app/borrower/rpc/internal/server/projectmanagementworkflowstage"
+	projectManagementWorkflowTransitionServer "zeebee-backend/app/borrower/rpc/internal/server/projectmanagementworkflowtransition"
 	zeitroServer "zeebee-backend/app/borrower/rpc/internal/server/zeitro"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/templater"
@@ -94,6 +96,8 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		borrower.RegisterDriveServer(grpcServer, driveServer.NewDriveServer(ctx))
 		borrower.RegisterApiServer(grpcServer, apiServer.NewApiServer(ctx))
 		borrower.RegisterProjectManagementWorkflowServer(grpcServer, projectManagementWorkflowServer.NewProjectManagementWorkflowServer(ctx))
+		borrower.RegisterProjectManagementWorkflowStageServer(grpcServer, projectManagementWorkflowStageServer.NewProjectManagementWorkflowStageServer(ctx))
+		borrower.RegisterProjectManagementWorkflowTransitionServer(grpcServer, projectManagementWorkflowTransitionServer.NewProjectManagementWorkflowTransitionServer(ctx))
 		borrower.RegisterProjectManagementTaskTypeServer(grpcServer, projectManagementTaskTypeServer.NewProjectManagementTaskTypeServer(ctx))
 		borrower.RegisterProjectManagementProjectServer(grpcServer, projectManagementProjectServer.NewProjectManagementProjectServer(ctx))
 		borrower.RegisterProjectManagementProjectMemberServer(grpcServer, projectManagementProjectMemberServer.NewProjectManagementProjectMemberServer(ctx))

@@ -1,10 +1,12 @@
 syntax = "v1"
 
 info (
-	title:  "borrower-api http service"
-	desc:   "borrower-api http service description"
-	author: "Wei Zeng"
-	email:  "wei@yeelee-capital.com"
+	title:          "borrower-api http service"
+	desc:           "borrower-api http service description"
+	author:         "Wei Zeng"
+	email:          "wei@yeelee-capital.com"
+	useDefinitions: true
+	wrapCodeMsg:    true
 )
 
 import "desc/user.api"
@@ -28,6 +30,8 @@ import "desc/drive.api"
 import "desc/zeitro.api"
 import "desc/resource.api"
 import "desc/project_management_workflow.api"
+import "desc/project_management_workflow_stage.api"
+import "desc/project_management_workflow_transition.api"
 import "desc/project_management_task_type.api"
 import "desc/project_management_project.api"
 import "desc/project_management_project_member.api"

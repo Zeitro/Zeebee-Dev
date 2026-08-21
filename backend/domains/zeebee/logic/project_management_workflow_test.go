@@ -32,6 +32,11 @@ func TestValidateProjectManagementWorkflow(t *testing.T) {
 		t.Fatal("workflow without pending stage accepted")
 	}
 
+	valid.Stages = []dto.ProjectManagementWorkflowStageDto{{Id: 1, Name: "Pending", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 1}}
+	if err := ValidateProjectManagementWorkflow(valid); err == nil {
+		t.Fatal("workflow without finished stage accepted")
+	}
+
 	valid.Stages = []dto.ProjectManagementWorkflowStageDto{
 		{Id: 1, Name: "Pending", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 1},
 		{Id: 2, Name: "Also pending", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 2},
@@ -86,7 +91,7 @@ func TestProjectManagementWorkflowCreateCopiesDefaultAndUpdatePreservesDefinitio
 	}
 	for _, statement := range []string{
 		"CREATE TABLE project_management_workflows (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, kind text not null, organization_id integer not null, project_id integer not null default 0, name text not null default '', description text not null default '', is_default boolean not null default false, source_template_id integer not null default 0, source_template_name text not null default '')",
-		"CREATE TABLE project_management_workflow_stages (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, workflow_id integer not null, name text not null default '', phase text not null, sort_order integer not null)",
+		"CREATE TABLE project_management_workflow_stages (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, workflow_id integer not null, name text not null default '', phase text not null, color text not null default '', sort_order integer not null)",
 		"CREATE TABLE project_management_workflow_transitions (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, workflow_id integer not null, from_stage_id integer not null, to_stage_id integer not null, allowed_actor_types json not null default '[]')",
 		"CREATE TABLE operations (id integer primary key autoincrement, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, entity_id integer not null, entity_type text not null, operator_id integer not null, operator_name text not null default '', operator_type text not null, operation text not null, note text not null default '', metadata json not null default '{}', organization_id integer not null)",
 	} {
@@ -96,7 +101,7 @@ func TestProjectManagementWorkflowCreateCopiesDefaultAndUpdatePreservesDefinitio
 	}
 	for _, statement := range []string{
 		"INSERT INTO project_management_workflows (id, kind, organization_id, name, is_default) VALUES (1, 'OrganizationTemplate', 1, 'Default', true)",
-		"INSERT INTO project_management_workflow_stages (id, workflow_id, name, phase, sort_order) VALUES (11, 1, 'Pending', 'Pending', 1), (12, 1, 'Finished', 'Finished', 2)",
+		"INSERT INTO project_management_workflow_stages (id, workflow_id, name, phase, color, sort_order) VALUES (11, 1, 'Pending', 'Pending', '#3b82f6', 1), (12, 1, 'Finished', 'Finished', '#22c55e', 2)",
 		"INSERT INTO project_management_workflow_transitions (id, workflow_id, from_stage_id, to_stage_id, allowed_actor_types) VALUES (13, 1, 11, 12, '[\"ProjectOwner\"]')",
 	} {
 		if err := db.Exec(statement).Error; err != nil {
@@ -109,7 +114,7 @@ func TestProjectManagementWorkflowCreateCopiesDefaultAndUpdatePreservesDefinitio
 	if err != nil {
 		t.Fatalf("create workflow: %v", err)
 	}
-	if created.IsDefault || len(created.Stages) != 2 || created.Stages[0].Name != "Pending" || created.Stages[1].Phase != constants.ProjectManagementStagePhaseFinished || len(created.Transitions) != 1 || len(created.Transitions[0].AllowedActorTypes) != 1 || created.Transitions[0].AllowedActorTypes[0] != constants.ProjectManagementMemberRoleProjectOwner {
+	if created.IsDefault || len(created.Stages) != 2 || created.Stages[0].Name != "Pending" || created.Stages[0].Color != "#3b82f6" || created.Stages[1].Phase != constants.ProjectManagementStagePhaseFinished || len(created.Transitions) != 1 || len(created.Transitions[0].AllowedActorTypes) != 1 || created.Transitions[0].AllowedActorTypes[0] != constants.ProjectManagementMemberRoleProjectOwner {
 		t.Fatalf("unexpected copied workflow: %#v", created)
 	}
 	if created.Stages[0].Id == 11 || created.Stages[1].Id == 12 || created.Transitions[0].FromStageId == 11 || created.Transitions[0].ToStageId == 12 {
@@ -142,5 +147,73 @@ func TestProjectManagementWorkflowCreateCopiesDefaultAndUpdatePreservesDefinitio
 	}
 	if err := logic.Delete(context.Background(), actor, 1); err != nil {
 		t.Fatalf("delete previous default workflow: %v", err)
+	}
+}
+
+func TestWorkflowStageAndTransitionRequireMatchingWorkflow(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(fmt.Sprintf("file:%s?mode=memory&cache=shared", t.Name())), &gorm.Config{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, statement := range []string{
+		"CREATE TABLE project_management_workflows (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, kind text not null, organization_id integer not null, project_id integer not null default 0, name text not null default '', description text not null default '', is_default boolean not null default false, source_template_id integer not null default 0, source_template_name text not null default '')",
+		"CREATE TABLE project_management_workflow_stages (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, workflow_id integer not null, name text not null default '', phase text not null, color text not null default '', sort_order integer not null)",
+		"CREATE TABLE project_management_workflow_transitions (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, workflow_id integer not null, from_stage_id integer not null, to_stage_id integer not null, allowed_actor_types json not null default '[]')",
+		"CREATE TABLE project_management_tasks (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, stage_id integer not null)",
+		"CREATE TABLE operations (id integer primary key autoincrement, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, entity_id integer not null, entity_type text not null, operator_id integer not null, operator_name text not null default '', operator_type text not null, operation text not null, note text not null default '', metadata json not null default '{}', organization_id integer not null)",
+	} {
+		if err := db.Exec(statement).Error; err != nil {
+			t.Fatal(err)
+		}
+	}
+	for _, statement := range []string{
+		"INSERT INTO project_management_workflows (id, kind, organization_id, name) VALUES (1, 'OrganizationTemplate', 1, 'One'), (2, 'OrganizationTemplate', 1, 'Two')",
+		"INSERT INTO project_management_workflow_stages (id, workflow_id, name, phase, sort_order) VALUES (11, 1, 'Pending', 'Pending', 1), (12, 1, 'Done', 'Finished', 2), (21, 2, 'Pending', 'Pending', 1)",
+		"INSERT INTO project_management_workflow_transitions (id, workflow_id, from_stage_id, to_stage_id, allowed_actor_types) VALUES (31, 1, 11, 12, '[]')",
+	} {
+		if err := db.Exec(statement).Error; err != nil {
+			t.Fatal(err)
+		}
+	}
+	workflowLogic := NewProjectManagementWorkflowLogic(NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}))
+	ctx := context.Background()
+	stage, err := workflowLogic.StageDetail(ctx, 1, 1, 11)
+	if err != nil || stage.Id != 11 {
+		t.Fatalf("stage detail: %#v, %v", stage, err)
+	}
+	transitions, err := workflowLogic.TransitionAll(ctx, 1, 1, 11)
+	if err != nil || len(transitions) != 1 || transitions[0].Id != 31 {
+		t.Fatalf("transition all: %#v, %v", transitions, err)
+	}
+	if _, err := workflowLogic.StageDetail(ctx, 1, 2, 11); err == nil {
+		t.Fatal("stage accepted a mismatched workflow")
+	}
+	if _, err := workflowLogic.TransitionAll(ctx, 1, 2, 11); err == nil {
+		t.Fatal("transition list accepted a mismatched workflow")
+	}
+	if _, err := workflowLogic.TransitionDetail(ctx, 1, 2, 31); err == nil {
+		t.Fatal("transition accepted a mismatched workflow")
+	}
+	actor := utils.JwtUser{OrganizationId: 1, OrganizationUserId: 1, Username: "tester", UserType: constants.UserTypeBorrower}
+	if _, err := workflowLogic.StageCreate(ctx, actor, dto.ProjectManagementWorkflowStageDto{Name: "Working", Phase: constants.ProjectManagementStagePhaseInProgress, SortOrder: 3}, 1); err != nil {
+		t.Fatalf("create in-progress stage: %v", err)
+	}
+	if _, err := workflowLogic.StageCreate(ctx, actor, dto.ProjectManagementWorkflowStageDto{Name: "Another pending", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 4}, 1); err == nil {
+		t.Fatal("create accepted a second pending stage")
+	}
+	if _, err := workflowLogic.StageUpdate(ctx, actor, 1, 12, dto.ProjectManagementWorkflowStageDto{Name: "Done", Phase: constants.ProjectManagementStagePhaseInProgress, SortOrder: 2}); err == nil {
+		t.Fatal("update accepted removal of the only finished stage")
+	}
+	if err := workflowLogic.StageDelete(ctx, actor, 1, 12); err == nil {
+		t.Fatal("delete accepted removal of the only finished stage")
+	}
+	if _, err := workflowLogic.StageCreate(ctx, actor, dto.ProjectManagementWorkflowStageDto{Name: "Closed", Phase: constants.ProjectManagementStagePhaseFinished, SortOrder: 4}, 1); err != nil {
+		t.Fatalf("create finished stage: %v", err)
+	}
+	if err := db.Exec("INSERT INTO project_management_tasks (id, stage_id) VALUES (41, 12)").Error; err != nil {
+		t.Fatal(err)
+	}
+	if err := workflowLogic.StageDelete(ctx, actor, 1, 12); err == nil {
+		t.Fatal("delete accepted a stage with active tasks")
 	}
 }

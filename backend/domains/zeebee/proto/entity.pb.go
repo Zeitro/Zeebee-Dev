@@ -7156,13 +7156,15 @@ func (x *ProjectManagementWorkflowEntity) GetUpdatedAt() string {
 }
 
 type ProjectManagementWorkflowStageEntity struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Phase         string                 `protobuf:"bytes,3,opt,name=phase,proto3" json:"phase,omitempty"`
-	SortOrder     int32                  `protobuf:"varint,4,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
-	CreatedAt     string                 `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     string                 `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	state         protoimpl.MessageState                       `protogen:"open.v1"`
+	Id            int64                                        `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string                                       `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Phase         string                                       `protobuf:"bytes,3,opt,name=phase,proto3" json:"phase,omitempty"`
+	Color         string                                       `protobuf:"bytes,4,opt,name=color,proto3" json:"color,omitempty"`
+	SortOrder     int32                                        `protobuf:"varint,5,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	CreatedAt     string                                       `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     string                                       `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Transitions   []*ProjectManagementWorkflowTransitionEntity `protobuf:"bytes,8,rep,name=transitions,proto3" json:"transitions,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -7218,6 +7220,13 @@ func (x *ProjectManagementWorkflowStageEntity) GetPhase() string {
 	return ""
 }
 
+func (x *ProjectManagementWorkflowStageEntity) GetColor() string {
+	if x != nil {
+		return x.Color
+	}
+	return ""
+}
+
 func (x *ProjectManagementWorkflowStageEntity) GetSortOrder() int32 {
 	if x != nil {
 		return x.SortOrder
@@ -7237,6 +7246,13 @@ func (x *ProjectManagementWorkflowStageEntity) GetUpdatedAt() string {
 		return x.UpdatedAt
 	}
 	return ""
+}
+
+func (x *ProjectManagementWorkflowStageEntity) GetTransitions() []*ProjectManagementWorkflowTransitionEntity {
+	if x != nil {
+		return x.Transitions
+	}
+	return nil
 }
 
 type ProjectManagementWorkflowTransitionEntity struct {
@@ -8989,17 +9005,19 @@ const file_proto_entity_proto_rawDesc = "" +
 	"created_at\x18\n" +
 	" \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\v \x01(\tR\tupdatedAtJ\x04\b\x04\x10\x05\"\xbd\x01\n" +
+	"updated_at\x18\v \x01(\tR\tupdatedAtJ\x04\b\x04\x10\x05\"\xa7\x02\n" +
 	"$ProjectManagementWorkflowStageEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
-	"\x05phase\x18\x03 \x01(\tR\x05phase\x12\x1d\n" +
+	"\x05phase\x18\x03 \x01(\tR\x05phase\x12\x14\n" +
+	"\x05color\x18\x04 \x01(\tR\x05color\x12\x1d\n" +
 	"\n" +
-	"sort_order\x18\x04 \x01(\x05R\tsortOrder\x12\x1d\n" +
+	"sort_order\x18\x05 \x01(\x05R\tsortOrder\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\x05 \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"created_at\x18\x06 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\x06 \x01(\tR\tupdatedAt\"\xed\x01\n" +
+	"updated_at\x18\a \x01(\tR\tupdatedAt\x12R\n" +
+	"\vtransitions\x18\b \x03(\v20.proto.ProjectManagementWorkflowTransitionEntityR\vtransitions\"\xed\x01\n" +
 	")ProjectManagementWorkflowTransitionEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\"\n" +
 	"\rfrom_stage_id\x18\x02 \x01(\x03R\vfromStageId\x12\x1e\n" +
@@ -9269,14 +9287,15 @@ var file_proto_entity_proto_depIdxs = []int32{
 	48, // 70: proto.DocumentEntity.files:type_name -> proto.FileEntity
 	56, // 71: proto.ProjectManagementWorkflowEntity.stages:type_name -> proto.ProjectManagementWorkflowStageEntity
 	57, // 72: proto.ProjectManagementWorkflowEntity.transitions:type_name -> proto.ProjectManagementWorkflowTransitionEntity
-	61, // 73: proto.ProjectManagementTaskEntity.task_type:type_name -> proto.ProjectManagementTaskTypeSnapshotEntity
-	62, // 74: proto.ProjectManagementTaskEntity.assignees:type_name -> proto.ProjectManagementTaskAssigneeEntity
-	18, // 75: proto.TemplateVariableEntity.PropertiesEntry.value:type_name -> proto.TemplateVariableEntity
-	76, // [76:76] is the sub-list for method output_type
-	76, // [76:76] is the sub-list for method input_type
-	76, // [76:76] is the sub-list for extension type_name
-	76, // [76:76] is the sub-list for extension extendee
-	0,  // [0:76] is the sub-list for field type_name
+	57, // 73: proto.ProjectManagementWorkflowStageEntity.transitions:type_name -> proto.ProjectManagementWorkflowTransitionEntity
+	61, // 74: proto.ProjectManagementTaskEntity.task_type:type_name -> proto.ProjectManagementTaskTypeSnapshotEntity
+	62, // 75: proto.ProjectManagementTaskEntity.assignees:type_name -> proto.ProjectManagementTaskAssigneeEntity
+	18, // 76: proto.TemplateVariableEntity.PropertiesEntry.value:type_name -> proto.TemplateVariableEntity
+	77, // [77:77] is the sub-list for method output_type
+	77, // [77:77] is the sub-list for method input_type
+	77, // [77:77] is the sub-list for extension type_name
+	77, // [77:77] is the sub-list for extension extendee
+	0,  // [0:77] is the sub-list for field type_name
 }
 
 func init() { file_proto_entity_proto_init() }

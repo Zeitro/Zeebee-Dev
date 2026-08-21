@@ -1,0 +1,71 @@
+syntax = "v1"
+
+info (
+    title: "borrower-project-management-workflow-transition-api"
+    desc: "borrower project management workflow transition types"
+    version: "v1"
+    useDefinitions: true
+    wrapCodeMsg: true
+)
+
+import "../../../../domains/zeebee/api/project_management_entity.api"
+import "base.api"
+
+type (
+    ProjectManagementWorkflowTransitionAllRequest {
+        WorkflowId int64 `path:"workflow_id" validate:"required,gt=0"`
+        FromStageId int64 `path:"from_stage_id" validate:"required,gt=0"`
+    }
+    ProjectManagementWorkflowTransitionAllResponse {
+        Lists []*ProjectManagementWorkflowTransitionEntity `json:"lists"`
+    }
+    ProjectManagementWorkflowTransitionDetailResponse {
+        ProjectManagementWorkflowTransitionEntity
+    }
+    ProjectManagementWorkflowTransitionDetailRequest {
+        WorkflowId int64 `path:"workflow_id" validate:"required,gt=0"`
+        Id int64 `path:"id" validate:"required,gt=0"`
+    }
+    ProjectManagementWorkflowTransitionCreateRequest {
+        WorkflowId int64 `path:"workflow_id" validate:"required,gt=0"`
+        FromStageId int64 `path:"from_stage_id" validate:"required,gt=0"`
+        ToStageId int64 `json:"to_stage_id" validate:"required,gt=0"`
+        AllowedActorTypes []string `json:"allowed_actor_types"`
+    }
+    ProjectManagementWorkflowTransitionUpdateRequest {
+        WorkflowId int64 `path:"workflow_id" validate:"required,gt=0"`
+        Id int64 `path:"id" validate:"required,gt=0"`
+        ToStageId int64 `json:"to_stage_id" validate:"required,gt=0"`
+        AllowedActorTypes []string `json:"allowed_actor_types"`
+    }
+)
+
+@server (
+    desc: "borrower project management workflow transition"
+    version: v1
+    group: project_management_workflow_transition
+    prefix: /api/v1
+    middleware: AuthMiddleware
+    tags: project_management_workflow_transition
+)
+service borrower-api {
+    @doc "all"
+    @handler All
+    get /project_management/workflow/:workflow_id/stage/:from_stage_id/transition/all (ProjectManagementWorkflowTransitionAllRequest) returns (ProjectManagementWorkflowTransitionAllResponse)
+
+    @doc "create"
+    @handler Create
+    post /project_management/workflow/:workflow_id/stage/:from_stage_id/transition (ProjectManagementWorkflowTransitionCreateRequest) returns (ProjectManagementWorkflowTransitionDetailResponse)
+
+    @doc "detail"
+    @handler Detail
+    get /project_management/workflow/:workflow_id/transition/:id (ProjectManagementWorkflowTransitionDetailRequest) returns (ProjectManagementWorkflowTransitionDetailResponse)
+
+    @doc "update"
+    @handler Update
+    put /project_management/workflow/:workflow_id/transition/:id (ProjectManagementWorkflowTransitionUpdateRequest) returns (ProjectManagementWorkflowTransitionDetailResponse)
+
+    @doc "delete"
+    @handler Delete
+    delete /project_management/workflow/:workflow_id/transition/:id (ProjectManagementWorkflowTransitionDetailRequest) returns (EmptyResponse)
+}

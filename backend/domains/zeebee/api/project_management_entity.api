@@ -23,10 +23,12 @@ type (
     ProjectManagementWorkflowStageEntity {
         Id int64 `json:"id"`
         Name string `json:"name"`
-        Phase string `json:"phase"`
+        Phase string `json:"phase,options=Pending|InProgress|Finished"`
+        Color string `json:"color"`
         SortOrder int `json:"sort_order"`
         CreatedAt string `json:"created_at"`
         UpdatedAt string `json:"updated_at"`
+        Transitions []*ProjectManagementWorkflowTransitionEntity `json:"transitions"`
     }
 
     ProjectManagementWorkflowTransitionEntity {

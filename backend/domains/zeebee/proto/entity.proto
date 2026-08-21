@@ -849,9 +849,11 @@ message ProjectManagementWorkflowStageEntity {
   int64 id = 1;
   string name = 2;
   string phase = 3;
-  int32 sort_order = 4;
-  string created_at = 5;
-  string updated_at = 6;
+  string color = 4;
+  int32 sort_order = 5;
+  string created_at = 6;
+  string updated_at = 7;
+  repeated ProjectManagementWorkflowTransitionEntity transitions = 8;
 }
 
 message ProjectManagementWorkflowTransitionEntity {

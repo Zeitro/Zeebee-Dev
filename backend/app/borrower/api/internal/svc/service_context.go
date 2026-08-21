@@ -41,6 +41,8 @@ type ServiceContext struct {
 	DriveRpcClient                           borrower.DriveClient
 	ApiRpcClient                             borrower.ApiClient
 	ProjectManagementWorkflowRpcClient       borrower.ProjectManagementWorkflowClient
+	WorkflowStageRpcClient                   borrower.ProjectManagementWorkflowStageClient
+	WorkflowTransitionRpcClient              borrower.ProjectManagementWorkflowTransitionClient
 	ProjectManagementTaskTypeRpcClient       borrower.ProjectManagementTaskTypeClient
 	ProjectManagementProjectRpcClient        borrower.ProjectManagementProjectClient
 	ProjectManagementProjectMemberRpcClient  borrower.ProjectManagementProjectMemberClient
@@ -78,6 +80,8 @@ func NewServiceContext(c config.ApiConf, logger logx.Logger) *ServiceContext {
 		DriveRpcClient:                           borrower.NewDriveClient(rpcClient.Conn()),
 		ApiRpcClient:                             borrower.NewApiClient(rpcClient.Conn()),
 		ProjectManagementWorkflowRpcClient:       borrower.NewProjectManagementWorkflowClient(rpcClient.Conn()),
+		WorkflowStageRpcClient:                   borrower.NewProjectManagementWorkflowStageClient(rpcClient.Conn()),
+		WorkflowTransitionRpcClient:              borrower.NewProjectManagementWorkflowTransitionClient(rpcClient.Conn()),
 		ProjectManagementTaskTypeRpcClient:       borrower.NewProjectManagementTaskTypeClient(rpcClient.Conn()),
 		ProjectManagementProjectRpcClient:        borrower.NewProjectManagementProjectClient(rpcClient.Conn()),
 		ProjectManagementProjectMemberRpcClient:  borrower.NewProjectManagementProjectMemberClient(rpcClient.Conn()),
