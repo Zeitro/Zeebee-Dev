@@ -10,6 +10,8 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type CreateLogic struct {
@@ -35,7 +37,7 @@ func (l *CreateLogic) Create(in *borrower.ProjectManagementProjectCreateRequest)
 	if err != nil {
 		return nil, err
 	}
-	claim := &claimValue
+	claim := claimValue
 	projectData, err := copierx.Trans[borrower.ProjectManagementProjectCreateRequestData, dto.ProjectManagementProjectDto](in.Data)
 	if err != nil {
 		return nil, err
@@ -44,7 +46,7 @@ func (l *CreateLogic) Create(in *borrower.ProjectManagementProjectCreateRequest)
 	if err != nil {
 		return nil, err
 	}
-	data, err := projectEntity(project)
+	data, err := copierx.Trans[model.ProjectManagementProject, proto.ProjectManagementProjectEntity](project, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

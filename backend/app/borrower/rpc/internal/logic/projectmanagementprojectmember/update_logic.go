@@ -36,7 +36,7 @@ func (l *UpdateLogic) Update(in *borrower.ProjectManagementMemberUpdateRequest) 
 	if err != nil {
 		return nil, err
 	}
-	claim := &claimValue
+	claim := claimValue
 	input, convertErr := copierx.Trans[borrower.ProjectManagementMemberUpdateRequestData, dto.ProjectManagementMemberDto](in.Data)
 	if convertErr != nil {
 		return nil, convertErr

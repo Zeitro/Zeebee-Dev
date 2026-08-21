@@ -56,7 +56,7 @@ func TestUpdateProjectWorkflowRequiresProjectManager(t *testing.T) {
 		Name:   "Updated workflow",
 		Stages: []dto.ProjectManagementWorkflowStageDto{{Id: 101, Name: "Pending", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 1}},
 	}
-	_, err = logic.ProjectUpdate(context.Background(), &utils.JwtUser{OrganizationId: 1, OrganizationUserId: 20}, 1, input)
+	_, err = logic.ProjectUpdate(context.Background(), utils.JwtUser{OrganizationId: 1, OrganizationUserId: 20}, 1, input)
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "project member role is not allowed")
 

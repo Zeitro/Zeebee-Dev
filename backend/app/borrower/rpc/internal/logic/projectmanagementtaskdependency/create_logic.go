@@ -6,9 +6,12 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type CreateLogic struct {
@@ -33,12 +36,12 @@ func (l *CreateLogic) Create(in *borrower.ProjectManagementDependencyCreateReque
 	if err != nil {
 		return nil, err
 	}
-	claim := &claimValue
+	claim := claimValue
 	dependency, err := base.ProjectManagementDependencyLogic.Create(l.ctx, claim, dto.ProjectManagementTaskDependencyDto{TaskId: in.Data.TaskId, DependencyTaskId: in.Data.DependencyTaskId, DependencyType: constants.ProjectManagementDependencyType(in.Data.DependencyType), DependencyRule: constants.ProjectManagementDependencyRule(in.Data.DependencyRule)})
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-	data, err := dependencyEntity(dependency)
+	data, err := copierx.Trans[model.ProjectManagementTaskDependency, proto.ProjectManagementTaskDependencyEntity](dependency, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

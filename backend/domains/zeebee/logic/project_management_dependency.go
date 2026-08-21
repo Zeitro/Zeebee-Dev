@@ -17,6 +17,13 @@ import (
 
 type ProjectManagementDependencyLogic struct{ *BaseLogic }
 
+type projectManagementDependencyOperation struct {
+	claim      utils.JwtUser
+	projectId  int64
+	dependency *model.ProjectManagementTaskDependency
+	action     constants.OperationAction
+}
+
 func NewProjectManagementDependencyLogic(baseLogic *BaseLogic) *ProjectManagementDependencyLogic {
 	return &ProjectManagementDependencyLogic{BaseLogic: baseLogic}
 }
@@ -56,7 +63,7 @@ func dependencyTasks(tasks []*model.ProjectManagementTask, taskId, dependencyTas
 	return task, dependencyTask
 }
 
-func (l *ProjectManagementDependencyLogic) Create(ctx context.Context, claim *utils.JwtUser, input dto.ProjectManagementTaskDependencyDto) (*model.ProjectManagementTaskDependency, error) {
+func (l *ProjectManagementDependencyLogic) Create(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementTaskDependencyDto) (*model.ProjectManagementTaskDependency, error) {
 	if err := validateProjectManagementDependency(input); err != nil {
 		return nil, err
 	}
@@ -108,46 +115,46 @@ func (l *ProjectManagementDependencyLogic) Create(ctx context.Context, claim *ut
 		if err != nil {
 			return err
 		}
-		return l.recordOperation(ctx, tx, claim, successor.ProjectId, dependency, constants.OperationActionProjectManagementDependencyCreate)
+		return l.recordOperation(ctx, tx, projectManagementDependencyOperation{claim: claim, projectId: successor.ProjectId, dependency: dependency, action: constants.OperationActionProjectManagementDependencyCreate})
 	})
 	return dependency, err
 }
 
-func (l *ProjectManagementDependencyLogic) Page(ctx context.Context, claim *utils.JwtUser, input dto.ProjectManagementTaskDependencyPageRequestDto) (gormx.PageResponse[*model.ProjectManagementTaskDependency], error) {
+func (l *ProjectManagementDependencyLogic) Page(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementTaskDependencyPageRequestDto) (gormx.PageResponse[*model.ProjectManagementTaskDependency], error) {
 	if _, err := NewProjectManagementTaskLogic(l.BaseLogic).Detail(ctx, claim, input.TaskId); err != nil {
 		return gormx.PageResponse[*model.ProjectManagementTaskDependency]{}, err
 	}
 	return l.repos.ProjectManagementDependencyRepo.PageByTask(ctx, input.TaskId, input.Predecessor, gormx.PageRequest{Page: input.Page, Limit: input.Limit})
 }
 
-func (l *ProjectManagementDependencyLogic) Update(ctx context.Context, claim *utils.JwtUser, taskId, id int64, dependencyType constants.ProjectManagementDependencyType, dependencyRule constants.ProjectManagementDependencyRule) (*model.ProjectManagementTaskDependency, error) {
+func (l *ProjectManagementDependencyLogic) Update(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementTaskDependencyDto) (*model.ProjectManagementTaskDependency, error) {
 	var dependency *model.ProjectManagementTaskDependency
 	err := l.repos.ProjectManagementDependencyRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var err error
-		dependency, err = l.repos.ProjectManagementDependencyRepo.LockWithTx(ctx, tx, id)
+		dependency, err = l.repos.ProjectManagementDependencyRepo.LockWithTx(ctx, tx, input.Id)
 		if err != nil {
 			return projectManagementNotFound(err, "task dependency not found")
 		}
-		if dependency.TaskId != taskId && dependency.DependencyTaskId != taskId {
+		if dependency.TaskId != input.TaskId && dependency.DependencyTaskId != input.TaskId {
 			return errorx.New("task dependency not found")
 		}
 		dependencyTaskId := dependency.DependencyTaskId
-		if dependency.TaskId != taskId {
+		if dependency.TaskId != input.TaskId {
 			dependencyTaskId = dependency.TaskId
 		}
-		input := dto.ProjectManagementTaskDependencyDto{TaskId: taskId, DependencyTaskId: dependencyTaskId, DependencyType: dependencyType, DependencyRule: dependencyRule}
-		if err = validateProjectManagementDependency(input); err != nil {
+		update := dto.ProjectManagementTaskDependencyDto{TaskId: input.TaskId, DependencyTaskId: dependencyTaskId, DependencyType: input.DependencyType, DependencyRule: input.DependencyRule}
+		if err = validateProjectManagementDependency(update); err != nil {
 			return err
 		}
-		tasks, err := l.repos.ProjectManagementDependencyRepo.LockTasksWithTx(ctx, tx, taskId, dependencyTaskId)
+		tasks, err := l.repos.ProjectManagementDependencyRepo.LockTasksWithTx(ctx, tx, input.TaskId, dependencyTaskId)
 		if err != nil {
 			return projectManagementNotFound(err, "task not found")
 		}
-		task, relatedTask := dependencyTasks(tasks, taskId, dependencyTaskId)
+		task, relatedTask := dependencyTasks(tasks, input.TaskId, dependencyTaskId)
 		if task == nil || relatedTask == nil {
 			return projectManagementNotFound(gorm.ErrRecordNotFound, "task not found")
 		}
-		successorTaskId, _ := dependencyEndpoints(taskId, dependencyTaskId, dependencyType)
+		successorTaskId, _ := dependencyEndpoints(input.TaskId, dependencyTaskId, input.DependencyType)
 		successor, predecessor := task, relatedTask
 		if successor.Id != successorTaskId {
 			successor, predecessor = predecessor, successor
@@ -177,19 +184,19 @@ func (l *ProjectManagementDependencyLogic) Update(ctx context.Context, claim *ut
 		if cycle {
 			return errorx.New("task dependency would create a cycle")
 		}
-		dependency.TaskId = taskId
+		dependency.TaskId = input.TaskId
 		dependency.DependencyTaskId = dependencyTaskId
-		dependency.DependencyType = dependencyType
-		dependency.DependencyRule = dependencyRule
+		dependency.DependencyType = input.DependencyType
+		dependency.DependencyRule = input.DependencyRule
 		if err = l.repos.ProjectManagementDependencyRepo.UpdateWithTx(ctx, tx, dependency); err != nil {
 			return err
 		}
-		return l.recordOperation(ctx, tx, claim, successor.ProjectId, dependency, constants.OperationActionProjectManagementDependencyUpdate)
+		return l.recordOperation(ctx, tx, projectManagementDependencyOperation{claim: claim, projectId: successor.ProjectId, dependency: dependency, action: constants.OperationActionProjectManagementDependencyUpdate})
 	})
 	return dependency, err
 }
 
-func (l *ProjectManagementDependencyLogic) Delete(ctx context.Context, claim *utils.JwtUser, id int64) error {
+func (l *ProjectManagementDependencyLogic) Delete(ctx context.Context, claim utils.JwtUser, id int64) error {
 	return l.repos.ProjectManagementDependencyRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		dependency, err := l.repos.ProjectManagementDependencyRepo.LockWithTx(ctx, tx, id)
 		if err != nil {
@@ -217,15 +224,15 @@ func (l *ProjectManagementDependencyLogic) Delete(ctx context.Context, claim *ut
 		if err = l.repos.ProjectManagementDependencyRepo.DeleteWithTx(ctx, tx, dependency); err != nil {
 			return err
 		}
-		return l.recordOperation(ctx, tx, claim, successor.ProjectId, dependency, constants.OperationActionProjectManagementDependencyDelete)
+		return l.recordOperation(ctx, tx, projectManagementDependencyOperation{claim: claim, projectId: successor.ProjectId, dependency: dependency, action: constants.OperationActionProjectManagementDependencyDelete})
 	})
 }
 
-func (l *ProjectManagementDependencyLogic) recordOperation(ctx context.Context, tx *gorm.DB, claim *utils.JwtUser, projectId int64, dependency *model.ProjectManagementTaskDependency, operation constants.OperationAction) error {
-	successorTaskId, _ := dependencyEndpoints(dependency.TaskId, dependency.DependencyTaskId, dependency.DependencyType)
-	metadata, err := json.Marshal(map[string]int64{"project_id": projectId, "task_id": successorTaskId, "dependency_id": dependency.Id})
+func (l *ProjectManagementDependencyLogic) recordOperation(ctx context.Context, tx *gorm.DB, input projectManagementDependencyOperation) error {
+	successorTaskId, _ := dependencyEndpoints(input.dependency.TaskId, input.dependency.DependencyTaskId, input.dependency.DependencyType)
+	metadata, err := json.Marshal(map[string]int64{"project_id": input.projectId, "task_id": successorTaskId, "dependency_id": input.dependency.Id})
 	if err != nil {
 		return errorx.WithStack(err)
 	}
-	return NewOperationLogic(l.BaseLogic).CreateOperationLog(ctx, tx, dto.OperationCreateDto{EntityId: projectId, EntityType: constants.OperationEntityTypeProjectManagementProject, OperatorId: claim.OrganizationUserId, OperatorName: claim.Username, OperatorType: constants.UserTypeBorrower, Operation: operation, Metadata: metadata, OrganizationId: claim.OrganizationId})
+	return NewOperationLogic(l.BaseLogic).CreateOperationLog(ctx, tx, dto.OperationCreateDto{EntityId: input.projectId, EntityType: constants.OperationEntityTypeProjectManagementProject, OperatorId: input.claim.OrganizationUserId, OperatorName: input.claim.Username, OperatorType: constants.UserTypeBorrower, Operation: input.action, Metadata: metadata, OrganizationId: input.claim.OrganizationId})
 }

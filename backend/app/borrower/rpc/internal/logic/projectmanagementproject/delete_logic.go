@@ -34,7 +34,7 @@ func (l *DeleteLogic) Delete(in *borrower.ProjectManagementProjectDeleteRequest)
 	if err != nil {
 		return nil, err
 	}
-	claim := &claimValue
+	claim := claimValue
 	if err = l.baseLogic.ProjectManagementProjectLogic.Delete(l.ctx, claim, in.Data.Id, in.Data.Confirm); err != nil {
 		return nil, err
 	}

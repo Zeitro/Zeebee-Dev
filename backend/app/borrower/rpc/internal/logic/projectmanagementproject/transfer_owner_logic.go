@@ -34,7 +34,7 @@ func (l *TransferOwnerLogic) TransferOwner(in *borrower.ProjectManagementProject
 	if err != nil {
 		return nil, err
 	}
-	claim := &claimValue
+	claim := claimValue
 	target, err := l.baseLogic.ProjectManagementMemberLogic.Detail(l.ctx, claim, in.Data.ProjectId, in.Data.MemberId)
 	if err != nil {
 		return nil, err

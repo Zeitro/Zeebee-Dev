@@ -15,6 +15,7 @@ func (l *ProjectManagementWorkflowLogic) ListEnabled(ctx context.Context, organi
 	if err != nil || len(workflows) > 0 {
 		return workflows, err
 	}
+	// If no workflows found, try to create a default one
 	if err = l.ensureDefault(ctx, organizationId); err != nil {
 		workflows, retryErr := l.repos.ProjectManagementWorkflowRepo.ListEnabledByOrganization(ctx, organizationId)
 		if retryErr == nil && len(workflows) > 0 {

@@ -41,7 +41,7 @@ func TestCreateProjectClonesTemplateAndRollsBack(t *testing.T) {
 		}
 	}
 	logic := NewProjectManagementProjectLogic(NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}))
-	actor := &utils.JwtUser{OrganizationId: 1, OrganizationUserId: 7, Username: "Owner"}
+	actor := utils.JwtUser{OrganizationId: 1, OrganizationUserId: 7, Username: "Owner"}
 	project, err := logic.Create(context.Background(), actor, dto.ProjectManagementProjectCreateDto{ProjectManagementProjectDto: dto.ProjectManagementProjectDto{Name: "Renovation", EntityId: 50, EntityType: "Property"}, WorkflowTemplateId: 100})
 	if err != nil {
 		t.Fatalf("project creation rejected: %v", err)

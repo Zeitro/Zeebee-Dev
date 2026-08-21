@@ -7,10 +7,9 @@ import (
 )
 
 func memberEntity(member *dto.ProjectManagementMemberDetailDto) (*proto.ProjectManagementMemberEntity, error) {
-	entity, err := copierx.Trans[dto.ProjectManagementMemberDetailDto, proto.ProjectManagementMemberEntity](member)
+	entity, err := copierx.Trans[dto.ProjectManagementMemberDetailDto, proto.ProjectManagementMemberEntity](member, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}
-	entity.CreatedAt, entity.UpdatedAt = formatEntityTime(member.CreatedAt), formatEntityTime(member.UpdatedAt)
 	return entity, nil
 }

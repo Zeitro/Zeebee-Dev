@@ -6,8 +6,12 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type UpdateLogic struct {
@@ -32,12 +36,12 @@ func (l *UpdateLogic) Update(in *borrower.ProjectManagementDependencyUpdateReque
 	if err != nil {
 		return nil, err
 	}
-	claim := &claimValue
-	dependency, err := base.ProjectManagementDependencyLogic.Update(l.ctx, claim, in.Data.TaskId, in.Data.Id, constants.ProjectManagementDependencyType(in.Data.DependencyType), constants.ProjectManagementDependencyRule(in.Data.DependencyRule))
+	claim := claimValue
+	dependency, err := base.ProjectManagementDependencyLogic.Update(l.ctx, claim, dto.ProjectManagementTaskDependencyDto{Id: in.Data.Id, TaskId: in.Data.TaskId, DependencyType: constants.ProjectManagementDependencyType(in.Data.DependencyType), DependencyRule: constants.ProjectManagementDependencyRule(in.Data.DependencyRule)})
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-	data, err := dependencyEntity(dependency)
+	data, err := copierx.Trans[model.ProjectManagementTaskDependency, proto.ProjectManagementTaskDependencyEntity](dependency, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

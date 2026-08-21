@@ -56,7 +56,7 @@ func TestCreateTaskDependencyRules(t *testing.T) {
 		}
 	}
 	logic := NewProjectManagementDependencyLogic(NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}))
-	actor := &utils.JwtUser{OrganizationId: 1, OrganizationUserId: 7, Username: "Actor"}
+	actor := utils.JwtUser{OrganizationId: 1, OrganizationUserId: 7, Username: "Actor"}
 	input := dto.ProjectManagementTaskDependencyDto{TaskId: 2, DependencyTaskId: 1, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}
 
 	dependency, err := logic.Create(context.Background(), actor, input)

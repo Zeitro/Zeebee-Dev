@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type CandidateLogic struct {
@@ -34,8 +35,8 @@ func (l *CandidateLogic) Candidate(in *borrower.ProjectManagementMemberCandidate
 	if err != nil {
 		return nil, err
 	}
-	claim := &claimValue
-	members, err := l.baseLogic.ProjectManagementMemberLogic.Candidate(l.ctx, claim, in.Data.ProjectId, in.Data.Keyword, in.Data.NeedAll)
+	claim := claimValue
+	members, err := l.baseLogic.ProjectManagementMemberLogic.Candidate(l.ctx, claim, dto.ProjectManagementMemberCandidateDto{ProjectId: in.Data.ProjectId, Keyword: in.Data.Keyword, NeedAll: in.Data.NeedAll})
 	if err != nil {
 		return nil, err
 	}

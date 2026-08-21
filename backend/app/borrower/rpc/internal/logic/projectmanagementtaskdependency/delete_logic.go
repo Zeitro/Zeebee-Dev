@@ -32,7 +32,7 @@ func (l *DeleteLogic) Delete(in *borrower.ProjectManagementDependencyDeleteReque
 	if err != nil {
 		return nil, err
 	}
-	claim := &claimValue
+	claim := claimValue
 	if err = base.ProjectManagementDependencyLogic.Delete(l.ctx, claim, in.Data.Id); err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

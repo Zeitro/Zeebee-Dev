@@ -12,7 +12,7 @@ import (
 	"zeebee-backend/domains/zeebee/model"
 )
 
-func (l *ProjectManagementWorkflowLogic) ProjectDetail(ctx context.Context, claim *utils.JwtUser, projectId int64) (*model.ProjectManagementWorkflow, error) {
+func (l *ProjectManagementWorkflowLogic) ProjectDetail(ctx context.Context, claim utils.JwtUser, projectId int64) (*model.ProjectManagementWorkflow, error) {
 	if _, err := l.projectManagementAccess().RequireProject(ctx, projectId, claim.OrganizationId); err != nil {
 		return nil, err
 	}
@@ -26,7 +26,7 @@ func (l *ProjectManagementWorkflowLogic) ProjectDetail(ctx context.Context, clai
 	return workflow, nil
 }
 
-func (l *ProjectManagementWorkflowLogic) ProjectUpdate(ctx context.Context, claim *utils.JwtUser, projectId int64, input dto.ProjectManagementWorkflowDto) (workflow *model.ProjectManagementWorkflow, err error) {
+func (l *ProjectManagementWorkflowLogic) ProjectUpdate(ctx context.Context, claim utils.JwtUser, projectId int64, input dto.ProjectManagementWorkflowDto) (workflow *model.ProjectManagementWorkflow, err error) {
 	if err = validateProjectManagementProjectWorkflow(input); err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (l *ProjectManagementWorkflowLogic) ProjectUpdate(ctx context.Context, clai
 		if err = l.repos.ProjectManagementWorkflowRepo.ReplaceProjectDefinitionWithTx(ctx, tx, current.Id, stages, transitions); err != nil {
 			return err
 		}
-		return NewProjectManagementTaskLogic(l.BaseLogic).recordProjectTaskOperation(ctx, tx, claim, projectId, 0, constants.OperationActionProjectManagementWorkflowUpdate)
+		return NewProjectManagementTaskLogic(l.BaseLogic).recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: projectId, action: constants.OperationActionProjectManagementWorkflowUpdate})
 	})
 	if err != nil {
 		return nil, err

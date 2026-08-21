@@ -13,7 +13,19 @@ import (
 	"zeebee-backend/domains/zeebee/model"
 )
 
-func (l *ProjectManagementTaskLogic) Transition(ctx context.Context, claim *utils.JwtUser, taskId, targetStageId int64) (task *model.ProjectManagementTask, err error) {
+type projectManagementTransitionContext struct {
+	ctx          context.Context
+	tx           *gorm.DB
+	claim        utils.JwtUser
+	task         *model.ProjectManagementTask
+	project      *model.ProjectManagementProject
+	member       *model.ProjectManagementProjectMember
+	currentStage *model.ProjectManagementWorkflowStage
+	targetStage  *model.ProjectManagementWorkflowStage
+	transition   *model.ProjectManagementWorkflowTransition
+}
+
+func (l *ProjectManagementTaskLogic) Transition(ctx context.Context, claim utils.JwtUser, taskId, targetStageId int64) (task *model.ProjectManagementTask, err error) {
 	if taskId == 0 || targetStageId == 0 {
 		return nil, errorx.New("task and target stage are required")
 	}
@@ -52,14 +64,25 @@ func (l *ProjectManagementTaskLogic) Transition(ctx context.Context, claim *util
 		if err != nil {
 			return projectManagementNotFound(err, "task workflow transition not found")
 		}
-		if err = l.requireTransitionActor(ctx, tx, task, project, member, claim, transition); err != nil {
+		transitionCtx := &projectManagementTransitionContext{
+			ctx:          ctx,
+			tx:           tx,
+			claim:        claim,
+			task:         task,
+			project:      project,
+			member:       member,
+			currentStage: currentStage,
+			targetStage:  targetStage,
+			transition:   transition,
+		}
+		if err = l.requireTransitionActor(transitionCtx); err != nil {
 			return err
 		}
-		if err = l.validateTransitionDependencies(ctx, tx, task, currentStage, targetStage); err != nil {
+		if err = l.validateTransitionDependencies(transitionCtx); err != nil {
 			return err
 		}
 		if targetStage.Phase == constants.ProjectManagementStagePhaseFinished {
-			if err = l.validateFinishedChildren(ctx, tx, task); err != nil {
+			if err = l.validateFinishedChildren(transitionCtx); err != nil {
 				return err
 			}
 		}
@@ -67,7 +90,7 @@ func (l *ProjectManagementTaskLogic) Transition(ctx context.Context, claim *util
 			return err
 		}
 		task.StageId = targetStage.Id
-		return l.recordProjectTaskTransition(ctx, tx, claim, task.ProjectId, task.Id, currentStage.Id, targetStage.Id)
+		return l.recordProjectTaskTransition(transitionCtx)
 	})
 	if err != nil {
 		return nil, err
@@ -75,26 +98,26 @@ func (l *ProjectManagementTaskLogic) Transition(ctx context.Context, claim *util
 	return l.Detail(ctx, claim, task.Id)
 }
 
-func (l *ProjectManagementTaskLogic) requireTransitionActor(ctx context.Context, tx *gorm.DB, task *model.ProjectManagementTask, project *model.ProjectManagementProject, member *model.ProjectManagementProjectMember, claim *utils.JwtUser, transition *model.ProjectManagementWorkflowTransition) error {
-	if len(transition.AllowedActorTypes) == 0 {
+func (l *ProjectManagementTaskLogic) requireTransitionActor(transitionCtx *projectManagementTransitionContext) error {
+	if len(transitionCtx.transition.AllowedActorTypes) == 0 {
 		return nil
 	}
-	for _, actorType := range transition.AllowedActorTypes {
+	for _, actorType := range transitionCtx.transition.AllowedActorTypes {
 		switch constants.ProjectManagementMemberRole(actorType) {
 		case constants.ProjectManagementMemberRoleProjectOwner:
-			if project.OwnerId == claim.OrganizationUserId || member.Role == constants.ProjectManagementMemberRoleProjectOwner {
+			if transitionCtx.project.OwnerId == transitionCtx.claim.OrganizationUserId || transitionCtx.member.Role == constants.ProjectManagementMemberRoleProjectOwner {
 				return nil
 			}
 		case constants.ProjectManagementMemberRoleProjectAdmin:
-			if member.Role == constants.ProjectManagementMemberRoleProjectAdmin {
+			if transitionCtx.member.Role == constants.ProjectManagementMemberRoleProjectAdmin {
 				return nil
 			}
 		case constants.ProjectManagementMemberRoleTaskCreator:
-			if task.CreatorId == claim.OrganizationUserId {
+			if transitionCtx.task.CreatorId == transitionCtx.claim.OrganizationUserId {
 				return nil
 			}
 		case constants.ProjectManagementMemberRoleTaskExecutor:
-			if member.Role == constants.ProjectManagementMemberRoleTaskExecutor {
+			if transitionCtx.member.Role == constants.ProjectManagementMemberRoleTaskExecutor {
 				return nil
 			}
 		}
@@ -102,39 +125,39 @@ func (l *ProjectManagementTaskLogic) requireTransitionActor(ctx context.Context,
 	return errorx.New("project member is not allowed to perform this transition")
 }
 
-func (l *ProjectManagementTaskLogic) validateTransitionDependencies(ctx context.Context, tx *gorm.DB, task *model.ProjectManagementTask, _ *model.ProjectManagementWorkflowStage, targetStage *model.ProjectManagementWorkflowStage) error {
-	dependencies, err := l.repos.ProjectManagementDependencyRepo.ListBySuccessorWithTx(ctx, tx, task.Id)
+func (l *ProjectManagementTaskLogic) validateTransitionDependencies(transitionCtx *projectManagementTransitionContext) error {
+	dependencies, err := l.repos.ProjectManagementDependencyRepo.ListBySuccessorWithTx(transitionCtx.ctx, transitionCtx.tx, transitionCtx.task.Id)
 	if err != nil {
 		return err
 	}
 	for _, dependency := range dependencies {
 		_, predecessorTaskId := dependencyEndpoints(dependency.TaskId, dependency.DependencyTaskId, dependency.DependencyType)
-		predecessor, err := l.repos.ProjectManagementTaskRepo.LockWithTx(ctx, tx, predecessorTaskId)
+		predecessor, err := l.repos.ProjectManagementTaskRepo.LockWithTx(transitionCtx.ctx, transitionCtx.tx, predecessorTaskId)
 		if err != nil {
 			return projectManagementNotFound(err, "dependency predecessor task not found")
 		}
-		stage, err := l.repos.ProjectManagementWorkflowRepo.FindStageWithTx(ctx, tx, predecessor.StageId)
+		stage, err := l.repos.ProjectManagementWorkflowRepo.FindStageWithTx(transitionCtx.ctx, transitionCtx.tx, predecessor.StageId)
 		if err != nil {
 			return projectManagementNotFound(err, "dependency predecessor stage not found")
 		}
 		finished, started := stage.Phase == constants.ProjectManagementStagePhaseFinished, stage.Phase != constants.ProjectManagementStagePhasePending
-		if targetStage.Phase == constants.ProjectManagementStagePhaseInProgress && ((dependency.DependencyRule == constants.ProjectManagementDependencyRuleFS && !finished) || (dependency.DependencyRule == constants.ProjectManagementDependencyRuleSS && !started)) {
+		if transitionCtx.targetStage.Phase == constants.ProjectManagementStagePhaseInProgress && ((dependency.DependencyRule == constants.ProjectManagementDependencyRuleFS && !finished) || (dependency.DependencyRule == constants.ProjectManagementDependencyRuleSS && !started)) {
 			return errorx.New("task dependency blocks transition to in progress")
 		}
-		if targetStage.Phase == constants.ProjectManagementStagePhaseFinished && ((dependency.DependencyRule == constants.ProjectManagementDependencyRuleFF && !finished) || (dependency.DependencyRule == constants.ProjectManagementDependencyRuleSF && !started)) {
+		if transitionCtx.targetStage.Phase == constants.ProjectManagementStagePhaseFinished && ((dependency.DependencyRule == constants.ProjectManagementDependencyRuleFF && !finished) || (dependency.DependencyRule == constants.ProjectManagementDependencyRuleSF && !started)) {
 			return errorx.New("task dependency blocks transition to finished")
 		}
 	}
 	return nil
 }
 
-func (l *ProjectManagementTaskLogic) validateFinishedChildren(ctx context.Context, tx *gorm.DB, task *model.ProjectManagementTask) error {
-	children, err := l.repos.ProjectManagementTaskRepo.DirectChildrenWithTx(ctx, tx, task.Id)
+func (l *ProjectManagementTaskLogic) validateFinishedChildren(transitionCtx *projectManagementTransitionContext) error {
+	children, err := l.repos.ProjectManagementTaskRepo.DirectChildrenWithTx(transitionCtx.ctx, transitionCtx.tx, transitionCtx.task.Id)
 	if err != nil {
 		return err
 	}
 	for _, child := range children {
-		stage, err := l.repos.ProjectManagementWorkflowRepo.FindStageWithTx(ctx, tx, child.StageId)
+		stage, err := l.repos.ProjectManagementWorkflowRepo.FindStageWithTx(transitionCtx.ctx, transitionCtx.tx, child.StageId)
 		if err != nil {
 			return projectManagementNotFound(err, "child task stage not found")
 		}
@@ -145,10 +168,25 @@ func (l *ProjectManagementTaskLogic) validateFinishedChildren(ctx context.Contex
 	return nil
 }
 
-func (l *ProjectManagementTaskLogic) recordProjectTaskTransition(ctx context.Context, tx *gorm.DB, claim *utils.JwtUser, projectId, taskId, fromStageId, toStageId int64) error {
-	metadata, err := json.Marshal(map[string]int64{"project_id": projectId, "task_id": taskId, "from_stage_id": fromStageId, "to_stage_id": toStageId})
+func (l *ProjectManagementTaskLogic) recordProjectTaskTransition(transitionCtx *projectManagementTransitionContext) error {
+	metadata, err := json.Marshal(map[string]int64{
+		"project_id":    transitionCtx.task.ProjectId,
+		"task_id":       transitionCtx.task.Id,
+		"from_stage_id": transitionCtx.currentStage.Id,
+		"to_stage_id":   transitionCtx.targetStage.Id,
+	})
 	if err != nil {
 		return errorx.WithStack(err)
 	}
-	return NewOperationLogic(l.BaseLogic).CreateOperationLog(ctx, tx, dto.OperationCreateDto{EntityId: projectId, EntityType: constants.OperationEntityTypeProjectManagementProject, OperatorId: claim.OrganizationUserId, OperatorName: claim.Username, OperatorType: constants.UserTypeBorrower, Operation: constants.OperationActionProjectManagementTaskTransition, Metadata: metadata, OrganizationId: claim.OrganizationId})
+	input := dto.OperationCreateDto{
+		EntityId:       transitionCtx.task.ProjectId,
+		EntityType:     constants.OperationEntityTypeProjectManagementProject,
+		OperatorId:     transitionCtx.claim.OrganizationUserId,
+		OperatorName:   transitionCtx.claim.Username,
+		OperatorType:   constants.UserTypeBorrower,
+		Operation:      constants.OperationActionProjectManagementTaskTransition,
+		Metadata:       metadata,
+		OrganizationId: transitionCtx.claim.OrganizationId,
+	}
+	return NewOperationLogic(l.BaseLogic).CreateOperationLog(transitionCtx.ctx, transitionCtx.tx, input)
 }

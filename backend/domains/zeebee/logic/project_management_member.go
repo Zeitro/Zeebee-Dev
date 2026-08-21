@@ -16,15 +16,22 @@ import (
 
 type ProjectManagementMemberLogic struct{ *BaseLogic }
 
+type projectManagementMemberOperation struct {
+	claim                    utils.JwtUser
+	projectId                int64
+	action                   constants.OperationAction
+	targetOrganizationUserId int64
+}
+
 func NewProjectManagementMemberLogic(baseLogic *BaseLogic) *ProjectManagementMemberLogic {
 	return &ProjectManagementMemberLogic{BaseLogic: baseLogic}
 }
 
-func (l *ProjectManagementMemberLogic) AddOne(ctx context.Context, claim *utils.JwtUser, input dto.ProjectManagementMemberDto) error {
+func (l *ProjectManagementMemberLogic) AddOne(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementMemberDto) error {
 	return l.Add(ctx, claim, []dto.ProjectManagementMemberDto{input})
 }
 
-func (l *ProjectManagementMemberLogic) Detail(ctx context.Context, claim *utils.JwtUser, projectId, memberId int64) (*model.ProjectManagementProjectMember, error) {
+func (l *ProjectManagementMemberLogic) Detail(ctx context.Context, claim utils.JwtUser, projectId, memberId int64) (*model.ProjectManagementProjectMember, error) {
 	if _, err := l.projectManagementAccess().RequireProject(ctx, projectId, claim.OrganizationId); err != nil {
 		return nil, err
 	}
@@ -38,7 +45,7 @@ func (l *ProjectManagementMemberLogic) Detail(ctx context.Context, claim *utils.
 	return member, nil
 }
 
-func (l *ProjectManagementMemberLogic) Add(ctx context.Context, claim *utils.JwtUser, inputs []dto.ProjectManagementMemberDto) error {
+func (l *ProjectManagementMemberLogic) Add(ctx context.Context, claim utils.JwtUser, inputs []dto.ProjectManagementMemberDto) error {
 	if len(inputs) == 0 {
 		return errorx.New("project members are required")
 	}
@@ -74,7 +81,7 @@ func (l *ProjectManagementMemberLogic) Add(ctx context.Context, claim *utils.Jwt
 			if err = l.repos.ProjectManagementProjectRepo.CreateMemberWithTx(ctx, tx, member); err != nil {
 				return err
 			}
-			if err = l.recordOperation(ctx, tx, claim, input.ProjectId, constants.OperationActionProjectManagementMemberAdd, input.OrganizationUserId); err != nil {
+			if err = l.recordOperation(ctx, tx, projectManagementMemberOperation{claim: claim, projectId: input.ProjectId, action: constants.OperationActionProjectManagementMemberAdd, targetOrganizationUserId: input.OrganizationUserId}); err != nil {
 				return err
 			}
 		}
@@ -82,7 +89,7 @@ func (l *ProjectManagementMemberLogic) Add(ctx context.Context, claim *utils.Jwt
 	})
 }
 
-func (l *ProjectManagementMemberLogic) Update(ctx context.Context, claim *utils.JwtUser, input dto.ProjectManagementMemberDto) error {
+func (l *ProjectManagementMemberLogic) Update(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementMemberDto) error {
 	if err := validateProjectManagementMemberRole(input.Role, false); err != nil {
 		return err
 	}
@@ -100,11 +107,12 @@ func (l *ProjectManagementMemberLogic) Update(ctx context.Context, claim *utils.
 		if err = l.repos.ProjectManagementProjectRepo.UpdateMemberRoleWithTx(ctx, tx, member, input.Role); err != nil {
 			return err
 		}
-		return l.recordOperation(ctx, tx, claim, input.ProjectId, constants.OperationActionProjectManagementMemberUpdate, member.OrganizationUserId)
+		return l.recordOperation(ctx, tx, projectManagementMemberOperation{claim: claim, projectId: input.ProjectId, action: constants.OperationActionProjectManagementMemberUpdate, targetOrganizationUserId: member.OrganizationUserId})
 	})
 }
 
-func (l *ProjectManagementMemberLogic) TransferOwner(ctx context.Context, claim *utils.JwtUser, projectId, targetOrganizationUserId int64) error {
+// TransferOwner transfers project ownership to another member
+func (l *ProjectManagementMemberLogic) TransferOwner(ctx context.Context, claim utils.JwtUser, projectId, targetOrganizationUserId int64) error {
 	if projectId == 0 || targetOrganizationUserId == 0 {
 		return errorx.New("project and target member are required")
 	}
@@ -143,11 +151,11 @@ func (l *ProjectManagementMemberLogic) TransferOwner(ctx context.Context, claim 
 		if err = l.repos.ProjectManagementProjectRepo.UpdateOwnerWithTx(ctx, tx, projectId, targetOrganizationUserId, targetOrganizationUser.FullName); err != nil {
 			return err
 		}
-		return l.recordOperation(ctx, tx, claim, projectId, constants.OperationActionProjectManagementOwnerTransfer, targetOrganizationUserId)
+		return l.recordOperation(ctx, tx, projectManagementMemberOperation{claim: claim, projectId: projectId, action: constants.OperationActionProjectManagementOwnerTransfer, targetOrganizationUserId: targetOrganizationUserId})
 	})
 }
 
-func (l *ProjectManagementMemberLogic) Delete(ctx context.Context, claim *utils.JwtUser, projectId, memberId int64) error {
+func (l *ProjectManagementMemberLogic) Delete(ctx context.Context, claim utils.JwtUser, projectId, memberId int64) error {
 	if projectId == 0 || memberId == 0 {
 		return errorx.New("project and member are required")
 	}
@@ -165,11 +173,11 @@ func (l *ProjectManagementMemberLogic) Delete(ctx context.Context, claim *utils.
 		if err = l.repos.ProjectManagementProjectRepo.DeleteMemberWithTx(ctx, tx, member); err != nil {
 			return err
 		}
-		return l.recordOperation(ctx, tx, claim, projectId, constants.OperationActionProjectManagementMemberRemove, member.OrganizationUserId)
+		return l.recordOperation(ctx, tx, projectManagementMemberOperation{claim: claim, projectId: projectId, action: constants.OperationActionProjectManagementMemberRemove, targetOrganizationUserId: member.OrganizationUserId})
 	})
 }
 
-func (l *ProjectManagementAccessLogic) requireProjectManagerWithTx(ctx context.Context, tx *gorm.DB, claim *utils.JwtUser, projectId int64) (*model.ProjectManagementProject, error) {
+func (l *ProjectManagementAccessLogic) requireProjectManagerWithTx(ctx context.Context, tx *gorm.DB, claim utils.JwtUser, projectId int64) (*model.ProjectManagementProject, error) {
 	project, err := l.repos.ProjectManagementProjectRepo.LockByOrganizationWithTx(ctx, tx, projectId, claim.OrganizationId)
 	if err != nil {
 		return nil, projectManagementNotFound(err, "project not found")
@@ -195,10 +203,10 @@ func isProjectManagementNotFound(err error) bool {
 	return errorx.Cause(err) == gorm.ErrRecordNotFound
 }
 
-func (l *ProjectManagementMemberLogic) recordOperation(ctx context.Context, tx *gorm.DB, claim *utils.JwtUser, projectId int64, operation constants.OperationAction, targetOrganizationUserId int64) error {
-	metadata, err := json.Marshal(map[string]int64{"project_id": projectId, "organization_user_id": targetOrganizationUserId})
+func (l *ProjectManagementMemberLogic) recordOperation(ctx context.Context, tx *gorm.DB, input projectManagementMemberOperation) error {
+	metadata, err := json.Marshal(map[string]int64{"project_id": input.projectId, "organization_user_id": input.targetOrganizationUserId})
 	if err != nil {
 		return errorx.WithStack(err)
 	}
-	return NewOperationLogic(l.BaseLogic).CreateOperationLog(ctx, tx, dto.OperationCreateDto{EntityId: projectId, EntityType: constants.OperationEntityTypeProjectManagementProject, OperatorId: claim.OrganizationUserId, OperatorName: claim.Username, OperatorType: constants.UserTypeBorrower, Operation: operation, Metadata: metadata, OrganizationId: claim.OrganizationId})
+	return NewOperationLogic(l.BaseLogic).CreateOperationLog(ctx, tx, dto.OperationCreateDto{EntityId: input.projectId, EntityType: constants.OperationEntityTypeProjectManagementProject, OperatorId: input.claim.OrganizationUserId, OperatorName: input.claim.Username, OperatorType: constants.UserTypeBorrower, Operation: input.action, Metadata: metadata, OrganizationId: input.claim.OrganizationId})
 }

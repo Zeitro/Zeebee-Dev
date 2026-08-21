@@ -36,7 +36,7 @@ func (l *AddLogic) Add(in *borrower.ProjectManagementMemberAddRequest) (resp *pr
 	if err != nil {
 		return nil, err
 	}
-	claim := &claimValue
+	claim := claimValue
 	members, err := copierx.Trans[[]*borrower.ProjectManagementMemberInput, []dto.ProjectManagementMemberDto](&in.Data.Members)
 	if err != nil {
 		return nil, err

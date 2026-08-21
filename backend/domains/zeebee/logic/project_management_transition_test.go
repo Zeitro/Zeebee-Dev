@@ -83,7 +83,7 @@ func TestTransitionDependencyRules(t *testing.T) {
 				target.Id = 102
 			}
 			err := db.Transaction(func(tx *gorm.DB) error {
-				return logic.validateTransitionDependencies(context.Background(), tx, &model.ProjectManagementTask{Base: model.Base{Id: 10}}, current, target)
+				return logic.validateTransitionDependencies(&projectManagementTransitionContext{ctx: context.Background(), tx: tx, task: &model.ProjectManagementTask{Base: model.Base{Id: 10}}, currentStage: current, targetStage: target})
 			})
 			if tc.blocked && err == nil {
 				t.Fatal("blocked transition was accepted")
@@ -97,32 +97,36 @@ func TestTransitionDependencyRules(t *testing.T) {
 
 func TestTransitionActorAndChildRules(t *testing.T) {
 	logic, db := setupProjectManagementTransitionTest(t, "", constants.ProjectManagementStagePhasePending)
-	actor := &utils.JwtUser{OrganizationUserId: 7}
+	actor := utils.JwtUser{OrganizationUserId: 7}
 	task := &model.ProjectManagementTask{Base: model.Base{Id: 10}}
 	project := &model.ProjectManagementProject{OwnerId: 1, OwnerName: "Owner"}
 	member := &model.ProjectManagementProjectMember{Role: constants.ProjectManagementMemberRoleProjectAdmin}
 	transition := &model.ProjectManagementWorkflowTransition{AllowedActorTypes: []constants.ProjectManagementMemberRole{constants.ProjectManagementMemberRoleTaskExecutor}}
 	if err := db.Transaction(func(tx *gorm.DB) error {
-		return logic.requireTransitionActor(context.Background(), tx, task, project, member, actor, transition)
+		return logic.requireTransitionActor(&projectManagementTransitionContext{ctx: context.Background(), tx: tx, task: task, project: project, member: member, claim: actor, transition: transition})
 	}); err == nil {
 		t.Fatal("non-executor passed executor-only transition")
 	}
 	member.Role = constants.ProjectManagementMemberRoleTaskExecutor
 	if err := db.Transaction(func(tx *gorm.DB) error {
-		return logic.requireTransitionActor(context.Background(), tx, task, project, member, actor, transition)
+		return logic.requireTransitionActor(&projectManagementTransitionContext{ctx: context.Background(), tx: tx, task: task, project: project, member: member, claim: actor, transition: transition})
 	}); err != nil {
 		t.Fatalf("executor member rejected: %v", err)
 	}
 	if err := db.Exec("INSERT INTO project_management_tasks (id, project_id, organization_id, parent_task_id, stage_id) VALUES (11, 1, 1, 10, 100)").Error; err != nil {
 		t.Fatal(err)
 	}
-	if err := db.Transaction(func(tx *gorm.DB) error { return logic.validateFinishedChildren(context.Background(), tx, task) }); err == nil {
+	if err := db.Transaction(func(tx *gorm.DB) error {
+		return logic.validateFinishedChildren(&projectManagementTransitionContext{ctx: context.Background(), tx: tx, task: task})
+	}); err == nil {
 		t.Fatal("unfinished child did not block finish")
 	}
 	if err := db.Exec("UPDATE project_management_tasks SET stage_id = 102 WHERE id = 11").Error; err != nil {
 		t.Fatal(err)
 	}
-	if err := db.Transaction(func(tx *gorm.DB) error { return logic.validateFinishedChildren(context.Background(), tx, task) }); err != nil {
+	if err := db.Transaction(func(tx *gorm.DB) error {
+		return logic.validateFinishedChildren(&projectManagementTransitionContext{ctx: context.Background(), tx: tx, task: task})
+	}); err != nil {
 		t.Fatalf("finished child blocked completion: %v", err)
 	}
 }

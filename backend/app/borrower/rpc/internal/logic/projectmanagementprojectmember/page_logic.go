@@ -36,7 +36,7 @@ func (l *PageLogic) Page(in *borrower.ProjectManagementMemberPageRequest) (resp 
 	if err != nil {
 		return nil, err
 	}
-	claim := &claimValue
+	claim := claimValue
 	input, err := copierx.Trans[borrower.ProjectManagementMemberPageRequestData, dto.ProjectManagementMemberPageRequestDto](in.Data)
 	if err != nil {
 		return nil, err

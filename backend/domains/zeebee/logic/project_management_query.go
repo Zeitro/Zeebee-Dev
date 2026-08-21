@@ -27,7 +27,7 @@ func (l *ProjectManagementTaskLogic) Overdue(ctx context.Context, task *model.Pr
 	return &dto.ProjectManagementTaskOverdueDto{Overdue: overdue, OverdueSeconds: overdueSeconds}, nil
 }
 
-func (l *ProjectManagementTaskLogic) MyPage(ctx context.Context, claim *utils.JwtUser, input dto.ProjectManagementMyTaskPageRequestDto) (gormx.PageResponse[*model.ProjectManagementTask], error) {
+func (l *ProjectManagementTaskLogic) MyPage(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementMyTaskPageRequestDto) (gormx.PageResponse[*model.ProjectManagementTask], error) {
 	page, err := l.repos.ProjectManagementTaskRepo.PageMine(ctx, claim.OrganizationId, claim.OrganizationUserId, input)
 	if err != nil {
 		return page, err
