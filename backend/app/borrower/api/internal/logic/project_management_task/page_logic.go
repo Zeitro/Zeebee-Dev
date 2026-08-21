@@ -30,7 +30,7 @@ func NewPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PageLogic {
 func (l *PageLogic) Page(req *types.ProjectManagementTaskPageRequest) (resp *types.ProjectManagementTaskPageResponse, err error) {
 	data, err := copierx.Trans[types.ProjectManagementTaskPageRequest, borrower.ProjectManagementTaskPageRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	data.ProjectId = req.ProjectId
 	rpcResp, err := l.svcCtx.ProjectManagementTaskRpcClient.Page(l.ctx, &borrower.ProjectManagementTaskPageRequest{Data: data})

@@ -56,11 +56,11 @@ func (l *CreateLogic) Create(in *borrower.ProjectManagementTaskCreateRequest) (r
 	}
 	task, err := base.ProjectManagementTaskLogic.Create(l.ctx, claim, dto.ProjectManagementTaskCreateDto{ProjectManagementTaskDto: dto.ProjectManagementTaskDto{ProjectId: in.Data.ProjectId, ParentTaskId: in.Data.ParentTaskId, Title: in.Data.Title, Description: in.Data.Description, Priority: in.Data.Priority, StartAt: startAt, EndAt: endAt}, TaskTypeId: in.Data.TaskTypeId, AssigneeIds: in.Data.AssigneeIds})
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	data, err := taskEntityWithOverdue(l.ctx, base.ProjectManagementTaskLogic, task)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return &borrower.ProjectManagementTaskDetailResponse{Data: data}, nil
 }

@@ -37,7 +37,7 @@ func (l *AttachmentDeleteLogic) AttachmentDelete(in *borrower.ProjectManagementA
 		return nil, err
 	}
 	if err = base.ProjectManagementAttachmentLogic.Delete(l.ctx, claim, in.Data.TaskId, in.Data.FileId); err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return &proto.EmptyResponse{}, nil
 }

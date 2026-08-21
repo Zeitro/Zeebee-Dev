@@ -41,22 +41,22 @@ func (l *UpdateLogic) Update(in *borrower.ProjectManagementWorkflowUpdateRequest
 	if in.Data.ProjectId != 0 {
 		data, err := copierx.Trans[borrower.ProjectManagementWorkflowUpdateRequestData, dto.ProjectManagementWorkflowDto](in.Data)
 		if err != nil {
-			return nil, errorx.GetFailedTransRespErr(err)
+			return nil, err
 		}
 		workflow, err = base.ProjectManagementWorkflowLogic.ProjectUpdate(l.ctx, claim, in.Data.ProjectId, *data)
 	} else {
 		data, err := copierx.Trans[borrower.ProjectManagementWorkflowUpdateRequestData, dto.ProjectManagementWorkflowDto](in.Data)
 		if err != nil {
-			return nil, errorx.GetFailedTransRespErr(err)
+			return nil, err
 		}
 		workflow, err = base.ProjectManagementWorkflowLogic.Update(l.ctx, claim, in.Data.Id, *data)
 	}
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	entity, err := copierx.Trans[model.ProjectManagementWorkflow, proto.ProjectManagementWorkflowEntity](workflow, copierx.TimeToRFC3339Str())
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return &borrower.ProjectManagementWorkflowDetailResponse{Data: entity}, nil
 }

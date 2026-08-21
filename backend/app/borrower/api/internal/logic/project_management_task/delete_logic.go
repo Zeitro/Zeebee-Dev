@@ -30,7 +30,7 @@ func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogi
 func (l *DeleteLogic) Delete(req *types.ProjectManagementTaskDeleteRequest) (resp *types.EmptyResponse, err error) {
 	data, err := copierx.Trans[types.ProjectManagementTaskDeleteRequest, borrower.ProjectManagementTaskDeleteRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	_, err = l.svcCtx.ProjectManagementTaskRpcClient.Delete(l.ctx, &borrower.ProjectManagementTaskDeleteRequest{Data: data})
 	if err != nil {

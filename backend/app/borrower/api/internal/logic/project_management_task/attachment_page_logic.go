@@ -30,7 +30,7 @@ func NewAttachmentPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *At
 func (l *AttachmentPageLogic) AttachmentPage(req *types.ProjectManagementAttachmentPageRequest) (resp *types.ProjectManagementAttachmentPageResponse, err error) {
 	data, err := copierx.Trans[types.ProjectManagementAttachmentPageRequest, borrower.ProjectManagementAttachmentPageRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	data.TaskId = req.Id
 	rpcResp, err := l.svcCtx.ProjectManagementTaskRpcClient.AttachmentPage(l.ctx, &borrower.ProjectManagementAttachmentPageRequest{Data: data})
@@ -41,7 +41,7 @@ func (l *AttachmentPageLogic) AttachmentPage(req *types.ProjectManagementAttachm
 	for _, file := range rpcResp.Data.List {
 		entity, err := attachmentEntity(file)
 		if err != nil {
-			return nil, errorx.GetFailedTransRespErr(err)
+			return nil, err
 		}
 		resp.List = append(resp.List, entity)
 	}

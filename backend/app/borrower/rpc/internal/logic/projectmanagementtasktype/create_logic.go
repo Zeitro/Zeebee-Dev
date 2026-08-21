@@ -42,15 +42,15 @@ func (l *CreateLogic) Create(in *borrower.ProjectManagementTaskTypeCreateRequest
 	claim := claimValue
 	input, err := copierx.Trans[borrower.ProjectManagementTaskTypeCreateRequestData, dto.ProjectManagementTaskTypeDto](in.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	taskType, err := l.baseLogic.ProjectManagementTaskTypeLogic.Create(l.ctx, claim, *input)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	data, err := copierx.Trans[model.ProjectManagementTaskType, proto.ProjectManagementTaskTypeEntity](taskType, copierx.TimeToRFC3339Str())
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return &borrower.ProjectManagementTaskTypeDetailResponse{Data: data}, nil
 }

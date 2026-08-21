@@ -30,7 +30,7 @@ func NewAddLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddLogic {
 func (l *AddLogic) Add(req *types.ProjectManagementMemberAddRequest) (resp *types.EmptyResponse, err error) {
 	members, err := copierx.Trans[[]*types.ProjectManagementMemberInput, []*borrower.ProjectManagementMemberInput](&req.Members)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	_, err = l.svcCtx.ProjectManagementProjectMemberRpcClient.Add(l.ctx, &borrower.ProjectManagementMemberAddRequest{Data: &borrower.ProjectManagementMemberAddRequestData{ProjectId: req.ProjectId, Members: *members}})
 	if err != nil {

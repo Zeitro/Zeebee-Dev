@@ -37,11 +37,11 @@ func (l *UpdateAssigneesLogic) UpdateAssignees(in *borrower.ProjectManagementTas
 	}
 	task, err := base.ProjectManagementTaskLogic.UpdateAssignees(l.ctx, claim, in.Data.TaskId, in.Data.AssigneeIds)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	data, err := taskEntityWithOverdue(l.ctx, logic.GetBaseLogic(l.svcCtx).ProjectManagementTaskLogic, task)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return &borrower.ProjectManagementTaskDetailResponse{Data: data}, nil
 }

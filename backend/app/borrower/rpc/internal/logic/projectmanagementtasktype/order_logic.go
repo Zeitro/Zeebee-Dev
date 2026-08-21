@@ -37,7 +37,7 @@ func (l *OrderLogic) Order(in *borrower.ProjectManagementTaskTypeOrderRequest) (
 		return nil, err
 	}
 	if err = l.baseLogic.ProjectManagementTaskTypeLogic.Order(l.ctx, claimValue, in.Data.Id, int(in.Data.SortOrder)); err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return &proto.EmptyResponse{}, nil
 }

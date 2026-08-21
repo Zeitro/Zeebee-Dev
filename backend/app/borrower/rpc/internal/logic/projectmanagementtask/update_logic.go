@@ -46,11 +46,11 @@ func (l *UpdateLogic) Update(in *borrower.ProjectManagementTaskUpdateRequest) (r
 	}
 	task, err := base.ProjectManagementTaskLogic.Update(l.ctx, claim, in.Data.Id, dto.ProjectManagementTaskUpdateDto{Title: in.Data.Title, Description: in.Data.Description, Priority: in.Data.Priority, StartAt: startAt, EndAt: endAt, TaskTypeId: in.Data.TaskTypeId})
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	data, err := taskEntityWithOverdue(l.ctx, logic.GetBaseLogic(l.svcCtx).ProjectManagementTaskLogic, task)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return &borrower.ProjectManagementTaskDetailResponse{Data: data}, nil
 }

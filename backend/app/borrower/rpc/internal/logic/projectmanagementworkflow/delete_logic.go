@@ -33,7 +33,7 @@ func (l *DeleteLogic) Delete(in *proto.PathIdRequest) (resp *proto.EmptyResponse
 		return nil, err
 	}
 	if err := base.ProjectManagementWorkflowLogic.Delete(l.ctx, claim, in.Data.Id); err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return &proto.EmptyResponse{}, nil
 }

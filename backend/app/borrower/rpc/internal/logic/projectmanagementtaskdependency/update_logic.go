@@ -39,11 +39,11 @@ func (l *UpdateLogic) Update(in *borrower.ProjectManagementDependencyUpdateReque
 	claim := claimValue
 	dependency, err := base.ProjectManagementDependencyLogic.Update(l.ctx, claim, dto.ProjectManagementTaskDependencyDto{Id: in.Data.Id, TaskId: in.Data.TaskId, DependencyType: constants.ProjectManagementDependencyType(in.Data.DependencyType), DependencyRule: constants.ProjectManagementDependencyRule(in.Data.DependencyRule)})
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	data, err := copierx.Trans[model.ProjectManagementTaskDependency, proto.ProjectManagementTaskDependencyEntity](dependency, copierx.TimeToRFC3339Str())
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return &borrower.ProjectManagementDependencyDetailResponse{Data: data}, nil
 }

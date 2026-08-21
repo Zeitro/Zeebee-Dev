@@ -30,7 +30,7 @@ func NewProjectManagementOperationPageLogic(ctx context.Context, svcCtx *svc.Ser
 func (l *ProjectManagementOperationPageLogic) ProjectManagementOperationPage(req *types.OperationPageRequest) (resp *types.OperationPageResponse, err error) {
 	data, err := copierx.Trans[types.OperationPageRequest, borrower.OperationPageRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	rpcResp, err := l.svcCtx.OperationRpcClient.Page(l.ctx, &borrower.OperationPageRequest{Data: data})
 	if err != nil {

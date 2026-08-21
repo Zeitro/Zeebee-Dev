@@ -31,7 +31,7 @@ func NewWorkflowUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Wo
 func (l *WorkflowUpdateLogic) WorkflowUpdate(req *types.ProjectManagementProjectWorkflowUpdateRequest) (resp *types.ProjectManagementWorkflowDetailResponse, err error) {
 	data, err := copierx.Trans[types.ProjectManagementProjectWorkflowUpdateRequest, borrower.ProjectManagementWorkflowUpdateRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	data.ProjectId = req.Id
 	rpcResp, err := l.svcCtx.ProjectManagementWorkflowRpcClient.Update(l.ctx, &borrower.ProjectManagementWorkflowUpdateRequest{Data: data})

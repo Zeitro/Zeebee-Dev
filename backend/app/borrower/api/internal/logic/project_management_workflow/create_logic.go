@@ -31,7 +31,7 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 func (l *CreateLogic) Create(req *types.ProjectManagementWorkflowCreateRequest) (resp *types.ProjectManagementWorkflowDetailResponse, err error) {
 	data, err := copierx.Trans[types.ProjectManagementWorkflowCreateRequest, borrower.ProjectManagementWorkflowCreateRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	rpcResp, err := l.svcCtx.ProjectManagementWorkflowRpcClient.Create(l.ctx, &borrower.ProjectManagementWorkflowCreateRequest{Data: data})
 	if err != nil {

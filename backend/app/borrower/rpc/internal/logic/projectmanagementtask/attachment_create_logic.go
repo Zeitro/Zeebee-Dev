@@ -39,11 +39,11 @@ func (l *AttachmentCreateLogic) AttachmentCreate(in *borrower.ProjectManagementA
 	}
 	file, err := base.ProjectManagementAttachmentLogic.Create(l.ctx, claim, dto.ProjectManagementAttachmentCreateDto{TaskId: in.Data.TaskId, FileName: in.Data.FileName, FileUrl: in.Data.FileUrl, StorageType: constants.StorageType(in.Data.StorageType)})
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	data, err := attachmentEntity(file)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return &borrower.ProjectManagementAttachmentDetailResponse{Data: data}, nil
 }

@@ -37,7 +37,7 @@ func (l *DeleteLogic) Delete(in *borrower.ProjectManagementTaskDeleteRequest) (r
 		return nil, err
 	}
 	if err = base.ProjectManagementTaskLogic.Delete(l.ctx, claim, in.Data.Id, in.Data.Confirm); err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return &proto.EmptyResponse{}, nil
 }

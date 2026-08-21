@@ -31,7 +31,7 @@ func NewTransitionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Transi
 func (l *TransitionLogic) Transition(req *types.ProjectManagementTaskTransitionRequest) (resp *types.ProjectManagementTaskDetailResponse, err error) {
 	data, err := copierx.Trans[types.ProjectManagementTaskTransitionRequest, borrower.ProjectManagementTaskTransitionRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	data.TaskId = req.Id
 	rpcResp, err := l.svcCtx.ProjectManagementTaskRpcClient.Transition(l.ctx, &borrower.ProjectManagementTaskTransitionRequest{Data: data})

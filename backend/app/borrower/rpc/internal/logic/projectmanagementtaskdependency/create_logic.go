@@ -39,11 +39,11 @@ func (l *CreateLogic) Create(in *borrower.ProjectManagementDependencyCreateReque
 	claim := claimValue
 	dependency, err := base.ProjectManagementDependencyLogic.Create(l.ctx, claim, dto.ProjectManagementTaskDependencyDto{TaskId: in.Data.TaskId, DependencyTaskId: in.Data.DependencyTaskId, DependencyType: constants.ProjectManagementDependencyType(in.Data.DependencyType), DependencyRule: constants.ProjectManagementDependencyRule(in.Data.DependencyRule)})
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	data, err := copierx.Trans[model.ProjectManagementTaskDependency, proto.ProjectManagementTaskDependencyEntity](dependency, copierx.TimeToRFC3339Str())
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return &borrower.ProjectManagementDependencyDetailResponse{Data: data}, nil
 }

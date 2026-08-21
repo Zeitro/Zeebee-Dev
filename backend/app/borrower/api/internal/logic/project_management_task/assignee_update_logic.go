@@ -31,7 +31,7 @@ func NewAssigneeUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *As
 func (l *AssigneeUpdateLogic) AssigneeUpdate(req *types.ProjectManagementTaskAssigneeUpdateRequest) (resp *types.ProjectManagementTaskDetailResponse, err error) {
 	data, err := copierx.Trans[types.ProjectManagementTaskAssigneeUpdateRequest, borrower.ProjectManagementTaskAssigneeUpdateRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	data.TaskId = req.Id
 	rpcResp, err := l.svcCtx.ProjectManagementTaskRpcClient.UpdateAssignees(l.ctx, &borrower.ProjectManagementTaskAssigneeUpdateRequest{Data: data})

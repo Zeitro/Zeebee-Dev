@@ -42,13 +42,13 @@ func (l *PageLogic) Page(in *borrower.ProjectManagementTaskPageRequest) (resp *b
 	input := dto.ProjectManagementTaskPageRequestDto{Page: in.Data.Page, Limit: in.Data.Limit, Filter: filter}
 	page, err := base.ProjectManagementTaskLogic.Page(l.ctx, claim, input)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	data := &borrower.ProjectManagementTaskPageResponseData{Page: page.Page, Limit: page.Limit, Total: page.Total, TotalPage: page.TotalPage, List: make([]*proto.ProjectManagementTaskEntity, 0, len(page.List))}
 	for _, task := range page.List {
 		entity, err := taskEntityWithOverdue(l.ctx, base.ProjectManagementTaskLogic, task)
 		if err != nil {
-			return nil, errorx.GetFailedTransRespErr(err)
+			return nil, err
 		}
 		data.List = append(data.List, entity)
 	}

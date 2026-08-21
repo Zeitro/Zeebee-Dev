@@ -30,7 +30,7 @@ func NewAttachmentCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 func (l *AttachmentCreateLogic) AttachmentCreate(req *types.ProjectManagementAttachmentCreateRequest) (resp *types.ProjectManagementAttachmentDetailResponse, err error) {
 	data, err := copierx.Trans[types.ProjectManagementAttachmentCreateRequest, borrower.ProjectManagementAttachmentCreateRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	data.TaskId = req.Id
 	rpcResp, err := l.svcCtx.ProjectManagementTaskRpcClient.AttachmentCreate(l.ctx, &borrower.ProjectManagementAttachmentCreateRequest{Data: data})

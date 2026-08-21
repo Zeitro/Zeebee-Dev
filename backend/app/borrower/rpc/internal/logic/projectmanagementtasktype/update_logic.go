@@ -42,15 +42,15 @@ func (l *UpdateLogic) Update(in *borrower.ProjectManagementTaskTypeUpdateRequest
 	claim := claimValue
 	input, err := copierx.Trans[borrower.ProjectManagementTaskTypeUpdateRequestData, dto.ProjectManagementTaskTypeDto](in.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	taskType, err := l.baseLogic.ProjectManagementTaskTypeLogic.Update(l.ctx, claim, in.Data.Id, *input)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	data, err := copierx.Trans[model.ProjectManagementTaskType, proto.ProjectManagementTaskTypeEntity](taskType, copierx.TimeToRFC3339Str())
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return &borrower.ProjectManagementTaskTypeDetailResponse{Data: data}, nil
 }

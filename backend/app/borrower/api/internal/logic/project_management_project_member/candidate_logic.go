@@ -31,7 +31,7 @@ func NewCandidateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Candida
 func (l *CandidateLogic) Candidate(req *types.ProjectManagementMemberCandidateRequest) (resp *types.ProjectManagementMemberCandidateResponse, err error) {
 	data, err := copierx.Trans[types.ProjectManagementMemberCandidateRequest, borrower.ProjectManagementMemberCandidateRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	data.ProjectId = req.ProjectId
 	rpcResp, err := l.svcCtx.ProjectManagementProjectMemberRpcClient.Candidate(l.ctx, &borrower.ProjectManagementMemberCandidateRequest{Data: data})
@@ -40,7 +40,7 @@ func (l *CandidateLogic) Candidate(req *types.ProjectManagementMemberCandidateRe
 	}
 	listData, err := copierx.Trans[[]*proto.ProjectManagementMemberEntity, []*types.ProjectManagementMemberEntity](&rpcResp.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return &types.ProjectManagementMemberCandidateResponse{Lists: *listData}, nil
 }

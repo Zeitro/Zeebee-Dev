@@ -39,15 +39,15 @@ func (l *CreateLogic) Create(in *borrower.ProjectManagementWorkflowCreateRequest
 
 	data, err := copierx.Trans[borrower.ProjectManagementWorkflowCreateRequestData, dto.ProjectManagementWorkflowDto](in.Data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	workflow, err := base.ProjectManagementWorkflowLogic.Create(l.ctx, claim, *data)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	entity, err := copierx.Trans[model.ProjectManagementWorkflow, proto.ProjectManagementWorkflowEntity](workflow, copierx.TimeToRFC3339Str())
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return &borrower.ProjectManagementWorkflowDetailResponse{Data: entity}, nil
 }

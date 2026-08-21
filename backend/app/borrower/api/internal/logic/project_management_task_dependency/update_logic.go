@@ -31,7 +31,7 @@ func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogi
 func (l *UpdateLogic) Update(req *types.ProjectManagementDependencyUpdateRequest) (resp *types.ProjectManagementDependencyDetailResponse, err error) {
 	data, err := copierx.Trans[types.ProjectManagementDependencyUpdateRequest, borrower.ProjectManagementDependencyUpdateRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	data.TaskId = req.TaskId
 	rpcResp, err := l.svcCtx.ProjectManagementTaskDependencyRpcClient.Update(l.ctx, &borrower.ProjectManagementDependencyUpdateRequest{Data: data})

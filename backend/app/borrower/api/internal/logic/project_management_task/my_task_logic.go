@@ -30,7 +30,7 @@ func NewMyTaskLogic(ctx context.Context, svcCtx *svc.ServiceContext) *MyTaskLogi
 func (l *MyTaskLogic) MyTask(req *types.ProjectManagementMyTaskPageRequest) (resp *types.ProjectManagementTaskPageResponse, err error) {
 	data, err := copierx.Trans[types.ProjectManagementMyTaskPageRequest, borrower.ProjectManagementMyTaskPageRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	rpcResp, err := l.svcCtx.ProjectManagementTaskRpcClient.MyPage(l.ctx, &borrower.ProjectManagementMyTaskPageRequest{Data: data})
 	if err != nil {

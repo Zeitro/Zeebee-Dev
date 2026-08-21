@@ -30,7 +30,7 @@ func NewOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OrderLogic 
 func (l *OrderLogic) Order(req *types.ProjectManagementTaskTypeOrderRequest) (resp *types.EmptyResponse, err error) {
 	data, err := copierx.Trans[types.ProjectManagementTaskTypeOrderRequest, borrower.ProjectManagementTaskTypeOrderRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	if _, err = l.svcCtx.ProjectManagementTaskTypeRpcClient.Order(l.ctx, &borrower.ProjectManagementTaskTypeOrderRequest{Data: data}); err != nil {
 		return nil, errorx.WithStack(err)

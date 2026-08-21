@@ -31,7 +31,7 @@ func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogi
 func (l *DetailLogic) Detail(req *types.ProjectManagementTaskDetailRequest) (resp *types.ProjectManagementTaskDetailResponse, err error) {
 	data, err := copierx.Trans[types.ProjectManagementTaskDetailRequest, borrower.ProjectManagementTaskDetailRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	rpcResp, err := l.svcCtx.ProjectManagementTaskRpcClient.Detail(l.ctx, &borrower.ProjectManagementTaskDetailRequest{Data: data})
 	if err != nil {

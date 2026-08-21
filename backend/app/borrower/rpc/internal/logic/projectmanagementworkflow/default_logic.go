@@ -32,7 +32,7 @@ func (l *DefaultLogic) Default(in *proto.PathIdRequest) (resp *proto.EmptyRespon
 		return nil, err
 	}
 	if err = base.ProjectManagementWorkflowLogic.SetDefault(l.ctx, claim, in.Data.Id); err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return &proto.EmptyResponse{}, nil
 }

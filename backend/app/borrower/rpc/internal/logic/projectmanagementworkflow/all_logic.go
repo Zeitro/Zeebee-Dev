@@ -9,8 +9,6 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/proto"
-
-	"zeebee-backend/common/errorx"
 )
 
 type AllLogic struct {
@@ -37,11 +35,11 @@ func (l *AllLogic) All(in *proto.EmptyRequest) (resp *borrower.ProjectManagement
 	claim := claimValue
 	workflows, err := l.baseLogic.ProjectManagementWorkflowLogic.List(l.ctx, claim.OrganizationId)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	entities, err := copierx.Trans[[]*model.ProjectManagementWorkflow, []*proto.ProjectManagementWorkflowEntity](&workflows, copierx.TimeToRFC3339Str())
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return &borrower.ProjectManagementWorkflowAllResponse{Data: *entities}, nil
 }

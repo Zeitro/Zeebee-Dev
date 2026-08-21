@@ -30,7 +30,7 @@ func NewAttachmentDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 func (l *AttachmentDeleteLogic) AttachmentDelete(req *types.ProjectManagementAttachmentDeleteRequest) (resp *types.EmptyResponse, err error) {
 	data, err := copierx.Trans[types.ProjectManagementAttachmentDeleteRequest, borrower.ProjectManagementAttachmentDeleteRequestData](req)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	data.TaskId = req.Id
 	_, err = l.svcCtx.ProjectManagementTaskRpcClient.AttachmentDelete(l.ctx, &borrower.ProjectManagementAttachmentDeleteRequest{Data: data})

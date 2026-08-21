@@ -41,13 +41,13 @@ func (l *AttachmentPageLogic) AttachmentPage(in *borrower.ProjectManagementAttac
 	}
 	page, err := base.ProjectManagementAttachmentLogic.Page(l.ctx, claim, in.Data.TaskId, dto.ProjectManagementAttachmentPageRequestDto{Page: in.Data.Page, Limit: in.Data.Limit})
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	data := &borrower.ProjectManagementAttachmentPageResponseData{Page: page.Page, Limit: page.Limit, Total: page.Total, TotalPage: page.TotalPage, List: make([]*proto.FileEntity, 0, len(page.List))}
 	for _, file := range page.List {
 		entity, err := attachmentEntity(file)
 		if err != nil {
-			return nil, errorx.GetFailedTransRespErr(err)
+			return nil, err
 		}
 		data.List = append(data.List, entity)
 	}

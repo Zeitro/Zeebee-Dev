@@ -42,11 +42,11 @@ func (l *DetailLogic) Detail(in *borrower.ProjectManagementWorkflowDetailRequest
 		workflow, err = base.ProjectManagementWorkflowLogic.Detail(l.ctx, claim.OrganizationId, in.Data.Id)
 	}
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	entity, err := copierx.Trans[model.ProjectManagementWorkflow, proto.ProjectManagementWorkflowEntity](workflow, copierx.TimeToRFC3339Str())
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return &borrower.ProjectManagementWorkflowDetailResponse{Data: entity}, nil
 }

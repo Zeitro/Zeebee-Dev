@@ -38,13 +38,13 @@ func (l *PageLogic) Page(in *borrower.ProjectManagementDependencyPageRequest) (r
 	claim := claimValue
 	page, err := base.ProjectManagementDependencyLogic.Page(l.ctx, claim, dto.ProjectManagementTaskDependencyPageRequestDto{TaskId: in.Data.TaskId, Page: in.Data.Page, Limit: in.Data.Limit, Predecessor: in.Data.Predecessor})
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	data := &borrower.ProjectManagementDependencyPageResponseData{Page: page.Page, Limit: page.Limit, Total: page.Total, TotalPage: page.TotalPage, List: make([]*proto.ProjectManagementTaskDependencyEntity, 0, len(page.List))}
 	for _, dependency := range page.List {
 		entity, err := copierx.Trans[model.ProjectManagementTaskDependency, proto.ProjectManagementTaskDependencyEntity](dependency, copierx.TimeToRFC3339Str())
 		if err != nil {
-			return nil, errorx.GetFailedTransRespErr(err)
+			return nil, err
 		}
 		data.List = append(data.List, entity)
 	}

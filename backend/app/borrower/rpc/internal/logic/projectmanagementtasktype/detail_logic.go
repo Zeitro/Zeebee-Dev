@@ -37,11 +37,11 @@ func (l *DetailLogic) Detail(in *proto.PathIdRequest) (resp *borrower.ProjectMan
 	}
 	taskType, err := base.ProjectManagementTaskTypeLogic.Detail(l.ctx, claim.OrganizationId, in.Data.Id)
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	data, err := copierx.Trans[model.ProjectManagementTaskType, proto.ProjectManagementTaskTypeEntity](taskType, copierx.TimeToRFC3339Str())
 	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
+		return nil, err
 	}
 	return &borrower.ProjectManagementTaskTypeDetailResponse{Data: data}, nil
 }
