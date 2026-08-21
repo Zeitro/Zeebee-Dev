@@ -33,7 +33,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProjectManagementProjectClient interface {
 	Page(ctx context.Context, in *ProjectManagementProjectPageRequest, opts ...grpc.CallOption) (*ProjectManagementProjectPageResponse, error)
-	Detail(ctx context.Context, in *ProjectManagementProjectDetailRequest, opts ...grpc.CallOption) (*ProjectManagementProjectDetailResponse, error)
+	Detail(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*ProjectManagementProjectDetailResponse, error)
 	Create(ctx context.Context, in *ProjectManagementProjectCreateRequest, opts ...grpc.CallOption) (*ProjectManagementProjectDetailResponse, error)
 	Update(ctx context.Context, in *ProjectManagementProjectUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementProjectDetailResponse, error)
 	Delete(ctx context.Context, in *ProjectManagementProjectDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
@@ -58,7 +58,7 @@ func (c *projectManagementProjectClient) Page(ctx context.Context, in *ProjectMa
 	return out, nil
 }
 
-func (c *projectManagementProjectClient) Detail(ctx context.Context, in *ProjectManagementProjectDetailRequest, opts ...grpc.CallOption) (*ProjectManagementProjectDetailResponse, error) {
+func (c *projectManagementProjectClient) Detail(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*ProjectManagementProjectDetailResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ProjectManagementProjectDetailResponse)
 	err := c.cc.Invoke(ctx, ProjectManagementProject_Detail_FullMethodName, in, out, cOpts...)
@@ -113,7 +113,7 @@ func (c *projectManagementProjectClient) TransferOwner(ctx context.Context, in *
 // for forward compatibility.
 type ProjectManagementProjectServer interface {
 	Page(context.Context, *ProjectManagementProjectPageRequest) (*ProjectManagementProjectPageResponse, error)
-	Detail(context.Context, *ProjectManagementProjectDetailRequest) (*ProjectManagementProjectDetailResponse, error)
+	Detail(context.Context, *proto.PathIdRequest) (*ProjectManagementProjectDetailResponse, error)
 	Create(context.Context, *ProjectManagementProjectCreateRequest) (*ProjectManagementProjectDetailResponse, error)
 	Update(context.Context, *ProjectManagementProjectUpdateRequest) (*ProjectManagementProjectDetailResponse, error)
 	Delete(context.Context, *ProjectManagementProjectDeleteRequest) (*proto.EmptyResponse, error)
@@ -131,7 +131,7 @@ type UnimplementedProjectManagementProjectServer struct{}
 func (UnimplementedProjectManagementProjectServer) Page(context.Context, *ProjectManagementProjectPageRequest) (*ProjectManagementProjectPageResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Page not implemented")
 }
-func (UnimplementedProjectManagementProjectServer) Detail(context.Context, *ProjectManagementProjectDetailRequest) (*ProjectManagementProjectDetailResponse, error) {
+func (UnimplementedProjectManagementProjectServer) Detail(context.Context, *proto.PathIdRequest) (*ProjectManagementProjectDetailResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Detail not implemented")
 }
 func (UnimplementedProjectManagementProjectServer) Create(context.Context, *ProjectManagementProjectCreateRequest) (*ProjectManagementProjectDetailResponse, error) {
@@ -187,7 +187,7 @@ func _ProjectManagementProject_Page_Handler(srv interface{}, ctx context.Context
 }
 
 func _ProjectManagementProject_Detail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ProjectManagementProjectDetailRequest)
+	in := new(proto.PathIdRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -199,7 +199,7 @@ func _ProjectManagementProject_Detail_Handler(srv interface{}, ctx context.Conte
 		FullMethod: ProjectManagementProject_Detail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectManagementProjectServer).Detail(ctx, req.(*ProjectManagementProjectDetailRequest))
+		return srv.(ProjectManagementProjectServer).Detail(ctx, req.(*proto.PathIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

@@ -28,7 +28,7 @@ func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogi
 	}
 }
 
-func (l *UpdateLogic) Update(req *types.ProjectManagementDependencyUpdateRequest) (resp *types.ProjectManagementTaskDependencyEntity, err error) {
+func (l *UpdateLogic) Update(req *types.ProjectManagementDependencyUpdateRequest) (resp *types.ProjectManagementDependencyDetailResponse, err error) {
 	data, err := copierx.Trans[types.ProjectManagementDependencyUpdateRequest, borrower.ProjectManagementDependencyUpdateRequestData](req)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
@@ -38,5 +38,9 @@ func (l *UpdateLogic) Update(req *types.ProjectManagementDependencyUpdateRequest
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	return copierx.Trans[proto.ProjectManagementTaskDependencyEntity, types.ProjectManagementTaskDependencyEntity](rpcResp.Data)
+	entity, err := copierx.Trans[proto.ProjectManagementTaskDependencyEntity, types.ProjectManagementTaskDependencyEntity](rpcResp.Data)
+	if err != nil {
+		return nil, err
+	}
+	return &types.ProjectManagementDependencyDetailResponse{ProjectManagementTaskDependencyEntity: *entity}, nil
 }

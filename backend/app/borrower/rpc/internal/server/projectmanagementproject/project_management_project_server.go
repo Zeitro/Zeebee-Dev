@@ -29,7 +29,7 @@ func (s *ProjectManagementProjectServer) Page(ctx context.Context, in *borrower.
 	return l.Page(in)
 }
 
-func (s *ProjectManagementProjectServer) Detail(ctx context.Context, in *borrower.ProjectManagementProjectDetailRequest) (*borrower.ProjectManagementProjectDetailResponse, error) {
+func (s *ProjectManagementProjectServer) Detail(ctx context.Context, in *proto.PathIdRequest) (*borrower.ProjectManagementProjectDetailResponse, error) {
 	l := projectmanagementprojectlogic.NewDetailLogic(ctx, s.svcCtx)
 	return l.Detail(in)
 }

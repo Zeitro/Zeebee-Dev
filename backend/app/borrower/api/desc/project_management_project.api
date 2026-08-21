@@ -30,8 +30,8 @@ type (
         List []*ProjectManagementProjectEntity `json:"list"`
     }
 
-    ProjectManagementProjectDetailRequest {
-        Id int64 `path:"id" validate:"required,gt=0"`
+    ProjectManagementProjectDetailResponse {
+        ProjectManagementProjectEntity
     }
 
     ProjectManagementProjectCreateRequest {
@@ -60,10 +60,6 @@ type (
         MemberId int64 `json:"member_id" validate:"required,gt=0"`
     }
 
-    ProjectManagementProjectWorkflowDetailRequest {
-        Id int64 `path:"id" validate:"required,gt=0"`
-    }
-
     ProjectManagementProjectWorkflowUpdateRequest {
         Id int64 `path:"id" validate:"required,gt=0"`
         Name string `json:"name" validate:"required,max=100"`
@@ -88,15 +84,15 @@ service borrower-api {
 
     @doc "detail"
     @handler Detail
-    get /project_management/project/:id (ProjectManagementProjectDetailRequest) returns (ProjectManagementProjectEntity)
+    get /project_management/project/:id (PathIdRequest) returns (ProjectManagementProjectDetailResponse)
 
     @doc "create"
     @handler Create
-    post /project_management/project (ProjectManagementProjectCreateRequest) returns (ProjectManagementProjectEntity)
+    post /project_management/project (ProjectManagementProjectCreateRequest) returns (ProjectManagementProjectDetailResponse)
 
     @doc "update"
     @handler Update
-    put /project_management/project/:id (ProjectManagementProjectUpdateRequest) returns (ProjectManagementProjectEntity)
+    put /project_management/project/:id (ProjectManagementProjectUpdateRequest) returns (ProjectManagementProjectDetailResponse)
 
     @doc "delete"
     @handler Delete
@@ -108,9 +104,9 @@ service borrower-api {
 
     @doc "workflow detail"
     @handler WorkflowDetail
-    get /project_management/project/:id/workflow (ProjectManagementProjectWorkflowDetailRequest) returns (ProjectManagementWorkflowEntity)
+    get /project_management/project/:id/workflow (PathIdRequest) returns (ProjectManagementWorkflowDetailResponse)
 
     @doc "workflow update"
     @handler WorkflowUpdate
-    put /project_management/project/:id/workflow (ProjectManagementProjectWorkflowUpdateRequest) returns (ProjectManagementWorkflowEntity)
+    put /project_management/project/:id/workflow (ProjectManagementProjectWorkflowUpdateRequest) returns (ProjectManagementWorkflowDetailResponse)
 }

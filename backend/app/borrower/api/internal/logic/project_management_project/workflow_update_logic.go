@@ -28,7 +28,7 @@ func NewWorkflowUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Wo
 	}
 }
 
-func (l *WorkflowUpdateLogic) WorkflowUpdate(req *types.ProjectManagementProjectWorkflowUpdateRequest) (resp *types.ProjectManagementWorkflowEntity, err error) {
+func (l *WorkflowUpdateLogic) WorkflowUpdate(req *types.ProjectManagementProjectWorkflowUpdateRequest) (resp *types.ProjectManagementWorkflowDetailResponse, err error) {
 	data, err := copierx.Trans[types.ProjectManagementProjectWorkflowUpdateRequest, borrower.ProjectManagementWorkflowUpdateRequestData](req)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
@@ -38,5 +38,9 @@ func (l *WorkflowUpdateLogic) WorkflowUpdate(req *types.ProjectManagementProject
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	return copierx.Trans[proto.ProjectManagementWorkflowEntity, types.ProjectManagementWorkflowEntity](rpcResp.Data)
+	entity, err := copierx.Trans[proto.ProjectManagementWorkflowEntity, types.ProjectManagementWorkflowEntity](rpcResp.Data)
+	if err != nil {
+		return nil, err
+	}
+	return &types.ProjectManagementWorkflowDetailResponse{ProjectManagementWorkflowEntity: *entity}, nil
 }

@@ -25,6 +25,10 @@ type (
         List []*ProjectManagementTaskDependencyEntity `json:"list"`
     }
 
+    ProjectManagementDependencyDetailResponse {
+        ProjectManagementTaskDependencyEntity
+    }
+
     ProjectManagementDependencyCreateRequest {
         TaskId int64 `path:"id" validate:"required,gt=0"`
         DependencyTaskId int64 `json:"dependency_task_id" validate:"required,gt=0"`
@@ -61,11 +65,11 @@ service borrower-api {
 
     @doc "create"
     @handler Create
-    post /project_management/task/:id/task_dependency (ProjectManagementDependencyCreateRequest) returns (ProjectManagementTaskDependencyEntity)
+    post /project_management/task/:id/task_dependency (ProjectManagementDependencyCreateRequest) returns (ProjectManagementDependencyDetailResponse)
 
     @doc "update"
     @handler Update
-    put /project_management/task/:task_id/task_dependency/:id (ProjectManagementDependencyUpdateRequest) returns (ProjectManagementTaskDependencyEntity)
+    put /project_management/task/:task_id/task_dependency/:id (ProjectManagementDependencyUpdateRequest) returns (ProjectManagementDependencyDetailResponse)
 
     @doc "delete"
     @handler Delete

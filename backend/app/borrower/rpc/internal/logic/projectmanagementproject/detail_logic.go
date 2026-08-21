@@ -6,8 +6,11 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/domains/zeebee/proto"
 
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/model"
 )
 
 type DetailLogic struct {
@@ -24,7 +27,7 @@ func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogi
 	}
 }
 
-func (l *DetailLogic) Detail(in *borrower.ProjectManagementProjectDetailRequest) (resp *borrower.ProjectManagementProjectDetailResponse, err error) {
+func (l *DetailLogic) Detail(in *proto.PathIdRequest) (resp *borrower.ProjectManagementProjectDetailResponse, err error) {
 	if in.Data == nil {
 		err = errorx.New("request data is nil")
 		return
@@ -33,7 +36,7 @@ func (l *DetailLogic) Detail(in *borrower.ProjectManagementProjectDetailRequest)
 	if err != nil {
 		return nil, err
 	}
-	claim := &claimValue
+	claim := claimValue
 	project, err := l.baseLogic.ProjectManagementAccessLogic.RequireProject(l.ctx, in.Data.Id, claim.OrganizationId)
 	if err != nil {
 		return nil, err
@@ -41,7 +44,7 @@ func (l *DetailLogic) Detail(in *borrower.ProjectManagementProjectDetailRequest)
 	if _, err = l.baseLogic.ProjectManagementAccessLogic.RequireMember(l.ctx, project.Id, claim.OrganizationUserId); err != nil {
 		return nil, err
 	}
-	data, err := projectEntity(project)
+	data, err := copierx.Trans[model.ProjectManagementProject, proto.ProjectManagementProjectEntity](project, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

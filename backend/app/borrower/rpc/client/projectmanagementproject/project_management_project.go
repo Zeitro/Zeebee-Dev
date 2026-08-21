@@ -18,7 +18,6 @@ import (
 type (
 	ProjectManagementProjectCreateRequest        = borrower.ProjectManagementProjectCreateRequest
 	ProjectManagementProjectDeleteRequest        = borrower.ProjectManagementProjectDeleteRequest
-	ProjectManagementProjectDetailRequest        = borrower.ProjectManagementProjectDetailRequest
 	ProjectManagementProjectDetailResponse       = borrower.ProjectManagementProjectDetailResponse
 	ProjectManagementProjectOwnerTransferRequest = borrower.ProjectManagementProjectOwnerTransferRequest
 	ProjectManagementProjectPageRequest          = borrower.ProjectManagementProjectPageRequest
@@ -27,7 +26,7 @@ type (
 
 	ProjectManagementProject interface {
 		Page(ctx context.Context, in *ProjectManagementProjectPageRequest, opts ...grpc.CallOption) (*ProjectManagementProjectPageResponse, error)
-		Detail(ctx context.Context, in *ProjectManagementProjectDetailRequest, opts ...grpc.CallOption) (*ProjectManagementProjectDetailResponse, error)
+		Detail(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*ProjectManagementProjectDetailResponse, error)
 		Create(ctx context.Context, in *ProjectManagementProjectCreateRequest, opts ...grpc.CallOption) (*ProjectManagementProjectDetailResponse, error)
 		Update(ctx context.Context, in *ProjectManagementProjectUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementProjectDetailResponse, error)
 		Delete(ctx context.Context, in *ProjectManagementProjectDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
@@ -50,7 +49,7 @@ func (m *defaultProjectManagementProject) Page(ctx context.Context, in *ProjectM
 	return client.Page(ctx, in, opts...)
 }
 
-func (m *defaultProjectManagementProject) Detail(ctx context.Context, in *ProjectManagementProjectDetailRequest, opts ...grpc.CallOption) (*ProjectManagementProjectDetailResponse, error) {
+func (m *defaultProjectManagementProject) Detail(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*ProjectManagementProjectDetailResponse, error) {
 	client := borrower.NewProjectManagementProjectClient(m.cli.Conn())
 	return client.Detail(ctx, in, opts...)
 }

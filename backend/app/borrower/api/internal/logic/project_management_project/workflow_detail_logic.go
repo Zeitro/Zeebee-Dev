@@ -28,10 +28,14 @@ func NewWorkflowDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Wo
 	}
 }
 
-func (l *WorkflowDetailLogic) WorkflowDetail(req *types.ProjectManagementProjectWorkflowDetailRequest) (resp *types.ProjectManagementWorkflowEntity, err error) {
+func (l *WorkflowDetailLogic) WorkflowDetail(req *types.PathIdRequest) (resp *types.ProjectManagementWorkflowDetailResponse, err error) {
 	rpcResp, err := l.svcCtx.ProjectManagementWorkflowRpcClient.Detail(l.ctx, &borrower.ProjectManagementWorkflowDetailRequest{Data: &borrower.ProjectManagementWorkflowDetailRequestData{ProjectId: req.Id}})
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	return copierx.Trans[proto.ProjectManagementWorkflowEntity, types.ProjectManagementWorkflowEntity](rpcResp.Data)
+	entity, err := copierx.Trans[proto.ProjectManagementWorkflowEntity, types.ProjectManagementWorkflowEntity](rpcResp.Data)
+	if err != nil {
+		return nil, err
+	}
+	return &types.ProjectManagementWorkflowDetailResponse{ProjectManagementWorkflowEntity: *entity}, nil
 }

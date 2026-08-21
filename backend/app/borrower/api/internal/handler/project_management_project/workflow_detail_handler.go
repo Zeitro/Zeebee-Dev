@@ -27,7 +27,7 @@ func WorkflowDetailHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 					Error(err)
 			}
 		}()
-		var req types.ProjectManagementProjectWorkflowDetailRequest
+		var req types.PathIdRequest
 		if err = httpx.Parse(r, &req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return

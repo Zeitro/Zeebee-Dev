@@ -28,7 +28,7 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 	}
 }
 
-func (l *CreateLogic) Create(req *types.ProjectManagementProjectCreateRequest) (resp *types.ProjectManagementProjectEntity, err error) {
+func (l *CreateLogic) Create(req *types.ProjectManagementProjectCreateRequest) (resp *types.ProjectManagementProjectDetailResponse, err error) {
 	data, err := copierx.Trans[types.ProjectManagementProjectCreateRequest, borrower.ProjectManagementProjectCreateRequestData](req)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
@@ -37,5 +37,9 @@ func (l *CreateLogic) Create(req *types.ProjectManagementProjectCreateRequest) (
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	return copierx.Trans[proto.ProjectManagementProjectEntity, types.ProjectManagementProjectEntity](rpcResp.Data)
+	entity, err := copierx.Trans[proto.ProjectManagementProjectEntity, types.ProjectManagementProjectEntity](rpcResp.Data)
+	if err != nil {
+		return nil, err
+	}
+	return &types.ProjectManagementProjectDetailResponse{ProjectManagementProjectEntity: *entity}, nil
 }

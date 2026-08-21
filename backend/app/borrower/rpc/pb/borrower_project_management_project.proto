@@ -31,12 +31,6 @@ message ProjectManagementProjectPageResponseData {
   repeated proto.ProjectManagementProjectEntity list = 5;
 }
 
-message ProjectManagementProjectDetailRequest {
-  ProjectManagementProjectDetailRequestData data = 1;
-}
-message ProjectManagementProjectDetailRequestData {
-  int64 id = 1;
-}
 message ProjectManagementProjectDetailResponse {
   proto.ProjectManagementProjectEntity data = 1;
 }
@@ -81,7 +75,7 @@ message ProjectManagementProjectOwnerTransferRequestData {
 
 service ProjectManagementProject {
   rpc Page(ProjectManagementProjectPageRequest) returns(ProjectManagementProjectPageResponse);
-  rpc Detail(ProjectManagementProjectDetailRequest) returns(ProjectManagementProjectDetailResponse);
+  rpc Detail(proto.PathIdRequest) returns(ProjectManagementProjectDetailResponse);
   rpc Create(ProjectManagementProjectCreateRequest) returns(ProjectManagementProjectDetailResponse);
   rpc Update(ProjectManagementProjectUpdateRequest) returns(ProjectManagementProjectDetailResponse);
   rpc Delete(ProjectManagementProjectDeleteRequest) returns(proto.EmptyResponse);
