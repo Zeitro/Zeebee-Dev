@@ -33,11 +33,9 @@ type ServiceContext struct {
 	PricingPlanRpcClient              admin.PricingPlanClient
 	PricingPlanPolicyRpcClient        admin.PricingPlanPolicyClient
 	OrganizationSubscriptionRpcClient admin.OrganizationSubscriptionClient
-
-	AdminApiContent string
 }
 
-func NewServiceContext(c config.ApiConf, logger logx.Logger, adminApiContent string) *ServiceContext {
+func NewServiceContext(c config.ApiConf, logger logx.Logger) *ServiceContext {
 	rpcClient := zrpc.MustNewClient(c.RpcConf)
 
 	return &ServiceContext{
@@ -59,6 +57,5 @@ func NewServiceContext(c config.ApiConf, logger logx.Logger, adminApiContent str
 		PricingPlanRpcClient:              admin.NewPricingPlanClient(rpcClient.Conn()),
 		PricingPlanPolicyRpcClient:        admin.NewPricingPlanPolicyClient(rpcClient.Conn()),
 		OrganizationSubscriptionRpcClient: admin.NewOrganizationSubscriptionClient(rpcClient.Conn()),
-		AdminApiContent:                   adminApiContent,
 	}
 }

@@ -33,11 +33,9 @@ type ServiceContext struct {
 	OrganizationSettingRpcClient  lender.OrganizationSettingClient
 	ResourceRpcClient             lender.ResourceClient
 	ApiRpcClient                  lender.ApiClient
-
-	BorrowerApiContent string
 }
 
-func NewServiceContext(c config.ApiConf, logger logx.Logger, borrowerApiContent string) *ServiceContext {
+func NewServiceContext(c config.ApiConf, logger logx.Logger) *ServiceContext {
 	rpcClient := zrpc.MustNewClient(c.RpcConf)
 	return &ServiceContext{
 		Config:         c,
@@ -58,6 +56,5 @@ func NewServiceContext(c config.ApiConf, logger logx.Logger, borrowerApiContent 
 		OrganizationSettingRpcClient:  lender.NewOrganizationSettingClient(rpcClient.Conn()),
 		ResourceRpcClient:             lender.NewResourceClient(rpcClient.Conn()),
 		ApiRpcClient:                  lender.NewApiClient(rpcClient.Conn()),
-		BorrowerApiContent:            borrowerApiContent,
 	}
 }

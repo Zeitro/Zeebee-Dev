@@ -47,11 +47,9 @@ type ServiceContext struct {
 	ProjectManagementTaskRpcClient           borrower.ProjectManagementTaskClient
 	ProjectManagementTaskDependencyRpcClient borrower.ProjectManagementTaskDependencyClient
 	OperationRpcClient                       borrower.OperationClient
-
-	BorrowerApiContent string
 }
 
-func NewServiceContext(c config.ApiConf, logger logx.Logger, borrowerApiContent string) *ServiceContext {
+func NewServiceContext(c config.ApiConf, logger logx.Logger) *ServiceContext {
 	rpcClient := zrpc.MustNewClient(c.RpcConf)
 
 	return &ServiceContext{
@@ -86,6 +84,5 @@ func NewServiceContext(c config.ApiConf, logger logx.Logger, borrowerApiContent 
 		ProjectManagementTaskRpcClient:           borrower.NewProjectManagementTaskClient(rpcClient.Conn()),
 		ProjectManagementTaskDependencyRpcClient: borrower.NewProjectManagementTaskDependencyClient(rpcClient.Conn()),
 		OperationRpcClient:                       borrower.NewOperationClient(rpcClient.Conn()),
-		BorrowerApiContent:                       borrowerApiContent,
 	}
 }
