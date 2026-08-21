@@ -5,12 +5,9 @@ import (
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/domains/zeebee/proto"
 
-	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/data/dto"
 )
 
 type DeleteLogic struct {
@@ -29,7 +26,7 @@ func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogi
 	}
 }
 
-func (l *DeleteLogic) Delete(in *borrower.ProjectManagementTaskTypeDeleteRequest) (resp *proto.EmptyResponse, err error) {
+func (l *DeleteLogic) Delete(in *proto.PathIdRequest) (resp *proto.EmptyResponse, err error) {
 	if in.Data == nil {
 		err = errorx.New("request data is nil")
 		return
@@ -38,12 +35,7 @@ func (l *DeleteLogic) Delete(in *borrower.ProjectManagementTaskTypeDeleteRequest
 	if err != nil {
 		return nil, err
 	}
-	claim := &claimValue
-	input, err := copierx.Trans[borrower.ProjectManagementTaskTypeDeleteRequestData, dto.ProjectManagementTaskTypeDto](in.Data)
-	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
-	}
-	if err := l.baseLogic.ProjectManagementTaskTypeLogic.Delete(l.ctx, claim, input.Id); err != nil {
+	if err := l.baseLogic.ProjectManagementTaskTypeLogic.Delete(l.ctx, claimValue, in.Data.Id); err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 	return &proto.EmptyResponse{}, nil

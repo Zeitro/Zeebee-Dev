@@ -7429,9 +7429,9 @@ type ProjectManagementTaskTypeEntity struct {
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	Color         string                 `protobuf:"bytes,4,opt,name=color,proto3" json:"color,omitempty"`
-	Enabled       bool                   `protobuf:"varint,5,opt,name=enabled,proto3" json:"enabled,omitempty"`
 	CreatedAt     string                 `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     string                 `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	SortOrder     int64                  `protobuf:"varint,8,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -7494,13 +7494,6 @@ func (x *ProjectManagementTaskTypeEntity) GetColor() string {
 	return ""
 }
 
-func (x *ProjectManagementTaskTypeEntity) GetEnabled() bool {
-	if x != nil {
-		return x.Enabled
-	}
-	return false
-}
-
 func (x *ProjectManagementTaskTypeEntity) GetCreatedAt() string {
 	if x != nil {
 		return x.CreatedAt
@@ -7513,6 +7506,13 @@ func (x *ProjectManagementTaskTypeEntity) GetUpdatedAt() string {
 		return x.UpdatedAt
 	}
 	return ""
+}
+
+func (x *ProjectManagementTaskTypeEntity) GetSortOrder() int64 {
+	if x != nil {
+		return x.SortOrder
+	}
+	return 0
 }
 
 type ProjectManagementProjectEntity struct {
@@ -9120,17 +9120,18 @@ const file_proto_entity_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x06 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\a \x01(\tR\tupdatedAt\"\xd5\x01\n" +
+	"updated_at\x18\a \x01(\tR\tupdatedAt\"\xda\x01\n" +
 	"\x1fProjectManagementTaskTypeEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x14\n" +
-	"\x05color\x18\x04 \x01(\tR\x05color\x12\x18\n" +
-	"\aenabled\x18\x05 \x01(\bR\aenabled\x12\x1d\n" +
+	"\x05color\x18\x04 \x01(\tR\x05color\x12\x1d\n" +
 	"\n" +
 	"created_at\x18\x06 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\a \x01(\tR\tupdatedAt\"\xb9\x02\n" +
+	"updated_at\x18\a \x01(\tR\tupdatedAt\x12\x1d\n" +
+	"\n" +
+	"sort_order\x18\b \x01(\x03R\tsortOrder\"\xb9\x02\n" +
 	"\x1eProjectManagementProjectEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tentity_id\x18\x02 \x01(\x03R\bentityId\x12\x12\n" +

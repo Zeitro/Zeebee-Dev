@@ -6,8 +6,10 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
@@ -33,7 +35,7 @@ func (l *AttachmentPageLogic) AttachmentPage(in *borrower.ProjectManagementAttac
 	if err != nil {
 		return nil, err
 	}
-	claim := &claimValue
+	claim := claimValue
 	if _, err = base.ProjectManagementTaskLogic.DetailForProject(l.ctx, claim, in.Data.ProjectId, in.Data.TaskId); err != nil {
 		return nil, err
 	}
@@ -50,4 +52,16 @@ func (l *AttachmentPageLogic) AttachmentPage(in *borrower.ProjectManagementAttac
 		data.List = append(data.List, entity)
 	}
 	return &borrower.ProjectManagementAttachmentPageResponse{Data: data}, nil
+}
+
+func attachmentEntity(file *model.File) (*proto.FileEntity, error) {
+	entity, err := copierx.Trans[model.File, proto.FileEntity](file,
+		copierx.TimeToRFC3339Str(),
+		copierx.SqlTimePtrToRFC3339Str(),
+	)
+	if err != nil {
+		return nil, err
+	}
+	entity.Id = file.Id
+	return entity, nil
 }

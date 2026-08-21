@@ -971,6 +971,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: project_management_task_type.CreateHandler(serverCtx),
 				},
 				{
+					// detail
+					Method:  http.MethodGet,
+					Path:    "/project_management/task_type/:id",
+					Handler: project_management_task_type.DetailHandler(serverCtx),
+				},
+				{
 					// update
 					Method:  http.MethodPut,
 					Path:    "/project_management/task_type/:id",
@@ -983,10 +989,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: project_management_task_type.DeleteHandler(serverCtx),
 				},
 				{
-					// page
-					Method:  http.MethodPost,
-					Path:    "/project_management/task_type/page",
-					Handler: project_management_task_type.PageHandler(serverCtx),
+					// order
+					Method:  http.MethodPut,
+					Path:    "/project_management/task_type/:id/order",
+					Handler: project_management_task_type.OrderHandler(serverCtx),
+				},
+				{
+					// all
+					Method:  http.MethodGet,
+					Path:    "/project_management/task_type/all",
+					Handler: project_management_task_type.AllHandler(serverCtx),
 				},
 			}...,
 		),

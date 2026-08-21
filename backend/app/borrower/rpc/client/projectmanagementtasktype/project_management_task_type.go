@@ -16,18 +16,19 @@ import (
 )
 
 type (
+	ProjectManagementTaskTypeAllResponse    = borrower.ProjectManagementTaskTypeAllResponse
 	ProjectManagementTaskTypeCreateRequest  = borrower.ProjectManagementTaskTypeCreateRequest
-	ProjectManagementTaskTypeDeleteRequest  = borrower.ProjectManagementTaskTypeDeleteRequest
 	ProjectManagementTaskTypeDetailResponse = borrower.ProjectManagementTaskTypeDetailResponse
-	ProjectManagementTaskTypePageRequest    = borrower.ProjectManagementTaskTypePageRequest
-	ProjectManagementTaskTypePageResponse   = borrower.ProjectManagementTaskTypePageResponse
+	ProjectManagementTaskTypeOrderRequest   = borrower.ProjectManagementTaskTypeOrderRequest
 	ProjectManagementTaskTypeUpdateRequest  = borrower.ProjectManagementTaskTypeUpdateRequest
 
 	ProjectManagementTaskType interface {
-		Page(ctx context.Context, in *ProjectManagementTaskTypePageRequest, opts ...grpc.CallOption) (*ProjectManagementTaskTypePageResponse, error)
+		All(ctx context.Context, in *proto.EmptyRequest, opts ...grpc.CallOption) (*ProjectManagementTaskTypeAllResponse, error)
+		Detail(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*ProjectManagementTaskTypeDetailResponse, error)
 		Create(ctx context.Context, in *ProjectManagementTaskTypeCreateRequest, opts ...grpc.CallOption) (*ProjectManagementTaskTypeDetailResponse, error)
 		Update(ctx context.Context, in *ProjectManagementTaskTypeUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementTaskTypeDetailResponse, error)
-		Delete(ctx context.Context, in *ProjectManagementTaskTypeDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
+		Order(ctx context.Context, in *ProjectManagementTaskTypeOrderRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
+		Delete(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 	}
 
 	defaultProjectManagementTaskType struct {
@@ -41,9 +42,14 @@ func NewProjectManagementTaskType(cli zrpc.Client) ProjectManagementTaskType {
 	}
 }
 
-func (m *defaultProjectManagementTaskType) Page(ctx context.Context, in *ProjectManagementTaskTypePageRequest, opts ...grpc.CallOption) (*ProjectManagementTaskTypePageResponse, error) {
+func (m *defaultProjectManagementTaskType) All(ctx context.Context, in *proto.EmptyRequest, opts ...grpc.CallOption) (*ProjectManagementTaskTypeAllResponse, error) {
 	client := borrower.NewProjectManagementTaskTypeClient(m.cli.Conn())
-	return client.Page(ctx, in, opts...)
+	return client.All(ctx, in, opts...)
+}
+
+func (m *defaultProjectManagementTaskType) Detail(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*ProjectManagementTaskTypeDetailResponse, error) {
+	client := borrower.NewProjectManagementTaskTypeClient(m.cli.Conn())
+	return client.Detail(ctx, in, opts...)
 }
 
 func (m *defaultProjectManagementTaskType) Create(ctx context.Context, in *ProjectManagementTaskTypeCreateRequest, opts ...grpc.CallOption) (*ProjectManagementTaskTypeDetailResponse, error) {
@@ -56,7 +62,12 @@ func (m *defaultProjectManagementTaskType) Update(ctx context.Context, in *Proje
 	return client.Update(ctx, in, opts...)
 }
 
-func (m *defaultProjectManagementTaskType) Delete(ctx context.Context, in *ProjectManagementTaskTypeDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
+func (m *defaultProjectManagementTaskType) Order(ctx context.Context, in *ProjectManagementTaskTypeOrderRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
+	client := borrower.NewProjectManagementTaskTypeClient(m.cli.Conn())
+	return client.Order(ctx, in, opts...)
+}
+
+func (m *defaultProjectManagementTaskType) Delete(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
 	client := borrower.NewProjectManagementTaskTypeClient(m.cli.Conn())
 	return client.Delete(ctx, in, opts...)
 }

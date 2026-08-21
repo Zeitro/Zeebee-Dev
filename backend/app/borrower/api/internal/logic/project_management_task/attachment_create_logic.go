@@ -27,7 +27,7 @@ func NewAttachmentCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-func (l *AttachmentCreateLogic) AttachmentCreate(req *types.ProjectManagementAttachmentCreateRequest) (resp *types.ProjectManagementAttachmentEntity, err error) {
+func (l *AttachmentCreateLogic) AttachmentCreate(req *types.ProjectManagementAttachmentCreateRequest) (resp *types.ProjectManagementAttachmentDetailResponse, err error) {
 	data, err := copierx.Trans[types.ProjectManagementAttachmentCreateRequest, borrower.ProjectManagementAttachmentCreateRequestData](req)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
@@ -37,5 +37,9 @@ func (l *AttachmentCreateLogic) AttachmentCreate(req *types.ProjectManagementAtt
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	return attachmentEntity(rpcResp.Data)
+	entity, err := attachmentEntity(rpcResp.Data)
+	if err != nil {
+		return nil, err
+	}
+	return &types.ProjectManagementAttachmentDetailResponse{ProjectManagementAttachmentEntity: *entity}, nil
 }

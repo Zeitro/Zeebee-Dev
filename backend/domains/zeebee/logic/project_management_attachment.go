@@ -21,14 +21,14 @@ func NewProjectManagementAttachmentLogic(baseLogic *BaseLogic) *ProjectManagemen
 	return &ProjectManagementAttachmentLogic{BaseLogic: baseLogic}
 }
 
-func (l *ProjectManagementAttachmentLogic) Page(ctx context.Context, claim *utils.JwtUser, taskId int64, input dto.ProjectManagementAttachmentPageRequestDto) (gormx.PageResponse[*model.File], error) {
+func (l *ProjectManagementAttachmentLogic) Page(ctx context.Context, claim utils.JwtUser, taskId int64, input dto.ProjectManagementAttachmentPageRequestDto) (gormx.PageResponse[*model.File], error) {
 	if _, err := NewProjectManagementTaskLogic(l.BaseLogic).Detail(ctx, claim, taskId); err != nil {
 		return gormx.PageResponse[*model.File]{}, err
 	}
 	return l.repos.FileRepo.PageByEntity(ctx, taskId, constants.FileEntityTypeProjectManagementTask, gormx.PageRequest{Page: input.Page, Limit: input.Limit})
 }
 
-func (l *ProjectManagementAttachmentLogic) Create(ctx context.Context, claim *utils.JwtUser, input dto.ProjectManagementAttachmentCreateDto) (file *model.File, err error) {
+func (l *ProjectManagementAttachmentLogic) Create(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementAttachmentCreateDto) (file *model.File, err error) {
 	if input.TaskId == 0 || strings.TrimSpace(input.FileUrl) == "" {
 		return nil, errorx.New("task and file url are required")
 	}
@@ -58,12 +58,12 @@ func (l *ProjectManagementAttachmentLogic) Create(ctx context.Context, claim *ut
 		if err != nil {
 			return err
 		}
-		return NewProjectManagementTaskLogic(l.BaseLogic).recordProjectTaskOperation(ctx, tx, claim, task.ProjectId, task.Id, constants.OperationActionProjectManagementAttachmentAdd)
+		return NewProjectManagementTaskLogic(l.BaseLogic).recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementAttachmentAdd})
 	})
 	return file, err
 }
 
-func (l *ProjectManagementAttachmentLogic) Delete(ctx context.Context, claim *utils.JwtUser, taskId, fileId int64) error {
+func (l *ProjectManagementAttachmentLogic) Delete(ctx context.Context, claim utils.JwtUser, taskId, fileId int64) error {
 	return l.repos.FileRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		task, err := l.repos.ProjectManagementTaskRepo.LockWithTx(ctx, tx, taskId)
 		if err != nil {
@@ -85,6 +85,6 @@ func (l *ProjectManagementAttachmentLogic) Delete(ctx context.Context, claim *ut
 		if _, err = l.repos.FileRepo.DeleteByIDWithTx(ctx, tx, file.Id); err != nil {
 			return err
 		}
-		return NewProjectManagementTaskLogic(l.BaseLogic).recordProjectTaskOperation(ctx, tx, claim, task.ProjectId, task.Id, constants.OperationActionProjectManagementAttachmentDelete)
+		return NewProjectManagementTaskLogic(l.BaseLogic).recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementAttachmentDelete})
 	})
 }

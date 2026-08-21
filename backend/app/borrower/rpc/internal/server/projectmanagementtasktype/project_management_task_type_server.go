@@ -24,9 +24,14 @@ func NewProjectManagementTaskTypeServer(svcCtx *svc.ServiceContext) *ProjectMana
 	}
 }
 
-func (s *ProjectManagementTaskTypeServer) Page(ctx context.Context, in *borrower.ProjectManagementTaskTypePageRequest) (*borrower.ProjectManagementTaskTypePageResponse, error) {
-	l := projectmanagementtasktypelogic.NewPageLogic(ctx, s.svcCtx)
-	return l.Page(in)
+func (s *ProjectManagementTaskTypeServer) All(ctx context.Context, in *proto.EmptyRequest) (*borrower.ProjectManagementTaskTypeAllResponse, error) {
+	l := projectmanagementtasktypelogic.NewAllLogic(ctx, s.svcCtx)
+	return l.All(in)
+}
+
+func (s *ProjectManagementTaskTypeServer) Detail(ctx context.Context, in *proto.PathIdRequest) (*borrower.ProjectManagementTaskTypeDetailResponse, error) {
+	l := projectmanagementtasktypelogic.NewDetailLogic(ctx, s.svcCtx)
+	return l.Detail(in)
 }
 
 func (s *ProjectManagementTaskTypeServer) Create(ctx context.Context, in *borrower.ProjectManagementTaskTypeCreateRequest) (*borrower.ProjectManagementTaskTypeDetailResponse, error) {
@@ -39,7 +44,12 @@ func (s *ProjectManagementTaskTypeServer) Update(ctx context.Context, in *borrow
 	return l.Update(in)
 }
 
-func (s *ProjectManagementTaskTypeServer) Delete(ctx context.Context, in *borrower.ProjectManagementTaskTypeDeleteRequest) (*proto.EmptyResponse, error) {
+func (s *ProjectManagementTaskTypeServer) Order(ctx context.Context, in *borrower.ProjectManagementTaskTypeOrderRequest) (*proto.EmptyResponse, error) {
+	l := projectmanagementtasktypelogic.NewOrderLogic(ctx, s.svcCtx)
+	return l.Order(in)
+}
+
+func (s *ProjectManagementTaskTypeServer) Delete(ctx context.Context, in *proto.PathIdRequest) (*proto.EmptyResponse, error) {
 	l := projectmanagementtasktypelogic.NewDeleteLogic(ctx, s.svcCtx)
 	return l.Delete(in)
 }

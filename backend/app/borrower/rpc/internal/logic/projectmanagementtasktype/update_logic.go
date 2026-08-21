@@ -10,6 +10,8 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type UpdateLogic struct {
@@ -37,7 +39,7 @@ func (l *UpdateLogic) Update(in *borrower.ProjectManagementTaskTypeUpdateRequest
 	if err != nil {
 		return nil, err
 	}
-	claim := &claimValue
+	claim := claimValue
 	input, err := copierx.Trans[borrower.ProjectManagementTaskTypeUpdateRequestData, dto.ProjectManagementTaskTypeDto](in.Data)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
@@ -46,7 +48,7 @@ func (l *UpdateLogic) Update(in *borrower.ProjectManagementTaskTypeUpdateRequest
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-	data, err := taskTypeEntity(taskType)
+	data, err := copierx.Trans[model.ProjectManagementTaskType, proto.ProjectManagementTaskTypeEntity](taskType, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

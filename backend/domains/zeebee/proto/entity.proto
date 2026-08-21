@@ -878,9 +878,9 @@ message ProjectManagementTaskTypeEntity {
   string name = 2;
   string description = 3;
   string color = 4;
-  bool enabled = 5;
   string created_at = 6;
   string updated_at = 7;
+  int64 sort_order = 8;
 }
 
 message ProjectManagementProjectEntity {

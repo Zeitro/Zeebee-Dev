@@ -54,7 +54,7 @@ type (
         Name string `json:"name"`
         Description string `json:"description"`
         Color string `json:"color"`
-        Enabled bool `json:"enabled"`
+        SortOrder int `json:"sort_order"`
         CreatedAt string `json:"created_at"`
         UpdatedAt string `json:"updated_at"`
     }

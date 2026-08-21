@@ -28,7 +28,7 @@ func NewTransitionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Transi
 	}
 }
 
-func (l *TransitionLogic) Transition(req *types.ProjectManagementTaskTransitionRequest) (resp *types.ProjectManagementTaskEntity, err error) {
+func (l *TransitionLogic) Transition(req *types.ProjectManagementTaskTransitionRequest) (resp *types.ProjectManagementTaskDetailResponse, err error) {
 	data, err := copierx.Trans[types.ProjectManagementTaskTransitionRequest, borrower.ProjectManagementTaskTransitionRequestData](req)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
@@ -38,5 +38,9 @@ func (l *TransitionLogic) Transition(req *types.ProjectManagementTaskTransitionR
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	return copierx.Trans[proto.ProjectManagementTaskEntity, types.ProjectManagementTaskEntity](rpcResp.Data)
+	entity, err := copierx.Trans[proto.ProjectManagementTaskEntity, types.ProjectManagementTaskEntity](rpcResp.Data)
+	if err != nil {
+		return nil, err
+	}
+	return &types.ProjectManagementTaskDetailResponse{ProjectManagementTaskEntity: *entity}, nil
 }

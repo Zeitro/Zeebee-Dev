@@ -20,9 +20,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ProjectManagementTaskType_Page_FullMethodName   = "/borrower.ProjectManagementTaskType/Page"
+	ProjectManagementTaskType_All_FullMethodName    = "/borrower.ProjectManagementTaskType/All"
+	ProjectManagementTaskType_Detail_FullMethodName = "/borrower.ProjectManagementTaskType/Detail"
 	ProjectManagementTaskType_Create_FullMethodName = "/borrower.ProjectManagementTaskType/Create"
 	ProjectManagementTaskType_Update_FullMethodName = "/borrower.ProjectManagementTaskType/Update"
+	ProjectManagementTaskType_Order_FullMethodName  = "/borrower.ProjectManagementTaskType/Order"
 	ProjectManagementTaskType_Delete_FullMethodName = "/borrower.ProjectManagementTaskType/Delete"
 )
 
@@ -30,10 +32,12 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProjectManagementTaskTypeClient interface {
-	Page(ctx context.Context, in *ProjectManagementTaskTypePageRequest, opts ...grpc.CallOption) (*ProjectManagementTaskTypePageResponse, error)
+	All(ctx context.Context, in *proto.EmptyRequest, opts ...grpc.CallOption) (*ProjectManagementTaskTypeAllResponse, error)
+	Detail(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*ProjectManagementTaskTypeDetailResponse, error)
 	Create(ctx context.Context, in *ProjectManagementTaskTypeCreateRequest, opts ...grpc.CallOption) (*ProjectManagementTaskTypeDetailResponse, error)
 	Update(ctx context.Context, in *ProjectManagementTaskTypeUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementTaskTypeDetailResponse, error)
-	Delete(ctx context.Context, in *ProjectManagementTaskTypeDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
+	Order(ctx context.Context, in *ProjectManagementTaskTypeOrderRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
+	Delete(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 }
 
 type projectManagementTaskTypeClient struct {
@@ -44,10 +48,20 @@ func NewProjectManagementTaskTypeClient(cc grpc.ClientConnInterface) ProjectMana
 	return &projectManagementTaskTypeClient{cc}
 }
 
-func (c *projectManagementTaskTypeClient) Page(ctx context.Context, in *ProjectManagementTaskTypePageRequest, opts ...grpc.CallOption) (*ProjectManagementTaskTypePageResponse, error) {
+func (c *projectManagementTaskTypeClient) All(ctx context.Context, in *proto.EmptyRequest, opts ...grpc.CallOption) (*ProjectManagementTaskTypeAllResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ProjectManagementTaskTypePageResponse)
-	err := c.cc.Invoke(ctx, ProjectManagementTaskType_Page_FullMethodName, in, out, cOpts...)
+	out := new(ProjectManagementTaskTypeAllResponse)
+	err := c.cc.Invoke(ctx, ProjectManagementTaskType_All_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *projectManagementTaskTypeClient) Detail(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*ProjectManagementTaskTypeDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ProjectManagementTaskTypeDetailResponse)
+	err := c.cc.Invoke(ctx, ProjectManagementTaskType_Detail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +88,17 @@ func (c *projectManagementTaskTypeClient) Update(ctx context.Context, in *Projec
 	return out, nil
 }
 
-func (c *projectManagementTaskTypeClient) Delete(ctx context.Context, in *ProjectManagementTaskTypeDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
+func (c *projectManagementTaskTypeClient) Order(ctx context.Context, in *ProjectManagementTaskTypeOrderRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(proto.EmptyResponse)
+	err := c.cc.Invoke(ctx, ProjectManagementTaskType_Order_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *projectManagementTaskTypeClient) Delete(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(proto.EmptyResponse)
 	err := c.cc.Invoke(ctx, ProjectManagementTaskType_Delete_FullMethodName, in, out, cOpts...)
@@ -88,10 +112,12 @@ func (c *projectManagementTaskTypeClient) Delete(ctx context.Context, in *Projec
 // All implementations must embed UnimplementedProjectManagementTaskTypeServer
 // for forward compatibility.
 type ProjectManagementTaskTypeServer interface {
-	Page(context.Context, *ProjectManagementTaskTypePageRequest) (*ProjectManagementTaskTypePageResponse, error)
+	All(context.Context, *proto.EmptyRequest) (*ProjectManagementTaskTypeAllResponse, error)
+	Detail(context.Context, *proto.PathIdRequest) (*ProjectManagementTaskTypeDetailResponse, error)
 	Create(context.Context, *ProjectManagementTaskTypeCreateRequest) (*ProjectManagementTaskTypeDetailResponse, error)
 	Update(context.Context, *ProjectManagementTaskTypeUpdateRequest) (*ProjectManagementTaskTypeDetailResponse, error)
-	Delete(context.Context, *ProjectManagementTaskTypeDeleteRequest) (*proto.EmptyResponse, error)
+	Order(context.Context, *ProjectManagementTaskTypeOrderRequest) (*proto.EmptyResponse, error)
+	Delete(context.Context, *proto.PathIdRequest) (*proto.EmptyResponse, error)
 	mustEmbedUnimplementedProjectManagementTaskTypeServer()
 }
 
@@ -102,8 +128,11 @@ type ProjectManagementTaskTypeServer interface {
 // pointer dereference when methods are called.
 type UnimplementedProjectManagementTaskTypeServer struct{}
 
-func (UnimplementedProjectManagementTaskTypeServer) Page(context.Context, *ProjectManagementTaskTypePageRequest) (*ProjectManagementTaskTypePageResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method Page not implemented")
+func (UnimplementedProjectManagementTaskTypeServer) All(context.Context, *proto.EmptyRequest) (*ProjectManagementTaskTypeAllResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method All not implemented")
+}
+func (UnimplementedProjectManagementTaskTypeServer) Detail(context.Context, *proto.PathIdRequest) (*ProjectManagementTaskTypeDetailResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Detail not implemented")
 }
 func (UnimplementedProjectManagementTaskTypeServer) Create(context.Context, *ProjectManagementTaskTypeCreateRequest) (*ProjectManagementTaskTypeDetailResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Create not implemented")
@@ -111,7 +140,10 @@ func (UnimplementedProjectManagementTaskTypeServer) Create(context.Context, *Pro
 func (UnimplementedProjectManagementTaskTypeServer) Update(context.Context, *ProjectManagementTaskTypeUpdateRequest) (*ProjectManagementTaskTypeDetailResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Update not implemented")
 }
-func (UnimplementedProjectManagementTaskTypeServer) Delete(context.Context, *ProjectManagementTaskTypeDeleteRequest) (*proto.EmptyResponse, error) {
+func (UnimplementedProjectManagementTaskTypeServer) Order(context.Context, *ProjectManagementTaskTypeOrderRequest) (*proto.EmptyResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Order not implemented")
+}
+func (UnimplementedProjectManagementTaskTypeServer) Delete(context.Context, *proto.PathIdRequest) (*proto.EmptyResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedProjectManagementTaskTypeServer) mustEmbedUnimplementedProjectManagementTaskTypeServer() {
@@ -136,20 +168,38 @@ func RegisterProjectManagementTaskTypeServer(s grpc.ServiceRegistrar, srv Projec
 	s.RegisterService(&ProjectManagementTaskType_ServiceDesc, srv)
 }
 
-func _ProjectManagementTaskType_Page_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ProjectManagementTaskTypePageRequest)
+func _ProjectManagementTaskType_All_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto.EmptyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProjectManagementTaskTypeServer).Page(ctx, in)
+		return srv.(ProjectManagementTaskTypeServer).All(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ProjectManagementTaskType_Page_FullMethodName,
+		FullMethod: ProjectManagementTaskType_All_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectManagementTaskTypeServer).Page(ctx, req.(*ProjectManagementTaskTypePageRequest))
+		return srv.(ProjectManagementTaskTypeServer).All(ctx, req.(*proto.EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProjectManagementTaskType_Detail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto.PathIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectManagementTaskTypeServer).Detail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProjectManagementTaskType_Detail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectManagementTaskTypeServer).Detail(ctx, req.(*proto.PathIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -190,8 +240,26 @@ func _ProjectManagementTaskType_Update_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProjectManagementTaskType_Order_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ProjectManagementTaskTypeOrderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectManagementTaskTypeServer).Order(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProjectManagementTaskType_Order_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectManagementTaskTypeServer).Order(ctx, req.(*ProjectManagementTaskTypeOrderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ProjectManagementTaskType_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ProjectManagementTaskTypeDeleteRequest)
+	in := new(proto.PathIdRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -203,7 +271,7 @@ func _ProjectManagementTaskType_Delete_Handler(srv interface{}, ctx context.Cont
 		FullMethod: ProjectManagementTaskType_Delete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectManagementTaskTypeServer).Delete(ctx, req.(*ProjectManagementTaskTypeDeleteRequest))
+		return srv.(ProjectManagementTaskTypeServer).Delete(ctx, req.(*proto.PathIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -216,8 +284,12 @@ var ProjectManagementTaskType_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ProjectManagementTaskTypeServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Page",
-			Handler:    _ProjectManagementTaskType_Page_Handler,
+			MethodName: "All",
+			Handler:    _ProjectManagementTaskType_All_Handler,
+		},
+		{
+			MethodName: "Detail",
+			Handler:    _ProjectManagementTaskType_Detail_Handler,
 		},
 		{
 			MethodName: "Create",
@@ -226,6 +298,10 @@ var ProjectManagementTaskType_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Update",
 			Handler:    _ProjectManagementTaskType_Update_Handler,
+		},
+		{
+			MethodName: "Order",
+			Handler:    _ProjectManagementTaskType_Order_Handler,
 		},
 		{
 			MethodName: "Delete",

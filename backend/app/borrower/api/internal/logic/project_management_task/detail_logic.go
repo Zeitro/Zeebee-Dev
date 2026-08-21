@@ -28,7 +28,7 @@ func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogi
 	}
 }
 
-func (l *DetailLogic) Detail(req *types.ProjectManagementTaskDetailRequest) (resp *types.ProjectManagementTaskEntity, err error) {
+func (l *DetailLogic) Detail(req *types.ProjectManagementTaskDetailRequest) (resp *types.ProjectManagementTaskDetailResponse, err error) {
 	data, err := copierx.Trans[types.ProjectManagementTaskDetailRequest, borrower.ProjectManagementTaskDetailRequestData](req)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
@@ -37,5 +37,9 @@ func (l *DetailLogic) Detail(req *types.ProjectManagementTaskDetailRequest) (res
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	return copierx.Trans[proto.ProjectManagementTaskEntity, types.ProjectManagementTaskEntity](rpcResp.Data)
+	entity, err := copierx.Trans[proto.ProjectManagementTaskEntity, types.ProjectManagementTaskEntity](rpcResp.Data)
+	if err != nil {
+		return nil, err
+	}
+	return &types.ProjectManagementTaskDetailResponse{ProjectManagementTaskEntity: *entity}, nil
 }

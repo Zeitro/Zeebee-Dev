@@ -28,7 +28,7 @@ func NewAssigneeUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *As
 	}
 }
 
-func (l *AssigneeUpdateLogic) AssigneeUpdate(req *types.ProjectManagementTaskAssigneeUpdateRequest) (resp *types.ProjectManagementTaskEntity, err error) {
+func (l *AssigneeUpdateLogic) AssigneeUpdate(req *types.ProjectManagementTaskAssigneeUpdateRequest) (resp *types.ProjectManagementTaskDetailResponse, err error) {
 	data, err := copierx.Trans[types.ProjectManagementTaskAssigneeUpdateRequest, borrower.ProjectManagementTaskAssigneeUpdateRequestData](req)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
@@ -38,5 +38,9 @@ func (l *AssigneeUpdateLogic) AssigneeUpdate(req *types.ProjectManagementTaskAss
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	return copierx.Trans[proto.ProjectManagementTaskEntity, types.ProjectManagementTaskEntity](rpcResp.Data)
+	entity, err := copierx.Trans[proto.ProjectManagementTaskEntity, types.ProjectManagementTaskEntity](rpcResp.Data)
+	if err != nil {
+		return nil, err
+	}
+	return &types.ProjectManagementTaskDetailResponse{ProjectManagementTaskEntity: *entity}, nil
 }

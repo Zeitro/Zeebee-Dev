@@ -2,6 +2,8 @@ package projectmanagementtasklogic
 
 import (
 	"context"
+	"strings"
+	"time"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
@@ -22,6 +24,17 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 	}
 }
 
+func taskTime(value string) (*time.Time, error) {
+	if strings.TrimSpace(value) == "" {
+		return nil, nil
+	}
+	parsed, err := time.Parse(time.RFC3339, value)
+	if err != nil {
+		return nil, errorx.New("task time must use RFC3339")
+	}
+	return &parsed, nil
+}
+
 func (l *CreateLogic) Create(in *borrower.ProjectManagementTaskCreateRequest) (resp *borrower.ProjectManagementTaskDetailResponse, err error) {
 	if in.Data == nil {
 		err = errorx.New("request data is nil")
@@ -32,7 +45,7 @@ func (l *CreateLogic) Create(in *borrower.ProjectManagementTaskCreateRequest) (r
 	if err != nil {
 		return nil, err
 	}
-	claim := &claimValue
+	claim := claimValue
 	startAt, err := taskTime(in.Data.StartAt)
 	if err != nil {
 		return nil, err

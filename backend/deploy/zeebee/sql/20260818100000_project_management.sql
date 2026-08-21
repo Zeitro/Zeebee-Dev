@@ -103,11 +103,18 @@ CREATE TABLE "public"."project_management_task_types" (
     "name" varchar(100) NOT NULL DEFAULT '',
     "description" varchar(500) NOT NULL DEFAULT '',
     "color" varchar(32) NOT NULL DEFAULT '',
-    "enabled" bool NOT NULL DEFAULT true
+    "sort_order" int4 NOT NULL DEFAULT 0
 );
 
 CREATE INDEX "idx_pm_task_type_organization_id"
     ON "public"."project_management_task_types" USING btree ("organization_id");
+
+INSERT INTO "public"."project_management_task_types" ("organization_id", "name", "color", "sort_order")
+VALUES
+    (0, 'Task', '#1890FF', 1),
+    (0, 'Defect', '#F5222D', 2),
+    (0, 'Requirement', '#FAAD14', 3),
+    (0, 'Improvement', '#52C41A', 4);
 
 CREATE TABLE "public"."project_management_tasks" (
     "id" serial PRIMARY KEY,

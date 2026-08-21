@@ -10,30 +10,21 @@ import "../../../../domains/zeebee/api/project_management_entity.api"
 import "base.api"
 
 type (
-    ProjectManagementTaskTypePageFilter {
-        Keyword string `json:"keyword,optional"`
-        Enabled *bool `json:"enabled,optional"`
+    ProjectManagementTaskTypeAllRequest {}
+
+    ProjectManagementTaskTypeAllResponse {
+        Lists []*ProjectManagementTaskTypeEntity `json:"lists"`
     }
 
-    ProjectManagementTaskTypePageRequest {
-        Page int64 `json:"page,default=1"`
-        Limit int64 `json:"limit,default=20"`
-        Filter ProjectManagementTaskTypePageFilter `json:"filter,optional"`
-    }
-
-    ProjectManagementTaskTypePageResponse {
-        Page int64 `json:"page"`
-        Limit int64 `json:"limit"`
-        Total int64 `json:"total"`
-        TotalPage int64 `json:"total_page"`
-        List []*ProjectManagementTaskTypeEntity `json:"list"`
+    ProjectManagementTaskTypeDetailResponse {
+        ProjectManagementTaskTypeEntity
     }
 
     ProjectManagementTaskTypeCreateRequest {
         Name string `json:"name" validate:"required,max=100"`
         Description string `json:"description,optional" validate:"max=500"`
         Color string `json:"color,optional" validate:"max=32"`
-        Enabled bool `json:"enabled"`
+        SortOrder int `json:"sort_order" validate:"gte=0"`
     }
 
     ProjectManagementTaskTypeUpdateRequest {
@@ -41,12 +32,14 @@ type (
         Name string `json:"name" validate:"required,max=100"`
         Description string `json:"description,optional" validate:"max=500"`
         Color string `json:"color,optional" validate:"max=32"`
-        Enabled bool `json:"enabled"`
+        SortOrder int `json:"sort_order" validate:"gte=0"`
     }
 
-    ProjectManagementTaskTypeDeleteRequest {
+    ProjectManagementTaskTypeOrderRequest {
         Id int64 `path:"id" validate:"required,gt=0"`
+        SortOrder int `json:"sort_order" validate:"gte=0"`
     }
+
 )
 
 @server (
@@ -58,19 +51,27 @@ type (
     tags: project_management_task_type
 )
 service borrower-api {
-    @doc "page"
-    @handler Page
-    post /project_management/task_type/page (ProjectManagementTaskTypePageRequest) returns (ProjectManagementTaskTypePageResponse)
+    @doc "all"
+    @handler All
+    get /project_management/task_type/all (ProjectManagementTaskTypeAllRequest) returns (ProjectManagementTaskTypeAllResponse)
+
+    @doc "detail"
+    @handler Detail
+    get /project_management/task_type/:id (PathIdRequest) returns (ProjectManagementTaskTypeDetailResponse)
 
     @doc "create"
     @handler Create
-    post /project_management/task_type (ProjectManagementTaskTypeCreateRequest) returns (ProjectManagementTaskTypeEntity)
+    post /project_management/task_type (ProjectManagementTaskTypeCreateRequest) returns (ProjectManagementTaskTypeDetailResponse)
 
     @doc "update"
     @handler Update
-    put /project_management/task_type/:id (ProjectManagementTaskTypeUpdateRequest) returns (ProjectManagementTaskTypeEntity)
+    put /project_management/task_type/:id (ProjectManagementTaskTypeUpdateRequest) returns (ProjectManagementTaskTypeDetailResponse)
+
+    @doc "order"
+    @handler Order
+    put /project_management/task_type/:id/order (ProjectManagementTaskTypeOrderRequest) returns (EmptyResponse)
 
     @doc "delete"
     @handler Delete
-    delete /project_management/task_type/:id (ProjectManagementTaskTypeDeleteRequest) returns (EmptyResponse)
+    delete /project_management/task_type/:id (PathIdRequest) returns (EmptyResponse)
 }

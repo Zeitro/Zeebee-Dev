@@ -33,7 +33,7 @@ func (l *MyPageLogic) MyPage(in *borrower.ProjectManagementMyTaskPageRequest) (r
 	if err != nil {
 		return nil, err
 	}
-	claim := &claimValue
+	claim := claimValue
 	filter := dto.ProjectManagementTaskFilterDto{}
 	if in.Data.Filter != nil {
 		filter.ProjectId = in.Data.Filter.ProjectId

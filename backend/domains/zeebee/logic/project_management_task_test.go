@@ -67,7 +67,7 @@ func TestCreateTaskKeepsWorkflowAndTypeSnapshots(t *testing.T) {
 		}
 	}
 	logic := NewProjectManagementTaskLogic(NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}))
-	actor := &utils.JwtUser{OrganizationId: 1, OrganizationUserId: 20, Username: "Creator"}
+	actor := utils.JwtUser{OrganizationId: 1, OrganizationUserId: 20, Username: "Creator"}
 	task, err := logic.Create(context.Background(), actor, dto.ProjectManagementTaskCreateDto{
 		ProjectManagementTaskDto: dto.ProjectManagementTaskDto{ProjectId: 10, Title: "Inspect roof"},
 		TaskTypeId:               500,
@@ -76,7 +76,7 @@ func TestCreateTaskKeepsWorkflowAndTypeSnapshots(t *testing.T) {
 	if err != nil || task.StageId != 200 || len(task.Assignees) != 1 || task.Assignees[0].OrganizationUserName != "Executor" || task.TaskType == nil || task.TaskType.Id != 500 || task.TaskType.Name != "Inspection" || task.TaskType.Description != "Initial visit" || task.TaskType.Color != "#123456" {
 		t.Fatalf("task snapshots were not created: %#v, %v", task, err)
 	}
-	if _, err = logic.Create(context.Background(), &utils.JwtUser{OrganizationId: 1, OrganizationUserId: 22, Username: "Not member"}, dto.ProjectManagementTaskCreateDto{ProjectManagementTaskDto: dto.ProjectManagementTaskDto{ProjectId: 10, Title: "Denied"}}); err == nil {
+	if _, err = logic.Create(context.Background(), utils.JwtUser{OrganizationId: 1, OrganizationUserId: 22, Username: "Not member"}, dto.ProjectManagementTaskCreateDto{ProjectManagementTaskDto: dto.ProjectManagementTaskDto{ProjectId: 10, Title: "Denied"}}); err == nil {
 		t.Fatal("non-member created a task")
 	}
 	if err = db.Exec("UPDATE project_management_tasks SET stage_id = 201 WHERE id = ?", task.Id).Error; err != nil {

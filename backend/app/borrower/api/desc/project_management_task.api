@@ -33,6 +33,14 @@ type (
         List []*ProjectManagementTaskEntity `json:"list"`
     }
 
+    ProjectManagementTaskDetailResponse {
+        ProjectManagementTaskEntity
+    }
+
+    ProjectManagementAttachmentDetailResponse {
+        ProjectManagementAttachmentEntity
+    }
+
     ProjectManagementTaskCreateRequest {
         ProjectId int64 `json:"project_id" validate:"required,gt=0"`
         ParentTaskId int64 `json:"parent_task_id,optional"`
@@ -139,19 +147,19 @@ service borrower-api {
 
     @doc "create"
     @handler Create
-    post /project_management/task (ProjectManagementTaskCreateRequest) returns (ProjectManagementTaskEntity)
+    post /project_management/task (ProjectManagementTaskCreateRequest) returns (ProjectManagementTaskDetailResponse)
 
     @doc "detail"
     @handler Detail
-    get /project_management/task/:id (ProjectManagementTaskDetailRequest) returns (ProjectManagementTaskEntity)
+    get /project_management/task/:id (ProjectManagementTaskDetailRequest) returns (ProjectManagementTaskDetailResponse)
 
     @doc "update"
     @handler Update
-    put /project_management/task/:id (ProjectManagementTaskUpdateRequest) returns (ProjectManagementTaskEntity)
+    put /project_management/task/:id (ProjectManagementTaskUpdateRequest) returns (ProjectManagementTaskDetailResponse)
 
     @doc "transition"
     @handler Transition
-    post /project_management/task/:id/transition (ProjectManagementTaskTransitionRequest) returns (ProjectManagementTaskEntity)
+    post /project_management/task/:id/transition (ProjectManagementTaskTransitionRequest) returns (ProjectManagementTaskDetailResponse)
 
     @doc "delete"
     @handler Delete
@@ -159,7 +167,7 @@ service borrower-api {
 
     @doc "assignee"
     @handler AssigneeUpdate
-    put /project_management/task/:id/assignee (ProjectManagementTaskAssigneeUpdateRequest) returns (ProjectManagementTaskEntity)
+    put /project_management/task/:id/assignee (ProjectManagementTaskAssigneeUpdateRequest) returns (ProjectManagementTaskDetailResponse)
 
     @doc "attachment page"
     @handler AttachmentPage
@@ -167,7 +175,7 @@ service borrower-api {
 
     @doc "attachment create"
     @handler AttachmentCreate
-    post /project_management/task/:id/attachment (ProjectManagementAttachmentCreateRequest) returns (ProjectManagementAttachmentEntity)
+    post /project_management/task/:id/attachment (ProjectManagementAttachmentCreateRequest) returns (ProjectManagementAttachmentDetailResponse)
 
     @doc "attachment delete"
     @handler AttachmentDelete

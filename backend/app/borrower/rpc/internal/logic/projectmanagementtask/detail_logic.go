@@ -6,7 +6,12 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/data/dto"
+	domainlogic "zeebee-backend/domains/zeebee/logic"
+	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DetailLogic struct {
@@ -31,7 +36,7 @@ func (l *DetailLogic) Detail(in *borrower.ProjectManagementTaskDetailRequest) (r
 	if err != nil {
 		return nil, err
 	}
-	claim := &claimValue
+	claim := claimValue
 	task, err := base.ProjectManagementTaskLogic.DetailForProject(l.ctx, claim, in.Data.ProjectId, in.Data.Id)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
@@ -41,4 +46,37 @@ func (l *DetailLogic) Detail(in *borrower.ProjectManagementTaskDetailRequest) (r
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 	return &borrower.ProjectManagementTaskDetailResponse{Data: data}, nil
+}
+
+func taskEntity(task *model.ProjectManagementTask, overdue *dto.ProjectManagementTaskOverdueDto) (*proto.ProjectManagementTaskEntity, error) {
+	entity, err := copierx.Trans[model.ProjectManagementTask, proto.ProjectManagementTaskEntity](task,
+		copierx.TimeToRFC3339Str(),
+		copierx.SqlTimePtrToRFC3339Str(),
+	)
+	if err != nil {
+		return nil, err
+	}
+	if task.TaskType != nil && task.TaskType.Id != 0 {
+		entity.TaskType, err = copierx.Trans[dto.ProjectManagementTaskTypeSnapshotDto, proto.ProjectManagementTaskTypeSnapshotEntity](task.TaskType)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if overdue != nil {
+		entity.Overdue, entity.OverdueSeconds = overdue.Overdue, overdue.OverdueSeconds
+	}
+	assignees, err := copierx.Trans[[]*model.ProjectManagementTaskAssignee, []*proto.ProjectManagementTaskAssigneeEntity](&task.Assignees, copierx.TimeToRFC3339Str())
+	if err != nil {
+		return nil, err
+	}
+	entity.Assignees = *assignees
+	return entity, nil
+}
+
+func taskEntityWithOverdue(ctx context.Context, taskLogic *domainlogic.ProjectManagementTaskLogic, task *model.ProjectManagementTask) (*proto.ProjectManagementTaskEntity, error) {
+	overdue, err := taskLogic.Overdue(ctx, task)
+	if err != nil {
+		return nil, err
+	}
+	return taskEntity(task, overdue)
 }

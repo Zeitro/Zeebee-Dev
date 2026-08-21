@@ -55,18 +55,7 @@ type ProjectManagementTaskTypeDto struct {
 	Name        string
 	Description string
 	Color       string
-	Enabled     bool
-}
-
-type ProjectManagementTaskTypeFilterDto struct {
-	Keyword string
-	Enabled *bool
-}
-
-type ProjectManagementTaskTypePageRequestDto struct {
-	Page   int64
-	Limit  int64
-	Filter ProjectManagementTaskTypeFilterDto
+	SortOrder   int
 }
 
 type ProjectManagementProjectDto struct {
@@ -125,6 +114,12 @@ type ProjectManagementMemberDetailDto struct {
 type ProjectManagementMemberFilterDto struct {
 	Keyword string
 	Role    constants.ProjectManagementMemberRole
+}
+
+type ProjectManagementMemberCandidateDto struct {
+	ProjectId int64
+	Keyword   string
+	NeedAll   bool
 }
 
 type ProjectManagementMemberPageRequestDto struct {

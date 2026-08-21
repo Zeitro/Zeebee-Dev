@@ -32,7 +32,7 @@ func (l *UpdateLogic) Update(in *borrower.ProjectManagementTaskUpdateRequest) (r
 	if err != nil {
 		return nil, err
 	}
-	claim := &claimValue
+	claim := claimValue
 	if _, err = base.ProjectManagementTaskLogic.DetailForProject(l.ctx, claim, in.Data.ProjectId, in.Data.Id); err != nil {
 		return nil, err
 	}

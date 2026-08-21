@@ -4,10 +4,10 @@ import (
 	"context"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
-	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 )
 
@@ -19,15 +19,9 @@ func NewProjectManagementTaskTypeRepo(db *gorm.DB) *ProjectManagementTaskTypeRep
 	return &ProjectManagementTaskTypeRepo{BaseRepo: gormx.NewBaseRepo[*model.ProjectManagementTaskType](db)}
 }
 
-func (r *ProjectManagementTaskTypeRepo) FindEnabledByOrganization(ctx context.Context, id, organizationId int64) (*model.ProjectManagementTaskType, error) {
+func (r *ProjectManagementTaskTypeRepo) FindByOrganizationWithTx(ctx context.Context, tx *gorm.DB, id, organizationId int64) (*model.ProjectManagementTaskType, error) {
 	taskType := new(model.ProjectManagementTaskType)
-	err := r.Client(ctx).Where("id = ? AND organization_id = ? AND enabled = true", id, organizationId).First(taskType).Error
-	return taskType, errorx.WithStack(err)
-}
-
-func (r *ProjectManagementTaskTypeRepo) FindEnabledByOrganizationWithTx(ctx context.Context, tx *gorm.DB, id, organizationId int64) (*model.ProjectManagementTaskType, error) {
-	taskType := new(model.ProjectManagementTaskType)
-	err := tx.WithContext(ctx).Where("id = ? AND organization_id = ? AND enabled = ?", id, organizationId, true).First(taskType).Error
+	err := tx.WithContext(ctx).Where("id = ? AND organization_id = ?", id, organizationId).First(taskType).Error
 	return taskType, errorx.WithStack(err)
 }
 
@@ -37,25 +31,39 @@ func (r *ProjectManagementTaskTypeRepo) FindByOrganization(ctx context.Context, 
 	return taskType, errorx.WithStack(err)
 }
 
-func (r *ProjectManagementTaskTypeRepo) Page(ctx context.Context, organizationId int64, input dto.ProjectManagementTaskTypePageRequestDto) (gormx.PageResponse[*model.ProjectManagementTaskType], error) {
-	query := r.Client(ctx).Where("organization_id = ?", organizationId).Order("id DESC")
-	if input.Filter.Keyword != "" {
-		query = query.Where("name ILIKE ?", "%"+input.Filter.Keyword+"%")
-	}
-	if input.Filter.Enabled != nil {
-		query = query.Where("enabled = ?", *input.Filter.Enabled)
-	}
-	return r.BaseRepo.Page(query, gormx.PageRequest{Page: input.Page, Limit: input.Limit})
+func (r *ProjectManagementTaskTypeRepo) ListByOrganization(ctx context.Context, organizationId int64) ([]*model.ProjectManagementTaskType, error) {
+	taskTypes := make([]*model.ProjectManagementTaskType, 0)
+	err := r.Client(ctx).Where("organization_id = ?", organizationId).Order("sort_order ASC, id ASC").Find(&taskTypes).Error
+	return taskTypes, errorx.WithStack(err)
 }
 
-func (r *ProjectManagementTaskTypeRepo) UpdateByOrganization(ctx context.Context, id, organizationId int64, taskType *model.ProjectManagementTaskType) error {
-	err := r.Client(ctx).Model(taskType).
+func (r *ProjectManagementTaskTypeRepo) ListByOrganizationWithTx(ctx context.Context, tx *gorm.DB, organizationId int64) ([]*model.ProjectManagementTaskType, error) {
+	taskTypes := make([]*model.ProjectManagementTaskType, 0)
+	err := tx.WithContext(ctx).Where("organization_id = ?", organizationId).Order("sort_order ASC, id ASC").Find(&taskTypes).Error
+	return taskTypes, errorx.WithStack(err)
+}
+
+func (r *ProjectManagementTaskTypeRepo) LockByOrganizationWithTx(ctx context.Context, tx *gorm.DB, organizationId int64) ([]*model.ProjectManagementTaskType, error) {
+	taskTypes := make([]*model.ProjectManagementTaskType, 0)
+	err := tx.WithContext(ctx).Clauses(clause.Locking{Strength: "UPDATE"}).Where("organization_id = ?", organizationId).Order("id ASC").Find(&taskTypes).Error
+	return taskTypes, errorx.WithStack(err)
+}
+
+func (r *ProjectManagementTaskTypeRepo) UpdateByOrganizationWithTx(ctx context.Context, tx *gorm.DB, id, organizationId int64, taskType *model.ProjectManagementTaskType) error {
+	err := tx.WithContext(ctx).Model(taskType).
 		Where("id = ? AND organization_id = ?", id, organizationId).
-		Select("name", "description", "color", "enabled").Updates(taskType).Error
+		Select("name", "description", "color", "sort_order").Updates(taskType).Error
 	return errorx.WithStack(err)
 }
 
-func (r *ProjectManagementTaskTypeRepo) DeleteByOrganization(ctx context.Context, id, organizationId int64) error {
-	err := r.Client(ctx).Where("id = ? AND organization_id = ?", id, organizationId).Delete(&model.ProjectManagementTaskType{}).Error
+func (r *ProjectManagementTaskTypeRepo) UpdateSortOrderWithTx(ctx context.Context, tx *gorm.DB, id, organizationId int64, sortOrder int) error {
+	err := tx.WithContext(ctx).Model(&model.ProjectManagementTaskType{}).
+		Where("id = ? AND organization_id = ?", id, organizationId).
+		Update("sort_order", sortOrder).Error
+	return errorx.WithStack(err)
+}
+
+func (r *ProjectManagementTaskTypeRepo) DeleteByOrganizationWithTx(ctx context.Context, tx *gorm.DB, id, organizationId int64) error {
+	err := tx.WithContext(ctx).Where("id = ? AND organization_id = ?", id, organizationId).Delete(&model.ProjectManagementTaskType{}).Error
 	return errorx.WithStack(err)
 }
