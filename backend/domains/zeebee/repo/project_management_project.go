@@ -17,6 +17,7 @@ import (
 
 type ProjectManagementProjectRepo struct {
 	*gormx.BaseRepo[*model.ProjectManagementProject]
+	memberRepo *gormx.BaseRepo[*model.ProjectManagementProjectMember]
 }
 
 type ProjectManagementProjectMemberEntity struct {
@@ -31,7 +32,10 @@ type ProjectManagementProjectMemberEntity struct {
 }
 
 func NewProjectManagementProjectRepo(db *gorm.DB) *ProjectManagementProjectRepo {
-	return &ProjectManagementProjectRepo{BaseRepo: gormx.NewBaseRepo[*model.ProjectManagementProject](db)}
+	return &ProjectManagementProjectRepo{
+		BaseRepo:   gormx.NewBaseRepo[*model.ProjectManagementProject](db),
+		memberRepo: gormx.NewBaseRepo[*model.ProjectManagementProjectMember](db),
+	}
 }
 
 func (r *ProjectManagementProjectRepo) Page(ctx context.Context, organizationId int64, input dto.ProjectManagementProjectPageRequestDto) (gormx.PageResponse[*model.ProjectManagementProject], error) {
@@ -101,30 +105,21 @@ func (r *ProjectManagementProjectRepo) HasUnfinishedTasksForEntity(ctx context.C
 }
 
 func (r *ProjectManagementProjectRepo) FindByOrganization(ctx context.Context, id, organizationId int64) (*model.ProjectManagementProject, error) {
-	project := new(model.ProjectManagementProject)
-	err := r.Client(ctx).Where("id = ? AND organization_id = ?", id, organizationId).First(project).Error
-	return project, errorx.WithStack(err)
+	return r.FindOneByColumns(ctx, map[string]any{"id": id, "organization_id": organizationId})
 }
 
 func (r *ProjectManagementProjectRepo) UpdateByOrganization(ctx context.Context, id, organizationId int64, project *model.ProjectManagementProject) error {
-	err := r.Client(ctx).Model(project).
-		Where("id = ? AND organization_id = ?", id, organizationId).
-		Select("name", "description", "cover_url").Updates(project).Error
-	return errorx.WithStack(err)
+	return r.UpdateColumns(ctx,
+		map[string]any{"name": project.Name, "description": project.Description, "cover_url": project.CoverUrl},
+		map[string]any{"id": id, "organization_id": organizationId}, nil)
 }
 
 func (r *ProjectManagementProjectRepo) FindMember(ctx context.Context, projectId, organizationUserId int64) (*model.ProjectManagementProjectMember, error) {
-	member := new(model.ProjectManagementProjectMember)
-	err := r.Client(ctx).Model(&model.ProjectManagementProjectMember{}).
-		Where("project_id = ? AND organization_user_id = ?", projectId, organizationUserId).First(member).Error
-	return member, errorx.WithStack(err)
+	return r.memberRepo.FindOneByColumns(ctx, map[string]any{"project_id": projectId, "organization_user_id": organizationUserId})
 }
 
 func (r *ProjectManagementProjectRepo) FindMemberById(ctx context.Context, projectId, memberId int64) (*model.ProjectManagementProjectMember, error) {
-	member := new(model.ProjectManagementProjectMember)
-	err := r.Client(ctx).Model(&model.ProjectManagementProjectMember{}).
-		Where("id = ? AND project_id = ?", memberId, projectId).First(member).Error
-	return member, errorx.WithStack(err)
+	return r.memberRepo.FindOneByColumns(ctx, map[string]any{"id": memberId, "project_id": projectId})
 }
 
 func (r *ProjectManagementProjectRepo) LockWithTx(ctx context.Context, tx *gorm.DB, id int64) (*model.ProjectManagementProject, error) {
@@ -155,38 +150,33 @@ func (r *ProjectManagementProjectRepo) LockMemberByIdWithTx(ctx context.Context,
 }
 
 func (r *ProjectManagementProjectRepo) DeleteByOrganizationUserWithTx(ctx context.Context, tx *gorm.DB, organizationUserId int64) error {
-	err := tx.WithContext(ctx).
-		Where("organization_user_id = ?", organizationUserId).
-		Delete(&model.ProjectManagementProjectMember{}).Error
-	return errorx.WithStack(err)
+	_, err := r.memberRepo.DeleteWithTx(ctx, tx, map[string]any{"organization_user_id": organizationUserId})
+	return err
 }
 
 func (r *ProjectManagementProjectRepo) CreateMemberWithTx(ctx context.Context, tx *gorm.DB, member *model.ProjectManagementProjectMember) error {
-	err := tx.WithContext(ctx).Create(member).Error
-	return errorx.WithStack(err)
+	_, err := r.memberRepo.CreateWithTx(ctx, tx, member, false)
+	return err
 }
 
 func (r *ProjectManagementProjectRepo) UpdateMemberRoleWithTx(ctx context.Context, tx *gorm.DB, member *model.ProjectManagementProjectMember, role constants.ProjectManagementMemberRole) error {
 	member.Role = role
-	err := tx.WithContext(ctx).Model(member).Select("role").Updates(member).Error
-	return errorx.WithStack(err)
+	return r.memberRepo.UpdateColumnsWithTx(ctx, tx, map[string]any{"role": role}, map[string]any{"id": member.Id, "project_id": member.ProjectId}, nil)
 }
 
 func (r *ProjectManagementProjectRepo) UpdateOwnerWithTx(ctx context.Context, tx *gorm.DB, projectId, ownerId int64, ownerName string) error {
-	err := tx.WithContext(ctx).Model(&model.ProjectManagementProject{}).Where("id = ?", projectId).
-		Select("owner_id", "owner_name").Updates(&model.ProjectManagementProject{Base: model.Base{Id: projectId}, OwnerId: ownerId, OwnerName: ownerName}).Error
-	return errorx.WithStack(err)
+	return r.UpdateColumnsWithTx(ctx, tx, map[string]any{"owner_id": ownerId, "owner_name": ownerName}, map[string]any{"id": projectId}, nil)
 }
 
 func (r *ProjectManagementProjectRepo) DeleteMemberWithTx(ctx context.Context, tx *gorm.DB, member *model.ProjectManagementProjectMember) error {
-	err := tx.WithContext(ctx).Delete(member).Error
-	return errorx.WithStack(err)
+	_, err := r.memberRepo.DeleteWithTx(ctx, tx, map[string]any{"id": member.Id, "project_id": member.ProjectId})
+	return err
 }
 
 func (r *ProjectManagementProjectRepo) DeleteProjectWithTx(ctx context.Context, tx *gorm.DB, projectId int64) error {
-	if err := tx.WithContext(ctx).Where("project_id = ?", projectId).Delete(&model.ProjectManagementProjectMember{}).Error; err != nil {
-		return errorx.WithStack(err)
+	if _, err := r.memberRepo.DeleteWithTx(ctx, tx, map[string]any{"project_id": projectId}); err != nil {
+		return err
 	}
-	err := tx.WithContext(ctx).Delete(&model.ProjectManagementProject{Base: model.Base{Id: projectId}}).Error
-	return errorx.WithStack(err)
+	_, err := r.DeleteByIDWithTx(ctx, tx, projectId)
+	return err
 }

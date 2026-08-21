@@ -76,17 +76,13 @@ SELECT EXISTS (SELECT 1 FROM reachable WHERE id = ?)`, constants.ProjectManageme
 }
 
 func (r *ProjectManagementDependencyRepo) CreateWithTx(ctx context.Context, tx *gorm.DB, dependency *model.ProjectManagementTaskDependency) (*model.ProjectManagementTaskDependency, error) {
-	if err := tx.WithContext(ctx).Create(dependency).Error; err != nil {
-		return nil, errorx.WithStack(err)
-	}
-	return dependency, nil
+	return r.BaseRepo.CreateWithTx(ctx, tx, dependency, false)
 }
 
 func (r *ProjectManagementDependencyRepo) UpdateWithTx(ctx context.Context, tx *gorm.DB, dependency *model.ProjectManagementTaskDependency) error {
-	err := tx.WithContext(ctx).Model(dependency).
-		Select("task_id", "dependency_task_id", "dependency_type", "dependency_rule").
-		Updates(dependency).Error
-	return errorx.WithStack(err)
+	return r.UpdateColumnsWithTx(ctx, tx,
+		map[string]any{"task_id": dependency.TaskId, "dependency_task_id": dependency.DependencyTaskId, "dependency_type": dependency.DependencyType, "dependency_rule": dependency.DependencyRule},
+		map[string]any{"id": dependency.Id}, nil)
 }
 
 func (r *ProjectManagementDependencyRepo) ListBySuccessorWithTx(ctx context.Context, tx *gorm.DB, taskId int64) ([]*model.ProjectManagementTaskDependency, error) {
@@ -118,6 +114,6 @@ WHERE dependency_task_id = ? AND dependency_type = ? AND is_del = 0`, table, tab
 }
 
 func (r *ProjectManagementDependencyRepo) DeleteWithTx(ctx context.Context, tx *gorm.DB, dependency *model.ProjectManagementTaskDependency) error {
-	err := tx.WithContext(ctx).Delete(dependency).Error
-	return errorx.WithStack(err)
+	_, err := r.BaseRepo.DeleteWithTx(ctx, tx, map[string]any{"id": dependency.Id})
+	return err
 }

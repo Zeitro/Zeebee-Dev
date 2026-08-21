@@ -20,15 +20,11 @@ func NewProjectManagementTaskTypeRepo(db *gorm.DB) *ProjectManagementTaskTypeRep
 }
 
 func (r *ProjectManagementTaskTypeRepo) FindByOrganizationWithTx(ctx context.Context, tx *gorm.DB, id, organizationId int64) (*model.ProjectManagementTaskType, error) {
-	taskType := new(model.ProjectManagementTaskType)
-	err := tx.WithContext(ctx).Where("id = ? AND organization_id = ?", id, organizationId).First(taskType).Error
-	return taskType, errorx.WithStack(err)
+	return r.FindOneByColumnsWithTx(ctx, tx, map[string]any{"id": id, "organization_id": organizationId})
 }
 
 func (r *ProjectManagementTaskTypeRepo) FindByOrganization(ctx context.Context, id, organizationId int64) (*model.ProjectManagementTaskType, error) {
-	taskType := new(model.ProjectManagementTaskType)
-	err := r.Client(ctx).Where("id = ? AND organization_id = ?", id, organizationId).First(taskType).Error
-	return taskType, errorx.WithStack(err)
+	return r.FindOneByColumns(ctx, map[string]any{"id": id, "organization_id": organizationId})
 }
 
 func (r *ProjectManagementTaskTypeRepo) ListByOrganization(ctx context.Context, organizationId int64) ([]*model.ProjectManagementTaskType, error) {
@@ -50,20 +46,16 @@ func (r *ProjectManagementTaskTypeRepo) LockByOrganizationWithTx(ctx context.Con
 }
 
 func (r *ProjectManagementTaskTypeRepo) UpdateByOrganizationWithTx(ctx context.Context, tx *gorm.DB, id, organizationId int64, taskType *model.ProjectManagementTaskType) error {
-	err := tx.WithContext(ctx).Model(taskType).
-		Where("id = ? AND organization_id = ?", id, organizationId).
-		Select("name", "description", "color", "sort_order").Updates(taskType).Error
-	return errorx.WithStack(err)
+	return r.UpdateColumnsWithTx(ctx, tx,
+		map[string]any{"name": taskType.Name, "description": taskType.Description, "color": taskType.Color, "sort_order": taskType.SortOrder},
+		map[string]any{"id": id, "organization_id": organizationId}, nil)
 }
 
 func (r *ProjectManagementTaskTypeRepo) UpdateSortOrderWithTx(ctx context.Context, tx *gorm.DB, id, organizationId int64, sortOrder int) error {
-	err := tx.WithContext(ctx).Model(&model.ProjectManagementTaskType{}).
-		Where("id = ? AND organization_id = ?", id, organizationId).
-		Update("sort_order", sortOrder).Error
-	return errorx.WithStack(err)
+	return r.UpdateColumnsWithTx(ctx, tx, map[string]any{"sort_order": sortOrder}, map[string]any{"id": id, "organization_id": organizationId}, nil)
 }
 
 func (r *ProjectManagementTaskTypeRepo) DeleteByOrganizationWithTx(ctx context.Context, tx *gorm.DB, id, organizationId int64) error {
-	err := tx.WithContext(ctx).Where("id = ? AND organization_id = ?", id, organizationId).Delete(&model.ProjectManagementTaskType{}).Error
-	return errorx.WithStack(err)
+	_, err := r.DeleteWithTx(ctx, tx, map[string]any{"id": id, "organization_id": organizationId})
+	return err
 }

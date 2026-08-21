@@ -16,16 +16,18 @@ import (
 
 type ProjectManagementTaskRepo struct {
 	*gormx.BaseRepo[*model.ProjectManagementTask]
+	assigneeRepo *gormx.BaseRepo[*model.ProjectManagementTaskAssignee]
 }
 
 func NewProjectManagementTaskRepo(db *gorm.DB) *ProjectManagementTaskRepo {
-	return &ProjectManagementTaskRepo{BaseRepo: gormx.NewBaseRepo[*model.ProjectManagementTask](db)}
+	return &ProjectManagementTaskRepo{
+		BaseRepo:     gormx.NewBaseRepo[*model.ProjectManagementTask](db),
+		assigneeRepo: gormx.NewBaseRepo[*model.ProjectManagementTaskAssignee](db),
+	}
 }
 
 func (r *ProjectManagementTaskRepo) FindByOrganization(ctx context.Context, id, organizationId int64) (*model.ProjectManagementTask, error) {
-	task := new(model.ProjectManagementTask)
-	err := r.Client(ctx).Where("id = ? AND organization_id = ?", id, organizationId).First(task).Error
-	return task, errorx.WithStack(err)
+	return r.FindOneByColumns(ctx, map[string]any{"id": id, "organization_id": organizationId})
 }
 
 func (r *ProjectManagementTaskRepo) FindDetailByOrganization(ctx context.Context, id, organizationId int64) (*model.ProjectManagementTask, error) {
@@ -108,9 +110,7 @@ func (r *ProjectManagementTaskRepo) LockWithTx(ctx context.Context, tx *gorm.DB,
 }
 
 func (r *ProjectManagementTaskRepo) IsAssigneeWithTx(ctx context.Context, tx *gorm.DB, taskId, organizationUserId int64) (bool, error) {
-	var count int64
-	err := tx.WithContext(ctx).Model(&model.ProjectManagementTaskAssignee{}).Where("task_id = ? AND organization_user_id = ?", taskId, organizationUserId).Count(&count).Error
-	return count > 0, errorx.WithStack(err)
+	return r.assigneeRepo.IsExistedByColumnsWithTx(ctx, tx, map[string]any{"task_id": taskId, "organization_user_id": organizationUserId})
 }
 
 func (r *ProjectManagementTaskRepo) DirectChildrenWithTx(ctx context.Context, tx *gorm.DB, taskId int64) ([]*model.ProjectManagementTask, error) {
@@ -120,14 +120,13 @@ func (r *ProjectManagementTaskRepo) DirectChildrenWithTx(ctx context.Context, tx
 }
 
 func (r *ProjectManagementTaskRepo) UpdateStageWithTx(ctx context.Context, tx *gorm.DB, taskId, stageId int64) error {
-	err := tx.WithContext(ctx).Model(&model.ProjectManagementTask{}).Where("id = ?", taskId).Update("stage_id", stageId).Error
-	return errorx.WithStack(err)
+	return r.UpdateColumnsWithTx(ctx, tx, map[string]any{"stage_id": stageId}, map[string]any{"id": taskId}, nil)
 }
 
 func (r *ProjectManagementTaskRepo) IdsByProjectWithTx(ctx context.Context, tx *gorm.DB, projectId int64) ([]int64, error) {
 	ids := make([]int64, 0)
-	err := tx.WithContext(ctx).Model(&model.ProjectManagementTask{}).Where("project_id = ?", projectId).Pluck("id", &ids).Error
-	return ids, errorx.WithStack(err)
+	err := r.PluckByColumnsWithTx(ctx, tx, "id", &ids, []gormx.WhereRaw{{Raw: "project_id = ?", Args: []interface{}{projectId}}})
+	return ids, err
 }
 
 func (r *ProjectManagementTaskRepo) DeleteByProjectWithTx(ctx context.Context, tx *gorm.DB, projectId int64, taskIds []int64) error {
@@ -139,20 +138,20 @@ func (r *ProjectManagementTaskRepo) DeleteByProjectWithTx(ctx context.Context, t
 			return errorx.WithStack(err)
 		}
 	}
-	err := tx.WithContext(ctx).Where("project_id = ?", projectId).Delete(&model.ProjectManagementTask{}).Error
-	return errorx.WithStack(err)
+	_, err := r.DeleteWithTx(ctx, tx, map[string]any{"project_id": projectId})
+	return err
 }
 
 func (r *ProjectManagementTaskRepo) CreateAssigneesWithTx(ctx context.Context, tx *gorm.DB, assignees []*model.ProjectManagementTaskAssignee) error {
 	if len(assignees) == 0 {
 		return nil
 	}
-	err := tx.WithContext(ctx).Create(&assignees).Error
-	return errorx.WithStack(err)
+	_, err := r.assigneeRepo.BatchCreateWithTx(ctx, tx, assignees, false)
+	return err
 }
 
 func (r *ProjectManagementTaskRepo) ReplaceAssigneesWithTx(ctx context.Context, tx *gorm.DB, taskId int64, assignees []*model.ProjectManagementTaskAssignee) error {
-	if err := tx.WithContext(ctx).Where("task_id = ?", taskId).Delete(&model.ProjectManagementTaskAssignee{}).Error; err != nil {
+	if _, err := r.assigneeRepo.DeleteWithTx(ctx, tx, map[string]any{"task_id": taskId}); err != nil {
 		return errorx.WithStack(err)
 	}
 	return r.CreateAssigneesWithTx(ctx, tx, assignees)
@@ -180,6 +179,6 @@ func (r *ProjectManagementTaskRepo) DeleteByIdsWithTx(ctx context.Context, tx *g
 	if err := tx.WithContext(ctx).Where("task_id IN ? OR dependency_task_id IN ?", taskIds, taskIds).Delete(&model.ProjectManagementTaskDependency{}).Error; err != nil {
 		return errorx.WithStack(err)
 	}
-	err := tx.WithContext(ctx).Where("id IN ?", taskIds).Delete(&model.ProjectManagementTask{}).Error
-	return errorx.WithStack(err)
+	_, err := r.DeleteByIDsWithTx(ctx, tx, taskIds)
+	return err
 }
