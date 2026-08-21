@@ -49,7 +49,7 @@ func (s *ProjectManagementWorkflowServer) Update(ctx context.Context, in *borrow
 	return l.Update(in)
 }
 
-func (s *ProjectManagementWorkflowServer) Delete(ctx context.Context, in *borrower.ProjectManagementWorkflowDeleteRequest) (*proto.EmptyResponse, error) {
+func (s *ProjectManagementWorkflowServer) Delete(ctx context.Context, in *proto.PathIdRequest) (*proto.EmptyResponse, error) {
 	l := projectmanagementworkflowlogic.NewDeleteLogic(ctx, s.svcCtx)
 	return l.Delete(in)
 }

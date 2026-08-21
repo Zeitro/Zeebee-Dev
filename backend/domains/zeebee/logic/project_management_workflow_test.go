@@ -11,7 +11,6 @@ import (
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/repo"
 )
 
@@ -51,26 +50,6 @@ func TestValidateProjectManagementWorkflow(t *testing.T) {
 	}
 }
 
-func TestNormalizeProjectManagementTemplateStageReferences(t *testing.T) {
-	workflow := dto.ProjectManagementWorkflowDto{
-		Stages: []dto.ProjectManagementWorkflowStageDto{
-			{Name: "Pending", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 1},
-			{Id: -1, Name: "Finished", Phase: constants.ProjectManagementStagePhaseFinished, SortOrder: 2},
-			{Name: "Archived", Phase: constants.ProjectManagementStagePhaseFinished, SortOrder: 3},
-		},
-	}
-
-	normalizeProjectManagementTemplateStageReferences(&workflow)
-
-	if workflow.Stages[0].Id != -2 || workflow.Stages[1].Id != -1 || workflow.Stages[2].Id != -3 {
-		t.Fatalf("unexpected stage references: %#v", workflow.Stages)
-	}
-	workflow.Name = "Template"
-	if err := ValidateProjectManagementWorkflow(workflow); err != nil {
-		t.Fatalf("normalized workflow rejected: %v", err)
-	}
-}
-
 func TestProjectManagementTemplateModels(t *testing.T) {
 	input := dto.ProjectManagementWorkflowDto{
 		Name: "Template",
@@ -91,25 +70,16 @@ func TestProjectManagementTemplateModels(t *testing.T) {
 	}
 }
 
-func TestValidateProjectManagementTemplateWorkflow(t *testing.T) {
-	workflow := dto.ProjectManagementWorkflowDto{
-		Name:      "Template",
-		Enabled:   true,
-		IsDefault: true,
-		Stages: []dto.ProjectManagementWorkflowStageDto{
-			{Id: 1, Name: "Pending", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 1},
-		},
+func TestValidateProjectManagementWorkflowDetails(t *testing.T) {
+	if err := validateProjectManagementWorkflowDetails(dto.ProjectManagementWorkflowDto{Name: "Template"}); err != nil {
+		t.Fatalf("valid workflow details rejected: %v", err)
 	}
-	if err := validateProjectManagementTemplateWorkflow(workflow); err != nil {
-		t.Fatalf("valid template rejected: %v", err)
-	}
-	workflow.Enabled = false
-	if err := validateProjectManagementTemplateWorkflow(workflow); err == nil {
-		t.Fatal("disabled default template accepted")
+	if err := validateProjectManagementWorkflowDetails(dto.ProjectManagementWorkflowDto{Name: " "}); err == nil {
+		t.Fatal("blank workflow name accepted")
 	}
 }
 
-func TestProjectManagementWorkflowDefaultRules(t *testing.T) {
+func TestProjectManagementWorkflowCreateCopiesDefaultAndUpdatePreservesDefinition(t *testing.T) {
 	db, err := gorm.Open(sqlite.Open(fmt.Sprintf("file:%s?mode=memory&cache=shared", t.Name())), &gorm.Config{})
 	if err != nil {
 		t.Fatal(err)
@@ -125,49 +95,42 @@ func TestProjectManagementWorkflowDefaultRules(t *testing.T) {
 		}
 	}
 	for _, statement := range []string{
-		"INSERT INTO project_management_workflows (id, kind, organization_id, name, enabled, is_default) VALUES (1, 'OrganizationTemplate', 1, 'Default', true, true), (2, 'OrganizationTemplate', 1, 'Other', true, false)",
-		"INSERT INTO project_management_workflow_stages (id, workflow_id, name, phase, sort_order) VALUES (11, 1, 'Pending', 'Pending', 1), (21, 2, 'Pending', 'Pending', 1)",
+		"INSERT INTO project_management_workflows (id, kind, organization_id, name, enabled, is_default) VALUES (1, 'OrganizationTemplate', 1, 'Default', true, true)",
+		"INSERT INTO project_management_workflow_stages (id, workflow_id, name, phase, sort_order) VALUES (11, 1, 'Pending', 'Pending', 1), (12, 1, 'Finished', 'Finished', 2)",
+		"INSERT INTO project_management_workflow_transitions (id, workflow_id, from_stage_id, to_stage_id, allowed_actor_types) VALUES (13, 1, 11, 12, '[\"ProjectOwner\"]')",
 	} {
 		if err := db.Exec(statement).Error; err != nil {
 			t.Fatal(err)
 		}
 	}
 	logic := NewProjectManagementWorkflowLogic(NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}))
-	actor := &utils.JwtUser{OrganizationId: 1, OrganizationUserId: 7, Username: "Admin"}
-	defaultInput := dto.ProjectManagementWorkflowDto{Name: "Default", Enabled: true, Stages: []dto.ProjectManagementWorkflowStageDto{{Id: 11, Name: "Pending", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 1}}}
-	if _, err := logic.Update(context.Background(), actor, 1, defaultInput); err == nil {
-		t.Fatal("default workflow was unset without a replacement")
+	actor := utils.JwtUser{OrganizationId: 1, OrganizationUserId: 7, Username: "Admin"}
+	created, err := logic.Create(context.Background(), actor, dto.ProjectManagementWorkflowDto{Name: "Copy", Description: "Copied from default"})
+	if err != nil {
+		t.Fatalf("create workflow: %v", err)
 	}
+	if !created.Enabled || created.IsDefault || len(created.Stages) != 2 || created.Stages[0].Name != "Pending" || created.Stages[1].Phase != constants.ProjectManagementStagePhaseFinished || len(created.Transitions) != 1 || len(created.Transitions[0].AllowedActorTypes) != 1 || created.Transitions[0].AllowedActorTypes[0] != constants.ProjectManagementMemberRoleProjectOwner {
+		t.Fatalf("unexpected copied workflow: %#v", created)
+	}
+	if created.Stages[0].Id == 11 || created.Stages[1].Id == 12 || created.Transitions[0].FromStageId == 11 || created.Transitions[0].ToStageId == 12 {
+		t.Fatalf("default workflow definition was not cloned: %#v", created)
+	}
+
+	updated, err := logic.Update(context.Background(), actor, created.Id, dto.ProjectManagementWorkflowDto{
+		Name: "Renamed", Description: "Only details change", Enabled: false, IsDefault: true,
+		Stages: []dto.ProjectManagementWorkflowStageDto{{Id: 99, Name: "Ignored", Phase: constants.ProjectManagementStagePhasePending}},
+	})
+	if err != nil {
+		t.Fatalf("update workflow: %v", err)
+	}
+	if updated.Name != "Renamed" || updated.Description != "Only details change" || !updated.Enabled || updated.IsDefault || len(updated.Stages) != 2 || len(updated.Transitions) != 1 {
+		t.Fatalf("workflow update changed definition: %#v", updated)
+	}
+
 	if err := logic.Delete(context.Background(), actor, 1); err == nil {
 		t.Fatal("default workflow was deleted")
 	}
-	replacement := dto.ProjectManagementWorkflowDto{Name: "Other", Enabled: true, IsDefault: true, Stages: []dto.ProjectManagementWorkflowStageDto{{Id: 21, Name: "Pending", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 1}}}
-	if _, err := logic.Update(context.Background(), actor, 2, replacement); err != nil {
-		t.Fatalf("default workflow replacement rejected: %v", err)
-	}
-	var defaultCount int64
-	if err := db.Model(&model.ProjectManagementWorkflow{}).Where("organization_id = ? AND kind = ? AND is_default = ?", 1, constants.ProjectManagementWorkflowKindOrganizationTemplate, true).Count(&defaultCount).Error; err != nil {
-		t.Fatal(err)
-	}
-	if defaultCount != 1 {
-		t.Fatalf("expected one default workflow, got %d", defaultCount)
-	}
-	if err := db.Model(&model.ProjectManagementWorkflow{}).Where("id = ?", 2).Update("enabled", false).Error; err != nil {
-		t.Fatal(err)
-	}
-	if err := logic.Delete(context.Background(), actor, 1); err == nil {
-		t.Fatal("last enabled workflow was deleted")
-	}
-	if err := db.Model(&model.ProjectManagementWorkflow{}).Where("id = ?", 2).Update("enabled", true).Error; err != nil {
-		t.Fatal(err)
-	}
-	if err := logic.Delete(context.Background(), actor, 1); err != nil {
-		t.Fatalf("non-default workflow deletion rejected: %v", err)
-	}
-	if err := db.Exec("INSERT INTO project_management_workflows (id, kind, organization_id, project_id, name, enabled) VALUES (3, 'Project', 1, 9, 'Project workflow', true)").Error; err != nil {
-		t.Fatal(err)
-	}
-	if err := logic.Delete(context.Background(), actor, 3); err == nil {
-		t.Fatal("project workflow was deleted")
+	if err := logic.Delete(context.Background(), actor, created.Id); err != nil {
+		t.Fatalf("delete copied workflow: %v", err)
 	}
 }

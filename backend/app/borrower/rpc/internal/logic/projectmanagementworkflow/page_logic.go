@@ -6,8 +6,10 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
@@ -36,18 +38,15 @@ func (l *PageLogic) Page(in *borrower.ProjectManagementWorkflowPageRequest) (res
 	if err != nil {
 		return nil, err
 	}
-	claim := &claimValue
+	claim := claimValue
 	page, err := base.ProjectManagementWorkflowLogic.Page(l.ctx, claim.OrganizationId, dto.ProjectManagementWorkflowPageRequestDto{Page: in.Data.Page, Limit: in.Data.Limit, Filter: dto.ProjectManagementWorkflowFilterDto{Keyword: in.Data.Filter.Keyword, Enabled: in.Data.Filter.Enabled}})
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-	result := &borrower.ProjectManagementWorkflowPageResponseData{Page: page.Page, Limit: page.Limit, Total: page.Total, TotalPage: page.TotalPage, List: make([]*proto.ProjectManagementWorkflowPageEntity, 0, len(page.List))}
-	for _, workflow := range page.List {
-		entity, err := workflowPageEntity(workflow)
-		if err != nil {
-			return nil, errorx.GetFailedTransRespErr(err)
-		}
-		result.List = append(result.List, entity)
+	list, err := copierx.Trans[[]*model.ProjectManagementWorkflow, []*proto.ProjectManagementWorkflowPageEntity](&page.List, copierx.TimeToRFC3339Str())
+	if err != nil {
+		return nil, errorx.GetFailedTransRespErr(err)
 	}
+	result := &borrower.ProjectManagementWorkflowPageResponseData{Page: page.Page, Limit: page.Limit, Total: page.Total, TotalPage: page.TotalPage, List: *list}
 	return &borrower.ProjectManagementWorkflowPageResponse{Data: result}, nil
 }

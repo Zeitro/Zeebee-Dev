@@ -19,6 +19,12 @@ import (
 
 type ProjectManagementWorkflowLogic struct{ *BaseLogic }
 
+type projectManagementWorkflowOperation struct {
+	claim      utils.JwtUser
+	workflowId int64
+	action     constants.OperationAction
+}
+
 func NewProjectManagementWorkflowLogic(baseLogic *BaseLogic) *ProjectManagementWorkflowLogic {
 	return &ProjectManagementWorkflowLogic{BaseLogic: baseLogic}
 }
@@ -95,34 +101,34 @@ func (l *ProjectManagementWorkflowLogic) Detail(ctx context.Context, organizatio
 	return workflow, nil
 }
 
-func (l *ProjectManagementWorkflowLogic) Create(ctx context.Context, claim *utils.JwtUser, input dto.ProjectManagementWorkflowDto) (workflow *model.ProjectManagementWorkflow, err error) {
-	normalizeProjectManagementTemplateStageReferences(&input)
-	if err = validateProjectManagementTemplateWorkflow(input); err != nil {
+func (l *ProjectManagementWorkflowLogic) Create(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementWorkflowDto) (workflow *model.ProjectManagementWorkflow, err error) {
+	if err = validateProjectManagementWorkflowDetails(input); err != nil {
 		return nil, err
 	}
-	workflow, stages, transitions, err := projectManagementTemplateModels(input)
-	if err != nil {
+	if _, err = l.ListEnabled(ctx, claim.OrganizationId); err != nil {
 		return nil, err
 	}
-	workflow.Kind = constants.ProjectManagementWorkflowKindOrganizationTemplate
-	workflow.OrganizationId = claim.OrganizationId
-	workflow.ProjectId = 0
-	workflow.SourceTemplateId = 0
-	workflow.SourceTemplateName = ""
 	err = l.repos.ProjectManagementWorkflowRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		if workflow.IsDefault {
-			if err := l.repos.ProjectManagementWorkflowRepo.DemoteDefaultWithTx(ctx, tx, claim.OrganizationId, 0); err != nil {
-				return err
-			}
+		defaultWorkflow, err := l.repos.ProjectManagementWorkflowRepo.LockDefaultTemplateDefinitionWithTx(ctx, tx, claim.OrganizationId)
+		if err != nil {
+			return projectManagementNotFound(err, "default workflow not found")
+		}
+		workflow = &model.ProjectManagementWorkflow{
+			Kind:           constants.ProjectManagementWorkflowKindOrganizationTemplate,
+			OrganizationId: claim.OrganizationId,
+			Name:           input.Name,
+			Description:    input.Description,
+			Enabled:        true,
 		}
 		workflow, err = l.repos.ProjectManagementWorkflowRepo.CreateWithTx(ctx, tx, workflow, false)
 		if err != nil {
 			return err
 		}
+		stages, transitions := cloneProjectManagementWorkflowDefinition(defaultWorkflow)
 		if err := l.repos.ProjectManagementWorkflowRepo.ReplaceTemplateDefinitionWithTx(ctx, tx, workflow.Id, stages, transitions); err != nil {
 			return err
 		}
-		return l.recordOperation(ctx, tx, claim, workflow.Id, constants.OperationActionProjectManagementWorkflowCreate)
+		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: workflow.Id, action: constants.OperationActionProjectManagementWorkflowCreate})
 	})
 	if err != nil {
 		return nil, err
@@ -130,36 +136,21 @@ func (l *ProjectManagementWorkflowLogic) Create(ctx context.Context, claim *util
 	return l.Detail(ctx, claim.OrganizationId, workflow.Id)
 }
 
-func (l *ProjectManagementWorkflowLogic) Update(ctx context.Context, claim *utils.JwtUser, id int64, input dto.ProjectManagementWorkflowDto) (workflow *model.ProjectManagementWorkflow, err error) {
-	if err = validateProjectManagementTemplateWorkflow(input); err != nil {
+func (l *ProjectManagementWorkflowLogic) Update(ctx context.Context, claim utils.JwtUser, id int64, input dto.ProjectManagementWorkflowDto) (workflow *model.ProjectManagementWorkflow, err error) {
+	if err = validateProjectManagementWorkflowDetails(input); err != nil {
 		return nil, err
 	}
-	workflow, stages, transitions, err := projectManagementTemplateModels(input)
-	if err != nil {
-		return nil, err
-	}
+	workflow = &model.ProjectManagementWorkflow{OrganizationId: claim.OrganizationId, Name: input.Name, Description: input.Description}
 	workflow.Id = id
-	workflow.OrganizationId = claim.OrganizationId
 	err = l.repos.ProjectManagementWorkflowRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		existing, err := l.repos.ProjectManagementWorkflowRepo.LockTemplateWithTx(ctx, tx, id, claim.OrganizationId)
+		_, err := l.repos.ProjectManagementWorkflowRepo.LockTemplateWithTx(ctx, tx, id, claim.OrganizationId)
 		if err != nil {
 			return projectManagementNotFound(err, "workflow not found")
-		}
-		if existing.IsDefault && !workflow.IsDefault {
-			return errorx.New("default workflow must be replaced by another default workflow")
-		}
-		if workflow.IsDefault {
-			if err := l.repos.ProjectManagementWorkflowRepo.DemoteDefaultWithTx(ctx, tx, claim.OrganizationId, id); err != nil {
-				return err
-			}
 		}
 		if err := l.repos.ProjectManagementWorkflowRepo.UpdateTemplateWithTx(ctx, tx, workflow); err != nil {
 			return err
 		}
-		if err := l.repos.ProjectManagementWorkflowRepo.ReplaceTemplateDefinitionWithTx(ctx, tx, id, stages, transitions); err != nil {
-			return err
-		}
-		return l.recordOperation(ctx, tx, claim, id, constants.OperationActionProjectManagementWorkflowUpdate)
+		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: id, action: constants.OperationActionProjectManagementWorkflowUpdate})
 	})
 	if err != nil {
 		return nil, err
@@ -167,7 +158,7 @@ func (l *ProjectManagementWorkflowLogic) Update(ctx context.Context, claim *util
 	return l.Detail(ctx, claim.OrganizationId, id)
 }
 
-func (l *ProjectManagementWorkflowLogic) Delete(ctx context.Context, claim *utils.JwtUser, id int64) error {
+func (l *ProjectManagementWorkflowLogic) Delete(ctx context.Context, claim utils.JwtUser, id int64) error {
 	return l.repos.ProjectManagementWorkflowRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		workflows, err := l.repos.ProjectManagementWorkflowRepo.LockTemplatesWithTx(ctx, tx, claim.OrganizationId)
 		if err != nil {
@@ -195,40 +186,29 @@ func (l *ProjectManagementWorkflowLogic) Delete(ctx context.Context, claim *util
 		if err := l.repos.ProjectManagementWorkflowRepo.DeleteTemplateWithTx(ctx, tx, id); err != nil {
 			return err
 		}
-		return l.recordOperation(ctx, tx, claim, id, constants.OperationActionProjectManagementWorkflowDelete)
+		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: id, action: constants.OperationActionProjectManagementWorkflowDelete})
 	})
 }
 
-func validateProjectManagementTemplateWorkflow(input dto.ProjectManagementWorkflowDto) error {
-	if input.IsDefault && !input.Enabled {
-		return errorx.New("default workflow cannot be disabled")
+func validateProjectManagementWorkflowDetails(input dto.ProjectManagementWorkflowDto) error {
+	if strings.TrimSpace(input.Name) == "" {
+		return errorx.New("workflow name is required")
 	}
-	return ValidateProjectManagementWorkflow(input)
+	return nil
 }
 
-func normalizeProjectManagementTemplateStageReferences(input *dto.ProjectManagementWorkflowDto) {
-	used := make(map[int64]struct{}, len(input.Stages))
-	for _, stage := range input.Stages {
-		if stage.Id != 0 {
-			used[stage.Id] = struct{}{}
-		}
+func cloneProjectManagementWorkflowDefinition(source *model.ProjectManagementWorkflow) ([]*model.ProjectManagementWorkflowStage, []*model.ProjectManagementWorkflowTransition) {
+	stages := make([]*model.ProjectManagementWorkflowStage, len(source.Stages))
+	for i, stage := range source.Stages {
+		clone := *stage
+		stages[i] = &clone
 	}
-
-	referenceId := int64(-1)
-	for i := range input.Stages {
-		if input.Stages[i].Id != 0 {
-			continue
-		}
-		for {
-			if _, exists := used[referenceId]; !exists {
-				break
-			}
-			referenceId--
-		}
-		input.Stages[i].Id = referenceId
-		used[referenceId] = struct{}{}
-		referenceId--
+	transitions := make([]*model.ProjectManagementWorkflowTransition, len(source.Transitions))
+	for i, transition := range source.Transitions {
+		clone := *transition
+		transitions[i] = &clone
 	}
+	return stages, transitions
 }
 
 func projectManagementTemplateModels(input dto.ProjectManagementWorkflowDto) (*model.ProjectManagementWorkflow, []*model.ProjectManagementWorkflowStage, []*model.ProjectManagementWorkflowTransition, error) {
@@ -247,20 +227,20 @@ func projectManagementTemplateModels(input dto.ProjectManagementWorkflowDto) (*m
 	return workflow, *stages, *transitions, nil
 }
 
-func (l *ProjectManagementWorkflowLogic) recordOperation(ctx context.Context, tx *gorm.DB, claim *utils.JwtUser, workflowId int64, action constants.OperationAction) error {
-	metadata, err := json.Marshal(map[string]int64{"workflow_id": workflowId})
+func (l *ProjectManagementWorkflowLogic) recordOperation(ctx context.Context, tx *gorm.DB, input projectManagementWorkflowOperation) error {
+	metadata, err := json.Marshal(map[string]int64{"workflow_id": input.workflowId})
 	if err != nil {
 		return errorx.WithStack(err)
 	}
 	return NewOperationLogic(l.BaseLogic).CreateOperationLog(ctx, tx, dto.OperationCreateDto{
-		EntityId:       claim.OrganizationId,
+		EntityId:       input.claim.OrganizationId,
 		EntityType:     constants.OperationEntityTypeProjectManagementOrganization,
-		OperatorId:     claim.OrganizationUserId,
-		OperatorName:   claim.Username,
+		OperatorId:     input.claim.OrganizationUserId,
+		OperatorName:   input.claim.Username,
 		OperatorType:   constants.UserTypeBorrower,
-		Operation:      action,
+		Operation:      input.action,
 		Metadata:       metadata,
-		OrganizationId: claim.OrganizationId,
+		OrganizationId: input.claim.OrganizationId,
 	})
 }
 

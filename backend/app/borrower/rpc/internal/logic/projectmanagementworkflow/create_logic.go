@@ -2,11 +2,16 @@ package projectmanagementworkflowlogic
 
 import (
 	"context"
+
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type CreateLogic struct {
@@ -27,12 +32,12 @@ func (l *CreateLogic) Create(in *borrower.ProjectManagementWorkflowCreateRequest
 		return
 	}
 	base := logic.GetBaseLogic(l.svcCtx)
-	claimValue, err := base.GetUserClaimFromCtx(l.ctx)
+	claim, err := base.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	claim := &claimValue
-	data, err := workflowDto(in.Data.Name, in.Data.Description, in.Data.Enabled, in.Data.IsDefault, in.Data.Stages, in.Data.Transitions)
+
+	data, err := copierx.Trans[borrower.ProjectManagementWorkflowCreateRequestData, dto.ProjectManagementWorkflowDto](in.Data)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
@@ -40,7 +45,7 @@ func (l *CreateLogic) Create(in *borrower.ProjectManagementWorkflowCreateRequest
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-	entity, err := workflowEntity(workflow)
+	entity, err := copierx.Trans[model.ProjectManagementWorkflow, proto.ProjectManagementWorkflowEntity](workflow, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

@@ -6,6 +6,8 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
@@ -32,20 +34,14 @@ func (l *AllLogic) All(in *proto.EmptyRequest) (resp *borrower.ProjectManagement
 	if err != nil {
 		return nil, err
 	}
-	claim := &claimValue
+	claim := claimValue
 	workflows, err := l.baseLogic.ProjectManagementWorkflowLogic.ListEnabled(l.ctx, claim.OrganizationId)
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-	entities := make([]*proto.ProjectManagementWorkflowEntity, 0, len(workflows))
-	for _, workflow := range workflows {
-		entity, err := workflowEntity(workflow)
-		if err != nil {
-			return nil, err
-		}
-		entities = append(entities, entity)
+	entities, err := copierx.Trans[[]*model.ProjectManagementWorkflow, []*proto.ProjectManagementWorkflowEntity](&workflows, copierx.TimeToRFC3339Str())
+	if err != nil {
+		return nil, errorx.GetFailedTransRespErr(err)
 	}
-	resp = &borrower.ProjectManagementWorkflowAllResponse{Data: entities}
-
-	return resp, nil
+	return &borrower.ProjectManagementWorkflowAllResponse{Data: *entities}, nil
 }

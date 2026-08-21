@@ -2,11 +2,15 @@ package projectmanagementworkflowlogic
 
 import (
 	"context"
+
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 )
 
@@ -28,25 +32,29 @@ func (l *UpdateLogic) Update(in *borrower.ProjectManagementWorkflowUpdateRequest
 		return
 	}
 	base := logic.GetBaseLogic(l.svcCtx)
-	claimValue, err := base.GetUserClaimFromCtx(l.ctx)
+	claim, err := base.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	claim := &claimValue
-	data, err := workflowDto(in.Data.Name, in.Data.Description, in.Data.Enabled, in.Data.IsDefault, in.Data.Stages, in.Data.Transitions)
-	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
-	}
+
 	var workflow *model.ProjectManagementWorkflow
 	if in.Data.ProjectId != 0 {
+		data, err := copierx.Trans[borrower.ProjectManagementWorkflowUpdateRequestData, dto.ProjectManagementWorkflowDto](in.Data)
+		if err != nil {
+			return nil, errorx.GetFailedTransRespErr(err)
+		}
 		workflow, err = base.ProjectManagementWorkflowLogic.ProjectUpdate(l.ctx, claim, in.Data.ProjectId, *data)
 	} else {
+		data, err := copierx.Trans[borrower.ProjectManagementWorkflowUpdateRequestData, dto.ProjectManagementWorkflowDto](in.Data)
+		if err != nil {
+			return nil, errorx.GetFailedTransRespErr(err)
+		}
 		workflow, err = base.ProjectManagementWorkflowLogic.Update(l.ctx, claim, in.Data.Id, *data)
 	}
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-	entity, err := workflowEntity(workflow)
+	entity, err := copierx.Trans[model.ProjectManagementWorkflow, proto.ProjectManagementWorkflowEntity](workflow, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

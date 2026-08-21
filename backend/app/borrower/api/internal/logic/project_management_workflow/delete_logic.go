@@ -5,9 +5,7 @@ import (
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/copierx"
-	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,13 +25,9 @@ func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogi
 	}
 }
 
-func (l *DeleteLogic) Delete(req *types.ProjectManagementWorkflowDeleteRequest) (resp *types.EmptyResponse, err error) {
-	data, err := copierx.Trans[types.ProjectManagementWorkflowDeleteRequest, borrower.ProjectManagementWorkflowDeleteRequestData](req)
-	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
-	}
-	if _, err = l.svcCtx.ProjectManagementWorkflowRpcClient.Delete(l.ctx, &borrower.ProjectManagementWorkflowDeleteRequest{Data: data}); err != nil {
-		return nil, errorx.WithStack(err)
+func (l *DeleteLogic) Delete(req *types.PathIdRequest) (resp *types.EmptyResponse, err error) {
+	if _, err = l.svcCtx.ProjectManagementWorkflowRpcClient.Delete(l.ctx, &proto.PathIdRequest{Data: &proto.PathIdRequestData{Id: req.Id}}); err != nil {
+		return nil, err
 	}
 	return &types.EmptyResponse{}, nil
 }

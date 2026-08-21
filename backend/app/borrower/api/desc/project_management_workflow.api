@@ -31,30 +31,19 @@ type (
         TotalPage int64                                  `json:"total_page"`
         List      []*ProjectManagementWorkflowPageEntity `json:"list"`
     }
-    ProjectManagementWorkflowDetailRequest {
-        Id int64 `path:"id" validate:"required,gt=0"`
+    ProjectManagementWorkflowDetailResponse {
+        ProjectManagementWorkflowEntity
     }
     ProjectManagementWorkflowCreateRequest {
-        Name        string                                       `json:"name" validate:"required,max=100"`
-        Description string                                       `json:"description,optional" validate:"max=500"`
-        Enabled     bool                                         `json:"enabled"`
-        IsDefault   bool                                         `json:"is_default"`
-        Stages      []*ProjectManagementWorkflowStageEntity      `json:"stages" validate:"required,min=1,dive"`
-        Transitions []*ProjectManagementWorkflowTransitionEntity `json:"transitions,optional" validate:"dive"`
+        Name        string `json:"name" validate:"required,max=100"`
+        Description string `json:"description,optional" validate:"max=500"`
     }
     ProjectManagementWorkflowUpdateRequest {
-        Id          int64                                        `path:"id" validate:"required,gt=0"`
-        Name        string                                       `json:"name" validate:"required,max=100"`
-        Description string                                       `json:"description,optional" validate:"max=500"`
-        Enabled     bool                                         `json:"enabled"`
-        IsDefault   bool                                         `json:"is_default"`
-        Stages      []*ProjectManagementWorkflowStageEntity      `json:"stages" validate:"required,min=1,dive"`
-        Transitions []*ProjectManagementWorkflowTransitionEntity `json:"transitions,optional" validate:"dive"`
+        Id          int64  `path:"id" validate:"required,gt=0"`
+        Name        string `json:"name" validate:"required,max=100"`
+        Description string `json:"description,optional" validate:"max=500"`
     }
 
-    ProjectManagementWorkflowDeleteRequest {
-        Id int64 `path:"id" validate:"required,gt=0"`
-    }
 )
 
 @server (
@@ -76,18 +65,18 @@ service borrower-api {
 
     @doc "detail"
     @handler Detail
-    get /project_management/workflow/:id (ProjectManagementWorkflowDetailRequest) returns (ProjectManagementWorkflowEntity)
+    get /project_management/workflow/:id (PathIdRequest) returns (ProjectManagementWorkflowDetailResponse)
 
     @doc "create organization workflow"
     @handler Create
-    post /project_management/workflow (ProjectManagementWorkflowCreateRequest) returns (ProjectManagementWorkflowEntity)
+    post /project_management/workflow (ProjectManagementWorkflowCreateRequest) returns (ProjectManagementWorkflowDetailResponse)
 
     @doc "update"
     @handler Update
-    put /project_management/workflow/:id (ProjectManagementWorkflowUpdateRequest) returns (ProjectManagementWorkflowEntity)
+    put /project_management/workflow/:id (ProjectManagementWorkflowUpdateRequest) returns (ProjectManagementWorkflowDetailResponse)
 
     @doc "delete organization workflow"
     @handler Delete
-    delete /project_management/workflow/:id (ProjectManagementWorkflowDeleteRequest) returns (EmptyResponse)
+    delete /project_management/workflow/:id (PathIdRequest) returns (EmptyResponse)
 
 }

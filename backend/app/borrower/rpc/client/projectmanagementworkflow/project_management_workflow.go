@@ -18,7 +18,6 @@ import (
 type (
 	ProjectManagementWorkflowAllResponse    = borrower.ProjectManagementWorkflowAllResponse
 	ProjectManagementWorkflowCreateRequest  = borrower.ProjectManagementWorkflowCreateRequest
-	ProjectManagementWorkflowDeleteRequest  = borrower.ProjectManagementWorkflowDeleteRequest
 	ProjectManagementWorkflowDetailRequest  = borrower.ProjectManagementWorkflowDetailRequest
 	ProjectManagementWorkflowDetailResponse = borrower.ProjectManagementWorkflowDetailResponse
 	ProjectManagementWorkflowPageRequest    = borrower.ProjectManagementWorkflowPageRequest
@@ -31,7 +30,7 @@ type (
 		Detail(ctx context.Context, in *ProjectManagementWorkflowDetailRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error)
 		Create(ctx context.Context, in *ProjectManagementWorkflowCreateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error)
 		Update(ctx context.Context, in *ProjectManagementWorkflowUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error)
-		Delete(ctx context.Context, in *ProjectManagementWorkflowDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
+		Delete(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 	}
 
 	defaultProjectManagementWorkflow struct {
@@ -70,7 +69,7 @@ func (m *defaultProjectManagementWorkflow) Update(ctx context.Context, in *Proje
 	return client.Update(ctx, in, opts...)
 }
 
-func (m *defaultProjectManagementWorkflow) Delete(ctx context.Context, in *ProjectManagementWorkflowDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
+func (m *defaultProjectManagementWorkflow) Delete(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
 	client := borrower.NewProjectManagementWorkflowClient(m.cli.Conn())
 	return client.Delete(ctx, in, opts...)
 }

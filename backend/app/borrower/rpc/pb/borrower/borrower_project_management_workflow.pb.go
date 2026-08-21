@@ -754,94 +754,6 @@ func (x *ProjectManagementWorkflowUpdateRequestData) GetProjectId() int64 {
 	return 0
 }
 
-type ProjectManagementWorkflowDeleteRequest struct {
-	state         protoimpl.MessageState                      `protogen:"open.v1"`
-	Data          *ProjectManagementWorkflowDeleteRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ProjectManagementWorkflowDeleteRequest) Reset() {
-	*x = ProjectManagementWorkflowDeleteRequest{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[13]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ProjectManagementWorkflowDeleteRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ProjectManagementWorkflowDeleteRequest) ProtoMessage() {}
-
-func (x *ProjectManagementWorkflowDeleteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[13]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ProjectManagementWorkflowDeleteRequest.ProtoReflect.Descriptor instead.
-func (*ProjectManagementWorkflowDeleteRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{13}
-}
-
-func (x *ProjectManagementWorkflowDeleteRequest) GetData() *ProjectManagementWorkflowDeleteRequestData {
-	if x != nil {
-		return x.Data
-	}
-	return nil
-}
-
-type ProjectManagementWorkflowDeleteRequestData struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ProjectManagementWorkflowDeleteRequestData) Reset() {
-	*x = ProjectManagementWorkflowDeleteRequestData{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[14]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ProjectManagementWorkflowDeleteRequestData) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ProjectManagementWorkflowDeleteRequestData) ProtoMessage() {}
-
-func (x *ProjectManagementWorkflowDeleteRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[14]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ProjectManagementWorkflowDeleteRequestData.ProtoReflect.Descriptor instead.
-func (*ProjectManagementWorkflowDeleteRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{14}
-}
-
-func (x *ProjectManagementWorkflowDeleteRequestData) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
 var File_borrower_project_management_workflow_proto protoreflect.FileDescriptor
 
 const file_borrower_project_management_workflow_proto_rawDesc = "" +
@@ -899,18 +811,14 @@ const file_borrower_project_management_workflow_proto_rawDesc = "" +
 	"\x06stages\x18\x06 \x03(\v2+.proto.ProjectManagementWorkflowStageEntityR\x06stages\x12R\n" +
 	"\vtransitions\x18\a \x03(\v20.proto.ProjectManagementWorkflowTransitionEntityR\vtransitions\x12\x1d\n" +
 	"\n" +
-	"project_id\x18\b \x01(\x03R\tprojectId\"r\n" +
-	"&ProjectManagementWorkflowDeleteRequest\x12H\n" +
-	"\x04data\x18\x01 \x01(\v24.borrower.ProjectManagementWorkflowDeleteRequestDataR\x04data\"<\n" +
-	"*ProjectManagementWorkflowDeleteRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id2\xef\x04\n" +
+	"project_id\x18\b \x01(\x03R\tprojectId2\xd3\x04\n" +
 	"\x19ProjectManagementWorkflow\x12J\n" +
 	"\x03All\x12\x13.proto.EmptyRequest\x1a..borrower.ProjectManagementWorkflowAllResponse\x12g\n" +
 	"\x04Page\x12..borrower.ProjectManagementWorkflowPageRequest\x1a/.borrower.ProjectManagementWorkflowPageResponse\x12m\n" +
 	"\x06Detail\x120.borrower.ProjectManagementWorkflowDetailRequest\x1a1.borrower.ProjectManagementWorkflowDetailResponse\x12m\n" +
 	"\x06Create\x120.borrower.ProjectManagementWorkflowCreateRequest\x1a1.borrower.ProjectManagementWorkflowDetailResponse\x12m\n" +
-	"\x06Update\x120.borrower.ProjectManagementWorkflowUpdateRequest\x1a1.borrower.ProjectManagementWorkflowDetailResponse\x12P\n" +
-	"\x06Delete\x120.borrower.ProjectManagementWorkflowDeleteRequest\x1a\x14.proto.EmptyResponseB-Z+zeebee-backend/app/borrower/rpc/pb/borrowerb\x06proto3"
+	"\x06Update\x120.borrower.ProjectManagementWorkflowUpdateRequest\x1a1.borrower.ProjectManagementWorkflowDetailResponse\x124\n" +
+	"\x06Delete\x12\x14.proto.PathIdRequest\x1a\x14.proto.EmptyResponseB-Z+zeebee-backend/app/borrower/rpc/pb/borrowerb\x06proto3"
 
 var (
 	file_borrower_project_management_workflow_proto_rawDescOnce sync.Once
@@ -924,7 +832,7 @@ func file_borrower_project_management_workflow_proto_rawDescGZIP() []byte {
 	return file_borrower_project_management_workflow_proto_rawDescData
 }
 
-var file_borrower_project_management_workflow_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
+var file_borrower_project_management_workflow_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_borrower_project_management_workflow_proto_goTypes = []any{
 	(*ProjectManagementWorkflowAllResponse)(nil),            // 0: borrower.ProjectManagementWorkflowAllResponse
 	(*ProjectManagementWorkflowPageRequest)(nil),            // 1: borrower.ProjectManagementWorkflowPageRequest
@@ -939,47 +847,45 @@ var file_borrower_project_management_workflow_proto_goTypes = []any{
 	(*ProjectManagementWorkflowCreateRequestData)(nil),      // 10: borrower.ProjectManagementWorkflowCreateRequestData
 	(*ProjectManagementWorkflowUpdateRequest)(nil),          // 11: borrower.ProjectManagementWorkflowUpdateRequest
 	(*ProjectManagementWorkflowUpdateRequestData)(nil),      // 12: borrower.ProjectManagementWorkflowUpdateRequestData
-	(*ProjectManagementWorkflowDeleteRequest)(nil),          // 13: borrower.ProjectManagementWorkflowDeleteRequest
-	(*ProjectManagementWorkflowDeleteRequestData)(nil),      // 14: borrower.ProjectManagementWorkflowDeleteRequestData
-	(*proto.ProjectManagementWorkflowEntity)(nil),           // 15: proto.ProjectManagementWorkflowEntity
-	(*proto.ProjectManagementWorkflowPageEntity)(nil),       // 16: proto.ProjectManagementWorkflowPageEntity
-	(*proto.ProjectManagementWorkflowStageEntity)(nil),      // 17: proto.ProjectManagementWorkflowStageEntity
-	(*proto.ProjectManagementWorkflowTransitionEntity)(nil), // 18: proto.ProjectManagementWorkflowTransitionEntity
-	(*proto.EmptyRequest)(nil),                              // 19: proto.EmptyRequest
-	(*proto.EmptyResponse)(nil),                             // 20: proto.EmptyResponse
+	(*proto.ProjectManagementWorkflowEntity)(nil),           // 13: proto.ProjectManagementWorkflowEntity
+	(*proto.ProjectManagementWorkflowPageEntity)(nil),       // 14: proto.ProjectManagementWorkflowPageEntity
+	(*proto.ProjectManagementWorkflowStageEntity)(nil),      // 15: proto.ProjectManagementWorkflowStageEntity
+	(*proto.ProjectManagementWorkflowTransitionEntity)(nil), // 16: proto.ProjectManagementWorkflowTransitionEntity
+	(*proto.EmptyRequest)(nil),                              // 17: proto.EmptyRequest
+	(*proto.PathIdRequest)(nil),                             // 18: proto.PathIdRequest
+	(*proto.EmptyResponse)(nil),                             // 19: proto.EmptyResponse
 }
 var file_borrower_project_management_workflow_proto_depIdxs = []int32{
-	15, // 0: borrower.ProjectManagementWorkflowAllResponse.data:type_name -> proto.ProjectManagementWorkflowEntity
+	13, // 0: borrower.ProjectManagementWorkflowAllResponse.data:type_name -> proto.ProjectManagementWorkflowEntity
 	2,  // 1: borrower.ProjectManagementWorkflowPageRequest.data:type_name -> borrower.ProjectManagementWorkflowPageRequestData
 	3,  // 2: borrower.ProjectManagementWorkflowPageRequestData.filter:type_name -> borrower.ProjectManagementWorkflowPageRequestFilter
 	5,  // 3: borrower.ProjectManagementWorkflowPageResponse.data:type_name -> borrower.ProjectManagementWorkflowPageResponseData
-	16, // 4: borrower.ProjectManagementWorkflowPageResponseData.list:type_name -> proto.ProjectManagementWorkflowPageEntity
+	14, // 4: borrower.ProjectManagementWorkflowPageResponseData.list:type_name -> proto.ProjectManagementWorkflowPageEntity
 	7,  // 5: borrower.ProjectManagementWorkflowDetailRequest.data:type_name -> borrower.ProjectManagementWorkflowDetailRequestData
-	15, // 6: borrower.ProjectManagementWorkflowDetailResponse.data:type_name -> proto.ProjectManagementWorkflowEntity
+	13, // 6: borrower.ProjectManagementWorkflowDetailResponse.data:type_name -> proto.ProjectManagementWorkflowEntity
 	10, // 7: borrower.ProjectManagementWorkflowCreateRequest.data:type_name -> borrower.ProjectManagementWorkflowCreateRequestData
-	17, // 8: borrower.ProjectManagementWorkflowCreateRequestData.stages:type_name -> proto.ProjectManagementWorkflowStageEntity
-	18, // 9: borrower.ProjectManagementWorkflowCreateRequestData.transitions:type_name -> proto.ProjectManagementWorkflowTransitionEntity
+	15, // 8: borrower.ProjectManagementWorkflowCreateRequestData.stages:type_name -> proto.ProjectManagementWorkflowStageEntity
+	16, // 9: borrower.ProjectManagementWorkflowCreateRequestData.transitions:type_name -> proto.ProjectManagementWorkflowTransitionEntity
 	12, // 10: borrower.ProjectManagementWorkflowUpdateRequest.data:type_name -> borrower.ProjectManagementWorkflowUpdateRequestData
-	17, // 11: borrower.ProjectManagementWorkflowUpdateRequestData.stages:type_name -> proto.ProjectManagementWorkflowStageEntity
-	18, // 12: borrower.ProjectManagementWorkflowUpdateRequestData.transitions:type_name -> proto.ProjectManagementWorkflowTransitionEntity
-	14, // 13: borrower.ProjectManagementWorkflowDeleteRequest.data:type_name -> borrower.ProjectManagementWorkflowDeleteRequestData
-	19, // 14: borrower.ProjectManagementWorkflow.All:input_type -> proto.EmptyRequest
-	1,  // 15: borrower.ProjectManagementWorkflow.Page:input_type -> borrower.ProjectManagementWorkflowPageRequest
-	6,  // 16: borrower.ProjectManagementWorkflow.Detail:input_type -> borrower.ProjectManagementWorkflowDetailRequest
-	9,  // 17: borrower.ProjectManagementWorkflow.Create:input_type -> borrower.ProjectManagementWorkflowCreateRequest
-	11, // 18: borrower.ProjectManagementWorkflow.Update:input_type -> borrower.ProjectManagementWorkflowUpdateRequest
-	13, // 19: borrower.ProjectManagementWorkflow.Delete:input_type -> borrower.ProjectManagementWorkflowDeleteRequest
-	0,  // 20: borrower.ProjectManagementWorkflow.All:output_type -> borrower.ProjectManagementWorkflowAllResponse
-	4,  // 21: borrower.ProjectManagementWorkflow.Page:output_type -> borrower.ProjectManagementWorkflowPageResponse
-	8,  // 22: borrower.ProjectManagementWorkflow.Detail:output_type -> borrower.ProjectManagementWorkflowDetailResponse
-	8,  // 23: borrower.ProjectManagementWorkflow.Create:output_type -> borrower.ProjectManagementWorkflowDetailResponse
-	8,  // 24: borrower.ProjectManagementWorkflow.Update:output_type -> borrower.ProjectManagementWorkflowDetailResponse
-	20, // 25: borrower.ProjectManagementWorkflow.Delete:output_type -> proto.EmptyResponse
-	20, // [20:26] is the sub-list for method output_type
-	14, // [14:20] is the sub-list for method input_type
-	14, // [14:14] is the sub-list for extension type_name
-	14, // [14:14] is the sub-list for extension extendee
-	0,  // [0:14] is the sub-list for field type_name
+	15, // 11: borrower.ProjectManagementWorkflowUpdateRequestData.stages:type_name -> proto.ProjectManagementWorkflowStageEntity
+	16, // 12: borrower.ProjectManagementWorkflowUpdateRequestData.transitions:type_name -> proto.ProjectManagementWorkflowTransitionEntity
+	17, // 13: borrower.ProjectManagementWorkflow.All:input_type -> proto.EmptyRequest
+	1,  // 14: borrower.ProjectManagementWorkflow.Page:input_type -> borrower.ProjectManagementWorkflowPageRequest
+	6,  // 15: borrower.ProjectManagementWorkflow.Detail:input_type -> borrower.ProjectManagementWorkflowDetailRequest
+	9,  // 16: borrower.ProjectManagementWorkflow.Create:input_type -> borrower.ProjectManagementWorkflowCreateRequest
+	11, // 17: borrower.ProjectManagementWorkflow.Update:input_type -> borrower.ProjectManagementWorkflowUpdateRequest
+	18, // 18: borrower.ProjectManagementWorkflow.Delete:input_type -> proto.PathIdRequest
+	0,  // 19: borrower.ProjectManagementWorkflow.All:output_type -> borrower.ProjectManagementWorkflowAllResponse
+	4,  // 20: borrower.ProjectManagementWorkflow.Page:output_type -> borrower.ProjectManagementWorkflowPageResponse
+	8,  // 21: borrower.ProjectManagementWorkflow.Detail:output_type -> borrower.ProjectManagementWorkflowDetailResponse
+	8,  // 22: borrower.ProjectManagementWorkflow.Create:output_type -> borrower.ProjectManagementWorkflowDetailResponse
+	8,  // 23: borrower.ProjectManagementWorkflow.Update:output_type -> borrower.ProjectManagementWorkflowDetailResponse
+	19, // 24: borrower.ProjectManagementWorkflow.Delete:output_type -> proto.EmptyResponse
+	19, // [19:25] is the sub-list for method output_type
+	13, // [13:19] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_borrower_project_management_workflow_proto_init() }
@@ -994,7 +900,7 @@ func file_borrower_project_management_workflow_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_borrower_project_management_workflow_proto_rawDesc), len(file_borrower_project_management_workflow_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   15,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -41,7 +41,7 @@ func (r *ProjectManagementWorkflowRepo) ListEnabledByOrganization(ctx context.Co
 	workflows := make([]*model.ProjectManagementWorkflow, 0)
 	err := r.Client(ctx).
 		Preload("Stages", func(db *gorm.DB) *gorm.DB { return db.Order("sort_order ASC, id ASC") }).
-		Preload("Transitions", func(db *gorm.DB) *gorm.DB { return db.Order("id ASC") }).
+		// Preload("Transitions", func(db *gorm.DB) *gorm.DB { return db.Order("id ASC") }).
 		Where("organization_id = ? AND kind = ? AND enabled = true", organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).
 		Order("is_default DESC, id ASC").
 		Find(&workflows).Error
@@ -127,6 +127,16 @@ func (r *ProjectManagementWorkflowRepo) LockTemplateWithTx(ctx context.Context, 
 	return workflow, errorx.WithStack(err)
 }
 
+func (r *ProjectManagementWorkflowRepo) LockDefaultTemplateDefinitionWithTx(ctx context.Context, tx *gorm.DB, organizationId int64) (*model.ProjectManagementWorkflow, error) {
+	workflow := new(model.ProjectManagementWorkflow)
+	err := tx.WithContext(ctx).Clauses(clause.Locking{Strength: "UPDATE"}).
+		Preload("Stages", func(db *gorm.DB) *gorm.DB { return db.Order("sort_order ASC, id ASC") }).
+		Preload("Transitions", func(db *gorm.DB) *gorm.DB { return db.Order("id ASC") }).
+		Where("organization_id = ? AND kind = ? AND is_default = true", organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).
+		First(workflow).Error
+	return workflow, errorx.WithStack(err)
+}
+
 func (r *ProjectManagementWorkflowRepo) LockTemplatesWithTx(ctx context.Context, tx *gorm.DB, organizationId int64) ([]*model.ProjectManagementWorkflow, error) {
 	workflows := make([]*model.ProjectManagementWorkflow, 0)
 	err := tx.WithContext(ctx).Clauses(clause.Locking{Strength: "UPDATE"}).
@@ -145,7 +155,7 @@ func (r *ProjectManagementWorkflowRepo) DemoteDefaultWithTx(ctx context.Context,
 func (r *ProjectManagementWorkflowRepo) UpdateTemplateWithTx(ctx context.Context, tx *gorm.DB, workflow *model.ProjectManagementWorkflow) error {
 	err := tx.WithContext(ctx).Model(workflow).
 		Where("id = ? AND organization_id = ? AND kind = ?", workflow.Id, workflow.OrganizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).
-		Select("name", "description", "enabled", "is_default").Updates(workflow).Error
+		Select("name", "description").Updates(workflow).Error
 	return errorx.WithStack(err)
 }
 

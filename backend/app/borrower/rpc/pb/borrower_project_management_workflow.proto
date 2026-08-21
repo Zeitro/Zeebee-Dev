@@ -70,18 +70,11 @@ message ProjectManagementWorkflowUpdateRequestData {
   int64 project_id = 8;
 }
 
-message ProjectManagementWorkflowDeleteRequest {
-  ProjectManagementWorkflowDeleteRequestData data = 1;
-}
-message ProjectManagementWorkflowDeleteRequestData {
-  int64 id = 1;
-}
-
 service ProjectManagementWorkflow {
   rpc All(proto.EmptyRequest) returns(ProjectManagementWorkflowAllResponse);
   rpc Page(ProjectManagementWorkflowPageRequest) returns(ProjectManagementWorkflowPageResponse);
   rpc Detail(ProjectManagementWorkflowDetailRequest) returns(ProjectManagementWorkflowDetailResponse);
   rpc Create(ProjectManagementWorkflowCreateRequest) returns(ProjectManagementWorkflowDetailResponse);
   rpc Update(ProjectManagementWorkflowUpdateRequest) returns(ProjectManagementWorkflowDetailResponse);
-  rpc Delete(ProjectManagementWorkflowDeleteRequest) returns(proto.EmptyResponse);
+  rpc Delete(proto.PathIdRequest) returns(proto.EmptyResponse);
 }

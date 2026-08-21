@@ -6,7 +6,9 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 )
 
@@ -32,7 +34,7 @@ func (l *DetailLogic) Detail(in *borrower.ProjectManagementWorkflowDetailRequest
 	if err != nil {
 		return nil, err
 	}
-	claim := &claimValue
+	claim := claimValue
 	var workflow *model.ProjectManagementWorkflow
 	if in.Data.ProjectId != 0 {
 		workflow, err = base.ProjectManagementWorkflowLogic.ProjectDetail(l.ctx, claim, in.Data.ProjectId)
@@ -42,7 +44,7 @@ func (l *DetailLogic) Detail(in *borrower.ProjectManagementWorkflowDetailRequest
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
-	entity, err := workflowEntity(workflow)
+	entity, err := copierx.Trans[model.ProjectManagementWorkflow, proto.ProjectManagementWorkflowEntity](workflow, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

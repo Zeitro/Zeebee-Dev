@@ -37,7 +37,7 @@ type ProjectManagementWorkflowClient interface {
 	Detail(ctx context.Context, in *ProjectManagementWorkflowDetailRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error)
 	Create(ctx context.Context, in *ProjectManagementWorkflowCreateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error)
 	Update(ctx context.Context, in *ProjectManagementWorkflowUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error)
-	Delete(ctx context.Context, in *ProjectManagementWorkflowDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
+	Delete(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 }
 
 type projectManagementWorkflowClient struct {
@@ -98,7 +98,7 @@ func (c *projectManagementWorkflowClient) Update(ctx context.Context, in *Projec
 	return out, nil
 }
 
-func (c *projectManagementWorkflowClient) Delete(ctx context.Context, in *ProjectManagementWorkflowDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
+func (c *projectManagementWorkflowClient) Delete(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(proto.EmptyResponse)
 	err := c.cc.Invoke(ctx, ProjectManagementWorkflow_Delete_FullMethodName, in, out, cOpts...)
@@ -117,7 +117,7 @@ type ProjectManagementWorkflowServer interface {
 	Detail(context.Context, *ProjectManagementWorkflowDetailRequest) (*ProjectManagementWorkflowDetailResponse, error)
 	Create(context.Context, *ProjectManagementWorkflowCreateRequest) (*ProjectManagementWorkflowDetailResponse, error)
 	Update(context.Context, *ProjectManagementWorkflowUpdateRequest) (*ProjectManagementWorkflowDetailResponse, error)
-	Delete(context.Context, *ProjectManagementWorkflowDeleteRequest) (*proto.EmptyResponse, error)
+	Delete(context.Context, *proto.PathIdRequest) (*proto.EmptyResponse, error)
 	mustEmbedUnimplementedProjectManagementWorkflowServer()
 }
 
@@ -143,7 +143,7 @@ func (UnimplementedProjectManagementWorkflowServer) Create(context.Context, *Pro
 func (UnimplementedProjectManagementWorkflowServer) Update(context.Context, *ProjectManagementWorkflowUpdateRequest) (*ProjectManagementWorkflowDetailResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Update not implemented")
 }
-func (UnimplementedProjectManagementWorkflowServer) Delete(context.Context, *ProjectManagementWorkflowDeleteRequest) (*proto.EmptyResponse, error) {
+func (UnimplementedProjectManagementWorkflowServer) Delete(context.Context, *proto.PathIdRequest) (*proto.EmptyResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedProjectManagementWorkflowServer) mustEmbedUnimplementedProjectManagementWorkflowServer() {
@@ -259,7 +259,7 @@ func _ProjectManagementWorkflow_Update_Handler(srv interface{}, ctx context.Cont
 }
 
 func _ProjectManagementWorkflow_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ProjectManagementWorkflowDeleteRequest)
+	in := new(proto.PathIdRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -271,7 +271,7 @@ func _ProjectManagementWorkflow_Delete_Handler(srv interface{}, ctx context.Cont
 		FullMethod: ProjectManagementWorkflow_Delete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectManagementWorkflowServer).Delete(ctx, req.(*ProjectManagementWorkflowDeleteRequest))
+		return srv.(ProjectManagementWorkflowServer).Delete(ctx, req.(*proto.PathIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
