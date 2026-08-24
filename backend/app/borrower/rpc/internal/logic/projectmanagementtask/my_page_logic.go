@@ -29,11 +29,10 @@ func (l *MyPageLogic) MyPage(in *borrower.ProjectManagementMyTaskPageRequest) (r
 		return
 	}
 	base := logic.GetBaseLogic(l.svcCtx)
-	claimValue, err := base.GetUserClaimFromCtx(l.ctx)
+	claim, err := base.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	claim := claimValue
 	filter := dto.ProjectManagementTaskFilterDto{}
 	if in.Data.Filter != nil {
 		filter.ProjectId = in.Data.Filter.ProjectId

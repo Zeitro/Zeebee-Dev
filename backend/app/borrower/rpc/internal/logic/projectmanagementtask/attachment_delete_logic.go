@@ -28,11 +28,10 @@ func (l *AttachmentDeleteLogic) AttachmentDelete(in *borrower.ProjectManagementA
 		return
 	}
 	base := logic.GetBaseLogic(l.svcCtx)
-	claimValue, err := base.GetUserClaimFromCtx(l.ctx)
+	claim, err := base.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	claim := claimValue
 	if _, err = base.ProjectManagementTaskLogic.DetailForProject(l.ctx, claim, in.Data.ProjectId, in.Data.TaskId); err != nil {
 		return nil, err
 	}

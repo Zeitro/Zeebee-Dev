@@ -32,11 +32,10 @@ func (l *DetailLogic) Detail(in *borrower.ProjectManagementTaskDetailRequest) (r
 		return
 	}
 	base := logic.GetBaseLogic(l.svcCtx)
-	claimValue, err := base.GetUserClaimFromCtx(l.ctx)
+	claim, err := base.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	claim := claimValue
 	task, err := base.ProjectManagementTaskLogic.DetailForProject(l.ctx, claim, in.Data.ProjectId, in.Data.Id)
 	if err != nil {
 		return nil, err

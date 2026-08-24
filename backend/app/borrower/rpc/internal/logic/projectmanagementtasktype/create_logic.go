@@ -35,11 +35,10 @@ func (l *CreateLogic) Create(in *borrower.ProjectManagementTaskTypeCreateRequest
 		err = errorx.New("request data is nil")
 		return
 	}
-	claimValue, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	claim := claimValue
 	input, err := copierx.Trans[borrower.ProjectManagementTaskTypeCreateRequestData, dto.ProjectManagementTaskTypeDto](in.Data)
 	if err != nil {
 		return nil, err

@@ -31,11 +31,10 @@ func (l *PageLogic) Page(in *borrower.ProjectManagementDependencyPageRequest) (r
 		return
 	}
 	base := logic.GetBaseLogic(l.svcCtx)
-	claimValue, err := base.GetUserClaimFromCtx(l.ctx)
+	claim, err := base.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	claim := claimValue
 	page, err := base.ProjectManagementDependencyLogic.Page(l.ctx, claim, dto.ProjectManagementTaskDependencyPageRequestDto{TaskId: in.Data.TaskId, Page: in.Data.Page, Limit: in.Data.Limit, Predecessor: in.Data.Predecessor})
 	if err != nil {
 		return nil, err

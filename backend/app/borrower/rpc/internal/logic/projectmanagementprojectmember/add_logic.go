@@ -32,11 +32,10 @@ func (l *AddLogic) Add(in *borrower.ProjectManagementMemberAddRequest) (resp *pr
 		err = errorx.New("request data is nil")
 		return
 	}
-	claimValue, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	claim := claimValue
 	members, err := copierx.Trans[[]*borrower.ProjectManagementMemberInput, []dto.ProjectManagementMemberDto](&in.Data.Members)
 	if err != nil {
 		return nil, err

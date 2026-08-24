@@ -32,11 +32,10 @@ func (l *UpdateLogic) Update(in *borrower.ProjectManagementDependencyUpdateReque
 		return
 	}
 	base := logic.GetBaseLogic(l.svcCtx)
-	claimValue, err := base.GetUserClaimFromCtx(l.ctx)
+	claim, err := base.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	claim := claimValue
 	dependency, err := base.ProjectManagementDependencyLogic.Update(l.ctx, claim, dto.ProjectManagementTaskDependencyDto{Id: in.Data.Id, TaskId: in.Data.TaskId, DependencyType: constants.ProjectManagementDependencyType(in.Data.DependencyType), DependencyRule: constants.ProjectManagementDependencyRule(in.Data.DependencyRule)})
 	if err != nil {
 		return nil, err

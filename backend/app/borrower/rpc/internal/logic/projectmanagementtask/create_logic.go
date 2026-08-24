@@ -41,11 +41,10 @@ func (l *CreateLogic) Create(in *borrower.ProjectManagementTaskCreateRequest) (r
 		return
 	}
 	base := logic.GetBaseLogic(l.svcCtx)
-	claimValue, err := base.GetUserClaimFromCtx(l.ctx)
+	claim, err := base.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	claim := claimValue
 	startAt, err := taskTime(in.Data.StartAt)
 	if err != nil {
 		return nil, err

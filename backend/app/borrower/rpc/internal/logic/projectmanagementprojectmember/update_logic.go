@@ -32,11 +32,10 @@ func (l *UpdateLogic) Update(in *borrower.ProjectManagementMemberUpdateRequest) 
 		err = errorx.New("request data is nil")
 		return
 	}
-	claimValue, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	claim := claimValue
 	input, convertErr := copierx.Trans[borrower.ProjectManagementMemberUpdateRequestData, dto.ProjectManagementMemberDto](in.Data)
 	if convertErr != nil {
 		return nil, convertErr

@@ -30,11 +30,10 @@ func (l *TransferOwnerLogic) TransferOwner(in *borrower.ProjectManagementProject
 		err = errorx.New("request data is nil")
 		return
 	}
-	claimValue, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	claim := claimValue
 	target, err := l.baseLogic.ProjectManagementMemberLogic.Detail(l.ctx, claim, in.Data.ProjectId, in.Data.MemberId)
 	if err != nil {
 		return nil, err

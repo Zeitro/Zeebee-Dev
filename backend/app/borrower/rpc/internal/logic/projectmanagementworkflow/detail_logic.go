@@ -30,11 +30,10 @@ func (l *DetailLogic) Detail(in *borrower.ProjectManagementWorkflowDetailRequest
 		return
 	}
 	base := logic.GetBaseLogic(l.svcCtx)
-	claimValue, err := base.GetUserClaimFromCtx(l.ctx)
+	claim, err := base.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	claim := claimValue
 	var workflow *model.ProjectManagementWorkflow
 	if in.Data.ProjectId != 0 {
 		workflow, err = base.ProjectManagementWorkflowLogic.ProjectDetail(l.ctx, claim, in.Data.ProjectId)

@@ -30,11 +30,10 @@ func (l *DeleteLogic) Delete(in *borrower.ProjectManagementMemberDeleteRequest) 
 		err = errorx.New("request data is nil")
 		return
 	}
-	claimValue, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	claim := claimValue
 	if err = l.baseLogic.ProjectManagementMemberLogic.Delete(l.ctx, claim, in.Data.ProjectId, in.Data.MemberId); err != nil {
 		return nil, err
 	}

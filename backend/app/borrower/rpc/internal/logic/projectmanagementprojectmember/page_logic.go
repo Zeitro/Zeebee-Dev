@@ -32,11 +32,10 @@ func (l *PageLogic) Page(in *borrower.ProjectManagementMemberPageRequest) (resp 
 		err = errorx.New("request data is nil")
 		return
 	}
-	claimValue, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	claim := claimValue
 	input, err := copierx.Trans[borrower.ProjectManagementMemberPageRequestData, dto.ProjectManagementMemberPageRequestDto](in.Data)
 	if err != nil {
 		return nil, err

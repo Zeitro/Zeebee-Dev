@@ -28,11 +28,10 @@ func NewAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AllLogic {
 }
 
 func (l *AllLogic) All(in *proto.EmptyRequest) (resp *borrower.ProjectManagementWorkflowAllResponse, err error) {
-	claimValue, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	claim := claimValue
 	workflows, err := l.baseLogic.ProjectManagementWorkflowLogic.List(l.ctx, claim.OrganizationId)
 	if err != nil {
 		return nil, err

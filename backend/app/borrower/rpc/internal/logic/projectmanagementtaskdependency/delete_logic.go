@@ -28,11 +28,10 @@ func (l *DeleteLogic) Delete(in *borrower.ProjectManagementDependencyDeleteReque
 		return
 	}
 	base := logic.GetBaseLogic(l.svcCtx)
-	claimValue, err := base.GetUserClaimFromCtx(l.ctx)
+	claim, err := base.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	claim := claimValue
 	if err = base.ProjectManagementDependencyLogic.Delete(l.ctx, claim, in.Data.Id); err != nil {
 		return nil, err
 	}
