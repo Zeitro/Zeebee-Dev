@@ -32,11 +32,10 @@ func (l *DetailLogic) Detail(in *proto.PathIdRequest) (resp *borrower.ProjectMan
 		err = errorx.New("request data is nil")
 		return
 	}
-	claimValue, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	claim := claimValue
 	project, err := l.baseLogic.ProjectManagementAccessLogic.RequireProject(l.ctx, in.Data.Id, claim.OrganizationId)
 	if err != nil {
 		return nil, err
@@ -45,6 +44,14 @@ func (l *DetailLogic) Detail(in *proto.PathIdRequest) (resp *borrower.ProjectMan
 		return nil, err
 	}
 	data, err := copierx.Trans[model.ProjectManagementProject, proto.ProjectManagementProjectEntity](project, copierx.TimeToRFC3339Str())
+	if err != nil {
+		return nil, err
+	}
+	workflow, err := l.baseLogic.ProjectManagementWorkflowLogic.ProjectDetail(l.ctx, claim, project.Id)
+	if err != nil {
+		return nil, err
+	}
+	data.Workflow, err = copierx.Trans[model.ProjectManagementWorkflow, proto.ProjectManagementWorkflowEntity](workflow, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

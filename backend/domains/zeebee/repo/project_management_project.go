@@ -91,7 +91,7 @@ func (r *ProjectManagementProjectRepo) CandidateMembers(ctx context.Context, org
 	return candidates, errorx.WithStack(err)
 }
 
-func (r *ProjectManagementProjectRepo) HasUnfinishedTasksForEntity(ctx context.Context, entityId int64, entityType string) (bool, error) {
+func (r *ProjectManagementProjectRepo) HasUnfinishedTasksForEntity(ctx context.Context, entityId int64, entityType constants.ProjectManagementProjectEntityType) (bool, error) {
 	projectsTable := model.ProjectManagementProject{}.TableName()
 	tasksTable := model.ProjectManagementTask{}.TableName()
 	stagesTable := model.ProjectManagementWorkflowStage{}.TableName()
@@ -106,12 +106,6 @@ func (r *ProjectManagementProjectRepo) HasUnfinishedTasksForEntity(ctx context.C
 
 func (r *ProjectManagementProjectRepo) FindByOrganization(ctx context.Context, id, organizationId int64) (*model.ProjectManagementProject, error) {
 	return r.FindOneByColumns(ctx, map[string]any{"id": id, "organization_id": organizationId})
-}
-
-func (r *ProjectManagementProjectRepo) UpdateByOrganization(ctx context.Context, id, organizationId int64, project *model.ProjectManagementProject) error {
-	return r.UpdateColumns(ctx,
-		map[string]any{"name": project.Name, "description": project.Description, "cover_url": project.CoverUrl},
-		map[string]any{"id": id, "organization_id": organizationId}, nil)
 }
 
 func (r *ProjectManagementProjectRepo) FindMember(ctx context.Context, projectId, organizationUserId int64) (*model.ProjectManagementProjectMember, error) {

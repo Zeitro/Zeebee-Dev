@@ -1,15 +1,17 @@
 package model
 
+import "zeebee-backend/domains/zeebee/constants"
+
 type ProjectManagementProject struct {
 	Base
-	OrganizationId int64  `gorm:"column:organization_id;not null;default:0" json:"organization_id"`
-	EntityId       int64  `gorm:"column:entity_id;not null;default:0" json:"entity_id"`
-	EntityType     string `gorm:"column:entity_type;type:varchar(100);not null;default:''" json:"entity_type"`
-	Name           string `gorm:"column:name;type:varchar(100);not null;default:''" json:"name"`
-	Description    string `gorm:"column:description;type:varchar(500);not null;default:''" json:"description"`
-	CoverUrl       string `gorm:"column:cover_url;type:varchar(255);not null;default:''" json:"cover_url"`
-	OwnerId        int64  `gorm:"column:owner_id;not null;default:0" json:"owner_id"`
-	OwnerName      string `gorm:"column:owner_name;type:varchar(100);not null;default:''" json:"owner_name"`
+	OrganizationId int64                                        `gorm:"column:organization_id;not null;default:0" json:"organization_id"`
+	EntityId       int64                                        `gorm:"column:entity_id;not null;default:0" json:"entity_id"`
+	EntityType     constants.ProjectManagementProjectEntityType `gorm:"column:entity_type;type:varchar(100);not null;default:''" json:"entity_type"`
+	Name           string                                       `gorm:"column:name;type:varchar(100);not null;default:''" json:"name"`
+	Description    string                                       `gorm:"column:description;type:varchar(500);not null;default:''" json:"description"`
+	CoverUrl       string                                       `gorm:"column:cover_url;type:varchar(255);not null;default:''" json:"cover_url"`
+	OwnerId        int64                                        `gorm:"column:owner_id;not null;default:0" json:"owner_id"`
+	OwnerName      string                                       `gorm:"column:owner_name;type:varchar(100);not null;default:''" json:"owner_name"`
 	// relationships
 	Members []*ProjectManagementProjectMember `gorm:"foreignKey:ProjectId" json:"members"`
 }

@@ -27,8 +27,8 @@ func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogi
 	}
 }
 
-func (l *DeleteLogic) Delete(req *types.ProjectManagementProjectDeleteRequest) (resp *types.EmptyResponse, err error) {
-	data, err := copierx.Trans[types.ProjectManagementProjectDeleteRequest, borrower.ProjectManagementProjectDeleteRequestData](req)
+func (l *DeleteLogic) Delete(req *types.PathIdRequest) (resp *types.EmptyResponse, err error) {
+	data, err := copierx.Trans[types.PathIdRequest, borrower.ProjectManagementProjectDeleteRequestData](req)
 	if err != nil {
 		return nil, err
 	}

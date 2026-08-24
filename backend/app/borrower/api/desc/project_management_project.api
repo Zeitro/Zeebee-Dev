@@ -36,10 +36,10 @@ type (
 
     ProjectManagementProjectCreateRequest {
         EntityId int64 `json:"entity_id,optional"`
-        EntityType string `json:"entity_type,optional"`
+        EntityType string `json:"entity_type,optional,options=BorrowerProperty|" validate:"omitempty,oneof=BorrowerProperty"`
         Name string `json:"name" validate:"required,max=100"`
         Description string `json:"description,optional" validate:"max=500"`
-        CoverUrl string `json:"cover_url,optional" validate:"max=255"`
+        CoverUrl string `json:"cover_url,optional" validate:"omitempty,uri"`
         WorkflowTemplateId int64 `json:"workflow_template_id" validate:"required,gt=0"`
     }
 
@@ -47,12 +47,7 @@ type (
         Id int64 `path:"id" validate:"required,gt=0"`
         Name string `json:"name" validate:"required,max=100"`
         Description string `json:"description,optional" validate:"max=500"`
-        CoverUrl string `json:"cover_url,optional" validate:"max=255"`
-    }
-
-    ProjectManagementProjectDeleteRequest {
-        Id int64 `path:"id" validate:"required,gt=0"`
-        Confirm bool `json:"confirm" validate:"required"`
+        CoverUrl string `json:"cover_url,optional" validate:"omitempty,uri"`
     }
 
     ProjectManagementProjectOwnerTransferRequest {
@@ -96,7 +91,7 @@ service borrower-api {
 
     @doc "delete"
     @handler Delete
-    delete /project_management/project/:id (ProjectManagementProjectDeleteRequest) returns (EmptyResponse)
+    delete /project_management/project/:id (PathIdRequest) returns (EmptyResponse)
 
     @doc "transfer owner"
     @handler TransferOwner

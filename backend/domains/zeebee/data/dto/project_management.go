@@ -52,7 +52,7 @@ type ProjectManagementProjectDto struct {
 	Id             int64
 	OrganizationId int64
 	EntityId       int64
-	EntityType     string
+	EntityType     constants.ProjectManagementProjectEntityType
 	Name           string
 	Description    string
 	CoverUrl       string

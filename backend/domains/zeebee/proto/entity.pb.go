@@ -7456,17 +7456,18 @@ func (x *ProjectManagementTaskTypeEntity) GetSortOrder() int64 {
 }
 
 type ProjectManagementProjectEntity struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	EntityId      int64                  `protobuf:"varint,2,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
-	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	Description   string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
-	CoverUrl      string                 `protobuf:"bytes,5,opt,name=cover_url,json=coverUrl,proto3" json:"cover_url,omitempty"`
-	OwnerId       int64                  `protobuf:"varint,6,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
-	EntityType    string                 `protobuf:"bytes,7,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"`
-	OwnerName     string                 `protobuf:"bytes,8,opt,name=owner_name,json=ownerName,proto3" json:"owner_name,omitempty"`
-	CreatedAt     string                 `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     string                 `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	state         protoimpl.MessageState           `protogen:"open.v1"`
+	Id            int64                            `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	EntityId      int64                            `protobuf:"varint,2,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
+	Name          string                           `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Description   string                           `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
+	CoverUrl      string                           `protobuf:"bytes,5,opt,name=cover_url,json=coverUrl,proto3" json:"cover_url,omitempty"`
+	OwnerId       int64                            `protobuf:"varint,6,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
+	EntityType    string                           `protobuf:"bytes,7,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"`
+	OwnerName     string                           `protobuf:"bytes,8,opt,name=owner_name,json=ownerName,proto3" json:"owner_name,omitempty"`
+	CreatedAt     string                           `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     string                           `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Workflow      *ProjectManagementWorkflowEntity `protobuf:"bytes,11,opt,name=workflow,proto3" json:"workflow,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -7569,6 +7570,13 @@ func (x *ProjectManagementProjectEntity) GetUpdatedAt() string {
 		return x.UpdatedAt
 	}
 	return ""
+}
+
+func (x *ProjectManagementProjectEntity) GetWorkflow() *ProjectManagementWorkflowEntity {
+	if x != nil {
+		return x.Workflow
+	}
+	return nil
 }
 
 type ProjectManagementMemberEntity struct {
@@ -9065,7 +9073,7 @@ const file_proto_entity_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\a \x01(\tR\tupdatedAt\x12\x1d\n" +
 	"\n" +
-	"sort_order\x18\b \x01(\x03R\tsortOrder\"\xb9\x02\n" +
+	"sort_order\x18\b \x01(\x03R\tsortOrder\"\xfd\x02\n" +
 	"\x1eProjectManagementProjectEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tentity_id\x18\x02 \x01(\x03R\bentityId\x12\x12\n" +
@@ -9081,7 +9089,8 @@ const file_proto_entity_proto_rawDesc = "" +
 	"created_at\x18\t \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
 	"updated_at\x18\n" +
-	" \x01(\tR\tupdatedAt\"\x85\x02\n" +
+	" \x01(\tR\tupdatedAt\x12B\n" +
+	"\bworkflow\x18\v \x01(\v2&.proto.ProjectManagementWorkflowEntityR\bworkflow\"\x85\x02\n" +
 	"\x1dProjectManagementMemberEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -9318,14 +9327,15 @@ var file_proto_entity_proto_depIdxs = []int32{
 	57, // 73: proto.ProjectManagementWorkflowStageEntity.transitions:type_name -> proto.ProjectManagementWorkflowTransitionEntity
 	56, // 74: proto.ProjectManagementWorkflowTransitionEntity.from_stage:type_name -> proto.ProjectManagementWorkflowStageEntity
 	56, // 75: proto.ProjectManagementWorkflowTransitionEntity.to_stage:type_name -> proto.ProjectManagementWorkflowStageEntity
-	61, // 76: proto.ProjectManagementTaskEntity.task_type:type_name -> proto.ProjectManagementTaskTypeSnapshotEntity
-	62, // 77: proto.ProjectManagementTaskEntity.assignees:type_name -> proto.ProjectManagementTaskAssigneeEntity
-	18, // 78: proto.TemplateVariableEntity.PropertiesEntry.value:type_name -> proto.TemplateVariableEntity
-	79, // [79:79] is the sub-list for method output_type
-	79, // [79:79] is the sub-list for method input_type
-	79, // [79:79] is the sub-list for extension type_name
-	79, // [79:79] is the sub-list for extension extendee
-	0,  // [0:79] is the sub-list for field type_name
+	55, // 76: proto.ProjectManagementProjectEntity.workflow:type_name -> proto.ProjectManagementWorkflowEntity
+	61, // 77: proto.ProjectManagementTaskEntity.task_type:type_name -> proto.ProjectManagementTaskTypeSnapshotEntity
+	62, // 78: proto.ProjectManagementTaskEntity.assignees:type_name -> proto.ProjectManagementTaskAssigneeEntity
+	18, // 79: proto.TemplateVariableEntity.PropertiesEntry.value:type_name -> proto.TemplateVariableEntity
+	80, // [80:80] is the sub-list for method output_type
+	80, // [80:80] is the sub-list for method input_type
+	80, // [80:80] is the sub-list for extension type_name
+	80, // [80:80] is the sub-list for extension extendee
+	0,  // [0:80] is the sub-list for field type_name
 }
 
 func init() { file_proto_entity_proto_init() }

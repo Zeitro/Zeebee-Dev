@@ -6,6 +6,8 @@ type ProjectManagementMemberRole string
 type ProjectManagementDependencyType string
 type ProjectManagementDependencyRule string
 
+type ProjectManagementProjectEntityType string
+
 const (
 	ProjectManagementWorkflowKindOrganizationTemplate ProjectManagementWorkflowKind = "OrganizationTemplate"
 	ProjectManagementWorkflowKindProject              ProjectManagementWorkflowKind = "Project"
@@ -27,7 +29,7 @@ const (
 	ProjectManagementDependencyRuleSS ProjectManagementDependencyRule = "SS"
 	ProjectManagementDependencyRuleSF ProjectManagementDependencyRule = "SF"
 
-	ProjectManagementEntityTypeProperty = "Property"
+	ProjectManagementEntityTypeBorrowerProperty ProjectManagementProjectEntityType = "BorrowerProperty"
 
 	OperationEntityTypeProjectManagementOrganization OperationEntityType = "ProjectManagementOrganization"
 	OperationEntityTypeProjectManagementProject      OperationEntityType = "ProjectManagementProject"

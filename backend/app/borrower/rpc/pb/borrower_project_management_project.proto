@@ -62,7 +62,6 @@ message ProjectManagementProjectDeleteRequest {
 }
 message ProjectManagementProjectDeleteRequestData {
   int64 id = 1;
-  bool confirm = 2;
 }
 
 message ProjectManagementProjectOwnerTransferRequest {

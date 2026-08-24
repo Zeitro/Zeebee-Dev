@@ -66,7 +66,7 @@ func (l *ProjectManagementMemberLogic) Candidate(ctx context.Context, claim util
 }
 
 func (l *ProjectManagementProjectLogic) RequirePropertyDeletable(ctx context.Context, propertyId int64) error {
-	blocked, err := l.repos.ProjectManagementProjectRepo.HasUnfinishedTasksForEntity(ctx, propertyId, constants.ProjectManagementEntityTypeProperty)
+	blocked, err := l.repos.ProjectManagementProjectRepo.HasUnfinishedTasksForEntity(ctx, propertyId, constants.ProjectManagementEntityTypeBorrowerProperty)
 	if err != nil {
 		return err
 	}
@@ -92,21 +92,36 @@ func (l *ProjectManagementProjectLogic) Create(ctx context.Context, claim utils.
 	if err = validateProjectManagementProjectCreate(input); err != nil {
 		return nil, err
 	}
+	// Validate entity
+	if input.EntityType == constants.ProjectManagementEntityTypeBorrowerProperty && input.EntityId > 0 {
+		exists, err := l.repos.BorrowerPropertyRepo.IsExistedByColumns(ctx, map[string]any{"id": input.EntityId, "organization_id": claim.OrganizationId})
+		if err != nil {
+			return nil, err
+		}
+		if !exists {
+			return nil, errorx.New("property not found")
+		}
+	}
 	project, err = copierx.Trans[dto.ProjectManagementProjectDto, model.ProjectManagementProject](&input.ProjectManagementProjectDto)
 	if err != nil {
 		return nil, err
 	}
 	project.OrganizationId, project.OwnerId, project.OwnerName = claim.OrganizationId, claim.OrganizationUserId, claim.Username
 	err = l.repos.ProjectManagementProjectRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		project, err = l.repos.ProjectManagementProjectRepo.CreateWithTx(ctx, tx, project, false)
-		if err != nil {
-			return err
+		var innerErr error
+		project, innerErr = l.repos.ProjectManagementProjectRepo.CreateWithTx(ctx, tx, project, false)
+		if innerErr != nil {
+			return innerErr
 		}
-		if err = l.repos.ProjectManagementProjectRepo.CreateMemberWithTx(ctx, tx, &model.ProjectManagementProjectMember{ProjectId: project.Id, OrganizationUserId: claim.OrganizationUserId, Role: constants.ProjectManagementMemberRoleProjectOwner}); err != nil {
-			return err
+		if innerErr = l.repos.ProjectManagementProjectRepo.CreateMemberWithTx(ctx, tx, &model.ProjectManagementProjectMember{
+			ProjectId:          project.Id,
+			OrganizationUserId: claim.OrganizationUserId,
+			Role:               constants.ProjectManagementMemberRoleProjectOwner,
+		}); innerErr != nil {
+			return innerErr
 		}
-		if err = l.repos.ProjectManagementWorkflowRepo.CloneTemplateToProjectWithTx(ctx, tx, input.WorkflowTemplateId, claim.OrganizationId, project.Id); err != nil {
-			return projectManagementNotFound(err, "workflow template not found")
+		if innerErr = l.repos.ProjectManagementWorkflowRepo.CloneTemplateToProjectWithTx(ctx, tx, input.WorkflowTemplateId, claim.OrganizationId, project.Id); innerErr != nil {
+			return projectManagementNotFound(innerErr, "workflow template not found")
 		}
 		return l.recordOperation(ctx, tx, projectManagementProjectOperation{claim: claim, projectId: project.Id, action: constants.OperationActionProjectManagementProjectCreate})
 	})
@@ -127,19 +142,22 @@ func (l *ProjectManagementProjectLogic) Update(ctx context.Context, claim utils.
 	if err = copierx.Assign(&input, project); err != nil {
 		return nil, err
 	}
-	if err = l.repos.ProjectManagementProjectRepo.UpdateByOrganization(ctx, projectId, claim.OrganizationId, &model.ProjectManagementProject{Name: project.Name, Description: project.Description, CoverUrl: project.CoverUrl}); err != nil {
-		return nil, err
-	}
+	project.RemoveRelationships()
+
 	err = l.repos.ProjectManagementProjectRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		return l.recordOperation(ctx, tx, projectManagementProjectOperation{claim: claim, projectId: projectId, action: constants.OperationActionProjectManagementProjectUpdate})
+		if _, innerErr := l.repos.ProjectManagementProjectRepo.UpdateOneByIdWithTx(ctx, tx, project.Id, project); innerErr != nil {
+			return innerErr
+		}
+		return l.recordOperation(ctx, tx, projectManagementProjectOperation{
+			claim:     claim,
+			projectId: projectId,
+			action:    constants.OperationActionProjectManagementProjectUpdate,
+		})
 	})
 	return project, err
 }
 
-func (l *ProjectManagementProjectLogic) Delete(ctx context.Context, claim utils.JwtUser, projectId int64, confirm bool) error {
-	if err := validateProjectManagementProjectDelete(confirm); err != nil {
-		return err
-	}
+func (l *ProjectManagementProjectLogic) Delete(ctx context.Context, claim utils.JwtUser, projectId int64) error {
 	return l.repos.ProjectManagementProjectRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		if _, err := l.projectManagementAccess().requireProjectManagerWithTx(ctx, tx, claim, projectId); err != nil {
 			return err
@@ -174,13 +192,6 @@ func validateProjectManagementProjectCreate(input dto.ProjectManagementProjectCr
 func validateProjectManagementProjectUpdate(input dto.ProjectManagementProjectUpdateDto) error {
 	if strings.TrimSpace(input.Name) == "" {
 		return errorx.New("project name is required")
-	}
-	return nil
-}
-
-func validateProjectManagementProjectDelete(confirm bool) error {
-	if !confirm {
-		return errorx.New("project deletion requires confirmation")
 	}
 	return nil
 }

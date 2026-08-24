@@ -1880,16 +1880,11 @@ type ProjectManagementMyTaskPageRequest struct {
 
 type ProjectManagementProjectCreateRequest struct {
 	EntityId           int64  `json:"entity_id,optional"`
-	EntityType         string `json:"entity_type,optional"`
+	EntityType         string `json:"entity_type,optional,options=BorrowerProperty|" validate:"omitempty,oneof=BorrowerProperty"`
 	Name               string `json:"name" validate:"required,max=100"`
 	Description        string `json:"description,optional" validate:"max=500"`
-	CoverUrl           string `json:"cover_url,optional" validate:"max=255"`
+	CoverUrl           string `json:"cover_url,optional" validate:"omitempty,uri"`
 	WorkflowTemplateId int64  `json:"workflow_template_id" validate:"required,gt=0"`
-}
-
-type ProjectManagementProjectDeleteRequest struct {
-	Id      int64 `path:"id" validate:"required,gt=0"`
-	Confirm bool  `json:"confirm" validate:"required"`
 }
 
 type ProjectManagementProjectDetailResponse struct {
@@ -1897,16 +1892,17 @@ type ProjectManagementProjectDetailResponse struct {
 }
 
 type ProjectManagementProjectEntity struct {
-	Id          int64  `json:"id"`
-	EntityId    int64  `json:"entity_id"`
-	EntityType  string `json:"entity_type"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	CoverUrl    string `json:"cover_url"`
-	OwnerId     int64  `json:"owner_id"`
-	OwnerName   string `json:"owner_name"`
-	CreatedAt   string `json:"created_at"`
-	UpdatedAt   string `json:"updated_at"`
+	Id          int64                            `json:"id"`
+	EntityId    int64                            `json:"entity_id"`
+	EntityType  string                           `json:"entity_type"`
+	Name        string                           `json:"name"`
+	Description string                           `json:"description"`
+	CoverUrl    string                           `json:"cover_url"`
+	OwnerId     int64                            `json:"owner_id"`
+	OwnerName   string                           `json:"owner_name"`
+	Workflow    *ProjectManagementWorkflowEntity `json:"workflow"`
+	CreatedAt   string                           `json:"created_at"`
+	UpdatedAt   string                           `json:"updated_at"`
 }
 
 type ProjectManagementProjectOwnerTransferRequest struct {
@@ -1938,7 +1934,7 @@ type ProjectManagementProjectUpdateRequest struct {
 	Id          int64  `path:"id" validate:"required,gt=0"`
 	Name        string `json:"name" validate:"required,max=100"`
 	Description string `json:"description,optional" validate:"max=500"`
-	CoverUrl    string `json:"cover_url,optional" validate:"max=255"`
+	CoverUrl    string `json:"cover_url,optional" validate:"omitempty,uri"`
 }
 
 type ProjectManagementProjectWorkflowUpdateRequest struct {

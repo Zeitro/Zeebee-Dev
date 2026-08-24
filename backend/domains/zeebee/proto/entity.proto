@@ -889,6 +889,7 @@ message ProjectManagementProjectEntity {
   string owner_name = 8;
   string created_at = 9;
   string updated_at = 10;
+  ProjectManagementWorkflowEntity workflow = 11;
 }
 
 message ProjectManagementMemberEntity {

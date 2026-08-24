@@ -637,7 +637,6 @@ func (x *ProjectManagementProjectDeleteRequest) GetData() *ProjectManagementProj
 type ProjectManagementProjectDeleteRequestData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Confirm       bool                   `protobuf:"varint,2,opt,name=confirm,proto3" json:"confirm,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -677,13 +676,6 @@ func (x *ProjectManagementProjectDeleteRequestData) GetId() int64 {
 		return x.Id
 	}
 	return 0
-}
-
-func (x *ProjectManagementProjectDeleteRequestData) GetConfirm() bool {
-	if x != nil {
-		return x.Confirm
-	}
-	return false
 }
 
 type ProjectManagementProjectOwnerTransferRequest struct {
@@ -827,10 +819,9 @@ const file_borrower_project_management_project_proto_rawDesc = "" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x1b\n" +
 	"\tcover_url\x18\x04 \x01(\tR\bcoverUrl\"p\n" +
 	"%ProjectManagementProjectDeleteRequest\x12G\n" +
-	"\x04data\x18\x01 \x01(\v23.borrower.ProjectManagementProjectDeleteRequestDataR\x04data\"U\n" +
+	"\x04data\x18\x01 \x01(\v23.borrower.ProjectManagementProjectDeleteRequestDataR\x04data\";\n" +
 	")ProjectManagementProjectDeleteRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x18\n" +
-	"\aconfirm\x18\x02 \x01(\bR\aconfirm\"~\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"~\n" +
 	",ProjectManagementProjectOwnerTransferRequest\x12N\n" +
 	"\x04data\x18\x01 \x01(\v2:.borrower.ProjectManagementProjectOwnerTransferRequestDataR\x04data\"n\n" +
 	"0ProjectManagementProjectOwnerTransferRequestData\x12\x1d\n" +

@@ -33,16 +33,18 @@ func (l *CreateLogic) Create(in *borrower.ProjectManagementProjectCreateRequest)
 		err = errorx.New("request data is nil")
 		return
 	}
-	claimValue, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	claim := claimValue
 	projectData, err := copierx.Trans[borrower.ProjectManagementProjectCreateRequestData, dto.ProjectManagementProjectDto](in.Data)
 	if err != nil {
 		return nil, err
 	}
-	project, err := l.baseLogic.ProjectManagementProjectLogic.Create(l.ctx, claim, dto.ProjectManagementProjectCreateDto{ProjectManagementProjectDto: *projectData, WorkflowTemplateId: in.Data.WorkflowTemplateId})
+	project, err := l.baseLogic.ProjectManagementProjectLogic.Create(l.ctx, claim, dto.ProjectManagementProjectCreateDto{
+		ProjectManagementProjectDto: *projectData,
+		WorkflowTemplateId:          in.Data.WorkflowTemplateId,
+	})
 	if err != nil {
 		return nil, err
 	}

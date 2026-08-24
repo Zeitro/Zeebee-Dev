@@ -69,6 +69,7 @@ type (
         CoverUrl string `json:"cover_url"`
         OwnerId int64 `json:"owner_id"`
         OwnerName string `json:"owner_name"`
+        Workflow *ProjectManagementWorkflowEntity `json:"workflow"`
         CreatedAt string `json:"created_at"`
         UpdatedAt string `json:"updated_at"`
     }
