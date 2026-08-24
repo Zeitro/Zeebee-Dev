@@ -20,11 +20,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ProjectManagementProjectMember_Page_FullMethodName      = "/borrower.ProjectManagementProjectMember/Page"
-	ProjectManagementProjectMember_Candidate_FullMethodName = "/borrower.ProjectManagementProjectMember/Candidate"
-	ProjectManagementProjectMember_Add_FullMethodName       = "/borrower.ProjectManagementProjectMember/Add"
-	ProjectManagementProjectMember_Update_FullMethodName    = "/borrower.ProjectManagementProjectMember/Update"
-	ProjectManagementProjectMember_Delete_FullMethodName    = "/borrower.ProjectManagementProjectMember/Delete"
+	ProjectManagementProjectMember_Page_FullMethodName       = "/borrower.ProjectManagementProjectMember/Page"
+	ProjectManagementProjectMember_Candidate_FullMethodName  = "/borrower.ProjectManagementProjectMember/Candidate"
+	ProjectManagementProjectMember_Detail_FullMethodName     = "/borrower.ProjectManagementProjectMember/Detail"
+	ProjectManagementProjectMember_Add_FullMethodName        = "/borrower.ProjectManagementProjectMember/Add"
+	ProjectManagementProjectMember_UpdateRole_FullMethodName = "/borrower.ProjectManagementProjectMember/UpdateRole"
+	ProjectManagementProjectMember_Delete_FullMethodName     = "/borrower.ProjectManagementProjectMember/Delete"
 )
 
 // ProjectManagementProjectMemberClient is the client API for ProjectManagementProjectMember service.
@@ -33,8 +34,9 @@ const (
 type ProjectManagementProjectMemberClient interface {
 	Page(ctx context.Context, in *ProjectManagementMemberPageRequest, opts ...grpc.CallOption) (*ProjectManagementMemberPageResponse, error)
 	Candidate(ctx context.Context, in *ProjectManagementMemberCandidateRequest, opts ...grpc.CallOption) (*ProjectManagementMemberCandidateResponse, error)
+	Detail(ctx context.Context, in *ProjectManagementMemberDetailRequest, opts ...grpc.CallOption) (*ProjectManagementMemberDetailResponse, error)
 	Add(ctx context.Context, in *ProjectManagementMemberAddRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
-	Update(ctx context.Context, in *ProjectManagementMemberUpdateRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
+	UpdateRole(ctx context.Context, in *ProjectManagementMemberRoleUpdateRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 	Delete(ctx context.Context, in *ProjectManagementMemberDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 }
 
@@ -66,6 +68,16 @@ func (c *projectManagementProjectMemberClient) Candidate(ctx context.Context, in
 	return out, nil
 }
 
+func (c *projectManagementProjectMemberClient) Detail(ctx context.Context, in *ProjectManagementMemberDetailRequest, opts ...grpc.CallOption) (*ProjectManagementMemberDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ProjectManagementMemberDetailResponse)
+	err := c.cc.Invoke(ctx, ProjectManagementProjectMember_Detail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *projectManagementProjectMemberClient) Add(ctx context.Context, in *ProjectManagementMemberAddRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(proto.EmptyResponse)
@@ -76,10 +88,10 @@ func (c *projectManagementProjectMemberClient) Add(ctx context.Context, in *Proj
 	return out, nil
 }
 
-func (c *projectManagementProjectMemberClient) Update(ctx context.Context, in *ProjectManagementMemberUpdateRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
+func (c *projectManagementProjectMemberClient) UpdateRole(ctx context.Context, in *ProjectManagementMemberRoleUpdateRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(proto.EmptyResponse)
-	err := c.cc.Invoke(ctx, ProjectManagementProjectMember_Update_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ProjectManagementProjectMember_UpdateRole_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -102,8 +114,9 @@ func (c *projectManagementProjectMemberClient) Delete(ctx context.Context, in *P
 type ProjectManagementProjectMemberServer interface {
 	Page(context.Context, *ProjectManagementMemberPageRequest) (*ProjectManagementMemberPageResponse, error)
 	Candidate(context.Context, *ProjectManagementMemberCandidateRequest) (*ProjectManagementMemberCandidateResponse, error)
+	Detail(context.Context, *ProjectManagementMemberDetailRequest) (*ProjectManagementMemberDetailResponse, error)
 	Add(context.Context, *ProjectManagementMemberAddRequest) (*proto.EmptyResponse, error)
-	Update(context.Context, *ProjectManagementMemberUpdateRequest) (*proto.EmptyResponse, error)
+	UpdateRole(context.Context, *ProjectManagementMemberRoleUpdateRequest) (*proto.EmptyResponse, error)
 	Delete(context.Context, *ProjectManagementMemberDeleteRequest) (*proto.EmptyResponse, error)
 	mustEmbedUnimplementedProjectManagementProjectMemberServer()
 }
@@ -121,11 +134,14 @@ func (UnimplementedProjectManagementProjectMemberServer) Page(context.Context, *
 func (UnimplementedProjectManagementProjectMemberServer) Candidate(context.Context, *ProjectManagementMemberCandidateRequest) (*ProjectManagementMemberCandidateResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Candidate not implemented")
 }
+func (UnimplementedProjectManagementProjectMemberServer) Detail(context.Context, *ProjectManagementMemberDetailRequest) (*ProjectManagementMemberDetailResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Detail not implemented")
+}
 func (UnimplementedProjectManagementProjectMemberServer) Add(context.Context, *ProjectManagementMemberAddRequest) (*proto.EmptyResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Add not implemented")
 }
-func (UnimplementedProjectManagementProjectMemberServer) Update(context.Context, *ProjectManagementMemberUpdateRequest) (*proto.EmptyResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method Update not implemented")
+func (UnimplementedProjectManagementProjectMemberServer) UpdateRole(context.Context, *ProjectManagementMemberRoleUpdateRequest) (*proto.EmptyResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateRole not implemented")
 }
 func (UnimplementedProjectManagementProjectMemberServer) Delete(context.Context, *ProjectManagementMemberDeleteRequest) (*proto.EmptyResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
@@ -188,6 +204,24 @@ func _ProjectManagementProjectMember_Candidate_Handler(srv interface{}, ctx cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProjectManagementProjectMember_Detail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ProjectManagementMemberDetailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectManagementProjectMemberServer).Detail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProjectManagementProjectMember_Detail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectManagementProjectMemberServer).Detail(ctx, req.(*ProjectManagementMemberDetailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ProjectManagementProjectMember_Add_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ProjectManagementMemberAddRequest)
 	if err := dec(in); err != nil {
@@ -206,20 +240,20 @@ func _ProjectManagementProjectMember_Add_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ProjectManagementProjectMember_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ProjectManagementMemberUpdateRequest)
+func _ProjectManagementProjectMember_UpdateRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ProjectManagementMemberRoleUpdateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProjectManagementProjectMemberServer).Update(ctx, in)
+		return srv.(ProjectManagementProjectMemberServer).UpdateRole(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ProjectManagementProjectMember_Update_FullMethodName,
+		FullMethod: ProjectManagementProjectMember_UpdateRole_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectManagementProjectMemberServer).Update(ctx, req.(*ProjectManagementMemberUpdateRequest))
+		return srv.(ProjectManagementProjectMemberServer).UpdateRole(ctx, req.(*ProjectManagementMemberRoleUpdateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -258,12 +292,16 @@ var ProjectManagementProjectMember_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ProjectManagementProjectMember_Candidate_Handler,
 		},
 		{
+			MethodName: "Detail",
+			Handler:    _ProjectManagementProjectMember_Detail_Handler,
+		},
+		{
 			MethodName: "Add",
 			Handler:    _ProjectManagementProjectMember_Add_Handler,
 		},
 		{
-			MethodName: "Update",
-			Handler:    _ProjectManagementProjectMember_Update_Handler,
+			MethodName: "UpdateRole",
+			Handler:    _ProjectManagementProjectMember_UpdateRole_Handler,
 		},
 		{
 			MethodName: "Delete",

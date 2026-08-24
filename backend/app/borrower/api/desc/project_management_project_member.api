@@ -16,14 +16,14 @@ type (
         Role               string `json:"role" validate:"required,oneof=ProjectAdmin TaskExecutor"`
     }
     ProjectManagementMemberPageFilter {
-        Keyword string `json:"keyword,optional"`
-        Role    string `json:"role,optional" validate:"omitempty,oneof=ProjectOwner ProjectAdmin TaskExecutor"`
+        ProjectId int64  `json:"project_id" validate:"required,gt=0"`
+        Keyword   string `json:"keyword,optional"`
+        Role      string `json:"role,optional" validate:"omitempty,oneof=ProjectOwner ProjectAdmin TaskExecutor"`
     }
     ProjectManagementMemberPageRequest {
-        ProjectId int64                             `json:"project_id" validate:"required,gt=0"`
-        Page      int64                             `json:"page,default=1"`
-        Limit     int64                             `json:"limit,default=20"`
-        Filter    ProjectManagementMemberPageFilter `json:"filter,optional"`
+        Page   int64                             `json:"page,default=1"`
+        Limit  int64                             `json:"limit,default=20"`
+        Filter ProjectManagementMemberPageFilter `json:"filter" validate:"required"`
     }
     ProjectManagementMemberPageResponse {
         Page      int64                            `json:"page"`
@@ -37,19 +37,29 @@ type (
         Keyword   string `form:"keyword,optional"`
         NeedAll   bool   `form:"need_all,optional"`
     }
+    ProjectManagementMemberCandidateEntity {
+        OrganizationUserId int64  `json:"organization_user_id"`
+        FullName           string `json:"full_name"`
+        Email              string `json:"email"`
+    }
     ProjectManagementMemberCandidateResponse {
-        Lists []*ProjectManagementMemberEntity `json:"lists"`
+        Lists []*ProjectManagementMemberCandidateEntity `json:"lists"`
+    }
+    ProjectManagementMemberDetailRequest {
+        Id        int64 `path:"id" validate:"required,gt=0"`
+        ProjectId int64 `form:"project_id" validate:"required,gt=0"`
+    }
+    ProjectManagementMemberDetailResponse {
+        ProjectManagementMemberEntity
     }
     ProjectManagementMemberAddRequest {
         ProjectId int64                           `json:"project_id" validate:"required,gt=0"`
         Members   []*ProjectManagementMemberInput `json:"members" validate:"required,min=1,dive"`
     }
-    ProjectManagementMemberUpdateRequest {
+    ProjectManagementMemberRoleUpdateRequest {
         Id        int64  `path:"id" validate:"required,gt=0"`
         ProjectId int64  `json:"project_id" validate:"required,gt=0"`
-        //        UserId                int64  `path:"user_id" validate:"required,gt=0"`
-        Role      string `json:"role,optional" validate:"omitempty,oneof=ProjectAdmin TaskExecutor"`
-        //        TransferOwnerToUserId int64  `json:"transfer_owner_to_user_id,optional"`
+        Role      string `json:"role" validate:"required,oneof=ProjectAdmin TaskExecutor"`
     }
     ProjectManagementMemberDeleteRequest {
         Id        int64 `path:"id" validate:"required,gt=0"`
@@ -75,13 +85,17 @@ service borrower-api {
     @handler Candidate
     get /project_management/project_member/candidate (ProjectManagementMemberCandidateRequest) returns (ProjectManagementMemberCandidateResponse)
 
+    @doc "detail"
+    @handler Detail
+    get /project_management/project_member/:id (ProjectManagementMemberDetailRequest) returns (ProjectManagementMemberDetailResponse)
+
     @doc "add member"
     @handler Add
     post /project_management/project_member (ProjectManagementMemberAddRequest) returns (EmptyResponse)
 
-    @doc "update"
-    @handler Update
-    put /project_management/project_member/:id (ProjectManagementMemberUpdateRequest) returns (EmptyResponse)
+    @doc "update role"
+    @handler RoleUpdate
+    put /project_management/project_member/:id/role (ProjectManagementMemberRoleUpdateRequest) returns (EmptyResponse)
 
     @doc "delete"
     @handler Delete

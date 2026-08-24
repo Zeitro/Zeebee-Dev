@@ -16,14 +16,14 @@ message ProjectManagementMemberPageRequest {
   ProjectManagementMemberPageRequestData data = 1;
 }
 message ProjectManagementMemberPageRequestData {
-  int64 project_id = 1;
-  int64 page = 2;
-  int64 limit = 3;
-  ProjectManagementMemberPageRequestFilter filter = 4;
+  int64 page = 1;
+  int64 limit = 2;
+  ProjectManagementMemberPageRequestFilter filter = 3;
 }
 message ProjectManagementMemberPageRequestFilter {
-  string keyword = 1;
-  string role = 2;
+  int64 project_id = 1;
+  string keyword = 2;
+  string role = 3;
 }
 message ProjectManagementMemberPageResponse {
   ProjectManagementMemberPageResponseData data = 1;
@@ -44,8 +44,24 @@ message ProjectManagementMemberCandidateRequestData {
   string keyword = 2;
   bool need_all = 3;
 }
+message ProjectManagementMemberCandidateEntity {
+  int64 organization_user_id = 1;
+  string full_name = 2;
+  string email = 3;
+}
 message ProjectManagementMemberCandidateResponse {
-  repeated proto.ProjectManagementMemberEntity data = 1;
+  repeated ProjectManagementMemberCandidateEntity data = 1;
+}
+
+message ProjectManagementMemberDetailRequest {
+  ProjectManagementMemberDetailRequestData data = 1;
+}
+message ProjectManagementMemberDetailRequestData {
+  int64 id = 1;
+  int64 project_id = 2;
+}
+message ProjectManagementMemberDetailResponse {
+  proto.ProjectManagementMemberEntity data = 1;
 }
 
 message ProjectManagementMemberAddRequest {
@@ -56,10 +72,10 @@ message ProjectManagementMemberAddRequestData {
   repeated ProjectManagementMemberInput members = 2;
 }
 
-message ProjectManagementMemberUpdateRequest {
-  ProjectManagementMemberUpdateRequestData data = 1;
+message ProjectManagementMemberRoleUpdateRequest {
+  ProjectManagementMemberRoleUpdateRequestData data = 1;
 }
-message ProjectManagementMemberUpdateRequestData {
+message ProjectManagementMemberRoleUpdateRequestData {
   int64 project_id = 1;
   int64 member_id = 2;
   string role = 3;
@@ -76,7 +92,8 @@ message ProjectManagementMemberDeleteRequestData {
 service ProjectManagementProjectMember {
   rpc Page(ProjectManagementMemberPageRequest) returns(ProjectManagementMemberPageResponse);
   rpc Candidate(ProjectManagementMemberCandidateRequest) returns(ProjectManagementMemberCandidateResponse);
+  rpc Detail(ProjectManagementMemberDetailRequest) returns(ProjectManagementMemberDetailResponse);
   rpc Add(ProjectManagementMemberAddRequest) returns(proto.EmptyResponse);
-  rpc Update(ProjectManagementMemberUpdateRequest) returns(proto.EmptyResponse);
+  rpc UpdateRole(ProjectManagementMemberRoleUpdateRequest) returns(proto.EmptyResponse);
   rpc Delete(ProjectManagementMemberDeleteRequest) returns(proto.EmptyResponse);
 }

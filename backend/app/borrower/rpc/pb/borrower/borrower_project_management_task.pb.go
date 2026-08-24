@@ -1107,6 +1107,7 @@ type ProjectManagementTaskAssigneeUpdateRequestData struct {
 	TaskId        int64                  `protobuf:"varint,1,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
 	AssigneeIds   []int64                `protobuf:"varint,2,rep,packed,name=assignee_ids,json=assigneeIds,proto3" json:"assignee_ids,omitempty"`
 	ProjectId     int64                  `protobuf:"varint,3,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	StageId       int64                  `protobuf:"varint,4,opt,name=stage_id,json=stageId,proto3" json:"stage_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1158,6 +1159,13 @@ func (x *ProjectManagementTaskAssigneeUpdateRequestData) GetAssigneeIds() []int6
 func (x *ProjectManagementTaskAssigneeUpdateRequestData) GetProjectId() int64 {
 	if x != nil {
 		return x.ProjectId
+	}
+	return 0
+}
+
+func (x *ProjectManagementTaskAssigneeUpdateRequestData) GetStageId() int64 {
+	if x != nil {
+		return x.StageId
 	}
 	return 0
 }
@@ -1859,12 +1867,13 @@ const file_borrower_project_management_task_proto_rawDesc = "" +
 	"\n" +
 	"\b_overdue\"z\n" +
 	"*ProjectManagementTaskAssigneeUpdateRequest\x12L\n" +
-	"\x04data\x18\x01 \x01(\v28.borrower.ProjectManagementTaskAssigneeUpdateRequestDataR\x04data\"\x8b\x01\n" +
+	"\x04data\x18\x01 \x01(\v28.borrower.ProjectManagementTaskAssigneeUpdateRequestDataR\x04data\"\xa6\x01\n" +
 	".ProjectManagementTaskAssigneeUpdateRequestData\x12\x17\n" +
 	"\atask_id\x18\x01 \x01(\x03R\x06taskId\x12!\n" +
 	"\fassignee_ids\x18\x02 \x03(\x03R\vassigneeIds\x12\x1d\n" +
 	"\n" +
-	"project_id\x18\x03 \x01(\x03R\tprojectId\"r\n" +
+	"project_id\x18\x03 \x01(\x03R\tprojectId\x12\x19\n" +
+	"\bstage_id\x18\x04 \x01(\x03R\astageId\"r\n" +
 	"&ProjectManagementAttachmentPageRequest\x12H\n" +
 	"\x04data\x18\x01 \x01(\v24.borrower.ProjectManagementAttachmentPageRequestDataR\x04data\"\x8e\x01\n" +
 	"*ProjectManagementAttachmentPageRequestData\x12\x17\n" +

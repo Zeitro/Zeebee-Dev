@@ -12,6 +12,7 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/repo"
 )
 
 type ProjectManagementMemberLogic struct{ *BaseLogic }
@@ -31,18 +32,18 @@ func (l *ProjectManagementMemberLogic) AddOne(ctx context.Context, claim utils.J
 	return l.Add(ctx, claim, []dto.ProjectManagementMemberDto{input})
 }
 
-func (l *ProjectManagementMemberLogic) Detail(ctx context.Context, claim utils.JwtUser, projectId, memberId int64) (*model.ProjectManagementProjectMember, error) {
+func (l *ProjectManagementMemberLogic) Detail(ctx context.Context, claim utils.JwtUser, projectId, memberId int64) (*dto.ProjectManagementMemberDetailDto, error) {
 	if _, err := l.projectManagementAccess().RequireProject(ctx, projectId, claim.OrganizationId); err != nil {
 		return nil, err
 	}
 	if _, err := l.projectManagementAccess().RequireMember(ctx, projectId, claim.OrganizationUserId); err != nil {
 		return nil, err
 	}
-	member, err := l.repos.ProjectManagementProjectRepo.FindMemberById(ctx, projectId, memberId)
+	member, err := l.repos.ProjectManagementProjectRepo.DetailMember(ctx, projectId, memberId)
 	if err != nil {
 		return nil, projectManagementNotFound(err, "project member not found")
 	}
-	return member, nil
+	return copierx.Trans[repo.ProjectManagementProjectMemberEntity, dto.ProjectManagementMemberDetailDto](member)
 }
 
 func (l *ProjectManagementMemberLogic) Add(ctx context.Context, claim utils.JwtUser, inputs []dto.ProjectManagementMemberDto) error {
@@ -169,6 +170,9 @@ func (l *ProjectManagementMemberLogic) Delete(ctx context.Context, claim utils.J
 		}
 		if member.Role == constants.ProjectManagementMemberRoleProjectOwner {
 			return errorx.New("transfer project owner before removing member")
+		}
+		if err = l.repos.ProjectManagementTaskRepo.DeleteUnfinishedAssigneesByProjectMemberWithTx(ctx, tx, projectId, member.OrganizationUserId); err != nil {
+			return err
 		}
 		if err = l.repos.ProjectManagementProjectRepo.DeleteMemberWithTx(ctx, tx, member); err != nil {
 			return err

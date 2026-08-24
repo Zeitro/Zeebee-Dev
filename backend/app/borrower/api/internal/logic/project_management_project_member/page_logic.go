@@ -32,7 +32,6 @@ func (l *PageLogic) Page(req *types.ProjectManagementMemberPageRequest) (resp *t
 	if err != nil {
 		return nil, err
 	}
-	data.ProjectId = req.ProjectId
 	rpcResp, err := l.svcCtx.ProjectManagementProjectMemberRpcClient.Page(l.ctx, &borrower.ProjectManagementMemberPageRequest{Data: data})
 	if err != nil {
 		return nil, errorx.WithStack(err)

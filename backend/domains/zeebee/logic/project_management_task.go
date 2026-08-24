@@ -23,6 +23,7 @@ type ProjectManagementTaskLogic struct{ *BaseLogic }
 type projectManagementTaskAssigneeInput struct {
 	projectId           int64
 	taskId              int64
+	stageId             int64
 	organizationId      int64
 	organizationUserIds []int64
 }
@@ -94,7 +95,7 @@ func (l *ProjectManagementTaskLogic) Create(ctx context.Context, claim utils.Jwt
 		if err != nil {
 			return err
 		}
-		assignees, err := l.projectManagementTaskAssignees(ctx, tx, projectManagementTaskAssigneeInput{projectId: input.ProjectId, taskId: task.Id, organizationId: claim.OrganizationId, organizationUserIds: input.AssigneeIds})
+		assignees, err := l.projectManagementTaskAssignees(ctx, tx, projectManagementTaskAssigneeInput{projectId: input.ProjectId, taskId: task.Id, stageId: task.StageId, organizationId: claim.OrganizationId, organizationUserIds: input.AssigneeIds})
 		if err != nil {
 			return err
 		}
@@ -189,7 +190,7 @@ func (l *ProjectManagementTaskLogic) Update(ctx context.Context, claim utils.Jwt
 	return l.Detail(ctx, claim, task.Id)
 }
 
-func (l *ProjectManagementTaskLogic) UpdateAssignees(ctx context.Context, claim utils.JwtUser, taskId int64, organizationUserIds []int64) (*model.ProjectManagementTask, error) {
+func (l *ProjectManagementTaskLogic) UpdateAssignees(ctx context.Context, claim utils.JwtUser, taskId, stageId int64, organizationUserIds []int64) (*model.ProjectManagementTask, error) {
 	err := l.repos.ProjectManagementTaskRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		task, err := l.repos.ProjectManagementTaskRepo.LockWithTx(ctx, tx, taskId)
 		if err != nil {
@@ -201,11 +202,22 @@ func (l *ProjectManagementTaskLogic) UpdateAssignees(ctx context.Context, claim 
 		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.ProjectId, claim.OrganizationUserId); err != nil {
 			return projectManagementNotFound(err, "project member required")
 		}
-		assignees, err := l.projectManagementTaskAssignees(ctx, tx, projectManagementTaskAssigneeInput{projectId: task.ProjectId, taskId: task.Id, organizationId: claim.OrganizationId, organizationUserIds: organizationUserIds})
+		workflow, err := l.repos.ProjectManagementWorkflowRepo.FindProjectDefinitionWithTx(ctx, tx, task.ProjectId, claim.OrganizationId)
+		if err != nil {
+			return projectManagementNotFound(err, "project workflow not found")
+		}
+		stage, err := l.repos.ProjectManagementWorkflowRepo.FindStageWithTx(ctx, tx, stageId)
+		if err != nil {
+			return projectManagementNotFound(err, "workflow stage not found")
+		}
+		if stage.WorkflowId != workflow.Id {
+			return errorx.New("task assignee stage must belong to the project workflow")
+		}
+		assignees, err := l.projectManagementTaskAssignees(ctx, tx, projectManagementTaskAssigneeInput{projectId: task.ProjectId, taskId: task.Id, stageId: stageId, organizationId: claim.OrganizationId, organizationUserIds: organizationUserIds})
 		if err != nil {
 			return err
 		}
-		if err = l.repos.ProjectManagementTaskRepo.ReplaceAssigneesWithTx(ctx, tx, task.Id, assignees); err != nil {
+		if err = l.repos.ProjectManagementTaskRepo.ReplaceAssigneesWithTx(ctx, tx, task.Id, stageId, assignees); err != nil {
 			return err
 		}
 		return l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskAssignees})
@@ -277,7 +289,7 @@ func (l *ProjectManagementTaskLogic) projectManagementTaskAssignees(ctx context.
 		if organizationUser.Status != constants.OrganizationUserStatusActive {
 			return nil, errorx.New("task assignee must be an active organization member")
 		}
-		result = append(result, &model.ProjectManagementTaskAssignee{TaskId: input.taskId, OrganizationUserId: organizationUserId, OrganizationUserName: organizationUser.FullName})
+		result = append(result, &model.ProjectManagementTaskAssignee{TaskId: input.taskId, StageId: input.stageId, OrganizationUserId: organizationUserId, OrganizationUserName: organizationUser.FullName})
 	}
 	return result, nil
 }

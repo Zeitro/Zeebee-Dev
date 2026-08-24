@@ -71,7 +71,21 @@ func (r *ProjectManagementProjectRepo) PageMembers(ctx context.Context, projectI
 	return gormx.Page[*ProjectManagementProjectMemberEntity](query, gormx.PageRequest{Page: input.Page, Limit: input.Limit, CountColumn: fmt.Sprintf("%s.id", membersTable)})
 }
 
-func (r *ProjectManagementProjectRepo) CandidateMembers(ctx context.Context, organizationId, projectId int64, keyword string, needAll bool) ([]*ProjectManagementProjectMemberEntity, error) {
+func (r *ProjectManagementProjectRepo) DetailMember(ctx context.Context, projectId, memberId int64) (*ProjectManagementProjectMemberEntity, error) {
+	membersTable := model.ProjectManagementProjectMember{}.TableName()
+	organizationUsersTable := model.OrganizationUser{}.TableName()
+	usersTable := model.User{}.TableName()
+	member := new(ProjectManagementProjectMemberEntity)
+	err := r.Client(ctx).Table(membersTable).
+		Select(fmt.Sprintf("%s.id, %s.project_id, %s.organization_user_id, %s.role, %s.full_name, %s.email, %s.created_at, %s.updated_at", membersTable, membersTable, membersTable, membersTable, organizationUsersTable, usersTable, membersTable, membersTable)).
+		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.organization_user_id", organizationUsersTable, organizationUsersTable, membersTable)).
+		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.user_id", usersTable, usersTable, organizationUsersTable)).
+		Where(fmt.Sprintf("%s.id = ? AND %s.project_id = ?", membersTable, membersTable), memberId, projectId).
+		First(member).Error
+	return member, errorx.WithStack(err)
+}
+
+func (r *ProjectManagementProjectRepo) CandidateMembers(ctx context.Context, organizationId, projectId int64, keyword string, needAll bool) ([]*dto.ProjectManagementMemberCandidateEntityDto, error) {
 	membersTable := model.ProjectManagementProjectMember{}.TableName()
 	organizationUsersTable := model.OrganizationUser{}.TableName()
 	usersTable := model.User{}.TableName()
@@ -86,7 +100,7 @@ func (r *ProjectManagementProjectRepo) CandidateMembers(ctx context.Context, org
 	if keyword != "" {
 		query = query.Where(fmt.Sprintf("%s.full_name ILIKE ? OR %s.email ILIKE ?", organizationUsersTable, usersTable), "%"+keyword+"%", "%"+keyword+"%")
 	}
-	candidates := make([]*ProjectManagementProjectMemberEntity, 0)
+	candidates := make([]*dto.ProjectManagementMemberCandidateEntityDto, 0)
 	err := query.Find(&candidates).Error
 	return candidates, errorx.WithStack(err)
 }

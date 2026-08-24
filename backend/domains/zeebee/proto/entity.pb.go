@@ -7749,10 +7749,11 @@ func (x *ProjectManagementTaskTypeSnapshotEntity) GetColor() string {
 
 type ProjectManagementTaskAssigneeEntity struct {
 	state                protoimpl.MessageState `protogen:"open.v1"`
-	OrganizationUserId   int64                  `protobuf:"varint,1,opt,name=organization_user_id,json=organizationUserId,proto3" json:"organization_user_id,omitempty"`
-	OrganizationUserName string                 `protobuf:"bytes,2,opt,name=organization_user_name,json=organizationUserName,proto3" json:"organization_user_name,omitempty"`
-	CreatedAt            string                 `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt            string                 `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	StageId              int64                  `protobuf:"varint,1,opt,name=stage_id,json=stageId,proto3" json:"stage_id,omitempty"`
+	OrganizationUserId   int64                  `protobuf:"varint,2,opt,name=organization_user_id,json=organizationUserId,proto3" json:"organization_user_id,omitempty"`
+	OrganizationUserName string                 `protobuf:"bytes,3,opt,name=organization_user_name,json=organizationUserName,proto3" json:"organization_user_name,omitempty"`
+	CreatedAt            string                 `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt            string                 `protobuf:"bytes,5,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -7785,6 +7786,13 @@ func (x *ProjectManagementTaskAssigneeEntity) ProtoReflect() protoreflect.Messag
 // Deprecated: Use ProjectManagementTaskAssigneeEntity.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTaskAssigneeEntity) Descriptor() ([]byte, []int) {
 	return file_proto_entity_proto_rawDescGZIP(), []int{62}
+}
+
+func (x *ProjectManagementTaskAssigneeEntity) GetStageId() int64 {
+	if x != nil {
+		return x.StageId
+	}
+	return 0
 }
 
 func (x *ProjectManagementTaskAssigneeEntity) GetOrganizationUserId() int64 {
@@ -9107,14 +9115,15 @@ const file_proto_entity_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x14\n" +
-	"\x05color\x18\x04 \x01(\tR\x05color\"\xcb\x01\n" +
-	"#ProjectManagementTaskAssigneeEntity\x120\n" +
-	"\x14organization_user_id\x18\x01 \x01(\x03R\x12organizationUserId\x124\n" +
-	"\x16organization_user_name\x18\x02 \x01(\tR\x14organizationUserName\x12\x1d\n" +
+	"\x05color\x18\x04 \x01(\tR\x05color\"\xe6\x01\n" +
+	"#ProjectManagementTaskAssigneeEntity\x12\x19\n" +
+	"\bstage_id\x18\x01 \x01(\x03R\astageId\x120\n" +
+	"\x14organization_user_id\x18\x02 \x01(\x03R\x12organizationUserId\x124\n" +
+	"\x16organization_user_name\x18\x03 \x01(\tR\x14organizationUserName\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\x03 \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"created_at\x18\x04 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\x04 \x01(\tR\tupdatedAt\"\xed\x04\n" +
+	"updated_at\x18\x05 \x01(\tR\tupdatedAt\"\xed\x04\n" +
 	"\x1bProjectManagementTaskEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +

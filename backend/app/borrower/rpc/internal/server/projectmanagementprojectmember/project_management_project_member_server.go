@@ -34,14 +34,19 @@ func (s *ProjectManagementProjectMemberServer) Candidate(ctx context.Context, in
 	return l.Candidate(in)
 }
 
+func (s *ProjectManagementProjectMemberServer) Detail(ctx context.Context, in *borrower.ProjectManagementMemberDetailRequest) (*borrower.ProjectManagementMemberDetailResponse, error) {
+	l := projectmanagementprojectmemberlogic.NewDetailLogic(ctx, s.svcCtx)
+	return l.Detail(in)
+}
+
 func (s *ProjectManagementProjectMemberServer) Add(ctx context.Context, in *borrower.ProjectManagementMemberAddRequest) (*proto.EmptyResponse, error) {
 	l := projectmanagementprojectmemberlogic.NewAddLogic(ctx, s.svcCtx)
 	return l.Add(in)
 }
 
-func (s *ProjectManagementProjectMemberServer) Update(ctx context.Context, in *borrower.ProjectManagementMemberUpdateRequest) (*proto.EmptyResponse, error) {
-	l := projectmanagementprojectmemberlogic.NewUpdateLogic(ctx, s.svcCtx)
-	return l.Update(in)
+func (s *ProjectManagementProjectMemberServer) UpdateRole(ctx context.Context, in *borrower.ProjectManagementMemberRoleUpdateRequest) (*proto.EmptyResponse, error) {
+	l := projectmanagementprojectmemberlogic.NewUpdateRoleLogic(ctx, s.svcCtx)
+	return l.UpdateRole(in)
 }
 
 func (s *ProjectManagementProjectMemberServer) Delete(ctx context.Context, in *borrower.ProjectManagementMemberDeleteRequest) (*proto.EmptyResponse, error) {

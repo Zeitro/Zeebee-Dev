@@ -34,7 +34,7 @@ func (l *UpdateAssigneesLogic) UpdateAssignees(in *borrower.ProjectManagementTas
 	if _, err = base.ProjectManagementTaskLogic.DetailForProject(l.ctx, claim, in.Data.ProjectId, in.Data.TaskId); err != nil {
 		return nil, err
 	}
-	task, err := base.ProjectManagementTaskLogic.UpdateAssignees(l.ctx, claim, in.Data.TaskId, in.Data.AssigneeIds)
+	task, err := base.ProjectManagementTaskLogic.UpdateAssignees(l.ctx, claim, in.Data.TaskId, in.Data.StageId, in.Data.AssigneeIds)
 	if err != nil {
 		return nil, err
 	}

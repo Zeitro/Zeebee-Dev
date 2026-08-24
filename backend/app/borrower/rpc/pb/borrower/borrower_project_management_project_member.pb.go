@@ -120,10 +120,9 @@ func (x *ProjectManagementMemberPageRequest) GetData() *ProjectManagementMemberP
 
 type ProjectManagementMemberPageRequestData struct {
 	state         protoimpl.MessageState                    `protogen:"open.v1"`
-	ProjectId     int64                                     `protobuf:"varint,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
-	Page          int64                                     `protobuf:"varint,2,opt,name=page,proto3" json:"page,omitempty"`
-	Limit         int64                                     `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
-	Filter        *ProjectManagementMemberPageRequestFilter `protobuf:"bytes,4,opt,name=filter,proto3" json:"filter,omitempty"`
+	Page          int64                                     `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
+	Limit         int64                                     `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	Filter        *ProjectManagementMemberPageRequestFilter `protobuf:"bytes,3,opt,name=filter,proto3" json:"filter,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -158,13 +157,6 @@ func (*ProjectManagementMemberPageRequestData) Descriptor() ([]byte, []int) {
 	return file_borrower_project_management_project_member_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ProjectManagementMemberPageRequestData) GetProjectId() int64 {
-	if x != nil {
-		return x.ProjectId
-	}
-	return 0
-}
-
 func (x *ProjectManagementMemberPageRequestData) GetPage() int64 {
 	if x != nil {
 		return x.Page
@@ -188,8 +180,9 @@ func (x *ProjectManagementMemberPageRequestData) GetFilter() *ProjectManagementM
 
 type ProjectManagementMemberPageRequestFilter struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Keyword       string                 `protobuf:"bytes,1,opt,name=keyword,proto3" json:"keyword,omitempty"`
-	Role          string                 `protobuf:"bytes,2,opt,name=role,proto3" json:"role,omitempty"`
+	ProjectId     int64                  `protobuf:"varint,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	Keyword       string                 `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"`
+	Role          string                 `protobuf:"bytes,3,opt,name=role,proto3" json:"role,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -222,6 +215,13 @@ func (x *ProjectManagementMemberPageRequestFilter) ProtoReflect() protoreflect.M
 // Deprecated: Use ProjectManagementMemberPageRequestFilter.ProtoReflect.Descriptor instead.
 func (*ProjectManagementMemberPageRequestFilter) Descriptor() ([]byte, []int) {
 	return file_borrower_project_management_project_member_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *ProjectManagementMemberPageRequestFilter) GetProjectId() int64 {
+	if x != nil {
+		return x.ProjectId
+	}
+	return 0
 }
 
 func (x *ProjectManagementMemberPageRequestFilter) GetKeyword() string {
@@ -462,16 +462,76 @@ func (x *ProjectManagementMemberCandidateRequestData) GetNeedAll() bool {
 	return false
 }
 
+type ProjectManagementMemberCandidateEntity struct {
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	OrganizationUserId int64                  `protobuf:"varint,1,opt,name=organization_user_id,json=organizationUserId,proto3" json:"organization_user_id,omitempty"`
+	FullName           string                 `protobuf:"bytes,2,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
+	Email              string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *ProjectManagementMemberCandidateEntity) Reset() {
+	*x = ProjectManagementMemberCandidateEntity{}
+	mi := &file_borrower_project_management_project_member_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProjectManagementMemberCandidateEntity) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProjectManagementMemberCandidateEntity) ProtoMessage() {}
+
+func (x *ProjectManagementMemberCandidateEntity) ProtoReflect() protoreflect.Message {
+	mi := &file_borrower_project_management_project_member_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProjectManagementMemberCandidateEntity.ProtoReflect.Descriptor instead.
+func (*ProjectManagementMemberCandidateEntity) Descriptor() ([]byte, []int) {
+	return file_borrower_project_management_project_member_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *ProjectManagementMemberCandidateEntity) GetOrganizationUserId() int64 {
+	if x != nil {
+		return x.OrganizationUserId
+	}
+	return 0
+}
+
+func (x *ProjectManagementMemberCandidateEntity) GetFullName() string {
+	if x != nil {
+		return x.FullName
+	}
+	return ""
+}
+
+func (x *ProjectManagementMemberCandidateEntity) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
 type ProjectManagementMemberCandidateResponse struct {
-	state         protoimpl.MessageState                 `protogen:"open.v1"`
-	Data          []*proto.ProjectManagementMemberEntity `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty"`
+	state         protoimpl.MessageState                    `protogen:"open.v1"`
+	Data          []*ProjectManagementMemberCandidateEntity `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ProjectManagementMemberCandidateResponse) Reset() {
 	*x = ProjectManagementMemberCandidateResponse{}
-	mi := &file_borrower_project_management_project_member_proto_msgTypes[8]
+	mi := &file_borrower_project_management_project_member_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -483,7 +543,7 @@ func (x *ProjectManagementMemberCandidateResponse) String() string {
 func (*ProjectManagementMemberCandidateResponse) ProtoMessage() {}
 
 func (x *ProjectManagementMemberCandidateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_project_member_proto_msgTypes[8]
+	mi := &file_borrower_project_management_project_member_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -496,10 +556,150 @@ func (x *ProjectManagementMemberCandidateResponse) ProtoReflect() protoreflect.M
 
 // Deprecated: Use ProjectManagementMemberCandidateResponse.ProtoReflect.Descriptor instead.
 func (*ProjectManagementMemberCandidateResponse) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_project_member_proto_rawDescGZIP(), []int{8}
+	return file_borrower_project_management_project_member_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *ProjectManagementMemberCandidateResponse) GetData() []*proto.ProjectManagementMemberEntity {
+func (x *ProjectManagementMemberCandidateResponse) GetData() []*ProjectManagementMemberCandidateEntity {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type ProjectManagementMemberDetailRequest struct {
+	state         protoimpl.MessageState                    `protogen:"open.v1"`
+	Data          *ProjectManagementMemberDetailRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProjectManagementMemberDetailRequest) Reset() {
+	*x = ProjectManagementMemberDetailRequest{}
+	mi := &file_borrower_project_management_project_member_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProjectManagementMemberDetailRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProjectManagementMemberDetailRequest) ProtoMessage() {}
+
+func (x *ProjectManagementMemberDetailRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_borrower_project_management_project_member_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProjectManagementMemberDetailRequest.ProtoReflect.Descriptor instead.
+func (*ProjectManagementMemberDetailRequest) Descriptor() ([]byte, []int) {
+	return file_borrower_project_management_project_member_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *ProjectManagementMemberDetailRequest) GetData() *ProjectManagementMemberDetailRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type ProjectManagementMemberDetailRequestData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	ProjectId     int64                  `protobuf:"varint,2,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProjectManagementMemberDetailRequestData) Reset() {
+	*x = ProjectManagementMemberDetailRequestData{}
+	mi := &file_borrower_project_management_project_member_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProjectManagementMemberDetailRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProjectManagementMemberDetailRequestData) ProtoMessage() {}
+
+func (x *ProjectManagementMemberDetailRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_borrower_project_management_project_member_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProjectManagementMemberDetailRequestData.ProtoReflect.Descriptor instead.
+func (*ProjectManagementMemberDetailRequestData) Descriptor() ([]byte, []int) {
+	return file_borrower_project_management_project_member_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *ProjectManagementMemberDetailRequestData) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *ProjectManagementMemberDetailRequestData) GetProjectId() int64 {
+	if x != nil {
+		return x.ProjectId
+	}
+	return 0
+}
+
+type ProjectManagementMemberDetailResponse struct {
+	state         protoimpl.MessageState               `protogen:"open.v1"`
+	Data          *proto.ProjectManagementMemberEntity `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProjectManagementMemberDetailResponse) Reset() {
+	*x = ProjectManagementMemberDetailResponse{}
+	mi := &file_borrower_project_management_project_member_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProjectManagementMemberDetailResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProjectManagementMemberDetailResponse) ProtoMessage() {}
+
+func (x *ProjectManagementMemberDetailResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_borrower_project_management_project_member_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProjectManagementMemberDetailResponse.ProtoReflect.Descriptor instead.
+func (*ProjectManagementMemberDetailResponse) Descriptor() ([]byte, []int) {
+	return file_borrower_project_management_project_member_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *ProjectManagementMemberDetailResponse) GetData() *proto.ProjectManagementMemberEntity {
 	if x != nil {
 		return x.Data
 	}
@@ -515,7 +715,7 @@ type ProjectManagementMemberAddRequest struct {
 
 func (x *ProjectManagementMemberAddRequest) Reset() {
 	*x = ProjectManagementMemberAddRequest{}
-	mi := &file_borrower_project_management_project_member_proto_msgTypes[9]
+	mi := &file_borrower_project_management_project_member_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -527,7 +727,7 @@ func (x *ProjectManagementMemberAddRequest) String() string {
 func (*ProjectManagementMemberAddRequest) ProtoMessage() {}
 
 func (x *ProjectManagementMemberAddRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_project_member_proto_msgTypes[9]
+	mi := &file_borrower_project_management_project_member_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -540,7 +740,7 @@ func (x *ProjectManagementMemberAddRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use ProjectManagementMemberAddRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementMemberAddRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_project_member_proto_rawDescGZIP(), []int{9}
+	return file_borrower_project_management_project_member_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ProjectManagementMemberAddRequest) GetData() *ProjectManagementMemberAddRequestData {
@@ -560,7 +760,7 @@ type ProjectManagementMemberAddRequestData struct {
 
 func (x *ProjectManagementMemberAddRequestData) Reset() {
 	*x = ProjectManagementMemberAddRequestData{}
-	mi := &file_borrower_project_management_project_member_proto_msgTypes[10]
+	mi := &file_borrower_project_management_project_member_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -572,7 +772,7 @@ func (x *ProjectManagementMemberAddRequestData) String() string {
 func (*ProjectManagementMemberAddRequestData) ProtoMessage() {}
 
 func (x *ProjectManagementMemberAddRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_project_member_proto_msgTypes[10]
+	mi := &file_borrower_project_management_project_member_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -585,7 +785,7 @@ func (x *ProjectManagementMemberAddRequestData) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use ProjectManagementMemberAddRequestData.ProtoReflect.Descriptor instead.
 func (*ProjectManagementMemberAddRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_project_member_proto_rawDescGZIP(), []int{10}
+	return file_borrower_project_management_project_member_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ProjectManagementMemberAddRequestData) GetProjectId() int64 {
@@ -602,28 +802,28 @@ func (x *ProjectManagementMemberAddRequestData) GetMembers() []*ProjectManagemen
 	return nil
 }
 
-type ProjectManagementMemberUpdateRequest struct {
-	state         protoimpl.MessageState                    `protogen:"open.v1"`
-	Data          *ProjectManagementMemberUpdateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+type ProjectManagementMemberRoleUpdateRequest struct {
+	state         protoimpl.MessageState                        `protogen:"open.v1"`
+	Data          *ProjectManagementMemberRoleUpdateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ProjectManagementMemberUpdateRequest) Reset() {
-	*x = ProjectManagementMemberUpdateRequest{}
-	mi := &file_borrower_project_management_project_member_proto_msgTypes[11]
+func (x *ProjectManagementMemberRoleUpdateRequest) Reset() {
+	*x = ProjectManagementMemberRoleUpdateRequest{}
+	mi := &file_borrower_project_management_project_member_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ProjectManagementMemberUpdateRequest) String() string {
+func (x *ProjectManagementMemberRoleUpdateRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ProjectManagementMemberUpdateRequest) ProtoMessage() {}
+func (*ProjectManagementMemberRoleUpdateRequest) ProtoMessage() {}
 
-func (x *ProjectManagementMemberUpdateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_project_member_proto_msgTypes[11]
+func (x *ProjectManagementMemberRoleUpdateRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_borrower_project_management_project_member_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -634,19 +834,19 @@ func (x *ProjectManagementMemberUpdateRequest) ProtoReflect() protoreflect.Messa
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ProjectManagementMemberUpdateRequest.ProtoReflect.Descriptor instead.
-func (*ProjectManagementMemberUpdateRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_project_member_proto_rawDescGZIP(), []int{11}
+// Deprecated: Use ProjectManagementMemberRoleUpdateRequest.ProtoReflect.Descriptor instead.
+func (*ProjectManagementMemberRoleUpdateRequest) Descriptor() ([]byte, []int) {
+	return file_borrower_project_management_project_member_proto_rawDescGZIP(), []int{15}
 }
 
-func (x *ProjectManagementMemberUpdateRequest) GetData() *ProjectManagementMemberUpdateRequestData {
+func (x *ProjectManagementMemberRoleUpdateRequest) GetData() *ProjectManagementMemberRoleUpdateRequestData {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type ProjectManagementMemberUpdateRequestData struct {
+type ProjectManagementMemberRoleUpdateRequestData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ProjectId     int64                  `protobuf:"varint,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
 	MemberId      int64                  `protobuf:"varint,2,opt,name=member_id,json=memberId,proto3" json:"member_id,omitempty"`
@@ -655,21 +855,21 @@ type ProjectManagementMemberUpdateRequestData struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ProjectManagementMemberUpdateRequestData) Reset() {
-	*x = ProjectManagementMemberUpdateRequestData{}
-	mi := &file_borrower_project_management_project_member_proto_msgTypes[12]
+func (x *ProjectManagementMemberRoleUpdateRequestData) Reset() {
+	*x = ProjectManagementMemberRoleUpdateRequestData{}
+	mi := &file_borrower_project_management_project_member_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ProjectManagementMemberUpdateRequestData) String() string {
+func (x *ProjectManagementMemberRoleUpdateRequestData) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ProjectManagementMemberUpdateRequestData) ProtoMessage() {}
+func (*ProjectManagementMemberRoleUpdateRequestData) ProtoMessage() {}
 
-func (x *ProjectManagementMemberUpdateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_project_member_proto_msgTypes[12]
+func (x *ProjectManagementMemberRoleUpdateRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_borrower_project_management_project_member_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -680,26 +880,26 @@ func (x *ProjectManagementMemberUpdateRequestData) ProtoReflect() protoreflect.M
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ProjectManagementMemberUpdateRequestData.ProtoReflect.Descriptor instead.
-func (*ProjectManagementMemberUpdateRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_project_member_proto_rawDescGZIP(), []int{12}
+// Deprecated: Use ProjectManagementMemberRoleUpdateRequestData.ProtoReflect.Descriptor instead.
+func (*ProjectManagementMemberRoleUpdateRequestData) Descriptor() ([]byte, []int) {
+	return file_borrower_project_management_project_member_proto_rawDescGZIP(), []int{16}
 }
 
-func (x *ProjectManagementMemberUpdateRequestData) GetProjectId() int64 {
+func (x *ProjectManagementMemberRoleUpdateRequestData) GetProjectId() int64 {
 	if x != nil {
 		return x.ProjectId
 	}
 	return 0
 }
 
-func (x *ProjectManagementMemberUpdateRequestData) GetMemberId() int64 {
+func (x *ProjectManagementMemberRoleUpdateRequestData) GetMemberId() int64 {
 	if x != nil {
 		return x.MemberId
 	}
 	return 0
 }
 
-func (x *ProjectManagementMemberUpdateRequestData) GetRole() string {
+func (x *ProjectManagementMemberRoleUpdateRequestData) GetRole() string {
 	if x != nil {
 		return x.Role
 	}
@@ -715,7 +915,7 @@ type ProjectManagementMemberDeleteRequest struct {
 
 func (x *ProjectManagementMemberDeleteRequest) Reset() {
 	*x = ProjectManagementMemberDeleteRequest{}
-	mi := &file_borrower_project_management_project_member_proto_msgTypes[13]
+	mi := &file_borrower_project_management_project_member_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -727,7 +927,7 @@ func (x *ProjectManagementMemberDeleteRequest) String() string {
 func (*ProjectManagementMemberDeleteRequest) ProtoMessage() {}
 
 func (x *ProjectManagementMemberDeleteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_project_member_proto_msgTypes[13]
+	mi := &file_borrower_project_management_project_member_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -740,7 +940,7 @@ func (x *ProjectManagementMemberDeleteRequest) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use ProjectManagementMemberDeleteRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementMemberDeleteRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_project_member_proto_rawDescGZIP(), []int{13}
+	return file_borrower_project_management_project_member_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *ProjectManagementMemberDeleteRequest) GetData() *ProjectManagementMemberDeleteRequestData {
@@ -760,7 +960,7 @@ type ProjectManagementMemberDeleteRequestData struct {
 
 func (x *ProjectManagementMemberDeleteRequestData) Reset() {
 	*x = ProjectManagementMemberDeleteRequestData{}
-	mi := &file_borrower_project_management_project_member_proto_msgTypes[14]
+	mi := &file_borrower_project_management_project_member_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -772,7 +972,7 @@ func (x *ProjectManagementMemberDeleteRequestData) String() string {
 func (*ProjectManagementMemberDeleteRequestData) ProtoMessage() {}
 
 func (x *ProjectManagementMemberDeleteRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_project_member_proto_msgTypes[14]
+	mi := &file_borrower_project_management_project_member_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -785,7 +985,7 @@ func (x *ProjectManagementMemberDeleteRequestData) ProtoReflect() protoreflect.M
 
 // Deprecated: Use ProjectManagementMemberDeleteRequestData.ProtoReflect.Descriptor instead.
 func (*ProjectManagementMemberDeleteRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_project_member_proto_rawDescGZIP(), []int{14}
+	return file_borrower_project_management_project_member_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *ProjectManagementMemberDeleteRequestData) GetProjectId() int64 {
@@ -811,16 +1011,16 @@ const file_borrower_project_management_project_member_proto_rawDesc = "" +
 	"\x14organization_user_id\x18\x01 \x01(\x03R\x12organizationUserId\x12\x12\n" +
 	"\x04role\x18\x02 \x01(\tR\x04role\"j\n" +
 	"\"ProjectManagementMemberPageRequest\x12D\n" +
-	"\x04data\x18\x01 \x01(\v20.borrower.ProjectManagementMemberPageRequestDataR\x04data\"\xbd\x01\n" +
-	"&ProjectManagementMemberPageRequestData\x12\x1d\n" +
+	"\x04data\x18\x01 \x01(\v20.borrower.ProjectManagementMemberPageRequestDataR\x04data\"\x9e\x01\n" +
+	"&ProjectManagementMemberPageRequestData\x12\x12\n" +
+	"\x04page\x18\x01 \x01(\x03R\x04page\x12\x14\n" +
+	"\x05limit\x18\x02 \x01(\x03R\x05limit\x12J\n" +
+	"\x06filter\x18\x03 \x01(\v22.borrower.ProjectManagementMemberPageRequestFilterR\x06filter\"w\n" +
+	"(ProjectManagementMemberPageRequestFilter\x12\x1d\n" +
 	"\n" +
-	"project_id\x18\x01 \x01(\x03R\tprojectId\x12\x12\n" +
-	"\x04page\x18\x02 \x01(\x03R\x04page\x12\x14\n" +
-	"\x05limit\x18\x03 \x01(\x03R\x05limit\x12J\n" +
-	"\x06filter\x18\x04 \x01(\v22.borrower.ProjectManagementMemberPageRequestFilterR\x06filter\"X\n" +
-	"(ProjectManagementMemberPageRequestFilter\x12\x18\n" +
-	"\akeyword\x18\x01 \x01(\tR\akeyword\x12\x12\n" +
-	"\x04role\x18\x02 \x01(\tR\x04role\"l\n" +
+	"project_id\x18\x01 \x01(\x03R\tprojectId\x12\x18\n" +
+	"\akeyword\x18\x02 \x01(\tR\akeyword\x12\x12\n" +
+	"\x04role\x18\x03 \x01(\tR\x04role\"l\n" +
 	"#ProjectManagementMemberPageResponse\x12E\n" +
 	"\x04data\x18\x01 \x01(\v21.borrower.ProjectManagementMemberPageResponseDataR\x04data\"\xc2\x01\n" +
 	"'ProjectManagementMemberPageResponseData\x12\x12\n" +
@@ -836,18 +1036,30 @@ const file_borrower_project_management_project_member_proto_rawDesc = "" +
 	"\n" +
 	"project_id\x18\x01 \x01(\x03R\tprojectId\x12\x18\n" +
 	"\akeyword\x18\x02 \x01(\tR\akeyword\x12\x19\n" +
-	"\bneed_all\x18\x03 \x01(\bR\aneedAll\"d\n" +
-	"(ProjectManagementMemberCandidateResponse\x128\n" +
-	"\x04data\x18\x01 \x03(\v2$.proto.ProjectManagementMemberEntityR\x04data\"h\n" +
+	"\bneed_all\x18\x03 \x01(\bR\aneedAll\"\x8d\x01\n" +
+	"&ProjectManagementMemberCandidateEntity\x120\n" +
+	"\x14organization_user_id\x18\x01 \x01(\x03R\x12organizationUserId\x12\x1b\n" +
+	"\tfull_name\x18\x02 \x01(\tR\bfullName\x12\x14\n" +
+	"\x05email\x18\x03 \x01(\tR\x05email\"p\n" +
+	"(ProjectManagementMemberCandidateResponse\x12D\n" +
+	"\x04data\x18\x01 \x03(\v20.borrower.ProjectManagementMemberCandidateEntityR\x04data\"n\n" +
+	"$ProjectManagementMemberDetailRequest\x12F\n" +
+	"\x04data\x18\x01 \x01(\v22.borrower.ProjectManagementMemberDetailRequestDataR\x04data\"Y\n" +
+	"(ProjectManagementMemberDetailRequestData\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
+	"\n" +
+	"project_id\x18\x02 \x01(\x03R\tprojectId\"a\n" +
+	"%ProjectManagementMemberDetailResponse\x128\n" +
+	"\x04data\x18\x01 \x01(\v2$.proto.ProjectManagementMemberEntityR\x04data\"h\n" +
 	"!ProjectManagementMemberAddRequest\x12C\n" +
 	"\x04data\x18\x01 \x01(\v2/.borrower.ProjectManagementMemberAddRequestDataR\x04data\"\x88\x01\n" +
 	"%ProjectManagementMemberAddRequestData\x12\x1d\n" +
 	"\n" +
 	"project_id\x18\x01 \x01(\x03R\tprojectId\x12@\n" +
-	"\amembers\x18\x02 \x03(\v2&.borrower.ProjectManagementMemberInputR\amembers\"n\n" +
-	"$ProjectManagementMemberUpdateRequest\x12F\n" +
-	"\x04data\x18\x01 \x01(\v22.borrower.ProjectManagementMemberUpdateRequestDataR\x04data\"z\n" +
-	"(ProjectManagementMemberUpdateRequestData\x12\x1d\n" +
+	"\amembers\x18\x02 \x03(\v2&.borrower.ProjectManagementMemberInputR\amembers\"v\n" +
+	"(ProjectManagementMemberRoleUpdateRequest\x12J\n" +
+	"\x04data\x18\x01 \x01(\v26.borrower.ProjectManagementMemberRoleUpdateRequestDataR\x04data\"~\n" +
+	",ProjectManagementMemberRoleUpdateRequestData\x12\x1d\n" +
 	"\n" +
 	"project_id\x18\x01 \x01(\x03R\tprojectId\x12\x1b\n" +
 	"\tmember_id\x18\x02 \x01(\x03R\bmemberId\x12\x12\n" +
@@ -857,12 +1069,14 @@ const file_borrower_project_management_project_member_proto_rawDesc = "" +
 	"(ProjectManagementMemberDeleteRequestData\x12\x1d\n" +
 	"\n" +
 	"project_id\x18\x01 \x01(\x03R\tprojectId\x12\x1b\n" +
-	"\tmember_id\x18\x02 \x01(\x03R\bmemberId2\xe3\x03\n" +
+	"\tmember_id\x18\x02 \x01(\x03R\bmemberId2\xd6\x04\n" +
 	"\x1eProjectManagementProjectMember\x12c\n" +
 	"\x04Page\x12,.borrower.ProjectManagementMemberPageRequest\x1a-.borrower.ProjectManagementMemberPageResponse\x12r\n" +
-	"\tCandidate\x121.borrower.ProjectManagementMemberCandidateRequest\x1a2.borrower.ProjectManagementMemberCandidateResponse\x12H\n" +
-	"\x03Add\x12+.borrower.ProjectManagementMemberAddRequest\x1a\x14.proto.EmptyResponse\x12N\n" +
-	"\x06Update\x12..borrower.ProjectManagementMemberUpdateRequest\x1a\x14.proto.EmptyResponse\x12N\n" +
+	"\tCandidate\x121.borrower.ProjectManagementMemberCandidateRequest\x1a2.borrower.ProjectManagementMemberCandidateResponse\x12i\n" +
+	"\x06Detail\x12..borrower.ProjectManagementMemberDetailRequest\x1a/.borrower.ProjectManagementMemberDetailResponse\x12H\n" +
+	"\x03Add\x12+.borrower.ProjectManagementMemberAddRequest\x1a\x14.proto.EmptyResponse\x12V\n" +
+	"\n" +
+	"UpdateRole\x122.borrower.ProjectManagementMemberRoleUpdateRequest\x1a\x14.proto.EmptyResponse\x12N\n" +
 	"\x06Delete\x12..borrower.ProjectManagementMemberDeleteRequest\x1a\x14.proto.EmptyResponseB-Z+zeebee-backend/app/borrower/rpc/pb/borrowerb\x06proto3"
 
 var (
@@ -877,52 +1091,60 @@ func file_borrower_project_management_project_member_proto_rawDescGZIP() []byte 
 	return file_borrower_project_management_project_member_proto_rawDescData
 }
 
-var file_borrower_project_management_project_member_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
+var file_borrower_project_management_project_member_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
 var file_borrower_project_management_project_member_proto_goTypes = []any{
-	(*ProjectManagementMemberInput)(nil),                // 0: borrower.ProjectManagementMemberInput
-	(*ProjectManagementMemberPageRequest)(nil),          // 1: borrower.ProjectManagementMemberPageRequest
-	(*ProjectManagementMemberPageRequestData)(nil),      // 2: borrower.ProjectManagementMemberPageRequestData
-	(*ProjectManagementMemberPageRequestFilter)(nil),    // 3: borrower.ProjectManagementMemberPageRequestFilter
-	(*ProjectManagementMemberPageResponse)(nil),         // 4: borrower.ProjectManagementMemberPageResponse
-	(*ProjectManagementMemberPageResponseData)(nil),     // 5: borrower.ProjectManagementMemberPageResponseData
-	(*ProjectManagementMemberCandidateRequest)(nil),     // 6: borrower.ProjectManagementMemberCandidateRequest
-	(*ProjectManagementMemberCandidateRequestData)(nil), // 7: borrower.ProjectManagementMemberCandidateRequestData
-	(*ProjectManagementMemberCandidateResponse)(nil),    // 8: borrower.ProjectManagementMemberCandidateResponse
-	(*ProjectManagementMemberAddRequest)(nil),           // 9: borrower.ProjectManagementMemberAddRequest
-	(*ProjectManagementMemberAddRequestData)(nil),       // 10: borrower.ProjectManagementMemberAddRequestData
-	(*ProjectManagementMemberUpdateRequest)(nil),        // 11: borrower.ProjectManagementMemberUpdateRequest
-	(*ProjectManagementMemberUpdateRequestData)(nil),    // 12: borrower.ProjectManagementMemberUpdateRequestData
-	(*ProjectManagementMemberDeleteRequest)(nil),        // 13: borrower.ProjectManagementMemberDeleteRequest
-	(*ProjectManagementMemberDeleteRequestData)(nil),    // 14: borrower.ProjectManagementMemberDeleteRequestData
-	(*proto.ProjectManagementMemberEntity)(nil),         // 15: proto.ProjectManagementMemberEntity
-	(*proto.EmptyResponse)(nil),                         // 16: proto.EmptyResponse
+	(*ProjectManagementMemberInput)(nil),                 // 0: borrower.ProjectManagementMemberInput
+	(*ProjectManagementMemberPageRequest)(nil),           // 1: borrower.ProjectManagementMemberPageRequest
+	(*ProjectManagementMemberPageRequestData)(nil),       // 2: borrower.ProjectManagementMemberPageRequestData
+	(*ProjectManagementMemberPageRequestFilter)(nil),     // 3: borrower.ProjectManagementMemberPageRequestFilter
+	(*ProjectManagementMemberPageResponse)(nil),          // 4: borrower.ProjectManagementMemberPageResponse
+	(*ProjectManagementMemberPageResponseData)(nil),      // 5: borrower.ProjectManagementMemberPageResponseData
+	(*ProjectManagementMemberCandidateRequest)(nil),      // 6: borrower.ProjectManagementMemberCandidateRequest
+	(*ProjectManagementMemberCandidateRequestData)(nil),  // 7: borrower.ProjectManagementMemberCandidateRequestData
+	(*ProjectManagementMemberCandidateEntity)(nil),       // 8: borrower.ProjectManagementMemberCandidateEntity
+	(*ProjectManagementMemberCandidateResponse)(nil),     // 9: borrower.ProjectManagementMemberCandidateResponse
+	(*ProjectManagementMemberDetailRequest)(nil),         // 10: borrower.ProjectManagementMemberDetailRequest
+	(*ProjectManagementMemberDetailRequestData)(nil),     // 11: borrower.ProjectManagementMemberDetailRequestData
+	(*ProjectManagementMemberDetailResponse)(nil),        // 12: borrower.ProjectManagementMemberDetailResponse
+	(*ProjectManagementMemberAddRequest)(nil),            // 13: borrower.ProjectManagementMemberAddRequest
+	(*ProjectManagementMemberAddRequestData)(nil),        // 14: borrower.ProjectManagementMemberAddRequestData
+	(*ProjectManagementMemberRoleUpdateRequest)(nil),     // 15: borrower.ProjectManagementMemberRoleUpdateRequest
+	(*ProjectManagementMemberRoleUpdateRequestData)(nil), // 16: borrower.ProjectManagementMemberRoleUpdateRequestData
+	(*ProjectManagementMemberDeleteRequest)(nil),         // 17: borrower.ProjectManagementMemberDeleteRequest
+	(*ProjectManagementMemberDeleteRequestData)(nil),     // 18: borrower.ProjectManagementMemberDeleteRequestData
+	(*proto.ProjectManagementMemberEntity)(nil),          // 19: proto.ProjectManagementMemberEntity
+	(*proto.EmptyResponse)(nil),                          // 20: proto.EmptyResponse
 }
 var file_borrower_project_management_project_member_proto_depIdxs = []int32{
 	2,  // 0: borrower.ProjectManagementMemberPageRequest.data:type_name -> borrower.ProjectManagementMemberPageRequestData
 	3,  // 1: borrower.ProjectManagementMemberPageRequestData.filter:type_name -> borrower.ProjectManagementMemberPageRequestFilter
 	5,  // 2: borrower.ProjectManagementMemberPageResponse.data:type_name -> borrower.ProjectManagementMemberPageResponseData
-	15, // 3: borrower.ProjectManagementMemberPageResponseData.list:type_name -> proto.ProjectManagementMemberEntity
+	19, // 3: borrower.ProjectManagementMemberPageResponseData.list:type_name -> proto.ProjectManagementMemberEntity
 	7,  // 4: borrower.ProjectManagementMemberCandidateRequest.data:type_name -> borrower.ProjectManagementMemberCandidateRequestData
-	15, // 5: borrower.ProjectManagementMemberCandidateResponse.data:type_name -> proto.ProjectManagementMemberEntity
-	10, // 6: borrower.ProjectManagementMemberAddRequest.data:type_name -> borrower.ProjectManagementMemberAddRequestData
-	0,  // 7: borrower.ProjectManagementMemberAddRequestData.members:type_name -> borrower.ProjectManagementMemberInput
-	12, // 8: borrower.ProjectManagementMemberUpdateRequest.data:type_name -> borrower.ProjectManagementMemberUpdateRequestData
-	14, // 9: borrower.ProjectManagementMemberDeleteRequest.data:type_name -> borrower.ProjectManagementMemberDeleteRequestData
-	1,  // 10: borrower.ProjectManagementProjectMember.Page:input_type -> borrower.ProjectManagementMemberPageRequest
-	6,  // 11: borrower.ProjectManagementProjectMember.Candidate:input_type -> borrower.ProjectManagementMemberCandidateRequest
-	9,  // 12: borrower.ProjectManagementProjectMember.Add:input_type -> borrower.ProjectManagementMemberAddRequest
-	11, // 13: borrower.ProjectManagementProjectMember.Update:input_type -> borrower.ProjectManagementMemberUpdateRequest
-	13, // 14: borrower.ProjectManagementProjectMember.Delete:input_type -> borrower.ProjectManagementMemberDeleteRequest
-	4,  // 15: borrower.ProjectManagementProjectMember.Page:output_type -> borrower.ProjectManagementMemberPageResponse
-	8,  // 16: borrower.ProjectManagementProjectMember.Candidate:output_type -> borrower.ProjectManagementMemberCandidateResponse
-	16, // 17: borrower.ProjectManagementProjectMember.Add:output_type -> proto.EmptyResponse
-	16, // 18: borrower.ProjectManagementProjectMember.Update:output_type -> proto.EmptyResponse
-	16, // 19: borrower.ProjectManagementProjectMember.Delete:output_type -> proto.EmptyResponse
-	15, // [15:20] is the sub-list for method output_type
-	10, // [10:15] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	8,  // 5: borrower.ProjectManagementMemberCandidateResponse.data:type_name -> borrower.ProjectManagementMemberCandidateEntity
+	11, // 6: borrower.ProjectManagementMemberDetailRequest.data:type_name -> borrower.ProjectManagementMemberDetailRequestData
+	19, // 7: borrower.ProjectManagementMemberDetailResponse.data:type_name -> proto.ProjectManagementMemberEntity
+	14, // 8: borrower.ProjectManagementMemberAddRequest.data:type_name -> borrower.ProjectManagementMemberAddRequestData
+	0,  // 9: borrower.ProjectManagementMemberAddRequestData.members:type_name -> borrower.ProjectManagementMemberInput
+	16, // 10: borrower.ProjectManagementMemberRoleUpdateRequest.data:type_name -> borrower.ProjectManagementMemberRoleUpdateRequestData
+	18, // 11: borrower.ProjectManagementMemberDeleteRequest.data:type_name -> borrower.ProjectManagementMemberDeleteRequestData
+	1,  // 12: borrower.ProjectManagementProjectMember.Page:input_type -> borrower.ProjectManagementMemberPageRequest
+	6,  // 13: borrower.ProjectManagementProjectMember.Candidate:input_type -> borrower.ProjectManagementMemberCandidateRequest
+	10, // 14: borrower.ProjectManagementProjectMember.Detail:input_type -> borrower.ProjectManagementMemberDetailRequest
+	13, // 15: borrower.ProjectManagementProjectMember.Add:input_type -> borrower.ProjectManagementMemberAddRequest
+	15, // 16: borrower.ProjectManagementProjectMember.UpdateRole:input_type -> borrower.ProjectManagementMemberRoleUpdateRequest
+	17, // 17: borrower.ProjectManagementProjectMember.Delete:input_type -> borrower.ProjectManagementMemberDeleteRequest
+	4,  // 18: borrower.ProjectManagementProjectMember.Page:output_type -> borrower.ProjectManagementMemberPageResponse
+	9,  // 19: borrower.ProjectManagementProjectMember.Candidate:output_type -> borrower.ProjectManagementMemberCandidateResponse
+	12, // 20: borrower.ProjectManagementProjectMember.Detail:output_type -> borrower.ProjectManagementMemberDetailResponse
+	20, // 21: borrower.ProjectManagementProjectMember.Add:output_type -> proto.EmptyResponse
+	20, // 22: borrower.ProjectManagementProjectMember.UpdateRole:output_type -> proto.EmptyResponse
+	20, // 23: borrower.ProjectManagementProjectMember.Delete:output_type -> proto.EmptyResponse
+	18, // [18:24] is the sub-list for method output_type
+	12, // [12:18] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
 func init() { file_borrower_project_management_project_member_proto_init() }
@@ -936,7 +1158,7 @@ func file_borrower_project_management_project_member_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_borrower_project_management_project_member_proto_rawDesc), len(file_borrower_project_management_project_member_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   15,
+			NumMessages:   19,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

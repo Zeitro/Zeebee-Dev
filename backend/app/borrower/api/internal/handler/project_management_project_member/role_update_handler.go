@@ -14,8 +14,8 @@ import (
 	"zeebee-backend/common/validator"
 )
 
-// update
-func UpdateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+// update role
+func RoleUpdateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -27,7 +27,7 @@ func UpdateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 					Error(err)
 			}
 		}()
-		var req types.ProjectManagementMemberUpdateRequest
+		var req types.ProjectManagementMemberRoleUpdateRequest
 		if err = httpx.Parse(r, &req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
@@ -44,8 +44,8 @@ func UpdateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := project_management_project_member.NewUpdateLogic(r.Context(), svcCtx)
-		resp, err := l.Update(&req)
+		l := project_management_project_member.NewRoleUpdateLogic(r.Context(), svcCtx)
+		resp, err := l.RoleUpdate(&req)
 		if err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 		} else {

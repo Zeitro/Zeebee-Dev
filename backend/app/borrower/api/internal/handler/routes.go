@@ -28,8 +28,6 @@ import (
 	project_management_task_dependency "zeebee-backend/app/borrower/api/internal/handler/project_management_task_dependency"
 	project_management_task_type "zeebee-backend/app/borrower/api/internal/handler/project_management_task_type"
 	project_management_workflow "zeebee-backend/app/borrower/api/internal/handler/project_management_workflow"
-	project_management_workflow_stage "zeebee-backend/app/borrower/api/internal/handler/project_management_workflow_stage"
-	project_management_workflow_transition "zeebee-backend/app/borrower/api/internal/handler/project_management_workflow_transition"
 	resource "zeebee-backend/app/borrower/api/internal/handler/resource"
 	role "zeebee-backend/app/borrower/api/internal/handler/role"
 	storage "zeebee-backend/app/borrower/api/internal/handler/storage"
@@ -826,16 +824,22 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: project_management_project_member.AddHandler(serverCtx),
 				},
 				{
-					// update
-					Method:  http.MethodPut,
+					// detail
+					Method:  http.MethodGet,
 					Path:    "/project_management/project_member/:id",
-					Handler: project_management_project_member.UpdateHandler(serverCtx),
+					Handler: project_management_project_member.DetailHandler(serverCtx),
 				},
 				{
 					// delete
 					Method:  http.MethodDelete,
 					Path:    "/project_management/project_member/:id",
 					Handler: project_management_project_member.DeleteHandler(serverCtx),
+				},
+				{
+					// update role
+					Method:  http.MethodPut,
+					Path:    "/project_management/project_member/:id/role",
+					Handler: project_management_project_member.RoleUpdateHandler(serverCtx),
 				},
 				{
 					// candidate
@@ -1042,88 +1046,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: project_management_workflow.DefaultHandler(serverCtx),
 				},
 				{
+					// swap stage order
+					Method:  http.MethodPut,
+					Path:    "/project_management/workflow/:id/swap_stage_order",
+					Handler: project_management_workflow.StageSwapOrderHandler(serverCtx),
+				},
+				{
 					// all
 					Method:  http.MethodGet,
 					Path:    "/project_management/workflow/all",
 					Handler: project_management_workflow.AllHandler(serverCtx),
-				},
-			}...,
-		),
-		rest.WithPrefix("/api/v1"),
-	)
-
-	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.AuthMiddleware},
-			[]rest.Route{
-				{
-					// create
-					Method:  http.MethodPost,
-					Path:    "/project_management/workflow/:workflow_id/stage",
-					Handler: project_management_workflow_stage.CreateHandler(serverCtx),
-				},
-				{
-					// detail
-					Method:  http.MethodGet,
-					Path:    "/project_management/workflow/:workflow_id/stage/:id",
-					Handler: project_management_workflow_stage.DetailHandler(serverCtx),
-				},
-				{
-					// update
-					Method:  http.MethodPut,
-					Path:    "/project_management/workflow/:workflow_id/stage/:id",
-					Handler: project_management_workflow_stage.UpdateHandler(serverCtx),
-				},
-				{
-					// delete
-					Method:  http.MethodDelete,
-					Path:    "/project_management/workflow/:workflow_id/stage/:id",
-					Handler: project_management_workflow_stage.DeleteHandler(serverCtx),
-				},
-				{
-					// all
-					Method:  http.MethodGet,
-					Path:    "/project_management/workflow/:workflow_id/stage/all",
-					Handler: project_management_workflow_stage.AllHandler(serverCtx),
-				},
-			}...,
-		),
-		rest.WithPrefix("/api/v1"),
-	)
-
-	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.AuthMiddleware},
-			[]rest.Route{
-				{
-					// all
-					Method:  http.MethodGet,
-					Path:    "/project_management/workflow/:workflow_id/stage/:from_stage_id/transition/all",
-					Handler: project_management_workflow_transition.AllHandler(serverCtx),
-				},
-				{
-					// create
-					Method:  http.MethodPost,
-					Path:    "/project_management/workflow/:workflow_id/transition",
-					Handler: project_management_workflow_transition.CreateHandler(serverCtx),
-				},
-				{
-					// detail
-					Method:  http.MethodGet,
-					Path:    "/project_management/workflow/:workflow_id/transition/:id",
-					Handler: project_management_workflow_transition.DetailHandler(serverCtx),
-				},
-				{
-					// update
-					Method:  http.MethodPut,
-					Path:    "/project_management/workflow/:workflow_id/transition/:id",
-					Handler: project_management_workflow_transition.UpdateHandler(serverCtx),
-				},
-				{
-					// delete
-					Method:  http.MethodDelete,
-					Path:    "/project_management/workflow/:workflow_id/transition/:id",
-					Handler: project_management_workflow_transition.DeleteHandler(serverCtx),
 				},
 			}...,
 		),

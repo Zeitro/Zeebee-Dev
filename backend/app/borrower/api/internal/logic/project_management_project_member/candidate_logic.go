@@ -8,7 +8,6 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -38,7 +37,7 @@ func (l *CandidateLogic) Candidate(req *types.ProjectManagementMemberCandidateRe
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	listData, err := copierx.Trans[[]*proto.ProjectManagementMemberEntity, []*types.ProjectManagementMemberEntity](&rpcResp.Data)
+	listData, err := copierx.Trans[[]*borrower.ProjectManagementMemberCandidateEntity, []*types.ProjectManagementMemberCandidateEntity](&rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

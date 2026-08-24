@@ -99,6 +99,7 @@ type (
     ProjectManagementTaskAssigneeUpdateRequest {
         Id int64 `path:"id" validate:"required,gt=0"`
         ProjectId int64 `json:"project_id" validate:"required,gt=0"`
+        StageId int64 `json:"stage_id" validate:"required,gt=0"`
         AssigneeIds []int64 `json:"assignee_ids"`
     }
 

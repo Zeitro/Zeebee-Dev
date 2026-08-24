@@ -6,7 +6,6 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/data/dto"
@@ -39,9 +38,9 @@ func (l *CandidateLogic) Candidate(in *borrower.ProjectManagementMemberCandidate
 	if err != nil {
 		return nil, err
 	}
-	data := make([]*proto.ProjectManagementMemberEntity, 0, len(members))
+	data := make([]*borrower.ProjectManagementMemberCandidateEntity, 0, len(members))
 	for _, member := range members {
-		entity, err := memberEntity(member)
+		entity, err := memberCandidateEntity(member)
 		if err != nil {
 			return nil, err
 		}

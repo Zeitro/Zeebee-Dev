@@ -18,7 +18,7 @@ func TestTaskCascadeDeleteAndHistoricalSnapshots(t *testing.T) {
 	}
 	for _, statement := range []string{
 		"CREATE TABLE project_management_tasks (id integer primary key, is_del integer not null default 0, project_id integer not null, organization_id integer not null, parent_task_id integer not null default 0, stage_id integer not null default 0, creator_id integer not null default 0, creator_name text not null default '', title text not null default '')",
-		"CREATE TABLE project_management_task_assignees (id integer primary key, is_del integer not null default 0, task_id integer not null, organization_user_id integer not null, organization_user_name text not null default '')",
+		"CREATE TABLE project_management_task_assignees (id integer primary key, is_del integer not null default 0, task_id integer not null, stage_id integer not null default 0, organization_user_id integer not null, organization_user_name text not null default '')",
 		"CREATE TABLE project_management_task_dependencies (id integer primary key, is_del integer not null default 0, task_id integer not null, dependency_task_id integer not null, dependency_type text not null default 'PreTask', dependency_rule text not null default 'FS')",
 		"CREATE TABLE files (id integer primary key, is_del integer not null default 0, entity_id integer not null, entity_type text not null)",
 		"CREATE TABLE project_management_project_members (id integer primary key, is_del integer not null default 0, project_id integer not null, organization_user_id integer not null, role text not null default '')",
@@ -30,7 +30,7 @@ func TestTaskCascadeDeleteAndHistoricalSnapshots(t *testing.T) {
 	}
 	for _, statement := range []string{
 		"INSERT INTO project_management_tasks (id, project_id, organization_id, stage_id, creator_id, creator_name, title) VALUES (1, 10, 1, 100, 8, 'Former creator', 'Historical task')",
-		"INSERT INTO project_management_task_assignees (id, task_id, organization_user_id, organization_user_name) VALUES (2, 1, 9, 'Former executor')",
+		"INSERT INTO project_management_task_assignees (id, task_id, stage_id, organization_user_id, organization_user_name) VALUES (2, 1, 100, 9, 'Former executor')",
 		"INSERT INTO project_management_project_members (id, project_id, organization_user_id, role) VALUES (3, 10, 9, 'executor')",
 	} {
 		if err := db.Exec(statement).Error; err != nil {

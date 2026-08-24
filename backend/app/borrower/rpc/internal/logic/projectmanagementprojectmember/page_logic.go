@@ -40,7 +40,7 @@ func (l *PageLogic) Page(in *borrower.ProjectManagementMemberPageRequest) (resp 
 	if err != nil {
 		return nil, err
 	}
-	page, err := l.baseLogic.ProjectManagementMemberLogic.Page(l.ctx, claim, in.Data.ProjectId, *input)
+	page, err := l.baseLogic.ProjectManagementMemberLogic.Page(l.ctx, claim, *input)
 	if err != nil {
 		return nil, err
 	}

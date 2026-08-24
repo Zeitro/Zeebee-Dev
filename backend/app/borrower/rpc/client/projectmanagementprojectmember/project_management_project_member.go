@@ -16,27 +16,32 @@ import (
 )
 
 type (
-	ProjectManagementMemberAddRequest           = borrower.ProjectManagementMemberAddRequest
-	ProjectManagementMemberAddRequestData       = borrower.ProjectManagementMemberAddRequestData
-	ProjectManagementMemberCandidateRequest     = borrower.ProjectManagementMemberCandidateRequest
-	ProjectManagementMemberCandidateRequestData = borrower.ProjectManagementMemberCandidateRequestData
-	ProjectManagementMemberCandidateResponse    = borrower.ProjectManagementMemberCandidateResponse
-	ProjectManagementMemberDeleteRequest        = borrower.ProjectManagementMemberDeleteRequest
-	ProjectManagementMemberDeleteRequestData    = borrower.ProjectManagementMemberDeleteRequestData
-	ProjectManagementMemberInput                = borrower.ProjectManagementMemberInput
-	ProjectManagementMemberPageRequest          = borrower.ProjectManagementMemberPageRequest
-	ProjectManagementMemberPageRequestData      = borrower.ProjectManagementMemberPageRequestData
-	ProjectManagementMemberPageRequestFilter    = borrower.ProjectManagementMemberPageRequestFilter
-	ProjectManagementMemberPageResponse         = borrower.ProjectManagementMemberPageResponse
-	ProjectManagementMemberPageResponseData     = borrower.ProjectManagementMemberPageResponseData
-	ProjectManagementMemberUpdateRequest        = borrower.ProjectManagementMemberUpdateRequest
-	ProjectManagementMemberUpdateRequestData    = borrower.ProjectManagementMemberUpdateRequestData
+	ProjectManagementMemberAddRequest            = borrower.ProjectManagementMemberAddRequest
+	ProjectManagementMemberAddRequestData        = borrower.ProjectManagementMemberAddRequestData
+	ProjectManagementMemberCandidateEntity       = borrower.ProjectManagementMemberCandidateEntity
+	ProjectManagementMemberCandidateRequest      = borrower.ProjectManagementMemberCandidateRequest
+	ProjectManagementMemberCandidateRequestData  = borrower.ProjectManagementMemberCandidateRequestData
+	ProjectManagementMemberCandidateResponse     = borrower.ProjectManagementMemberCandidateResponse
+	ProjectManagementMemberDeleteRequest         = borrower.ProjectManagementMemberDeleteRequest
+	ProjectManagementMemberDeleteRequestData     = borrower.ProjectManagementMemberDeleteRequestData
+	ProjectManagementMemberDetailRequest         = borrower.ProjectManagementMemberDetailRequest
+	ProjectManagementMemberDetailRequestData     = borrower.ProjectManagementMemberDetailRequestData
+	ProjectManagementMemberDetailResponse        = borrower.ProjectManagementMemberDetailResponse
+	ProjectManagementMemberInput                 = borrower.ProjectManagementMemberInput
+	ProjectManagementMemberPageRequest           = borrower.ProjectManagementMemberPageRequest
+	ProjectManagementMemberPageRequestData       = borrower.ProjectManagementMemberPageRequestData
+	ProjectManagementMemberPageRequestFilter     = borrower.ProjectManagementMemberPageRequestFilter
+	ProjectManagementMemberPageResponse          = borrower.ProjectManagementMemberPageResponse
+	ProjectManagementMemberPageResponseData      = borrower.ProjectManagementMemberPageResponseData
+	ProjectManagementMemberRoleUpdateRequest     = borrower.ProjectManagementMemberRoleUpdateRequest
+	ProjectManagementMemberRoleUpdateRequestData = borrower.ProjectManagementMemberRoleUpdateRequestData
 
 	ProjectManagementProjectMember interface {
 		Page(ctx context.Context, in *ProjectManagementMemberPageRequest, opts ...grpc.CallOption) (*ProjectManagementMemberPageResponse, error)
 		Candidate(ctx context.Context, in *ProjectManagementMemberCandidateRequest, opts ...grpc.CallOption) (*ProjectManagementMemberCandidateResponse, error)
+		Detail(ctx context.Context, in *ProjectManagementMemberDetailRequest, opts ...grpc.CallOption) (*ProjectManagementMemberDetailResponse, error)
 		Add(ctx context.Context, in *ProjectManagementMemberAddRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
-		Update(ctx context.Context, in *ProjectManagementMemberUpdateRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
+		UpdateRole(ctx context.Context, in *ProjectManagementMemberRoleUpdateRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 		Delete(ctx context.Context, in *ProjectManagementMemberDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 	}
 
@@ -61,14 +66,19 @@ func (m *defaultProjectManagementProjectMember) Candidate(ctx context.Context, i
 	return client.Candidate(ctx, in, opts...)
 }
 
+func (m *defaultProjectManagementProjectMember) Detail(ctx context.Context, in *ProjectManagementMemberDetailRequest, opts ...grpc.CallOption) (*ProjectManagementMemberDetailResponse, error) {
+	client := borrower.NewProjectManagementProjectMemberClient(m.cli.Conn())
+	return client.Detail(ctx, in, opts...)
+}
+
 func (m *defaultProjectManagementProjectMember) Add(ctx context.Context, in *ProjectManagementMemberAddRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
 	client := borrower.NewProjectManagementProjectMemberClient(m.cli.Conn())
 	return client.Add(ctx, in, opts...)
 }
 
-func (m *defaultProjectManagementProjectMember) Update(ctx context.Context, in *ProjectManagementMemberUpdateRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
+func (m *defaultProjectManagementProjectMember) UpdateRole(ctx context.Context, in *ProjectManagementMemberRoleUpdateRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
 	client := borrower.NewProjectManagementProjectMemberClient(m.cli.Conn())
-	return client.Update(ctx, in, opts...)
+	return client.UpdateRole(ctx, in, opts...)
 }
 
 func (m *defaultProjectManagementProjectMember) Delete(ctx context.Context, in *ProjectManagementMemberDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {

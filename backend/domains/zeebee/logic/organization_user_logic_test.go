@@ -27,7 +27,7 @@ func setupOrganizationUserDeleteLogic(t *testing.T) (*OrganizationUserLogic, *go
 		`CREATE TABLE organization_user_and_roles (organization_user_id INTEGER NOT NULL, role_id INTEGER NOT NULL)`,
 		`CREATE TABLE project_management_project_members (id INTEGER PRIMARY KEY, is_del INTEGER NOT NULL DEFAULT 0, project_id INTEGER NOT NULL DEFAULT 0, organization_user_id INTEGER NOT NULL DEFAULT 0, role TEXT NOT NULL DEFAULT '')`,
 		`CREATE TABLE project_management_tasks (id INTEGER PRIMARY KEY, is_del INTEGER NOT NULL DEFAULT 0, project_id INTEGER NOT NULL DEFAULT 0, organization_id INTEGER NOT NULL DEFAULT 0, stage_id INTEGER NOT NULL DEFAULT 0, creator_id INTEGER NOT NULL DEFAULT 0, creator_name TEXT NOT NULL DEFAULT '', title TEXT NOT NULL DEFAULT '')`,
-		`CREATE TABLE project_management_task_assignees (id INTEGER PRIMARY KEY, is_del INTEGER NOT NULL DEFAULT 0, task_id INTEGER NOT NULL DEFAULT 0, organization_user_id INTEGER NOT NULL DEFAULT 0, organization_user_name TEXT NOT NULL DEFAULT '')`,
+		`CREATE TABLE project_management_task_assignees (id INTEGER PRIMARY KEY, is_del INTEGER NOT NULL DEFAULT 0, task_id INTEGER NOT NULL DEFAULT 0, stage_id INTEGER NOT NULL DEFAULT 0, organization_user_id INTEGER NOT NULL DEFAULT 0, organization_user_name TEXT NOT NULL DEFAULT '')`,
 	} {
 		require.NoError(t, db.Exec(statement).Error)
 	}

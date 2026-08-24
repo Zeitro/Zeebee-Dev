@@ -33,14 +33,14 @@ func (l *ProjectManagementProjectLogic) Page(ctx context.Context, claim utils.Jw
 	return l.repos.ProjectManagementProjectRepo.Page(ctx, claim.OrganizationId, input)
 }
 
-func (l *ProjectManagementMemberLogic) Page(ctx context.Context, claim utils.JwtUser, projectId int64, input dto.ProjectManagementMemberPageRequestDto) (gormx.PageResponse[*dto.ProjectManagementMemberDetailDto], error) {
-	if _, err := l.projectManagementAccess().RequireProject(ctx, projectId, claim.OrganizationId); err != nil {
+func (l *ProjectManagementMemberLogic) Page(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementMemberPageRequestDto) (gormx.PageResponse[*dto.ProjectManagementMemberDetailDto], error) {
+	if _, err := l.projectManagementAccess().RequireProject(ctx, input.Filter.ProjectId, claim.OrganizationId); err != nil {
 		return gormx.PageResponse[*dto.ProjectManagementMemberDetailDto]{}, err
 	}
-	if _, err := l.projectManagementAccess().RequireMember(ctx, projectId, claim.OrganizationUserId); err != nil {
+	if _, err := l.projectManagementAccess().RequireMember(ctx, input.Filter.ProjectId, claim.OrganizationUserId); err != nil {
 		return gormx.PageResponse[*dto.ProjectManagementMemberDetailDto]{}, err
 	}
-	page, err := l.repos.ProjectManagementProjectRepo.PageMembers(ctx, projectId, input)
+	page, err := l.repos.ProjectManagementProjectRepo.PageMembers(ctx, input.Filter.ProjectId, input)
 	if err != nil {
 		return gormx.PageResponse[*dto.ProjectManagementMemberDetailDto]{}, err
 	}
@@ -51,7 +51,7 @@ func (l *ProjectManagementMemberLogic) Page(ctx context.Context, claim utils.Jwt
 	return gormx.PageResponse[*dto.ProjectManagementMemberDetailDto]{Page: page.Page, Limit: page.Limit, Total: page.Total, TotalPage: page.TotalPage, List: list}, nil
 }
 
-func (l *ProjectManagementMemberLogic) Candidate(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementMemberCandidateDto) ([]*dto.ProjectManagementMemberDetailDto, error) {
+func (l *ProjectManagementMemberLogic) Candidate(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementMemberCandidateDto) ([]*dto.ProjectManagementMemberCandidateEntityDto, error) {
 	if _, err := l.projectManagementAccess().RequireProject(ctx, input.ProjectId, claim.OrganizationId); err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func (l *ProjectManagementMemberLogic) Candidate(ctx context.Context, claim util
 	if err != nil {
 		return nil, err
 	}
-	return projectManagementMemberDtos(candidates)
+	return candidates, nil
 }
 
 func (l *ProjectManagementProjectLogic) RequirePropertyDeletable(ctx context.Context, propertyId int64) error {
