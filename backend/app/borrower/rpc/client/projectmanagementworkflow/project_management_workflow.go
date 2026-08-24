@@ -24,6 +24,8 @@ type (
 	ProjectManagementWorkflowDetailResponse    = borrower.ProjectManagementWorkflowDetailResponse
 	ProjectManagementWorkflowUpdateRequest     = borrower.ProjectManagementWorkflowUpdateRequest
 	ProjectManagementWorkflowUpdateRequestData = borrower.ProjectManagementWorkflowUpdateRequestData
+	ProjectManagementWorkflowUpdateStage       = borrower.ProjectManagementWorkflowUpdateStage
+	ProjectManagementWorkflowUpdateTransition  = borrower.ProjectManagementWorkflowUpdateTransition
 
 	ProjectManagementWorkflow interface {
 		All(ctx context.Context, in *proto.EmptyRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowAllResponse, error)

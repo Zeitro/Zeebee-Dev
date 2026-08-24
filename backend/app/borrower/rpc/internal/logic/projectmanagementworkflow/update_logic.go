@@ -37,18 +37,14 @@ func (l *UpdateLogic) Update(in *borrower.ProjectManagementWorkflowUpdateRequest
 		return nil, err
 	}
 
+	data, err := copierx.Trans[borrower.ProjectManagementWorkflowUpdateRequestData, dto.ProjectManagementWorkflowUpdateDto](in.Data)
+	if err != nil {
+		return nil, err
+	}
 	var workflow *model.ProjectManagementWorkflow
 	if in.Data.ProjectId != 0 {
-		data, err := copierx.Trans[borrower.ProjectManagementWorkflowUpdateRequestData, dto.ProjectManagementWorkflowDto](in.Data)
-		if err != nil {
-			return nil, err
-		}
 		workflow, err = base.ProjectManagementWorkflowLogic.ProjectUpdate(l.ctx, claim, in.Data.ProjectId, *data)
 	} else {
-		data, err := copierx.Trans[borrower.ProjectManagementWorkflowUpdateRequestData, dto.ProjectManagementWorkflowDto](in.Data)
-		if err != nil {
-			return nil, err
-		}
 		workflow, err = base.ProjectManagementWorkflowLogic.Update(l.ctx, claim, in.Data.Id, *data)
 	}
 	if err != nil {

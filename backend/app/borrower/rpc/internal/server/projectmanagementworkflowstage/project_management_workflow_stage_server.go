@@ -44,6 +44,11 @@ func (s *ProjectManagementWorkflowStageServer) Update(ctx context.Context, in *b
 	return l.Update(in)
 }
 
+func (s *ProjectManagementWorkflowStageServer) SwapOrder(ctx context.Context, in *borrower.ProjectManagementWorkflowStageSwapOrderRequest) (*proto.EmptyResponse, error) {
+	l := projectmanagementworkflowstagelogic.NewSwapOrderLogic(ctx, s.svcCtx)
+	return l.SwapOrder(in)
+}
+
 func (s *ProjectManagementWorkflowStageServer) Delete(ctx context.Context, in *borrower.ProjectManagementWorkflowStageDetailRequest) (*proto.EmptyResponse, error) {
 	l := projectmanagementworkflowstagelogic.NewDeleteLogic(ctx, s.svcCtx)
 	return l.Delete(in)

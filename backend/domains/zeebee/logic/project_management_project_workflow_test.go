@@ -29,13 +29,22 @@ func TestValidateProjectManagementProjectWorkflow(t *testing.T) {
 	if err := validateProjectManagementProjectWorkflow(workflow); err != nil {
 		t.Fatalf("valid workflow replacement rejected: %v", err)
 	}
+	workflow.Name = ""
+	if err := validateProjectManagementProjectWorkflow(workflow); err != nil {
+		t.Fatalf("project workflow definition should not require a name: %v", err)
+	}
+	workflow.Transitions = append(workflow.Transitions, dto.ProjectManagementWorkflowTransitionDto{Name: "Restart", FromStageId: -1, ToStageId: 12})
+	if err := validateProjectManagementProjectWorkflow(workflow); err != nil {
+		t.Fatalf("workflow replacement rejected a transition loop: %v", err)
+	}
+	workflow.Transitions = workflow.Transitions[:1]
 	workflow.Stages[1].Id = 0
 	if err := validateProjectManagementProjectWorkflow(workflow); err == nil {
 		t.Fatal("workflow replacement accepted a stage without a stable or temporary id")
 	}
 }
 
-func TestUpdateProjectWorkflowRequiresProjectManagerAndPersistsMetadata(t *testing.T) {
+func TestUpdateProjectWorkflowRequiresProjectManagerAndPreservesMetadata(t *testing.T) {
 	db, err := gorm.Open(sqlite.Open(fmt.Sprintf("file:%s?mode=memory&cache=shared", t.Name())), &gorm.Config{})
 	require.NoError(t, err)
 	for _, statement := range []string{
@@ -54,10 +63,9 @@ func TestUpdateProjectWorkflowRequiresProjectManagerAndPersistsMetadata(t *testi
 	require.NoError(t, db.Exec("INSERT INTO project_management_workflow_stages (id, workflow_id, name, phase, sort_order) VALUES (101, 100, 'Pending', ?, 1), (102, 100, 'Finished', ?, 2)", constants.ProjectManagementStagePhasePending, constants.ProjectManagementStagePhaseFinished).Error)
 
 	logic := NewProjectManagementWorkflowLogic(NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}))
-	input := dto.ProjectManagementWorkflowDto{
-		Name: "Updated workflow",
-		Stages: []dto.ProjectManagementWorkflowStageDto{
-			{Id: 101, Name: "Pending", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 1},
+	input := dto.ProjectManagementWorkflowUpdateDto{
+		Stages: []dto.ProjectManagementWorkflowUpdateStageDto{
+			{Id: 101, Name: "Not started", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 1},
 			{Id: 102, Name: "Finished", Phase: constants.ProjectManagementStagePhaseFinished, SortOrder: 2},
 		},
 	}
@@ -71,8 +79,12 @@ func TestUpdateProjectWorkflowRequiresProjectManagerAndPersistsMetadata(t *testi
 
 	updated, err := logic.ProjectUpdate(context.Background(), utils.JwtUser{OrganizationId: 1, OrganizationUserId: 10}, 1, input)
 	require.NoError(t, err)
-	require.Equal(t, "Updated workflow", updated.Name)
-	require.Equal(t, "", updated.Description)
+	require.Equal(t, "Workflow", updated.Name)
+	require.Equal(t, "Original description", updated.Description)
 	require.NoError(t, db.First(&workflow, 100).Error)
-	require.Equal(t, "", workflow.Description)
+	require.Equal(t, "Workflow", workflow.Name)
+	require.Equal(t, "Original description", workflow.Description)
+	var stage model.ProjectManagementWorkflowStage
+	require.NoError(t, db.First(&stage, 101).Error)
+	require.Equal(t, "Not started", stage.Name)
 }

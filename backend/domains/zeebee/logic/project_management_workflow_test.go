@@ -11,6 +11,7 @@ import (
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/repo"
 )
 
@@ -63,6 +64,34 @@ func TestValidateProjectManagementWorkflow(t *testing.T) {
 	}
 }
 
+func TestProjectManagementWorkflowUpdateDefinition(t *testing.T) {
+	definition, err := projectManagementWorkflowUpdateDefinition(dto.ProjectManagementWorkflowUpdateDto{
+		Name: "Template",
+		Stages: []dto.ProjectManagementWorkflowUpdateStageDto{
+			{Id: 1, Name: "Pending", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 1, Transitions: []dto.ProjectManagementWorkflowUpdateTransitionDto{{Id: 10, Name: "Finish", FromStageId: 1, ToStageId: 2}}},
+			{Name: "Finished", Phase: constants.ProjectManagementStagePhaseFinished, SortOrder: 2},
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(definition.Stages) != 2 || definition.Stages[1].Id == 0 || len(definition.Transitions) != 1 || definition.Transitions[0].Id != 10 || definition.Transitions[0].FromStageId != 1 || definition.Transitions[0].ToStageId != 2 {
+		t.Fatalf("unexpected workflow definition: %#v", definition)
+	}
+	_, err = projectManagementWorkflowUpdateDefinition(dto.ProjectManagementWorkflowUpdateDto{Stages: []dto.ProjectManagementWorkflowUpdateStageDto{{
+		Id: 1, Transitions: []dto.ProjectManagementWorkflowUpdateTransitionDto{{FromStageId: 2, ToStageId: 2}},
+	}}})
+	if err == nil {
+		t.Fatal("transition with a mismatched source stage accepted")
+	}
+	_, err = projectManagementWorkflowUpdateDefinition(dto.ProjectManagementWorkflowUpdateDto{Stages: []dto.ProjectManagementWorkflowUpdateStageDto{{
+		Transitions: []dto.ProjectManagementWorkflowUpdateTransitionDto{{FromStageId: 1, ToStageId: 2}},
+	}}})
+	if err == nil {
+		t.Fatal("new stage with transitions accepted")
+	}
+}
+
 func TestProjectManagementTemplateModels(t *testing.T) {
 	input := dto.ProjectManagementWorkflowDto{
 		Name: "Template",
@@ -92,7 +121,34 @@ func TestValidateProjectManagementWorkflowDetails(t *testing.T) {
 	}
 }
 
-func TestProjectManagementWorkflowCreateCopiesDefaultAndUpdatePreservesDefinition(t *testing.T) {
+func TestProjectManagementWorkflowDeleteRejectsProjectWorkflow(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(fmt.Sprintf("file:%s?mode=memory&cache=shared", t.Name())), &gorm.Config{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = db.Exec("CREATE TABLE project_management_workflows (id integer primary key, is_del integer not null default 0, organization_id integer not null, kind text not null)").Error; err != nil {
+		t.Fatal(err)
+	}
+	for _, statement := range []string{
+		"INSERT INTO project_management_workflows (id, organization_id, kind) VALUES (1, 1, 'OrganizationTemplate')",
+		"INSERT INTO project_management_workflows (id, organization_id, kind) VALUES (2, 1, 'Project')",
+	} {
+		if err = db.Exec(statement).Error; err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	logic := NewProjectManagementWorkflowLogic(NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}))
+	if err = logic.Delete(context.Background(), utils.JwtUser{OrganizationId: 1}, 2); err == nil {
+		t.Fatal("project workflow deletion accepted")
+	}
+	var workflow model.ProjectManagementWorkflow
+	if err = db.First(&workflow, 2).Error; err != nil {
+		t.Fatalf("project workflow deleted: %v", err)
+	}
+}
+
+func TestProjectManagementWorkflowCreateCopiesDefaultAndUpdateReplacesDefinition(t *testing.T) {
 	db, err := gorm.Open(sqlite.Open(fmt.Sprintf("file:%s?mode=memory&cache=shared", t.Name())), &gorm.Config{})
 	if err != nil {
 		t.Fatal(err)
@@ -122,21 +178,28 @@ func TestProjectManagementWorkflowCreateCopiesDefaultAndUpdatePreservesDefinitio
 	if err != nil {
 		t.Fatalf("create workflow: %v", err)
 	}
-	if created.IsDefault || len(created.Stages) != 2 || created.Stages[0].Name != "Pending" || created.Stages[0].Color != "#3b82f6" || created.Stages[1].Phase != constants.ProjectManagementStagePhaseFinished || len(created.Transitions) != 1 || len(created.Transitions[0].AllowedActorTypes) != 1 || created.Transitions[0].AllowedActorTypes[0] != constants.ProjectManagementMemberRoleProjectOwner {
+	if created.IsDefault || len(created.Stages) != 2 || created.Stages[0].Name != "Pending" || created.Stages[0].Color != "#3b82f6" || created.Stages[1].Phase != constants.ProjectManagementStagePhaseFinished || len(created.Stages[0].Transitions) != 1 || len(created.Stages[0].Transitions[0].AllowedActorTypes) != 1 || created.Stages[0].Transitions[0].AllowedActorTypes[0] != constants.ProjectManagementMemberRoleProjectOwner {
 		t.Fatalf("unexpected copied workflow: %#v", created)
 	}
-	if created.Stages[0].Id == 11 || created.Stages[1].Id == 12 || created.Transitions[0].FromStageId == 11 || created.Transitions[0].ToStageId == 12 {
+	if created.Stages[0].Id == 11 || created.Stages[1].Id == 12 || created.Stages[0].Transitions[0].FromStageId == 11 || created.Stages[0].Transitions[0].ToStageId == 12 {
 		t.Fatalf("default workflow definition was not cloned: %#v", created)
 	}
 
-	updated, err := logic.Update(context.Background(), actor, created.Id, dto.ProjectManagementWorkflowDto{
-		Name: "Renamed", IsDefault: true,
-		Stages: []dto.ProjectManagementWorkflowStageDto{{Id: 99, Name: "Ignored", Phase: constants.ProjectManagementStagePhasePending}},
+	updated, err := logic.Update(context.Background(), actor, created.Id, dto.ProjectManagementWorkflowUpdateDto{
+		Name:        "Renamed",
+		Description: "Updated definition",
+		Stages: []dto.ProjectManagementWorkflowUpdateStageDto{
+			{Id: created.Stages[0].Id, Name: "Queued", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 1, Transitions: []dto.ProjectManagementWorkflowUpdateTransitionDto{{
+				Id: created.Stages[0].Transitions[0].Id, Name: "Complete", FromStageId: created.Stages[0].Id, ToStageId: created.Stages[1].Id,
+			}}},
+			{Id: created.Stages[1].Id, Name: "Completed", Phase: constants.ProjectManagementStagePhaseFinished, SortOrder: 2},
+			{Name: "Review", Phase: constants.ProjectManagementStagePhaseInProgress},
+		},
 	})
 	if err != nil {
 		t.Fatalf("update workflow: %v", err)
 	}
-	if updated.Name != "Renamed" || updated.Description != "" || updated.IsDefault || len(updated.Stages) != 2 || len(updated.Transitions) != 1 {
+	if updated.Name != "Renamed" || updated.Description != "Updated definition" || updated.IsDefault || len(updated.Stages) != 3 || updated.Stages[0].Name != "Queued" || len(updated.Stages[0].Transitions) != 1 || updated.Stages[0].Transitions[0].Name != "Complete" || updated.Stages[2].SortOrder != 3 {
 		t.Fatalf("workflow update changed definition: %#v", updated)
 	}
 

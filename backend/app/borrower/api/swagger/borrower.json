@@ -4313,7 +4313,7 @@
       },
       "delete": {
         "consumes": [
-          "application/json"
+          "application/x-www-form-urlencoded"
         ],
         "produces": [
           "application/json"
@@ -4332,14 +4332,6 @@
             "name": "id",
             "in": "path",
             "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/ProjectManagementProjectDeleteRequest"
-            }
           }
         ],
         "responses": {
@@ -4686,10 +4678,7 @@
       }
     },
     "/api/v1/project_management/project_member/{id}": {
-      "put": {
-        "consumes": [
-          "application/json"
-        ],
+      "get": {
         "produces": [
           "application/json"
         ],
@@ -4699,8 +4688,8 @@
         "tags": [
           "project_management_project_member"
         ],
-        "summary": "update",
-        "operationId": "projectManagementProjectMemberUpdate",
+        "summary": "detail",
+        "operationId": "projectManagementProjectMemberDetail",
         "parameters": [
           {
             "type": "integer",
@@ -4709,12 +4698,10 @@
             "required": true
           },
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/ProjectManagementMemberUpdateRequest"
-            }
+            "type": "integer",
+            "name": "project_id",
+            "in": "query",
+            "required": true
           }
         ],
         "responses": {
@@ -4729,7 +4716,7 @@
                   "example": 0
                 },
                 "data": {
-                  "$ref": "#/definitions/EmptyResponse"
+                  "$ref": "#/definitions/ProjectManagementMemberDetailResponse"
                 },
                 "msg": {
                   "description": "business message",
@@ -4769,6 +4756,63 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/ProjectManagementMemberDeleteRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "business code",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/EmptyResponse"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/project_member/{id}/role": {
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management_project_member"
+        ],
+        "summary": "update role",
+        "operationId": "projectManagementProjectMemberRoleUpdate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ProjectManagementMemberRoleUpdateRequest"
             }
           }
         ],
@@ -6215,212 +6259,7 @@
         }
       }
     },
-    "/api/v1/project_management/workflow/{workflow_id}/stage": {
-      "post": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "project_management_workflow_stage"
-        ],
-        "summary": "create",
-        "operationId": "projectManagementWorkflowStageCreate",
-        "parameters": [
-          {
-            "type": "integer",
-            "name": "workflow_id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/ProjectManagementWorkflowStageCreateRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/ProjectManagementWorkflowStageDetailResponse"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/project_management/workflow/{workflow_id}/stage/all": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "project_management_workflow_stage"
-        ],
-        "summary": "all",
-        "operationId": "projectManagementWorkflowStageAll",
-        "parameters": [
-          {
-            "type": "integer",
-            "name": "workflow_id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/ProjectManagementWorkflowStageAllResponse"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/project_management/workflow/{workflow_id}/stage/{from_stage_id}/transition/all": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "project_management_workflow_transition"
-        ],
-        "summary": "all",
-        "operationId": "projectManagementWorkflowTransitionAll",
-        "parameters": [
-          {
-            "type": "integer",
-            "name": "workflow_id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "integer",
-            "name": "from_stage_id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/ProjectManagementWorkflowTransitionAllResponse"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/project_management/workflow/{workflow_id}/stage/{id}": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "project_management_workflow_stage"
-        ],
-        "summary": "detail",
-        "operationId": "projectManagementWorkflowStageDetail",
-        "parameters": [
-          {
-            "type": "integer",
-            "name": "workflow_id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "integer",
-            "name": "id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/ProjectManagementWorkflowStageDetailResponse"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      },
+    "/api/v1/project_management/workflow/{id}/swap_stage_order": {
       "put": {
         "consumes": [
           "application/json"
@@ -6432,17 +6271,11 @@
           "https"
         ],
         "tags": [
-          "project_management_workflow_stage"
+          "project_management_workflow"
         ],
-        "summary": "update",
-        "operationId": "projectManagementWorkflowStageUpdate",
+        "summary": "swap stage order",
+        "operationId": "projectManagementWorkflowStageSwapOrder",
         "parameters": [
-          {
-            "type": "integer",
-            "name": "workflow_id",
-            "in": "path",
-            "required": true
-          },
           {
             "type": "integer",
             "name": "id",
@@ -6454,284 +6287,8 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/ProjectManagementWorkflowStageUpdateRequest"
+              "$ref": "#/definitions/ProjectManagementWorkflowStageSwapOrderRequest"
             }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/ProjectManagementWorkflowStageDetailResponse"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "consumes": [
-          "application/x-www-form-urlencoded"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "project_management_workflow_stage"
-        ],
-        "summary": "delete",
-        "operationId": "projectManagementWorkflowStageDelete",
-        "parameters": [
-          {
-            "type": "integer",
-            "name": "workflow_id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "integer",
-            "name": "id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/EmptyResponse"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/project_management/workflow/{workflow_id}/transition": {
-      "post": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "project_management_workflow_transition"
-        ],
-        "summary": "create",
-        "operationId": "projectManagementWorkflowTransitionCreate",
-        "parameters": [
-          {
-            "type": "integer",
-            "name": "workflow_id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/ProjectManagementWorkflowTransitionCreateRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/ProjectManagementWorkflowTransitionDetailResponse"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/project_management/workflow/{workflow_id}/transition/{id}": {
-      "get": {
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "project_management_workflow_transition"
-        ],
-        "summary": "detail",
-        "operationId": "projectManagementWorkflowTransitionDetail",
-        "parameters": [
-          {
-            "type": "integer",
-            "name": "workflow_id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "integer",
-            "name": "id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/ProjectManagementWorkflowTransitionDetailResponse"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "project_management_workflow_transition"
-        ],
-        "summary": "update",
-        "operationId": "projectManagementWorkflowTransitionUpdate",
-        "parameters": [
-          {
-            "type": "integer",
-            "name": "workflow_id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "integer",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/ProjectManagementWorkflowTransitionUpdateRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/ProjectManagementWorkflowTransitionDetailResponse"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "consumes": [
-          "application/x-www-form-urlencoded"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "project_management_workflow_transition"
-        ],
-        "summary": "delete",
-        "operationId": "projectManagementWorkflowTransitionDelete",
-        "parameters": [
-          {
-            "type": "integer",
-            "name": "workflow_id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "integer",
-            "name": "id",
-            "in": "path",
-            "required": true
           }
         ],
         "responses": {
@@ -18655,6 +18212,25 @@
         }
       }
     },
+    "ProjectManagementMemberCandidateEntity": {
+      "type": "object",
+      "required": [
+        "organization_user_id",
+        "full_name",
+        "email"
+      ],
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "full_name": {
+          "type": "string"
+        },
+        "organization_user_id": {
+          "type": "integer"
+        }
+      }
+    },
     "ProjectManagementMemberCandidateRequest": {
       "type": "object"
     },
@@ -18667,7 +18243,7 @@
         "lists": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/ProjectManagementMemberEntity"
+            "$ref": "#/definitions/ProjectManagementMemberCandidateEntity"
           }
         }
       }
@@ -18680,6 +18256,48 @@
       "properties": {
         "project_id": {
           "type": "integer"
+        }
+      }
+    },
+    "ProjectManagementMemberDetailRequest": {
+      "type": "object"
+    },
+    "ProjectManagementMemberDetailResponse": {
+      "type": "object",
+      "required": [
+        "id",
+        "project_id",
+        "organization_user_id",
+        "role",
+        "full_name",
+        "email",
+        "created_at",
+        "updated_at"
+      ],
+      "properties": {
+        "created_at": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "full_name": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "organization_user_id": {
+          "type": "integer"
+        },
+        "project_id": {
+          "type": "integer"
+        },
+        "role": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
         }
       }
     },
@@ -18739,9 +18357,15 @@
     },
     "ProjectManagementMemberPageFilter": {
       "type": "object",
+      "required": [
+        "project_id"
+      ],
       "properties": {
         "keyword": {
           "type": "string"
+        },
+        "project_id": {
+          "type": "integer"
         },
         "role": {
           "type": "string"
@@ -18751,16 +18375,22 @@
     "ProjectManagementMemberPageRequest": {
       "type": "object",
       "required": [
-        "project_id",
         "page",
-        "limit"
+        "limit",
+        "filter"
       ],
       "properties": {
         "filter": {
           "type": "object",
+          "required": [
+            "project_id"
+          ],
           "properties": {
             "keyword": {
               "type": "string"
+            },
+            "project_id": {
+              "type": "integer"
             },
             "role": {
               "type": "string"
@@ -18777,9 +18407,6 @@
           "type": "integer",
           "default": 1,
           "example": 1
-        },
-        "project_id": {
-          "type": "integer"
         }
       }
     },
@@ -18813,10 +18440,11 @@
         }
       }
     },
-    "ProjectManagementMemberUpdateRequest": {
+    "ProjectManagementMemberRoleUpdateRequest": {
       "type": "object",
       "required": [
-        "project_id"
+        "project_id",
+        "role"
       ],
       "properties": {
         "project_id": {
@@ -18916,24 +18544,16 @@
           "type": "integer"
         },
         "entity_type": {
-          "type": "string"
+          "type": "string",
+          "enum": [
+            "BorrowerProperty"
+          ]
         },
         "name": {
           "type": "string"
         },
         "workflow_template_id": {
           "type": "integer"
-        }
-      }
-    },
-    "ProjectManagementProjectDeleteRequest": {
-      "type": "object",
-      "required": [
-        "confirm"
-      ],
-      "properties": {
-        "confirm": {
-          "type": "boolean"
         }
       }
     },
@@ -18948,6 +18568,7 @@
         "cover_url",
         "owner_id",
         "owner_name",
+        "workflow",
         "created_at",
         "updated_at"
       ],
@@ -18981,6 +18602,53 @@
         },
         "updated_at": {
           "type": "string"
+        },
+        "workflow": {
+          "type": "object",
+          "required": [
+            "id",
+            "name",
+            "description",
+            "is_default",
+            "stages",
+            "source_template_id",
+            "source_template_name",
+            "created_at",
+            "updated_at"
+          ],
+          "properties": {
+            "created_at": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "is_default": {
+              "type": "boolean"
+            },
+            "name": {
+              "type": "string"
+            },
+            "source_template_id": {
+              "type": "integer"
+            },
+            "source_template_name": {
+              "type": "string"
+            },
+            "stages": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ProjectManagementWorkflowStageEntity"
+              }
+            },
+            "updated_at": {
+              "type": "string"
+            }
+          },
+          "$ref": "#/definitions/ProjectManagementWorkflowEntity"
         }
       }
     },
@@ -18995,6 +18663,7 @@
         "cover_url",
         "owner_id",
         "owner_name",
+        "workflow",
         "created_at",
         "updated_at"
       ],
@@ -19028,6 +18697,53 @@
         },
         "updated_at": {
           "type": "string"
+        },
+        "workflow": {
+          "type": "object",
+          "required": [
+            "id",
+            "name",
+            "description",
+            "is_default",
+            "stages",
+            "source_template_id",
+            "source_template_name",
+            "created_at",
+            "updated_at"
+          ],
+          "properties": {
+            "created_at": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "is_default": {
+              "type": "boolean"
+            },
+            "name": {
+              "type": "string"
+            },
+            "source_template_id": {
+              "type": "integer"
+            },
+            "source_template_name": {
+              "type": "string"
+            },
+            "stages": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ProjectManagementWorkflowStageEntity"
+              }
+            },
+            "updated_at": {
+              "type": "string"
+            }
+          },
+          "$ref": "#/definitions/ProjectManagementWorkflowEntity"
         }
       }
     },
@@ -19140,26 +18856,13 @@
     "ProjectManagementProjectWorkflowUpdateRequest": {
       "type": "object",
       "required": [
-        "name",
         "stages"
       ],
       "properties": {
-        "description": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
         "stages": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/ProjectManagementWorkflowStageEntity"
-          }
-        },
-        "transitions": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ProjectManagementWorkflowTransitionEntity"
+            "$ref": "#/definitions/ProjectManagementWorkflowUpdateStage"
           }
         }
       }
@@ -19167,6 +18870,7 @@
     "ProjectManagementTaskAssigneeEntity": {
       "type": "object",
       "required": [
+        "stage_id",
         "organization_user_id",
         "organization_user_name",
         "created_at",
@@ -19182,6 +18886,9 @@
         "organization_user_name": {
           "type": "string"
         },
+        "stage_id": {
+          "type": "integer"
+        },
         "updated_at": {
           "type": "string"
         }
@@ -19191,6 +18898,7 @@
       "type": "object",
       "required": [
         "project_id",
+        "stage_id",
         "assignee_ids"
       ],
       "properties": {
@@ -19201,6 +18909,9 @@
           }
         },
         "project_id": {
+          "type": "integer"
+        },
+        "stage_id": {
           "type": "integer"
         }
       }
@@ -19836,7 +19547,6 @@
         "description",
         "is_default",
         "stages",
-        "transitions",
         "source_template_id",
         "source_template_name",
         "created_at",
@@ -19868,12 +19578,6 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/ProjectManagementWorkflowStageEntity"
-          }
-        },
-        "transitions": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ProjectManagementWorkflowTransitionEntity"
           }
         },
         "updated_at": {
@@ -19889,7 +19593,6 @@
         "description",
         "is_default",
         "stages",
-        "transitions",
         "source_template_id",
         "source_template_name",
         "created_at",
@@ -19921,101 +19624,6 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/ProjectManagementWorkflowStageEntity"
-          }
-        },
-        "transitions": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ProjectManagementWorkflowTransitionEntity"
-          }
-        },
-        "updated_at": {
-          "type": "string"
-        }
-      }
-    },
-    "ProjectManagementWorkflowStageAllRequest": {
-      "type": "object"
-    },
-    "ProjectManagementWorkflowStageAllResponse": {
-      "type": "object",
-      "required": [
-        "lists"
-      ],
-      "properties": {
-        "lists": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ProjectManagementWorkflowStageEntity"
-          }
-        }
-      }
-    },
-    "ProjectManagementWorkflowStageCreateRequest": {
-      "type": "object",
-      "required": [
-        "name",
-        "phase",
-        "sort_order"
-      ],
-      "properties": {
-        "color": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "phase": {
-          "type": "string"
-        },
-        "sort_order": {
-          "type": "integer"
-        }
-      }
-    },
-    "ProjectManagementWorkflowStageDetailRequest": {
-      "type": "object"
-    },
-    "ProjectManagementWorkflowStageDetailResponse": {
-      "type": "object",
-      "required": [
-        "id",
-        "name",
-        "phase",
-        "color",
-        "sort_order",
-        "created_at",
-        "updated_at",
-        "transitions"
-      ],
-      "properties": {
-        "color": {
-          "type": "string"
-        },
-        "created_at": {
-          "type": "string"
-        },
-        "id": {
-          "type": "integer"
-        },
-        "name": {
-          "type": "string"
-        },
-        "phase": {
-          "type": "string",
-          "enum": [
-            "Pending",
-            "InProgress",
-            "Finished"
-          ]
-        },
-        "sort_order": {
-          "type": "integer"
-        },
-        "transitions": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ProjectManagementWorkflowTransitionEntity"
           }
         },
         "updated_at": {
@@ -20070,207 +19678,18 @@
         }
       }
     },
-    "ProjectManagementWorkflowStageUpdateRequest": {
-      "type": "object",
-      "required": [
-        "name",
-        "phase",
-        "sort_order"
-      ],
-      "properties": {
-        "color": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "phase": {
-          "type": "string"
-        },
-        "sort_order": {
-          "type": "integer"
-        }
-      }
-    },
-    "ProjectManagementWorkflowTransitionAllRequest": {
-      "type": "object"
-    },
-    "ProjectManagementWorkflowTransitionAllResponse": {
-      "type": "object",
-      "required": [
-        "lists"
-      ],
-      "properties": {
-        "lists": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ProjectManagementWorkflowTransitionEntity"
-          }
-        }
-      }
-    },
-    "ProjectManagementWorkflowTransitionCreateRequest": {
+    "ProjectManagementWorkflowStageSwapOrderRequest": {
       "type": "object",
       "required": [
         "from_stage_id",
-        "name",
-        "to_stage_id",
-        "allowed_actor_types"
+        "to_stage_id"
       ],
       "properties": {
-        "allowed_actor_types": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
         "from_stage_id": {
           "type": "integer"
         },
-        "name": {
-          "type": "string"
-        },
         "to_stage_id": {
           "type": "integer"
-        }
-      }
-    },
-    "ProjectManagementWorkflowTransitionDetailRequest": {
-      "type": "object"
-    },
-    "ProjectManagementWorkflowTransitionDetailResponse": {
-      "type": "object",
-      "required": [
-        "id",
-        "name",
-        "from_stage_id",
-        "to_stage_id",
-        "allowed_actor_types",
-        "created_at",
-        "updated_at",
-        "from_stage",
-        "to_stage"
-      ],
-      "properties": {
-        "allowed_actor_types": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "created_at": {
-          "type": "string"
-        },
-        "from_stage": {
-          "type": "object",
-          "required": [
-            "id",
-            "name",
-            "phase",
-            "color",
-            "sort_order",
-            "created_at",
-            "updated_at",
-            "transitions"
-          ],
-          "properties": {
-            "color": {
-              "type": "string"
-            },
-            "created_at": {
-              "type": "string"
-            },
-            "id": {
-              "type": "integer"
-            },
-            "name": {
-              "type": "string"
-            },
-            "phase": {
-              "type": "string",
-              "enum": [
-                "Pending",
-                "InProgress",
-                "Finished"
-              ]
-            },
-            "sort_order": {
-              "type": "integer"
-            },
-            "transitions": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/ProjectManagementWorkflowTransitionEntity"
-              }
-            },
-            "updated_at": {
-              "type": "string"
-            }
-          },
-          "$ref": "#/definitions/ProjectManagementWorkflowStageEntity"
-        },
-        "from_stage_id": {
-          "type": "integer"
-        },
-        "id": {
-          "type": "integer"
-        },
-        "name": {
-          "type": "string"
-        },
-        "to_stage": {
-          "type": "object",
-          "required": [
-            "id",
-            "name",
-            "phase",
-            "color",
-            "sort_order",
-            "created_at",
-            "updated_at",
-            "transitions"
-          ],
-          "properties": {
-            "color": {
-              "type": "string"
-            },
-            "created_at": {
-              "type": "string"
-            },
-            "id": {
-              "type": "integer"
-            },
-            "name": {
-              "type": "string"
-            },
-            "phase": {
-              "type": "string",
-              "enum": [
-                "Pending",
-                "InProgress",
-                "Finished"
-              ]
-            },
-            "sort_order": {
-              "type": "integer"
-            },
-            "transitions": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/ProjectManagementWorkflowTransitionEntity"
-              }
-            },
-            "updated_at": {
-              "type": "string"
-            }
-          },
-          "$ref": "#/definitions/ProjectManagementWorkflowStageEntity"
-        },
-        "to_stage_id": {
-          "type": "integer"
-        },
-        "updated_at": {
-          "type": "string"
         }
       }
     },
@@ -20410,13 +19829,62 @@
         }
       }
     },
-    "ProjectManagementWorkflowTransitionUpdateRequest": {
+    "ProjectManagementWorkflowUpdateRequest": {
       "type": "object",
       "required": [
         "name",
-        "from_stage_id",
+        "stages"
+      ],
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "stages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProjectManagementWorkflowUpdateStage"
+          }
+        }
+      }
+    },
+    "ProjectManagementWorkflowUpdateStage": {
+      "type": "object",
+      "required": [
+        "name",
+        "phase"
+      ],
+      "properties": {
+        "color": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "phase": {
+          "type": "string"
+        },
+        "sort_order": {
+          "type": "integer"
+        },
+        "transitions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProjectManagementWorkflowUpdateTransition"
+          }
+        }
+      }
+    },
+    "ProjectManagementWorkflowUpdateTransition": {
+      "type": "object",
+      "required": [
         "to_stage_id",
-        "allowed_actor_types"
+        "from_stage_id"
       ],
       "properties": {
         "allowed_actor_types": {
@@ -20428,25 +19896,14 @@
         "from_stage_id": {
           "type": "integer"
         },
+        "id": {
+          "type": "integer"
+        },
         "name": {
           "type": "string"
         },
         "to_stage_id": {
           "type": "integer"
-        }
-      }
-    },
-    "ProjectManagementWorkflowUpdateRequest": {
-      "type": "object",
-      "required": [
-        "name"
-      ],
-      "properties": {
-        "description": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
         }
       }
     },
@@ -22468,7 +21925,7 @@
       }
     }
   },
-  "x-date": "2026-08-21 18:07:24",
+  "x-date": "2026-08-24 18:08:46",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

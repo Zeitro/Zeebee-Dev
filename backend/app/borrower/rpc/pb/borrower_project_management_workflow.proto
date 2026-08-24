@@ -37,14 +37,27 @@ message ProjectManagementWorkflowCreateRequestData {
 message ProjectManagementWorkflowUpdateRequest {
   ProjectManagementWorkflowUpdateRequestData data = 1;
 }
+message ProjectManagementWorkflowUpdateStage {
+  int64 id = 1;
+  string name = 2;
+  string phase = 3;
+  string color = 4;
+  int32 sort_order = 5;
+  repeated ProjectManagementWorkflowUpdateTransition transitions = 6;
+}
+message ProjectManagementWorkflowUpdateTransition {
+  int64 id = 1;
+  string name = 2;
+  int64 from_stage_id = 3;
+  int64 to_stage_id = 4;
+  repeated string allowed_actor_types = 5;
+}
 message ProjectManagementWorkflowUpdateRequestData {
   int64 id = 1;
   string name = 2;
   string description = 3;
-  reserved 4;
-  bool is_default = 5;
-  repeated proto.ProjectManagementWorkflowStageEntity stages = 6;
-  repeated proto.ProjectManagementWorkflowTransitionEntity transitions = 7;
+  reserved 4, 5, 7;
+  repeated ProjectManagementWorkflowUpdateStage stages = 6;
   int64 project_id = 8;
 }
 

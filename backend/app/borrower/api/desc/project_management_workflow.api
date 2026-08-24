@@ -9,8 +9,14 @@ info (
 import "../../../../domains/zeebee/api/project_management_entity.api"
 
 import "base.api"
+import "project_management.api"
 
 type (
+    ProjectManagementWorkflowStageSwapOrderRequest {
+        Id int64 `path:"id" validate:"required,gt=0"`
+        FromStageId int64 `json:"from_stage_id" validate:"required,gt=0"`
+        ToStageId int64 `json:"to_stage_id" validate:"required,gt=0"`
+    }
     ProjectManagementWorkflowAllRequest {}
     ProjectManagementWorkflowAllResponse {
         Lists []*ProjectManagementWorkflowEntity `json:"lists"`
@@ -26,6 +32,7 @@ type (
         Id          int64  `path:"id" validate:"required,gt=0"`
         Name        string `json:"name" validate:"required,max=100"`
         Description string `json:"description,optional" validate:"max=500"`
+        Stages      []*ProjectManagementWorkflowUpdateStage `json:"stages" validate:"required,min=1,dive"`
     }
 
 )
@@ -58,6 +65,10 @@ service borrower-api {
     @doc "update"
     @handler Update
     put /project_management/workflow/:id (ProjectManagementWorkflowUpdateRequest) returns (ProjectManagementWorkflowDetailResponse)
+
+    @doc "swap stage order"
+    @handler StageSwapOrder
+    put /project_management/workflow/:id/swap_stage_order (ProjectManagementWorkflowStageSwapOrderRequest) returns (EmptyResponse)
 
     @doc "delete"
     @handler Delete

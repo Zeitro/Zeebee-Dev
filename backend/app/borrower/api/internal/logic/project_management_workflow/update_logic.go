@@ -19,7 +19,7 @@ type UpdateLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
-// update project workflow
+// update workflow
 func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogic {
 	return &UpdateLogic{
 		Logger: logx.WithContext(ctx),
@@ -33,7 +33,11 @@ func (l *UpdateLogic) Update(req *types.ProjectManagementWorkflowUpdateRequest) 
 	if err != nil {
 		return nil, err
 	}
-	rpcResp, err := l.svcCtx.ProjectManagementWorkflowRpcClient.Update(l.ctx, &borrower.ProjectManagementWorkflowUpdateRequest{Data: data})
+	return UpdateWorkflow(l.ctx, l.svcCtx, data)
+}
+
+func UpdateWorkflow(ctx context.Context, svcCtx *svc.ServiceContext, data *borrower.ProjectManagementWorkflowUpdateRequestData) (resp *types.ProjectManagementWorkflowDetailResponse, err error) {
+	rpcResp, err := svcCtx.ProjectManagementWorkflowRpcClient.Update(ctx, &borrower.ProjectManagementWorkflowUpdateRequest{Data: data})
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}

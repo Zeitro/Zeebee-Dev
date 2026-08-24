@@ -20,11 +20,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ProjectManagementWorkflowStage_All_FullMethodName    = "/borrower.ProjectManagementWorkflowStage/All"
-	ProjectManagementWorkflowStage_Detail_FullMethodName = "/borrower.ProjectManagementWorkflowStage/Detail"
-	ProjectManagementWorkflowStage_Create_FullMethodName = "/borrower.ProjectManagementWorkflowStage/Create"
-	ProjectManagementWorkflowStage_Update_FullMethodName = "/borrower.ProjectManagementWorkflowStage/Update"
-	ProjectManagementWorkflowStage_Delete_FullMethodName = "/borrower.ProjectManagementWorkflowStage/Delete"
+	ProjectManagementWorkflowStage_All_FullMethodName       = "/borrower.ProjectManagementWorkflowStage/All"
+	ProjectManagementWorkflowStage_Detail_FullMethodName    = "/borrower.ProjectManagementWorkflowStage/Detail"
+	ProjectManagementWorkflowStage_Create_FullMethodName    = "/borrower.ProjectManagementWorkflowStage/Create"
+	ProjectManagementWorkflowStage_Update_FullMethodName    = "/borrower.ProjectManagementWorkflowStage/Update"
+	ProjectManagementWorkflowStage_SwapOrder_FullMethodName = "/borrower.ProjectManagementWorkflowStage/SwapOrder"
+	ProjectManagementWorkflowStage_Delete_FullMethodName    = "/borrower.ProjectManagementWorkflowStage/Delete"
 )
 
 // ProjectManagementWorkflowStageClient is the client API for ProjectManagementWorkflowStage service.
@@ -35,6 +36,7 @@ type ProjectManagementWorkflowStageClient interface {
 	Detail(ctx context.Context, in *ProjectManagementWorkflowStageDetailRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowStageDetailResponse, error)
 	Create(ctx context.Context, in *ProjectManagementWorkflowStageCreateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowStageDetailResponse, error)
 	Update(ctx context.Context, in *ProjectManagementWorkflowStageUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowStageDetailResponse, error)
+	SwapOrder(ctx context.Context, in *ProjectManagementWorkflowStageSwapOrderRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 	Delete(ctx context.Context, in *ProjectManagementWorkflowStageDetailRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 }
 
@@ -86,6 +88,16 @@ func (c *projectManagementWorkflowStageClient) Update(ctx context.Context, in *P
 	return out, nil
 }
 
+func (c *projectManagementWorkflowStageClient) SwapOrder(ctx context.Context, in *ProjectManagementWorkflowStageSwapOrderRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(proto.EmptyResponse)
+	err := c.cc.Invoke(ctx, ProjectManagementWorkflowStage_SwapOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *projectManagementWorkflowStageClient) Delete(ctx context.Context, in *ProjectManagementWorkflowStageDetailRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(proto.EmptyResponse)
@@ -104,6 +116,7 @@ type ProjectManagementWorkflowStageServer interface {
 	Detail(context.Context, *ProjectManagementWorkflowStageDetailRequest) (*ProjectManagementWorkflowStageDetailResponse, error)
 	Create(context.Context, *ProjectManagementWorkflowStageCreateRequest) (*ProjectManagementWorkflowStageDetailResponse, error)
 	Update(context.Context, *ProjectManagementWorkflowStageUpdateRequest) (*ProjectManagementWorkflowStageDetailResponse, error)
+	SwapOrder(context.Context, *ProjectManagementWorkflowStageSwapOrderRequest) (*proto.EmptyResponse, error)
 	Delete(context.Context, *ProjectManagementWorkflowStageDetailRequest) (*proto.EmptyResponse, error)
 	mustEmbedUnimplementedProjectManagementWorkflowStageServer()
 }
@@ -126,6 +139,9 @@ func (UnimplementedProjectManagementWorkflowStageServer) Create(context.Context,
 }
 func (UnimplementedProjectManagementWorkflowStageServer) Update(context.Context, *ProjectManagementWorkflowStageUpdateRequest) (*ProjectManagementWorkflowStageDetailResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedProjectManagementWorkflowStageServer) SwapOrder(context.Context, *ProjectManagementWorkflowStageSwapOrderRequest) (*proto.EmptyResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SwapOrder not implemented")
 }
 func (UnimplementedProjectManagementWorkflowStageServer) Delete(context.Context, *ProjectManagementWorkflowStageDetailRequest) (*proto.EmptyResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
@@ -224,6 +240,24 @@ func _ProjectManagementWorkflowStage_Update_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProjectManagementWorkflowStage_SwapOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ProjectManagementWorkflowStageSwapOrderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectManagementWorkflowStageServer).SwapOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProjectManagementWorkflowStage_SwapOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectManagementWorkflowStageServer).SwapOrder(ctx, req.(*ProjectManagementWorkflowStageSwapOrderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ProjectManagementWorkflowStage_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ProjectManagementWorkflowStageDetailRequest)
 	if err := dec(in); err != nil {
@@ -264,6 +298,10 @@ var ProjectManagementWorkflowStage_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Update",
 			Handler:    _ProjectManagementWorkflowStage_Update_Handler,
+		},
+		{
+			MethodName: "SwapOrder",
+			Handler:    _ProjectManagementWorkflowStage_SwapOrder_Handler,
 		},
 		{
 			MethodName: "Delete",

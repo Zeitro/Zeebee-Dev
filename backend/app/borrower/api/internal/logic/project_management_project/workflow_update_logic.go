@@ -3,12 +3,11 @@ package project_management_project
 import (
 	"context"
 
+	workflowlogic "zeebee-backend/app/borrower/api/internal/logic/project_management_workflow"
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -34,13 +33,5 @@ func (l *WorkflowUpdateLogic) WorkflowUpdate(req *types.ProjectManagementProject
 		return nil, err
 	}
 	data.ProjectId = req.Id
-	rpcResp, err := l.svcCtx.ProjectManagementWorkflowRpcClient.Update(l.ctx, &borrower.ProjectManagementWorkflowUpdateRequest{Data: data})
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-	entity, err := copierx.Trans[proto.ProjectManagementWorkflowEntity, types.ProjectManagementWorkflowEntity](rpcResp.Data)
-	if err != nil {
-		return nil, err
-	}
-	return &types.ProjectManagementWorkflowDetailResponse{ProjectManagementWorkflowEntity: *entity}, nil
+	return workflowlogic.UpdateWorkflow(l.ctx, l.svcCtx, data)
 }

@@ -33,6 +33,58 @@ func ValidateProjectManagementWorkflow(workflow dto.ProjectManagementWorkflowDto
 	if strings.TrimSpace(workflow.Name) == "" {
 		return errorx.New("workflow name is required")
 	}
+	if err := validateProjectManagementWorkflowDefinition(workflow); err != nil {
+		return err
+	}
+	return nil
+}
+
+func projectManagementWorkflowUpdateDefinition(input dto.ProjectManagementWorkflowUpdateDto) (dto.ProjectManagementWorkflowDto, error) {
+	definition, err := copierx.Trans[dto.ProjectManagementWorkflowUpdateDto, dto.ProjectManagementWorkflowDto](&input)
+	if err != nil {
+		return dto.ProjectManagementWorkflowDto{}, err
+	}
+	stageIds := make(map[int64]struct{}, len(definition.Stages))
+	for _, stage := range definition.Stages {
+		if stage.Id != 0 {
+			stageIds[stage.Id] = struct{}{}
+		}
+	}
+	nextStageId := int64(-1)
+	for i := range definition.Stages {
+		if definition.Stages[i].Id != 0 {
+			continue
+		}
+		for {
+			if _, exists := stageIds[nextStageId]; !exists {
+				definition.Stages[i].Id = nextStageId
+				stageIds[nextStageId] = struct{}{}
+				nextStageId--
+				break
+			}
+			nextStageId--
+		}
+	}
+	for i, stage := range input.Stages {
+		if stage.Id == 0 && len(stage.Transitions) != 0 {
+			return dto.ProjectManagementWorkflowDto{}, errorx.New("new workflow stage cannot include transitions")
+		}
+		for _, inputTransition := range stage.Transitions {
+			if inputTransition.FromStageId != stage.Id {
+				return dto.ProjectManagementWorkflowDto{}, errorx.New("workflow transition source stage is invalid")
+			}
+			transition, err := copierx.Trans[dto.ProjectManagementWorkflowUpdateTransitionDto, dto.ProjectManagementWorkflowTransitionDto](&inputTransition)
+			if err != nil {
+				return dto.ProjectManagementWorkflowDto{}, err
+			}
+			transition.FromStageId = definition.Stages[i].Id
+			definition.Transitions = append(definition.Transitions, *transition)
+		}
+	}
+	return *definition, nil
+}
+
+func validateProjectManagementWorkflowDefinition(workflow dto.ProjectManagementWorkflowDto) error {
 	stageIDs := make(map[int64]struct{}, len(workflow.Stages))
 	sortOrders := make(map[int]struct{}, len(workflow.Stages))
 	pendingCount, finishedCount := 0, 0
@@ -137,8 +189,9 @@ func (l *ProjectManagementWorkflowLogic) Create(ctx context.Context, claim utils
 	return l.Detail(ctx, claim.OrganizationId, workflow.Id)
 }
 
-func (l *ProjectManagementWorkflowLogic) Update(ctx context.Context, claim utils.JwtUser, id int64, input dto.ProjectManagementWorkflowDto) (workflow *model.ProjectManagementWorkflow, err error) {
-	if err = validateProjectManagementWorkflowDetails(input); err != nil {
+func (l *ProjectManagementWorkflowLogic) Update(ctx context.Context, claim utils.JwtUser, id int64, input dto.ProjectManagementWorkflowUpdateDto) (workflow *model.ProjectManagementWorkflow, err error) {
+	definition, err := projectManagementWorkflowUpdateDefinition(input)
+	if err != nil {
 		return nil, err
 	}
 	err = l.repos.ProjectManagementWorkflowRepo.Transaction(ctx, func(tx *gorm.DB) error {
@@ -147,9 +200,22 @@ func (l *ProjectManagementWorkflowLogic) Update(ctx context.Context, claim utils
 		if innerErr != nil {
 			return projectManagementNotFound(innerErr, "workflow not found")
 		}
+		if innerErr = l.assignNewStageSortOrders(ctx, tx, workflow.Id, &definition); innerErr != nil {
+			return innerErr
+		}
+		if innerErr = ValidateProjectManagementWorkflow(definition); innerErr != nil {
+			return innerErr
+		}
+		_, stages, transitions, innerErr := projectManagementTemplateModels(definition)
+		if innerErr != nil {
+			return innerErr
+		}
 		workflow.Name, workflow.Description = input.Name, input.Description
 		workflow.RemoveRelationships()
 		if _, innerErr = l.repos.ProjectManagementWorkflowRepo.UpdateOneByIdWithTx(ctx, tx, workflow.Id, workflow); innerErr != nil {
+			return innerErr
+		}
+		if innerErr = l.repos.ProjectManagementWorkflowRepo.ReplaceTemplateDefinitionWithTx(ctx, tx, workflow.Id, stages, transitions); innerErr != nil {
 			return innerErr
 		}
 		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: id, action: constants.OperationActionProjectManagementWorkflowUpdate})
@@ -158,6 +224,21 @@ func (l *ProjectManagementWorkflowLogic) Update(ctx context.Context, claim utils
 		return nil, err
 	}
 	return l.Detail(ctx, claim.OrganizationId, id)
+}
+
+func (l *ProjectManagementWorkflowLogic) assignNewStageSortOrders(ctx context.Context, tx *gorm.DB, workflowId int64, definition *dto.ProjectManagementWorkflowDto) error {
+	maxSortOrder, err := l.repos.ProjectManagementWorkflowRepo.MaxStageSortOrderWithTx(ctx, tx, workflowId)
+	if err != nil {
+		return err
+	}
+	for i := range definition.Stages {
+		if definition.Stages[i].Id > 0 {
+			continue
+		}
+		maxSortOrder++
+		definition.Stages[i].SortOrder = maxSortOrder
+	}
+	return nil
 }
 
 func (l *ProjectManagementWorkflowLogic) SetDefault(ctx context.Context, claim utils.JwtUser, id int64) error {
@@ -238,6 +319,11 @@ func (l *ProjectManagementWorkflowLogic) StageCreate(ctx context.Context, claim 
 		if _, err = l.repos.ProjectManagementWorkflowRepo.LockTemplateWithTx(ctx, tx, workflowId, claim.OrganizationId); err != nil {
 			return projectManagementNotFound(err, "workflow not found")
 		}
+		maxSortOrder, err := l.repos.ProjectManagementWorkflowRepo.MaxStageSortOrderWithTx(ctx, tx, workflowId)
+		if err != nil {
+			return err
+		}
+		stage.SortOrder = maxSortOrder + 1
 		if err = l.repos.ProjectManagementWorkflowRepo.CreateTemplateStageWithTx(ctx, tx, stage); err != nil {
 			return err
 		}
@@ -247,6 +333,15 @@ func (l *ProjectManagementWorkflowLogic) StageCreate(ctx context.Context, claim 
 		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: workflowId, action: constants.OperationActionProjectManagementWorkflowUpdate})
 	})
 	return stage, err
+}
+
+func (l *ProjectManagementWorkflowLogic) StageSwapOrder(ctx context.Context, claim utils.JwtUser, workflowId, id, targetId int64) error {
+	return l.repos.ProjectManagementWorkflowRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		if innerErr := l.repos.ProjectManagementWorkflowRepo.SwapTemplateStageSortOrdersWithTx(ctx, tx, workflowId, claim.OrganizationId, id, targetId); innerErr != nil {
+			return innerErr
+		}
+		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: workflowId, action: constants.OperationActionProjectManagementWorkflowUpdate})
+	})
 }
 
 func (l *ProjectManagementWorkflowLogic) StageUpdate(ctx context.Context, claim utils.JwtUser, workflowId, id int64, input dto.ProjectManagementWorkflowStageDto) (stage *model.ProjectManagementWorkflowStage, err error) {

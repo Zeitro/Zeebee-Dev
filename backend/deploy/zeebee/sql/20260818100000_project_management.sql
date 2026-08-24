@@ -149,12 +149,13 @@ CREATE TABLE "public"."project_management_task_assignees" (
     "updated_at" timestamptz NOT NULL DEFAULT now(),
     "is_del" int2 NOT NULL DEFAULT 0,
     "task_id" int4 NOT NULL DEFAULT 0,
+    "stage_id" int4 NOT NULL DEFAULT 0,
     "organization_user_id" int4 NOT NULL DEFAULT 0,
     "organization_user_name" varchar(100) NOT NULL DEFAULT ''
 );
 
 CREATE INDEX "idx_pm_assignee"
-    ON "public"."project_management_task_assignees" USING btree ("task_id", "organization_user_id","organization_user_name");
+    ON "public"."project_management_task_assignees" USING btree ("task_id","stage_id", "organization_user_id","organization_user_name");
 
 CREATE TABLE "public"."project_management_task_dependencies" (
     "id" serial PRIMARY KEY,

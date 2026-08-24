@@ -13,7 +13,6 @@ type (
         Description string `json:"description"`
         IsDefault bool `json:"is_default"`
         Stages []*ProjectManagementWorkflowStageEntity `json:"stages"`
-        Transitions []*ProjectManagementWorkflowTransitionEntity `json:"transitions"`
         SourceTemplateId int64 `json:"source_template_id"`
         SourceTemplateName string `json:"source_template_name"`
         CreatedAt string `json:"created_at"`
@@ -86,6 +85,7 @@ type (
     }
 
     ProjectManagementTaskAssigneeEntity {
+        StageId int64 `json:"stage_id"`
         OrganizationUserId int64 `json:"organization_user_id"`
         OrganizationUserName string `json:"organization_user_name"`
         CreatedAt string `json:"created_at"`

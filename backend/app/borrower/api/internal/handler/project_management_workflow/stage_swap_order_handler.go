@@ -1,11 +1,11 @@
-package project_management_workflow_stage
+package project_management_workflow
 
 import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"zeebee-backend/app/borrower/api/internal/logic/project_management_workflow_stage"
+	"zeebee-backend/app/borrower/api/internal/logic/project_management_workflow"
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 
@@ -14,8 +14,8 @@ import (
 	"zeebee-backend/common/validator"
 )
 
-// create
-func CreateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+// swap stage order
+func StageSwapOrderHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -27,7 +27,7 @@ func CreateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 					Error(err)
 			}
 		}()
-		var req types.ProjectManagementWorkflowStageCreateRequest
+		var req types.ProjectManagementWorkflowStageSwapOrderRequest
 		if err = httpx.Parse(r, &req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
@@ -44,8 +44,8 @@ func CreateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := project_management_workflow_stage.NewCreateLogic(r.Context(), svcCtx)
-		resp, err := l.Create(&req)
+		l := project_management_workflow.NewStageSwapOrderLogic(r.Context(), svcCtx)
+		resp, err := l.StageSwapOrder(&req)
 		if err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 		} else {

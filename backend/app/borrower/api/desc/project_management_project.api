@@ -8,6 +8,7 @@ info(
 
 import "../../../../domains/zeebee/api/project_management_entity.api"
 import "base.api"
+import "project_management.api"
 
 type (
     ProjectManagementProjectPageFilter {
@@ -57,11 +58,9 @@ type (
 
     ProjectManagementProjectWorkflowUpdateRequest {
         Id int64 `path:"id" validate:"required,gt=0"`
-        Name string `json:"name" validate:"required,max=100"`
-        Description string `json:"description,optional" validate:"max=500"`
-        Stages []*ProjectManagementWorkflowStageEntity `json:"stages" validate:"required,min=1,dive"`
-        Transitions []*ProjectManagementWorkflowTransitionEntity `json:"transitions,optional" validate:"dive"`
+        Stages []*ProjectManagementWorkflowUpdateStage `json:"stages" validate:"required,min=1,dive"`
     }
+
 )
 
 @server (

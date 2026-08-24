@@ -22,6 +22,29 @@ type ProjectManagementWorkflowTransitionDto struct {
 	AllowedActorTypes []constants.ProjectManagementMemberRole
 }
 
+type ProjectManagementWorkflowUpdateTransitionDto struct {
+	Id                int64
+	Name              string
+	FromStageId       int64
+	ToStageId         int64
+	AllowedActorTypes []constants.ProjectManagementMemberRole
+}
+
+type ProjectManagementWorkflowUpdateStageDto struct {
+	Id          int64
+	Name        string
+	Phase       constants.ProjectManagementStagePhase
+	Color       string
+	SortOrder   int
+	Transitions []ProjectManagementWorkflowUpdateTransitionDto
+}
+
+type ProjectManagementWorkflowUpdateDto struct {
+	Name        string
+	Description string
+	Stages      []ProjectManagementWorkflowUpdateStageDto
+}
+
 type ProjectManagementWorkflowDto struct {
 	Id                 int64
 	Name               string
@@ -102,14 +125,21 @@ type ProjectManagementMemberDetailDto struct {
 }
 
 type ProjectManagementMemberFilterDto struct {
-	Keyword string
-	Role    constants.ProjectManagementMemberRole
+	ProjectId int64
+	Keyword   string
+	Role      constants.ProjectManagementMemberRole
 }
 
 type ProjectManagementMemberCandidateDto struct {
 	ProjectId int64
 	Keyword   string
 	NeedAll   bool
+}
+
+type ProjectManagementMemberCandidateEntityDto struct {
+	OrganizationUserId int64
+	FullName           string
+	Email              string
 }
 
 type ProjectManagementMemberPageRequestDto struct {
@@ -156,6 +186,7 @@ type ProjectManagementTaskUpdateDto struct {
 
 type ProjectManagementTaskAssigneeDto struct {
 	TaskId               int64
+	StageId              int64
 	OrganizationUserId   int64
 	OrganizationUserName string
 }

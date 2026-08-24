@@ -52,10 +52,20 @@ message ProjectManagementWorkflowStageDetailResponse {
   proto.ProjectManagementWorkflowStageEntity data = 1;
 }
 
+message ProjectManagementWorkflowStageSwapOrderRequest {
+  ProjectManagementWorkflowStageSwapOrderRequestData data = 1;
+}
+message ProjectManagementWorkflowStageSwapOrderRequestData {
+  int64 id = 1;
+  int64 from_stage_id = 2;
+  int64 to_stage_id = 3;
+}
+
 service ProjectManagementWorkflowStage {
   rpc All(ProjectManagementWorkflowStageAllRequest) returns(ProjectManagementWorkflowStageAllResponse);
   rpc Detail(ProjectManagementWorkflowStageDetailRequest) returns(ProjectManagementWorkflowStageDetailResponse);
   rpc Create(ProjectManagementWorkflowStageCreateRequest) returns(ProjectManagementWorkflowStageDetailResponse);
   rpc Update(ProjectManagementWorkflowStageUpdateRequest) returns(ProjectManagementWorkflowStageDetailResponse);
+  rpc SwapOrder(ProjectManagementWorkflowStageSwapOrderRequest) returns(proto.EmptyResponse);
   rpc Delete(ProjectManagementWorkflowStageDetailRequest) returns(proto.EmptyResponse);
 }

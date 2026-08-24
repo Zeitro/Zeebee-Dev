@@ -26,11 +26,8 @@ func (l *ProjectManagementWorkflowLogic) ProjectDetail(ctx context.Context, clai
 	return workflow, nil
 }
 
-func (l *ProjectManagementWorkflowLogic) ProjectUpdate(ctx context.Context, claim utils.JwtUser, projectId int64, input dto.ProjectManagementWorkflowDto) (workflow *model.ProjectManagementWorkflow, err error) {
-	if err = validateProjectManagementProjectWorkflow(input); err != nil {
-		return nil, err
-	}
-	definition, stages, transitions, err := projectManagementTemplateModels(input)
+func (l *ProjectManagementWorkflowLogic) ProjectUpdate(ctx context.Context, claim utils.JwtUser, projectId int64, input dto.ProjectManagementWorkflowUpdateDto) (workflow *model.ProjectManagementWorkflow, err error) {
+	definition, err := projectManagementWorkflowUpdateDefinition(input)
 	if err != nil {
 		return nil, err
 	}
@@ -43,9 +40,14 @@ func (l *ProjectManagementWorkflowLogic) ProjectUpdate(ctx context.Context, clai
 		if innerErr != nil {
 			return projectManagementNotFound(innerErr, "project workflow not found")
 		}
-		current.Name, current.Description = definition.Name, definition.Description
-		current.RemoveRelationships()
-		if _, innerErr = l.repos.ProjectManagementWorkflowRepo.UpdateOneByIdWithTx(ctx, tx, current.Id, current); innerErr != nil {
+		if innerErr = l.assignNewStageSortOrders(ctx, tx, current.Id, &definition); innerErr != nil {
+			return innerErr
+		}
+		if innerErr = validateProjectManagementProjectWorkflow(definition); innerErr != nil {
+			return innerErr
+		}
+		_, stages, transitions, innerErr := projectManagementTemplateModels(definition)
+		if innerErr != nil {
 			return innerErr
 		}
 		if innerErr = l.repos.ProjectManagementWorkflowRepo.ReplaceProjectDefinitionWithTx(ctx, tx, current.Id, stages, transitions); innerErr != nil {
@@ -60,7 +62,7 @@ func (l *ProjectManagementWorkflowLogic) ProjectUpdate(ctx context.Context, clai
 }
 
 func validateProjectManagementProjectWorkflow(input dto.ProjectManagementWorkflowDto) error {
-	if err := ValidateProjectManagementWorkflow(input); err != nil {
+	if err := validateProjectManagementWorkflowDefinition(input); err != nil {
 		return err
 	}
 	for _, stage := range input.Stages {

@@ -16,22 +16,25 @@ import (
 )
 
 type (
-	ProjectManagementWorkflowStageAllRequest        = borrower.ProjectManagementWorkflowStageAllRequest
-	ProjectManagementWorkflowStageAllRequestData    = borrower.ProjectManagementWorkflowStageAllRequestData
-	ProjectManagementWorkflowStageAllResponse       = borrower.ProjectManagementWorkflowStageAllResponse
-	ProjectManagementWorkflowStageCreateRequest     = borrower.ProjectManagementWorkflowStageCreateRequest
-	ProjectManagementWorkflowStageCreateRequestData = borrower.ProjectManagementWorkflowStageCreateRequestData
-	ProjectManagementWorkflowStageDetailRequest     = borrower.ProjectManagementWorkflowStageDetailRequest
-	ProjectManagementWorkflowStageDetailRequestData = borrower.ProjectManagementWorkflowStageDetailRequestData
-	ProjectManagementWorkflowStageDetailResponse    = borrower.ProjectManagementWorkflowStageDetailResponse
-	ProjectManagementWorkflowStageUpdateRequest     = borrower.ProjectManagementWorkflowStageUpdateRequest
-	ProjectManagementWorkflowStageUpdateRequestData = borrower.ProjectManagementWorkflowStageUpdateRequestData
+	ProjectManagementWorkflowStageAllRequest           = borrower.ProjectManagementWorkflowStageAllRequest
+	ProjectManagementWorkflowStageAllRequestData       = borrower.ProjectManagementWorkflowStageAllRequestData
+	ProjectManagementWorkflowStageAllResponse          = borrower.ProjectManagementWorkflowStageAllResponse
+	ProjectManagementWorkflowStageCreateRequest        = borrower.ProjectManagementWorkflowStageCreateRequest
+	ProjectManagementWorkflowStageCreateRequestData    = borrower.ProjectManagementWorkflowStageCreateRequestData
+	ProjectManagementWorkflowStageDetailRequest        = borrower.ProjectManagementWorkflowStageDetailRequest
+	ProjectManagementWorkflowStageDetailRequestData    = borrower.ProjectManagementWorkflowStageDetailRequestData
+	ProjectManagementWorkflowStageDetailResponse       = borrower.ProjectManagementWorkflowStageDetailResponse
+	ProjectManagementWorkflowStageSwapOrderRequest     = borrower.ProjectManagementWorkflowStageSwapOrderRequest
+	ProjectManagementWorkflowStageSwapOrderRequestData = borrower.ProjectManagementWorkflowStageSwapOrderRequestData
+	ProjectManagementWorkflowStageUpdateRequest        = borrower.ProjectManagementWorkflowStageUpdateRequest
+	ProjectManagementWorkflowStageUpdateRequestData    = borrower.ProjectManagementWorkflowStageUpdateRequestData
 
 	ProjectManagementWorkflowStage interface {
 		All(ctx context.Context, in *ProjectManagementWorkflowStageAllRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowStageAllResponse, error)
 		Detail(ctx context.Context, in *ProjectManagementWorkflowStageDetailRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowStageDetailResponse, error)
 		Create(ctx context.Context, in *ProjectManagementWorkflowStageCreateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowStageDetailResponse, error)
 		Update(ctx context.Context, in *ProjectManagementWorkflowStageUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowStageDetailResponse, error)
+		SwapOrder(ctx context.Context, in *ProjectManagementWorkflowStageSwapOrderRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 		Delete(ctx context.Context, in *ProjectManagementWorkflowStageDetailRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 	}
 
@@ -64,6 +67,11 @@ func (m *defaultProjectManagementWorkflowStage) Create(ctx context.Context, in *
 func (m *defaultProjectManagementWorkflowStage) Update(ctx context.Context, in *ProjectManagementWorkflowStageUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowStageDetailResponse, error) {
 	client := borrower.NewProjectManagementWorkflowStageClient(m.cli.Conn())
 	return client.Update(ctx, in, opts...)
+}
+
+func (m *defaultProjectManagementWorkflowStage) SwapOrder(ctx context.Context, in *ProjectManagementWorkflowStageSwapOrderRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
+	client := borrower.NewProjectManagementWorkflowStageClient(m.cli.Conn())
+	return client.SwapOrder(ctx, in, opts...)
 }
 
 func (m *defaultProjectManagementWorkflowStage) Delete(ctx context.Context, in *ProjectManagementWorkflowStageDetailRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
