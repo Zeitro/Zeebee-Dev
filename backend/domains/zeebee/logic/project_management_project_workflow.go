@@ -35,19 +35,21 @@ func (l *ProjectManagementWorkflowLogic) ProjectUpdate(ctx context.Context, clai
 		return nil, err
 	}
 	err = l.repos.ProjectManagementWorkflowRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		if _, err = l.projectManagementAccess().requireProjectManagerWithTx(ctx, tx, claim, projectId); err != nil {
-			return err
+		var innerErr error
+		if _, innerErr = l.projectManagementAccess().requireProjectManagerWithTx(ctx, tx, claim, projectId); innerErr != nil {
+			return innerErr
 		}
-		current, err := l.repos.ProjectManagementWorkflowRepo.LockProjectWithTx(ctx, tx, projectId, claim.OrganizationId)
-		if err != nil {
-			return projectManagementNotFound(err, "project workflow not found")
+		current, innerErr := l.repos.ProjectManagementWorkflowRepo.LockProjectWithTx(ctx, tx, projectId, claim.OrganizationId)
+		if innerErr != nil {
+			return projectManagementNotFound(innerErr, "project workflow not found")
 		}
-		definition.Id, definition.OrganizationId, definition.ProjectId = current.Id, claim.OrganizationId, projectId
-		if err = l.repos.ProjectManagementWorkflowRepo.UpdateProjectWithTx(ctx, tx, definition); err != nil {
-			return err
+		current.Name, current.Description = definition.Name, definition.Description
+		current.RemoveRelationships()
+		if _, innerErr = l.repos.ProjectManagementWorkflowRepo.UpdateOneByIdWithTx(ctx, tx, current.Id, current); innerErr != nil {
+			return innerErr
 		}
-		if err = l.repos.ProjectManagementWorkflowRepo.ReplaceProjectDefinitionWithTx(ctx, tx, current.Id, stages, transitions); err != nil {
-			return err
+		if innerErr = l.repos.ProjectManagementWorkflowRepo.ReplaceProjectDefinitionWithTx(ctx, tx, current.Id, stages, transitions); innerErr != nil {
+			return innerErr
 		}
 		return NewProjectManagementTaskLogic(l.BaseLogic).recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: projectId, action: constants.OperationActionProjectManagementWorkflowUpdate})
 	})

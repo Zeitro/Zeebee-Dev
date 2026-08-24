@@ -98,14 +98,17 @@ func (l *ProjectManagementTaskTypeLogic) Update(ctx context.Context, claim utils
 	if err := validateProjectManagementTaskType(input); err != nil {
 		return nil, err
 	}
-	if _, err := l.repos.ProjectManagementTaskTypeRepo.FindByOrganization(ctx, id, claim.OrganizationId); err != nil {
-		return nil, projectManagementNotFound(err, "task type not found")
-	}
 	err := l.repos.ProjectManagementTaskTypeRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		if err := l.repos.ProjectManagementTaskTypeRepo.UpdateByOrganizationWithTx(ctx, tx, id, claim.OrganizationId, &model.ProjectManagementTaskType{
-			Name: input.Name, Description: input.Description, Color: input.Color, SortOrder: input.SortOrder,
-		}); err != nil {
-			return err
+		taskType, innerErr := l.repos.ProjectManagementTaskTypeRepo.FindByOrganizationWithTx(ctx, tx, id, claim.OrganizationId)
+		if innerErr != nil {
+			return projectManagementNotFound(innerErr, "task type not found")
+		}
+		input.Id = taskType.Id
+		if innerErr = copierx.Assign(&input, taskType); innerErr != nil {
+			return innerErr
+		}
+		if _, innerErr = l.repos.ProjectManagementTaskTypeRepo.UpdateOneByIdWithTx(ctx, tx, taskType.Id, taskType); innerErr != nil {
+			return innerErr
 		}
 		return l.recordOperation(ctx, tx, projectManagementTaskTypeOperation{claim: claim, taskTypeId: id, action: constants.OperationActionProjectManagementTaskTypeUpdate})
 	})

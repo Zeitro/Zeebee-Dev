@@ -64,12 +64,12 @@ func TestProjectManagementTaskTypeAllCopiesGlobalTemplatesAndKeepsOne(t *testing
 	if _, err = logic.Detail(context.Background(), 2, taskTypes[0].Id); err == nil {
 		t.Fatal("task type was visible to another organization")
 	}
-	updated, err := logic.Update(context.Background(), actor, taskTypes[1].Id, dto.ProjectManagementTaskTypeDto{Name: "Updated inspection", Description: "Initial visit", Color: "#111111", SortOrder: 7})
+	updated, err := logic.Update(context.Background(), actor, taskTypes[1].Id, dto.ProjectManagementTaskTypeDto{Name: "Updated inspection"})
 	if err != nil {
 		t.Fatalf("update task type: %v", err)
 	}
-	if updated.SortOrder != 7 {
-		t.Fatalf("task type update did not change sort order: %#v", updated)
+	if updated.Description != "" || updated.Color != "" || updated.SortOrder != 0 {
+		t.Fatalf("task type update did not persist zero values: %#v", updated)
 	}
 	if err = logic.Order(context.Background(), actor, updated.Id, 5); err != nil {
 		t.Fatalf("order task type: %v", err)

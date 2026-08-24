@@ -130,13 +130,13 @@ func TestProjectManagementWorkflowCreateCopiesDefaultAndUpdatePreservesDefinitio
 	}
 
 	updated, err := logic.Update(context.Background(), actor, created.Id, dto.ProjectManagementWorkflowDto{
-		Name: "Renamed", Description: "Only details change", IsDefault: true,
+		Name: "Renamed", IsDefault: true,
 		Stages: []dto.ProjectManagementWorkflowStageDto{{Id: 99, Name: "Ignored", Phase: constants.ProjectManagementStagePhasePending}},
 	})
 	if err != nil {
 		t.Fatalf("update workflow: %v", err)
 	}
-	if updated.Name != "Renamed" || updated.Description != "Only details change" || updated.IsDefault || len(updated.Stages) != 2 || len(updated.Transitions) != 1 {
+	if updated.Name != "Renamed" || updated.Description != "" || updated.IsDefault || len(updated.Stages) != 2 || len(updated.Transitions) != 1 {
 		t.Fatalf("workflow update changed definition: %#v", updated)
 	}
 

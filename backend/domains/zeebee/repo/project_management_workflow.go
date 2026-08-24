@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/constants"
@@ -231,13 +232,6 @@ func (r *ProjectManagementWorkflowRepo) SetDefaultWithTx(ctx context.Context, tx
 	return errorx.WithStack(err)
 }
 
-func (r *ProjectManagementWorkflowRepo) UpdateTemplateWithTx(ctx context.Context, tx *gorm.DB, workflow *model.ProjectManagementWorkflow) error {
-	err := tx.WithContext(ctx).Model(workflow).
-		Where("id = ? AND organization_id = ? AND kind = ?", workflow.Id, workflow.OrganizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).
-		Select("name", "description").Updates(workflow).Error
-	return errorx.WithStack(err)
-}
-
 func (r *ProjectManagementWorkflowRepo) ReplaceTemplateDefinitionWithTx(ctx context.Context, tx *gorm.DB, workflowId int64, stages []*model.ProjectManagementWorkflowStage, transitions []*model.ProjectManagementWorkflowTransition) error {
 	if err := tx.WithContext(ctx).Where("workflow_id = ?", workflowId).Delete(&model.ProjectManagementWorkflowTransition{}).Error; err != nil {
 		return errorx.WithStack(err)
@@ -265,13 +259,6 @@ func (r *ProjectManagementWorkflowRepo) ReplaceTemplateDefinitionWithTx(ctx cont
 		}
 	}
 	return nil
-}
-
-func (r *ProjectManagementWorkflowRepo) UpdateProjectWithTx(ctx context.Context, tx *gorm.DB, workflow *model.ProjectManagementWorkflow) error {
-	err := tx.WithContext(ctx).Model(workflow).
-		Where("id = ? AND organization_id = ? AND kind = ?", workflow.Id, workflow.OrganizationId, constants.ProjectManagementWorkflowKindProject).
-		Select("name", "description").Updates(workflow).Error
-	return errorx.WithStack(err)
 }
 
 // ReplaceProjectDefinitionWithTx preserves submitted positive stage IDs. New stages
@@ -386,21 +373,46 @@ func (r *ProjectManagementWorkflowRepo) CloneTemplateToProjectWithTx(ctx context
 	if err != nil {
 		return errorx.WithStack(err)
 	}
-	workflow := &model.ProjectManagementWorkflow{Kind: constants.ProjectManagementWorkflowKindProject, OrganizationId: organizationId, ProjectId: projectId, Name: template.Name, Description: template.Description, SourceTemplateId: template.Id, SourceTemplateName: template.Name}
+	workflow, err := copierx.Trans[model.ProjectManagementWorkflow, model.ProjectManagementWorkflow](template)
+	if err != nil {
+		return err
+	}
+	workflow.Base = model.Base{}
+	workflow.RemoveRelationships()
+	workflow.Kind = constants.ProjectManagementWorkflowKindProject
+	workflow.OrganizationId = organizationId
+	workflow.ProjectId = projectId
+	workflow.IsDefault = false
+	workflow.SourceTemplateId = template.Id
+	workflow.SourceTemplateName = template.Name
 	if _, err = r.CreateWithTx(ctx, tx, workflow, false); err != nil {
 		return err
 	}
 	stageIds := make(map[int64]int64, len(template.Stages))
 	for _, stage := range template.Stages {
-		copy := &model.ProjectManagementWorkflowStage{WorkflowId: workflow.Id, Name: stage.Name, Phase: stage.Phase, Color: stage.Color, SortOrder: stage.SortOrder}
-		if _, err = r.stageRepo.CreateWithTx(ctx, tx, copy, false); err != nil {
+		copyStage, err := copierx.Trans[model.ProjectManagementWorkflowStage, model.ProjectManagementWorkflowStage](stage)
+		if err != nil {
 			return err
 		}
-		stageIds[stage.Id] = copy.Id
+		copyStage.Base = model.Base{}
+		copyStage.RemoveRelationships()
+		copyStage.WorkflowId = workflow.Id
+		if _, err = r.stageRepo.CreateWithTx(ctx, tx, copyStage, false); err != nil {
+			return err
+		}
+		stageIds[stage.Id] = copyStage.Id
 	}
 	for _, transition := range template.Transitions {
-		copy := &model.ProjectManagementWorkflowTransition{WorkflowId: workflow.Id, Name: transition.Name, FromStageId: stageIds[transition.FromStageId], ToStageId: stageIds[transition.ToStageId], AllowedActorTypes: transition.AllowedActorTypes}
-		if _, err = r.transitionRepo.CreateWithTx(ctx, tx, copy, false); err != nil {
+		copyTransition, err := copierx.Trans[model.ProjectManagementWorkflowTransition, model.ProjectManagementWorkflowTransition](transition)
+		if err != nil {
+			return err
+		}
+		copyTransition.Base = model.Base{}
+		copyTransition.RemoveRelationships()
+		copyTransition.WorkflowId = workflow.Id
+		copyTransition.FromStageId = stageIds[transition.FromStageId]
+		copyTransition.ToStageId = stageIds[transition.ToStageId]
+		if _, err = r.transitionRepo.CreateWithTx(ctx, tx, copyTransition, false); err != nil {
 			return err
 		}
 	}

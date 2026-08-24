@@ -141,15 +141,16 @@ func (l *ProjectManagementWorkflowLogic) Update(ctx context.Context, claim utils
 	if err = validateProjectManagementWorkflowDetails(input); err != nil {
 		return nil, err
 	}
-	workflow = &model.ProjectManagementWorkflow{OrganizationId: claim.OrganizationId, Name: input.Name, Description: input.Description}
-	workflow.Id = id
 	err = l.repos.ProjectManagementWorkflowRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		_, err := l.repos.ProjectManagementWorkflowRepo.LockTemplateWithTx(ctx, tx, id, claim.OrganizationId)
-		if err != nil {
-			return projectManagementNotFound(err, "workflow not found")
+		var innerErr error
+		workflow, innerErr = l.repos.ProjectManagementWorkflowRepo.LockTemplateWithTx(ctx, tx, id, claim.OrganizationId)
+		if innerErr != nil {
+			return projectManagementNotFound(innerErr, "workflow not found")
 		}
-		if err := l.repos.ProjectManagementWorkflowRepo.UpdateTemplateWithTx(ctx, tx, workflow); err != nil {
-			return err
+		workflow.Name, workflow.Description = input.Name, input.Description
+		workflow.RemoveRelationships()
+		if _, innerErr = l.repos.ProjectManagementWorkflowRepo.UpdateOneByIdWithTx(ctx, tx, workflow.Id, workflow); innerErr != nil {
+			return innerErr
 		}
 		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: id, action: constants.OperationActionProjectManagementWorkflowUpdate})
 	})

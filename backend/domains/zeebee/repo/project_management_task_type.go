@@ -45,12 +45,6 @@ func (r *ProjectManagementTaskTypeRepo) LockByOrganizationWithTx(ctx context.Con
 	return taskTypes, errorx.WithStack(err)
 }
 
-func (r *ProjectManagementTaskTypeRepo) UpdateByOrganizationWithTx(ctx context.Context, tx *gorm.DB, id, organizationId int64, taskType *model.ProjectManagementTaskType) error {
-	return r.UpdateColumnsWithTx(ctx, tx,
-		map[string]any{"name": taskType.Name, "description": taskType.Description, "color": taskType.Color, "sort_order": taskType.SortOrder},
-		map[string]any{"id": id, "organization_id": organizationId}, nil)
-}
-
 func (r *ProjectManagementTaskTypeRepo) UpdateSortOrderWithTx(ctx context.Context, tx *gorm.DB, id, organizationId int64, sortOrder int) error {
 	return r.UpdateColumnsWithTx(ctx, tx, map[string]any{"sort_order": sortOrder}, map[string]any{"id": id, "organization_id": organizationId}, nil)
 }
