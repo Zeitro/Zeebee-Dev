@@ -44,46 +44,15 @@ func (r *ProjectManagementTaskRepo) PageByProject(ctx context.Context, organizat
 	assigneesTable := model.ProjectManagementTaskAssignee{}.TableName()
 	stagesTable := model.ProjectManagementWorkflowStage{}.TableName()
 	query := r.Client(ctx).
+		Omit("Description").
 		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.stage_id AND %s.is_del = 0", stagesTable, stagesTable, tasksTable, stagesTable)).
 		Where(fmt.Sprintf("%s.organization_id = ? AND %s.project_id = ?", tasksTable, tasksTable), organizationId, input.Filter.ProjectId).
 		Order(fmt.Sprintf("%s.sort_order ASC, %s.id DESC", stagesTable, tasksTable))
 	if input.Filter.StageId != 0 {
 		query = query.Where(fmt.Sprintf("%s.stage_id = ?", tasksTable), input.Filter.StageId)
 	}
-	if input.Filter.TaskTypeId != 0 {
-		query = query.Where(fmt.Sprintf("CAST(%s.task_type->>'id' AS TEXT) = CAST(? AS TEXT)", tasksTable), input.Filter.TaskTypeId)
-	}
-	if input.Filter.AssigneeId != 0 {
-		query = query.Where(fmt.Sprintf("EXISTS (SELECT 1 FROM %s WHERE %s.task_id = %s.id AND %s.stage_id = %s.stage_id AND %s.organization_user_id = ? AND %s.is_del = 0)", assigneesTable, assigneesTable, tasksTable, assigneesTable, tasksTable, assigneesTable, assigneesTable), input.Filter.AssigneeId)
-	}
-	if input.Filter.Keyword != "" {
-		query = query.Where(fmt.Sprintf("LOWER(%s.title) LIKE LOWER(?)", tasksTable), "%"+input.Filter.Keyword+"%")
-	}
-	if input.Filter.Overdue != nil {
-		if *input.Filter.Overdue {
-			query = query.Where(fmt.Sprintf("%s.end_at IS NOT NULL AND %s.end_at < CURRENT_TIMESTAMP AND %s.phase <> ?", tasksTable, tasksTable, stagesTable), "finished")
-		} else {
-			query = query.Where(fmt.Sprintf("(%s.end_at IS NULL OR %s.end_at >= CURRENT_TIMESTAMP OR %s.phase = ?)", tasksTable, tasksTable, stagesTable), "finished")
-		}
-	}
-	query = query.Preload("Assignees", currentStageAssignees)
-	return r.BaseRepo.Page(query, gormx.PageRequest{Page: input.Page, Limit: input.Limit})
-}
-
-func (r *ProjectManagementTaskRepo) PageMine(ctx context.Context, organizationId, organizationUserId int64, input dto.ProjectManagementMyTaskPageRequestDto) (gormx.PageResponse[*model.ProjectManagementTask], error) {
-	tasksTable := model.ProjectManagementTask{}.TableName()
-	assigneesTable := model.ProjectManagementTaskAssignee{}.TableName()
-	stagesTable := model.ProjectManagementWorkflowStage{}.TableName()
-	query := r.Client(ctx).
-		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.stage_id AND %s.is_del = 0", stagesTable, stagesTable, tasksTable, stagesTable)).
-		Where(fmt.Sprintf("%s.organization_id = ?", tasksTable), organizationId).
-		Where(fmt.Sprintf("(%s.creator_id = ? OR EXISTS (SELECT 1 FROM %s mine WHERE mine.task_id = %s.id AND mine.stage_id = %s.stage_id AND mine.organization_user_id = ? AND mine.is_del = 0))", tasksTable, assigneesTable, tasksTable, tasksTable), organizationUserId, organizationUserId).
-		Order(fmt.Sprintf("%s.sort_order ASC, %s.id DESC", stagesTable, tasksTable))
-	if input.Filter.ProjectId != 0 {
-		query = query.Where(fmt.Sprintf("%s.project_id = ?", tasksTable), input.Filter.ProjectId)
-	}
-	if input.Filter.StageId != 0 {
-		query = query.Where(fmt.Sprintf("%s.stage_id = ?", tasksTable), input.Filter.StageId)
+	if len(input.Filter.Phase) > 0 {
+		query = query.Where(fmt.Sprintf("%s.phase IN ?", tasksTable), input.Filter.Phase)
 	}
 	if input.Filter.TaskTypeId != 0 {
 		query = query.Where(fmt.Sprintf("CAST(%s.task_type->>'id' AS TEXT) = CAST(? AS TEXT)", tasksTable), input.Filter.TaskTypeId)
@@ -101,7 +70,44 @@ func (r *ProjectManagementTaskRepo) PageMine(ctx context.Context, organizationId
 			query = query.Where(fmt.Sprintf("(%s.end_at IS NULL OR %s.end_at >= CURRENT_TIMESTAMP OR %s.phase = ?)", tasksTable, tasksTable, stagesTable), constants.ProjectManagementStagePhaseFinished)
 		}
 	}
-	query = query.Preload("Assignees", currentStageAssignees)
+	return r.BaseRepo.Page(query, gormx.PageRequest{Page: input.Page, Limit: input.Limit})
+}
+
+func (r *ProjectManagementTaskRepo) PageMine(ctx context.Context, organizationId, organizationUserId int64, input dto.ProjectManagementMyTaskPageRequestDto) (gormx.PageResponse[*model.ProjectManagementTask], error) {
+	tasksTable := model.ProjectManagementTask{}.TableName()
+	assigneesTable := model.ProjectManagementTaskAssignee{}.TableName()
+	stagesTable := model.ProjectManagementWorkflowStage{}.TableName()
+	query := r.Client(ctx).
+		Omit("Description").
+		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.stage_id AND %s.is_del = 0", stagesTable, stagesTable, tasksTable, stagesTable)).
+		Where(fmt.Sprintf("%s.organization_id = ?", tasksTable), organizationId).
+		Where(fmt.Sprintf("EXISTS (SELECT 1 FROM %s mine WHERE mine.task_id = %s.id AND mine.stage_id = %s.stage_id AND mine.organization_user_id = ? AND mine.is_del = 0)", assigneesTable, tasksTable, tasksTable), organizationUserId).
+		Order(fmt.Sprintf("%s.sort_order ASC, %s.id DESC", stagesTable, tasksTable))
+	if input.Filter.ProjectId != 0 {
+		query = query.Where(fmt.Sprintf("%s.project_id = ?", tasksTable), input.Filter.ProjectId)
+	}
+	if input.Filter.StageId != 0 {
+		query = query.Where(fmt.Sprintf("%s.stage_id = ?", tasksTable), input.Filter.StageId)
+	}
+	if len(input.Filter.Phase) > 0 {
+		query = query.Where(fmt.Sprintf("%s.phase IN ?", tasksTable), input.Filter.Phase)
+	}
+	if input.Filter.TaskTypeId != 0 {
+		query = query.Where(fmt.Sprintf("CAST(%s.task_type->>'id' AS TEXT) = CAST(? AS TEXT)", tasksTable), input.Filter.TaskTypeId)
+	}
+	if input.Filter.AssigneeId != 0 {
+		query = query.Where(fmt.Sprintf("EXISTS (SELECT 1 FROM %s WHERE %s.task_id = %s.id AND %s.stage_id = %s.stage_id AND %s.organization_user_id = ? AND %s.is_del = 0)", assigneesTable, assigneesTable, tasksTable, assigneesTable, tasksTable, assigneesTable, assigneesTable), input.Filter.AssigneeId)
+	}
+	if input.Filter.Keyword != "" {
+		query = query.Where(fmt.Sprintf("LOWER(%s.title) LIKE LOWER(?)", tasksTable), "%"+input.Filter.Keyword+"%")
+	}
+	if input.Filter.Overdue != nil {
+		if *input.Filter.Overdue {
+			query = query.Where(fmt.Sprintf("%s.end_at IS NOT NULL AND %s.end_at < CURRENT_TIMESTAMP AND %s.phase <> ?", tasksTable, tasksTable, stagesTable), constants.ProjectManagementStagePhaseFinished)
+		} else {
+			query = query.Where(fmt.Sprintf("(%s.end_at IS NULL OR %s.end_at >= CURRENT_TIMESTAMP OR %s.phase = ?)", tasksTable, tasksTable, stagesTable), constants.ProjectManagementStagePhaseFinished)
+		}
+	}
 	return r.BaseRepo.Page(query, gormx.PageRequest{Page: input.Page, Limit: input.Limit})
 }
 
@@ -123,10 +129,6 @@ func (r *ProjectManagementTaskRepo) DirectChildrenWithTx(ctx context.Context, tx
 	children := make([]*model.ProjectManagementTask, 0)
 	err := tx.WithContext(ctx).Where("parent_task_id = ?", taskId).Order("id ASC").Find(&children).Error
 	return children, errorx.WithStack(err)
-}
-
-func (r *ProjectManagementTaskRepo) UpdateStageWithTx(ctx context.Context, tx *gorm.DB, taskId, stageId int64) error {
-	return r.UpdateColumnsWithTx(ctx, tx, map[string]any{"stage_id": stageId}, map[string]any{"id": taskId}, nil)
 }
 
 func (r *ProjectManagementTaskRepo) IdsByProjectWithTx(ctx context.Context, tx *gorm.DB, projectId int64) ([]int64, error) {
@@ -156,11 +158,56 @@ func (r *ProjectManagementTaskRepo) CreateAssigneesWithTx(ctx context.Context, t
 	return err
 }
 
-func (r *ProjectManagementTaskRepo) ReplaceAssigneesWithTx(ctx context.Context, tx *gorm.DB, taskId, stageId int64, assignees []*model.ProjectManagementTaskAssignee) error {
-	if _, err := r.assigneeRepo.DeleteWithTx(ctx, tx, map[string]any{"task_id": taskId, "stage_id": stageId}); err != nil {
+func (r *ProjectManagementTaskRepo) CopyCurrentStageAssigneesIfTargetEmptyWithTx(ctx context.Context, tx *gorm.DB, task *model.ProjectManagementTask, targetStageId int64) error {
+	hasTargetAssignees, err := r.assigneeRepo.IsExistedByColumnsWithTx(ctx, tx, map[string]any{"task_id": task.Id, "stage_id": targetStageId})
+	if err != nil || hasTargetAssignees {
+		return err
+	}
+	currentAssignees := make([]*model.ProjectManagementTaskAssignee, 0)
+	if err = tx.WithContext(ctx).Where("task_id = ? AND stage_id = ?", task.Id, task.StageId).Find(&currentAssignees).Error; err != nil {
 		return errorx.WithStack(err)
 	}
-	return r.CreateAssigneesWithTx(ctx, tx, assignees)
+	targetAssignees := make([]*model.ProjectManagementTaskAssignee, 0, len(currentAssignees))
+	for _, assignee := range currentAssignees {
+		targetAssignees = append(targetAssignees, &model.ProjectManagementTaskAssignee{TaskId: task.Id, StageId: targetStageId, OrganizationUserId: assignee.OrganizationUserId, OrganizationUserName: assignee.OrganizationUserName})
+	}
+	return r.CreateAssigneesWithTx(ctx, tx, targetAssignees)
+}
+
+func (r *ProjectManagementTaskRepo) ReplaceAssigneesWithTx(ctx context.Context, tx *gorm.DB, taskId, stageId int64, assignees []*model.ProjectManagementTaskAssignee) error {
+	existing := make([]*model.ProjectManagementTaskAssignee, 0)
+	if err := tx.WithContext(ctx).Where("task_id = ? AND stage_id = ?", taskId, stageId).Find(&existing).Error; err != nil {
+		return errorx.WithStack(err)
+	}
+	existingByOrganizationUserId := make(map[int64]struct{}, len(existing))
+	requestedByOrganizationUserId := make(map[int64]struct{}, len(assignees))
+	deleteIds := make([]int64, 0)
+	for _, assignee := range existing {
+		existingByOrganizationUserId[assignee.OrganizationUserId] = struct{}{}
+	}
+	for _, assignee := range assignees {
+		requestedByOrganizationUserId[assignee.OrganizationUserId] = struct{}{}
+	}
+	for _, assignee := range existing {
+		if _, exists := requestedByOrganizationUserId[assignee.OrganizationUserId]; !exists {
+			deleteIds = append(deleteIds, assignee.Id)
+		}
+	}
+	if len(deleteIds) > 0 {
+		if err := tx.WithContext(ctx).Where("id IN ?", deleteIds).Delete(&model.ProjectManagementTaskAssignee{}).Error; err != nil {
+			return errorx.WithStack(err)
+		}
+	}
+	additions := make([]*model.ProjectManagementTaskAssignee, 0)
+	for _, assignee := range assignees {
+		if _, exists := existingByOrganizationUserId[assignee.OrganizationUserId]; !exists {
+			additions = append(additions, assignee)
+		}
+	}
+	if err := r.CreateAssigneesWithTx(ctx, tx, additions); err != nil {
+		return errorx.WithStack(err)
+	}
+	return nil
 }
 
 func (r *ProjectManagementTaskRepo) DeleteUnfinishedAssigneesByProjectMemberWithTx(ctx context.Context, tx *gorm.DB, projectId, organizationUserId int64) error {

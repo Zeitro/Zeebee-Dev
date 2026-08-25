@@ -336,6 +336,9 @@ func (r *ProjectManagementWorkflowRepo) ReplaceProjectDefinitionWithTx(ctx conte
 			if _, err := r.stageRepo.UpdateOneByIdWithTx(ctx, tx, existingStage.Id, existingStage); err != nil {
 				return err
 			}
+			if err := tx.WithContext(ctx).Model(&model.ProjectManagementTask{}).Where("stage_id = ?", existingStage.Id).Update("phase", existingStage.Phase).Error; err != nil {
+				return errorx.WithStack(err)
+			}
 			stageIds[referenceId], retained[referenceId] = referenceId, struct{}{}
 			continue
 		}

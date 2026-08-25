@@ -121,10 +121,10 @@ func (l *ProjectManagementDependencyLogic) Create(ctx context.Context, claim uti
 }
 
 func (l *ProjectManagementDependencyLogic) Page(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementTaskDependencyPageRequestDto) (gormx.PageResponse[*model.ProjectManagementTaskDependency], error) {
-	if _, err := NewProjectManagementTaskLogic(l.BaseLogic).Detail(ctx, claim, input.TaskId); err != nil {
+	if _, err := NewProjectManagementTaskLogic(l.BaseLogic).Detail(ctx, claim, input.Filter.TaskId); err != nil {
 		return gormx.PageResponse[*model.ProjectManagementTaskDependency]{}, err
 	}
-	return l.repos.ProjectManagementDependencyRepo.PageByTask(ctx, input.TaskId, input.Predecessor, gormx.PageRequest{Page: input.Page, Limit: input.Limit})
+	return l.repos.ProjectManagementDependencyRepo.PageByTask(ctx, input.Filter.TaskId, input.Filter.Predecessor, gormx.PageRequest{Page: input.Page, Limit: input.Limit})
 }
 
 func (l *ProjectManagementDependencyLogic) Update(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementTaskDependencyDto) (*model.ProjectManagementTaskDependency, error) {

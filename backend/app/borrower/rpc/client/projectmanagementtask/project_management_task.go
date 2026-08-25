@@ -16,36 +16,30 @@ import (
 )
 
 type (
-	ProjectManagementAttachmentCreateRequest       = borrower.ProjectManagementAttachmentCreateRequest
-	ProjectManagementAttachmentCreateRequestData   = borrower.ProjectManagementAttachmentCreateRequestData
-	ProjectManagementAttachmentDeleteRequest       = borrower.ProjectManagementAttachmentDeleteRequest
-	ProjectManagementAttachmentDeleteRequestData   = borrower.ProjectManagementAttachmentDeleteRequestData
-	ProjectManagementAttachmentDetailResponse      = borrower.ProjectManagementAttachmentDetailResponse
-	ProjectManagementAttachmentPageRequest         = borrower.ProjectManagementAttachmentPageRequest
-	ProjectManagementAttachmentPageRequestData     = borrower.ProjectManagementAttachmentPageRequestData
-	ProjectManagementAttachmentPageResponse        = borrower.ProjectManagementAttachmentPageResponse
-	ProjectManagementAttachmentPageResponseData    = borrower.ProjectManagementAttachmentPageResponseData
-	ProjectManagementMyTaskPageFilter              = borrower.ProjectManagementMyTaskPageFilter
-	ProjectManagementMyTaskPageRequest             = borrower.ProjectManagementMyTaskPageRequest
-	ProjectManagementMyTaskPageRequestData         = borrower.ProjectManagementMyTaskPageRequestData
-	ProjectManagementTaskAssigneeUpdateRequest     = borrower.ProjectManagementTaskAssigneeUpdateRequest
-	ProjectManagementTaskAssigneeUpdateRequestData = borrower.ProjectManagementTaskAssigneeUpdateRequestData
-	ProjectManagementTaskCreateRequest             = borrower.ProjectManagementTaskCreateRequest
-	ProjectManagementTaskCreateRequestData         = borrower.ProjectManagementTaskCreateRequestData
-	ProjectManagementTaskDeleteRequest             = borrower.ProjectManagementTaskDeleteRequest
-	ProjectManagementTaskDeleteRequestData         = borrower.ProjectManagementTaskDeleteRequestData
-	ProjectManagementTaskDetailRequest             = borrower.ProjectManagementTaskDetailRequest
-	ProjectManagementTaskDetailRequestData         = borrower.ProjectManagementTaskDetailRequestData
-	ProjectManagementTaskDetailResponse            = borrower.ProjectManagementTaskDetailResponse
-	ProjectManagementTaskPageRequest               = borrower.ProjectManagementTaskPageRequest
-	ProjectManagementTaskPageRequestData           = borrower.ProjectManagementTaskPageRequestData
-	ProjectManagementTaskPageRequestFilter         = borrower.ProjectManagementTaskPageRequestFilter
-	ProjectManagementTaskPageResponse              = borrower.ProjectManagementTaskPageResponse
-	ProjectManagementTaskPageResponseData          = borrower.ProjectManagementTaskPageResponseData
-	ProjectManagementTaskTransitionRequest         = borrower.ProjectManagementTaskTransitionRequest
-	ProjectManagementTaskTransitionRequestData     = borrower.ProjectManagementTaskTransitionRequestData
-	ProjectManagementTaskUpdateRequest             = borrower.ProjectManagementTaskUpdateRequest
-	ProjectManagementTaskUpdateRequestData         = borrower.ProjectManagementTaskUpdateRequestData
+	ProjectManagementAttachmentCreateRequest     = borrower.ProjectManagementAttachmentCreateRequest
+	ProjectManagementAttachmentCreateRequestData = borrower.ProjectManagementAttachmentCreateRequestData
+	ProjectManagementAttachmentDeleteRequest     = borrower.ProjectManagementAttachmentDeleteRequest
+	ProjectManagementAttachmentDeleteRequestData = borrower.ProjectManagementAttachmentDeleteRequestData
+	ProjectManagementAttachmentDetailResponse    = borrower.ProjectManagementAttachmentDetailResponse
+	ProjectManagementMyTaskPageFilter            = borrower.ProjectManagementMyTaskPageFilter
+	ProjectManagementMyTaskPageRequest           = borrower.ProjectManagementMyTaskPageRequest
+	ProjectManagementMyTaskPageRequestData       = borrower.ProjectManagementMyTaskPageRequestData
+	ProjectManagementTaskCreateRequest           = borrower.ProjectManagementTaskCreateRequest
+	ProjectManagementTaskCreateRequestData       = borrower.ProjectManagementTaskCreateRequestData
+	ProjectManagementTaskDeleteRequest           = borrower.ProjectManagementTaskDeleteRequest
+	ProjectManagementTaskDeleteRequestData       = borrower.ProjectManagementTaskDeleteRequestData
+	ProjectManagementTaskDetailRequest           = borrower.ProjectManagementTaskDetailRequest
+	ProjectManagementTaskDetailRequestData       = borrower.ProjectManagementTaskDetailRequestData
+	ProjectManagementTaskDetailResponse          = borrower.ProjectManagementTaskDetailResponse
+	ProjectManagementTaskPageRequest             = borrower.ProjectManagementTaskPageRequest
+	ProjectManagementTaskPageRequestData         = borrower.ProjectManagementTaskPageRequestData
+	ProjectManagementTaskPageRequestFilter       = borrower.ProjectManagementTaskPageRequestFilter
+	ProjectManagementTaskPageResponse            = borrower.ProjectManagementTaskPageResponse
+	ProjectManagementTaskPageResponseData        = borrower.ProjectManagementTaskPageResponseData
+	ProjectManagementTaskTransitionRequest       = borrower.ProjectManagementTaskTransitionRequest
+	ProjectManagementTaskTransitionRequestData   = borrower.ProjectManagementTaskTransitionRequestData
+	ProjectManagementTaskUpdateRequest           = borrower.ProjectManagementTaskUpdateRequest
+	ProjectManagementTaskUpdateRequestData       = borrower.ProjectManagementTaskUpdateRequestData
 
 	ProjectManagementTask interface {
 		Page(ctx context.Context, in *ProjectManagementTaskPageRequest, opts ...grpc.CallOption) (*ProjectManagementTaskPageResponse, error)
@@ -54,8 +48,6 @@ type (
 		Update(ctx context.Context, in *ProjectManagementTaskUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementTaskDetailResponse, error)
 		Delete(ctx context.Context, in *ProjectManagementTaskDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 		MyPage(ctx context.Context, in *ProjectManagementMyTaskPageRequest, opts ...grpc.CallOption) (*ProjectManagementTaskPageResponse, error)
-		UpdateAssignees(ctx context.Context, in *ProjectManagementTaskAssigneeUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementTaskDetailResponse, error)
-		AttachmentPage(ctx context.Context, in *ProjectManagementAttachmentPageRequest, opts ...grpc.CallOption) (*ProjectManagementAttachmentPageResponse, error)
 		AttachmentCreate(ctx context.Context, in *ProjectManagementAttachmentCreateRequest, opts ...grpc.CallOption) (*ProjectManagementAttachmentDetailResponse, error)
 		AttachmentDelete(ctx context.Context, in *ProjectManagementAttachmentDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 		Transition(ctx context.Context, in *ProjectManagementTaskTransitionRequest, opts ...grpc.CallOption) (*ProjectManagementTaskDetailResponse, error)
@@ -100,16 +92,6 @@ func (m *defaultProjectManagementTask) Delete(ctx context.Context, in *ProjectMa
 func (m *defaultProjectManagementTask) MyPage(ctx context.Context, in *ProjectManagementMyTaskPageRequest, opts ...grpc.CallOption) (*ProjectManagementTaskPageResponse, error) {
 	client := borrower.NewProjectManagementTaskClient(m.cli.Conn())
 	return client.MyPage(ctx, in, opts...)
-}
-
-func (m *defaultProjectManagementTask) UpdateAssignees(ctx context.Context, in *ProjectManagementTaskAssigneeUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementTaskDetailResponse, error) {
-	client := borrower.NewProjectManagementTaskClient(m.cli.Conn())
-	return client.UpdateAssignees(ctx, in, opts...)
-}
-
-func (m *defaultProjectManagementTask) AttachmentPage(ctx context.Context, in *ProjectManagementAttachmentPageRequest, opts ...grpc.CallOption) (*ProjectManagementAttachmentPageResponse, error) {
-	client := borrower.NewProjectManagementTaskClient(m.cli.Conn())
-	return client.AttachmentPage(ctx, in, opts...)
 }
 
 func (m *defaultProjectManagementTask) AttachmentCreate(ctx context.Context, in *ProjectManagementAttachmentCreateRequest, opts ...grpc.CallOption) (*ProjectManagementAttachmentDetailResponse, error) {

@@ -54,16 +54,6 @@ func (s *ProjectManagementTaskServer) MyPage(ctx context.Context, in *borrower.P
 	return l.MyPage(in)
 }
 
-func (s *ProjectManagementTaskServer) UpdateAssignees(ctx context.Context, in *borrower.ProjectManagementTaskAssigneeUpdateRequest) (*borrower.ProjectManagementTaskDetailResponse, error) {
-	l := projectmanagementtasklogic.NewUpdateAssigneesLogic(ctx, s.svcCtx)
-	return l.UpdateAssignees(in)
-}
-
-func (s *ProjectManagementTaskServer) AttachmentPage(ctx context.Context, in *borrower.ProjectManagementAttachmentPageRequest) (*borrower.ProjectManagementAttachmentPageResponse, error) {
-	l := projectmanagementtasklogic.NewAttachmentPageLogic(ctx, s.svcCtx)
-	return l.AttachmentPage(in)
-}
-
 func (s *ProjectManagementTaskServer) AttachmentCreate(ctx context.Context, in *borrower.ProjectManagementAttachmentCreateRequest) (*borrower.ProjectManagementAttachmentDetailResponse, error) {
 	l := projectmanagementtasklogic.NewAttachmentCreateLogic(ctx, s.svcCtx)
 	return l.AttachmentCreate(in)

@@ -26,8 +26,6 @@ const (
 	ProjectManagementTask_Update_FullMethodName           = "/borrower.ProjectManagementTask/Update"
 	ProjectManagementTask_Delete_FullMethodName           = "/borrower.ProjectManagementTask/Delete"
 	ProjectManagementTask_MyPage_FullMethodName           = "/borrower.ProjectManagementTask/MyPage"
-	ProjectManagementTask_UpdateAssignees_FullMethodName  = "/borrower.ProjectManagementTask/UpdateAssignees"
-	ProjectManagementTask_AttachmentPage_FullMethodName   = "/borrower.ProjectManagementTask/AttachmentPage"
 	ProjectManagementTask_AttachmentCreate_FullMethodName = "/borrower.ProjectManagementTask/AttachmentCreate"
 	ProjectManagementTask_AttachmentDelete_FullMethodName = "/borrower.ProjectManagementTask/AttachmentDelete"
 	ProjectManagementTask_Transition_FullMethodName       = "/borrower.ProjectManagementTask/Transition"
@@ -43,8 +41,6 @@ type ProjectManagementTaskClient interface {
 	Update(ctx context.Context, in *ProjectManagementTaskUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementTaskDetailResponse, error)
 	Delete(ctx context.Context, in *ProjectManagementTaskDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 	MyPage(ctx context.Context, in *ProjectManagementMyTaskPageRequest, opts ...grpc.CallOption) (*ProjectManagementTaskPageResponse, error)
-	UpdateAssignees(ctx context.Context, in *ProjectManagementTaskAssigneeUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementTaskDetailResponse, error)
-	AttachmentPage(ctx context.Context, in *ProjectManagementAttachmentPageRequest, opts ...grpc.CallOption) (*ProjectManagementAttachmentPageResponse, error)
 	AttachmentCreate(ctx context.Context, in *ProjectManagementAttachmentCreateRequest, opts ...grpc.CallOption) (*ProjectManagementAttachmentDetailResponse, error)
 	AttachmentDelete(ctx context.Context, in *ProjectManagementAttachmentDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 	Transition(ctx context.Context, in *ProjectManagementTaskTransitionRequest, opts ...grpc.CallOption) (*ProjectManagementTaskDetailResponse, error)
@@ -118,26 +114,6 @@ func (c *projectManagementTaskClient) MyPage(ctx context.Context, in *ProjectMan
 	return out, nil
 }
 
-func (c *projectManagementTaskClient) UpdateAssignees(ctx context.Context, in *ProjectManagementTaskAssigneeUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementTaskDetailResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ProjectManagementTaskDetailResponse)
-	err := c.cc.Invoke(ctx, ProjectManagementTask_UpdateAssignees_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *projectManagementTaskClient) AttachmentPage(ctx context.Context, in *ProjectManagementAttachmentPageRequest, opts ...grpc.CallOption) (*ProjectManagementAttachmentPageResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ProjectManagementAttachmentPageResponse)
-	err := c.cc.Invoke(ctx, ProjectManagementTask_AttachmentPage_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *projectManagementTaskClient) AttachmentCreate(ctx context.Context, in *ProjectManagementAttachmentCreateRequest, opts ...grpc.CallOption) (*ProjectManagementAttachmentDetailResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ProjectManagementAttachmentDetailResponse)
@@ -178,8 +154,6 @@ type ProjectManagementTaskServer interface {
 	Update(context.Context, *ProjectManagementTaskUpdateRequest) (*ProjectManagementTaskDetailResponse, error)
 	Delete(context.Context, *ProjectManagementTaskDeleteRequest) (*proto.EmptyResponse, error)
 	MyPage(context.Context, *ProjectManagementMyTaskPageRequest) (*ProjectManagementTaskPageResponse, error)
-	UpdateAssignees(context.Context, *ProjectManagementTaskAssigneeUpdateRequest) (*ProjectManagementTaskDetailResponse, error)
-	AttachmentPage(context.Context, *ProjectManagementAttachmentPageRequest) (*ProjectManagementAttachmentPageResponse, error)
 	AttachmentCreate(context.Context, *ProjectManagementAttachmentCreateRequest) (*ProjectManagementAttachmentDetailResponse, error)
 	AttachmentDelete(context.Context, *ProjectManagementAttachmentDeleteRequest) (*proto.EmptyResponse, error)
 	Transition(context.Context, *ProjectManagementTaskTransitionRequest) (*ProjectManagementTaskDetailResponse, error)
@@ -210,12 +184,6 @@ func (UnimplementedProjectManagementTaskServer) Delete(context.Context, *Project
 }
 func (UnimplementedProjectManagementTaskServer) MyPage(context.Context, *ProjectManagementMyTaskPageRequest) (*ProjectManagementTaskPageResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method MyPage not implemented")
-}
-func (UnimplementedProjectManagementTaskServer) UpdateAssignees(context.Context, *ProjectManagementTaskAssigneeUpdateRequest) (*ProjectManagementTaskDetailResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method UpdateAssignees not implemented")
-}
-func (UnimplementedProjectManagementTaskServer) AttachmentPage(context.Context, *ProjectManagementAttachmentPageRequest) (*ProjectManagementAttachmentPageResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method AttachmentPage not implemented")
 }
 func (UnimplementedProjectManagementTaskServer) AttachmentCreate(context.Context, *ProjectManagementAttachmentCreateRequest) (*ProjectManagementAttachmentDetailResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method AttachmentCreate not implemented")
@@ -355,42 +323,6 @@ func _ProjectManagementTask_MyPage_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ProjectManagementTask_UpdateAssignees_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ProjectManagementTaskAssigneeUpdateRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProjectManagementTaskServer).UpdateAssignees(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ProjectManagementTask_UpdateAssignees_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectManagementTaskServer).UpdateAssignees(ctx, req.(*ProjectManagementTaskAssigneeUpdateRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProjectManagementTask_AttachmentPage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ProjectManagementAttachmentPageRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProjectManagementTaskServer).AttachmentPage(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ProjectManagementTask_AttachmentPage_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectManagementTaskServer).AttachmentPage(ctx, req.(*ProjectManagementAttachmentPageRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _ProjectManagementTask_AttachmentCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ProjectManagementAttachmentCreateRequest)
 	if err := dec(in); err != nil {
@@ -475,14 +407,6 @@ var ProjectManagementTask_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MyPage",
 			Handler:    _ProjectManagementTask_MyPage_Handler,
-		},
-		{
-			MethodName: "UpdateAssignees",
-			Handler:    _ProjectManagementTask_UpdateAssignees_Handler,
-		},
-		{
-			MethodName: "AttachmentPage",
-			Handler:    _ProjectManagementTask_AttachmentPage_Handler,
 		},
 		{
 			MethodName: "AttachmentCreate",

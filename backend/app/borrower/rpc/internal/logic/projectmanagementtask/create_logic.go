@@ -2,13 +2,13 @@ package projectmanagementtasklogic
 
 import (
 	"context"
-	"strings"
-	"time"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/data/dto"
 )
 
@@ -24,17 +24,6 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 	}
 }
 
-func taskTime(value string) (*time.Time, error) {
-	if strings.TrimSpace(value) == "" {
-		return nil, nil
-	}
-	parsed, err := time.Parse(time.RFC3339, value)
-	if err != nil {
-		return nil, errorx.New("task time must use RFC3339")
-	}
-	return &parsed, nil
-}
-
 func (l *CreateLogic) Create(in *borrower.ProjectManagementTaskCreateRequest) (resp *borrower.ProjectManagementTaskDetailResponse, err error) {
 	if in.Data == nil {
 		err = errorx.New("request data is nil")
@@ -45,15 +34,13 @@ func (l *CreateLogic) Create(in *borrower.ProjectManagementTaskCreateRequest) (r
 	if err != nil {
 		return nil, err
 	}
-	startAt, err := taskTime(in.Data.StartAt)
+	var input dto.ProjectManagementTaskCreateDto
+	err = copierx.Assign(in.Data, &input, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
 		return nil, err
 	}
-	endAt, err := taskTime(in.Data.EndAt)
-	if err != nil {
-		return nil, err
-	}
-	task, err := base.ProjectManagementTaskLogic.Create(l.ctx, claim, dto.ProjectManagementTaskCreateDto{ProjectManagementTaskDto: dto.ProjectManagementTaskDto{ProjectId: in.Data.ProjectId, ParentTaskId: in.Data.ParentTaskId, Title: in.Data.Title, Description: in.Data.Description, Priority: in.Data.Priority, StartAt: startAt, EndAt: endAt}, TaskTypeId: in.Data.TaskTypeId, AssigneeIds: in.Data.AssigneeIds})
+
+	task, err := base.ProjectManagementTaskLogic.Create(l.ctx, claim, input)
 	if err != nil {
 		return nil, err
 	}

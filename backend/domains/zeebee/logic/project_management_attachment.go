@@ -8,7 +8,6 @@ import (
 
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/gormx"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
@@ -19,13 +18,6 @@ type ProjectManagementAttachmentLogic struct{ *BaseLogic }
 
 func NewProjectManagementAttachmentLogic(baseLogic *BaseLogic) *ProjectManagementAttachmentLogic {
 	return &ProjectManagementAttachmentLogic{BaseLogic: baseLogic}
-}
-
-func (l *ProjectManagementAttachmentLogic) Page(ctx context.Context, claim utils.JwtUser, taskId int64, input dto.ProjectManagementAttachmentPageRequestDto) (gormx.PageResponse[*model.File], error) {
-	if _, err := NewProjectManagementTaskLogic(l.BaseLogic).Detail(ctx, claim, taskId); err != nil {
-		return gormx.PageResponse[*model.File]{}, err
-	}
-	return l.repos.FileRepo.PageByEntity(ctx, taskId, constants.FileEntityTypeProjectManagementTask, gormx.PageRequest{Page: input.Page, Limit: input.Limit})
 }
 
 func (l *ProjectManagementAttachmentLogic) Create(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementAttachmentCreateDto) (file *model.File, err error) {
@@ -44,7 +36,7 @@ func (l *ProjectManagementAttachmentLogic) Create(ctx context.Context, claim uti
 			return projectManagementNotFound(err, "task not found")
 		}
 		if task.OrganizationId != claim.OrganizationId {
-			return errorx.New("task not found")
+			return errorx.New("task not belong to organization")
 		}
 		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.ProjectId, claim.OrganizationUserId); err != nil {
 			return projectManagementNotFound(err, "project member required")
@@ -70,7 +62,7 @@ func (l *ProjectManagementAttachmentLogic) Delete(ctx context.Context, claim uti
 			return projectManagementNotFound(err, "task not found")
 		}
 		if task.OrganizationId != claim.OrganizationId {
-			return errorx.New("task not found")
+			return errorx.New("task not belong to organization")
 		}
 		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.ProjectId, claim.OrganizationUserId); err != nil {
 			return projectManagementNotFound(err, "project member required")
@@ -80,7 +72,7 @@ func (l *ProjectManagementAttachmentLogic) Delete(ctx context.Context, claim uti
 			return projectManagementNotFound(err, "task attachment not found")
 		}
 		if file.EntityId != task.Id || file.EntityType != constants.FileEntityTypeProjectManagementTask {
-			return errorx.New("task attachment not found")
+			return errorx.New("task attachment not belong to task")
 		}
 		if _, err = l.repos.FileRepo.DeleteByIDWithTx(ctx, tx, file.Id); err != nil {
 			return err

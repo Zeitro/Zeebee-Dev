@@ -6,7 +6,9 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/data/dto"
 )
 
@@ -32,18 +34,12 @@ func (l *UpdateLogic) Update(in *borrower.ProjectManagementTaskUpdateRequest) (r
 	if err != nil {
 		return nil, err
 	}
-	if _, err = base.ProjectManagementTaskLogic.DetailForProject(l.ctx, claim, in.Data.ProjectId, in.Data.Id); err != nil {
-		return nil, err
-	}
-	startAt, err := taskTime(in.Data.StartAt)
+	var input dto.ProjectManagementTaskUpdateDto
+	err = copierx.Assign(in.Data, &input, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
 	if err != nil {
 		return nil, err
 	}
-	endAt, err := taskTime(in.Data.EndAt)
-	if err != nil {
-		return nil, err
-	}
-	task, err := base.ProjectManagementTaskLogic.Update(l.ctx, claim, in.Data.Id, dto.ProjectManagementTaskUpdateDto{Title: in.Data.Title, Description: in.Data.Description, Priority: in.Data.Priority, StartAt: startAt, EndAt: endAt, TaskTypeId: in.Data.TaskTypeId})
+	task, err := base.ProjectManagementTaskLogic.Update(l.ctx, claim, in.Data.Id, input)
 	if err != nil {
 		return nil, err
 	}

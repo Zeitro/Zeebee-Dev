@@ -86,10 +86,14 @@ func (l *ProjectManagementTaskLogic) Transition(ctx context.Context, claim utils
 				return err
 			}
 		}
-		if err = l.repos.ProjectManagementTaskRepo.UpdateStageWithTx(ctx, tx, task.Id, targetStage.Id); err != nil {
+		if err = l.repos.ProjectManagementTaskRepo.CopyCurrentStageAssigneesIfTargetEmptyWithTx(ctx, tx, task, targetStage.Id); err != nil {
 			return err
 		}
-		task.StageId = targetStage.Id
+		task.StageId, task.Phase = targetStage.Id, targetStage.Phase
+		task.RemoveRelationships()
+		if _, err = l.repos.ProjectManagementTaskRepo.UpdateOneWithTx(ctx, tx, task); err != nil {
+			return err
+		}
 		return l.recordProjectTaskTransition(transitionCtx)
 	})
 	if err != nil {
@@ -169,11 +173,21 @@ func (l *ProjectManagementTaskLogic) validateFinishedChildren(transitionCtx *pro
 }
 
 func (l *ProjectManagementTaskLogic) recordProjectTaskTransition(transitionCtx *projectManagementTransitionContext) error {
-	metadata, err := json.Marshal(map[string]int64{
-		"project_id":    transitionCtx.task.ProjectId,
-		"task_id":       transitionCtx.task.Id,
-		"from_stage_id": transitionCtx.currentStage.Id,
-		"to_stage_id":   transitionCtx.targetStage.Id,
+	metadata, err := json.Marshal(map[string]any{
+		"project_id": transitionCtx.task.ProjectId,
+		"task_id":    transitionCtx.task.Id,
+		"from_stage": map[string]any{
+			"id":    transitionCtx.currentStage.Id,
+			"name":  transitionCtx.currentStage.Name,
+			"phase": transitionCtx.currentStage.Phase,
+			"color": transitionCtx.currentStage.Color,
+		},
+		"to_stage": map[string]any{
+			"id":    transitionCtx.targetStage.Id,
+			"name":  transitionCtx.targetStage.Name,
+			"phase": transitionCtx.targetStage.Phase,
+			"color": transitionCtx.targetStage.Color,
+		},
 	})
 	if err != nil {
 		return errorx.WithStack(err)

@@ -918,6 +918,15 @@ message ProjectManagementTaskAssigneeEntity {
   string updated_at = 5;
 }
 
+message ProjectManagementAttachmentEntity {
+  int64 file_id = 1;
+  string file_name = 2;
+  string file_url = 3;
+  string storage_type = 4;
+  string created_at = 5;
+  string updated_at = 6;
+}
+
 message ProjectManagementTaskEntity {
   int64 id = 1;
   int64 project_id = 2;
@@ -932,10 +941,31 @@ message ProjectManagementTaskEntity {
   string end_at = 11;
   ProjectManagementTaskTypeSnapshotEntity task_type = 12;
   repeated ProjectManagementTaskAssigneeEntity assignees = 13;
+  repeated ProjectManagementAttachmentEntity attachments = 18;
   bool overdue = 14;
   int64 overdue_seconds = 15;
   string created_at = 16;
   string updated_at = 17;
+  string phase = 19;
+}
+
+message ProjectManagementTaskPageEntity {
+  int64 id = 1;
+  int64 project_id = 2;
+  int64 parent_task_id = 3;
+  int64 stage_id = 4;
+  int64 creator_id = 5;
+  string creator_name = 6;
+  string title = 7;
+  string priority = 9;
+  string start_at = 10;
+  string end_at = 11;
+  ProjectManagementTaskTypeSnapshotEntity task_type = 12;
+  bool overdue = 14;
+  int64 overdue_seconds = 15;
+  string created_at = 16;
+  string updated_at = 17;
+  string phase = 19;
 }
 
 message ProjectManagementTaskDependencyEntity {
@@ -950,8 +980,7 @@ message ProjectManagementTaskDependencyEntity {
 
 message OperationEntity {
   int64 id = 1;
-  int64 project_id = 2;
-  int64 task_id = 3;
+  reserved 2, 3;
   int64 operator_id = 4;
   string operator_name = 5;
   string operation = 6;
@@ -959,4 +988,5 @@ message OperationEntity {
   string updated_at = 8;
   string entity_type = 9;
   int64 entity_id = 10;
+  string metadata = 11;
 }

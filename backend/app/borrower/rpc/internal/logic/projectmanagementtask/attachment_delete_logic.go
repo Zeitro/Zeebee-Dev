@@ -32,9 +32,6 @@ func (l *AttachmentDeleteLogic) AttachmentDelete(in *borrower.ProjectManagementA
 	if err != nil {
 		return nil, err
 	}
-	if _, err = base.ProjectManagementTaskLogic.DetailForProject(l.ctx, claim, in.Data.ProjectId, in.Data.TaskId); err != nil {
-		return nil, err
-	}
 	if err = base.ProjectManagementAttachmentLogic.Delete(l.ctx, claim, in.Data.TaskId, in.Data.FileId); err != nil {
 		return nil, err
 	}

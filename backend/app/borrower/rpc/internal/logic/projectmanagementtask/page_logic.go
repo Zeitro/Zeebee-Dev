@@ -7,6 +7,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
 )
@@ -33,19 +34,23 @@ func (l *PageLogic) Page(in *borrower.ProjectManagementTaskPageRequest) (resp *b
 	if err != nil {
 		return nil, err
 	}
-	filter := dto.ProjectManagementTaskFilterDto{ProjectId: in.Data.ProjectId}
+	filter := dto.ProjectManagementTaskFilterDto{}
 	if in.Data.Filter != nil {
-		filter.StageId, filter.TaskTypeId = in.Data.Filter.StageId, in.Data.Filter.TaskTypeId
-		filter.AssigneeId, filter.Keyword, filter.Overdue = in.Data.Filter.AssigneeId, in.Data.Filter.Keyword, in.Data.Filter.Overdue
+		filter.ProjectId, filter.StageId = in.Data.Filter.ProjectId, in.Data.Filter.StageId
+		filter.Phase = make([]constants.ProjectManagementStagePhase, len(in.Data.Filter.Phase))
+		for i, phase := range in.Data.Filter.Phase {
+			filter.Phase[i] = constants.ProjectManagementStagePhase(phase)
+		}
+		filter.TaskTypeId, filter.Keyword, filter.Overdue = in.Data.Filter.TaskTypeId, in.Data.Filter.Keyword, in.Data.Filter.Overdue
 	}
 	input := dto.ProjectManagementTaskPageRequestDto{Page: in.Data.Page, Limit: in.Data.Limit, Filter: filter}
 	page, err := base.ProjectManagementTaskLogic.Page(l.ctx, claim, input)
 	if err != nil {
 		return nil, err
 	}
-	data := &borrower.ProjectManagementTaskPageResponseData{Page: page.Page, Limit: page.Limit, Total: page.Total, TotalPage: page.TotalPage, List: make([]*proto.ProjectManagementTaskEntity, 0, len(page.List))}
+	data := &borrower.ProjectManagementTaskPageResponseData{Page: page.Page, Limit: page.Limit, Total: page.Total, TotalPage: page.TotalPage, List: make([]*proto.ProjectManagementTaskPageEntity, 0, len(page.List))}
 	for _, task := range page.List {
-		entity, err := taskEntityWithOverdue(l.ctx, base.ProjectManagementTaskLogic, task)
+		entity, err := taskPageEntityWithOverdue(l.ctx, base.ProjectManagementTaskLogic, task)
 		if err != nil {
 			return nil, err
 		}

@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"strings"
-	"time"
 
 	"gorm.io/gorm"
 
@@ -53,7 +52,7 @@ func (l *ProjectManagementTaskLogic) Create(ctx context.Context, claim utils.Jwt
 		return nil, err
 	}
 	task.OrganizationId, task.CreatorId, task.CreatorName = claim.OrganizationId, claim.OrganizationUserId, claim.Username
-	task.StartAt, task.EndAt = projectManagementNullTime(input.StartAt), projectManagementNullTime(input.EndAt)
+	task.StartAt, task.EndAt = input.StartAt, input.EndAt
 	task.TaskType = &dto.ProjectManagementTaskTypeSnapshotDto{}
 	err = l.repos.ProjectManagementTaskRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		if _, err = l.repos.ProjectManagementProjectRepo.LockByOrganizationWithTx(ctx, tx, input.ProjectId, claim.OrganizationId); err != nil {
@@ -83,7 +82,7 @@ func (l *ProjectManagementTaskLogic) Create(ctx context.Context, claim utils.Jwt
 				return errorx.New("cannot add child task to a finished parent task")
 			}
 		}
-		task.StageId = pendingStage.Id
+		task.StageId, task.Phase = pendingStage.Id, pendingStage.Phase
 		if input.TaskTypeId != 0 {
 			taskType, err := l.repos.ProjectManagementTaskTypeRepo.FindByOrganizationWithTx(ctx, tx, input.TaskTypeId, claim.OrganizationId)
 			if err != nil {
@@ -95,7 +94,7 @@ func (l *ProjectManagementTaskLogic) Create(ctx context.Context, claim utils.Jwt
 		if err != nil {
 			return err
 		}
-		assignees, err := l.projectManagementTaskAssignees(ctx, tx, projectManagementTaskAssigneeInput{projectId: input.ProjectId, taskId: task.Id, stageId: task.StageId, organizationId: claim.OrganizationId, organizationUserIds: input.AssigneeIds})
+		assignees, err := l.projectManagementTaskAssignees(ctx, tx, projectManagementTaskAssigneeInput{projectId: input.ProjectId, taskId: task.Id, stageId: task.StageId, organizationId: claim.OrganizationId, organizationUserIds: input.AssigneeOrganizationUserIds})
 		if err != nil {
 			return err
 		}
@@ -125,6 +124,13 @@ func validateProjectManagementTaskCreate(input dto.ProjectManagementTaskCreateDt
 	if input.ProjectId == 0 || strings.TrimSpace(input.Title) == "" {
 		return errorx.New("project and task title are required")
 	}
+	return validateProjectManagementTaskTimeRange(input.StartAt, input.EndAt)
+}
+
+func validateProjectManagementTaskTimeRange(startAt, endAt *sql.NullTime) error {
+	if startAt != nil && startAt.Valid && endAt != nil && endAt.Valid && !startAt.Time.Before(endAt.Time) {
+		return errorx.New("task start time must be before end time")
+	}
 	return nil
 }
 
@@ -134,6 +140,10 @@ func (l *ProjectManagementTaskLogic) Detail(ctx context.Context, claim utils.Jwt
 		return nil, projectManagementNotFound(err, "task not found")
 	}
 	if _, err = l.projectManagementAccess().RequireMember(ctx, task.ProjectId, claim.OrganizationUserId); err != nil {
+		return nil, err
+	}
+	task.Attachments, err = l.repos.FileRepo.GetFiles(ctx, task.Id, constants.FileEntityTypeProjectManagementTask)
+	if err != nil {
 		return nil, err
 	}
 	return task, nil
@@ -157,6 +167,9 @@ func (l *ProjectManagementTaskLogic) Update(ctx context.Context, claim utils.Jwt
 	if strings.TrimSpace(input.Title) == "" {
 		return nil, errorx.New("task title is required")
 	}
+	if err := validateProjectManagementTaskTimeRange(input.StartAt, input.EndAt); err != nil {
+		return nil, err
+	}
 	var task *model.ProjectManagementTask
 	err := l.repos.ProjectManagementTaskRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var err error
@@ -170,8 +183,11 @@ func (l *ProjectManagementTaskLogic) Update(ctx context.Context, claim utils.Jwt
 		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.ProjectId, claim.OrganizationUserId); err != nil {
 			return projectManagementNotFound(err, "project member required")
 		}
-		task.Title, task.Description, task.Priority = input.Title, input.Description, input.Priority
-		task.StartAt, task.EndAt = projectManagementNullTime(input.StartAt), projectManagementNullTime(input.EndAt)
+		base, taskType := task.Base, task.TaskType
+		if err = copierx.Assign(&input, task); err != nil {
+			return err
+		}
+		task.Base, task.TaskType = base, taskType
 		if input.TaskTypeId != 0 {
 			taskType, err := l.repos.ProjectManagementTaskTypeRepo.FindByOrganizationWithTx(ctx, tx, input.TaskTypeId, claim.OrganizationId)
 			if err != nil {
@@ -179,8 +195,16 @@ func (l *ProjectManagementTaskLogic) Update(ctx context.Context, claim utils.Jwt
 			}
 			task.TaskType = ProjectManagementTaskTypeSnapshot(taskType)
 		}
-		if err = tx.WithContext(ctx).Model(&model.ProjectManagementTask{}).Where("id = ?", task.Id).Updates(map[string]interface{}{"title": task.Title, "description": task.Description, "priority": task.Priority, "start_at": task.StartAt, "end_at": task.EndAt, "task_type": task.TaskType}).Error; err != nil {
-			return errorx.WithStack(err)
+		assignees, err := l.projectManagementTaskAssignees(ctx, tx, projectManagementTaskAssigneeInput{projectId: task.ProjectId, taskId: task.Id, stageId: task.StageId, organizationId: claim.OrganizationId, organizationUserIds: input.AssigneeOrganizationUserIds})
+		if err != nil {
+			return err
+		}
+		if err = l.repos.ProjectManagementTaskRepo.ReplaceAssigneesWithTx(ctx, tx, task.Id, task.StageId, assignees); err != nil {
+			return err
+		}
+		task.RemoveRelationships()
+		if _, err = l.repos.ProjectManagementTaskRepo.UpdateOneWithTx(ctx, tx, task); err != nil {
+			return err
 		}
 		return l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskUpdate})
 	})
@@ -190,48 +214,7 @@ func (l *ProjectManagementTaskLogic) Update(ctx context.Context, claim utils.Jwt
 	return l.Detail(ctx, claim, task.Id)
 }
 
-func (l *ProjectManagementTaskLogic) UpdateAssignees(ctx context.Context, claim utils.JwtUser, taskId, stageId int64, organizationUserIds []int64) (*model.ProjectManagementTask, error) {
-	err := l.repos.ProjectManagementTaskRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		task, err := l.repos.ProjectManagementTaskRepo.LockWithTx(ctx, tx, taskId)
-		if err != nil {
-			return projectManagementNotFound(err, "task not found")
-		}
-		if task.OrganizationId != claim.OrganizationId {
-			return errorx.New("task not found")
-		}
-		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.ProjectId, claim.OrganizationUserId); err != nil {
-			return projectManagementNotFound(err, "project member required")
-		}
-		workflow, err := l.repos.ProjectManagementWorkflowRepo.FindProjectDefinitionWithTx(ctx, tx, task.ProjectId, claim.OrganizationId)
-		if err != nil {
-			return projectManagementNotFound(err, "project workflow not found")
-		}
-		stage, err := l.repos.ProjectManagementWorkflowRepo.FindStageWithTx(ctx, tx, stageId)
-		if err != nil {
-			return projectManagementNotFound(err, "workflow stage not found")
-		}
-		if stage.WorkflowId != workflow.Id {
-			return errorx.New("task assignee stage must belong to the project workflow")
-		}
-		assignees, err := l.projectManagementTaskAssignees(ctx, tx, projectManagementTaskAssigneeInput{projectId: task.ProjectId, taskId: task.Id, stageId: stageId, organizationId: claim.OrganizationId, organizationUserIds: organizationUserIds})
-		if err != nil {
-			return err
-		}
-		if err = l.repos.ProjectManagementTaskRepo.ReplaceAssigneesWithTx(ctx, tx, task.Id, stageId, assignees); err != nil {
-			return err
-		}
-		return l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskAssignees})
-	})
-	if err != nil {
-		return nil, err
-	}
-	return l.Detail(ctx, claim, taskId)
-}
-
-func (l *ProjectManagementTaskLogic) Delete(ctx context.Context, claim utils.JwtUser, taskId int64, confirm bool) error {
-	if err := validateProjectManagementTaskDelete(confirm); err != nil {
-		return err
-	}
+func (l *ProjectManagementTaskLogic) Delete(ctx context.Context, claim utils.JwtUser, taskId int64) error {
 	return l.repos.ProjectManagementTaskRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		task, err := l.repos.ProjectManagementTaskRepo.LockWithTx(ctx, tx, taskId)
 		if err != nil {
@@ -255,20 +238,6 @@ func (l *ProjectManagementTaskLogic) Delete(ctx context.Context, claim utils.Jwt
 		}
 		return l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskDelete})
 	})
-}
-
-func validateProjectManagementTaskDelete(confirm bool) error {
-	if !confirm {
-		return errorx.New("task deletion requires confirmation")
-	}
-	return nil
-}
-
-func projectManagementNullTime(value *time.Time) *sql.NullTime {
-	if value == nil {
-		return nil
-	}
-	return &sql.NullTime{Time: *value, Valid: true}
 }
 
 func (l *ProjectManagementTaskLogic) projectManagementTaskAssignees(ctx context.Context, tx *gorm.DB, input projectManagementTaskAssigneeInput) ([]*model.ProjectManagementTaskAssignee, error) {

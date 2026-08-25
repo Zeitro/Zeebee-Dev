@@ -11,6 +11,9 @@ const (
 	OperationEntityTypeOrganizationSubscription    OperationEntityType = "OrganizationSubscription"
 	OperationEntityTypePricingPlan                 OperationEntityType = "PricingPlan"
 	OperationEntityTypePricingPlanPolicy           OperationEntityType = "PricingPlanPolicy"
+
+	OperationEntityTypeProjectManagementOrganization OperationEntityType = "ProjectManagementOrganization"
+	OperationEntityTypeProjectManagementProject      OperationEntityType = "ProjectManagementProject"
 )
 
 type OperationAction string
@@ -32,20 +35,20 @@ const (
 	OperationActionLoanUpdate       OperationAction = "Loan Update"
 	OperationActionLoanStatusChange OperationAction = "Loan Status Change"
 
-	// Identity / security audit actions (NFR-003)
+	// Identity / security audit actions
 	OperationActionUserLogin         OperationAction = "User Login"
 	OperationActionUserLoginFailed   OperationAction = "User Login Failed"
 	OperationActionUserPasswordReset OperationAction = "User Password Reset"
 	OperationActionUserPasswordEdit  OperationAction = "User Password Edit"
 
-	// Role authorization actions (NFR-003: 角色授权变更)
+	// Role authorization actions
 	OperationActionRoleCreate       OperationAction = "Role Create"
 	OperationActionRoleUpdate       OperationAction = "Role Update"
 	OperationActionRoleDelete       OperationAction = "Role Delete"
 	OperationActionRoleStatusSwitch OperationAction = "Role Status Switch"
 	OperationActionRoleAssignUsers  OperationAction = "Role Assign Users"
 
-	// Member / organization-user actions (NFR-003: 成员授权变更 / 邀请 / 加入)
+	// Member / organization-user actions
 	OperationActionMemberInvite           OperationAction = "Member Invite"
 	OperationActionMemberInviteEmailSent  OperationAction = "Member Invite Email Sent"
 	OperationActionMemberAcceptInvitation OperationAction = "Member Accept Invitation"
@@ -55,7 +58,7 @@ const (
 	OperationActionMemberUpdate           OperationAction = "Member Update"
 	OperationActionMemberAssignRoles      OperationAction = "Member Assign Roles"
 
-	// Subscription actions (NFR-003: 订阅变更)
+	// Subscription actions
 	OperationActionSubscriptionCreate       OperationAction = "Subscription Create"
 	OperationActionSubscriptionRenew        OperationAction = "Subscription Renew"
 	OperationActionSubscriptionStatusSwitch OperationAction = "Subscription Status Switch"
@@ -63,15 +66,40 @@ const (
 	OperationActionSubscriptionExpireUpdate OperationAction = "Subscription Expire Update"
 	OperationActionSubscriptionDefaultPlan  OperationAction = "Subscription Default Plan"
 
-	// Pricing plan actions (NFR-003: 定价计划变更)
-	OperationActionPlanCreate         OperationAction = "Plan Create"
-	OperationActionPlanUpdate         OperationAction = "Plan Update"
-	OperationActionPlanDelete         OperationAction = "Plan Delete"
-	OperationActionPlanStatusSwitch   OperationAction = "Plan Status Switch"
-	OperationActionPlanBindResources  OperationAction = "Plan Bind Resources"
-	OperationActionPlanPolicyCreate   OperationAction = "Plan Policy Create"
-	OperationActionPlanPolicyUpdate   OperationAction = "Plan Policy Update"
-	OperationActionPlanPolicyDelete   OperationAction = "Plan Policy Delete"
+	// Pricing plan actions
+	OperationActionPlanCreate        OperationAction = "Plan Create"
+	OperationActionPlanUpdate        OperationAction = "Plan Update"
+	OperationActionPlanDelete        OperationAction = "Plan Delete"
+	OperationActionPlanStatusSwitch  OperationAction = "Plan Status Switch"
+	OperationActionPlanBindResources OperationAction = "Plan Bind Resources"
+	OperationActionPlanPolicyCreate  OperationAction = "Plan Policy Create"
+	OperationActionPlanPolicyUpdate  OperationAction = "Plan Policy Update"
+	OperationActionPlanPolicyDelete  OperationAction = "Plan Policy Delete"
+
+	// project management
+	OperationActionProjectManagementTaskTypeCreate   OperationAction = "Project Task Type Created"
+	OperationActionProjectManagementTaskTypeUpdate   OperationAction = "Project Task Type Updated"
+	OperationActionProjectManagementTaskTypeDelete   OperationAction = "Project Task Type Deleted"
+	OperationActionProjectManagementWorkflowCreate   OperationAction = "Project Workflow Created"
+	OperationActionProjectManagementWorkflowUpdate   OperationAction = "Project Workflow Updated"
+	OperationActionProjectManagementWorkflowDelete   OperationAction = "Project Workflow Deleted"
+	OperationActionProjectManagementProjectCreate    OperationAction = "Project Created"
+	OperationActionProjectManagementProjectUpdate    OperationAction = "Project Updated"
+	OperationActionProjectManagementProjectDelete    OperationAction = "Project Deleted"
+	OperationActionProjectManagementMemberAdd        OperationAction = "Project Member Added"
+	OperationActionProjectManagementMemberUpdate     OperationAction = "Project Member Role Updated"
+	OperationActionProjectManagementMemberRemove     OperationAction = "Project Member Removed"
+	OperationActionProjectManagementOwnerTransfer    OperationAction = "Project Owner Transferred"
+	OperationActionProjectManagementTaskCreate       OperationAction = "Project Task Created"
+	OperationActionProjectManagementTaskUpdate       OperationAction = "Project Task Updated"
+	OperationActionProjectManagementTaskDelete       OperationAction = "Project Task Deleted"
+	OperationActionProjectManagementTaskAssignees    OperationAction = "Project Task Assignees Updated"
+	OperationActionProjectManagementAttachmentAdd    OperationAction = "Project Task Attachment Added"
+	OperationActionProjectManagementAttachmentDelete OperationAction = "Project Task Attachment Deleted"
+	OperationActionProjectManagementDependencyCreate OperationAction = "Project Task Dependency Created"
+	OperationActionProjectManagementDependencyUpdate OperationAction = "Project Task Dependency Updated"
+	OperationActionProjectManagementDependencyDelete OperationAction = "Project Task Dependency Deleted"
+	OperationActionProjectManagementTaskTransition   OperationAction = "Project Task Transitioned"
 )
 
 type StorageType string

@@ -69,6 +69,14 @@ func taskEntity(task *model.ProjectManagementTask, overdue *dto.ProjectManagemen
 		return nil, err
 	}
 	entity.Assignees = *assignees
+	attachments, err := copierx.Trans[[]*model.File, []*proto.ProjectManagementAttachmentEntity](&task.Attachments, copierx.TimeToRFC3339Str())
+	if err != nil {
+		return nil, err
+	}
+	for i, attachment := range *attachments {
+		attachment.FileId = task.Attachments[i].Id
+	}
+	entity.Attachments = *attachments
 	return entity, nil
 }
 
@@ -78,4 +86,23 @@ func taskEntityWithOverdue(ctx context.Context, taskLogic *domainlogic.ProjectMa
 		return nil, err
 	}
 	return taskEntity(task, overdue)
+}
+
+func taskPageEntityWithOverdue(ctx context.Context, taskLogic *domainlogic.ProjectManagementTaskLogic, task *model.ProjectManagementTask) (*proto.ProjectManagementTaskPageEntity, error) {
+	overdue, err := taskLogic.Overdue(ctx, task)
+	if err != nil {
+		return nil, err
+	}
+	entity, err := copierx.Trans[model.ProjectManagementTask, proto.ProjectManagementTaskPageEntity](task, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToRFC3339Str())
+	if err != nil {
+		return nil, err
+	}
+	if task.TaskType != nil && task.TaskType.Id != 0 {
+		entity.TaskType, err = copierx.Trans[dto.ProjectManagementTaskTypeSnapshotDto, proto.ProjectManagementTaskTypeSnapshotEntity](task.TaskType)
+		if err != nil {
+			return nil, err
+		}
+	}
+	entity.Overdue, entity.OverdueSeconds = overdue.Overdue, overdue.OverdueSeconds
+	return entity, nil
 }

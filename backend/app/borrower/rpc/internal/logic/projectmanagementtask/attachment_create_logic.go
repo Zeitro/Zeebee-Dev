@@ -6,9 +6,12 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type AttachmentCreateLogic struct {
@@ -45,4 +48,16 @@ func (l *AttachmentCreateLogic) AttachmentCreate(in *borrower.ProjectManagementA
 		return nil, err
 	}
 	return &borrower.ProjectManagementAttachmentDetailResponse{Data: data}, nil
+}
+
+func attachmentEntity(file *model.File) (*proto.FileEntity, error) {
+	entity, err := copierx.Trans[model.File, proto.FileEntity](file,
+		copierx.TimeToRFC3339Str(),
+		copierx.SqlTimePtrToRFC3339Str(),
+	)
+	if err != nil {
+		return nil, err
+	}
+	entity.Id = file.Id
+	return entity, nil
 }

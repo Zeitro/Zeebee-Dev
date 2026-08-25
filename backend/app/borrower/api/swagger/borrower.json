@@ -4595,10 +4595,10 @@
             "allowEmptyValue": true
           },
           {
-            "type": "boolean",
-            "name": "need_all",
+            "type": "string",
+            "name": "purpose",
             "in": "query",
-            "allowEmptyValue": true
+            "required": true
           }
         ],
         "responses": {
@@ -5102,7 +5102,7 @@
       },
       "delete": {
         "consumes": [
-          "application/json"
+          "application/x-www-form-urlencoded"
         ],
         "produces": [
           "application/json"
@@ -5123,12 +5123,10 @@
             "required": true
           },
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/ProjectManagementTaskDeleteRequest"
-            }
+            "type": "integer",
+            "name": "project_id",
+            "in": "formData",
+            "required": true
           }
         ],
         "responses": {
@@ -5144,63 +5142,6 @@
                 },
                 "data": {
                   "$ref": "#/definitions/EmptyResponse"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/project_management/task/{id}/assignee": {
-      "put": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "project_management_task"
-        ],
-        "summary": "assignee",
-        "operationId": "projectManagementTaskAssigneeUpdate",
-        "parameters": [
-          {
-            "type": "integer",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/ProjectManagementTaskAssigneeUpdateRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/ProjectManagementTaskDetailResponse"
                 },
                 "msg": {
                   "description": "business message",
@@ -5270,67 +5211,10 @@
         }
       }
     },
-    "/api/v1/project_management/task/{id}/attachment/page": {
-      "post": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "project_management_task"
-        ],
-        "summary": "attachment page",
-        "operationId": "projectManagementTaskAttachmentPage",
-        "parameters": [
-          {
-            "type": "integer",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/ProjectManagementAttachmentPageRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/ProjectManagementAttachmentPageResponse"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/project_management/task/{id}/attachment/{file_id}": {
       "delete": {
         "consumes": [
-          "application/json"
+          "application/x-www-form-urlencoded"
         ],
         "produces": [
           "application/json"
@@ -5355,14 +5239,6 @@
             "name": "file_id",
             "in": "path",
             "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/ProjectManagementAttachmentDeleteRequest"
-            }
           }
         ],
         "responses": {
@@ -16402,11 +16278,10 @@
         "id",
         "entity_type",
         "entity_id",
-        "project_id",
-        "task_id",
         "operator_id",
         "operator_name",
         "operation",
+        "metadata",
         "created_at",
         "updated_at"
       ],
@@ -16423,6 +16298,10 @@
         "id": {
           "type": "integer"
         },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {}
+        },
         "operation": {
           "type": "string"
         },
@@ -16431,12 +16310,6 @@
         },
         "operator_name": {
           "type": "string"
-        },
-        "project_id": {
-          "type": "integer"
-        },
-        "task_id": {
-          "type": "integer"
         },
         "updated_at": {
           "type": "string"
@@ -17945,15 +17818,7 @@
       }
     },
     "ProjectManagementAttachmentDeleteRequest": {
-      "type": "object",
-      "required": [
-        "project_id"
-      ],
-      "properties": {
-        "project_id": {
-          "type": "integer"
-        }
-      }
+      "type": "object"
     },
     "ProjectManagementAttachmentDetailResponse": {
       "type": "object",
@@ -18014,59 +17879,6 @@
         },
         "updated_at": {
           "type": "string"
-        }
-      }
-    },
-    "ProjectManagementAttachmentPageRequest": {
-      "type": "object",
-      "required": [
-        "project_id",
-        "page",
-        "limit"
-      ],
-      "properties": {
-        "limit": {
-          "type": "integer",
-          "default": 20,
-          "example": 20
-        },
-        "page": {
-          "type": "integer",
-          "default": 1,
-          "example": 1
-        },
-        "project_id": {
-          "type": "integer"
-        }
-      }
-    },
-    "ProjectManagementAttachmentPageResponse": {
-      "type": "object",
-      "required": [
-        "page",
-        "limit",
-        "total",
-        "total_page",
-        "list"
-      ],
-      "properties": {
-        "limit": {
-          "type": "integer"
-        },
-        "list": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ProjectManagementAttachmentEntity"
-          }
-        },
-        "page": {
-          "type": "integer"
-        },
-        "total": {
-          "type": "integer"
-        },
-        "total_page": {
-          "type": "integer"
         }
       }
     },
@@ -18457,18 +18269,18 @@
     },
     "ProjectManagementMyTaskPageFilter": {
       "type": "object",
-      "required": [
-        "project_id"
-      ],
       "properties": {
-        "assignee_id": {
-          "type": "integer"
-        },
         "keyword": {
           "type": "string"
         },
         "overdue": {
           "type": "boolean"
+        },
+        "phase": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "project_id": {
           "type": "integer"
@@ -18490,18 +18302,18 @@
       "properties": {
         "filter": {
           "type": "object",
-          "required": [
-            "project_id"
-          ],
           "properties": {
-            "assignee_id": {
-              "type": "integer"
-            },
             "keyword": {
               "type": "string"
             },
             "overdue": {
               "type": "boolean"
+            },
+            "phase": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             },
             "project_id": {
               "type": "integer"
@@ -18750,10 +18562,10 @@
     "ProjectManagementProjectOwnerTransferRequest": {
       "type": "object",
       "required": [
-        "member_id"
+        "organization_user_id"
       ],
       "properties": {
-        "member_id": {
+        "organization_user_id": {
           "type": "integer"
         }
       }
@@ -18894,36 +18706,16 @@
         }
       }
     },
-    "ProjectManagementTaskAssigneeUpdateRequest": {
-      "type": "object",
-      "required": [
-        "project_id",
-        "stage_id",
-        "assignee_ids"
-      ],
-      "properties": {
-        "assignee_ids": {
-          "type": "array",
-          "items": {
-            "type": "integer"
-          }
-        },
-        "project_id": {
-          "type": "integer"
-        },
-        "stage_id": {
-          "type": "integer"
-        }
-      }
-    },
     "ProjectManagementTaskCreateRequest": {
       "type": "object",
       "required": [
         "project_id",
-        "title"
+        "title",
+        "priority",
+        "task_type_id"
       ],
       "properties": {
-        "assignee_ids": {
+        "assignee_organization_user_ids": {
           "type": "array",
           "items": {
             "type": "integer"
@@ -18956,19 +18748,7 @@
       }
     },
     "ProjectManagementTaskDeleteRequest": {
-      "type": "object",
-      "required": [
-        "project_id",
-        "confirm"
-      ],
-      "properties": {
-        "confirm": {
-          "type": "boolean"
-        },
-        "project_id": {
-          "type": "integer"
-        }
-      }
+      "type": "object"
     },
     "ProjectManagementTaskDependencyEntity": {
       "type": "object",
@@ -19015,6 +18795,7 @@
         "project_id",
         "parent_task_id",
         "stage_id",
+        "phase",
         "creator_id",
         "creator_name",
         "title",
@@ -19024,6 +18805,7 @@
         "end_at",
         "task_type",
         "assignees",
+        "attachments",
         "overdue",
         "overdue_seconds",
         "created_at",
@@ -19034,6 +18816,12 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/ProjectManagementTaskAssigneeEntity"
+          }
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProjectManagementAttachmentEntity"
           }
         },
         "created_at": {
@@ -19062,6 +18850,9 @@
         },
         "parent_task_id": {
           "type": "integer"
+        },
+        "phase": {
+          "type": "string"
         },
         "priority": {
           "type": "string"
@@ -19114,6 +18905,7 @@
         "project_id",
         "parent_task_id",
         "stage_id",
+        "phase",
         "creator_id",
         "creator_name",
         "title",
@@ -19123,6 +18915,7 @@
         "end_at",
         "task_type",
         "assignees",
+        "attachments",
         "overdue",
         "overdue_seconds",
         "created_at",
@@ -19133,6 +18926,12 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/ProjectManagementTaskAssigneeEntity"
+          }
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProjectManagementAttachmentEntity"
           }
         },
         "created_at": {
@@ -19161,6 +18960,101 @@
         },
         "parent_task_id": {
           "type": "integer"
+        },
+        "phase": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "string"
+        },
+        "project_id": {
+          "type": "integer"
+        },
+        "stage_id": {
+          "type": "integer"
+        },
+        "start_at": {
+          "type": "string"
+        },
+        "task_type": {
+          "type": "object",
+          "required": [
+            "id",
+            "name",
+            "description",
+            "color"
+          ],
+          "properties": {
+            "color": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            }
+          },
+          "$ref": "#/definitions/ProjectManagementTaskTypeSnapshotEntity"
+        },
+        "title": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      }
+    },
+    "ProjectManagementTaskPageEntity": {
+      "type": "object",
+      "required": [
+        "id",
+        "project_id",
+        "parent_task_id",
+        "stage_id",
+        "phase",
+        "creator_id",
+        "creator_name",
+        "title",
+        "priority",
+        "start_at",
+        "end_at",
+        "task_type",
+        "overdue",
+        "overdue_seconds",
+        "created_at",
+        "updated_at"
+      ],
+      "properties": {
+        "created_at": {
+          "type": "string"
+        },
+        "creator_id": {
+          "type": "integer"
+        },
+        "creator_name": {
+          "type": "string"
+        },
+        "end_at": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "overdue": {
+          "type": "boolean"
+        },
+        "overdue_seconds": {
+          "type": "integer"
+        },
+        "parent_task_id": {
+          "type": "integer"
+        },
+        "phase": {
+          "type": "string"
         },
         "priority": {
           "type": "string"
@@ -19208,15 +19102,24 @@
     },
     "ProjectManagementTaskPageFilter": {
       "type": "object",
+      "required": [
+        "project_id"
+      ],
       "properties": {
-        "assignee_id": {
-          "type": "integer"
-        },
         "keyword": {
           "type": "string"
         },
         "overdue": {
           "type": "boolean"
+        },
+        "phase": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "project_id": {
+          "type": "integer"
         },
         "stage_id": {
           "type": "integer"
@@ -19229,22 +19132,30 @@
     "ProjectManagementTaskPageRequest": {
       "type": "object",
       "required": [
-        "project_id",
         "page",
         "limit"
       ],
       "properties": {
         "filter": {
           "type": "object",
+          "required": [
+            "project_id"
+          ],
           "properties": {
-            "assignee_id": {
-              "type": "integer"
-            },
             "keyword": {
               "type": "string"
             },
             "overdue": {
               "type": "boolean"
+            },
+            "phase": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "project_id": {
+              "type": "integer"
             },
             "stage_id": {
               "type": "integer"
@@ -19264,9 +19175,6 @@
           "type": "integer",
           "default": 1,
           "example": 1
-        },
-        "project_id": {
-          "type": "integer"
         }
       }
     },
@@ -19286,7 +19194,7 @@
         "list": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/ProjectManagementTaskEntity"
+            "$ref": "#/definitions/ProjectManagementTaskPageEntity"
           }
         },
         "page": {
@@ -19481,10 +19389,15 @@
     "ProjectManagementTaskUpdateRequest": {
       "type": "object",
       "required": [
-        "project_id",
         "title"
       ],
       "properties": {
+        "assignee_organization_user_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
         "description": {
           "type": "string"
         },
@@ -19493,9 +19406,6 @@
         },
         "priority": {
           "type": "string"
-        },
-        "project_id": {
-          "type": "integer"
         },
         "start_at": {
           "type": "string"
@@ -21925,7 +21835,7 @@
       }
     }
   },
-  "x-date": "2026-08-24 18:08:46",
+  "x-date": "2026-08-25 17:10:14",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

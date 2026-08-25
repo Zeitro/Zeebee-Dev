@@ -126,6 +126,7 @@ CREATE TABLE "public"."project_management_tasks" (
     "organization_id" int4 NOT NULL DEFAULT 0,
     "parent_task_id" int4 NOT NULL DEFAULT 0,
     "stage_id" int4 NOT NULL DEFAULT 0,
+    "phase" varchar(32) NOT NULL DEFAULT 'Pending',
     "creator_id" int4 NOT NULL DEFAULT 0,
     "creator_name" varchar(100) NOT NULL DEFAULT '',
     "title" varchar(255) NOT NULL DEFAULT '',
@@ -137,9 +138,11 @@ CREATE TABLE "public"."project_management_tasks" (
 );
 
 COMMENT ON COLUMN "public"."project_management_tasks"."parent_task_id" IS '0 means root task';
+COMMENT ON COLUMN "public"."project_management_tasks"."phase" IS 'Phase snapshot of the current stage: Pending, InProgress or Finished';
 COMMENT ON COLUMN "public"."project_management_tasks"."task_type" IS 'immutable JSON snapshot: id, name, description and color';
 
 CREATE INDEX "idx_pm_task_project_stage" ON "public"."project_management_tasks" USING btree ("project_id", "stage_id");
+CREATE INDEX "idx_pm_task_project_phase" ON "public"."project_management_tasks" USING btree ("project_id", "phase");
 CREATE INDEX "idx_pm_task_parent" ON "public"."project_management_tasks" USING btree ("project_id", "parent_task_id");
 CREATE INDEX "idx_pm_task_creator" ON "public"."project_management_tasks" USING btree ("organization_id", "creator_id");
 

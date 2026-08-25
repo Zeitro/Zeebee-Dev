@@ -12,14 +12,14 @@ import "base.api"
 type (
     ProjectManagementTaskPageFilter {
         StageId int64 `json:"stage_id,optional"`
+        Phase []string `json:"phase,optional" validate:"omitempty,dive,oneof=Pending InProgress Finished"`
         TaskTypeId int64 `json:"task_type_id,optional"`
-        AssigneeId int64 `json:"assignee_id,optional"`
+        ProjectId int64 `json:"project_id"`
         Keyword string `json:"keyword,optional"`
         Overdue *bool `json:"overdue,optional"`
     }
 
     ProjectManagementTaskPageRequest {
-        ProjectId int64 `json:"project_id" validate:"required,gt=0"`
         Page int64 `json:"page,default=1"`
         Limit int64 `json:"limit,default=20"`
         Filter ProjectManagementTaskPageFilter `json:"filter,optional"`
@@ -30,7 +30,7 @@ type (
         Limit int64 `json:"limit"`
         Total int64 `json:"total"`
         TotalPage int64 `json:"total_page"`
-        List []*ProjectManagementTaskEntity `json:"list"`
+        List []*ProjectManagementTaskPageEntity `json:"list"`
     }
 
     ProjectManagementTaskDetailResponse {
@@ -43,14 +43,14 @@ type (
 
     ProjectManagementTaskCreateRequest {
         ProjectId int64 `json:"project_id" validate:"required,gt=0"`
-        ParentTaskId int64 `json:"parent_task_id,optional"`
+        ParentTaskId int64 `json:"parent_task_id,optional" validate:"gte=0"`
         Title string `json:"title" validate:"required,max=255"`
         Description string `json:"description,optional"`
-        Priority string `json:"priority,optional" validate:"max=32"`
-        StartAt string `json:"start_at,optional"`
-        EndAt string `json:"end_at,optional"`
-        TaskTypeId int64 `json:"task_type_id,optional"`
-        AssigneeIds []int64 `json:"assignee_ids,optional"`
+        Priority string `json:"priority" validate:"oneof=Low Medium High Critical"`
+        StartAt string `json:"start_at,optional" validate:"omitempty,datetime=01/02/2006"`
+        EndAt string `json:"end_at,optional" validate:"omitempty,datetime=01/02/2006"`
+        TaskTypeId int64 `json:"task_type_id" validate:"required,gt=0"`
+        AssigneeOrganizationUserIds []int64 `json:"assignee_organization_user_ids,optional"`
     }
 
     ProjectManagementTaskDetailRequest {
@@ -60,13 +60,13 @@ type (
 
     ProjectManagementTaskUpdateRequest {
         Id int64 `path:"id" validate:"required,gt=0"`
-        ProjectId int64 `json:"project_id" validate:"required,gt=0"`
         Title string `json:"title" validate:"required,max=255"`
         Description string `json:"description,optional"`
-        Priority string `json:"priority,optional" validate:"max=32"`
-        StartAt string `json:"start_at,optional"`
-        EndAt string `json:"end_at,optional"`
+        Priority string `json:"priority,optional" validate:"omitempty,oneof=Low Medium High Critical"`
+        StartAt string `json:"start_at,optional" validate:"omitempty,datetime=01/02/2006"`
+        EndAt string `json:"end_at,optional" validate:"omitempty,datetime=01/02/2006"`
         TaskTypeId int64 `json:"task_type_id,optional"`
+        AssigneeOrganizationUserIds []int64 `json:"assignee_organization_user_ids,optional"`
     }
 
     ProjectManagementTaskTransitionRequest {
@@ -77,8 +77,7 @@ type (
 
     ProjectManagementTaskDeleteRequest {
         Id int64 `path:"id" validate:"required,gt=0"`
-        ProjectId int64 `json:"project_id" validate:"required,gt=0"`
-        Confirm bool `json:"confirm" validate:"required"`
+        ProjectId int64 `form:"project_id" validate:"required,gt=0"`
     }
 
     ProjectManagementMyTaskPageRequest {
@@ -88,34 +87,12 @@ type (
     }
 
     ProjectManagementMyTaskPageFilter {
-        ProjectId int64 `json:"project_id" validate:"required,gt=0"`
+        ProjectId int64 `json:"project_id,optional"`
         StageId int64 `json:"stage_id,optional"`
+        Phase []string `json:"phase,optional" validate:"omitempty,dive,oneof=Pending InProgress Finished"`
         TaskTypeId int64 `json:"task_type_id,optional"`
-        AssigneeId int64 `json:"assignee_id,optional"`
         Keyword string `json:"keyword,optional"`
         Overdue *bool `json:"overdue,optional"`
-    }
-
-    ProjectManagementTaskAssigneeUpdateRequest {
-        Id int64 `path:"id" validate:"required,gt=0"`
-        ProjectId int64 `json:"project_id" validate:"required,gt=0"`
-        StageId int64 `json:"stage_id" validate:"required,gt=0"`
-        AssigneeIds []int64 `json:"assignee_ids"`
-    }
-
-    ProjectManagementAttachmentPageRequest {
-        Id int64 `path:"id" validate:"required,gt=0"`
-        ProjectId int64 `json:"project_id" validate:"required,gt=0"`
-        Page int64 `json:"page,default=1"`
-        Limit int64 `json:"limit,default=20"`
-    }
-
-    ProjectManagementAttachmentPageResponse {
-        Page int64 `json:"page"`
-        Limit int64 `json:"limit"`
-        Total int64 `json:"total"`
-        TotalPage int64 `json:"total_page"`
-        List []*ProjectManagementAttachmentEntity `json:"list"`
     }
 
     ProjectManagementAttachmentCreateRequest {
@@ -128,7 +105,6 @@ type (
 
     ProjectManagementAttachmentDeleteRequest {
         Id int64 `path:"id" validate:"required,gt=0"`
-        ProjectId int64 `json:"project_id" validate:"required,gt=0"`
         FileId int64 `path:"file_id" validate:"required,gt=0"`
     }
 )
@@ -165,14 +141,6 @@ service borrower-api {
     @doc "delete"
     @handler Delete
     delete /project_management/task/:id (ProjectManagementTaskDeleteRequest) returns (EmptyResponse)
-
-    @doc "assignee"
-    @handler AssigneeUpdate
-    put /project_management/task/:id/assignee (ProjectManagementTaskAssigneeUpdateRequest) returns (ProjectManagementTaskDetailResponse)
-
-    @doc "attachment page"
-    @handler AttachmentPage
-    post /project_management/task/:id/attachment/page (ProjectManagementAttachmentPageRequest) returns (ProjectManagementAttachmentPageResponse)
 
     @doc "attachment create"
     @handler AttachmentCreate

@@ -28,6 +28,9 @@ func TestReplaceProjectDefinitionPreservesReferencedStages(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
+	if err := db.Exec("ALTER TABLE project_management_tasks ADD COLUMN phase text not null default 'Pending'").Error; err != nil {
+		t.Fatal(err)
+	}
 	repo := NewProjectManagementWorkflowRepo(db)
 	kept := &model.ProjectManagementWorkflowStage{WorkflowId: 1, Name: "Pending", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 10}
 	template := &model.ProjectManagementWorkflowStage{WorkflowId: 2, Name: "Template", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 10}
@@ -37,24 +40,28 @@ func TestReplaceProjectDefinitionPreservesReferencedStages(t *testing.T) {
 	if err := db.Create(template).Error; err != nil {
 		t.Fatal(err)
 	}
+	if err := db.Create(&model.ProjectManagementTask{StageId: kept.Id}).Error; err != nil {
+		t.Fatal(err)
+	}
 	if err := db.Transaction(func(tx *gorm.DB) error {
 		return repo.ReplaceProjectDefinitionWithTx(context.Background(), tx, 1, []*model.ProjectManagementWorkflowStage{
-			{Base: model.Base{Id: kept.Id}, Name: "Not started", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 10},
+			{Base: model.Base{Id: kept.Id}, Name: "In progress", Phase: constants.ProjectManagementStagePhaseInProgress, SortOrder: 10},
 			{Base: model.Base{Id: -1}, Name: "In progress", Phase: constants.ProjectManagementStagePhaseInProgress, SortOrder: 20},
 		}, nil)
 	}); err != nil {
 		t.Fatalf("replace project workflow: %v", err)
 	}
 	var got model.ProjectManagementWorkflowStage
-	if err := db.First(&got, kept.Id).Error; err != nil || got.Name != "Not started" {
+	if err := db.First(&got, kept.Id).Error; err != nil || got.Name != "In progress" {
 		t.Fatalf("referenced stage was not preserved: %#v, %v", got, err)
+	}
+	var task model.ProjectManagementTask
+	if err := db.First(&task).Error; err != nil || task.Phase != constants.ProjectManagementStagePhaseInProgress {
+		t.Fatalf("task phase was not synchronized: %#v, %v", task, err)
 	}
 	got = model.ProjectManagementWorkflowStage{}
 	if err := db.First(&got, template.Id).Error; err != nil || got.Name != "Template" {
 		t.Fatalf("template stage was modified: %#v, %v", got, err)
-	}
-	if err := db.Create(&model.ProjectManagementTask{StageId: kept.Id}).Error; err != nil {
-		t.Fatal(err)
 	}
 	if err := db.Transaction(func(tx *gorm.DB) error {
 		return repo.ReplaceProjectDefinitionWithTx(context.Background(), tx, 1, []*model.ProjectManagementWorkflowStage{
@@ -84,6 +91,9 @@ func TestReplaceProjectDefinitionUpdatesTransitions(t *testing.T) {
 		if err := db.Exec(statement).Error; err != nil {
 			t.Fatal(err)
 		}
+	}
+	if err := db.Exec("ALTER TABLE project_management_tasks ADD COLUMN phase text not null default 'Pending'").Error; err != nil {
+		t.Fatal(err)
 	}
 
 	repo := NewProjectManagementWorkflowRepo(db)

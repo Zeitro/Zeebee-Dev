@@ -1404,16 +1404,15 @@ type LoanUpdateRequest struct {
 }
 
 type OperationEntity struct {
-	Id           int64  `json:"id"`
-	EntityType   string `json:"entity_type"`
-	EntityId     int64  `json:"entity_id"`
-	ProjectId    int64  `json:"project_id"`
-	TaskId       int64  `json:"task_id"`
-	OperatorId   int64  `json:"operator_id"`
-	OperatorName string `json:"operator_name"`
-	Operation    string `json:"operation"`
-	CreatedAt    string `json:"created_at"`
-	UpdatedAt    string `json:"updated_at"`
+	Id           int64                  `json:"id"`
+	EntityType   string                 `json:"entity_type"`
+	EntityId     int64                  `json:"entity_id"`
+	OperatorId   int64                  `json:"operator_id"`
+	OperatorName string                 `json:"operator_name"`
+	Operation    string                 `json:"operation"`
+	Metadata     map[string]interface{} `json:"metadata"`
+	CreatedAt    string                 `json:"created_at"`
+	UpdatedAt    string                 `json:"updated_at"`
 }
 
 type OperationListItem struct {
@@ -1730,9 +1729,8 @@ type ProjectManagementAttachmentCreateRequest struct {
 }
 
 type ProjectManagementAttachmentDeleteRequest struct {
-	Id        int64 `path:"id" validate:"required,gt=0"`
-	ProjectId int64 `json:"project_id" validate:"required,gt=0"`
-	FileId    int64 `path:"file_id" validate:"required,gt=0"`
+	Id     int64 `path:"id" validate:"required,gt=0"`
+	FileId int64 `path:"file_id" validate:"required,gt=0"`
 }
 
 type ProjectManagementAttachmentDetailResponse struct {
@@ -1746,21 +1744,6 @@ type ProjectManagementAttachmentEntity struct {
 	StorageType string `json:"storage_type"`
 	CreatedAt   string `json:"created_at"`
 	UpdatedAt   string `json:"updated_at"`
-}
-
-type ProjectManagementAttachmentPageRequest struct {
-	Id        int64 `path:"id" validate:"required,gt=0"`
-	ProjectId int64 `json:"project_id" validate:"required,gt=0"`
-	Page      int64 `json:"page,default=1"`
-	Limit     int64 `json:"limit,default=20"`
-}
-
-type ProjectManagementAttachmentPageResponse struct {
-	Page      int64                                `json:"page"`
-	Limit     int64                                `json:"limit"`
-	Total     int64                                `json:"total"`
-	TotalPage int64                                `json:"total_page"`
-	List      []*ProjectManagementAttachmentEntity `json:"list"`
 }
 
 type ProjectManagementDependencyCreateRequest struct {
@@ -1815,7 +1798,7 @@ type ProjectManagementMemberCandidateEntity struct {
 type ProjectManagementMemberCandidateRequest struct {
 	ProjectId int64  `form:"project_id" validate:"required,gt=0"`
 	Keyword   string `form:"keyword,optional"`
-	NeedAll   bool   `form:"need_all,optional"`
+	Purpose   string `form:"purpose" validate:"required,oneof=AddMember TransferOwner ProjectMember"`
 }
 
 type ProjectManagementMemberCandidateResponse struct {
@@ -1879,12 +1862,12 @@ type ProjectManagementMemberRoleUpdateRequest struct {
 }
 
 type ProjectManagementMyTaskPageFilter struct {
-	ProjectId  int64  `json:"project_id" validate:"required,gt=0"`
-	StageId    int64  `json:"stage_id,optional"`
-	TaskTypeId int64  `json:"task_type_id,optional"`
-	AssigneeId int64  `json:"assignee_id,optional"`
-	Keyword    string `json:"keyword,optional"`
-	Overdue    *bool  `json:"overdue,optional"`
+	ProjectId  int64    `json:"project_id,optional"`
+	StageId    int64    `json:"stage_id,optional"`
+	Phase      []string `json:"phase,optional" validate:"omitempty,dive,oneof=Pending InProgress Finished"`
+	TaskTypeId int64    `json:"task_type_id,optional"`
+	Keyword    string   `json:"keyword,optional"`
+	Overdue    *bool    `json:"overdue,optional"`
 }
 
 type ProjectManagementMyTaskPageRequest struct {
@@ -1921,8 +1904,8 @@ type ProjectManagementProjectEntity struct {
 }
 
 type ProjectManagementProjectOwnerTransferRequest struct {
-	ProjectId int64 `path:"id" validate:"required,gt=0"`
-	MemberId  int64 `json:"member_id" validate:"required,gt=0"`
+	ProjectId          int64 `path:"id" validate:"required,gt=0"`
+	OrganizationUserId int64 `json:"organization_user_id" validate:"required,gt=0"`
 }
 
 type ProjectManagementProjectPageFilter struct {
@@ -1965,29 +1948,21 @@ type ProjectManagementTaskAssigneeEntity struct {
 	UpdatedAt            string `json:"updated_at"`
 }
 
-type ProjectManagementTaskAssigneeUpdateRequest struct {
-	Id          int64   `path:"id" validate:"required,gt=0"`
-	ProjectId   int64   `json:"project_id" validate:"required,gt=0"`
-	StageId     int64   `json:"stage_id" validate:"required,gt=0"`
-	AssigneeIds []int64 `json:"assignee_ids"`
-}
-
 type ProjectManagementTaskCreateRequest struct {
-	ProjectId    int64   `json:"project_id" validate:"required,gt=0"`
-	ParentTaskId int64   `json:"parent_task_id,optional"`
-	Title        string  `json:"title" validate:"required,max=255"`
-	Description  string  `json:"description,optional"`
-	Priority     string  `json:"priority,optional" validate:"max=32"`
-	StartAt      string  `json:"start_at,optional"`
-	EndAt        string  `json:"end_at,optional"`
-	TaskTypeId   int64   `json:"task_type_id,optional"`
-	AssigneeIds  []int64 `json:"assignee_ids,optional"`
+	ProjectId                   int64   `json:"project_id" validate:"required,gt=0"`
+	ParentTaskId                int64   `json:"parent_task_id,optional" validate:"gte=0"`
+	Title                       string  `json:"title" validate:"required,max=255"`
+	Description                 string  `json:"description,optional"`
+	Priority                    string  `json:"priority" validate:"oneof=Low Medium High Critical"`
+	StartAt                     string  `json:"start_at,optional" validate:"omitempty,datetime=01/02/2006"`
+	EndAt                       string  `json:"end_at,optional" validate:"omitempty,datetime=01/02/2006"`
+	TaskTypeId                  int64   `json:"task_type_id" validate:"required,gt=0"`
+	AssigneeOrganizationUserIds []int64 `json:"assignee_organization_user_ids,optional"`
 }
 
 type ProjectManagementTaskDeleteRequest struct {
 	Id        int64 `path:"id" validate:"required,gt=0"`
-	ProjectId int64 `json:"project_id" validate:"required,gt=0"`
-	Confirm   bool  `json:"confirm" validate:"required"`
+	ProjectId int64 `form:"project_id" validate:"required,gt=0"`
 }
 
 type ProjectManagementTaskDependencyEntity struct {
@@ -2014,6 +1989,7 @@ type ProjectManagementTaskEntity struct {
 	ProjectId      int64                                    `json:"project_id"`
 	ParentTaskId   int64                                    `json:"parent_task_id"`
 	StageId        int64                                    `json:"stage_id"`
+	Phase          string                                   `json:"phase"`
 	CreatorId      int64                                    `json:"creator_id"`
 	CreatorName    string                                   `json:"creator_name"`
 	Title          string                                   `json:"title"`
@@ -2023,6 +1999,26 @@ type ProjectManagementTaskEntity struct {
 	EndAt          string                                   `json:"end_at"`
 	TaskType       *ProjectManagementTaskTypeSnapshotEntity `json:"task_type"`
 	Assignees      []*ProjectManagementTaskAssigneeEntity   `json:"assignees"`
+	Attachments    []*ProjectManagementAttachmentEntity     `json:"attachments"`
+	Overdue        bool                                     `json:"overdue"`
+	OverdueSeconds int64                                    `json:"overdue_seconds"`
+	CreatedAt      string                                   `json:"created_at"`
+	UpdatedAt      string                                   `json:"updated_at"`
+}
+
+type ProjectManagementTaskPageEntity struct {
+	Id             int64                                    `json:"id"`
+	ProjectId      int64                                    `json:"project_id"`
+	ParentTaskId   int64                                    `json:"parent_task_id"`
+	StageId        int64                                    `json:"stage_id"`
+	Phase          string                                   `json:"phase"`
+	CreatorId      int64                                    `json:"creator_id"`
+	CreatorName    string                                   `json:"creator_name"`
+	Title          string                                   `json:"title"`
+	Priority       string                                   `json:"priority"`
+	StartAt        string                                   `json:"start_at"`
+	EndAt          string                                   `json:"end_at"`
+	TaskType       *ProjectManagementTaskTypeSnapshotEntity `json:"task_type"`
 	Overdue        bool                                     `json:"overdue"`
 	OverdueSeconds int64                                    `json:"overdue_seconds"`
 	CreatedAt      string                                   `json:"created_at"`
@@ -2030,26 +2026,26 @@ type ProjectManagementTaskEntity struct {
 }
 
 type ProjectManagementTaskPageFilter struct {
-	StageId    int64  `json:"stage_id,optional"`
-	TaskTypeId int64  `json:"task_type_id,optional"`
-	AssigneeId int64  `json:"assignee_id,optional"`
-	Keyword    string `json:"keyword,optional"`
-	Overdue    *bool  `json:"overdue,optional"`
+	StageId    int64    `json:"stage_id,optional"`
+	Phase      []string `json:"phase,optional" validate:"omitempty,dive,oneof=Pending InProgress Finished"`
+	TaskTypeId int64    `json:"task_type_id,optional"`
+	ProjectId  int64    `json:"project_id"`
+	Keyword    string   `json:"keyword,optional"`
+	Overdue    *bool    `json:"overdue,optional"`
 }
 
 type ProjectManagementTaskPageRequest struct {
-	ProjectId int64                           `json:"project_id" validate:"required,gt=0"`
-	Page      int64                           `json:"page,default=1"`
-	Limit     int64                           `json:"limit,default=20"`
-	Filter    ProjectManagementTaskPageFilter `json:"filter,optional"`
+	Page   int64                           `json:"page,default=1"`
+	Limit  int64                           `json:"limit,default=20"`
+	Filter ProjectManagementTaskPageFilter `json:"filter,optional"`
 }
 
 type ProjectManagementTaskPageResponse struct {
-	Page      int64                          `json:"page"`
-	Limit     int64                          `json:"limit"`
-	Total     int64                          `json:"total"`
-	TotalPage int64                          `json:"total_page"`
-	List      []*ProjectManagementTaskEntity `json:"list"`
+	Page      int64                              `json:"page"`
+	Limit     int64                              `json:"limit"`
+	Total     int64                              `json:"total"`
+	TotalPage int64                              `json:"total_page"`
+	List      []*ProjectManagementTaskPageEntity `json:"list"`
 }
 
 type ProjectManagementTaskTransitionRequest struct {
@@ -2107,14 +2103,14 @@ type ProjectManagementTaskTypeUpdateRequest struct {
 }
 
 type ProjectManagementTaskUpdateRequest struct {
-	Id          int64  `path:"id" validate:"required,gt=0"`
-	ProjectId   int64  `json:"project_id" validate:"required,gt=0"`
-	Title       string `json:"title" validate:"required,max=255"`
-	Description string `json:"description,optional"`
-	Priority    string `json:"priority,optional" validate:"max=32"`
-	StartAt     string `json:"start_at,optional"`
-	EndAt       string `json:"end_at,optional"`
-	TaskTypeId  int64  `json:"task_type_id,optional"`
+	Id                          int64   `path:"id" validate:"required,gt=0"`
+	Title                       string  `json:"title" validate:"required,max=255"`
+	Description                 string  `json:"description,optional"`
+	Priority                    string  `json:"priority,optional" validate:"omitempty,oneof=Low Medium High Critical"`
+	StartAt                     string  `json:"start_at,optional" validate:"omitempty,datetime=01/02/2006"`
+	EndAt                       string  `json:"end_at,optional" validate:"omitempty,datetime=01/02/2006"`
+	TaskTypeId                  int64   `json:"task_type_id,optional"`
+	AssigneeOrganizationUserIds []int64 `json:"assignee_organization_user_ids,optional"`
 }
 
 type ProjectManagementWorkflowAllRequest struct {

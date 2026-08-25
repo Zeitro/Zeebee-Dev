@@ -97,6 +97,7 @@ type (
         ProjectId int64 `json:"project_id"`
         ParentTaskId int64 `json:"parent_task_id"`
         StageId int64 `json:"stage_id"`
+        Phase string `json:"phase"`
         CreatorId int64 `json:"creator_id"`
         CreatorName string `json:"creator_name"`
         Title string `json:"title"`
@@ -106,6 +107,26 @@ type (
         EndAt string `json:"end_at"`
         TaskType *ProjectManagementTaskTypeSnapshotEntity `json:"task_type"`
         Assignees []*ProjectManagementTaskAssigneeEntity `json:"assignees"`
+        Attachments []*ProjectManagementAttachmentEntity `json:"attachments"`
+        Overdue bool `json:"overdue"`
+        OverdueSeconds int64 `json:"overdue_seconds"`
+        CreatedAt string `json:"created_at"`
+        UpdatedAt string `json:"updated_at"`
+    }
+
+    ProjectManagementTaskPageEntity {
+        Id int64 `json:"id"`
+        ProjectId int64 `json:"project_id"`
+        ParentTaskId int64 `json:"parent_task_id"`
+        StageId int64 `json:"stage_id"`
+        Phase string `json:"phase"`
+        CreatorId int64 `json:"creator_id"`
+        CreatorName string `json:"creator_name"`
+        Title string `json:"title"`
+        Priority string `json:"priority"`
+        StartAt string `json:"start_at"`
+        EndAt string `json:"end_at"`
+        TaskType *ProjectManagementTaskTypeSnapshotEntity `json:"task_type"`
         Overdue bool `json:"overdue"`
         OverdueSeconds int64 `json:"overdue_seconds"`
         CreatedAt string `json:"created_at"`
@@ -135,11 +156,10 @@ type (
         Id int64 `json:"id"`
         EntityType string `json:"entity_type"`
         EntityId int64 `json:"entity_id"`
-        ProjectId int64 `json:"project_id"`
-        TaskId int64 `json:"task_id"`
         OperatorId int64 `json:"operator_id"`
         OperatorName string `json:"operator_name"`
         Operation string `json:"operation"`
+        Metadata map[string]interface{} `json:"metadata"`
         CreatedAt string `json:"created_at"`
         UpdatedAt string `json:"updated_at"`
     }

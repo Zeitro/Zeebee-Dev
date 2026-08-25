@@ -11,7 +11,6 @@ message ProjectManagementTaskPageRequest {
   ProjectManagementTaskPageRequestData data = 1;
 }
 message ProjectManagementTaskPageRequestData {
-  int64 project_id = 1;
   int64 page = 2;
   int64 limit = 3;
   ProjectManagementTaskPageRequestFilter filter = 4;
@@ -19,9 +18,10 @@ message ProjectManagementTaskPageRequestData {
 message ProjectManagementTaskPageRequestFilter {
   int64 stage_id = 1;
   int64 task_type_id = 2;
-  int64 assignee_id = 3;
   string keyword = 4;
   optional bool overdue = 5;
+  repeated string phase = 6;
+  int64 project_id = 7;
 }
 message ProjectManagementTaskPageResponse {
   ProjectManagementTaskPageResponseData data = 1;
@@ -31,7 +31,7 @@ message ProjectManagementTaskPageResponseData {
   int64 limit = 2;
   int64 total = 3;
   int64 total_page = 4;
-  repeated proto.ProjectManagementTaskEntity list = 5;
+  repeated proto.ProjectManagementTaskPageEntity list = 5;
 }
 
 message ProjectManagementTaskCreateRequest {
@@ -46,7 +46,7 @@ message ProjectManagementTaskCreateRequestData {
   string start_at = 6;
   string end_at = 7;
   int64 task_type_id = 8;
-  repeated int64 assignee_ids = 9;
+  repeated int64 assignee_organization_user_ids = 9;
 }
 
 message ProjectManagementTaskDetailRequest {
@@ -71,7 +71,8 @@ message ProjectManagementTaskUpdateRequestData {
   string start_at = 5;
   string end_at = 6;
   int64 task_type_id = 7;
-  int64 project_id = 8;
+  reserved 8;
+  repeated int64 assignee_organization_user_ids = 9;
 }
 
 message ProjectManagementTaskDeleteRequest {
@@ -79,7 +80,7 @@ message ProjectManagementTaskDeleteRequest {
 }
 message ProjectManagementTaskDeleteRequestData {
   int64 id = 1;
-  bool confirm = 2;
+  reserved 2;
   int64 project_id = 3;
 }
 
@@ -95,40 +96,11 @@ message ProjectManagementMyTaskPageFilter {
   int64 project_id = 1;
   int64 stage_id = 2;
   int64 task_type_id = 3;
-  int64 assignee_id = 4;
   string keyword = 5;
   optional bool overdue = 6;
+  repeated string phase = 7;
 }
 
-message ProjectManagementTaskAssigneeUpdateRequest {
-  ProjectManagementTaskAssigneeUpdateRequestData data = 1;
-}
-message ProjectManagementTaskAssigneeUpdateRequestData {
-  int64 task_id = 1;
-  repeated int64 assignee_ids = 2;
-  int64 project_id = 3;
-  int64 stage_id = 4;
-}
-
-message ProjectManagementAttachmentPageRequest {
-  ProjectManagementAttachmentPageRequestData data = 1;
-}
-message ProjectManagementAttachmentPageRequestData {
-  int64 task_id = 1;
-  int64 page = 2;
-  int64 limit = 3;
-  int64 project_id = 4;
-}
-message ProjectManagementAttachmentPageResponse {
-  ProjectManagementAttachmentPageResponseData data = 1;
-}
-message ProjectManagementAttachmentPageResponseData {
-  int64 page = 1;
-  int64 limit = 2;
-  int64 total = 3;
-  int64 total_page = 4;
-  repeated proto.FileEntity list = 5;
-}
 message ProjectManagementAttachmentCreateRequest {
   ProjectManagementAttachmentCreateRequestData data = 1;
 }
@@ -148,7 +120,6 @@ message ProjectManagementAttachmentDeleteRequest {
 message ProjectManagementAttachmentDeleteRequestData {
   int64 task_id = 1;
   int64 file_id = 2;
-  int64 project_id = 3;
 }
 
 message ProjectManagementTaskTransitionRequest {
@@ -167,8 +138,6 @@ service ProjectManagementTask {
   rpc Update(ProjectManagementTaskUpdateRequest) returns(ProjectManagementTaskDetailResponse);
   rpc Delete(ProjectManagementTaskDeleteRequest) returns(proto.EmptyResponse);
   rpc MyPage(ProjectManagementMyTaskPageRequest) returns(ProjectManagementTaskPageResponse);
-  rpc UpdateAssignees(ProjectManagementTaskAssigneeUpdateRequest) returns(ProjectManagementTaskDetailResponse);
-  rpc AttachmentPage(ProjectManagementAttachmentPageRequest) returns(ProjectManagementAttachmentPageResponse);
   rpc AttachmentCreate(ProjectManagementAttachmentCreateRequest) returns(ProjectManagementAttachmentDetailResponse);
   rpc AttachmentDelete(ProjectManagementAttachmentDeleteRequest) returns(proto.EmptyResponse);
   rpc Transition(ProjectManagementTaskTransitionRequest) returns(ProjectManagementTaskDetailResponse);
