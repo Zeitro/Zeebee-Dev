@@ -36,5 +36,5 @@ func (l *ProjectManagementOperationPageLogic) ProjectManagementOperationPage(req
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
-	return copierx.Trans[borrower.OperationPageResponseData, types.OperationPageResponse](rpcResp.Data)
+	return copierx.Trans[borrower.OperationPageResponseData, types.OperationPageResponse](rpcResp.Data, copierx.StrToStrMap())
 }
