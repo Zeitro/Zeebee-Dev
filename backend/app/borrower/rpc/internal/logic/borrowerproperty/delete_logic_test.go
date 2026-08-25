@@ -45,7 +45,7 @@ func TestDeleteRejectsPropertyWithUnfinishedProjectTask(t *testing.T) {
 		"CREATE TABLE project_management_workflow_stages (id integer primary key, is_del integer not null default 0, phase text not null default '')",
 		"CREATE TABLE project_management_tasks (id integer primary key, is_del integer not null default 0, project_id integer not null default 0, stage_id integer not null default 0)",
 		"INSERT INTO borrower_properties (id, organization_id) VALUES (1, 1)",
-		"INSERT INTO project_management_projects (id, entity_id, entity_type) VALUES (1, 1, 'Property')",
+		"INSERT INTO project_management_projects (id, entity_id, entity_type) VALUES (1, 1, 'BorrowerProperty')",
 		"INSERT INTO project_management_workflow_stages (id, phase) VALUES (1, 'InProgress')",
 		"INSERT INTO project_management_tasks (id, project_id, stage_id) VALUES (1, 1, 1)",
 	} {
