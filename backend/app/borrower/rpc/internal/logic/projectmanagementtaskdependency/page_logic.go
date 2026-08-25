@@ -35,7 +35,7 @@ func (l *PageLogic) Page(in *borrower.ProjectManagementDependencyPageRequest) (r
 	if err != nil {
 		return nil, err
 	}
-	page, err := base.ProjectManagementDependencyLogic.Page(l.ctx, claim, dto.ProjectManagementTaskDependencyPageRequestDto{TaskId: in.Data.TaskId, Page: in.Data.Page, Limit: in.Data.Limit, Predecessor: in.Data.Predecessor})
+	page, err := base.ProjectManagementDependencyLogic.Page(l.ctx, claim, dto.ProjectManagementTaskDependencyPageRequestDto{Page: in.Data.Page, Limit: in.Data.Limit, Filter: dto.ProjectManagementTaskDependencyFilterDto{TaskId: in.Data.TaskId, Predecessor: in.Data.Predecessor}})
 	if err != nil {
 		return nil, err
 	}
