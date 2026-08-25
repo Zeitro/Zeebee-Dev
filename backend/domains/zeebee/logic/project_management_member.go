@@ -143,7 +143,7 @@ func (l *ProjectManagementMemberLogic) TransferOwner(ctx context.Context, claim 
 		if err != nil {
 			return projectManagementNotFound(err, "target organization member not found")
 		}
-		if err = l.repos.ProjectManagementProjectRepo.UpdateMemberRoleWithTx(ctx, tx, currentOwner, constants.ProjectManagementMemberRoleProjectAdmin); err != nil {
+		if err = l.repos.ProjectManagementProjectRepo.UpdateMemberRoleWithTx(ctx, tx, currentOwner, constants.ProjectManagementMemberRoleTaskExecutor); err != nil {
 			return err
 		}
 		if err = l.repos.ProjectManagementProjectRepo.UpdateMemberRoleWithTx(ctx, tx, target, constants.ProjectManagementMemberRoleProjectOwner); err != nil {

@@ -34,11 +34,7 @@ func (l *TransferOwnerLogic) TransferOwner(in *borrower.ProjectManagementProject
 	if err != nil {
 		return nil, err
 	}
-	target, err := l.baseLogic.ProjectManagementMemberLogic.Detail(l.ctx, claim, in.Data.ProjectId, in.Data.MemberId)
-	if err != nil {
-		return nil, err
-	}
-	if err = l.baseLogic.ProjectManagementMemberLogic.TransferOwner(l.ctx, claim, in.Data.ProjectId, target.OrganizationUserId); err != nil {
+	if err = l.baseLogic.ProjectManagementMemberLogic.TransferOwner(l.ctx, claim, in.Data.ProjectId, in.Data.OrganizationUserId); err != nil {
 		return nil, err
 	}
 	return &proto.EmptyResponse{}, nil

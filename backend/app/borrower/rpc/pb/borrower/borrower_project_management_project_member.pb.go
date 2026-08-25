@@ -406,7 +406,7 @@ type ProjectManagementMemberCandidateRequestData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ProjectId     int64                  `protobuf:"varint,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
 	Keyword       string                 `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"`
-	NeedAll       bool                   `protobuf:"varint,3,opt,name=need_all,json=needAll,proto3" json:"need_all,omitempty"`
+	Purpose       string                 `protobuf:"bytes,3,opt,name=purpose,proto3" json:"purpose,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -455,11 +455,11 @@ func (x *ProjectManagementMemberCandidateRequestData) GetKeyword() string {
 	return ""
 }
 
-func (x *ProjectManagementMemberCandidateRequestData) GetNeedAll() bool {
+func (x *ProjectManagementMemberCandidateRequestData) GetPurpose() string {
 	if x != nil {
-		return x.NeedAll
+		return x.Purpose
 	}
-	return false
+	return ""
 }
 
 type ProjectManagementMemberCandidateEntity struct {
@@ -1031,12 +1031,12 @@ const file_borrower_project_management_project_member_proto_rawDesc = "" +
 	"total_page\x18\x04 \x01(\x03R\ttotalPage\x128\n" +
 	"\x04list\x18\x05 \x03(\v2$.proto.ProjectManagementMemberEntityR\x04list\"t\n" +
 	"'ProjectManagementMemberCandidateRequest\x12I\n" +
-	"\x04data\x18\x01 \x01(\v25.borrower.ProjectManagementMemberCandidateRequestDataR\x04data\"\x81\x01\n" +
+	"\x04data\x18\x01 \x01(\v25.borrower.ProjectManagementMemberCandidateRequestDataR\x04data\"\x80\x01\n" +
 	"+ProjectManagementMemberCandidateRequestData\x12\x1d\n" +
 	"\n" +
 	"project_id\x18\x01 \x01(\x03R\tprojectId\x12\x18\n" +
-	"\akeyword\x18\x02 \x01(\tR\akeyword\x12\x19\n" +
-	"\bneed_all\x18\x03 \x01(\bR\aneedAll\"\x8d\x01\n" +
+	"\akeyword\x18\x02 \x01(\tR\akeyword\x12\x18\n" +
+	"\apurpose\x18\x03 \x01(\tR\apurpose\"\x8d\x01\n" +
 	"&ProjectManagementMemberCandidateEntity\x120\n" +
 	"\x14organization_user_id\x18\x01 \x01(\x03R\x12organizationUserId\x12\x1b\n" +
 	"\tfull_name\x18\x02 \x01(\tR\bfullName\x12\x14\n" +

@@ -85,17 +85,31 @@ func (r *ProjectManagementProjectRepo) DetailMember(ctx context.Context, project
 	return member, errorx.WithStack(err)
 }
 
-func (r *ProjectManagementProjectRepo) CandidateMembers(ctx context.Context, organizationId, projectId int64, keyword string, needAll bool) ([]*dto.ProjectManagementMemberCandidateEntityDto, error) {
+func (r *ProjectManagementProjectRepo) CandidateMembers(ctx context.Context, organizationId, projectId int64, keyword string, purpose constants.ProjectManagementMemberCandidatePurpose) ([]*dto.ProjectManagementMemberCandidateEntityDto, error) {
 	membersTable := model.ProjectManagementProjectMember{}.TableName()
 	organizationUsersTable := model.OrganizationUser{}.TableName()
 	usersTable := model.User{}.TableName()
-	query := r.Client(ctx).Model(&model.OrganizationUser{}).Table(organizationUsersTable).
-		Select(fmt.Sprintf("%s.id AS organization_user_id, %s.full_name, %s.email", organizationUsersTable, organizationUsersTable, usersTable)).
-		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.user_id", usersTable, usersTable, organizationUsersTable)).
-		Where(fmt.Sprintf("%s.organization_id = ? AND %s.status = ? AND %s.is_del = 0", organizationUsersTable, organizationUsersTable, usersTable), organizationId, constants.OrganizationUserStatusActive).
-		Order(fmt.Sprintf("%s.full_name ASC, %s.id ASC", organizationUsersTable, organizationUsersTable))
-	if !needAll {
+	var query *gorm.DB
+	switch purpose {
+	case constants.ProjectManagementMemberCandidatePurposeAddMember:
+		query = r.Client(ctx).Model(&model.OrganizationUser{}).Table(organizationUsersTable).
+			Select(fmt.Sprintf("%s.id AS organization_user_id, %s.full_name, %s.email", organizationUsersTable, organizationUsersTable, usersTable)).
+			Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.user_id", usersTable, usersTable, organizationUsersTable)).
+			Where(fmt.Sprintf("%s.organization_id = ? AND %s.status = ? AND %s.is_del = 0", organizationUsersTable, organizationUsersTable, usersTable), organizationId, constants.OrganizationUserStatusActive).
+			Order(fmt.Sprintf("%s.full_name ASC, %s.id ASC", organizationUsersTable, organizationUsersTable))
 		query = query.Where(fmt.Sprintf("NOT EXISTS (SELECT 1 FROM %s WHERE %s.project_id = ? AND %s.organization_user_id = %s.id AND %s.is_del = 0)", membersTable, membersTable, membersTable, organizationUsersTable, membersTable), projectId)
+	case constants.ProjectManagementMemberCandidatePurposeTransferOwner, constants.ProjectManagementMemberCandidatePurposeProjectMember:
+		query = r.Client(ctx).Table(membersTable).
+			Select(fmt.Sprintf("%s.organization_user_id, %s.full_name, %s.email", membersTable, organizationUsersTable, usersTable)).
+			Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.organization_user_id", organizationUsersTable, organizationUsersTable, membersTable)).
+			Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.user_id", usersTable, usersTable, organizationUsersTable)).
+			Where(fmt.Sprintf("%s.project_id = ? AND %s.is_del = 0", membersTable, membersTable), projectId).
+			Order(fmt.Sprintf("%s.full_name ASC, %s.id ASC", organizationUsersTable, membersTable))
+		if purpose == constants.ProjectManagementMemberCandidatePurposeTransferOwner {
+			query = query.Where(fmt.Sprintf("%s.role <> ?", membersTable), constants.ProjectManagementMemberRoleProjectOwner)
+		}
+	default:
+		return nil, errorx.New("invalid project member candidate purpose")
 	}
 	if keyword != "" {
 		query = query.Where(fmt.Sprintf("%s.full_name ILIKE ? OR %s.email ILIKE ?", organizationUsersTable, usersTable), "%"+keyword+"%", "%"+keyword+"%")

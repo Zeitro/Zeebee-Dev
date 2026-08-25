@@ -42,7 +42,7 @@ message ProjectManagementMemberCandidateRequest {
 message ProjectManagementMemberCandidateRequestData {
   int64 project_id = 1;
   string keyword = 2;
-  bool need_all = 3;
+  string purpose = 3;
 }
 message ProjectManagementMemberCandidateEntity {
   int64 organization_user_id = 1;

@@ -723,11 +723,11 @@ func (x *ProjectManagementProjectOwnerTransferRequest) GetData() *ProjectManagem
 }
 
 type ProjectManagementProjectOwnerTransferRequestData struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProjectId     int64                  `protobuf:"varint,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
-	MemberId      int64                  `protobuf:"varint,2,opt,name=member_id,json=memberId,proto3" json:"member_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	ProjectId          int64                  `protobuf:"varint,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	OrganizationUserId int64                  `protobuf:"varint,2,opt,name=organization_user_id,json=organizationUserId,proto3" json:"organization_user_id,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *ProjectManagementProjectOwnerTransferRequestData) Reset() {
@@ -767,9 +767,9 @@ func (x *ProjectManagementProjectOwnerTransferRequestData) GetProjectId() int64 
 	return 0
 }
 
-func (x *ProjectManagementProjectOwnerTransferRequestData) GetMemberId() int64 {
+func (x *ProjectManagementProjectOwnerTransferRequestData) GetOrganizationUserId() int64 {
 	if x != nil {
-		return x.MemberId
+		return x.OrganizationUserId
 	}
 	return 0
 }
@@ -823,11 +823,11 @@ const file_borrower_project_management_project_proto_rawDesc = "" +
 	")ProjectManagementProjectDeleteRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"~\n" +
 	",ProjectManagementProjectOwnerTransferRequest\x12N\n" +
-	"\x04data\x18\x01 \x01(\v2:.borrower.ProjectManagementProjectOwnerTransferRequestDataR\x04data\"n\n" +
+	"\x04data\x18\x01 \x01(\v2:.borrower.ProjectManagementProjectOwnerTransferRequestDataR\x04data\"\x83\x01\n" +
 	"0ProjectManagementProjectOwnerTransferRequestData\x12\x1d\n" +
 	"\n" +
-	"project_id\x18\x01 \x01(\x03R\tprojectId\x12\x1b\n" +
-	"\tmember_id\x18\x02 \x01(\x03R\bmemberId2\xdd\x04\n" +
+	"project_id\x18\x01 \x01(\x03R\tprojectId\x120\n" +
+	"\x14organization_user_id\x18\x02 \x01(\x03R\x12organizationUserId2\xdd\x04\n" +
 	"\x18ProjectManagementProject\x12e\n" +
 	"\x04Page\x12-.borrower.ProjectManagementProjectPageRequest\x1a..borrower.ProjectManagementProjectPageResponse\x12P\n" +
 	"\x06Detail\x12\x14.proto.PathIdRequest\x1a0.borrower.ProjectManagementProjectDetailResponse\x12k\n" +

@@ -28,8 +28,8 @@ func NewTransferOwnerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Tra
 
 func (l *TransferOwnerLogic) TransferOwner(req *types.ProjectManagementProjectOwnerTransferRequest) (resp *types.EmptyResponse, err error) {
 	_, err = l.svcCtx.ProjectManagementProjectRpcClient.TransferOwner(l.ctx, &borrower.ProjectManagementProjectOwnerTransferRequest{Data: &borrower.ProjectManagementProjectOwnerTransferRequestData{
-		ProjectId: req.ProjectId,
-		MemberId:  req.MemberId,
+		ProjectId:          req.ProjectId,
+		OrganizationUserId: req.OrganizationUserId,
 	}})
 	if err != nil {
 		return nil, errorx.WithStack(err)

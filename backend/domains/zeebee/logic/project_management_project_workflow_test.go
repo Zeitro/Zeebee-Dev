@@ -57,6 +57,7 @@ func TestUpdateProjectWorkflowRequiresProjectManagerAndPreservesMetadata(t *test
 	} {
 		require.NoError(t, db.Exec(statement).Error)
 	}
+	require.NoError(t, db.Exec("CREATE TABLE project_management_tasks (id INTEGER PRIMARY KEY, updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, is_del INTEGER NOT NULL DEFAULT 0, stage_id INTEGER NOT NULL, phase TEXT NOT NULL DEFAULT 'Pending')").Error)
 	require.NoError(t, db.Exec("INSERT INTO project_management_projects (id, organization_id, name, owner_id) VALUES (1, 1, 'Project', 10)").Error)
 	require.NoError(t, db.Exec("INSERT INTO project_management_project_members (id, project_id, organization_user_id, role) VALUES (1, 1, 20, ?), (2, 1, 10, ?)", constants.ProjectManagementMemberRoleTaskExecutor, constants.ProjectManagementMemberRoleProjectOwner).Error)
 	require.NoError(t, db.Exec("INSERT INTO project_management_workflows (id, kind, organization_id, project_id, name, description) VALUES (100, ?, 1, 1, 'Workflow', 'Original description')", constants.ProjectManagementWorkflowKindProject).Error)

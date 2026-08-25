@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 )
 
@@ -34,7 +35,7 @@ func (l *CandidateLogic) Candidate(in *borrower.ProjectManagementMemberCandidate
 	if err != nil {
 		return nil, err
 	}
-	members, err := l.baseLogic.ProjectManagementMemberLogic.Candidate(l.ctx, claim, dto.ProjectManagementMemberCandidateDto{ProjectId: in.Data.ProjectId, Keyword: in.Data.Keyword, NeedAll: in.Data.NeedAll})
+	members, err := l.baseLogic.ProjectManagementMemberLogic.Candidate(l.ctx, claim, dto.ProjectManagementMemberCandidateDto{ProjectId: in.Data.ProjectId, Keyword: in.Data.Keyword, Purpose: constants.ProjectManagementMemberCandidatePurpose(in.Data.Purpose)})
 	if err != nil {
 		return nil, err
 	}

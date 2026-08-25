@@ -52,13 +52,16 @@ func (l *ProjectManagementMemberLogic) Page(ctx context.Context, claim utils.Jwt
 }
 
 func (l *ProjectManagementMemberLogic) Candidate(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementMemberCandidateDto) ([]*dto.ProjectManagementMemberCandidateEntityDto, error) {
+	if input.Purpose != constants.ProjectManagementMemberCandidatePurposeAddMember && input.Purpose != constants.ProjectManagementMemberCandidatePurposeTransferOwner && input.Purpose != constants.ProjectManagementMemberCandidatePurposeProjectMember {
+		return nil, errorx.New("invalid project member candidate purpose")
+	}
 	if _, err := l.projectManagementAccess().RequireProject(ctx, input.ProjectId, claim.OrganizationId); err != nil {
 		return nil, err
 	}
 	if _, err := l.projectManagementAccess().RequireMemberRole(ctx, input.ProjectId, claim.OrganizationUserId, constants.ProjectManagementMemberRoleProjectOwner, constants.ProjectManagementMemberRoleProjectAdmin); err != nil {
 		return nil, err
 	}
-	candidates, err := l.repos.ProjectManagementProjectRepo.CandidateMembers(ctx, claim.OrganizationId, input.ProjectId, input.Keyword, input.NeedAll)
+	candidates, err := l.repos.ProjectManagementProjectRepo.CandidateMembers(ctx, claim.OrganizationId, input.ProjectId, input.Keyword, input.Purpose)
 	if err != nil {
 		return nil, err
 	}

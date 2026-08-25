@@ -35,7 +35,7 @@ type (
     ProjectManagementMemberCandidateRequest {
         ProjectId int64  `form:"project_id" validate:"required,gt=0"`
         Keyword   string `form:"keyword,optional"`
-        NeedAll   bool   `form:"need_all,optional"`
+        Purpose   string `form:"purpose" validate:"required,oneof=AddMember TransferOwner ProjectMember"`
     }
     ProjectManagementMemberCandidateEntity {
         OrganizationUserId int64  `json:"organization_user_id"`

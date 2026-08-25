@@ -53,7 +53,7 @@ type (
 
     ProjectManagementProjectOwnerTransferRequest {
         ProjectId int64 `path:"id" validate:"required,gt=0"`
-        MemberId int64 `json:"member_id" validate:"required,gt=0"`
+        OrganizationUserId int64 `json:"organization_user_id" validate:"required,gt=0"`
     }
 
     ProjectManagementProjectWorkflowUpdateRequest {

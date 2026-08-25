@@ -50,12 +50,26 @@ func TestProjectMemberTransferRemoveAndHistoricalSnapshots(t *testing.T) {
 
 	logic := NewProjectManagementMemberLogic(NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}))
 	actor := utils.JwtUser{OrganizationId: 1, OrganizationUserId: 10, Username: "Owner"}
-	candidates, err := logic.repos.ProjectManagementProjectRepo.CandidateMembers(context.Background(), 1, 1, "", false)
+	candidates, err := logic.repos.ProjectManagementProjectRepo.CandidateMembers(context.Background(), 1, 1, "", constants.ProjectManagementMemberCandidatePurposeAddMember)
 	require.NoError(t, err)
 	require.Len(t, candidates, 1)
 	require.Equal(t, int64(12), candidates[0].OrganizationUserId)
+	ownerCandidates, err := logic.repos.ProjectManagementProjectRepo.CandidateMembers(context.Background(), 1, 1, "", constants.ProjectManagementMemberCandidatePurposeTransferOwner)
+	require.NoError(t, err)
+	require.Len(t, ownerCandidates, 1)
+	require.Equal(t, int64(11), ownerCandidates[0].OrganizationUserId)
+	memberCandidates, err := logic.repos.ProjectManagementProjectRepo.CandidateMembers(context.Background(), 1, 1, "", constants.ProjectManagementMemberCandidatePurposeProjectMember)
+	require.NoError(t, err)
+	require.Len(t, memberCandidates, 2)
 
 	require.NoError(t, logic.TransferOwner(context.Background(), actor, 1, 11))
+	var oldOwner, newOwner model.ProjectManagementProjectMember
+	require.NoError(t, db.Where("project_id = ? AND organization_user_id = ?", 1, 10).First(&oldOwner).Error)
+	require.NoError(t, db.Where("project_id = ? AND organization_user_id = ?", 1, 11).First(&newOwner).Error)
+	require.Equal(t, constants.ProjectManagementMemberRoleTaskExecutor, oldOwner.Role)
+	require.Equal(t, constants.ProjectManagementMemberRoleProjectOwner, newOwner.Role)
+	require.Error(t, logic.TransferOwner(context.Background(), utils.JwtUser{OrganizationId: 1, OrganizationUserId: 11, Username: "Admin"}, 1, 11))
+	require.Error(t, logic.TransferOwner(context.Background(), utils.JwtUser{OrganizationId: 1, OrganizationUserId: 11, Username: "Admin"}, 1, 12))
 	require.NoError(t, logic.Delete(context.Background(), utils.JwtUser{OrganizationId: 1, OrganizationUserId: 11, Username: "Admin"}, 1, 1))
 
 	var project model.ProjectManagementProject
