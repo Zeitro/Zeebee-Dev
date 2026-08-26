@@ -9,9 +9,6 @@
 export const PROJECT_API = '/project_management/project';
 export const PROJECT_PAGE_API = `${PROJECT_API}/page`;
 
-/** 创建项目默认工作流模板 id；模板选择器未接前先固定 */
-export const DEFAULT_WORKFLOW_TEMPLATE_ID = 1;
-
 const PROJECT_LEGACY_API = '/projects';
 
 /**

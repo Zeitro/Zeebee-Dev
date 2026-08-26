@@ -9,7 +9,7 @@ import { Form, Input, Select } from 'antd';
 import { useTranslations } from 'next-intl';
 import { NewModal } from '@repo/shared-methods';
 import { createRequest, displayValue } from '@repo/shared-methods/utils';
-import { DEFAULT_WORKFLOW_TEMPLATE_ID, PROJECT_API } from '../../../api/project';
+import { PROJECT_API } from '../../../api/project';
 import { WORKFLOW_ALL_API } from '../../../api/workflow';
 // import {
 // 	PROJECT_PRIORITY,
@@ -105,11 +105,10 @@ export default function CreateProjectModal({ messageApi, setOpen, handleSearch }
 				body: {
 					name: String(values.name || '').trim(),
 					description: values.description || '',
-					cover_url: '',
-					entity_id: 0,
-					entity_type: '',
-					workflow_template_id:
-						values.workflow_template_id ?? DEFAULT_WORKFLOW_TEMPLATE_ID,
+					// cover_url: '',
+					// entity_id: 0,
+					// entity_type: '',
+					workflow_template_id: values.workflow_template_id,
 					// priority: values.priority,
 				},
 			});
