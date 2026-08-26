@@ -24,6 +24,7 @@ import { ProjectActivityDrawer } from './components/ProjectActivityDrawer';
 import { ProjectMemberListDrawer } from './components/ProjectMemberListDrawer';
 import { TaskActivityDrawer, TaskDetailDrawer } from './components/TaskDetail';
 import { useKanbanBoard } from './hooks/useKanbanBoard';
+import { useTaskNavStack } from './hooks/useTaskNavStack';
 
 export function ProjectKanban() {
 	const { id } = useParams();
@@ -101,19 +102,21 @@ export function ProjectKanban() {
 		[pathname, router, searchParams],
 	);
 
-	const handleTaskClick = useCallback(
-		(task) => {
-			openTask(task);
-			setTaskQuery(task.id);
-		},
-		[openTask, setTaskQuery],
-	);
+	const { previousTask, openFromBoard, openFromDrawer, backFromDrawer, reset } = useTaskNavStack({
+		tasks,
+		activeTask,
+		openTask,
+		setTaskQuery,
+	});
+
+	const handleTaskClick = openFromBoard;
 
 	const handleDrawerClose = useCallback(() => {
 		closeTask();
 		setTaskQuery();
 		setTaskLogOpen(false);
-	}, [closeTask, setTaskQuery]);
+		reset();
+	}, [closeTask, reset, setTaskQuery]);
 
 	const openCreate = useCallback((stateId, parent) => {
 		setTargetStateId(stateId || null);
@@ -287,7 +290,9 @@ export function ProjectKanban() {
 				memberOptions={memberOptions}
 				members={members}
 				onClose={handleDrawerClose}
-				onTaskClick={handleTaskClick}
+				previousTask={previousTask}
+				onTaskClick={openFromDrawer}
+				onBack={backFromDrawer}
 				onCreateSubtask={(parent) => openCreate(null, parent)}
 				onTitleBlur={saveTitle}
 				onPersistAssignees={persistAssignees}

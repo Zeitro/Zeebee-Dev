@@ -19,10 +19,10 @@ import { getMemberInitial, getMemberLabel } from '../helpers';
  * @param {{
  *   task: object,
  *   project?: object|null,
- *   parentTask?: object,
+ *   backTask?: object|null,
  *   assigneeIds?: number[],
  *   members?: Array,
- *   onTaskClick: (task: object) => void,
+ *   onBack?: () => void,
  *   onTitleBlur: (title: string) => void,
  *   onDelete: () => void,
  *   onOpenLog?: () => void,
@@ -32,10 +32,10 @@ import { getMemberInitial, getMemberLabel } from '../helpers';
 export function TaskDrawerHeader({
 	task,
 	project,
-	parentTask,
+	backTask,
 	assigneeIds = [],
 	members = [],
-	onTaskClick,
+	onBack,
 	onTitleBlur,
 	onDelete,
 	onOpenLog,
@@ -60,13 +60,13 @@ export function TaskDrawerHeader({
 		<div className="shrink-0 px-6 pt-5 pb-4 border-b border-base-border bg-white">
 			<div className="flex items-center justify-between gap-3 mb-4">
 				<div className="flex items-center gap-2 min-w-0 flex-wrap">
-					{parentTask ? (
+					{backTask ? (
 						<Button
 							type="text"
 							size="small"
 							icon={<ArrowLeftOutlined />}
 							className="!text-base-label hover:!text-base-primary"
-							onClick={() => onTaskClick(parentTask)}
+							onClick={onBack}
 						>
 							{t('kanban.backToParent')}
 						</Button>

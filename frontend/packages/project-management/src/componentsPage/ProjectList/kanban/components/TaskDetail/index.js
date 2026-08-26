@@ -39,7 +39,9 @@ export { TaskActivityDrawer } from './TaskActivityDrawer';
  *   memberOptions?: Array,
  *   members?: Array,
  *   onClose: () => void,
+ *   previousTask?: object|null,
  *   onTaskClick: (task: object) => void,
+ *   onBack?: () => void,
  *   onCreateSubtask: (parent: object) => void,
  *   onTitleBlur: (title: string) => void,
  *   onPersistAssignees: (ids: number[]) => void,
@@ -66,7 +68,9 @@ export function TaskDetailDrawer({
 	memberOptions = [],
 	members = [],
 	onClose,
+	previousTask = null,
 	onTaskClick,
+	onBack,
 	onCreateSubtask,
 	onTitleBlur,
 	onPersistAssignees,
@@ -87,6 +91,7 @@ export function TaskDetailDrawer({
 	const [form] = Form.useForm();
 	const [dependencyFocusMode, setDependencyFocusMode] = useState(null);
 	const parentTask = tasks.find((item) => item.id === task?.parent_id);
+	const backTask = previousTask || parentTask;
 	const { subtasks, subtaskCompletedCount } = useMemo(() => {
 		const list = task?.id ? getSubtasks(tasks, task.id) : [];
 		const completed = list.filter((item) => {
@@ -152,10 +157,10 @@ export function TaskDetailDrawer({
 					<TaskDrawerHeader
 						task={task}
 						project={project}
-						parentTask={parentTask}
+						backTask={backTask}
 						assigneeIds={liveAssigneeIds}
 						members={members}
-						onTaskClick={onTaskClick}
+						onBack={onBack}
 						onTitleBlur={onTitleBlur}
 						onDelete={onDelete}
 						onOpenLog={onOpenLog}

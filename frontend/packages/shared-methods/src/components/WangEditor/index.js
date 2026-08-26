@@ -1,8 +1,10 @@
 'use client';
-import React, { useRef, useEffect, useLayoutEffect, useState, useMemo } from 'react';
+import React, { useEffect, useLayoutEffect, useState, useMemo } from 'react';
+import { message } from 'antd';
 import { Editor, Toolbar } from '@wangeditor-next/editor-for-react';
 import { Boot, i18nChangeLanguage } from '@wangeditor-next/editor';
 import '@wangeditor-next/editor/dist/css/style.css';
+import { uploadAwsS3 } from '../../api/common';
 import { CustomVariablesMenu, CustomViewCodeMenu } from './CustomMenu';
 import { MonacoModal } from './MonacoModal';
 
@@ -13,6 +15,29 @@ function resolveWangEditorLocale(locale) {
 	return 'en';
 }
 
+/**
+ * 富文本图片走系统统一 AWS 预签名上传（uploadAwsS3），非 wangEditor 默认 multipart server。
+ * @param {File} file
+ * @param {(url: string, alt: string, href: string) => void} insertFn
+ */
+async function uploadEditorImageToAws(file, insertFn) {
+	try {
+		// type 固定 image：编辑器入口已是图片；后缀映射不全时仍满足 presign 字段
+		const uploadedUrl = await uploadAwsS3({
+			url: '/storage/presign_url',
+			file,
+			type: 'image',
+		});
+		if (!uploadedUrl) {
+			message.error('Image upload failed');
+			return;
+		}
+		insertFn(uploadedUrl, file?.name || '', uploadedUrl);
+	} catch {
+		message.error('Image upload failed');
+	}
+}
+
 // 创建一个菜单实例管理器来存储菜单实例
 let variableMenuInstance = null;
 /**
@@ -20,7 +45,7 @@ let variableMenuInstance = null;
  * @param {string} value 受控内容（HTML）
  * @param {function} onChange 内容变更回调
  * @param {string} [locale] 界面语言（如 next-intl 的 en/zh），不传默认 en
- * @param {object} editorProps 传递给 Editor 的其他属性
+ * @param {object} editorProps 传递给 Editor 的其他属性（defaultConfig 会与内置配置 merge，勿整对象覆盖）
  * @param {object} toolbarProps 传递给 Toolbar 的其他属性
  * @param {object} wrapperProps 外层div样式/属性
  * @param {Array} variables 变量列表
@@ -38,9 +63,13 @@ export const WangEditor = ({
 	isShowViewCodeToolbar = false,
 }) => {
 	const [editor, setEditor] = useState(null);
-	const initRef = useRef(true);
 	const [showMonacoModal, setShowMonacoModal] = useState(false);
 	const editorLocale = useMemo(() => resolveWangEditorLocale(locale), [locale]);
+	const {
+		defaultConfig: userDefaultConfig = {},
+		className: editorClassName,
+		...restEditorProps
+	} = editorProps;
 	const insertKeys = useMemo(() => {
 		let keys = [];
 		if (isShowVariablesToolbar) {
@@ -57,13 +86,21 @@ export const WangEditor = ({
 		}
 		return keys;
 	}, [isShowVariablesToolbar, isShowViewCodeToolbar]);
-	// 默认编辑器配置
+	// 默认编辑器配置（与 userDefaultConfig merge；MENU_CONF.uploadImage 默认走 AWS）
 	const defaultEditorConfig = {
 		placeholder: 'Please enter content...',
 		language: editorLocale,
 		styleWithCSS: true,
-		// 其他配置
-		...editorProps.defaultConfig,
+		...userDefaultConfig,
+		MENU_CONF: {
+			...userDefaultConfig.MENU_CONF,
+			uploadImage: {
+				async customUpload(file, insertFn) {
+					await uploadEditorImageToAws(file, insertFn);
+				},
+				...userDefaultConfig.MENU_CONF?.uploadImage,
+			},
+		},
 	};
 
 	// 默认工具栏配置
@@ -180,9 +217,9 @@ export const WangEditor = ({
 					mode="default"
 					className={[
 						'flex-1 overflow-hidden min-h-[160px] border border-base-border rounded-b-md',
-						editorProps?.className,
+						editorClassName,
 					].join(' ')}
-					{...editorProps}
+					{...restEditorProps}
 				/>
 			</div>
 			{showMonacoModal && <MonacoModal setOpen={setShowMonacoModal} data={value} />}

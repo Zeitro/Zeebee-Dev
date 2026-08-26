@@ -249,7 +249,7 @@ export function TaskDependencies({
 							<LinkOutlined className="text-base-disabled text-xs" />
 							<Button
 								type="link"
-								className="flex-1 text-left text-[13px] truncate h-auto p-0 justify-start"
+								className="flex-1 text-[13px] truncate h-auto !p-0 !justify-start"
 								onClick={() => {
 									const depTask = tasks.find(
 										(item) => item.id === dep.depends_on_task_id,
@@ -303,6 +303,16 @@ export function TaskDependencies({
 							className="flex items-center gap-2 px-3 py-2 bg-base-text2 rounded-lg mb-2 last:mb-0"
 						>
 							<LinkOutlined className="text-base-disabled text-xs" />
+							<Button
+								type="link"
+								className="flex-1 text-[13px] truncate h-auto !p-0 !justify-start"
+								onClick={() => {
+									const depTask = tasks.find((item) => item.id === dep.task_id);
+									if (depTask) onTaskClick(depTask);
+								}}
+							>
+								#{dep.task_id} {displayValue(dep.task?.title)}
+							</Button>
 							<Select
 								size="small"
 								value={dep.dependency_type}
@@ -317,16 +327,6 @@ export function TaskDependencies({
 									}
 								}}
 							/>
-							<Button
-								type="link"
-								className="flex-1 text-left text-[13px] truncate h-auto p-0 justify-start"
-								onClick={() => {
-									const depTask = tasks.find((item) => item.id === dep.task_id);
-									if (depTask) onTaskClick(depTask);
-								}}
-							>
-								#{dep.task_id} {displayValue(dep.task?.title)}
-							</Button>
 							<Button
 								size="small"
 								type="text"
