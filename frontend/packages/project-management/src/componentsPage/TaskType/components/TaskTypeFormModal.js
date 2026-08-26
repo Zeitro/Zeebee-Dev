@@ -1,5 +1,6 @@
 /**
- * 任务类型表单弹窗：新建 / 编辑共用；颜色用 ColorPicker，提交 hex。
+ * 任务类型表单弹窗：新建 / 编辑共用。
+ * 提交 body 对齐接口 `{ name, description, color, sort_order }`；颜色预设色用英文名。
  */
 'use client';
 
@@ -11,6 +12,7 @@ import {
 	TASK_TYPE_COLOR_PRESETS,
 	TASK_TYPE_DEFAULT_COLOR,
 	toTaskTypeColorHex,
+	toTaskTypeColorPayload,
 } from '@repo/project-management/enum/taskType';
 
 /**
@@ -37,7 +39,7 @@ function HexColorPicker({ value, onChange, presets, ...rest }) {
  * 	confirmLoading: boolean,
  * 	editingType: object|null,
  * 	onCancel: () => void,
- * 	onSave: (values: {name: string, description: string, color: string}) => Promise<void>
+ * 	onSave: (values: {name: string, description: string, color: string, sort_order: number}) => Promise<void>
  * }} props
  */
 export function TaskTypeFormModal({ open, confirmLoading, editingType, onCancel, onSave }) {
@@ -57,6 +59,7 @@ export function TaskTypeFormModal({ open, confirmLoading, editingType, onCancel,
 				name: editingType.name,
 				description: editingType.description || '',
 				color: toTaskTypeColorHex(editingType.color) || TASK_TYPE_DEFAULT_COLOR,
+				// sort_order: Number(editingType.sort_order ?? editingType.sort_order ?? 1),
 			});
 			return;
 		}
@@ -65,6 +68,7 @@ export function TaskTypeFormModal({ open, confirmLoading, editingType, onCancel,
 			name: '',
 			description: '',
 			color: TASK_TYPE_DEFAULT_COLOR,
+			// sort_order: 1,
 		});
 	}, [editingType, form, open]);
 
@@ -73,7 +77,8 @@ export function TaskTypeFormModal({ open, confirmLoading, editingType, onCancel,
 		await onSave?.({
 			name: String(values.name || '').trim(),
 			description: values.description || '',
-			color: toTaskTypeColorHex(values.color) || TASK_TYPE_DEFAULT_COLOR,
+			color: toTaskTypeColorPayload(values.color),
+			// sort_order: Number(values.sort_order ?? 1),
 		});
 	}, [form, onSave]);
 
@@ -81,7 +86,7 @@ export function TaskTypeFormModal({ open, confirmLoading, editingType, onCancel,
 
 	return (
 		<NewModal
-			width={520}
+			width={600}
 			title={isEdit ? t('taskType.editTitle') : t('taskType.createTitle')}
 			okText={t('common.save')}
 			cancelText={t('common.cancel')}
@@ -90,7 +95,7 @@ export function TaskTypeFormModal({ open, confirmLoading, editingType, onCancel,
 			onCancel={onCancel}
 			destroyOnHidden
 		>
-			<Form form={form} layout="vertical" style={{ marginTop: 16 }}>
+			<Form form={form} layout="vertical" style={{ marginTop: 16 }} size="large">
 				<Form.Item
 					name="name"
 					label={t('taskType.nameLabel')}
@@ -108,6 +113,13 @@ export function TaskTypeFormModal({ open, confirmLoading, editingType, onCancel,
 				>
 					<HexColorPicker presets={presets} />
 				</Form.Item>
+				{/* <Form.Item
+					name="sort_order"
+					label={t('taskType.sortOrderLabel')}
+					rules={[{ required: true, message: t('taskType.sortOrderRequired') }]}
+				>
+					<InputNumber className="!w-full" min={1} precision={0} />
+				</Form.Item> */}
 			</Form>
 		</NewModal>
 	);

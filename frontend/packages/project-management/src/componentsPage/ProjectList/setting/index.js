@@ -12,7 +12,7 @@ import { NoData, UploadFileButton } from '@repo/shared-methods';
 import { createRequest } from '@repo/shared-methods/utils';
 import { getProjectDetailApi } from '../../../api/project';
 
-const COVER_ACCEPT = '.png,.jpg,.jpeg,.webp,.gif';
+const COVER_ACCEPT = '.png,.jpg,.jpeg';
 
 /**
  * @param {{ projectId: number|string }} props

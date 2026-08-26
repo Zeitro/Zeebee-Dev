@@ -1,6 +1,6 @@
 /**
- * 任务类型列表：拉取/分页、新建/编辑/删除。
- * GET /task-types 无分页协议，在 getData 内切页，返回 FilterTable 所需 { list, total }。
+ * 任务类型列表：GET `/project_management/task_type/all` 无分页（量少一次拉全量），
+ * 返回 FilterTable 所需 `{ list, total }`；新建 / 编辑 / 删除。
  */
 'use client';
 
@@ -9,23 +9,9 @@ import { Button, Empty, Modal, Space, Tag, message } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { useTranslations } from 'next-intl';
 import { createRequest, displayValue } from '@repo/shared-methods/utils';
-import { TASK_TYPES_API, createTaskTypeApi } from '@repo/project-management/api/taskType';
+import { initConfigFn } from '@repo/shared-methods';
+import { TASK_TYPE_ALL_API, createTaskTypeApi } from '@repo/project-management/api/taskType';
 import { getTaskTypeColorLabel, toTaskTypeColorHex } from '@repo/project-management/enum/taskType';
-
-/**
- * @param {unknown} data
- * @param {number} [page]
- * @param {number} [limit]
- * @returns {{ list: object[], total: number }}
- */
-function toTaskTypePage(data, page = 1, limit = 20) {
-	const all = Array.isArray(data) ? data : Array.isArray(data?.list) ? data.list : [];
-	const start = (Math.max(page, 1) - 1) * limit;
-	return {
-		list: all.slice(start, start + limit),
-		total: all.length,
-	};
-}
 
 export function useTaskTypeList() {
 	const t = useTranslations();
@@ -40,22 +26,24 @@ export function useTaskTypeList() {
 	const [modal, modalContextHolder] = Modal.useModal();
 
 	const refreshList = useCallback(() => {
-		cancelMatch(TASK_TYPES_API);
+		cancelMatch(TASK_TYPE_ALL_API);
 		tableFilterRef.current?.handleSearch?.();
 	}, [cancelMatch]);
 
-	const getData = useCallback(
-		async (params) => {
-			try {
-				const data = await taskTypeApi.list();
-				return toTaskTypePage(data, params?.page, params?.limit);
-			} catch {
-				messageApi.error(t('taskType.loadFailed'));
-				return { list: [], total: 0 };
-			}
-		},
-		[messageApi, t, taskTypeApi],
-	);
+	/**
+	 * FilterTable 仍会传入 page/limit，此处忽略；全量 list 一次返回。
+	 * @returns {Promise<{ list: object[], total: number }>}
+	 */
+	const getData = useCallback(async () => {
+		try {
+			const data = await taskTypeApi.list();
+			const list = Array.isArray(data?.list) ? data.list : [];
+			return { list, total: list.length };
+		} catch {
+			messageApi.error(t('taskType.loadFailed'));
+			return { list: [], total: 0 };
+		}
+	}, [messageApi, t, taskTypeApi]);
 
 	const openCreateModal = useCallback(() => {
 		setEditingType(null);
@@ -74,13 +62,19 @@ export function useTaskTypeList() {
 
 	const handleSave = useCallback(
 		async (values) => {
+			const body = {
+				name: values.name,
+				description: values.description || '',
+				color: values.color,
+				// sort_order: Number(values.sort_order ?? 0),
+			};
 			try {
 				setSaving(true);
 				if (editingType) {
-					await taskTypeApi.update(editingType.id, values);
+					await taskTypeApi.update(editingType.id, body);
 					messageApi.success(t('taskType.updateSuccess'));
 				} else {
-					await taskTypeApi.create(values);
+					await taskTypeApi.create(body);
 					messageApi.success(t('taskType.createSuccess'));
 				}
 				closeModal();
@@ -100,20 +94,22 @@ export function useTaskTypeList() {
 	const handleDelete = useCallback(
 		(record) => {
 			modal.confirm({
-				title: t('taskType.deleteConfirmTitle'),
-				content: t('taskType.deleteConfirmContent', { name: record.name }),
-				okText: t('common.delete'),
-				cancelText: t('common.cancel'),
-				okButtonProps: { danger: true },
-				onOk: async () => {
-					try {
-						await taskTypeApi.delete(record.id);
-						messageApi.success(t('taskType.deleteSuccess'));
-						refreshList();
-					} catch (err) {
-						messageApi.error(err?.message || t('taskType.deleteFailed'));
-					}
-				},
+				...initConfigFn({
+					title: t('taskType.deleteConfirmTitle'),
+					content: t('taskType.deleteConfirmContent', { name: record.name }),
+					okText: t('common.delete'),
+					cancelText: t('common.cancel'),
+					okButtonProps: { danger: true },
+					onOk: async () => {
+						try {
+							await taskTypeApi.delete(record.id);
+							messageApi.success(t('taskType.deleteSuccess'));
+							refreshList();
+						} catch (err) {
+							messageApi.error(err?.message || t('taskType.deleteFailed'));
+						}
+					},
+				}),
 			});
 		},
 		[messageApi, modal, refreshList, t, taskTypeApi],
@@ -144,6 +140,13 @@ export function useTaskTypeList() {
 					if (!hex) return displayValue(color);
 					return <Tag color={hex}>{label}</Tag>;
 				},
+			},
+			{
+				title: t('taskType.sortOrderColumn'),
+				dataIndex: 'sort_order',
+				key: 'sort_order',
+				width: 100,
+				render: (sort_order) => displayValue(sort_order),
 			},
 			{
 				title: t('taskType.actionColumn'),

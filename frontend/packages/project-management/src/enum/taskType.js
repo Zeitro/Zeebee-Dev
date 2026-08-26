@@ -32,7 +32,8 @@ export function toTaskTypeColorHex(value) {
 	}
 	const trimmed = value.trim();
 	if (trimmed.startsWith('#')) return trimmed;
-	return TASK_TYPE_COLOR_HEX[trimmed] || trimmed;
+	const name = trimmed === 'grey' ? 'gray' : trimmed;
+	return TASK_TYPE_COLOR_HEX[name] || trimmed;
 }
 
 /**
@@ -41,6 +42,17 @@ export function toTaskTypeColorHex(value) {
  * @returns {string}
  */
 export function getTaskTypeColorLabel(value) {
+	const hex = toTaskTypeColorHex(value);
+	if (!hex) return '';
+	return HEX_TO_NAME[hex.toLowerCase()] || hex;
+}
+
+/**
+ * 提交给创建 / 更新接口的 color：预设色用英文名（如 red），自定义色保留 hex。
+ * @param {string|{toHexString?: () => string}|null|undefined} value
+ * @returns {string}
+ */
+export function toTaskTypeColorPayload(value) {
 	const hex = toTaskTypeColorHex(value);
 	if (!hex) return '';
 	return HEX_TO_NAME[hex.toLowerCase()] || hex;

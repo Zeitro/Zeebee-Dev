@@ -1,5 +1,5 @@
 /**
- * 任务类型列表页：无页标题；FilterTable 仅放新建按钮，表单走独立 Modal。
+ * 任务类型列表页：无页标题；FilterTable 仅放新建按钮、无分页（GET all）；表单走独立 Modal。
  */
 'use client';
 
@@ -34,6 +34,8 @@ export function ProjectTaskType() {
 				filterList={filterList}
 				hasFilterField
 				getData={getData}
+				hasPaginationRequest={false}
+				pagination={false}
 				rowProps={{ justify: 'end' }}
 				locale={{ emptyText }}
 			/>
