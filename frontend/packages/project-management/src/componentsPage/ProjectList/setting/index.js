@@ -3,13 +3,14 @@
  */
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CameraOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Modal, message } from 'antd';
+import { Button, Form, Input, Modal, Spin, message } from 'antd';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { NoData, UploadFileButton } from '@repo/shared-methods';
-import { deleteMockProject, getMockProject, updateMockProject } from '../mockData';
+import { createRequest } from '@repo/shared-methods/utils';
+import { getProjectDetailApi } from '../../../api/project';
 
 const COVER_ACCEPT = '.png,.jpg,.jpeg,.webp,.gif';
 
@@ -20,9 +21,40 @@ function ProjectSettingContent({ projectId }) {
 	const t = useTranslations();
 	const router = useRouter();
 	const [form] = Form.useForm();
+	const { request } = useMemo(() => createRequest(), []);
+	const [messageApi, messageContextHolder] = message.useMessage();
+	const [modal, modalContextHolder] = Modal.useModal();
 	const [saving, setSaving] = useState(false);
-	const [project, setProject] = useState(() => getMockProject(projectId));
+	const [deleting, setDeleting] = useState(false);
+	const [loading, setLoading] = useState(() => projectId != null && projectId !== '');
+	const [project, setProject] = useState(null);
 	const [coverPreview, setCoverPreview] = useState();
+	const coverUploadRef = useRef(null);
+
+	useEffect(() => {
+		if (projectId == null || projectId === '') return undefined;
+		let cancelled = false;
+		(async () => {
+			try {
+				const data = await request(getProjectDetailApi(projectId), {
+					method: 'GET',
+					isHideTips: true,
+				});
+				if (cancelled) return;
+				setProject(data || null);
+			} catch {
+				if (!cancelled) {
+					setProject(null);
+					messageApi.error(t('projectSetting.loadFailed'));
+				}
+			} finally {
+				if (!cancelled) setLoading(false);
+			}
+		})();
+		return () => {
+			cancelled = true;
+		};
+	}, [projectId, request, t, messageApi]);
 
 	const goList = useCallback(() => {
 		router.push('/project/projectList');
@@ -30,61 +62,85 @@ function ProjectSettingContent({ projectId }) {
 
 	const handleCoverListChange = useCallback((fileList) => {
 		const last = fileList[fileList.length - 1];
-		if (last?.thumbUrl) setCoverPreview(last.thumbUrl);
+		setCoverPreview(last || undefined);
 	}, []);
 
+	/**
+	 * 有新封面时先 triggerUpload 走公共 AWS 预签名上传，再用返回 url 作为 cover_url。
+	 */
 	const handleUpdate = async (values) => {
-		const cover_image = coverPreview ?? project?.cover_image ?? '';
 		try {
 			setSaving(true);
-			// MOCK: start — 接口就绪后改为 PUT getProjectApi(projectId)
-			const next = updateMockProject(projectId, {
-				name: values.name,
-				description: values.description,
-				cover_image,
+			let cover_url = project?.cover_url ?? '';
+			if (coverPreview?.originFileObj) {
+				const urls = await coverUploadRef.current?.triggerUpload();
+				const uploaded = urls?.[0];
+				if (!uploaded) return;
+				cover_url = typeof uploaded === 'string' ? uploaded : uploaded.url;
+			}
+			const next = await request(getProjectDetailApi(projectId), {
+				method: 'PUT',
+				body: {
+					name: String(values.name || '').trim(),
+					description: values.description || '',
+					cover_url,
+				},
 			});
-			if (!next) throw new Error('not found');
+			if (next == null) return;
 			setProject(next);
-			message.success(t('projectSetting.updateSuccess'));
+			setCoverPreview(undefined);
+			coverUploadRef.current?.clearFileList();
+			messageApi.success(t('projectSetting.updateSuccess'));
 		} catch {
-			message.error(t('projectSetting.updateFailed'));
+			// createRequest 已提示接口错误
 		} finally {
 			setSaving(false);
 		}
 	};
 
 	const handleDelete = () => {
-		Modal.confirm({
+		modal.confirm({
 			title: t('projectSetting.deleteConfirmTitle'),
 			content: t('projectSetting.deleteConfirmContent', { name: project?.name }),
 			okText: t('projectSetting.delete'),
 			okType: 'danger',
 			cancelText: t('common.cancel'),
+			centered: true,
 			onOk: async () => {
 				try {
-					// MOCK: start — 接口就绪后改为 DELETE getProjectApi(projectId)
-					if (!deleteMockProject(projectId)) throw new Error('not found');
-					message.success(t('projectSetting.deleteSuccess'));
+					setDeleting(true);
+					await request(getProjectDetailApi(projectId), {
+						method: 'DELETE',
+					});
+					messageApi.success(t('projectSetting.deleteSuccess'));
 					goList();
+					setDeleting(false);
 				} catch {
-					message.error(t('projectSetting.deleteFailed'));
+					setDeleting(false);
+					// createRequest 已提示接口错误
 					return Promise.reject();
 				}
 			},
 		});
 	};
 
-	const coverImage = coverPreview ?? project?.cover_image;
+	const coverImage = coverPreview?.thumbUrl ?? project?.cover_url;
 
 	return (
 		<div className="flex-1 overflow-hidden bg-gray-light px-8 pt-6 pb-10">
+			{messageContextHolder}
+			{modalContextHolder}
 			<div className="max-w-2xl mx-auto">
 				<div className="relative flex items-center justify-center mb-6">
 					<h1 className="m-0 text-xl font-semibold text-black-dark">
 						{t('projectSetting.title')}
 					</h1>
 				</div>
-				{!project ? (
+				{loading ? (
+					<div className="flex items-center justify-center py-24">
+						<Spin size="large" />
+					</div>
+				) : !project ? (
 					<NoData text={t('projectSetting.notFound')} />
 				) : (
 					<>
@@ -94,13 +150,15 @@ function ProjectSettingContent({ projectId }) {
 								coverImage
 									? {
 											backgroundImage: `url(${coverImage}), linear-gradient(135deg, var(--purple-dark), var(--blue-dark))`,
-											backgroundPosition: 'top',
+											backgroundPosition: 'center',
+											backgroundSize: 'cover',
 										}
 									: undefined
 							}
 						>
 							<div className="absolute top-3 right-3">
 								<UploadFileButton
+									ref={coverUploadRef}
 									accept={COVER_ACCEPT}
 									showUploadList={false}
 									immediateUpload={false}
@@ -153,7 +211,7 @@ function ProjectSettingContent({ projectId }) {
 								color="danger"
 								variant="outlined"
 								onClick={handleDelete}
-								disabled={saving}
+								disabled={deleting}
 							>
 								{t('projectSetting.delete')}
 							</Button>
