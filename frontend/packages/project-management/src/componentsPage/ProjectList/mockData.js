@@ -1,6 +1,5 @@
 /**
- * 项目列表 mock：后端 `/projects/page` 未就绪时替代分页响应。
- * 支持 filter.keyword / filter.priority 与 page / limit 分页，字段与 ProjectCard 一致。
+ * 项目 mock：设置页 / 看板 / 我的任务在对应接口未就绪时共用 MOCK_PROJECT_LIST。
  */
 
 import { PROJECT_PRIORITY, PROJECT_STATUS } from '../../enum/project';
@@ -52,40 +51,6 @@ export const MOCK_PROJECT_LIST = [
 		updated_at: '2026-08-10T14:45:00Z',
 	},
 ];
-
-/**
- * @param {{ page?: number, limit?: number, filter?: { keyword?: string, priority?: number|string } }} params
- * @returns {{ list: object[], total: number }}
- */
-export function getMockProjectPage(params) {
-	const page = Number(params?.page) || 1;
-	const limit = Number(params?.limit) || 20;
-	const filter = params?.filter || {};
-	const { keyword, priority } = filter;
-
-	let list = [...MOCK_PROJECT_LIST];
-
-	if (keyword?.trim()) {
-		const kw = keyword.trim().toLowerCase();
-		list = list.filter(
-			(item) =>
-				item.name?.toLowerCase().includes(kw) ||
-				item.description?.toLowerCase().includes(kw),
-		);
-	}
-
-	if (priority !== undefined && priority !== '') {
-		list = list.filter((item) => item.priority === Number(priority));
-	}
-
-	const total = list.length;
-	const start = (page - 1) * limit;
-
-	return {
-		list: list.slice(start, start + limit),
-		total,
-	};
-}
 
 /**
  * @param {number|string|undefined} projectId

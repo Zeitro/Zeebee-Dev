@@ -10,11 +10,10 @@ import { useTranslations } from 'next-intl';
 import { FilterTableCard } from '@repo/shared-methods';
 import { createRequest } from '@repo/shared-methods/utils';
 import { PROJECT_PAGE_API } from '../../api/project';
-import { PROJECT_PRIORITY_FILTER_VALUES, PROJECT_PRIORITY_I18N_KEY } from '../../enum/project';
+// import { PROJECT_PRIORITY_FILTER_VALUES, PROJECT_PRIORITY_I18N_KEY } from '../../enum/project';
 import { CREATE_PROJECT_ITEM, isCreateProjectItem } from './components/constants';
 import { CreateProjectCard } from './components/CreateProjectCard';
 import { ProjectCard } from './components/ProjectCard';
-import { getMockProjectPage } from './mockData';
 
 const PROJECT_CARD_ITEM_CLASS =
 	'!p-0 w-[280px] min-h-[280px] overflow-hidden rounded-xl hover:border-base-primary';
@@ -24,21 +23,62 @@ export const ProjectList = () => {
 	const { request, cancelMatch } = useMemo(() => createRequest(), []);
 	const tableFilterRef = useRef();
 	const [keyword, setKeyword] = useState('');
-	const [priority, setPriority] = useState();
+	// const [priority, setPriority] = useState();
 
-	const priorityOptions = useMemo(
-		() =>
-			PROJECT_PRIORITY_FILTER_VALUES.map((value) => ({
-				value,
-				label: t(PROJECT_PRIORITY_I18N_KEY[value]),
-			})),
-		[t],
-	);
+	// const priorityOptions = useMemo(
+	// 	() =>
+	// 		PROJECT_PRIORITY_FILTER_VALUES.map((value) => ({
+	// 			value,
+	// 			label: t(PROJECT_PRIORITY_I18N_KEY[value]),
+	// 		})),
+	// 	[t],
+	// );
 
 	const handleRefresh = useCallback(() => {
 		cancelMatch(PROJECT_PAGE_API);
 		tableFilterRef?.current?.handleSearch();
 	}, [cancelMatch]);
+
+	/**
+	 * POST 分页；filter 对齐后端 `{ entity_id, entity_type, keyword }`，
+	 * 列表首位再插入创建卡占位（不计入 total）。
+	 * @param {{ page?: number, limit?: number, filter?: object }} params
+	 * @returns {Promise<{ list: object[], total: number }>}
+	 */
+	const getData = useCallback(
+		async (params) => {
+			const filter = {
+				// entity_id: 0,
+				// entity_type: '',
+				...(params?.filter || {}),
+			};
+			if (filter.priority !== undefined && filter.priority !== '') {
+				filter.priority = Number(filter.priority);
+			} else {
+				delete filter.priority;
+			}
+			try {
+				const res = await request(PROJECT_PAGE_API, {
+					method: 'POST',
+					body: {
+						...params,
+						filter,
+					},
+				});
+				const list = res?.list ?? [];
+				return {
+					list: [CREATE_PROJECT_ITEM, ...list],
+					total: res?.total ?? 0,
+				};
+			} catch {
+				return {
+					list: [CREATE_PROJECT_ITEM],
+					total: 0,
+				};
+			}
+		},
+		[request],
+	);
 
 	const filterList = useMemo(
 		() => [
@@ -49,15 +89,15 @@ export const ProjectList = () => {
 				value: keyword,
 				onChange: ({ target: { value } }) => setKeyword(value),
 			},
-			{
-				filterType: 'select',
-				placeholder: t('projectList.priority'),
-				paramsKey: 'priority',
-				value: priority,
-				onChange: (value) => setPriority(value),
-				options: priorityOptions,
-				style: { width: 160 },
-			},
+			// {
+			// 	filterType: 'select',
+			// 	placeholder: t('projectList.priority'),
+			// 	paramsKey: 'priority',
+			// 	value: priority,
+			// 	onChange: (value) => setPriority(value),
+			// 	options: priorityOptions,
+			// 	style: { width: 160 },
+			// },
 			{
 				filterType: 'button',
 				text: t('common.search'),
@@ -71,17 +111,17 @@ export const ProjectList = () => {
 				onClick: () => {
 					cancelMatch(PROJECT_PAGE_API);
 					setKeyword('');
-					setPriority(undefined);
+					// setPriority(undefined);
 					tableFilterRef?.current?.handleSearch({
 						filter: {
 							keyword: '',
-							priority: undefined,
+							// priority: undefined,
 						},
 					});
 				},
 			},
 		],
-		[keyword, priority, priorityOptions, t, cancelMatch, handleRefresh],
+		[keyword, t, cancelMatch, handleRefresh],
 	);
 
 	return (
@@ -93,38 +133,7 @@ export const ProjectList = () => {
 			typeKey="card"
 			cardTitle={t('projectList.cardTitle')}
 			itemClassName={PROJECT_CARD_ITEM_CLASS}
-			getData={async (params) => {
-				const filter = { ...(params?.filter || {}) };
-				if (filter.priority !== undefined && filter.priority !== '') {
-					filter.priority = Number(filter.priority);
-				} else {
-					delete filter.priority;
-				}
-				// try {
-				// 	const res = await request(PROJECT_PAGE_API, {
-				// 		method: 'POST',
-				// 		body: {
-				// 			...params,
-				// 			filter,
-				// 		},
-				// 	});
-				// 	const list = res?.list ?? res?.data ?? [];
-				// 	return {
-				// 		list: [CREATE_PROJECT_ITEM, ...list],
-				// 		total: res?.total ?? 0,
-				// 	};
-				// } catch {
-				// 	return {
-				// 		list: [CREATE_PROJECT_ITEM],
-				// 		total: 0,
-				// 	};
-				// }
-				const { list, total } = getMockProjectPage({ ...params, filter });
-				return {
-					list: [CREATE_PROJECT_ITEM, ...list],
-					total,
-				};
-			}}
+			getData={getData}
 			renderItem={(row) =>
 				isCreateProjectItem(row) ? (
 					<CreateProjectCard handleSearch={handleRefresh} />

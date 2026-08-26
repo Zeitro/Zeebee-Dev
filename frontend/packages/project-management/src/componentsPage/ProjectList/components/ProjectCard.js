@@ -16,7 +16,7 @@ export function ProjectCard({ row }) {
 	const t = useTranslations('projectList');
 	const router = useRouter();
 	const projectId = row?.id;
-	const coverImage = row?.cover_image;
+	const coverImage = row?.cover_url;
 
 	const goKanban = () => {
 		if (projectId == null) return;
