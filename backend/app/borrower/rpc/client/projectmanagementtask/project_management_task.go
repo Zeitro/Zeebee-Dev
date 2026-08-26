@@ -24,10 +24,15 @@ type (
 	ProjectManagementMyTaskPageFilter            = borrower.ProjectManagementMyTaskPageFilter
 	ProjectManagementMyTaskPageRequest           = borrower.ProjectManagementMyTaskPageRequest
 	ProjectManagementMyTaskPageRequestData       = borrower.ProjectManagementMyTaskPageRequestData
+	ProjectManagementTaskCandidateEntity         = borrower.ProjectManagementTaskCandidateEntity
+	ProjectManagementTaskCandidateRequest        = borrower.ProjectManagementTaskCandidateRequest
+	ProjectManagementTaskCandidateRequestData    = borrower.ProjectManagementTaskCandidateRequestData
+	ProjectManagementTaskCandidateResponse       = borrower.ProjectManagementTaskCandidateResponse
 	ProjectManagementTaskCreateRequest           = borrower.ProjectManagementTaskCreateRequest
 	ProjectManagementTaskCreateRequestData       = borrower.ProjectManagementTaskCreateRequestData
 	ProjectManagementTaskDeleteRequest           = borrower.ProjectManagementTaskDeleteRequest
 	ProjectManagementTaskDeleteRequestData       = borrower.ProjectManagementTaskDeleteRequestData
+	ProjectManagementTaskDependencyRequest       = borrower.ProjectManagementTaskDependencyRequest
 	ProjectManagementTaskDetailRequest           = borrower.ProjectManagementTaskDetailRequest
 	ProjectManagementTaskDetailRequestData       = borrower.ProjectManagementTaskDetailRequestData
 	ProjectManagementTaskDetailResponse          = borrower.ProjectManagementTaskDetailResponse
@@ -43,6 +48,7 @@ type (
 
 	ProjectManagementTask interface {
 		Page(ctx context.Context, in *ProjectManagementTaskPageRequest, opts ...grpc.CallOption) (*ProjectManagementTaskPageResponse, error)
+		Candidate(ctx context.Context, in *ProjectManagementTaskCandidateRequest, opts ...grpc.CallOption) (*ProjectManagementTaskCandidateResponse, error)
 		Create(ctx context.Context, in *ProjectManagementTaskCreateRequest, opts ...grpc.CallOption) (*ProjectManagementTaskDetailResponse, error)
 		Detail(ctx context.Context, in *ProjectManagementTaskDetailRequest, opts ...grpc.CallOption) (*ProjectManagementTaskDetailResponse, error)
 		Update(ctx context.Context, in *ProjectManagementTaskUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementTaskDetailResponse, error)
@@ -67,6 +73,11 @@ func NewProjectManagementTask(cli zrpc.Client) ProjectManagementTask {
 func (m *defaultProjectManagementTask) Page(ctx context.Context, in *ProjectManagementTaskPageRequest, opts ...grpc.CallOption) (*ProjectManagementTaskPageResponse, error) {
 	client := borrower.NewProjectManagementTaskClient(m.cli.Conn())
 	return client.Page(ctx, in, opts...)
+}
+
+func (m *defaultProjectManagementTask) Candidate(ctx context.Context, in *ProjectManagementTaskCandidateRequest, opts ...grpc.CallOption) (*ProjectManagementTaskCandidateResponse, error) {
+	client := borrower.NewProjectManagementTaskClient(m.cli.Conn())
+	return client.Candidate(ctx, in, opts...)
 }
 
 func (m *defaultProjectManagementTask) Create(ctx context.Context, in *ProjectManagementTaskCreateRequest, opts ...grpc.CallOption) (*ProjectManagementTaskDetailResponse, error) {

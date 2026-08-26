@@ -95,6 +95,12 @@ func (r *ProjectManagementDependencyRepo) ListBySuccessorWithTx(ctx context.Cont
 	return dependencies, errorx.WithStack(err)
 }
 
+func (r *ProjectManagementDependencyRepo) ListByTaskWithTx(ctx context.Context, tx *gorm.DB, taskId int64) ([]*model.ProjectManagementTaskDependency, error) {
+	dependencies := make([]*model.ProjectManagementTaskDependency, 0)
+	err := tx.WithContext(ctx).Where("(task_id = ? OR dependency_task_id = ?) AND is_del = 0", taskId, taskId).Order("id ASC").Find(&dependencies).Error
+	return dependencies, errorx.WithStack(err)
+}
+
 func (r *ProjectManagementDependencyRepo) PageByTask(ctx context.Context, taskId int64, predecessor bool, pageReq gormx.PageRequest) (gormx.PageResponse[*model.ProjectManagementTaskDependency], error) {
 	direction := constants.ProjectManagementDependencyTypePreTask
 	reverseDirection := constants.ProjectManagementDependencyTypePostTask

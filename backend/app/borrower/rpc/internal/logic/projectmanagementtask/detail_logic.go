@@ -77,6 +77,20 @@ func taskEntity(task *model.ProjectManagementTask, overdue *dto.ProjectManagemen
 		attachment.FileId = task.Attachments[i].Id
 	}
 	entity.Attachments = *attachments
+	children := make([]*proto.ProjectManagementTaskEntity, 0, len(task.Children))
+	for _, child := range task.Children {
+		childEntity, err := taskEntity(child, nil)
+		if err != nil {
+			return nil, err
+		}
+		children = append(children, childEntity)
+	}
+	entity.Children = children
+	dependencies, err := copierx.Trans[[]*model.ProjectManagementTaskDependency, []*proto.ProjectManagementTaskDependencyEntity](&task.Dependencies, copierx.TimeToRFC3339Str())
+	if err != nil {
+		return nil, err
+	}
+	entity.Dependencies = *dependencies
 	return entity, nil
 }
 

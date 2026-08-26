@@ -34,6 +34,22 @@ message ProjectManagementTaskPageResponseData {
   repeated proto.ProjectManagementTaskPageEntity list = 5;
 }
 
+message ProjectManagementTaskCandidateRequest {
+  ProjectManagementTaskCandidateRequestData data = 1;
+}
+message ProjectManagementTaskCandidateRequestData {
+  int64 project_id = 1;
+  int64 task_id = 2;
+  string keyword = 3;
+}
+message ProjectManagementTaskCandidateEntity {
+  int64 id = 1;
+  string title = 2;
+}
+message ProjectManagementTaskCandidateResponse {
+  repeated ProjectManagementTaskCandidateEntity data = 1;
+}
+
 message ProjectManagementTaskCreateRequest {
   ProjectManagementTaskCreateRequestData data = 1;
 }
@@ -63,6 +79,13 @@ message ProjectManagementTaskDetailResponse {
 message ProjectManagementTaskUpdateRequest {
   ProjectManagementTaskUpdateRequestData data = 1;
 }
+message ProjectManagementTaskDependencyRequest {
+  int64 id = 1;
+  int64 task_id = 2;
+  int64 dependency_task_id = 3;
+  string dependency_type = 4;
+  string dependency_rule = 5;
+}
 message ProjectManagementTaskUpdateRequestData {
   int64 id = 1;
   string title = 2;
@@ -73,6 +96,7 @@ message ProjectManagementTaskUpdateRequestData {
   int64 task_type_id = 7;
   reserved 8;
   repeated int64 assignee_organization_user_ids = 9;
+  repeated ProjectManagementTaskDependencyRequest dependencies = 10;
 }
 
 message ProjectManagementTaskDeleteRequest {
@@ -133,6 +157,7 @@ message ProjectManagementTaskTransitionRequestData {
 
 service ProjectManagementTask {
   rpc Page(ProjectManagementTaskPageRequest) returns(ProjectManagementTaskPageResponse);
+  rpc Candidate(ProjectManagementTaskCandidateRequest) returns(ProjectManagementTaskCandidateResponse);
   rpc Create(ProjectManagementTaskCreateRequest) returns(ProjectManagementTaskDetailResponse);
   rpc Detail(ProjectManagementTaskDetailRequest) returns(ProjectManagementTaskDetailResponse);
   rpc Update(ProjectManagementTaskUpdateRequest) returns(ProjectManagementTaskDetailResponse);

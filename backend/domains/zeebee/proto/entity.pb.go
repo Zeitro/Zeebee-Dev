@@ -7928,6 +7928,8 @@ type ProjectManagementTaskEntity struct {
 	CreatedAt      string                                   `protobuf:"bytes,16,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt      string                                   `protobuf:"bytes,17,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	Phase          string                                   `protobuf:"bytes,19,opt,name=phase,proto3" json:"phase,omitempty"`
+	Children       []*ProjectManagementTaskEntity           `protobuf:"bytes,20,rep,name=children,proto3" json:"children,omitempty"`
+	Dependencies   []*ProjectManagementTaskDependencyEntity `protobuf:"bytes,21,rep,name=dependencies,proto3" json:"dependencies,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -8093,6 +8095,20 @@ func (x *ProjectManagementTaskEntity) GetPhase() string {
 		return x.Phase
 	}
 	return ""
+}
+
+func (x *ProjectManagementTaskEntity) GetChildren() []*ProjectManagementTaskEntity {
+	if x != nil {
+		return x.Children
+	}
+	return nil
+}
+
+func (x *ProjectManagementTaskEntity) GetDependencies() []*ProjectManagementTaskDependencyEntity {
+	if x != nil {
+		return x.Dependencies
+	}
+	return nil
 }
 
 type ProjectManagementTaskPageEntity struct {
@@ -9388,7 +9404,7 @@ const file_proto_entity_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x05 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\x06 \x01(\tR\tupdatedAt\"\xcf\x05\n" +
+	"updated_at\x18\x06 \x01(\tR\tupdatedAt\"\xe1\x06\n" +
 	"\x1bProjectManagementTaskEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -9413,7 +9429,9 @@ const file_proto_entity_proto_rawDesc = "" +
 	"created_at\x18\x10 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
 	"updated_at\x18\x11 \x01(\tR\tupdatedAt\x12\x14\n" +
-	"\x05phase\x18\x13 \x01(\tR\x05phase\"\x9b\x04\n" +
+	"\x05phase\x18\x13 \x01(\tR\x05phase\x12>\n" +
+	"\bchildren\x18\x14 \x03(\v2\".proto.ProjectManagementTaskEntityR\bchildren\x12P\n" +
+	"\fdependencies\x18\x15 \x03(\v2,.proto.ProjectManagementTaskDependencyEntityR\fdependencies\"\x9b\x04\n" +
 	"\x1fProjectManagementTaskPageEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -9629,13 +9647,15 @@ var file_proto_entity_proto_depIdxs = []int32{
 	61, // 77: proto.ProjectManagementTaskEntity.task_type:type_name -> proto.ProjectManagementTaskTypeSnapshotEntity
 	62, // 78: proto.ProjectManagementTaskEntity.assignees:type_name -> proto.ProjectManagementTaskAssigneeEntity
 	63, // 79: proto.ProjectManagementTaskEntity.attachments:type_name -> proto.ProjectManagementAttachmentEntity
-	61, // 80: proto.ProjectManagementTaskPageEntity.task_type:type_name -> proto.ProjectManagementTaskTypeSnapshotEntity
-	18, // 81: proto.TemplateVariableEntity.PropertiesEntry.value:type_name -> proto.TemplateVariableEntity
-	82, // [82:82] is the sub-list for method output_type
-	82, // [82:82] is the sub-list for method input_type
-	82, // [82:82] is the sub-list for extension type_name
-	82, // [82:82] is the sub-list for extension extendee
-	0,  // [0:82] is the sub-list for field type_name
+	64, // 80: proto.ProjectManagementTaskEntity.children:type_name -> proto.ProjectManagementTaskEntity
+	66, // 81: proto.ProjectManagementTaskEntity.dependencies:type_name -> proto.ProjectManagementTaskDependencyEntity
+	61, // 82: proto.ProjectManagementTaskPageEntity.task_type:type_name -> proto.ProjectManagementTaskTypeSnapshotEntity
+	18, // 83: proto.TemplateVariableEntity.PropertiesEntry.value:type_name -> proto.TemplateVariableEntity
+	84, // [84:84] is the sub-list for method output_type
+	84, // [84:84] is the sub-list for method input_type
+	84, // [84:84] is the sub-list for extension type_name
+	84, // [84:84] is the sub-list for extension extendee
+	0,  // [0:84] is the sub-list for field type_name
 }
 
 func init() { file_proto_entity_proto_init() }

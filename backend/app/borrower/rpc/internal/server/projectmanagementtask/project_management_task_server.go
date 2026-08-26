@@ -29,6 +29,11 @@ func (s *ProjectManagementTaskServer) Page(ctx context.Context, in *borrower.Pro
 	return l.Page(in)
 }
 
+func (s *ProjectManagementTaskServer) Candidate(ctx context.Context, in *borrower.ProjectManagementTaskCandidateRequest) (*borrower.ProjectManagementTaskCandidateResponse, error) {
+	l := projectmanagementtasklogic.NewCandidateLogic(ctx, s.svcCtx)
+	return l.Candidate(in)
+}
+
 func (s *ProjectManagementTaskServer) Create(ctx context.Context, in *borrower.ProjectManagementTaskCreateRequest) (*borrower.ProjectManagementTaskDetailResponse, error) {
 	l := projectmanagementtasklogic.NewCreateLogic(ctx, s.svcCtx)
 	return l.Create(in)

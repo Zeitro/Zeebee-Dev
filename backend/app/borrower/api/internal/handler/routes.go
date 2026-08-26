@@ -25,7 +25,6 @@ import (
 	project_management_project "zeebee-backend/app/borrower/api/internal/handler/project_management_project"
 	project_management_project_member "zeebee-backend/app/borrower/api/internal/handler/project_management_project_member"
 	project_management_task "zeebee-backend/app/borrower/api/internal/handler/project_management_task"
-	project_management_task_dependency "zeebee-backend/app/borrower/api/internal/handler/project_management_task_dependency"
 	project_management_task_type "zeebee-backend/app/borrower/api/internal/handler/project_management_task_type"
 	project_management_workflow "zeebee-backend/app/borrower/api/internal/handler/project_management_workflow"
 	resource "zeebee-backend/app/borrower/api/internal/handler/resource"
@@ -905,6 +904,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: project_management_task.TransitionHandler(serverCtx),
 				},
 				{
+					// candidate
+					Method:  http.MethodGet,
+					Path:    "/project_management/task/candidate",
+					Handler: project_management_task.CandidateHandler(serverCtx),
+				},
+				{
 					// my task
 					Method:  http.MethodPost,
 					Path:    "/project_management/task/my",
@@ -915,39 +920,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/project_management/task/page",
 					Handler: project_management_task.PageHandler(serverCtx),
-				},
-			}...,
-		),
-		rest.WithPrefix("/api/v1"),
-	)
-
-	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.AuthMiddleware},
-			[]rest.Route{
-				{
-					// create
-					Method:  http.MethodPost,
-					Path:    "/project_management/task/:id/task_dependency",
-					Handler: project_management_task_dependency.CreateHandler(serverCtx),
-				},
-				{
-					// delete
-					Method:  http.MethodDelete,
-					Path:    "/project_management/task/:id/task_dependency/:dependency_id",
-					Handler: project_management_task_dependency.DeleteHandler(serverCtx),
-				},
-				{
-					// page
-					Method:  http.MethodPost,
-					Path:    "/project_management/task/:id/task_dependency/page",
-					Handler: project_management_task_dependency.PageHandler(serverCtx),
-				},
-				{
-					// update
-					Method:  http.MethodPut,
-					Path:    "/project_management/task/:task_id/task_dependency/:id",
-					Handler: project_management_task_dependency.UpdateHandler(serverCtx),
 				},
 			}...,
 		),

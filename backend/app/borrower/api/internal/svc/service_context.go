@@ -46,7 +46,6 @@ type ServiceContext struct {
 	ProjectManagementProjectRpcClient        borrower.ProjectManagementProjectClient
 	ProjectManagementProjectMemberRpcClient  borrower.ProjectManagementProjectMemberClient
 	ProjectManagementTaskRpcClient           borrower.ProjectManagementTaskClient
-	ProjectManagementTaskDependencyRpcClient borrower.ProjectManagementTaskDependencyClient
 	OperationRpcClient                       borrower.OperationClient
 }
 
@@ -84,7 +83,6 @@ func NewServiceContext(c config.ApiConf, logger logx.Logger) *ServiceContext {
 		ProjectManagementProjectRpcClient:        borrower.NewProjectManagementProjectClient(rpcClient.Conn()),
 		ProjectManagementProjectMemberRpcClient:  borrower.NewProjectManagementProjectMemberClient(rpcClient.Conn()),
 		ProjectManagementTaskRpcClient:           borrower.NewProjectManagementTaskClient(rpcClient.Conn()),
-		ProjectManagementTaskDependencyRpcClient: borrower.NewProjectManagementTaskDependencyClient(rpcClient.Conn()),
 		OperationRpcClient:                       borrower.NewOperationClient(rpcClient.Conn()),
 	}
 }

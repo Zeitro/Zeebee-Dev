@@ -112,6 +112,8 @@ type (
         OverdueSeconds int64 `json:"overdue_seconds"`
         CreatedAt string `json:"created_at"`
         UpdatedAt string `json:"updated_at"`
+        Children []*ProjectManagementTaskEntity `json:"children"`
+        Dependencies []*ProjectManagementTaskDependencyEntity `json:"dependencies"`
     }
 
     ProjectManagementTaskPageEntity {

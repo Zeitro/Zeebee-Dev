@@ -1746,44 +1746,6 @@ type ProjectManagementAttachmentEntity struct {
 	UpdatedAt   string `json:"updated_at"`
 }
 
-type ProjectManagementDependencyCreateRequest struct {
-	TaskId           int64  `path:"id" validate:"required,gt=0"`
-	DependencyTaskId int64  `json:"dependency_task_id" validate:"required,gt=0"`
-	DependencyType   string `json:"dependency_type" validate:"required,oneof=PreTask PostTask"`
-	DependencyRule   string `json:"dependency_rule" validate:"required,oneof=FS FF SS SF"`
-}
-
-type ProjectManagementDependencyDeleteRequest struct {
-	TaskId int64 `path:"id" validate:"required,gt=0"`
-	Id     int64 `path:"dependency_id" validate:"required,gt=0"`
-}
-
-type ProjectManagementDependencyDetailResponse struct {
-	ProjectManagementTaskDependencyEntity
-}
-
-type ProjectManagementDependencyPageRequest struct {
-	TaskId      int64 `path:"id" validate:"required,gt=0"`
-	Page        int64 `json:"page,default=1"`
-	Limit       int64 `json:"limit,default=20"`
-	Predecessor bool  `json:"predecessor,optional"`
-}
-
-type ProjectManagementDependencyPageResponse struct {
-	Page      int64                                    `json:"page"`
-	Limit     int64                                    `json:"limit"`
-	Total     int64                                    `json:"total"`
-	TotalPage int64                                    `json:"total_page"`
-	List      []*ProjectManagementTaskDependencyEntity `json:"list"`
-}
-
-type ProjectManagementDependencyUpdateRequest struct {
-	Id             int64  `path:"id" validate:"required,gt=0"`
-	TaskId         int64  `path:"task_id" validate:"required,gt=0"`
-	DependencyType string `json:"dependency_type" validate:"required,oneof=PreTask PostTask"`
-	DependencyRule string `json:"dependency_rule" validate:"required,oneof=FS FF SS SF"`
-}
-
 type ProjectManagementMemberAddRequest struct {
 	ProjectId int64                           `json:"project_id" validate:"required,gt=0"`
 	Members   []*ProjectManagementMemberInput `json:"members" validate:"required,min=1,dive"`
@@ -1948,6 +1910,21 @@ type ProjectManagementTaskAssigneeEntity struct {
 	UpdatedAt            string `json:"updated_at"`
 }
 
+type ProjectManagementTaskCandidateEntity struct {
+	Id    int64  `json:"id"`
+	Title string `json:"title"`
+}
+
+type ProjectManagementTaskCandidateRequest struct {
+	ProjectId int64  `form:"project_id" validate:"required,gt=0"`
+	TaskId    int64  `form:"task_id" validate:"required,gt=0"`
+	Keyword   string `form:"keyword,optional"`
+}
+
+type ProjectManagementTaskCandidateResponse struct {
+	List []*ProjectManagementTaskCandidateEntity `json:"list"`
+}
+
 type ProjectManagementTaskCreateRequest struct {
 	ProjectId                   int64   `json:"project_id" validate:"required,gt=0"`
 	ParentTaskId                int64   `json:"parent_task_id,optional" validate:"gte=0"`
@@ -1973,6 +1950,14 @@ type ProjectManagementTaskDependencyEntity struct {
 	DependencyRule   string `json:"dependency_rule"`
 	CreatedAt        string `json:"created_at"`
 	UpdatedAt        string `json:"updated_at"`
+}
+
+type ProjectManagementTaskDependencyRequest struct {
+	Id               int64  `json:"id,optional" validate:"gte=0"`
+	TaskId           int64  `json:"task_id" validate:"required,gt=0"`
+	DependencyTaskId int64  `json:"dependency_task_id" validate:"required,gt=0"`
+	DependencyType   string `json:"dependency_type" validate:"required,oneof=PreTask PostTask"`
+	DependencyRule   string `json:"dependency_rule" validate:"required,oneof=FF FS SS SF"`
 }
 
 type ProjectManagementTaskDetailRequest struct {
@@ -2004,6 +1989,8 @@ type ProjectManagementTaskEntity struct {
 	OverdueSeconds int64                                    `json:"overdue_seconds"`
 	CreatedAt      string                                   `json:"created_at"`
 	UpdatedAt      string                                   `json:"updated_at"`
+	Children       []*ProjectManagementTaskEntity           `json:"children"`
+	Dependencies   []*ProjectManagementTaskDependencyEntity `json:"dependencies"`
 }
 
 type ProjectManagementTaskPageEntity struct {
@@ -2103,14 +2090,15 @@ type ProjectManagementTaskTypeUpdateRequest struct {
 }
 
 type ProjectManagementTaskUpdateRequest struct {
-	Id                          int64   `path:"id" validate:"required,gt=0"`
-	Title                       string  `json:"title" validate:"required,max=255"`
-	Description                 string  `json:"description,optional"`
-	Priority                    string  `json:"priority,optional" validate:"omitempty,oneof=Low Medium High Critical"`
-	StartAt                     string  `json:"start_at,optional" validate:"omitempty,datetime=01/02/2006"`
-	EndAt                       string  `json:"end_at,optional" validate:"omitempty,datetime=01/02/2006"`
-	TaskTypeId                  int64   `json:"task_type_id,optional"`
-	AssigneeOrganizationUserIds []int64 `json:"assignee_organization_user_ids,optional"`
+	Id                          int64                                     `path:"id" validate:"required,gt=0"`
+	Title                       string                                    `json:"title" validate:"required,max=255"`
+	Description                 string                                    `json:"description,optional"`
+	Priority                    string                                    `json:"priority,optional" validate:"omitempty,oneof=Low Medium High Critical"`
+	StartAt                     string                                    `json:"start_at,optional" validate:"omitempty,datetime=01/02/2006"`
+	EndAt                       string                                    `json:"end_at,optional" validate:"omitempty,datetime=01/02/2006"`
+	TaskTypeId                  int64                                     `json:"task_type_id,optional"`
+	AssigneeOrganizationUserIds []int64                                   `json:"assignee_organization_user_ids,optional"`
+	Dependencies                []*ProjectManagementTaskDependencyRequest `json:"dependencies,optional"`
 }
 
 type ProjectManagementWorkflowAllRequest struct {

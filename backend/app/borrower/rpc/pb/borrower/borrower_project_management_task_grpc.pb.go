@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	ProjectManagementTask_Page_FullMethodName             = "/borrower.ProjectManagementTask/Page"
+	ProjectManagementTask_Candidate_FullMethodName        = "/borrower.ProjectManagementTask/Candidate"
 	ProjectManagementTask_Create_FullMethodName           = "/borrower.ProjectManagementTask/Create"
 	ProjectManagementTask_Detail_FullMethodName           = "/borrower.ProjectManagementTask/Detail"
 	ProjectManagementTask_Update_FullMethodName           = "/borrower.ProjectManagementTask/Update"
@@ -36,6 +37,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProjectManagementTaskClient interface {
 	Page(ctx context.Context, in *ProjectManagementTaskPageRequest, opts ...grpc.CallOption) (*ProjectManagementTaskPageResponse, error)
+	Candidate(ctx context.Context, in *ProjectManagementTaskCandidateRequest, opts ...grpc.CallOption) (*ProjectManagementTaskCandidateResponse, error)
 	Create(ctx context.Context, in *ProjectManagementTaskCreateRequest, opts ...grpc.CallOption) (*ProjectManagementTaskDetailResponse, error)
 	Detail(ctx context.Context, in *ProjectManagementTaskDetailRequest, opts ...grpc.CallOption) (*ProjectManagementTaskDetailResponse, error)
 	Update(ctx context.Context, in *ProjectManagementTaskUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementTaskDetailResponse, error)
@@ -58,6 +60,16 @@ func (c *projectManagementTaskClient) Page(ctx context.Context, in *ProjectManag
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ProjectManagementTaskPageResponse)
 	err := c.cc.Invoke(ctx, ProjectManagementTask_Page_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *projectManagementTaskClient) Candidate(ctx context.Context, in *ProjectManagementTaskCandidateRequest, opts ...grpc.CallOption) (*ProjectManagementTaskCandidateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ProjectManagementTaskCandidateResponse)
+	err := c.cc.Invoke(ctx, ProjectManagementTask_Candidate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -149,6 +161,7 @@ func (c *projectManagementTaskClient) Transition(ctx context.Context, in *Projec
 // for forward compatibility.
 type ProjectManagementTaskServer interface {
 	Page(context.Context, *ProjectManagementTaskPageRequest) (*ProjectManagementTaskPageResponse, error)
+	Candidate(context.Context, *ProjectManagementTaskCandidateRequest) (*ProjectManagementTaskCandidateResponse, error)
 	Create(context.Context, *ProjectManagementTaskCreateRequest) (*ProjectManagementTaskDetailResponse, error)
 	Detail(context.Context, *ProjectManagementTaskDetailRequest) (*ProjectManagementTaskDetailResponse, error)
 	Update(context.Context, *ProjectManagementTaskUpdateRequest) (*ProjectManagementTaskDetailResponse, error)
@@ -169,6 +182,9 @@ type UnimplementedProjectManagementTaskServer struct{}
 
 func (UnimplementedProjectManagementTaskServer) Page(context.Context, *ProjectManagementTaskPageRequest) (*ProjectManagementTaskPageResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Page not implemented")
+}
+func (UnimplementedProjectManagementTaskServer) Candidate(context.Context, *ProjectManagementTaskCandidateRequest) (*ProjectManagementTaskCandidateResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Candidate not implemented")
 }
 func (UnimplementedProjectManagementTaskServer) Create(context.Context, *ProjectManagementTaskCreateRequest) (*ProjectManagementTaskDetailResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Create not implemented")
@@ -229,6 +245,24 @@ func _ProjectManagementTask_Page_Handler(srv interface{}, ctx context.Context, d
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ProjectManagementTaskServer).Page(ctx, req.(*ProjectManagementTaskPageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProjectManagementTask_Candidate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ProjectManagementTaskCandidateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectManagementTaskServer).Candidate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProjectManagementTask_Candidate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectManagementTaskServer).Candidate(ctx, req.(*ProjectManagementTaskCandidateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -387,6 +421,10 @@ var ProjectManagementTask_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Page",
 			Handler:    _ProjectManagementTask_Page_Handler,
+		},
+		{
+			MethodName: "Candidate",
+			Handler:    _ProjectManagementTask_Candidate_Handler,
 		},
 		{
 			MethodName: "Create",

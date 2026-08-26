@@ -63,8 +63,15 @@ func TestCreateTaskDependencyRules(t *testing.T) {
 	if err != nil || dependency == nil || dependency.Id == 0 {
 		t.Fatalf("valid dependency rejected: %#v, %v", dependency, err)
 	}
-	if _, err = logic.Create(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 2, DependencyTaskId: 4, DependencyType: constants.ProjectManagementDependencyTypePostTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}); err != nil {
+	postDependency, err := logic.Create(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 2, DependencyTaskId: 4, DependencyType: constants.ProjectManagementDependencyTypePostTask, DependencyRule: constants.ProjectManagementDependencyRuleFS})
+	if err != nil {
 		t.Fatalf("mixed post-task dependency rejected: %v", err)
+	}
+	if _, err = logic.Update(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{Id: dependency.Id, TaskId: 2, DependencyTaskId: 3, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}); err == nil {
+		t.Fatal("dependency updated to a task from another project")
+	}
+	if _, err = logic.Update(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{Id: postDependency.Id, TaskId: 2, DependencyTaskId: 1, DependencyType: constants.ProjectManagementDependencyTypePostTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}); err == nil {
+		t.Fatal("dependency update created a cycle")
 	}
 	if _, err = logic.Create(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 1, DependencyTaskId: 4, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}); err == nil {
 		t.Fatal("mixed pre/post dependency cycle accepted")
@@ -86,5 +93,35 @@ func TestCreateTaskDependencyRules(t *testing.T) {
 	}
 	if _, err = logic.Create(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 2, DependencyTaskId: 1, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFF}); err == nil {
 		t.Fatal("dependency added after successor left pending")
+	}
+	if err = db.Exec("UPDATE project_management_tasks SET stage_id = 100 WHERE id = 2").Error; err != nil {
+		t.Fatal(err)
+	}
+	if err = logic.repos.ProjectManagementDependencyRepo.Transaction(context.Background(), func(tx *gorm.DB) error {
+		return logic.SyncWithTx(context.Background(), tx, actor, 2, []*dto.ProjectManagementTaskDependencyDto{{
+			Id: dependency.Id, TaskId: 2, DependencyTaskId: 1,
+			DependencyType: constants.ProjectManagementDependencyTypePreTask,
+			DependencyRule: constants.ProjectManagementDependencyRuleFF,
+		}})
+	}); err != nil {
+		t.Fatalf("dependency sync failed: %v", err)
+	}
+	var count int64
+	if err = db.Model(&struct{ Id int64 }{}).Table("project_management_task_dependencies").Where("task_id = ? AND is_del = 0", 2).Count(&count).Error; err != nil || count != 1 {
+		t.Fatalf("dependency sync did not replace set: count=%d err=%v", count, err)
+	}
+	if err = db.Exec("INSERT INTO project_management_task_dependencies (task_id, dependency_task_id, dependency_type, dependency_rule) VALUES (4, 2, 'PreTask', 'FS')").Error; err != nil {
+		t.Fatal(err)
+	}
+	if err = logic.repos.ProjectManagementDependencyRepo.Transaction(context.Background(), func(tx *gorm.DB) error {
+		return logic.SyncWithTx(context.Background(), tx, actor, 2, nil)
+	}); err != nil {
+		t.Fatalf("empty dependency sync failed: %v", err)
+	}
+	if err = db.Model(&struct{ Id int64 }{}).Table("project_management_task_dependencies").Where("task_id = ? AND is_del = 0", 2).Count(&count).Error; err != nil || count != 0 {
+		t.Fatalf("empty dependency sync did not clear task dependencies: count=%d err=%v", count, err)
+	}
+	if err = db.Model(&struct{ Id int64 }{}).Table("project_management_task_dependencies").Where("task_id = ? AND dependency_task_id = ? AND is_del = 0", 4, 2).Count(&count).Error; err != nil || count != 1 {
+		t.Fatalf("empty dependency sync removed a reverse dependency: count=%d err=%v", count, err)
 	}
 }

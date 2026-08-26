@@ -23,8 +23,10 @@ type ProjectManagementTask struct {
 	EndAt          *sql.NullTime                             `gorm:"column:end_at;type:timestamptz" json:"end_at"`
 	TaskType       *dto.ProjectManagementTaskTypeSnapshotDto `gorm:"column:task_type;type:jsonb;not null;default:'{}';serializer:json" json:"task_type"`
 	// relationships
-	Assignees   []*ProjectManagementTaskAssignee `gorm:"foreignKey:TaskId" json:"assignees"`
-	Attachments []*File                          `gorm:"-" json:"attachments"`
+	Assignees    []*ProjectManagementTaskAssignee   `gorm:"foreignKey:TaskId;references:Id" json:"assignees"`
+	Attachments  []*File                            `gorm:"polymorphicType:EntityType;polymorphicId:EntityId;polymorphicValue:ProjectManagementTask" json:"attachments"`
+	Children     []*ProjectManagementTask           `gorm:"foreignKey:ParentTaskId;references:Id" json:"children"`
+	Dependencies []*ProjectManagementTaskDependency `gorm:"foreignKey:TaskId;references:Id" json:"dependencies"`
 }
 
 func (ProjectManagementTask) TableName() string { return "project_management_tasks" }
@@ -33,4 +35,6 @@ func (ProjectManagementTask) TableName() string { return "project_management_tas
 func (m *ProjectManagementTask) RemoveRelationships() {
 	m.Assignees = nil
 	m.Attachments = nil
+	m.Children = nil
+	m.Dependencies = nil
 }

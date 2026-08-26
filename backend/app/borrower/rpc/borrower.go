@@ -25,7 +25,6 @@ import (
 	projectManagementProjectServer "zeebee-backend/app/borrower/rpc/internal/server/projectmanagementproject"
 	projectManagementProjectMemberServer "zeebee-backend/app/borrower/rpc/internal/server/projectmanagementprojectmember"
 	projectManagementTaskServer "zeebee-backend/app/borrower/rpc/internal/server/projectmanagementtask"
-	projectManagementTaskDependencyServer "zeebee-backend/app/borrower/rpc/internal/server/projectmanagementtaskdependency"
 	projectManagementTaskTypeServer "zeebee-backend/app/borrower/rpc/internal/server/projectmanagementtasktype"
 	projectManagementWorkflowServer "zeebee-backend/app/borrower/rpc/internal/server/projectmanagementworkflow"
 	projectManagementWorkflowStageServer "zeebee-backend/app/borrower/rpc/internal/server/projectmanagementworkflowstage"
@@ -102,7 +101,6 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		borrower.RegisterProjectManagementProjectServer(grpcServer, projectManagementProjectServer.NewProjectManagementProjectServer(ctx))
 		borrower.RegisterProjectManagementProjectMemberServer(grpcServer, projectManagementProjectMemberServer.NewProjectManagementProjectMemberServer(ctx))
 		borrower.RegisterProjectManagementTaskServer(grpcServer, projectManagementTaskServer.NewProjectManagementTaskServer(ctx))
-		borrower.RegisterProjectManagementTaskDependencyServer(grpcServer, projectManagementTaskDependencyServer.NewProjectManagementTaskDependencyServer(ctx))
 		borrower.RegisterOperationServer(grpcServer, operationServer.NewOperationServer(ctx))
 
 		if rpcConfig.Mode == service.DevMode || rpcConfig.Mode == service.TestMode {

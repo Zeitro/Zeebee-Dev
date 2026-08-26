@@ -142,10 +142,6 @@ func (l *ProjectManagementTaskLogic) Detail(ctx context.Context, claim utils.Jwt
 	if _, err = l.projectManagementAccess().RequireMember(ctx, task.ProjectId, claim.OrganizationUserId); err != nil {
 		return nil, err
 	}
-	task.Attachments, err = l.repos.FileRepo.GetFiles(ctx, task.Id, constants.FileEntityTypeProjectManagementTask)
-	if err != nil {
-		return nil, err
-	}
 	return task, nil
 }
 
@@ -161,6 +157,16 @@ func (l *ProjectManagementTaskLogic) Page(ctx context.Context, claim utils.JwtUs
 		return page, err
 	}
 	return page, nil
+}
+
+func (l *ProjectManagementTaskLogic) Candidate(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementTaskCandidateDto) ([]*dto.ProjectManagementTaskCandidateEntityDto, error) {
+	if _, err := l.projectManagementAccess().RequireProject(ctx, input.ProjectId, claim.OrganizationId); err != nil {
+		return nil, err
+	}
+	if _, err := l.projectManagementAccess().RequireMember(ctx, input.ProjectId, claim.OrganizationUserId); err != nil {
+		return nil, err
+	}
+	return l.repos.ProjectManagementTaskRepo.CandidateByProject(ctx, claim.OrganizationId, input)
 }
 
 func (l *ProjectManagementTaskLogic) Update(ctx context.Context, claim utils.JwtUser, taskId int64, input dto.ProjectManagementTaskUpdateDto) (*model.ProjectManagementTask, error) {
@@ -200,6 +206,9 @@ func (l *ProjectManagementTaskLogic) Update(ctx context.Context, claim utils.Jwt
 			return err
 		}
 		if err = l.repos.ProjectManagementTaskRepo.ReplaceAssigneesWithTx(ctx, tx, task.Id, task.StageId, assignees); err != nil {
+			return err
+		}
+		if err = NewProjectManagementDependencyLogic(l.BaseLogic).SyncWithTx(ctx, tx, claim, task.Id, input.Dependencies); err != nil {
 			return err
 		}
 		task.RemoveRelationships()

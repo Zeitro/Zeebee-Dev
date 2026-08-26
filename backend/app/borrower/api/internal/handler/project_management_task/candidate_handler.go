@@ -1,11 +1,11 @@
-package project_management_task_dependency
+package project_management_task
 
 import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"zeebee-backend/app/borrower/api/internal/logic/project_management_task_dependency"
+	"zeebee-backend/app/borrower/api/internal/logic/project_management_task"
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 
@@ -14,8 +14,8 @@ import (
 	"zeebee-backend/common/validator"
 )
 
-// delete
-func DeleteHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+// candidate
+func CandidateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -27,7 +27,7 @@ func DeleteHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 					Error(err)
 			}
 		}()
-		var req types.ProjectManagementDependencyDeleteRequest
+		var req types.ProjectManagementTaskCandidateRequest
 		if err = httpx.Parse(r, &req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
@@ -44,8 +44,8 @@ func DeleteHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := project_management_task_dependency.NewDeleteLogic(r.Context(), svcCtx)
-		resp, err := l.Delete(&req)
+		l := project_management_task.NewCandidateLogic(r.Context(), svcCtx)
+		resp, err := l.Candidate(&req)
 		if err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 		} else {

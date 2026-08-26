@@ -33,7 +33,7 @@ func TestProjectManagementQueryFilters(t *testing.T) {
 		"INSERT INTO project_management_tasks (id, project_id, organization_id, stage_id, creator_id, creator_name, title, end_at, task_type) VALUES (1, 10, 1, 100, 7, 'Creator', 'Roof inspection', datetime('now', '-1 hour'), '{\"id\":5}')",
 		"INSERT INTO project_management_tasks (id, project_id, organization_id, stage_id, creator_id, creator_name, title, task_type) VALUES (2, 10, 1, 100, 8, 'Other', 'Assigned work', '{\"id\":6}')",
 		"INSERT INTO project_management_tasks (id, project_id, organization_id, stage_id, creator_id, creator_name, title, task_type) VALUES (3, 10, 1, 100, 8, 'Other', 'Not mine', '{\"id\":5}')",
-		"INSERT INTO project_management_tasks (id, project_id, organization_id, stage_id, creator_id, creator_name, title, end_at, task_type) VALUES (4, 11, 1, 101, 7, 'Creator', 'Finished task', datetime('now', '-1 hour'), '{\"id\":5}')",
+		"INSERT INTO project_management_tasks (id, project_id, organization_id, stage_id, creator_id, creator_name, title, end_at, task_type) VALUES (4, 10, 1, 101, 7, 'Creator', 'Finished task', datetime('now', '-1 hour'), '{\"id\":5}')",
 		"INSERT INTO project_management_tasks (id, project_id, organization_id, stage_id, creator_id, creator_name, title, end_at, task_type) VALUES (5, 10, 1, 100, 7, 'Creator', 'Future roof work', datetime('now', '+1 hour'), '{\"id\":5}')",
 		"INSERT INTO project_management_task_assignees (id, task_id, stage_id, organization_user_id, organization_user_name) VALUES (1, 1, 100, 7, 'Assignee'), (2, 2, 100, 7, 'Assignee')",
 		fmt.Sprintf("INSERT INTO operations (id, created_at, updated_at, entity_id, entity_type, operator_id, operation, metadata, organization_id) VALUES (1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 10, 'ProjectManagementProject', 7, '%s', '{\"task_id\":1}', 1), (2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 10, 'ProjectManagementProject', 7, '%s', '{\"task_id\":2}', 1), (3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 11, 'ProjectManagementProject', 7, '%s', '{\"task_id\":1}', 1)", constants.OperationActionProjectManagementTaskUpdate, constants.OperationActionProjectManagementTaskUpdate, constants.OperationActionProjectManagementTaskUpdate),
@@ -46,6 +46,9 @@ func TestProjectManagementQueryFilters(t *testing.T) {
 		t.Fatal(err)
 	}
 	if err := db.Exec("UPDATE project_management_tasks SET phase = 'InProgress' WHERE id = 1").Error; err != nil {
+		t.Fatal(err)
+	}
+	if err := db.Exec("UPDATE project_management_tasks SET phase = 'Finished' WHERE id = 4").Error; err != nil {
 		t.Fatal(err)
 	}
 	repo := NewProjectManagementTaskRepo(db)
@@ -69,6 +72,14 @@ func TestProjectManagementQueryFilters(t *testing.T) {
 	if err != nil || page.Total != 1 || len(page.List) != 1 || page.List[0].Id != 1 {
 		t.Fatalf("multiple phase filter failed: %#v, %v", page, err)
 	}
+	candidates, err := repo.CandidateByProject(context.Background(), 1, dto.ProjectManagementTaskCandidateDto{ProjectId: 10})
+	if err != nil || len(candidates) != 4 {
+		t.Fatalf("task candidates should exclude finished tasks: %#v, %v", candidates, err)
+	}
+	candidates, err = repo.CandidateByProject(context.Background(), 1, dto.ProjectManagementTaskCandidateDto{ProjectId: 10, TaskId: 1, Keyword: "roof"})
+	if err != nil || len(candidates) != 1 || candidates[0].Id != 5 {
+		t.Fatalf("task candidates should filter keyword and current task: %#v, %v", candidates, err)
+	}
 	operations, err := NewOperationRepo(db).PageProjectManagementOperations(context.Background(), 1, dto.ProjectManagementOperationPageRequestDto{
 		Page: 1, Limit: 20,
 		Filter: dto.ProjectManagementOperationFilterDto{ProjectId: 10, TaskId: 1, OperationType: constants.OperationActionProjectManagementTaskUpdate},
@@ -86,6 +97,8 @@ func TestFindDetailByOrganizationLoadsCurrentStageAssignees(t *testing.T) {
 	for _, statement := range []string{
 		"CREATE TABLE project_management_tasks (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, project_id integer not null, organization_id integer not null, parent_task_id integer not null default 0, stage_id integer not null, phase text not null default 'Pending', creator_id integer not null default 0, creator_name text not null default '', title text not null default '', description text not null default '', priority text not null default '', start_at datetime, end_at datetime, task_type json not null default '{}')",
 		"CREATE TABLE project_management_task_assignees (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, task_id integer not null, stage_id integer not null, organization_user_id integer not null, organization_user_name text not null default '')",
+		"CREATE TABLE project_management_task_dependencies (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, task_id integer not null, dependency_task_id integer not null, dependency_type text not null default 'PreTask', dependency_rule text not null default 'FS')",
+		"CREATE TABLE files (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, entity_id integer not null, entity_type text not null, file_url text not null default '', file_name text not null default '', storage_type text not null default '')",
 		"INSERT INTO project_management_tasks (id, project_id, organization_id, stage_id, title) VALUES (1, 10, 1, 101, 'Task')",
 		"INSERT INTO project_management_task_assignees (id, task_id, stage_id, organization_user_id, organization_user_name) VALUES (1, 1, 100, 7, 'Previous stage'), (2, 1, 101, 8, 'Current stage')",
 	} {

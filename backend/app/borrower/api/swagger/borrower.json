@@ -4892,6 +4892,64 @@
         }
       }
     },
+    "/api/v1/project_management/task/candidate": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management_task"
+        ],
+        "summary": "candidate",
+        "operationId": "projectManagementTaskCandidate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "project_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "task_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "keyword",
+            "in": "query",
+            "allowEmptyValue": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "business code",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "$ref": "#/definitions/ProjectManagementTaskCandidateResponse"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/project_management/task/my": {
       "post": {
         "consumes": [
@@ -5266,175 +5324,6 @@
         }
       }
     },
-    "/api/v1/project_management/task/{id}/task_dependency": {
-      "post": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "project_management_task_dependency"
-        ],
-        "summary": "create",
-        "operationId": "projectManagementTaskDependencyCreate",
-        "parameters": [
-          {
-            "type": "integer",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/ProjectManagementDependencyCreateRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/ProjectManagementDependencyDetailResponse"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/project_management/task/{id}/task_dependency/page": {
-      "post": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "project_management_task_dependency"
-        ],
-        "summary": "page",
-        "operationId": "projectManagementTaskDependencyPage",
-        "parameters": [
-          {
-            "type": "integer",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/ProjectManagementDependencyPageRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/ProjectManagementDependencyPageResponse"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/project_management/task/{id}/task_dependency/{dependency_id}": {
-      "delete": {
-        "consumes": [
-          "application/x-www-form-urlencoded"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "project_management_task_dependency"
-        ],
-        "summary": "delete",
-        "operationId": "projectManagementTaskDependencyDelete",
-        "parameters": [
-          {
-            "type": "integer",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "integer",
-            "name": "dependency_id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/EmptyResponse"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/project_management/task/{id}/transition": {
       "post": {
         "consumes": [
@@ -5480,69 +5369,6 @@
                 },
                 "data": {
                   "$ref": "#/definitions/ProjectManagementTaskDetailResponse"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/project_management/task/{task_id}/task_dependency/{id}": {
-      "put": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "project_management_task_dependency"
-        ],
-        "summary": "update",
-        "operationId": "projectManagementTaskDependencyUpdate",
-        "parameters": [
-          {
-            "type": "integer",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "integer",
-            "name": "task_id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/ProjectManagementDependencyUpdateRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/ProjectManagementDependencyDetailResponse"
                 },
                 "msg": {
                   "description": "business message",
@@ -17882,130 +17708,6 @@
         }
       }
     },
-    "ProjectManagementDependencyCreateRequest": {
-      "type": "object",
-      "required": [
-        "dependency_task_id",
-        "dependency_type",
-        "dependency_rule"
-      ],
-      "properties": {
-        "dependency_rule": {
-          "type": "string"
-        },
-        "dependency_task_id": {
-          "type": "integer"
-        },
-        "dependency_type": {
-          "type": "string"
-        }
-      }
-    },
-    "ProjectManagementDependencyDeleteRequest": {
-      "type": "object"
-    },
-    "ProjectManagementDependencyDetailResponse": {
-      "type": "object",
-      "required": [
-        "id",
-        "task_id",
-        "dependency_task_id",
-        "dependency_type",
-        "dependency_rule",
-        "created_at",
-        "updated_at"
-      ],
-      "properties": {
-        "created_at": {
-          "type": "string"
-        },
-        "dependency_rule": {
-          "type": "string"
-        },
-        "dependency_task_id": {
-          "type": "integer"
-        },
-        "dependency_type": {
-          "type": "string"
-        },
-        "id": {
-          "type": "integer"
-        },
-        "task_id": {
-          "type": "integer"
-        },
-        "updated_at": {
-          "type": "string"
-        }
-      }
-    },
-    "ProjectManagementDependencyPageRequest": {
-      "type": "object",
-      "required": [
-        "page",
-        "limit"
-      ],
-      "properties": {
-        "limit": {
-          "type": "integer",
-          "default": 20,
-          "example": 20
-        },
-        "page": {
-          "type": "integer",
-          "default": 1,
-          "example": 1
-        },
-        "predecessor": {
-          "type": "boolean"
-        }
-      }
-    },
-    "ProjectManagementDependencyPageResponse": {
-      "type": "object",
-      "required": [
-        "page",
-        "limit",
-        "total",
-        "total_page",
-        "list"
-      ],
-      "properties": {
-        "limit": {
-          "type": "integer"
-        },
-        "list": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ProjectManagementTaskDependencyEntity"
-          }
-        },
-        "page": {
-          "type": "integer"
-        },
-        "total": {
-          "type": "integer"
-        },
-        "total_page": {
-          "type": "integer"
-        }
-      }
-    },
-    "ProjectManagementDependencyUpdateRequest": {
-      "type": "object",
-      "required": [
-        "dependency_type",
-        "dependency_rule"
-      ],
-      "properties": {
-        "dependency_rule": {
-          "type": "string"
-        },
-        "dependency_type": {
-          "type": "string"
-        }
-      }
-    },
     "ProjectManagementMemberAddRequest": {
       "type": "object",
       "required": [
@@ -18706,6 +18408,38 @@
         }
       }
     },
+    "ProjectManagementTaskCandidateEntity": {
+      "type": "object",
+      "required": [
+        "id",
+        "title"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "ProjectManagementTaskCandidateRequest": {
+      "type": "object"
+    },
+    "ProjectManagementTaskCandidateResponse": {
+      "type": "object",
+      "required": [
+        "list"
+      ],
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProjectManagementTaskCandidateEntity"
+          }
+        }
+      }
+    },
     "ProjectManagementTaskCreateRequest": {
       "type": "object",
       "required": [
@@ -18785,6 +18519,32 @@
         }
       }
     },
+    "ProjectManagementTaskDependencyRequest": {
+      "type": "object",
+      "required": [
+        "task_id",
+        "dependency_task_id",
+        "dependency_type",
+        "dependency_rule"
+      ],
+      "properties": {
+        "dependency_rule": {
+          "type": "string"
+        },
+        "dependency_task_id": {
+          "type": "integer"
+        },
+        "dependency_type": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "task_id": {
+          "type": "integer"
+        }
+      }
+    },
     "ProjectManagementTaskDetailRequest": {
       "type": "object"
     },
@@ -18809,7 +18569,9 @@
         "overdue",
         "overdue_seconds",
         "created_at",
-        "updated_at"
+        "updated_at",
+        "children",
+        "dependencies"
       ],
       "properties": {
         "assignees": {
@@ -18824,6 +18586,12 @@
             "$ref": "#/definitions/ProjectManagementAttachmentEntity"
           }
         },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProjectManagementTaskEntity"
+          }
+        },
         "created_at": {
           "type": "string"
         },
@@ -18832,6 +18600,12 @@
         },
         "creator_name": {
           "type": "string"
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProjectManagementTaskDependencyEntity"
+          }
         },
         "description": {
           "type": "string"
@@ -18919,7 +18693,9 @@
         "overdue",
         "overdue_seconds",
         "created_at",
-        "updated_at"
+        "updated_at",
+        "children",
+        "dependencies"
       ],
       "properties": {
         "assignees": {
@@ -18932,6 +18708,12 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/ProjectManagementAttachmentEntity"
+          }
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProjectManagementTaskEntity"
           }
         },
         "created_at": {
@@ -19402,6 +19184,12 @@
           "type": "array",
           "items": {
             "type": "integer"
+          }
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProjectManagementTaskDependencyRequest"
           }
         },
         "description": {
@@ -21841,7 +21629,7 @@
       }
     }
   },
-  "x-date": "2026-08-25 17:10:14",
+  "x-date": "2026-08-26 13:17:24",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

@@ -82,8 +82,8 @@ func TestCreateTaskKeepsWorkflowAndTypeSnapshots(t *testing.T) {
 	logic := NewProjectManagementTaskLogic(NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}))
 	actor := utils.JwtUser{OrganizationId: 1, OrganizationUserId: 20, Username: "Creator"}
 	task, err := logic.Create(context.Background(), actor, dto.ProjectManagementTaskCreateDto{
-		ProjectManagementTaskDto:     dto.ProjectManagementTaskDto{ProjectId: 10, Title: "Inspect roof"},
-		TaskTypeId:                   500,
+		ProjectManagementTaskDto:    dto.ProjectManagementTaskDto{ProjectId: 10, Title: "Inspect roof"},
+		TaskTypeId:                  500,
 		AssigneeOrganizationUserIds: []int64{21},
 	})
 	if err != nil || task.StageId != 200 || task.Phase != constants.ProjectManagementStagePhasePending || len(task.Assignees) != 1 || task.Assignees[0].OrganizationUserName != "Executor" || task.TaskType == nil || task.TaskType.Id != 500 || task.TaskType.Name != "Inspection" || task.TaskType.Description != "Initial visit" || task.TaskType.Color != "#123456" {
@@ -92,9 +92,18 @@ func TestCreateTaskKeepsWorkflowAndTypeSnapshots(t *testing.T) {
 	if err = db.Exec("INSERT INTO files (entity_type, entity_id, file_url, file_name, storage_type) VALUES (?, ?, 'https://example.test/task.pdf', 'task.pdf', 'Aws S3')", constants.FileEntityTypeProjectManagementTask, task.Id).Error; err != nil {
 		t.Fatal(err)
 	}
+	if err = db.Exec("INSERT INTO project_management_tasks (id, project_id, organization_id, stage_id, creator_id, title) VALUES (900, 11, 1, 200, 20, 'Other project parent')").Error; err != nil {
+		t.Fatal(err)
+	}
+	if _, err = logic.Create(context.Background(), actor, dto.ProjectManagementTaskCreateDto{ProjectManagementTaskDto: dto.ProjectManagementTaskDto{ProjectId: 10, ParentTaskId: 900, Title: "Cross-project child"}}); err == nil {
+		t.Fatal("child task was added to a parent from another project")
+	}
 	task, err = logic.Detail(context.Background(), actor, task.Id)
 	if err != nil || len(task.Attachments) != 1 || task.Attachments[0].FileName != "task.pdf" {
 		t.Fatalf("task attachments were not returned: %#v, %v", task, err)
+	}
+	if _, err = logic.Update(context.Background(), actor, task.Id, dto.ProjectManagementTaskUpdateDto{Title: task.Title, Dependencies: []*dto.ProjectManagementTaskDependencyDto{{TaskId: task.Id, DependencyTaskId: 900, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}}}); err == nil {
+		t.Fatal("task dependency was added to another project")
 	}
 	assigneeId := task.Assignees[0].Id
 	task, err = logic.Update(context.Background(), actor, task.Id, dto.ProjectManagementTaskUpdateDto{Title: task.Title, TaskTypeId: 500, AssigneeOrganizationUserIds: []int64{21, 22}})
@@ -118,6 +127,20 @@ func TestCreateTaskKeepsWorkflowAndTypeSnapshots(t *testing.T) {
 	})
 	if err != nil || len(unassignedTask.Assignees) != 0 {
 		t.Fatalf("unassigned task was not created: %#v, %v", unassignedTask, err)
+	}
+	task, err = logic.Update(context.Background(), actor, task.Id, dto.ProjectManagementTaskUpdateDto{Title: task.Title, Dependencies: []*dto.ProjectManagementTaskDependencyDto{{TaskId: task.Id, DependencyTaskId: unassignedTask.Id, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}}})
+	if err != nil || len(task.Dependencies) != 1 {
+		t.Fatalf("task dependency was not created: %#v, %v", task, err)
+	}
+	task, err = logic.Update(context.Background(), actor, task.Id, dto.ProjectManagementTaskUpdateDto{Title: task.Title})
+	if err != nil || len(task.Dependencies) != 0 {
+		t.Fatalf("omitted task dependencies did not clear dependencies: %#v, %v", task, err)
+	}
+	if err = db.Exec("INSERT INTO project_management_task_dependencies (task_id, dependency_task_id, dependency_type, dependency_rule) VALUES (?, ?, 'PreTask', 'FS')", unassignedTask.Id, task.Id).Error; err != nil {
+		t.Fatal(err)
+	}
+	if _, err = logic.Update(context.Background(), actor, task.Id, dto.ProjectManagementTaskUpdateDto{Title: task.Title, Dependencies: []*dto.ProjectManagementTaskDependencyDto{{TaskId: task.Id, DependencyTaskId: unassignedTask.Id, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}}}); err == nil {
+		t.Fatal("task dependency update created a cycle")
 	}
 	if _, err = logic.Create(context.Background(), utils.JwtUser{OrganizationId: 1, OrganizationUserId: 23, Username: "Not member"}, dto.ProjectManagementTaskCreateDto{ProjectManagementTaskDto: dto.ProjectManagementTaskDto{ProjectId: 10, Title: "Denied"}}); err == nil {
 		t.Fatal("non-member created a task")

@@ -4,6 +4,8 @@ info(
     title: "borrower-project-management-task-api"
     desc: "borrower project management task types"
     version: "v1"
+    useDefinitions: true
+    wrapCodeMsg:    true
 )
 
 import "../../../../domains/zeebee/api/project_management_entity.api"
@@ -33,6 +35,19 @@ type (
         List []*ProjectManagementTaskPageEntity `json:"list"`
     }
 
+    ProjectManagementTaskCandidateRequest {
+        ProjectId int64  `form:"project_id" validate:"required,gt=0"`
+        TaskId    int64  `form:"task_id" validate:"required,gt=0"`
+        Keyword   string `form:"keyword,optional"`
+    }
+    ProjectManagementTaskCandidateEntity {
+        Id    int64  `json:"id"`
+        Title string `json:"title"`
+    }
+    ProjectManagementTaskCandidateResponse {
+        List []*ProjectManagementTaskCandidateEntity `json:"list"`
+    }
+
     ProjectManagementTaskDetailResponse {
         ProjectManagementTaskEntity
     }
@@ -58,6 +73,14 @@ type (
         ProjectId int64 `form:"project_id" validate:"required,gt=0"`
     }
 
+    ProjectManagementTaskDependencyRequest {
+        Id int64 `json:"id,optional" validate:"gte=0"`
+        TaskId int64 `json:"task_id" validate:"required,gt=0"`
+        DependencyTaskId int64 `json:"dependency_task_id" validate:"required,gt=0"`
+        DependencyType string `json:"dependency_type" validate:"required,oneof=PreTask PostTask"`
+        DependencyRule string `json:"dependency_rule" validate:"required,oneof=FF FS SS SF"`
+    }
+
     ProjectManagementTaskUpdateRequest {
         Id int64 `path:"id" validate:"required,gt=0"`
         Title string `json:"title" validate:"required,max=255"`
@@ -67,6 +90,7 @@ type (
         EndAt string `json:"end_at,optional" validate:"omitempty,datetime=01/02/2006"`
         TaskTypeId int64 `json:"task_type_id,optional"`
         AssigneeOrganizationUserIds []int64 `json:"assignee_organization_user_ids,optional"`
+        Dependencies []*ProjectManagementTaskDependencyRequest `json:"dependencies,optional"`
     }
 
     ProjectManagementTaskTransitionRequest {
@@ -121,6 +145,10 @@ service borrower-api {
     @doc "page"
     @handler Page
     post /project_management/task/page (ProjectManagementTaskPageRequest) returns (ProjectManagementTaskPageResponse)
+
+    @doc "candidate"
+    @handler Candidate
+    get /project_management/task/candidate (ProjectManagementTaskCandidateRequest) returns (ProjectManagementTaskCandidateResponse)
 
     @doc "create"
     @handler Create

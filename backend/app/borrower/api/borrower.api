@@ -34,7 +34,6 @@ import "desc/project_management_task_type.api"
 import "desc/project_management_project.api"
 import "desc/project_management_project_member.api"
 import "desc/project_management_task.api"
-import "desc/project_management_task_dependency.api"
 import "desc/operation.api"
 import "desc/base.api"
 

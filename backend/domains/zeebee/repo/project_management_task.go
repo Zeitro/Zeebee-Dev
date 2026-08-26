@@ -32,7 +32,11 @@ func (r *ProjectManagementTaskRepo) FindByOrganization(ctx context.Context, id, 
 
 func (r *ProjectManagementTaskRepo) FindDetailByOrganization(ctx context.Context, id, organizationId int64) (*model.ProjectManagementTask, error) {
 	task := new(model.ProjectManagementTask)
-	err := r.Client(ctx).Where("id = ? AND organization_id = ?", id, organizationId).First(task).Error
+	err := r.Client(ctx).
+		Preload("Children").
+		Preload("Attachments").
+		Preload("Dependencies").
+		Where("id = ? AND organization_id = ?", id, organizationId).First(task).Error
 	if err == nil {
 		err = r.assigneeRepo.Client(ctx).Where("task_id = ? AND stage_id = ?", task.Id, task.StageId).Order("id ASC").Find(&task.Assignees).Error
 	}
@@ -71,6 +75,22 @@ func (r *ProjectManagementTaskRepo) PageByProject(ctx context.Context, organizat
 		}
 	}
 	return r.BaseRepo.Page(query, gormx.PageRequest{Page: input.Page, Limit: input.Limit})
+}
+
+func (r *ProjectManagementTaskRepo) CandidateByProject(ctx context.Context, organizationId int64, input dto.ProjectManagementTaskCandidateDto) ([]*dto.ProjectManagementTaskCandidateEntityDto, error) {
+	query := r.Client(ctx).
+		Select("id, title").
+		Where("organization_id = ? AND project_id = ? AND phase IN ?", organizationId, input.ProjectId, []constants.ProjectManagementStagePhase{constants.ProjectManagementStagePhasePending, constants.ProjectManagementStagePhaseInProgress}).
+		Order("title ASC, id ASC")
+	if input.TaskId != 0 {
+		query = query.Where("id <> ?", input.TaskId)
+	}
+	if input.Keyword != "" {
+		query = query.Where("LOWER(title) LIKE LOWER(?)", "%"+input.Keyword+"%")
+	}
+	candidates := make([]*dto.ProjectManagementTaskCandidateEntityDto, 0)
+	err := query.Find(&candidates).Error
+	return candidates, errorx.WithStack(err)
 }
 
 func (r *ProjectManagementTaskRepo) PageMine(ctx context.Context, organizationId, organizationUserId int64, input dto.ProjectManagementMyTaskPageRequestDto) (gormx.PageResponse[*model.ProjectManagementTask], error) {

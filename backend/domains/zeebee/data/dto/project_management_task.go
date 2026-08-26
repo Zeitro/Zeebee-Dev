@@ -30,18 +30,19 @@ type ProjectManagementTaskOverdueDto struct {
 
 type ProjectManagementTaskCreateDto struct {
 	ProjectManagementTaskDto
-	TaskTypeId                   int64
+	TaskTypeId                  int64
 	AssigneeOrganizationUserIds []int64
 }
 
 type ProjectManagementTaskUpdateDto struct {
-	Title                        string
-	Description                  string
-	Priority                     constants.ProjectManagementPriority
-	StartAt                      *sql.NullTime
-	EndAt                        *sql.NullTime
-	TaskTypeId                   int64
+	Title                       string
+	Description                 string
+	Priority                    constants.ProjectManagementPriority
+	StartAt                     *sql.NullTime
+	EndAt                       *sql.NullTime
+	TaskTypeId                  int64
 	AssigneeOrganizationUserIds []int64
+	Dependencies                []*ProjectManagementTaskDependencyDto
 }
 
 type ProjectManagementTaskAssigneeDto struct {
@@ -59,6 +60,17 @@ type ProjectManagementTaskFilterDto struct {
 	AssigneeId int64
 	Keyword    string
 	Overdue    *bool
+}
+
+type ProjectManagementTaskCandidateDto struct {
+	ProjectId int64
+	TaskId    int64
+	Keyword   string
+}
+
+type ProjectManagementTaskCandidateEntityDto struct {
+	Id    int64
+	Title string
 }
 
 type ProjectManagementTaskPageRequestDto struct {

@@ -947,6 +947,8 @@ message ProjectManagementTaskEntity {
   string created_at = 16;
   string updated_at = 17;
   string phase = 19;
+  repeated ProjectManagementTaskEntity children = 20;
+  repeated ProjectManagementTaskDependencyEntity dependencies = 21;
 }
 
 message ProjectManagementTaskPageEntity {
