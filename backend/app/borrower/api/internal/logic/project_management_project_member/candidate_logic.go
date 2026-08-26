@@ -41,5 +41,5 @@ func (l *CandidateLogic) Candidate(req *types.ProjectManagementMemberCandidateRe
 	if err != nil {
 		return nil, err
 	}
-	return &types.ProjectManagementMemberCandidateResponse{Lists: *listData}, nil
+	return &types.ProjectManagementMemberCandidateResponse{List: *listData}, nil
 }

@@ -4,6 +4,8 @@ info(
     title: "borrower-operation-api"
     desc: "borrower operation types"
     version: "v1"
+    useDefinitions: true
+    wrapCodeMsg:    true
 )
 
 import "../../../../domains/zeebee/api/project_management_entity.api"

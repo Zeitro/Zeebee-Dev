@@ -1802,7 +1802,7 @@ type ProjectManagementMemberCandidateRequest struct {
 }
 
 type ProjectManagementMemberCandidateResponse struct {
-	Lists []*ProjectManagementMemberCandidateEntity `json:"lists"`
+	List []*ProjectManagementMemberCandidateEntity `json:"list"`
 }
 
 type ProjectManagementMemberDeleteRequest struct {
@@ -2058,7 +2058,7 @@ type ProjectManagementTaskTypeAllRequest struct {
 }
 
 type ProjectManagementTaskTypeAllResponse struct {
-	Lists []*ProjectManagementTaskTypeEntity `json:"lists"`
+	List []*ProjectManagementTaskTypeEntity `json:"list"`
 }
 
 type ProjectManagementTaskTypeCreateRequest struct {
@@ -2117,7 +2117,7 @@ type ProjectManagementWorkflowAllRequest struct {
 }
 
 type ProjectManagementWorkflowAllResponse struct {
-	Lists []*ProjectManagementWorkflowEntity `json:"lists"`
+	List []*ProjectManagementWorkflowEntity `json:"list"`
 }
 
 type ProjectManagementWorkflowCreateRequest struct {

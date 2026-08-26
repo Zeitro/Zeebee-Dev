@@ -18049,10 +18049,10 @@
     "ProjectManagementMemberCandidateResponse": {
       "type": "object",
       "required": [
-        "lists"
+        "list"
       ],
       "properties": {
-        "lists": {
+        "list": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/ProjectManagementMemberCandidateEntity"
@@ -18943,6 +18943,12 @@
         "creator_name": {
           "type": "string"
         },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProjectManagementTaskDependencyEntity"
+          }
+        },
         "description": {
           "type": "string"
         },
@@ -19229,10 +19235,10 @@
     "ProjectManagementTaskTypeAllResponse": {
       "type": "object",
       "required": [
-        "lists"
+        "list"
       ],
       "properties": {
-        "lists": {
+        "list": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/ProjectManagementTaskTypeEntity"
@@ -19424,10 +19430,10 @@
     "ProjectManagementWorkflowAllResponse": {
       "type": "object",
       "required": [
-        "lists"
+        "list"
       ],
       "properties": {
-        "lists": {
+        "list": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/ProjectManagementWorkflowEntity"

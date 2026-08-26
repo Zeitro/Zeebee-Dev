@@ -4,6 +4,8 @@ info(
     title: "borrower-project-management-project-api"
     desc: "borrower project management project types"
     version: "v1"
+    useDefinitions: true
+    wrapCodeMsg:    true
 )
 
 import "../../../../domains/zeebee/api/project_management_entity.api"
@@ -32,7 +34,7 @@ type (
     }
 
     ProjectManagementProjectDetailResponse {
-        ProjectManagementProjectEntity
+       ProjectManagementProjectEntity
     }
 
     ProjectManagementProjectCreateRequest {

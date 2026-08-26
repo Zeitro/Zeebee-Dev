@@ -4,6 +4,8 @@ info (
     title: "borrower-project-management-project-member-api"
     desc: "borrower project management project member types"
     version: "v1"
+    useDefinitions: true
+    wrapCodeMsg:    true
 )
 
 import "../../../../domains/zeebee/api/project_management_entity.api"
@@ -43,7 +45,7 @@ type (
         Email              string `json:"email"`
     }
     ProjectManagementMemberCandidateResponse {
-        Lists []*ProjectManagementMemberCandidateEntity `json:"lists"`
+        List []*ProjectManagementMemberCandidateEntity `json:"list"`
     }
     ProjectManagementMemberDetailRequest {
         Id        int64 `path:"id" validate:"required,gt=0"`

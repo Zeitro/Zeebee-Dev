@@ -35,5 +35,5 @@ func (l *AllLogic) All(req *types.ProjectManagementTaskTypeAllRequest) (resp *ty
 	if err != nil {
 		return nil, err
 	}
-	return &types.ProjectManagementTaskTypeAllResponse{Lists: *data}, nil
+	return &types.ProjectManagementTaskTypeAllResponse{List: *data}, nil
 }
