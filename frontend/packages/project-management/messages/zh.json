@@ -29,6 +29,8 @@
 		"namePlaceholder": "请输入项目名称",
 		"description": "项目描述",
 		"descriptionPlaceholder": "请输入项目描述",
+		"workflow": "工作流",
+		"workflowPlaceholder": "请选择工作流",
 		"createSuccess": "项目已创建",
 		"openKanban": "打开看板",
 		"openSettings": "打开设置"

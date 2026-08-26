@@ -29,6 +29,8 @@
 		"namePlaceholder": "Enter project name",
 		"description": "Description",
 		"descriptionPlaceholder": "Enter description",
+		"workflow": "Workflow",
+		"workflowPlaceholder": "Select a workflow",
 		"createSuccess": "Project created",
 		"openKanban": "Open board",
 		"openSettings": "Open settings"

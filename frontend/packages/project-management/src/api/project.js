@@ -2,17 +2,24 @@
  * 项目管理接口。分页与三端 FilterTable 协议一致：
  * POST `/project_management/project/page`，body `{ page, limit, filter }`，
  * 响应 data 为 `{ list, total }`（另含 page / limit / total_page）。
+ * 创建：POST `/project_management/project`。
+ * 看板 / 成员仍走旧路径 `/projects/:id`，待对应接口迁移后再切。
  */
 
-export const PROJECT_PAGE_API = '/project_management/project/page';
-export const PROJECT_API = '/projects';
+export const PROJECT_API = '/project_management/project';
+export const PROJECT_PAGE_API = `${PROJECT_API}/page`;
+
+/** 创建项目默认工作流模板 id；模板选择器未接前先固定 */
+export const DEFAULT_WORKFLOW_TEMPLATE_ID = 1;
+
+const PROJECT_LEGACY_API = '/projects';
 
 /**
  * @param {number|string} id
  * @returns {string}
  */
 export function getProjectApi(id) {
-	return `${PROJECT_API}/${id}`;
+	return `${PROJECT_LEGACY_API}/${id}`;
 }
 
 /**
@@ -20,7 +27,7 @@ export function getProjectApi(id) {
  * @returns {string}
  */
 export function getProjectMembersApi(id) {
-	return `${PROJECT_API}/${id}/members`;
+	return `${PROJECT_LEGACY_API}/${id}/members`;
 }
 
 /**
@@ -29,7 +36,7 @@ export function getProjectMembersApi(id) {
  * @returns {string}
  */
 export function getProjectMemberApi(projectId, userId) {
-	return `${PROJECT_API}/${projectId}/members/${userId}`;
+	return `${PROJECT_LEGACY_API}/${projectId}/members/${userId}`;
 }
 
 /**
@@ -38,5 +45,5 @@ export function getProjectMemberApi(projectId, userId) {
  * @returns {string}
  */
 export function getProjectMemberRoleApi(projectId, userId) {
-	return `${PROJECT_API}/${projectId}/members/${userId}/role`;
+	return `${PROJECT_LEGACY_API}/${projectId}/members/${userId}/role`;
 }

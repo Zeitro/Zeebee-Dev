@@ -4,9 +4,10 @@
 
 export { createRequest } from '@repo/shared-methods/utils';
 
-import { PROJECT_API } from './project';
-
 export const WORKFLOW_API = '/workflows';
+
+/** 全量工作流（创建项目下拉）：GET，响应 data 为 `{ list }` */
+export const WORKFLOW_ALL_API = '/project_management/workflow/all';
 
 /**
  * @param {Record<string, string|number|undefined|null>} params
@@ -27,7 +28,7 @@ export function buildWorkflowQuery(params) {
  * @returns {string}
  */
 export function getProjectWorkflowApi(projectId) {
-	return `${PROJECT_API}/${projectId}/workflow`;
+	return `/projects/${projectId}/workflow`;
 }
 
 /**
