@@ -65,9 +65,9 @@ func (l *ProjectManagementWorkflowLogic) ensureDefault(ctx context.Context, orga
 			return err
 		}
 		stages := []*model.ProjectManagementWorkflowStage{
-			{WorkflowId: workflow.Id, Name: "Pending", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 10},
-			{WorkflowId: workflow.Id, Name: "In progress", Phase: constants.ProjectManagementStagePhaseInProgress, SortOrder: 20},
-			{WorkflowId: workflow.Id, Name: "Finished", Phase: constants.ProjectManagementStagePhaseFinished, SortOrder: 30},
+			{WorkflowId: workflow.Id, Name: "Pending", Phase: constants.ProjectManagementStagePhasePending, Color: "#3b82f6", SortOrder: 10},
+			{WorkflowId: workflow.Id, Name: "In progress", Phase: constants.ProjectManagementStagePhaseInProgress, Color: "#f59e0b", SortOrder: 20},
+			{WorkflowId: workflow.Id, Name: "Finished", Phase: constants.ProjectManagementStagePhaseFinished, Color: "#22c55e", SortOrder: 30},
 		}
 		if err = tx.WithContext(ctx).Create(&stages).Error; err != nil {
 			return errorx.WithStack(err)

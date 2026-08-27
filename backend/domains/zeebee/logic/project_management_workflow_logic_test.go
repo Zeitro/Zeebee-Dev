@@ -148,6 +148,34 @@ func TestProjectManagementWorkflowDeleteRejectsProjectWorkflow(t *testing.T) {
 	}
 }
 
+func TestProjectManagementWorkflowEnsureDefaultSetsStageColors(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(fmt.Sprintf("file:%s?mode=memory&cache=shared", t.Name())), &gorm.Config{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, statement := range []string{
+		"CREATE TABLE project_management_workflows (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, kind text not null, organization_id integer not null, project_id integer not null default 0, name text not null default '', description text not null default '', is_default boolean not null default false, source_template_id integer not null default 0, source_template_name text not null default '')",
+		"CREATE TABLE project_management_workflow_stages (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, workflow_id integer not null, name text not null default '', phase text not null, color text not null default '', sort_order integer not null)",
+		"CREATE TABLE project_management_workflow_transitions (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, workflow_id integer not null, name text not null default '', from_stage_id integer not null, to_stage_id integer not null, allowed_actor_types json not null default '[]')",
+	} {
+		if err = db.Exec(statement).Error; err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	logic := NewProjectManagementWorkflowLogic(NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}))
+	if err = logic.ensureDefault(context.Background(), 1); err != nil {
+		t.Fatalf("ensure default workflow: %v", err)
+	}
+	var stages []model.ProjectManagementWorkflowStage
+	if err = db.Order("sort_order").Find(&stages).Error; err != nil {
+		t.Fatalf("list default stages: %v", err)
+	}
+	if len(stages) != 3 || stages[0].Color != "#3b82f6" || stages[1].Color != "#f59e0b" || stages[2].Color != "#22c55e" {
+		t.Fatalf("unexpected default stage colors: %#v", stages)
+	}
+}
+
 func TestProjectManagementWorkflowCreateCopiesDefaultAndUpdateReplacesDefinition(t *testing.T) {
 	db, err := gorm.Open(sqlite.Open(fmt.Sprintf("file:%s?mode=memory&cache=shared", t.Name())), &gorm.Config{})
 	if err != nil {
