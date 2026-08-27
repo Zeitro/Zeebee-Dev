@@ -13,20 +13,24 @@ import "../../../../domains/zeebee/api/project_management_entity.api"
 import "base.api"
 
 type (
+    // member input
     ProjectManagementMemberInput {
         OrganizationUserId int64  `json:"organization_user_id" validate:"required,gt=0"`
         Role               string `json:"role" validate:"required,oneof=ProjectAdmin TaskExecutor"`
     }
+    // page filter
     ProjectManagementMemberPageFilter {
         ProjectId int64  `json:"project_id" validate:"required,gt=0"`
         Keyword   string `json:"keyword,optional"`
         Role      string `json:"role,optional" validate:"omitempty,oneof=ProjectOwner ProjectAdmin TaskExecutor"`
     }
+    // page request
     ProjectManagementMemberPageRequest {
         Page   int64                             `json:"page,default=1"`
         Limit  int64                             `json:"limit,default=20"`
         Filter ProjectManagementMemberPageFilter `json:"filter" validate:"required"`
     }
+    // page response
     ProjectManagementMemberPageResponse {
         Page      int64                            `json:"page"`
         Limit     int64                            `json:"limit"`
@@ -34,41 +38,56 @@ type (
         TotalPage int64                            `json:"total_page"`
         List      []*ProjectManagementMemberEntity `json:"list"`
     }
-    ProjectManagementMemberCandidateRequest {
-        ProjectId int64  `form:"project_id" validate:"required,gt=0"`
-        Keyword   string `form:"keyword,optional"`
-        Purpose   string `form:"purpose" validate:"required,oneof=AddMember TransferOwner ProjectMember"`
-    }
+)
+
+// candidate request
+type ProjectManagementMemberCandidateRequest {
+    ProjectId int64  `form:"project_id" validate:"required,gt=0"`
+    Keyword   string `form:"keyword,optional"`
+    Purpose   string `form:"purpose" validate:"required,oneof=AddMember TransferOwner ProjectMember"`
+}
+
+type (
     ProjectManagementMemberCandidateEntity {
         OrganizationUserId int64  `json:"organization_user_id"`
         FullName           string `json:"full_name"`
         Email              string `json:"email"`
     }
+    // candidate response
     ProjectManagementMemberCandidateResponse {
         List []*ProjectManagementMemberCandidateEntity `json:"list"`
     }
-    ProjectManagementMemberDetailRequest {
-        Id        int64 `path:"id" validate:"required,gt=0"`
-        ProjectId int64 `form:"project_id" validate:"required,gt=0"`
-    }
-    ProjectManagementMemberDetailResponse {
-        ProjectManagementMemberEntity
-    }
-    ProjectManagementMemberAddRequest {
-        ProjectId int64                           `json:"project_id" validate:"required,gt=0"`
-        Members   []*ProjectManagementMemberInput `json:"members" validate:"required,min=1,dive"`
-    }
-    ProjectManagementMemberRoleUpdateRequest {
-        Id        int64  `path:"id" validate:"required,gt=0"`
-        ProjectId int64  `json:"project_id" validate:"required,gt=0"`
-        Role      string `json:"role" validate:"required,oneof=ProjectAdmin TaskExecutor"`
-    }
-    ProjectManagementMemberDeleteRequest {
-        Id        int64 `path:"id" validate:"required,gt=0"`
-        ProjectId int64 `json:"project_id" validate:"required,gt=0"`
-        //        UserId int64 `path:"user_id" validate:"required,gt=0"`
-    }
 )
+
+// detail request
+type ProjectManagementMemberDetailRequest {
+    Id        int64 `path:"id" validate:"required,gt=0"`
+    ProjectId int64 `form:"project_id" validate:"required,gt=0"`
+}
+
+// detail response
+type ProjectManagementMemberDetailResponse {
+    ProjectManagementMemberEntity
+}
+
+// add member request
+type ProjectManagementMemberAddRequest {
+    ProjectId int64                           `json:"project_id" validate:"required,gt=0"`
+    Members   []*ProjectManagementMemberInput `json:"members" validate:"required,min=1,dive"`
+}
+
+// role update request
+type ProjectManagementMemberRoleUpdateRequest {
+    Id        int64  `path:"id" validate:"required,gt=0"`
+    ProjectId int64  `json:"project_id" validate:"required,gt=0"`
+    Role      string `json:"role" validate:"required,oneof=ProjectAdmin TaskExecutor"`
+}
+
+// delete request
+type ProjectManagementMemberDeleteRequest {
+    Id        int64 `path:"id" validate:"required,gt=0"`
+    ProjectId int64 `json:"project_id" validate:"required,gt=0"`
+}
 
 @server (
     desc: "borrower project management project member"

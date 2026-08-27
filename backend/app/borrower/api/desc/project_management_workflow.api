@@ -5,39 +5,45 @@ info (
     desc: "borrower project management workflow types"
     version: "v1"
     useDefinitions: true
-    wrapCodeMsg:    true
+    wrapCodeMsg: true
 )
 
 import "../../../../domains/zeebee/api/project_management_entity.api"
 
 import "base.api"
+
 import "project_management.api"
 
+// stage swap order request
+type ProjectManagementWorkflowStageSwapOrderRequest {
+    Id          int64 `path:"id" validate:"required,gt=0"`
+    FromStageId int64 `json:"from_stage_id" validate:"required,gt=0"`
+    ToStageId   int64 `json:"to_stage_id" validate:"required,gt=0"`
+}
+
 type (
-    ProjectManagementWorkflowStageSwapOrderRequest {
-        Id int64 `path:"id" validate:"required,gt=0"`
-        FromStageId int64 `json:"from_stage_id" validate:"required,gt=0"`
-        ToStageId int64 `json:"to_stage_id" validate:"required,gt=0"`
-    }
+    // all request
     ProjectManagementWorkflowAllRequest {}
     ProjectManagementWorkflowAllResponse {
         List []*ProjectManagementWorkflowEntity `json:"list"`
     }
-    ProjectManagementWorkflowDetailResponse {
-        ProjectManagementWorkflowEntity
-    }
-    ProjectManagementWorkflowCreateRequest {
-        Name        string `json:"name" validate:"required,max=100"`
-        Description string `json:"description,optional" validate:"max=500"`
-    }
-    ProjectManagementWorkflowUpdateRequest {
-        Id          int64  `path:"id" validate:"required,gt=0"`
-        Name        string `json:"name" validate:"required,max=100"`
-        Description string `json:"description,optional" validate:"max=500"`
-        Stages      []*ProjectManagementWorkflowUpdateStage `json:"stages" validate:"required,min=1,dive"`
-    }
-
 )
+
+type ProjectManagementWorkflowDetailResponse {
+    ProjectManagementWorkflowEntity
+}
+
+type ProjectManagementWorkflowCreateRequest {
+    Name        string `json:"name" validate:"required,max=100"`
+    Description string `json:"description,optional" validate:"max=500"`
+}
+
+type ProjectManagementWorkflowUpdateRequest {
+    Id          int64                                   `path:"id" validate:"required,gt=0"`
+    Name        string                                  `json:"name" validate:"required,max=100"`
+    Description string                                  `json:"description,optional" validate:"max=500"`
+    Stages      []*ProjectManagementWorkflowUpdateStage `json:"stages" validate:"required,min=1,dive"`
+}
 
 @server (
     desc: "borrower project management workflow"
@@ -75,5 +81,4 @@ service borrower-api {
     @doc "delete"
     @handler Delete
     delete /project_management/workflow/:id (PathIdRequest) returns (EmptyResponse)
-
 }
