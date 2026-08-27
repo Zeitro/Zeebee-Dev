@@ -278,7 +278,7 @@ func (l *ProjectManagementWorkflowLogic) Update(ctx context.Context, claim utils
 }
 
 func (l *ProjectManagementWorkflowLogic) assignNewStageSortOrders(ctx context.Context, tx *gorm.DB, workflowId int64, definition *dto.ProjectManagementWorkflowDto) error {
-	maxSortOrder, err := l.repos.ProjectManagementWorkflowRepo.MaxStageSortOrderWithTx(ctx, tx, workflowId)
+	maxSortOrder, err := l.repos.ProjectManagementWorkflowStageRepo.MaxSortOrderWithTx(ctx, tx, workflowId)
 	if err != nil {
 		return err
 	}
@@ -370,7 +370,7 @@ func (l *ProjectManagementWorkflowLogic) StageCreate(ctx context.Context, claim 
 		if _, err = l.repos.ProjectManagementWorkflowRepo.LockTemplateWithTx(ctx, tx, workflowId, claim.OrganizationId); err != nil {
 			return projectManagementNotFound(err, "workflow not found")
 		}
-		maxSortOrder, err := l.repos.ProjectManagementWorkflowRepo.MaxStageSortOrderWithTx(ctx, tx, workflowId)
+		maxSortOrder, err := l.repos.ProjectManagementWorkflowStageRepo.MaxSortOrderWithTx(ctx, tx, workflowId)
 		if err != nil {
 			return err
 		}

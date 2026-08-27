@@ -230,8 +230,9 @@ func TestStageSortOrderUsesWorkflowScope(t *testing.T) {
 		}
 	}
 	repo := NewProjectManagementWorkflowRepo(db)
+	stageRepo := NewProjectManagementWorkflowStageRepo(db)
 	if err := db.Transaction(func(tx *gorm.DB) error {
-		maxSortOrder, err := repo.MaxStageSortOrderWithTx(context.Background(), tx, 1)
+		maxSortOrder, err := stageRepo.MaxSortOrderWithTx(context.Background(), tx, 1)
 		if err != nil || maxSortOrder != 20 {
 			t.Fatalf("unexpected max sort order: %d, %v", maxSortOrder, err)
 		}

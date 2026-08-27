@@ -66,15 +66,6 @@ func (r *ProjectManagementWorkflowRepo) ListStagesWithTx(ctx context.Context, tx
 	return r.stageRepo.FindAllWithTx(ctx, tx, map[string]any{"workflow_id": workflowId})
 }
 
-func (r *ProjectManagementWorkflowRepo) MaxStageSortOrderWithTx(ctx context.Context, tx *gorm.DB, workflowId int64) (int, error) {
-	var maxSortOrder int
-	err := tx.WithContext(ctx).Model(&model.ProjectManagementWorkflowStage{}).
-		Where("workflow_id = ?", workflowId).
-		Select("COALESCE(MAX(sort_order), 0)").
-		Scan(&maxSortOrder).Error
-	return maxSortOrder, errorx.WithStack(err)
-}
-
 func (r *ProjectManagementWorkflowRepo) FindProjectDefinitionWithTx(ctx context.Context, tx *gorm.DB, projectId, organizationId int64) (*model.ProjectManagementWorkflow, error) {
 	workflow := new(model.ProjectManagementWorkflow)
 	err := tx.WithContext(ctx).
