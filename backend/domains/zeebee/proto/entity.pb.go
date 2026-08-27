@@ -7165,6 +7165,7 @@ type ProjectManagementWorkflowStageEntity struct {
 	CreatedAt     string                                       `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     string                                       `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	Transitions   []*ProjectManagementWorkflowTransitionEntity `protobuf:"bytes,8,rep,name=transitions,proto3" json:"transitions,omitempty"`
+	Description   string                                       `protobuf:"bytes,9,opt,name=description,proto3" json:"description,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -7253,6 +7254,13 @@ func (x *ProjectManagementWorkflowStageEntity) GetTransitions() []*ProjectManage
 		return x.Transitions
 	}
 	return nil
+}
+
+func (x *ProjectManagementWorkflowStageEntity) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
 }
 
 type ProjectManagementWorkflowTransitionEntity struct {
@@ -9357,7 +9365,7 @@ const file_proto_entity_proto_rawDesc = "" +
 	"created_at\x18\n" +
 	" \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\v \x01(\tR\tupdatedAtJ\x04\b\x04\x10\x05\"\xa7\x02\n" +
+	"updated_at\x18\v \x01(\tR\tupdatedAtJ\x04\b\x04\x10\x05\"\xc9\x02\n" +
 	"$ProjectManagementWorkflowStageEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
@@ -9369,7 +9377,8 @@ const file_proto_entity_proto_rawDesc = "" +
 	"created_at\x18\x06 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
 	"updated_at\x18\a \x01(\tR\tupdatedAt\x12R\n" +
-	"\vtransitions\x18\b \x03(\v20.proto.ProjectManagementWorkflowTransitionEntityR\vtransitions\"\x95\x03\n" +
+	"\vtransitions\x18\b \x03(\v20.proto.ProjectManagementWorkflowTransitionEntityR\vtransitions\x12 \n" +
+	"\vdescription\x18\t \x01(\tR\vdescription\"\x95\x03\n" +
 	")ProjectManagementWorkflowTransitionEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\"\n" +
 	"\rfrom_stage_id\x18\x02 \x01(\x03R\vfromStageId\x12\x1e\n" +

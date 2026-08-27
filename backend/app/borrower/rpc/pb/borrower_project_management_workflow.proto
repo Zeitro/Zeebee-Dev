@@ -44,6 +44,7 @@ message ProjectManagementWorkflowUpdateStage {
   string color = 4;
   int32 sort_order = 5;
   repeated ProjectManagementWorkflowUpdateTransition transitions = 6;
+  string description = 7;
 }
 message ProjectManagementWorkflowUpdateTransition {
   int64 id = 1;

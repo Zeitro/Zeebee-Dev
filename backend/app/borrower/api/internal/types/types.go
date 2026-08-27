@@ -2140,12 +2140,13 @@ type ProjectManagementWorkflowEntity struct {
 type ProjectManagementWorkflowStageEntity struct {
 	Id          int64                                        `json:"id"`
 	Name        string                                       `json:"name"`
+	Description string                                       `json:"description"`
 	Phase       string                                       `json:"phase,options=Pending|InProgress|Finished"`
 	Color       string                                       `json:"color"`
 	SortOrder   int                                          `json:"sort_order"`
 	CreatedAt   string                                       `json:"created_at"`
 	UpdatedAt   string                                       `json:"updated_at"`
-	Transitions []*ProjectManagementWorkflowTransitionEntity `json:"transitions"`
+	Transitions []*ProjectManagementWorkflowTransitionEntity `json:"transitions,omitempty"`
 }
 
 type ProjectManagementWorkflowStageSwapOrderRequest struct {
@@ -2176,10 +2177,11 @@ type ProjectManagementWorkflowUpdateRequest struct {
 type ProjectManagementWorkflowUpdateStage struct {
 	Id          int64                                        `json:"id,optional"`
 	Name        string                                       `json:"name" validate:"required,max=100"`
+	Description string                                       `json:"description,optional" validate:"max=100"`
 	Phase       string                                       `json:"phase" validate:"required,oneof=Pending InProgress Finished"`
 	Color       string                                       `json:"color,optional" validate:"max=32"`
-	SortOrder   int                                          `json:"sort_order,optional" validate:"gte=0"`
-	Transitions []*ProjectManagementWorkflowUpdateTransition `json:"transitions,optional" validate:"dive"`
+	SortOrder   int                                          `json:"sort_order,optional" validate:"omitempty,gte=0"`
+	Transitions []*ProjectManagementWorkflowUpdateTransition `json:"transitions,optional,omitempty" validate:"dive"`
 }
 
 type ProjectManagementWorkflowUpdateTransition struct {

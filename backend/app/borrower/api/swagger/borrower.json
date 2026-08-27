@@ -19391,6 +19391,7 @@
       "required": [
         "id",
         "name",
+        "description",
         "phase",
         "color",
         "sort_order",
@@ -19403,6 +19404,9 @@
           "type": "string"
         },
         "created_at": {
+          "type": "string"
+        },
+        "description": {
           "type": "string"
         },
         "id": {
@@ -19476,6 +19480,7 @@
           "required": [
             "id",
             "name",
+            "description",
             "phase",
             "color",
             "sort_order",
@@ -19488,6 +19493,9 @@
               "type": "string"
             },
             "created_at": {
+              "type": "string"
+            },
+            "description": {
               "type": "string"
             },
             "id": {
@@ -19533,6 +19541,7 @@
           "required": [
             "id",
             "name",
+            "description",
             "phase",
             "color",
             "sort_order",
@@ -19545,6 +19554,9 @@
               "type": "string"
             },
             "created_at": {
+              "type": "string"
+            },
+            "description": {
               "type": "string"
             },
             "id": {
@@ -19613,6 +19625,9 @@
       ],
       "properties": {
         "color": {
+          "type": "string"
+        },
+        "description": {
           "type": "string"
         },
         "id": {
@@ -21680,7 +21695,7 @@
       }
     }
   },
-  "x-date": "2026-08-27 11:36:20",
+  "x-date": "2026-08-27 15:30:16",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

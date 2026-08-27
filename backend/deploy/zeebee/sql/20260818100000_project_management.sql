@@ -30,6 +30,7 @@ CREATE TABLE "public"."project_management_workflow_stages" (
     "is_del" int2 NOT NULL DEFAULT 0,
     "workflow_id" int4 NOT NULL DEFAULT 0,
     "name" varchar(100) NOT NULL DEFAULT '',
+    "description" varchar(100) NOT NULL DEFAULT '',
     "phase" varchar(32) NOT NULL DEFAULT 'Pending',
     "color" varchar(32) NOT NULL DEFAULT '',
     "sort_order" int4 NOT NULL DEFAULT 0

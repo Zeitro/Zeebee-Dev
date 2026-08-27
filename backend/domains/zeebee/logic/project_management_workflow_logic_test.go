@@ -155,7 +155,7 @@ func TestProjectManagementWorkflowEnsureDefaultSetsStageColors(t *testing.T) {
 	}
 	for _, statement := range []string{
 		"CREATE TABLE project_management_workflows (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, kind text not null, organization_id integer not null, project_id integer not null default 0, name text not null default '', description text not null default '', is_default boolean not null default false, source_template_id integer not null default 0, source_template_name text not null default '')",
-		"CREATE TABLE project_management_workflow_stages (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, workflow_id integer not null, name text not null default '', phase text not null, color text not null default '', sort_order integer not null)",
+		"CREATE TABLE project_management_workflow_stages (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, workflow_id integer not null, name text not null default '', description text not null default '', phase text not null, color text not null default '', sort_order integer not null)",
 		"CREATE TABLE project_management_workflow_transitions (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, workflow_id integer not null, name text not null default '', from_stage_id integer not null, to_stage_id integer not null, allowed_actor_types json not null default '[]')",
 	} {
 		if err = db.Exec(statement).Error; err != nil {
@@ -183,7 +183,7 @@ func TestProjectManagementWorkflowCreateCopiesDefaultAndUpdateReplacesDefinition
 	}
 	for _, statement := range []string{
 		"CREATE TABLE project_management_workflows (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, kind text not null, organization_id integer not null, project_id integer not null default 0, name text not null default '', description text not null default '', is_default boolean not null default false, source_template_id integer not null default 0, source_template_name text not null default '')",
-		"CREATE TABLE project_management_workflow_stages (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, workflow_id integer not null, name text not null default '', phase text not null, color text not null default '', sort_order integer not null)",
+		"CREATE TABLE project_management_workflow_stages (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, workflow_id integer not null, name text not null default '', description text not null default '', phase text not null, color text not null default '', sort_order integer not null)",
 		"CREATE TABLE project_management_workflow_transitions (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, workflow_id integer not null, name text not null default '', from_stage_id integer not null, to_stage_id integer not null, allowed_actor_types json not null default '[]')",
 		"CREATE TABLE operations (id integer primary key autoincrement, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, entity_id integer not null, entity_type text not null, operator_id integer not null, operator_name text not null default '', operator_type text not null, operation text not null, note text not null default '', metadata json not null default '{}', organization_id integer not null)",
 	} {
@@ -217,7 +217,7 @@ func TestProjectManagementWorkflowCreateCopiesDefaultAndUpdateReplacesDefinition
 		Name:        "Renamed",
 		Description: "Updated definition",
 		Stages: []dto.ProjectManagementWorkflowUpdateStageDto{
-			{Id: created.Stages[0].Id, Name: "Queued", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 1, Transitions: []dto.ProjectManagementWorkflowUpdateTransitionDto{{
+			{Id: created.Stages[0].Id, Name: "Queued", Description: "Waiting for review", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 1, Transitions: []dto.ProjectManagementWorkflowUpdateTransitionDto{{
 				Id: created.Stages[0].Transitions[0].Id, Name: "Complete", FromStageId: created.Stages[0].Id, ToStageId: created.Stages[1].Id,
 			}}},
 			{Id: created.Stages[1].Id, Name: "Completed", Phase: constants.ProjectManagementStagePhaseFinished, SortOrder: 2},
@@ -227,7 +227,7 @@ func TestProjectManagementWorkflowCreateCopiesDefaultAndUpdateReplacesDefinition
 	if err != nil {
 		t.Fatalf("update workflow: %v", err)
 	}
-	if updated.Name != "Renamed" || updated.Description != "Updated definition" || updated.IsDefault || len(updated.Stages) != 3 || updated.Stages[0].Name != "Queued" || len(updated.Stages[0].Transitions) != 1 || updated.Stages[0].Transitions[0].Name != "Complete" || updated.Stages[2].SortOrder != 3 {
+	if updated.Name != "Renamed" || updated.Description != "Updated definition" || updated.IsDefault || len(updated.Stages) != 3 || updated.Stages[0].Name != "Queued" || updated.Stages[0].Description != "Waiting for review" || len(updated.Stages[0].Transitions) != 1 || updated.Stages[0].Transitions[0].Name != "Complete" || updated.Stages[2].SortOrder != 3 {
 		t.Fatalf("workflow update changed definition: %#v", updated)
 	}
 
@@ -256,7 +256,7 @@ func TestWorkflowStageAndTransitionRequireMatchingWorkflow(t *testing.T) {
 	}
 	for _, statement := range []string{
 		"CREATE TABLE project_management_workflows (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, kind text not null, organization_id integer not null, project_id integer not null default 0, name text not null default '', description text not null default '', is_default boolean not null default false, source_template_id integer not null default 0, source_template_name text not null default '')",
-		"CREATE TABLE project_management_workflow_stages (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, workflow_id integer not null, name text not null default '', phase text not null, color text not null default '', sort_order integer not null)",
+		"CREATE TABLE project_management_workflow_stages (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, workflow_id integer not null, name text not null default '', description text not null default '', phase text not null, color text not null default '', sort_order integer not null)",
 		"CREATE TABLE project_management_workflow_transitions (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, workflow_id integer not null, name text not null default '', from_stage_id integer not null, to_stage_id integer not null, allowed_actor_types json not null default '[]')",
 		"CREATE TABLE project_management_tasks (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, stage_id integer not null)",
 		"CREATE TABLE operations (id integer primary key autoincrement, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, entity_id integer not null, entity_type text not null, operator_id integer not null, operator_name text not null default '', operator_type text not null, operation text not null, note text not null default '', metadata json not null default '{}', organization_id integer not null)",

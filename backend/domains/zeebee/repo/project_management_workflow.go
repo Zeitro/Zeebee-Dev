@@ -154,7 +154,7 @@ func (r *ProjectManagementWorkflowRepo) CreateTemplateStageWithTx(ctx context.Co
 
 func (r *ProjectManagementWorkflowRepo) UpdateTemplateStageWithTx(ctx context.Context, tx *gorm.DB, stage *model.ProjectManagementWorkflowStage) error {
 	return r.stageRepo.UpdateColumnsWithTx(ctx, tx,
-		map[string]any{"name": stage.Name, "phase": stage.Phase, "color": stage.Color, "sort_order": stage.SortOrder},
+		map[string]any{"name": stage.Name, "description": stage.Description, "phase": stage.Phase, "color": stage.Color, "sort_order": stage.SortOrder},
 		map[string]any{"id": stage.Id, "workflow_id": stage.WorkflowId}, nil)
 }
 

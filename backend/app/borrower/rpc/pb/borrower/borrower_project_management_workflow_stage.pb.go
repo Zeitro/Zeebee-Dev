@@ -205,6 +205,7 @@ type ProjectManagementWorkflowStageCreateRequestData struct {
 	Phase         string                 `protobuf:"bytes,3,opt,name=phase,proto3" json:"phase,omitempty"`
 	Color         string                 `protobuf:"bytes,4,opt,name=color,proto3" json:"color,omitempty"`
 	SortOrder     int64                  `protobuf:"varint,5,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	Description   string                 `protobuf:"bytes,6,opt,name=description,proto3" json:"description,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -274,6 +275,13 @@ func (x *ProjectManagementWorkflowStageCreateRequestData) GetSortOrder() int64 {
 	return 0
 }
 
+func (x *ProjectManagementWorkflowStageCreateRequestData) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
 type ProjectManagementWorkflowStageUpdateRequest struct {
 	state         protoimpl.MessageState                           `protogen:"open.v1"`
 	Data          *ProjectManagementWorkflowStageUpdateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -326,6 +334,7 @@ type ProjectManagementWorkflowStageUpdateRequestData struct {
 	Phase         string                 `protobuf:"bytes,4,opt,name=phase,proto3" json:"phase,omitempty"`
 	Color         string                 `protobuf:"bytes,5,opt,name=color,proto3" json:"color,omitempty"`
 	SortOrder     int64                  `protobuf:"varint,6,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	Description   string                 `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -400,6 +409,13 @@ func (x *ProjectManagementWorkflowStageUpdateRequestData) GetSortOrder() int64 {
 		return x.SortOrder
 	}
 	return 0
+}
+
+func (x *ProjectManagementWorkflowStageUpdateRequestData) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
 }
 
 type ProjectManagementWorkflowStageDetailRequest struct {
@@ -659,7 +675,7 @@ const file_borrower_project_management_workflow_stage_proto_rawDesc = "" +
 	")ProjectManagementWorkflowStageAllResponse\x12?\n" +
 	"\x04data\x18\x01 \x03(\v2+.proto.ProjectManagementWorkflowStageEntityR\x04data\"|\n" +
 	"+ProjectManagementWorkflowStageCreateRequest\x12M\n" +
-	"\x04data\x18\x01 \x01(\v29.borrower.ProjectManagementWorkflowStageCreateRequestDataR\x04data\"\xb1\x01\n" +
+	"\x04data\x18\x01 \x01(\v29.borrower.ProjectManagementWorkflowStageCreateRequestDataR\x04data\"\xd3\x01\n" +
 	"/ProjectManagementWorkflowStageCreateRequestData\x12\x1f\n" +
 	"\vworkflow_id\x18\x01 \x01(\x03R\n" +
 	"workflowId\x12\x12\n" +
@@ -667,9 +683,10 @@ const file_borrower_project_management_workflow_stage_proto_rawDesc = "" +
 	"\x05phase\x18\x03 \x01(\tR\x05phase\x12\x14\n" +
 	"\x05color\x18\x04 \x01(\tR\x05color\x12\x1d\n" +
 	"\n" +
-	"sort_order\x18\x05 \x01(\x03R\tsortOrder\"|\n" +
+	"sort_order\x18\x05 \x01(\x03R\tsortOrder\x12 \n" +
+	"\vdescription\x18\x06 \x01(\tR\vdescription\"|\n" +
 	"+ProjectManagementWorkflowStageUpdateRequest\x12M\n" +
-	"\x04data\x18\x01 \x01(\v29.borrower.ProjectManagementWorkflowStageUpdateRequestDataR\x04data\"\xc1\x01\n" +
+	"\x04data\x18\x01 \x01(\v29.borrower.ProjectManagementWorkflowStageUpdateRequestDataR\x04data\"\xe3\x01\n" +
 	"/ProjectManagementWorkflowStageUpdateRequestData\x12\x1f\n" +
 	"\vworkflow_id\x18\x01 \x01(\x03R\n" +
 	"workflowId\x12\x0e\n" +
@@ -678,7 +695,8 @@ const file_borrower_project_management_workflow_stage_proto_rawDesc = "" +
 	"\x05phase\x18\x04 \x01(\tR\x05phase\x12\x14\n" +
 	"\x05color\x18\x05 \x01(\tR\x05color\x12\x1d\n" +
 	"\n" +
-	"sort_order\x18\x06 \x01(\x03R\tsortOrder\"|\n" +
+	"sort_order\x18\x06 \x01(\x03R\tsortOrder\x12 \n" +
+	"\vdescription\x18\a \x01(\tR\vdescription\"|\n" +
 	"+ProjectManagementWorkflowStageDetailRequest\x12M\n" +
 	"\x04data\x18\x01 \x01(\v29.borrower.ProjectManagementWorkflowStageDetailRequestDataR\x04data\"b\n" +
 	"/ProjectManagementWorkflowStageDetailRequestData\x12\x1f\n" +

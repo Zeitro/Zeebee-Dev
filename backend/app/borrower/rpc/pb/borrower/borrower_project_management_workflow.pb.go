@@ -378,6 +378,7 @@ type ProjectManagementWorkflowUpdateStage struct {
 	Color         string                                       `protobuf:"bytes,4,opt,name=color,proto3" json:"color,omitempty"`
 	SortOrder     int32                                        `protobuf:"varint,5,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
 	Transitions   []*ProjectManagementWorkflowUpdateTransition `protobuf:"bytes,6,rep,name=transitions,proto3" json:"transitions,omitempty"`
+	Description   string                                       `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -452,6 +453,13 @@ func (x *ProjectManagementWorkflowUpdateStage) GetTransitions() []*ProjectManage
 		return x.Transitions
 	}
 	return nil
+}
+
+func (x *ProjectManagementWorkflowUpdateStage) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
 }
 
 type ProjectManagementWorkflowUpdateTransition struct {
@@ -631,7 +639,7 @@ const file_borrower_project_management_workflow_proto_rawDesc = "" +
 	"\x06stages\x18\x05 \x03(\v2+.proto.ProjectManagementWorkflowStageEntityR\x06stages\x12R\n" +
 	"\vtransitions\x18\x06 \x03(\v20.proto.ProjectManagementWorkflowTransitionEntityR\vtransitionsJ\x04\b\x03\x10\x04\"r\n" +
 	"&ProjectManagementWorkflowUpdateRequest\x12H\n" +
-	"\x04data\x18\x01 \x01(\v24.borrower.ProjectManagementWorkflowUpdateRequestDataR\x04data\"\xec\x01\n" +
+	"\x04data\x18\x01 \x01(\v24.borrower.ProjectManagementWorkflowUpdateRequestDataR\x04data\"\x8e\x02\n" +
 	"$ProjectManagementWorkflowUpdateStage\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
@@ -639,7 +647,8 @@ const file_borrower_project_management_workflow_proto_rawDesc = "" +
 	"\x05color\x18\x04 \x01(\tR\x05color\x12\x1d\n" +
 	"\n" +
 	"sort_order\x18\x05 \x01(\x05R\tsortOrder\x12U\n" +
-	"\vtransitions\x18\x06 \x03(\v23.borrower.ProjectManagementWorkflowUpdateTransitionR\vtransitions\"\xc3\x01\n" +
+	"\vtransitions\x18\x06 \x03(\v23.borrower.ProjectManagementWorkflowUpdateTransitionR\vtransitions\x12 \n" +
+	"\vdescription\x18\a \x01(\tR\vdescription\"\xc3\x01\n" +
 	")ProjectManagementWorkflowUpdateTransition\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\"\n" +

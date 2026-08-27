@@ -10,14 +10,14 @@ import (
 
 func TestWorkflowUpdateRequestConversion(t *testing.T) {
 	req := &types.ProjectManagementWorkflowUpdateRequest{Stages: []*types.ProjectManagementWorkflowUpdateStage{{
-		Id: 1, Name: "Pending", Phase: "Pending", Color: "grey", SortOrder: 10,
+		Id: 1, Name: "Pending", Description: "Awaiting work", Phase: "Pending", Color: "grey", SortOrder: 10,
 		Transitions: []*types.ProjectManagementWorkflowUpdateTransition{{Name: "Next", FromStageId: 1, ToStageId: 2, AllowedActorTypes: []string{"ProjectOwner"}}},
 	}}}
 	data, err := copierx.Trans[types.ProjectManagementWorkflowUpdateRequest, borrower.ProjectManagementWorkflowUpdateRequestData](req)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(data.Stages) != 1 || len(data.Stages[0].Transitions) != 1 || data.Stages[0].Transitions[0].FromStageId != 1 || data.Stages[0].Transitions[0].ToStageId != 2 {
+	if len(data.Stages) != 1 || data.Stages[0].Description != "Awaiting work" || len(data.Stages[0].Transitions) != 1 || data.Stages[0].Transitions[0].FromStageId != 1 || data.Stages[0].Transitions[0].ToStageId != 2 {
 		t.Fatalf("unexpected converted workflow: %#v", data)
 	}
 }

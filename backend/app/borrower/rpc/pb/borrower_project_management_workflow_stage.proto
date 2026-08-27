@@ -26,6 +26,7 @@ message ProjectManagementWorkflowStageCreateRequestData {
   string phase = 3;
   string color = 4;
   int64 sort_order = 5;
+  string description = 6;
 }
 
 message ProjectManagementWorkflowStageUpdateRequest {
@@ -38,6 +39,7 @@ message ProjectManagementWorkflowStageUpdateRequestData {
   string phase = 4;
   string color = 5;
   int64 sort_order = 6;
+  string description = 7;
 }
 
 message ProjectManagementWorkflowStageDetailRequest {

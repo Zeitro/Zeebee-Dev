@@ -20,7 +20,7 @@ func TestReplaceProjectDefinitionPreservesReferencedStages(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, statement := range []string{
-		"CREATE TABLE project_management_workflow_stages (id integer primary key autoincrement, created_at datetime, updated_at datetime, is_del integer not null default 0, workflow_id integer not null, name text not null, phase text not null, color text not null default '', sort_order integer not null)",
+		"CREATE TABLE project_management_workflow_stages (id integer primary key autoincrement, created_at datetime, updated_at datetime, is_del integer not null default 0, workflow_id integer not null, name text not null, description text not null default '', phase text not null, color text not null default '', sort_order integer not null)",
 		"CREATE TABLE project_management_workflow_transitions (id integer primary key autoincrement, created_at datetime, updated_at datetime, is_del integer not null default 0, workflow_id integer not null, name text not null default '', from_stage_id integer not null, to_stage_id integer not null, allowed_actor_types json not null default '[]')",
 		"CREATE TABLE project_management_tasks (id integer primary key autoincrement, created_at datetime, updated_at datetime, is_del integer not null default 0, project_id integer not null default 0, organization_id integer not null default 0, parent_task_id integer not null default 0, stage_id integer not null, creator_id integer not null default 0, creator_name text not null default '', title text not null default '', description text not null default '', priority text not null default '', work_hours numeric not null default 0, start_at datetime, end_at datetime, task_type text not null default '{}')",
 	} {
@@ -82,7 +82,7 @@ func TestReplaceProjectDefinitionUpdatesTransitions(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, statement := range []string{
-		"CREATE TABLE project_management_workflow_stages (id integer primary key autoincrement, created_at datetime, updated_at datetime, is_del integer not null default 0, workflow_id integer not null, name text not null, phase text not null, color text not null default '', sort_order integer not null)",
+		"CREATE TABLE project_management_workflow_stages (id integer primary key autoincrement, created_at datetime, updated_at datetime, is_del integer not null default 0, workflow_id integer not null, name text not null, description text not null default '', phase text not null, color text not null default '', sort_order integer not null)",
 		"CREATE TABLE project_management_workflow_transitions (id integer primary key autoincrement, created_at datetime, updated_at datetime, is_del integer not null default 0, workflow_id integer not null, name text not null default '', from_stage_id integer not null, to_stage_id integer not null, allowed_actor_types json not null default '[]')",
 		"CREATE TABLE project_management_tasks (id integer primary key autoincrement, created_at datetime, updated_at datetime, is_del integer not null default 0, stage_id integer not null)",
 		"INSERT INTO project_management_workflow_stages (id, workflow_id, name, phase, sort_order) VALUES (1, 1, 'Pending', 'Pending', 1), (2, 1, 'Finished', 'Finished', 2), (3, 1, 'Removed', 'InProgress', 3)",
@@ -143,7 +143,7 @@ func TestWorkflowDefinitionsPreloadTransitionStages(t *testing.T) {
 	}
 	for _, statement := range []string{
 		"CREATE TABLE project_management_workflows (id integer primary key, is_del integer not null default 0, organization_id integer not null, project_id integer not null default 0, kind text not null)",
-		"CREATE TABLE project_management_workflow_stages (id integer primary key, created_at datetime, updated_at datetime, is_del integer not null default 0, workflow_id integer not null, name text not null, phase text not null, color text not null default '', sort_order integer not null)",
+		"CREATE TABLE project_management_workflow_stages (id integer primary key, created_at datetime, updated_at datetime, is_del integer not null default 0, workflow_id integer not null, name text not null, description text not null default '', phase text not null, color text not null default '', sort_order integer not null)",
 		"CREATE TABLE project_management_workflow_transitions (id integer primary key, is_del integer not null default 0, workflow_id integer not null, name text not null default '', from_stage_id integer not null, to_stage_id integer not null, allowed_actor_types json not null default '[]')",
 		"INSERT INTO project_management_workflows (id, organization_id, project_id, kind) VALUES (1, 4, 0, 'OrganizationTemplate'), (2, 4, 5, 'Project')",
 		"INSERT INTO project_management_workflow_stages (id, workflow_id, name, phase, sort_order) VALUES (10, 1, 'Pending', 'Pending', 1), (11, 1, 'In progress', 'InProgress', 2), (12, 1, 'Finished', 'Finished', 3)",
@@ -221,7 +221,7 @@ func TestStageSortOrderUsesWorkflowScope(t *testing.T) {
 	}
 	for _, statement := range []string{
 		"CREATE TABLE project_management_workflows (id integer primary key, is_del integer not null default 0, organization_id integer not null, kind text not null)",
-		"CREATE TABLE project_management_workflow_stages (id integer primary key, created_at datetime, updated_at datetime, is_del integer not null default 0, workflow_id integer not null, name text not null, phase text not null, color text not null default '', sort_order integer not null)",
+		"CREATE TABLE project_management_workflow_stages (id integer primary key, created_at datetime, updated_at datetime, is_del integer not null default 0, workflow_id integer not null, name text not null, description text not null default '', phase text not null, color text not null default '', sort_order integer not null)",
 		"INSERT INTO project_management_workflows (id, organization_id, kind) VALUES (1, 4, 'OrganizationTemplate'), (2, 4, 'OrganizationTemplate')",
 		"INSERT INTO project_management_workflow_stages (id, workflow_id, name, phase, sort_order) VALUES (10, 1, 'Pending', 'Pending', 10), (11, 1, 'Finished', 'Finished', 20), (12, 2, 'Other', 'Pending', 30)",
 	} {

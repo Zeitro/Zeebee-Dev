@@ -854,6 +854,7 @@ message ProjectManagementWorkflowStageEntity {
   string created_at = 6;
   string updated_at = 7;
   repeated ProjectManagementWorkflowTransitionEntity transitions = 8;
+  string description = 9;
 }
 
 message ProjectManagementWorkflowTransitionEntity {

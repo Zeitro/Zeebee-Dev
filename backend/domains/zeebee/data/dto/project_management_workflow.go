@@ -3,11 +3,12 @@ package dto
 import "zeebee-backend/domains/zeebee/constants"
 
 type ProjectManagementWorkflowStageDto struct {
-	Id        int64
-	Name      string
-	Phase     constants.ProjectManagementStagePhase
-	Color     string
-	SortOrder int
+	Id          int64
+	Name        string
+	Description string
+	Phase       constants.ProjectManagementStagePhase
+	Color       string
+	SortOrder   int
 }
 
 type ProjectManagementWorkflowTransitionDto struct {
@@ -29,6 +30,7 @@ type ProjectManagementWorkflowUpdateTransitionDto struct {
 type ProjectManagementWorkflowUpdateStageDto struct {
 	Id          int64
 	Name        string
+	Description string
 	Phase       constants.ProjectManagementStagePhase
 	Color       string
 	SortOrder   int
