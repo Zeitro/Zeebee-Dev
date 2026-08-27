@@ -7468,6 +7468,7 @@ type ProjectManagementProjectEntity struct {
 	CreatedAt     string                           `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     string                           `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	Workflow      *ProjectManagementWorkflowEntity `protobuf:"bytes,11,opt,name=workflow,proto3" json:"workflow,omitempty"`
+	Priority      string                           `protobuf:"bytes,12,opt,name=priority,proto3" json:"priority,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -7577,6 +7578,13 @@ func (x *ProjectManagementProjectEntity) GetWorkflow() *ProjectManagementWorkflo
 		return x.Workflow
 	}
 	return nil
+}
+
+func (x *ProjectManagementProjectEntity) GetPriority() string {
+	if x != nil {
+		return x.Priority
+	}
+	return ""
 }
 
 type ProjectManagementMemberEntity struct {
@@ -7930,6 +7938,7 @@ type ProjectManagementTaskEntity struct {
 	Phase          string                                   `protobuf:"bytes,19,opt,name=phase,proto3" json:"phase,omitempty"`
 	Children       []*ProjectManagementTaskEntity           `protobuf:"bytes,20,rep,name=children,proto3" json:"children,omitempty"`
 	Dependencies   []*ProjectManagementTaskDependencyEntity `protobuf:"bytes,21,rep,name=dependencies,proto3" json:"dependencies,omitempty"`
+	WorkHours      float64                                  `protobuf:"fixed64,22,opt,name=work_hours,json=workHours,proto3" json:"work_hours,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -8111,6 +8120,13 @@ func (x *ProjectManagementTaskEntity) GetDependencies() []*ProjectManagementTask
 	return nil
 }
 
+func (x *ProjectManagementTaskEntity) GetWorkHours() float64 {
+	if x != nil {
+		return x.WorkHours
+	}
+	return 0
+}
+
 type ProjectManagementTaskPageEntity struct {
 	state          protoimpl.MessageState                   `protogen:"open.v1"`
 	Id             int64                                    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -8129,6 +8145,9 @@ type ProjectManagementTaskPageEntity struct {
 	CreatedAt      string                                   `protobuf:"bytes,16,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt      string                                   `protobuf:"bytes,17,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	Phase          string                                   `protobuf:"bytes,19,opt,name=phase,proto3" json:"phase,omitempty"`
+	WorkHours      float64                                  `protobuf:"fixed64,20,opt,name=work_hours,json=workHours,proto3" json:"work_hours,omitempty"`
+	ProjectName    string                                   `protobuf:"bytes,21,opt,name=project_name,json=projectName,proto3" json:"project_name,omitempty"`
+	StageName      string                                   `protobuf:"bytes,22,opt,name=stage_name,json=stageName,proto3" json:"stage_name,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -8271,6 +8290,27 @@ func (x *ProjectManagementTaskPageEntity) GetUpdatedAt() string {
 func (x *ProjectManagementTaskPageEntity) GetPhase() string {
 	if x != nil {
 		return x.Phase
+	}
+	return ""
+}
+
+func (x *ProjectManagementTaskPageEntity) GetWorkHours() float64 {
+	if x != nil {
+		return x.WorkHours
+	}
+	return 0
+}
+
+func (x *ProjectManagementTaskPageEntity) GetProjectName() string {
+	if x != nil {
+		return x.ProjectName
+	}
+	return ""
+}
+
+func (x *ProjectManagementTaskPageEntity) GetStageName() string {
+	if x != nil {
+		return x.StageName
 	}
 	return ""
 }
@@ -9353,7 +9393,7 @@ const file_proto_entity_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\a \x01(\tR\tupdatedAt\x12\x1d\n" +
 	"\n" +
-	"sort_order\x18\b \x01(\x03R\tsortOrder\"\xfd\x02\n" +
+	"sort_order\x18\b \x01(\x03R\tsortOrder\"\x99\x03\n" +
 	"\x1eProjectManagementProjectEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tentity_id\x18\x02 \x01(\x03R\bentityId\x12\x12\n" +
@@ -9370,7 +9410,8 @@ const file_proto_entity_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\n" +
 	" \x01(\tR\tupdatedAt\x12B\n" +
-	"\bworkflow\x18\v \x01(\v2&.proto.ProjectManagementWorkflowEntityR\bworkflow\"\x85\x02\n" +
+	"\bworkflow\x18\v \x01(\v2&.proto.ProjectManagementWorkflowEntityR\bworkflow\x12\x1a\n" +
+	"\bpriority\x18\f \x01(\tR\bpriority\"\x85\x02\n" +
 	"\x1dProjectManagementMemberEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -9404,7 +9445,7 @@ const file_proto_entity_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x05 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\x06 \x01(\tR\tupdatedAt\"\xe1\x06\n" +
+	"updated_at\x18\x06 \x01(\tR\tupdatedAt\"\x80\a\n" +
 	"\x1bProjectManagementTaskEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -9431,7 +9472,9 @@ const file_proto_entity_proto_rawDesc = "" +
 	"updated_at\x18\x11 \x01(\tR\tupdatedAt\x12\x14\n" +
 	"\x05phase\x18\x13 \x01(\tR\x05phase\x12>\n" +
 	"\bchildren\x18\x14 \x03(\v2\".proto.ProjectManagementTaskEntityR\bchildren\x12P\n" +
-	"\fdependencies\x18\x15 \x03(\v2,.proto.ProjectManagementTaskDependencyEntityR\fdependencies\"\x9b\x04\n" +
+	"\fdependencies\x18\x15 \x03(\v2,.proto.ProjectManagementTaskDependencyEntityR\fdependencies\x12\x1d\n" +
+	"\n" +
+	"work_hours\x18\x16 \x01(\x01R\tworkHours\"\xfc\x04\n" +
 	"\x1fProjectManagementTaskPageEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -9453,7 +9496,12 @@ const file_proto_entity_proto_rawDesc = "" +
 	"created_at\x18\x10 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
 	"updated_at\x18\x11 \x01(\tR\tupdatedAt\x12\x14\n" +
-	"\x05phase\x18\x13 \x01(\tR\x05phase\"\x8e\x02\n" +
+	"\x05phase\x18\x13 \x01(\tR\x05phase\x12\x1d\n" +
+	"\n" +
+	"work_hours\x18\x14 \x01(\x01R\tworkHours\x12!\n" +
+	"\fproject_name\x18\x15 \x01(\tR\vprojectName\x12\x1d\n" +
+	"\n" +
+	"stage_name\x18\x16 \x01(\tR\tstageName\"\x8e\x02\n" +
 	"%ProjectManagementTaskDependencyEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\atask_id\x18\x02 \x01(\x03R\x06taskId\x12,\n" +

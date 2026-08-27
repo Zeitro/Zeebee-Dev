@@ -26,7 +26,7 @@ func NewAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AllLogic {
 	}
 }
 
-func (l *AllLogic) All(req *types.ProjectManagementTaskTypeAllRequest) (resp *types.ProjectManagementTaskTypeAllResponse, err error) {
+func (l *AllLogic) All(req *types.EmptyRequest) (resp *types.ProjectManagementTaskTypeAllResponse, err error) {
 	rpcResp, err := l.svcCtx.ProjectManagementTaskTypeRpcClient.All(l.ctx, &proto.EmptyRequest{})
 	if err != nil {
 		return nil, err

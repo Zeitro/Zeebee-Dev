@@ -1,69 +1,76 @@
 syntax = "v1"
 
-info(
+info (
     title: "borrower-project-management-project-api"
     desc: "borrower project management project types"
     version: "v1"
     useDefinitions: true
-    wrapCodeMsg:    true
+    wrapCodeMsg: true
 )
 
 import "../../../../domains/zeebee/api/project_management_entity.api"
+
 import "base.api"
+
 import "project_management.api"
 
 type (
     ProjectManagementProjectPageFilter {
-        Keyword string `json:"keyword,optional"`
-        EntityId int64 `json:"entity_id,optional"`
+        Keyword    string `json:"keyword,optional"`
+        EntityId   int64  `json:"entity_id,optional"`
         EntityType string `json:"entity_type,optional"`
     }
-
+    // page request
     ProjectManagementProjectPageRequest {
-        Page int64 `json:"page,default=1"`
-        Limit int64 `json:"limit,default=20"`
+        Page   int64                              `json:"page,default=1"`
+        Limit  int64                              `json:"limit,default=20"`
         Filter ProjectManagementProjectPageFilter `json:"filter,optional"`
     }
-
+    // page response
     ProjectManagementProjectPageResponse {
-        Page int64 `json:"page"`
-        Limit int64 `json:"limit"`
-        Total int64 `json:"total"`
-        TotalPage int64 `json:"total_page"`
-        List []*ProjectManagementProjectEntity `json:"list"`
+        Page      int64                             `json:"page"`
+        Limit     int64                             `json:"limit"`
+        Total     int64                             `json:"total"`
+        TotalPage int64                             `json:"total_page"`
+        List      []*ProjectManagementProjectEntity `json:"list"`
     }
-
-    ProjectManagementProjectDetailResponse {
-       ProjectManagementProjectEntity
-    }
-
-    ProjectManagementProjectCreateRequest {
-        EntityId int64 `json:"entity_id,optional"`
-        EntityType string `json:"entity_type,optional,options=BorrowerProperty|" validate:"omitempty,oneof=BorrowerProperty"`
-        Name string `json:"name" validate:"required,max=100"`
-        Description string `json:"description,optional" validate:"max=500"`
-        CoverUrl string `json:"cover_url,optional" validate:"omitempty,uri"`
-        WorkflowTemplateId int64 `json:"workflow_template_id" validate:"required,gt=0"`
-    }
-
-    ProjectManagementProjectUpdateRequest {
-        Id int64 `path:"id" validate:"required,gt=0"`
-        Name string `json:"name" validate:"required,max=100"`
-        Description string `json:"description,optional" validate:"max=500"`
-        CoverUrl string `json:"cover_url,optional" validate:"omitempty,uri"`
-    }
-
-    ProjectManagementProjectOwnerTransferRequest {
-        ProjectId int64 `path:"id" validate:"required,gt=0"`
-        OrganizationUserId int64 `json:"organization_user_id" validate:"required,gt=0"`
-    }
-
-    ProjectManagementProjectWorkflowUpdateRequest {
-        Id int64 `path:"id" validate:"required,gt=0"`
-        Stages []*ProjectManagementWorkflowUpdateStage `json:"stages" validate:"required,min=1,dive"`
-    }
-
 )
+// detail response
+type ProjectManagementProjectDetailResponse {
+    ProjectManagementProjectEntity
+}
+
+// create request
+type ProjectManagementProjectCreateRequest {
+    EntityId           int64  `json:"entity_id,optional"`
+    EntityType         string `json:"entity_type,optional,options=BorrowerProperty|" validate:"omitempty,oneof=BorrowerProperty"`
+    Name               string `json:"name" validate:"required,max=100"`
+    Description        string `json:"description,optional" validate:"max=500"`
+    Priority           string `json:"priority" validate:"oneof=Low Medium High Critical"`
+    CoverUrl           string `json:"cover_url,optional" validate:"omitempty,uri"`
+    WorkflowTemplateId int64  `json:"workflow_template_id" validate:"required,gt=0"`
+}
+
+// update request
+type ProjectManagementProjectUpdateRequest {
+    Id          int64  `path:"id" validate:"required,gt=0"`
+    Name        string `json:"name" validate:"required,max=100"`
+    Description string `json:"description,optional" validate:"max=500"`
+    Priority    string `json:"priority" validate:"oneof=Low Medium High Critical"`
+    CoverUrl    string `json:"cover_url,optional" validate:"omitempty,uri"`
+}
+
+// owner transfer request
+type ProjectManagementProjectOwnerTransferRequest {
+    ProjectId          int64 `path:"id" validate:"required,gt=0"`
+    OrganizationUserId int64 `json:"organization_user_id" validate:"required,gt=0"`
+}
+
+// workflow update request
+type ProjectManagementProjectWorkflowUpdateRequest {
+    Id     int64                                   `path:"id" validate:"required,gt=0"`
+    Stages []*ProjectManagementWorkflowUpdateStage `json:"stages" validate:"required,min=1,dive"`
+}
 
 @server (
     desc: "borrower project management project"

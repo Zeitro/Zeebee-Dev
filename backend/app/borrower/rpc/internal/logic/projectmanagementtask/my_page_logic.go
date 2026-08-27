@@ -42,6 +42,7 @@ func (l *MyPageLogic) MyPage(in *borrower.ProjectManagementMyTaskPageRequest) (r
 		for i, phase := range in.Data.Filter.Phase {
 			filter.Phase[i] = constants.ProjectManagementStagePhase(phase)
 		}
+		filter.Priority = constants.ProjectManagementPriority(in.Data.Filter.Priority)
 		filter.TaskTypeId = in.Data.Filter.TaskTypeId
 		filter.Keyword = in.Data.Filter.Keyword
 		filter.Overdue = in.Data.Filter.Overdue

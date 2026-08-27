@@ -41,6 +41,7 @@ func (l *PageLogic) Page(in *borrower.ProjectManagementProjectPageRequest) (resp
 	if err != nil {
 		return nil, err
 	}
+	data.Filter.OrganizationUserId = claim.OrganizationUserId
 	page, err := l.baseLogic.ProjectManagementProjectLogic.Page(l.ctx, claim, *data)
 	if err != nil {
 		return nil, err

@@ -12,10 +12,15 @@ import (
 )
 
 func projectManagementTaskOverdue(task *model.ProjectManagementTask, phase constants.ProjectManagementStagePhase, now time.Time) (bool, int64) {
-	if task.EndAt == nil || !task.EndAt.Valid || phase == constants.ProjectManagementStagePhaseFinished || !now.After(task.EndAt.Time) {
+	if task.EndAt == nil || !task.EndAt.Valid || phase == constants.ProjectManagementStagePhaseFinished {
 		return false, 0
 	}
-	return true, int64(now.Sub(task.EndAt.Time).Seconds())
+	// end_at is date-only (midnight), so +1 day = start of the day after the deadline.
+	deadline := task.EndAt.Time.AddDate(0, 0, 1)
+	if now.Before(deadline) {
+		return false, 0
+	}
+	return true, int64(now.Sub(deadline).Seconds())
 }
 
 func (l *ProjectManagementTaskLogic) Overdue(ctx context.Context, task *model.ProjectManagementTask) (*dto.ProjectManagementTaskOverdueDto, error) {

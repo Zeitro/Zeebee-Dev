@@ -69,6 +69,7 @@ CREATE TABLE "public"."project_management_projects" (
     "entity_type" varchar(100) NOT NULL DEFAULT '',
     "name" varchar(100) NOT NULL DEFAULT '',
     "description" varchar(500) NOT NULL DEFAULT '',
+    "priority" varchar(32) NOT NULL DEFAULT '',
     "cover_url" varchar(255) NOT NULL DEFAULT '',
     "owner_id" int4 NOT NULL DEFAULT 0,
     "owner_name" varchar(100) NOT NULL DEFAULT ''
@@ -132,6 +133,7 @@ CREATE TABLE "public"."project_management_tasks" (
     "title" varchar(255) NOT NULL DEFAULT '',
     "description" text NOT NULL DEFAULT '',
     "priority" varchar(32) NOT NULL DEFAULT '',
+    "work_hours" numeric(10,2) NOT NULL DEFAULT 0,
     "start_at" timestamptz NULL,
     "end_at" timestamptz NULL,
     "task_type" jsonb NOT NULL DEFAULT '{}'

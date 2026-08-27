@@ -17984,6 +17984,9 @@
             "type": "string"
           }
         },
+        "priority": {
+          "type": "string"
+        },
         "project_id": {
           "type": "integer"
         },
@@ -18017,6 +18020,9 @@
                 "type": "string"
               }
             },
+            "priority": {
+              "type": "string"
+            },
             "project_id": {
               "type": "integer"
             },
@@ -18045,6 +18051,7 @@
       "type": "object",
       "required": [
         "name",
+        "priority",
         "workflow_template_id"
       ],
       "properties": {
@@ -18066,6 +18073,9 @@
         "name": {
           "type": "string"
         },
+        "priority": {
+          "type": "string"
+        },
         "workflow_template_id": {
           "type": "integer"
         }
@@ -18079,6 +18089,8 @@
         "entity_type",
         "name",
         "description",
+        "priority",
+        "work_hours",
         "cover_url",
         "owner_id",
         "owner_name",
@@ -18114,8 +18126,14 @@
         "owner_name": {
           "type": "string"
         },
+        "priority": {
+          "type": "string"
+        },
         "updated_at": {
           "type": "string"
+        },
+        "work_hours": {
+          "type": "number"
         },
         "workflow": {
           "type": "object",
@@ -18174,6 +18192,8 @@
         "entity_type",
         "name",
         "description",
+        "priority",
+        "work_hours",
         "cover_url",
         "owner_id",
         "owner_name",
@@ -18209,8 +18229,14 @@
         "owner_name": {
           "type": "string"
         },
+        "priority": {
+          "type": "string"
+        },
         "updated_at": {
           "type": "string"
+        },
+        "work_hours": {
+          "type": "number"
         },
         "workflow": {
           "type": "object",
@@ -18353,7 +18379,8 @@
     "ProjectManagementProjectUpdateRequest": {
       "type": "object",
       "required": [
-        "name"
+        "name",
+        "priority"
       ],
       "properties": {
         "cover_url": {
@@ -18363,6 +18390,9 @@
           "type": "string"
         },
         "name": {
+          "type": "string"
+        },
+        "priority": {
           "type": "string"
         }
       }
@@ -18478,6 +18508,9 @@
         },
         "title": {
           "type": "string"
+        },
+        "work_hours": {
+          "type": "number"
         }
       }
     },
@@ -18801,13 +18834,16 @@
       "required": [
         "id",
         "project_id",
+        "project_name",
         "parent_task_id",
         "stage_id",
+        "stage_name",
         "phase",
         "creator_id",
         "creator_name",
         "title",
         "priority",
+        "work_hours",
         "start_at",
         "end_at",
         "task_type",
@@ -18850,8 +18886,14 @@
         "project_id": {
           "type": "integer"
         },
+        "project_name": {
+          "type": "string"
+        },
         "stage_id": {
           "type": "integer"
+        },
+        "stage_name": {
+          "type": "string"
         },
         "start_at": {
           "type": "string"
@@ -18885,6 +18927,9 @@
         },
         "updated_at": {
           "type": "string"
+        },
+        "work_hours": {
+          "type": "number"
         }
       }
     },
@@ -18905,6 +18950,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "priority": {
+          "type": "string"
         },
         "project_id": {
           "type": "integer"
@@ -18941,6 +18989,9 @@
               "items": {
                 "type": "string"
               }
+            },
+            "priority": {
+              "type": "string"
             },
             "project_id": {
               "type": "integer"
@@ -19010,9 +19061,6 @@
           "type": "integer"
         }
       }
-    },
-    "ProjectManagementTaskTypeAllRequest": {
-      "type": "object"
     },
     "ProjectManagementTaskTypeAllResponse": {
       "type": "object",
@@ -19209,6 +19257,9 @@
         },
         "title": {
           "type": "string"
+        },
+        "work_hours": {
+          "type": "number"
         }
       }
     },
@@ -21629,7 +21680,7 @@
       }
     }
   },
-  "x-date": "2026-08-26 13:17:24",
+  "x-date": "2026-08-27 11:36:20",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

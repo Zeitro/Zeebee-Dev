@@ -65,6 +65,8 @@ type (
         EntityType string `json:"entity_type"`
         Name string `json:"name"`
         Description string `json:"description"`
+        Priority string `json:"priority"`
+        WorkHours float64 `json:"work_hours"`
         CoverUrl string `json:"cover_url"`
         OwnerId int64 `json:"owner_id"`
         OwnerName string `json:"owner_name"`
@@ -114,25 +116,6 @@ type (
         UpdatedAt string `json:"updated_at"`
         Children []*ProjectManagementTaskEntity `json:"children"`
         Dependencies []*ProjectManagementTaskDependencyEntity `json:"dependencies"`
-    }
-
-    ProjectManagementTaskPageEntity {
-        Id int64 `json:"id"`
-        ProjectId int64 `json:"project_id"`
-        ParentTaskId int64 `json:"parent_task_id"`
-        StageId int64 `json:"stage_id"`
-        Phase string `json:"phase"`
-        CreatorId int64 `json:"creator_id"`
-        CreatorName string `json:"creator_name"`
-        Title string `json:"title"`
-        Priority string `json:"priority"`
-        StartAt string `json:"start_at"`
-        EndAt string `json:"end_at"`
-        TaskType *ProjectManagementTaskTypeSnapshotEntity `json:"task_type"`
-        Overdue bool `json:"overdue"`
-        OverdueSeconds int64 `json:"overdue_seconds"`
-        CreatedAt string `json:"created_at"`
-        UpdatedAt string `json:"updated_at"`
     }
 
     ProjectManagementAttachmentEntity {

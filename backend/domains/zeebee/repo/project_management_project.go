@@ -49,6 +49,11 @@ func (r *ProjectManagementProjectRepo) Page(ctx context.Context, organizationId 
 	if input.Filter.EntityType != "" {
 		query = query.Where("entity_type = ?", input.Filter.EntityType)
 	}
+	if input.Filter.OrganizationUserId > 0 {
+		query = query.Where("id IN (?)", r.memberRepo.Client(ctx).
+			Select("project_id").
+			Where("organization_user_id = ?", input.Filter.OrganizationUserId))
+	}
 	return r.BaseRepo.Page(query, gormx.PageRequest{Page: input.Page, Limit: input.Limit})
 }
 

@@ -189,14 +189,14 @@ func validateProjectManagementProjectCreate(input dto.ProjectManagementProjectCr
 	if strings.TrimSpace(input.Name) == "" || input.WorkflowTemplateId == 0 {
 		return errorx.New("project name and workflow template are required")
 	}
-	return nil
+	return input.Priority.Validate()
 }
 
 func validateProjectManagementProjectUpdate(input dto.ProjectManagementProjectUpdateDto) error {
 	if strings.TrimSpace(input.Name) == "" {
 		return errorx.New("project name is required")
 	}
-	return nil
+	return input.Priority.Validate()
 }
 
 func (l *ProjectManagementProjectLogic) recordOperation(ctx context.Context, tx *gorm.DB, input projectManagementProjectOperation) error {

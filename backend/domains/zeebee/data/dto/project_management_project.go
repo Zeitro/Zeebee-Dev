@@ -9,6 +9,7 @@ type ProjectManagementProjectDto struct {
 	EntityType     constants.ProjectManagementProjectEntityType
 	Name           string
 	Description    string
+	Priority       constants.ProjectManagementPriority
 	CoverUrl       string
 	OwnerId        int64
 	OwnerName      string
@@ -22,13 +23,15 @@ type ProjectManagementProjectCreateDto struct {
 type ProjectManagementProjectUpdateDto struct {
 	Name        string
 	Description string
+	Priority    constants.ProjectManagementPriority
 	CoverUrl    string
 }
 
 type ProjectManagementProjectFilterDto struct {
-	Keyword    string
-	EntityId   int64
-	EntityType constants.ProjectManagementProjectEntityType
+	Keyword            string
+	EntityId           int64
+	EntityType         constants.ProjectManagementProjectEntityType
+	OrganizationUserId int64
 }
 
 type ProjectManagementProjectPageRequestDto struct {

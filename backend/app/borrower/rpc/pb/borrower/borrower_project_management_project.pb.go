@@ -402,6 +402,7 @@ type ProjectManagementProjectCreateRequestData struct {
 	CoverUrl           string                 `protobuf:"bytes,4,opt,name=cover_url,json=coverUrl,proto3" json:"cover_url,omitempty"`
 	WorkflowTemplateId int64                  `protobuf:"varint,5,opt,name=workflow_template_id,json=workflowTemplateId,proto3" json:"workflow_template_id,omitempty"`
 	EntityType         string                 `protobuf:"bytes,6,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"`
+	Priority           string                 `protobuf:"bytes,7,opt,name=priority,proto3" json:"priority,omitempty"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -478,6 +479,13 @@ func (x *ProjectManagementProjectCreateRequestData) GetEntityType() string {
 	return ""
 }
 
+func (x *ProjectManagementProjectCreateRequestData) GetPriority() string {
+	if x != nil {
+		return x.Priority
+	}
+	return ""
+}
+
 type ProjectManagementProjectUpdateRequest struct {
 	state         protoimpl.MessageState                     `protogen:"open.v1"`
 	Data          *ProjectManagementProjectUpdateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -528,6 +536,7 @@ type ProjectManagementProjectUpdateRequestData struct {
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	CoverUrl      string                 `protobuf:"bytes,4,opt,name=cover_url,json=coverUrl,proto3" json:"cover_url,omitempty"`
+	Priority      string                 `protobuf:"bytes,5,opt,name=priority,proto3" json:"priority,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -586,6 +595,13 @@ func (x *ProjectManagementProjectUpdateRequestData) GetDescription() string {
 func (x *ProjectManagementProjectUpdateRequestData) GetCoverUrl() string {
 	if x != nil {
 		return x.CoverUrl
+	}
+	return ""
+}
+
+func (x *ProjectManagementProjectUpdateRequestData) GetPriority() string {
+	if x != nil {
+		return x.Priority
 	}
 	return ""
 }
@@ -802,7 +818,7 @@ const file_borrower_project_management_project_proto_rawDesc = "" +
 	"&ProjectManagementProjectDetailResponse\x129\n" +
 	"\x04data\x18\x01 \x01(\v2%.proto.ProjectManagementProjectEntityR\x04data\"p\n" +
 	"%ProjectManagementProjectCreateRequest\x12G\n" +
-	"\x04data\x18\x01 \x01(\v23.borrower.ProjectManagementProjectCreateRequestDataR\x04data\"\xee\x01\n" +
+	"\x04data\x18\x01 \x01(\v23.borrower.ProjectManagementProjectCreateRequestDataR\x04data\"\x8a\x02\n" +
 	")ProjectManagementProjectCreateRequestData\x12\x1b\n" +
 	"\tentity_id\x18\x01 \x01(\x03R\bentityId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
@@ -810,14 +826,16 @@ const file_borrower_project_management_project_proto_rawDesc = "" +
 	"\tcover_url\x18\x04 \x01(\tR\bcoverUrl\x120\n" +
 	"\x14workflow_template_id\x18\x05 \x01(\x03R\x12workflowTemplateId\x12\x1f\n" +
 	"\ventity_type\x18\x06 \x01(\tR\n" +
-	"entityType\"p\n" +
+	"entityType\x12\x1a\n" +
+	"\bpriority\x18\a \x01(\tR\bpriority\"p\n" +
 	"%ProjectManagementProjectUpdateRequest\x12G\n" +
-	"\x04data\x18\x01 \x01(\v23.borrower.ProjectManagementProjectUpdateRequestDataR\x04data\"\x8e\x01\n" +
+	"\x04data\x18\x01 \x01(\v23.borrower.ProjectManagementProjectUpdateRequestDataR\x04data\"\xaa\x01\n" +
 	")ProjectManagementProjectUpdateRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x1b\n" +
-	"\tcover_url\x18\x04 \x01(\tR\bcoverUrl\"p\n" +
+	"\tcover_url\x18\x04 \x01(\tR\bcoverUrl\x12\x1a\n" +
+	"\bpriority\x18\x05 \x01(\tR\bpriority\"p\n" +
 	"%ProjectManagementProjectDeleteRequest\x12G\n" +
 	"\x04data\x18\x01 \x01(\v23.borrower.ProjectManagementProjectDeleteRequestDataR\x04data\";\n" +
 	")ProjectManagementProjectDeleteRequestData\x12\x0e\n" +

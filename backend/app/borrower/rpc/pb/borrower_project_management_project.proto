@@ -45,6 +45,7 @@ message ProjectManagementProjectCreateRequestData {
   string cover_url = 4;
   int64 workflow_template_id = 5;
   string entity_type = 6;
+  string priority = 7;
 }
 
 message ProjectManagementProjectUpdateRequest {
@@ -55,6 +56,7 @@ message ProjectManagementProjectUpdateRequestData {
   string name = 2;
   string description = 3;
   string cover_url = 4;
+  string priority = 5;
 }
 
 message ProjectManagementProjectDeleteRequest {

@@ -13,37 +13,39 @@ import "base.api"
 
 
 type (
-    ProjectManagementTaskTypeAllRequest {}
-
+    // all response
     ProjectManagementTaskTypeAllResponse {
         List []*ProjectManagementTaskTypeEntity `json:"list"`
     }
-
-    ProjectManagementTaskTypeDetailResponse {
-        ProjectManagementTaskTypeEntity
-    }
-
-    ProjectManagementTaskTypeCreateRequest {
-        Name string `json:"name" validate:"required,max=100"`
-        Description string `json:"description,optional" validate:"max=500"`
-        Color string `json:"color,optional" validate:"max=32"`
-        SortOrder int `json:"sort_order" validate:"gte=0"`
-    }
-
-    ProjectManagementTaskTypeUpdateRequest {
-        Id int64 `path:"id" validate:"required,gt=0"`
-        Name string `json:"name" validate:"required,max=100"`
-        Description string `json:"description,optional" validate:"max=500"`
-        Color string `json:"color,optional" validate:"max=32"`
-        SortOrder int `json:"sort_order" validate:"gte=0"`
-    }
-
-    ProjectManagementTaskTypeOrderRequest {
-        Id int64 `path:"id" validate:"required,gt=0"`
-        SortOrder int `json:"sort_order" validate:"gte=0"`
-    }
-
 )
+
+// detail response
+type ProjectManagementTaskTypeDetailResponse {
+    ProjectManagementTaskTypeEntity
+}
+
+// create request
+type ProjectManagementTaskTypeCreateRequest {
+    Name        string `json:"name" validate:"required,max=100"`
+    Description string `json:"description,optional" validate:"max=500"`
+    Color       string `json:"color,optional" validate:"max=32"`
+    SortOrder   int    `json:"sort_order" validate:"gte=0"`
+}
+
+// update request
+type ProjectManagementTaskTypeUpdateRequest {
+    Id          int64  `path:"id" validate:"required,gt=0"`
+    Name        string `json:"name" validate:"required,max=100"`
+    Description string `json:"description,optional" validate:"max=500"`
+    Color       string `json:"color,optional" validate:"max=32"`
+    SortOrder   int    `json:"sort_order" validate:"gte=0"`
+}
+
+// order request
+type ProjectManagementTaskTypeOrderRequest {
+    Id        int64 `path:"id" validate:"required,gt=0"`
+    SortOrder int   `json:"sort_order" validate:"gte=0"`
+}
 
 @server (
     desc: "borrower project management task type"
@@ -56,7 +58,7 @@ type (
 service borrower-api {
     @doc "all"
     @handler All
-    get /project_management/task_type/all (ProjectManagementTaskTypeAllRequest) returns (ProjectManagementTaskTypeAllResponse)
+    get /project_management/task_type/all (EmptyRequest) returns (ProjectManagementTaskTypeAllResponse)
 
     @doc "detail"
     @handler Detail

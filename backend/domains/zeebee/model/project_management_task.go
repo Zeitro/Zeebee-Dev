@@ -19,6 +19,7 @@ type ProjectManagementTask struct {
 	Title          string                                    `gorm:"column:title;type:varchar(255);not null;default:''" json:"title"`
 	Description    string                                    `gorm:"column:description;type:text;not null;default:''" json:"description"`
 	Priority       constants.ProjectManagementPriority       `gorm:"column:priority;type:varchar(32);not null;default:''" json:"priority"`
+	WorkHours      float64                                   `gorm:"column:work_hours;type:numeric(10,2);not null;default:0" json:"work_hours"`
 	StartAt        *sql.NullTime                             `gorm:"column:start_at;type:timestamptz" json:"start_at"`
 	EndAt          *sql.NullTime                             `gorm:"column:end_at;type:timestamptz" json:"end_at"`
 	TaskType       *dto.ProjectManagementTaskTypeSnapshotDto `gorm:"column:task_type;type:jsonb;not null;default:'{}';serializer:json" json:"task_type"`
@@ -27,6 +28,8 @@ type ProjectManagementTask struct {
 	Attachments  []*File                            `gorm:"polymorphicType:EntityType;polymorphicId:EntityId;polymorphicValue:ProjectManagementTask" json:"attachments"`
 	Children     []*ProjectManagementTask           `gorm:"foreignKey:ParentTaskId;references:Id" json:"children"`
 	Dependencies []*ProjectManagementTaskDependency `gorm:"foreignKey:TaskId;references:Id" json:"dependencies"`
+	ProjectName  string                             `gorm:"->;column:project_name" json:"project_name"`
+	StageName    string                             `gorm:"->;column:stage_name" json:"stage_name"`
 }
 
 func (ProjectManagementTask) TableName() string { return "project_management_tasks" }

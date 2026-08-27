@@ -18,6 +18,7 @@ message ProjectManagementTaskPageRequestData {
 message ProjectManagementTaskPageRequestFilter {
   int64 stage_id = 1;
   int64 task_type_id = 2;
+  string priority = 3;
   string keyword = 4;
   optional bool overdue = 5;
   repeated string phase = 6;
@@ -63,6 +64,7 @@ message ProjectManagementTaskCreateRequestData {
   string end_at = 7;
   int64 task_type_id = 8;
   repeated int64 assignee_organization_user_ids = 9;
+  double work_hours = 10;
 }
 
 message ProjectManagementTaskDetailRequest {
@@ -97,6 +99,7 @@ message ProjectManagementTaskUpdateRequestData {
   reserved 8;
   repeated int64 assignee_organization_user_ids = 9;
   repeated ProjectManagementTaskDependencyRequest dependencies = 10;
+  double work_hours = 11;
 }
 
 message ProjectManagementTaskDeleteRequest {
@@ -120,6 +123,7 @@ message ProjectManagementMyTaskPageFilter {
   int64 project_id = 1;
   int64 stage_id = 2;
   int64 task_type_id = 3;
+  string priority = 4;
   string keyword = 5;
   optional bool overdue = 6;
   repeated string phase = 7;

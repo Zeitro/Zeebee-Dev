@@ -1827,6 +1827,7 @@ type ProjectManagementMyTaskPageFilter struct {
 	ProjectId  int64    `json:"project_id,optional"`
 	StageId    int64    `json:"stage_id,optional"`
 	Phase      []string `json:"phase,optional" validate:"omitempty,dive,oneof=Pending InProgress Finished"`
+	Priority   string   `json:"priority,optional" validate:"omitempty,oneof=Low Medium High Critical"`
 	TaskTypeId int64    `json:"task_type_id,optional"`
 	Keyword    string   `json:"keyword,optional"`
 	Overdue    *bool    `json:"overdue,optional"`
@@ -1843,6 +1844,7 @@ type ProjectManagementProjectCreateRequest struct {
 	EntityType         string `json:"entity_type,optional,options=BorrowerProperty|" validate:"omitempty,oneof=BorrowerProperty"`
 	Name               string `json:"name" validate:"required,max=100"`
 	Description        string `json:"description,optional" validate:"max=500"`
+	Priority           string `json:"priority" validate:"oneof=Low Medium High Critical"`
 	CoverUrl           string `json:"cover_url,optional" validate:"omitempty,uri"`
 	WorkflowTemplateId int64  `json:"workflow_template_id" validate:"required,gt=0"`
 }
@@ -1857,6 +1859,8 @@ type ProjectManagementProjectEntity struct {
 	EntityType  string                           `json:"entity_type"`
 	Name        string                           `json:"name"`
 	Description string                           `json:"description"`
+	Priority    string                           `json:"priority"`
+	WorkHours   float64                          `json:"work_hours"`
 	CoverUrl    string                           `json:"cover_url"`
 	OwnerId     int64                            `json:"owner_id"`
 	OwnerName   string                           `json:"owner_name"`
@@ -1894,6 +1898,7 @@ type ProjectManagementProjectUpdateRequest struct {
 	Id          int64  `path:"id" validate:"required,gt=0"`
 	Name        string `json:"name" validate:"required,max=100"`
 	Description string `json:"description,optional" validate:"max=500"`
+	Priority    string `json:"priority" validate:"oneof=Low Medium High Critical"`
 	CoverUrl    string `json:"cover_url,optional" validate:"omitempty,uri"`
 }
 
@@ -1931,6 +1936,7 @@ type ProjectManagementTaskCreateRequest struct {
 	Title                       string  `json:"title" validate:"required,max=255"`
 	Description                 string  `json:"description,optional"`
 	Priority                    string  `json:"priority" validate:"oneof=Low Medium High Critical"`
+	WorkHours                   float64 `json:"work_hours,optional" validate:"gte=0"`
 	StartAt                     string  `json:"start_at,optional" validate:"omitempty,datetime=01/02/2006"`
 	EndAt                       string  `json:"end_at,optional" validate:"omitempty,datetime=01/02/2006"`
 	TaskTypeId                  int64   `json:"task_type_id" validate:"required,gt=0"`
@@ -1996,13 +2002,16 @@ type ProjectManagementTaskEntity struct {
 type ProjectManagementTaskPageEntity struct {
 	Id             int64                                    `json:"id"`
 	ProjectId      int64                                    `json:"project_id"`
+	ProjectName    string                                   `json:"project_name"`
 	ParentTaskId   int64                                    `json:"parent_task_id"`
 	StageId        int64                                    `json:"stage_id"`
+	StageName      string                                   `json:"stage_name"`
 	Phase          string                                   `json:"phase"`
 	CreatorId      int64                                    `json:"creator_id"`
 	CreatorName    string                                   `json:"creator_name"`
 	Title          string                                   `json:"title"`
 	Priority       string                                   `json:"priority"`
+	WorkHours      float64                                  `json:"work_hours"`
 	StartAt        string                                   `json:"start_at"`
 	EndAt          string                                   `json:"end_at"`
 	TaskType       *ProjectManagementTaskTypeSnapshotEntity `json:"task_type"`
@@ -2015,6 +2024,7 @@ type ProjectManagementTaskPageEntity struct {
 type ProjectManagementTaskPageFilter struct {
 	StageId    int64    `json:"stage_id,optional"`
 	Phase      []string `json:"phase,optional" validate:"omitempty,dive,oneof=Pending InProgress Finished"`
+	Priority   string   `json:"priority,optional" validate:"omitempty,oneof=Low Medium High Critical"`
 	TaskTypeId int64    `json:"task_type_id,optional"`
 	ProjectId  int64    `json:"project_id"`
 	Keyword    string   `json:"keyword,optional"`
@@ -2039,9 +2049,6 @@ type ProjectManagementTaskTransitionRequest struct {
 	Id            int64 `path:"id" validate:"required,gt=0"`
 	ProjectId     int64 `json:"project_id" validate:"required,gt=0"`
 	TargetStageId int64 `json:"target_stage_id" validate:"required,gt=0"`
-}
-
-type ProjectManagementTaskTypeAllRequest struct {
 }
 
 type ProjectManagementTaskTypeAllResponse struct {
@@ -2094,6 +2101,7 @@ type ProjectManagementTaskUpdateRequest struct {
 	Title                       string                                    `json:"title" validate:"required,max=255"`
 	Description                 string                                    `json:"description,optional"`
 	Priority                    string                                    `json:"priority,optional" validate:"omitempty,oneof=Low Medium High Critical"`
+	WorkHours                   float64                                   `json:"work_hours,optional" validate:"gte=0"`
 	StartAt                     string                                    `json:"start_at,optional" validate:"omitempty,datetime=01/02/2006"`
 	EndAt                       string                                    `json:"end_at,optional" validate:"omitempty,datetime=01/02/2006"`
 	TaskTypeId                  int64                                     `json:"task_type_id,optional"`

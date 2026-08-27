@@ -47,9 +47,12 @@ func (r *ProjectManagementTaskRepo) PageByProject(ctx context.Context, organizat
 	tasksTable := model.ProjectManagementTask{}.TableName()
 	assigneesTable := model.ProjectManagementTaskAssignee{}.TableName()
 	stagesTable := model.ProjectManagementWorkflowStage{}.TableName()
+	projectsTable := model.ProjectManagementProject{}.TableName()
 	query := r.Client(ctx).
 		Omit("Description").
 		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.stage_id AND %s.is_del = 0", stagesTable, stagesTable, tasksTable, stagesTable)).
+		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.project_id AND %s.is_del = 0", projectsTable, projectsTable, tasksTable, projectsTable)).
+		Select(fmt.Sprintf("%s.*, %s.name AS project_name, %s.name AS stage_name", tasksTable, projectsTable, stagesTable)).
 		Where(fmt.Sprintf("%s.organization_id = ? AND %s.project_id = ?", tasksTable, tasksTable), organizationId, input.Filter.ProjectId).
 		Order(fmt.Sprintf("%s.sort_order ASC, %s.id DESC", stagesTable, tasksTable))
 	if input.Filter.StageId != 0 {
@@ -57,6 +60,9 @@ func (r *ProjectManagementTaskRepo) PageByProject(ctx context.Context, organizat
 	}
 	if len(input.Filter.Phase) > 0 {
 		query = query.Where(fmt.Sprintf("%s.phase IN ?", tasksTable), input.Filter.Phase)
+	}
+	if input.Filter.Priority != "" {
+		query = query.Where(fmt.Sprintf("%s.priority = ?", tasksTable), input.Filter.Priority)
 	}
 	if input.Filter.TaskTypeId != 0 {
 		query = query.Where(fmt.Sprintf("CAST(%s.task_type->>'id' AS TEXT) = CAST(? AS TEXT)", tasksTable), input.Filter.TaskTypeId)
@@ -97,9 +103,12 @@ func (r *ProjectManagementTaskRepo) PageMine(ctx context.Context, organizationId
 	tasksTable := model.ProjectManagementTask{}.TableName()
 	assigneesTable := model.ProjectManagementTaskAssignee{}.TableName()
 	stagesTable := model.ProjectManagementWorkflowStage{}.TableName()
+	projectsTable := model.ProjectManagementProject{}.TableName()
 	query := r.Client(ctx).
 		Omit("Description").
 		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.stage_id AND %s.is_del = 0", stagesTable, stagesTable, tasksTable, stagesTable)).
+		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.project_id AND %s.is_del = 0", projectsTable, projectsTable, tasksTable, projectsTable)).
+		Select(fmt.Sprintf("%s.*, %s.name AS project_name, %s.name AS stage_name", tasksTable, projectsTable, stagesTable)).
 		Where(fmt.Sprintf("%s.organization_id = ?", tasksTable), organizationId).
 		Where(fmt.Sprintf("EXISTS (SELECT 1 FROM %s mine WHERE mine.task_id = %s.id AND mine.stage_id = %s.stage_id AND mine.organization_user_id = ? AND mine.is_del = 0)", assigneesTable, tasksTable, tasksTable), organizationUserId).
 		Order(fmt.Sprintf("%s.sort_order ASC, %s.id DESC", stagesTable, tasksTable))
@@ -111,6 +120,9 @@ func (r *ProjectManagementTaskRepo) PageMine(ctx context.Context, organizationId
 	}
 	if len(input.Filter.Phase) > 0 {
 		query = query.Where(fmt.Sprintf("%s.phase IN ?", tasksTable), input.Filter.Phase)
+	}
+	if input.Filter.Priority != "" {
+		query = query.Where(fmt.Sprintf("%s.priority = ?", tasksTable), input.Filter.Priority)
 	}
 	if input.Filter.TaskTypeId != 0 {
 		query = query.Where(fmt.Sprintf("CAST(%s.task_type->>'id' AS TEXT) = CAST(? AS TEXT)", tasksTable), input.Filter.TaskTypeId)

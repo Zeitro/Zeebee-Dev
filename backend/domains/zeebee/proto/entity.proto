@@ -890,6 +890,7 @@ message ProjectManagementProjectEntity {
   string created_at = 9;
   string updated_at = 10;
   ProjectManagementWorkflowEntity workflow = 11;
+  string priority = 12;
 }
 
 message ProjectManagementMemberEntity {
@@ -949,6 +950,7 @@ message ProjectManagementTaskEntity {
   string phase = 19;
   repeated ProjectManagementTaskEntity children = 20;
   repeated ProjectManagementTaskDependencyEntity dependencies = 21;
+  double work_hours = 22;
 }
 
 message ProjectManagementTaskPageEntity {
@@ -968,6 +970,9 @@ message ProjectManagementTaskPageEntity {
   string created_at = 16;
   string updated_at = 17;
   string phase = 19;
+  double work_hours = 20;
+  string project_name = 21;
+  string stage_name = 22;
 }
 
 message ProjectManagementTaskDependencyEntity {

@@ -114,7 +114,10 @@ type ProjectManagementProjectEntityType string
 
 const ProjectManagementProjectEntityTypeName = "project_management_project_entity_type"
 
-const ProjectManagementEntityTypeBorrowerProperty ProjectManagementProjectEntityType = "BorrowerProperty"
+const (
+	ProjectManagementEntityTypeNone             ProjectManagementProjectEntityType = ""
+	ProjectManagementEntityTypeBorrowerProperty ProjectManagementProjectEntityType = "BorrowerProperty"
+)
 
 func (c ProjectManagementProjectEntityType) Validate() error {
 	return validateConstant(c, []ProjectManagementProjectEntityType{

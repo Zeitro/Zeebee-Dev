@@ -54,7 +54,7 @@ func TestCreateTaskKeepsWorkflowAndTypeSnapshots(t *testing.T) {
 		"CREATE TABLE project_management_workflow_stages (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, workflow_id integer not null, name text not null default '', phase text not null, color text not null default '', sort_order integer not null default 0)",
 		"CREATE TABLE project_management_workflow_transitions (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, workflow_id integer not null, name text not null default '', from_stage_id integer not null, to_stage_id integer not null, allowed_actor_types json not null default '[]')",
 		"CREATE TABLE project_management_task_types (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, organization_id integer not null, name text not null default '', description text not null default '', color text not null default '', enabled boolean not null default true)",
-		"CREATE TABLE project_management_tasks (id integer primary key autoincrement, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, project_id integer not null, organization_id integer not null, parent_task_id integer not null default 0, stage_id integer not null, creator_id integer not null, creator_name text not null default '', title text not null default '', description text not null default '', priority text not null default '', start_at datetime, end_at datetime, task_type json not null default '{}')",
+		"CREATE TABLE project_management_tasks (id integer primary key autoincrement, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, project_id integer not null, organization_id integer not null, parent_task_id integer not null default 0, stage_id integer not null, creator_id integer not null, creator_name text not null default '', title text not null default '', description text not null default '', priority text not null default '', work_hours numeric not null default 0, start_at datetime, end_at datetime, task_type json not null default '{}')",
 		"CREATE TABLE project_management_task_assignees (id integer primary key autoincrement, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, task_id integer not null, stage_id integer not null default 0, organization_user_id integer not null, organization_user_name text not null default '')",
 		"CREATE TABLE project_management_task_dependencies (id integer primary key autoincrement, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, task_id integer not null, dependency_task_id integer not null, dependency_type text not null default 'PreTask', dependency_rule text not null default 'FS')",
 		"CREATE TABLE files (id integer primary key autoincrement, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, entity_type text not null default '', entity_id integer not null default 0, file_url text not null default '', file_name text not null default '', storage_type text not null default '', external_id text not null default '', upload_type text not null default '', drive_url text not null default '', drive_synced_at datetime)",
@@ -82,12 +82,16 @@ func TestCreateTaskKeepsWorkflowAndTypeSnapshots(t *testing.T) {
 	logic := NewProjectManagementTaskLogic(NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}))
 	actor := utils.JwtUser{OrganizationId: 1, OrganizationUserId: 20, Username: "Creator"}
 	task, err := logic.Create(context.Background(), actor, dto.ProjectManagementTaskCreateDto{
-		ProjectManagementTaskDto:    dto.ProjectManagementTaskDto{ProjectId: 10, Title: "Inspect roof"},
+		ProjectManagementTaskDto:    dto.ProjectManagementTaskDto{ProjectId: 10, Title: "Inspect roof", WorkHours: 2.5},
 		TaskTypeId:                  500,
 		AssigneeOrganizationUserIds: []int64{21},
 	})
-	if err != nil || task.StageId != 200 || task.Phase != constants.ProjectManagementStagePhasePending || len(task.Assignees) != 1 || task.Assignees[0].OrganizationUserName != "Executor" || task.TaskType == nil || task.TaskType.Id != 500 || task.TaskType.Name != "Inspection" || task.TaskType.Description != "Initial visit" || task.TaskType.Color != "#123456" {
+	if err != nil || task.StageId != 200 || task.Phase != constants.ProjectManagementStagePhasePending || task.WorkHours != 2.5 || len(task.Assignees) != 1 || task.Assignees[0].OrganizationUserName != "Executor" || task.TaskType == nil || task.TaskType.Id != 500 || task.TaskType.Name != "Inspection" || task.TaskType.Description != "Initial visit" || task.TaskType.Color != "#123456" {
 		t.Fatalf("task snapshots were not created: %#v, %v", task, err)
+	}
+	page, err := logic.Page(context.Background(), actor, dto.ProjectManagementTaskPageRequestDto{Page: 1, Limit: 20, Filter: dto.ProjectManagementTaskFilterDto{ProjectId: 10}})
+	if err != nil || len(page.List) != 1 || page.List[0].ProjectName != "Project" || page.List[0].StageName != "Pending" {
+		t.Fatalf("task page did not include project or stage name: %#v, %v", page, err)
 	}
 	if err = db.Exec("INSERT INTO files (entity_type, entity_id, file_url, file_name, storage_type) VALUES (?, ?, 'https://example.test/task.pdf', 'task.pdf', 'Aws S3')", constants.FileEntityTypeProjectManagementTask, task.Id).Error; err != nil {
 		t.Fatal(err)
@@ -109,6 +113,10 @@ func TestCreateTaskKeepsWorkflowAndTypeSnapshots(t *testing.T) {
 	task, err = logic.Update(context.Background(), actor, task.Id, dto.ProjectManagementTaskUpdateDto{Title: task.Title, TaskTypeId: 500, AssigneeOrganizationUserIds: []int64{21, 22}})
 	if err != nil || task.TaskType == nil || task.TaskType.Id != 500 || len(task.Assignees) != 2 || task.Assignees[0].OrganizationUserId != 21 || task.Assignees[0].Id != assigneeId || task.Assignees[1].OrganizationUserId != 22 {
 		t.Fatalf("task assignee was not updated: %#v, %v", task, err)
+	}
+	task, err = logic.Update(context.Background(), actor, task.Id, dto.ProjectManagementTaskUpdateDto{Title: task.Title, WorkHours: 4})
+	if err != nil || task.WorkHours != 4 {
+		t.Fatalf("task work hours were not updated: %#v, %v", task, err)
 	}
 	task, err = logic.Update(context.Background(), actor, task.Id, dto.ProjectManagementTaskUpdateDto{Title: task.Title, AssigneeOrganizationUserIds: []int64{22}})
 	if err != nil || len(task.Assignees) != 1 || task.Assignees[0].OrganizationUserId != 22 {

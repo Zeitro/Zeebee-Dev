@@ -18,6 +18,7 @@ type ProjectManagementTaskDto struct {
 	Title          string
 	Description    string
 	Priority       constants.ProjectManagementPriority
+	WorkHours      float64
 	StartAt        *sql.NullTime
 	EndAt          *sql.NullTime
 	TaskType       *ProjectManagementTaskTypeSnapshotDto
@@ -38,6 +39,7 @@ type ProjectManagementTaskUpdateDto struct {
 	Title                       string
 	Description                 string
 	Priority                    constants.ProjectManagementPriority
+	WorkHours                   float64
 	StartAt                     *sql.NullTime
 	EndAt                       *sql.NullTime
 	TaskTypeId                  int64
@@ -56,6 +58,7 @@ type ProjectManagementTaskFilterDto struct {
 	ProjectId  int64
 	StageId    int64
 	Phase      []constants.ProjectManagementStagePhase
+	Priority   constants.ProjectManagementPriority
 	TaskTypeId int64
 	AssigneeId int64
 	Keyword    string

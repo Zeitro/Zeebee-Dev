@@ -130,6 +130,7 @@ type ProjectManagementTaskPageRequestFilter struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	StageId       int64                  `protobuf:"varint,1,opt,name=stage_id,json=stageId,proto3" json:"stage_id,omitempty"`
 	TaskTypeId    int64                  `protobuf:"varint,2,opt,name=task_type_id,json=taskTypeId,proto3" json:"task_type_id,omitempty"`
+	Priority      string                 `protobuf:"bytes,3,opt,name=priority,proto3" json:"priority,omitempty"`
 	Keyword       string                 `protobuf:"bytes,4,opt,name=keyword,proto3" json:"keyword,omitempty"`
 	Overdue       *bool                  `protobuf:"varint,5,opt,name=overdue,proto3,oneof" json:"overdue,omitempty"`
 	Phase         []string               `protobuf:"bytes,6,rep,name=phase,proto3" json:"phase,omitempty"`
@@ -180,6 +181,13 @@ func (x *ProjectManagementTaskPageRequestFilter) GetTaskTypeId() int64 {
 		return x.TaskTypeId
 	}
 	return 0
+}
+
+func (x *ProjectManagementTaskPageRequestFilter) GetPriority() string {
+	if x != nil {
+		return x.Priority
+	}
+	return ""
 }
 
 func (x *ProjectManagementTaskPageRequestFilter) GetKeyword() string {
@@ -585,6 +593,7 @@ type ProjectManagementTaskCreateRequestData struct {
 	EndAt                       string                 `protobuf:"bytes,7,opt,name=end_at,json=endAt,proto3" json:"end_at,omitempty"`
 	TaskTypeId                  int64                  `protobuf:"varint,8,opt,name=task_type_id,json=taskTypeId,proto3" json:"task_type_id,omitempty"`
 	AssigneeOrganizationUserIds []int64                `protobuf:"varint,9,rep,packed,name=assignee_organization_user_ids,json=assigneeOrganizationUserIds,proto3" json:"assignee_organization_user_ids,omitempty"`
+	WorkHours                   float64                `protobuf:"fixed64,10,opt,name=work_hours,json=workHours,proto3" json:"work_hours,omitempty"`
 	unknownFields               protoimpl.UnknownFields
 	sizeCache                   protoimpl.SizeCache
 }
@@ -680,6 +689,13 @@ func (x *ProjectManagementTaskCreateRequestData) GetAssigneeOrganizationUserIds(
 		return x.AssigneeOrganizationUserIds
 	}
 	return nil
+}
+
+func (x *ProjectManagementTaskCreateRequestData) GetWorkHours() float64 {
+	if x != nil {
+		return x.WorkHours
+	}
+	return 0
 }
 
 type ProjectManagementTaskDetailRequest struct {
@@ -953,6 +969,7 @@ type ProjectManagementTaskUpdateRequestData struct {
 	TaskTypeId                  int64                                     `protobuf:"varint,7,opt,name=task_type_id,json=taskTypeId,proto3" json:"task_type_id,omitempty"`
 	AssigneeOrganizationUserIds []int64                                   `protobuf:"varint,9,rep,packed,name=assignee_organization_user_ids,json=assigneeOrganizationUserIds,proto3" json:"assignee_organization_user_ids,omitempty"`
 	Dependencies                []*ProjectManagementTaskDependencyRequest `protobuf:"bytes,10,rep,name=dependencies,proto3" json:"dependencies,omitempty"`
+	WorkHours                   float64                                   `protobuf:"fixed64,11,opt,name=work_hours,json=workHours,proto3" json:"work_hours,omitempty"`
 	unknownFields               protoimpl.UnknownFields
 	sizeCache                   protoimpl.SizeCache
 }
@@ -1048,6 +1065,13 @@ func (x *ProjectManagementTaskUpdateRequestData) GetDependencies() []*ProjectMan
 		return x.Dependencies
 	}
 	return nil
+}
+
+func (x *ProjectManagementTaskUpdateRequestData) GetWorkHours() float64 {
+	if x != nil {
+		return x.WorkHours
+	}
+	return 0
 }
 
 type ProjectManagementTaskDeleteRequest struct {
@@ -1255,6 +1279,7 @@ type ProjectManagementMyTaskPageFilter struct {
 	ProjectId     int64                  `protobuf:"varint,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
 	StageId       int64                  `protobuf:"varint,2,opt,name=stage_id,json=stageId,proto3" json:"stage_id,omitempty"`
 	TaskTypeId    int64                  `protobuf:"varint,3,opt,name=task_type_id,json=taskTypeId,proto3" json:"task_type_id,omitempty"`
+	Priority      string                 `protobuf:"bytes,4,opt,name=priority,proto3" json:"priority,omitempty"`
 	Keyword       string                 `protobuf:"bytes,5,opt,name=keyword,proto3" json:"keyword,omitempty"`
 	Overdue       *bool                  `protobuf:"varint,6,opt,name=overdue,proto3,oneof" json:"overdue,omitempty"`
 	Phase         []string               `protobuf:"bytes,7,rep,name=phase,proto3" json:"phase,omitempty"`
@@ -1311,6 +1336,13 @@ func (x *ProjectManagementMyTaskPageFilter) GetTaskTypeId() int64 {
 		return x.TaskTypeId
 	}
 	return 0
+}
+
+func (x *ProjectManagementMyTaskPageFilter) GetPriority() string {
+	if x != nil {
+		return x.Priority
+	}
+	return ""
 }
 
 func (x *ProjectManagementMyTaskPageFilter) GetKeyword() string {
@@ -1708,11 +1740,12 @@ const file_borrower_project_management_task_proto_rawDesc = "" +
 	"$ProjectManagementTaskPageRequestData\x12\x12\n" +
 	"\x04page\x18\x02 \x01(\x03R\x04page\x12\x14\n" +
 	"\x05limit\x18\x03 \x01(\x03R\x05limit\x12H\n" +
-	"\x06filter\x18\x04 \x01(\v20.borrower.ProjectManagementTaskPageRequestFilterR\x06filter\"\xdf\x01\n" +
+	"\x06filter\x18\x04 \x01(\v20.borrower.ProjectManagementTaskPageRequestFilterR\x06filter\"\xfb\x01\n" +
 	"&ProjectManagementTaskPageRequestFilter\x12\x19\n" +
 	"\bstage_id\x18\x01 \x01(\x03R\astageId\x12 \n" +
 	"\ftask_type_id\x18\x02 \x01(\x03R\n" +
-	"taskTypeId\x12\x18\n" +
+	"taskTypeId\x12\x1a\n" +
+	"\bpriority\x18\x03 \x01(\tR\bpriority\x12\x18\n" +
 	"\akeyword\x18\x04 \x01(\tR\akeyword\x12\x1d\n" +
 	"\aoverdue\x18\x05 \x01(\bH\x00R\aoverdue\x88\x01\x01\x12\x14\n" +
 	"\x05phase\x18\x06 \x03(\tR\x05phase\x12\x1d\n" +
@@ -1742,7 +1775,7 @@ const file_borrower_project_management_task_proto_rawDesc = "" +
 	"&ProjectManagementTaskCandidateResponse\x12B\n" +
 	"\x04data\x18\x01 \x03(\v2..borrower.ProjectManagementTaskCandidateEntityR\x04data\"j\n" +
 	"\"ProjectManagementTaskCreateRequest\x12D\n" +
-	"\x04data\x18\x01 \x01(\v20.borrower.ProjectManagementTaskCreateRequestDataR\x04data\"\xda\x02\n" +
+	"\x04data\x18\x01 \x01(\v20.borrower.ProjectManagementTaskCreateRequestDataR\x04data\"\xf9\x02\n" +
 	"&ProjectManagementTaskCreateRequestData\x12\x1d\n" +
 	"\n" +
 	"project_id\x18\x01 \x01(\x03R\tprojectId\x12$\n" +
@@ -1754,7 +1787,10 @@ const file_borrower_project_management_task_proto_rawDesc = "" +
 	"\x06end_at\x18\a \x01(\tR\x05endAt\x12 \n" +
 	"\ftask_type_id\x18\b \x01(\x03R\n" +
 	"taskTypeId\x12C\n" +
-	"\x1eassignee_organization_user_ids\x18\t \x03(\x03R\x1bassigneeOrganizationUserIds\"j\n" +
+	"\x1eassignee_organization_user_ids\x18\t \x03(\x03R\x1bassigneeOrganizationUserIds\x12\x1d\n" +
+	"\n" +
+	"work_hours\x18\n" +
+	" \x01(\x01R\tworkHours\"j\n" +
 	"\"ProjectManagementTaskDetailRequest\x12D\n" +
 	"\x04data\x18\x01 \x01(\v20.borrower.ProjectManagementTaskDetailRequestDataR\x04data\"W\n" +
 	"&ProjectManagementTaskDetailRequestData\x12\x0e\n" +
@@ -1770,7 +1806,7 @@ const file_borrower_project_management_task_proto_rawDesc = "" +
 	"\atask_id\x18\x02 \x01(\x03R\x06taskId\x12,\n" +
 	"\x12dependency_task_id\x18\x03 \x01(\x03R\x10dependencyTaskId\x12'\n" +
 	"\x0fdependency_type\x18\x04 \x01(\tR\x0edependencyType\x12'\n" +
-	"\x0fdependency_rule\x18\x05 \x01(\tR\x0edependencyRule\"\x81\x03\n" +
+	"\x0fdependency_rule\x18\x05 \x01(\tR\x0edependencyRule\"\xa0\x03\n" +
 	"&ProjectManagementTaskUpdateRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12 \n" +
@@ -1782,7 +1818,9 @@ const file_borrower_project_management_task_proto_rawDesc = "" +
 	"taskTypeId\x12C\n" +
 	"\x1eassignee_organization_user_ids\x18\t \x03(\x03R\x1bassigneeOrganizationUserIds\x12T\n" +
 	"\fdependencies\x18\n" +
-	" \x03(\v20.borrower.ProjectManagementTaskDependencyRequestR\fdependenciesJ\x04\b\b\x10\t\"j\n" +
+	" \x03(\v20.borrower.ProjectManagementTaskDependencyRequestR\fdependencies\x12\x1d\n" +
+	"\n" +
+	"work_hours\x18\v \x01(\x01R\tworkHoursJ\x04\b\b\x10\t\"j\n" +
 	"\"ProjectManagementTaskDeleteRequest\x12D\n" +
 	"\x04data\x18\x01 \x01(\v20.borrower.ProjectManagementTaskDeleteRequestDataR\x04data\"]\n" +
 	"&ProjectManagementTaskDeleteRequestData\x12\x0e\n" +
@@ -1794,13 +1832,14 @@ const file_borrower_project_management_task_proto_rawDesc = "" +
 	"&ProjectManagementMyTaskPageRequestData\x12\x12\n" +
 	"\x04page\x18\x01 \x01(\x03R\x04page\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x03R\x05limit\x12C\n" +
-	"\x06filter\x18\x03 \x01(\v2+.borrower.ProjectManagementMyTaskPageFilterR\x06filter\"\xda\x01\n" +
+	"\x06filter\x18\x03 \x01(\v2+.borrower.ProjectManagementMyTaskPageFilterR\x06filter\"\xf6\x01\n" +
 	"!ProjectManagementMyTaskPageFilter\x12\x1d\n" +
 	"\n" +
 	"project_id\x18\x01 \x01(\x03R\tprojectId\x12\x19\n" +
 	"\bstage_id\x18\x02 \x01(\x03R\astageId\x12 \n" +
 	"\ftask_type_id\x18\x03 \x01(\x03R\n" +
-	"taskTypeId\x12\x18\n" +
+	"taskTypeId\x12\x1a\n" +
+	"\bpriority\x18\x04 \x01(\tR\bpriority\x12\x18\n" +
 	"\akeyword\x18\x05 \x01(\tR\akeyword\x12\x1d\n" +
 	"\aoverdue\x18\x06 \x01(\bH\x00R\aoverdue\x88\x01\x01\x12\x14\n" +
 	"\x05phase\x18\a \x03(\tR\x05phaseB\n" +
