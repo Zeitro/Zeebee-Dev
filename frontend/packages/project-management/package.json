@@ -14,7 +14,8 @@
 		"./components/*": "./src/components/*",
 		"./api/*": "./src/api/*",
 		"./enum": "./src/enum/index.js",
-		"./enum/*": "./src/enum/*"
+		"./enum/*": "./src/enum/*",
+		"./store/*": "./src/store/*"
 	},
 	"scripts": {
 		"format": "prettier --write .",

@@ -1,6 +1,6 @@
 /**
- * 我的任务列表：标题/优先级/状态筛选，FilterTable 分页。
- * 任务范围：创建者或执行者为当前用户；接口就绪后切 GET /tasks。
+ * 我的任务列表：POST `/project_management/task/my`。
+ * 筛选只传 keyword / phase（treeSelect 多选数组）/ priority（字符串，如 High）。
  */
 'use client';
 
@@ -9,117 +9,104 @@ import { useRouter } from 'next/navigation';
 import { Empty, Tag, Button, message } from 'antd';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import { useTranslations } from 'next-intl';
-import { useUserStore } from '@repo/shared-methods/store';
-import { createRequest, displayValue, formatDate, dayjs } from '@repo/shared-methods/utils';
-import { TASK_API } from '@repo/project-management/api/task';
 import {
-	PROJECT_PRIORITY_FILTER_VALUES,
-	PROJECT_PRIORITY_I18N_KEY,
-	getPriorityI18nKey,
-} from '@repo/project-management/enum/project';
-import { WORKFLOW_STATE_TYPE } from '@repo/project-management/enum/workflow';
-import { getMockMyTaskPage, getMockProjectName, MOCK_MEMBER_MAP } from '../mockData';
-
-const PRIORITY_TAG_COLOR = {
-	0: 'green',
-	1: 'default',
-	2: 'blue',
-	3: 'orange',
-};
-
-const STATUS_FILTER_OPTIONS = [
-	{ value: WORKFLOW_STATE_TYPE.INITIAL, labelKey: 'myTask.statusInitial' },
-	{ value: WORKFLOW_STATE_TYPE.IN_PROGRESS, labelKey: 'myTask.statusInProgress' },
-	{ value: WORKFLOW_STATE_TYPE.COMPLETED, labelKey: 'myTask.statusCompleted' },
-	{ value: WORKFLOW_STATE_TYPE.PAUSED, labelKey: 'myTask.statusPaused' },
-];
+	createRequest,
+	displayValue,
+	formatDate,
+	transformArrayStructure,
+} from '@repo/shared-methods/utils';
+import { TASK_MY_API, createTaskApi } from '@repo/project-management/api/task';
+import {
+	TASK_PRIORITY_TAG_COLOR,
+	getPhaseI18nKey,
+	getTaskPriorityI18nKey,
+	localizeSelectOptions,
+} from '@repo/project-management/enum/task';
+import { toTaskTypeColorHex } from '@repo/project-management/enum/taskType';
+import { useOptionsStore } from '@repo/project-management/store/options';
 
 /**
- * @param {number|string|undefined} userId
- * @param {number|string|undefined} memberId
- * @param {Record<number, string>} memberMap
- * @param {string|undefined} userName
- * @returns {string}
+ * @param {Array<{ value?: string, label?: string }>} options
+ * @param {string} value
+ * @returns {string|undefined}
  */
-function resolveMemberName(userId, memberId, memberMap, userName) {
-	if (memberId == null || memberId === '') return '';
-	if (String(memberId) === String(userId)) {
-		return userName || memberMap[memberId] || '';
+function getOptionLabel(options, value) {
+	return options?.find((item) => item.value === value)?.label;
+}
+
+/**
+ * 只提交 keyword / phase / priority；空值不传。
+ * @param {object} raw
+ * @returns {{ keyword?: string, phase?: string[], priority?: string }}
+ */
+function pickMyTaskFilter(raw = {}) {
+	const filter = {};
+	const keyword = typeof raw.keyword === 'string' ? raw.keyword.trim() : '';
+	if (keyword) filter.keyword = keyword;
+
+	const phase = Array.isArray(raw.phase) ? raw.phase.filter(Boolean) : [];
+	if (phase.length) filter.phase = phase;
+
+	if (typeof raw.priority === 'string' && raw.priority) {
+		filter.priority = raw.priority;
 	}
-	return memberMap[memberId] || '';
+	return filter;
 }
 
 export function useMyTaskList() {
 	const t = useTranslations();
 	const router = useRouter();
-	const { cancelMatch } = useMemo(() => createRequest(), []);
-	const userId = useUserStore((state) => state.userInfo?.id);
-	const userName = useUserStore((state) => state.userInfo?.full_name);
+	const { request, cancelMatch } = useMemo(() => createRequest(), []);
+	const taskApi = useMemo(() => createTaskApi(request), [request]);
 	const tableFilterRef = useRef();
 
-	const [title, setTitle] = useState('');
+	const [keyword, setKeyword] = useState('');
 	const [priority, setPriority] = useState();
-	const [statusType, setStatusType] = useState();
+	const [phase, setPhase] = useState([]);
 	const [messageApi, messageContextHolder] = message.useMessage();
+	const priorityOptions = useOptionsStore((state) => state.priorityOptions);
+	const stageOptions = useOptionsStore((state) => state.stageOptions);
 
-	const priorityOptions = useMemo(
-		() =>
-			PROJECT_PRIORITY_FILTER_VALUES.map((value) => ({
-				value,
-				label: t(PROJECT_PRIORITY_I18N_KEY[value]),
-			})),
-		[t],
+	const localizedPriorityOptions = useMemo(
+		() => localizeSelectOptions(priorityOptions, t, getTaskPriorityI18nKey),
+		[priorityOptions, t],
 	);
 
-	const statusOptions = useMemo(
+	const localizedStageOptions = useMemo(
+		() => localizeSelectOptions(stageOptions, t, getPhaseI18nKey),
+		[stageOptions, t],
+	);
+
+	const phaseTreeData = useMemo(
 		() =>
-			STATUS_FILTER_OPTIONS.map(({ value, labelKey }) => ({
-				value,
-				label: t(labelKey),
-			})),
-		[t],
+			transformArrayStructure({
+				sourceArray: localizedStageOptions,
+				outputKey: 'title',
+			}).map((item) => ({ ...item, key: item.value })),
+		[localizedStageOptions],
 	);
 
 	const handleRefresh = useCallback(() => {
-		cancelMatch(TASK_API);
+		cancelMatch(TASK_MY_API);
 		tableFilterRef.current?.handleSearch?.();
 	}, [cancelMatch]);
 
 	const getData = useCallback(
 		async (params) => {
-			const filter = { ...(params?.filter || {}) };
-			if (filter.priority !== undefined && filter.priority !== '') {
-				filter.priority = Number(filter.priority);
-			} else {
-				delete filter.priority;
-			}
-			if (!filter.statusType) {
-				delete filter.statusType;
-			}
-
 			try {
-				// API:
-				// const res = await request(
-				// 	`${TASK_API}?${new URLSearchParams({
-				// 		page: String(params?.page || 1),
-				// 		page_size: String(params?.limit || 15),
-				// 		user_id: String(userId || ''),
-				// 		...(filter.title ? { title: filter.title } : {}),
-				// 		...(filter.priority != null ? { priority: String(filter.priority) } : {}),
-				// 		...(filter.statusType ? { status_type: filter.statusType } : {}),
-				// 	})}`,
-				// 	{ method: 'GET', isHideTips: true },
-				// );
-				// const list = res?.list ?? res?.data ?? [];
-				// return { list, total: res?.total ?? list.length };
-
-				return getMockMyTaskPage({ ...params, filter }, userId, userName);
+				const res = await taskApi.page({
+					page: params?.page || 1,
+					limit: params?.limit || 20,
+					filter: pickMyTaskFilter(params?.filter),
+				});
+				const list = Array.isArray(res?.list) ? res.list : [];
+				return { list, total: res?.total ?? 0 };
 			} catch {
 				messageApi.error(t('myTask.loadFailed'));
 				return { list: [], total: 0 };
 			}
 		},
-		[messageApi, t, userId, userName],
+		[messageApi, t, taskApi],
 	);
 
 	const goTaskDetail = useCallback(
@@ -149,109 +136,80 @@ export function useMyTaskList() {
 				),
 			},
 			{
-				title: t('myTask.projectColumn'),
-				key: 'project',
-				width: 140,
-				render: (_, record) =>
-					displayValue(record.project_name || getMockProjectName(record.project_id)),
-			},
-			{
 				title: t('myTask.statusColumn'),
-				key: 'status',
-				width: 100,
-				render: (_, record) => <Tag>{displayValue(record.status)}</Tag>,
+				dataIndex: 'phase',
+				key: 'phase',
+				width: 120,
+				render: (value) => {
+					const key = getPhaseI18nKey(value);
+					return (
+						<Tag>
+							{key
+								? t(key)
+								: displayValue(
+										getOptionLabel(localizedStageOptions, value) || value,
+									)}
+						</Tag>
+					);
+				},
 			},
 			{
 				title: t('myTask.priorityColumn'),
 				dataIndex: 'priority',
 				key: 'priority',
-				width: 80,
+				width: 90,
 				render: (value) => {
-					const key = getPriorityI18nKey(value);
-					if (!key) return displayValue(value);
-					return <Tag color={PRIORITY_TAG_COLOR[value] || 'default'}>{t(key)}</Tag>;
+					const key = getTaskPriorityI18nKey(value);
+					return (
+						<Tag color={TASK_PRIORITY_TAG_COLOR[value] || 'default'}>
+							{key
+								? t(key)
+								: displayValue(
+										getOptionLabel(localizedPriorityOptions, value) || value,
+									)}
+						</Tag>
+					);
 				},
 			},
 			{
 				title: t('myTask.typeColumn'),
-				key: 'type',
-				width: 80,
-				render: (_, record) => displayValue(record.type_label || record.type),
+				key: 'task_type',
+				width: 120,
+				render: (_, record) => {
+					const name = record.task_type?.name;
+					const hex = toTaskTypeColorHex(record.task_type?.color);
+					if (!name) return displayValue();
+					return hex ? <Tag color={hex}>{name}</Tag> : displayValue(name);
+				},
 			},
 			{
 				title: t('myTask.creatorColumn'),
-				key: 'creator',
-				width: 100,
-				render: (_, record) =>
-					displayValue(
-						record.creator_name ||
-							resolveMemberName(userId, record.creator_id, MOCK_MEMBER_MAP, userName),
-					),
+				dataIndex: 'creator_name',
+				key: 'creator_name',
+				width: 120,
+				render: (value) => displayValue(value),
 			},
 			{
-				title: t('myTask.assigneeColumn'),
-				key: 'assignee',
+				title: t('myTask.startAtColumn'),
+				dataIndex: 'start_at',
+				key: 'start_at',
 				width: 120,
-				render: (_, record) => {
-					if (record.assignee_id == null) return displayValue();
-					const name =
-						record.assignee_name ||
-						resolveMemberName(userId, record.assignee_id, MOCK_MEMBER_MAP, userName);
-					if (!name) return displayValue();
-					const isMe = String(record.assignee_id) === String(userId);
-					return (
-						<span className={isMe ? 'font-semibold text-base-primary' : undefined}>
-							{name}
-							{isMe ? t('myTask.meSuffix') : ''}
-						</span>
-					);
-				},
+				render: (value) => displayValue(value, formatDate),
 			},
 			{
 				title: t('myTask.dueDateColumn'),
-				dataIndex: 'due_date',
-				key: 'due_date',
+				dataIndex: 'end_at',
+				key: 'end_at',
 				width: 120,
-				render: (value) => {
-					if (!value) return displayValue();
-					const isOverdue = dayjs(value).isBefore(dayjs(), 'day');
-					return (
-						<span className={isOverdue ? 'text-base-error' : undefined}>
-							{formatDate(value, 'YYYY/M/D')}
+				render: (value, record) =>
+					displayValue(value, (v) => (
+						<span className={record.overdue ? 'text-base-error' : undefined}>
+							{formatDate(v)}
 						</span>
-					);
-				},
-			},
-			{
-				title: t('myTask.roleColumn'),
-				key: 'role',
-				width: 120,
-				render: (_, record) => {
-					const tags = [];
-					if (String(record.creator_id) === String(userId)) {
-						tags.push({
-							key: 'creator',
-							label: t('myTask.roleCreator'),
-							color: 'purple',
-						});
-					}
-					if (String(record.assignee_id) === String(userId)) {
-						tags.push({
-							key: 'assignee',
-							label: t('myTask.roleAssignee'),
-							color: 'cyan',
-						});
-					}
-					if (!tags.length) return displayValue();
-					return tags.map((item) => (
-						<Tag key={item.key} color={item.color} className="mr-1">
-							{item.label}
-						</Tag>
-					));
-				},
+					)),
 			},
 		],
-		[goTaskDetail, t, userId, userName],
+		[goTaskDetail, localizedPriorityOptions, localizedStageOptions, t],
 	);
 
 	const filterList = useMemo(
@@ -259,10 +217,21 @@ export function useMyTaskList() {
 			{
 				filterType: 'input',
 				placeholder: t('myTask.searchPlaceholder'),
-				paramsKey: 'title',
-				value: title,
-				onChange: ({ target: { value } }) => setTitle(value),
+				paramsKey: 'keyword',
+				value: keyword,
+				onChange: ({ target: { value } }) => setKeyword(value),
 				style: { width: 240 },
+			},
+			{
+				filterType: 'treeSelect',
+				label: t('myTask.statusColumn'),
+				paramsKey: 'phase',
+				placeholder: t('myTask.statusColumn'),
+				value: phase,
+				onChange: (value) => setPhase(value || []),
+				treeData: phaseTreeData,
+				style: { width: 160 },
+				popupMatchSelectWidth: 172,
 			},
 			{
 				filterType: 'select',
@@ -270,16 +239,7 @@ export function useMyTaskList() {
 				paramsKey: 'priority',
 				value: priority,
 				onChange: (value) => setPriority(value),
-				options: priorityOptions,
-				style: { width: 120 },
-			},
-			{
-				filterType: 'select',
-				placeholder: t('myTask.statusColumn'),
-				paramsKey: 'statusType',
-				value: statusType,
-				onChange: (value) => setStatusType(value),
-				options: statusOptions,
+				options: localizedPriorityOptions,
 				style: { width: 120 },
 			},
 			{
@@ -294,15 +254,15 @@ export function useMyTaskList() {
 				text: t('common.reset'),
 				icon: <ReloadOutlined />,
 				onClick: () => {
-					cancelMatch(TASK_API);
-					setTitle('');
+					cancelMatch(TASK_MY_API);
+					setKeyword('');
 					setPriority(undefined);
-					setStatusType(undefined);
+					setPhase([]);
 					tableFilterRef.current?.handleSearch?.({
 						filter: {
-							title: '',
+							keyword: '',
+							phase: undefined,
 							priority: undefined,
-							statusType: undefined,
 						},
 					});
 				},
@@ -311,12 +271,12 @@ export function useMyTaskList() {
 		[
 			cancelMatch,
 			handleRefresh,
+			keyword,
+			localizedPriorityOptions,
+			phase,
+			phaseTreeData,
 			priority,
-			priorityOptions,
-			statusOptions,
-			statusType,
 			t,
-			title,
 		],
 	);
 
@@ -326,6 +286,6 @@ export function useMyTaskList() {
 		columns,
 		getData,
 		messageContextHolder,
-		emptyText: <Empty description={t('myTask.empty')} />,
+		// emptyText: <Empty description={t('myTask.empty')} />,
 	};
 }

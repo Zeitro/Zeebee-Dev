@@ -55,7 +55,8 @@
 		"low": "Low",
 		"medium": "Medium",
 		"high": "High",
-		"urgent": "Urgent"
+		"urgent": "Urgent",
+		"critical": "Critical"
 	},
 	"status": {
 		"planning": "Planning",
@@ -216,6 +217,7 @@
 		"creatorColumn": "Creator",
 		"assigneeColumn": "Assignee",
 		"dueDateColumn": "Due date",
+		"startAtColumn": "Start date",
 		"roleColumn": "Role",
 		"roleCreator": "Creator",
 		"roleAssignee": "Assignee",
@@ -223,7 +225,12 @@
 		"statusInitial": "To do",
 		"statusInProgress": "In progress",
 		"statusCompleted": "Completed",
-		"statusPaused": "Paused"
+		"statusPaused": "Paused",
+		"phasePending": "Pending",
+		"phaseInProgress": "In progress",
+		"phaseCompleted": "Completed",
+		"phaseFinished": "Finished",
+		"phasePaused": "Paused"
 	},
 	"taskType": {
 		"empty": "No task types",

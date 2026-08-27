@@ -1,9 +1,24 @@
 /**
- * 任务接口：列表 GET query；创建 POST；更新 PUT；拖拽改状态走 transition。
+ * 任务接口：我的任务分页 POST `/project_management/task/my`；
+ * 看板创建 / 更新 / 流转仍走 `/tasks`（待迁移）。
  */
 
 export const TASK_API = '/tasks';
 export const TASK_TYPES_API = '/task-types';
+
+/** 我的任务分页：POST，body `{ page, limit, filter }`，data 为 `{ list, total }` */
+export const TASK_MY_API = '/project_management/task/my';
+
+/**
+ * @param {import('@repo/shared-methods/utils').RequestFn} request
+ * @returns {{ page: (body: object) => Promise<{ list?: object[], total?: number }|unknown> }}
+ */
+export function createTaskApi(request) {
+	const hide = { isHideTips: true };
+	return {
+		page: (body) => request(TASK_MY_API, { method: 'POST', ...hide, body }),
+	};
+}
 
 /**
  * @param {number|string} id

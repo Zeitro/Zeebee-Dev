@@ -55,7 +55,8 @@
 		"low": "低",
 		"medium": "中",
 		"high": "高",
-		"urgent": "紧急"
+		"urgent": "紧急",
+		"critical": "紧急"
 	},
 	"status": {
 		"planning": "规划中",
@@ -216,6 +217,7 @@
 		"creatorColumn": "创建者",
 		"assigneeColumn": "执行者",
 		"dueDateColumn": "截止日期",
+		"startAtColumn": "开始日期",
 		"roleColumn": "角色",
 		"roleCreator": "创建者",
 		"roleAssignee": "执行者",
@@ -223,7 +225,12 @@
 		"statusInitial": "待开始",
 		"statusInProgress": "进行中",
 		"statusCompleted": "已完成",
-		"statusPaused": "已暂停"
+		"statusPaused": "已暂停",
+		"phasePending": "待处理",
+		"phaseInProgress": "进行中",
+		"phaseCompleted": "已完成",
+		"phaseFinished": "已完成",
+		"phasePaused": "已暂停"
 	},
 	"taskType": {
 		"empty": "暂无任务类型",
