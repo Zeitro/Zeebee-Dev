@@ -34,10 +34,10 @@ func (l *ProjectManagementProjectLogic) Page(ctx context.Context, claim utils.Jw
 }
 
 func (l *ProjectManagementMemberLogic) Page(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementMemberPageRequestDto) (gormx.PageResponse[*dto.ProjectManagementMemberDetailDto], error) {
-	if _, err := l.projectManagementAccess().RequireProject(ctx, input.Filter.ProjectId, claim.OrganizationId); err != nil {
+	if _, err := l.projectManagementLogic().RequireProject(ctx, input.Filter.ProjectId, claim.OrganizationId); err != nil {
 		return gormx.PageResponse[*dto.ProjectManagementMemberDetailDto]{}, err
 	}
-	if _, err := l.projectManagementAccess().RequireMember(ctx, input.Filter.ProjectId, claim.OrganizationUserId); err != nil {
+	if _, err := l.projectManagementLogic().RequireMember(ctx, input.Filter.ProjectId, claim.OrganizationUserId); err != nil {
 		return gormx.PageResponse[*dto.ProjectManagementMemberDetailDto]{}, err
 	}
 	page, err := l.repos.ProjectManagementProjectRepo.PageMembers(ctx, input.Filter.ProjectId, input)
@@ -55,10 +55,10 @@ func (l *ProjectManagementMemberLogic) Candidate(ctx context.Context, claim util
 	if input.Purpose != constants.ProjectManagementMemberCandidatePurposeAddMember && input.Purpose != constants.ProjectManagementMemberCandidatePurposeTransferOwner && input.Purpose != constants.ProjectManagementMemberCandidatePurposeProjectMember {
 		return nil, errorx.New("invalid project member candidate purpose")
 	}
-	if _, err := l.projectManagementAccess().RequireProject(ctx, input.ProjectId, claim.OrganizationId); err != nil {
+	if _, err := l.projectManagementLogic().RequireProject(ctx, input.ProjectId, claim.OrganizationId); err != nil {
 		return nil, err
 	}
-	if _, err := l.projectManagementAccess().RequireMemberRole(ctx, input.ProjectId, claim.OrganizationUserId, constants.ProjectManagementMemberRoleProjectOwner, constants.ProjectManagementMemberRoleProjectAdmin); err != nil {
+	if _, err := l.projectManagementLogic().RequireMemberRole(ctx, input.ProjectId, claim.OrganizationUserId, constants.ProjectManagementMemberRoleProjectOwner, constants.ProjectManagementMemberRoleProjectAdmin); err != nil {
 		return nil, err
 	}
 	candidates, err := l.repos.ProjectManagementProjectRepo.CandidateMembers(ctx, claim.OrganizationId, input.ProjectId, input.Keyword, input.Purpose)
@@ -135,11 +135,11 @@ func (l *ProjectManagementProjectLogic) Update(ctx context.Context, claim utils.
 	if err := validateProjectManagementProjectUpdate(input); err != nil {
 		return nil, err
 	}
-	project, err := l.projectManagementAccess().RequireProject(ctx, projectId, claim.OrganizationId)
+	project, err := l.projectManagementLogic().RequireProject(ctx, projectId, claim.OrganizationId)
 	if err != nil {
 		return nil, err
 	}
-	if _, err = l.projectManagementAccess().RequireMemberRole(ctx, projectId, claim.OrganizationUserId, constants.ProjectManagementMemberRoleProjectOwner, constants.ProjectManagementMemberRoleProjectAdmin); err != nil {
+	if _, err = l.projectManagementLogic().RequireMemberRole(ctx, projectId, claim.OrganizationUserId, constants.ProjectManagementMemberRoleProjectOwner, constants.ProjectManagementMemberRoleProjectAdmin); err != nil {
 		return nil, err
 	}
 	if err = copierx.Assign(&input, project); err != nil {
@@ -162,7 +162,7 @@ func (l *ProjectManagementProjectLogic) Update(ctx context.Context, claim utils.
 
 func (l *ProjectManagementProjectLogic) Delete(ctx context.Context, claim utils.JwtUser, projectId int64) error {
 	return l.repos.ProjectManagementProjectRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		if _, err := l.projectManagementAccess().requireProjectManagerWithTx(ctx, tx, claim, projectId); err != nil {
+		if _, err := l.projectManagementLogic().requireProjectManagerWithTx(ctx, tx, claim, projectId); err != nil {
 			return err
 		}
 		taskIds, err := l.repos.ProjectManagementTaskRepo.IdsByProjectWithTx(ctx, tx, projectId)

@@ -36,11 +36,11 @@ func (l *DetailLogic) Detail(in *proto.PathIdRequest) (resp *borrower.ProjectMan
 	if err != nil {
 		return nil, err
 	}
-	project, err := l.baseLogic.ProjectManagementAccessLogic.RequireProject(l.ctx, in.Data.Id, claim.OrganizationId)
+	project, err := l.baseLogic.ProjectManagementLogic.RequireProject(l.ctx, in.Data.Id, claim.OrganizationId)
 	if err != nil {
 		return nil, err
 	}
-	if _, err = l.baseLogic.ProjectManagementAccessLogic.RequireMember(l.ctx, project.Id, claim.OrganizationUserId); err != nil {
+	if _, err = l.baseLogic.ProjectManagementLogic.RequireMember(l.ctx, project.Id, claim.OrganizationUserId); err != nil {
 		return nil, err
 	}
 	data, err := copierx.Trans[model.ProjectManagementProject, proto.ProjectManagementProjectEntity](project, copierx.TimeToRFC3339Str())

@@ -13,10 +13,10 @@ import (
 )
 
 func (l *ProjectManagementWorkflowLogic) ProjectDetail(ctx context.Context, claim utils.JwtUser, projectId int64) (*model.ProjectManagementWorkflow, error) {
-	if _, err := l.projectManagementAccess().RequireProject(ctx, projectId, claim.OrganizationId); err != nil {
+	if _, err := l.projectManagementLogic().RequireProject(ctx, projectId, claim.OrganizationId); err != nil {
 		return nil, err
 	}
-	if _, err := l.projectManagementAccess().RequireMember(ctx, projectId, claim.OrganizationUserId); err != nil {
+	if _, err := l.projectManagementLogic().RequireMember(ctx, projectId, claim.OrganizationUserId); err != nil {
 		return nil, err
 	}
 	workflow, err := l.repos.ProjectManagementWorkflowRepo.FindProjectDefinition(ctx, projectId, claim.OrganizationId)
@@ -33,7 +33,7 @@ func (l *ProjectManagementWorkflowLogic) ProjectUpdate(ctx context.Context, clai
 	}
 	err = l.repos.ProjectManagementWorkflowRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
-		if _, innerErr = l.projectManagementAccess().requireProjectManagerWithTx(ctx, tx, claim, projectId); innerErr != nil {
+		if _, innerErr = l.projectManagementLogic().requireProjectManagerWithTx(ctx, tx, claim, projectId); innerErr != nil {
 			return innerErr
 		}
 		current, innerErr := l.repos.ProjectManagementWorkflowRepo.LockProjectWithTx(ctx, tx, projectId, claim.OrganizationId)

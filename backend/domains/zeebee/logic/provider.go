@@ -30,7 +30,7 @@ type AllLogics struct {
 	PricingPlanLogic                 *PricingPlanLogic
 	PricingPlanPolicyLogic           *PricingPlanPolicyLogic
 	OrganizationSubscriptionLogic    *OrganizationSubscriptionLogic
-	ProjectManagementAccessLogic     *ProjectManagementAccessLogic
+	ProjectManagementLogic           *ProjectManagementLogic
 	ProjectManagementWorkflowLogic   *ProjectManagementWorkflowLogic
 	ProjectManagementProjectLogic    *ProjectManagementProjectLogic
 	ProjectManagementMemberLogic     *ProjectManagementMemberLogic
@@ -73,7 +73,7 @@ func NewAllLogics(config AllLogicConfig) *AllLogics {
 		PricingPlanLogic:                 NewPricingPlanLogic(baseLogic, config.AuthEventTopicMap),
 		PricingPlanPolicyLogic:           NewPricingPlanPolicyLogic(baseLogic),
 		OrganizationSubscriptionLogic:    NewOrganizationSubscriptionLogic(baseLogic, config.AuthEventTopicMap),
-		ProjectManagementAccessLogic:     NewProjectManagementAccessLogic(baseLogic),
+		ProjectManagementLogic:           NewProjectManagementLogic(baseLogic),
 		ProjectManagementWorkflowLogic:   NewProjectManagementWorkflowLogic(baseLogic),
 		ProjectManagementProjectLogic:    NewProjectManagementProjectLogic(baseLogic),
 		ProjectManagementMemberLogic:     NewProjectManagementMemberLogic(baseLogic),

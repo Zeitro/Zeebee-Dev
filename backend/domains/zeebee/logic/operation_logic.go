@@ -32,10 +32,10 @@ func (l *OperationLogic) Page(ctx context.Context, claim *utils.JwtUser, input d
 		if input.Filter.EntityId == 0 {
 			return gormx.PageResponse[*model.Operation]{}, errorx.New("project id is required")
 		}
-		if _, err := l.projectManagementAccess().RequireProject(ctx, input.Filter.EntityId, claim.OrganizationId); err != nil {
+		if _, err := l.projectManagementLogic().RequireProject(ctx, input.Filter.EntityId, claim.OrganizationId); err != nil {
 			return gormx.PageResponse[*model.Operation]{}, err
 		}
-		if _, err := l.projectManagementAccess().RequireMember(ctx, input.Filter.EntityId, claim.OrganizationUserId); err != nil {
+		if _, err := l.projectManagementLogic().RequireMember(ctx, input.Filter.EntityId, claim.OrganizationUserId); err != nil {
 			return gormx.PageResponse[*model.Operation]{}, err
 		}
 	case constants.OperationEntityTypeProjectManagementOrganization:

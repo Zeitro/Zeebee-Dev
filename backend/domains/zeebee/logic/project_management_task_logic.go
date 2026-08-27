@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"strings"
+	"time"
 
 	"gorm.io/gorm"
 
@@ -42,7 +43,7 @@ func (l *ProjectManagementTaskLogic) Create(ctx context.Context, claim utils.Jwt
 	if err = validateProjectManagementTaskCreate(input); err != nil {
 		return nil, err
 	}
-	if _, err = l.projectManagementAccess().RequireMember(ctx, input.ProjectId, claim.OrganizationUserId); err != nil {
+	if _, err = l.projectManagementLogic().RequireMember(ctx, input.ProjectId, claim.OrganizationUserId); err != nil {
 		return nil, err
 	}
 	taskData := input.ProjectManagementTaskDto
@@ -139,17 +140,17 @@ func (l *ProjectManagementTaskLogic) Detail(ctx context.Context, claim utils.Jwt
 	if err != nil {
 		return nil, projectManagementNotFound(err, "task not found")
 	}
-	if _, err = l.projectManagementAccess().RequireMember(ctx, task.ProjectId, claim.OrganizationUserId); err != nil {
+	if _, err = l.projectManagementLogic().RequireMember(ctx, task.ProjectId, claim.OrganizationUserId); err != nil {
 		return nil, err
 	}
 	return task, nil
 }
 
 func (l *ProjectManagementTaskLogic) Page(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementTaskPageRequestDto) (gormx.PageResponse[*model.ProjectManagementTask], error) {
-	if _, err := l.projectManagementAccess().RequireProject(ctx, input.Filter.ProjectId, claim.OrganizationId); err != nil {
+	if _, err := l.projectManagementLogic().RequireProject(ctx, input.Filter.ProjectId, claim.OrganizationId); err != nil {
 		return gormx.PageResponse[*model.ProjectManagementTask]{}, err
 	}
-	if _, err := l.projectManagementAccess().RequireMember(ctx, input.Filter.ProjectId, claim.OrganizationUserId); err != nil {
+	if _, err := l.projectManagementLogic().RequireMember(ctx, input.Filter.ProjectId, claim.OrganizationUserId); err != nil {
 		return gormx.PageResponse[*model.ProjectManagementTask]{}, err
 	}
 	page, err := l.repos.ProjectManagementTaskRepo.PageByProject(ctx, claim.OrganizationId, input)
@@ -160,10 +161,10 @@ func (l *ProjectManagementTaskLogic) Page(ctx context.Context, claim utils.JwtUs
 }
 
 func (l *ProjectManagementTaskLogic) Candidate(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementTaskCandidateDto) ([]*dto.ProjectManagementTaskCandidateEntityDto, error) {
-	if _, err := l.projectManagementAccess().RequireProject(ctx, input.ProjectId, claim.OrganizationId); err != nil {
+	if _, err := l.projectManagementLogic().RequireProject(ctx, input.ProjectId, claim.OrganizationId); err != nil {
 		return nil, err
 	}
-	if _, err := l.projectManagementAccess().RequireMember(ctx, input.ProjectId, claim.OrganizationUserId); err != nil {
+	if _, err := l.projectManagementLogic().RequireMember(ctx, input.ProjectId, claim.OrganizationUserId); err != nil {
 		return nil, err
 	}
 	return l.repos.ProjectManagementTaskRepo.CandidateByProject(ctx, claim.OrganizationId, input)
@@ -247,6 +248,23 @@ func (l *ProjectManagementTaskLogic) Delete(ctx context.Context, claim utils.Jwt
 		}
 		return l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskDelete})
 	})
+}
+
+func (l *ProjectManagementTaskLogic) Overdue(ctx context.Context, task *model.ProjectManagementTask) (*dto.ProjectManagementTaskOverdueDto, error) {
+	stage, err := l.repos.ProjectManagementWorkflowRepo.FindStage(ctx, task.StageId)
+	if err != nil {
+		return nil, projectManagementNotFound(err, "task stage not found")
+	}
+	overdue, overdueSeconds := projectManagementTaskOverdue(task, stage.Phase, time.Now())
+	return &dto.ProjectManagementTaskOverdueDto{Overdue: overdue, OverdueSeconds: overdueSeconds}, nil
+}
+
+func (l *ProjectManagementTaskLogic) MyPage(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementMyTaskPageRequestDto) (gormx.PageResponse[*model.ProjectManagementTask], error) {
+	page, err := l.repos.ProjectManagementTaskRepo.PageMine(ctx, claim.OrganizationId, claim.OrganizationUserId, input)
+	if err != nil {
+		return page, err
+	}
+	return page, nil
 }
 
 func (l *ProjectManagementTaskLogic) projectManagementTaskAssignees(ctx context.Context, tx *gorm.DB, input projectManagementTaskAssigneeInput) ([]*model.ProjectManagementTaskAssignee, error) {

@@ -33,10 +33,10 @@ func (l *ProjectManagementMemberLogic) AddOne(ctx context.Context, claim utils.J
 }
 
 func (l *ProjectManagementMemberLogic) Detail(ctx context.Context, claim utils.JwtUser, projectId, memberId int64) (*dto.ProjectManagementMemberDetailDto, error) {
-	if _, err := l.projectManagementAccess().RequireProject(ctx, projectId, claim.OrganizationId); err != nil {
+	if _, err := l.projectManagementLogic().RequireProject(ctx, projectId, claim.OrganizationId); err != nil {
 		return nil, err
 	}
-	if _, err := l.projectManagementAccess().RequireMember(ctx, projectId, claim.OrganizationUserId); err != nil {
+	if _, err := l.projectManagementLogic().RequireMember(ctx, projectId, claim.OrganizationUserId); err != nil {
 		return nil, err
 	}
 	member, err := l.repos.ProjectManagementProjectRepo.DetailMember(ctx, projectId, memberId)
@@ -56,7 +56,7 @@ func (l *ProjectManagementMemberLogic) Add(ctx context.Context, claim utils.JwtU
 		}
 	}
 	return l.repos.ProjectManagementProjectRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		if _, err := l.projectManagementAccess().requireProjectManagerWithTx(ctx, tx, claim, inputs[0].ProjectId); err != nil {
+		if _, err := l.projectManagementLogic().requireProjectManagerWithTx(ctx, tx, claim, inputs[0].ProjectId); err != nil {
 			return err
 		}
 		for _, input := range inputs {
@@ -95,7 +95,7 @@ func (l *ProjectManagementMemberLogic) Update(ctx context.Context, claim utils.J
 		return err
 	}
 	return l.repos.ProjectManagementProjectRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		if _, err := l.projectManagementAccess().requireProjectManagerWithTx(ctx, tx, claim, input.ProjectId); err != nil {
+		if _, err := l.projectManagementLogic().requireProjectManagerWithTx(ctx, tx, claim, input.ProjectId); err != nil {
 			return err
 		}
 		member, err := l.repos.ProjectManagementProjectRepo.LockMemberByIdWithTx(ctx, tx, input.ProjectId, input.MemberId)
@@ -161,7 +161,7 @@ func (l *ProjectManagementMemberLogic) Delete(ctx context.Context, claim utils.J
 		return errorx.New("project and member are required")
 	}
 	return l.repos.ProjectManagementProjectRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		if _, err := l.projectManagementAccess().requireProjectManagerWithTx(ctx, tx, claim, projectId); err != nil {
+		if _, err := l.projectManagementLogic().requireProjectManagerWithTx(ctx, tx, claim, projectId); err != nil {
 			return err
 		}
 		member, err := l.repos.ProjectManagementProjectRepo.LockMemberByIdWithTx(ctx, tx, projectId, memberId)
@@ -181,7 +181,7 @@ func (l *ProjectManagementMemberLogic) Delete(ctx context.Context, claim utils.J
 	})
 }
 
-func (l *ProjectManagementAccessLogic) requireProjectManagerWithTx(ctx context.Context, tx *gorm.DB, claim utils.JwtUser, projectId int64) (*model.ProjectManagementProject, error) {
+func (l *ProjectManagementLogic) requireProjectManagerWithTx(ctx context.Context, tx *gorm.DB, claim utils.JwtUser, projectId int64) (*model.ProjectManagementProject, error) {
 	project, err := l.repos.ProjectManagementProjectRepo.LockByOrganizationWithTx(ctx, tx, projectId, claim.OrganizationId)
 	if err != nil {
 		return nil, projectManagementNotFound(err, "project not found")

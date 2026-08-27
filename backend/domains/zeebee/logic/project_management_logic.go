@@ -2,6 +2,9 @@ package logic
 
 import (
 	"context"
+	"errors"
+	"slices"
+	"time"
 
 	"gorm.io/gorm"
 
@@ -10,53 +13,60 @@ import (
 	"zeebee-backend/domains/zeebee/model"
 )
 
-func (l *ProjectManagementWorkflowLogic) List(ctx context.Context, organizationId int64) ([]*model.ProjectManagementWorkflow, error) {
-	workflows, err := l.repos.ProjectManagementWorkflowRepo.ListByOrganization(ctx, organizationId)
-	if err != nil {
-		return workflows, err
-	}
-	for _, workflow := range workflows {
-		if workflow.IsDefault {
-			return workflows, nil
-		}
-	}
-	if err = l.ensureDefault(ctx, organizationId); err != nil {
-		workflows, retryErr := l.repos.ProjectManagementWorkflowRepo.ListByOrganization(ctx, organizationId)
-		if retryErr == nil {
-			for _, workflow := range workflows {
-				if workflow.IsDefault {
-					return workflows, nil
-				}
-			}
-		}
-		return nil, err
-	}
-	return l.repos.ProjectManagementWorkflowRepo.ListByOrganization(ctx, organizationId)
+type ProjectManagementLogic struct {
+	*BaseLogic
 }
 
-func (l *ProjectManagementWorkflowLogic) ensureDefault(ctx context.Context, organizationId int64) error {
-	return l.repos.ProjectManagementWorkflowRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		workflow, err := l.repos.ProjectManagementWorkflowRepo.CreateWithTx(ctx, tx, &model.ProjectManagementWorkflow{
-			Kind:           constants.ProjectManagementWorkflowKindOrganizationTemplate,
-			OrganizationId: organizationId,
-			Name:           "Default workflow",
-			IsDefault:      true,
-		}, false)
-		if err != nil {
-			return err
-		}
-		stages := []*model.ProjectManagementWorkflowStage{
-			{WorkflowId: workflow.Id, Name: "Pending", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 10},
-			{WorkflowId: workflow.Id, Name: "In progress", Phase: constants.ProjectManagementStagePhaseInProgress, SortOrder: 20},
-			{WorkflowId: workflow.Id, Name: "Finished", Phase: constants.ProjectManagementStagePhaseFinished, SortOrder: 30},
-		}
-		if err = tx.WithContext(ctx).Create(&stages).Error; err != nil {
-			return errorx.WithStack(err)
-		}
-		transitions := []*model.ProjectManagementWorkflowTransition{
-			{WorkflowId: workflow.Id, FromStageId: stages[0].Id, ToStageId: stages[1].Id},
-			{WorkflowId: workflow.Id, FromStageId: stages[1].Id, ToStageId: stages[2].Id},
-		}
-		return errorx.WithStack(tx.WithContext(ctx).Create(&transitions).Error)
-	})
+func NewProjectManagementLogic(baseLogic *BaseLogic) *ProjectManagementLogic {
+	return &ProjectManagementLogic{BaseLogic: baseLogic}
+}
+
+func (l *BaseLogic) projectManagementLogic() *ProjectManagementLogic {
+	return NewProjectManagementLogic(l)
+}
+
+func (l *ProjectManagementLogic) RequireProject(ctx context.Context, projectId, organizationId int64) (*model.ProjectManagementProject, error) {
+	project, err := l.repos.ProjectManagementProjectRepo.FindByOrganization(ctx, projectId, organizationId)
+	if err != nil {
+		return nil, projectManagementNotFound(err, "project not found")
+	}
+	return project, nil
+}
+
+func (l *ProjectManagementLogic) RequireMember(ctx context.Context, projectId, organizationUserId int64) (*model.ProjectManagementProjectMember, error) {
+	member, err := l.repos.ProjectManagementProjectRepo.FindMember(ctx, projectId, organizationUserId)
+	if err != nil {
+		return nil, projectManagementNotFound(err, "project member required")
+	}
+	return member, nil
+}
+
+func projectManagementNotFound(err error, message string) error {
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return errorx.New(message)
+	}
+	return err
+}
+
+func (l *ProjectManagementLogic) RequireMemberRole(ctx context.Context, projectId, organizationUserId int64, roles ...constants.ProjectManagementMemberRole) (*model.ProjectManagementProjectMember, error) {
+	member, err := l.RequireMember(ctx, projectId, organizationUserId)
+	if err != nil {
+		return nil, err
+	}
+	if slices.Contains(roles, member.Role) {
+		return member, nil
+	}
+	return nil, errorx.New("project member role is not allowed")
+}
+
+func projectManagementTaskOverdue(task *model.ProjectManagementTask, phase constants.ProjectManagementStagePhase, now time.Time) (bool, int64) {
+	if task.EndAt == nil || !task.EndAt.Valid || phase == constants.ProjectManagementStagePhaseFinished {
+		return false, 0
+	}
+	// end_at is date-only (midnight), so +1 day = start of the day after the deadline.
+	deadline := task.EndAt.Time.AddDate(0, 0, 1)
+	if now.Before(deadline) {
+		return false, 0
+	}
+	return true, int64(now.Sub(deadline).Seconds())
 }
