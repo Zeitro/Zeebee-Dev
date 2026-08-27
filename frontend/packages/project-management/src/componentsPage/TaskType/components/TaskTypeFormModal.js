@@ -5,7 +5,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo } from 'react';
-import { ColorPicker, Form, Input } from 'antd';
+import { ColorPicker, Form, Input, InputNumber } from 'antd';
 import { NewModal } from '@repo/shared-methods';
 import { useTranslations } from 'next-intl';
 import {
@@ -59,7 +59,7 @@ export function TaskTypeFormModal({ open, confirmLoading, editingType, onCancel,
 				name: editingType.name,
 				description: editingType.description || '',
 				color: toTaskTypeColorHex(editingType.color) || TASK_TYPE_DEFAULT_COLOR,
-				// sort_order: Number(editingType.sort_order ?? editingType.sort_order ?? 1),
+				sort_order: Number(editingType.sort_order ?? 0),
 			});
 			return;
 		}
@@ -68,7 +68,7 @@ export function TaskTypeFormModal({ open, confirmLoading, editingType, onCancel,
 			name: '',
 			description: '',
 			color: TASK_TYPE_DEFAULT_COLOR,
-			// sort_order: 1,
+			sort_order: 0,
 		});
 	}, [editingType, form, open]);
 
@@ -78,7 +78,7 @@ export function TaskTypeFormModal({ open, confirmLoading, editingType, onCancel,
 			name: String(values.name || '').trim(),
 			description: values.description || '',
 			color: toTaskTypeColorPayload(values.color),
-			// sort_order: Number(values.sort_order ?? 1),
+			sort_order: Number(values.sort_order ?? 0),
 		});
 	}, [form, onSave]);
 
@@ -113,13 +113,13 @@ export function TaskTypeFormModal({ open, confirmLoading, editingType, onCancel,
 				>
 					<HexColorPicker presets={presets} />
 				</Form.Item>
-				{/* <Form.Item
+				<Form.Item
 					name="sort_order"
 					label={t('taskType.sortOrderLabel')}
 					rules={[{ required: true, message: t('taskType.sortOrderRequired') }]}
 				>
-					<InputNumber className="!w-full" min={1} precision={0} />
-				</Form.Item> */}
+					<InputNumber className="!w-full" min={0} precision={0} />
+				</Form.Item>
 			</Form>
 		</NewModal>
 	);

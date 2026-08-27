@@ -254,7 +254,8 @@
 		"deleteConfirmTitle": "确认删除",
 		"deleteConfirmContent": "确定要删除任务类型「{name}」吗？",
 		"deleteSuccess": "任务类型已删除",
-		"deleteFailed": "删除任务类型失败"
+		"deleteFailed": "删除任务类型失败",
+		"orderFailed": "更新排序失败"
 	},
 	"kanban": {
 		"taskCount": "（{count} 个任务）",

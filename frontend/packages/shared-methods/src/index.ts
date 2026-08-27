@@ -21,6 +21,7 @@ export * from './components/NewModal/index';
 export * from './components/NewModal/BtnPopUpModal/index';
 export * from './components/NewPagination/index';
 export * from './components/NewTable/index';
+export * from './components/SortableTable/index';
 export * from './components/NoData/index';
 // export * from './components/SignatureModal/index';
 export * from './components/TableOperation/index';

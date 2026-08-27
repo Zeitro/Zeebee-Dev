@@ -254,7 +254,8 @@
 		"deleteConfirmTitle": "Confirm delete",
 		"deleteConfirmContent": "Are you sure you want to delete task type \"{name}\"?",
 		"deleteSuccess": "Task type deleted",
-		"deleteFailed": "Failed to delete task type"
+		"deleteFailed": "Failed to delete task type",
+		"orderFailed": "Failed to update sort order"
 	},
 	"kanban": {
 		"taskCount": "({count} tasks)",

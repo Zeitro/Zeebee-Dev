@@ -66,7 +66,7 @@ export function useTaskTypeList() {
 				name: values.name,
 				description: values.description || '',
 				color: values.color,
-				// sort_order: Number(values.sort_order ?? 0),
+				sort_order: Number(values.sort_order ?? 0),
 			};
 			try {
 				setSaving(true);
@@ -113,6 +113,25 @@ export function useTaskTypeList() {
 			});
 		},
 		[messageApi, modal, refreshList, t, taskTypeApi],
+	);
+
+	/**
+	 * 行拖到 toIndex 后，对该行 PUT `/:id/order`，sort_order 用 1-based 新位置。
+	 * 表格已乐观更新顺序；成功/失败都 refreshList，失败时拉回服务端顺序。
+	 */
+	const handleSortEnd = useCallback(
+		async (nextList, { toIndex } = {}) => {
+			const record = nextList?.[toIndex];
+			if (record?.id == null || toIndex == null) return;
+			try {
+				await taskTypeApi.updateOrder(record.id, { sort_order: toIndex + 1 });
+				refreshList();
+			} catch (err) {
+				messageApi.error(err?.message || t('taskType.orderFailed'));
+				refreshList();
+			}
+		},
+		[messageApi, refreshList, t, taskTypeApi],
 	);
 
 	const columns = useMemo(
@@ -201,5 +220,6 @@ export function useTaskTypeList() {
 		closeModal,
 		handleSave,
 		emptyText: <Empty description={t('taskType.empty')} />,
+		handleSortEnd,
 	};
 }

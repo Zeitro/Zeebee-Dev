@@ -21,6 +21,7 @@ export function ProjectTaskType() {
 		closeModal,
 		handleSave,
 		emptyText,
+		handleSortEnd,
 	} = useTaskTypeList();
 
 	return (
@@ -38,6 +39,8 @@ export function ProjectTaskType() {
 				pagination={false}
 				rowProps={{ justify: 'end' }}
 				locale={{ emptyText }}
+				tableType="sortable"
+				onSortEnd={handleSortEnd}
 			/>
 			<TaskTypeFormModal
 				open={modalOpen}
