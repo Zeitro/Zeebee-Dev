@@ -3,6 +3,21 @@
 import { getCenter, getTransitionKey } from './flowLayout';
 import { computeTransitionPath } from './computeTransitionPath';
 
+/** 连线标签最长展示字数，超出截断以免挡节点 */
+const EDGE_LABEL_MAX_LEN = 20;
+
+/**
+ * @param {string|null|undefined} name
+ * @returns {string}
+ */
+function getEdgeLabel(name) {
+	const trimmed = (name || '').trim();
+	if (!trimmed) return '';
+	return trimmed.length > EDGE_LABEL_MAX_LEN
+		? `${trimmed.slice(0, EDGE_LABEL_MAX_LEN)}…`
+		: trimmed;
+}
+
 /**
  * @param {object} props
  */
@@ -75,6 +90,9 @@ export default function FlowTransitionEdges({ svgRef, maxX, maxY, flow }) {
 				const { pathD, midX, midY } = pathResult;
 				const transitionKey = getTransitionKey(transition, index);
 				const isSelected = selectedTransitionKey === transitionKey;
+				const fullName = (transition.name || '').trim();
+				const edgeLabel = getEdgeLabel(fullName);
+				const labelY = midY < 100 ? midY + 20 : midY - 16;
 
 				return (
 					<g key={transitionKey}>
@@ -97,6 +115,22 @@ export default function FlowTransitionEdges({ svgRef, maxX, maxY, flow }) {
 							markerEnd={isSelected ? 'url(#arrowhead-selected)' : 'url(#arrowhead)'}
 							style={{ pointerEvents: 'none' }}
 						/>
+						{edgeLabel ? (
+							<text
+								x={midX}
+								y={labelY}
+								textAnchor="middle"
+								fontSize={11}
+								fontWeight={isSelected ? 600 : 500}
+								fill={isSelected ? '#1890ff' : '#595959'}
+								stroke="#fafafa"
+								strokeWidth={4}
+								paintOrder="stroke"
+								style={{ pointerEvents: 'none', userSelect: 'none' }}
+							>
+								{edgeLabel}
+							</text>
+						) : null}
 						<circle
 							cx={midX}
 							cy={midY}

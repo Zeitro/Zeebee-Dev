@@ -13,7 +13,7 @@ import { StateDetailsPanel } from './components/editor/StateDetailsPanel';
 import { StateListView } from './components/editor/StateListView';
 import { StateFormModal } from './components/editor/StateFormModal';
 import { TransitionFormModal } from './components/editor/TransitionFormModal';
-import { TransitionConditionModal } from './components/editor/TransitionConditionModal';
+import FlowConfigDrawer from './components/FlowDiagram/FlowConfigDrawer';
 
 /**
  * @param {{ workflowId: number|string }} props
@@ -23,7 +23,7 @@ export function WorkflowEditor({ workflowId }) {
 	const router = useRouter();
 	const editor = useWorkflowEditor(workflowId);
 
-	if (editor.loading) {
+	if (editor.loading && !editor.workflow) {
 		return (
 			<div className="text-center py-24">
 				{editor.contextHolder}
@@ -47,12 +47,11 @@ export function WorkflowEditor({ workflowId }) {
 			states={editor.states}
 			transitions={editor.transitions}
 			canEdit
-			typeOptions={editor.typeOptions}
+			stageOptions={editor.stageOptions}
 			colorOptions={editor.colorOptions}
-			colorMap={editor.colorMap}
 			onEditState={editor.openEditState}
 			onAddTransition={editor.openAddTransition}
-			onEditTransition={editor.openEditTransition}
+			onConfigTransition={editor.openConfigDrawer}
 			onDeleteTransition={editor.handleDeleteTransition}
 		/>
 	);
@@ -86,6 +85,7 @@ export function WorkflowEditor({ workflowId }) {
 							onUpdate={editor.fetchWorkflow}
 							canEdit
 							userId={editor.userId || 0}
+							selectedStateId={editor.selectedState?.id}
 							onSelectState={editor.setSelectedState}
 						/>
 					</div>
@@ -100,8 +100,7 @@ export function WorkflowEditor({ workflowId }) {
 							selectedState={editor.selectedState}
 							canEdit
 							sensors={editor.sensors}
-							typeOptions={editor.typeOptions}
-							colorMap={editor.colorMap}
+							stageOptions={editor.stageOptions}
 							onDragEnd={editor.handleDragEnd}
 							onSelectState={editor.setSelectedState}
 							onEditState={editor.openEditState}
@@ -118,8 +117,6 @@ export function WorkflowEditor({ workflowId }) {
 				open={editor.stateModalOpen}
 				editingState={editor.editingState}
 				form={editor.stateForm}
-				colorOptions={editor.colorOptions}
-				typeOptions={editor.typeOptions}
 				onCancel={editor.closeStateModal}
 				onSubmit={editor.handleSaveState}
 			/>
@@ -129,18 +126,19 @@ export function WorkflowEditor({ workflowId }) {
 				fromState={editor.transFromState}
 				states={editor.states}
 				form={editor.transForm}
-				colorMap={editor.colorMap}
 				triggerOptions={editor.triggerOptions}
 				onCancel={editor.closeTransitionModal}
 				onSubmit={editor.handleSaveTransition}
 			/>
 
-			<TransitionConditionModal
-				open={editor.conditionModalOpen}
-				form={editor.conditionForm}
-				memberOptions={editor.memberOptions}
-				onCancel={editor.closeConditionModal}
-				onSubmit={editor.handleSaveTransitionConditions}
+			<FlowConfigDrawer
+				open={editor.configDrawerOpen}
+				onClose={editor.closeConfigDrawer}
+				onSave={editor.handleSaveConfig}
+				configTransition={editor.configTransition}
+				states={editor.states}
+				configData={editor.configData}
+				onConfigDataChange={editor.setConfigData}
 			/>
 		</div>
 	);

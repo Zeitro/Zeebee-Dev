@@ -1,8 +1,10 @@
 'use client';
 
+import { useEffect } from 'react';
 import { Form, Input, Select } from 'antd';
 import { NewModal } from '@repo/shared-methods';
 import { useTranslations } from 'next-intl';
+import { getWorkflowStateColorHex } from '@repo/project-management/enum/workflow';
 
 /**
  * 添加流转 Modal。
@@ -12,17 +14,21 @@ export function TransitionFormModal({
 	fromState,
 	states,
 	form,
-	colorMap,
 	triggerOptions,
 	onCancel,
 	onSubmit,
 }) {
 	const t = useTranslations();
 
-	if (!open) return null;
+	useEffect(() => {
+		if (!open) return;
+		form.resetFields();
+		form.setFieldsValue({ trigger_type: 'manual' });
+	}, [form, open, fromState?.id]);
 
 	return (
 		<NewModal
+			open={open}
 			width={520}
 			title={t('workflow.editor.addTransitionTitle', { from: fromState?.name || '' })}
 			okText={t('workflow.editor.addTransitionOk')}
@@ -31,7 +37,14 @@ export function TransitionFormModal({
 			onOk={() => form.submit()}
 			destroyOnHidden
 		>
-			<Form form={form} layout="vertical" className="mt-4" onFinish={onSubmit}>
+			<Form
+				form={form}
+				layout="vertical"
+				className="mt-4"
+				onFinish={onSubmit}
+				size="large"
+				initialValues={{ trigger_type: 'manual' }}
+			>
 				<Form.Item
 					name="to_state_id"
 					label={t('workflow.editor.targetStateLabel')}
@@ -44,7 +57,7 @@ export function TransitionFormModal({
 								<Select.Option key={s.id} value={s.id}>
 									<span
 										className="inline-block w-2.5 h-2.5 rounded-full mr-2 align-middle"
-										style={{ background: colorMap[s.color] }}
+										style={{ background: getWorkflowStateColorHex(s.color) }}
 									/>
 									{s.name}
 								</Select.Option>

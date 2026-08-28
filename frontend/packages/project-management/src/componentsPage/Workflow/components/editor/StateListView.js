@@ -16,8 +16,7 @@ export function StateListView({
 	selectedState,
 	canEdit,
 	sensors,
-	typeOptions,
-	colorMap,
+	stageOptions,
 	onDragEnd,
 	onSelectState,
 	onEditState,
@@ -54,8 +53,7 @@ export function StateListView({
 								)}
 								states={states}
 								canEdit={canEdit}
-								typeOptions={typeOptions}
-								colorMap={colorMap}
+								stageOptions={stageOptions}
 								onSelect={() => onSelectState(state)}
 								onEdit={() => onEditState(state)}
 								onAddTransition={() => onAddTransition(state)}

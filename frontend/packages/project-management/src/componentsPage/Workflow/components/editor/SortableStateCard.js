@@ -5,6 +5,7 @@ import { DeleteOutlined, EditOutlined, PlusOutlined, HolderOutlined } from '@ant
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useTranslations } from 'next-intl';
+import { getWorkflowStateColorHex } from '@repo/project-management/enum/workflow';
 
 /**
  * 列表视图：可拖拽排序的状态卡片。
@@ -16,8 +17,7 @@ export function SortableStateCard({
 	stateTransitions,
 	states,
 	canEdit,
-	typeOptions,
-	colorMap,
+	stageOptions,
 	onSelect,
 	onEdit,
 	onAddTransition,
@@ -71,7 +71,7 @@ export function SortableStateCard({
 					{state.is_terminal ? (
 						<Tag className="text-[10px]">{t('workflow.editor.tagTerminal')}</Tag>
 					) : null}
-					<span>{typeOptions.find((opt) => opt.value === state.type)?.label}</span>
+					<span>{stageOptions.find((opt) => opt.value === state.phase)?.label}</span>
 				</div>
 				{stateTransitions.length > 0 ? (
 					<div className="mt-2 pt-1.5 border-t border-gray-border">
@@ -84,7 +84,7 @@ export function SortableStateCard({
 								<div key={trans.id} className="flex items-center gap-1 mb-0.5">
 									<Tag
 										className="text-[10px] m-0"
-										color={colorMap[toState?.color || 'gray']}
+										color={getWorkflowStateColorHex(toState?.color)}
 										closable={canEdit}
 										onClose={(e) => {
 											e.preventDefault();

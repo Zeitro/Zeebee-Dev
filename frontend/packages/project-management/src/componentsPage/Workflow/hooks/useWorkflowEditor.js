@@ -9,8 +9,29 @@ import { useSensor, useSensors, PointerSensor } from '@dnd-kit/core';
 import { useTranslations } from 'next-intl';
 import { useUserStore } from '@repo/shared-methods/store';
 import { createRequest, createWorkflowApi } from '@repo/project-management/api/workflow';
-import { getMockWorkflowDetail } from '../mockData';
+import { TASK_PHASE } from '@repo/project-management/enum/task';
+import {
+	WORKFLOW_STATE_DEFAULT_COLOR,
+	toWorkflowStateColorHex,
+} from '@repo/project-management/enum/workflow';
+import { useOptionsStore } from '@repo/project-management/store/options';
+import {
+	applyAddTransitionToStages,
+	applyDeleteTransitionFromStages,
+	applyStateFormToStages,
+	applyUpdateTransitionToStages,
+	buildWorkflowUpdateBody,
+	mapWorkflowDetail,
+} from '../lib/mapWorkflowDetail';
+import { formatApiError } from '../../../lib/formatApiError';
 import { useWorkflowEditorOptions } from './useWorkflowEditorOptions';
+
+const DEFAULT_CONFIG_DATA = {
+	allowedRoles: [],
+	requireNote: false,
+	requiredFields: [],
+	approvalFields: [],
+};
 
 /**
  * @param {number|string} workflowId
@@ -25,48 +46,121 @@ export function useWorkflowEditor(workflowId) {
 
 	const [workflow, setWorkflow] = useState(null);
 	const [loading, setLoading] = useState(true);
-	const [selectedState, setSelectedState] = useState(null);
+	const [selectedStateId, setSelectedStateId] = useState(null);
 	const [viewMode, setViewMode] = useState('flow');
 
 	const [stateModalOpen, setStateModalOpen] = useState(false);
 	const [editingState, setEditingState] = useState(null);
 	const [transitionModalOpen, setTransitionModalOpen] = useState(false);
 	const [transFromState, setTransFromState] = useState(null);
-	const [conditionModalOpen, setConditionModalOpen] = useState(false);
-	const [editingTransition, setEditingTransition] = useState(null);
+	const [configDrawerOpen, setConfigDrawerOpen] = useState(false);
+	const [configTransition, setConfigTransition] = useState(null);
+	const [configData, setConfigData] = useState(DEFAULT_CONFIG_DATA);
 
 	const [stateForm] = Form.useForm();
 	const [transForm] = Form.useForm();
-	const [conditionForm] = Form.useForm();
 
 	const [editingName, setEditingName] = useState(false);
 	const [nameInputValue, setNameInputValue] = useState('');
 	const nameInputRef = useRef(null);
+	const selectedStateIdRef = useRef(null);
+	const selectedStateNameRef = useRef(null);
+	/** 弹窗关闭后短暂忽略画布清空选中（避免点击穿透） */
+	const suppressDeselectUntilRef = useRef(0);
 
 	const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
-	const fetchWorkflow = useCallback(async () => {
-		try {
-			setLoading(true);
-			// MOCK: start — 接口就绪后删除本段并恢复 GET
-			const wf = getMockWorkflowDetail(workflowId);
-			setWorkflow(wf || null);
-			// const wf = await workflowApi.get(workflowId);
-			// setWorkflow(wf || null);
-		} catch {
-			messageApi.error(t('workflow.editor.loadFailed'));
-		} finally {
-			setLoading(false);
-		}
-	}, [workflowApi, workflowId, t, messageApi]);
+	const fetchWorkflow = useCallback(
+		async ({ initial = false } = {}) => {
+			if (workflowId == null || workflowId === '') {
+				setWorkflow(null);
+				setLoading(false);
+				return;
+			}
+			const keepId = selectedStateIdRef.current;
+			const keepName = selectedStateNameRef.current;
+			suppressDeselectUntilRef.current = Date.now() + 500;
+			try {
+				if (initial) setLoading(true);
+				const data = await workflowApi.get(workflowId);
+				const mapped = mapWorkflowDetail(data);
+				setWorkflow(mapped);
+				const nextStates = mapped?.states || [];
+				const restored =
+					nextStates.find((s) => String(s.id) === String(keepId)) ||
+					(keepName ? nextStates.find((s) => s.name === keepName) : null);
+				if (restored) setSelectedStateId(restored.id);
+			} catch (error) {
+				setWorkflow(null);
+				messageApi.error(formatApiError(t, 'workflow.editor.loadFailed', error));
+			} finally {
+				setLoading(false);
+			}
+		},
+		[workflowApi, workflowId, t, messageApi],
+	);
 
 	useEffect(() => {
-		void Promise.resolve().then(() => fetchWorkflow());
+		void Promise.resolve().then(() => fetchWorkflow({ initial: true }));
 	}, [fetchWorkflow]);
+
+	useEffect(() => {
+		const { stageOptions, memberOptions, getOptions } = useOptionsStore.getState();
+		if (!stageOptions.length) {
+			getOptions('project_management_stage_phase', 'stageOptions').catch(() => {});
+		}
+		if (!memberOptions.length) {
+			getOptions('project_management_member_role', 'memberOptions').catch(() => {});
+		}
+	}, []);
 
 	const states = useMemo(
 		() => [...(workflow?.states || [])].sort((a, b) => a.sort_order - b.sort_order),
 		[workflow?.states],
+	);
+	/** 按 id 从最新 states 取当前选中项，避免编辑后详情仍用旧对象 */
+	const selectedState = useMemo(
+		() => states.find((s) => String(s.id) === String(selectedStateId)) ?? null,
+		[states, selectedStateId],
+	);
+
+	useEffect(() => {
+		selectedStateIdRef.current = selectedStateId;
+		if (selectedState?.name) selectedStateNameRef.current = selectedState.name;
+		else if (selectedStateId == null) selectedStateNameRef.current = null;
+	}, [selectedStateId, selectedState?.name]);
+
+	const syncSelectionRefs = useCallback(
+		(nextId) => {
+			selectedStateIdRef.current = nextId;
+			if (nextId == null) {
+				selectedStateNameRef.current = null;
+				return;
+			}
+			const state = states.find((s) => String(s.id) === String(nextId));
+			if (state?.name) selectedStateNameRef.current = state.name;
+		},
+		[states],
+	);
+
+	const setSelectedState = useCallback(
+		(next) => {
+			const resolveId = (value) => {
+				if (typeof value === 'function') {
+					const prevState =
+						states.find((s) => String(s.id) === String(selectedStateIdRef.current)) ??
+						null;
+					const result = value(prevState);
+					return result == null ? null : result.id;
+				}
+				return value == null ? null : value.id;
+			};
+			const nextId = resolveId(next);
+			if (nextId == null && Date.now() < suppressDeselectUntilRef.current) return;
+			syncSelectionRefs(nextId);
+			setSelectedStateId(nextId);
+		},
+		[states, syncSelectionRefs],
 	);
 	const transitions = workflow?.transitions || [];
 	const flowDiagramKey = states.map((s) => s.id).join(',');
@@ -76,33 +170,32 @@ export function useWorkflowEditor(workflowId) {
 		const { active, over } = event;
 		if (!over || active.id === over.id) return;
 
-		const activeId = Number(String(active.id).replace('state-', ''));
-		const overId = Number(String(over.id).replace('state-', ''));
+		const fromStageId = Number(String(active.id).replace('state-', ''));
+		const toStageId = Number(String(over.id).replace('state-', ''));
 		const currentStates = [...(workflow.states || [])].sort(
 			(a, b) => a.sort_order - b.sort_order,
 		);
-		const activeIdx = currentStates.findIndex((s) => s.id === activeId);
-		const overIdx = currentStates.findIndex((s) => s.id === overId);
-		if (activeIdx === -1 || overIdx === -1) return;
-
-		const reordered = [...currentStates];
-		const [moved] = reordered.splice(activeIdx, 1);
-		reordered.splice(overIdx, 0, moved);
+		const fromState = currentStates.find((s) => s.id === fromStageId);
+		const toState = currentStates.find((s) => s.id === toStageId);
+		if (!fromState || !toState) return;
 
 		setWorkflow({
 			...workflow,
-			states: reordered.map((s, i) => ({ ...s, sort_order: i + 1 })),
+			states: currentStates.map((s) => {
+				if (s.id === fromStageId) return { ...s, sort_order: toState.sort_order };
+				if (s.id === toStageId) return { ...s, sort_order: fromState.sort_order };
+				return s;
+			}),
 		});
 
 		try {
-			await workflowApi.reorderStates(
-				workflow.id,
-				reordered.map((s) => s.id),
-				userId || 0,
-			);
+			await workflowApi.swapStageOrder(workflow.id, {
+				from_stage_id: fromStageId,
+				to_stage_id: toStageId,
+			});
 			messageApi.success(t('workflow.editor.reorderSuccess'));
-		} catch {
-			messageApi.error(t('workflow.editor.reorderFailed'));
+		} catch (error) {
+			messageApi.error(formatApiError(t, 'workflow.editor.reorderFailed', error));
 			fetchWorkflow();
 		}
 	};
@@ -110,7 +203,10 @@ export function useWorkflowEditor(workflowId) {
 	const openAddState = useCallback(() => {
 		setEditingState(null);
 		stateForm.resetFields();
-		stateForm.setFieldsValue({ type: 'in_progress', color: 'blue' });
+		stateForm.setFieldsValue({
+			phase: TASK_PHASE.IN_PROGRESS,
+			color: WORKFLOW_STATE_DEFAULT_COLOR,
+		});
 		setStateModalOpen(true);
 	}, [stateForm]);
 
@@ -119,8 +215,8 @@ export function useWorkflowEditor(workflowId) {
 			setEditingState(state);
 			stateForm.setFieldsValue({
 				name: state.name,
-				type: state.type,
-				color: state.color,
+				phase: state.phase,
+				color: toWorkflowStateColorHex(state.color) || WORKFLOW_STATE_DEFAULT_COLOR,
 				description: state.description,
 			});
 			setStateModalOpen(true);
@@ -131,28 +227,18 @@ export function useWorkflowEditor(workflowId) {
 	const handleSaveState = async (values) => {
 		if (!workflow) return;
 		try {
-			if (editingState) {
-				await workflowApi.updateState(workflow.id, editingState.id, {
-					...values,
-					user_id: userId || 0,
-				});
-				messageApi.success(t('workflow.editor.stateUpdateSuccess'));
-			} else {
-				const maxOrder = Math.max(0, ...(workflow.states?.map((s) => s.sort_order) || []));
-				await workflowApi.addState(workflow.id, {
-					...values,
-					sort_order: maxOrder + 1,
-					is_initial: values.type === 'initial',
-					is_terminal: values.type === 'completed',
-					user_id: userId || 0,
-				});
-				messageApi.success(t('workflow.editor.stateAddSuccess'));
-			}
+			const stages = applyStateFormToStages(workflow.stages, { editingState, values });
+			await workflowApi.update(workflow.id, buildWorkflowUpdateBody(workflow, stages));
+			messageApi.success(
+				editingState
+					? t('workflow.editor.stateUpdateSuccess')
+					: t('workflow.editor.stateAddSuccess'),
+			);
 			setStateModalOpen(false);
 			stateForm.resetFields();
 			fetchWorkflow();
-		} catch {
-			messageApi.error(t('workflow.editor.stateSaveFailed'));
+		} catch (error) {
+			messageApi.error(formatApiError(t, 'workflow.editor.stateSaveFailed', error));
 		}
 	};
 
@@ -162,13 +248,18 @@ export function useWorkflowEditor(workflowId) {
 			try {
 				await workflowApi.deleteState(workflow.id, stateId, userId || 0);
 				messageApi.success(t('workflow.editor.stateDeleteSuccess'));
-				setSelectedState((prev) => (prev?.id === stateId ? null : prev));
+				const nextId =
+					String(selectedStateIdRef.current) === String(stateId)
+						? null
+						: selectedStateIdRef.current;
+				syncSelectionRefs(nextId);
+				setSelectedStateId(nextId);
 				fetchWorkflow();
-			} catch (err) {
-				messageApi.error(err?.message || t('workflow.editor.stateDeleteFailed'));
+			} catch (error) {
+				messageApi.error(formatApiError(t, 'workflow.editor.stateDeleteFailed', error));
 			}
 		},
-		[fetchWorkflow, userId, workflow, workflowApi, t, messageApi],
+		[fetchWorkflow, syncSelectionRefs, userId, workflow, workflowApi, t, messageApi],
 	);
 
 	useEffect(() => {
@@ -178,7 +269,7 @@ export function useWorkflowEditor(workflowId) {
 				target.tagName === 'INPUT' ||
 				target.tagName === 'TEXTAREA' ||
 				target.isContentEditable;
-			const isModalOpen = stateModalOpen || transitionModalOpen || conditionModalOpen;
+			const isModalOpen = stateModalOpen || transitionModalOpen || configDrawerOpen;
 			if (isInput || isModalOpen) return;
 
 			if (
@@ -191,88 +282,71 @@ export function useWorkflowEditor(workflowId) {
 		};
 		window.addEventListener('keydown', handleKeyDown);
 		return () => window.removeEventListener('keydown', handleKeyDown);
-	}, [selectedState, stateModalOpen, transitionModalOpen, conditionModalOpen, handleDeleteState]);
+	}, [selectedState, stateModalOpen, transitionModalOpen, configDrawerOpen, handleDeleteState]);
 
-	const openAddTransition = useCallback(
-		(fromState) => {
-			setTransFromState(fromState);
-			transForm.resetFields();
-			transForm.setFieldsValue({ trigger_type: 'manual' });
-			setTransitionModalOpen(true);
-		},
-		[transForm],
-	);
+	const openAddTransition = useCallback((fromState) => {
+		setTransFromState(fromState);
+		setTransitionModalOpen(true);
+	}, []);
 
 	const handleSaveTransition = async (values) => {
 		if (!workflow || !transFromState) return;
 		try {
-			await workflowApi.addTransition(workflow.id, {
-				from_state_id: transFromState.id,
-				to_state_id: Number(values.to_state_id),
-				name: values.name,
-				trigger_type: values.trigger_type,
-				user_id: userId || 0,
+			const stages = applyAddTransitionToStages(workflow.stages, {
+				fromStageId: transFromState.id,
+				values,
 			});
+			await workflowApi.update(workflow.id, buildWorkflowUpdateBody(workflow, stages));
 			messageApi.success(t('workflow.editor.transitionAddSuccess'));
 			setTransitionModalOpen(false);
-			transForm.resetFields();
 			fetchWorkflow();
-		} catch {
-			messageApi.error(t('workflow.editor.transitionAddFailed'));
+		} catch (error) {
+			messageApi.error(formatApiError(t, 'workflow.editor.transitionAddFailed', error));
 		}
 	};
 
 	const handleDeleteTransition = async (transitionId) => {
 		if (!workflow) return;
 		try {
-			await workflowApi.deleteTransition(workflow.id, transitionId, userId || 0);
+			const stages = applyDeleteTransitionFromStages(workflow.stages, { transitionId });
+			await workflowApi.update(workflow.id, buildWorkflowUpdateBody(workflow, stages));
 			messageApi.success(t('workflow.editor.transitionDeleteSuccess'));
 			fetchWorkflow();
-		} catch {
-			messageApi.error(t('workflow.editor.transitionDeleteFailed'));
+		} catch (error) {
+			messageApi.error(formatApiError(t, 'workflow.editor.transitionDeleteFailed', error));
 		}
 	};
 
-	const parseConditions = (conditions) => {
-		if (!conditions) return {};
-		try {
-			return JSON.parse(conditions);
-		} catch {
-			return {};
-		}
-	};
+	const openConfigDrawer = useCallback((transition) => {
+		setConfigTransition(transition);
+		setConfigDrawerOpen(true);
+		setConfigData({
+			...DEFAULT_CONFIG_DATA,
+			allowedRoles: Array.isArray(transition?.allowed_actor_types)
+				? transition.allowed_actor_types
+				: [],
+		});
+	}, []);
 
-	const openEditTransition = useCallback(
-		(transition) => {
-			setEditingTransition(transition);
-			conditionForm.resetFields();
-			const cond = parseConditions(transition.conditions);
-			const defaultMembers = options.memberOptions.map((m) => m.value);
-			conditionForm.setFieldsValue({
-				allowed_members: cond.allowed_members?.length
-					? cond.allowed_members
-					: defaultMembers,
-				require_comment: false,
-			});
-			setConditionModalOpen(true);
-		},
-		[conditionForm, options.memberOptions],
-	);
+	const closeConfigDrawer = useCallback(() => {
+		setConfigDrawerOpen(false);
+		setConfigTransition(null);
+	}, []);
 
-	const handleSaveTransitionConditions = async (values) => {
-		if (!workflow || !editingTransition) return;
+	const handleSaveConfig = async () => {
+		if (!workflow || !configTransition) return;
 		try {
-			await workflowApi.updateTransition(workflow.id, editingTransition.id, {
-				conditions: JSON.stringify({ allowed_members: values.allowed_members }),
-				user_id: userId || 0,
+			const stages = applyUpdateTransitionToStages(workflow.stages, {
+				transitionId: configTransition.id,
+				values: { allowed_actor_types: configData.allowedRoles || [] },
 			});
+			await workflowApi.update(workflow.id, buildWorkflowUpdateBody(workflow, stages));
 			messageApi.success(t('workflow.editor.conditionUpdateSuccess'));
-			setConditionModalOpen(false);
-			conditionForm.resetFields();
-			setEditingTransition(null);
+			setConfigDrawerOpen(false);
+			setConfigTransition(null);
 			fetchWorkflow();
-		} catch {
-			messageApi.error(t('workflow.editor.conditionSaveFailed'));
+		} catch (error) {
+			messageApi.error(formatApiError(t, 'workflow.editor.conditionSaveFailed', error));
 		}
 	};
 
@@ -280,11 +354,14 @@ export function useWorkflowEditor(workflowId) {
 		const trimmed = nameInputValue.trim();
 		if (!trimmed || !workflow) return;
 		try {
-			await workflowApi.update(workflow.id, { name: trimmed, user_id: userId || 0 });
+			await workflowApi.update(workflow.id, {
+				...buildWorkflowUpdateBody(workflow),
+				name: trimmed,
+			});
 			await fetchWorkflow();
 			messageApi.success(t('workflow.editor.nameUpdateSuccess'));
-		} catch (err) {
-			messageApi.error(err?.message || t('workflow.editor.nameUpdateFailed'));
+		} catch (error) {
+			messageApi.error(formatApiError(t, 'workflow.editor.nameUpdateFailed', error));
 		}
 		setEditingName(false);
 	};
@@ -302,13 +379,6 @@ export function useWorkflowEditor(workflowId) {
 
 	const closeTransitionModal = () => {
 		setTransitionModalOpen(false);
-		transForm.resetFields();
-	};
-
-	const closeConditionModal = () => {
-		setConditionModalOpen(false);
-		conditionForm.resetFields();
-		setEditingTransition(null);
 	};
 
 	return {
@@ -330,8 +400,9 @@ export function useWorkflowEditor(workflowId) {
 		openAddTransition,
 		handleSaveTransition,
 		handleDeleteTransition,
-		openEditTransition,
-		handleSaveTransitionConditions,
+		openConfigDrawer,
+		closeConfigDrawer,
+		handleSaveConfig,
 		handleSaveWorkflowName,
 		startEditName,
 		editingName,
@@ -342,13 +413,14 @@ export function useWorkflowEditor(workflowId) {
 		editingState,
 		transitionModalOpen,
 		transFromState,
-		conditionModalOpen,
+		configDrawerOpen,
+		configTransition,
+		configData,
+		setConfigData,
 		stateForm,
 		transForm,
-		conditionForm,
 		closeStateModal,
 		closeTransitionModal,
-		closeConditionModal,
 		fetchWorkflow,
 		workflowApi,
 		userId,

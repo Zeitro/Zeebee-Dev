@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import {
 	getWorkflowStateColorHex,
-	WORKFLOW_STATE_TYPE_OPTIONS,
+	getWorkflowPhaseI18nKey,
 } from '@repo/project-management/enum/workflow';
 import { NODE_H, NODE_W, portDirs, portOffsets } from './flowLayout';
 
@@ -28,10 +28,10 @@ export default function FlowStateNodes({ flow }) {
 		startFromPort,
 	} = flow;
 
-	const getStateTypeLabel = useCallback(
-		(type) => {
-			const option = WORKFLOW_STATE_TYPE_OPTIONS.find((item) => item.value === type);
-			return option ? t(option.labelKey) : type;
+	const getPhaseLabel = useCallback(
+		(phase) => {
+			const key = getWorkflowPhaseI18nKey(phase);
+			return key ? t(key) : phase;
 		},
 		[t],
 	);
@@ -40,7 +40,7 @@ export default function FlowStateNodes({ flow }) {
 		const pos = positions.get(state.id);
 		if (!pos) return null;
 		const bgColor = getWorkflowStateColorHex(state.color);
-		const isActive = activeNodeId === state.id;
+		const isActive = String(activeNodeId) === String(state.id);
 		const isHovered = hoveredNodeId === state.id;
 		const isConnecting = connecting?.fromId === state.id;
 		const showPorts = isActive || isHovered || isConnecting;
@@ -48,6 +48,7 @@ export default function FlowStateNodes({ flow }) {
 		return (
 			<div
 				key={state.id}
+				data-flow-node="true"
 				style={{
 					position: 'absolute',
 					left: pos.x,
@@ -102,13 +103,7 @@ export default function FlowStateNodes({ flow }) {
 				/>
 				<div style={{ textAlign: 'center' }}>
 					<div style={{ fontWeight: 600, fontSize: 13, color: '#333' }}>{state.name}</div>
-					<div style={{ fontSize: 10, color: '#999' }}>
-						{state.is_initial
-							? t('workflow.editor.stateInitial')
-							: state.is_terminal
-								? t('workflow.editor.stateTerminal')
-								: getStateTypeLabel(state.type)}
-					</div>
+					<div style={{ fontSize: 10, color: '#999' }}>{getPhaseLabel(state.phase)}</div>
 				</div>
 
 				{showPorts

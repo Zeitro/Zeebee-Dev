@@ -20,6 +20,7 @@ import FlowConfigDrawer from './FlowConfigDrawer';
  * @param {boolean} props.canEdit
  * @param {number} props.userId
  * @param {(state: object|null) => void} [props.onSelectState]
+ * @param {number|string|null} [props.selectedStateId]
  */
 function FlowDiagramInner({
 	workflow,
@@ -28,6 +29,7 @@ function FlowDiagramInner({
 	onUpdate,
 	canEdit,
 	userId,
+	selectedStateId,
 	onSelectState,
 }) {
 	const flow = useFlowDiagram({
@@ -37,6 +39,7 @@ function FlowDiagramInner({
 		onUpdate,
 		canEdit,
 		userId,
+		selectedStateId,
 		onSelectState,
 	});
 
@@ -55,6 +58,7 @@ function FlowDiagramInner({
 				svgRef={flow.svgRef}
 				maxX={flow.maxX}
 				maxY={flow.maxY}
+				canvasOffsetY={flow.canvasOffsetY}
 				zoom={flow.zoom}
 				pan={flow.pan}
 				isPanning={flow.isPanning}
@@ -79,17 +83,14 @@ function FlowDiagramInner({
 				selectedTransition={flow.selectedTransition}
 				states={flow.states}
 				canEdit={flow.canEdit}
-				onOpenConfig={() => {
-					flow.setConfigTransition(flow.selectedTransition);
-					flow.setConfigDrawerOpen(true);
-				}}
+				onOpenConfig={() => flow.openConfigDrawer(flow.selectedTransition)}
 				onDelete={flow.handleDeleteTransition}
 				t={flow.t}
 			/>
 
 			<FlowAddTransitionModal
 				open={flow.addModalOpen}
-				onCancel={() => flow.setAddModalOpen(false)}
+				onCancel={flow.closeAddTransitionModal}
 				onOk={flow.handleAddTransition}
 				newTransition={flow.newTransition}
 				states={flow.states}
@@ -121,6 +122,7 @@ function FlowDiagramInner({
  * @param {boolean} props.canEdit
  * @param {number} props.userId
  * @param {(state: object|null) => void} [props.onSelectState]
+ * @param {number|string|null} [props.selectedStateId]
  * @param {string|number} [props.layoutKey] 父级传入以在状态变更时 remount 并重算布局
  */
 export default function FlowDiagram({ layoutKey, ...props }) {

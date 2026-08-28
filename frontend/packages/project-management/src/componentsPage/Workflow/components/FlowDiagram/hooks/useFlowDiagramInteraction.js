@@ -3,6 +3,7 @@
  */
 
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
 
 /** 画布初始 / 重置缩放比例 */
 export const DEFAULT_ZOOM = 0.7;
@@ -15,7 +16,9 @@ export const DEFAULT_ZOOM = 0.7;
  * @param {object[]} params.states
  * @param {Map<number, { x: number; y: number }>} params.positions
  * @param {React.MutableRefObject<HTMLDivElement|null>} params.containerRef
+ * @param {number} [params.canvasOffsetY]
  * @param {(state: object|null) => void} [params.onSelectState]
+ * @param {number|string|null} [params.selectedStateId]
  * @param {(fromId: number, toId: number) => boolean} params.hasTransition
  * @param {React.Dispatch<React.SetStateAction<object|null>>} params.setSelectedTransition
  * @param {React.Dispatch<React.SetStateAction<string|null>>} params.setSelectedTransitionKey
@@ -32,7 +35,9 @@ export function useFlowDiagramInteraction({
 	states,
 	positions,
 	containerRef,
+	canvasOffsetY = 0,
 	onSelectState,
+	selectedStateId,
 	hasTransition,
 	setSelectedTransition,
 	setSelectedTransitionKey,
@@ -43,7 +48,7 @@ export function useFlowDiagramInteraction({
 	setNodePositions,
 }) {
 	const [dragging, setDragging] = useState(null);
-	const [activeNodeId, setActiveNodeId] = useState(null);
+	const [activeNodeId, setActiveNodeId] = useState(selectedStateId ?? null);
 	const [hoveredNodeId, setHoveredNodeId] = useState(null);
 	const [connecting, setConnecting] = useState(null);
 	const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -60,6 +65,12 @@ export function useFlowDiagramInteraction({
 		panRef.current = pan;
 	}, [pan, zoom]);
 
+	useDeferredSyncEffect({
+		isUseMicrotask: true,
+		deferred: () => setActiveNodeId(selectedStateId ?? null),
+		deps: [selectedStateId],
+	});
+
 	const handleMouseMove = useCallback(
 		(e) => {
 			if (!containerRef.current) return;
@@ -67,7 +78,7 @@ export function useFlowDiagramInteraction({
 			const z = zoomRef.current;
 			const p = panRef.current;
 			const x = (e.clientX - rect.left - p.x) / z;
-			const y = (e.clientY - rect.top - p.y) / z;
+			const y = (e.clientY - rect.top - p.y) / z - canvasOffsetY;
 
 			if (isPanning) {
 				const dx = e.clientX - panStart.current.x;
@@ -92,7 +103,7 @@ export function useFlowDiagramInteraction({
 				setMousePos({ x, y });
 			}
 		},
-		[connecting, containerRef, dragging, isPanning, setNodePositions],
+		[canvasOffsetY, connecting, containerRef, dragging, isPanning, setNodePositions],
 	);
 
 	const handleMouseUp = useCallback(() => {
@@ -146,14 +157,14 @@ export function useFlowDiagramInteraction({
 			const z = zoomRef.current;
 			const p = panRef.current;
 			const mouseX = (e.clientX - rect.left - p.x) / z;
-			const mouseY = (e.clientY - rect.top - p.y) / z;
+			const mouseY = (e.clientY - rect.top - p.y) / z - canvasOffsetY;
 			setDragging({
 				nodeId: stateId,
 				offsetX: mouseX - pos.x,
 				offsetY: mouseY - pos.y,
 			});
 		},
-		[connecting, containerRef, positions],
+		[canvasOffsetY, connecting, containerRef, positions],
 	);
 
 	const clickNode = useCallback(
@@ -162,17 +173,13 @@ export function useFlowDiagramInteraction({
 			if (connecting) {
 				endConnection(stateId);
 			} else {
-				const nextId = activeNodeId === stateId ? null : stateId;
-				setActiveNodeId(nextId);
+				setActiveNodeId(stateId);
 				setSelectedTransition(null);
 				setSelectedTransitionKey(null);
-				onSelectState?.(
-					nextId === null ? null : states.find((s) => s.id === nextId) || null,
-				);
+				onSelectState?.(states.find((s) => String(s.id) === String(stateId)) || null);
 			}
 		},
 		[
-			activeNodeId,
 			connecting,
 			endConnection,
 			onSelectState,
@@ -223,23 +230,27 @@ export function useFlowDiagramInteraction({
 		setZoom((z) => Math.max(0.2, Math.min(2, z + delta)));
 	}, []);
 
-	const handleCanvasClick = useCallback(() => {
-		if (dragging || isPanning) return;
-		if (connecting) setConnecting(null);
-		else {
-			setActiveNodeId(null);
-			setSelectedTransition(null);
-			onSelectState?.(null);
-		}
-		setSelectedTransitionKey(null);
-	}, [
-		connecting,
-		dragging,
-		isPanning,
-		onSelectState,
-		setSelectedTransition,
-		setSelectedTransitionKey,
-	]);
+	const handleCanvasClick = useCallback(
+		(e) => {
+			if (dragging || isPanning) return;
+			const el = e.target instanceof Element ? e.target : e.target?.parentElement;
+			if (el?.closest?.('button, .ant-modal-wrap, [data-flow-node]')) return;
+			if (connecting) setConnecting(null);
+			else {
+				setSelectedTransition(null);
+				onSelectState?.(null);
+			}
+			setSelectedTransitionKey(null);
+		},
+		[
+			connecting,
+			dragging,
+			isPanning,
+			onSelectState,
+			setSelectedTransition,
+			setSelectedTransitionKey,
+		],
+	);
 
 	const selectTransition = useCallback(
 		(transition, transitionKey) => {

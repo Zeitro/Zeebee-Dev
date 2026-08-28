@@ -1,5 +1,5 @@
 /**
- * 项目工作流列表页：FilterTable 负责筛选/分页，新建走独立 Modal。
+ * 项目工作流列表页：FilterTable 仅放新建按钮、无分页（GET all）；新建走独立 Modal。
  */
 'use client';
 
@@ -35,6 +35,9 @@ export function ProjectWorkflow() {
 				filterList={filterList}
 				hasFilterField
 				getData={getData}
+				hasPaginationRequest={false}
+				pagination={false}
+				rowProps={{ justify: 'end' }}
 				locale={{ emptyText }}
 			/>
 			<CreateWorkflowModal

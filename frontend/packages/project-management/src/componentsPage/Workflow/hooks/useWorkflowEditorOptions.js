@@ -1,48 +1,32 @@
 /**
- * 工作流编辑器：枚举 → Select / 色块选项（含 i18n label）。
+ * 工作流编辑器：枚举 → Select / 颜色文案（含 i18n label）。
  */
 'use client';
 
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
+import { localizeSelectOptions } from '@repo/project-management/enum/task';
 import {
 	WORKFLOW_STATE_COLOR_HEX,
 	WORKFLOW_STATE_COLOR_LABEL_KEYS,
 	WORKFLOW_STATE_COLOR_OPTIONS,
-	WORKFLOW_STATE_TYPE_OPTIONS,
-	WORKFLOW_TRANSITION_MEMBER_OPTIONS,
 	WORKFLOW_TRANSITION_TRIGGER_OPTIONS,
+	getWorkflowPhaseI18nKey,
 } from '@repo/project-management/enum/workflow';
+import { useOptionsStore } from '@repo/project-management/store/options';
 
 export function useWorkflowEditorOptions() {
 	const t = useTranslations();
+	const stageOptionsRaw = useOptionsStore((state) => state.stageOptions);
 
-	const colorMap = useMemo(
-		() => Object.fromEntries(Object.entries(WORKFLOW_STATE_COLOR_HEX)),
-		[],
-	);
-
-	const typeOptions = useMemo(
-		() =>
-			WORKFLOW_STATE_TYPE_OPTIONS.map((opt) => ({
-				value: opt.value,
-				label: t(opt.labelKey),
-			})),
-		[t],
+	const stageOptions = useMemo(
+		() => localizeSelectOptions(stageOptionsRaw, t, getWorkflowPhaseI18nKey),
+		[stageOptionsRaw, t],
 	);
 
 	const triggerOptions = useMemo(
 		() =>
 			WORKFLOW_TRANSITION_TRIGGER_OPTIONS.map((opt) => ({
-				value: opt.value,
-				label: t(opt.labelKey),
-			})),
-		[t],
-	);
-
-	const memberOptions = useMemo(
-		() =>
-			WORKFLOW_TRANSITION_MEMBER_OPTIONS.map((opt) => ({
 				value: opt.value,
 				label: t(opt.labelKey),
 			})),
@@ -61,5 +45,5 @@ export function useWorkflowEditorOptions() {
 		[t],
 	);
 
-	return { colorMap, typeOptions, triggerOptions, memberOptions, colorOptions };
+	return { stageOptions, triggerOptions, colorOptions };
 }

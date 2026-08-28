@@ -3,6 +3,7 @@
  */
 
 import { useEffect } from 'react';
+import { formatApiError } from '../../../../../lib/formatApiError';
 
 /**
  * @param {object} params
@@ -59,7 +60,11 @@ export function useFlowDiagramKeyboard({
 							messageApi.success(t('workflow.editor.stateDeleteSuccess'));
 							onUpdate();
 						})
-						.catch(() => messageApi.error(t('workflow.editor.stateDeleteFailed')));
+						.catch((error) =>
+							messageApi.error(
+								formatApiError(t, 'workflow.editor.stateDeleteFailed', error),
+							),
+						);
 				} else if (selectedTransition?.id !== undefined && selectedTransition.id !== null) {
 					e.preventDefault();
 					onDeleteTransition();

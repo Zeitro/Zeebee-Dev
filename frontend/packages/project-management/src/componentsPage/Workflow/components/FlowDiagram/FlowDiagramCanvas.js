@@ -12,6 +12,7 @@ export default function FlowDiagramCanvas({
 	svgRef,
 	maxX,
 	maxY,
+	canvasOffsetY = 0,
 	zoom,
 	pan,
 	isPanning,
@@ -51,7 +52,7 @@ export default function FlowDiagramCanvas({
 				background: '#fafafa',
 				border: '1px solid #eee',
 				borderRadius: 8,
-				minHeight: 500,
+				minHeight: maxY,
 				cursor,
 			}}
 		>
@@ -88,8 +89,10 @@ export default function FlowDiagramCanvas({
 				data-flow-canvas="true"
 				style={{
 					position: 'absolute',
-					top: 0,
+					top: canvasOffsetY,
 					left: 0,
+					width: maxX,
+					height: maxY,
 					transformOrigin: '0 0',
 					transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
 				}}

@@ -1,13 +1,18 @@
 'use client';
 
-import { useMemo } from 'react';
-import { Button, Drawer, Input, Select, Switch, Tag } from 'antd';
-import { EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { useEffect, useMemo } from 'react';
+import { Button, Drawer, Select, Tag } from 'antd';
 import { useTranslations } from 'next-intl';
-import { WORKFLOW_STATE_COLOR_HEX } from '@repo/project-management/enum/workflow';
+import { localizeSelectOptions } from '@repo/project-management/enum/task';
+import {
+	getWorkflowMemberRoleI18nKey,
+	getWorkflowStateColorHex,
+} from '@repo/project-management/enum/workflow';
+import { useOptionsStore } from '@repo/project-management/store/options';
 
 /**
- * @param {object} props
+ * 流程图流转配置抽屉。
+ * 可执行成员下来自公共接口 `project_management_member_role`（store.memberOptions），与流转条件 Modal 一致。
  */
 export default function FlowConfigDrawer({
 	open,
@@ -19,17 +24,18 @@ export default function FlowConfigDrawer({
 	onConfigDataChange,
 }) {
 	const t = useTranslations();
-
-	const memberRoleOptions = useMemo(
-		() => [
-			{ label: t('workflow.editor.roleProjectAdmin'), value: 'project_admin' },
-			{ label: t('workflow.editor.roleProjectOwner'), value: 'project_owner' },
-			{ label: t('workflow.editor.roleTaskCreator'), value: 'task_creator' },
-			{ label: t('workflow.editor.roleTaskAssignee'), value: 'task_assignee' },
-			{ label: t('workflow.editor.roleAllMembers'), value: 'all_members' },
-		],
-		[t],
+	const memberOptionsRaw = useOptionsStore((state) => state.memberOptions);
+	const getOptions = useOptionsStore((state) => state.getOptions);
+	const memberOptions = useMemo(
+		() => localizeSelectOptions(memberOptionsRaw, t, getWorkflowMemberRoleI18nKey),
+		[memberOptionsRaw, t],
 	);
+
+	useEffect(() => {
+		if (!open) return;
+		if (useOptionsStore.getState().memberOptions.length) return;
+		getOptions('project_management_member_role', 'memberOptions').catch(() => {});
+	}, [open, getOptions]);
 
 	const fromState = states.find((s) => s.id === configTransition?.from_state_id);
 	const toState = states.find((s) => s.id === configTransition?.to_state_id);
@@ -39,7 +45,7 @@ export default function FlowConfigDrawer({
 			title={t('workflow.editor.configDrawerTitle')}
 			open={open}
 			onClose={onClose}
-			width={420}
+			width={530}
 			extra={
 				<Button type="primary" onClick={onSave}>
 					{t('common.save')}
@@ -63,22 +69,14 @@ export default function FlowConfigDrawer({
 							}}
 						>
 							<Tag
-								color={
-									WORKFLOW_STATE_COLOR_HEX[fromState?.color]
-										? fromState?.color
-										: 'gray'
-								}
+								color={getWorkflowStateColorHex(fromState?.color)}
 								style={{ margin: 0 }}
 							>
 								{fromState?.name}
 							</Tag>
 							<span style={{ color: '#999' }}>→</span>
 							<Tag
-								color={
-									WORKFLOW_STATE_COLOR_HEX[toState?.color]
-										? toState?.color
-										: 'gray'
-								}
+								color={getWorkflowStateColorHex(toState?.color)}
 								style={{ margin: 0 }}
 							>
 								{toState?.name}
@@ -131,17 +129,20 @@ export default function FlowConfigDrawer({
 							{t('workflow.editor.configAllowedMembers')}
 						</div>
 						<Select
+							allowClear
 							mode="multiple"
 							style={{ width: '100%' }}
 							value={configData.allowedRoles}
 							onChange={(val) =>
 								onConfigDataChange({ ...configData, allowedRoles: val })
 							}
-							options={memberRoleOptions}
+							options={memberOptions}
+							size="large"
+							placeholder={t('workflow.editor.selectPlaceholder')}
 						/>
 					</div>
 
-					<div style={{ marginBottom: 24 }}>
+					{/* <div style={{ marginBottom: 24 }}>
 						<div
 							style={{
 								display: 'flex',
@@ -198,9 +199,9 @@ export default function FlowConfigDrawer({
 								{t('workflow.editor.addField')}
 							</Button>
 						</div>
-					</div>
+					</div> */}
 
-					<div style={{ marginBottom: 24 }}>
+					{/* <div style={{ marginBottom: 24 }}>
 						<div
 							style={{
 								display: 'flex',
@@ -226,9 +227,9 @@ export default function FlowConfigDrawer({
 								defaultValue={t('workflow.editor.noteDefaultValue')}
 							/>
 						) : null}
-					</div>
+					</div> */}
 
-					<div style={{ marginBottom: 24 }}>
+					{/* <div style={{ marginBottom: 24 }}>
 						<div
 							style={{
 								fontSize: 13,
@@ -276,7 +277,7 @@ export default function FlowConfigDrawer({
 								{t('workflow.editor.addApprovalField')}
 							</Button>
 						</div>
-					</div>
+					</div> */}
 				</div>
 			) : null}
 		</Drawer>

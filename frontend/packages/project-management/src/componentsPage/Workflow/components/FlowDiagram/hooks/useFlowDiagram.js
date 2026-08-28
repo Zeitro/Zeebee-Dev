@@ -4,12 +4,20 @@
 
 import { useState, useRef, useCallback, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import { computeLayout, NODE_H, NODE_W } from '../flowLayout';
+import {
+	applyAddTransitionToStages,
+	applyDeleteTransitionFromStages,
+	applyUpdateTransitionToStages,
+	buildWorkflowUpdateBody,
+} from '../../../lib/mapWorkflowDetail';
+import { formatApiError } from '../../../../../lib/formatApiError';
+import { computeLayout } from '../flowLayout';
+import { computeDiagramExtents } from '../computeTransitionPath';
 import { useFlowDiagramKeyboard } from './useFlowDiagramKeyboard';
 import { useFlowDiagramInteraction } from './useFlowDiagramInteraction';
 
 const DEFAULT_CONFIG_DATA = {
-	allowedRoles: ['project_admin', 'project_owner'],
+	allowedRoles: [],
 	requireNote: false,
 	requiredFields: [],
 	approvalFields: [],
@@ -24,6 +32,7 @@ const DEFAULT_CONFIG_DATA = {
  * @param {number} params.userId
  * @param {import('antd/es/message/interface').MessageInstance} params.messageApi
  * @param {(state: object|null) => void} [params.onSelectState]
+ * @param {number|string|null} [params.selectedStateId]
  */
 export function useFlowDiagram({
 	workflow,
@@ -32,6 +41,7 @@ export function useFlowDiagram({
 	onUpdate,
 	canEdit,
 	userId,
+	selectedStateId,
 	onSelectState,
 }) {
 	const t = useTranslations();
@@ -59,8 +69,13 @@ export function useFlowDiagram({
 
 	const positions = nodePositions;
 
-	const maxX = Math.max(...Array.from(positions.values()).map((p) => p.x), 0) + NODE_W + 100;
-	const maxY = Math.max(...Array.from(positions.values()).map((p) => p.y), 0) + NODE_H + 200;
+	const diagramExtents = useMemo(
+		() => computeDiagramExtents(positions, states, transitions),
+		[positions, states, transitions],
+	);
+	const maxX = diagramExtents.width;
+	const maxY = diagramExtents.height;
+	const canvasOffsetY = diagramExtents.offsetY;
 
 	const hasTransition = useCallback(
 		(fromId, toId) =>
@@ -78,13 +93,16 @@ export function useFlowDiagram({
 		setSelectedTransition(null);
 		setSelectedTransitionKey(null);
 		try {
-			await workflowApi.deleteTransition(workflowId, transId, userId);
+			const stages = applyDeleteTransitionFromStages(workflow?.stages, {
+				transitionId: transId,
+			});
+			await workflowApi.update(workflowId, buildWorkflowUpdateBody(workflow, stages));
 			messageApi.success(t('workflow.editor.transitionDeleteSuccess'));
 			onUpdate();
-		} catch {
-			messageApi.error(t('workflow.editor.transitionDeleteFailed'));
+		} catch (error) {
+			messageApi.error(formatApiError(t, 'workflow.editor.transitionDeleteFailed', error));
 		}
-	}, [messageApi, onUpdate, selectedTransition, t, userId, workflowId, workflowApi]);
+	}, [messageApi, onUpdate, selectedTransition, t, workflow, workflowId, workflowApi]);
 
 	const interaction = useFlowDiagramInteraction({
 		canEdit,
@@ -93,7 +111,9 @@ export function useFlowDiagram({
 		states,
 		positions,
 		containerRef,
+		canvasOffsetY,
 		onSelectState,
+		selectedStateId,
 		hasTransition,
 		setSelectedTransition,
 		setSelectedTransitionKey,
@@ -124,42 +144,67 @@ export function useFlowDiagram({
 	const handleAddTransition = useCallback(async () => {
 		if (!newTransition || workflowId == null) return;
 		try {
-			await workflowApi.addTransition(workflowId, {
-				from_state_id: newTransition.from,
-				to_state_id: newTransition.to,
-				name: transName,
-				trigger_type: transTrigger,
-				user_id: userId,
+			const stages = applyAddTransitionToStages(workflow?.stages, {
+				fromStageId: newTransition.from,
+				values: {
+					name: transName,
+					to_state_id: newTransition.to,
+				},
 			});
+			await workflowApi.update(workflowId, buildWorkflowUpdateBody(workflow, stages));
 			messageApi.success(t('workflow.editor.transitionAddSuccess'));
 			setAddModalOpen(false);
+			setTransName('');
+			setTransTrigger('manual');
 			onUpdate();
-		} catch {
-			messageApi.error(t('workflow.editor.transitionAddFailed'));
+		} catch (error) {
+			messageApi.error(formatApiError(t, 'workflow.editor.transitionAddFailed', error));
+		}
+	}, [messageApi, newTransition, onUpdate, t, transName, workflow, workflowId, workflowApi]);
+
+	const closeAddTransitionModal = useCallback(() => {
+		setAddModalOpen(false);
+		setTransName('');
+		setTransTrigger('manual');
+	}, []);
+
+	const openConfigDrawer = useCallback((transition, e) => {
+		e?.stopPropagation();
+		setConfigTransition(transition);
+		setConfigDrawerOpen(true);
+		setConfigData({
+			...DEFAULT_CONFIG_DATA,
+			allowedRoles: Array.isArray(transition?.allowed_actor_types)
+				? transition.allowed_actor_types
+				: [],
+		});
+	}, []);
+
+	const handleSaveConfig = useCallback(async () => {
+		if (!workflow || !configTransition) return;
+		try {
+			const stages = applyUpdateTransitionToStages(workflow.stages, {
+				transitionId: configTransition.id,
+				values: { allowed_actor_types: configData.allowedRoles || [] },
+			});
+			await workflowApi.update(workflowId, buildWorkflowUpdateBody(workflow, stages));
+			messageApi.success(t('workflow.editor.conditionUpdateSuccess'));
+			setConfigDrawerOpen(false);
+			setConfigTransition(null);
+			onUpdate();
+		} catch (error) {
+			messageApi.error(formatApiError(t, 'workflow.editor.conditionSaveFailed', error));
 		}
 	}, [
+		configData.allowedRoles,
+		configTransition,
 		messageApi,
-		newTransition,
 		onUpdate,
 		t,
-		transName,
-		transTrigger,
-		userId,
+		workflow,
 		workflowId,
 		workflowApi,
 	]);
-
-	const openConfigDrawer = useCallback((transition, e) => {
-		e.stopPropagation();
-		setConfigTransition(transition);
-		setConfigDrawerOpen(true);
-		setConfigData(DEFAULT_CONFIG_DATA);
-	}, []);
-
-	const handleSaveConfig = useCallback(() => {
-		messageApi.success(t('workflow.editor.configSaveSuccess'));
-		setConfigDrawerOpen(false);
-	}, [messageApi, t]);
 
 	const handleResetLayout = useCallback(() => {
 		setNodePositions(computeLayout(states));
@@ -175,6 +220,7 @@ export function useFlowDiagram({
 		positions,
 		maxX,
 		maxY,
+		canvasOffsetY,
 		selectedTransition,
 		selectedTransitionKey,
 		addModalOpen,
@@ -193,6 +239,7 @@ export function useFlowDiagram({
 		canEdit,
 		handleDeleteTransition,
 		handleAddTransition,
+		closeAddTransitionModal,
 		openConfigDrawer,
 		handleSaveConfig,
 		handleResetLayout,

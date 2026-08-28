@@ -6,7 +6,8 @@ import { NewModal } from '@repo/shared-methods';
 import { useTranslations } from 'next-intl';
 
 /**
- * 新建工作流弹窗（只负责表单与提交，不负责请求与列表刷新）
+ * 新建工作流弹窗：提交 `{ name, description }`。
+ * 请求由父级走 POST `/project_management/workflow`，成功 data 为工作流对象（含 stages / transitions）。
  *
  * @param {{
  * 	open: boolean,
@@ -47,7 +48,7 @@ export function CreateWorkflowModal({ open, confirmLoading, onCancel, onSave }) 
 			onCancel={onCancel}
 			destroyOnHidden
 		>
-			<Form form={form} layout="vertical" style={{ marginTop: 16 }}>
+			<Form form={form} layout="vertical" size="large">
 				<Form.Item
 					name="name"
 					label={t('workflow.nameLabel')}
@@ -57,7 +58,7 @@ export function CreateWorkflowModal({ open, confirmLoading, onCancel, onSave }) 
 				</Form.Item>
 
 				<Form.Item name="description" label={t('workflow.descriptionLabel')}>
-					<Input.TextArea rows={3} placeholder={t('workflow.descriptionPlaceholder')} />
+					<Input.TextArea rows={4} placeholder={t('workflow.descriptionPlaceholder')} />
 				</Form.Item>
 			</Form>
 		</NewModal>
