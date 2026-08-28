@@ -50,7 +50,12 @@ export function getAssigneeIds(task) {
  * @returns {string}
  */
 export function getMemberLabel(member, fallbackId) {
-	return member?.name || member?.email || (fallbackId != null ? String(fallbackId) : '');
+	return (
+		member?.full_name ||
+		member?.name ||
+		member?.email ||
+		(fallbackId != null ? String(fallbackId) : '')
+	);
 }
 
 /**

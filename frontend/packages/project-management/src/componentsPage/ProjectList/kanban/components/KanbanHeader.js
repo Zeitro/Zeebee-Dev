@@ -33,8 +33,6 @@ import { getMemberInitial, getMemberLabel } from './helpers';
 export function KanbanHeader({
 	project,
 	taskCount = 0,
-	members = [],
-	projectMembers = [],
 	canManageMembers = false,
 	onCreateTask,
 	onMembersClick,
@@ -45,6 +43,7 @@ export function KanbanHeader({
 	const t = useTranslations();
 	const router = useRouter();
 	const projectId = project?.id;
+	const workflowId = project?.workflow?.id;
 
 	return (
 		<div className="flex items-center justify-between mb-4">
@@ -63,13 +62,13 @@ export function KanbanHeader({
 				</h2>
 			</div>
 			<div className="flex items-center gap-3 shrink-0">
-				<div
-					className="flex items-center gap-1.5 h-auto p-0 cursor-pointer"
-					title={t('kanban.viewAllMembers')}
-					onClick={onMembersClick}
-				>
-					<TeamOutlined className="text-base-label" />
-					<Avatar.Group
+				<Tooltip title={t('kanban.projectMembers')}>
+					<div
+						className="flex items-center gap-1.5 h-auto p-0 cursor-pointer"
+						onClick={onMembersClick}
+					>
+						<TeamOutlined className="text-base-label" />
+						{/* <Avatar.Group
 						max={{
 							count: 8,
 							style: { backgroundColor: 'var(--blue-medium)', fontSize: 12 },
@@ -98,8 +97,9 @@ export function KanbanHeader({
 								</Tooltip>
 							);
 						})}
-					</Avatar.Group>
-				</div>
+					</Avatar.Group> */}
+					</div>
+				</Tooltip>
 				{canManageMembers ? (
 					<Button size="small" icon={<PlusOutlined />} onClick={onInviteClick}>
 						{t('kanban.invite')}
@@ -112,7 +112,9 @@ export function KanbanHeader({
 				{projectId != null ? (
 					<Button
 						icon={<SettingOutlined />}
-						onClick={() => router.push(`/project/workflow/${projectId}`)}
+						onClick={() =>
+							router.push(`/project/workflow/${workflowId}?projectId=${projectId}`)
+						}
 					>
 						{t('projectList.openSettings')}
 					</Button>

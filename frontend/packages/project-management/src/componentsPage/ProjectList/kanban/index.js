@@ -4,7 +4,7 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
-import { Spin } from 'antd';
+import { Spin, message } from 'antd';
 import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
 	DndContext,
@@ -37,6 +37,7 @@ export function ProjectKanban() {
 		project,
 		workflow,
 		tasks,
+		taskTotal,
 		members,
 		projectMembers,
 		memberOptions,
@@ -52,10 +53,8 @@ export function ProjectKanban() {
 		saveTask,
 		saveTitle,
 		deleteTask,
-		inviteProjectMembers,
-		removeProjectMember,
-		updateProjectMemberRole,
-		fetchProjectActivities,
+		refreshProjectMembers,
+		searchProjectMembers,
 		fetchTaskActivities,
 		fetchTaskDependencies,
 		fetchTaskDependents,
@@ -72,13 +71,11 @@ export function ProjectKanban() {
 	const [createParent, setCreateParent] = useState(null);
 	const [targetStateId, setTargetStateId] = useState(null);
 	const [memberListOpen, setMemberListOpen] = useState(false);
-	const [memberSearch, setMemberSearch] = useState('');
 	const [inviteOpen, setInviteOpen] = useState(false);
-	const [inviteLoading, setInviteLoading] = useState(false);
 	const [projectActivityOpen, setProjectActivityOpen] = useState(false);
-	const [projectActivities, setProjectActivities] = useState([]);
 	const [taskLogOpen, setTaskLogOpen] = useState(false);
 	const [taskActivities, setTaskActivities] = useState([]);
+	const [messageApi, messageContextHolder] = message.useMessage();
 
 	const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 	const states = useMemo(
@@ -87,8 +84,10 @@ export function ProjectKanban() {
 		[workflow],
 	);
 
-	const currentProjectRole = projectMembers.find((item) => item.user_id === userId)?.role;
-	// const canManageMembers = userId === project?.owner_id || currentProjectRole === 'admin';
+	const currentProjectRole = projectMembers.find(
+		(item) => item.user_id === userId || item.organization_user_id === userId,
+	)?.role;
+	// const canManageMembers = userId === project?.owner_id || currentProjectRole === 'ProjectAdmin';
 	const canManageMembers = true;
 
 	const setTaskQuery = useCallback(
@@ -139,11 +138,9 @@ export function ProjectKanban() {
 		[tasks, transitionTask],
 	);
 
-	const handleOpenProjectActivity = useCallback(async () => {
+	const handleOpenProjectActivity = useCallback(() => {
 		setProjectActivityOpen(true);
-		const activities = await fetchProjectActivities();
-		setProjectActivities(activities);
-	}, [fetchProjectActivities]);
+	}, []);
 
 	const handleOpenTaskLog = useCallback(async () => {
 		if (!activeTask) return;
@@ -151,19 +148,6 @@ export function ProjectKanban() {
 		const activities = await fetchTaskActivities(activeTask.id);
 		setTaskActivities(activities);
 	}, [activeTask, fetchTaskActivities]);
-
-	const handleInviteMembers = useCallback(
-		async (userIds) => {
-			setInviteLoading(true);
-			try {
-				await inviteProjectMembers(userIds);
-				setInviteOpen(false);
-			} finally {
-				setInviteLoading(false);
-			}
-		},
-		[inviteProjectMembers],
-	);
 
 	if (loading) {
 		return (
@@ -173,23 +157,19 @@ export function ProjectKanban() {
 		);
 	}
 
-	if (!workflow) {
+	if (!workflow?.states?.length) {
 		return <EmptyWorkflow project={project} />;
 	}
 
 	return (
-		<div className="flex flex-col h-[calc(100vh-130px)] px-8 pt-6 pb-6">
+		<div className="flex flex-col flex-1 px-8 pt-6 pb-6">
+			{messageContextHolder}
 			<KanbanHeader
 				project={project}
-				taskCount={tasks.length}
-				members={members}
-				projectMembers={projectMembers}
+				taskCount={taskTotal || tasks.length}
 				canManageMembers={canManageMembers}
 				onCreateTask={() => openCreate(null)}
-				onMembersClick={() => {
-					setMemberSearch('');
-					setMemberListOpen(true);
-				}}
+				onMembersClick={() => setMemberListOpen(true)}
 				onInviteClick={() => setInviteOpen(true)}
 				onActivityClick={handleOpenProjectActivity}
 			/>
@@ -247,31 +227,28 @@ export function ProjectKanban() {
 			) : null}
 			<InviteMemberModal
 				open={inviteOpen}
-				members={members}
-				projectMembers={projectMembers}
-				loading={inviteLoading}
+				projectId={projectId}
 				onCancel={() => setInviteOpen(false)}
-				onInvite={handleInviteMembers}
+				onSuccess={refreshProjectMembers}
+				messageApi={messageApi}
 			/>
 			<ProjectMemberListDrawer
 				open={memberListOpen}
-				project={project}
-				members={members}
+				projectId={projectId}
 				projectMembers={projectMembers}
 				canManage={canManageMembers}
-				search={memberSearch}
-				onSearchChange={setMemberSearch}
+				onSearchMembers={searchProjectMembers}
 				onClose={() => setMemberListOpen(false)}
 				onInvite={() => {
-					setMemberListOpen(false);
+					// setMemberListOpen(false);
 					setInviteOpen(true);
 				}}
-				onRemove={removeProjectMember}
-				onRoleChange={updateProjectMemberRole}
+				onSuccess={refreshProjectMembers}
+				messageApi={messageApi}
 			/>
 			<ProjectActivityDrawer
 				open={projectActivityOpen}
-				activities={projectActivities}
+				projectId={projectId}
 				tasks={tasks}
 				members={members}
 				onClose={() => setProjectActivityOpen(false)}

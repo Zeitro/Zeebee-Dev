@@ -1,49 +1,115 @@
 /**
- * 邀请项目成员：从未加入项目的租户成员中多选添加。
+ * 邀请项目成员：candidate 拉候选、addMembers 批量添加；两处入口共用本弹窗。
  */
 'use client';
 
-import { useMemo, useState } from 'react';
-import { Avatar, Button, Checkbox, Empty, Input } from 'antd';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Avatar, Checkbox, Empty, Input, message } from 'antd';
 import { useTranslations } from 'next-intl';
 import { NewModal } from '@repo/shared-methods';
-import { getMemberInitial, getMemberLabel } from './helpers';
+import { createRequest } from '@repo/shared-methods/utils';
+import {
+	createProjectMemberApi,
+	PROJECT_MEMBER_CANDIDATE_PURPOSE_ADD_MEMBER,
+	PROJECT_MEMBER_DEFAULT_ROLE,
+} from '@repo/project-management/api/projectMember';
+import { mapProjectMember } from '@repo/project-management/lib/mapProjectMember';
+import { getMemberInitial, getMemberLabel, unwrapList } from './helpers';
+
+/**
+ * @param {object|null|undefined} item
+ * @returns {number|undefined}
+ */
+function getCandidateUserId(item) {
+	const id = item?.organization_user_id ?? item?.user_id ?? item?.id;
+	return id == null ? undefined : Number(id);
+}
 
 /**
  * @param {{
  *   open: boolean,
- *   members?: Array,
- *   projectMembers?: Array,
- *   loading?: boolean,
+ *   projectId?: number|string,
  *   onCancel: () => void,
- *   onInvite: (userIds: number[]) => Promise<void>,
+ *   onSuccess?: () => void | Promise<void>,
  * }} props
  */
-export function InviteMemberModal({
-	open,
-	members = [],
-	projectMembers = [],
-	loading = false,
-	onCancel,
-	onInvite,
-}) {
+export function InviteMemberModal({ open, projectId, onCancel, onSuccess, messageApi }) {
 	const t = useTranslations();
+	const { request } = useMemo(() => createRequest(), []);
+	const projectMemberApi = useMemo(() => createProjectMemberApi(request), [request]);
+
 	const [search, setSearch] = useState('');
 	const [selected, setSelected] = useState(new Set());
+	const [candidates, setCandidates] = useState([]);
+	const [candidatesLoading, setCandidatesLoading] = useState(false);
+	const [inviteLoading, setInviteLoading] = useState(false);
 
-	const availableMembers = useMemo(() => {
-		const projectMemberIds = new Set(projectMembers.map((item) => item.user_id));
-		return members.filter((item) => !projectMemberIds.has(item.id));
-	}, [members, projectMembers]);
+	const resetState = useCallback(() => {
+		setSearch('');
+		setSelected(new Set());
+		setCandidates([]);
+	}, []);
 
-	const filteredMembers = useMemo(() => {
-		if (!search.trim()) return availableMembers;
-		const keyword = search.trim().toLowerCase();
-		return availableMembers.filter((item) => {
-			const label = getMemberLabel(item).toLowerCase();
-			return label.includes(keyword) || (item.email || '').toLowerCase().includes(keyword);
-		});
-	}, [availableMembers, search]);
+	const loadCandidates = useCallback(
+		async (keyword = '') => {
+			if (!projectId) {
+				setCandidates([]);
+				return;
+			}
+			setCandidatesLoading(true);
+			try {
+				const res = await projectMemberApi.candidate({
+					project_id: Number(projectId),
+					keyword: keyword.trim(),
+					purpose: PROJECT_MEMBER_CANDIDATE_PURPOSE_ADD_MEMBER,
+				});
+				setCandidates(unwrapList(res).map(mapProjectMember).filter(Boolean));
+			} catch {
+				setCandidates([]);
+			} finally {
+				setCandidatesLoading(false);
+			}
+		},
+		[projectId, projectMemberApi],
+	);
+
+	useEffect(() => {
+		if (!open) return undefined;
+
+		let cancelled = false;
+		(async () => {
+			if (!projectId) return;
+			setCandidatesLoading(true);
+			try {
+				const res = await projectMemberApi.candidate({
+					project_id: Number(projectId),
+					keyword: '',
+					purpose: PROJECT_MEMBER_CANDIDATE_PURPOSE_ADD_MEMBER,
+				});
+				if (!cancelled) {
+					setCandidates(unwrapList(res).map(mapProjectMember).filter(Boolean));
+				}
+			} catch {
+				if (!cancelled) setCandidates([]);
+			} finally {
+				if (!cancelled) setCandidatesLoading(false);
+			}
+		})();
+
+		return () => {
+			cancelled = true;
+		};
+	}, [open, projectId, projectMemberApi]);
+
+	const handleSearch = async (value) => {
+		await loadCandidates(value.trim());
+	};
+
+	const handleSearchChange = (event) => {
+		const value = event.target.value;
+		setSearch(value);
+		if (!value) loadCandidates('');
+	};
 
 	const toggleSelection = (userId) => {
 		setSelected((prev) => {
@@ -55,15 +121,33 @@ export function InviteMemberModal({
 	};
 
 	const handleClose = () => {
-		setSearch('');
-		setSelected(new Set());
+		resetState();
 		onCancel();
 	};
 
 	const handleInvite = async () => {
-		await onInvite([...selected]);
-		setSelected(new Set());
-		setSearch('');
+		const userIds = [...selected];
+		if (!projectId || !userIds.length) return;
+
+		setInviteLoading(true);
+		try {
+			await projectMemberApi.addMembers({
+				project_id: Number(projectId),
+				members: userIds.map((organization_user_id) => ({
+					organization_user_id: Number(organization_user_id),
+					role: PROJECT_MEMBER_DEFAULT_ROLE,
+				})),
+			});
+			messageApi.success(t('kanban.inviteSuccess', { count: userIds.length }));
+			await onSuccess?.();
+			resetState();
+			onCancel();
+		} catch (error) {
+			messageApi.error(error?.message || t('kanban.inviteFailed', { count: userIds.length }));
+			throw error;
+		} finally {
+			setInviteLoading(false);
+		}
 	};
 
 	if (!open) return null;
@@ -71,69 +155,67 @@ export function InviteMemberModal({
 	return (
 		<NewModal
 			title={t('kanban.inviteMembers')}
-			width={480}
+			width={500}
 			destroyOnHidden
 			onCancel={handleClose}
-			footer={
-				<div className="flex items-center justify-between">
-					<span className="text-[13px] text-base-label">
-						{selected.size > 0
-							? t('kanban.inviteSelected', { count: selected.size })
-							: ''}
-					</span>
-					<Button
-						type="primary"
-						loading={loading}
-						disabled={selected.size === 0}
-						onClick={handleInvite}
-					>
-						{t('kanban.inviteAdd')}
-					</Button>
-				</div>
-			}
+			onOk={handleInvite}
+			okText={t('kanban.inviteAdd')}
+			okButtonProps={{
+				disabled: selected.size === 0,
+			}}
+			confirmLoading={inviteLoading}
+			cancelText={t('common.cancel')}
 		>
 			<Input.Search
 				placeholder={t('kanban.inviteSearchPlaceholder')}
 				allowClear
 				value={search}
-				onChange={(event) => setSearch(event.target.value)}
+				loading={candidatesLoading}
+				onChange={handleSearchChange}
+				onSearch={handleSearch}
 				className="mb-4"
 			/>
-			<div className="max-h-[360px] overflow-y-auto">
-				{filteredMembers.length === 0 ? (
+			<div className="min-h-[360px] max-h-[600px] overflow-y-auto">
+				{!candidatesLoading && candidates.length === 0 ? (
 					<Empty
 						description={t('kanban.inviteEmpty')}
 						image={Empty.PRESENTED_IMAGE_SIMPLE}
 					/>
 				) : (
-					filteredMembers.map((item) => (
-						<div
-							key={item.id}
-							className={`flex items-center justify-between px-3 py-2.5 border-b border-base-border cursor-pointer ${
-								selected.has(item.id) ? 'bg-blue-light-1' : ''
-							}`}
-							onClick={() => toggleSelection(item.id)}
-						>
-							<div className="flex items-center gap-2.5">
-								<Checkbox
-									checked={selected.has(item.id)}
-									onChange={() => toggleSelection(item.id)}
-									onClick={(event) => event.stopPropagation()}
-								/>
-								<Avatar
-									size={36}
-									style={{ backgroundColor: 'var(--blue-medium)' }}
-									className="shrink-0"
-								>
-									{getMemberInitial(item)}
-								</Avatar>
-								<div>
-									<div className="font-medium">{getMemberLabel(item)}</div>
-									<div className="text-xs text-base-label">{item.email}</div>
+					candidates.map((item) => {
+						const userId = getCandidateUserId(item);
+						if (userId == null) return null;
+						return (
+							<div
+								key={userId}
+								className={`flex items-center justify-between px-3 py-2.5 border-b border-base-border cursor-pointer ${
+									selected.has(userId) ? 'bg-blue-light-1' : ''
+								}`}
+								onClick={() => toggleSelection(userId)}
+							>
+								<div className="flex items-center gap-2.5">
+									<Checkbox
+										checked={selected.has(userId)}
+										onChange={() => toggleSelection(userId)}
+										onClick={(event) => event.stopPropagation()}
+									/>
+									<Avatar
+										size={36}
+										style={{ backgroundColor: 'var(--blue-medium)' }}
+										className="shrink-0"
+									>
+										{getMemberInitial(item, userId)}
+									</Avatar>
+									<div>
+										<div className="font-medium">
+											{getMemberLabel(item, userId)}
+										</div>
+										<div className="text-xs text-base-label">{item.email}</div>
+									</div>
 								</div>
 							</div>
-						</div>
-					))
+						);
+					})
 				)}
 			</div>
 		</NewModal>

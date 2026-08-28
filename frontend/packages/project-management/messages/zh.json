@@ -12,7 +12,11 @@
 		"reset": "重置",
 		"back": "返回",
 		"create": "创建",
-		"delete": "删除"
+		"delete": "删除",
+		"roleProjectAdmin": "项目管理员",
+		"roleProjectOwner": "项目所有者",
+		"roleTaskCreator": "任务创建者",
+		"roleTaskExecutor": "任务执行者"
 	},
 	"home": {
 		"title": "Zeebee 项目管理系统"
@@ -192,12 +196,7 @@
 			"roleProjectOwner": "项目所有者",
 			"roleTaskCreator": "任务创建者",
 			"roleTaskExecutor": "任务执行者",
-			"roleTaskAssignee": "任务执行者",
 			"roleAllMembers": "所有成员",
-			"memberAssignee": "任务执行者",
-			"memberCreator": "任务创建者",
-			"memberOwner": "项目所有者",
-			"memberAdmin": "项目管理员",
 			"configRequiredFields": "流转时需完善的字段",
 			"fieldTitle": "标题",
 			"fieldAssignee": "执行者",
@@ -304,7 +303,7 @@
 		"parentLink": "父任务：{title}",
 		"backToParent": "返回上级任务",
 		"members": "成员",
-		"owner": "创建者",
+		"owner": "项目所有者",
 		"invite": "邀请",
 		"viewAllMembers": "查看全部成员",
 		"inviteMembers": "邀请项目成员",

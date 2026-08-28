@@ -8,14 +8,15 @@ import { Modal, message } from 'antd';
 import { useTranslations } from 'next-intl';
 import { useUserStore } from '@repo/shared-methods/store';
 import { createRequest } from '@repo/shared-methods/utils';
-// MOCK: 接口就绪后恢复下方 import
-// import { MEMBER_API } from '@repo/project-management/api/member';
+import { getProjectMembersApi } from '@repo/project-management/api/project';
+import { getProjectDetailApi } from '@repo/project-management/api/project';
 import {
-	getProjectMemberApi,
-	getProjectMemberRoleApi,
-	getProjectMembersApi,
-} from '@repo/project-management/api/project';
+	createProjectMemberApi,
+	PROJECT_MEMBER_LIST_PAGE_SIZE,
+} from '@repo/project-management/api/projectMember';
+import { createTaskTypeApi } from '@repo/project-management/api/taskType';
 import {
+	createTaskApi,
 	getTaskActivitiesApi,
 	getTaskApi,
 	getTaskDependenciesApi,
@@ -24,20 +25,13 @@ import {
 	getTaskDependentsApi,
 	getTaskTransitionApi,
 	TASK_API,
-	// TASK_TYPES_API,
 } from '@repo/project-management/api/task';
-// import { getProjectWorkflowApi } from '@repo/project-management/api/workflow';
 import { isInitialState } from '@repo/project-management/enum/workflow';
-// import { TASK_LIST_PAGE_SIZE } from '../components/constants';
-import { toIsoDateTime, buildQuery, unwrapList } from '../components/helpers';
-import {
-	getMockKanbanBoard,
-	getMockKanbanMembers,
-	getMockProjectActivities,
-	getMockTaskActivities,
-	getMockTaskDependencies,
-	getMockTaskDependents,
-} from '../mockData';
+import { mapProjectMember } from '@repo/project-management/lib/mapProjectMember';
+import { TASK_LIST_PAGE_SIZE } from '../components/constants';
+import { toIsoDateTime, unwrapList } from '../components/helpers';
+import { mapKanbanProjectDetail, mapKanbanTask } from '../lib/mapKanbanBoard';
+import { getMockTaskActivities, getMockTaskDependencies, getMockTaskDependents } from '../mockData';
 
 /**
  * @param {number|string|undefined} projectId
@@ -46,115 +40,142 @@ import {
 export function useKanbanBoard(projectId, queryTaskId) {
 	const t = useTranslations();
 	const { request } = useMemo(() => createRequest(), []);
-	const userId = useUserStore((state) => state.userInfo?.id);
+	const taskApi = useMemo(() => createTaskApi(request), [request]);
+	const projectMemberApi = useMemo(() => createProjectMemberApi(request), [request]);
+	const taskTypeApi = useMemo(() => createTaskTypeApi(request), [request]);
+	const userId = useUserStore(
+		(state) => state.userInfo?.organization_user_id ?? state.userInfo?.id,
+	);
 	const queryTaskIdRef = useRef(queryTaskId);
 	const [project, setProject] = useState(null);
 	const [workflow, setWorkflow] = useState(null);
 	const [tasks, setTasks] = useState([]);
-	const [members, setMembers] = useState([]);
+	const [taskTotal, setTaskTotal] = useState(0);
 	const [projectMembers, setProjectMembers] = useState([]);
 	const [taskTypes, setTaskTypes] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [activeTask, setActiveTask] = useState(null);
 
+	const syncActiveTask = useCallback((list) => {
+		setActiveTask((prev) => {
+			const targetId = prev?.id || queryTaskIdRef.current;
+			if (!targetId) return prev;
+			const fresh = list.find((item) => item.id === targetId);
+			if (!fresh) return prev;
+			return {
+				...fresh,
+				assignments: fresh.assignments ?? prev?.assignments,
+				assignee_ids: fresh.assignee_ids ?? prev?.assignee_ids,
+			};
+		});
+	}, []);
+
 	const fetchBoard = useCallback(async () => {
 		if (!projectId) return;
 		try {
-			// MOCK: start — 接口就绪后删除本段并恢复下方 API
+			const projectRes = await request(getProjectDetailApi(projectId), {
+				method: 'GET',
+				isHideTips: true,
+			}).catch(() => null);
+
 			const {
-				project: mockProject,
-				workflow: mockWorkflow,
-				tasks: mockTasks,
-			} = getMockKanbanBoard(projectId);
-			setWorkflow(mockWorkflow);
-			setTasks(mockTasks);
-			setProject(mockProject);
-			setActiveTask((prev) => {
-				const targetId = prev?.id || queryTaskIdRef.current;
-				if (!targetId) return prev;
-				const fresh = mockTasks.find((item) => item.id === targetId);
-				if (!fresh) return prev;
-				return {
-					...fresh,
-					assignments: fresh.assignments ?? prev?.assignments,
-					assignee_ids: fresh.assignee_ids ?? prev?.assignee_ids,
-				};
-			});
-			/* API:
-			const [workflowRes, taskRes, projectRes] = await Promise.all([
-				request(getProjectWorkflowApi(projectId), {
-					method: 'GET',
-					isHideTips: true,
-				}).catch(() => null),
-				request(
-					`${TASK_API}${buildQuery({
-						project_id: projectId,
-						page: 1,
-						page_size: TASK_LIST_PAGE_SIZE,
-						user_id: userId,
-					})}`,
-					{ method: 'GET', isHideTips: true },
-				).catch(() => []),
-				request(`${getProjectApi(projectId)}${buildQuery({ user_id: userId })}`, {
-					method: 'GET',
-					isHideTips: true,
-				}).catch(() => null),
-			]);
-			const list = unwrapList(taskRes);
-			setWorkflow(workflowRes || null);
+				project: mappedProject,
+				workflow: mappedWorkflow,
+				taskTotal: projectTaskTotal,
+			} = mapKanbanProjectDetail(projectRes);
+
+			const stages = mappedWorkflow?.states || [];
+			const taskResults = stages.length
+				? await Promise.all(
+						stages.map((stage) =>
+							taskApi
+								.pageByProject({
+									page: 1,
+									limit: TASK_LIST_PAGE_SIZE,
+									filter: {
+										project_id: Number(projectId),
+										stage_id: stage.id,
+									},
+								})
+								.catch(() => ({ list: [], total: 0 })),
+						),
+					)
+				: [];
+
+			const list = taskResults
+				.flatMap((res) => (Array.isArray(res?.list) ? res.list : []))
+				.map((item) => mapKanbanTask(item))
+				.filter(Boolean);
+
+			const totalFromStages = taskResults.reduce(
+				(sum, res) => sum + (Number(res?.total) || 0),
+				0,
+			);
+
+			setProject(mappedProject);
+			setWorkflow(mappedWorkflow);
 			setTasks(list);
-			setProject(projectRes || null);
-			setActiveTask((prev) => {
-				const targetId = prev?.id || queryTaskIdRef.current;
-				if (!targetId) return prev;
-				const fresh = list.find((item) => item.id === targetId);
-				if (!fresh) return prev;
-				return {
-					...fresh,
-					assignments: fresh.assignments ?? prev?.assignments,
-					assignee_ids: fresh.assignee_ids ?? prev?.assignee_ids,
-				};
-			});
-			*/
+			setTaskTotal(projectTaskTotal || totalFromStages || list.length);
+			syncActiveTask(list);
 		} catch {
 			message.error(t('kanban.loadFailed'));
+			setProject(null);
+			setWorkflow(null);
 			setTasks([]);
+			setTaskTotal(0);
 		} finally {
 			setLoading(false);
 		}
-	}, [projectId, t]);
+	}, [projectId, request, syncActiveTask, t, taskApi]);
 
-	const fetchMembers = useCallback(async () => {
+	const fetchProjectMembers = useCallback(async () => {
 		if (!projectId) return;
 		try {
-			// MOCK: start — 接口就绪后删除本段并恢复下方 API
-			const {
-				members: mockMembers,
-				projectMembers: mockProjectMembers,
-				taskTypes: mockTaskTypes,
-			} = getMockKanbanMembers(projectId);
-			setMembers(mockMembers);
-			setProjectMembers(mockProjectMembers);
-			setTaskTypes(mockTaskTypes);
-			/* API:
-			const [memberRes, projectMemberRes, typeRes] = await Promise.all([
-				request(MEMBER_API, { method: 'GET', isHideTips: true }).catch(() => []),
-				request(getProjectMembersApi(projectId), { method: 'GET', isHideTips: true }).catch(
-					() => [],
-				),
-				request(TASK_TYPES_API, { method: 'GET', isHideTips: true }).catch(() => []),
-			]);
-			const allMembers = unwrapList(memberRes);
-			setMembers(allMembers.filter((item) => !item.status || item.status === 'active'));
-			setProjectMembers(unwrapList(projectMemberRes));
-			setTaskTypes(unwrapList(typeRes));
-			*/
+			const projectMemberRes = await projectMemberApi.page({
+				page: 1,
+				limit: PROJECT_MEMBER_LIST_PAGE_SIZE,
+				filter: {
+					project_id: Number(projectId),
+					keyword: '',
+					role: '',
+				},
+			});
+			const projectMemberList = unwrapList(projectMemberRes)
+				.map(mapProjectMember)
+				.filter(Boolean);
+			setProjectMembers(projectMemberList);
 		} catch {
-			setMembers([]);
 			setProjectMembers([]);
+		}
+	}, [projectId, projectMemberApi]);
+
+	/** 抽屉内搜索专用，不写入 projectMembers，避免影响权限等全量数据 */
+	const searchProjectMembers = useCallback(
+		async (keyword) => {
+			if (!projectId) return [];
+			const projectMemberRes = await projectMemberApi.page({
+				page: 1,
+				limit: PROJECT_MEMBER_LIST_PAGE_SIZE,
+				filter: {
+					project_id: Number(projectId),
+					keyword: keyword.trim(),
+					role: '',
+				},
+			});
+			return unwrapList(projectMemberRes).map(mapProjectMember).filter(Boolean);
+		},
+		[projectId, projectMemberApi],
+	);
+
+	const fetchTaskTypes = useCallback(async () => {
+		try {
+			const typeRes = await taskTypeApi.list();
+			const typeList = Array.isArray(typeRes?.list) ? typeRes.list : unwrapList(typeRes);
+			setTaskTypes(typeList);
+		} catch {
 			setTaskTypes([]);
 		}
-	}, [projectId]);
+	}, [taskTypeApi]);
 
 	useEffect(() => {
 		queryTaskIdRef.current = queryTaskId;
@@ -163,16 +184,30 @@ export function useKanbanBoard(projectId, queryTaskId) {
 	useEffect(() => {
 		// eslint-disable-next-line react-hooks/set-state-in-effect -- 挂载/切换项目时拉看板
 		fetchBoard();
-		fetchMembers();
-	}, [fetchBoard, fetchMembers]);
+		fetchProjectMembers();
+		fetchTaskTypes();
+	}, [fetchBoard, fetchProjectMembers, fetchTaskTypes]);
 
-	const memberOptions = useMemo(() => {
-		const viewerIds = new Set(
-			projectMembers.filter((item) => item.role === 'viewer').map((item) => item.user_id),
-		);
-		const projectMemberIds = new Set(projectMembers.map((item) => item.user_id));
-		return members.filter((item) => projectMemberIds.has(item.id) && !viewerIds.has(item.id));
-	}, [members, projectMembers]);
+	/** 看板展示用：由项目成员派生，供任务卡片/详情等按 id 查找 */
+	const members = useMemo(
+		() =>
+			projectMembers.map((item) => ({
+				id: item.user_id,
+				name: item.full_name || item.name,
+				email: item.email,
+			})),
+		[projectMembers],
+	);
+
+	const memberOptions = useMemo(
+		() =>
+			projectMembers.map((item) => ({
+				id: item.user_id,
+				name: item.full_name || item.name,
+				email: item.email,
+			})),
+		[projectMembers],
+	);
 
 	const openTask = useCallback((task) => setActiveTask(task), []);
 	const closeTask = useCallback(() => setActiveTask(null), []);
@@ -230,8 +265,8 @@ export function useKanbanBoard(projectId, queryTaskId) {
 	);
 
 	const refreshProjectMembers = useCallback(async () => {
-		await fetchMembers();
-	}, [fetchMembers]);
+		await fetchProjectMembers();
+	}, [fetchProjectMembers]);
 
 	const syncAssigneeParticipants = useCallback(
 		async (assigneeIds) => {
@@ -247,7 +282,7 @@ export function useKanbanBoard(projectId, queryTaskId) {
 							body: {
 								operator_id: userId || 0,
 								user_id: uid,
-								role: 'executor',
+								role: 'TaskExecutor',
 							},
 						});
 						memberAdded = true;
@@ -282,96 +317,6 @@ export function useKanbanBoard(projectId, queryTaskId) {
 		},
 		[activeTask, request, syncAssigneeParticipants, t, userId],
 	);
-
-	const inviteProjectMembers = useCallback(
-		async (userIds) => {
-			if (!projectId || !userIds?.length) return { successCount: 0, failCount: 0 };
-			let successCount = 0;
-			let failCount = 0;
-			for (const uid of userIds) {
-				try {
-					await request(getProjectMembersApi(projectId), {
-						method: 'POST',
-						isHideTips: true,
-						body: {
-							operator_id: userId || 0,
-							user_id: uid,
-							role: 'member',
-						},
-					});
-					successCount += 1;
-				} catch {
-					failCount += 1;
-				}
-			}
-			if (successCount > 0) {
-				message.success(t('kanban.inviteSuccess', { count: successCount }));
-				await refreshProjectMembers();
-			}
-			if (failCount > 0) message.error(t('kanban.inviteFailed', { count: failCount }));
-			return { successCount, failCount };
-		},
-		[projectId, refreshProjectMembers, request, t, userId],
-	);
-
-	const removeProjectMember = useCallback(
-		async (memberUserId) => {
-			if (!projectId) return;
-			try {
-				await request(
-					`${getProjectMemberApi(projectId, memberUserId)}${buildQuery({
-						operator_id: userId || 0,
-					})}`,
-					{ method: 'DELETE', isHideTips: true },
-				);
-				message.success(t('kanban.memberRemoved'));
-				await refreshProjectMembers();
-			} catch (error) {
-				message.error(error?.message || t('kanban.memberRemoveFailed'));
-			}
-		},
-		[projectId, refreshProjectMembers, request, t, userId],
-	);
-
-	const updateProjectMemberRole = useCallback(
-		async (memberUserId, role) => {
-			if (!projectId) return;
-			try {
-				await request(getProjectMemberRoleApi(projectId, memberUserId), {
-					method: 'PUT',
-					isHideTips: true,
-					body: { user_id: userId || 0, role },
-				});
-				message.success(t('kanban.memberRoleUpdated'));
-				await refreshProjectMembers();
-			} catch (error) {
-				message.error(error?.message || t('kanban.memberRoleUpdateFailed'));
-			}
-		},
-		[projectId, refreshProjectMembers, request, t, userId],
-	);
-
-	const fetchProjectActivities = useCallback(async () => {
-		// MOCK: 接口就绪后改为逐任务 request(getTaskActivitiesApi)
-		return getMockProjectActivities(tasks);
-		/*
-		const all = [];
-		for (const task of tasks) {
-			try {
-				const data = await request(getTaskActivitiesApi(task.id), {
-					method: 'GET',
-					isHideTips: true,
-				});
-				const items = unwrapList(data).map((act) => ({ ...act, task_id: task.id }));
-				all.push(...items);
-			} catch {
-				// ignore per-task errors
-			}
-		}
-		all.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-		return all;
-		*/
-	}, [tasks]);
 
 	const fetchTaskActivities = useCallback(
 		async (taskId) => {
@@ -581,6 +526,7 @@ export function useKanbanBoard(projectId, queryTaskId) {
 		project,
 		workflow,
 		tasks,
+		taskTotal,
 		members,
 		projectMembers,
 		memberOptions,
@@ -597,10 +543,7 @@ export function useKanbanBoard(projectId, queryTaskId) {
 		saveTitle,
 		deleteTask,
 		refreshProjectMembers,
-		inviteProjectMembers,
-		removeProjectMember,
-		updateProjectMemberRole,
-		fetchProjectActivities,
+		searchProjectMembers,
 		fetchTaskActivities,
 		fetchTaskDependencies,
 		fetchTaskDependents,

@@ -18,10 +18,10 @@ import FlowConfigDrawer from './components/FlowDiagram/FlowConfigDrawer';
 /**
  * @param {{ workflowId: number|string }} props
  */
-export function WorkflowEditor({ workflowId }) {
+export function WorkflowEditor({ workflowId, projectId }) {
 	const t = useTranslations();
 	const router = useRouter();
-	const editor = useWorkflowEditor(workflowId);
+	const editor = useWorkflowEditor(workflowId, projectId);
 
 	if (editor.loading && !editor.workflow) {
 		return (

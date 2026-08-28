@@ -3,10 +3,11 @@
  * POST `/project_management/project/page`，body `{ page, limit, filter }`，
  * 响应 data 为 `{ list, total }`（另含 page / limit / total_page）。
  * 创建：POST `/project_management/project`。
- * 详情：GET `/project_management/project/:id`，data 含 name / cover_url / workflow.stages。
+ * 详情：GET `/project_management/project/:id`，data 含 name / cover_url / task_count / workflow.stages。
  * 更新：PUT 同路径，body `{ name, description, cover_url }`。
  * 删除：DELETE 同路径。
- * 看板 / 成员仍走旧路径 `/projects/:id`，待对应接口迁移后再切。
+ * 看板 / 成员写操作仍走旧路径 `/projects/:id/members`，待迁移；
+ * 成员分页：POST `/project_management/project_member/page`（见 `api/projectMember.js`）。
  */
 
 export const PROJECT_API = '/project_management/project';

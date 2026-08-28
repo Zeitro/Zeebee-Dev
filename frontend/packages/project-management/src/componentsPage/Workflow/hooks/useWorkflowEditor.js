@@ -8,7 +8,11 @@ import { Form, message } from 'antd';
 import { useSensor, useSensors, PointerSensor } from '@dnd-kit/core';
 import { useTranslations } from 'next-intl';
 import { useUserStore } from '@repo/shared-methods/store';
-import { createRequest, createWorkflowApi } from '@repo/project-management/api/workflow';
+import {
+	createRequest,
+	createWorkflowApi,
+	isValidProjectId,
+} from '@repo/project-management/api/workflow';
 import { TASK_PHASE } from '@repo/project-management/enum/task';
 import {
 	WORKFLOW_STATE_DEFAULT_COLOR,
@@ -35,12 +39,16 @@ const DEFAULT_CONFIG_DATA = {
 
 /**
  * @param {number|string} workflowId
+ * @param {number|string} [projectId] 有值时 get / update 走 `/project_management/project/:id/workflow`
  */
-export function useWorkflowEditor(workflowId) {
+export function useWorkflowEditor(workflowId, projectId) {
 	const t = useTranslations();
 	const [messageApi, contextHolder] = message.useMessage();
 	const { request } = useMemo(() => createRequest(), []);
-	const workflowApi = useMemo(() => createWorkflowApi(request), [request]);
+	const workflowApi = useMemo(
+		() => createWorkflowApi(request, { projectId }),
+		[request, projectId],
+	);
 	const userId = useUserStore((state) => state.userInfo?.id);
 	const options = useWorkflowEditorOptions();
 
@@ -72,7 +80,8 @@ export function useWorkflowEditor(workflowId) {
 
 	const fetchWorkflow = useCallback(
 		async ({ initial = false } = {}) => {
-			if (workflowId == null || workflowId === '') {
+			const hasProject = isValidProjectId(projectId);
+			if (!hasProject && (workflowId == null || workflowId === '')) {
 				setWorkflow(null);
 				setLoading(false);
 				return;
@@ -97,7 +106,7 @@ export function useWorkflowEditor(workflowId) {
 				setLoading(false);
 			}
 		},
-		[workflowApi, workflowId, t, messageApi],
+		[workflowApi, workflowId, projectId, t, messageApi],
 	);
 
 	useEffect(() => {

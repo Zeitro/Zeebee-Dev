@@ -27,11 +27,36 @@ export function buildWorkflowQuery(params) {
 }
 
 /**
+ * 项目维度工作流：GET / PUT `/project_management/project/:id/workflow`。
  * @param {number|string} projectId
  * @returns {string}
  */
 export function getProjectWorkflowApi(projectId) {
-	return `/projects/${projectId}/workflow`;
+	return `/project_management/project/${projectId}/workflow`;
+}
+
+/**
+ * @param {number|string|null|undefined} projectId
+ * @returns {boolean}
+ */
+export function isValidProjectId(projectId) {
+	return (
+		projectId != null &&
+		projectId !== '' &&
+		!Number.isNaN(Number(projectId)) &&
+		Number(projectId) !== 0
+	);
+}
+
+/**
+ * 调用方显式 projectId 优先，否则用工厂上下文 projectId。
+ * @param {number|string|null|undefined} explicitProjectId
+ * @param {number|string|null|undefined} contextProjectId
+ * @returns {number|string|null}
+ */
+function resolveProjectId(explicitProjectId, contextProjectId) {
+	const candidate = explicitProjectId ?? contextProjectId;
+	return isValidProjectId(candidate) ? candidate : null;
 }
 
 /**
@@ -66,11 +91,12 @@ export function getWorkflowSwapStageOrderApi(id) {
 
 /**
  * @param {import('@repo/shared-methods/utils').RequestFn} request
+ * @param {{ projectId?: number|string }} [options] 项目上下文；有值时 get / update 走 `/project_management/project/:id/workflow`
  * @returns {{
  *   list: () => Promise<{ list?: object[] }|unknown>,
- *   get: (id: number|string) => Promise<object|unknown>,
+ *   get: (id: number|string, projectId?: number|string) => Promise<object|unknown>,
  *   create: (body: { name: string, description?: string }) => Promise<object|unknown>,
- *   update: (id: number|string, body: { name: string, description?: string, project_id?: number, stages: object[] }) => Promise<unknown>,
+ *   update: (id: number|string, body: { name: string, description?: string, project_id?: number, stages: object[] }, projectId?: number|string) => Promise<unknown>,
  *   setDefault: (id: number|string) => Promise<unknown>,
  *   delete: (id: number|string) => Promise<unknown>,
  *   getForProject: (projectId: number|string) => Promise<unknown>,
@@ -84,14 +110,23 @@ export function getWorkflowSwapStageOrderApi(id) {
  *   deleteTransition: (workflowId: number|string, transitionId: number|string, userId: number|string) => Promise<unknown>,
  * }}
  */
-export function createWorkflowApi(request) {
+export function createWorkflowApi(request, options = {}) {
 	const hide = { isHideTips: true };
+	const contextProjectId = options.projectId;
 
 	return {
 		list: () => request(WORKFLOW_ALL_API, { method: 'GET', ...hide }),
-		get: (id) => request(getWorkflowApi(id), { method: 'GET', ...hide }),
+		get: (id, projectId) => {
+			const pid = resolveProjectId(projectId, contextProjectId);
+			const url = pid ? getProjectWorkflowApi(pid) : getWorkflowApi(id);
+			return request(url, { method: 'GET', ...hide });
+		},
 		create: (body) => request(WORKFLOW_PM_API, { method: 'POST', ...hide, body }),
-		update: (id, body) => request(getWorkflowApi(id), { method: 'PUT', ...hide, body }),
+		update: (id, body, projectId) => {
+			const pid = resolveProjectId(projectId, contextProjectId);
+			const url = pid ? getProjectWorkflowApi(pid) : getWorkflowApi(id);
+			return request(url, { method: 'PUT', ...hide, body });
+		},
 		setDefault: (id) => request(getWorkflowDefaultApi(id), { method: 'PUT', ...hide }),
 		delete: (id) => request(getWorkflowApi(id), { method: 'DELETE', ...hide }),
 		getForProject: (projectId) =>

@@ -16,11 +16,11 @@ export const DEPENDENCY_TYPE_OPTIONS = [
 	{ value: 'start_to_finish', labelKey: 'kanban.dependencyStartToFinish' },
 ];
 
-export const PROJECT_MEMBER_ROLE_OPTIONS = [
-	{ value: 'admin', labelKey: 'kanban.roleAdmin' },
-	{ value: 'member', labelKey: 'kanban.roleMember' },
-	{ value: 'executor', labelKey: 'kanban.roleExecutor' },
-	{ value: 'viewer', labelKey: 'kanban.roleViewer' },
-];
+import { WORKFLOW_TRANSITION_MEMBER_OPTIONS } from '@repo/project-management/enum/workflow';
+
+/** 与后端 `project_management_member_role` 一致，排除 ProjectOwner / TaskCreator */
+export const PROJECT_MEMBER_ROLE_OPTIONS = WORKFLOW_TRANSITION_MEMBER_OPTIONS.filter(
+	(option) => option.value === 'ProjectAdmin' || option.value === 'TaskExecutor',
+);
 
 export const IMAGE_FILE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp', 'svg'];
