@@ -66,7 +66,7 @@ func (r *ProjectManagementProjectRepo) PageMembers(ctx context.Context, projectI
 		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.organization_user_id", organizationUsersTable, organizationUsersTable, membersTable)).
 		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.user_id", usersTable, usersTable, organizationUsersTable)).
 		Where(fmt.Sprintf("%s.project_id = ?", membersTable), projectId).
-		Order(fmt.Sprintf("%s.id DESC", membersTable))
+		Order(fmt.Sprintf("CASE %s.role WHEN '%s' THEN 1 WHEN '%s' THEN 2 WHEN '%s' THEN 3 WHEN '%s' THEN 4 ELSE 5 END, %s.id DESC", membersTable, constants.ProjectManagementMemberRoleProjectOwner, constants.ProjectManagementMemberRoleProjectAdmin, constants.ProjectManagementMemberRoleTaskExecutor, constants.ProjectManagementMemberRoleTaskCreator, membersTable))
 	if input.Filter.Keyword != "" {
 		query = query.Where(fmt.Sprintf("%s.full_name ILIKE ? OR %s.email ILIKE ?", organizationUsersTable, usersTable), "%"+input.Filter.Keyword+"%", "%"+input.Filter.Keyword+"%")
 	}

@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"encoding/json"
 
 	"gorm.io/gorm"
 
@@ -173,22 +172,11 @@ func (l *ProjectManagementTaskLogic) validateFinishedChildren(transitionCtx *pro
 }
 
 func (l *ProjectManagementTaskLogic) recordProjectTaskTransition(transitionCtx *projectManagementTransitionContext) error {
-	metadata, err := json.Marshal(map[string]any{
-		"project_id": transitionCtx.task.ProjectId,
-		"task_id":    transitionCtx.task.Id,
-		"from_stage": map[string]any{
-			"id":    transitionCtx.currentStage.Id,
-			"name":  transitionCtx.currentStage.Name,
-			"phase": transitionCtx.currentStage.Phase,
-			"color": transitionCtx.currentStage.Color,
-		},
-		"to_stage": map[string]any{
-			"id":    transitionCtx.targetStage.Id,
-			"name":  transitionCtx.targetStage.Name,
-			"phase": transitionCtx.targetStage.Phase,
-			"color": transitionCtx.targetStage.Color,
-		},
-	})
+	metadata, err := projectManagementOperationMetadata(
+		map[string]any{"project_id": transitionCtx.task.ProjectId, "task_id": transitionCtx.task.Id},
+		stageOperationValues(transitionCtx.currentStage),
+		stageOperationValues(transitionCtx.targetStage),
+	)
 	if err != nil {
 		return errorx.WithStack(err)
 	}
@@ -203,4 +191,8 @@ func (l *ProjectManagementTaskLogic) recordProjectTaskTransition(transitionCtx *
 		OrganizationId: transitionCtx.claim.OrganizationId,
 	}
 	return NewOperationLogic(l.BaseLogic).CreateOperationLog(transitionCtx.ctx, transitionCtx.tx, input)
+}
+
+func stageOperationValues(stage *model.ProjectManagementWorkflowStage) map[string]any {
+	return map[string]any{"stage_id": stage.Id, "stage_name": stage.Name}
 }

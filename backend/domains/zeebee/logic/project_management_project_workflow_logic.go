@@ -46,6 +46,14 @@ func (l *ProjectManagementWorkflowLogic) ProjectUpdate(ctx context.Context, clai
 		if innerErr = validateProjectManagementProjectWorkflow(definition); innerErr != nil {
 			return innerErr
 		}
+		beforeStages, innerErr := l.repos.ProjectManagementWorkflowRepo.ListStagesWithTx(ctx, tx, current.Id)
+		if innerErr != nil {
+			return innerErr
+		}
+		beforeTransitions, innerErr := l.repos.ProjectManagementWorkflowRepo.ListTransitionsWithTx(ctx, tx, current.Id)
+		if innerErr != nil {
+			return innerErr
+		}
 		_, stages, transitions, innerErr := projectManagementTemplateModels(definition)
 		if innerErr != nil {
 			return innerErr
@@ -53,12 +61,75 @@ func (l *ProjectManagementWorkflowLogic) ProjectUpdate(ctx context.Context, clai
 		if innerErr = l.repos.ProjectManagementWorkflowRepo.ReplaceProjectDefinitionWithTx(ctx, tx, current.Id, stages, transitions); innerErr != nil {
 			return innerErr
 		}
-		return NewProjectManagementTaskLogic(l.BaseLogic).recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: projectId, action: constants.OperationActionProjectManagementWorkflowUpdate})
+		afterStages, innerErr := l.repos.ProjectManagementWorkflowRepo.ListStagesWithTx(ctx, tx, current.Id)
+		if innerErr != nil {
+			return innerErr
+		}
+		afterTransitions, innerErr := l.repos.ProjectManagementWorkflowRepo.ListTransitionsWithTx(ctx, tx, current.Id)
+		if innerErr != nil {
+			return innerErr
+		}
+		return l.recordProjectWorkflowDefinitionChanges(ctx, tx, claim, projectId, beforeStages, afterStages, beforeTransitions, afterTransitions)
 	})
 	if err != nil {
 		return nil, err
 	}
 	return l.ProjectDetail(ctx, claim, projectId)
+}
+
+func (l *ProjectManagementWorkflowLogic) recordProjectWorkflowDefinitionChanges(ctx context.Context, tx *gorm.DB, claim utils.JwtUser, projectId int64, beforeStages, afterStages []*model.ProjectManagementWorkflowStage, beforeTransitions, afterTransitions []*model.ProjectManagementWorkflowTransition) error {
+	record := func(action constants.OperationAction, stageId, transitionId int64, before, after map[string]any) error {
+		return NewProjectManagementTaskLogic(l.BaseLogic).recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: projectId, stageId: stageId, transitionId: transitionId, action: action, before: before, after: after})
+	}
+	beforeStageByID := make(map[int64]*model.ProjectManagementWorkflowStage, len(beforeStages))
+	for _, stage := range beforeStages {
+		beforeStageByID[stage.Id] = stage
+	}
+	for _, stage := range afterStages {
+		if before := beforeStageByID[stage.Id]; before != nil {
+			old, next := operationValuesDiff(workflowStageOperationValues(before), workflowStageOperationValues(stage))
+			if len(old) != 0 {
+				if err := record(constants.OperationActionProjectManagementWorkflowStageUpdate, stage.Id, 0, old, next); err != nil {
+					return err
+				}
+			}
+			delete(beforeStageByID, stage.Id)
+			continue
+		}
+		if err := record(constants.OperationActionProjectManagementWorkflowStageCreate, stage.Id, 0, nil, workflowStageOperationIdentity(stage)); err != nil {
+			return err
+		}
+	}
+	for _, stage := range beforeStageByID {
+		if err := record(constants.OperationActionProjectManagementWorkflowStageDelete, stage.Id, 0, workflowStageOperationIdentity(stage), nil); err != nil {
+			return err
+		}
+	}
+	beforeTransitionByID := make(map[int64]*model.ProjectManagementWorkflowTransition, len(beforeTransitions))
+	for _, transition := range beforeTransitions {
+		beforeTransitionByID[transition.Id] = transition
+	}
+	for _, transition := range afterTransitions {
+		if before := beforeTransitionByID[transition.Id]; before != nil {
+			old, next := operationValuesDiff(workflowTransitionOperationValues(before), workflowTransitionOperationValues(transition))
+			if len(old) != 0 {
+				if err := record(constants.OperationActionProjectManagementWorkflowTransitionUpdate, 0, transition.Id, old, next); err != nil {
+					return err
+				}
+			}
+			delete(beforeTransitionByID, transition.Id)
+			continue
+		}
+		if err := record(constants.OperationActionProjectManagementWorkflowTransitionCreate, 0, transition.Id, nil, workflowTransitionOperationIdentity(transition)); err != nil {
+			return err
+		}
+	}
+	for _, transition := range beforeTransitionByID {
+		if err := record(constants.OperationActionProjectManagementWorkflowTransitionDelete, 0, transition.Id, workflowTransitionOperationIdentity(transition), nil); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func validateProjectManagementProjectWorkflow(input dto.ProjectManagementWorkflowDto) error {

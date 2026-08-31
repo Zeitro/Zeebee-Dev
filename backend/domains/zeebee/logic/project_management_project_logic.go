@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"encoding/json"
 	"strings"
 
 	"gorm.io/gorm"
@@ -23,6 +22,8 @@ type projectManagementProjectOperation struct {
 	claim     utils.JwtUser
 	projectId int64
 	action    constants.OperationAction
+	before    map[string]any
+	after     map[string]any
 }
 
 func NewProjectManagementProjectLogic(baseLogic *BaseLogic) *ProjectManagementProjectLogic {
@@ -126,7 +127,7 @@ func (l *ProjectManagementProjectLogic) Create(ctx context.Context, claim utils.
 		if innerErr = l.repos.ProjectManagementWorkflowRepo.CloneTemplateToProjectWithTx(ctx, tx, input.WorkflowTemplateId, claim.OrganizationId, project.Id); innerErr != nil {
 			return projectManagementNotFound(innerErr, "workflow template not found")
 		}
-		return l.recordOperation(ctx, tx, projectManagementProjectOperation{claim: claim, projectId: project.Id, action: constants.OperationActionProjectManagementProjectCreate})
+		return l.recordOperation(ctx, tx, projectManagementProjectOperation{claim: claim, projectId: project.Id, action: constants.OperationActionProjectManagementProjectCreate, after: map[string]any{"id": project.Id, "name": project.Name}})
 	})
 	return project, err
 }
@@ -142,6 +143,7 @@ func (l *ProjectManagementProjectLogic) Update(ctx context.Context, claim utils.
 	if _, err = l.projectManagementLogic().RequireMemberRole(ctx, projectId, claim.OrganizationUserId, constants.ProjectManagementMemberRoleProjectOwner, constants.ProjectManagementMemberRoleProjectAdmin); err != nil {
 		return nil, err
 	}
+	before := projectOperationValues(project)
 	if err = copierx.Assign(&input, project); err != nil {
 		return nil, err
 	}
@@ -151,10 +153,17 @@ func (l *ProjectManagementProjectLogic) Update(ctx context.Context, claim utils.
 		if _, innerErr := l.repos.ProjectManagementProjectRepo.UpdateOneByIdWithTx(ctx, tx, project.Id, project); innerErr != nil {
 			return innerErr
 		}
+		after := projectOperationValues(project)
+		before, after = operationValuesDiff(before, after)
+		if len(before) == 0 {
+			return nil
+		}
 		return l.recordOperation(ctx, tx, projectManagementProjectOperation{
 			claim:     claim,
 			projectId: projectId,
 			action:    constants.OperationActionProjectManagementProjectUpdate,
+			before:    before,
+			after:     after,
 		})
 	})
 	return project, err
@@ -162,7 +171,8 @@ func (l *ProjectManagementProjectLogic) Update(ctx context.Context, claim utils.
 
 func (l *ProjectManagementProjectLogic) Delete(ctx context.Context, claim utils.JwtUser, projectId int64) error {
 	return l.repos.ProjectManagementProjectRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		if _, err := l.projectManagementLogic().requireProjectManagerWithTx(ctx, tx, claim, projectId); err != nil {
+		project, err := l.projectManagementLogic().requireProjectManagerWithTx(ctx, tx, claim, projectId)
+		if err != nil {
 			return err
 		}
 		taskIds, err := l.repos.ProjectManagementTaskRepo.IdsByProjectWithTx(ctx, tx, projectId)
@@ -181,7 +191,7 @@ func (l *ProjectManagementProjectLogic) Delete(ctx context.Context, claim utils.
 		if err = l.repos.ProjectManagementProjectRepo.DeleteProjectWithTx(ctx, tx, projectId); err != nil {
 			return err
 		}
-		return l.recordOperation(ctx, tx, projectManagementProjectOperation{claim: claim, projectId: projectId, action: constants.OperationActionProjectManagementProjectDelete})
+		return l.recordOperation(ctx, tx, projectManagementProjectOperation{claim: claim, projectId: projectId, action: constants.OperationActionProjectManagementProjectDelete, before: projectOperationValues(project)})
 	})
 }
 
@@ -200,9 +210,22 @@ func validateProjectManagementProjectUpdate(input dto.ProjectManagementProjectUp
 }
 
 func (l *ProjectManagementProjectLogic) recordOperation(ctx context.Context, tx *gorm.DB, input projectManagementProjectOperation) error {
-	metadata, err := json.Marshal(map[string]int64{"project_id": input.projectId})
+	metadata, err := projectManagementOperationMetadata(map[string]any{"project_id": input.projectId}, input.before, input.after)
 	if err != nil {
 		return errorx.WithStack(err)
 	}
 	return NewOperationLogic(l.BaseLogic).CreateOperationLog(ctx, tx, dto.OperationCreateDto{EntityId: input.projectId, EntityType: constants.OperationEntityTypeProjectManagementProject, OperatorId: input.claim.OrganizationUserId, OperatorName: input.claim.Username, OperatorType: constants.UserTypeBorrower, Operation: input.action, Metadata: metadata, OrganizationId: input.claim.OrganizationId})
+}
+
+func projectOperationValues(project *model.ProjectManagementProject) map[string]any {
+	return map[string]any{
+		"name":        project.Name,
+		"description": project.Description,
+		"priority":    project.Priority,
+		"cover_url":   project.CoverUrl,
+		"entity_id":   project.EntityId,
+		"entity_type": project.EntityType,
+		"owner_id":    project.OwnerId,
+		"owner_name":  project.OwnerName,
+	}
 }

@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"encoding/json"
 	"strings"
 
 	"gorm.io/gorm"
@@ -21,6 +20,8 @@ type projectManagementTaskTypeOperation struct {
 	claim      utils.JwtUser
 	taskTypeId int64
 	action     constants.OperationAction
+	before     map[string]any
+	after      map[string]any
 }
 
 func NewProjectManagementTaskTypeLogic(baseLogic *BaseLogic) *ProjectManagementTaskTypeLogic {
@@ -50,7 +51,7 @@ func (l *ProjectManagementTaskTypeLogic) Create(ctx context.Context, claim utils
 		if err != nil {
 			return err
 		}
-		return l.recordOperation(ctx, tx, projectManagementTaskTypeOperation{claim: claim, taskTypeId: taskType.Id, action: constants.OperationActionProjectManagementTaskTypeCreate})
+		return l.recordOperation(ctx, tx, projectManagementTaskTypeOperation{claim: claim, taskTypeId: taskType.Id, action: constants.OperationActionProjectManagementTaskTypeCreate, after: map[string]any{"id": taskType.Id, "name": taskType.Name}})
 	})
 	return taskType, err
 }
@@ -103,6 +104,7 @@ func (l *ProjectManagementTaskTypeLogic) Update(ctx context.Context, claim utils
 		if innerErr != nil {
 			return projectManagementNotFound(innerErr, "task type not found")
 		}
+		before := taskTypeOperationValues(taskType)
 		input.Id = taskType.Id
 		if innerErr = copierx.Assign(&input, taskType); innerErr != nil {
 			return innerErr
@@ -110,7 +112,12 @@ func (l *ProjectManagementTaskTypeLogic) Update(ctx context.Context, claim utils
 		if _, innerErr = l.repos.ProjectManagementTaskTypeRepo.UpdateOneByIdWithTx(ctx, tx, taskType.Id, taskType); innerErr != nil {
 			return innerErr
 		}
-		return l.recordOperation(ctx, tx, projectManagementTaskTypeOperation{claim: claim, taskTypeId: id, action: constants.OperationActionProjectManagementTaskTypeUpdate})
+		after := taskTypeOperationValues(taskType)
+		before, after = operationValuesDiff(before, after)
+		if len(before) == 0 {
+			return nil
+		}
+		return l.recordOperation(ctx, tx, projectManagementTaskTypeOperation{claim: claim, taskTypeId: id, action: constants.OperationActionProjectManagementTaskTypeUpdate, before: before, after: after})
 	})
 	if err != nil {
 		return nil, err
@@ -127,13 +134,17 @@ func (l *ProjectManagementTaskTypeLogic) Order(ctx context.Context, claim utils.
 		return errorx.New("task type sort order must be >= 0")
 	}
 	return l.repos.ProjectManagementTaskTypeRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		if _, err := l.repos.ProjectManagementTaskTypeRepo.FindByOrganizationWithTx(ctx, tx, id, claim.OrganizationId); err != nil {
+		taskType, err := l.repos.ProjectManagementTaskTypeRepo.FindByOrganizationWithTx(ctx, tx, id, claim.OrganizationId)
+		if err != nil {
 			return projectManagementNotFound(err, "task type not found")
+		}
+		if taskType.SortOrder == sortOrder {
+			return nil
 		}
 		if err := l.repos.ProjectManagementTaskTypeRepo.UpdateSortOrderWithTx(ctx, tx, id, claim.OrganizationId, sortOrder); err != nil {
 			return err
 		}
-		return l.recordOperation(ctx, tx, projectManagementTaskTypeOperation{claim: claim, taskTypeId: id, action: constants.OperationActionProjectManagementTaskTypeUpdate})
+		return l.recordOperation(ctx, tx, projectManagementTaskTypeOperation{claim: claim, taskTypeId: id, action: constants.OperationActionProjectManagementTaskTypeUpdate, before: map[string]any{"sort_order": taskType.SortOrder}, after: map[string]any{"sort_order": sortOrder}})
 	})
 }
 
@@ -143,14 +154,14 @@ func (l *ProjectManagementTaskTypeLogic) Delete(ctx context.Context, claim utils
 		if err != nil {
 			return err
 		}
-		found := false
+		var target *model.ProjectManagementTaskType
 		for _, taskType := range taskTypes {
 			if taskType.Id == id {
-				found = true
+				target = taskType
 				break
 			}
 		}
-		if !found {
+		if target == nil {
 			return errorx.New("task type not found")
 		}
 		if len(taskTypes) <= 1 {
@@ -159,7 +170,7 @@ func (l *ProjectManagementTaskTypeLogic) Delete(ctx context.Context, claim utils
 		if err := l.repos.ProjectManagementTaskTypeRepo.DeleteByOrganizationWithTx(ctx, tx, id, claim.OrganizationId); err != nil {
 			return err
 		}
-		return l.recordOperation(ctx, tx, projectManagementTaskTypeOperation{claim: claim, taskTypeId: id, action: constants.OperationActionProjectManagementTaskTypeDelete})
+		return l.recordOperation(ctx, tx, projectManagementTaskTypeOperation{claim: claim, taskTypeId: id, action: constants.OperationActionProjectManagementTaskTypeDelete, before: taskTypeOperationValues(target)})
 	})
 }
 
@@ -171,7 +182,7 @@ func validateProjectManagementTaskType(input dto.ProjectManagementTaskTypeDto) e
 }
 
 func (l *ProjectManagementTaskTypeLogic) recordOperation(ctx context.Context, tx *gorm.DB, input projectManagementTaskTypeOperation) error {
-	metadata, err := json.Marshal(map[string]int64{"task_type_id": input.taskTypeId})
+	metadata, err := projectManagementOperationMetadata(map[string]any{"task_type_id": input.taskTypeId}, input.before, input.after)
 	if err != nil {
 		return errorx.WithStack(err)
 	}
@@ -185,4 +196,8 @@ func (l *ProjectManagementTaskTypeLogic) recordOperation(ctx context.Context, tx
 		Metadata:       metadata,
 		OrganizationId: input.claim.OrganizationId,
 	})
+}
+
+func taskTypeOperationValues(taskType *model.ProjectManagementTaskType) map[string]any {
+	return map[string]any{"name": taskType.Name, "description": taskType.Description, "color": taskType.Color, "sort_order": taskType.SortOrder}
 }

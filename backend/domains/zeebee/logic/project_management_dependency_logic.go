@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"encoding/json"
 
 	"gorm.io/gorm"
 
@@ -22,6 +21,8 @@ type projectManagementDependencyOperation struct {
 	projectId  int64
 	dependency *model.ProjectManagementTaskDependency
 	action     constants.OperationAction
+	before     map[string]any
+	after      map[string]any
 }
 
 func NewProjectManagementDependencyLogic(baseLogic *BaseLogic) *ProjectManagementDependencyLogic {
@@ -123,7 +124,7 @@ func (l *ProjectManagementDependencyLogic) createWithTx(ctx context.Context, tx 
 	if err != nil {
 		return nil, err
 	}
-	return dependency, l.recordOperation(ctx, tx, projectManagementDependencyOperation{claim: claim, projectId: successor.ProjectId, dependency: dependency, action: constants.OperationActionProjectManagementDependencyCreate})
+	return dependency, l.recordOperation(ctx, tx, projectManagementDependencyOperation{claim: claim, projectId: successor.ProjectId, dependency: dependency, action: constants.OperationActionProjectManagementDependencyCreate, after: dependencyOperationIdentity(dependency, predecessor)})
 }
 
 func (l *ProjectManagementDependencyLogic) Page(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementTaskDependencyPageRequestDto) (gormx.PageResponse[*model.ProjectManagementTaskDependency], error) {
@@ -153,6 +154,20 @@ func (l *ProjectManagementDependencyLogic) updateWithTx(ctx context.Context, tx 
 	if dependency.TaskId != input.TaskId && dependency.DependencyTaskId != input.TaskId {
 		return nil, errorx.New("task dependency not found")
 	}
+	oldTasks, err := l.repos.ProjectManagementDependencyRepo.LockTasksWithTx(ctx, tx, dependency.TaskId, dependency.DependencyTaskId)
+	if err != nil {
+		return nil, projectManagementNotFound(err, "task not found")
+	}
+	oldTask, oldRelatedTask := dependencyTasks(oldTasks, dependency.TaskId, dependency.DependencyTaskId)
+	if oldTask == nil || oldRelatedTask == nil {
+		return nil, projectManagementNotFound(gorm.ErrRecordNotFound, "task not found")
+	}
+	_, oldPredecessor := dependencyEndpoints(dependency.TaskId, dependency.DependencyTaskId, dependency.DependencyType)
+	oldPredecessorTask := oldRelatedTask
+	if oldPredecessor == oldTask.Id {
+		oldPredecessorTask = oldTask
+	}
+	before := dependencyOperationValues(dependency, oldPredecessorTask)
 	update := dto.ProjectManagementTaskDependencyDto{TaskId: input.TaskId, DependencyTaskId: input.DependencyTaskId, DependencyType: input.DependencyType, DependencyRule: input.DependencyRule}
 	if err = validateProjectManagementDependency(update); err != nil {
 		return nil, err
@@ -202,7 +217,12 @@ func (l *ProjectManagementDependencyLogic) updateWithTx(ctx context.Context, tx 
 	if err = l.repos.ProjectManagementDependencyRepo.UpdateWithTx(ctx, tx, dependency); err != nil {
 		return nil, err
 	}
-	return dependency, l.recordOperation(ctx, tx, projectManagementDependencyOperation{claim: claim, projectId: successor.ProjectId, dependency: dependency, action: constants.OperationActionProjectManagementDependencyUpdate})
+	after := dependencyOperationValues(dependency, predecessor)
+	before, after = operationValuesDiff(before, after)
+	if len(before) == 0 {
+		return dependency, nil
+	}
+	return dependency, l.recordOperation(ctx, tx, projectManagementDependencyOperation{claim: claim, projectId: successor.ProjectId, dependency: dependency, action: constants.OperationActionProjectManagementDependencyUpdate, before: before, after: after})
 }
 
 func (l *ProjectManagementDependencyLogic) Delete(ctx context.Context, claim utils.JwtUser, id int64) error {
@@ -238,7 +258,7 @@ func (l *ProjectManagementDependencyLogic) deleteWithTx(ctx context.Context, tx 
 	if err = l.repos.ProjectManagementDependencyRepo.DeleteWithTx(ctx, tx, dependency); err != nil {
 		return err
 	}
-	return l.recordOperation(ctx, tx, projectManagementDependencyOperation{claim: claim, projectId: successor.ProjectId, dependency: dependency, action: constants.OperationActionProjectManagementDependencyDelete})
+	return l.recordOperation(ctx, tx, projectManagementDependencyOperation{claim: claim, projectId: successor.ProjectId, dependency: dependency, action: constants.OperationActionProjectManagementDependencyDelete, before: dependencyOperationIdentity(dependency, predecessor)})
 }
 
 func (l *ProjectManagementDependencyLogic) SyncWithTx(ctx context.Context, tx *gorm.DB, claim utils.JwtUser, taskId int64, inputs []*dto.ProjectManagementTaskDependencyDto) error {
@@ -291,9 +311,17 @@ func (l *ProjectManagementDependencyLogic) SyncWithTx(ctx context.Context, tx *g
 
 func (l *ProjectManagementDependencyLogic) recordOperation(ctx context.Context, tx *gorm.DB, input projectManagementDependencyOperation) error {
 	successorTaskId, _ := dependencyEndpoints(input.dependency.TaskId, input.dependency.DependencyTaskId, input.dependency.DependencyType)
-	metadata, err := json.Marshal(map[string]int64{"project_id": input.projectId, "task_id": successorTaskId, "dependency_id": input.dependency.Id})
+	metadata, err := projectManagementOperationMetadata(map[string]any{"project_id": input.projectId, "task_id": successorTaskId, "dependency_id": input.dependency.Id}, input.before, input.after)
 	if err != nil {
 		return errorx.WithStack(err)
 	}
 	return NewOperationLogic(l.BaseLogic).CreateOperationLog(ctx, tx, dto.OperationCreateDto{EntityId: input.projectId, EntityType: constants.OperationEntityTypeProjectManagementProject, OperatorId: input.claim.OrganizationUserId, OperatorName: input.claim.Username, OperatorType: constants.UserTypeBorrower, Operation: input.action, Metadata: metadata, OrganizationId: input.claim.OrganizationId})
+}
+
+func dependencyOperationValues(dependency *model.ProjectManagementTaskDependency, dependencyTask *model.ProjectManagementTask) map[string]any {
+	return map[string]any{"dependency_task_id": dependencyTask.Id, "dependency_task_name": dependencyTask.Title, "dependency_type": dependency.DependencyType, "dependency_rule": dependency.DependencyRule}
+}
+
+func dependencyOperationIdentity(dependency *model.ProjectManagementTaskDependency, dependencyTask *model.ProjectManagementTask) map[string]any {
+	return map[string]any{"id": dependency.Id, "name": dependencyTask.Title}
 }

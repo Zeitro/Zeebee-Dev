@@ -50,7 +50,7 @@ func (l *ProjectManagementAttachmentLogic) Create(ctx context.Context, claim uti
 		if err != nil {
 			return err
 		}
-		return NewProjectManagementTaskLogic(l.BaseLogic).recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementAttachmentAdd})
+		return NewProjectManagementTaskLogic(l.BaseLogic).recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, fileId: file.Id, action: constants.OperationActionProjectManagementAttachmentAdd, after: attachmentOperationIdentity(file)})
 	})
 	return file, err
 }
@@ -77,6 +77,10 @@ func (l *ProjectManagementAttachmentLogic) Delete(ctx context.Context, claim uti
 		if _, err = l.repos.FileRepo.DeleteByIDWithTx(ctx, tx, file.Id); err != nil {
 			return err
 		}
-		return NewProjectManagementTaskLogic(l.BaseLogic).recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementAttachmentDelete})
+		return NewProjectManagementTaskLogic(l.BaseLogic).recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, fileId: file.Id, action: constants.OperationActionProjectManagementAttachmentDelete, before: attachmentOperationIdentity(file)})
 	})
+}
+
+func attachmentOperationIdentity(file *model.File) map[string]any {
+	return map[string]any{"id": file.Id, "file_name": file.FileName}
 }

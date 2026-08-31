@@ -66,6 +66,12 @@ func (r *ProjectManagementWorkflowRepo) ListStagesWithTx(ctx context.Context, tx
 	return r.stageRepo.FindAllWithTx(ctx, tx, map[string]any{"workflow_id": workflowId})
 }
 
+func (r *ProjectManagementWorkflowRepo) ListTransitionsWithTx(ctx context.Context, tx *gorm.DB, workflowId int64) ([]*model.ProjectManagementWorkflowTransition, error) {
+	transitions := make([]*model.ProjectManagementWorkflowTransition, 0)
+	err := tx.WithContext(ctx).Where("workflow_id = ?", workflowId).Order("id ASC").Find(&transitions).Error
+	return transitions, errorx.WithStack(err)
+}
+
 func (r *ProjectManagementWorkflowRepo) FindProjectDefinitionWithTx(ctx context.Context, tx *gorm.DB, projectId, organizationId int64) (*model.ProjectManagementWorkflow, error) {
 	workflow := new(model.ProjectManagementWorkflow)
 	err := tx.WithContext(ctx).

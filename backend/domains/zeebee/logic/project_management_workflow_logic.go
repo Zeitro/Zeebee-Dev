@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -20,9 +19,14 @@ import (
 type ProjectManagementWorkflowLogic struct{ *BaseLogic }
 
 type projectManagementWorkflowOperation struct {
-	claim      utils.JwtUser
-	workflowId int64
-	action     constants.OperationAction
+	claim         utils.JwtUser
+	workflowId    int64
+	stageId       int64
+	targetStageId int64
+	transitionId  int64
+	action        constants.OperationAction
+	before        map[string]any
+	after         map[string]any
 }
 
 func NewProjectManagementWorkflowLogic(baseLogic *BaseLogic) *ProjectManagementWorkflowLogic {
@@ -232,7 +236,7 @@ func (l *ProjectManagementWorkflowLogic) Create(ctx context.Context, claim utils
 		if err := l.repos.ProjectManagementWorkflowRepo.ReplaceTemplateDefinitionWithTx(ctx, tx, workflow.Id, stages, transitions); err != nil {
 			return err
 		}
-		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: workflow.Id, action: constants.OperationActionProjectManagementWorkflowCreate})
+		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: workflow.Id, action: constants.OperationActionProjectManagementWorkflowCreate, after: map[string]any{"id": workflow.Id, "name": workflow.Name}})
 	})
 	if err != nil {
 		return nil, err
@@ -251,16 +255,26 @@ func (l *ProjectManagementWorkflowLogic) Update(ctx context.Context, claim utils
 		if innerErr != nil {
 			return projectManagementNotFound(innerErr, "workflow not found")
 		}
+		before := workflowOperationValues(workflow)
 		if innerErr = l.assignNewStageSortOrders(ctx, tx, workflow.Id, &definition); innerErr != nil {
 			return innerErr
 		}
 		if innerErr = ValidateProjectManagementWorkflow(definition); innerErr != nil {
 			return innerErr
 		}
+		beforeStages, innerErr := l.repos.ProjectManagementWorkflowRepo.ListStagesWithTx(ctx, tx, workflow.Id)
+		if innerErr != nil {
+			return innerErr
+		}
+		beforeTransitions, innerErr := l.repos.ProjectManagementWorkflowRepo.ListTransitionsWithTx(ctx, tx, workflow.Id)
+		if innerErr != nil {
+			return innerErr
+		}
 		_, stages, transitions, innerErr := projectManagementTemplateModels(definition)
 		if innerErr != nil {
 			return innerErr
 		}
+		desiredStages, desiredTransitions := cloneProjectManagementWorkflowDefinition(&model.ProjectManagementWorkflow{Stages: stages, Transitions: transitions})
 		workflow.Name, workflow.Description = input.Name, input.Description
 		workflow.RemoveRelationships()
 		if _, innerErr = l.repos.ProjectManagementWorkflowRepo.UpdateOneByIdWithTx(ctx, tx, workflow.Id, workflow); innerErr != nil {
@@ -269,12 +283,74 @@ func (l *ProjectManagementWorkflowLogic) Update(ctx context.Context, claim utils
 		if innerErr = l.repos.ProjectManagementWorkflowRepo.ReplaceTemplateDefinitionWithTx(ctx, tx, workflow.Id, stages, transitions); innerErr != nil {
 			return innerErr
 		}
-		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: id, action: constants.OperationActionProjectManagementWorkflowUpdate})
+		after := workflowOperationValues(workflow)
+		before, after = operationValuesDiff(before, after)
+		if len(before) != 0 {
+			if innerErr = l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: id, action: constants.OperationActionProjectManagementWorkflowUpdate, before: before, after: after}); innerErr != nil {
+				return innerErr
+			}
+		}
+		return l.recordTemplateWorkflowDefinitionChanges(ctx, tx, claim, id, beforeStages, beforeTransitions, desiredStages, desiredTransitions, stages, transitions)
 	})
 	if err != nil {
 		return nil, err
 	}
 	return l.Detail(ctx, claim.OrganizationId, id)
+}
+
+func (l *ProjectManagementWorkflowLogic) recordTemplateWorkflowDefinitionChanges(ctx context.Context, tx *gorm.DB, claim utils.JwtUser, workflowId int64, beforeStages []*model.ProjectManagementWorkflowStage, beforeTransitions []*model.ProjectManagementWorkflowTransition, desiredStages []*model.ProjectManagementWorkflowStage, desiredTransitions []*model.ProjectManagementWorkflowTransition, stages []*model.ProjectManagementWorkflowStage, transitions []*model.ProjectManagementWorkflowTransition) error {
+	record := func(action constants.OperationAction, stageId, transitionId int64, before, after map[string]any) error {
+		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: workflowId, stageId: stageId, transitionId: transitionId, action: action, before: before, after: after})
+	}
+	beforeStageByID := make(map[int64]*model.ProjectManagementWorkflowStage, len(beforeStages))
+	for _, stage := range beforeStages {
+		beforeStageByID[stage.Id] = stage
+	}
+	for i, desired := range desiredStages {
+		if before := beforeStageByID[desired.Id]; before != nil {
+			old, next := operationValuesDiff(workflowStageOperationValues(before), workflowStageOperationValues(desired))
+			if len(old) != 0 {
+				if err := record(constants.OperationActionProjectManagementWorkflowStageUpdate, desired.Id, 0, old, next); err != nil {
+					return err
+				}
+			}
+			delete(beforeStageByID, desired.Id)
+			continue
+		}
+		if err := record(constants.OperationActionProjectManagementWorkflowStageCreate, stages[i].Id, 0, nil, workflowStageOperationIdentity(stages[i])); err != nil {
+			return err
+		}
+	}
+	for _, stage := range beforeStageByID {
+		if err := record(constants.OperationActionProjectManagementWorkflowStageDelete, stage.Id, 0, workflowStageOperationIdentity(stage), nil); err != nil {
+			return err
+		}
+	}
+	beforeTransitionByID := make(map[int64]*model.ProjectManagementWorkflowTransition, len(beforeTransitions))
+	for _, transition := range beforeTransitions {
+		beforeTransitionByID[transition.Id] = transition
+	}
+	for i, desired := range desiredTransitions {
+		if before := beforeTransitionByID[desired.Id]; before != nil {
+			old, next := operationValuesDiff(workflowTransitionOperationValues(before), workflowTransitionOperationValues(desired))
+			if len(old) != 0 {
+				if err := record(constants.OperationActionProjectManagementWorkflowTransitionUpdate, 0, desired.Id, old, next); err != nil {
+					return err
+				}
+			}
+			delete(beforeTransitionByID, desired.Id)
+			continue
+		}
+		if err := record(constants.OperationActionProjectManagementWorkflowTransitionCreate, 0, transitions[i].Id, nil, workflowTransitionOperationIdentity(transitions[i])); err != nil {
+			return err
+		}
+	}
+	for _, transition := range beforeTransitionByID {
+		if err := record(constants.OperationActionProjectManagementWorkflowTransitionDelete, 0, transition.Id, workflowTransitionOperationIdentity(transition), nil); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (l *ProjectManagementWorkflowLogic) assignNewStageSortOrders(ctx context.Context, tx *gorm.DB, workflowId int64, definition *dto.ProjectManagementWorkflowDto) error {
@@ -311,7 +387,7 @@ func (l *ProjectManagementWorkflowLogic) SetDefault(ctx context.Context, claim u
 			if err = l.repos.ProjectManagementWorkflowRepo.SetDefaultWithTx(ctx, tx, id, claim.OrganizationId); err != nil {
 				return err
 			}
-			return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: id, action: constants.OperationActionProjectManagementWorkflowUpdate})
+			return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: id, action: constants.OperationActionProjectManagementWorkflowUpdate, before: map[string]any{"is_default": false}, after: map[string]any{"is_default": true}})
 		}
 		return errorx.New("workflow not found")
 	})
@@ -338,7 +414,7 @@ func (l *ProjectManagementWorkflowLogic) Delete(ctx context.Context, claim utils
 		if err := l.repos.ProjectManagementWorkflowRepo.DeleteTemplateWithTx(ctx, tx, id); err != nil {
 			return err
 		}
-		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: id, action: constants.OperationActionProjectManagementWorkflowDelete})
+		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: id, action: constants.OperationActionProjectManagementWorkflowDelete, before: workflowOperationValues(workflow)})
 	})
 }
 
@@ -381,17 +457,30 @@ func (l *ProjectManagementWorkflowLogic) StageCreate(ctx context.Context, claim 
 		if err = l.validateWorkflowStages(ctx, tx, workflowId); err != nil {
 			return err
 		}
-		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: workflowId, action: constants.OperationActionProjectManagementWorkflowUpdate})
+		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: workflowId, stageId: stage.Id, action: constants.OperationActionProjectManagementWorkflowStageCreate, after: workflowStageOperationIdentity(stage)})
 	})
 	return stage, err
 }
 
 func (l *ProjectManagementWorkflowLogic) StageSwapOrder(ctx context.Context, claim utils.JwtUser, workflowId, id, targetId int64) error {
+	if id == targetId {
+		return nil
+	}
 	return l.repos.ProjectManagementWorkflowRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		stage, err := l.repos.ProjectManagementWorkflowRepo.FindTemplateStageWithTx(ctx, tx, id, workflowId, claim.OrganizationId)
+		if err != nil {
+			return projectManagementNotFound(err, "workflow stage not found")
+		}
+		target, err := l.repos.ProjectManagementWorkflowRepo.FindTemplateStageWithTx(ctx, tx, targetId, workflowId, claim.OrganizationId)
+		if err != nil {
+			return projectManagementNotFound(err, "workflow stage not found")
+		}
 		if innerErr := l.repos.ProjectManagementWorkflowRepo.SwapTemplateStageSortOrdersWithTx(ctx, tx, workflowId, claim.OrganizationId, id, targetId); innerErr != nil {
 			return innerErr
 		}
-		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: workflowId, action: constants.OperationActionProjectManagementWorkflowUpdate})
+		before := map[string]any{"sort_order": stage.SortOrder, "target_sort_order": target.SortOrder}
+		after := map[string]any{"sort_order": target.SortOrder, "target_sort_order": stage.SortOrder}
+		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: workflowId, stageId: stage.Id, targetStageId: target.Id, action: constants.OperationActionProjectManagementWorkflowStageUpdate, before: before, after: after})
 	})
 }
 
@@ -409,6 +498,7 @@ func (l *ProjectManagementWorkflowLogic) StageUpdate(ctx context.Context, claim 
 		if err != nil {
 			return projectManagementNotFound(err, "workflow stage not found")
 		}
+		before := workflowStageOperationValues(existing)
 		stage.WorkflowId = existing.WorkflowId
 		if err = l.repos.ProjectManagementWorkflowRepo.UpdateTemplateStageWithTx(ctx, tx, stage); err != nil {
 			return err
@@ -416,7 +506,12 @@ func (l *ProjectManagementWorkflowLogic) StageUpdate(ctx context.Context, claim 
 		if err = l.validateWorkflowStages(ctx, tx, stage.WorkflowId); err != nil {
 			return err
 		}
-		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: stage.WorkflowId, action: constants.OperationActionProjectManagementWorkflowUpdate})
+		after := workflowStageOperationValues(stage)
+		before, after = operationValuesDiff(before, after)
+		if len(before) == 0 {
+			return nil
+		}
+		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: stage.WorkflowId, stageId: stage.Id, action: constants.OperationActionProjectManagementWorkflowStageUpdate, before: before, after: after})
 	})
 	if err != nil {
 		return nil, err
@@ -443,7 +538,7 @@ func (l *ProjectManagementWorkflowLogic) StageDelete(ctx context.Context, claim 
 		if err := l.validateWorkflowStages(ctx, tx, stage.WorkflowId); err != nil {
 			return err
 		}
-		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: stage.WorkflowId, action: constants.OperationActionProjectManagementWorkflowUpdate})
+		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: stage.WorkflowId, stageId: stage.Id, action: constants.OperationActionProjectManagementWorkflowStageDelete, before: workflowStageOperationIdentity(stage)})
 	})
 }
 
@@ -488,7 +583,7 @@ func (l *ProjectManagementWorkflowLogic) TransitionCreate(ctx context.Context, c
 		if err = l.repos.ProjectManagementWorkflowRepo.CreateTemplateTransitionWithTx(ctx, tx, transition); err != nil {
 			return err
 		}
-		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: transition.WorkflowId, action: constants.OperationActionProjectManagementWorkflowUpdate})
+		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: transition.WorkflowId, transitionId: transition.Id, action: constants.OperationActionProjectManagementWorkflowTransitionCreate, after: workflowTransitionOperationIdentity(transition)})
 	})
 	return transition, err
 }
@@ -499,6 +594,7 @@ func (l *ProjectManagementWorkflowLogic) TransitionUpdate(ctx context.Context, c
 		if err != nil {
 			return projectManagementNotFound(err, "workflow transition not found")
 		}
+		before := workflowTransitionOperationValues(transition)
 		if err = validateProjectManagementWorkflowTransition(input); err != nil {
 			return err
 		}
@@ -525,7 +621,12 @@ func (l *ProjectManagementWorkflowLogic) TransitionUpdate(ctx context.Context, c
 		if err = l.repos.ProjectManagementWorkflowRepo.UpdateTemplateTransitionWithTx(ctx, tx, transition); err != nil {
 			return err
 		}
-		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: transition.WorkflowId, action: constants.OperationActionProjectManagementWorkflowUpdate})
+		after := workflowTransitionOperationValues(transition)
+		before, after = operationValuesDiff(before, after)
+		if len(before) == 0 {
+			return nil
+		}
+		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: transition.WorkflowId, transitionId: transition.Id, action: constants.OperationActionProjectManagementWorkflowTransitionUpdate, before: before, after: after})
 	})
 	if err != nil {
 		return nil, err
@@ -542,7 +643,7 @@ func (l *ProjectManagementWorkflowLogic) TransitionDelete(ctx context.Context, c
 		if err := l.repos.ProjectManagementWorkflowRepo.DeleteTemplateTransitionWithTx(ctx, tx, transition); err != nil {
 			return err
 		}
-		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: transition.WorkflowId, action: constants.OperationActionProjectManagementWorkflowUpdate})
+		return l.recordOperation(ctx, tx, projectManagementWorkflowOperation{claim: claim, workflowId: transition.WorkflowId, transitionId: transition.Id, action: constants.OperationActionProjectManagementWorkflowTransitionDelete, before: workflowTransitionOperationIdentity(transition)})
 	})
 }
 
@@ -643,7 +744,17 @@ func projectManagementTemplateModels(input dto.ProjectManagementWorkflowDto) (*m
 }
 
 func (l *ProjectManagementWorkflowLogic) recordOperation(ctx context.Context, tx *gorm.DB, input projectManagementWorkflowOperation) error {
-	metadata, err := json.Marshal(map[string]int64{"workflow_id": input.workflowId})
+	locator := map[string]any{"workflow_id": input.workflowId}
+	if input.stageId != 0 {
+		locator["stage_id"] = input.stageId
+	}
+	if input.targetStageId != 0 {
+		locator["target_stage_id"] = input.targetStageId
+	}
+	if input.transitionId != 0 {
+		locator["transition_id"] = input.transitionId
+	}
+	metadata, err := projectManagementOperationMetadata(locator, input.before, input.after)
 	if err != nil {
 		return errorx.WithStack(err)
 	}
@@ -657,6 +768,26 @@ func (l *ProjectManagementWorkflowLogic) recordOperation(ctx context.Context, tx
 		Metadata:       metadata,
 		OrganizationId: input.claim.OrganizationId,
 	})
+}
+
+func workflowOperationValues(workflow *model.ProjectManagementWorkflow) map[string]any {
+	return map[string]any{"name": workflow.Name, "description": workflow.Description, "is_default": workflow.IsDefault}
+}
+
+func workflowStageOperationValues(stage *model.ProjectManagementWorkflowStage) map[string]any {
+	return map[string]any{"name": stage.Name, "description": stage.Description, "phase": stage.Phase, "color": stage.Color, "sort_order": stage.SortOrder}
+}
+
+func workflowStageOperationIdentity(stage *model.ProjectManagementWorkflowStage) map[string]any {
+	return map[string]any{"id": stage.Id, "name": stage.Name}
+}
+
+func workflowTransitionOperationValues(transition *model.ProjectManagementWorkflowTransition) map[string]any {
+	return map[string]any{"name": transition.Name, "from_stage_id": transition.FromStageId, "to_stage_id": transition.ToStageId, "allowed_actor_types": transition.AllowedActorTypes}
+}
+
+func workflowTransitionOperationIdentity(transition *model.ProjectManagementWorkflowTransition) map[string]any {
+	return map[string]any{"id": transition.Id, "name": transition.Name}
 }
 
 func isProjectManagementStagePhase(phase constants.ProjectManagementStagePhase) bool {

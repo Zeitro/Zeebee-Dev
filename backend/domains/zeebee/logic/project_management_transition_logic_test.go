@@ -25,7 +25,7 @@ func setupProjectManagementTransitionTest(t *testing.T, dependencyRule constants
 		"CREATE TABLE project_management_tasks (id integer primary key, is_del integer not null default 0, project_id integer not null default 0, organization_id integer not null default 0, parent_task_id integer not null default 0, stage_id integer not null default 0, creator_id integer not null default 0, creator_name text not null default '', title text not null default '')",
 		"CREATE TABLE project_management_workflow_stages (id integer primary key, is_del integer not null default 0, workflow_id integer not null default 0, name text not null default '', phase text not null default '', color text not null default '', sort_order integer not null default 0)",
 		"CREATE TABLE project_management_task_dependencies (id integer primary key, is_del integer not null default 0, task_id integer not null, dependency_task_id integer not null, dependency_type text not null default 'PreTask', dependency_rule text not null default 'FS')",
-		"CREATE TABLE project_management_task_assignees (id integer primary key, is_del integer not null default 0, task_id integer not null, stage_id integer not null default 0, organization_user_id integer not null, organization_user_name text not null default '')",
+		"CREATE TABLE project_management_task_assignees (id integer primary key, is_del integer not null default 0, task_id integer not null, stage_id integer not null default 0, organization_user_id integer not null, organization_user_full_name text not null default '')",
 	} {
 		if err := db.Exec(statement).Error; err != nil {
 			t.Fatal(err)

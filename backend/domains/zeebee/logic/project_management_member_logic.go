@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"encoding/json"
 
 	"gorm.io/gorm"
 
@@ -18,10 +17,13 @@ import (
 type ProjectManagementMemberLogic struct{ *BaseLogic }
 
 type projectManagementMemberOperation struct {
-	claim                    utils.JwtUser
-	projectId                int64
-	action                   constants.OperationAction
-	targetOrganizationUserId int64
+	claim                      utils.JwtUser
+	projectId                  int64
+	action                     constants.OperationAction
+	targetOrganizationUserId   int64
+	targetOrganizationUserName string
+	before                     map[string]any
+	after                      map[string]any
 }
 
 func NewProjectManagementMemberLogic(baseLogic *BaseLogic) *ProjectManagementMemberLogic {
@@ -82,7 +84,7 @@ func (l *ProjectManagementMemberLogic) Add(ctx context.Context, claim utils.JwtU
 			if err = l.repos.ProjectManagementProjectRepo.CreateMemberWithTx(ctx, tx, member); err != nil {
 				return err
 			}
-			if err = l.recordOperation(ctx, tx, projectManagementMemberOperation{claim: claim, projectId: input.ProjectId, action: constants.OperationActionProjectManagementMemberAdd, targetOrganizationUserId: input.OrganizationUserId}); err != nil {
+			if err = l.recordOperation(ctx, tx, projectManagementMemberOperation{claim: claim, projectId: input.ProjectId, action: constants.OperationActionProjectManagementMemberAdd, targetOrganizationUserId: input.OrganizationUserId, targetOrganizationUserName: organizationUser.FullName, after: map[string]any{"organization_user_id": input.OrganizationUserId, "organization_user_full_name": organizationUser.FullName}}); err != nil {
 				return err
 			}
 		}
@@ -105,10 +107,24 @@ func (l *ProjectManagementMemberLogic) Update(ctx context.Context, claim utils.J
 		if member.Role == constants.ProjectManagementMemberRoleProjectOwner {
 			return errorx.New("transfer project owner instead")
 		}
+		organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserByIdWithTx(ctx, tx, member.OrganizationUserId, claim.OrganizationId)
+		if err != nil && !isProjectManagementNotFound(err) {
+			return projectManagementNotFound(err, "organization member not found")
+		}
+		organizationUserName := ""
+		if organizationUser != nil {
+			organizationUserName = organizationUser.FullName
+		}
+		before := memberOperationValues(member.OrganizationUserId, organizationUserName, member.Role)
 		if err = l.repos.ProjectManagementProjectRepo.UpdateMemberRoleWithTx(ctx, tx, member, input.Role); err != nil {
 			return err
 		}
-		return l.recordOperation(ctx, tx, projectManagementMemberOperation{claim: claim, projectId: input.ProjectId, action: constants.OperationActionProjectManagementMemberUpdate, targetOrganizationUserId: member.OrganizationUserId})
+		after := memberOperationValues(member.OrganizationUserId, organizationUserName, input.Role)
+		before, after = operationValuesDiff(before, after)
+		if len(before) == 0 {
+			return nil
+		}
+		return l.recordOperation(ctx, tx, projectManagementMemberOperation{claim: claim, projectId: input.ProjectId, action: constants.OperationActionProjectManagementMemberUpdate, targetOrganizationUserId: member.OrganizationUserId, targetOrganizationUserName: organizationUserName, before: before, after: after})
 	})
 }
 
@@ -152,7 +168,7 @@ func (l *ProjectManagementMemberLogic) TransferOwner(ctx context.Context, claim 
 		if err = l.repos.ProjectManagementProjectRepo.UpdateOwnerWithTx(ctx, tx, projectId, targetOrganizationUserId, targetOrganizationUser.FullName); err != nil {
 			return err
 		}
-		return l.recordOperation(ctx, tx, projectManagementMemberOperation{claim: claim, projectId: projectId, action: constants.OperationActionProjectManagementOwnerTransfer, targetOrganizationUserId: targetOrganizationUserId})
+		return l.recordOperation(ctx, tx, projectManagementMemberOperation{claim: claim, projectId: projectId, action: constants.OperationActionProjectManagementOwnerTransfer, targetOrganizationUserId: targetOrganizationUserId, targetOrganizationUserName: targetOrganizationUser.FullName, before: memberOperationValues(currentOwner.OrganizationUserId, project.OwnerName, constants.ProjectManagementMemberRoleProjectOwner), after: memberOperationValues(targetOrganizationUserId, targetOrganizationUser.FullName, constants.ProjectManagementMemberRoleProjectOwner)})
 	})
 }
 
@@ -171,13 +187,21 @@ func (l *ProjectManagementMemberLogic) Delete(ctx context.Context, claim utils.J
 		if member.Role == constants.ProjectManagementMemberRoleProjectOwner {
 			return errorx.New("transfer project owner before removing member")
 		}
+		organizationUser, err := l.repos.OrganizationUserRepo.GetOrganizationUserByIdWithTx(ctx, tx, member.OrganizationUserId, claim.OrganizationId)
+		if err != nil && !isProjectManagementNotFound(err) {
+			return projectManagementNotFound(err, "organization member not found")
+		}
+		organizationUserName := ""
+		if organizationUser != nil {
+			organizationUserName = organizationUser.FullName
+		}
 		if err = l.repos.ProjectManagementTaskRepo.DeleteUnfinishedAssigneesByProjectMemberWithTx(ctx, tx, projectId, member.OrganizationUserId); err != nil {
 			return err
 		}
 		if err = l.repos.ProjectManagementProjectRepo.DeleteMemberWithTx(ctx, tx, member); err != nil {
 			return err
 		}
-		return l.recordOperation(ctx, tx, projectManagementMemberOperation{claim: claim, projectId: projectId, action: constants.OperationActionProjectManagementMemberRemove, targetOrganizationUserId: member.OrganizationUserId})
+		return l.recordOperation(ctx, tx, projectManagementMemberOperation{claim: claim, projectId: projectId, action: constants.OperationActionProjectManagementMemberRemove, targetOrganizationUserId: member.OrganizationUserId, targetOrganizationUserName: organizationUserName, before: memberOperationValues(member.OrganizationUserId, organizationUserName, member.Role)})
 	})
 }
 
@@ -208,9 +232,13 @@ func isProjectManagementNotFound(err error) bool {
 }
 
 func (l *ProjectManagementMemberLogic) recordOperation(ctx context.Context, tx *gorm.DB, input projectManagementMemberOperation) error {
-	metadata, err := json.Marshal(map[string]int64{"project_id": input.projectId, "organization_user_id": input.targetOrganizationUserId})
+	metadata, err := projectManagementOperationMetadata(map[string]any{"project_id": input.projectId, "organization_user_id": input.targetOrganizationUserId, "organization_user_full_name": input.targetOrganizationUserName}, input.before, input.after)
 	if err != nil {
 		return errorx.WithStack(err)
 	}
 	return NewOperationLogic(l.BaseLogic).CreateOperationLog(ctx, tx, dto.OperationCreateDto{EntityId: input.projectId, EntityType: constants.OperationEntityTypeProjectManagementProject, OperatorId: input.claim.OrganizationUserId, OperatorName: input.claim.Username, OperatorType: constants.UserTypeBorrower, Operation: input.action, Metadata: metadata, OrganizationId: input.claim.OrganizationId})
+}
+
+func memberOperationValues(id int64, name string, role constants.ProjectManagementMemberRole) map[string]any {
+	return map[string]any{"organization_user_id": id, "organization_user_full_name": name, "role": role}
 }
