@@ -46,7 +46,7 @@ func (l *PageLogic) Page(in *borrower.ProjectManagementMemberPageRequest) (resp 
 	}
 	data := &borrower.ProjectManagementMemberPageResponseData{Page: page.Page, Limit: page.Limit, Total: page.Total, TotalPage: page.TotalPage, List: make([]*proto.ProjectManagementMemberEntity, 0, len(page.List))}
 	for _, member := range page.List {
-		entity, err := memberEntity(member)
+		entity, err := copierx.Trans[dto.ProjectManagementMemberDetailDto, proto.ProjectManagementMemberEntity](member, copierx.TimeToRFC3339Str())
 		if err != nil {
 			return nil, err
 		}

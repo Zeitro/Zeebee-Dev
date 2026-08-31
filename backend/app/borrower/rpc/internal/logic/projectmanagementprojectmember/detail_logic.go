@@ -6,7 +6,10 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DetailLogic struct {
@@ -34,7 +37,7 @@ func (l *DetailLogic) Detail(in *borrower.ProjectManagementMemberDetailRequest) 
 	if err != nil {
 		return nil, err
 	}
-	data, err := memberEntity(member)
+	data, err := copierx.Trans[dto.ProjectManagementMemberDetailDto, proto.ProjectManagementMemberEntity](member, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

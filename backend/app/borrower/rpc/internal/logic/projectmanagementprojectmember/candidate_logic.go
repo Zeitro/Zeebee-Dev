@@ -7,6 +7,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
@@ -41,7 +42,7 @@ func (l *CandidateLogic) Candidate(in *borrower.ProjectManagementMemberCandidate
 	}
 	data := make([]*borrower.ProjectManagementMemberCandidateEntity, 0, len(members))
 	for _, member := range members {
-		entity, err := memberCandidateEntity(member)
+		entity, err := copierx.Trans[dto.ProjectManagementMemberCandidateEntityDto, borrower.ProjectManagementMemberCandidateEntity](member)
 		if err != nil {
 			return nil, err
 		}
