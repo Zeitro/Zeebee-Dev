@@ -71,6 +71,7 @@ type (
     ProjectManagementTaskCandidateEntity {
         Id    int64  `json:"id"`
         Title string `json:"title"`
+        Phase string `json:"phase"`
     }
     // candidate response
     ProjectManagementTaskCandidateResponse {

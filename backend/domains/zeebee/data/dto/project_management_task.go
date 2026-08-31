@@ -48,10 +48,10 @@ type ProjectManagementTaskUpdateDto struct {
 }
 
 type ProjectManagementTaskAssigneeDto struct {
-	TaskId               int64
-	StageId              int64
-	OrganizationUserId   int64
-	OrganizationUserName string
+	TaskId                   int64
+	StageId                  int64
+	OrganizationUserId       int64
+	OrganizationUserFullName string
 }
 
 type ProjectManagementTaskFilterDto struct {
@@ -74,6 +74,7 @@ type ProjectManagementTaskCandidateDto struct {
 type ProjectManagementTaskCandidateEntityDto struct {
 	Id    int64
 	Title string
+	Phase constants.ProjectManagementStagePhase
 }
 
 type ProjectManagementTaskPageRequestDto struct {

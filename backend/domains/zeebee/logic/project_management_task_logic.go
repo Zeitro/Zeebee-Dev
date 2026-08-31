@@ -3,7 +3,6 @@ package logic
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"strings"
 	"time"
 
@@ -29,10 +28,15 @@ type projectManagementTaskAssigneeInput struct {
 }
 
 type projectManagementTaskOperation struct {
-	claim     utils.JwtUser
-	projectId int64
-	taskId    int64
-	action    constants.OperationAction
+	claim        utils.JwtUser
+	projectId    int64
+	taskId       int64
+	stageId      int64
+	transitionId int64
+	fileId       int64
+	action       constants.OperationAction
+	before       map[string]any
+	after        map[string]any
 }
 
 func NewProjectManagementTaskLogic(baseLogic *BaseLogic) *ProjectManagementTaskLogic {
@@ -102,7 +106,15 @@ func (l *ProjectManagementTaskLogic) Create(ctx context.Context, claim utils.Jwt
 		if err = l.repos.ProjectManagementTaskRepo.CreateAssigneesWithTx(ctx, tx, assignees); err != nil {
 			return err
 		}
-		return l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskCreate})
+		if err = l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskCreate, after: map[string]any{"id": task.Id, "name": task.Title}}); err != nil {
+			return err
+		}
+		for _, assignee := range assignees {
+			if err = l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskAssigneeAdd, after: assigneeOperationValues(assignee)}); err != nil {
+				return err
+			}
+		}
+		return nil
 	})
 	if err != nil {
 		return nil, err
@@ -190,6 +202,7 @@ func (l *ProjectManagementTaskLogic) Update(ctx context.Context, claim utils.Jwt
 		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.ProjectId, claim.OrganizationUserId); err != nil {
 			return projectManagementNotFound(err, "project member required")
 		}
+		before := taskOperationValues(task)
 		base, taskType := task.Base, task.TaskType
 		if err = copierx.Assign(&input, task); err != nil {
 			return err
@@ -206,8 +219,36 @@ func (l *ProjectManagementTaskLogic) Update(ctx context.Context, claim utils.Jwt
 		if err != nil {
 			return err
 		}
+		existingAssignees, err := l.repos.ProjectManagementTaskRepo.ListAssigneesWithTx(ctx, tx, task.Id, task.StageId)
+		if err != nil {
+			return err
+		}
 		if err = l.repos.ProjectManagementTaskRepo.ReplaceAssigneesWithTx(ctx, tx, task.Id, task.StageId, assignees); err != nil {
 			return err
+		}
+		requestedAssignees := make(map[int64]struct{}, len(assignees))
+		for _, assignee := range assignees {
+			requestedAssignees[assignee.OrganizationUserId] = struct{}{}
+		}
+		for _, assignee := range existingAssignees {
+			if _, exists := requestedAssignees[assignee.OrganizationUserId]; exists {
+				continue
+			}
+			if err = l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskAssigneeRemove, before: assigneeOperationValues(assignee)}); err != nil {
+				return err
+			}
+		}
+		existingAssigneeIds := make(map[int64]struct{}, len(existingAssignees))
+		for _, assignee := range existingAssignees {
+			existingAssigneeIds[assignee.OrganizationUserId] = struct{}{}
+		}
+		for _, assignee := range assignees {
+			if _, exists := existingAssigneeIds[assignee.OrganizationUserId]; exists {
+				continue
+			}
+			if err = l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskAssigneeAdd, after: assigneeOperationValues(assignee)}); err != nil {
+				return err
+			}
 		}
 		if err = NewProjectManagementDependencyLogic(l.BaseLogic).SyncWithTx(ctx, tx, claim, task.Id, input.Dependencies); err != nil {
 			return err
@@ -216,7 +257,12 @@ func (l *ProjectManagementTaskLogic) Update(ctx context.Context, claim utils.Jwt
 		if _, err = l.repos.ProjectManagementTaskRepo.UpdateOneWithTx(ctx, tx, task); err != nil {
 			return err
 		}
-		return l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskUpdate})
+		after := taskOperationValues(task)
+		before, after = operationValuesDiff(before, after)
+		if len(before) == 0 {
+			return nil
+		}
+		return l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskUpdate, before: before, after: after})
 	})
 	if err != nil {
 		return nil, err
@@ -246,7 +292,7 @@ func (l *ProjectManagementTaskLogic) Delete(ctx context.Context, claim utils.Jwt
 		if err = l.repos.ProjectManagementTaskRepo.DeleteByIdsWithTx(ctx, tx, taskIds); err != nil {
 			return err
 		}
-		return l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskDelete})
+		return l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskDelete, before: taskOperationValues(task)})
 	})
 }
 
@@ -285,15 +331,46 @@ func (l *ProjectManagementTaskLogic) projectManagementTaskAssignees(ctx context.
 		if organizationUser.Status != constants.OrganizationUserStatusActive {
 			return nil, errorx.New("task assignee must be an active organization member")
 		}
-		result = append(result, &model.ProjectManagementTaskAssignee{TaskId: input.taskId, StageId: input.stageId, OrganizationUserId: organizationUserId, OrganizationUserName: organizationUser.FullName})
+		result = append(result, &model.ProjectManagementTaskAssignee{TaskId: input.taskId, StageId: input.stageId, OrganizationUserId: organizationUserId, OrganizationUserFullName: organizationUser.FullName})
 	}
 	return result, nil
 }
 
 func (l *ProjectManagementTaskLogic) recordProjectTaskOperation(ctx context.Context, tx *gorm.DB, input projectManagementTaskOperation) error {
-	metadata, err := json.Marshal(map[string]int64{"project_id": input.projectId, "task_id": input.taskId})
+	locator := map[string]any{"project_id": input.projectId}
+	if input.taskId != 0 {
+		locator["task_id"] = input.taskId
+	}
+	if input.stageId != 0 {
+		locator["stage_id"] = input.stageId
+	}
+	if input.transitionId != 0 {
+		locator["transition_id"] = input.transitionId
+	}
+	if input.fileId != 0 {
+		locator["file_id"] = input.fileId
+	}
+	metadata, err := projectManagementOperationMetadata(locator, input.before, input.after)
 	if err != nil {
 		return errorx.WithStack(err)
 	}
 	return NewOperationLogic(l.BaseLogic).CreateOperationLog(ctx, tx, dto.OperationCreateDto{EntityId: input.projectId, EntityType: constants.OperationEntityTypeProjectManagementProject, OperatorId: input.claim.OrganizationUserId, OperatorName: input.claim.Username, OperatorType: constants.UserTypeBorrower, Operation: input.action, Metadata: metadata, OrganizationId: input.claim.OrganizationId})
+}
+
+func taskOperationValues(task *model.ProjectManagementTask) map[string]any {
+	values := map[string]any{"title": task.Title, "description": task.Description, "priority": task.Priority, "work_hours": task.WorkHours, "parent_task_id": task.ParentTaskId, "task_type_id": int64(0), "task_type_name": "", "start_at": "", "end_at": ""}
+	if task.TaskType != nil {
+		values["task_type_id"], values["task_type_name"] = task.TaskType.Id, task.TaskType.Name
+	}
+	if task.StartAt != nil && task.StartAt.Valid {
+		values["start_at"] = task.StartAt.Time.UTC().Format(time.RFC3339)
+	}
+	if task.EndAt != nil && task.EndAt.Valid {
+		values["end_at"] = task.EndAt.Time.UTC().Format(time.RFC3339)
+	}
+	return values
+}
+
+func assigneeOperationValues(assignee *model.ProjectManagementTaskAssignee) map[string]any {
+	return map[string]any{"organization_user_id": assignee.OrganizationUserId, "organization_user_full_name": assignee.OrganizationUserFullName}
 }

@@ -18,7 +18,7 @@ func TestTaskCascadeDeleteAndHistoricalSnapshots(t *testing.T) {
 	}
 	for _, statement := range []string{
 		"CREATE TABLE project_management_tasks (id integer primary key, is_del integer not null default 0, project_id integer not null, organization_id integer not null, parent_task_id integer not null default 0, stage_id integer not null default 0, creator_id integer not null default 0, creator_name text not null default '', title text not null default '')",
-		"CREATE TABLE project_management_task_assignees (id integer primary key, is_del integer not null default 0, task_id integer not null, stage_id integer not null default 0, organization_user_id integer not null, organization_user_name text not null default '')",
+		"CREATE TABLE project_management_task_assignees (id integer primary key, is_del integer not null default 0, task_id integer not null, stage_id integer not null default 0, organization_user_id integer not null, organization_user_full_name text not null default '')",
 		"CREATE TABLE project_management_task_dependencies (id integer primary key, is_del integer not null default 0, task_id integer not null, dependency_task_id integer not null, dependency_type text not null default 'PreTask', dependency_rule text not null default 'FS')",
 		"CREATE TABLE files (id integer primary key, is_del integer not null default 0, entity_id integer not null, entity_type text not null)",
 		"CREATE TABLE project_management_project_members (id integer primary key, is_del integer not null default 0, project_id integer not null, organization_user_id integer not null, role text not null default '')",
@@ -30,7 +30,7 @@ func TestTaskCascadeDeleteAndHistoricalSnapshots(t *testing.T) {
 	}
 	for _, statement := range []string{
 		"INSERT INTO project_management_tasks (id, project_id, organization_id, stage_id, creator_id, creator_name, title) VALUES (1, 10, 1, 100, 8, 'Former creator', 'Historical task')",
-		"INSERT INTO project_management_task_assignees (id, task_id, stage_id, organization_user_id, organization_user_name) VALUES (2, 1, 100, 9, 'Former executor')",
+		"INSERT INTO project_management_task_assignees (id, task_id, stage_id, organization_user_id, organization_user_full_name) VALUES (2, 1, 100, 9, 'Former executor')",
 		"INSERT INTO project_management_project_members (id, project_id, organization_user_id, role) VALUES (3, 10, 9, 'executor')",
 	} {
 		if err := db.Exec(statement).Error; err != nil {
@@ -42,13 +42,13 @@ func TestTaskCascadeDeleteAndHistoricalSnapshots(t *testing.T) {
 		t.Fatal(err)
 	}
 	historical, err := taskRepo.FindDetailByOrganization(context.Background(), 1, 1)
-	if err != nil || historical.CreatorId != 8 || historical.CreatorName != "Former creator" || len(historical.Assignees) != 1 || historical.Assignees[0].OrganizationUserId != 9 || historical.Assignees[0].OrganizationUserName != "Former executor" {
+	if err != nil || historical.CreatorId != 8 || historical.CreatorName != "Former creator" || len(historical.Assignees) != 1 || historical.Assignees[0].OrganizationUserId != 9 || historical.Assignees[0].OrganizationUserFullName != "Former executor" {
 		t.Fatalf("historical task identity was lost: %#v, %v", historical, err)
 	}
 	for _, statement := range []string{
 		"INSERT INTO project_management_tasks (id, project_id, organization_id, parent_task_id, stage_id, creator_id, creator_name, title) VALUES (11, 10, 1, 0, 100, 8, 'Creator', 'Parent')",
 		"INSERT INTO project_management_tasks (id, project_id, organization_id, parent_task_id, stage_id, creator_id, creator_name, title) VALUES (12, 10, 1, 11, 100, 8, 'Creator', 'Child')",
-		"INSERT INTO project_management_task_assignees (id, task_id, organization_user_id, organization_user_name) VALUES (13, 12, 9, 'Executor')",
+		"INSERT INTO project_management_task_assignees (id, task_id, organization_user_id, organization_user_full_name) VALUES (13, 12, 9, 'Executor')",
 		"INSERT INTO project_management_task_dependencies (id, task_id, dependency_task_id) VALUES (14, 12, 11)",
 		"INSERT INTO files (id, entity_id, entity_type) VALUES (15, 12, 'ProjectManagementTask')",
 		"INSERT INTO operations (id, entity_id, entity_type, operation) VALUES (16, 10, 'ProjectManagementProject', 'Project task deleted')",

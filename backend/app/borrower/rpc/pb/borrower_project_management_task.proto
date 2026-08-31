@@ -46,6 +46,7 @@ message ProjectManagementTaskCandidateRequestData {
 message ProjectManagementTaskCandidateEntity {
   int64 id = 1;
   string title = 2;
+  string phase = 3;
 }
 message ProjectManagementTaskCandidateResponse {
   repeated ProjectManagementTaskCandidateEntity data = 1;

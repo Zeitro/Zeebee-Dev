@@ -22,7 +22,7 @@ func TestProjectManagementQueryFilters(t *testing.T) {
 		"CREATE TABLE project_management_workflow_stages (id integer primary key, is_del integer not null default 0, sort_order integer not null, name text not null default '', phase text not null, color text not null default '')",
 		"CREATE TABLE project_management_projects (id integer primary key, is_del integer not null default 0, name text not null default '')",
 		"CREATE TABLE project_management_tasks (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, project_id integer not null, organization_id integer not null, parent_task_id integer not null default 0, stage_id integer not null, creator_id integer not null, creator_name text not null default '', title text not null, description text not null default '', priority text not null default '', start_at datetime, end_at datetime, task_type json not null default '{}')",
-		"CREATE TABLE project_management_task_assignees (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, task_id integer not null, stage_id integer not null default 0, organization_user_id integer not null, organization_user_name text not null default '')",
+		"CREATE TABLE project_management_task_assignees (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, task_id integer not null, stage_id integer not null default 0, organization_user_id integer not null, organization_user_full_name text not null default '')",
 		"CREATE TABLE operations (id integer primary key, is_del integer not null default 0, created_at datetime not null, updated_at datetime not null, entity_id integer not null, entity_type text not null, operator_id integer not null, operator_name text not null default '', operator_type text not null default '', operation text not null, note text not null default '', metadata json not null default '{}', organization_id integer not null)",
 	} {
 		if err := db.Exec(statement).Error; err != nil {
@@ -37,7 +37,7 @@ func TestProjectManagementQueryFilters(t *testing.T) {
 		"INSERT INTO project_management_tasks (id, project_id, organization_id, stage_id, creator_id, creator_name, title, task_type) VALUES (3, 10, 1, 100, 8, 'Other', 'Not mine', '{\"id\":5}')",
 		"INSERT INTO project_management_tasks (id, project_id, organization_id, stage_id, creator_id, creator_name, title, end_at, task_type) VALUES (4, 10, 1, 101, 7, 'Creator', 'Finished task', datetime('now', '-1 hour'), '{\"id\":5}')",
 		"INSERT INTO project_management_tasks (id, project_id, organization_id, stage_id, creator_id, creator_name, title, end_at, task_type) VALUES (5, 10, 1, 100, 7, 'Creator', 'Future roof work', datetime('now', '+1 hour'), '{\"id\":5}')",
-		"INSERT INTO project_management_task_assignees (id, task_id, stage_id, organization_user_id, organization_user_name) VALUES (1, 1, 100, 7, 'Assignee'), (2, 2, 100, 7, 'Assignee')",
+		"INSERT INTO project_management_task_assignees (id, task_id, stage_id, organization_user_id, organization_user_full_name) VALUES (1, 1, 100, 7, 'Assignee'), (2, 2, 100, 7, 'Assignee')",
 		fmt.Sprintf("INSERT INTO operations (id, created_at, updated_at, entity_id, entity_type, operator_id, operation, metadata, organization_id) VALUES (1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 10, 'ProjectManagementProject', 7, '%s', '{\"task_id\":1}', 1), (2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 10, 'ProjectManagementProject', 7, '%s', '{\"task_id\":2}', 1), (3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 11, 'ProjectManagementProject', 7, '%s', '{\"task_id\":1}', 1)", constants.OperationActionProjectManagementTaskUpdate, constants.OperationActionProjectManagementTaskUpdate, constants.OperationActionProjectManagementTaskUpdate),
 	} {
 		if err := db.Exec(statement).Error; err != nil {
@@ -106,11 +106,11 @@ func TestFindDetailByOrganizationLoadsCurrentStageAssignees(t *testing.T) {
 	}
 	for _, statement := range []string{
 		"CREATE TABLE project_management_tasks (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, project_id integer not null, organization_id integer not null, parent_task_id integer not null default 0, stage_id integer not null, phase text not null default 'Pending', creator_id integer not null default 0, creator_name text not null default '', title text not null default '', description text not null default '', priority text not null default '', start_at datetime, end_at datetime, task_type json not null default '{}')",
-		"CREATE TABLE project_management_task_assignees (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, task_id integer not null, stage_id integer not null, organization_user_id integer not null, organization_user_name text not null default '')",
+		"CREATE TABLE project_management_task_assignees (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, task_id integer not null, stage_id integer not null, organization_user_id integer not null, organization_user_full_name text not null default '')",
 		"CREATE TABLE project_management_task_dependencies (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, task_id integer not null, dependency_task_id integer not null, dependency_type text not null default 'PreTask', dependency_rule text not null default 'FS')",
 		"CREATE TABLE files (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, entity_id integer not null, entity_type text not null, file_url text not null default '', file_name text not null default '', storage_type text not null default '')",
 		"INSERT INTO project_management_tasks (id, project_id, organization_id, stage_id, title) VALUES (1, 10, 1, 101, 'Task')",
-		"INSERT INTO project_management_task_assignees (id, task_id, stage_id, organization_user_id, organization_user_name) VALUES (1, 1, 100, 7, 'Previous stage'), (2, 1, 101, 8, 'Current stage')",
+		"INSERT INTO project_management_task_assignees (id, task_id, stage_id, organization_user_id, organization_user_full_name) VALUES (1, 1, 100, 7, 'Previous stage'), (2, 1, 101, 8, 'Current stage')",
 	} {
 		if err := db.Exec(statement).Error; err != nil {
 			t.Fatal(err)
@@ -128,8 +128,8 @@ func TestCopyCurrentStageAssigneesIfTargetEmpty(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, statement := range []string{
-		"CREATE TABLE project_management_task_assignees (id integer primary key autoincrement, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, task_id integer not null, stage_id integer not null, organization_user_id integer not null, organization_user_name text not null default '')",
-		"INSERT INTO project_management_task_assignees (task_id, stage_id, organization_user_id, organization_user_name) VALUES (1, 100, 7, 'Current')",
+		"CREATE TABLE project_management_task_assignees (id integer primary key autoincrement, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, task_id integer not null, stage_id integer not null, organization_user_id integer not null, organization_user_full_name text not null default '')",
+		"INSERT INTO project_management_task_assignees (task_id, stage_id, organization_user_id, organization_user_full_name) VALUES (1, 100, 7, 'Current')",
 	} {
 		if err := db.Exec(statement).Error; err != nil {
 			t.Fatal(err)
@@ -146,7 +146,7 @@ func TestCopyCurrentStageAssigneesIfTargetEmpty(t *testing.T) {
 	if err := db.Where("task_id = ? AND stage_id = ?", 1, 101).Find(&assignees).Error; err != nil || len(assignees) != 1 || assignees[0].OrganizationUserId != 7 {
 		t.Fatalf("current stage assignees were not copied: %#v, %v", assignees, err)
 	}
-	if err := db.Exec("INSERT INTO project_management_task_assignees (task_id, stage_id, organization_user_id, organization_user_name) VALUES (1, 100, 8, 'Another current')").Error; err != nil {
+	if err := db.Exec("INSERT INTO project_management_task_assignees (task_id, stage_id, organization_user_id, organization_user_full_name) VALUES (1, 100, 8, 'Another current')").Error; err != nil {
 		t.Fatal(err)
 	}
 	if err := db.Transaction(func(tx *gorm.DB) error {

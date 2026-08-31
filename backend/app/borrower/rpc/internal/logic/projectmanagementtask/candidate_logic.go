@@ -34,7 +34,7 @@ func (l *CandidateLogic) Candidate(in *borrower.ProjectManagementTaskCandidateRe
 	}
 	data := make([]*borrower.ProjectManagementTaskCandidateEntity, 0, len(tasks))
 	for _, task := range tasks {
-		data = append(data, &borrower.ProjectManagementTaskCandidateEntity{Id: task.Id, Title: task.Title})
+		data = append(data, &borrower.ProjectManagementTaskCandidateEntity{Id: task.Id, Title: task.Title, Phase: string(task.Phase)})
 	}
 	return &borrower.ProjectManagementTaskCandidateResponse{Data: data}, nil
 }

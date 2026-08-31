@@ -90,7 +90,7 @@ type (
     ProjectManagementTaskAssigneeEntity {
         StageId int64 `json:"stage_id"`
         OrganizationUserId int64 `json:"organization_user_id"`
-        OrganizationUserName string `json:"organization_user_name"`
+        OrganizationUserFullName string `json:"organization_user_full_name"`
         CreatedAt string `json:"created_at"`
         UpdatedAt string `json:"updated_at"`
     }

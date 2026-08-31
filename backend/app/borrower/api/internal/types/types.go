@@ -1908,16 +1908,17 @@ type ProjectManagementProjectWorkflowUpdateRequest struct {
 }
 
 type ProjectManagementTaskAssigneeEntity struct {
-	StageId              int64  `json:"stage_id"`
-	OrganizationUserId   int64  `json:"organization_user_id"`
-	OrganizationUserName string `json:"organization_user_name"`
-	CreatedAt            string `json:"created_at"`
-	UpdatedAt            string `json:"updated_at"`
+	StageId                  int64  `json:"stage_id"`
+	OrganizationUserId       int64  `json:"organization_user_id"`
+	OrganizationUserFullName string `json:"organization_user_full_name"`
+	CreatedAt                string `json:"created_at"`
+	UpdatedAt                string `json:"updated_at"`
 }
 
 type ProjectManagementTaskCandidateEntity struct {
 	Id    int64  `json:"id"`
 	Title string `json:"title"`
+	Phase string `json:"phase"`
 }
 
 type ProjectManagementTaskCandidateRequest struct {

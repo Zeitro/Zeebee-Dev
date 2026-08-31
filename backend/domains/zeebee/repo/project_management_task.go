@@ -85,7 +85,7 @@ func (r *ProjectManagementTaskRepo) PageByProject(ctx context.Context, organizat
 
 func (r *ProjectManagementTaskRepo) CandidateByProject(ctx context.Context, organizationId int64, input dto.ProjectManagementTaskCandidateDto) ([]*dto.ProjectManagementTaskCandidateEntityDto, error) {
 	query := r.Client(ctx).
-		Select("id, title").
+		Select("id, title, phase").
 		Where("organization_id = ? AND project_id = ? AND phase IN ?", organizationId, input.ProjectId, []constants.ProjectManagementStagePhase{constants.ProjectManagementStagePhasePending, constants.ProjectManagementStagePhaseInProgress}).
 		Order("title ASC, id ASC")
 	if input.TaskId != 0 {
@@ -157,6 +157,12 @@ func (r *ProjectManagementTaskRepo) IsAssigneeWithTx(ctx context.Context, tx *go
 	return r.assigneeRepo.IsExistedByColumnsWithTx(ctx, tx, map[string]any{"task_id": taskId, "stage_id": stageId, "organization_user_id": organizationUserId})
 }
 
+func (r *ProjectManagementTaskRepo) ListAssigneesWithTx(ctx context.Context, tx *gorm.DB, taskId, stageId int64) ([]*model.ProjectManagementTaskAssignee, error) {
+	assignees := make([]*model.ProjectManagementTaskAssignee, 0)
+	err := tx.WithContext(ctx).Where("task_id = ? AND stage_id = ?", taskId, stageId).Find(&assignees).Error
+	return assignees, errorx.WithStack(err)
+}
+
 func (r *ProjectManagementTaskRepo) DirectChildrenWithTx(ctx context.Context, tx *gorm.DB, taskId int64) ([]*model.ProjectManagementTask, error) {
 	children := make([]*model.ProjectManagementTask, 0)
 	err := tx.WithContext(ctx).Where("parent_task_id = ?", taskId).Order("id ASC").Find(&children).Error
@@ -201,7 +207,7 @@ func (r *ProjectManagementTaskRepo) CopyCurrentStageAssigneesIfTargetEmptyWithTx
 	}
 	targetAssignees := make([]*model.ProjectManagementTaskAssignee, 0, len(currentAssignees))
 	for _, assignee := range currentAssignees {
-		targetAssignees = append(targetAssignees, &model.ProjectManagementTaskAssignee{TaskId: task.Id, StageId: targetStageId, OrganizationUserId: assignee.OrganizationUserId, OrganizationUserName: assignee.OrganizationUserName})
+		targetAssignees = append(targetAssignees, &model.ProjectManagementTaskAssignee{TaskId: task.Id, StageId: targetStageId, OrganizationUserId: assignee.OrganizationUserId, OrganizationUserFullName: assignee.OrganizationUserFullName})
 	}
 	return r.CreateAssigneesWithTx(ctx, tx, targetAssignees)
 }

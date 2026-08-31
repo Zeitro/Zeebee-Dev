@@ -18416,7 +18416,7 @@
       "required": [
         "stage_id",
         "organization_user_id",
-        "organization_user_name",
+        "organization_user_full_name",
         "created_at",
         "updated_at"
       ],
@@ -18424,11 +18424,11 @@
         "created_at": {
           "type": "string"
         },
+        "organization_user_full_name": {
+          "type": "string"
+        },
         "organization_user_id": {
           "type": "integer"
-        },
-        "organization_user_name": {
-          "type": "string"
         },
         "stage_id": {
           "type": "integer"
@@ -18442,11 +18442,15 @@
       "type": "object",
       "required": [
         "id",
-        "title"
+        "title",
+        "phase"
       ],
       "properties": {
         "id": {
           "type": "integer"
+        },
+        "phase": {
+          "type": "string"
         },
         "title": {
           "type": "string"
@@ -21695,7 +21699,7 @@
       }
     }
   },
-  "x-date": "2026-08-27 15:30:16",
+  "x-date": "2026-08-31 15:53:07",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
