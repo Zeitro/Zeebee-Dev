@@ -1,7 +1,7 @@
 /**
  * 任务接口：我的任务分页 POST `/project_management/task/my`；
  * 看板任务分页 POST `/project_management/task/page`（filter 含 project_id / stage_id）；
- * 看板创建 / 更新 / 流转仍走 `/tasks`（待迁移）。
+ * 看板新建 POST `/project_management/task`；更新 / 流转仍走 `/tasks`（待迁移）。
  */
 
 export const TASK_API = '/tasks';
@@ -13,11 +13,15 @@ export const TASK_MY_API = '/project_management/task/my';
 /** 项目看板任务分页：POST，body `{ page, limit, filter }`，filter 含 project_id、stage_id 等 */
 export const TASK_PAGE_API = '/project_management/task/page';
 
+/** 看板新建任务：POST，body 含 project_id、task_type_id、priority（字符串）等 */
+export const TASK_CREATE_API = '/project_management/task';
+
 /**
  * @param {import('@repo/shared-methods/utils').RequestFn} request
  * @returns {{
  *   page: (body: object) => Promise<{ list?: object[], total?: number }|unknown>,
  *   pageByProject: (body: object) => Promise<{ list?: object[], total?: number }|unknown>,
+ *   create: (body: object) => Promise<unknown>,
  * }}
  */
 export function createTaskApi(request) {
@@ -25,6 +29,7 @@ export function createTaskApi(request) {
 	return {
 		page: (body) => request(TASK_MY_API, { method: 'POST', ...hide, body }),
 		pageByProject: (body) => request(TASK_PAGE_API, { method: 'POST', ...hide, body }),
+		create: (body) => request(TASK_CREATE_API, { method: 'POST', ...hide, body }),
 	};
 }
 

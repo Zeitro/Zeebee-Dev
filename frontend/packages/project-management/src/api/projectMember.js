@@ -19,6 +19,9 @@ export const PROJECT_MEMBER_CANDIDATE_API = `${PROJECT_MEMBER_API}/candidate`;
 /** 邀请成员弹窗：拉取可添加的租户成员 */
 export const PROJECT_MEMBER_CANDIDATE_PURPOSE_ADD_MEMBER = 'AddMember';
 
+/** 新建任务执行者下拉：拉取项目内可选成员 */
+export const PROJECT_MEMBER_CANDIDATE_PURPOSE_PROJECT_MEMBER = 'ProjectMember';
+
 /** 邀请成员默认角色 */
 export const PROJECT_MEMBER_DEFAULT_ROLE = 'TaskExecutor';
 

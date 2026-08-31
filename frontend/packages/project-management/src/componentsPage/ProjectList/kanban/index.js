@@ -48,7 +48,7 @@ export function ProjectKanban() {
 		openTask,
 		closeTask,
 		transitionTask,
-		createTask,
+		refreshBoard,
 		persistAssignees,
 		saveTask,
 		saveTitle,
@@ -69,7 +69,6 @@ export function ProjectKanban() {
 	const [draggedTask, setDraggedTask] = useState(null);
 	const [createOpen, setCreateOpen] = useState(false);
 	const [createParent, setCreateParent] = useState(null);
-	const [targetStateId, setTargetStateId] = useState(null);
 	const [memberListOpen, setMemberListOpen] = useState(false);
 	const [inviteOpen, setInviteOpen] = useState(false);
 	const [projectActivityOpen, setProjectActivityOpen] = useState(false);
@@ -117,8 +116,7 @@ export function ProjectKanban() {
 		reset();
 	}, [closeTask, reset, setTaskQuery]);
 
-	const openCreate = useCallback((stateId, parent) => {
-		setTargetStateId(stateId || null);
+	const openCreate = useCallback((parent) => {
 		setCreateParent(parent || null);
 		setCreateOpen(true);
 	}, []);
@@ -168,7 +166,7 @@ export function ProjectKanban() {
 				project={project}
 				taskCount={taskTotal || tasks.length}
 				canManageMembers={canManageMembers}
-				onCreateTask={() => openCreate(null)}
+				onCreateTask={() => openCreate()}
 				onMembersClick={() => setMemberListOpen(true)}
 				onInviteClick={() => setInviteOpen(true)}
 				onActivityClick={handleOpenProjectActivity}
@@ -190,7 +188,7 @@ export function ProjectKanban() {
 								state={state}
 								tasks={tasks}
 								members={members}
-								onAddTask={() => openCreate(state.id)}
+								onAddTask={() => openCreate()}
 								onTaskClick={handleTaskClick}
 							/>
 						))}
@@ -204,27 +202,17 @@ export function ProjectKanban() {
 					</DragOverlay>
 				</DndContext>
 			</div>
-			{createOpen ? (
-				<CreateTaskModal
-					parentTask={createParent}
-					taskTypes={taskTypes}
-					memberOptions={memberOptions}
-					onCancel={() => {
-						setCreateOpen(false);
-						setCreateParent(null);
-						setTargetStateId(null);
-					}}
-					onSubmit={async (values) => {
-						await createTask(values, {
-							parentId: createParent?.id,
-							targetStateId,
-						});
-						setCreateOpen(false);
-						setCreateParent(null);
-						setTargetStateId(null);
-					}}
-				/>
-			) : null}
+			<CreateTaskModal
+				open={createOpen}
+				projectId={projectId}
+				parentTask={createParent}
+				messageApi={messageApi}
+				onCancel={() => {
+					setCreateOpen(false);
+					setCreateParent(null);
+				}}
+				onSuccess={refreshBoard}
+			/>
 			<InviteMemberModal
 				open={inviteOpen}
 				projectId={projectId}
@@ -270,7 +258,7 @@ export function ProjectKanban() {
 				previousTask={previousTask}
 				onTaskClick={openFromDrawer}
 				onBack={backFromDrawer}
-				onCreateSubtask={(parent) => openCreate(null, parent)}
+				onCreateSubtask={(parent) => openCreate(parent)}
 				onTitleBlur={saveTitle}
 				onPersistAssignees={persistAssignees}
 				onSave={saveTask}

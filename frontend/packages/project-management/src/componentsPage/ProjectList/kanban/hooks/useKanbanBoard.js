@@ -24,9 +24,7 @@ import {
 	getTaskDependentApi,
 	getTaskDependentsApi,
 	getTaskTransitionApi,
-	TASK_API,
 } from '@repo/project-management/api/task';
-import { isInitialState } from '@repo/project-management/enum/workflow';
 import { mapProjectMember } from '@repo/project-management/lib/mapProjectMember';
 import { TASK_LIST_PAGE_SIZE } from '../components/constants';
 import { toIsoDateTime, unwrapList } from '../components/helpers';
@@ -228,40 +226,6 @@ export function useKanbanBoard(projectId, queryTaskId) {
 			}
 		},
 		[fetchBoard, request, t, userId],
-	);
-
-	const createTask = useCallback(
-		async (values, { parentId, targetStateId } = {}) => {
-			const initialState = workflow?.states?.find((state) => isInitialState(state));
-			try {
-				await request(TASK_API, {
-					method: 'POST',
-					isHideTips: true,
-					body: {
-						project_id: Number(projectId),
-						parent_id: parentId || null,
-						title: values.title,
-						description: values.description,
-						priority: Number(values.priority) || 1,
-						type: values.type || taskTypes[0]?.name,
-						creator_id: userId || 0,
-						assignee_id: values.assignee_id ? Number(values.assignee_id) : undefined,
-						start_date: toIsoDateTime(values.start_date),
-						due_date: toIsoDateTime(values.due_date),
-						estimated_hours: values.estimated_hours
-							? Number(values.estimated_hours)
-							: undefined,
-						workflow_state_id: targetStateId || initialState?.id || null,
-					},
-				});
-				message.success(t('kanban.createSuccess'));
-				await fetchBoard();
-			} catch (error) {
-				message.error(error?.message || t('kanban.createFailed'));
-				throw error;
-			}
-		},
-		[fetchBoard, projectId, request, t, taskTypes, userId, workflow],
 	);
 
 	const refreshProjectMembers = useCallback(async () => {
@@ -537,7 +501,7 @@ export function useKanbanBoard(projectId, queryTaskId) {
 		openTask,
 		closeTask,
 		transitionTask,
-		createTask,
+		refreshBoard: fetchBoard,
 		persistAssignees,
 		saveTask,
 		saveTitle,
