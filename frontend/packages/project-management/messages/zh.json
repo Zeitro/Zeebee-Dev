@@ -282,6 +282,10 @@
 		"createFailed": "创建任务失败",
 		"saveSuccess": "已保存",
 		"saveFailed": "保存失败",
+		"unsavedChangesHint": "有未保存的修改",
+		"unsavedChangesCloseHint": "关闭后未保存的修改将丢失",
+		"taskCreator": "创建人：{name}",
+		"taskCreatedAt": "创建于 {time}",
 		"assigneeSaveFailed": "执行者保存失败",
 		"deleteSuccess": "任务已删除",
 		"deleteConfirmTitle": "确认删除",
@@ -361,6 +365,7 @@
 		"dependencyExists": "已有依赖关系",
 		"dependencyAdded": "已添加依赖",
 		"dependencyRemoved": "已删除依赖",
+		"dependencyDeleteConfirm": "确定删除这条依赖关系吗？",
 		"dependencyAddFailed": "添加失败",
 		"dependencyUpdateFailed": "修改失败",
 		"dependencyRemoveFailed": "删除失败",
@@ -376,6 +381,8 @@
 		"uploadedBy": "by {name}",
 		"attachmentNote": "备注",
 		"attachmentDeleteConfirm": "确定删除这个附件吗？",
+		"attachmentDeleteSuccess": "附件已删除",
+		"attachmentDeleteFailed": "附件删除失败",
 		"unknownUser": "未知用户"
 	}
 }

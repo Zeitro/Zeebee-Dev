@@ -7,13 +7,15 @@ import {
 	ArrowLeftOutlined,
 	DeleteOutlined,
 	FileTextOutlined,
-	LinkOutlined,
-	MoreOutlined,
+	// LinkOutlined,
+	// MoreOutlined,
 } from '@ant-design/icons';
 import { Avatar, Button, Dropdown, Input, Tooltip } from 'antd';
 import { useTranslations } from 'next-intl';
 import { displayValue } from '@repo/shared-methods/utils';
-import { getMemberInitial, getMemberLabel } from '../helpers';
+// import { TASK_DEPENDENCY_DIRECTION } from '@repo/project-management/enum/task';
+// import { DEPENDENCY_DIRECTION_OPTIONS } from '../constants';
+// import { getMemberInitial, getMemberLabel } from '../helpers';
 
 /**
  * @param {{
@@ -26,7 +28,7 @@ import { getMemberInitial, getMemberLabel } from '../helpers';
  *   onTitleBlur: (title: string) => void,
  *   onDelete: () => void,
  *   onOpenLog?: () => void,
- *   onAddDependency?: (mode: 'predecessor' | 'successor') => void,
+ *   onAddDependency?: (mode: typeof TASK_DEPENDENCY_DIRECTION.PRE_TASK | typeof TASK_DEPENDENCY_DIRECTION.POST_TASK) => void,
  * }} props
  */
 export function TaskDrawerHeader({
@@ -83,7 +85,7 @@ export function TaskDrawerHeader({
 				</div>
 
 				<div className="flex items-center gap-0.5 shrink-0">
-					{participantItems.length > 0 ? (
+					{/* {participantItems.length > 0 ? (
 						<Avatar.Group
 							max={{
 								count: 3,
@@ -104,7 +106,7 @@ export function TaskDrawerHeader({
 								);
 							})}
 						</Avatar.Group>
-					) : null}
+					) : null} */}
 					<Button
 						type="text"
 						size="small"
@@ -114,7 +116,16 @@ export function TaskDrawerHeader({
 					>
 						{t('kanban.taskLog')}
 					</Button>
-					<Dropdown
+					<Button
+						type="text"
+						size="small"
+						icon={<DeleteOutlined />}
+						onClick={onDelete}
+						danger
+					>
+						{t('common.delete')}
+					</Button>
+					{/* <Dropdown
 						trigger={['click']}
 						menu={{
 							items: [
@@ -122,18 +133,11 @@ export function TaskDrawerHeader({
 									key: 'add-dependency',
 									label: t('kanban.addDependencyTask'),
 									icon: <LinkOutlined />,
-									children: [
-										{
-											key: 'add-predecessor',
-											label: t('kanban.predecessor'),
-											icon: <LinkOutlined />,
-										},
-										{
-											key: 'add-successor',
-											label: t('kanban.successor'),
-											icon: <LinkOutlined />,
-										},
-									],
+									children: DEPENDENCY_DIRECTION_OPTIONS.map((item) => ({
+										key: item.value,
+										label: t(item.labelKey),
+										icon: <LinkOutlined />,
+									})),
 								},
 								{ type: 'divider' },
 								{
@@ -145,14 +149,17 @@ export function TaskDrawerHeader({
 							],
 							onClick: ({ key }) => {
 								if (key === 'delete') onDelete();
-								else if (key === 'add-predecessor')
-									onAddDependency?.('predecessor');
-								else if (key === 'add-successor') onAddDependency?.('successor');
+								else if (
+									key === TASK_DEPENDENCY_DIRECTION.PRE_TASK ||
+									key === TASK_DEPENDENCY_DIRECTION.POST_TASK
+								) {
+									onAddDependency?.(key);
+								}
 							},
 						}}
 					>
 						<Button type="text" size="small" icon={<MoreOutlined />} />
-					</Dropdown>
+					</Dropdown> */}
 				</div>
 			</div>
 

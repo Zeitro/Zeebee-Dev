@@ -1,114 +1,100 @@
 /**
- * 任务附件：无后端 API 时用 localStorage 持久化（与 demo 一致）。
+ * 任务附件：UploadFileButton 直传 AWS，成功后走 saveTask 统一 PUT 更新。
  */
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
-import { DeleteOutlined, DownloadOutlined, InboxOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Image, Input, Popconfirm, message } from 'antd';
+import { useCallback, useState } from 'react';
+import { DeleteOutlined, DownloadOutlined, UploadOutlined } from '@ant-design/icons';
+import { Button, Image, Spin } from 'antd';
 import { useTranslations } from 'next-intl';
-import { NewModal, UploadFileButton } from '@repo/shared-methods';
-import { dayjs } from '@repo/shared-methods/utils';
-import { useUserStore } from '@repo/shared-methods/store';
+import { DeleteBtn, NewModal, UploadFileButton } from '@repo/shared-methods';
+import { displayValue, formatTime } from '@repo/shared-methods/utils';
 import { IMAGE_FILE_EXTENSIONS } from '../constants';
-import { dataUrlToBlob, formatFileSize, getFileExtension, getMemberLabel } from '../helpers';
+import { getFileExtension } from '../helpers';
 import { TaskDetailPanel, TaskDetailPanelAction } from './TaskDetailPanel';
 
 /**
  * @param {{
- *   taskId: number,
- *   projectId?: number|string,
- *   members?: Array,
+ *   task: object,
+ *   saveTask: (sourceTask: object, values: object) => Promise<object|null>,
+ *   updateTaskDetail: (sourceTask: object, overrides: object) => Promise<object|null>,
+ *   messageApi?: import('antd/es/message/interface').MessageInstance,
+ *   onTaskUpdated?: (task: object|null) => void,
  * }} props
  */
-export function TaskAttachments({ taskId, projectId, members = [] }) {
+export function TaskAttachments({ task, saveTask, updateTaskDetail, messageApi, onTaskUpdated }) {
 	const t = useTranslations();
-	const userInfo = useUserStore((state) => state.userInfo);
-	const storageKey = `pm-attachments-${projectId || 'default'}-${taskId}`;
-	const [items, setItems] = useState(() => {
-		if (typeof window === 'undefined') return [];
-		try {
-			return JSON.parse(localStorage.getItem(storageKey) || '[]');
-		} catch {
-			return [];
-		}
-	});
+	const items = Array.isArray(task?.attachments) ? task.attachments : [];
 	const [previewItem, setPreviewItem] = useState(null);
-	const uploadRef = useRef(null);
+	const [saving, setSaving] = useState(false);
+	const [deletingId, setDeletingId] = useState(null);
 
-	const persist = (next) => {
-		setItems(next);
+	const handleUploadSuccess = useCallback(
+		async (fileUrl, file) => {
+			if (!fileUrl || !file?.name) return;
+			const currentAttachments = Array.isArray(task?.attachments) ? task.attachments : [];
+			setSaving(true);
+			try {
+				const updated = await saveTask(task, {
+					attachments: [
+						...currentAttachments,
+						{
+							file_name: file.name,
+							file_url: fileUrl,
+							storage_type: 'Aws S3',
+							upload_type: 'Manual',
+						},
+					],
+				});
+				onTaskUpdated?.(updated);
+			} finally {
+				setSaving(false);
+			}
+		},
+		[onTaskUpdated, saveTask, task],
+	);
+
+	const handleDelete = async (fileId) => {
+		setDeletingId(fileId);
 		try {
-			localStorage.setItem(storageKey, JSON.stringify(next));
+			const updated = await updateTaskDetail(task, {
+				attachments: items.filter((item) => item.id !== fileId),
+			});
+			if (!updated) {
+				messageApi?.error(t('kanban.attachmentDeleteFailed'));
+				return;
+			}
+			messageApi?.success(t('kanban.attachmentDeleteSuccess'));
+			onTaskUpdated?.(updated);
 		} catch {
-			message.error(t('kanban.attachmentSaveFailed'));
+			messageApi?.error(t('kanban.attachmentDeleteFailed'));
+		} finally {
+			setDeletingId(null);
 		}
 	};
 
 	const handleOpen = (item) => {
-		const ext = getFileExtension(item.name);
+		const ext = getFileExtension(item.file_name);
 		if (IMAGE_FILE_EXTENSIONS.includes(ext) || ext === 'pdf') {
 			setPreviewItem(item);
 		} else {
-			const url = URL.createObjectURL(dataUrlToBlob(item.dataUrl));
-			window.open(url, '_blank');
-		}
-	};
-
-	const handleUploadListChange = useCallback(
-		(fileList) => {
-			const file = fileList[fileList.length - 1]?.originFileObj;
-			if (!file) return;
-
-			const reader = new FileReader();
-			reader.onload = () => {
-				setItems((prev) => {
-					const next = [
-						{
-							id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-							name: file.name,
-							dataUrl: String(reader.result),
-							size: file.size,
-							uploaderId: userInfo?.id || 0,
-							uploaderName:
-								userInfo?.name || userInfo?.email || t('kanban.unknownUser'),
-							uploadedAt: new Date().toISOString(),
-							note: '',
-						},
-						...prev,
-					];
-					try {
-						localStorage.setItem(storageKey, JSON.stringify(next));
-					} catch {
-						message.error(t('kanban.attachmentSaveFailed'));
-					}
-					return next;
-				});
-				uploadRef.current?.clearFileList();
-			};
-			reader.readAsDataURL(file);
-		},
-		[storageKey, t, userInfo?.email, userInfo?.id, userInfo?.name],
-	);
-
-	const handleNoteChange = (id, note) => {
-		const next = items.map((item) => (item.id === id ? { ...item, note } : item));
-		setItems(next);
-		try {
-			localStorage.setItem(storageKey, JSON.stringify(next));
-		} catch {
-			/* ignore */
+			window.open(item.file_url, '_blank', 'noopener,noreferrer');
 		}
 	};
 
 	const uploadButton = (
 		<UploadFileButton
-			ref={uploadRef}
 			showUploadList={false}
-			immediateUpload={false}
-			onGetUploadList={handleUploadListChange}
+			immediateUpload={true}
+			disabled={saving}
+			onSuccess={handleUploadSuccess}
 		>
-			<TaskDetailPanelAction title={t('kanban.uploadAttachment')} icon={<UploadOutlined />} />
+			<Spin spinning={saving} size="small">
+				<TaskDetailPanelAction
+					title={t('kanban.uploadAttachment')}
+					icon={<UploadOutlined />}
+				/>
+			</Spin>
 		</UploadFileButton>
 	);
 
@@ -120,80 +106,66 @@ export function TaskAttachments({ taskId, projectId, members = [] }) {
 				isEmpty={items.length === 0}
 				emptyText={t('kanban.attachmentsEmpty')}
 			>
-				{items.map((item) => {
-					const uploader = members.find((member) => member.id === item.uploaderId);
-					return (
-						<div
-							key={item.id}
-							className="flex items-center gap-2.5 px-4 py-2.5 border-b border-base-border/60 last:border-b-0 text-xs hover:bg-base-active transition-colors"
+				{items.map((item) => (
+					<div
+						key={item.id ?? item.file_url}
+						className="flex items-center gap-2.5 px-4 py-2.5 border-b border-base-border/60 last:border-b-0 text-xs hover:bg-base-active transition-colors"
+					>
+						<Button
+							type="link"
+							size="small"
+							className="font-medium truncate max-w-[220px] !px-0"
+							title={t('kanban.attachmentPreview', { name: item.file_name })}
+							onClick={() => handleOpen(item)}
 						>
-							<Button
-								type="link"
-								size="small"
-								className="font-medium truncate max-w-[220px] !px-0"
-								title={t('kanban.attachmentPreview', { name: item.name })}
-								onClick={() => handleOpen(item)}
-							>
-								{item.name}
-							</Button>
-							<Button
-								type="link"
-								size="small"
-								icon={<DownloadOutlined className="text-blue-medium" />}
-								href={item.dataUrl}
-								download={item.name}
-								title={t('kanban.download')}
-							/>
-							<span className="text-base-label shrink-0">
-								{dayjs(item.uploadedAt).format('YYYY-MM-DD HH:mm')}{' '}
-								{t('kanban.uploadedBy', {
-									name:
-										getMemberLabel(uploader) ||
-										item.uploaderName ||
-										t('kanban.unknownUser'),
-								})}
-							</span>
-							<span className="text-base-disabled shrink-0">
-								{formatFileSize(item.size)}
-							</span>
-							<Input
-								size="small"
-								variant="borderless"
-								placeholder={t('kanban.attachmentNote')}
-								value={item.note}
-								onChange={(event) => handleNoteChange(item.id, event.target.value)}
-								className="flex-1 min-w-[60px] !px-1"
-							/>
-							<Popconfirm
-								title={t('kanban.attachmentDeleteConfirm')}
-								okText={t('common.confirm')}
-								cancelText={t('common.cancel')}
-								onConfirm={() => persist(items.filter((row) => row.id !== item.id))}
-							>
-								<Button type="text" size="small" danger icon={<DeleteOutlined />} />
-							</Popconfirm>
-						</div>
-					);
-				})}
+							{item.file_name}
+						</Button>
+						<Button
+							type="link"
+							size="small"
+							icon={<DownloadOutlined className="text-blue-medium" />}
+							href={item.file_url}
+							download={item.file_name}
+							title={t('kanban.download')}
+						/>
+						<span className="text-base-label flex-1">
+							{displayValue(item.created_at, formatTime)}
+						</span>
+						<DeleteBtn
+							type="text"
+							size="small"
+							danger
+							icon={<DeleteOutlined />}
+							title={t('kanban.attachmentDeleteConfirm')}
+							okText={t('common.confirm')}
+							cancelText={t('common.cancel')}
+							onOk={() => handleDelete(item.id)}
+							confirmLoading={deletingId === item.id}
+							className="!px-0 !gap-0"
+						>
+							<></>
+						</DeleteBtn>
+					</div>
+				))}
 			</TaskDetailPanel>
 
 			{previewItem ? (
 				<NewModal
-					title={previewItem.name}
+					title={previewItem.file_name}
 					footer={null}
 					width={800}
 					onCancel={() => setPreviewItem(null)}
 				>
-					{getFileExtension(previewItem.name) === 'pdf' ? (
+					{getFileExtension(previewItem.file_name) === 'pdf' ? (
 						<iframe
-							src={previewItem.dataUrl}
-							title={previewItem.name}
+							src={previewItem.file_url}
+							title={previewItem.file_name}
 							className="w-full h-[70vh] border-0"
 						/>
 					) : (
 						<Image
-							src={previewItem.dataUrl}
-							alt={previewItem.name}
+							src={previewItem.file_url}
+							alt={previewItem.file_name}
 							className="max-w-full block mx-auto"
 						/>
 					)}

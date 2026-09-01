@@ -4,12 +4,14 @@
 
 import {
 	CalendarOutlined,
+	CheckCircleOutlined,
 	FieldTimeOutlined,
 	FlagOutlined,
 	TagOutlined,
 	UserOutlined,
 } from '@ant-design/icons';
-import { DatePicker, Form, InputNumber, Select } from 'antd';
+import { CommonFormDate } from '@repo/shared-methods';
+import { Form, InputNumber, Select } from 'antd';
 import { getWorkflowStateColor } from '../../../../../enum/workflow';
 import { AssigneeChips } from './AssigneeChips';
 
@@ -56,13 +58,15 @@ export function TaskDetailProperties({
 	workflow,
 	taskTypes = [],
 	priorityOptions = [],
-	memberOptions = [],
-	members = [],
+	projectId,
 }) {
 	return (
-		<div className="rounded-xl border border-base-border bg-white p-1 mb-6">
+		<div className="rounded-xl border border-base-border bg-white p-2 mb-6">
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-0.5">
-				<PropertyRow label={t('kanban.activityFieldStatus')}>
+				<PropertyRow
+					label={t('kanban.activityFieldStatus')}
+					icon={<CheckCircleOutlined className="text-xs" />}
+				>
 					<Form.Item name="workflow_state_id" noStyle>
 						<Select variant="borderless" size="small" className={FIELD_SURFACE_CLASS}>
 							{(workflow?.states || []).map((state) => (
@@ -117,7 +121,7 @@ export function TaskDetailProperties({
 					icon={<CalendarOutlined className="text-xs" />}
 				>
 					<Form.Item name="start_date" noStyle>
-						<DatePicker
+						<CommonFormDate
 							variant="borderless"
 							size="small"
 							placeholder={t('kanban.startDate')}
@@ -132,7 +136,7 @@ export function TaskDetailProperties({
 					icon={<CalendarOutlined className="text-xs" />}
 				>
 					<Form.Item name="due_date" noStyle>
-						<DatePicker
+						<CommonFormDate
 							variant="borderless"
 							size="small"
 							placeholder={t('kanban.dueDate')}
@@ -165,7 +169,7 @@ export function TaskDetailProperties({
 						icon={<UserOutlined className="text-xs" />}
 					>
 						<Form.Item name="assignee_ids" noStyle>
-							<AssigneeChips options={memberOptions} fallbacks={members} />
+							<AssigneeChips projectId={projectId} />
 						</Form.Item>
 					</PropertyRow>
 				</div>

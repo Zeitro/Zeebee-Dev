@@ -6,8 +6,7 @@ import { forwardRef } from 'react';
 import { Button, Tooltip } from 'antd';
 
 /** 区块右上角操作按钮统一尺寸 */
-export const PANEL_ACTION_CLASS =
-	'!w-8 !h-8 !min-w-8 !p-0 inline-flex items-center justify-center';
+export const PANEL_ACTION_CLASS = '!w-6 !h-6 !min-w-6 !p-0 inline-flex items-center justify-center';
 
 /**
  * @param {{
@@ -68,10 +67,12 @@ export function TaskDetailPanel({
 						</span>
 					) : null}
 				</h3>
-				<div className="w-8 h-8 shrink-0 flex items-center justify-center">{action}</div>
+				<div className="w-6 h-6 shrink-0 flex items-center justify-center">{action}</div>
 			</div>
 			{isEmpty && emptyText ? (
-				<div className="px-4 py-5 text-center text-[13px] text-base-disabled">{emptyText}</div>
+				<div className="px-4 py-5 text-center text-[13px] text-base-disabled">
+					{emptyText}
+				</div>
 			) : (
 				children
 			)}

@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import { isRichTextEmpty, normalizeRichTextValue, toRichTextPreviewHtml } from '../helpers';
 
-const EDITOR_HEIGHT_CLASS = 'h-[320px]';
+const EDITOR_HEIGHT_CLASS = 'h-[400px]';
 
 /** 预加载 WangEditor chunk，减少首次进入编辑时的闪烁 */
 function preloadWangEditor() {

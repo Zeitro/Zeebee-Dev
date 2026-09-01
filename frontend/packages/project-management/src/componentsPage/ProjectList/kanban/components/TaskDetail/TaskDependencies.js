@@ -1,124 +1,227 @@
 /**
  * 任务依赖：前置/后置依赖的增删改与搜索选择。
+ * 变更走 PUT 全量更新：修改详情中的 dependencies 后一并提交。
  */
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { DeleteOutlined, LinkOutlined, PlusOutlined } from '@ant-design/icons';
-import { Avatar, Button, Dropdown, Input, Select, Tag, Tooltip, message } from 'antd';
+import { Button, Dropdown, Input, Select, Spin, Tag } from 'antd';
 import { useTranslations } from 'next-intl';
-import { useDeferredSyncEffect } from '@repo/shared-methods/hooks';
+import { DeleteBtn } from '@repo/shared-methods';
 import { displayValue } from '@repo/shared-methods/utils';
-import { DEPENDENCY_TYPE_OPTIONS } from '../constants';
-import { getMemberInitial, getMemberLabel } from '../helpers';
+import {
+	TASK_DEPENDENCY_DIRECTION,
+	TASK_DEPENDENCY_RULE,
+} from '@repo/project-management/enum/task';
+import { DEPENDENCY_DIRECTION_OPTIONS, DEPENDENCY_RULE_OPTIONS } from '../constants';
+import { splitTaskDependencies } from '../helpers';
 import { TaskDetailPanel, TaskDetailPanelAction } from './TaskDetailPanel';
 
 /**
  * @param {{
  *   task: object,
+ *   projectId?: number|string,
  *   tasks?: Array,
- *   workflow?: object|null,
- *   members?: Array,
  *   onTaskClick: (task: object) => void,
- *   fetchDependencies: (taskId: number) => Promise<Array>,
- *   fetchDependents: (taskId: number) => Promise<Array>,
- *   onAddDependency: (taskId: number, dependsOnTaskId: number) => Promise<void>,
- *   onAddDependent: (taskId: number, dependentTaskId: number) => Promise<void>,
- *   onUpdateDependency: (taskId: number, dependencyId: number, type: string) => Promise<void>,
- *   onUpdateDependent: (taskId: number, dependencyId: number, type: string) => Promise<void>,
- *   onDeleteDependency: (taskId: number, dependencyId: number) => Promise<void>,
- *   onDeleteDependent: (taskId: number, dependencyId: number) => Promise<void>,
- *   initialAddingMode?: 'predecessor' | 'successor' | null,
+ *   fetchCandidates: (params: { project_id: number|string, task_id: number|string, keyword?: string }) => Promise<Array>,
+ *   onSaveDependencies: (dependencies: Array) => Promise<object|null>,
+ *   initialAddingMode?: typeof TASK_DEPENDENCY_DIRECTION.PRE_TASK | typeof TASK_DEPENDENCY_DIRECTION.POST_TASK | null,
  * }} props
  */
 export function TaskDependencies({
 	task,
+	projectId,
 	tasks = [],
-	workflow,
-	members = [],
 	onTaskClick,
-	fetchDependencies,
-	fetchDependents,
-	onAddDependency,
-	onAddDependent,
-	onUpdateDependency,
-	onUpdateDependent,
-	onDeleteDependency,
-	onDeleteDependent,
+	fetchCandidates,
+	onSaveDependencies,
 	initialAddingMode = null,
+	messageApi,
 }) {
 	const t = useTranslations();
-	const [dependencies, setDependencies] = useState([]);
-	const [dependents, setDependents] = useState([]);
 	const [addingMode, setAddingMode] = useState(initialAddingMode);
 	const [search, setSearch] = useState('');
+	const [candidateTasks, setCandidateTasks] = useState([]);
+	const [candidatesLoading, setCandidatesLoading] = useState(false);
+	const [saving, setSaving] = useState(false);
+	const [removingDepKey, setRemovingDepKey] = useState(null);
 
-	const dependencyTypeOptions = useMemo(
+	const { predecessors, successors } = useMemo(
+		() => splitTaskDependencies(task?.dependencies),
+		[task?.dependencies],
+	);
+
+	const dependencyDirectionOptions = useMemo(
 		() =>
-			DEPENDENCY_TYPE_OPTIONS.map((item) => ({
+			DEPENDENCY_DIRECTION_OPTIONS.map((item) => ({
+				key: item.value,
+				label: t(item.labelKey),
+				icon: <LinkOutlined />,
+			})),
+		[t],
+	);
+
+	const dependencyDirectionLabelKey = useMemo(() => {
+		const option = DEPENDENCY_DIRECTION_OPTIONS.find((item) => item.value === addingMode);
+		return option?.labelKey ?? 'kanban.predecessor';
+	}, [addingMode]);
+
+	const dependencyRuleOptions = useMemo(
+		() =>
+			DEPENDENCY_RULE_OPTIONS.map((item) => ({
 				value: item.value,
 				label: t(item.labelKey),
 			})),
 		[t],
 	);
 
-	const reload = useCallback(async () => {
-		if (!task?.id) return;
-		const [depRows, dependentRows] = await Promise.all([
-			fetchDependencies(task.id),
-			fetchDependents(task.id),
-		]);
-		setDependencies(depRows);
-		setDependents(dependentRows);
-	}, [fetchDependencies, fetchDependents, task]);
-
-	// 父级 key 随 task / initialAddingMode 变化 remount；此处仅异步拉依赖列表
-	useDeferredSyncEffect({
-		deferred: () => {
-			reload();
-		},
-		deps: [reload, task?.id],
-		isUseMicrotask: true,
-	});
-
-	const candidateTasks = useMemo(() => {
-		const keyword = search.trim().toLowerCase();
-		const isPredecessor = addingMode === 'predecessor';
-		return tasks.filter((item) => {
-			if (item.id === task.id) return false;
-			if (isPredecessor) {
-				if (dependencies.some((dep) => dep.depends_on_task_id === item.id)) return false;
-			} else if (dependents.some((dep) => dep.task_id === item.id)) {
-				return false;
-			}
-			if (!keyword) return true;
-			return item.title.toLowerCase().includes(keyword) || String(item.id) === keyword;
+	const relatedTaskIds = useMemo(() => {
+		const ids = new Set();
+		predecessors.forEach((dep) => {
+			if (dep.dependency_task_id != null) ids.add(dep.dependency_task_id);
 		});
-	}, [addingMode, dependencies, dependents, search, task.id, tasks]);
+		successors.forEach((dep) => {
+			if (dep.dependency_task_id != null) ids.add(dep.dependency_task_id);
+		});
+		return ids;
+	}, [predecessors, successors]);
 
-	const handleAdd = async (targetTask) => {
-		const alreadyRelated =
-			dependencies.some((dep) => dep.depends_on_task_id === targetTask.id) ||
-			dependents.some((dep) => dep.task_id === targetTask.id);
-		if (alreadyRelated) {
-			message.warning(t('kanban.dependencyExists'));
-			return;
-		}
-		try {
-			if (addingMode === 'predecessor') {
-				await onAddDependency(task.id, targetTask.id);
-			} else {
-				await onAddDependent(task.id, targetTask.id);
+	useEffect(() => {
+		if (!addingMode || !projectId || !task?.id) return undefined;
+
+		let cancelled = false;
+		const timer = setTimeout(async () => {
+			setCandidatesLoading(true);
+			try {
+				const list = await fetchCandidates({
+					project_id: projectId,
+					task_id: task.id,
+					keyword: search.trim(),
+				});
+				if (!cancelled) setCandidateTasks(list);
+			} catch {
+				if (!cancelled) setCandidateTasks([]);
+			} finally {
+				if (!cancelled) setCandidatesLoading(false);
 			}
-			setSearch('');
-			setAddingMode(null);
-			await reload();
+		}, 300);
+
+		return () => {
+			cancelled = true;
+			clearTimeout(timer);
+		};
+	}, [addingMode, fetchCandidates, projectId, search, task?.id]);
+
+	const visibleCandidates = useMemo(() => {
+		return candidateTasks.filter((item) => !relatedTaskIds.has(item.id));
+	}, [candidateTasks, relatedTaskIds]);
+
+	const findRelatedTask = (dependencyTaskId) =>
+		tasks.find((item) => item.id === dependencyTaskId);
+
+	const getRelatedTaskTitle = (dep) => {
+		const relatedTask = findRelatedTask(dep.dependency_task_id);
+		return relatedTask?.title ?? dep.dependency_task?.title;
+	};
+
+	const persistDependencies = async (nextDependencies, successKey) => {
+		setSaving(true);
+		try {
+			await onSaveDependencies(nextDependencies);
+			messageApi.success(t(successKey));
 		} catch (error) {
-			message.error(error?.message || t('kanban.dependencyAddFailed'));
+			messageApi.error(error?.message || t('kanban.dependencyAddFailed'));
+			throw error;
+		} finally {
+			setSaving(false);
 		}
 	};
 
-	const hasDependencies = dependencies.length > 0 || dependents.length > 0;
+	const handleAdd = async (targetTask) => {
+		if (relatedTaskIds.has(targetTask.id)) {
+			messageApi.warning(t('kanban.dependencyExists'));
+			return;
+		}
+		if (
+			addingMode !== TASK_DEPENDENCY_DIRECTION.PRE_TASK &&
+			addingMode !== TASK_DEPENDENCY_DIRECTION.POST_TASK
+		) {
+			return;
+		}
+		const nextDependencies = [
+			...(task.dependencies || []),
+			{
+				id: 0,
+				task_id: task.id,
+				dependency_task_id: targetTask.id,
+				dependency_type: addingMode,
+				dependency_rule: TASK_DEPENDENCY_RULE.FINISH_TO_START,
+			},
+		];
+		try {
+			await persistDependencies(nextDependencies, 'kanban.dependencyAdded');
+			setSearch('');
+			setAddingMode(null);
+			setCandidateTasks([]);
+		} catch {
+			/* message 已在 persistDependencies 展示 */
+		}
+	};
+
+	const isSameDependency = (a, b) =>
+		a === b ||
+		(a?.id != null && b?.id != null && a.id !== 0 && a.id === b.id) ||
+		(a?.dependency_task_id === b?.dependency_task_id &&
+			a?.dependency_type === b?.dependency_type);
+
+	const getDepKey = (dep) => dep.id ?? `${dep.dependency_type}-${dep.dependency_task_id}`;
+
+	const handleUpdateRule = async (dep, rule) => {
+		const nextDependencies = (task.dependencies || []).map((item) =>
+			isSameDependency(item, dep) ? { ...item, dependency_rule: rule } : item,
+		);
+		try {
+			await persistDependencies(nextDependencies, 'kanban.saveSuccess');
+		} catch {
+			messageApi.error(t('kanban.dependencyUpdateFailed'));
+		}
+	};
+
+	const handleRemove = async (dep) => {
+		const depKey = getDepKey(dep);
+		setRemovingDepKey(depKey);
+		const nextDependencies = (task.dependencies || []).filter(
+			(item) => !isSameDependency(item, dep),
+		);
+		try {
+			await persistDependencies(nextDependencies, 'kanban.dependencyRemoved');
+		} catch {
+			messageApi.error(t('kanban.dependencyRemoveFailed'));
+		} finally {
+			setRemovingDepKey(null);
+		}
+	};
+
+	const renderDeleteButton = (dep) => (
+		<DeleteBtn
+			type="text"
+			size="small"
+			danger
+			icon={<DeleteOutlined />}
+			title={t('kanban.dependencyDeleteConfirm')}
+			okText={t('common.confirm')}
+			cancelText={t('common.cancel')}
+			onOk={() => handleRemove(dep)}
+			disabled={saving}
+			confirmLoading={removingDepKey === getDepKey(dep)}
+			className="!px-0 !gap-0"
+		>
+			<></>
+		</DeleteBtn>
+	);
+
+	const hasDependencies = predecessors.length > 0 || successors.length > 0;
 	const showEmpty = !hasDependencies && !addingMode;
 
 	return (
@@ -129,24 +232,15 @@ export function TaskDependencies({
 			action={
 				<Dropdown
 					menu={{
-						items: [
-							{
-								key: 'predecessor',
-								label: t('kanban.predecessor'),
-								icon: <LinkOutlined />,
-							},
-							{
-								key: 'successor',
-								label: t('kanban.successor'),
-								icon: <LinkOutlined />,
-							},
-						],
+						items: dependencyDirectionOptions,
 						onClick: ({ key }) => {
 							setAddingMode(key);
 							setSearch('');
+							setCandidateTasks([]);
 						},
 					}}
 					trigger={['click']}
+					disabled={saving}
 				>
 					<TaskDetailPanelAction
 						title={t('kanban.addDependencyTask')}
@@ -158,9 +252,7 @@ export function TaskDependencies({
 			{addingMode ? (
 				<div className="px-4 py-3 border-b border-base-border/60">
 					<div className="text-xs text-base-label mb-2">
-						{addingMode === 'predecessor'
-							? t('kanban.predecessor')
-							: t('kanban.successor')}
+						{t(dependencyDirectionLabelKey)}
 					</div>
 					<Input
 						size="small"
@@ -169,6 +261,7 @@ export function TaskDependencies({
 						value={search}
 						onChange={(event) => setSearch(event.target.value)}
 						allowClear
+						disabled={saving}
 						className="mb-2"
 					/>
 					<div className="border border-base-border rounded-lg bg-base-text2 max-h-60 overflow-y-auto">
@@ -177,58 +270,43 @@ export function TaskDependencies({
 								? t('kanban.searchResults')
 								: t('kanban.selectableTasks')}
 						</div>
-						{candidateTasks.length === 0 ? (
+						{candidatesLoading ? (
+							<div className="flex justify-center py-6">
+								<Spin size="small" />
+							</div>
+						) : visibleCandidates.length === 0 ? (
 							<div className="px-3 py-3 text-[13px] text-base-disabled">
 								{t('kanban.noMatchingTasks')}
 							</div>
 						) : (
-							candidateTasks.map((item) => {
-								const stateObj = workflow?.states?.find(
-									(state) => state.id === item.workflow_state_id,
-								);
-								const assignee = members.find(
-									(member) => member.id === item.assignee_id,
-								);
-								return (
-									<div
-										key={item.id}
-										className="flex items-center gap-2.5 px-3 py-2 text-[13px] border-b border-base-border last:border-b-0 cursor-pointer hover:bg-base-active transition-colors"
-										onClick={() => handleAdd(item)}
-									>
-										<span className="text-base-label text-xs">#{item.id}</span>
-										<span className="flex-1 truncate">
-											{displayValue(item.title)}
-										</span>
-										{stateObj ? (
-											<Tag className="m-0 text-[11px] leading-[18px] px-1.5">
-												{stateObj.name}
-											</Tag>
-										) : null}
-										{assignee ? (
-											<Tooltip title={getMemberLabel(assignee)}>
-												<Avatar
-													size={20}
-													style={{
-														backgroundColor: 'var(--blue-medium)',
-													}}
-													className="text-[10px] shrink-0"
-												>
-													{getMemberInitial(assignee)}
-												</Avatar>
-											</Tooltip>
-										) : null}
-									</div>
-								);
-							})
+							visibleCandidates.map((item) => (
+								<div
+									key={item.id}
+									className="flex items-center gap-2.5 px-3 py-2 text-[13px] border-b border-base-border last:border-b-0 cursor-pointer hover:bg-base-active transition-colors"
+									onClick={() => handleAdd(item)}
+								>
+									<span className="text-base-label text-xs">#{item.id}</span>
+									<span className="flex-1 truncate">
+										{displayValue(item.title)}
+									</span>
+									{item.phase ? (
+										<Tag className="m-0 text-[11px] leading-[18px] px-1.5">
+											{displayValue(item.phase)}
+										</Tag>
+									) : null}
+								</div>
+							))
 						)}
 					</div>
 					<Button
 						size="small"
 						type="text"
 						className="text-base-label mt-1 !px-0"
+						disabled={saving}
 						onClick={() => {
 							setAddingMode(null);
 							setSearch('');
+							setCandidateTasks([]);
 						}}
 					>
 						{t('common.cancel')}
@@ -236,14 +314,14 @@ export function TaskDependencies({
 				</div>
 			) : null}
 
-			{dependencies.length > 0 ? (
+			{predecessors.length > 0 ? (
 				<div className="px-4 py-3 border-b border-base-border/60 last:border-b-0">
 					<div className="text-xs font-medium text-base-label mb-2">
 						{t('kanban.predecessor')}
 					</div>
-					{dependencies.map((dep) => (
+					{predecessors.map((dep) => (
 						<div
-							key={dep.id}
+							key={dep.id ?? `${dep.dependency_type}-${dep.dependency_task_id}`}
 							className="flex items-center gap-2 px-3 py-2 bg-base-text2 rounded-lg mb-2 last:mb-0"
 						>
 							<LinkOutlined className="text-base-disabled text-xs" />
@@ -251,55 +329,37 @@ export function TaskDependencies({
 								type="link"
 								className="flex-1 text-[13px] truncate h-auto !p-0 !justify-start"
 								onClick={() => {
-									const depTask = tasks.find(
-										(item) => item.id === dep.depends_on_task_id,
-									);
+									const depTask = findRelatedTask(dep.dependency_task_id);
 									if (depTask) onTaskClick(depTask);
 								}}
 							>
-								#{dep.depends_on_task_id} {displayValue(dep.depends_on_task?.title)}
+								{displayValue(getRelatedTaskTitle(dep))}
+								<span className="text-[11px]/3 pt-1">
+									#{dep.dependency_task_id}
+								</span>
 							</Button>
 							<Select
 								size="small"
-								value={dep.dependency_type}
+								value={dep.dependency_rule}
 								className="w-[110px]"
-								options={dependencyTypeOptions}
-								onChange={async (value) => {
-									try {
-										await onUpdateDependency(task.id, dep.id, value);
-										await reload();
-									} catch {
-										message.error(t('kanban.dependencyUpdateFailed'));
-									}
-								}}
+								options={dependencyRuleOptions}
+								disabled={saving}
+								onChange={(value) => handleUpdateRule(dep, value)}
 							/>
-							<Button
-								size="small"
-								type="text"
-								danger
-								icon={<DeleteOutlined />}
-								onClick={async () => {
-									try {
-										await onDeleteDependency(task.id, dep.id);
-										await reload();
-									} catch {
-										message.error(t('kanban.dependencyRemoveFailed'));
-									}
-								}}
-							/>
+							{renderDeleteButton(dep)}
 						</div>
 					))}
 				</div>
 			) : null}
 
-			{dependents.length > 0 ? (
+			{successors.length > 0 ? (
 				<div className="px-4 py-3">
 					<div className="text-xs font-medium text-base-label mb-2">
 						{t('kanban.successor')}
 					</div>
-					{dependents.map((dep) => (
+					{successors.map((dep) => (
 						<div
-							key={dep.id}
+							key={dep.id ?? `${dep.dependency_type}-${dep.dependency_task_id}`}
 							className="flex items-center gap-2 px-3 py-2 bg-base-text2 rounded-lg mb-2 last:mb-0"
 						>
 							<LinkOutlined className="text-base-disabled text-xs" />
@@ -307,40 +367,24 @@ export function TaskDependencies({
 								type="link"
 								className="flex-1 text-[13px] truncate h-auto !p-0 !justify-start"
 								onClick={() => {
-									const depTask = tasks.find((item) => item.id === dep.task_id);
+									const depTask = findRelatedTask(dep.dependency_task_id);
 									if (depTask) onTaskClick(depTask);
 								}}
 							>
-								#{dep.task_id} {displayValue(dep.task?.title)}
+								{displayValue(getRelatedTaskTitle(dep))}
+								<span className="text-[11px]/3 pt-1">
+									#{dep.dependency_task_id}
+								</span>
 							</Button>
 							<Select
 								size="small"
-								value={dep.dependency_type}
+								value={dep.dependency_rule}
 								className="w-[110px]"
-								options={dependencyTypeOptions}
-								onChange={async (value) => {
-									try {
-										await onUpdateDependent(task.id, dep.id, value);
-										await reload();
-									} catch {
-										message.error(t('kanban.dependencyUpdateFailed'));
-									}
-								}}
+								options={dependencyRuleOptions}
+								disabled={saving}
+								onChange={(value) => handleUpdateRule(dep, value)}
 							/>
-							<Button
-								size="small"
-								type="text"
-								danger
-								icon={<DeleteOutlined />}
-								onClick={async () => {
-									try {
-										await onDeleteDependent(task.id, dep.id);
-										await reload();
-									} catch {
-										message.error(t('kanban.dependencyRemoveFailed'));
-									}
-								}}
-							/>
+							{renderDeleteButton(dep)}
 						</div>
 					))}
 				</div>

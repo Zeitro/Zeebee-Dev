@@ -24,48 +24,59 @@ import { ProjectActivityDrawer } from './components/ProjectActivityDrawer';
 import { ProjectMemberListDrawer } from './components/ProjectMemberListDrawer';
 import { TaskActivityDrawer, TaskDetailDrawer } from './components/TaskDetail';
 import { useKanbanBoard } from './hooks/useKanbanBoard';
+import { KanbanTaskDetailProvider, useKanbanTaskDetail } from './hooks/useKanbanTaskDetail';
 import { useTaskNavStack } from './hooks/useTaskNavStack';
 
 export function ProjectKanban() {
 	const { id } = useParams();
-	const router = useRouter();
-	const pathname = usePathname();
 	const searchParams = useSearchParams();
 	const projectId = id;
 	const queryTaskId = Number(searchParams.get('task')) || undefined;
-	const {
-		project,
-		workflow,
-		tasks,
-		taskTotal,
-		members,
-		projectMembers,
-		memberOptions,
-		taskTypes,
-		loading,
-		activeTask,
-		userId,
-		openTask,
-		closeTask,
-		transitionTask,
-		refreshBoard,
-		persistAssignees,
-		saveTask,
-		saveTitle,
-		deleteTask,
-		refreshProjectMembers,
-		searchProjectMembers,
-		fetchTaskActivities,
-		fetchTaskDependencies,
-		fetchTaskDependents,
-		addTaskDependency,
-		addTaskDependent,
-		updateTaskDependency,
-		updateTaskDependent,
-		deleteTaskDependency,
-		deleteTaskDependent,
-	} = useKanbanBoard(projectId, queryTaskId);
+	const { loading, workflow, taskDetailContextValue, ...boardProps } = useKanbanBoard(
+		projectId,
+		queryTaskId,
+	);
 
+	if (loading) {
+		return (
+			<div className="flex items-center justify-center py-24">
+				<Spin size="large" />
+			</div>
+		);
+	}
+
+	if (!workflow?.states?.length) {
+		return <EmptyWorkflow project={boardProps.project} />;
+	}
+
+	return (
+		<KanbanTaskDetailProvider value={taskDetailContextValue}>
+			<ProjectKanbanView projectId={projectId} workflow={workflow} {...boardProps} />
+		</KanbanTaskDetailProvider>
+	);
+}
+
+/**
+ * @param {object} props
+ */
+function ProjectKanbanView({
+	projectId,
+	project,
+	workflow,
+	tasks,
+	taskTotal,
+	members,
+	projectMembers,
+	userId,
+	transitionTask,
+	refreshBoard,
+	refreshProjectMembers,
+	searchProjectMembers,
+}) {
+	const router = useRouter();
+	const pathname = usePathname();
+	const searchParams = useSearchParams();
+	const { activeTask, openTask, closeTask, fetchTaskActivities } = useKanbanTaskDetail();
 	const [draggedTask, setDraggedTask] = useState(null);
 	const [createOpen, setCreateOpen] = useState(false);
 	const [createParent, setCreateParent] = useState(null);
@@ -147,18 +158,6 @@ export function ProjectKanban() {
 		setTaskActivities(activities);
 	}, [activeTask, fetchTaskActivities]);
 
-	if (loading) {
-		return (
-			<div className="flex items-center justify-center py-24">
-				<Spin size="large" />
-			</div>
-		);
-	}
-
-	if (!workflow?.states?.length) {
-		return <EmptyWorkflow project={project} />;
-	}
-
 	return (
 		<div className="flex flex-col flex-1 px-8 pt-6 pb-6">
 			{messageContextHolder}
@@ -228,7 +227,6 @@ export function ProjectKanban() {
 				onSearchMembers={searchProjectMembers}
 				onClose={() => setMemberListOpen(false)}
 				onInvite={() => {
-					// setMemberListOpen(false);
 					setInviteOpen(true);
 				}}
 				onSuccess={refreshProjectMembers}
@@ -246,32 +244,16 @@ export function ProjectKanban() {
 				}}
 			/>
 			<TaskDetailDrawer
-				open={Boolean(activeTask)}
-				task={activeTask}
 				project={project}
 				workflow={workflow}
 				tasks={tasks}
-				taskTypes={taskTypes}
-				memberOptions={memberOptions}
-				members={members}
 				onClose={handleDrawerClose}
 				previousTask={previousTask}
 				onTaskClick={openFromDrawer}
 				onBack={backFromDrawer}
 				onCreateSubtask={(parent) => openCreate(parent)}
-				onTitleBlur={saveTitle}
-				onPersistAssignees={persistAssignees}
-				onSave={saveTask}
-				onDelete={() => deleteTask(handleDrawerClose)}
 				onOpenLog={handleOpenTaskLog}
-				fetchTaskDependencies={fetchTaskDependencies}
-				fetchTaskDependents={fetchTaskDependents}
-				onAddDependency={addTaskDependency}
-				onAddDependent={addTaskDependent}
-				onUpdateDependency={updateTaskDependency}
-				onUpdateDependent={updateTaskDependent}
-				onDeleteDependency={deleteTaskDependency}
-				onDeleteDependent={deleteTaskDependent}
+				messageApi={messageApi}
 			/>
 			<TaskActivityDrawer
 				open={taskLogOpen}

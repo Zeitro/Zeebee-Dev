@@ -5,8 +5,31 @@
 
 import { CheckOutlined, CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import { Avatar, Button, Dropdown } from 'antd';
-import { displayValue } from '@repo/shared-methods/utils';
-import { getMemberInitial, getMemberLabel } from '../helpers';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+	PROJECT_MEMBER_CANDIDATE_PURPOSE_PROJECT_MEMBER,
+	createProjectMemberApi,
+} from '@repo/project-management/api/projectMember';
+import { mapProjectMember } from '@repo/project-management/lib/mapProjectMember';
+import { createRequest, displayValue } from '@repo/shared-methods/utils';
+import { getMemberInitial, getMemberLabel, unwrapList } from '../helpers';
+
+/**
+ * candidate 成员 → AssigneeChips 内部结构（id 对齐 assignee_ids）。
+ * @param {object} item
+ * @returns {{ id: number, name?: string, email?: string, full_name?: string }|null}
+ */
+function mapAssigneeCandidate(item) {
+	if (!item) return null;
+	const id = item.organization_user_id ?? item.user_id;
+	if (id == null) return null;
+	return {
+		id,
+		name: item.full_name || item.name,
+		email: item.email,
+		full_name: item.full_name,
+	};
+}
 
 /**
  * @param {{
@@ -14,12 +37,42 @@ import { getMemberInitial, getMemberLabel } from '../helpers';
  *   onChange?: (ids: number[]) => void,
  *   options?: Array,
  *   fallbacks?: Array,
+ *   projectId?: number|string,
  * }} props
  */
-export function AssigneeChips({ value, onChange, options = [], fallbacks = [] }) {
+export function AssigneeChips({ value, onChange, projectId }) {
 	const ids = value || [];
-	const findMember = (id) =>
-		options.find((member) => member.id === id) || fallbacks.find((member) => member.id === id);
+	const { request } = useMemo(() => createRequest(), []);
+	const projectMemberApi = useMemo(() => createProjectMemberApi(request), [request]);
+	const [options, setOptions] = useState([]);
+
+	const fetchAssigneeOptions = useCallback(async () => {
+		if (!projectId) return [];
+		try {
+			const res = await projectMemberApi.candidate({
+				project_id: Number(projectId),
+				keyword: '',
+				purpose: PROJECT_MEMBER_CANDIDATE_PURPOSE_PROJECT_MEMBER,
+			});
+			return unwrapList(res).map(mapProjectMember).map(mapAssigneeCandidate).filter(Boolean);
+		} catch {
+			return [];
+		}
+	}, [projectId, projectMemberApi]);
+
+	useEffect(() => {
+		let cancelled = false;
+		(async () => {
+			const nextOptions = await fetchAssigneeOptions();
+			if (cancelled) return;
+			setOptions(nextOptions);
+		})();
+		return () => {
+			cancelled = true;
+		};
+	}, [fetchAssigneeOptions]);
+
+	const findMember = useCallback((id) => options.find((member) => member.id === id), [options]);
 
 	const menuItems = options.map((member) => {
 		const name = getMemberLabel(member);

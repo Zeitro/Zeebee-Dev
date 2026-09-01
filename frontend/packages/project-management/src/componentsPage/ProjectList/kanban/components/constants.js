@@ -8,15 +8,22 @@ export const TASK_CARD_DUE_FORMAT = 'MM-DD';
 export const TASK_DETAIL_DRAWER_WIDTH = '66.67%';
 export const TASK_LIST_PAGE_SIZE = 200;
 
-/** 任务依赖类型，与后端 `dependency_type` 一致 */
-export const DEPENDENCY_TYPE_OPTIONS = [
-	{ value: 'finish_to_start', labelKey: 'kanban.dependencyFinishToStart' },
-	{ value: 'finish_to_finish', labelKey: 'kanban.dependencyFinishToFinish' },
-	{ value: 'start_to_start', labelKey: 'kanban.dependencyStartToStart' },
-	{ value: 'start_to_finish', labelKey: 'kanban.dependencyStartToFinish' },
+/** 任务依赖规则选项，与详情 `dependency_rule` 一致 */
+export const DEPENDENCY_RULE_OPTIONS = [
+	{ value: 'FS', labelKey: 'kanban.dependencyFinishToStart' },
+	{ value: 'FF', labelKey: 'kanban.dependencyFinishToFinish' },
+	{ value: 'SS', labelKey: 'kanban.dependencyStartToStart' },
+	{ value: 'SF', labelKey: 'kanban.dependencyStartToFinish' },
 ];
 
+import { TASK_DEPENDENCY_DIRECTION } from '@repo/project-management/enum/task';
 import { WORKFLOW_TRANSITION_MEMBER_OPTIONS } from '@repo/project-management/enum/workflow';
+
+/** 添加依赖方向选项，value 与后端 `dependency_type` 一致 */
+export const DEPENDENCY_DIRECTION_OPTIONS = [
+	{ value: TASK_DEPENDENCY_DIRECTION.PRE_TASK, labelKey: 'kanban.predecessor' },
+	{ value: TASK_DEPENDENCY_DIRECTION.POST_TASK, labelKey: 'kanban.successor' },
+];
 
 /** 与后端 `project_management_member_role` 一致，排除 ProjectOwner / TaskCreator */
 export const PROJECT_MEMBER_ROLE_OPTIONS = WORKFLOW_TRANSITION_MEMBER_OPTIONS.filter(

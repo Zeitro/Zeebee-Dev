@@ -22,7 +22,7 @@ export function SubtaskList({ parentId, tasks = [], workflow, onTaskClick }) {
 	if (!subtasks.length) return null;
 
 	return (
-		<div>
+		<div className="py-3 px-4">
 			{subtasks.map((item) => {
 				const state = workflow?.states?.find((row) => row.id === item.workflow_state_id);
 				const isDone = isTerminalState(state);
@@ -31,7 +31,7 @@ export function SubtaskList({ parentId, tasks = [], workflow, onTaskClick }) {
 						key={item.id}
 						type="text"
 						block
-						className="group flex w-full items-center !justify-start gap-2.5 px-4 py-2.5 h-auto text-left text-[13px] hover:!bg-base-active rounded-none border-b border-base-border/40 last:border-b-0"
+						className="group flex w-full items-center !justify-start gap-2.5 !px-0 !py-2.5 h-auto text-left text-[13px] hover:!bg-base-active rounded-none border-b border-base-border/40 last:border-b-0"
 						onClick={() => onTaskClick(item)}
 					>
 						<CheckCircleFilled
@@ -41,11 +41,11 @@ export function SubtaskList({ parentId, tasks = [], workflow, onTaskClick }) {
 						/>
 						<span className="min-w-0 flex-1 truncate text-left text-base-gray group-hover:text-base-primary transition-colors">
 							{displayValue(item.title)}
-						</span>
-						<span className="ml-auto flex shrink-0 items-center gap-2">
-							<span className="text-[11px] text-base-disabled font-mono">
+							<span className="text-[11px] text-base-disabled font-mono pl-1">
 								#{item.id}
 							</span>
+						</span>
+						<span className="ml-auto flex shrink-0 items-center">
 							{state?.name ? (
 								<Tag className="m-0 text-[11px] leading-[18px]">{state.name}</Tag>
 							) : null}

@@ -1,5 +1,5 @@
 /**
- * Linear 风格优先级图标：1 灰条、2 黄条、3 红叹号；0 与 1 同形。
+ * Linear 风格优先级图标：低 1 灰条、中 2 蓝条、高 3 黄条、紧急红叹号。
  */
 
 import { PROJECT_PRIORITY } from '@repo/project-management/enum/project';
@@ -8,7 +8,9 @@ import { PROJECT_PRIORITY } from '@repo/project-management/enum/project';
  * @param {{ level?: number, size?: number }} props
  */
 export function PriorityIcon({ level = PROJECT_PRIORITY.MEDIUM, size = 13 }) {
-	if (Number(level) === PROJECT_PRIORITY.URGENT) {
+	const priority = Number(level);
+
+	if (priority === PROJECT_PRIORITY.URGENT) {
 		return (
 			<svg width={size} height={size} viewBox="0 0 16 16" className="align-[-2px]">
 				<rect x="1" y="1" width="14" height="14" rx="3.5" fill="var(--base-error)" />
@@ -17,14 +19,20 @@ export function PriorityIcon({ level = PROJECT_PRIORITY.MEDIUM, size = 13 }) {
 			</svg>
 		);
 	}
-	const isHigh = Number(level) === PROJECT_PRIORITY.HIGH;
-	const activeColor = isHigh ? 'var(--base-warning)' : 'var(--base-disabled)';
-	const filled = isHigh ? 3 : 2;
+
+	const barStyles = {
+		[PROJECT_PRIORITY.LOW]: { filled: 1, activeColor: 'var(--base-disabled)' },
+		[PROJECT_PRIORITY.MEDIUM]: { filled: 2, activeColor: 'var(--blue-medium)' },
+		[PROJECT_PRIORITY.HIGH]: { filled: 3, activeColor: 'var(--base-warning)' },
+	};
+	const { filled, activeColor } = barStyles[priority] ?? barStyles[PROJECT_PRIORITY.MEDIUM];
+
 	const bars = [
 		{ x: 2, h: 11 },
 		{ x: 6.5, h: 8 },
 		{ x: 11, h: 5 },
 	];
+
 	return (
 		<svg width={size} height={size} viewBox="0 0 16 16" className="align-[-2px]">
 			{bars.map((bar, index) => (

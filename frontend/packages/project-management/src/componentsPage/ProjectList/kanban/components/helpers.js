@@ -2,8 +2,9 @@
  * 看板纯函数：列表解包、query、执行者 id、成员展示；不改外部状态。
  */
 
-import { dayjs } from '@repo/shared-methods/utils';
+import { dayjs, formatDate, formatStr } from '@repo/shared-methods/utils';
 import { PROJECT_PRIORITY } from '@repo/project-management/enum';
+import { TASK_DEPENDENCY_DIRECTION, toTaskPriorityValue } from '@repo/project-management/enum/task';
 
 /**
  * 兼容 `{ list }` / `{ data }` / 裸数组。
@@ -15,6 +16,23 @@ export function unwrapList(res) {
 	if (Array.isArray(res?.list)) return res.list;
 	if (Array.isArray(res?.data)) return res.data;
 	return [];
+}
+
+/**
+ * 任务详情 `dependencies` 按方向拆分为前置 / 后置。
+ * @param {Array|undefined|null} dependencies
+ * @returns {{ predecessors: object[], successors: object[] }}
+ */
+export function splitTaskDependencies(dependencies) {
+	const list = Array.isArray(dependencies) ? dependencies : [];
+	return {
+		predecessors: list.filter(
+			(dep) => dep.dependency_type === TASK_DEPENDENCY_DIRECTION.PRE_TASK,
+		),
+		successors: list.filter(
+			(dep) => dep.dependency_type === TASK_DEPENDENCY_DIRECTION.POST_TASK,
+		),
+	};
 }
 
 /**
@@ -66,6 +84,23 @@ export function getMemberLabel(member, fallbackId) {
 export function getMemberInitial(member, fallbackId) {
 	const label = getMemberLabel(member, fallbackId);
 	return label ? label.charAt(0).toUpperCase() : '?';
+}
+
+/**
+ * DatePicker / dayjs / 接口日期字符串 → 系统统一日期 MM/DD/YYYY；空值不传。
+ * @param {*} value
+ * @returns {string|undefined}
+ */
+export function toApiDate(value) {
+	if (!value) return undefined;
+	const parsed =
+		typeof value.format === 'function'
+			? value
+			: dayjs(value, formatStr, true).isValid()
+				? dayjs(value, formatStr, true)
+				: dayjs(value);
+	if (!parsed?.isValid?.()) return undefined;
+	return formatDate(parsed) || undefined;
 }
 
 /**
@@ -232,6 +267,38 @@ export function isRichTextEmpty(html) {
 export function normalizeRichTextValue(html) {
 	if (!html) return '';
 	return isRichTextEmpty(html) ? '' : html;
+}
+
+/**
+ * 任务详情表单是否与已保存任务不一致（不含执行者：执行者单独即时保存）。
+ * @param {object|null|undefined} task 已保存的详情
+ * @param {object|null|undefined} values 当前表单值
+ * @returns {boolean}
+ */
+export function isTaskDetailFormDirty(task, values) {
+	if (!task || !values) return false;
+
+	const savedHours = task.work_hours ?? task.estimated_hours;
+	const currentHours = values.estimated_hours;
+	const normalizedSavedHours =
+		savedHours == null || savedHours === '' ? null : Number(savedHours);
+	const normalizedCurrentHours =
+		currentHours == null || currentHours === '' ? null : Number(currentHours);
+	const hoursEqual =
+		normalizedSavedHours === normalizedCurrentHours ||
+		(Number.isNaN(normalizedSavedHours) && Number.isNaN(normalizedCurrentHours));
+
+	return (
+		Number(values.workflow_state_id) !== Number(task.workflow_state_id) ||
+		(values.type ?? '') !== (task.type ?? '') ||
+		toTaskPriorityValue(values.priority) !== toTaskPriorityValue(task.priority) ||
+		(values.start_date ? toApiDate(values.start_date) : undefined) !==
+			(task.start_date ? toApiDate(task.start_date) : undefined) ||
+		(values.due_date ? toApiDate(values.due_date) : undefined) !==
+			(task.due_date ? toApiDate(task.due_date) : undefined) ||
+		!hoursEqual ||
+		normalizeRichTextValue(values.description) !== normalizeRichTextValue(task.description)
+	);
 }
 
 /** 纯文本或 HTML 转为预览 HTML；legacy 纯文本保留换行 */

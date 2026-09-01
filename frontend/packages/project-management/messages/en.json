@@ -283,6 +283,10 @@
 		"createFailed": "Failed to create task",
 		"saveSuccess": "Saved",
 		"saveFailed": "Failed to save",
+		"unsavedChangesHint": "You have unsaved changes",
+		"unsavedChangesCloseHint": "Unsaved changes will be lost if you close",
+		"taskCreator": "Created by: {name}",
+		"taskCreatedAt": "Created at {time}",
 		"assigneeSaveFailed": "Failed to save assignees",
 		"deleteSuccess": "Task deleted",
 		"deleteConfirmTitle": "Delete task",
@@ -362,6 +366,7 @@
 		"dependencyExists": "Dependency already exists",
 		"dependencyAdded": "Dependency added",
 		"dependencyRemoved": "Dependency removed",
+		"dependencyDeleteConfirm": "Delete this dependency?",
 		"dependencyAddFailed": "Failed to add dependency",
 		"dependencyUpdateFailed": "Failed to update dependency",
 		"dependencyRemoveFailed": "Failed to remove dependency",
@@ -377,6 +382,8 @@
 		"uploadedBy": "by {name}",
 		"attachmentNote": "Note",
 		"attachmentDeleteConfirm": "Delete this attachment?",
+		"attachmentDeleteSuccess": "Attachment deleted",
+		"attachmentDeleteFailed": "Failed to delete attachment",
 		"unknownUser": "Unknown user"
 	}
 }

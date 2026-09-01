@@ -9,33 +9,26 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DatePicker, Form, Input, InputNumber, Select } from 'antd';
 import { useLocale, useTranslations } from 'next-intl';
 import { NewModal } from '@repo/shared-methods';
-import { createRequest, dayjs, displayValue, formatDate } from '@repo/shared-methods/utils';
+import { createRequest, displayValue } from '@repo/shared-methods/utils';
 import {
 	PROJECT_MEMBER_CANDIDATE_PURPOSE_PROJECT_MEMBER,
 	createProjectMemberApi,
 } from '@repo/project-management/api/projectMember';
 import { createTaskApi } from '@repo/project-management/api/task';
 import { createTaskTypeApi } from '@repo/project-management/api/taskType';
-import { getTaskPriorityI18nKey, localizeSelectOptions } from '@repo/project-management/enum/task';
+import {
+	getTaskPriorityI18nKey,
+	localizeSelectOptions,
+	toProjectPriorityLevel,
+} from '@repo/project-management/enum/task';
 import { mapProjectMember } from '@repo/project-management/lib/mapProjectMember';
 import { useOptionsStore } from '@repo/project-management/store/options';
-import { normalizeRichTextValue, unwrapList } from './helpers';
+import { normalizeRichTextValue, toApiDate, unwrapList } from './helpers';
+import { PriorityIcon } from './TaskDetail/PriorityIcon';
 
 const WangEditor = dynamic(() => import('@repo/shared-methods/components/WangEditor'), {
 	ssr: false,
 });
-
-/**
- * DatePicker / dayjs → 接口日期 MM/DD/YYYY；空值不传。
- * @param {*} value
- * @returns {string|undefined}
- */
-function toApiDate(value) {
-	if (!value) return undefined;
-	const parsed = typeof value.format === 'function' ? value : dayjs(value);
-	if (!parsed?.isValid?.()) return undefined;
-	return formatDate(parsed) || undefined;
-}
 
 /**
  * @param {{
@@ -70,8 +63,21 @@ export default function CreateTaskModal({
 	const priorityOptionsRaw = useOptionsStore((state) => state.priorityOptions);
 	const getOptions = useOptionsStore((state) => state.getOptions);
 
+	// const priorityOptions = useMemo(
+	// 	() => localizeSelectOptions(priorityOptionsRaw, t, getTaskPriorityI18nKey),
+	// 	[priorityOptionsRaw, t],
+	// );
 	const priorityOptions = useMemo(
-		() => localizeSelectOptions(priorityOptionsRaw, t, getTaskPriorityI18nKey),
+		() =>
+			localizeSelectOptions(priorityOptionsRaw, t, getTaskPriorityI18nKey).map((item) => ({
+				...item,
+				label: (
+					<span className="inline-flex items-center gap-1.5">
+						<PriorityIcon level={toProjectPriorityLevel(item.value)} />
+						{item.label}
+					</span>
+				),
+			})),
 		[priorityOptionsRaw, t],
 	);
 
