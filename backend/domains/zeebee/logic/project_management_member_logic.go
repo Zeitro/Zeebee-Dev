@@ -232,7 +232,7 @@ func isProjectManagementNotFound(err error) bool {
 }
 
 func (l *ProjectManagementMemberLogic) recordOperation(ctx context.Context, tx *gorm.DB, input projectManagementMemberOperation) error {
-	metadata, err := projectManagementOperationMetadata(map[string]any{"project_id": input.projectId, "organization_user_id": input.targetOrganizationUserId, "organization_user_full_name": input.targetOrganizationUserName}, input.before, input.after)
+	metadata, err := marshalProjectManagementOperationMetadata(projectManagementOperationMetadata{ProjectID: input.projectId, OrganizationUserID: input.targetOrganizationUserId, OrganizationUserFullName: input.targetOrganizationUserName}, input.before, input.after)
 	if err != nil {
 		return errorx.WithStack(err)
 	}

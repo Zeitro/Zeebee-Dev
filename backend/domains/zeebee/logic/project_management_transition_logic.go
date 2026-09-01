@@ -172,8 +172,8 @@ func (l *ProjectManagementTaskLogic) validateFinishedChildren(transitionCtx *pro
 }
 
 func (l *ProjectManagementTaskLogic) recordProjectTaskTransition(transitionCtx *projectManagementTransitionContext) error {
-	metadata, err := projectManagementOperationMetadata(
-		map[string]any{"project_id": transitionCtx.task.ProjectId, "task_id": transitionCtx.task.Id},
+	metadata, err := marshalProjectManagementOperationMetadata(
+		projectManagementOperationMetadata{ProjectID: transitionCtx.task.ProjectId, TaskID: transitionCtx.task.Id, WorkflowID: transitionCtx.currentStage.WorkflowId, StageID: transitionCtx.currentStage.Id, TransitionID: transitionCtx.transition.Id},
 		stageOperationValues(transitionCtx.currentStage),
 		stageOperationValues(transitionCtx.targetStage),
 	)

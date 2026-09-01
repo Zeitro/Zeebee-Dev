@@ -744,17 +744,12 @@ func projectManagementTemplateModels(input dto.ProjectManagementWorkflowDto) (*m
 }
 
 func (l *ProjectManagementWorkflowLogic) recordOperation(ctx context.Context, tx *gorm.DB, input projectManagementWorkflowOperation) error {
-	locator := map[string]any{"workflow_id": input.workflowId}
-	if input.stageId != 0 {
-		locator["stage_id"] = input.stageId
-	}
-	if input.targetStageId != 0 {
-		locator["target_stage_id"] = input.targetStageId
-	}
-	if input.transitionId != 0 {
-		locator["transition_id"] = input.transitionId
-	}
-	metadata, err := projectManagementOperationMetadata(locator, input.before, input.after)
+	metadata, err := marshalProjectManagementOperationMetadata(projectManagementOperationMetadata{
+		WorkflowID:    input.workflowId,
+		StageID:       input.stageId,
+		TargetStageID: input.targetStageId,
+		TransitionID:  input.transitionId,
+	}, input.before, input.after)
 	if err != nil {
 		return errorx.WithStack(err)
 	}

@@ -11,8 +11,8 @@ import (
 )
 
 func TestProjectManagementOperationMetadata(t *testing.T) {
-	metadata, err := projectManagementOperationMetadata(
-		map[string]any{"project_id": int64(1)},
+	metadata, err := marshalProjectManagementOperationMetadata(
+		projectManagementOperationMetadata{ProjectID: 1, TaskID: 2, WorkflowID: 3, StageID: 4, TransitionID: 5},
 		map[string]any{"assignee_id": int64(2), "assignee_name": "Zhang San"},
 		nil,
 	)
@@ -21,6 +21,10 @@ func TestProjectManagementOperationMetadata(t *testing.T) {
 	var actual map[string]any
 	require.NoError(t, json.Unmarshal(metadata, &actual))
 	require.Equal(t, float64(1), actual["project_id"])
+	require.Equal(t, float64(2), actual["task_id"])
+	require.Equal(t, float64(3), actual["workflow_id"])
+	require.Equal(t, float64(4), actual["stage_id"])
+	require.Equal(t, float64(5), actual["transition_id"])
 	require.Equal(t, map[string]any{"assignee_id": float64(2), "assignee_name": "Zhang San"}, actual["before"])
 	require.NotContains(t, actual, "after")
 }

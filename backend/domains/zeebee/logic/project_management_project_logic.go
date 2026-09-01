@@ -210,7 +210,7 @@ func validateProjectManagementProjectUpdate(input dto.ProjectManagementProjectUp
 }
 
 func (l *ProjectManagementProjectLogic) recordOperation(ctx context.Context, tx *gorm.DB, input projectManagementProjectOperation) error {
-	metadata, err := projectManagementOperationMetadata(map[string]any{"project_id": input.projectId}, input.before, input.after)
+	metadata, err := marshalProjectManagementOperationMetadata(projectManagementOperationMetadata{ProjectID: input.projectId}, input.before, input.after)
 	if err != nil {
 		return errorx.WithStack(err)
 	}

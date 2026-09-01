@@ -27,6 +27,9 @@ func (l *OperationLogic) Page(ctx context.Context, claim *utils.JwtUser, input d
 	if input.Filter.EntityType == "" {
 		return gormx.PageResponse[*model.Operation]{}, errorx.New("entity type is required")
 	}
+	if err := validateOperationPageFilter(input.Filter); err != nil {
+		return gormx.PageResponse[*model.Operation]{}, err
+	}
 	switch input.Filter.EntityType {
 	case constants.OperationEntityTypeProjectManagementProject:
 		if input.Filter.EntityId == 0 {
@@ -53,6 +56,13 @@ func (l *OperationLogic) Page(ctx context.Context, claim *utils.JwtUser, input d
 		return gormx.PageResponse[*model.Operation]{}, errorx.New("unsupported operation entity type")
 	}
 	return l.repos.OperationRepo.PageOperations(ctx, claim.OrganizationId, input)
+}
+
+func validateOperationPageFilter(filter dto.OperationPageFilterDto) error {
+	if filter.TaskId != 0 && filter.EntityType != constants.OperationEntityTypeProjectManagementProject {
+		return errorx.New("task id filter is only supported for project management project operations")
+	}
+	return nil
 }
 
 func (l *OperationLogic) CreateOperationLog(ctx context.Context, tx *gorm.DB, input dto.OperationCreateDto) (err error) {

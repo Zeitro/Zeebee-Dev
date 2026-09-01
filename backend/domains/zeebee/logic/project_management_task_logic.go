@@ -31,6 +31,7 @@ type projectManagementTaskOperation struct {
 	claim        utils.JwtUser
 	projectId    int64
 	taskId       int64
+	workflowId   int64
 	stageId      int64
 	transitionId int64
 	fileId       int64
@@ -337,20 +338,14 @@ func (l *ProjectManagementTaskLogic) projectManagementTaskAssignees(ctx context.
 }
 
 func (l *ProjectManagementTaskLogic) recordProjectTaskOperation(ctx context.Context, tx *gorm.DB, input projectManagementTaskOperation) error {
-	locator := map[string]any{"project_id": input.projectId}
-	if input.taskId != 0 {
-		locator["task_id"] = input.taskId
-	}
-	if input.stageId != 0 {
-		locator["stage_id"] = input.stageId
-	}
-	if input.transitionId != 0 {
-		locator["transition_id"] = input.transitionId
-	}
-	if input.fileId != 0 {
-		locator["file_id"] = input.fileId
-	}
-	metadata, err := projectManagementOperationMetadata(locator, input.before, input.after)
+	metadata, err := marshalProjectManagementOperationMetadata(projectManagementOperationMetadata{
+		ProjectID:    input.projectId,
+		TaskID:       input.taskId,
+		WorkflowID:   input.workflowId,
+		StageID:      input.stageId,
+		TransitionID: input.transitionId,
+		FileID:       input.fileId,
+	}, input.before, input.after)
 	if err != nil {
 		return errorx.WithStack(err)
 	}

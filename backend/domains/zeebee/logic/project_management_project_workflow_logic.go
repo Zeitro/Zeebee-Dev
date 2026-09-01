@@ -69,7 +69,7 @@ func (l *ProjectManagementWorkflowLogic) ProjectUpdate(ctx context.Context, clai
 		if innerErr != nil {
 			return innerErr
 		}
-		return l.recordProjectWorkflowDefinitionChanges(ctx, tx, claim, projectId, beforeStages, afterStages, beforeTransitions, afterTransitions)
+		return l.recordProjectWorkflowDefinitionChanges(ctx, tx, claim, projectId, current.Id, beforeStages, afterStages, beforeTransitions, afterTransitions)
 	})
 	if err != nil {
 		return nil, err
@@ -77,9 +77,9 @@ func (l *ProjectManagementWorkflowLogic) ProjectUpdate(ctx context.Context, clai
 	return l.ProjectDetail(ctx, claim, projectId)
 }
 
-func (l *ProjectManagementWorkflowLogic) recordProjectWorkflowDefinitionChanges(ctx context.Context, tx *gorm.DB, claim utils.JwtUser, projectId int64, beforeStages, afterStages []*model.ProjectManagementWorkflowStage, beforeTransitions, afterTransitions []*model.ProjectManagementWorkflowTransition) error {
+func (l *ProjectManagementWorkflowLogic) recordProjectWorkflowDefinitionChanges(ctx context.Context, tx *gorm.DB, claim utils.JwtUser, projectId, workflowId int64, beforeStages, afterStages []*model.ProjectManagementWorkflowStage, beforeTransitions, afterTransitions []*model.ProjectManagementWorkflowTransition) error {
 	record := func(action constants.OperationAction, stageId, transitionId int64, before, after map[string]any) error {
-		return NewProjectManagementTaskLogic(l.BaseLogic).recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: projectId, stageId: stageId, transitionId: transitionId, action: action, before: before, after: after})
+		return NewProjectManagementTaskLogic(l.BaseLogic).recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: projectId, workflowId: workflowId, stageId: stageId, transitionId: transitionId, action: action, before: before, after: after})
 	}
 	beforeStageByID := make(map[int64]*model.ProjectManagementWorkflowStage, len(beforeStages))
 	for _, stage := range beforeStages {

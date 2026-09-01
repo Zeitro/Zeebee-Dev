@@ -182,7 +182,7 @@ func validateProjectManagementTaskType(input dto.ProjectManagementTaskTypeDto) e
 }
 
 func (l *ProjectManagementTaskTypeLogic) recordOperation(ctx context.Context, tx *gorm.DB, input projectManagementTaskTypeOperation) error {
-	metadata, err := projectManagementOperationMetadata(map[string]any{"task_type_id": input.taskTypeId}, input.before, input.after)
+	metadata, err := marshalProjectManagementOperationMetadata(projectManagementOperationMetadata{TaskTypeID: input.taskTypeId}, input.before, input.after)
 	if err != nil {
 		return errorx.WithStack(err)
 	}

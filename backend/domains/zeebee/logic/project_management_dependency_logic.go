@@ -311,7 +311,7 @@ func (l *ProjectManagementDependencyLogic) SyncWithTx(ctx context.Context, tx *g
 
 func (l *ProjectManagementDependencyLogic) recordOperation(ctx context.Context, tx *gorm.DB, input projectManagementDependencyOperation) error {
 	successorTaskId, _ := dependencyEndpoints(input.dependency.TaskId, input.dependency.DependencyTaskId, input.dependency.DependencyType)
-	metadata, err := projectManagementOperationMetadata(map[string]any{"project_id": input.projectId, "task_id": successorTaskId, "dependency_id": input.dependency.Id}, input.before, input.after)
+	metadata, err := marshalProjectManagementOperationMetadata(projectManagementOperationMetadata{ProjectID: input.projectId, TaskID: successorTaskId, DependencyID: input.dependency.Id}, input.before, input.after)
 	if err != nil {
 		return errorx.WithStack(err)
 	}
