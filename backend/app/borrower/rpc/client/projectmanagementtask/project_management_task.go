@@ -24,6 +24,7 @@ type (
 	ProjectManagementMyTaskPageFilter            = borrower.ProjectManagementMyTaskPageFilter
 	ProjectManagementMyTaskPageRequest           = borrower.ProjectManagementMyTaskPageRequest
 	ProjectManagementMyTaskPageRequestData       = borrower.ProjectManagementMyTaskPageRequestData
+	ProjectManagementTaskAttachmentRequest       = borrower.ProjectManagementTaskAttachmentRequest
 	ProjectManagementTaskCandidateEntity         = borrower.ProjectManagementTaskCandidateEntity
 	ProjectManagementTaskCandidateRequest        = borrower.ProjectManagementTaskCandidateRequest
 	ProjectManagementTaskCandidateRequestData    = borrower.ProjectManagementTaskCandidateRequestData

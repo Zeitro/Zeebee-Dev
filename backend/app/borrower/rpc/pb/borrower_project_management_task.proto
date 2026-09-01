@@ -89,6 +89,13 @@ message ProjectManagementTaskDependencyRequest {
   string dependency_type = 4;
   string dependency_rule = 5;
 }
+message ProjectManagementTaskAttachmentRequest {
+  int64 id = 1;
+  string file_name = 2;
+  string file_url = 3;
+  string storage_type = 4;
+  string upload_type = 5;
+}
 message ProjectManagementTaskUpdateRequestData {
   int64 id = 1;
   string title = 2;
@@ -101,6 +108,7 @@ message ProjectManagementTaskUpdateRequestData {
   repeated int64 assignee_organization_user_ids = 9;
   repeated ProjectManagementTaskDependencyRequest dependencies = 10;
   double work_hours = 11;
+  repeated ProjectManagementTaskAttachmentRequest attachments = 12;
 }
 
 message ProjectManagementTaskDeleteRequest {
@@ -139,6 +147,7 @@ message ProjectManagementAttachmentCreateRequestData {
   string file_url = 3;
   string storage_type = 4;
   int64 project_id = 5;
+  string upload_type = 6;
 }
 message ProjectManagementAttachmentDetailResponse {
   proto.FileEntity data = 1;

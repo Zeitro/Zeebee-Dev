@@ -45,6 +45,7 @@ type ProjectManagementTaskUpdateDto struct {
 	TaskTypeId                  int64
 	AssigneeOrganizationUserIds []int64
 	Dependencies                []*ProjectManagementTaskDependencyDto
+	Attachments                 []*ProjectManagementTaskAttachmentDto
 }
 
 type ProjectManagementTaskAssigneeDto struct {

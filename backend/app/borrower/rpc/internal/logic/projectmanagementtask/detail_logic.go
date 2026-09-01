@@ -69,12 +69,9 @@ func taskEntity(task *model.ProjectManagementTask, overdue *dto.ProjectManagemen
 		return nil, err
 	}
 	entity.Assignees = *assignees
-	attachments, err := copierx.Trans[[]*model.File, []*proto.ProjectManagementAttachmentEntity](&task.Attachments, copierx.TimeToRFC3339Str())
+	attachments, err := copierx.Trans[[]*model.File, []*proto.FileEntity](&task.Attachments, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToRFC3339Str())
 	if err != nil {
 		return nil, err
-	}
-	for i, attachment := range *attachments {
-		attachment.FileId = task.Attachments[i].Id
 	}
 	entity.Attachments = *attachments
 	children := make([]*proto.ProjectManagementTaskEntity, 0, len(task.Children))

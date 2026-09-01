@@ -30,6 +30,12 @@ func (l *ProjectManagementAttachmentLogic) Create(ctx context.Context, claim uti
 	if !input.StorageType.IsValid() {
 		return nil, errorx.New("invalid attachment storage type")
 	}
+	if input.UploadType == "" {
+		input.UploadType = constants.UploadTypeManual
+	}
+	if !input.UploadType.IsValid() {
+		return nil, errorx.New("invalid attachment upload type")
+	}
 	err = l.repos.FileRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		task, err := l.repos.ProjectManagementTaskRepo.LockWithTx(ctx, tx, input.TaskId)
 		if err != nil {

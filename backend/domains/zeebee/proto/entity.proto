@@ -920,15 +920,6 @@ message ProjectManagementTaskAssigneeEntity {
   string updated_at = 5;
 }
 
-message ProjectManagementAttachmentEntity {
-  int64 file_id = 1;
-  string file_name = 2;
-  string file_url = 3;
-  string storage_type = 4;
-  string created_at = 5;
-  string updated_at = 6;
-}
-
 message ProjectManagementTaskEntity {
   int64 id = 1;
   int64 project_id = 2;
@@ -943,7 +934,7 @@ message ProjectManagementTaskEntity {
   string end_at = 11;
   ProjectManagementTaskTypeSnapshotEntity task_type = 12;
   repeated ProjectManagementTaskAssigneeEntity assignees = 13;
-  repeated ProjectManagementAttachmentEntity attachments = 18;
+  repeated FileEntity attachments = 18;
   bool overdue = 14;
   int64 overdue_seconds = 15;
   string created_at = 16;

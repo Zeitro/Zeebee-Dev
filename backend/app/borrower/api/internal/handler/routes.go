@@ -886,18 +886,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: project_management_task.DeleteHandler(serverCtx),
 				},
 				{
-					// attachment create
-					Method:  http.MethodPost,
-					Path:    "/project_management/task/:id/attachment",
-					Handler: project_management_task.AttachmentCreateHandler(serverCtx),
-				},
-				{
-					// attachment delete
-					Method:  http.MethodDelete,
-					Path:    "/project_management/task/:id/attachment/:file_id",
-					Handler: project_management_task.AttachmentDeleteHandler(serverCtx),
-				},
-				{
 					// transition
 					Method:  http.MethodPost,
 					Path:    "/project_management/task/:id/transition",

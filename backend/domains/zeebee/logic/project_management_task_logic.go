@@ -251,6 +251,9 @@ func (l *ProjectManagementTaskLogic) Update(ctx context.Context, claim utils.Jwt
 				return err
 			}
 		}
+		if err = l.syncAttachmentsWithTx(ctx, tx, claim, task, input.Attachments); err != nil {
+			return err
+		}
 		if err = NewProjectManagementDependencyLogic(l.BaseLogic).SyncWithTx(ctx, tx, claim, task.Id, input.Dependencies); err != nil {
 			return err
 		}
@@ -269,6 +272,69 @@ func (l *ProjectManagementTaskLogic) Update(ctx context.Context, claim utils.Jwt
 		return nil, err
 	}
 	return l.Detail(ctx, claim, task.Id)
+}
+
+func (l *ProjectManagementTaskLogic) syncAttachmentsWithTx(ctx context.Context, tx *gorm.DB, claim utils.JwtUser, task *model.ProjectManagementTask, inputs []*dto.ProjectManagementTaskAttachmentDto) error {
+	existing, err := l.repos.FileRepo.ListByEntityWithTx(ctx, tx, task.Id, constants.FileEntityTypeProjectManagementTask)
+	if err != nil {
+		return err
+	}
+	existingByID := make(map[int64]*model.File, len(existing))
+	for _, file := range existing {
+		existingByID[file.Id] = file
+	}
+	requested := make(map[int64]struct{}, len(inputs))
+	for _, input := range inputs {
+		if input == nil {
+			return errorx.New("task attachment is required")
+		}
+		if input.Id != 0 {
+			if _, ok := existingByID[input.Id]; !ok {
+				return errorx.New("task attachment not found")
+			}
+			if _, ok := requested[input.Id]; ok {
+				return errorx.New("duplicate task attachment")
+			}
+			requested[input.Id] = struct{}{}
+			continue
+		}
+		if strings.TrimSpace(input.FileUrl) == "" {
+			return errorx.New("attachment file url is required")
+		}
+		storageType := input.StorageType
+		if storageType == "" {
+			storageType = constants.StorageTypeAwsS3
+		}
+		if !storageType.IsValid() {
+			return errorx.New("invalid attachment storage type")
+		}
+		uploadType := input.UploadType
+		if uploadType == "" {
+			uploadType = constants.UploadTypeManual
+		}
+		if !uploadType.IsValid() {
+			return errorx.New("invalid attachment upload type")
+		}
+		file, err := l.repos.FileRepo.CreateWithTx(ctx, tx, &model.File{EntityId: task.Id, EntityType: constants.FileEntityTypeProjectManagementTask, FileName: input.FileName, FileUrl: input.FileUrl, StorageType: storageType, UploadType: uploadType}, false)
+		if err != nil {
+			return err
+		}
+		if err = l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, fileId: file.Id, action: constants.OperationActionProjectManagementAttachmentAdd, after: attachmentOperationIdentity(file)}); err != nil {
+			return err
+		}
+	}
+	for _, file := range existing {
+		if _, ok := requested[file.Id]; ok {
+			continue
+		}
+		if _, err = l.repos.FileRepo.DeleteByIDWithTx(ctx, tx, file.Id); err != nil {
+			return err
+		}
+		if err = l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, fileId: file.Id, action: constants.OperationActionProjectManagementAttachmentDelete, before: attachmentOperationIdentity(file)}); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (l *ProjectManagementTaskLogic) Delete(ctx context.Context, claim utils.JwtUser, taskId int64) error {

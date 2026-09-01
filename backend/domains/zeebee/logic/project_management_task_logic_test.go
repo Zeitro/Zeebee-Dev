@@ -93,8 +93,36 @@ func TestCreateTaskKeepsWorkflowAndTypeSnapshots(t *testing.T) {
 	if err != nil || len(page.List) != 1 || page.List[0].ProjectName != "Project" || page.List[0].StageName != "Pending" {
 		t.Fatalf("task page did not include project or stage name: %#v, %v", page, err)
 	}
-	if err = db.Exec("INSERT INTO files (entity_type, entity_id, file_url, file_name, storage_type) VALUES (?, ?, 'https://example.test/task.pdf', 'task.pdf', 'Aws S3')", constants.FileEntityTypeProjectManagementTask, task.Id).Error; err != nil {
-		t.Fatal(err)
+	attachment, err := NewProjectManagementAttachmentLogic(logic.BaseLogic).Create(context.Background(), actor, dto.ProjectManagementAttachmentCreateDto{TaskId: task.Id, FileName: "task.pdf", FileUrl: "https://example.test/task.pdf", StorageType: constants.StorageTypeAwsS3})
+	if err != nil {
+		t.Fatalf("task attachment was not created: %v", err)
+	}
+	task, err = logic.Update(context.Background(), actor, task.Id, dto.ProjectManagementTaskUpdateDto{Title: task.Title, TaskTypeId: 500, AssigneeOrganizationUserIds: []int64{21}, Attachments: []*dto.ProjectManagementTaskAttachmentDto{{Id: attachment.Id}}})
+	if err != nil || len(task.Attachments) != 1 || task.Attachments[0].FileName != "task.pdf" {
+		t.Fatalf("task update did not return attachments: %#v, %v", task, err)
+	}
+	task, err = logic.Update(context.Background(), actor, task.Id, dto.ProjectManagementTaskUpdateDto{Title: task.Title, AssigneeOrganizationUserIds: []int64{21}, Attachments: []*dto.ProjectManagementTaskAttachmentDto{{Id: attachment.Id, FileName: "renamed.pdf"}, {FileName: "new.pdf", FileUrl: "https://example.test/new.pdf", StorageType: constants.StorageTypeAwsS3, UploadType: constants.UploadTypeGoogleDrive}}})
+	if err != nil || len(task.Attachments) != 2 {
+		t.Fatalf("task attachment set was not updated: %#v, %v", task, err)
+	}
+	var newAttachmentId int64
+	for _, file := range task.Attachments {
+		if file.Id == attachment.Id && file.FileName != "task.pdf" {
+			t.Fatalf("existing task attachment was modified: %#v", file)
+		}
+		if file.FileName == "new.pdf" {
+			if file.EntityId != task.Id || file.EntityType != constants.FileEntityTypeProjectManagementTask || file.UploadType != constants.UploadTypeGoogleDrive {
+				t.Fatalf("new task attachment is incomplete: %#v", file)
+			}
+			newAttachmentId = file.Id
+		}
+	}
+	if newAttachmentId == 0 {
+		t.Fatalf("new task attachment was not returned: %#v", task.Attachments)
+	}
+	task, err = logic.Update(context.Background(), actor, task.Id, dto.ProjectManagementTaskUpdateDto{Title: task.Title, AssigneeOrganizationUserIds: []int64{21}, Attachments: []*dto.ProjectManagementTaskAttachmentDto{{Id: newAttachmentId}}})
+	if err != nil || len(task.Attachments) != 1 || task.Attachments[0].Id != newAttachmentId {
+		t.Fatalf("omitted task attachment was not removed: %#v, %v", task, err)
 	}
 	if err = db.Exec("INSERT INTO project_management_tasks (id, project_id, organization_id, stage_id, creator_id, title) VALUES (900, 11, 1, 200, 20, 'Other project parent')").Error; err != nil {
 		t.Fatal(err)
@@ -103,7 +131,7 @@ func TestCreateTaskKeepsWorkflowAndTypeSnapshots(t *testing.T) {
 		t.Fatal("child task was added to a parent from another project")
 	}
 	task, err = logic.Detail(context.Background(), actor, task.Id)
-	if err != nil || len(task.Attachments) != 1 || task.Attachments[0].FileName != "task.pdf" {
+	if err != nil || len(task.Attachments) != 1 || task.Attachments[0].FileName != "new.pdf" {
 		t.Fatalf("task attachments were not returned: %#v, %v", task, err)
 	}
 	if _, err = logic.Update(context.Background(), actor, task.Id, dto.ProjectManagementTaskUpdateDto{Title: task.Title, Dependencies: []*dto.ProjectManagementTaskDependencyDto{{TaskId: task.Id, DependencyTaskId: 900, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}}}); err == nil {

@@ -7839,90 +7839,6 @@ func (x *ProjectManagementTaskAssigneeEntity) GetUpdatedAt() string {
 	return ""
 }
 
-type ProjectManagementAttachmentEntity struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	FileId        int64                  `protobuf:"varint,1,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"`
-	FileName      string                 `protobuf:"bytes,2,opt,name=file_name,json=fileName,proto3" json:"file_name,omitempty"`
-	FileUrl       string                 `protobuf:"bytes,3,opt,name=file_url,json=fileUrl,proto3" json:"file_url,omitempty"`
-	StorageType   string                 `protobuf:"bytes,4,opt,name=storage_type,json=storageType,proto3" json:"storage_type,omitempty"`
-	CreatedAt     string                 `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     string                 `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ProjectManagementAttachmentEntity) Reset() {
-	*x = ProjectManagementAttachmentEntity{}
-	mi := &file_proto_entity_proto_msgTypes[63]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ProjectManagementAttachmentEntity) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ProjectManagementAttachmentEntity) ProtoMessage() {}
-
-func (x *ProjectManagementAttachmentEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_entity_proto_msgTypes[63]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ProjectManagementAttachmentEntity.ProtoReflect.Descriptor instead.
-func (*ProjectManagementAttachmentEntity) Descriptor() ([]byte, []int) {
-	return file_proto_entity_proto_rawDescGZIP(), []int{63}
-}
-
-func (x *ProjectManagementAttachmentEntity) GetFileId() int64 {
-	if x != nil {
-		return x.FileId
-	}
-	return 0
-}
-
-func (x *ProjectManagementAttachmentEntity) GetFileName() string {
-	if x != nil {
-		return x.FileName
-	}
-	return ""
-}
-
-func (x *ProjectManagementAttachmentEntity) GetFileUrl() string {
-	if x != nil {
-		return x.FileUrl
-	}
-	return ""
-}
-
-func (x *ProjectManagementAttachmentEntity) GetStorageType() string {
-	if x != nil {
-		return x.StorageType
-	}
-	return ""
-}
-
-func (x *ProjectManagementAttachmentEntity) GetCreatedAt() string {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return ""
-}
-
-func (x *ProjectManagementAttachmentEntity) GetUpdatedAt() string {
-	if x != nil {
-		return x.UpdatedAt
-	}
-	return ""
-}
-
 type ProjectManagementTaskEntity struct {
 	state          protoimpl.MessageState                   `protogen:"open.v1"`
 	Id             int64                                    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -7938,7 +7854,7 @@ type ProjectManagementTaskEntity struct {
 	EndAt          string                                   `protobuf:"bytes,11,opt,name=end_at,json=endAt,proto3" json:"end_at,omitempty"`
 	TaskType       *ProjectManagementTaskTypeSnapshotEntity `protobuf:"bytes,12,opt,name=task_type,json=taskType,proto3" json:"task_type,omitempty"`
 	Assignees      []*ProjectManagementTaskAssigneeEntity   `protobuf:"bytes,13,rep,name=assignees,proto3" json:"assignees,omitempty"`
-	Attachments    []*ProjectManagementAttachmentEntity     `protobuf:"bytes,18,rep,name=attachments,proto3" json:"attachments,omitempty"`
+	Attachments    []*FileEntity                            `protobuf:"bytes,18,rep,name=attachments,proto3" json:"attachments,omitempty"`
 	Overdue        bool                                     `protobuf:"varint,14,opt,name=overdue,proto3" json:"overdue,omitempty"`
 	OverdueSeconds int64                                    `protobuf:"varint,15,opt,name=overdue_seconds,json=overdueSeconds,proto3" json:"overdue_seconds,omitempty"`
 	CreatedAt      string                                   `protobuf:"bytes,16,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
@@ -7953,7 +7869,7 @@ type ProjectManagementTaskEntity struct {
 
 func (x *ProjectManagementTaskEntity) Reset() {
 	*x = ProjectManagementTaskEntity{}
-	mi := &file_proto_entity_proto_msgTypes[64]
+	mi := &file_proto_entity_proto_msgTypes[63]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7965,7 +7881,7 @@ func (x *ProjectManagementTaskEntity) String() string {
 func (*ProjectManagementTaskEntity) ProtoMessage() {}
 
 func (x *ProjectManagementTaskEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_entity_proto_msgTypes[64]
+	mi := &file_proto_entity_proto_msgTypes[63]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7978,7 +7894,7 @@ func (x *ProjectManagementTaskEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProjectManagementTaskEntity.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTaskEntity) Descriptor() ([]byte, []int) {
-	return file_proto_entity_proto_rawDescGZIP(), []int{64}
+	return file_proto_entity_proto_rawDescGZIP(), []int{63}
 }
 
 func (x *ProjectManagementTaskEntity) GetId() int64 {
@@ -8072,7 +7988,7 @@ func (x *ProjectManagementTaskEntity) GetAssignees() []*ProjectManagementTaskAss
 	return nil
 }
 
-func (x *ProjectManagementTaskEntity) GetAttachments() []*ProjectManagementAttachmentEntity {
+func (x *ProjectManagementTaskEntity) GetAttachments() []*FileEntity {
 	if x != nil {
 		return x.Attachments
 	}
@@ -8162,7 +8078,7 @@ type ProjectManagementTaskPageEntity struct {
 
 func (x *ProjectManagementTaskPageEntity) Reset() {
 	*x = ProjectManagementTaskPageEntity{}
-	mi := &file_proto_entity_proto_msgTypes[65]
+	mi := &file_proto_entity_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8174,7 +8090,7 @@ func (x *ProjectManagementTaskPageEntity) String() string {
 func (*ProjectManagementTaskPageEntity) ProtoMessage() {}
 
 func (x *ProjectManagementTaskPageEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_entity_proto_msgTypes[65]
+	mi := &file_proto_entity_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8187,7 +8103,7 @@ func (x *ProjectManagementTaskPageEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProjectManagementTaskPageEntity.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTaskPageEntity) Descriptor() ([]byte, []int) {
-	return file_proto_entity_proto_rawDescGZIP(), []int{65}
+	return file_proto_entity_proto_rawDescGZIP(), []int{64}
 }
 
 func (x *ProjectManagementTaskPageEntity) GetId() int64 {
@@ -8338,7 +8254,7 @@ type ProjectManagementTaskDependencyEntity struct {
 
 func (x *ProjectManagementTaskDependencyEntity) Reset() {
 	*x = ProjectManagementTaskDependencyEntity{}
-	mi := &file_proto_entity_proto_msgTypes[66]
+	mi := &file_proto_entity_proto_msgTypes[65]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8350,7 +8266,7 @@ func (x *ProjectManagementTaskDependencyEntity) String() string {
 func (*ProjectManagementTaskDependencyEntity) ProtoMessage() {}
 
 func (x *ProjectManagementTaskDependencyEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_entity_proto_msgTypes[66]
+	mi := &file_proto_entity_proto_msgTypes[65]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8363,7 +8279,7 @@ func (x *ProjectManagementTaskDependencyEntity) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use ProjectManagementTaskDependencyEntity.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTaskDependencyEntity) Descriptor() ([]byte, []int) {
-	return file_proto_entity_proto_rawDescGZIP(), []int{66}
+	return file_proto_entity_proto_rawDescGZIP(), []int{65}
 }
 
 func (x *ProjectManagementTaskDependencyEntity) GetId() int64 {
@@ -8432,7 +8348,7 @@ type OperationEntity struct {
 
 func (x *OperationEntity) Reset() {
 	*x = OperationEntity{}
-	mi := &file_proto_entity_proto_msgTypes[67]
+	mi := &file_proto_entity_proto_msgTypes[66]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8444,7 +8360,7 @@ func (x *OperationEntity) String() string {
 func (*OperationEntity) ProtoMessage() {}
 
 func (x *OperationEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_entity_proto_msgTypes[67]
+	mi := &file_proto_entity_proto_msgTypes[66]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8457,7 +8373,7 @@ func (x *OperationEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OperationEntity.ProtoReflect.Descriptor instead.
 func (*OperationEntity) Descriptor() ([]byte, []int) {
-	return file_proto_entity_proto_rawDescGZIP(), []int{67}
+	return file_proto_entity_proto_rawDescGZIP(), []int{66}
 }
 
 func (x *OperationEntity) GetId() int64 {
@@ -9445,16 +9361,7 @@ const file_proto_entity_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x04 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\x05 \x01(\tR\tupdatedAt\"\xd5\x01\n" +
-	"!ProjectManagementAttachmentEntity\x12\x17\n" +
-	"\afile_id\x18\x01 \x01(\x03R\x06fileId\x12\x1b\n" +
-	"\tfile_name\x18\x02 \x01(\tR\bfileName\x12\x19\n" +
-	"\bfile_url\x18\x03 \x01(\tR\afileUrl\x12!\n" +
-	"\fstorage_type\x18\x04 \x01(\tR\vstorageType\x12\x1d\n" +
-	"\n" +
-	"created_at\x18\x05 \x01(\tR\tcreatedAt\x12\x1d\n" +
-	"\n" +
-	"updated_at\x18\x06 \x01(\tR\tupdatedAt\"\x80\a\n" +
+	"updated_at\x18\x05 \x01(\tR\tupdatedAt\"\xe9\x06\n" +
 	"\x1bProjectManagementTaskEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -9471,8 +9378,8 @@ const file_proto_entity_proto_rawDesc = "" +
 	" \x01(\tR\astartAt\x12\x15\n" +
 	"\x06end_at\x18\v \x01(\tR\x05endAt\x12K\n" +
 	"\ttask_type\x18\f \x01(\v2..proto.ProjectManagementTaskTypeSnapshotEntityR\btaskType\x12H\n" +
-	"\tassignees\x18\r \x03(\v2*.proto.ProjectManagementTaskAssigneeEntityR\tassignees\x12J\n" +
-	"\vattachments\x18\x12 \x03(\v2(.proto.ProjectManagementAttachmentEntityR\vattachments\x12\x18\n" +
+	"\tassignees\x18\r \x03(\v2*.proto.ProjectManagementTaskAssigneeEntityR\tassignees\x123\n" +
+	"\vattachments\x18\x12 \x03(\v2\x11.proto.FileEntityR\vattachments\x12\x18\n" +
 	"\aoverdue\x18\x0e \x01(\bR\aoverdue\x12'\n" +
 	"\x0foverdue_seconds\x18\x0f \x01(\x03R\x0eoverdueSeconds\x12\x1d\n" +
 	"\n" +
@@ -9549,7 +9456,7 @@ func file_proto_entity_proto_rawDescGZIP() []byte {
 	return file_proto_entity_proto_rawDescData
 }
 
-var file_proto_entity_proto_msgTypes = make([]protoimpl.MessageInfo, 69)
+var file_proto_entity_proto_msgTypes = make([]protoimpl.MessageInfo, 68)
 var file_proto_entity_proto_goTypes = []any{
 	(*AddressEntity)(nil),                                  // 0: proto.AddressEntity
 	(*UserEntity)(nil),                                     // 1: proto.UserEntity
@@ -9614,14 +9521,13 @@ var file_proto_entity_proto_goTypes = []any{
 	(*ProjectManagementMemberEntity)(nil),                  // 60: proto.ProjectManagementMemberEntity
 	(*ProjectManagementTaskTypeSnapshotEntity)(nil),        // 61: proto.ProjectManagementTaskTypeSnapshotEntity
 	(*ProjectManagementTaskAssigneeEntity)(nil),            // 62: proto.ProjectManagementTaskAssigneeEntity
-	(*ProjectManagementAttachmentEntity)(nil),              // 63: proto.ProjectManagementAttachmentEntity
-	(*ProjectManagementTaskEntity)(nil),                    // 64: proto.ProjectManagementTaskEntity
-	(*ProjectManagementTaskPageEntity)(nil),                // 65: proto.ProjectManagementTaskPageEntity
-	(*ProjectManagementTaskDependencyEntity)(nil),          // 66: proto.ProjectManagementTaskDependencyEntity
-	(*OperationEntity)(nil),                                // 67: proto.OperationEntity
-	nil,                                                    // 68: proto.TemplateVariableEntity.PropertiesEntry
-	(*RangeFloat)(nil),                                     // 69: proto.RangeFloat
-	(*RangeInt32)(nil),                                     // 70: proto.RangeInt32
+	(*ProjectManagementTaskEntity)(nil),                    // 63: proto.ProjectManagementTaskEntity
+	(*ProjectManagementTaskPageEntity)(nil),                // 64: proto.ProjectManagementTaskPageEntity
+	(*ProjectManagementTaskDependencyEntity)(nil),          // 65: proto.ProjectManagementTaskDependencyEntity
+	(*OperationEntity)(nil),                                // 66: proto.OperationEntity
+	nil,                                                    // 67: proto.TemplateVariableEntity.PropertiesEntry
+	(*RangeFloat)(nil),                                     // 68: proto.RangeFloat
+	(*RangeInt32)(nil),                                     // 69: proto.RangeInt32
 }
 var file_proto_entity_proto_depIdxs = []int32{
 	12, // 0: proto.UserEntity.roles:type_name -> proto.RoleEntity
@@ -9631,10 +9537,10 @@ var file_proto_entity_proto_depIdxs = []int32{
 	1,  // 4: proto.OrganizationEntity.owner:type_name -> proto.UserEntity
 	9,  // 5: proto.OrganizationEntity.organization_settings:type_name -> proto.OrganizationSettingEntity
 	5,  // 6: proto.OrganizationMetadataEntity.lender:type_name -> proto.OrganizationLenderMetadataEntity
-	69, // 7: proto.OrganizationLenderMetadataEntity.loan_amount_range:type_name -> proto.RangeFloat
-	70, // 8: proto.OrganizationLenderMetadataEntity.loan_term_range:type_name -> proto.RangeInt32
-	69, // 9: proto.OrganizationLenderMetadataEntity.loan_rate_range:type_name -> proto.RangeFloat
-	69, // 10: proto.OrganizationLenderMetadataEntity.loan_point_range:type_name -> proto.RangeFloat
+	68, // 7: proto.OrganizationLenderMetadataEntity.loan_amount_range:type_name -> proto.RangeFloat
+	69, // 8: proto.OrganizationLenderMetadataEntity.loan_term_range:type_name -> proto.RangeInt32
+	68, // 9: proto.OrganizationLenderMetadataEntity.loan_rate_range:type_name -> proto.RangeFloat
+	68, // 10: proto.OrganizationLenderMetadataEntity.loan_point_range:type_name -> proto.RangeFloat
 	0,  // 11: proto.OrganizationProfileEntity.address:type_name -> proto.AddressEntity
 	8,  // 12: proto.OrganizationProfileEntity.organization_emails:type_name -> proto.OrganizationEmailEntity
 	4,  // 13: proto.OrganizationProfileEntity.metadata:type_name -> proto.OrganizationMetadataEntity
@@ -9648,7 +9554,7 @@ var file_proto_entity_proto_depIdxs = []int32{
 	14, // 21: proto.ResourceTreeEntity.children:type_name -> proto.ResourceTreeEntity
 	15, // 22: proto.ResourceTreeEntity.apis:type_name -> proto.ApiEntity
 	16, // 23: proto.ApiTreeEntity.children:type_name -> proto.ApiTreeEntity
-	68, // 24: proto.TemplateVariableEntity.properties:type_name -> proto.TemplateVariableEntity.PropertiesEntry
+	67, // 24: proto.TemplateVariableEntity.properties:type_name -> proto.TemplateVariableEntity.PropertiesEntry
 	18, // 25: proto.TemplateVariableEntity.items:type_name -> proto.TemplateVariableEntity
 	18, // 26: proto.TemplateVariableGroupEntity.variables:type_name -> proto.TemplateVariableEntity
 	19, // 27: proto.BaseTemplateEntity.variable_group_schema:type_name -> proto.TemplateVariableGroupEntity
@@ -9703,9 +9609,9 @@ var file_proto_entity_proto_depIdxs = []int32{
 	55, // 76: proto.ProjectManagementProjectEntity.workflow:type_name -> proto.ProjectManagementWorkflowEntity
 	61, // 77: proto.ProjectManagementTaskEntity.task_type:type_name -> proto.ProjectManagementTaskTypeSnapshotEntity
 	62, // 78: proto.ProjectManagementTaskEntity.assignees:type_name -> proto.ProjectManagementTaskAssigneeEntity
-	63, // 79: proto.ProjectManagementTaskEntity.attachments:type_name -> proto.ProjectManagementAttachmentEntity
-	64, // 80: proto.ProjectManagementTaskEntity.children:type_name -> proto.ProjectManagementTaskEntity
-	66, // 81: proto.ProjectManagementTaskEntity.dependencies:type_name -> proto.ProjectManagementTaskDependencyEntity
+	48, // 79: proto.ProjectManagementTaskEntity.attachments:type_name -> proto.FileEntity
+	63, // 80: proto.ProjectManagementTaskEntity.children:type_name -> proto.ProjectManagementTaskEntity
+	65, // 81: proto.ProjectManagementTaskEntity.dependencies:type_name -> proto.ProjectManagementTaskDependencyEntity
 	61, // 82: proto.ProjectManagementTaskPageEntity.task_type:type_name -> proto.ProjectManagementTaskTypeSnapshotEntity
 	18, // 83: proto.TemplateVariableEntity.PropertiesEntry.value:type_name -> proto.TemplateVariableEntity
 	84, // [84:84] is the sub-list for method output_type
@@ -9727,7 +9633,7 @@ func file_proto_entity_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_entity_proto_rawDesc), len(file_proto_entity_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   69,
+			NumMessages:   68,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

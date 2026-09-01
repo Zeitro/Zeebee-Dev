@@ -41,5 +41,5 @@ func (l *AttachmentCreateLogic) AttachmentCreate(req *types.ProjectManagementAtt
 	if err != nil {
 		return nil, err
 	}
-	return &types.ProjectManagementAttachmentDetailResponse{ProjectManagementAttachmentEntity: *entity}, nil
+	return &types.ProjectManagementAttachmentDetailResponse{FileEntity: *entity}, nil
 }

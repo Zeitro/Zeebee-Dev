@@ -5212,118 +5212,6 @@
         }
       }
     },
-    "/api/v1/project_management/task/{id}/attachment": {
-      "post": {
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "project_management_task"
-        ],
-        "summary": "attachment create",
-        "operationId": "projectManagementTaskAttachmentCreate",
-        "parameters": [
-          {
-            "type": "integer",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/ProjectManagementAttachmentCreateRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/ProjectManagementAttachmentDetailResponse"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/project_management/task/{id}/attachment/{file_id}": {
-      "delete": {
-        "consumes": [
-          "application/x-www-form-urlencoded"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "project_management_task"
-        ],
-        "summary": "attachment delete",
-        "operationId": "projectManagementTaskAttachmentDelete",
-        "parameters": [
-          {
-            "type": "integer",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "integer",
-            "name": "file_id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "description": "business code",
-                  "type": "integer",
-                  "example": 0
-                },
-                "data": {
-                  "$ref": "#/definitions/EmptyResponse"
-                },
-                "msg": {
-                  "description": "business message",
-                  "type": "string",
-                  "example": "ok"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/project_management/task/{id}/transition": {
       "post": {
         "consumes": [
@@ -17640,6 +17528,9 @@
         },
         "storage_type": {
           "type": "string"
+        },
+        "upload_type": {
+          "type": "string"
         }
       }
     },
@@ -17649,19 +17540,37 @@
     "ProjectManagementAttachmentDetailResponse": {
       "type": "object",
       "required": [
-        "file_id",
-        "file_name",
+        "id",
+        "entity_type",
+        "entity_id",
         "file_url",
+        "file_name",
         "storage_type",
+        "external_id",
+        "upload_type",
         "created_at",
-        "updated_at"
+        "updated_at",
+        "drive_url",
+        "drive_synced_at"
       ],
       "properties": {
         "created_at": {
           "type": "string"
         },
-        "file_id": {
+        "drive_synced_at": {
+          "type": "string"
+        },
+        "drive_url": {
+          "type": "string"
+        },
+        "entity_id": {
           "type": "integer"
+        },
+        "entity_type": {
+          "type": "string"
+        },
+        "external_id": {
+          "type": "string"
         },
         "file_name": {
           "type": "string"
@@ -17669,41 +17578,16 @@
         "file_url": {
           "type": "string"
         },
-        "storage_type": {
-          "type": "string"
-        },
-        "updated_at": {
-          "type": "string"
-        }
-      }
-    },
-    "ProjectManagementAttachmentEntity": {
-      "type": "object",
-      "required": [
-        "file_id",
-        "file_name",
-        "file_url",
-        "storage_type",
-        "created_at",
-        "updated_at"
-      ],
-      "properties": {
-        "created_at": {
-          "type": "string"
-        },
-        "file_id": {
+        "id": {
           "type": "integer"
         },
-        "file_name": {
-          "type": "string"
-        },
-        "file_url": {
-          "type": "string"
-        },
         "storage_type": {
           "type": "string"
         },
         "updated_at": {
+          "type": "string"
+        },
+        "upload_type": {
           "type": "string"
         }
       }
@@ -18438,6 +18322,26 @@
         }
       }
     },
+    "ProjectManagementTaskAttachmentRequest": {
+      "type": "object",
+      "properties": {
+        "file_name": {
+          "type": "string"
+        },
+        "file_url": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "storage_type": {
+          "type": "string"
+        },
+        "upload_type": {
+          "type": "string"
+        }
+      }
+    },
     "ProjectManagementTaskCandidateEntity": {
       "type": "object",
       "required": [
@@ -18598,6 +18502,7 @@
         "title",
         "description",
         "priority",
+        "work_hours",
         "start_at",
         "end_at",
         "task_type",
@@ -18620,7 +18525,7 @@
         "attachments": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/ProjectManagementAttachmentEntity"
+            "$ref": "#/definitions/FileEntity"
           }
         },
         "children": {
@@ -18706,6 +18611,9 @@
         },
         "updated_at": {
           "type": "string"
+        },
+        "work_hours": {
+          "type": "number"
         }
       }
     },
@@ -18722,6 +18630,7 @@
         "title",
         "description",
         "priority",
+        "work_hours",
         "start_at",
         "end_at",
         "task_type",
@@ -18744,7 +18653,7 @@
         "attachments": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/ProjectManagementAttachmentEntity"
+            "$ref": "#/definitions/FileEntity"
           }
         },
         "children": {
@@ -18830,6 +18739,9 @@
         },
         "updated_at": {
           "type": "string"
+        },
+        "work_hours": {
+          "type": "number"
         }
       }
     },
@@ -19236,6 +19148,12 @@
           "type": "array",
           "items": {
             "type": "integer"
+          }
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProjectManagementTaskAttachmentRequest"
           }
         },
         "dependencies": {
@@ -21699,7 +21617,7 @@
       }
     }
   },
-  "x-date": "2026-08-31 15:53:07",
+  "x-date": "2026-09-01 16:39:39",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

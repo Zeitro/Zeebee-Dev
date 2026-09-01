@@ -6,11 +6,6 @@ import (
 	"zeebee-backend/domains/zeebee/proto"
 )
 
-func attachmentEntity(file *proto.FileEntity) (*types.ProjectManagementAttachmentEntity, error) {
-	entity, err := copierx.Trans[proto.FileEntity, types.ProjectManagementAttachmentEntity](file)
-	if err != nil {
-		return nil, err
-	}
-	entity.FileId = file.Id
-	return entity, nil
+func attachmentEntity(file *proto.FileEntity) (*types.FileEntity, error) {
+	return copierx.Trans[proto.FileEntity, types.FileEntity](file)
 }

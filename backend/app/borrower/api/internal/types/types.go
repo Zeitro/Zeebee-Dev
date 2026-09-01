@@ -1726,6 +1726,7 @@ type ProjectManagementAttachmentCreateRequest struct {
 	FileName    string `json:"file_name,optional" validate:"max=255"`
 	FileUrl     string `json:"file_url" validate:"required,max=255"`
 	StorageType string `json:"storage_type,optional" validate:"max=20"`
+	UploadType  string `json:"upload_type,optional" validate:"omitempty,oneof=Manual GoogleDrive"`
 }
 
 type ProjectManagementAttachmentDeleteRequest struct {
@@ -1734,16 +1735,7 @@ type ProjectManagementAttachmentDeleteRequest struct {
 }
 
 type ProjectManagementAttachmentDetailResponse struct {
-	ProjectManagementAttachmentEntity
-}
-
-type ProjectManagementAttachmentEntity struct {
-	FileId      int64  `json:"file_id"`
-	FileName    string `json:"file_name"`
-	FileUrl     string `json:"file_url"`
-	StorageType string `json:"storage_type"`
-	CreatedAt   string `json:"created_at"`
-	UpdatedAt   string `json:"updated_at"`
+	FileEntity
 }
 
 type ProjectManagementMemberAddRequest struct {
@@ -1915,6 +1907,14 @@ type ProjectManagementTaskAssigneeEntity struct {
 	UpdatedAt                string `json:"updated_at"`
 }
 
+type ProjectManagementTaskAttachmentRequest struct {
+	Id          int64  `json:"id,optional" validate:"gte=0"`
+	FileName    string `json:"file_name,optional" validate:"required,max=255"`
+	FileUrl     string `json:"file_url,optional" validate:"required,uri,max=255"`
+	StorageType string `json:"storage_type,optional" validate:"oneof='Aws S3' GoogleDrive"`
+	UploadType  string `json:"upload_type,optional" validate:"oneof=Manual GoogleDrive"`
+}
+
 type ProjectManagementTaskCandidateEntity struct {
 	Id    int64  `json:"id"`
 	Title string `json:"title"`
@@ -1987,11 +1987,12 @@ type ProjectManagementTaskEntity struct {
 	Title          string                                   `json:"title"`
 	Description    string                                   `json:"description"`
 	Priority       string                                   `json:"priority"`
+	WorkHours      float64                                  `json:"work_hours"`
 	StartAt        string                                   `json:"start_at"`
 	EndAt          string                                   `json:"end_at"`
 	TaskType       *ProjectManagementTaskTypeSnapshotEntity `json:"task_type"`
 	Assignees      []*ProjectManagementTaskAssigneeEntity   `json:"assignees"`
-	Attachments    []*ProjectManagementAttachmentEntity     `json:"attachments"`
+	Attachments    []*FileEntity                            `json:"attachments"`
 	Overdue        bool                                     `json:"overdue"`
 	OverdueSeconds int64                                    `json:"overdue_seconds"`
 	CreatedAt      string                                   `json:"created_at"`
@@ -2108,6 +2109,7 @@ type ProjectManagementTaskUpdateRequest struct {
 	TaskTypeId                  int64                                     `json:"task_type_id,optional"`
 	AssigneeOrganizationUserIds []int64                                   `json:"assignee_organization_user_ids,optional"`
 	Dependencies                []*ProjectManagementTaskDependencyRequest `json:"dependencies,optional"`
+	Attachments                 []*ProjectManagementTaskAttachmentRequest `json:"attachments,optional"`
 }
 
 type ProjectManagementWorkflowAllRequest struct {
