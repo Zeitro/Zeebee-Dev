@@ -312,15 +312,16 @@ func (l *ProjectManagementDependencyLogic) SyncWithTx(ctx context.Context, tx *g
 			}
 			continue
 		}
-		if _, ok := existingById[input.Id]; !ok {
+		existingDependency, ok := existingById[input.Id]
+		if !ok {
 			return projectManagementNotFound(gorm.ErrRecordNotFound, "task dependency not found")
 		}
 		if _, ok := requested[input.Id]; ok {
 			return errorx.New("duplicate task dependency")
 		}
 		requested[input.Id] = struct{}{}
-		if _, err := l.updateWithTx(ctx, tx, claim, *input); err != nil {
-			return err
+		if existingDependency.DependencyTaskId != input.DependencyTaskId || existingDependency.DependencyType != input.DependencyType || existingDependency.DependencyRule != input.DependencyRule {
+			return errorx.New("existing task dependency cannot be modified")
 		}
 	}
 	for id := range existingById {

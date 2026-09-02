@@ -104,6 +104,14 @@ func TestCreateTaskDependencyRules(t *testing.T) {
 	if _, err = logic.Create(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 2, DependencyTaskId: 1, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFF}); err == nil {
 		t.Fatal("dependency added after successor left pending")
 	}
+	if err = logic.repos.ProjectManagementDependencyRepo.Transaction(context.Background(), func(tx *gorm.DB) error {
+		return logic.SyncWithTx(context.Background(), tx, actor, 2, []*dto.ProjectManagementTaskDependencyDto{
+			{Id: dependency.Id, TaskId: 2, DependencyTaskId: 1, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS},
+			{Id: postDependency.Id, TaskId: 2, DependencyTaskId: 4, DependencyType: constants.ProjectManagementDependencyTypePostTask, DependencyRule: constants.ProjectManagementDependencyRuleFS},
+		})
+	}); err != nil {
+		t.Fatalf("unchanged dependency sync rejected after successor started: %v", err)
+	}
 	if err = db.Exec("UPDATE project_management_tasks SET stage_id = 100 WHERE id = 2").Error; err != nil {
 		t.Fatal(err)
 	}
@@ -113,13 +121,10 @@ func TestCreateTaskDependencyRules(t *testing.T) {
 			DependencyType: constants.ProjectManagementDependencyTypePreTask,
 			DependencyRule: constants.ProjectManagementDependencyRuleFF,
 		}})
-	}); err != nil {
-		t.Fatalf("dependency sync failed: %v", err)
+	}); err == nil {
+		t.Fatal("dependency sync modified an existing dependency")
 	}
 	var count int64
-	if err = db.Model(&struct{ Id int64 }{}).Table("project_management_task_dependencies").Where("task_id = ? AND is_del = 0", 2).Count(&count).Error; err != nil || count != 1 {
-		t.Fatalf("dependency sync did not replace set: count=%d err=%v", count, err)
-	}
 	if err = db.Exec("INSERT INTO project_management_task_dependencies (task_id, dependency_task_id, dependency_type, dependency_rule) VALUES (4, 2, 'PreTask', 'FS')").Error; err != nil {
 		t.Fatal(err)
 	}
