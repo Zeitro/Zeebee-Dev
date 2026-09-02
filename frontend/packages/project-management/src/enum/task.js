@@ -3,7 +3,7 @@
  * 请求仍传接口原值；展示文案走 i18n，便于中英切换。
  */
 
-import { PROJECT_PRIORITY } from './project';
+import { PROJECT_PRIORITY, PROJECT_PRIORITY_I18N_KEY } from './project';
 
 export const TASK_PHASE = {
 	PENDING: 'Pending',
@@ -26,6 +26,7 @@ export const TASK_PRIORITY = {
 	LOW: 'Low',
 	MEDIUM: 'Medium',
 	HIGH: 'High',
+	URGENT: 'Urgent',
 	CRITICAL: 'Critical',
 };
 
@@ -33,6 +34,7 @@ export const TASK_PRIORITY_I18N_KEY = {
 	[TASK_PRIORITY.LOW]: 'priority.low',
 	[TASK_PRIORITY.MEDIUM]: 'priority.medium',
 	[TASK_PRIORITY.HIGH]: 'priority.high',
+	[TASK_PRIORITY.URGENT]: 'priority.critical',
 	[TASK_PRIORITY.CRITICAL]: 'priority.critical',
 };
 
@@ -57,6 +59,7 @@ export const TASK_TO_PROJECT_PRIORITY = {
 	[TASK_PRIORITY.LOW]: PROJECT_PRIORITY.LOW,
 	[TASK_PRIORITY.MEDIUM]: PROJECT_PRIORITY.MEDIUM,
 	[TASK_PRIORITY.HIGH]: PROJECT_PRIORITY.HIGH,
+	[TASK_PRIORITY.URGENT]: PROJECT_PRIORITY.URGENT,
 	[TASK_PRIORITY.CRITICAL]: PROJECT_PRIORITY.URGENT,
 };
 
@@ -100,6 +103,9 @@ export function getPhaseI18nKey(phase) {
  */
 export function getTaskPriorityI18nKey(priority) {
 	if (priority === null || priority === undefined || priority === '') return undefined;
+	if (typeof priority === 'number' && !Number.isNaN(priority)) {
+		return PROJECT_PRIORITY_I18N_KEY[priority];
+	}
 	return TASK_PRIORITY_I18N_KEY[priority];
 }
 

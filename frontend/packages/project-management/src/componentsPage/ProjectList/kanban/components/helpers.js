@@ -3,8 +3,12 @@
  */
 
 import { dayjs, formatDate, formatStr } from '@repo/shared-methods/utils';
-import { PROJECT_PRIORITY } from '@repo/project-management/enum';
-import { TASK_DEPENDENCY_DIRECTION, toTaskPriorityValue } from '@repo/project-management/enum/task';
+import { getPriorityI18nKey } from '@repo/project-management/enum/project';
+import {
+	TASK_DEPENDENCY_DIRECTION,
+	toProjectPriorityLevel,
+	toTaskPriorityValue,
+} from '@repo/project-management/enum/task';
 
 /**
  * 兼容 `{ list }` / `{ data }` / 裸数组。
@@ -116,13 +120,13 @@ export function toIsoDateTime(value) {
 }
 
 /**
- * 卡片不展示「中」优先级（与 demo 一致：priority === 1 隐藏）。
+ * 卡片是否展示优先级标签（有效优先级均展示，含「中」）。
  * @param {number|string|null|undefined} priority
  * @returns {boolean}
  */
 export function shouldShowCardPriority(priority) {
 	if (priority === null || priority === undefined || priority === '') return false;
-	return Number(priority) !== PROJECT_PRIORITY.MEDIUM;
+	return getPriorityI18nKey(toProjectPriorityLevel(priority)) != null;
 }
 
 /**
@@ -204,7 +208,7 @@ export function formatActivityDescription(act, t, resolveUserName) {
 		t('priority.low'),
 		t('priority.medium'),
 		t('priority.high'),
-		t('priority.urgent'),
+		t('priority.critical'),
 	];
 	const formatValue = (field, val) => {
 		if (!val) return val;

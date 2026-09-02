@@ -20,7 +20,7 @@ export const PROJECT_PRIORITY_I18N_KEY = {
 	[PROJECT_PRIORITY.LOW]: 'priority.low',
 	[PROJECT_PRIORITY.MEDIUM]: 'priority.medium',
 	[PROJECT_PRIORITY.HIGH]: 'priority.high',
-	[PROJECT_PRIORITY.URGENT]: 'priority.urgent',
+	[PROJECT_PRIORITY.URGENT]: 'priority.critical',
 };
 
 /** 卡片优先级标签：已注册 token 用 utility，未注册的用 CSS 变量 */

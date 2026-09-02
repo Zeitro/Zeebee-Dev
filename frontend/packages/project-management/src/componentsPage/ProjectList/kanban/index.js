@@ -85,7 +85,7 @@ function ProjectKanbanView({
 	const router = useRouter();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
-	const { activeTask, openTask, closeTask, fetchTaskActivities } = useKanbanTaskDetail();
+	const { activeTask, openTask, closeTask } = useKanbanTaskDetail();
 	const [draggedTask, setDraggedTask] = useState(null);
 	const [createOpen, setCreateOpen] = useState(false);
 	const [createParent, setCreateParent] = useState(null);
@@ -93,7 +93,6 @@ function ProjectKanbanView({
 	const [inviteOpen, setInviteOpen] = useState(false);
 	const [projectActivityOpen, setProjectActivityOpen] = useState(false);
 	const [taskLogOpen, setTaskLogOpen] = useState(false);
-	const [taskActivities, setTaskActivities] = useState([]);
 
 	const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 	const states = useMemo(
@@ -159,12 +158,9 @@ function ProjectKanbanView({
 		setProjectActivityOpen(true);
 	}, []);
 
-	const handleOpenTaskLog = useCallback(async () => {
-		if (!activeTask) return;
+	const handleOpenTaskLog = useCallback(() => {
 		setTaskLogOpen(true);
-		const activities = await fetchTaskActivities(activeTask.id);
-		setTaskActivities(activities);
-	}, [activeTask, fetchTaskActivities]);
+	}, []);
 
 	return (
 		<div className="flex flex-col flex-1 px-8 pt-6 pb-6">
@@ -264,7 +260,8 @@ function ProjectKanbanView({
 			/>
 			<TaskActivityDrawer
 				open={taskLogOpen}
-				activities={taskActivities}
+				projectId={projectId}
+				taskId={activeTask?.id}
 				members={members}
 				onClose={() => setTaskLogOpen(false)}
 			/>

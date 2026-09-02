@@ -1,5 +1,5 @@
 /**
- * 看板任务卡：可拖拽；展示标题、子任务数、非中优先级、截止日期、评论、执行者。
+ * 看板任务卡：可拖拽；展示标题、子任务数、优先级、截止日期、评论、执行者。
  */
 'use client';
 
@@ -8,15 +8,14 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useTranslations } from 'next-intl';
 import { dayjs, displayValue, formatDate } from '@repo/shared-methods/utils';
-import { getPriorityI18nKey, getPriorityTagClass } from '../../../../enum/project';
-import { isTerminalState } from '../../../../enum/workflow';
-import { TASK_CARD_DUE_FORMAT, TASK_CARD_HEIGHT_CLASS } from './constants';
 import {
-	getAssigneeIds,
-	getMemberInitial,
-	getMemberLabel,
-	shouldShowCardPriority,
-} from './helpers';
+	PROJECT_PRIORITY,
+	getPriorityI18nKey,
+	getPriorityTagClass,
+} from '../../../../enum/project';
+import { toProjectPriorityLevel } from '../../../../enum/task';
+import { isTerminalState } from '../../../../enum/workflow';
+import { getAssigneeIds, getMemberInitial, getMemberLabel } from './helpers';
 
 const PILL_CLASS =
 	'inline-flex items-center gap-0.5 px-2 py-0.5 rounded bg-base-text2 text-[11px] text-base-gray leading-[18px]';
@@ -55,7 +54,10 @@ export function TaskCard({
 	const assigneeMembers = assigneeIds
 		.map((id) => members.find((member) => member.id === id))
 		.filter(Boolean);
-	const priorityKey = getPriorityI18nKey(task.priority);
+	const priorityLevel = toProjectPriorityLevel(task.priority);
+	const priorityKey = getPriorityI18nKey(priorityLevel);
+
+	const isCriticalPriority = priorityLevel === PROJECT_PRIORITY.URGENT;
 
 	return (
 		<div
@@ -76,7 +78,7 @@ export function TaskCard({
 				onKeyDown={(event) => {
 					if (event.key === 'Enter') onClick();
 				}}
-				className={`w-full ${TASK_CARD_HEIGHT_CLASS} mb-2.5 rounded-lg bg-white px-3.5 py-3 text-left border border-base-border shadow-[0_1px_4px_rgba(0,0,0,0.06)] cursor-grab overflow-hidden flex flex-col`}
+				className={`w-full min-h-[76px] mb-2.5 rounded-lg bg-white px-3.5 py-3 text-left border border-base-border shadow-[0_1px_4px_rgba(0,0,0,0.06)] cursor-grab overflow-hidden flex flex-col`}
 			>
 				<div className="flex items-center gap-1.5 h-5">
 					<p
@@ -105,8 +107,14 @@ export function TaskCard({
 							{subtaskCount}
 						</span>
 					) : null}
-					{shouldShowCardPriority(task.priority) && priorityKey ? (
-						<span className={`${PILL_CLASS} ${getPriorityTagClass(task.priority)}`}>
+					{priorityKey ? (
+						<span
+							className={
+								isCriticalPriority
+									? `${PILL_CLASS} !text-base-error`
+									: `${PILL_CLASS} ${getPriorityTagClass(priorityLevel)}`
+							}
+						>
 							{t(priorityKey)}
 						</span>
 					) : null}
@@ -116,9 +124,7 @@ export function TaskCard({
 								isOverdue ? 'text-base-error bg-[var(--error-light)]' : ''
 							}`}
 						>
-							{displayValue(task.due_date, (value) =>
-								formatDate(value, TASK_CARD_DUE_FORMAT),
-							)}
+							{displayValue(task.due_date, (value) => formatDate(value))}
 						</span>
 					) : null}
 					{commentCount > 0 ? (

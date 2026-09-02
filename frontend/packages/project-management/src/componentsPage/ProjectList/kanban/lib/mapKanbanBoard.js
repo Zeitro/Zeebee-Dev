@@ -12,6 +12,7 @@ const API_PRIORITY_TO_PROJECT = {
 	[TASK_PRIORITY.LOW]: PROJECT_PRIORITY.LOW,
 	[TASK_PRIORITY.MEDIUM]: PROJECT_PRIORITY.MEDIUM,
 	[TASK_PRIORITY.HIGH]: PROJECT_PRIORITY.HIGH,
+	[TASK_PRIORITY.URGENT]: PROJECT_PRIORITY.URGENT,
 	[TASK_PRIORITY.CRITICAL]: PROJECT_PRIORITY.URGENT,
 };
 
@@ -148,7 +149,10 @@ export function buildTaskUpdateBody(task, overrides = {}, options = {}) {
 		.filter(Boolean);
 
 	const workHours =
-		overrides.work_hours ?? overrides.estimated_hours ?? task.work_hours ?? task.estimated_hours;
+		overrides.work_hours ??
+		overrides.estimated_hours ??
+		task.work_hours ??
+		task.estimated_hours;
 
 	return {
 		title: overrides.title ?? task.title,

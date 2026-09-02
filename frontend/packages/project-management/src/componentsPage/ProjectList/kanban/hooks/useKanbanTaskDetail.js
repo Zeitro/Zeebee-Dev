@@ -17,10 +17,9 @@ import { useTranslations } from 'next-intl';
 import { useUserStore } from '@repo/shared-methods/store';
 import { createRequest } from '@repo/shared-methods/utils';
 import { getProjectMembersApi } from '@repo/project-management/api/project';
-import { createTaskApi, getTaskActivitiesApi, getTaskApi } from '@repo/project-management/api/task';
+import { createTaskApi, getTaskApi } from '@repo/project-management/api/task';
 import { unwrapList } from '../components/helpers';
 import { buildTaskUpdateBody, mapKanbanTaskDetail } from '../lib/mapKanbanBoard';
-import { getMockTaskActivities } from '../mockData';
 import { createTaskTypeApi } from '@repo/project-management/api/taskType';
 
 /** @type {import('react').Context<ReturnType<typeof useKanbanTaskDetailState>|null>} */
@@ -150,22 +149,6 @@ export function useKanbanTaskDetailState({
 		[taskApi],
 	);
 
-	const fetchTaskActivities = useCallback(
-		async (taskId) => {
-			if (!taskId) return [];
-			try {
-				const data = await request(getTaskActivitiesApi(taskId), {
-					method: 'GET',
-					isHideTips: true,
-				}).catch(() => getMockTaskActivities(taskId));
-				return unwrapList(data);
-			} catch {
-				return getMockTaskActivities(taskId);
-			}
-		},
-		[request],
-	);
-
 	const fetchTaskCandidates = useCallback(
 		async ({ project_id, task_id, keyword = '' }) => {
 			if (!project_id || !task_id) return [];
@@ -287,7 +270,6 @@ export function useKanbanTaskDetailState({
 		deleting,
 		fetchTaskDetail,
 		fetchTaskTypes,
-		fetchTaskActivities,
 		fetchTaskCandidates,
 		updateTaskDetail,
 	};

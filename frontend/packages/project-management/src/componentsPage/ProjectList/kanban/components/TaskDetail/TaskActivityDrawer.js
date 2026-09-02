@@ -1,28 +1,67 @@
 /**
- * 单任务操作日志抽屉。
+ * 单任务操作日志：与项目动态共用 `/operation/page`，filter 额外传 task_id。
  */
 'use client';
 
-import { Drawer, Empty, Timeline } from 'antd';
+import { useCallback, useMemo } from 'react';
+import { Drawer, Empty, Spin, Timeline } from 'antd';
 import { useTranslations } from 'next-intl';
-import { dayjs } from '@repo/shared-methods/utils';
-import { formatActivityDescription, getMemberLabel } from '../helpers';
+import { displayValue, formatTime } from '@repo/shared-methods/utils';
+import { formatOperationDescription } from '@repo/project-management/lib/operationLog';
+import { useOperationActivityList } from '../../hooks/useOperationActivityList';
+import { getMemberLabel } from '../helpers';
 
 /**
  * @param {{
  *   open: boolean,
- *   activities?: Array,
+ *   projectId?: number|string,
+ *   taskId?: number|string,
  *   members?: Array,
  *   onClose: () => void,
  * }} props
  */
-export function TaskActivityDrawer({ open, activities = [], members = [], onClose }) {
+export function TaskActivityDrawer({ open, projectId, taskId, members = [], onClose }) {
 	const t = useTranslations();
+	const { activities, loading, loadingMore, hasMore, sentinelRef } = useOperationActivityList({
+		open,
+		projectId,
+		taskId,
+		requireTaskId: true,
+	});
 
-	const resolveUserName = (id) => {
-		const member = members.find((item) => item.id === id);
-		return getMemberLabel(member, id);
-	};
+	const resolveUserName = useCallback(
+		(id) => {
+			const member = members.find((item) => item.id === id);
+			return getMemberLabel(member, id);
+		},
+		[members],
+	);
+
+	const timelineItems = useMemo(
+		() =>
+			activities.map((act) => {
+				const userName =
+					act.operator_name ||
+					(act.operator_id ? resolveUserName(act.operator_id) : t('kanban.system'));
+				const description = formatOperationDescription(act, t, {
+					resolveUserName,
+				});
+				return {
+					key: act.id,
+					children: (
+						<div>
+							<div className="text-xs">
+								<strong>{userName}</strong> {description}
+							</div>
+							<div className="text-xs text-base-label mt-0.5">
+								{displayValue(act.created_at, formatTime)}
+							</div>
+						</div>
+					),
+				};
+			}),
+		[activities, resolveUserName, t],
+	);
 
 	return (
 		<Drawer
@@ -32,34 +71,26 @@ export function TaskActivityDrawer({ open, activities = [], members = [], onClos
 			open={open}
 			onClose={onClose}
 		>
-			{activities.length === 0 ? (
-				<Empty
-					description={t('kanban.activityEmptyList')}
-					image={Empty.PRESENTED_IMAGE_SIMPLE}
-				/>
-			) : (
-				<Timeline
-					className="mt-3"
-					items={activities.map((act) => {
-						const userName = act.user_id
-							? resolveUserName(act.user_id)
-							: t('kanban.system');
-						return {
-							children: (
-								<div>
-									<div className="text-xs">
-										<strong>{userName}</strong>{' '}
-										{formatActivityDescription(act, t, resolveUserName)}
-									</div>
-									<div className="text-xs text-base-label mt-0.5">
-										{dayjs(act.created_at).format('YYYY-MM-DD HH:mm')}
-									</div>
-								</div>
-							),
-						};
-					})}
-				/>
-			)}
+			<Spin spinning={loading}>
+				{!loading && activities.length === 0 ? (
+					<Empty
+						description={t('kanban.activityEmptyList')}
+						image={Empty.PRESENTED_IMAGE_SIMPLE}
+					/>
+				) : (
+					<>
+						<Timeline className="mt-3" items={timelineItems} />
+						{hasMore || loadingMore ? (
+							<div
+								ref={sentinelRef}
+								className="flex items-center justify-center py-3 min-h-8"
+							>
+								{loadingMore ? <Spin size="small" /> : null}
+							</div>
+						) : null}
+					</>
+				)}
+			</Spin>
 		</Drawer>
 	);
 }
