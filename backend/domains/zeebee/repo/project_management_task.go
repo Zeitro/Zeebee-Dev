@@ -3,6 +3,8 @@ package repo
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -91,8 +93,14 @@ func (r *ProjectManagementTaskRepo) CandidateByProject(ctx context.Context, orga
 	if input.TaskId != 0 {
 		query = query.Where("id <> ?", input.TaskId)
 	}
-	if input.Keyword != "" {
-		query = query.Where("LOWER(title) LIKE LOWER(?)", "%"+input.Keyword+"%")
+	keyword := strings.TrimSpace(input.Keyword)
+	if keyword != "" {
+		pattern := "%" + keyword + "%"
+		if id, err := strconv.ParseInt(keyword, 10, 64); err == nil && id > 0 {
+			query = query.Where("id = ? OR LOWER(title) LIKE LOWER(?)", id, pattern)
+		} else {
+			query = query.Where("LOWER(title) LIKE LOWER(?)", pattern)
+		}
 	}
 	candidates := make([]*dto.ProjectManagementTaskCandidateEntityDto, 0)
 	err := query.Find(&candidates).Error

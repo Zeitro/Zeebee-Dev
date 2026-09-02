@@ -3,6 +3,8 @@ package repo
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
 	"time"
 
 	"gorm.io/gorm"
@@ -116,8 +118,14 @@ func (r *ProjectManagementProjectRepo) CandidateMembers(ctx context.Context, org
 	default:
 		return nil, errorx.New("invalid project member candidate purpose")
 	}
+	keyword = strings.TrimSpace(keyword)
 	if keyword != "" {
-		query = query.Where(fmt.Sprintf("%s.full_name ILIKE ? OR %s.email ILIKE ?", organizationUsersTable, usersTable), "%"+keyword+"%", "%"+keyword+"%")
+		pattern := "%" + keyword + "%"
+		if id, err := strconv.ParseInt(keyword, 10, 64); err == nil && id > 0 {
+			query = query.Where(fmt.Sprintf("%s.id = ? OR LOWER(%s.full_name) LIKE LOWER(?) OR LOWER(%s.email) LIKE LOWER(?)", organizationUsersTable, organizationUsersTable, usersTable), id, pattern, pattern)
+		} else {
+			query = query.Where(fmt.Sprintf("LOWER(%s.full_name) LIKE LOWER(?) OR LOWER(%s.email) LIKE LOWER(?)", organizationUsersTable, usersTable), pattern, pattern)
+		}
 	}
 	candidates := make([]*dto.ProjectManagementMemberCandidateEntityDto, 0)
 	err := query.Find(&candidates).Error
