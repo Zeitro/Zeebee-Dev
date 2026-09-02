@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 
 	"gorm.io/gorm"
 
@@ -61,7 +62,7 @@ func (l *ProjectManagementTaskLogic) Transition(ctx context.Context, claim utils
 		}
 		transition, err := l.repos.ProjectManagementWorkflowRepo.FindTransitionWithTx(ctx, tx, workflow.Id, currentStage.Id, targetStage.Id)
 		if err != nil {
-			return projectManagementNotFound(err, "task workflow transition not found")
+			return projectManagementNotFound(err, fmt.Sprintf("workflow has no transition configured from %q to %q", currentStage.Name, targetStage.Name))
 		}
 		transitionCtx := &projectManagementTransitionContext{
 			ctx:          ctx,
@@ -145,10 +146,18 @@ func (l *ProjectManagementTaskLogic) validateTransitionDependencies(transitionCt
 		}
 		finished, started := stage.Phase == constants.ProjectManagementStagePhaseFinished, stage.Phase != constants.ProjectManagementStagePhasePending
 		if transitionCtx.targetStage.Phase == constants.ProjectManagementStagePhaseInProgress && ((dependency.DependencyRule == constants.ProjectManagementDependencyRuleFS && !finished) || (dependency.DependencyRule == constants.ProjectManagementDependencyRuleSS && !started)) {
-			return errorx.New("task dependency blocks transition to in progress")
+			state := "started"
+			if dependency.DependencyRule == constants.ProjectManagementDependencyRuleFS {
+				state = "finished"
+			}
+			return errorx.New(fmt.Sprintf("cannot move task to InProgress: predecessor task %q must be %s (%s dependency)", predecessor.Title, state, dependency.DependencyRule))
 		}
 		if transitionCtx.targetStage.Phase == constants.ProjectManagementStagePhaseFinished && ((dependency.DependencyRule == constants.ProjectManagementDependencyRuleFF && !finished) || (dependency.DependencyRule == constants.ProjectManagementDependencyRuleSF && !started)) {
-			return errorx.New("task dependency blocks transition to finished")
+			state := "started"
+			if dependency.DependencyRule == constants.ProjectManagementDependencyRuleFF {
+				state = "finished"
+			}
+			return errorx.New(fmt.Sprintf("cannot move task to Finished: predecessor task %q must be %s (%s dependency)", predecessor.Title, state, dependency.DependencyRule))
 		}
 	}
 	return nil

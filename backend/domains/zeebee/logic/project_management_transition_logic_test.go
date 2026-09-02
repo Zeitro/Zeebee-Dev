@@ -39,7 +39,7 @@ func setupProjectManagementTransitionTest(t *testing.T, dependencyRule constants
 			t.Fatal(err)
 		}
 	}
-	if err := db.Exec("INSERT INTO project_management_tasks (id, project_id, organization_id, stage_id) VALUES (10, 1, 1, 100), (20, 1, 1, 100)").Error; err != nil {
+	if err := db.Exec("INSERT INTO project_management_tasks (id, project_id, organization_id, stage_id, title) VALUES (10, 1, 1, 100, 'Current'), (20, 1, 1, 100, 'Predecessor')").Error; err != nil {
 		t.Fatal(err)
 	}
 	if dependencyRule != "" {
@@ -67,12 +67,13 @@ func TestTransitionDependencyRules(t *testing.T) {
 		dependency constants.ProjectManagementDependencyRule
 		target     constants.ProjectManagementStagePhase
 		blocked    bool
+		message    string
 	}{
-		{"FS blocks in progress", constants.ProjectManagementDependencyRuleFS, constants.ProjectManagementStagePhaseInProgress, true},
-		{"SS blocks in progress", constants.ProjectManagementDependencyRuleSS, constants.ProjectManagementStagePhaseInProgress, true},
-		{"FF blocks finished", constants.ProjectManagementDependencyRuleFF, constants.ProjectManagementStagePhaseFinished, true},
-		{"SF blocks finished", constants.ProjectManagementDependencyRuleSF, constants.ProjectManagementStagePhaseFinished, true},
-		{"direct finish ignores FS", constants.ProjectManagementDependencyRuleFS, constants.ProjectManagementStagePhaseFinished, false},
+		{"FS blocks in progress", constants.ProjectManagementDependencyRuleFS, constants.ProjectManagementStagePhaseInProgress, true, "cannot move task to InProgress: predecessor task \"Predecessor\" must be finished (FS dependency)"},
+		{"SS blocks in progress", constants.ProjectManagementDependencyRuleSS, constants.ProjectManagementStagePhaseInProgress, true, "cannot move task to InProgress: predecessor task \"Predecessor\" must be started (SS dependency)"},
+		{"FF blocks finished", constants.ProjectManagementDependencyRuleFF, constants.ProjectManagementStagePhaseFinished, true, "cannot move task to Finished: predecessor task \"Predecessor\" must be finished (FF dependency)"},
+		{"SF blocks finished", constants.ProjectManagementDependencyRuleSF, constants.ProjectManagementStagePhaseFinished, true, "cannot move task to Finished: predecessor task \"Predecessor\" must be started (SF dependency)"},
+		{"direct finish ignores FS", constants.ProjectManagementDependencyRuleFS, constants.ProjectManagementStagePhaseFinished, false, ""},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -87,6 +88,9 @@ func TestTransitionDependencyRules(t *testing.T) {
 			})
 			if tc.blocked && err == nil {
 				t.Fatal("blocked transition was accepted")
+			}
+			if tc.blocked && err.Error() != tc.message {
+				t.Fatalf("unexpected dependency error: %v", err)
 			}
 			if !tc.blocked && err != nil {
 				t.Fatalf("allowed direct finish rejected: %v", err)
