@@ -10,7 +10,8 @@ import {
 	// LinkOutlined,
 	// MoreOutlined,
 } from '@ant-design/icons';
-import { Avatar, Button, Dropdown, Input, Tooltip } from 'antd';
+import { DeleteBtn } from '@repo/shared-methods';
+import { Button, Input, Tooltip } from 'antd';
 import { useTranslations } from 'next-intl';
 import { displayValue } from '@repo/shared-methods/utils';
 // import { TASK_DEPENDENCY_DIRECTION } from '@repo/project-management/enum/task';
@@ -26,7 +27,8 @@ import { displayValue } from '@repo/shared-methods/utils';
  *   members?: Array,
  *   onBack?: () => void,
  *   onTitleBlur: (title: string) => void,
- *   onDelete: () => void,
+ *   onDelete: () => void | Promise<void>,
+ *   deleteLoading?: boolean,
  *   onOpenLog?: () => void,
  *   onAddDependency?: (mode: typeof TASK_DEPENDENCY_DIRECTION.PRE_TASK | typeof TASK_DEPENDENCY_DIRECTION.POST_TASK) => void,
  * }} props
@@ -40,6 +42,7 @@ export function TaskDrawerHeader({
 	onBack,
 	onTitleBlur,
 	onDelete,
+	deleteLoading = false,
 	onOpenLog,
 	onAddDependency,
 }) {
@@ -116,15 +119,20 @@ export function TaskDrawerHeader({
 					>
 						{t('kanban.taskLog')}
 					</Button>
-					<Button
+					<DeleteBtn
 						type="text"
 						size="small"
 						icon={<DeleteOutlined />}
-						onClick={onDelete}
 						danger
+						title={t('kanban.deleteConfirmTitle')}
+						content={t('kanban.deleteConfirmContent', { title: task.title })}
+						okText={t('kanban.deleteConfirmOk')}
+						cancelText={t('common.cancel')}
+						onOk={onDelete}
+						confirmLoading={deleteLoading}
 					>
 						{t('common.delete')}
-					</Button>
+					</DeleteBtn>
 					{/* <Dropdown
 						trigger={['click']}
 						menu={{

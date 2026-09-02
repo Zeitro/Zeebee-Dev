@@ -4,8 +4,8 @@
  * 看板新建 POST `/project_management/task`；详情 GET `/project_management/task/:id?project_id=`；
  * 依赖候选 GET `/project_management/task/candidate?project_id=&task_id=&keyword=`；
  * 编辑 PUT `/project_management/task/:id`（含 dependencies 等全量字段）；
- * 删除 DELETE `/project_management/task/:id`，body `{ project_id }`。
- * 流转仍走 `/tasks/:id/transition`（待迁移）。
+ * 删除 DELETE `/project_management/task/:id?project_id=`；
+ * 流转 POST `/project_management/task/:id/transition`，body `{ project_id, target_stage_id }`。
  */
 
 export const TASK_API = '/tasks';
@@ -63,6 +63,16 @@ export function getTaskDetailApi(id, projectId) {
 }
 
 /**
+ * 任务删除：DELETE `/project_management/task/:id?project_id=`。
+ * @param {number|string} id
+ * @param {number|string|undefined|null} projectId
+ * @returns {string}
+ */
+export function getTaskDeleteApi(id, projectId) {
+	return getTaskDetailApi(id, projectId);
+}
+
+/**
  * @param {import('@repo/shared-methods/utils').RequestFn} request
  * @returns {{
  *   page: (body: object) => Promise<{ list?: object[], total?: number }|unknown>,
@@ -71,7 +81,8 @@ export function getTaskDetailApi(id, projectId) {
  *   detail: (id: number|string, projectId: number|string) => Promise<unknown>,
  *   candidate: (params: { project_id: number|string, task_id: number|string, keyword?: string }) => Promise<{ list?: object[] }|unknown>,
  *   update: (id: number|string, body: object) => Promise<unknown>,
- *   delete: (id: number|string, body: { project_id: number|string }) => Promise<unknown>,
+ *   delete: (id: number|string, projectId: number|string) => Promise<unknown>,
+ *   transition: (id: number|string, body: { project_id: number|string, target_stage_id: number|string }) => Promise<unknown>,
  * }}
  */
 export function createTaskApi(request) {
@@ -88,8 +99,10 @@ export function createTaskApi(request) {
 				...hide,
 			}),
 		update: (id, body) => request(`${TASK_CREATE_API}/${id}`, { method: 'PUT', ...hide, body }),
-		delete: (id, body) =>
-			request(`${TASK_CREATE_API}/${id}`, { method: 'DELETE', ...hide, body }),
+		delete: (id, projectId) =>
+			request(getTaskDeleteApi(id, projectId), { method: 'DELETE', ...hide }),
+		transition: (id, body) =>
+			request(getTaskTransitionApi(id), { method: 'POST', ...hide, body }),
 	};
 }
 
@@ -106,7 +119,7 @@ export function getTaskApi(id) {
  * @returns {string}
  */
 export function getTaskTransitionApi(id) {
-	return `${TASK_API}/${id}/transition`;
+	return `${TASK_CREATE_API}/${id}/transition`;
 }
 
 /**

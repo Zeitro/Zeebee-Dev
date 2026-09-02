@@ -15,7 +15,7 @@ import {
 	PROJECT_MEMBER_LIST_PAGE_SIZE,
 } from '@repo/project-management/api/projectMember';
 import { createTaskTypeApi } from '@repo/project-management/api/taskType';
-import { createTaskApi, getTaskTransitionApi } from '@repo/project-management/api/task';
+import { createTaskApi } from '@repo/project-management/api/task';
 import { mapProjectMember } from '@repo/project-management/lib/mapProjectMember';
 import { TASK_LIST_PAGE_SIZE } from '../components/constants';
 import { unwrapList } from '../components/helpers';
@@ -26,7 +26,7 @@ import { useKanbanTaskDetailState } from './useKanbanTaskDetail';
  * @param {number|string|undefined} projectId
  * @param {number|undefined} queryTaskId URL `?task=`，首次拉数时打开对应详情
  */
-export function useKanbanBoard(projectId, queryTaskId) {
+export function useKanbanBoard(projectId, queryTaskId, messageApi) {
 	const t = useTranslations();
 	const { request } = useMemo(() => createRequest(), []);
 	const taskApi = useMemo(() => createTaskApi(request), [request]);
@@ -143,6 +143,7 @@ export function useKanbanBoard(projectId, queryTaskId) {
 		projectId,
 		projectMembers,
 		queryTaskId,
+		messageApi,
 		onRefreshBoard: () => refreshBoardRef.current(),
 		onRefreshProjectMembers: refreshProjectMembers,
 	});
@@ -190,18 +191,17 @@ export function useKanbanBoard(projectId, queryTaskId) {
 		async (task, targetStateId) => {
 			if (!task || !targetStateId || targetStateId === task.workflow_state_id) return;
 			try {
-				await request(getTaskTransitionApi(task.id), {
-					method: 'POST',
-					isHideTips: true,
-					body: { target_state_id: targetStateId, user_id: userId || 0 },
+				await taskApi.transition(task.id, {
+					project_id: Number(projectId),
+					target_stage_id: Number(targetStateId),
 				});
-				message.success(t('kanban.transitionSuccess'));
+				messageApi?.success(t('kanban.transitionSuccess'));
 				await fetchBoardAndSyncTask();
 			} catch (error) {
-				message.error(error?.message || t('kanban.transitionFailed'));
+				messageApi?.error(error?.message || t('kanban.transitionFailed'));
 			}
 		},
-		[fetchBoardAndSyncTask, request, t, userId],
+		[fetchBoardAndSyncTask, projectId, t, taskApi, messageApi],
 	);
 
 	/** 抽屉内搜索专用，不写入 projectMembers，避免影响权限等全量数据 */

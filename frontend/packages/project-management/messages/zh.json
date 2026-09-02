@@ -288,6 +288,7 @@
 		"taskCreatedAt": "创建于 {time}",
 		"assigneeSaveFailed": "执行者保存失败",
 		"deleteSuccess": "任务已删除",
+		"deleteFailed": "删除任务失败",
 		"deleteConfirmTitle": "确认删除",
 		"deleteConfirmContent": "确定要删除任务「{title}」吗？此操作不可撤销。",
 		"deleteConfirmOk": "确认删除",

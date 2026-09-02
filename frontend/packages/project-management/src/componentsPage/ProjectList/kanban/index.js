@@ -32,9 +32,11 @@ export function ProjectKanban() {
 	const searchParams = useSearchParams();
 	const projectId = id;
 	const queryTaskId = Number(searchParams.get('task')) || undefined;
+	const [messageApi, messageContextHolder] = message.useMessage();
 	const { loading, workflow, taskDetailContextValue, ...boardProps } = useKanbanBoard(
 		projectId,
 		queryTaskId,
+		messageApi,
 	);
 
 	if (loading) {
@@ -51,7 +53,13 @@ export function ProjectKanban() {
 
 	return (
 		<KanbanTaskDetailProvider value={taskDetailContextValue}>
-			<ProjectKanbanView projectId={projectId} workflow={workflow} {...boardProps} />
+			{messageContextHolder}
+			<ProjectKanbanView
+				projectId={projectId}
+				workflow={workflow}
+				messageApi={messageApi}
+				{...boardProps}
+			/>
 		</KanbanTaskDetailProvider>
 	);
 }
@@ -72,6 +80,7 @@ function ProjectKanbanView({
 	refreshBoard,
 	refreshProjectMembers,
 	searchProjectMembers,
+	messageApi,
 }) {
 	const router = useRouter();
 	const pathname = usePathname();
@@ -85,7 +94,6 @@ function ProjectKanbanView({
 	const [projectActivityOpen, setProjectActivityOpen] = useState(false);
 	const [taskLogOpen, setTaskLogOpen] = useState(false);
 	const [taskActivities, setTaskActivities] = useState([]);
-	const [messageApi, messageContextHolder] = message.useMessage();
 
 	const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 	const states = useMemo(
@@ -160,7 +168,6 @@ function ProjectKanbanView({
 
 	return (
 		<div className="flex flex-col flex-1 px-8 pt-6 pb-6">
-			{messageContextHolder}
 			<KanbanHeader
 				project={project}
 				taskCount={taskTotal || tasks.length}
@@ -170,7 +177,7 @@ function ProjectKanbanView({
 				onInviteClick={() => setInviteOpen(true)}
 				onActivityClick={handleOpenProjectActivity}
 			/>
-			<div className="flex-1 overflow-x-auto p-4 bg-white">
+			<div className="flex-1 overflow-x-auto bg-white">
 				<DndContext
 					sensors={sensors}
 					collisionDetection={pointerWithin}

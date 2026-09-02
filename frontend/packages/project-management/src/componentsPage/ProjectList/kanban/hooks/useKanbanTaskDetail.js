@@ -13,7 +13,6 @@ import {
 	useRef,
 	useState,
 } from 'react';
-import { Modal, message } from 'antd';
 import { useTranslations } from 'next-intl';
 import { useUserStore } from '@repo/shared-methods/store';
 import { createRequest } from '@repo/shared-methods/utils';
@@ -55,6 +54,7 @@ export function useKanbanTaskDetail() {
  *   onRefreshBoard?: () => Promise<void>,
  *   onRefreshProjectMembers?: () => Promise<void>,
  *   queryTaskId?: number,
+ *   messageApi?: import('antd/es/message/interface').MessageInstance,
  * }} options
  */
 export function useKanbanTaskDetailState({
@@ -63,6 +63,7 @@ export function useKanbanTaskDetailState({
 	onRefreshBoard,
 	onRefreshProjectMembers,
 	queryTaskId,
+	messageApi,
 }) {
 	const t = useTranslations();
 	const { request } = useMemo(() => createRequest(), []);
@@ -74,6 +75,7 @@ export function useKanbanTaskDetailState({
 	const queryTaskIdRef = useRef(queryTaskId);
 	const [activeTask, setActiveTask] = useState(null);
 	const [taskTypes, setTaskTypes] = useState([]);
+	const [deleting, setDeleting] = useState(false);
 
 	useEffect(() => {
 		queryTaskIdRef.current = queryTaskId;
@@ -210,14 +212,11 @@ export function useKanbanTaskDetailState({
 				await syncAssigneeParticipants(ids);
 				return updated;
 			} catch {
-				message.open({
-					type: 'error',
-					content: t('kanban.assigneeSaveFailed'),
-				});
+				messageApi?.error(t('kanban.assigneeSaveFailed'));
 				return null;
 			}
 		},
-		[syncAssigneeParticipants, t, updateTaskDetail],
+		[messageApi, syncAssigneeParticipants, t, updateTaskDetail],
 	);
 
 	const saveTask = useCallback(
@@ -225,20 +224,14 @@ export function useKanbanTaskDetailState({
 			if (!sourceTask?.id || !values) return null;
 			try {
 				const updated = await updateTaskDetail(sourceTask, values);
-				message.open({
-					type: 'success',
-					content: t('kanban.saveSuccess'),
-				});
+				messageApi?.success(t('kanban.saveSuccess'));
 				return updated;
 			} catch {
-				message.open({
-					type: 'error',
-					content: t('kanban.saveFailed'),
-				});
+				messageApi?.error(t('kanban.saveFailed'));
 				return null;
 			}
 		},
-		[t, updateTaskDetail],
+		[messageApi, t, updateTaskDetail],
 	);
 
 	const saveTitle = useCallback(
@@ -250,47 +243,35 @@ export function useKanbanTaskDetailState({
 					isHideTips: true,
 					body: { title, user_id: userId || 0 },
 				});
-				message.open({
-					type: 'success',
-					content: t('kanban.saveSuccess'),
-				});
+				messageApi?.success(t('kanban.saveSuccess'));
 				await onRefreshBoard?.();
 			} catch {
-				message.open({
-					type: 'error',
-					content: t('kanban.saveFailed'),
-				});
+				messageApi?.error(t('kanban.saveFailed'));
 			}
 		},
-		[activeTask, onRefreshBoard, request, t, userId],
+		[activeTask, messageApi, onRefreshBoard, request, t, userId],
 	);
 
 	const deleteTask = useCallback(
-		(onDeleted) => {
-			if (!activeTask) return;
+		async (onDeleted) => {
+			if (!activeTask || deleting) return;
 			const resolvedProjectId = projectId ?? activeTask.project_id;
 			if (!resolvedProjectId) return;
-			Modal.confirm({
-				title: t('kanban.deleteConfirmTitle'),
-				content: t('kanban.deleteConfirmContent', { title: activeTask.title }),
-				okText: t('kanban.deleteConfirmOk'),
-				okType: 'danger',
-				cancelText: t('common.cancel'),
-				onOk: async () => {
-					await taskApi.delete(activeTask.id, {
-						project_id: Number(resolvedProjectId),
-					});
-					message.open({
-						type: 'success',
-						content: t('kanban.deleteSuccess'),
-					});
-					setActiveTask(null);
-					onDeleted?.();
-					await onRefreshBoard?.();
-				},
-			});
+			setDeleting(true);
+			try {
+				await taskApi.delete(activeTask.id, Number(resolvedProjectId));
+				messageApi?.success(t('kanban.deleteSuccess'));
+				setActiveTask(null);
+				onDeleted?.();
+				await onRefreshBoard?.();
+			} catch (error) {
+				messageApi?.error(error?.message || t('kanban.deleteFailed'));
+				throw error;
+			} finally {
+				setDeleting(false);
+			}
 		},
-		[activeTask, onRefreshBoard, projectId, taskApi, t],
+		[activeTask, deleting, messageApi, onRefreshBoard, projectId, taskApi, t],
 	);
 
 	return {
@@ -303,6 +284,7 @@ export function useKanbanTaskDetailState({
 		saveTask,
 		saveTitle,
 		deleteTask,
+		deleting,
 		fetchTaskDetail,
 		fetchTaskTypes,
 		fetchTaskActivities,

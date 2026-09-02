@@ -48,17 +48,17 @@ export function KanbanHeader({
 	return (
 		<div className="flex items-center justify-between mb-4">
 			<div className="flex items-center gap-3 min-w-0">
-				<Button
+				{/* <Button
 					icon={<ArrowLeftOutlined />}
 					onClick={() => router.push('/project/projectList')}
 				>
 					{t('common.back')}
-				</Button>
+				</Button> */}
 				<h2 className="m-0 text-lg font-semibold truncate">
 					{displayValue(project?.name)}
-					<span className="ml-1 text-sm font-normal text-base-label">
+					{/* <span className="ml-1 text-sm font-normal text-base-label">
 						{t('kanban.taskCount', { count: taskCount })}
-					</span>
+					</span> */}
 				</h2>
 			</div>
 			<div className="flex items-center gap-3 shrink-0">

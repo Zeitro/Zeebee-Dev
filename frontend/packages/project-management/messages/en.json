@@ -289,6 +289,7 @@
 		"taskCreatedAt": "Created at {time}",
 		"assigneeSaveFailed": "Failed to save assignees",
 		"deleteSuccess": "Task deleted",
+		"deleteFailed": "Failed to delete task",
 		"deleteConfirmTitle": "Delete task",
 		"deleteConfirmContent": "Delete task \"{title}\"? This cannot be undone.",
 		"deleteConfirmOk": "Delete",

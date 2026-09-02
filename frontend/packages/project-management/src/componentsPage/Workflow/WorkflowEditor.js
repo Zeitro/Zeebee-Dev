@@ -66,7 +66,7 @@ export function WorkflowEditor({ workflowId, projectId }) {
 				nameInputRef={editor.nameInputRef}
 				viewMode={editor.viewMode}
 				canEdit
-				onBack={() => router.push('/project/workflow')}
+				onBack={() => router.back()}
 				onStartEditName={editor.startEditName}
 				onNameChange={editor.setNameInputValue}
 				onSaveName={editor.handleSaveWorkflowName}

@@ -86,11 +86,12 @@ export function TaskDetailDrawer({
 		saveTask,
 		saveTitle,
 		deleteTask,
+		deleting,
 		fetchTaskDetail,
 		fetchTaskTypes,
 		fetchTaskCandidates,
 		updateTaskDetail,
-	} = useKanbanTaskDetail({ messageApi });
+	} = useKanbanTaskDetail();
 	const open = Boolean(task);
 	const displayTask = detailTask ?? task;
 	const subtaskTasks = useMemo(() => {
@@ -233,9 +234,7 @@ export function TaskDetailDrawer({
 		applyDetailTask(updated);
 	};
 
-	const handleDelete = () => {
-		deleteTask(onClose);
-	};
+	const handleDelete = () => deleteTask(onClose);
 
 	return (
 		<Drawer
@@ -298,6 +297,7 @@ export function TaskDetailDrawer({
 							onBack={onBack}
 							onTitleBlur={saveTitle}
 							onDelete={handleDelete}
+							deleteLoading={deleting}
 							onOpenLog={onOpenLog}
 							onAddDependency={setDependencyFocusMode}
 						/>
