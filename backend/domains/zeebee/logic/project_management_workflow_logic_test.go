@@ -64,6 +64,27 @@ func TestValidateProjectManagementWorkflow(t *testing.T) {
 	}
 }
 
+func TestValidateProjectManagementWorkflowTransitionMessages(t *testing.T) {
+	tests := []struct {
+		name  string
+		input dto.ProjectManagementWorkflowTransitionDto
+		want  string
+	}{
+		{"missing stage ID", dto.ProjectManagementWorkflowTransitionDto{Name: "Move"}, "workflow transition source and target stage IDs are required"},
+		{"same stage", dto.ProjectManagementWorkflowTransitionDto{Name: "Move", FromStageId: 1, ToStageId: 1}, "workflow transition source and target stages must differ (both are 1)"},
+		{"invalid actor", dto.ProjectManagementWorkflowTransitionDto{Name: "Move", FromStageId: 1, ToStageId: 2, AllowedActorTypes: []constants.ProjectManagementMemberRole{"invalid"}}, "workflow transition allowed actor type \"invalid\" is invalid"},
+		{"duplicate actor", dto.ProjectManagementWorkflowTransitionDto{Name: "Move", FromStageId: 1, ToStageId: 2, AllowedActorTypes: []constants.ProjectManagementMemberRole{constants.ProjectManagementMemberRoleProjectAdmin, constants.ProjectManagementMemberRoleProjectAdmin}}, "workflow transition allowed actor type \"ProjectAdmin\" is duplicated"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := validateProjectManagementWorkflowTransition(tt.input)
+			if err == nil || err.Error() != tt.want {
+				t.Fatalf("got %v, want %q", err, tt.want)
+			}
+		})
+	}
+}
+
 func TestProjectManagementWorkflowUpdateDefinition(t *testing.T) {
 	definition, err := projectManagementWorkflowUpdateDefinition(dto.ProjectManagementWorkflowUpdateDto{
 		Name: "Template",
@@ -173,6 +194,26 @@ func TestProjectManagementWorkflowEnsureDefaultSetsStageColors(t *testing.T) {
 	}
 	if len(stages) != 3 || stages[0].Color != "#3b82f6" || stages[1].Color != "#f59e0b" || stages[2].Color != "#22c55e" {
 		t.Fatalf("unexpected default stage colors: %#v", stages)
+	}
+	var transitions []model.ProjectManagementWorkflowTransition
+	if err = db.Find(&transitions).Error; err != nil {
+		t.Fatalf("list default transitions: %v", err)
+	}
+	if len(transitions) != len(stages)*(len(stages)-1) {
+		t.Fatalf("default transitions = %d, want %d", len(transitions), len(stages)*(len(stages)-1))
+	}
+	edges := make(map[[2]int64]struct{}, len(transitions))
+	for _, transition := range transitions {
+		edges[[2]int64{transition.FromStageId, transition.ToStageId}] = struct{}{}
+	}
+	for _, from := range stages {
+		for _, to := range stages {
+			if from.Id != to.Id {
+				if _, ok := edges[[2]int64{from.Id, to.Id}]; !ok {
+					t.Fatalf("missing default transition %d -> %d", from.Id, to.Id)
+				}
+			}
+		}
 	}
 }
 

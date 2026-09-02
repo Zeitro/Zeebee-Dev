@@ -76,9 +76,13 @@ func (l *ProjectManagementWorkflowLogic) ensureDefault(ctx context.Context, orga
 		if err = tx.WithContext(ctx).Create(&stages).Error; err != nil {
 			return errorx.WithStack(err)
 		}
-		transitions := []*model.ProjectManagementWorkflowTransition{
-			{WorkflowId: workflow.Id, FromStageId: stages[0].Id, ToStageId: stages[1].Id},
-			{WorkflowId: workflow.Id, FromStageId: stages[1].Id, ToStageId: stages[2].Id},
+		transitions := make([]*model.ProjectManagementWorkflowTransition, 0, len(stages)*(len(stages)-1))
+		for _, from := range stages {
+			for _, to := range stages {
+				if from.Id != to.Id {
+					transitions = append(transitions, &model.ProjectManagementWorkflowTransition{WorkflowId: workflow.Id, FromStageId: from.Id, ToStageId: to.Id})
+				}
+			}
 		}
 		return errorx.WithStack(tx.WithContext(ctx).Create(&transitions).Error)
 	})
@@ -690,16 +694,19 @@ func validateProjectManagementWorkflowTransition(input dto.ProjectManagementWork
 	if strings.TrimSpace(input.Name) == "" {
 		return errorx.New("workflow transition name is required")
 	}
-	if input.FromStageId == 0 || input.ToStageId == 0 || input.FromStageId == input.ToStageId {
-		return errorx.New("workflow transition stages are invalid")
+	if input.FromStageId == 0 || input.ToStageId == 0 {
+		return errorx.New("workflow transition source and target stage IDs are required")
+	}
+	if input.FromStageId == input.ToStageId {
+		return errorx.New(fmt.Sprintf("workflow transition source and target stages must differ (both are %d)", input.FromStageId))
 	}
 	roles := make(map[constants.ProjectManagementMemberRole]struct{}, len(input.AllowedActorTypes))
 	for _, role := range input.AllowedActorTypes {
 		if !isProjectManagementMemberRole(role) {
-			return errorx.New("invalid workflow transition claim type")
+			return errorx.New(fmt.Sprintf("workflow transition allowed actor type %q is invalid", role))
 		}
 		if _, exists := roles[role]; exists {
-			return errorx.New("workflow transition claim type must be unique")
+			return errorx.New(fmt.Sprintf("workflow transition allowed actor type %q is duplicated", role))
 		}
 		roles[role] = struct{}{}
 	}
