@@ -48,7 +48,7 @@ func TestCreateTaskDependencyRules(t *testing.T) {
 	}
 	for _, statement := range []string{
 		"INSERT INTO project_management_workflow_stages (id, phase) VALUES (100, 'Pending'), (101, 'InProgress')",
-		"INSERT INTO project_management_tasks (id, project_id, organization_id, stage_id, title) VALUES (1, 10, 1, 100, 'Predecessor'), (2, 10, 1, 100, 'Successor'), (3, 11, 1, 100, 'Other project'), (4, 10, 1, 100, 'Post task')",
+		"INSERT INTO project_management_tasks (id, project_id, organization_id, parent_task_id, stage_id, title) VALUES (1, 10, 1, 0, 100, 'Predecessor'), (2, 10, 1, 0, 100, 'Successor'), (3, 11, 1, 0, 100, 'Other project'), (4, 10, 1, 0, 100, 'Post task'), (5, 10, 1, 1, 100, 'Child'), (6, 10, 1, 5, 100, 'Grandchild')",
 		"INSERT INTO project_management_project_members (id, project_id, organization_user_id) VALUES (1, 10, 7)",
 	} {
 		if err := db.Exec(statement).Error; err != nil {
@@ -87,6 +87,16 @@ func TestCreateTaskDependencyRules(t *testing.T) {
 	}
 	if _, err = logic.Create(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 2, DependencyTaskId: 3, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}); err == nil {
 		t.Fatal("cross-project dependency accepted")
+	}
+	if _, err = logic.Create(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 6, DependencyTaskId: 1, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}); err == nil {
+		t.Fatal("ancestor-descendant dependency accepted")
+	}
+	unrelated, err := logic.Create(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 5, DependencyTaskId: 2, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS})
+	if err != nil {
+		t.Fatalf("unrelated dependency rejected: %v", err)
+	}
+	if _, err = logic.Update(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{Id: unrelated.Id, TaskId: 5, DependencyTaskId: 1, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFS}); err == nil {
+		t.Fatal("dependency update accepted an ancestor-descendant relationship")
 	}
 	if err = db.Exec("UPDATE project_management_tasks SET stage_id = 101 WHERE id = 2").Error; err != nil {
 		t.Fatal(err)

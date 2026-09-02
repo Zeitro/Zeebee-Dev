@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"slices"
 
 	"gorm.io/gorm"
 
@@ -64,6 +65,24 @@ func dependencyTasks(tasks []*model.ProjectManagementTask, taskId, dependencyTas
 	return task, dependencyTask
 }
 
+func (l *ProjectManagementDependencyLogic) validateTaskDependencyHierarchyWithTx(ctx context.Context, tx *gorm.DB, taskId, dependencyTaskId int64) error {
+	descendantIds, err := l.repos.ProjectManagementTaskRepo.DescendantIdsWithTx(ctx, tx, taskId)
+	if err != nil {
+		return err
+	}
+	if slices.Contains(descendantIds, dependencyTaskId) {
+		return errorx.New("task dependency cannot be between ancestor and descendant tasks")
+	}
+	descendantIds, err = l.repos.ProjectManagementTaskRepo.DescendantIdsWithTx(ctx, tx, dependencyTaskId)
+	if err != nil {
+		return err
+	}
+	if slices.Contains(descendantIds, taskId) {
+		return errorx.New("task dependency cannot be between ancestor and descendant tasks")
+	}
+	return nil
+}
+
 func (l *ProjectManagementDependencyLogic) Create(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementTaskDependencyDto) (*model.ProjectManagementTaskDependency, error) {
 	if err := validateProjectManagementDependency(input); err != nil {
 		return nil, err
@@ -96,6 +115,9 @@ func (l *ProjectManagementDependencyLogic) createWithTx(ctx context.Context, tx 
 	}
 	if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, successor.ProjectId, claim.OrganizationUserId); err != nil {
 		return nil, projectManagementNotFound(err, "project member required")
+	}
+	if err = l.validateTaskDependencyHierarchyWithTx(ctx, tx, successor.Id, predecessor.Id); err != nil {
+		return nil, err
 	}
 	stage, err := l.repos.ProjectManagementWorkflowRepo.FindStageWithTx(ctx, tx, successor.StageId)
 	if err != nil {
@@ -190,6 +212,9 @@ func (l *ProjectManagementDependencyLogic) updateWithTx(ctx context.Context, tx 
 	}
 	if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, successor.ProjectId, claim.OrganizationUserId); err != nil {
 		return nil, projectManagementNotFound(err, "project member required")
+	}
+	if err = l.validateTaskDependencyHierarchyWithTx(ctx, tx, successor.Id, predecessor.Id); err != nil {
+		return nil, err
 	}
 	stage, err := l.repos.ProjectManagementWorkflowRepo.FindStageWithTx(ctx, tx, successor.StageId)
 	if err != nil {
