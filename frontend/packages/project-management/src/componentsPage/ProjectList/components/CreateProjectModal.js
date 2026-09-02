@@ -11,11 +11,12 @@ import { NewModal } from '@repo/shared-methods';
 import { createRequest, displayValue } from '@repo/shared-methods/utils';
 import { PROJECT_API } from '../../../api/project';
 import { WORKFLOW_ALL_API } from '../../../api/workflow';
-// import {
-// 	PROJECT_PRIORITY,
-// 	PROJECT_PRIORITY_FILTER_VALUES,
-// 	PROJECT_PRIORITY_I18N_KEY,
-// } from '../../../enum/project';
+import {
+	getTaskPriorityI18nKey,
+	localizeSelectOptions,
+	TASK_PRIORITY,
+} from '../../../enum/task';
+import { useOptionsStore } from '../../../store/options';
 
 /**
  * 下拉文案：工作流名称 + stages.name（按 sort_order），便于区分模板。
@@ -61,40 +62,52 @@ export default function CreateProjectModal({ messageApi, setOpen, handleSearch }
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [workflowOptions, setWorkflowOptions] = useState([]);
 	const [workflowLoading, setWorkflowLoading] = useState(true);
+	const [priorityLoading, setPriorityLoading] = useState(true);
 
-	// const priorityOptions = useMemo(
-	// 	() =>
-	// 		PROJECT_PRIORITY_FILTER_VALUES.map((value) => ({
-	// 			value: Number(value),
-	// 			label: t(PROJECT_PRIORITY_I18N_KEY[value]),
-	// 		})),
-	// 	[t],
-	// );
+	const priorityOptionsRaw = useOptionsStore((state) => state.priorityOptions);
+	const getOptions = useOptionsStore((state) => state.getOptions);
+
+	const priorityOptions = useMemo(
+		() => localizeSelectOptions(priorityOptionsRaw, t, getTaskPriorityI18nKey),
+		[priorityOptionsRaw, t],
+	);
 
 	useEffect(() => {
 		let cancelled = false;
 		(async () => {
 			try {
-				const data = await request(WORKFLOW_ALL_API, {
-					method: 'GET',
-					isHideTips: true,
-				});
+				const [data] = await Promise.all([
+					request(WORKFLOW_ALL_API, {
+						method: 'GET',
+						isHideTips: true,
+					}),
+					getOptions('project_management_priority', 'priorityOptions').catch(() => {}),
+				]);
 				if (cancelled) return;
 				const { options, defaultId } = toWorkflowSelect(data);
 				setWorkflowOptions(options);
-				if (defaultId != null) {
-					form.setFieldsValue({ workflow_template_id: defaultId });
-				}
+
+				const { priorityOptions } = useOptionsStore.getState();
+				const defaultPriority =
+					priorityOptions.find((item) => item.value === TASK_PRIORITY.MEDIUM)?.value ??
+					priorityOptions[0]?.value;
+				const fields = {};
+				if (defaultId != null) fields.workflow_template_id = defaultId;
+				if (defaultPriority != null) fields.priority = defaultPriority;
+				if (Object.keys(fields).length) form.setFieldsValue(fields);
 			} catch {
 				if (!cancelled) setWorkflowOptions([]);
 			} finally {
-				if (!cancelled) setWorkflowLoading(false);
+				if (!cancelled) {
+					setWorkflowLoading(false);
+					setPriorityLoading(false);
+				}
 			}
 		})();
 		return () => {
 			cancelled = true;
 		};
-	}, [form, request]);
+	}, [form, getOptions, request]);
 
 	const handleSave = async () => {
 		try {
@@ -109,7 +122,7 @@ export default function CreateProjectModal({ messageApi, setOpen, handleSearch }
 					// entity_id: 0,
 					// entity_type: '',
 					workflow_template_id: values.workflow_template_id,
-					// priority: values.priority,
+					priority: values.priority,
 				},
 			});
 			if (created == null) return;
@@ -140,7 +153,6 @@ export default function CreateProjectModal({ messageApi, setOpen, handleSearch }
 				autoComplete="off"
 				size="large"
 				disabled={confirmLoading}
-				// initialValues={{ priority: PROJECT_PRIORITY.MEDIUM }}
 			>
 				<Form.Item name="name" label={t('projectList.name')} rules={[{ required: true }]}>
 					<Input placeholder={t('projectList.namePlaceholder')} />
@@ -164,13 +176,13 @@ export default function CreateProjectModal({ messageApi, setOpen, handleSearch }
 						options={workflowOptions}
 					/>
 				</Form.Item>
-				{/* <Form.Item
-						name="priority"
-						label={t('projectList.priority')}
-						rules={[{ required: true }]}
-					>
-						<Select options={priorityOptions} />
-					</Form.Item> */}
+				<Form.Item
+					name="priority"
+					label={t('projectList.priority')}
+					rules={[{ required: true }]}
+				>
+					<Select loading={priorityLoading} options={priorityOptions} />
+				</Form.Item>
 			</Form>
 		</NewModal>
 	);

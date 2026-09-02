@@ -5,12 +5,18 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CameraOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Modal, Spin, message } from 'antd';
+import { Button, Form, Input, Modal, Select, Spin, message } from 'antd';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { NoData, UploadFileButton } from '@repo/shared-methods';
 import { createRequest } from '@repo/shared-methods/utils';
 import { getProjectDetailApi } from '../../../api/project';
+import {
+	getTaskPriorityI18nKey,
+	localizeSelectOptions,
+	toTaskPriorityValue,
+} from '../../../enum/task';
+import { useOptionsStore } from '../../../store/options';
 
 const COVER_ACCEPT = '.png,.jpg,.jpeg';
 
@@ -30,6 +36,33 @@ function ProjectSettingContent({ projectId }) {
 	const [project, setProject] = useState(null);
 	const [coverPreview, setCoverPreview] = useState();
 	const coverUploadRef = useRef(null);
+
+	const priorityOptionsRaw = useOptionsStore((state) => state.priorityOptions);
+	const getOptions = useOptionsStore((state) => state.getOptions);
+	const [priorityLoading, setPriorityLoading] = useState(
+		() => !useOptionsStore.getState().priorityOptions.length,
+	);
+
+	const priorityOptions = useMemo(
+		() => localizeSelectOptions(priorityOptionsRaw, t, getTaskPriorityI18nKey),
+		[priorityOptionsRaw, t],
+	);
+
+	useEffect(() => {
+		let cancelled = false;
+		(async () => {
+			try {
+				await getOptions('project_management_priority', 'priorityOptions');
+			} catch {
+				// 下拉失败时保留空选项，不阻断设置页
+			} finally {
+				if (!cancelled) setPriorityLoading(false);
+			}
+		})();
+		return () => {
+			cancelled = true;
+		};
+	}, [getOptions]);
 
 	useEffect(() => {
 		if (projectId == null || projectId === '') return undefined;
@@ -84,6 +117,7 @@ function ProjectSettingContent({ projectId }) {
 					name: String(values.name || '').trim(),
 					description: values.description || '',
 					cover_url,
+					priority: values.priority,
 				},
 			});
 			if (next == null) return;
@@ -180,8 +214,10 @@ function ProjectSettingContent({ projectId }) {
 							initialValues={{
 								name: project.name,
 								description: project.description,
+								priority: toTaskPriorityValue(project.priority),
 							}}
 							onFinish={handleUpdate}
+							size="large"
 						>
 							<Form.Item
 								name="name"
@@ -195,6 +231,13 @@ function ProjectSettingContent({ projectId }) {
 									rows={4}
 									placeholder={t('projectList.descriptionPlaceholder')}
 								/>
+							</Form.Item>
+							<Form.Item
+								name="priority"
+								label={t('projectList.priority')}
+								rules={[{ required: true }]}
+							>
+								<Select loading={priorityLoading} options={priorityOptions} />
 							</Form.Item>
 							<Button type="primary" htmlType="submit" loading={saving}>
 								{t('projectSetting.update')}

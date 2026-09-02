@@ -4,13 +4,14 @@
  */
 'use client';
 
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ReloadOutlined } from '@ant-design/icons';
 import { useTranslations } from 'next-intl';
 import { FilterTableCard } from '@repo/shared-methods';
 import { createRequest } from '@repo/shared-methods/utils';
 import { PROJECT_PAGE_API } from '../../api/project';
-// import { PROJECT_PRIORITY_FILTER_VALUES, PROJECT_PRIORITY_I18N_KEY } from '../../enum/project';
+import { getTaskPriorityI18nKey, localizeSelectOptions } from '../../enum/task';
+import { useOptionsStore } from '../../store/options';
 import { CREATE_PROJECT_ITEM, isCreateProjectItem } from './components/constants';
 import { CreateProjectCard } from './components/CreateProjectCard';
 import { ProjectCard } from './components/ProjectCard';
@@ -23,16 +24,22 @@ export const ProjectList = () => {
 	const { request, cancelMatch } = useMemo(() => createRequest(), []);
 	const tableFilterRef = useRef();
 	const [keyword, setKeyword] = useState('');
-	// const [priority, setPriority] = useState();
+	const [priority, setPriority] = useState();
 
-	// const priorityOptions = useMemo(
-	// 	() =>
-	// 		PROJECT_PRIORITY_FILTER_VALUES.map((value) => ({
-	// 			value,
-	// 			label: t(PROJECT_PRIORITY_I18N_KEY[value]),
-	// 		})),
-	// 	[t],
-	// );
+	const priorityOptionsRaw = useOptionsStore((state) => state.priorityOptions);
+	const getOptions = useOptionsStore((state) => state.getOptions);
+
+	const priorityOptions = useMemo(
+		() => localizeSelectOptions(priorityOptionsRaw, t, getTaskPriorityI18nKey),
+		[priorityOptionsRaw, t],
+	);
+
+	useEffect(() => {
+		const { priorityOptions: cached } = useOptionsStore.getState();
+		if (!cached.length) {
+			getOptions('project_management_priority', 'priorityOptions').catch(() => {});
+		}
+	}, [getOptions]);
 
 	const handleRefresh = useCallback(() => {
 		cancelMatch(PROJECT_PAGE_API);
@@ -52,9 +59,7 @@ export const ProjectList = () => {
 				// entity_type: '',
 				...(params?.filter || {}),
 			};
-			if (filter.priority !== undefined && filter.priority !== '') {
-				filter.priority = Number(filter.priority);
-			} else {
+			if (typeof filter.priority !== 'string' || !filter.priority) {
 				delete filter.priority;
 			}
 			try {
@@ -89,15 +94,15 @@ export const ProjectList = () => {
 				value: keyword,
 				onChange: ({ target: { value } }) => setKeyword(value),
 			},
-			// {
-			// 	filterType: 'select',
-			// 	placeholder: t('projectList.priority'),
-			// 	paramsKey: 'priority',
-			// 	value: priority,
-			// 	onChange: (value) => setPriority(value),
-			// 	options: priorityOptions,
-			// 	style: { width: 160 },
-			// },
+			{
+				filterType: 'select',
+				placeholder: t('projectList.priority'),
+				paramsKey: 'priority',
+				value: priority,
+				onChange: (value) => setPriority(value),
+				options: priorityOptions,
+				style: { width: 160 },
+			},
 			{
 				filterType: 'button',
 				text: t('common.search'),
@@ -111,17 +116,17 @@ export const ProjectList = () => {
 				onClick: () => {
 					cancelMatch(PROJECT_PAGE_API);
 					setKeyword('');
-					// setPriority(undefined);
+					setPriority(undefined);
 					tableFilterRef?.current?.handleSearch({
 						filter: {
 							keyword: '',
-							// priority: undefined,
+							priority: undefined,
 						},
 					});
 				},
 			},
 		],
-		[keyword, t, cancelMatch, handleRefresh],
+		[keyword, priority, priorityOptions, t, cancelMatch, handleRefresh],
 	);
 
 	return (
