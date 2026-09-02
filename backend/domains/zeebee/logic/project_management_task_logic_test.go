@@ -34,8 +34,8 @@ func TestValidateProjectManagementTaskTimeRange(t *testing.T) {
 	if err := validateProjectManagementTaskTimeRange(endAt, startAt); err == nil {
 		t.Fatal("reversed time range accepted")
 	}
-	if err := validateProjectManagementTaskTimeRange(startAt, startAt); err == nil {
-		t.Fatal("equal time range accepted")
+	if err := validateProjectManagementTaskTimeRange(startAt, startAt); err != nil {
+		t.Fatalf("equal time range rejected: %v", err)
 	}
 }
 

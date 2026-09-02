@@ -142,8 +142,8 @@ func validateProjectManagementTaskCreate(input dto.ProjectManagementTaskCreateDt
 }
 
 func validateProjectManagementTaskTimeRange(startAt, endAt *sql.NullTime) error {
-	if startAt != nil && startAt.Valid && endAt != nil && endAt.Valid && !startAt.Time.Before(endAt.Time) {
-		return errorx.New("task start time must be before end time")
+	if startAt != nil && startAt.Valid && endAt != nil && endAt.Valid && endAt.Time.Before(startAt.Time) {
+		return errorx.New("task end time must not be before start time")
 	}
 	return nil
 }
@@ -266,6 +266,7 @@ func (l *ProjectManagementTaskLogic) Update(ctx context.Context, claim utils.Jwt
 		if len(before) == 0 {
 			return nil
 		}
+		before["id"], after["id"] = task.Id, task.Id
 		return l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskUpdate, before: before, after: after})
 	})
 	if err != nil {
@@ -359,7 +360,7 @@ func (l *ProjectManagementTaskLogic) Delete(ctx context.Context, claim utils.Jwt
 		if err = l.repos.ProjectManagementTaskRepo.DeleteByIdsWithTx(ctx, tx, taskIds); err != nil {
 			return err
 		}
-		return l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskDelete, before: taskOperationValues(task)})
+		return l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskDelete, before: map[string]any{"id": task.Id, "title": task.Title}})
 	})
 }
 
