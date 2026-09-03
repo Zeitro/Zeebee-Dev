@@ -1,0 +1,131 @@
+syntax = "proto3";
+
+package tenant;
+
+option go_package = "zeebee-backend/app/tenant/rpc/pb/tenant";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+// Organization subscriptions + default-plan onboarding, consolidated from admin.
+// tenant is a thin wrapper over the shared OrganizationSubscriptionLogic (8 methods).
+// UpdateStatus is a background sweep (cron) and is not exposed.
+
+message OrganizationSubscriptionCreateRequest {
+  OrganizationSubscriptionCreateRequestData data = 1;
+}
+message OrganizationSubscriptionCreateRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+  int64 pricing_plan_id = 3;
+  int64 pricing_plan_policy_id = 4;
+}
+
+message OrganizationSubscriptionDetailRequest {
+  OrganizationSubscriptionDetailRequestData data = 1;
+}
+message OrganizationSubscriptionDetailRequestData {
+  string user_type = 1;       // caller platform; admin may manage all organizations
+  int64 id = 2;
+  int64 organization_id = 3; // required for lender/borrower callers
+}
+
+message OrganizationSubscriptionDetailResponse {
+  proto.OrganizationSubscriptionEntity data = 1;
+}
+
+message OrganizationSubscriptionRenewRequest {
+  OrganizationSubscriptionRenewRequestData data = 1;
+}
+message OrganizationSubscriptionRenewRequestData {
+  string user_type = 1;
+  int64 id = 2;
+}
+
+message OrganizationSubscriptionUpdateExpireDateRequest {
+  OrganizationSubscriptionUpdateExpireDateRequestData data = 1;
+}
+message OrganizationSubscriptionUpdateExpireDateRequestData {
+  string user_type = 1;
+  int64 id = 2;
+  string expire_date = 3;        // RFC3339; "" = clear
+}
+
+message OrganizationSubscriptionSwitchStatusRequest {
+  OrganizationSubscriptionSwitchStatusRequestData data = 1;
+}
+message OrganizationSubscriptionSwitchStatusRequestData {
+  string user_type = 1;
+  int64 id = 2;
+  string status = 3;
+}
+
+message OrganizationSubscriptionPageRequest {
+  OrganizationSubscriptionPageRequestData data = 1;
+}
+message OrganizationSubscriptionPageRequestFilter {
+  string keyword = 1;
+  string type = 2;
+  repeated string status = 3;
+}
+message OrganizationSubscriptionPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  OrganizationSubscriptionPageRequestFilter filter = 3;
+  proto.CommonPageSorter sorter = 4;
+  string user_type = 5;       // caller platform; admin may page all organizations
+  int64 organization_id = 6; // required for lender/borrower callers
+}
+
+message OrganizationSubscriptionPageEntity {
+  int64 id = 1;
+  string code = 2;
+  string organization_name = 3;
+  string pricing_plan_name = 4;
+  string pricing_plan_policy_type = 5;
+  string status = 6;
+  string expire_date = 7;
+  double original_amount = 8;
+  double actual_amount = 9;
+  bool is_auto_renew = 10;
+  string created_at = 11;
+  string updated_at = 12;
+}
+
+message OrganizationSubscriptionPageResponse {
+  OrganizationSubscriptionPageResponseData data = 1;
+}
+message OrganizationSubscriptionPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated OrganizationSubscriptionPageEntity list = 5;
+}
+
+message OrganizationSubscriptionSuspendEffectiveByOrganizationIdRequest {
+  OrganizationSubscriptionSuspendEffectiveByOrganizationIdRequestData data = 1;
+}
+message OrganizationSubscriptionSuspendEffectiveByOrganizationIdRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+}
+
+message OrganizationSubscriptionSubscribeDefaultPlanRequest {
+  OrganizationSubscriptionSubscribeDefaultPlanRequestData data = 1;
+}
+message OrganizationSubscriptionSubscribeDefaultPlanRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+}
+
+service OrganizationSubscription {
+  rpc Create(OrganizationSubscriptionCreateRequest) returns (OrganizationSubscriptionDetailResponse);
+  rpc Detail(OrganizationSubscriptionDetailRequest) returns (OrganizationSubscriptionDetailResponse);
+  rpc Renew(OrganizationSubscriptionRenewRequest) returns (OrganizationSubscriptionDetailResponse);
+  rpc UpdateExpireDate(OrganizationSubscriptionUpdateExpireDateRequest) returns (proto.EmptyResponse);
+  rpc SwitchStatus(OrganizationSubscriptionSwitchStatusRequest) returns (proto.EmptyResponse);
+  rpc Page(OrganizationSubscriptionPageRequest) returns (OrganizationSubscriptionPageResponse);
+  rpc SuspendEffectiveByOrganizationId(OrganizationSubscriptionSuspendEffectiveByOrganizationIdRequest) returns (proto.EmptyResponse);
+  rpc SubscribeDefaultPlan(OrganizationSubscriptionSubscribeDefaultPlanRequest) returns (proto.EmptyResponse);
+}

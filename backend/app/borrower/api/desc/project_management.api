@@ -1,0 +1,28 @@
+syntax = "v1"
+
+info (
+    title: "borrower-project-management-api"
+    desc: "borrower project management types"
+    version: "v1"
+)
+
+import "../../../../domains/zeebee/api/project_management_entity.api"
+
+type (
+    ProjectManagementWorkflowUpdateStage {
+        Id          int64                                        `json:"id,optional"`
+        Name        string                                       `json:"name" validate:"required,max=100"`
+        Description string                                       `json:"description,optional" validate:"max=100"`
+        Phase       string                                       `json:"phase" validate:"required,oneof=Pending InProgress Finished"`
+        Color       string                                       `json:"color,optional" validate:"max=32"`
+        SortOrder   int                                          `json:"sort_order,optional" validate:"omitempty,gte=0"`
+        Transitions []*ProjectManagementWorkflowUpdateTransition `json:"transitions,optional,omitempty" validate:"dive"`
+    }
+    ProjectManagementWorkflowUpdateTransition {
+        Id                int64    `json:"id,optional"`
+        Name              string   `json:"name,optional" validate:"max=100"`
+        ToStageId         int64    `json:"to_stage_id" validate:"required,gt=0"`
+        FromStageId       int64    `json:"from_stage_id" validate:"required,gt=0"`
+        AllowedActorTypes []string `json:"allowed_actor_types,optional" validate:"dive,oneof=ProjectOwner ProjectAdmin TaskExecutor TaskCreator"`
+    }
+)

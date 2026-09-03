@@ -13,7 +13,7 @@ type Config struct {
 	ForbiddenLoginSeconds int // seconds for next retry login
 	RedisConf             RedisConf
 
-	JwtAuth types.JwtAuth `json:",optional"`
+	JwtConf types.JwtConf `json:",optional"`
 	DbConf  DbConf
 }
 

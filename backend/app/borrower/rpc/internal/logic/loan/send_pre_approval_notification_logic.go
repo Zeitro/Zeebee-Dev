@@ -28,7 +28,7 @@ func (l *SendPreApprovalNotificationLogic) SendPreApprovalNotification(in *borro
 
 	go func() {
 		ctx := context.WithoutCancel(l.ctx)
-		err := sendPreApprovalNotification(ctx, l.svcCtx.OrganizationRepo, in.Data.RequestId, in.Data.LenderCompanyId, true)
+		err := sendPreApprovalNotification(ctx, l.svcCtx.TenantClient, in.Data.RequestId, in.Data.LenderCompanyId, true)
 		if err != nil {
 			l.svcCtx.Logger.WithContext(ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}

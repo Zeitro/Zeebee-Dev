@@ -21,6 +21,7 @@ import (
 )
 
 const maxRPAPages = 10
+
 // rpaFields: 5 contract fields. Dates MM/DD/YYYY ("" absent); amounts float (0 absent).
 type rpaFields struct {
 	PurchaseAmount         float64 `json:"purchase_amount"`
