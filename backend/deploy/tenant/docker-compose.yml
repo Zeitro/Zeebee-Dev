@@ -14,11 +14,6 @@ services:
       timeout: 3s
       retries: 3
       start_period: 15s
-    deploy:
-      # NFR-001: tenant is a per-request critical path -> at least 2 replicas.
-      # container_name + host network are single-instance helpers; the real
-      # replica count is enforced by the orchestrator (ECS task count / --scale).
-      replicas: 2
     logging:
       driver: awslogs
       options:
