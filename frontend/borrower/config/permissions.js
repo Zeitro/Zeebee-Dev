@@ -56,4 +56,31 @@ export const PERMISSIONS = {
 		DELETE: 'Transactions:Delete',
 		ADD: 'Transactions:Add',
 	},
+	PROJECT_LIST: {
+		PAGE: 'Project:ProjectList',
+		DETAILS: 'Project:ProjectList:Details',
+		SETTING: 'Project:ProjectList:Setting',
+		ADD: 'Project:ProjectList:Add',
+	},
+	PROJECT_WORKFLOW: {
+		PAGE: 'Project:Workflow',
+		EDIT: 'Project:Workflow:Edit',
+		ADD_STATUS: 'Project:Workflow:Edit:AddStatus',
+		SET_STATUS: 'Project:Workflow:Edit:SetStatus',
+		ADD_TRANSITION: 'Project:Workflow:Edit:AddTransition',
+		DELETE_TRANSITION: 'Project:Workflow:Edit:DeleteTransition',
+		TRANSITION_CONDITIONS: 'Project:Workflow:Edit:TransitionConditions',
+		ADD: 'Project:Workflow:Add',
+		DELETE: 'Project:Workflow:Delete',
+		SET_DEFAULT: 'Project:Workflow:SetDefault',
+	},
+	PROJECT_TASK_TYPE: {
+		PAGE: 'Project:TaskType',
+		ADD: 'Project:TaskType:Add',
+		EDIT: 'Project:TaskType:Edit',
+		DELETE: 'Project:TaskType:Delete',
+	},
+	PROJECT_MY_TASK: {
+		PAGE: 'Project:MyTask',
+	},
 };

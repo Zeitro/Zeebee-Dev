@@ -1,0 +1,13 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"baseUrl": ".",
+		"outDir": "dist",
+		"rootDir": "src",
+		"paths": {
+			"@repo/platform-core": ["./src/index.ts"],
+			"@repo/platform-core/*": ["./src/*"]
+		}
+	},
+	"include": ["src"]
+}
