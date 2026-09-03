@@ -6,9 +6,8 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/copierx"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
@@ -30,21 +29,21 @@ func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogi
 
 func (l *DetailLogic) Detail(in *proto.PathIdRequest) (resp *borrower.RoleDetailResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	role, err := l.baseLogic.RoleLogic.Detail(l.ctx, in.Data.Id, claim.OrganizationId, constants.UserTypeBorrower)
+	role, err := l.svcCtx.TenantClient.Role.Detail(l.ctx, &tenant.RoleDetailRequest{Data: &tenant.RoleDetailRequestData{
+		UserType:       string(constants.UserTypeBorrower),
+		OrganizationId: claim.OrganizationId,
+		Id:             in.Data.Id,
+	}})
 	if err != nil {
 		return nil, err
 	}
 
-	respData, err := copierx.Trans[dto.RoleEntityDto, proto.RoleEntity](role, copierx.TimeToRFC3339Str())
-	if err != nil {
-		return nil, err
-	}
 	return &borrower.RoleDetailResponse{
-		Data: respData,
+		Data: role.Data,
 	}, nil
 }

@@ -25,7 +25,7 @@ const extractSystemPrompt = "You extract data from documents. Your entire respon
 const (
 	// uploadMaxRetry bounds convert+upload retries (overload/timeout). Backoff
 	// doubles per attempt; exhaustion fails the file soft (handler skips it).
-	uploadMaxRetry    = 3
+	uploadMaxRetry     = 3
 	uploadRetryBackoff = 2 * time.Second
 )
 
@@ -160,7 +160,7 @@ func (b *base) wordToPdf(ctx context.Context, f collectedFile) (fileStreamResult
 // collectedFile is the flat file list handed from scope resolution to extraction
 // (avoids a DB round-trip per file). Type-agnostic; extract dispatches per type.
 type collectedFile struct {
-	FileId int64 `json:"file_id"`
+	FileId int64  `json:"file_id"`
 	Url    string `json:"url"`
 	Name   string `json:"name"`
 }

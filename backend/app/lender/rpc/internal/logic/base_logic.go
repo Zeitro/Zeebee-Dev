@@ -4,15 +4,17 @@ import (
 	"context"
 	"sync"
 
-	"github.com/duke-git/lancet/v2/condition"
-	"github.com/duke-git/lancet/v2/slice"
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/threading"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/lender/rpc/internal/global"
 	"zeebee-backend/app/lender/rpc/internal/svc"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/logic"
@@ -39,25 +41,26 @@ func GetBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 	redisCli := global.GetRedis()
 	jwtConfig := dto.JwtConfig{
-		AccessSecret:  svcCtx.Config.JwtAuth.AccessSecret,
-		AccessExpire:  svcCtx.Config.JwtAuth.AccessExpire,
-		RefreshSecret: svcCtx.Config.JwtAuth.RefreshSecret,
-		RefreshExpire: svcCtx.Config.JwtAuth.RefreshExpire,
+		AccessSecret:  svcCtx.Config.JwtConf.AccessSecret,
+		AccessExpire:  svcCtx.Config.JwtConf.AccessExpire,
+		RefreshSecret: svcCtx.Config.JwtConf.RefreshSecret,
+		RefreshExpire: svcCtx.Config.JwtConf.RefreshExpire,
 	}
-	currentEnforcer := global.LenderEnforcer
 	authEventTopicMap := map[constants.UserType]string{
 		constants.UserTypeLender: svcCtx.Config.CasbinConf.EventTopic.LenderTopic,
 	}
 
 	logicConfig := logic.AllLogicConfig{
-		Repos:                 svcCtx.AllRepos,
-		RedisCli:              redisCli,
-		JwtConfig:             jwtConfig,
-		EmailClient:           global.EmailClient,
-		CurrentEnforcer:       currentEnforcer,
-		CurrentAuthEventTopic: svcCtx.Config.CasbinConf.EventTopic.LenderTopic,
-		AuthEventTopicMap:     authEventTopicMap,
-		Logger:                svcCtx.Logger,
+		Repos:       svcCtx.AllRepos,
+		RedisCli:    redisCli,
+		JwtConfig:   jwtConfig,
+		EmailClient: global.EmailClient,
+		// US-12: tenant is the sole casbin executor; lender no longer runs a
+		// local enforcer, so it subscribes to no reload channel (AuthLogic is
+		// never invoked here anymore).
+		CurrentEnforcer:   nil,
+		AuthEventTopicMap: authEventTopicMap,
+		Logger:            svcCtx.Logger,
 	}
 
 	l := &BaseLogic{
@@ -65,17 +68,29 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		AllLogics: logic.NewAllLogics(logicConfig),
 	}
 
-	threading.GoSafe(func() {
-		ctx := context.Background()
-		err := l.AuthLogic.RebuildPolicy(ctx, constants.UserTypeLender)
-		if err != nil {
-			l.svcCtx.Logger.WithContext(ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("user_type", constants.UserTypeLender),
-			).Error("fail to rebuild lender policy")
-		}
-	})
 	return l
+}
+
+func (l *BaseLogic) GetUserClaimFromCtx(ctx context.Context) (utils.JwtUser, error) {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok || len(md.Get(utils.JwtTokenCtxKey)) == 0 || len(md.Get(utils.UserTypeCtxKey)) == 0 {
+		return utils.JwtUser{}, status.Error(codes.Unauthenticated, "not login")
+	}
+	claim, err := l.svcCtx.TenantClient.User.GetClaim(ctx, &tenant.GetClaimRequest{Data: &tenant.GetClaimRequestData{
+		AccessToken: md.Get(utils.JwtTokenCtxKey)[0],
+		UserType:    md.Get(utils.UserTypeCtxKey)[0],
+	}})
+	if err != nil {
+		return utils.JwtUser{}, err
+	}
+	if claim.Data == nil {
+		return utils.JwtUser{}, status.Error(codes.Unauthenticated, "invalid token")
+	}
+	return utils.JwtUser{
+		UserId: claim.Data.UserId, OrganizationId: claim.Data.OrganizationId,
+		OrganizationUserId: claim.Data.OrganizationUserId, Username: claim.Data.Username,
+		Role: claim.Data.Role, UserType: constants.UserType(claim.Data.UserType),
+	}, nil
 }
 
 // get lender loan
@@ -111,14 +126,9 @@ func (l *BaseLogic) CreateLoanOperationLog(ctx context.Context, tx *gorm.DB, loa
 			).Error("fail to create loan operation log")
 		}
 	}()
-	operator, _ := l.svcCtx.OrganizationUserRepo.FindOneByIdWithTx(ctx, tx, operatorId)
-	// if err != nil {
-	// 	return errorx.Wrap(err, "fail to Get Operator")
-	// }
-
 	operatorName := ""
-	if operator != nil {
-		operatorName = operator.FullName
+	if claim, claimErr := l.GetUserClaimFromCtx(ctx); claimErr == nil {
+		operatorName = claim.Username
 	}
 
 	operation := &model.LoanOperation{
@@ -151,56 +161,4 @@ func (l *BaseLogic) GetLoanAndDocumentByDocumentId(ctx context.Context, document
 	}
 
 	return loan, loanDocument, nil
-}
-
-// GetActiveOrganizationByUser returns the active organization for the given user
-func (l *BaseLogic) GetActiveOrganizationByUser(user *model.User) (currentOrganization *model.Organization, isChanged bool, err error) {
-	if user == nil {
-		return nil, false, errorx.New("user is empty")
-	}
-	organizations := user.Organizations
-	// find current company
-	currentOrganization, ok := slice.FindBy(organizations, func(index int, item *model.Organization) bool {
-		return item.Id == user.DefaultOrganizationId && item.Status == constants.OrganizationStatusActive
-	})
-	// find first active company
-	if !ok {
-		currentOrganization, ok = slice.FindBy(organizations, func(index int, item *model.Organization) bool {
-			return item.Status == constants.OrganizationStatusActive
-		})
-	}
-	if !ok {
-		// no active company
-		isChanged = condition.Ternary(user.DefaultOrganizationId == 0, false, true)
-		user.DefaultOrganizationId = 0
-	} else if user.DefaultOrganizationId != currentOrganization.Id {
-		// company changed
-		isChanged = true
-		user.DefaultOrganizationId = currentOrganization.Id
-	}
-
-	return currentOrganization, isChanged, err
-}
-
-// CheckAndUpdateActiveOrganizationByUser checks and updates the active organization for the given user
-func (l *BaseLogic) CheckAndUpdateActiveOrganizationByUser(ctx context.Context, user *model.User) (currentUser *model.User, err error) {
-	currentOrganization, isChanged, err := l.GetActiveOrganizationByUser(user)
-	if err != nil {
-		return currentUser, err
-	}
-	if isChanged {
-		var defaultOrganizationId int64
-		if currentOrganization != nil {
-			defaultOrganizationId = currentOrganization.Id
-		}
-
-		user.DefaultOrganizationId = defaultOrganizationId
-		err = l.svcCtx.UserRepo.UpdateColumnsById(ctx, user.Id, map[string]interface{}{
-			"default_organization_id": user.DefaultOrganizationId,
-		})
-		if err != nil {
-			return currentUser, errorx.WithStack(err)
-		}
-	}
-	return user, err
 }

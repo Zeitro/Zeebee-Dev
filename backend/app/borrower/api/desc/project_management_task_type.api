@@ -1,0 +1,82 @@
+syntax = "v1"
+
+info(
+    title: "borrower-project-management-task-type-api"
+    desc: "borrower project management task type types"
+    version: "v1"
+    useDefinitions: true
+    wrapCodeMsg:    true
+)
+
+import "../../../../domains/zeebee/api/project_management_entity.api"
+import "base.api"
+
+
+type (
+    // all response
+    ProjectManagementTaskTypeAllResponse {
+        List []*ProjectManagementTaskTypeEntity `json:"list"`
+    }
+)
+
+// detail response
+type ProjectManagementTaskTypeDetailResponse {
+    ProjectManagementTaskTypeEntity
+}
+
+// create request
+type ProjectManagementTaskTypeCreateRequest {
+    Name        string `json:"name" validate:"required,max=100"`
+    Description string `json:"description,optional" validate:"max=500"`
+    Color       string `json:"color,optional" validate:"max=32"`
+    SortOrder   int    `json:"sort_order" validate:"gte=0"`
+}
+
+// update request
+type ProjectManagementTaskTypeUpdateRequest {
+    Id          int64  `path:"id" validate:"required,gt=0"`
+    Name        string `json:"name" validate:"required,max=100"`
+    Description string `json:"description,optional" validate:"max=500"`
+    Color       string `json:"color,optional" validate:"max=32"`
+    SortOrder   int    `json:"sort_order" validate:"gte=0"`
+}
+
+// order request
+type ProjectManagementTaskTypeOrderRequest {
+    Id        int64 `path:"id" validate:"required,gt=0"`
+    SortOrder int   `json:"sort_order" validate:"gte=0"`
+}
+
+@server (
+    desc: "borrower project management task type"
+    version: v1
+    group: project_management_task_type
+    prefix: /api/v1
+    middleware: AuthMiddleware
+    tags: project_management_task_type
+)
+service borrower-api {
+    @doc "all"
+    @handler All
+    get /project_management/task_type/all (EmptyRequest) returns (ProjectManagementTaskTypeAllResponse)
+
+    @doc "detail"
+    @handler Detail
+    get /project_management/task_type/:id (PathIdRequest) returns (ProjectManagementTaskTypeDetailResponse)
+
+    @doc "create"
+    @handler Create
+    post /project_management/task_type (ProjectManagementTaskTypeCreateRequest) returns (ProjectManagementTaskTypeDetailResponse)
+
+    @doc "update"
+    @handler Update
+    put /project_management/task_type/:id (ProjectManagementTaskTypeUpdateRequest) returns (ProjectManagementTaskTypeDetailResponse)
+
+    @doc "order"
+    @handler Order
+    put /project_management/task_type/:id/order (ProjectManagementTaskTypeOrderRequest) returns (EmptyResponse)
+
+    @doc "delete"
+    @handler Delete
+    delete /project_management/task_type/:id (PathIdRequest) returns (EmptyResponse)
+}

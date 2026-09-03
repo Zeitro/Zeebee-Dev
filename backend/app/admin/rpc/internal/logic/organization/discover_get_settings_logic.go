@@ -5,7 +5,8 @@ import (
 
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/domains/zeebee/lenderdiscover"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
@@ -18,18 +19,10 @@ func NewDiscoverGetSettingsLogic(ctx context.Context, svcCtx *svc.ServiceContext
 	return &DiscoverGetSettingsLogic{ctx: ctx, svcCtx: svcCtx}
 }
 
-func (l *DiscoverGetSettingsLogic) DiscoverGetSettings(_ *proto.EmptyRequest) (resp *admin.LenderDiscoverSettingsResponse, err error) {
-
-	cfg, _, err := lenderdiscover.LoadConfig(l.ctx, l.svcCtx.OrganizationSettingRepo)
+func (l *DiscoverGetSettingsLogic) DiscoverGetSettings(in *proto.EmptyRequest) (*admin.LenderDiscoverSettingsResponse, error) {
+	resp, err := l.svcCtx.TenantClient.Organization.DiscoverGetSettings(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}
-	// model is yaml-driven now; surface the configured model on the legacy
-	// OpenaiModel field so the admin UI shows what is actually in use.
-	cfg.Model = l.svcCtx.Config.LlmConf.LenderDiscoverConf.Model
-	data, err := discoverConfigToProto(cfg)
-	if err != nil {
-		return nil, err
-	}
-	return &admin.LenderDiscoverSettingsResponse{Data: data}, nil
+	return copierx.Trans[tenant.LenderDiscoverSettingsResponse, admin.LenderDiscoverSettingsResponse](resp)
 }

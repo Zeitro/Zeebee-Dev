@@ -99,7 +99,7 @@ func (l *AddFilesLogic) prepare(in *borrower.LoanDocumentAddFilesRequest) (loan 
 		return nil, nil, errorx.WithStack(errorx.New("total number of files (existing + new) cannot exceed 10"))
 	}
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, nil, err
 	}

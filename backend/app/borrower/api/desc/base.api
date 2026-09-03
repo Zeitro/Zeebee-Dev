@@ -1,0 +1,16 @@
+syntax = "v1"
+
+info(
+    title: "api-api"
+    desc: "base api type"
+    version: "v1"
+)
+
+type (
+    EmptyRequest  {}
+    EmptyResponse  {}
+)
+
+type PathIdRequest {
+    id int64 `path:"id" validate:"required,gt=0"`
+}

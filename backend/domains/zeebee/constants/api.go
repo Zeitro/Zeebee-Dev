@@ -1,6 +1,9 @@
 package constants
 
-import "fmt"
+import (
+	"fmt"
+	"slices"
+)
 
 type ApiMethod string
 
@@ -42,10 +45,8 @@ func (m ApiMethod) Validate() error {
 }
 
 func validateConstant[t comparable](target t, ranges []t, constName string) error {
-	for _, t2 := range ranges {
-		if target == t2 {
+	if slices.Contains(ranges, target) {
 			return nil
 		}
-	}
 	return fmt.Errorf("invalid %s: %v", constName, target)
 }

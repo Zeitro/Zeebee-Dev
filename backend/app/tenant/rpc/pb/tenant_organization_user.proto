@@ -1,0 +1,220 @@
+syntax = "proto3";
+
+package tenant;
+
+option go_package = "zeebee-backend/app/tenant/rpc/pb/tenant";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+import "proto/user.proto";
+
+// Organization members: invite / accept / CRUD / role assignment, consolidated from
+// the three backends. tenant is a thin wrapper over the shared OrganizationUserLogic
+// (13 methods).
+
+message OrganizationUserPageRequest {
+  OrganizationUserPageRequestData data = 1;
+}
+message OrganizationUserPageRequestFilter {
+  string keyword = 1;
+  int64 organization_id = 2;
+  int64 user_id = 3;
+  int64 role_id = 4;
+  string status = 5;
+}
+message OrganizationUserPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  OrganizationUserPageRequestFilter filter = 3;
+  proto.CommonPageSorter sorter = 4;
+  string user_type = 5;
+}
+
+message OrganizationUserPageResponse {
+  OrganizationUserPageResponseData data = 1;
+}
+message OrganizationUserPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated proto.OrganizationUserEntity list = 5;
+}
+
+message OrganizationUserCreateAdminRequest {
+  OrganizationUserCreateAdminRequestData data = 1;
+}
+message OrganizationUserCreateAdminRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+  string email = 3;
+  string phone = 4;
+  string first_name = 5;
+  string last_name = 6;
+  string password = 7;
+  string remark = 8;
+  repeated int64 role_ids = 9;
+}
+
+message OrganizationUserDetailResponse {
+  proto.OrganizationUserEntity data = 1;
+}
+
+message OrganizationUserInviteRequest {
+  OrganizationUserInviteRequestData data = 1;
+}
+message OrganizationUserInviteRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+  string email = 3;
+  string phone = 4;
+  string remark = 5;
+  repeated int64 role_ids = 6;
+  string operator = 7;
+  OrganizationUserInviteEmailConfig email_config = 8;
+}
+message OrganizationUserInviteEmailConfig {
+  string host_email = 1;
+  string tpl_name = 2;
+  int32 expire_seconds = 3;
+  int32 send_period_seconds = 4;
+  string url = 5;
+  string logo = 6;
+  string address = 7;
+}
+
+message OrganizationUserSendInviteEmailRequest {
+  OrganizationUserSendInviteEmailRequestData data = 1;
+}
+message OrganizationUserSendInviteEmailRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+  int64 id = 3;
+  string operator = 4;
+  OrganizationUserInviteEmailConfig email_config = 5;
+}
+
+message OrganizationUserAcceptInvitationRequest {
+  OrganizationUserAcceptInvitationRequestData data = 1;
+}
+message OrganizationUserAcceptInvitationRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+  string code = 3;
+  string email = 4;
+  string first_name = 5;
+  string last_name = 6;
+}
+
+message OrganizationUserAcceptInvitationResponse {
+  proto.UserEntity data = 1;
+  proto.UserLoginResponse token = 2;
+}
+
+message OrganizationUserCheckInvitationCodeRequest {
+  OrganizationUserCheckInvitationCodeRequestData data = 1;
+}
+message OrganizationUserCheckInvitationCodeRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+  string code = 3;
+  string email = 4;
+}
+
+message OrganizationUserCheckInvitationCodeResponse {
+  bool is_expired = 1;
+}
+
+message OrganizationUserUpdateRequest {
+  OrganizationUserUpdateRequestData data = 1;
+}
+message OrganizationUserUpdateRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+  int64 id = 3;
+  string phone = 4;
+  string first_name = 5;
+  string mid_name = 6;
+  string last_name = 7;
+  string remark = 8;
+  repeated int64 role_ids = 9;
+}
+
+message OrganizationUserUpdateProfileRequest {
+  OrganizationUserUpdateProfileRequestData data = 1;
+}
+message OrganizationUserUpdateProfileRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+  int64 user_id = 3;
+  string first_name = 4;
+  string mid_name = 5;
+  string last_name = 6;
+  string phone = 7;
+}
+
+message OrganizationUserAllOrganizationUsersRequest {
+  OrganizationUserAllOrganizationUsersRequestData data = 1;
+}
+message OrganizationUserAllOrganizationUsersRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+}
+
+message OrganizationUserAllOrganizationUsersResponse {
+  repeated proto.OrganizationUserEntity data = 1;
+}
+
+message OrganizationUserDetailRequest {
+  OrganizationUserDetailRequestData data = 1;
+}
+message OrganizationUserDetailRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+  int64 id = 3;
+}
+
+message OrganizationUserSwitchStatusRequest {
+  OrganizationUserSwitchStatusRequestData data = 1;
+}
+message OrganizationUserSwitchStatusRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+  int64 id = 3;
+  string status = 4;
+}
+
+message OrganizationUserAssignRolesRequest {
+  OrganizationUserAssignRolesRequestData data = 1;
+}
+message OrganizationUserAssignRolesRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+  int64 id = 3;
+  repeated int64 role_ids = 4;
+}
+
+message OrganizationUserDeleteRequest {
+  OrganizationUserDeleteRequestData data = 1;
+}
+message OrganizationUserDeleteRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+  int64 id = 3;
+}
+
+service OrganizationUser {
+  rpc Page(OrganizationUserPageRequest) returns (OrganizationUserPageResponse);
+  rpc CreateAdminOrganizationUser(OrganizationUserCreateAdminRequest) returns (OrganizationUserDetailResponse);
+  rpc InviteOrganizationUser(OrganizationUserInviteRequest) returns (OrganizationUserDetailResponse);
+  rpc SendInviteEmail(OrganizationUserSendInviteEmailRequest) returns (proto.EmptyResponse);
+  rpc AcceptInvitation(OrganizationUserAcceptInvitationRequest) returns (OrganizationUserAcceptInvitationResponse);
+  rpc CheckInvitationCode(OrganizationUserCheckInvitationCodeRequest) returns (OrganizationUserCheckInvitationCodeResponse);
+  rpc UpdateOrganizationUser(OrganizationUserUpdateRequest) returns (OrganizationUserDetailResponse);
+  rpc UpdateProfile(OrganizationUserUpdateProfileRequest) returns (proto.EmptyResponse);
+  rpc AllOrganizationUsers(OrganizationUserAllOrganizationUsersRequest) returns (OrganizationUserAllOrganizationUsersResponse);
+  rpc Detail(OrganizationUserDetailRequest) returns (OrganizationUserDetailResponse);
+  rpc SwitchStatus(OrganizationUserSwitchStatusRequest) returns (proto.EmptyResponse);
+  rpc AssignRoles(OrganizationUserAssignRolesRequest) returns (proto.EmptyResponse);
+  rpc Delete(OrganizationUserDeleteRequest) returns (proto.EmptyResponse);
+}

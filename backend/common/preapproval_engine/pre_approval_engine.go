@@ -9,7 +9,7 @@ import (
 )
 
 // ExperienceLevel represents the borrower's experience level
-type ExperienceLevel int
+type ExperienceLevel int32
 
 const (
 	// ExperienceLevelNoExperienced represents a borrower with no experience

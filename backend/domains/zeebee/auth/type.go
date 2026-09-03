@@ -12,8 +12,9 @@ const (
 	routeFormat                     = "%s:%s"                                        // <method>:<path>
 	organizationUserRoleFormat      = "%s:organization:%d:organizationuser:%d:roles" // <type>:organization:<organizationId>:organizationuser:<organizationUserId>:roles
 	roleResourceFormat              = "%d:%d"                                        // <roleId>:<resourceId>
-	policyRebuildFormat             = "policy:%v:rebuild"                            // policy:<type>:rebuild
+	policyRebuildFormat             = "policy:%v:rebuild"                            // policy:<type>:rebuild (singleflight key)
 	organizationPolicyRebuildFormat = "organization:%d:policy:%v:rebuild"            // organization:<organizationId>:policy:<type>:rebuild
+	policyRebuildLockFormat         = "policy:%v:rebuild:lock"                       // policy:<type>:rebuild:lock (cross-node lock)
 	roleFormat                      = "Role:%d"                                      // Role:<roleId>
 	resourceFormat                  = "Resource:%d"                                  // Resource:<resourceId>
 	organizationPlanResourceFormat  = "organization:%d:plan_resource"                // organization:<organizationId>:plan_resource
@@ -26,6 +27,11 @@ const (
 	maxRetryTimes                     = 10
 	retryIntervalTime                 = time.Millisecond * 50
 	maxRetryIntervalTime              = time.Minute
+	// policyRebuildLockTTL bounds how long one node may hold the global-rebuild
+	// lock. Must exceed worst-case full rebuild; if a holder crashes the lock
+	// auto-expires so a sibling can take over. Rebuild ops are idempotent, so a
+	// TTL overrun (two concurrent rebuilders) is wasteful, never corrupting.
+	policyRebuildLockTTL = 10 * time.Minute
 )
 
 type AuthRole struct {

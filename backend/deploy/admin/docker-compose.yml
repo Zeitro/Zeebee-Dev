@@ -15,4 +15,3 @@ services:
         awslogs-group: /zeebee/${SERVICE_NAME}-${SERVICE_ENVIRONMENT}
         awslogs-create-group: "true"
         awslogs-stream: backend-${HOSTNAME}
-

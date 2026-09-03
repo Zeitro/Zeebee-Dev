@@ -1,0 +1,134 @@
+syntax = "v1"
+
+info (
+    title: "project-management-entity-api"
+    desc: "shared project management entities"
+    version: "v1"
+)
+
+type (
+    ProjectManagementWorkflowEntity {
+        Id                 int64                                   `json:"id"`
+        Name               string                                  `json:"name"`
+        Description        string                                  `json:"description"`
+        IsDefault          bool                                    `json:"is_default"`
+        Stages             []*ProjectManagementWorkflowStageEntity `json:"stages"`
+        SourceTemplateId   int64                                   `json:"source_template_id"`
+        SourceTemplateName string                                  `json:"source_template_name"`
+        CreatedAt          string                                  `json:"created_at"`
+        UpdatedAt          string                                  `json:"updated_at"`
+    }
+    ProjectManagementWorkflowStageEntity {
+        Id          int64                                        `json:"id"`
+        Name        string                                       `json:"name"`
+        Description string                                       `json:"description"`
+        Phase       string                                       `json:"phase,options=Pending|InProgress|Finished"`
+        Color       string                                       `json:"color"`
+        SortOrder   int                                          `json:"sort_order"`
+        CreatedAt   string                                       `json:"created_at"`
+        UpdatedAt   string                                       `json:"updated_at"`
+        Transitions []*ProjectManagementWorkflowTransitionEntity `json:"transitions,omitempty"`
+    }
+    ProjectManagementWorkflowTransitionEntity {
+        Id                int64                                 `json:"id"`
+        Name              string                                `json:"name"`
+        FromStageId       int64                                 `json:"from_stage_id"`
+        ToStageId         int64                                 `json:"to_stage_id"`
+        AllowedActorTypes []string                              `json:"allowed_actor_types"`
+        CreatedAt         string                                `json:"created_at"`
+        UpdatedAt         string                                `json:"updated_at"`
+        FromStage         *ProjectManagementWorkflowStageEntity `json:"from_stage"`
+        ToStage           *ProjectManagementWorkflowStageEntity `json:"to_stage"`
+    }
+    ProjectManagementTaskTypeEntity {
+        Id          int64  `json:"id"`
+        Name        string `json:"name"`
+        Description string `json:"description"`
+        Color       string `json:"color"`
+        SortOrder   int    `json:"sort_order"`
+        CreatedAt   string `json:"created_at"`
+        UpdatedAt   string `json:"updated_at"`
+    }
+    ProjectManagementTaskTypeSnapshotEntity {
+        Id          int64  `json:"id"`
+        Name        string `json:"name"`
+        Description string `json:"description"`
+        Color       string `json:"color"`
+    }
+    ProjectManagementProjectEntity {
+        Id          int64                            `json:"id"`
+        EntityId    int64                            `json:"entity_id"`
+        EntityType  string                           `json:"entity_type"`
+        Name        string                           `json:"name"`
+        Description string                           `json:"description"`
+        Priority    string                           `json:"priority"`
+        WorkHours   float64                          `json:"work_hours"`
+        CoverUrl    string                           `json:"cover_url"`
+        OwnerId     int64                            `json:"owner_id"`
+        OwnerName   string                           `json:"owner_name"`
+        Workflow    *ProjectManagementWorkflowEntity `json:"workflow"`
+        CreatedAt   string                           `json:"created_at"`
+        UpdatedAt   string                           `json:"updated_at"`
+    }
+    ProjectManagementMemberEntity {
+        Id                 int64  `json:"id"`
+        ProjectId          int64  `json:"project_id"`
+        OrganizationUserId int64  `json:"organization_user_id"`
+        Role               string `json:"role"`
+        FullName           string `json:"full_name"`
+        Email              string `json:"email"`
+        CreatedAt          string `json:"created_at"`
+        UpdatedAt          string `json:"updated_at"`
+    }
+    ProjectManagementTaskAssigneeEntity {
+        StageId                  int64  `json:"stage_id"`
+        OrganizationUserId       int64  `json:"organization_user_id"`
+        OrganizationUserFullName string `json:"organization_user_full_name"`
+        CreatedAt                string `json:"created_at"`
+        UpdatedAt                string `json:"updated_at"`
+    }
+    ProjectManagementTaskEntity {
+        Id             int64                                    `json:"id"`
+        ProjectId      int64                                    `json:"project_id"`
+        ParentTaskId   int64                                    `json:"parent_task_id"`
+        StageId        int64                                    `json:"stage_id"`
+        Phase          string                                   `json:"phase"`
+        CreatorId      int64                                    `json:"creator_id"`
+        CreatorName    string                                   `json:"creator_name"`
+        Title          string                                   `json:"title"`
+        Description    string                                   `json:"description"`
+        Priority       string                                   `json:"priority"`
+        WorkHours      float64                                  `json:"work_hours"`
+        StartAt        string                                   `json:"start_at"`
+        EndAt          string                                   `json:"end_at"`
+        TaskType       *ProjectManagementTaskTypeSnapshotEntity `json:"task_type"`
+        Assignees      []*ProjectManagementTaskAssigneeEntity   `json:"assignees"`
+        Attachments    []*FileEntity                            `json:"attachments"`
+        Overdue        bool                                     `json:"overdue"`
+        OverdueSeconds int64                                    `json:"overdue_seconds"`
+        CreatedAt      string                                   `json:"created_at"`
+        UpdatedAt      string                                   `json:"updated_at"`
+        Children       []*ProjectManagementTaskEntity           `json:"children"`
+        Dependencies   []*ProjectManagementTaskDependencyEntity `json:"dependencies"`
+    }
+    ProjectManagementTaskDependencyEntity {
+        Id               int64  `json:"id"`
+        TaskId           int64  `json:"task_id"`
+        DependencyTaskId int64  `json:"dependency_task_id"`
+        DependencyType   string `json:"dependency_type"`
+        DependencyRule   string `json:"dependency_rule"`
+        CreatedAt        string `json:"created_at"`
+        UpdatedAt        string `json:"updated_at"`
+    }
+    OperationEntity {
+        Id           int64                  `json:"id"`
+        EntityType   string                 `json:"entity_type"`
+        EntityId     int64                  `json:"entity_id"`
+        OperatorId   int64                  `json:"operator_id"`
+        OperatorName string                 `json:"operator_name"`
+        Operation    string                 `json:"operation"`
+        Metadata     map[string]interface{} `json:"metadata"`
+        CreatedAt    string                 `json:"created_at"`
+        UpdatedAt    string                 `json:"updated_at"`
+    }
+)

@@ -1,6 +1,9 @@
 package swagger
 
 import (
+	"os"
+	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -175,4 +178,39 @@ func TestParseApi_FullExpectedData(t *testing.T) {
 	}
 
 	assert.Equal(t, expected, result)
+}
+
+func TestParseSwagger(t *testing.T) {
+	result, err := ParseSwagger([]byte(`{
+		"paths": {
+			"/api/v1/project_management/project/{id}": {
+				"get": {
+					"tags": ["project_management_project"],
+					"summary": "detail"
+				}
+			}
+		}
+	}`))
+	require.NoError(t, err)
+	assert.Equal(t, ApiGroup{
+		"project_management_project": {
+			{Path: "/api/v1/project_management/project/:id", Method: "GET", Name: "detail", Description: "detail"},
+		},
+	}, result)
+}
+
+func TestParseSwagger_BorrowerManifestIncludesImportedServers(t *testing.T) {
+	_, file, _, ok := runtime.Caller(0)
+	require.True(t, ok)
+	content, err := os.ReadFile(filepath.Join(filepath.Dir(file), "../../app/borrower/api/swagger/borrower.json"))
+	require.NoError(t, err)
+
+	result, err := ParseSwagger(content)
+	require.NoError(t, err)
+	assert.Contains(t, result["project_management_project"], Api{
+		Path:        "/api/v1/project_management/project/:id",
+		Method:      "GET",
+		Name:        "detail",
+		Description: "detail",
+	})
 }

@@ -88,6 +88,8 @@ type SendInviteUserEmailConfig struct {
 	ExpireSeconds     int
 	SendPeriodSeconds int
 	Url               string
+	Logo              string
+	Address           string
 }
 
 type OrganizationUserAcceptInvitationRequestDto struct {
