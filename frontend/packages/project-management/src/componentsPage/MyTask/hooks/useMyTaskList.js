@@ -24,6 +24,7 @@ import {
 } from '@repo/project-management/enum/task';
 import { toTaskTypeColorHex } from '@repo/project-management/enum/taskType';
 import { useOptionsStore } from '@repo/project-management/store/options';
+import { useAuth } from '@repo/shared-methods/hooks';
 
 /**
  * @param {Array<{ value?: string, label?: string }>} options
@@ -53,9 +54,10 @@ function pickMyTaskFilter(raw = {}) {
 	return filter;
 }
 
-export function useMyTaskList() {
+export function useMyTaskList(PERMISSIONS) {
 	const t = useTranslations();
 	const router = useRouter();
+	const { hasPermission } = useAuth();
 	const { request, cancelMatch } = useMemo(() => createRequest(), []);
 	const taskApi = useMemo(() => createTaskApi(request), [request]);
 	const tableFilterRef = useRef();
@@ -125,15 +127,18 @@ export function useMyTaskList() {
 				key: 'title',
 				width: 260,
 				ellipsis: true,
-				render: (value, record) => (
-					<Button
-						type="link"
-						className="font-medium !p-0 h-auto"
-						onClick={() => goTaskDetail(record)}
-					>
-						{displayValue(value)}
-					</Button>
-				),
+				render: (value, record) =>
+					hasPermission(PERMISSIONS?.PROJECT_LIST?.DETAILS) ? (
+						<Button
+							type="link"
+							className="font-medium !p-0 h-auto"
+							onClick={() => goTaskDetail(record)}
+						>
+							{displayValue(value)}
+						</Button>
+					) : (
+						displayValue(value)
+					),
 			},
 			{
 				title: t('myTask.statusColumn'),
@@ -209,7 +214,7 @@ export function useMyTaskList() {
 					)),
 			},
 		],
-		[goTaskDetail, localizedPriorityOptions, localizedStageOptions, t],
+		[goTaskDetail, hasPermission, localizedPriorityOptions, localizedStageOptions, t],
 	);
 
 	const filterList = useMemo(

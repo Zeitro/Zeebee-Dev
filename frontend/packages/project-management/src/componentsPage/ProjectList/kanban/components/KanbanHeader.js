@@ -22,7 +22,7 @@ import { getMemberInitial, getMemberLabel } from './helpers';
  *   taskCount?: number,
  *   members?: Array,
  *   projectMembers?: Array,
- *   canManageMembers?: boolean,
+ *   canManage?: boolean,
  *   onCreateTask?: () => void,
  *   onMembersClick?: () => void,
  *   onInviteClick?: () => void,
@@ -33,7 +33,7 @@ import { getMemberInitial, getMemberLabel } from './helpers';
 export function KanbanHeader({
 	project,
 	taskCount = 0,
-	canManageMembers = false,
+	canManage = false,
 	onCreateTask,
 	onMembersClick,
 	onInviteClick,
@@ -62,13 +62,15 @@ export function KanbanHeader({
 				</h2>
 			</div>
 			<div className="flex items-center gap-3 shrink-0">
-				<Tooltip title={t('kanban.projectMembers')}>
-					<div
-						className="flex items-center gap-1.5 h-auto p-0 cursor-pointer"
-						onClick={onMembersClick}
-					>
-						<TeamOutlined className="text-base-label" />
-						{/* <Avatar.Group
+				{canManage && (
+					<>
+						<Tooltip title={t('kanban.projectMembers')}>
+							<div
+								className="flex items-center gap-1.5 h-auto p-0 cursor-pointer"
+								onClick={onMembersClick}
+							>
+								<TeamOutlined className="text-base-label" />
+								{/* <Avatar.Group
 						max={{
 							count: 8,
 							style: { backgroundColor: 'var(--blue-medium)', fontSize: 12 },
@@ -98,27 +100,27 @@ export function KanbanHeader({
 							);
 						})}
 					</Avatar.Group> */}
-					</div>
-				</Tooltip>
-				{canManageMembers ? (
-					<Button size="small" icon={<PlusOutlined />} onClick={onInviteClick}>
-						{t('kanban.invite')}
-					</Button>
-				) : null}
-				<Divider type="vertical" className="h-6" />
-				<Button icon={<MessageOutlined />} onClick={onActivityClick}>
-					{t('kanban.projectActivity')}
-				</Button>
-				{projectId != null ? (
-					<Button
-						icon={<SettingOutlined />}
-						onClick={() =>
-							router.push(`/project/workflow/${workflowId}?projectId=${projectId}`)
-						}
-					>
-						{t('projectList.openSettings')}
-					</Button>
-				) : null}
+							</div>
+						</Tooltip>
+						<Button size="small" icon={<PlusOutlined />} onClick={onInviteClick}>
+							{t('kanban.invite')}
+						</Button>
+						<Divider type="vertical" className="h-6" />
+						<Button icon={<MessageOutlined />} onClick={onActivityClick}>
+							{t('kanban.projectActivity')}
+						</Button>
+						<Button
+							icon={<SettingOutlined />}
+							onClick={() =>
+								router.push(
+									`/project/workflow/${workflowId}?projectId=${projectId}`,
+								)
+							}
+						>
+							{t('projectList.openSettings')}
+						</Button>
+					</>
+				)}
 				{showCreate ? (
 					<Button type="primary" icon={<PlusOutlined />} onClick={onCreateTask}>
 						{t('kanban.newTask')}

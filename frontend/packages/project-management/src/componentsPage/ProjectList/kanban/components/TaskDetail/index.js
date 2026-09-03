@@ -71,6 +71,7 @@ export function TaskDetailDrawer({
 	onCreateSubtask,
 	onOpenLog,
 	messageApi,
+	canManage,
 }) {
 	const t = useTranslations();
 	const locale = useLocale();
@@ -300,6 +301,7 @@ export function TaskDetailDrawer({
 							deleteLoading={deleting}
 							onOpenLog={onOpenLog}
 							onAddDependency={setDependencyFocusMode}
+							canManage={canManage}
 						/>
 
 						<div className="flex-1 overflow-y-auto px-6 py-5 pb-24">

@@ -9,7 +9,7 @@ import { FilterTable } from '@repo/shared-methods';
 import { useOptionsStore } from '@repo/project-management/store/options';
 import { useMyTaskList } from './hooks/useMyTaskList';
 
-export function ProjectMyTask() {
+export function ProjectMyTask({ PERMISSIONS }) {
 	const getOptions = useOptionsStore((state) => state.getOptions);
 	useEffect(() => {
 		const { priorityOptions, stageOptions } = useOptionsStore.getState();
@@ -20,7 +20,8 @@ export function ProjectMyTask() {
 			getOptions('project_management_stage_phase', 'stageOptions').catch(() => {});
 		}
 	}, [getOptions]);
-	const { tableFilterRef, filterList, columns, getData, messageContextHolder } = useMyTaskList();
+	const { tableFilterRef, filterList, columns, getData, messageContextHolder } =
+		useMyTaskList(PERMISSIONS);
 
 	return (
 		<>

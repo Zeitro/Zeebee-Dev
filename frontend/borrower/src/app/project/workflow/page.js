@@ -1,7 +1,7 @@
 'use client';
 
 import { ProjectWorkflow } from '@repo/project-management';
-
+import { PERMISSIONS } from '@config/permissions';
 export default function ProjectWorkflowPage() {
-	return <ProjectWorkflow />;
+	return <ProjectWorkflow PERMISSIONS={PERMISSIONS} />;
 }

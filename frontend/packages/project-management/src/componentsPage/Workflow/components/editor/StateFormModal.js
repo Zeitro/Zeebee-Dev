@@ -9,7 +9,7 @@ import { useEffect, useMemo } from 'react';
 import { ColorPicker, Form, Input, Select } from 'antd';
 import { NewModal } from '@repo/shared-methods';
 import { useTranslations } from 'next-intl';
-import { localizeSelectOptions } from '@repo/project-management/enum/task';
+import { localizeSelectOptions, TASK_PHASE } from '@repo/project-management/enum/task';
 import {
 	WORKFLOW_STATE_COLOR_PRESETS,
 	WORKFLOW_STATE_DEFAULT_COLOR,
@@ -56,6 +56,25 @@ export function StateFormModal({ open, editingState, form, onCancel, onSubmit })
 		if (useOptionsStore.getState().stageOptions.length) return;
 		getOptions('project_management_stage_phase', 'stageOptions').catch(() => {});
 	}, [open, getOptions]);
+
+	/** destroyOnHidden 下 Form 未挂载时 setFieldsValue 会告警；等 open 后再写值 */
+	useEffect(() => {
+		if (!open) return;
+		form.resetFields();
+		if (editingState) {
+			form.setFieldsValue({
+				name: editingState.name,
+				phase: editingState.phase,
+				color: toWorkflowStateColorHex(editingState.color) || WORKFLOW_STATE_DEFAULT_COLOR,
+				description: editingState.description,
+			});
+			return;
+		}
+		form.setFieldsValue({
+			phase: TASK_PHASE.IN_PROGRESS,
+			color: WORKFLOW_STATE_DEFAULT_COLOR,
+		});
+	}, [editingState, form, open]);
 
 	return (
 		<NewModal

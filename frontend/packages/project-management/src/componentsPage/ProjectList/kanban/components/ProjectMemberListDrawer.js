@@ -239,7 +239,7 @@ export function ProjectMemberListDrawer({
 								{isOwner ? (
 									<Tag
 										color="purple"
-										className="w-[88px] text-center m-0 !text-sm"
+										className="w-[110px] text-center m-0 !text-sm"
 									>
 										{t('common.roleProjectOwner')}
 									</Tag>
@@ -247,7 +247,7 @@ export function ProjectMemberListDrawer({
 									<Select
 										size="small"
 										value={item.role}
-										className="w-[110px]"
+										className="w-[130px]"
 										disabled={!canManage}
 										loading={updatingMemberId === item.id}
 										onChange={(role) => handleRoleChange(item.id, role)}

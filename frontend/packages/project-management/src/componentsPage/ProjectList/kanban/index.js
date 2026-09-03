@@ -102,10 +102,11 @@ function ProjectKanbanView({
 	);
 
 	const currentProjectRole = projectMembers.find(
-		(item) => item.user_id === userId || item.organization_user_id === userId,
+		(item) => item.organization_user_id === userId,
 	)?.role;
-	// const canManageMembers = userId === project?.owner_id || currentProjectRole === 'ProjectAdmin';
-	const canManageMembers = true;
+
+	// 项目管理员或项目创建者可操作邀请成员/成员查看/查看项目日志/修改工作流
+	const canManage = ['ProjectAdmin', 'ProjectOwner'].includes(currentProjectRole);
 
 	const setTaskQuery = useCallback(
 		(taskId) => {
@@ -167,7 +168,7 @@ function ProjectKanbanView({
 			<KanbanHeader
 				project={project}
 				taskCount={taskTotal || tasks.length}
-				canManageMembers={canManageMembers}
+				canManage={canManage}
 				onCreateTask={() => openCreate()}
 				onMembersClick={() => setMemberListOpen(true)}
 				onInviteClick={() => setInviteOpen(true)}
@@ -226,7 +227,7 @@ function ProjectKanbanView({
 				open={memberListOpen}
 				projectId={projectId}
 				projectMembers={projectMembers}
-				canManage={canManageMembers}
+				canManage={canManage}
 				onSearchMembers={searchProjectMembers}
 				onClose={() => setMemberListOpen(false)}
 				onInvite={() => {
@@ -257,6 +258,7 @@ function ProjectKanbanView({
 				onCreateSubtask={(parent) => openCreate(parent)}
 				onOpenLog={handleOpenTaskLog}
 				messageApi={messageApi}
+				canManage={canManage}
 			/>
 			<TaskActivityDrawer
 				open={taskLogOpen}

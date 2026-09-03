@@ -85,8 +85,8 @@ export function getWorkflowPhaseI18nKey(phase) {
 
 export const WORKFLOW_TRANSITION_TRIGGER_OPTIONS = [
 	{ value: 'manual', labelKey: 'workflow.editor.triggerManual' },
-	{ value: 'automatic', labelKey: 'workflow.editor.triggerAutomatic' },
-	{ value: 'scheduled', labelKey: 'workflow.editor.triggerScheduled' },
+	// { value: 'automatic', labelKey: 'workflow.editor.triggerAutomatic' },
+	// { value: 'scheduled', labelKey: 'workflow.editor.triggerScheduled' },
 ];
 
 export const WORKFLOW_TRANSITION_MEMBER_OPTIONS = [

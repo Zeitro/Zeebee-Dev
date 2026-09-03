@@ -13,11 +13,6 @@ import {
 	createWorkflowApi,
 	isValidProjectId,
 } from '@repo/project-management/api/workflow';
-import { TASK_PHASE } from '@repo/project-management/enum/task';
-import {
-	WORKFLOW_STATE_DEFAULT_COLOR,
-	toWorkflowStateColorHex,
-} from '@repo/project-management/enum/workflow';
 import { useOptionsStore } from '@repo/project-management/store/options';
 import {
 	applyAddTransitionToStages,
@@ -211,27 +206,13 @@ export function useWorkflowEditor(workflowId, projectId) {
 
 	const openAddState = useCallback(() => {
 		setEditingState(null);
-		stateForm.resetFields();
-		stateForm.setFieldsValue({
-			phase: TASK_PHASE.IN_PROGRESS,
-			color: WORKFLOW_STATE_DEFAULT_COLOR,
-		});
 		setStateModalOpen(true);
-	}, [stateForm]);
+	}, []);
 
-	const openEditState = useCallback(
-		(state) => {
-			setEditingState(state);
-			stateForm.setFieldsValue({
-				name: state.name,
-				phase: state.phase,
-				color: toWorkflowStateColorHex(state.color) || WORKFLOW_STATE_DEFAULT_COLOR,
-				description: state.description,
-			});
-			setStateModalOpen(true);
-		},
-		[stateForm],
-	);
+	const openEditState = useCallback((state) => {
+		setEditingState(state);
+		setStateModalOpen(true);
+	}, []);
 
 	const handleSaveState = async (values) => {
 		if (!workflow) return;

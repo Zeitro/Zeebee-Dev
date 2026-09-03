@@ -7,12 +7,13 @@ import { AppstoreOutlined, SettingOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { PermissionSlot } from '@repo/shared-methods';
 import { displayValue } from '@repo/shared-methods/utils';
 
 /**
  * @param {{ row: object }} props
  */
-export function ProjectCard({ row }) {
+export function ProjectCard({ row, PERMISSIONS }) {
 	const t = useTranslations('projectList');
 	const router = useRouter();
 	const projectId = row?.id;
@@ -58,14 +59,16 @@ export function ProjectCard({ row }) {
 					icon={<AppstoreOutlined />}
 					onClick={goKanban}
 				/>
-				<span className="w-px bg-base-border" />
-				<Button
-					type="text"
-					className="flex-1 py-3 h-auto rounded-none text-base-gray hover:text-base-primary"
-					aria-label={t('openSettings')}
-					icon={<SettingOutlined />}
-					onClick={goSettings}
-				/>
+				<PermissionSlot code={PERMISSIONS?.PROJECT_LIST?.SETTING}>
+					<span className="w-px bg-base-border" />
+					<Button
+						type="text"
+						className="flex-1 py-3 h-auto rounded-none text-base-gray hover:text-base-primary"
+						aria-label={t('openSettings')}
+						icon={<SettingOutlined />}
+						onClick={goSettings}
+					/>
+				</PermissionSlot>
 			</div>
 		</div>
 	);

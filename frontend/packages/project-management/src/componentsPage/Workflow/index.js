@@ -9,7 +9,7 @@ import { useWorkflowList } from './hooks/useWorkflowList';
 
 export { WorkflowEditor } from './WorkflowEditor';
 
-export function ProjectWorkflow() {
+export function ProjectWorkflow({ PERMISSIONS }) {
 	const {
 		tableFilterRef,
 		filterList,
@@ -22,7 +22,7 @@ export function ProjectWorkflow() {
 		setModalOpen,
 		handleSave,
 		emptyText,
-	} = useWorkflowList();
+	} = useWorkflowList(PERMISSIONS);
 
 	return (
 		<>

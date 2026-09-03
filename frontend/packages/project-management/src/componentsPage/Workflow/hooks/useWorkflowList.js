@@ -1,6 +1,6 @@
 /**
  * 工作流列表：GET `/project_management/workflow/all` 无分页（量少一次拉全量），
- * 返回 FilterTable 所需 `{ list, total }`；工具栏仅新建按钮。
+ * 返回 FilterTable 所需 `{ list, total }`；新建 / 编辑 / 删除 / 设默认（按 PROJECT_WORKFLOW 权限）。
  */
 'use client';
 
@@ -10,7 +10,8 @@ import { Button, Empty, Modal, Space, Tag, message } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { useTranslations } from 'next-intl';
 import { createRequest, displayValue, EMPTY_DISPLAY } from '@repo/shared-methods/utils';
-import { initConfigFn } from '@repo/shared-methods';
+import { initConfigFn, PermissionSlot } from '@repo/shared-methods';
+import { useAuth } from '@repo/shared-methods/hooks';
 import { WORKFLOW_ALL_API, createWorkflowApi } from '@repo/project-management/api/workflow';
 import { getWorkflowStateColor } from '@repo/project-management/enum/workflow';
 import { formatApiError } from '../../../lib/formatApiError';
@@ -25,9 +26,10 @@ function getWorkflowStages(wf) {
 	return stages.sort((a, b) => (Number(a?.sort_order) || 0) - (Number(b?.sort_order) || 0));
 }
 
-export function useWorkflowList() {
+export function useWorkflowList(PERMISSIONS) {
 	const t = useTranslations();
 	const router = useRouter();
+	const { hasPermission, getActiveByPermission } = useAuth();
 	const { request, cancelMatch } = useMemo(() => createRequest(), []);
 	const workflowApi = useMemo(() => createWorkflowApi(request), [request]);
 	const tableFilterRef = useRef();
@@ -159,33 +161,48 @@ export function useWorkflowList() {
 					);
 				},
 			},
-			{
+			getActiveByPermission({
 				title: t('workflow.actionColumn'),
 				key: 'action',
 				width: 280,
+				permissionList: [
+					PERMISSIONS?.PROJECT_WORKFLOW?.EDIT,
+					PERMISSIONS?.PROJECT_WORKFLOW?.DELETE,
+					PERMISSIONS?.PROJECT_WORKFLOW?.SET_DEFAULT,
+				],
 				render: (_, wf) => (
 					<Space size="middle">
-						<Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(wf)}>
-							{t('workflow.edit')}
-						</Button>
-						<Button
-							type="link"
-							danger
-							icon={<DeleteOutlined />}
-							onClick={() => handleDelete(wf)}
-						>
-							{t('workflow.delete')}
-						</Button>
-						{!wf.is_default ? (
-							<Button type="link" onClick={() => handleSetDefault(wf)}>
-								{t('workflow.setDefault')}
+						<PermissionSlot code={PERMISSIONS?.PROJECT_WORKFLOW?.EDIT}>
+							<Button
+								type="link"
+								icon={<EditOutlined />}
+								onClick={() => handleEdit(wf)}
+							>
+								{t('workflow.edit')}
 							</Button>
+						</PermissionSlot>
+						<PermissionSlot code={PERMISSIONS?.PROJECT_WORKFLOW?.DELETE}>
+							<Button
+								type="link"
+								danger
+								icon={<DeleteOutlined />}
+								onClick={() => handleDelete(wf)}
+							>
+								{t('workflow.delete')}
+							</Button>
+						</PermissionSlot>
+						{!wf.is_default ? (
+							<PermissionSlot code={PERMISSIONS?.PROJECT_WORKFLOW?.SET_DEFAULT}>
+								<Button type="link" onClick={() => handleSetDefault(wf)}>
+									{t('workflow.setDefault')}
+								</Button>
+							</PermissionSlot>
 						) : null}
 					</Space>
 				),
-			},
+			}),
 		],
-		[handleDelete, handleEdit, handleSetDefault, t],
+		[getActiveByPermission, handleDelete, handleEdit, handleSetDefault, PERMISSIONS, t],
 	);
 
 	const filterList = useMemo(
@@ -195,9 +212,10 @@ export function useWorkflowList() {
 				text: t('workflow.createTitle'),
 				icon: <PlusOutlined />,
 				onClick: openCreateModal,
+				hidden: !hasPermission(PERMISSIONS?.PROJECT_WORKFLOW?.ADD),
 			},
 		],
-		[openCreateModal, t],
+		[hasPermission, openCreateModal, PERMISSIONS, t],
 	);
 
 	return {

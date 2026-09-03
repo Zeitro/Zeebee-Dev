@@ -1,6 +1,6 @@
 /**
  * 任务类型列表：GET `/project_management/task_type/all` 无分页（量少一次拉全量），
- * 返回 FilterTable 所需 `{ list, total }`；新建 / 编辑 / 删除。
+ * 返回 FilterTable 所需 `{ list, total }`；新建 / 编辑 / 删除（按 PROJECT_TASK_TYPE 权限）。
  */
 'use client';
 
@@ -9,12 +9,14 @@ import { Button, Empty, Modal, Space, Tag, message } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { useTranslations } from 'next-intl';
 import { createRequest, displayValue } from '@repo/shared-methods/utils';
-import { initConfigFn } from '@repo/shared-methods';
+import { initConfigFn, PermissionSlot } from '@repo/shared-methods';
+import { useAuth } from '@repo/shared-methods/hooks';
 import { TASK_TYPE_ALL_API, createTaskTypeApi } from '@repo/project-management/api/taskType';
 import { getTaskTypeColorLabel, toTaskTypeColorHex } from '@repo/project-management/enum/taskType';
 
-export function useTaskTypeList() {
+export function useTaskTypeList(PERMISSIONS) {
 	const t = useTranslations();
+	const { hasPermission, getActiveByPermission } = useAuth();
 	const { request, cancelMatch } = useMemo(() => createRequest(), []);
 	const taskTypeApi = useMemo(() => createTaskTypeApi(request), [request]);
 	const tableFilterRef = useRef();
@@ -167,32 +169,40 @@ export function useTaskTypeList() {
 				width: 100,
 				render: (sort_order) => displayValue(sort_order),
 			},
-			{
+			getActiveByPermission({
 				title: t('taskType.actionColumn'),
 				key: 'action',
 				width: 180,
+				permissionList: [
+					PERMISSIONS?.PROJECT_TASK_TYPE?.EDIT,
+					PERMISSIONS?.PROJECT_TASK_TYPE?.DELETE,
+				],
 				render: (_, record) => (
 					<Space size="middle">
-						<Button
-							type="link"
-							icon={<EditOutlined />}
-							onClick={() => openEditModal(record)}
-						>
-							{t('taskType.edit')}
-						</Button>
-						<Button
-							type="link"
-							danger
-							icon={<DeleteOutlined />}
-							onClick={() => handleDelete(record)}
-						>
-							{t('taskType.delete')}
-						</Button>
+						<PermissionSlot code={PERMISSIONS?.PROJECT_TASK_TYPE?.EDIT}>
+							<Button
+								type="link"
+								icon={<EditOutlined />}
+								onClick={() => openEditModal(record)}
+							>
+								{t('taskType.edit')}
+							</Button>
+						</PermissionSlot>
+						<PermissionSlot code={PERMISSIONS?.PROJECT_TASK_TYPE?.DELETE}>
+							<Button
+								type="link"
+								danger
+								icon={<DeleteOutlined />}
+								onClick={() => handleDelete(record)}
+							>
+								{t('taskType.delete')}
+							</Button>
+						</PermissionSlot>
 					</Space>
 				),
-			},
+			}),
 		],
-		[handleDelete, openEditModal, t],
+		[getActiveByPermission, handleDelete, openEditModal, PERMISSIONS, t],
 	);
 
 	const filterList = useMemo(
@@ -202,9 +212,10 @@ export function useTaskTypeList() {
 				text: t('taskType.createTitle'),
 				icon: <PlusOutlined />,
 				onClick: openCreateModal,
+				hidden: !hasPermission(PERMISSIONS?.PROJECT_TASK_TYPE?.ADD),
 			},
 		],
-		[openCreateModal, t],
+		[hasPermission, openCreateModal, PERMISSIONS, t],
 	);
 
 	return {

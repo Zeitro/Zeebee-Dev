@@ -8,6 +8,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ReloadOutlined } from '@ant-design/icons';
 import { useTranslations } from 'next-intl';
 import { FilterTableCard } from '@repo/shared-methods';
+import { useAuth } from '@repo/shared-methods/hooks';
 import { createRequest } from '@repo/shared-methods/utils';
 import { PROJECT_PAGE_API } from '../../api/project';
 import { getTaskPriorityI18nKey, localizeSelectOptions } from '../../enum/task';
@@ -19,12 +20,15 @@ import { ProjectCard } from './components/ProjectCard';
 const PROJECT_CARD_ITEM_CLASS =
 	'!p-0 w-[280px] min-h-[280px] overflow-hidden rounded-xl hover:border-base-primary';
 
-export const ProjectList = () => {
+export const ProjectList = ({ PERMISSIONS }) => {
 	const t = useTranslations();
+	const { hasPermission } = useAuth();
 	const { request, cancelMatch } = useMemo(() => createRequest(), []);
 	const tableFilterRef = useRef();
 	const [keyword, setKeyword] = useState('');
 	const [priority, setPriority] = useState();
+
+	const canCreateProject = hasPermission(PERMISSIONS?.PROJECT_LIST?.ADD);
 
 	const priorityOptionsRaw = useOptionsStore((state) => state.priorityOptions);
 	const getOptions = useOptionsStore((state) => state.getOptions);
@@ -72,17 +76,17 @@ export const ProjectList = () => {
 				});
 				const list = res?.list ?? [];
 				return {
-					list: [CREATE_PROJECT_ITEM, ...list],
+					list: canCreateProject ? [CREATE_PROJECT_ITEM, ...list] : list,
 					total: res?.total ?? 0,
 				};
 			} catch {
 				return {
-					list: [CREATE_PROJECT_ITEM],
+					list: canCreateProject ? [CREATE_PROJECT_ITEM] : [],
 					total: 0,
 				};
 			}
 		},
-		[request],
+		[request, canCreateProject],
 	);
 
 	const filterList = useMemo(
@@ -140,10 +144,10 @@ export const ProjectList = () => {
 			itemClassName={PROJECT_CARD_ITEM_CLASS}
 			getData={getData}
 			renderItem={(row) =>
-				isCreateProjectItem(row) ? (
+				isCreateProjectItem(row) && canCreateProject ? (
 					<CreateProjectCard handleSearch={handleRefresh} />
 				) : (
-					<ProjectCard row={row} />
+					<ProjectCard row={row} PERMISSIONS={PERMISSIONS} />
 				)
 			}
 		/>

@@ -32,9 +32,7 @@ export function useKanbanBoard(projectId, queryTaskId, messageApi) {
 	const taskApi = useMemo(() => createTaskApi(request), [request]);
 	const projectMemberApi = useMemo(() => createProjectMemberApi(request), [request]);
 	const taskTypeApi = useMemo(() => createTaskTypeApi(request), [request]);
-	const userId = useUserStore(
-		(state) => state.userInfo?.organization_user_id ?? state.userInfo?.id,
-	);
+	const userId = useUserStore((state) => state.userInfo?.organization_user_id);
 	const [project, setProject] = useState(null);
 	const [workflow, setWorkflow] = useState(null);
 	const [tasks, setTasks] = useState([]);

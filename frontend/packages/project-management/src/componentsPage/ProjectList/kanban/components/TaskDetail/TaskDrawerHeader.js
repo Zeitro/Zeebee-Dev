@@ -14,6 +14,7 @@ import { DeleteBtn } from '@repo/shared-methods';
 import { Button, Input, Tooltip } from 'antd';
 import { useTranslations } from 'next-intl';
 import { displayValue } from '@repo/shared-methods/utils';
+import { useUserStore } from '@repo/shared-methods/store';
 // import { TASK_DEPENDENCY_DIRECTION } from '@repo/project-management/enum/task';
 // import { DEPENDENCY_DIRECTION_OPTIONS } from '../constants';
 // import { getMemberInitial, getMemberLabel } from '../helpers';
@@ -45,8 +46,11 @@ export function TaskDrawerHeader({
 	deleteLoading = false,
 	onOpenLog,
 	onAddDependency,
+	canManage,
 }) {
 	const t = useTranslations();
+	const { userInfo } = useUserStore();
+	const isCreator = task.creator_id === userInfo?.organization_user_id;
 
 	const participantItems = [];
 	const seen = new Set();
@@ -119,20 +123,22 @@ export function TaskDrawerHeader({
 					>
 						{t('kanban.taskLog')}
 					</Button>
-					<DeleteBtn
-						type="text"
-						size="small"
-						icon={<DeleteOutlined />}
-						danger
-						title={t('kanban.deleteConfirmTitle')}
-						content={t('kanban.deleteConfirmContent', { title: task.title })}
-						okText={t('kanban.deleteConfirmOk')}
-						cancelText={t('common.cancel')}
-						onOk={onDelete}
-						confirmLoading={deleteLoading}
-					>
-						{t('common.delete')}
-					</DeleteBtn>
+					{(canManage || isCreator) && (
+						<DeleteBtn
+							type="text"
+							size="small"
+							icon={<DeleteOutlined />}
+							danger
+							title={t('kanban.deleteConfirmTitle')}
+							content={t('kanban.deleteConfirmContent', { title: task.title })}
+							okText={t('kanban.deleteConfirmOk')}
+							cancelText={t('common.cancel')}
+							onOk={onDelete}
+							confirmLoading={deleteLoading}
+						>
+							{t('common.delete')}
+						</DeleteBtn>
+					)}
 					{/* <Dropdown
 						trigger={['click']}
 						menu={{

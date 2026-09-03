@@ -7,7 +7,7 @@ import { FilterTable } from '@repo/shared-methods';
 import { TaskTypeFormModal } from './components/TaskTypeFormModal';
 import { useTaskTypeList } from './hooks/useTaskTypeList';
 
-export function ProjectTaskType() {
+export function ProjectTaskType({ PERMISSIONS }) {
 	const {
 		tableFilterRef,
 		filterList,
@@ -22,7 +22,7 @@ export function ProjectTaskType() {
 		handleSave,
 		emptyText,
 		handleSortEnd,
-	} = useTaskTypeList();
+	} = useTaskTypeList(PERMISSIONS);
 
 	return (
 		<>
