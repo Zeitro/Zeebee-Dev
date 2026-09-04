@@ -7,20 +7,34 @@ import { useRouter, usePathname } from 'next/navigation';
 import { RightCircleTwoTone, LeftCircleTwoTone } from '@ant-design/icons';
 import { useUserStore } from '@repo/shared-methods/store';
 import UserInfo from './UserInfo';
+import TrialBanner from './TrialBanner';
 import { useDeferredSyncEffect, useElementSize } from '@repo/shared-methods/hooks';
-import { generateMenuBar, resolveSidebarMenuState } from '@repo/shared-methods/utils';
+import {
+	generateMenuBar,
+	getRemainingDaysUntilExpire,
+	resolveSidebarMenuState,
+} from '@repo/shared-methods/utils';
 import { iconData } from '@repo/shared-methods/enum';
 
 const homePathname = '/';
 const initTwoToneColor = ['var(--base-label)', 'var(--gray-light)'];
 /**
  * 侧边栏组件
+ *
+ * @param {object} props
+ * @param {number} [props.trialDaysRemaining] 试用剩余天数；>0 时在用户区上方展示提示条
+ * @param {boolean} [props.isLoggedIn] 是否已登录，透传 Pricing
  */
 export const CommonSidebar = ({
 	routerList,
 	personalList,
 	handleClickPersonalItem,
 	renderLogo,
+	planName,
+	currentPlanId,
+	isLoggedIn,
+	pricingProps,
+	currentPlan,
 }) => {
 	const router = useRouter();
 	const pathname = usePathname();
@@ -29,6 +43,7 @@ export const CommonSidebar = ({
 	const [selectedKey, setSelectedKey] = useState('');
 	const [openKey, setOpenKey] = useState('');
 	const [twoToneColor, setTwoToneColor] = useState(initTwoToneColor);
+	const [pricingOpen, setPricingOpen] = useState(false);
 	const [rect, rectDom] = useElementSize();
 
 	// 详情/设置等未展示菜单的路由 → 选中并展开最近可见父级
@@ -104,11 +119,25 @@ export const CommonSidebar = ({
 					return customRoot;
 				}}
 			/>
+			{currentPlan?.status === 'Trialing' && currentPlan?.expire_date && (
+				<TrialBanner
+					trialDaysRemaining={getRemainingDaysUntilExpire(currentPlan?.expire_date)}
+					sidebarCollapsed={sidebarCollapsed}
+					onUpgradeClick={() => setPricingOpen(true)}
+				/>
+			)}
 			<UserInfo
 				userInfo={userInfo}
 				sidebarCollapsed={sidebarCollapsed}
 				personalList={personalList}
 				handleClickPersonalItem={handleClickPersonalItem}
+				planName={planName}
+				currentPlanId={currentPlanId}
+				isLoggedIn={isLoggedIn}
+				pricingProps={pricingProps}
+				pricingOpen={pricingOpen}
+				onPricingOpenChange={setPricingOpen}
+				currentPlan={currentPlan}
 			/>
 			<div
 				className="absolute right-[-8px] top-[18px] cursor-pointer"

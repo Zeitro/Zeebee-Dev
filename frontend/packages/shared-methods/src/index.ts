@@ -50,3 +50,5 @@ export * from './components/CreateZBLoan/ReviewAndSign';
 // borrower端、lender端、admin端共用的页面封装的组件
 export * from './componentsUi/OrgProfile/index';
 export * from './componentsUi/SelectCard/index';
+export { default as Pricing } from './componentsUi/Pricing/index';
+export { default as PricingModal } from './componentsUi/Pricing/PricingModal/index';
