@@ -23,6 +23,61 @@ import { mapKanbanProjectDetail, mapKanbanTask } from '../lib/mapKanbanBoard';
 import { useKanbanTaskDetailState } from './useKanbanTaskDetail';
 
 /**
+ * 解析单列任务分页结果，供首屏与滚动加载共用。
+ * @param {*} res
+ * @param {number} page
+ * @returns {{ list: Array, page: number, total: number, hasMore: boolean, loadingMore: boolean }}
+ */
+function normalizeStageTaskPage(res, page) {
+	const list = Array.isArray(res?.list) ? res.list : [];
+	const total = Number(res?.total) || 0;
+	const totalPage =
+		Number(res?.total_page) || (total > 0 ? Math.ceil(total / TASK_LIST_PAGE_SIZE) : 0);
+	const hasMore = totalPage > 0 ? page < totalPage : list.length >= TASK_LIST_PAGE_SIZE;
+	return {
+		list,
+		page,
+		total: total || list.length,
+		hasMore,
+		loadingMore: false,
+	};
+}
+
+/** @param {{ page: number, total: number, hasMore: boolean, loadingMore: boolean }} pageInfo */
+function toStageMeta(pageInfo) {
+	return {
+		page: pageInfo.page,
+		total: pageInfo.total,
+		hasMore: pageInfo.hasMore,
+		loadingMore: pageInfo.loadingMore,
+	};
+}
+
+/**
+ * 拉取单列某一页任务并映射为看板结构（首屏与滚动加载共用）。
+ * @param {{ pageByProject: (body: object) => Promise<*> }} taskApi
+ * @param {number|string} projectId
+ * @param {number|string} stageId
+ * @param {number} page
+ * @returns {Promise<{ tasks: Array, meta: { page: number, total: number, hasMore: boolean, loadingMore: boolean } }>}
+ */
+async function fetchStageTasksPage(taskApi, projectId, stageId, page) {
+	const res = await taskApi.pageByProject({
+		page,
+		limit: TASK_LIST_PAGE_SIZE,
+		filter: {
+			project_id: Number(projectId),
+			stage_id: stageId,
+		},
+	});
+	const pageInfo = normalizeStageTaskPage(res, page);
+	return {
+		tasks: pageInfo.list.map((item) => mapKanbanTask(item)).filter(Boolean),
+		meta: toStageMeta(pageInfo),
+	};
+}
+
+/**
  * @param {number|string|undefined} projectId
  * @param {number|undefined} queryTaskId URL `?task=`，首次拉数时打开对应详情
  */
@@ -37,6 +92,10 @@ export function useKanbanBoard(projectId, queryTaskId, messageApi) {
 	const [workflow, setWorkflow] = useState(null);
 	const [tasks, setTasks] = useState([]);
 	const [taskTotal, setTaskTotal] = useState(0);
+	/** @type {[Record<string|number, { page: number, total: number, hasMore: boolean, loadingMore: boolean }>, Function]} */
+	const [stageTaskMeta, setStageTaskMeta] = useState({});
+	const stageTaskMetaRef = useRef({});
+	const loadingStagesRef = useRef(new Set());
 	const [projectMembers, setProjectMembers] = useState([]);
 	const [taskTypes, setTaskTypes] = useState([]);
 	const [loading, setLoading] = useState(true);
@@ -81,33 +140,35 @@ export function useKanbanBoard(projectId, queryTaskId, messageApi) {
 			} = mapKanbanProjectDetail(projectRes);
 
 			const stages = mappedWorkflow?.states || [];
-			const taskResults = stages.length
+			const stagePages = stages.length
 				? await Promise.all(
 						stages.map((stage) =>
-							taskApi
-								.pageByProject({
-									page: 1,
-									limit: TASK_LIST_PAGE_SIZE,
-									filter: {
-										project_id: Number(projectId),
-										stage_id: stage.id,
-									},
-								})
-								.catch(() => ({ list: [], total: 0 })),
+							fetchStageTasksPage(taskApi, projectId, stage.id, 1).catch(() => ({
+								tasks: [],
+								meta: toStageMeta(
+									normalizeStageTaskPage({ list: [], total: 0 }, 1),
+								),
+							})),
 						),
 					)
 				: [];
 
-			const list = taskResults
-				.flatMap((res) => (Array.isArray(res?.list) ? res.list : []))
-				.map((item) => mapKanbanTask(item))
-				.filter(Boolean);
+			const nextMeta = {};
+			const list = [];
+			stages.forEach((stage, index) => {
+				const { tasks: stageTasks, meta } = stagePages[index];
+				nextMeta[stage.id] = meta;
+				list.push(...stageTasks);
+			});
 
-			const totalFromStages = taskResults.reduce(
-				(sum, res) => sum + (Number(res?.total) || 0),
+			const totalFromStages = Object.values(nextMeta).reduce(
+				(sum, meta) => sum + (Number(meta?.total) || 0),
 				0,
 			);
 
+			stageTaskMetaRef.current = nextMeta;
+			loadingStagesRef.current = new Set();
+			setStageTaskMeta(nextMeta);
 			setProject(mappedProject);
 			setWorkflow(mappedWorkflow);
 			setTasks(list);
@@ -115,6 +176,9 @@ export function useKanbanBoard(projectId, queryTaskId, messageApi) {
 			return list;
 		} catch {
 			message.error(t('kanban.loadFailed'));
+			stageTaskMetaRef.current = {};
+			loadingStagesRef.current = new Set();
+			setStageTaskMeta({});
 			setProject(null);
 			setWorkflow(null);
 			setTasks([]);
@@ -124,6 +188,53 @@ export function useKanbanBoard(projectId, queryTaskId, messageApi) {
 			setLoading(false);
 		}
 	}, [projectId, request, t, taskApi]);
+
+	/** 列内滚动加载下一页任务 */
+	const loadMoreStageTasks = useCallback(
+		async (stageId) => {
+			if (!projectId || stageId == null || stageId === '') return;
+			const meta = stageTaskMetaRef.current[stageId];
+			if (!meta?.hasMore || loadingStagesRef.current.has(stageId)) return;
+
+			loadingStagesRef.current.add(stageId);
+			setStageTaskMeta((prev) => ({
+				...prev,
+				[stageId]: { ...prev[stageId], ...meta, loadingMore: true },
+			}));
+
+			const nextPage = (meta.page || 1) + 1;
+			try {
+				const { tasks: mapped, meta: nextMeta } = await fetchStageTasksPage(
+					taskApi,
+					projectId,
+					stageId,
+					nextPage,
+				);
+
+				setTasks((prev) => {
+					const existingIds = new Set(prev.map((item) => item.id));
+					const appended = mapped.filter((item) => !existingIds.has(item.id));
+					return appended.length ? [...prev, ...appended] : prev;
+				});
+
+				stageTaskMetaRef.current[stageId] = nextMeta;
+				setStageTaskMeta((prev) => ({
+					...prev,
+					[stageId]: nextMeta,
+				}));
+			} catch {
+				const failedMeta = { ...meta, hasMore: false, loadingMore: false };
+				stageTaskMetaRef.current[stageId] = failedMeta;
+				setStageTaskMeta((prev) => ({
+					...prev,
+					[stageId]: failedMeta,
+				}));
+			} finally {
+				loadingStagesRef.current.delete(stageId);
+			}
+		},
+		[projectId, taskApi],
+	);
 
 	// const fetchTaskTypes = useCallback(async () => {
 	// 	try {
@@ -254,6 +365,7 @@ export function useKanbanBoard(projectId, queryTaskId, messageApi) {
 		workflow,
 		tasks,
 		taskTotal,
+		stageTaskMeta,
 		members,
 		projectMembers,
 		memberOptions,
@@ -261,6 +373,7 @@ export function useKanbanBoard(projectId, queryTaskId, messageApi) {
 		loading,
 		userId,
 		transitionTask,
+		loadMoreStageTasks,
 		refreshBoard: fetchBoardAndSyncTask,
 		refreshProjectMembers,
 		searchProjectMembers,

@@ -6,7 +6,9 @@
 export const KANBAN_COLUMN_MIN_WIDTH_CLASS = 'min-w-[230px]';
 // export const TASK_CARD_DUE_FORMAT = 'MM-DD';
 export const TASK_DETAIL_DRAWER_WIDTH = '66.67%';
-export const TASK_LIST_PAGE_SIZE = 200;
+export const TASK_LIST_PAGE_SIZE = 20;
+/** Virtuoso 不等高卡片的默认估算高度（min-h-[76px] + mb-2.5） */
+export const KANBAN_TASK_CARD_DEFAULT_HEIGHT = 100;
 
 /** 任务依赖规则选项，与详情 `dependency_rule` 一致 */
 export const DEPENDENCY_RULE_OPTIONS = [
