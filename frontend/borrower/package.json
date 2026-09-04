@@ -39,7 +39,11 @@
 		"react-draggable": "^4.5.0",
 		"react-pdf": "10.0.1",
 		"react-signature-pad-wrapper": "^4.1.1",
-		"zustand": "^5.0.6"
+		"zustand": "^5.0.6",
+		"react-virtuoso": "^4.16.1",
+		"@dnd-kit/core": "^6.3.1",
+		"@dnd-kit/sortable": "^10.0.0",
+		"@dnd-kit/utilities": "^3.2.2"
 	},
 	"devDependencies": {
 		"@eslint/eslintrc": "^3",
