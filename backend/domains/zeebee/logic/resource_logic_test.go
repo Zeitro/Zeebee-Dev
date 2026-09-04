@@ -6,10 +6,48 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 )
+
+func TestSyncResource_AddsOnlyMissingApis(t *testing.T) {
+	ppLogic, db := setupPricingPlanLogic(t)
+	require.NoError(t, db.Exec(`CREATE TABLE apis (
+		id INTEGER PRIMARY KEY, created_at DATETIME, updated_at DATETIME,
+		is_del INTEGER NOT NULL DEFAULT 0, parent_id INTEGER NOT NULL DEFAULT 0,
+		type TEXT NOT NULL, name TEXT NOT NULL DEFAULT '', path TEXT NOT NULL,
+		method TEXT NOT NULL, description TEXT NOT NULL DEFAULT '',
+		status TEXT NOT NULL DEFAULT 'Active', sort_order INTEGER NOT NULL DEFAULT 0,
+		auth_required INTEGER NOT NULL DEFAULT 0, permission_required INTEGER NOT NULL DEFAULT 0
+	)`).Error)
+	require.NoError(t, db.Exec(`CREATE TABLE resource_and_apis (
+		resource_id INTEGER NOT NULL, api_id INTEGER NOT NULL,
+		PRIMARY KEY (resource_id, api_id)
+	)`).Error)
+	require.NoError(t, db.Exec(`INSERT INTO resources (id, type, resource_type, name, tag, status) VALUES (1, 'Borrower', 'Menu', 'Existing', 'Sync:Existing', 'Active')`).Error)
+	require.NoError(t, db.Exec(`INSERT INTO apis (id, type, path, method) VALUES (1, 'Borrower', '/existing', 'GET'), (2, 'Borrower', '/new', 'POST')`).Error)
+	require.NoError(t, db.Exec(`INSERT INTO resource_and_apis (resource_id, api_id) VALUES (1, 1)`).Error)
+
+	resourceLogic := NewResourceLogic(ppLogic.BaseLogic, map[constants.UserType]string{})
+	err := db.Transaction(func(tx *gorm.DB) error {
+		return resourceLogic.handleSyncResource(context.Background(), tx, constants.UserTypeBorrower, dto.ResourceSyncItemDto{
+			ResourceType: constants.ResourceTypeMenu,
+			Tag:          "Sync:Existing",
+			Apis: []dto.ApiSyncItemDto{
+				{Path: "/existing", Method: "GET"},
+				{Path: "/new", Method: "POST"},
+			},
+		}, 0)
+	})
+	require.NoError(t, err)
+
+	var apiIDs []int64
+	require.NoError(t, db.Raw(`SELECT api_id FROM resource_and_apis WHERE resource_id = 1 ORDER BY api_id`).Scan(&apiIDs).Error)
+	assert.Equal(t, []int64{1, 2}, apiIDs)
+}
 
 // --- T056: Pricing plan resource intersection filter tests ---
 
