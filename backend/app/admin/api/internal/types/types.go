@@ -1292,7 +1292,7 @@ type RoleUpdateRequest struct {
 }
 
 type S3PresignUrlCreateRequest struct {
-	Type       string `json:"type" validate:"required,oneof=pdf image doc ppt excel"`
+	Type       string `json:"type" validate:"required,oneof=pdf image doc ppt excel markdown"`
 	FileSuffix string `json:"file_suffix" validate:"required"`
 	FileName   string `json:"file_name,optional"`
 }

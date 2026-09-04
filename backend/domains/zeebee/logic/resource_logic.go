@@ -558,6 +558,23 @@ func (l *ResourceLogic) handleSyncResource(ctx context.Context, tx *gorm.DB, use
 		resourceId = created.Id
 	} else {
 		resourceId = existing.Id
+		existing, err = resourceRepo.GetResourceWithTx(ctx, tx, existing.Id, userType, true)
+		if err != nil {
+			return err
+		}
+		boundApis := make(map[int64]struct{}, len(existing.Apis))
+		for _, api := range existing.Apis {
+			boundApis[api.Id] = struct{}{}
+		}
+		newApis := make([]*model.Api, 0, len(apiModels))
+		for _, api := range apiModels {
+			if _, ok := boundApis[api.Id]; !ok {
+				newApis = append(newApis, api)
+			}
+		}
+		if err = resourceRepo.AddApisWithTx(ctx, tx, existing, newApis); err != nil {
+			return err
+		}
 	}
 
 	for _, child := range item.Children {
