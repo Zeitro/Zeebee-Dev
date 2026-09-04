@@ -122,7 +122,18 @@ func (r *ProjectManagementWorkflowRepo) FindTemplateStage(ctx context.Context, i
 
 func (r *ProjectManagementWorkflowRepo) FindTemplateStageWithTx(ctx context.Context, tx *gorm.DB, id, workflowId, organizationId int64) (*model.ProjectManagementWorkflowStage, error) {
 	stage := new(model.ProjectManagementWorkflowStage)
-	err := tx.WithContext(ctx).Model(new(model.ProjectManagementWorkflowStage)).Clauses(clause.Locking{Strength: "UPDATE"}).Where("id = ? AND workflow_id = ? AND EXISTS (SELECT 1 FROM project_management_workflows WHERE id = project_management_workflow_stages.workflow_id AND organization_id = ? AND kind = ?)", id, workflowId, organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).First(stage).Error
+	err := tx.WithContext(ctx).Model(new(model.ProjectManagementWorkflowStage)).
+		Clauses(clause.Locking{Strength: "UPDATE"}).
+		Where("id = ? AND workflow_id = ? AND EXISTS (SELECT 1 FROM project_management_workflows WHERE id = project_management_workflow_stages.workflow_id AND organization_id = ? AND kind = ?)", id, workflowId, organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).
+		First(stage).Error
+	return stage, errorx.WithStack(err)
+}
+
+func (r *ProjectManagementWorkflowRepo) FindSwappableStageWithTx(ctx context.Context, tx *gorm.DB, id, workflowId, organizationId int64) (*model.ProjectManagementWorkflowStage, error) {
+	stage := new(model.ProjectManagementWorkflowStage)
+	err := tx.WithContext(ctx).Model(new(model.ProjectManagementWorkflowStage)).Clauses(clause.Locking{Strength: "UPDATE"}).
+		Where("id = ? AND workflow_id = ? AND EXISTS (SELECT 1 FROM project_management_workflows WHERE id = project_management_workflow_stages.workflow_id AND organization_id = ? AND kind IN ?)", id, workflowId, organizationId, []constants.ProjectManagementWorkflowKind{constants.ProjectManagementWorkflowKindOrganizationTemplate, constants.ProjectManagementWorkflowKindProject}).
+		First(stage).Error
 	return stage, errorx.WithStack(err)
 }
 
@@ -164,13 +175,13 @@ func (r *ProjectManagementWorkflowRepo) UpdateTemplateStageWithTx(ctx context.Co
 		map[string]any{"id": stage.Id, "workflow_id": stage.WorkflowId}, nil)
 }
 
-func (r *ProjectManagementWorkflowRepo) SwapTemplateStageSortOrdersWithTx(ctx context.Context, tx *gorm.DB, workflowId, organizationId, id, targetId int64) error {
+func (r *ProjectManagementWorkflowRepo) SwapStageSortOrdersWithTx(ctx context.Context, tx *gorm.DB, workflowId, organizationId, id, targetId int64) error {
 	if id == targetId {
 		return errorx.New("workflow stages must be different")
 	}
 	stages := make([]*model.ProjectManagementWorkflowStage, 0, 2)
 	err := tx.WithContext(ctx).Model(&model.ProjectManagementWorkflowStage{}).Clauses(clause.Locking{Strength: "UPDATE"}).
-		Where("id IN ? AND workflow_id = ? AND EXISTS (SELECT 1 FROM project_management_workflows WHERE id = project_management_workflow_stages.workflow_id AND organization_id = ? AND kind = ?)", []int64{id, targetId}, workflowId, organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).
+		Where("id IN ? AND workflow_id = ? AND EXISTS (SELECT 1 FROM project_management_workflows WHERE id = project_management_workflow_stages.workflow_id AND organization_id = ? AND kind IN ?)", []int64{id, targetId}, workflowId, organizationId, []constants.ProjectManagementWorkflowKind{constants.ProjectManagementWorkflowKindOrganizationTemplate, constants.ProjectManagementWorkflowKindProject}).
 		Order("id ASC").Find(&stages).Error
 	if err != nil {
 		return errorx.WithStack(err)
