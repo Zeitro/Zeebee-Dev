@@ -957,6 +957,7 @@ message ProjectManagementTaskPageEntity {
   string start_at = 10;
   string end_at = 11;
   ProjectManagementTaskTypeSnapshotEntity task_type = 12;
+  repeated ProjectManagementTaskAssigneeEntity assignees = 13;
   bool overdue = 14;
   int64 overdue_seconds = 15;
   string created_at = 16;

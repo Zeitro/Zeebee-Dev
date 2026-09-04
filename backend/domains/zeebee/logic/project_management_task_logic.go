@@ -170,6 +170,9 @@ func (l *ProjectManagementTaskLogic) Page(ctx context.Context, claim utils.JwtUs
 	if err != nil {
 		return page, err
 	}
+	if err = l.loadCurrentAssignees(ctx, page.List); err != nil {
+		return page, err
+	}
 	return page, nil
 }
 
@@ -378,7 +381,29 @@ func (l *ProjectManagementTaskLogic) MyPage(ctx context.Context, claim utils.Jwt
 	if err != nil {
 		return page, err
 	}
+	if err = l.loadCurrentAssignees(ctx, page.List); err != nil {
+		return page, err
+	}
 	return page, nil
+}
+
+func (l *ProjectManagementTaskLogic) loadCurrentAssignees(ctx context.Context, tasks []*model.ProjectManagementTask) error {
+	taskIds := make([]int64, 0, len(tasks))
+	for _, task := range tasks {
+		taskIds = append(taskIds, task.Id)
+	}
+	assignees, err := l.repos.ProjectManagementTaskRepo.ListCurrentAssigneesByTaskIds(ctx, taskIds)
+	if err != nil {
+		return err
+	}
+	byTaskId := make(map[int64][]*model.ProjectManagementTaskAssignee, len(tasks))
+	for _, assignee := range assignees {
+		byTaskId[assignee.TaskId] = append(byTaskId[assignee.TaskId], assignee)
+	}
+	for _, task := range tasks {
+		task.Assignees = byTaskId[task.Id]
+	}
+	return nil
 }
 
 func (l *ProjectManagementTaskLogic) projectManagementTaskAssignees(ctx context.Context, tx *gorm.DB, input projectManagementTaskAssigneeInput) ([]*model.ProjectManagementTaskAssignee, error) {
