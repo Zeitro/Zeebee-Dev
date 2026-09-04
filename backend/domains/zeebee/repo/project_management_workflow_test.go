@@ -222,8 +222,8 @@ func TestStageSortOrderUsesWorkflowScope(t *testing.T) {
 	for _, statement := range []string{
 		"CREATE TABLE project_management_workflows (id integer primary key, is_del integer not null default 0, organization_id integer not null, kind text not null)",
 		"CREATE TABLE project_management_workflow_stages (id integer primary key, created_at datetime, updated_at datetime, is_del integer not null default 0, workflow_id integer not null, name text not null, description text not null default '', phase text not null, color text not null default '', sort_order integer not null)",
-		"INSERT INTO project_management_workflows (id, organization_id, kind) VALUES (1, 4, 'OrganizationTemplate'), (2, 4, 'OrganizationTemplate')",
-		"INSERT INTO project_management_workflow_stages (id, workflow_id, name, phase, sort_order) VALUES (10, 1, 'Pending', 'Pending', 10), (11, 1, 'Finished', 'Finished', 20), (12, 2, 'Other', 'Pending', 30)",
+		"INSERT INTO project_management_workflows (id, organization_id, kind) VALUES (1, 4, 'OrganizationTemplate'), (2, 4, 'OrganizationTemplate'), (3, 4, 'Project')",
+		"INSERT INTO project_management_workflow_stages (id, workflow_id, name, phase, sort_order) VALUES (10, 1, 'Pending', 'Pending', 10), (11, 1, 'Finished', 'Finished', 20), (12, 2, 'Other', 'Pending', 30), (20, 3, 'Project pending', 'Pending', 10), (21, 3, 'Project finished', 'Finished', 20)",
 	} {
 		if err := db.Exec(statement).Error; err != nil {
 			t.Fatal(err)
@@ -236,7 +236,7 @@ func TestStageSortOrderUsesWorkflowScope(t *testing.T) {
 		if err != nil || maxSortOrder != 20 {
 			t.Fatalf("unexpected max sort order: %d, %v", maxSortOrder, err)
 		}
-		return repo.SwapTemplateStageSortOrdersWithTx(context.Background(), tx, 1, 4, 10, 11)
+		return repo.SwapStageSortOrdersWithTx(context.Background(), tx, 1, 4, 10, 11)
 	}); err != nil {
 		t.Fatal(err)
 	}
@@ -245,9 +245,18 @@ func TestStageSortOrderUsesWorkflowScope(t *testing.T) {
 		t.Fatalf("unexpected swapped stages: %#v, %v", stages, err)
 	}
 	if err := db.Transaction(func(tx *gorm.DB) error {
-		return repo.SwapTemplateStageSortOrdersWithTx(context.Background(), tx, 1, 4, 10, 12)
+		return repo.SwapStageSortOrdersWithTx(context.Background(), tx, 1, 4, 10, 12)
 	}); err == nil {
 		t.Fatal("cross-workflow stage swap accepted")
+	}
+	if err := db.Transaction(func(tx *gorm.DB) error {
+		return repo.SwapStageSortOrdersWithTx(context.Background(), tx, 3, 4, 20, 21)
+	}); err != nil {
+		t.Fatalf("swap project workflow stages: %v", err)
+	}
+	stages = nil
+	if err := db.Where("workflow_id = ?", 3).Order("id ASC").Find(&stages).Error; err != nil || stages[0].SortOrder != 20 || stages[1].SortOrder != 10 {
+		t.Fatalf("unexpected project workflow stages: %#v, %v", stages, err)
 	}
 }
 

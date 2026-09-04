@@ -471,15 +471,15 @@ func (l *ProjectManagementWorkflowLogic) StageSwapOrder(ctx context.Context, cla
 		return nil
 	}
 	return l.repos.ProjectManagementWorkflowRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		stage, err := l.repos.ProjectManagementWorkflowRepo.FindTemplateStageWithTx(ctx, tx, id, workflowId, claim.OrganizationId)
+		stage, err := l.repos.ProjectManagementWorkflowRepo.FindSwappableStageWithTx(ctx, tx, id, workflowId, claim.OrganizationId)
 		if err != nil {
 			return projectManagementNotFound(err, "workflow stage not found")
 		}
-		target, err := l.repos.ProjectManagementWorkflowRepo.FindTemplateStageWithTx(ctx, tx, targetId, workflowId, claim.OrganizationId)
+		target, err := l.repos.ProjectManagementWorkflowRepo.FindSwappableStageWithTx(ctx, tx, targetId, workflowId, claim.OrganizationId)
 		if err != nil {
 			return projectManagementNotFound(err, "workflow stage not found")
 		}
-		if innerErr := l.repos.ProjectManagementWorkflowRepo.SwapTemplateStageSortOrdersWithTx(ctx, tx, workflowId, claim.OrganizationId, id, targetId); innerErr != nil {
+		if innerErr := l.repos.ProjectManagementWorkflowRepo.SwapStageSortOrdersWithTx(ctx, tx, workflowId, claim.OrganizationId, id, targetId); innerErr != nil {
 			return innerErr
 		}
 		before := map[string]any{"sort_order": stage.SortOrder, "target_sort_order": target.SortOrder}
