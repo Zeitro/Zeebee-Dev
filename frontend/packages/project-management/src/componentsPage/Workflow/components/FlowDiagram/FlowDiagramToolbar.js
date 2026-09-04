@@ -28,7 +28,7 @@ export default function FlowDiagramToolbar({
 			}}
 		>
 			<span style={{ fontSize: 13, color: '#666' }}>{toolbarHint}</span>
-			<Space>
+			{/* <Space>
 				{showCancel ? (
 					<Button size="small" icon={<CloseOutlined />} onClick={onCancel}>
 						{t('common.cancel')}
@@ -37,7 +37,7 @@ export default function FlowDiagramToolbar({
 				<Button size="small" icon={<ReloadOutlined />} onClick={onResetLayout}>
 					{t('workflow.editor.resetLayout')}
 				</Button>
-			</Space>
+			</Space> */}
 		</div>
 	);
 }

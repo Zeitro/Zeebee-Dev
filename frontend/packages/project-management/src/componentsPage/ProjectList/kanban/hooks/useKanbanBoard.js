@@ -188,18 +188,47 @@ export function useKanbanBoard(projectId, queryTaskId, messageApi) {
 	const transitionTask = useCallback(
 		async (task, targetStateId) => {
 			if (!task || !targetStateId || targetStateId === task.workflow_state_id) return;
+
+			const prevStateId = task.workflow_state_id;
+			const nextStateId = Number(targetStateId);
+			const targetState = workflow?.states?.find((state) => state.id === nextStateId);
+
+			// 乐观更新：拖拽松手时立刻换列，避免 transform 清除后弹回原列
+			setTasks((prev) =>
+				prev.map((item) =>
+					item.id === task.id
+						? {
+								...item,
+								workflow_state_id: nextStateId,
+								...(targetState ? { workflow_state: targetState } : {}),
+							}
+						: item,
+				),
+			);
+
 			try {
 				await taskApi.transition(task.id, {
 					project_id: Number(projectId),
-					target_stage_id: Number(targetStateId),
+					target_stage_id: nextStateId,
 				});
 				messageApi?.success(t('kanban.transitionSuccess'));
-				await fetchBoardAndSyncTask();
+				fetchBoardAndSyncTask();
 			} catch (error) {
+				setTasks((prev) =>
+					prev.map((item) =>
+						item.id === task.id
+							? {
+									...item,
+									workflow_state_id: prevStateId,
+									workflow_state: task.workflow_state,
+								}
+							: item,
+					),
+				);
 				messageApi?.error(error?.message || t('kanban.transitionFailed'));
 			}
 		},
-		[fetchBoardAndSyncTask, projectId, t, taskApi, messageApi],
+		[fetchBoardAndSyncTask, projectId, t, taskApi, messageApi, workflow],
 	);
 
 	/** 抽屉内搜索专用，不写入 projectMembers，避免影响权限等全量数据 */

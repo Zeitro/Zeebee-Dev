@@ -52,7 +52,7 @@ export default function CreateTaskModal({
 	const locale = useLocale();
 	const [form] = Form.useForm();
 	const [confirmLoading, setConfirmLoading] = useState(false);
-	const [optionsLoading, setOptionsLoading] = useState(false);
+	const [optionsLoading, setOptionsLoading] = useState(true);
 	const [typeOptions, setTypeOptions] = useState([]);
 	const [assigneeOptions, setAssigneeOptions] = useState([]);
 	const { request } = useMemo(() => createRequest(), []);
@@ -220,17 +220,22 @@ export default function CreateTaskModal({
 						name="description"
 						label={t('kanban.description')}
 						getValueFromEvent={normalizeRichTextValue}
+						className="h-[422px]"
 					>
-						<WangEditor
-							locale={locale}
-							wrapperProps={{ className: 'h-[400px]' }}
-							editorProps={{
-								defaultConfig: {
-									placeholder: t('kanban.descriptionPlaceholder'),
-								},
-								style: { height: '100%', overflowY: 'hidden' },
-							}}
-						/>
+						{optionsLoading ? (
+							<div className="h-[400px] bg-base-text2 rounded-md border border-base-text2"></div>
+						) : (
+							<WangEditor
+								locale={locale}
+								wrapperProps={{ className: 'h-[400px]' }}
+								editorProps={{
+									defaultConfig: {
+										placeholder: t('kanban.descriptionPlaceholder'),
+									},
+									style: { overflowY: 'hidden' },
+								}}
+							/>
+						)}
 					</Form.Item>
 					<div className="grid grid-cols-2 gap-4">
 						<Form.Item name="task_type_id" label={t('kanban.type')}>

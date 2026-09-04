@@ -7,6 +7,7 @@ import SettingSvg from '@repo/shared-methods/assets/images/menu/setting.svg';
 import ShopOutlined from '@repo/shared-methods/assets/images/menu/shopOutlined.svg';
 import Dashboard from '@repo/shared-methods/assets/images/menu/dashboard.svg';
 import Transaction from '@repo/shared-methods/assets/images/menu/sync.svg';
+import Project from '@repo/shared-methods/assets/images/menu/project.svg';
 import { ApartmentOutlined, CreditCardOutlined, FileTextOutlined } from '@ant-design/icons';
 export const iconData = {
 	loan: <LoanSvg fill="currentColor" className="common-fill" />,
@@ -20,4 +21,5 @@ export const iconData = {
 	dashboard: <Dashboard fill="currentColor" className="common-fill" />,
 	transaction: <Transaction className="common-fill" />,
 	pricing: <CreditCardOutlined style={{ fontSize: 20, paddingLeft: 2 }} />,
+	project: <Project className="common-fill" />,
 };

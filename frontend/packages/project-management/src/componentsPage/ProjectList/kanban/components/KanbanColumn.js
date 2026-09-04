@@ -51,7 +51,7 @@ export function KanbanColumn({ state, tasks, members = [], onAddTask, onTaskClic
 					<Button type="text" size="small" icon={<PlusOutlined />} onClick={onAddTask} />
 				) : null}
 			</div>
-			<div className="flex-1 overflow-y-auto min-h-20">
+			<div className="flex-1 overflow-y-auto min-h-20 px-1.5 -mx-1.5">
 				<SortableContext
 					items={columnTasks.map((task) => `task-${task.id}`)}
 					strategy={verticalListSortingStrategy}
