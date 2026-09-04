@@ -114,6 +114,11 @@ func taskPageEntityWithOverdue(ctx context.Context, taskLogic *domainlogic.Proje
 			return nil, err
 		}
 	}
+	assignees, err := copierx.Trans[[]*model.ProjectManagementTaskAssignee, []*proto.ProjectManagementTaskAssigneeEntity](&task.Assignees, copierx.TimeToRFC3339Str())
+	if err != nil {
+		return nil, err
+	}
+	entity.Assignees = *assignees
 	entity.Overdue, entity.OverdueSeconds = overdue.Overdue, overdue.OverdueSeconds
 	return entity, nil
 }

@@ -2017,6 +2017,7 @@ type ProjectManagementTaskPageEntity struct {
 	StartAt        string                                   `json:"start_at"`
 	EndAt          string                                   `json:"end_at"`
 	TaskType       *ProjectManagementTaskTypeSnapshotEntity `json:"task_type"`
+	Assignees      []*ProjectManagementTaskAssigneeEntity   `json:"assignees"`
 	Overdue        bool                                     `json:"overdue"`
 	OverdueSeconds int64                                    `json:"overdue_seconds"`
 	CreatedAt      string                                   `json:"created_at"`

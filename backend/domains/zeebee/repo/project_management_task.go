@@ -171,6 +171,15 @@ func (r *ProjectManagementTaskRepo) ListAssigneesWithTx(ctx context.Context, tx 
 	return assignees, errorx.WithStack(err)
 }
 
+func (r *ProjectManagementTaskRepo) ListCurrentAssigneesByTaskIds(ctx context.Context, taskIds []int64) ([]*model.ProjectManagementTaskAssignee, error) {
+	if len(taskIds) == 0 {
+		return []*model.ProjectManagementTaskAssignee{}, nil
+	}
+	assignees := make([]*model.ProjectManagementTaskAssignee, 0)
+	err := currentStageAssignees(r.assigneeRepo.Client(ctx)).Where("project_management_task_assignees.task_id IN ?", taskIds).Find(&assignees).Error
+	return assignees, errorx.WithStack(err)
+}
+
 func (r *ProjectManagementTaskRepo) DirectChildrenWithTx(ctx context.Context, tx *gorm.DB, taskId int64) ([]*model.ProjectManagementTask, error) {
 	children := make([]*model.ProjectManagementTask, 0)
 	err := tx.WithContext(ctx).Where("parent_task_id = ?", taskId).Order("id ASC").Find(&children).Error

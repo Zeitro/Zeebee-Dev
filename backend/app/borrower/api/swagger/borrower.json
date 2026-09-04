@@ -18972,12 +18972,19 @@
         "start_at",
         "end_at",
         "task_type",
+        "assignees",
         "overdue",
         "overdue_seconds",
         "created_at",
         "updated_at"
       ],
       "properties": {
+        "assignees": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProjectManagementTaskAssigneeEntity"
+          }
+        },
         "created_at": {
           "type": "string"
         },
@@ -22216,7 +22223,7 @@
       }
     }
   },
-  "x-date": "2026-09-04 11:17:45",
+  "x-date": "2026-09-04 14:19:40",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

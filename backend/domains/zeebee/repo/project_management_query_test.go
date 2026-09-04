@@ -122,6 +122,27 @@ func TestFindDetailByOrganizationLoadsCurrentStageAssignees(t *testing.T) {
 	}
 }
 
+func TestListCurrentAssigneesByTaskIds(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(fmt.Sprintf("file:%s?mode=memory&cache=shared", t.Name())), &gorm.Config{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, statement := range []string{
+		"CREATE TABLE project_management_tasks (id integer primary key, stage_id integer not null)",
+		"CREATE TABLE project_management_task_assignees (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, task_id integer not null, stage_id integer not null, organization_user_id integer not null, organization_user_full_name text not null default '')",
+		"INSERT INTO project_management_tasks (id, stage_id) VALUES (1, 101), (2, 200)",
+		"INSERT INTO project_management_task_assignees (id, task_id, stage_id, organization_user_id, organization_user_full_name) VALUES (1, 1, 100, 7, 'Previous'), (2, 1, 101, 8, 'Current'), (3, 2, 200, 9, 'Other current')",
+	} {
+		if err := db.Exec(statement).Error; err != nil {
+			t.Fatal(err)
+		}
+	}
+	assignees, err := NewProjectManagementTaskRepo(db).ListCurrentAssigneesByTaskIds(context.Background(), []int64{1, 2})
+	if err != nil || len(assignees) != 2 || assignees[0].OrganizationUserId != 8 || assignees[1].OrganizationUserId != 9 {
+		t.Fatalf("page assignees should only include current stages: %#v, %v", assignees, err)
+	}
+}
+
 func TestCopyCurrentStageAssigneesIfTargetEmpty(t *testing.T) {
 	db, err := gorm.Open(sqlite.Open(fmt.Sprintf("file:%s?mode=memory&cache=shared", t.Name())), &gorm.Config{})
 	if err != nil {
