@@ -48,7 +48,7 @@ export function getTaskTypeColorLabel(value) {
 }
 
 /**
- * 提交给创建 / 更新接口的 color：预设色用英文名（如 red），自定义色保留 hex。
+ * 提交给 create / 更新接口的 color：预设色用英文名（如 red），自定义色保留 hex。
  * @param {string|{toHexString?: () => string}|null|undefined} value
  * @returns {string}
  */

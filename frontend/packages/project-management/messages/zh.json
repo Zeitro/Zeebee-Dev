@@ -305,6 +305,8 @@
 		"hoursSuffix": "h",
 		"addSubtask": "添加子任务",
 		"subtasks": "子任务",
+		"subtaskCount": "子任务数量：{count}",
+		"attachmentCount": "附件数量：{count}",
 		"parentLink": "父任务：{title}",
 		"backToParent": "返回上级任务",
 		"members": "成员",

@@ -14,7 +14,6 @@ import {
 	useSensor,
 	useSensors,
 } from '@dnd-kit/core';
-import { displayValue } from '@repo/shared-methods/utils';
 import CreateTaskModal from './components/CreateTaskModal';
 import { EmptyWorkflow } from './components/EmptyWorkflow';
 import { InviteMemberModal } from './components/InviteMemberModal';
@@ -22,6 +21,8 @@ import { KanbanColumn } from './components/KanbanColumn';
 import { KanbanHeader } from './components/KanbanHeader';
 import { ProjectActivityDrawer } from './components/ProjectActivityDrawer';
 import { ProjectMemberListDrawer } from './components/ProjectMemberListDrawer';
+import { TaskCardDragPreview } from './components/TaskCard';
+import { countSubtasks } from './components/helpers';
 import { TaskActivityDrawer, TaskDetailDrawer } from './components/TaskDetail';
 import { useKanbanBoard } from './hooks/useKanbanBoard';
 import { KanbanTaskDetailProvider, useKanbanTaskDetail } from './hooks/useKanbanTaskDetail';
@@ -196,11 +197,22 @@ function ProjectKanbanView({
 							/>
 						))}
 					</div>
-					<DragOverlay>
+					<DragOverlay dropAnimation={null}>
 						{draggedTask ? (
-							<div className="rounded-lg bg-white px-3.5 py-3 border border-base-border shadow-md opacity-80">
-								{displayValue(draggedTask.title)}
-							</div>
+							<TaskCardDragPreview
+								task={draggedTask}
+								members={members}
+								workflowState={states.find(
+									(state) => state.id === draggedTask.workflow_state_id,
+								)}
+								parentTitle={
+									draggedTask.parent_id
+										? tasks.find((item) => item.id === draggedTask.parent_id)
+												?.title
+										: undefined
+								}
+								subtaskCount={countSubtasks(tasks, draggedTask.id)}
+							/>
 						) : null}
 					</DragOverlay>
 				</DndContext>

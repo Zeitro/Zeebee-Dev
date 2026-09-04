@@ -306,6 +306,8 @@
 		"hoursSuffix": "h",
 		"addSubtask": "Add subtask",
 		"subtasks": "Subtasks",
+		"subtaskCount": "Subtasks: {count}",
+		"attachmentCount": "Attachments: {count}",
 		"parentLink": "Parent: {title}",
 		"backToParent": "Back to parent",
 		"members": "Members",
