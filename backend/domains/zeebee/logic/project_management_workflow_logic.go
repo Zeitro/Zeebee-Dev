@@ -62,7 +62,7 @@ func (l *ProjectManagementWorkflowLogic) ensureDefault(ctx context.Context, orga
 		workflow, err := l.repos.ProjectManagementWorkflowRepo.CreateWithTx(ctx, tx, &model.ProjectManagementWorkflow{
 			Kind:           constants.ProjectManagementWorkflowKindOrganizationTemplate,
 			OrganizationId: organizationId,
-			Name:           "Default workflow",
+			Name:           "Default",
 			IsDefault:      true,
 		}, false)
 		if err != nil {
@@ -76,11 +76,17 @@ func (l *ProjectManagementWorkflowLogic) ensureDefault(ctx context.Context, orga
 		if err = tx.WithContext(ctx).Create(&stages).Error; err != nil {
 			return errorx.WithStack(err)
 		}
+		allowedActorTypes := []constants.ProjectManagementMemberRole{
+			constants.ProjectManagementMemberRoleProjectOwner,
+			constants.ProjectManagementMemberRoleProjectAdmin,
+			constants.ProjectManagementMemberRoleTaskExecutor,
+			constants.ProjectManagementMemberRoleTaskCreator,
+		}
 		transitions := make([]*model.ProjectManagementWorkflowTransition, 0, len(stages)*(len(stages)-1))
 		for _, from := range stages {
 			for _, to := range stages {
 				if from.Id != to.Id {
-					transitions = append(transitions, &model.ProjectManagementWorkflowTransition{WorkflowId: workflow.Id, FromStageId: from.Id, ToStageId: to.Id})
+					transitions = append(transitions, &model.ProjectManagementWorkflowTransition{WorkflowId: workflow.Id, FromStageId: from.Id, ToStageId: to.Id, AllowedActorTypes: allowedActorTypes})
 				}
 			}
 		}
