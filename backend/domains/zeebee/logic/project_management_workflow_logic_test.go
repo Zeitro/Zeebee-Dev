@@ -202,8 +202,22 @@ func TestProjectManagementWorkflowEnsureDefaultSetsStageColors(t *testing.T) {
 	if len(transitions) != len(stages)*(len(stages)-1) {
 		t.Fatalf("default transitions = %d, want %d", len(transitions), len(stages)*(len(stages)-1))
 	}
+	wantActorTypes := []constants.ProjectManagementMemberRole{
+		constants.ProjectManagementMemberRoleProjectOwner,
+		constants.ProjectManagementMemberRoleProjectAdmin,
+		constants.ProjectManagementMemberRoleTaskExecutor,
+		constants.ProjectManagementMemberRoleTaskCreator,
+	}
 	edges := make(map[[2]int64]struct{}, len(transitions))
 	for _, transition := range transitions {
+		if len(transition.AllowedActorTypes) != len(wantActorTypes) {
+			t.Fatalf("default transition actors: %#v", transition.AllowedActorTypes)
+		}
+		for i, actorType := range wantActorTypes {
+			if transition.AllowedActorTypes[i] != actorType {
+				t.Fatalf("default transition actors: %#v", transition.AllowedActorTypes)
+			}
+		}
 		edges[[2]int64{transition.FromStageId, transition.ToStageId}] = struct{}{}
 	}
 	for _, from := range stages {
