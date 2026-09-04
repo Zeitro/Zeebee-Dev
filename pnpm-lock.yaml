@@ -501,6 +501,9 @@ importers:
       react-dom:
         specifier: ^19.0.0
         version: 19.2.4(react@19.2.4)
+      react-virtuoso:
+        specifier: ^4.16.1
+        version: 4.18.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       sass:
         specifier: ^1.89.2
         version: 1.97.3
