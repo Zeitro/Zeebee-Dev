@@ -74,10 +74,12 @@ function ProjectKanbanView({
 	workflow,
 	tasks,
 	taskTotal,
+	stageTaskMeta,
 	members,
 	projectMembers,
 	userId,
 	transitionTask,
+	loadMoreStageTasks,
 	refreshBoard,
 	refreshProjectMembers,
 	searchProjectMembers,
@@ -165,7 +167,7 @@ function ProjectKanbanView({
 	}, []);
 
 	return (
-		<div className="flex flex-col flex-1 px-8 pt-6 pb-6">
+		<div className="flex flex-col flex-1 px-8 pt-6 pb-6 overflow-hidden">
 			<KanbanHeader
 				project={project}
 				taskCount={taskTotal || tasks.length}
@@ -175,7 +177,7 @@ function ProjectKanbanView({
 				onInviteClick={() => setInviteOpen(true)}
 				onActivityClick={handleOpenProjectActivity}
 			/>
-			<div className="flex-1 overflow-x-auto bg-white">
+			<div className="flex-1 overflow-x-auto bg-white min-h-0">
 				<DndContext
 					sensors={sensors}
 					collisionDetection={pointerWithin}
@@ -185,17 +187,24 @@ function ProjectKanbanView({
 					}}
 					onDragEnd={handleDragEnd}
 				>
-					<div className="flex gap-5 h-full">
-						{states.map((state) => (
-							<KanbanColumn
-								key={state.id}
-								state={state}
-								tasks={tasks}
-								members={members}
-								onAddTask={() => openCreate()}
-								onTaskClick={handleTaskClick}
-							/>
-						))}
+					<div className="flex gap-5 h-full min-h-0">
+						{states.map((state) => {
+							const meta = stageTaskMeta?.[state.id];
+							return (
+								<KanbanColumn
+									key={state.id}
+									state={state}
+									tasks={tasks}
+									members={members}
+									taskTotal={meta?.total}
+									hasMore={Boolean(meta?.hasMore)}
+									loadingMore={Boolean(meta?.loadingMore)}
+									onLoadMore={loadMoreStageTasks}
+									onAddTask={() => openCreate()}
+									onTaskClick={handleTaskClick}
+								/>
+							);
+						})}
 					</div>
 					<DragOverlay dropAnimation={null}>
 						{draggedTask ? (
