@@ -8,7 +8,7 @@ import { RightCircleTwoTone, LeftCircleTwoTone } from '@ant-design/icons';
 import { useUserStore } from '@repo/shared-methods/store';
 import UserInfo from './UserInfo';
 import { useDeferredSyncEffect, useElementSize } from '@repo/shared-methods/hooks';
-import { findItem, generateMenuBar } from '@repo/shared-methods/utils';
+import { generateMenuBar, resolveSidebarMenuState } from '@repo/shared-methods/utils';
 import { iconData } from '@repo/shared-methods/enum';
 
 const homePathname = '/';
@@ -31,16 +31,9 @@ export const CommonSidebar = ({
 	const [twoToneColor, setTwoToneColor] = useState(initTwoToneColor);
 	const [rect, rectDom] = useElementSize();
 
-	// 获取当前路由的配置
-	const config = useMemo(
-		() =>
-			findItem({
-				list: routerList,
-				key: pathname,
-				keyName: 'path',
-				childName: 'children',
-				isPushParent: true,
-			}),
+	// 详情/设置等未展示菜单的路由 → 选中并展开最近可见父级
+	const menuState = useMemo(
+		() => resolveSidebarMenuState(pathname, routerList, homePathname),
 		[pathname, routerList],
 	);
 	const items = useMemo(() => {
@@ -55,30 +48,27 @@ export const CommonSidebar = ({
 	const handleExpand = () => {
 		changeSidebarCollapsed(!sidebarCollapsed);
 	};
-	// 初始化根据路由选中侧边栏
+	// 初始化根据路由选中侧边栏（含无菜单页回落父级）
 	useDeferredSyncEffect({
-		predicate: () => selectedKey !== pathname,
+		predicate: () => selectedKey !== menuState.selectedKey,
 		deferred: () => {
-			const path = (!config?.is_show ? config?.parentKey : config?.path) || homePathname;
-			if (selectedKey !== path || path !== pathname) {
-				setSelectedKey(path);
-			}
+			setSelectedKey(menuState.selectedKey);
 		},
-		deps: [pathname, config, selectedKey, openKey],
+		deps: [pathname, menuState.selectedKey, selectedKey],
 		delay: 0,
 	});
 
 	useDeferredSyncEffect({
 		predicate: () => !sidebarCollapsed,
 		deferred: () => {
-			setOpenKey(config?.parentKey || '');
+			setOpenKey(menuState.openKey);
 		},
-		deps: [pathname, config, sidebarCollapsed],
+		deps: [pathname, menuState.openKey, sidebarCollapsed],
 		delay: 0,
 	});
 
-	// hideSidebar隐藏左侧菜单栏
-	return config && !config?.hideSidebar ? (
+	// hideSidebar隐藏左侧菜单栏；无精确路由配置时仍展示，以便详情页回落父级选中
+	return !menuState.hideSidebar ? (
 		<div
 			style={{ width: sidebarCollapsed ? 63 : 216 }}
 			className={[
