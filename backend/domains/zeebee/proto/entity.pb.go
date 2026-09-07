@@ -8248,16 +8248,17 @@ func (x *ProjectManagementTaskPageEntity) GetStageName() string {
 }
 
 type ProjectManagementTaskDependencyEntity struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TaskId           int64                  `protobuf:"varint,2,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
-	DependencyTaskId int64                  `protobuf:"varint,3,opt,name=dependency_task_id,json=dependencyTaskId,proto3" json:"dependency_task_id,omitempty"`
-	DependencyType   string                 `protobuf:"bytes,4,opt,name=dependency_type,json=dependencyType,proto3" json:"dependency_type,omitempty"`
-	DependencyRule   string                 `protobuf:"bytes,5,opt,name=dependency_rule,json=dependencyRule,proto3" json:"dependency_rule,omitempty"`
-	CreatedAt        string                 `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt        string                 `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state               protoimpl.MessageState `protogen:"open.v1"`
+	Id                  int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TaskId              int64                  `protobuf:"varint,2,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
+	DependencyTaskId    int64                  `protobuf:"varint,3,opt,name=dependency_task_id,json=dependencyTaskId,proto3" json:"dependency_task_id,omitempty"`
+	DependencyType      string                 `protobuf:"bytes,4,opt,name=dependency_type,json=dependencyType,proto3" json:"dependency_type,omitempty"`
+	DependencyRule      string                 `protobuf:"bytes,5,opt,name=dependency_rule,json=dependencyRule,proto3" json:"dependency_rule,omitempty"`
+	CreatedAt           string                 `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt           string                 `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	DependencyTaskTitle string                 `protobuf:"bytes,8,opt,name=dependency_task_title,json=dependencyTaskTitle,proto3" json:"dependency_task_title,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
 }
 
 func (x *ProjectManagementTaskDependencyEntity) Reset() {
@@ -8335,6 +8336,13 @@ func (x *ProjectManagementTaskDependencyEntity) GetCreatedAt() string {
 func (x *ProjectManagementTaskDependencyEntity) GetUpdatedAt() string {
 	if x != nil {
 		return x.UpdatedAt
+	}
+	return ""
+}
+
+func (x *ProjectManagementTaskDependencyEntity) GetDependencyTaskTitle() string {
+	if x != nil {
+		return x.DependencyTaskTitle
 	}
 	return ""
 }
@@ -9426,7 +9434,7 @@ const file_proto_entity_proto_rawDesc = "" +
 	"work_hours\x18\x14 \x01(\x01R\tworkHours\x12!\n" +
 	"\fproject_name\x18\x15 \x01(\tR\vprojectName\x12\x1d\n" +
 	"\n" +
-	"stage_name\x18\x16 \x01(\tR\tstageName\"\x8e\x02\n" +
+	"stage_name\x18\x16 \x01(\tR\tstageName\"\xc2\x02\n" +
 	"%ProjectManagementTaskDependencyEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\atask_id\x18\x02 \x01(\x03R\x06taskId\x12,\n" +
@@ -9436,7 +9444,8 @@ const file_proto_entity_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x06 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\a \x01(\tR\tupdatedAt\"\xa9\x02\n" +
+	"updated_at\x18\a \x01(\tR\tupdatedAt\x122\n" +
+	"\x15dependency_task_title\x18\b \x01(\tR\x13dependencyTaskTitle\"\xa9\x02\n" +
 	"\x0fOperationEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\voperator_id\x18\x04 \x01(\x03R\n" +

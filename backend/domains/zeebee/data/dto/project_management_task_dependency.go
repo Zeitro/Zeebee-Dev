@@ -6,6 +6,7 @@ type ProjectManagementTaskDependencyDto struct {
 	Id               int64
 	TaskId           int64
 	DependencyTaskId int64
+	DependencyTaskTitle string
 	DependencyType   constants.ProjectManagementDependencyType
 	DependencyRule   constants.ProjectManagementDependencyRule
 }
