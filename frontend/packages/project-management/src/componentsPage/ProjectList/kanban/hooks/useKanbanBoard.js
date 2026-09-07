@@ -1,6 +1,6 @@
 /**
  * 看板数据与写操作：拉项目/工作流/任务/成员；拖拽走 transition；不写入全局 store。
- * 任务详情逻辑见 useKanbanTaskDetail。
+ * 任务详情读写在 TaskDetail/useTaskDetail，本 hook 不持有详情状态。
  */
 'use client';
 
@@ -14,13 +14,11 @@ import {
 	createProjectMemberApi,
 	PROJECT_MEMBER_LIST_PAGE_SIZE,
 } from '@repo/project-management/api/projectMember';
-import { createTaskTypeApi } from '@repo/project-management/api/taskType';
 import { createTaskApi } from '@repo/project-management/api/task';
 import { mapProjectMember } from '@repo/project-management/lib/mapProjectMember';
 import { TASK_LIST_PAGE_SIZE } from '../components/constants';
 import { unwrapList } from '../components/helpers';
 import { mapKanbanProjectDetail, mapKanbanTask } from '../lib/mapKanbanBoard';
-import { useKanbanTaskDetailState } from './useKanbanTaskDetail';
 
 /**
  * 解析单列任务分页结果，供首屏与滚动加载共用。
@@ -79,14 +77,13 @@ async function fetchStageTasksPage(taskApi, projectId, stageId, page) {
 
 /**
  * @param {number|string|undefined} projectId
- * @param {number|undefined} queryTaskId URL `?task=`，首次拉数时打开对应详情
+ * @param {import('antd/es/message/interface').MessageInstance} [messageApi]
  */
-export function useKanbanBoard(projectId, queryTaskId, messageApi) {
+export function useKanbanBoard(projectId, messageApi) {
 	const t = useTranslations();
 	const { request } = useMemo(() => createRequest(), []);
 	const taskApi = useMemo(() => createTaskApi(request), [request]);
 	const projectMemberApi = useMemo(() => createProjectMemberApi(request), [request]);
-	const taskTypeApi = useMemo(() => createTaskTypeApi(request), [request]);
 	const userId = useUserStore((state) => state.userInfo?.organization_user_id);
 	const [project, setProject] = useState(null);
 	const [workflow, setWorkflow] = useState(null);
@@ -97,7 +94,6 @@ export function useKanbanBoard(projectId, queryTaskId, messageApi) {
 	const stageTaskMetaRef = useRef({});
 	const loadingStagesRef = useRef(new Set());
 	const [projectMembers, setProjectMembers] = useState([]);
-	const [taskTypes, setTaskTypes] = useState([]);
 	const [loading, setLoading] = useState(true);
 
 	const fetchProjectMembers = useCallback(async () => {
@@ -236,44 +232,11 @@ export function useKanbanBoard(projectId, queryTaskId, messageApi) {
 		[projectId, taskApi],
 	);
 
-	// const fetchTaskTypes = useCallback(async () => {
-	// 	try {
-	// 		const typeRes = await taskTypeApi.list();
-	// 		const typeList = Array.isArray(typeRes?.list) ? typeRes.list : unwrapList(typeRes);
-	// 		setTaskTypes(typeList);
-	// 	} catch {
-	// 		setTaskTypes([]);
-	// 	}
-	// }, [taskTypeApi]);
-
-	const refreshBoardRef = useRef(async () => {});
-
-	const taskDetailContextValue = useKanbanTaskDetailState({
-		projectId,
-		projectMembers,
-		queryTaskId,
-		messageApi,
-		onRefreshBoard: () => refreshBoardRef.current(),
-		onRefreshProjectMembers: refreshProjectMembers,
-	});
-	const { syncActiveTask } = taskDetailContextValue;
-
-	const fetchBoardAndSyncTask = useCallback(async () => {
-		const list = await fetchBoard();
-		syncActiveTask(list || []);
-		return list;
-	}, [fetchBoard, syncActiveTask]);
-
-	useEffect(() => {
-		refreshBoardRef.current = fetchBoardAndSyncTask;
-	}, [fetchBoardAndSyncTask]);
-
 	useEffect(() => {
 		// eslint-disable-next-line react-hooks/set-state-in-effect -- 挂载/切换项目时拉看板
-		fetchBoardAndSyncTask();
+		fetchBoard();
 		fetchProjectMembers();
-		// fetchTaskTypes();
-	}, [fetchBoardAndSyncTask, fetchProjectMembers]);
+	}, [fetchBoard, fetchProjectMembers]);
 
 	/** 看板展示用：由项目成员派生，供任务卡片/详情等按 id 查找 */
 	const members = useMemo(
@@ -323,7 +286,7 @@ export function useKanbanBoard(projectId, queryTaskId, messageApi) {
 					target_stage_id: nextStateId,
 				});
 				messageApi?.success(t('kanban.transitionSuccess'));
-				fetchBoardAndSyncTask();
+				fetchBoard();
 			} catch (error) {
 				setTasks((prev) =>
 					prev.map((item) =>
@@ -339,7 +302,7 @@ export function useKanbanBoard(projectId, queryTaskId, messageApi) {
 				messageApi?.error(error?.message || t('kanban.transitionFailed'));
 			}
 		},
-		[fetchBoardAndSyncTask, projectId, t, taskApi, messageApi, workflow],
+		[fetchBoard, projectId, t, taskApi, messageApi, workflow],
 	);
 
 	/** 抽屉内搜索专用，不写入 projectMembers，避免影响权限等全量数据 */
@@ -369,14 +332,12 @@ export function useKanbanBoard(projectId, queryTaskId, messageApi) {
 		members,
 		projectMembers,
 		memberOptions,
-		// taskTypes,
 		loading,
 		userId,
 		transitionTask,
 		loadMoreStageTasks,
-		refreshBoard: fetchBoardAndSyncTask,
+		refreshBoard: fetchBoard,
 		refreshProjectMembers,
 		searchProjectMembers,
-		taskDetailContextValue,
 	};
 }

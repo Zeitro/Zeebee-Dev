@@ -9,7 +9,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DatePicker, Form, Input, InputNumber, Select } from 'antd';
 import { useLocale, useTranslations } from 'next-intl';
 import { NewModal } from '@repo/shared-methods';
-import { createRequest, displayValue } from '@repo/shared-methods/utils';
+import { createRequest, dayjs, displayValue, formatStr } from '@repo/shared-methods/utils';
 import {
 	PROJECT_MEMBER_CANDIDATE_PURPOSE_PROJECT_MEMBER,
 	createProjectMemberApi,
@@ -51,6 +51,8 @@ export default function CreateTaskModal({
 	const t = useTranslations();
 	const locale = useLocale();
 	const [form] = Form.useForm();
+	const startDate = Form.useWatch('start_date', form);
+	const dueDate = Form.useWatch('due_date', form);
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [optionsLoading, setOptionsLoading] = useState(true);
 	const [typeOptions, setTypeOptions] = useState([]);
@@ -238,7 +240,11 @@ export default function CreateTaskModal({
 						)}
 					</Form.Item>
 					<div className="grid grid-cols-2 gap-4">
-						<Form.Item name="task_type_id" label={t('kanban.type')}>
+						<Form.Item
+							name="task_type_id"
+							label={t('kanban.type')}
+							rules={[{ required: true }]}
+						>
 							<Select
 								options={typeOptions}
 								allowClear
@@ -257,10 +263,30 @@ export default function CreateTaskModal({
 
 					<div className="grid grid-cols-2 gap-4">
 						<Form.Item name="start_date" label={t('kanban.startDate')}>
-							<DatePicker className="w-full" />
+							<DatePicker
+								className="w-full"
+								format={formatStr}
+								disabledDate={(current) => {
+									if (!current) return false;
+									if (current.isBefore(dayjs(), 'day')) return true;
+									if (dueDate && current.isAfter(dayjs(dueDate), 'day'))
+										return true;
+									return false;
+								}}
+							/>
 						</Form.Item>
 						<Form.Item name="due_date" label={t('kanban.dueDate')}>
-							<DatePicker className="w-full" />
+							<DatePicker
+								className="w-full"
+								format={formatStr}
+								disabledDate={(current) => {
+									if (!current) return false;
+									if (current.isBefore(dayjs(), 'day')) return true;
+									if (startDate && current.isBefore(dayjs(startDate), 'day'))
+										return true;
+									return false;
+								}}
+							/>
 						</Form.Item>
 					</div>
 					<div className="grid grid-cols-2 gap-4">

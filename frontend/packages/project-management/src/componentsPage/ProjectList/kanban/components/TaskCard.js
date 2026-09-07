@@ -13,16 +13,15 @@ import {
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useTranslations } from 'next-intl';
-import { dayjs, displayValue, formatDate } from '@repo/shared-methods/utils';
+import { displayValue, formatDate } from '@repo/shared-methods/utils';
 import {
 	PROJECT_PRIORITY,
 	getPriorityI18nKey,
 	getPriorityTagClass,
 } from '../../../../enum/project';
 import { toProjectPriorityLevel } from '../../../../enum/task';
-import { isTerminalState } from '../../../../enum/workflow';
 import { getAssigneeIds, getMemberInitial, getMemberLabel } from './helpers';
-
+import { TASK_PHASE } from '@repo/project-management/enum/task';
 const PILL_CLASS =
 	'inline-flex items-center gap-0.5 px-2 py-0.5 rounded bg-base-text2 text-[11px] text-base-gray leading-[18px]';
 
@@ -48,12 +47,7 @@ function TaskCardBody({
 	className = '',
 }) {
 	const t = useTranslations();
-	const isCompleted = isTerminalState(task.workflow_state || workflowState);
-	const isOverdue =
-		Boolean(task.due_date) &&
-		dayjs(task.due_date).isBefore(dayjs(), 'day') &&
-		task.status !== 'done' &&
-		!isCompleted;
+	const isCompleted = task?.phase === TASK_PHASE.FINISHED;
 	const commentCount = task.comments?.length || 0;
 	const attachmentCount =
 		Number(task.attachment_count) ||
@@ -112,7 +106,7 @@ function TaskCardBody({
 				{task.due_date ? (
 					<span
 						className={`${PILL_CLASS} ${
-							isOverdue ? 'text-base-error bg-[var(--error-light)]' : ''
+							task?.overdue ? '!text-base-error !bg-[var(--error-light)]' : ''
 						}`}
 					>
 						{displayValue(task.due_date, (value) => formatDate(value))}

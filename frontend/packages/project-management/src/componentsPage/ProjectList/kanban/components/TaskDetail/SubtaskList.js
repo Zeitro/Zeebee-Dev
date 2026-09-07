@@ -6,7 +6,7 @@
 import { CheckCircleFilled, RightOutlined } from '@ant-design/icons';
 import { Button, Tag } from 'antd';
 import { displayValue } from '@repo/shared-methods/utils';
-import { isTerminalState } from '../../../../../enum/workflow';
+import { TASK_PHASE } from '@repo/project-management/enum/task';
 import { getSubtasks } from '../helpers';
 
 /**
@@ -25,7 +25,7 @@ export function SubtaskList({ parentId, tasks = [], workflow, onTaskClick }) {
 		<div className="py-3 px-4">
 			{subtasks.map((item) => {
 				const state = workflow?.states?.find((row) => row.id === item.workflow_state_id);
-				const isDone = isTerminalState(state);
+				const isDone = item?.phase === TASK_PHASE.FINISHED;
 				return (
 					<Button
 						key={item.id}
@@ -35,9 +35,9 @@ export function SubtaskList({ parentId, tasks = [], workflow, onTaskClick }) {
 						onClick={() => onTaskClick(item)}
 					>
 						<CheckCircleFilled
-							className={
-								isDone ? 'text-base-success' : 'text-base-disabled opacity-40'
-							}
+							style={{
+								color: isDone ? 'var(--base-success)' : 'var(--base-disabled)',
+							}}
 						/>
 						<span className="min-w-0 flex-1 truncate text-left text-base-gray group-hover:text-base-primary transition-colors">
 							{displayValue(item.title)}

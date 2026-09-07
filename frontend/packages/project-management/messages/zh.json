@@ -309,6 +309,8 @@
 		"attachmentCount": "附件数量：{count}",
 		"parentLink": "父任务：{title}",
 		"backToParent": "返回上级任务",
+		"backViaSubtask": "（子任务）",
+		"backViaDependency": "（依赖关系）",
 		"members": "成员",
 		"owner": "项目所有者",
 		"invite": "邀请",

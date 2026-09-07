@@ -120,9 +120,17 @@ export function TaskDependencies({
 	const findRelatedTask = (dependencyTaskId) =>
 		tasks.find((item) => item.id === dependencyTaskId);
 
-	const getRelatedTaskTitle = (dep) => {
-		const relatedTask = findRelatedTask(dep.dependency_task_id);
-		return relatedTask?.title ?? dep.dependency_task?.title;
+	/** 依赖项点击跳转：不依赖看板 tasks，有 id 即可导航 */
+	const handleDependencyClick = (dep) => {
+		const dependencyTaskId = Number(dep.dependency_task_id);
+		if (!dependencyTaskId) return;
+		const relatedTask = findRelatedTask(dependencyTaskId);
+		onTaskClick({
+			...(dep.dependency_task || {}),
+			...(relatedTask || {}),
+			id: dependencyTaskId,
+			title: dep?.dependency_task_title,
+		});
 	};
 
 	const persistDependencies = async (nextDependencies, successKey) => {
@@ -328,12 +336,9 @@ export function TaskDependencies({
 							<Button
 								type="link"
 								className="flex-1 text-[13px] truncate h-auto !p-0 !justify-start"
-								onClick={() => {
-									const depTask = findRelatedTask(dep.dependency_task_id);
-									if (depTask) onTaskClick(depTask);
-								}}
+								onClick={() => handleDependencyClick(dep)}
 							>
-								{displayValue(getRelatedTaskTitle(dep))}
+								{displayValue(dep?.dependency_task_title)}
 								<span className="text-[11px]/3 pt-1">
 									#{dep.dependency_task_id}
 								</span>
@@ -366,12 +371,9 @@ export function TaskDependencies({
 							<Button
 								type="link"
 								className="flex-1 text-[13px] truncate h-auto !p-0 !justify-start"
-								onClick={() => {
-									const depTask = findRelatedTask(dep.dependency_task_id);
-									if (depTask) onTaskClick(depTask);
-								}}
+								onClick={() => handleDependencyClick(dep)}
 							>
-								{displayValue(getRelatedTaskTitle(dep))}
+								{displayValue(dep?.dependency_task_title)}
 								<span className="text-[11px]/3 pt-1">
 									#{dep.dependency_task_id}
 								</span>
