@@ -107,3 +107,7 @@ jobs:
 
       - name: Remove dangling images
         run: docker image prune -f
+
+      - name: Remove old build cache
+        run: |
+          docker builder prune -f --filter "until=72h"
