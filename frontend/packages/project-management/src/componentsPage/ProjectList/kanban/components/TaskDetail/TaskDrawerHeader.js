@@ -24,6 +24,7 @@ import { useUserStore } from '@repo/shared-methods/store';
  *   task: object,
  *   project?: object|null,
  *   backTask?: object|null,
+ *   backVia?: 'subtask' | 'dependency' | null,
  *   assigneeIds?: number[],
  *   members?: Array,
  *   onBack?: () => void,
@@ -38,6 +39,7 @@ export function TaskDrawerHeader({
 	task,
 	project,
 	backTask,
+	backVia = null,
 	assigneeIds = [],
 	members = [],
 	onBack,
@@ -78,6 +80,9 @@ export function TaskDrawerHeader({
 							onClick={onBack}
 						>
 							{t('kanban.backToParent')}
+							{backVia === 'dependency'
+								? t('kanban.backViaDependency')
+								: t('kanban.backViaSubtask')}
 						</Button>
 					) : null}
 					<span className="inline-flex items-center gap-1.5 text-xs text-base-label min-w-0">

@@ -310,6 +310,8 @@
 		"attachmentCount": "Attachments: {count}",
 		"parentLink": "Parent: {title}",
 		"backToParent": "Back to parent",
+		"backViaSubtask": " (Subtask)",
+		"backViaDependency": " (Dependency)",
 		"members": "Members",
 		"owner": "Owner",
 		"invite": "Invite",

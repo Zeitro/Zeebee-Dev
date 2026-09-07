@@ -1,5 +1,6 @@
 /**
- * 任务详情抽屉（本目录入口）：标题失焦保存；执行者/依赖即时走 PUT 全量更新；附件/日志。
+ * 任务详情抽屉：自持数据/导航/日志/建子任务。
+ * 宿主最小接口：taskId + projectId + onClose；可选 onTaskIdChange / onMutated / seedTask。
  */
 'use client';
 
@@ -22,18 +23,18 @@ import {
 	toTaskPriorityValue,
 } from '@repo/project-management/enum/task';
 import { useOptionsStore } from '@repo/project-management/store/options';
-import { useKanbanTaskDetail } from '../../hooks/useKanbanTaskDetail';
+import CreateTaskModal from '../CreateTaskModal';
 import { TASK_DETAIL_DRAWER_WIDTH } from '../constants';
 import {
 	getAssigneeIds,
 	getMemberLabel,
-	getSubtasks,
 	isTaskDetailFormDirty,
 	normalizeRichTextValue,
 } from '../helpers';
 import { isTerminalState } from '../../../../../enum/workflow';
 import { PriorityIcon } from './PriorityIcon';
 import { SubtaskList } from './SubtaskList';
+import { TaskActivityDrawer } from './TaskActivityDrawer';
 import { TaskAttachments } from './TaskAttachments';
 import { TaskDependencies } from './TaskDependencies';
 import { TaskDetailPanel, TaskDetailPanelAction } from './TaskDetailPanel';
@@ -41,37 +42,28 @@ import { TaskDetailProperties } from './TaskDetailProperties';
 import { TaskDetailSection } from './TaskDetailSection';
 import { TaskDescription } from './TaskDescription';
 import { TaskDrawerHeader } from './TaskDrawerHeader';
+import { useTaskDetail } from './useTaskDetail';
+import { useTaskDetailNav } from './useTaskDetailNav';
 
 export { TaskActivityDrawer } from './TaskActivityDrawer';
 
 /**
  * @param {{
- *   project?: object|null,
- *   workflow?: object|null,
- *   tasks?: Array,
- *   memberOptions?: Array,
- *   members?: Array,
+ *   taskId?: number,
+ *   projectId?: number|string,
+ *   seedTask?: object|null,
  *   onClose: () => void,
- *   previousTask?: object|null,
- *   onTaskClick: (task: object) => void,
- *   onBack?: () => void,
- *   onCreateSubtask: (parent: object) => void,
- *   onOpenLog?: () => void,
+ *   onTaskIdChange?: (taskId?: number) => void,
+ *   onMutated?: () => Promise<void>|void,
  * }} props
  */
 export function TaskDetailDrawer({
-	project,
-	workflow,
-	tasks = [],
-	members = [],
+	taskId,
+	projectId,
+	seedTask = null,
 	onClose,
-	previousTask = null,
-	onTaskClick,
-	onBack,
-	onCreateSubtask,
-	onOpenLog,
-	messageApi,
-	canManage,
+	onTaskIdChange,
+	onMutated,
 }) {
 	const t = useTranslations();
 	const locale = useLocale();
@@ -79,9 +71,18 @@ export function TaskDetailDrawer({
 	const [dependencyFocusMode, setDependencyFocusMode] = useState(null);
 	const [detailTask, setDetailTask] = useState(null);
 	const [detailLoading, setDetailLoading] = useState(false);
+	const [logOpen, setLogOpen] = useState(false);
+	const [createOpen, setCreateOpen] = useState(false);
 	const detailRequestRef = useRef(0);
+	const open = Boolean(taskId);
+
 	const {
-		activeTask: task,
+		messageApi,
+		messageContextHolder,
+		project,
+		workflow,
+		members,
+		canManage,
 		taskTypes,
 		persistAssignees,
 		saveTask,
@@ -92,30 +93,46 @@ export function TaskDetailDrawer({
 		fetchTaskTypes,
 		fetchTaskCandidates,
 		updateTaskDetail,
-	} = useKanbanTaskDetail();
-	const open = Boolean(task);
-	const displayTask = detailTask ?? task;
-	const subtaskTasks = useMemo(() => {
-		const children = displayTask?.children;
-		if (!Array.isArray(children) || !children.length) return tasks;
-		const existingIds = new Set(tasks.map((item) => item.id));
-		const extra = children.filter((item) => !existingIds.has(item.id));
-		return extra.length ? [...tasks, ...extra] : tasks;
-	}, [displayTask?.children, tasks]);
-	const parentTask = tasks.find((item) => item.id === displayTask?.parent_id);
-	const backTask = previousTask || parentTask;
-	const { subtasks, subtaskCompletedCount } = useMemo(() => {
-		const list = displayTask?.id
-			? displayTask.children?.length
-				? displayTask.children
-				: getSubtasks(subtaskTasks, displayTask.id)
-			: [];
-		const completed = list.filter((item) => {
-			const state = workflow?.states?.find((row) => row.id === item.workflow_state_id);
-			return isTerminalState(state);
-		}).length;
-		return { subtasks: list, subtaskCompletedCount: completed };
-	}, [displayTask, subtaskTasks, workflow?.states]);
+	} = useTaskDetail({
+		projectId,
+		enabled: open,
+		onMutated,
+	});
+
+	const displayTask = detailTask ?? (open ? seedTask || { id: taskId } : null);
+	const { previousTask, backVia, navigateTo, goBack } = useTaskDetailNav({
+		taskId,
+		currentTask: displayTask,
+		onTaskIdChange,
+	});
+
+	const subtasks = useMemo(() => {
+		if (!displayTask?.id) return [];
+		return Array.isArray(displayTask.children) ? displayTask.children : [];
+	}, [displayTask]);
+
+	const subtaskCompletedCount = useMemo(
+		() =>
+			subtasks.filter((item) => {
+				const state = workflow?.states?.find((row) => row.id === item.workflow_state_id);
+				return isTerminalState(state);
+			}).length,
+		[subtasks, workflow?.states],
+	);
+
+	const relatedTasks = useMemo(() => {
+		const list = [...subtasks];
+		if (displayTask?.id) list.push(displayTask);
+		if (previousTask?.id) list.push(previousTask);
+		return list;
+	}, [displayTask, previousTask, subtasks]);
+
+	const backTask =
+		previousTask ||
+		(displayTask?.parent_id
+			? { id: displayTask.parent_id, title: displayTask.parent_title }
+			: null);
+
 	const watchedAssigneeIds = Form.useWatch('assignee_ids', form);
 	const liveAssigneeIds = watchedAssigneeIds ?? getAssigneeIds(displayTask);
 	const watchedFormValues = Form.useWatch([], form);
@@ -149,22 +166,25 @@ export function TaskDetailDrawer({
 	);
 
 	useDeferredSyncEffect({
-		predicate: () => Boolean(task && open),
+		predicate: () => Boolean(open && taskId && projectId),
 		notPassedCallback: () => {
 			setDetailTask(null);
+			setLogOpen(false);
+			setCreateOpen(false);
 		},
 		immediate: () => {
-			setDetailTask(task);
+			const initial = seedTask?.id === taskId ? seedTask : { id: taskId };
+			setDetailTask(initial);
 			form.setFieldsValue({
-				title: task.title,
-				description: task.description,
-				priority: toTaskPriorityValue(task.priority),
-				type: task.type,
-				workflow_state_id: task.workflow_state_id,
-				assignee_ids: getAssigneeIds(task),
-				start_date: task.start_date ? formatDate(task.start_date) : undefined,
-				due_date: task.due_date ? formatDate(task.due_date) : undefined,
-				estimated_hours: task.estimated_hours,
+				title: initial.title,
+				description: initial.description,
+				priority: toTaskPriorityValue(initial.priority),
+				type: initial.type,
+				workflow_state_id: initial.workflow_state_id,
+				assignee_ids: getAssigneeIds(initial),
+				start_date: initial.start_date ? formatDate(initial.start_date) : undefined,
+				due_date: initial.due_date ? formatDate(initial.due_date) : undefined,
+				estimated_hours: initial.estimated_hours,
 			});
 		},
 		deferred: () => {
@@ -178,15 +198,10 @@ export function TaskDetailDrawer({
 				'priorityOptions',
 			).catch(() => {});
 
-			const detailPromise =
-				task?.id && project?.id
-					? fetchTaskDetail(task.id, project.id)
-					: Promise.resolve(null);
-
-			Promise.all([priorityPromise, detailPromise, fetchTaskTypes()])
+			Promise.all([priorityPromise, fetchTaskDetail(taskId, projectId), fetchTaskTypes()])
 				.then(([, detail]) => {
 					if (requestId !== detailRequestRef.current || !detail) return;
-					const merged = { ...task, ...detail };
+					const merged = { ...(seedTask?.id === taskId ? seedTask : null), ...detail };
 					setDetailTask(merged);
 					form.setFieldsValue({
 						title: merged.title,
@@ -209,7 +224,7 @@ export function TaskDetailDrawer({
 		destroyCallback: () => {
 			detailRequestRef.current += 1;
 		},
-		deps: [fetchTaskDetail, fetchTaskTypes, form, getOptions, open, project?.id, task?.id],
+		deps: [fetchTaskDetail, fetchTaskTypes, form, getOptions, open, projectId, taskId],
 		isUseMicrotask: true,
 	});
 
@@ -235,165 +250,199 @@ export function TaskDetailDrawer({
 		applyDetailTask(updated);
 	};
 
-	const handleDelete = () => deleteTask(onClose);
+	const handleDelete = () => deleteTask(displayTask, onClose);
+	const handleTitleBlur = (title) => saveTitle(displayTask, title);
+	const handleClose = () => {
+		setLogOpen(false);
+		setCreateOpen(false);
+		onClose();
+	};
 
 	return (
-		<Drawer
-			title={null}
-			width={TASK_DETAIL_DRAWER_WIDTH}
-			open={open}
-			onClose={onClose}
-			closeIcon={
-				<Tooltip
-					title={hasUnsavedChanges ? t('kanban.unsavedChangesCloseHint') : undefined}
-				>
-					<CloseOutlined />
-				</Tooltip>
-			}
-			styles={{ body: { padding: 0, background: 'var(--base-text2)' } }}
-			destroyOnHidden
-			footer={
-				<div className="flex items-center justify-between gap-4">
-					<div className="flex items-center gap-4 min-w-0 text-xs text-base-label">
-						<span className="inline-flex items-center gap-1.5 shrink-0">
-							<UserOutlined className="text-base-disabled text-xs" />
-							{t('kanban.taskCreator', { name: displayValue(creatorLabel) })}
-						</span>
-						<span className="inline-flex items-center gap-1.5 shrink-0">
-							<CalendarOutlined className="text-base-disabled text-xs" />
-							{t('kanban.taskCreatedAt', {
-								time: displayValue(displayTask?.created_at, formatTime),
-							})}
-						</span>
-					</div>
-					<Button
-						type="primary"
-						onClick={handleSave}
-						icon={
-							hasUnsavedChanges ? (
-								<Tooltip title={t('kanban.unsavedChangesHint')}>
-									<ExclamationCircleFilled
-										style={{ color: 'var(--base-warning)' }}
-									/>
-								</Tooltip>
-							) : null
-						}
+		<>
+			{messageContextHolder}
+			<Drawer
+				title={null}
+				width={TASK_DETAIL_DRAWER_WIDTH}
+				open={open}
+				onClose={handleClose}
+				closeIcon={
+					<Tooltip
+						title={hasUnsavedChanges ? t('kanban.unsavedChangesCloseHint') : undefined}
 					>
-						{t('common.save')}
-					</Button>
-				</div>
-			}
-			keyboard={false}
-			maskClosable={false}
-		>
-			{displayTask ? (
-				<Spin spinning={detailLoading} wrapperClassName="flex flex-col h-full">
-					<div className="flex flex-col h-full bg-base-text2">
-						<TaskDrawerHeader
-							task={displayTask}
-							project={project}
-							backTask={backTask}
-							assigneeIds={liveAssigneeIds}
-							members={members}
-							onBack={onBack}
-							onTitleBlur={saveTitle}
-							onDelete={handleDelete}
-							deleteLoading={deleting}
-							onOpenLog={onOpenLog}
-							onAddDependency={setDependencyFocusMode}
-							canManage={canManage}
-						/>
-
-						<div className="flex-1 overflow-y-auto px-6 py-5 pb-24">
-							<Form
-								form={form}
-								layout="vertical"
-								onValuesChange={(changed) => {
-									if ('assignee_ids' in changed) {
-										persistAssignees(
-											displayTask,
-											changed.assignee_ids || [],
-										).then(applyDetailTask);
-									}
-								}}
-							>
-								<TaskDetailProperties
-									t={t}
-									workflow={workflow}
-									taskTypes={taskTypes}
-									priorityOptions={priorityOptions}
-									projectId={project?.id}
-								/>
-
-								<TaskDetailSection title={t('kanban.description')}>
-									<Form.Item
-										name="description"
-										noStyle
-										getValueFromEvent={normalizeRichTextValue}
-									>
-										<TaskDescription
-											key={`${displayTask.id}-${open}`}
-											locale={locale}
-											placeholder={t('kanban.descriptionPlaceholder')}
-										/>
-									</Form.Item>
-								</TaskDetailSection>
-
-								<TaskDependencies
-									key={`${displayTask.id}-${dependencyFocusMode || 'idle'}`}
-									task={displayTask}
-									projectId={project?.id}
-									tasks={tasks}
-									onTaskClick={onTaskClick}
-									fetchCandidates={fetchTaskCandidates}
-									onSaveDependencies={async (dependencies) => {
-										const updated = await updateTaskDetail(displayTask, {
-											dependencies,
-										});
-										applyDetailTask(updated);
-										return updated;
-									}}
-									initialAddingMode={dependencyFocusMode}
-									messageApi={messageApi}
-								/>
-
-								<TaskDetailPanel
-									title={t('kanban.subtasks')}
-									titleSuffix={
-										subtasks.length > 0
-											? `${subtaskCompletedCount}/${subtasks.length}`
-											: undefined
-									}
-									isEmpty={subtasks.length === 0}
-									emptyText={t('kanban.subtasksEmpty')}
-									action={
-										<TaskDetailPanelAction
-											title={t('kanban.addSubtask')}
-											icon={<PlusOutlined />}
-											onClick={() => onCreateSubtask(displayTask)}
-										/>
-									}
-								>
-									<SubtaskList
-										parentId={displayTask.id}
-										tasks={subtaskTasks}
-										workflow={workflow}
-										onTaskClick={onTaskClick}
-									/>
-								</TaskDetailPanel>
-
-								<TaskAttachments
-									task={displayTask}
-									saveTask={saveTask}
-									updateTaskDetail={updateTaskDetail}
-									messageApi={messageApi}
-									onTaskUpdated={applyDetailTask}
-								/>
-							</Form>
+						<CloseOutlined />
+					</Tooltip>
+				}
+				styles={{ body: { padding: 0, background: 'var(--base-text2)' } }}
+				destroyOnHidden
+				footer={
+					<div className="flex items-center justify-between gap-4">
+						<div className="flex items-center gap-4 min-w-0 text-xs text-base-label">
+							<span className="inline-flex items-center gap-1.5 shrink-0">
+								<UserOutlined className="text-base-disabled text-xs" />
+								{t('kanban.taskCreator', { name: displayValue(creatorLabel) })}
+							</span>
+							<span className="inline-flex items-center gap-1.5 shrink-0">
+								<CalendarOutlined className="text-base-disabled text-xs" />
+								{t('kanban.taskCreatedAt', {
+									time: displayValue(displayTask?.created_at, formatTime),
+								})}
+							</span>
 						</div>
+						<Button
+							type="primary"
+							onClick={handleSave}
+							icon={
+								hasUnsavedChanges ? (
+									<Tooltip title={t('kanban.unsavedChangesHint')}>
+										<ExclamationCircleFilled
+											style={{ color: 'var(--base-warning)' }}
+										/>
+									</Tooltip>
+								) : null
+							}
+						>
+							{t('common.save')}
+						</Button>
 					</div>
-				</Spin>
-			) : null}
-		</Drawer>
+				}
+				keyboard={false}
+				maskClosable={false}
+			>
+				{displayTask ? (
+					<Spin spinning={detailLoading} wrapperClassName="flex flex-col h-full">
+						<div className="flex flex-col h-full bg-base-text2">
+							<TaskDrawerHeader
+								task={displayTask}
+								project={project}
+								backTask={backTask}
+								backVia={backVia}
+								assigneeIds={liveAssigneeIds}
+								members={members}
+								onBack={goBack}
+								onTitleBlur={handleTitleBlur}
+								onDelete={handleDelete}
+								deleteLoading={deleting}
+								onOpenLog={() => setLogOpen(true)}
+								onAddDependency={setDependencyFocusMode}
+								canManage={canManage}
+							/>
+
+							<div className="flex-1 overflow-y-auto px-6 py-5 pb-24">
+								<Form
+									form={form}
+									layout="vertical"
+									onValuesChange={(changed) => {
+										if ('assignee_ids' in changed) {
+											persistAssignees(
+												displayTask,
+												changed.assignee_ids || [],
+											).then(applyDetailTask);
+										}
+									}}
+								>
+									<TaskDetailProperties
+										t={t}
+										workflow={workflow}
+										taskTypes={taskTypes}
+										priorityOptions={priorityOptions}
+										projectId={projectId}
+									/>
+
+									<TaskDetailSection title={t('kanban.description')}>
+										<Form.Item
+											name="description"
+											noStyle
+											getValueFromEvent={normalizeRichTextValue}
+										>
+											<TaskDescription
+												key={`${displayTask.id}-${open}`}
+												locale={locale}
+												placeholder={t('kanban.descriptionPlaceholder')}
+											/>
+										</Form.Item>
+									</TaskDetailSection>
+
+									<TaskDependencies
+										key={`${displayTask.id}-${dependencyFocusMode || 'idle'}`}
+										task={displayTask}
+										projectId={projectId}
+										tasks={relatedTasks}
+										onTaskClick={(task) => navigateTo(task, 'dependency')}
+										fetchCandidates={fetchTaskCandidates}
+										onSaveDependencies={async (dependencies) => {
+											const updated = await updateTaskDetail(displayTask, {
+												dependencies,
+											});
+											applyDetailTask(updated);
+											return updated;
+										}}
+										initialAddingMode={dependencyFocusMode}
+										messageApi={messageApi}
+									/>
+
+									<TaskDetailPanel
+										title={t('kanban.subtasks')}
+										titleSuffix={
+											subtasks.length > 0
+												? `${subtaskCompletedCount}/${subtasks.length}`
+												: undefined
+										}
+										isEmpty={subtasks.length === 0}
+										emptyText={t('kanban.subtasksEmpty')}
+										action={
+											<TaskDetailPanelAction
+												title={t('kanban.addSubtask')}
+												icon={<PlusOutlined />}
+												onClick={() => setCreateOpen(true)}
+											/>
+										}
+									>
+										<SubtaskList
+											parentId={displayTask.id}
+											tasks={subtasks.map((item) => ({
+												...item,
+												parent_id: item.parent_id ?? displayTask.id,
+											}))}
+											workflow={workflow}
+											onTaskClick={(task) => navigateTo(task, 'subtask')}
+										/>
+									</TaskDetailPanel>
+
+									<TaskAttachments
+										task={displayTask}
+										saveTask={saveTask}
+										updateTaskDetail={updateTaskDetail}
+										messageApi={messageApi}
+										onTaskUpdated={applyDetailTask}
+									/>
+								</Form>
+							</div>
+						</div>
+					</Spin>
+				) : null}
+			</Drawer>
+
+			<TaskActivityDrawer
+				open={logOpen}
+				projectId={projectId}
+				taskId={taskId}
+				members={members}
+				onClose={() => setLogOpen(false)}
+			/>
+			<CreateTaskModal
+				open={createOpen}
+				projectId={projectId}
+				parentTask={displayTask}
+				messageApi={messageApi}
+				onCancel={() => setCreateOpen(false)}
+				onSuccess={async () => {
+					setCreateOpen(false);
+					const detail = await fetchTaskDetail(taskId, projectId);
+					if (detail) applyDetailTask({ ...displayTask, ...detail });
+					await onMutated?.();
+				}}
+			/>
+		</>
 	);
 }

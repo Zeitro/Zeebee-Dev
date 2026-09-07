@@ -1,5 +1,6 @@
 /**
- * 项目任务看板：读路由 id，拉工作流列与任务；拖拽改状态，点击打开详情。
+ * 项目任务看板：读路由 id，拉工作流列与任务；拖拽改状态；URL `?task=` 打开详情壳。
+ * 详情自持数据与交互；本页只同步 taskId 与 mutation 后刷新看板。
  */
 'use client';
 
@@ -23,22 +24,14 @@ import { ProjectActivityDrawer } from './components/ProjectActivityDrawer';
 import { ProjectMemberListDrawer } from './components/ProjectMemberListDrawer';
 import { TaskCardDragPreview } from './components/TaskCard';
 import { countSubtasks } from './components/helpers';
-import { TaskActivityDrawer, TaskDetailDrawer } from './components/TaskDetail';
+import { TaskDetailDrawer } from './components/TaskDetail';
 import { useKanbanBoard } from './hooks/useKanbanBoard';
-import { KanbanTaskDetailProvider, useKanbanTaskDetail } from './hooks/useKanbanTaskDetail';
-import { useTaskNavStack } from './hooks/useTaskNavStack';
 
 export function ProjectKanban() {
 	const { id } = useParams();
-	const searchParams = useSearchParams();
 	const projectId = id;
-	const queryTaskId = Number(searchParams.get('task')) || undefined;
 	const [messageApi, messageContextHolder] = message.useMessage();
-	const { loading, workflow, taskDetailContextValue, ...boardProps } = useKanbanBoard(
-		projectId,
-		queryTaskId,
-		messageApi,
-	);
+	const { loading, workflow, ...boardProps } = useKanbanBoard(projectId, messageApi);
 
 	if (loading) {
 		return (
@@ -53,7 +46,7 @@ export function ProjectKanban() {
 	}
 
 	return (
-		<KanbanTaskDetailProvider value={taskDetailContextValue}>
+		<>
 			{messageContextHolder}
 			<ProjectKanbanView
 				projectId={projectId}
@@ -61,7 +54,7 @@ export function ProjectKanban() {
 				messageApi={messageApi}
 				{...boardProps}
 			/>
-		</KanbanTaskDetailProvider>
+		</>
 	);
 }
 
@@ -88,14 +81,18 @@ function ProjectKanbanView({
 	const router = useRouter();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
-	const { activeTask, openTask, closeTask } = useKanbanTaskDetail();
+	const taskId = Number(searchParams.get('task')) || undefined;
+	const seedTask = useMemo(
+		() => (taskId ? tasks.find((item) => item.id === taskId) || null : null),
+		[taskId, tasks],
+	);
+
 	const [draggedTask, setDraggedTask] = useState(null);
 	const [createOpen, setCreateOpen] = useState(false);
 	const [createParent, setCreateParent] = useState(null);
 	const [memberListOpen, setMemberListOpen] = useState(false);
 	const [inviteOpen, setInviteOpen] = useState(false);
 	const [projectActivityOpen, setProjectActivityOpen] = useState(false);
-	const [taskLogOpen, setTaskLogOpen] = useState(false);
 
 	const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 	const states = useMemo(
@@ -112,9 +109,9 @@ function ProjectKanbanView({
 	const canManage = ['ProjectAdmin', 'ProjectOwner'].includes(currentProjectRole);
 
 	const setTaskQuery = useCallback(
-		(taskId) => {
+		(nextTaskId) => {
 			const params = new URLSearchParams(searchParams.toString());
-			if (taskId) params.set('task', String(taskId));
+			if (nextTaskId) params.set('task', String(nextTaskId));
 			else params.delete('task');
 			const qs = params.toString();
 			router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
@@ -122,21 +119,17 @@ function ProjectKanbanView({
 		[pathname, router, searchParams],
 	);
 
-	const { previousTask, openFromBoard, openFromDrawer, backFromDrawer, reset } = useTaskNavStack({
-		tasks,
-		activeTask,
-		openTask,
-		setTaskQuery,
-	});
-
-	const handleTaskClick = openFromBoard;
+	const handleTaskClick = useCallback(
+		(task) => {
+			if (!task?.id) return;
+			setTaskQuery(task.id);
+		},
+		[setTaskQuery],
+	);
 
 	const handleDrawerClose = useCallback(() => {
-		closeTask();
 		setTaskQuery();
-		setTaskLogOpen(false);
-		reset();
-	}, [closeTask, reset, setTaskQuery]);
+	}, [setTaskQuery]);
 
 	const openCreate = useCallback((parent) => {
 		setCreateParent(parent || null);
@@ -148,8 +141,8 @@ function ProjectKanbanView({
 			setDraggedTask(null);
 			const { active, over } = event;
 			if (!over) return;
-			const taskId = Number(String(active.id).replace('task-', ''));
-			const task = tasks.find((item) => item.id === taskId);
+			const dragTaskId = Number(String(active.id).replace('task-', ''));
+			const task = tasks.find((item) => item.id === dragTaskId);
 			const newStateId = over.data.current?.stateId;
 			if (task && newStateId) {
 				await transitionTask(task, newStateId);
@@ -157,14 +150,6 @@ function ProjectKanbanView({
 		},
 		[tasks, transitionTask],
 	);
-
-	const handleOpenProjectActivity = useCallback(() => {
-		setProjectActivityOpen(true);
-	}, []);
-
-	const handleOpenTaskLog = useCallback(() => {
-		setTaskLogOpen(true);
-	}, []);
 
 	return (
 		<div className="flex flex-col flex-1 px-8 pt-6 pb-6 overflow-hidden">
@@ -175,15 +160,15 @@ function ProjectKanbanView({
 				onCreateTask={() => openCreate()}
 				onMembersClick={() => setMemberListOpen(true)}
 				onInviteClick={() => setInviteOpen(true)}
-				onActivityClick={handleOpenProjectActivity}
+				onActivityClick={() => setProjectActivityOpen(true)}
 			/>
 			<div className="flex-1 overflow-x-auto bg-white min-h-0">
 				<DndContext
 					sensors={sensors}
 					collisionDetection={pointerWithin}
 					onDragStart={(event) => {
-						const taskId = Number(String(event.active.id).replace('task-', ''));
-						setDraggedTask(tasks.find((item) => item.id === taskId) || null);
+						const dragTaskId = Number(String(event.active.id).replace('task-', ''));
+						setDraggedTask(tasks.find((item) => item.id === dragTaskId) || null);
 					}}
 					onDragEnd={handleDragEnd}
 				>
@@ -269,24 +254,12 @@ function ProjectKanbanView({
 				}}
 			/>
 			<TaskDetailDrawer
-				project={project}
-				workflow={workflow}
-				tasks={tasks}
-				onClose={handleDrawerClose}
-				previousTask={previousTask}
-				onTaskClick={openFromDrawer}
-				onBack={backFromDrawer}
-				onCreateSubtask={(parent) => openCreate(parent)}
-				onOpenLog={handleOpenTaskLog}
-				messageApi={messageApi}
-				canManage={canManage}
-			/>
-			<TaskActivityDrawer
-				open={taskLogOpen}
+				taskId={taskId}
 				projectId={projectId}
-				taskId={activeTask?.id}
-				members={members}
-				onClose={() => setTaskLogOpen(false)}
+				seedTask={seedTask}
+				onClose={handleDrawerClose}
+				onTaskIdChange={setTaskQuery}
+				onMutated={refreshBoard}
 			/>
 		</div>
 	);
