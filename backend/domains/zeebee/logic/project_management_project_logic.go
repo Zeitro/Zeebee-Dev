@@ -59,9 +59,6 @@ func (l *ProjectManagementMemberLogic) Candidate(ctx context.Context, claim util
 	if _, err := l.projectManagementLogic().RequireProject(ctx, input.ProjectId, claim.OrganizationId); err != nil {
 		return nil, err
 	}
-	if _, err := l.projectManagementLogic().RequireMemberRole(ctx, input.ProjectId, claim.OrganizationUserId, constants.ProjectManagementMemberRoleProjectOwner, constants.ProjectManagementMemberRoleProjectAdmin); err != nil {
-		return nil, err
-	}
 	candidates, err := l.repos.ProjectManagementProjectRepo.CandidateMembers(ctx, claim.OrganizationId, input.ProjectId, input.Keyword, input.Purpose)
 	if err != nil {
 		return nil, err

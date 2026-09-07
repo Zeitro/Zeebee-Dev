@@ -101,8 +101,11 @@ func TestCreateTaskDependencyRules(t *testing.T) {
 	if err = db.Exec("UPDATE project_management_tasks SET stage_id = 101 WHERE id = 2").Error; err != nil {
 		t.Fatal(err)
 	}
-	if _, err = logic.Create(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 2, DependencyTaskId: 1, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFF}); err == nil {
-		t.Fatal("dependency added after successor left pending")
+	if _, err = logic.Create(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{TaskId: 2, DependencyTaskId: 1, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFF}); err == nil || err.Error() != `dependency successor task "Successor" must be pending` {
+		t.Fatalf("unexpected successor pending error: %v", err)
+	}
+	if _, err = logic.Update(context.Background(), actor, dto.ProjectManagementTaskDependencyDto{Id: dependency.Id, TaskId: 2, DependencyTaskId: 1, DependencyType: constants.ProjectManagementDependencyTypePreTask, DependencyRule: constants.ProjectManagementDependencyRuleFF}); err == nil || err.Error() != `dependency successor task "Successor" must be pending` {
+		t.Fatalf("unexpected successor pending update error: %v", err)
 	}
 	if err = logic.repos.ProjectManagementDependencyRepo.Transaction(context.Background(), func(tx *gorm.DB) error {
 		return logic.SyncWithTx(context.Background(), tx, actor, 2, []*dto.ProjectManagementTaskDependencyDto{

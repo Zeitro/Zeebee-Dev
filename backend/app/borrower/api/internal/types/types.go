@@ -1950,13 +1950,14 @@ type ProjectManagementTaskDeleteRequest struct {
 }
 
 type ProjectManagementTaskDependencyEntity struct {
-	Id               int64  `json:"id"`
-	TaskId           int64  `json:"task_id"`
-	DependencyTaskId int64  `json:"dependency_task_id"`
-	DependencyType   string `json:"dependency_type"`
-	DependencyRule   string `json:"dependency_rule"`
-	CreatedAt        string `json:"created_at"`
-	UpdatedAt        string `json:"updated_at"`
+	Id                  int64  `json:"id"`
+	TaskId              int64  `json:"task_id"`
+	DependencyTaskId    int64  `json:"dependency_task_id"`
+	DependencyTaskTitle string `json:"dependency_task_title"`
+	DependencyType      string `json:"dependency_type"`
+	DependencyRule      string `json:"dependency_rule"`
+	CreatedAt           string `json:"created_at"`
+	UpdatedAt           string `json:"updated_at"`
 }
 
 type ProjectManagementTaskDependencyRequest struct {

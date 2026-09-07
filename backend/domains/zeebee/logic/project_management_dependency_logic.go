@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	"slices"
 
 	"gorm.io/gorm"
@@ -124,7 +125,7 @@ func (l *ProjectManagementDependencyLogic) createWithTx(ctx context.Context, tx 
 		return nil, projectManagementNotFound(err, "successor task stage not found")
 	}
 	if stage.Phase != constants.ProjectManagementStagePhasePending {
-		return nil, errorx.New("dependency successor task must be pending")
+		return nil, errorx.New(fmt.Sprintf("dependency successor task %q must be pending", successor.Title))
 	}
 	if _, err = l.repos.ProjectManagementDependencyRepo.FindByTasksWithTx(ctx, tx, successor.Id, predecessor.Id); err == nil {
 		return nil, errorx.New("task dependency already exists")
@@ -150,7 +151,27 @@ func (l *ProjectManagementDependencyLogic) createWithTx(ctx context.Context, tx 
 }
 
 func (l *ProjectManagementDependencyLogic) Page(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementTaskDependencyPageRequestDto) (gormx.PageResponse[*model.ProjectManagementTaskDependency], error) {
-	if _, err := NewProjectManagementTaskLogic(l.BaseLogic).Detail(ctx, claim, input.Filter.TaskId); err != nil {
+	// Validate task belongs to the organization.
+	exists, err := l.repos.ProjectManagementTaskRepo.IsExistedByColumns(ctx, map[string]any{
+		"id":              input.Filter.TaskId,
+		"organization_id": claim.OrganizationId,
+	})
+	if err != nil {
+		return gormx.PageResponse[*model.ProjectManagementTaskDependency]{}, err
+	}
+	if !exists {
+		return gormx.PageResponse[*model.ProjectManagementTaskDependency]{}, errorx.New("task not found")
+	}
+	// Load the task project for membership validation.
+	var task struct{ ProjectId int64 }
+	err = l.repos.ProjectManagementTaskRepo.FindColumnByColumns(ctx, "project_id", &task, map[string]any{
+		"id":              input.Filter.TaskId,
+		"organization_id": claim.OrganizationId,
+	})
+	if err != nil {
+		return gormx.PageResponse[*model.ProjectManagementTaskDependency]{}, projectManagementNotFound(err, "task does not belong to project")
+	}
+	if _, err = l.projectManagementLogic().RequireMember(ctx, task.ProjectId, claim.OrganizationUserId); err != nil {
 		return gormx.PageResponse[*model.ProjectManagementTaskDependency]{}, err
 	}
 	return l.repos.ProjectManagementDependencyRepo.PageByTask(ctx, input.Filter.TaskId, input.Filter.Predecessor, gormx.PageRequest{Page: input.Page, Limit: input.Limit})
@@ -221,7 +242,7 @@ func (l *ProjectManagementDependencyLogic) updateWithTx(ctx context.Context, tx 
 		return nil, projectManagementNotFound(err, "successor task stage not found")
 	}
 	if stage.Phase != constants.ProjectManagementStagePhasePending {
-		return nil, errorx.New("dependency successor task must be pending")
+		return nil, errorx.New(fmt.Sprintf("dependency successor task %q must be pending", successor.Title))
 	}
 	if existing, findErr := l.repos.ProjectManagementDependencyRepo.FindByTasksWithTx(ctx, tx, successor.Id, predecessor.Id); findErr == nil && existing.Id != dependency.Id {
 		return nil, errorx.New("task dependency already exists")

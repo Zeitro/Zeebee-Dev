@@ -37,7 +37,7 @@ func (r *ProjectManagementTaskRepo) FindDetailByOrganization(ctx context.Context
 	err := r.Client(ctx).
 		Preload("Children").
 		Preload("Attachments").
-		Preload("Dependencies").
+		Preload("Dependencies.DependencyTask").
 		Where("id = ? AND organization_id = ?", id, organizationId).First(task).Error
 	if err == nil {
 		err = r.assigneeRepo.Client(ctx).Where("task_id = ? AND stage_id = ?", task.Id, task.StageId).Order("id ASC").Find(&task.Assignees).Error
