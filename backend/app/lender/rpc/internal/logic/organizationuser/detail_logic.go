@@ -6,11 +6,9 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/copierx"
-	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
-
-	"zeebee-backend/common/errorx"
 )
 
 type DetailLogic struct {
@@ -31,20 +29,19 @@ func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogi
 
 func (l *DetailLogic) Detail(in *proto.PathIdRequest) (resp *lender.OrganizationUserDetailResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	result, err := l.baseLogic.OrganizationUserLogic.Detail(l.ctx, in.Data.Id, claim.OrganizationId)
+	result, err := l.svcCtx.TenantClient.OrganizationUser.Detail(l.ctx, &tenant.OrganizationUserDetailRequest{Data: &tenant.OrganizationUserDetailRequestData{
+		UserType:       string(constants.UserTypeLender),
+		OrganizationId: claim.OrganizationId,
+		Id:             in.Data.Id,
+	}})
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[dto.OrganizationUserEntityDto, proto.OrganizationUserEntity](result, copierx.TimeToRFC3339Str())
-	if err != nil {
-		return nil, errorx.GetFailedTransRespErr(err)
-	}
-
 	return &lender.OrganizationUserDetailResponse{
-		Data: data,
+		Data: result.Data,
 	}, nil
 }

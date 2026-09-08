@@ -8,7 +8,7 @@ ApiConf:
     Stat: false
     ServiceName: borrower.api
 
-  JwtAuth:
+  JwtConf:
     AccessSecret: nR1oP0lP2zF5cE9cW2eY2qN6pP4bX5mA
     AccessExpire: 86000
 
@@ -17,8 +17,18 @@ ApiConf:
       - 127.0.0.1:10001
     Timeout: 10000
     NonBlock: true
+  TenantRpc:
+    Endpoints:
+      - 127.0.0.1:10401
+    Timeout: 10000
+    NonBlock: true
 
 RpcConf:
+  RpcServiceConf:
+    Tenant:
+      ServiceName: tenant.rpc
+      Endpoints:
+        - 127.0.0.1:10401
   Name: borrower.rpc
   ListenOn: 0.0.0.0:10001
   Mode: pro
@@ -53,10 +63,10 @@ RpcConf:
     Password: jerburfauvmzpmnq
     Username: info@zeebeeloans.com
 
-  JwtAuth:
-    AccessSecret: nR1oP0lP2zF5cE9cW2eY2qN6pP4bX5mA
+  JwtConf:
+    AccessSecret: iV6jQ7sK0mO2yZ1qX7oF9rC8oB0lW8wR
     AccessExpire: 864000
-    RefreshSecret: kQ8qH6kK7mZ1wV5zM7tI4cM3fR5dF6wH
+    RefreshSecret: iT0jA2bW3hM6iS6wB3dR2pD1dD4gQ8xS
     RefreshExpire: 864000
 
   RedisConf:
@@ -151,9 +161,6 @@ RpcConf:
       Pwd: ''
       Tls: true
       BorrowerChannel: /borrower-channel
-  CronTaskConf:
-    - name: update_organization_subscription_status
-      schedule: "0 0 2 * * *"
   # llm
   LlmConf:
     Providers:

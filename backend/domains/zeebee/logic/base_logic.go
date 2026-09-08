@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/common/redisx"
 	"zeebee-backend/domains/zeebee/auth"
 	"zeebee-backend/domains/zeebee/payment"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/repo"
 )
 
@@ -18,14 +19,16 @@ type BaseLogic struct {
 	redisCli       *redisx.Client
 	logger         logx.Logger
 	paymentGateway payment.Gateway // nil when Stripe is not configured
+	jwtConfig dto.JwtConfig
 }
 
 // NewBaseLogic creates a new base logic instance
-func NewBaseLogic(repos *repo.AllRepos, redisCli *redisx.Client, logger logx.Logger, paymentGateway payment.Gateway) *BaseLogic {
+func NewBaseLogic(repos *repo.AllRepos, redisCli *redisx.Client, logger logx.Logger, paymentGateway payment.Gateway, jwtConfig dto.JwtConfig) *BaseLogic {
 	return &BaseLogic{
 		repos:          repos,
 		redisCli:       redisCli,
 		logger:         logger,
+		jwtConfig: jwtConfig,
 		paymentGateway: paymentGateway,
 	}
 }

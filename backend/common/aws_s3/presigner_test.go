@@ -4,6 +4,8 @@ import (
 	"context"
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var c = &Config{
@@ -11,6 +13,10 @@ var c = &Config{
 	Region:       "us-west-1",
 	AccessKey:    "AKIA4RT6FLQ5RNYTQCPJ",
 	AccessSecret: "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",
+}
+
+func TestContentTypeMap_Markdown(t *testing.T) {
+	assert.Equal(t, "text/markdown", ContentTypeMap["md"])
 }
 
 func TestClient_GetPresignUrl(t *testing.T) {

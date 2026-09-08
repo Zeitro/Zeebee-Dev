@@ -8,7 +8,7 @@ ApiConf:
     Stat: false
     ServiceName: admin.api
 
-  JwtAuth:
+  JwtConf:
     AccessSecret: nX7vC1dM3tU3oW9aR9pZ6qI0fX4tC7wK
     AccessExpire: 86000
 
@@ -17,8 +17,18 @@ ApiConf:
       - 127.0.0.1:10201
     Timeout: 600000
     NonBlock: true
+  TenantRpc:
+    Endpoints:
+      - 127.0.0.1:10401
+    Timeout: 10000
+    NonBlock: true
 
 RpcConf:
+  RpcServiceConf:
+    Tenant:
+      ServiceName: tenant.rpc
+      Endpoints:
+        - 127.0.0.1:10401
   Name: admin.rpc
   ListenOn: 0.0.0.0:10201
   Timeout: 600000
@@ -38,10 +48,10 @@ RpcConf:
     Password: jerburfauvmzpmnq
     Username: info@zeebeeloans.com
 
-  JwtAuth:
-    AccessSecret: nX7vC1dM3tU3oW9aR9pZ6qI0fX4tC7wK
+  JwtConf:
+    AccessSecret: bL0iP5yE4jS4mT0nY0uJ0iG1yP6lI9gY
     AccessExpire: 864000
-    RefreshSecret: bV7yI5oL4gX4hV7pZ0lU9oF4pB4pC6xM
+    RefreshSecret: fQ4rU4iR7vL1uH7iH3jB0gO5oV1uD1rP
     RefreshExpire: 864000
 
   RedisConf:
@@ -61,16 +71,6 @@ RpcConf:
     Bucket: zeebee-files-staging
     FileFolder: files-staging
     PreSigneUrlExpireSeconds: 60
-  LlmConf:
-    Providers:
-      - Name: openai
-        ApiKey: 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
-        BaseUrl: https://api.openai.com/v1
-    LenderDiscoverConf:
-      Provider: openai
-      Model: gpt-5.4
-      MaxTokens: 16384
-      TimeoutSeconds: 480
   CasbinConf:
     ModelPath: etc/model.conf
     EventTopic:
@@ -84,9 +84,6 @@ RpcConf:
       AdminChannel: /admin-channel
       BorrowerChannel: /borrower-channel
       LenderChannel: /lender-channel
-  CronTaskConf:
-    - name: update_organization_subscription_status
-      schedule: "0 0 1 * * *"
 
   StripeConf:
     SecretKey: 'sk_test_51Tm5drHATBZ0cr5xSjiCko1iyLdYLSghQWHGac7uvxB73yb54wOkXkcWYNYVhqjLiJilcuJLky5W4sj4O6nEoDaL00f9zdIKW4'

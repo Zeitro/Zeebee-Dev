@@ -3,52 +3,32 @@ package resourcelogic
 import (
 	"context"
 
-	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/proto"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 type UpdateLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-
-	baseLogic *logic.BaseLogic
 }
 
 func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogic {
-	return &UpdateLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-
-		baseLogic: logic.GetBaseLogic(svcCtx),
-	}
+	return &UpdateLogic{ctx: ctx, svcCtx: svcCtx}
 }
 
+// Update proxies to tenant; tenant is the RBAC single authority.
 func (l *UpdateLogic) Update(in *admin.ResourceUpdateRequest) (resp *admin.ResourceDetailResponse, err error) {
-
-	data := in.Data
-	if data == nil {
-		return nil, logic.ErrorInvalidRequest
-	}
-	input, err := copierx.Trans[admin.ResourceUpdateRequestData, dto.ResourceUpdateRequestDto](data)
+	data, err := copierx.Trans[admin.ResourceUpdateRequestData, tenant.ResourceUpdateRequestData](in.Data)
 	if err != nil {
 		return nil, err
 	}
-
-	result, err := l.baseLogic.ResourceLogic.UpdateResource(l.ctx, input)
+	data.UserType = string(constants.UserTypeAdmin)
+	tenantResp, err := l.svcCtx.TenantClient.Resource.Update(l.ctx, &tenant.ResourceUpdateRequest{Data: data})
 	if err != nil {
 		return nil, err
 	}
-
-	respData, err := copierx.Trans[dto.ResourceEntityDto, proto.ResourceEntity](result, copierx.TimeToRFC3339Str())
-	if err != nil {
-		return nil, err
-	}
-
-	return &admin.ResourceDetailResponse{
-		Data: respData,
-	}, nil
+	return &admin.ResourceDetailResponse{Data: tenantResp.Data}, nil
 }

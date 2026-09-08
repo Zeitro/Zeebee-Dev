@@ -17,39 +17,29 @@ type Config struct {
 
 type ApiConf struct {
 	rest.RestConf
-	JwtAuth types.JwtAuth      `json:",optional"`
-	RpcConf zrpc.RpcClientConf `json:",optional"`
+	JwtConf   types.JwtConf      `json:",optional"`
+	RpcConf   zrpc.RpcClientConf `json:",optional"`
+	TenantRpc zrpc.RpcClientConf `json:",optional"`
 }
 
 type RpcConf struct {
 	zrpc.RpcServerConf
-	LimiterConf LimiterConf
-	EmailConf   EmailConf
-	RedisConf   RedisConf
-	JwtAuth     types.JwtAuth `json:",optional"`
-	DbConf      DbConf
-	AwsS3Conf   AwsS3Conf
-	// OpenAIConf   OpenAIConf `json:",optional"`
-	LlmConf      LlmConf `json:",optional"`
-	CasbinConf   CasbinConf
-	CronTaskConf []CronTaskConf
+	RpcServiceConf RpcServiceConf
+	LimiterConf    LimiterConf
+	EmailConf      EmailConf
+	RedisConf      RedisConf
+	JwtConf        types.JwtConf `json:",optional"`
+	DbConf         DbConf
+	AwsS3Conf      AwsS3Conf
+	CasbinConf     CasbinConf
+	// CronTaskConf   []CronTaskConf
 	StripeConf   config.StripeConf `json:",optional"`
 }
 
-// OpenAIConf optional keys for lender discover; prefer env OPENAI_API_KEY in production.
-// Deprecated: lender discover now uses LlmConf (claude). Kept for config-file compat.
-// type OpenAIConf struct {
-// 	APIKey  string `json:",optional"`
-// 	Model   string `json:",optional"`
-// 	BaseURL string `json:",optional"`
-// }
-
-// LlmConf wires the shared LLM provider list + per-biz tuning. Lender discover
-// reads LenderDiscoverConf to pick provider + model + token/timeout budgets.
-type LlmConf struct {
-	config.LlmConf
-
-	LenderDiscoverConf config.LlmBizConf
+// RpcServiceConf holds outbound RPC clients. Tenant is the identity + authz
+// authority (direction B); backends reach it via direct endpoints (no Etcd in dev).
+type RpcServiceConf struct {
+	Tenant zrpc.RpcClientConf
 }
 
 type DbConf struct {

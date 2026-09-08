@@ -829,3 +829,165 @@ message DocumentEntity {
   repeated DocumentEntity children = 11;
   repeated FileEntity files = 12;
 }
+
+// Project management entities
+message ProjectManagementWorkflowEntity {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  reserved 4;
+  bool is_default = 5;
+  repeated ProjectManagementWorkflowStageEntity stages = 6;
+  repeated ProjectManagementWorkflowTransitionEntity transitions = 7;
+  int64 source_template_id = 8;
+  string source_template_name = 9;
+  string created_at = 10;
+  string updated_at = 11;
+}
+
+message ProjectManagementWorkflowStageEntity {
+  int64 id = 1;
+  string name = 2;
+  string phase = 3;
+  string color = 4;
+  int32 sort_order = 5;
+  string created_at = 6;
+  string updated_at = 7;
+  repeated ProjectManagementWorkflowTransitionEntity transitions = 8;
+  string description = 9;
+}
+
+message ProjectManagementWorkflowTransitionEntity {
+  int64 id = 1;
+  int64 from_stage_id = 2;
+  int64 to_stage_id = 3;
+  repeated string allowed_actor_types = 4;
+  string created_at = 5;
+  string updated_at = 6;
+  string name = 7;
+  ProjectManagementWorkflowStageEntity from_stage = 8;
+  ProjectManagementWorkflowStageEntity to_stage = 9;
+}
+
+message ProjectManagementTaskTypeEntity {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  string color = 4;
+  string created_at = 6;
+  string updated_at = 7;
+  int64 sort_order = 8;
+}
+
+message ProjectManagementProjectEntity {
+  int64 id = 1;
+  int64 entity_id = 2;
+  string name = 3;
+  string description = 4;
+  string cover_url = 5;
+  int64 owner_id = 6;
+  string entity_type = 7;
+  string owner_name = 8;
+  string created_at = 9;
+  string updated_at = 10;
+  ProjectManagementWorkflowEntity workflow = 11;
+  string priority = 12;
+}
+
+message ProjectManagementMemberEntity {
+  int64 id = 1;
+  int64 project_id = 2;
+  int64 organization_user_id = 3;
+  string role = 4;
+  string full_name = 5;
+  string email = 6;
+  string created_at = 7;
+  string updated_at = 8;
+}
+
+message ProjectManagementTaskTypeSnapshotEntity {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  string color = 4;
+}
+
+message ProjectManagementTaskAssigneeEntity {
+  int64 stage_id = 1;
+  int64 organization_user_id = 2;
+  string organization_user_full_name = 3;
+  string created_at = 4;
+  string updated_at = 5;
+}
+
+message ProjectManagementTaskEntity {
+  int64 id = 1;
+  int64 project_id = 2;
+  int64 parent_task_id = 3;
+  int64 stage_id = 4;
+  int64 creator_id = 5;
+  string creator_name = 6;
+  string title = 7;
+  string description = 8;
+  string priority = 9;
+  string start_at = 10;
+  string end_at = 11;
+  ProjectManagementTaskTypeSnapshotEntity task_type = 12;
+  repeated ProjectManagementTaskAssigneeEntity assignees = 13;
+  repeated FileEntity attachments = 18;
+  bool overdue = 14;
+  int64 overdue_seconds = 15;
+  string created_at = 16;
+  string updated_at = 17;
+  string phase = 19;
+  repeated ProjectManagementTaskEntity children = 20;
+  repeated ProjectManagementTaskDependencyEntity dependencies = 21;
+  double work_hours = 22;
+}
+
+message ProjectManagementTaskPageEntity {
+  int64 id = 1;
+  int64 project_id = 2;
+  int64 parent_task_id = 3;
+  int64 stage_id = 4;
+  int64 creator_id = 5;
+  string creator_name = 6;
+  string title = 7;
+  string priority = 9;
+  string start_at = 10;
+  string end_at = 11;
+  ProjectManagementTaskTypeSnapshotEntity task_type = 12;
+  repeated ProjectManagementTaskAssigneeEntity assignees = 13;
+  bool overdue = 14;
+  int64 overdue_seconds = 15;
+  string created_at = 16;
+  string updated_at = 17;
+  string phase = 19;
+  double work_hours = 20;
+  string project_name = 21;
+  string stage_name = 22;
+}
+
+message ProjectManagementTaskDependencyEntity {
+  int64 id = 1;
+  int64 task_id = 2;
+  int64 dependency_task_id = 3;
+  string dependency_type = 4;
+  string dependency_rule = 5;
+  string created_at = 6;
+  string updated_at = 7;
+  string dependency_task_title = 8;
+}
+
+message OperationEntity {
+  int64 id = 1;
+  reserved 2, 3;
+  int64 operator_id = 4;
+  string operator_name = 5;
+  string operation = 6;
+  string created_at = 7;
+  string updated_at = 8;
+  string entity_type = 9;
+  int64 entity_id = 10;
+  string metadata = 11;
+}

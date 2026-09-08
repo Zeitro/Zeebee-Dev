@@ -15,11 +15,14 @@ type AuthLogic struct {
 	auth *auth.Auth
 }
 
-// NewAuthLogic creates a new authentication logic instance
-func NewAuthLogic(baseLogic *BaseLogic, jwtConfig dto.JwtConfig, enforcer *rbac.Enforcer, authEventTopic string) *AuthLogic {
+// NewAuthLogic creates a new authentication logic instance.
+// jwtConfig comes from the embedded BaseLogic (single shared key).
+// subscribeTopics are the redis channels this replica listens on for reload
+// events; publishTopics routes a userType to its broadcast channel.
+func NewAuthLogic(baseLogic *BaseLogic, enforcer *rbac.Enforcer, subscribeTopics []string, publishTopics map[constants.UserType]string) *AuthLogic {
 	l := &AuthLogic{
 		BaseLogic: baseLogic,
-		auth:      auth.NewAuth(baseLogic.repos, baseLogic.redisCli, jwtConfig, enforcer, authEventTopic),
+		auth:      auth.NewAuth(baseLogic.repos, baseLogic.redisCli, baseLogic.jwtConfig, enforcer, auth.AuthTopics{Subscribe: subscribeTopics, Publish: publishTopics}),
 	}
 	return l
 }
@@ -35,5 +38,5 @@ func (l *AuthLogic) AuthCheck(ctx context.Context, input dto.AuthCheckRequestDto
 func (l *AuthLogic) RebuildPolicy(ctx context.Context, organizationType constants.UserType) (err error) {
 	err = l.auth.RebuildPolicy(ctx, organizationType)
 
-	return nil
+	return
 }

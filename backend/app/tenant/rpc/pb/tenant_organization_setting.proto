@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package tenant;
+
+option go_package = "zeebee-backend/app/tenant/rpc/pb/tenant";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+// Organization-level feature settings (e.g. lender pre-approval letter toggle),
+// consolidated from the lender backend. tenant is a thin wrapper over the shared
+// OrganizationSettingLogic. InitLenderOrganizationSettingWithTx is tx-internal
+// (org provisioning) and is not exposed.
+
+message OrganizationSettingDetailByPurposeRequest {
+  OrganizationSettingDetailByPurposeRequestData data = 1;
+}
+message OrganizationSettingDetailByPurposeRequestData {
+  string user_type = 1;     // borrower | lender | admin
+  int64 organization_id = 2;
+  string purpose = 3;
+}
+
+message OrganizationSettingSwitchStatusRequest {
+  OrganizationSettingSwitchStatusRequestData data = 1;
+}
+message OrganizationSettingSwitchStatusRequestData {
+  string user_type = 1;
+  int64 id = 2;
+  int64 organization_id = 3;
+  bool enabled = 4;
+}
+
+message OrganizationSettingDetailResponse {
+  proto.OrganizationSettingEntity data = 1;
+}
+
+message OrganizationSettingSyncLenderDefaultsRequest {
+  OrganizationSettingSyncLenderDefaultsRequestData data = 1;
+}
+message OrganizationSettingSyncLenderDefaultsRequestData {
+}
+
+service OrganizationSetting {
+  rpc DetailByPurpose(OrganizationSettingDetailByPurposeRequest) returns (OrganizationSettingDetailResponse);
+  rpc SwitchStatus(OrganizationSettingSwitchStatusRequest) returns (proto.EmptyResponse);
+  rpc SyncLenderDefaults(OrganizationSettingSyncLenderDefaultsRequest) returns (proto.EmptyResponse);
+}

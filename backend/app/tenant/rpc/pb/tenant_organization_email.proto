@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package tenant;
+
+option go_package = "zeebee-backend/app/tenant/rpc/pb/tenant";
+
+import "proto/common.proto";
+
+// Organization-level sender credentials (SMTP / Gmail OAuth), consolidated from
+// the borrower backend. SaveEmail persists SMTP/strategy config.
+// GenerateAuthCodeUrl and Authorize drive Gmail OAuth consent and persist the
+// authorization token. Runtime clients remain local and are recreated from token.
+
+message OrganizationEmailSaveEmailRequest {
+  OrganizationEmailSaveEmailRequestData data = 1;
+}
+message OrganizationEmailSaveEmailRequestData {
+  string user_type = 1;            // organization_type
+  int64 organization_id = 2;
+  int64 user_id = 3;
+  string email = 4;
+  string purpose = 5;              // contact | ...
+  string auth_strategy = 6;        // organization | user | ...
+}
+
+message OrganizationEmailGenerateAuthCodeUrlRequest {
+  OrganizationEmailGenerateAuthCodeUrlRequestData data = 1;
+}
+message OrganizationEmailGenerateAuthCodeUrlRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+  int64 user_id = 3;
+  string email_provider = 4;       // gmail | ...
+  string purpose = 5;
+}
+
+message OrganizationEmailGenerateAuthCodeUrlResponse {
+  OrganizationEmailGenerateAuthCodeUrlResponseData data = 1;
+}
+message OrganizationEmailGenerateAuthCodeUrlResponseData {
+  string url = 1;
+}
+
+message OrganizationEmailAuthorizeRequest {
+  OrganizationEmailAuthorizeRequestData data = 1;
+}
+message OrganizationEmailAuthorizeRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+  int64 user_id = 3;
+  string code = 4;
+  string state = 5;
+  string scope = 6;
+  string email_provider = 7;
+}
+
+message OrganizationEmailGetAuthorizationRequest {
+  OrganizationEmailGetAuthorizationRequestData data = 1;
+}
+message OrganizationEmailGetAuthorizationRequestData {
+  int64 organization_id = 1;
+  int64 user_id = 2;
+  string purpose = 3;
+}
+message OrganizationEmailGetAuthorizationResponse {
+  OrganizationEmailGetAuthorizationResponseData data = 1;
+}
+message OrganizationEmailGetAuthorizationResponseData {
+  string email = 1;
+  string email_provider = 2;
+  bool is_authorized = 3;
+  string access_token = 4;
+  string refresh_token = 5;
+  string token_type = 6;
+  string expiry = 7;
+}
+
+service OrganizationEmail {
+  rpc SaveEmail(OrganizationEmailSaveEmailRequest) returns (proto.EmptyResponse);
+  rpc GenerateAuthCodeUrl(OrganizationEmailGenerateAuthCodeUrlRequest) returns (OrganizationEmailGenerateAuthCodeUrlResponse);
+  rpc Authorize(OrganizationEmailAuthorizeRequest) returns (proto.EmptyResponse);
+  rpc GetAuthorization(OrganizationEmailGetAuthorizationRequest) returns (OrganizationEmailGetAuthorizationResponse);
+}

@@ -1,7 +1,6 @@
 package api
 
 import (
-	_ "embed"
 	"net/http"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -13,10 +12,8 @@ import (
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/config"
 	"zeebee-backend/common/response"
+	"zeebee-backend/common/routex"
 )
-
-//go:embed lender.api
-var lenderApiContent string
 
 type ApiServer struct {
 	s        *rest.Server
@@ -49,13 +46,14 @@ func NewApiServer(c config.Config) (s service.Service) {
 	logger := logx.WithCallerSkip(0).
 		WithFields(logx.Field("service_name", apiConfig.Name))
 
-	ctx := svc.NewServiceContext(apiConfig, logger, lenderApiContent)
+	ctx := svc.NewServiceContext(apiConfig, logger)
 
 	// register handlers
 	handler.RegisterHandlers(restServer, ctx)
 
 	// extra route
 	handler.RegisterExtraRoutes(restServer)
+	routex.RegisterRoutes(restServer.Routes())
 
 	return &ApiServer{
 		s:        restServer,

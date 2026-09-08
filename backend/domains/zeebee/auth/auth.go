@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/duke-git/lancet/v2/slice"
+	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/logx"
 	"golang.org/x/sync/errgroup"
@@ -50,11 +51,24 @@ type Auth struct {
 	organizationRoleResourceMap *mapx.Map[int64, *mapx.Map[string, RoleResource]]
 	organizationPlanResourceMap *mapx.Map[int64, *mapx.Map[int64, bool]] // orgId -> set of plan resource IDs
 	sf                          singleflight.Group
-	eventTopic                  string
+	nodeId                      string   // unique per process; identifies the cross-node rebuild-lock holder
+	eventTopics                 []string // redis channels this replica subscribes to for reload events
+	publishTopics               map[constants.UserType]string
 	eventSubScribeCancelFn      context.CancelFunc
 }
 
-func NewAuth(repos *repo.AllRepos, redisCli *redisx.Client, jwtConfig dto.JwtConfig, enforcer *rbac.Enforcer, authEventTopic string) *Auth {
+// AuthTopics wires the policy-event bus. Subscribe lists the redis channels this
+// replica listens on; Publish maps a userType to the channel its mutations
+// broadcast on. tenant (sole executor) subscribes to all platforms and publishes
+// per-platform; platform-only backends pass an empty Subscribe (no local enforcer
+// → no reload). Keeping topics per-platform means a borrower change never wakes a
+// lender/admin subscriber.
+type AuthTopics struct {
+	Subscribe []string
+	Publish   map[constants.UserType]string
+}
+
+func NewAuth(repos *repo.AllRepos, redisCli *redisx.Client, jwtConfig dto.JwtConfig, enforcer *rbac.Enforcer, topics AuthTopics) *Auth {
 	ctx, cancel := context.WithCancel(context.Background())
 	auth := &Auth{
 		repos:                       repos,
@@ -66,7 +80,9 @@ func NewAuth(repos *repo.AllRepos, redisCli *redisx.Client, jwtConfig dto.JwtCon
 		apiResourceMap:              mapx.NewMap[constants.UserType, *mapx.Map[string, []int64]](),
 		organizationRoleResourceMap: mapx.NewMap[int64, *mapx.Map[string, RoleResource]](),
 		organizationPlanResourceMap: mapx.NewMap[int64, *mapx.Map[int64, bool]](),
-		eventTopic:                  authEventTopic,
+		eventTopics:                 topics.Subscribe,
+		publishTopics:               topics.Publish,
+		nodeId:                      uuid.NewString(),
 		eventSubScribeCancelFn:      cancel,
 	}
 
@@ -79,7 +95,7 @@ func NewAuth(repos *repo.AllRepos, redisCli *redisx.Client, jwtConfig dto.JwtCon
 
 // newAuthWithEnforcer is a test seam: Auth with a fake enforcer and no redis
 // loop, for unit-testing rebuild/auth-check without DB or redis.
-func newAuthWithEnforcer(repos *repo.AllRepos, redisCli *redisx.Client, jwtConfig dto.JwtConfig, enforcer policyEnforcer, authEventTopic string) *Auth {
+func newAuthWithEnforcer(repos *repo.AllRepos, redisCli *redisx.Client, jwtConfig dto.JwtConfig, enforcer policyEnforcer, topics AuthTopics) *Auth {
 	return &Auth{
 		repos:                       repos,
 		redisCli:                    redisCli,
@@ -90,13 +106,23 @@ func newAuthWithEnforcer(repos *repo.AllRepos, redisCli *redisx.Client, jwtConfi
 		apiResourceMap:              mapx.NewMap[constants.UserType, *mapx.Map[string, []int64]](),
 		organizationRoleResourceMap: mapx.NewMap[int64, *mapx.Map[string, RoleResource]](),
 		organizationPlanResourceMap: mapx.NewMap[int64, *mapx.Map[int64, bool]](),
-		eventTopic:                  authEventTopic,
+		eventTopics:                 topics.Subscribe,
+		publishTopics:               topics.Publish,
+		nodeId:                      uuid.NewString(),
 	}
 }
 
 // subscribeEvent
 func (l *Auth) subscribeEvent(ctx context.Context) {
-	if len(l.eventTopic) == 0 {
+	// Drop empty channels — a misconfigured EventTopic (stale yaml, missing
+	// platform entry) would otherwise make Subscribe reject "" and crash-loop.
+	topics := make([]string, 0, len(l.eventTopics))
+	for _, t := range l.eventTopics {
+		if strings.TrimSpace(t) != "" {
+			topics = append(topics, t)
+		}
+	}
+	if len(topics) == 0 {
 		return
 	}
 
@@ -109,7 +135,7 @@ func (l *Auth) subscribeEvent(ctx context.Context) {
 		if ctx.Err() != nil {
 			return
 		}
-		subPub := l.redisCli.GetClient().Subscribe(ctx, l.eventTopic)
+		subPub := l.redisCli.GetClient().Subscribe(ctx, topics...)
 		err := subPub.Ping(ctx, "ping")
 		if err != nil {
 			logx.WithContext(ctx).WithFields(
@@ -368,7 +394,7 @@ func (l *Auth) CheckAuthentication(ctx context.Context, input dto.AuthCheckReque
 		authenticationRequired = false
 		return
 	}
-	_, err = l.GetUserClaimFromCtx(ctx)
+	_, err = l.GetUserClaimFromCtx(ctx, input.Type)
 	if err == nil {
 		authenticated = true
 	}
@@ -379,7 +405,7 @@ func (l *Auth) CheckAuthentication(ctx context.Context, input dto.AuthCheckReque
 // It first checks if the request path is in the authorization whitelist.
 // If not, it verifies the user's roles and permissions using an enforcer.
 func (l *Auth) CheckAuthorization(ctx context.Context, input dto.AuthCheckRequestDto) (authorized bool, authorizationRequired bool, err error) {
-	claim, err := l.GetUserClaimFromCtx(ctx)
+	claim, err := l.GetUserClaimFromCtx(ctx, input.Type)
 	if err != nil {
 		return
 	}
@@ -464,7 +490,7 @@ func (l *Auth) GetDataScope(ctx context.Context, input dto.AuthCheckRequestDto) 
 
 	// Extract JWT user claims from the context
 	var claim utils.JwtUser
-	claim, err = l.GetUserClaimFromCtx(ctx)
+	claim, err = l.GetUserClaimFromCtx(ctx, input.Type)
 	if err != nil {
 		return
 	}
@@ -508,7 +534,7 @@ func (l *Auth) GetDataScope(ctx context.Context, input dto.AuthCheckRequestDto) 
 
 // IsAdmin checks if the current user is an admin.
 func (l *Auth) IsAdmin(ctx context.Context, userType constants.UserType) (isAdmin bool, err error) {
-	claim, err := l.GetUserClaimFromCtx(ctx)
+	claim, err := l.GetUserClaimFromCtx(ctx, userType)
 	if err != nil {
 		return false, nil
 	}
@@ -630,17 +656,68 @@ func (l *Auth) RebuildPolicyForOrganization(ctx context.Context, organizationId 
 }
 
 // rebuildPolicy core. orgId == 0: full rebuild; orgId > 0: org-scoped.
-// singleflight dedupes concurrent same-scope rebuilds. Distinct key prefixes
-// avoid collision; idempotent policy ops let full + org-scoped rebuilds converge.
+//
+// singleflight dedupes concurrent same-scope rebuilds WITHIN this process.
+// The full (orgId==0) path ALSO takes a Redis lock so that across multi-replica
+// tenant only ONE node pays the compute cost per organizationType; siblings skip
+// and converge via the casbin watcher (the holder's AddPolicies publishes a
+// casbin MSG → each sibling's watcher LoadPolicy). org-scoped rebuilds are
+// event-driven and MUST run on every replica, so they are not locked.
+// Idempotent policy ops keep a TTL overrun (two holders) safe, just wasteful.
 func (l *Auth) rebuildPolicy(ctx context.Context, organizationType constants.UserType, organizationId int64) (err error) {
 	sfKey := stringx.Format(policyRebuildFormat, organizationType)
 	if organizationId > 0 {
 		sfKey = stringx.Format(organizationPolicyRebuildFormat, organizationId, organizationType)
 	}
-	_, err, _ = l.sf.Do(sfKey, func() (interface{}, error) {
+	_, err, _ = l.sf.Do(sfKey, func() (any, error) {
+		if organizationId == 0 && l.redisCli != nil {
+			held, lerr := l.acquireRebuildLock(ctx, organizationType)
+			if lerr != nil {
+				// Redis reachable but the op failed — can't coordinate. Fall
+				// through to a local rebuild: idempotent, so duplicate compute
+				// is the only risk.
+				logx.WithContext(ctx).WithFields(
+					logx.Field("stacks", errorx.GetErrorStack(lerr)),
+					logx.Field("organization_type", organizationType),
+				).Error("fail to acquire policy rebuild lock; proceeding uncoordinated")
+				return nil, l.doRebuild(ctx, organizationType, organizationId)
+			}
+			if !held {
+				logx.WithContext(ctx).WithFields(
+					logx.Field("organization_type", organizationType),
+				).Info("policy rebuild skipped; another node is rebuilding")
+				return nil, nil
+			}
+			defer l.releaseRebuildLock(ctx, organizationType)
+		}
 		return nil, l.doRebuild(ctx, organizationType, organizationId)
 	})
 	return err
+}
+
+// acquireRebuildLock tries to become the sole global-rebuild holder for a
+// platform. Returns true when this node now holds the lock.
+func (l *Auth) acquireRebuildLock(ctx context.Context, organizationType constants.UserType) (bool, error) {
+	if l.redisCli == nil {
+		return false, nil
+	}
+	key := stringx.Format(policyRebuildLockFormat, organizationType)
+	return l.redisCli.SetNX(ctx, key, l.nodeId, policyRebuildLockTTL)
+}
+
+// releaseRebuildLock drops the global-rebuild lock. Plain Del (repo idiom):
+// safe here because rebuild ops are idempotent and the TTL bounds any overrun.
+func (l *Auth) releaseRebuildLock(ctx context.Context, organizationType constants.UserType) {
+	if l.redisCli == nil {
+		return
+	}
+	key := stringx.Format(policyRebuildLockFormat, organizationType)
+	if err := l.redisCli.Del(ctx, key); err != nil {
+		logx.WithContext(ctx).WithFields(
+			logx.Field("stacks", errorx.GetErrorStack(err)),
+			logx.Field("organization_type", organizationType),
+		).Error("fail to release policy rebuild lock")
+	}
 }
 
 func (l *Auth) doRebuild(ctx context.Context, organizationType constants.UserType, organizationId int64) (err error) {
@@ -730,8 +807,10 @@ func (l *Auth) doRebuild(ctx context.Context, organizationType constants.UserTyp
 	})
 
 	// 6. existing policies. Org-scoped: only those whose subject belongs to this
-	//    org (never touch another org's policies). Full: all current policies,
-	//    matching the legacy diff.
+	//    org (never touch another org's policies). Full: only this type's domain
+	//    policies — tenant runs ONE shared unfiltered enforcer holding every
+	//    platform's policies, so a per-type rebuild must not diff (and remove)
+	//    another type's policies.
 	oldPolicies, err := l.enforcer.AllPolicies()
 	if err != nil {
 		return err
@@ -745,6 +824,8 @@ func (l *Auth) doRebuild(ctx context.Context, organizationType constants.UserTyp
 			if _, ok := subjectSet[item[0]]; !ok {
 				return
 			}
+		} else if len(item) < 2 || item[1] != string(organizationType) {
+			return
 		}
 		existing[buildKeyFn(item)] = item
 	})
@@ -783,38 +864,43 @@ func (l *Auth) doRebuild(ctx context.Context, organizationType constants.UserTyp
 
 	// 9. only the full-rebuild path self-publishes ActionAllPolicyReload (legacy
 	//    startup fan-out). Org-scoped rebuilds don't: every replica rebuilt itself
-	//    from the originating event.
+	//    from the originating event. Publish to the rebuilt platform's own channel
+	//    so only its subscribers wake — never the other platforms'.
 	if organizationId == 0 && (len(newPolicies) > 0 || len(removePolicies) > 0) {
 		msg := Msg{
 			Action: ActionAllPolicyReload,
 			Scope:  ScopeGlobal,
 			Type:   organizationType,
 		}
-		if perr := l.redisCli.GetClient().Publish(ctx, l.eventTopic, msg.String()).Err(); perr != nil {
-			return errorx.WithStack(perr)
+		topic := ""
+		if l.publishTopics != nil {
+			topic = l.publishTopics[organizationType]
+		}
+		if topic != "" {
+			if perr := l.redisCli.GetClient().Publish(ctx, topic, msg.String()).Err(); perr != nil {
+				return errorx.WithStack(perr)
+			}
 		}
 	}
 
 	return nil
 }
 
-func (l *Auth) GetUserClaimFromCtx(ctx context.Context) (claim utils.JwtUser, err error) {
+func (l *Auth) GetUserClaimFromCtx(ctx context.Context, userType constants.UserType) (claim utils.JwtUser, err error) {
 	// Get from metadata
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		err = status.Error(codes.Unauthenticated, "not login")
-		return claim, errorx.WithStack(err)
+		return claim, status.Error(codes.Unauthenticated, "not login")
 	}
 	tokens := md[utils.JwtTokenCtxKey]
 	if len(tokens) == 0 {
-		err = status.Error(codes.Unauthenticated, "not login")
-		return claim, errorx.WithStack(err)
+		return claim, status.Error(codes.Unauthenticated, "not login")
 	}
 	token := tokens[0]
-	jwtClaim, err := utils.ParseToken(token, l.jwtConfig.AccessSecret)
+	jwtConf := l.jwtConfig
+	jwtClaim, err := utils.ParseToken(token, jwtConf.AccessSecret)
 	if err != nil {
-		err = status.Error(codes.InvalidArgument, err.Error())
-		return claim, errorx.WithStack(err)
+		return claim, status.Error(codes.Unauthenticated, "invalid token")
 	}
 	return jwtClaim.JwtUser, nil
 }

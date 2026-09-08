@@ -1,0 +1,169 @@
+syntax = "proto3";
+
+package tenant;
+
+option go_package = "zeebee-backend/app/tenant/rpc/pb/tenant";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+// Pricing plan CRUD + resource binding, consolidated from admin (US-10).
+// Plan<->resource policies (PricingPlanPolicy) live in tenant_pricing_plan_policy.proto.
+
+message PricingPlanPageEntity {
+  int64 id = 1;
+  string name = 2;
+  string subtitle = 3;
+  string status = 4;
+  int32 trial_days = 5;
+  int32 sort_order = 6;
+  bool is_public = 7;
+  string type = 8;
+  string plan_type = 9;
+  string created_at = 10;
+  string updated_at = 11;
+  bool is_default = 12;
+  repeated proto.PricingPlanPolicyEntity policies = 13;
+}
+
+// create
+message PricingPlanCreateRequest {
+  PricingPlanCreateRequestData data = 1;
+}
+message PricingPlanCreateRequestData {
+  string user_type = 1;
+  string name = 2;
+  string subtitle = 3;
+  string description = 4;
+  int32 trial_days = 5;
+  int32 sort_order = 6;
+  bool is_public = 7;
+  string type = 8;
+  string plan_type = 9;
+  bool is_default = 10;
+}
+
+// update
+message PricingPlanUpdateRequest {
+  PricingPlanUpdateRequestData data = 1;
+}
+message PricingPlanUpdateRequestData {
+  string user_type = 1;
+  int64 id = 2;
+  string subtitle = 3;
+  string description = 4;
+  int32 trial_days = 5;
+  int32 sort_order = 6;
+  bool is_public = 7;
+  string plan_type = 8;
+  bool is_default = 9;
+}
+
+// delete
+message PricingPlanDeleteRequest {
+  PricingPlanDeleteRequestData data = 1;
+}
+message PricingPlanDeleteRequestData {
+  string user_type = 1;
+  int64 id = 2;
+}
+
+// detail
+message PricingPlanDetailRequest {
+  PricingPlanDetailRequestData data = 1;
+}
+message PricingPlanDetailRequestData {
+  string user_type = 1;
+  int64 id = 2;
+}
+message PricingPlanDetailResponse {
+  proto.PricingPlanEntity data = 1;
+}
+
+// page
+message PricingPlanPageRequest {
+  PricingPlanPageRequestData data = 1;
+}
+message PricingPlanPageRequestData {
+  string user_type = 1;
+  int64 page = 2;
+  int64 limit = 3;
+  PricingPlanPageRequestFilter filter = 4;
+  PricingPlanPageRequestSorter sorter = 5;
+}
+message PricingPlanPageRequestFilter {
+  string keyword = 1;
+  string status = 2;
+  string type = 3;
+  string plan_type = 4;
+}
+message PricingPlanPageRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+message PricingPlanPageResponse {
+  PricingPlanPageResponseData data = 1;
+}
+message PricingPlanPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated PricingPlanPageEntity list = 5;
+}
+
+// switch status
+message PricingPlanSwitchStatusRequest {
+  PricingPlanSwitchStatusRequestData data = 1;
+}
+message PricingPlanSwitchStatusRequestData {
+  string user_type = 1;
+  int64 id = 2;
+  string status = 3;
+}
+
+// bind resources to a plan
+message PricingPlanBindResourcesRequest {
+  PricingPlanBindResourcesRequestData data = 1;
+}
+message PricingPlanBindResourcesRequestData {
+  string user_type = 1;
+  int64 id = 2;
+  repeated int64 resource_ids = 3;
+}
+
+// resource list bound to a plan
+message PricingPlanResourceListRequest {
+  PricingPlanResourceListRequestData data = 1;
+}
+message PricingPlanResourceListRequestData {
+  string user_type = 1;
+  int64 id = 2;
+}
+message PricingPlanResourceListResponse {
+  repeated proto.ResourceTreeEntity data = 1;
+}
+
+// all plans
+message PricingPlanAllRequest {
+  PricingPlanAllRequestData data = 1;
+}
+message PricingPlanAllRequestData {
+  string user_type = 1;
+  string type = 2;
+}
+message PricingPlanAllResponse {
+  repeated proto.PricingPlanEntity data = 1;
+}
+
+service PricingPlan {
+  rpc Create(PricingPlanCreateRequest) returns (PricingPlanDetailResponse);
+  rpc Update(PricingPlanUpdateRequest) returns (PricingPlanDetailResponse);
+  rpc Delete(PricingPlanDeleteRequest) returns (proto.EmptyResponse);
+  rpc Detail(PricingPlanDetailRequest) returns (PricingPlanDetailResponse);
+  rpc Page(PricingPlanPageRequest) returns (PricingPlanPageResponse);
+  rpc SwitchStatus(PricingPlanSwitchStatusRequest) returns (proto.EmptyResponse);
+  rpc BindResources(PricingPlanBindResourcesRequest) returns (proto.EmptyResponse);
+  rpc ResourceList(PricingPlanResourceListRequest) returns (PricingPlanResourceListResponse);
+  rpc All(PricingPlanAllRequest) returns (PricingPlanAllResponse);
+}

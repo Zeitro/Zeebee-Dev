@@ -1,10 +1,22 @@
 # AI agent & plugin layer — local only, not version-controlled
 .claude/
+.agents
 .specify/
 
 # generated / local artifacts
 specs
 .DS_Store
+Thumbs.db
+*.tmp
+*.swp
+.vscode/
+.idea/
 .traces
 .skillopt-sleep
 .cache
+
+# Go build artifacts
+*.exe
+*.test
+vendor/
+*.out
