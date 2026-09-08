@@ -6,8 +6,8 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/common/copierx"
-	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
@@ -32,13 +32,9 @@ func NewSwitchStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Swit
 // in a single transaction for data consistency.
 func (l *SwitchStatusLogic) SwitchStatus(in *admin.OrganizationSwitchStatusRequest) (resp *proto.EmptyResponse, err error) {
 
-	input, err := copierx.Trans[admin.OrganizationSwitchStatusRequestData, dto.OrganizationSwitchStatusRequestDto](in.Data)
-	if err != nil {
-		return nil, err
-	}
-	err = l.OrganizationLogic.SwitchStatus(l.ctx, *input)
-	if err != nil {
-		return nil, err
-	}
-	return &proto.EmptyResponse{}, nil
+	return l.svcCtx.TenantClient.Organization.SwitchStatus(l.ctx, &tenant.OrganizationSwitchStatusRequest{Data: &tenant.OrganizationSwitchStatusRequestData{
+		UserType: string(constants.UserTypeAdmin),
+		Id:       in.Data.Id,
+		Status:   in.Data.Status,
+	}})
 }

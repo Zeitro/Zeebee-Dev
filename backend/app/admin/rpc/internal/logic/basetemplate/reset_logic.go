@@ -5,6 +5,8 @@ import (
 
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
@@ -27,6 +29,9 @@ func NewResetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ResetLogic 
 func (l *ResetLogic) Reset(in *proto.IdRequest) (resp *proto.EmptyResponse, err error) {
 
 	id := in.Data
-	err = l.baseLogic.OrganizationTemplateLogic.ResetByBaseTemplateId(l.ctx, id)
+	_, err = l.svcCtx.TenantClient.OrganizationTemplate.ResetByBaseTemplateId(l.ctx, &tenant.OrganizationTemplateResetByBaseTemplateIdRequest{Data: &tenant.OrganizationTemplateResetByBaseTemplateIdRequestData{
+		UserType:       string(constants.UserTypeAdmin),
+		BaseTemplateId: id,
+	}})
 	return &proto.EmptyResponse{}, err
 }

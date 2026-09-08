@@ -5,9 +5,10 @@ import (
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
 
-	"zeebee-backend/app/admin/api/internal/middleware"
 	"zeebee-backend/app/admin/config"
 	"zeebee-backend/app/admin/rpc/pb/admin"
+	tenantclient "zeebee-backend/app/tenant/rpc/client"
+	"zeebee-backend/app/tenant/rpc/middleware"
 	"zeebee-backend/domains/zeebee/constants"
 )
 
@@ -33,17 +34,14 @@ type ServiceContext struct {
 	PricingPlanPolicyRpcClient        admin.PricingPlanPolicyClient
 	OrganizationSubscriptionRpcClient admin.OrganizationSubscriptionClient
 	StripeWebhookRpcClient            admin.StripeWebhookClient
-
-	AdminApiContent string
 }
 
-func NewServiceContext(c config.ApiConf, logger logx.Logger, adminApiContent string) *ServiceContext {
+func NewServiceContext(c config.ApiConf, logger logx.Logger) *ServiceContext {
 	rpcClient := zrpc.MustNewClient(c.RpcConf)
 
-	authRpcClient := admin.NewAuthClient(rpcClient.Conn())
 	return &ServiceContext{
 		Config:         c,
-		AuthMiddleware: middleware.NewAuthMiddleware(constants.UserTypeAdmin, authRpcClient).Handle,
+		AuthMiddleware: middleware.NewAuthMiddleware(constants.UserTypeAdmin, tenantclient.New(zrpc.MustNewClient(c.TenantRpc)).Auth).Handle,
 		Logger:         logger,
 
 		// rpc client
@@ -61,6 +59,5 @@ func NewServiceContext(c config.ApiConf, logger logx.Logger, adminApiContent str
 		PricingPlanPolicyRpcClient:        admin.NewPricingPlanPolicyClient(rpcClient.Conn()),
 		OrganizationSubscriptionRpcClient: admin.NewOrganizationSubscriptionClient(rpcClient.Conn()),
 		StripeWebhookRpcClient:            admin.NewStripeWebhookClient(rpcClient.Conn()),
-		AdminApiContent:                   adminApiContent,
 	}
 }

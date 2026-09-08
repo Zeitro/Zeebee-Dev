@@ -55,7 +55,7 @@ func (repo *BaseRepo[T]) Transaction(ctx context.Context, fn func(tx *gorm.DB) e
 }
 
 // IsExistedByColumns check is exist by columns
-func (repo *BaseRepo[T]) IsExistedByColumns(ctx context.Context, columns map[string]interface{}) (bool, error) {
+func (repo *BaseRepo[T]) IsExistedByColumns(ctx context.Context, columns map[string]any) (bool, error) {
 	query := repo.Client(ctx)
 	for k, v := range columns {
 		query = query.Where(k+" = ?", v)
@@ -69,7 +69,7 @@ func (repo *BaseRepo[T]) IsExistedByColumns(ctx context.Context, columns map[str
 }
 
 // IsExistedByColumnsWithTx check is exist by columns
-func (repo *BaseRepo[T]) IsExistedByColumnsWithTx(ctx context.Context, tx *gorm.DB, columns map[string]interface{}) (bool, error) {
+func (repo *BaseRepo[T]) IsExistedByColumnsWithTx(ctx context.Context, tx *gorm.DB, columns map[string]any) (bool, error) {
 	query := tx.WithContext(ctx).Model(new(T))
 	for k, v := range columns {
 		query = query.Where(k+" = ?", v)
@@ -129,16 +129,16 @@ func (repo *BaseRepo[T]) BatchCreate(ctx context.Context, data []T) error {
 	return nil
 }
 
-func (repo *BaseRepo[T]) UpdateColumnsById(ctx context.Context, id int64, columns map[string]interface{}) error {
+func (repo *BaseRepo[T]) UpdateColumnsById(ctx context.Context, id int64, columns map[string]any) error {
 	return errorx.WithStack(repo.Client(ctx).Where("id = ?", id).Updates(columns).Error)
 }
 
-func (repo *BaseRepo[T]) UpdateColumnsByIdWithTx(ctx context.Context, tx *gorm.DB, id int64, columns map[string]interface{}) error {
+func (repo *BaseRepo[T]) UpdateColumnsByIdWithTx(ctx context.Context, tx *gorm.DB, id int64, columns map[string]any) error {
 	return errorx.WithStack(tx.WithContext(ctx).Model(new(T)).Where("id = ?", id).Updates(columns).Error)
 }
 
 // UpdateColumns update columns
-func (repo *BaseRepo[T]) UpdateColumns(ctx context.Context, columns map[string]interface{}, equalColumns map[string]interface{}, notEqualColumns map[string]interface{}) error {
+func (repo *BaseRepo[T]) UpdateColumns(ctx context.Context, columns map[string]any, equalColumns map[string]any, notEqualColumns map[string]any) error {
 	if len(equalColumns) == 0 && len(notEqualColumns) == 0 {
 		return errorx.New("filter columns can not be empty")
 	}
@@ -157,7 +157,7 @@ func (repo *BaseRepo[T]) UpdateColumns(ctx context.Context, columns map[string]i
 }
 
 // UpdateColumnsWithTx update columns with tx
-func (repo *BaseRepo[T]) UpdateColumnsWithTx(ctx context.Context, tx *gorm.DB, columns map[string]interface{}, equalColumns map[string]interface{}, notEqualColumns map[string]interface{}) error {
+func (repo *BaseRepo[T]) UpdateColumnsWithTx(ctx context.Context, tx *gorm.DB, columns map[string]any, equalColumns map[string]any, notEqualColumns map[string]any) error {
 	if len(equalColumns) == 0 && len(notEqualColumns) == 0 {
 		return errorx.New("filter columns can not be empty")
 	}
@@ -211,7 +211,7 @@ func (repo *BaseRepo[T]) BatchCreateWithTx(ctx context.Context, tx *gorm.DB, dat
 func (repo *BaseRepo[T]) FindOneById(ctx context.Context, id int64) (T, error) {
 	var data T
 	var err error
-	data, err = repo.FindOneByColumns(ctx, map[string]interface{}{
+	data, err = repo.FindOneByColumns(ctx, map[string]any{
 		"id": id,
 	})
 	return data, errorx.WithStack(err)
@@ -235,14 +235,14 @@ func (repo *BaseRepo[T]) FindOneWithPreloadById(ctx context.Context, id int64, p
 func (repo *BaseRepo[T]) FindOneByIdWithTx(ctx context.Context, tx *gorm.DB, id int64) (T, error) {
 	var data T
 	var err error
-	data, err = repo.FindOneByColumnsWithTx(ctx, tx, map[string]interface{}{
+	data, err = repo.FindOneByColumnsWithTx(ctx, tx, map[string]any{
 		"id": id,
 	})
 	return data, errorx.WithStack(err)
 }
 
 // FindOneByColumns find one by columns
-func (repo *BaseRepo[T]) FindOneByColumns(ctx context.Context, columns map[string]interface{}) (T, error) {
+func (repo *BaseRepo[T]) FindOneByColumns(ctx context.Context, columns map[string]any) (T, error) {
 	query := repo.Client(ctx)
 	for k, v := range columns {
 		query = query.Where(k+" = ?", v)
@@ -255,7 +255,7 @@ func (repo *BaseRepo[T]) FindOneByColumns(ctx context.Context, columns map[strin
 	return data, nil
 }
 
-func (repo *BaseRepo[T]) FindOneByColumnsWithTx(ctx context.Context, tx *gorm.DB, columns map[string]interface{}) (T, error) {
+func (repo *BaseRepo[T]) FindOneByColumnsWithTx(ctx context.Context, tx *gorm.DB, columns map[string]any) (T, error) {
 	query := tx.WithContext(ctx)
 	for k, v := range columns {
 		query = query.Where(k+" = ?", v)
@@ -275,7 +275,7 @@ func (repo *BaseRepo[T]) FindOneByFilter(ctx context.Context, filter []WhereRaw,
 	}
 
 	for _, preload := range preloads {
-		args := make([]interface{}, 0, len(preload.Args))
+		args := make([]any, 0, len(preload.Args))
 		for _, arg := range preload.Args {
 			args = append(args, arg)
 		}
@@ -291,7 +291,7 @@ func (repo *BaseRepo[T]) FindOneByFilter(ctx context.Context, filter []WhereRaw,
 }
 
 // FindColumnByColumns find column by columns
-func (repo *BaseRepo[T]) FindColumnByColumns(ctx context.Context, columnName string, target interface{}, columns map[string]interface{}) error {
+func (repo *BaseRepo[T]) FindColumnByColumns(ctx context.Context, columnName string, target any, columns map[string]any) error {
 	query := repo.Client(ctx).Select(columnName)
 	for k, v := range columns {
 		query = query.Where(k+" = ?", v)
@@ -301,7 +301,7 @@ func (repo *BaseRepo[T]) FindColumnByColumns(ctx context.Context, columnName str
 }
 
 // FindColumnByColumnsWithTx find column by columns with tx
-func (repo *BaseRepo[T]) FindColumnByColumnsWithTx(ctx context.Context, tx *gorm.DB, columnName string, target interface{}, columns map[string]interface{}) error {
+func (repo *BaseRepo[T]) FindColumnByColumnsWithTx(ctx context.Context, tx *gorm.DB, columnName string, target any, columns map[string]any) error {
 	query := tx.Model(new(T)).WithContext(ctx).Select(columnName)
 	for k, v := range columns {
 		query = query.Where(k+" = ?", v)
@@ -311,7 +311,7 @@ func (repo *BaseRepo[T]) FindColumnByColumnsWithTx(ctx context.Context, tx *gorm
 }
 
 // PluckByColumns find column slice by columns
-func (repo *BaseRepo[T]) PluckByColumns(ctx context.Context, columnName string, target interface{}, filters []WhereRaw) error {
+func (repo *BaseRepo[T]) PluckByColumns(ctx context.Context, columnName string, target any, filters []WhereRaw) error {
 	query := repo.Client(ctx)
 	for i := range filters {
 		query = query.Where(filters[i].Raw, filters[i].Args...)
@@ -322,7 +322,7 @@ func (repo *BaseRepo[T]) PluckByColumns(ctx context.Context, columnName string, 
 }
 
 // PluckByColumnsWithTx find column slice by columns with tx
-func (repo *BaseRepo[T]) PluckByColumnsWithTx(ctx context.Context, tx *gorm.DB, columnName string, target interface{}, filters []WhereRaw) error {
+func (repo *BaseRepo[T]) PluckByColumnsWithTx(ctx context.Context, tx *gorm.DB, columnName string, target any, filters []WhereRaw) error {
 	query := tx.WithContext(ctx).Model(new(T))
 	for i := range filters {
 		query = query.Where(filters[i].Raw, filters[i].Args...)
@@ -365,14 +365,14 @@ func (repo *BaseRepo[T]) UpdateOneWithTx(ctx context.Context, tx *gorm.DB, data 
 
 // DeleteById delete one
 func (repo *BaseRepo[T]) DeleteByID(ctx context.Context, id int64) (effectRaws int64, err error) {
-	return repo.Delete(ctx, map[string]interface{}{
+	return repo.Delete(ctx, map[string]any{
 		"id": id,
 	})
 }
 
 // DeleteByIDWithTx delete one with tx
 func (repo *BaseRepo[T]) DeleteByIDWithTx(ctx context.Context, tx *gorm.DB, id int64) (effectRaws int64, err error) {
-	return repo.DeleteWithTx(ctx, tx, map[string]interface{}{
+	return repo.DeleteWithTx(ctx, tx, map[string]any{
 		"id": id,
 	})
 }
@@ -387,7 +387,7 @@ func (repo *BaseRepo[T]) DeleteByIDsWithTx(ctx context.Context, tx *gorm.DB, ids
 }
 
 // Delete delete
-func (repo *BaseRepo[T]) Delete(ctx context.Context, filters map[string]interface{}) (effectRaws int64, err error) {
+func (repo *BaseRepo[T]) Delete(ctx context.Context, filters map[string]any) (effectRaws int64, err error) {
 	if len(filters) == 0 {
 		return 0, errorx.New("Filters Is Empty")
 	}
@@ -403,7 +403,7 @@ func (repo *BaseRepo[T]) Delete(ctx context.Context, filters map[string]interfac
 }
 
 // DeleteWithTx delete with tx
-func (repo *BaseRepo[T]) DeleteWithTx(ctx context.Context, tx *gorm.DB, filters map[string]interface{}) (effectRaws int64, err error) {
+func (repo *BaseRepo[T]) DeleteWithTx(ctx context.Context, tx *gorm.DB, filters map[string]any) (effectRaws int64, err error) {
 	if len(filters) == 0 {
 		return 0, errorx.New("Filters is empty")
 	}
@@ -449,7 +449,7 @@ func (repo *BaseRepo[T]) Page(query *gorm.DB, pageReq PageRequest) (page PageRes
 }
 
 // FindAll find all
-func (repo *BaseRepo[T]) FindAll(ctx context.Context, filter map[string]interface{}) ([]T, error) {
+func (repo *BaseRepo[T]) FindAll(ctx context.Context, filter map[string]any) ([]T, error) {
 	query := repo.Client(ctx)
 	for k, v := range filter {
 		query = query.Where(k+" = ?", v)
@@ -460,7 +460,7 @@ func (repo *BaseRepo[T]) FindAll(ctx context.Context, filter map[string]interfac
 	return data, errorx.WithStack(err)
 }
 
-func (repo *BaseRepo[T]) FindAllWithTx(ctx context.Context, tx *gorm.DB, filter map[string]interface{}) ([]T, error) {
+func (repo *BaseRepo[T]) FindAllWithTx(ctx context.Context, tx *gorm.DB, filter map[string]any) ([]T, error) {
 	query := tx.WithContext(ctx)
 	for k, v := range filter {
 		query = query.Where(k+" = ?", v)
@@ -472,7 +472,7 @@ func (repo *BaseRepo[T]) FindAllWithTx(ctx context.Context, tx *gorm.DB, filter 
 }
 
 // FindStrDistinctColumn find string distinct column
-func (repo *BaseRepo[T]) FindStrDistinctColumn(ctx context.Context, columnName string, filter map[string]interface{}) ([]string, error) {
+func (repo *BaseRepo[T]) FindStrDistinctColumn(ctx context.Context, columnName string, filter map[string]any) ([]string, error) {
 	query := repo.Client(ctx)
 	for k, v := range filter {
 		query = query.Where(k+" = ?", v)

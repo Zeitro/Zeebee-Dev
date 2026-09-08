@@ -61,7 +61,7 @@ jobs:
           docker images ${IMAGE_NAME} \
             --format "{{.Tag}}" \
             | sort -V \
-            | head -n -10 \
+            | head -n -5 \
             | xargs -r -I {} docker rmi ${IMAGE_NAME}:{} || true
 
       - name: Remove dangling images

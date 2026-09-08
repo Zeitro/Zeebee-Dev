@@ -27,11 +27,11 @@ func TestIsWord(t *testing.T) {
 
 func TestWordExt(t *testing.T) {
 	cases := map[string]string{
-		"a.docx":   "docx",
-		"A.Doc":    "doc",
-		"a.docm":   "",
-		"a.pdf":    "",
-		"noext":    "",
+		"a.docx": "docx",
+		"A.Doc":  "doc",
+		"a.docm": "",
+		"a.pdf":  "",
+		"noext":  "",
 	}
 	for name, want := range cases {
 		if got := WordExt(name); got != want {
@@ -42,12 +42,12 @@ func TestWordExt(t *testing.T) {
 
 func TestPdfDisplayName(t *testing.T) {
 	cases := map[string]string{
-		"wire.doc":           "wire.pdf",
-		"Wire.DOCX":          "Wire.pdf",
-		"a.b.docx":           "a.b.pdf",
-		"contract.pdf":       "contract.pdf", // non-Word unchanged
-		"photo.png":          "photo.png",
-		"macro.docm":         "macro.docm", // not in scope, unchanged
+		"wire.doc":     "wire.pdf",
+		"Wire.DOCX":    "Wire.pdf",
+		"a.b.docx":     "a.b.pdf",
+		"contract.pdf": "contract.pdf", // non-Word unchanged
+		"photo.png":    "photo.png",
+		"macro.docm":   "macro.docm", // not in scope, unchanged
 	}
 	for name, want := range cases {
 		if got := PdfDisplayName(name); got != want {

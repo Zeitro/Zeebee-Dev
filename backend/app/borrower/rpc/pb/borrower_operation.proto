@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package borrower;
+
+option go_package = "zeebee-backend/app/borrower/rpc/pb/borrower";
+
+import "proto/entity.proto";
+
+message OperationPageRequest {
+  OperationPageRequestData data = 1;
+}
+message OperationPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  OperationPageRequestFilter filter = 3;
+}
+message OperationPageRequestFilter {
+  int64 task_id = 1;
+  string operation_type = 2;
+  string entity_type = 3;
+  int64 entity_id = 4;
+}
+message OperationPageResponse {
+  OperationPageResponseData data = 1;
+}
+message OperationPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated proto.OperationEntity list = 5;
+}
+
+service Operation {
+  rpc Page(OperationPageRequest) returns(OperationPageResponse);
+}

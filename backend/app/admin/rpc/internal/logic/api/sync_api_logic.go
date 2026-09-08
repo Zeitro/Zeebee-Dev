@@ -2,62 +2,29 @@ package apilogic
 
 import (
 	"context"
-	"encoding/json"
 
-	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/swagger"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
 type SyncApiLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-
-	baseLogic *logic.BaseLogic
 }
 
 func NewSyncApiLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncApiLogic {
-	return &SyncApiLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-
-		baseLogic: logic.GetBaseLogic(svcCtx),
-	}
+	return &SyncApiLogic{ctx: ctx, svcCtx: svcCtx}
 }
 
+// SyncApi proxies to tenant; tenant upserts the manifest into its registry.
 func (l *SyncApiLogic) SyncApi(in *admin.SyncApiRequest) (resp *proto.EmptyResponse, err error) {
-
-	var apiGroups swagger.ApiGroup
-	if err = json.Unmarshal([]byte(in.Data.ApiJson), &apiGroups); err != nil {
-		return nil, errorx.Wrap(err, "failed to unmarshal api json")
-	}
-
-	syncDto := &dto.ApiSyncRequestDto{
-		Type: constants.UserTypeAdmin,
-		Apis: make(map[string][]dto.ApiSyncItemDto),
-	}
-	for tag, apis := range apiGroups {
-		items := make([]dto.ApiSyncItemDto, 0, len(apis))
-		for _, api := range apis {
-			items = append(items, dto.ApiSyncItemDto{
-				Path:        api.Path,
-				Method:      api.Method,
-				Name:        api.Name,
-				Description: api.Description,
-			})
-		}
-		syncDto.Apis[tag] = items
-	}
-
-	err = l.baseLogic.ApiLogic.SyncApi(l.ctx, syncDto)
-	if err != nil {
-		return nil, err
-	}
-
-	return &proto.EmptyResponse{}, nil
+	return l.svcCtx.TenantClient.Api.SyncApi(l.ctx, &tenant.SyncApiRequest{
+		Data: &tenant.SyncApiRequestData{
+			UserType: string(constants.UserTypeAdmin),
+			ApiJson:  in.Data.ApiJson,
+		},
+	})
 }

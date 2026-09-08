@@ -6,10 +6,10 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/proto"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 type CreateLogic struct {
@@ -30,20 +30,16 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 
 func (l *CreateLogic) Create(in *admin.PricingPlanCreateRequest) (resp *admin.PricingPlanDetailResponse, err error) {
 
-	dtoData, err := copierx.Trans[admin.PricingPlanCreateRequestData, dto.PricingPlanCreateRequestDto](in.Data)
+	data, err := copierx.Trans[admin.PricingPlanCreateRequestData, tenant.PricingPlanCreateRequestData](in.Data)
 	if err != nil {
 		return nil, err
 	}
 
-	result, err := l.baseLogic.PricingPlanLogic.Create(l.ctx, *dtoData)
+	data.UserType = string(constants.UserTypeAdmin)
+	result, err := l.svcCtx.TenantClient.PricingPlan.Create(l.ctx, &tenant.PricingPlanCreateRequest{Data: data})
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
 
-	protoData, err := copierx.Trans[dto.PricingPlanEntityDto, proto.PricingPlanEntity](result, copierx.TimeToRFC3339Str())
-	if err != nil {
-		return nil, err
-	}
-
-	return &admin.PricingPlanDetailResponse{Data: protoData}, nil
+	return &admin.PricingPlanDetailResponse{Data: result.Data}, nil
 }

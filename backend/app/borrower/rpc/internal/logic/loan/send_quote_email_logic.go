@@ -4,14 +4,17 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/duke-git/lancet/v2/slice"
+	"golang.org/x/oauth2"
 
 	"zeebee-backend/app/borrower/rpc/internal/email_tpl"
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	commonemail "zeebee-backend/common/email"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
@@ -47,15 +50,17 @@ func (l *SendQuoteEmailLogic) SendQuoteEmail(in *borrower.LoanSendQuoteEmailRequ
 		return nil, errorx.New("Lender is required")
 	}
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	borrowerOrganization, err := l.svcCtx.OrganizationRepo.GetOrganization(l.ctx, claim.OrganizationId, constants.UserTypeBorrower, false)
+	borrowerOrganization, err := l.svcCtx.TenantClient.Organization.DetailWithType(l.ctx, &tenant.OrganizationDetailWithTypeRequest{Data: &tenant.OrganizationDetailWithTypeRequestData{
+		UserType: string(constants.UserTypeBorrower), Id: claim.OrganizationId,
+	}})
 	if err != nil {
 		return nil, err
 	}
-	if borrowerOrganization.Status != constants.OrganizationStatusActive {
+	if borrowerOrganization.Data == nil || borrowerOrganization.Data.Status != string(constants.OrganizationStatusActive) {
 		return nil, errorx.New("Borrower organization is not active")
 	}
 	borrowerApplicantIds := slice.Map(in.Data.Applicants, func(index int, item *borrower.ThirdPartyLoanApplicantEditEntity) int64 {
@@ -83,7 +88,7 @@ func (l *SendQuoteEmailLogic) SendQuoteEmail(in *borrower.LoanSendQuoteEmailRequ
 		newCtx := context.WithoutCancel(l.ctx)
 		l.svcCtx.Logger.WithContext(newCtx).WithFields(logx.Field("lender ids", in.Data.LenderIds)).Info("Start send quote email")
 		tplVars := map[string]interface{}{
-			"borrower_name":           borrowerOrganization.Name,
+			"borrower_name":           borrowerOrganization.Data.Name,
 			"borrower_applicant_name": strings.Join(borrowerApplicantNames, ","),
 			"holdback_amount":         in.Data.HoldbackAmount,
 			"closing_date":            in.Data.ClosingDate,
@@ -122,21 +127,23 @@ type quoteEmailInput struct {
 
 // send email
 func (l *SendQuoteEmailLogic) sendEmail(ctx context.Context, input quoteEmailInput, claim utils.JwtUser) (err error) {
-	lender, err := l.svcCtx.OrganizationRepo.GetOrganization(ctx, input.lenderId, constants.UserTypeLender, false)
+	lender, err := l.svcCtx.TenantClient.Organization.DetailWithType(ctx, &tenant.OrganizationDetailWithTypeRequest{Data: &tenant.OrganizationDetailWithTypeRequestData{
+		UserType: string(constants.UserTypeLender), Id: input.lenderId,
+	}})
 	if err != nil {
 		return err
 	}
-	if lender.Status != constants.OrganizationStatusActive {
+	if lender.Data == nil || lender.Data.Status != string(constants.OrganizationStatusActive) {
 		return errorx.New("Lender organization is not active")
 	}
 	tplVars := input.tplVars
-	tplVars["lender_name"] = lender.Name
+	tplVars["lender_name"] = lender.Data.Name
 	property, ok := tplVars["property"].(*model.BorrowerProperty)
 	if !ok {
 		return errorx.New("Invalid property")
 	}
 
-	key := global.EmailAuthManager.BuildKey(limiter.StrategySendLoanQuoteEmail, input.senderEmail, lender.ContactEmail, claim.OrganizationId, claim.UserType)
+	key := global.EmailAuthManager.BuildKey(limiter.StrategySendLoanQuoteEmail, input.senderEmail, lender.Data.ContactEmail, claim.OrganizationId, claim.UserType)
 	// rate limit
 	ok, err = global.LimiterMgr.Limit(ctx, limiter.StrategySendLoanQuoteEmail, key)
 	if err != nil {
@@ -154,7 +161,7 @@ func (l *SendQuoteEmailLogic) sendEmail(ctx context.Context, input quoteEmailInp
 	msg := commonemail.Message{
 		Subject: fmt.Sprintf("%v lender - %v quote - %v", tplVars["lender_name"], tplVars["loan_purpose"], property.Address.Address1),
 		From:    input.senderEmail,
-		To:      []string{lender.ContactEmail},
+		To:      []string{lender.Data.ContactEmail},
 		Body:    emailContent,
 		IsHTML:  true,
 	}
@@ -164,54 +171,47 @@ func (l *SendQuoteEmailLogic) sendEmail(ctx context.Context, input quoteEmailInp
 	}
 	l.svcCtx.Logger.WithContext(ctx).WithFields(
 		logx.Field("sender", input.senderEmail),
-		logx.Field("receiver", lender.ContactEmail),
+		logx.Field("receiver", lender.Data.ContactEmail),
 	).Info("Send quote email success")
 	return err
 }
 
 // get borrower email
 func (l *SendQuoteEmailLogic) getEmailClient(ctx context.Context, userId int64, organizationId int64) (senderEmail string, emailClient client.Client, err error) {
-	var emailAuthorization *model.EmailAuthorization
-	organizationEmail, err := l.svcCtx.OrganizationEmailRepo.GetOrganizationEmailByOrganizationId(ctx, organizationId, constants.EmailPurposeContact)
+	emailAuthorization, err := l.svcCtx.TenantClient.OrganizationEmail.GetAuthorization(ctx, &tenant.OrganizationEmailGetAuthorizationRequest{Data: &tenant.OrganizationEmailGetAuthorizationRequestData{
+		OrganizationId: organizationId, UserId: userId, Purpose: string(constants.EmailPurposeContact),
+	}})
 	if err != nil {
 		return "", nil, err
 	}
-	switch organizationEmail.AuthStrategy {
-	case constants.EmailAuthStrategyOrganization:
-		emailAuthorization, err = l.svcCtx.EmailAuthorizationRepo.GetEmailAuthorizationByOrganizationEmailId(ctx, organizationEmail.Id, 0, constants.EmailPurposeContact)
-	case constants.EmailAuthStrategyUser:
-		emailAuthorization, err = l.svcCtx.EmailAuthorizationRepo.GetEmailAuthorizationByOrganizationEmailId(ctx, organizationEmail.Id, userId, constants.EmailPurposeContact)
-	default:
-		err = errorx.New("Invalid email auth strategy")
-	}
-	if err != nil {
-		return "", nil, err
-	}
-
-	if !emailAuthorization.IsAuthorized {
+	if emailAuthorization.Data == nil || !emailAuthorization.Data.IsAuthorized {
 		err = errorx.New("Borrower email is not authorized")
 		return "", nil, err
 	}
 
 	var existed bool
-	emailClient, existed = global.EmailAuthManager.GetClient(emailAuthorization.Email)
+	emailClient, existed = global.EmailAuthManager.GetClient(emailAuthorization.Data.Email)
 	if !existed {
-		emailProvider, ok := global.EmailAuthUrlGenerator[emailAuthorization.EmailProvider]
+		emailProvider, ok := global.EmailAuthUrlGenerator[constants.EmailProvider(emailAuthorization.Data.EmailProvider)]
 		if !ok {
 			return "", nil, errorx.New("Invalid email provider")
 		}
 		oauth2Config := emailProvider.GetConfig()
-		switch emailAuthorization.EmailProvider {
+		switch constants.EmailProvider(emailAuthorization.Data.EmailProvider) {
 		case constants.EmailProviderGmail:
-			emailClient, err = client.NewGmailClientFromToken(oauth2Config, emailAuthorization.Token.Token)
+			token := &oauth2.Token{AccessToken: emailAuthorization.Data.AccessToken, RefreshToken: emailAuthorization.Data.RefreshToken, TokenType: emailAuthorization.Data.TokenType}
+			if emailAuthorization.Data.Expiry != "" {
+				token.Expiry, _ = time.Parse(time.RFC3339, emailAuthorization.Data.Expiry)
+			}
+			emailClient, err = client.NewGmailClientFromToken(oauth2Config, token)
 		default:
 			err = errorx.New("Invalid email provider")
 		}
 		if err != nil {
 			return "", nil, err
 		}
-		global.EmailAuthManager.Register(emailAuthorization.Email, emailClient)
+		global.EmailAuthManager.Register(emailAuthorization.Data.Email, emailClient)
 	}
 
-	return emailAuthorization.Email, emailClient, nil
+	return emailAuthorization.Data.Email, emailClient, nil
 }

@@ -163,6 +163,9 @@ func (repo *OrganizationSubscriptionRepo) Page(ctx context.Context, pageReq dto.
 	if len(filter.Type) > 0 {
 		query = query.Where(fmt.Sprintf("%s.type = ?", orgTable), filter.Type)
 	}
+	if filter.OrganizationId > 0 {
+		query = query.Where(fmt.Sprintf("%s.organization_id = ?", subTable), filter.OrganizationId)
+	}
 	if len(filter.Status) > 0 {
 		query = query.Where(fmt.Sprintf("%s.status IN ?", subTable), filter.Status)
 	}
