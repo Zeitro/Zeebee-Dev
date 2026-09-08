@@ -13,6 +13,7 @@ import {
 import { Avatar, Button, Divider, Tooltip } from 'antd';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { PermissionSlot } from '@repo/shared-methods';
 import { displayValue } from '@repo/shared-methods/utils';
 import { getMemberInitial, getMemberLabel } from './helpers';
 
@@ -23,6 +24,7 @@ import { getMemberInitial, getMemberLabel } from './helpers';
  *   members?: Array,
  *   projectMembers?: Array,
  *   canManage?: boolean,
+ *   PERMISSIONS?: object,
  *   onCreateTask?: () => void,
  *   onMembersClick?: () => void,
  *   onInviteClick?: () => void,
@@ -34,6 +36,7 @@ export function KanbanHeader({
 	project,
 	taskCount = 0,
 	canManage = false,
+	PERMISSIONS,
 	onCreateTask,
 	onMembersClick,
 	onInviteClick,
@@ -109,16 +112,19 @@ export function KanbanHeader({
 						<Button icon={<MessageOutlined />} onClick={onActivityClick}>
 							{t('kanban.projectActivity')}
 						</Button>
-						<Button
-							icon={<SettingOutlined />}
-							onClick={() =>
-								router.push(
-									`/project/workflow/${workflowId}?projectId=${projectId}`,
-								)
-							}
-						>
-							{t('projectList.openSettings')}
-						</Button>
+
+						<PermissionSlot code={PERMISSIONS?.PROJECT_WORKFLOW?.EDIT}>
+							<Button
+								icon={<SettingOutlined />}
+								onClick={() =>
+									router.push(
+										`/project/workflow/${workflowId}?projectId=${projectId}`,
+									)
+								}
+							>
+								{t('projectList.openSettings')}
+							</Button>
+						</PermissionSlot>
 					</>
 				)}
 				{showCreate ? (
