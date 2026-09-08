@@ -84,7 +84,7 @@ func StrToSqlTimePtr(layout string) copier.TypeConverter {
 	return copier.TypeConverter{
 		SrcType: copier.String,
 		DstType: &sql.NullTime{},
-		Fn: func(src interface{}) (dst interface{}, err error) {
+		Fn: func(src any) (dst any, err error) {
 			val, ok := src.(string)
 			if !ok {
 				return "", errors.Errorf("invalid src type:%T", val)

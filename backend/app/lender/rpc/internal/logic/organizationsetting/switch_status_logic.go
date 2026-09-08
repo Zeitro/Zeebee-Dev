@@ -6,6 +6,8 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
+	"zeebee-backend/domains/zeebee/constants"
 
 	"zeebee-backend/common/errorx"
 )
@@ -32,12 +34,17 @@ func (l *SwitchStatusLogic) SwitchStatus(in *lender.OrganizationSettingSwitchSta
 		return nil, errorx.New("Data is required")
 	}
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	err = l.baseLogic.OrganizationSettingLogic.SwitchStatus(l.ctx, in.Data.Id, claim.OrganizationId, in.Data.Enabled)
+	_, err = l.svcCtx.TenantClient.OrganizationSetting.SwitchStatus(l.ctx, &tenant.OrganizationSettingSwitchStatusRequest{Data: &tenant.OrganizationSettingSwitchStatusRequestData{
+		UserType:       string(constants.UserTypeLender),
+		Id:             in.Data.Id,
+		OrganizationId: claim.OrganizationId,
+		Enabled:        in.Data.Enabled,
+	}})
 	if err != nil {
 		return nil, err
 	}

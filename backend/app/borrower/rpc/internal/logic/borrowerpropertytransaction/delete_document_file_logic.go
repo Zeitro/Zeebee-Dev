@@ -34,7 +34,7 @@ func NewDeleteDocumentFileLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *DeleteDocumentFileLogic) DeleteDocumentFile(in *borrower.BorrowerPropertyTransactionDocumentDeleteFileRequest) (resp *proto.EmptyResponse, err error) {
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}

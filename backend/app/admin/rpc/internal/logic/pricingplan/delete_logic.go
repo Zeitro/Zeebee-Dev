@@ -5,7 +5,8 @@ import (
 
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
-	"zeebee-backend/common/errorx"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
@@ -27,10 +28,8 @@ func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogi
 
 func (l *DeleteLogic) Delete(in *proto.PathIdRequest) (resp *proto.EmptyResponse, err error) {
 
-	err = l.baseLogic.PricingPlanLogic.Delete(l.ctx, in.Data.Id)
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-
-	return &proto.EmptyResponse{}, nil
+	return l.svcCtx.TenantClient.PricingPlan.Delete(l.ctx, &tenant.PricingPlanDeleteRequest{Data: &tenant.PricingPlanDeleteRequestData{
+		UserType: string(constants.UserTypeAdmin),
+		Id:       in.Data.Id,
+	}})
 }

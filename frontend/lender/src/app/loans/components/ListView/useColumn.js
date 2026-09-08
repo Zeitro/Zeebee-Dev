@@ -5,8 +5,11 @@ import {
 	LoanPendingStatus,
 } from '@repo/shared-methods/componentsUi/zeeBeeDetails/components/ChangeStageStatus';
 import { TableOperation } from '@repo/shared-methods';
+import { PERMISSIONS } from '@config/permissions';
+import { useAuth } from '@repo/shared-methods/hooks';
 
 export default function useColumn({ isNotAddress, successCallback, showDeleteModal, stage }) {
+	const { hasPermission, getActiveByPermission } = useAuth();
 	const get3rdPartyMark = (v, { source }) => (
 		<div className="flex items-center">
 			<p className="overflow-hidden text-ellipsis whitespace-nowrap" title={v}>
@@ -82,23 +85,21 @@ export default function useColumn({ isNotAddress, successCallback, showDeleteMod
 		];
 	};
 
-	const getOpt = (showDeleteModal) => {
-		return {
-			title: 'Action',
-			dataIndex: 'operation',
+	const getOpt = (showDeleteModal) =>
+		getActiveByPermission({
 			width: 110,
-			align: 'left',
-			fixed: 'right',
+			permissionList: [PERMISSIONS.LOAN.DETAILS],
 			render: (_, record) => (
 				<TableOperation
 					record={record}
 					getItems={(editItem, deleteItem, detailsItem) => {
-						const arr = [
-							{
+						const arr = [];
+						if (hasPermission(PERMISSIONS.LOAN.DETAILS)) {
+							arr.push({
 								...detailsItem,
 								url: `/loans/zeeBeeDetails?id=${record?.id}`,
-							},
-						];
+							});
+						}
 						return arr;
 					}}
 					onSelect={(key) => {
@@ -108,8 +109,7 @@ export default function useColumn({ isNotAddress, successCallback, showDeleteMod
 					}}
 				/>
 			),
-		};
-	};
+		});
 
 	const getStageOpt = (successCallback) => {
 		return {
@@ -120,7 +120,12 @@ export default function useColumn({ isNotAddress, successCallback, showDeleteMod
 			width: 150,
 			align: 'center',
 			fixed: 'right',
-			render: (v, record) => <LoanStage data={record} successCallback={successCallback} />,
+			render: (v, record) =>
+				hasPermission(PERMISSIONS?.LOAN?.CHANGE_STAGE) ? (
+					<LoanStage data={record} successCallback={successCallback} />
+				) : (
+					v
+				),
 		};
 	};
 
@@ -133,9 +138,12 @@ export default function useColumn({ isNotAddress, successCallback, showDeleteMod
 			width: 150,
 			align: 'center',
 			fixed: 'right',
-			render: (v, record) => (
-				<LoanPendingStatus data={record} successCallback={successCallback} />
-			),
+			render: (v, record) =>
+				hasPermission(PERMISSIONS?.LOAN?.CHANGE_PENDING_STATUS) ? (
+					<LoanPendingStatus data={record} successCallback={successCallback} />
+				) : (
+					v
+				),
 		};
 		let arr = [
 			...common(isNotAddress),

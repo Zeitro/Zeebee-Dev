@@ -1,7 +1,9 @@
 'use client';
 import { useUserStore, usePermissionStore } from '@repo/shared-methods/store';
+import { matchRoute } from '@repo/shared-methods/utils';
 import { useRouter } from 'next/navigation';
 import { menuSetting } from '@config/routes';
+
 const useData = () => {
 	const router = useRouter();
 	const { getUserInfo, getUserMenus, getOrganization } = useUserStore();
@@ -16,10 +18,12 @@ const useData = () => {
 		await getUserInfo();
 		const result = await getUserMenus(menuSetting);
 		await getOrganization();
+		const accessPaths = result?.accessPaths ?? [];
 		setPermissionTags(result?.permissionTags);
-		setAccessPaths(result?.accessPaths);
+		setAccessPaths(accessPaths);
 		successCallback?.(false);
-		router.push('/');
+		const hasDashboard = accessPaths.some((path) => matchRoute(path, '/dashboard'));
+		router.push(hasDashboard ? '/dashboard' : '/');
 	};
 	return { getUserPermissions };
 };

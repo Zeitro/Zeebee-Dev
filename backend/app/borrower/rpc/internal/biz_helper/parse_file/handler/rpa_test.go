@@ -113,7 +113,9 @@ func (m *memReporter) stage(name string) *memStage {
 	return s
 }
 
-func (m *memReporter) MarkStage(_ context.Context, stage, status string) { m.stage(stage).status = status }
+func (m *memReporter) MarkStage(_ context.Context, stage, status string) {
+	m.stage(stage).status = status
+}
 func (m *memReporter) SetStageTotal(_ context.Context, stage string, total int) {
 	m.stage(stage).total = total
 }
