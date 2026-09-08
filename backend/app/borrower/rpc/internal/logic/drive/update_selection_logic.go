@@ -37,7 +37,7 @@ func (l *UpdateSelectionLogic) UpdateSelection(in *borrower.DriveUpdateSelection
 			l.svcCtx.Logger.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}

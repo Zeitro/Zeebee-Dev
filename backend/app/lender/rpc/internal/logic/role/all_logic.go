@@ -6,9 +6,8 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/copierx"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
@@ -30,22 +29,20 @@ func NewAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AllLogic {
 
 func (l *AllLogic) All(in *proto.EmptyRequest) (resp *lender.RoleAllResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	result, err := l.baseLogic.RoleLogic.All(l.ctx, claim.OrganizationId, constants.UserTypeLender)
-	if err != nil {
-		return nil, err
-	}
-
-	data, err := copierx.Trans[[]*dto.RoleEntityDto, []*proto.RoleEntity](&result, copierx.TimeToRFC3339Str())
+	result, err := l.svcCtx.TenantClient.Role.All(l.ctx, &tenant.RoleAllRequest{Data: &tenant.RoleAllRequestData{
+		UserType:       string(constants.UserTypeLender),
+		OrganizationId: claim.OrganizationId,
+	}})
 	if err != nil {
 		return nil, err
 	}
 
 	return &lender.RoleAllResponse{
-		Data: *data,
+		Data: result.Data,
 	}, nil
 }

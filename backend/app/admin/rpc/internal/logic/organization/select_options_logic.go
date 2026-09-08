@@ -6,10 +6,7 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/common/copierx"
-	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/proto"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 
 	"zeebee-backend/common/errorx"
 )
@@ -36,18 +33,14 @@ func (l *SelectOptionsLogic) SelectOptions(in *admin.OrganizationSelectOptionsRe
 		return nil, errorx.New("Data is required")
 	}
 
-	organizationType := constants.UserType(in.Data.Type)
-
-	organization, err := l.baseLogic.OrganizationLogic.AllForOption(l.ctx, organizationType, constants.OrganizationStatusActive)
-	if err != nil {
-		return nil, err
-	}
-	data, err := copierx.Trans[[]*dto.OrganizationOptionDto, []*proto.OrganizationOptionsEntity](&organization)
+	organization, err := l.svcCtx.TenantClient.Organization.SelectOptions(l.ctx, &tenant.OrganizationSelectOptionsRequest{Data: &tenant.OrganizationSelectOptionsRequestData{
+		UserType: in.Data.Type,
+	}})
 	if err != nil {
 		return nil, err
 	}
 
 	return &admin.OrganizationSelectOptionsResponse{
-		Data: *data,
+		Data: organization.Data,
 	}, nil
 }

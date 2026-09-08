@@ -3,26 +3,26 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button, Progress, message } from 'antd';
 import { CloudSyncOutlined } from '@ant-design/icons';
-import { NewModal } from '@repo/shared-methods';
 import { createRequest, displayValue } from '@repo/shared-methods/utils';
 import CategoryContentPanel from './CategoryContentPanel';
 import { buildDocumentCategoriesFromChecklist, getChecklistProgress } from './checklist';
 import DocumentCategoryButton from './DocumentCategoryButton';
-import SyncResultContent from './SyncResultContent';
-
 // 同步是异步任务：POST 立即返回 job，之后轮询 status 接口直到终态。
 // 代理（undici）约 30s 会掐断长请求，所以绝不能让 HTTP 请求一直等同步结果。
 const SYNC_POLL_INTERVAL = 2000;
 const SYNC_POLL_MAX_MS = 10 * 60 * 1000; // 与后端 driveSyncJobTimeout 对齐
 const SYNC_TERMINAL_STATUSES = ['Success', 'PartialFailed', 'Failed'];
+const PARSE_POLL_INTERVAL = 5000; // 每 5 秒请求一次 parse/result
+const PARSE_POLL_MAX_MS = 60 * 60 * 1000; // 最长轮询 1 小时，超时则停止并提示
+/** 解析任务终态；Running 为进行中，Finished / Failed 为终态 */
+const PARSE_TERMINAL_STATUSES = ['Finished', 'Failed'];
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const DocumentsTab = ({ rowData, onRefresh }) => {
 	// createRequest() 每次渲染返回新的 request 引用，useMemo 固定一次，避免回调失稳
 	const { request } = useMemo(() => createRequest(), []);
 	const [syncing, setSyncing] = useState(false);
-	// 同步完成结果（成功/部分失败）；用受控 NewModal 展示，与系统弹窗风格统一
-	const [syncResult, setSyncResult] = useState(null);
+	const [messageApi, contextHolder] = message.useMessage();
 	// 组件卸载后停止轮询 / 状态更新，避免切换菜单回来时遗留的异步写入已卸载组件
 	const mountedRef = useRef(true);
 	useEffect(() => {
@@ -37,6 +37,52 @@ const DocumentsTab = ({ rowData, onRefresh }) => {
 	useEffect(() => {
 		onRefreshRef.current = onRefresh;
 	}, [onRefresh]);
+
+	/**
+	 * 轮询 GET /borrower_property_transaction/{id}/parse/result?request_id= 直到终态。
+	 * 必须用 getState() 读最新 params：updateParseFileParams 是同步写入，
+	 * 但 useCallback 闭包里的 parseFileParams 仍是旧快照，会导致刚写入却读不到。
+	 * @param {number|string} transactionId
+	 * @param {number|string} documentId
+	 * @returns {Promise<object|null>}
+	 */
+	const pollParseStatus = useCallback(
+		async (transactionId, documentId, params) => {
+			if (!transactionId || !documentId) return null;
+
+			const deadline = Date.now() + PARSE_POLL_MAX_MS;
+			let result = null;
+
+			while (!result || !PARSE_TERMINAL_STATUSES.includes(result?.status)) {
+				if (!mountedRef.current || Date.now() > deadline) {
+					return null;
+				}
+
+				const query = new URLSearchParams({
+					...params,
+					type: 'request_id',
+				}).toString();
+				result = await request(
+					`/borrower_property_transaction/${transactionId}/parse/result?${query}`,
+					{ method: 'GET' },
+				);
+
+				if (PARSE_TERMINAL_STATUSES.includes(result?.status)) {
+					if (result?.status === 'Finished') {
+						messageApi.success('AI parsing completed');
+					} else {
+						messageApi.error('AI parsing failed');
+					}
+					return result;
+				}
+
+				await sleep(PARSE_POLL_INTERVAL);
+			}
+
+			return result;
+		},
+		[messageApi, request],
+	);
 
 	// 轮询任务状态直到终态；shouldStop 为真或组件卸载时提前退出。返回终态结果或 null。
 	const pollSyncStatus = useCallback(
@@ -67,18 +113,6 @@ const DocumentsTab = ({ rowData, onRefresh }) => {
 		[request],
 	);
 
-	// 展示终态结果（失败提示 / 成功弹窗）
-	const showSyncResult = useCallback((result) => {
-		if (!result) {
-			return;
-		}
-		if (result.status === 'Failed') {
-			message.error('Sync failed: ' + (result.error || 'unknown error'));
-			return;
-		}
-		setSyncResult(result);
-	}, []);
-
 	const runSync = useCallback(async () => {
 		const transactionId = rowData?.id;
 		// syncing 时直接返回：防止在状态尚未刷新的瞬间重复触发
@@ -104,9 +138,10 @@ const DocumentsTab = ({ rowData, onRefresh }) => {
 			message.info('Sync started. Syncing to Google Drive in the background…');
 
 			const result = await pollSyncStatus(transactionId, started);
-			showSyncResult(result);
-			// 同步达终态后刷新文档列表，使新同步的文件立即带上 Google Drive 标签，
-			// 无需手动刷新页面（Failed 表示整体失败、无文件落库，跳过）。
+			// On terminal status, refresh the document list so newly synced files show
+			// the Google Drive tag immediately. The full result (counts / folder link /
+			// per-file list) is recorded in the transaction Log instead of a modal.
+			// Failed means the whole run failed with nothing persisted, so skip refresh.
 			if (result && result.status !== 'Failed') {
 				onRefreshRef.current?.();
 			}
@@ -117,10 +152,11 @@ const DocumentsTab = ({ rowData, onRefresh }) => {
 				setSyncing(false);
 			}
 		}
-	}, [request, rowData?.id, syncing, pollSyncStatus, showSyncResult]);
+	}, [request, rowData?.id, syncing, pollSyncStatus]);
 
-	// 切换菜单回到本页时，若后台仍有 Running 任务，自动恢复 loading 并继续轮询，
-	// 避免按钮误显示为可点击导致重复触发同步。
+	// On returning to this page, if a Running job still exists, restore the loading
+	// state and keep polling so the button isn't shown as clickable (avoiding a
+	// duplicate sync); refresh the document list on completion to show the tags.
 	useEffect(() => {
 		const transactionId = rowData?.id;
 		if (!transactionId) {
@@ -139,11 +175,8 @@ const DocumentsTab = ({ rowData, onRefresh }) => {
 				if (current?.status === 'Running') {
 					setSyncing(true);
 					const result = await pollSyncStatus(transactionId, current);
-					if (active && mountedRef.current) {
-						showSyncResult(result);
-						if (result && result.status !== 'Failed') {
-							onRefreshRef.current?.();
-						}
+					if (active && mountedRef.current && result && result.status !== 'Failed') {
+						onRefreshRef.current?.();
 					}
 				}
 			} catch {
@@ -157,7 +190,7 @@ const DocumentsTab = ({ rowData, onRefresh }) => {
 		return () => {
 			active = false;
 		};
-	}, [rowData?.id, request, pollSyncStatus, showSyncResult]);
+	}, [rowData?.id, request, pollSyncStatus]);
 
 	const categories = useMemo(
 		() => buildDocumentCategoriesFromChecklist(rowData?.checklist),
@@ -187,6 +220,7 @@ const DocumentsTab = ({ rowData, onRefresh }) => {
 
 	return (
 		<div className="flex gap-4 p-4">
+			{contextHolder}
 			<div className="flex w-[311px] shrink-0 flex-col gap-2">
 				<div className="flex gap-2">
 					{/* Import 按钮本期不需要，先隐藏 */}
@@ -253,27 +287,8 @@ const DocumentsTab = ({ rowData, onRefresh }) => {
 				category={activeCategory}
 				onRefresh={onRefresh}
 				transactionId={rowData?.id}
+				pollParseStatus={pollParseStatus}
 			/>
-
-			{syncResult && (
-				<NewModal
-					width={560}
-					title={
-						syncResult.status === 'PartialFailed'
-							? 'Sync to Google Drive completed with some failures'
-							: 'Sync to Google Drive completed'
-					}
-					onCancel={() => setSyncResult(null)}
-					footer={[
-						<span key="spacer" />,
-						<Button key="done" type="primary" onClick={() => setSyncResult(null)}>
-							Done
-						</Button>,
-					]}
-				>
-					<SyncResultContent result={syncResult} />
-				</NewModal>
-			)}
 		</div>
 	);
 };

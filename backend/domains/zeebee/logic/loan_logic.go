@@ -160,7 +160,7 @@ func (l *LoanLogic) BorrowerLoanPage(ctx context.Context, req dto.LoanBorrowerPa
 }
 
 func (l *LoanLogic) handleDueInfo(items []*dto.LoanEntityDto, days int) {
-	today := datetime.EndOfDay(time.Now())
+	today := datetime.BeginOfDay(time.Now())
 	dueDay := datetime.BeginOfDay(time.Now().AddDate(0, 0, days))
 
 	for _, item := range items {
@@ -175,9 +175,9 @@ func (l *LoanLogic) handleDueInfo(items []*dto.LoanEntityDto, days int) {
 		if maturityDate.Before(today) {
 			item.DueStatus = constants.LoanDueStatusOverdue
 			item.DueDays = int32(datetime.DaysBetween(maturityDate, today))
-		} else if maturityDate.Before(dueDay) {
+		} else if maturityDate.Before(dueDay) || maturityDate.Equal(dueDay) {
 			item.DueStatus = constants.LoanDueStatusDueSoon
-			item.DueDays = int32(datetime.DaysBetween(today, dueDay))
+			item.DueDays = int32(datetime.DaysBetween(today, maturityDate))
 		} else {
 			item.DueStatus = constants.LoanDueStatusNone
 			item.DueDays = int32(datetime.DaysBetween(today, maturityDate))

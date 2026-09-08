@@ -6,8 +6,9 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/constants"
 
 	"zeebee-backend/common/errorx"
 )
@@ -30,41 +31,30 @@ func NewPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PageLogic {
 
 func (l *PageLogic) Page(in *lender.OrganizationUserPageRequest) (resp *lender.OrganizationUserPageResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	pageReq := &dto.OrganizationUserPageRequestDto{}
-	pageReq, err = copierx.Trans[lender.OrganizationUserPageRequestData, dto.OrganizationUserPageRequestDto](in.Data)
+	pageReq, err := copierx.Trans[lender.OrganizationUserPageRequestData, tenant.OrganizationUserPageRequestData](in.Data)
 	// err = copier.Copy(&pageReq, &in.Data)
 	if err != nil {
 		return nil, err
 	}
 
-	pageReq.Filter.UserType = claim.UserType
+	pageReq.UserType = string(constants.UserTypeLender)
 	pageReq.Filter.OrganizationId = claim.OrganizationId
 	pageReq.Filter.UserId = claim.UserId
 
-	results, err := l.baseLogic.OrganizationUserLogic.Page(l.ctx, *pageReq)
+	results, err := l.svcCtx.TenantClient.OrganizationUser.Page(l.ctx, &tenant.OrganizationUserPageRequest{Data: pageReq})
 	if err != nil {
 		return nil, err
 	}
-	var list []*lender.OrganizationUserPageEntity
-	for _, v := range results.List {
-		item, err := copierx.Trans[dto.OrganizationUserEntityDto, lender.OrganizationUserPageEntity](v, copierx.TimeToRFC3339Str())
-		if err != nil {
-			return nil, errorx.GetFailedTransRespErr(err)
-		}
-		list = append(list, item)
+	data, err := copierx.Trans[tenant.OrganizationUserPageResponseData, lender.OrganizationUserPageResponseData](results.Data, copierx.TimeToRFC3339Str())
+	if err != nil {
+		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
 	return &lender.OrganizationUserPageResponse{
-		Data: &lender.OrganizationUserPageResponseData{
-			Page:      results.Page,
-			Limit:     results.Limit,
-			Total:     results.Total,
-			TotalPage: results.TotalPage,
-			List:      list,
-		},
+		Data: data,
 	}, nil
 }

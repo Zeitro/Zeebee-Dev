@@ -6,9 +6,9 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
@@ -30,19 +30,20 @@ func NewLenderPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Lender
 
 func (l *LenderPageLogic) LenderPage(in *proto.CommonPageRequest) (resp *borrower.OrganizationLenderPageResponse, err error) {
 
-	pageReq, err := copierx.Trans[proto.CommonPageRequestData, dto.OrganizationPageRequestDto](in.Data)
+	pageReq, err := copierx.Trans[proto.CommonPageRequestData, tenant.OrganizationPageRequestData](in.Data)
 	if err != nil {
 		return nil, err
 	}
-	pageReq.Filter.OrganizationType = constants.UserTypeLender
-	pageReq.Filter.Status = constants.OrganizationStatusActive
+	pageReq.UserType = string(constants.UserTypeBorrower)
+	pageReq.Filter.OrganizationType = string(constants.UserTypeLender)
+	pageReq.Filter.Status = string(constants.OrganizationStatusActive)
 
-	pageResult, err := l.baseLogic.OrganizationLogic.Page(l.ctx, *pageReq)
+	pageResult, err := l.svcCtx.TenantClient.Organization.Page(l.ctx, &tenant.OrganizationPageRequest{Data: pageReq})
 	if err != nil {
 		return nil, err
 	}
 
-	data, err := copierx.Trans[dto.PageResultDto[dto.OrganizationPageEntityDto], borrower.OrganizationLenderPageResponseData](&pageResult, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[tenant.OrganizationPageResponseData, borrower.OrganizationLenderPageResponseData](pageResult.Data, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

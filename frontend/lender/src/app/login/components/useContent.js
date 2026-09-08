@@ -4,11 +4,11 @@ import { eventBus } from '@repo/shared-methods/utils';
 import { useRouter } from 'next/navigation';
 import MainModal from '@/app/setting/organizationProfile/components/Main';
 import { menuSetting } from '@config/routes';
+import { PERMISSIONS } from '@config/permissions';
 const useContent = () => {
 	const router = useRouter();
 	const { getUserInfo, getOrganization, setOrganization, getUserMenus } = useUserStore();
 	const { setPermissionTags, setAccessPaths, updateAccess } = usePermissionStore();
-
 	// 组织信息完整后登录
 	const getUserPermissions = async (access, successCallback, org) => {
 		if (access) {
@@ -17,7 +17,8 @@ const useContent = () => {
 		}
 		await getUserInfo();
 		const result = await getUserMenus(menuSetting);
-		setPermissionTags(result?.permissionTags);
+		const permissionTags = result?.permissionTags ?? [];
+		setPermissionTags(permissionTags);
 		setAccessPaths(result?.accessPaths);
 		successCallback?.(false);
 		if (!org) return;
@@ -26,13 +27,21 @@ const useContent = () => {
 		// 预授权信件未配置,跳转配置页面
 		if (!preSetting?.has_configured) {
 			const params = new URLSearchParams({ isSettingPreApprovedLetter: true });
-			router.replace(`/setting/system?${params}`);
+			// 须用本次接口返回的 tags 判断；useAuth().hasPermission 闭包内仍是旧 permissionTags
+			if (permissionTags.includes(PERMISSIONS.SETTING_SYSTEM.PAGE)) {
+				router.replace(`/setting/system?${params}`);
+			} else {
+				router.replace('/');
+			}
 		} else {
 			router.replace('/');
 		}
 	};
 	// 拿到用户token后登录
 	const loginByToken = async (access, successCallback) => {
+		if (access) {
+			updateAccess(access);
+		}
 		const org = await getOrganization();
 		// 未填写组织信息, 弹出组织相关让其填写
 		if (!org?.contact_email || !org?.contact_phone || !org?.contact_name) {
