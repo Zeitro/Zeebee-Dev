@@ -27,7 +27,7 @@ import { countSubtasks } from './components/helpers';
 import { TaskDetailDrawer } from './components/TaskDetail';
 import { useKanbanBoard } from './hooks/useKanbanBoard';
 
-export function ProjectKanban() {
+export function ProjectKanban({ PERMISSIONS }) {
 	const { id } = useParams();
 	const projectId = id;
 	const [messageApi, messageContextHolder] = message.useMessage();
@@ -52,6 +52,7 @@ export function ProjectKanban() {
 				projectId={projectId}
 				workflow={workflow}
 				messageApi={messageApi}
+				PERMISSIONS={PERMISSIONS}
 				{...boardProps}
 			/>
 		</>
@@ -77,6 +78,7 @@ function ProjectKanbanView({
 	refreshProjectMembers,
 	searchProjectMembers,
 	messageApi,
+	PERMISSIONS,
 }) {
 	const router = useRouter();
 	const pathname = usePathname();
@@ -157,6 +159,7 @@ function ProjectKanbanView({
 				project={project}
 				taskCount={taskTotal || tasks.length}
 				canManage={canManage}
+				PERMISSIONS={PERMISSIONS}
 				onCreateTask={() => openCreate()}
 				onMembersClick={() => setMemberListOpen(true)}
 				onInviteClick={() => setInviteOpen(true)}
