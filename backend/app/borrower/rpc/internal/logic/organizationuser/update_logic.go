@@ -3,14 +3,12 @@ package organizationuserlogic
 import (
 	"context"
 
-	"github.com/jinzhu/copier"
-
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/proto"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 type UpdateLogic struct {
@@ -31,36 +29,23 @@ func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogi
 
 func (l *UpdateLogic) Update(in *borrower.OrganizationUserUpdateRequest) (resp *borrower.OrganizationUserDetailResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	input := dto.OrganizationUserUpdateRequestDto{}
-	err = copier.CopyWithOption(&input, &in.Data, copier.Option{CaseSensitive: true, DeepCopy: true})
+	input, err := copierx.Trans[borrower.OrganizationUserUpdateRequestData, tenant.OrganizationUserUpdateRequestData](in.Data)
 	if err != nil {
 		return nil, err
 	}
-	input.UserType = claim.UserType
+	input.UserType = string(constants.UserTypeBorrower)
 	input.OrganizationId = claim.OrganizationId
 
-	result, err := l.baseLogic.OrganizationUserLogic.UpdateOrganizationUser(l.ctx, input)
+	result, err := l.svcCtx.TenantClient.OrganizationUser.UpdateOrganizationUser(l.ctx, &tenant.OrganizationUserUpdateRequest{Data: input})
 	if err != nil {
 		return nil, err
 	}
-	data := &proto.OrganizationUserEntity{}
-	err = copier.CopyWithOption(data, result, copier.Option{
-		CaseSensitive: true,
-		DeepCopy:      true,
-		Converters: []copier.TypeConverter{
-			copierx.TimeToRFC3339Str(),
-		},
-	})
-	if err != nil {
-		return nil, err
-	}
-
 	return &borrower.OrganizationUserDetailResponse{
-		Data: data,
+		Data: result.Data,
 	}, nil
 }

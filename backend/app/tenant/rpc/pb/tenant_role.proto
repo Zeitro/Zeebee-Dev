@@ -1,0 +1,144 @@
+syntax = "proto3";
+
+package tenant;
+
+option go_package = "zeebee-backend/app/tenant/rpc/pb/tenant";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+// Role CRUD + status + resource binding + member assignment, consolidated from
+// the three backends. tenant is a thin wrapper over the shared RoleLogic.
+// Resource binding is expressed via role_and_resources on Create/Update
+// (the shared layer has no separate BindResource RPC).
+
+// page
+message RolePageRequest {
+  RolePageRequestData data = 1;
+}
+message RolePageRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+  int64 page = 3;
+  int64 limit = 4;
+  RolePageRequestFilter filter = 5;
+  RolePageRequestSorter sorter = 6;
+}
+message RolePageRequestFilter {
+  string keyword = 1;
+}
+message RolePageRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+message RolePageResponse {
+  RolePageResponseData data = 1;
+}
+message RolePageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated proto.RoleEntity list = 5;
+}
+
+// create
+message RoleCreateRequest {
+  RoleCreateRequestData data = 1;
+}
+message RoleCreateRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+  string name = 3;
+  string description = 4;
+  string status = 5;
+  repeated RoleAndResourceRelationEntity role_and_resources = 6;
+}
+
+// update
+message RoleUpdateRequest {
+  RoleUpdateRequestData data = 1;
+}
+message RoleUpdateRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+  int64 id = 3;
+  string name = 4;
+  string description = 5;
+  string status = 6;
+  repeated RoleAndResourceRelationEntity role_and_resources = 7;
+}
+
+message RoleAndResourceRelationEntity {
+  int64 role_id = 1;
+  int64 resource_id = 2;
+  string data_scope = 3;
+}
+
+// delete
+message RoleDeleteRequest {
+  RoleDeleteRequestData data = 1;
+}
+message RoleDeleteRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+  int64 id = 3;
+}
+
+// detail
+message RoleDetailRequest {
+  RoleDetailRequestData data = 1;
+}
+message RoleDetailRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+  int64 id = 3;
+}
+message RoleDetailResponse {
+  proto.RoleEntity data = 1;
+}
+
+// switch status
+message RoleSwitchStatusRequest {
+  RoleSwitchStatusRequestData data = 1;
+}
+message RoleSwitchStatusRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+  int64 id = 3;
+  string status = 4;
+}
+
+// all roles of an organization
+message RoleAllRequest {
+  RoleAllRequestData data = 1;
+}
+message RoleAllRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+}
+message RoleAllResponse {
+  repeated proto.RoleEntity data = 1;
+}
+
+// assign organization users to a role
+message RoleAssignOrganizationUsersRequest {
+  RoleAssignOrganizationUsersRequestData data = 1;
+}
+message RoleAssignOrganizationUsersRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+  int64 id = 3;
+  repeated int64 organization_user_ids = 4;
+}
+
+service Role {
+  rpc Page(RolePageRequest) returns (RolePageResponse);
+  rpc Create(RoleCreateRequest) returns (RoleDetailResponse);
+  rpc Update(RoleUpdateRequest) returns (RoleDetailResponse);
+  rpc Delete(RoleDeleteRequest) returns (proto.EmptyResponse);
+  rpc Detail(RoleDetailRequest) returns (RoleDetailResponse);
+  rpc SwitchStatus(RoleSwitchStatusRequest) returns (proto.EmptyResponse);
+  rpc All(RoleAllRequest) returns (RoleAllResponse);
+  rpc AssignOrganizationUsers(RoleAssignOrganizationUsersRequest) returns (RoleDetailResponse);
+}

@@ -1,0 +1,49 @@
+package organizationtemplatelogic
+
+import (
+	"context"
+
+	"zeebee-backend/app/tenant/rpc/internal/logic"
+	"zeebee-backend/app/tenant/rpc/internal/svc"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
+	"zeebee-backend/common/copierx"
+	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
+)
+
+type UpdateVariableGroupLogic struct {
+	ctx       context.Context
+	svcCtx    *svc.ServiceContext
+	baseLogic *logic.BaseLogic
+}
+
+func NewUpdateVariableGroupLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateVariableGroupLogic {
+	return &UpdateVariableGroupLogic{ctx: ctx, svcCtx: svcCtx, baseLogic: logic.GetBaseLogic(svcCtx)}
+}
+
+// UpdateVariableGroup edits an organization template's variable groups.
+func (l *UpdateVariableGroupLogic) UpdateVariableGroup(in *tenant.OrganizationTemplateUpdateVariableGroupRequest) (resp *tenant.OrganizationTemplateDetailResponse, err error) {
+	if in.Data == nil {
+		return nil, errorx.ErrorEmptyRequestData
+	}
+	if _, err = logic.ParseUserType(in.Data.UserType); err != nil {
+		return
+	}
+
+	req, err := copierx.Trans[tenant.OrganizationTemplateUpdateVariableGroupRequestData, dto.OrganizationTemplateUpdateVariableGroupDto](in.Data)
+	if err != nil {
+		return
+	}
+
+	result, err := l.baseLogic.OrganizationTemplateLogic.UpdateVariableGroup(l.ctx, *req)
+	if err != nil {
+		return
+	}
+
+	data, err := copierx.Trans[dto.OrganizationTemplateEntityDto, proto.OrganizationTemplateEntity](result, copierx.TimeToRFC3339Str())
+	if err != nil {
+		return
+	}
+	return &tenant.OrganizationTemplateDetailResponse{Data: data}, nil
+}

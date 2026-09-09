@@ -141,7 +141,7 @@ func setupPricingPlanLogic(t *testing.T) (*PricingPlanLogic, *gorm.DB) {
 	t.Helper()
 	db := setupTestDB(t)
 	repos := repo.NewAllRepos(db)
-	baseLogic := NewBaseLogic(repos, nil)
+	baseLogic := NewBaseLogic(repos, nil, nil, dto.JwtConfig{})
 	authTopicMap := map[constants.UserType]string{
 		constants.UserTypeBorrower: "test-borrower-topic",
 		constants.UserTypeLender:   "test-lender-topic",

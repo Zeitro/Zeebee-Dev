@@ -3,7 +3,7 @@ Host: 0.0.0.0
 Port: 10000
 Timeout: 60000
 
-JwtAuth:
+JwtConf:
   AccessSecret: accessSecret
   AccessExpire: 86000
 

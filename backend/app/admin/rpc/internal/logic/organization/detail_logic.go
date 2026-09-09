@@ -6,8 +6,8 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/common/copierx"
-	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
@@ -31,14 +31,14 @@ func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogi
 // It fetches the organization with preloaded relations (Owner, OrganizationEmails).
 func (l *DetailLogic) Detail(in *proto.IdRequest) (resp *admin.OrganizationDetailResponse, err error) {
 
-	organization, err := l.baseLogic.OrganizationLogic.Detail(l.ctx, in.Data)
+	organization, err := l.svcCtx.TenantClient.Organization.Detail(l.ctx, &tenant.OrganizationDetailRequest{Data: &tenant.OrganizationDetailRequestData{
+		UserType: string(constants.UserTypeAdmin),
+		Id:       in.Data,
+	}})
 	if err != nil {
 		return nil, err
 	}
-	// Convert to response
-	data, err := copierx.Trans[dto.OrganizationEntityDto, proto.OrganizationEntity](organization, copierx.TimeToRFC3339Str())
-
 	return &admin.OrganizationDetailResponse{
-		Data: data,
-	}, err
+		Data: organization.Data,
+	}, nil
 }

@@ -7,7 +7,7 @@ ApiConf:
     Stat: false
     ServiceName: lender.api
 
-  JwtAuth:
+  JwtConf:
     AccessSecret: bL0iP5yE4jS4mT0nY0uJ0iG1yP6lI9gY
     AccessExpire: 86000
 
@@ -16,9 +16,19 @@ ApiConf:
       - 127.0.0.1:10101
     Timeout: 10000
     NonBlock: true
+  TenantRpc:
+    Endpoints:
+      - 127.0.0.1:10401
+    Timeout: 10000
+    NonBlock: true
   PdfGeneratorBaseUrl: http://127.0.0.1:10300/api/v1
 
 RpcConf:
+  RpcServiceConf:
+    Tenant:
+      ServiceName: tenant.rpc
+      Endpoints:
+        - 127.0.0.1:10401
   Name: lender.rpc
   ListenOn: 0.0.0.0:10101
   Mode: dev
@@ -48,7 +58,7 @@ RpcConf:
     Password: jerburfauvmzpmnq
     Username: info@zeebeeloans.com
 
-  JwtAuth:
+  JwtConf:
     AccessSecret: bL0iP5yE4jS4mT0nY0uJ0iG1yP6lI9gY
     AccessExpire: 864000
     RefreshSecret: fQ4rU4iR7vL1uH7iH3jB0gO5oV1uD1rP
@@ -88,6 +98,3 @@ RpcConf:
       Pwd: ''
       Tls: true
       LenderChannel: /lender-channel
-  CronTaskConf:
-    - name: update_organization_subscription_status
-      schedule: "0 0 3 * * *"

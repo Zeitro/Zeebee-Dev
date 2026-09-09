@@ -1,0 +1,315 @@
+syntax = "proto3";
+
+package tenant;
+
+option go_package = "zeebee-backend/app/tenant/rpc/pb/tenant";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+// Organization CRUD + ordering + status, consolidated from admin / lender / borrower.
+// tenant is a thin wrapper over the shared OrganizationLogic plus organization
+// provisioning flows used by admin and lender.
+
+message OrganizationPageRequest {
+  OrganizationPageRequestData data = 1;
+}
+message OrganizationPageRequestFilter {
+  string keyword = 1;
+  string organization_type = 2;
+  string status = 3;
+}
+message OrganizationPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  OrganizationPageRequestFilter filter = 3;
+  proto.CommonPageSorter sorter = 4;
+  string user_type = 5;
+}
+
+message OrganizationPageEntity {
+  int64 id = 1;
+  string name = 2;
+  string status = 3;
+  proto.AddressEntity address = 4;
+  string contact_email = 5;
+  string contact_phone = 6;
+  string contact_name = 7;
+  string owner_type = 8;
+  string type = 9;
+  string logo = 10;
+  string website = 11;
+  string tagline = 12;
+  string source = 13;
+  int32 order = 14;
+  string owner_email = 15;
+  string owner_full_name = 16;
+  string owner_first_name = 17;
+  string owner_mid_name = 18;
+  string owner_last_name = 19;
+  string created_at = 20;
+  string updated_at = 21;
+}
+
+message OrganizationPageResponse {
+  OrganizationPageResponseData data = 1;
+}
+message OrganizationPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated OrganizationPageEntity list = 5;
+}
+
+message OrganizationDetailRequest {
+  OrganizationDetailRequestData data = 1;
+}
+message OrganizationDetailRequestData {
+  string user_type = 1;
+  int64 id = 2;
+}
+
+message OrganizationDetailWithTypeRequest {
+  OrganizationDetailWithTypeRequestData data = 1;
+}
+message OrganizationDetailWithTypeRequestData {
+  string user_type = 1;
+  int64 id = 2;
+}
+
+message OrganizationDetailResponse {
+  proto.OrganizationEntity data = 1;
+}
+
+message OrganizationCreateRequest {
+  OrganizationCreateRequestData data = 1;
+}
+message OrganizationCreateRequestData {
+  string user_type = 1;
+  string name = 2;
+  string contact_email = 3;
+  string contact_phone = 4;
+  string contact_name = 5;
+  string logo = 6;
+  string website = 7;
+  string tagline = 8;
+  proto.OrganizationMetadataEntity metadata = 9;
+  proto.AddressEntity address = 10;
+  string status = 11;
+  string owner_type = 12;
+  string source = 13;
+  int32 order = 14;
+  string owner_email = 15;
+  string owner_password = 16;
+  string owner_first_name = 17;
+  string owner_last_name = 18;
+}
+
+message OrganizationUpdateProfileRequest {
+  OrganizationUpdateProfileRequestData data = 1;
+}
+message OrganizationUpdateProfileRequestData {
+  string user_type = 1;
+  string contact_email = 2;
+  string contact_phone = 3;
+  string contact_name = 4;
+  string logo = 5;
+  string website = 6;
+  string tagline = 7;
+  proto.OrganizationMetadataEntity metadata = 8;
+  proto.AddressEntity address = 9;
+}
+
+message OrganizationUpdateLenderRequest {
+  OrganizationUpdateLenderRequestData data = 1;
+}
+message OrganizationUpdateLenderRequestData {
+  string user_type = 1;
+  int64 id = 2;
+  string contact_email = 3;
+  string contact_phone = 4;
+  string contact_name = 5;
+  string logo = 6;
+  string website = 7;
+  string tagline = 8;
+  proto.OrganizationMetadataEntity metadata = 9;
+  proto.AddressEntity address = 10;
+  string owner_email = 11;
+  string owner_password = 12;
+  string owner_first_name = 13;
+  string owner_last_name = 14;
+}
+
+message OrganizationAllRequest {
+  OrganizationAllRequestData data = 1;
+}
+message OrganizationAllRequestData {
+  string user_type = 1;
+}
+
+message OrganizationAllResponse {
+  repeated proto.OrganizationEntity data = 1;
+}
+
+message OrganizationAllForOptionRequest {
+  OrganizationAllForOptionRequestData data = 1;
+}
+message OrganizationAllForOptionRequestData {
+  string user_type = 1;
+  string status = 2;
+}
+
+message OrganizationSelectOptionsRequest {
+  OrganizationSelectOptionsRequestData data = 1;
+}
+message OrganizationSelectOptionsRequestData {
+  string user_type = 1;
+}
+
+message OrganizationOptionsResponse {
+  repeated proto.OrganizationOptionsEntity data = 1;
+}
+
+message OrganizationDeleteRequest {
+  OrganizationDeleteRequestData data = 1;
+}
+message OrganizationDeleteRequestData {
+  string user_type = 1;
+  int64 id = 2;
+}
+
+message OrganizationUpdateOrderRequest {
+  OrganizationUpdateOrderRequestData data = 1;
+}
+message OrganizationUpdateOrderRequestData {
+  string user_type = 1;
+  int64 id = 2;
+  int32 order = 3;
+}
+
+message OrganizationSwitchStatusRequest {
+  OrganizationSwitchStatusRequestData data = 1;
+}
+message OrganizationSwitchStatusRequestData {
+  string user_type = 1;
+  int64 id = 2;
+  string status = 3;
+}
+
+message LenderDiscoverSettingsEntity {
+  bool schedule_enabled = 1;
+  int32 interval_days = 2;
+  string scope_state = 3;
+  string scope_extra = 4;
+  string user_prompt = 5;
+  string openai_model = 6;
+}
+
+message LenderDiscoverSettingsResponse {
+  LenderDiscoverSettingsEntity data = 1;
+}
+
+message LenderDiscoverUpdateSettingsRequest {
+  LenderDiscoverUpdateSettingsRequestData data = 1;
+}
+message LenderDiscoverUpdateSettingsRequestData {
+  bool schedule_enabled = 1;
+  int32 interval_days = 2;
+  string scope_state = 3;
+  string scope_extra = 4;
+  string user_prompt = 5;
+  string openai_model = 6;
+  int64 updated_by_user_id = 7;
+}
+
+message LenderDiscoverRunRequest {
+  LenderDiscoverRunRequestData data = 1;
+}
+message LenderDiscoverRunRequestData {
+  string trigger = 1;
+}
+
+message LenderDiscoverRunStats {
+  int32 requested_count = 1;
+  int32 inserted_count = 2;
+  int32 skipped_duplicate_count = 3;
+  int32 error_count = 4;
+}
+
+message LenderDiscoverRunEntity {
+  int64 id = 1;
+  string trigger_type = 2;
+  string status = 3;
+  string started_at = 4;
+  string finished_at = 5;
+  string error_message = 6;
+  LenderDiscoverRunStats stats = 7;
+}
+
+message LenderDiscoverRunResponse {
+  LenderDiscoverRunEntity data = 1;
+}
+
+message LenderDiscoverCandidateEntity {
+  string dedupe_status = 1;
+  string normalized_key = 2;
+  string name = 3;
+  string contact_email = 4;
+  string contact_phone = 5;
+  string contact_name = 6;
+  string website = 7;
+  string tagline = 8;
+  string logo = 9;
+  proto.AddressEntity address = 10;
+  proto.OrganizationLenderMetadataEntity lender_metadata = 11;
+}
+
+message LenderDiscoverPreviewResponseData {
+  repeated LenderDiscoverCandidateEntity candidates = 1;
+  int32 new_count = 2;
+  int32 existed_count = 3;
+}
+
+message LenderDiscoverPreviewResponse {
+  LenderDiscoverPreviewResponseData data = 1;
+}
+
+message LenderDiscoverCommitRequest {
+  LenderDiscoverCommitRequestData data = 1;
+}
+message LenderDiscoverCommitRequestData {
+  repeated LenderDiscoverCommitLender lenders = 1;
+}
+message LenderDiscoverCommitLender {
+  string name = 1;
+  string contact_email = 2;
+  string contact_phone = 3;
+  string contact_name = 4;
+  string website = 5;
+  string tagline = 6;
+  string logo = 7;
+  proto.AddressEntity address = 8;
+  proto.OrganizationLenderMetadataEntity lender_metadata = 9;
+}
+
+service Organization {
+  rpc Create(OrganizationCreateRequest) returns (OrganizationDetailResponse);
+  rpc UpdateProfile(OrganizationUpdateProfileRequest) returns (OrganizationDetailResponse);
+  rpc UpdateLender(OrganizationUpdateLenderRequest) returns (OrganizationDetailResponse);
+  rpc Page(OrganizationPageRequest) returns (OrganizationPageResponse);
+  rpc Detail(OrganizationDetailRequest) returns (OrganizationDetailResponse);
+  rpc DetailWithType(OrganizationDetailWithTypeRequest) returns (OrganizationDetailResponse);
+  rpc All(OrganizationAllRequest) returns (OrganizationAllResponse);
+  rpc AllForOption(OrganizationAllForOptionRequest) returns (OrganizationOptionsResponse);
+  rpc SelectOptions(OrganizationSelectOptionsRequest) returns (OrganizationOptionsResponse);
+  rpc Delete(OrganizationDeleteRequest) returns (proto.EmptyResponse);
+  rpc UpdateOrder(OrganizationUpdateOrderRequest) returns (proto.EmptyResponse);
+  rpc SwitchStatus(OrganizationSwitchStatusRequest) returns (proto.EmptyResponse);
+  rpc DiscoverGetSettings(proto.EmptyRequest) returns (LenderDiscoverSettingsResponse);
+  rpc DiscoverUpdateSettings(LenderDiscoverUpdateSettingsRequest) returns (LenderDiscoverSettingsResponse);
+  rpc DiscoverRun(LenderDiscoverRunRequest) returns (LenderDiscoverRunResponse);
+  rpc DiscoverPreview(proto.EmptyRequest) returns (LenderDiscoverPreviewResponse);
+  rpc DiscoverCommit(LenderDiscoverCommitRequest) returns (LenderDiscoverRunResponse);
+  rpc DiscoverLatestRun(proto.EmptyRequest) returns (LenderDiscoverRunResponse);
+}

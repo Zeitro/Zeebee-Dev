@@ -1,14 +1,17 @@
 'use client';
 import { Loading3QuartersOutlined } from '@ant-design/icons';
-import { eventBus, createRequest, setCookie } from '@repo/shared-methods/utils';
-import { useUserStore } from '@/store/user';
+import { eventBus, createRequest } from '@repo/shared-methods/utils';
+import { useUserStore } from '@repo/shared-methods/store';
 import { message } from 'antd';
 import { useCallback, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 
 // 切换组织中的页面
-export const SwitchOrganization = ({ organization_name, organization_id, api }) => {
-	const router = useRouter();
+export const SwitchOrganization = ({
+	organization_name,
+	organization_id,
+	api,
+	successCallback,
+}) => {
 	const { request } = createRequest();
 	const { getUserInfo, updateAccess } = useUserStore();
 
@@ -21,17 +24,19 @@ export const SwitchOrganization = ({ organization_name, organization_id, api }) 
 				organization_id,
 			},
 		});
-		setCookie('token', access?.access_token, access?.access_token_expire * 1000);
-		message.open({
-			type: 'success',
-			content: `Successfully switched organization to ${organization_name}`,
+		successCallback?.(access, () => {
+			message.open({
+				type: 'success',
+				content: `Successfully switched organization to ${organization_name}`,
+			});
+			setTimeout(() => {
+				eventBus.emit('removePortalComponent');
+			}, 300);
 		});
-		await updateAccess(access);
-		await getUserInfo();
-		router.replace('/');
-		setTimeout(() => {
-			eventBus.emit('removePortalComponent');
-		}, 300);
+		// setCookie('token', access?.access_token, access?.access_token_expire * 1000);
+		// await updateAccess(access);
+		// await getUserInfo();
+		// router.replace('/');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, getUserInfo, organization_id, organization_name, updateAccess]);
 

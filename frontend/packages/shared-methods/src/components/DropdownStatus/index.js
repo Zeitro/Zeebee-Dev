@@ -25,7 +25,10 @@ export const DropdownStatus = ({
 	...props
 }) => {
 	const [loading, setLoading] = useState(false);
-	const [statusValue, setStatusValue] = useState(data[statusKey] || '');
+	const externalStatus = data?.[statusKey] || '';
+	/** 用户手动切换时的乐观值；为 null 时展示 data[statusKey] */
+	const [optimisticStatus, setOptimisticStatus] = useState(null);
+	const statusValue = optimisticStatus ?? externalStatus;
 	const { request, cancelMatch } = useMemo(() => createRequest(), []);
 	const rowData = useMemo(() => {
 		return items.find((i) => i.key === statusValue) || {};
@@ -35,18 +38,20 @@ export const DropdownStatus = ({
 		try {
 			cancelMatch(api);
 			setLoading(true);
-			setStatusValue(key);
+			setOptimisticStatus(key);
 			await request(api, {
 				method: 'PATCH',
 				body: { [statusKey]: key },
 			});
+			setOptimisticStatus(null);
 			setLoading(false);
 			message.open({
 				type: 'success',
 				content: 'Update successful！',
 			});
 			successCallback?.();
-		} catch (error) {
+		} catch {
+			setOptimisticStatus(null);
 			setLoading(false);
 		}
 	};

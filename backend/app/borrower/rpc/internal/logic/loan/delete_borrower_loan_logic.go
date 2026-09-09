@@ -33,7 +33,7 @@ func NewDeleteBorrowerLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 // DeleteBorrowerLoan delete borrower loan
 func (l *DeleteBorrowerLoanLogic) DeleteBorrowerLoan(in *borrower.LoanDeleteRequest) (resp *proto.EmptyResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}

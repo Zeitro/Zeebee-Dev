@@ -1,0 +1,4 @@
+services:
+  tenant-backend:
+    logging: !override
+      driver: json-file

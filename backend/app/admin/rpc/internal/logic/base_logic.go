@@ -5,12 +5,16 @@ import (
 	"sync"
 
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/threading"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/admin/rpc/internal/global"
 	"zeebee-backend/app/admin/rpc/internal/svc"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/logic"
@@ -39,48 +43,58 @@ func GetBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 	redisCli := global.GetRedis()
 	jwtConfig := dto.JwtConfig{
-		AccessSecret:  svcCtx.Config.JwtAuth.AccessSecret,
-		AccessExpire:  svcCtx.Config.JwtAuth.AccessExpire,
-		RefreshSecret: svcCtx.Config.JwtAuth.RefreshSecret,
-		RefreshExpire: svcCtx.Config.JwtAuth.RefreshExpire,
+		AccessSecret:  svcCtx.Config.JwtConf.AccessSecret,
+		AccessExpire:  svcCtx.Config.JwtConf.AccessExpire,
+		RefreshSecret: svcCtx.Config.JwtConf.RefreshSecret,
+		RefreshExpire: svcCtx.Config.JwtConf.RefreshExpire,
 	}
 	emailClient := global.EmailClient
 
-	currentEnforcer := global.AdminEnforcer
-
-	currentAuthEventTopic := svcCtx.Config.CasbinConf.EventTopic.AdminTopic
 	authEventTopicMap := map[constants.UserType]string{
 		constants.UserTypeAdmin:    svcCtx.Config.CasbinConf.EventTopic.AdminTopic,
 		constants.UserTypeLender:   svcCtx.Config.CasbinConf.EventTopic.LenderTopic,
 		constants.UserTypeBorrower: svcCtx.Config.CasbinConf.EventTopic.BorrowerTopic,
 	}
 	logicConfig := logic.AllLogicConfig{
-		Repos:                 svcCtx.AllRepos,
-		RedisCli:              redisCli,
-		JwtConfig:             jwtConfig,
-		EmailClient:           emailClient,
-		CurrentEnforcer:       currentEnforcer,
-		CurrentAuthEventTopic: currentAuthEventTopic,
-		AuthEventTopicMap:     authEventTopicMap,
-		Logger:                svcCtx.Logger,
+		Repos:       svcCtx.AllRepos,
+		RedisCli:    redisCli,
+		JwtConfig:   jwtConfig,
+		EmailClient: emailClient,
+		// US-12: tenant is the sole casbin executor; admin no longer runs a
+		// local enforcer, so it subscribes to no reload channel (AuthLogic is
+		// never invoked here anymore).
+		CurrentEnforcer:   nil,
+		AuthEventTopicMap: authEventTopicMap,
+		Logger:            svcCtx.Logger,
 	}
 	l := &BaseLogic{
 		svcCtx:    svcCtx,
 		AllLogics: logic.NewAllLogics(logicConfig),
 	}
 
-	threading.GoSafe(func() {
-		ctx := context.Background()
-		err := l.AuthLogic.RebuildPolicy(ctx, constants.UserTypeAdmin)
-		if err != nil {
-			l.svcCtx.Logger.WithContext(ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("user_type", constants.UserTypeAdmin),
-			).Error("fail to rebuild admin policy")
-		}
-	})
-
 	return l
+}
+
+func (l *BaseLogic) GetUserClaimFromCtx(ctx context.Context) (utils.JwtUser, error) {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok || len(md.Get(utils.JwtTokenCtxKey)) == 0 || len(md.Get(utils.UserTypeCtxKey)) == 0 {
+		return utils.JwtUser{}, status.Error(codes.Unauthenticated, "not login")
+	}
+	claim, err := l.svcCtx.TenantClient.User.GetClaim(ctx, &tenant.GetClaimRequest{Data: &tenant.GetClaimRequestData{
+		AccessToken: md.Get(utils.JwtTokenCtxKey)[0],
+		UserType:    md.Get(utils.UserTypeCtxKey)[0],
+	}})
+	if err != nil {
+		return utils.JwtUser{}, err
+	}
+	if claim.Data == nil {
+		return utils.JwtUser{}, status.Error(codes.Unauthenticated, "invalid token")
+	}
+	return utils.JwtUser{
+		UserId: claim.Data.UserId, OrganizationId: claim.Data.OrganizationId,
+		OrganizationUserId: claim.Data.OrganizationUserId, Username: claim.Data.Username,
+		Role: claim.Data.Role, UserType: constants.UserType(claim.Data.UserType),
+	}, nil
 }
 
 func (l *BaseLogic) CreateLoanOperationLog(ctx context.Context, tx *gorm.DB, loanId, operatorId int64, from, to dto.LoanOperationStatus, action constants.LoanOperationAction, metadata *dto.LoanOperationMetadata) (err error) {
@@ -98,11 +112,9 @@ func (l *BaseLogic) CreateLoanOperationLog(ctx context.Context, tx *gorm.DB, loa
 			).Error("fail to create loan operation log")
 		}
 	}()
-	operator, _ := l.svcCtx.OrganizationUserRepo.FindOneByIdWithTx(ctx, tx, operatorId)
-
 	operatorName := ""
-	if operator != nil {
-		operatorName = operator.FullName
+	if claim, claimErr := l.GetUserClaimFromCtx(ctx); claimErr == nil {
+		operatorName = claim.Username
 	}
 
 	operation := &model.LoanOperation{
