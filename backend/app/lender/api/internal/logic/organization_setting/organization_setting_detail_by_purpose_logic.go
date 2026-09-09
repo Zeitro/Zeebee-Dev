@@ -7,6 +7,7 @@ import (
 	"zeebee-backend/app/lender/api/internal/types"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -38,7 +39,7 @@ func (l *OrganizationSettingDetailByPurposeLogic) OrganizationSettingDetailByPur
 	if err != nil {
 		return
 	}
-	resp, err = copierx.Trans[lender.OrganizationSettingEntity, types.OrganizationSettingDetailResponse](rpcResp.Data, copierx.BytesToStrMap())
+	resp, err = copierx.Trans[proto.OrganizationSettingEntity, types.OrganizationSettingDetailResponse](rpcResp.Data, copierx.BytesToStrMap())
 
 	return resp, err
 }

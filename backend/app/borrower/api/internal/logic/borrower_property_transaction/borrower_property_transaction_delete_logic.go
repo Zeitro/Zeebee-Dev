@@ -7,8 +7,8 @@ import (
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type BorrowerPropertyTransactionDeleteLogic struct {
@@ -27,11 +27,11 @@ func NewBorrowerPropertyTransactionDeleteLogic(ctx context.Context, svcCtx *svc.
 }
 
 func (l *BorrowerPropertyTransactionDeleteLogic) BorrowerPropertyTransactionDelete(req *types.BorrowerPropertyTransactionDeleteRequest) (resp *types.EmptyResponse, err error) {
-	rpcReq := &borrower.BorrowerPropertyTransactionDeleteRequest{
-		Data: &borrower.BorrowerPropertyTransactionDeleteRequestData{},
+	rpcReq := &proto.PathIdRequest{
+		Data: &proto.PathIdRequestData{},
 	}
 
-	rpcReq.Data, err = copierx.Trans[types.BorrowerPropertyTransactionDeleteRequest, borrower.BorrowerPropertyTransactionDeleteRequestData](req)
+	rpcReq.Data, err = copierx.Trans[types.BorrowerPropertyTransactionDeleteRequest, proto.PathIdRequestData](req)
 	if err != nil {
 		return nil, err
 	}

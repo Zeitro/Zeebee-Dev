@@ -1,11 +1,11 @@
 package errorx
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"testing"
 
-	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -128,13 +128,16 @@ func TestUnwrap(t *testing.T) {
 	cause := New("cause error")
 	wrapped := Wrap(cause, "wrapper")
 
+	if !errors.Is(wrapped, cause) {
+		t.Error("wrapped chain does not reach cause")
+	}
+
 	unwrapped := Unwrap(wrapped)
 	if unwrapped == nil {
 		t.Fatal("expected Unwrap to return a non-nil error")
 	}
-	if errors.Cause(unwrapped).Error() != cause.Error() {
-		t.Errorf("expected cause message %q, got %q",
-			cause.Error(), errors.Cause(unwrapped).Error())
+	if unwrapped.Error() != cause.Error() {
+		t.Errorf("unwrapped = %q, want %q", unwrapped.Error(), cause.Error())
 	}
 }
 
@@ -164,7 +167,7 @@ func TestNotFound(t *testing.T) {
 		t.Fatal("NotFound returned nil")
 	}
 
-	expected := "Record Not Found"
+	expected := "record not found"
 	if err.Error() != expected {
 		t.Errorf("err.Error() = %q, want %q", err.Error(), expected)
 	}
@@ -176,7 +179,7 @@ func TestNotFound(t *testing.T) {
 		t.Fatal("NotFound returned nil")
 	}
 
-	expected = fmt.Sprintf("%s Not Found", recordName)
+	expected = fmt.Sprintf("%s not found", recordName)
 	if err.Error() != expected {
 		t.Errorf("err.Error() = %q, want %q", err.Error(), expected)
 	}

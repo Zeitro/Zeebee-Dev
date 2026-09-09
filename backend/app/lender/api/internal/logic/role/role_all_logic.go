@@ -7,9 +7,9 @@ import (
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
-	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type RoleAllLogic struct {
@@ -28,9 +28,7 @@ func NewRoleAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RoleAllLo
 }
 
 func (l *RoleAllLogic) RoleAll(req *types.EmptyRequest) (resp *types.RoleAllResponse, err error) {
-	rpcReq := &lender.RoleAllRequest{
-		Data: &lender.RoleAllRequestData{},
-	}
+	rpcReq := &proto.EmptyRequest{}
 
 	rpcResp, err := l.svcCtx.RoleRpcClient.All(l.ctx, rpcReq)
 	if err != nil {
@@ -38,7 +36,7 @@ func (l *RoleAllLogic) RoleAll(req *types.EmptyRequest) (resp *types.RoleAllResp
 	}
 
 	// trans response
-	list, err := copierx.Trans[[]*lender.RoleEntity, []*types.RoleEntity](&rpcResp.Data, copierx.TimeToRFC3339Str())
+	list, err := copierx.Trans[[]*proto.RoleEntity, []*types.RoleEntity](&rpcResp.Data, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

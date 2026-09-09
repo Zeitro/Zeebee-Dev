@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DocumentCreateLogic struct {
@@ -26,11 +27,11 @@ func NewDocumentCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Do
 }
 
 func (l *DocumentCreateLogic) DocumentCreate(req *types.DocumentCreateRequest) (resp *types.DocumentCreateResponse, err error) {
-	rpcReq := &borrower.DocumentCreateRequest{
-		Data: &borrower.DocumentCreateRequestData{},
+	rpcReq := &borrower.BorrowerPropertyTransactionDocumentCreateRequest{
+		// Data: &borrower.BorrowerPropertyTransactionDocumentCreateRequestData{},
 	}
 
-	rpcReq.Data, err = copierx.Trans[types.DocumentCreateRequest, borrower.DocumentCreateRequestData](req)
+	rpcReq.Data, err = copierx.Trans[types.DocumentCreateRequest, borrower.BorrowerPropertyTransactionDocumentCreateRequest_DocumentCreateRequestData](req)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +48,7 @@ func (l *DocumentCreateLogic) DocumentCreate(req *types.DocumentCreateRequest) (
 
 	var treeNodes []types.DocumentTreeNode
 	for _, protoDoc := range protoDocs {
-		treeNode, transErr := copierx.Trans[borrower.DocumentEntity, types.DocumentTreeNode](protoDoc, copierx.StrToStrMap())
+		treeNode, transErr := copierx.Trans[proto.DocumentEntity, types.DocumentTreeNode](protoDoc, copierx.StrToStrMap())
 		if transErr != nil {
 			return nil, transErr
 		}

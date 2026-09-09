@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package borrower;
+
+option go_package = "zeebee-backend/app/borrower/rpc/pb/borrower";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+
+// detail -- request
+message DocumentDetailRequest {
+  DocumentDetailRequestData data = 1;
+}
+
+message DocumentDetailRequestData {
+  string entity_type = 1;
+  int64 entity_id = 2;
+}
+// detail -- response
+message DocumentDetailResponse {
+  proto.DocumentEntity data = 1;
+}
+
+// create -- request
+message DocumentCreateRequest {
+  DocumentCreateRequestData data = 1;
+}
+
+message DocumentCreateRequestData {
+  int64 transaction_id = 1;
+  int64 parent_id = 2;
+  repeated string names = 3;
+}
+
+// upload file -- request
+message DocumentUploadFileResponse {
+  repeated proto.FileEntity data = 1;
+}
+
+// leaf list -- request
+message DocumentLeafListRequest {
+  DocumentLeafListRequestData data = 1;
+}
+
+message DocumentLeafListRequestData {
+  string entity_type = 1;
+  int64 entity_id = 2;
+}
+
+// leaf list -- response
+message DocumentLeafListResponse {
+  repeated proto.DocumentEntity data = 1;
+}
+
+// files -- request
+message DocumentFilesRequest {
+  DocumentFilesRequestData data = 1;
+}
+
+message DocumentFilesRequestData {
+  int64 document_id = 1;
+}
+
+// files -- response
+message DocumentFilesResponse {
+  repeated proto.FileEntity data = 1;
+}
+
+service Document {
+  rpc Detail(DocumentDetailRequest) returns(DocumentDetailResponse);
+  rpc LeafList(DocumentLeafListRequest) returns(DocumentLeafListResponse);
+  rpc Files(DocumentFilesRequest) returns(DocumentFilesResponse);
+}

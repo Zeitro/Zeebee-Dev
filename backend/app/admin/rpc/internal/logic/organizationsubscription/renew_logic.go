@@ -9,36 +9,35 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/data/dto"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type RenewLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewRenewLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RenewLogic {
 	return &RenewLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *RenewLogic) Renew(in *admin.OrganizationSubscriptionRenewRequest) (resp *admin.EmptyResponse, err error) {
+func (l *RenewLogic) Renew(in *admin.OrganizationSubscriptionRenewRequest) (resp *proto.EmptyResponse, err error) {
 	result, err := l.baseLogic.OrganizationSubscriptionLogic.Renew(l.ctx, in.Data.Id)
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
 
-	_, err = copierx.Trans[dto.OrganizationSubscriptionEntity, admin.OrganizationSubscriptionEntity](result, copierx.TimeToRFC3339Str())
+	_, err = copierx.Trans[dto.OrganizationSubscriptionEntity, proto.OrganizationSubscriptionEntity](result, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}
 
-	return &admin.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

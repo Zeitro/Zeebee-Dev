@@ -56,7 +56,8 @@ func (repo *BorrowerPropertyTransactionRepo) GetOne(ctx context.Context, id int6
 func (repo *BorrowerPropertyTransactionRepo) GetOrganizationTransaction(ctx context.Context, id int64, organizationId int64) (result *model.BorrowerPropertyTransaction, err error) {
 	err = repo.Client(ctx).
 		Where("id = ? and organization_id = ?", id, organizationId).
-		Preload("BorrowerProperty").
+		// Preload("BorrowerProperty").
+		Preload("Property").
 		First(&result).Error
 	return result, errorx.WithStack(err)
 }

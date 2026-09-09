@@ -26,8 +26,8 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 	}
 }
 
-func (l *RegisterLogic) Register(req *types.UserRegisterRequest) (resp *types.UserRegisterResponse, err error) {
-	resp = &types.UserRegisterResponse{}
+func (l *RegisterLogic) Register(req *types.UserRegisterRequest) (resp *types.EmptyResponse, err error) {
+	resp = &types.EmptyResponse{}
 	rpcReq := &borrower.UserRegisterRequest{
 		Data: &borrower.UserRegisterRequestData{},
 	}
@@ -38,15 +38,15 @@ func (l *RegisterLogic) Register(req *types.UserRegisterRequest) (resp *types.Us
 	}
 
 	// call rpc server
-	rpcResp, err := l.svcCtx.UserRpcClient.Register(l.ctx, rpcReq)
+	_, err = l.svcCtx.UserRpcClient.Register(l.ctx, rpcReq)
 	if err != nil {
 		return nil, err
 	}
 
 	// trans response data
-	resp, err = copierx.Trans[borrower.UserRegisterResponseData, types.UserRegisterResponse](rpcResp.Data)
-	if err != nil {
-		return nil, err
-	}
+	// resp, err = copierx.Trans[borrower.UserRegisterResponseData, types.UserRegisterResponse](rpcResp.Data)
+	// if err != nil {
+	// 	return nil, err
+	// }
 	return resp, err
 }

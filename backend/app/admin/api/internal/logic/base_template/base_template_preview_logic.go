@@ -21,7 +21,7 @@ type BaseTemplatePreviewLogic struct {
 // Preview
 func NewBaseTemplatePreviewLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseTemplatePreviewLogic {
 	return &BaseTemplatePreviewLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

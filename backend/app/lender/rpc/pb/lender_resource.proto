@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package lender;
+
+option go_package = "zeebee-backend/app/lender/rpc/pb/lender";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+
+// tree -- request
+message ResourceTreeRequest {
+  ResourceTreeRequestData data = 1;
+}
+message ResourceTreeRequestData {
+  string type = 1;
+}
+// tree -- response
+message ResourceTreeResponse {
+  repeated proto.ResourceTreeEntity data = 1;
+}
+// sync -- request
+message SyncResourceRequest {
+  SyncResourceRequestData data = 1;
+}
+
+message SyncResourceRequestData {
+  string resource_json = 1;
+}
+
+service resource {
+  rpc ResourceTree(ResourceTreeRequest) returns(ResourceTreeResponse);
+  rpc UserMenu(proto.EmptyRequest) returns(ResourceTreeResponse);
+  rpc SyncResource(SyncResourceRequest) returns(proto.EmptyResponse);
+}

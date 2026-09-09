@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DriveAuthStatusLogic struct {
@@ -27,7 +28,7 @@ func NewDriveAuthStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *D
 }
 
 func (l *DriveAuthStatusLogic) DriveAuthStatus(req *types.EmptyRequest) (resp *types.DriveIntegrationEntity, err error) {
-	rpcResp, err := l.svcCtx.DriveRpcClient.AuthStatus(l.ctx, &borrower.EmptyRequest{})
+	rpcResp, err := l.svcCtx.DriveRpcClient.AuthStatus(l.ctx, &proto.EmptyRequest{})
 	if err != nil {
 		return nil, err
 	}

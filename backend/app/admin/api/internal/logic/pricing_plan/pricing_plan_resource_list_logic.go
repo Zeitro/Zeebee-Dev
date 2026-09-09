@@ -21,7 +21,7 @@ type PricingPlanResourceListLogic struct {
 // resource list
 func NewPricingPlanResourceListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PricingPlanResourceListLogic {
 	return &PricingPlanResourceListLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

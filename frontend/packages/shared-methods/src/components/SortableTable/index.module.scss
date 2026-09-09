@@ -1,0 +1,16 @@
+// tr 本身不能 transform；位移写到 td 上，拖拽时行才会跟着走。
+.sortableRow {
+	:global(> td) {
+		transform: var(--row-transform, none);
+		transition: var(--row-transition, none);
+	}
+}
+
+.dragging {
+	:global(> td) {
+		opacity: 0.55;
+		background: var(--base-active) !important;
+		position: relative;
+		z-index: 9;
+	}
+}

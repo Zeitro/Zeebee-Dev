@@ -11,44 +11,31 @@ import (
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
-
-	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type LoanDetailLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
 }
 
 func NewLoanDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoanDetailLogic {
 	return &LoanDetailLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *LoanDetailLogic) LoanDetail(in *admin.IdRequest) (resp *admin.LoanDetailResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
-			).Error(err)
-		}
-	}()
+func (l *LoanDetailLogic) LoanDetail(in *proto.IdRequest) (resp *admin.LoanDetailResponse, err error) {
 
 	loan, err := l.svcCtx.LoanRepo.Detail(l.ctx, in.Data, true)
 	if err != nil {
 		return nil, err
 	}
 	resp = &admin.LoanDetailResponse{
-		Data: &admin.LoanEntity{},
+		Data: &proto.LoanEntity{},
 	}
-	data, err := copierx.Trans[model.Loan, admin.LoanEntity](loan,
+	data, err := copierx.Trans[model.Loan, proto.LoanEntity](loan,
 		copierx.TimeToRFC3339Str(),
 		copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
 	)
@@ -56,10 +43,10 @@ func (l *LoanDetailLogic) LoanDetail(in *admin.IdRequest) (resp *admin.LoanDetai
 		return nil, err
 	}
 	// loan experiences
-	var transExperiences []*admin.LoanExperienceEntity
-	var realEstateExperiences []*admin.LoanExperienceEntity
+	var transExperiences []*proto.LoanExperienceEntity
+	var realEstateExperiences []*proto.LoanExperienceEntity
 	slice.ForEach(loan.LoanExperiences, func(index int, item *model.LoanExperience) {
-		experience, _ := copierx.Trans[model.LoanExperience, admin.LoanExperienceEntity](item,
+		experience, _ := copierx.Trans[model.LoanExperience, proto.LoanExperienceEntity](item,
 			copierx.TimeToRFC3339Str(),
 			copierx.TimePtrToRFC3339Str(),
 			copierx.SqlTimePtrToStr(timex.LayoutUsStyle),

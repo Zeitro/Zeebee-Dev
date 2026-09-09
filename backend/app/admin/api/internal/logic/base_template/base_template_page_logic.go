@@ -21,7 +21,7 @@ type BaseTemplatePageLogic struct {
 // Base template page list
 func NewBaseTemplatePageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseTemplatePageLogic {
 	return &BaseTemplatePageLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

@@ -7,8 +7,8 @@ import (
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
-	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DetailLogic struct {
@@ -29,8 +29,8 @@ func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogi
 func (l *DetailLogic) Detail(req *types.LoanDetailRequest) (resp *types.LoanDetailResponse, err error) {
 	resp = &types.LoanDetailResponse{}
 
-	rpcResp, err := l.svcCtx.LoanRpcClient.LoanDetail(l.ctx, &lender.LoanDetailRequest{
-		Data: &lender.LoanDetailRequestData{
+	rpcResp, err := l.svcCtx.LoanRpcClient.LoanDetail(l.ctx, &proto.PathIdRequest{
+		Data: &proto.PathIdRequestData{
 			Id: req.Id,
 		},
 	})
@@ -38,7 +38,7 @@ func (l *DetailLogic) Detail(req *types.LoanDetailRequest) (resp *types.LoanDeta
 		return nil, err
 	}
 
-	resp, err = copierx.Trans[lender.LoanEntity, types.LoanDetailResponse](rpcResp.Data)
+	resp, err = copierx.Trans[proto.LoanEntity, types.LoanDetailResponse](rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

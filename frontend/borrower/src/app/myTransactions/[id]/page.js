@@ -91,16 +91,21 @@ const TransactionDetailsPage = () => {
 		return () => clearTimeout(timer);
 	}, [getDetails]);
 
+	/**
+	 * Documents 用 destroyOnHidden:false 常驻；其余 tab 隐藏时销毁，切回 remount 拿最新数据。
+	 */
 	const tabItems = useMemo(
 		() => [
 			{
 				key: 'documents',
 				label: 'Documents',
+				destroyOnHidden: false,
 				children: <DocumentsTab rowData={rowData} onRefresh={getDetails} />,
 			},
 			{
 				key: 'details',
 				label: 'Details',
+				destroyOnHidden: true,
 				children: (
 					<div className="px-6 py-6">
 						<DetailsTab
@@ -115,11 +120,13 @@ const TransactionDetailsPage = () => {
 			{
 				key: 'loans',
 				label: 'Loan',
+				destroyOnHidden: true,
 				children: <LoansTab rowData={rowData} loading={loading} onRefresh={getDetails} />,
 			},
 			{
 				key: 'log',
 				label: 'Log',
+				destroyOnHidden: true,
 				children: <LogTab transactionId={id} />,
 			},
 		],
@@ -191,7 +198,6 @@ const TransactionDetailsPage = () => {
 				onChange={handleTabChange}
 				items={tabItems}
 				className={styles.transactionDetailTabs}
-				destroyOnHidden={false}
 			/>
 		</div>
 	);

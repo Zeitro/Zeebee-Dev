@@ -1,0 +1,56 @@
+/**
+ * 任务类型列表页：无页标题；FilterTable 仅放新建按钮、无分页（GET all）；表单走独立 Modal。
+ */
+'use client';
+
+import { FilterTable } from '@repo/shared-methods';
+import { TaskTypeFormModal } from './components/TaskTypeFormModal';
+import { useTaskTypeList } from './hooks/useTaskTypeList';
+
+export function ProjectTaskType({ PERMISSIONS }) {
+	const {
+		tableFilterRef,
+		filterList,
+		columns,
+		getData,
+		messageContextHolder,
+		modalContextHolder,
+		modalOpen,
+		saving,
+		editingType,
+		closeModal,
+		handleSave,
+		emptyText,
+		handleSortEnd,
+	} = useTaskTypeList(PERMISSIONS);
+
+	return (
+		<>
+			{messageContextHolder}
+			{modalContextHolder}
+			<FilterTable
+				filterWrapClassName="overflow-hidden bg-background rounded-lg p-4"
+				ref={tableFilterRef}
+				columns={columns}
+				filterList={filterList}
+				hasFilterField
+				getData={getData}
+				hasPaginationRequest={false}
+				pagination={false}
+				rowProps={{ justify: 'end' }}
+				locale={{ emptyText }}
+				tableType="sortable"
+				onSortEnd={handleSortEnd}
+			/>
+			<TaskTypeFormModal
+				open={modalOpen}
+				confirmLoading={saving}
+				editingType={editingType}
+				onCancel={closeModal}
+				onSave={handleSave}
+			/>
+		</>
+	);
+}
+
+export default ProjectTaskType;

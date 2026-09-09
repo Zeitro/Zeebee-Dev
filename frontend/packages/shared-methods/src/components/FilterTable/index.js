@@ -4,7 +4,8 @@ import styles from './index.module.scss';
 import { useDisUpdateEffect } from '@repo/shared-methods/hooks';
 import { FilterTag } from '../FilterField/filterTag.js';
 import { FilterField } from '../FilterField/index';
-import { NewTable } from '../NewTable';
+import { TABLE_TYPE } from '../SortableTable';
+import { ListTable } from './ListTable';
 import useContent from './useContent';
 /**
  * Form筛选 + Table
@@ -13,6 +14,9 @@ import useContent from './useContent';
  * @param {*string} api table list接口请求的api，没有api时会默认调用getData
  * @param {*string} method 接口请求的类别。与api一同使用
  * @param {*String} filterName 筛选汇总的标题
+ * @param {'default'|'sortable'} tableType 表格类型，sortable 为行拖拽排序
+ * @param {function} onSortEnd 拖拽结束后回调 (nextList, { fromIndex, toIndex })
+ * @param {boolean} showDragHandle sortable 时是否显示拖拽手柄列，默认 true
  */
 export const FilterTable = forwardRef(
 	(
@@ -32,6 +36,10 @@ export const FilterTable = forwardRef(
 			api,
 			method = 'POST',
 			settingPagination, // 初始化修改分页请求参数
+			pageSizeStorageKey, // localStorage 键，默认全局 zb_table_page_size
+			tableType = TABLE_TYPE.DEFAULT, // default | sortable
+			onSortEnd,
+			showDragHandle,
 			...props
 		},
 		ref,
@@ -54,6 +62,7 @@ export const FilterTable = forwardRef(
 			hasPaginationRequest,
 			settingPagination,
 			hasInitRequest,
+			pageSizeStorageKey,
 		});
 
 		useEffect(() => {
@@ -84,13 +93,17 @@ export const FilterTable = forwardRef(
 						<FilterTag filterList={filterList} filterName={filterName} />
 					</>
 				)}
-				<NewTable
+				<ListTable
+					{...props}
+					tableType={tableType}
+					onSortEnd={onSortEnd}
+					showDragHandle={showDragHandle}
+					setList={setList}
 					dataSource={list}
 					loading={loading}
 					columns={columns}
 					scroll={scroll}
 					onChange={onChange}
-					{...props}
 					pagination={props?.pagination ?? paramsData}
 					className={[styles.filter_table_content, props?.className].join(' ')}
 				/>

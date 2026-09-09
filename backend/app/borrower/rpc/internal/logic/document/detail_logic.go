@@ -3,8 +3,6 @@ package documentlogic
 import (
 	"context"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
@@ -13,33 +11,26 @@ import (
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DetailLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogic {
 	return &DetailLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
 func (l *DetailLogic) Detail(in *borrower.DocumentDetailRequest) (resp *borrower.DocumentDetailResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
-			).Error(err)
-		}
-	}()
 
 	entityDoc, err := l.svcCtx.EntityDocumentRepo.GetByEntity(l.ctx, constants.EntityDocumentType(in.Data.EntityType), in.Data.EntityId)
 	if err != nil {
@@ -104,8 +95,8 @@ func (l *DetailLogic) buildDocumentTree(entityDocId int64) (*model.Document, err
 	return root, nil
 }
 
-func (l *DetailLogic) convertDocumentEntity(doc *model.Document) (*borrower.DocumentEntity, error) {
-	entity, err := copierx.Trans[model.Document, borrower.DocumentEntity](
+func (l *DetailLogic) convertDocumentEntity(doc *model.Document) (*proto.DocumentEntity, error) {
+	entity, err := copierx.Trans[model.Document, proto.DocumentEntity](
 		doc,
 		copierx.TimeToRFC3339Str(),
 		copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
@@ -121,7 +112,7 @@ func (l *DetailLogic) convertDocumentEntity(doc *model.Document) (*borrower.Docu
 
 	// convert files
 	for _, f := range doc.Files {
-		protoFile, err := copierx.Trans[model.File, borrower.FileEntity](
+		protoFile, err := copierx.Trans[model.File, proto.FileEntity](
 			f,
 			copierx.TimeToRFC3339Str(),
 		)

@@ -3,11 +3,11 @@ package organization_user
 import (
 	"context"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
-	"zeebee-backend/app/lender/rpc/pb/lender"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type OrganizationUserDeleteLogic struct {
@@ -26,8 +26,8 @@ func NewOrganizationUserDeleteLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 func (l *OrganizationUserDeleteLogic) OrganizationUserDelete(req *types.PathIdRequest) (resp *types.EmptyResponse, err error) {
-	rpcReq := &lender.OrganizationUserDeleteRequest{
-		Data: &lender.OrganizationUserDeleteRequestData{
+	rpcReq := &proto.PathIdRequest{
+		Data: &proto.PathIdRequestData{
 			Id: req.Id,
 		},
 	}
