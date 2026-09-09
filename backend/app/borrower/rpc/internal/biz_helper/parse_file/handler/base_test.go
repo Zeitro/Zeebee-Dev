@@ -68,10 +68,10 @@ func setupResolveDB(t *testing.T) (*gorm.DB, *repo.AllRepos) {
 func seedDocTree(t *testing.T, db *gorm.DB) {
 	t.Helper()
 	docs := []struct {
-		id       int64
-		parent   int64
-		typ      string
-		meta string
+		id     int64
+		parent int64
+		typ    string
+		meta   string
 	}{
 		{10, 0, "Branch", "{}"},
 		{20, 10, "Leaf", `{"tags":["emd"]}`},

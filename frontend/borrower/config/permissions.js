@@ -14,6 +14,7 @@ export const PERMISSIONS = {
 	},
 	SETTING_SYSTEM: {
 		// CONTACT_EMAIL: 'Setting:System:ContactEmail',
+		GOOGLE_DRIVE: 'Setting:System:GoogleDrive',
 	},
 	PERSONAL: {
 		CHANGE_PASSWORD: 'Personal:ChangePassword',

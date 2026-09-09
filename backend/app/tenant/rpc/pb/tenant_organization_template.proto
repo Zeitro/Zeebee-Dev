@@ -1,0 +1,113 @@
+syntax = "proto3";
+
+package tenant;
+
+option go_package = "zeebee-backend/app/tenant/rpc/pb/tenant";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+// Organization-level document templates (derived from BaseTemplate), consolidated
+// from the lender backend. Depends on US-16 (BaseTemplate / RBAC objects).
+// BatchCreateWithTx / SyncByOrganizationIdWithTx are tx-internal (org provisioning)
+// and are not exposed.
+
+message OrganizationTemplateDetailRequest {
+  OrganizationTemplateDetailRequestData data = 1;
+}
+message OrganizationTemplateDetailRequestData {
+  string user_type = 1;
+  int64 id = 2;
+  int64 organization_id = 3; // required for lender/borrower callers
+}
+
+message OrganizationTemplateDetailByPurposeRequest {
+  OrganizationTemplateDetailByPurposeRequestData data = 1;
+}
+message OrganizationTemplateDetailByPurposeRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+  string purpose = 3;
+}
+
+message OrganizationTemplateDetailResponse {
+  proto.OrganizationTemplateEntity data = 1;
+}
+
+message OrganizationTemplateUpdateVariableGroupRequest {
+  OrganizationTemplateUpdateVariableGroupRequestData data = 1;
+}
+message OrganizationTemplateUpdateVariableGroupRequestData {
+  string user_type = 1;
+  int64 id = 2;
+  int64 organization_id = 3;
+  repeated proto.TemplateVariableGroupEntity variable_group_schema = 4;
+}
+
+message OrganizationTemplatePageRequest {
+  OrganizationTemplatePageRequestData data = 1;
+}
+message OrganizationTemplatePageRequestFilter {
+  string keyword = 1;
+  string type = 2;
+  string category = 3;
+  string status = 4;
+  int64 organization_id = 5;
+}
+message OrganizationTemplatePageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  OrganizationTemplatePageRequestFilter filter = 3;
+  proto.CommonPageSorter sorter = 4;
+  string user_type = 5;
+}
+
+message OrganizationTemplatePageEntity {
+  int64 id = 1;
+  string name = 2;
+  string type = 3;
+  string category = 4;
+  string purpose = 5;
+  string status = 6;
+  bool has_configured = 7;
+  string description = 8;
+  string created_at = 9;
+  string updated_at = 10;
+}
+
+message OrganizationTemplatePageResponse {
+  OrganizationTemplatePageResponseData data = 1;
+}
+message OrganizationTemplatePageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated OrganizationTemplatePageEntity list = 5;
+}
+
+message OrganizationTemplateResetRequest {
+  OrganizationTemplateResetRequestData data = 1;
+}
+message OrganizationTemplateResetRequestData {
+  string user_type = 1;
+  int64 id = 2;
+  int64 organization_id = 3;
+}
+
+message OrganizationTemplateResetByBaseTemplateIdRequest {
+  OrganizationTemplateResetByBaseTemplateIdRequestData data = 1;
+}
+message OrganizationTemplateResetByBaseTemplateIdRequestData {
+  string user_type = 1;
+  int64 base_template_id = 2;
+}
+
+service OrganizationTemplate {
+  rpc Detail(OrganizationTemplateDetailRequest) returns (OrganizationTemplateDetailResponse);
+  rpc DetailByPurpose(OrganizationTemplateDetailByPurposeRequest) returns (OrganizationTemplateDetailResponse);
+  rpc UpdateVariableGroup(OrganizationTemplateUpdateVariableGroupRequest) returns (OrganizationTemplateDetailResponse);
+  rpc Page(OrganizationTemplatePageRequest) returns (OrganizationTemplatePageResponse);
+  rpc Reset(OrganizationTemplateResetRequest) returns (OrganizationTemplateDetailResponse);
+  rpc ResetByBaseTemplateId(OrganizationTemplateResetByBaseTemplateIdRequest) returns (proto.EmptyResponse);
+}

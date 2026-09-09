@@ -6,9 +6,8 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/copierx"
-	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/proto"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
+	"zeebee-backend/domains/zeebee/constants"
 
 	"zeebee-backend/common/errorx"
 )
@@ -35,21 +34,20 @@ func (l *DetailByPurposeLogic) DetailByPurpose(in *lender.OrganizationSettingDet
 		return nil, errorx.New("data is required")
 	}
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	result, err := l.baseLogic.OrganizationSettingLogic.DetailByPurpose(l.ctx, claim.OrganizationId, in.Data.Purpose)
+	result, err := l.svcCtx.TenantClient.OrganizationSetting.DetailByPurpose(l.ctx, &tenant.OrganizationSettingDetailByPurposeRequest{Data: &tenant.OrganizationSettingDetailByPurposeRequestData{
+		UserType:       string(constants.UserTypeLender),
+		OrganizationId: claim.OrganizationId,
+		Purpose:        in.Data.Purpose,
+	}})
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[dto.OrganizationSettingEntityDto, proto.OrganizationSettingEntity](result, copierx.TimeToRFC3339Str(), copierx.StrMapToBytes())
-	if err != nil {
-		return nil, err
-	}
-
 	return &lender.OrganizationSettingDetailResponse{
-		Data: data,
+		Data: result.Data,
 	}, nil
 }

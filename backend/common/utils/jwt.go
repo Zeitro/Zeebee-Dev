@@ -12,6 +12,7 @@ import (
 
 const (
 	JwtTokenCtxKey string = "jwt_token"
+	UserTypeCtxKey string = "user_type"
 )
 
 // JWTClaims JWT声明结构
