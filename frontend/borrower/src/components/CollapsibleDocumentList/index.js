@@ -54,7 +54,7 @@ const CollapsibleDocumentList = ({
 			)}
 
 			{dataSource.length > 0 ? (
-				<Space direction="vertical" size={12} className="min-w-full">
+				<Space direction="vertical" size={12} className="w-full min-w-0">
 					{dataSource.map((item, index) => (
 						<CollapsibleDocumentRow
 							key={item?.[rowKey] ?? index}

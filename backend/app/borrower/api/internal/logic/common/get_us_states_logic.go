@@ -7,7 +7,7 @@ import (
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type GetUsStatesLogic struct {
@@ -26,8 +26,8 @@ func NewGetUsStatesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 }
 
 func (l *GetUsStatesLogic) GetUsStates(req *types.EmptyRequest) (resp *types.GetUsStatesResponse, err error) {
-	var rpcResp *borrower.StringSliceResponse
-	rpcResp, err = l.svcCtx.CommonRpcClient.GetUsState(l.ctx, &borrower.EmptyRequest{})
+	var rpcResp *proto.StringSliceResponse
+	rpcResp, err = l.svcCtx.CommonRpcClient.GetUsState(l.ctx, &proto.EmptyRequest{})
 	if err != nil {
 		return nil, err
 	}

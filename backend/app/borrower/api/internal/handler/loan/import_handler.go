@@ -20,8 +20,10 @@ func ImportHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		var err error
 		defer func() {
 			if err != nil {
-				logx.WithContext(r.Context()).
-					WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
+				svcCtx.Logger.WithContext(r.Context()).
+					WithFields(
+						logx.Field("stacks", errorx.GetErrorStack(err)),
+					).
 					Error(err)
 			}
 		}()
@@ -32,9 +34,14 @@ func ImportHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		_ = r.ParseMultipartForm(32 << 20)
+		err = r.ParseMultipartForm(32 << 20)
+		if err != nil {
+			response.BadRequest(w, errorx.GetErrorMsg(err))
+			return
+		}
 		f, _, err := r.FormFile("file")
 		if err != nil {
+			err = errorx.Wrap(err, "fail to parse form file")
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
 		}

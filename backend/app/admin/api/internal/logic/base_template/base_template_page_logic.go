@@ -21,18 +21,13 @@ type BaseTemplatePageLogic struct {
 // Base template page list
 func NewBaseTemplatePageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseTemplatePageLogic {
 	return &BaseTemplatePageLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
 func (l *BaseTemplatePageLogic) BaseTemplatePage(req *types.BaseTemplatePageRequest) (resp *types.BaseTemplatePageResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
 
 	// Convert types to pb request
 	rpcReq := &admin.BaseTemplatePageRequest{

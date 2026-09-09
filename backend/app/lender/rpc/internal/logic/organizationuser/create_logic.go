@@ -10,8 +10,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -19,25 +18,21 @@ import (
 type CreateLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogic {
 	return &CreateLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *CreateLogic) Create(in *lender.OrganizationUserCreateRequest) (resp *lender.OrganizationUserCreateResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+func (l *CreateLogic) Create(in *lender.OrganizationUserCreateRequest) (resp *lender.OrganizationUserDetailResponse, err error) {
+
 	claimUser, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
@@ -63,12 +58,12 @@ func (l *CreateLogic) Create(in *lender.OrganizationUserCreateRequest) (resp *le
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[dto.OrganizationUserEntityDto, lender.OrganizationUserEntity](result, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[dto.OrganizationUserEntityDto, proto.OrganizationUserEntity](result, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
-	return &lender.OrganizationUserCreateResponse{
+	return &lender.OrganizationUserDetailResponse{
 		Data: data,
 	}, nil
 }

@@ -19,9 +19,11 @@ func {{.HandlerName}}(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		var err error
         defer func() {
             if err != nil {
-                logx.WithContext(r.Context()).
-                    WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
-                    Error(err)
+                svcCtx.Logger.WithContext(r.Context()).
+                	WithFields(
+                		logx.Field("stacks", errorx.GetErrorStack(err)),
+                	).
+                	Error(err)
             }
         }()
 		{{if .HasRequest}}var req types.{{.RequestType}}

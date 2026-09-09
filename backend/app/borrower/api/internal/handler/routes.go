@@ -226,6 +226,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: borrower_property_transaction.BorrowerPropertyTransactionUpdateChecklistHandler(serverCtx),
 				},
 				{
+					// parse file
+					Method:  http.MethodPost,
+					Path:    "/borrower_property_transaction/:id/parse",
+					Handler: borrower_property_transaction.ParseFileHandler(serverCtx),
+				},
+				{
+					// get parse file result
+					Method:  http.MethodGet,
+					Path:    "/borrower_property_transaction/:id/parse/result",
+					Handler: borrower_property_transaction.ParseFileResultHandler(serverCtx),
+				},
+				{
 					// switch transaction status
 					Method:  http.MethodPatch,
 					Path:    "/borrower_property_transaction/:id/status",
@@ -637,21 +649,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
-					// accept invitation
-					Method:  http.MethodPost,
-					Path:    "/organization_user/accept_invitation",
-					Handler: organization_user.AcceptInvitationHandler(serverCtx),
-				},
-			}...,
-		),
-		rest.WithPrefix("/api/v1"),
-	)
-
-	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.AuthMiddleware},
-			[]rest.Route{
-				{
 					// create
 					Method:  http.MethodPost,
 					Path:    "/organization_user",
@@ -694,10 +691,22 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: organization_user.OrganizationUserUpdateStatusHandler(serverCtx),
 				},
 				{
+					// accept invitation
+					Method:  http.MethodPost,
+					Path:    "/organization_user/accept_invitation",
+					Handler: organization_user.AcceptInvitationHandler(serverCtx),
+				},
+				{
 					// all
 					Method:  http.MethodGet,
 					Path:    "/organization_user/all",
 					Handler: organization_user.OrganizationUserAllHandler(serverCtx),
+				},
+				{
+					// check invitation
+					Method:  http.MethodPost,
+					Path:    "/organization_user/check_invitation",
+					Handler: organization_user.CheckInvitationHandler(serverCtx),
 				},
 				{
 					// page

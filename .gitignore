@@ -11,4 +11,6 @@ env
 /frontend/lender/.next
 /frontend/docker-compose-local.yml
 /frontend/Dockerfile-*-local
+expdt
 .pnpm-store
+pm-frontend

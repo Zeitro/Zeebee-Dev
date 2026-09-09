@@ -1,10 +1,12 @@
 ApiConf:
-  Name: admin-api
+  Name: admin.api
   Host: 0.0.0.0
   Port: 10200
-  Timeout: 10000
+  Timeout: 600000
+  Mode: pre
   Log:
     Stat: false
+    ServiceName: admin.api
 
   JwtAuth:
     AccessSecret: nX7vC1dM3tU3oW9aR9pZ6qI0fX4tC7wK
@@ -13,17 +15,22 @@ ApiConf:
   RpcConf:
     Endpoints:
       - 127.0.0.1:10201
-    Timeout: 10000
+    Timeout: 600000
     NonBlock: true
 
 RpcConf:
   Name: admin.rpc
   ListenOn: 0.0.0.0:10201
-  Timeout: 10000
+  Timeout: 600000
+  Mode: pre
+  Log:
+    ServiceName: admin.rpc
+    Stat: false
   LimiterConf:
     Login:
-      Rate: 5
+      Rate: 10
       Period: 300
+      LockPeriod: 120
 
   EmailConf:
     Host: smtp.gmail.com
@@ -54,6 +61,16 @@ RpcConf:
     Bucket: zeebee-files-staging
     FileFolder: files-staging
     PreSigneUrlExpireSeconds: 60
+  LlmConf:
+    Providers:
+      - Name: openai
+        ApiKey: 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
+        BaseUrl: https://api.openai.com/v1
+    LenderDiscoverConf:
+      Provider: openai
+      Model: gpt-5.4
+      MaxTokens: 16384
+      TimeoutSeconds: 480
   CasbinConf:
     ModelPath: etc/model.conf
     EventTopic:
@@ -67,3 +84,6 @@ RpcConf:
       AdminChannel: /admin-channel
       BorrowerChannel: /borrower-channel
       LenderChannel: /lender-channel
+  CronTaskConf:
+    - name: update_organization_subscription_status
+      schedule: "0 0 1 * * *"

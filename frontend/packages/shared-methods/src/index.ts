@@ -21,6 +21,7 @@ export * from './components/NewModal/index';
 export * from './components/NewModal/BtnPopUpModal/index';
 export * from './components/NewPagination/index';
 export * from './components/NewTable/index';
+export * from './components/SortableTable/index';
 export * from './components/NoData/index';
 // export * from './components/SignatureModal/index';
 export * from './components/TableOperation/index';
@@ -49,3 +50,5 @@ export * from './components/CreateZBLoan/ReviewAndSign';
 // borrower端、lender端、admin端共用的页面封装的组件
 export * from './componentsUi/OrgProfile/index';
 export * from './componentsUi/SelectCard/index';
+export { default as Pricing } from './componentsUi/Pricing/index';
+export { default as PricingModal } from './componentsUi/Pricing/PricingModal/index';

@@ -11,8 +11,7 @@ import (
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -20,25 +19,21 @@ import (
 type AuthorizeLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewAuthorizeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AuthorizeLogic {
 	return &AuthorizeLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *AuthorizeLogic) Authorize(in *borrower.OrganizationEmailAuthorizeRequest) (resp *borrower.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+func (l *AuthorizeLogic) Authorize(in *borrower.OrganizationEmailAuthorizeRequest) (resp *proto.EmptyResponse, err error) {
+
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
@@ -54,7 +49,7 @@ func (l *AuthorizeLogic) Authorize(in *borrower.OrganizationEmailAuthorizeReques
 
 	authCodeUrlGenerator, ok := global.EmailAuthUrlGenerator[input.EmailProvider]
 	if !ok {
-		return nil, errorx.Errorf("Invalid email provider %v", input.EmailProvider)
+		return nil, errorx.Errorf("invalid email provider %v", input.EmailProvider)
 	}
 	input.Oauth2Config = authCodeUrlGenerator.GetConfig()
 	input.UserId = claim.UserId
@@ -67,13 +62,13 @@ func (l *AuthorizeLogic) Authorize(in *borrower.OrganizationEmailAuthorizeReques
 		return nil, err
 	}
 	global.EmailAuthManager.Register(email, emailClient)
-	return &borrower.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }
 
 // validate
 func (l *AuthorizeLogic) validate(input *dto.OrganizationEmailAuthorizeRequestDto, claim utils.JwtUser) (err error) {
 	if input.Code == "" {
-		return errorx.New("Code is empty")
+		return errorx.New("code is empty")
 	}
 	return err
 }

@@ -161,13 +161,13 @@ export const formatPhone = (phoneNumber) => {
 	}
 };
 
-// 千分位加逗号,最多保留2位小数
+// 千分位加逗号,最多保留2位小数；0 / '0' 视为有效值
 export const formatThousands = (amount) => {
-	if (!amount) return '';
+	if (amount === null || amount === undefined || amount === '') return '';
 	if (typeof amount === 'string') {
 		amount = Number(amount.replace(/[^\d.-]/g, '')); //去除字符串中所有非数字、小数点和负号的字符
 	}
-	if (isNaN(amount)) return '';
+	if (typeof amount !== 'number' || isNaN(amount)) return '';
 
 	let [integerPart, decimalPart = ''] = amount.toString().split('.');
 	if (decimalPart.length > 2) {

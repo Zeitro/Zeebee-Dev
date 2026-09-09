@@ -5,13 +5,11 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/lender/rpc/internal/svc"
-	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/common/errorx"
@@ -21,7 +19,6 @@ type DeleteFileLogic struct {
 	ctx       context.Context
 	svcCtx    *svc.ServiceContext
 	baseLogic *logic.BaseLogic
-	logx.Logger
 }
 
 func NewDeleteFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteFileLogic {
@@ -29,16 +26,10 @@ func NewDeleteFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delete
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		baseLogic: logic.GetBaseLogic(svcCtx),
-		Logger:    logx.WithContext(ctx),
 	}
 }
 
-func (l *DeleteFileLogic) DeleteFile(in *lender.FileDeleteRequest) (resp *lender.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+func (l *DeleteFileLogic) DeleteFile(in *proto.PathIdRequest) (resp *proto.EmptyResponse, err error) {
 
 	var loan *model.Loan
 	var loanDocument *model.LoanDocument
@@ -51,11 +42,11 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.FileDeleteRequest) (resp *lender
 
 	file, err = l.svcCtx.FileRepo.FindOneById(l.ctx, in.Data.Id)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed To Find File")
+		return nil, errorx.Wrap(err, "fail to find file")
 	}
 
 	if file.EntityType != constants.FileEntityTypeLoanDocument {
-		return nil, errorx.WithStack(errorx.New("File is not associated with a loan document"))
+		return nil, errorx.WithStack(errorx.New("file is not associated with a loan document"))
 	}
 
 	loan, loanDocument, err = l.baseLogic.GetLoanAndDocumentByDocumentId(l.ctx, file.EntityId, claim.OrganizationId)
@@ -69,14 +60,14 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.FileDeleteRequest) (resp *lender
 		// delete file
 		_, innerErr = l.svcCtx.FileRepo.DeleteByIDWithTx(l.ctx, tx, in.Data.Id)
 		if innerErr != nil {
-			return errorx.Wrap(innerErr, "Failed To Delete File")
+			return errorx.Wrap(innerErr, "fail to delete file")
 		}
 
 		// get file count
 		var fileCount int64
 		fileCount, innerErr = l.svcCtx.FileRepo.GetFileCountByEntityIdWithTx(l.ctx, tx, loanDocument.Id, constants.FileEntityTypeLoanDocument)
 		if innerErr != nil {
-			return errorx.Wrap(innerErr, "Failed To Check Remaining Files")
+			return errorx.Wrap(innerErr, "fail to check remaining files")
 		}
 
 		// update loan document status
@@ -90,12 +81,12 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.FileDeleteRequest) (resp *lender
 				"status": documentStatus,
 			})
 			if innerErr != nil {
-				return errorx.Wrap(innerErr, "Failed To Update Loan Document Status")
+				return errorx.Wrap(innerErr, "fail to update loan document status")
 			}
 		}
 
 		// create operation log
-		operationFile := &data.OperationFile{
+		operationFile := &dto.OperationFile{
 			EntityId:   file.EntityId,
 			EntityType: file.EntityType,
 			FileUrl:    file.FileUrl,
@@ -106,28 +97,28 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.FileDeleteRequest) (resp *lender
 			tx,
 			loanDocument.LoanId,
 			claim.OrganizationUserId,
-			data.LoanOperationStatus{
+			dto.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			data.LoanOperationStatus{
+			dto.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			constants.LoanOperationActionDeleteDocumentFile,
-			&data.LoanOperationMetadata{
-				LoanDocuments: []*data.OperationLoanDocument{
+			&dto.LoanOperationMetadata{
+				LoanDocuments: []*dto.OperationLoanDocument{
 					{
 						Category: loanDocument.Category,
 						FileType: loanDocument.FileType,
 						Status:   loanDocument.Status,
-						Files:    []*data.OperationFile{operationFile},
+						Files:    []*dto.OperationFile{operationFile},
 					},
 				},
 			},
 		)
 		if innerErr != nil {
-			return errorx.Wrap(innerErr, "Failed To Create Operation Log")
+			return errorx.Wrap(innerErr, "fail to create operation log")
 		}
 
 		return nil
@@ -137,5 +128,5 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.FileDeleteRequest) (resp *lender
 		return nil, err
 	}
 
-	return &lender.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

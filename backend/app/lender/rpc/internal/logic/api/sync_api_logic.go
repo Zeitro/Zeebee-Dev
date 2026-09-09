@@ -11,32 +11,26 @@ import (
 	"zeebee-backend/common/swagger"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type SyncApiLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewSyncApiLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncApiLogic {
 	return &SyncApiLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *SyncApiLogic) SyncApi(in *lender.SyncApiRequest) (resp *lender.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+func (l *SyncApiLogic) SyncApi(in *lender.SyncApiRequest) (resp *proto.EmptyResponse, err error) {
 
 	var apiGroups swagger.ApiGroup
 	if err = json.Unmarshal([]byte(in.Data.ApiJson), &apiGroups); err != nil {
@@ -65,5 +59,5 @@ func (l *SyncApiLogic) SyncApi(in *lender.SyncApiRequest) (resp *lender.EmptyRes
 		return nil, err
 	}
 
-	return &lender.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

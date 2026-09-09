@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type CreateLoanDocumentLogic struct {
@@ -28,11 +29,7 @@ func NewCreateLoanDocumentLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *CreateLoanDocumentLogic) CreateLoanDocument(req *types.LoanDocumentCreateRequest) (resp *types.LoanDocumentCreateResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+
 	resp = &types.LoanDocumentCreateResponse{
 		LoanDocuments: []*types.LoanDocumentOptEntity{},
 	}
@@ -52,7 +49,7 @@ func (l *CreateLoanDocumentLogic) CreateLoanDocument(req *types.LoanDocumentCrea
 		return nil, errorx.WithStack(err)
 	}
 
-	documents, err := copierx.Trans[[]*lender.LoanDocumentOptEntity, []*types.LoanDocumentOptEntity](&rpcResp.Data)
+	documents, err := copierx.Trans[[]*proto.LoanDocumentOptEntity, []*types.LoanDocumentOptEntity](&rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

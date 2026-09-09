@@ -176,6 +176,24 @@ export const noTokenRouter = [
 		hideCrumbs: true,
 	},
 	{
+		path: '/pricing',
+		title: 'Pricing',
+		hideMenu: true,
+		hideCrumbs: true,
+	},
+	{
+		path: '/billing/success',
+		title: 'Billing Success',
+		hideMenu: true,
+		hideCrumbs: true,
+	},
+	{
+		path: '/billing/cancel',
+		title: 'Billing Cancelled',
+		hideMenu: true,
+		hideCrumbs: true,
+	},
+	{
 		path: '/not-found',
 		title: '404',
 		hideCrumbs: true,
@@ -212,7 +230,36 @@ export const menuSetting = {
 		hideCrumbs: true,
 		hideSidebar: true,
 	},
+	'/billing/success': {
+		hideCrumbs: true,
+		hideSidebar: true,
+	},
+	'/billing/cancel': {
+		hideCrumbs: true,
+		hideSidebar: true,
+	},
 	'/dashboard': {
+		hideCrumbs: true,
+	},
+	'/project/projectList': {
+		hideCrumbs: true,
+	},
+	'/project/projectList/:id': {
+		hideCrumbs: true,
+	},
+	'/project/projectList/settings': {
+		hideCrumbs: true,
+	},
+	'/project/workflow': {
+		hideCrumbs: true,
+	},
+	'/project/workflow/:id': {
+		hideCrumbs: true,
+	},
+	'/project/taskType': {
+		hideCrumbs: true,
+	},
+	'/project/myTask': {
 		hideCrumbs: true,
 	},
 };

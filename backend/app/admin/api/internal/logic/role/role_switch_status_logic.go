@@ -20,7 +20,7 @@ type RoleSwitchStatusLogic struct {
 // update status
 func NewRoleSwitchStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RoleSwitchStatusLogic {
 	return &RoleSwitchStatusLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}

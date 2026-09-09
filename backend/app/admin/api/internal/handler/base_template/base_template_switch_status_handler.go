@@ -5,6 +5,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
+
 	"zeebee-backend/app/admin/api/internal/logic/base_template"
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
@@ -20,8 +21,10 @@ func BaseTemplateSwitchStatusHandler(svcCtx *svc.ServiceContext) http.HandlerFun
 		var err error
 		defer func() {
 			if err != nil {
-				logx.WithContext(r.Context()).
-					WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
+				svcCtx.Logger.WithContext(r.Context()).
+					WithFields(
+						logx.Field("stacks", errorx.GetErrorStack(err)),
+					).
 					Error(err)
 			}
 		}()

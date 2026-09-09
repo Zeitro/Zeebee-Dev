@@ -7,7 +7,7 @@ import (
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type BorrowerApplicantDeleteLogic struct {
@@ -26,8 +26,8 @@ func NewBorrowerApplicantDeleteLogic(ctx context.Context, svcCtx *svc.ServiceCon
 }
 
 func (l *BorrowerApplicantDeleteLogic) BorrowerApplicantDelete(req *types.PathIdRequest) (resp *types.EmptyResponse, err error) {
-	rpcReq := &borrower.BorrowerApplicantDeleteRequest{
-		Data: &borrower.BorrowerApplicantDeleteRequestData{
+	rpcReq := &proto.PathIdRequest{
+		Data: &proto.PathIdRequestData{
 			Id: req.Id,
 		},
 	}
