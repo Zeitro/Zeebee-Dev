@@ -18,7 +18,7 @@ const useData = () => {
 		await getUserInfo();
 		const result = await getUserMenus(menuSetting);
 		await getOrganization();
-		await getCurrentPlan();
+		// await getCurrentPlan();
 		const accessPaths = result?.accessPaths ?? [];
 		setPermissionTags(result?.permissionTags);
 		setAccessPaths(accessPaths);
