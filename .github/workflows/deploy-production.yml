@@ -26,7 +26,7 @@ jobs:
           short="${GITHUB_REF##*/}"                 # prod-borrower-backend
           SERVICE_NAME="${short#*-}"                # borrower-backend
           SERVICE_NAME="${SERVICE_NAME%-backend}"   # borrower
-          case "$SERVICE_NAME" in borrower|lender|admin|pdfgenerator) ;; *) echo "Invalid branch $GITHUB_REF"; exit 1;; esac
+          case "$SERVICE_NAME" in borrower|lender|admin|pdfgenerator|tenant) ;; *) echo "Invalid branch $GITHUB_REF"; exit 1;; esac
           if [ "${ACT}" = "true" ]; then SERVICE_ENVIRONMENT=local; else SERVICE_ENVIRONMENT=prod; fi
           FULL_SERVICE_NAME="${SERVICE_ENVIRONMENT}-${SERVICE_NAME}-backend"
           echo "SERVICE_NAME=${SERVICE_NAME}" >> $GITHUB_ENV
