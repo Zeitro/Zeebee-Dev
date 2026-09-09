@@ -5,7 +5,6 @@ import (
 
 	{{.imports}}
 
-	"github.com/zeromicro/go-zero/core/logx"
 	"zeebee-backend/common/errorx"
 )
 

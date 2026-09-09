@@ -33,10 +33,6 @@ func InitGlobal(c config.RpcConf) (err error) {
 	eg.Do(func() error {
 		return initEmailClient(c.EmailConf)
 	})
-	eg.Do(func() error {
-		return initCasbin(c.CasbinConf)
-	})
-
 	err = eg.Wait()
 	if err != nil {
 		return err

@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package tenant;
+
+option go_package = "zeebee-backend/app/tenant/rpc/pb/tenant";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+// PricingPlanPolicy (plan<->resource pricing policy) CRUD, consolidated from
+// admin (Q2=C / US-16). The subscription gate reads these policies live.
+
+// create
+message PricingPlanPolicyCreateRequest {
+  PricingPlanPolicyCreateRequestData data = 1;
+}
+message PricingPlanPolicyCreateRequestData {
+  string user_type = 1;
+  int64 pricing_plan_id = 2;
+  double original_amount = 3;
+  double actual_amount = 4;
+  string type = 5;
+}
+
+// update
+message PricingPlanPolicyUpdateRequest {
+  PricingPlanPolicyUpdateRequestData data = 1;
+}
+message PricingPlanPolicyUpdateRequestData {
+  string user_type = 1;
+  int64 id = 2;
+  double original_amount = 3;
+  double actual_amount = 4;
+  string type = 5;
+}
+message PricingPlanPolicyDetailResponse {
+  proto.PricingPlanPolicyEntity data = 1;
+}
+
+// delete
+message PricingPlanPolicyDeleteRequest {
+  PricingPlanPolicyDeleteRequestData data = 1;
+}
+message PricingPlanPolicyDeleteRequestData {
+  string user_type = 1;
+  int64 id = 2;
+}
+
+service PricingPlanPolicy {
+  rpc Create(PricingPlanPolicyCreateRequest) returns (PricingPlanPolicyDetailResponse);
+  rpc Update(PricingPlanPolicyUpdateRequest) returns (PricingPlanPolicyDetailResponse);
+  rpc Delete(PricingPlanPolicyDeleteRequest) returns (proto.EmptyResponse);
+}

@@ -46,7 +46,7 @@ func NewImportPendingLoansLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 func (l *ImportPendingLoansLogic) ImportPendingLoans(in *borrower.ImportPendingLoansRequest) (resp *borrower.ImportPendingLoansResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}

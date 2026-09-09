@@ -29,7 +29,7 @@ func NewBorrowerLoanPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 func (l *BorrowerLoanPageLogic) BorrowerLoanPage(in *borrower.LoanPageRequest) (resp *borrower.LoanPageResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}

@@ -1,4 +1,5 @@
 export * from './useDeferredSyncEffect';
+export * from './usePersistStoresHydrated';
 export * from './common';
 export * from './useElementSize';
 export * from './useGetOptions';

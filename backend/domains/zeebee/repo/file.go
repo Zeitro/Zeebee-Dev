@@ -69,6 +69,17 @@ func (repo *FileRepo) GetFiles(ctx context.Context, entityId int64, entityType c
 	return result, errorx.WithStack(err)
 }
 
+func (repo *FileRepo) ListByEntityWithTx(ctx context.Context, tx *gorm.DB, entityId int64, entityType constants.FileEntityType) ([]*model.File, error) {
+	files := make([]*model.File, 0)
+	err := tx.WithContext(ctx).Where("entity_id = ? AND entity_type = ?", entityId, entityType).Order("id ASC").Find(&files).Error
+	return files, errorx.WithStack(err)
+}
+
+func (repo *FileRepo) PageByEntity(ctx context.Context, entityId int64, entityType constants.FileEntityType, pageReq gormx.PageRequest) (gormx.PageResponse[*model.File], error) {
+	query := repo.Client(ctx).Where("entity_id = ? AND entity_type = ?", entityId, entityType).Order("id DESC")
+	return repo.BaseRepo.Page(query, pageReq)
+}
+
 // MarkDriveSynced records the Google Drive link and sync time for a file.
 func (repo *FileRepo) MarkDriveSynced(ctx context.Context, id int64, driveUrl string, syncedAt time.Time) error {
 	return repo.UpdateColumnsById(ctx, id, map[string]interface{}{

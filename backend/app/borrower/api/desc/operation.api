@@ -1,0 +1,48 @@
+syntax = "v1"
+
+info(
+    title: "borrower-operation-api"
+    desc: "borrower operation types"
+    version: "v1"
+    useDefinitions: true
+    wrapCodeMsg:    true
+)
+
+import "../../../../domains/zeebee/api/project_management_entity.api"
+
+type (
+    OperationPageFilter {
+        TaskId int64 `json:"task_id,optional"`
+        OperationType string `json:"operation_type,optional"`
+        EntityType string `json:"entity_type" validate:"required"`
+        EntityId int64 `json:"entity_id,optional"`
+    }
+
+    OperationPageRequest {
+        Page int64 `json:"page,default=1"`
+        Limit int64 `json:"limit,default=20"`
+        Filter OperationPageFilter `json:"filter" validate:"required"`
+    }
+
+    OperationPageResponse {
+        Page int64 `json:"page"`
+        Limit int64 `json:"limit"`
+        Total int64 `json:"total"`
+        TotalPage int64 `json:"total_page"`
+        List []*OperationEntity `json:"list"`
+    }
+)
+
+@server (
+    desc: "borrower operation"
+    version: v1
+    group: operation
+    prefix: /api/v1
+    middleware: AuthMiddleware
+    tags: operation
+)
+service borrower-api {
+    @doc "page operation records"
+    @handler ProjectManagementOperationPage
+    post /operation/page (OperationPageRequest) returns (OperationPageResponse)
+}

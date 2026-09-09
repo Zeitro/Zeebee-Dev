@@ -66,9 +66,10 @@ type OrganizationSubscriptionPageRequestDto struct {
 }
 
 type OrganizationSubscriptionPageRequestFilter struct {
-	Keyword string                                     `json:"keyword,omitempty"`
-	Type    constants.UserType                         `json:"type,omitempty"`
-	Status  []constants.OrganizationSubscriptionStatus `json:"status,omitempty"`
+	Keyword        string                                     `json:"keyword,omitempty"`
+	Type           constants.UserType                         `json:"type,omitempty"`
+	OrganizationId int64                                      `json:"organization_id,omitempty"`
+	Status         []constants.OrganizationSubscriptionStatus `json:"status,omitempty"`
 }
 
 type OrganizationSubscriptionUpdateExpireDateRequestDto struct {

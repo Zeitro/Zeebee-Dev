@@ -1,0 +1,115 @@
+RpcConf:
+  Name: tenant.rpc
+  ListenOn: 0.0.0.0:10401
+  Mode: pre
+
+  DbConf:
+    dsn: "host=database-1.cj0ksq4g8d6c.us-west-1.rds.amazonaws.com user=dev_user password=dev_password dbname=dev_db port=5432 sslmode=require TimeZone=UTC"
+
+  RedisConf:
+    Host: zeebee-backend-redis-single-001.zeebee-backend-redis-single.uwixeb.usw1.cache.amazonaws.com:6379
+    Type: node
+    Prefix: zeebee
+    Tls: true
+    PingTimeout: 10s
+
+  LlmConf:
+    Providers:
+      - Name: openai
+        ApiKey: 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
+        BaseUrl: https://api.openai.com/v1
+    LenderDiscoverConf:
+      Provider: openai
+      Model: gpt-5.4
+      MaxTokens: 16384
+      TimeoutSeconds: 480
+
+  LimiterConf:
+    Login:             { Rate: 10, Period: 300, LockPeriod: 120 }
+    SendLoginEmail:    { Rate: 5, Period: 300 }
+    SendVerifyEmail:   { Rate: 5, Period: 300 }
+    SendResetPwdEmail: { Rate: 5, Period: 300 }
+
+  CronTaskConf:
+    - name: update_admin_subscription_status
+      schedule: "0 0 0 * * *"
+    - name: update_borrower_subscription_status
+      schedule: "0 10 0 * * *"
+    - name: update_lender_subscription_status
+      schedule: "0 20 0 * * *"
+
+  CasbinConf:
+    ModelPath: etc/model.conf
+    EventTopic:
+      BorrowerTopic: /borrower-rbac-event
+      LenderTopic: /lender-rbac-event
+      AdminTopic: /admin-rbac-event
+    Watcher:
+      Host: zeebee-backend-redis-single-001.zeebee-backend-redis-single.uwixeb.usw1.cache.amazonaws.com:6379
+      Pwd: ''
+      Channel: /tenant-channel
+      Tls: true
+
+  JwtConf:
+    AccessSecret: bL0iP5yE4jS4mT0nY0uJ0iG1yP6lI9gY
+    AccessExpire: 864000
+    RefreshSecret: fQ4rU4iR7vL1uH7iH3jB0gO5oV1uD1rP
+    RefreshExpire: 864000
+
+  PlatformConf:
+    Borrower:
+      EmailConf:
+        Host: smtp.gmail.com
+        Port: 587
+        Password: jerburfauvmzpmnq
+        Username: info@zeebeeloans.com
+        Gmail:
+          ClientId: 808134957644-2savep4tlp45sln5v9f21hq06628vvia.apps.googleusercontent.com
+          ClientSecret: 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
+          CallbackUrl: https://app.zeebeeloans.net/gmailAuth
+      LoginUrl: https://app.zeebeeloans.net/login
+      LenderUrl: https://agent.zeebeeloans.net
+      VerifyEmailUrl: https://app.zeebeeloans.net/login/verifyEmail
+      ResetPwdUrl: https://app.zeebeeloans.net/login/resetPassword
+      InviteUserUrl: https://app.zeebeeloans.net/login/joinOrganization
+      VerifyEmailExpireSeconds: 86400
+      ResetPwdExpireSeconds: 3600
+      InviteUserExpireSeconds: 259200
+      SendInviteEmailPeriodSeconds: 60
+      SenderName: Zeebee
+      SenderEmail: info@zeebeeloans.com
+      LogoUrl: "https://zeebee-files-staging.s3.us-west-1.amazonaws.com/files-dev/logo.png"
+      FooterAddress: "ZeeBee | 123 Business St | San Francisco, CA, 94105"
+    Lender:
+      EmailConf:
+        Host: smtp.gmail.com
+        Port: 587
+        Password: jerburfauvmzpmnq
+        Username: info@zeebeeloans.com
+      LoginUrl: https://agent.zeebeeloans.net/login
+      BorrowerLoginUrl: https://app.zeebeeloans.net/login
+      VerifyEmailUrl: https://agent.zeebeeloans.net/login/verifyEmail
+      ResetPwdUrl: https://agent.zeebeeloans.net/login/resetPassword
+      InviteUserUrl: https://agent.zeebeeloans.net/login/joinOrganization
+      VerifyEmailExpireSeconds: 86400
+      ResetPwdExpireSeconds: 3600
+      InviteUserExpireSeconds: 259200
+      SendInviteEmailPeriodSeconds: 60
+      SenderName: Zeebee
+      SenderEmail: info@zeebeeloans.com
+      LogoUrl: "https://zeebee-files-staging.s3.us-west-1.amazonaws.com/files-dev/logo.png"
+      FooterAddress: "ZeeBee | 123 Business St | San Francisco, CA, 94105"
+    Admin:
+      EmailConf:
+        Host: smtp.gmail.com
+        Port: 587
+        Password: jerburfauvmzpmnq
+        Username: info@zeebeeloans.com
+      VerifyEmailExpireSeconds: 86400
+      ResetPwdExpireSeconds: 3600
+      InviteUserExpireSeconds: 259200
+      SendInviteEmailPeriodSeconds: 60
+      SenderName: Zeebee
+      SenderEmail: info@zeebeeloans.com
+      LogoUrl: "https://zeebee-files-staging.s3.us-west-1.amazonaws.com/files-dev/logo.png"
+      FooterAddress: "ZeeBee | 123 Business St | San Francisco, CA, 94105"

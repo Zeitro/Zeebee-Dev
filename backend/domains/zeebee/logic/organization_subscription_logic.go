@@ -494,7 +494,7 @@ func (l *OrganizationSubscriptionLogic) UpdateStatus(ctx context.Context, organi
 	planFilter := []gormx.WhereRaw{
 		{
 			Raw: "is_default = ? and type = ?",
-			Args: []interface{}{
+			Args: []any{
 				true,
 				organizationType,
 			},
@@ -551,7 +551,7 @@ func (l *OrganizationSubscriptionLogic) UpdateStatus(ctx context.Context, organi
 		}
 		// non-Expired transition (e.g. Active -> Expiring): simple status update
 		if newStatus != constants.OrganizationSubscriptionStatusExpired {
-			_ = l.repos.OrganizationSubscriptionRepo.UpdateColumnsById(ctx, sub.Id, map[string]interface{}{
+			_ = l.repos.OrganizationSubscriptionRepo.UpdateColumnsById(ctx, sub.Id, map[string]any{
 				"status": newStatus,
 			})
 			continue

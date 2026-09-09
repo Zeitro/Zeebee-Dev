@@ -6,15 +6,14 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/reflection"
 
 	"github.com/zeromicro/go-zero/core/service"
 
 	"zeebee-backend/app/lender/config"
 	"zeebee-backend/app/lender/rpc/internal/global"
-	"zeebee-backend/app/lender/rpc/internal/logic"
 	apiServer "zeebee-backend/app/lender/rpc/internal/server/api"
-	authServer "zeebee-backend/app/lender/rpc/internal/server/auth"
 	commonServer "zeebee-backend/app/lender/rpc/internal/server/common"
 	fileServer "zeebee-backend/app/lender/rpc/internal/server/file"
 	loanServer "zeebee-backend/app/lender/rpc/internal/server/loan"
@@ -29,14 +28,11 @@ import (
 	userServer "zeebee-backend/app/lender/rpc/internal/server/user"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/cron"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/constants"
 )
 
 type RpcServer struct {
-	s    *zrpc.RpcServer
-	cron *cron.Engine
+	s *zrpc.RpcServer
 }
 
 func NewRpcServer(c config.Config) (s service.Service, err error) {
@@ -61,7 +57,6 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		lender.RegisterOrganizationServer(grpcServer, organizationServer.NewOrganizationServer(ctx))
 		lender.RegisterOrganizationTemplateServer(grpcServer, organizationTemplateServer.NewOrganizationTemplateServer(ctx))
 		lender.RegisterOrganizationSettingServer(grpcServer, organizationSettingServer.NewOrganizationSettingServer(ctx))
-		lender.RegisterAuthServer(grpcServer, authServer.NewAuthServer(ctx))
 		lender.RegisterResourceServer(grpcServer, resourceServer.NewResourceServer(ctx))
 		lender.RegisterApiServer(grpcServer, apiServer.NewApiServer(ctx))
 
@@ -69,12 +64,19 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 			reflection.Register(grpcServer)
 		}
 	})
-	// Outermost interceptor: tag every rpc ctx with service_name. grpc.UnaryInterceptor
-	// is prepended by grpc-go to the chain (outermost), so it runs above go-zero's
-	// stat interceptor and the stat access-log line carries the field.
+	// Outermost interceptor: tag every rpc ctx with service_name, and propagate
+	// incoming gRPC metadata (jwt_token / data_scope) to the outgoing context so
+	// the US-12 proxy calls to tenant rpc carry the caller's identity across the
+	// hop. grpc.UnaryInterceptor is prepended by grpc-go to the chain (outermost),
+	// so it runs above go-zero's stat interceptor and the access-log line carries
+	// the field. gRPC does not mirror incoming→outgoing metadata automatically;
+	// go-zero only forwards trace headers.
 	rpcServer.AddOptions(grpc.UnaryInterceptor(func(ctx context.Context, req any,
 		info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 		ctx = logx.ContextWithFields(ctx, logx.Field("service_name", c.RpcConf.Name))
+		if md, ok := metadata.FromIncomingContext(ctx); ok {
+			ctx = metadata.NewOutgoingContext(ctx, md.Copy())
+		}
 		return handler(ctx, req)
 	}))
 	// Centralized error logging. Registered via AddUnaryInterceptors so it sits at
@@ -93,14 +95,8 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		return resp, err
 	})
 	rpcService := &RpcServer{
-		s:    rpcServer,
-		cron: cron.NewEngine(),
+		s: rpcServer,
 	}
-	err = rpcService.RegisterCronTask(ctx, rpcConfig, logger)
-	if err != nil {
-		return nil, err
-	}
-
 	return rpcService, nil
 }
 
@@ -108,36 +104,8 @@ func (s *RpcServer) Start() {
 	go func() {
 		s.s.Start()
 	}()
-	go func() {
-		s.cron.Start()
-	}()
 }
 
 func (s *RpcServer) Stop() {
 	s.s.Stop()
-	s.cron.Stop()
-}
-
-func (s *RpcServer) RegisterCronTask(svcCtx *svc.ServiceContext, conf config.RpcConf, logger logx.Logger) (err error) {
-	if s.cron == nil {
-		s.cron = cron.NewEngine()
-	}
-	baseLogic := logic.GetBaseLogic(svcCtx)
-	for _, task := range conf.CronTaskConf {
-		switch task.Name {
-		case "update_organization_subscription_status":
-			err = s.cron.Register(task.Name, task.Schedule, func() {
-				ctx := context.Background()
-				taskErr := baseLogic.OrganizationSubscriptionLogic.UpdateStatus(ctx, constants.UserTypeLender)
-				if taskErr != nil {
-					logger.WithFields(
-						logx.Field("type", "cron_task"),
-						logx.Field("name", task.Name),
-						logx.Field("schedule", task.Schedule),
-					).Error(taskErr)
-				}
-			})
-		}
-	}
-	return
 }

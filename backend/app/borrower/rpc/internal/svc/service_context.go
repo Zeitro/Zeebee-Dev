@@ -5,12 +5,14 @@ import (
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/zrpc"
 
 	"zeebee-backend/app/borrower/config"
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file"
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper/parse_file/progress"
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/pdf_generator/client"
+	tenantclient "zeebee-backend/app/tenant/rpc/client"
 	"zeebee-backend/common/llm"
 	"zeebee-backend/domains/zeebee/repo"
 	"zeebee-backend/domains/zeebee/zeitro"
@@ -35,6 +37,9 @@ type ServiceContext struct {
 	// PdfGenerator converts doc/docx → pdf so Word files reuse the PDF parse
 	// pipeline. Nil-safe: an empty base URL makes Word parsing fail-soft.
 	PdfGenerator *client.Client
+	// TenantClient bundles tenant's outbound RPC clients (identity + authz +
+	// org/role/resource/...); used by the US-12 cutover.
+	TenantClient *tenantclient.Client
 }
 
 func NewServiceContext(c config.RpcConf, logger logx.Logger) *ServiceContext {
@@ -69,6 +74,7 @@ func NewServiceContext(c config.RpcConf, logger logx.Logger) *ServiceContext {
 		llmClient = lc
 	}
 
+	tenantCli := zrpc.MustNewClient(c.RpcServiceConf.Tenant)
 	ctx := &ServiceContext{
 		Config:       c,
 		Logger:       logger,
@@ -76,7 +82,8 @@ func NewServiceContext(c config.RpcConf, logger logx.Logger) *ServiceContext {
 		ZeitroClient: zeitroClient,
 		LLM:          llmClient,
 		Progress:     progress.NewProgressManager(global.GetRedis(), logger),
-		PdfGenerator: client.NewClient(c.PdfGeneratorBaseUrl),
+		PdfGenerator:  client.NewClient(c.PdfGeneratorBaseUrl),
+		TenantClient:  tenantclient.New(tenantCli),
 	}
 	ctx.FileParser = parse_file.NewParser(ctx.AllRepos, llmClient, ctx.Progress, ctx.PdfGenerator, logger)
 	// Recover in-flight parses left by a previous/crashed process, then sweep
