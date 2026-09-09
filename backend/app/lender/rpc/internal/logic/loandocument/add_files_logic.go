@@ -14,8 +14,7 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -24,7 +23,6 @@ type AddFilesLogic struct {
 	ctx       context.Context
 	svcCtx    *svc.ServiceContext
 	baseLogic *logic.BaseLogic
-	logx.Logger
 }
 
 func NewAddFilesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddFilesLogic {
@@ -32,19 +30,10 @@ func NewAddFilesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddFiles
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		baseLogic: logic.GetBaseLogic(svcCtx),
-		Logger:    logx.WithContext(ctx),
 	}
 }
 
-func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *lender.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
-			).Error(err)
-		}
-	}()
+func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *proto.EmptyResponse, err error) {
 
 	var loan *model.Loan
 	var loanDocument *model.LoanDocument
@@ -137,7 +126,7 @@ func (l *AddFilesLogic) AddFiles(in *lender.LoanDocumentAddFilesRequest) (resp *
 		return nil, err
 	}
 
-	return &lender.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }
 
 // prepare

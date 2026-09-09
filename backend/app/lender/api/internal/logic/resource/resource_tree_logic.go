@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -41,7 +42,7 @@ func (l *ResourceTreeLogic) ResourceTree(req *types.EmptyRequest) (resp *types.R
 	}
 
 	// trans response
-	list, err := copierx.Trans[[]*lender.ResourceTreeEntity, []*types.ResourceTreeEntity](&rpcResp.Data)
+	list, err := copierx.Trans[[]*proto.ResourceTreeEntity, []*types.ResourceTreeEntity](&rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

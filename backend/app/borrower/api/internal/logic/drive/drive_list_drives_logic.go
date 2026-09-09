@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DriveListDrivesLogic struct {
@@ -27,7 +28,7 @@ func NewDriveListDrivesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *D
 }
 
 func (l *DriveListDrivesLogic) DriveListDrives(req *types.EmptyRequest) (resp *types.DriveListDrivesResponse, err error) {
-	rpcResp, err := l.svcCtx.DriveRpcClient.ListDrives(l.ctx, &borrower.EmptyRequest{})
+	rpcResp, err := l.svcCtx.DriveRpcClient.ListDrives(l.ctx, &proto.EmptyRequest{})
 	if err != nil {
 		return nil, err
 	}

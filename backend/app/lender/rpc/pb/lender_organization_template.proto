@@ -1,0 +1,101 @@
+syntax = "proto3";
+
+package lender;
+
+option go_package = "zeebee-backend/app/lender/rpc/pb/lender";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+
+// Base template page entity (for list display)
+message OrganizationTemplatePageEntity {
+  int64 id = 1;
+  string name = 2;
+  string type = 3;
+  string category = 4;
+  string purpose = 5;
+  string status = 6;
+  string description = 7;
+  string created_at = 8;
+  string updated_at = 9;
+  bool has_configured = 10;
+}
+
+// Update ---- request
+message UpdateOrganizationTemplateRequest {
+  UpdateOrganizationTemplateRequestData data = 1;
+}
+message UpdateOrganizationTemplateRequestData {
+  int64 id = 1;
+  repeated proto.TemplateVariableGroupEntity variable_group_schema = 7;
+}
+
+// detail ---- response
+message OrganizationTemplateDetailResponse {
+  proto.OrganizationTemplateEntity data = 1;
+}
+
+// Page ---- request
+message OrganizationTemplatePageRequest {
+  OrganizationTemplatePageRequestData data = 1;
+}
+message OrganizationTemplatePageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  OrganizationTemplatePageRequestFilter filter = 3;
+  proto.CommonPageSorter sorter = 4;
+}
+message OrganizationTemplatePageRequestFilter {
+  string keyword = 1;
+  string type = 2;
+  string category = 3;
+  string status = 4;
+}
+
+// Page ---- response
+message OrganizationTemplatePageResponse {
+  OrganizationTemplatePageResponseData data = 1;
+}
+message OrganizationTemplatePageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated OrganizationTemplatePageEntity list = 5;
+}
+
+// preview ---- request
+message OrganizationTemplatePreviewRequest {
+  OrganizationTemplatePreviewRequestData data = 1;
+}
+message OrganizationTemplatePreviewRequestData {
+  string content = 1;
+  repeated proto.TemplateVariableGroupEntity variable_group_schema = 2;
+  string example_variables = 3;
+  string name = 4;
+}
+// preview ---- response
+message OrganizationTemplatePreviewResponse {
+  OrganizationTemplatePreviewResponseData data = 1;
+}
+message OrganizationTemplatePreviewResponseData {
+  string content = 1;
+}
+
+// detail by purpose ---- request
+message OrganizationTemplateDetailByPurposeRequest {
+  OrganizationTemplateDetailByPurposeRequestData data = 1;
+}
+message OrganizationTemplateDetailByPurposeRequestData {
+  string purpose = 1;
+}
+
+service OrganizationTemplate {
+  rpc Update(UpdateOrganizationTemplateRequest) returns(OrganizationTemplateDetailResponse);
+  rpc Detail(proto.IdRequest) returns(OrganizationTemplateDetailResponse);
+  rpc DetailByPurpose(OrganizationTemplateDetailByPurposeRequest) returns(OrganizationTemplateDetailResponse);
+  rpc Page(OrganizationTemplatePageRequest) returns(OrganizationTemplatePageResponse);
+  rpc Preview(OrganizationTemplatePreviewRequest) returns(OrganizationTemplatePreviewResponse);
+  rpc Reset(proto.IdRequest) returns(OrganizationTemplateDetailResponse);
+}

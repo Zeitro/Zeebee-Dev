@@ -9,8 +9,6 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper"
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
@@ -21,33 +19,26 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type CreateLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogic {
 	return &CreateLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateRequest) (resp *borrower.BorrowerPropertyTransactionCreateResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
-			).Error(err)
-		}
-	}()
+func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateRequest) (resp *borrower.BorrowerPropertyTransactionDetailResponse, err error) {
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
@@ -88,13 +79,42 @@ func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateReque
 	err = l.svcCtx.BorrowerPropertyTransactionRepo.Transaction(l.ctx, func(tx *gorm.DB) error {
 		var innerErr error
 
+		// get borrower property
+		borrowerProperty, innerErr := l.svcCtx.BorrowerPropertyRepo.GetOneByIdForOrganization(l.ctx, in.Data.BorrowerPropertyId, claim.OrganizationId)
+		if innerErr != nil {
+			return innerErr
+		}
+
 		// create transaction
 		result, innerErr = l.svcCtx.BorrowerPropertyTransactionRepo.CreateWithTx(l.ctx, tx, transactionData, false)
 		if innerErr != nil {
 			return innerErr
 		}
 
-		// create entity_document binding first (root_document_id=0, backfilled later)
+		// seed an empty escrow row for the transaction
+		_, innerErr = l.svcCtx.PropertyTransactionEscrowRepo.CreateWithTx(l.ctx, tx, &model.PropertyTransactionEscrow{
+			BorrowerPropertyTransactionId: result.Id,
+			Checklist:                     dto.PropertyTransactionEscrowChecklist{},
+		}, false)
+		if innerErr != nil {
+			return innerErr
+		}
+
+		// create property transaction property
+		var propertyTransactionProperty *model.PropertyTransactionProperty
+		propertyTransactionProperty, innerErr = copierx.Trans[model.BorrowerProperty, model.PropertyTransactionProperty](borrowerProperty)
+		if innerErr != nil {
+			return innerErr
+		}
+		propertyTransactionProperty.Id = 0
+		propertyTransactionProperty.BorrowerPropertyTransactionId = result.Id
+		propertyTransactionProperty.BorrowerPropertyId = in.Data.BorrowerPropertyId
+		_, innerErr = l.svcCtx.PropertyTransactionPropertyRepo.CreateWithTx(l.ctx, tx, propertyTransactionProperty, false)
+		if innerErr != nil {
+			return innerErr
+		}
+
+		// create entity_document binding first
 		entityDoc := &model.EntityDocument{
 			EntityType:     constants.EntityDocumentTypeBorrowerPropertyTransaction,
 			OrganizationId: claim.OrganizationId,
@@ -113,7 +133,7 @@ func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateReque
 		}
 
 		// backfill root_document_id
-		innerErr = l.svcCtx.EntityDocumentRepo.UpdateColumnsByIdWithTx(l.ctx, tx, entityDoc.Id, map[string]interface{}{
+		innerErr = l.svcCtx.EntityDocumentRepo.UpdateColumnsByIdWithTx(l.ctx, tx, entityDoc.Id, map[string]any{
 			"root_document_id": rootDoc.Id,
 		})
 		if innerErr != nil {
@@ -136,7 +156,7 @@ func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateReque
 			return innerErr
 		}
 
-		metadata, _ := json.Marshal(map[string]interface{}{
+		metadata, _ := json.Marshal(map[string]any{
 			"after": struct {
 				*model.BorrowerPropertyTransaction
 				Id        int64     `json:"-"`
@@ -165,7 +185,7 @@ func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateReque
 	}
 
 	// convert response
-	responseEntity, err := copierx.Trans[model.BorrowerPropertyTransaction, borrower.BorrowerPropertyTransactionEntity](
+	responseEntity, err := copierx.Trans[model.BorrowerPropertyTransaction, proto.BorrowerPropertyTransactionEntity](
 		result,
 		copierx.TimeToRFC3339Str(),
 		copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
@@ -174,12 +194,12 @@ func (l *CreateLogic) Create(in *borrower.BorrowerPropertyTransactionCreateReque
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
 
-	return &borrower.BorrowerPropertyTransactionCreateResponse{
+	return &borrower.BorrowerPropertyTransactionDetailResponse{
 		Data: responseEntity,
 	}, nil
 }
 
-func (l *CreateLogic) createDocumentTree(tx *gorm.DB, entityDocumentId int64, structureMap model.DocumentTemplateStructureMap, transactionType string) (*model.Document, error) {
+func (l *CreateLogic) createDocumentTree(tx *gorm.DB, entityDocumentId int64, structureMap dto.DocumentTemplateStructureMap, transactionType string) (*model.Document, error) {
 	// merge common + per-type nodes
 	nodes := structureMap["common"]
 	typeKey := strings.ToLower(transactionType)
@@ -209,16 +229,18 @@ func (l *CreateLogic) createDocumentTree(tx *gorm.DB, entityDocumentId int64, st
 	return root, nil
 }
 
-func (l *CreateLogic) createDocumentNode(tx *gorm.DB, entityDocumentId int64, parentId int64, node model.DocumentTemplateStructure, level int32) error {
+func (l *CreateLogic) createDocumentNode(tx *gorm.DB, entityDocumentId int64, parentId int64, node *dto.DocumentTemplateStructure, level int32) error {
 	docType := constants.DocumentTypeBranch
 	if len(node.Children) == 0 {
 		docType = constants.DocumentTypeLeaf
 	}
 
 	metadata, _ := json.Marshal(map[string]interface{}{
-		"is_required": node.IsRequired,
-		"status":      constants.BorrowerPropertyTransactionStatusPending,
-		"create_type": "System",
+		"is_required":       node.IsRequired,
+		"status":            constants.BorrowerPropertyTransactionStatusPending,
+		"create_type":       "System",
+		"file_parse_config": node.FileParseConfig,
+		"tags":              node.Tags,
 	})
 
 	doc := &model.Document{

@@ -3,7 +3,6 @@ package loanlogic
 import (
 	"context"
 
-	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
@@ -12,33 +11,26 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type PendingStatusReviewLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewPendingStatusReviewLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PendingStatusReviewLogic {
 	return &PendingStatusReviewLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *PendingStatusReviewLogic) PendingStatusReview(in *lender.LoanPendingStatusReviewRequest) (resp *lender.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
-			).Error(err)
-		}
-	}()
+func (l *PendingStatusReviewLogic) PendingStatusReview(in *lender.LoanPendingStatusReviewRequest) (resp *proto.EmptyResponse, err error) {
 
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
@@ -59,17 +51,17 @@ func (l *PendingStatusReviewLogic) PendingStatusReview(in *lender.LoanPendingSta
 
 	// validate loan pending status
 	if loan.Stage != constants.LoanStagePending {
-		return nil, errorx.WithStack(errorx.New("Loan is not in pending stage"))
+		return nil, errorx.WithStack(errorx.New("loan is not in pending stage"))
 	}
 	if loan.Source != constants.LoanSourceSystem && loan.Source != constants.LoanSourcePreapproval {
-		return nil, errorx.WithStack(errorx.New("Invalid loan source"))
+		return nil, errorx.WithStack(errorx.New("invalid loan source"))
 	}
 
 	if loan.PendingStatus != currentStatus {
-		return nil, errorx.WithStack(errorx.New("Current pending status is not valid"))
+		return nil, errorx.WithStack(errorx.New("current pending status is not valid"))
 	}
 	if action == constants.LoanOperationActionReject && in.Data.Comment == "" {
-		return nil, errorx.WithStack(errorx.New("Comment is empty"))
+		return nil, errorx.WithStack(errorx.New("comment is empty"))
 	}
 	var targetStatus constants.LoanPendingStatus
 	loanBaseLogic := NewLoanBaseLogic(l.ctx, l.svcCtx)
@@ -111,5 +103,5 @@ func (l *PendingStatusReviewLogic) PendingStatusReview(in *lender.LoanPendingSta
 		return nil, err
 	}
 
-	return &lender.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

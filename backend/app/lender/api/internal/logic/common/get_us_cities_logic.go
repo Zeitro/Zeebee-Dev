@@ -6,6 +6,7 @@ import (
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
 	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,7 +27,7 @@ func NewGetUsCitiesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 }
 
 func (l *GetUsCitiesLogic) GetUsCities(req *types.GetUsCitiesRequest) (resp *types.GetUsCitiesResponse, err error) {
-	var rpcResp *lender.StringSliceResponse
+	var rpcResp *proto.StringSliceResponse
 	rpcResp, err = l.svcCtx.CommonRpcClient.GetUsCities(l.ctx, &lender.UsCitiesRequest{
 		Data: &lender.UsCitiesRequestData{
 			StateUsps: req.State,

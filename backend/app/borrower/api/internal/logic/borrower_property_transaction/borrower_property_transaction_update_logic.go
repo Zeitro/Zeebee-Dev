@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type BorrowerPropertyTransactionUpdateLogic struct {
@@ -43,7 +44,7 @@ func (l *BorrowerPropertyTransactionUpdateLogic) BorrowerPropertyTransactionUpda
 	}
 
 	resp = &types.BorrowerPropertyTransactionDetailResponse{}
-	resp, err = copierx.Trans[borrower.BorrowerPropertyTransactionEntity, types.BorrowerPropertyTransactionDetailResponse](rpcResp.Data)
+	resp, err = copierx.Trans[proto.BorrowerPropertyTransactionEntity, types.BorrowerPropertyTransactionDetailResponse](rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

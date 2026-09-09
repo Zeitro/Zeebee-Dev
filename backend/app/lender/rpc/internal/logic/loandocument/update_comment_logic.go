@@ -11,8 +11,7 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -21,7 +20,6 @@ type UpdateCommentLogic struct {
 	ctx       context.Context
 	svcCtx    *svc.ServiceContext
 	baseLogic *logic.BaseLogic
-	logx.Logger
 }
 
 func NewUpdateCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateCommentLogic {
@@ -29,19 +27,11 @@ func NewUpdateCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upd
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		baseLogic: logic.GetBaseLogic(svcCtx),
-		Logger:    logx.WithContext(ctx),
 	}
 }
 
-func (l *UpdateCommentLogic) UpdateComment(in *lender.LoanDocumentUpdateCommentRequest) (resp *lender.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
-			).Error(err)
-		}
-	}()
+func (l *UpdateCommentLogic) UpdateComment(in *lender.LoanDocumentUpdateCommentRequest) (resp *proto.EmptyResponse, err error) {
+
 	var loan *model.Loan
 	var loanDocument *model.LoanDocument
 
@@ -91,7 +81,7 @@ func (l *UpdateCommentLogic) UpdateComment(in *lender.LoanDocumentUpdateCommentR
 		return nil, err
 	}
 
-	return &lender.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }
 
 func (l *UpdateCommentLogic) prepare(in *lender.LoanDocumentUpdateCommentRequest, organizationId int64) (loan *model.Loan, loanDocument *model.LoanDocument, err error) {

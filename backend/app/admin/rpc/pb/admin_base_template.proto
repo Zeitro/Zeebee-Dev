@@ -1,0 +1,151 @@
+syntax = "proto3";
+
+package admin;
+
+option go_package = "zeebee-backend/app/admin/rpc/pb/admin";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+
+// Base template page entity (for list display)
+message BaseTemplatePageEntity {
+  int64 id = 1;
+  string name = 2;
+  string type = 3;
+  string category = 4;
+  string purpose = 5;
+  string status = 6;
+  string description = 7;
+  string created_at = 8;
+  string updated_at = 9;
+  string scope = 10;
+  bool is_configurable = 11;
+}
+
+// Create ---- request
+message CreateBaseTemplateRequest {
+  CreateBaseTemplateRequestData data = 1;
+}
+message CreateBaseTemplateRequestData {
+  string name = 1;
+  string type = 2;
+  string category = 3;
+  string purpose = 4;
+  string content = 5;
+  repeated proto.TemplateVariableGroupEntity variable_group_schema = 6;
+  string description = 7;
+  string example_variables = 8;
+  string scope = 9;
+  bool is_configurable = 10;
+}
+// Create ---- response
+message CreateBaseTemplateResponse {
+  proto.BaseTemplateEntity data = 1;
+}
+
+// Update ---- request
+message UpdateBaseTemplateRequest {
+  UpdateBaseTemplateRequestData data = 1;
+}
+message UpdateBaseTemplateRequestData {
+  int64 id = 1;
+  string name = 2;
+  string category = 4;
+  string content = 6;
+  repeated proto.TemplateVariableGroupEntity variable_group_schema = 7;
+  string description = 8;
+  string example_variables = 9;
+  string scope = 10;
+  bool is_configurable = 11;
+}
+// Update ---- response
+message UpdateBaseTemplateResponse {
+  proto.BaseTemplateEntity data = 1;
+}
+
+// detail ---- request
+message GetBaseTemplateRequest {
+  proto.IdRequest data = 1;
+}
+// detail ---- response
+message GetBaseTemplateResponse {
+  proto.BaseTemplateEntity data = 1;
+}
+
+// Page ---- request
+message BaseTemplatePageRequest {
+  BaseTemplatePageRequestData data = 1;
+}
+message BaseTemplatePageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  BaseTemplatePageRequestFilter filter = 3;
+  BaseTemplatePageRequestSorter sorter = 4;
+}
+message BaseTemplatePageRequestFilter {
+  string keyword = 1;
+  string type = 2;
+  string category = 3;
+  string status = 4;
+  string scope = 5;
+}
+message BaseTemplatePageRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+// Page ---- response
+message BaseTemplatePageResponse {
+  BaseTemplatePageResponseData data = 1;
+}
+message BaseTemplatePageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated BaseTemplatePageEntity list = 5;
+}
+
+// Switch ---- request
+message SwitchBaseTemplateStatusRequest {
+  SwitchBaseTemplateStatusRequestData data = 1;
+}
+message SwitchBaseTemplateStatusRequestData {
+  int64 id = 1;
+  string status = 2;
+}
+
+// Delete ---- request
+message DeleteBaseTemplateRequest {
+  proto.IdRequest data = 1;
+}
+
+// preview ---- request
+message BaseTemplatePreviewRequest {
+  BaseTemplatePreviewRequestData data = 1;
+}
+message BaseTemplatePreviewRequestData {
+  string content = 1;
+  repeated proto.TemplateVariableGroupEntity variable_group_schema = 2;
+  string example_variables = 3;
+  string name = 4;
+}
+// preview ---- response
+message BaseTemplatePreviewResponse {
+  BaseTemplatePreviewResponseData data = 1;
+}
+message BaseTemplatePreviewResponseData {
+  string content = 1;
+}
+
+
+service BaseTemplate {
+  rpc Create(CreateBaseTemplateRequest) returns(CreateBaseTemplateResponse);
+  rpc Update(UpdateBaseTemplateRequest) returns(UpdateBaseTemplateResponse);
+  rpc Detail(GetBaseTemplateRequest) returns(GetBaseTemplateResponse);
+  rpc Page(BaseTemplatePageRequest) returns(BaseTemplatePageResponse);
+  rpc SwitchStatus(SwitchBaseTemplateStatusRequest) returns(proto.EmptyResponse);
+  rpc Delete(DeleteBaseTemplateRequest) returns(proto.EmptyResponse);
+  rpc Preview(BaseTemplatePreviewRequest) returns(BaseTemplatePreviewResponse);
+  rpc Reset(proto.IdRequest) returns(proto.EmptyResponse);
+}

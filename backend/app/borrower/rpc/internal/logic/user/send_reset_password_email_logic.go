@@ -7,43 +7,31 @@ import (
 
 	"github.com/duke-git/lancet/v2/random"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/borrower/rpc/internal/email_tpl"
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	email2 "zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/limiter"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type SendResetPasswordEmailLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
 }
 
 func NewSendResetPasswordEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SendResetPasswordEmailLogic {
 	return &SendResetPasswordEmailLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *borrower.SendResetPasswordEmailRequest) (resp *borrower.SendResetPasswordEmailResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
-			).Error(err)
-		}
-	}()
+func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *proto.SendResetPasswordEmailRequest) (resp *proto.SendResetPasswordEmailResponse, err error) {
 
 	email := in.Data.Email
 	if email == "" {
@@ -75,11 +63,11 @@ func (l *SendResetPasswordEmailLogic) SendResetPasswordEmail(in *borrower.SendRe
 		err := l.sendResetPwdEmail(email, user.FirstName)
 		if err != nil {
 			err = errorx.Wrap(err, "fail to send reset password email")
-			l.WithContext(ctx).Error(err)
+			l.svcCtx.Logger.WithContext(ctx).Error(err)
 		}
 	}()
 
-	return &borrower.SendResetPasswordEmailResponse{}, err
+	return &proto.SendResetPasswordEmailResponse{}, err
 }
 
 func (l *SendResetPasswordEmailLogic) sendResetPwdEmail(email string, firstName string) (err error) {

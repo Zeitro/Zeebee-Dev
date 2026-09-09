@@ -7,11 +7,9 @@ import (
 
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
-	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -19,28 +17,21 @@ import (
 type SyncDataLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewSyncDataLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncDataLogic {
 	return &SyncDataLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *SyncDataLogic) SyncData(in *lender.EmptyRequest) (resp *lender.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
-			).Error(err)
-		}
-	}()
+func (l *SyncDataLogic) SyncData(in *proto.EmptyRequest) (resp *proto.EmptyResponse, err error) {
+
 	organizations, err := l.svcCtx.OrganizationRepo.FindAll(l.ctx, map[string]interface{}{
 		"type": constants.UserTypeLender,
 	})
@@ -77,5 +68,5 @@ func (l *SyncDataLogic) SyncData(in *lender.EmptyRequest) (resp *lender.EmptyRes
 		return innerErr
 	})
 
-	return &lender.EmptyResponse{}, errorx.WithStack(err)
+	return &proto.EmptyResponse{}, errorx.WithStack(err)
 }

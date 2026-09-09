@@ -3,43 +3,32 @@ package userlogic
 import (
 	"context"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
-
-	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type SwitchOrganizationLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewSwitchOrganizationLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SwitchOrganizationLogic {
 	return &SwitchOrganizationLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *SwitchOrganizationLogic) SwitchOrganization(in *borrower.SwitchOrganizationRequest) (resp *borrower.UserLoginResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
-			).Error(err)
-		}
-	}()
+func (l *SwitchOrganizationLogic) SwitchOrganization(in *proto.SwitchOrganizationRequest) (resp *proto.UserLoginResponse, err error) {
+
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
@@ -55,10 +44,10 @@ func (l *SwitchOrganizationLogic) SwitchOrganization(in *borrower.SwitchOrganiza
 	if err != nil {
 		return nil, err
 	}
-	data := &borrower.UserLoginResponseData{}
-	data, err = copierx.Trans[dto.UserJwtTokenDto, borrower.UserLoginResponseData](token)
+	data := &proto.UserLoginResponseData{}
+	data, err = copierx.Trans[dto.UserJwtTokenDto, proto.UserLoginResponseData](token)
 	if err != nil {
 		return nil, err
 	}
-	return &borrower.UserLoginResponse{Data: data}, nil
+	return &proto.UserLoginResponse{Data: data}, nil
 }

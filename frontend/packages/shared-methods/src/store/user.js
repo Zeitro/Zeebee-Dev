@@ -10,6 +10,17 @@ export const useUserStore = create(
 			// access: {},
 			organization: {},
 			accessibleRoutes: [],
+			currentPlan: {},
+			setCurrentPlan: (currentPlan) => {
+				set({ currentPlan });
+			},
+			getCurrentPlan: async () => {
+				const { subscription } = await request('/organization/subscription/current', {
+					method: 'GET',
+				});
+				set({ currentPlan: subscription });
+				return subscription;
+			},
 			// login: async (values, config = {}) => {
 			// 	const access = await request('/user/login', {
 			// 		method: 'POST',
@@ -108,6 +119,7 @@ export const useUserStore = create(
 			partialize: (state) => ({
 				userInfo: state.userInfo,
 				organization: state.organization,
+				currentPlan: state.currentPlan,
 				accessibleRoutes: state.accessibleRoutes,
 			}),
 		},

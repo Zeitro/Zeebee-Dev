@@ -7,8 +7,8 @@ import (
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type RoleDetailLogic struct {
@@ -28,8 +28,8 @@ func NewRoleDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RoleDe
 
 func (l *RoleDetailLogic) RoleDetail(req *types.PathIdRequest) (resp *types.RoleEntity, err error) {
 	resp = &types.RoleEntity{}
-	rpcReq := &borrower.RoleDetailRequest{
-		Data: &borrower.RoleDetailRequestData{},
+	rpcReq := &proto.PathIdRequest{
+		Data: &proto.PathIdRequestData{},
 	}
 	rpcReq.Data.Id = req.Id
 
@@ -39,7 +39,7 @@ func (l *RoleDetailLogic) RoleDetail(req *types.PathIdRequest) (resp *types.Role
 	}
 
 	// trans response
-	resp, err = copierx.Trans[borrower.RoleEntity, types.RoleEntity](rpcResp.Data)
+	resp, err = copierx.Trans[proto.RoleEntity, types.RoleEntity](rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

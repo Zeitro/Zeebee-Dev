@@ -7,7 +7,7 @@ import (
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
-	"zeebee-backend/app/lender/rpc/pb/lender"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type RoleDeleteLogic struct {
@@ -27,8 +27,8 @@ func NewRoleDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RoleDe
 
 func (l *RoleDeleteLogic) RoleDelete(req *types.PathIdRequest) (resp *types.EmptyResponse, err error) {
 	resp = &types.EmptyResponse{}
-	rpcReq := &lender.RoleDeleteRequest{
-		Data: &lender.RoleDeleteRequestData{},
+	rpcReq := &proto.PathIdRequest{
+		Data: &proto.PathIdRequestData{},
 	}
 	rpcReq.Data.Id = req.Id
 

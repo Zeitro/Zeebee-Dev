@@ -3,11 +3,11 @@ package organization_user
 import (
 	"context"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
-	"zeebee-backend/app/lender/rpc/pb/lender"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type OrganizationUserSendEmailLogic struct {
@@ -26,8 +26,8 @@ func NewOrganizationUserSendEmailLogic(ctx context.Context, svcCtx *svc.ServiceC
 }
 
 func (l *OrganizationUserSendEmailLogic) OrganizationUserSendEmail(req *types.PathIdRequest) (resp *types.EmptyResponse, err error) {
-	rpcReq := &lender.OrganizationUserSendInvitationEmailRequest{
-		Data: &lender.OrganizationUserSendInvitationEmailRequestData{
+	rpcReq := &proto.PathIdRequest{
+		Data: &proto.PathIdRequestData{
 			Id: req.Id,
 		},
 	}

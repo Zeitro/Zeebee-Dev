@@ -12,8 +12,7 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -22,7 +21,6 @@ type DeleteFileLogic struct {
 	ctx       context.Context
 	svcCtx    *svc.ServiceContext
 	baseLogic *logic.BaseLogic
-	logx.Logger
 }
 
 func NewDeleteFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteFileLogic {
@@ -30,19 +28,11 @@ func NewDeleteFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delete
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		baseLogic: logic.GetBaseLogic(svcCtx),
-		Logger:    logx.WithContext(ctx),
 	}
 }
 
-func (l *DeleteFileLogic) DeleteFile(in *lender.LoanDocumentDeleteFileRequest) (resp *lender.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
-			).Error(err)
-		}
-	}()
+func (l *DeleteFileLogic) DeleteFile(in *lender.LoanDocumentDeleteFileRequest) (resp *proto.EmptyResponse, err error) {
+
 	var loan *model.Loan
 	var loanDocument *model.LoanDocument
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
@@ -127,7 +117,7 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.LoanDocumentDeleteFileRequest) (
 		return nil, err
 	}
 
-	return &lender.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }
 
 // prepare

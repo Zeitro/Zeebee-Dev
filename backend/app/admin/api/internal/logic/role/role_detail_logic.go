@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type RoleDetailLogic struct {
@@ -20,7 +21,7 @@ type RoleDetailLogic struct {
 // detail
 func NewRoleDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RoleDetailLogic {
 	return &RoleDetailLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
@@ -39,7 +40,7 @@ func (l *RoleDetailLogic) RoleDetail(req *types.PathIdRequest) (resp *types.Role
 	}
 
 	// trans response
-	resp, err = copierx.Trans[admin.RoleEntity, types.RoleEntity](rpcResp.Data)
+	resp, err = copierx.Trans[proto.RoleEntity, types.RoleEntity](rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

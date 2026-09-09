@@ -7,7 +7,7 @@ import (
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
-	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DriveDisconnectLogic struct {
@@ -26,7 +26,7 @@ func NewDriveDisconnectLogic(ctx context.Context, svcCtx *svc.ServiceContext) *D
 }
 
 func (l *DriveDisconnectLogic) DriveDisconnect(req *types.EmptyRequest) (resp *types.EmptyResponse, err error) {
-	_, err = l.svcCtx.DriveRpcClient.Disconnect(l.ctx, &borrower.EmptyRequest{})
+	_, err = l.svcCtx.DriveRpcClient.Disconnect(l.ctx, &proto.EmptyRequest{})
 	if err != nil {
 		return nil, err
 	}

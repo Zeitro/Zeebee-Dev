@@ -3,14 +3,15 @@ import React, { useEffect, forwardRef, useImperativeHandle } from 'react';
 import { useDisUpdateEffect } from '@repo/shared-methods/hooks';
 import { FilterTag } from '../FilterField/filterTag.js';
 import { FilterField } from '../FilterField/index';
-import { NewTable } from '../NewTable';
+import { TABLE_TYPE } from '../SortableTable';
+import { ListTable } from '../FilterTable/ListTable';
 import { Cards } from './cards.js';
 import styles from './index.module.scss';
 import useContent from '../FilterTable/useContent';
 
 /**
  * Form筛选 + Table/Card（两个可切换）
- * 与FilterTable传一样的参数
+ * 与FilterTable传一样的参数；table 模式下可用 tableType 切换普通表 / 拖拽排序表
  */
 export const FilterTableCard = forwardRef(
 	(
@@ -35,6 +36,9 @@ export const FilterTableCard = forwardRef(
 			cardTitle,
 			settingPagination, // 初始化修改分页请求参数
 			pageSizeStorageKey,
+			tableType = TABLE_TYPE.DEFAULT, // default | sortable，仅 typeKey=table 时生效
+			onSortEnd,
+			showDragHandle,
 			...props
 		},
 		ref,
@@ -66,13 +70,17 @@ export const FilterTableCard = forwardRef(
 			switch (type) {
 				case 'table':
 					return (
-						<NewTable
+						<ListTable
+							{...props}
+							tableType={tableType}
+							onSortEnd={onSortEnd}
+							showDragHandle={showDragHandle}
+							setList={setList}
 							dataSource={list}
 							loading={loading}
 							columns={columns}
 							scroll={scroll}
 							onChange={onChange}
-							{...props}
 							pagination={props?.pagination ?? paramsData}
 							className={[
 								'flex-1 overflow-hidden',

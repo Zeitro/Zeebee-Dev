@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package admin;
+
+option go_package = "zeebee-backend/app/admin/rpc/pb/admin";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+// PricingPlanPolicy Create
+message PricingPlanPolicyCreateRequest {
+  PricingPlanPolicyCreateRequestData data = 1;
+}
+message PricingPlanPolicyCreateRequestData {
+  int64 pricing_plan_id = 1;
+  double original_amount = 2;
+  double actual_amount = 3;
+  string type = 4;
+}
+
+// PricingPlanPolicy Update
+message PricingPlanPolicyUpdateRequest {
+  PricingPlanPolicyUpdateRequestData data = 1;
+}
+message PricingPlanPolicyUpdateRequestData {
+  int64 id = 1;
+  double original_amount = 2;
+  double actual_amount = 3;
+  string type = 4;
+}
+message PricingPlanPolicyDetailResponse {
+  proto.PricingPlanPolicyEntity data = 1;
+}
+
+// PricingPlanPolicy Delete
+message PricingPlanPolicyDeleteRequest {
+  PricingPlanPolicyDeleteRequestData data = 1;
+}
+message PricingPlanPolicyDeleteRequestData {
+  int64 id = 1;
+}
+
+service PricingPlanPolicy {
+  rpc Create(PricingPlanPolicyCreateRequest) returns(PricingPlanPolicyDetailResponse);
+  rpc Update(PricingPlanPolicyUpdateRequest) returns(PricingPlanPolicyDetailResponse);
+  rpc Delete(proto.PathIdRequest) returns(proto.EmptyResponse);
+}
