@@ -98,14 +98,16 @@ export const UploadFileButton = forwardRef<CommonUploadRef, UploadFileButtonProp
 			});
 
 		const handleUpload = async (
-			file: UploadFile,
+			file: UploadFile | RcFile,
 			// eslint-disable-next-line no-unused-vars
 			progressCallback: (_percent: number) => void,
 			isReturnDetail = false,
 		): Promise<string | UploadDetail> => {
+			// immediateUpload + customRequest 传入 RcFile；triggerUpload 传入 UploadFile
+			const rawFile = ('originFileObj' in file && file.originFileObj) || file;
 			const result = await uploadAwsS3({
 				url: '/storage/presign_url',
-				file: file.originFileObj,
+				file: rawFile,
 				onProgress: progressCallback,
 				isReturnMoreInfo: isReturnDetail,
 			});
@@ -278,7 +280,7 @@ export const UploadFileButton = forwardRef<CommonUploadRef, UploadFileButtonProp
 				const uploadFile = {
 					uid: file.uid,
 					name: file.name,
-					status: 'uploading' as const,
+					// status: 'done' as const,
 					originFileObj: file,
 					thumbUrl,
 				} as UploadFile;

@@ -7,8 +7,8 @@ import (
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
-	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type InfoLogic struct {
@@ -29,13 +29,11 @@ func NewInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *InfoLogic {
 func (l *InfoLogic) Info(req *types.EmptyRequest) (resp *types.UserInfoResponse, err error) {
 	resp = &types.UserInfoResponse{}
 
-	userInfo, err := l.svcCtx.UserRpcClient.UserInfo(l.ctx, &lender.UserInfoRequest{
-		Data: &lender.UserInfoRequestData{},
-	})
+	userInfo, err := l.svcCtx.UserRpcClient.UserInfo(l.ctx, &proto.EmptyRequest{})
 	if err != nil {
 		return nil, err
 	}
-	resp, err = copierx.Trans[lender.UserinfoResponseData, types.UserInfoResponse](userInfo.Data)
+	resp, err = copierx.Trans[proto.UserinfoResponseData, types.UserInfoResponse](userInfo.Data)
 	if err != nil {
 		return nil, err
 	}

@@ -11,7 +11,6 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 )
@@ -33,7 +32,7 @@ type BorrowerPropertyTransactionPageRow struct {
 	Note               string                                      `gorm:"column:note"`
 	CreatedAt          time.Time                                   `gorm:"column:created_at"`
 	UpdatedAt          time.Time                                   `gorm:"column:updated_at"`
-	Address            data.Address                                `gorm:"column:address;;serializer:json"`
+	Address            dto.AddressDto                              `gorm:"column:address;;serializer:json"`
 }
 
 type BorrowerPropertyTransactionRepo struct {
@@ -57,7 +56,8 @@ func (repo *BorrowerPropertyTransactionRepo) GetOne(ctx context.Context, id int6
 func (repo *BorrowerPropertyTransactionRepo) GetOrganizationTransaction(ctx context.Context, id int64, organizationId int64) (result *model.BorrowerPropertyTransaction, err error) {
 	err = repo.Client(ctx).
 		Where("id = ? and organization_id = ?", id, organizationId).
-		Preload("BorrowerProperty").
+		// Preload("BorrowerProperty").
+		Preload("Property").
 		First(&result).Error
 	return result, errorx.WithStack(err)
 }

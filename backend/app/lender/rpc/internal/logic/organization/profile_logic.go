@@ -9,8 +9,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -19,7 +18,6 @@ type ProfileLogic struct {
 	ctx       context.Context
 	svcCtx    *svc.ServiceContext
 	baseLogic *logic.BaseLogic
-	logx.Logger
 }
 
 func NewProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ProfileLogic {
@@ -27,21 +25,15 @@ func NewProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ProfileLo
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		baseLogic: logic.GetBaseLogic(svcCtx),
-		Logger:    logx.WithContext(ctx),
 	}
 }
 
-func (l *ProfileLogic) Profile(in *lender.EmptyRequest) (resp *lender.OrganizationProfileResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+func (l *ProfileLogic) Profile(in *proto.EmptyRequest) (resp *lender.OrganizationProfileResponse, err error) {
 
 	// Get current user claim from gRPC metadata (JWT token)
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to get user claim from context")
+		return nil, errorx.Wrap(err, "fail to get user claim from context")
 	}
 
 	// Validate user belongs to an organization
@@ -56,11 +48,11 @@ func (l *ProfileLogic) Profile(in *lender.EmptyRequest) (resp *lender.Organizati
 		constants.UserTypeLender,
 	)
 	if err != nil {
-		return nil, errorx.Wrap(err, "Failed to get organization")
+		return nil, errorx.Wrap(err, "fail to get organization")
 	}
 
 	// Convert business object to proto entity with time field conversion
-	data, err := copierx.Trans[dto.OrganizationEntityDto, lender.OrganizationProfileEntity](
+	data, err := copierx.Trans[dto.OrganizationEntityDto, proto.OrganizationProfileEntity](
 		organization,
 		copierx.TimeToRFC3339Str(),
 		copierx.StrMapToBytes(),

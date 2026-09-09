@@ -5,8 +5,8 @@ import (
 
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
-	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -20,7 +20,7 @@ type UserMenuLogic struct {
 // user menu
 func NewUserMenuLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserMenuLogic {
 	return &UserMenuLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
@@ -31,13 +31,13 @@ func (l *UserMenuLogic) UserMenu(req *types.EmptyRequest) (resp *types.ResourceT
 		List: []*types.ResourceTreeEntity{},
 	}
 
-	rpcResp, err := l.svcCtx.ResourceRpcClient.UserMenu(l.ctx, &admin.EmptyRequest{})
+	rpcResp, err := l.svcCtx.ResourceRpcClient.UserMenu(l.ctx, &proto.EmptyRequest{})
 	if err != nil {
 		return nil, err
 	}
 
 	// trans response
-	result, err := copierx.Trans[[]*admin.ResourceTreeEntity, []*types.ResourceTreeEntity](&rpcResp.Data)
+	result, err := copierx.Trans[[]*proto.ResourceTreeEntity, []*types.ResourceTreeEntity](&rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

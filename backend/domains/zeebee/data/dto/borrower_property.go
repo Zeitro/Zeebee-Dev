@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
 )
 
 type BorrowerPropertyDto struct {
@@ -16,7 +15,7 @@ type BorrowerPropertyDto struct {
 	LotAreaSqft    float32                `json:"lot_area_sqft"`
 	Bedrooms       int32                  `json:"bedrooms"`
 	Bathrooms      int32                  `json:"bathrooms"`
-	Address        data.Address           `json:"address"`
+	Address        AddressDto             `json:"address"`
 	CreatedAt      time.Time              `json:"created_at"`
 	UpdatedAt      time.Time              `json:"updated_at"`
 	LoanCount      int32                  `json:"loan_count"`

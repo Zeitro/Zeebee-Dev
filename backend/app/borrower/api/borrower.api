@@ -515,20 +515,6 @@ service borrower-api {
 	tags:       organization_user
 )
 service borrower-api {
-	@doc "accept invitation"
-	@handler AcceptInvitation
-	post /organization_user/accept_invitation (OrganizationUserAcceptInvitationRequest) returns (UserLoginResponse)
-}
-
-@server (
-	desc:       "organization user service"
-	version:    v1
-	group:      organization_user
-	prefix:     /api/v1
-	middleware: AuthMiddleware
-	tags:       organization_user
-)
-service borrower-api {
 	@doc "detail"
 	@handler OrganizationUserDetail
 	get /organization_user/:id (PathIdRequest) returns (OrganizationUserEntity)
@@ -564,6 +550,14 @@ service borrower-api {
 	@doc "send email"
 	@handler OrganizationUserSendEmail
 	post /organization_user/:id/send_email (PathIdRequest) returns (EmptyResponse)
+
+	@doc "accept invitation"
+	@handler AcceptInvitation
+	post /organization_user/accept_invitation (OrganizationUserAcceptInvitationRequest) returns (UserLoginResponse)
+
+	@doc "check invitation"
+	@handler CheckInvitation
+	post /organization_user/check_invitation (OrganizationUserCheckInvitationRequest) returns (OrganizationUserCheckInvitationResponse)
 }
 
 // ============== organization user end =============
@@ -724,6 +718,14 @@ service borrower-api {
 	@doc "transaction operation list"
 	@handler OperationList
 	get /borrower_property_transaction/:transaction_id/operations (TransactionOperationListRequest) returns (TransactionOperationListResponse)
+
+	@doc "parse file"
+	@handler ParseFile
+	post /borrower_property_transaction/:id/parse (ParseFileRequest) returns (ParseFileResponse)
+
+	@doc "get parse file result"
+	@handler ParseFileResult
+	get /borrower_property_transaction/:id/parse/result (ParseFileResultRequest) returns (ParseFileResultResponse)
 }
 
 // =============== borrower property transaction end ==============

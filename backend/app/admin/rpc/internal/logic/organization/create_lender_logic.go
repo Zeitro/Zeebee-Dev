@@ -3,8 +3,6 @@ package organizationlogic
 import (
 	"context"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
@@ -14,20 +12,21 @@ import (
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type CreateLenderLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewCreateLenderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLenderLogic {
 	return &CreateLenderLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
@@ -38,11 +37,6 @@ func NewCreateLenderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Crea
 // - Validates organization name uniqueness (Lender type)
 // - Validates owner email uniqueness (Lender type)
 func (l *CreateLenderLogic) CreateLender(in *admin.OrganizationCreateLenderRequest) (resp *admin.OrganizationDetailResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
 
 	if in.Data == nil || in.Data.Owner == nil || in.Data.Organization == nil {
 		return nil, errorx.New("Request data is required")
@@ -72,12 +66,23 @@ func (l *CreateLenderLogic) CreateLender(in *admin.OrganizationCreateLenderReque
 	orgInput.Status = constants.OrganizationStatusActive
 	orgInput.Type = constants.UserTypeLender
 	orgInput.OwnerType = constants.OrganizationOwnerTypeThirdParty
+	orgInput.Source = constants.OrganizationSourceManual
+
+	// Append the new lender at the end of the lender list.
+	maxOrder, err := l.svcCtx.OrganizationRepo.MaxOrderByType(l.ctx, constants.UserTypeLender)
+	if err != nil {
+		return nil, err
+	}
+	orgInput.Order = maxOrder + 1
 
 	// Register with organization
 	_, organizationUser, err := l.baseLogic.UserLogic.RegisterWithOrganization(l.ctx, *userInput, *orgInput, constants.UserTypeLender, true)
 	if err != nil {
 		return nil, err
 	}
+
+	// Subscribe default pricing plan (best-effort, ignore errors)
+	_ = l.baseLogic.OrganizationSubscriptionLogic.SubscribeDefaultPlan(l.ctx, organizationUser.OrganizationId, constants.UserTypeLender)
 
 	// Load organization with relations for response
 	organization, err := l.baseLogic.OrganizationLogic.DetailWithType(l.ctx, organizationUser.OrganizationId, constants.UserTypeLender)
@@ -86,7 +91,7 @@ func (l *CreateLenderLogic) CreateLender(in *admin.OrganizationCreateLenderReque
 	}
 
 	// Convert to response
-	data, err := copierx.Trans[dto.OrganizationEntityDto, admin.OrganizationEntity](organization, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[dto.OrganizationEntityDto, proto.OrganizationEntity](organization, copierx.TimeToRFC3339Str())
 	return &admin.OrganizationDetailResponse{
 		Data: data,
 	}, err

@@ -21,7 +21,6 @@ var onceBase sync.Once
 type BaseLogic struct {
 	// ctx    context.Context
 	svcCtx *svc.ServiceContext
-	// logx.Logger
 	*logic.AllLogics
 }
 
@@ -53,6 +52,7 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		CurrentEnforcer:       currentEnforcer,
 		CurrentAuthEventTopic: svcCtx.Config.CasbinConf.EventTopic.BorrowerTopic,
 		AuthEventTopicMap:     authEventTopicMap,
+		Logger:                svcCtx.Logger,
 	}
 
 	l := &BaseLogic{
@@ -65,10 +65,10 @@ func NewBaseLogic(svcCtx *svc.ServiceContext) *BaseLogic {
 		ctx := context.Background()
 		err := l.AuthLogic.RebuildPolicy(ctx, constants.UserTypeBorrower)
 		if err != nil {
-			logx.WithContext(ctx).WithFields(
+			l.svcCtx.Logger.WithContext(ctx).WithFields(
 				logx.Field("stacks", errorx.GetErrorStack(err)),
 				logx.Field("user_type", constants.UserTypeBorrower),
-			).Error("failed to rebuild borrower policy")
+			).Error("fail to rebuild borrower policy")
 		}
 	})
 

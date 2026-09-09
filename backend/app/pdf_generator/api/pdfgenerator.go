@@ -1,6 +1,9 @@
 package api
 
 import (
+	"net/http"
+
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/service"
 
 	"zeebee-backend/app/pdf_generator/api/internal/global"
@@ -14,8 +17,9 @@ import (
 )
 
 type ApiServer struct {
-	s      *rest.Server
-	svcCtx *svc.ServiceContext
+	s        *rest.Server
+	svcCtx   *svc.ServiceContext
+	startOpt rest.StartOption
 }
 
 func NewApiServer(c config.Config) (s service.Service, err error) {
@@ -30,13 +34,26 @@ func NewApiServer(c config.Config) (s service.Service, err error) {
 	apiConfig := c.ApiConf
 	runOpts := []rest.RunOption{
 		rest.WithNotFoundHandler(response.NotFoundHandler{}),
-		rest.WithNotAllowedHandler(response.NotFoundHandler{}),
+		rest.WithNotAllowedHandler(response.NotAllowedHandler{}),
 		rest.WithCors("*"),
 	}
 	restServer := rest.MustNewServer(apiConfig.RestConf, runOpts...)
 	// restServer.Use(middleware.CorsMiddleware)
 
-	ctx := svc.NewServiceContext(apiConfig)
+	// Wrap the http.Server handler ABOVE go-zero's TraceHandler/LogHandler so the
+	// built-in access log line carries service_name.
+	startOpt := func(svr *http.Server) {
+		base := svr.Handler
+		svr.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ctx := logx.ContextWithFields(r.Context(),
+				logx.Field("service_name", apiConfig.Name))
+			base.ServeHTTP(w, r.WithContext(ctx))
+		})
+	}
+	logger := logx.WithCallerSkip(0).
+		WithFields(logx.Field("service_name", apiConfig.Name))
+
+	ctx := svc.NewServiceContext(apiConfig, logger)
 
 	// register handlers
 	handler.RegisterHandlers(restServer, ctx)
@@ -45,14 +62,15 @@ func NewApiServer(c config.Config) (s service.Service, err error) {
 	handler.RegisterExtraRoutes(restServer)
 
 	return &ApiServer{
-		s:      restServer,
-		svcCtx: ctx,
+		s:        restServer,
+		svcCtx:   ctx,
+		startOpt: startOpt,
 	}, nil
 }
 
 func (s *ApiServer) Start() {
 	go func() {
-		s.s.Start()
+		s.s.StartWithOpts(s.startOpt)
 	}()
 }
 

@@ -6,8 +6,8 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/domains/zeebee/proto"
 
-	"github.com/zeromicro/go-zero/core/logx"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
@@ -17,25 +17,20 @@ import (
 type LeafListLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewLeafListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LeafListLogic {
 	return &LeafListLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
 func (l *LeafListLogic) LeafList(in *borrower.DocumentLeafListRequest) (resp *borrower.DocumentLeafListResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
 
 	// find entity_document to get root
 	entityDoc, err := l.svcCtx.EntityDocumentRepo.GetByEntity(l.ctx, constants.EntityDocumentType(in.Data.EntityType), in.Data.EntityId)
@@ -50,7 +45,7 @@ func (l *LeafListLogic) LeafList(in *borrower.DocumentLeafListRequest) (resp *bo
 	}
 
 	// filter leaf nodes
-	leaves := make([]*borrower.DocumentEntity, 0)
+	leaves := make([]*proto.DocumentEntity, 0)
 	fileEntityType := string(constants.FileEntityTypeDocument)
 	for _, doc := range descendants {
 		if doc.Type != "leaf" {
@@ -63,7 +58,7 @@ func (l *LeafListLogic) LeafList(in *borrower.DocumentLeafListRequest) (resp *bo
 			Where("entity_type = ? AND entity_id = ?", fileEntityType, doc.Id).
 			Count(&fileCount)
 
-		protoDoc, innerErr := copierx.Trans[model.Document, borrower.DocumentEntity](
+		protoDoc, innerErr := copierx.Trans[model.Document, proto.DocumentEntity](
 			doc,
 			copierx.TimeToRFC3339Str(),
 		)

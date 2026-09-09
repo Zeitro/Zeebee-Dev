@@ -1,8 +1,10 @@
 package rpc
 
 import (
+	"context"
 	"time"
 
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -10,8 +12,8 @@ import (
 	"github.com/zeromicro/go-zero/core/service"
 
 	"zeebee-backend/app/borrower/rpc/internal/logic"
-	borrowerApplicantServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerapplicant"
 	apiServer "zeebee-backend/app/borrower/rpc/internal/server/api"
+	borrowerApplicantServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerapplicant"
 	borrowerEntityServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerentity"
 	borrowerPropertyServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerproperty"
 	borrowerPropertyTransactionServer "zeebee-backend/app/borrower/rpc/internal/server/borrowerpropertytransaction"
@@ -20,6 +22,9 @@ import (
 	organizationServer "zeebee-backend/app/borrower/rpc/internal/server/organization"
 	organizationEmailServer "zeebee-backend/app/borrower/rpc/internal/server/organizationemail"
 	zeitroServer "zeebee-backend/app/borrower/rpc/internal/server/zeitro"
+	"zeebee-backend/common/cron"
+	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/templater"
 	"zeebee-backend/domains/zeebee/templater/convertor"
 	"zeebee-backend/domains/zeebee/templater/loader"
@@ -42,7 +47,8 @@ import (
 )
 
 type RpcServer struct {
-	s *zrpc.RpcServer
+	s    *zrpc.RpcServer
+	cron *cron.Engine
 }
 
 func NewRpcServer(c config.Config) (s service.Service, err error) {
@@ -53,12 +59,13 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		return nil, err
 	}
 	zrpc.SetClientSlowThreshold(time.Second * 2)
-
-	ctx := svc.NewServiceContext(rpcConfig)
+	logger := logx.WithCallerSkip(0).
+		WithFields(logx.Field("service_name", c.RpcConf.Name))
+	ctx := svc.NewServiceContext(rpcConfig, logger)
 
 	baseLogic := logic.NewBaseLogic(ctx)
 	tplLoader := loader.NewDefaultTemplateLoader(baseLogic.BaseTemplateLogic, baseLogic.OrganizationTemplateLogic)
-	tplConvertor := convertor.NewDefaultConvertor(rpcConfig.PdfGeneratorUrl)
+	tplConvertor := convertor.NewDefaultConvertor(rpcConfig.PdfGeneratorBaseUrl)
 	tpl := templater.NewEngine(tplLoader, tplConvertor)
 	global.Templater = tpl
 
@@ -88,18 +95,76 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 			reflection.Register(grpcServer)
 		}
 	})
+	// Outermost interceptor: tag every rpc ctx with service_name. grpc.UnaryInterceptor
+	// is prepended by grpc-go to the chain (outermost), so it runs above go-zero's
+	// stat interceptor and the stat access-log line carries the field.
+	rpcServer.AddOptions(grpc.UnaryInterceptor(func(ctx context.Context, req any,
+		info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+		ctx = logx.ContextWithFields(ctx, logx.Field("service_name", c.RpcConf.Name))
+		return handler(ctx, req)
+	}))
+	// Centralized error logging. Registered via AddUnaryInterceptors so it sits at
+	// the tail of go-zero's chain — INSIDE the tracing interceptor — and the ctx
+	// here already carries trace+span (from tracing) plus service_name (from the
+	// outer interceptor above). Logging in the outermost interceptor instead loses
+	// trace/span because tracing has not run yet at that layer.
+	rpcServer.AddUnaryInterceptors(func(ctx context.Context, req any,
+		info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+		resp, err := handler(ctx, req)
+		if err != nil {
+			logger.WithContext(ctx).WithFields(
+				logx.Field("stacks", errorx.GetErrorStack(err)),
+			).Error(err)
+		}
+		return resp, err
+	})
 
-	return &RpcServer{
-		s: rpcServer,
-	}, nil
+	rpcService := &RpcServer{
+		s:    rpcServer,
+		cron: cron.NewEngine(),
+	}
+	err = rpcService.RegisterCronTask(ctx, rpcConfig, logger)
+	if err != nil {
+		return nil, err
+	}
+
+	return rpcService, nil
 }
 
 func (s *RpcServer) Start() {
 	go func() {
 		s.s.Start()
 	}()
+	go func() {
+		s.cron.Start()
+	}()
 }
 
 func (s *RpcServer) Stop() {
 	s.s.Stop()
+	s.cron.Stop()
+}
+
+func (s *RpcServer) RegisterCronTask(svcCtx *svc.ServiceContext, conf config.RpcConf, logger logx.Logger) (err error) {
+	if s.cron == nil {
+		s.cron = cron.NewEngine()
+	}
+	baseLogic := logic.GetBaseLogic(svcCtx)
+	for _, task := range conf.CronTaskConf {
+		switch task.Name {
+		case "update_organization_subscription_status":
+			err = s.cron.Register(task.Name, task.Schedule, func() {
+				ctx := context.Background()
+				taskErr := baseLogic.OrganizationSubscriptionLogic.UpdateStatus(ctx, constants.UserTypeBorrower)
+				if taskErr != nil {
+					logger.WithFields(
+						logx.Field("type", "cron_task"),
+						logx.Field("name", task.Name),
+						logx.Field("schedule", task.Schedule),
+					).Error(taskErr)
+				}
+			})
+		}
+	}
+	return
 }

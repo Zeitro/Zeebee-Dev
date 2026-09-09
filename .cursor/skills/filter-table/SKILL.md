@@ -15,6 +15,7 @@ description: >-
 |------|------|
 | 筛选 + **表格** + 后端分页（最常见） | **`FilterTable`** |
 | 需 **表格/卡片** 切换或卡片列表 | **`FilterTableCard`**（`typeKey`、`renderItem`） |
+| 行 **拖拽排序**（当前页 dataSource） | `tableType="sortable"` + **`onSortEnd`**（`FilterTable` / `FilterTableCard` 的 table 模式） |
 | 纯静态 demo、且与统一分页协议无关 | 可例外；**默认**仍优先尝试 `getData` / `dataSource` + `FilterTable` |
 
 ## Checklist
@@ -26,6 +27,7 @@ description: >-
 5. **列与刷新**：`columns` 自页面或 `useColumn`；删改后 **`successCallback` → handleSearch**。
 6. **列内日期/金额等**：先查 **`@repo/shared-methods/utils`**（**`lib/date.js`**、**`lib/format.js`**），优先 **`formatDate` / `formatTime` / `formatAmount` / `formatPhone`**，勿重复造格式化逻辑。
 7. **避免**：标准 CRUD 页只拼 `FilterField` + `NewTable` 并自管分页/请求。
+8. **拖拽排序**：`tableType="sortable"`，在 `onSortEnd(nextList)` 里持久化；有服务端分页时 `nextList` 仅为当前页。
 
 ## 参考
 

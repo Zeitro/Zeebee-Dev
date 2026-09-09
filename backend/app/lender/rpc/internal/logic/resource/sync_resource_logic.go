@@ -10,32 +10,26 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type SyncResourceLogic struct {
-	ctx       context.Context
-	svcCtx    *svc.ServiceContext
-	logx.Logger
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewSyncResourceLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncResourceLogic {
 	return &SyncResourceLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *SyncResourceLogic) SyncResource(in *lender.SyncResourceRequest) (resp *lender.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+func (l *SyncResourceLogic) SyncResource(in *lender.SyncResourceRequest) (resp *proto.EmptyResponse, err error) {
 
 	var resources []dto.ResourceSyncItemDto
 	if err = json.Unmarshal([]byte(in.Data.ResourceJson), &resources); err != nil {
@@ -52,5 +46,5 @@ func (l *SyncResourceLogic) SyncResource(in *lender.SyncResourceRequest) (resp *
 		return nil, err
 	}
 
-	return &lender.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

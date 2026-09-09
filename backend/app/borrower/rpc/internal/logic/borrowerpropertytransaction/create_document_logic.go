@@ -7,8 +7,6 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/borrower/rpc/internal/biz_helper"
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
@@ -18,31 +16,26 @@ import (
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type CreateDocumentLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewCreateDocumentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateDocumentLogic {
 	return &CreateDocumentLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *CreateDocumentLogic) CreateDocument(in *borrower.DocumentCreateRequest) (resp *borrower.DocumentCreateResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
-
+func (l *CreateDocumentLogic) CreateDocument(in *borrower.BorrowerPropertyTransactionDocumentCreateRequest) (resp *borrower.BorrowerPropertyTransactionDocumentCreateResponse, err error) {
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
@@ -162,16 +155,16 @@ func (l *CreateDocumentLogic) CreateDocument(in *borrower.DocumentCreateRequest)
 		return nil, err
 	}
 
-	var protoDocs []*borrower.DocumentEntity
+	var protoDocs []*proto.DocumentEntity
 	for _, doc := range createdDocs {
-		protoDoc, transErr := copierx.Trans[model.Document, borrower.DocumentEntity](doc, copierx.TimeToRFC3339Str())
+		protoDoc, transErr := copierx.Trans[model.Document, proto.DocumentEntity](doc, copierx.TimeToRFC3339Str())
 		if transErr != nil {
 			return nil, errorx.GetFailedTransRespErr(transErr)
 		}
 		protoDocs = append(protoDocs, protoDoc)
 	}
 
-	return &borrower.DocumentCreateResponse{
+	return &borrower.BorrowerPropertyTransactionDocumentCreateResponse{
 		Data: protoDocs,
 	}, nil
 }

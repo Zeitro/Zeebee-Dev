@@ -1,6 +1,8 @@
 package config
 
 import (
+	"zeebee-backend/domains/zeebee/config"
+
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -27,7 +29,26 @@ type RpcConf struct {
 	JwtAuth     types.JwtAuth `json:",optional"`
 	DbConf      DbConf
 	AwsS3Conf   AwsS3Conf
-	CasbinConf  CasbinConf
+	// OpenAIConf   OpenAIConf `json:",optional"`
+	LlmConf      LlmConf `json:",optional"`
+	CasbinConf   CasbinConf
+	CronTaskConf []CronTaskConf
+}
+
+// OpenAIConf optional keys for lender discover; prefer env OPENAI_API_KEY in production.
+// Deprecated: lender discover now uses LlmConf (claude). Kept for config-file compat.
+// type OpenAIConf struct {
+// 	APIKey  string `json:",optional"`
+// 	Model   string `json:",optional"`
+// 	BaseURL string `json:",optional"`
+// }
+
+// LlmConf wires the shared LLM provider list + per-biz tuning. Lender discover
+// reads LenderDiscoverConf to pick provider + model + token/timeout budgets.
+type LlmConf struct {
+	config.LlmConf
+
+	LenderDiscoverConf config.LlmBizConf
 }
 
 type DbConf struct {
@@ -50,12 +71,7 @@ type AwsS3Conf struct {
 }
 
 type LimiterConf struct {
-	Login LimiterItem
-}
-
-type LimiterItem struct {
-	Rate   int
-	Period int
+	Login config.LimiterItem
 }
 
 type EmailConf struct {
@@ -84,4 +100,9 @@ type CasbinEventTopic struct {
 	AdminTopic    string
 	BorrowerTopic string
 	LenderTopic   string
+}
+
+type CronTaskConf struct {
+	Name     string `json:"name"`
+	Schedule string `json:"schedule"`
 }

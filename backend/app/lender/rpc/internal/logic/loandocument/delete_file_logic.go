@@ -10,10 +10,9 @@ import (
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -22,7 +21,6 @@ type DeleteFileLogic struct {
 	ctx       context.Context
 	svcCtx    *svc.ServiceContext
 	baseLogic *logic.BaseLogic
-	logx.Logger
 }
 
 func NewDeleteFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteFileLogic {
@@ -30,16 +28,11 @@ func NewDeleteFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delete
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		baseLogic: logic.GetBaseLogic(svcCtx),
-		Logger:    logx.WithContext(ctx),
 	}
 }
 
-func (l *DeleteFileLogic) DeleteFile(in *lender.LoanDocumentDeleteFileRequest) (resp *lender.EmptyResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
+func (l *DeleteFileLogic) DeleteFile(in *lender.LoanDocumentDeleteFileRequest) (resp *proto.EmptyResponse, err error) {
+
 	var loan *model.Loan
 	var loanDocument *model.LoanDocument
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
@@ -57,17 +50,17 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.LoanDocumentDeleteFileRequest) (
 		var file *model.File
 		file, innerErr = l.svcCtx.FileRepo.FindOneByIdWithTx(l.ctx, tx, in.Data.FileId)
 		if innerErr != nil {
-			return errorx.Wrap(innerErr, "Failed To Find File")
+			return errorx.Wrap(innerErr, "fail to find file")
 		}
 		_, innerErr = l.svcCtx.FileRepo.DeleteByIDWithTx(l.ctx, tx, in.Data.FileId)
 		if innerErr != nil {
-			return errorx.Wrap(err, "Failed To Delete File")
+			return errorx.Wrap(err, "fail to delete file")
 		}
 
 		var fileCount int64
 		fileCount, innerErr = l.svcCtx.FileRepo.GetFileCountByEntityIdWithTx(l.ctx, tx, in.Data.FileId, constants.FileEntityTypeLoanDocument)
 		if innerErr != nil {
-			return errorx.Wrap(innerErr, "Failed To Check Remaining Files")
+			return errorx.Wrap(innerErr, "fail to check remaining files")
 		}
 		// change LoanDocument status to PendingUpload
 		if fileCount == 0 {
@@ -79,7 +72,7 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.LoanDocumentDeleteFileRequest) (
 			if innerErr = l.svcCtx.LoanDocumentRepo.UpdateColumnsByIdWithTx(l.ctx, tx, loanDocument.Id, map[string]interface{}{
 				"status": documentStatus,
 			}); innerErr != nil {
-				return errorx.Wrap(innerErr, "Failed To Update Loan Document Status")
+				return errorx.Wrap(innerErr, "fail to update loan document status")
 			}
 		}
 
@@ -88,22 +81,22 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.LoanDocumentDeleteFileRequest) (
 			tx,
 			in.Data.Id,
 			claim.OrganizationUserId,
-			data.LoanOperationStatus{
+			dto.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
-			data.LoanOperationStatus{
+			dto.LoanOperationStatus{
 				Stage:         loan.Stage,
 				PendingStatus: loan.PendingStatus,
 			},
 			constants.LoanOperationActionDeleteDocumentFile,
-			&data.LoanOperationMetadata{
-				LoanDocuments: []*data.OperationLoanDocument{
+			&dto.LoanOperationMetadata{
+				LoanDocuments: []*dto.OperationLoanDocument{
 					{
 						Category: loanDocument.Category,
 						FileType: loanDocument.FileType,
 						Status:   loanDocument.Status,
-						Files: []*data.OperationFile{
+						Files: []*dto.OperationFile{
 							{
 								EntityId:   file.EntityId,
 								EntityType: file.EntityType,
@@ -114,7 +107,7 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.LoanDocumentDeleteFileRequest) (
 				},
 			},
 		); innerErr != nil {
-			return errorx.Wrap(innerErr, "Failed To Create Operation Log")
+			return errorx.Wrap(innerErr, "fail to create operation log")
 		}
 
 		return nil
@@ -124,18 +117,18 @@ func (l *DeleteFileLogic) DeleteFile(in *lender.LoanDocumentDeleteFileRequest) (
 		return nil, err
 	}
 
-	return &lender.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }
 
 // prepare
 func (l *DeleteFileLogic) prepare(in *lender.LoanDocumentDeleteFileRequest, claim utils.JwtUser) (loan *model.Loan, loanDocument *model.LoanDocument, file *model.File, err error) {
 	file, err = l.svcCtx.FileRepo.FindOneById(l.ctx, in.Data.FileId)
 	if err != nil {
-		return nil, nil, nil, errorx.Wrap(err, "Failed To Find File")
+		return nil, nil, nil, errorx.Wrap(err, "fail to find file")
 	}
 
 	if file.EntityType != constants.FileEntityTypeLoanDocument {
-		return nil, nil, nil, errorx.WithStack(errorx.New("File is not associated with a loan document"))
+		return nil, nil, nil, errorx.WithStack(errorx.New("file is not associated with a loan document"))
 	}
 	loan, loanDocument, err = l.baseLogic.GetLoanAndDocumentByDocumentId(l.ctx, file.EntityId, claim.OrganizationId)
 

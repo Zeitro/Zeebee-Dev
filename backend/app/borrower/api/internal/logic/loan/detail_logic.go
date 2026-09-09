@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DetailLogic struct {
@@ -37,7 +38,7 @@ func (l *DetailLogic) Detail(req *types.LoanDetailRequest) (resp *types.LoanDeta
 	if err != nil {
 		return nil, err
 	}
-	resp, err = copierx.Trans[borrower.LoanEntity, types.LoanDetailResponse](rpcResp.Data)
+	resp, err = copierx.Trans[proto.LoanEntity, types.LoanDetailResponse](rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

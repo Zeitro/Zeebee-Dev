@@ -1,7 +1,6 @@
 'use client';
 import { Loading3QuartersOutlined } from '@ant-design/icons';
 import { eventBus, createRequest } from '@repo/shared-methods/utils';
-import { useUserStore } from '@repo/shared-methods/store';
 import { message } from 'antd';
 import { useCallback, useEffect } from 'react';
 
@@ -13,7 +12,6 @@ export const SwitchOrganization = ({
 	successCallback,
 }) => {
 	const { request } = createRequest();
-	const { getUserInfo, updateAccess } = useUserStore();
 
 	// 切换组织
 	const handleSwitch = useCallback(async () => {
@@ -29,16 +27,11 @@ export const SwitchOrganization = ({
 				type: 'success',
 				content: `Successfully switched organization to ${organization_name}`,
 			});
+			setTimeout(() => {
+				eventBus.emit('removePortalComponent');
+			}, 300);
 		});
-		setTimeout(() => {
-			eventBus.emit('removePortalComponent');
-		}, 300);
-		// setCookie('token', access?.access_token, access?.access_token_expire * 1000);
-		// await updateAccess(access);
-		// await getUserInfo();
-		// router.replace('/');
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, getUserInfo, organization_id, organization_name, updateAccess]);
+	}, [api, organization_id, organization_name, request, successCallback]);
 
 	useEffect(() => {
 		handleSwitch();

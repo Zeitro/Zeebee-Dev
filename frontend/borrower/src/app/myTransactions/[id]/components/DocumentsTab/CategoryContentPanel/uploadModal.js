@@ -72,12 +72,12 @@ const UploadModal = ({ transaction_id, open, setOpen, record = {}, onRefresh }) 
 					multiple={true}
 					onGetUploadList={setFileList}
 					className={[
-						'w-full [&_.ant-upload-list]:w-max [&_.ant-upload]:w-full [&_.ant-upload]:pb-6',
+						'w-full [&_.ant-upload-list]:w-max [&_.ant-upload]:w-full [&_.ant-upload]:pb-6 [&_.ant-upload-list]:max-w-full',
 					].join(' ')}
 					disabled={false}
 					itemRender={(node, file, fileList, { remove }) => {
 						return (
-							<div className="flex items-center px-4 py-[5px] mb-6 gap-2 border border-base-border rounded-md w-max">
+							<div className="flex items-center px-4 py-[5px] mb-6 gap-2 border border-base-border rounded-md w-max max-w-full">
 								<FileTextOutlined />
 								<div>{file.name}</div>
 								<CloseOutlined

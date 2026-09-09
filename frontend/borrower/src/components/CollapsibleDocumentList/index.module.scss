@@ -1,4 +1,8 @@
 .list {
+	width: 100%;
+	min-width: 0;
+	overflow: hidden;
+
 	:global {
 		.ant-collapse-item {
 			border: 1px solid var(--base-border) !important;
@@ -14,6 +18,8 @@
 
 		.ant-collapse-header-text {
 			width: 100%;
+			min-width: 0;
+			overflow: hidden;
 		}
 
 		.ant-collapse-content-box {
@@ -67,6 +73,8 @@
 
 .fileRow {
 	padding: 12px 16px;
+	min-width: 0;
+	overflow: hidden;
 
 	&:not(:last-child) {
 		border-bottom: 1px solid var(--base-border);

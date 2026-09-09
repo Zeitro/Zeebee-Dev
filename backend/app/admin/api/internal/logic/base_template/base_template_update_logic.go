@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type BaseTemplateUpdateLogic struct {
@@ -21,18 +22,13 @@ type BaseTemplateUpdateLogic struct {
 // Update base template
 func NewBaseTemplateUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseTemplateUpdateLogic {
 	return &BaseTemplateUpdateLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
 func (l *BaseTemplateUpdateLogic) BaseTemplateUpdate(req *types.BaseTemplateUpdateRequest) (resp *types.BaseTemplateDetailResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
-		}
-	}()
 
 	// Convert types to pb request
 	rpcReq := &admin.UpdateBaseTemplateRequest{
@@ -51,7 +47,7 @@ func (l *BaseTemplateUpdateLogic) BaseTemplateUpdate(req *types.BaseTemplateUpda
 
 	// Convert pb response to types
 	resp = &types.BaseTemplateDetailResponse{}
-	entity, err := copierx.Trans[admin.BaseTemplateEntity, types.BaseTemplateEntity](rpcResp.Data, copierx.TimeToRFC3339Str())
+	entity, err := copierx.Trans[proto.BaseTemplateEntity, types.BaseTemplateEntity](rpcResp.Data, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}
