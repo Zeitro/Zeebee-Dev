@@ -7,20 +7,34 @@ import { useRouter, usePathname } from 'next/navigation';
 import { RightCircleTwoTone, LeftCircleTwoTone } from '@ant-design/icons';
 import { useUserStore } from '@repo/shared-methods/store';
 import UserInfo from './UserInfo';
+import TrialBanner from './TrialBanner';
 import { useDeferredSyncEffect, useElementSize } from '@repo/shared-methods/hooks';
-import { findItem, generateMenuBar } from '@repo/shared-methods/utils';
+import {
+	generateMenuBar,
+	getRemainingDaysUntilExpire,
+	resolveSidebarMenuState,
+} from '@repo/shared-methods/utils';
 import { iconData } from '@repo/shared-methods/enum';
 
 const homePathname = '/';
 const initTwoToneColor = ['var(--base-label)', 'var(--gray-light)'];
 /**
  * 侧边栏组件
+ *
+ * @param {object} props
+ * @param {number} [props.trialDaysRemaining] 试用剩余天数；>0 时在用户区上方展示提示条
+ * @param {boolean} [props.isLoggedIn] 是否已登录，透传 Pricing
  */
 export const CommonSidebar = ({
 	routerList,
 	personalList,
 	handleClickPersonalItem,
 	renderLogo,
+	planName,
+	currentPlanId,
+	isLoggedIn,
+	pricingProps,
+	currentPlan,
 }) => {
 	const router = useRouter();
 	const pathname = usePathname();
@@ -29,18 +43,12 @@ export const CommonSidebar = ({
 	const [selectedKey, setSelectedKey] = useState('');
 	const [openKey, setOpenKey] = useState('');
 	const [twoToneColor, setTwoToneColor] = useState(initTwoToneColor);
+	const [pricingOpen, setPricingOpen] = useState(false);
 	const [rect, rectDom] = useElementSize();
 
-	// 获取当前路由的配置
-	const config = useMemo(
-		() =>
-			findItem({
-				list: routerList,
-				key: pathname,
-				keyName: 'path',
-				childName: 'children',
-				isPushParent: true,
-			}),
+	// 详情/设置等未展示菜单的路由 → 选中并展开最近可见父级
+	const menuState = useMemo(
+		() => resolveSidebarMenuState(pathname, routerList, homePathname),
 		[pathname, routerList],
 	);
 	const items = useMemo(() => {
@@ -55,30 +63,27 @@ export const CommonSidebar = ({
 	const handleExpand = () => {
 		changeSidebarCollapsed(!sidebarCollapsed);
 	};
-	// 初始化根据路由选中侧边栏
+	// 初始化根据路由选中侧边栏（含无菜单页回落父级）
 	useDeferredSyncEffect({
-		predicate: () => selectedKey !== pathname,
+		predicate: () => selectedKey !== menuState.selectedKey,
 		deferred: () => {
-			const path = (!config?.is_show ? config?.parentKey : config?.path) || homePathname;
-			if (selectedKey !== path || path !== pathname) {
-				setSelectedKey(path);
-			}
+			setSelectedKey(menuState.selectedKey);
 		},
-		deps: [pathname, config, selectedKey, openKey],
+		deps: [pathname, menuState.selectedKey, selectedKey],
 		delay: 0,
 	});
 
 	useDeferredSyncEffect({
 		predicate: () => !sidebarCollapsed,
 		deferred: () => {
-			setOpenKey(config?.parentKey || '');
+			setOpenKey(menuState.openKey);
 		},
-		deps: [pathname, config, sidebarCollapsed],
+		deps: [pathname, menuState.openKey, sidebarCollapsed],
 		delay: 0,
 	});
 
-	// hideSidebar隐藏左侧菜单栏
-	return config && !config?.hideSidebar ? (
+	// hideSidebar隐藏左侧菜单栏；无精确路由配置时仍展示，以便详情页回落父级选中
+	return !menuState.hideSidebar ? (
 		<div
 			style={{ width: sidebarCollapsed ? 63 : 216 }}
 			className={[
@@ -114,11 +119,25 @@ export const CommonSidebar = ({
 					return customRoot;
 				}}
 			/>
+			{currentPlan?.status === 'Trialing' && currentPlan?.expire_date && (
+				<TrialBanner
+					trialDaysRemaining={getRemainingDaysUntilExpire(currentPlan?.expire_date)}
+					sidebarCollapsed={sidebarCollapsed}
+					onUpgradeClick={() => setPricingOpen(true)}
+				/>
+			)}
 			<UserInfo
 				userInfo={userInfo}
 				sidebarCollapsed={sidebarCollapsed}
 				personalList={personalList}
 				handleClickPersonalItem={handleClickPersonalItem}
+				planName={planName}
+				currentPlanId={currentPlanId}
+				isLoggedIn={isLoggedIn}
+				pricingProps={pricingProps}
+				pricingOpen={pricingOpen}
+				onPricingOpenChange={setPricingOpen}
+				currentPlan={currentPlan}
 			/>
 			<div
 				className="absolute right-[-8px] top-[18px] cursor-pointer"

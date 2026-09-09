@@ -191,3 +191,72 @@ export const getCurrentRouterItem = (currentPathname, allRouters, childName) => 
 	const routerItem = routers.find((item) => matchRoute(item.path, currentPathname));
 	return routerItem;
 };
+
+/**
+ * pathname 是否落在菜单 path 之下（精确 / 动态参数 / 静态前缀）。
+ * `/` 仅精确匹配，避免所有路由都挂到首页。
+ * @param {string} menuPath
+ * @param {string} pathname
+ * @returns {boolean}
+ */
+const isPathUnderMenu = (menuPath, pathname) => {
+	if (!menuPath || !pathname) return false;
+	if (menuPath === '/') return pathname === '/';
+	if (matchRoute(menuPath, pathname)) return true;
+	// /project/projectList/:id → /project/projectList，供未登记的详情/设置页做前缀回落
+	const staticBase = menuPath.includes(':')
+		? menuPath.replace(/\/:[^/]+/g, '').replace(/\/$/, '') || '/'
+		: menuPath;
+	if (staticBase === '/') return pathname === '/';
+	return pathname === staticBase || pathname.startsWith(`${staticBase}/`);
+};
+
+/**
+ * 解析侧边栏选中与展开：详情/设置等未在菜单展示的路由，回落到最长匹配的可见父级。
+ * @param {string} pathname
+ * @param {Array} routerList accessibleRoutes
+ * @param {string} [homePath='/']
+ * @returns {{ selectedKey: string, openKey: string, hideSidebar: boolean, config: object|null }}
+ */
+export const resolveSidebarMenuState = (pathname, routerList, homePath = '/') => {
+	const config = getCurrentRouterItem(pathname, routerList ?? [], 'children') || null;
+	if (config?.hideSidebar) {
+		return { selectedKey: '', openKey: '', hideSidebar: true, config };
+	}
+
+	const flat = [];
+	const walk = (list, parentPath) => {
+		list?.forEach((item) => {
+			flat.push({ item, parentPath });
+			if (item.children?.length) {
+				walk(item.children, item.path);
+			}
+		});
+	};
+	walk(routerList, null);
+
+	let best = null;
+	for (const { item, parentPath } of flat) {
+		if (!item?.is_show || !item.path) continue;
+		if (!isPathUnderMenu(item.path, pathname)) continue;
+		if (!best || item.path.length > best.item.path.length) {
+			best = { item, parentPath };
+		}
+	}
+
+	if (!best) {
+		return {
+			selectedKey: homePath,
+			openKey: '',
+			hideSidebar: false,
+			config,
+		};
+	}
+
+	return {
+		selectedKey: best.item.path,
+		openKey: best.parentPath || '',
+		hideSidebar: false,
+		config,
+	};
+};

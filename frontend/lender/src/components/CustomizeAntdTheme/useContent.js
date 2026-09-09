@@ -87,6 +87,9 @@ const useContent = () => {
 		</div>
 	);
 
+	const hasMultipleOrgs = (userInfo?.organizations?.length ?? 0) > 1;
+	const currentOrgName = organizationRow?.name?.trim();
+
 	const personalList = [
 		{
 			key: 'personal',
@@ -100,7 +103,7 @@ const useContent = () => {
 			key: 'organization',
 			label: (
 				<Tooltip
-					title={organizationContent}
+					title={hasMultipleOrgs ? organizationContent : null}
 					placement="rightTop"
 					align={{ offset: [17, -5] }}
 					arrow={false}
@@ -109,9 +112,18 @@ const useContent = () => {
 					}}
 					color="white"
 				>
-					<div className="flex justify-between items-center">
-						<span className="pr-10">Change organization</span>
-						<RightOutlined style={{ fontSize: 9 }} />
+					<div className="flex items-center justify-between gap-2">
+						<div className="min-w-0 flex-1">
+							<div className="leading-5">
+								{hasMultipleOrgs ? 'Change organization' : 'Organization'}
+							</div>
+							{currentOrgName ? (
+								<div className="truncate text-xs leading-4 text-base-label">
+									{currentOrgName}
+								</div>
+							) : null}
+						</div>
+						{hasMultipleOrgs ? <RightOutlined style={{ fontSize: 9 }} /> : null}
 					</div>
 				</Tooltip>
 			),

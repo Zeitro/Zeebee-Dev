@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
 	env: {
 		NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL, // 注入环境变量
 	},
-	transpilePackages: ['@repo/shared-methods'],
+	transpilePackages: ['@repo/shared-methods', '@repo/project-management'],
 	webpack: (config) => {
 		config.module.rules.push({
 			test: /\.svg$/,

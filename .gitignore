@@ -13,3 +13,4 @@ env
 /frontend/Dockerfile-*-local
 expdt
 .pnpm-store
+pm-frontend
