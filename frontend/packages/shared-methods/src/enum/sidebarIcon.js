@@ -21,5 +21,5 @@ export const iconData = {
 	dashboard: <Dashboard fill="currentColor" className="common-fill" />,
 	transaction: <Transaction className="common-fill" />,
 	pricing: <CreditCardOutlined style={{ fontSize: 20, paddingLeft: 2 }} />,
-	project: <Project className="common-fill" />,
+	project: <Project className="common-fill" style={{ fontSize: 20, marginLeft: 2 }} />,
 };
