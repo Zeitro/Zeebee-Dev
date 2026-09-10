@@ -408,7 +408,7 @@ stateDiagram-v2
 
 ### 4.8 配置
 
-`borrower.rpc` 配置（`app/borrower/config/config.go` 的 `RpcConf`）：`DbConf` / `AwsS3Conf` / `RedisConf` / `JwtAuth` / `TemplateConf` / `CasbinConf` 等。解析子特性新增的 `PdfGeneratorBaseUrl` 与 `LlmConf` 也挂在此处（详见 file-parse TechDoc §4.3）。
+`borrower.rpc` 配置（`app/borrower/config/config.go` 的 `RpcConf`）：`DbConf` / `AwsS3Conf` / `RedisConf` / `JwtConf` / `TemplateConf` / `CasbinConf` 等。解析子特性新增的 `PdfGeneratorBaseUrl` 与 `LlmConf` 也挂在此处（详见 file-parse TechDoc §4.3）。
 
 ### 4.9 技术选型
 

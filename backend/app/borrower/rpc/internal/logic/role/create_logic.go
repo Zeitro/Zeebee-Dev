@@ -6,10 +6,9 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/proto"
 )
 
 type CreateLogic struct {
@@ -30,31 +29,24 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 
 func (l *CreateLogic) Create(in *borrower.RoleCreateRequest) (resp *borrower.RoleCreateResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	input := &dto.RoleCreateRequestDto{}
-	input, err = copierx.Trans[borrower.RoleCreateRequestData, dto.RoleCreateRequestDto](in.Data)
+	input, err := copierx.Trans[borrower.RoleCreateRequestData, tenant.RoleCreateRequestData](in.Data)
 	if err != nil {
 		return nil, err
 	}
 
-	input.Type = constants.UserTypeBorrower
+	input.UserType = string(constants.UserTypeBorrower)
 	input.OrganizationId = claim.OrganizationId
 
-	role, err := l.baseLogic.RoleLogic.Create(l.ctx, *input)
-	if err != nil {
-		return nil, err
-	}
-
-	respData := &proto.RoleEntity{}
-	respData, err = copierx.Trans[dto.RoleEntityDto, proto.RoleEntity](role, copierx.TimeToRFC3339Str())
+	role, err := l.svcCtx.TenantClient.Role.Create(l.ctx, &tenant.RoleCreateRequest{Data: input})
 	if err != nil {
 		return nil, err
 	}
 
 	return &borrower.RoleCreateResponse{
-		Data: respData,
+		Data: role.Data,
 	}, nil
 }

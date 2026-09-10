@@ -30,7 +30,7 @@ func NewListByBorrowerPropertyLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 func (l *ListByBorrowerPropertyLogic) ListByBorrowerProperty(in *borrower.BorrowerPropertyTransactionListByPropertyRequest) (resp *borrower.BorrowerPropertyTransactionListByPropertyResponse, err error) {
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}

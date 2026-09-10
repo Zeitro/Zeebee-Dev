@@ -1,8 +1,8 @@
 # Zeebee 后端知识库索引
 
-> 本文件为知识库导航中心。架构设计、分层职责、数据流详见 [architecture.md](guides/architecture.md)；代码风格（项目无关）详见 [constitution.md](constitution.md)；技术栈、核心原则、服务矩阵详见 [CLAUDE.md](../CLAUDE.md)。
+> 本文件为知识库导航中心。项目流程见 [AGENTS.md](AGENTS.md)；架构设计、分层职责、数据流详见 [architecture.md](guides/architecture.md)；代码风格（项目无关）详见 [constitution.md](constitution.md)。
 >
-> **最后更新**: 2026-07-13 | **项目状态**: 开发阶段
+> **最后更新**: 2026-08-20 | **项目状态**: 开发阶段
 
 ---
 
@@ -10,8 +10,8 @@
 
 | 角色 / 场景 | 阅读路径 |
 |-------------|----------|
-| 新手入门 | [CLAUDE.md](../CLAUDE.md)（规范）→ [constitution.md](constitution.md)（风格）→ [architecture.md](guides/architecture.md)（结构） |
-| API 开发 | [API 文档索引](guides/api_documentation_index.md) → [CLAUDE.md](../CLAUDE.md)（数据转换规范） → [architecture.md](guides/architecture.md) |
+| 新手入门 | [AGENTS.md](AGENTS.md)（流程）→ [constitution.md](constitution.md)（风格）→ [architecture.md](guides/architecture.md)（结构） |
+| API 开发 | [API 文档索引](guides/api_documentation_index.md) → [AGENTS.md](AGENTS.md)（生成与转换）→ [architecture.md](guides/architecture.md) |
 | 领域建模 | [architecture.md](guides/architecture.md) §代码组织 → `domains/zeebee/model/` → `domains/zeebee/data/dto/` |
 
 ---
@@ -41,6 +41,7 @@
 | 文档 | 用途 |
 |------|------|
 | [API 文档索引](guides/api_documentation_index.md) | API 接口导航（含模块端点清单） |
+| [Tenant 部署检查清单](guides/tenant-deployment-checklist.md) | tenant 内网访问与订阅任务上线检查 |
 
 > 架构、目录结构、共享层、ADR 已统一收编至 [architecture.md](guides/architecture.md)。
 
@@ -49,6 +50,8 @@
 ## 服务功能矩阵
 
 服务总览（端口/职责/规模）见 [architecture.md](guides/architecture.md) §服务矩阵。以下为各服务模块级清单：
+
+> 身份 / RBAC / 权益（user / organization / organization_user / role / resource / api / pricing_plan / pricing_plan_policy / organization_subscription / organization_setting / organization_email / organization_template / auth）已收敛至 **tenant**（RPC-only `10401`）；三端相应 RPC 为 tenant 薄代理，鉴权经每请求 `tenant.Auth.AuthCheck`。
 
 ### Borrower 服务（21 个模块）
 
@@ -116,6 +119,26 @@
 
 ---
 
+### Tenant 服务（身份与权限，RPC-only）
+
+| 模块 | API | RPC | 功能 |
+|------|-----|-----|------|
+| auth | - | ✅ | AuthCheck（每请求鉴权，casbin 唯一执行者） |
+| user | - | ✅ | 身份：登录/注册/激活/改密/刷新/切换/资料/CreateAdminUser |
+| organization | - | ✅ | 组织 CRUD / Profile / 排序 / 状态 |
+| organization_user | - | ✅ | 组织成员（含邀请接受/检查、角色分配） |
+| organization_email | - | ✅ | 组织邮箱（SaveEmail / GenerateAuthCodeUrl） |
+| organization_setting | - | ✅ | 组织设置（DetailByPurpose / SwitchStatus） |
+| organization_subscription | - | ✅ | 组织订阅 CRUD |
+| organization_template | - | ✅ | 组织模板（Detail/Page/UpdateVariableGroup/Reset） |
+| role | - | ✅ | 角色 CRUD / 启停 / 分配 |
+| resource | - | ✅ | 资源 CRUD / ResourceTree / UserMenu / SyncResource |
+| api | - | ✅ | API 权限定义 CRUD / SyncApi |
+| pricing_plan | - | ✅ | 定价计划 CRUD / BindResources / ResourceList |
+| pricing_plan_policy | - | ✅ | 定价策略 CRUD |
+
+---
+
 ## 领域模型（38 个）
 
 | 类别 | 文件 |
@@ -144,6 +167,7 @@
 | Admin | `admin.proto` | `app/admin/rpc/pb/` |
 | Borrower | `borrower.proto` | `app/borrower/rpc/pb/` |
 | Lender | `lender.proto` | `app/lender/rpc/pb/` |
+| Tenant | `tenant.proto`（按模块拆分） | `app/tenant/rpc/pb/` |
 
 ## 通用组件（22 个）
 
@@ -183,6 +207,7 @@ common/
 | Lender | `deploy/lender/docker-compose.yml` | local/staging/production |
 | Admin | `deploy/admin/docker-compose.yml` | local/staging/production |
 | PDF Generator | `deploy/pdfgenerator/docker-compose.yml` | local/staging/production |
+| Tenant | `deploy/tenant/docker-compose.yml` | local/staging/production |
 
 ---
 

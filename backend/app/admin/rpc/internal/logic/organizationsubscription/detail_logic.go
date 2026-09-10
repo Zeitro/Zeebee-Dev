@@ -6,10 +6,9 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/common/copierx"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/timex"
-	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
@@ -31,17 +30,15 @@ func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogi
 
 func (l *DetailLogic) Detail(in *proto.PathIdRequest) (resp *admin.OrganizationSubscriptionDetailResponse, err error) {
 
-	result, err := l.baseLogic.OrganizationSubscriptionLogic.Detail(l.ctx, in.Data.Id)
+	result, err := l.svcCtx.TenantClient.OrganizationSubscription.Detail(l.ctx, &tenant.OrganizationSubscriptionDetailRequest{Data: &tenant.OrganizationSubscriptionDetailRequestData{
+		UserType: string(constants.UserTypeAdmin),
+		Id:       in.Data.Id,
+	}})
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
 
-	protoData, err := copierx.Trans[dto.OrganizationSubscriptionEntity, proto.OrganizationSubscriptionEntity](result, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToStr(timex.LayoutUsStyle))
-	if err != nil {
-		return nil, err
-	}
-
 	return &admin.OrganizationSubscriptionDetailResponse{
-		Data: protoData,
+		Data: result.Data,
 	}, nil
 }

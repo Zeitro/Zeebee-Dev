@@ -184,7 +184,7 @@ type LoanPreapprovalInfoResult struct {
 	Ltv                    float32 `json:"ltv,omitempty"`
 	Ltc                    float32 `json:"ltc,omitempty"`
 	Ltarv                  float32 `json:"ltarv,omitempty"`
-	ExperienceLevel        string  `json:"experience_level,omitempty"`
+	ExperienceLevel        int32   `json:"experience_level,omitempty"`
 }
 
 type LoanPreapprovalInfoInputBorrower struct {

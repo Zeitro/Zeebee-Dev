@@ -5,6 +5,8 @@ import (
 
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
@@ -32,6 +34,8 @@ func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogi
 // Note: Users are NOT deleted as they may belong to other organizations
 func (l *DeleteLogic) Delete(in *proto.IdRequest) (resp *proto.EmptyResponse, err error) {
 
-	err = l.baseLogic.OrganizationLogic.Delete(l.ctx, in.Data)
-	return &proto.EmptyResponse{}, err
+	return l.svcCtx.TenantClient.Organization.Delete(l.ctx, &tenant.OrganizationDeleteRequest{Data: &tenant.OrganizationDeleteRequestData{
+		UserType: string(constants.UserTypeAdmin),
+		Id:       in.Data,
+	}})
 }

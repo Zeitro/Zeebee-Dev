@@ -149,7 +149,7 @@ docker-compose -f deploy/{service}/docker-compose.yml up -d
 |-------------|--------|
 | Local | `app/{service}/etc/config-local.yaml` |
 | Staging | `app/{service}/etc/config-staging.yaml` |
-| Production | `app/{service}/etc/config-production.yaml` |
+| Production | `app/{service}/etc/config-prod.yaml` |
 
 ## Documentation
 
@@ -162,5 +162,4 @@ docker-compose -f deploy/{service}/docker-compose.yml up -d
 ---
 
 *Last updated: 2026-06-16*
-
 

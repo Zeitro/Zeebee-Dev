@@ -34,3 +34,16 @@ type OperationListRequestDto struct {
 	EndDate    *sql.NullTime                 `json:"end_date"`
 	Operation  constants.OperationAction     `json:"operation"`
 }
+
+type OperationPageFilterDto struct {
+	TaskId        int64
+	OperationType constants.OperationAction
+	EntityType    constants.OperationEntityType
+	EntityId      int64
+}
+
+type OperationPageRequestDto struct {
+	Page   int64
+	Limit  int64
+	Filter OperationPageFilterDto
+}

@@ -6,10 +6,9 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
@@ -31,23 +30,23 @@ func NewPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PageLogic {
 
 func (l *PageLogic) Page(in *proto.CommonPageRequest) (resp *borrower.RolePageResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	pageReq := dto.RolePageRequestDto{}
-	_ = copierx.Assign[proto.CommonPageRequestData, dto.RolePageRequestDto](in.Data, &pageReq)
-
-	pageReq.Filter.RoleType = constants.UserTypeBorrower
-	pageReq.Filter.OrganizationId = claim.OrganizationId
-
-	result, err := l.baseLogic.RoleLogic.Page(l.ctx, pageReq)
+	pageReq, err := copierx.Trans[proto.CommonPageRequestData, tenant.RolePageRequestData](in.Data)
 	if err != nil {
 		return nil, err
 	}
+	pageReq.UserType = string(constants.UserTypeBorrower)
+	pageReq.OrganizationId = claim.OrganizationId
 
-	data, err := copierx.Trans[gormx.PageResponse[dto.RoleEntityDto], borrower.RolePageResponseData](&result, copierx.TimeToRFC3339Str())
+	result, err := l.svcCtx.TenantClient.Role.Page(l.ctx, &tenant.RolePageRequest{Data: pageReq})
+	if err != nil {
+		return nil, err
+	}
+	data, err := copierx.Trans[tenant.RolePageResponseData, borrower.RolePageResponseData](result.Data, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

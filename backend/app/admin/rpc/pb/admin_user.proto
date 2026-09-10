@@ -40,7 +40,9 @@ message RefreshTokenResponse {
 
 message RefreshTokenResponseData {
   string access_token = 1;
-  int64 access_token_expire = 2;
+  string refresh_token = 2;
+  int64 access_token_expire = 3;
+  int64 refresh_token_expire = 4;
 }
 
 // reset password -- request

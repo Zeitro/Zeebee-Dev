@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package borrower;
+
+option go_package = "zeebee-backend/app/borrower/rpc/pb/borrower";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+message ProjectManagementTaskTypeAllResponse {
+  repeated proto.ProjectManagementTaskTypeEntity data = 1;
+}
+
+message ProjectManagementTaskTypeCreateRequest {
+  ProjectManagementTaskTypeCreateRequestData data = 1;
+}
+message ProjectManagementTaskTypeCreateRequestData {
+  string name = 1;
+  string description = 2;
+  string color = 3;
+  int64 sort_order = 5;
+}
+
+message ProjectManagementTaskTypeUpdateRequest {
+  ProjectManagementTaskTypeUpdateRequestData data = 1;
+}
+message ProjectManagementTaskTypeUpdateRequestData {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  string color = 4;
+  int64 sort_order = 6;
+}
+
+message ProjectManagementTaskTypeOrderRequest {
+  ProjectManagementTaskTypeOrderRequestData data = 1;
+}
+message ProjectManagementTaskTypeOrderRequestData {
+  int64 id = 1;
+  int64 sort_order = 2;
+}
+
+message ProjectManagementTaskTypeDetailResponse {
+  proto.ProjectManagementTaskTypeEntity data = 1;
+}
+service ProjectManagementTaskType {
+  rpc All(proto.EmptyRequest) returns(ProjectManagementTaskTypeAllResponse);
+  rpc Detail(proto.PathIdRequest) returns(ProjectManagementTaskTypeDetailResponse);
+  rpc Create(ProjectManagementTaskTypeCreateRequest) returns(ProjectManagementTaskTypeDetailResponse);
+  rpc Update(ProjectManagementTaskTypeUpdateRequest) returns(ProjectManagementTaskTypeDetailResponse);
+  rpc Order(ProjectManagementTaskTypeOrderRequest) returns(proto.EmptyResponse);
+  rpc Delete(proto.PathIdRequest) returns(proto.EmptyResponse);
+}

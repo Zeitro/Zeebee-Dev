@@ -11,7 +11,9 @@ type memRetryStore struct{ retries map[string]RetryState }
 
 func newRetryStore() *memRetryStore { return &memRetryStore{retries: map[string]RetryState{}} }
 
-func (m *memRetryStore) StageRetry(_ context.Context, stage string) RetryState  { return m.retries[stage] }
+func (m *memRetryStore) StageRetry(_ context.Context, stage string) RetryState {
+	return m.retries[stage]
+}
 func (m *memRetryStore) SaveStageRetry(_ context.Context, stage string, r RetryState) {
 	m.retries[stage] = r
 }

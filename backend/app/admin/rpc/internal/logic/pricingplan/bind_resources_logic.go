@@ -6,7 +6,8 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/common/errorx"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
@@ -28,6 +29,9 @@ func NewBindResourcesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Bin
 
 func (l *BindResourcesLogic) BindResources(in *admin.PricingPlanBindResourcesRequest) (resp *proto.EmptyResponse, err error) {
 
-	err = l.baseLogic.PricingPlanLogic.BindResources(l.ctx, in.Data.Id, in.Data.ResourceIds)
-	return nil, errorx.WithStack(err)
+	return l.svcCtx.TenantClient.PricingPlan.BindResources(l.ctx, &tenant.PricingPlanBindResourcesRequest{Data: &tenant.PricingPlanBindResourcesRequestData{
+		UserType:    string(constants.UserTypeAdmin),
+		Id:          in.Data.Id,
+		ResourceIds: in.Data.ResourceIds,
+	}})
 }
