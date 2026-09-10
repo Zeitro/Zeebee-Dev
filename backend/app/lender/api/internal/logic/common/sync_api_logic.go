@@ -6,6 +6,7 @@ import (
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
+	apiswagger "zeebee-backend/app/lender/api/swagger"
 	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/swagger"
@@ -29,9 +30,14 @@ func NewSyncApiLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncApiLo
 }
 
 func (l *SyncApiLogic) SyncApi(req *types.EmptyRequest) (resp *types.EmptyResponse, err error) {
-	apiGroup, err := swagger.ParseApi(l.svcCtx.BorrowerApiContent)
+	content, err := apiswagger.SwaggerJSON.ReadFile("lender.json")
 	if err != nil {
-		return nil, errorx.Wrap(err, "failed to parse lender.api")
+		return nil, errorx.Wrap(err, "failed to read lender swagger")
+	}
+
+	apiGroup, err := swagger.ParseSwagger(content)
+	if err != nil {
+		return nil, errorx.Wrap(err, "failed to parse lender swagger")
 	}
 
 	apiJson, err := json.Marshal(apiGroup)

@@ -6,6 +6,7 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
 )
@@ -28,14 +29,14 @@ func NewSwitchStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Swit
 
 func (l *SwitchStatusLogic) SwitchStatus(in *admin.OrganizationUserSwitchStatusRequest) (resp *proto.EmptyResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	err = l.baseLogic.OrganizationUserLogic.SwitchStatus(l.ctx, in.Data.Id, claim.OrganizationId, constants.OrganizationUserStatus(in.Data.Status), claim.UserType)
-	if err != nil {
-		return nil, err
-	}
-
-	return &proto.EmptyResponse{}, nil
+	return l.svcCtx.TenantClient.OrganizationUser.SwitchStatus(l.ctx, &tenant.OrganizationUserSwitchStatusRequest{Data: &tenant.OrganizationUserSwitchStatusRequestData{
+		UserType:       string(constants.UserTypeAdmin),
+		OrganizationId: claim.OrganizationId,
+		Id:             in.Data.Id,
+		Status:         in.Data.Status,
+	}})
 }

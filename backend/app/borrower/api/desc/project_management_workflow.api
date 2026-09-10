@@ -1,0 +1,84 @@
+syntax = "v1"
+
+info (
+    title: "borrower-project-management-workflow-api"
+    desc: "borrower project management workflow types"
+    version: "v1"
+    useDefinitions: true
+    wrapCodeMsg: true
+)
+
+import "../../../../domains/zeebee/api/project_management_entity.api"
+
+import "base.api"
+
+import "project_management.api"
+
+// stage swap order request
+type ProjectManagementWorkflowStageSwapOrderRequest {
+    Id          int64 `path:"id" validate:"required,gt=0"`
+    FromStageId int64 `json:"from_stage_id" validate:"required,gt=0"`
+    ToStageId   int64 `json:"to_stage_id" validate:"required,gt=0"`
+}
+
+type (
+    // all request
+    ProjectManagementWorkflowAllRequest {}
+    ProjectManagementWorkflowAllResponse {
+        List []*ProjectManagementWorkflowEntity `json:"list"`
+    }
+)
+
+type ProjectManagementWorkflowDetailResponse {
+    ProjectManagementWorkflowEntity
+}
+
+type ProjectManagementWorkflowCreateRequest {
+    Name        string `json:"name" validate:"required,max=100"`
+    Description string `json:"description,optional" validate:"max=500"`
+}
+
+type ProjectManagementWorkflowUpdateRequest {
+    Id          int64                                   `path:"id" validate:"required,gt=0"`
+    Name        string                                  `json:"name" validate:"required,max=100"`
+    Description string                                  `json:"description,optional" validate:"max=500"`
+    Stages      []*ProjectManagementWorkflowUpdateStage `json:"stages" validate:"required,min=1,dive"`
+}
+
+@server (
+    desc: "borrower project management workflow"
+    version: v1
+    group: project_management_workflow
+    prefix: /api/v1
+    middleware: AuthMiddleware
+    tags: project_management_workflow
+)
+service borrower-api {
+    @doc "all"
+    @handler All
+    get /project_management/workflow/all (ProjectManagementWorkflowAllRequest) returns (ProjectManagementWorkflowAllResponse)
+
+    @doc "set default workflow"
+    @handler Default
+    put /project_management/workflow/:id/default (PathIdRequest) returns (EmptyResponse)
+
+    @doc "detail"
+    @handler Detail
+    get /project_management/workflow/:id (PathIdRequest) returns (ProjectManagementWorkflowDetailResponse)
+
+    @doc "create"
+    @handler Create
+    post /project_management/workflow (ProjectManagementWorkflowCreateRequest) returns (ProjectManagementWorkflowDetailResponse)
+
+    @doc "update"
+    @handler Update
+    put /project_management/workflow/:id (ProjectManagementWorkflowUpdateRequest) returns (ProjectManagementWorkflowDetailResponse)
+
+    @doc "swap stage order"
+    @handler StageSwapOrder
+    put /project_management/workflow/:id/swap_stage_order (ProjectManagementWorkflowStageSwapOrderRequest) returns (EmptyResponse)
+
+    @doc "delete"
+    @handler Delete
+    delete /project_management/workflow/:id (PathIdRequest) returns (EmptyResponse)
+}

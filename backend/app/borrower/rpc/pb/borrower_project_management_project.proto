@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package borrower;
+
+option go_package = "zeebee-backend/app/borrower/rpc/pb/borrower";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+message ProjectManagementProjectPageRequest {
+  ProjectManagementProjectPageRequestData data = 1;
+}
+message ProjectManagementProjectPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  ProjectManagementProjectPageRequestFilter filter = 3;
+}
+message ProjectManagementProjectPageRequestFilter {
+  string keyword = 1;
+  int64 entity_id = 2;
+  string entity_type = 3;
+}
+message ProjectManagementProjectPageResponse {
+  ProjectManagementProjectPageResponseData data = 1;
+}
+message ProjectManagementProjectPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated proto.ProjectManagementProjectEntity list = 5;
+}
+
+message ProjectManagementProjectDetailResponse {
+  proto.ProjectManagementProjectEntity data = 1;
+}
+
+message ProjectManagementProjectCreateRequest {
+  ProjectManagementProjectCreateRequestData data = 1;
+}
+message ProjectManagementProjectCreateRequestData {
+  int64 entity_id = 1;
+  string name = 2;
+  string description = 3;
+  string cover_url = 4;
+  int64 workflow_template_id = 5;
+  string entity_type = 6;
+  string priority = 7;
+}
+
+message ProjectManagementProjectUpdateRequest {
+  ProjectManagementProjectUpdateRequestData data = 1;
+}
+message ProjectManagementProjectUpdateRequestData {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  string cover_url = 4;
+  string priority = 5;
+}
+
+message ProjectManagementProjectDeleteRequest {
+  ProjectManagementProjectDeleteRequestData data = 1;
+}
+message ProjectManagementProjectDeleteRequestData {
+  int64 id = 1;
+}
+
+message ProjectManagementProjectOwnerTransferRequest {
+  ProjectManagementProjectOwnerTransferRequestData data = 1;
+}
+message ProjectManagementProjectOwnerTransferRequestData {
+  int64 project_id = 1;
+  int64 organization_user_id = 2;
+}
+
+service ProjectManagementProject {
+  rpc Page(ProjectManagementProjectPageRequest) returns(ProjectManagementProjectPageResponse);
+  rpc Detail(proto.PathIdRequest) returns(ProjectManagementProjectDetailResponse);
+  rpc Create(ProjectManagementProjectCreateRequest) returns(ProjectManagementProjectDetailResponse);
+  rpc Update(ProjectManagementProjectUpdateRequest) returns(ProjectManagementProjectDetailResponse);
+  rpc Delete(ProjectManagementProjectDeleteRequest) returns(proto.EmptyResponse);
+  rpc TransferOwner(ProjectManagementProjectOwnerTransferRequest) returns(proto.EmptyResponse);
+}

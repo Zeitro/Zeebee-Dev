@@ -6,6 +6,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
 )
@@ -28,14 +29,14 @@ func NewSwitchStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Swit
 
 func (l *SwitchStatusLogic) SwitchStatus(in *borrower.OrganizationUserUpdateStatusRequest) (resp *proto.EmptyResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	err = l.baseLogic.OrganizationUserLogic.SwitchStatus(l.ctx, in.Data.Id, claim.OrganizationId, constants.OrganizationUserStatus(in.Data.Status), claim.UserType)
-	if err != nil {
-		return nil, err
-	}
-
-	return &proto.EmptyResponse{}, nil
+	return l.svcCtx.TenantClient.OrganizationUser.SwitchStatus(l.ctx, &tenant.OrganizationUserSwitchStatusRequest{Data: &tenant.OrganizationUserSwitchStatusRequestData{
+		UserType:       string(constants.UserTypeBorrower),
+		OrganizationId: claim.OrganizationId,
+		Id:             in.Data.Id,
+		Status:         in.Data.Status,
+	}})
 }

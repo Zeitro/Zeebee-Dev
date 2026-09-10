@@ -6,9 +6,8 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/common/copierx"
-	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
@@ -29,15 +28,9 @@ func NewRenewLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RenewLogic 
 }
 
 func (l *RenewLogic) Renew(in *admin.OrganizationSubscriptionRenewRequest) (resp *proto.EmptyResponse, err error) {
-	result, err := l.baseLogic.OrganizationSubscriptionLogic.Renew(l.ctx, in.Data.Id)
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-
-	_, err = copierx.Trans[dto.OrganizationSubscriptionEntity, proto.OrganizationSubscriptionEntity](result, copierx.TimeToRFC3339Str())
-	if err != nil {
-		return nil, err
-	}
-
-	return &proto.EmptyResponse{}, nil
+	_, err = l.svcCtx.TenantClient.OrganizationSubscription.Renew(l.ctx, &tenant.OrganizationSubscriptionRenewRequest{Data: &tenant.OrganizationSubscriptionRenewRequestData{
+		UserType: string(constants.UserTypeAdmin),
+		Id:       in.Data.Id,
+	}})
+	return &proto.EmptyResponse{}, err
 }

@@ -6,8 +6,8 @@ import (
 	"zeebee-backend/app/lender/rpc/internal/logic"
 	"zeebee-backend/app/lender/rpc/internal/svc"
 	"zeebee-backend/app/lender/rpc/pb/lender"
-	"zeebee-backend/common/copierx"
-	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
@@ -29,20 +29,19 @@ func NewResetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ResetLogic 
 
 func (l *ResetLogic) Reset(in *proto.IdRequest) (resp *lender.OrganizationTemplateDetailResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	organizationTemplate, err := l.baseLogic.OrganizationTemplateLogic.Reset(l.ctx, in.Data, claim.OrganizationId)
+	organizationTemplate, err := l.svcCtx.TenantClient.OrganizationTemplate.Reset(l.ctx, &tenant.OrganizationTemplateResetRequest{Data: &tenant.OrganizationTemplateResetRequestData{
+		UserType:       string(constants.UserTypeLender),
+		Id:             in.Data,
+		OrganizationId: claim.OrganizationId,
+	}})
 	if err != nil {
 		return nil, err
 	}
-	result, err := copierx.Trans[dto.OrganizationTemplateEntityDto, proto.OrganizationTemplateEntity](
-		organizationTemplate,
-		copierx.TimeToRFC3339Str(),
-	)
-
 	return &lender.OrganizationTemplateDetailResponse{
-		Data: result,
-	}, err
+		Data: organizationTemplate.Data,
+	}, nil
 }

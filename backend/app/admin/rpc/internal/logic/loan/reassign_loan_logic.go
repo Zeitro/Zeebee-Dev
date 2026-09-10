@@ -29,7 +29,7 @@ func NewReassignLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Reas
 
 func (l *ReassignLoanLogic) ReassignLoan(in *admin.ReassignLoanRequest) (resp *proto.EmptyResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}

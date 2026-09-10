@@ -33,7 +33,7 @@ func NewLoanPageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoanPage
 
 func (l *LoanPageLogic) LoanPage(in *lender.LoanPageRequest) (resp *lender.LoanPageResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}

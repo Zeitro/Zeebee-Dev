@@ -288,7 +288,7 @@ message LoanPreapproveResult {
   float ltv = 13;
   float ltc = 14;
   float ltarv = 15;
-  string experience_level = 16;
+  int32 experience_level = 16;
 }
 
 message LoanApplyResponse {

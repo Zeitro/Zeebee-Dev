@@ -29,7 +29,7 @@ func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogi
 
 func (l *DeleteLogic) Delete(in *borrower.PropertyDeleteRequest) (resp *proto.EmptyResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -45,6 +45,9 @@ func (l *DeleteLogic) Delete(in *borrower.PropertyDeleteRequest) (resp *proto.Em
 
 	if result.LoanCount > 0 {
 		return nil, errorx.GetFailedTransRespErr(errorx.New("You cannot delete a property that has loans"))
+	}
+	if err = l.baseLogic.ProjectManagementProjectLogic.RequirePropertyDeletable(l.ctx, result.Id); err != nil {
+		return nil, errorx.GetFailedTransRespErr(err)
 	}
 	_, err = l.svcCtx.BorrowerPropertyRepo.DeleteByID(l.ctx, in.Data.Id)
 
