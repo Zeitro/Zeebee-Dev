@@ -162,6 +162,8 @@ func TestPage_ListsSubscriptions(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, resp.GetData())
 	assert.Equal(t, int64(2), resp.GetData().GetTotal())
+	require.NotEmpty(t, resp.GetData().GetList())
+	assert.NotEmpty(t, resp.GetData().GetList()[0].GetExpireDate())
 }
 
 // T037 US-10: UpdateExpireDate overrides the subscription expire date.
