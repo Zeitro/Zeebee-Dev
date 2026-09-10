@@ -5,6 +5,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
+
 	"zeebee-backend/app/borrower/api/internal/logic/organization_user"
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
@@ -20,10 +21,9 @@ func CheckInvitationHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		var err error
 		defer func() {
 			if err != nil {
-				logx.WithContext(r.Context()).
+				svcCtx.Logger.WithContext(r.Context()).
 					WithFields(
 						logx.Field("stacks", errorx.GetErrorStack(err)),
-						logx.Field("service_name", svcCtx.Config.Name),
 					).
 					Error(err)
 			}

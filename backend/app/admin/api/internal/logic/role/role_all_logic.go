@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/admin/api/internal/types"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type RoleAllLogic struct {
@@ -20,7 +21,7 @@ type RoleAllLogic struct {
 // all
 func NewRoleAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RoleAllLogic {
 	return &RoleAllLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
@@ -41,7 +42,7 @@ func (l *RoleAllLogic) RoleAll(req *types.EmptyRequest) (resp *types.RoleAllResp
 	}
 
 	// trans response
-	list, err := copierx.Trans[[]*admin.RoleEntity, []*types.RoleEntity](&rpcResp.Data)
+	list, err := copierx.Trans[[]*proto.RoleEntity, []*types.RoleEntity](&rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

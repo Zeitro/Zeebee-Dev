@@ -7,8 +7,8 @@ import (
 
 	"zeebee-backend/app/lender/api/internal/svc"
 	"zeebee-backend/app/lender/api/internal/types"
-	"zeebee-backend/app/lender/rpc/pb/lender"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DeleteLoanDocumentRequestLogic struct {
@@ -29,8 +29,8 @@ func NewDeleteLoanDocumentRequestLogic(ctx context.Context, svcCtx *svc.ServiceC
 func (l *DeleteLoanDocumentRequestLogic) DeleteLoanDocumentRequest(req *types.PathIdRequest) (resp *types.EmptyResponse, err error) {
 
 	// Call RPC method
-	_, err = l.svcCtx.LoanDocumentRpcClient.DeleteRequest(l.ctx, &lender.LoanDocumentDeleteRequestRequest{
-		Data: &lender.LoanDocumentDeleteRequestRequestData{
+	_, err = l.svcCtx.LoanDocumentRpcClient.DeleteRequest(l.ctx, &proto.PathIdRequest{
+		Data: &proto.PathIdRequestData{
 			Id: req.Id,
 		},
 	})

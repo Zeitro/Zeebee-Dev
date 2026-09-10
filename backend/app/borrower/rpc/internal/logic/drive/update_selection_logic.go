@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -17,23 +18,23 @@ import (
 type UpdateSelectionLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewUpdateSelectionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateSelectionLogic {
 	return &UpdateSelectionLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *UpdateSelectionLogic) UpdateSelection(in *borrower.DriveUpdateSelectionRequest) (resp *borrower.EmptyResponse, err error) {
+func (l *UpdateSelectionLogic) UpdateSelection(in *borrower.DriveUpdateSelectionRequest) (resp *proto.EmptyResponse, err error) {
 	defer func() {
 		if err != nil {
-			l.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+			l.svcCtx.Logger.WithContext(l.ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
 		}
 	}()
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
@@ -56,5 +57,5 @@ func (l *UpdateSelectionLogic) UpdateSelection(in *borrower.DriveUpdateSelection
 		return nil, err
 	}
 
-	return &borrower.EmptyResponse{}, nil
+	return &proto.EmptyResponse{}, nil
 }

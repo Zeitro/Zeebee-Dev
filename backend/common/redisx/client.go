@@ -141,3 +141,50 @@ func (r *Client) buildKey(key string) string {
 	}
 	return fmt.Sprintf("%s:%s", r.prefix, key)
 }
+
+// PushBack appends val to the tail of the list at key (RPUSH).
+func (r *Client) PushBack(ctx context.Context, key, val string) error {
+	return r.cli.RPush(ctx, r.buildKey(key), val).Err()
+}
+
+// PopFront removes and returns the head element of the list at key (LPOP).
+// Returns ("", false, nil) when the list is empty.
+func (r *Client) PopFront(ctx context.Context, key string) (val string, ok bool, err error) {
+	res, err := r.cli.LPop(ctx, r.buildKey(key)).Result()
+	if err != nil {
+		if errors.Is(err, redis.Nil) {
+			return "", false, nil
+		}
+		return "", false, err
+	}
+	return res, true, nil
+}
+
+// LLen returns the length of the list at key.
+func (r *Client) LLen(ctx context.Context, key string) (int64, error) {
+	return r.cli.LLen(ctx, r.buildKey(key)).Result()
+}
+
+// Scan returns the unprefixed keys matching match (the store prefix is applied
+// internally). Use for bounded administrative scans (e.g. job recovery), not
+// hot paths.
+func (r *Client) Scan(ctx context.Context, match string) ([]string, error) {
+	var keys []string
+	iter := r.cli.Scan(ctx, 0, r.buildKey(match), 100).Iterator()
+	for iter.Next(ctx) {
+		keys = append(keys, r.stripPrefix(iter.Val()))
+	}
+	return keys, iter.Err()
+}
+
+// stripPrefix reverses buildKey: returns the logical (unprefixed) key.
+func (r *Client) stripPrefix(key string) string {
+	if r.prefix == "" {
+		return key
+	}
+	p := r.prefix + ":"
+	if strings.HasPrefix(key, p) {
+		return key[len(p):]
+	}
+	return key
+}

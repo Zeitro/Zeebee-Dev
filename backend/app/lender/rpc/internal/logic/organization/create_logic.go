@@ -12,8 +12,7 @@ import (
 	"zeebee-backend/common/stringx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"zeebee-backend/common/errorx"
 )
@@ -22,7 +21,6 @@ type CreateLogic struct {
 	ctx       context.Context
 	svcCtx    *svc.ServiceContext
 	baseLogic *logic.BaseLogic
-	logx.Logger
 }
 
 func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogic {
@@ -30,19 +28,10 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		baseLogic: logic.GetBaseLogic(svcCtx),
-		Logger:    logx.WithContext(ctx),
 	}
 }
 
 func (l *CreateLogic) Create(in *lender.OrganizationCreateRequest) (resp *lender.OrganizationDetailResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
-			).Error(err)
-		}
-	}()
 
 	// Get current user claim (creator will become owner)
 	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
@@ -120,7 +109,7 @@ func (l *CreateLogic) Create(in *lender.OrganizationCreateRequest) (resp *lender
 	// Subscribe default pricing plan (best-effort, ignore errors)
 	// _ = l.baseLogic.OrganizationSubscriptionLogic.SubscribeDefaultPlan(l.ctx, organization.Id, constants.UserTypeLender)
 	// Convert created organization to proto entity for response
-	resultOrganization, err := copierx.Trans[model.Organization, lender.OrganizationEntity](
+	resultOrganization, err := copierx.Trans[model.Organization, proto.OrganizationEntity](
 		organization,
 		copierx.TimeToRFC3339Str(),
 	)

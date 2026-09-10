@@ -1,0 +1,169 @@
+syntax = "proto3";
+
+package borrower;
+
+option go_package = "zeebee-backend/app/borrower/rpc/pb/borrower";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+
+message PropertyPageEntity{
+  int64 id = 1;
+  string property_type = 2;
+  double total_amount = 3;
+  double total_principal_amount = 4;
+  float avg_rate = 5;
+  double total_monthly_payment_amount = 6;
+  repeated string applicants = 7;
+  repeated string lenders = 8;
+  string nearest_maturity_date = 9;
+  int64 pending_loan_count = 10;
+  int64 active_loan_count = 11;
+  int64 archived_loan_count = 12;
+  proto.AddressEntity address = 13;
+  float living_area_sqft = 14;
+  int32 bedrooms = 15;
+  int32 bathrooms = 16;
+  int32 unit = 17;
+  int32 loan_count = 18;
+  int64 creator_id = 19;
+  string creator_name = 20;
+  float lot_area_sqft = 21;
+  repeated string status = 22;
+  repeated string transaction_status = 23;
+}
+
+// Page
+message PropertyPageRequest {
+  PropertyPageRequestData data = 1;
+}
+
+message PropertyPageResponse {
+  PropertyPageResponseData data = 1;
+}
+
+message PropertyPageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+  PropertyPageRequestFilter filter = 3;
+  PropertyPageRequestSorter sorter = 4;
+}
+
+message  PropertyPageRequestFilter{
+  string keyword = 1;
+  repeated string applicant = 2;
+  repeated string status = 3;
+}
+
+message  PropertyPageRequestSorter {
+  string column = 1;
+  string sort = 2;
+}
+
+message PropertyPageResponseData {
+  int64 page = 1;
+  int64 limit = 2;
+  int64 total = 3;
+  int64 total_page = 4;
+  repeated PropertyPageEntity list = 5;
+}
+
+//  detail
+message PropertyDetailRequest {
+  PropertyDetailRequestData data = 1;
+}
+
+message PropertyDetailSummaryResponse {
+  PropertyDetailSummaryResponseData data = 1;
+}
+
+message PropertyDetailRequestData {
+  int64 id = 1;
+}
+
+message PropertyDetailSummaryResponseData {
+  int64 id = 1;
+  string property_type = 2;
+  double total_amount = 3;
+  int32 unit = 4;
+  proto.AddressEntity address = 5;
+  double total_closing_fund_amount = 6;
+  double total_principal_amount = 7;
+  float avg_rate = 8;
+  double total_monthly_payment_amount = 9;
+  repeated proto.LoanEntity pending_loans = 10;
+  repeated proto.LoanEntity active_loans = 11;
+  repeated proto.LoanEntity archived_loans = 12;
+  float living_area_sqft = 13;
+  int32 bedrooms = 14;
+  int32 bathrooms = 15;
+  float lot_area_sqft = 16;
+}
+
+// create property
+message PropertyCreateRequest {
+  PropertyCreateRequestData data = 1;
+}
+
+message PropertyCreateRequestData {
+  string property_type = 1;
+  int32  unit = 2;
+  float living_area_sqft = 3;
+  int32 bedrooms = 4;
+  int32 bathrooms = 5;
+  proto.AddressEntity address = 6;
+  float lot_area_sqft = 7;
+}
+
+message PropertyCreateResponse {
+  proto.BorrowerPropertyEntity data = 1;
+}
+
+
+// update property
+message PropertyUpdateRequest {
+  PropertyUpdateRequestData data = 1;
+}
+
+message PropertyUpdateRequestData {
+  int64 id = 1;
+  string property_type = 2;
+  int32  unit = 3;
+  float living_area_sqft = 4;
+  int32 bedrooms = 5;
+  int32 bathrooms = 6;
+  float lot_area_sqft = 7;
+}
+
+// detail property
+message PropertyDetailResponse {
+  proto.BorrowerPropertyEntity data = 1;
+}
+
+// delete property
+message PropertyDeleteRequest {
+  PropertyDeleteRequestData data = 1;
+}
+message PropertyDeleteRequestData {
+  int64 id = 1;
+}
+// all borrower properties
+message PropertyAllRequest {
+  PropertyAllRequestData data = 1;
+}
+message PropertyAllRequestData {
+}
+message PropertyAllResponse {
+  repeated proto.BorrowerPropertyEntity data = 1;
+}
+
+service BorrowerProperty {
+  rpc Page(PropertyPageRequest) returns(PropertyPageResponse);
+  rpc DetailSummary(PropertyDetailRequest) returns(PropertyDetailSummaryResponse);
+  rpc Create(PropertyCreateRequest) returns(PropertyCreateResponse);
+  rpc Update(PropertyUpdateRequest) returns(proto.EmptyResponse);
+  rpc Delete(PropertyDeleteRequest) returns(proto.EmptyResponse);
+  rpc Detail(PropertyDetailRequest) returns(PropertyDetailResponse);
+  rpc All(PropertyAllRequest) returns(PropertyAllResponse);
+}

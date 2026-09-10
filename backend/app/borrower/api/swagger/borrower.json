@@ -1537,6 +1537,86 @@
             "schema": {
               "type": "object",
               "properties": {
+                "borrower_property": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "creator_id",
+                    "creator_name",
+                    "organization_id",
+                    "property_type",
+                    "total_amount",
+                    "unit",
+                    "living_area_sqft",
+                    "bedrooms",
+                    "bathrooms",
+                    "address",
+                    "created_at",
+                    "updated_at",
+                    "loan_count"
+                  ],
+                  "properties": {
+                    "address": {
+                      "type": "object",
+                      "properties": {
+                        "address1": {
+                          "type": "string"
+                        },
+                        "address2": {
+                          "type": "string"
+                        },
+                        "city": {
+                          "type": "string"
+                        },
+                        "state": {
+                          "type": "string"
+                        },
+                        "zip_code": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "bathrooms": {
+                      "type": "integer"
+                    },
+                    "bedrooms": {
+                      "type": "integer"
+                    },
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "creator_id": {
+                      "type": "integer"
+                    },
+                    "creator_name": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "living_area_sqft": {
+                      "type": "number"
+                    },
+                    "loan_count": {
+                      "type": "integer"
+                    },
+                    "organization_id": {
+                      "type": "integer"
+                    },
+                    "property_type": {
+                      "type": "string"
+                    },
+                    "total_amount": {
+                      "type": "number"
+                    },
+                    "unit": {
+                      "type": "integer"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
+                },
                 "borrower_property_id": {
                   "type": "integer"
                 },
@@ -1576,7 +1656,9 @@
                           "optional_document_count",
                           "children",
                           "file_count",
-                          "files"
+                          "files",
+                          "file_parse_config",
+                          "tags"
                         ],
                         "properties": {
                           "children": {
@@ -1593,7 +1675,9 @@
                                 "optional_document_count",
                                 "children",
                                 "file_count",
-                                "files"
+                                "files",
+                                "file_parse_config",
+                                "tags"
                               ],
                               "properties": {
                                 "children": {
@@ -1610,7 +1694,9 @@
                                       "optional_document_count",
                                       "children",
                                       "file_count",
-                                      "files"
+                                      "files",
+                                      "file_parse_config",
+                                      "tags"
                                     ],
                                     "properties": {
                                       "children": {
@@ -1624,6 +1710,9 @@
                                       },
                                       "file_count": {
                                         "type": "integer"
+                                      },
+                                      "file_parse_config": {
+                                        "type": "object"
                                       },
                                       "files": {
                                         "type": "array",
@@ -1646,6 +1735,12 @@
                                       "sub_document_count": {
                                         "type": "integer"
                                       },
+                                      "tags": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      },
                                       "uploaded_document_count": {
                                         "type": "integer"
                                       }
@@ -1657,6 +1752,20 @@
                                 },
                                 "file_count": {
                                   "type": "integer"
+                                },
+                                "file_parse_config": {
+                                  "type": "object",
+                                  "required": [
+                                    "rules"
+                                  ],
+                                  "properties": {
+                                    "rules": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object"
+                                      }
+                                    }
+                                  }
                                 },
                                 "files": {
                                   "type": "array",
@@ -1731,6 +1840,12 @@
                                 "sub_document_count": {
                                   "type": "integer"
                                 },
+                                "tags": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
                                 "uploaded_document_count": {
                                   "type": "integer"
                                 }
@@ -1742,6 +1857,44 @@
                           },
                           "file_count": {
                             "type": "integer"
+                          },
+                          "file_parse_config": {
+                            "type": "object",
+                            "required": [
+                              "rules"
+                            ],
+                            "properties": {
+                              "rules": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "required": [
+                                    "parser",
+                                    "source",
+                                    "triggered_by",
+                                    "label",
+                                    "selector"
+                                  ],
+                                  "properties": {
+                                    "label": {
+                                      "type": "string"
+                                    },
+                                    "parser": {
+                                      "type": "string"
+                                    },
+                                    "selector": {
+                                      "type": "object"
+                                    },
+                                    "source": {
+                                      "type": "string"
+                                    },
+                                    "triggered_by": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              }
+                            }
                           },
                           "files": {
                             "type": "array",
@@ -1815,6 +1968,12 @@
                           },
                           "sub_document_count": {
                             "type": "integer"
+                          },
+                          "tags": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
                           },
                           "uploaded_document_count": {
                             "type": "integer"
@@ -1836,7 +1995,9 @@
                           "optional_document_count",
                           "children",
                           "file_count",
-                          "files"
+                          "files",
+                          "file_parse_config",
+                          "tags"
                         ],
                         "properties": {
                           "children": {
@@ -1853,7 +2014,9 @@
                                 "optional_document_count",
                                 "children",
                                 "file_count",
-                                "files"
+                                "files",
+                                "file_parse_config",
+                                "tags"
                               ],
                               "properties": {
                                 "children": {
@@ -1870,7 +2033,9 @@
                                       "optional_document_count",
                                       "children",
                                       "file_count",
-                                      "files"
+                                      "files",
+                                      "file_parse_config",
+                                      "tags"
                                     ],
                                     "properties": {
                                       "children": {
@@ -1884,6 +2049,9 @@
                                       },
                                       "file_count": {
                                         "type": "integer"
+                                      },
+                                      "file_parse_config": {
+                                        "type": "object"
                                       },
                                       "files": {
                                         "type": "array",
@@ -1906,6 +2074,12 @@
                                       "sub_document_count": {
                                         "type": "integer"
                                       },
+                                      "tags": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      },
                                       "uploaded_document_count": {
                                         "type": "integer"
                                       }
@@ -1917,6 +2091,20 @@
                                 },
                                 "file_count": {
                                   "type": "integer"
+                                },
+                                "file_parse_config": {
+                                  "type": "object",
+                                  "required": [
+                                    "rules"
+                                  ],
+                                  "properties": {
+                                    "rules": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object"
+                                      }
+                                    }
+                                  }
                                 },
                                 "files": {
                                   "type": "array",
@@ -1991,6 +2179,12 @@
                                 "sub_document_count": {
                                   "type": "integer"
                                 },
+                                "tags": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
                                 "uploaded_document_count": {
                                   "type": "integer"
                                 }
@@ -2002,6 +2196,44 @@
                           },
                           "file_count": {
                             "type": "integer"
+                          },
+                          "file_parse_config": {
+                            "type": "object",
+                            "required": [
+                              "rules"
+                            ],
+                            "properties": {
+                              "rules": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "required": [
+                                    "parser",
+                                    "source",
+                                    "triggered_by",
+                                    "label",
+                                    "selector"
+                                  ],
+                                  "properties": {
+                                    "label": {
+                                      "type": "string"
+                                    },
+                                    "parser": {
+                                      "type": "string"
+                                    },
+                                    "selector": {
+                                      "type": "object"
+                                    },
+                                    "source": {
+                                      "type": "string"
+                                    },
+                                    "triggered_by": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              }
+                            }
                           },
                           "files": {
                             "type": "array",
@@ -2075,6 +2307,12 @@
                           },
                           "sub_document_count": {
                             "type": "integer"
+                          },
+                          "tags": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
                           },
                           "uploaded_document_count": {
                             "type": "integer"
@@ -2105,11 +2343,76 @@
                 "coe_date": {
                   "type": "string"
                 },
+                "contingency_removal_date": {
+                  "type": "string"
+                },
+                "contract_date": {
+                  "type": "string"
+                },
+                "cost_allocation": {
+                  "type": "string"
+                },
                 "created_at": {
                   "type": "string"
                 },
                 "emd_amount": {
                   "type": "number"
+                },
+                "emd_due_date": {
+                  "type": "string"
+                },
+                "escrows": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "checklist": {
+                        "type": "object",
+                        "required": [
+                          "has_wire_instruction",
+                          "has_emd_receipt",
+                          "has_prelim_report",
+                          "has_nhd",
+                          "has_colored_map"
+                        ],
+                        "properties": {
+                          "has_colored_map": {
+                            "type": "boolean"
+                          },
+                          "has_emd_receipt": {
+                            "type": "boolean"
+                          },
+                          "has_nhd": {
+                            "type": "boolean"
+                          },
+                          "has_prelim_report": {
+                            "type": "boolean"
+                          },
+                          "has_wire_instruction": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "escrow_company": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "no": {
+                        "type": "string"
+                      },
+                      "officer_email": {
+                        "type": "string"
+                      },
+                      "officer_name": {
+                        "type": "string"
+                      },
+                      "officer_phone": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 },
                 "id": {
                   "type": "integer"
@@ -2123,13 +2426,88 @@
                 "pm": {
                   "type": "string"
                 },
-                "property_type": {
-                  "type": "string"
+                "property": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "created_at",
+                    "updated_at",
+                    "borrower_property_id",
+                    "borrower_property_transaction_id",
+                    "unit",
+                    "property_type",
+                    "living_area_sqft",
+                    "lot_area_sqft",
+                    "bedrooms",
+                    "bathrooms",
+                    "address"
+                  ],
+                  "properties": {
+                    "address": {
+                      "type": "object",
+                      "properties": {
+                        "address1": {
+                          "type": "string"
+                        },
+                        "address2": {
+                          "type": "string"
+                        },
+                        "city": {
+                          "type": "string"
+                        },
+                        "state": {
+                          "type": "string"
+                        },
+                        "zip_code": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "bathrooms": {
+                      "type": "integer"
+                    },
+                    "bedrooms": {
+                      "type": "integer"
+                    },
+                    "borrower_property_id": {
+                      "type": "integer"
+                    },
+                    "borrower_property_transaction_id": {
+                      "type": "integer"
+                    },
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "living_area_sqft": {
+                      "type": "number"
+                    },
+                    "lot_area_sqft": {
+                      "type": "number"
+                    },
+                    "property_type": {
+                      "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
                 },
                 "purchase_amount": {
                   "type": "number"
                 },
                 "status": {
+                  "type": "string"
+                },
+                "tc": {
+                  "type": "string"
+                },
+                "title_holder": {
                   "type": "string"
                 },
                 "type": {
@@ -2218,7 +2596,7 @@
                             }
                           },
                           "bathrooms": {
-                            "type": "number"
+                            "type": "integer"
                           },
                           "bedrooms": {
                             "type": "integer"
@@ -2489,7 +2867,9 @@
                           "optional_document_count",
                           "children",
                           "file_count",
-                          "files"
+                          "files",
+                          "file_parse_config",
+                          "tags"
                         ],
                         "properties": {
                           "children": {
@@ -2506,7 +2886,9 @@
                                 "optional_document_count",
                                 "children",
                                 "file_count",
-                                "files"
+                                "files",
+                                "file_parse_config",
+                                "tags"
                               ],
                               "properties": {
                                 "children": {
@@ -2523,7 +2905,9 @@
                                       "optional_document_count",
                                       "children",
                                       "file_count",
-                                      "files"
+                                      "files",
+                                      "file_parse_config",
+                                      "tags"
                                     ],
                                     "properties": {
                                       "children": {
@@ -2537,6 +2921,9 @@
                                       },
                                       "file_count": {
                                         "type": "integer"
+                                      },
+                                      "file_parse_config": {
+                                        "type": "object"
                                       },
                                       "files": {
                                         "type": "array",
@@ -2559,6 +2946,12 @@
                                       "sub_document_count": {
                                         "type": "integer"
                                       },
+                                      "tags": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      },
                                       "uploaded_document_count": {
                                         "type": "integer"
                                       }
@@ -2570,6 +2963,20 @@
                                 },
                                 "file_count": {
                                   "type": "integer"
+                                },
+                                "file_parse_config": {
+                                  "type": "object",
+                                  "required": [
+                                    "rules"
+                                  ],
+                                  "properties": {
+                                    "rules": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object"
+                                      }
+                                    }
+                                  }
                                 },
                                 "files": {
                                   "type": "array",
@@ -2644,6 +3051,12 @@
                                 "sub_document_count": {
                                   "type": "integer"
                                 },
+                                "tags": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
                                 "uploaded_document_count": {
                                   "type": "integer"
                                 }
@@ -2655,6 +3068,44 @@
                           },
                           "file_count": {
                             "type": "integer"
+                          },
+                          "file_parse_config": {
+                            "type": "object",
+                            "required": [
+                              "rules"
+                            ],
+                            "properties": {
+                              "rules": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "required": [
+                                    "parser",
+                                    "source",
+                                    "triggered_by",
+                                    "label",
+                                    "selector"
+                                  ],
+                                  "properties": {
+                                    "label": {
+                                      "type": "string"
+                                    },
+                                    "parser": {
+                                      "type": "string"
+                                    },
+                                    "selector": {
+                                      "type": "object"
+                                    },
+                                    "source": {
+                                      "type": "string"
+                                    },
+                                    "triggered_by": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              }
+                            }
                           },
                           "files": {
                             "type": "array",
@@ -2728,6 +3179,12 @@
                           },
                           "sub_document_count": {
                             "type": "integer"
+                          },
+                          "tags": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
                           },
                           "uploaded_document_count": {
                             "type": "integer"
@@ -2749,7 +3206,9 @@
                           "optional_document_count",
                           "children",
                           "file_count",
-                          "files"
+                          "files",
+                          "file_parse_config",
+                          "tags"
                         ],
                         "properties": {
                           "children": {
@@ -2766,7 +3225,9 @@
                                 "optional_document_count",
                                 "children",
                                 "file_count",
-                                "files"
+                                "files",
+                                "file_parse_config",
+                                "tags"
                               ],
                               "properties": {
                                 "children": {
@@ -2783,7 +3244,9 @@
                                       "optional_document_count",
                                       "children",
                                       "file_count",
-                                      "files"
+                                      "files",
+                                      "file_parse_config",
+                                      "tags"
                                     ],
                                     "properties": {
                                       "children": {
@@ -2797,6 +3260,9 @@
                                       },
                                       "file_count": {
                                         "type": "integer"
+                                      },
+                                      "file_parse_config": {
+                                        "type": "object"
                                       },
                                       "files": {
                                         "type": "array",
@@ -2819,6 +3285,12 @@
                                       "sub_document_count": {
                                         "type": "integer"
                                       },
+                                      "tags": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      },
                                       "uploaded_document_count": {
                                         "type": "integer"
                                       }
@@ -2830,6 +3302,20 @@
                                 },
                                 "file_count": {
                                   "type": "integer"
+                                },
+                                "file_parse_config": {
+                                  "type": "object",
+                                  "required": [
+                                    "rules"
+                                  ],
+                                  "properties": {
+                                    "rules": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object"
+                                      }
+                                    }
+                                  }
                                 },
                                 "files": {
                                   "type": "array",
@@ -2904,6 +3390,12 @@
                                 "sub_document_count": {
                                   "type": "integer"
                                 },
+                                "tags": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
                                 "uploaded_document_count": {
                                   "type": "integer"
                                 }
@@ -2915,6 +3407,44 @@
                           },
                           "file_count": {
                             "type": "integer"
+                          },
+                          "file_parse_config": {
+                            "type": "object",
+                            "required": [
+                              "rules"
+                            ],
+                            "properties": {
+                              "rules": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "required": [
+                                    "parser",
+                                    "source",
+                                    "triggered_by",
+                                    "label",
+                                    "selector"
+                                  ],
+                                  "properties": {
+                                    "label": {
+                                      "type": "string"
+                                    },
+                                    "parser": {
+                                      "type": "string"
+                                    },
+                                    "selector": {
+                                      "type": "object"
+                                    },
+                                    "source": {
+                                      "type": "string"
+                                    },
+                                    "triggered_by": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              }
+                            }
                           },
                           "files": {
                             "type": "array",
@@ -2988,6 +3518,12 @@
                           },
                           "sub_document_count": {
                             "type": "integer"
+                          },
+                          "tags": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
                           },
                           "uploaded_document_count": {
                             "type": "integer"
@@ -3018,11 +3554,76 @@
                 "coe_date": {
                   "type": "string"
                 },
+                "contingency_removal_date": {
+                  "type": "string"
+                },
+                "contract_date": {
+                  "type": "string"
+                },
+                "cost_allocation": {
+                  "type": "string"
+                },
                 "created_at": {
                   "type": "string"
                 },
                 "emd_amount": {
                   "type": "number"
+                },
+                "emd_due_date": {
+                  "type": "string"
+                },
+                "escrows": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "checklist": {
+                        "type": "object",
+                        "required": [
+                          "has_wire_instruction",
+                          "has_emd_receipt",
+                          "has_prelim_report",
+                          "has_nhd",
+                          "has_colored_map"
+                        ],
+                        "properties": {
+                          "has_colored_map": {
+                            "type": "boolean"
+                          },
+                          "has_emd_receipt": {
+                            "type": "boolean"
+                          },
+                          "has_nhd": {
+                            "type": "boolean"
+                          },
+                          "has_prelim_report": {
+                            "type": "boolean"
+                          },
+                          "has_wire_instruction": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "escrow_company": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "no": {
+                        "type": "string"
+                      },
+                      "officer_email": {
+                        "type": "string"
+                      },
+                      "officer_name": {
+                        "type": "string"
+                      },
+                      "officer_phone": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 },
                 "id": {
                   "type": "integer"
@@ -3036,6 +3637,78 @@
                 "pm": {
                   "type": "string"
                 },
+                "property": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "created_at",
+                    "updated_at",
+                    "borrower_property_id",
+                    "borrower_property_transaction_id",
+                    "unit",
+                    "property_type",
+                    "living_area_sqft",
+                    "lot_area_sqft",
+                    "bedrooms",
+                    "bathrooms",
+                    "address"
+                  ],
+                  "properties": {
+                    "address": {
+                      "type": "object",
+                      "properties": {
+                        "address1": {
+                          "type": "string"
+                        },
+                        "address2": {
+                          "type": "string"
+                        },
+                        "city": {
+                          "type": "string"
+                        },
+                        "state": {
+                          "type": "string"
+                        },
+                        "zip_code": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "bathrooms": {
+                      "type": "integer"
+                    },
+                    "bedrooms": {
+                      "type": "integer"
+                    },
+                    "borrower_property_id": {
+                      "type": "integer"
+                    },
+                    "borrower_property_transaction_id": {
+                      "type": "integer"
+                    },
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "living_area_sqft": {
+                      "type": "number"
+                    },
+                    "lot_area_sqft": {
+                      "type": "number"
+                    },
+                    "property_type": {
+                      "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
+                },
                 "property_type": {
                   "type": "string"
                 },
@@ -3043,6 +3716,12 @@
                   "type": "number"
                 },
                 "status": {
+                  "type": "string"
+                },
+                "tc": {
+                  "type": "string"
+                },
+                "title_holder": {
                   "type": "string"
                 },
                 "type": {
@@ -3094,8 +3773,73 @@
                 "coe_date": {
                   "type": "string"
                 },
+                "contingency_removal_date": {
+                  "type": "string"
+                },
+                "contract_date": {
+                  "type": "string"
+                },
+                "cost_allocation": {
+                  "type": "string"
+                },
                 "emd_amount": {
                   "type": "number"
+                },
+                "emd_due_date": {
+                  "type": "string"
+                },
+                "escrows": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "checklist": {
+                        "type": "object",
+                        "required": [
+                          "has_wire_instruction",
+                          "has_emd_receipt",
+                          "has_prelim_report",
+                          "has_nhd",
+                          "has_colored_map"
+                        ],
+                        "properties": {
+                          "has_colored_map": {
+                            "type": "boolean"
+                          },
+                          "has_emd_receipt": {
+                            "type": "boolean"
+                          },
+                          "has_nhd": {
+                            "type": "boolean"
+                          },
+                          "has_prelim_report": {
+                            "type": "boolean"
+                          },
+                          "has_wire_instruction": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "escrow_company": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "no": {
+                        "type": "string"
+                      },
+                      "officer_email": {
+                        "type": "string"
+                      },
+                      "officer_name": {
+                        "type": "string"
+                      },
+                      "officer_phone": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 },
                 "note": {
                   "type": "string"
@@ -3103,11 +3847,48 @@
                 "pm": {
                   "type": "string"
                 },
-                "property_type": {
-                  "type": "string"
+                "property": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "unit",
+                    "living_area_sqft",
+                    "lot_area_sqft",
+                    "bedrooms",
+                    "bathrooms"
+                  ],
+                  "properties": {
+                    "bathrooms": {
+                      "type": "integer"
+                    },
+                    "bedrooms": {
+                      "type": "integer"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "living_area_sqft": {
+                      "type": "number"
+                    },
+                    "lot_area_sqft": {
+                      "type": "number"
+                    },
+                    "property_type": {
+                      "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
+                    }
+                  }
                 },
                 "purchase_amount": {
                   "type": "number"
+                },
+                "tc": {
+                  "type": "string"
+                },
+                "title_holder": {
+                  "type": "string"
                 }
               }
             }
@@ -3158,7 +3939,9 @@
                           "optional_document_count",
                           "children",
                           "file_count",
-                          "files"
+                          "files",
+                          "file_parse_config",
+                          "tags"
                         ],
                         "properties": {
                           "children": {
@@ -3175,7 +3958,9 @@
                                 "optional_document_count",
                                 "children",
                                 "file_count",
-                                "files"
+                                "files",
+                                "file_parse_config",
+                                "tags"
                               ],
                               "properties": {
                                 "children": {
@@ -3192,7 +3977,9 @@
                                       "optional_document_count",
                                       "children",
                                       "file_count",
-                                      "files"
+                                      "files",
+                                      "file_parse_config",
+                                      "tags"
                                     ],
                                     "properties": {
                                       "children": {
@@ -3206,6 +3993,9 @@
                                       },
                                       "file_count": {
                                         "type": "integer"
+                                      },
+                                      "file_parse_config": {
+                                        "type": "object"
                                       },
                                       "files": {
                                         "type": "array",
@@ -3228,6 +4018,12 @@
                                       "sub_document_count": {
                                         "type": "integer"
                                       },
+                                      "tags": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      },
                                       "uploaded_document_count": {
                                         "type": "integer"
                                       }
@@ -3239,6 +4035,20 @@
                                 },
                                 "file_count": {
                                   "type": "integer"
+                                },
+                                "file_parse_config": {
+                                  "type": "object",
+                                  "required": [
+                                    "rules"
+                                  ],
+                                  "properties": {
+                                    "rules": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object"
+                                      }
+                                    }
+                                  }
                                 },
                                 "files": {
                                   "type": "array",
@@ -3313,6 +4123,12 @@
                                 "sub_document_count": {
                                   "type": "integer"
                                 },
+                                "tags": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
                                 "uploaded_document_count": {
                                   "type": "integer"
                                 }
@@ -3324,6 +4140,44 @@
                           },
                           "file_count": {
                             "type": "integer"
+                          },
+                          "file_parse_config": {
+                            "type": "object",
+                            "required": [
+                              "rules"
+                            ],
+                            "properties": {
+                              "rules": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "required": [
+                                    "parser",
+                                    "source",
+                                    "triggered_by",
+                                    "label",
+                                    "selector"
+                                  ],
+                                  "properties": {
+                                    "label": {
+                                      "type": "string"
+                                    },
+                                    "parser": {
+                                      "type": "string"
+                                    },
+                                    "selector": {
+                                      "type": "object"
+                                    },
+                                    "source": {
+                                      "type": "string"
+                                    },
+                                    "triggered_by": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              }
+                            }
                           },
                           "files": {
                             "type": "array",
@@ -3397,6 +4251,12 @@
                           },
                           "sub_document_count": {
                             "type": "integer"
+                          },
+                          "tags": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
                           },
                           "uploaded_document_count": {
                             "type": "integer"
@@ -3418,7 +4278,9 @@
                           "optional_document_count",
                           "children",
                           "file_count",
-                          "files"
+                          "files",
+                          "file_parse_config",
+                          "tags"
                         ],
                         "properties": {
                           "children": {
@@ -3435,7 +4297,9 @@
                                 "optional_document_count",
                                 "children",
                                 "file_count",
-                                "files"
+                                "files",
+                                "file_parse_config",
+                                "tags"
                               ],
                               "properties": {
                                 "children": {
@@ -3452,7 +4316,9 @@
                                       "optional_document_count",
                                       "children",
                                       "file_count",
-                                      "files"
+                                      "files",
+                                      "file_parse_config",
+                                      "tags"
                                     ],
                                     "properties": {
                                       "children": {
@@ -3466,6 +4332,9 @@
                                       },
                                       "file_count": {
                                         "type": "integer"
+                                      },
+                                      "file_parse_config": {
+                                        "type": "object"
                                       },
                                       "files": {
                                         "type": "array",
@@ -3488,6 +4357,12 @@
                                       "sub_document_count": {
                                         "type": "integer"
                                       },
+                                      "tags": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      },
                                       "uploaded_document_count": {
                                         "type": "integer"
                                       }
@@ -3499,6 +4374,20 @@
                                 },
                                 "file_count": {
                                   "type": "integer"
+                                },
+                                "file_parse_config": {
+                                  "type": "object",
+                                  "required": [
+                                    "rules"
+                                  ],
+                                  "properties": {
+                                    "rules": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object"
+                                      }
+                                    }
+                                  }
                                 },
                                 "files": {
                                   "type": "array",
@@ -3573,6 +4462,12 @@
                                 "sub_document_count": {
                                   "type": "integer"
                                 },
+                                "tags": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
                                 "uploaded_document_count": {
                                   "type": "integer"
                                 }
@@ -3584,6 +4479,44 @@
                           },
                           "file_count": {
                             "type": "integer"
+                          },
+                          "file_parse_config": {
+                            "type": "object",
+                            "required": [
+                              "rules"
+                            ],
+                            "properties": {
+                              "rules": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "required": [
+                                    "parser",
+                                    "source",
+                                    "triggered_by",
+                                    "label",
+                                    "selector"
+                                  ],
+                                  "properties": {
+                                    "label": {
+                                      "type": "string"
+                                    },
+                                    "parser": {
+                                      "type": "string"
+                                    },
+                                    "selector": {
+                                      "type": "object"
+                                    },
+                                    "source": {
+                                      "type": "string"
+                                    },
+                                    "triggered_by": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              }
+                            }
                           },
                           "files": {
                             "type": "array",
@@ -3657,6 +4590,12 @@
                           },
                           "sub_document_count": {
                             "type": "integer"
+                          },
+                          "tags": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
                           },
                           "uploaded_document_count": {
                             "type": "integer"
@@ -3687,11 +4626,76 @@
                 "coe_date": {
                   "type": "string"
                 },
+                "contingency_removal_date": {
+                  "type": "string"
+                },
+                "contract_date": {
+                  "type": "string"
+                },
+                "cost_allocation": {
+                  "type": "string"
+                },
                 "created_at": {
                   "type": "string"
                 },
                 "emd_amount": {
                   "type": "number"
+                },
+                "emd_due_date": {
+                  "type": "string"
+                },
+                "escrows": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "checklist": {
+                        "type": "object",
+                        "required": [
+                          "has_wire_instruction",
+                          "has_emd_receipt",
+                          "has_prelim_report",
+                          "has_nhd",
+                          "has_colored_map"
+                        ],
+                        "properties": {
+                          "has_colored_map": {
+                            "type": "boolean"
+                          },
+                          "has_emd_receipt": {
+                            "type": "boolean"
+                          },
+                          "has_nhd": {
+                            "type": "boolean"
+                          },
+                          "has_prelim_report": {
+                            "type": "boolean"
+                          },
+                          "has_wire_instruction": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "escrow_company": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "no": {
+                        "type": "string"
+                      },
+                      "officer_email": {
+                        "type": "string"
+                      },
+                      "officer_name": {
+                        "type": "string"
+                      },
+                      "officer_phone": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 },
                 "id": {
                   "type": "integer"
@@ -3705,6 +4709,78 @@
                 "pm": {
                   "type": "string"
                 },
+                "property": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "created_at",
+                    "updated_at",
+                    "borrower_property_id",
+                    "borrower_property_transaction_id",
+                    "unit",
+                    "property_type",
+                    "living_area_sqft",
+                    "lot_area_sqft",
+                    "bedrooms",
+                    "bathrooms",
+                    "address"
+                  ],
+                  "properties": {
+                    "address": {
+                      "type": "object",
+                      "properties": {
+                        "address1": {
+                          "type": "string"
+                        },
+                        "address2": {
+                          "type": "string"
+                        },
+                        "city": {
+                          "type": "string"
+                        },
+                        "state": {
+                          "type": "string"
+                        },
+                        "zip_code": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "bathrooms": {
+                      "type": "integer"
+                    },
+                    "bedrooms": {
+                      "type": "integer"
+                    },
+                    "borrower_property_id": {
+                      "type": "integer"
+                    },
+                    "borrower_property_transaction_id": {
+                      "type": "integer"
+                    },
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "living_area_sqft": {
+                      "type": "number"
+                    },
+                    "lot_area_sqft": {
+                      "type": "number"
+                    },
+                    "property_type": {
+                      "type": "string"
+                    },
+                    "unit": {
+                      "type": "integer"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
+                },
                 "property_type": {
                   "type": "string"
                 },
@@ -3712,6 +4788,12 @@
                   "type": "number"
                 },
                 "status": {
+                  "type": "string"
+                },
+                "tc": {
+                  "type": "string"
+                },
+                "title_holder": {
                   "type": "string"
                 },
                 "type": {
@@ -3803,6 +4885,137 @@
             "description": "",
             "schema": {
               "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/borrower_property_transaction/{id}/parse": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "borrower_property_transaction"
+        ],
+        "summary": "parse file",
+        "operationId": "borrowerPropertyTransactionParseFile",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "document_id",
+                "parser"
+              ],
+              "properties": {
+                "document_id": {
+                  "type": "integer"
+                },
+                "parser": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "request_id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/borrower_property_transaction/{id}/parse/result": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "borrower_property_transaction"
+        ],
+        "summary": "get parse file result",
+        "operationId": "borrowerPropertyTransactionParseFileResult",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "type",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "request_id",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "name": "document_id",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "parser",
+            "in": "query",
+            "allowEmptyValue": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                },
+                "stage": {
+                  "type": "string"
+                },
+                "stage_processed": {
+                  "type": "integer"
+                },
+                "stage_total": {
+                  "type": "integer"
+                },
+                "status": {
+                  "type": "string"
+                }
+              }
             }
           }
         }
@@ -4376,6 +5589,9 @@
                       }
                     }
                   }
+                },
+                "request_id": {
+                  "type": "string"
                 }
               }
             }
@@ -7279,6 +8495,14 @@
                           "pm",
                           "business_strategy",
                           "note",
+                          "title_holder",
+                          "contract_date",
+                          "emd_due_date",
+                          "contingency_removal_date",
+                          "tc",
+                          "cost_allocation",
+                          "escrows",
+                          "property",
                           "checklist",
                           "created_at",
                           "updated_at"
@@ -7323,7 +8547,9 @@
                                     "optional_document_count",
                                     "children",
                                     "file_count",
-                                    "files"
+                                    "files",
+                                    "file_parse_config",
+                                    "tags"
                                   ],
                                   "properties": {
                                     "children": {
@@ -7340,7 +8566,9 @@
                                           "optional_document_count",
                                           "children",
                                           "file_count",
-                                          "files"
+                                          "files",
+                                          "file_parse_config",
+                                          "tags"
                                         ],
                                         "properties": {
                                           "children": {
@@ -7357,7 +8585,9 @@
                                                 "optional_document_count",
                                                 "children",
                                                 "file_count",
-                                                "files"
+                                                "files",
+                                                "file_parse_config",
+                                                "tags"
                                               ],
                                               "properties": {
                                                 "children": {
@@ -7371,6 +8601,9 @@
                                                 },
                                                 "file_count": {
                                                   "type": "integer"
+                                                },
+                                                "file_parse_config": {
+                                                  "type": "object"
                                                 },
                                                 "files": {
                                                   "type": "array",
@@ -7393,6 +8626,12 @@
                                                 "sub_document_count": {
                                                   "type": "integer"
                                                 },
+                                                "tags": {
+                                                  "type": "array",
+                                                  "items": {
+                                                    "type": "string"
+                                                  }
+                                                },
                                                 "uploaded_document_count": {
                                                   "type": "integer"
                                                 }
@@ -7404,6 +8643,20 @@
                                           },
                                           "file_count": {
                                             "type": "integer"
+                                          },
+                                          "file_parse_config": {
+                                            "type": "object",
+                                            "required": [
+                                              "rules"
+                                            ],
+                                            "properties": {
+                                              "rules": {
+                                                "type": "array",
+                                                "items": {
+                                                  "type": "object"
+                                                }
+                                              }
+                                            }
                                           },
                                           "files": {
                                             "type": "array",
@@ -7478,6 +8731,12 @@
                                           "sub_document_count": {
                                             "type": "integer"
                                           },
+                                          "tags": {
+                                            "type": "array",
+                                            "items": {
+                                              "type": "string"
+                                            }
+                                          },
                                           "uploaded_document_count": {
                                             "type": "integer"
                                           }
@@ -7489,6 +8748,20 @@
                                     },
                                     "file_count": {
                                       "type": "integer"
+                                    },
+                                    "file_parse_config": {
+                                      "type": "object",
+                                      "required": [
+                                        "rules"
+                                      ],
+                                      "properties": {
+                                        "rules": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "object"
+                                          }
+                                        }
+                                      }
                                     },
                                     "files": {
                                       "type": "array",
@@ -7562,6 +8835,12 @@
                                     },
                                     "sub_document_count": {
                                       "type": "integer"
+                                    },
+                                    "tags": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
                                     },
                                     "uploaded_document_count": {
                                       "type": "integer"
@@ -7583,7 +8862,9 @@
                                     "optional_document_count",
                                     "children",
                                     "file_count",
-                                    "files"
+                                    "files",
+                                    "file_parse_config",
+                                    "tags"
                                   ],
                                   "properties": {
                                     "children": {
@@ -7600,7 +8881,9 @@
                                           "optional_document_count",
                                           "children",
                                           "file_count",
-                                          "files"
+                                          "files",
+                                          "file_parse_config",
+                                          "tags"
                                         ],
                                         "properties": {
                                           "children": {
@@ -7617,7 +8900,9 @@
                                                 "optional_document_count",
                                                 "children",
                                                 "file_count",
-                                                "files"
+                                                "files",
+                                                "file_parse_config",
+                                                "tags"
                                               ],
                                               "properties": {
                                                 "children": {
@@ -7631,6 +8916,9 @@
                                                 },
                                                 "file_count": {
                                                   "type": "integer"
+                                                },
+                                                "file_parse_config": {
+                                                  "type": "object"
                                                 },
                                                 "files": {
                                                   "type": "array",
@@ -7653,6 +8941,12 @@
                                                 "sub_document_count": {
                                                   "type": "integer"
                                                 },
+                                                "tags": {
+                                                  "type": "array",
+                                                  "items": {
+                                                    "type": "string"
+                                                  }
+                                                },
                                                 "uploaded_document_count": {
                                                   "type": "integer"
                                                 }
@@ -7664,6 +8958,20 @@
                                           },
                                           "file_count": {
                                             "type": "integer"
+                                          },
+                                          "file_parse_config": {
+                                            "type": "object",
+                                            "required": [
+                                              "rules"
+                                            ],
+                                            "properties": {
+                                              "rules": {
+                                                "type": "array",
+                                                "items": {
+                                                  "type": "object"
+                                                }
+                                              }
+                                            }
                                           },
                                           "files": {
                                             "type": "array",
@@ -7738,6 +9046,12 @@
                                           "sub_document_count": {
                                             "type": "integer"
                                           },
+                                          "tags": {
+                                            "type": "array",
+                                            "items": {
+                                              "type": "string"
+                                            }
+                                          },
                                           "uploaded_document_count": {
                                             "type": "integer"
                                           }
@@ -7749,6 +9063,20 @@
                                     },
                                     "file_count": {
                                       "type": "integer"
+                                    },
+                                    "file_parse_config": {
+                                      "type": "object",
+                                      "required": [
+                                        "rules"
+                                      ],
+                                      "properties": {
+                                        "rules": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "object"
+                                          }
+                                        }
+                                      }
                                     },
                                     "files": {
                                       "type": "array",
@@ -7822,6 +9150,12 @@
                                     },
                                     "sub_document_count": {
                                       "type": "integer"
+                                    },
+                                    "tags": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
                                     },
                                     "uploaded_document_count": {
                                       "type": "integer"
@@ -7852,11 +9186,76 @@
                           "coe_date": {
                             "type": "string"
                           },
+                          "contingency_removal_date": {
+                            "type": "string"
+                          },
+                          "contract_date": {
+                            "type": "string"
+                          },
+                          "cost_allocation": {
+                            "type": "string"
+                          },
                           "created_at": {
                             "type": "string"
                           },
                           "emd_amount": {
                             "type": "number"
+                          },
+                          "emd_due_date": {
+                            "type": "string"
+                          },
+                          "escrows": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "checklist": {
+                                  "type": "object",
+                                  "required": [
+                                    "has_wire_instruction",
+                                    "has_emd_receipt",
+                                    "has_prelim_report",
+                                    "has_nhd",
+                                    "has_colored_map"
+                                  ],
+                                  "properties": {
+                                    "has_colored_map": {
+                                      "type": "boolean"
+                                    },
+                                    "has_emd_receipt": {
+                                      "type": "boolean"
+                                    },
+                                    "has_nhd": {
+                                      "type": "boolean"
+                                    },
+                                    "has_prelim_report": {
+                                      "type": "boolean"
+                                    },
+                                    "has_wire_instruction": {
+                                      "type": "boolean"
+                                    }
+                                  }
+                                },
+                                "escrow_company": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "no": {
+                                  "type": "string"
+                                },
+                                "officer_email": {
+                                  "type": "string"
+                                },
+                                "officer_name": {
+                                  "type": "string"
+                                },
+                                "officer_phone": {
+                                  "type": "string"
+                                }
+                              }
+                            }
                           },
                           "id": {
                             "type": "integer"
@@ -7870,6 +9269,78 @@
                           "pm": {
                             "type": "string"
                           },
+                          "property": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "created_at",
+                              "updated_at",
+                              "borrower_property_id",
+                              "borrower_property_transaction_id",
+                              "unit",
+                              "property_type",
+                              "living_area_sqft",
+                              "lot_area_sqft",
+                              "bedrooms",
+                              "bathrooms",
+                              "address"
+                            ],
+                            "properties": {
+                              "address": {
+                                "type": "object",
+                                "properties": {
+                                  "address1": {
+                                    "type": "string"
+                                  },
+                                  "address2": {
+                                    "type": "string"
+                                  },
+                                  "city": {
+                                    "type": "string"
+                                  },
+                                  "state": {
+                                    "type": "string"
+                                  },
+                                  "zip_code": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "bathrooms": {
+                                "type": "integer"
+                              },
+                              "bedrooms": {
+                                "type": "integer"
+                              },
+                              "borrower_property_id": {
+                                "type": "integer"
+                              },
+                              "borrower_property_transaction_id": {
+                                "type": "integer"
+                              },
+                              "created_at": {
+                                "type": "string"
+                              },
+                              "id": {
+                                "type": "integer"
+                              },
+                              "living_area_sqft": {
+                                "type": "number"
+                              },
+                              "lot_area_sqft": {
+                                "type": "number"
+                              },
+                              "property_type": {
+                                "type": "string"
+                              },
+                              "unit": {
+                                "type": "integer"
+                              },
+                              "updated_at": {
+                                "type": "string"
+                              }
+                            }
+                          },
                           "property_type": {
                             "type": "string"
                           },
@@ -7877,6 +9348,12 @@
                             "type": "number"
                           },
                           "status": {
+                            "type": "string"
+                          },
+                          "tc": {
+                            "type": "string"
+                          },
+                          "title_holder": {
                             "type": "string"
                           },
                           "type": {
@@ -9255,6 +10732,14 @@
                     "pm",
                     "business_strategy",
                     "note",
+                    "title_holder",
+                    "contract_date",
+                    "emd_due_date",
+                    "contingency_removal_date",
+                    "tc",
+                    "cost_allocation",
+                    "escrows",
+                    "property",
                     "checklist",
                     "created_at",
                     "updated_at"
@@ -9299,7 +10784,9 @@
                               "optional_document_count",
                               "children",
                               "file_count",
-                              "files"
+                              "files",
+                              "file_parse_config",
+                              "tags"
                             ],
                             "properties": {
                               "children": {
@@ -9316,7 +10803,9 @@
                                     "optional_document_count",
                                     "children",
                                     "file_count",
-                                    "files"
+                                    "files",
+                                    "file_parse_config",
+                                    "tags"
                                   ],
                                   "properties": {
                                     "children": {
@@ -9333,7 +10822,9 @@
                                           "optional_document_count",
                                           "children",
                                           "file_count",
-                                          "files"
+                                          "files",
+                                          "file_parse_config",
+                                          "tags"
                                         ],
                                         "properties": {
                                           "children": {
@@ -9347,6 +10838,9 @@
                                           },
                                           "file_count": {
                                             "type": "integer"
+                                          },
+                                          "file_parse_config": {
+                                            "type": "object"
                                           },
                                           "files": {
                                             "type": "array",
@@ -9369,6 +10863,12 @@
                                           "sub_document_count": {
                                             "type": "integer"
                                           },
+                                          "tags": {
+                                            "type": "array",
+                                            "items": {
+                                              "type": "string"
+                                            }
+                                          },
                                           "uploaded_document_count": {
                                             "type": "integer"
                                           }
@@ -9380,6 +10880,20 @@
                                     },
                                     "file_count": {
                                       "type": "integer"
+                                    },
+                                    "file_parse_config": {
+                                      "type": "object",
+                                      "required": [
+                                        "rules"
+                                      ],
+                                      "properties": {
+                                        "rules": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "object"
+                                          }
+                                        }
+                                      }
                                     },
                                     "files": {
                                       "type": "array",
@@ -9454,6 +10968,12 @@
                                     "sub_document_count": {
                                       "type": "integer"
                                     },
+                                    "tags": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    },
                                     "uploaded_document_count": {
                                       "type": "integer"
                                     }
@@ -9465,6 +10985,44 @@
                               },
                               "file_count": {
                                 "type": "integer"
+                              },
+                              "file_parse_config": {
+                                "type": "object",
+                                "required": [
+                                  "rules"
+                                ],
+                                "properties": {
+                                  "rules": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "required": [
+                                        "parser",
+                                        "source",
+                                        "triggered_by",
+                                        "label",
+                                        "selector"
+                                      ],
+                                      "properties": {
+                                        "label": {
+                                          "type": "string"
+                                        },
+                                        "parser": {
+                                          "type": "string"
+                                        },
+                                        "selector": {
+                                          "type": "object"
+                                        },
+                                        "source": {
+                                          "type": "string"
+                                        },
+                                        "triggered_by": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
                               },
                               "files": {
                                 "type": "array",
@@ -9538,6 +11096,12 @@
                               },
                               "sub_document_count": {
                                 "type": "integer"
+                              },
+                              "tags": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
                               },
                               "uploaded_document_count": {
                                 "type": "integer"
@@ -9559,7 +11123,9 @@
                               "optional_document_count",
                               "children",
                               "file_count",
-                              "files"
+                              "files",
+                              "file_parse_config",
+                              "tags"
                             ],
                             "properties": {
                               "children": {
@@ -9576,7 +11142,9 @@
                                     "optional_document_count",
                                     "children",
                                     "file_count",
-                                    "files"
+                                    "files",
+                                    "file_parse_config",
+                                    "tags"
                                   ],
                                   "properties": {
                                     "children": {
@@ -9593,7 +11161,9 @@
                                           "optional_document_count",
                                           "children",
                                           "file_count",
-                                          "files"
+                                          "files",
+                                          "file_parse_config",
+                                          "tags"
                                         ],
                                         "properties": {
                                           "children": {
@@ -9607,6 +11177,9 @@
                                           },
                                           "file_count": {
                                             "type": "integer"
+                                          },
+                                          "file_parse_config": {
+                                            "type": "object"
                                           },
                                           "files": {
                                             "type": "array",
@@ -9629,6 +11202,12 @@
                                           "sub_document_count": {
                                             "type": "integer"
                                           },
+                                          "tags": {
+                                            "type": "array",
+                                            "items": {
+                                              "type": "string"
+                                            }
+                                          },
                                           "uploaded_document_count": {
                                             "type": "integer"
                                           }
@@ -9640,6 +11219,20 @@
                                     },
                                     "file_count": {
                                       "type": "integer"
+                                    },
+                                    "file_parse_config": {
+                                      "type": "object",
+                                      "required": [
+                                        "rules"
+                                      ],
+                                      "properties": {
+                                        "rules": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "object"
+                                          }
+                                        }
+                                      }
                                     },
                                     "files": {
                                       "type": "array",
@@ -9714,6 +11307,12 @@
                                     "sub_document_count": {
                                       "type": "integer"
                                     },
+                                    "tags": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    },
                                     "uploaded_document_count": {
                                       "type": "integer"
                                     }
@@ -9725,6 +11324,44 @@
                               },
                               "file_count": {
                                 "type": "integer"
+                              },
+                              "file_parse_config": {
+                                "type": "object",
+                                "required": [
+                                  "rules"
+                                ],
+                                "properties": {
+                                  "rules": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "required": [
+                                        "parser",
+                                        "source",
+                                        "triggered_by",
+                                        "label",
+                                        "selector"
+                                      ],
+                                      "properties": {
+                                        "label": {
+                                          "type": "string"
+                                        },
+                                        "parser": {
+                                          "type": "string"
+                                        },
+                                        "selector": {
+                                          "type": "object"
+                                        },
+                                        "source": {
+                                          "type": "string"
+                                        },
+                                        "triggered_by": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
                               },
                               "files": {
                                 "type": "array",
@@ -9798,6 +11435,12 @@
                               },
                               "sub_document_count": {
                                 "type": "integer"
+                              },
+                              "tags": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
                               },
                               "uploaded_document_count": {
                                 "type": "integer"
@@ -9828,11 +11471,76 @@
                     "coe_date": {
                       "type": "string"
                     },
+                    "contingency_removal_date": {
+                      "type": "string"
+                    },
+                    "contract_date": {
+                      "type": "string"
+                    },
+                    "cost_allocation": {
+                      "type": "string"
+                    },
                     "created_at": {
                       "type": "string"
                     },
                     "emd_amount": {
                       "type": "number"
+                    },
+                    "emd_due_date": {
+                      "type": "string"
+                    },
+                    "escrows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "checklist": {
+                            "type": "object",
+                            "required": [
+                              "has_wire_instruction",
+                              "has_emd_receipt",
+                              "has_prelim_report",
+                              "has_nhd",
+                              "has_colored_map"
+                            ],
+                            "properties": {
+                              "has_colored_map": {
+                                "type": "boolean"
+                              },
+                              "has_emd_receipt": {
+                                "type": "boolean"
+                              },
+                              "has_nhd": {
+                                "type": "boolean"
+                              },
+                              "has_prelim_report": {
+                                "type": "boolean"
+                              },
+                              "has_wire_instruction": {
+                                "type": "boolean"
+                              }
+                            }
+                          },
+                          "escrow_company": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "no": {
+                            "type": "string"
+                          },
+                          "officer_email": {
+                            "type": "string"
+                          },
+                          "officer_name": {
+                            "type": "string"
+                          },
+                          "officer_phone": {
+                            "type": "string"
+                          }
+                        }
+                      }
                     },
                     "id": {
                       "type": "integer"
@@ -9846,6 +11554,78 @@
                     "pm": {
                       "type": "string"
                     },
+                    "property": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "created_at",
+                        "updated_at",
+                        "borrower_property_id",
+                        "borrower_property_transaction_id",
+                        "unit",
+                        "property_type",
+                        "living_area_sqft",
+                        "lot_area_sqft",
+                        "bedrooms",
+                        "bathrooms",
+                        "address"
+                      ],
+                      "properties": {
+                        "address": {
+                          "type": "object",
+                          "properties": {
+                            "address1": {
+                              "type": "string"
+                            },
+                            "address2": {
+                              "type": "string"
+                            },
+                            "city": {
+                              "type": "string"
+                            },
+                            "state": {
+                              "type": "string"
+                            },
+                            "zip_code": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "bathrooms": {
+                          "type": "integer"
+                        },
+                        "bedrooms": {
+                          "type": "integer"
+                        },
+                        "borrower_property_id": {
+                          "type": "integer"
+                        },
+                        "borrower_property_transaction_id": {
+                          "type": "integer"
+                        },
+                        "created_at": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "integer"
+                        },
+                        "living_area_sqft": {
+                          "type": "number"
+                        },
+                        "lot_area_sqft": {
+                          "type": "number"
+                        },
+                        "property_type": {
+                          "type": "string"
+                        },
+                        "unit": {
+                          "type": "integer"
+                        },
+                        "updated_at": {
+                          "type": "string"
+                        }
+                      }
+                    },
                     "property_type": {
                       "type": "string"
                     },
@@ -9853,6 +11633,12 @@
                       "type": "number"
                     },
                     "status": {
+                      "type": "string"
+                    },
+                    "tc": {
+                      "type": "string"
+                    },
+                    "title_holder": {
                       "type": "string"
                     },
                     "type": {
@@ -14809,7 +16595,7 @@
                   }
                 },
                 "bathrooms": {
-                  "type": "number"
+                  "type": "integer"
                 },
                 "bedrooms": {
                   "type": "integer"
@@ -14857,7 +16643,7 @@
                   }
                 },
                 "bathrooms": {
-                  "type": "number"
+                  "type": "integer"
                 },
                 "bedrooms": {
                   "type": "integer"
@@ -14973,7 +16759,7 @@
                         }
                       },
                       "bathrooms": {
-                        "type": "number"
+                        "type": "integer"
                       },
                       "bedrooms": {
                         "type": "integer"
@@ -15169,7 +16955,7 @@
                         "type": "number"
                       },
                       "bathrooms": {
-                        "type": "number"
+                        "type": "integer"
                       },
                       "bedrooms": {
                         "type": "integer"
@@ -15297,7 +17083,7 @@
                   }
                 },
                 "bathrooms": {
-                  "type": "number"
+                  "type": "integer"
                 },
                 "bedrooms": {
                   "type": "integer"
@@ -15387,7 +17173,7 @@
               ],
               "properties": {
                 "bathrooms": {
-                  "type": "number"
+                  "type": "integer"
                 },
                 "bedrooms": {
                   "type": "integer"
@@ -15495,6 +17281,14 @@
                       "pm",
                       "business_strategy",
                       "note",
+                      "title_holder",
+                      "contract_date",
+                      "emd_due_date",
+                      "contingency_removal_date",
+                      "tc",
+                      "cost_allocation",
+                      "escrows",
+                      "property",
                       "checklist",
                       "created_at",
                       "updated_at"
@@ -15539,7 +17333,9 @@
                                 "optional_document_count",
                                 "children",
                                 "file_count",
-                                "files"
+                                "files",
+                                "file_parse_config",
+                                "tags"
                               ],
                               "properties": {
                                 "children": {
@@ -15556,7 +17352,9 @@
                                       "optional_document_count",
                                       "children",
                                       "file_count",
-                                      "files"
+                                      "files",
+                                      "file_parse_config",
+                                      "tags"
                                     ],
                                     "properties": {
                                       "children": {
@@ -15573,7 +17371,9 @@
                                             "optional_document_count",
                                             "children",
                                             "file_count",
-                                            "files"
+                                            "files",
+                                            "file_parse_config",
+                                            "tags"
                                           ],
                                           "properties": {
                                             "children": {
@@ -15587,6 +17387,9 @@
                                             },
                                             "file_count": {
                                               "type": "integer"
+                                            },
+                                            "file_parse_config": {
+                                              "type": "object"
                                             },
                                             "files": {
                                               "type": "array",
@@ -15609,6 +17412,12 @@
                                             "sub_document_count": {
                                               "type": "integer"
                                             },
+                                            "tags": {
+                                              "type": "array",
+                                              "items": {
+                                                "type": "string"
+                                              }
+                                            },
                                             "uploaded_document_count": {
                                               "type": "integer"
                                             }
@@ -15620,6 +17429,20 @@
                                       },
                                       "file_count": {
                                         "type": "integer"
+                                      },
+                                      "file_parse_config": {
+                                        "type": "object",
+                                        "required": [
+                                          "rules"
+                                        ],
+                                        "properties": {
+                                          "rules": {
+                                            "type": "array",
+                                            "items": {
+                                              "type": "object"
+                                            }
+                                          }
+                                        }
                                       },
                                       "files": {
                                         "type": "array",
@@ -15694,6 +17517,12 @@
                                       "sub_document_count": {
                                         "type": "integer"
                                       },
+                                      "tags": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      },
                                       "uploaded_document_count": {
                                         "type": "integer"
                                       }
@@ -15705,6 +17534,20 @@
                                 },
                                 "file_count": {
                                   "type": "integer"
+                                },
+                                "file_parse_config": {
+                                  "type": "object",
+                                  "required": [
+                                    "rules"
+                                  ],
+                                  "properties": {
+                                    "rules": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object"
+                                      }
+                                    }
+                                  }
                                 },
                                 "files": {
                                   "type": "array",
@@ -15778,6 +17621,12 @@
                                 },
                                 "sub_document_count": {
                                   "type": "integer"
+                                },
+                                "tags": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
                                 },
                                 "uploaded_document_count": {
                                   "type": "integer"
@@ -15799,7 +17648,9 @@
                                 "optional_document_count",
                                 "children",
                                 "file_count",
-                                "files"
+                                "files",
+                                "file_parse_config",
+                                "tags"
                               ],
                               "properties": {
                                 "children": {
@@ -15816,7 +17667,9 @@
                                       "optional_document_count",
                                       "children",
                                       "file_count",
-                                      "files"
+                                      "files",
+                                      "file_parse_config",
+                                      "tags"
                                     ],
                                     "properties": {
                                       "children": {
@@ -15833,7 +17686,9 @@
                                             "optional_document_count",
                                             "children",
                                             "file_count",
-                                            "files"
+                                            "files",
+                                            "file_parse_config",
+                                            "tags"
                                           ],
                                           "properties": {
                                             "children": {
@@ -15847,6 +17702,9 @@
                                             },
                                             "file_count": {
                                               "type": "integer"
+                                            },
+                                            "file_parse_config": {
+                                              "type": "object"
                                             },
                                             "files": {
                                               "type": "array",
@@ -15869,6 +17727,12 @@
                                             "sub_document_count": {
                                               "type": "integer"
                                             },
+                                            "tags": {
+                                              "type": "array",
+                                              "items": {
+                                                "type": "string"
+                                              }
+                                            },
                                             "uploaded_document_count": {
                                               "type": "integer"
                                             }
@@ -15880,6 +17744,20 @@
                                       },
                                       "file_count": {
                                         "type": "integer"
+                                      },
+                                      "file_parse_config": {
+                                        "type": "object",
+                                        "required": [
+                                          "rules"
+                                        ],
+                                        "properties": {
+                                          "rules": {
+                                            "type": "array",
+                                            "items": {
+                                              "type": "object"
+                                            }
+                                          }
+                                        }
                                       },
                                       "files": {
                                         "type": "array",
@@ -15954,6 +17832,12 @@
                                       "sub_document_count": {
                                         "type": "integer"
                                       },
+                                      "tags": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      },
                                       "uploaded_document_count": {
                                         "type": "integer"
                                       }
@@ -15965,6 +17849,20 @@
                                 },
                                 "file_count": {
                                   "type": "integer"
+                                },
+                                "file_parse_config": {
+                                  "type": "object",
+                                  "required": [
+                                    "rules"
+                                  ],
+                                  "properties": {
+                                    "rules": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object"
+                                      }
+                                    }
+                                  }
                                 },
                                 "files": {
                                   "type": "array",
@@ -16038,6 +17936,12 @@
                                 },
                                 "sub_document_count": {
                                   "type": "integer"
+                                },
+                                "tags": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
                                 },
                                 "uploaded_document_count": {
                                   "type": "integer"
@@ -16068,11 +17972,76 @@
                       "coe_date": {
                         "type": "string"
                       },
+                      "contingency_removal_date": {
+                        "type": "string"
+                      },
+                      "contract_date": {
+                        "type": "string"
+                      },
+                      "cost_allocation": {
+                        "type": "string"
+                      },
                       "created_at": {
                         "type": "string"
                       },
                       "emd_amount": {
                         "type": "number"
+                      },
+                      "emd_due_date": {
+                        "type": "string"
+                      },
+                      "escrows": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "checklist": {
+                              "type": "object",
+                              "required": [
+                                "has_wire_instruction",
+                                "has_emd_receipt",
+                                "has_prelim_report",
+                                "has_nhd",
+                                "has_colored_map"
+                              ],
+                              "properties": {
+                                "has_colored_map": {
+                                  "type": "boolean"
+                                },
+                                "has_emd_receipt": {
+                                  "type": "boolean"
+                                },
+                                "has_nhd": {
+                                  "type": "boolean"
+                                },
+                                "has_prelim_report": {
+                                  "type": "boolean"
+                                },
+                                "has_wire_instruction": {
+                                  "type": "boolean"
+                                }
+                              }
+                            },
+                            "escrow_company": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "no": {
+                              "type": "string"
+                            },
+                            "officer_email": {
+                              "type": "string"
+                            },
+                            "officer_name": {
+                              "type": "string"
+                            },
+                            "officer_phone": {
+                              "type": "string"
+                            }
+                          }
+                        }
                       },
                       "id": {
                         "type": "integer"
@@ -16086,6 +18055,78 @@
                       "pm": {
                         "type": "string"
                       },
+                      "property": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "created_at",
+                          "updated_at",
+                          "borrower_property_id",
+                          "borrower_property_transaction_id",
+                          "unit",
+                          "property_type",
+                          "living_area_sqft",
+                          "lot_area_sqft",
+                          "bedrooms",
+                          "bathrooms",
+                          "address"
+                        ],
+                        "properties": {
+                          "address": {
+                            "type": "object",
+                            "properties": {
+                              "address1": {
+                                "type": "string"
+                              },
+                              "address2": {
+                                "type": "string"
+                              },
+                              "city": {
+                                "type": "string"
+                              },
+                              "state": {
+                                "type": "string"
+                              },
+                              "zip_code": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "bathrooms": {
+                            "type": "integer"
+                          },
+                          "bedrooms": {
+                            "type": "integer"
+                          },
+                          "borrower_property_id": {
+                            "type": "integer"
+                          },
+                          "borrower_property_transaction_id": {
+                            "type": "integer"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "living_area_sqft": {
+                            "type": "number"
+                          },
+                          "lot_area_sqft": {
+                            "type": "number"
+                          },
+                          "property_type": {
+                            "type": "string"
+                          },
+                          "unit": {
+                            "type": "integer"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        }
+                      },
                       "property_type": {
                         "type": "string"
                       },
@@ -16093,6 +18134,12 @@
                         "type": "number"
                       },
                       "status": {
+                        "type": "string"
+                      },
+                      "tc": {
+                        "type": "string"
+                      },
+                      "title_holder": {
                         "type": "string"
                       },
                       "type": {
@@ -16333,6 +18380,14 @@
                           "pm",
                           "business_strategy",
                           "note",
+                          "title_holder",
+                          "contract_date",
+                          "emd_due_date",
+                          "contingency_removal_date",
+                          "tc",
+                          "cost_allocation",
+                          "escrows",
+                          "property",
                           "checklist",
                           "created_at",
                           "updated_at"
@@ -16377,7 +18432,9 @@
                                     "optional_document_count",
                                     "children",
                                     "file_count",
-                                    "files"
+                                    "files",
+                                    "file_parse_config",
+                                    "tags"
                                   ],
                                   "properties": {
                                     "children": {
@@ -16394,7 +18451,9 @@
                                           "optional_document_count",
                                           "children",
                                           "file_count",
-                                          "files"
+                                          "files",
+                                          "file_parse_config",
+                                          "tags"
                                         ],
                                         "properties": {
                                           "children": {
@@ -16411,7 +18470,9 @@
                                                 "optional_document_count",
                                                 "children",
                                                 "file_count",
-                                                "files"
+                                                "files",
+                                                "file_parse_config",
+                                                "tags"
                                               ],
                                               "properties": {
                                                 "children": {
@@ -16425,6 +18486,9 @@
                                                 },
                                                 "file_count": {
                                                   "type": "integer"
+                                                },
+                                                "file_parse_config": {
+                                                  "type": "object"
                                                 },
                                                 "files": {
                                                   "type": "array",
@@ -16447,6 +18511,12 @@
                                                 "sub_document_count": {
                                                   "type": "integer"
                                                 },
+                                                "tags": {
+                                                  "type": "array",
+                                                  "items": {
+                                                    "type": "string"
+                                                  }
+                                                },
                                                 "uploaded_document_count": {
                                                   "type": "integer"
                                                 }
@@ -16458,6 +18528,20 @@
                                           },
                                           "file_count": {
                                             "type": "integer"
+                                          },
+                                          "file_parse_config": {
+                                            "type": "object",
+                                            "required": [
+                                              "rules"
+                                            ],
+                                            "properties": {
+                                              "rules": {
+                                                "type": "array",
+                                                "items": {
+                                                  "type": "object"
+                                                }
+                                              }
+                                            }
                                           },
                                           "files": {
                                             "type": "array",
@@ -16532,6 +18616,12 @@
                                           "sub_document_count": {
                                             "type": "integer"
                                           },
+                                          "tags": {
+                                            "type": "array",
+                                            "items": {
+                                              "type": "string"
+                                            }
+                                          },
                                           "uploaded_document_count": {
                                             "type": "integer"
                                           }
@@ -16543,6 +18633,20 @@
                                     },
                                     "file_count": {
                                       "type": "integer"
+                                    },
+                                    "file_parse_config": {
+                                      "type": "object",
+                                      "required": [
+                                        "rules"
+                                      ],
+                                      "properties": {
+                                        "rules": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "object"
+                                          }
+                                        }
+                                      }
                                     },
                                     "files": {
                                       "type": "array",
@@ -16616,6 +18720,12 @@
                                     },
                                     "sub_document_count": {
                                       "type": "integer"
+                                    },
+                                    "tags": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
                                     },
                                     "uploaded_document_count": {
                                       "type": "integer"
@@ -16637,7 +18747,9 @@
                                     "optional_document_count",
                                     "children",
                                     "file_count",
-                                    "files"
+                                    "files",
+                                    "file_parse_config",
+                                    "tags"
                                   ],
                                   "properties": {
                                     "children": {
@@ -16654,7 +18766,9 @@
                                           "optional_document_count",
                                           "children",
                                           "file_count",
-                                          "files"
+                                          "files",
+                                          "file_parse_config",
+                                          "tags"
                                         ],
                                         "properties": {
                                           "children": {
@@ -16671,7 +18785,9 @@
                                                 "optional_document_count",
                                                 "children",
                                                 "file_count",
-                                                "files"
+                                                "files",
+                                                "file_parse_config",
+                                                "tags"
                                               ],
                                               "properties": {
                                                 "children": {
@@ -16685,6 +18801,9 @@
                                                 },
                                                 "file_count": {
                                                   "type": "integer"
+                                                },
+                                                "file_parse_config": {
+                                                  "type": "object"
                                                 },
                                                 "files": {
                                                   "type": "array",
@@ -16707,6 +18826,12 @@
                                                 "sub_document_count": {
                                                   "type": "integer"
                                                 },
+                                                "tags": {
+                                                  "type": "array",
+                                                  "items": {
+                                                    "type": "string"
+                                                  }
+                                                },
                                                 "uploaded_document_count": {
                                                   "type": "integer"
                                                 }
@@ -16718,6 +18843,20 @@
                                           },
                                           "file_count": {
                                             "type": "integer"
+                                          },
+                                          "file_parse_config": {
+                                            "type": "object",
+                                            "required": [
+                                              "rules"
+                                            ],
+                                            "properties": {
+                                              "rules": {
+                                                "type": "array",
+                                                "items": {
+                                                  "type": "object"
+                                                }
+                                              }
+                                            }
                                           },
                                           "files": {
                                             "type": "array",
@@ -16792,6 +18931,12 @@
                                           "sub_document_count": {
                                             "type": "integer"
                                           },
+                                          "tags": {
+                                            "type": "array",
+                                            "items": {
+                                              "type": "string"
+                                            }
+                                          },
                                           "uploaded_document_count": {
                                             "type": "integer"
                                           }
@@ -16803,6 +18948,20 @@
                                     },
                                     "file_count": {
                                       "type": "integer"
+                                    },
+                                    "file_parse_config": {
+                                      "type": "object",
+                                      "required": [
+                                        "rules"
+                                      ],
+                                      "properties": {
+                                        "rules": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "object"
+                                          }
+                                        }
+                                      }
                                     },
                                     "files": {
                                       "type": "array",
@@ -16876,6 +19035,12 @@
                                     },
                                     "sub_document_count": {
                                       "type": "integer"
+                                    },
+                                    "tags": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
                                     },
                                     "uploaded_document_count": {
                                       "type": "integer"
@@ -16906,11 +19071,76 @@
                           "coe_date": {
                             "type": "string"
                           },
+                          "contingency_removal_date": {
+                            "type": "string"
+                          },
+                          "contract_date": {
+                            "type": "string"
+                          },
+                          "cost_allocation": {
+                            "type": "string"
+                          },
                           "created_at": {
                             "type": "string"
                           },
                           "emd_amount": {
                             "type": "number"
+                          },
+                          "emd_due_date": {
+                            "type": "string"
+                          },
+                          "escrows": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "checklist": {
+                                  "type": "object",
+                                  "required": [
+                                    "has_wire_instruction",
+                                    "has_emd_receipt",
+                                    "has_prelim_report",
+                                    "has_nhd",
+                                    "has_colored_map"
+                                  ],
+                                  "properties": {
+                                    "has_colored_map": {
+                                      "type": "boolean"
+                                    },
+                                    "has_emd_receipt": {
+                                      "type": "boolean"
+                                    },
+                                    "has_nhd": {
+                                      "type": "boolean"
+                                    },
+                                    "has_prelim_report": {
+                                      "type": "boolean"
+                                    },
+                                    "has_wire_instruction": {
+                                      "type": "boolean"
+                                    }
+                                  }
+                                },
+                                "escrow_company": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "no": {
+                                  "type": "string"
+                                },
+                                "officer_email": {
+                                  "type": "string"
+                                },
+                                "officer_name": {
+                                  "type": "string"
+                                },
+                                "officer_phone": {
+                                  "type": "string"
+                                }
+                              }
+                            }
                           },
                           "id": {
                             "type": "integer"
@@ -16924,6 +19154,78 @@
                           "pm": {
                             "type": "string"
                           },
+                          "property": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "created_at",
+                              "updated_at",
+                              "borrower_property_id",
+                              "borrower_property_transaction_id",
+                              "unit",
+                              "property_type",
+                              "living_area_sqft",
+                              "lot_area_sqft",
+                              "bedrooms",
+                              "bathrooms",
+                              "address"
+                            ],
+                            "properties": {
+                              "address": {
+                                "type": "object",
+                                "properties": {
+                                  "address1": {
+                                    "type": "string"
+                                  },
+                                  "address2": {
+                                    "type": "string"
+                                  },
+                                  "city": {
+                                    "type": "string"
+                                  },
+                                  "state": {
+                                    "type": "string"
+                                  },
+                                  "zip_code": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "bathrooms": {
+                                "type": "integer"
+                              },
+                              "bedrooms": {
+                                "type": "integer"
+                              },
+                              "borrower_property_id": {
+                                "type": "integer"
+                              },
+                              "borrower_property_transaction_id": {
+                                "type": "integer"
+                              },
+                              "created_at": {
+                                "type": "string"
+                              },
+                              "id": {
+                                "type": "integer"
+                              },
+                              "living_area_sqft": {
+                                "type": "number"
+                              },
+                              "lot_area_sqft": {
+                                "type": "number"
+                              },
+                              "property_type": {
+                                "type": "string"
+                              },
+                              "unit": {
+                                "type": "integer"
+                              },
+                              "updated_at": {
+                                "type": "string"
+                              }
+                            }
+                          },
                           "property_type": {
                             "type": "string"
                           },
@@ -16931,6 +19233,12 @@
                             "type": "number"
                           },
                           "status": {
+                            "type": "string"
+                          },
+                          "tc": {
+                            "type": "string"
+                          },
+                          "title_holder": {
                             "type": "string"
                           },
                           "type": {
@@ -17848,6 +20156,14 @@
                           "pm",
                           "business_strategy",
                           "note",
+                          "title_holder",
+                          "contract_date",
+                          "emd_due_date",
+                          "contingency_removal_date",
+                          "tc",
+                          "cost_allocation",
+                          "escrows",
+                          "property",
                           "checklist",
                           "created_at",
                           "updated_at"
@@ -17892,7 +20208,9 @@
                                     "optional_document_count",
                                     "children",
                                     "file_count",
-                                    "files"
+                                    "files",
+                                    "file_parse_config",
+                                    "tags"
                                   ],
                                   "properties": {
                                     "children": {
@@ -17909,7 +20227,9 @@
                                           "optional_document_count",
                                           "children",
                                           "file_count",
-                                          "files"
+                                          "files",
+                                          "file_parse_config",
+                                          "tags"
                                         ],
                                         "properties": {
                                           "children": {
@@ -17926,7 +20246,9 @@
                                                 "optional_document_count",
                                                 "children",
                                                 "file_count",
-                                                "files"
+                                                "files",
+                                                "file_parse_config",
+                                                "tags"
                                               ],
                                               "properties": {
                                                 "children": {
@@ -17940,6 +20262,9 @@
                                                 },
                                                 "file_count": {
                                                   "type": "integer"
+                                                },
+                                                "file_parse_config": {
+                                                  "type": "object"
                                                 },
                                                 "files": {
                                                   "type": "array",
@@ -17962,6 +20287,12 @@
                                                 "sub_document_count": {
                                                   "type": "integer"
                                                 },
+                                                "tags": {
+                                                  "type": "array",
+                                                  "items": {
+                                                    "type": "string"
+                                                  }
+                                                },
                                                 "uploaded_document_count": {
                                                   "type": "integer"
                                                 }
@@ -17973,6 +20304,20 @@
                                           },
                                           "file_count": {
                                             "type": "integer"
+                                          },
+                                          "file_parse_config": {
+                                            "type": "object",
+                                            "required": [
+                                              "rules"
+                                            ],
+                                            "properties": {
+                                              "rules": {
+                                                "type": "array",
+                                                "items": {
+                                                  "type": "object"
+                                                }
+                                              }
+                                            }
                                           },
                                           "files": {
                                             "type": "array",
@@ -18047,6 +20392,12 @@
                                           "sub_document_count": {
                                             "type": "integer"
                                           },
+                                          "tags": {
+                                            "type": "array",
+                                            "items": {
+                                              "type": "string"
+                                            }
+                                          },
                                           "uploaded_document_count": {
                                             "type": "integer"
                                           }
@@ -18058,6 +20409,20 @@
                                     },
                                     "file_count": {
                                       "type": "integer"
+                                    },
+                                    "file_parse_config": {
+                                      "type": "object",
+                                      "required": [
+                                        "rules"
+                                      ],
+                                      "properties": {
+                                        "rules": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "object"
+                                          }
+                                        }
+                                      }
                                     },
                                     "files": {
                                       "type": "array",
@@ -18131,6 +20496,12 @@
                                     },
                                     "sub_document_count": {
                                       "type": "integer"
+                                    },
+                                    "tags": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
                                     },
                                     "uploaded_document_count": {
                                       "type": "integer"
@@ -18152,7 +20523,9 @@
                                     "optional_document_count",
                                     "children",
                                     "file_count",
-                                    "files"
+                                    "files",
+                                    "file_parse_config",
+                                    "tags"
                                   ],
                                   "properties": {
                                     "children": {
@@ -18169,7 +20542,9 @@
                                           "optional_document_count",
                                           "children",
                                           "file_count",
-                                          "files"
+                                          "files",
+                                          "file_parse_config",
+                                          "tags"
                                         ],
                                         "properties": {
                                           "children": {
@@ -18186,7 +20561,9 @@
                                                 "optional_document_count",
                                                 "children",
                                                 "file_count",
-                                                "files"
+                                                "files",
+                                                "file_parse_config",
+                                                "tags"
                                               ],
                                               "properties": {
                                                 "children": {
@@ -18200,6 +20577,9 @@
                                                 },
                                                 "file_count": {
                                                   "type": "integer"
+                                                },
+                                                "file_parse_config": {
+                                                  "type": "object"
                                                 },
                                                 "files": {
                                                   "type": "array",
@@ -18222,6 +20602,12 @@
                                                 "sub_document_count": {
                                                   "type": "integer"
                                                 },
+                                                "tags": {
+                                                  "type": "array",
+                                                  "items": {
+                                                    "type": "string"
+                                                  }
+                                                },
                                                 "uploaded_document_count": {
                                                   "type": "integer"
                                                 }
@@ -18233,6 +20619,20 @@
                                           },
                                           "file_count": {
                                             "type": "integer"
+                                          },
+                                          "file_parse_config": {
+                                            "type": "object",
+                                            "required": [
+                                              "rules"
+                                            ],
+                                            "properties": {
+                                              "rules": {
+                                                "type": "array",
+                                                "items": {
+                                                  "type": "object"
+                                                }
+                                              }
+                                            }
                                           },
                                           "files": {
                                             "type": "array",
@@ -18307,6 +20707,12 @@
                                           "sub_document_count": {
                                             "type": "integer"
                                           },
+                                          "tags": {
+                                            "type": "array",
+                                            "items": {
+                                              "type": "string"
+                                            }
+                                          },
                                           "uploaded_document_count": {
                                             "type": "integer"
                                           }
@@ -18318,6 +20724,20 @@
                                     },
                                     "file_count": {
                                       "type": "integer"
+                                    },
+                                    "file_parse_config": {
+                                      "type": "object",
+                                      "required": [
+                                        "rules"
+                                      ],
+                                      "properties": {
+                                        "rules": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "object"
+                                          }
+                                        }
+                                      }
                                     },
                                     "files": {
                                       "type": "array",
@@ -18391,6 +20811,12 @@
                                     },
                                     "sub_document_count": {
                                       "type": "integer"
+                                    },
+                                    "tags": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
                                     },
                                     "uploaded_document_count": {
                                       "type": "integer"
@@ -18421,11 +20847,76 @@
                           "coe_date": {
                             "type": "string"
                           },
+                          "contingency_removal_date": {
+                            "type": "string"
+                          },
+                          "contract_date": {
+                            "type": "string"
+                          },
+                          "cost_allocation": {
+                            "type": "string"
+                          },
                           "created_at": {
                             "type": "string"
                           },
                           "emd_amount": {
                             "type": "number"
+                          },
+                          "emd_due_date": {
+                            "type": "string"
+                          },
+                          "escrows": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "checklist": {
+                                  "type": "object",
+                                  "required": [
+                                    "has_wire_instruction",
+                                    "has_emd_receipt",
+                                    "has_prelim_report",
+                                    "has_nhd",
+                                    "has_colored_map"
+                                  ],
+                                  "properties": {
+                                    "has_colored_map": {
+                                      "type": "boolean"
+                                    },
+                                    "has_emd_receipt": {
+                                      "type": "boolean"
+                                    },
+                                    "has_nhd": {
+                                      "type": "boolean"
+                                    },
+                                    "has_prelim_report": {
+                                      "type": "boolean"
+                                    },
+                                    "has_wire_instruction": {
+                                      "type": "boolean"
+                                    }
+                                  }
+                                },
+                                "escrow_company": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "no": {
+                                  "type": "string"
+                                },
+                                "officer_email": {
+                                  "type": "string"
+                                },
+                                "officer_name": {
+                                  "type": "string"
+                                },
+                                "officer_phone": {
+                                  "type": "string"
+                                }
+                              }
+                            }
                           },
                           "id": {
                             "type": "integer"
@@ -18439,6 +20930,78 @@
                           "pm": {
                             "type": "string"
                           },
+                          "property": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "created_at",
+                              "updated_at",
+                              "borrower_property_id",
+                              "borrower_property_transaction_id",
+                              "unit",
+                              "property_type",
+                              "living_area_sqft",
+                              "lot_area_sqft",
+                              "bedrooms",
+                              "bathrooms",
+                              "address"
+                            ],
+                            "properties": {
+                              "address": {
+                                "type": "object",
+                                "properties": {
+                                  "address1": {
+                                    "type": "string"
+                                  },
+                                  "address2": {
+                                    "type": "string"
+                                  },
+                                  "city": {
+                                    "type": "string"
+                                  },
+                                  "state": {
+                                    "type": "string"
+                                  },
+                                  "zip_code": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "bathrooms": {
+                                "type": "integer"
+                              },
+                              "bedrooms": {
+                                "type": "integer"
+                              },
+                              "borrower_property_id": {
+                                "type": "integer"
+                              },
+                              "borrower_property_transaction_id": {
+                                "type": "integer"
+                              },
+                              "created_at": {
+                                "type": "string"
+                              },
+                              "id": {
+                                "type": "integer"
+                              },
+                              "living_area_sqft": {
+                                "type": "number"
+                              },
+                              "lot_area_sqft": {
+                                "type": "number"
+                              },
+                              "property_type": {
+                                "type": "string"
+                              },
+                              "unit": {
+                                "type": "integer"
+                              },
+                              "updated_at": {
+                                "type": "string"
+                              }
+                            }
+                          },
                           "property_type": {
                             "type": "string"
                           },
@@ -18446,6 +21009,12 @@
                             "type": "number"
                           },
                           "status": {
+                            "type": "string"
+                          },
+                          "tc": {
+                            "type": "string"
+                          },
+                          "title_holder": {
                             "type": "string"
                           },
                           "type": {
@@ -19151,7 +21720,7 @@
                   "type": "number"
                 },
                 "bathrooms": {
-                  "type": "number"
+                  "type": "integer"
                 },
                 "bedrooms": {
                   "type": "integer"
@@ -19367,6 +21936,14 @@
                           "pm",
                           "business_strategy",
                           "note",
+                          "title_holder",
+                          "contract_date",
+                          "emd_due_date",
+                          "contingency_removal_date",
+                          "tc",
+                          "cost_allocation",
+                          "escrows",
+                          "property",
                           "checklist",
                           "created_at",
                           "updated_at"
@@ -19411,7 +21988,9 @@
                                     "optional_document_count",
                                     "children",
                                     "file_count",
-                                    "files"
+                                    "files",
+                                    "file_parse_config",
+                                    "tags"
                                   ],
                                   "properties": {
                                     "children": {
@@ -19428,7 +22007,9 @@
                                           "optional_document_count",
                                           "children",
                                           "file_count",
-                                          "files"
+                                          "files",
+                                          "file_parse_config",
+                                          "tags"
                                         ],
                                         "properties": {
                                           "children": {
@@ -19445,7 +22026,9 @@
                                                 "optional_document_count",
                                                 "children",
                                                 "file_count",
-                                                "files"
+                                                "files",
+                                                "file_parse_config",
+                                                "tags"
                                               ],
                                               "properties": {
                                                 "children": {
@@ -19459,6 +22042,9 @@
                                                 },
                                                 "file_count": {
                                                   "type": "integer"
+                                                },
+                                                "file_parse_config": {
+                                                  "type": "object"
                                                 },
                                                 "files": {
                                                   "type": "array",
@@ -19481,6 +22067,12 @@
                                                 "sub_document_count": {
                                                   "type": "integer"
                                                 },
+                                                "tags": {
+                                                  "type": "array",
+                                                  "items": {
+                                                    "type": "string"
+                                                  }
+                                                },
                                                 "uploaded_document_count": {
                                                   "type": "integer"
                                                 }
@@ -19492,6 +22084,20 @@
                                           },
                                           "file_count": {
                                             "type": "integer"
+                                          },
+                                          "file_parse_config": {
+                                            "type": "object",
+                                            "required": [
+                                              "rules"
+                                            ],
+                                            "properties": {
+                                              "rules": {
+                                                "type": "array",
+                                                "items": {
+                                                  "type": "object"
+                                                }
+                                              }
+                                            }
                                           },
                                           "files": {
                                             "type": "array",
@@ -19566,6 +22172,12 @@
                                           "sub_document_count": {
                                             "type": "integer"
                                           },
+                                          "tags": {
+                                            "type": "array",
+                                            "items": {
+                                              "type": "string"
+                                            }
+                                          },
                                           "uploaded_document_count": {
                                             "type": "integer"
                                           }
@@ -19577,6 +22189,20 @@
                                     },
                                     "file_count": {
                                       "type": "integer"
+                                    },
+                                    "file_parse_config": {
+                                      "type": "object",
+                                      "required": [
+                                        "rules"
+                                      ],
+                                      "properties": {
+                                        "rules": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "object"
+                                          }
+                                        }
+                                      }
                                     },
                                     "files": {
                                       "type": "array",
@@ -19650,6 +22276,12 @@
                                     },
                                     "sub_document_count": {
                                       "type": "integer"
+                                    },
+                                    "tags": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
                                     },
                                     "uploaded_document_count": {
                                       "type": "integer"
@@ -19671,7 +22303,9 @@
                                     "optional_document_count",
                                     "children",
                                     "file_count",
-                                    "files"
+                                    "files",
+                                    "file_parse_config",
+                                    "tags"
                                   ],
                                   "properties": {
                                     "children": {
@@ -19688,7 +22322,9 @@
                                           "optional_document_count",
                                           "children",
                                           "file_count",
-                                          "files"
+                                          "files",
+                                          "file_parse_config",
+                                          "tags"
                                         ],
                                         "properties": {
                                           "children": {
@@ -19705,7 +22341,9 @@
                                                 "optional_document_count",
                                                 "children",
                                                 "file_count",
-                                                "files"
+                                                "files",
+                                                "file_parse_config",
+                                                "tags"
                                               ],
                                               "properties": {
                                                 "children": {
@@ -19719,6 +22357,9 @@
                                                 },
                                                 "file_count": {
                                                   "type": "integer"
+                                                },
+                                                "file_parse_config": {
+                                                  "type": "object"
                                                 },
                                                 "files": {
                                                   "type": "array",
@@ -19741,6 +22382,12 @@
                                                 "sub_document_count": {
                                                   "type": "integer"
                                                 },
+                                                "tags": {
+                                                  "type": "array",
+                                                  "items": {
+                                                    "type": "string"
+                                                  }
+                                                },
                                                 "uploaded_document_count": {
                                                   "type": "integer"
                                                 }
@@ -19752,6 +22399,20 @@
                                           },
                                           "file_count": {
                                             "type": "integer"
+                                          },
+                                          "file_parse_config": {
+                                            "type": "object",
+                                            "required": [
+                                              "rules"
+                                            ],
+                                            "properties": {
+                                              "rules": {
+                                                "type": "array",
+                                                "items": {
+                                                  "type": "object"
+                                                }
+                                              }
+                                            }
                                           },
                                           "files": {
                                             "type": "array",
@@ -19826,6 +22487,12 @@
                                           "sub_document_count": {
                                             "type": "integer"
                                           },
+                                          "tags": {
+                                            "type": "array",
+                                            "items": {
+                                              "type": "string"
+                                            }
+                                          },
                                           "uploaded_document_count": {
                                             "type": "integer"
                                           }
@@ -19837,6 +22504,20 @@
                                     },
                                     "file_count": {
                                       "type": "integer"
+                                    },
+                                    "file_parse_config": {
+                                      "type": "object",
+                                      "required": [
+                                        "rules"
+                                      ],
+                                      "properties": {
+                                        "rules": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "object"
+                                          }
+                                        }
+                                      }
                                     },
                                     "files": {
                                       "type": "array",
@@ -19910,6 +22591,12 @@
                                     },
                                     "sub_document_count": {
                                       "type": "integer"
+                                    },
+                                    "tags": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
                                     },
                                     "uploaded_document_count": {
                                       "type": "integer"
@@ -19940,11 +22627,76 @@
                           "coe_date": {
                             "type": "string"
                           },
+                          "contingency_removal_date": {
+                            "type": "string"
+                          },
+                          "contract_date": {
+                            "type": "string"
+                          },
+                          "cost_allocation": {
+                            "type": "string"
+                          },
                           "created_at": {
                             "type": "string"
                           },
                           "emd_amount": {
                             "type": "number"
+                          },
+                          "emd_due_date": {
+                            "type": "string"
+                          },
+                          "escrows": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "checklist": {
+                                  "type": "object",
+                                  "required": [
+                                    "has_wire_instruction",
+                                    "has_emd_receipt",
+                                    "has_prelim_report",
+                                    "has_nhd",
+                                    "has_colored_map"
+                                  ],
+                                  "properties": {
+                                    "has_colored_map": {
+                                      "type": "boolean"
+                                    },
+                                    "has_emd_receipt": {
+                                      "type": "boolean"
+                                    },
+                                    "has_nhd": {
+                                      "type": "boolean"
+                                    },
+                                    "has_prelim_report": {
+                                      "type": "boolean"
+                                    },
+                                    "has_wire_instruction": {
+                                      "type": "boolean"
+                                    }
+                                  }
+                                },
+                                "escrow_company": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "no": {
+                                  "type": "string"
+                                },
+                                "officer_email": {
+                                  "type": "string"
+                                },
+                                "officer_name": {
+                                  "type": "string"
+                                },
+                                "officer_phone": {
+                                  "type": "string"
+                                }
+                              }
+                            }
                           },
                           "id": {
                             "type": "integer"
@@ -19958,6 +22710,78 @@
                           "pm": {
                             "type": "string"
                           },
+                          "property": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "created_at",
+                              "updated_at",
+                              "borrower_property_id",
+                              "borrower_property_transaction_id",
+                              "unit",
+                              "property_type",
+                              "living_area_sqft",
+                              "lot_area_sqft",
+                              "bedrooms",
+                              "bathrooms",
+                              "address"
+                            ],
+                            "properties": {
+                              "address": {
+                                "type": "object",
+                                "properties": {
+                                  "address1": {
+                                    "type": "string"
+                                  },
+                                  "address2": {
+                                    "type": "string"
+                                  },
+                                  "city": {
+                                    "type": "string"
+                                  },
+                                  "state": {
+                                    "type": "string"
+                                  },
+                                  "zip_code": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "bathrooms": {
+                                "type": "integer"
+                              },
+                              "bedrooms": {
+                                "type": "integer"
+                              },
+                              "borrower_property_id": {
+                                "type": "integer"
+                              },
+                              "borrower_property_transaction_id": {
+                                "type": "integer"
+                              },
+                              "created_at": {
+                                "type": "string"
+                              },
+                              "id": {
+                                "type": "integer"
+                              },
+                              "living_area_sqft": {
+                                "type": "number"
+                              },
+                              "lot_area_sqft": {
+                                "type": "number"
+                              },
+                              "property_type": {
+                                "type": "string"
+                              },
+                              "unit": {
+                                "type": "integer"
+                              },
+                              "updated_at": {
+                                "type": "string"
+                              }
+                            }
+                          },
                           "property_type": {
                             "type": "string"
                           },
@@ -19965,6 +22789,12 @@
                             "type": "number"
                           },
                           "status": {
+                            "type": "string"
+                          },
+                          "tc": {
+                            "type": "string"
+                          },
+                          "title_holder": {
                             "type": "string"
                           },
                           "type": {
@@ -23705,7 +26535,7 @@
       }
     }
   },
-  "x-date": "2026-06-24 09:39:27",
+  "x-date": "2026-07-24 15:43:22",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

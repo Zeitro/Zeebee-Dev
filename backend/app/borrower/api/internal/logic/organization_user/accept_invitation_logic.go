@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -41,7 +42,7 @@ func (l *AcceptInvitationLogic) AcceptInvitation(req *types.OrganizationUserAcce
 		return nil, errorx.WithStack(err)
 	}
 	resp = &types.UserLoginResponse{}
-	resp, err = copierx.Trans[borrower.UserLoginResponseData, types.UserLoginResponse](rpcResp.Data, copierx.TimeToRFC3339Str())
+	resp, err = copierx.Trans[proto.UserLoginResponseData, types.UserLoginResponse](rpcResp.Data, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}

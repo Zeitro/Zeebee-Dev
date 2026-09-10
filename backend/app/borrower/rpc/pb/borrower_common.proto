@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package borrower;
+
+option go_package = "zeebee-backend/app/borrower/rpc/pb/borrower";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+
+message OptionRequest {
+  OptionRequestData data = 1;
+}
+
+message OptionRequestData {
+  string name = 1;
+}
+
+message OptionResponse {
+  repeated proto.OptionEntity data = 1;
+}
+
+message UsCitiesRequest {
+  UsCitiesRequestData data = 1;
+}
+
+message UsCitiesRequestData {
+  string state_usps = 1;
+}
+
+message GetUuidResponse {
+  string data = 1;
+}
+
+service common {
+  rpc GetOpt(OptionRequest) returns(OptionResponse);
+  rpc GetUsState(proto.EmptyRequest) returns(proto.StringSliceResponse);
+  rpc GetUsCities(UsCitiesRequest) returns(proto.StringSliceResponse);
+  rpc GetUuid(proto.EmptyRequest) returns(GetUuidResponse);
+  rpc SyncData(proto.EmptyRequest) returns(proto.EmptyResponse);
+}

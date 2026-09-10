@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type BorrowerEntityAllLogic struct {
@@ -27,9 +28,7 @@ func NewBorrowerEntityAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *BorrowerEntityAllLogic) BorrowerEntityAll(req *types.EmptyRequest) (resp *types.BorrowerEntityAllResponse, err error) {
-	rpcResp, err := l.svcCtx.BorrowerEntityRpcClient.All(l.ctx, &borrower.BorrowerEntityAllRequest{
-		Data: &borrower.BorrowerEntityAllRequestData{},
-	})
+	rpcResp, err := l.svcCtx.BorrowerEntityRpcClient.All(l.ctx, &proto.EmptyRequest{})
 	if err != nil {
 		return nil, err
 	}

@@ -237,6 +237,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: organization.OrganizationDiscoverPreviewHandler(serverCtx),
 				},
 				{
+					// lender discover run (scheduled trigger only; manual flow uses preview + commit)
+					Method:  http.MethodPost,
+					Path:    "/organization/discover/run",
+					Handler: organization.OrganizationDiscoverRunHandler(serverCtx),
+				},
+				{
 					// lender discover latest run
 					Method:  http.MethodGet,
 					Path:    "/organization/discover/runs/latest",

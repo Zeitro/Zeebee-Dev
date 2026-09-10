@@ -3,14 +3,11 @@ package userlogic
 import (
 	"context"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"zeebee-backend/app/admin/rpc/internal/global"
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 )
@@ -18,29 +15,22 @@ import (
 type LoginLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
+
 	baseLogic *logic.BaseLogic
 }
 
 func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic {
 	return &LoginLogic{
-		ctx:       ctx,
-		svcCtx:    svcCtx,
-		Logger:    logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
 // user
 func (l *LoginLogic) Login(in *admin.UserLoginRequest) (resp *admin.UserLoginResponse, err error) {
-	defer func() {
-		if err != nil {
-			l.WithContext(l.ctx).WithFields(
-				logx.Field("stacks", errorx.GetErrorStack(err)),
-				logx.Field("service_name", l.svcCtx.Config.Name),
-			).Error(err)
-		}
-	}()
+
 	loginReq := dto.UserLoginRequestDto{
 		Email:    in.Data.Email,
 		Password: in.Data.Password,

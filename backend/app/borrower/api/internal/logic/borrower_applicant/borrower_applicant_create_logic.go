@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/app/borrower/api/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type BorrowerApplicantCreateLogic struct {
@@ -41,7 +42,7 @@ func (l *BorrowerApplicantCreateLogic) BorrowerApplicantCreate(req *types.Borrow
 	}
 
 	resp = &types.BorrowerApplicantCreateResponse{}
-	entityPtr, err := copierx.Trans[borrower.BorrowerApplicantEntity, types.BorrowerApplicantEntity](rpcResp.Data)
+	entityPtr, err := copierx.Trans[proto.BorrowerApplicantEntity, types.BorrowerApplicantEntity](rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

@@ -7,6 +7,12 @@ import { debounce } from 'lodash';
 
 const { Search } = Input;
 const { SHOW_ALL } = TreeSelect;
+
+/** 空数组不进请求（多选 Select）；空字符串 / null 仍按假值跳过 */
+function hasFilterValue(value) {
+	if (Array.isArray(value)) return value.length > 0;
+	return Boolean(value);
+}
 /**
  * Form过滤数据组件，配合table使用
  * type 区分哪种组件（input-search、select-input、input、select、treeSelect）
@@ -167,7 +173,7 @@ export const FilterField = forwardRef(({ list, className, ...rowProps }, ref) =>
 			if (item?.selectParamsKey && item?.selectValue) {
 				params[item.selectParamsKey] = item.selectValue;
 			}
-			if (item?.paramsKey && item?.value) {
+			if (item?.paramsKey && hasFilterValue(item.value)) {
 				params[item.paramsKey] = item.value;
 			}
 		});

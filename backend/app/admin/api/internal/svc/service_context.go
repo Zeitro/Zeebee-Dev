@@ -1,6 +1,7 @@
 package svc
 
 import (
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
 
@@ -12,6 +13,8 @@ import (
 
 type ServiceContext struct {
 	Config config.ApiConf
+	// Logger
+	Logger logx.Logger
 	// middleware
 	AuthMiddleware rest.Middleware
 
@@ -33,13 +36,14 @@ type ServiceContext struct {
 	AdminApiContent string
 }
 
-func NewServiceContext(c config.ApiConf, adminApiContent string) *ServiceContext {
+func NewServiceContext(c config.ApiConf, logger logx.Logger, adminApiContent string) *ServiceContext {
 	rpcClient := zrpc.MustNewClient(c.RpcConf)
 
 	authRpcClient := admin.NewAuthClient(rpcClient.Conn())
 	return &ServiceContext{
 		Config:         c,
 		AuthMiddleware: middleware.NewAuthMiddleware(constants.UserTypeAdmin, authRpcClient).Handle,
+		Logger:         logger,
 
 		// rpc client
 		UserRpcClient:                     admin.NewUserClient(rpcClient.Conn()),

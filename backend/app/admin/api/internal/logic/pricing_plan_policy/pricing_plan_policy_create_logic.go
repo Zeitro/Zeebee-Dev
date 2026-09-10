@@ -8,6 +8,7 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/domains/zeebee/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -21,7 +22,7 @@ type PricingPlanPolicyCreateLogic struct {
 // create
 func NewPricingPlanPolicyCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PricingPlanPolicyCreateLogic {
 	return &PricingPlanPolicyCreateLogic{
-		Logger: logx.WithContext(ctx),
+		Logger: svcCtx.Logger.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
@@ -43,7 +44,7 @@ func (l *PricingPlanPolicyCreateLogic) PricingPlanPolicyCreate(req *types.Pricin
 	}
 
 	// Convert pb response to types
-	resp, err = copierx.Trans[admin.PricingPlanPolicyEntity, types.PricingPlanPolicyEntity](rpcResp.Data, copierx.TimeToRFC3339Str())
+	resp, err = copierx.Trans[proto.PricingPlanPolicyEntity, types.PricingPlanPolicyEntity](rpcResp.Data, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, errorx.GetFailedTransRespErr(err)
 	}

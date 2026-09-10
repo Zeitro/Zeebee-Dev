@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState, useCallback } from 'react';
 import { createRequest } from '../../lib/fetch';
 import { getPagination } from '../../lib/common';
+import { getInitialTablePageSize, setStoredTablePageSize } from '../../lib/tablePagination';
 import { asc, des, ascend, descend } from '@repo/shared-methods/enum';
 const defaultSortOrder = {
 	// column: 'address',
@@ -14,6 +15,7 @@ const useContent = ({
 	hasPaginationRequest,
 	settingPagination = {},
 	hasInitRequest,
+	pageSizeStorageKey,
 }) => {
 	const scrollRef = useRef();
 	const isGetRef = useRef(hasInitRequest); // 是否请求接口
@@ -24,9 +26,21 @@ const useContent = ({
 	// 但提供一套封装方法同步更新 ref 与用于渲染的 state（paramsData）
 	// const pagination = useRef(getPagination(settingPagination));
 	// const sorter = useRef(defaultSortOrder);
-	const [paramsData, setParamsData] = useState({
-		...defaultSortOrder,
-		...(getPagination(settingPagination) || {}),
+	const [paramsData, setParamsData] = useState(() => {
+		const hasCustomPageSize = settingPagination?.pageSize !== undefined;
+		const initialPageSize = hasCustomPageSize
+			? settingPagination.pageSize
+			: typeof window !== 'undefined'
+				? getInitialTablePageSize(pageSizeStorageKey)
+				: 20;
+
+		return {
+			...defaultSortOrder,
+			...(getPagination({
+				...settingPagination,
+				pageSize: initialPageSize,
+			}) || {}),
+		};
 	});
 	const [list, setList] = useState([]);
 	const [loading, setLoading] = useState(false);
@@ -111,6 +125,16 @@ const useContent = ({
 	};
 
 	const onChange = (paginationObj, filters, { order, columnKey }) => {
+		const pageSizeChanged = paginationObj.pageSize !== paramsData.pageSize;
+		const nextPage = pageSizeChanged ? 1 : paginationObj.current;
+
+		if (pageSizeChanged) {
+			setStoredTablePageSize(paginationObj.pageSize, pageSizeStorageKey);
+			// 切换到更小 pageSize 时，旧 list 仍可能大于新 pageSize；
+			// 先裁剪，避免 antd 报 dataSource.length > pageSize 的异步分页警告
+			setList((prev) => (Array.isArray(prev) ? prev.slice(0, paginationObj.pageSize) : prev));
+		}
+
 		// 不请求分页接口，只更新 paramsData（用于显示）
 		if (!hasPaginationRequest) {
 			setParamsData((v) => {
@@ -119,6 +143,9 @@ const useContent = ({
 					next.current = paginationObj.current;
 				} else {
 					next.current = 1;
+				}
+				if (pageSizeChanged) {
+					next.pageSize = paginationObj.pageSize;
 				}
 				return next;
 			});
@@ -136,8 +163,17 @@ const useContent = ({
 			column: columnKey,
 			sort: orderObj[order],
 		};
-		setParamsData((v) => ({ ...v, ...sorter, current: paginationObj.current }));
-		getList({ sorter, page: paginationObj.current });
+		setParamsData((v) => ({
+			...v,
+			...sorter,
+			current: nextPage,
+			...(pageSizeChanged ? { pageSize: paginationObj.pageSize } : {}),
+		}));
+		getList({
+			sorter,
+			page: nextPage,
+			...(pageSizeChanged ? { limit: paginationObj.pageSize } : {}),
+		});
 	};
 	return {
 		filterFieldRef,
