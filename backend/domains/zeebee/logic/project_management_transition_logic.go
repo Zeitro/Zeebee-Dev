@@ -25,10 +25,11 @@ type projectManagementTransitionContext struct {
 	transition   *model.ProjectManagementWorkflowTransition
 }
 
-func (l *ProjectManagementTaskLogic) Transition(ctx context.Context, claim utils.JwtUser, taskId, targetStageId int64) (task *model.ProjectManagementTask, err error) {
+func (l *ProjectManagementTaskLogic) Transition(ctx context.Context, claim utils.JwtUser, taskId, targetStageId int64) (result *dto.ProjectManagementTaskDto, err error) {
 	if taskId == 0 || targetStageId == 0 {
 		return nil, errorx.New("task and target stage are required")
 	}
+	var task *model.ProjectManagementTask
 	err = l.repos.ProjectManagementTaskRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		task, err = l.repos.ProjectManagementTaskRepo.LockWithTx(ctx, tx, taskId)
 		if err != nil {

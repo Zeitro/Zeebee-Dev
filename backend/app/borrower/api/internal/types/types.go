@@ -1950,13 +1950,14 @@ type ProjectManagementTaskDeleteRequest struct {
 }
 
 type ProjectManagementTaskDependencyEntity struct {
-	Id               int64  `json:"id"`
-	TaskId           int64  `json:"task_id"`
-	DependencyTaskId int64  `json:"dependency_task_id"`
-	DependencyType   string `json:"dependency_type"`
-	DependencyRule   string `json:"dependency_rule"`
-	CreatedAt        string `json:"created_at"`
-	UpdatedAt        string `json:"updated_at"`
+	Id                  int64  `json:"id"`
+	TaskId              int64  `json:"task_id"`
+	DependencyTaskId    int64  `json:"dependency_task_id"`
+	DependencyTaskTitle string `json:"dependency_task_title"`
+	DependencyType      string `json:"dependency_type"`
+	DependencyRule      string `json:"dependency_rule"`
+	CreatedAt           string `json:"created_at"`
+	UpdatedAt           string `json:"updated_at"`
 }
 
 type ProjectManagementTaskDependencyRequest struct {
@@ -2017,6 +2018,7 @@ type ProjectManagementTaskPageEntity struct {
 	StartAt        string                                   `json:"start_at"`
 	EndAt          string                                   `json:"end_at"`
 	TaskType       *ProjectManagementTaskTypeSnapshotEntity `json:"task_type"`
+	Assignees      []*ProjectManagementTaskAssigneeEntity   `json:"assignees"`
 	Overdue        bool                                     `json:"overdue"`
 	OverdueSeconds int64                                    `json:"overdue_seconds"`
 	CreatedAt      string                                   `json:"created_at"`
@@ -2473,7 +2475,7 @@ type RoleUpdateStatusRequest struct {
 }
 
 type S3PresignUrlCreateRequest struct {
-	Type       string `json:"type" validate:"required,oneof=pdf image doc ppt excel"`
+	Type       string `json:"type" validate:"required,oneof=pdf image doc ppt excel markdown"`
 	FileSuffix string `json:"file_suffix" validate:"required"`
 	FileName   string `json:"file_name,optional"`
 }

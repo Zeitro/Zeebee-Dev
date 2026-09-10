@@ -2,12 +2,15 @@ package dto
 
 import (
 	"database/sql"
+	"time"
 
 	"zeebee-backend/domains/zeebee/constants"
 )
 
 type ProjectManagementTaskDto struct {
 	Id             int64
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
 	OrganizationId int64
 	ProjectId      int64
 	ParentTaskId   int64
@@ -22,6 +25,12 @@ type ProjectManagementTaskDto struct {
 	StartAt        *sql.NullTime
 	EndAt          *sql.NullTime
 	TaskType       *ProjectManagementTaskTypeSnapshotDto
+	Assignees      []*ProjectManagementTaskAssigneeDto
+	Attachments    []*ProjectManagementTaskAttachmentDto
+	Children       []*ProjectManagementTaskDto
+	Dependencies   []*ProjectManagementTaskDependencyDto
+	ProjectName    string
+	StageName      string
 }
 
 type ProjectManagementTaskOverdueDto struct {
@@ -49,6 +58,7 @@ type ProjectManagementTaskUpdateDto struct {
 }
 
 type ProjectManagementTaskAssigneeDto struct {
+	Id                       int64
 	TaskId                   int64
 	StageId                  int64
 	OrganizationUserId       int64

@@ -18431,6 +18431,7 @@
         "id",
         "task_id",
         "dependency_task_id",
+        "dependency_task_title",
         "dependency_type",
         "dependency_rule",
         "created_at",
@@ -18445,6 +18446,9 @@
         },
         "dependency_task_id": {
           "type": "integer"
+        },
+        "dependency_task_title": {
+          "type": "string"
         },
         "dependency_type": {
           "type": "string"
@@ -18763,12 +18767,19 @@
         "start_at",
         "end_at",
         "task_type",
+        "assignees",
         "overdue",
         "overdue_seconds",
         "created_at",
         "updated_at"
       ],
       "properties": {
+        "assignees": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProjectManagementTaskAssigneeEntity"
+          }
+        },
         "created_at": {
           "type": "string"
         },
@@ -21617,7 +21628,7 @@
       }
     }
   },
-  "x-date": "2026-09-01 16:39:39",
+  "x-date": "2026-09-07 14:32:15",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

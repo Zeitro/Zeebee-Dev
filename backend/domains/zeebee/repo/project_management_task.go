@@ -37,7 +37,7 @@ func (r *ProjectManagementTaskRepo) FindDetailByOrganization(ctx context.Context
 	err := r.Client(ctx).
 		Preload("Children").
 		Preload("Attachments").
-		Preload("Dependencies").
+		Preload("Dependencies.DependencyTask").
 		Where("id = ? AND organization_id = ?", id, organizationId).First(task).Error
 	if err == nil {
 		err = r.assigneeRepo.Client(ctx).Where("task_id = ? AND stage_id = ?", task.Id, task.StageId).Order("id ASC").Find(&task.Assignees).Error
@@ -168,6 +168,15 @@ func (r *ProjectManagementTaskRepo) IsAssigneeWithTx(ctx context.Context, tx *go
 func (r *ProjectManagementTaskRepo) ListAssigneesWithTx(ctx context.Context, tx *gorm.DB, taskId, stageId int64) ([]*model.ProjectManagementTaskAssignee, error) {
 	assignees := make([]*model.ProjectManagementTaskAssignee, 0)
 	err := tx.WithContext(ctx).Where("task_id = ? AND stage_id = ?", taskId, stageId).Find(&assignees).Error
+	return assignees, errorx.WithStack(err)
+}
+
+func (r *ProjectManagementTaskRepo) ListCurrentAssigneesByTaskIds(ctx context.Context, taskIds []int64) ([]*model.ProjectManagementTaskAssignee, error) {
+	if len(taskIds) == 0 {
+		return []*model.ProjectManagementTaskAssignee{}, nil
+	}
+	assignees := make([]*model.ProjectManagementTaskAssignee, 0)
+	err := currentStageAssignees(r.assigneeRepo.Client(ctx)).Where("project_management_task_assignees.task_id IN ?", taskIds).Find(&assignees).Error
 	return assignees, errorx.WithStack(err)
 }
 

@@ -10,7 +10,6 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/data/dto"
 	domainlogic "zeebee-backend/domains/zeebee/logic"
-	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
@@ -47,8 +46,8 @@ func (l *DetailLogic) Detail(in *borrower.ProjectManagementTaskDetailRequest) (r
 	return &borrower.ProjectManagementTaskDetailResponse{Data: data}, nil
 }
 
-func taskEntity(task *model.ProjectManagementTask, overdue *dto.ProjectManagementTaskOverdueDto) (*proto.ProjectManagementTaskEntity, error) {
-	entity, err := copierx.Trans[model.ProjectManagementTask, proto.ProjectManagementTaskEntity](task,
+func taskEntity(task *dto.ProjectManagementTaskDto, overdue *dto.ProjectManagementTaskOverdueDto) (*proto.ProjectManagementTaskEntity, error) {
+	entity, err := copierx.Trans[dto.ProjectManagementTaskDto, proto.ProjectManagementTaskEntity](task,
 		copierx.TimeToRFC3339Str(),
 		copierx.SqlTimePtrToRFC3339Str(),
 	)
@@ -64,12 +63,12 @@ func taskEntity(task *model.ProjectManagementTask, overdue *dto.ProjectManagemen
 	if overdue != nil {
 		entity.Overdue, entity.OverdueSeconds = overdue.Overdue, overdue.OverdueSeconds
 	}
-	assignees, err := copierx.Trans[[]*model.ProjectManagementTaskAssignee, []*proto.ProjectManagementTaskAssigneeEntity](&task.Assignees, copierx.TimeToRFC3339Str())
+	assignees, err := copierx.Trans[[]*dto.ProjectManagementTaskAssigneeDto, []*proto.ProjectManagementTaskAssigneeEntity](&task.Assignees, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}
 	entity.Assignees = *assignees
-	attachments, err := copierx.Trans[[]*model.File, []*proto.FileEntity](&task.Attachments, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToRFC3339Str())
+	attachments, err := copierx.Trans[[]*dto.ProjectManagementTaskAttachmentDto, []*proto.FileEntity](&task.Attachments, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +82,7 @@ func taskEntity(task *model.ProjectManagementTask, overdue *dto.ProjectManagemen
 		children = append(children, childEntity)
 	}
 	entity.Children = children
-	dependencies, err := copierx.Trans[[]*model.ProjectManagementTaskDependency, []*proto.ProjectManagementTaskDependencyEntity](&task.Dependencies, copierx.TimeToRFC3339Str())
+	dependencies, err := copierx.Trans[[]*dto.ProjectManagementTaskDependencyDto, []*proto.ProjectManagementTaskDependencyEntity](&task.Dependencies, copierx.TimeToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +90,7 @@ func taskEntity(task *model.ProjectManagementTask, overdue *dto.ProjectManagemen
 	return entity, nil
 }
 
-func taskEntityWithOverdue(ctx context.Context, taskLogic *domainlogic.ProjectManagementTaskLogic, task *model.ProjectManagementTask) (*proto.ProjectManagementTaskEntity, error) {
+func taskEntityWithOverdue(ctx context.Context, taskLogic *domainlogic.ProjectManagementTaskLogic, task *dto.ProjectManagementTaskDto) (*proto.ProjectManagementTaskEntity, error) {
 	overdue, err := taskLogic.Overdue(ctx, task)
 	if err != nil {
 		return nil, err
@@ -99,12 +98,12 @@ func taskEntityWithOverdue(ctx context.Context, taskLogic *domainlogic.ProjectMa
 	return taskEntity(task, overdue)
 }
 
-func taskPageEntityWithOverdue(ctx context.Context, taskLogic *domainlogic.ProjectManagementTaskLogic, task *model.ProjectManagementTask) (*proto.ProjectManagementTaskPageEntity, error) {
+func taskPageEntityWithOverdue(ctx context.Context, taskLogic *domainlogic.ProjectManagementTaskLogic, task *dto.ProjectManagementTaskDto) (*proto.ProjectManagementTaskPageEntity, error) {
 	overdue, err := taskLogic.Overdue(ctx, task)
 	if err != nil {
 		return nil, err
 	}
-	entity, err := copierx.Trans[model.ProjectManagementTask, proto.ProjectManagementTaskPageEntity](task, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToRFC3339Str())
+	entity, err := copierx.Trans[dto.ProjectManagementTaskDto, proto.ProjectManagementTaskPageEntity](task, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToRFC3339Str())
 	if err != nil {
 		return nil, err
 	}
@@ -114,6 +113,11 @@ func taskPageEntityWithOverdue(ctx context.Context, taskLogic *domainlogic.Proje
 			return nil, err
 		}
 	}
+	assignees, err := copierx.Trans[[]*dto.ProjectManagementTaskAssigneeDto, []*proto.ProjectManagementTaskAssigneeEntity](&task.Assignees, copierx.TimeToRFC3339Str())
+	if err != nil {
+		return nil, err
+	}
+	entity.Assignees = *assignees
 	entity.Overdue, entity.OverdueSeconds = overdue.Overdue, overdue.OverdueSeconds
 	return entity, nil
 }

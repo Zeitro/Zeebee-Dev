@@ -8064,6 +8064,7 @@ type ProjectManagementTaskPageEntity struct {
 	StartAt        string                                   `protobuf:"bytes,10,opt,name=start_at,json=startAt,proto3" json:"start_at,omitempty"`
 	EndAt          string                                   `protobuf:"bytes,11,opt,name=end_at,json=endAt,proto3" json:"end_at,omitempty"`
 	TaskType       *ProjectManagementTaskTypeSnapshotEntity `protobuf:"bytes,12,opt,name=task_type,json=taskType,proto3" json:"task_type,omitempty"`
+	Assignees      []*ProjectManagementTaskAssigneeEntity   `protobuf:"bytes,13,rep,name=assignees,proto3" json:"assignees,omitempty"`
 	Overdue        bool                                     `protobuf:"varint,14,opt,name=overdue,proto3" json:"overdue,omitempty"`
 	OverdueSeconds int64                                    `protobuf:"varint,15,opt,name=overdue_seconds,json=overdueSeconds,proto3" json:"overdue_seconds,omitempty"`
 	CreatedAt      string                                   `protobuf:"bytes,16,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
@@ -8183,6 +8184,13 @@ func (x *ProjectManagementTaskPageEntity) GetTaskType() *ProjectManagementTaskTy
 	return nil
 }
 
+func (x *ProjectManagementTaskPageEntity) GetAssignees() []*ProjectManagementTaskAssigneeEntity {
+	if x != nil {
+		return x.Assignees
+	}
+	return nil
+}
+
 func (x *ProjectManagementTaskPageEntity) GetOverdue() bool {
 	if x != nil {
 		return x.Overdue
@@ -8240,16 +8248,17 @@ func (x *ProjectManagementTaskPageEntity) GetStageName() string {
 }
 
 type ProjectManagementTaskDependencyEntity struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TaskId           int64                  `protobuf:"varint,2,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
-	DependencyTaskId int64                  `protobuf:"varint,3,opt,name=dependency_task_id,json=dependencyTaskId,proto3" json:"dependency_task_id,omitempty"`
-	DependencyType   string                 `protobuf:"bytes,4,opt,name=dependency_type,json=dependencyType,proto3" json:"dependency_type,omitempty"`
-	DependencyRule   string                 `protobuf:"bytes,5,opt,name=dependency_rule,json=dependencyRule,proto3" json:"dependency_rule,omitempty"`
-	CreatedAt        string                 `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt        string                 `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state               protoimpl.MessageState `protogen:"open.v1"`
+	Id                  int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TaskId              int64                  `protobuf:"varint,2,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
+	DependencyTaskId    int64                  `protobuf:"varint,3,opt,name=dependency_task_id,json=dependencyTaskId,proto3" json:"dependency_task_id,omitempty"`
+	DependencyType      string                 `protobuf:"bytes,4,opt,name=dependency_type,json=dependencyType,proto3" json:"dependency_type,omitempty"`
+	DependencyRule      string                 `protobuf:"bytes,5,opt,name=dependency_rule,json=dependencyRule,proto3" json:"dependency_rule,omitempty"`
+	CreatedAt           string                 `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt           string                 `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	DependencyTaskTitle string                 `protobuf:"bytes,8,opt,name=dependency_task_title,json=dependencyTaskTitle,proto3" json:"dependency_task_title,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
 }
 
 func (x *ProjectManagementTaskDependencyEntity) Reset() {
@@ -8327,6 +8336,13 @@ func (x *ProjectManagementTaskDependencyEntity) GetCreatedAt() string {
 func (x *ProjectManagementTaskDependencyEntity) GetUpdatedAt() string {
 	if x != nil {
 		return x.UpdatedAt
+	}
+	return ""
+}
+
+func (x *ProjectManagementTaskDependencyEntity) GetDependencyTaskTitle() string {
+	if x != nil {
+		return x.DependencyTaskTitle
 	}
 	return ""
 }
@@ -9390,7 +9406,7 @@ const file_proto_entity_proto_rawDesc = "" +
 	"\bchildren\x18\x14 \x03(\v2\".proto.ProjectManagementTaskEntityR\bchildren\x12P\n" +
 	"\fdependencies\x18\x15 \x03(\v2,.proto.ProjectManagementTaskDependencyEntityR\fdependencies\x12\x1d\n" +
 	"\n" +
-	"work_hours\x18\x16 \x01(\x01R\tworkHours\"\xfc\x04\n" +
+	"work_hours\x18\x16 \x01(\x01R\tworkHours\"\xc6\x05\n" +
 	"\x1fProjectManagementTaskPageEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -9405,7 +9421,8 @@ const file_proto_entity_proto_rawDesc = "" +
 	"\bstart_at\x18\n" +
 	" \x01(\tR\astartAt\x12\x15\n" +
 	"\x06end_at\x18\v \x01(\tR\x05endAt\x12K\n" +
-	"\ttask_type\x18\f \x01(\v2..proto.ProjectManagementTaskTypeSnapshotEntityR\btaskType\x12\x18\n" +
+	"\ttask_type\x18\f \x01(\v2..proto.ProjectManagementTaskTypeSnapshotEntityR\btaskType\x12H\n" +
+	"\tassignees\x18\r \x03(\v2*.proto.ProjectManagementTaskAssigneeEntityR\tassignees\x12\x18\n" +
 	"\aoverdue\x18\x0e \x01(\bR\aoverdue\x12'\n" +
 	"\x0foverdue_seconds\x18\x0f \x01(\x03R\x0eoverdueSeconds\x12\x1d\n" +
 	"\n" +
@@ -9417,7 +9434,7 @@ const file_proto_entity_proto_rawDesc = "" +
 	"work_hours\x18\x14 \x01(\x01R\tworkHours\x12!\n" +
 	"\fproject_name\x18\x15 \x01(\tR\vprojectName\x12\x1d\n" +
 	"\n" +
-	"stage_name\x18\x16 \x01(\tR\tstageName\"\x8e\x02\n" +
+	"stage_name\x18\x16 \x01(\tR\tstageName\"\xc2\x02\n" +
 	"%ProjectManagementTaskDependencyEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\atask_id\x18\x02 \x01(\x03R\x06taskId\x12,\n" +
@@ -9427,7 +9444,8 @@ const file_proto_entity_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x06 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\a \x01(\tR\tupdatedAt\"\xa9\x02\n" +
+	"updated_at\x18\a \x01(\tR\tupdatedAt\x122\n" +
+	"\x15dependency_task_title\x18\b \x01(\tR\x13dependencyTaskTitle\"\xa9\x02\n" +
 	"\x0fOperationEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\voperator_id\x18\x04 \x01(\x03R\n" +
@@ -9613,12 +9631,13 @@ var file_proto_entity_proto_depIdxs = []int32{
 	63, // 80: proto.ProjectManagementTaskEntity.children:type_name -> proto.ProjectManagementTaskEntity
 	65, // 81: proto.ProjectManagementTaskEntity.dependencies:type_name -> proto.ProjectManagementTaskDependencyEntity
 	61, // 82: proto.ProjectManagementTaskPageEntity.task_type:type_name -> proto.ProjectManagementTaskTypeSnapshotEntity
-	18, // 83: proto.TemplateVariableEntity.PropertiesEntry.value:type_name -> proto.TemplateVariableEntity
-	84, // [84:84] is the sub-list for method output_type
-	84, // [84:84] is the sub-list for method input_type
-	84, // [84:84] is the sub-list for extension type_name
-	84, // [84:84] is the sub-list for extension extendee
-	0,  // [0:84] is the sub-list for field type_name
+	62, // 83: proto.ProjectManagementTaskPageEntity.assignees:type_name -> proto.ProjectManagementTaskAssigneeEntity
+	18, // 84: proto.TemplateVariableEntity.PropertiesEntry.value:type_name -> proto.TemplateVariableEntity
+	85, // [85:85] is the sub-list for method output_type
+	85, // [85:85] is the sub-list for method input_type
+	85, // [85:85] is the sub-list for extension type_name
+	85, // [85:85] is the sub-list for extension extendee
+	0,  // [0:85] is the sub-list for field type_name
 }
 
 func init() { file_proto_entity_proto_init() }
