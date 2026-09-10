@@ -36,7 +36,7 @@ function getCssVarValue(name, key) {
  * 自定义antd主题，区分有无（导航栏和面包屑）的页面
  */
 export default function CustomizeAntdTheme({ children, fontFamily }) {
-	const { accessibleRoutes, userInfo } = useUserStore();
+	const { accessibleRoutes, userInfo, currentPlan } = useUserStore();
 	const { accessPaths, access } = usePermissionStore();
 	const isPersistHydrated = usePersistStoresHydrated();
 	const [antdToken, setAntdToken] = useState({});
@@ -128,6 +128,10 @@ export default function CustomizeAntdTheme({ children, fontFamily }) {
 							routerList={accessibleRoutes}
 							personalList={personalList}
 							handleClickPersonalItem={handleClickPersonalItem}
+							isLoggedIn={!!userInfo?.id || !!access?.access_token}
+							planName={currentPlan?.pricing_plan?.name}
+							currentPlanId={currentPlan?.pricing_plan_id}
+							currentPlan={currentPlan}
 							renderLogo={() => (
 								<Image
 									src="/images/logo.svg"
