@@ -66,7 +66,9 @@ func (l *PageLogic) Page(in *tenant.OrganizationSubscriptionPageRequest) (resp *
 		return
 	}
 
-	data, err := copierx.Trans[gormx.PageResponse[dto.OrganizationSubscriptionPageEntity], tenant.OrganizationSubscriptionPageResponseData](&page, copierx.TimeToRFC3339Str())
+	data, err := copierx.Trans[gormx.PageResponse[dto.OrganizationSubscriptionPageEntity], tenant.OrganizationSubscriptionPageResponseData](
+		&page, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToRFC3339Str(),
+	)
 	if err != nil {
 		return
 	}
