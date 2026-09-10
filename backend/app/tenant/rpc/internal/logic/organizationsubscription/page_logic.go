@@ -9,6 +9,7 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
+	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
 )
@@ -67,7 +68,7 @@ func (l *PageLogic) Page(in *tenant.OrganizationSubscriptionPageRequest) (resp *
 	}
 
 	data, err := copierx.Trans[gormx.PageResponse[dto.OrganizationSubscriptionPageEntity], tenant.OrganizationSubscriptionPageResponseData](
-		&page, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToRFC3339Str(),
+		&page, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToStr(timex.LayoutUsStyle),
 	)
 	if err != nil {
 		return
