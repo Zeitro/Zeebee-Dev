@@ -1,0 +1,122 @@
+syntax = "proto3";
+
+package tenant;
+
+option go_package = "zeebee-backend/app/tenant/rpc/pb/tenant";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+// Resource full CRUD + tree + sync + user menu, consolidated from the three
+// backends (Q2=C: tenant is the RBAC single authority).
+
+// resource tree
+message ResourceTreeRequest {
+  ResourceTreeRequestData data = 1;
+}
+message ResourceTreeRequestData {
+  string user_type = 1; // caller platform (validated)
+  string type = 2;      // platform whose resources are managed (admin/lender/borrower)
+  string scope = 3;     // all | organization
+  int64 organization_id = 4; // required when scope = organization
+}
+message ResourceTreeResponse {
+  repeated proto.ResourceTreeEntity data = 1;
+}
+
+// create
+message ResourceCreateRequest {
+  ResourceCreateRequestData data = 1;
+}
+message ResourceCreateRequestData {
+  string user_type = 1;
+  int64 parent_id = 2;
+  string type = 3;
+  string resource_type = 4;
+  string name = 5;
+  string path = 6;
+  string icon = 7;
+  string tag = 8;
+  bool is_show = 9;
+  string status = 10;
+  int32 sort_order = 11;
+  repeated int64 api_ids = 12;
+  bool enable_data_scope = 13;
+  string description = 14;
+  bool is_public = 15;
+}
+
+// update
+message ResourceUpdateRequest {
+  ResourceUpdateRequestData data = 1;
+}
+message ResourceUpdateRequestData {
+  string user_type = 1;
+  int64 id = 2;
+  int64 parent_id = 3;
+  string type = 4;
+  string resource_type = 5;
+  string name = 6;
+  string path = 7;
+  string icon = 8;
+  string tag = 9;
+  bool is_show = 10;
+  string status = 11;
+  int32 sort_order = 12;
+  repeated int64 api_ids = 13;
+  bool enable_data_scope = 14;
+  string description = 15;
+  bool is_public = 16;
+}
+
+// delete
+message ResourceDeleteRequest {
+  ResourceDeleteRequestData data = 1;
+}
+message ResourceDeleteRequestData {
+  string user_type = 1;
+  int64 id = 2;
+  string type = 3;
+}
+
+// detail
+message ResourceDetailRequest {
+  ResourceDetailRequestData data = 1;
+}
+message ResourceDetailRequestData {
+  string user_type = 1;
+  int64 id = 2;
+  string type = 3;
+}
+message ResourceDetailResponse {
+  proto.ResourceEntity data = 1;
+}
+
+// user menu (derived from the user's roles + subscription gate)
+message UserMenuRequest {
+  UserMenuRequestData data = 1;
+}
+message UserMenuRequestData {
+  string user_type = 1;
+  int64 organization_id = 2;
+  int64 organization_user_id = 3;
+}
+
+// sync resources from a backend manifest
+message SyncResourceRequest {
+  SyncResourceRequestData data = 1;
+}
+message SyncResourceRequestData {
+  string user_type = 1;
+  string resource_json = 2;
+}
+
+service Resource {
+  rpc ResourceTree(ResourceTreeRequest) returns (ResourceTreeResponse);
+  rpc Create(ResourceCreateRequest) returns (ResourceDetailResponse);
+  rpc Update(ResourceUpdateRequest) returns (ResourceDetailResponse);
+  rpc Delete(ResourceDeleteRequest) returns (proto.EmptyResponse);
+  rpc Detail(ResourceDetailRequest) returns (ResourceDetailResponse);
+  rpc UserMenu(UserMenuRequest) returns (ResourceTreeResponse);
+  rpc SyncResource(SyncResourceRequest) returns (proto.EmptyResponse);
+}

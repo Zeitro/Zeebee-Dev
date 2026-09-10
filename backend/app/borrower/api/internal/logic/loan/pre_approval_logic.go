@@ -43,7 +43,7 @@ func (l *PreApprovalLogic) PreApproval(req *types.LoanPreApprovalRequest) (resp 
 		return nil, err
 	}
 
-	resp, err = copierx.Trans[borrower.LoanPreApprovalResponse, types.LoanPreApprovalResponse](rpcResp)
+	resp, err = copierx.Trans[borrower.LoanPreApprovalResponseData, types.LoanPreApprovalResponse](rpcResp.Data)
 	if err != nil {
 		return nil, err
 	}

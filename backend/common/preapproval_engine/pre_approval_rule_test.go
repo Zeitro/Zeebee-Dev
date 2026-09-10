@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"zeebee-backend/domains/zeebee/constants"
 )
@@ -207,9 +208,10 @@ func TestPreApprovalRule_CalPreApprovaldLoanAmount(t *testing.T) {
 			PurchaseAmount:          500000,
 		}
 
-		_, err := rule.CalPreApprovalLoanAmount(input)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "invalid loan type")
+		result, err := rule.CalPreApprovalLoanAmount(input)
+		require.NoError(t, err)
+		require.False(t, result.IsApproved)
+		require.Equal(t, "Can not get ltaiv/ltc/ltarv", result.RejectReason)
 	})
 
 	t.Run("rejected loan due to zero property value", func(t *testing.T) {

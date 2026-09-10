@@ -6,10 +6,9 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/common/copierx"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/proto"
+	"zeebee-backend/domains/zeebee/constants"
 )
 
 type ResourceListLogic struct {
@@ -30,19 +29,13 @@ func NewResourceListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Reso
 
 func (l *ResourceListLogic) ResourceList(in *admin.PricingPlanResourceListRequest) (resp *admin.PricingPlanResourceListResponse, err error) {
 
-	resources, err := l.baseLogic.PricingPlanLogic.ResourceList(l.ctx, in.Data.Id)
+	resources, err := l.svcCtx.TenantClient.PricingPlan.ResourceList(l.ctx, &tenant.PricingPlanResourceListRequest{Data: &tenant.PricingPlanResourceListRequestData{
+		UserType: string(constants.UserTypeAdmin),
+		Id:       in.Data.Id,
+	}})
 	if err != nil {
 		return nil, errorx.WithStack(err)
 	}
 
-	var list []*proto.ResourceTreeEntity
-	for _, r := range resources {
-		item, innerErr := copierx.Trans[dto.PricingPlanResourceEntityDto, proto.ResourceTreeEntity](r)
-		if innerErr != nil {
-			return nil, innerErr
-		}
-		list = append(list, item)
-	}
-
-	return &admin.PricingPlanResourceListResponse{Data: list}, nil
+	return &admin.PricingPlanResourceListResponse{Data: resources.Data}, nil
 }

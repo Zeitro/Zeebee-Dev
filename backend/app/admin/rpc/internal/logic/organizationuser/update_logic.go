@@ -6,9 +6,8 @@ import (
 	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
-	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/proto"
 )
 
 type UpdateLogic struct {
@@ -29,29 +28,24 @@ func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogi
 
 func (l *UpdateLogic) Update(in *admin.OrganizationUserUpdateRequest) (resp *admin.OrganizationUserDetailResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	input, err := copierx.Trans[admin.OrganizationUserUpdateRequestData, dto.OrganizationUserUpdateRequestDto](in.Data)
+	input, err := copierx.Trans[admin.OrganizationUserUpdateRequestData, tenant.OrganizationUserUpdateRequestData](in.Data)
 	if err != nil {
 		return nil, err
 	}
 
-	input.UserType = claim.UserType
+	input.UserType = string(claim.UserType)
 	input.OrganizationId = claim.OrganizationId
 
-	result, err := l.baseLogic.OrganizationUserLogic.UpdateOrganizationUser(l.ctx, *input)
+	result, err := l.svcCtx.TenantClient.OrganizationUser.UpdateOrganizationUser(l.ctx, &tenant.OrganizationUserUpdateRequest{Data: input})
 	if err != nil {
 		return nil, err
 	}
-	data, err := copierx.Trans[dto.OrganizationUserEntityDto, proto.OrganizationUserEntity](result, copierx.TimeToRFC3339Str())
-	if err != nil {
-		return nil, err
-	}
-
 	return &admin.OrganizationUserDetailResponse{
-		Data: data,
+		Data: result.Data,
 	}, nil
 }

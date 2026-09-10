@@ -3,33 +3,23 @@ package userlogic
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"strings"
-	"time"
 
-	"github.com/duke-git/lancet/v2/random"
+	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/grpc/metadata"
 	"gorm.io/gorm"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
-	"zeebee-backend/app/borrower/rpc/internal/email_tpl"
 	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	loanlogic "zeebee-backend/app/borrower/rpc/internal/logic/loan"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/internal/types"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
-	email2 "zeebee-backend/common/email"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/stringx"
-	"zeebee-backend/common/timex"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/limiter"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/proto"
 )
@@ -43,139 +33,74 @@ type RegisterLogic struct {
 
 func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RegisterLogic {
 	return &RegisterLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-
+		ctx:       ctx,
+		svcCtx:    svcCtx,
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
+// Register proxies identity creation to tenant (the sole identity authority)
+// and keeps the borrower-only pre-approval side effect local: after tenant
+// creates the account, borrower asynchronously builds the draft loan from the
+// cached pre-approval result. A side-effect failure never fails registration.
 func (l *RegisterLogic) Register(in *borrower.UserRegisterRequest) (resp *proto.EmptyResponse, err error) {
-
-	// check if user already exists
-	var existedUser *model.User
-	// var organizationUserModel *model.OrganizationUser
-	in.Data.Email = strings.ToLower(in.Data.Email)
-	existedUser, _ = l.svcCtx.UserRepo.GetUserByEmail(l.ctx, in.Data.Email, constants.UserTypeBorrower)
-
-	if existedUser != nil && existedUser.Id > 0 {
-		ctx := context.WithoutCancel(l.ctx)
-		if existedUser.Status == constants.UserStatusUnverified {
-			// send verify email
-			go func() {
-				err := sendRegisterVerifyUrlEmail(ctx, in.Data.Email, existedUser.FirstName)
-				if err != nil {
-					err = errorx.Wrap(err, "Send Verify Email Error")
-					l.svcCtx.Logger.WithContext(ctx).Error(err)
-				}
-			}()
-		} else {
-			// send login email
-			go func() {
-				err := sendLoginUrlEmail(ctx, in.Data.Email, existedUser.FirstName)
-				if err != nil {
-					err = errorx.Wrap(err, "Send Login Email Error")
-					l.svcCtx.Logger.WithContext(ctx).Error(err)
-				}
-			}()
-		}
-
-		return &proto.EmptyResponse{}, nil
-	}
-	var pwd string
-	pwd, err = utils.HashPassword(in.Data.Password)
-	if err != nil {
-		return nil, errorx.WithStack(err)
-	}
-	userInput := dto.UserRegisterRequestDto{
-		Email:        in.Data.Email,
-		PasswordHash: pwd,
-		Status:       constants.UserStatusUnverified,
-		Type:         constants.UserTypeBorrower,
-		FirstName:    in.Data.FirstName,
-		LastName:     in.Data.LastName,
-		FullName:     stringx.FormatFullName(in.Data.FirstName, "", in.Data.LastName),
-	}
-	organizationInput := dto.OrganizationRegisterRequestDto{
-		Name:      in.Data.OrganizationName,
-		Type:      constants.UserTypeBorrower,
-		Status:    constants.OrganizationStatusActive,
-		OwnerType: constants.OrganizationOwnerTypeNone,
-	}
-
-	userModel, organizationUserModel, err := l.baseLogic.UserLogic.RegisterWithOrganization(l.ctx, userInput, organizationInput, constants.UserTypeBorrower, false)
+	preApprovalJSON, _ := json.Marshal(map[string]any{
+		"pre_approval_request_id": in.Data.PreApprovalRequestId,
+		"lender_organization_id":  in.Data.LenderOrganizationId,
+	})
+	registerResp, err := l.svcCtx.TenantClient.User.Register(l.ctx, &tenant.RegisterRequest{
+		Data: &tenant.RegisterRequestData{
+			UserType:                string(constants.UserTypeBorrower),
+			Email:                   in.Data.Email,
+			Password:                in.Data.Password,
+			FirstName:               in.Data.FirstName,
+			LastName:                in.Data.LastName,
+			OrganizationName:        in.Data.OrganizationName,
+			OwnerType:               string(constants.OrganizationOwnerTypeThirdParty),
+			BorrowerPreApprovalJson: string(preApprovalJSON),
+		},
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	newCxt := context.WithoutCancel(l.ctx)
-	go func() {
-		// send account validate email
-		ctx := context.WithoutCancel(newCxt)
-		err := sendRegisterVerifyUrlEmail(ctx, in.Data.Email, userModel.FirstName)
-		if err != nil {
-			l.svcCtx.Logger.WithContext(ctx).Error(err)
-		}
-		if err != nil {
-			err = errorx.Wrap(err, "Send Register Verify Email Error")
-			l.svcCtx.Logger.WithContext(ctx).Error(err)
-		}
-	}()
-
-	go func() {
-		var err error
-		var tokenInfo *dto.UserJwtTokenDto
-		ctx := context.WithoutCancel(newCxt)
-		md, _ := metadata.FromIncomingContext(ctx)
-		newMd := md.Copy()
-		logx.WithContext(ctx).WithFields(
-			logx.Field("pre_approval_request_id", in.Data.PreApprovalRequestId),
-			logx.Field("lender_organization_id", in.Data.LenderOrganizationId),
-		).Info("create draft loan for preapproval loan")
-		defer func() {
-			panicInfo := recover()
-			if panicInfo != nil {
-				err = errorx.Wrap(panicInfo.(error), "Send Register Verify Email Panic Error")
-				l.svcCtx.Logger.WithContext(ctx).Error(err)
-			}
-
-			if err != nil {
-				err = errorx.Wrap(err, "Send Register Verify Email Error")
-				l.svcCtx.Logger.WithContext(ctx).Error(err)
-			}
-		}()
-		if len(in.Data.PreApprovalRequestId) == 0 || in.Data.LenderOrganizationId == 0 {
-			return
-		}
-
-		tokenInfo, err = l.baseLogic.UserLogic.GenerateJwtToken(userModel, organizationUserModel, constants.UserTypeBorrower)
-		if err != nil {
-			return
-		}
-		newMd.Set(utils.JwtTokenCtxKey, tokenInfo.AccessToken)
-		ctx = metadata.NewIncomingContext(ctx, newMd)
-		// create a draft loan
-		err = l.handlePreapproveLoan(
-			ctx,
-			organizationUserModel.Id,
-			organizationUserModel.FullName,
+	if len(in.Data.PreApprovalRequestId) > 0 && in.Data.LenderOrganizationId > 0 && registerResp.Data.AccessToken != "" {
+		go l.handlePreapproveLoanSideEffect(
+			registerResp.Data.AccessToken,
 			in.Data.PreApprovalRequestId,
-			organizationUserModel.OrganizationId,
-			in.Data.LenderOrganizationId)
-		if err != nil {
-			if errors.Is(err, context.Canceled) {
-				l.svcCtx.Logger.WithContext(ctx).
-					WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
-					Info("Pre-Approve Loan Processing Canceled")
-			} else {
-				l.svcCtx.Logger.WithContext(ctx).
-					WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).
-					Error(err)
-			}
+			in.Data.LenderOrganizationId,
+		)
+	}
+
+	return &proto.EmptyResponse{}, nil
+}
+
+// handlePreapproveLoanSideEffect fetches the just-created identity and creates
+// the draft pre-approval loan. Fire-and-forget; errors are logged only.
+func (l *RegisterLogic) handlePreapproveLoanSideEffect(accessToken, requestId string, lenderOrganizationId int64) {
+	ctx := context.WithoutCancel(l.ctx)
+	defer func() {
+		if panicInfo := recover(); panicInfo != nil {
+			l.svcCtx.Logger.WithContext(ctx).
+				WithFields(logx.Field("stacks", fmt.Sprint(panicInfo))).
+				Error("pre-approval loan side effect panic")
 		}
 	}()
 
-	return &proto.EmptyResponse{}, err
+	md, _ := metadata.FromIncomingContext(ctx)
+	newMd := md.Copy()
+	newMd.Set(utils.JwtTokenCtxKey, accessToken)
+	newMd.Set(utils.UserTypeCtxKey, string(constants.UserTypeBorrower))
+	ctx = metadata.NewIncomingContext(ctx, newMd)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(ctx)
+	if err != nil {
+		l.svcCtx.Logger.WithContext(ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+		return
+	}
+
+	if err = l.handlePreapproveLoan(ctx, claim.OrganizationUserId, claim.Username, requestId, claim.OrganizationId, lenderOrganizationId); err != nil {
+		l.svcCtx.Logger.WithContext(ctx).WithFields(logx.Field("stacks", errorx.GetErrorStack(err))).Error(err)
+	}
 }
 
 func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int64, creatorName string, requestId string, borrowerOrganizationId int64, lenderOrganizationId int64) (err error) {
@@ -187,7 +112,7 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 	}
 
 	if len(cacheDataStr) == 0 {
-		return errorx.WithStack(errorx.New("Pre-approve loan data not found in cache"))
+		return errorx.WithStack(errorx.New("pre-approve loan data not found in cache"))
 	}
 
 	defer func() {
@@ -210,18 +135,22 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 	}
 
 	// get lender company
-	lenderOrganization, err := l.svcCtx.OrganizationRepo.FindOneById(ctx, lenderOrganizationId)
+	lenderOrganization, err := l.svcCtx.TenantClient.Organization.DetailWithType(ctx, &tenant.OrganizationDetailWithTypeRequest{
+		Data: &tenant.OrganizationDetailWithTypeRequestData{
+			UserType: string(constants.UserTypeLender),
+			Id:       lenderOrganizationId,
+		}})
 	if err != nil {
-		return errorx.WithStack(err)
+		return err
 	}
 
-	if lenderOrganization.Status != constants.OrganizationStatusActive {
-		return errorx.WithStack(errorx.New("Lender organization is not active"))
+	if lenderOrganization.Data == nil || lenderOrganization.Data.Status != string(constants.OrganizationStatusActive) {
+		return errorx.WithStack(errorx.New("lender organization is not active"))
 	}
 	// prepare data
 	var borrowerProperty *model.BorrowerProperty
 	var borrowerApplicant *model.BorrowerApplicant
-	err = l.svcCtx.UserRepo.Transaction(ctx, func(tx *gorm.DB) error {
+	err = l.svcCtx.BorrowerPropertyRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 
 		eg := errorx.NewErrorGroup()
@@ -262,8 +191,14 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 	}
 
 	loanPreapprovalInfo := &borrower.LoanPreapproveInfo{}
-	loanPreapprovalInfo.Input, _ = copierx.Trans[types.LoanPreApprovalRequest, borrower.LoanPreApprovalRequestData](&preApproveRequest)
-	loanPreapprovalInfo.Result, _ = copierx.Trans[types.LoanPreApprovalResult, borrower.LoanPreapproveResult](&calcResult)
+	loanPreapprovalInfo.Input, err = copierx.Trans[types.LoanPreApprovalRequest, borrower.LoanPreApprovalRequestData](&preApproveRequest)
+	if err != nil {
+		return err
+	}
+	loanPreapprovalInfo.Result, err = copierx.Trans[types.LoanPreApprovalResult, borrower.LoanPreapproveResult](&calcResult)
+	if err != nil {
+		return err
+	}
 
 	// create draft loan
 	saveDraftLogic := loanlogic.NewSaveDraftLoanLogic(ctx, l.svcCtx)
@@ -292,7 +227,6 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 			HoldbackAmount:  preApproveRequest.Loan.HoldbackAmount,
 			PrincipalAmount: preApproveRequest.Loan.PrincipalAmount,
 			LenderCompanyId: lenderOrganizationId,
-			// UserId:          creatorId,
 			Applicants: []*borrower.LoanApplicantApplyEntity{
 				{
 					IsPrimary:           true,
@@ -317,72 +251,4 @@ func (l *RegisterLogic) handlePreapproveLoan(ctx context.Context, creatorId int6
 		return errorx.WithStack(err)
 	}
 	return err
-}
-
-// sendLoginUrlEmail send login url email
-func sendLoginUrlEmail(ctx context.Context, email string, firstName string) (err error) {
-	key := stringx.Format(constants.LoginEmail, constants.UserTypeBorrower, email)
-	ok, err := global.LimiterMgr.Limit(ctx, limiter.StrategySendLoginEmail, key)
-
-	if err != nil {
-		return errorx.WithStack(err)
-	}
-	if !ok {
-		return errorx.WithStack(errorx.Errorf("Email %s try too many times", email))
-	}
-
-	// send login email
-	data := map[string]interface{}{
-		"url":        fmt.Sprintf("%s", global.Config.LoginUrl),
-		"first_name": firstName,
-	}
-	content, err := email2.ParseTemplate(email_tpl.LoginUrlEmail, data)
-	if err != nil {
-		return errorx.WithStack(err)
-	}
-	msg := email2.Message{
-		Subject: "Login to your account",
-		From:    global.Config.EmailConf.Username,
-		To:      []string{email},
-		Body:    content,
-		IsHTML:  true,
-	}
-	err = global.EmailClient.SendEmail(msg)
-
-	return errorx.WithStack(err)
-}
-
-// sendRegisterVerifyUrlEmail send register verify url email
-func sendRegisterVerifyUrlEmail(ctx context.Context, email string, firstName string) (err error) {
-	var code string
-	// generate verify code
-	codeKey := stringx.Format(constants.UserRegisterVerifyCode, constants.UserTypeBorrower, email)
-	code, _ = global.GetRedis().Get(ctx, codeKey)
-	if len(code) == 0 {
-		code = random.RandNumeral(10)
-		err = global.GetRedis().SetExpire(ctx, codeKey, code, global.Config.VerifyEmailExpireSeconds)
-		if err != nil {
-			return errorx.WithStack(err)
-		}
-	}
-	// send verify email
-	data := map[string]interface{}{
-		"url":         fmt.Sprintf("%s?code=%s&email=%s", global.Config.VerifyEmailUrl, code, email),
-		"first_name":  firstName,
-		"expire_time": timex.DurationToString(time.Second*time.Duration(global.Config.VerifyEmailExpireSeconds), true),
-	}
-	content, err := email2.ParseTemplate(email_tpl.RegisterVerifyEmail, data)
-	if err != nil {
-		return errorx.WithStack(err)
-	}
-	msg := email2.Message{
-		Subject: "Verify your email",
-		From:    global.Config.EmailConf.Username,
-		To:      []string{email},
-		Body:    content,
-		IsHTML:  true,
-	}
-	err = global.EmailClient.SendEmail(msg)
-
-	return errorx.WithStack(err)
 }

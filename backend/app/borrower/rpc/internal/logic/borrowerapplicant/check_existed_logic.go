@@ -29,7 +29,7 @@ func NewCheckExistedLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Chec
 
 func (l *CheckExistedLogic) CheckExisted(in *borrower.BorrowerApplicantCheckExistedRequest) (resp *borrower.BorrowerApplicantCheckExistedResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}

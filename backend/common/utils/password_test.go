@@ -37,7 +37,6 @@ func TestHashPassword(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    string
 		wantErr bool
 	}{
 		{
@@ -45,7 +44,6 @@ func TestHashPassword(t *testing.T) {
 			args: args{
 				password: "12345678",
 			},
-			want:    "$2a$10$rtHXsBBo/bSUXpGq93qzKeQo71hBZiGf2JiKj9hTozO/bhnZCJJCm",
 			wantErr: false,
 		},
 	}
@@ -56,8 +54,12 @@ func TestHashPassword(t *testing.T) {
 				t.Errorf("HashPassword() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if got != tt.want {
-				t.Errorf("HashPassword() got = %v, want %v", got, tt.want)
+			if got == "" {
+				t.Error("HashPassword() returned an empty hash")
+				return
+			}
+			if !CheckPassword(tt.args.password, got) {
+				t.Errorf("HashPassword() returned a hash that does not verify the password")
 			}
 		})
 	}

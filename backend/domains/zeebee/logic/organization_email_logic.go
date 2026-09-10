@@ -192,7 +192,7 @@ func (l *OrganizationEmailLogic) EmailAuthorize(ctx context.Context, input dto.O
 		emailClient, err = client.NewGmailClient(input.Oauth2Config, input.Code)
 	default:
 		// Return error for unsupported email providers
-		err = errorx.New("Invalid email provider")
+		err = errorx.New("invalid email provider")
 	}
 	if err != nil {
 		return "", nil, err
@@ -214,7 +214,7 @@ func (l *OrganizationEmailLogic) EmailAuthorize(ctx context.Context, input dto.O
 		emailAuthorization, err = l.repos.EmailAuthorizationRepo.GetEmailAuthorizationByOrganizationEmailId(ctx, organizationEmail.Id, input.UserId, input.Purpose)
 	default:
 		// Return error for invalid authorization strategy
-		err = errorx.New("Invalid email auth strategy")
+		err = errorx.New("invalid email auth strategy")
 	}
 
 	if err != nil {
@@ -229,7 +229,7 @@ func (l *OrganizationEmailLogic) EmailAuthorize(ctx context.Context, input dto.O
 
 	// Verify that the authenticated email matches the stored authorization email
 	if emailAuthorization.Email != authEmail {
-		return "", nil, errorx.New("Email does not match")
+		return "", nil, errorx.New("email does not match")
 	}
 
 	// Refresh the authorization token

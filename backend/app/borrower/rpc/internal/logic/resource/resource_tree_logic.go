@@ -6,45 +6,37 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
-	"zeebee-backend/common/copierx"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/dto"
-	"zeebee-backend/domains/zeebee/proto"
 )
 
 type ResourceTreeLogic struct {
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
-
+	ctx       context.Context
+	svcCtx    *svc.ServiceContext
 	baseLogic *logic.BaseLogic
 }
 
 func NewResourceTreeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ResourceTreeLogic {
-	return &ResourceTreeLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-
-		baseLogic: logic.GetBaseLogic(svcCtx),
-	}
+	return &ResourceTreeLogic{ctx: ctx, svcCtx: svcCtx, baseLogic: logic.GetBaseLogic(svcCtx)}
 }
 
+// ResourceTree proxies to tenant; tenant is the RBAC single authority. Borrower
+// resources are always scoped to the caller's organization.
 func (l *ResourceTreeLogic) ResourceTree(in *borrower.ResourceTreeRequest) (resp *borrower.ResourceTreeResponse, err error) {
-
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	trees, err := l.baseLogic.ResourceLogic.GetOrganizationResources(l.ctx, claim.OrganizationId, constants.UserType(in.Data.Type))
+	tenantResp, err := l.svcCtx.TenantClient.Resource.ResourceTree(l.ctx, &tenant.ResourceTreeRequest{
+		Data: &tenant.ResourceTreeRequestData{
+			UserType:       string(constants.UserTypeBorrower),
+			Type:           string(constants.UserTypeBorrower),
+			Scope:          string(constants.ResourceTreeScopeOrganization),
+			OrganizationId: claim.OrganizationId,
+		},
+	})
 	if err != nil {
 		return nil, err
 	}
-
-	data, err := copierx.Trans[[]*dto.ResourceTreeDto, []*proto.ResourceTreeEntity](&trees, copierx.TimeToRFC3339Str())
-	if err != nil {
-		return nil, err
-	}
-
-	return &borrower.ResourceTreeResponse{
-		Data: *data,
-	}, nil
+	return &borrower.ResourceTreeResponse{Data: tenantResp.Data}, nil
 }

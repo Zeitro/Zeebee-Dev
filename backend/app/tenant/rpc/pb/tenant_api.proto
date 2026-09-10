@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+package tenant;
+
+option go_package = "zeebee-backend/app/tenant/rpc/pb/tenant";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+// API endpoint registry + sync, consolidated from admin (Q2=C).
+
+// api tree
+message ApiTreeRequest {
+  ApiTreeRequestData data = 1;
+}
+message ApiTreeRequestData {
+  string user_type = 1; // caller platform (validated)
+  string type = 2;      // platform whose api registry is managed
+}
+message ApiTreeResponse {
+  repeated proto.ApiTreeEntity data = 1;
+}
+
+// create
+message ApiCreateRequest {
+  ApiCreateRequestData data = 1;
+}
+message ApiCreateRequestData {
+  string user_type = 1;
+  int64 parent_id = 2;
+  string type = 3;
+  string name = 4;
+  string path = 5;
+  string method = 6;
+  string description = 7;
+  string status = 8;
+  int32 sort_order = 9;
+  bool auth_required = 10;
+  bool permission_required = 11;
+}
+
+// update
+message ApiUpdateRequest {
+  ApiUpdateRequestData data = 1;
+}
+message ApiUpdateRequestData {
+  string user_type = 1;
+  int64 id = 2;
+  int64 parent_id = 3;
+  string type = 4;
+  string name = 5;
+  string path = 6;
+  string method = 7;
+  string description = 8;
+  string status = 9;
+  int32 sort_order = 10;
+  bool auth_required = 11;
+  bool permission_required = 12;
+}
+
+// delete
+message ApiDeleteRequest {
+  ApiDeleteRequestData data = 1;
+}
+message ApiDeleteRequestData {
+  string user_type = 1;
+  int64 id = 2;
+  string type = 3;
+}
+
+// detail
+message ApiDetailRequest {
+  ApiDetailRequestData data = 1;
+}
+message ApiDetailRequestData {
+  string user_type = 1;
+  int64 id = 2;
+  string type = 3;
+}
+message ApiDetailResponse {
+  proto.ApiEntity data = 1;
+}
+
+// sync api registry from a backend manifest
+message SyncApiRequest {
+  SyncApiRequestData data = 1;
+}
+message SyncApiRequestData {
+  string user_type = 1;
+  string api_json = 2;
+}
+
+service Api {
+  rpc ApiTree(ApiTreeRequest) returns (ApiTreeResponse);
+  rpc Create(ApiCreateRequest) returns (ApiDetailResponse);
+  rpc Update(ApiUpdateRequest) returns (ApiDetailResponse);
+  rpc Delete(ApiDeleteRequest) returns (proto.EmptyResponse);
+  rpc Detail(ApiDetailRequest) returns (ApiDetailResponse);
+  rpc SyncApi(SyncApiRequest) returns (proto.EmptyResponse);
+}

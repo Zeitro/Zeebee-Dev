@@ -8,6 +8,7 @@ import (
 
 type OrganizationTemplateEntityDto struct {
 	Id                  int64                      `json:"id"`
+	OrganizationId      int64                      `json:"organization_id"`
 	Name                string                     `json:"name"`
 	Type                constants.UserType         `json:"type"`
 	Category            constants.TemplateCategory `json:"category"`

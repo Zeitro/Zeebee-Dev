@@ -3,15 +3,12 @@ package organizationemaillogic
 import (
 	"context"
 
-	"zeebee-backend/app/borrower/rpc/internal/global"
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/data/dto"
-
-	"zeebee-backend/common/errorx"
 )
 
 type GenerateAuthCodeUrlLogic struct {
@@ -32,32 +29,25 @@ func NewGenerateAuthCodeUrlLogic(ctx context.Context, svcCtx *svc.ServiceContext
 
 func (l *GenerateAuthCodeUrlLogic) GenerateAuthCodeUrl(in *borrower.OrganizationEmailGenerateAuthCodeUrlRequest) (resp *borrower.OrganizationEmailGenerateAuthCodeUrlResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	input, err := copierx.Trans[borrower.OrganizationEmailGenerateAuthCodeUrlRequestData, dto.OrganizationEmailGenerateAuthCodeUrlRequestDto](in.Data)
+	input, err := copierx.Trans[borrower.OrganizationEmailGenerateAuthCodeUrlRequestData, tenant.OrganizationEmailGenerateAuthCodeUrlRequestData](in.Data)
 	if err != nil {
 		return nil, err
 	}
 	input.OrganizationId = claim.OrganizationId
 	input.UserId = claim.UserId
-	input.OrganizationType = constants.UserTypeBorrower
-
-	authCodeUrlGenerator, ok := global.EmailAuthUrlGenerator[input.EmailProvider]
-	if !ok {
-		return nil, errorx.Errorf("invalid email provider %v", input.EmailProvider)
-	}
-	input.AuthCodeGenerator = authCodeUrlGenerator
-
-	url, err := l.baseLogic.OrganizationEmailLogic.GenerateAuthCodeUrl(l.ctx, *input)
+	input.UserType = string(constants.UserTypeBorrower)
+	result, err := l.svcCtx.TenantClient.OrganizationEmail.GenerateAuthCodeUrl(l.ctx, &tenant.OrganizationEmailGenerateAuthCodeUrlRequest{Data: input})
 	if err != nil {
 		return nil, err
 	}
 
 	return &borrower.OrganizationEmailGenerateAuthCodeUrlResponse{
 		Data: &borrower.OrganizationEmailGenerateAuthCodeUrlResponseData{
-			Url: url,
+			Url: result.Data.Url,
 		},
 	}, nil
 }

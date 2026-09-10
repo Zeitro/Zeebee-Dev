@@ -33,14 +33,16 @@ type OrganizationUserLogic struct {
 	*BaseLogic
 	authTopicMap map[constants.UserType]string
 	emailClient  *email2.Email
+	emailClients map[constants.UserType]*email2.Email
 }
 
 // NewOrganizationUserLogic creates a new organization user logic instance
-func NewOrganizationUserLogic(baseLogic *BaseLogic, emailClient *email2.Email, authTopicMap map[constants.UserType]string) *OrganizationUserLogic {
+func NewOrganizationUserLogic(baseLogic *BaseLogic, emailClient *email2.Email, emailClients map[constants.UserType]*email2.Email, authTopicMap map[constants.UserType]string) *OrganizationUserLogic {
 	return &OrganizationUserLogic{
 		BaseLogic:    baseLogic,
 		authTopicMap: authTopicMap,
 		emailClient:  emailClient,
+		emailClients: emailClients,
 	}
 }
 
@@ -153,18 +155,30 @@ func (l *OrganizationUserLogic) CreateAdminOrganizationUser(ctx context.Context,
 			FullName:       fullName,
 		}
 
-		// Get organization roles
+		// Get organization roles (scoped to the created user's platform, not
+		// hardcoded — a lender org admin may provision a lender member).
+		var roles []*model.Role
 		if len(input.RoleIds) > 0 {
-			roles, innerErr := l.repos.RoleRepo.GetOrganizationRolesByIdsWithTx(ctx, tx, input.OrganizationId, input.RoleIds, constants.UserTypeAdmin)
+			roles, innerErr = l.repos.RoleRepo.GetOrganizationRolesByIdsWithTx(ctx, tx, input.OrganizationId, input.RoleIds, input.UserType)
 			if innerErr != nil {
 				return innerErr
 			}
-			organizationUser.Roles = roles
 		}
 
-		organizationUser, innerErr = l.repos.OrganizationUserRepo.CreateWithTx(ctx, tx, organizationUser, true)
+		// Create the member without association cascade, then bind roles
+		// explicitly — gorm many2many-on-Create is unreliable for the
+		// self-referential OrganizationUser<->Role association, so we mirror
+		// UpdateOrganizationUser's explicit binding (UpdateRolesWithTx).
+		organizationUser.RemoveRelationships()
+		organizationUser, innerErr = l.repos.OrganizationUserRepo.CreateWithTx(ctx, tx, organizationUser, false)
 		if innerErr != nil {
 			return innerErr
+		}
+		if len(roles) > 0 {
+			if innerErr = l.repos.OrganizationUserRepo.UpdateRolesWithTx(ctx, tx, organizationUser, roles, nil); innerErr != nil {
+				return innerErr
+			}
+			organizationUser.Roles = roles
 		}
 		return innerErr
 	})
@@ -278,8 +292,7 @@ func (l *OrganizationUserLogic) InviteOrganizationUser(ctx context.Context, crea
 			OrganizationName: organization.Name,
 			OrganizationId:   organizationUser.OrganizationId,
 			Operator:         createDto.Operator,
-			Logo:             organization.Logo,
-			Address:          organization.Address,
+			Logo:             createDto.EmailConfig.Logo,
 			ExpireTime:       timex.DurationToString(time.Second*time.Duration(createDto.EmailConfig.ExpireSeconds), true),
 		})
 		if err != nil {
@@ -334,8 +347,7 @@ func (l *OrganizationUserLogic) SendInviteEmail(ctx context.Context, input dto.O
 		OrganizationId:   input.OrganizationId,
 		Operator:         input.Operator,
 		Pwd:              pwd,
-		Logo:             organization.Logo,
-		Address:          organization.Address,
+		Logo:             input.EmailConfig.Logo,
 		ExpireTime:       timex.DurationToString(time.Second*time.Duration(input.EmailConfig.ExpireSeconds), true),
 	}
 	err = l.sendInviteEmail(ctx, previousInput)
@@ -417,7 +429,7 @@ func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.
 			"status":     constants.OrganizationUserStatusActive,
 			"first_name": input.FirstName,
 			"last_name":  input.LastName,
-			"full_name":  stringx.FormatFullName(input.FirstName, "", input.LastName),
+			"full_name":  stringx.FormatFullName(input.FirstName, " ", input.LastName),
 		})
 		if innerErr != nil {
 			return innerErr
@@ -428,7 +440,7 @@ func (l *OrganizationUserLogic) AcceptInvitation(ctx context.Context, input dto.
 		if len(userModel.FirstName) == 0 {
 			userModel.FirstName = input.FirstName
 			userModel.LastName = input.LastName
-			userModel.FullName = stringx.FormatFullName(input.FirstName, "", input.LastName)
+			userModel.FullName = stringx.FormatFullName(input.FirstName, " ", input.LastName)
 		}
 		if userModel.Status == constants.UserStatusUnverified {
 			userModel.Status = constants.UserStatusActive
@@ -605,7 +617,6 @@ type SendInviteUserEmailInput struct {
 	TargetEmail string
 	UserType    constants.UserType
 	Logo        string
-	Address     model.Address
 	// HasPwd           bool
 	Pwd              string
 	OrganizationName string
@@ -624,6 +635,15 @@ const (
 
 // sendInviteEmail sends invite email
 func (l *OrganizationUserLogic) sendInviteEmail(ctx context.Context, input SendInviteUserEmailInput) (err error) {
+	emailClient := l.emailClient
+	if l.emailClients != nil {
+		emailClient = l.emailClients[input.UserType]
+	}
+	if emailClient == nil {
+		err = errorx.New("email client is not initialized")
+		return
+	}
+
 	sendTagKey := stringx.Format(constants.UserInviteEmailSendTag, input.UserType, input.TargetEmail, input.OrganizationId)
 	isExisted, _ := l.redisCli.IsExisted(ctx, sendTagKey)
 	if isExisted {
@@ -663,7 +683,7 @@ func (l *OrganizationUserLogic) sendInviteEmail(ctx context.Context, input SendI
 	}
 
 	// Send invite email
-	data := map[string]interface{}{
+	data := map[string]any{
 		"url": fmt.Sprintf("%s?code=%s&email=%s&first_name=%s&last_name=%s&organization_name=%s&organization_id=%v",
 			input.EmailConfig.Url,
 			code,
@@ -679,13 +699,7 @@ func (l *OrganizationUserLogic) sendInviteEmail(ctx context.Context, input SendI
 		"organization_name": input.OrganizationName,
 		"logo":              input.Logo,
 		"expire_time":       input.ExpireTime,
-		"address": fmt.Sprintf("%s | %s | %s, %s, %s",
-			input.OrganizationName,
-			input.Address.Address1,
-			input.Address.City,
-			input.Address.State,
-			input.Address.ZipCode,
-		),
+		"address":           input.EmailConfig.Address,
 	}
 	content, err := email2.ParseTemplate(input.EmailConfig.TplName, data)
 	if err != nil {
@@ -698,7 +712,8 @@ func (l *OrganizationUserLogic) sendInviteEmail(ctx context.Context, input SendI
 		Body:    content,
 		IsHTML:  true,
 	}
-	err = l.emailClient.SendEmail(msg)
+	err = emailClient.SendEmail(msg)
+
 	return errorx.WithStack(err)
 }
 
@@ -814,6 +829,10 @@ func (l *OrganizationUserLogic) Delete(ctx context.Context, id int64, organizati
 		}
 		if organization.OwnerId == organizationUser.UserId {
 			innerErr = errorx.New("cannot delete owner")
+			return innerErr
+		}
+		innerErr = l.repos.ProjectManagementProjectRepo.DeleteByOrganizationUserWithTx(ctx, tx, organizationUser.Id)
+		if innerErr != nil {
 			return innerErr
 		}
 		innerErr = l.repos.OrganizationUserRepo.DeleteOrganizationUserWithTx(ctx, tx, organizationUser)

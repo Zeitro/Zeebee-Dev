@@ -106,3 +106,12 @@ func (l *PricingPlanPolicyLogic) Delete(ctx context.Context, id int64) error {
 	_, err = l.repos.PricingPlanPolicyRepo.DeleteByID(ctx, id)
 	return err
 }
+
+// Detail returns a single pricing-plan policy by id, for audit before/after snapshots.
+func (l *PricingPlanPolicyLogic) Detail(ctx context.Context, id int64) (*dto.PricingPlanPolicyEntityDto, error) {
+	policy, err := l.repos.PricingPlanPolicyRepo.GetOne(ctx, id)
+	if err != nil {
+		return nil, errorx.Wrap(err, "fail to find pricing plan policy")
+	}
+	return copierx.Trans[model.PricingPlanPolicy, dto.PricingPlanPolicyEntityDto](policy)
+}

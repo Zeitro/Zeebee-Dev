@@ -6,6 +6,7 @@ import (
 
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
+	apiswagger "zeebee-backend/app/admin/api/swagger"
 	"zeebee-backend/app/admin/rpc/pb/admin"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/swagger"
@@ -29,9 +30,14 @@ func NewSyncApiLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncApiLo
 }
 
 func (l *SyncApiLogic) SyncApi(req *types.EmptyRequest) (resp *types.EmptyResponse, err error) {
-	apiGroup, err := swagger.ParseApi(l.svcCtx.AdminApiContent)
+	content, err := apiswagger.SwaggerJSON.ReadFile("admin.json")
 	if err != nil {
-		return nil, errorx.Wrap(err, "failed to parse admin.api")
+		return nil, errorx.Wrap(err, "failed to read admin swagger")
+	}
+
+	apiGroup, err := swagger.ParseSwagger(content)
+	if err != nil {
+		return nil, errorx.Wrap(err, "failed to parse admin swagger")
 	}
 
 	apiJson, err := json.Marshal(apiGroup)

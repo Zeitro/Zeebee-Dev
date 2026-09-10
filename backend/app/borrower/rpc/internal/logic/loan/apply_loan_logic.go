@@ -10,6 +10,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/logic"
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
+	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
@@ -49,7 +50,7 @@ func NewApplyLoanLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ApplyLo
 
 func (l *ApplyLoanLogic) ApplyLoan(in *borrower.LoanApplyRequest) (resp *borrower.LoanApplyResponse, err error) {
 
-	claim, err := l.baseLogic.UserLogic.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, errorx.Wrap(err, "fail to get user claim")
 	}
@@ -255,12 +256,17 @@ func (l *ApplyLoanLogic) buildModelData(reqData *borrower.LoanApplyRequestData, 
 	loan.PendingStatus = constants.LoanPendingStatusQuoting
 	loan.Source = constants.LoanSourceSystem
 	// get lender
-	lender, err := l.svcCtx.OrganizationRepo.FindOneById(l.ctx, reqData.LenderCompanyId)
+	lender, err := l.svcCtx.TenantClient.Organization.DetailWithType(l.ctx, &tenant.OrganizationDetailWithTypeRequest{Data: &tenant.OrganizationDetailWithTypeRequestData{
+		UserType: string(constants.UserTypeLender), Id: reqData.LenderCompanyId,
+	}})
 	if err != nil {
 		return nil, err
 	}
-	loan.LenderOrganizationId = lender.Id
-	loan.LenderCompany = lender.Name
+	if lender.Data == nil {
+		return nil, errorx.New("lender organization not found")
+	}
+	loan.LenderOrganizationId = lender.Data.Id
+	loan.LenderCompany = lender.Data.Name
 
 	// LoanBorrower
 	loanBorrowerData := reqData.LoanBorrower
