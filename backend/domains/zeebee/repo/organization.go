@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
@@ -187,6 +188,12 @@ func (repo *OrganizationRepo) GetOrganizationByIdWithTx(ctx context.Context, tx 
 			Preload("Roles")
 	}
 	err = query.First(&result).Error
+	return result, errorx.WithStack(err)
+}
+
+func (repo *OrganizationRepo) LockByIdWithTx(ctx context.Context, tx *gorm.DB, id int64) (result *model.Organization, err error) {
+	result = new(model.Organization)
+	err = tx.WithContext(ctx).Clauses(clause.Locking{Strength: "UPDATE"}).First(result, id).Error
 	return result, errorx.WithStack(err)
 }
 

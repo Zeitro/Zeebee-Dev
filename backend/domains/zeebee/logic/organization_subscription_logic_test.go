@@ -371,6 +371,30 @@ func TestSubscriptionSwitchStatus_Success(t *testing.T) {
 	assert.Equal(t, string(constants.OrganizationSubscriptionStatusSuspended), string(sub.Status))
 }
 
+func TestSubscriptionSwitchStatus_ExpiredSetsExpireDateNow(t *testing.T) {
+	subLogic, db := setupSubscriptionLogic(t)
+	plan := &model.PricingPlan{Name: "Active Plan", Type: constants.UserTypeLender, Status: constants.CommonStatusActive}
+	require.NoError(t, db.Create(plan).Error)
+	sub := &model.OrganizationSubscription{
+		Code:           "SU_EXPIRED_NOW",
+		OrganizationId: 1,
+		PricingPlanId:  plan.Id,
+		Status:         constants.OrganizationSubscriptionStatusActive,
+		ExpireDate:     &sql.NullTime{Time: time.Now().AddDate(0, 1, 0), Valid: true},
+	}
+	require.NoError(t, db.Create(sub).Error)
+
+	before := time.Now()
+	require.NoError(t, subLogic.SwitchStatus(context.Background(), sub.Id, constants.OrganizationSubscriptionStatusExpired))
+
+	var got model.OrganizationSubscription
+	require.NoError(t, db.First(&got, sub.Id).Error)
+	require.NotNil(t, got.ExpireDate)
+	assert.True(t, got.ExpireDate.Valid)
+	assert.Equal(t, constants.OrganizationSubscriptionStatusExpired, got.Status)
+	assert.WithinDuration(t, before, got.ExpireDate.Time, time.Second)
+}
+
 func TestSubscriptionSwitchStatus_SameStatus_NoOp(t *testing.T) {
 	subLogic, db := setupSubscriptionLogic(t)
 	ctx := context.Background()
@@ -488,6 +512,91 @@ func TestSubscriptionUpdateExpireDate_SuspendedPreserved(t *testing.T) {
 	assert.Equal(t, string(constants.OrganizationSubscriptionStatusSuspended), string(result.Status))
 }
 
+func TestSubscriptionUpdateExpireDate_ExpiredSnapshotsAndPrunes(t *testing.T) {
+	subLogic, db := setupSubscriptionLogic(t)
+	plan := &model.PricingPlan{Name: "Active Plan", Type: constants.UserTypeLender, Status: constants.CommonStatusActive}
+	resource := &model.Resource{Name: "Plan resource", Type: constants.UserTypeLender, Status: constants.CommonStatusActive}
+	role := &model.Role{OrganizationId: 1, Type: constants.UserTypeLender, Name: "Manager", Status: constants.CommonStatusActive}
+	require.NoError(t, db.Create(plan).Error)
+	require.NoError(t, db.Create(resource).Error)
+	require.NoError(t, db.Create(role).Error)
+	require.NoError(t, db.Exec("INSERT INTO pricing_plan_and_resources (pricing_plan_id, resource_id) VALUES (?, ?)", plan.Id, resource.Id).Error)
+	require.NoError(t, db.Create(&model.RoleAndResource{RoleId: role.Id, ResourceId: resource.Id, DataScope: constants.DataScopeAll}).Error)
+	sub := &model.OrganizationSubscription{Code: "SU_EXPIRE_SNAPSHOT", OrganizationId: 1, PricingPlanId: plan.Id, Status: constants.OrganizationSubscriptionStatusActive, ExpireDate: &sql.NullTime{Time: time.Now().AddDate(0, 0, 1), Valid: true}}
+	require.NoError(t, db.Create(sub).Error)
+
+	require.NoError(t, subLogic.UpdateExpireDate(context.Background(), dto.OrganizationSubscriptionUpdateExpireDateRequestDto{Id: sub.Id, ExpireDate: &sql.NullTime{Time: time.Now().Add(-time.Second), Valid: true}}))
+
+	var count int64
+	require.NoError(t, db.Model(&model.RoleAndResource{}).Where("role_id = ?", role.Id).Count(&count).Error)
+	assert.Zero(t, count)
+	var snapshot model.RoleResourceSnapshot
+	require.NoError(t, db.Where("organization_id = ? AND pricing_plan_id = ? AND role_id = ?", 1, plan.Id, role.Id).First(&snapshot).Error)
+	assert.Equal(t, []model.RoleResourceSnapshotResource{{ResourceId: resource.Id, DataScope: constants.DataScopeAll}}, snapshot.Resources)
+}
+
+func TestSuspendEffectiveSubscription_MissingPlanRollsBack(t *testing.T) {
+	subLogic, db := setupSubscriptionLogic(t)
+	sub := &model.OrganizationSubscription{Code: "SU_MISSING_PLAN", OrganizationId: 1, PricingPlanId: 999, Status: constants.OrganizationSubscriptionStatusActive}
+	require.NoError(t, db.Create(sub).Error)
+
+	err := subLogic.SuspendEffectiveByOrganizationId(context.Background(), 1, constants.UserTypeLender)
+	require.ErrorContains(t, err, "pricing plan")
+
+	var got model.OrganizationSubscription
+	require.NoError(t, db.First(&got, sub.Id).Error)
+	assert.Equal(t, constants.OrganizationSubscriptionStatusActive, got.Status)
+}
+
+func TestHandleExpiredSubscription_SamePlanDoesNotReplaySnapshot(t *testing.T) {
+	subLogic, db := setupSubscriptionLogic(t)
+	plan := &model.PricingPlan{Name: "Default Plan", Type: constants.UserTypeLender, Status: constants.CommonStatusActive, IsDefault: true}
+	policy := &model.PricingPlanPolicy{PricingPlanId: 0, Type: constants.PricingPolicyTypeMonthly}
+	resource := &model.Resource{Name: "Historical resource", Type: constants.UserTypeLender, Status: constants.CommonStatusActive}
+	role := &model.Role{OrganizationId: 1, Type: constants.UserTypeLender, Name: "Manager", Status: constants.CommonStatusActive}
+	require.NoError(t, db.Create(plan).Error)
+	policy.PricingPlanId = plan.Id
+	require.NoError(t, db.Create(policy).Error)
+	require.NoError(t, db.Create(resource).Error)
+	require.NoError(t, db.Create(role).Error)
+	plan.Resources = []*model.Resource{resource}
+	require.NoError(t, db.Create(&model.RoleResourceSnapshot{OrganizationId: 1, PricingPlanId: plan.Id, RoleId: role.Id, Resources: []model.RoleResourceSnapshotResource{{ResourceId: resource.Id, DataScope: constants.DataScopeAll}}}).Error)
+	sub := &model.OrganizationSubscription{Code: "SU_SAME_PLAN_CRON", OrganizationId: 1, PricingPlanId: plan.Id, Status: constants.OrganizationSubscriptionStatusActive}
+	require.NoError(t, db.Create(sub).Error)
+
+	require.NoError(t, db.Transaction(func(tx *gorm.DB) error {
+		_, err := subLogic.handleExpiredSubscription(context.Background(), tx, sub, expiredSubscriptionRecovery{DefaultPlan: plan, DefaultPolicy: policy, Now: time.Now()})
+		return err
+	}))
+
+	var count int64
+	require.NoError(t, db.Model(&model.RoleAndResource{}).Where("role_id = ?", role.Id).Count(&count).Error)
+	assert.Zero(t, count, "cron renewal must not replay a historical permission removed during the current plan")
+}
+
+func TestSubscriptionReactivation_DisabledPlanRejected(t *testing.T) {
+	subLogic, db := setupSubscriptionLogic(t)
+	ctx := context.Background()
+	plan := &model.PricingPlan{Name: "Disabled Plan", Type: constants.UserTypeLender, Status: constants.CommonStatusDisabled}
+	require.NoError(t, db.Create(plan).Error)
+
+	suspended := &model.OrganizationSubscription{Code: "SU_DISABLED_SWITCH", OrganizationId: 1, PricingPlanId: plan.Id, Status: constants.OrganizationSubscriptionStatusSuspended}
+	require.NoError(t, db.Create(suspended).Error)
+	err := subLogic.SwitchStatus(ctx, suspended.Id, constants.OrganizationSubscriptionStatusActive)
+	require.ErrorContains(t, err, "disabled")
+	var got model.OrganizationSubscription
+	require.NoError(t, db.First(&got, suspended.Id).Error)
+	assert.Equal(t, constants.OrganizationSubscriptionStatusSuspended, got.Status)
+
+	expired := &model.OrganizationSubscription{Code: "SU_DISABLED_DATE", OrganizationId: 1, PricingPlanId: plan.Id, Status: constants.OrganizationSubscriptionStatusExpired}
+	require.NoError(t, db.Create(expired).Error)
+	err = subLogic.UpdateExpireDate(ctx, dto.OrganizationSubscriptionUpdateExpireDateRequestDto{Id: expired.Id, ExpireDate: &sql.NullTime{Time: time.Now().AddDate(0, 0, 1), Valid: true}})
+	require.ErrorContains(t, err, "disabled")
+	var expiredGot model.OrganizationSubscription
+	require.NoError(t, db.First(&expiredGot, expired.Id).Error)
+	assert.Equal(t, constants.OrganizationSubscriptionStatusExpired, expiredGot.Status)
+}
+
 // TestCalculateExpireDate verifies the calendar-month billing logic:
 // expire = (start - 1 day) + N months, with the day clamped to the target
 // month's last day. N = 1/3/12 for monthly/quarterly/yearly.
@@ -541,7 +650,7 @@ func TestCalculateExpireDate(t *testing.T) {
 // --- syncSubscriptionEffect: refactored no-op branches ---
 
 // When effective status is unchanged, syncSubscriptionEffect must short-circuit
-// before touching any role/resource table. Asserts no error and nil result.
+// before touching any role/resource table.
 func TestSyncSubscriptionEffect_NoChange_NoOp(t *testing.T) {
 	db := setupTestDB(t)
 	repos := repo.NewAllRepos(db)
@@ -556,21 +665,13 @@ func TestSyncSubscriptionEffect_NoChange_NoOp(t *testing.T) {
 	require.NoError(t, db.Create(plan).Error)
 
 	err := db.Transaction(func(tx *gorm.DB) error {
-		result, err := syncSubscriptionEffect(ctx, repos, tx, subscriptionEffectSyncReq{
-			OrganizationId: 1,
-			Plan:           plan,
-			OldEffective:   true,
-			NewEffective:   true,
-		})
-		assert.NoError(t, err)
-		assert.Nil(t, result)
-		return nil
+		return syncSubscriptionEffect(ctx, repos, tx, 1, plan, true, true)
 	})
 	require.NoError(t, err)
 }
 
 // When the plan has no resources bound, syncSubscriptionEffect must short-circuit
-// even if the effective boundary was crossed. Asserts no error and nil result.
+// even if the effective boundary was crossed.
 func TestSyncSubscriptionEffect_NoResources_NoOp(t *testing.T) {
 	db := setupTestDB(t)
 	repos := repo.NewAllRepos(db)
@@ -585,128 +686,98 @@ func TestSyncSubscriptionEffect_NoResources_NoOp(t *testing.T) {
 	require.NoError(t, db.Create(plan).Error)
 
 	err := db.Transaction(func(tx *gorm.DB) error {
-		result, err := syncSubscriptionEffect(ctx, repos, tx, subscriptionEffectSyncReq{
-			OrganizationId: 1,
-			Plan:           plan,
-			OldEffective:   false,
-			NewEffective:   true,
-		})
-		assert.NoError(t, err)
-		assert.Nil(t, result)
-		return nil
+		return syncSubscriptionEffect(ctx, repos, tx, 1, plan, false, true)
 	})
 	require.NoError(t, err)
 }
 
-// --- unbindEffectiveSubscriptions: non-effective filtering ---
-
-// seedUnbindFixture seeds a plan+resource, a lender role for org=1 with the
-// resource bound, and one subscription per given status. Returns the role.
-func seedUnbindFixture(t *testing.T, db *gorm.DB, subStatuses []constants.OrganizationSubscriptionStatus) *model.Role {
-	t.Helper()
-
-	plan := &model.PricingPlan{
-		Name:     "Active Plan",
-		Type:     constants.UserTypeLender,
-		PlanType: constants.PricingPlanTypeStandard,
-		Status:   constants.CommonStatusActive,
-	}
-	require.NoError(t, db.Create(plan).Error)
-
-	resource := &model.Resource{
-		Name:   "Res1",
-		Type:   constants.UserTypeLender,
-		Status: constants.CommonStatusActive,
-	}
-	require.NoError(t, db.Create(resource).Error)
-
-	role := &model.Role{
-		OrganizationId: 1,
-		Name:           "Lender Role",
-		Type:           constants.UserTypeLender,
-		Status:         constants.CommonStatusActive,
-	}
-	require.NoError(t, db.Create(role).Error)
-	require.NoError(t, db.Exec("INSERT INTO role_and_resources (role_id, resource_id) VALUES (?, ?)", role.Id, resource.Id).Error)
-
-	// bind resource to plan so GetOne(plan, Preload Resources) yields a non-empty set
-	require.NoError(t, db.Exec("INSERT INTO pricing_plan_and_resources (pricing_plan_id, resource_id) VALUES (?, ?)", plan.Id, resource.Id).Error)
-
-	for i, st := range subStatuses {
-		sub := &model.OrganizationSubscription{
-			Code:           fmt.Sprintf("SU_%d", i),
-			OrganizationId: 1,
-			PricingPlanId:  plan.Id,
-			Status:         st,
-			ExpireDate:     &sql.NullTime{Time: time.Now().AddDate(0, 0, 10), Valid: true},
-			OriginalAmount: 100,
-			ActualAmount:   80,
+func TestRoleResourceSnapshotRepo_SaveListAndCleanup(t *testing.T) {
+	db := setupTestDB(t)
+	repos := repo.NewAllRepos(db)
+	ctx := context.Background()
+	require.NoError(t, db.Transaction(func(tx *gorm.DB) error {
+		if err := repos.RoleResourceSnapshotRepo.SaveWithTx(ctx, tx, &model.RoleResourceSnapshot{OrganizationId: 1, PricingPlanId: 2, RoleId: 3, Resources: []model.RoleResourceSnapshotResource{{ResourceId: 4, DataScope: constants.DataScopeAll}}}); err != nil {
+			return err
 		}
-		require.NoError(t, db.Create(sub).Error)
+		return repos.RoleResourceSnapshotRepo.SaveWithTx(ctx, tx, &model.RoleResourceSnapshot{OrganizationId: 1, PricingPlanId: 2, RoleId: 3, Resources: []model.RoleResourceSnapshotResource{}})
+	}))
+
+	var snapshots []*model.RoleResourceSnapshot
+	require.NoError(t, db.Transaction(func(tx *gorm.DB) error {
+		var err error
+		snapshots, err = repos.RoleResourceSnapshotRepo.FindByOrganizationAndPlanWithTx(ctx, tx, 1, 2)
+		return err
+	}))
+	require.Len(t, snapshots, 1)
+	assert.Empty(t, snapshots[0].Resources)
+	require.NoError(t, db.Transaction(func(tx *gorm.DB) error {
+		return repos.RoleResourceSnapshotRepo.DeleteByRoleIdWithTx(ctx, tx, 3)
+	}))
+	var count int64
+	require.NoError(t, db.Model(&model.RoleResourceSnapshot{}).Count(&count).Error)
+	assert.Zero(t, count)
+	require.NoError(t, db.Create(&model.RoleResourceSnapshot{OrganizationId: 1, PricingPlanId: 2, RoleId: 4, Resources: []model.RoleResourceSnapshotResource{{ResourceId: 5, DataScope: constants.DataScopeAll}}}).Error)
+	require.NoError(t, db.Transaction(func(tx *gorm.DB) error {
+		return repos.RoleResourceSnapshotRepo.DeleteByPricingPlanIdWithTx(ctx, tx, 2)
+	}))
+	require.NoError(t, db.Model(&model.RoleResourceSnapshot{}).Count(&count).Error)
+	assert.Zero(t, count)
+}
+
+func TestReconcileRoleResourcesForPlanChange_RestoresSnapshotWithinPlan(t *testing.T) {
+	db := setupTestDB(t)
+	repos := repo.NewAllRepos(db)
+	ctx := context.Background()
+	role := &model.Role{OrganizationId: 1, Type: constants.UserTypeLender, Name: "Manager", Status: constants.CommonStatusActive}
+	resource := &model.Resource{Type: constants.UserTypeLender, Name: "Plan resource", Status: constants.CommonStatusActive}
+	require.NoError(t, db.Create(role).Error)
+	require.NoError(t, db.Create(resource).Error)
+	require.NoError(t, db.Exec("INSERT INTO role_and_resources (role_id, resource_id) VALUES (?, ?)", role.Id, resource.Id).Error)
+	plan := &model.PricingPlan{Base: model.Base{Id: 9}, Type: constants.UserTypeLender, Resources: []*model.Resource{resource}}
+	require.NoError(t, db.Transaction(func(tx *gorm.DB) error {
+		return reconcileRoleResourcesForPlanChange(ctx, repos, tx, 1, plan, nil)
+	}))
+	var snapshot model.RoleResourceSnapshot
+	require.NoError(t, db.Where("organization_id = ? AND pricing_plan_id = ? AND role_id = ?", 1, 9, role.Id).First(&snapshot).Error)
+	assert.Equal(t, []model.RoleResourceSnapshotResource{{ResourceId: resource.Id, DataScope: constants.DataScopeAll}}, snapshot.Resources)
+	disabled := &model.Resource{Type: constants.UserTypeLender, Name: "Disabled", Status: constants.CommonStatusDisabled}
+	require.NoError(t, db.Create(disabled).Error)
+	snapshot.Resources = []model.RoleResourceSnapshotResource{{ResourceId: resource.Id, DataScope: constants.DataScopeAll}, {ResourceId: disabled.Id, DataScope: constants.DataScopeAll}}
+	require.NoError(t, db.Save(&snapshot).Error)
+	var count int64
+	require.NoError(t, db.Model(&model.RoleAndResource{}).Where("role_id = ?", role.Id).Count(&count).Error)
+	assert.Zero(t, count)
+	targetPlan := &model.PricingPlan{Base: model.Base{Id: 9}, Type: constants.UserTypeLender, Resources: []*model.Resource{resource, disabled}}
+	require.NoError(t, db.Transaction(func(tx *gorm.DB) error {
+		return reconcileRoleResourcesForPlanChange(ctx, repos, tx, 1, nil, targetPlan)
+	}))
+	require.NoError(t, db.Model(&model.RoleAndResource{}).Where("role_id = ?", role.Id).Count(&count).Error)
+	assert.Equal(t, int64(1), count)
+}
+
+func TestReconcileRoleResourcesForPlanChange_RestoreDataScopeAllWins(t *testing.T) {
+	db := setupTestDB(t)
+	repos := repo.NewAllRepos(db)
+	ctx := context.Background()
+	resource := &model.Resource{Type: constants.UserTypeLender, Name: "Plan resource", Status: constants.CommonStatusActive}
+	roleWithCurrentAll := &model.Role{OrganizationId: 1, Type: constants.UserTypeLender, Name: "Current All", Status: constants.CommonStatusActive}
+	roleWithSnapshotAll := &model.Role{OrganizationId: 1, Type: constants.UserTypeLender, Name: "Snapshot All", Status: constants.CommonStatusActive}
+	require.NoError(t, db.Create(resource).Error)
+	require.NoError(t, db.Create(roleWithCurrentAll).Error)
+	require.NoError(t, db.Create(roleWithSnapshotAll).Error)
+	require.NoError(t, db.Create(&model.RoleAndResource{RoleId: roleWithCurrentAll.Id, ResourceId: resource.Id, DataScope: constants.DataScopeAll}).Error)
+	require.NoError(t, db.Create(&model.RoleAndResource{RoleId: roleWithSnapshotAll.Id, ResourceId: resource.Id, DataScope: constants.DataScopeOrganization}).Error)
+	require.NoError(t, db.Create(&model.RoleResourceSnapshot{OrganizationId: 1, PricingPlanId: 9, RoleId: roleWithCurrentAll.Id, Resources: []model.RoleResourceSnapshotResource{{ResourceId: resource.Id, DataScope: constants.DataScopeOwn}}}).Error)
+	require.NoError(t, db.Create(&model.RoleResourceSnapshot{OrganizationId: 1, PricingPlanId: 9, RoleId: roleWithSnapshotAll.Id, Resources: []model.RoleResourceSnapshotResource{{ResourceId: resource.Id, DataScope: constants.DataScopeAll}}}).Error)
+
+	plan := &model.PricingPlan{Base: model.Base{Id: 9}, Type: constants.UserTypeLender, Resources: []*model.Resource{resource}}
+	require.NoError(t, db.Transaction(func(tx *gorm.DB) error {
+		return reconcileRoleResourcesForPlanChange(ctx, repos, tx, 1, nil, plan)
+	}))
+
+	for _, role := range []*model.Role{roleWithCurrentAll, roleWithSnapshotAll} {
+		var relation model.RoleAndResource
+		require.NoError(t, db.Where("role_id = ? AND resource_id = ?", role.Id, resource.Id).First(&relation).Error)
+		assert.Equal(t, constants.DataScopeAll, relation.DataScope)
 	}
-	return role
-}
-
-// When every subscription is non-effective (Suspended/Expired), unbindEffectiveSubscriptions
-// must skip them all: no role-resource row removed, no policy changes returned.
-func TestUnbindEffectiveSubscriptions_AllNonEffective_NoOp(t *testing.T) {
-	db := setupTestDB(t)
-	repos := repo.NewAllRepos(db)
-	ctx := context.Background()
-
-	role := seedUnbindFixture(t, db, []constants.OrganizationSubscriptionStatus{
-		constants.OrganizationSubscriptionStatusSuspended,
-		constants.OrganizationSubscriptionStatusExpired,
-	})
-
-	var policies map[int64]*organizationPolicyChanges
-	err := db.Transaction(func(tx *gorm.DB) error {
-		var subs []*model.OrganizationSubscription
-		require.NoError(t, tx.WithContext(ctx).Find(&subs).Error)
-
-		var innerErr error
-		policies, innerErr = unbindEffectiveSubscriptions(ctx, repos, tx, subs)
-		return innerErr
-	})
-	require.NoError(t, err)
-
-	assert.Empty(t, policies)
-
-	var count int64
-	require.NoError(t, db.Table("role_and_resources").Where("role_id = ?", role.Id).Count(&count).Error)
-	assert.Equal(t, int64(1), count, "non-effective subs must not unbind resources")
-}
-
-// When the subscription set mixes effective and non-effective statuses, only
-// effective ones trigger unbind: the role loses its resource and policy changes
-// are emitted exactly once for the org (same-plan subs collapse to one unbind).
-func TestUnbindEffectiveSubscriptions_Mixed_OnlyEffectiveUnbound(t *testing.T) {
-	db := setupTestDB(t)
-	repos := repo.NewAllRepos(db)
-	ctx := context.Background()
-
-	role := seedUnbindFixture(t, db, []constants.OrganizationSubscriptionStatus{
-		constants.OrganizationSubscriptionStatusActive,
-		constants.OrganizationSubscriptionStatusSuspended,
-		constants.OrganizationSubscriptionStatusTrialing,
-		constants.OrganizationSubscriptionStatusExpired,
-	})
-
-	var policies map[int64]*organizationPolicyChanges
-	err := db.Transaction(func(tx *gorm.DB) error {
-		var subs []*model.OrganizationSubscription
-		require.NoError(t, tx.WithContext(ctx).Find(&subs).Error)
-
-		var innerErr error
-		policies, innerErr = unbindEffectiveSubscriptions(ctx, repos, tx, subs)
-		return innerErr
-	})
-	require.NoError(t, err)
-
-	require.Contains(t, policies, int64(1))
-	assert.NotEmpty(t, policies[1].removed)
-
-	var count int64
-	require.NoError(t, db.Table("role_and_resources").Where("role_id = ?", role.Id).Count(&count).Error)
-	assert.Equal(t, int64(0), count, "effective subs must unbind resources")
 }

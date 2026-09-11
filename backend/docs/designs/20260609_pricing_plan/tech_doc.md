@@ -516,14 +516,17 @@ flowchart TD
     FD --> CK{TrialDays > 0?}
     CK -->|否| SKIP
     CK -->|是| TX[Transaction]
-    TX --> OA[FindActiveByOrgIdWithTx<br/>现有 effective 订阅]
-    OA --> EX[把每个 active sub 置 Expired]
-    EX --> CR[CreateWithTx<br/>status=Trialing<br/>PricingPlanPolicyId=0<br/>amounts=0<br/>expire=now+TrialDays]
+    TX --> OA[锁定组织并读取现有 effective 订阅]
+    OA --> EX[按套餐转换编排保存快照、裁剪角色资源并置 Expired]
+    EX --> RE[按默认套餐恢复或最小化保留角色资源]
+    RE --> CR[CreateWithTx<br/>status=Trialing<br/>PricingPlanPolicyId=0<br/>amounts=0<br/>expire=now+TrialDays]
     CR --> PUB[publishOrgPolicyRebuild<br/>ScopeOrganization]
     PUB --> GATE[各 replica 重算该 org 的 plan gate<br/>trial 资源立即生效]
 ```
 
 > 「0 元策略 + 默认套餐」兜底：另见 §6.4 cron 的 `handleExpiredSubscription`——过期时若存在默认套餐 + `ActualAmount==0` 的 policy，自动续到默认套餐上，避免组织彻底失访。
+
+> 角色套餐快照存储为 `resources jsonb`，元素格式为 `{ "resource_id": 1, "data_scope": "All" }`。恢复关联时保留原数据范围；`Organization` 是介于 `Own` 与 `All` 的公开数据范围枚举。
 
 ### 6.4 订阅状态机 + cron 自动流转
 

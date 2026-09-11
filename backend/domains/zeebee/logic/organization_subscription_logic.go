@@ -36,29 +36,27 @@ func NewOrganizationSubscriptionLogic(baseLogic *BaseLogic, authTopicMap map[con
 	}
 }
 
+func validateEffectivePlan(organization *model.Organization, plan *model.PricingPlan) error {
+	if plan == nil || plan.Status != constants.CommonStatusActive {
+		return errorx.New("pricing plan is disabled")
+	}
+	if organization == nil || organization.Type != plan.Type {
+		return errorx.New("organization type not match pricing plan type")
+	}
+	return nil
+}
+
 // Create creates a new organization subscription.
 func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.OrganizationSubscriptionCreateDto) (result *dto.OrganizationSubscriptionEntity, err error) {
-	plan, err := l.repos.PricingPlanRepo.GetOne(ctx, input.PricingPlanId, []gormx.Preload{{Query: "Resources"}})
+	plan, err := l.repos.PricingPlanRepo.GetOne(ctx, input.PricingPlanId, nil)
 	if err != nil {
 		return nil, errorx.Wrap(err, "fail to find pricing plan")
 	}
 	if plan.Type != input.Type {
-		err = errorx.New("pricing plan type not match")
-		return
+		return nil, errorx.New("pricing plan type not match")
 	}
-
 	if plan.Status != constants.CommonStatusActive {
 		return nil, errorx.New("pricing plan not found or disabled")
-	}
-
-	// H4: the organization's type must match the plan's type, otherwise the
-	// subscription would bind plan resources to the wrong user-type roles.
-	organization, err := l.repos.OrganizationRepo.GetOrganizationById(ctx, input.OrganizationId, false)
-	if err != nil {
-		return nil, errorx.Wrap(err, "fail to find organization")
-	}
-	if organization == nil || organization.Type != plan.Type {
-		return nil, errorx.New("organization type not match pricing plan type")
 	}
 
 	policy, err := l.repos.PricingPlanPolicyRepo.GetOne(ctx, input.PricingPlanPolicyId)
@@ -90,14 +88,36 @@ func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.Or
 
 	err = l.repos.OrganizationSubscriptionRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
+		lockedOrganization, innerErr := l.repos.OrganizationRepo.LockByIdWithTx(ctx, tx, input.OrganizationId)
+		if innerErr != nil {
+			return innerErr
+		}
+		plan, innerErr = l.repos.PricingPlanRepo.GetOneWithTx(ctx, tx, input.PricingPlanId, []gormx.Preload{{Query: "Resources"}})
+		if innerErr != nil {
+			return errorx.Wrap(innerErr, "fail to find pricing plan")
+		}
+		if plan.Type != input.Type {
+			return errorx.New("pricing plan type not match")
+		}
+		if innerErr = validateEffectivePlan(lockedOrganization, plan); innerErr != nil {
+			return innerErr
+		}
 		// fetch current non-expired subscriptions for the org
 		oldSubs, innerErr := l.repos.OrganizationSubscriptionRepo.FindActiveByOrgIdWithTx(ctx, tx, input.OrganizationId)
 		if innerErr != nil {
 			return innerErr
 		}
-		// unbind resources for currently effective old subscriptions (remove-side)
-		if _, innerErr = unbindEffectiveSubscriptions(ctx, l.repos, tx, oldSubs); innerErr != nil {
-			return innerErr
+		for _, oldSub := range oldSubs {
+			if oldSub.PricingPlanId == plan.Id {
+				continue
+			}
+			oldPlan, findErr := l.repos.PricingPlanRepo.GetOneWithTx(ctx, tx, oldSub.PricingPlanId, []gormx.Preload{{Query: "Resources"}})
+			if findErr != nil {
+				return findErr
+			}
+			if innerErr = reconcileRoleResourcesForPlanChange(ctx, l.repos, tx, oldSub.OrganizationId, oldPlan, plan); innerErr != nil {
+				return innerErr
+			}
 		}
 		// set non-expired subscriptions to expired; Suspended subs preserved.
 		updateColumns := map[string]interface{}{
@@ -118,6 +138,9 @@ func (l *OrganizationSubscriptionLogic) Create(ctx context.Context, input dto.Or
 		subscription, innerErr = l.repos.OrganizationSubscriptionRepo.CreateWithTx(ctx, tx, subscription, false)
 		if innerErr != nil {
 			return innerErr
+		}
+		if len(oldSubs) == 0 {
+			return reconcileRoleResourcesForPlanChange(ctx, l.repos, tx, subscription.OrganizationId, nil, plan)
 		}
 		return nil
 	})
@@ -148,16 +171,6 @@ func (l *OrganizationSubscriptionLogic) Renew(ctx context.Context, id int64) (re
 		return
 	}
 
-	plan, err := l.repos.PricingPlanRepo.GetOne(ctx, subscription.PricingPlanId, []gormx.Preload{{Query: "Resources"}})
-	if err != nil || plan == nil {
-		err = errorx.New("fail to find pricing plan")
-		return
-	}
-
-	if plan.Status != constants.CommonStatusActive {
-		return nil, errorx.New("pricing plan is disabled")
-	}
-
 	policy, err := l.repos.PricingPlanPolicyRepo.GetOne(ctx, subscription.PricingPlanPolicyId)
 	if err != nil {
 		err = errorx.New("fail to find pricing plan")
@@ -179,20 +192,33 @@ func (l *OrganizationSubscriptionLogic) Renew(ctx context.Context, id int64) (re
 	subscription.Status = constants.OrganizationSubscriptionStatusActive
 	newEffective := subscription.Status.IsEffective()
 
+	var plan *model.PricingPlan
 	err = l.repos.OrganizationSubscriptionRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
+		lockedOrganization, innerErr := l.repos.OrganizationRepo.LockByIdWithTx(ctx, tx, subscription.OrganizationId)
+		if innerErr != nil {
+			return innerErr
+		}
+		plan, innerErr = l.repos.PricingPlanRepo.GetOneWithTx(ctx, tx, subscription.PricingPlanId, []gormx.Preload{{Query: "Resources"}})
+		if innerErr != nil {
+			return errorx.Wrap(innerErr, "fail to find pricing plan")
+		}
+		if newEffective {
+			if innerErr = validateEffectivePlan(lockedOrganization, plan); innerErr != nil {
+				return innerErr
+			}
+		}
+		if newEffective {
+			if innerErr = l.expireOtherEffectiveSubscriptions(ctx, tx, subscription.OrganizationId, id); innerErr != nil {
+				return innerErr
+			}
+		}
 		subscription, innerErr = l.repos.OrganizationSubscriptionRepo.UpdateOneByIdWithTx(ctx, tx, id, subscription)
 		if innerErr != nil {
 			return innerErr
 		}
 		// M5: only becoming ineffective unbinds (remove-side); the rebuild recomputes the gate.
-		_, innerErr = syncSubscriptionEffect(ctx, l.repos, tx, subscriptionEffectSyncReq{
-			OrganizationId: subscription.OrganizationId,
-			Plan:           plan,
-			OldEffective:   oldEffective,
-			NewEffective:   newEffective,
-		})
-		return innerErr
+		return syncSubscriptionEffect(ctx, l.repos, tx, subscription.OrganizationId, plan, oldEffective, newEffective)
 	})
 	if err != nil {
 		return nil, err
@@ -234,25 +260,33 @@ func (l *OrganizationSubscriptionLogic) UpdateExpireDate(ctx context.Context, in
 	}
 	newEffective := subscription.Status.IsEffective()
 
-	plan, err := l.repos.PricingPlanRepo.GetOne(ctx, subscription.PricingPlanId, []gormx.Preload{{Query: "Resources"}})
-	if err != nil {
-		return errorx.Wrap(err, "fail to find pricing plan")
-	}
-
+	var plan *model.PricingPlan
 	err = l.repos.OrganizationSubscriptionRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
+		lockedOrganization, innerErr := l.repos.OrganizationRepo.LockByIdWithTx(ctx, tx, subscription.OrganizationId)
+		if innerErr != nil {
+			return innerErr
+		}
+		plan, innerErr = l.repos.PricingPlanRepo.GetOneWithTx(ctx, tx, subscription.PricingPlanId, []gormx.Preload{{Query: "Resources"}})
+		if innerErr != nil {
+			return errorx.Wrap(innerErr, "fail to find pricing plan")
+		}
+		if newEffective {
+			if innerErr = validateEffectivePlan(lockedOrganization, plan); innerErr != nil {
+				return innerErr
+			}
+		}
+		if newEffective {
+			if innerErr = l.expireOtherEffectiveSubscriptions(ctx, tx, subscription.OrganizationId, input.Id); innerErr != nil {
+				return innerErr
+			}
+		}
 		_, innerErr = l.repos.OrganizationSubscriptionRepo.UpdateOneByIdWithTx(ctx, tx, input.Id, subscription)
 		if innerErr != nil {
 			return innerErr
 		}
 		// M5: only becoming ineffective unbinds (remove-side); the rebuild recomputes the gate.
-		_, innerErr = syncSubscriptionEffect(ctx, l.repos, tx, subscriptionEffectSyncReq{
-			OrganizationId: subscription.OrganizationId,
-			Plan:           plan,
-			OldEffective:   oldEffective,
-			NewEffective:   newEffective,
-		})
-		return innerErr
+		return syncSubscriptionEffect(ctx, l.repos, tx, subscription.OrganizationId, plan, oldEffective, newEffective)
 	})
 	if err != nil {
 		return err
@@ -275,27 +309,38 @@ func (l *OrganizationSubscriptionLogic) SwitchStatus(ctx context.Context, id int
 
 	oldEffective := subscription.Status.IsEffective()
 	subscription.Status = status
+	if status == constants.OrganizationSubscriptionStatusExpired {
+		subscription.ExpireDate = &sql.NullTime{Time: time.Now(), Valid: true}
+	}
 	newEffective := subscription.Status.IsEffective()
 
-	plan, err := l.repos.PricingPlanRepo.GetOne(ctx, subscription.PricingPlanId, []gormx.Preload{{Query: "Resources"}})
-	if err != nil {
-		return errorx.Wrap(err, "fail to find pricing plan")
-	}
-
+	var plan *model.PricingPlan
 	err = l.repos.OrganizationSubscriptionRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
+		lockedOrganization, innerErr := l.repos.OrganizationRepo.LockByIdWithTx(ctx, tx, subscription.OrganizationId)
+		if innerErr != nil {
+			return innerErr
+		}
+		plan, innerErr = l.repos.PricingPlanRepo.GetOneWithTx(ctx, tx, subscription.PricingPlanId, []gormx.Preload{{Query: "Resources"}})
+		if innerErr != nil {
+			return errorx.Wrap(innerErr, "fail to find pricing plan")
+		}
+		if newEffective {
+			if innerErr = validateEffectivePlan(lockedOrganization, plan); innerErr != nil {
+				return innerErr
+			}
+		}
+		if newEffective {
+			if innerErr = l.expireOtherEffectiveSubscriptions(ctx, tx, subscription.OrganizationId, id); innerErr != nil {
+				return innerErr
+			}
+		}
 		_, innerErr = l.repos.OrganizationSubscriptionRepo.UpdateOneByIdWithTx(ctx, tx, id, subscription)
 		if innerErr != nil {
 			return innerErr
 		}
 		// M5: only becoming ineffective unbinds (remove-side); the rebuild recomputes the gate.
-		_, innerErr = syncSubscriptionEffect(ctx, l.repos, tx, subscriptionEffectSyncReq{
-			OrganizationId: subscription.OrganizationId,
-			Plan:           plan,
-			OldEffective:   oldEffective,
-			NewEffective:   newEffective,
-		})
-		return innerErr
+		return syncSubscriptionEffect(ctx, l.repos, tx, subscription.OrganizationId, plan, oldEffective, newEffective)
 	})
 	if err != nil {
 		return err
@@ -309,8 +354,10 @@ func (l *OrganizationSubscriptionLogic) SwitchStatus(ctx context.Context, id int
 // org and unbinds its plan resources (remove-side). Used when an org is disabled.
 // Subscriptions are suspended, not deleted (no delete op exists).
 func (l *OrganizationSubscriptionLogic) SuspendEffectiveByOrganizationId(ctx context.Context, organizationId int64, userType constants.UserType) error {
-	organizationPolicies := make(map[int64]*organizationPolicyChanges)
 	err := l.repos.OrganizationSubscriptionRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		if _, innerErr := l.repos.OrganizationRepo.LockByIdWithTx(ctx, tx, organizationId); innerErr != nil {
+			return innerErr
+		}
 		subs, innerErr := l.repos.OrganizationSubscriptionRepo.FindActiveByOrgIdWithTx(ctx, tx, organizationId)
 		if innerErr != nil {
 			return innerErr
@@ -319,21 +366,13 @@ func (l *OrganizationSubscriptionLogic) SuspendEffectiveByOrganizationId(ctx con
 			if sub == nil || !sub.Status.IsEffective() {
 				continue
 			}
-			plan, planErr := l.repos.PricingPlanRepo.GetOne(ctx, sub.PricingPlanId, []gormx.Preload{{Query: "Resources"}})
-			if planErr != nil || plan == nil {
-				continue
+			plan, planErr := l.repos.PricingPlanRepo.GetOneWithTx(ctx, tx, sub.PricingPlanId, []gormx.Preload{{Query: "Resources"}})
+			if planErr != nil {
+				return errorx.Wrap(planErr, "fail to find pricing plan")
 			}
-			// remove-side: unbind this subscription's plan resources from the org's roles
-			removed, unbindErr := syncPlanResourcesToOrganizationRoles(ctx, l.repos, tx, planResourceSyncReq{
-				OrganizationIds: []int64{sub.OrganizationId},
-				ResourceIds:     planResourceIds(plan),
-				UserType:        plan.Type,
-				IsBind:          false,
-			})
-			if unbindErr != nil {
-				return unbindErr
+			if reconcileErr := reconcileRoleResourcesForPlanChange(ctx, l.repos, tx, sub.OrganizationId, plan, nil); reconcileErr != nil {
+				return reconcileErr
 			}
-			mergeOrganizationPolicies(organizationPolicies, removed)
 			sub.Status = constants.OrganizationSubscriptionStatusSuspended
 			if _, updateErr := l.repos.OrganizationSubscriptionRepo.UpdateOneByIdWithTx(ctx, tx, sub.Id, sub); updateErr != nil {
 				return updateErr
@@ -345,7 +384,32 @@ func (l *OrganizationSubscriptionLogic) SuspendEffectiveByOrganizationId(ctx con
 		return err
 	}
 
-	l.publishOrgPolicyRebuild(ctx, orgPolicyKeys(organizationPolicies), userType)
+	l.publishOrgPolicyRebuild(ctx, []int64{organizationId}, userType)
+	return nil
+}
+
+func (l *OrganizationSubscriptionLogic) expireOtherEffectiveSubscriptions(ctx context.Context, tx *gorm.DB, organizationId, keepId int64) error {
+	subs, err := l.repos.OrganizationSubscriptionRepo.FindActiveByOrgIdWithTx(ctx, tx, organizationId)
+	if err != nil {
+		return err
+	}
+	for _, sub := range subs {
+		if sub == nil || sub.Id == keepId || !sub.Status.IsEffective() {
+			continue
+		}
+		plan, err := l.repos.PricingPlanRepo.GetOneWithTx(ctx, tx, sub.PricingPlanId, []gormx.Preload{{Query: "Resources"}})
+		if err != nil {
+			return errorx.Wrap(err, "fail to find pricing plan")
+		}
+		if err = reconcileRoleResourcesForPlanChange(ctx, l.repos, tx, organizationId, plan, nil); err != nil {
+			return err
+		}
+		if err = l.repos.OrganizationSubscriptionRepo.UpdateColumnsByIdWithTx(ctx, tx, sub.Id, map[string]interface{}{
+			"status": constants.OrganizationSubscriptionStatusExpired,
+		}); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
@@ -463,16 +527,18 @@ func (l *OrganizationSubscriptionLogic) SubscribeDefaultPlan(ctx context.Context
 	}
 
 	err = l.repos.OrganizationSubscriptionRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		activeSubs, innerErr := l.repos.OrganizationSubscriptionRepo.FindActiveByOrgIdWithTx(ctx, tx, organizationId)
+		organization, innerErr := l.repos.OrganizationRepo.LockByIdWithTx(ctx, tx, organizationId)
 		if innerErr != nil {
 			return innerErr
 		}
-		for _, sub := range activeSubs {
-			sub.Status = constants.OrganizationSubscriptionStatusExpired
-			_, innerErr = l.repos.OrganizationSubscriptionRepo.UpdateOneByIdWithTx(ctx, tx, sub.Id, sub)
-			if innerErr != nil {
-				return innerErr
-			}
+		if organization.Type != userType {
+			return errorx.New("organization type not match pricing plan type")
+		}
+		if innerErr = l.expireOtherEffectiveSubscriptions(ctx, tx, organizationId, 0); innerErr != nil {
+			return innerErr
+		}
+		if innerErr = reconcileRoleResourcesForPlanChange(ctx, l.repos, tx, organizationId, nil, plan); innerErr != nil {
+			return innerErr
 		}
 
 		_, createErr := l.repos.OrganizationSubscriptionRepo.CreateWithTx(ctx, tx, subscription, false)
@@ -493,10 +559,11 @@ func (l *OrganizationSubscriptionLogic) UpdateStatus(ctx context.Context, organi
 	// expired subscriptions so an org never fully loses access on expiry.
 	planFilter := []gormx.WhereRaw{
 		{
-			Raw: "is_default = ? and type = ?",
+			Raw: "is_default = ? and type = ? and status = ?",
 			Args: []any{
 				true,
 				organizationType,
+				constants.CommonStatusActive,
 			},
 		},
 	}
@@ -597,6 +664,9 @@ func (l *OrganizationSubscriptionLogic) handleExpiredSubscription(
 	recovery expiredSubscriptionRecovery,
 ) (map[int64]*organizationPolicyChanges, error) {
 	var err error
+	if _, err = l.repos.OrganizationRepo.LockByIdWithTx(ctx, tx, sub.OrganizationId); err != nil {
+		return nil, err
+	}
 	if err = l.repos.OrganizationSubscriptionRepo.UpdateColumnsByIdWithTx(ctx, tx, sub.Id, map[string]interface{}{
 		"status": constants.OrganizationSubscriptionStatusExpired,
 	}); err != nil {
@@ -604,7 +674,11 @@ func (l *OrganizationSubscriptionLogic) handleExpiredSubscription(
 	}
 
 	if recovery.DefaultPlan == nil || recovery.DefaultPolicy == nil {
-		return nil, nil
+		oldPlan, planErr := l.repos.PricingPlanRepo.GetOneWithTx(ctx, tx, sub.PricingPlanId, []gormx.Preload{{Query: "Resources"}})
+		if planErr != nil {
+			return nil, errorx.Wrap(planErr, "fail to find expired subscription pricing plan")
+		}
+		return nil, reconcileRoleResourcesForPlanChange(ctx, l.repos, tx, sub.OrganizationId, oldPlan, nil)
 	}
 
 	// same plan -> renew in place
@@ -645,21 +719,7 @@ func (l *OrganizationSubscriptionLogic) handleExpiredSubscription(
 		return nil, err
 	}
 
-	// unbind old-only resources; overlap kept, new-only left to admin
-	_, oldOnly := diffResourceIds(planResourceIds(oldPlan), planResourceIds(recovery.DefaultPlan))
-	if len(oldOnly) == 0 {
-		return nil, nil
-	}
-	removed, err := syncPlanResourcesToOrganizationRoles(ctx, l.repos, tx, planResourceSyncReq{
-		OrganizationIds: []int64{sub.OrganizationId},
-		ResourceIds:     oldOnly,
-		UserType:        oldPlan.Type,
-		IsBind:          false,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return removed, nil
+	return nil, reconcileRoleResourcesForPlanChange(ctx, l.repos, tx, sub.OrganizationId, oldPlan, recovery.DefaultPlan)
 }
 
 // publishOrgPolicyRebuild emits a per-org ActionPolicyRebuild for each org whose
@@ -684,15 +744,6 @@ func (l *OrganizationSubscriptionLogic) publishOrgPolicyRebuild(ctx context.Cont
 			_ = l.publishAuthEvent(subCtx, l.authTopicMap[userType], msg)
 		})
 	}
-}
-
-// orgPolicyKeys returns the org ids tracked in an organizationPolicyChanges map.
-func orgPolicyKeys(m map[int64]*organizationPolicyChanges) []int64 {
-	out := make([]int64, 0, len(m))
-	for k := range m {
-		out = append(out, k)
-	}
-	return out
 }
 
 // maxCodeRetries is the number of attempts generateCode makes to produce a
@@ -728,80 +779,174 @@ func (l *OrganizationSubscriptionLogic) generateCode(ctx context.Context, tx *go
 	return "", errorx.New("fail to generate unique subscription code")
 }
 
-// planResourceIds extracts resource IDs from a pricing plan.
-func planResourceIds(plan *model.PricingPlan) []int64 {
-	if plan == nil {
-		return nil
-	}
-	return slice.Map(plan.Resources, func(index int, resource *model.Resource) int64 {
-		return resource.Id
-	})
-}
-
-// subscriptionEffectSyncReq bundles inputs for syncing a single organization's
-// plan resources when a subscription crosses the effective boundary.
-type subscriptionEffectSyncReq struct {
-	OrganizationId int64
-	Plan           *model.PricingPlan
-	OldEffective   bool
-	NewEffective   bool
-}
-
 // syncSubscriptionEffect propagates a subscription's effective-boundary crossing
 // to role-resource bindings. M5: only becoming ineffective unbinds (remove-side);
 // becoming effective never auto-binds (admin configures, gate recomputes on rebuild).
-func syncSubscriptionEffect(ctx context.Context, repos *repo.AllRepos, tx *gorm.DB, req subscriptionEffectSyncReq) (map[int64]*organizationPolicyChanges, error) {
-	if req.OldEffective == req.NewEffective {
-		return nil, nil
+func syncSubscriptionEffect(ctx context.Context, repos *repo.AllRepos, tx *gorm.DB, organizationId int64, plan *model.PricingPlan, oldEffective, newEffective bool) error {
+	if oldEffective == newEffective {
+		return nil
 	}
-	if req.NewEffective {
-		return nil, nil
+	if newEffective {
+		return reconcileRoleResourcesForPlanChange(ctx, repos, tx, organizationId, nil, plan)
 	}
-	resourceIds := planResourceIds(req.Plan)
-	if len(resourceIds) == 0 {
-		return nil, nil
-	}
-	return syncPlanResourcesToOrganizationRoles(ctx, repos, tx, planResourceSyncReq{
-		OrganizationIds: []int64{req.OrganizationId},
-		ResourceIds:     resourceIds,
-		UserType:        req.Plan.Type,
-		IsBind:          false,
-	})
+	return reconcileRoleResourcesForPlanChange(ctx, repos, tx, organizationId, plan, nil)
 }
 
-// unbindEffectiveSubscriptions unbinds plan resources for subscriptions that
-// are currently effective (Active/Trialing) and groups their policy changes.
-// Subscriptions sharing a plan are unbound once. Non-effective statuses are skipped.
-// orgIdByUserType maps each org's affected policies, keyed by organization id.
-func unbindEffectiveSubscriptions(ctx context.Context, repos *repo.AllRepos, tx *gorm.DB, subs []*model.OrganizationSubscription) (map[int64]*organizationPolicyChanges, error) {
-	merged := make(map[int64]*organizationPolicyChanges)
-	// group effective subs by plan id to avoid reloading the same plan
-	planOrgs := make(map[int64][]int64)
-	for _, sub := range subs {
-		if sub == nil || !sub.Status.IsEffective() {
-			continue
-		}
-		planOrgs[sub.PricingPlanId] = append(planOrgs[sub.PricingPlanId], sub.OrganizationId)
+func reconcileRoleResourcesForPlanChange(ctx context.Context, repos *repo.AllRepos, tx *gorm.DB, organizationId int64, sourcePlan, targetPlan *model.PricingPlan) error {
+	plan := sourcePlan
+	if targetPlan != nil {
+		plan = targetPlan
 	}
-	for planId, orgIds := range planOrgs {
-		plan, innerErr := repos.PricingPlanRepo.GetOne(ctx, planId, []gormx.Preload{{Query: "Resources"}})
-		if innerErr != nil || plan == nil {
-			continue
-		}
-		resourceIds := planResourceIds(plan)
-		if len(resourceIds) == 0 {
-			continue
-		}
-		orgPolicies, innerErr := syncPlanResourcesToOrganizationRoles(ctx, repos, tx, planResourceSyncReq{
-			OrganizationIds: slice.Unique(orgIds),
-			ResourceIds:     resourceIds,
-			UserType:        plan.Type,
-			IsBind:          false,
-		})
-		if innerErr != nil {
-			return nil, innerErr
-		}
-		mergeOrganizationPolicies(merged, orgPolicies)
+	if plan == nil {
+		return nil
 	}
-	return merged, nil
+	roles, err := repos.RoleRepo.FindByOrganizationIdsWithTx(ctx, tx, []int64{organizationId}, plan.Type)
+	if err != nil {
+		return err
+	}
+	sourceIDs := map[int64]bool{}
+	if sourcePlan != nil {
+		for _, resource := range sourcePlan.Resources {
+			if resource != nil && !resource.IsPublic {
+				sourceIDs[resource.Id] = true
+			}
+		}
+	}
+	roleIds := make([]int64, 0, len(roles))
+	for _, role := range roles {
+		roleIds = append(roleIds, role.Id)
+	}
+	sourceResourceIds := make([]int64, 0, len(sourceIDs))
+	for id := range sourceIDs {
+		sourceResourceIds = append(sourceResourceIds, id)
+	}
+	roleResourceScopes := map[int64]map[int64]constants.DataScope{}
+	if sourcePlan != nil {
+		relations, relationErr := repos.RoleAndResourceRepo.FindByRoleIdsAndResourceIdsWithTx(ctx, tx, roleIds, sourceResourceIds)
+		if relationErr != nil {
+			return relationErr
+		}
+		for _, relation := range relations {
+			if relation == nil {
+				continue
+			}
+			if roleResourceScopes[relation.RoleId] == nil {
+				roleResourceScopes[relation.RoleId] = map[int64]constants.DataScope{}
+			}
+			roleResourceScopes[relation.RoleId][relation.ResourceId] = relation.DataScope
+		}
+	}
+	targetIDs := map[int64]bool{}
+	if targetPlan != nil {
+		for _, resource := range targetPlan.Resources {
+			if resource != nil && !resource.IsPublic && resource.Status == constants.CommonStatusActive {
+				targetIDs[resource.Id] = true
+			}
+		}
+	}
+	currentScopes := map[int64]map[int64]constants.DataScope{}
+	if len(targetIDs) > 0 {
+		targetResourceIds := make([]int64, 0, len(targetIDs))
+		for id := range targetIDs {
+			targetResourceIds = append(targetResourceIds, id)
+		}
+		relations, relationErr := repos.RoleAndResourceRepo.FindByRoleIdsAndResourceIdsWithTx(ctx, tx, roleIds, targetResourceIds)
+		if relationErr != nil {
+			return relationErr
+		}
+		for _, relation := range relations {
+			if currentScopes[relation.RoleId] == nil {
+				currentScopes[relation.RoleId] = map[int64]constants.DataScope{}
+			}
+			currentScopes[relation.RoleId][relation.ResourceId] = relation.DataScope
+		}
+	}
+	history := map[int64]map[int64]constants.DataScope{}
+	if targetPlan != nil {
+		snapshots, findErr := repos.RoleResourceSnapshotRepo.FindByOrganizationAndPlanWithTx(ctx, tx, organizationId, targetPlan.Id)
+		if findErr != nil {
+			return findErr
+		}
+		for _, snapshot := range snapshots {
+			history[snapshot.RoleId] = map[int64]constants.DataScope{}
+			for _, resource := range snapshot.Resources {
+				scope := resource.DataScope
+				if scope == "" {
+					scope = constants.DataScopeAll
+				}
+				history[snapshot.RoleId][resource.ResourceId] = scope
+			}
+		}
+	}
+	for _, role := range roles {
+		if role.Name == constants.AdminRoleName {
+			continue
+		}
+		if sourcePlan != nil {
+			resources := make([]model.RoleResourceSnapshotResource, 0)
+			for _, resource := range role.Resources {
+				if resource != nil && !resource.IsPublic && sourceIDs[resource.Id] {
+					scope := constants.DataScopeAll
+					if roleResourceScopes[role.Id] != nil && roleResourceScopes[role.Id][resource.Id] != "" {
+						scope = roleResourceScopes[role.Id][resource.Id]
+					}
+					resources = append(resources, model.RoleResourceSnapshotResource{ResourceId: resource.Id, DataScope: scope})
+				}
+			}
+			if err = repos.RoleResourceSnapshotRepo.SaveWithTx(ctx, tx, &model.RoleResourceSnapshot{OrganizationId: organizationId, PricingPlanId: sourcePlan.Id, RoleId: role.Id, Resources: resources}); err != nil {
+				return err
+			}
+		}
+		wanted := map[int64]bool{}
+		for _, resource := range role.Resources {
+			if resource != nil && !resource.IsPublic && targetIDs[resource.Id] {
+				wanted[resource.Id] = true
+			}
+		}
+		for id := range history[role.Id] {
+			if targetIDs[id] {
+				wanted[id] = true
+			}
+		}
+		var add, remove []*model.Resource
+		addScopes := map[int64]constants.DataScope{}
+		for _, resource := range role.Resources {
+			if resource != nil && !resource.IsPublic && !wanted[resource.Id] {
+				remove = append(remove, &model.Resource{Base: model.Base{Id: resource.Id}})
+			}
+		}
+		for id := range wanted {
+			if _, found := currentScopes[role.Id][id]; !found {
+				add = append(add, &model.Resource{Base: model.Base{Id: id}})
+				addScopes[id] = history[role.Id][id]
+			}
+		}
+		if err = repos.RoleRepo.UpdateResourcesWithTx(ctx, tx, role, nil, remove); err != nil {
+			return err
+		}
+		for resourceId, snapshotScope := range history[role.Id] {
+			if !wanted[resourceId] || snapshotScope != constants.DataScopeAll {
+				continue
+			}
+			if currentScopes[role.Id][resourceId] != constants.DataScopeAll {
+				if err = repos.RoleAndResourceRepo.UpdateDataScopeWithTx(ctx, tx, role.Id, resourceId, constants.DataScopeAll); err != nil {
+					return err
+				}
+			}
+		}
+		newRelations := make([]*model.RoleAndResource, 0, len(add))
+		for _, resource := range add {
+			scope := addScopes[resource.Id]
+			if scope == "" {
+				scope = constants.DataScopeAll
+			}
+			newRelations = append(newRelations, &model.RoleAndResource{RoleId: role.Id, ResourceId: resource.Id, DataScope: scope})
+		}
+		if len(newRelations) > 0 {
+			if _, err = repos.RoleAndResourceRepo.BatchCreateWithTx(ctx, tx, newRelations, false); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
