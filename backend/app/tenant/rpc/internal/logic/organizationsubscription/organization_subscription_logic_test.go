@@ -174,7 +174,7 @@ func TestUpdateExpireDate_ChangesExpire(t *testing.T) {
 	sub := seedSubscription(t, env, org, plan, constants.OrganizationSubscriptionStatusActive)
 
 	_, err := NewUpdateExpireDateLogic(context.Background(), env.SvcCtx).UpdateExpireDate(&tenant.OrganizationSubscriptionUpdateExpireDateRequest{Data: &tenant.OrganizationSubscriptionUpdateExpireDateRequestData{
-		UserType: string(constants.UserTypeLender), Id: sub.Id, ExpireDate: "2027-01-01T00:00:00Z",
+		UserType: string(constants.UserTypeLender), Id: sub.Id, ExpireDate: "06/27/2026",
 	}})
 	require.NoError(t, err)
 
@@ -182,7 +182,21 @@ func TestUpdateExpireDate_ChangesExpire(t *testing.T) {
 	require.NoError(t, env.DB.First(&got, sub.Id).Error)
 	require.NotNil(t, got.ExpireDate)
 	assert.True(t, got.ExpireDate.Valid)
-	assert.Equal(t, "2027-01-01 00:00:00 +0000 UTC", got.ExpireDate.Time.UTC().String())
+	assert.Equal(t, "2026-06-27 00:00:00 +0000 UTC", got.ExpireDate.Time.UTC().String())
+}
+
+func TestUpdateExpireDate_RejectsEmptyOrInvalidDate(t *testing.T) {
+	env := newTestEnv(t)
+	org := seedOrg(t, env, constants.UserTypeLender)
+	plan := seedPlan(t, env, constants.UserTypeLender, "Plan")
+	sub := seedSubscription(t, env, org, plan, constants.OrganizationSubscriptionStatusActive)
+
+	for _, expireDate := range []string{"", "2026-06-27"} {
+		_, err := NewUpdateExpireDateLogic(context.Background(), env.SvcCtx).UpdateExpireDate(&tenant.OrganizationSubscriptionUpdateExpireDateRequest{Data: &tenant.OrganizationSubscriptionUpdateExpireDateRequestData{
+			UserType: string(constants.UserTypeLender), Id: sub.Id, ExpireDate: expireDate,
+		}})
+		require.Error(t, err)
+	}
 }
 
 // T037 US-10: SuspendEffectiveByOrganizationId suspends an org's effective subs.

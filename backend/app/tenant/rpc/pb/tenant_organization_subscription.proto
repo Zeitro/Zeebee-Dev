@@ -48,7 +48,7 @@ message OrganizationSubscriptionUpdateExpireDateRequest {
 message OrganizationSubscriptionUpdateExpireDateRequestData {
   string user_type = 1;
   int64 id = 2;
-  string expire_date = 3;        // RFC3339; "" = clear
+  string expire_date = 3;
 }
 
 message OrganizationSubscriptionSwitchStatusRequest {
