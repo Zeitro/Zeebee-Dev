@@ -1,0 +1,14 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"baseUrl": ".",
+		"outDir": "dist",
+		"rootDir": "src",
+		"resolveJsonModule": true,
+		"paths": {
+			"@repo/project-management": ["./src/index.ts"],
+			"@repo/project-management/*": ["./src/*"]
+		}
+	},
+	"include": ["src", "messages"]
+}

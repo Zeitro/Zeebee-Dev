@@ -2,7 +2,9 @@ package resourcelogic
 
 import (
 	"context"
+	"database/sql"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -11,6 +13,7 @@ import (
 	"zeebee-backend/app/tenant/rpc/internal/logic/testutil"
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/model"
 )
 
 func newTestEnv(t *testing.T) *testutil.Env {
@@ -67,4 +70,23 @@ func TestResourceTree_RejectsCrossPlatformScope(t *testing.T) {
 	}})
 
 	require.EqualError(t, err, "resource type must match caller platform")
+}
+
+func TestUserMenu_OwnerIsPlanBound(t *testing.T) {
+	env := newTestEnv(t)
+	org := testutil.SeedOrganization(t, env.DB, &model.Organization{Name: "Owner org", OwnerId: 1, Type: constants.UserTypeLender, Status: constants.OrganizationStatusActive})
+	member := testutil.SeedOrganizationUser(t, env.DB, &model.OrganizationUser{OrganizationId: org.Id, UserId: 1, Status: constants.OrganizationUserStatusActive})
+	resource := testutil.SeedResource(t, env.DB, &model.Resource{Type: constants.UserTypeLender, ResourceType: constants.ResourceTypeMenu, Name: "Plan menu", Status: constants.CommonStatusActive})
+	plan := testutil.SeedPricingPlan(t, env.DB, &model.PricingPlan{Name: "Plan", Type: constants.UserTypeLender, Status: constants.CommonStatusActive})
+	require.NoError(t, env.DB.Create(&model.PricingPlanAndResource{PricingPlanId: plan.Id, ResourceId: resource.Id}).Error)
+	testutil.SeedSubscription(t, env.DB, &model.OrganizationSubscription{Code: "MENU", OrganizationId: org.Id, PricingPlanId: plan.Id, Status: constants.OrganizationSubscriptionStatusActive, ExpireDate: &sql.NullTime{Time: time.Now().AddDate(0, 0, 1), Valid: true}})
+
+	menu := NewUserMenuLogic(context.Background(), env.SvcCtx)
+	resp, err := menu.UserMenu(&tenant.UserMenuRequest{Data: &tenant.UserMenuRequestData{UserType: string(constants.UserTypeLender), OrganizationId: org.Id, OrganizationUserId: member.Id}})
+	require.NoError(t, err)
+	require.Len(t, resp.GetData(), 1)
+	require.NoError(t, env.DB.Where("pricing_plan_id = ? AND resource_id = ?", plan.Id, resource.Id).Delete(&model.PricingPlanAndResource{}).Error)
+	resp, err = menu.UserMenu(&tenant.UserMenuRequest{Data: &tenant.UserMenuRequestData{UserType: string(constants.UserTypeLender), OrganizationId: org.Id, OrganizationUserId: member.Id}})
+	require.NoError(t, err)
+	assert.Empty(t, resp.GetData())
 }

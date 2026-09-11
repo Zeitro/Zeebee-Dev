@@ -948,21 +948,27 @@ func (l *Auth) getOrganizationUserRoles(ctx context.Context, organizationUserId 
 func (l *Auth) loadOrganizationUserRoles(ctx context.Context, organizationUserId int64, organizationId int64, userType constants.UserType) (roles []AuthRole, err error) {
 	roles = []AuthRole{}
 	organizationUser, _ := l.repos.OrganizationUserRepo.GetOrganizationUserById(ctx, organizationUserId, organizationId)
-	if organizationUser == nil || organizationUser.Status != constants.OrganizationUserStatusActive || len(organizationUser.Roles) == 0 {
-		goto saveCache
+	if organizationUser != nil && organizationUser.Status == constants.OrganizationUserStatusActive {
+		organization, err := l.repos.OrganizationRepo.GetOrganizationById(ctx, organizationId, false)
+		if err != nil {
+			return nil, err
+		}
+		isOwner := organization != nil && organization.OwnerId == organizationUser.UserId
+
+		roles = slice.FilterMap(organizationUser.Roles, func(index int, item *model.Role) (AuthRole, bool) {
+			if item == nil {
+				return AuthRole{}, false
+			}
+			if item.Status != constants.CommonStatusActive {
+				return AuthRole{}, false
+			}
+			return AuthRole{RoleId: item.Id, IsAdmin: isOwner || item.Name == constants.AdminRoleName}, true
+		})
+		if isOwner && len(roles) == 0 {
+			roles = []AuthRole{{IsAdmin: true}}
+		}
 	}
 
-	roles = slice.FilterMap(organizationUser.Roles, func(index int, item *model.Role) (AuthRole, bool) {
-		if item == nil {
-			return AuthRole{}, false
-		}
-		if item.Status != constants.CommonStatusActive {
-			return AuthRole{}, false
-		}
-		return AuthRole{RoleId: item.Id, IsAdmin: item.Name == constants.AdminRoleName}, true
-	})
-
-saveCache:
 	key := stringx.Format(organizationUserRoleFormat, userType, organizationId, organizationUserId)
 	rolesContent, err := json.Marshal(roles)
 	if err != nil {
@@ -977,6 +983,10 @@ saveCache:
 
 // loadOrganizationRoles load organization roles
 func (l *Auth) loadOrganizationRoles(ctx context.Context, organizationId int64, userType constants.UserType) (roles []AuthRole, err error) {
+	organization, err := l.repos.OrganizationRepo.GetOrganizationById(ctx, organizationId, false)
+	if err != nil {
+		return nil, err
+	}
 	organizationUsers, _ := l.repos.OrganizationUserRepo.AllOrganizationUsers(ctx, organizationId)
 
 	slice.ForEach(organizationUsers, func(index int, organizationUser *model.OrganizationUser) {
@@ -990,8 +1000,11 @@ func (l *Auth) loadOrganizationRoles(ctx context.Context, organizationId int64, 
 			if role.Status != constants.CommonStatusActive {
 				return AuthRole{}, false
 			}
-			return AuthRole{RoleId: role.Id, IsAdmin: role.Name == constants.AdminRoleName}, true
+			return AuthRole{RoleId: role.Id, IsAdmin: (organization != nil && organization.OwnerId == organizationUser.UserId) || role.Name == constants.AdminRoleName}, true
 		})
+		if organization != nil && organization.OwnerId == organizationUser.UserId && len(subRoles) == 0 {
+			subRoles = []AuthRole{{IsAdmin: true}}
+		}
 		key := stringx.Format(organizationUserRoleFormat, userType, organizationId, organizationUser.Id)
 		roles = append(roles, subRoles...)
 		var rolesContent []byte

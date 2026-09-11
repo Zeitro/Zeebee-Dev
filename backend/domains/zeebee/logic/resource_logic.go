@@ -312,9 +312,14 @@ func (l *ResourceLogic) GetUserResources(ctx context.Context, input dto.Resource
 		}
 		return true
 	})
+	organization, err := l.repos.OrganizationRepo.GetOrganizationById(ctx, input.OrganizationId, false)
+	if err != nil {
+		return nil, err
+	}
+	isOwner := organization != nil && organization.OwnerId == organizationUser.UserId
 
 	var allResources []*model.Resource
-	if hasAdminRole {
+	if hasAdminRole || isOwner {
 		// Get all active resources for the organization
 		allResources, err = l.repos.ResourceRepo.AllResources(ctx, input.OrganizationId, input.Type, false)
 		if err != nil {
