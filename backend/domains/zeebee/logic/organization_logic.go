@@ -251,7 +251,7 @@ func (l *OrganizationLogic) SwitchStatus(ctx context.Context, input dto.Organiza
 
 	// H7: disabling an organization revokes its plan-granted access by suspending
 	// its effective subscriptions and unbinding their plan resources. The suspend
-	// logic publishes its own RoleReload with the removed policies. Re-enabling
+	// logic publishes its own PolicyRebuild. Re-enabling
 	// the org does NOT reactivate subscriptions (no auto-reactivation; the org
 	// admin renews/switches them explicitly).
 	if newStatus != constants.OrganizationStatusActive {

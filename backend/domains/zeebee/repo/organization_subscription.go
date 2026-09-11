@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
@@ -67,6 +68,7 @@ func (repo *OrganizationSubscriptionRepo) FindActiveByOrganizationId(ctx context
 
 func (repo *OrganizationSubscriptionRepo) FindActiveByOrgIdWithTx(ctx context.Context, tx *gorm.DB, organizationId int64) (result []*model.OrganizationSubscription, err error) {
 	err = tx.WithContext(ctx).
+		Clauses(clause.Locking{Strength: "UPDATE"}).
 		Where("organization_id = ? AND status IN ?",
 			organizationId,
 			constants.EffectiveStatuses,

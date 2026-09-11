@@ -86,6 +86,32 @@ func TestCreate_ActiveSubscription(t *testing.T) {
 	assert.Equal(t, plan.Id, sub.PricingPlanId)
 }
 
+func TestCreate_FirstPlanSwitchDoesNotAutoGrantTargetResources(t *testing.T) {
+	env := newTestEnv(t)
+	org := seedOrg(t, env, constants.UserTypeLender)
+	oldPlan := seedPlan(t, env, constants.UserTypeLender, "Old")
+	targetPlan := seedPlan(t, env, constants.UserTypeLender, "Target")
+	oldPolicy := seedPolicy(t, env, oldPlan)
+	policy := seedPolicy(t, env, targetPlan)
+	oldResource := testutil.SeedResource(t, env.DB, &model.Resource{Type: constants.UserTypeLender, Name: "Old resource", Status: constants.CommonStatusActive})
+	targetResource := testutil.SeedResource(t, env.DB, &model.Resource{Type: constants.UserTypeLender, Name: "Target resource", Status: constants.CommonStatusActive})
+	require.NoError(t, env.DB.Create(&model.PricingPlanAndResource{PricingPlanId: oldPlan.Id, ResourceId: oldResource.Id}).Error)
+	require.NoError(t, env.DB.Create(&model.PricingPlanAndResource{PricingPlanId: targetPlan.Id, ResourceId: targetResource.Id}).Error)
+	role := testutil.SeedRole(t, env.DB, &model.Role{OrganizationId: org.Id, Name: "Staff", Type: constants.UserTypeLender, Status: constants.CommonStatusActive})
+	testutil.SeedRoleResource(t, env.DB, role.Id, oldResource.Id)
+	seedSubscription(t, env, org, oldPlan, constants.OrganizationSubscriptionStatusActive)
+
+	_, err := NewCreateLogic(context.Background(), env.SvcCtx).Create(&tenant.OrganizationSubscriptionCreateRequest{Data: &tenant.OrganizationSubscriptionCreateRequestData{UserType: string(constants.UserTypeLender), OrganizationId: org.Id, PricingPlanId: targetPlan.Id, PricingPlanPolicyId: policy.Id}})
+	require.NoError(t, err)
+	var count int64
+	require.NoError(t, env.DB.Model(&model.RoleAndResource{}).Where("role_id = ?", role.Id).Count(&count).Error)
+	assert.Zero(t, count)
+	_, err = NewCreateLogic(context.Background(), env.SvcCtx).Create(&tenant.OrganizationSubscriptionCreateRequest{Data: &tenant.OrganizationSubscriptionCreateRequestData{UserType: string(constants.UserTypeLender), OrganizationId: org.Id, PricingPlanId: oldPlan.Id, PricingPlanPolicyId: oldPolicy.Id}})
+	require.NoError(t, err)
+	require.NoError(t, env.DB.Model(&model.RoleAndResource{}).Where("role_id = ? AND resource_id = ?", role.Id, oldResource.Id).Count(&count).Error)
+	assert.Equal(t, int64(1), count)
+}
+
 // T037 US-10: Create rejects a plan whose type does not match the request.
 func TestCreate_PlanTypeMismatch(t *testing.T) {
 	env := newTestEnv(t)
@@ -143,6 +169,29 @@ func TestSwitchStatus_Suspends(t *testing.T) {
 	var got model.OrganizationSubscription
 	require.NoError(t, env.DB.First(&got, sub.Id).Error)
 	assert.Equal(t, constants.OrganizationSubscriptionStatusSuspended, got.Status)
+}
+
+func TestSwitchStatus_RestoresRoleSnapshotWithoutChangingAdmin(t *testing.T) {
+	env := newTestEnv(t)
+	org := seedOrg(t, env, constants.UserTypeLender)
+	plan := seedPlan(t, env, constants.UserTypeLender, "Plan")
+	resource := testutil.SeedResource(t, env.DB, &model.Resource{Type: constants.UserTypeLender, Name: "Plan resource", Status: constants.CommonStatusActive})
+	require.NoError(t, env.DB.Create(&model.PricingPlanAndResource{PricingPlanId: plan.Id, ResourceId: resource.Id}).Error)
+	staff := testutil.SeedRole(t, env.DB, &model.Role{OrganizationId: org.Id, Name: "Staff", Type: constants.UserTypeLender, Status: constants.CommonStatusActive})
+	admin := testutil.SeedRole(t, env.DB, &model.Role{OrganizationId: org.Id, Name: constants.AdminRoleName, Type: constants.UserTypeLender, Status: constants.CommonStatusActive})
+	testutil.SeedRoleResource(t, env.DB, staff.Id, resource.Id)
+	testutil.SeedRoleResource(t, env.DB, admin.Id, resource.Id)
+	sub := seedSubscription(t, env, org, plan, constants.OrganizationSubscriptionStatusActive)
+	switcher := NewSwitchStatusLogic(context.Background(), env.SvcCtx)
+	_, err := switcher.SwitchStatus(&tenant.OrganizationSubscriptionSwitchStatusRequest{Data: &tenant.OrganizationSubscriptionSwitchStatusRequestData{UserType: string(constants.UserTypeLender), Id: sub.Id, Status: string(constants.OrganizationSubscriptionStatusSuspended)}})
+	require.NoError(t, err)
+	_, err = switcher.SwitchStatus(&tenant.OrganizationSubscriptionSwitchStatusRequest{Data: &tenant.OrganizationSubscriptionSwitchStatusRequestData{UserType: string(constants.UserTypeLender), Id: sub.Id, Status: string(constants.OrganizationSubscriptionStatusActive)}})
+	require.NoError(t, err)
+	var count int64
+	require.NoError(t, env.DB.Model(&model.RoleAndResource{}).Where("role_id = ? AND resource_id = ?", staff.Id, resource.Id).Count(&count).Error)
+	assert.Equal(t, int64(1), count)
+	require.NoError(t, env.DB.Model(&model.RoleAndResource{}).Where("role_id = ? AND resource_id = ?", admin.Id, resource.Id).Count(&count).Error)
+	assert.Equal(t, int64(1), count)
 }
 
 // T037 US-10: Page lists subscriptions (filter/sorter optional).

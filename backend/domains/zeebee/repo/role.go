@@ -151,6 +151,7 @@ func (repo *RoleRepo) FindByOrganizationIdsWithTx(ctx context.Context, tx *gorm.
 	}
 	err = tx.WithContext(ctx).
 		Where("organization_id IN ? AND type = ?", organizationIds, roleType).
+		Preload("Resources").
 		Find(&result).Error
 	return result, errorx.WithStack(err)
 }

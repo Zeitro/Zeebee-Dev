@@ -142,6 +142,7 @@ func tenantModels() []any {
 		&model.PricingPlanPolicy{},
 		&model.PricingPlanAndResource{},
 		&model.OrganizationSubscription{},
+		&model.RoleResourceSnapshot{},
 		&model.OrganizationSetting{},
 		&model.OrganizationTemplate{},
 		&model.BaseTemplate{},
