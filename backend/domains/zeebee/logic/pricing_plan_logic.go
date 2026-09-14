@@ -150,6 +150,9 @@ func (l *PricingPlanLogic) Delete(ctx context.Context, id int64) (err error) {
 				return innerErr
 			}
 		}
+		if innerErr = l.repos.RoleResourceSnapshotRepo.DeleteByPricingPlanIdWithTx(ctx, tx, plan.Id); innerErr != nil {
+			return innerErr
+		}
 		// delete plan
 		innerErr = l.repos.PricingPlanRepo.DeleteWithTx(ctx, tx, plan)
 		return innerErr
@@ -459,6 +462,9 @@ func syncPlanResourcesToOrganizationRoles(ctx context.Context, repos *repo.AllRe
 	organizationPolicies := make(map[int64]*organizationPolicyChanges)
 
 	for _, role := range roles {
+		if role.Name == constants.AdminRoleName {
+			continue
+		}
 		err = repos.RoleRepo.UpdateResourcesWithTx(ctx, tx, role, addedResources, removedResources)
 		if err != nil {
 			return nil, err

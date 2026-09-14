@@ -42,6 +42,7 @@ type AllRepos struct {
 	PricingPlanPolicyRepo              *PricingPlanPolicyRepo
 	PricingPlanAndResourceRepo         *PricingPlanAndResourceRepo
 	OrganizationSubscriptionRepo       *OrganizationSubscriptionRepo
+	RoleResourceSnapshotRepo           *RoleResourceSnapshotRepo
 	ProjectManagementWorkflowRepo      *ProjectManagementWorkflowRepo
 	ProjectManagementWorkflowStageRepo *ProjectManagementWorkflowStageRepo
 	ProjectManagementProjectRepo       *ProjectManagementProjectRepo
@@ -94,6 +95,7 @@ func NewAllRepos(db *gorm.DB) *AllRepos {
 		PricingPlanPolicyRepo:              NewPricingPlanPolicyRepo(db),
 		PricingPlanAndResourceRepo:         NewPricingPlanAndResourceRepo(db),
 		OrganizationSubscriptionRepo:       NewOrganizationSubscriptionRepo(db),
+		RoleResourceSnapshotRepo:           NewRoleResourceSnapshotRepo(db),
 		ProjectManagementWorkflowRepo:      NewProjectManagementWorkflowRepo(db),
 		ProjectManagementWorkflowStageRepo: NewProjectManagementWorkflowStageRepo(db),
 		ProjectManagementProjectRepo:       NewProjectManagementProjectRepo(db),

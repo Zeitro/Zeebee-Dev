@@ -35,9 +35,11 @@ HTTP Handler → API Logic → RPC Client → RPC Logic → Domain Logic → Rep
 
 - API 层负责 HTTP 参数绑定、边界校验、调用 RPC 和响应转换。
 - RPC 层负责鉴权、业务编排和跨服务调用；RPC logic 不直接访问数据库。
-- 领域层负责可复用业务规则；repository 负责 GORM 查询和持久化；model 只描述数据库模型。
+- 领域层负责可复用业务规则，输入和返回均使用 `data/dto`，不暴露 `model` 数据；repository 负责 GORM 查询和持久化；model 只描述数据库模型。
 - HTTP `types`、Proto message、domain DTO、BO 和 model 不能跨层混用。
 - 数据库访问必须经过 `baseLogic → domains/zeebee/logic → repo`，不要在 RPC logic 中绕过领域层。
+- domain logic 不直接操作数据库；可通过 repo 调用其嵌入的 `BaseRepo` 数据操作方法，但不获取 `GetDB`、`Client` 等 ORM 连接来拼接 SQL。
+- repo 优先复用 `BaseRepo` 已封装的方法；仅在基础方法无法表达业务查询时新增专用仓储查询。
 
 ## 4. API、Proto 与代码生成
 
