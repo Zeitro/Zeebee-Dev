@@ -39,6 +39,7 @@ func setupAuthTestDB(t *testing.T) *gorm.DB {
 			is_del INTEGER DEFAULT 0,
 			name TEXT NOT NULL DEFAULT '',
 			status TEXT NOT NULL DEFAULT 'Active',
+			owner_id INTEGER DEFAULT 0,
 			type TEXT DEFAULT ''
 		)`,
 		`CREATE TABLE resources (
@@ -600,6 +601,62 @@ func TestCheckAuthorization_AdminOutOfPlan_Denied(t *testing.T) {
 	ok, _, err := a.CheckAuthorization(ctxWithClaim(t, a, constants.UserTypeLender, 1, 50), authzReq())
 	require.NoError(t, err)
 	assert.False(t, ok, "admin must be denied when the API's resource is outside the plan")
+}
+
+func TestCheckAuthorization_OwnerPlanBoundary(t *testing.T) {
+	a, _, db, _ := newAuthzForTest(t)
+	seedAuthzBaseline(t, db)
+	require.NoError(t, db.Exec(`UPDATE organizations SET owner_id = 1 WHERE id = 1`).Error)
+
+	ok, _, err := a.CheckAuthorization(ctxWithClaim(t, a, constants.UserTypeLender, 1, 50), authzReq())
+	require.NoError(t, err)
+	assert.True(t, ok, "owner must be authorized within the plan without an Admin role")
+	require.NoError(t, db.Exec(`DELETE FROM pricing_plan_and_resources WHERE resource_id = 100`).Error)
+	a.organizationPlanResourceMap.Clear()
+	ok, _, err = a.CheckAuthorization(ctxWithClaim(t, a, constants.UserTypeLender, 1, 50), authzReq())
+	require.NoError(t, err)
+	assert.False(t, ok, "owner must not bypass the plan boundary")
+}
+
+func TestCheckAuthorization_OwnerWithoutRoles(t *testing.T) {
+	a, _, db, _ := newAuthzForTest(t)
+	seedAuthzBaseline(t, db)
+	require.NoError(t, db.Exec(`UPDATE organizations SET owner_id = 1 WHERE id = 1`).Error)
+	require.NoError(t, db.Exec(`DELETE FROM organization_user_and_roles WHERE organization_user_id = 50`).Error)
+
+	ctx := ctxWithClaim(t, a, constants.UserTypeLender, 1, 50)
+	ok, _, err := a.CheckAuthorization(ctx, authzReq())
+	require.NoError(t, err)
+	assert.True(t, ok, "owner without roles must retain in-plan access")
+
+	require.NoError(t, a.handleRoleReload(context.Background(), Msg{
+		Action:         ActionRoleReload,
+		Scope:          ScopeOrganization,
+		Type:           constants.UserTypeLender,
+		OrganizationId: 1,
+	}))
+	ok, _, err = a.CheckAuthorization(ctx, authzReq())
+	require.NoError(t, err)
+	assert.True(t, ok, "organization role reload must preserve an owner without roles")
+}
+
+func TestCheckAuthorization_OwnerSurvivesOrganizationRoleReload(t *testing.T) {
+	a, _, db, _ := newAuthzForTest(t)
+	seedAuthzBaseline(t, db)
+	require.NoError(t, db.Exec(`UPDATE organizations SET owner_id = 1 WHERE id = 1`).Error)
+
+	ctx := ctxWithClaim(t, a, constants.UserTypeLender, 1, 50)
+	err := a.handleRoleReload(context.Background(), Msg{
+		Action:         ActionRoleReload,
+		Scope:          ScopeOrganization,
+		Type:           constants.UserTypeLender,
+		OrganizationId: 1,
+	})
+	require.NoError(t, err)
+
+	ok, _, err := a.CheckAuthorization(ctx, authzReq())
+	require.NoError(t, err)
+	assert.True(t, ok, "owner must retain in-plan access after an organization role reload")
 }
 
 // --- admin: org without any subscription -> denied (deny-default) ---

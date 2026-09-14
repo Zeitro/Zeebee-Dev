@@ -82,12 +82,13 @@ func (l *RoleLogic) Create(ctx context.Context, input dto.RoleCreateRequestDto) 
 	resourceIds := slice.Map[dto.RoleAndResourceDto, int64](input.RoleAndResources, func(i int, item dto.RoleAndResourceDto) int64 {
 		return item.ResourceId
 	})
-	var resources []*model.Resource
 	var rolesAndResources []*model.RoleAndResource
 	err = l.repos.RoleRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
 
-		var validResourceIds []int64
+		if innerErr = l.validateRoleResources(ctx, tx, input.OrganizationId, input.Type, resourceIds); innerErr != nil {
+			return innerErr
+		}
 		// create role
 		role, innerErr = l.repos.RoleRepo.CreateWithTx(ctx, tx, role, false)
 		if innerErr != nil {
@@ -95,22 +96,12 @@ func (l *RoleLogic) Create(ctx context.Context, input dto.RoleCreateRequestDto) 
 		}
 
 		// create role and resource relationship
-		resources, innerErr = l.repos.ResourceRepo.GetResourcesWithTx(ctx, tx, resourceIds, input.Type)
-		if innerErr != nil {
-			return innerErr
-		}
-		validResourceIds = slice.Map[*model.Resource, int64](resources, func(i int, item *model.Resource) int64 {
-			return item.Id
-		})
-		rolesAndResources = slice.FilterMap[dto.RoleAndResourceDto, *model.RoleAndResource](input.RoleAndResources, func(i int, item dto.RoleAndResourceDto) (*model.RoleAndResource, bool) {
-			if slice.Contain(validResourceIds, item.ResourceId) {
-				return &model.RoleAndResource{
-					RoleId:     role.Id,
-					ResourceId: item.ResourceId,
-					DataScope:  item.DataScope,
-				}, true
+		rolesAndResources = slice.Map(input.RoleAndResources, func(i int, item dto.RoleAndResourceDto) *model.RoleAndResource {
+			return &model.RoleAndResource{
+				RoleId:     role.Id,
+				ResourceId: item.ResourceId,
+				DataScope:  item.DataScope,
 			}
-			return nil, false
 		})
 		if len(rolesAndResources) > 0 {
 			_, innerErr = l.repos.RoleAndResourceRepo.BatchCreateWithTx(ctx, tx, rolesAndResources, false)
@@ -183,8 +174,9 @@ func (l *RoleLogic) Update(ctx context.Context, id int64, input dto.RoleUpdateRe
 	var removedPolicies [][]string
 	err = l.repos.RoleRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		var innerErr error
-		var resources []*model.Resource
-		var validResourceIds []int64
+		if innerErr = l.validateRoleResources(ctx, tx, input.OrganizationId, input.Type, resourceIds); innerErr != nil {
+			return innerErr
+		}
 		// update role
 		roleModel.RemoveRelationships()
 		roleModel, innerErr = l.repos.RoleRepo.UpdateOneWithTx(ctx, tx, roleModel)
@@ -193,22 +185,12 @@ func (l *RoleLogic) Update(ctx context.Context, id int64, input dto.RoleUpdateRe
 		}
 
 		// save role and resource relationship
-		resources, innerErr = l.repos.ResourceRepo.GetResourcesWithTx(ctx, tx, resourceIds, roleModel.Type)
-		if innerErr != nil {
-			return innerErr
-		}
-		validResourceIds = slice.Map[*model.Resource, int64](resources, func(i int, item *model.Resource) int64 {
-			return item.Id
-		})
-		rolesAndResources := slice.FilterMap[dto.RoleAndResourceDto, *model.RoleAndResource](input.RoleAndResources, func(i int, item dto.RoleAndResourceDto) (*model.RoleAndResource, bool) {
-			if slice.Contain(validResourceIds, item.ResourceId) {
-				return &model.RoleAndResource{
-					RoleId:     roleModel.Id,
-					ResourceId: item.ResourceId,
-					DataScope:  item.DataScope,
-				}, true
+		rolesAndResources := slice.Map(input.RoleAndResources, func(i int, item dto.RoleAndResourceDto) *model.RoleAndResource {
+			return &model.RoleAndResource{
+				RoleId:     roleModel.Id,
+				ResourceId: item.ResourceId,
+				DataScope:  item.DataScope,
 			}
-			return nil, false
 		})
 		oldRelations, innerErr := l.repos.RoleAndResourceRepo.GetRoleRelationsWithTx(ctx, tx, roleModel.Id)
 		if innerErr != nil {
@@ -290,6 +272,39 @@ func (l *RoleLogic) Update(ctx context.Context, id int64, input dto.RoleUpdateRe
 	return result, err
 }
 
+func (l *RoleLogic) validateRoleResources(ctx context.Context, tx *gorm.DB, organizationId int64, userType constants.UserType, resourceIds []int64) error {
+	if len(resourceIds) == 0 {
+		return nil
+	}
+	resources, err := l.repos.ResourceRepo.GetResourcesWithTx(ctx, tx, resourceIds, userType)
+	if err != nil {
+		return err
+	}
+	if len(resources) != len(slice.Unique(resourceIds)) {
+		return errorx.New("resource not found")
+	}
+	planResources := map[int64]bool{}
+	subs, err := l.repos.OrganizationSubscriptionRepo.FindActiveByOrgIdWithTx(ctx, tx, organizationId)
+	if err != nil {
+		return err
+	}
+	for _, sub := range subs {
+		ids, findErr := l.repos.PricingPlanAndResourceRepo.FindResourceIdsByPlanIdWithTx(ctx, tx, sub.PricingPlanId)
+		if findErr != nil {
+			return findErr
+		}
+		for _, id := range ids {
+			planResources[id] = true
+		}
+	}
+	for _, resource := range resources {
+		if resource.Status != constants.CommonStatusActive || (!resource.IsPublic && !planResources[resource.Id]) {
+			return errorx.New("resource is unavailable for organization pricing plan")
+		}
+	}
+	return nil
+}
+
 // Detail returns a role by id
 func (l *RoleLogic) Detail(ctx context.Context, id int64, organizationId int64, roleType constants.UserType) (result *dto.RoleEntityDto, err error) {
 	role, err := l.repos.RoleRepo.GetRole(ctx, id, organizationId, roleType)
@@ -341,6 +356,9 @@ func (l *RoleLogic) Delete(ctx context.Context, id int64, organizationId int64, 
 		}
 		innerErr = l.repos.RoleRepo.DeleteByIdWithTx(ctx, tx, id)
 		if innerErr != nil {
+			return innerErr
+		}
+		if innerErr = l.repos.RoleResourceSnapshotRepo.DeleteByRoleIdWithTx(ctx, tx, id); innerErr != nil {
 			return innerErr
 		}
 		// remove role policies

@@ -27,6 +27,16 @@ func setupTestDB(t *testing.T) *gorm.DB {
 	require.NoError(t, err)
 
 	sqls := []string{
+		`CREATE TABLE IF NOT EXISTS role_resource_snapshots (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			is_del INTEGER DEFAULT 0,
+			organization_id INTEGER NOT NULL,
+			pricing_plan_id INTEGER NOT NULL,
+			role_id INTEGER NOT NULL,
+			resources TEXT NOT NULL DEFAULT '[]'
+		)`,
 		`CREATE TABLE IF NOT EXISTS pricing_plans (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -125,9 +135,11 @@ func setupTestDB(t *testing.T) *gorm.DB {
 			description TEXT NOT NULL DEFAULT ''
 		)`,
 		`CREATE TABLE IF NOT EXISTS role_and_resources (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			role_id INTEGER NOT NULL,
 			resource_id INTEGER NOT NULL,
-			PRIMARY KEY (role_id, resource_id)
+			data_scope TEXT NOT NULL DEFAULT 'All',
+			UNIQUE (role_id, resource_id)
 		)`,
 	}
 	for _, s := range sqls {
@@ -468,6 +480,26 @@ func TestPricingPlanDelete_RemovesResourcesAndPolicies(t *testing.T) {
 	require.NoError(t, db.Model(&model.PricingPlan{}).
 		Where("id = ? AND is_del = 0", plan.Id).Count(&planCount).Error)
 	assert.Equal(t, int64(0), planCount, "pricing plan should be deleted")
+}
+
+func TestPricingPlanDelete_CleansSnapshotsWithoutChangingAdmin(t *testing.T) {
+	logic, db := setupPricingPlanLogic(t)
+	ctx := context.Background()
+	plan := seedPricingPlan(t, db, &model.PricingPlan{Name: "Plan", Type: constants.UserTypeLender, Status: constants.CommonStatusActive})
+	seedResources(t, db, []int64{201})
+	require.NoError(t, db.Create(&model.PricingPlanAndResource{PricingPlanId: plan.Id, ResourceId: 201}).Error)
+	require.NoError(t, db.Create(&model.OrganizationSubscription{Code: "SU-clean", OrganizationId: 1, PricingPlanId: plan.Id, Status: constants.OrganizationSubscriptionStatusExpired}).Error)
+	admin := &model.Role{OrganizationId: 1, Name: constants.AdminRoleName, Type: constants.UserTypeLender, Status: constants.CommonStatusActive}
+	require.NoError(t, db.Create(admin).Error)
+	require.NoError(t, db.Exec("INSERT INTO role_and_resources (role_id, resource_id) VALUES (?, ?)", admin.Id, 201).Error)
+	require.NoError(t, db.Create(&model.RoleResourceSnapshot{OrganizationId: 1, PricingPlanId: plan.Id, RoleId: 99, Resources: []model.RoleResourceSnapshotResource{{ResourceId: 201, DataScope: constants.DataScopeAll}}}).Error)
+
+	require.NoError(t, logic.Delete(ctx, plan.Id))
+	var snapshots, relations int64
+	require.NoError(t, db.Model(&model.RoleResourceSnapshot{}).Where("pricing_plan_id = ?", plan.Id).Count(&snapshots).Error)
+	require.NoError(t, db.Table("role_and_resources").Where("role_id = ?", admin.Id).Count(&relations).Error)
+	assert.Zero(t, snapshots)
+	assert.Equal(t, int64(1), relations)
 }
 
 // T033: UpdatePolicy/DeletePolicy tests

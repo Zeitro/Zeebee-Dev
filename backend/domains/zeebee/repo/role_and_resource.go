@@ -7,6 +7,7 @@ import (
 
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
+	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
 )
 
@@ -55,4 +56,11 @@ func (repo *RoleAndResourceRepo) FindByRoleIdsAndResourceIdsWithTx(ctx context.C
 		return nil, errorx.WithStack(err)
 	}
 	return results, nil
+}
+
+func (repo *RoleAndResourceRepo) UpdateDataScopeWithTx(ctx context.Context, tx *gorm.DB, roleId, resourceId int64, dataScope constants.DataScope) error {
+	err := tx.WithContext(ctx).Model(&model.RoleAndResource{}).
+		Where("role_id = ? AND resource_id = ?", roleId, resourceId).
+		Update("data_scope", dataScope).Error
+	return errorx.WithStack(err)
 }

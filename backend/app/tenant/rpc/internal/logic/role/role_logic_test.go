@@ -50,7 +50,7 @@ func seedResource(t *testing.T, env *testutil.Env, userType constants.UserType, 
 		Type:     userType,
 		Status:   constants.CommonStatusActive,
 		Name:     name,
-		IsPublic: false,
+		IsPublic: true,
 	})
 }
 
@@ -113,6 +113,54 @@ func TestCreate_DuplicateNameRejected(t *testing.T) {
 	}})
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "already exists")
+}
+
+func TestCreate_InvalidResourceLeavesNoRole(t *testing.T) {
+	env := newTestEnv(t)
+	organization := seedActiveOrganization(t, env, constants.UserTypeLender)
+	_, err := NewCreateLogic(context.Background(), env.SvcCtx).Create(&tenant.RoleCreateRequest{Data: &tenant.RoleCreateRequestData{
+		UserType:       string(constants.UserTypeLender),
+		OrganizationId: organization.Id,
+		Name:           "Invalid",
+		Status:         string(constants.CommonStatusActive),
+		RoleAndResources: []*tenant.RoleAndResourceRelationEntity{{
+			ResourceId: 99999, DataScope: string(constants.DataScopeAll),
+		}},
+	}})
+	require.Error(t, err)
+	var count int64
+	require.NoError(t, env.DB.Model(&model.Role{}).Where("organization_id = ?", organization.Id).Count(&count).Error)
+	assert.Zero(t, count)
+}
+
+func TestCreate_InvalidResourceVariantsLeaveNoRole(t *testing.T) {
+	for _, tc := range []struct {
+		name     string
+		resource *model.Resource
+		id       int64
+	}{
+		{"missing", nil, 99999},
+		{"wrong type", &model.Resource{Type: constants.UserTypeBorrower, Name: "Borrower", Status: constants.CommonStatusActive}, 0},
+		{"disabled", &model.Resource{Type: constants.UserTypeLender, Name: "Disabled", Status: constants.CommonStatusDisabled}, 0},
+		{"outside plan", &model.Resource{Type: constants.UserTypeLender, Name: "Outside", Status: constants.CommonStatusActive}, 0},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			env := newTestEnv(t)
+			organization := seedActiveOrganization(t, env, constants.UserTypeLender)
+			id := tc.id
+			if tc.resource != nil {
+				id = testutil.SeedResource(t, env.DB, tc.resource).Id
+			}
+			_, err := NewCreateLogic(context.Background(), env.SvcCtx).Create(&tenant.RoleCreateRequest{Data: &tenant.RoleCreateRequestData{
+				UserType: string(constants.UserTypeLender), OrganizationId: organization.Id, Name: "Invalid", Status: string(constants.CommonStatusActive),
+				RoleAndResources: []*tenant.RoleAndResourceRelationEntity{{ResourceId: id, DataScope: string(constants.DataScopeAll)}},
+			}})
+			require.Error(t, err)
+			var count int64
+			require.NoError(t, env.DB.Model(&model.Role{}).Where("organization_id = ?", organization.Id).Count(&count).Error)
+			assert.Zero(t, count)
+		})
+	}
 }
 
 // T029 US-8: Detail returns the role (org + platform scoped).
@@ -230,6 +278,7 @@ func TestDelete_RemovesRole(t *testing.T) {
 	env := newTestEnv(t)
 	organization := seedActiveOrganization(t, env, constants.UserTypeLender)
 	roleId := createRole(t, env, organization, "Deletable", nil)
+	require.NoError(t, env.DB.Create(&model.RoleResourceSnapshot{OrganizationId: organization.Id, PricingPlanId: 1, RoleId: roleId, Resources: []model.RoleResourceSnapshotResource{{ResourceId: 1, DataScope: constants.DataScopeAll}}}).Error)
 
 	_, err := NewDeleteLogic(context.Background(), env.SvcCtx).Delete(&tenant.RoleDeleteRequest{Data: &tenant.RoleDeleteRequestData{
 		UserType: string(constants.UserTypeLender), OrganizationId: organization.Id, Id: roleId,
@@ -238,5 +287,7 @@ func TestDelete_RemovesRole(t *testing.T) {
 
 	var count int64
 	require.NoError(t, env.DB.Model(&model.Role{}).Where("id = ?", roleId).Count(&count).Error)
+	assert.Zero(t, count)
+	require.NoError(t, env.DB.Model(&model.RoleResourceSnapshot{}).Where("role_id = ?", roleId).Count(&count).Error)
 	assert.Zero(t, count)
 }

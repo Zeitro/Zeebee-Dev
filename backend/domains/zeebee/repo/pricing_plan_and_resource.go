@@ -50,6 +50,11 @@ func (repo *PricingPlanAndResourceRepo) FindResourceIdsByPlanId(ctx context.Cont
 	return ids, errorx.WithStack(err)
 }
 
+func (repo *PricingPlanAndResourceRepo) FindResourceIdsByPlanIdWithTx(ctx context.Context, tx *gorm.DB, pricingPlanId int64) (ids []int64, err error) {
+	err = tx.WithContext(ctx).Model(&model.PricingPlanAndResource{}).Where("pricing_plan_id = ?", pricingPlanId).Pluck("resource_id", &ids).Error
+	return ids, errorx.WithStack(err)
+}
+
 // ReplaceResourcesByPlanId replaces all resource bindings for a plan using GORM many2many association
 func (repo *PricingPlanAndResourceRepo) ReplaceResourcesByPlanId(ctx context.Context, planId int64, resourceIds []int64) error {
 	resources := make([]*model.Resource, 0, len(resourceIds))

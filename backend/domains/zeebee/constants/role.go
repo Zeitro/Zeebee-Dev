@@ -9,8 +9,9 @@ type DataScope string
 var DataScopeName = "data_scope"
 
 const (
-	DataScopeAll DataScope = "All"
-	DataScopeOwn DataScope = "Own"
+	DataScopeAll          DataScope = "All"
+	DataScopeOrganization DataScope = "Organization"
+	DataScopeOwn          DataScope = "Own"
 )
 
 // Priority
@@ -18,8 +19,10 @@ func (d DataScope) Priority() int {
 	switch d {
 	case DataScopeAll:
 		return 1
-	case DataScopeOwn:
+	case DataScopeOrganization:
 		return 2
+	case DataScopeOwn:
+		return 3
 	default:
 		return 999
 	}
@@ -28,6 +31,10 @@ func (d DataScope) Priority() int {
 func init() {
 	// register data scope
 	enums.Register(DataScopeName, []enums.EnumOpt{
+		{
+			Label: string(DataScopeOrganization),
+			Value: string(DataScopeOrganization),
+		},
 		{
 			Label: string(DataScopeAll),
 			Value: string(DataScopeAll),
