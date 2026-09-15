@@ -62,11 +62,15 @@ func TestUpdateProjectWorkflowRequiresProjectManagerAndPreservesMetadata(t *test
 	require.NoError(t, db.Exec("INSERT INTO project_management_project_members (id, project_id, organization_user_id, role) VALUES (1, 1, 20, ?), (2, 1, 10, ?)", constants.ProjectManagementMemberRoleTaskExecutor, constants.ProjectManagementMemberRoleProjectOwner).Error)
 	require.NoError(t, db.Exec("INSERT INTO project_management_workflows (id, kind, organization_id, project_id, name, description) VALUES (100, ?, 1, 1, 'Workflow', 'Original description')", constants.ProjectManagementWorkflowKindProject).Error)
 	require.NoError(t, db.Exec("INSERT INTO project_management_workflow_stages (id, workflow_id, name, phase, sort_order) VALUES (101, 100, 'Pending', ?, 1), (102, 100, 'Finished', ?, 2)", constants.ProjectManagementStagePhasePending, constants.ProjectManagementStagePhaseFinished).Error)
+	require.NoError(t, db.Exec("INSERT INTO project_management_workflow_transitions (id, workflow_id, name, from_stage_id, to_stage_id, allowed_actor_types) VALUES (103, 100, 'Finish', 101, 102, ?)", `["ProjectAdmin","ProjectOwner","TaskCreator","TaskExecutor"]`).Error)
 
 	logic := NewProjectManagementWorkflowLogic(NewBaseLogic(repo.NewAllRepos(db), nil, nil, dto.JwtConfig{}))
 	input := dto.ProjectManagementWorkflowUpdateDto{
 		Stages: []dto.ProjectManagementWorkflowUpdateStageDto{
-			{Id: 101, Name: "Not started", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 1},
+			{Id: 101, Name: "Not started", Phase: constants.ProjectManagementStagePhasePending, SortOrder: 1, Transitions: []dto.ProjectManagementWorkflowUpdateTransitionDto{{
+				Id: 103, Name: "Finish", FromStageId: 101, ToStageId: 102,
+				AllowedActorTypes: []constants.ProjectManagementMemberRole{constants.ProjectManagementMemberRoleProjectAdmin, constants.ProjectManagementMemberRoleProjectOwner, constants.ProjectManagementMemberRoleTaskCreator},
+			}}},
 			{Id: 102, Name: "Finished", Phase: constants.ProjectManagementStagePhaseFinished, SortOrder: 2},
 		},
 	}
@@ -88,4 +92,5 @@ func TestUpdateProjectWorkflowRequiresProjectManagerAndPreservesMetadata(t *test
 	var stage model.ProjectManagementWorkflowStage
 	require.NoError(t, db.First(&stage, 101).Error)
 	require.Equal(t, "Not started", stage.Name)
+	require.Equal(t, []constants.ProjectManagementMemberRole{constants.ProjectManagementMemberRoleProjectAdmin, constants.ProjectManagementMemberRoleProjectOwner, constants.ProjectManagementMemberRoleTaskCreator}, updated.Stages[0].Transitions[0].AllowedActorTypes)
 }

@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
 // Test models
@@ -296,4 +298,43 @@ func TestTrans_NestedSliceConversion(t *testing.T) {
 	if len(*result) != 3 {
 		t.Errorf("Expected 3 items, got %d", len(*result))
 	}
+}
+
+func TestAssignReplacesNonNilSlices(t *testing.T) {
+	type value struct {
+		Actors []string
+	}
+
+	dst := value{
+		Actors: []string{"admin", "owner", "creator", "executor"},
+	}
+	require.NoError(t, Assign(&value{
+		Actors: []string{"admin", "owner", "creator"},
+	}, &dst))
+	require.Equal(t, []string{"admin", "owner", "creator"}, dst.Actors)
+
+	srcActors := []string{"admin", "owner", "creator"}
+	dstActors := []string{"admin", "owner", "creator", "executor"}
+	require.NoError(t, Assign(&srcActors, &dstActors))
+	require.Equal(t, srcActors, dstActors)
+}
+
+func TestAssignConvertsSliceElements(t *testing.T) {
+	src := []*sourceModel{{Name: "Alice", Age: 25}, {Name: "Bob", Age: 30}}
+	dst := []*destModel{{Name: "Stale"}, {Name: "Stale"}, {Name: "Stale"}}
+
+	require.NoError(t, Assign(&src, &dst))
+	require.Len(t, dst, 2)
+	require.Equal(t, "Alice", dst[0].Name)
+	require.Equal(t, "Bob", dst[1].Name)
+}
+
+func TestTransCopiesCollections(t *testing.T) {
+	type value struct {
+		Actors []string
+	}
+
+	dst, err := Trans[value, value](&value{Actors: []string{"admin", "owner", "creator"}})
+	require.NoError(t, err)
+	require.Equal(t, []string{"admin", "owner", "creator"}, dst.Actors)
 }
