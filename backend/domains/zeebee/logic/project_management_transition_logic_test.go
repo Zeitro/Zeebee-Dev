@@ -111,11 +111,39 @@ func TestTransitionActorAndChildRules(t *testing.T) {
 	}); err == nil {
 		t.Fatal("non-executor passed executor-only transition")
 	}
+	owner := utils.JwtUser{OrganizationUserId: 1}
+	member.Role = constants.ProjectManagementMemberRoleProjectOwner
+	if err := db.Transaction(func(tx *gorm.DB) error {
+		return logic.requireTransitionActor(&projectManagementTransitionContext{ctx: context.Background(), tx: tx, task: task, project: project, member: member, claim: owner, transition: transition})
+	}); err == nil {
+		t.Fatal("owner passed executor-only transition")
+	}
+	transition.AllowedActorTypes = []constants.ProjectManagementMemberRole{constants.ProjectManagementMemberRoleProjectOwner}
+	member.Role = constants.ProjectManagementMemberRoleTaskExecutor
+	if err := db.Transaction(func(tx *gorm.DB) error {
+		return logic.requireTransitionActor(&projectManagementTransitionContext{ctx: context.Background(), tx: tx, task: task, project: project, member: member, claim: owner, transition: transition})
+	}); err == nil {
+		t.Fatal("organization owner passed project-owner transition without project-owner role")
+	}
+	member.Role = constants.ProjectManagementMemberRoleProjectOwner
+	if err := db.Transaction(func(tx *gorm.DB) error {
+		return logic.requireTransitionActor(&projectManagementTransitionContext{ctx: context.Background(), tx: tx, task: task, project: project, member: member, claim: owner, transition: transition})
+	}); err != nil {
+		t.Fatalf("project owner member rejected: %v", err)
+	}
+	transition.AllowedActorTypes = []constants.ProjectManagementMemberRole{constants.ProjectManagementMemberRoleTaskExecutor}
 	member.Role = constants.ProjectManagementMemberRoleTaskExecutor
 	if err := db.Transaction(func(tx *gorm.DB) error {
 		return logic.requireTransitionActor(&projectManagementTransitionContext{ctx: context.Background(), tx: tx, task: task, project: project, member: member, claim: actor, transition: transition})
 	}); err != nil {
 		t.Fatalf("executor member rejected: %v", err)
+	}
+	transition.AllowedActorTypes = nil
+	member.Role = constants.ProjectManagementMemberRoleProjectAdmin
+	if err := db.Transaction(func(tx *gorm.DB) error {
+		return logic.requireTransitionActor(&projectManagementTransitionContext{ctx: context.Background(), tx: tx, task: task, project: project, member: member, claim: actor, transition: transition})
+	}); err != nil {
+		t.Fatalf("unrestricted transition rejected a project member: %v", err)
 	}
 	if err := db.Exec("INSERT INTO project_management_tasks (id, project_id, organization_id, parent_task_id, stage_id) VALUES (11, 1, 1, 10, 100)").Error; err != nil {
 		t.Fatal(err)

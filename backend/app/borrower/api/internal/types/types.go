@@ -2102,6 +2102,7 @@ type ProjectManagementTaskTypeUpdateRequest struct {
 
 type ProjectManagementTaskUpdateRequest struct {
 	Id                          int64                                     `path:"id" validate:"required,gt=0"`
+	StageId                     int64                                     `json:"stage_id,optional" validate:"gte=0"`
 	Title                       string                                    `json:"title" validate:"required,max=255"`
 	Description                 string                                    `json:"description,optional"`
 	Priority                    string                                    `json:"priority,optional" validate:"omitempty,oneof=Low Medium High Critical"`

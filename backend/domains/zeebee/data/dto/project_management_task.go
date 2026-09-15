@@ -45,6 +45,7 @@ type ProjectManagementTaskCreateDto struct {
 }
 
 type ProjectManagementTaskUpdateDto struct {
+	StageId                     int64
 	Title                       string
 	Description                 string
 	Priority                    constants.ProjectManagementPriority

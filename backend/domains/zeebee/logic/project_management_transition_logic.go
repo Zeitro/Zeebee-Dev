@@ -38,69 +38,76 @@ func (l *ProjectManagementTaskLogic) Transition(ctx context.Context, claim utils
 		if task.OrganizationId != claim.OrganizationId {
 			return errorx.New("task not found")
 		}
-		project, err := l.repos.ProjectManagementProjectRepo.LockByOrganizationWithTx(ctx, tx, task.ProjectId, claim.OrganizationId)
-		if err != nil {
-			return projectManagementNotFound(err, "project not found")
-		}
-		member, err := l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.ProjectId, claim.OrganizationUserId)
-		if err != nil {
-			return projectManagementNotFound(err, "project member required")
-		}
-		workflow, err := l.repos.ProjectManagementWorkflowRepo.FindProjectDefinitionWithTx(ctx, tx, task.ProjectId, claim.OrganizationId)
-		if err != nil {
-			return projectManagementNotFound(err, "project workflow not found")
-		}
-		currentStage, err := l.repos.ProjectManagementWorkflowRepo.FindStageWithTx(ctx, tx, task.StageId)
-		if err != nil {
-			return projectManagementNotFound(err, "task stage not found")
-		}
-		targetStage, err := l.repos.ProjectManagementWorkflowRepo.FindStageWithTx(ctx, tx, targetStageId)
-		if err != nil {
-			return projectManagementNotFound(err, "target stage not found")
-		}
-		if currentStage.WorkflowId != workflow.Id || targetStage.WorkflowId != workflow.Id {
-			return errorx.New("task transition stage must belong to the project workflow")
-		}
-		transition, err := l.repos.ProjectManagementWorkflowRepo.FindTransitionWithTx(ctx, tx, workflow.Id, currentStage.Id, targetStage.Id)
-		if err != nil {
-			return projectManagementNotFound(err, fmt.Sprintf("workflow has no transition configured from %q to %q", currentStage.Name, targetStage.Name))
-		}
-		transitionCtx := &projectManagementTransitionContext{
-			ctx:          ctx,
-			tx:           tx,
-			claim:        claim,
-			task:         task,
-			project:      project,
-			member:       member,
-			currentStage: currentStage,
-			targetStage:  targetStage,
-			transition:   transition,
-		}
-		if err = l.requireTransitionActor(transitionCtx); err != nil {
+		if err = l.transitionWithTx(ctx, tx, claim, task, targetStageId); err != nil {
 			return err
 		}
-		if err = l.validateTransitionDependencies(transitionCtx); err != nil {
-			return err
-		}
-		if targetStage.Phase == constants.ProjectManagementStagePhaseFinished {
-			if err = l.validateFinishedChildren(transitionCtx); err != nil {
-				return err
-			}
-		}
-		if err = l.repos.ProjectManagementTaskRepo.CopyCurrentStageAssigneesIfTargetEmptyWithTx(ctx, tx, task, targetStage.Id); err != nil {
-			return err
-		}
-		task.StageId, task.Phase = targetStage.Id, targetStage.Phase
 		task.RemoveRelationships()
 		if _, err = l.repos.ProjectManagementTaskRepo.UpdateOneWithTx(ctx, tx, task); err != nil {
 			return err
 		}
-		return l.recordProjectTaskTransition(transitionCtx)
+		return nil
 	})
 	if err != nil {
 		return nil, err
 	}
 	return l.Detail(ctx, claim, task.Id)
+}
+
+func (l *ProjectManagementTaskLogic) transitionWithTx(ctx context.Context, tx *gorm.DB, claim utils.JwtUser, task *model.ProjectManagementTask, targetStageId int64) error {
+	project, err := l.repos.ProjectManagementProjectRepo.LockByOrganizationWithTx(ctx, tx, task.ProjectId, claim.OrganizationId)
+	if err != nil {
+		return projectManagementNotFound(err, "project not found")
+	}
+	member, err := l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.ProjectId, claim.OrganizationUserId)
+	if err != nil {
+		return projectManagementNotFound(err, "project member required")
+	}
+	workflow, err := l.repos.ProjectManagementWorkflowRepo.FindProjectDefinitionWithTx(ctx, tx, task.ProjectId, claim.OrganizationId)
+	if err != nil {
+		return projectManagementNotFound(err, "project workflow not found")
+	}
+	currentStage, err := l.repos.ProjectManagementWorkflowRepo.FindStageWithTx(ctx, tx, task.StageId)
+	if err != nil {
+		return projectManagementNotFound(err, "task stage not found")
+	}
+	targetStage, err := l.repos.ProjectManagementWorkflowRepo.FindStageWithTx(ctx, tx, targetStageId)
+	if err != nil {
+		return projectManagementNotFound(err, "target stage not found")
+	}
+	if currentStage.WorkflowId != workflow.Id || targetStage.WorkflowId != workflow.Id {
+		return errorx.New("task transition stage must belong to the project workflow")
+	}
+	transition, err := l.repos.ProjectManagementWorkflowRepo.FindTransitionWithTx(ctx, tx, workflow.Id, currentStage.Id, targetStage.Id)
+	if err != nil {
+		return projectManagementNotFound(err, fmt.Sprintf("workflow has no transition configured from %q to %q", currentStage.Name, targetStage.Name))
+	}
+	transitionCtx := &projectManagementTransitionContext{
+		ctx:          ctx,
+		tx:           tx,
+		claim:        claim,
+		task:         task,
+		project:      project,
+		member:       member,
+		currentStage: currentStage,
+		targetStage:  targetStage,
+		transition:   transition,
+	}
+	if err = l.requireTransitionActor(transitionCtx); err != nil {
+		return err
+	}
+	if err = l.validateTransitionDependencies(transitionCtx); err != nil {
+		return err
+	}
+	if targetStage.Phase == constants.ProjectManagementStagePhaseFinished {
+		if err = l.validateFinishedChildren(transitionCtx); err != nil {
+			return err
+		}
+	}
+	if err = l.repos.ProjectManagementTaskRepo.CopyCurrentStageAssigneesIfTargetEmptyWithTx(ctx, tx, task, targetStage.Id); err != nil {
+		return err
+	}
+	task.StageId, task.Phase = targetStage.Id, targetStage.Phase
+	return l.recordProjectTaskTransition(transitionCtx)
 }
 
 func (l *ProjectManagementTaskLogic) requireTransitionActor(transitionCtx *projectManagementTransitionContext) error {
@@ -110,7 +117,7 @@ func (l *ProjectManagementTaskLogic) requireTransitionActor(transitionCtx *proje
 	for _, actorType := range transitionCtx.transition.AllowedActorTypes {
 		switch constants.ProjectManagementMemberRole(actorType) {
 		case constants.ProjectManagementMemberRoleProjectOwner:
-			if transitionCtx.project.OwnerId == transitionCtx.claim.OrganizationUserId || transitionCtx.member.Role == constants.ProjectManagementMemberRoleProjectOwner {
+			if transitionCtx.member.Role == constants.ProjectManagementMemberRoleProjectOwner {
 				return nil
 			}
 		case constants.ProjectManagementMemberRoleProjectAdmin:

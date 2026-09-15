@@ -217,21 +217,36 @@ func (l *ProjectManagementTaskLogic) Update(ctx context.Context, claim utils.Jwt
 		if task.OrganizationId != claim.OrganizationId {
 			return errorx.New("task not found")
 		}
-		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.ProjectId, claim.OrganizationUserId); err != nil {
+		stageChanged := input.StageId != 0 && input.StageId != task.StageId
+		if stageChanged {
+			if err = l.transitionWithTx(ctx, tx, claim, task, input.StageId); err != nil {
+				return err
+			}
+		} else if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.ProjectId, claim.OrganizationUserId); err != nil {
 			return projectManagementNotFound(err, "project member required")
 		}
 		before := taskOperationValues(task)
-		base, taskType := task.Base, task.TaskType
+		base, taskType, stageId, phase := task.Base, task.TaskType, task.StageId, task.Phase
 		if err = copierx.Assign(&input, task); err != nil {
 			return err
 		}
-		task.Base, task.TaskType = base, taskType
+		task.Base, task.TaskType, task.StageId, task.Phase = base, taskType, stageId, phase
 		if input.TaskTypeId != 0 {
 			taskType, err := l.repos.ProjectManagementTaskTypeRepo.FindByOrganizationWithTx(ctx, tx, input.TaskTypeId, claim.OrganizationId)
 			if err != nil {
 				return projectManagementNotFound(err, "task type not found")
 			}
 			task.TaskType = ProjectManagementTaskTypeSnapshot(taskType)
+		}
+		if stageChanged {
+			existing, err := l.repos.ProjectManagementTaskRepo.ListAssigneesWithTx(ctx, tx, task.Id, task.StageId)
+			if err != nil {
+				return err
+			}
+			input.AssigneeOrganizationUserIds = make([]int64, len(existing))
+			for i, assignee := range existing {
+				input.AssigneeOrganizationUserIds[i] = assignee.OrganizationUserId
+			}
 		}
 		assignees, err := l.projectManagementTaskAssignees(ctx, tx, projectManagementTaskAssigneeInput{projectId: task.ProjectId, taskId: task.Id, stageId: task.StageId, organizationId: claim.OrganizationId, organizationUserIds: input.AssigneeOrganizationUserIds})
 		if err != nil {

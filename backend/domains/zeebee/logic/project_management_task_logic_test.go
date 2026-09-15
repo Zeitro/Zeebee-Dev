@@ -73,6 +73,7 @@ func TestCreateTaskKeepsWorkflowAndTypeSnapshots(t *testing.T) {
 		"INSERT INTO project_management_project_members (id, project_id, organization_user_id, role) VALUES (1, 10, 20, 'ProjectOwner'), (2, 10, 21, 'TaskExecutor'), (3, 10, 22, 'TaskExecutor')",
 		"INSERT INTO project_management_workflows (id, kind, organization_id, project_id, name) VALUES (100, 'Project', 1, 10, 'Workflow')",
 		"INSERT INTO project_management_workflow_stages (id, workflow_id, name, phase, sort_order) VALUES (200, 100, 'Pending', 'Pending', 1), (201, 100, 'Finished', 'Finished', 2)",
+		"INSERT INTO project_management_workflow_transitions (id, workflow_id, name, from_stage_id, to_stage_id, allowed_actor_types) VALUES (300, 100, 'Finish', 200, 201, '[\"ProjectOwner\"]')",
 		"INSERT INTO project_management_task_types (id, organization_id, name, description, color, enabled) VALUES (500, 1, 'Inspection', 'Initial visit', '#123456', true)",
 	} {
 		if err := db.Exec(statement).Error; err != nil {
@@ -181,8 +182,12 @@ func TestCreateTaskKeepsWorkflowAndTypeSnapshots(t *testing.T) {
 	if _, err = logic.Create(context.Background(), utils.JwtUser{OrganizationId: 1, OrganizationUserId: 23, Username: "Not member"}, dto.ProjectManagementTaskCreateDto{ProjectManagementTaskDto: dto.ProjectManagementTaskDto{ProjectId: 10, Title: "Denied"}}); err == nil {
 		t.Fatal("non-member created a task")
 	}
-	if err = db.Exec("UPDATE project_management_tasks SET stage_id = 201, phase = 'Finished' WHERE id = ?", task.Id).Error; err != nil {
-		t.Fatal(err)
+	if _, err = logic.Update(context.Background(), utils.JwtUser{OrganizationId: 1, OrganizationUserId: 21, Username: "Executor"}, task.Id, dto.ProjectManagementTaskUpdateDto{Title: task.Title, StageId: 201}); err == nil {
+		t.Fatal("disallowed member changed task stage through update")
+	}
+	task, err = logic.Update(context.Background(), actor, task.Id, dto.ProjectManagementTaskUpdateDto{Title: task.Title, StageId: 201})
+	if err != nil || task.StageId != 201 || task.Phase != constants.ProjectManagementStagePhaseFinished {
+		t.Fatalf("task update did not apply the configured transition: %#v, %v", task, err)
 	}
 	if _, err = logic.Create(context.Background(), actor, dto.ProjectManagementTaskCreateDto{ProjectManagementTaskDto: dto.ProjectManagementTaskDto{ProjectId: 10, ParentTaskId: task.Id, Title: "Child"}}); err == nil {
 		t.Fatal("child task was added to a finished parent")
