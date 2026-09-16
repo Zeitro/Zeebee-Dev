@@ -294,6 +294,7 @@
 		"deleteConfirmOk": "确认删除",
 		"title": "标题",
 		"titlePlaceholder": "输入任务标题",
+		"titleEditableHint": "点击修改标题",
 		"description": "描述",
 		"descriptionPlaceholder": "输入任务描述",
 		"type": "类型",
