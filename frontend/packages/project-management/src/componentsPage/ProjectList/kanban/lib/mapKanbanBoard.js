@@ -154,11 +154,19 @@ export function buildTaskUpdateBody(task, overrides = {}, options = {}) {
 		task.work_hours ??
 		task.estimated_hours;
 
+	/** UI 用 workflow_state_id；PUT 接口字段为 stage_id */
+	const stageId =
+		overrides.stage_id ??
+		overrides.workflow_state_id ??
+		task.stage_id ??
+		task.workflow_state_id;
+
 	return {
 		title: overrides.title ?? task.title,
 		description: overrides.description ?? task.description ?? '',
 		priority: toTaskPriorityValue(overrides.priority ?? task.priority),
 		task_type_id: taskTypeId ? Number(taskTypeId) : undefined,
+		stage_id: stageId ? Number(stageId) : undefined,
 		start_at: toApiDate(
 			overrides.start_at ?? overrides.start_date ?? task.start_date ?? task.start_at,
 		),

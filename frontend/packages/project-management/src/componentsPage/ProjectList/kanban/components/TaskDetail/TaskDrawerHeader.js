@@ -6,6 +6,7 @@
 import {
 	ArrowLeftOutlined,
 	DeleteOutlined,
+	EditOutlined,
 	FileTextOutlined,
 	// LinkOutlined,
 	// MoreOutlined,
@@ -182,14 +183,19 @@ export function TaskDrawerHeader({
 				</div>
 			</div>
 
-			<Input
-				key={task.id}
-				variant="borderless"
-				defaultValue={task.title}
-				onBlur={(event) => onTitleBlur(event.target.value.trim())}
-				onPressEnter={(event) => event.currentTarget.blur()}
-				className="!px-0 !py-0 font-semibold text-[22px] leading-snug text-base-text"
-			/>
+			<Tooltip title={t('kanban.titleEditableHint')}>
+				<div className="group relative">
+					<Input
+						key={task.id}
+						variant="borderless"
+						defaultValue={task.title}
+						placeholder={t('kanban.titlePlaceholder')}
+						onBlur={(event) => onTitleBlur(event.target.value.trim())}
+						className="!px-2 !py-1 !pr-8 font-semibold text-[22px] leading-snug text-base-text rounded-md cursor-text border border-dashed border-transparent transition-colors hover:!bg-base-text2 hover:!border-base-border focus:!bg-white focus:!border-base-primary"
+					/>
+					<EditOutlined className="absolute right-2.5 top-1/2 -translate-y-1/2 text-sm text-base-label opacity-40 pointer-events-none transition-opacity group-hover:opacity-100 group-focus-within:opacity-0" />
+				</div>
+			</Tooltip>
 		</div>
 	);
 }

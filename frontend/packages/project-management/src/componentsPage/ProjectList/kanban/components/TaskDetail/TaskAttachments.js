@@ -7,7 +7,7 @@ import { useCallback, useState } from 'react';
 import { DeleteOutlined, DownloadOutlined, UploadOutlined } from '@ant-design/icons';
 import { Button, Image, Spin } from 'antd';
 import { useTranslations } from 'next-intl';
-import { DeleteBtn, NewModal, UploadFileButton } from '@repo/shared-methods';
+import { DeleteBtn, UploadFileButton } from '@repo/shared-methods';
 import { displayValue, formatTime } from '@repo/shared-methods/utils';
 import { IMAGE_FILE_EXTENSIONS } from '../constants';
 import { getFileExtension } from '../helpers';
@@ -27,6 +27,7 @@ export function TaskAttachments({ task, saveTask, updateTaskDetail, messageApi, 
 	const items = Array.isArray(task?.attachments) ? task.attachments : [];
 	const [previewItem, setPreviewItem] = useState(null);
 	const [saving, setSaving] = useState(false);
+	const [visible, setVisible] = useState(false);
 	const [deletingId, setDeletingId] = useState(null);
 
 	const handleUploadSuccess = useCallback(
@@ -75,8 +76,9 @@ export function TaskAttachments({ task, saveTask, updateTaskDetail, messageApi, 
 
 	const handleOpen = (item) => {
 		const ext = getFileExtension(item.file_name);
-		if (IMAGE_FILE_EXTENSIONS.includes(ext) || ext === 'pdf') {
+		if (IMAGE_FILE_EXTENSIONS.includes(ext)) {
 			setPreviewItem(item);
+			setVisible(true);
 		} else {
 			window.open(item.file_url, '_blank', 'noopener,noreferrer');
 		}
@@ -149,28 +151,16 @@ export function TaskAttachments({ task, saveTask, updateTaskDetail, messageApi, 
 				))}
 			</TaskDetailPanel>
 
-			{previewItem ? (
-				<NewModal
-					title={previewItem.file_name}
-					footer={null}
-					width={800}
-					onCancel={() => setPreviewItem(null)}
-				>
-					{getFileExtension(previewItem.file_name) === 'pdf' ? (
-						<iframe
-							src={previewItem.file_url}
-							title={previewItem.file_name}
-							className="w-full h-[70vh] border-0"
-						/>
-					) : (
-						<Image
-							src={previewItem.file_url}
-							alt={previewItem.file_name}
-							className="max-w-full block mx-auto"
-						/>
-					)}
-				</NewModal>
-			) : null}
+			<Image
+				width={0}
+				height={0}
+				preview={{
+					visible,
+					src: previewItem?.file_url,
+					onVisibleChange: (vis) => setVisible(vis),
+				}}
+				alt=""
+			/>
 		</>
 	);
 }

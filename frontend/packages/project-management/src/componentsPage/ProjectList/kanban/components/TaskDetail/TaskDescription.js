@@ -6,7 +6,7 @@
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import { isRichTextEmpty, normalizeRichTextValue, toRichTextPreviewHtml } from '../helpers';
-
+import { Image } from 'antd';
 const EDITOR_HEIGHT_CLASS = 'h-[400px]';
 
 /** 预加载 WangEditor chunk，减少首次进入编辑时的闪烁 */
@@ -50,7 +50,8 @@ const previewClassName = [
  */
 export function TaskDescription({ value, onChange, locale, placeholder }) {
 	const [isEditing, setIsEditing] = useState(false);
-
+	const [visible, setVisible] = useState(false);
+	const [imageUrl, setImageUrl] = useState('');
 	useEffect(() => {
 		void preloadWangEditor();
 	}, []);
@@ -59,7 +60,13 @@ export function TaskDescription({ value, onChange, locale, placeholder }) {
 		onChange?.(normalizeRichTextValue(html));
 	};
 
-	const handleStartEditing = () => {
+	const handleStartEditing = (e) => {
+		if (e?.target?.currentSrc) {
+			setImageUrl(e?.target?.currentSrc);
+			setVisible(true);
+			return;
+		}
+		if (e?.target?.href) return;
 		void preloadWangEditor();
 		setIsEditing(true);
 	};
@@ -84,31 +91,43 @@ export function TaskDescription({ value, onChange, locale, placeholder }) {
 	const isEmpty = isRichTextEmpty(value);
 
 	return (
-		<div
-			role="button"
-			tabIndex={0}
-			onMouseEnter={() => void preloadWangEditor()}
-			onClick={handleStartEditing}
-			onKeyDown={(event) => {
-				if (event.key === 'Enter' || event.key === ' ') {
-					event.preventDefault();
-					handleStartEditing();
-				}
-			}}
-			className="rounded-xl border border-base-border bg-white overflow-hidden cursor-text transition-colors hover:bg-base-active/20"
-		>
-			<div className="min-h-[80px] px-4 py-3">
-				{isEmpty ? (
-					<span className="text-[13px] leading-relaxed text-base-disabled">
-						{placeholder}
-					</span>
-				) : (
-					<div
-						className={previewClassName}
-						dangerouslySetInnerHTML={{ __html: toRichTextPreviewHtml(value) }}
-					/>
-				)}
+		<>
+			<div
+				role="button"
+				tabIndex={0}
+				onMouseEnter={() => void preloadWangEditor()}
+				onClick={handleStartEditing}
+				onKeyDown={(event) => {
+					if (event.key === 'Enter' || event.key === ' ') {
+						event.preventDefault();
+						handleStartEditing();
+					}
+				}}
+				className="rounded-xl border border-base-border bg-white overflow-hidden cursor-text transition-colors hover:bg-base-active/20"
+			>
+				<div className="min-h-[80px] px-4 py-3">
+					{isEmpty ? (
+						<span className="text-[13px] leading-relaxed text-base-disabled">
+							{placeholder}
+						</span>
+					) : (
+						<div
+							className={previewClassName}
+							dangerouslySetInnerHTML={{ __html: toRichTextPreviewHtml(value) }}
+						/>
+					)}
+				</div>
 			</div>
-		</div>
+			<Image
+				width={0}
+				height={0}
+				preview={{
+					visible,
+					src: imageUrl,
+					onVisibleChange: (vis) => setVisible(vis),
+				}}
+				alt=""
+			/>
+		</>
 	);
 }
