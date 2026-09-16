@@ -86,7 +86,6 @@ export function TaskDetailDrawer({
 		taskTypes,
 		persistAssignees,
 		saveTask,
-		saveTitle,
 		deleteTask,
 		deleting,
 		fetchTaskDetail,
@@ -251,7 +250,13 @@ export function TaskDetailDrawer({
 	};
 
 	const handleDelete = () => deleteTask(displayTask, onClose);
-	const handleTitleBlur = (title) => saveTitle(displayTask, title);
+	const handleTitleBlur = async (title) => {
+		if (title === displayTask.title) return;
+		const updated = await saveTask(displayTask, { title });
+		if (!updated) return;
+		setDetailTask(updated);
+		form.setFieldValue('title', updated.title ?? title);
+	};
 	const handleClose = () => {
 		setLogOpen(false);
 		setCreateOpen(false);

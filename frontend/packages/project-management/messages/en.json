@@ -295,6 +295,7 @@
 		"deleteConfirmOk": "Delete",
 		"title": "Title",
 		"titlePlaceholder": "Enter task title",
+		"titleEditableHint": "Click to edit title",
 		"description": "Description",
 		"descriptionPlaceholder": "Enter task description",
 		"type": "Type",

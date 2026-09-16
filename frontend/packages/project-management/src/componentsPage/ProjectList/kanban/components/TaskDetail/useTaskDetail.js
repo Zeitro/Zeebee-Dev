@@ -15,7 +15,7 @@ import {
 	createProjectMemberApi,
 	PROJECT_MEMBER_LIST_PAGE_SIZE,
 } from '@repo/project-management/api/projectMember';
-import { createTaskApi, getTaskApi } from '@repo/project-management/api/task';
+import { createTaskApi } from '@repo/project-management/api/task';
 import { createTaskTypeApi } from '@repo/project-management/api/taskType';
 import { mapProjectMember } from '@repo/project-management/lib/mapProjectMember';
 import { unwrapList } from '../helpers';
@@ -208,8 +208,8 @@ export function useTaskDetail({ projectId, enabled = true, onMutated }) {
 				const updated = await updateTaskDetail(sourceTask, { assignee_ids: ids });
 				await syncAssigneeParticipants(ids);
 				return updated;
-			} catch {
-				messageApi.error(t('kanban.assigneeSaveFailed'));
+			} catch (error) {
+				messageApi.error(`${t('kanban.assigneeSaveFailed')}: ${error?.message}`);
 				return null;
 			}
 		},
@@ -223,34 +223,12 @@ export function useTaskDetail({ projectId, enabled = true, onMutated }) {
 				const updated = await updateTaskDetail(sourceTask, values);
 				messageApi.success(t('kanban.saveSuccess'));
 				return updated;
-			} catch {
-				messageApi.error(t('kanban.saveFailed'));
+			} catch (error) {
+				messageApi.error(`${t('kanban.saveFailed')}: ${error?.message}`);
 				return null;
 			}
 		},
 		[messageApi, t, updateTaskDetail],
-	);
-
-	/**
-	 * @param {object} sourceTask
-	 * @param {string} title
-	 */
-	const saveTitle = useCallback(
-		async (sourceTask, title) => {
-			if (!sourceTask?.id || !title || title === sourceTask.title) return;
-			try {
-				await request(getTaskApi(sourceTask.id), {
-					method: 'PUT',
-					isHideTips: true,
-					body: { title, user_id: userId || 0 },
-				});
-				messageApi.success(t('kanban.saveSuccess'));
-				await onMutated?.();
-			} catch {
-				messageApi.error(t('kanban.saveFailed'));
-			}
-		},
-		[messageApi, onMutated, request, t, userId],
 	);
 
 	/**
@@ -269,7 +247,7 @@ export function useTaskDetail({ projectId, enabled = true, onMutated }) {
 				onDeleted?.();
 				await onMutated?.();
 			} catch (error) {
-				messageApi.error(error?.message || t('kanban.deleteFailed'));
+				messageApi.error(`${t('kanban.deleteFailed')}: ${error?.message}`);
 				throw error;
 			} finally {
 				setDeleting(false);
@@ -289,7 +267,6 @@ export function useTaskDetail({ projectId, enabled = true, onMutated }) {
 		taskTypes,
 		persistAssignees,
 		saveTask,
-		saveTitle,
 		deleteTask,
 		deleting,
 		fetchTaskDetail,
