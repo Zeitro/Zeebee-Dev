@@ -93,8 +93,10 @@ Zeebee-Dev/
 - **交互组件**：优先按「封装组件放置」选用共享包或应用内封装（见二），再 Ant Design 5.x；沿用各应用根布局的 **AntdRegistry / ConfigProvider**。
 - **布局、间距、响应式**：Tailwind 3.x；避免与 antd 强耦合的重复样式。
 - **颜色 token**：写文字色 / 背景色 / 边框色前，先查**当前应用** `src/app/globals.css`（`:root` 的 `--*`）与同应用 `tailwind.config.js` → `theme.extend.colors`。已注册 token 用 utility（如 `--base-primary` → `text-base-primary`）；仅 CSS 有、Tailwind 未注册的用 `var(--*)`。**禁止**硬编码与 token 等价的色值；确无 token 再评估新增。
-- **图标**：`@ant-design/icons`；**日期**与 antd 5 对齐 **dayjs**。
-- **空值展示**：向用户展示的字段无有效数据时一律 **`--`**（两个 ASCII 连字符）。**禁止**手写 `'--'` / `?? '--'` / `—` / `N/A` 等。使用对应共享包的 **`displayValue(value, formatter?)`** / **`EMPTY_DISPLAY`**（实现于 `lib/format.js`）；三端与 project-management 优先 **`@repo/shared-methods/utils`**（或经其 re-export 的 platform-core）。
+- **图标**：`@ant-design/icons`。
+- **日期 / 时间统一格式**：展示、`DatePicker`、提交请求**一律**走 **`@repo/shared-methods/utils`** 的 **`formatDate` / `formatTime` / `formatStr` / `formatTimeStr`**（日期 `MM/DD/YYYY`，时间 `MM/DD/YYYY HH:mm:ss`）。`DatePicker` 的 `format` 用 **`formatStr`**（或时间用 `formatTimeStr`）；请求体日期用 **`formatDate(value)`**（PM 任务等已有 **`toApiDate`** 时复用，勿再写一套）。回填优先按 `formatStr` 解析，仅在不匹配时再兼容 ISO。**禁止**手写 `YYYY-MM-DD`、`YYYY-MM-DDTHH:mm:ssZ` 或其它与 `formatStr` 不一致的展示 / 提交格式。
+- **删除确认用公共提示框**：**禁止**用 antd **`Popconfirm`** 做删除（及其它需确认的危险操作）确认。删除按钮用 **`@repo/shared-methods`** 的 **`DeleteBtn`**（内部是统一 `modal.confirm`）；不能用按钮封装时，用 **`Modal.useModal()`** 的 **`modal.confirm({ ...initConfigFn({ ... }) })`**（`initConfigFn` 同包导出）。文案走 i18n，`okButtonProps: { danger: true }`。
+- **空值展示**：向用户展示的字段无有效数据时一律 **`--`**（两个 ASCII 连字符）。**禁止**手写 `'--'` / `?? '--'` / `—` / `N/A` 等。使用对应共享包的 **`displayValue(value, formatter?)`** / **`EMPTY_DISPLAY`**（实现于 `lib/format.js`）；三端与 project-management 优先 **`@repo/shared-methods/utils`**（或经其 re-export 的 platform-core）。日期空值同样走 **`displayValue(value, formatDate)`**，勿另写占位。
 
 ### 质量、注释与 Agent 方式
 
@@ -135,7 +137,7 @@ Zeebee-Dev/
 - **UI 组件**：直接用 antd 前，**先查 `@repo/shared-methods`**（`components/*`、`componentsUi/*`，含经其中转的 **`platform-core`** 通用能力）；**PM 域**再查 **`@repo/project-management/components/*`**。已有封装必须复用。列表「筛选 + 表格」优先 Skill **`filter-table`**（`FilterTable` / `FilterTableCard`），说明见 `.cursor/skills/filter-table/SKILL.md`，勿手写 `FilterField`+`NewTable` 流水线。
 - **枚举与展示常量**：三端非 PM → **`@repo/shared-methods/enum/*`**；PM 域 → **`@repo/project-management/enum/*`**。会被多 feature 复用则进对应包的 `enum` 并补 `exports`。
 - **hooks**：三端非 PM → **`@repo/shared-methods/hooks/*`**；PM → **`@repo/project-management/hooks/*`**。跨三端则抽到 `shared-methods`；跨 PM feature 则抽到 `project-management`。通用非业务 hook 优先 **`platform-core`** 再经 `shared-methods` 中转。
-- **展示类格式化 / 空值**：优先 **`@repo/shared-methods/utils`**（`formatDate` / `formatTime` / `formatAmount` / `formatPhone` / **`displayValue`** / **`EMPTY_DISPLAY`** 等）。`project-management` 复用同一套，勿在包内手写不一致格式。
+- **展示类格式化 / 空值**：优先 **`@repo/shared-methods/utils`**（`formatDate` / `formatTime` / `formatAmount` / `formatPhone` / **`displayValue`** / **`EMPTY_DISPLAY`** 等）。日期时间**必须**用上面的统一格式，**禁止**另写 format 字符串。删除确认用 **`DeleteBtn`** 或 **`initConfigFn` + `modal.confirm`**，**禁止 `Popconfirm`**。`project-management` 复用同一套，勿在包内手写不一致格式或弹框。
 - **API / 请求与通用逻辑**：三端非 PM → **`@repo/shared-methods/api/*`**、`lib/*`；PM → **`@repo/project-management`** 内 api / lib；纯通用请求基建优先落在 / 中转自 **`platform-core`**。
 - **全局或跨页面状态**：三端非 PM 跨端 → `shared-methods`；PM 域 → `project-management` 内 context / store；仅单应用 → 该应用 `store` / `context`。
 - 新增对外入口时在包 **`package.json` → `exports`** 声明子路径；各三端 Next 应用 **`transpilePackages`** 含 `@repo/shared-methods`（及若直接依赖则含 `@repo/platform-core`）；**borrower** 另含 **`@repo/project-management`**。

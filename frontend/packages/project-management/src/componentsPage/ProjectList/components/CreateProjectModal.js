@@ -1,6 +1,7 @@
 /**
- * 创建项目弹窗：NewModal + Form；POST `/project_management/project`，
- * 工作流下拉来自 GET `/project_management/workflow/all`，成功后回调 handleSearch 刷新列表。
+ * 创建项目弹窗：模板横滑选择与表单在同一 NewModal 内，模板默认排在项目名称前。
+ * POST `/project_management/project`，模板来自 GET `/project_management/workflow/all`；
+ * 周期 / 开始 / 截止与项目设置同一套字段，成功后回调 handleSearch 刷新列表。
  */
 'use client';
 
@@ -8,61 +9,50 @@ import { useEffect, useMemo, useState } from 'react';
 import { Form, Input, Select } from 'antd';
 import { useTranslations } from 'next-intl';
 import { NewModal } from '@repo/shared-methods';
-import { createRequest, displayValue } from '@repo/shared-methods/utils';
+import { createRequest, dayjs } from '@repo/shared-methods/utils';
 import { PROJECT_API } from '../../../api/project';
 import { WORKFLOW_ALL_API } from '../../../api/workflow';
-import {
-	getTaskPriorityI18nKey,
-	localizeSelectOptions,
-	TASK_PRIORITY,
-} from '../../../enum/task';
+import { getTaskPriorityI18nKey, localizeSelectOptions, TASK_PRIORITY } from '../../../enum/task';
 import { useOptionsStore } from '../../../store/options';
+import { addProjectCycle, toCycleUpdateBody } from '../setting/cycle';
+import { ProjectCycleFields } from '../setting/ProjectCycleFields';
+import { WorkflowTemplatePicker } from './WorkflowTemplatePicker';
 
 /**
- * 下拉文案：工作流名称 + stages.name（按 sort_order），便于区分模板。
- * @param {object} wf
- * @returns {string}
+ * 默认选 is_default，否则第一项。
+ * @param {object[]} list
+ * @returns {number|undefined}
  */
-function formatWorkflowLabel(wf) {
-	const title = wf?.name || '';
-	const stages = Array.isArray(wf?.stages) ? [...wf.stages] : [];
-	const stageNames = stages
-		.sort((a, b) => (Number(a?.sort_order) || 0) - (Number(b?.sort_order) || 0))
-		.map((stage) => stage?.name)
-		.filter(Boolean);
-	if (title && stageNames.length) {
-		return `${title} (${stageNames.join(' → ')})`;
-	}
-	if (stageNames.length) return stageNames.join(' → ');
-	return displayValue(title);
+function pickDefaultWorkflowId(list) {
+	return list.find((workflow) => workflow.is_default)?.id ?? list[0]?.id;
 }
 
 /**
- * GET workflow/all 的 data → Select options；默认选 is_default，否则第一项。
- * @param {unknown} data
- * @returns {{ options: Array<{value: number, label: string}>, defaultId: number|undefined }}
+ * 创建时的周期初值：今天起，默认 3 个月，截止日期 = 开始 + 周期。
+ * @returns {{ cycle_months: number, cycle_unit: string, start_date: import('dayjs').Dayjs, end_date: import('dayjs').Dayjs }}
  */
-function toWorkflowSelect(data) {
-	const list = Array.isArray(data?.list) ? data.list : [];
-	const options = list.map((wf) => ({
-		value: wf.id,
-		label: formatWorkflowLabel(wf),
-	}));
-	const defaultId = list.find((wf) => wf.is_default)?.id ?? list[0]?.id;
-	return { options, defaultId };
+function createCycleDefaults() {
+	const start = dayjs();
+	return {
+		cycle_months: 3,
+		cycle_unit: 'month',
+		start_date: start,
+		end_date: addProjectCycle(start, 3, 'month'),
+	};
 }
 
 /**
- * @param {{ setOpen: (open: boolean) => void, handleSearch?: () => void }} props
+ * @param {{ messageApi: { success: (msg: string) => void }, setOpen: (open: boolean) => void, handleSearch?: () => void }} props
  */
 export default function CreateProjectModal({ messageApi, setOpen, handleSearch }) {
 	const t = useTranslations();
 	const { request } = useMemo(() => createRequest(), []);
 	const [form] = Form.useForm();
 	const [confirmLoading, setConfirmLoading] = useState(false);
-	const [workflowOptions, setWorkflowOptions] = useState([]);
+	const [workflows, setWorkflows] = useState([]);
 	const [workflowLoading, setWorkflowLoading] = useState(true);
 	const [priorityLoading, setPriorityLoading] = useState(true);
+	const [cycleDefaults] = useState(createCycleDefaults);
 
 	const priorityOptionsRaw = useOptionsStore((state) => state.priorityOptions);
 	const getOptions = useOptionsStore((state) => state.getOptions);
@@ -84,19 +74,20 @@ export default function CreateProjectModal({ messageApi, setOpen, handleSearch }
 					getOptions('project_management_priority', 'priorityOptions').catch(() => {}),
 				]);
 				if (cancelled) return;
-				const { options, defaultId } = toWorkflowSelect(data);
-				setWorkflowOptions(options);
+				const list = Array.isArray(data?.list) ? data.list : [];
+				setWorkflows(list);
 
-				const { priorityOptions } = useOptionsStore.getState();
+				const { priorityOptions: loadedPriority } = useOptionsStore.getState();
 				const defaultPriority =
-					priorityOptions.find((item) => item.value === TASK_PRIORITY.MEDIUM)?.value ??
-					priorityOptions[0]?.value;
+					loadedPriority.find((item) => item.value === TASK_PRIORITY.MEDIUM)?.value ??
+					loadedPriority[0]?.value;
+				const defaultId = pickDefaultWorkflowId(list);
 				const fields = {};
 				if (defaultId != null) fields.workflow_template_id = defaultId;
 				if (defaultPriority != null) fields.priority = defaultPriority;
 				if (Object.keys(fields).length) form.setFieldsValue(fields);
 			} catch {
-				if (!cancelled) setWorkflowOptions([]);
+				if (!cancelled) setWorkflows([]);
 			} finally {
 				if (!cancelled) {
 					setWorkflowLoading(false);
@@ -118,11 +109,9 @@ export default function CreateProjectModal({ messageApi, setOpen, handleSearch }
 				body: {
 					name: String(values.name || '').trim(),
 					description: values.description || '',
-					// cover_url: '',
-					// entity_id: 0,
-					// entity_type: '',
 					workflow_template_id: values.workflow_template_id,
 					priority: values.priority,
+					...toCycleUpdateBody(values),
 				},
 			});
 			if (created == null) return;
@@ -153,7 +142,16 @@ export default function CreateProjectModal({ messageApi, setOpen, handleSearch }
 				autoComplete="off"
 				size="large"
 				disabled={confirmLoading}
+				initialValues={cycleDefaults}
+				className="h-[65vh] overflow-y-auto max-h-[800px]"
 			>
+				<Form.Item
+					name="workflow_template_id"
+					label={t('projectList.template')}
+					rules={[{ required: true, message: t('projectList.templateRequired') }]}
+				>
+					<WorkflowTemplatePicker workflows={workflows} loading={workflowLoading} />
+				</Form.Item>
 				<Form.Item name="name" label={t('projectList.name')} rules={[{ required: true }]}>
 					<Input placeholder={t('projectList.namePlaceholder')} />
 				</Form.Item>
@@ -164,25 +162,13 @@ export default function CreateProjectModal({ messageApi, setOpen, handleSearch }
 					/>
 				</Form.Item>
 				<Form.Item
-					name="workflow_template_id"
-					label={t('projectList.workflow')}
-					rules={[{ required: true }]}
-				>
-					<Select
-						showSearch
-						loading={workflowLoading}
-						optionFilterProp="label"
-						placeholder={t('projectList.workflowPlaceholder')}
-						options={workflowOptions}
-					/>
-				</Form.Item>
-				<Form.Item
 					name="priority"
 					label={t('projectList.priority')}
 					rules={[{ required: true }]}
 				>
 					<Select loading={priorityLoading} options={priorityOptions} />
 				</Form.Item>
+				<ProjectCycleFields required stacked />
 			</Form>
 		</NewModal>
 	);

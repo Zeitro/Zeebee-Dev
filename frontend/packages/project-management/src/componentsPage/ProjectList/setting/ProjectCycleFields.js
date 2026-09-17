@@ -9,7 +9,11 @@ import { useTranslations } from 'next-intl';
 import { dayjs, formatStr } from '@repo/shared-methods/utils';
 import { PROJECT_CYCLE_UNITS, addProjectCycle } from './cycle';
 
-export function ProjectCycleFields() {
+/**
+ * @param {{ required?: boolean, stacked?: boolean }} [props]
+ * 创建项目时周期 / 开始日必填，并在弹框内纵向排开；设置页保持可选、三列。
+ */
+export function ProjectCycleFields({ required = false, stacked = false } = {}) {
 	const t = useTranslations();
 	const form = Form.useFormInstance();
 	const cycleAmount = Number(Form.useWatch('cycle_months', form)) || 3;
@@ -30,10 +34,18 @@ export function ProjectCycleFields() {
 	};
 
 	return (
-		<div className="grid grid-cols-3 gap-4">
-			<Form.Item label={t('projectSetting.cycle')}>
+		<div className={stacked ? 'flex flex-col' : 'grid grid-cols-3 gap-4'}>
+			<Form.Item label={t('projectSetting.cycle')} required={required}>
 				<Space.Compact block>
-					<Form.Item name="cycle_months" noStyle>
+					<Form.Item
+						name="cycle_months"
+						noStyle
+						rules={
+							required
+								? [{ required: true, message: t('projectSetting.cycleRequired') }]
+								: undefined
+						}
+					>
 						<InputNumber
 							min={1}
 							precision={0}
@@ -51,7 +63,15 @@ export function ProjectCycleFields() {
 					</Form.Item>
 				</Space.Compact>
 			</Form.Item>
-			<Form.Item name="start_date" label={t('projectSetting.startDate')}>
+			<Form.Item
+				name="start_date"
+				label={t('projectSetting.startDate')}
+				rules={
+					required
+						? [{ required: true, message: t('projectSetting.startDateRequired') }]
+						: undefined
+				}
+			>
 				<DatePicker className="w-full" format={formatStr} onChange={applyDefaultEndDate} />
 			</Form.Item>
 			<Form.Item name="end_date" label={t('projectSetting.endDate')}>
