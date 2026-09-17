@@ -1,5 +1,6 @@
 export * from './componentsPage/ProjectList';
 export * from './componentsPage/ProjectList/kanban';
+export * from './componentsPage/ProjectList/details';
 export * from './componentsPage/ProjectList/setting';
 export * from './componentsPage/Workflow';
 export * from './componentsPage/TaskType';

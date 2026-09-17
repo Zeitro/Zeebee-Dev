@@ -334,6 +334,13 @@
 		"deleteFailed": "删除任务类型失败",
 		"orderFailed": "更新排序失败"
 	},
+	"projectDetail": {
+		"viewKanban": "看板",
+		"viewTable": "列表",
+		"viewTimeline": "时间线",
+		"viewHours": "工时",
+		"viewEmpty": "{view}即将开放"
+	},
 	"kanban": {
 		"taskCount": "（{count} 个任务）",
 		"newTask": "新建任务",

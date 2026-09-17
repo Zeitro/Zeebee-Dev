@@ -1,5 +1,5 @@
 /**
- * 看板顶栏：返回、项目名、成员、邀请、项目动态、新建任务（不含工作流配置）。
+ * 项目详情顶栏：项目名、视图切换槽、成员、邀请、项目动态、新建任务。
  */
 'use client';
 
@@ -30,6 +30,7 @@ import { getMemberInitial, getMemberLabel } from './helpers';
  *   onInviteClick?: () => void,
  *   onActivityClick?: () => void,
  *   showCreate?: boolean,
+ *   extra?: import('react').ReactNode,
  * }} props
  */
 export function KanbanHeader({
@@ -42,6 +43,7 @@ export function KanbanHeader({
 	onInviteClick,
 	onActivityClick,
 	showCreate = true,
+	extra = null,
 }) {
 	const t = useTranslations();
 	const router = useRouter();
@@ -65,6 +67,7 @@ export function KanbanHeader({
 				</h2>
 			</div>
 			<div className="flex items-center gap-3 shrink-0">
+				{extra}
 				{canManage && (
 					<>
 						<Tooltip title={t('kanban.projectMembers')}>

@@ -335,6 +335,13 @@
 		"deleteFailed": "Failed to delete task type",
 		"orderFailed": "Failed to update sort order"
 	},
+	"projectDetail": {
+		"viewKanban": "Board",
+		"viewTable": "List",
+		"viewTimeline": "Timeline",
+		"viewHours": "Hours",
+		"viewEmpty": "{view} is coming soon"
+	},
 	"kanban": {
 		"taskCount": "({count} tasks)",
 		"newTask": "New task",
