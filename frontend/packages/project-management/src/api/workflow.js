@@ -36,6 +36,24 @@ export function getProjectWorkflowApi(projectId) {
 }
 
 /**
+ * 给项目挂工作流：POST `/project_management/project/:id/workflows`，body `{ workflow_ids }`。
+ * @param {number|string} projectId
+ * @returns {string}
+ */
+export function getProjectWorkflowAttachApi(projectId) {
+	return `/project_management/project/${projectId}/workflows`;
+}
+
+/**
+ * 设项目默认工作流：PUT `/project_management/project/:id/default_workflow`，body `{ workflow_id }`。
+ * @param {number|string} projectId
+ * @returns {string}
+ */
+export function getProjectDefaultWorkflowApi(projectId) {
+	return `/project_management/project/${projectId}/default_workflow`;
+}
+
+/**
  * @param {number|string|null|undefined} projectId
  * @returns {boolean}
  */

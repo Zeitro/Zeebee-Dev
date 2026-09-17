@@ -1,11 +1,12 @@
 /**
- * 项目设置：封面 / 名称 / 描述更新，以及危险区删除；读路由 id，不写入全局 store。
+ * 项目设置：封面 / 名称 / 描述 / 优先级更新，以及周期、另存模板、项目工作流和危险区删除。
+ * 读路由 id，不写入全局 store。已联调的更新 / 删除请求体保持不变，周期字段附加在同一 PUT。
  */
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CameraOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Modal, Select, Spin, message } from 'antd';
+import { Button, Form, Input, Select, Space, Spin, message } from 'antd';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { NoData, UploadFileButton } from '@repo/shared-methods';
@@ -17,6 +18,11 @@ import {
 	toTaskPriorityValue,
 } from '../../../enum/task';
 import { useOptionsStore } from '../../../store/options';
+import { toCycleFormValues, toCycleUpdateBody } from './cycle';
+import { DeleteProjectSection } from './DeleteProjectSection';
+import { ProjectCycleFields } from './ProjectCycleFields';
+import { ProjectWorkflowSection } from './ProjectWorkflowSection';
+import { SaveAsTemplateButton } from './SaveTemplateModal';
 
 const COVER_ACCEPT = '.png,.jpg,.jpeg';
 
@@ -29,12 +35,11 @@ function ProjectSettingContent({ projectId }) {
 	const [form] = Form.useForm();
 	const { request } = useMemo(() => createRequest(), []);
 	const [messageApi, messageContextHolder] = message.useMessage();
-	const [modal, modalContextHolder] = Modal.useModal();
 	const [saving, setSaving] = useState(false);
-	const [deleting, setDeleting] = useState(false);
 	const [loading, setLoading] = useState(() => projectId != null && projectId !== '');
 	const [project, setProject] = useState(null);
 	const [coverPreview, setCoverPreview] = useState();
+	const [reloadToken, setReloadToken] = useState(0);
 	const coverUploadRef = useRef(null);
 
 	const priorityOptionsRaw = useOptionsStore((state) => state.priorityOptions);
@@ -87,11 +92,16 @@ function ProjectSettingContent({ projectId }) {
 		return () => {
 			cancelled = true;
 		};
-	}, [projectId, request, t, messageApi]);
+	}, [projectId, request, t, messageApi, reloadToken]);
 
 	const goList = useCallback(() => {
 		router.push('/project/projectList');
 	}, [router]);
+
+	/** 工作流变更后重拉详情；不把整页打回 loading，避免已填表单被卸载。 */
+	const refreshProject = useCallback(() => {
+		setReloadToken((token) => token + 1);
+	}, []);
 
 	const handleCoverListChange = useCallback((fileList) => {
 		const last = fileList[fileList.length - 1];
@@ -118,6 +128,7 @@ function ProjectSettingContent({ projectId }) {
 					description: values.description || '',
 					cover_url,
 					priority: values.priority,
+					...toCycleUpdateBody(values),
 				},
 			});
 			if (next == null) return;
@@ -132,38 +143,11 @@ function ProjectSettingContent({ projectId }) {
 		}
 	};
 
-	const handleDelete = () => {
-		modal.confirm({
-			title: t('projectSetting.deleteConfirmTitle'),
-			content: t('projectSetting.deleteConfirmContent', { name: project?.name }),
-			okText: t('projectSetting.delete'),
-			okType: 'danger',
-			cancelText: t('common.cancel'),
-			centered: true,
-			onOk: async () => {
-				try {
-					setDeleting(true);
-					await request(getProjectDetailApi(projectId), {
-						method: 'DELETE',
-					});
-					messageApi.success(t('projectSetting.deleteSuccess'));
-					goList();
-					setDeleting(false);
-				} catch {
-					setDeleting(false);
-					// createRequest 已提示接口错误
-					return Promise.reject();
-				}
-			},
-		});
-	};
-
 	const coverImage = coverPreview?.thumbUrl ?? project?.cover_url;
 
 	return (
 		<div className="flex-1 overflow-hidden bg-gray-light px-8 pt-6 pb-10">
 			{messageContextHolder}
-			{modalContextHolder}
 			<div className="max-w-2xl mx-auto">
 				<div className="relative flex items-center justify-center mb-6">
 					<h1 className="m-0 text-xl font-semibold text-black-dark">
@@ -215,6 +199,7 @@ function ProjectSettingContent({ projectId }) {
 								name: project.name,
 								description: project.description,
 								priority: toTaskPriorityValue(project.priority),
+								...toCycleFormValues(project),
 							}}
 							onFinish={handleUpdate}
 							size="large"
@@ -232,6 +217,7 @@ function ProjectSettingContent({ projectId }) {
 									placeholder={t('projectList.descriptionPlaceholder')}
 								/>
 							</Form.Item>
+							<ProjectCycleFields />
 							<Form.Item
 								name="priority"
 								label={t('projectList.priority')}
@@ -239,26 +225,30 @@ function ProjectSettingContent({ projectId }) {
 							>
 								<Select loading={priorityLoading} options={priorityOptions} />
 							</Form.Item>
-							<Button type="primary" htmlType="submit" loading={saving}>
-								{t('projectSetting.update')}
-							</Button>
+							<Space>
+								<Button type="primary" htmlType="submit" loading={saving}>
+									{t('projectSetting.update')}
+								</Button>
+								<SaveAsTemplateButton
+									project={project}
+									projectId={projectId}
+									messageApi={messageApi}
+								/>
+							</Space>
 						</Form>
-						<div className="mt-10 rounded-lg border border-[var(--error-medium)] bg-[var(--error-light)] px-4 py-4">
-							<p className="m-0 font-medium text-base-error">
-								{t('projectSetting.deleteTitle')}
-							</p>
-							<p className="mt-2 mb-4 text-sm text-base-error">
-								{t('projectSetting.deleteWarning')}
-							</p>
-							<Button
-								color="danger"
-								variant="outlined"
-								onClick={handleDelete}
-								disabled={deleting}
-							>
-								{t('projectSetting.delete')}
-							</Button>
-						</div>
+						<ProjectWorkflowSection
+							project={project}
+							projectId={projectId}
+							messageApi={messageApi}
+							onRefresh={refreshProject}
+						/>
+						<DeleteProjectSection
+							project={project}
+							projectId={projectId}
+							request={request}
+							messageApi={messageApi}
+							onDeleted={goList}
+						/>
 					</>
 				)}
 			</div>

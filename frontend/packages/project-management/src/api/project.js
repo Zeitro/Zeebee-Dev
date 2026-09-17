@@ -25,6 +25,16 @@ export function getProjectDetailApi(id) {
 }
 
 /**
+ * 另存为模板：POST `/project_management/project/:id/template`。
+ * body：`{ name, description, include_workflow, include_tasks, include_members }`。
+ * @param {number|string} id
+ * @returns {string}
+ */
+export function getProjectTemplateApi(id) {
+	return `${PROJECT_API}/${id}/template`;
+}
+
+/**
  * @param {number|string} id
  * @returns {string}
  */
