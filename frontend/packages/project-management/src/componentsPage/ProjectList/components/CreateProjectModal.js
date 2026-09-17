@@ -1,5 +1,6 @@
 /**
  * 创建项目弹窗：模板横滑选择与表单在同一 NewModal 内，模板默认排在项目名称前。
+ * `initialWorkflowId` 有值且在列表中时预选该模板，否则仍选默认项。
  * POST `/project_management/project`，模板来自 GET `/project_management/workflow/all`；
  * 周期 / 开始 / 截止与项目设置同一套字段，成功后回调 handleSearch 刷新列表。
  */
@@ -42,9 +43,33 @@ function createCycleDefaults() {
 }
 
 /**
- * @param {{ messageApi: { success: (msg: string) => void }, setOpen: (open: boolean) => void, handleSearch?: () => void }} props
+ * 列表里与 initialWorkflowId 同 id 的项优先，否则默认模板。保留接口返回的 id 类型，供选择器 === 比较。
+ * @param {object[]} list
+ * @param {number|string|null|undefined} initialWorkflowId
+ * @returns {number|string|undefined}
  */
-export default function CreateProjectModal({ messageApi, setOpen, handleSearch }) {
+function resolveWorkflowId(list, initialWorkflowId) {
+	if (initialWorkflowId != null) {
+		const matched = list.find((workflow) => String(workflow.id) === String(initialWorkflowId));
+		if (matched) return matched.id;
+	}
+	return pickDefaultWorkflowId(list);
+}
+
+/**
+ * @param {{
+ *   messageApi: { success: (msg: string) => void },
+ *   setOpen: (open: boolean) => void,
+ *   handleSearch?: () => void,
+ *   initialWorkflowId?: number|string|null
+ * }} props
+ */
+export default function CreateProjectModal({
+	messageApi,
+	setOpen,
+	handleSearch,
+	initialWorkflowId,
+}) {
 	const t = useTranslations();
 	const { request } = useMemo(() => createRequest(), []);
 	const [form] = Form.useForm();
@@ -81,7 +106,7 @@ export default function CreateProjectModal({ messageApi, setOpen, handleSearch }
 				const defaultPriority =
 					loadedPriority.find((item) => item.value === TASK_PRIORITY.MEDIUM)?.value ??
 					loadedPriority[0]?.value;
-				const defaultId = pickDefaultWorkflowId(list);
+				const defaultId = resolveWorkflowId(list, initialWorkflowId);
 				const fields = {};
 				if (defaultId != null) fields.workflow_template_id = defaultId;
 				if (defaultPriority != null) fields.priority = defaultPriority;
@@ -98,7 +123,7 @@ export default function CreateProjectModal({ messageApi, setOpen, handleSearch }
 		return () => {
 			cancelled = true;
 		};
-	}, [form, getOptions, request]);
+	}, [form, getOptions, initialWorkflowId, request]);
 
 	const handleSave = async () => {
 		try {

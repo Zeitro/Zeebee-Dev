@@ -262,4 +262,10 @@ export const menuSetting = {
 	'/project/myTask': {
 		hideCrumbs: true,
 	},
+	'/projectTemplate/templateLibrary': {
+		hideCrumbs: true,
+	},
+	'/projectTemplate/my': {
+		hideCrumbs: true,
+	},
 };

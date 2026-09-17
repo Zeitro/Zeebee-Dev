@@ -4,4 +4,6 @@ export * from './componentsPage/ProjectList/setting';
 export * from './componentsPage/Workflow';
 export * from './componentsPage/TaskType';
 export * from './componentsPage/MyTask';
+export * from './componentsPage/ProjectTemplate/templateLibrary';
+export * from './componentsPage/ProjectTemplate/my';
 export * from './i18n';
