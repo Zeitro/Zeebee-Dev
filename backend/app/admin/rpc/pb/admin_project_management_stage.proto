@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package admin;
+
+option go_package = "zeebee-backend/app/admin/rpc/pb/admin";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+
+message ProjectManagementStageInput {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  string phase = 4;
+  string color = 5;
+  int32 sort_order = 6;
+}
+
+message ProjectManagementStageCandidateRequest {
+  ProjectManagementStageCandidateRequestData data = 1;
+}
+message ProjectManagementStageCandidateRequestData {
+  int64 template_id = 1;
+  int64 workflow_id = 2;
+}
+message ProjectManagementStageCandidateResponse {
+  repeated ProjectManagementStageCandidateEntity list = 1;
+}
+message ProjectManagementStageCandidateEntity {
+  int64 id = 1;
+  string name = 2;
+}
+
+message ProjectManagementStageSwapOrderRequest {
+  ProjectManagementStageSwapOrderRequestData data = 1;
+}
+message ProjectManagementStageSwapOrderRequestData {
+  int64 template_id = 1;
+  int64 stage_id = 2;
+  int64 target_stage_id = 3;
+}
+
+service ProjectManagementStage {
+  rpc Candidate(ProjectManagementStageCandidateRequest) returns(ProjectManagementStageCandidateResponse);
+  rpc SwapOrder(ProjectManagementStageSwapOrderRequest) returns(proto.EmptyResponse);
+}

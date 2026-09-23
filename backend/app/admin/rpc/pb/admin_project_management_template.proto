@@ -1,0 +1,160 @@
+syntax = "proto3";
+
+package admin;
+
+option go_package = "zeebee-backend/app/admin/rpc/pb/admin";
+
+import "proto/common.proto";
+import "proto/entity.proto";
+import "admin_project_management_stage.proto";
+
+message ProjectManagementTemplatePageRequest {
+  ProjectManagementTemplatePageRequestData data = 1;
+}
+message ProjectManagementTemplatePageRequestData {
+  int64 page = 1;
+  int64 limit = 2;
+}
+message ProjectManagementTemplatePageResponse {
+  int64 total = 1;
+  int64 page = 2;
+  int64 limit = 3;
+  int64 total_page = 4;
+  repeated proto.ProjectManagementTemplateEntity list = 5;
+}
+
+message ProjectManagementTemplateCreateRequest {
+  ProjectManagementTemplateCreateRequestData data = 1;
+}
+message ProjectManagementTemplateCreateRequestData {
+  string name = 1;
+  string description = 2;
+  string status = 3;
+  string project_type = 4;
+  string start_at = 5;
+  int64 period_value = 6;
+  string period_unit = 7;
+  optional int32 sort_order = 8;
+  string end_at = 9;
+}
+
+message ProjectManagementTemplateUpdateRequest {
+  ProjectManagementTemplateUpdateRequestData data = 1;
+}
+message ProjectManagementTemplateUpdateRequestData {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  string status = 4;
+  optional int32 sort_order = 5;
+  string project_type = 6;
+  string start_at = 7;
+  string end_at = 8;
+  int64 period_value = 9;
+  string period_unit = 10;
+  repeated ProjectManagementStageInput stages = 11;
+}
+
+message ProjectManagementTemplateStatusRequest {
+  ProjectManagementTemplateStatusRequestData data = 1;
+}
+message ProjectManagementTemplateStatusRequestData {
+  int64 id = 1;
+  string status = 2;
+}
+
+message ProjectManagementTemplateDefaultsRequest {
+  ProjectManagementTemplateDefaultsRequestData data = 1;
+}
+message ProjectManagementTemplateDefaultsRequestData {
+  int64 id = 1;
+  string project_type = 2;
+  string start_at = 3;
+  int64 period_value = 4;
+  string period_unit = 5;
+}
+
+message ProjectManagementTemplateDetailRequest {
+  ProjectManagementTemplateDetailRequestData data = 1;
+}
+message ProjectManagementTemplateDetailRequestData {
+  int64 id = 1;
+}
+
+message ProjectManagementTemplateDetailResponse {
+  proto.ProjectManagementTemplateEntity data = 1;
+}
+
+message ProjectManagementTemplateWorkflowResponse {
+  repeated proto.ProjectManagementWorkflowEntity list = 1;
+}
+message ProjectManagementTemplateWorkflowDetailResponse {
+  proto.ProjectManagementWorkflowEntity data = 1;
+}
+
+message ProjectManagementTemplateWorkflowCreateRequest {
+  ProjectManagementTemplateWorkflowCreateRequestData data = 1;
+}
+message ProjectManagementTemplateWorkflowCreateRequestData {
+  int64 template_id = 1;
+  string name = 2;
+  string description = 3;
+  repeated ProjectManagementTemplateWorkflowTransitionInput transitions = 4;
+}
+
+message ProjectManagementTemplateWorkflowUpdateRequest {
+  ProjectManagementTemplateWorkflowUpdateRequestData data = 1;
+}
+message ProjectManagementTemplateWorkflowUpdateRequestData {
+  int64 template_id = 1;
+  int64 workflow_id = 2;
+  string name = 3;
+  string description = 4;
+  repeated ProjectManagementTemplateWorkflowTransitionInput transitions = 5;
+}
+
+message ProjectManagementTemplateWorkflowDetailRequest {
+  ProjectManagementTemplateWorkflowDetailRequestData data = 1;
+}
+message ProjectManagementTemplateWorkflowDetailRequestData {
+  int64 template_id = 1;
+  int64 workflow_id = 2;
+}
+
+message ProjectManagementTemplateWorkflowTransitionInput {
+  string name = 1;
+  int64 from_stage_id = 2;
+  int64 to_stage_id = 3;
+  repeated string allowed_actor_types = 4;
+}
+message ProjectManagementTemplateWorkflowDeleteRequest {
+  ProjectManagementTemplateWorkflowDeleteRequestData data = 1;
+}
+message ProjectManagementTemplateWorkflowDeleteRequestData {
+  int64 template_id = 1;
+  int64 workflow_id = 2;
+}
+
+message ProjectManagementTemplateWorkflowDefaultRequest {
+  ProjectManagementTemplateWorkflowDefaultRequestData data = 1;
+}
+message ProjectManagementTemplateWorkflowDefaultRequestData {
+  int64 template_id = 1;
+  int64 workflow_id = 2;
+}
+
+service ProjectManagementTemplate {
+  rpc Page(ProjectManagementTemplatePageRequest) returns(ProjectManagementTemplatePageResponse);
+  rpc Create(ProjectManagementTemplateCreateRequest) returns(ProjectManagementTemplateDetailResponse);
+  rpc Update(ProjectManagementTemplateUpdateRequest) returns(ProjectManagementTemplateDetailResponse);
+	  rpc Delete(proto.PathIdRequest) returns(proto.EmptyResponse);
+  rpc Status(ProjectManagementTemplateStatusRequest) returns(ProjectManagementTemplateDetailResponse);
+  rpc Defaults(ProjectManagementTemplateDefaultsRequest) returns(ProjectManagementTemplateDetailResponse);
+  rpc Workflows(proto.PathIdRequest) returns(ProjectManagementTemplateWorkflowResponse);
+  rpc WorkflowCreate(ProjectManagementTemplateWorkflowCreateRequest) returns(ProjectManagementTemplateWorkflowDetailResponse);
+  rpc WorkflowDetail(ProjectManagementTemplateWorkflowDetailRequest) returns(ProjectManagementTemplateWorkflowDetailResponse);
+  rpc WorkflowUpdate(ProjectManagementTemplateWorkflowUpdateRequest) returns(ProjectManagementTemplateWorkflowDetailResponse);
+  rpc WorkflowDelete(ProjectManagementTemplateWorkflowDeleteRequest) returns(proto.EmptyResponse);
+  rpc WorkflowDefault(ProjectManagementTemplateWorkflowDefaultRequest) returns(proto.EmptyResponse);
+  rpc Detail(ProjectManagementTemplateDetailRequest) returns(ProjectManagementTemplateDetailResponse);
+}
