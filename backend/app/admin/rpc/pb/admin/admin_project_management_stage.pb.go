@@ -154,6 +154,7 @@ type ProjectManagementStageCandidateRequestData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TemplateId    int64                  `protobuf:"varint,1,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
 	WorkflowId    int64                  `protobuf:"varint,2,opt,name=workflow_id,json=workflowId,proto3" json:"workflow_id,omitempty"`
+	WorkflowType  string                 `protobuf:"bytes,3,opt,name=workflow_type,json=workflowType,proto3" json:"workflow_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -200,6 +201,13 @@ func (x *ProjectManagementStageCandidateRequestData) GetWorkflowId() int64 {
 		return x.WorkflowId
 	}
 	return 0
+}
+
+func (x *ProjectManagementStageCandidateRequestData) GetWorkflowType() string {
+	if x != nil {
+		return x.WorkflowType
+	}
+	return ""
 }
 
 type ProjectManagementStageCandidateResponse struct {
@@ -416,12 +424,13 @@ const file_admin_project_management_stage_proto_rawDesc = "" +
 	"\n" +
 	"sort_order\x18\x06 \x01(\x05R\tsortOrder\"o\n" +
 	"&ProjectManagementStageCandidateRequest\x12E\n" +
-	"\x04data\x18\x01 \x01(\v21.admin.ProjectManagementStageCandidateRequestDataR\x04data\"n\n" +
+	"\x04data\x18\x01 \x01(\v21.admin.ProjectManagementStageCandidateRequestDataR\x04data\"\x93\x01\n" +
 	"*ProjectManagementStageCandidateRequestData\x12\x1f\n" +
 	"\vtemplate_id\x18\x01 \x01(\x03R\n" +
 	"templateId\x12\x1f\n" +
 	"\vworkflow_id\x18\x02 \x01(\x03R\n" +
-	"workflowId\"k\n" +
+	"workflowId\x12#\n" +
+	"\rworkflow_type\x18\x03 \x01(\tR\fworkflowType\"k\n" +
 	"'ProjectManagementStageCandidateResponse\x12@\n" +
 	"\x04list\x18\x01 \x03(\v2,.admin.ProjectManagementStageCandidateEntityR\x04list\"K\n" +
 	"%ProjectManagementStageCandidateEntity\x12\x0e\n" +

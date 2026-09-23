@@ -13056,6 +13056,16 @@
             "name": "workflow_id",
             "in": "query",
             "allowEmptyValue": true
+          },
+          {
+            "enum": [
+              "Unbound",
+              "Bound"
+            ],
+            "type": "string",
+            "name": "workflow_type",
+            "in": "query",
+            "allowEmptyValue": true
           }
         ],
         "responses": {

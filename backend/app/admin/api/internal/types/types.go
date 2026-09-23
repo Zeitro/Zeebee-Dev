@@ -1153,8 +1153,9 @@ type ProjectManagementStageCandidateEntity struct {
 }
 
 type ProjectManagementStageCandidateRequest struct {
-	Id         int64 `form:"template_id" validate:"required,gt=0"`
-	WorkflowId int64 `form:"workflow_id,optional" validate:"gte=0"`
+	TemplateId   int64  `form:"template_id" validate:"required,gt=0"`
+	WorkflowId   int64  `form:"workflow_id,optional" validate:"required_if=WorkflowType Bound,gte=0"`
+	WorkflowType string `form:"workflow_type,optional,options=Unbound|Bound" validate:"omitempty,oneof=Unbound Bound"`
 }
 
 type ProjectManagementStageCandidateResponse struct {

@@ -1,9 +1,11 @@
 import "../../../../domains/zeebee/api/entity.api"
+
 import "common.api"
 
 type ProjectManagementStageCandidateRequest {
-    Id int64 `form:"template_id" validate:"required,gt=0"`
-    WorkflowId int64 `form:"workflow_id,optional" validate:"gte=0"`
+    TemplateId  int64  `form:"template_id" validate:"required,gt=0"`
+    WorkflowId  int64  `form:"workflow_id,optional" validate:"required_if=WorkflowType Bound,gte=0"`
+    WorkflowType string `form:"workflow_type,optional,options=Unbound|Bound" validate:"omitempty,oneof=Unbound Bound"`
 }
 
 type ProjectManagementStageCandidateResponse {
@@ -11,12 +13,12 @@ type ProjectManagementStageCandidateResponse {
 }
 
 type ProjectManagementStageCandidateEntity {
-    Id int64 `json:"id"`
+    Id   int64  `json:"id"`
     Name string `json:"name"`
 }
 
 type ProjectManagementTemplateStageSwapOrderRequest {
-    Id                    int64 `path:"template_id" validate:"required,gt=0"`
+    TemplateId    int64 `path:"template_id" validate:"required,gt=0"`
     StageId       int64 `json:"stage_id" validate:"required,gt=0"`
     TargetStageId int64 `json:"target_stage_id" validate:"required,gt=0,nefield=StageId"`
 }

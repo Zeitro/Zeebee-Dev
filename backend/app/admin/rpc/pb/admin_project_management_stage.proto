@@ -22,6 +22,7 @@ message ProjectManagementStageCandidateRequest {
 message ProjectManagementStageCandidateRequestData {
   int64 template_id = 1;
   int64 workflow_id = 2;
+  string workflow_type = 3;
 }
 message ProjectManagementStageCandidateResponse {
   repeated ProjectManagementStageCandidateEntity list = 1;
