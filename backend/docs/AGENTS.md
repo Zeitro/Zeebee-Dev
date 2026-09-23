@@ -70,9 +70,19 @@ make create-service <service>
 
 没有对应 schema 变更时不要为了完成清单而运行生成命令。`create-api-service`、`create-rpc-service`、`create-service` 和 `create-server` 的既有行为必须保持不变。
 
+### 分页契约
+
+- API 分页请求固定保留 `page`、`limit`、`filter`、`sorter` 四个层次字段；领域筛选新增模块专用 `*PageFilter`，不要把筛选条件平铺到请求根部。
+- Proto 的 `*PageRequestData` 镜像该层次：`page=1`、`limit=2`、模块 `filter=3`、`sorter=4`。排序字段与 `proto.CommonPageSorter` 一致时直接复用它，不重复定义本模块 sorter message。
+- Domain DTO 嵌入 `BasePageRequestDto`，并保留模块 `Filter` 和 `BasePageSorter`；API → Proto → DTO 的字段名和嵌套结构保持一致，才能直接使用 `copierx.Trans`。
+- Repository 接收完整分页 DTO，按白名单将 `Filter` 和 `Sorter` 组装为 GORM 查询；排序字段不能直接作为客户端 SQL 输入。若查询只支持固定排序，契约中不要暴露 `sorter`。
+- 分页响应继续按现有模块约定返回 `total`、`page`、`limit`、`total_page`、`list`，不要为列表额外包装一层。
+
 ## 5. 类型转换与错误处理
 
 - 跨层结构体和切片转换统一使用 `common/copierx` 的 `copierx.Trans[T, U]`；`T`、`U` 使用非指针类型，源值按函数签名传入。
+- 切片（包括嵌套 `Stages`、`Transitions` 等）优先一次性转换，例如 `copierx.Trans[[]*model.T, []*proto.T](&list, ...)`；不要逐项循环或为单一模块保留手写转换 helper。
+- `copierx.Trans`/`Assign` 的非 nil 切片或 map 是完整替换：非 nil 空集合会清空目标，nil 表示未提供并保留目标。涉及集合的修改应有转换回归测试。
 - 时间字段转字符串时使用 `copierx.TimeToRFC3339Str()`。
 - 只有在 copierx 无法表达特殊业务转换时才手工处理，并把原因留在代码结构或短注释中。
 - 输入在 HTTP/RPC 边界校验；错误使用 `common/errorx`，保留堆栈和上下文，不向外暴露敏感实现细节。
