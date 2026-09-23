@@ -6,17 +6,15 @@ import (
 
 type ProjectManagementWorkflow struct {
 	Base
-	Kind               constants.ProjectManagementWorkflowKind `gorm:"column:kind;type:varchar(32);not null;default:'OrganizationTemplate'" json:"kind"`
-	OrganizationId     int64                                   `gorm:"column:organization_id;not null;default:0" json:"organization_id"`
-	ProjectId          int64                                   `gorm:"column:project_id;not null;default:0" json:"project_id"`
-	Name               string                                  `gorm:"column:name;type:varchar(100);not null;default:''" json:"name"`
-	Description        string                                  `gorm:"column:description;type:varchar(500);not null;default:''" json:"description"`
-	IsDefault          bool                                    `gorm:"column:is_default;not null;default:false" json:"is_default"`
-	SourceTemplateId   int64                                   `gorm:"column:source_template_id;not null;default:0" json:"source_template_id"`
-	SourceTemplateName string                                  `gorm:"column:source_template_name;type:varchar(100);not null;default:''" json:"source_template_name"`
-	// relationships
-	Stages      []*ProjectManagementWorkflowStage      `gorm:"foreignKey:WorkflowId" json:"stages"`
-	Transitions []*ProjectManagementWorkflowTransition `gorm:"foreignKey:WorkflowId" json:"transitions"`
+	Name               string                                      `gorm:"column:name;type:varchar(100);not null;default:''" json:"name"`
+	Description        string                                      `gorm:"column:description;type:varchar(500);not null;default:''" json:"description"`
+	IsDefault          bool                                        `gorm:"column:is_default;not null;default:false" json:"is_default"`
+	EntityType         constants.ProjectManagementOwnerType        `gorm:"column:entity_type;type:varchar(32);not null;default:'Project'" json:"entity_type"`
+	EntityId           int64                                       `gorm:"column:entity_id;not null;default:0" json:"entity_id"`
+	SourceWorkflowId   int64                                       `gorm:"column:source_workflow_id;not null;default:0" json:"source_workflow_id"`
+	SourceWorkflowName string                                      `gorm:"column:source_workflow_name;type:varchar(100);not null;default:''" json:"source_workflow_name"`
+	Stages             []*ProjectManagementStage                   `gorm:"many2many:project_management_workflow_stages;joinForeignKey:WorkflowId;joinReferences:StageId" json:"stages"`
+	Transitions        []*ProjectManagementWorkflowStageTransition `gorm:"foreignKey:WorkflowId;references:Id" json:"transitions"`
 }
 
 func (ProjectManagementWorkflow) TableName() string { return "project_management_workflows" }

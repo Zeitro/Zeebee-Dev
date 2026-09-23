@@ -48,7 +48,10 @@ func (l *ProjectManagementTaskLogic) Create(ctx context.Context, claim utils.Jwt
 	if err = validateProjectManagementTaskCreate(input); err != nil {
 		return nil, err
 	}
-	if _, err = l.projectManagementLogic().RequireMember(ctx, input.ProjectId, claim.OrganizationUserId); err != nil {
+	if input.EntityType != constants.ProjectManagementOwnerTypeProject {
+		return nil, errorx.New("task entity must be a project")
+	}
+	if _, err = l.projectManagementLogic().RequireMember(ctx, input.EntityId, claim.OrganizationUserId); err != nil {
 		return nil, err
 	}
 	var task *model.ProjectManagementTask
@@ -62,34 +65,47 @@ func (l *ProjectManagementTaskLogic) Create(ctx context.Context, claim utils.Jwt
 	task.StartAt, task.EndAt = input.StartAt, input.EndAt
 	task.TaskType = &dto.ProjectManagementTaskTypeSnapshotDto{}
 	err = l.repos.ProjectManagementTaskRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		if _, err = l.repos.ProjectManagementProjectRepo.LockByOrganizationWithTx(ctx, tx, input.ProjectId, claim.OrganizationId); err != nil {
+		project, err := l.repos.ProjectManagementProjectRepo.LockByOrganizationWithTx(ctx, tx, input.EntityId, claim.OrganizationId)
+		if err != nil {
 			return projectManagementNotFound(err, "project not found")
 		}
-		workflow, err := l.repos.ProjectManagementWorkflowRepo.FindProjectDefinitionWithTx(ctx, tx, input.ProjectId, claim.OrganizationId)
+		if err = validateTaskWithinProjectSchedule(project, input.StartAt, input.EndAt); err != nil {
+			return err
+		}
+		var workflow *model.ProjectManagementWorkflow
+		if input.WorkflowId != 0 {
+			workflow, err = l.repos.ProjectManagementWorkflowRepo.FindProjectWorkflowByIDWithTx(ctx, tx, input.WorkflowId, input.EntityId, claim.OrganizationId)
+		} else {
+			workflow, err = l.repos.ProjectManagementWorkflowRepo.FindDefaultProjectWorkflowWithTx(ctx, tx, input.EntityId, claim.OrganizationId)
+		}
 		if err != nil {
 			return projectManagementNotFound(err, "project workflow not found")
 		}
-		pendingStage, err := l.repos.ProjectManagementWorkflowRepo.FindPendingStageWithTx(ctx, tx, workflow.Id)
-		if err != nil {
-			return projectManagementNotFound(err, "project pending stage not found")
+		pendingStage, stageErr := l.repos.ProjectManagementWorkflowRepo.FindPendingOwnerStageWithTx(ctx, tx, workflow.Id)
+		if stageErr != nil {
+			return projectManagementNotFound(stageErr, "project pending stage not found")
 		}
 		if input.ParentTaskId != 0 {
 			parent, err := l.repos.ProjectManagementTaskRepo.LockWithTx(ctx, tx, input.ParentTaskId)
 			if err != nil {
 				return projectManagementNotFound(err, "parent task not found")
 			}
-			if parent.ProjectId != input.ProjectId {
+			if parent.EntityType != constants.ProjectManagementOwnerTypeProject || parent.EntityId != input.EntityId {
 				return errorx.New("parent task must belong to the project")
 			}
-			parentStage, err := l.repos.ProjectManagementWorkflowRepo.FindStageWithTx(ctx, tx, parent.StageId)
-			if err != nil {
-				return projectManagementNotFound(err, "parent task stage not found")
+			parentStage, stageErr := l.repos.ProjectManagementWorkflowRepo.FindOwnerStageWithTx(ctx, tx, parent.StageId, constants.ProjectManagementOwnerTypeProject, input.EntityId)
+			if stageErr != nil {
+				return projectManagementNotFound(stageErr, "parent task stage not found")
 			}
 			if parentStage.Phase == constants.ProjectManagementStagePhaseFinished {
 				return errorx.New("cannot add child task to a finished parent task")
 			}
 		}
-		task.StageId, task.Phase = pendingStage.Id, pendingStage.Phase
+		phase := pendingStage.Phase
+		task.StageId, task.Phase = pendingStage.Id, &phase
+		task.WorkflowId = workflow.Id
+		task.EntityType = constants.ProjectManagementOwnerTypeProject
+		task.EntityId = input.EntityId
 		if input.TaskTypeId != 0 {
 			taskType, err := l.repos.ProjectManagementTaskTypeRepo.FindByOrganizationWithTx(ctx, tx, input.TaskTypeId, claim.OrganizationId)
 			if err != nil {
@@ -97,22 +113,22 @@ func (l *ProjectManagementTaskLogic) Create(ctx context.Context, claim utils.Jwt
 			}
 			task.TaskType = ProjectManagementTaskTypeSnapshot(taskType)
 		}
-		task, err = l.repos.ProjectManagementTaskRepo.CreateWithTx(ctx, tx, task, false)
+		err = l.repos.ProjectManagementTaskRepo.CreateEntityWithTx(ctx, tx, task)
 		if err != nil {
 			return err
 		}
-		assignees, err := l.projectManagementTaskAssignees(ctx, tx, projectManagementTaskAssigneeInput{projectId: input.ProjectId, taskId: task.Id, stageId: task.StageId, organizationId: claim.OrganizationId, organizationUserIds: input.AssigneeOrganizationUserIds})
+		assignees, err := l.projectManagementTaskAssignees(ctx, tx, projectManagementTaskAssigneeInput{projectId: input.EntityId, taskId: task.Id, stageId: task.StageId, organizationId: claim.OrganizationId, organizationUserIds: input.AssigneeOrganizationUserIds})
 		if err != nil {
 			return err
 		}
 		if err = l.repos.ProjectManagementTaskRepo.CreateAssigneesWithTx(ctx, tx, assignees); err != nil {
 			return err
 		}
-		if err = l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskCreate, after: map[string]any{"id": task.Id, "name": task.Title}}); err != nil {
+		if err = l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.EntityId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskCreate, after: map[string]any{"id": task.Id, "name": task.Title}}); err != nil {
 			return err
 		}
 		for _, assignee := range assignees {
-			if err = l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskAssigneeAdd, after: assigneeOperationValues(assignee)}); err != nil {
+			if err = l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.EntityId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskAssigneeAdd, after: assigneeOperationValues(assignee)}); err != nil {
 				return err
 			}
 		}
@@ -129,14 +145,14 @@ func (l *ProjectManagementTaskLogic) DetailForProject(ctx context.Context, claim
 	if err != nil {
 		return nil, err
 	}
-	if task.ProjectId != projectId {
+	if task.EntityType != constants.ProjectManagementOwnerTypeProject || task.EntityId != projectId {
 		return nil, errorx.New("task not found")
 	}
 	return task, nil
 }
 
 func validateProjectManagementTaskCreate(input dto.ProjectManagementTaskCreateDto) error {
-	if input.ProjectId == 0 || strings.TrimSpace(input.Title) == "" {
+	if input.EntityId == 0 || strings.TrimSpace(input.Title) == "" {
 		return errorx.New("project and task title are required")
 	}
 	return validateProjectManagementTaskTimeRange(input.StartAt, input.EndAt)
@@ -149,12 +165,36 @@ func validateProjectManagementTaskTimeRange(startAt, endAt *sql.NullTime) error 
 	return nil
 }
 
+func validateTaskWithinProjectSchedule(project *model.ProjectManagementProject, startAt, endAt *sql.NullTime) error {
+	if project.ProjectType != constants.ProjectManagementProjectTypePlanned || (startAt == nil && endAt == nil) {
+		return nil
+	}
+	if project.StartAt == nil || !project.StartAt.Valid || project.EndAt == nil || !project.EndAt.Valid {
+		return errorx.New("planned project schedule is invalid")
+	}
+	for _, taskAt := range []*sql.NullTime{startAt, endAt} {
+		if taskAt == nil || !taskAt.Valid {
+			continue
+		}
+		date := time.Date(taskAt.Time.Year(), taskAt.Time.Month(), taskAt.Time.Day(), 0, 0, 0, 0, time.UTC)
+		start := time.Date(project.StartAt.Time.Year(), project.StartAt.Time.Month(), project.StartAt.Time.Day(), 0, 0, 0, 0, time.UTC)
+		end := time.Date(project.EndAt.Time.Year(), project.EndAt.Time.Month(), project.EndAt.Time.Day(), 0, 0, 0, 0, time.UTC)
+		if date.Before(start) || date.After(end) {
+			return errorx.New("task date must be within the planned project range")
+		}
+	}
+	return nil
+}
+
 func (l *ProjectManagementTaskLogic) Detail(ctx context.Context, claim utils.JwtUser, taskId int64) (*dto.ProjectManagementTaskDto, error) {
 	task, err := l.repos.ProjectManagementTaskRepo.FindDetailByOrganization(ctx, taskId, claim.OrganizationId)
 	if err != nil {
 		return nil, projectManagementNotFound(err, "task not found")
 	}
-	if _, err = l.projectManagementLogic().RequireMember(ctx, task.ProjectId, claim.OrganizationUserId); err != nil {
+	if task.EntityType != constants.ProjectManagementOwnerTypeProject {
+		return nil, projectManagementNotFound(gorm.ErrRecordNotFound, "task not found")
+	}
+	if _, err = l.projectManagementLogic().RequireMember(ctx, task.EntityId, claim.OrganizationUserId); err != nil {
 		return nil, err
 	}
 	result, err := copierx.Trans[model.ProjectManagementTask, dto.ProjectManagementTaskDto](task)
@@ -191,10 +231,13 @@ func (l *ProjectManagementTaskLogic) Page(ctx context.Context, claim utils.JwtUs
 }
 
 func (l *ProjectManagementTaskLogic) Candidate(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementTaskCandidateDto) ([]*dto.ProjectManagementTaskCandidateEntityDto, error) {
-	if _, err := l.projectManagementLogic().RequireProject(ctx, input.ProjectId, claim.OrganizationId); err != nil {
+	if input.EntityType != constants.ProjectManagementOwnerTypeProject {
+		return nil, errorx.New("task entity must be a project")
+	}
+	if _, err := l.projectManagementLogic().RequireProject(ctx, input.EntityId, claim.OrganizationId); err != nil {
 		return nil, err
 	}
-	if _, err := l.projectManagementLogic().RequireMember(ctx, input.ProjectId, claim.OrganizationUserId); err != nil {
+	if _, err := l.projectManagementLogic().RequireMember(ctx, input.EntityId, claim.OrganizationUserId); err != nil {
 		return nil, err
 	}
 	return l.repos.ProjectManagementTaskRepo.CandidateByProject(ctx, claim.OrganizationId, input)
@@ -217,20 +260,54 @@ func (l *ProjectManagementTaskLogic) Update(ctx context.Context, claim utils.Jwt
 		if task.OrganizationId != claim.OrganizationId {
 			return errorx.New("task not found")
 		}
+		project, err := l.repos.ProjectManagementProjectRepo.LockByOrganizationWithTx(ctx, tx, task.EntityId, claim.OrganizationId)
+		if err != nil {
+			return projectManagementNotFound(err, "project not found")
+		}
+		if task.Phase == nil {
+			return errorx.New("task stage is required")
+		}
 		stageChanged := input.StageId != 0 && input.StageId != task.StageId
+		workflowChanged := input.WorkflowId != 0 && input.WorkflowId != task.WorkflowId
+		if workflowChanged && stageChanged {
+			return errorx.New("task workflow and stage must be changed separately")
+		}
+		if workflowChanged {
+			targetWorkflow, workflowErr := l.repos.ProjectManagementWorkflowRepo.FindProjectWorkflowByIDWithTx(ctx, tx, input.WorkflowId, task.EntityId, claim.OrganizationId)
+			if workflowErr != nil {
+				return projectManagementNotFound(workflowErr, "task workflow not found")
+			}
+			if _, workflowErr = l.repos.ProjectManagementWorkflowRepo.FindOwnerStageInWorkflowWithTx(ctx, tx, targetWorkflow.Id, task.StageId, constants.ProjectManagementOwnerTypeProject, task.EntityId); workflowErr != nil {
+				return errorx.New("task stage is not included in target workflow")
+			}
+		}
 		if stageChanged {
 			if err = l.transitionWithTx(ctx, tx, claim, task, input.StageId); err != nil {
 				return err
 			}
-		} else if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.ProjectId, claim.OrganizationUserId); err != nil {
+		} else if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.EntityId, claim.OrganizationUserId); err != nil {
 			return projectManagementNotFound(err, "project member required")
 		}
 		before := taskOperationValues(task)
-		base, taskType, stageId, phase := task.Base, task.TaskType, task.StageId, task.Phase
+		base, taskType, stageId, phase, workflowId, startAt, endAt := task.Base, task.TaskType, task.StageId, task.Phase, task.WorkflowId, task.StartAt, task.EndAt
 		if err = copierx.Assign(&input, task); err != nil {
 			return err
 		}
 		task.Base, task.TaskType, task.StageId, task.Phase = base, taskType, stageId, phase
+		if input.WorkflowId == 0 {
+			task.WorkflowId = workflowId
+		}
+		if input.StartAt == nil {
+			task.StartAt = startAt
+		}
+		if input.EndAt == nil {
+			task.EndAt = endAt
+		}
+		if input.StartAt != nil || input.EndAt != nil {
+			if err = validateTaskWithinProjectSchedule(project, task.StartAt, task.EndAt); err != nil {
+				return err
+			}
+		}
 		if input.TaskTypeId != 0 {
 			taskType, err := l.repos.ProjectManagementTaskTypeRepo.FindByOrganizationWithTx(ctx, tx, input.TaskTypeId, claim.OrganizationId)
 			if err != nil {
@@ -248,7 +325,7 @@ func (l *ProjectManagementTaskLogic) Update(ctx context.Context, claim utils.Jwt
 				input.AssigneeOrganizationUserIds[i] = assignee.OrganizationUserId
 			}
 		}
-		assignees, err := l.projectManagementTaskAssignees(ctx, tx, projectManagementTaskAssigneeInput{projectId: task.ProjectId, taskId: task.Id, stageId: task.StageId, organizationId: claim.OrganizationId, organizationUserIds: input.AssigneeOrganizationUserIds})
+		assignees, err := l.projectManagementTaskAssignees(ctx, tx, projectManagementTaskAssigneeInput{projectId: task.EntityId, taskId: task.Id, stageId: task.StageId, organizationId: claim.OrganizationId, organizationUserIds: input.AssigneeOrganizationUserIds})
 		if err != nil {
 			return err
 		}
@@ -267,7 +344,7 @@ func (l *ProjectManagementTaskLogic) Update(ctx context.Context, claim utils.Jwt
 			if _, exists := requestedAssignees[assignee.OrganizationUserId]; exists {
 				continue
 			}
-			if err = l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskAssigneeRemove, before: assigneeOperationValues(assignee)}); err != nil {
+			if err = l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.EntityId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskAssigneeRemove, before: assigneeOperationValues(assignee)}); err != nil {
 				return err
 			}
 		}
@@ -279,7 +356,7 @@ func (l *ProjectManagementTaskLogic) Update(ctx context.Context, claim utils.Jwt
 			if _, exists := existingAssigneeIds[assignee.OrganizationUserId]; exists {
 				continue
 			}
-			if err = l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskAssigneeAdd, after: assigneeOperationValues(assignee)}); err != nil {
+			if err = l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.EntityId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskAssigneeAdd, after: assigneeOperationValues(assignee)}); err != nil {
 				return err
 			}
 		}
@@ -299,7 +376,7 @@ func (l *ProjectManagementTaskLogic) Update(ctx context.Context, claim utils.Jwt
 			return nil
 		}
 		before["id"], after["id"] = task.Id, task.Id
-		return l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskUpdate, before: before, after: after})
+		return l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.EntityId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskUpdate, before: before, after: after})
 	})
 	if err != nil {
 		return nil, err
@@ -352,7 +429,7 @@ func (l *ProjectManagementTaskLogic) syncAttachmentsWithTx(ctx context.Context, 
 		if err != nil {
 			return err
 		}
-		if err = l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, fileId: file.Id, action: constants.OperationActionProjectManagementAttachmentAdd, after: attachmentOperationIdentity(file)}); err != nil {
+		if err = l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.EntityId, taskId: task.Id, fileId: file.Id, action: constants.OperationActionProjectManagementAttachmentAdd, after: attachmentOperationIdentity(file)}); err != nil {
 			return err
 		}
 	}
@@ -363,7 +440,7 @@ func (l *ProjectManagementTaskLogic) syncAttachmentsWithTx(ctx context.Context, 
 		if _, err = l.repos.FileRepo.DeleteByIDWithTx(ctx, tx, file.Id); err != nil {
 			return err
 		}
-		if err = l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, fileId: file.Id, action: constants.OperationActionProjectManagementAttachmentDelete, before: attachmentOperationIdentity(file)}); err != nil {
+		if err = l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.EntityId, taskId: task.Id, fileId: file.Id, action: constants.OperationActionProjectManagementAttachmentDelete, before: attachmentOperationIdentity(file)}); err != nil {
 			return err
 		}
 	}
@@ -379,7 +456,7 @@ func (l *ProjectManagementTaskLogic) Delete(ctx context.Context, claim utils.Jwt
 		if task.OrganizationId != claim.OrganizationId {
 			return errorx.New("task not found")
 		}
-		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.ProjectId, claim.OrganizationUserId); err != nil {
+		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.EntityId, claim.OrganizationUserId); err != nil {
 			return projectManagementNotFound(err, "project member required")
 		}
 		taskIds, err := l.repos.ProjectManagementTaskRepo.DescendantIdsWithTx(ctx, tx, taskId)
@@ -392,12 +469,12 @@ func (l *ProjectManagementTaskLogic) Delete(ctx context.Context, claim utils.Jwt
 		if err = l.repos.ProjectManagementTaskRepo.DeleteByIdsWithTx(ctx, tx, taskIds); err != nil {
 			return err
 		}
-		return l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskDelete, before: map[string]any{"id": task.Id, "title": task.Title}})
+		return l.recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.EntityId, taskId: task.Id, action: constants.OperationActionProjectManagementTaskDelete, before: map[string]any{"id": task.Id, "title": task.Title}})
 	})
 }
 
 func (l *ProjectManagementTaskLogic) Overdue(ctx context.Context, task *dto.ProjectManagementTaskDto) (*dto.ProjectManagementTaskOverdueDto, error) {
-	stage, err := l.repos.ProjectManagementWorkflowRepo.FindStage(ctx, task.StageId)
+	stage, err := l.repos.ProjectManagementWorkflowRepo.FindOwnerStageWithTx(ctx, l.repos.ProjectManagementWorkflowRepo.Client(ctx), task.StageId, constants.ProjectManagementOwnerTypeProject, task.EntityId)
 	if err != nil {
 		return nil, projectManagementNotFound(err, "task stage not found")
 	}
@@ -457,7 +534,8 @@ func (l *ProjectManagementTaskLogic) projectManagementTaskAssignees(ctx context.
 		if organizationUser.Status != constants.OrganizationUserStatusActive {
 			return nil, errorx.New("task assignee must be an active organization member")
 		}
-		result = append(result, &model.ProjectManagementTaskAssignee{TaskId: input.taskId, StageId: input.stageId, OrganizationUserId: organizationUserId, OrganizationUserFullName: organizationUser.FullName})
+		stageID := input.stageId
+		result = append(result, &model.ProjectManagementTaskAssignee{TaskId: input.taskId, StageId: &stageID, OrganizationUserId: organizationUserId, OrganizationUserFullName: organizationUser.FullName})
 	}
 	return result, nil
 }
@@ -478,7 +556,7 @@ func (l *ProjectManagementTaskLogic) recordProjectTaskOperation(ctx context.Cont
 }
 
 func taskOperationValues(task *model.ProjectManagementTask) map[string]any {
-	values := map[string]any{"title": task.Title, "description": task.Description, "priority": task.Priority, "work_hours": task.WorkHours, "parent_task_id": task.ParentTaskId, "task_type_id": int64(0), "task_type_name": "", "start_at": "", "end_at": ""}
+	values := map[string]any{"workflow_id": task.WorkflowId, "title": task.Title, "description": task.Description, "priority": task.Priority, "work_hours": task.WorkHours, "parent_task_id": task.ParentTaskId, "task_type_id": int64(0), "task_type_name": "", "start_at": "", "end_at": ""}
 	if task.TaskType != nil {
 		values["task_type_id"], values["task_type_name"] = task.TaskType.Id, task.TaskType.Name
 	}

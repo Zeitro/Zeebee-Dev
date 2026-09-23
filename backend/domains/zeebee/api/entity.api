@@ -12,33 +12,26 @@ type (
         Name               string                                  `json:"name"`
         Description        string                                  `json:"description"`
         IsDefault          bool                                    `json:"is_default"`
-        Stages             []*ProjectManagementWorkflowStageEntity `json:"stages"`
+		Stages             []*ProjectManagementStageEntity          `json:"stages"`
+		Transitions        []*ProjectManagementWorkflowStageTransitionEntity `json:"transitions"`
         SourceTemplateId   int64                                   `json:"source_template_id"`
         SourceTemplateName string                                  `json:"source_template_name"`
+		EntityType         string                                  `json:"entity_type"`
+		EntityId           int64                                   `json:"entity_id"`
+		SourceWorkflowId   int64                                   `json:"source_workflow_id"`
+		SourceWorkflowName string                                  `json:"source_workflow_name"`
         CreatedAt          string                                  `json:"created_at"`
         UpdatedAt          string                                  `json:"updated_at"`
     }
-    ProjectManagementWorkflowStageEntity {
-        Id          int64                                        `json:"id"`
-        Name        string                                       `json:"name"`
-        Description string                                       `json:"description"`
-        Phase       string                                       `json:"phase,options=Pending|InProgress|Finished"`
-        Color       string                                       `json:"color"`
-        SortOrder   int                                          `json:"sort_order"`
-        CreatedAt   string                                       `json:"created_at"`
-        UpdatedAt   string                                       `json:"updated_at"`
-        Transitions []*ProjectManagementWorkflowTransitionEntity `json:"transitions,omitempty"`
-    }
-    ProjectManagementWorkflowTransitionEntity {
-        Id                int64                                 `json:"id"`
-        Name              string                                `json:"name"`
-        FromStageId       int64                                 `json:"from_stage_id"`
-        ToStageId         int64                                 `json:"to_stage_id"`
-        AllowedActorTypes []string                              `json:"allowed_actor_types"`
-        CreatedAt         string                                `json:"created_at"`
-        UpdatedAt         string                                `json:"updated_at"`
-        FromStage         *ProjectManagementWorkflowStageEntity `json:"from_stage"`
-        ToStage           *ProjectManagementWorkflowStageEntity `json:"to_stage"`
+    ProjectManagementWorkflowStageTransitionEntity {
+        Id                  int64    `json:"id"`
+        WorkflowId          int64    `json:"workflow_id"`
+        Name                string   `json:"name"`
+        FromStageId         int64    `json:"from_stage_id"`
+        ToStageId           int64    `json:"to_stage_id"`
+        AllowedActorTypes   []string `json:"allowed_actor_types"`
+        CreatedAt           string   `json:"created_at"`
+        UpdatedAt           string   `json:"updated_at"`
     }
     ProjectManagementTaskTypeEntity {
         Id          int64  `json:"id"`
@@ -48,6 +41,37 @@ type (
         SortOrder   int    `json:"sort_order"`
         CreatedAt   string `json:"created_at"`
         UpdatedAt   string `json:"updated_at"`
+    }
+    ProjectManagementStageEntity {
+        Id          int64  `json:"id"`
+        EntityType  string `json:"entity_type"`
+        EntityId    int64  `json:"entity_id"`
+        Name        string `json:"name"`
+        Description string `json:"description"`
+        Phase       string `json:"phase,options=Pending|InProgress|Finished"`
+        Color       string `json:"color"`
+        SortOrder   int    `json:"sort_order"`
+        CreatedAt   string `json:"created_at"`
+        UpdatedAt   string `json:"updated_at"`
+    }
+    ProjectManagementTemplateEntity {
+        Id              int64  `json:"id"`
+        TemplateType    string `json:"template_type"`
+        OrganizationId  int64  `json:"organization_id"`
+        Name            string `json:"name"`
+        Description     string `json:"description"`
+        Status          string `json:"status"`
+        IsDefault       bool   `json:"is_default"`
+        SortOrder       int    `json:"sort_order"`
+        ProjectType     string `json:"project_type"`
+        StartAt         string `json:"start_at"`
+        EndAt           string `json:"end_at"`
+        PeriodValue     int    `json:"period_value"`
+        PeriodUnit      string `json:"period_unit"`
+        SourceProjectId int64  `json:"source_project_id"`
+		Stages          []*ProjectManagementStageEntity `json:"stages"`
+        CreatedAt       string `json:"created_at"`
+        UpdatedAt       string `json:"updated_at"`
     }
     ProjectManagementTaskTypeSnapshotEntity {
         Id          int64  `json:"id"`
@@ -66,7 +90,12 @@ type (
         CoverUrl    string                           `json:"cover_url"`
         OwnerId     int64                            `json:"owner_id"`
         OwnerName   string                           `json:"owner_name"`
-        Workflow    *ProjectManagementWorkflowEntity `json:"workflow"`
+		ProjectType string                           `json:"project_type"`
+		StartAt     string                           `json:"start_at"`
+		EndAt       string                           `json:"end_at"`
+		PeriodValue int                              `json:"period_value"`
+		PeriodUnit  string                           `json:"period_unit"`
+		Stages      []*ProjectManagementStageEntity  `json:"stages,omitempty"`
         CreatedAt   string                           `json:"created_at"`
         UpdatedAt   string                           `json:"updated_at"`
     }
@@ -89,7 +118,10 @@ type (
     }
     ProjectManagementTaskEntity {
         Id             int64                                    `json:"id"`
-        ProjectId      int64                                    `json:"project_id"`
+		WorkflowId     int64                                    `json:"workflow_id"`
+		WorkflowName   string                                   `json:"workflow_name"`
+		EntityType     string                                   `json:"entity_type"`
+		EntityId       int64                                    `json:"entity_id"`
         ParentTaskId   int64                                    `json:"parent_task_id"`
         StageId        int64                                    `json:"stage_id"`
         Phase          string                                   `json:"phase"`
@@ -106,6 +138,7 @@ type (
         Attachments    []*FileEntity                            `json:"attachments"`
         Overdue        bool                                     `json:"overdue"`
         OverdueSeconds int64                                    `json:"overdue_seconds"`
+		OutOfPlan      bool                                     `json:"out_of_plan"`
         CreatedAt      string                                   `json:"created_at"`
         UpdatedAt      string                                   `json:"updated_at"`
         Children       []*ProjectManagementTaskEntity           `json:"children"`
@@ -120,6 +153,14 @@ type (
         DependencyRule   string `json:"dependency_rule"`
         CreatedAt        string `json:"created_at"`
         UpdatedAt        string `json:"updated_at"`
+    }
+    ProjectManagementTaskViewEntity {
+        ProjectId       int64                          `json:"project_id"`
+        ProjectStartAt  string                         `json:"project_start_at"`
+        ProjectEndAt    string                         `json:"project_end_at"`
+        Tasks           []*ProjectManagementTaskEntity `json:"tasks"`
+        TimelineStartAt string                         `json:"timeline_start_at"`
+        TimelineEndAt   string                         `json:"timeline_end_at"`
     }
     OperationEntity {
         Id           int64                  `json:"id"`

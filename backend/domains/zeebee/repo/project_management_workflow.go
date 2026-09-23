@@ -2,13 +2,11 @@ package repo
 
 import (
 	"context"
-	"encoding/json"
+	"errors"
 
-	"gorm.io/datatypes"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
-	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/constants"
@@ -17,490 +15,400 @@ import (
 
 type ProjectManagementWorkflowRepo struct {
 	*gormx.BaseRepo[*model.ProjectManagementWorkflow]
-	stageRepo      *gormx.BaseRepo[*model.ProjectManagementWorkflowStage]
-	transitionRepo *gormx.BaseRepo[*model.ProjectManagementWorkflowTransition]
+}
+
+func preloadWorkflowTransitions(db *gorm.DB) *gorm.DB {
+	return db.Order("project_management_workflow_transitions.id ASC")
 }
 
 func NewProjectManagementWorkflowRepo(db *gorm.DB) *ProjectManagementWorkflowRepo {
-	return &ProjectManagementWorkflowRepo{
-		BaseRepo:       gormx.NewBaseRepo[*model.ProjectManagementWorkflow](db),
-		stageRepo:      gormx.NewBaseRepo[*model.ProjectManagementWorkflowStage](db),
-		transitionRepo: gormx.NewBaseRepo[*model.ProjectManagementWorkflowTransition](db),
-	}
+	return &ProjectManagementWorkflowRepo{BaseRepo: gormx.NewBaseRepo[*model.ProjectManagementWorkflow](db)}
 }
 
-func (r *ProjectManagementWorkflowRepo) FindByOrganization(ctx context.Context, id, organizationId int64) (*model.ProjectManagementWorkflow, error) {
-	workflow := new(model.ProjectManagementWorkflow)
-	err := r.Client(ctx).Where("id = ? AND organization_id = ?", id, organizationId).First(workflow).Error
-	return workflow, errorx.WithStack(err)
-}
-
-func (r *ProjectManagementWorkflowRepo) FindDefinitionByOrganization(ctx context.Context, id, organizationId int64) (*model.ProjectManagementWorkflow, error) {
-	workflow := new(model.ProjectManagementWorkflow)
-	err := r.Client(ctx).
-		Preload("Stages", func(db *gorm.DB) *gorm.DB { return db.Order("sort_order ASC, id ASC") }).
-		Preload("Stages.Transitions", func(db *gorm.DB) *gorm.DB { return db.Order("id ASC") }).
-		Preload("Stages.Transitions.FromStage").
-		Preload("Stages.Transitions.ToStage").
-		Where("id = ? AND organization_id = ? AND kind = ?", id, organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).
-		First(workflow).Error
-	return workflow, errorx.WithStack(err)
-}
-
-func (r *ProjectManagementWorkflowRepo) ListByOrganization(ctx context.Context, organizationId int64) ([]*model.ProjectManagementWorkflow, error) {
-	workflows := make([]*model.ProjectManagementWorkflow, 0)
-	err := r.Client(ctx).
-		Preload("Stages", func(db *gorm.DB) *gorm.DB { return db.Order("sort_order ASC, id ASC") }).
-		// Preload("Transitions", func(db *gorm.DB) *gorm.DB { return db.Order("id ASC") }).
-		Where("organization_id = ? AND kind = ?", organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).
-		Order("is_default DESC, id ASC").
-		Find(&workflows).Error
-	return workflows, errorx.WithStack(err)
-}
-
-func (r *ProjectManagementWorkflowRepo) FindPendingStageWithTx(ctx context.Context, tx *gorm.DB, workflowId int64) (*model.ProjectManagementWorkflowStage, error) {
-	return r.stageRepo.FindOneByColumnsWithTx(ctx, tx, map[string]any{"workflow_id": workflowId, "phase": constants.ProjectManagementStagePhasePending})
-}
-
-func (r *ProjectManagementWorkflowRepo) ListStagesWithTx(ctx context.Context, tx *gorm.DB, workflowId int64) ([]*model.ProjectManagementWorkflowStage, error) {
-	return r.stageRepo.FindAllWithTx(ctx, tx, map[string]any{"workflow_id": workflowId})
-}
-
-func (r *ProjectManagementWorkflowRepo) ListTransitionsWithTx(ctx context.Context, tx *gorm.DB, workflowId int64) ([]*model.ProjectManagementWorkflowTransition, error) {
-	transitions := make([]*model.ProjectManagementWorkflowTransition, 0)
-	err := tx.WithContext(ctx).Where("workflow_id = ?", workflowId).Order("id ASC").Find(&transitions).Error
-	return transitions, errorx.WithStack(err)
-}
-
-func (r *ProjectManagementWorkflowRepo) FindProjectDefinitionWithTx(ctx context.Context, tx *gorm.DB, projectId, organizationId int64) (*model.ProjectManagementWorkflow, error) {
-	workflow := new(model.ProjectManagementWorkflow)
-	err := tx.WithContext(ctx).
-		Preload("Stages", func(db *gorm.DB) *gorm.DB { return db.Order("sort_order ASC, id ASC") }).
-		Preload("Transitions", func(db *gorm.DB) *gorm.DB { return db.Order("id ASC") }).
-		Where("project_id = ? AND organization_id = ? AND kind = ?", projectId, organizationId, constants.ProjectManagementWorkflowKindProject).
-		First(workflow).Error
-	return workflow, errorx.WithStack(err)
-}
-
-func (r *ProjectManagementWorkflowRepo) FindProjectDefinition(ctx context.Context, projectId, organizationId int64) (*model.ProjectManagementWorkflow, error) {
-	workflow := new(model.ProjectManagementWorkflow)
-	err := r.Client(ctx).
-		Preload("Stages", func(db *gorm.DB) *gorm.DB { return db.Order("sort_order ASC, id ASC") }).
-		Preload("Stages.Transitions", func(db *gorm.DB) *gorm.DB { return db.Order("id ASC") }).
-		Preload("Stages.Transitions.FromStage").
-		Preload("Stages.Transitions.ToStage").
-		Where("project_id = ? AND organization_id = ? AND kind = ?", projectId, organizationId, constants.ProjectManagementWorkflowKindProject).
-		First(workflow).Error
-	return workflow, errorx.WithStack(err)
-}
-
-func (r *ProjectManagementWorkflowRepo) FindStageWithTx(ctx context.Context, tx *gorm.DB, id int64) (*model.ProjectManagementWorkflowStage, error) {
-	return r.stageRepo.FindOneByIdWithTx(ctx, tx, id)
-}
-
-func (r *ProjectManagementWorkflowRepo) FindStage(ctx context.Context, id int64) (*model.ProjectManagementWorkflowStage, error) {
-	return r.stageRepo.FindOneById(ctx, id)
-}
-
-func (r *ProjectManagementWorkflowRepo) ListTemplateStages(ctx context.Context, workflowId, organizationId int64) ([]*model.ProjectManagementWorkflowStage, error) {
-	stages := make([]*model.ProjectManagementWorkflowStage, 0)
-	err := r.stageRepo.Client(ctx).Where("workflow_id = ? AND EXISTS (SELECT 1 FROM project_management_workflows WHERE id = project_management_workflow_stages.workflow_id AND organization_id = ? AND kind = ?)", workflowId, organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).
-		Order("sort_order ASC, id ASC").Find(&stages).Error
+func (r *ProjectManagementWorkflowRepo) ListWorkflowStagesWithTx(ctx context.Context, tx *gorm.DB, workflowId int64) ([]*model.ProjectManagementStage, error) {
+	stages := make([]*model.ProjectManagementStage, 0)
+	err := tx.WithContext(ctx).Model(&model.ProjectManagementStage{}).
+		Select("project_management_stages.*").
+		Joins("JOIN project_management_workflow_stages ON project_management_workflow_stages.stage_id = project_management_stages.id AND project_management_workflow_stages.is_del = 0").
+		Where("project_management_workflow_stages.workflow_id = ?", workflowId).
+		Order("project_management_stages.sort_order ASC, project_management_stages.id ASC").Find(&stages).Error
 	return stages, errorx.WithStack(err)
 }
 
-func (r *ProjectManagementWorkflowRepo) FindTemplateStage(ctx context.Context, id, workflowId, organizationId int64) (*model.ProjectManagementWorkflowStage, error) {
-	stage := new(model.ProjectManagementWorkflowStage)
-	err := r.stageRepo.Client(ctx).
-		Preload("Transitions", func(db *gorm.DB) *gorm.DB { return db.Order("id ASC") }).
-		Where(
-			"id = ? AND workflow_id = ? AND EXISTS (SELECT 1 FROM project_management_workflows WHERE id = project_management_workflow_stages.workflow_id AND organization_id = ? AND kind = ?)",
-			id, workflowId, organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).
-		First(stage).Error
-	return stage, errorx.WithStack(err)
+func (r *ProjectManagementWorkflowRepo) ListStageLinksWithTx(ctx context.Context, tx *gorm.DB, workflowId int64) ([]*model.ProjectManagementWorkflowStage, error) {
+	links := make([]*model.ProjectManagementWorkflowStage, 0)
+	err := tx.WithContext(ctx).Model(&model.ProjectManagementWorkflowStage{}).Where("workflow_id = ?", workflowId).Order("id ASC").Find(&links).Error
+	return links, errorx.WithStack(err)
 }
 
-func (r *ProjectManagementWorkflowRepo) FindTemplateStageWithTx(ctx context.Context, tx *gorm.DB, id, workflowId, organizationId int64) (*model.ProjectManagementWorkflowStage, error) {
-	stage := new(model.ProjectManagementWorkflowStage)
-	err := tx.WithContext(ctx).Model(new(model.ProjectManagementWorkflowStage)).
-		Clauses(clause.Locking{Strength: "UPDATE"}).
-		Where("id = ? AND workflow_id = ? AND EXISTS (SELECT 1 FROM project_management_workflows WHERE id = project_management_workflow_stages.workflow_id AND organization_id = ? AND kind = ?)", id, workflowId, organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).
-		First(stage).Error
-	return stage, errorx.WithStack(err)
-}
-
-func (r *ProjectManagementWorkflowRepo) FindSwappableStageWithTx(ctx context.Context, tx *gorm.DB, id, workflowId, organizationId int64) (*model.ProjectManagementWorkflowStage, error) {
-	stage := new(model.ProjectManagementWorkflowStage)
-	err := tx.WithContext(ctx).Model(new(model.ProjectManagementWorkflowStage)).Clauses(clause.Locking{Strength: "UPDATE"}).
-		Where("id = ? AND workflow_id = ? AND EXISTS (SELECT 1 FROM project_management_workflows WHERE id = project_management_workflow_stages.workflow_id AND organization_id = ? AND kind IN ?)", id, workflowId, organizationId, []constants.ProjectManagementWorkflowKind{constants.ProjectManagementWorkflowKindOrganizationTemplate, constants.ProjectManagementWorkflowKindProject}).
-		First(stage).Error
-	return stage, errorx.WithStack(err)
-}
-
-func (r *ProjectManagementWorkflowRepo) ListTransitionsByFromStage(ctx context.Context, fromStageId int64) ([]*model.ProjectManagementWorkflowTransition, error) {
-	transitions := make([]*model.ProjectManagementWorkflowTransition, 0)
-	err := r.transitionRepo.Client(ctx).
-		Preload("FromStage").
-		Preload("ToStage").
-		Where("from_stage_id = ?", fromStageId).
-		Order("id ASC").
-		Find(&transitions).Error
+func (r *ProjectManagementWorkflowRepo) ListStageTransitionsWithTx(ctx context.Context, tx *gorm.DB, workflowId int64) ([]*model.ProjectManagementWorkflowStageTransition, error) {
+	transitions := make([]*model.ProjectManagementWorkflowStageTransition, 0)
+	err := tx.WithContext(ctx).Model(&model.ProjectManagementWorkflowStageTransition{}).Where("workflow_id = ?", workflowId).Order("id ASC").Find(&transitions).Error
 	return transitions, errorx.WithStack(err)
 }
 
-func (r *ProjectManagementWorkflowRepo) FindTemplateTransition(ctx context.Context, id, workflowId, organizationId int64) (*model.ProjectManagementWorkflowTransition, error) {
-	transition := new(model.ProjectManagementWorkflowTransition)
-	err := r.transitionRepo.Client(ctx).
-		Preload("FromStage").
-		Preload("ToStage").
-		Where("id = ? AND workflow_id = ? AND EXISTS (SELECT 1 FROM project_management_workflows WHERE id = project_management_workflow_transitions.workflow_id AND organization_id = ? AND kind = ?)", id, workflowId, organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).
-		First(transition).Error
-	return transition, errorx.WithStack(err)
-}
-
-func (r *ProjectManagementWorkflowRepo) FindTemplateTransitionWithTx(ctx context.Context, tx *gorm.DB, id, workflowId, organizationId int64) (*model.ProjectManagementWorkflowTransition, error) {
-	transition := new(model.ProjectManagementWorkflowTransition)
-	err := tx.WithContext(ctx).Model(new(model.ProjectManagementWorkflowTransition)).Clauses(clause.Locking{Strength: "UPDATE"}).Where("id = ? AND workflow_id = ? AND EXISTS (SELECT 1 FROM project_management_workflows WHERE id = project_management_workflow_transitions.workflow_id AND organization_id = ? AND kind = ?)", id, workflowId, organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).First(transition).Error
-	return transition, errorx.WithStack(err)
-}
-
-func (r *ProjectManagementWorkflowRepo) CreateTemplateStageWithTx(ctx context.Context, tx *gorm.DB, stage *model.ProjectManagementWorkflowStage) error {
-	_, err := r.stageRepo.CreateWithTx(ctx, tx, stage, false)
-	return err
-}
-
-func (r *ProjectManagementWorkflowRepo) UpdateTemplateStageWithTx(ctx context.Context, tx *gorm.DB, stage *model.ProjectManagementWorkflowStage) error {
-	return r.stageRepo.UpdateColumnsWithTx(ctx, tx,
-		map[string]any{"name": stage.Name, "description": stage.Description, "phase": stage.Phase, "color": stage.Color, "sort_order": stage.SortOrder},
-		map[string]any{"id": stage.Id, "workflow_id": stage.WorkflowId}, nil)
-}
-
-func (r *ProjectManagementWorkflowRepo) SwapStageSortOrdersWithTx(ctx context.Context, tx *gorm.DB, workflowId, organizationId, id, targetId int64) error {
-	if id == targetId {
-		return errorx.New("workflow stages must be different")
-	}
-	stages := make([]*model.ProjectManagementWorkflowStage, 0, 2)
-	err := tx.WithContext(ctx).Model(&model.ProjectManagementWorkflowStage{}).Clauses(clause.Locking{Strength: "UPDATE"}).
-		Where("id IN ? AND workflow_id = ? AND EXISTS (SELECT 1 FROM project_management_workflows WHERE id = project_management_workflow_stages.workflow_id AND organization_id = ? AND kind IN ?)", []int64{id, targetId}, workflowId, organizationId, []constants.ProjectManagementWorkflowKind{constants.ProjectManagementWorkflowKindOrganizationTemplate, constants.ProjectManagementWorkflowKindProject}).
-		Order("id ASC").Find(&stages).Error
-	if err != nil {
-		return errorx.WithStack(err)
-	}
-	if len(stages) != 2 {
-		return errorx.New("workflow stage not found")
-	}
-	stageById := map[int64]*model.ProjectManagementWorkflowStage{stages[0].Id: stages[0], stages[1].Id: stages[1]}
-	stage, target := stageById[id], stageById[targetId]
-	if stage == nil || target == nil {
-		return errorx.New("workflow stage not found")
-	}
-	if err = r.stageRepo.UpdateColumnsWithTx(ctx, tx, map[string]any{"sort_order": target.SortOrder}, map[string]any{"id": stage.Id, "workflow_id": workflowId}, nil); err != nil {
-		return err
-	}
-	return r.stageRepo.UpdateColumnsWithTx(ctx, tx, map[string]any{"sort_order": stage.SortOrder}, map[string]any{"id": target.Id, "workflow_id": workflowId}, nil)
-}
-
-func (r *ProjectManagementWorkflowRepo) CreateTemplateTransitionWithTx(ctx context.Context, tx *gorm.DB, transition *model.ProjectManagementWorkflowTransition) error {
-	_, err := r.transitionRepo.CreateWithTx(ctx, tx, transition, false)
-	return err
-}
-
-func (r *ProjectManagementWorkflowRepo) UpdateTemplateTransitionWithTx(ctx context.Context, tx *gorm.DB, transition *model.ProjectManagementWorkflowTransition) error {
-	allowedActorTypes, err := json.Marshal(transition.AllowedActorTypes)
-	if err != nil {
-		return errorx.WithStack(err)
-	}
-	return r.transitionRepo.UpdateColumnsWithTx(ctx, tx,
-		map[string]any{"name": transition.Name, "from_stage_id": transition.FromStageId, "to_stage_id": transition.ToStageId, "allowed_actor_types": datatypes.JSON(allowedActorTypes)},
-		map[string]any{"id": transition.Id, "workflow_id": transition.WorkflowId}, nil)
-}
-
-func (r *ProjectManagementWorkflowRepo) DeleteTemplateTransitionWithTx(ctx context.Context, tx *gorm.DB, transition *model.ProjectManagementWorkflowTransition) error {
-	_, err := r.transitionRepo.DeleteWithTx(ctx, tx, map[string]any{"id": transition.Id, "workflow_id": transition.WorkflowId})
-	return err
-}
-
-func (r *ProjectManagementWorkflowRepo) FindTransitionWithTx(ctx context.Context, tx *gorm.DB, workflowId, fromStageId, toStageId int64) (*model.ProjectManagementWorkflowTransition, error) {
-	return r.transitionRepo.FindOneByColumnsWithTx(ctx, tx, map[string]any{"workflow_id": workflowId, "from_stage_id": fromStageId, "to_stage_id": toStageId})
-}
-
-func (r *ProjectManagementWorkflowRepo) LockProjectWithTx(ctx context.Context, tx *gorm.DB, projectId, organizationId int64) (*model.ProjectManagementWorkflow, error) {
+func (r *ProjectManagementWorkflowRepo) FindProjectWorkflowByIDWithTx(ctx context.Context, tx *gorm.DB, workflowId, projectId, organizationId int64) (*model.ProjectManagementWorkflow, error) {
 	workflow := new(model.ProjectManagementWorkflow)
-	err := tx.WithContext(ctx).Clauses(clause.Locking{Strength: "UPDATE"}).
-		Where("project_id = ? AND organization_id = ? AND kind = ?", projectId, organizationId, constants.ProjectManagementWorkflowKindProject).
+	err := tx.WithContext(ctx).Model(&model.ProjectManagementWorkflow{}).
+		Joins("JOIN project_management_projects ON project_management_projects.id = project_management_workflows.entity_id AND project_management_projects.is_del = 0").
+		Where("project_management_workflows.id = ? AND project_management_workflows.entity_type = ? AND project_management_workflows.entity_id = ? AND project_management_projects.organization_id = ?", workflowId, constants.ProjectManagementOwnerTypeProject, projectId, organizationId).
 		First(workflow).Error
 	return workflow, errorx.WithStack(err)
 }
 
-func (r *ProjectManagementWorkflowRepo) LockWithTx(ctx context.Context, tx *gorm.DB, id int64) (*model.ProjectManagementWorkflow, error) {
+func (r *ProjectManagementWorkflowRepo) FindDefaultProjectWorkflowWithTx(ctx context.Context, tx *gorm.DB, projectId, organizationId int64) (*model.ProjectManagementWorkflow, error) {
 	workflow := new(model.ProjectManagementWorkflow)
-	err := tx.WithContext(ctx).Clauses(clause.Locking{Strength: "UPDATE"}).First(workflow, id).Error
-	return workflow, errorx.WithStack(err)
-}
-
-func (r *ProjectManagementWorkflowRepo) LockTemplateWithTx(ctx context.Context, tx *gorm.DB, id, organizationId int64) (*model.ProjectManagementWorkflow, error) {
-	workflow := new(model.ProjectManagementWorkflow)
-	err := tx.WithContext(ctx).Clauses(clause.Locking{Strength: "UPDATE"}).
-		Where("id = ? AND organization_id = ? AND kind = ?", id, organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).
+	err := tx.WithContext(ctx).Model(&model.ProjectManagementWorkflow{}).
+		Joins("JOIN project_management_projects ON project_management_projects.id = project_management_workflows.entity_id AND project_management_projects.is_del = 0").
+		Where("project_management_workflows.entity_type = ? AND project_management_workflows.entity_id = ? AND project_management_projects.organization_id = ? AND project_management_workflows.is_default = 1", constants.ProjectManagementOwnerTypeProject, projectId, organizationId).
 		First(workflow).Error
 	return workflow, errorx.WithStack(err)
 }
 
-func (r *ProjectManagementWorkflowRepo) LockDefaultTemplateDefinitionWithTx(ctx context.Context, tx *gorm.DB, organizationId int64) (*model.ProjectManagementWorkflow, error) {
-	workflow := new(model.ProjectManagementWorkflow)
-	err := tx.WithContext(ctx).Clauses(clause.Locking{Strength: "UPDATE"}).
-		Preload("Stages", func(db *gorm.DB) *gorm.DB { return db.Order("sort_order ASC, id ASC") }).
-		Preload("Transitions", func(db *gorm.DB) *gorm.DB { return db.Order("id ASC") }).
-		Where("organization_id = ? AND kind = ? AND is_default = true", organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).
-		First(workflow).Error
-	return workflow, errorx.WithStack(err)
-}
-
-func (r *ProjectManagementWorkflowRepo) LockTemplatesWithTx(ctx context.Context, tx *gorm.DB, organizationId int64) ([]*model.ProjectManagementWorkflow, error) {
+func (r *ProjectManagementWorkflowRepo) ListWorkflowSources(ctx context.Context, organizationId int64) ([]*model.ProjectManagementWorkflow, error) {
 	workflows := make([]*model.ProjectManagementWorkflow, 0)
-	err := tx.WithContext(ctx).Clauses(clause.Locking{Strength: "UPDATE"}).
-		Where("organization_id = ? AND kind = ?", organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).
+	err := r.sourceQuery(r.Client(ctx), organizationId).
+		Preload("Stages", func(db *gorm.DB) *gorm.DB { return db.Order("sort_order ASC, id ASC") }).
+		Preload("Transitions", preloadWorkflowTransitions).
+		Order("project_management_workflows.is_default DESC, project_management_workflows.id ASC").Find(&workflows).Error
+	return workflows, errorx.WithStack(err)
+}
+
+func (r *ProjectManagementWorkflowRepo) FindWorkflowSourceByID(ctx context.Context, workflowId, organizationId int64) (*model.ProjectManagementWorkflow, error) {
+	workflow := new(model.ProjectManagementWorkflow)
+	err := r.sourceQuery(r.Client(ctx), organizationId).
+		Preload("Stages", func(db *gorm.DB) *gorm.DB { return db.Order("sort_order ASC, id ASC") }).
+		Preload("Transitions", preloadWorkflowTransitions).
+		Where("project_management_workflows.id = ?", workflowId).First(workflow).Error
+	return workflow, errorx.WithStack(err)
+}
+
+func (r *ProjectManagementWorkflowRepo) FindWorkflowSourceByIDWithTx(ctx context.Context, tx *gorm.DB, workflowId, organizationId int64) (*model.ProjectManagementWorkflow, error) {
+	workflow := new(model.ProjectManagementWorkflow)
+	err := r.sourceQuery(tx.WithContext(ctx), organizationId).Where("project_management_workflows.id = ?", workflowId).First(workflow).Error
+	return workflow, errorx.WithStack(err)
+}
+
+func (r *ProjectManagementWorkflowRepo) FindDefaultWorkflowSourceWithTx(ctx context.Context, tx *gorm.DB, organizationId int64) (*model.ProjectManagementWorkflow, error) {
+	workflow := new(model.ProjectManagementWorkflow)
+	err := r.sourceQuery(tx.WithContext(ctx), organizationId).Where("project_management_workflows.is_default = 1").First(workflow).Error
+	return workflow, errorx.WithStack(err)
+}
+
+func (r *ProjectManagementWorkflowRepo) LockWorkflowSourceWithTx(ctx context.Context, tx *gorm.DB, workflowId, organizationId int64) (*model.ProjectManagementWorkflow, error) {
+	workflow := new(model.ProjectManagementWorkflow)
+	err := r.sourceQuery(tx.WithContext(ctx).Clauses(clause.Locking{Strength: "UPDATE"}), organizationId).Where("project_management_workflows.id = ?", workflowId).First(workflow).Error
+	return workflow, errorx.WithStack(err)
+}
+
+func (r *ProjectManagementWorkflowRepo) LockWorkflowSourcesWithTx(ctx context.Context, tx *gorm.DB, organizationId int64) ([]*model.ProjectManagementWorkflow, error) {
+	workflows := make([]*model.ProjectManagementWorkflow, 0)
+	err := r.sourceQuery(tx.WithContext(ctx).Clauses(clause.Locking{Strength: "UPDATE"}), organizationId).Order("project_management_workflows.id ASC").Find(&workflows).Error
+	return workflows, errorx.WithStack(err)
+}
+
+func (r *ProjectManagementWorkflowRepo) sourceQuery(db *gorm.DB, organizationId int64) *gorm.DB {
+	return db.Model(&model.ProjectManagementWorkflow{}).
+		Joins("JOIN project_management_templates ON project_management_templates.id = project_management_workflows.entity_id AND project_management_templates.template_type = ? AND project_management_templates.status = ? AND project_management_templates.is_del = 0 AND (project_management_templates.project_type IS NULL OR project_management_templates.project_type = '')", constants.ProjectManagementTemplateTypeOrganization, "Active").
+		Where("project_management_templates.organization_id = ?", organizationId)
+}
+
+func (r *ProjectManagementWorkflowRepo) ListProjectWorkflows(ctx context.Context, projectId, organizationId int64) ([]*model.ProjectManagementWorkflow, error) {
+	workflows := make([]*model.ProjectManagementWorkflow, 0)
+	err := r.Client(ctx).Model(&model.ProjectManagementWorkflow{}).
+		Where("entity_type = ? AND entity_id = ?", constants.ProjectManagementOwnerTypeProject, projectId).
+		Where("EXISTS (SELECT 1 FROM project_management_projects WHERE id = ? AND organization_id = ?)", projectId, organizationId).
+		Order("is_default DESC, id ASC").Find(&workflows).Error
+	return workflows, errorx.WithStack(err)
+}
+
+func (r *ProjectManagementWorkflowRepo) ListTemplateWorkflowsWithTx(ctx context.Context, tx *gorm.DB, templateId int64) ([]*model.ProjectManagementWorkflow, error) {
+	workflows := make([]*model.ProjectManagementWorkflow, 0)
+	err := tx.WithContext(ctx).Model(&model.ProjectManagementWorkflow{}).
+		Where("entity_type = ? AND entity_id = ?", constants.ProjectManagementOwnerTypeTemplate, templateId).
 		Order("id ASC").Find(&workflows).Error
 	return workflows, errorx.WithStack(err)
 }
 
-func (r *ProjectManagementWorkflowRepo) DemoteDefaultWithTx(ctx context.Context, tx *gorm.DB, organizationId, exceptId int64) error {
+func (r *ProjectManagementWorkflowRepo) ListProjectWorkflowsWithTx(ctx context.Context, tx *gorm.DB, projectId int64) ([]*model.ProjectManagementWorkflow, error) {
+	workflows := make([]*model.ProjectManagementWorkflow, 0)
 	err := tx.WithContext(ctx).Model(&model.ProjectManagementWorkflow{}).
-		Where("organization_id = ? AND kind = ? AND id <> ?", organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate, exceptId).
-		Update("is_default", false).Error
-	return errorx.WithStack(err)
+		Where("entity_type = ? AND entity_id = ?", constants.ProjectManagementOwnerTypeProject, projectId).
+		Order("id ASC").Find(&workflows).Error
+	return workflows, errorx.WithStack(err)
 }
 
-func (r *ProjectManagementWorkflowRepo) SetDefaultWithTx(ctx context.Context, tx *gorm.DB, id, organizationId int64) error {
-	err := tx.WithContext(ctx).Model(&model.ProjectManagementWorkflow{}).
-		Where("id = ? AND organization_id = ? AND kind = ?", id, organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).
-		Update("is_default", true).Error
-	return errorx.WithStack(err)
+func (r *ProjectManagementWorkflowRepo) PageProjectWorkflows(ctx context.Context, projectId, organizationId int64, pageReq gormx.PageRequest) (gormx.PageResponse[*model.ProjectManagementWorkflow], error) {
+	query := r.Client(ctx).Model(&model.ProjectManagementWorkflow{}).
+		Where("entity_type = ? AND entity_id = ?", constants.ProjectManagementOwnerTypeProject, projectId).
+		Where("EXISTS (SELECT 1 FROM project_management_projects WHERE id = ? AND organization_id = ?)", projectId, organizationId).
+		Order("is_default DESC, id ASC")
+	return r.BaseRepo.Page(query, pageReq)
 }
 
-func (r *ProjectManagementWorkflowRepo) ReplaceTemplateDefinitionWithTx(ctx context.Context, tx *gorm.DB, workflowId int64, stages []*model.ProjectManagementWorkflowStage, transitions []*model.ProjectManagementWorkflowTransition) error {
-	if err := tx.WithContext(ctx).Where("workflow_id = ?", workflowId).Delete(&model.ProjectManagementWorkflowTransition{}).Error; err != nil {
-		return errorx.WithStack(err)
-	}
-	if err := tx.WithContext(ctx).Where("workflow_id = ?", workflowId).Delete(&model.ProjectManagementWorkflowStage{}).Error; err != nil {
-		return errorx.WithStack(err)
-	}
-	stageIds := make(map[int64]int64, len(stages))
-	for _, stage := range stages {
-		referenceId := stage.Id
-		stage.Id = 0
-		stage.WorkflowId = workflowId
-		if _, err := r.stageRepo.CreateWithTx(ctx, tx, stage, false); err != nil {
-			return err
-		}
-		stageIds[referenceId] = stage.Id
-	}
-	for _, transition := range transitions {
-		transition.Id = 0
-		transition.WorkflowId = workflowId
-		transition.FromStageId = stageIds[transition.FromStageId]
-		transition.ToStageId = stageIds[transition.ToStageId]
-		if _, err := r.transitionRepo.CreateWithTx(ctx, tx, transition, false); err != nil {
-			return err
-		}
-	}
-	return nil
+func (r *ProjectManagementWorkflowRepo) FindProjectWorkflowByID(ctx context.Context, workflowId, projectId, organizationId int64) (*model.ProjectManagementWorkflow, error) {
+	workflow := new(model.ProjectManagementWorkflow)
+	err := r.Client(ctx).Model(&model.ProjectManagementWorkflow{}).
+		Preload("Stages", func(db *gorm.DB) *gorm.DB { return db.Order("sort_order ASC, id ASC") }).
+		Preload("Transitions", preloadWorkflowTransitions).
+		Where("id = ? AND entity_type = ? AND entity_id = ?", workflowId, constants.ProjectManagementOwnerTypeProject, projectId).
+		Where("EXISTS (SELECT 1 FROM project_management_projects WHERE id = ? AND organization_id = ?)", projectId, organizationId).
+		First(workflow).Error
+	return workflow, errorx.WithStack(err)
 }
 
-// ReplaceProjectDefinitionWithTx preserves submitted positive stage IDs. New stages
-// use unique negative IDs for transition references within this replacement request.
-func (r *ProjectManagementWorkflowRepo) ReplaceProjectDefinitionWithTx(ctx context.Context, tx *gorm.DB, workflowId int64, stages []*model.ProjectManagementWorkflowStage, transitions []*model.ProjectManagementWorkflowTransition) error {
-	existing := make([]*model.ProjectManagementWorkflowStage, 0)
-	if err := tx.WithContext(ctx).Where("workflow_id = ?", workflowId).Find(&existing).Error; err != nil {
-		return errorx.WithStack(err)
-	}
-	existingById := make(map[int64]*model.ProjectManagementWorkflowStage, len(existing))
-	for _, stage := range existing {
-		existingById[stage.Id] = stage
-	}
-	existingTransitions := make([]*model.ProjectManagementWorkflowTransition, 0)
-	if err := tx.WithContext(ctx).Where("workflow_id = ?", workflowId).Find(&existingTransitions).Error; err != nil {
-		return errorx.WithStack(err)
-	}
-	existingTransitionsById := make(map[int64]*model.ProjectManagementWorkflowTransition, len(existingTransitions))
-	for _, transition := range existingTransitions {
-		existingTransitionsById[transition.Id] = transition
-	}
-	stageIds := make(map[int64]int64, len(stages))
-	retained := make(map[int64]struct{}, len(stages))
-	for _, stage := range stages {
-		referenceId := stage.Id
-		if referenceId > 0 {
-			if _, ok := existingById[referenceId]; !ok {
-				return errorx.New("workflow stage does not belong to the project workflow")
-			}
-			existingStage := existingById[referenceId]
-			base := existingStage.Base
-			if err := copierx.Assign(stage, existingStage); err != nil {
-				return err
-			}
-			existingStage.Base, existingStage.WorkflowId = base, workflowId
-			existingStage.RemoveRelationships()
-			if _, err := r.stageRepo.UpdateOneByIdWithTx(ctx, tx, existingStage.Id, existingStage); err != nil {
-				return err
-			}
-			if err := tx.WithContext(ctx).Model(&model.ProjectManagementTask{}).Where("stage_id = ?", existingStage.Id).Update("phase", existingStage.Phase).Error; err != nil {
-				return errorx.WithStack(err)
-			}
-			stageIds[referenceId], retained[referenceId] = referenceId, struct{}{}
-			continue
-		}
-		stage.Id, stage.WorkflowId = 0, workflowId
-		if _, err := r.stageRepo.CreateWithTx(ctx, tx, stage, false); err != nil {
-			return err
-		}
-		stageIds[referenceId] = stage.Id
-	}
-	for _, stage := range existing {
-		if _, keep := retained[stage.Id]; keep {
-			continue
-		}
-		var taskCount int64
-		if err := tx.WithContext(ctx).Model(&model.ProjectManagementTask{}).Where("stage_id = ?", stage.Id).Count(&taskCount).Error; err != nil {
-			return errorx.WithStack(err)
-		}
-		if taskCount != 0 {
-			return errorx.New("workflow stage is referenced by a task")
-		}
-	}
-	retainedTransitions := make(map[int64]struct{}, len(transitions))
-	for _, transition := range transitions {
-		fromStageId, fromOK := stageIds[transition.FromStageId]
-		toStageId, toOK := stageIds[transition.ToStageId]
-		if !fromOK || !toOK {
-			return errorx.New("workflow transition stage is invalid")
-		}
-		if transition.Id > 0 {
-			existingTransition, ok := existingTransitionsById[transition.Id]
-			if !ok {
-				return errorx.New("workflow transition does not belong to the project workflow")
-			}
-			base := existingTransition.Base
-			if err := copierx.Assign(transition, existingTransition); err != nil {
-				return err
-			}
-			existingTransition.Base, existingTransition.WorkflowId = base, workflowId
-			existingTransition.FromStageId, existingTransition.ToStageId = fromStageId, toStageId
-			existingTransition.RemoveRelationships()
-			if _, err := r.transitionRepo.UpdateOneByIdWithTx(ctx, tx, existingTransition.Id, existingTransition); err != nil {
-				return err
-			}
-			retainedTransitions[existingTransition.Id] = struct{}{}
-			continue
-		}
-		transition.Id, transition.WorkflowId = 0, workflowId
-		transition.FromStageId, transition.ToStageId = fromStageId, toStageId
-		if _, err := r.transitionRepo.CreateWithTx(ctx, tx, transition, false); err != nil {
-			return err
-		}
-	}
-	for _, transition := range existingTransitions {
-		if _, keep := retainedTransitions[transition.Id]; keep {
-			continue
-		}
-		if _, err := r.transitionRepo.DeleteByIDWithTx(ctx, tx, transition.Id); err != nil {
-			return err
-		}
-	}
-	for _, stage := range existing {
-		if _, keep := retained[stage.Id]; !keep {
-			if _, err := r.stageRepo.DeleteByIDWithTx(ctx, tx, stage.Id); err != nil {
-				return err
-			}
-		}
-	}
-	return nil
+func (r *ProjectManagementWorkflowRepo) FindPendingOwnerStageWithTx(ctx context.Context, tx *gorm.DB, workflowId int64) (*model.ProjectManagementStage, error) {
+	stage := new(model.ProjectManagementStage)
+	err := tx.WithContext(ctx).Model(&model.ProjectManagementStage{}).
+		Joins("JOIN project_management_workflow_stages ON project_management_workflow_stages.stage_id = project_management_stages.id AND project_management_workflow_stages.is_del = 0").
+		Where("project_management_workflow_stages.workflow_id = ? AND project_management_stages.phase = ?", workflowId, constants.ProjectManagementStagePhasePending).
+		First(stage).Error
+	return stage, errorx.WithStack(err)
 }
 
-func (r *ProjectManagementWorkflowRepo) DeleteTemplateWithTx(ctx context.Context, tx *gorm.DB, workflowId int64) error {
-	if _, err := r.transitionRepo.DeleteWithTx(ctx, tx, map[string]any{"workflow_id": workflowId}); err != nil {
-		return err
+func (r *ProjectManagementWorkflowRepo) ListPendingOwnerStagesWithTx(ctx context.Context, tx *gorm.DB, workflowIds []int64) (map[int64]*model.ProjectManagementStage, error) {
+	if len(workflowIds) == 0 {
+		return map[int64]*model.ProjectManagementStage{}, nil
 	}
-	if _, err := r.stageRepo.DeleteWithTx(ctx, tx, map[string]any{"workflow_id": workflowId}); err != nil {
-		return err
+	type pendingStage struct {
+		WorkflowId int64
+		model.ProjectManagementStage
 	}
-	_, err := r.DeleteByIDWithTx(ctx, tx, workflowId)
-	return err
+	rows := make([]pendingStage, 0, len(workflowIds))
+	err := tx.WithContext(ctx).Model(&model.ProjectManagementWorkflowStage{}).
+		Select("project_management_workflow_stages.workflow_id, project_management_stages.*").
+		Joins("JOIN project_management_stages ON project_management_stages.id = project_management_workflow_stages.stage_id AND project_management_stages.is_del = 0").
+		Where("project_management_workflow_stages.workflow_id IN ? AND project_management_stages.phase = ?", workflowIds, constants.ProjectManagementStagePhasePending).
+		Find(&rows).Error
+	if err != nil {
+		return nil, errorx.WithStack(err)
+	}
+	result := make(map[int64]*model.ProjectManagementStage, len(rows))
+	for _, row := range rows {
+		stage := row.ProjectManagementStage
+		if _, exists := result[row.WorkflowId]; exists {
+			return nil, errorx.New("workflow has multiple pending stages")
+		}
+		result[row.WorkflowId] = &stage
+	}
+	return result, nil
 }
 
-func (r *ProjectManagementWorkflowRepo) DeleteTemplateStageWithTx(ctx context.Context, tx *gorm.DB, stage *model.ProjectManagementWorkflowStage) error {
-	if err := tx.WithContext(ctx).Where("workflow_id = ? AND (from_stage_id = ? OR to_stage_id = ?)", stage.WorkflowId, stage.Id, stage.Id).Delete(&model.ProjectManagementWorkflowTransition{}).Error; err != nil {
+func (r *ProjectManagementWorkflowRepo) FindOwnerStageWithTx(ctx context.Context, tx *gorm.DB, stageId int64, entityType constants.ProjectManagementOwnerType, entityId int64) (*model.ProjectManagementStage, error) {
+	stage := new(model.ProjectManagementStage)
+	err := tx.WithContext(ctx).Model(&model.ProjectManagementStage{}).Where("id = ? AND entity_type = ? AND entity_id = ?", stageId, entityType, entityId).First(stage).Error
+	return stage, errorx.WithStack(err)
+}
+
+func (r *ProjectManagementWorkflowRepo) FindOwnerStageInWorkflowWithTx(ctx context.Context, tx *gorm.DB, workflowId, stageId int64, entityType constants.ProjectManagementOwnerType, entityId int64) (*model.ProjectManagementStage, error) {
+	stage := new(model.ProjectManagementStage)
+	err := tx.WithContext(ctx).Model(&model.ProjectManagementStage{}).
+		Joins("JOIN project_management_workflow_stages ON project_management_workflow_stages.stage_id = project_management_stages.id AND project_management_workflow_stages.is_del = 0").
+		Where("project_management_workflow_stages.workflow_id = ? AND project_management_stages.id = ? AND project_management_stages.entity_type = ? AND project_management_stages.entity_id = ?", workflowId, stageId, entityType, entityId).
+		First(stage).Error
+	return stage, errorx.WithStack(err)
+}
+
+func (r *ProjectManagementWorkflowRepo) DeleteWorkflowSourceWithTx(ctx context.Context, tx *gorm.DB, workflow *model.ProjectManagementWorkflow) error {
+	if err := tx.WithContext(ctx).Where("workflow_id = ?", workflow.Id).Delete(&model.ProjectManagementWorkflowStageTransition{}).Error; err != nil {
 		return errorx.WithStack(err)
 	}
-	_, err := r.stageRepo.DeleteWithTx(ctx, tx, map[string]any{"id": stage.Id, "workflow_id": stage.WorkflowId})
-	return err
+	if err := tx.WithContext(ctx).Where("workflow_id = ?", workflow.Id).Delete(&model.ProjectManagementWorkflowStage{}).Error; err != nil {
+		return errorx.WithStack(err)
+	}
+	if err := tx.WithContext(ctx).Where("entity_type = ? AND entity_id = ?", constants.ProjectManagementOwnerTypeTemplate, workflow.EntityId).Delete(&model.ProjectManagementStage{}).Error; err != nil {
+		return errorx.WithStack(err)
+	}
+	if err := tx.WithContext(ctx).Delete(workflow).Error; err != nil {
+		return errorx.WithStack(err)
+	}
+	return errorx.WithStack(tx.WithContext(ctx).Delete(&model.ProjectManagementTemplate{}, workflow.EntityId).Error)
 }
 
 func (r *ProjectManagementWorkflowRepo) DeleteProjectWorkflowWithTx(ctx context.Context, tx *gorm.DB, projectId int64) error {
 	workflows := make([]*model.ProjectManagementWorkflow, 0)
-	if err := tx.WithContext(ctx).Where("project_id = ? AND kind = ?", projectId, constants.ProjectManagementWorkflowKindProject).Find(&workflows).Error; err != nil {
+	if err := tx.WithContext(ctx).Model(&model.ProjectManagementWorkflow{}).Where("entity_type = ? AND entity_id = ?", constants.ProjectManagementOwnerTypeProject, projectId).Find(&workflows).Error; err != nil {
 		return errorx.WithStack(err)
 	}
 	for _, workflow := range workflows {
-		if err := r.DeleteTemplateWithTx(ctx, tx, workflow.Id); err != nil {
+		if err := tx.WithContext(ctx).Where("workflow_id = ?", workflow.Id).Delete(&model.ProjectManagementWorkflowStageTransition{}).Error; err != nil {
+			return errorx.WithStack(err)
+		}
+		if err := tx.WithContext(ctx).Where("workflow_id = ?", workflow.Id).Delete(&model.ProjectManagementWorkflowStage{}).Error; err != nil {
+			return errorx.WithStack(err)
+		}
+		if err := tx.WithContext(ctx).Delete(workflow).Error; err != nil {
+			return errorx.WithStack(err)
+		}
+	}
+	return errorx.WithStack(tx.WithContext(ctx).Where("entity_type = ? AND entity_id = ?", constants.ProjectManagementOwnerTypeProject, projectId).Delete(&model.ProjectManagementStage{}).Error)
+}
+
+func (r *ProjectManagementWorkflowRepo) CloneTemplateToProjectWithTx(ctx context.Context, tx *gorm.DB, templateId, organizationId, projectId int64) error {
+	if templateId == 0 {
+		source, err := r.FindDefaultWorkflowSourceWithTx(ctx, tx, organizationId)
+		if err == nil {
+			return r.cloneWorkflowToOwnerWithTx(ctx, tx, source, constants.ProjectManagementOwnerTypeProject, projectId)
+		}
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return err
+		}
+		return r.createDefaultProjectWorkflowWithTx(ctx, tx, projectId)
+	}
+	template := new(model.ProjectManagementTemplate)
+	if err := tx.WithContext(ctx).Model(&model.ProjectManagementTemplate{}).
+		Where("id = ? AND ((template_type = ? AND organization_id = 0) OR (template_type = ? AND organization_id = ? AND project_type <> '')) AND status = ?", templateId, constants.ProjectManagementTemplateTypePublic, constants.ProjectManagementTemplateTypeOrganization, organizationId, "Active").
+		First(template).Error; err != nil {
+		return errorx.WithStack(err)
+	}
+	workflows := make([]*model.ProjectManagementWorkflow, 0)
+	if err := tx.WithContext(ctx).Model(&model.ProjectManagementWorkflow{}).
+		Where("entity_type = ? AND entity_id = ?", constants.ProjectManagementOwnerTypeTemplate, templateId).
+		Order("is_default DESC, id ASC").Find(&workflows).Error; err != nil {
+		return errorx.WithStack(err)
+	}
+	if len(workflows) == 0 {
+		return errorx.New("project template has no workflows")
+	}
+	for _, workflow := range workflows {
+		if err := r.cloneWorkflowToOwnerWithTx(ctx, tx, workflow, constants.ProjectManagementOwnerTypeProject, projectId); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (r *ProjectManagementWorkflowRepo) CloneTemplateToProjectWithTx(ctx context.Context, tx *gorm.DB, templateId, organizationId, projectId int64) error {
-	template := new(model.ProjectManagementWorkflow)
-	err := tx.WithContext(ctx).Clauses(clause.Locking{Strength: "UPDATE"}).
-		Preload("Stages", func(db *gorm.DB) *gorm.DB { return db.Order("sort_order ASC, id ASC") }).
-		Preload("Transitions", func(db *gorm.DB) *gorm.DB { return db.Order("id ASC") }).
-		Where("id = ? AND organization_id = ? AND kind = ?", templateId, organizationId, constants.ProjectManagementWorkflowKindOrganizationTemplate).
-		First(template).Error
-	if err != nil {
+func (r *ProjectManagementWorkflowRepo) CloneProjectToTemplateWithTx(ctx context.Context, tx *gorm.DB, projectId, templateId int64) error {
+	workflows := make([]*model.ProjectManagementWorkflow, 0)
+	if err := tx.WithContext(ctx).Model(&model.ProjectManagementWorkflow{}).
+		Where("entity_type = ? AND entity_id = ?", constants.ProjectManagementOwnerTypeProject, projectId).
+		Order("is_default DESC, id ASC").Find(&workflows).Error; err != nil {
 		return errorx.WithStack(err)
 	}
-	workflow, err := copierx.Trans[model.ProjectManagementWorkflow, model.ProjectManagementWorkflow](template)
-	if err != nil {
-		return err
+	if len(workflows) == 0 {
+		return errorx.New("project has no workflows")
 	}
-	workflow.Base = model.Base{}
-	workflow.RemoveRelationships()
-	workflow.Kind = constants.ProjectManagementWorkflowKindProject
-	workflow.OrganizationId = organizationId
-	workflow.ProjectId = projectId
-	workflow.IsDefault = false
-	workflow.SourceTemplateId = template.Id
-	workflow.SourceTemplateName = template.Name
-	if _, err = r.CreateWithTx(ctx, tx, workflow, false); err != nil {
-		return err
-	}
-	stageIds := make(map[int64]int64, len(template.Stages))
-	for _, stage := range template.Stages {
-		copyStage, err := copierx.Trans[model.ProjectManagementWorkflowStage, model.ProjectManagementWorkflowStage](stage)
-		if err != nil {
-			return err
-		}
-		copyStage.Base = model.Base{}
-		copyStage.RemoveRelationships()
-		copyStage.WorkflowId = workflow.Id
-		if _, err = r.stageRepo.CreateWithTx(ctx, tx, copyStage, false); err != nil {
-			return err
-		}
-		stageIds[stage.Id] = copyStage.Id
-	}
-	for _, transition := range template.Transitions {
-		copyTransition, err := copierx.Trans[model.ProjectManagementWorkflowTransition, model.ProjectManagementWorkflowTransition](transition)
-		if err != nil {
-			return err
-		}
-		copyTransition.Base = model.Base{}
-		copyTransition.RemoveRelationships()
-		copyTransition.WorkflowId = workflow.Id
-		copyTransition.FromStageId = stageIds[transition.FromStageId]
-		copyTransition.ToStageId = stageIds[transition.ToStageId]
-		if _, err = r.transitionRepo.CreateWithTx(ctx, tx, copyTransition, false); err != nil {
+	for _, workflow := range workflows {
+		if err := r.cloneWorkflowToOwnerWithTx(ctx, tx, workflow, constants.ProjectManagementOwnerTypeTemplate, templateId); err != nil {
 			return err
 		}
 	}
 	return nil
+}
+
+func (r *ProjectManagementWorkflowRepo) cloneWorkflowToOwnerWithTx(ctx context.Context, tx *gorm.DB, source *model.ProjectManagementWorkflow, entityType constants.ProjectManagementOwnerType, entityId int64) error {
+	stages, err := r.ListWorkflowStagesWithTx(ctx, tx, source.Id)
+	if err != nil {
+		return err
+	}
+	links, err := r.ListStageLinksWithTx(ctx, tx, source.Id)
+	if err != nil {
+		return err
+	}
+	transitions, err := r.ListStageTransitionsWithTx(ctx, tx, source.Id)
+	if err != nil {
+		return err
+	}
+	workflow := &model.ProjectManagementWorkflow{EntityType: entityType, EntityId: entityId, SourceWorkflowId: source.Id, SourceWorkflowName: source.Name, Name: source.Name, Description: source.Description, IsDefault: source.IsDefault}
+	if err = tx.WithContext(ctx).Create(workflow).Error; err != nil {
+		return errorx.WithStack(err)
+	}
+	stageIDs := make(map[int64]int64, len(stages))
+	ownerStages := make([]*model.ProjectManagementStage, 0)
+	if entityType == constants.ProjectManagementOwnerTypeProject {
+		if err = tx.WithContext(ctx).Model(&model.ProjectManagementStage{}).
+			Where("entity_type = ? AND entity_id = ?", entityType, entityId).
+			Find(&ownerStages).Error; err != nil {
+			return errorx.WithStack(err)
+		}
+	}
+	stageByName := make(map[string]*model.ProjectManagementStage, len(ownerStages))
+	var pending *model.ProjectManagementStage
+	for _, stage := range ownerStages {
+		if stageByName[stage.Name] != nil {
+			return errorx.New("project has duplicate stage name")
+		}
+		stageByName[stage.Name] = stage
+		if stage.Phase == constants.ProjectManagementStagePhasePending {
+			if pending != nil {
+				return errorx.New("project has multiple pending stages")
+			}
+			pending = stage
+		}
+	}
+	for _, sourceStage := range stages {
+		if entityType == constants.ProjectManagementOwnerTypeProject {
+			if sourceStage.Phase == constants.ProjectManagementStagePhasePending && pending != nil {
+				stageIDs[sourceStage.Id] = pending.Id
+				continue
+			}
+			if existing := stageByName[sourceStage.Name]; existing != nil {
+				if existing.Phase != sourceStage.Phase {
+					return errorx.New("project stage name has conflicting phase")
+				}
+				stageIDs[sourceStage.Id] = existing.Id
+				continue
+			}
+		}
+		stage := &model.ProjectManagementStage{EntityType: entityType, EntityId: entityId, Name: sourceStage.Name, Description: sourceStage.Description, Phase: sourceStage.Phase, Color: sourceStage.Color, SortOrder: sourceStage.SortOrder}
+		if err = tx.WithContext(ctx).Create(stage).Error; err != nil {
+			return errorx.WithStack(err)
+		}
+		stageIDs[sourceStage.Id] = stage.Id
+		stageByName[stage.Name] = stage
+		if stage.Phase == constants.ProjectManagementStagePhasePending {
+			pending = stage
+		}
+	}
+	for _, sourceLink := range links {
+		link := &model.ProjectManagementWorkflowStage{WorkflowId: workflow.Id, StageId: stageIDs[sourceLink.StageId]}
+		if link.StageId == 0 {
+			return errorx.New("workflow source link stage is invalid")
+		}
+		if err = tx.WithContext(ctx).Create(link).Error; err != nil {
+			return errorx.WithStack(err)
+		}
+	}
+	for _, sourceTransition := range transitions {
+		transition := &model.ProjectManagementWorkflowStageTransition{WorkflowId: workflow.Id, Name: sourceTransition.Name, FromStageId: stageIDs[sourceTransition.FromStageId], ToStageId: stageIDs[sourceTransition.ToStageId], AllowedActorTypes: sourceTransition.AllowedActorTypes}
+		if transition.FromStageId == 0 || transition.ToStageId == 0 {
+			return errorx.New("workflow source transition endpoint is invalid")
+		}
+		if err = tx.WithContext(ctx).Create(transition).Error; err != nil {
+			return errorx.WithStack(err)
+		}
+	}
+	return nil
+}
+
+func (r *ProjectManagementWorkflowRepo) createDefaultProjectWorkflowWithTx(ctx context.Context, tx *gorm.DB, projectId int64) error {
+	return r.createDefaultWorkflowWithTx(ctx, tx, constants.ProjectManagementOwnerTypeProject, projectId)
+}
+
+func (r *ProjectManagementWorkflowRepo) CreateDefaultTemplateWorkflowWithTx(ctx context.Context, tx *gorm.DB, templateId int64) error {
+	return r.createDefaultWorkflowWithTx(ctx, tx, constants.ProjectManagementOwnerTypeTemplate, templateId)
+}
+
+func (r *ProjectManagementWorkflowRepo) createDefaultWorkflowWithTx(ctx context.Context, tx *gorm.DB, entityType constants.ProjectManagementOwnerType, entityId int64) error {
+	workflow := &model.ProjectManagementWorkflow{EntityType: entityType, EntityId: entityId, Name: "Default", IsDefault: true}
+	if err := tx.WithContext(ctx).Create(workflow).Error; err != nil {
+		return errorx.WithStack(err)
+	}
+	pending := &model.ProjectManagementStage{EntityType: entityType, EntityId: entityId, Name: "Pending", Phase: constants.ProjectManagementStagePhasePending, Color: "#3b82f6", SortOrder: 10}
+	inProgress := &model.ProjectManagementStage{EntityType: entityType, EntityId: entityId, Name: "In progress", Phase: constants.ProjectManagementStagePhaseInProgress, Color: "#f59e0b", SortOrder: 20}
+	finished := &model.ProjectManagementStage{EntityType: entityType, EntityId: entityId, Name: "Finished", Phase: constants.ProjectManagementStagePhaseFinished, Color: "#22c55e", SortOrder: 30}
+	if err := tx.WithContext(ctx).Create([]*model.ProjectManagementStage{pending, inProgress, finished}).Error; err != nil {
+		return errorx.WithStack(err)
+	}
+	from := &model.ProjectManagementWorkflowStage{WorkflowId: workflow.Id, StageId: pending.Id}
+	middle := &model.ProjectManagementWorkflowStage{WorkflowId: workflow.Id, StageId: inProgress.Id}
+	to := &model.ProjectManagementWorkflowStage{WorkflowId: workflow.Id, StageId: finished.Id}
+	if err := tx.WithContext(ctx).Create([]*model.ProjectManagementWorkflowStage{from, middle, to}).Error; err != nil {
+		return errorx.WithStack(err)
+	}
+	roles := []constants.ProjectManagementMemberRole{constants.ProjectManagementMemberRoleProjectOwner, constants.ProjectManagementMemberRoleProjectAdmin, constants.ProjectManagementMemberRoleTaskCreator, constants.ProjectManagementMemberRoleTaskExecutor}
+	return errorx.WithStack(tx.WithContext(ctx).Create([]*model.ProjectManagementWorkflowStageTransition{
+		{WorkflowId: workflow.Id, Name: "Start", FromStageId: pending.Id, ToStageId: inProgress.Id, AllowedActorTypes: roles},
+		{WorkflowId: workflow.Id, Name: "Finish", FromStageId: inProgress.Id, ToStageId: finished.Id, AllowedActorTypes: roles},
+	}).Error)
 }

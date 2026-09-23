@@ -9,11 +9,13 @@ import (
 
 type ProjectManagementTask struct {
 	Base
-	ProjectId      int64                                     `gorm:"column:project_id;not null;default:0" json:"project_id"`
+	EntityType     constants.ProjectManagementOwnerType      `gorm:"column:entity_type;type:varchar(32);not null;default:'Project'" json:"entity_type"`
+	EntityId       int64                                     `gorm:"column:entity_id;not null;default:0" json:"entity_id"`
+	WorkflowId     int64                                     `gorm:"column:workflow_id;not null;default:0" json:"workflow_id"`
 	OrganizationId int64                                     `gorm:"column:organization_id;not null;default:0" json:"organization_id"`
 	ParentTaskId   int64                                     `gorm:"column:parent_task_id;not null;default:0" json:"parent_task_id"`
-	StageId        int64                                     `gorm:"column:stage_id;not null;default:0" json:"stage_id"`
-	Phase          constants.ProjectManagementStagePhase     `gorm:"column:phase;type:varchar(32);not null;default:'Pending'" json:"phase"`
+	StageId        int64                                     `gorm:"column:stage_id" json:"stage_id"`
+	Phase          *constants.ProjectManagementStagePhase    `gorm:"column:phase;type:varchar(32)" json:"phase"`
 	CreatorId      int64                                     `gorm:"column:creator_id;not null;default:0" json:"creator_id"`
 	CreatorName    string                                    `gorm:"column:creator_name;type:varchar(100);not null;default:''" json:"creator_name"`
 	Title          string                                    `gorm:"column:title;type:varchar(255);not null;default:''" json:"title"`
@@ -30,6 +32,7 @@ type ProjectManagementTask struct {
 	Dependencies []*ProjectManagementTaskDependency `gorm:"foreignKey:TaskId;references:Id" json:"dependencies"`
 	ProjectName  string                             `gorm:"->;column:project_name" json:"project_name"`
 	StageName    string                             `gorm:"->;column:stage_name" json:"stage_name"`
+	WorkflowName string                             `gorm:"->;column:workflow_name" json:"workflow_name"`
 }
 
 func (ProjectManagementTask) TableName() string { return "project_management_tasks" }

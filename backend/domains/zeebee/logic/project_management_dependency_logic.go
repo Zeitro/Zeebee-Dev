@@ -111,16 +111,16 @@ func (l *ProjectManagementDependencyLogic) createWithTx(ctx context.Context, tx 
 	if successor.Id != successorTaskId {
 		successor, predecessor = predecessor, successor
 	}
-	if successor.OrganizationId != claim.OrganizationId || predecessor.OrganizationId != claim.OrganizationId || successor.ProjectId != predecessor.ProjectId {
+	if successor.OrganizationId != claim.OrganizationId || predecessor.OrganizationId != claim.OrganizationId || successor.EntityType != constants.ProjectManagementOwnerTypeProject || predecessor.EntityType != constants.ProjectManagementOwnerTypeProject || successor.EntityId != predecessor.EntityId {
 		return nil, errorx.New("dependency tasks must belong to the same project")
 	}
-	if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, successor.ProjectId, claim.OrganizationUserId); err != nil {
+	if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, successor.EntityId, claim.OrganizationUserId); err != nil {
 		return nil, projectManagementNotFound(err, "project member required")
 	}
 	if err = l.validateTaskDependencyHierarchyWithTx(ctx, tx, successor.Id, predecessor.Id); err != nil {
 		return nil, err
 	}
-	stage, err := l.repos.ProjectManagementWorkflowRepo.FindStageWithTx(ctx, tx, successor.StageId)
+	stage, err := l.repos.ProjectManagementWorkflowRepo.FindOwnerStageWithTx(ctx, tx, successor.StageId, constants.ProjectManagementOwnerTypeProject, successor.EntityId)
 	if err != nil {
 		return nil, projectManagementNotFound(err, "successor task stage not found")
 	}
@@ -147,7 +147,7 @@ func (l *ProjectManagementDependencyLogic) createWithTx(ctx context.Context, tx 
 	if err != nil {
 		return nil, err
 	}
-	return dependency, l.recordOperation(ctx, tx, projectManagementDependencyOperation{claim: claim, projectId: successor.ProjectId, dependency: dependency, action: constants.OperationActionProjectManagementDependencyCreate, after: dependencyOperationIdentity(dependency, predecessor)})
+	return dependency, l.recordOperation(ctx, tx, projectManagementDependencyOperation{claim: claim, projectId: successor.EntityId, dependency: dependency, action: constants.OperationActionProjectManagementDependencyCreate, after: dependencyOperationIdentity(dependency, predecessor)})
 }
 
 func (l *ProjectManagementDependencyLogic) Page(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementTaskDependencyPageRequestDto) (gormx.PageResponse[*model.ProjectManagementTaskDependency], error) {
@@ -163,15 +163,15 @@ func (l *ProjectManagementDependencyLogic) Page(ctx context.Context, claim utils
 		return gormx.PageResponse[*model.ProjectManagementTaskDependency]{}, errorx.New("task not found")
 	}
 	// Load the task project for membership validation.
-	var task struct{ ProjectId int64 }
-	err = l.repos.ProjectManagementTaskRepo.FindColumnByColumns(ctx, "project_id", &task, map[string]any{
+	var task struct{ EntityId int64 }
+	err = l.repos.ProjectManagementTaskRepo.FindColumnByColumns(ctx, "entity_id", &task, map[string]any{
 		"id":              input.Filter.TaskId,
 		"organization_id": claim.OrganizationId,
 	})
 	if err != nil {
 		return gormx.PageResponse[*model.ProjectManagementTaskDependency]{}, projectManagementNotFound(err, "task does not belong to project")
 	}
-	if _, err = l.projectManagementLogic().RequireMember(ctx, task.ProjectId, claim.OrganizationUserId); err != nil {
+	if _, err = l.projectManagementLogic().RequireMember(ctx, task.EntityId, claim.OrganizationUserId); err != nil {
 		return gormx.PageResponse[*model.ProjectManagementTaskDependency]{}, err
 	}
 	return l.repos.ProjectManagementDependencyRepo.PageByTask(ctx, input.Filter.TaskId, input.Filter.Predecessor, gormx.PageRequest{Page: input.Page, Limit: input.Limit})
@@ -228,16 +228,16 @@ func (l *ProjectManagementDependencyLogic) updateWithTx(ctx context.Context, tx 
 	if successor.Id != successorTaskId {
 		successor, predecessor = predecessor, successor
 	}
-	if successor == nil || predecessor == nil || successor.OrganizationId != claim.OrganizationId || predecessor.OrganizationId != claim.OrganizationId || successor.ProjectId != predecessor.ProjectId {
+	if successor == nil || predecessor == nil || successor.OrganizationId != claim.OrganizationId || predecessor.OrganizationId != claim.OrganizationId || successor.EntityType != constants.ProjectManagementOwnerTypeProject || predecessor.EntityType != constants.ProjectManagementOwnerTypeProject || successor.EntityId != predecessor.EntityId {
 		return nil, errorx.New("task dependency not found")
 	}
-	if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, successor.ProjectId, claim.OrganizationUserId); err != nil {
+	if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, successor.EntityId, claim.OrganizationUserId); err != nil {
 		return nil, projectManagementNotFound(err, "project member required")
 	}
 	if err = l.validateTaskDependencyHierarchyWithTx(ctx, tx, successor.Id, predecessor.Id); err != nil {
 		return nil, err
 	}
-	stage, err := l.repos.ProjectManagementWorkflowRepo.FindStageWithTx(ctx, tx, successor.StageId)
+	stage, err := l.repos.ProjectManagementWorkflowRepo.FindOwnerStageWithTx(ctx, tx, successor.StageId, constants.ProjectManagementOwnerTypeProject, successor.EntityId)
 	if err != nil {
 		return nil, projectManagementNotFound(err, "successor task stage not found")
 	}
@@ -268,7 +268,7 @@ func (l *ProjectManagementDependencyLogic) updateWithTx(ctx context.Context, tx 
 	if len(before) == 0 {
 		return dependency, nil
 	}
-	return dependency, l.recordOperation(ctx, tx, projectManagementDependencyOperation{claim: claim, projectId: successor.ProjectId, dependency: dependency, action: constants.OperationActionProjectManagementDependencyUpdate, before: before, after: after})
+	return dependency, l.recordOperation(ctx, tx, projectManagementDependencyOperation{claim: claim, projectId: successor.EntityId, dependency: dependency, action: constants.OperationActionProjectManagementDependencyUpdate, before: before, after: after})
 }
 
 func (l *ProjectManagementDependencyLogic) Delete(ctx context.Context, claim utils.JwtUser, id int64) error {
@@ -298,13 +298,13 @@ func (l *ProjectManagementDependencyLogic) deleteWithTx(ctx context.Context, tx 
 	if successor == nil || predecessor == nil || successor.OrganizationId != claim.OrganizationId {
 		return errorx.New("task dependency not found")
 	}
-	if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, successor.ProjectId, claim.OrganizationUserId); err != nil {
+	if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, successor.EntityId, claim.OrganizationUserId); err != nil {
 		return projectManagementNotFound(err, "project member required")
 	}
 	if err = l.repos.ProjectManagementDependencyRepo.DeleteWithTx(ctx, tx, dependency); err != nil {
 		return err
 	}
-	return l.recordOperation(ctx, tx, projectManagementDependencyOperation{claim: claim, projectId: successor.ProjectId, dependency: dependency, action: constants.OperationActionProjectManagementDependencyDelete, before: dependencyOperationIdentity(dependency, predecessor)})
+	return l.recordOperation(ctx, tx, projectManagementDependencyOperation{claim: claim, projectId: successor.EntityId, dependency: dependency, action: constants.OperationActionProjectManagementDependencyDelete, before: dependencyOperationIdentity(dependency, predecessor)})
 }
 
 func (l *ProjectManagementDependencyLogic) SyncWithTx(ctx context.Context, tx *gorm.DB, claim utils.JwtUser, taskId int64, inputs []*dto.ProjectManagementTaskDependencyDto) error {

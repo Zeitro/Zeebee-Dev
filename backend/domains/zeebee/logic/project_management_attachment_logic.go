@@ -44,7 +44,7 @@ func (l *ProjectManagementAttachmentLogic) Create(ctx context.Context, claim uti
 		if task.OrganizationId != claim.OrganizationId {
 			return errorx.New("task not belong to organization")
 		}
-		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.ProjectId, claim.OrganizationUserId); err != nil {
+		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.EntityId, claim.OrganizationUserId); err != nil {
 			return projectManagementNotFound(err, "project member required")
 		}
 		file, err = copierx.Trans[dto.ProjectManagementAttachmentCreateDto, model.File](&input)
@@ -56,7 +56,7 @@ func (l *ProjectManagementAttachmentLogic) Create(ctx context.Context, claim uti
 		if err != nil {
 			return err
 		}
-		return NewProjectManagementTaskLogic(l.BaseLogic).recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, fileId: file.Id, action: constants.OperationActionProjectManagementAttachmentAdd, after: attachmentOperationIdentity(file)})
+		return NewProjectManagementTaskLogic(l.BaseLogic).recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.EntityId, taskId: task.Id, fileId: file.Id, action: constants.OperationActionProjectManagementAttachmentAdd, after: attachmentOperationIdentity(file)})
 	})
 	return file, err
 }
@@ -70,7 +70,7 @@ func (l *ProjectManagementAttachmentLogic) Delete(ctx context.Context, claim uti
 		if task.OrganizationId != claim.OrganizationId {
 			return errorx.New("task not belong to organization")
 		}
-		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.ProjectId, claim.OrganizationUserId); err != nil {
+		if _, err = l.repos.ProjectManagementProjectRepo.LockMemberWithTx(ctx, tx, task.EntityId, claim.OrganizationUserId); err != nil {
 			return projectManagementNotFound(err, "project member required")
 		}
 		file, err := l.repos.FileRepo.FindOneByIdWithTx(ctx, tx, fileId)
@@ -83,7 +83,7 @@ func (l *ProjectManagementAttachmentLogic) Delete(ctx context.Context, claim uti
 		if _, err = l.repos.FileRepo.DeleteByIDWithTx(ctx, tx, file.Id); err != nil {
 			return err
 		}
-		return NewProjectManagementTaskLogic(l.BaseLogic).recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.ProjectId, taskId: task.Id, fileId: file.Id, action: constants.OperationActionProjectManagementAttachmentDelete, before: attachmentOperationIdentity(file)})
+		return NewProjectManagementTaskLogic(l.BaseLogic).recordProjectTaskOperation(ctx, tx, projectManagementTaskOperation{claim: claim, projectId: task.EntityId, taskId: task.Id, fileId: file.Id, action: constants.OperationActionProjectManagementAttachmentDelete, before: attachmentOperationIdentity(file)})
 	})
 }
 

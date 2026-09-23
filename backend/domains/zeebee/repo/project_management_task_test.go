@@ -5,19 +5,16 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 
 	"zeebee-backend/domains/zeebee/constants"
 )
 
 func TestTaskCascadeDeleteAndHistoricalSnapshots(t *testing.T) {
-	db, err := gorm.Open(sqlite.Open(fmt.Sprintf("file:%s?mode=memory&cache=shared", t.Name())), &gorm.Config{})
-	if err != nil {
-		t.Fatal(err)
-	}
+	db := newRepoTestDB(t)
 	for _, statement := range []string{
-		"CREATE TABLE project_management_tasks (id integer primary key, is_del integer not null default 0, project_id integer not null, organization_id integer not null, parent_task_id integer not null default 0, stage_id integer not null default 0, creator_id integer not null default 0, creator_name text not null default '', title text not null default '')",
+		"CREATE TABLE project_management_workflows (id integer primary key, is_del integer not null default 0, name text not null default '')",
+		"CREATE TABLE project_management_tasks (id integer primary key, created_at datetime, updated_at datetime, is_del integer not null default 0, entity_type text not null default 'Project', entity_id integer not null, workflow_id integer not null default 0, organization_id integer not null, parent_task_id integer not null default 0, stage_id integer not null default 0, phase text not null default 'Pending', creator_id integer not null default 0, creator_name text not null default '', title text not null default '', description text not null default '', priority text not null default '', work_hours numeric not null default 0, start_at datetime, end_at datetime, task_type json not null default '{}')",
 		"CREATE TABLE project_management_task_assignees (id integer primary key, is_del integer not null default 0, task_id integer not null, stage_id integer not null default 0, organization_user_id integer not null, organization_user_full_name text not null default '')",
 		"CREATE TABLE project_management_task_dependencies (id integer primary key, is_del integer not null default 0, task_id integer not null, dependency_task_id integer not null, dependency_type text not null default 'PreTask', dependency_rule text not null default 'FS')",
 		"CREATE TABLE files (id integer primary key, is_del integer not null default 0, entity_id integer not null, entity_type text not null)",
@@ -29,7 +26,8 @@ func TestTaskCascadeDeleteAndHistoricalSnapshots(t *testing.T) {
 		}
 	}
 	for _, statement := range []string{
-		"INSERT INTO project_management_tasks (id, project_id, organization_id, stage_id, creator_id, creator_name, title) VALUES (1, 10, 1, 100, 8, 'Former creator', 'Historical task')",
+		"INSERT INTO project_management_workflows (id, name) VALUES (0, 'Default')",
+		"INSERT INTO project_management_tasks (id, entity_type, entity_id, organization_id, stage_id, creator_id, creator_name, title) VALUES (1, 'Project', 10, 1, 100, 8, 'Former creator', 'Historical task')",
 		"INSERT INTO project_management_task_assignees (id, task_id, stage_id, organization_user_id, organization_user_full_name) VALUES (2, 1, 100, 9, 'Former executor')",
 		"INSERT INTO project_management_project_members (id, project_id, organization_user_id, role) VALUES (3, 10, 9, 'executor')",
 	} {
@@ -46,8 +44,8 @@ func TestTaskCascadeDeleteAndHistoricalSnapshots(t *testing.T) {
 		t.Fatalf("historical task identity was lost: %#v, %v", historical, err)
 	}
 	for _, statement := range []string{
-		"INSERT INTO project_management_tasks (id, project_id, organization_id, parent_task_id, stage_id, creator_id, creator_name, title) VALUES (11, 10, 1, 0, 100, 8, 'Creator', 'Parent')",
-		"INSERT INTO project_management_tasks (id, project_id, organization_id, parent_task_id, stage_id, creator_id, creator_name, title) VALUES (12, 10, 1, 11, 100, 8, 'Creator', 'Child')",
+		"INSERT INTO project_management_tasks (id, entity_type, entity_id, organization_id, parent_task_id, stage_id, creator_id, creator_name, title) VALUES (11, 'Project', 10, 1, 0, 100, 8, 'Creator', 'Parent')",
+		"INSERT INTO project_management_tasks (id, entity_type, entity_id, organization_id, parent_task_id, stage_id, creator_id, creator_name, title) VALUES (12, 'Project', 10, 1, 11, 100, 8, 'Creator', 'Child')",
 		"INSERT INTO project_management_task_assignees (id, task_id, organization_user_id, organization_user_full_name) VALUES (13, 12, 9, 'Executor')",
 		"INSERT INTO project_management_task_dependencies (id, task_id, dependency_task_id) VALUES (14, 12, 11)",
 		"INSERT INTO files (id, entity_id, entity_type) VALUES (15, 12, 'ProjectManagementTask')",

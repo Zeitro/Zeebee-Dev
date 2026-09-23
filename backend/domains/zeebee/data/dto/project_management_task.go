@@ -12,7 +12,9 @@ type ProjectManagementTaskDto struct {
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 	OrganizationId int64
-	ProjectId      int64
+	EntityType     constants.ProjectManagementOwnerType
+	EntityId       int64
+	WorkflowId     int64
 	ParentTaskId   int64
 	StageId        int64
 	Phase          constants.ProjectManagementStagePhase
@@ -31,6 +33,8 @@ type ProjectManagementTaskDto struct {
 	Dependencies   []*ProjectManagementTaskDependencyDto
 	ProjectName    string
 	StageName      string
+	WorkflowName   string
+	OutOfPlan      bool
 }
 
 type ProjectManagementTaskOverdueDto struct {
@@ -46,6 +50,7 @@ type ProjectManagementTaskCreateDto struct {
 
 type ProjectManagementTaskUpdateDto struct {
 	StageId                     int64
+	WorkflowId                  int64
 	Title                       string
 	Description                 string
 	Priority                    constants.ProjectManagementPriority
@@ -78,9 +83,10 @@ type ProjectManagementTaskFilterDto struct {
 }
 
 type ProjectManagementTaskCandidateDto struct {
-	ProjectId int64
-	TaskId    int64
-	Keyword   string
+	EntityType constants.ProjectManagementOwnerType
+	EntityId   int64
+	TaskId     int64
+	Keyword    string
 }
 
 type ProjectManagementTaskCandidateEntityDto struct {
@@ -93,6 +99,15 @@ type ProjectManagementTaskPageRequestDto struct {
 	Page   int64
 	Limit  int64
 	Filter ProjectManagementTaskFilterDto
+}
+
+type ProjectManagementTaskViewDto struct {
+	ProjectId       int64
+	ProjectStartAt  *sql.NullTime
+	ProjectEndAt    *sql.NullTime
+	Tasks           []*ProjectManagementTaskDto
+	TimelineStartAt *sql.NullTime
+	TimelineEndAt   *sql.NullTime
 }
 
 type ProjectManagementMyTaskPageRequestDto struct {

@@ -107,6 +107,11 @@ const (
 	OperationActionProjectManagementDependencyUpdate         OperationAction = "Project Task Dependency Updated"
 	OperationActionProjectManagementDependencyDelete         OperationAction = "Project Task Dependency Deleted"
 	OperationActionProjectManagementTaskTransition           OperationAction = "Project Task Transitioned"
+	OperationActionProjectManagementWorkflowDefault          OperationAction = "Project Workflow Default Changed"
+	OperationActionProjectManagementWorkflowSourceDefault    OperationAction = "Project Workflow Source Default Changed"
+	OperationActionProjectManagementTemplateCreate           OperationAction = "Project Template Created"
+	OperationActionProjectManagementTemplateUpdate           OperationAction = "Project Template Updated"
+	OperationActionProjectManagementTemplateDelete           OperationAction = "Project Template Deleted"
 )
 
 type StorageType string

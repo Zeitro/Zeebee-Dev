@@ -28,6 +28,26 @@ func TestProjectManagementNotFound(t *testing.T) {
 	}
 }
 
+func TestValidateProjectWorkflowInvariant(t *testing.T) {
+	projectID := int64(10)
+	workflows := []*model.ProjectManagementWorkflow{{Base: model.Base{Id: 1}, EntityType: constants.ProjectManagementOwnerTypeProject, EntityId: projectID, IsDefault: true}}
+	stages := []*model.ProjectManagementStage{
+		{Base: model.Base{Id: 11}, EntityType: constants.ProjectManagementOwnerTypeProject, EntityId: projectID, Phase: constants.ProjectManagementStagePhasePending},
+		{Base: model.Base{Id: 12}, EntityType: constants.ProjectManagementOwnerTypeProject, EntityId: projectID, Phase: constants.ProjectManagementStagePhaseFinished},
+	}
+	links := []*model.ProjectManagementWorkflowStage{{WorkflowId: 1, StageId: 11}, {WorkflowId: 1, StageId: 12}}
+	if err := validateProjectWorkflowInvariant(projectID, workflows, stages, links); err != nil {
+		t.Fatalf("valid project workflow rejected: %v", err)
+	}
+	workflows = append(workflows, &model.ProjectManagementWorkflow{Base: model.Base{Id: 2}, EntityType: constants.ProjectManagementOwnerTypeProject, EntityId: projectID, IsDefault: true})
+	if err := validateProjectWorkflowInvariant(projectID, workflows, stages, links); err == nil {
+		t.Fatal("duplicate default workflow accepted")
+	}
+	if err := validateProjectWorkflowInvariant(projectID, workflows[:1], stages, append(links, &model.ProjectManagementWorkflowStage{WorkflowId: 1, StageId: 99})); err == nil {
+		t.Fatal("foreign workflow-stage link accepted")
+	}
+}
+
 func TestProjectManagementAccessScopeAndRemovedMember(t *testing.T) {
 	db, err := gorm.Open(sqlite.Open(fmt.Sprintf("file:%s?mode=memory&cache=shared", t.Name())), &gorm.Config{})
 	if err != nil {

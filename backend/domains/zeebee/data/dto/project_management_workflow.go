@@ -50,6 +50,10 @@ type ProjectManagementWorkflowDto struct {
 	IsDefault          bool
 	SourceTemplateId   int64
 	SourceTemplateName string
+	EntityType         constants.ProjectManagementOwnerType
+	EntityId           int64
+	SourceWorkflowId   int64
+	SourceWorkflowName string
 	Stages             []ProjectManagementWorkflowStageDto
 	Transitions        []ProjectManagementWorkflowTransitionDto
 }

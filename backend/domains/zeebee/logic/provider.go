@@ -32,6 +32,7 @@ type AllLogics struct {
 	OrganizationSubscriptionLogic    *OrganizationSubscriptionLogic
 	ProjectManagementLogic           *ProjectManagementLogic
 	ProjectManagementWorkflowLogic   *ProjectManagementWorkflowLogic
+	ProjectManagementTemplateLogic   *ProjectManagementTemplateLogic
 	ProjectManagementProjectLogic    *ProjectManagementProjectLogic
 	ProjectManagementMemberLogic     *ProjectManagementMemberLogic
 	ProjectManagementTaskTypeLogic   *ProjectManagementTaskTypeLogic
@@ -75,6 +76,7 @@ func NewAllLogics(config AllLogicConfig) *AllLogics {
 		OrganizationSubscriptionLogic:    NewOrganizationSubscriptionLogic(baseLogic, config.AuthEventTopicMap),
 		ProjectManagementLogic:           NewProjectManagementLogic(baseLogic),
 		ProjectManagementWorkflowLogic:   NewProjectManagementWorkflowLogic(baseLogic),
+		ProjectManagementTemplateLogic:   NewProjectManagementTemplateLogic(baseLogic),
 		ProjectManagementProjectLogic:    NewProjectManagementProjectLogic(baseLogic),
 		ProjectManagementMemberLogic:     NewProjectManagementMemberLogic(baseLogic),
 		ProjectManagementTaskTypeLogic:   NewProjectManagementTaskTypeLogic(baseLogic),

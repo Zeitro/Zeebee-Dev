@@ -101,6 +101,28 @@ func (r *ProjectManagementDependencyRepo) ListByTaskWithTx(ctx context.Context, 
 	return dependencies, errorx.WithStack(err)
 }
 
+func (r *ProjectManagementDependencyRepo) ListByTaskIds(ctx context.Context, taskIds []int64) ([]*model.ProjectManagementTaskDependency, error) {
+	if len(taskIds) == 0 {
+		return []*model.ProjectManagementTaskDependency{}, nil
+	}
+	dependencies := make([]*model.ProjectManagementTaskDependency, 0)
+	err := r.Client(ctx).Model(&model.ProjectManagementTaskDependency{}).
+		Preload("DependencyTask").Where("task_id IN ? OR dependency_task_id IN ?", taskIds, taskIds).
+		Order("id ASC").Find(&dependencies).Error
+	return dependencies, errorx.WithStack(err)
+}
+
+func (r *ProjectManagementDependencyRepo) ListByTaskIdsWithTx(ctx context.Context, tx *gorm.DB, taskIds []int64) ([]*model.ProjectManagementTaskDependency, error) {
+	if len(taskIds) == 0 {
+		return []*model.ProjectManagementTaskDependency{}, nil
+	}
+	dependencies := make([]*model.ProjectManagementTaskDependency, 0)
+	err := tx.WithContext(ctx).Model(&model.ProjectManagementTaskDependency{}).
+		Where("task_id IN ? OR dependency_task_id IN ?", taskIds, taskIds).
+		Order("id ASC").Find(&dependencies).Error
+	return dependencies, errorx.WithStack(err)
+}
+
 func (r *ProjectManagementDependencyRepo) PageByTask(ctx context.Context, taskId int64, predecessor bool, pageReq gormx.PageRequest) (gormx.PageResponse[*model.ProjectManagementTaskDependency], error) {
 	direction := constants.ProjectManagementDependencyTypePreTask
 	reverseDirection := constants.ProjectManagementDependencyTypePostTask

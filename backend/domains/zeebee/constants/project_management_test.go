@@ -34,6 +34,10 @@ func TestProjectManagementEnums(t *testing.T) {
 		count   int
 	}{
 		{"workflow kind", ProjectManagementWorkflowKindName, func() error { return ProjectManagementWorkflowKindProject.Validate() }, func() error { return ProjectManagementWorkflowKind("invalid").Validate() }, 2},
+		{"owner type", ProjectManagementOwnerTypeName, func() error { return ProjectManagementOwnerTypeProject.Validate() }, func() error { return ProjectManagementOwnerType("invalid").Validate() }, 2},
+		{"template type", ProjectManagementTemplateTypeName, func() error { return ProjectManagementTemplateTypePublic.Validate() }, func() error { return ProjectManagementTemplateType("invalid").Validate() }, 2},
+		{"project type", ProjectManagementProjectTypeName, func() error { return ProjectManagementProjectTypePlanned.Validate() }, func() error { return ProjectManagementProjectType("invalid").Validate() }, 2},
+		{"period unit", ProjectManagementPeriodUnitName, func() error { return ProjectManagementPeriodUnitMonth.Validate() }, func() error { return ProjectManagementPeriodUnit("invalid").Validate() }, 3},
 		{"stage phase", ProjectManagementStagePhaseName, func() error { return ProjectManagementStagePhasePending.Validate() }, func() error { return ProjectManagementStagePhase("invalid").Validate() }, 3},
 		{"member role", ProjectManagementMemberRoleName, func() error { return ProjectManagementMemberRoleProjectOwner.Validate() }, func() error { return ProjectManagementMemberRole("invalid").Validate() }, 4},
 		{"candidate purpose", ProjectManagementMemberCandidatePurposeName, func() error { return ProjectManagementMemberCandidatePurposeAddMember.Validate() }, func() error { return ProjectManagementMemberCandidatePurpose("invalid").Validate() }, 3},

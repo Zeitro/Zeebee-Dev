@@ -2,18 +2,13 @@ package repo
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
-	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 )
 
 func TestProjectManagementDependencyReachability(t *testing.T) {
-	db, err := gorm.Open(sqlite.Open(fmt.Sprintf("file:%s?mode=memory&cache=shared", t.Name())), &gorm.Config{})
-	if err != nil {
-		t.Fatal(err)
-	}
+	db := newRepoTestDB(t)
 	if err := db.Exec("CREATE TABLE project_management_task_dependencies (id integer primary key, is_del integer not null default 0, task_id integer not null, dependency_task_id integer not null, dependency_type text not null default 'PreTask', dependency_rule text not null default 'FS')").Error; err != nil {
 		t.Fatal(err)
 	}

@@ -59,6 +59,58 @@ func (l *ProjectManagementLogic) RequireMemberRole(ctx context.Context, projectI
 	return nil, errorx.New("project member role is not allowed")
 }
 
+func validateProjectWorkflowInvariant(projectId int64, workflows []*model.ProjectManagementWorkflow, stages []*model.ProjectManagementStage, links []*model.ProjectManagementWorkflowStage) error {
+	if len(workflows) == 0 {
+		return errorx.New("project requires a workflow")
+	}
+	stageByID := make(map[int64]*model.ProjectManagementStage, len(stages))
+	pendingCount, finishedCount := 0, 0
+	for _, stage := range stages {
+		if stage.EntityType != constants.ProjectManagementOwnerTypeProject || stage.EntityId != projectId {
+			return errorx.New("project stage owner mismatch")
+		}
+		stageByID[stage.Id] = stage
+		if stage.Phase == constants.ProjectManagementStagePhasePending {
+			pendingCount++
+		}
+		if stage.Phase == constants.ProjectManagementStagePhaseFinished {
+			finishedCount++
+		}
+	}
+	if pendingCount != 1 || finishedCount == 0 {
+		return errorx.New("project requires exactly one pending stage and at least one finished stage")
+	}
+	workflowByID := make(map[int64]struct{}, len(workflows))
+	defaultCount := 0
+	for _, workflow := range workflows {
+		if workflow.EntityType != constants.ProjectManagementOwnerTypeProject || workflow.EntityId != projectId {
+			return errorx.New("project workflow owner mismatch")
+		}
+		workflowByID[workflow.Id] = struct{}{}
+		if workflow.IsDefault {
+			defaultCount++
+		}
+	}
+	if defaultCount != 1 {
+		return errorx.New("project requires exactly one default workflow")
+	}
+	seenLinks := make(map[[2]int64]struct{}, len(links))
+	for _, link := range links {
+		if _, ok := workflowByID[link.WorkflowId]; !ok {
+			return errorx.New("workflow stage link workflow mismatch")
+		}
+		if _, ok := stageByID[link.StageId]; !ok {
+			return errorx.New("workflow stage link stage mismatch")
+		}
+		key := [2]int64{link.WorkflowId, link.StageId}
+		if _, ok := seenLinks[key]; ok {
+			return errorx.New("duplicate workflow stage link")
+		}
+		seenLinks[key] = struct{}{}
+	}
+	return nil
+}
+
 func projectManagementTaskOverdue(task *model.ProjectManagementTask, phase constants.ProjectManagementStagePhase, now time.Time) (bool, int64) {
 	if task.EndAt == nil || !task.EndAt.Valid || phase == constants.ProjectManagementStagePhaseFinished {
 		return false, 0

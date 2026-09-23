@@ -29,18 +29,58 @@ func NewProjectManagementTaskRepo(db *gorm.DB) *ProjectManagementTaskRepo {
 }
 
 func (r *ProjectManagementTaskRepo) FindByOrganization(ctx context.Context, id, organizationId int64) (*model.ProjectManagementTask, error) {
-	return r.FindOneByColumns(ctx, map[string]any{"id": id, "organization_id": organizationId})
+	task, err := r.FindOneByColumns(ctx, map[string]any{"id": id, "organization_id": organizationId, "entity_type": constants.ProjectManagementOwnerTypeProject})
+	return task, err
+}
+
+func (r *ProjectManagementTaskRepo) ListByWorkflowWithTx(ctx context.Context, tx *gorm.DB, workflowId, organizationId int64, history bool) ([]*model.ProjectManagementTask, error) {
+	tasks := make([]*model.ProjectManagementTask, 0)
+	query := tx.WithContext(ctx).Model(&model.ProjectManagementTask{}).
+		Select("id, created_at, updated_at, is_del, entity_id, entity_type, workflow_id, organization_id, parent_task_id, stage_id, phase, creator_id, creator_name, title, description, priority, work_hours, start_at, end_at, task_type").
+		Where("workflow_id = ? AND organization_id = ? AND entity_type = ?", workflowId, organizationId, constants.ProjectManagementOwnerTypeProject)
+	if history {
+		query = query.Unscoped().Where("phase = ?", constants.ProjectManagementStagePhaseFinished)
+	} else {
+		query = query.Where("phase <> ?", constants.ProjectManagementStagePhaseFinished)
+	}
+	err := query.Order("id ASC").Find(&tasks).Error
+	return tasks, errorx.WithStack(err)
+}
+
+func (r *ProjectManagementTaskRepo) ListByProjectForView(ctx context.Context, projectId, organizationId int64) ([]*model.ProjectManagementTask, error) {
+	tasks := make([]*model.ProjectManagementTask, 0)
+	err := r.Client(ctx).Model(&model.ProjectManagementTask{}).
+		Select("project_management_tasks.*, project_management_workflows.name AS workflow_name").
+		Joins("LEFT JOIN project_management_workflows ON project_management_workflows.id = project_management_tasks.workflow_id").
+		Where("project_management_tasks.entity_type = ? AND project_management_tasks.entity_id = ? AND project_management_tasks.organization_id = ?", constants.ProjectManagementOwnerTypeProject, projectId, organizationId).
+		Order("project_management_tasks.parent_task_id ASC, project_management_tasks.id ASC").Find(&tasks).Error
+	return tasks, errorx.WithStack(err)
+}
+
+func (r *ProjectManagementTaskRepo) ListByOwnerWithTx(ctx context.Context, tx *gorm.DB, entityType constants.ProjectManagementOwnerType, entityId int64) ([]*model.ProjectManagementTask, error) {
+	tasks := make([]*model.ProjectManagementTask, 0)
+	err := tx.WithContext(ctx).Model(&model.ProjectManagementTask{}).
+		Where("entity_type = ? AND entity_id = ?", entityType, entityId).
+		Order("id ASC").Find(&tasks).Error
+	return tasks, errorx.WithStack(err)
+}
+
+func (r *ProjectManagementTaskRepo) UpdateParentWithTx(ctx context.Context, tx *gorm.DB, taskId, parentTaskId int64) error {
+	return r.UpdateColumnsWithTx(ctx, tx, map[string]any{"parent_task_id": parentTaskId}, map[string]any{"id": taskId}, nil)
 }
 
 func (r *ProjectManagementTaskRepo) FindDetailByOrganization(ctx context.Context, id, organizationId int64) (*model.ProjectManagementTask, error) {
 	task := new(model.ProjectManagementTask)
-	err := r.Client(ctx).
+	err := r.Client(ctx).Model(&model.ProjectManagementTask{}).
+		Select("project_management_tasks.*, project_management_workflows.name AS workflow_name").
+		Joins("LEFT JOIN project_management_workflows ON project_management_workflows.id = project_management_tasks.workflow_id").
 		Preload("Children").
 		Preload("Attachments").
 		Preload("Dependencies.DependencyTask").
-		Where("id = ? AND organization_id = ?", id, organizationId).First(task).Error
-	if err == nil {
+		Where("project_management_tasks.id = ? AND project_management_tasks.organization_id = ?", id, organizationId).First(task).Error
+	if err == nil && task.EntityType == constants.ProjectManagementOwnerTypeProject {
 		err = r.assigneeRepo.Client(ctx).Where("task_id = ? AND stage_id = ?", task.Id, task.StageId).Order("id ASC").Find(&task.Assignees).Error
+		return task, errorx.WithStack(err)
 	}
 	return task, errorx.WithStack(err)
 }
@@ -48,14 +88,16 @@ func (r *ProjectManagementTaskRepo) FindDetailByOrganization(ctx context.Context
 func (r *ProjectManagementTaskRepo) PageByProject(ctx context.Context, organizationId int64, input dto.ProjectManagementTaskPageRequestDto) (gormx.PageResponse[*model.ProjectManagementTask], error) {
 	tasksTable := model.ProjectManagementTask{}.TableName()
 	assigneesTable := model.ProjectManagementTaskAssignee{}.TableName()
-	stagesTable := model.ProjectManagementWorkflowStage{}.TableName()
+	stagesTable := model.ProjectManagementStage{}.TableName()
 	projectsTable := model.ProjectManagementProject{}.TableName()
+	workflowsTable := model.ProjectManagementWorkflow{}.TableName()
 	query := r.Client(ctx).
 		Omit("Description").
-		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.stage_id AND %s.is_del = 0", stagesTable, stagesTable, tasksTable, stagesTable)).
-		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.project_id AND %s.is_del = 0", projectsTable, projectsTable, tasksTable, projectsTable)).
-		Select(fmt.Sprintf("%s.*, %s.name AS project_name, %s.name AS stage_name", tasksTable, projectsTable, stagesTable)).
-		Where(fmt.Sprintf("%s.organization_id = ? AND %s.project_id = ?", tasksTable, tasksTable), organizationId, input.Filter.ProjectId).
+		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.stage_id AND %s.entity_type = ? AND %s.is_del = 0", stagesTable, stagesTable, tasksTable, stagesTable, stagesTable), constants.ProjectManagementOwnerTypeProject).
+		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.entity_id AND %s.is_del = 0", projectsTable, projectsTable, tasksTable, projectsTable)).
+		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.workflow_id", workflowsTable, workflowsTable, tasksTable)).
+		Select(fmt.Sprintf("%s.*, %s.name AS project_name, %s.name AS stage_name, %s.name AS workflow_name", tasksTable, projectsTable, stagesTable, workflowsTable)).
+		Where(fmt.Sprintf("%s.organization_id = ? AND %s.entity_type = ? AND %s.entity_id = ?", tasksTable, tasksTable, tasksTable), organizationId, constants.ProjectManagementOwnerTypeProject, input.Filter.ProjectId).
 		Order(fmt.Sprintf("%s.sort_order ASC, %s.id DESC", stagesTable, tasksTable))
 	if input.Filter.StageId != 0 {
 		query = query.Where(fmt.Sprintf("%s.stage_id = ?", tasksTable), input.Filter.StageId)
@@ -88,7 +130,7 @@ func (r *ProjectManagementTaskRepo) PageByProject(ctx context.Context, organizat
 func (r *ProjectManagementTaskRepo) CandidateByProject(ctx context.Context, organizationId int64, input dto.ProjectManagementTaskCandidateDto) ([]*dto.ProjectManagementTaskCandidateEntityDto, error) {
 	query := r.Client(ctx).
 		Select("id, title, phase").
-		Where("organization_id = ? AND project_id = ? AND phase IN ?", organizationId, input.ProjectId, []constants.ProjectManagementStagePhase{constants.ProjectManagementStagePhasePending, constants.ProjectManagementStagePhaseInProgress}).
+		Where("organization_id = ? AND entity_type = ? AND entity_id = ? AND phase IN ?", organizationId, constants.ProjectManagementOwnerTypeProject, input.EntityId, []constants.ProjectManagementStagePhase{constants.ProjectManagementStagePhasePending, constants.ProjectManagementStagePhaseInProgress}).
 		Order("title ASC, id ASC")
 	if input.TaskId != 0 {
 		query = query.Where("id <> ?", input.TaskId)
@@ -110,18 +152,20 @@ func (r *ProjectManagementTaskRepo) CandidateByProject(ctx context.Context, orga
 func (r *ProjectManagementTaskRepo) PageMine(ctx context.Context, organizationId, organizationUserId int64, input dto.ProjectManagementMyTaskPageRequestDto) (gormx.PageResponse[*model.ProjectManagementTask], error) {
 	tasksTable := model.ProjectManagementTask{}.TableName()
 	assigneesTable := model.ProjectManagementTaskAssignee{}.TableName()
-	stagesTable := model.ProjectManagementWorkflowStage{}.TableName()
+	stagesTable := model.ProjectManagementStage{}.TableName()
 	projectsTable := model.ProjectManagementProject{}.TableName()
+	workflowsTable := model.ProjectManagementWorkflow{}.TableName()
 	query := r.Client(ctx).
 		Omit("Description").
-		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.stage_id AND %s.is_del = 0", stagesTable, stagesTable, tasksTable, stagesTable)).
-		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.project_id AND %s.is_del = 0", projectsTable, projectsTable, tasksTable, projectsTable)).
-		Select(fmt.Sprintf("%s.*, %s.name AS project_name, %s.name AS stage_name", tasksTable, projectsTable, stagesTable)).
+		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.stage_id AND %s.entity_type = ? AND %s.is_del = 0", stagesTable, stagesTable, tasksTable, stagesTable, stagesTable), constants.ProjectManagementOwnerTypeProject).
+		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.entity_id AND %s.is_del = 0", projectsTable, projectsTable, tasksTable, projectsTable)).
+		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.workflow_id", workflowsTable, workflowsTable, tasksTable)).
+		Select(fmt.Sprintf("%s.*, %s.name AS project_name, %s.name AS stage_name, %s.name AS workflow_name", tasksTable, projectsTable, stagesTable, workflowsTable)).
 		Where(fmt.Sprintf("%s.organization_id = ?", tasksTable), organizationId).
 		Where(fmt.Sprintf("EXISTS (SELECT 1 FROM %s mine WHERE mine.task_id = %s.id AND mine.stage_id = %s.stage_id AND mine.organization_user_id = ? AND mine.is_del = 0)", assigneesTable, tasksTable, tasksTable), organizationUserId).
 		Order(fmt.Sprintf("%s.sort_order ASC, %s.id DESC", stagesTable, tasksTable))
 	if input.Filter.ProjectId != 0 {
-		query = query.Where(fmt.Sprintf("%s.project_id = ?", tasksTable), input.Filter.ProjectId)
+		query = query.Where(fmt.Sprintf("%s.entity_type = ? AND %s.entity_id = ?", tasksTable, tasksTable), constants.ProjectManagementOwnerTypeProject, input.Filter.ProjectId)
 	}
 	if input.Filter.StageId != 0 {
 		query = query.Where(fmt.Sprintf("%s.stage_id = ?", tasksTable), input.Filter.StageId)
@@ -153,7 +197,12 @@ func (r *ProjectManagementTaskRepo) PageMine(ctx context.Context, organizationId
 
 func (r *ProjectManagementTaskRepo) LockWithTx(ctx context.Context, tx *gorm.DB, id int64) (*model.ProjectManagementTask, error) {
 	task := new(model.ProjectManagementTask)
-	err := tx.WithContext(ctx).Clauses(clause.Locking{Strength: "UPDATE"}).First(task, id).Error
+	err := tx.WithContext(ctx).Model(&model.ProjectManagementTask{}).
+		Select("id, created_at, updated_at, is_del, entity_id, entity_type, workflow_id, organization_id, parent_task_id, stage_id, phase, creator_id, creator_name, title, description, priority, work_hours, start_at, end_at, task_type").
+		Clauses(clause.Locking{Strength: "UPDATE"}).First(task, id).Error
+	if err == nil && task.EntityType == constants.ProjectManagementOwnerTypeProject {
+		return task, nil
+	}
 	return task, errorx.WithStack(err)
 }
 
@@ -172,11 +221,29 @@ func (r *ProjectManagementTaskRepo) ListAssigneesWithTx(ctx context.Context, tx 
 }
 
 func (r *ProjectManagementTaskRepo) ListCurrentAssigneesByTaskIds(ctx context.Context, taskIds []int64) ([]*model.ProjectManagementTaskAssignee, error) {
+	return r.listCurrentAssigneesByTaskIds(ctx, r.assigneeRepo.Client(ctx), taskIds)
+}
+
+func (r *ProjectManagementTaskRepo) ListCurrentAssigneesByTaskIdsWithTx(ctx context.Context, tx *gorm.DB, taskIds []int64) ([]*model.ProjectManagementTaskAssignee, error) {
+	return r.listCurrentAssigneesByTaskIds(ctx, tx, taskIds)
+}
+
+func (r *ProjectManagementTaskRepo) listCurrentAssigneesByTaskIds(ctx context.Context, db *gorm.DB, taskIds []int64) ([]*model.ProjectManagementTaskAssignee, error) {
 	if len(taskIds) == 0 {
 		return []*model.ProjectManagementTaskAssignee{}, nil
 	}
 	assignees := make([]*model.ProjectManagementTaskAssignee, 0)
-	err := currentStageAssignees(r.assigneeRepo.Client(ctx)).Where("project_management_task_assignees.task_id IN ?", taskIds).Find(&assignees).Error
+	err := currentStageAssignees(db.WithContext(ctx)).Where("project_management_task_assignees.task_id IN ?", taskIds).Find(&assignees).Error
+	return assignees, errorx.WithStack(err)
+}
+
+func (r *ProjectManagementTaskRepo) ListTemplateAssigneesByTaskIdsWithTx(ctx context.Context, tx *gorm.DB, taskIds []int64) ([]*model.ProjectManagementTaskAssignee, error) {
+	if len(taskIds) == 0 {
+		return []*model.ProjectManagementTaskAssignee{}, nil
+	}
+	assignees := make([]*model.ProjectManagementTaskAssignee, 0)
+	err := tx.WithContext(ctx).Model(&model.ProjectManagementTaskAssignee{}).
+		Where("task_id IN ? AND stage_id = ?", taskIds, 0).Order("id ASC").Find(&assignees).Error
 	return assignees, errorx.WithStack(err)
 }
 
@@ -188,7 +255,7 @@ func (r *ProjectManagementTaskRepo) DirectChildrenWithTx(ctx context.Context, tx
 
 func (r *ProjectManagementTaskRepo) IdsByProjectWithTx(ctx context.Context, tx *gorm.DB, projectId int64) ([]int64, error) {
 	ids := make([]int64, 0)
-	err := r.PluckByColumnsWithTx(ctx, tx, "id", &ids, []gormx.WhereRaw{{Raw: "project_id = ?", Args: []interface{}{projectId}}})
+	err := r.PluckByColumnsWithTx(ctx, tx, "id", &ids, []gormx.WhereRaw{{Raw: "entity_type = ? AND entity_id = ?", Args: []interface{}{constants.ProjectManagementOwnerTypeProject, projectId}}})
 	return ids, err
 }
 
@@ -201,7 +268,7 @@ func (r *ProjectManagementTaskRepo) DeleteByProjectWithTx(ctx context.Context, t
 			return errorx.WithStack(err)
 		}
 	}
-	_, err := r.DeleteWithTx(ctx, tx, map[string]any{"project_id": projectId})
+	_, err := r.DeleteWithTx(ctx, tx, map[string]any{"entity_type": constants.ProjectManagementOwnerTypeProject, "entity_id": projectId})
 	return err
 }
 
@@ -211,6 +278,21 @@ func (r *ProjectManagementTaskRepo) CreateAssigneesWithTx(ctx context.Context, t
 	}
 	_, err := r.assigneeRepo.BatchCreateWithTx(ctx, tx, assignees, false)
 	return err
+}
+
+func (r *ProjectManagementTaskRepo) CreateEntityWithTx(ctx context.Context, tx *gorm.DB, task *model.ProjectManagementTask) error {
+	return errorx.WithStack(tx.WithContext(ctx).Create(task).Error)
+}
+
+func (r *ProjectManagementTaskRepo) CreateTemplateEntityWithTx(ctx context.Context, tx *gorm.DB, task *model.ProjectManagementTask) error {
+	return errorx.WithStack(tx.WithContext(ctx).Omit("StageId", "Phase").Create(task).Error)
+}
+
+func (r *ProjectManagementTaskRepo) CreateTemplateAssigneesWithTx(ctx context.Context, tx *gorm.DB, assignees []*model.ProjectManagementTaskAssignee) error {
+	if len(assignees) == 0 {
+		return nil
+	}
+	return errorx.WithStack(tx.WithContext(ctx).Omit("StageId").Create(&assignees).Error)
 }
 
 func (r *ProjectManagementTaskRepo) CopyCurrentStageAssigneesIfTargetEmptyWithTx(ctx context.Context, tx *gorm.DB, task *model.ProjectManagementTask, targetStageId int64) error {
@@ -224,7 +306,7 @@ func (r *ProjectManagementTaskRepo) CopyCurrentStageAssigneesIfTargetEmptyWithTx
 	}
 	targetAssignees := make([]*model.ProjectManagementTaskAssignee, 0, len(currentAssignees))
 	for _, assignee := range currentAssignees {
-		targetAssignees = append(targetAssignees, &model.ProjectManagementTaskAssignee{TaskId: task.Id, StageId: targetStageId, OrganizationUserId: assignee.OrganizationUserId, OrganizationUserFullName: assignee.OrganizationUserFullName})
+		targetAssignees = append(targetAssignees, &model.ProjectManagementTaskAssignee{TaskId: task.Id, StageId: &targetStageId, OrganizationUserId: assignee.OrganizationUserId, OrganizationUserFullName: assignee.OrganizationUserFullName})
 	}
 	return r.CreateAssigneesWithTx(ctx, tx, targetAssignees)
 }
@@ -267,11 +349,11 @@ func (r *ProjectManagementTaskRepo) ReplaceAssigneesWithTx(ctx context.Context, 
 
 func (r *ProjectManagementTaskRepo) DeleteUnfinishedAssigneesByProjectMemberWithTx(ctx context.Context, tx *gorm.DB, projectId, organizationUserId int64) error {
 	tasksTable := model.ProjectManagementTask{}.TableName()
-	stagesTable := model.ProjectManagementWorkflowStage{}.TableName()
-	taskIds := tx.WithContext(ctx).Table(tasksTable).
+	stagesTable := model.ProjectManagementStage{}.TableName()
+	taskIds := tx.WithContext(ctx).Model(&model.ProjectManagementTask{}).
 		Select(fmt.Sprintf("%s.id", tasksTable)).
-		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.stage_id AND %s.is_del = 0", stagesTable, stagesTable, tasksTable, stagesTable)).
-		Where(fmt.Sprintf("%s.project_id = ? AND %s.is_del = 0 AND %s.phase <> ?", tasksTable, tasksTable, stagesTable), projectId, constants.ProjectManagementStagePhaseFinished)
+		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.stage_id AND %s.entity_type = ? AND %s.is_del = 0", stagesTable, stagesTable, tasksTable, stagesTable, stagesTable), constants.ProjectManagementOwnerTypeProject).
+		Where(fmt.Sprintf("%s.entity_type = ? AND %s.entity_id = ? AND %s.is_del = 0 AND %s.phase <> ?", tasksTable, tasksTable, tasksTable, stagesTable), constants.ProjectManagementOwnerTypeProject, projectId, constants.ProjectManagementStagePhaseFinished)
 	if err := tx.WithContext(ctx).Where("organization_user_id = ? AND task_id IN (?)", organizationUserId, taskIds).Delete(&model.ProjectManagementTaskAssignee{}).Error; err != nil {
 		return errorx.WithStack(err)
 	}

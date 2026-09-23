@@ -135,11 +135,11 @@ func (r *ProjectManagementProjectRepo) CandidateMembers(ctx context.Context, org
 func (r *ProjectManagementProjectRepo) HasUnfinishedTasksForEntity(ctx context.Context, entityId int64, entityType constants.ProjectManagementProjectEntityType) (bool, error) {
 	projectsTable := model.ProjectManagementProject{}.TableName()
 	tasksTable := model.ProjectManagementTask{}.TableName()
-	stagesTable := model.ProjectManagementWorkflowStage{}.TableName()
+	stagesTable := model.ProjectManagementStage{}.TableName()
 	var count int64
-	err := r.Client(ctx).Table(projectsTable).
-		Joins(fmt.Sprintf("JOIN %s ON %s.project_id = %s.id AND %s.is_del = 0", tasksTable, tasksTable, projectsTable, tasksTable)).
-		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.stage_id AND %s.is_del = 0", stagesTable, stagesTable, tasksTable, stagesTable)).
+	err := r.Client(ctx).Model(&model.ProjectManagementProject{}).
+		Joins(fmt.Sprintf("JOIN %s ON %s.entity_type = ? AND %s.entity_id = %s.id AND %s.is_del = 0", tasksTable, tasksTable, tasksTable, projectsTable, tasksTable), constants.ProjectManagementOwnerTypeProject).
+		Joins(fmt.Sprintf("JOIN %s ON %s.id = %s.stage_id AND %s.entity_type = ? AND %s.entity_id = %s.entity_id AND %s.is_del = 0", stagesTable, stagesTable, tasksTable, stagesTable, stagesTable, tasksTable, stagesTable), constants.ProjectManagementOwnerTypeProject).
 		Where(fmt.Sprintf("%s.entity_id = ? AND %s.entity_type = ? AND %s.is_del = 0 AND %s.phase <> ?", projectsTable, projectsTable, projectsTable, stagesTable), entityId, entityType, constants.ProjectManagementStagePhaseFinished).
 		Count(&count).Error
 	return count > 0, errorx.WithStack(err)
@@ -192,6 +192,14 @@ func (r *ProjectManagementProjectRepo) DeleteByOrganizationUserWithTx(ctx contex
 func (r *ProjectManagementProjectRepo) CreateMemberWithTx(ctx context.Context, tx *gorm.DB, member *model.ProjectManagementProjectMember) error {
 	_, err := r.memberRepo.CreateWithTx(ctx, tx, member, false)
 	return err
+}
+
+func (r *ProjectManagementProjectRepo) EnsureExecutorMemberWithTx(ctx context.Context, tx *gorm.DB, projectId, organizationUserId int64) error {
+	exists, err := r.memberRepo.IsExistedByColumnsWithTx(ctx, tx, map[string]any{"project_id": projectId, "organization_user_id": organizationUserId})
+	if err != nil || exists {
+		return err
+	}
+	return r.CreateMemberWithTx(ctx, tx, &model.ProjectManagementProjectMember{ProjectId: projectId, OrganizationUserId: organizationUserId, Role: constants.ProjectManagementMemberRoleTaskExecutor})
 }
 
 func (r *ProjectManagementProjectRepo) UpdateMemberRoleWithTx(ctx context.Context, tx *gorm.DB, member *model.ProjectManagementProjectMember, role constants.ProjectManagementMemberRole) error {

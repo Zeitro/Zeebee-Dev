@@ -36,9 +36,9 @@ func TestCreateTaskDependencyRules(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, statement := range []string{
-		"CREATE TABLE project_management_tasks (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, project_id integer not null, organization_id integer not null, parent_task_id integer not null default 0, stage_id integer not null, creator_id integer not null default 0, creator_name text not null default '', title text not null default '', description text not null default '', priority text not null default '', task_type json not null default '{}')",
+		"CREATE TABLE project_management_tasks (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, entity_type text not null default 'Project', entity_id integer not null, organization_id integer not null, parent_task_id integer not null default 0, stage_id integer not null, creator_id integer not null default 0, creator_name text not null default '', title text not null default '', description text not null default '', priority text not null default '', task_type json not null default '{}')",
 		"CREATE TABLE project_management_project_members (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, project_id integer not null, organization_user_id integer not null, role text not null default 'TaskExecutor')",
-		"CREATE TABLE project_management_workflow_stages (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, workflow_id integer not null default 0, name text not null default '', phase text not null, color text not null default '', sort_order integer not null default 0)",
+		"CREATE TABLE project_management_stages (id integer primary key, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, entity_type text not null default 'Project', entity_id integer not null default 0, name text not null default '', phase text not null, color text not null default '', sort_order integer not null default 0)",
 		"CREATE TABLE project_management_task_dependencies (id integer primary key autoincrement, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, task_id integer not null, dependency_task_id integer not null, dependency_type text not null, dependency_rule text not null)",
 		"CREATE TABLE operations (id integer primary key autoincrement, created_at datetime not null default CURRENT_TIMESTAMP, updated_at datetime not null default CURRENT_TIMESTAMP, is_del integer not null default 0, entity_id integer not null, entity_type text not null, operator_id integer not null, operator_name text not null default '', operator_type text not null, operation text not null, note text not null default '', metadata json not null default '{}', organization_id integer not null)",
 	} {
@@ -47,8 +47,8 @@ func TestCreateTaskDependencyRules(t *testing.T) {
 		}
 	}
 	for _, statement := range []string{
-		"INSERT INTO project_management_workflow_stages (id, phase) VALUES (100, 'Pending'), (101, 'InProgress')",
-		"INSERT INTO project_management_tasks (id, project_id, organization_id, parent_task_id, stage_id, title) VALUES (1, 10, 1, 0, 100, 'Predecessor'), (2, 10, 1, 0, 100, 'Successor'), (3, 11, 1, 0, 100, 'Other project'), (4, 10, 1, 0, 100, 'Post task'), (5, 10, 1, 1, 100, 'Child'), (6, 10, 1, 5, 100, 'Grandchild')",
+		"INSERT INTO project_management_stages (id, entity_type, entity_id, phase) VALUES (100, 'Project', 10, 'Pending'), (101, 'Project', 10, 'InProgress')",
+		"INSERT INTO project_management_tasks (id, entity_type, entity_id, organization_id, parent_task_id, stage_id, title) VALUES (1, 'Project', 10, 1, 0, 100, 'Predecessor'), (2, 'Project', 10, 1, 0, 100, 'Successor'), (3, 'Project', 11, 1, 0, 100, 'Other project'), (4, 'Project', 10, 1, 0, 100, 'Post task'), (5, 'Project', 10, 1, 1, 100, 'Child'), (6, 'Project', 10, 1, 5, 100, 'Grandchild')",
 		"INSERT INTO project_management_project_members (id, project_id, organization_user_id) VALUES (1, 10, 7)",
 	} {
 		if err := db.Exec(statement).Error; err != nil {

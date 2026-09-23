@@ -1,23 +1,16 @@
 package model
 
-import "zeebee-backend/domains/zeebee/constants"
 
+
+// ProjectManagementWorkflowStage connects a workflow to an owner-stage.
+// Stage definitions belong to a project or template; a workflow only selects them.
 type ProjectManagementWorkflowStage struct {
-	Base
-	WorkflowId  int64                                 `gorm:"column:workflow_id;not null;default:0" json:"workflow_id"`
-	Name        string                                `gorm:"column:name;type:varchar(100);not null;default:''" json:"name"`
-	Description string                                `gorm:"column:description;type:varchar(100);not null;default:''" json:"description"`
-	Phase       constants.ProjectManagementStagePhase `gorm:"column:phase;type:varchar(32);not null;default:'Pending'" json:"phase"`
-	Color       string                                `gorm:"column:color;type:varchar(32);not null;default:''" json:"color"`
-	SortOrder   int                                   `gorm:"column:sort_order;not null;default:0" json:"sort_order"`
-
-	// Relationships
-	Transitions []ProjectManagementWorkflowTransition `gorm:"foreignKey:FromStageId" json:"transitions"`
+	Id         int64 `gorm:"primaryKey;autoIncrement;<-:create" json:"id"`
+	WorkflowId int64 `gorm:"column:workflow_id;not null;default:0" json:"workflow_id"`
+	StageId    int64 `gorm:"column:stage_id;not null;default:0" json:"stage_id"`
 }
 
-func (ProjectManagementWorkflowStage) TableName() string { return "project_management_workflow_stages" }
-
-// RemoveRelationships removes relationship data to avoid circular references.
-func (m *ProjectManagementWorkflowStage) RemoveRelationships() {
-	m.Transitions = nil
+func (ProjectManagementWorkflowStage) TableName() string {
+	return "project_management_workflow_stages"
 }
+

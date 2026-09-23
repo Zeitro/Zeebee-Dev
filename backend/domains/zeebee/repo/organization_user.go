@@ -150,6 +150,10 @@ func (repo *OrganizationUserRepo) GetOrganizationUsersByIdsWithTx(ctx context.Co
 	return result, errorx.WithStack(err)
 }
 
+func (repo *OrganizationUserRepo) IsActiveByIdWithTx(ctx context.Context, tx *gorm.DB, id, organizationId int64) (bool, error) {
+	return repo.IsExistedByColumnsWithTx(ctx, tx, map[string]any{"id": id, "organization_id": organizationId, "status": constants.OrganizationUserStatusActive})
+}
+
 // GetOrganizationUsersByOrganizationId get organization users by organizationId
 func (repo *OrganizationUserRepo) GetOrganizationUsersByOrganizationId(ctx context.Context, organizationId int64) (result []*model.OrganizationUser, err error) {
 	err = repo.Client(ctx).Model(&model.OrganizationUser{}).

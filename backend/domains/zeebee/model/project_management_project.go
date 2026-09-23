@@ -1,6 +1,10 @@
 package model
 
-import "zeebee-backend/domains/zeebee/constants"
+import (
+	"database/sql"
+
+	"zeebee-backend/domains/zeebee/constants"
+)
 
 type ProjectManagementProject struct {
 	Base
@@ -13,6 +17,11 @@ type ProjectManagementProject struct {
 	CoverUrl       string                                       `gorm:"column:cover_url;type:varchar(255);not null;default:''" json:"cover_url"`
 	OwnerId        int64                                        `gorm:"column:owner_id;not null;default:0" json:"owner_id"`
 	OwnerName      string                                       `gorm:"column:owner_name;type:varchar(100);not null;default:''" json:"owner_name"`
+	ProjectType    constants.ProjectManagementProjectType       `gorm:"column:project_type;type:varchar(32);not null;default:'Ordinary'" json:"project_type"`
+	StartAt        *sql.NullTime                                `gorm:"column:start_at;type:date" json:"start_at"`
+	EndAt          *sql.NullTime                                `gorm:"column:end_at;type:date" json:"end_at"`
+	PeriodValue    int                                          `gorm:"column:period_value;not null;default:0" json:"period_value"`
+	PeriodUnit     constants.ProjectManagementPeriodUnit        `gorm:"column:period_unit;type:varchar(16);not null;default:''" json:"period_unit"`
 	// relationships
 	Members []*ProjectManagementProjectMember `gorm:"foreignKey:ProjectId" json:"members"`
 }

@@ -837,36 +837,60 @@ message ProjectManagementWorkflowEntity {
   string description = 3;
   reserved 4;
   bool is_default = 5;
-  repeated ProjectManagementWorkflowStageEntity stages = 6;
-  repeated ProjectManagementWorkflowTransitionEntity transitions = 7;
+  repeated ProjectManagementStageEntity stages = 6;
+  repeated ProjectManagementWorkflowStageTransitionEntity transitions = 7;
   int64 source_template_id = 8;
   string source_template_name = 9;
   string created_at = 10;
   string updated_at = 11;
+  string entity_type = 12;
+  int64 entity_id = 13;
+  int64 source_workflow_id = 14;
+  string source_workflow_name = 15;
 }
 
-message ProjectManagementWorkflowStageEntity {
+message ProjectManagementWorkflowStageTransitionEntity {
   int64 id = 1;
-  string name = 2;
-  string phase = 3;
-  string color = 4;
-  int32 sort_order = 5;
-  string created_at = 6;
-  string updated_at = 7;
-  repeated ProjectManagementWorkflowTransitionEntity transitions = 8;
-  string description = 9;
+  int64 workflow_id = 2;
+  string name = 3;
+  int64 from_stage_id = 4;
+  int64 to_stage_id = 5;
+  repeated string allowed_actor_types = 6;
+  string created_at = 7;
+  string updated_at = 8;
 }
 
-message ProjectManagementWorkflowTransitionEntity {
+message ProjectManagementStageEntity {
   int64 id = 1;
-  int64 from_stage_id = 2;
-  int64 to_stage_id = 3;
-  repeated string allowed_actor_types = 4;
-  string created_at = 5;
-  string updated_at = 6;
-  string name = 7;
-  ProjectManagementWorkflowStageEntity from_stage = 8;
-  ProjectManagementWorkflowStageEntity to_stage = 9;
+  string entity_type = 2;
+  int64 entity_id = 3;
+  string name = 4;
+  string description = 5;
+  string phase = 6;
+  string color = 7;
+  int32 sort_order = 8;
+  string created_at = 9;
+  string updated_at = 10;
+}
+
+message ProjectManagementTemplateEntity {
+  int64 id = 1;
+  string template_type = 2;
+  int64 organization_id = 3;
+  string name = 4;
+  string description = 5;
+  string status = 6;
+  bool is_default = 7;
+  int32 sort_order = 8;
+  string project_type = 9;
+  string start_at = 10;
+  string end_at = 11;
+  int32 period_value = 12;
+  string period_unit = 13;
+  int64 source_project_id = 14;
+  string created_at = 15;
+  string updated_at = 16;
+  repeated ProjectManagementStageEntity stages = 17;
 }
 
 message ProjectManagementTaskTypeEntity {
@@ -890,8 +914,13 @@ message ProjectManagementProjectEntity {
   string owner_name = 8;
   string created_at = 9;
   string updated_at = 10;
-  ProjectManagementWorkflowEntity workflow = 11;
+  reserved 11;
   string priority = 12;
+	string project_type = 13;
+	string start_at = 14;
+	string end_at = 15;
+	int32 period_value = 16;
+	string period_unit = 17;
 }
 
 message ProjectManagementMemberEntity {
@@ -922,7 +951,7 @@ message ProjectManagementTaskAssigneeEntity {
 
 message ProjectManagementTaskEntity {
   int64 id = 1;
-  int64 project_id = 2;
+  reserved 2;
   int64 parent_task_id = 3;
   int64 stage_id = 4;
   int64 creator_id = 5;
@@ -943,11 +972,16 @@ message ProjectManagementTaskEntity {
   repeated ProjectManagementTaskEntity children = 20;
   repeated ProjectManagementTaskDependencyEntity dependencies = 21;
   double work_hours = 22;
+	int64 workflow_id = 23;
+	string workflow_name = 24;
+	string entity_type = 25;
+	int64 entity_id = 26;
+	bool out_of_plan = 27;
 }
 
 message ProjectManagementTaskPageEntity {
   int64 id = 1;
-  int64 project_id = 2;
+  reserved 2;
   int64 parent_task_id = 3;
   int64 stage_id = 4;
   int64 creator_id = 5;
@@ -966,6 +1000,10 @@ message ProjectManagementTaskPageEntity {
   double work_hours = 20;
   string project_name = 21;
   string stage_name = 22;
+  int64 workflow_id = 23;
+  string workflow_name = 24;
+	string entity_type = 25;
+	int64 entity_id = 26;
 }
 
 message ProjectManagementTaskDependencyEntity {
@@ -977,6 +1015,15 @@ message ProjectManagementTaskDependencyEntity {
   string created_at = 6;
   string updated_at = 7;
   string dependency_task_title = 8;
+}
+
+message ProjectManagementTaskViewEntity {
+  int64 project_id = 1;
+  string project_start_at = 2;
+  string project_end_at = 3;
+  repeated ProjectManagementTaskEntity tasks = 4;
+  string timeline_start_at = 5;
+  string timeline_end_at = 6;
 }
 
 message OperationEntity {

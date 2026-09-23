@@ -18,6 +18,72 @@ func (c ProjectManagementWorkflowKind) Validate() error {
 	}, ProjectManagementWorkflowKindName)
 }
 
+type ProjectManagementOwnerType string
+
+const ProjectManagementOwnerTypeName = "project_management_owner_type"
+
+const (
+	ProjectManagementOwnerTypeProject  ProjectManagementOwnerType = "Project"
+	ProjectManagementOwnerTypeTemplate ProjectManagementOwnerType = "Template"
+)
+
+func (c ProjectManagementOwnerType) Validate() error {
+	return validateConstant(c, []ProjectManagementOwnerType{
+		ProjectManagementOwnerTypeProject,
+		ProjectManagementOwnerTypeTemplate,
+	}, ProjectManagementOwnerTypeName)
+}
+
+type ProjectManagementTemplateType string
+
+const ProjectManagementTemplateTypeName = "project_management_template_type"
+
+const (
+	ProjectManagementTemplateTypePublic       ProjectManagementTemplateType = "Public"
+	ProjectManagementTemplateTypeOrganization ProjectManagementTemplateType = "Organization"
+)
+
+func (c ProjectManagementTemplateType) Validate() error {
+	return validateConstant(c, []ProjectManagementTemplateType{
+		ProjectManagementTemplateTypePublic,
+		ProjectManagementTemplateTypeOrganization,
+	}, ProjectManagementTemplateTypeName)
+}
+
+type ProjectManagementProjectType string
+
+const ProjectManagementProjectTypeName = "project_management_project_type"
+
+const (
+	ProjectManagementProjectTypeOrdinary ProjectManagementProjectType = "Ordinary"
+	ProjectManagementProjectTypePlanned  ProjectManagementProjectType = "Planned"
+)
+
+func (c ProjectManagementProjectType) Validate() error {
+	return validateConstant(c, []ProjectManagementProjectType{
+		ProjectManagementProjectTypeOrdinary,
+		ProjectManagementProjectTypePlanned,
+	}, ProjectManagementProjectTypeName)
+}
+
+type ProjectManagementPeriodUnit string
+
+const ProjectManagementPeriodUnitName = "project_management_period_unit"
+
+const (
+	ProjectManagementPeriodUnitDay   ProjectManagementPeriodUnit = "Day"
+	ProjectManagementPeriodUnitWeek  ProjectManagementPeriodUnit = "Week"
+	ProjectManagementPeriodUnitMonth ProjectManagementPeriodUnit = "Month"
+)
+
+func (c ProjectManagementPeriodUnit) Validate() error {
+	return validateConstant(c, []ProjectManagementPeriodUnit{
+		ProjectManagementPeriodUnitDay,
+		ProjectManagementPeriodUnitWeek,
+		ProjectManagementPeriodUnitMonth,
+	}, ProjectManagementPeriodUnitName)
+}
+
 type ProjectManagementStagePhase string
 
 const ProjectManagementStagePhaseName = "project_management_stage_phase"
@@ -150,6 +216,23 @@ func init() {
 	enums.Register(ProjectManagementWorkflowKindName, []enums.EnumOpt{
 		{Label: string(ProjectManagementWorkflowKindOrganizationTemplate), Value: string(ProjectManagementWorkflowKindOrganizationTemplate)},
 		{Label: string(ProjectManagementWorkflowKindProject), Value: string(ProjectManagementWorkflowKindProject)},
+	})
+	enums.Register(ProjectManagementOwnerTypeName, []enums.EnumOpt{
+		{Label: string(ProjectManagementOwnerTypeProject), Value: string(ProjectManagementOwnerTypeProject)},
+		{Label: string(ProjectManagementOwnerTypeTemplate), Value: string(ProjectManagementOwnerTypeTemplate)},
+	})
+	enums.Register(ProjectManagementTemplateTypeName, []enums.EnumOpt{
+		{Label: string(ProjectManagementTemplateTypePublic), Value: string(ProjectManagementTemplateTypePublic)},
+		{Label: string(ProjectManagementTemplateTypeOrganization), Value: string(ProjectManagementTemplateTypeOrganization)},
+	})
+	enums.Register(ProjectManagementProjectTypeName, []enums.EnumOpt{
+		{Label: string(ProjectManagementProjectTypeOrdinary), Value: string(ProjectManagementProjectTypeOrdinary)},
+		{Label: string(ProjectManagementProjectTypePlanned), Value: string(ProjectManagementProjectTypePlanned)},
+	})
+	enums.Register(ProjectManagementPeriodUnitName, []enums.EnumOpt{
+		{Label: string(ProjectManagementPeriodUnitDay), Value: string(ProjectManagementPeriodUnitDay)},
+		{Label: string(ProjectManagementPeriodUnitWeek), Value: string(ProjectManagementPeriodUnitWeek)},
+		{Label: string(ProjectManagementPeriodUnitMonth), Value: string(ProjectManagementPeriodUnitMonth)},
 	})
 	enums.Register(ProjectManagementStagePhaseName, []enums.EnumOpt{
 		{Label: string(ProjectManagementStagePhasePending), Value: string(ProjectManagementStagePhasePending)},
