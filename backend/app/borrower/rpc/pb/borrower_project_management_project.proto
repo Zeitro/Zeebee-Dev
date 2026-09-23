@@ -43,9 +43,15 @@ message ProjectManagementProjectCreateRequestData {
   string name = 2;
   string description = 3;
   string cover_url = 4;
-  int64 workflow_template_id = 5;
+  reserved 5;
   string entity_type = 6;
   string priority = 7;
+  string project_type = 8;
+  string start_at = 9;
+  int64 period_value = 10;
+  string period_unit = 11;
+  int64 template_id = 12;
+  bool copy_assignees = 13;
 }
 
 message ProjectManagementProjectUpdateRequest {
@@ -57,6 +63,9 @@ message ProjectManagementProjectUpdateRequestData {
   string description = 3;
   string cover_url = 4;
   string priority = 5;
+  string start_at = 6;
+  int64 period_value = 7;
+  string period_unit = 8;
 }
 
 message ProjectManagementProjectDeleteRequest {

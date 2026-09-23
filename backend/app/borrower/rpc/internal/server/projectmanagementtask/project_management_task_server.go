@@ -44,6 +44,11 @@ func (s *ProjectManagementTaskServer) Detail(ctx context.Context, in *borrower.P
 	return l.Detail(in)
 }
 
+func (s *ProjectManagementTaskServer) View(ctx context.Context, in *borrower.ProjectManagementTaskViewRequest) (*proto.ProjectManagementTaskViewEntity, error) {
+	l := projectmanagementtasklogic.NewViewLogic(ctx, s.svcCtx)
+	return l.View(in)
+}
+
 func (s *ProjectManagementTaskServer) Update(ctx context.Context, in *borrower.ProjectManagementTaskUpdateRequest) (*borrower.ProjectManagementTaskDetailResponse, error) {
 	l := projectmanagementtasklogic.NewUpdateLogic(ctx, s.svcCtx)
 	return l.Update(in)

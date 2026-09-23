@@ -39,9 +39,10 @@ message ProjectManagementTaskCandidateRequest {
   ProjectManagementTaskCandidateRequestData data = 1;
 }
 message ProjectManagementTaskCandidateRequestData {
-  int64 project_id = 1;
+  string entity_type = 1;
   int64 task_id = 2;
   string keyword = 3;
+  int64 entity_id = 4;
 }
 message ProjectManagementTaskCandidateEntity {
   int64 id = 1;
@@ -56,7 +57,7 @@ message ProjectManagementTaskCreateRequest {
   ProjectManagementTaskCreateRequestData data = 1;
 }
 message ProjectManagementTaskCreateRequestData {
-  int64 project_id = 1;
+  string entity_type = 1;
   int64 parent_task_id = 2;
   string title = 3;
   string description = 4;
@@ -65,7 +66,9 @@ message ProjectManagementTaskCreateRequestData {
   string end_at = 7;
   int64 task_type_id = 8;
   repeated int64 assignee_organization_user_ids = 9;
-  double work_hours = 10;
+	double work_hours = 10;
+	int64 workflow_id = 11;
+	int64 entity_id = 12;
 }
 
 message ProjectManagementTaskDetailRequest {
@@ -73,10 +76,17 @@ message ProjectManagementTaskDetailRequest {
 }
 message ProjectManagementTaskDetailRequestData {
   int64 id = 1;
-  int64 project_id = 2;
+  reserved 2;
 }
 message ProjectManagementTaskDetailResponse {
   proto.ProjectManagementTaskEntity data = 1;
+}
+
+message ProjectManagementTaskViewRequest {
+  ProjectManagementTaskViewRequestData data = 1;
+}
+message ProjectManagementTaskViewRequestData {
+  int64 id = 1;
 }
 
 message ProjectManagementTaskUpdateRequest {
@@ -110,6 +120,7 @@ message ProjectManagementTaskUpdateRequestData {
   repeated ProjectManagementTaskDependencyRequest dependencies = 10;
   double work_hours = 11;
   repeated ProjectManagementTaskAttachmentRequest attachments = 12;
+	int64 workflow_id = 14;
 }
 
 message ProjectManagementTaskDeleteRequest {
@@ -117,8 +128,7 @@ message ProjectManagementTaskDeleteRequest {
 }
 message ProjectManagementTaskDeleteRequestData {
   int64 id = 1;
-  reserved 2;
-  int64 project_id = 3;
+  reserved 2, 3;
 }
 
 message ProjectManagementMyTaskPageRequest {
@@ -147,7 +157,7 @@ message ProjectManagementAttachmentCreateRequestData {
   string file_name = 2;
   string file_url = 3;
   string storage_type = 4;
-  int64 project_id = 5;
+  reserved 5;
   string upload_type = 6;
 }
 message ProjectManagementAttachmentDetailResponse {
@@ -167,7 +177,7 @@ message ProjectManagementTaskTransitionRequest {
 message ProjectManagementTaskTransitionRequestData {
   int64 task_id = 1;
   int64 target_stage_id = 2;
-  int64 project_id = 3;
+  reserved 3;
 }
 
 service ProjectManagementTask {
@@ -175,6 +185,7 @@ service ProjectManagementTask {
   rpc Candidate(ProjectManagementTaskCandidateRequest) returns(ProjectManagementTaskCandidateResponse);
   rpc Create(ProjectManagementTaskCreateRequest) returns(ProjectManagementTaskDetailResponse);
   rpc Detail(ProjectManagementTaskDetailRequest) returns(ProjectManagementTaskDetailResponse);
+  rpc View(ProjectManagementTaskViewRequest) returns(proto.ProjectManagementTaskViewEntity);
   rpc Update(ProjectManagementTaskUpdateRequest) returns(ProjectManagementTaskDetailResponse);
   rpc Delete(ProjectManagementTaskDeleteRequest) returns(proto.EmptyResponse);
   rpc MyPage(ProjectManagementMyTaskPageRequest) returns(ProjectManagementTaskPageResponse);

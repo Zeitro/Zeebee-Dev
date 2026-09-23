@@ -46,12 +46,15 @@ type (
 	ProjectManagementTaskTransitionRequestData   = borrower.ProjectManagementTaskTransitionRequestData
 	ProjectManagementTaskUpdateRequest           = borrower.ProjectManagementTaskUpdateRequest
 	ProjectManagementTaskUpdateRequestData       = borrower.ProjectManagementTaskUpdateRequestData
+	ProjectManagementTaskViewRequest             = borrower.ProjectManagementTaskViewRequest
+	ProjectManagementTaskViewRequestData         = borrower.ProjectManagementTaskViewRequestData
 
 	ProjectManagementTask interface {
 		Page(ctx context.Context, in *ProjectManagementTaskPageRequest, opts ...grpc.CallOption) (*ProjectManagementTaskPageResponse, error)
 		Candidate(ctx context.Context, in *ProjectManagementTaskCandidateRequest, opts ...grpc.CallOption) (*ProjectManagementTaskCandidateResponse, error)
 		Create(ctx context.Context, in *ProjectManagementTaskCreateRequest, opts ...grpc.CallOption) (*ProjectManagementTaskDetailResponse, error)
 		Detail(ctx context.Context, in *ProjectManagementTaskDetailRequest, opts ...grpc.CallOption) (*ProjectManagementTaskDetailResponse, error)
+		View(ctx context.Context, in *ProjectManagementTaskViewRequest, opts ...grpc.CallOption) (*proto.ProjectManagementTaskViewEntity, error)
 		Update(ctx context.Context, in *ProjectManagementTaskUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementTaskDetailResponse, error)
 		Delete(ctx context.Context, in *ProjectManagementTaskDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 		MyPage(ctx context.Context, in *ProjectManagementMyTaskPageRequest, opts ...grpc.CallOption) (*ProjectManagementTaskPageResponse, error)
@@ -89,6 +92,11 @@ func (m *defaultProjectManagementTask) Create(ctx context.Context, in *ProjectMa
 func (m *defaultProjectManagementTask) Detail(ctx context.Context, in *ProjectManagementTaskDetailRequest, opts ...grpc.CallOption) (*ProjectManagementTaskDetailResponse, error) {
 	client := borrower.NewProjectManagementTaskClient(m.cli.Conn())
 	return client.Detail(ctx, in, opts...)
+}
+
+func (m *defaultProjectManagementTask) View(ctx context.Context, in *ProjectManagementTaskViewRequest, opts ...grpc.CallOption) (*proto.ProjectManagementTaskViewEntity, error) {
+	client := borrower.NewProjectManagementTaskClient(m.cli.Conn())
+	return client.View(ctx, in, opts...)
 }
 
 func (m *defaultProjectManagementTask) Update(ctx context.Context, in *ProjectManagementTaskUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementTaskDetailResponse, error) {

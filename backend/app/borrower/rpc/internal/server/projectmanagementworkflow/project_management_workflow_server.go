@@ -53,3 +53,38 @@ func (s *ProjectManagementWorkflowServer) Delete(ctx context.Context, in *proto.
 	l := projectmanagementworkflowlogic.NewDeleteLogic(ctx, s.svcCtx)
 	return l.Delete(in)
 }
+
+func (s *ProjectManagementWorkflowServer) ProjectWorkflowPage(ctx context.Context, in *borrower.ProjectManagementProjectWorkflowPageRequest) (*borrower.ProjectManagementWorkflowPageResponse, error) {
+	l := projectmanagementworkflowlogic.NewProjectWorkflowPageLogic(ctx, s.svcCtx)
+	return l.ProjectWorkflowPage(in)
+}
+
+func (s *ProjectManagementWorkflowServer) ProjectWorkflowBatch(ctx context.Context, in *borrower.ProjectManagementProjectWorkflowBatchRequest) (*borrower.ProjectManagementWorkflowBatchResponse, error) {
+	l := projectmanagementworkflowlogic.NewProjectWorkflowBatchLogic(ctx, s.svcCtx)
+	return l.ProjectWorkflowBatch(in)
+}
+
+func (s *ProjectManagementWorkflowServer) ProjectWorkflowDetail(ctx context.Context, in *borrower.ProjectManagementProjectWorkflowDetailRequest) (*borrower.ProjectManagementWorkflowDetailResponse, error) {
+	l := projectmanagementworkflowlogic.NewProjectWorkflowDetailLogic(ctx, s.svcCtx)
+	return l.ProjectWorkflowDetail(in)
+}
+
+func (s *ProjectManagementWorkflowServer) ProjectWorkflowDelete(ctx context.Context, in *borrower.ProjectManagementProjectWorkflowDeleteRequest) (*proto.EmptyResponse, error) {
+	l := projectmanagementworkflowlogic.NewProjectWorkflowDeleteLogic(ctx, s.svcCtx)
+	return l.ProjectWorkflowDelete(in)
+}
+
+func (s *ProjectManagementWorkflowServer) ProjectWorkflowStageUpdate(ctx context.Context, in *borrower.ProjectManagementProjectWorkflowStageUpdateRequest) (*borrower.ProjectManagementWorkflowDetailResponse, error) {
+	l := projectmanagementworkflowlogic.NewProjectWorkflowStageUpdateLogic(ctx, s.svcCtx)
+	return l.ProjectWorkflowStageUpdate(in)
+}
+
+func (s *ProjectManagementWorkflowServer) ProjectWorkflowDefault(ctx context.Context, in *borrower.ProjectManagementProjectWorkflowDefaultRequest) (*proto.EmptyResponse, error) {
+	l := projectmanagementworkflowlogic.NewProjectWorkflowDefaultLogic(ctx, s.svcCtx)
+	return l.ProjectWorkflowDefault(in)
+}
+
+func (s *ProjectManagementWorkflowServer) ProjectWorkflowTemplates(ctx context.Context, in *proto.EmptyRequest) (*borrower.ProjectManagementWorkflowTemplateResponse, error) {
+	l := projectmanagementworkflowlogic.NewProjectWorkflowTemplatesLogic(ctx, s.svcCtx)
+	return l.ProjectWorkflowTemplates(in)
+}

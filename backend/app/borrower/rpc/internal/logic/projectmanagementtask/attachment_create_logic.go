@@ -36,7 +36,7 @@ func (l *AttachmentCreateLogic) AttachmentCreate(in *borrower.ProjectManagementA
 	if err != nil {
 		return nil, err
 	}
-	if _, err = base.ProjectManagementTaskLogic.DetailForProject(l.ctx, claim, in.Data.ProjectId, in.Data.TaskId); err != nil {
+	if _, err = base.ProjectManagementTaskLogic.Detail(l.ctx, claim, in.Data.TaskId); err != nil {
 		return nil, err
 	}
 	file, err := base.ProjectManagementAttachmentLogic.Create(l.ctx, claim, dto.ProjectManagementAttachmentCreateDto{TaskId: in.Data.TaskId, FileName: in.Data.FileName, FileUrl: in.Data.FileUrl, StorageType: constants.StorageType(in.Data.StorageType), UploadType: constants.UploadType(in.Data.UploadType)})

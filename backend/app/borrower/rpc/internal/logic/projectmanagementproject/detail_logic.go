@@ -47,13 +47,5 @@ func (l *DetailLogic) Detail(in *proto.PathIdRequest) (resp *borrower.ProjectMan
 	if err != nil {
 		return nil, err
 	}
-	workflow, err := l.baseLogic.ProjectManagementWorkflowLogic.ProjectDetail(l.ctx, claim, project.Id)
-	if err != nil {
-		return nil, err
-	}
-	data.Workflow, err = copierx.Trans[model.ProjectManagementWorkflow, proto.ProjectManagementWorkflowEntity](workflow, copierx.TimeToRFC3339Str())
-	if err != nil {
-		return nil, err
-	}
 	return &borrower.ProjectManagementProjectDetailResponse{Data: data}, nil
 }

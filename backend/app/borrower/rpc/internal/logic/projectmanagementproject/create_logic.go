@@ -37,14 +37,12 @@ func (l *CreateLogic) Create(in *borrower.ProjectManagementProjectCreateRequest)
 	if err != nil {
 		return nil, err
 	}
-	projectData, err := copierx.Trans[borrower.ProjectManagementProjectCreateRequestData, dto.ProjectManagementProjectDto](in.Data)
+	projectData, err := copierx.Trans[borrower.ProjectManagementProjectCreateRequestData, dto.ProjectManagementProjectCreateDto](in.Data)
 	if err != nil {
 		return nil, err
 	}
-	project, err := l.baseLogic.ProjectManagementProjectLogic.Create(l.ctx, claim, dto.ProjectManagementProjectCreateDto{
-		ProjectManagementProjectDto: *projectData,
-		WorkflowTemplateId:          in.Data.WorkflowTemplateId,
-	})
+	projectData.TemplateId = in.Data.TemplateId
+	project, _, err := l.baseLogic.ProjectManagementProjectLogic.CreateWithAssigneeResult(l.ctx, claim, *projectData)
 	if err != nil {
 		return nil, err
 	}

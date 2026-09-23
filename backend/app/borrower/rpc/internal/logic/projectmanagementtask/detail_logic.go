@@ -35,7 +35,7 @@ func (l *DetailLogic) Detail(in *borrower.ProjectManagementTaskDetailRequest) (r
 	if err != nil {
 		return nil, err
 	}
-	task, err := base.ProjectManagementTaskLogic.DetailForProject(l.ctx, claim, in.Data.ProjectId, in.Data.Id)
+	task, err := base.ProjectManagementTaskLogic.Detail(l.ctx, claim, in.Data.Id)
 	if err != nil {
 		return nil, err
 	}

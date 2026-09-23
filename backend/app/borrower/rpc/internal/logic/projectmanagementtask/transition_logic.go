@@ -31,7 +31,7 @@ func (l *TransitionLogic) Transition(in *borrower.ProjectManagementTaskTransitio
 	if err != nil {
 		return nil, err
 	}
-	if _, err = base.ProjectManagementTaskLogic.DetailForProject(l.ctx, claim, in.Data.ProjectId, in.Data.TaskId); err != nil {
+	if _, err = base.ProjectManagementTaskLogic.Detail(l.ctx, claim, in.Data.TaskId); err != nil {
 		return nil, err
 	}
 	task, err := base.ProjectManagementTaskLogic.Transition(l.ctx, claim, in.Data.TaskId, in.Data.TargetStageId)

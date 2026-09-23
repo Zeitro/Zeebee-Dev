@@ -384,9 +384,10 @@ func (x *ProjectManagementTaskCandidateRequest) GetData() *ProjectManagementTask
 
 type ProjectManagementTaskCandidateRequestData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProjectId     int64                  `protobuf:"varint,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	EntityType    string                 `protobuf:"bytes,1,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"`
 	TaskId        int64                  `protobuf:"varint,2,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
 	Keyword       string                 `protobuf:"bytes,3,opt,name=keyword,proto3" json:"keyword,omitempty"`
+	EntityId      int64                  `protobuf:"varint,4,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -421,11 +422,11 @@ func (*ProjectManagementTaskCandidateRequestData) Descriptor() ([]byte, []int) {
 	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *ProjectManagementTaskCandidateRequestData) GetProjectId() int64 {
+func (x *ProjectManagementTaskCandidateRequestData) GetEntityType() string {
 	if x != nil {
-		return x.ProjectId
+		return x.EntityType
 	}
-	return 0
+	return ""
 }
 
 func (x *ProjectManagementTaskCandidateRequestData) GetTaskId() int64 {
@@ -440,6 +441,13 @@ func (x *ProjectManagementTaskCandidateRequestData) GetKeyword() string {
 		return x.Keyword
 	}
 	return ""
+}
+
+func (x *ProjectManagementTaskCandidateRequestData) GetEntityId() int64 {
+	if x != nil {
+		return x.EntityId
+	}
+	return 0
 }
 
 type ProjectManagementTaskCandidateEntity struct {
@@ -592,7 +600,7 @@ func (x *ProjectManagementTaskCreateRequest) GetData() *ProjectManagementTaskCre
 
 type ProjectManagementTaskCreateRequestData struct {
 	state                       protoimpl.MessageState `protogen:"open.v1"`
-	ProjectId                   int64                  `protobuf:"varint,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	EntityType                  string                 `protobuf:"bytes,1,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"`
 	ParentTaskId                int64                  `protobuf:"varint,2,opt,name=parent_task_id,json=parentTaskId,proto3" json:"parent_task_id,omitempty"`
 	Title                       string                 `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
 	Description                 string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
@@ -602,6 +610,8 @@ type ProjectManagementTaskCreateRequestData struct {
 	TaskTypeId                  int64                  `protobuf:"varint,8,opt,name=task_type_id,json=taskTypeId,proto3" json:"task_type_id,omitempty"`
 	AssigneeOrganizationUserIds []int64                `protobuf:"varint,9,rep,packed,name=assignee_organization_user_ids,json=assigneeOrganizationUserIds,proto3" json:"assignee_organization_user_ids,omitempty"`
 	WorkHours                   float64                `protobuf:"fixed64,10,opt,name=work_hours,json=workHours,proto3" json:"work_hours,omitempty"`
+	WorkflowId                  int64                  `protobuf:"varint,11,opt,name=workflow_id,json=workflowId,proto3" json:"workflow_id,omitempty"`
+	EntityId                    int64                  `protobuf:"varint,12,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
 	unknownFields               protoimpl.UnknownFields
 	sizeCache                   protoimpl.SizeCache
 }
@@ -636,11 +646,11 @@ func (*ProjectManagementTaskCreateRequestData) Descriptor() ([]byte, []int) {
 	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *ProjectManagementTaskCreateRequestData) GetProjectId() int64 {
+func (x *ProjectManagementTaskCreateRequestData) GetEntityType() string {
 	if x != nil {
-		return x.ProjectId
+		return x.EntityType
 	}
-	return 0
+	return ""
 }
 
 func (x *ProjectManagementTaskCreateRequestData) GetParentTaskId() int64 {
@@ -706,6 +716,20 @@ func (x *ProjectManagementTaskCreateRequestData) GetWorkHours() float64 {
 	return 0
 }
 
+func (x *ProjectManagementTaskCreateRequestData) GetWorkflowId() int64 {
+	if x != nil {
+		return x.WorkflowId
+	}
+	return 0
+}
+
+func (x *ProjectManagementTaskCreateRequestData) GetEntityId() int64 {
+	if x != nil {
+		return x.EntityId
+	}
+	return 0
+}
+
 type ProjectManagementTaskDetailRequest struct {
 	state         protoimpl.MessageState                  `protogen:"open.v1"`
 	Data          *ProjectManagementTaskDetailRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -753,7 +777,6 @@ func (x *ProjectManagementTaskDetailRequest) GetData() *ProjectManagementTaskDet
 type ProjectManagementTaskDetailRequestData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	ProjectId     int64                  `protobuf:"varint,2,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -791,13 +814,6 @@ func (*ProjectManagementTaskDetailRequestData) Descriptor() ([]byte, []int) {
 func (x *ProjectManagementTaskDetailRequestData) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *ProjectManagementTaskDetailRequestData) GetProjectId() int64 {
-	if x != nil {
-		return x.ProjectId
 	}
 	return 0
 }
@@ -846,6 +862,94 @@ func (x *ProjectManagementTaskDetailResponse) GetData() *proto.ProjectManagement
 	return nil
 }
 
+type ProjectManagementTaskViewRequest struct {
+	state         protoimpl.MessageState                `protogen:"open.v1"`
+	Data          *ProjectManagementTaskViewRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProjectManagementTaskViewRequest) Reset() {
+	*x = ProjectManagementTaskViewRequest{}
+	mi := &file_borrower_project_management_task_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProjectManagementTaskViewRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProjectManagementTaskViewRequest) ProtoMessage() {}
+
+func (x *ProjectManagementTaskViewRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_borrower_project_management_task_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProjectManagementTaskViewRequest.ProtoReflect.Descriptor instead.
+func (*ProjectManagementTaskViewRequest) Descriptor() ([]byte, []int) {
+	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *ProjectManagementTaskViewRequest) GetData() *ProjectManagementTaskViewRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type ProjectManagementTaskViewRequestData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProjectManagementTaskViewRequestData) Reset() {
+	*x = ProjectManagementTaskViewRequestData{}
+	mi := &file_borrower_project_management_task_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProjectManagementTaskViewRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProjectManagementTaskViewRequestData) ProtoMessage() {}
+
+func (x *ProjectManagementTaskViewRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_borrower_project_management_task_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProjectManagementTaskViewRequestData.ProtoReflect.Descriptor instead.
+func (*ProjectManagementTaskViewRequestData) Descriptor() ([]byte, []int) {
+	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *ProjectManagementTaskViewRequestData) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
 type ProjectManagementTaskUpdateRequest struct {
 	state         protoimpl.MessageState                  `protogen:"open.v1"`
 	Data          *ProjectManagementTaskUpdateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -855,7 +959,7 @@ type ProjectManagementTaskUpdateRequest struct {
 
 func (x *ProjectManagementTaskUpdateRequest) Reset() {
 	*x = ProjectManagementTaskUpdateRequest{}
-	mi := &file_borrower_project_management_task_proto_msgTypes[14]
+	mi := &file_borrower_project_management_task_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -867,7 +971,7 @@ func (x *ProjectManagementTaskUpdateRequest) String() string {
 func (*ProjectManagementTaskUpdateRequest) ProtoMessage() {}
 
 func (x *ProjectManagementTaskUpdateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_task_proto_msgTypes[14]
+	mi := &file_borrower_project_management_task_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -880,7 +984,7 @@ func (x *ProjectManagementTaskUpdateRequest) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use ProjectManagementTaskUpdateRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTaskUpdateRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{14}
+	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ProjectManagementTaskUpdateRequest) GetData() *ProjectManagementTaskUpdateRequestData {
@@ -903,7 +1007,7 @@ type ProjectManagementTaskDependencyRequest struct {
 
 func (x *ProjectManagementTaskDependencyRequest) Reset() {
 	*x = ProjectManagementTaskDependencyRequest{}
-	mi := &file_borrower_project_management_task_proto_msgTypes[15]
+	mi := &file_borrower_project_management_task_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -915,7 +1019,7 @@ func (x *ProjectManagementTaskDependencyRequest) String() string {
 func (*ProjectManagementTaskDependencyRequest) ProtoMessage() {}
 
 func (x *ProjectManagementTaskDependencyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_task_proto_msgTypes[15]
+	mi := &file_borrower_project_management_task_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -928,7 +1032,7 @@ func (x *ProjectManagementTaskDependencyRequest) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use ProjectManagementTaskDependencyRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTaskDependencyRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{15}
+	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *ProjectManagementTaskDependencyRequest) GetId() int64 {
@@ -979,7 +1083,7 @@ type ProjectManagementTaskAttachmentRequest struct {
 
 func (x *ProjectManagementTaskAttachmentRequest) Reset() {
 	*x = ProjectManagementTaskAttachmentRequest{}
-	mi := &file_borrower_project_management_task_proto_msgTypes[16]
+	mi := &file_borrower_project_management_task_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -991,7 +1095,7 @@ func (x *ProjectManagementTaskAttachmentRequest) String() string {
 func (*ProjectManagementTaskAttachmentRequest) ProtoMessage() {}
 
 func (x *ProjectManagementTaskAttachmentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_task_proto_msgTypes[16]
+	mi := &file_borrower_project_management_task_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1004,7 +1108,7 @@ func (x *ProjectManagementTaskAttachmentRequest) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use ProjectManagementTaskAttachmentRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTaskAttachmentRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{16}
+	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *ProjectManagementTaskAttachmentRequest) GetId() int64 {
@@ -1056,13 +1160,14 @@ type ProjectManagementTaskUpdateRequestData struct {
 	Dependencies                []*ProjectManagementTaskDependencyRequest `protobuf:"bytes,10,rep,name=dependencies,proto3" json:"dependencies,omitempty"`
 	WorkHours                   float64                                   `protobuf:"fixed64,11,opt,name=work_hours,json=workHours,proto3" json:"work_hours,omitempty"`
 	Attachments                 []*ProjectManagementTaskAttachmentRequest `protobuf:"bytes,12,rep,name=attachments,proto3" json:"attachments,omitempty"`
+	WorkflowId                  int64                                     `protobuf:"varint,14,opt,name=workflow_id,json=workflowId,proto3" json:"workflow_id,omitempty"`
 	unknownFields               protoimpl.UnknownFields
 	sizeCache                   protoimpl.SizeCache
 }
 
 func (x *ProjectManagementTaskUpdateRequestData) Reset() {
 	*x = ProjectManagementTaskUpdateRequestData{}
-	mi := &file_borrower_project_management_task_proto_msgTypes[17]
+	mi := &file_borrower_project_management_task_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1074,7 +1179,7 @@ func (x *ProjectManagementTaskUpdateRequestData) String() string {
 func (*ProjectManagementTaskUpdateRequestData) ProtoMessage() {}
 
 func (x *ProjectManagementTaskUpdateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_task_proto_msgTypes[17]
+	mi := &file_borrower_project_management_task_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1087,7 +1192,7 @@ func (x *ProjectManagementTaskUpdateRequestData) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use ProjectManagementTaskUpdateRequestData.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTaskUpdateRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{17}
+	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *ProjectManagementTaskUpdateRequestData) GetId() int64 {
@@ -1174,6 +1279,13 @@ func (x *ProjectManagementTaskUpdateRequestData) GetAttachments() []*ProjectMana
 	return nil
 }
 
+func (x *ProjectManagementTaskUpdateRequestData) GetWorkflowId() int64 {
+	if x != nil {
+		return x.WorkflowId
+	}
+	return 0
+}
+
 type ProjectManagementTaskDeleteRequest struct {
 	state         protoimpl.MessageState                  `protogen:"open.v1"`
 	Data          *ProjectManagementTaskDeleteRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -1183,7 +1295,7 @@ type ProjectManagementTaskDeleteRequest struct {
 
 func (x *ProjectManagementTaskDeleteRequest) Reset() {
 	*x = ProjectManagementTaskDeleteRequest{}
-	mi := &file_borrower_project_management_task_proto_msgTypes[18]
+	mi := &file_borrower_project_management_task_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1195,7 +1307,7 @@ func (x *ProjectManagementTaskDeleteRequest) String() string {
 func (*ProjectManagementTaskDeleteRequest) ProtoMessage() {}
 
 func (x *ProjectManagementTaskDeleteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_task_proto_msgTypes[18]
+	mi := &file_borrower_project_management_task_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1208,7 +1320,7 @@ func (x *ProjectManagementTaskDeleteRequest) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use ProjectManagementTaskDeleteRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTaskDeleteRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{18}
+	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *ProjectManagementTaskDeleteRequest) GetData() *ProjectManagementTaskDeleteRequestData {
@@ -1221,14 +1333,13 @@ func (x *ProjectManagementTaskDeleteRequest) GetData() *ProjectManagementTaskDel
 type ProjectManagementTaskDeleteRequestData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	ProjectId     int64                  `protobuf:"varint,3,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ProjectManagementTaskDeleteRequestData) Reset() {
 	*x = ProjectManagementTaskDeleteRequestData{}
-	mi := &file_borrower_project_management_task_proto_msgTypes[19]
+	mi := &file_borrower_project_management_task_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1240,7 +1351,7 @@ func (x *ProjectManagementTaskDeleteRequestData) String() string {
 func (*ProjectManagementTaskDeleteRequestData) ProtoMessage() {}
 
 func (x *ProjectManagementTaskDeleteRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_task_proto_msgTypes[19]
+	mi := &file_borrower_project_management_task_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1253,19 +1364,12 @@ func (x *ProjectManagementTaskDeleteRequestData) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use ProjectManagementTaskDeleteRequestData.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTaskDeleteRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{19}
+	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *ProjectManagementTaskDeleteRequestData) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *ProjectManagementTaskDeleteRequestData) GetProjectId() int64 {
-	if x != nil {
-		return x.ProjectId
 	}
 	return 0
 }
@@ -1279,7 +1383,7 @@ type ProjectManagementMyTaskPageRequest struct {
 
 func (x *ProjectManagementMyTaskPageRequest) Reset() {
 	*x = ProjectManagementMyTaskPageRequest{}
-	mi := &file_borrower_project_management_task_proto_msgTypes[20]
+	mi := &file_borrower_project_management_task_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1291,7 +1395,7 @@ func (x *ProjectManagementMyTaskPageRequest) String() string {
 func (*ProjectManagementMyTaskPageRequest) ProtoMessage() {}
 
 func (x *ProjectManagementMyTaskPageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_task_proto_msgTypes[20]
+	mi := &file_borrower_project_management_task_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1304,7 +1408,7 @@ func (x *ProjectManagementMyTaskPageRequest) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use ProjectManagementMyTaskPageRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementMyTaskPageRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{20}
+	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *ProjectManagementMyTaskPageRequest) GetData() *ProjectManagementMyTaskPageRequestData {
@@ -1325,7 +1429,7 @@ type ProjectManagementMyTaskPageRequestData struct {
 
 func (x *ProjectManagementMyTaskPageRequestData) Reset() {
 	*x = ProjectManagementMyTaskPageRequestData{}
-	mi := &file_borrower_project_management_task_proto_msgTypes[21]
+	mi := &file_borrower_project_management_task_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1337,7 +1441,7 @@ func (x *ProjectManagementMyTaskPageRequestData) String() string {
 func (*ProjectManagementMyTaskPageRequestData) ProtoMessage() {}
 
 func (x *ProjectManagementMyTaskPageRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_task_proto_msgTypes[21]
+	mi := &file_borrower_project_management_task_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1350,7 +1454,7 @@ func (x *ProjectManagementMyTaskPageRequestData) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use ProjectManagementMyTaskPageRequestData.ProtoReflect.Descriptor instead.
 func (*ProjectManagementMyTaskPageRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{21}
+	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *ProjectManagementMyTaskPageRequestData) GetPage() int64 {
@@ -1389,7 +1493,7 @@ type ProjectManagementMyTaskPageFilter struct {
 
 func (x *ProjectManagementMyTaskPageFilter) Reset() {
 	*x = ProjectManagementMyTaskPageFilter{}
-	mi := &file_borrower_project_management_task_proto_msgTypes[22]
+	mi := &file_borrower_project_management_task_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1401,7 +1505,7 @@ func (x *ProjectManagementMyTaskPageFilter) String() string {
 func (*ProjectManagementMyTaskPageFilter) ProtoMessage() {}
 
 func (x *ProjectManagementMyTaskPageFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_task_proto_msgTypes[22]
+	mi := &file_borrower_project_management_task_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1414,7 +1518,7 @@ func (x *ProjectManagementMyTaskPageFilter) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use ProjectManagementMyTaskPageFilter.ProtoReflect.Descriptor instead.
 func (*ProjectManagementMyTaskPageFilter) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{22}
+	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *ProjectManagementMyTaskPageFilter) GetProjectId() int64 {
@@ -1475,7 +1579,7 @@ type ProjectManagementAttachmentCreateRequest struct {
 
 func (x *ProjectManagementAttachmentCreateRequest) Reset() {
 	*x = ProjectManagementAttachmentCreateRequest{}
-	mi := &file_borrower_project_management_task_proto_msgTypes[23]
+	mi := &file_borrower_project_management_task_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1487,7 +1591,7 @@ func (x *ProjectManagementAttachmentCreateRequest) String() string {
 func (*ProjectManagementAttachmentCreateRequest) ProtoMessage() {}
 
 func (x *ProjectManagementAttachmentCreateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_task_proto_msgTypes[23]
+	mi := &file_borrower_project_management_task_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1500,7 +1604,7 @@ func (x *ProjectManagementAttachmentCreateRequest) ProtoReflect() protoreflect.M
 
 // Deprecated: Use ProjectManagementAttachmentCreateRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementAttachmentCreateRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{23}
+	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *ProjectManagementAttachmentCreateRequest) GetData() *ProjectManagementAttachmentCreateRequestData {
@@ -1516,7 +1620,6 @@ type ProjectManagementAttachmentCreateRequestData struct {
 	FileName      string                 `protobuf:"bytes,2,opt,name=file_name,json=fileName,proto3" json:"file_name,omitempty"`
 	FileUrl       string                 `protobuf:"bytes,3,opt,name=file_url,json=fileUrl,proto3" json:"file_url,omitempty"`
 	StorageType   string                 `protobuf:"bytes,4,opt,name=storage_type,json=storageType,proto3" json:"storage_type,omitempty"`
-	ProjectId     int64                  `protobuf:"varint,5,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
 	UploadType    string                 `protobuf:"bytes,6,opt,name=upload_type,json=uploadType,proto3" json:"upload_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1524,7 +1627,7 @@ type ProjectManagementAttachmentCreateRequestData struct {
 
 func (x *ProjectManagementAttachmentCreateRequestData) Reset() {
 	*x = ProjectManagementAttachmentCreateRequestData{}
-	mi := &file_borrower_project_management_task_proto_msgTypes[24]
+	mi := &file_borrower_project_management_task_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1536,7 +1639,7 @@ func (x *ProjectManagementAttachmentCreateRequestData) String() string {
 func (*ProjectManagementAttachmentCreateRequestData) ProtoMessage() {}
 
 func (x *ProjectManagementAttachmentCreateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_task_proto_msgTypes[24]
+	mi := &file_borrower_project_management_task_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1549,7 +1652,7 @@ func (x *ProjectManagementAttachmentCreateRequestData) ProtoReflect() protorefle
 
 // Deprecated: Use ProjectManagementAttachmentCreateRequestData.ProtoReflect.Descriptor instead.
 func (*ProjectManagementAttachmentCreateRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{24}
+	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *ProjectManagementAttachmentCreateRequestData) GetTaskId() int64 {
@@ -1580,13 +1683,6 @@ func (x *ProjectManagementAttachmentCreateRequestData) GetStorageType() string {
 	return ""
 }
 
-func (x *ProjectManagementAttachmentCreateRequestData) GetProjectId() int64 {
-	if x != nil {
-		return x.ProjectId
-	}
-	return 0
-}
-
 func (x *ProjectManagementAttachmentCreateRequestData) GetUploadType() string {
 	if x != nil {
 		return x.UploadType
@@ -1603,7 +1699,7 @@ type ProjectManagementAttachmentDetailResponse struct {
 
 func (x *ProjectManagementAttachmentDetailResponse) Reset() {
 	*x = ProjectManagementAttachmentDetailResponse{}
-	mi := &file_borrower_project_management_task_proto_msgTypes[25]
+	mi := &file_borrower_project_management_task_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1615,7 +1711,7 @@ func (x *ProjectManagementAttachmentDetailResponse) String() string {
 func (*ProjectManagementAttachmentDetailResponse) ProtoMessage() {}
 
 func (x *ProjectManagementAttachmentDetailResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_task_proto_msgTypes[25]
+	mi := &file_borrower_project_management_task_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1628,7 +1724,7 @@ func (x *ProjectManagementAttachmentDetailResponse) ProtoReflect() protoreflect.
 
 // Deprecated: Use ProjectManagementAttachmentDetailResponse.ProtoReflect.Descriptor instead.
 func (*ProjectManagementAttachmentDetailResponse) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{25}
+	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *ProjectManagementAttachmentDetailResponse) GetData() *proto.FileEntity {
@@ -1647,7 +1743,7 @@ type ProjectManagementAttachmentDeleteRequest struct {
 
 func (x *ProjectManagementAttachmentDeleteRequest) Reset() {
 	*x = ProjectManagementAttachmentDeleteRequest{}
-	mi := &file_borrower_project_management_task_proto_msgTypes[26]
+	mi := &file_borrower_project_management_task_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1659,7 +1755,7 @@ func (x *ProjectManagementAttachmentDeleteRequest) String() string {
 func (*ProjectManagementAttachmentDeleteRequest) ProtoMessage() {}
 
 func (x *ProjectManagementAttachmentDeleteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_task_proto_msgTypes[26]
+	mi := &file_borrower_project_management_task_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1672,7 +1768,7 @@ func (x *ProjectManagementAttachmentDeleteRequest) ProtoReflect() protoreflect.M
 
 // Deprecated: Use ProjectManagementAttachmentDeleteRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementAttachmentDeleteRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{26}
+	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *ProjectManagementAttachmentDeleteRequest) GetData() *ProjectManagementAttachmentDeleteRequestData {
@@ -1692,7 +1788,7 @@ type ProjectManagementAttachmentDeleteRequestData struct {
 
 func (x *ProjectManagementAttachmentDeleteRequestData) Reset() {
 	*x = ProjectManagementAttachmentDeleteRequestData{}
-	mi := &file_borrower_project_management_task_proto_msgTypes[27]
+	mi := &file_borrower_project_management_task_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1704,7 +1800,7 @@ func (x *ProjectManagementAttachmentDeleteRequestData) String() string {
 func (*ProjectManagementAttachmentDeleteRequestData) ProtoMessage() {}
 
 func (x *ProjectManagementAttachmentDeleteRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_task_proto_msgTypes[27]
+	mi := &file_borrower_project_management_task_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1717,7 +1813,7 @@ func (x *ProjectManagementAttachmentDeleteRequestData) ProtoReflect() protorefle
 
 // Deprecated: Use ProjectManagementAttachmentDeleteRequestData.ProtoReflect.Descriptor instead.
 func (*ProjectManagementAttachmentDeleteRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{27}
+	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *ProjectManagementAttachmentDeleteRequestData) GetTaskId() int64 {
@@ -1743,7 +1839,7 @@ type ProjectManagementTaskTransitionRequest struct {
 
 func (x *ProjectManagementTaskTransitionRequest) Reset() {
 	*x = ProjectManagementTaskTransitionRequest{}
-	mi := &file_borrower_project_management_task_proto_msgTypes[28]
+	mi := &file_borrower_project_management_task_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1755,7 +1851,7 @@ func (x *ProjectManagementTaskTransitionRequest) String() string {
 func (*ProjectManagementTaskTransitionRequest) ProtoMessage() {}
 
 func (x *ProjectManagementTaskTransitionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_task_proto_msgTypes[28]
+	mi := &file_borrower_project_management_task_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1768,7 +1864,7 @@ func (x *ProjectManagementTaskTransitionRequest) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use ProjectManagementTaskTransitionRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTaskTransitionRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{28}
+	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *ProjectManagementTaskTransitionRequest) GetData() *ProjectManagementTaskTransitionRequestData {
@@ -1782,14 +1878,13 @@ type ProjectManagementTaskTransitionRequestData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TaskId        int64                  `protobuf:"varint,1,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
 	TargetStageId int64                  `protobuf:"varint,2,opt,name=target_stage_id,json=targetStageId,proto3" json:"target_stage_id,omitempty"`
-	ProjectId     int64                  `protobuf:"varint,3,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ProjectManagementTaskTransitionRequestData) Reset() {
 	*x = ProjectManagementTaskTransitionRequestData{}
-	mi := &file_borrower_project_management_task_proto_msgTypes[29]
+	mi := &file_borrower_project_management_task_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1801,7 +1896,7 @@ func (x *ProjectManagementTaskTransitionRequestData) String() string {
 func (*ProjectManagementTaskTransitionRequestData) ProtoMessage() {}
 
 func (x *ProjectManagementTaskTransitionRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_task_proto_msgTypes[29]
+	mi := &file_borrower_project_management_task_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1814,7 +1909,7 @@ func (x *ProjectManagementTaskTransitionRequestData) ProtoReflect() protoreflect
 
 // Deprecated: Use ProjectManagementTaskTransitionRequestData.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTaskTransitionRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{29}
+	return file_borrower_project_management_task_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *ProjectManagementTaskTransitionRequestData) GetTaskId() int64 {
@@ -1827,13 +1922,6 @@ func (x *ProjectManagementTaskTransitionRequestData) GetTaskId() int64 {
 func (x *ProjectManagementTaskTransitionRequestData) GetTargetStageId() int64 {
 	if x != nil {
 		return x.TargetStageId
-	}
-	return 0
-}
-
-func (x *ProjectManagementTaskTransitionRequestData) GetProjectId() int64 {
-	if x != nil {
-		return x.ProjectId
 	}
 	return 0
 }
@@ -1871,12 +1959,13 @@ const file_borrower_project_management_task_proto_rawDesc = "" +
 	"total_page\x18\x04 \x01(\x03R\ttotalPage\x12:\n" +
 	"\x04list\x18\x05 \x03(\v2&.proto.ProjectManagementTaskPageEntityR\x04list\"p\n" +
 	"%ProjectManagementTaskCandidateRequest\x12G\n" +
-	"\x04data\x18\x01 \x01(\v23.borrower.ProjectManagementTaskCandidateRequestDataR\x04data\"}\n" +
-	")ProjectManagementTaskCandidateRequestData\x12\x1d\n" +
-	"\n" +
-	"project_id\x18\x01 \x01(\x03R\tprojectId\x12\x17\n" +
+	"\x04data\x18\x01 \x01(\v23.borrower.ProjectManagementTaskCandidateRequestDataR\x04data\"\x9c\x01\n" +
+	")ProjectManagementTaskCandidateRequestData\x12\x1f\n" +
+	"\ventity_type\x18\x01 \x01(\tR\n" +
+	"entityType\x12\x17\n" +
 	"\atask_id\x18\x02 \x01(\x03R\x06taskId\x12\x18\n" +
-	"\akeyword\x18\x03 \x01(\tR\akeyword\"b\n" +
+	"\akeyword\x18\x03 \x01(\tR\akeyword\x12\x1b\n" +
+	"\tentity_id\x18\x04 \x01(\x03R\bentityId\"b\n" +
 	"$ProjectManagementTaskCandidateEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12\x14\n" +
@@ -1884,10 +1973,10 @@ const file_borrower_project_management_task_proto_rawDesc = "" +
 	"&ProjectManagementTaskCandidateResponse\x12B\n" +
 	"\x04data\x18\x01 \x03(\v2..borrower.ProjectManagementTaskCandidateEntityR\x04data\"j\n" +
 	"\"ProjectManagementTaskCreateRequest\x12D\n" +
-	"\x04data\x18\x01 \x01(\v20.borrower.ProjectManagementTaskCreateRequestDataR\x04data\"\xf9\x02\n" +
-	"&ProjectManagementTaskCreateRequestData\x12\x1d\n" +
-	"\n" +
-	"project_id\x18\x01 \x01(\x03R\tprojectId\x12$\n" +
+	"\x04data\x18\x01 \x01(\v20.borrower.ProjectManagementTaskCreateRequestDataR\x04data\"\xb9\x03\n" +
+	"&ProjectManagementTaskCreateRequestData\x12\x1f\n" +
+	"\ventity_type\x18\x01 \x01(\tR\n" +
+	"entityType\x12$\n" +
 	"\x0eparent_task_id\x18\x02 \x01(\x03R\fparentTaskId\x12\x14\n" +
 	"\x05title\x18\x03 \x01(\tR\x05title\x12 \n" +
 	"\vdescription\x18\x04 \x01(\tR\vdescription\x12\x1a\n" +
@@ -1899,15 +1988,20 @@ const file_borrower_project_management_task_proto_rawDesc = "" +
 	"\x1eassignee_organization_user_ids\x18\t \x03(\x03R\x1bassigneeOrganizationUserIds\x12\x1d\n" +
 	"\n" +
 	"work_hours\x18\n" +
-	" \x01(\x01R\tworkHours\"j\n" +
+	" \x01(\x01R\tworkHours\x12\x1f\n" +
+	"\vworkflow_id\x18\v \x01(\x03R\n" +
+	"workflowId\x12\x1b\n" +
+	"\tentity_id\x18\f \x01(\x03R\bentityId\"j\n" +
 	"\"ProjectManagementTaskDetailRequest\x12D\n" +
-	"\x04data\x18\x01 \x01(\v20.borrower.ProjectManagementTaskDetailRequestDataR\x04data\"W\n" +
+	"\x04data\x18\x01 \x01(\v20.borrower.ProjectManagementTaskDetailRequestDataR\x04data\">\n" +
 	"&ProjectManagementTaskDetailRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
-	"\n" +
-	"project_id\x18\x02 \x01(\x03R\tprojectId\"]\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02idJ\x04\b\x02\x10\x03\"]\n" +
 	"#ProjectManagementTaskDetailResponse\x126\n" +
-	"\x04data\x18\x01 \x01(\v2\".proto.ProjectManagementTaskEntityR\x04data\"j\n" +
+	"\x04data\x18\x01 \x01(\v2\".proto.ProjectManagementTaskEntityR\x04data\"f\n" +
+	" ProjectManagementTaskViewRequest\x12B\n" +
+	"\x04data\x18\x01 \x01(\v2..borrower.ProjectManagementTaskViewRequestDataR\x04data\"6\n" +
+	"$ProjectManagementTaskViewRequestData\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"j\n" +
 	"\"ProjectManagementTaskUpdateRequest\x12D\n" +
 	"\x04data\x18\x01 \x01(\v20.borrower.ProjectManagementTaskUpdateRequestDataR\x04data\"\xd1\x01\n" +
 	"&ProjectManagementTaskDependencyRequest\x12\x0e\n" +
@@ -1922,7 +2016,7 @@ const file_borrower_project_management_task_proto_rawDesc = "" +
 	"\bfile_url\x18\x03 \x01(\tR\afileUrl\x12!\n" +
 	"\fstorage_type\x18\x04 \x01(\tR\vstorageType\x12\x1f\n" +
 	"\vupload_type\x18\x05 \x01(\tR\n" +
-	"uploadType\"\x8f\x04\n" +
+	"uploadType\"\xb0\x04\n" +
 	"&ProjectManagementTaskUpdateRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\bstage_id\x18\r \x01(\x03R\astageId\x12\x14\n" +
@@ -1938,13 +2032,13 @@ const file_borrower_project_management_task_proto_rawDesc = "" +
 	" \x03(\v20.borrower.ProjectManagementTaskDependencyRequestR\fdependencies\x12\x1d\n" +
 	"\n" +
 	"work_hours\x18\v \x01(\x01R\tworkHours\x12R\n" +
-	"\vattachments\x18\f \x03(\v20.borrower.ProjectManagementTaskAttachmentRequestR\vattachmentsJ\x04\b\b\x10\t\"j\n" +
+	"\vattachments\x18\f \x03(\v20.borrower.ProjectManagementTaskAttachmentRequestR\vattachments\x12\x1f\n" +
+	"\vworkflow_id\x18\x0e \x01(\x03R\n" +
+	"workflowIdJ\x04\b\b\x10\t\"j\n" +
 	"\"ProjectManagementTaskDeleteRequest\x12D\n" +
-	"\x04data\x18\x01 \x01(\v20.borrower.ProjectManagementTaskDeleteRequestDataR\x04data\"]\n" +
+	"\x04data\x18\x01 \x01(\v20.borrower.ProjectManagementTaskDeleteRequestDataR\x04data\"D\n" +
 	"&ProjectManagementTaskDeleteRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
-	"\n" +
-	"project_id\x18\x03 \x01(\x03R\tprojectIdJ\x04\b\x02\x10\x03\"j\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02idJ\x04\b\x02\x10\x03J\x04\b\x03\x10\x04\"j\n" +
 	"\"ProjectManagementMyTaskPageRequest\x12D\n" +
 	"\x04data\x18\x01 \x01(\v20.borrower.ProjectManagementMyTaskPageRequestDataR\x04data\"\x97\x01\n" +
 	"&ProjectManagementMyTaskPageRequestData\x12\x12\n" +
@@ -1964,16 +2058,14 @@ const file_borrower_project_management_task_proto_rawDesc = "" +
 	"\n" +
 	"\b_overdue\"v\n" +
 	"(ProjectManagementAttachmentCreateRequest\x12J\n" +
-	"\x04data\x18\x01 \x01(\v26.borrower.ProjectManagementAttachmentCreateRequestDataR\x04data\"\xe2\x01\n" +
+	"\x04data\x18\x01 \x01(\v26.borrower.ProjectManagementAttachmentCreateRequestDataR\x04data\"\xc9\x01\n" +
 	",ProjectManagementAttachmentCreateRequestData\x12\x17\n" +
 	"\atask_id\x18\x01 \x01(\x03R\x06taskId\x12\x1b\n" +
 	"\tfile_name\x18\x02 \x01(\tR\bfileName\x12\x19\n" +
 	"\bfile_url\x18\x03 \x01(\tR\afileUrl\x12!\n" +
-	"\fstorage_type\x18\x04 \x01(\tR\vstorageType\x12\x1d\n" +
-	"\n" +
-	"project_id\x18\x05 \x01(\x03R\tprojectId\x12\x1f\n" +
+	"\fstorage_type\x18\x04 \x01(\tR\vstorageType\x12\x1f\n" +
 	"\vupload_type\x18\x06 \x01(\tR\n" +
-	"uploadType\"R\n" +
+	"uploadTypeJ\x04\b\x05\x10\x06\"R\n" +
 	")ProjectManagementAttachmentDetailResponse\x12%\n" +
 	"\x04data\x18\x01 \x01(\v2\x11.proto.FileEntityR\x04data\"v\n" +
 	"(ProjectManagementAttachmentDeleteRequest\x12J\n" +
@@ -1982,17 +2074,16 @@ const file_borrower_project_management_task_proto_rawDesc = "" +
 	"\atask_id\x18\x01 \x01(\x03R\x06taskId\x12\x17\n" +
 	"\afile_id\x18\x02 \x01(\x03R\x06fileId\"r\n" +
 	"&ProjectManagementTaskTransitionRequest\x12H\n" +
-	"\x04data\x18\x01 \x01(\v24.borrower.ProjectManagementTaskTransitionRequestDataR\x04data\"\x8c\x01\n" +
+	"\x04data\x18\x01 \x01(\v24.borrower.ProjectManagementTaskTransitionRequestDataR\x04data\"s\n" +
 	"*ProjectManagementTaskTransitionRequestData\x12\x17\n" +
 	"\atask_id\x18\x01 \x01(\x03R\x06taskId\x12&\n" +
-	"\x0ftarget_stage_id\x18\x02 \x01(\x03R\rtargetStageId\x12\x1d\n" +
-	"\n" +
-	"project_id\x18\x03 \x01(\x03R\tprojectId2\x9a\b\n" +
+	"\x0ftarget_stage_id\x18\x02 \x01(\x03R\rtargetStageIdJ\x04\b\x03\x10\x042\xf6\b\n" +
 	"\x15ProjectManagementTask\x12_\n" +
 	"\x04Page\x12*.borrower.ProjectManagementTaskPageRequest\x1a+.borrower.ProjectManagementTaskPageResponse\x12n\n" +
 	"\tCandidate\x12/.borrower.ProjectManagementTaskCandidateRequest\x1a0.borrower.ProjectManagementTaskCandidateResponse\x12e\n" +
 	"\x06Create\x12,.borrower.ProjectManagementTaskCreateRequest\x1a-.borrower.ProjectManagementTaskDetailResponse\x12e\n" +
-	"\x06Detail\x12,.borrower.ProjectManagementTaskDetailRequest\x1a-.borrower.ProjectManagementTaskDetailResponse\x12e\n" +
+	"\x06Detail\x12,.borrower.ProjectManagementTaskDetailRequest\x1a-.borrower.ProjectManagementTaskDetailResponse\x12Z\n" +
+	"\x04View\x12*.borrower.ProjectManagementTaskViewRequest\x1a&.proto.ProjectManagementTaskViewEntity\x12e\n" +
 	"\x06Update\x12,.borrower.ProjectManagementTaskUpdateRequest\x1a-.borrower.ProjectManagementTaskDetailResponse\x12L\n" +
 	"\x06Delete\x12,.borrower.ProjectManagementTaskDeleteRequest\x1a\x14.proto.EmptyResponse\x12c\n" +
 	"\x06MyPage\x12,.borrower.ProjectManagementMyTaskPageRequest\x1a+.borrower.ProjectManagementTaskPageResponse\x12{\n" +
@@ -2013,7 +2104,7 @@ func file_borrower_project_management_task_proto_rawDescGZIP() []byte {
 	return file_borrower_project_management_task_proto_rawDescData
 }
 
-var file_borrower_project_management_task_proto_msgTypes = make([]protoimpl.MessageInfo, 30)
+var file_borrower_project_management_task_proto_msgTypes = make([]protoimpl.MessageInfo, 32)
 var file_borrower_project_management_task_proto_goTypes = []any{
 	(*ProjectManagementTaskPageRequest)(nil),             // 0: borrower.ProjectManagementTaskPageRequest
 	(*ProjectManagementTaskPageRequestData)(nil),         // 1: borrower.ProjectManagementTaskPageRequestData
@@ -2029,72 +2120,78 @@ var file_borrower_project_management_task_proto_goTypes = []any{
 	(*ProjectManagementTaskDetailRequest)(nil),           // 11: borrower.ProjectManagementTaskDetailRequest
 	(*ProjectManagementTaskDetailRequestData)(nil),       // 12: borrower.ProjectManagementTaskDetailRequestData
 	(*ProjectManagementTaskDetailResponse)(nil),          // 13: borrower.ProjectManagementTaskDetailResponse
-	(*ProjectManagementTaskUpdateRequest)(nil),           // 14: borrower.ProjectManagementTaskUpdateRequest
-	(*ProjectManagementTaskDependencyRequest)(nil),       // 15: borrower.ProjectManagementTaskDependencyRequest
-	(*ProjectManagementTaskAttachmentRequest)(nil),       // 16: borrower.ProjectManagementTaskAttachmentRequest
-	(*ProjectManagementTaskUpdateRequestData)(nil),       // 17: borrower.ProjectManagementTaskUpdateRequestData
-	(*ProjectManagementTaskDeleteRequest)(nil),           // 18: borrower.ProjectManagementTaskDeleteRequest
-	(*ProjectManagementTaskDeleteRequestData)(nil),       // 19: borrower.ProjectManagementTaskDeleteRequestData
-	(*ProjectManagementMyTaskPageRequest)(nil),           // 20: borrower.ProjectManagementMyTaskPageRequest
-	(*ProjectManagementMyTaskPageRequestData)(nil),       // 21: borrower.ProjectManagementMyTaskPageRequestData
-	(*ProjectManagementMyTaskPageFilter)(nil),            // 22: borrower.ProjectManagementMyTaskPageFilter
-	(*ProjectManagementAttachmentCreateRequest)(nil),     // 23: borrower.ProjectManagementAttachmentCreateRequest
-	(*ProjectManagementAttachmentCreateRequestData)(nil), // 24: borrower.ProjectManagementAttachmentCreateRequestData
-	(*ProjectManagementAttachmentDetailResponse)(nil),    // 25: borrower.ProjectManagementAttachmentDetailResponse
-	(*ProjectManagementAttachmentDeleteRequest)(nil),     // 26: borrower.ProjectManagementAttachmentDeleteRequest
-	(*ProjectManagementAttachmentDeleteRequestData)(nil), // 27: borrower.ProjectManagementAttachmentDeleteRequestData
-	(*ProjectManagementTaskTransitionRequest)(nil),       // 28: borrower.ProjectManagementTaskTransitionRequest
-	(*ProjectManagementTaskTransitionRequestData)(nil),   // 29: borrower.ProjectManagementTaskTransitionRequestData
-	(*proto.ProjectManagementTaskPageEntity)(nil),        // 30: proto.ProjectManagementTaskPageEntity
-	(*proto.ProjectManagementTaskEntity)(nil),            // 31: proto.ProjectManagementTaskEntity
-	(*proto.FileEntity)(nil),                             // 32: proto.FileEntity
-	(*proto.EmptyResponse)(nil),                          // 33: proto.EmptyResponse
+	(*ProjectManagementTaskViewRequest)(nil),             // 14: borrower.ProjectManagementTaskViewRequest
+	(*ProjectManagementTaskViewRequestData)(nil),         // 15: borrower.ProjectManagementTaskViewRequestData
+	(*ProjectManagementTaskUpdateRequest)(nil),           // 16: borrower.ProjectManagementTaskUpdateRequest
+	(*ProjectManagementTaskDependencyRequest)(nil),       // 17: borrower.ProjectManagementTaskDependencyRequest
+	(*ProjectManagementTaskAttachmentRequest)(nil),       // 18: borrower.ProjectManagementTaskAttachmentRequest
+	(*ProjectManagementTaskUpdateRequestData)(nil),       // 19: borrower.ProjectManagementTaskUpdateRequestData
+	(*ProjectManagementTaskDeleteRequest)(nil),           // 20: borrower.ProjectManagementTaskDeleteRequest
+	(*ProjectManagementTaskDeleteRequestData)(nil),       // 21: borrower.ProjectManagementTaskDeleteRequestData
+	(*ProjectManagementMyTaskPageRequest)(nil),           // 22: borrower.ProjectManagementMyTaskPageRequest
+	(*ProjectManagementMyTaskPageRequestData)(nil),       // 23: borrower.ProjectManagementMyTaskPageRequestData
+	(*ProjectManagementMyTaskPageFilter)(nil),            // 24: borrower.ProjectManagementMyTaskPageFilter
+	(*ProjectManagementAttachmentCreateRequest)(nil),     // 25: borrower.ProjectManagementAttachmentCreateRequest
+	(*ProjectManagementAttachmentCreateRequestData)(nil), // 26: borrower.ProjectManagementAttachmentCreateRequestData
+	(*ProjectManagementAttachmentDetailResponse)(nil),    // 27: borrower.ProjectManagementAttachmentDetailResponse
+	(*ProjectManagementAttachmentDeleteRequest)(nil),     // 28: borrower.ProjectManagementAttachmentDeleteRequest
+	(*ProjectManagementAttachmentDeleteRequestData)(nil), // 29: borrower.ProjectManagementAttachmentDeleteRequestData
+	(*ProjectManagementTaskTransitionRequest)(nil),       // 30: borrower.ProjectManagementTaskTransitionRequest
+	(*ProjectManagementTaskTransitionRequestData)(nil),   // 31: borrower.ProjectManagementTaskTransitionRequestData
+	(*proto.ProjectManagementTaskPageEntity)(nil),        // 32: proto.ProjectManagementTaskPageEntity
+	(*proto.ProjectManagementTaskEntity)(nil),            // 33: proto.ProjectManagementTaskEntity
+	(*proto.FileEntity)(nil),                             // 34: proto.FileEntity
+	(*proto.ProjectManagementTaskViewEntity)(nil),        // 35: proto.ProjectManagementTaskViewEntity
+	(*proto.EmptyResponse)(nil),                          // 36: proto.EmptyResponse
 }
 var file_borrower_project_management_task_proto_depIdxs = []int32{
 	1,  // 0: borrower.ProjectManagementTaskPageRequest.data:type_name -> borrower.ProjectManagementTaskPageRequestData
 	2,  // 1: borrower.ProjectManagementTaskPageRequestData.filter:type_name -> borrower.ProjectManagementTaskPageRequestFilter
 	4,  // 2: borrower.ProjectManagementTaskPageResponse.data:type_name -> borrower.ProjectManagementTaskPageResponseData
-	30, // 3: borrower.ProjectManagementTaskPageResponseData.list:type_name -> proto.ProjectManagementTaskPageEntity
+	32, // 3: borrower.ProjectManagementTaskPageResponseData.list:type_name -> proto.ProjectManagementTaskPageEntity
 	6,  // 4: borrower.ProjectManagementTaskCandidateRequest.data:type_name -> borrower.ProjectManagementTaskCandidateRequestData
 	7,  // 5: borrower.ProjectManagementTaskCandidateResponse.data:type_name -> borrower.ProjectManagementTaskCandidateEntity
 	10, // 6: borrower.ProjectManagementTaskCreateRequest.data:type_name -> borrower.ProjectManagementTaskCreateRequestData
 	12, // 7: borrower.ProjectManagementTaskDetailRequest.data:type_name -> borrower.ProjectManagementTaskDetailRequestData
-	31, // 8: borrower.ProjectManagementTaskDetailResponse.data:type_name -> proto.ProjectManagementTaskEntity
-	17, // 9: borrower.ProjectManagementTaskUpdateRequest.data:type_name -> borrower.ProjectManagementTaskUpdateRequestData
-	15, // 10: borrower.ProjectManagementTaskUpdateRequestData.dependencies:type_name -> borrower.ProjectManagementTaskDependencyRequest
-	16, // 11: borrower.ProjectManagementTaskUpdateRequestData.attachments:type_name -> borrower.ProjectManagementTaskAttachmentRequest
-	19, // 12: borrower.ProjectManagementTaskDeleteRequest.data:type_name -> borrower.ProjectManagementTaskDeleteRequestData
-	21, // 13: borrower.ProjectManagementMyTaskPageRequest.data:type_name -> borrower.ProjectManagementMyTaskPageRequestData
-	22, // 14: borrower.ProjectManagementMyTaskPageRequestData.filter:type_name -> borrower.ProjectManagementMyTaskPageFilter
-	24, // 15: borrower.ProjectManagementAttachmentCreateRequest.data:type_name -> borrower.ProjectManagementAttachmentCreateRequestData
-	32, // 16: borrower.ProjectManagementAttachmentDetailResponse.data:type_name -> proto.FileEntity
-	27, // 17: borrower.ProjectManagementAttachmentDeleteRequest.data:type_name -> borrower.ProjectManagementAttachmentDeleteRequestData
-	29, // 18: borrower.ProjectManagementTaskTransitionRequest.data:type_name -> borrower.ProjectManagementTaskTransitionRequestData
-	0,  // 19: borrower.ProjectManagementTask.Page:input_type -> borrower.ProjectManagementTaskPageRequest
-	5,  // 20: borrower.ProjectManagementTask.Candidate:input_type -> borrower.ProjectManagementTaskCandidateRequest
-	9,  // 21: borrower.ProjectManagementTask.Create:input_type -> borrower.ProjectManagementTaskCreateRequest
-	11, // 22: borrower.ProjectManagementTask.Detail:input_type -> borrower.ProjectManagementTaskDetailRequest
-	14, // 23: borrower.ProjectManagementTask.Update:input_type -> borrower.ProjectManagementTaskUpdateRequest
-	18, // 24: borrower.ProjectManagementTask.Delete:input_type -> borrower.ProjectManagementTaskDeleteRequest
-	20, // 25: borrower.ProjectManagementTask.MyPage:input_type -> borrower.ProjectManagementMyTaskPageRequest
-	23, // 26: borrower.ProjectManagementTask.AttachmentCreate:input_type -> borrower.ProjectManagementAttachmentCreateRequest
-	26, // 27: borrower.ProjectManagementTask.AttachmentDelete:input_type -> borrower.ProjectManagementAttachmentDeleteRequest
-	28, // 28: borrower.ProjectManagementTask.Transition:input_type -> borrower.ProjectManagementTaskTransitionRequest
-	3,  // 29: borrower.ProjectManagementTask.Page:output_type -> borrower.ProjectManagementTaskPageResponse
-	8,  // 30: borrower.ProjectManagementTask.Candidate:output_type -> borrower.ProjectManagementTaskCandidateResponse
-	13, // 31: borrower.ProjectManagementTask.Create:output_type -> borrower.ProjectManagementTaskDetailResponse
-	13, // 32: borrower.ProjectManagementTask.Detail:output_type -> borrower.ProjectManagementTaskDetailResponse
-	13, // 33: borrower.ProjectManagementTask.Update:output_type -> borrower.ProjectManagementTaskDetailResponse
-	33, // 34: borrower.ProjectManagementTask.Delete:output_type -> proto.EmptyResponse
-	3,  // 35: borrower.ProjectManagementTask.MyPage:output_type -> borrower.ProjectManagementTaskPageResponse
-	25, // 36: borrower.ProjectManagementTask.AttachmentCreate:output_type -> borrower.ProjectManagementAttachmentDetailResponse
-	33, // 37: borrower.ProjectManagementTask.AttachmentDelete:output_type -> proto.EmptyResponse
-	13, // 38: borrower.ProjectManagementTask.Transition:output_type -> borrower.ProjectManagementTaskDetailResponse
-	29, // [29:39] is the sub-list for method output_type
-	19, // [19:29] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+	33, // 8: borrower.ProjectManagementTaskDetailResponse.data:type_name -> proto.ProjectManagementTaskEntity
+	15, // 9: borrower.ProjectManagementTaskViewRequest.data:type_name -> borrower.ProjectManagementTaskViewRequestData
+	19, // 10: borrower.ProjectManagementTaskUpdateRequest.data:type_name -> borrower.ProjectManagementTaskUpdateRequestData
+	17, // 11: borrower.ProjectManagementTaskUpdateRequestData.dependencies:type_name -> borrower.ProjectManagementTaskDependencyRequest
+	18, // 12: borrower.ProjectManagementTaskUpdateRequestData.attachments:type_name -> borrower.ProjectManagementTaskAttachmentRequest
+	21, // 13: borrower.ProjectManagementTaskDeleteRequest.data:type_name -> borrower.ProjectManagementTaskDeleteRequestData
+	23, // 14: borrower.ProjectManagementMyTaskPageRequest.data:type_name -> borrower.ProjectManagementMyTaskPageRequestData
+	24, // 15: borrower.ProjectManagementMyTaskPageRequestData.filter:type_name -> borrower.ProjectManagementMyTaskPageFilter
+	26, // 16: borrower.ProjectManagementAttachmentCreateRequest.data:type_name -> borrower.ProjectManagementAttachmentCreateRequestData
+	34, // 17: borrower.ProjectManagementAttachmentDetailResponse.data:type_name -> proto.FileEntity
+	29, // 18: borrower.ProjectManagementAttachmentDeleteRequest.data:type_name -> borrower.ProjectManagementAttachmentDeleteRequestData
+	31, // 19: borrower.ProjectManagementTaskTransitionRequest.data:type_name -> borrower.ProjectManagementTaskTransitionRequestData
+	0,  // 20: borrower.ProjectManagementTask.Page:input_type -> borrower.ProjectManagementTaskPageRequest
+	5,  // 21: borrower.ProjectManagementTask.Candidate:input_type -> borrower.ProjectManagementTaskCandidateRequest
+	9,  // 22: borrower.ProjectManagementTask.Create:input_type -> borrower.ProjectManagementTaskCreateRequest
+	11, // 23: borrower.ProjectManagementTask.Detail:input_type -> borrower.ProjectManagementTaskDetailRequest
+	14, // 24: borrower.ProjectManagementTask.View:input_type -> borrower.ProjectManagementTaskViewRequest
+	16, // 25: borrower.ProjectManagementTask.Update:input_type -> borrower.ProjectManagementTaskUpdateRequest
+	20, // 26: borrower.ProjectManagementTask.Delete:input_type -> borrower.ProjectManagementTaskDeleteRequest
+	22, // 27: borrower.ProjectManagementTask.MyPage:input_type -> borrower.ProjectManagementMyTaskPageRequest
+	25, // 28: borrower.ProjectManagementTask.AttachmentCreate:input_type -> borrower.ProjectManagementAttachmentCreateRequest
+	28, // 29: borrower.ProjectManagementTask.AttachmentDelete:input_type -> borrower.ProjectManagementAttachmentDeleteRequest
+	30, // 30: borrower.ProjectManagementTask.Transition:input_type -> borrower.ProjectManagementTaskTransitionRequest
+	3,  // 31: borrower.ProjectManagementTask.Page:output_type -> borrower.ProjectManagementTaskPageResponse
+	8,  // 32: borrower.ProjectManagementTask.Candidate:output_type -> borrower.ProjectManagementTaskCandidateResponse
+	13, // 33: borrower.ProjectManagementTask.Create:output_type -> borrower.ProjectManagementTaskDetailResponse
+	13, // 34: borrower.ProjectManagementTask.Detail:output_type -> borrower.ProjectManagementTaskDetailResponse
+	35, // 35: borrower.ProjectManagementTask.View:output_type -> proto.ProjectManagementTaskViewEntity
+	13, // 36: borrower.ProjectManagementTask.Update:output_type -> borrower.ProjectManagementTaskDetailResponse
+	36, // 37: borrower.ProjectManagementTask.Delete:output_type -> proto.EmptyResponse
+	3,  // 38: borrower.ProjectManagementTask.MyPage:output_type -> borrower.ProjectManagementTaskPageResponse
+	27, // 39: borrower.ProjectManagementTask.AttachmentCreate:output_type -> borrower.ProjectManagementAttachmentDetailResponse
+	36, // 40: borrower.ProjectManagementTask.AttachmentDelete:output_type -> proto.EmptyResponse
+	13, // 41: borrower.ProjectManagementTask.Transition:output_type -> borrower.ProjectManagementTaskDetailResponse
+	31, // [31:42] is the sub-list for method output_type
+	20, // [20:31] is the sub-list for method input_type
+	20, // [20:20] is the sub-list for extension type_name
+	20, // [20:20] is the sub-list for extension extendee
+	0,  // [0:20] is the sub-list for field type_name
 }
 
 func init() { file_borrower_project_management_task_proto_init() }
@@ -2103,14 +2200,14 @@ func file_borrower_project_management_task_proto_init() {
 		return
 	}
 	file_borrower_project_management_task_proto_msgTypes[2].OneofWrappers = []any{}
-	file_borrower_project_management_task_proto_msgTypes[22].OneofWrappers = []any{}
+	file_borrower_project_management_task_proto_msgTypes[24].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_borrower_project_management_task_proto_rawDesc), len(file_borrower_project_management_task_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   30,
+			NumMessages:   32,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
