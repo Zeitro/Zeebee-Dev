@@ -14,7 +14,14 @@ message ProjectManagementTemplatePageRequest {
 message ProjectManagementTemplatePageRequestData {
   int64 page = 1;
   int64 limit = 2;
+  ProjectManagementTemplatePageRequestFilter filter = 3;
+  proto.CommonPageSorter sorter = 4;
 }
+message ProjectManagementTemplatePageRequestFilter {
+  string keyword = 1;
+  string status = 2;
+}
+
 message ProjectManagementTemplatePageResponse {
   int64 total = 1;
   int64 page = 2;
@@ -61,17 +68,6 @@ message ProjectManagementTemplateStatusRequest {
 message ProjectManagementTemplateStatusRequestData {
   int64 id = 1;
   string status = 2;
-}
-
-message ProjectManagementTemplateDefaultsRequest {
-  ProjectManagementTemplateDefaultsRequestData data = 1;
-}
-message ProjectManagementTemplateDefaultsRequestData {
-  int64 id = 1;
-  string project_type = 2;
-  string start_at = 3;
-  int64 period_value = 4;
-  string period_unit = 5;
 }
 
 message ProjectManagementTemplateDetailRequest {
@@ -149,7 +145,7 @@ service ProjectManagementTemplate {
   rpc Update(ProjectManagementTemplateUpdateRequest) returns(ProjectManagementTemplateDetailResponse);
 	  rpc Delete(proto.PathIdRequest) returns(proto.EmptyResponse);
   rpc Status(ProjectManagementTemplateStatusRequest) returns(ProjectManagementTemplateDetailResponse);
-  rpc Defaults(ProjectManagementTemplateDefaultsRequest) returns(ProjectManagementTemplateDetailResponse);
+  rpc Defaults(proto.PathIdRequest) returns(proto.EmptyResponse);
   rpc Workflows(proto.PathIdRequest) returns(ProjectManagementTemplateWorkflowResponse);
   rpc WorkflowCreate(ProjectManagementTemplateWorkflowCreateRequest) returns(ProjectManagementTemplateWorkflowDetailResponse);
   rpc WorkflowDetail(ProjectManagementTemplateWorkflowDetailRequest) returns(ProjectManagementTemplateWorkflowDetailResponse);

@@ -11,6 +11,8 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/timex"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type CreateLogic struct {
@@ -43,5 +45,9 @@ func (l *CreateLogic) Create(in *admin.ProjectManagementTemplateCreateRequest) (
 	if err != nil {
 		return nil, err
 	}
-	return templateResponse(template)
+	data, err := copierx.Trans[model.ProjectManagementTemplate, proto.ProjectManagementTemplateEntity](template, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToStr(timex.LayoutUsStyle))
+	if err != nil {
+		return nil, err
+	}
+	return &admin.ProjectManagementTemplateDetailResponse{Data: data}, nil
 }

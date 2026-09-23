@@ -9,6 +9,8 @@ import (
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type WorkflowCreateLogic struct {
@@ -41,5 +43,9 @@ func (l *WorkflowCreateLogic) WorkflowCreate(in *admin.ProjectManagementTemplate
 	if err != nil {
 		return nil, err
 	}
-	return templateWorkflowResponse(workflow)
+	data, err := copierx.Trans[model.ProjectManagementWorkflow, proto.ProjectManagementWorkflowEntity](workflow, copierx.TimeToRFC3339Str())
+	if err != nil {
+		return nil, err
+	}
+	return &admin.ProjectManagementTemplateWorkflowDetailResponse{Data: data}, nil
 }

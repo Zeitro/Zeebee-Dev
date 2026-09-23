@@ -1,10 +1,15 @@
 import "../../../../domains/zeebee/api/entity.api"
 import "common.api"
 
+type ProjectManagementTemplatePageFilter {
+    Keyword string `json:"keyword,optional"`
+    Status  string `json:"status,optional" validate:"omitempty,oneof=Active Disabled"`
+}
+
 type ProjectManagementTemplatePageRequest {
     Page  int64 `json:"page,default=1"`
     Limit int64 `json:"limit,default=20" validate:"gte=1,lte=100"`
-    Filter BasePageFilter `json:"filer"`
+    Filter ProjectManagementTemplatePageFilter `json:"filter"`
     Sorter BasePageSort `json:"sorter"`
 }
 
@@ -13,7 +18,7 @@ type ProjectManagementTemplatePageResponse {
     Page      int64                              `json:"page"`
     Limit     int64                              `json:"limit"`
     TotalPage int64                              `json:"total_page"`
-    List      []*ProjectManagementTemplateEntity `json:"list"`
+    List      []ProjectManagementTemplateEntity `json:"list"`
 }
 
 type ProjectManagementTemplateCreateRequest {
@@ -56,14 +61,6 @@ type ProjectManagementTemplateStatusRequest {
     Status string `json:"status" validate:"required,oneof=Active Disabled"`
 }
 
-type ProjectManagementTemplateDefaultsRequest {
-    Id          int64  `path:"id" validate:"required,gt=0"`
-    ProjectType string `json:"project_type" validate:"required,oneof=Ordinary Planned"`
-    StartAt     string `json:"start_at,optional" validate:"omitempty,datetime=01/02/2006"`
-    PeriodValue int    `json:"period_value,optional" validate:"gte=0"`
-    PeriodUnit  string `json:"period_unit,optional,options=Day|Week|Month" validate:"omitempty,oneof=Day Week Month"`
-}
-
 @server (
     desc: "admin project management template"
     version: v1
@@ -94,8 +91,8 @@ service admin-api {
     put /project_management/template/:id/status (ProjectManagementTemplateStatusRequest) returns (ProjectManagementTemplateEntity)
 
     @doc "set default template"
-    @handler ProjectManagementTemplateDefaults
-    put /project_management/template/:id/default (ProjectManagementTemplateDefaultsRequest) returns (EmptyResponse)
+    @handler ProjectManagementTemplateDefault
+    put /project_management/template/:id/default (PathIdRequest) returns (EmptyResponse)
 
     @doc "detail"
     @handler ProjectManagementTemplateDetail

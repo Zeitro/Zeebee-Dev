@@ -1261,47 +1261,44 @@ type ProjectManagementTemplateCreateRequest struct {
 	PeriodUnit  string `json:"period_unit,optional,options=Day|Week|Month|" validate:"required_if=ProjectType Planned,omitempty,oneof=Day Week Month ''"`
 }
 
-type ProjectManagementTemplateDefaultsRequest struct {
-	Id          int64  `path:"id" validate:"required,gt=0"`
-	ProjectType string `json:"project_type" validate:"required,oneof=Ordinary Planned"`
-	StartAt     string `json:"start_at,optional" validate:"omitempty,datetime=01/02/2006"`
-	PeriodValue int    `json:"period_value,optional" validate:"gte=0"`
-	PeriodUnit  string `json:"period_unit,optional,options=Day|Week|Month" validate:"omitempty,oneof=Day Week Month"`
+type ProjectManagementTemplateEntity struct {
+	Id              int64                          `json:"id"`
+	TemplateType    string                         `json:"template_type"`
+	OrganizationId  int64                          `json:"organization_id"`
+	Name            string                         `json:"name"`
+	Description     string                         `json:"description"`
+	Status          string                         `json:"status"`
+	IsDefault       bool                           `json:"is_default"`
+	SortOrder       int                            `json:"sort_order"`
+	ProjectType     string                         `json:"project_type"`
+	StartAt         string                         `json:"start_at"`
+	EndAt           string                         `json:"end_at"`
+	PeriodValue     int                            `json:"period_value"`
+	PeriodUnit      string                         `json:"period_unit"`
+	SourceProjectId int64                          `json:"source_project_id"`
+	Stages          []ProjectManagementStageEntity `json:"stages"`
+	CreatedAt       string                         `json:"created_at"`
+	UpdatedAt       string                         `json:"updated_at"`
 }
 
-type ProjectManagementTemplateEntity struct {
-	Id              int64                           `json:"id"`
-	TemplateType    string                          `json:"template_type"`
-	OrganizationId  int64                           `json:"organization_id"`
-	Name            string                          `json:"name"`
-	Description     string                          `json:"description"`
-	Status          string                          `json:"status"`
-	IsDefault       bool                            `json:"is_default"`
-	SortOrder       int                             `json:"sort_order"`
-	ProjectType     string                          `json:"project_type"`
-	StartAt         string                          `json:"start_at"`
-	EndAt           string                          `json:"end_at"`
-	PeriodValue     int                             `json:"period_value"`
-	PeriodUnit      string                          `json:"period_unit"`
-	SourceProjectId int64                           `json:"source_project_id"`
-	Stages          []*ProjectManagementStageEntity `json:"stages"`
-	CreatedAt       string                          `json:"created_at"`
-	UpdatedAt       string                          `json:"updated_at"`
+type ProjectManagementTemplatePageFilter struct {
+	Keyword string `json:"keyword,optional"`
+	Status  string `json:"status,optional" validate:"omitempty,oneof=Active Disabled"`
 }
 
 type ProjectManagementTemplatePageRequest struct {
-	Page   int64          `json:"page,default=1"`
-	Limit  int64          `json:"limit,default=20" validate:"gte=1,lte=100"`
-	Filter BasePageFilter `json:"filer"`
-	Sorter BasePageSort   `json:"sorter"`
+	Page   int64                               `json:"page,default=1"`
+	Limit  int64                               `json:"limit,default=20" validate:"gte=1,lte=100"`
+	Filter ProjectManagementTemplatePageFilter `json:"filter"`
+	Sorter BasePageSort                        `json:"sorter"`
 }
 
 type ProjectManagementTemplatePageResponse struct {
-	Total     int64                              `json:"total"`
-	Page      int64                              `json:"page"`
-	Limit     int64                              `json:"limit"`
-	TotalPage int64                              `json:"total_page"`
-	List      []*ProjectManagementTemplateEntity `json:"list"`
+	Total     int64                             `json:"total"`
+	Page      int64                             `json:"page"`
+	Limit     int64                             `json:"limit"`
+	TotalPage int64                             `json:"total_page"`
+	List      []ProjectManagementTemplateEntity `json:"list"`
 }
 
 type ProjectManagementTemplateStageInput struct {
@@ -1314,7 +1311,7 @@ type ProjectManagementTemplateStageInput struct {
 }
 
 type ProjectManagementTemplateStageSwapOrderRequest struct {
-	Id            int64 `path:"template_id" validate:"required,gt=0"`
+	TemplateId    int64 `path:"template_id" validate:"required,gt=0"`
 	StageId       int64 `json:"stage_id" validate:"required,gt=0"`
 	TargetStageId int64 `json:"target_stage_id" validate:"required,gt=0,nefield=StageId"`
 }

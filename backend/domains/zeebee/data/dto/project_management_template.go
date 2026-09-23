@@ -23,12 +23,24 @@ type ProjectManagementTemplateDto struct {
 	SourceProjectId int64
 }
 
+type ProjectManagementTemplatePageRequestDto struct {
+	BasePageRequestDto
+	Filter ProjectManagementTemplatePageRequestFilter `json:"filter"`
+	Sorter BasePageSorter                             `json:"sorter"`
+}
+
+type ProjectManagementTemplatePageRequestFilter struct {
+	Keyword        string                 `json:"keyword,omitempty"`
+	Status         constants.CommonStatus `json:"status,omitempty"`
+	OrganizationId int64                  `json:"organization_id"`
+}
+
 type ProjectManagementTemplateCreateDto struct {
 	TemplateType    constants.ProjectManagementTemplateType
 	OrganizationId  int64
 	Name            string
 	Description     string
-	Status          string
+	Status          constants.CommonStatus
 	IsDefault       bool
 	SortOrder       int
 	ProjectType     constants.ProjectManagementProjectType
@@ -44,7 +56,7 @@ type ProjectManagementTemplateCreateDto struct {
 type ProjectManagementTemplateUpdateDto struct {
 	Name        string
 	Description string
-	Status      string
+	Status      constants.CommonStatus
 	IsDefault   bool
 	SortOrder   int
 	ProjectType constants.ProjectManagementProjectType

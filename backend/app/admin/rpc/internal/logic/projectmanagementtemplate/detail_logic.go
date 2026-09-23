@@ -7,7 +7,11 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 
 	"zeebee-backend/app/admin/rpc/internal/logic"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/timex"
+	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DetailLogic struct {
@@ -36,5 +40,14 @@ func (l *DetailLogic) Detail(in *admin.ProjectManagementTemplateDetailRequest) (
 	if err != nil {
 		return nil, err
 	}
-	return templateResponse(template)
+	data, err := copierx.Trans[model.ProjectManagementTemplate, proto.ProjectManagementTemplateEntity](template, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToStr(timex.LayoutUsStyle))
+	if err != nil {
+		return nil, err
+	}
+	stages, err := copierx.Trans[[]*model.ProjectManagementStage, []*proto.ProjectManagementStageEntity](&template.Stages, copierx.TimeToRFC3339Str())
+	if err != nil {
+		return nil, err
+	}
+	data.Stages = *stages
+	return &admin.ProjectManagementTemplateDetailResponse{Data: data}, nil
 }

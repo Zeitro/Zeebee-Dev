@@ -13337,14 +13337,17 @@
               "required": [
                 "page",
                 "limit",
-                "filer",
+                "filter",
                 "sorter"
               ],
               "properties": {
-                "filer": {
+                "filter": {
                   "type": "object",
                   "properties": {
                     "keyword": {
+                      "type": "string"
+                    },
+                    "status": {
                       "type": "string"
                     }
                   }
@@ -13989,7 +13992,7 @@
           "project_management_template"
         ],
         "summary": "set default template",
-        "operationId": "projectManagementTemplateProjectManagementTemplateDefaults",
+        "operationId": "projectManagementTemplateProjectManagementTemplateDefault",
         "parameters": [
           {
             "type": "integer",
@@ -19111,7 +19114,7 @@
       }
     }
   },
-  "x-date": "2026-09-23 14:48:31",
+  "x-date": "2026-09-23 16:47:43",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

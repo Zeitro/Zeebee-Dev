@@ -67,9 +67,11 @@ func (x *ProjectManagementTemplatePageRequest) GetData() *ProjectManagementTempl
 }
 
 type ProjectManagementTemplatePageRequestData struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Page          int64                  `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
-	Limit         int64                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	state         protoimpl.MessageState                      `protogen:"open.v1"`
+	Page          int64                                       `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
+	Limit         int64                                       `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	Filter        *ProjectManagementTemplatePageRequestFilter `protobuf:"bytes,3,opt,name=filter,proto3" json:"filter,omitempty"`
+	Sorter        *proto.CommonPageSorter                     `protobuf:"bytes,4,opt,name=sorter,proto3" json:"sorter,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -118,6 +120,72 @@ func (x *ProjectManagementTemplatePageRequestData) GetLimit() int64 {
 	return 0
 }
 
+func (x *ProjectManagementTemplatePageRequestData) GetFilter() *ProjectManagementTemplatePageRequestFilter {
+	if x != nil {
+		return x.Filter
+	}
+	return nil
+}
+
+func (x *ProjectManagementTemplatePageRequestData) GetSorter() *proto.CommonPageSorter {
+	if x != nil {
+		return x.Sorter
+	}
+	return nil
+}
+
+type ProjectManagementTemplatePageRequestFilter struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Keyword       string                 `protobuf:"bytes,1,opt,name=keyword,proto3" json:"keyword,omitempty"`
+	Status        string                 `protobuf:"bytes,2,opt,name=status,proto3" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProjectManagementTemplatePageRequestFilter) Reset() {
+	*x = ProjectManagementTemplatePageRequestFilter{}
+	mi := &file_admin_project_management_template_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProjectManagementTemplatePageRequestFilter) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProjectManagementTemplatePageRequestFilter) ProtoMessage() {}
+
+func (x *ProjectManagementTemplatePageRequestFilter) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_project_management_template_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProjectManagementTemplatePageRequestFilter.ProtoReflect.Descriptor instead.
+func (*ProjectManagementTemplatePageRequestFilter) Descriptor() ([]byte, []int) {
+	return file_admin_project_management_template_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *ProjectManagementTemplatePageRequestFilter) GetKeyword() string {
+	if x != nil {
+		return x.Keyword
+	}
+	return ""
+}
+
+func (x *ProjectManagementTemplatePageRequestFilter) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
 type ProjectManagementTemplatePageResponse struct {
 	state         protoimpl.MessageState                   `protogen:"open.v1"`
 	Total         int64                                    `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
@@ -131,7 +199,7 @@ type ProjectManagementTemplatePageResponse struct {
 
 func (x *ProjectManagementTemplatePageResponse) Reset() {
 	*x = ProjectManagementTemplatePageResponse{}
-	mi := &file_admin_project_management_template_proto_msgTypes[2]
+	mi := &file_admin_project_management_template_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -143,7 +211,7 @@ func (x *ProjectManagementTemplatePageResponse) String() string {
 func (*ProjectManagementTemplatePageResponse) ProtoMessage() {}
 
 func (x *ProjectManagementTemplatePageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_project_management_template_proto_msgTypes[2]
+	mi := &file_admin_project_management_template_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -156,7 +224,7 @@ func (x *ProjectManagementTemplatePageResponse) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use ProjectManagementTemplatePageResponse.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTemplatePageResponse) Descriptor() ([]byte, []int) {
-	return file_admin_project_management_template_proto_rawDescGZIP(), []int{2}
+	return file_admin_project_management_template_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *ProjectManagementTemplatePageResponse) GetTotal() int64 {
@@ -203,7 +271,7 @@ type ProjectManagementTemplateCreateRequest struct {
 
 func (x *ProjectManagementTemplateCreateRequest) Reset() {
 	*x = ProjectManagementTemplateCreateRequest{}
-	mi := &file_admin_project_management_template_proto_msgTypes[3]
+	mi := &file_admin_project_management_template_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -215,7 +283,7 @@ func (x *ProjectManagementTemplateCreateRequest) String() string {
 func (*ProjectManagementTemplateCreateRequest) ProtoMessage() {}
 
 func (x *ProjectManagementTemplateCreateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_project_management_template_proto_msgTypes[3]
+	mi := &file_admin_project_management_template_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -228,7 +296,7 @@ func (x *ProjectManagementTemplateCreateRequest) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use ProjectManagementTemplateCreateRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTemplateCreateRequest) Descriptor() ([]byte, []int) {
-	return file_admin_project_management_template_proto_rawDescGZIP(), []int{3}
+	return file_admin_project_management_template_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ProjectManagementTemplateCreateRequest) GetData() *ProjectManagementTemplateCreateRequestData {
@@ -255,7 +323,7 @@ type ProjectManagementTemplateCreateRequestData struct {
 
 func (x *ProjectManagementTemplateCreateRequestData) Reset() {
 	*x = ProjectManagementTemplateCreateRequestData{}
-	mi := &file_admin_project_management_template_proto_msgTypes[4]
+	mi := &file_admin_project_management_template_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -267,7 +335,7 @@ func (x *ProjectManagementTemplateCreateRequestData) String() string {
 func (*ProjectManagementTemplateCreateRequestData) ProtoMessage() {}
 
 func (x *ProjectManagementTemplateCreateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_project_management_template_proto_msgTypes[4]
+	mi := &file_admin_project_management_template_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -280,7 +348,7 @@ func (x *ProjectManagementTemplateCreateRequestData) ProtoReflect() protoreflect
 
 // Deprecated: Use ProjectManagementTemplateCreateRequestData.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTemplateCreateRequestData) Descriptor() ([]byte, []int) {
-	return file_admin_project_management_template_proto_rawDescGZIP(), []int{4}
+	return file_admin_project_management_template_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ProjectManagementTemplateCreateRequestData) GetName() string {
@@ -355,7 +423,7 @@ type ProjectManagementTemplateUpdateRequest struct {
 
 func (x *ProjectManagementTemplateUpdateRequest) Reset() {
 	*x = ProjectManagementTemplateUpdateRequest{}
-	mi := &file_admin_project_management_template_proto_msgTypes[5]
+	mi := &file_admin_project_management_template_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -367,7 +435,7 @@ func (x *ProjectManagementTemplateUpdateRequest) String() string {
 func (*ProjectManagementTemplateUpdateRequest) ProtoMessage() {}
 
 func (x *ProjectManagementTemplateUpdateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_project_management_template_proto_msgTypes[5]
+	mi := &file_admin_project_management_template_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -380,7 +448,7 @@ func (x *ProjectManagementTemplateUpdateRequest) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use ProjectManagementTemplateUpdateRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTemplateUpdateRequest) Descriptor() ([]byte, []int) {
-	return file_admin_project_management_template_proto_rawDescGZIP(), []int{5}
+	return file_admin_project_management_template_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ProjectManagementTemplateUpdateRequest) GetData() *ProjectManagementTemplateUpdateRequestData {
@@ -409,7 +477,7 @@ type ProjectManagementTemplateUpdateRequestData struct {
 
 func (x *ProjectManagementTemplateUpdateRequestData) Reset() {
 	*x = ProjectManagementTemplateUpdateRequestData{}
-	mi := &file_admin_project_management_template_proto_msgTypes[6]
+	mi := &file_admin_project_management_template_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -421,7 +489,7 @@ func (x *ProjectManagementTemplateUpdateRequestData) String() string {
 func (*ProjectManagementTemplateUpdateRequestData) ProtoMessage() {}
 
 func (x *ProjectManagementTemplateUpdateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_project_management_template_proto_msgTypes[6]
+	mi := &file_admin_project_management_template_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -434,7 +502,7 @@ func (x *ProjectManagementTemplateUpdateRequestData) ProtoReflect() protoreflect
 
 // Deprecated: Use ProjectManagementTemplateUpdateRequestData.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTemplateUpdateRequestData) Descriptor() ([]byte, []int) {
-	return file_admin_project_management_template_proto_rawDescGZIP(), []int{6}
+	return file_admin_project_management_template_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *ProjectManagementTemplateUpdateRequestData) GetId() int64 {
@@ -523,7 +591,7 @@ type ProjectManagementTemplateStatusRequest struct {
 
 func (x *ProjectManagementTemplateStatusRequest) Reset() {
 	*x = ProjectManagementTemplateStatusRequest{}
-	mi := &file_admin_project_management_template_proto_msgTypes[7]
+	mi := &file_admin_project_management_template_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -535,7 +603,7 @@ func (x *ProjectManagementTemplateStatusRequest) String() string {
 func (*ProjectManagementTemplateStatusRequest) ProtoMessage() {}
 
 func (x *ProjectManagementTemplateStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_project_management_template_proto_msgTypes[7]
+	mi := &file_admin_project_management_template_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -548,7 +616,7 @@ func (x *ProjectManagementTemplateStatusRequest) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use ProjectManagementTemplateStatusRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTemplateStatusRequest) Descriptor() ([]byte, []int) {
-	return file_admin_project_management_template_proto_rawDescGZIP(), []int{7}
+	return file_admin_project_management_template_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ProjectManagementTemplateStatusRequest) GetData() *ProjectManagementTemplateStatusRequestData {
@@ -568,7 +636,7 @@ type ProjectManagementTemplateStatusRequestData struct {
 
 func (x *ProjectManagementTemplateStatusRequestData) Reset() {
 	*x = ProjectManagementTemplateStatusRequestData{}
-	mi := &file_admin_project_management_template_proto_msgTypes[8]
+	mi := &file_admin_project_management_template_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -580,7 +648,7 @@ func (x *ProjectManagementTemplateStatusRequestData) String() string {
 func (*ProjectManagementTemplateStatusRequestData) ProtoMessage() {}
 
 func (x *ProjectManagementTemplateStatusRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_project_management_template_proto_msgTypes[8]
+	mi := &file_admin_project_management_template_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -593,7 +661,7 @@ func (x *ProjectManagementTemplateStatusRequestData) ProtoReflect() protoreflect
 
 // Deprecated: Use ProjectManagementTemplateStatusRequestData.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTemplateStatusRequestData) Descriptor() ([]byte, []int) {
-	return file_admin_project_management_template_proto_rawDescGZIP(), []int{8}
+	return file_admin_project_management_template_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ProjectManagementTemplateStatusRequestData) GetId() int64 {
@@ -610,126 +678,6 @@ func (x *ProjectManagementTemplateStatusRequestData) GetStatus() string {
 	return ""
 }
 
-type ProjectManagementTemplateDefaultsRequest struct {
-	state         protoimpl.MessageState                        `protogen:"open.v1"`
-	Data          *ProjectManagementTemplateDefaultsRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ProjectManagementTemplateDefaultsRequest) Reset() {
-	*x = ProjectManagementTemplateDefaultsRequest{}
-	mi := &file_admin_project_management_template_proto_msgTypes[9]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ProjectManagementTemplateDefaultsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ProjectManagementTemplateDefaultsRequest) ProtoMessage() {}
-
-func (x *ProjectManagementTemplateDefaultsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_project_management_template_proto_msgTypes[9]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ProjectManagementTemplateDefaultsRequest.ProtoReflect.Descriptor instead.
-func (*ProjectManagementTemplateDefaultsRequest) Descriptor() ([]byte, []int) {
-	return file_admin_project_management_template_proto_rawDescGZIP(), []int{9}
-}
-
-func (x *ProjectManagementTemplateDefaultsRequest) GetData() *ProjectManagementTemplateDefaultsRequestData {
-	if x != nil {
-		return x.Data
-	}
-	return nil
-}
-
-type ProjectManagementTemplateDefaultsRequestData struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	ProjectType   string                 `protobuf:"bytes,2,opt,name=project_type,json=projectType,proto3" json:"project_type,omitempty"`
-	StartAt       string                 `protobuf:"bytes,3,opt,name=start_at,json=startAt,proto3" json:"start_at,omitempty"`
-	PeriodValue   int64                  `protobuf:"varint,4,opt,name=period_value,json=periodValue,proto3" json:"period_value,omitempty"`
-	PeriodUnit    string                 `protobuf:"bytes,5,opt,name=period_unit,json=periodUnit,proto3" json:"period_unit,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ProjectManagementTemplateDefaultsRequestData) Reset() {
-	*x = ProjectManagementTemplateDefaultsRequestData{}
-	mi := &file_admin_project_management_template_proto_msgTypes[10]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ProjectManagementTemplateDefaultsRequestData) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ProjectManagementTemplateDefaultsRequestData) ProtoMessage() {}
-
-func (x *ProjectManagementTemplateDefaultsRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_project_management_template_proto_msgTypes[10]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ProjectManagementTemplateDefaultsRequestData.ProtoReflect.Descriptor instead.
-func (*ProjectManagementTemplateDefaultsRequestData) Descriptor() ([]byte, []int) {
-	return file_admin_project_management_template_proto_rawDescGZIP(), []int{10}
-}
-
-func (x *ProjectManagementTemplateDefaultsRequestData) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *ProjectManagementTemplateDefaultsRequestData) GetProjectType() string {
-	if x != nil {
-		return x.ProjectType
-	}
-	return ""
-}
-
-func (x *ProjectManagementTemplateDefaultsRequestData) GetStartAt() string {
-	if x != nil {
-		return x.StartAt
-	}
-	return ""
-}
-
-func (x *ProjectManagementTemplateDefaultsRequestData) GetPeriodValue() int64 {
-	if x != nil {
-		return x.PeriodValue
-	}
-	return 0
-}
-
-func (x *ProjectManagementTemplateDefaultsRequestData) GetPeriodUnit() string {
-	if x != nil {
-		return x.PeriodUnit
-	}
-	return ""
-}
-
 type ProjectManagementTemplateDetailRequest struct {
 	state         protoimpl.MessageState                      `protogen:"open.v1"`
 	Data          *ProjectManagementTemplateDetailRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -739,7 +687,7 @@ type ProjectManagementTemplateDetailRequest struct {
 
 func (x *ProjectManagementTemplateDetailRequest) Reset() {
 	*x = ProjectManagementTemplateDetailRequest{}
-	mi := &file_admin_project_management_template_proto_msgTypes[11]
+	mi := &file_admin_project_management_template_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -751,7 +699,7 @@ func (x *ProjectManagementTemplateDetailRequest) String() string {
 func (*ProjectManagementTemplateDetailRequest) ProtoMessage() {}
 
 func (x *ProjectManagementTemplateDetailRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_project_management_template_proto_msgTypes[11]
+	mi := &file_admin_project_management_template_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -764,7 +712,7 @@ func (x *ProjectManagementTemplateDetailRequest) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use ProjectManagementTemplateDetailRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTemplateDetailRequest) Descriptor() ([]byte, []int) {
-	return file_admin_project_management_template_proto_rawDescGZIP(), []int{11}
+	return file_admin_project_management_template_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ProjectManagementTemplateDetailRequest) GetData() *ProjectManagementTemplateDetailRequestData {
@@ -783,7 +731,7 @@ type ProjectManagementTemplateDetailRequestData struct {
 
 func (x *ProjectManagementTemplateDetailRequestData) Reset() {
 	*x = ProjectManagementTemplateDetailRequestData{}
-	mi := &file_admin_project_management_template_proto_msgTypes[12]
+	mi := &file_admin_project_management_template_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -795,7 +743,7 @@ func (x *ProjectManagementTemplateDetailRequestData) String() string {
 func (*ProjectManagementTemplateDetailRequestData) ProtoMessage() {}
 
 func (x *ProjectManagementTemplateDetailRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_project_management_template_proto_msgTypes[12]
+	mi := &file_admin_project_management_template_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -808,7 +756,7 @@ func (x *ProjectManagementTemplateDetailRequestData) ProtoReflect() protoreflect
 
 // Deprecated: Use ProjectManagementTemplateDetailRequestData.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTemplateDetailRequestData) Descriptor() ([]byte, []int) {
-	return file_admin_project_management_template_proto_rawDescGZIP(), []int{12}
+	return file_admin_project_management_template_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *ProjectManagementTemplateDetailRequestData) GetId() int64 {
@@ -827,7 +775,7 @@ type ProjectManagementTemplateDetailResponse struct {
 
 func (x *ProjectManagementTemplateDetailResponse) Reset() {
 	*x = ProjectManagementTemplateDetailResponse{}
-	mi := &file_admin_project_management_template_proto_msgTypes[13]
+	mi := &file_admin_project_management_template_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -839,7 +787,7 @@ func (x *ProjectManagementTemplateDetailResponse) String() string {
 func (*ProjectManagementTemplateDetailResponse) ProtoMessage() {}
 
 func (x *ProjectManagementTemplateDetailResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_project_management_template_proto_msgTypes[13]
+	mi := &file_admin_project_management_template_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -852,7 +800,7 @@ func (x *ProjectManagementTemplateDetailResponse) ProtoReflect() protoreflect.Me
 
 // Deprecated: Use ProjectManagementTemplateDetailResponse.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTemplateDetailResponse) Descriptor() ([]byte, []int) {
-	return file_admin_project_management_template_proto_rawDescGZIP(), []int{13}
+	return file_admin_project_management_template_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *ProjectManagementTemplateDetailResponse) GetData() *proto.ProjectManagementTemplateEntity {
@@ -871,7 +819,7 @@ type ProjectManagementTemplateWorkflowResponse struct {
 
 func (x *ProjectManagementTemplateWorkflowResponse) Reset() {
 	*x = ProjectManagementTemplateWorkflowResponse{}
-	mi := &file_admin_project_management_template_proto_msgTypes[14]
+	mi := &file_admin_project_management_template_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -883,7 +831,7 @@ func (x *ProjectManagementTemplateWorkflowResponse) String() string {
 func (*ProjectManagementTemplateWorkflowResponse) ProtoMessage() {}
 
 func (x *ProjectManagementTemplateWorkflowResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_project_management_template_proto_msgTypes[14]
+	mi := &file_admin_project_management_template_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -896,7 +844,7 @@ func (x *ProjectManagementTemplateWorkflowResponse) ProtoReflect() protoreflect.
 
 // Deprecated: Use ProjectManagementTemplateWorkflowResponse.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTemplateWorkflowResponse) Descriptor() ([]byte, []int) {
-	return file_admin_project_management_template_proto_rawDescGZIP(), []int{14}
+	return file_admin_project_management_template_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ProjectManagementTemplateWorkflowResponse) GetList() []*proto.ProjectManagementWorkflowEntity {
@@ -915,7 +863,7 @@ type ProjectManagementTemplateWorkflowDetailResponse struct {
 
 func (x *ProjectManagementTemplateWorkflowDetailResponse) Reset() {
 	*x = ProjectManagementTemplateWorkflowDetailResponse{}
-	mi := &file_admin_project_management_template_proto_msgTypes[15]
+	mi := &file_admin_project_management_template_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -927,7 +875,7 @@ func (x *ProjectManagementTemplateWorkflowDetailResponse) String() string {
 func (*ProjectManagementTemplateWorkflowDetailResponse) ProtoMessage() {}
 
 func (x *ProjectManagementTemplateWorkflowDetailResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_project_management_template_proto_msgTypes[15]
+	mi := &file_admin_project_management_template_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -940,7 +888,7 @@ func (x *ProjectManagementTemplateWorkflowDetailResponse) ProtoReflect() protore
 
 // Deprecated: Use ProjectManagementTemplateWorkflowDetailResponse.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTemplateWorkflowDetailResponse) Descriptor() ([]byte, []int) {
-	return file_admin_project_management_template_proto_rawDescGZIP(), []int{15}
+	return file_admin_project_management_template_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ProjectManagementTemplateWorkflowDetailResponse) GetData() *proto.ProjectManagementWorkflowEntity {
@@ -959,7 +907,7 @@ type ProjectManagementTemplateWorkflowCreateRequest struct {
 
 func (x *ProjectManagementTemplateWorkflowCreateRequest) Reset() {
 	*x = ProjectManagementTemplateWorkflowCreateRequest{}
-	mi := &file_admin_project_management_template_proto_msgTypes[16]
+	mi := &file_admin_project_management_template_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -971,7 +919,7 @@ func (x *ProjectManagementTemplateWorkflowCreateRequest) String() string {
 func (*ProjectManagementTemplateWorkflowCreateRequest) ProtoMessage() {}
 
 func (x *ProjectManagementTemplateWorkflowCreateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_project_management_template_proto_msgTypes[16]
+	mi := &file_admin_project_management_template_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -984,7 +932,7 @@ func (x *ProjectManagementTemplateWorkflowCreateRequest) ProtoReflect() protoref
 
 // Deprecated: Use ProjectManagementTemplateWorkflowCreateRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTemplateWorkflowCreateRequest) Descriptor() ([]byte, []int) {
-	return file_admin_project_management_template_proto_rawDescGZIP(), []int{16}
+	return file_admin_project_management_template_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *ProjectManagementTemplateWorkflowCreateRequest) GetData() *ProjectManagementTemplateWorkflowCreateRequestData {
@@ -1006,7 +954,7 @@ type ProjectManagementTemplateWorkflowCreateRequestData struct {
 
 func (x *ProjectManagementTemplateWorkflowCreateRequestData) Reset() {
 	*x = ProjectManagementTemplateWorkflowCreateRequestData{}
-	mi := &file_admin_project_management_template_proto_msgTypes[17]
+	mi := &file_admin_project_management_template_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1018,7 +966,7 @@ func (x *ProjectManagementTemplateWorkflowCreateRequestData) String() string {
 func (*ProjectManagementTemplateWorkflowCreateRequestData) ProtoMessage() {}
 
 func (x *ProjectManagementTemplateWorkflowCreateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_project_management_template_proto_msgTypes[17]
+	mi := &file_admin_project_management_template_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1031,7 +979,7 @@ func (x *ProjectManagementTemplateWorkflowCreateRequestData) ProtoReflect() prot
 
 // Deprecated: Use ProjectManagementTemplateWorkflowCreateRequestData.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTemplateWorkflowCreateRequestData) Descriptor() ([]byte, []int) {
-	return file_admin_project_management_template_proto_rawDescGZIP(), []int{17}
+	return file_admin_project_management_template_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ProjectManagementTemplateWorkflowCreateRequestData) GetTemplateId() int64 {
@@ -1071,7 +1019,7 @@ type ProjectManagementTemplateWorkflowUpdateRequest struct {
 
 func (x *ProjectManagementTemplateWorkflowUpdateRequest) Reset() {
 	*x = ProjectManagementTemplateWorkflowUpdateRequest{}
-	mi := &file_admin_project_management_template_proto_msgTypes[18]
+	mi := &file_admin_project_management_template_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1083,7 +1031,7 @@ func (x *ProjectManagementTemplateWorkflowUpdateRequest) String() string {
 func (*ProjectManagementTemplateWorkflowUpdateRequest) ProtoMessage() {}
 
 func (x *ProjectManagementTemplateWorkflowUpdateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_project_management_template_proto_msgTypes[18]
+	mi := &file_admin_project_management_template_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1096,7 +1044,7 @@ func (x *ProjectManagementTemplateWorkflowUpdateRequest) ProtoReflect() protoref
 
 // Deprecated: Use ProjectManagementTemplateWorkflowUpdateRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTemplateWorkflowUpdateRequest) Descriptor() ([]byte, []int) {
-	return file_admin_project_management_template_proto_rawDescGZIP(), []int{18}
+	return file_admin_project_management_template_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *ProjectManagementTemplateWorkflowUpdateRequest) GetData() *ProjectManagementTemplateWorkflowUpdateRequestData {
@@ -1119,7 +1067,7 @@ type ProjectManagementTemplateWorkflowUpdateRequestData struct {
 
 func (x *ProjectManagementTemplateWorkflowUpdateRequestData) Reset() {
 	*x = ProjectManagementTemplateWorkflowUpdateRequestData{}
-	mi := &file_admin_project_management_template_proto_msgTypes[19]
+	mi := &file_admin_project_management_template_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1131,7 +1079,7 @@ func (x *ProjectManagementTemplateWorkflowUpdateRequestData) String() string {
 func (*ProjectManagementTemplateWorkflowUpdateRequestData) ProtoMessage() {}
 
 func (x *ProjectManagementTemplateWorkflowUpdateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_project_management_template_proto_msgTypes[19]
+	mi := &file_admin_project_management_template_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1144,7 +1092,7 @@ func (x *ProjectManagementTemplateWorkflowUpdateRequestData) ProtoReflect() prot
 
 // Deprecated: Use ProjectManagementTemplateWorkflowUpdateRequestData.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTemplateWorkflowUpdateRequestData) Descriptor() ([]byte, []int) {
-	return file_admin_project_management_template_proto_rawDescGZIP(), []int{19}
+	return file_admin_project_management_template_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *ProjectManagementTemplateWorkflowUpdateRequestData) GetTemplateId() int64 {
@@ -1191,7 +1139,7 @@ type ProjectManagementTemplateWorkflowDetailRequest struct {
 
 func (x *ProjectManagementTemplateWorkflowDetailRequest) Reset() {
 	*x = ProjectManagementTemplateWorkflowDetailRequest{}
-	mi := &file_admin_project_management_template_proto_msgTypes[20]
+	mi := &file_admin_project_management_template_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1203,7 +1151,7 @@ func (x *ProjectManagementTemplateWorkflowDetailRequest) String() string {
 func (*ProjectManagementTemplateWorkflowDetailRequest) ProtoMessage() {}
 
 func (x *ProjectManagementTemplateWorkflowDetailRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_project_management_template_proto_msgTypes[20]
+	mi := &file_admin_project_management_template_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1216,7 +1164,7 @@ func (x *ProjectManagementTemplateWorkflowDetailRequest) ProtoReflect() protoref
 
 // Deprecated: Use ProjectManagementTemplateWorkflowDetailRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTemplateWorkflowDetailRequest) Descriptor() ([]byte, []int) {
-	return file_admin_project_management_template_proto_rawDescGZIP(), []int{20}
+	return file_admin_project_management_template_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *ProjectManagementTemplateWorkflowDetailRequest) GetData() *ProjectManagementTemplateWorkflowDetailRequestData {
@@ -1236,7 +1184,7 @@ type ProjectManagementTemplateWorkflowDetailRequestData struct {
 
 func (x *ProjectManagementTemplateWorkflowDetailRequestData) Reset() {
 	*x = ProjectManagementTemplateWorkflowDetailRequestData{}
-	mi := &file_admin_project_management_template_proto_msgTypes[21]
+	mi := &file_admin_project_management_template_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1248,7 +1196,7 @@ func (x *ProjectManagementTemplateWorkflowDetailRequestData) String() string {
 func (*ProjectManagementTemplateWorkflowDetailRequestData) ProtoMessage() {}
 
 func (x *ProjectManagementTemplateWorkflowDetailRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_project_management_template_proto_msgTypes[21]
+	mi := &file_admin_project_management_template_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1261,7 +1209,7 @@ func (x *ProjectManagementTemplateWorkflowDetailRequestData) ProtoReflect() prot
 
 // Deprecated: Use ProjectManagementTemplateWorkflowDetailRequestData.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTemplateWorkflowDetailRequestData) Descriptor() ([]byte, []int) {
-	return file_admin_project_management_template_proto_rawDescGZIP(), []int{21}
+	return file_admin_project_management_template_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *ProjectManagementTemplateWorkflowDetailRequestData) GetTemplateId() int64 {
@@ -1290,7 +1238,7 @@ type ProjectManagementTemplateWorkflowTransitionInput struct {
 
 func (x *ProjectManagementTemplateWorkflowTransitionInput) Reset() {
 	*x = ProjectManagementTemplateWorkflowTransitionInput{}
-	mi := &file_admin_project_management_template_proto_msgTypes[22]
+	mi := &file_admin_project_management_template_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1302,7 +1250,7 @@ func (x *ProjectManagementTemplateWorkflowTransitionInput) String() string {
 func (*ProjectManagementTemplateWorkflowTransitionInput) ProtoMessage() {}
 
 func (x *ProjectManagementTemplateWorkflowTransitionInput) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_project_management_template_proto_msgTypes[22]
+	mi := &file_admin_project_management_template_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1315,7 +1263,7 @@ func (x *ProjectManagementTemplateWorkflowTransitionInput) ProtoReflect() protor
 
 // Deprecated: Use ProjectManagementTemplateWorkflowTransitionInput.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTemplateWorkflowTransitionInput) Descriptor() ([]byte, []int) {
-	return file_admin_project_management_template_proto_rawDescGZIP(), []int{22}
+	return file_admin_project_management_template_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *ProjectManagementTemplateWorkflowTransitionInput) GetName() string {
@@ -1355,7 +1303,7 @@ type ProjectManagementTemplateWorkflowDeleteRequest struct {
 
 func (x *ProjectManagementTemplateWorkflowDeleteRequest) Reset() {
 	*x = ProjectManagementTemplateWorkflowDeleteRequest{}
-	mi := &file_admin_project_management_template_proto_msgTypes[23]
+	mi := &file_admin_project_management_template_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1367,7 +1315,7 @@ func (x *ProjectManagementTemplateWorkflowDeleteRequest) String() string {
 func (*ProjectManagementTemplateWorkflowDeleteRequest) ProtoMessage() {}
 
 func (x *ProjectManagementTemplateWorkflowDeleteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_project_management_template_proto_msgTypes[23]
+	mi := &file_admin_project_management_template_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1380,7 +1328,7 @@ func (x *ProjectManagementTemplateWorkflowDeleteRequest) ProtoReflect() protoref
 
 // Deprecated: Use ProjectManagementTemplateWorkflowDeleteRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTemplateWorkflowDeleteRequest) Descriptor() ([]byte, []int) {
-	return file_admin_project_management_template_proto_rawDescGZIP(), []int{23}
+	return file_admin_project_management_template_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *ProjectManagementTemplateWorkflowDeleteRequest) GetData() *ProjectManagementTemplateWorkflowDeleteRequestData {
@@ -1400,7 +1348,7 @@ type ProjectManagementTemplateWorkflowDeleteRequestData struct {
 
 func (x *ProjectManagementTemplateWorkflowDeleteRequestData) Reset() {
 	*x = ProjectManagementTemplateWorkflowDeleteRequestData{}
-	mi := &file_admin_project_management_template_proto_msgTypes[24]
+	mi := &file_admin_project_management_template_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1412,7 +1360,7 @@ func (x *ProjectManagementTemplateWorkflowDeleteRequestData) String() string {
 func (*ProjectManagementTemplateWorkflowDeleteRequestData) ProtoMessage() {}
 
 func (x *ProjectManagementTemplateWorkflowDeleteRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_project_management_template_proto_msgTypes[24]
+	mi := &file_admin_project_management_template_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1425,7 +1373,7 @@ func (x *ProjectManagementTemplateWorkflowDeleteRequestData) ProtoReflect() prot
 
 // Deprecated: Use ProjectManagementTemplateWorkflowDeleteRequestData.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTemplateWorkflowDeleteRequestData) Descriptor() ([]byte, []int) {
-	return file_admin_project_management_template_proto_rawDescGZIP(), []int{24}
+	return file_admin_project_management_template_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *ProjectManagementTemplateWorkflowDeleteRequestData) GetTemplateId() int64 {
@@ -1451,7 +1399,7 @@ type ProjectManagementTemplateWorkflowDefaultRequest struct {
 
 func (x *ProjectManagementTemplateWorkflowDefaultRequest) Reset() {
 	*x = ProjectManagementTemplateWorkflowDefaultRequest{}
-	mi := &file_admin_project_management_template_proto_msgTypes[25]
+	mi := &file_admin_project_management_template_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1463,7 +1411,7 @@ func (x *ProjectManagementTemplateWorkflowDefaultRequest) String() string {
 func (*ProjectManagementTemplateWorkflowDefaultRequest) ProtoMessage() {}
 
 func (x *ProjectManagementTemplateWorkflowDefaultRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_project_management_template_proto_msgTypes[25]
+	mi := &file_admin_project_management_template_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1476,7 +1424,7 @@ func (x *ProjectManagementTemplateWorkflowDefaultRequest) ProtoReflect() protore
 
 // Deprecated: Use ProjectManagementTemplateWorkflowDefaultRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTemplateWorkflowDefaultRequest) Descriptor() ([]byte, []int) {
-	return file_admin_project_management_template_proto_rawDescGZIP(), []int{25}
+	return file_admin_project_management_template_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *ProjectManagementTemplateWorkflowDefaultRequest) GetData() *ProjectManagementTemplateWorkflowDefaultRequestData {
@@ -1496,7 +1444,7 @@ type ProjectManagementTemplateWorkflowDefaultRequestData struct {
 
 func (x *ProjectManagementTemplateWorkflowDefaultRequestData) Reset() {
 	*x = ProjectManagementTemplateWorkflowDefaultRequestData{}
-	mi := &file_admin_project_management_template_proto_msgTypes[26]
+	mi := &file_admin_project_management_template_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1508,7 +1456,7 @@ func (x *ProjectManagementTemplateWorkflowDefaultRequestData) String() string {
 func (*ProjectManagementTemplateWorkflowDefaultRequestData) ProtoMessage() {}
 
 func (x *ProjectManagementTemplateWorkflowDefaultRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_project_management_template_proto_msgTypes[26]
+	mi := &file_admin_project_management_template_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1521,7 +1469,7 @@ func (x *ProjectManagementTemplateWorkflowDefaultRequestData) ProtoReflect() pro
 
 // Deprecated: Use ProjectManagementTemplateWorkflowDefaultRequestData.ProtoReflect.Descriptor instead.
 func (*ProjectManagementTemplateWorkflowDefaultRequestData) Descriptor() ([]byte, []int) {
-	return file_admin_project_management_template_proto_rawDescGZIP(), []int{26}
+	return file_admin_project_management_template_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *ProjectManagementTemplateWorkflowDefaultRequestData) GetTemplateId() int64 {
@@ -1544,10 +1492,15 @@ const file_admin_project_management_template_proto_rawDesc = "" +
 	"\n" +
 	"'admin_project_management_template.proto\x12\x05admin\x1a\x12proto/common.proto\x1a\x12proto/entity.proto\x1a$admin_project_management_stage.proto\"k\n" +
 	"$ProjectManagementTemplatePageRequest\x12C\n" +
-	"\x04data\x18\x01 \x01(\v2/.admin.ProjectManagementTemplatePageRequestDataR\x04data\"T\n" +
+	"\x04data\x18\x01 \x01(\v2/.admin.ProjectManagementTemplatePageRequestDataR\x04data\"\xd0\x01\n" +
 	"(ProjectManagementTemplatePageRequestData\x12\x12\n" +
 	"\x04page\x18\x01 \x01(\x03R\x04page\x12\x14\n" +
-	"\x05limit\x18\x02 \x01(\x03R\x05limit\"\xc2\x01\n" +
+	"\x05limit\x18\x02 \x01(\x03R\x05limit\x12I\n" +
+	"\x06filter\x18\x03 \x01(\v21.admin.ProjectManagementTemplatePageRequestFilterR\x06filter\x12/\n" +
+	"\x06sorter\x18\x04 \x01(\v2\x17.proto.CommonPageSorterR\x06sorter\"^\n" +
+	"*ProjectManagementTemplatePageRequestFilter\x12\x18\n" +
+	"\akeyword\x18\x01 \x01(\tR\akeyword\x12\x16\n" +
+	"\x06status\x18\x02 \x01(\tR\x06status\"\xc2\x01\n" +
 	"%ProjectManagementTemplatePageResponse\x12\x14\n" +
 	"\x05total\x18\x01 \x01(\x03R\x05total\x12\x12\n" +
 	"\x04page\x18\x02 \x01(\x03R\x04page\x12\x14\n" +
@@ -1592,16 +1545,7 @@ const file_admin_project_management_template_proto_rawDesc = "" +
 	"\x04data\x18\x01 \x01(\v21.admin.ProjectManagementTemplateStatusRequestDataR\x04data\"T\n" +
 	"*ProjectManagementTemplateStatusRequestData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x16\n" +
-	"\x06status\x18\x02 \x01(\tR\x06status\"s\n" +
-	"(ProjectManagementTemplateDefaultsRequest\x12G\n" +
-	"\x04data\x18\x01 \x01(\v23.admin.ProjectManagementTemplateDefaultsRequestDataR\x04data\"\xc0\x01\n" +
-	",ProjectManagementTemplateDefaultsRequestData\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12!\n" +
-	"\fproject_type\x18\x02 \x01(\tR\vprojectType\x12\x19\n" +
-	"\bstart_at\x18\x03 \x01(\tR\astartAt\x12!\n" +
-	"\fperiod_value\x18\x04 \x01(\x03R\vperiodValue\x12\x1f\n" +
-	"\vperiod_unit\x18\x05 \x01(\tR\n" +
-	"periodUnit\"o\n" +
+	"\x06status\x18\x02 \x01(\tR\x06status\"o\n" +
 	"&ProjectManagementTemplateDetailRequest\x12E\n" +
 	"\x04data\x18\x01 \x01(\v21.admin.ProjectManagementTemplateDetailRequestDataR\x04data\"<\n" +
 	"*ProjectManagementTemplateDetailRequestData\x12\x0e\n" +
@@ -1655,15 +1599,15 @@ const file_admin_project_management_template_proto_rawDesc = "" +
 	"\vtemplate_id\x18\x01 \x01(\x03R\n" +
 	"templateId\x12\x1f\n" +
 	"\vworkflow_id\x18\x02 \x01(\x03R\n" +
-	"workflowId2\xdd\n" +
+	"workflowId2\xa8\n" +
 	"\n" +
 	"\x19ProjectManagementTemplate\x12a\n" +
 	"\x04Page\x12+.admin.ProjectManagementTemplatePageRequest\x1a,.admin.ProjectManagementTemplatePageResponse\x12g\n" +
 	"\x06Create\x12-.admin.ProjectManagementTemplateCreateRequest\x1a..admin.ProjectManagementTemplateDetailResponse\x12g\n" +
 	"\x06Update\x12-.admin.ProjectManagementTemplateUpdateRequest\x1a..admin.ProjectManagementTemplateDetailResponse\x124\n" +
 	"\x06Delete\x12\x14.proto.PathIdRequest\x1a\x14.proto.EmptyResponse\x12g\n" +
-	"\x06Status\x12-.admin.ProjectManagementTemplateStatusRequest\x1a..admin.ProjectManagementTemplateDetailResponse\x12k\n" +
-	"\bDefaults\x12/.admin.ProjectManagementTemplateDefaultsRequest\x1a..admin.ProjectManagementTemplateDetailResponse\x12S\n" +
+	"\x06Status\x12-.admin.ProjectManagementTemplateStatusRequest\x1a..admin.ProjectManagementTemplateDetailResponse\x126\n" +
+	"\bDefaults\x12\x14.proto.PathIdRequest\x1a\x14.proto.EmptyResponse\x12S\n" +
 	"\tWorkflows\x12\x14.proto.PathIdRequest\x1a0.admin.ProjectManagementTemplateWorkflowResponse\x12\x7f\n" +
 	"\x0eWorkflowCreate\x125.admin.ProjectManagementTemplateWorkflowCreateRequest\x1a6.admin.ProjectManagementTemplateWorkflowDetailResponse\x12\x7f\n" +
 	"\x0eWorkflowDetail\x125.admin.ProjectManagementTemplateWorkflowDetailRequest\x1a6.admin.ProjectManagementTemplateWorkflowDetailResponse\x12\x7f\n" +
@@ -1684,35 +1628,35 @@ func file_admin_project_management_template_proto_rawDescGZIP() []byte {
 	return file_admin_project_management_template_proto_rawDescData
 }
 
-var file_admin_project_management_template_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
+var file_admin_project_management_template_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
 var file_admin_project_management_template_proto_goTypes = []any{
 	(*ProjectManagementTemplatePageRequest)(nil),                // 0: admin.ProjectManagementTemplatePageRequest
 	(*ProjectManagementTemplatePageRequestData)(nil),            // 1: admin.ProjectManagementTemplatePageRequestData
-	(*ProjectManagementTemplatePageResponse)(nil),               // 2: admin.ProjectManagementTemplatePageResponse
-	(*ProjectManagementTemplateCreateRequest)(nil),              // 3: admin.ProjectManagementTemplateCreateRequest
-	(*ProjectManagementTemplateCreateRequestData)(nil),          // 4: admin.ProjectManagementTemplateCreateRequestData
-	(*ProjectManagementTemplateUpdateRequest)(nil),              // 5: admin.ProjectManagementTemplateUpdateRequest
-	(*ProjectManagementTemplateUpdateRequestData)(nil),          // 6: admin.ProjectManagementTemplateUpdateRequestData
-	(*ProjectManagementTemplateStatusRequest)(nil),              // 7: admin.ProjectManagementTemplateStatusRequest
-	(*ProjectManagementTemplateStatusRequestData)(nil),          // 8: admin.ProjectManagementTemplateStatusRequestData
-	(*ProjectManagementTemplateDefaultsRequest)(nil),            // 9: admin.ProjectManagementTemplateDefaultsRequest
-	(*ProjectManagementTemplateDefaultsRequestData)(nil),        // 10: admin.ProjectManagementTemplateDefaultsRequestData
-	(*ProjectManagementTemplateDetailRequest)(nil),              // 11: admin.ProjectManagementTemplateDetailRequest
-	(*ProjectManagementTemplateDetailRequestData)(nil),          // 12: admin.ProjectManagementTemplateDetailRequestData
-	(*ProjectManagementTemplateDetailResponse)(nil),             // 13: admin.ProjectManagementTemplateDetailResponse
-	(*ProjectManagementTemplateWorkflowResponse)(nil),           // 14: admin.ProjectManagementTemplateWorkflowResponse
-	(*ProjectManagementTemplateWorkflowDetailResponse)(nil),     // 15: admin.ProjectManagementTemplateWorkflowDetailResponse
-	(*ProjectManagementTemplateWorkflowCreateRequest)(nil),      // 16: admin.ProjectManagementTemplateWorkflowCreateRequest
-	(*ProjectManagementTemplateWorkflowCreateRequestData)(nil),  // 17: admin.ProjectManagementTemplateWorkflowCreateRequestData
-	(*ProjectManagementTemplateWorkflowUpdateRequest)(nil),      // 18: admin.ProjectManagementTemplateWorkflowUpdateRequest
-	(*ProjectManagementTemplateWorkflowUpdateRequestData)(nil),  // 19: admin.ProjectManagementTemplateWorkflowUpdateRequestData
-	(*ProjectManagementTemplateWorkflowDetailRequest)(nil),      // 20: admin.ProjectManagementTemplateWorkflowDetailRequest
-	(*ProjectManagementTemplateWorkflowDetailRequestData)(nil),  // 21: admin.ProjectManagementTemplateWorkflowDetailRequestData
-	(*ProjectManagementTemplateWorkflowTransitionInput)(nil),    // 22: admin.ProjectManagementTemplateWorkflowTransitionInput
-	(*ProjectManagementTemplateWorkflowDeleteRequest)(nil),      // 23: admin.ProjectManagementTemplateWorkflowDeleteRequest
-	(*ProjectManagementTemplateWorkflowDeleteRequestData)(nil),  // 24: admin.ProjectManagementTemplateWorkflowDeleteRequestData
-	(*ProjectManagementTemplateWorkflowDefaultRequest)(nil),     // 25: admin.ProjectManagementTemplateWorkflowDefaultRequest
-	(*ProjectManagementTemplateWorkflowDefaultRequestData)(nil), // 26: admin.ProjectManagementTemplateWorkflowDefaultRequestData
+	(*ProjectManagementTemplatePageRequestFilter)(nil),          // 2: admin.ProjectManagementTemplatePageRequestFilter
+	(*ProjectManagementTemplatePageResponse)(nil),               // 3: admin.ProjectManagementTemplatePageResponse
+	(*ProjectManagementTemplateCreateRequest)(nil),              // 4: admin.ProjectManagementTemplateCreateRequest
+	(*ProjectManagementTemplateCreateRequestData)(nil),          // 5: admin.ProjectManagementTemplateCreateRequestData
+	(*ProjectManagementTemplateUpdateRequest)(nil),              // 6: admin.ProjectManagementTemplateUpdateRequest
+	(*ProjectManagementTemplateUpdateRequestData)(nil),          // 7: admin.ProjectManagementTemplateUpdateRequestData
+	(*ProjectManagementTemplateStatusRequest)(nil),              // 8: admin.ProjectManagementTemplateStatusRequest
+	(*ProjectManagementTemplateStatusRequestData)(nil),          // 9: admin.ProjectManagementTemplateStatusRequestData
+	(*ProjectManagementTemplateDetailRequest)(nil),              // 10: admin.ProjectManagementTemplateDetailRequest
+	(*ProjectManagementTemplateDetailRequestData)(nil),          // 11: admin.ProjectManagementTemplateDetailRequestData
+	(*ProjectManagementTemplateDetailResponse)(nil),             // 12: admin.ProjectManagementTemplateDetailResponse
+	(*ProjectManagementTemplateWorkflowResponse)(nil),           // 13: admin.ProjectManagementTemplateWorkflowResponse
+	(*ProjectManagementTemplateWorkflowDetailResponse)(nil),     // 14: admin.ProjectManagementTemplateWorkflowDetailResponse
+	(*ProjectManagementTemplateWorkflowCreateRequest)(nil),      // 15: admin.ProjectManagementTemplateWorkflowCreateRequest
+	(*ProjectManagementTemplateWorkflowCreateRequestData)(nil),  // 16: admin.ProjectManagementTemplateWorkflowCreateRequestData
+	(*ProjectManagementTemplateWorkflowUpdateRequest)(nil),      // 17: admin.ProjectManagementTemplateWorkflowUpdateRequest
+	(*ProjectManagementTemplateWorkflowUpdateRequestData)(nil),  // 18: admin.ProjectManagementTemplateWorkflowUpdateRequestData
+	(*ProjectManagementTemplateWorkflowDetailRequest)(nil),      // 19: admin.ProjectManagementTemplateWorkflowDetailRequest
+	(*ProjectManagementTemplateWorkflowDetailRequestData)(nil),  // 20: admin.ProjectManagementTemplateWorkflowDetailRequestData
+	(*ProjectManagementTemplateWorkflowTransitionInput)(nil),    // 21: admin.ProjectManagementTemplateWorkflowTransitionInput
+	(*ProjectManagementTemplateWorkflowDeleteRequest)(nil),      // 22: admin.ProjectManagementTemplateWorkflowDeleteRequest
+	(*ProjectManagementTemplateWorkflowDeleteRequestData)(nil),  // 23: admin.ProjectManagementTemplateWorkflowDeleteRequestData
+	(*ProjectManagementTemplateWorkflowDefaultRequest)(nil),     // 24: admin.ProjectManagementTemplateWorkflowDefaultRequest
+	(*ProjectManagementTemplateWorkflowDefaultRequestData)(nil), // 25: admin.ProjectManagementTemplateWorkflowDefaultRequestData
+	(*proto.CommonPageSorter)(nil),                              // 26: proto.CommonPageSorter
 	(*proto.ProjectManagementTemplateEntity)(nil),               // 27: proto.ProjectManagementTemplateEntity
 	(*ProjectManagementStageInput)(nil),                         // 28: admin.ProjectManagementStageInput
 	(*proto.ProjectManagementWorkflowEntity)(nil),               // 29: proto.ProjectManagementWorkflowEntity
@@ -1721,54 +1665,55 @@ var file_admin_project_management_template_proto_goTypes = []any{
 }
 var file_admin_project_management_template_proto_depIdxs = []int32{
 	1,  // 0: admin.ProjectManagementTemplatePageRequest.data:type_name -> admin.ProjectManagementTemplatePageRequestData
-	27, // 1: admin.ProjectManagementTemplatePageResponse.list:type_name -> proto.ProjectManagementTemplateEntity
-	4,  // 2: admin.ProjectManagementTemplateCreateRequest.data:type_name -> admin.ProjectManagementTemplateCreateRequestData
-	6,  // 3: admin.ProjectManagementTemplateUpdateRequest.data:type_name -> admin.ProjectManagementTemplateUpdateRequestData
-	28, // 4: admin.ProjectManagementTemplateUpdateRequestData.stages:type_name -> admin.ProjectManagementStageInput
-	8,  // 5: admin.ProjectManagementTemplateStatusRequest.data:type_name -> admin.ProjectManagementTemplateStatusRequestData
-	10, // 6: admin.ProjectManagementTemplateDefaultsRequest.data:type_name -> admin.ProjectManagementTemplateDefaultsRequestData
-	12, // 7: admin.ProjectManagementTemplateDetailRequest.data:type_name -> admin.ProjectManagementTemplateDetailRequestData
-	27, // 8: admin.ProjectManagementTemplateDetailResponse.data:type_name -> proto.ProjectManagementTemplateEntity
-	29, // 9: admin.ProjectManagementTemplateWorkflowResponse.list:type_name -> proto.ProjectManagementWorkflowEntity
-	29, // 10: admin.ProjectManagementTemplateWorkflowDetailResponse.data:type_name -> proto.ProjectManagementWorkflowEntity
-	17, // 11: admin.ProjectManagementTemplateWorkflowCreateRequest.data:type_name -> admin.ProjectManagementTemplateWorkflowCreateRequestData
-	22, // 12: admin.ProjectManagementTemplateWorkflowCreateRequestData.transitions:type_name -> admin.ProjectManagementTemplateWorkflowTransitionInput
-	19, // 13: admin.ProjectManagementTemplateWorkflowUpdateRequest.data:type_name -> admin.ProjectManagementTemplateWorkflowUpdateRequestData
-	22, // 14: admin.ProjectManagementTemplateWorkflowUpdateRequestData.transitions:type_name -> admin.ProjectManagementTemplateWorkflowTransitionInput
-	21, // 15: admin.ProjectManagementTemplateWorkflowDetailRequest.data:type_name -> admin.ProjectManagementTemplateWorkflowDetailRequestData
-	24, // 16: admin.ProjectManagementTemplateWorkflowDeleteRequest.data:type_name -> admin.ProjectManagementTemplateWorkflowDeleteRequestData
-	26, // 17: admin.ProjectManagementTemplateWorkflowDefaultRequest.data:type_name -> admin.ProjectManagementTemplateWorkflowDefaultRequestData
-	0,  // 18: admin.ProjectManagementTemplate.Page:input_type -> admin.ProjectManagementTemplatePageRequest
-	3,  // 19: admin.ProjectManagementTemplate.Create:input_type -> admin.ProjectManagementTemplateCreateRequest
-	5,  // 20: admin.ProjectManagementTemplate.Update:input_type -> admin.ProjectManagementTemplateUpdateRequest
-	30, // 21: admin.ProjectManagementTemplate.Delete:input_type -> proto.PathIdRequest
-	7,  // 22: admin.ProjectManagementTemplate.Status:input_type -> admin.ProjectManagementTemplateStatusRequest
-	9,  // 23: admin.ProjectManagementTemplate.Defaults:input_type -> admin.ProjectManagementTemplateDefaultsRequest
-	30, // 24: admin.ProjectManagementTemplate.Workflows:input_type -> proto.PathIdRequest
-	16, // 25: admin.ProjectManagementTemplate.WorkflowCreate:input_type -> admin.ProjectManagementTemplateWorkflowCreateRequest
-	20, // 26: admin.ProjectManagementTemplate.WorkflowDetail:input_type -> admin.ProjectManagementTemplateWorkflowDetailRequest
-	18, // 27: admin.ProjectManagementTemplate.WorkflowUpdate:input_type -> admin.ProjectManagementTemplateWorkflowUpdateRequest
-	23, // 28: admin.ProjectManagementTemplate.WorkflowDelete:input_type -> admin.ProjectManagementTemplateWorkflowDeleteRequest
-	25, // 29: admin.ProjectManagementTemplate.WorkflowDefault:input_type -> admin.ProjectManagementTemplateWorkflowDefaultRequest
-	11, // 30: admin.ProjectManagementTemplate.Detail:input_type -> admin.ProjectManagementTemplateDetailRequest
-	2,  // 31: admin.ProjectManagementTemplate.Page:output_type -> admin.ProjectManagementTemplatePageResponse
-	13, // 32: admin.ProjectManagementTemplate.Create:output_type -> admin.ProjectManagementTemplateDetailResponse
-	13, // 33: admin.ProjectManagementTemplate.Update:output_type -> admin.ProjectManagementTemplateDetailResponse
-	31, // 34: admin.ProjectManagementTemplate.Delete:output_type -> proto.EmptyResponse
-	13, // 35: admin.ProjectManagementTemplate.Status:output_type -> admin.ProjectManagementTemplateDetailResponse
-	13, // 36: admin.ProjectManagementTemplate.Defaults:output_type -> admin.ProjectManagementTemplateDetailResponse
-	14, // 37: admin.ProjectManagementTemplate.Workflows:output_type -> admin.ProjectManagementTemplateWorkflowResponse
-	15, // 38: admin.ProjectManagementTemplate.WorkflowCreate:output_type -> admin.ProjectManagementTemplateWorkflowDetailResponse
-	15, // 39: admin.ProjectManagementTemplate.WorkflowDetail:output_type -> admin.ProjectManagementTemplateWorkflowDetailResponse
-	15, // 40: admin.ProjectManagementTemplate.WorkflowUpdate:output_type -> admin.ProjectManagementTemplateWorkflowDetailResponse
-	31, // 41: admin.ProjectManagementTemplate.WorkflowDelete:output_type -> proto.EmptyResponse
-	31, // 42: admin.ProjectManagementTemplate.WorkflowDefault:output_type -> proto.EmptyResponse
-	13, // 43: admin.ProjectManagementTemplate.Detail:output_type -> admin.ProjectManagementTemplateDetailResponse
-	31, // [31:44] is the sub-list for method output_type
-	18, // [18:31] is the sub-list for method input_type
-	18, // [18:18] is the sub-list for extension type_name
-	18, // [18:18] is the sub-list for extension extendee
-	0,  // [0:18] is the sub-list for field type_name
+	2,  // 1: admin.ProjectManagementTemplatePageRequestData.filter:type_name -> admin.ProjectManagementTemplatePageRequestFilter
+	26, // 2: admin.ProjectManagementTemplatePageRequestData.sorter:type_name -> proto.CommonPageSorter
+	27, // 3: admin.ProjectManagementTemplatePageResponse.list:type_name -> proto.ProjectManagementTemplateEntity
+	5,  // 4: admin.ProjectManagementTemplateCreateRequest.data:type_name -> admin.ProjectManagementTemplateCreateRequestData
+	7,  // 5: admin.ProjectManagementTemplateUpdateRequest.data:type_name -> admin.ProjectManagementTemplateUpdateRequestData
+	28, // 6: admin.ProjectManagementTemplateUpdateRequestData.stages:type_name -> admin.ProjectManagementStageInput
+	9,  // 7: admin.ProjectManagementTemplateStatusRequest.data:type_name -> admin.ProjectManagementTemplateStatusRequestData
+	11, // 8: admin.ProjectManagementTemplateDetailRequest.data:type_name -> admin.ProjectManagementTemplateDetailRequestData
+	27, // 9: admin.ProjectManagementTemplateDetailResponse.data:type_name -> proto.ProjectManagementTemplateEntity
+	29, // 10: admin.ProjectManagementTemplateWorkflowResponse.list:type_name -> proto.ProjectManagementWorkflowEntity
+	29, // 11: admin.ProjectManagementTemplateWorkflowDetailResponse.data:type_name -> proto.ProjectManagementWorkflowEntity
+	16, // 12: admin.ProjectManagementTemplateWorkflowCreateRequest.data:type_name -> admin.ProjectManagementTemplateWorkflowCreateRequestData
+	21, // 13: admin.ProjectManagementTemplateWorkflowCreateRequestData.transitions:type_name -> admin.ProjectManagementTemplateWorkflowTransitionInput
+	18, // 14: admin.ProjectManagementTemplateWorkflowUpdateRequest.data:type_name -> admin.ProjectManagementTemplateWorkflowUpdateRequestData
+	21, // 15: admin.ProjectManagementTemplateWorkflowUpdateRequestData.transitions:type_name -> admin.ProjectManagementTemplateWorkflowTransitionInput
+	20, // 16: admin.ProjectManagementTemplateWorkflowDetailRequest.data:type_name -> admin.ProjectManagementTemplateWorkflowDetailRequestData
+	23, // 17: admin.ProjectManagementTemplateWorkflowDeleteRequest.data:type_name -> admin.ProjectManagementTemplateWorkflowDeleteRequestData
+	25, // 18: admin.ProjectManagementTemplateWorkflowDefaultRequest.data:type_name -> admin.ProjectManagementTemplateWorkflowDefaultRequestData
+	0,  // 19: admin.ProjectManagementTemplate.Page:input_type -> admin.ProjectManagementTemplatePageRequest
+	4,  // 20: admin.ProjectManagementTemplate.Create:input_type -> admin.ProjectManagementTemplateCreateRequest
+	6,  // 21: admin.ProjectManagementTemplate.Update:input_type -> admin.ProjectManagementTemplateUpdateRequest
+	30, // 22: admin.ProjectManagementTemplate.Delete:input_type -> proto.PathIdRequest
+	8,  // 23: admin.ProjectManagementTemplate.Status:input_type -> admin.ProjectManagementTemplateStatusRequest
+	30, // 24: admin.ProjectManagementTemplate.Defaults:input_type -> proto.PathIdRequest
+	30, // 25: admin.ProjectManagementTemplate.Workflows:input_type -> proto.PathIdRequest
+	15, // 26: admin.ProjectManagementTemplate.WorkflowCreate:input_type -> admin.ProjectManagementTemplateWorkflowCreateRequest
+	19, // 27: admin.ProjectManagementTemplate.WorkflowDetail:input_type -> admin.ProjectManagementTemplateWorkflowDetailRequest
+	17, // 28: admin.ProjectManagementTemplate.WorkflowUpdate:input_type -> admin.ProjectManagementTemplateWorkflowUpdateRequest
+	22, // 29: admin.ProjectManagementTemplate.WorkflowDelete:input_type -> admin.ProjectManagementTemplateWorkflowDeleteRequest
+	24, // 30: admin.ProjectManagementTemplate.WorkflowDefault:input_type -> admin.ProjectManagementTemplateWorkflowDefaultRequest
+	10, // 31: admin.ProjectManagementTemplate.Detail:input_type -> admin.ProjectManagementTemplateDetailRequest
+	3,  // 32: admin.ProjectManagementTemplate.Page:output_type -> admin.ProjectManagementTemplatePageResponse
+	12, // 33: admin.ProjectManagementTemplate.Create:output_type -> admin.ProjectManagementTemplateDetailResponse
+	12, // 34: admin.ProjectManagementTemplate.Update:output_type -> admin.ProjectManagementTemplateDetailResponse
+	31, // 35: admin.ProjectManagementTemplate.Delete:output_type -> proto.EmptyResponse
+	12, // 36: admin.ProjectManagementTemplate.Status:output_type -> admin.ProjectManagementTemplateDetailResponse
+	31, // 37: admin.ProjectManagementTemplate.Defaults:output_type -> proto.EmptyResponse
+	13, // 38: admin.ProjectManagementTemplate.Workflows:output_type -> admin.ProjectManagementTemplateWorkflowResponse
+	14, // 39: admin.ProjectManagementTemplate.WorkflowCreate:output_type -> admin.ProjectManagementTemplateWorkflowDetailResponse
+	14, // 40: admin.ProjectManagementTemplate.WorkflowDetail:output_type -> admin.ProjectManagementTemplateWorkflowDetailResponse
+	14, // 41: admin.ProjectManagementTemplate.WorkflowUpdate:output_type -> admin.ProjectManagementTemplateWorkflowDetailResponse
+	31, // 42: admin.ProjectManagementTemplate.WorkflowDelete:output_type -> proto.EmptyResponse
+	31, // 43: admin.ProjectManagementTemplate.WorkflowDefault:output_type -> proto.EmptyResponse
+	12, // 44: admin.ProjectManagementTemplate.Detail:output_type -> admin.ProjectManagementTemplateDetailResponse
+	32, // [32:45] is the sub-list for method output_type
+	19, // [19:32] is the sub-list for method input_type
+	19, // [19:19] is the sub-list for extension type_name
+	19, // [19:19] is the sub-list for extension extendee
+	0,  // [0:19] is the sub-list for field type_name
 }
 
 func init() { file_admin_project_management_template_proto_init() }
@@ -1777,15 +1722,15 @@ func file_admin_project_management_template_proto_init() {
 		return
 	}
 	file_admin_project_management_stage_proto_init()
-	file_admin_project_management_template_proto_msgTypes[4].OneofWrappers = []any{}
-	file_admin_project_management_template_proto_msgTypes[6].OneofWrappers = []any{}
+	file_admin_project_management_template_proto_msgTypes[5].OneofWrappers = []any{}
+	file_admin_project_management_template_proto_msgTypes[7].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_admin_project_management_template_proto_rawDesc), len(file_admin_project_management_template_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   27,
+			NumMessages:   26,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

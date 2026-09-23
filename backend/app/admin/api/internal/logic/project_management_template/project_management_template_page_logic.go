@@ -36,7 +36,7 @@ func (l *ProjectManagementTemplatePageLogic) ProjectManagementTemplatePage(req *
 	if err != nil {
 		return nil, err
 	}
-	list, err := copierx.Trans[[]*proto.ProjectManagementTemplateEntity, []*types.ProjectManagementTemplateEntity](&rpcResp.List)
+	list, err := copierx.Trans[[]*proto.ProjectManagementTemplateEntity, []types.ProjectManagementTemplateEntity](&rpcResp.List)
 	if err != nil {
 		return nil, err
 	}

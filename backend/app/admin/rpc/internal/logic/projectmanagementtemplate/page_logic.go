@@ -7,7 +7,11 @@ import (
 	"zeebee-backend/app/admin/rpc/pb/admin"
 
 	"zeebee-backend/app/admin/rpc/internal/logic"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/timex"
+	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/proto"
 )
 
@@ -28,17 +32,17 @@ func (l *PageLogic) Page(in *admin.ProjectManagementTemplatePageRequest) (resp *
 		err = errorx.New("request data is nil")
 		return
 	}
-	page, err := logic.GetBaseLogic(l.svcCtx).ProjectManagementTemplateLogic.Page(l.ctx, in.Data.Page, in.Data.Limit)
+	pageReq, err := copierx.Trans[admin.ProjectManagementTemplatePageRequestData, dto.ProjectManagementTemplatePageRequestDto](in.Data)
 	if err != nil {
 		return nil, err
 	}
-	list := make([]*proto.ProjectManagementTemplateEntity, 0, len(page.List))
-	for _, item := range page.List {
-		entity, convertErr := templateEntity(item)
-		if convertErr != nil {
-			return nil, convertErr
-		}
-		list = append(list, entity)
+	page, err := logic.GetBaseLogic(l.svcCtx).ProjectManagementTemplateLogic.Page(l.ctx, *pageReq)
+	if err != nil {
+		return nil, err
 	}
-	return &admin.ProjectManagementTemplatePageResponse{Total: page.Total, Page: page.Page, Limit: page.Limit, TotalPage: page.TotalPage, List: list}, nil
+	list, err := copierx.Trans[[]*model.ProjectManagementTemplate, []*proto.ProjectManagementTemplateEntity](&page.List, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToStr(timex.LayoutUsStyle))
+	if err != nil {
+		return nil, err
+	}
+	return &admin.ProjectManagementTemplatePageResponse{Total: page.Total, Page: page.Page, Limit: page.Limit, TotalPage: page.TotalPage, List: *list}, nil
 }

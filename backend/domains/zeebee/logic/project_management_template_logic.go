@@ -24,8 +24,8 @@ func NewProjectManagementTemplateLogic(baseLogic *BaseLogic) *ProjectManagementT
 	return &ProjectManagementTemplateLogic{BaseLogic: baseLogic}
 }
 
-func (l *ProjectManagementTemplateLogic) Page(ctx context.Context, page, limit int64) (gormx.PageResponse[*model.ProjectManagementTemplate], error) {
-	return l.repos.ProjectManagementTemplateRepo.PagePublic(ctx, page, limit)
+func (l *ProjectManagementTemplateLogic) Page(ctx context.Context, input dto.ProjectManagementTemplatePageRequestDto) (gormx.PageResponse[*model.ProjectManagementTemplate], error) {
+	return l.repos.ProjectManagementTemplateRepo.Page(ctx, input)
 }
 
 func (l *ProjectManagementTemplateLogic) Create(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementTemplateCreateDto) (*model.ProjectManagementTemplate, error) {
@@ -38,7 +38,7 @@ func (l *ProjectManagementTemplateLogic) Create(ctx context.Context, claim utils
 	if input.TemplateType != constants.ProjectManagementTemplateTypePublic {
 		return nil, errorx.New("only project templates can be created here")
 	}
-	input.Status = "Active"
+	input.Status = constants.CommonStatusActive
 	template, err := copierx.Trans[dto.ProjectManagementTemplateCreateDto, model.ProjectManagementTemplate](&input)
 	if err != nil {
 		return nil, err
@@ -152,18 +152,21 @@ func (l *ProjectManagementTemplateLogic) Update(ctx context.Context, claim utils
 		return nil, err
 	}
 	if input.Status != "" {
-		if err := validateProjectManagementTemplateStatus(input.Status); err != nil {
+		if err := input.Status.Validate(); err != nil {
 			return nil, err
 		}
 	}
 	var updated *model.ProjectManagementTemplate
 	err := l.repos.ProjectManagementTemplateRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		template, err := l.repos.ProjectManagementTemplateRepo.FindPublicByID(ctx, id)
+		template, err := l.manageableTemplate(ctx, claim, id)
 		if err != nil {
-			return projectManagementNotFound(err, "project template not found")
+			return err
 		}
 		if input.ProjectType != template.ProjectType {
 			return errorx.New("project type cannot be changed")
+		}
+		if template.IsDefault && input.Status == constants.CommonStatusDisabled {
+			return errorx.New("default project template cannot be disabled")
 		}
 		updated = new(model.ProjectManagementTemplate)
 		*updated = *template
@@ -192,20 +195,27 @@ func (l *ProjectManagementTemplateLogic) Update(ctx context.Context, claim utils
 }
 
 func (l *ProjectManagementTemplateLogic) Delete(ctx context.Context, claim utils.JwtUser, id int64) error {
-	if _, err := l.repos.ProjectManagementTemplateRepo.FindPublicByID(ctx, id); err != nil {
-		return projectManagementNotFound(err, "project template not found")
+	template, err := l.manageableTemplate(ctx, claim, id)
+	if err != nil {
+		return err
 	}
-	_, err := l.repos.ProjectManagementTemplateRepo.DeleteByID(ctx, id)
+	if template.IsDefault {
+		return errorx.New("can not delete default project template")
+	}
+	_, err = l.repos.ProjectManagementTemplateRepo.DeleteByID(ctx, id)
 	return err
 }
 
-func (l *ProjectManagementTemplateLogic) SetStatus(ctx context.Context, claim utils.JwtUser, id int64, status string) (*model.ProjectManagementTemplate, error) {
-	if err := validateProjectManagementTemplateStatus(status); err != nil {
+func (l *ProjectManagementTemplateLogic) SetStatus(ctx context.Context, claim utils.JwtUser, id int64, status constants.CommonStatus) (*model.ProjectManagementTemplate, error) {
+	if err := status.Validate(); err != nil {
 		return nil, err
 	}
-	template, err := l.repos.ProjectManagementTemplateRepo.FindPublicByID(ctx, id)
+	template, err := l.manageableTemplate(ctx, claim, id)
 	if err != nil {
-		return nil, projectManagementNotFound(err, "project template not found")
+		return nil, err
+	}
+	if template.IsDefault && status == constants.CommonStatusDisabled {
+		return nil, errorx.New("default project template cannot be disabled")
 	}
 	if err = l.repos.ProjectManagementTemplateRepo.UpdateColumns(ctx, map[string]any{"status": status}, map[string]any{"id": id}, nil); err != nil {
 		return nil, err
@@ -214,22 +224,21 @@ func (l *ProjectManagementTemplateLogic) SetStatus(ctx context.Context, claim ut
 	return template, nil
 }
 
-func (l *ProjectManagementTemplateLogic) SetDefaults(ctx context.Context, claim utils.JwtUser, id int64, input dto.ProjectManagementTemplateUpdateDto) (*model.ProjectManagementTemplate, error) {
-	template, err := l.repos.ProjectManagementTemplateRepo.FindPublicByID(ctx, id)
+func (l *ProjectManagementTemplateLogic) SetDefault(ctx context.Context, claim utils.JwtUser, id int64) error {
+	template, err := l.manageableTemplate(ctx, claim, id)
 	if err != nil {
-		return nil, projectManagementNotFound(err, "project template not found")
+		return err
 	}
-	if input.ProjectType != "" && input.ProjectType != template.ProjectType {
-		return nil, errorx.New("project type cannot be changed")
-	}
-	template.StartAt, template.PeriodValue, template.PeriodUnit = input.StartAt, input.PeriodValue, input.PeriodUnit
-	if err = prepareProjectManagementTemplateSchedule(template); err != nil {
-		return nil, err
-	}
-	if _, err = l.repos.ProjectManagementTemplateRepo.UpdateOneById(ctx, id, template); err != nil {
-		return nil, err
-	}
-	return template, nil
+	return l.repos.ProjectManagementTemplateRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		found, err := l.repos.ProjectManagementTemplateRepo.SetDefaultWithTx(ctx, tx, id, template.OrganizationId, template.TemplateType)
+		if err != nil {
+			return err
+		}
+		if !found {
+			return projectManagementNotFound(gorm.ErrRecordNotFound, "project template not found")
+		}
+		return nil
+	})
 }
 
 func (l *ProjectManagementTemplateLogic) Detail(ctx context.Context, claim utils.JwtUser, id int64) (*model.ProjectManagementTemplate, error) {
@@ -254,8 +263,8 @@ func (l *ProjectManagementTemplateLogic) SwapStageOrder(ctx context.Context, cla
 		return errorx.New("template stages must be different")
 	}
 	return l.repos.ProjectManagementTemplateRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		if _, err := l.repos.ProjectManagementTemplateRepo.FindPublicByID(ctx, templateId); err != nil {
-			return projectManagementNotFound(err, "project template not found")
+		if _, err := l.manageableTemplate(ctx, claim, templateId); err != nil {
+			return err
 		}
 		firstID, secondID := stageId, targetStageId
 		if secondID < firstID {
@@ -274,6 +283,27 @@ func (l *ProjectManagementTemplateLogic) SwapStageOrder(ctx context.Context, cla
 		}
 		return l.repos.ProjectManagementStageRepo.UpdateColumnsWithTx(ctx, tx, map[string]any{"sort_order": first.SortOrder}, map[string]any{"id": second.Id}, nil)
 	})
+}
+
+func (l *ProjectManagementTemplateLogic) manageableTemplate(ctx context.Context, claim utils.JwtUser, id int64) (*model.ProjectManagementTemplate, error) {
+	var (
+		template *model.ProjectManagementTemplate
+		err      error
+	)
+	if claim.UserType == constants.UserTypeAdmin {
+		template, err = l.repos.ProjectManagementTemplateRepo.FindPublicByID(ctx, id)
+	} else if claim.OrganizationId != 0 {
+		template, err = l.repos.ProjectManagementTemplateRepo.FindByOrganization(ctx, id, claim.OrganizationId)
+		if err == nil && template.TemplateType != constants.ProjectManagementTemplateTypeOrganization {
+			err = gorm.ErrRecordNotFound
+		}
+	} else {
+		err = gorm.ErrRecordNotFound
+	}
+	if err != nil {
+		return nil, projectManagementNotFound(err, "project template not found")
+	}
+	return template, nil
 }
 
 func (l *ProjectManagementTemplateLogic) syncTemplateStagesWithTx(ctx context.Context, tx *gorm.DB, templateId int64, input []dto.ProjectManagementTemplateStageDto) error {
@@ -410,7 +440,7 @@ func (l *ProjectManagementTemplateLogic) Workflows(ctx context.Context, claim ut
 }
 
 func (l *ProjectManagementTemplateLogic) Discover(ctx context.Context, claim utils.JwtUser) ([]*model.ProjectManagementTemplate, error) {
-	public, err := l.repos.ProjectManagementTemplateRepo.ListPublicTemplates(ctx, "Active")
+	public, err := l.repos.ProjectManagementTemplateRepo.ListPublicTemplates(ctx, constants.CommonStatusActive)
 	if err != nil {
 		return nil, err
 	}
@@ -421,18 +451,11 @@ func (l *ProjectManagementTemplateLogic) Discover(ctx context.Context, claim uti
 	result := make([]*model.ProjectManagementTemplate, 0, len(public)+len(organization))
 	result = append(result, public...)
 	for _, template := range organization {
-		if template.Status == "Active" {
+		if template.Status == constants.CommonStatusActive {
 			result = append(result, template)
 		}
 	}
 	return result, nil
-}
-
-func validateProjectManagementTemplateStatus(status string) error {
-	if status != "Active" && status != "Disabled" {
-		return errorx.New("template status must be Active or Disabled")
-	}
-	return nil
 }
 
 func prepareProjectManagementTemplateSchedule(template *model.ProjectManagementTemplate) error {

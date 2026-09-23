@@ -3,14 +3,10 @@ package projectmanagementtemplatelogic
 import (
 	"context"
 
-	"zeebee-backend/app/admin/rpc/internal/svc"
-	"zeebee-backend/app/admin/rpc/pb/admin"
-
 	"zeebee-backend/app/admin/rpc/internal/logic"
-	"zeebee-backend/common/copierx"
+	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/common/errorx"
-	"zeebee-backend/common/timex"
-	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type DefaultsLogic struct {
@@ -25,7 +21,7 @@ func NewDefaultsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Defaults
 	}
 }
 
-func (l *DefaultsLogic) Defaults(in *admin.ProjectManagementTemplateDefaultsRequest) (resp *admin.ProjectManagementTemplateDetailResponse, err error) {
+func (l *DefaultsLogic) Defaults(in *proto.PathIdRequest) (resp *proto.EmptyResponse, err error) {
 	if in.Data == nil {
 		err = errorx.New("request data is nil")
 		return
@@ -35,13 +31,8 @@ func (l *DefaultsLogic) Defaults(in *admin.ProjectManagementTemplateDefaultsRequ
 	if err != nil {
 		return nil, err
 	}
-	input, err := copierx.Trans[admin.ProjectManagementTemplateDefaultsRequestData, dto.ProjectManagementTemplateUpdateDto](in.Data, copierx.StrToSqlTimePtr(timex.LayoutUsStyle))
-	if err != nil {
+	if err = base.ProjectManagementTemplateLogic.SetDefault(l.ctx, claim, in.Data.Id); err != nil {
 		return nil, err
 	}
-	template, err := base.ProjectManagementTemplateLogic.SetDefaults(l.ctx, claim, in.Data.Id, *input)
-	if err != nil {
-		return nil, err
-	}
-	return templateResponse(template)
+	return &proto.EmptyResponse{}, nil
 }

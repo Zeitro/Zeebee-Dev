@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"errors"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -9,6 +10,7 @@ import (
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/common/gormx"
 	"zeebee-backend/domains/zeebee/constants"
+	"zeebee-backend/domains/zeebee/data/dto"
 	"zeebee-backend/domains/zeebee/model"
 )
 
@@ -46,7 +48,7 @@ func (r *ProjectManagementTemplateRepo) ListProjectTemplates(ctx context.Context
 	return templates, errorx.WithStack(err)
 }
 
-func (r *ProjectManagementTemplateRepo) ListPublicTemplates(ctx context.Context, status string) ([]*model.ProjectManagementTemplate, error) {
+func (r *ProjectManagementTemplateRepo) ListPublicTemplates(ctx context.Context, status constants.CommonStatus) ([]*model.ProjectManagementTemplate, error) {
 	templates := make([]*model.ProjectManagementTemplate, 0)
 	err := r.Client(ctx).Model(&model.ProjectManagementTemplate{}).
 		Where("template_type = ? AND organization_id = 0 AND status = ?", constants.ProjectManagementTemplateTypePublic, status).
@@ -54,11 +56,22 @@ func (r *ProjectManagementTemplateRepo) ListPublicTemplates(ctx context.Context,
 	return templates, errorx.WithStack(err)
 }
 
-func (r *ProjectManagementTemplateRepo) PagePublic(ctx context.Context, page, limit int64) (gormx.PageResponse[*model.ProjectManagementTemplate], error) {
-	query := r.Client(ctx).Model(&model.ProjectManagementTemplate{}).
-		Where("template_type = ? AND organization_id = 0", constants.ProjectManagementTemplateTypePublic).
-		Order("id DESC")
-	return r.BaseRepo.Page(query, gormx.PageRequest{Page: page, Limit: limit})
+func (r *ProjectManagementTemplateRepo) Page(ctx context.Context, input dto.ProjectManagementTemplatePageRequestDto) (gormx.PageResponse[*model.ProjectManagementTemplate], error) {
+	filter := input.Filter
+	query := r.Client(ctx).Model(&model.ProjectManagementTemplate{})
+	if filter.OrganizationId == 0 {
+		query = query.Where("template_type = ? AND organization_id = ?", constants.ProjectManagementTemplateTypePublic, 0)
+	} else {
+		query = query.Where("template_type = ? AND organization_id = ?", constants.ProjectManagementTemplateTypeOrganization, filter.OrganizationId)
+	}
+	if filter.Keyword != "" {
+		query = query.Where("name ILIKE ?", "%"+filter.Keyword+"%")
+	}
+	if filter.Status != "" {
+		query = query.Where("status = ?", filter.Status)
+	}
+	query = query.Preload("Stages", func(db *gorm.DB) *gorm.DB { return db.Order("sort_order ASC, id ASC") }).Order("id DESC")
+	return r.BaseRepo.Page(query, gormx.PageRequest{Page: input.Page, Limit: input.Limit})
 }
 
 func (r *ProjectManagementTemplateRepo) FindPublicByID(ctx context.Context, id int64) (*model.ProjectManagementTemplate, error) {
@@ -67,6 +80,30 @@ func (r *ProjectManagementTemplateRepo) FindPublicByID(ctx context.Context, id i
 		Where("id = ? AND template_type = ? AND organization_id = 0", id, constants.ProjectManagementTemplateTypePublic).
 		First(template).Error
 	return template, errorx.WithStack(err)
+}
+
+func (r *ProjectManagementTemplateRepo) SetDefaultWithTx(ctx context.Context, tx *gorm.DB, id, organizationID int64, templateType constants.ProjectManagementTemplateType) (bool, error) {
+	template := new(model.ProjectManagementTemplate)
+	if err := tx.WithContext(ctx).Where("id = ? AND template_type = ? AND organization_id = ?", id, templateType, organizationID).First(template).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+		return false, errorx.WithStack(err)
+	}
+	defaultTemplate := new(model.ProjectManagementTemplate)
+	err := tx.WithContext(ctx).Where("template_type = ? AND organization_id = ? AND is_default = ?", templateType, organizationID, true).First(defaultTemplate).Error
+	if err == nil && defaultTemplate.Id == id {
+		return true, nil
+	}
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return false, errorx.WithStack(err)
+	}
+	if err == nil {
+		if err = tx.WithContext(ctx).Model(&model.ProjectManagementTemplate{}).Where("id = ?", defaultTemplate.Id).Update("is_default", false).Error; err != nil {
+			return false, errorx.WithStack(err)
+		}
+	}
+	return true, errorx.WithStack(tx.WithContext(ctx).Model(&model.ProjectManagementTemplate{}).Where("id = ?", id).Update("is_default", true).Error)
 }
 
 func (r *ProjectManagementTemplateRepo) FindVisibleProjectTemplate(ctx context.Context, id, organizationId int64) (*model.ProjectManagementTemplate, error) {

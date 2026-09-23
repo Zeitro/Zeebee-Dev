@@ -13,15 +13,15 @@ import (
 )
 
 func (l *ProjectManagementTemplateLogic) CreateWorkflow(ctx context.Context, claim utils.JwtUser, templateID int64, input dto.ProjectManagementWorkflowDto) (*model.ProjectManagementWorkflow, error) {
+	if _, err := l.manageableTemplate(ctx, claim, templateID); err != nil {
+		return nil, err
+	}
 	stageIDs := templateWorkflowStageIDs(input.Transitions)
 	if err := l.validateTemplateWorkflow(ctx, templateID, stageIDs, input.Transitions); err != nil {
 		return nil, err
 	}
 	var workflow *model.ProjectManagementWorkflow
 	err := l.repos.ProjectManagementTemplateRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		if _, err := l.repos.ProjectManagementTemplateRepo.FindPublicByID(ctx, templateID); err != nil {
-			return projectManagementNotFound(err, "project template not found")
-		}
 		workflow = &model.ProjectManagementWorkflow{EntityType: constants.ProjectManagementOwnerTypeTemplate, EntityId: templateID, Name: input.Name, Description: input.Description}
 		if err := tx.WithContext(ctx).Create(workflow).Error; err != nil {
 			return errorx.WithStack(err)
@@ -35,6 +35,9 @@ func (l *ProjectManagementTemplateLogic) CreateWorkflow(ctx context.Context, cla
 }
 
 func (l *ProjectManagementTemplateLogic) UpdateWorkflow(ctx context.Context, claim utils.JwtUser, templateID, workflowID int64, input dto.ProjectManagementWorkflowDto) (*model.ProjectManagementWorkflow, error) {
+	if _, err := l.manageableTemplate(ctx, claim, templateID); err != nil {
+		return nil, err
+	}
 	stageIDs := templateWorkflowStageIDs(input.Transitions)
 	if err := l.validateTemplateWorkflow(ctx, templateID, stageIDs, input.Transitions); err != nil {
 		return nil, err
@@ -56,6 +59,9 @@ func (l *ProjectManagementTemplateLogic) UpdateWorkflow(ctx context.Context, cla
 }
 
 func (l *ProjectManagementTemplateLogic) DeleteWorkflow(ctx context.Context, claim utils.JwtUser, templateID, workflowID int64) error {
+	if _, err := l.manageableTemplate(ctx, claim, templateID); err != nil {
+		return err
+	}
 	return l.repos.ProjectManagementTemplateRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		workflow, err := l.repos.ProjectManagementTemplateRepo.FindWorkflow(ctx, templateID, workflowID)
 		if err != nil {
@@ -86,6 +92,9 @@ func (l *ProjectManagementTemplateLogic) WorkflowDetail(ctx context.Context, cla
 }
 
 func (l *ProjectManagementTemplateLogic) SetWorkflowDefault(ctx context.Context, claim utils.JwtUser, templateID, workflowID int64) error {
+	if _, err := l.manageableTemplate(ctx, claim, templateID); err != nil {
+		return err
+	}
 	return l.repos.ProjectManagementTemplateRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		if _, err := l.repos.ProjectManagementTemplateRepo.FindWorkflow(ctx, templateID, workflowID); err != nil {
 			return projectManagementNotFound(err, "template workflow not found")

@@ -44,7 +44,7 @@ type ProjectManagementTemplateClient interface {
 	Update(ctx context.Context, in *ProjectManagementTemplateUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateDetailResponse, error)
 	Delete(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 	Status(ctx context.Context, in *ProjectManagementTemplateStatusRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateDetailResponse, error)
-	Defaults(ctx context.Context, in *ProjectManagementTemplateDefaultsRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateDetailResponse, error)
+	Defaults(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 	Workflows(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateWorkflowResponse, error)
 	WorkflowCreate(ctx context.Context, in *ProjectManagementTemplateWorkflowCreateRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateWorkflowDetailResponse, error)
 	WorkflowDetail(ctx context.Context, in *ProjectManagementTemplateWorkflowDetailRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateWorkflowDetailResponse, error)
@@ -112,9 +112,9 @@ func (c *projectManagementTemplateClient) Status(ctx context.Context, in *Projec
 	return out, nil
 }
 
-func (c *projectManagementTemplateClient) Defaults(ctx context.Context, in *ProjectManagementTemplateDefaultsRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateDetailResponse, error) {
+func (c *projectManagementTemplateClient) Defaults(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ProjectManagementTemplateDetailResponse)
+	out := new(proto.EmptyResponse)
 	err := c.cc.Invoke(ctx, ProjectManagementTemplate_Defaults_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -201,7 +201,7 @@ type ProjectManagementTemplateServer interface {
 	Update(context.Context, *ProjectManagementTemplateUpdateRequest) (*ProjectManagementTemplateDetailResponse, error)
 	Delete(context.Context, *proto.PathIdRequest) (*proto.EmptyResponse, error)
 	Status(context.Context, *ProjectManagementTemplateStatusRequest) (*ProjectManagementTemplateDetailResponse, error)
-	Defaults(context.Context, *ProjectManagementTemplateDefaultsRequest) (*ProjectManagementTemplateDetailResponse, error)
+	Defaults(context.Context, *proto.PathIdRequest) (*proto.EmptyResponse, error)
 	Workflows(context.Context, *proto.PathIdRequest) (*ProjectManagementTemplateWorkflowResponse, error)
 	WorkflowCreate(context.Context, *ProjectManagementTemplateWorkflowCreateRequest) (*ProjectManagementTemplateWorkflowDetailResponse, error)
 	WorkflowDetail(context.Context, *ProjectManagementTemplateWorkflowDetailRequest) (*ProjectManagementTemplateWorkflowDetailResponse, error)
@@ -234,7 +234,7 @@ func (UnimplementedProjectManagementTemplateServer) Delete(context.Context, *pro
 func (UnimplementedProjectManagementTemplateServer) Status(context.Context, *ProjectManagementTemplateStatusRequest) (*ProjectManagementTemplateDetailResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Status not implemented")
 }
-func (UnimplementedProjectManagementTemplateServer) Defaults(context.Context, *ProjectManagementTemplateDefaultsRequest) (*ProjectManagementTemplateDetailResponse, error) {
+func (UnimplementedProjectManagementTemplateServer) Defaults(context.Context, *proto.PathIdRequest) (*proto.EmptyResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Defaults not implemented")
 }
 func (UnimplementedProjectManagementTemplateServer) Workflows(context.Context, *proto.PathIdRequest) (*ProjectManagementTemplateWorkflowResponse, error) {
@@ -371,7 +371,7 @@ func _ProjectManagementTemplate_Status_Handler(srv interface{}, ctx context.Cont
 }
 
 func _ProjectManagementTemplate_Defaults_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ProjectManagementTemplateDefaultsRequest)
+	in := new(proto.PathIdRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -383,7 +383,7 @@ func _ProjectManagementTemplate_Defaults_Handler(srv interface{}, ctx context.Co
 		FullMethod: ProjectManagementTemplate_Defaults_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectManagementTemplateServer).Defaults(ctx, req.(*ProjectManagementTemplateDefaultsRequest))
+		return srv.(ProjectManagementTemplateServer).Defaults(ctx, req.(*proto.PathIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

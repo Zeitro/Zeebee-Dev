@@ -512,7 +512,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					// set default template
 					Method:  http.MethodPut,
 					Path:    "/project_management/template/:id/default",
-					Handler: project_management_template.ProjectManagementTemplateDefaultsHandler(serverCtx),
+					Handler: project_management_template.ProjectManagementTemplateDefaultHandler(serverCtx),
 				},
 				{
 					// status

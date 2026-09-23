@@ -5,9 +5,14 @@ import (
 
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
+	"zeebee-backend/domains/zeebee/constants"
 
 	"zeebee-backend/app/admin/rpc/internal/logic"
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
+	"zeebee-backend/common/timex"
+	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type StatusLogic struct {
@@ -32,9 +37,13 @@ func (l *StatusLogic) Status(in *admin.ProjectManagementTemplateStatusRequest) (
 	if err != nil {
 		return nil, err
 	}
-	template, err := base.ProjectManagementTemplateLogic.SetStatus(l.ctx, claim, in.Data.Id, in.Data.Status)
+	template, err := base.ProjectManagementTemplateLogic.SetStatus(l.ctx, claim, in.Data.Id, constants.CommonStatus(in.Data.Status))
 	if err != nil {
 		return nil, err
 	}
-	return templateResponse(template)
+	data, err := copierx.Trans[model.ProjectManagementTemplate, proto.ProjectManagementTemplateEntity](template, copierx.TimeToRFC3339Str(), copierx.SqlTimePtrToStr(timex.LayoutUsStyle))
+	if err != nil {
+		return nil, err
+	}
+	return &admin.ProjectManagementTemplateDetailResponse{Data: data}, nil
 }

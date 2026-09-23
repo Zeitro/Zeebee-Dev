@@ -69,7 +69,7 @@ type (
         PeriodValue     int    `json:"period_value"`
         PeriodUnit      string `json:"period_unit"`
         SourceProjectId int64  `json:"source_project_id"`
-		Stages          []*ProjectManagementStageEntity `json:"stages"`
+		Stages          []ProjectManagementStageEntity `json:"stages"`
         CreatedAt       string `json:"created_at"`
         UpdatedAt       string `json:"updated_at"`
     }

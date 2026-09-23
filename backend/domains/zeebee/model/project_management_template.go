@@ -12,7 +12,7 @@ type ProjectManagementTemplate struct {
 	OrganizationId  int64                                   `gorm:"column:organization_id;not null;default:0" json:"organization_id"`
 	Name            string                                  `gorm:"column:name;type:varchar(100);not null;default:''" json:"name"`
 	Description     string                                  `gorm:"column:description;type:varchar(500);not null;default:''" json:"description"`
-	Status          string                                  `gorm:"column:status;type:varchar(32);not null;default:'Active'" json:"status"`
+	Status          constants.CommonStatus                  `gorm:"column:status;type:varchar(32);not null;default:'Active'" json:"status"`
 	IsDefault       bool                                    `gorm:"column:is_default;not null;default:false" json:"is_default"`
 	SortOrder       int                                     `gorm:"column:sort_order;not null;default:0" json:"sort_order"`
 	ProjectType     constants.ProjectManagementProjectType  `gorm:"column:project_type;type:varchar(32)" json:"project_type"`

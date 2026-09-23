@@ -14,8 +14,8 @@ import (
 	"zeebee-backend/common/validator"
 )
 
-// project defaults
-func ProjectManagementTemplateDefaultsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+// set default template
+func ProjectManagementTemplateDefaultHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -27,7 +27,7 @@ func ProjectManagementTemplateDefaultsHandler(svcCtx *svc.ServiceContext) http.H
 					Error(err)
 			}
 		}()
-		var req types.ProjectManagementTemplateDefaultsRequest
+		var req types.PathIdRequest
 		if err = httpx.Parse(r, &req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
@@ -44,8 +44,8 @@ func ProjectManagementTemplateDefaultsHandler(svcCtx *svc.ServiceContext) http.H
 			return
 		}
 
-		l := project_management_template.NewProjectManagementTemplateDefaultsLogic(r.Context(), svcCtx)
-		resp, err := l.ProjectManagementTemplateDefaults(&req)
+		l := project_management_template.NewProjectManagementTemplateDefaultLogic(r.Context(), svcCtx)
+		resp, err := l.ProjectManagementTemplateDefault(&req)
 		if err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 		} else {

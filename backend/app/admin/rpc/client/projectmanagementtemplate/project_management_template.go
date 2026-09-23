@@ -18,13 +18,12 @@ import (
 type (
 	ProjectManagementTemplateCreateRequest              = admin.ProjectManagementTemplateCreateRequest
 	ProjectManagementTemplateCreateRequestData          = admin.ProjectManagementTemplateCreateRequestData
-	ProjectManagementTemplateDefaultsRequest            = admin.ProjectManagementTemplateDefaultsRequest
-	ProjectManagementTemplateDefaultsRequestData        = admin.ProjectManagementTemplateDefaultsRequestData
 	ProjectManagementTemplateDetailRequest              = admin.ProjectManagementTemplateDetailRequest
 	ProjectManagementTemplateDetailRequestData          = admin.ProjectManagementTemplateDetailRequestData
 	ProjectManagementTemplateDetailResponse             = admin.ProjectManagementTemplateDetailResponse
 	ProjectManagementTemplatePageRequest                = admin.ProjectManagementTemplatePageRequest
 	ProjectManagementTemplatePageRequestData            = admin.ProjectManagementTemplatePageRequestData
+	ProjectManagementTemplatePageRequestFilter          = admin.ProjectManagementTemplatePageRequestFilter
 	ProjectManagementTemplatePageResponse               = admin.ProjectManagementTemplatePageResponse
 	ProjectManagementTemplateStatusRequest              = admin.ProjectManagementTemplateStatusRequest
 	ProjectManagementTemplateStatusRequestData          = admin.ProjectManagementTemplateStatusRequestData
@@ -50,7 +49,7 @@ type (
 		Update(ctx context.Context, in *ProjectManagementTemplateUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateDetailResponse, error)
 		Delete(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 		Status(ctx context.Context, in *ProjectManagementTemplateStatusRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateDetailResponse, error)
-		Defaults(ctx context.Context, in *ProjectManagementTemplateDefaultsRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateDetailResponse, error)
+		Defaults(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 		Workflows(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateWorkflowResponse, error)
 		WorkflowCreate(ctx context.Context, in *ProjectManagementTemplateWorkflowCreateRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateWorkflowDetailResponse, error)
 		WorkflowDetail(ctx context.Context, in *ProjectManagementTemplateWorkflowDetailRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateWorkflowDetailResponse, error)
@@ -96,7 +95,7 @@ func (m *defaultProjectManagementTemplate) Status(ctx context.Context, in *Proje
 	return client.Status(ctx, in, opts...)
 }
 
-func (m *defaultProjectManagementTemplate) Defaults(ctx context.Context, in *ProjectManagementTemplateDefaultsRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateDetailResponse, error) {
+func (m *defaultProjectManagementTemplate) Defaults(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
 	client := admin.NewProjectManagementTemplateClient(m.cli.Conn())
 	return client.Defaults(ctx, in, opts...)
 }

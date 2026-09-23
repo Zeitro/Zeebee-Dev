@@ -49,7 +49,7 @@ func (s *ProjectManagementTemplateServer) Status(ctx context.Context, in *admin.
 	return l.Status(in)
 }
 
-func (s *ProjectManagementTemplateServer) Defaults(ctx context.Context, in *admin.ProjectManagementTemplateDefaultsRequest) (*admin.ProjectManagementTemplateDetailResponse, error) {
+func (s *ProjectManagementTemplateServer) Defaults(ctx context.Context, in *proto.PathIdRequest) (*proto.EmptyResponse, error) {
 	l := projectmanagementtemplatelogic.NewDefaultsLogic(ctx, s.svcCtx)
 	return l.Defaults(in)
 }
