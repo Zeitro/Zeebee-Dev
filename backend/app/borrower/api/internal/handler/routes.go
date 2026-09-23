@@ -790,18 +790,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: project_management_project.TransferOwnerHandler(serverCtx),
 				},
 				{
-					// workflow detail
-					Method:  http.MethodGet,
-					Path:    "/project_management/project/:id/workflow",
-					Handler: project_management_project.WorkflowDetailHandler(serverCtx),
-				},
-				{
-					// workflow update
-					Method:  http.MethodPut,
-					Path:    "/project_management/project/:id/workflow",
-					Handler: project_management_project.WorkflowUpdateHandler(serverCtx),
-				},
-				{
 					// page
 					Method:  http.MethodPost,
 					Path:    "/project_management/project/page",
@@ -861,6 +849,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		rest.WithMiddlewares(
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
+				{
+					// read-only task view
+					Method:  http.MethodGet,
+					Path:    "/project_management/project/:id/task_view",
+					Handler: project_management_task.ViewHandler(serverCtx),
+				},
 				{
 					// create
 					Method:  http.MethodPost,
@@ -964,6 +958,48 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
+					// project workflow detail
+					Method:  http.MethodGet,
+					Path:    "/project_management/project/:project_id/workflows/:workflow_id",
+					Handler: project_management_workflow.ProjectManagementProjectWorkflowDetailHandler(serverCtx),
+				},
+				{
+					// delete project workflow
+					Method:  http.MethodDelete,
+					Path:    "/project_management/project/:project_id/workflows/:workflow_id",
+					Handler: project_management_workflow.ProjectManagementProjectWorkflowDeleteHandler(serverCtx),
+				},
+				{
+					// set project workflow default
+					Method:  http.MethodPut,
+					Path:    "/project_management/project/:project_id/workflows/:workflow_id/default",
+					Handler: project_management_workflow.ProjectManagementProjectWorkflowDefaultHandler(serverCtx),
+				},
+				{
+					// update project workflow stages
+					Method:  http.MethodPut,
+					Path:    "/project_management/project/:project_id/workflows/:workflow_id/stages",
+					Handler: project_management_workflow.ProjectManagementProjectWorkflowStageUpdateHandler(serverCtx),
+				},
+				{
+					// copy workflows into project
+					Method:  http.MethodPost,
+					Path:    "/project_management/project/:project_id/workflows/batch",
+					Handler: project_management_workflow.ProjectManagementProjectWorkflowBatchHandler(serverCtx),
+				},
+				{
+					// discover project templates
+					Method:  http.MethodGet,
+					Path:    "/project_management/project/templates",
+					Handler: project_management_workflow.ProjectManagementProjectWorkflowTemplateHandler(serverCtx),
+				},
+				{
+					// project workflow page
+					Method:  http.MethodPost,
+					Path:    "/project_management/project/workflows/page",
+					Handler: project_management_workflow.ProjectManagementProjectWorkflowPageHandler(serverCtx),
+				},
+				{
 					// create
 					Method:  http.MethodPost,
 					Path:    "/project_management/workflow",
@@ -992,12 +1028,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPut,
 					Path:    "/project_management/workflow/:id/default",
 					Handler: project_management_workflow.DefaultHandler(serverCtx),
-				},
-				{
-					// swap stage order
-					Method:  http.MethodPut,
-					Path:    "/project_management/workflow/:id/swap_stage_order",
-					Handler: project_management_workflow.StageSwapOrderHandler(serverCtx),
 				},
 				{
 					// all

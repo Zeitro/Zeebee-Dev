@@ -14,8 +14,8 @@ import (
 	"zeebee-backend/common/validator"
 )
 
-// swap stage order
-func StageSwapOrderHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+// project workflow page
+func ProjectManagementProjectWorkflowPageHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -27,7 +27,7 @@ func StageSwapOrderHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 					Error(err)
 			}
 		}()
-		var req types.ProjectManagementWorkflowStageSwapOrderRequest
+		var req types.ProjectManagementProjectWorkflowPageRequest
 		if err = httpx.Parse(r, &req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
@@ -44,8 +44,8 @@ func StageSwapOrderHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := project_management_workflow.NewStageSwapOrderLogic(r.Context(), svcCtx)
-		resp, err := l.StageSwapOrder(&req)
+		l := project_management_workflow.NewProjectManagementProjectWorkflowPageLogic(r.Context(), svcCtx)
+		resp, err := l.ProjectManagementProjectWorkflowPage(&req)
 		if err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 		} else {

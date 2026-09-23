@@ -8,7 +8,7 @@ info (
     wrapCodeMsg: true
 )
 
-import "../../../../domains/zeebee/api/project_management_entity.api"
+import "../../../../domains/zeebee/api/entity.api"
 
 import "base.api"
 
@@ -48,7 +48,12 @@ type ProjectManagementProjectCreateRequest {
     Description        string `json:"description,optional" validate:"max=500"`
     Priority           string `json:"priority" validate:"oneof=Low Medium High Critical"`
     CoverUrl           string `json:"cover_url,optional" validate:"omitempty,uri"`
-    WorkflowTemplateId int64  `json:"workflow_template_id" validate:"required,gt=0"`
+    ProjectType        string `json:"project_type" validate:"required,oneof=Ordinary Planned"`
+    StartAt            string `json:"start_at,optional" validate:"omitempty,datetime=01/02/2006"`
+    PeriodValue        int    `json:"period_value,optional" validate:"gte=0"`
+    PeriodUnit         string `json:"period_unit,optional,options=Day|Week|Month" validate:"omitempty,oneof=Day Week Month"`
+    TemplateId         int64  `json:"template_id,optional" validate:"gte=0"`
+    CopyAssignees      bool   `json:"copy_assignees,optional"`
 }
 
 // update request
@@ -58,18 +63,15 @@ type ProjectManagementProjectUpdateRequest {
     Description string `json:"description,optional" validate:"max=500"`
     Priority    string `json:"priority" validate:"oneof=Low Medium High Critical"`
     CoverUrl    string `json:"cover_url,optional" validate:"omitempty,uri"`
+    StartAt     string `json:"start_at,optional" validate:"omitempty,datetime=01/02/2006"`
+    PeriodValue int    `json:"period_value,optional" validate:"gte=0"`
+    PeriodUnit  string `json:"period_unit,optional,options=Day|Week|Month" validate:"omitempty,oneof=Day Week Month"`
 }
 
 // owner transfer request
 type ProjectManagementProjectOwnerTransferRequest {
     ProjectId          int64 `path:"id" validate:"required,gt=0"`
     OrganizationUserId int64 `json:"organization_user_id" validate:"required,gt=0"`
-}
-
-// workflow update request
-type ProjectManagementProjectWorkflowUpdateRequest {
-    Id     int64                                   `path:"id" validate:"required,gt=0"`
-    Stages []*ProjectManagementWorkflowUpdateStage `json:"stages" validate:"required,min=1,dive"`
 }
 
 @server (
@@ -105,11 +107,4 @@ service borrower-api {
     @handler TransferOwner
     post /project_management/project/:id/owner (ProjectManagementProjectOwnerTransferRequest) returns (EmptyResponse)
 
-    @doc "workflow detail"
-    @handler WorkflowDetail
-    get /project_management/project/:id/workflow (PathIdRequest) returns (ProjectManagementWorkflowDetailResponse)
-
-    @doc "workflow update"
-    @handler WorkflowUpdate
-    put /project_management/project/:id/workflow (ProjectManagementProjectWorkflowUpdateRequest) returns (ProjectManagementWorkflowDetailResponse)
 }

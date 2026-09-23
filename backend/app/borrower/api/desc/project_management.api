@@ -6,7 +6,7 @@ info (
     version: "v1"
 )
 
-import "../../../../domains/zeebee/api/project_management_entity.api"
+import "../../../../domains/zeebee/api/entity.api"
 
 type (
     ProjectManagementWorkflowUpdateStage {

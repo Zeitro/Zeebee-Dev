@@ -33,7 +33,6 @@ func (l *CreateLogic) Create(req *types.ProjectManagementTaskCreateRequest) (res
 	if err != nil {
 		return nil, err
 	}
-	data.ProjectId = req.ProjectId
 	rpcResp, err := l.svcCtx.ProjectManagementTaskRpcClient.Create(l.ctx, &borrower.ProjectManagementTaskCreateRequest{Data: data})
 	if err != nil {
 		return nil, errorx.WithStack(err)

@@ -8,18 +8,11 @@ info (
     wrapCodeMsg: true
 )
 
-import "../../../../domains/zeebee/api/project_management_entity.api"
+import "../../../../domains/zeebee/api/entity.api"
 
 import "base.api"
 
 import "project_management.api"
-
-// stage swap order request
-type ProjectManagementWorkflowStageSwapOrderRequest {
-    Id          int64 `path:"id" validate:"required,gt=0"`
-    FromStageId int64 `json:"from_stage_id" validate:"required,gt=0"`
-    ToStageId   int64 `json:"to_stage_id" validate:"required,gt=0"`
-}
 
 type (
     // all request
@@ -33,9 +26,28 @@ type ProjectManagementWorkflowDetailResponse {
     ProjectManagementWorkflowEntity
 }
 
+type ProjectManagementWorkflowStageInput {
+    Id          int64  `json:"id"`
+    Name        string `json:"name" validate:"required,max=100"`
+    Description string `json:"description,optional" validate:"max=100"`
+    Phase       string `json:"phase" validate:"required,oneof=Pending InProgress Finished"`
+    Color       string `json:"color,optional" validate:"max=32"`
+    SortOrder   int    `json:"sort_order"`
+}
+
+type ProjectManagementWorkflowTransitionInput {
+    Id                int64    `json:"id"`
+    Name              string   `json:"name" validate:"required,max=100"`
+    FromStageId       int64    `json:"from_stage_id" validate:"required,gt=0"`
+    ToStageId         int64    `json:"to_stage_id" validate:"required,gt=0"`
+    AllowedActorTypes []string `json:"allowed_actor_types,optional"`
+}
+
 type ProjectManagementWorkflowCreateRequest {
     Name        string `json:"name" validate:"required,max=100"`
     Description string `json:"description,optional" validate:"max=500"`
+    Stages      []*ProjectManagementWorkflowStageInput `json:"stages" validate:"required,min=1,dive"`
+    Transitions []*ProjectManagementWorkflowTransitionInput `json:"transitions,optional" validate:"omitempty,dive"`
 }
 
 type ProjectManagementWorkflowUpdateRequest {
@@ -44,6 +56,60 @@ type ProjectManagementWorkflowUpdateRequest {
     Description string                                  `json:"description,optional" validate:"max=500"`
     Stages      []*ProjectManagementWorkflowUpdateStage `json:"stages" validate:"required,min=1,dive"`
 }
+
+type ProjectManagementProjectWorkflowPageFilter {
+    ProjectId int64 `json:"project_id" validate:"required,gt=0"`
+}
+
+type ProjectManagementProjectWorkflowPageRequest {
+    Page   int64                                       `json:"page,default=1"`
+    Limit  int64                                       `json:"limit,default=20"`
+    Filter ProjectManagementProjectWorkflowPageFilter `json:"filter" validate:"required"`
+}
+
+type ProjectManagementProjectWorkflowBatchRequest {
+    ProjectId          int64   `path:"project_id" validate:"required,gt=0"`
+    SourceWorkflowIds  []int64 `json:"source_workflow_ids" validate:"required,min=1,dive,gt=0"`
+}
+
+type ProjectManagementProjectWorkflowDetailRequest {
+    ProjectId  int64 `path:"project_id" validate:"required,gt=0"`
+    WorkflowId int64 `path:"workflow_id" validate:"required,gt=0"`
+}
+
+type ProjectManagementProjectWorkflowDeleteRequest {
+    ProjectId  int64 `path:"project_id" validate:"required,gt=0"`
+    WorkflowId int64 `path:"workflow_id" validate:"required,gt=0"`
+}
+
+type ProjectManagementProjectWorkflowStageUpdateRequest {
+    ProjectId  int64                                   `path:"project_id" validate:"required,gt=0"`
+    WorkflowId int64                                   `path:"workflow_id" validate:"required,gt=0"`
+    Stages     []*ProjectManagementWorkflowUpdateStage `json:"stages" validate:"required,min=1,dive"`
+}
+
+type ProjectManagementProjectWorkflowDefaultRequest {
+    ProjectId  int64 `path:"project_id" validate:"required,gt=0"`
+    WorkflowId int64 `path:"workflow_id" validate:"required,gt=0"`
+}
+
+type ProjectManagementWorkflowPageResponse {
+    Total     int64                           `json:"total"`
+    Page      int64                           `json:"page"`
+    Limit     int64                           `json:"limit"`
+    TotalPage int64                           `json:"total_page"`
+    List      []*ProjectManagementWorkflowEntity `json:"list"`
+}
+
+type ProjectManagementWorkflowBatchResponse {
+    List []*ProjectManagementWorkflowEntity `json:"list"`
+}
+
+type ProjectManagementWorkflowTemplateResponse {
+    List []*ProjectManagementTemplateEntity `json:"list"`
+}
+
+type ProjectManagementWorkflowTemplateRequest {}
 
 @server (
     desc: "borrower project management workflow"
@@ -74,11 +140,35 @@ service borrower-api {
     @handler Update
     put /project_management/workflow/:id (ProjectManagementWorkflowUpdateRequest) returns (ProjectManagementWorkflowDetailResponse)
 
-    @doc "swap stage order"
-    @handler StageSwapOrder
-    put /project_management/workflow/:id/swap_stage_order (ProjectManagementWorkflowStageSwapOrderRequest) returns (EmptyResponse)
-
     @doc "delete"
     @handler Delete
     delete /project_management/workflow/:id (PathIdRequest) returns (EmptyResponse)
+
+    @doc "project workflow page"
+    @handler ProjectManagementProjectWorkflowPage
+    post /project_management/project/workflows/page (ProjectManagementProjectWorkflowPageRequest) returns (ProjectManagementWorkflowPageResponse)
+
+    @doc "copy workflows into project"
+    @handler ProjectManagementProjectWorkflowBatch
+    post /project_management/project/:project_id/workflows/batch (ProjectManagementProjectWorkflowBatchRequest) returns (ProjectManagementWorkflowBatchResponse)
+
+    @doc "project workflow detail"
+    @handler ProjectManagementProjectWorkflowDetail
+    get /project_management/project/:project_id/workflows/:workflow_id (ProjectManagementProjectWorkflowDetailRequest) returns (ProjectManagementWorkflowDetailResponse)
+
+    @doc "delete project workflow"
+    @handler ProjectManagementProjectWorkflowDelete
+    delete /project_management/project/:project_id/workflows/:workflow_id (ProjectManagementProjectWorkflowDeleteRequest) returns (EmptyResponse)
+
+    @doc "update project workflow stages"
+    @handler ProjectManagementProjectWorkflowStageUpdate
+    put /project_management/project/:project_id/workflows/:workflow_id/stages (ProjectManagementProjectWorkflowStageUpdateRequest) returns (ProjectManagementWorkflowDetailResponse)
+
+    @doc "set project workflow default"
+    @handler ProjectManagementProjectWorkflowDefault
+    put /project_management/project/:project_id/workflows/:workflow_id/default (ProjectManagementProjectWorkflowDefaultRequest) returns (EmptyResponse)
+
+    @doc "discover project templates"
+    @handler ProjectManagementProjectWorkflowTemplate
+    get /project_management/project/templates (ProjectManagementWorkflowTemplateRequest) returns (ProjectManagementWorkflowTemplateResponse)
 }

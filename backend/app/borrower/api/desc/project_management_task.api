@@ -8,7 +8,7 @@ info (
     wrapCodeMsg: true
 )
 
-import "../../../../domains/zeebee/api/project_management_entity.api"
+import "../../../../domains/zeebee/api/entity.api"
 
 import "base.api"
 
@@ -39,7 +39,10 @@ type (
     }
     ProjectManagementTaskPageEntity {
         Id             int64                                    `json:"id"`
-        ProjectId      int64                                    `json:"project_id"`
+		EntityType     string                                   `json:"entity_type"`
+		EntityId       int64                                    `json:"entity_id"`
+        WorkflowId     int64                                    `json:"workflow_id"`
+        WorkflowName   string                                   `json:"workflow_name"`
         ProjectName    string                                   `json:"project_name"`
         ParentTaskId   int64                                    `json:"parent_task_id"`
         StageId        int64                                    `json:"stage_id"`
@@ -63,7 +66,8 @@ type (
 
 // candidate request
 type ProjectManagementTaskCandidateRequest {
-    ProjectId int64  `form:"project_id" validate:"required,gt=0"`
+	EntityType string `form:"entity_type" validate:"required,oneof=Project"`
+	EntityId   int64  `form:"entity_id" validate:"required,gt=0"`
     TaskId    int64  `form:"task_id" validate:"required,gt=0"`
     Keyword   string `form:"keyword,optional"`
 }
@@ -85,6 +89,10 @@ type ProjectManagementTaskDetailResponse {
     ProjectManagementTaskEntity
 }
 
+type ProjectManagementTaskViewRequest {
+    Id int64 `path:"id" validate:"required,gt=0"`
+}
+
 // attachment detail response
 type ProjectManagementAttachmentDetailResponse {
     FileEntity
@@ -92,7 +100,8 @@ type ProjectManagementAttachmentDetailResponse {
 
 // create request
 type ProjectManagementTaskCreateRequest {
-    ProjectId                   int64   `json:"project_id" validate:"required,gt=0"`
+	EntityType                  string  `json:"entity_type" validate:"required,oneof=Project"`
+	EntityId                    int64   `json:"entity_id" validate:"required,gt=0"`
     ParentTaskId                int64   `json:"parent_task_id,optional" validate:"gte=0"`
     Title                       string  `json:"title" validate:"required,max=255"`
     Description                 string  `json:"description,optional"`
@@ -101,13 +110,13 @@ type ProjectManagementTaskCreateRequest {
     StartAt                     string  `json:"start_at,optional" validate:"omitempty,datetime=01/02/2006"`
     EndAt                       string  `json:"end_at,optional" validate:"omitempty,datetime=01/02/2006"`
     TaskTypeId                  int64   `json:"task_type_id" validate:"required,gt=0"`
+	WorkflowId                    int64   `json:"workflow_id,optional" validate:"gte=0"`
     AssigneeOrganizationUserIds []int64 `json:"assignee_organization_user_ids,optional"`
 }
 
 // detail request
 type ProjectManagementTaskDetailRequest {
-    Id        int64 `path:"id" validate:"required,gt=0"`
-    ProjectId int64 `form:"project_id" validate:"required,gt=0"`
+	Id int64 `path:"id" validate:"required,gt=0"`
 }
 
 // task dependency input
@@ -131,6 +140,7 @@ type ProjectManagementTaskAttachmentRequest {
 type ProjectManagementTaskUpdateRequest {
     Id                          int64                                     `path:"id" validate:"required,gt=0"`
     StageId                     int64                                     `json:"stage_id,optional" validate:"gte=0"`
+	WorkflowId                  int64                                     `json:"workflow_id,optional" validate:"gte=0"`
     Title                       string                                    `json:"title" validate:"required,max=255"`
     Description                 string                                    `json:"description,optional"`
     Priority                    string                                    `json:"priority,optional" validate:"omitempty,oneof=Low Medium High Critical"`
@@ -145,15 +155,13 @@ type ProjectManagementTaskUpdateRequest {
 
 // transition request
 type ProjectManagementTaskTransitionRequest {
-    Id            int64 `path:"id" validate:"required,gt=0"`
-    ProjectId     int64 `json:"project_id" validate:"required,gt=0"`
-    TargetStageId int64 `json:"target_stage_id" validate:"required,gt=0"`
+	Id            int64 `path:"id" validate:"required,gt=0"`
+	TargetStageId int64 `json:"target_stage_id" validate:"required,gt=0"`
 }
 
 // delete request
 type ProjectManagementTaskDeleteRequest {
-    Id        int64 `path:"id" validate:"required,gt=0"`
-    ProjectId int64 `form:"project_id" validate:"required,gt=0"`
+	Id int64 `path:"id" validate:"required,gt=0"`
 }
 
 // my task page request
@@ -177,7 +185,6 @@ type ProjectManagementMyTaskPageFilter {
 // attachment create request
 type ProjectManagementAttachmentCreateRequest {
     Id          int64  `path:"id" validate:"required,gt=0"`
-    ProjectId   int64  `json:"project_id" validate:"required,gt=0"`
     FileName    string `json:"file_name,optional" validate:"max=255"`
     FileUrl     string `json:"file_url" validate:"required,max=255"`
     StorageType string `json:"storage_type,optional" validate:"max=20"`
@@ -214,6 +221,10 @@ service borrower-api {
     @doc "detail"
     @handler Detail
     get /project_management/task/:id (ProjectManagementTaskDetailRequest) returns (ProjectManagementTaskDetailResponse)
+
+    @doc "read-only task view"
+    @handler View
+    get /project_management/project/:id/task_view (ProjectManagementTaskViewRequest) returns (ProjectManagementTaskViewEntity)
 
     @doc "update"
     @handler Update

@@ -1,11 +1,11 @@
-package project_management_project
+package project_management_workflow
 
 import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"zeebee-backend/app/borrower/api/internal/logic/project_management_project"
+	"zeebee-backend/app/borrower/api/internal/logic/project_management_workflow"
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
 
@@ -14,8 +14,8 @@ import (
 	"zeebee-backend/common/validator"
 )
 
-// workflow update
-func WorkflowUpdateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+// set project workflow default
+func ProjectManagementProjectWorkflowDefaultHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -27,7 +27,7 @@ func WorkflowUpdateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 					Error(err)
 			}
 		}()
-		var req types.ProjectManagementProjectWorkflowUpdateRequest
+		var req types.ProjectManagementProjectWorkflowDefaultRequest
 		if err = httpx.Parse(r, &req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
@@ -44,8 +44,8 @@ func WorkflowUpdateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := project_management_project.NewWorkflowUpdateLogic(r.Context(), svcCtx)
-		resp, err := l.WorkflowUpdate(&req)
+		l := project_management_workflow.NewProjectManagementProjectWorkflowDefaultLogic(r.Context(), svcCtx)
+		resp, err := l.ProjectManagementProjectWorkflowDefault(&req)
 		if err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 		} else {
