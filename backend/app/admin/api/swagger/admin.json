@@ -13031,6 +13031,2151 @@
         }
       }
     },
+    "/api/v1/project_management/stages/candidate": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management_stage"
+        ],
+        "summary": "stages candidate",
+        "operationId": "projectManagementStageProjectManagementStageCandidate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "template_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "workflow_id",
+            "in": "query",
+            "allowEmptyValue": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "list": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/template": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management_template"
+        ],
+        "summary": "create",
+        "operationId": "projectManagementTemplateProjectManagementTemplateCreate",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "project_type"
+              ],
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "end_at": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "period_unit": {
+                  "type": "string",
+                  "enum": [
+                    "Day",
+                    "Week",
+                    "Month"
+                  ]
+                },
+                "period_value": {
+                  "type": "integer"
+                },
+                "project_type": {
+                  "type": "string"
+                },
+                "sort_order": {
+                  "type": "integer"
+                },
+                "start_at": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "Active",
+                    "Disabled"
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "end_at": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "is_default": {
+                      "type": "boolean"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "organization_id": {
+                      "type": "integer"
+                    },
+                    "period_unit": {
+                      "type": "string"
+                    },
+                    "period_value": {
+                      "type": "integer"
+                    },
+                    "project_type": {
+                      "type": "string"
+                    },
+                    "sort_order": {
+                      "type": "integer"
+                    },
+                    "source_project_id": {
+                      "type": "integer"
+                    },
+                    "stages": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "entity_type",
+                          "entity_id",
+                          "name",
+                          "description",
+                          "phase",
+                          "color",
+                          "sort_order",
+                          "created_at",
+                          "updated_at"
+                        ],
+                        "properties": {
+                          "color": {
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "entity_id": {
+                            "type": "integer"
+                          },
+                          "entity_type": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "phase": {
+                            "type": "string",
+                            "enum": [
+                              "Pending",
+                              "InProgress",
+                              "Finished"
+                            ]
+                          },
+                          "sort_order": {
+                            "type": "integer"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "start_at": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "template_type": {
+                      "type": "string"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/template/page": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management_template"
+        ],
+        "summary": "page",
+        "operationId": "projectManagementTemplateProjectManagementTemplatePage",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "page",
+                "limit",
+                "filer",
+                "sorter"
+              ],
+              "properties": {
+                "filer": {
+                  "type": "object",
+                  "properties": {
+                    "keyword": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "limit": {
+                  "type": "integer",
+                  "default": 20,
+                  "example": 20
+                },
+                "page": {
+                  "type": "integer",
+                  "default": 1,
+                  "example": 1
+                },
+                "sorter": {
+                  "type": "object",
+                  "properties": {
+                    "column": {
+                      "type": "string"
+                    },
+                    "sort": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "list": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "template_type",
+                          "organization_id",
+                          "name",
+                          "description",
+                          "status",
+                          "is_default",
+                          "sort_order",
+                          "project_type",
+                          "start_at",
+                          "end_at",
+                          "period_value",
+                          "period_unit",
+                          "source_project_id",
+                          "stages",
+                          "created_at",
+                          "updated_at"
+                        ],
+                        "properties": {
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "end_at": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "is_default": {
+                            "type": "boolean"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "organization_id": {
+                            "type": "integer"
+                          },
+                          "period_unit": {
+                            "type": "string"
+                          },
+                          "period_value": {
+                            "type": "integer"
+                          },
+                          "project_type": {
+                            "type": "string"
+                          },
+                          "sort_order": {
+                            "type": "integer"
+                          },
+                          "source_project_id": {
+                            "type": "integer"
+                          },
+                          "stages": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "entity_type",
+                                "entity_id",
+                                "name",
+                                "description",
+                                "phase",
+                                "color",
+                                "sort_order",
+                                "created_at",
+                                "updated_at"
+                              ],
+                              "properties": {
+                                "color": {
+                                  "type": "string"
+                                },
+                                "created_at": {
+                                  "type": "string"
+                                },
+                                "description": {
+                                  "type": "string"
+                                },
+                                "entity_id": {
+                                  "type": "integer"
+                                },
+                                "entity_type": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "phase": {
+                                  "type": "string",
+                                  "enum": [
+                                    "Pending",
+                                    "InProgress",
+                                    "Finished"
+                                  ]
+                                },
+                                "sort_order": {
+                                  "type": "integer"
+                                },
+                                "updated_at": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "start_at": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "template_type": {
+                            "type": "string"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "page": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "total_page": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/template/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management_template"
+        ],
+        "summary": "detail",
+        "operationId": "projectManagementTemplateProjectManagementTemplateDetail",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "end_at": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "is_default": {
+                      "type": "boolean"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "organization_id": {
+                      "type": "integer"
+                    },
+                    "period_unit": {
+                      "type": "string"
+                    },
+                    "period_value": {
+                      "type": "integer"
+                    },
+                    "project_type": {
+                      "type": "string"
+                    },
+                    "sort_order": {
+                      "type": "integer"
+                    },
+                    "source_project_id": {
+                      "type": "integer"
+                    },
+                    "stages": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "entity_type",
+                          "entity_id",
+                          "name",
+                          "description",
+                          "phase",
+                          "color",
+                          "sort_order",
+                          "created_at",
+                          "updated_at"
+                        ],
+                        "properties": {
+                          "color": {
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "entity_id": {
+                            "type": "integer"
+                          },
+                          "entity_type": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "phase": {
+                            "type": "string",
+                            "enum": [
+                              "Pending",
+                              "InProgress",
+                              "Finished"
+                            ]
+                          },
+                          "sort_order": {
+                            "type": "integer"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "start_at": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "template_type": {
+                      "type": "string"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management_template"
+        ],
+        "summary": "update",
+        "operationId": "projectManagementTemplateProjectManagementTemplateUpdate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "project_type",
+                "stages"
+              ],
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "end_at": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "period_unit": {
+                  "type": "string",
+                  "enum": [
+                    "Day",
+                    "Week",
+                    "Month"
+                  ]
+                },
+                "period_value": {
+                  "type": "integer"
+                },
+                "project_type": {
+                  "type": "string"
+                },
+                "sort_order": {
+                  "type": "integer"
+                },
+                "stages": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "name",
+                      "phase"
+                    ],
+                    "properties": {
+                      "color": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "phase": {
+                        "type": "string"
+                      },
+                      "sort_order": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "start_at": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "Active",
+                    "Disabled"
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "end_at": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "is_default": {
+                      "type": "boolean"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "organization_id": {
+                      "type": "integer"
+                    },
+                    "period_unit": {
+                      "type": "string"
+                    },
+                    "period_value": {
+                      "type": "integer"
+                    },
+                    "project_type": {
+                      "type": "string"
+                    },
+                    "sort_order": {
+                      "type": "integer"
+                    },
+                    "source_project_id": {
+                      "type": "integer"
+                    },
+                    "stages": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "entity_type",
+                          "entity_id",
+                          "name",
+                          "description",
+                          "phase",
+                          "color",
+                          "sort_order",
+                          "created_at",
+                          "updated_at"
+                        ],
+                        "properties": {
+                          "color": {
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "entity_id": {
+                            "type": "integer"
+                          },
+                          "entity_type": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "phase": {
+                            "type": "string",
+                            "enum": [
+                              "Pending",
+                              "InProgress",
+                              "Finished"
+                            ]
+                          },
+                          "sort_order": {
+                            "type": "integer"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "start_at": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "template_type": {
+                      "type": "string"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management_template"
+        ],
+        "summary": "delete",
+        "operationId": "projectManagementTemplateProjectManagementTemplateDelete",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/template/{id}/default": {
+      "put": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management_template"
+        ],
+        "summary": "set default template",
+        "operationId": "projectManagementTemplateProjectManagementTemplateDefaults",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/template/{id}/status": {
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management_template"
+        ],
+        "summary": "status",
+        "operationId": "projectManagementTemplateProjectManagementTemplateStatus",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "status"
+              ],
+              "properties": {
+                "status": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "end_at": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "is_default": {
+                      "type": "boolean"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "organization_id": {
+                      "type": "integer"
+                    },
+                    "period_unit": {
+                      "type": "string"
+                    },
+                    "period_value": {
+                      "type": "integer"
+                    },
+                    "project_type": {
+                      "type": "string"
+                    },
+                    "sort_order": {
+                      "type": "integer"
+                    },
+                    "source_project_id": {
+                      "type": "integer"
+                    },
+                    "stages": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "entity_type",
+                          "entity_id",
+                          "name",
+                          "description",
+                          "phase",
+                          "color",
+                          "sort_order",
+                          "created_at",
+                          "updated_at"
+                        ],
+                        "properties": {
+                          "color": {
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "entity_id": {
+                            "type": "integer"
+                          },
+                          "entity_type": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "phase": {
+                            "type": "string",
+                            "enum": [
+                              "Pending",
+                              "InProgress",
+                              "Finished"
+                            ]
+                          },
+                          "sort_order": {
+                            "type": "integer"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "start_at": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "template_type": {
+                      "type": "string"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/template/{template_id}/stages/swap_order": {
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management_stage"
+        ],
+        "summary": "swap stage order",
+        "operationId": "projectManagementStageProjectManagementStageSwapOrder",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "template_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "stage_id",
+                "target_stage_id"
+              ],
+              "properties": {
+                "stage_id": {
+                  "type": "integer"
+                },
+                "target_stage_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/template/{template_id}/workflow": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management_workflow"
+        ],
+        "summary": "create",
+        "operationId": "projectManagementTemplateProjectManagementWorkflowCreate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "template_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "transitions"
+              ],
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "transitions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "name",
+                      "from_stage_id",
+                      "to_stage_id"
+                    ],
+                    "properties": {
+                      "allowed_actor_types": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "from_stage_id": {
+                        "type": "integer"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "to_stage_id": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "entity_id": {
+                      "type": "integer"
+                    },
+                    "entity_type": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "is_default": {
+                      "type": "boolean"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "source_template_id": {
+                      "type": "integer"
+                    },
+                    "source_template_name": {
+                      "type": "string"
+                    },
+                    "source_workflow_id": {
+                      "type": "integer"
+                    },
+                    "source_workflow_name": {
+                      "type": "string"
+                    },
+                    "stages": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "entity_type",
+                          "entity_id",
+                          "name",
+                          "description",
+                          "phase",
+                          "color",
+                          "sort_order",
+                          "created_at",
+                          "updated_at"
+                        ],
+                        "properties": {
+                          "color": {
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "entity_id": {
+                            "type": "integer"
+                          },
+                          "entity_type": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "phase": {
+                            "type": "string",
+                            "enum": [
+                              "Pending",
+                              "InProgress",
+                              "Finished"
+                            ]
+                          },
+                          "sort_order": {
+                            "type": "integer"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "transitions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "workflow_id",
+                          "name",
+                          "from_stage_id",
+                          "to_stage_id",
+                          "allowed_actor_types",
+                          "created_at",
+                          "updated_at"
+                        ],
+                        "properties": {
+                          "allowed_actor_types": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "from_stage_id": {
+                            "type": "integer"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "to_stage_id": {
+                            "type": "integer"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          },
+                          "workflow_id": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/template/{template_id}/workflow/{id}/default": {
+      "put": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management_workflow"
+        ],
+        "summary": "set default template workflow",
+        "operationId": "projectManagementTemplateProjectManagementWorkflowDefault",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "template_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/template/{template_id}/workflows": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management_workflow"
+        ],
+        "summary": "template's workflow",
+        "operationId": "projectManagementTemplateProjectManagementTemplateWorkflows",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "template_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "list": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name",
+                          "description",
+                          "is_default",
+                          "stages",
+                          "entity_type",
+                          "entity_id",
+                          "created_at",
+                          "updated_at"
+                        ],
+                        "properties": {
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "entity_id": {
+                            "type": "integer"
+                          },
+                          "entity_type": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "is_default": {
+                            "type": "boolean"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "stages": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "entity_type",
+                                "entity_id",
+                                "name",
+                                "description",
+                                "phase",
+                                "color",
+                                "sort_order",
+                                "created_at",
+                                "updated_at"
+                              ],
+                              "properties": {
+                                "color": {
+                                  "type": "string"
+                                },
+                                "created_at": {
+                                  "type": "string"
+                                },
+                                "description": {
+                                  "type": "string"
+                                },
+                                "entity_id": {
+                                  "type": "integer"
+                                },
+                                "entity_type": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "phase": {
+                                  "type": "string",
+                                  "enum": [
+                                    "Pending",
+                                    "InProgress",
+                                    "Finished"
+                                  ]
+                                },
+                                "sort_order": {
+                                  "type": "integer"
+                                },
+                                "updated_at": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/project_management/template/{template_id}/workflows/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management_workflow"
+        ],
+        "summary": "detail",
+        "operationId": "projectManagementTemplateProjectManagementWorkflowDetail",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "template_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "entity_id": {
+                      "type": "integer"
+                    },
+                    "entity_type": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "is_default": {
+                      "type": "boolean"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "source_template_id": {
+                      "type": "integer"
+                    },
+                    "source_template_name": {
+                      "type": "string"
+                    },
+                    "source_workflow_id": {
+                      "type": "integer"
+                    },
+                    "source_workflow_name": {
+                      "type": "string"
+                    },
+                    "stages": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "entity_type",
+                          "entity_id",
+                          "name",
+                          "description",
+                          "phase",
+                          "color",
+                          "sort_order",
+                          "created_at",
+                          "updated_at"
+                        ],
+                        "properties": {
+                          "color": {
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "entity_id": {
+                            "type": "integer"
+                          },
+                          "entity_type": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "phase": {
+                            "type": "string",
+                            "enum": [
+                              "Pending",
+                              "InProgress",
+                              "Finished"
+                            ]
+                          },
+                          "sort_order": {
+                            "type": "integer"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "transitions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "workflow_id",
+                          "name",
+                          "from_stage_id",
+                          "to_stage_id",
+                          "allowed_actor_types",
+                          "created_at",
+                          "updated_at"
+                        ],
+                        "properties": {
+                          "allowed_actor_types": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "from_stage_id": {
+                            "type": "integer"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "to_stage_id": {
+                            "type": "integer"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          },
+                          "workflow_id": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management_workflow"
+        ],
+        "summary": "update",
+        "operationId": "projectManagementTemplateProjectManagementWorkflowUpdate",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "template_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "transitions"
+              ],
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "transitions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "name",
+                      "from_stage_id",
+                      "to_stage_id"
+                    ],
+                    "properties": {
+                      "allowed_actor_types": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "from_stage_id": {
+                        "type": "integer"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "to_stage_id": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "entity_id": {
+                      "type": "integer"
+                    },
+                    "entity_type": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "is_default": {
+                      "type": "boolean"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "source_template_id": {
+                      "type": "integer"
+                    },
+                    "source_template_name": {
+                      "type": "string"
+                    },
+                    "source_workflow_id": {
+                      "type": "integer"
+                    },
+                    "source_workflow_name": {
+                      "type": "string"
+                    },
+                    "stages": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "entity_type",
+                          "entity_id",
+                          "name",
+                          "description",
+                          "phase",
+                          "color",
+                          "sort_order",
+                          "created_at",
+                          "updated_at"
+                        ],
+                        "properties": {
+                          "color": {
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "entity_id": {
+                            "type": "integer"
+                          },
+                          "entity_type": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "phase": {
+                            "type": "string",
+                            "enum": [
+                              "Pending",
+                              "InProgress",
+                              "Finished"
+                            ]
+                          },
+                          "sort_order": {
+                            "type": "integer"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "transitions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "workflow_id",
+                          "name",
+                          "from_stage_id",
+                          "to_stage_id",
+                          "allowed_actor_types",
+                          "created_at",
+                          "updated_at"
+                        ],
+                        "properties": {
+                          "allowed_actor_types": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "from_stage_id": {
+                            "type": "integer"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "to_stage_id": {
+                            "type": "integer"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          },
+                          "workflow_id": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "project_management_workflow"
+        ],
+        "summary": "delete",
+        "operationId": "projectManagementTemplateProjectManagementWorkflowDelete",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "template_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "400--Bad request\u003cbr\u003e401--Not Login\u003cbr\u003e403--No permission",
+                  "type": "integer",
+                  "example": 0
+                },
+                "data": {
+                  "type": "object"
+                },
+                "msg": {
+                  "description": "business message",
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/resource": {
       "post": {
         "consumes": [
@@ -16956,9 +19101,9 @@
       }
     }
   },
-  "x-date": "2026-07-17 10:09:52",
+  "x-date": "2026-09-23 14:48:31",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
-  "x-goctl-version": "1.10.1"
+  "x-goctl-version": "1.10.2"
 }

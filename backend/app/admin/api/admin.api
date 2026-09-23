@@ -22,6 +22,9 @@ import "desc/lender_discover.api"
 import "desc/pricing_plan.api"
 import "desc/pricing_plan_policy.api"
 import "desc/organization_subscription.api"
+import "desc/project_management_template.api"
+import "desc/project_management_stage.api"
+import "desc/project_management_workflow.api"
 
 // ============== common start =============
 @server (

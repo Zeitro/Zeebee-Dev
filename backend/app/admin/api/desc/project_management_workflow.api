@@ -1,0 +1,91 @@
+import "../../../../domains/zeebee/api/entity.api"
+import "common.api"
+
+
+
+type ProjectManagementWorkflowCreateRequest {
+    Id          int64   `path:"template_id" validate:"required,gt=0"`
+    Name        string  `json:"name" validate:"required,max=100"`
+    Description string  `json:"description,optional" validate:"max=500"`
+    Transitions []ProjectManagementWorkflowTransitionInput `json:"transitions" validate:"required,min=1,dive"`
+}
+
+
+
+type ProjectManagementWorkflowUpdateRequest {
+    Id          int64  `path:"template_id" validate:"required,gt=0"`
+    WorkflowId  int64  `path:"id" validate:"required,gt=0"`
+    Name        string `json:"name" validate:"required,max=100"`
+    Description string `json:"description,optional" validate:"max=500"`
+    Transitions []ProjectManagementWorkflowTransitionInput `json:"transitions" validate:"required,min=1,dive"`
+}
+
+type ProjectManagementWorkflowTransitionInput {
+    Id int64 `json:"id,optional"`
+    Name              string   `json:"name" validate:"required,max=100"`
+    FromStageId       int64    `json:"from_stage_id" validate:"required,gt=0"`
+    ToStageId         int64    `json:"to_stage_id" validate:"required,gt=0,nefield=FromStageId"`
+    AllowedActorTypes []string `json:"allowed_actor_types,optional"`
+}
+
+
+type ProjectManagementWorkflowDetailRequest {
+    Id         int64 `path:"template_id" validate:"required,gt=0"`
+    WorkflowId int64 `path:"id" validate:"required,gt=0"`
+}
+
+type ProjectManagementTemplateWorflowRequest {
+    Id int64 `path:"template_id" validate:"required,gt=0"`
+}
+
+type ProjectManagementTemplateWorflowResonse {
+    List []ProjectManagementTemplateWorflowEntity `json:"list"`
+}
+
+type ProjectManagementTemplateWorflowEntity {
+    Id                 int64                                   `json:"id"`
+    Name               string                                  `json:"name"`
+    Description        string                                  `json:"description"`
+    IsDefault          bool                                    `json:"is_default"`
+    Stages             []ProjectManagementStageEntity          `json:"stages"`
+    EntityType         string                                  `json:"entity_type"`
+    EntityId           int64                                   `json:"entity_id"`
+    CreatedAt          string                                  `json:"created_at"`
+    UpdatedAt          string                                  `json:"updated_at"`
+}
+
+
+
+@server (
+    desc: "admin project management template workflows"
+    version: v1
+    group: project_management_template
+    prefix: /api/v1
+    middleware: AuthMiddleware
+    tags: project_management_workflow
+)
+service admin-api {
+    @doc "template's workflow"
+    @handler ProjectManagementTemplateWorkflows
+    get /project_management/template/:template_id/workflows (ProjectManagementTemplateWorflowRequest) returns (ProjectManagementTemplateWorflowResonse)
+
+    @doc "create"
+    @handler ProjectManagementWorkflowCreate
+    post /project_management/template/:template_id/workflow (ProjectManagementWorkflowCreateRequest) returns (ProjectManagementWorkflowEntity)
+
+    @doc "detail"
+    @handler ProjectManagementWorkflowDetail
+    get /project_management/template/:template_id/workflows/:id (ProjectManagementWorkflowDetailRequest) returns (ProjectManagementWorkflowEntity)
+
+    @doc "update"
+    @handler ProjectManagementWorkflowUpdate
+    put /project_management/template/:template_id/workflows/:id (ProjectManagementWorkflowUpdateRequest) returns (ProjectManagementWorkflowEntity)
+
+    @doc "delete"
+    @handler ProjectManagementWorkflowDelete
+    delete /project_management/template/:template_id/workflows/:id (ProjectManagementWorkflowDetailRequest) returns (EmptyResponse)
+
+    @doc "set default template workflow"
+    @handler ProjectManagementWorkflowDefault
+    put /project_management/template/:template_id/workflow/:id/default (ProjectManagementWorkflowDetailRequest) returns (EmptyResponse)
+}

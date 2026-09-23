@@ -1,0 +1,40 @@
+import "../../../../domains/zeebee/api/entity.api"
+import "common.api"
+
+type ProjectManagementStageCandidateRequest {
+    Id int64 `form:"template_id" validate:"required,gt=0"`
+    WorkflowId int64 `form:"workflow_id,optional" validate:"gte=0"`
+}
+
+type ProjectManagementStageCandidateResponse {
+    List []ProjectManagementStageCandidateEntity `json:"list"`
+}
+
+type ProjectManagementStageCandidateEntity {
+    Id int64 `json:"id"`
+    Name string `json:"name"`
+}
+
+type ProjectManagementTemplateStageSwapOrderRequest {
+    Id                    int64 `path:"template_id" validate:"required,gt=0"`
+    StageId       int64 `json:"stage_id" validate:"required,gt=0"`
+    TargetStageId int64 `json:"target_stage_id" validate:"required,gt=0,nefield=StageId"`
+}
+
+@server (
+    desc: "admin project management template stages"
+    version: v1
+    group: project_management_stage
+    prefix: /api/v1
+    middleware: AuthMiddleware
+    tags: project_management_stage
+)
+service admin-api {
+    @doc "stages candidate"
+    @handler ProjectManagementStageCandidate
+    get /project_management/stages/candidate (ProjectManagementStageCandidateRequest) returns (ProjectManagementStageCandidateResponse)
+
+    @doc "swap stage order"
+    @handler ProjectManagementStageSwapOrder
+    put /project_management/template/:template_id/stages/swap_order (ProjectManagementTemplateStageSwapOrderRequest) returns (EmptyResponse)
+}

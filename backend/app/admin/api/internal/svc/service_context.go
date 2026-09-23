@@ -20,19 +20,21 @@ type ServiceContext struct {
 	AuthMiddleware rest.Middleware
 
 	// rpc client
-	UserRpcClient                     admin.UserClient
-	ApiRpcClient                      admin.ApiClient
-	ResourceRpcClient                 admin.ResourceClient
-	RoleRpcClient                     admin.RoleClient
-	OrganizationUserRpcClient         admin.OrganizationUserClient
-	OrganizationRpcClient             admin.OrganizationClient
-	StorageRpcClient                  admin.StorageClient
-	CommonRpcClient                   admin.CommonClient
-	BaseTemplateRpcClient             admin.BaseTemplateClient
-	LoanRpcClient                     admin.LoanClient
-	PricingPlanRpcClient              admin.PricingPlanClient
-	PricingPlanPolicyRpcClient        admin.PricingPlanPolicyClient
-	OrganizationSubscriptionRpcClient admin.OrganizationSubscriptionClient
+	UserRpcClient                      admin.UserClient
+	ApiRpcClient                       admin.ApiClient
+	ResourceRpcClient                  admin.ResourceClient
+	RoleRpcClient                      admin.RoleClient
+	OrganizationUserRpcClient          admin.OrganizationUserClient
+	OrganizationRpcClient              admin.OrganizationClient
+	StorageRpcClient                   admin.StorageClient
+	CommonRpcClient                    admin.CommonClient
+	BaseTemplateRpcClient              admin.BaseTemplateClient
+	LoanRpcClient                      admin.LoanClient
+	PricingPlanRpcClient               admin.PricingPlanClient
+	PricingPlanPolicyRpcClient         admin.PricingPlanPolicyClient
+	OrganizationSubscriptionRpcClient  admin.OrganizationSubscriptionClient
+	ProjectManagementTemplateRpcClient admin.ProjectManagementTemplateClient
+	ProjectManagementStageRpcClient    admin.ProjectManagementStageClient
 }
 
 func NewServiceContext(c config.ApiConf, logger logx.Logger) *ServiceContext {
@@ -44,18 +46,20 @@ func NewServiceContext(c config.ApiConf, logger logx.Logger) *ServiceContext {
 		Logger:         logger,
 
 		// rpc client
-		UserRpcClient:                     admin.NewUserClient(rpcClient.Conn()),
-		ApiRpcClient:                      admin.NewApiClient(rpcClient.Conn()),
-		ResourceRpcClient:                 admin.NewResourceClient(rpcClient.Conn()),
-		RoleRpcClient:                     admin.NewRoleClient(rpcClient.Conn()),
-		OrganizationUserRpcClient:         admin.NewOrganizationUserClient(rpcClient.Conn()),
-		OrganizationRpcClient:             admin.NewOrganizationClient(rpcClient.Conn()),
-		StorageRpcClient:                  admin.NewStorageClient(rpcClient.Conn()),
-		CommonRpcClient:                   admin.NewCommonClient(rpcClient.Conn()),
-		BaseTemplateRpcClient:             admin.NewBaseTemplateClient(rpcClient.Conn()),
-		LoanRpcClient:                     admin.NewLoanClient(rpcClient.Conn()),
-		PricingPlanRpcClient:              admin.NewPricingPlanClient(rpcClient.Conn()),
-		PricingPlanPolicyRpcClient:        admin.NewPricingPlanPolicyClient(rpcClient.Conn()),
-		OrganizationSubscriptionRpcClient: admin.NewOrganizationSubscriptionClient(rpcClient.Conn()),
+		UserRpcClient:                      admin.NewUserClient(rpcClient.Conn()),
+		ApiRpcClient:                       admin.NewApiClient(rpcClient.Conn()),
+		ResourceRpcClient:                  admin.NewResourceClient(rpcClient.Conn()),
+		RoleRpcClient:                      admin.NewRoleClient(rpcClient.Conn()),
+		OrganizationUserRpcClient:          admin.NewOrganizationUserClient(rpcClient.Conn()),
+		OrganizationRpcClient:              admin.NewOrganizationClient(rpcClient.Conn()),
+		StorageRpcClient:                   admin.NewStorageClient(rpcClient.Conn()),
+		CommonRpcClient:                    admin.NewCommonClient(rpcClient.Conn()),
+		BaseTemplateRpcClient:              admin.NewBaseTemplateClient(rpcClient.Conn()),
+		LoanRpcClient:                      admin.NewLoanClient(rpcClient.Conn()),
+		PricingPlanRpcClient:               admin.NewPricingPlanClient(rpcClient.Conn()),
+		PricingPlanPolicyRpcClient:         admin.NewPricingPlanPolicyClient(rpcClient.Conn()),
+		OrganizationSubscriptionRpcClient:  admin.NewOrganizationSubscriptionClient(rpcClient.Conn()),
+		ProjectManagementTemplateRpcClient: admin.NewProjectManagementTemplateClient(rpcClient.Conn()),
+		ProjectManagementStageRpcClient:    admin.NewProjectManagementStageClient(rpcClient.Conn()),
 	}
 }
