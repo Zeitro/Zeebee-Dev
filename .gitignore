@@ -14,3 +14,5 @@ env
 expdt
 .pnpm-store
 pm-frontend
+.codegraph
+.serena
