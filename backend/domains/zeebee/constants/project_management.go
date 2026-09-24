@@ -25,12 +25,14 @@ const ProjectManagementOwnerTypeName = "project_management_owner_type"
 const (
 	ProjectManagementOwnerTypeProject  ProjectManagementOwnerType = "Project"
 	ProjectManagementOwnerTypeTemplate ProjectManagementOwnerType = "Template"
+	ProjectManagementOwnerTypeOrganization ProjectManagementOwnerType = "Organization"
 )
 
 func (c ProjectManagementOwnerType) Validate() error {
 	return validateConstant(c, []ProjectManagementOwnerType{
 		ProjectManagementOwnerTypeProject,
 		ProjectManagementOwnerTypeTemplate,
+		ProjectManagementOwnerTypeOrganization,
 	}, ProjectManagementOwnerTypeName)
 }
 
@@ -220,6 +222,7 @@ func init() {
 	enums.Register(ProjectManagementOwnerTypeName, []enums.EnumOpt{
 		{Label: string(ProjectManagementOwnerTypeProject), Value: string(ProjectManagementOwnerTypeProject)},
 		{Label: string(ProjectManagementOwnerTypeTemplate), Value: string(ProjectManagementOwnerTypeTemplate)},
+		{Label: string(ProjectManagementOwnerTypeOrganization), Value: string(ProjectManagementOwnerTypeOrganization)},
 	})
 	enums.Register(ProjectManagementTemplateTypeName, []enums.EnumOpt{
 		{Label: string(ProjectManagementTemplateTypePublic), Value: string(ProjectManagementTemplateTypePublic)},

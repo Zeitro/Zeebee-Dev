@@ -15,7 +15,7 @@ type ProjectManagementWorkflow struct {
 	SourceWorkflowName string                                      `gorm:"column:source_workflow_name;type:varchar(100);not null;default:''" json:"source_workflow_name"`
 	// relationship
 	Stages             []*ProjectManagementStage                   `gorm:"many2many:project_management_workflow_stages;joinForeignKey:WorkflowId;joinReferences:StageId" json:"stages"`
-	Transitions        []*ProjectManagementWorkflowStageTransition `gorm:"foreignKey:WorkflowId;references:Id" json:"transitions"`
+	Transitions        []*ProjectManagementWorkflowTransition `gorm:"foreignKey:WorkflowId;references:Id" json:"transitions"`
 }
 
 func (ProjectManagementWorkflow) TableName() string { return "project_management_workflows" }

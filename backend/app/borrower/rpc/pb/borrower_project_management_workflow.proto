@@ -7,6 +7,13 @@ option go_package = "zeebee-backend/app/borrower/rpc/pb/borrower";
 import "proto/common.proto";
 import "proto/entity.proto";
 
+message ProjectManagementWorkflowAllRequest {
+  ProjectManagementWorkflowAllRequestData data = 1;
+}
+message ProjectManagementWorkflowAllRequestData {
+  string entity_type = 1;
+  int64 entity_id = 2;
+}
 message ProjectManagementWorkflowAllResponse {
   repeated proto.ProjectManagementWorkflowEntity data = 1;
 }
@@ -47,6 +54,8 @@ message ProjectManagementWorkflowCreateRequestData {
   bool is_default = 4;
   repeated ProjectManagementWorkflowStageInput stages = 5;
   repeated ProjectManagementWorkflowTransitionInput transitions = 6;
+  string entity_type = 7;
+  int64 entity_id = 8;
 }
 
 message ProjectManagementWorkflowUpdateRequest {
@@ -103,6 +112,22 @@ message ProjectManagementProjectWorkflowBatchRequestData {
   int64 project_id = 1;
   repeated int64 source_workflow_ids = 2;
 }
+message ProjectManagementProjectWorkflowCreateRequest {
+  ProjectManagementProjectWorkflowCreateRequestData data = 1;
+}
+message ProjectManagementProjectWorkflowCreateRequestData {
+  int64 project_id = 1;
+  string name = 2;
+  string description = 3;
+}
+message ProjectManagementProjectWorkflowUpdateRequest {
+  ProjectManagementProjectWorkflowUpdateRequestData data = 1;
+}
+message ProjectManagementProjectWorkflowUpdateRequestData {
+  int64 project_id = 1;
+  int64 workflow_id = 2;
+  repeated ProjectManagementWorkflowTransitionInput transitions = 3;
+}
 message ProjectManagementProjectWorkflowDetailRequest {
   ProjectManagementProjectWorkflowDetailRequestData data = 1;
 }
@@ -143,7 +168,7 @@ message ProjectManagementWorkflowTemplateResponse {
 }
 
 service ProjectManagementWorkflow {
-  rpc All(proto.EmptyRequest) returns(ProjectManagementWorkflowAllResponse);
+  rpc All(ProjectManagementWorkflowAllRequest) returns(ProjectManagementWorkflowAllResponse);
   rpc Detail(ProjectManagementWorkflowDetailRequest) returns(ProjectManagementWorkflowDetailResponse);
   rpc Create(ProjectManagementWorkflowCreateRequest) returns(ProjectManagementWorkflowDetailResponse);
   rpc Update(ProjectManagementWorkflowUpdateRequest) returns(ProjectManagementWorkflowDetailResponse);
@@ -151,8 +176,10 @@ service ProjectManagementWorkflow {
   rpc Delete(proto.PathIdRequest) returns(proto.EmptyResponse);
   rpc ProjectWorkflowPage(ProjectManagementProjectWorkflowPageRequest) returns(ProjectManagementWorkflowPageResponse);
   rpc ProjectWorkflowBatch(ProjectManagementProjectWorkflowBatchRequest) returns(ProjectManagementWorkflowBatchResponse);
+  rpc ProjectWorkflowCreate(ProjectManagementProjectWorkflowCreateRequest) returns(ProjectManagementWorkflowDetailResponse);
   rpc ProjectWorkflowDetail(ProjectManagementProjectWorkflowDetailRequest) returns(ProjectManagementWorkflowDetailResponse);
   rpc ProjectWorkflowDelete(ProjectManagementProjectWorkflowDeleteRequest) returns(proto.EmptyResponse);
+  rpc ProjectWorkflowUpdate(ProjectManagementProjectWorkflowUpdateRequest) returns(ProjectManagementWorkflowDetailResponse);
   rpc ProjectWorkflowStageUpdate(ProjectManagementProjectWorkflowStageUpdateRequest) returns(ProjectManagementWorkflowDetailResponse);
   rpc ProjectWorkflowDefault(ProjectManagementProjectWorkflowDefaultRequest) returns(proto.EmptyResponse);
   rpc ProjectWorkflowTemplates(proto.EmptyRequest) returns(ProjectManagementWorkflowTemplateResponse);

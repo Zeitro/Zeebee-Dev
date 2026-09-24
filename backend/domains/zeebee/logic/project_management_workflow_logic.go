@@ -29,7 +29,29 @@ func NewProjectManagementWorkflowLogic(baseLogic *BaseLogic) *ProjectManagementW
 	return &ProjectManagementWorkflowLogic{BaseLogic: baseLogic}
 }
 
-func (l *ProjectManagementWorkflowLogic) List(ctx context.Context, organizationId int64) ([]*model.ProjectManagementWorkflow, error) {
+func (l *ProjectManagementWorkflowLogic) List(ctx context.Context, claim utils.JwtUser, entityType string, entityId int64) ([]*model.ProjectManagementWorkflow, error) {
+	ownerType := constants.ProjectManagementOwnerType(entityType)
+	if err := ownerType.Validate(); err != nil {
+		return nil, err
+	}
+	if ownerType != constants.ProjectManagementOwnerTypeOrganization && entityId == 0 {
+		return nil, errorx.New("entity id is required")
+	}
+	switch ownerType {
+	case constants.ProjectManagementOwnerTypeProject:
+		return l.repos.ProjectManagementWorkflowRepo.ListProjectWorkflows(ctx, entityId, claim.OrganizationId)
+	case constants.ProjectManagementOwnerTypeTemplate:
+		if _, err := l.repos.ProjectManagementTemplateRepo.FindVisibleProjectTemplate(ctx, entityId, claim.OrganizationId); err != nil {
+			return nil, projectManagementNotFound(err, "project template not found")
+		}
+		return l.repos.ProjectManagementWorkflowRepo.ListTemplateWorkflows(ctx, entityId)
+	case constants.ProjectManagementOwnerTypeOrganization:
+		return l.listWorkflowSources(ctx, claim.OrganizationId)
+	}
+	return nil, errorx.New("workflow entity type is invalid")
+}
+
+func (l *ProjectManagementWorkflowLogic) listWorkflowSources(ctx context.Context, organizationId int64) ([]*model.ProjectManagementWorkflow, error) {
 	workflows, err := l.repos.ProjectManagementWorkflowRepo.ListWorkflowSources(ctx, organizationId)
 	if err != nil || hasDefaultWorkflow(workflows) {
 		return workflows, err
@@ -214,15 +236,42 @@ func (l *ProjectManagementWorkflowLogic) Detail(ctx context.Context, organizatio
 }
 
 func (l *ProjectManagementWorkflowLogic) Create(ctx context.Context, claim utils.JwtUser, input dto.ProjectManagementWorkflowDto) (workflow *model.ProjectManagementWorkflow, err error) {
+	ownerType := input.EntityType
+	if err = ownerType.Validate(); err != nil {
+		return nil, err
+	}
+	if ownerType == constants.ProjectManagementOwnerTypeProject {
+		if input.EntityId == 0 {
+			return nil, errorx.New("entity id is required")
+		}
+		return l.ProjectWorkflowCreate(ctx, claim, input.EntityId, dto.ProjectManagementProjectWorkflowCreateDto{Name: input.Name, Description: input.Description})
+	}
+	if ownerType != constants.ProjectManagementOwnerTypeOrganization {
+		return nil, errorx.New("workflow entity type is invalid")
+	}
+	definition := defaultWorkflowDefinition()
+	input.Stages, input.Transitions = definition.Stages, definition.Transitions
 	if err = ValidateProjectManagementWorkflow(input); err != nil {
 		return nil, err
 	}
 	err = l.repos.ProjectManagementWorkflowRepo.Transaction(ctx, func(tx *gorm.DB) error {
-		template := &model.ProjectManagementTemplate{TemplateType: constants.ProjectManagementTemplateTypeOrganization, OrganizationId: claim.OrganizationId, Name: input.Name, Description: input.Description, Status: "Active"}
+		workflows, err := l.repos.ProjectManagementWorkflowRepo.LockWorkflowSourcesWithTx(ctx, tx, claim.OrganizationId)
+		if err != nil {
+			return err
+		}
+		isDefault := len(workflows) == 0
+		template := &model.ProjectManagementTemplate{
+			TemplateType:   constants.ProjectManagementTemplateTypeOrganization,
+			OrganizationId: claim.OrganizationId,
+			Name:           input.Name,
+			Description:    input.Description,
+			Status:         constants.CommonStatusActive,
+			IsDefault:      isDefault,
+		}
 		if err := tx.WithContext(ctx).Create(template).Error; err != nil {
 			return errorx.WithStack(err)
 		}
-		workflow = &model.ProjectManagementWorkflow{EntityType: constants.ProjectManagementOwnerTypeTemplate, EntityId: template.Id, Name: input.Name, Description: input.Description}
+		workflow = &model.ProjectManagementWorkflow{EntityType: constants.ProjectManagementOwnerTypeTemplate, EntityId: template.Id, Name: input.Name, Description: input.Description, IsDefault: isDefault}
 		if err = tx.WithContext(ctx).Omit("Kind", "OrganizationId", "ProjectId", "SourceTemplateId", "SourceTemplateName").Create(workflow).Error; err != nil {
 			return errorx.WithStack(err)
 		}
@@ -275,7 +324,7 @@ func (l *ProjectManagementWorkflowLogic) Update(ctx context.Context, claim utils
 }
 
 func (l *ProjectManagementWorkflowLogic) replaceWorkflowSourceDefinition(ctx context.Context, tx *gorm.DB, workflow *model.ProjectManagementWorkflow, definition dto.ProjectManagementWorkflowDto) error {
-	if err := tx.WithContext(ctx).Where("workflow_id = ?", workflow.Id).Delete(&model.ProjectManagementWorkflowStageTransition{}).Error; err != nil {
+	if err := tx.WithContext(ctx).Where("workflow_id = ?", workflow.Id).Delete(&model.ProjectManagementWorkflowTransition{}).Error; err != nil {
 		return errorx.WithStack(err)
 	}
 	if err := tx.WithContext(ctx).Where("workflow_id = ?", workflow.Id).Delete(&model.ProjectManagementWorkflowStage{}).Error; err != nil {
@@ -297,7 +346,7 @@ func (l *ProjectManagementWorkflowLogic) replaceWorkflowSourceDefinition(ctx con
 		stageIDs[input.Id] = stage.Id
 	}
 	for _, input := range definition.Transitions {
-		transition := &model.ProjectManagementWorkflowStageTransition{WorkflowId: workflow.Id, Name: input.Name, FromStageId: stageIDs[input.FromStageId], ToStageId: stageIDs[input.ToStageId], AllowedActorTypes: input.AllowedActorTypes}
+		transition := &model.ProjectManagementWorkflowTransition{WorkflowId: workflow.Id, Name: input.Name, FromStageId: stageIDs[input.FromStageId], ToStageId: stageIDs[input.ToStageId], AllowedActorTypes: input.AllowedActorTypes}
 		if transition.FromStageId == 0 || transition.ToStageId == 0 {
 			return errorx.New("workflow transition endpoint is invalid")
 		}
@@ -324,7 +373,7 @@ func (l *ProjectManagementWorkflowLogic) SetDefault(ctx context.Context, claim u
 			if err = tx.WithContext(ctx).Model(&model.ProjectManagementWorkflow{}).Where("id IN ?", workflowIDs(workflows)).Update("is_default", false).Error; err != nil {
 				return errorx.WithStack(err)
 			}
-			if err = tx.WithContext(ctx).Model(&model.ProjectManagementTemplate{}).Where("organization_id = ? AND template_type = ? AND (project_type IS NULL OR project_type = '')", claim.OrganizationId, constants.ProjectManagementTemplateTypeOrganization).Update("is_default", false).Error; err != nil {
+			if err = tx.WithContext(ctx).Model(&model.ProjectManagementTemplate{}).Where("organization_id = ? AND template_type = ?", claim.OrganizationId, constants.ProjectManagementTemplateTypeOrganization).Update("is_default", false).Error; err != nil {
 				return errorx.WithStack(err)
 			}
 			if err = tx.WithContext(ctx).Model(&model.ProjectManagementWorkflow{}).Where("id = ?", id).Update("is_default", true).Error; err != nil {

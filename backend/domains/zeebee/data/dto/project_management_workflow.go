@@ -43,6 +43,15 @@ type ProjectManagementWorkflowUpdateDto struct {
 	Stages      []ProjectManagementWorkflowUpdateStageDto
 }
 
+type ProjectManagementProjectWorkflowCreateDto struct {
+	Name        string
+	Description string
+}
+
+type ProjectManagementProjectWorkflowUpdateDto struct {
+	Transitions []ProjectManagementWorkflowTransitionDto
+}
+
 type ProjectManagementWorkflowDto struct {
 	Id                 int64
 	Name               string

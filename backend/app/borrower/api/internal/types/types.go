@@ -69,6 +69,11 @@ type ApplyFormPdfRequest struct {
 	Signatures             *Signatures                        `json:"signatures,optional"`
 }
 
+type BasePageSort struct {
+	Column string `json:"column,optional"`
+	Sort   string `json:"sort,optional"`
+}
+
 type BorrowerApplicantAllResponse struct {
 	Lists []*BorrowerApplicantPageEntity `json:"lists"`
 }
@@ -1839,6 +1844,7 @@ type ProjectManagementProjectCreateRequest struct {
 	CoverUrl      string `json:"cover_url,optional" validate:"omitempty,uri"`
 	ProjectType   string `json:"project_type" validate:"required,oneof=Ordinary Planned"`
 	StartAt       string `json:"start_at,optional" validate:"omitempty,datetime=01/02/2006"`
+	EndAt         string `json:"end_at,optional" validate:"omitempty,datetime=01/02/2006"`
 	PeriodValue   int    `json:"period_value,optional" validate:"gte=0"`
 	PeriodUnit    string `json:"period_unit,optional,options=Day|Week|Month" validate:"omitempty,oneof=Day Week Month"`
 	TemplateId    int64  `json:"template_id,optional" validate:"gte=0"`
@@ -1902,6 +1908,7 @@ type ProjectManagementProjectUpdateRequest struct {
 	Priority    string `json:"priority" validate:"oneof=Low Medium High Critical"`
 	CoverUrl    string `json:"cover_url,optional" validate:"omitempty,uri"`
 	StartAt     string `json:"start_at,optional" validate:"omitempty,datetime=01/02/2006"`
+	EndAt       string `json:"end_at,optional" validate:"omitempty,datetime=01/02/2006"`
 	PeriodValue int    `json:"period_value,optional" validate:"gte=0"`
 	PeriodUnit  string `json:"period_unit,optional,options=Day|Week|Month" validate:"omitempty,oneof=Day Week Month"`
 }
@@ -1909,6 +1916,12 @@ type ProjectManagementProjectUpdateRequest struct {
 type ProjectManagementProjectWorkflowBatchRequest struct {
 	ProjectId         int64   `path:"project_id" validate:"required,gt=0"`
 	SourceWorkflowIds []int64 `json:"source_workflow_ids" validate:"required,min=1,dive,gt=0"`
+}
+
+type ProjectManagementProjectWorkflowCreateRequest struct {
+	ProjectId   int64  `path:"project_id" validate:"required,gt=0"`
+	Name        string `json:"name" validate:"required,max=100"`
+	Description string `json:"description,optional" validate:"max=500"`
 }
 
 type ProjectManagementProjectWorkflowDefaultRequest struct {
@@ -1940,6 +1953,12 @@ type ProjectManagementProjectWorkflowStageUpdateRequest struct {
 	ProjectId  int64                                   `path:"project_id" validate:"required,gt=0"`
 	WorkflowId int64                                   `path:"workflow_id" validate:"required,gt=0"`
 	Stages     []*ProjectManagementWorkflowUpdateStage `json:"stages" validate:"required,min=1,dive"`
+}
+
+type ProjectManagementProjectWorkflowUpdateRequest struct {
+	ProjectId   int64                                       `path:"project_id" validate:"required,gt=0"`
+	WorkflowId  int64                                       `path:"workflow_id" validate:"required,gt=0"`
+	Transitions []*ProjectManagementWorkflowTransitionInput `json:"transitions" validate:"required,min=1,dive"`
 }
 
 type ProjectManagementStageEntity struct {
@@ -2193,26 +2212,49 @@ type ProjectManagementTaskViewRequest struct {
 }
 
 type ProjectManagementTemplateEntity struct {
-	Id              int64                           `json:"id"`
-	TemplateType    string                          `json:"template_type"`
-	OrganizationId  int64                           `json:"organization_id"`
-	Name            string                          `json:"name"`
-	Description     string                          `json:"description"`
-	Status          string                          `json:"status"`
-	IsDefault       bool                            `json:"is_default"`
-	SortOrder       int                             `json:"sort_order"`
-	ProjectType     string                          `json:"project_type"`
-	StartAt         string                          `json:"start_at"`
-	EndAt           string                          `json:"end_at"`
-	PeriodValue     int                             `json:"period_value"`
-	PeriodUnit      string                          `json:"period_unit"`
-	SourceProjectId int64                           `json:"source_project_id"`
-	Stages          []*ProjectManagementStageEntity `json:"stages"`
-	CreatedAt       string                          `json:"created_at"`
-	UpdatedAt       string                          `json:"updated_at"`
+	Id              int64                          `json:"id"`
+	TemplateType    string                         `json:"template_type"`
+	OrganizationId  int64                          `json:"organization_id"`
+	Name            string                         `json:"name"`
+	Description     string                         `json:"description"`
+	Status          string                         `json:"status"`
+	IsDefault       bool                           `json:"is_default"`
+	SortOrder       int                            `json:"sort_order"`
+	SourceProjectId int64                          `json:"source_project_id"`
+	Stages          []ProjectManagementStageEntity `json:"stages"`
+	CreatedAt       string                         `json:"created_at"`
+	UpdatedAt       string                         `json:"updated_at"`
+}
+
+type ProjectManagementTemplatePageFilter struct {
+	Keyword      string `json:"keyword,optional"`
+	TemplateType string `json:"template_type" validate:"required,oneof=Public Organization"`
+}
+
+type ProjectManagementTemplatePageRequest struct {
+	Page   int64                               `json:"page,default=1"`
+	Limit  int64                               `json:"limit,default=20" validate:"gte=1,lte=100"`
+	Filter ProjectManagementTemplatePageFilter `json:"filter,optional"`
+	Sorter BasePageSort                        `json:"sorter,optional"`
+}
+
+type ProjectManagementTemplatePageResponse struct {
+	Total     int64                             `json:"total"`
+	Page      int64                             `json:"page"`
+	Limit     int64                             `json:"limit"`
+	TotalPage int64                             `json:"total_page"`
+	List      []ProjectManagementTemplateEntity `json:"list"`
+}
+
+type ProjectManagementTemplateStageSwapOrderRequest struct {
+	TemplateId    int64 `path:"template_id" validate:"required,gt=0"`
+	StageId       int64 `json:"stage_id" validate:"required,gt=0"`
+	TargetStageId int64 `json:"target_stage_id" validate:"required,gt=0,nefield=StageId"`
 }
 
 type ProjectManagementWorkflowAllRequest struct {
+	EntityType string `form:"entity_type" validate:"required,oneof=Organization Project Template"`
+	EntityId   int64  `form:"entity_id,optional" validate:"gte=0"`
 }
 
 type ProjectManagementWorkflowAllResponse struct {
@@ -2224,10 +2266,10 @@ type ProjectManagementWorkflowBatchResponse struct {
 }
 
 type ProjectManagementWorkflowCreateRequest struct {
-	Name        string                                      `json:"name" validate:"required,max=100"`
-	Description string                                      `json:"description,optional" validate:"max=500"`
-	Stages      []*ProjectManagementWorkflowStageInput      `json:"stages" validate:"required,min=1,dive"`
-	Transitions []*ProjectManagementWorkflowTransitionInput `json:"transitions,optional" validate:"omitempty,dive"`
+	Name        string `json:"name" validate:"required,max=100"`
+	Description string `json:"description,optional" validate:"max=500"`
+	EntityType  string `json:"entity_type" validate:"required,oneof=Organization Project"`
+	EntityId    int64  `json:"entity_id,optional" validate:"gte=0"`
 }
 
 type ProjectManagementWorkflowDetailResponse struct {
@@ -2235,20 +2277,20 @@ type ProjectManagementWorkflowDetailResponse struct {
 }
 
 type ProjectManagementWorkflowEntity struct {
-	Id                 int64                                             `json:"id"`
-	Name               string                                            `json:"name"`
-	Description        string                                            `json:"description"`
-	IsDefault          bool                                              `json:"is_default"`
-	Stages             []*ProjectManagementStageEntity                   `json:"stages"`
-	Transitions        []*ProjectManagementWorkflowStageTransitionEntity `json:"transitions"`
-	SourceTemplateId   int64                                             `json:"source_template_id"`
-	SourceTemplateName string                                            `json:"source_template_name"`
-	EntityType         string                                            `json:"entity_type"`
-	EntityId           int64                                             `json:"entity_id"`
-	SourceWorkflowId   int64                                             `json:"source_workflow_id"`
-	SourceWorkflowName string                                            `json:"source_workflow_name"`
-	CreatedAt          string                                            `json:"created_at"`
-	UpdatedAt          string                                            `json:"updated_at"`
+	Id                 int64                                            `json:"id"`
+	Name               string                                           `json:"name"`
+	Description        string                                           `json:"description"`
+	IsDefault          bool                                             `json:"is_default"`
+	Stages             []ProjectManagementStageEntity                   `json:"stages,omitempty"`
+	Transitions        []ProjectManagementWorkflowStageTransitionEntity `json:"transitions,omitempty"`
+	SourceTemplateId   int64                                            `json:"source_template_id"`
+	SourceTemplateName string                                           `json:"source_template_name"`
+	EntityType         string                                           `json:"entity_type"`
+	EntityId           int64                                            `json:"entity_id"`
+	SourceWorkflowId   int64                                            `json:"source_workflow_id"`
+	SourceWorkflowName string                                           `json:"source_workflow_name"`
+	CreatedAt          string                                           `json:"created_at"`
+	UpdatedAt          string                                           `json:"updated_at"`
 }
 
 type ProjectManagementWorkflowPageResponse struct {
@@ -2269,14 +2311,16 @@ type ProjectManagementWorkflowStageInput struct {
 }
 
 type ProjectManagementWorkflowStageTransitionEntity struct {
-	Id                int64    `json:"id"`
-	WorkflowId        int64    `json:"workflow_id"`
-	Name              string   `json:"name"`
-	FromStageId       int64    `json:"from_stage_id"`
-	ToStageId         int64    `json:"to_stage_id"`
-	AllowedActorTypes []string `json:"allowed_actor_types"`
-	CreatedAt         string   `json:"created_at"`
-	UpdatedAt         string   `json:"updated_at"`
+	Id                int64                        `json:"id"`
+	WorkflowId        int64                        `json:"workflow_id"`
+	Name              string                       `json:"name"`
+	FromStageId       int64                        `json:"from_stage_id"`
+	FromStage         ProjectManagementStageEntity `json:"from_stage"`
+	ToStageId         int64                        `json:"to_stage_id"`
+	ToStage           ProjectManagementStageEntity `json:"to_stage"`
+	AllowedActorTypes []string                     `json:"allowed_actor_types"`
+	CreatedAt         string                       `json:"created_at"`
+	UpdatedAt         string                       `json:"updated_at"`
 }
 
 type ProjectManagementWorkflowTemplateRequest struct {

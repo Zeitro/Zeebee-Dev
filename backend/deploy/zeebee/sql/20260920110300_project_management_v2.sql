@@ -25,7 +25,7 @@ CREATE TABLE pm_v2_templates_staging (
     template_type varchar(32) NOT NULL, organization_id integer NOT NULL DEFAULT 0,
     name varchar(100) NOT NULL DEFAULT '', description varchar(500) NOT NULL DEFAULT '',
     status varchar(32) NOT NULL DEFAULT 'Active', is_default boolean NOT NULL DEFAULT false, sort_order integer NOT NULL DEFAULT 0,
-    project_type varchar(32), start_at date, end_at date, period_value integer, period_unit varchar(16), source_project_id integer NOT NULL DEFAULT 0
+    source_project_id integer NOT NULL DEFAULT 0
 );
 
 CREATE TABLE pm_v2_stages_staging (

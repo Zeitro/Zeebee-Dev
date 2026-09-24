@@ -5,6 +5,7 @@ import (
 
 	"zeebee-backend/app/borrower/api/internal/svc"
 	"zeebee-backend/app/borrower/api/internal/types"
+	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/proto"
 
@@ -27,7 +28,11 @@ func NewAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AllLogic {
 }
 
 func (l *AllLogic) All(req *types.ProjectManagementWorkflowAllRequest) (resp *types.ProjectManagementWorkflowAllResponse, err error) {
-	rpcResp, err := l.svcCtx.ProjectManagementWorkflowRpcClient.All(l.ctx, &proto.EmptyRequest{})
+	requestData, err := copierx.Trans[types.ProjectManagementWorkflowAllRequest, borrower.ProjectManagementWorkflowAllRequestData](req)
+	if err != nil {
+		return nil, err
+	}
+	rpcResp, err := l.svcCtx.ProjectManagementWorkflowRpcClient.All(l.ctx, &borrower.ProjectManagementWorkflowAllRequest{Data: requestData})
 	if err != nil {
 		return nil, err
 	}

@@ -2,8 +2,8 @@ package model
 
 import "zeebee-backend/domains/zeebee/constants"
 
-// ProjectManagementWorkflowStageTransition stores owner-stage IDs directly.
-type ProjectManagementWorkflowStageTransition struct {
+// ProjectManagementWorkflowTransition stores owner-stage IDs directly.
+type ProjectManagementWorkflowTransition struct {
 	Base
 	WorkflowId        int64                                   `gorm:"column:workflow_id;not null;default:0" json:"workflow_id"`
 	Name              string                                  `gorm:"column:name;type:varchar(100);not null;default:''" json:"name"`
@@ -16,11 +16,11 @@ type ProjectManagementWorkflowStageTransition struct {
 	ToStage   *ProjectManagementStage `gorm:"foreignKey:ToStageId;references:Id" json:"to_stage"`
 }
 
-func (ProjectManagementWorkflowStageTransition) TableName() string {
+func (ProjectManagementWorkflowTransition) TableName() string {
 	return "project_management_workflow_transitions"
 }
 
-func (m *ProjectManagementWorkflowStageTransition) RemoveRelationships() {
+func (m *ProjectManagementWorkflowTransition) RemoveRelationships() {
 	m.FromStage = nil
 	m.ToStage = nil
 }

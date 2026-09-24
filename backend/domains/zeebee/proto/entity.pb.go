@@ -7429,11 +7429,6 @@ type ProjectManagementTemplateEntity struct {
 	Status          string                          `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
 	IsDefault       bool                            `protobuf:"varint,7,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
 	SortOrder       int32                           `protobuf:"varint,8,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
-	ProjectType     string                          `protobuf:"bytes,9,opt,name=project_type,json=projectType,proto3" json:"project_type,omitempty"`
-	StartAt         string                          `protobuf:"bytes,10,opt,name=start_at,json=startAt,proto3" json:"start_at,omitempty"`
-	EndAt           string                          `protobuf:"bytes,11,opt,name=end_at,json=endAt,proto3" json:"end_at,omitempty"`
-	PeriodValue     int32                           `protobuf:"varint,12,opt,name=period_value,json=periodValue,proto3" json:"period_value,omitempty"`
-	PeriodUnit      string                          `protobuf:"bytes,13,opt,name=period_unit,json=periodUnit,proto3" json:"period_unit,omitempty"`
 	SourceProjectId int64                           `protobuf:"varint,14,opt,name=source_project_id,json=sourceProjectId,proto3" json:"source_project_id,omitempty"`
 	CreatedAt       string                          `protobuf:"bytes,15,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt       string                          `protobuf:"bytes,16,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
@@ -7526,41 +7521,6 @@ func (x *ProjectManagementTemplateEntity) GetSortOrder() int32 {
 		return x.SortOrder
 	}
 	return 0
-}
-
-func (x *ProjectManagementTemplateEntity) GetProjectType() string {
-	if x != nil {
-		return x.ProjectType
-	}
-	return ""
-}
-
-func (x *ProjectManagementTemplateEntity) GetStartAt() string {
-	if x != nil {
-		return x.StartAt
-	}
-	return ""
-}
-
-func (x *ProjectManagementTemplateEntity) GetEndAt() string {
-	if x != nil {
-		return x.EndAt
-	}
-	return ""
-}
-
-func (x *ProjectManagementTemplateEntity) GetPeriodValue() int32 {
-	if x != nil {
-		return x.PeriodValue
-	}
-	return 0
-}
-
-func (x *ProjectManagementTemplateEntity) GetPeriodUnit() string {
-	if x != nil {
-		return x.PeriodUnit
-	}
-	return ""
 }
 
 func (x *ProjectManagementTemplateEntity) GetSourceProjectId() int64 {
@@ -9726,7 +9686,7 @@ const file_proto_entity_proto_rawDesc = "" +
 	"created_at\x18\t \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
 	"updated_at\x18\n" +
-	" \x01(\tR\tupdatedAt\"\xcb\x04\n" +
+	" \x01(\tR\tupdatedAt\"\xd0\x03\n" +
 	"\x1fProjectManagementTemplateEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rtemplate_type\x18\x02 \x01(\tR\ftemplateType\x12'\n" +
@@ -9737,20 +9697,15 @@ const file_proto_entity_proto_rawDesc = "" +
 	"\n" +
 	"is_default\x18\a \x01(\bR\tisDefault\x12\x1d\n" +
 	"\n" +
-	"sort_order\x18\b \x01(\x05R\tsortOrder\x12!\n" +
-	"\fproject_type\x18\t \x01(\tR\vprojectType\x12\x19\n" +
-	"\bstart_at\x18\n" +
-	" \x01(\tR\astartAt\x12\x15\n" +
-	"\x06end_at\x18\v \x01(\tR\x05endAt\x12!\n" +
-	"\fperiod_value\x18\f \x01(\x05R\vperiodValue\x12\x1f\n" +
-	"\vperiod_unit\x18\r \x01(\tR\n" +
-	"periodUnit\x12*\n" +
+	"sort_order\x18\b \x01(\x05R\tsortOrder\x12*\n" +
 	"\x11source_project_id\x18\x0e \x01(\x03R\x0fsourceProjectId\x12\x1d\n" +
 	"\n" +
 	"created_at\x18\x0f \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
 	"updated_at\x18\x10 \x01(\tR\tupdatedAt\x12;\n" +
-	"\x06stages\x18\x11 \x03(\v2#.proto.ProjectManagementStageEntityR\x06stages\"\xda\x01\n" +
+	"\x06stages\x18\x11 \x03(\v2#.proto.ProjectManagementStageEntityR\x06stagesJ\x04\b\t\x10\n" +
+	"J\x04\b\n" +
+	"\x10\vJ\x04\b\v\x10\fJ\x04\b\f\x10\rJ\x04\b\r\x10\x0e\"\xda\x01\n" +
 	"\x1fProjectManagementTaskTypeEntity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +

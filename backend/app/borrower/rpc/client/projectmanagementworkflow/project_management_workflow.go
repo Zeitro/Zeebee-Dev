@@ -18,6 +18,8 @@ import (
 type (
 	ProjectManagementProjectWorkflowBatchRequest           = borrower.ProjectManagementProjectWorkflowBatchRequest
 	ProjectManagementProjectWorkflowBatchRequestData       = borrower.ProjectManagementProjectWorkflowBatchRequestData
+	ProjectManagementProjectWorkflowCreateRequest          = borrower.ProjectManagementProjectWorkflowCreateRequest
+	ProjectManagementProjectWorkflowCreateRequestData      = borrower.ProjectManagementProjectWorkflowCreateRequestData
 	ProjectManagementProjectWorkflowDefaultRequest         = borrower.ProjectManagementProjectWorkflowDefaultRequest
 	ProjectManagementProjectWorkflowDefaultRequestData     = borrower.ProjectManagementProjectWorkflowDefaultRequestData
 	ProjectManagementProjectWorkflowDeleteRequest          = borrower.ProjectManagementProjectWorkflowDeleteRequest
@@ -29,6 +31,10 @@ type (
 	ProjectManagementProjectWorkflowPageRequestData        = borrower.ProjectManagementProjectWorkflowPageRequestData
 	ProjectManagementProjectWorkflowStageUpdateRequest     = borrower.ProjectManagementProjectWorkflowStageUpdateRequest
 	ProjectManagementProjectWorkflowStageUpdateRequestData = borrower.ProjectManagementProjectWorkflowStageUpdateRequestData
+	ProjectManagementProjectWorkflowUpdateRequest          = borrower.ProjectManagementProjectWorkflowUpdateRequest
+	ProjectManagementProjectWorkflowUpdateRequestData      = borrower.ProjectManagementProjectWorkflowUpdateRequestData
+	ProjectManagementWorkflowAllRequest                    = borrower.ProjectManagementWorkflowAllRequest
+	ProjectManagementWorkflowAllRequestData                = borrower.ProjectManagementWorkflowAllRequestData
 	ProjectManagementWorkflowAllResponse                   = borrower.ProjectManagementWorkflowAllResponse
 	ProjectManagementWorkflowBatchResponse                 = borrower.ProjectManagementWorkflowBatchResponse
 	ProjectManagementWorkflowCreateRequest                 = borrower.ProjectManagementWorkflowCreateRequest
@@ -46,7 +52,7 @@ type (
 	ProjectManagementWorkflowUpdateTransition              = borrower.ProjectManagementWorkflowUpdateTransition
 
 	ProjectManagementWorkflow interface {
-		All(ctx context.Context, in *proto.EmptyRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowAllResponse, error)
+		All(ctx context.Context, in *ProjectManagementWorkflowAllRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowAllResponse, error)
 		Detail(ctx context.Context, in *ProjectManagementWorkflowDetailRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error)
 		Create(ctx context.Context, in *ProjectManagementWorkflowCreateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error)
 		Update(ctx context.Context, in *ProjectManagementWorkflowUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error)
@@ -54,8 +60,10 @@ type (
 		Delete(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 		ProjectWorkflowPage(ctx context.Context, in *ProjectManagementProjectWorkflowPageRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowPageResponse, error)
 		ProjectWorkflowBatch(ctx context.Context, in *ProjectManagementProjectWorkflowBatchRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowBatchResponse, error)
+		ProjectWorkflowCreate(ctx context.Context, in *ProjectManagementProjectWorkflowCreateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error)
 		ProjectWorkflowDetail(ctx context.Context, in *ProjectManagementProjectWorkflowDetailRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error)
 		ProjectWorkflowDelete(ctx context.Context, in *ProjectManagementProjectWorkflowDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
+		ProjectWorkflowUpdate(ctx context.Context, in *ProjectManagementProjectWorkflowUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error)
 		ProjectWorkflowStageUpdate(ctx context.Context, in *ProjectManagementProjectWorkflowStageUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error)
 		ProjectWorkflowDefault(ctx context.Context, in *ProjectManagementProjectWorkflowDefaultRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 		ProjectWorkflowTemplates(ctx context.Context, in *proto.EmptyRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowTemplateResponse, error)
@@ -72,7 +80,7 @@ func NewProjectManagementWorkflow(cli zrpc.Client) ProjectManagementWorkflow {
 	}
 }
 
-func (m *defaultProjectManagementWorkflow) All(ctx context.Context, in *proto.EmptyRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowAllResponse, error) {
+func (m *defaultProjectManagementWorkflow) All(ctx context.Context, in *ProjectManagementWorkflowAllRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowAllResponse, error) {
 	client := borrower.NewProjectManagementWorkflowClient(m.cli.Conn())
 	return client.All(ctx, in, opts...)
 }
@@ -112,6 +120,11 @@ func (m *defaultProjectManagementWorkflow) ProjectWorkflowBatch(ctx context.Cont
 	return client.ProjectWorkflowBatch(ctx, in, opts...)
 }
 
+func (m *defaultProjectManagementWorkflow) ProjectWorkflowCreate(ctx context.Context, in *ProjectManagementProjectWorkflowCreateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error) {
+	client := borrower.NewProjectManagementWorkflowClient(m.cli.Conn())
+	return client.ProjectWorkflowCreate(ctx, in, opts...)
+}
+
 func (m *defaultProjectManagementWorkflow) ProjectWorkflowDetail(ctx context.Context, in *ProjectManagementProjectWorkflowDetailRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error) {
 	client := borrower.NewProjectManagementWorkflowClient(m.cli.Conn())
 	return client.ProjectWorkflowDetail(ctx, in, opts...)
@@ -120,6 +133,11 @@ func (m *defaultProjectManagementWorkflow) ProjectWorkflowDetail(ctx context.Con
 func (m *defaultProjectManagementWorkflow) ProjectWorkflowDelete(ctx context.Context, in *ProjectManagementProjectWorkflowDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
 	client := borrower.NewProjectManagementWorkflowClient(m.cli.Conn())
 	return client.ProjectWorkflowDelete(ctx, in, opts...)
+}
+
+func (m *defaultProjectManagementWorkflow) ProjectWorkflowUpdate(ctx context.Context, in *ProjectManagementProjectWorkflowUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error) {
+	client := borrower.NewProjectManagementWorkflowClient(m.cli.Conn())
+	return client.ProjectWorkflowUpdate(ctx, in, opts...)
 }
 
 func (m *defaultProjectManagementWorkflow) ProjectWorkflowStageUpdate(ctx context.Context, in *ProjectManagementProjectWorkflowStageUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error) {

@@ -24,8 +24,10 @@ import (
 	organizationEmailServer "zeebee-backend/app/borrower/rpc/internal/server/organizationemail"
 	projectManagementProjectServer "zeebee-backend/app/borrower/rpc/internal/server/projectmanagementproject"
 	projectManagementProjectMemberServer "zeebee-backend/app/borrower/rpc/internal/server/projectmanagementprojectmember"
+	projectManagementStageServer "zeebee-backend/app/borrower/rpc/internal/server/projectmanagementstage"
 	projectManagementTaskServer "zeebee-backend/app/borrower/rpc/internal/server/projectmanagementtask"
 	projectManagementTaskTypeServer "zeebee-backend/app/borrower/rpc/internal/server/projectmanagementtasktype"
+	projectManagementTemplateServer "zeebee-backend/app/borrower/rpc/internal/server/projectmanagementtemplate"
 	projectManagementWorkflowServer "zeebee-backend/app/borrower/rpc/internal/server/projectmanagementworkflow"
 	zeitroServer "zeebee-backend/app/borrower/rpc/internal/server/zeitro"
 	"zeebee-backend/common/errorx"
@@ -93,6 +95,8 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		borrower.RegisterDriveServer(grpcServer, driveServer.NewDriveServer(ctx))
 		borrower.RegisterApiServer(grpcServer, apiServer.NewApiServer(ctx))
 		borrower.RegisterProjectManagementWorkflowServer(grpcServer, projectManagementWorkflowServer.NewProjectManagementWorkflowServer(ctx))
+		borrower.RegisterProjectManagementTemplateServer(grpcServer, projectManagementTemplateServer.NewProjectManagementTemplateServer(ctx))
+		borrower.RegisterProjectManagementStageServer(grpcServer, projectManagementStageServer.NewProjectManagementStageServer(ctx))
 		borrower.RegisterProjectManagementTaskTypeServer(grpcServer, projectManagementTaskTypeServer.NewProjectManagementTaskTypeServer(ctx))
 		borrower.RegisterProjectManagementProjectServer(grpcServer, projectManagementProjectServer.NewProjectManagementProjectServer(ctx))
 		borrower.RegisterProjectManagementProjectMemberServer(grpcServer, projectManagementProjectMemberServer.NewProjectManagementProjectMemberServer(ctx))

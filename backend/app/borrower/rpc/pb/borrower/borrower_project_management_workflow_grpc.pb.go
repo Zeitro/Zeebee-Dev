@@ -28,8 +28,10 @@ const (
 	ProjectManagementWorkflow_Delete_FullMethodName                     = "/borrower.ProjectManagementWorkflow/Delete"
 	ProjectManagementWorkflow_ProjectWorkflowPage_FullMethodName        = "/borrower.ProjectManagementWorkflow/ProjectWorkflowPage"
 	ProjectManagementWorkflow_ProjectWorkflowBatch_FullMethodName       = "/borrower.ProjectManagementWorkflow/ProjectWorkflowBatch"
+	ProjectManagementWorkflow_ProjectWorkflowCreate_FullMethodName      = "/borrower.ProjectManagementWorkflow/ProjectWorkflowCreate"
 	ProjectManagementWorkflow_ProjectWorkflowDetail_FullMethodName      = "/borrower.ProjectManagementWorkflow/ProjectWorkflowDetail"
 	ProjectManagementWorkflow_ProjectWorkflowDelete_FullMethodName      = "/borrower.ProjectManagementWorkflow/ProjectWorkflowDelete"
+	ProjectManagementWorkflow_ProjectWorkflowUpdate_FullMethodName      = "/borrower.ProjectManagementWorkflow/ProjectWorkflowUpdate"
 	ProjectManagementWorkflow_ProjectWorkflowStageUpdate_FullMethodName = "/borrower.ProjectManagementWorkflow/ProjectWorkflowStageUpdate"
 	ProjectManagementWorkflow_ProjectWorkflowDefault_FullMethodName     = "/borrower.ProjectManagementWorkflow/ProjectWorkflowDefault"
 	ProjectManagementWorkflow_ProjectWorkflowTemplates_FullMethodName   = "/borrower.ProjectManagementWorkflow/ProjectWorkflowTemplates"
@@ -39,7 +41,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProjectManagementWorkflowClient interface {
-	All(ctx context.Context, in *proto.EmptyRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowAllResponse, error)
+	All(ctx context.Context, in *ProjectManagementWorkflowAllRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowAllResponse, error)
 	Detail(ctx context.Context, in *ProjectManagementWorkflowDetailRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error)
 	Create(ctx context.Context, in *ProjectManagementWorkflowCreateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error)
 	Update(ctx context.Context, in *ProjectManagementWorkflowUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error)
@@ -47,8 +49,10 @@ type ProjectManagementWorkflowClient interface {
 	Delete(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 	ProjectWorkflowPage(ctx context.Context, in *ProjectManagementProjectWorkflowPageRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowPageResponse, error)
 	ProjectWorkflowBatch(ctx context.Context, in *ProjectManagementProjectWorkflowBatchRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowBatchResponse, error)
+	ProjectWorkflowCreate(ctx context.Context, in *ProjectManagementProjectWorkflowCreateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error)
 	ProjectWorkflowDetail(ctx context.Context, in *ProjectManagementProjectWorkflowDetailRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error)
 	ProjectWorkflowDelete(ctx context.Context, in *ProjectManagementProjectWorkflowDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
+	ProjectWorkflowUpdate(ctx context.Context, in *ProjectManagementProjectWorkflowUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error)
 	ProjectWorkflowStageUpdate(ctx context.Context, in *ProjectManagementProjectWorkflowStageUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error)
 	ProjectWorkflowDefault(ctx context.Context, in *ProjectManagementProjectWorkflowDefaultRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 	ProjectWorkflowTemplates(ctx context.Context, in *proto.EmptyRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowTemplateResponse, error)
@@ -62,7 +66,7 @@ func NewProjectManagementWorkflowClient(cc grpc.ClientConnInterface) ProjectMana
 	return &projectManagementWorkflowClient{cc}
 }
 
-func (c *projectManagementWorkflowClient) All(ctx context.Context, in *proto.EmptyRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowAllResponse, error) {
+func (c *projectManagementWorkflowClient) All(ctx context.Context, in *ProjectManagementWorkflowAllRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowAllResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ProjectManagementWorkflowAllResponse)
 	err := c.cc.Invoke(ctx, ProjectManagementWorkflow_All_FullMethodName, in, out, cOpts...)
@@ -142,6 +146,16 @@ func (c *projectManagementWorkflowClient) ProjectWorkflowBatch(ctx context.Conte
 	return out, nil
 }
 
+func (c *projectManagementWorkflowClient) ProjectWorkflowCreate(ctx context.Context, in *ProjectManagementProjectWorkflowCreateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ProjectManagementWorkflowDetailResponse)
+	err := c.cc.Invoke(ctx, ProjectManagementWorkflow_ProjectWorkflowCreate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *projectManagementWorkflowClient) ProjectWorkflowDetail(ctx context.Context, in *ProjectManagementProjectWorkflowDetailRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ProjectManagementWorkflowDetailResponse)
@@ -156,6 +170,16 @@ func (c *projectManagementWorkflowClient) ProjectWorkflowDelete(ctx context.Cont
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(proto.EmptyResponse)
 	err := c.cc.Invoke(ctx, ProjectManagementWorkflow_ProjectWorkflowDelete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *projectManagementWorkflowClient) ProjectWorkflowUpdate(ctx context.Context, in *ProjectManagementProjectWorkflowUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementWorkflowDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ProjectManagementWorkflowDetailResponse)
+	err := c.cc.Invoke(ctx, ProjectManagementWorkflow_ProjectWorkflowUpdate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -196,7 +220,7 @@ func (c *projectManagementWorkflowClient) ProjectWorkflowTemplates(ctx context.C
 // All implementations must embed UnimplementedProjectManagementWorkflowServer
 // for forward compatibility.
 type ProjectManagementWorkflowServer interface {
-	All(context.Context, *proto.EmptyRequest) (*ProjectManagementWorkflowAllResponse, error)
+	All(context.Context, *ProjectManagementWorkflowAllRequest) (*ProjectManagementWorkflowAllResponse, error)
 	Detail(context.Context, *ProjectManagementWorkflowDetailRequest) (*ProjectManagementWorkflowDetailResponse, error)
 	Create(context.Context, *ProjectManagementWorkflowCreateRequest) (*ProjectManagementWorkflowDetailResponse, error)
 	Update(context.Context, *ProjectManagementWorkflowUpdateRequest) (*ProjectManagementWorkflowDetailResponse, error)
@@ -204,8 +228,10 @@ type ProjectManagementWorkflowServer interface {
 	Delete(context.Context, *proto.PathIdRequest) (*proto.EmptyResponse, error)
 	ProjectWorkflowPage(context.Context, *ProjectManagementProjectWorkflowPageRequest) (*ProjectManagementWorkflowPageResponse, error)
 	ProjectWorkflowBatch(context.Context, *ProjectManagementProjectWorkflowBatchRequest) (*ProjectManagementWorkflowBatchResponse, error)
+	ProjectWorkflowCreate(context.Context, *ProjectManagementProjectWorkflowCreateRequest) (*ProjectManagementWorkflowDetailResponse, error)
 	ProjectWorkflowDetail(context.Context, *ProjectManagementProjectWorkflowDetailRequest) (*ProjectManagementWorkflowDetailResponse, error)
 	ProjectWorkflowDelete(context.Context, *ProjectManagementProjectWorkflowDeleteRequest) (*proto.EmptyResponse, error)
+	ProjectWorkflowUpdate(context.Context, *ProjectManagementProjectWorkflowUpdateRequest) (*ProjectManagementWorkflowDetailResponse, error)
 	ProjectWorkflowStageUpdate(context.Context, *ProjectManagementProjectWorkflowStageUpdateRequest) (*ProjectManagementWorkflowDetailResponse, error)
 	ProjectWorkflowDefault(context.Context, *ProjectManagementProjectWorkflowDefaultRequest) (*proto.EmptyResponse, error)
 	ProjectWorkflowTemplates(context.Context, *proto.EmptyRequest) (*ProjectManagementWorkflowTemplateResponse, error)
@@ -219,7 +245,7 @@ type ProjectManagementWorkflowServer interface {
 // pointer dereference when methods are called.
 type UnimplementedProjectManagementWorkflowServer struct{}
 
-func (UnimplementedProjectManagementWorkflowServer) All(context.Context, *proto.EmptyRequest) (*ProjectManagementWorkflowAllResponse, error) {
+func (UnimplementedProjectManagementWorkflowServer) All(context.Context, *ProjectManagementWorkflowAllRequest) (*ProjectManagementWorkflowAllResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method All not implemented")
 }
 func (UnimplementedProjectManagementWorkflowServer) Detail(context.Context, *ProjectManagementWorkflowDetailRequest) (*ProjectManagementWorkflowDetailResponse, error) {
@@ -243,11 +269,17 @@ func (UnimplementedProjectManagementWorkflowServer) ProjectWorkflowPage(context.
 func (UnimplementedProjectManagementWorkflowServer) ProjectWorkflowBatch(context.Context, *ProjectManagementProjectWorkflowBatchRequest) (*ProjectManagementWorkflowBatchResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProjectWorkflowBatch not implemented")
 }
+func (UnimplementedProjectManagementWorkflowServer) ProjectWorkflowCreate(context.Context, *ProjectManagementProjectWorkflowCreateRequest) (*ProjectManagementWorkflowDetailResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ProjectWorkflowCreate not implemented")
+}
 func (UnimplementedProjectManagementWorkflowServer) ProjectWorkflowDetail(context.Context, *ProjectManagementProjectWorkflowDetailRequest) (*ProjectManagementWorkflowDetailResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProjectWorkflowDetail not implemented")
 }
 func (UnimplementedProjectManagementWorkflowServer) ProjectWorkflowDelete(context.Context, *ProjectManagementProjectWorkflowDeleteRequest) (*proto.EmptyResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProjectWorkflowDelete not implemented")
+}
+func (UnimplementedProjectManagementWorkflowServer) ProjectWorkflowUpdate(context.Context, *ProjectManagementProjectWorkflowUpdateRequest) (*ProjectManagementWorkflowDetailResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ProjectWorkflowUpdate not implemented")
 }
 func (UnimplementedProjectManagementWorkflowServer) ProjectWorkflowStageUpdate(context.Context, *ProjectManagementProjectWorkflowStageUpdateRequest) (*ProjectManagementWorkflowDetailResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProjectWorkflowStageUpdate not implemented")
@@ -281,7 +313,7 @@ func RegisterProjectManagementWorkflowServer(s grpc.ServiceRegistrar, srv Projec
 }
 
 func _ProjectManagementWorkflow_All_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(proto.EmptyRequest)
+	in := new(ProjectManagementWorkflowAllRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -293,7 +325,7 @@ func _ProjectManagementWorkflow_All_Handler(srv interface{}, ctx context.Context
 		FullMethod: ProjectManagementWorkflow_All_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectManagementWorkflowServer).All(ctx, req.(*proto.EmptyRequest))
+		return srv.(ProjectManagementWorkflowServer).All(ctx, req.(*ProjectManagementWorkflowAllRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -424,6 +456,24 @@ func _ProjectManagementWorkflow_ProjectWorkflowBatch_Handler(srv interface{}, ct
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProjectManagementWorkflow_ProjectWorkflowCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ProjectManagementProjectWorkflowCreateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectManagementWorkflowServer).ProjectWorkflowCreate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProjectManagementWorkflow_ProjectWorkflowCreate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectManagementWorkflowServer).ProjectWorkflowCreate(ctx, req.(*ProjectManagementProjectWorkflowCreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ProjectManagementWorkflow_ProjectWorkflowDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ProjectManagementProjectWorkflowDetailRequest)
 	if err := dec(in); err != nil {
@@ -456,6 +506,24 @@ func _ProjectManagementWorkflow_ProjectWorkflowDelete_Handler(srv interface{}, c
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ProjectManagementWorkflowServer).ProjectWorkflowDelete(ctx, req.(*ProjectManagementProjectWorkflowDeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProjectManagementWorkflow_ProjectWorkflowUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ProjectManagementProjectWorkflowUpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectManagementWorkflowServer).ProjectWorkflowUpdate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProjectManagementWorkflow_ProjectWorkflowUpdate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectManagementWorkflowServer).ProjectWorkflowUpdate(ctx, req.(*ProjectManagementProjectWorkflowUpdateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -554,12 +622,20 @@ var ProjectManagementWorkflow_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ProjectManagementWorkflow_ProjectWorkflowBatch_Handler,
 		},
 		{
+			MethodName: "ProjectWorkflowCreate",
+			Handler:    _ProjectManagementWorkflow_ProjectWorkflowCreate_Handler,
+		},
+		{
 			MethodName: "ProjectWorkflowDetail",
 			Handler:    _ProjectManagementWorkflow_ProjectWorkflowDetail_Handler,
 		},
 		{
 			MethodName: "ProjectWorkflowDelete",
 			Handler:    _ProjectManagementWorkflow_ProjectWorkflowDelete_Handler,
+		},
+		{
+			MethodName: "ProjectWorkflowUpdate",
+			Handler:    _ProjectManagementWorkflow_ProjectWorkflowUpdate_Handler,
 		},
 		{
 			MethodName: "ProjectWorkflowStageUpdate",

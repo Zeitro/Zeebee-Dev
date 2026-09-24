@@ -3,6 +3,8 @@ package logic
 import (
 	"context"
 	"fmt"
+	"maps"
+	"slices"
 	"strings"
 
 	"gorm.io/gorm"
@@ -113,13 +115,13 @@ func (l *ProjectManagementWorkflowLogic) ProjectWorkflowBatch(ctx context.Contex
 					return errorx.WithStack(innerErr)
 				}
 			}
-			local.Transitions = make([]*model.ProjectManagementWorkflowStageTransition, 0, len(sourceTransitions))
+			local.Transitions = make([]*model.ProjectManagementWorkflowTransition, 0, len(sourceTransitions))
 			for _, sourceTransition := range sourceTransitions {
 				fromStageId, toStageId := stageIds[sourceTransition.FromStageId], stageIds[sourceTransition.ToStageId]
 				if fromStageId == 0 || toStageId == 0 {
 					return errorx.New("workflow source transition endpoint is invalid")
 				}
-				transition := &model.ProjectManagementWorkflowStageTransition{WorkflowId: local.Id, Name: sourceTransition.Name, FromStageId: fromStageId, ToStageId: toStageId, AllowedActorTypes: sourceTransition.AllowedActorTypes}
+				transition := &model.ProjectManagementWorkflowTransition{WorkflowId: local.Id, Name: sourceTransition.Name, FromStageId: fromStageId, ToStageId: toStageId, AllowedActorTypes: sourceTransition.AllowedActorTypes}
 				if innerErr = tx.WithContext(ctx).Create(transition).Error; innerErr != nil {
 					return errorx.WithStack(innerErr)
 				}
@@ -218,6 +220,174 @@ func validateWorkflowSourceStages(stages []*model.ProjectManagementStage) error 
 	return nil
 }
 
+func (l *ProjectManagementWorkflowLogic) ProjectWorkflowCreate(ctx context.Context, claim utils.JwtUser, projectId int64, input dto.ProjectManagementProjectWorkflowCreateDto) (*model.ProjectManagementWorkflow, error) {
+	if strings.TrimSpace(input.Name) == "" {
+		return nil, errorx.New("workflow name is required")
+	}
+	var workflow *model.ProjectManagementWorkflow
+	err := l.repos.ProjectManagementWorkflowRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		if _, err := l.projectManagementLogic().requireProjectManagerWithTx(ctx, tx, claim, projectId); err != nil {
+			return err
+		}
+		stages, err := l.repos.ProjectManagementStageRepo.ListByOwnerWithTx(ctx, tx, constants.ProjectManagementOwnerTypeProject, projectId)
+		if err != nil {
+			return err
+		}
+		if len(stages) < 2 {
+			return errorx.New("project workflow requires at least two stages")
+		}
+		workflows, err := l.repos.ProjectManagementWorkflowRepo.ListProjectWorkflowsWithTx(ctx, tx, projectId)
+		if err != nil {
+			return err
+		}
+		workflow = &model.ProjectManagementWorkflow{EntityType: constants.ProjectManagementOwnerTypeProject, EntityId: projectId, Name: input.Name, Description: input.Description, IsDefault: len(workflows) == 0}
+		if err = tx.WithContext(ctx).Create(workflow).Error; err != nil {
+			return errorx.WithStack(err)
+		}
+		if err = l.replaceProjectWorkflowTransitionsWithTx(ctx, tx, projectId, workflow.Id, projectWorkflowTransitions(stages)); err != nil {
+			return err
+		}
+		return l.recordProjectWorkflowOperation(ctx, tx, claim, projectId, workflow.Id, 0, constants.OperationActionProjectManagementWorkflowCreate, nil, workflowOperationValues(workflow))
+	})
+	if err != nil {
+		return nil, err
+	}
+	return l.ProjectWorkflowDetail(ctx, claim, projectId, workflow.Id)
+}
+
+func projectWorkflowTransitions(stages []*model.ProjectManagementStage) []dto.ProjectManagementWorkflowTransitionDto {
+	transitions := make([]dto.ProjectManagementWorkflowTransitionDto, 0, len(stages)*(len(stages)-1))
+	for _, from := range stages {
+		for _, to := range stages {
+			if from.Id == to.Id {
+				continue
+			}
+			transitions = append(transitions, dto.ProjectManagementWorkflowTransitionDto{
+				Name:              fmt.Sprintf("%s → %s", from.Name, to.Name),
+				FromStageId:       from.Id,
+				ToStageId:         to.Id,
+				AllowedActorTypes: defaultWorkflowActorTypes(),
+			})
+		}
+	}
+	return transitions
+}
+
+func (l *ProjectManagementWorkflowLogic) ProjectWorkflowUpdate(ctx context.Context, claim utils.JwtUser, projectId, workflowId int64, input dto.ProjectManagementProjectWorkflowUpdateDto) (*model.ProjectManagementWorkflow, error) {
+	var workflow *model.ProjectManagementWorkflow
+	err := l.repos.ProjectManagementWorkflowRepo.Transaction(ctx, func(tx *gorm.DB) error {
+		if _, err := l.projectManagementLogic().requireProjectManagerWithTx(ctx, tx, claim, projectId); err != nil {
+			return err
+		}
+		var err error
+		workflow, err = l.repos.ProjectManagementWorkflowRepo.FindProjectWorkflowByIDWithTx(ctx, tx, workflowId, projectId, claim.OrganizationId)
+		if err != nil {
+			return projectManagementNotFound(err, "project workflow not found")
+		}
+		if err = l.replaceProjectWorkflowTransitionsWithTx(ctx, tx, projectId, workflowId, input.Transitions); err != nil {
+			return err
+		}
+		return l.recordProjectWorkflowOperation(ctx, tx, claim, projectId, workflowId, 0, constants.OperationActionProjectManagementWorkflowStageUpdate, nil, map[string]any{"stage_ids": projectWorkflowStageIDs(input.Transitions)})
+	})
+	if err != nil {
+		return nil, err
+	}
+	return l.ProjectWorkflowDetail(ctx, claim, projectId, workflow.Id)
+}
+
+func (l *ProjectManagementWorkflowLogic) replaceProjectWorkflowTransitionsWithTx(ctx context.Context, tx *gorm.DB, projectId, workflowId int64, transitions []dto.ProjectManagementWorkflowTransitionDto) error {
+	stageIDs, err := validateProjectWorkflowTransitions(transitions)
+	if err != nil {
+		return err
+	}
+	stages, err := l.repos.ProjectManagementStageRepo.ListByOwnerWithTx(ctx, tx, constants.ProjectManagementOwnerTypeProject, projectId)
+	if err != nil {
+		return err
+	}
+	bound := make([]*model.ProjectManagementStage, 0, len(stageIDs))
+	for _, stage := range stages {
+		if _, ok := stageIDs[stage.Id]; ok {
+			bound = append(bound, stage)
+			delete(stageIDs, stage.Id)
+		}
+	}
+	if len(stageIDs) != 0 {
+		return errorx.New("workflow stage owner mismatch")
+	}
+	if err = validateWorkflowSourceStages(bound); err != nil {
+		return err
+	}
+	links, err := l.repos.ProjectManagementWorkflowRepo.ListStageLinksWithTx(ctx, tx, workflowId)
+	if err != nil {
+		return err
+	}
+	boundIDs := make(map[int64]struct{}, len(bound))
+	for _, stage := range bound {
+		boundIDs[stage.Id] = struct{}{}
+	}
+	for _, link := range links {
+		if _, ok := boundIDs[link.StageId]; ok {
+			delete(boundIDs, link.StageId)
+			continue
+		}
+		var tasks int64
+		if err = tx.WithContext(ctx).Model(&model.ProjectManagementTask{}).
+			Where("workflow_id = ? AND entity_type = ? AND entity_id = ? AND stage_id = ? AND (phase IS NULL OR phase <> ?)", workflowId, constants.ProjectManagementOwnerTypeProject, projectId, link.StageId, constants.ProjectManagementStagePhaseFinished).
+			Count(&tasks).Error; err != nil {
+			return errorx.WithStack(err)
+		}
+		if tasks > 0 {
+			return errorx.New("workflow stage with unfinished tasks cannot be removed")
+		}
+		if err = tx.WithContext(ctx).Delete(&model.ProjectManagementWorkflowStage{}, link.Id).Error; err != nil {
+			return errorx.WithStack(err)
+		}
+	}
+	for stageID := range boundIDs {
+		if err = tx.WithContext(ctx).Create(&model.ProjectManagementWorkflowStage{WorkflowId: workflowId, StageId: stageID}).Error; err != nil {
+			return errorx.WithStack(err)
+		}
+	}
+	if err = tx.WithContext(ctx).Where("workflow_id = ?", workflowId).Delete(&model.ProjectManagementWorkflowTransition{}).Error; err != nil {
+		return errorx.WithStack(err)
+	}
+	for _, transition := range transitions {
+		if err = tx.WithContext(ctx).Create(&model.ProjectManagementWorkflowTransition{WorkflowId: workflowId, Name: transition.Name, FromStageId: transition.FromStageId, ToStageId: transition.ToStageId, AllowedActorTypes: transition.AllowedActorTypes}).Error; err != nil {
+			return errorx.WithStack(err)
+		}
+	}
+	return nil
+}
+
+func validateProjectWorkflowTransitions(transitions []dto.ProjectManagementWorkflowTransitionDto) (map[int64]struct{}, error) {
+	if len(transitions) == 0 {
+		return nil, errorx.New("workflow transitions are required")
+	}
+	stageIDs := make(map[int64]struct{}, len(transitions)*2)
+	edges := make(map[[2]int64]struct{}, len(transitions))
+	for _, transition := range transitions {
+		if err := validateProjectManagementWorkflowTransition(transition); err != nil {
+			return nil, err
+		}
+		edge := [2]int64{transition.FromStageId, transition.ToStageId}
+		if _, exists := edges[edge]; exists {
+			return nil, errorx.New("workflow transition must be unique")
+		}
+		edges[edge] = struct{}{}
+		stageIDs[transition.FromStageId] = struct{}{}
+		stageIDs[transition.ToStageId] = struct{}{}
+	}
+	return stageIDs, nil
+}
+
+func projectWorkflowStageIDs(transitions []dto.ProjectManagementWorkflowTransitionDto) []int64 {
+	ids, err := validateProjectWorkflowTransitions(transitions)
+	if err != nil {
+		return nil
+	}
+	return slices.Sorted(maps.Keys(ids))
+}
+
 func (l *ProjectManagementWorkflowLogic) ProjectWorkflowDelete(ctx context.Context, claim utils.JwtUser, projectId, workflowId int64) error {
 	return l.repos.ProjectManagementWorkflowRepo.Transaction(ctx, func(tx *gorm.DB) error {
 		if _, err := l.projectManagementLogic().requireProjectManagerWithTx(ctx, tx, claim, projectId); err != nil {
@@ -240,7 +410,7 @@ func (l *ProjectManagementWorkflowLogic) ProjectWorkflowDelete(ctx context.Conte
 		if err = tx.WithContext(ctx).Where("workflow_id = ?", workflowId).Delete(&model.ProjectManagementWorkflowStage{}).Error; err != nil {
 			return errorx.WithStack(err)
 		}
-		if err = tx.WithContext(ctx).Where("workflow_id = ?", workflowId).Delete(&model.ProjectManagementWorkflowStageTransition{}).Error; err != nil {
+		if err = tx.WithContext(ctx).Where("workflow_id = ?", workflowId).Delete(&model.ProjectManagementWorkflowTransition{}).Error; err != nil {
 			return errorx.WithStack(err)
 		}
 		if err = tx.WithContext(ctx).Where("id = ?", workflowId).Delete(&model.ProjectManagementWorkflow{}).Error; err != nil {
@@ -355,7 +525,7 @@ func (l *ProjectManagementWorkflowLogic) ProjectWorkflowStageUpdate(ctx context.
 			}
 			linkByStage[stageId] = link
 		}
-		if err = tx.WithContext(ctx).Where("workflow_id = ?", workflowId).Delete(&model.ProjectManagementWorkflowStageTransition{}).Error; err != nil {
+		if err = tx.WithContext(ctx).Where("workflow_id = ?", workflowId).Delete(&model.ProjectManagementWorkflowTransition{}).Error; err != nil {
 			return errorx.WithStack(err)
 		}
 		for _, item := range input.Stages {
@@ -365,7 +535,7 @@ func (l *ProjectManagementWorkflowLogic) ProjectWorkflowStageUpdate(ctx context.
 				if !fromOK || !toOK {
 					return errorx.New("workflow transition endpoint is invalid")
 				}
-				if err = tx.WithContext(ctx).Create(&model.ProjectManagementWorkflowStageTransition{WorkflowId: workflowId, Name: transition.Name, FromStageId: transition.FromStageId, ToStageId: transition.ToStageId, AllowedActorTypes: transition.AllowedActorTypes}).Error; err != nil {
+				if err = tx.WithContext(ctx).Create(&model.ProjectManagementWorkflowTransition{WorkflowId: workflowId, Name: transition.Name, FromStageId: transition.FromStageId, ToStageId: transition.ToStageId, AllowedActorTypes: transition.AllowedActorTypes}).Error; err != nil {
 					return errorx.WithStack(err)
 				}
 			}

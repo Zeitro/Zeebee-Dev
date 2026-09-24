@@ -1,12 +1,25 @@
 package project_management_workflow
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"testing"
+
+	"zeebee-backend/app/borrower/api/internal/types"
 )
+
+func TestWorkflowAllResponseOmitsTransitions(t *testing.T) {
+	data, err := json.Marshal(types.ProjectManagementWorkflowAllResponse{List: []*types.ProjectManagementWorkflowEntity{{Id: 1}}})
+	if err != nil {
+		t.Fatalf("marshal workflow list: %v", err)
+	}
+	if strings.Contains(string(data), "transitions") {
+		t.Fatalf("workflow list exposes transitions: %s", data)
+	}
+}
 
 func TestGeneratedRoutesExposeV2WorkflowSurface(t *testing.T) {
 	_, file, _, ok := runtime.Caller(0)
@@ -20,7 +33,7 @@ func TestGeneratedRoutesExposeV2WorkflowSurface(t *testing.T) {
 	source := string(routes)
 	for _, obsolete := range []string{
 		"/project_management/workflow/:id/swap_stage_order",
-		"StageSwapOrderHandler(serverCtx)",
+		"project_management_workflow.StageSwapOrderHandler(serverCtx)",
 		"/project_management/project/:id/workflow",
 		"project_management_project.WorkflowDetailHandler(serverCtx)",
 		"project_management_project.WorkflowUpdateHandler(serverCtx)",
@@ -32,6 +45,9 @@ func TestGeneratedRoutesExposeV2WorkflowSurface(t *testing.T) {
 	for _, required := range []string{
 		"/project_management/project/workflows/page",
 		"ProjectManagementProjectWorkflowPageHandler(serverCtx)",
+		"/project_management/project/:project_id/workflows",
+		"ProjectManagementProjectWorkflowCreateHandler(serverCtx)",
+		"ProjectManagementProjectWorkflowUpdateHandler(serverCtx)",
 		"/project_management/project/:project_id/workflows/:workflow_id/stages",
 	} {
 		if !strings.Contains(source, required) {

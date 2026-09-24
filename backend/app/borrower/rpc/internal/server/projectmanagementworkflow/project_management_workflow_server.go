@@ -24,7 +24,7 @@ func NewProjectManagementWorkflowServer(svcCtx *svc.ServiceContext) *ProjectMana
 	}
 }
 
-func (s *ProjectManagementWorkflowServer) All(ctx context.Context, in *proto.EmptyRequest) (*borrower.ProjectManagementWorkflowAllResponse, error) {
+func (s *ProjectManagementWorkflowServer) All(ctx context.Context, in *borrower.ProjectManagementWorkflowAllRequest) (*borrower.ProjectManagementWorkflowAllResponse, error) {
 	l := projectmanagementworkflowlogic.NewAllLogic(ctx, s.svcCtx)
 	return l.All(in)
 }
@@ -64,6 +64,11 @@ func (s *ProjectManagementWorkflowServer) ProjectWorkflowBatch(ctx context.Conte
 	return l.ProjectWorkflowBatch(in)
 }
 
+func (s *ProjectManagementWorkflowServer) ProjectWorkflowCreate(ctx context.Context, in *borrower.ProjectManagementProjectWorkflowCreateRequest) (*borrower.ProjectManagementWorkflowDetailResponse, error) {
+	l := projectmanagementworkflowlogic.NewProjectWorkflowCreateLogic(ctx, s.svcCtx)
+	return l.ProjectWorkflowCreate(in)
+}
+
 func (s *ProjectManagementWorkflowServer) ProjectWorkflowDetail(ctx context.Context, in *borrower.ProjectManagementProjectWorkflowDetailRequest) (*borrower.ProjectManagementWorkflowDetailResponse, error) {
 	l := projectmanagementworkflowlogic.NewProjectWorkflowDetailLogic(ctx, s.svcCtx)
 	return l.ProjectWorkflowDetail(in)
@@ -72,6 +77,11 @@ func (s *ProjectManagementWorkflowServer) ProjectWorkflowDetail(ctx context.Cont
 func (s *ProjectManagementWorkflowServer) ProjectWorkflowDelete(ctx context.Context, in *borrower.ProjectManagementProjectWorkflowDeleteRequest) (*proto.EmptyResponse, error) {
 	l := projectmanagementworkflowlogic.NewProjectWorkflowDeleteLogic(ctx, s.svcCtx)
 	return l.ProjectWorkflowDelete(in)
+}
+
+func (s *ProjectManagementWorkflowServer) ProjectWorkflowUpdate(ctx context.Context, in *borrower.ProjectManagementProjectWorkflowUpdateRequest) (*borrower.ProjectManagementWorkflowDetailResponse, error) {
+	l := projectmanagementworkflowlogic.NewProjectWorkflowUpdateLogic(ctx, s.svcCtx)
+	return l.ProjectWorkflowUpdate(in)
 }
 
 func (s *ProjectManagementWorkflowServer) ProjectWorkflowStageUpdate(ctx context.Context, in *borrower.ProjectManagementProjectWorkflowStageUpdateRequest) (*borrower.ProjectManagementWorkflowDetailResponse, error) {

@@ -12,12 +12,12 @@ import (
 	"gorm.io/gorm"
 
 	"zeebee-backend/app/borrower/rpc/internal/svc"
+	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	tenantclient "zeebee-backend/app/tenant/rpc/client"
 	tenantuser "zeebee-backend/app/tenant/rpc/client/user"
 	"zeebee-backend/app/tenant/rpc/pb/tenant"
 	"zeebee-backend/common/utils"
 	"zeebee-backend/domains/zeebee/constants"
-	"zeebee-backend/domains/zeebee/proto"
 	"zeebee-backend/domains/zeebee/repo"
 )
 
@@ -45,8 +45,9 @@ func TestAllScopesWorkflowSourcesToClaimOrganization(t *testing.T) {
 	}
 	ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(utils.JwtTokenCtxKey, "tenant-issued-token", utils.UserTypeCtxKey, string(constants.UserTypeBorrower)))
 	svcCtx := &svc.ServiceContext{AllRepos: repo.NewAllRepos(db), TenantClient: &tenantclient.Client{User: workflowSourceTenantUser{}}}
-	resp, err := NewAllLogic(ctx, svcCtx).All(&proto.EmptyRequest{})
+	resp, err := NewAllLogic(ctx, svcCtx).All(&borrower.ProjectManagementWorkflowAllRequest{Data: &borrower.ProjectManagementWorkflowAllRequestData{EntityType: string(constants.ProjectManagementOwnerTypeOrganization)}})
 	require.NoError(t, err)
 	require.Len(t, resp.Data, 1)
 	require.Equal(t, int64(1), resp.Data[0].Id)
+	require.Empty(t, resp.Data[0].Transitions)
 }

@@ -7,6 +7,7 @@ import (
 
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/data/dto"
+	"zeebee-backend/domains/zeebee/model"
 )
 
 func TestValidateProjectManagementWorkflow(t *testing.T) {
@@ -34,4 +35,29 @@ func TestProjectManagementWorkflowUpdateDefinition(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, definition.Transitions, 1)
 	require.NotZero(t, definition.Stages[1].Id)
+}
+
+func TestProjectWorkflowTransitionsBindEveryDistinctStage(t *testing.T) {
+	stages := []*model.ProjectManagementStage{
+		{Base: model.Base{Id: 1}, Name: "Pending"},
+		{Base: model.Base{Id: 2}, Name: "In progress"},
+		{Base: model.Base{Id: 3}, Name: "Finished"},
+	}
+	transitions := projectWorkflowTransitions(stages)
+	require.Len(t, transitions, 6)
+	for _, transition := range transitions {
+		require.NotEqual(t, transition.FromStageId, transition.ToStageId)
+		require.NotEmpty(t, transition.Name)
+		require.Equal(t, defaultWorkflowActorTypes(), transition.AllowedActorTypes)
+	}
+	_, err := validateProjectWorkflowTransitions(append(transitions, transitions[0]))
+	require.ErrorContains(t, err, "workflow transition must be unique")
+}
+
+func TestDefaultWorkflowDefinitionIsValid(t *testing.T) {
+	workflow := defaultWorkflowDefinition()
+	workflow.Name = "Default"
+	require.NoError(t, ValidateProjectManagementWorkflow(workflow))
+	require.Len(t, workflow.Stages, 3)
+	require.Len(t, workflow.Transitions, 2)
 }

@@ -16,7 +16,10 @@ import "project_management.api"
 
 type (
     // all request
-    ProjectManagementWorkflowAllRequest {}
+    ProjectManagementWorkflowAllRequest {
+        EntityType string `form:"entity_type" validate:"required,oneof=Organization Project Template"`
+        EntityId   int64  `form:"entity_id,optional" validate:"gte=0"`
+    }
     ProjectManagementWorkflowAllResponse {
         List []*ProjectManagementWorkflowEntity `json:"list"`
     }
@@ -46,8 +49,8 @@ type ProjectManagementWorkflowTransitionInput {
 type ProjectManagementWorkflowCreateRequest {
     Name        string `json:"name" validate:"required,max=100"`
     Description string `json:"description,optional" validate:"max=500"`
-    Stages      []*ProjectManagementWorkflowStageInput `json:"stages" validate:"required,min=1,dive"`
-    Transitions []*ProjectManagementWorkflowTransitionInput `json:"transitions,optional" validate:"omitempty,dive"`
+    EntityType string `json:"entity_type" validate:"required,oneof=Organization Project"`
+    EntityId   int64  `json:"entity_id,optional" validate:"gte=0"`
 }
 
 type ProjectManagementWorkflowUpdateRequest {
@@ -70,6 +73,18 @@ type ProjectManagementProjectWorkflowPageRequest {
 type ProjectManagementProjectWorkflowBatchRequest {
     ProjectId          int64   `path:"project_id" validate:"required,gt=0"`
     SourceWorkflowIds  []int64 `json:"source_workflow_ids" validate:"required,min=1,dive,gt=0"`
+}
+
+type ProjectManagementProjectWorkflowCreateRequest {
+    ProjectId   int64  `path:"project_id" validate:"required,gt=0"`
+    Name        string `json:"name" validate:"required,max=100"`
+    Description string `json:"description,optional" validate:"max=500"`
+}
+
+type ProjectManagementProjectWorkflowUpdateRequest {
+    ProjectId   int64                                       `path:"project_id" validate:"required,gt=0"`
+    WorkflowId  int64                                       `path:"workflow_id" validate:"required,gt=0"`
+    Transitions []*ProjectManagementWorkflowTransitionInput `json:"transitions" validate:"required,min=1,dive"`
 }
 
 type ProjectManagementProjectWorkflowDetailRequest {
@@ -152,6 +167,10 @@ service borrower-api {
     @handler ProjectManagementProjectWorkflowBatch
     post /project_management/project/:project_id/workflows/batch (ProjectManagementProjectWorkflowBatchRequest) returns (ProjectManagementWorkflowBatchResponse)
 
+    @doc "create project workflow from project stages"
+    @handler ProjectManagementProjectWorkflowCreate
+    post /project_management/project/:project_id/workflows (ProjectManagementProjectWorkflowCreateRequest) returns (ProjectManagementWorkflowDetailResponse)
+
     @doc "project workflow detail"
     @handler ProjectManagementProjectWorkflowDetail
     get /project_management/project/:project_id/workflows/:workflow_id (ProjectManagementProjectWorkflowDetailRequest) returns (ProjectManagementWorkflowDetailResponse)
@@ -159,6 +178,10 @@ service borrower-api {
     @doc "delete project workflow"
     @handler ProjectManagementProjectWorkflowDelete
     delete /project_management/project/:project_id/workflows/:workflow_id (ProjectManagementProjectWorkflowDeleteRequest) returns (EmptyResponse)
+
+    @doc "update project workflow transitions"
+    @handler ProjectManagementProjectWorkflowUpdate
+    put /project_management/project/:project_id/workflows/:workflow_id (ProjectManagementProjectWorkflowUpdateRequest) returns (ProjectManagementWorkflowDetailResponse)
 
     @doc "update project workflow stages"
     @handler ProjectManagementProjectWorkflowStageUpdate

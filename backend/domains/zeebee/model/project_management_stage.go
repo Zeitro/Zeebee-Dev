@@ -11,6 +11,13 @@ type ProjectManagementStage struct {
 	Phase       constants.ProjectManagementStagePhase `gorm:"column:phase;type:varchar(32);not null" json:"phase"`
 	Color       string                                `gorm:"column:color;type:varchar(32);not null;default:''" json:"color"`
 	SortOrder   int                                   `gorm:"column:sort_order;not null;default:0" json:"sort_order"`
+
+	// relationship
+	Transitions []ProjectManagementWorkflowTransition `gorm:"foreignKey:FromStageId;references:Id" json:"transitions"`
 }
 
 func (ProjectManagementStage) TableName() string { return "project_management_stages" }
+
+func (m *ProjectManagementStage) RemoveRelationships() {
+	m.Transitions = nil
+}

@@ -7,6 +7,7 @@ import (
 	"zeebee-backend/app/borrower/rpc/internal/svc"
 	"zeebee-backend/app/borrower/rpc/pb/borrower"
 	"zeebee-backend/common/copierx"
+	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/model"
 	"zeebee-backend/domains/zeebee/proto"
 )
@@ -27,12 +28,15 @@ func NewAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AllLogic {
 	}
 }
 
-func (l *AllLogic) All(in *proto.EmptyRequest) (resp *borrower.ProjectManagementWorkflowAllResponse, err error) {
+func (l *AllLogic) All(in *borrower.ProjectManagementWorkflowAllRequest) (resp *borrower.ProjectManagementWorkflowAllResponse, err error) {
+	if in.Data == nil {
+		return nil, errorx.New("request data is nil")
+	}
 	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	workflows, err := l.baseLogic.ProjectManagementWorkflowLogic.List(l.ctx, claim.OrganizationId)
+	workflows, err := l.baseLogic.ProjectManagementWorkflowLogic.List(l.ctx, claim, in.Data.EntityType, in.Data.EntityId)
 	if err != nil {
 		return nil, err
 	}

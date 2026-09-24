@@ -22,6 +22,102 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type ProjectManagementWorkflowAllRequest struct {
+	state         protoimpl.MessageState                   `protogen:"open.v1"`
+	Data          *ProjectManagementWorkflowAllRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProjectManagementWorkflowAllRequest) Reset() {
+	*x = ProjectManagementWorkflowAllRequest{}
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProjectManagementWorkflowAllRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProjectManagementWorkflowAllRequest) ProtoMessage() {}
+
+func (x *ProjectManagementWorkflowAllRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProjectManagementWorkflowAllRequest.ProtoReflect.Descriptor instead.
+func (*ProjectManagementWorkflowAllRequest) Descriptor() ([]byte, []int) {
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *ProjectManagementWorkflowAllRequest) GetData() *ProjectManagementWorkflowAllRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type ProjectManagementWorkflowAllRequestData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	EntityType    string                 `protobuf:"bytes,1,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"`
+	EntityId      int64                  `protobuf:"varint,2,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProjectManagementWorkflowAllRequestData) Reset() {
+	*x = ProjectManagementWorkflowAllRequestData{}
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProjectManagementWorkflowAllRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProjectManagementWorkflowAllRequestData) ProtoMessage() {}
+
+func (x *ProjectManagementWorkflowAllRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProjectManagementWorkflowAllRequestData.ProtoReflect.Descriptor instead.
+func (*ProjectManagementWorkflowAllRequestData) Descriptor() ([]byte, []int) {
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *ProjectManagementWorkflowAllRequestData) GetEntityType() string {
+	if x != nil {
+		return x.EntityType
+	}
+	return ""
+}
+
+func (x *ProjectManagementWorkflowAllRequestData) GetEntityId() int64 {
+	if x != nil {
+		return x.EntityId
+	}
+	return 0
+}
+
 type ProjectManagementWorkflowAllResponse struct {
 	state         protoimpl.MessageState                   `protogen:"open.v1"`
 	Data          []*proto.ProjectManagementWorkflowEntity `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty"`
@@ -31,7 +127,7 @@ type ProjectManagementWorkflowAllResponse struct {
 
 func (x *ProjectManagementWorkflowAllResponse) Reset() {
 	*x = ProjectManagementWorkflowAllResponse{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[0]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -43,7 +139,7 @@ func (x *ProjectManagementWorkflowAllResponse) String() string {
 func (*ProjectManagementWorkflowAllResponse) ProtoMessage() {}
 
 func (x *ProjectManagementWorkflowAllResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[0]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -56,7 +152,7 @@ func (x *ProjectManagementWorkflowAllResponse) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use ProjectManagementWorkflowAllResponse.ProtoReflect.Descriptor instead.
 func (*ProjectManagementWorkflowAllResponse) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{0}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ProjectManagementWorkflowAllResponse) GetData() []*proto.ProjectManagementWorkflowEntity {
@@ -75,7 +171,7 @@ type ProjectManagementWorkflowDetailRequest struct {
 
 func (x *ProjectManagementWorkflowDetailRequest) Reset() {
 	*x = ProjectManagementWorkflowDetailRequest{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[1]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -87,7 +183,7 @@ func (x *ProjectManagementWorkflowDetailRequest) String() string {
 func (*ProjectManagementWorkflowDetailRequest) ProtoMessage() {}
 
 func (x *ProjectManagementWorkflowDetailRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[1]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -100,7 +196,7 @@ func (x *ProjectManagementWorkflowDetailRequest) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use ProjectManagementWorkflowDetailRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementWorkflowDetailRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{1}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *ProjectManagementWorkflowDetailRequest) GetData() *ProjectManagementWorkflowDetailRequestData {
@@ -120,7 +216,7 @@ type ProjectManagementWorkflowDetailRequestData struct {
 
 func (x *ProjectManagementWorkflowDetailRequestData) Reset() {
 	*x = ProjectManagementWorkflowDetailRequestData{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[2]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -132,7 +228,7 @@ func (x *ProjectManagementWorkflowDetailRequestData) String() string {
 func (*ProjectManagementWorkflowDetailRequestData) ProtoMessage() {}
 
 func (x *ProjectManagementWorkflowDetailRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[2]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -145,7 +241,7 @@ func (x *ProjectManagementWorkflowDetailRequestData) ProtoReflect() protoreflect
 
 // Deprecated: Use ProjectManagementWorkflowDetailRequestData.ProtoReflect.Descriptor instead.
 func (*ProjectManagementWorkflowDetailRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{2}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ProjectManagementWorkflowDetailRequestData) GetId() int64 {
@@ -171,7 +267,7 @@ type ProjectManagementWorkflowDetailResponse struct {
 
 func (x *ProjectManagementWorkflowDetailResponse) Reset() {
 	*x = ProjectManagementWorkflowDetailResponse{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[3]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -183,7 +279,7 @@ func (x *ProjectManagementWorkflowDetailResponse) String() string {
 func (*ProjectManagementWorkflowDetailResponse) ProtoMessage() {}
 
 func (x *ProjectManagementWorkflowDetailResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[3]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -196,7 +292,7 @@ func (x *ProjectManagementWorkflowDetailResponse) ProtoReflect() protoreflect.Me
 
 // Deprecated: Use ProjectManagementWorkflowDetailResponse.ProtoReflect.Descriptor instead.
 func (*ProjectManagementWorkflowDetailResponse) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{3}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ProjectManagementWorkflowDetailResponse) GetData() *proto.ProjectManagementWorkflowEntity {
@@ -215,7 +311,7 @@ type ProjectManagementWorkflowCreateRequest struct {
 
 func (x *ProjectManagementWorkflowCreateRequest) Reset() {
 	*x = ProjectManagementWorkflowCreateRequest{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[4]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -227,7 +323,7 @@ func (x *ProjectManagementWorkflowCreateRequest) String() string {
 func (*ProjectManagementWorkflowCreateRequest) ProtoMessage() {}
 
 func (x *ProjectManagementWorkflowCreateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[4]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -240,7 +336,7 @@ func (x *ProjectManagementWorkflowCreateRequest) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use ProjectManagementWorkflowCreateRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementWorkflowCreateRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{4}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ProjectManagementWorkflowCreateRequest) GetData() *ProjectManagementWorkflowCreateRequestData {
@@ -264,7 +360,7 @@ type ProjectManagementWorkflowStageInput struct {
 
 func (x *ProjectManagementWorkflowStageInput) Reset() {
 	*x = ProjectManagementWorkflowStageInput{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[5]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -276,7 +372,7 @@ func (x *ProjectManagementWorkflowStageInput) String() string {
 func (*ProjectManagementWorkflowStageInput) ProtoMessage() {}
 
 func (x *ProjectManagementWorkflowStageInput) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[5]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -289,7 +385,7 @@ func (x *ProjectManagementWorkflowStageInput) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use ProjectManagementWorkflowStageInput.ProtoReflect.Descriptor instead.
 func (*ProjectManagementWorkflowStageInput) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{5}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *ProjectManagementWorkflowStageInput) GetId() int64 {
@@ -347,7 +443,7 @@ type ProjectManagementWorkflowTransitionInput struct {
 
 func (x *ProjectManagementWorkflowTransitionInput) Reset() {
 	*x = ProjectManagementWorkflowTransitionInput{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[6]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -359,7 +455,7 @@ func (x *ProjectManagementWorkflowTransitionInput) String() string {
 func (*ProjectManagementWorkflowTransitionInput) ProtoMessage() {}
 
 func (x *ProjectManagementWorkflowTransitionInput) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[6]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -372,7 +468,7 @@ func (x *ProjectManagementWorkflowTransitionInput) ProtoReflect() protoreflect.M
 
 // Deprecated: Use ProjectManagementWorkflowTransitionInput.ProtoReflect.Descriptor instead.
 func (*ProjectManagementWorkflowTransitionInput) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{6}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ProjectManagementWorkflowTransitionInput) GetId() int64 {
@@ -417,13 +513,15 @@ type ProjectManagementWorkflowCreateRequestData struct {
 	IsDefault     bool                                        `protobuf:"varint,4,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
 	Stages        []*ProjectManagementWorkflowStageInput      `protobuf:"bytes,5,rep,name=stages,proto3" json:"stages,omitempty"`
 	Transitions   []*ProjectManagementWorkflowTransitionInput `protobuf:"bytes,6,rep,name=transitions,proto3" json:"transitions,omitempty"`
+	EntityType    string                                      `protobuf:"bytes,7,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"`
+	EntityId      int64                                       `protobuf:"varint,8,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ProjectManagementWorkflowCreateRequestData) Reset() {
 	*x = ProjectManagementWorkflowCreateRequestData{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[7]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -435,7 +533,7 @@ func (x *ProjectManagementWorkflowCreateRequestData) String() string {
 func (*ProjectManagementWorkflowCreateRequestData) ProtoMessage() {}
 
 func (x *ProjectManagementWorkflowCreateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[7]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -448,7 +546,7 @@ func (x *ProjectManagementWorkflowCreateRequestData) ProtoReflect() protoreflect
 
 // Deprecated: Use ProjectManagementWorkflowCreateRequestData.ProtoReflect.Descriptor instead.
 func (*ProjectManagementWorkflowCreateRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{7}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ProjectManagementWorkflowCreateRequestData) GetName() string {
@@ -486,6 +584,20 @@ func (x *ProjectManagementWorkflowCreateRequestData) GetTransitions() []*Project
 	return nil
 }
 
+func (x *ProjectManagementWorkflowCreateRequestData) GetEntityType() string {
+	if x != nil {
+		return x.EntityType
+	}
+	return ""
+}
+
+func (x *ProjectManagementWorkflowCreateRequestData) GetEntityId() int64 {
+	if x != nil {
+		return x.EntityId
+	}
+	return 0
+}
+
 type ProjectManagementWorkflowUpdateRequest struct {
 	state         protoimpl.MessageState                      `protogen:"open.v1"`
 	Data          *ProjectManagementWorkflowUpdateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -495,7 +607,7 @@ type ProjectManagementWorkflowUpdateRequest struct {
 
 func (x *ProjectManagementWorkflowUpdateRequest) Reset() {
 	*x = ProjectManagementWorkflowUpdateRequest{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[8]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -507,7 +619,7 @@ func (x *ProjectManagementWorkflowUpdateRequest) String() string {
 func (*ProjectManagementWorkflowUpdateRequest) ProtoMessage() {}
 
 func (x *ProjectManagementWorkflowUpdateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[8]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -520,7 +632,7 @@ func (x *ProjectManagementWorkflowUpdateRequest) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use ProjectManagementWorkflowUpdateRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementWorkflowUpdateRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{8}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ProjectManagementWorkflowUpdateRequest) GetData() *ProjectManagementWorkflowUpdateRequestData {
@@ -545,7 +657,7 @@ type ProjectManagementWorkflowUpdateStage struct {
 
 func (x *ProjectManagementWorkflowUpdateStage) Reset() {
 	*x = ProjectManagementWorkflowUpdateStage{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[9]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -557,7 +669,7 @@ func (x *ProjectManagementWorkflowUpdateStage) String() string {
 func (*ProjectManagementWorkflowUpdateStage) ProtoMessage() {}
 
 func (x *ProjectManagementWorkflowUpdateStage) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[9]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -570,7 +682,7 @@ func (x *ProjectManagementWorkflowUpdateStage) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use ProjectManagementWorkflowUpdateStage.ProtoReflect.Descriptor instead.
 func (*ProjectManagementWorkflowUpdateStage) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{9}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *ProjectManagementWorkflowUpdateStage) GetId() int64 {
@@ -635,7 +747,7 @@ type ProjectManagementWorkflowUpdateTransition struct {
 
 func (x *ProjectManagementWorkflowUpdateTransition) Reset() {
 	*x = ProjectManagementWorkflowUpdateTransition{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[10]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -647,7 +759,7 @@ func (x *ProjectManagementWorkflowUpdateTransition) String() string {
 func (*ProjectManagementWorkflowUpdateTransition) ProtoMessage() {}
 
 func (x *ProjectManagementWorkflowUpdateTransition) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[10]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -660,7 +772,7 @@ func (x *ProjectManagementWorkflowUpdateTransition) ProtoReflect() protoreflect.
 
 // Deprecated: Use ProjectManagementWorkflowUpdateTransition.ProtoReflect.Descriptor instead.
 func (*ProjectManagementWorkflowUpdateTransition) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{10}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *ProjectManagementWorkflowUpdateTransition) GetId() int64 {
@@ -711,7 +823,7 @@ type ProjectManagementWorkflowUpdateRequestData struct {
 
 func (x *ProjectManagementWorkflowUpdateRequestData) Reset() {
 	*x = ProjectManagementWorkflowUpdateRequestData{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[11]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -723,7 +835,7 @@ func (x *ProjectManagementWorkflowUpdateRequestData) String() string {
 func (*ProjectManagementWorkflowUpdateRequestData) ProtoMessage() {}
 
 func (x *ProjectManagementWorkflowUpdateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[11]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -736,7 +848,7 @@ func (x *ProjectManagementWorkflowUpdateRequestData) ProtoReflect() protoreflect
 
 // Deprecated: Use ProjectManagementWorkflowUpdateRequestData.ProtoReflect.Descriptor instead.
 func (*ProjectManagementWorkflowUpdateRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{11}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ProjectManagementWorkflowUpdateRequestData) GetId() int64 {
@@ -783,7 +895,7 @@ type ProjectManagementProjectWorkflowPageRequest struct {
 
 func (x *ProjectManagementProjectWorkflowPageRequest) Reset() {
 	*x = ProjectManagementProjectWorkflowPageRequest{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[12]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -795,7 +907,7 @@ func (x *ProjectManagementProjectWorkflowPageRequest) String() string {
 func (*ProjectManagementProjectWorkflowPageRequest) ProtoMessage() {}
 
 func (x *ProjectManagementProjectWorkflowPageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[12]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -808,7 +920,7 @@ func (x *ProjectManagementProjectWorkflowPageRequest) ProtoReflect() protoreflec
 
 // Deprecated: Use ProjectManagementProjectWorkflowPageRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementProjectWorkflowPageRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{12}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ProjectManagementProjectWorkflowPageRequest) GetData() *ProjectManagementProjectWorkflowPageRequestData {
@@ -827,7 +939,7 @@ type ProjectManagementProjectWorkflowPageFilter struct {
 
 func (x *ProjectManagementProjectWorkflowPageFilter) Reset() {
 	*x = ProjectManagementProjectWorkflowPageFilter{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[13]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -839,7 +951,7 @@ func (x *ProjectManagementProjectWorkflowPageFilter) String() string {
 func (*ProjectManagementProjectWorkflowPageFilter) ProtoMessage() {}
 
 func (x *ProjectManagementProjectWorkflowPageFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[13]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -852,7 +964,7 @@ func (x *ProjectManagementProjectWorkflowPageFilter) ProtoReflect() protoreflect
 
 // Deprecated: Use ProjectManagementProjectWorkflowPageFilter.ProtoReflect.Descriptor instead.
 func (*ProjectManagementProjectWorkflowPageFilter) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{13}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *ProjectManagementProjectWorkflowPageFilter) GetProjectId() int64 {
@@ -873,7 +985,7 @@ type ProjectManagementProjectWorkflowPageRequestData struct {
 
 func (x *ProjectManagementProjectWorkflowPageRequestData) Reset() {
 	*x = ProjectManagementProjectWorkflowPageRequestData{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[14]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -885,7 +997,7 @@ func (x *ProjectManagementProjectWorkflowPageRequestData) String() string {
 func (*ProjectManagementProjectWorkflowPageRequestData) ProtoMessage() {}
 
 func (x *ProjectManagementProjectWorkflowPageRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[14]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -898,7 +1010,7 @@ func (x *ProjectManagementProjectWorkflowPageRequestData) ProtoReflect() protore
 
 // Deprecated: Use ProjectManagementProjectWorkflowPageRequestData.ProtoReflect.Descriptor instead.
 func (*ProjectManagementProjectWorkflowPageRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{14}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ProjectManagementProjectWorkflowPageRequestData) GetPage() int64 {
@@ -935,7 +1047,7 @@ type ProjectManagementWorkflowPageResponse struct {
 
 func (x *ProjectManagementWorkflowPageResponse) Reset() {
 	*x = ProjectManagementWorkflowPageResponse{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[15]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -947,7 +1059,7 @@ func (x *ProjectManagementWorkflowPageResponse) String() string {
 func (*ProjectManagementWorkflowPageResponse) ProtoMessage() {}
 
 func (x *ProjectManagementWorkflowPageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[15]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -960,7 +1072,7 @@ func (x *ProjectManagementWorkflowPageResponse) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use ProjectManagementWorkflowPageResponse.ProtoReflect.Descriptor instead.
 func (*ProjectManagementWorkflowPageResponse) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{15}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *ProjectManagementWorkflowPageResponse) GetTotal() int64 {
@@ -1007,7 +1119,7 @@ type ProjectManagementProjectWorkflowBatchRequest struct {
 
 func (x *ProjectManagementProjectWorkflowBatchRequest) Reset() {
 	*x = ProjectManagementProjectWorkflowBatchRequest{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[16]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1019,7 +1131,7 @@ func (x *ProjectManagementProjectWorkflowBatchRequest) String() string {
 func (*ProjectManagementProjectWorkflowBatchRequest) ProtoMessage() {}
 
 func (x *ProjectManagementProjectWorkflowBatchRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[16]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1032,7 +1144,7 @@ func (x *ProjectManagementProjectWorkflowBatchRequest) ProtoReflect() protorefle
 
 // Deprecated: Use ProjectManagementProjectWorkflowBatchRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementProjectWorkflowBatchRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{16}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *ProjectManagementProjectWorkflowBatchRequest) GetData() *ProjectManagementProjectWorkflowBatchRequestData {
@@ -1052,7 +1164,7 @@ type ProjectManagementProjectWorkflowBatchRequestData struct {
 
 func (x *ProjectManagementProjectWorkflowBatchRequestData) Reset() {
 	*x = ProjectManagementProjectWorkflowBatchRequestData{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[17]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1064,7 +1176,7 @@ func (x *ProjectManagementProjectWorkflowBatchRequestData) String() string {
 func (*ProjectManagementProjectWorkflowBatchRequestData) ProtoMessage() {}
 
 func (x *ProjectManagementProjectWorkflowBatchRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[17]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1077,7 +1189,7 @@ func (x *ProjectManagementProjectWorkflowBatchRequestData) ProtoReflect() protor
 
 // Deprecated: Use ProjectManagementProjectWorkflowBatchRequestData.ProtoReflect.Descriptor instead.
 func (*ProjectManagementProjectWorkflowBatchRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{17}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *ProjectManagementProjectWorkflowBatchRequestData) GetProjectId() int64 {
@@ -1094,6 +1206,214 @@ func (x *ProjectManagementProjectWorkflowBatchRequestData) GetSourceWorkflowIds(
 	return nil
 }
 
+type ProjectManagementProjectWorkflowCreateRequest struct {
+	state         protoimpl.MessageState                             `protogen:"open.v1"`
+	Data          *ProjectManagementProjectWorkflowCreateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProjectManagementProjectWorkflowCreateRequest) Reset() {
+	*x = ProjectManagementProjectWorkflowCreateRequest{}
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProjectManagementProjectWorkflowCreateRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProjectManagementProjectWorkflowCreateRequest) ProtoMessage() {}
+
+func (x *ProjectManagementProjectWorkflowCreateRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProjectManagementProjectWorkflowCreateRequest.ProtoReflect.Descriptor instead.
+func (*ProjectManagementProjectWorkflowCreateRequest) Descriptor() ([]byte, []int) {
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *ProjectManagementProjectWorkflowCreateRequest) GetData() *ProjectManagementProjectWorkflowCreateRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type ProjectManagementProjectWorkflowCreateRequestData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ProjectId     int64                  `protobuf:"varint,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProjectManagementProjectWorkflowCreateRequestData) Reset() {
+	*x = ProjectManagementProjectWorkflowCreateRequestData{}
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProjectManagementProjectWorkflowCreateRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProjectManagementProjectWorkflowCreateRequestData) ProtoMessage() {}
+
+func (x *ProjectManagementProjectWorkflowCreateRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProjectManagementProjectWorkflowCreateRequestData.ProtoReflect.Descriptor instead.
+func (*ProjectManagementProjectWorkflowCreateRequestData) Descriptor() ([]byte, []int) {
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *ProjectManagementProjectWorkflowCreateRequestData) GetProjectId() int64 {
+	if x != nil {
+		return x.ProjectId
+	}
+	return 0
+}
+
+func (x *ProjectManagementProjectWorkflowCreateRequestData) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *ProjectManagementProjectWorkflowCreateRequestData) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+type ProjectManagementProjectWorkflowUpdateRequest struct {
+	state         protoimpl.MessageState                             `protogen:"open.v1"`
+	Data          *ProjectManagementProjectWorkflowUpdateRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProjectManagementProjectWorkflowUpdateRequest) Reset() {
+	*x = ProjectManagementProjectWorkflowUpdateRequest{}
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProjectManagementProjectWorkflowUpdateRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProjectManagementProjectWorkflowUpdateRequest) ProtoMessage() {}
+
+func (x *ProjectManagementProjectWorkflowUpdateRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProjectManagementProjectWorkflowUpdateRequest.ProtoReflect.Descriptor instead.
+func (*ProjectManagementProjectWorkflowUpdateRequest) Descriptor() ([]byte, []int) {
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *ProjectManagementProjectWorkflowUpdateRequest) GetData() *ProjectManagementProjectWorkflowUpdateRequestData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type ProjectManagementProjectWorkflowUpdateRequestData struct {
+	state         protoimpl.MessageState                      `protogen:"open.v1"`
+	ProjectId     int64                                       `protobuf:"varint,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	WorkflowId    int64                                       `protobuf:"varint,2,opt,name=workflow_id,json=workflowId,proto3" json:"workflow_id,omitempty"`
+	Transitions   []*ProjectManagementWorkflowTransitionInput `protobuf:"bytes,3,rep,name=transitions,proto3" json:"transitions,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProjectManagementProjectWorkflowUpdateRequestData) Reset() {
+	*x = ProjectManagementProjectWorkflowUpdateRequestData{}
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProjectManagementProjectWorkflowUpdateRequestData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProjectManagementProjectWorkflowUpdateRequestData) ProtoMessage() {}
+
+func (x *ProjectManagementProjectWorkflowUpdateRequestData) ProtoReflect() protoreflect.Message {
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProjectManagementProjectWorkflowUpdateRequestData.ProtoReflect.Descriptor instead.
+func (*ProjectManagementProjectWorkflowUpdateRequestData) Descriptor() ([]byte, []int) {
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *ProjectManagementProjectWorkflowUpdateRequestData) GetProjectId() int64 {
+	if x != nil {
+		return x.ProjectId
+	}
+	return 0
+}
+
+func (x *ProjectManagementProjectWorkflowUpdateRequestData) GetWorkflowId() int64 {
+	if x != nil {
+		return x.WorkflowId
+	}
+	return 0
+}
+
+func (x *ProjectManagementProjectWorkflowUpdateRequestData) GetTransitions() []*ProjectManagementWorkflowTransitionInput {
+	if x != nil {
+		return x.Transitions
+	}
+	return nil
+}
+
 type ProjectManagementProjectWorkflowDetailRequest struct {
 	state         protoimpl.MessageState                             `protogen:"open.v1"`
 	Data          *ProjectManagementProjectWorkflowDetailRequestData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
@@ -1103,7 +1423,7 @@ type ProjectManagementProjectWorkflowDetailRequest struct {
 
 func (x *ProjectManagementProjectWorkflowDetailRequest) Reset() {
 	*x = ProjectManagementProjectWorkflowDetailRequest{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[18]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1115,7 +1435,7 @@ func (x *ProjectManagementProjectWorkflowDetailRequest) String() string {
 func (*ProjectManagementProjectWorkflowDetailRequest) ProtoMessage() {}
 
 func (x *ProjectManagementProjectWorkflowDetailRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[18]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1128,7 +1448,7 @@ func (x *ProjectManagementProjectWorkflowDetailRequest) ProtoReflect() protorefl
 
 // Deprecated: Use ProjectManagementProjectWorkflowDetailRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementProjectWorkflowDetailRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{18}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *ProjectManagementProjectWorkflowDetailRequest) GetData() *ProjectManagementProjectWorkflowDetailRequestData {
@@ -1148,7 +1468,7 @@ type ProjectManagementProjectWorkflowDetailRequestData struct {
 
 func (x *ProjectManagementProjectWorkflowDetailRequestData) Reset() {
 	*x = ProjectManagementProjectWorkflowDetailRequestData{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[19]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1160,7 +1480,7 @@ func (x *ProjectManagementProjectWorkflowDetailRequestData) String() string {
 func (*ProjectManagementProjectWorkflowDetailRequestData) ProtoMessage() {}
 
 func (x *ProjectManagementProjectWorkflowDetailRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[19]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1173,7 +1493,7 @@ func (x *ProjectManagementProjectWorkflowDetailRequestData) ProtoReflect() proto
 
 // Deprecated: Use ProjectManagementProjectWorkflowDetailRequestData.ProtoReflect.Descriptor instead.
 func (*ProjectManagementProjectWorkflowDetailRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{19}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *ProjectManagementProjectWorkflowDetailRequestData) GetProjectId() int64 {
@@ -1199,7 +1519,7 @@ type ProjectManagementProjectWorkflowDeleteRequest struct {
 
 func (x *ProjectManagementProjectWorkflowDeleteRequest) Reset() {
 	*x = ProjectManagementProjectWorkflowDeleteRequest{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[20]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1211,7 +1531,7 @@ func (x *ProjectManagementProjectWorkflowDeleteRequest) String() string {
 func (*ProjectManagementProjectWorkflowDeleteRequest) ProtoMessage() {}
 
 func (x *ProjectManagementProjectWorkflowDeleteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[20]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1224,7 +1544,7 @@ func (x *ProjectManagementProjectWorkflowDeleteRequest) ProtoReflect() protorefl
 
 // Deprecated: Use ProjectManagementProjectWorkflowDeleteRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementProjectWorkflowDeleteRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{20}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *ProjectManagementProjectWorkflowDeleteRequest) GetData() *ProjectManagementProjectWorkflowDeleteRequestData {
@@ -1244,7 +1564,7 @@ type ProjectManagementProjectWorkflowDeleteRequestData struct {
 
 func (x *ProjectManagementProjectWorkflowDeleteRequestData) Reset() {
 	*x = ProjectManagementProjectWorkflowDeleteRequestData{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[21]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1256,7 +1576,7 @@ func (x *ProjectManagementProjectWorkflowDeleteRequestData) String() string {
 func (*ProjectManagementProjectWorkflowDeleteRequestData) ProtoMessage() {}
 
 func (x *ProjectManagementProjectWorkflowDeleteRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[21]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1269,7 +1589,7 @@ func (x *ProjectManagementProjectWorkflowDeleteRequestData) ProtoReflect() proto
 
 // Deprecated: Use ProjectManagementProjectWorkflowDeleteRequestData.ProtoReflect.Descriptor instead.
 func (*ProjectManagementProjectWorkflowDeleteRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{21}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *ProjectManagementProjectWorkflowDeleteRequestData) GetProjectId() int64 {
@@ -1295,7 +1615,7 @@ type ProjectManagementWorkflowBatchResponse struct {
 
 func (x *ProjectManagementWorkflowBatchResponse) Reset() {
 	*x = ProjectManagementWorkflowBatchResponse{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[22]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1307,7 +1627,7 @@ func (x *ProjectManagementWorkflowBatchResponse) String() string {
 func (*ProjectManagementWorkflowBatchResponse) ProtoMessage() {}
 
 func (x *ProjectManagementWorkflowBatchResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[22]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1320,7 +1640,7 @@ func (x *ProjectManagementWorkflowBatchResponse) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use ProjectManagementWorkflowBatchResponse.ProtoReflect.Descriptor instead.
 func (*ProjectManagementWorkflowBatchResponse) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{22}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *ProjectManagementWorkflowBatchResponse) GetList() []*proto.ProjectManagementWorkflowEntity {
@@ -1339,7 +1659,7 @@ type ProjectManagementProjectWorkflowStageUpdateRequest struct {
 
 func (x *ProjectManagementProjectWorkflowStageUpdateRequest) Reset() {
 	*x = ProjectManagementProjectWorkflowStageUpdateRequest{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[23]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1351,7 +1671,7 @@ func (x *ProjectManagementProjectWorkflowStageUpdateRequest) String() string {
 func (*ProjectManagementProjectWorkflowStageUpdateRequest) ProtoMessage() {}
 
 func (x *ProjectManagementProjectWorkflowStageUpdateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[23]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1364,7 +1684,7 @@ func (x *ProjectManagementProjectWorkflowStageUpdateRequest) ProtoReflect() prot
 
 // Deprecated: Use ProjectManagementProjectWorkflowStageUpdateRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementProjectWorkflowStageUpdateRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{23}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *ProjectManagementProjectWorkflowStageUpdateRequest) GetData() *ProjectManagementProjectWorkflowStageUpdateRequestData {
@@ -1385,7 +1705,7 @@ type ProjectManagementProjectWorkflowStageUpdateRequestData struct {
 
 func (x *ProjectManagementProjectWorkflowStageUpdateRequestData) Reset() {
 	*x = ProjectManagementProjectWorkflowStageUpdateRequestData{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[24]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1397,7 +1717,7 @@ func (x *ProjectManagementProjectWorkflowStageUpdateRequestData) String() string
 func (*ProjectManagementProjectWorkflowStageUpdateRequestData) ProtoMessage() {}
 
 func (x *ProjectManagementProjectWorkflowStageUpdateRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[24]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1410,7 +1730,7 @@ func (x *ProjectManagementProjectWorkflowStageUpdateRequestData) ProtoReflect() 
 
 // Deprecated: Use ProjectManagementProjectWorkflowStageUpdateRequestData.ProtoReflect.Descriptor instead.
 func (*ProjectManagementProjectWorkflowStageUpdateRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{24}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *ProjectManagementProjectWorkflowStageUpdateRequestData) GetProjectId() int64 {
@@ -1443,7 +1763,7 @@ type ProjectManagementProjectWorkflowDefaultRequest struct {
 
 func (x *ProjectManagementProjectWorkflowDefaultRequest) Reset() {
 	*x = ProjectManagementProjectWorkflowDefaultRequest{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[25]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1455,7 +1775,7 @@ func (x *ProjectManagementProjectWorkflowDefaultRequest) String() string {
 func (*ProjectManagementProjectWorkflowDefaultRequest) ProtoMessage() {}
 
 func (x *ProjectManagementProjectWorkflowDefaultRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[25]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1468,7 +1788,7 @@ func (x *ProjectManagementProjectWorkflowDefaultRequest) ProtoReflect() protoref
 
 // Deprecated: Use ProjectManagementProjectWorkflowDefaultRequest.ProtoReflect.Descriptor instead.
 func (*ProjectManagementProjectWorkflowDefaultRequest) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{25}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *ProjectManagementProjectWorkflowDefaultRequest) GetData() *ProjectManagementProjectWorkflowDefaultRequestData {
@@ -1488,7 +1808,7 @@ type ProjectManagementProjectWorkflowDefaultRequestData struct {
 
 func (x *ProjectManagementProjectWorkflowDefaultRequestData) Reset() {
 	*x = ProjectManagementProjectWorkflowDefaultRequestData{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[26]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1500,7 +1820,7 @@ func (x *ProjectManagementProjectWorkflowDefaultRequestData) String() string {
 func (*ProjectManagementProjectWorkflowDefaultRequestData) ProtoMessage() {}
 
 func (x *ProjectManagementProjectWorkflowDefaultRequestData) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[26]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1513,7 +1833,7 @@ func (x *ProjectManagementProjectWorkflowDefaultRequestData) ProtoReflect() prot
 
 // Deprecated: Use ProjectManagementProjectWorkflowDefaultRequestData.ProtoReflect.Descriptor instead.
 func (*ProjectManagementProjectWorkflowDefaultRequestData) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{26}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *ProjectManagementProjectWorkflowDefaultRequestData) GetProjectId() int64 {
@@ -1539,7 +1859,7 @@ type ProjectManagementWorkflowTemplateResponse struct {
 
 func (x *ProjectManagementWorkflowTemplateResponse) Reset() {
 	*x = ProjectManagementWorkflowTemplateResponse{}
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[27]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1551,7 +1871,7 @@ func (x *ProjectManagementWorkflowTemplateResponse) String() string {
 func (*ProjectManagementWorkflowTemplateResponse) ProtoMessage() {}
 
 func (x *ProjectManagementWorkflowTemplateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_borrower_project_management_workflow_proto_msgTypes[27]
+	mi := &file_borrower_project_management_workflow_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1564,7 +1884,7 @@ func (x *ProjectManagementWorkflowTemplateResponse) ProtoReflect() protoreflect.
 
 // Deprecated: Use ProjectManagementWorkflowTemplateResponse.ProtoReflect.Descriptor instead.
 func (*ProjectManagementWorkflowTemplateResponse) Descriptor() ([]byte, []int) {
-	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{27}
+	return file_borrower_project_management_workflow_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *ProjectManagementWorkflowTemplateResponse) GetList() []*proto.ProjectManagementTemplateEntity {
@@ -1578,7 +1898,13 @@ var File_borrower_project_management_workflow_proto protoreflect.FileDescriptor
 
 const file_borrower_project_management_workflow_proto_rawDesc = "" +
 	"\n" +
-	"*borrower_project_management_workflow.proto\x12\bborrower\x1a\x12proto/common.proto\x1a\x12proto/entity.proto\"b\n" +
+	"*borrower_project_management_workflow.proto\x12\bborrower\x1a\x12proto/common.proto\x1a\x12proto/entity.proto\"l\n" +
+	"#ProjectManagementWorkflowAllRequest\x12E\n" +
+	"\x04data\x18\x01 \x01(\v21.borrower.ProjectManagementWorkflowAllRequestDataR\x04data\"g\n" +
+	"'ProjectManagementWorkflowAllRequestData\x12\x1f\n" +
+	"\ventity_type\x18\x01 \x01(\tR\n" +
+	"entityType\x12\x1b\n" +
+	"\tentity_id\x18\x02 \x01(\x03R\bentityId\"b\n" +
 	"$ProjectManagementWorkflowAllResponse\x12:\n" +
 	"\x04data\x18\x01 \x03(\v2&.proto.ProjectManagementWorkflowEntityR\x04data\"r\n" +
 	"&ProjectManagementWorkflowDetailRequest\x12H\n" +
@@ -1604,14 +1930,17 @@ const file_borrower_project_management_workflow_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\"\n" +
 	"\rfrom_stage_id\x18\x03 \x01(\x03R\vfromStageId\x12\x1e\n" +
 	"\vto_stage_id\x18\x04 \x01(\x03R\ttoStageId\x12.\n" +
-	"\x13allowed_actor_types\x18\x05 \x03(\tR\x11allowedActorTypes\"\xa4\x02\n" +
+	"\x13allowed_actor_types\x18\x05 \x03(\tR\x11allowedActorTypes\"\xe2\x02\n" +
 	"*ProjectManagementWorkflowCreateRequestData\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x1d\n" +
 	"\n" +
 	"is_default\x18\x04 \x01(\bR\tisDefault\x12E\n" +
 	"\x06stages\x18\x05 \x03(\v2-.borrower.ProjectManagementWorkflowStageInputR\x06stages\x12T\n" +
-	"\vtransitions\x18\x06 \x03(\v22.borrower.ProjectManagementWorkflowTransitionInputR\vtransitionsJ\x04\b\x03\x10\x04\"r\n" +
+	"\vtransitions\x18\x06 \x03(\v22.borrower.ProjectManagementWorkflowTransitionInputR\vtransitions\x12\x1f\n" +
+	"\ventity_type\x18\a \x01(\tR\n" +
+	"entityType\x12\x1b\n" +
+	"\tentity_id\x18\b \x01(\x03R\bentityIdJ\x04\b\x03\x10\x04\"r\n" +
 	"&ProjectManagementWorkflowUpdateRequest\x12H\n" +
 	"\x04data\x18\x01 \x01(\v24.borrower.ProjectManagementWorkflowUpdateRequestDataR\x04data\"\x8e\x02\n" +
 	"$ProjectManagementWorkflowUpdateStage\x12\x0e\n" +
@@ -1658,6 +1987,21 @@ const file_borrower_project_management_workflow_proto_rawDesc = "" +
 	"\n" +
 	"project_id\x18\x01 \x01(\x03R\tprojectId\x12.\n" +
 	"\x13source_workflow_ids\x18\x02 \x03(\x03R\x11sourceWorkflowIds\"\x80\x01\n" +
+	"-ProjectManagementProjectWorkflowCreateRequest\x12O\n" +
+	"\x04data\x18\x01 \x01(\v2;.borrower.ProjectManagementProjectWorkflowCreateRequestDataR\x04data\"\x88\x01\n" +
+	"1ProjectManagementProjectWorkflowCreateRequestData\x12\x1d\n" +
+	"\n" +
+	"project_id\x18\x01 \x01(\x03R\tprojectId\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\"\x80\x01\n" +
+	"-ProjectManagementProjectWorkflowUpdateRequest\x12O\n" +
+	"\x04data\x18\x01 \x01(\v2;.borrower.ProjectManagementProjectWorkflowUpdateRequestDataR\x04data\"\xc9\x01\n" +
+	"1ProjectManagementProjectWorkflowUpdateRequestData\x12\x1d\n" +
+	"\n" +
+	"project_id\x18\x01 \x01(\x03R\tprojectId\x12\x1f\n" +
+	"\vworkflow_id\x18\x02 \x01(\x03R\n" +
+	"workflowId\x12T\n" +
+	"\vtransitions\x18\x03 \x03(\v22.borrower.ProjectManagementWorkflowTransitionInputR\vtransitions\"\x80\x01\n" +
 	"-ProjectManagementProjectWorkflowDetailRequest\x12O\n" +
 	"\x04data\x18\x01 \x01(\v2;.borrower.ProjectManagementProjectWorkflowDetailRequestDataR\x04data\"s\n" +
 	"1ProjectManagementProjectWorkflowDetailRequestData\x12\x1d\n" +
@@ -1690,10 +2034,9 @@ const file_borrower_project_management_workflow_proto_rawDesc = "" +
 	"\vworkflow_id\x18\x02 \x01(\x03R\n" +
 	"workflowId\"g\n" +
 	")ProjectManagementWorkflowTemplateResponse\x12:\n" +
-	"\x04list\x18\x01 \x03(\v2&.proto.ProjectManagementTemplateEntityR\x04list2\xf1\n" +
-	"\n" +
-	"\x19ProjectManagementWorkflow\x12J\n" +
-	"\x03All\x12\x13.proto.EmptyRequest\x1a..borrower.ProjectManagementWorkflowAllResponse\x12m\n" +
+	"\x04list\x18\x01 \x03(\v2&.proto.ProjectManagementTemplateEntityR\x04list2\x97\r\n" +
+	"\x19ProjectManagementWorkflow\x12d\n" +
+	"\x03All\x12-.borrower.ProjectManagementWorkflowAllRequest\x1a..borrower.ProjectManagementWorkflowAllResponse\x12m\n" +
 	"\x06Detail\x120.borrower.ProjectManagementWorkflowDetailRequest\x1a1.borrower.ProjectManagementWorkflowDetailResponse\x12m\n" +
 	"\x06Create\x120.borrower.ProjectManagementWorkflowCreateRequest\x1a1.borrower.ProjectManagementWorkflowDetailResponse\x12m\n" +
 	"\x06Update\x120.borrower.ProjectManagementWorkflowUpdateRequest\x1a1.borrower.ProjectManagementWorkflowDetailResponse\x125\n" +
@@ -1701,8 +2044,10 @@ const file_borrower_project_management_workflow_proto_rawDesc = "" +
 	"\x06Delete\x12\x14.proto.PathIdRequest\x1a\x14.proto.EmptyResponse\x12}\n" +
 	"\x13ProjectWorkflowPage\x125.borrower.ProjectManagementProjectWorkflowPageRequest\x1a/.borrower.ProjectManagementWorkflowPageResponse\x12\x80\x01\n" +
 	"\x14ProjectWorkflowBatch\x126.borrower.ProjectManagementProjectWorkflowBatchRequest\x1a0.borrower.ProjectManagementWorkflowBatchResponse\x12\x83\x01\n" +
+	"\x15ProjectWorkflowCreate\x127.borrower.ProjectManagementProjectWorkflowCreateRequest\x1a1.borrower.ProjectManagementWorkflowDetailResponse\x12\x83\x01\n" +
 	"\x15ProjectWorkflowDetail\x127.borrower.ProjectManagementProjectWorkflowDetailRequest\x1a1.borrower.ProjectManagementWorkflowDetailResponse\x12f\n" +
-	"\x15ProjectWorkflowDelete\x127.borrower.ProjectManagementProjectWorkflowDeleteRequest\x1a\x14.proto.EmptyResponse\x12\x8d\x01\n" +
+	"\x15ProjectWorkflowDelete\x127.borrower.ProjectManagementProjectWorkflowDeleteRequest\x1a\x14.proto.EmptyResponse\x12\x83\x01\n" +
+	"\x15ProjectWorkflowUpdate\x127.borrower.ProjectManagementProjectWorkflowUpdateRequest\x1a1.borrower.ProjectManagementWorkflowDetailResponse\x12\x8d\x01\n" +
 	"\x1aProjectWorkflowStageUpdate\x12<.borrower.ProjectManagementProjectWorkflowStageUpdateRequest\x1a1.borrower.ProjectManagementWorkflowDetailResponse\x12h\n" +
 	"\x16ProjectWorkflowDefault\x128.borrower.ProjectManagementProjectWorkflowDefaultRequest\x1a\x14.proto.EmptyResponse\x12d\n" +
 	"\x18ProjectWorkflowTemplates\x12\x13.proto.EmptyRequest\x1a3.borrower.ProjectManagementWorkflowTemplateResponseB-Z+zeebee-backend/app/borrower/rpc/pb/borrowerb\x06proto3"
@@ -1719,94 +2064,108 @@ func file_borrower_project_management_workflow_proto_rawDescGZIP() []byte {
 	return file_borrower_project_management_workflow_proto_rawDescData
 }
 
-var file_borrower_project_management_workflow_proto_msgTypes = make([]protoimpl.MessageInfo, 28)
+var file_borrower_project_management_workflow_proto_msgTypes = make([]protoimpl.MessageInfo, 34)
 var file_borrower_project_management_workflow_proto_goTypes = []any{
-	(*ProjectManagementWorkflowAllResponse)(nil),                   // 0: borrower.ProjectManagementWorkflowAllResponse
-	(*ProjectManagementWorkflowDetailRequest)(nil),                 // 1: borrower.ProjectManagementWorkflowDetailRequest
-	(*ProjectManagementWorkflowDetailRequestData)(nil),             // 2: borrower.ProjectManagementWorkflowDetailRequestData
-	(*ProjectManagementWorkflowDetailResponse)(nil),                // 3: borrower.ProjectManagementWorkflowDetailResponse
-	(*ProjectManagementWorkflowCreateRequest)(nil),                 // 4: borrower.ProjectManagementWorkflowCreateRequest
-	(*ProjectManagementWorkflowStageInput)(nil),                    // 5: borrower.ProjectManagementWorkflowStageInput
-	(*ProjectManagementWorkflowTransitionInput)(nil),               // 6: borrower.ProjectManagementWorkflowTransitionInput
-	(*ProjectManagementWorkflowCreateRequestData)(nil),             // 7: borrower.ProjectManagementWorkflowCreateRequestData
-	(*ProjectManagementWorkflowUpdateRequest)(nil),                 // 8: borrower.ProjectManagementWorkflowUpdateRequest
-	(*ProjectManagementWorkflowUpdateStage)(nil),                   // 9: borrower.ProjectManagementWorkflowUpdateStage
-	(*ProjectManagementWorkflowUpdateTransition)(nil),              // 10: borrower.ProjectManagementWorkflowUpdateTransition
-	(*ProjectManagementWorkflowUpdateRequestData)(nil),             // 11: borrower.ProjectManagementWorkflowUpdateRequestData
-	(*ProjectManagementProjectWorkflowPageRequest)(nil),            // 12: borrower.ProjectManagementProjectWorkflowPageRequest
-	(*ProjectManagementProjectWorkflowPageFilter)(nil),             // 13: borrower.ProjectManagementProjectWorkflowPageFilter
-	(*ProjectManagementProjectWorkflowPageRequestData)(nil),        // 14: borrower.ProjectManagementProjectWorkflowPageRequestData
-	(*ProjectManagementWorkflowPageResponse)(nil),                  // 15: borrower.ProjectManagementWorkflowPageResponse
-	(*ProjectManagementProjectWorkflowBatchRequest)(nil),           // 16: borrower.ProjectManagementProjectWorkflowBatchRequest
-	(*ProjectManagementProjectWorkflowBatchRequestData)(nil),       // 17: borrower.ProjectManagementProjectWorkflowBatchRequestData
-	(*ProjectManagementProjectWorkflowDetailRequest)(nil),          // 18: borrower.ProjectManagementProjectWorkflowDetailRequest
-	(*ProjectManagementProjectWorkflowDetailRequestData)(nil),      // 19: borrower.ProjectManagementProjectWorkflowDetailRequestData
-	(*ProjectManagementProjectWorkflowDeleteRequest)(nil),          // 20: borrower.ProjectManagementProjectWorkflowDeleteRequest
-	(*ProjectManagementProjectWorkflowDeleteRequestData)(nil),      // 21: borrower.ProjectManagementProjectWorkflowDeleteRequestData
-	(*ProjectManagementWorkflowBatchResponse)(nil),                 // 22: borrower.ProjectManagementWorkflowBatchResponse
-	(*ProjectManagementProjectWorkflowStageUpdateRequest)(nil),     // 23: borrower.ProjectManagementProjectWorkflowStageUpdateRequest
-	(*ProjectManagementProjectWorkflowStageUpdateRequestData)(nil), // 24: borrower.ProjectManagementProjectWorkflowStageUpdateRequestData
-	(*ProjectManagementProjectWorkflowDefaultRequest)(nil),         // 25: borrower.ProjectManagementProjectWorkflowDefaultRequest
-	(*ProjectManagementProjectWorkflowDefaultRequestData)(nil),     // 26: borrower.ProjectManagementProjectWorkflowDefaultRequestData
-	(*ProjectManagementWorkflowTemplateResponse)(nil),              // 27: borrower.ProjectManagementWorkflowTemplateResponse
-	(*proto.ProjectManagementWorkflowEntity)(nil),                  // 28: proto.ProjectManagementWorkflowEntity
-	(*proto.ProjectManagementTemplateEntity)(nil),                  // 29: proto.ProjectManagementTemplateEntity
-	(*proto.EmptyRequest)(nil),                                     // 30: proto.EmptyRequest
-	(*proto.PathIdRequest)(nil),                                    // 31: proto.PathIdRequest
-	(*proto.EmptyResponse)(nil),                                    // 32: proto.EmptyResponse
+	(*ProjectManagementWorkflowAllRequest)(nil),                    // 0: borrower.ProjectManagementWorkflowAllRequest
+	(*ProjectManagementWorkflowAllRequestData)(nil),                // 1: borrower.ProjectManagementWorkflowAllRequestData
+	(*ProjectManagementWorkflowAllResponse)(nil),                   // 2: borrower.ProjectManagementWorkflowAllResponse
+	(*ProjectManagementWorkflowDetailRequest)(nil),                 // 3: borrower.ProjectManagementWorkflowDetailRequest
+	(*ProjectManagementWorkflowDetailRequestData)(nil),             // 4: borrower.ProjectManagementWorkflowDetailRequestData
+	(*ProjectManagementWorkflowDetailResponse)(nil),                // 5: borrower.ProjectManagementWorkflowDetailResponse
+	(*ProjectManagementWorkflowCreateRequest)(nil),                 // 6: borrower.ProjectManagementWorkflowCreateRequest
+	(*ProjectManagementWorkflowStageInput)(nil),                    // 7: borrower.ProjectManagementWorkflowStageInput
+	(*ProjectManagementWorkflowTransitionInput)(nil),               // 8: borrower.ProjectManagementWorkflowTransitionInput
+	(*ProjectManagementWorkflowCreateRequestData)(nil),             // 9: borrower.ProjectManagementWorkflowCreateRequestData
+	(*ProjectManagementWorkflowUpdateRequest)(nil),                 // 10: borrower.ProjectManagementWorkflowUpdateRequest
+	(*ProjectManagementWorkflowUpdateStage)(nil),                   // 11: borrower.ProjectManagementWorkflowUpdateStage
+	(*ProjectManagementWorkflowUpdateTransition)(nil),              // 12: borrower.ProjectManagementWorkflowUpdateTransition
+	(*ProjectManagementWorkflowUpdateRequestData)(nil),             // 13: borrower.ProjectManagementWorkflowUpdateRequestData
+	(*ProjectManagementProjectWorkflowPageRequest)(nil),            // 14: borrower.ProjectManagementProjectWorkflowPageRequest
+	(*ProjectManagementProjectWorkflowPageFilter)(nil),             // 15: borrower.ProjectManagementProjectWorkflowPageFilter
+	(*ProjectManagementProjectWorkflowPageRequestData)(nil),        // 16: borrower.ProjectManagementProjectWorkflowPageRequestData
+	(*ProjectManagementWorkflowPageResponse)(nil),                  // 17: borrower.ProjectManagementWorkflowPageResponse
+	(*ProjectManagementProjectWorkflowBatchRequest)(nil),           // 18: borrower.ProjectManagementProjectWorkflowBatchRequest
+	(*ProjectManagementProjectWorkflowBatchRequestData)(nil),       // 19: borrower.ProjectManagementProjectWorkflowBatchRequestData
+	(*ProjectManagementProjectWorkflowCreateRequest)(nil),          // 20: borrower.ProjectManagementProjectWorkflowCreateRequest
+	(*ProjectManagementProjectWorkflowCreateRequestData)(nil),      // 21: borrower.ProjectManagementProjectWorkflowCreateRequestData
+	(*ProjectManagementProjectWorkflowUpdateRequest)(nil),          // 22: borrower.ProjectManagementProjectWorkflowUpdateRequest
+	(*ProjectManagementProjectWorkflowUpdateRequestData)(nil),      // 23: borrower.ProjectManagementProjectWorkflowUpdateRequestData
+	(*ProjectManagementProjectWorkflowDetailRequest)(nil),          // 24: borrower.ProjectManagementProjectWorkflowDetailRequest
+	(*ProjectManagementProjectWorkflowDetailRequestData)(nil),      // 25: borrower.ProjectManagementProjectWorkflowDetailRequestData
+	(*ProjectManagementProjectWorkflowDeleteRequest)(nil),          // 26: borrower.ProjectManagementProjectWorkflowDeleteRequest
+	(*ProjectManagementProjectWorkflowDeleteRequestData)(nil),      // 27: borrower.ProjectManagementProjectWorkflowDeleteRequestData
+	(*ProjectManagementWorkflowBatchResponse)(nil),                 // 28: borrower.ProjectManagementWorkflowBatchResponse
+	(*ProjectManagementProjectWorkflowStageUpdateRequest)(nil),     // 29: borrower.ProjectManagementProjectWorkflowStageUpdateRequest
+	(*ProjectManagementProjectWorkflowStageUpdateRequestData)(nil), // 30: borrower.ProjectManagementProjectWorkflowStageUpdateRequestData
+	(*ProjectManagementProjectWorkflowDefaultRequest)(nil),         // 31: borrower.ProjectManagementProjectWorkflowDefaultRequest
+	(*ProjectManagementProjectWorkflowDefaultRequestData)(nil),     // 32: borrower.ProjectManagementProjectWorkflowDefaultRequestData
+	(*ProjectManagementWorkflowTemplateResponse)(nil),              // 33: borrower.ProjectManagementWorkflowTemplateResponse
+	(*proto.ProjectManagementWorkflowEntity)(nil),                  // 34: proto.ProjectManagementWorkflowEntity
+	(*proto.ProjectManagementTemplateEntity)(nil),                  // 35: proto.ProjectManagementTemplateEntity
+	(*proto.PathIdRequest)(nil),                                    // 36: proto.PathIdRequest
+	(*proto.EmptyRequest)(nil),                                     // 37: proto.EmptyRequest
+	(*proto.EmptyResponse)(nil),                                    // 38: proto.EmptyResponse
 }
 var file_borrower_project_management_workflow_proto_depIdxs = []int32{
-	28, // 0: borrower.ProjectManagementWorkflowAllResponse.data:type_name -> proto.ProjectManagementWorkflowEntity
-	2,  // 1: borrower.ProjectManagementWorkflowDetailRequest.data:type_name -> borrower.ProjectManagementWorkflowDetailRequestData
-	28, // 2: borrower.ProjectManagementWorkflowDetailResponse.data:type_name -> proto.ProjectManagementWorkflowEntity
-	7,  // 3: borrower.ProjectManagementWorkflowCreateRequest.data:type_name -> borrower.ProjectManagementWorkflowCreateRequestData
-	5,  // 4: borrower.ProjectManagementWorkflowCreateRequestData.stages:type_name -> borrower.ProjectManagementWorkflowStageInput
-	6,  // 5: borrower.ProjectManagementWorkflowCreateRequestData.transitions:type_name -> borrower.ProjectManagementWorkflowTransitionInput
-	11, // 6: borrower.ProjectManagementWorkflowUpdateRequest.data:type_name -> borrower.ProjectManagementWorkflowUpdateRequestData
-	10, // 7: borrower.ProjectManagementWorkflowUpdateStage.transitions:type_name -> borrower.ProjectManagementWorkflowUpdateTransition
-	9,  // 8: borrower.ProjectManagementWorkflowUpdateRequestData.stages:type_name -> borrower.ProjectManagementWorkflowUpdateStage
-	14, // 9: borrower.ProjectManagementProjectWorkflowPageRequest.data:type_name -> borrower.ProjectManagementProjectWorkflowPageRequestData
-	13, // 10: borrower.ProjectManagementProjectWorkflowPageRequestData.filter:type_name -> borrower.ProjectManagementProjectWorkflowPageFilter
-	28, // 11: borrower.ProjectManagementWorkflowPageResponse.list:type_name -> proto.ProjectManagementWorkflowEntity
-	17, // 12: borrower.ProjectManagementProjectWorkflowBatchRequest.data:type_name -> borrower.ProjectManagementProjectWorkflowBatchRequestData
-	19, // 13: borrower.ProjectManagementProjectWorkflowDetailRequest.data:type_name -> borrower.ProjectManagementProjectWorkflowDetailRequestData
-	21, // 14: borrower.ProjectManagementProjectWorkflowDeleteRequest.data:type_name -> borrower.ProjectManagementProjectWorkflowDeleteRequestData
-	28, // 15: borrower.ProjectManagementWorkflowBatchResponse.list:type_name -> proto.ProjectManagementWorkflowEntity
-	24, // 16: borrower.ProjectManagementProjectWorkflowStageUpdateRequest.data:type_name -> borrower.ProjectManagementProjectWorkflowStageUpdateRequestData
-	9,  // 17: borrower.ProjectManagementProjectWorkflowStageUpdateRequestData.stages:type_name -> borrower.ProjectManagementWorkflowUpdateStage
-	26, // 18: borrower.ProjectManagementProjectWorkflowDefaultRequest.data:type_name -> borrower.ProjectManagementProjectWorkflowDefaultRequestData
-	29, // 19: borrower.ProjectManagementWorkflowTemplateResponse.list:type_name -> proto.ProjectManagementTemplateEntity
-	30, // 20: borrower.ProjectManagementWorkflow.All:input_type -> proto.EmptyRequest
-	1,  // 21: borrower.ProjectManagementWorkflow.Detail:input_type -> borrower.ProjectManagementWorkflowDetailRequest
-	4,  // 22: borrower.ProjectManagementWorkflow.Create:input_type -> borrower.ProjectManagementWorkflowCreateRequest
-	8,  // 23: borrower.ProjectManagementWorkflow.Update:input_type -> borrower.ProjectManagementWorkflowUpdateRequest
-	31, // 24: borrower.ProjectManagementWorkflow.Default:input_type -> proto.PathIdRequest
-	31, // 25: borrower.ProjectManagementWorkflow.Delete:input_type -> proto.PathIdRequest
-	12, // 26: borrower.ProjectManagementWorkflow.ProjectWorkflowPage:input_type -> borrower.ProjectManagementProjectWorkflowPageRequest
-	16, // 27: borrower.ProjectManagementWorkflow.ProjectWorkflowBatch:input_type -> borrower.ProjectManagementProjectWorkflowBatchRequest
-	18, // 28: borrower.ProjectManagementWorkflow.ProjectWorkflowDetail:input_type -> borrower.ProjectManagementProjectWorkflowDetailRequest
-	20, // 29: borrower.ProjectManagementWorkflow.ProjectWorkflowDelete:input_type -> borrower.ProjectManagementProjectWorkflowDeleteRequest
-	23, // 30: borrower.ProjectManagementWorkflow.ProjectWorkflowStageUpdate:input_type -> borrower.ProjectManagementProjectWorkflowStageUpdateRequest
-	25, // 31: borrower.ProjectManagementWorkflow.ProjectWorkflowDefault:input_type -> borrower.ProjectManagementProjectWorkflowDefaultRequest
-	30, // 32: borrower.ProjectManagementWorkflow.ProjectWorkflowTemplates:input_type -> proto.EmptyRequest
-	0,  // 33: borrower.ProjectManagementWorkflow.All:output_type -> borrower.ProjectManagementWorkflowAllResponse
-	3,  // 34: borrower.ProjectManagementWorkflow.Detail:output_type -> borrower.ProjectManagementWorkflowDetailResponse
-	3,  // 35: borrower.ProjectManagementWorkflow.Create:output_type -> borrower.ProjectManagementWorkflowDetailResponse
-	3,  // 36: borrower.ProjectManagementWorkflow.Update:output_type -> borrower.ProjectManagementWorkflowDetailResponse
-	32, // 37: borrower.ProjectManagementWorkflow.Default:output_type -> proto.EmptyResponse
-	32, // 38: borrower.ProjectManagementWorkflow.Delete:output_type -> proto.EmptyResponse
-	15, // 39: borrower.ProjectManagementWorkflow.ProjectWorkflowPage:output_type -> borrower.ProjectManagementWorkflowPageResponse
-	22, // 40: borrower.ProjectManagementWorkflow.ProjectWorkflowBatch:output_type -> borrower.ProjectManagementWorkflowBatchResponse
-	3,  // 41: borrower.ProjectManagementWorkflow.ProjectWorkflowDetail:output_type -> borrower.ProjectManagementWorkflowDetailResponse
-	32, // 42: borrower.ProjectManagementWorkflow.ProjectWorkflowDelete:output_type -> proto.EmptyResponse
-	3,  // 43: borrower.ProjectManagementWorkflow.ProjectWorkflowStageUpdate:output_type -> borrower.ProjectManagementWorkflowDetailResponse
-	32, // 44: borrower.ProjectManagementWorkflow.ProjectWorkflowDefault:output_type -> proto.EmptyResponse
-	27, // 45: borrower.ProjectManagementWorkflow.ProjectWorkflowTemplates:output_type -> borrower.ProjectManagementWorkflowTemplateResponse
-	33, // [33:46] is the sub-list for method output_type
-	20, // [20:33] is the sub-list for method input_type
-	20, // [20:20] is the sub-list for extension type_name
-	20, // [20:20] is the sub-list for extension extendee
-	0,  // [0:20] is the sub-list for field type_name
+	1,  // 0: borrower.ProjectManagementWorkflowAllRequest.data:type_name -> borrower.ProjectManagementWorkflowAllRequestData
+	34, // 1: borrower.ProjectManagementWorkflowAllResponse.data:type_name -> proto.ProjectManagementWorkflowEntity
+	4,  // 2: borrower.ProjectManagementWorkflowDetailRequest.data:type_name -> borrower.ProjectManagementWorkflowDetailRequestData
+	34, // 3: borrower.ProjectManagementWorkflowDetailResponse.data:type_name -> proto.ProjectManagementWorkflowEntity
+	9,  // 4: borrower.ProjectManagementWorkflowCreateRequest.data:type_name -> borrower.ProjectManagementWorkflowCreateRequestData
+	7,  // 5: borrower.ProjectManagementWorkflowCreateRequestData.stages:type_name -> borrower.ProjectManagementWorkflowStageInput
+	8,  // 6: borrower.ProjectManagementWorkflowCreateRequestData.transitions:type_name -> borrower.ProjectManagementWorkflowTransitionInput
+	13, // 7: borrower.ProjectManagementWorkflowUpdateRequest.data:type_name -> borrower.ProjectManagementWorkflowUpdateRequestData
+	12, // 8: borrower.ProjectManagementWorkflowUpdateStage.transitions:type_name -> borrower.ProjectManagementWorkflowUpdateTransition
+	11, // 9: borrower.ProjectManagementWorkflowUpdateRequestData.stages:type_name -> borrower.ProjectManagementWorkflowUpdateStage
+	16, // 10: borrower.ProjectManagementProjectWorkflowPageRequest.data:type_name -> borrower.ProjectManagementProjectWorkflowPageRequestData
+	15, // 11: borrower.ProjectManagementProjectWorkflowPageRequestData.filter:type_name -> borrower.ProjectManagementProjectWorkflowPageFilter
+	34, // 12: borrower.ProjectManagementWorkflowPageResponse.list:type_name -> proto.ProjectManagementWorkflowEntity
+	19, // 13: borrower.ProjectManagementProjectWorkflowBatchRequest.data:type_name -> borrower.ProjectManagementProjectWorkflowBatchRequestData
+	21, // 14: borrower.ProjectManagementProjectWorkflowCreateRequest.data:type_name -> borrower.ProjectManagementProjectWorkflowCreateRequestData
+	23, // 15: borrower.ProjectManagementProjectWorkflowUpdateRequest.data:type_name -> borrower.ProjectManagementProjectWorkflowUpdateRequestData
+	8,  // 16: borrower.ProjectManagementProjectWorkflowUpdateRequestData.transitions:type_name -> borrower.ProjectManagementWorkflowTransitionInput
+	25, // 17: borrower.ProjectManagementProjectWorkflowDetailRequest.data:type_name -> borrower.ProjectManagementProjectWorkflowDetailRequestData
+	27, // 18: borrower.ProjectManagementProjectWorkflowDeleteRequest.data:type_name -> borrower.ProjectManagementProjectWorkflowDeleteRequestData
+	34, // 19: borrower.ProjectManagementWorkflowBatchResponse.list:type_name -> proto.ProjectManagementWorkflowEntity
+	30, // 20: borrower.ProjectManagementProjectWorkflowStageUpdateRequest.data:type_name -> borrower.ProjectManagementProjectWorkflowStageUpdateRequestData
+	11, // 21: borrower.ProjectManagementProjectWorkflowStageUpdateRequestData.stages:type_name -> borrower.ProjectManagementWorkflowUpdateStage
+	32, // 22: borrower.ProjectManagementProjectWorkflowDefaultRequest.data:type_name -> borrower.ProjectManagementProjectWorkflowDefaultRequestData
+	35, // 23: borrower.ProjectManagementWorkflowTemplateResponse.list:type_name -> proto.ProjectManagementTemplateEntity
+	0,  // 24: borrower.ProjectManagementWorkflow.All:input_type -> borrower.ProjectManagementWorkflowAllRequest
+	3,  // 25: borrower.ProjectManagementWorkflow.Detail:input_type -> borrower.ProjectManagementWorkflowDetailRequest
+	6,  // 26: borrower.ProjectManagementWorkflow.Create:input_type -> borrower.ProjectManagementWorkflowCreateRequest
+	10, // 27: borrower.ProjectManagementWorkflow.Update:input_type -> borrower.ProjectManagementWorkflowUpdateRequest
+	36, // 28: borrower.ProjectManagementWorkflow.Default:input_type -> proto.PathIdRequest
+	36, // 29: borrower.ProjectManagementWorkflow.Delete:input_type -> proto.PathIdRequest
+	14, // 30: borrower.ProjectManagementWorkflow.ProjectWorkflowPage:input_type -> borrower.ProjectManagementProjectWorkflowPageRequest
+	18, // 31: borrower.ProjectManagementWorkflow.ProjectWorkflowBatch:input_type -> borrower.ProjectManagementProjectWorkflowBatchRequest
+	20, // 32: borrower.ProjectManagementWorkflow.ProjectWorkflowCreate:input_type -> borrower.ProjectManagementProjectWorkflowCreateRequest
+	24, // 33: borrower.ProjectManagementWorkflow.ProjectWorkflowDetail:input_type -> borrower.ProjectManagementProjectWorkflowDetailRequest
+	26, // 34: borrower.ProjectManagementWorkflow.ProjectWorkflowDelete:input_type -> borrower.ProjectManagementProjectWorkflowDeleteRequest
+	22, // 35: borrower.ProjectManagementWorkflow.ProjectWorkflowUpdate:input_type -> borrower.ProjectManagementProjectWorkflowUpdateRequest
+	29, // 36: borrower.ProjectManagementWorkflow.ProjectWorkflowStageUpdate:input_type -> borrower.ProjectManagementProjectWorkflowStageUpdateRequest
+	31, // 37: borrower.ProjectManagementWorkflow.ProjectWorkflowDefault:input_type -> borrower.ProjectManagementProjectWorkflowDefaultRequest
+	37, // 38: borrower.ProjectManagementWorkflow.ProjectWorkflowTemplates:input_type -> proto.EmptyRequest
+	2,  // 39: borrower.ProjectManagementWorkflow.All:output_type -> borrower.ProjectManagementWorkflowAllResponse
+	5,  // 40: borrower.ProjectManagementWorkflow.Detail:output_type -> borrower.ProjectManagementWorkflowDetailResponse
+	5,  // 41: borrower.ProjectManagementWorkflow.Create:output_type -> borrower.ProjectManagementWorkflowDetailResponse
+	5,  // 42: borrower.ProjectManagementWorkflow.Update:output_type -> borrower.ProjectManagementWorkflowDetailResponse
+	38, // 43: borrower.ProjectManagementWorkflow.Default:output_type -> proto.EmptyResponse
+	38, // 44: borrower.ProjectManagementWorkflow.Delete:output_type -> proto.EmptyResponse
+	17, // 45: borrower.ProjectManagementWorkflow.ProjectWorkflowPage:output_type -> borrower.ProjectManagementWorkflowPageResponse
+	28, // 46: borrower.ProjectManagementWorkflow.ProjectWorkflowBatch:output_type -> borrower.ProjectManagementWorkflowBatchResponse
+	5,  // 47: borrower.ProjectManagementWorkflow.ProjectWorkflowCreate:output_type -> borrower.ProjectManagementWorkflowDetailResponse
+	5,  // 48: borrower.ProjectManagementWorkflow.ProjectWorkflowDetail:output_type -> borrower.ProjectManagementWorkflowDetailResponse
+	38, // 49: borrower.ProjectManagementWorkflow.ProjectWorkflowDelete:output_type -> proto.EmptyResponse
+	5,  // 50: borrower.ProjectManagementWorkflow.ProjectWorkflowUpdate:output_type -> borrower.ProjectManagementWorkflowDetailResponse
+	5,  // 51: borrower.ProjectManagementWorkflow.ProjectWorkflowStageUpdate:output_type -> borrower.ProjectManagementWorkflowDetailResponse
+	38, // 52: borrower.ProjectManagementWorkflow.ProjectWorkflowDefault:output_type -> proto.EmptyResponse
+	33, // 53: borrower.ProjectManagementWorkflow.ProjectWorkflowTemplates:output_type -> borrower.ProjectManagementWorkflowTemplateResponse
+	39, // [39:54] is the sub-list for method output_type
+	24, // [24:39] is the sub-list for method input_type
+	24, // [24:24] is the sub-list for extension type_name
+	24, // [24:24] is the sub-list for extension extendee
+	0,  // [0:24] is the sub-list for field type_name
 }
 
 func init() { file_borrower_project_management_workflow_proto_init() }
@@ -1820,7 +2179,7 @@ func file_borrower_project_management_workflow_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_borrower_project_management_workflow_proto_rawDesc), len(file_borrower_project_management_workflow_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   28,
+			NumMessages:   34,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

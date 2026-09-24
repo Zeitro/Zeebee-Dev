@@ -41,9 +41,9 @@ func (r *ProjectManagementWorkflowRepo) ListStageLinksWithTx(ctx context.Context
 	return links, errorx.WithStack(err)
 }
 
-func (r *ProjectManagementWorkflowRepo) ListStageTransitionsWithTx(ctx context.Context, tx *gorm.DB, workflowId int64) ([]*model.ProjectManagementWorkflowStageTransition, error) {
-	transitions := make([]*model.ProjectManagementWorkflowStageTransition, 0)
-	err := tx.WithContext(ctx).Model(&model.ProjectManagementWorkflowStageTransition{}).Where("workflow_id = ?", workflowId).Order("id ASC").Find(&transitions).Error
+func (r *ProjectManagementWorkflowRepo) ListStageTransitionsWithTx(ctx context.Context, tx *gorm.DB, workflowId int64) ([]*model.ProjectManagementWorkflowTransition, error) {
+	transitions := make([]*model.ProjectManagementWorkflowTransition, 0)
+	err := tx.WithContext(ctx).Model(&model.ProjectManagementWorkflowTransition{}).Where("workflow_id = ?", workflowId).Order("id ASC").Find(&transitions).Error
 	return transitions, errorx.WithStack(err)
 }
 
@@ -69,7 +69,6 @@ func (r *ProjectManagementWorkflowRepo) ListWorkflowSources(ctx context.Context,
 	workflows := make([]*model.ProjectManagementWorkflow, 0)
 	err := r.sourceQuery(r.Client(ctx), organizationId).
 		Preload("Stages", func(db *gorm.DB) *gorm.DB { return db.Order("sort_order ASC, id ASC") }).
-		Preload("Transitions", preloadWorkflowTransitions).
 		Order("project_management_workflows.is_default DESC, project_management_workflows.id ASC").Find(&workflows).Error
 	return workflows, errorx.WithStack(err)
 }
@@ -109,8 +108,8 @@ func (r *ProjectManagementWorkflowRepo) LockWorkflowSourcesWithTx(ctx context.Co
 
 func (r *ProjectManagementWorkflowRepo) sourceQuery(db *gorm.DB, organizationId int64) *gorm.DB {
 	return db.Model(&model.ProjectManagementWorkflow{}).
-		Joins("JOIN project_management_templates ON project_management_templates.id = project_management_workflows.entity_id AND project_management_templates.template_type = ? AND project_management_templates.status = ? AND project_management_templates.is_del = 0 AND (project_management_templates.project_type IS NULL OR project_management_templates.project_type = '')", constants.ProjectManagementTemplateTypeOrganization, "Active").
-		Where("project_management_templates.organization_id = ?", organizationId)
+		Joins("JOIN project_management_templates ON project_management_templates.id = project_management_workflows.entity_id AND project_management_templates.template_type = ? AND project_management_templates.status = ? AND project_management_templates.is_del = 0", constants.ProjectManagementTemplateTypeOrganization, "Active").
+		Where("project_management_workflows.entity_type = ? AND project_management_templates.organization_id = ?", constants.ProjectManagementOwnerTypeTemplate, organizationId)
 }
 
 func (r *ProjectManagementWorkflowRepo) ListProjectWorkflows(ctx context.Context, projectId, organizationId int64) ([]*model.ProjectManagementWorkflow, error) {
@@ -127,6 +126,14 @@ func (r *ProjectManagementWorkflowRepo) ListTemplateWorkflowsWithTx(ctx context.
 	err := tx.WithContext(ctx).Model(&model.ProjectManagementWorkflow{}).
 		Where("entity_type = ? AND entity_id = ?", constants.ProjectManagementOwnerTypeTemplate, templateId).
 		Order("id ASC").Find(&workflows).Error
+	return workflows, errorx.WithStack(err)
+}
+
+func (r *ProjectManagementWorkflowRepo) ListTemplateWorkflows(ctx context.Context, templateId int64) ([]*model.ProjectManagementWorkflow, error) {
+	workflows := make([]*model.ProjectManagementWorkflow, 0)
+	err := r.Client(ctx).Model(&model.ProjectManagementWorkflow{}).
+		Where("entity_type = ? AND entity_id = ?", constants.ProjectManagementOwnerTypeTemplate, templateId).
+		Order("is_default DESC, id ASC").Find(&workflows).Error
 	return workflows, errorx.WithStack(err)
 }
 
@@ -210,7 +217,7 @@ func (r *ProjectManagementWorkflowRepo) FindOwnerStageInWorkflowWithTx(ctx conte
 }
 
 func (r *ProjectManagementWorkflowRepo) DeleteWorkflowSourceWithTx(ctx context.Context, tx *gorm.DB, workflow *model.ProjectManagementWorkflow) error {
-	if err := tx.WithContext(ctx).Where("workflow_id = ?", workflow.Id).Delete(&model.ProjectManagementWorkflowStageTransition{}).Error; err != nil {
+	if err := tx.WithContext(ctx).Where("workflow_id = ?", workflow.Id).Delete(&model.ProjectManagementWorkflowTransition{}).Error; err != nil {
 		return errorx.WithStack(err)
 	}
 	if err := tx.WithContext(ctx).Where("workflow_id = ?", workflow.Id).Delete(&model.ProjectManagementWorkflowStage{}).Error; err != nil {
@@ -231,7 +238,7 @@ func (r *ProjectManagementWorkflowRepo) DeleteProjectWorkflowWithTx(ctx context.
 		return errorx.WithStack(err)
 	}
 	for _, workflow := range workflows {
-		if err := tx.WithContext(ctx).Where("workflow_id = ?", workflow.Id).Delete(&model.ProjectManagementWorkflowStageTransition{}).Error; err != nil {
+		if err := tx.WithContext(ctx).Where("workflow_id = ?", workflow.Id).Delete(&model.ProjectManagementWorkflowTransition{}).Error; err != nil {
 			return errorx.WithStack(err)
 		}
 		if err := tx.WithContext(ctx).Where("workflow_id = ?", workflow.Id).Delete(&model.ProjectManagementWorkflowStage{}).Error; err != nil {
@@ -257,7 +264,7 @@ func (r *ProjectManagementWorkflowRepo) CloneTemplateToProjectWithTx(ctx context
 	}
 	template := new(model.ProjectManagementTemplate)
 	if err := tx.WithContext(ctx).Model(&model.ProjectManagementTemplate{}).
-		Where("id = ? AND ((template_type = ? AND organization_id = 0) OR (template_type = ? AND organization_id = ? AND project_type <> '')) AND status = ?", templateId, constants.ProjectManagementTemplateTypePublic, constants.ProjectManagementTemplateTypeOrganization, organizationId, "Active").
+		Where("id = ? AND ((template_type = ? AND organization_id = 0) OR (template_type = ? AND organization_id = ?)) AND status = ?", templateId, constants.ProjectManagementTemplateTypePublic, constants.ProjectManagementTemplateTypeOrganization, organizationId, "Active").
 		First(template).Error; err != nil {
 		return errorx.WithStack(err)
 	}
@@ -269,6 +276,9 @@ func (r *ProjectManagementWorkflowRepo) CloneTemplateToProjectWithTx(ctx context
 	}
 	if len(workflows) == 0 {
 		return errorx.New("project template has no workflows")
+	}
+	if !workflows[0].IsDefault {
+		workflows[0].IsDefault = true
 	}
 	for _, workflow := range workflows {
 		if err := r.cloneWorkflowToOwnerWithTx(ctx, tx, workflow, constants.ProjectManagementOwnerTypeProject, projectId); err != nil {
@@ -370,7 +380,7 @@ func (r *ProjectManagementWorkflowRepo) cloneWorkflowToOwnerWithTx(ctx context.C
 		}
 	}
 	for _, sourceTransition := range transitions {
-		transition := &model.ProjectManagementWorkflowStageTransition{WorkflowId: workflow.Id, Name: sourceTransition.Name, FromStageId: stageIDs[sourceTransition.FromStageId], ToStageId: stageIDs[sourceTransition.ToStageId], AllowedActorTypes: sourceTransition.AllowedActorTypes}
+		transition := &model.ProjectManagementWorkflowTransition{WorkflowId: workflow.Id, Name: sourceTransition.Name, FromStageId: stageIDs[sourceTransition.FromStageId], ToStageId: stageIDs[sourceTransition.ToStageId], AllowedActorTypes: sourceTransition.AllowedActorTypes}
 		if transition.FromStageId == 0 || transition.ToStageId == 0 {
 			return errorx.New("workflow source transition endpoint is invalid")
 		}
@@ -407,7 +417,7 @@ func (r *ProjectManagementWorkflowRepo) createDefaultWorkflowWithTx(ctx context.
 		return errorx.WithStack(err)
 	}
 	roles := []constants.ProjectManagementMemberRole{constants.ProjectManagementMemberRoleProjectOwner, constants.ProjectManagementMemberRoleProjectAdmin, constants.ProjectManagementMemberRoleTaskCreator, constants.ProjectManagementMemberRoleTaskExecutor}
-	return errorx.WithStack(tx.WithContext(ctx).Create([]*model.ProjectManagementWorkflowStageTransition{
+	return errorx.WithStack(tx.WithContext(ctx).Create([]*model.ProjectManagementWorkflowTransition{
 		{WorkflowId: workflow.Id, Name: "Start", FromStageId: pending.Id, ToStageId: inProgress.Id, AllowedActorTypes: roles},
 		{WorkflowId: workflow.Id, Name: "Finish", FromStageId: inProgress.Id, ToStageId: finished.Id, AllowedActorTypes: roles},
 	}).Error)

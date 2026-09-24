@@ -13,7 +13,7 @@ type (
         Description        string                                  `json:"description"`
         IsDefault          bool                                    `json:"is_default"`
 		Stages             []ProjectManagementStageEntity          `json:"stages,omitempty"`
-		Transitions        []ProjectManagementWorkflowStageTransitionEntity `json:"transitions"`
+		Transitions        []ProjectManagementWorkflowStageTransitionEntity `json:"transitions,omitempty"`
         SourceTemplateId   int64                                   `json:"source_template_id"`
         SourceTemplateName string                                  `json:"source_template_name"`
 		EntityType         string                                  `json:"entity_type"`
@@ -65,11 +65,6 @@ type (
         Status          string `json:"status"`
         IsDefault       bool   `json:"is_default"`
         SortOrder       int    `json:"sort_order"`
-        ProjectType     string `json:"project_type"`
-        StartAt         string `json:"start_at"`
-        EndAt           string `json:"end_at"`
-        PeriodValue     int    `json:"period_value"`
-        PeriodUnit      string `json:"period_unit"`
         SourceProjectId int64  `json:"source_project_id"`
 		Stages          []ProjectManagementStageEntity `json:"stages"`
         CreatedAt       string `json:"created_at"`
