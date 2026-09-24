@@ -13,6 +13,7 @@ type ProjectManagementWorkflow struct {
 	EntityId           int64                                       `gorm:"column:entity_id;not null;default:0" json:"entity_id"`
 	SourceWorkflowId   int64                                       `gorm:"column:source_workflow_id;not null;default:0" json:"source_workflow_id"`
 	SourceWorkflowName string                                      `gorm:"column:source_workflow_name;type:varchar(100);not null;default:''" json:"source_workflow_name"`
+	// relationship
 	Stages             []*ProjectManagementStage                   `gorm:"many2many:project_management_workflow_stages;joinForeignKey:WorkflowId;joinReferences:StageId" json:"stages"`
 	Transitions        []*ProjectManagementWorkflowStageTransition `gorm:"foreignKey:WorkflowId;references:Id" json:"transitions"`
 }

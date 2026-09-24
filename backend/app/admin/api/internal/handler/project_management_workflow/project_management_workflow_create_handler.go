@@ -1,11 +1,11 @@
-package project_management_template
+package project_management_workflow
 
 import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"zeebee-backend/app/admin/api/internal/logic/project_management_template"
+	"zeebee-backend/app/admin/api/internal/logic/project_management_workflow"
 	"zeebee-backend/app/admin/api/internal/svc"
 	"zeebee-backend/app/admin/api/internal/types"
 
@@ -14,8 +14,8 @@ import (
 	"zeebee-backend/common/validator"
 )
 
-// set default template workflow
-func ProjectManagementWorkflowDefaultHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+// create
+func ProjectManagementWorkflowCreateHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		defer func() {
@@ -27,7 +27,7 @@ func ProjectManagementWorkflowDefaultHandler(svcCtx *svc.ServiceContext) http.Ha
 					Error(err)
 			}
 		}()
-		var req types.ProjectManagementWorkflowDetailRequest
+		var req types.ProjectManagementWorkflowCreateRequest
 		if err = httpx.Parse(r, &req); err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 			return
@@ -44,8 +44,8 @@ func ProjectManagementWorkflowDefaultHandler(svcCtx *svc.ServiceContext) http.Ha
 			return
 		}
 
-		l := project_management_template.NewProjectManagementWorkflowDefaultLogic(r.Context(), svcCtx)
-		resp, err := l.ProjectManagementWorkflowDefault(&req)
+		l := project_management_workflow.NewProjectManagementWorkflowCreateLogic(r.Context(), svcCtx)
+		resp, err := l.ProjectManagementWorkflowCreate(&req)
 		if err != nil {
 			response.BadRequest(w, errorx.GetErrorMsg(err))
 		} else {

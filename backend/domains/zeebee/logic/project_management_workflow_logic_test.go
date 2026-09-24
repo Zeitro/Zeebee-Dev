@@ -18,6 +18,9 @@ func TestValidateProjectManagementWorkflow(t *testing.T) {
 	workflow.Transitions[0].ToStageId = 3
 	require.Error(t, ValidateProjectManagementWorkflow(workflow))
 	workflow.Transitions[0].ToStageId = 2
+	workflow.Transitions = append(workflow.Transitions, dto.ProjectManagementWorkflowTransitionDto{Name: "Finish again", FromStageId: 1, ToStageId: 2})
+	require.ErrorContains(t, ValidateProjectManagementWorkflow(workflow), "workflow transition must be unique")
+	workflow.Transitions = workflow.Transitions[:1]
 	workflow.Stages[1].Phase = constants.ProjectManagementStagePhaseInProgress
 	workflow.Stages = append(workflow.Stages, dto.ProjectManagementWorkflowStageDto{Id: 3, Name: "Finished", Phase: constants.ProjectManagementStagePhaseFinished, SortOrder: 1})
 	require.Error(t, ValidateProjectManagementWorkflow(workflow))

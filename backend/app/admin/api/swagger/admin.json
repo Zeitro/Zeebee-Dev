@@ -14280,7 +14280,7 @@
           "project_management_workflow"
         ],
         "summary": "create",
-        "operationId": "projectManagementTemplateProjectManagementWorkflowCreate",
+        "operationId": "projectManagementWorkflowProjectManagementWorkflowCreate",
         "parameters": [
           {
             "type": "integer",
@@ -14451,7 +14451,9 @@
                           "workflow_id",
                           "name",
                           "from_stage_id",
+                          "from_stage",
                           "to_stage_id",
+                          "to_stage",
                           "allowed_actor_types",
                           "created_at",
                           "updated_at"
@@ -14466,6 +14468,58 @@
                           "created_at": {
                             "type": "string"
                           },
+                          "from_stage": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "entity_type",
+                              "entity_id",
+                              "name",
+                              "description",
+                              "phase",
+                              "color",
+                              "sort_order",
+                              "created_at",
+                              "updated_at"
+                            ],
+                            "properties": {
+                              "color": {
+                                "type": "string"
+                              },
+                              "created_at": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "entity_id": {
+                                "type": "integer"
+                              },
+                              "entity_type": {
+                                "type": "string"
+                              },
+                              "id": {
+                                "type": "integer"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "phase": {
+                                "type": "string",
+                                "enum": [
+                                  "Pending",
+                                  "InProgress",
+                                  "Finished"
+                                ]
+                              },
+                              "sort_order": {
+                                "type": "integer"
+                              },
+                              "updated_at": {
+                                "type": "string"
+                              }
+                            }
+                          },
                           "from_stage_id": {
                             "type": "integer"
                           },
@@ -14474,6 +14528,58 @@
                           },
                           "name": {
                             "type": "string"
+                          },
+                          "to_stage": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "entity_type",
+                              "entity_id",
+                              "name",
+                              "description",
+                              "phase",
+                              "color",
+                              "sort_order",
+                              "created_at",
+                              "updated_at"
+                            ],
+                            "properties": {
+                              "color": {
+                                "type": "string"
+                              },
+                              "created_at": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "entity_id": {
+                                "type": "integer"
+                              },
+                              "entity_type": {
+                                "type": "string"
+                              },
+                              "id": {
+                                "type": "integer"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "phase": {
+                                "type": "string",
+                                "enum": [
+                                  "Pending",
+                                  "InProgress",
+                                  "Finished"
+                                ]
+                              },
+                              "sort_order": {
+                                "type": "integer"
+                              },
+                              "updated_at": {
+                                "type": "string"
+                              }
+                            }
                           },
                           "to_stage_id": {
                             "type": "integer"
@@ -14518,7 +14624,7 @@
           "project_management_workflow"
         ],
         "summary": "set default template workflow",
-        "operationId": "projectManagementTemplateProjectManagementWorkflowDefault",
+        "operationId": "projectManagementWorkflowProjectManagementWorkflowDefault",
         "parameters": [
           {
             "type": "integer",
@@ -14570,7 +14676,7 @@
           "project_management_workflow"
         ],
         "summary": "template's workflow",
-        "operationId": "projectManagementTemplateProjectManagementTemplateWorkflows",
+        "operationId": "projectManagementWorkflowProjectManagementTemplateWorkflows",
         "parameters": [
           {
             "type": "integer",
@@ -14716,7 +14822,7 @@
           "project_management_workflow"
         ],
         "summary": "detail",
-        "operationId": "projectManagementTemplateProjectManagementWorkflowDetail",
+        "operationId": "projectManagementWorkflowProjectManagementWorkflowDetail",
         "parameters": [
           {
             "type": "integer",
@@ -14842,7 +14948,9 @@
                           "workflow_id",
                           "name",
                           "from_stage_id",
+                          "from_stage",
                           "to_stage_id",
+                          "to_stage",
                           "allowed_actor_types",
                           "created_at",
                           "updated_at"
@@ -14857,6 +14965,58 @@
                           "created_at": {
                             "type": "string"
                           },
+                          "from_stage": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "entity_type",
+                              "entity_id",
+                              "name",
+                              "description",
+                              "phase",
+                              "color",
+                              "sort_order",
+                              "created_at",
+                              "updated_at"
+                            ],
+                            "properties": {
+                              "color": {
+                                "type": "string"
+                              },
+                              "created_at": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "entity_id": {
+                                "type": "integer"
+                              },
+                              "entity_type": {
+                                "type": "string"
+                              },
+                              "id": {
+                                "type": "integer"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "phase": {
+                                "type": "string",
+                                "enum": [
+                                  "Pending",
+                                  "InProgress",
+                                  "Finished"
+                                ]
+                              },
+                              "sort_order": {
+                                "type": "integer"
+                              },
+                              "updated_at": {
+                                "type": "string"
+                              }
+                            }
+                          },
                           "from_stage_id": {
                             "type": "integer"
                           },
@@ -14865,6 +15025,58 @@
                           },
                           "name": {
                             "type": "string"
+                          },
+                          "to_stage": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "entity_type",
+                              "entity_id",
+                              "name",
+                              "description",
+                              "phase",
+                              "color",
+                              "sort_order",
+                              "created_at",
+                              "updated_at"
+                            ],
+                            "properties": {
+                              "color": {
+                                "type": "string"
+                              },
+                              "created_at": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "entity_id": {
+                                "type": "integer"
+                              },
+                              "entity_type": {
+                                "type": "string"
+                              },
+                              "id": {
+                                "type": "integer"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "phase": {
+                                "type": "string",
+                                "enum": [
+                                  "Pending",
+                                  "InProgress",
+                                  "Finished"
+                                ]
+                              },
+                              "sort_order": {
+                                "type": "integer"
+                              },
+                              "updated_at": {
+                                "type": "string"
+                              }
+                            }
                           },
                           "to_stage_id": {
                             "type": "integer"
@@ -14907,7 +15119,7 @@
           "project_management_workflow"
         ],
         "summary": "update",
-        "operationId": "projectManagementTemplateProjectManagementWorkflowUpdate",
+        "operationId": "projectManagementWorkflowProjectManagementWorkflowUpdate",
         "parameters": [
           {
             "type": "integer",
@@ -15084,7 +15296,9 @@
                           "workflow_id",
                           "name",
                           "from_stage_id",
+                          "from_stage",
                           "to_stage_id",
+                          "to_stage",
                           "allowed_actor_types",
                           "created_at",
                           "updated_at"
@@ -15099,6 +15313,58 @@
                           "created_at": {
                             "type": "string"
                           },
+                          "from_stage": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "entity_type",
+                              "entity_id",
+                              "name",
+                              "description",
+                              "phase",
+                              "color",
+                              "sort_order",
+                              "created_at",
+                              "updated_at"
+                            ],
+                            "properties": {
+                              "color": {
+                                "type": "string"
+                              },
+                              "created_at": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "entity_id": {
+                                "type": "integer"
+                              },
+                              "entity_type": {
+                                "type": "string"
+                              },
+                              "id": {
+                                "type": "integer"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "phase": {
+                                "type": "string",
+                                "enum": [
+                                  "Pending",
+                                  "InProgress",
+                                  "Finished"
+                                ]
+                              },
+                              "sort_order": {
+                                "type": "integer"
+                              },
+                              "updated_at": {
+                                "type": "string"
+                              }
+                            }
+                          },
                           "from_stage_id": {
                             "type": "integer"
                           },
@@ -15107,6 +15373,58 @@
                           },
                           "name": {
                             "type": "string"
+                          },
+                          "to_stage": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "entity_type",
+                              "entity_id",
+                              "name",
+                              "description",
+                              "phase",
+                              "color",
+                              "sort_order",
+                              "created_at",
+                              "updated_at"
+                            ],
+                            "properties": {
+                              "color": {
+                                "type": "string"
+                              },
+                              "created_at": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "entity_id": {
+                                "type": "integer"
+                              },
+                              "entity_type": {
+                                "type": "string"
+                              },
+                              "id": {
+                                "type": "integer"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "phase": {
+                                "type": "string",
+                                "enum": [
+                                  "Pending",
+                                  "InProgress",
+                                  "Finished"
+                                ]
+                              },
+                              "sort_order": {
+                                "type": "integer"
+                              },
+                              "updated_at": {
+                                "type": "string"
+                              }
+                            }
                           },
                           "to_stage_id": {
                             "type": "integer"
@@ -15149,7 +15467,7 @@
           "project_management_workflow"
         ],
         "summary": "delete",
-        "operationId": "projectManagementTemplateProjectManagementWorkflowDelete",
+        "operationId": "projectManagementWorkflowProjectManagementWorkflowDelete",
         "parameters": [
           {
             "type": "integer",
@@ -19114,7 +19432,7 @@
       }
     }
   },
-  "x-date": "2026-09-23 16:47:43",
+  "x-date": "2026-09-24 11:19:27",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

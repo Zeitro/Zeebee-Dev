@@ -1,16 +1,15 @@
-package projectmanagementtemplatelogic
+package projectmanagementworkflowlogic
 
 import (
 	"context"
 
+	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/app/admin/rpc/internal/svc"
 	"zeebee-backend/app/admin/rpc/pb/admin"
-	"zeebee-backend/domains/zeebee/proto"
-
-	"zeebee-backend/app/admin/rpc/internal/logic"
 	"zeebee-backend/common/copierx"
 	"zeebee-backend/common/errorx"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 type WorkflowsLogic struct {
@@ -27,17 +26,16 @@ func NewWorkflowsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Workflo
 	}
 }
 
-func (l *WorkflowsLogic) Workflows(in *proto.PathIdRequest) (resp *admin.ProjectManagementTemplateWorkflowResponse, err error) {
+func (l *WorkflowsLogic) Workflows(in *proto.PathIdRequest) (resp *admin.ProjectManagementWorkflowResponse, err error) {
 	if in.Data == nil {
 		err = errorx.New("request data is nil")
 		return
 	}
-	base := l.baseLogic
-	claim, err := base.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	workflows, err := base.ProjectManagementTemplateLogic.Workflows(l.ctx, claim, in.Data.Id)
+	workflows, err := l.baseLogic.ProjectManagementTemplateLogic.Workflows(l.ctx, claim, in.Data.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -49,5 +47,5 @@ func (l *WorkflowsLogic) Workflows(in *proto.PathIdRequest) (resp *admin.Project
 		}
 		list = append(list, entity)
 	}
-	return &admin.ProjectManagementTemplateWorkflowResponse{List: list}, nil
+	return &admin.ProjectManagementWorkflowResponse{List: list}, nil
 }

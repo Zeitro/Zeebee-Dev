@@ -144,8 +144,34 @@ func templateWorkflowStageIDs(transitions []dto.ProjectManagementWorkflowTransit
 }
 
 func (l *ProjectManagementTemplateLogic) replaceTemplateWorkflowDefinition(ctx context.Context, tx *gorm.DB, templateID, workflowID int64, stageIDs []int64, transitions []dto.ProjectManagementWorkflowTransitionDto) error {
-	if err := tx.WithContext(ctx).Where("workflow_id = ?", workflowID).Delete(&model.ProjectManagementWorkflowStageTransition{}).Error; err != nil {
-		return errorx.WithStack(err)
+	existing, err := l.repos.ProjectManagementWorkflowRepo.ListStageTransitionsWithTx(ctx, tx, workflowID)
+	if err != nil {
+		return err
+	}
+	existingByID := make(map[int64]*model.ProjectManagementWorkflowStageTransition, len(existing))
+	for _, transition := range existing {
+		existingByID[transition.Id] = transition
+	}
+	requested := make(map[int64]struct{}, len(transitions))
+	for _, transition := range transitions {
+		if transition.Id == 0 {
+			continue
+		}
+		if existingByID[transition.Id] == nil {
+			return errorx.New("template workflow transition not found")
+		}
+		if _, exists := requested[transition.Id]; exists {
+			return errorx.New("template workflow transition id must be unique")
+		}
+		requested[transition.Id] = struct{}{}
+	}
+	for _, transition := range existing {
+		if _, exists := requested[transition.Id]; exists {
+			continue
+		}
+		if err := tx.WithContext(ctx).Delete(transition).Error; err != nil {
+			return errorx.WithStack(err)
+		}
 	}
 	if err := tx.WithContext(ctx).Where("workflow_id = ?", workflowID).Delete(&model.ProjectManagementWorkflowStage{}).Error; err != nil {
 		return errorx.WithStack(err)
@@ -156,9 +182,17 @@ func (l *ProjectManagementTemplateLogic) replaceTemplateWorkflowDefinition(ctx c
 			return errorx.WithStack(err)
 		}
 	}
-	for _, transition := range transitions {
-		item := &model.ProjectManagementWorkflowStageTransition{WorkflowId: workflowID, Name: transition.Name, FromStageId: transition.FromStageId, ToStageId: transition.ToStageId, AllowedActorTypes: transition.AllowedActorTypes}
-		if err := tx.WithContext(ctx).Create(item).Error; err != nil {
+	for _, input := range transitions {
+		if input.Id == 0 {
+			item := &model.ProjectManagementWorkflowStageTransition{WorkflowId: workflowID, Name: input.Name, FromStageId: input.FromStageId, ToStageId: input.ToStageId, AllowedActorTypes: input.AllowedActorTypes}
+			if err := tx.WithContext(ctx).Create(item).Error; err != nil {
+				return errorx.WithStack(err)
+			}
+			continue
+		}
+		item := existingByID[input.Id]
+		item.Name, item.FromStageId, item.ToStageId, item.AllowedActorTypes = input.Name, input.FromStageId, input.ToStageId, input.AllowedActorTypes
+		if err := tx.WithContext(ctx).Save(item).Error; err != nil {
 			return errorx.WithStack(err)
 		}
 	}

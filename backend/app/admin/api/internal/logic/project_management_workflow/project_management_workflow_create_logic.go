@@ -1,4 +1,4 @@
-package project_management_template
+package project_management_workflow
 
 import (
 	"context"
@@ -28,11 +28,11 @@ func NewProjectManagementWorkflowCreateLogic(ctx context.Context, svcCtx *svc.Se
 }
 
 func (l *ProjectManagementWorkflowCreateLogic) ProjectManagementWorkflowCreate(req *types.ProjectManagementWorkflowCreateRequest) (resp *types.ProjectManagementWorkflowEntity, err error) {
-	data, err := copierx.Trans[types.ProjectManagementWorkflowCreateRequest, admin.ProjectManagementTemplateWorkflowCreateRequestData](req)
+	data, err := copierx.Trans[types.ProjectManagementWorkflowCreateRequest, admin.ProjectManagementWorkflowCreateRequestData](req)
 	if err != nil {
 		return nil, err
 	}
-	rpcResp, err := l.svcCtx.ProjectManagementTemplateRpcClient.WorkflowCreate(l.ctx, &admin.ProjectManagementTemplateWorkflowCreateRequest{Data: data})
+	rpcResp, err := l.svcCtx.ProjectManagementWorkflowRpcClient.Create(l.ctx, &admin.ProjectManagementWorkflowCreateRequest{Data: data})
 	if err != nil {
 		return nil, err
 	}

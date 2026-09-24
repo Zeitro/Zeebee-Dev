@@ -24,6 +24,7 @@ import (
 	pricingPlanPolicyServer "zeebee-backend/app/admin/rpc/internal/server/pricingplanpolicy"
 	projectManagementStageServer "zeebee-backend/app/admin/rpc/internal/server/projectmanagementstage"
 	projectManagementTemplateServer "zeebee-backend/app/admin/rpc/internal/server/projectmanagementtemplate"
+	projectManagementWorkflowServer "zeebee-backend/app/admin/rpc/internal/server/projectmanagementworkflow"
 	resourceServer "zeebee-backend/app/admin/rpc/internal/server/resource"
 	roleServer "zeebee-backend/app/admin/rpc/internal/server/role"
 	storageServer "zeebee-backend/app/admin/rpc/internal/server/storage"
@@ -64,6 +65,7 @@ func NewRpcServer(c config.Config) (s service.Service, err error) {
 		admin.RegisterOrganizationSubscriptionServer(grpcServer, organizationSubscriptionServer.NewOrganizationSubscriptionServer(ctx))
 		admin.RegisterProjectManagementTemplateServer(grpcServer, projectManagementTemplateServer.NewProjectManagementTemplateServer(ctx))
 		admin.RegisterProjectManagementStageServer(grpcServer, projectManagementStageServer.NewProjectManagementStageServer(ctx))
+		admin.RegisterProjectManagementWorkflowServer(grpcServer, projectManagementWorkflowServer.NewProjectManagementWorkflowServer(ctx))
 		if rpcConfig.Mode == service.DevMode || rpcConfig.Mode == service.TestMode {
 			reflection.Register(grpcServer)
 		}

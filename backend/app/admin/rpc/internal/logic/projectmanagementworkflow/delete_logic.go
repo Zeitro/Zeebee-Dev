@@ -1,4 +1,4 @@
-package projectmanagementtemplatelogic
+package projectmanagementworkflowlogic
 
 import (
 	"context"
@@ -10,31 +10,30 @@ import (
 	"zeebee-backend/domains/zeebee/proto"
 )
 
-type WorkflowDefaultLogic struct {
+type DeleteLogic struct {
 	ctx       context.Context
 	svcCtx    *svc.ServiceContext
 	baseLogic *logic.BaseLogic
 }
 
-func NewWorkflowDefaultLogic(ctx context.Context, svcCtx *svc.ServiceContext) *WorkflowDefaultLogic {
-	return &WorkflowDefaultLogic{
+func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogic {
+	return &DeleteLogic{
 		ctx:       ctx,
 		svcCtx:    svcCtx,
 		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
-func (l *WorkflowDefaultLogic) WorkflowDefault(in *admin.ProjectManagementTemplateWorkflowDefaultRequest) (resp *proto.EmptyResponse, err error) {
+func (l *DeleteLogic) Delete(in *admin.ProjectManagementWorkflowDeleteRequest) (resp *proto.EmptyResponse, err error) {
 	if in.Data == nil {
 		err = errorx.New("request data is nil")
 		return
 	}
-	base := l.baseLogic
-	claim, err := base.GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	if err = base.ProjectManagementTemplateLogic.SetWorkflowDefault(l.ctx, claim, in.Data.TemplateId, in.Data.WorkflowId); err != nil {
+	if err = l.baseLogic.ProjectManagementTemplateLogic.DeleteWorkflow(l.ctx, claim, in.Data.TemplateId, in.Data.Id); err != nil {
 		return nil, err
 	}
 	return &proto.EmptyResponse{}, nil

@@ -144,7 +144,7 @@ func (r *ProjectManagementTemplateRepo) FindWorkflow(ctx context.Context, templa
 
 func (r *ProjectManagementTemplateRepo) ListStages(ctx context.Context, templateID int64) ([]*model.ProjectManagementStage, error) {
 	stages := make([]*model.ProjectManagementStage, 0)
-	err := r.Client(ctx).Where("entity_type = ? AND entity_id = ?", constants.ProjectManagementOwnerTypeTemplate, templateID).
+	err := r.Client(ctx).Model(&model.ProjectManagementStage{}).Where("entity_type = ? AND entity_id = ?", constants.ProjectManagementOwnerTypeTemplate, templateID).
 		Order("sort_order ASC, id ASC").Find(&stages).Error
 	return stages, errorx.WithStack(err)
 }

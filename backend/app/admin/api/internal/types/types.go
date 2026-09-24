@@ -1348,7 +1348,7 @@ type ProjectManagementTemplateWorflowEntity struct {
 }
 
 type ProjectManagementTemplateWorflowRequest struct {
-	Id int64 `path:"template_id" validate:"required,gt=0"`
+	TemplateId int64 `path:"template_id" validate:"required,gt=0"`
 }
 
 type ProjectManagementTemplateWorflowResonse struct {
@@ -1356,43 +1356,45 @@ type ProjectManagementTemplateWorflowResonse struct {
 }
 
 type ProjectManagementWorkflowCreateRequest struct {
-	Id          int64                                      `path:"template_id" validate:"required,gt=0"`
+	TemplateId  int64                                      `path:"template_id" validate:"required,gt=0"`
 	Name        string                                     `json:"name" validate:"required,max=100"`
 	Description string                                     `json:"description,optional" validate:"max=500"`
-	Transitions []ProjectManagementWorkflowTransitionInput `json:"transitions" validate:"required,min=1,dive"`
+	Transitions []ProjectManagementWorkflowTransitionInput `json:"transitions" validate:"required,min=2,dive"`
 }
 
 type ProjectManagementWorkflowDetailRequest struct {
-	Id         int64 `path:"template_id" validate:"required,gt=0"`
-	WorkflowId int64 `path:"id" validate:"required,gt=0"`
+	TemplateId int64 `path:"template_id" validate:"required,gt=0"`
+	Id         int64 `path:"id" validate:"required,gt=0"`
 }
 
 type ProjectManagementWorkflowEntity struct {
-	Id                 int64                                             `json:"id"`
-	Name               string                                            `json:"name"`
-	Description        string                                            `json:"description"`
-	IsDefault          bool                                              `json:"is_default"`
-	Stages             []*ProjectManagementStageEntity                   `json:"stages"`
-	Transitions        []*ProjectManagementWorkflowStageTransitionEntity `json:"transitions"`
-	SourceTemplateId   int64                                             `json:"source_template_id"`
-	SourceTemplateName string                                            `json:"source_template_name"`
-	EntityType         string                                            `json:"entity_type"`
-	EntityId           int64                                             `json:"entity_id"`
-	SourceWorkflowId   int64                                             `json:"source_workflow_id"`
-	SourceWorkflowName string                                            `json:"source_workflow_name"`
-	CreatedAt          string                                            `json:"created_at"`
-	UpdatedAt          string                                            `json:"updated_at"`
+	Id                 int64                                            `json:"id"`
+	Name               string                                           `json:"name"`
+	Description        string                                           `json:"description"`
+	IsDefault          bool                                             `json:"is_default"`
+	Stages             []ProjectManagementStageEntity                   `json:"stages,omitempty"`
+	Transitions        []ProjectManagementWorkflowStageTransitionEntity `json:"transitions"`
+	SourceTemplateId   int64                                            `json:"source_template_id"`
+	SourceTemplateName string                                           `json:"source_template_name"`
+	EntityType         string                                           `json:"entity_type"`
+	EntityId           int64                                            `json:"entity_id"`
+	SourceWorkflowId   int64                                            `json:"source_workflow_id"`
+	SourceWorkflowName string                                           `json:"source_workflow_name"`
+	CreatedAt          string                                           `json:"created_at"`
+	UpdatedAt          string                                           `json:"updated_at"`
 }
 
 type ProjectManagementWorkflowStageTransitionEntity struct {
-	Id                int64    `json:"id"`
-	WorkflowId        int64    `json:"workflow_id"`
-	Name              string   `json:"name"`
-	FromStageId       int64    `json:"from_stage_id"`
-	ToStageId         int64    `json:"to_stage_id"`
-	AllowedActorTypes []string `json:"allowed_actor_types"`
-	CreatedAt         string   `json:"created_at"`
-	UpdatedAt         string   `json:"updated_at"`
+	Id                int64                        `json:"id"`
+	WorkflowId        int64                        `json:"workflow_id"`
+	Name              string                       `json:"name"`
+	FromStageId       int64                        `json:"from_stage_id"`
+	FromStage         ProjectManagementStageEntity `json:"from_stage"`
+	ToStageId         int64                        `json:"to_stage_id"`
+	ToStage           ProjectManagementStageEntity `json:"to_stage"`
+	AllowedActorTypes []string                     `json:"allowed_actor_types"`
+	CreatedAt         string                       `json:"created_at"`
+	UpdatedAt         string                       `json:"updated_at"`
 }
 
 type ProjectManagementWorkflowTransitionInput struct {
@@ -1400,12 +1402,12 @@ type ProjectManagementWorkflowTransitionInput struct {
 	Name              string   `json:"name" validate:"required,max=100"`
 	FromStageId       int64    `json:"from_stage_id" validate:"required,gt=0"`
 	ToStageId         int64    `json:"to_stage_id" validate:"required,gt=0,nefield=FromStageId"`
-	AllowedActorTypes []string `json:"allowed_actor_types,optional"`
+	AllowedActorTypes []string `json:"allowed_actor_types,optional" validate:"omitempty,dive,oneof=ProjectOwner ProjectAdmin TaskExecutor TaskCreator"`
 }
 
 type ProjectManagementWorkflowUpdateRequest struct {
-	Id          int64                                      `path:"template_id" validate:"required,gt=0"`
-	WorkflowId  int64                                      `path:"id" validate:"required,gt=0"`
+	TemplateId  int64                                      `path:"template_id" validate:"required,gt=0"`
+	Id          int64                                      `path:"id" validate:"required,gt=0"`
 	Name        string                                     `json:"name" validate:"required,max=100"`
 	Description string                                     `json:"description,optional" validate:"max=500"`
 	Transitions []ProjectManagementWorkflowTransitionInput `json:"transitions" validate:"required,min=1,dive"`

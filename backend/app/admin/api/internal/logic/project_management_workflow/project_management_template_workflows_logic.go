@@ -1,4 +1,4 @@
-package project_management_template
+package project_management_workflow
 
 import (
 	"context"
@@ -27,7 +27,7 @@ func NewProjectManagementTemplateWorkflowsLogic(ctx context.Context, svcCtx *svc
 }
 
 func (l *ProjectManagementTemplateWorkflowsLogic) ProjectManagementTemplateWorkflows(req *types.ProjectManagementTemplateWorflowRequest) (resp *types.ProjectManagementTemplateWorflowResonse, err error) {
-	rpcResp, err := l.svcCtx.ProjectManagementTemplateRpcClient.Workflows(l.ctx, &proto.PathIdRequest{Data: &proto.PathIdRequestData{Id: req.Id}})
+	rpcResp, err := l.svcCtx.ProjectManagementWorkflowRpcClient.Workflows(l.ctx, &proto.PathIdRequest{Data: &proto.PathIdRequestData{Id: req.TemplateId}})
 	if err != nil {
 		return nil, err
 	}

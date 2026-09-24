@@ -17,6 +17,7 @@ import (
 	pricing_plan_policy "zeebee-backend/app/admin/api/internal/handler/pricing_plan_policy"
 	project_management_stage "zeebee-backend/app/admin/api/internal/handler/project_management_stage"
 	project_management_template "zeebee-backend/app/admin/api/internal/handler/project_management_template"
+	project_management_workflow "zeebee-backend/app/admin/api/internal/handler/project_management_workflow"
 	resource "zeebee-backend/app/admin/api/internal/handler/resource"
 	role "zeebee-backend/app/admin/api/internal/handler/role"
 	storage "zeebee-backend/app/admin/api/internal/handler/storage"
@@ -539,37 +540,37 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					// create
 					Method:  http.MethodPost,
 					Path:    "/project_management/template/:template_id/workflow",
-					Handler: project_management_template.ProjectManagementWorkflowCreateHandler(serverCtx),
+					Handler: project_management_workflow.ProjectManagementWorkflowCreateHandler(serverCtx),
 				},
 				{
 					// set default template workflow
 					Method:  http.MethodPut,
 					Path:    "/project_management/template/:template_id/workflow/:id/default",
-					Handler: project_management_template.ProjectManagementWorkflowDefaultHandler(serverCtx),
+					Handler: project_management_workflow.ProjectManagementWorkflowDefaultHandler(serverCtx),
 				},
 				{
 					// template's workflow
 					Method:  http.MethodGet,
 					Path:    "/project_management/template/:template_id/workflows",
-					Handler: project_management_template.ProjectManagementTemplateWorkflowsHandler(serverCtx),
+					Handler: project_management_workflow.ProjectManagementTemplateWorkflowsHandler(serverCtx),
 				},
 				{
 					// detail
 					Method:  http.MethodGet,
 					Path:    "/project_management/template/:template_id/workflows/:id",
-					Handler: project_management_template.ProjectManagementWorkflowDetailHandler(serverCtx),
+					Handler: project_management_workflow.ProjectManagementWorkflowDetailHandler(serverCtx),
 				},
 				{
 					// update
 					Method:  http.MethodPut,
 					Path:    "/project_management/template/:template_id/workflows/:id",
-					Handler: project_management_template.ProjectManagementWorkflowUpdateHandler(serverCtx),
+					Handler: project_management_workflow.ProjectManagementWorkflowUpdateHandler(serverCtx),
 				},
 				{
 					// delete
 					Method:  http.MethodDelete,
 					Path:    "/project_management/template/:template_id/workflows/:id",
-					Handler: project_management_template.ProjectManagementWorkflowDeleteHandler(serverCtx),
+					Handler: project_management_workflow.ProjectManagementWorkflowDeleteHandler(serverCtx),
 				},
 			}...,
 		),

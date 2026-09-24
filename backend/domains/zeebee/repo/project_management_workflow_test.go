@@ -5,8 +5,10 @@ import (
 
 	"gorm.io/gorm"
 
+	"zeebee-backend/common/copierx"
 	"zeebee-backend/domains/zeebee/constants"
 	"zeebee-backend/domains/zeebee/model"
+	"zeebee-backend/domains/zeebee/proto"
 )
 
 func TestProjectManagementWorkflowPreloadsStagesAndTransitions(t *testing.T) {
@@ -45,6 +47,13 @@ func TestProjectManagementWorkflowPreloadsStagesAndTransitions(t *testing.T) {
 	}
 	if got.Transitions[0].FromStageId != stages[1].Id || got.Transitions[0].ToStageId != stages[0].Id {
 		t.Fatalf("transition stage ids = %#v", got.Transitions[0])
+	}
+	if got.Transitions[0].FromStage == nil || got.Transitions[0].FromStage.Name != "Pending" || got.Transitions[0].ToStage == nil || got.Transitions[0].ToStage.Name != "Finished" {
+		t.Fatalf("transition stages = %#v", got.Transitions[0])
+	}
+	entity, err := copierx.Trans[model.ProjectManagementWorkflow, proto.ProjectManagementWorkflowEntity](got)
+	if err != nil || entity.Transitions[0].FromStage.GetName() != "Pending" || entity.Transitions[0].ToStage.GetName() != "Finished" {
+		t.Fatalf("transition entity = %#v, %v", entity.Transitions[0], err)
 	}
 }
 

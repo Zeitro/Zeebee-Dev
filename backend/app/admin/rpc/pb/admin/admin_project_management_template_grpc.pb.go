@@ -20,19 +20,13 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ProjectManagementTemplate_Page_FullMethodName            = "/admin.ProjectManagementTemplate/Page"
-	ProjectManagementTemplate_Create_FullMethodName          = "/admin.ProjectManagementTemplate/Create"
-	ProjectManagementTemplate_Update_FullMethodName          = "/admin.ProjectManagementTemplate/Update"
-	ProjectManagementTemplate_Delete_FullMethodName          = "/admin.ProjectManagementTemplate/Delete"
-	ProjectManagementTemplate_Status_FullMethodName          = "/admin.ProjectManagementTemplate/Status"
-	ProjectManagementTemplate_Defaults_FullMethodName        = "/admin.ProjectManagementTemplate/Defaults"
-	ProjectManagementTemplate_Workflows_FullMethodName       = "/admin.ProjectManagementTemplate/Workflows"
-	ProjectManagementTemplate_WorkflowCreate_FullMethodName  = "/admin.ProjectManagementTemplate/WorkflowCreate"
-	ProjectManagementTemplate_WorkflowDetail_FullMethodName  = "/admin.ProjectManagementTemplate/WorkflowDetail"
-	ProjectManagementTemplate_WorkflowUpdate_FullMethodName  = "/admin.ProjectManagementTemplate/WorkflowUpdate"
-	ProjectManagementTemplate_WorkflowDelete_FullMethodName  = "/admin.ProjectManagementTemplate/WorkflowDelete"
-	ProjectManagementTemplate_WorkflowDefault_FullMethodName = "/admin.ProjectManagementTemplate/WorkflowDefault"
-	ProjectManagementTemplate_Detail_FullMethodName          = "/admin.ProjectManagementTemplate/Detail"
+	ProjectManagementTemplate_Page_FullMethodName     = "/admin.ProjectManagementTemplate/Page"
+	ProjectManagementTemplate_Create_FullMethodName   = "/admin.ProjectManagementTemplate/Create"
+	ProjectManagementTemplate_Update_FullMethodName   = "/admin.ProjectManagementTemplate/Update"
+	ProjectManagementTemplate_Delete_FullMethodName   = "/admin.ProjectManagementTemplate/Delete"
+	ProjectManagementTemplate_Status_FullMethodName   = "/admin.ProjectManagementTemplate/Status"
+	ProjectManagementTemplate_Defaults_FullMethodName = "/admin.ProjectManagementTemplate/Defaults"
+	ProjectManagementTemplate_Detail_FullMethodName   = "/admin.ProjectManagementTemplate/Detail"
 )
 
 // ProjectManagementTemplateClient is the client API for ProjectManagementTemplate service.
@@ -45,12 +39,6 @@ type ProjectManagementTemplateClient interface {
 	Delete(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 	Status(ctx context.Context, in *ProjectManagementTemplateStatusRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateDetailResponse, error)
 	Defaults(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
-	Workflows(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateWorkflowResponse, error)
-	WorkflowCreate(ctx context.Context, in *ProjectManagementTemplateWorkflowCreateRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateWorkflowDetailResponse, error)
-	WorkflowDetail(ctx context.Context, in *ProjectManagementTemplateWorkflowDetailRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateWorkflowDetailResponse, error)
-	WorkflowUpdate(ctx context.Context, in *ProjectManagementTemplateWorkflowUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateWorkflowDetailResponse, error)
-	WorkflowDelete(ctx context.Context, in *ProjectManagementTemplateWorkflowDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
-	WorkflowDefault(ctx context.Context, in *ProjectManagementTemplateWorkflowDefaultRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 	Detail(ctx context.Context, in *ProjectManagementTemplateDetailRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateDetailResponse, error)
 }
 
@@ -122,66 +110,6 @@ func (c *projectManagementTemplateClient) Defaults(ctx context.Context, in *prot
 	return out, nil
 }
 
-func (c *projectManagementTemplateClient) Workflows(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateWorkflowResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ProjectManagementTemplateWorkflowResponse)
-	err := c.cc.Invoke(ctx, ProjectManagementTemplate_Workflows_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *projectManagementTemplateClient) WorkflowCreate(ctx context.Context, in *ProjectManagementTemplateWorkflowCreateRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateWorkflowDetailResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ProjectManagementTemplateWorkflowDetailResponse)
-	err := c.cc.Invoke(ctx, ProjectManagementTemplate_WorkflowCreate_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *projectManagementTemplateClient) WorkflowDetail(ctx context.Context, in *ProjectManagementTemplateWorkflowDetailRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateWorkflowDetailResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ProjectManagementTemplateWorkflowDetailResponse)
-	err := c.cc.Invoke(ctx, ProjectManagementTemplate_WorkflowDetail_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *projectManagementTemplateClient) WorkflowUpdate(ctx context.Context, in *ProjectManagementTemplateWorkflowUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateWorkflowDetailResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ProjectManagementTemplateWorkflowDetailResponse)
-	err := c.cc.Invoke(ctx, ProjectManagementTemplate_WorkflowUpdate_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *projectManagementTemplateClient) WorkflowDelete(ctx context.Context, in *ProjectManagementTemplateWorkflowDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(proto.EmptyResponse)
-	err := c.cc.Invoke(ctx, ProjectManagementTemplate_WorkflowDelete_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *projectManagementTemplateClient) WorkflowDefault(ctx context.Context, in *ProjectManagementTemplateWorkflowDefaultRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(proto.EmptyResponse)
-	err := c.cc.Invoke(ctx, ProjectManagementTemplate_WorkflowDefault_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *projectManagementTemplateClient) Detail(ctx context.Context, in *ProjectManagementTemplateDetailRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateDetailResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ProjectManagementTemplateDetailResponse)
@@ -202,12 +130,6 @@ type ProjectManagementTemplateServer interface {
 	Delete(context.Context, *proto.PathIdRequest) (*proto.EmptyResponse, error)
 	Status(context.Context, *ProjectManagementTemplateStatusRequest) (*ProjectManagementTemplateDetailResponse, error)
 	Defaults(context.Context, *proto.PathIdRequest) (*proto.EmptyResponse, error)
-	Workflows(context.Context, *proto.PathIdRequest) (*ProjectManagementTemplateWorkflowResponse, error)
-	WorkflowCreate(context.Context, *ProjectManagementTemplateWorkflowCreateRequest) (*ProjectManagementTemplateWorkflowDetailResponse, error)
-	WorkflowDetail(context.Context, *ProjectManagementTemplateWorkflowDetailRequest) (*ProjectManagementTemplateWorkflowDetailResponse, error)
-	WorkflowUpdate(context.Context, *ProjectManagementTemplateWorkflowUpdateRequest) (*ProjectManagementTemplateWorkflowDetailResponse, error)
-	WorkflowDelete(context.Context, *ProjectManagementTemplateWorkflowDeleteRequest) (*proto.EmptyResponse, error)
-	WorkflowDefault(context.Context, *ProjectManagementTemplateWorkflowDefaultRequest) (*proto.EmptyResponse, error)
 	Detail(context.Context, *ProjectManagementTemplateDetailRequest) (*ProjectManagementTemplateDetailResponse, error)
 	mustEmbedUnimplementedProjectManagementTemplateServer()
 }
@@ -236,24 +158,6 @@ func (UnimplementedProjectManagementTemplateServer) Status(context.Context, *Pro
 }
 func (UnimplementedProjectManagementTemplateServer) Defaults(context.Context, *proto.PathIdRequest) (*proto.EmptyResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Defaults not implemented")
-}
-func (UnimplementedProjectManagementTemplateServer) Workflows(context.Context, *proto.PathIdRequest) (*ProjectManagementTemplateWorkflowResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method Workflows not implemented")
-}
-func (UnimplementedProjectManagementTemplateServer) WorkflowCreate(context.Context, *ProjectManagementTemplateWorkflowCreateRequest) (*ProjectManagementTemplateWorkflowDetailResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method WorkflowCreate not implemented")
-}
-func (UnimplementedProjectManagementTemplateServer) WorkflowDetail(context.Context, *ProjectManagementTemplateWorkflowDetailRequest) (*ProjectManagementTemplateWorkflowDetailResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method WorkflowDetail not implemented")
-}
-func (UnimplementedProjectManagementTemplateServer) WorkflowUpdate(context.Context, *ProjectManagementTemplateWorkflowUpdateRequest) (*ProjectManagementTemplateWorkflowDetailResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method WorkflowUpdate not implemented")
-}
-func (UnimplementedProjectManagementTemplateServer) WorkflowDelete(context.Context, *ProjectManagementTemplateWorkflowDeleteRequest) (*proto.EmptyResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method WorkflowDelete not implemented")
-}
-func (UnimplementedProjectManagementTemplateServer) WorkflowDefault(context.Context, *ProjectManagementTemplateWorkflowDefaultRequest) (*proto.EmptyResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method WorkflowDefault not implemented")
 }
 func (UnimplementedProjectManagementTemplateServer) Detail(context.Context, *ProjectManagementTemplateDetailRequest) (*ProjectManagementTemplateDetailResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Detail not implemented")
@@ -388,114 +292,6 @@ func _ProjectManagementTemplate_Defaults_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ProjectManagementTemplate_Workflows_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(proto.PathIdRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProjectManagementTemplateServer).Workflows(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ProjectManagementTemplate_Workflows_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectManagementTemplateServer).Workflows(ctx, req.(*proto.PathIdRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProjectManagementTemplate_WorkflowCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ProjectManagementTemplateWorkflowCreateRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProjectManagementTemplateServer).WorkflowCreate(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ProjectManagementTemplate_WorkflowCreate_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectManagementTemplateServer).WorkflowCreate(ctx, req.(*ProjectManagementTemplateWorkflowCreateRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProjectManagementTemplate_WorkflowDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ProjectManagementTemplateWorkflowDetailRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProjectManagementTemplateServer).WorkflowDetail(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ProjectManagementTemplate_WorkflowDetail_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectManagementTemplateServer).WorkflowDetail(ctx, req.(*ProjectManagementTemplateWorkflowDetailRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProjectManagementTemplate_WorkflowUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ProjectManagementTemplateWorkflowUpdateRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProjectManagementTemplateServer).WorkflowUpdate(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ProjectManagementTemplate_WorkflowUpdate_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectManagementTemplateServer).WorkflowUpdate(ctx, req.(*ProjectManagementTemplateWorkflowUpdateRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProjectManagementTemplate_WorkflowDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ProjectManagementTemplateWorkflowDeleteRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProjectManagementTemplateServer).WorkflowDelete(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ProjectManagementTemplate_WorkflowDelete_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectManagementTemplateServer).WorkflowDelete(ctx, req.(*ProjectManagementTemplateWorkflowDeleteRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProjectManagementTemplate_WorkflowDefault_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ProjectManagementTemplateWorkflowDefaultRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProjectManagementTemplateServer).WorkflowDefault(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ProjectManagementTemplate_WorkflowDefault_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectManagementTemplateServer).WorkflowDefault(ctx, req.(*ProjectManagementTemplateWorkflowDefaultRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _ProjectManagementTemplate_Detail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ProjectManagementTemplateDetailRequest)
 	if err := dec(in); err != nil {
@@ -544,30 +340,6 @@ var ProjectManagementTemplate_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Defaults",
 			Handler:    _ProjectManagementTemplate_Defaults_Handler,
-		},
-		{
-			MethodName: "Workflows",
-			Handler:    _ProjectManagementTemplate_Workflows_Handler,
-		},
-		{
-			MethodName: "WorkflowCreate",
-			Handler:    _ProjectManagementTemplate_WorkflowCreate_Handler,
-		},
-		{
-			MethodName: "WorkflowDetail",
-			Handler:    _ProjectManagementTemplate_WorkflowDetail_Handler,
-		},
-		{
-			MethodName: "WorkflowUpdate",
-			Handler:    _ProjectManagementTemplate_WorkflowUpdate_Handler,
-		},
-		{
-			MethodName: "WorkflowDelete",
-			Handler:    _ProjectManagementTemplate_WorkflowDelete_Handler,
-		},
-		{
-			MethodName: "WorkflowDefault",
-			Handler:    _ProjectManagementTemplate_WorkflowDefault_Handler,
 		},
 		{
 			MethodName: "Detail",

@@ -18,7 +18,7 @@ type ProjectManagementWorkflowRepo struct {
 }
 
 func preloadWorkflowTransitions(db *gorm.DB) *gorm.DB {
-	return db.Order("project_management_workflow_transitions.id ASC")
+	return db.Preload("FromStage").Preload("ToStage").Order("project_management_workflow_transitions.id ASC")
 }
 
 func NewProjectManagementWorkflowRepo(db *gorm.DB) *ProjectManagementWorkflowRepo {

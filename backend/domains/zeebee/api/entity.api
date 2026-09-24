@@ -12,8 +12,8 @@ type (
         Name               string                                  `json:"name"`
         Description        string                                  `json:"description"`
         IsDefault          bool                                    `json:"is_default"`
-		Stages             []*ProjectManagementStageEntity          `json:"stages"`
-		Transitions        []*ProjectManagementWorkflowStageTransitionEntity `json:"transitions"`
+		Stages             []ProjectManagementStageEntity          `json:"stages,omitempty"`
+		Transitions        []ProjectManagementWorkflowStageTransitionEntity `json:"transitions"`
         SourceTemplateId   int64                                   `json:"source_template_id"`
         SourceTemplateName string                                  `json:"source_template_name"`
 		EntityType         string                                  `json:"entity_type"`
@@ -28,7 +28,9 @@ type (
         WorkflowId          int64    `json:"workflow_id"`
         Name                string   `json:"name"`
         FromStageId         int64    `json:"from_stage_id"`
+        FromStage           ProjectManagementStageEntity `json:"from_stage"`
         ToStageId           int64    `json:"to_stage_id"`
+        ToStage             ProjectManagementStageEntity `json:"to_stage"`
         AllowedActorTypes   []string `json:"allowed_actor_types"`
         CreatedAt           string   `json:"created_at"`
         UpdatedAt           string   `json:"updated_at"`

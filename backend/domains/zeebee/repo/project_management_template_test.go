@@ -32,4 +32,8 @@ func TestProjectManagementTemplatePreloadsStages(t *testing.T) {
 	if len(got.Stages) != 1 || got.Stages[0].Id != stages[0].Id {
 		t.Fatalf("unexpected template stages: %#v", got.Stages)
 	}
+	listed, err := NewProjectManagementTemplateRepo(db).ListStages(t.Context(), template.Id)
+	if err != nil || len(listed) != 1 || listed[0].Id != stages[0].Id {
+		t.Fatalf("listed template stages: %#v, %v", listed, err)
+	}
 }

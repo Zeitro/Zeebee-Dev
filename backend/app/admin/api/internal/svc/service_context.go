@@ -35,6 +35,7 @@ type ServiceContext struct {
 	OrganizationSubscriptionRpcClient  admin.OrganizationSubscriptionClient
 	ProjectManagementTemplateRpcClient admin.ProjectManagementTemplateClient
 	ProjectManagementStageRpcClient    admin.ProjectManagementStageClient
+	ProjectManagementWorkflowRpcClient admin.ProjectManagementWorkflowClient
 }
 
 func NewServiceContext(c config.ApiConf, logger logx.Logger) *ServiceContext {
@@ -61,5 +62,6 @@ func NewServiceContext(c config.ApiConf, logger logx.Logger) *ServiceContext {
 		OrganizationSubscriptionRpcClient:  admin.NewOrganizationSubscriptionClient(rpcClient.Conn()),
 		ProjectManagementTemplateRpcClient: admin.NewProjectManagementTemplateClient(rpcClient.Conn()),
 		ProjectManagementStageRpcClient:    admin.NewProjectManagementStageClient(rpcClient.Conn()),
+		ProjectManagementWorkflowRpcClient: admin.NewProjectManagementWorkflowClient(rpcClient.Conn()),
 	}
 }

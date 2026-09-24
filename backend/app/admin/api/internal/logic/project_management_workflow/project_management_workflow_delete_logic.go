@@ -1,4 +1,4 @@
-package project_management_template
+package project_management_workflow
 
 import (
 	"context"
@@ -27,11 +27,11 @@ func NewProjectManagementWorkflowDeleteLogic(ctx context.Context, svcCtx *svc.Se
 }
 
 func (l *ProjectManagementWorkflowDeleteLogic) ProjectManagementWorkflowDelete(req *types.ProjectManagementWorkflowDetailRequest) (resp *types.EmptyResponse, err error) {
-	data, err := copierx.Trans[types.ProjectManagementWorkflowDetailRequest, admin.ProjectManagementTemplateWorkflowDeleteRequestData](req)
+	data, err := copierx.Trans[types.ProjectManagementWorkflowDetailRequest, admin.ProjectManagementWorkflowDeleteRequestData](req)
 	if err != nil {
 		return nil, err
 	}
-	if _, err = l.svcCtx.ProjectManagementTemplateRpcClient.WorkflowDelete(l.ctx, &admin.ProjectManagementTemplateWorkflowDeleteRequest{Data: data}); err != nil {
+	if _, err = l.svcCtx.ProjectManagementWorkflowRpcClient.Delete(l.ctx, &admin.ProjectManagementWorkflowDeleteRequest{Data: data}); err != nil {
 		return nil, err
 	}
 	return &types.EmptyResponse{}, nil

@@ -54,36 +54,6 @@ func (s *ProjectManagementTemplateServer) Defaults(ctx context.Context, in *prot
 	return l.Defaults(in)
 }
 
-func (s *ProjectManagementTemplateServer) Workflows(ctx context.Context, in *proto.PathIdRequest) (*admin.ProjectManagementTemplateWorkflowResponse, error) {
-	l := projectmanagementtemplatelogic.NewWorkflowsLogic(ctx, s.svcCtx)
-	return l.Workflows(in)
-}
-
-func (s *ProjectManagementTemplateServer) WorkflowCreate(ctx context.Context, in *admin.ProjectManagementTemplateWorkflowCreateRequest) (*admin.ProjectManagementTemplateWorkflowDetailResponse, error) {
-	l := projectmanagementtemplatelogic.NewWorkflowCreateLogic(ctx, s.svcCtx)
-	return l.WorkflowCreate(in)
-}
-
-func (s *ProjectManagementTemplateServer) WorkflowDetail(ctx context.Context, in *admin.ProjectManagementTemplateWorkflowDetailRequest) (*admin.ProjectManagementTemplateWorkflowDetailResponse, error) {
-	l := projectmanagementtemplatelogic.NewWorkflowDetailLogic(ctx, s.svcCtx)
-	return l.WorkflowDetail(in)
-}
-
-func (s *ProjectManagementTemplateServer) WorkflowUpdate(ctx context.Context, in *admin.ProjectManagementTemplateWorkflowUpdateRequest) (*admin.ProjectManagementTemplateWorkflowDetailResponse, error) {
-	l := projectmanagementtemplatelogic.NewWorkflowUpdateLogic(ctx, s.svcCtx)
-	return l.WorkflowUpdate(in)
-}
-
-func (s *ProjectManagementTemplateServer) WorkflowDelete(ctx context.Context, in *admin.ProjectManagementTemplateWorkflowDeleteRequest) (*proto.EmptyResponse, error) {
-	l := projectmanagementtemplatelogic.NewWorkflowDeleteLogic(ctx, s.svcCtx)
-	return l.WorkflowDelete(in)
-}
-
-func (s *ProjectManagementTemplateServer) WorkflowDefault(ctx context.Context, in *admin.ProjectManagementTemplateWorkflowDefaultRequest) (*proto.EmptyResponse, error) {
-	l := projectmanagementtemplatelogic.NewWorkflowDefaultLogic(ctx, s.svcCtx)
-	return l.WorkflowDefault(in)
-}
-
 func (s *ProjectManagementTemplateServer) Detail(ctx context.Context, in *admin.ProjectManagementTemplateDetailRequest) (*admin.ProjectManagementTemplateDetailResponse, error) {
 	l := projectmanagementtemplatelogic.NewDetailLogic(ctx, s.svcCtx)
 	return l.Detail(in)

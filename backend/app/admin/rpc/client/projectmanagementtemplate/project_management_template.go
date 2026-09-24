@@ -16,32 +16,19 @@ import (
 )
 
 type (
-	ProjectManagementTemplateCreateRequest              = admin.ProjectManagementTemplateCreateRequest
-	ProjectManagementTemplateCreateRequestData          = admin.ProjectManagementTemplateCreateRequestData
-	ProjectManagementTemplateDetailRequest              = admin.ProjectManagementTemplateDetailRequest
-	ProjectManagementTemplateDetailRequestData          = admin.ProjectManagementTemplateDetailRequestData
-	ProjectManagementTemplateDetailResponse             = admin.ProjectManagementTemplateDetailResponse
-	ProjectManagementTemplatePageRequest                = admin.ProjectManagementTemplatePageRequest
-	ProjectManagementTemplatePageRequestData            = admin.ProjectManagementTemplatePageRequestData
-	ProjectManagementTemplatePageRequestFilter          = admin.ProjectManagementTemplatePageRequestFilter
-	ProjectManagementTemplatePageResponse               = admin.ProjectManagementTemplatePageResponse
-	ProjectManagementTemplateStatusRequest              = admin.ProjectManagementTemplateStatusRequest
-	ProjectManagementTemplateStatusRequestData          = admin.ProjectManagementTemplateStatusRequestData
-	ProjectManagementTemplateUpdateRequest              = admin.ProjectManagementTemplateUpdateRequest
-	ProjectManagementTemplateUpdateRequestData          = admin.ProjectManagementTemplateUpdateRequestData
-	ProjectManagementTemplateWorkflowCreateRequest      = admin.ProjectManagementTemplateWorkflowCreateRequest
-	ProjectManagementTemplateWorkflowCreateRequestData  = admin.ProjectManagementTemplateWorkflowCreateRequestData
-	ProjectManagementTemplateWorkflowDefaultRequest     = admin.ProjectManagementTemplateWorkflowDefaultRequest
-	ProjectManagementTemplateWorkflowDefaultRequestData = admin.ProjectManagementTemplateWorkflowDefaultRequestData
-	ProjectManagementTemplateWorkflowDeleteRequest      = admin.ProjectManagementTemplateWorkflowDeleteRequest
-	ProjectManagementTemplateWorkflowDeleteRequestData  = admin.ProjectManagementTemplateWorkflowDeleteRequestData
-	ProjectManagementTemplateWorkflowDetailRequest      = admin.ProjectManagementTemplateWorkflowDetailRequest
-	ProjectManagementTemplateWorkflowDetailRequestData  = admin.ProjectManagementTemplateWorkflowDetailRequestData
-	ProjectManagementTemplateWorkflowDetailResponse     = admin.ProjectManagementTemplateWorkflowDetailResponse
-	ProjectManagementTemplateWorkflowResponse           = admin.ProjectManagementTemplateWorkflowResponse
-	ProjectManagementTemplateWorkflowTransitionInput    = admin.ProjectManagementTemplateWorkflowTransitionInput
-	ProjectManagementTemplateWorkflowUpdateRequest      = admin.ProjectManagementTemplateWorkflowUpdateRequest
-	ProjectManagementTemplateWorkflowUpdateRequestData  = admin.ProjectManagementTemplateWorkflowUpdateRequestData
+	ProjectManagementTemplateCreateRequest     = admin.ProjectManagementTemplateCreateRequest
+	ProjectManagementTemplateCreateRequestData = admin.ProjectManagementTemplateCreateRequestData
+	ProjectManagementTemplateDetailRequest     = admin.ProjectManagementTemplateDetailRequest
+	ProjectManagementTemplateDetailRequestData = admin.ProjectManagementTemplateDetailRequestData
+	ProjectManagementTemplateDetailResponse    = admin.ProjectManagementTemplateDetailResponse
+	ProjectManagementTemplatePageRequest       = admin.ProjectManagementTemplatePageRequest
+	ProjectManagementTemplatePageRequestData   = admin.ProjectManagementTemplatePageRequestData
+	ProjectManagementTemplatePageRequestFilter = admin.ProjectManagementTemplatePageRequestFilter
+	ProjectManagementTemplatePageResponse      = admin.ProjectManagementTemplatePageResponse
+	ProjectManagementTemplateStatusRequest     = admin.ProjectManagementTemplateStatusRequest
+	ProjectManagementTemplateStatusRequestData = admin.ProjectManagementTemplateStatusRequestData
+	ProjectManagementTemplateUpdateRequest     = admin.ProjectManagementTemplateUpdateRequest
+	ProjectManagementTemplateUpdateRequestData = admin.ProjectManagementTemplateUpdateRequestData
 
 	ProjectManagementTemplate interface {
 		Page(ctx context.Context, in *ProjectManagementTemplatePageRequest, opts ...grpc.CallOption) (*ProjectManagementTemplatePageResponse, error)
@@ -50,12 +37,6 @@ type (
 		Delete(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 		Status(ctx context.Context, in *ProjectManagementTemplateStatusRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateDetailResponse, error)
 		Defaults(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
-		Workflows(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateWorkflowResponse, error)
-		WorkflowCreate(ctx context.Context, in *ProjectManagementTemplateWorkflowCreateRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateWorkflowDetailResponse, error)
-		WorkflowDetail(ctx context.Context, in *ProjectManagementTemplateWorkflowDetailRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateWorkflowDetailResponse, error)
-		WorkflowUpdate(ctx context.Context, in *ProjectManagementTemplateWorkflowUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateWorkflowDetailResponse, error)
-		WorkflowDelete(ctx context.Context, in *ProjectManagementTemplateWorkflowDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
-		WorkflowDefault(ctx context.Context, in *ProjectManagementTemplateWorkflowDefaultRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error)
 		Detail(ctx context.Context, in *ProjectManagementTemplateDetailRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateDetailResponse, error)
 	}
 
@@ -98,36 +79,6 @@ func (m *defaultProjectManagementTemplate) Status(ctx context.Context, in *Proje
 func (m *defaultProjectManagementTemplate) Defaults(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
 	client := admin.NewProjectManagementTemplateClient(m.cli.Conn())
 	return client.Defaults(ctx, in, opts...)
-}
-
-func (m *defaultProjectManagementTemplate) Workflows(ctx context.Context, in *proto.PathIdRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateWorkflowResponse, error) {
-	client := admin.NewProjectManagementTemplateClient(m.cli.Conn())
-	return client.Workflows(ctx, in, opts...)
-}
-
-func (m *defaultProjectManagementTemplate) WorkflowCreate(ctx context.Context, in *ProjectManagementTemplateWorkflowCreateRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateWorkflowDetailResponse, error) {
-	client := admin.NewProjectManagementTemplateClient(m.cli.Conn())
-	return client.WorkflowCreate(ctx, in, opts...)
-}
-
-func (m *defaultProjectManagementTemplate) WorkflowDetail(ctx context.Context, in *ProjectManagementTemplateWorkflowDetailRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateWorkflowDetailResponse, error) {
-	client := admin.NewProjectManagementTemplateClient(m.cli.Conn())
-	return client.WorkflowDetail(ctx, in, opts...)
-}
-
-func (m *defaultProjectManagementTemplate) WorkflowUpdate(ctx context.Context, in *ProjectManagementTemplateWorkflowUpdateRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateWorkflowDetailResponse, error) {
-	client := admin.NewProjectManagementTemplateClient(m.cli.Conn())
-	return client.WorkflowUpdate(ctx, in, opts...)
-}
-
-func (m *defaultProjectManagementTemplate) WorkflowDelete(ctx context.Context, in *ProjectManagementTemplateWorkflowDeleteRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
-	client := admin.NewProjectManagementTemplateClient(m.cli.Conn())
-	return client.WorkflowDelete(ctx, in, opts...)
-}
-
-func (m *defaultProjectManagementTemplate) WorkflowDefault(ctx context.Context, in *ProjectManagementTemplateWorkflowDefaultRequest, opts ...grpc.CallOption) (*proto.EmptyResponse, error) {
-	client := admin.NewProjectManagementTemplateClient(m.cli.Conn())
-	return client.WorkflowDefault(ctx, in, opts...)
 }
 
 func (m *defaultProjectManagementTemplate) Detail(ctx context.Context, in *ProjectManagementTemplateDetailRequest, opts ...grpc.CallOption) (*ProjectManagementTemplateDetailResponse, error) {

@@ -4,17 +4,17 @@ import "common.api"
 
 
 type ProjectManagementWorkflowCreateRequest {
-    Id          int64   `path:"template_id" validate:"required,gt=0"`
+    TemplateId  int64   `path:"template_id" validate:"required,gt=0"`
     Name        string  `json:"name" validate:"required,max=100"`
     Description string  `json:"description,optional" validate:"max=500"`
-    Transitions []ProjectManagementWorkflowTransitionInput `json:"transitions" validate:"required,min=1,dive"`
+    Transitions []ProjectManagementWorkflowTransitionInput `json:"transitions" validate:"required,min=2,dive"`
 }
 
 
 
 type ProjectManagementWorkflowUpdateRequest {
-    Id          int64  `path:"template_id" validate:"required,gt=0"`
-    WorkflowId  int64  `path:"id" validate:"required,gt=0"`
+    TemplateId  int64  `path:"template_id" validate:"required,gt=0"`
+    Id          int64  `path:"id" validate:"required,gt=0"`
     Name        string `json:"name" validate:"required,max=100"`
     Description string `json:"description,optional" validate:"max=500"`
     Transitions []ProjectManagementWorkflowTransitionInput `json:"transitions" validate:"required,min=1,dive"`
@@ -25,17 +25,17 @@ type ProjectManagementWorkflowTransitionInput {
     Name              string   `json:"name" validate:"required,max=100"`
     FromStageId       int64    `json:"from_stage_id" validate:"required,gt=0"`
     ToStageId         int64    `json:"to_stage_id" validate:"required,gt=0,nefield=FromStageId"`
-    AllowedActorTypes []string `json:"allowed_actor_types,optional"`
+    AllowedActorTypes []string `json:"allowed_actor_types,optional" validate:"omitempty,dive,oneof=ProjectOwner ProjectAdmin TaskExecutor TaskCreator"`
 }
 
 
 type ProjectManagementWorkflowDetailRequest {
-    Id         int64 `path:"template_id" validate:"required,gt=0"`
-    WorkflowId int64 `path:"id" validate:"required,gt=0"`
+    TemplateId int64 `path:"template_id" validate:"required,gt=0"`
+    Id         int64 `path:"id" validate:"required,gt=0"`
 }
 
 type ProjectManagementTemplateWorflowRequest {
-    Id int64 `path:"template_id" validate:"required,gt=0"`
+    TemplateId int64 `path:"template_id" validate:"required,gt=0"`
 }
 
 type ProjectManagementTemplateWorflowResonse {
@@ -59,7 +59,7 @@ type ProjectManagementTemplateWorflowEntity {
 @server (
     desc: "admin project management template workflows"
     version: v1
-    group: project_management_template
+    group: project_management_workflow
     prefix: /api/v1
     middleware: AuthMiddleware
     tags: project_management_workflow

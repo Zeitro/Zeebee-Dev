@@ -48,6 +48,7 @@ func TestProjectManagementTemplateLifecycleAndDiscovery(t *testing.T) {
 	require.Equal(t, "Renamed", updated.Name)
 	require.Equal(t, "Updated", updated.Description)
 	require.Equal(t, 12, updated.SortOrder)
+	require.Equal(t, (*inputStages)[0].Id, updated.Stages[0].Id)
 	_, err = logic.Update(t.Context(), adminClaim, created.Id, dto.ProjectManagementTemplateUpdateDto{ProjectType: constants.ProjectManagementProjectTypeOrdinary, Stages: *inputStages})
 	require.ErrorContains(t, err, "project type cannot be changed")
 	persisted, err := logic.Detail(t.Context(), adminClaim, created.Id)
@@ -71,6 +72,13 @@ func TestProjectManagementTemplateLifecycleAndDiscovery(t *testing.T) {
 	require.True(t, workflows[0].IsDefault)
 	require.Len(t, workflows[0].Stages, 3)
 	require.Len(t, workflows[0].Transitions, 2)
+	transitions, err := copierx.Trans[[]*model.ProjectManagementWorkflowStageTransition, []dto.ProjectManagementWorkflowTransitionDto](&workflows[0].Transitions)
+	require.NoError(t, err)
+	(*transitions)[0].Name = "Renamed transition"
+	workflow, err := logic.UpdateWorkflow(t.Context(), adminClaim, created.Id, workflows[0].Id, dto.ProjectManagementWorkflowDto{Name: workflows[0].Name, Description: workflows[0].Description, Transitions: *transitions})
+	require.NoError(t, err)
+	require.Equal(t, workflows[0].Transitions[0].Id, workflow.Transitions[0].Id)
+	require.Equal(t, "Renamed transition", workflow.Transitions[0].Name)
 	orgTemplate := &model.ProjectManagementTemplate{TemplateType: constants.ProjectManagementTemplateTypeOrganization, OrganizationId: 9, Name: "Organization", Status: "Active", ProjectType: constants.ProjectManagementProjectTypeOrdinary}
 	require.NoError(t, db.Create(orgTemplate).Error)
 	foreignTemplate := &model.ProjectManagementTemplate{TemplateType: constants.ProjectManagementTemplateTypeOrganization, OrganizationId: 10, Name: "Foreign", Status: "Active", ProjectType: constants.ProjectManagementProjectTypeOrdinary}
