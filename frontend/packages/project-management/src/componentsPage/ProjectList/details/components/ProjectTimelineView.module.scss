@@ -1,0 +1,63 @@
+/**
+ * 甘特视觉对齐 borrower 主题：主色任务条；今天仅用 error 刻度、无列底色。
+ * :global 类名来自 @rsagiev/gantt-task-react-19@0.3.9。
+ */
+.ganttHost {
+	min-width: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	background: var(--background);
+}
+
+.ganttHost :global(> div) {
+	max-width: 100%;
+	height: 100%;
+	box-sizing: border-box;
+}
+
+/* 行底统一白底，与表格一致、不做斑马纹 */
+.ganttHost :global(._2dZTy) {
+	fill: #ffffff;
+}
+
+.ganttHost :global(._2dZTy:nth-child(even)) {
+	fill: #ffffff;
+}
+
+.ganttHost :global(._3rUKi),
+.ganttHost :global(._RuwuK) {
+	stroke: var(--base-border);
+	stroke-opacity: 0.55;
+}
+
+/* 日历表头与表格 thead 一致 */
+.ganttHost :global(._35nLX) {
+	fill: var(--gray-light);
+	stroke: var(--base-border);
+}
+
+.ganttHost :global(._9w8d5),
+.ganttHost :global(._2q1Kt) {
+	fill: var(--foreground);
+	font-size: 12px;
+	font-weight: 500;
+}
+
+/* 主色条内工期白字；条外用 foreground */
+.ganttHost :global(._3zRJQ) {
+	fill: #fff;
+	font-weight: 500;
+	font-size: 11px;
+}
+
+.ganttHost :global(._3KcaM) {
+	fill: var(--foreground);
+	font-weight: 500;
+	font-size: 11px;
+}
+
+.ganttHost :global(._2k9Ys) {
+	background: var(--gray-light);
+	border-top: 1px solid var(--base-border);
+}

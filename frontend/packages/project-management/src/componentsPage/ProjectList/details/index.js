@@ -1,21 +1,20 @@
 /**
- * 项目详情入口：顶栏操作与看板/列表/时间线/工时切换。
- * 任务抽屉与成员类弹层由本页统一挂载；看板只渲染列。
- * 项目与任务数据暂走 useKanbanBoard，供顶栏与看板共用。
+ * 项目详情入口：顶栏是项目操作；任务页签右侧才放视图切换和新建任务。
+ * 表格 / 时间线 / 工时 / 文档在各自组件内拉数；本页只编排顶栏、看板与共享弹层。
  */
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
 import { Spin, message } from 'antd';
 import { useParams } from 'next/navigation';
-import { EmptyWorkflow } from '../kanban/components/EmptyWorkflow';
 import { KanbanHeader } from '../kanban/components/KanbanHeader';
 import { useKanbanBoard } from '../kanban/hooks/useKanbanBoard';
-import { ProjectKanbanBoard } from '../kanban';
-import { PROJECT_DETAIL_VIEW } from './constants';
+import { PROJECT_DETAIL_TAB } from './constants';
 import { ProjectDetailDrawers } from './components/ProjectDetailDrawers';
-import { ProjectViewPlaceholder } from './components/ProjectViewPlaceholder';
-import { ProjectViewSwitch } from './components/ProjectViewSwitch';
+import { ProjectDocumentsView } from './components/ProjectDocumentsView';
+import { ProjectPageTabs } from './components/ProjectPageTabs';
+import { ProjectTaskToolbar } from './components/ProjectTaskToolbar';
+import { ProjectTaskViews } from './components/ProjectTaskViews';
 import { useProjectDetailQuery } from './hooks/useProjectDetailQuery';
 
 /**
@@ -25,7 +24,7 @@ export function ProjectDetails({ PERMISSIONS }) {
 	const { id: projectId } = useParams();
 	const [messageApi, messageContextHolder] = message.useMessage();
 	const { loading, workflow, ...board } = useKanbanBoard(projectId, messageApi);
-	const { view, setView, taskId, setTaskQuery } = useProjectDetailQuery();
+	const { tab, setTab, view, setView, taskId, setTaskQuery } = useProjectDetailQuery();
 	const seedTask = useMemo(
 		() => (taskId ? board.tasks.find((item) => item.id === taskId) || null : null),
 		[taskId, board.tasks],
@@ -36,16 +35,22 @@ export function ProjectDetails({ PERMISSIONS }) {
 	const [memberListOpen, setMemberListOpen] = useState(false);
 	const [inviteOpen, setInviteOpen] = useState(false);
 	const [projectActivityOpen, setProjectActivityOpen] = useState(false);
+	const [catalogRevision, setCatalogRevision] = useState(0);
 
 	const currentProjectRole = board.projectMembers.find(
 		(item) => item.organization_user_id === board.userId,
 	)?.role;
 	const canManage = ['ProjectAdmin', 'ProjectOwner'].includes(currentProjectRole);
 	const hasWorkflow = Boolean(workflow?.states?.length);
+	const isTaskTab = tab === PROJECT_DETAIL_TAB.TASKS;
 
 	const openCreate = useCallback((parent) => {
 		setCreateParent(parent || null);
 		setCreateOpen(true);
+	}, []);
+
+	const bumpCatalog = useCallback(() => {
+		setCatalogRevision((current) => current + 1);
 	}, []);
 
 	const handleTaskClick = useCallback(
@@ -70,30 +75,45 @@ export function ProjectDetails({ PERMISSIONS }) {
 						taskCount={board.taskTotal || board.tasks.length}
 						canManage={canManage}
 						PERMISSIONS={PERMISSIONS}
-						showCreate={hasWorkflow}
-						extra={<ProjectViewSwitch value={view} onChange={setView} />}
-						onCreateTask={() => openCreate()}
+						showCreate={false}
 						onMembersClick={() => setMemberListOpen(true)}
 						onInviteClick={() => setInviteOpen(true)}
 						onActivityClick={() => setProjectActivityOpen(true)}
 					/>
-					{view === PROJECT_DETAIL_VIEW.KANBAN ? (
-						hasWorkflow ? (
-							<ProjectKanbanBoard
-								workflow={workflow}
-								tasks={board.tasks}
-								stageTaskMeta={board.stageTaskMeta}
-								members={board.members}
-								loadMoreStageTasks={board.loadMoreStageTasks}
-								transitionTask={board.transitionTask}
-								onCreateTask={() => openCreate()}
-								onTaskClick={handleTaskClick}
-							/>
-						) : (
-							<EmptyWorkflow project={board.project} />
-						)
+					<ProjectPageTabs
+						value={tab}
+						onChange={setTab}
+						extra={
+							isTaskTab ? (
+								<ProjectTaskToolbar
+									view={view}
+									onViewChange={setView}
+									showCreate={hasWorkflow}
+									onCreateTask={() => openCreate()}
+								/>
+							) : null
+						}
+					/>
+					{isTaskTab ? (
+						<ProjectTaskViews
+							view={view}
+							projectId={projectId}
+							project={board.project}
+							workflow={workflow}
+							tasks={board.tasks}
+							stageTaskMeta={board.stageTaskMeta}
+							members={board.members}
+							loadMoreStageTasks={board.loadMoreStageTasks}
+							transitionTask={board.transitionTask}
+							catalogRevision={catalogRevision}
+							onCreateTask={() => openCreate()}
+							onTaskClick={handleTaskClick}
+						/>
 					) : (
-						<ProjectViewPlaceholder view={view} />
+						<ProjectDocumentsView
+							key={`${projectId}-${catalogRevision}`}
+							projectId={projectId}
+						/>
 					)}
 					<ProjectDetailDrawers
 						projectId={projectId}
@@ -104,7 +124,10 @@ export function ProjectDetails({ PERMISSIONS }) {
 							setCreateOpen(false);
 							setCreateParent(null);
 						}}
-						onCreateSuccess={board.refreshBoard}
+						onCreateSuccess={() => {
+							board.refreshBoard();
+							bumpCatalog();
+						}}
 						inviteOpen={inviteOpen}
 						onInviteCancel={() => setInviteOpen(false)}
 						memberListOpen={memberListOpen}
@@ -126,7 +149,10 @@ export function ProjectDetails({ PERMISSIONS }) {
 						seedTask={seedTask}
 						onTaskClose={() => setTaskQuery()}
 						onTaskIdChange={setTaskQuery}
-						onTaskMutated={board.refreshBoard}
+						onTaskMutated={() => {
+							board.refreshBoard();
+							bumpCatalog();
+						}}
 					/>
 				</div>
 			)}

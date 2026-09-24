@@ -1,0 +1,37 @@
+/**
+ * 表格撑满剩余高度，分页贴在底部。
+ * 按钮尺寸走 NewTable 默认分页，不要在这里改 item 宽高。
+ */
+.tableFill {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-height: 0;
+	overflow: hidden;
+
+	:global {
+		.ant-table-wrapper,
+		.ant-spin-nested-loading,
+		.ant-spin-container {
+			display: flex;
+			flex: 1;
+			flex-direction: column;
+			min-height: 0;
+			height: 100%;
+		}
+
+		.ant-table {
+			flex: 1;
+			min-height: 0;
+			height: calc(100% - 56px);
+		}
+
+		.ant-pagination {
+			flex-shrink: 0;
+			margin: 0 !important;
+			padding: 12px 16px;
+			border-top: 1px solid var(--base-border);
+			background: #fff;
+		}
+	}
+}

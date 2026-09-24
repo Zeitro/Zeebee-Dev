@@ -1,15 +1,18 @@
 /**
  * 新建任务/子任务：表单校验 + POST `/project_management/task`；
- * 优先级走 options store，任务类型 / 执行者在弹窗内请求。
+ * 优先级走 options store，任务类型 / 执行者 / 项目工作流在弹窗内请求。
+ * 周期 / 开始 / 截止与项目设置同一套字段，仅用于推导 start_at / end_at，不向任务接口传 cycle。
+ * 工作流默认选项目默认项；提交带 `workflow_id`。
  */
 'use client';
 
 import dynamic from 'next/dynamic';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { DatePicker, Form, Input, InputNumber, Select } from 'antd';
+import { Form, Input, InputNumber, Select } from 'antd';
 import { useLocale, useTranslations } from 'next-intl';
 import { NewModal } from '@repo/shared-methods';
-import { createRequest, dayjs, displayValue, formatStr } from '@repo/shared-methods/utils';
+import { createRequest, dayjs, displayValue } from '@repo/shared-methods/utils';
+import { getProjectDetailApi } from '@repo/project-management/api/project';
 import {
 	PROJECT_MEMBER_CANDIDATE_PURPOSE_PROJECT_MEMBER,
 	createProjectMemberApi,
@@ -23,12 +26,53 @@ import {
 } from '@repo/project-management/enum/task';
 import { mapProjectMember } from '@repo/project-management/lib/mapProjectMember';
 import { useOptionsStore } from '@repo/project-management/store/options';
+import { addProjectCycle } from '../../setting/cycle';
+import { ProjectCycleFields } from '../../setting/ProjectCycleFields';
 import { normalizeRichTextValue, toApiDate, unwrapList } from './helpers';
 import { PriorityIcon } from './TaskDetail/PriorityIcon';
 
 const WangEditor = dynamic(() => import('@repo/shared-methods/components/WangEditor'), {
 	ssr: false,
 });
+
+/**
+ * 创建任务时的周期初值：今天起，默认 1 周，截止日期 = 开始 + 周期。
+ * @returns {{ cycle_months: number, cycle_unit: string, start_date: import('dayjs').Dayjs, end_date: import('dayjs').Dayjs }}
+ */
+function createTaskCycleDefaults() {
+	const start = dayjs();
+	return {
+		cycle_months: 1,
+		cycle_unit: 'week',
+		start_date: start,
+		end_date: addProjectCycle(start, 1, 'week'),
+	};
+}
+
+/**
+ * 详情 `workflows` 优先，否则用单个 `workflow`。
+ * @param {object|null|undefined} project
+ * @returns {object[]}
+ */
+function listProjectWorkflows(project) {
+	if (Array.isArray(project?.workflows) && project.workflows.length) return project.workflows;
+	return project?.workflow ? [project.workflow] : [];
+}
+
+/**
+ * 默认工作流：default_workflow_id → is_default → 第一项。
+ * @param {object|null|undefined} project
+ * @param {object[]} workflows
+ * @returns {number|string|undefined}
+ */
+function pickDefaultWorkflowId(project, workflows) {
+	if (!workflows.length) return undefined;
+	const preferred = project?.default_workflow_id;
+	if (preferred != null && workflows.some((row) => String(row.id) === String(preferred))) {
+		return preferred;
+	}
+	return workflows.find((row) => row.is_default)?.id ?? workflows[0]?.id;
+}
 
 /**
  * @param {{
@@ -51,12 +95,12 @@ export default function CreateTaskModal({
 	const t = useTranslations();
 	const locale = useLocale();
 	const [form] = Form.useForm();
-	const startDate = Form.useWatch('start_date', form);
-	const dueDate = Form.useWatch('due_date', form);
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [optionsLoading, setOptionsLoading] = useState(true);
 	const [typeOptions, setTypeOptions] = useState([]);
 	const [assigneeOptions, setAssigneeOptions] = useState([]);
+	const [workflowOptions, setWorkflowOptions] = useState([]);
+	const [cycleDefaults] = useState(createTaskCycleDefaults);
 	const { request } = useMemo(() => createRequest(), []);
 	const taskApi = useMemo(() => createTaskApi(request), [request]);
 	const taskTypeApi = useMemo(() => createTaskTypeApi(request), [request]);
@@ -65,10 +109,6 @@ export default function CreateTaskModal({
 	const priorityOptionsRaw = useOptionsStore((state) => state.priorityOptions);
 	const getOptions = useOptionsStore((state) => state.getOptions);
 
-	// const priorityOptions = useMemo(
-	// 	() => localizeSelectOptions(priorityOptionsRaw, t, getTaskPriorityI18nKey),
-	// 	[priorityOptionsRaw, t],
-	// );
 	const priorityOptions = useMemo(
 		() =>
 			localizeSelectOptions(priorityOptionsRaw, t, getTaskPriorityI18nKey).map((item) => ({
@@ -111,6 +151,23 @@ export default function CreateTaskModal({
 			}));
 	}, [projectId, projectMemberApi]);
 
+	/** @returns {{ options: Array<{ value: number|string, label: string }>, defaultId: number|string|undefined }} */
+	const fetchWorkflowOptions = useCallback(async () => {
+		if (!projectId) return { options: [], defaultId: undefined };
+		const project = await request(getProjectDetailApi(projectId), {
+			method: 'GET',
+			isHideTips: true,
+		});
+		const workflows = listProjectWorkflows(project);
+		const options = workflows.map((row) => ({
+			value: row.id,
+			label: row.is_default
+				? `${displayValue(row.name)} (${t('projectSetting.workflowDefault')})`
+				: displayValue(row.name),
+		}));
+		return { options, defaultId: pickDefaultWorkflowId(project, workflows) };
+	}, [projectId, request, t]);
+
 	useEffect(() => {
 		if (!open) return undefined;
 
@@ -118,20 +175,24 @@ export default function CreateTaskModal({
 		(async () => {
 			setOptionsLoading(true);
 			try {
-				const [, nextTypes, nextAssignees] = await Promise.all([
+				const [, nextTypes, nextAssignees, nextWorkflows] = await Promise.all([
 					getOptions('project_management_priority', 'priorityOptions').catch(() => {}),
 					fetchTaskTypeOptions().catch(() => []),
 					fetchAssigneeOptions().catch(() => []),
+					fetchWorkflowOptions().catch(() => ({ options: [], defaultId: undefined })),
 				]);
 				if (cancelled) return;
 
 				setTypeOptions(nextTypes);
 				setAssigneeOptions(nextAssignees);
+				setWorkflowOptions(nextWorkflows.options);
 
 				const { priorityOptions } = useOptionsStore.getState();
 				form.setFieldsValue({
+					...cycleDefaults,
 					priority: priorityOptions[0]?.value,
 					task_type_id: nextTypes[0]?.value,
+					workflow_id: nextWorkflows.defaultId,
 				});
 			} finally {
 				if (!cancelled) setOptionsLoading(false);
@@ -141,12 +202,21 @@ export default function CreateTaskModal({
 		return () => {
 			cancelled = true;
 		};
-	}, [fetchAssigneeOptions, fetchTaskTypeOptions, form, getOptions, open]);
+	}, [
+		cycleDefaults,
+		fetchAssigneeOptions,
+		fetchTaskTypeOptions,
+		fetchWorkflowOptions,
+		form,
+		getOptions,
+		open,
+	]);
 
 	const handleClose = useCallback(() => {
 		form.resetFields();
 		setTypeOptions([]);
 		setAssigneeOptions([]);
+		setWorkflowOptions([]);
 		onCancel();
 	}, [form, onCancel]);
 
@@ -161,6 +231,7 @@ export default function CreateTaskModal({
 				? values.assignee_ids.map((id) => Number(id)).filter(Boolean)
 				: [];
 			const taskTypeId = values.task_type_id ?? defaultTaskTypeId;
+			const workflowId = values.workflow_id;
 
 			await taskApi.create({
 				project_id: Number(projectId),
@@ -169,8 +240,9 @@ export default function CreateTaskModal({
 				description: values.description || '',
 				priority: values.priority,
 				task_type_id: taskTypeId ? Number(taskTypeId) : undefined,
+				workflow_id: workflowId ? Number(workflowId) : undefined,
 				start_at: toApiDate(values.start_date),
-				end_at: toApiDate(values.due_date),
+				end_at: toApiDate(values.end_date),
 				work_hours: values.estimated_hours ? Number(values.estimated_hours) : undefined,
 				assignee_organization_user_ids: assigneeIds,
 			});
@@ -180,6 +252,7 @@ export default function CreateTaskModal({
 			form.resetFields();
 			setTypeOptions([]);
 			setAssigneeOptions([]);
+			setWorkflowOptions([]);
 			onCancel();
 		} catch (error) {
 			if (error?.errorFields) return;
@@ -214,6 +287,7 @@ export default function CreateTaskModal({
 					autoComplete="off"
 					size="large"
 					disabled={confirmLoading || optionsLoading}
+					initialValues={cycleDefaults}
 				>
 					<Form.Item name="title" label={t('kanban.title')} rules={[{ required: true }]}>
 						<Input placeholder={t('kanban.titlePlaceholder')} />
@@ -261,34 +335,21 @@ export default function CreateTaskModal({
 						</Form.Item>
 					</div>
 
-					<div className="grid grid-cols-2 gap-4">
-						<Form.Item name="start_date" label={t('kanban.startDate')}>
-							<DatePicker
-								className="w-full"
-								format={formatStr}
-								disabledDate={(current) => {
-									if (!current) return false;
-									if (current.isBefore(dayjs(), 'day')) return true;
-									if (dueDate && current.isAfter(dayjs(dueDate), 'day'))
-										return true;
-									return false;
-								}}
-							/>
-						</Form.Item>
-						<Form.Item name="due_date" label={t('kanban.dueDate')}>
-							<DatePicker
-								className="w-full"
-								format={formatStr}
-								disabledDate={(current) => {
-									if (!current) return false;
-									if (current.isBefore(dayjs(), 'day')) return true;
-									if (startDate && current.isBefore(dayjs(startDate), 'day'))
-										return true;
-									return false;
-								}}
-							/>
-						</Form.Item>
-					</div>
+					<Form.Item
+						name="workflow_id"
+						label={t('kanban.workflow')}
+						rules={[{ required: true, message: t('kanban.workflowRequired') }]}
+					>
+						<Select
+							options={workflowOptions}
+							loading={optionsLoading}
+							showSearch
+							optionFilterProp="label"
+							placeholder={t('kanban.workflowPlaceholder')}
+							notFoundContent={optionsLoading ? undefined : t('kanban.emptyWorkflow')}
+						/>
+					</Form.Item>
+
 					<div className="grid grid-cols-2 gap-4">
 						<Form.Item name="estimated_hours" label={t('kanban.estimatedHours')}>
 							<InputNumber className="!w-full" min={0} step={0.5} />
@@ -305,6 +366,7 @@ export default function CreateTaskModal({
 							/>
 						</Form.Item>
 					</div>
+					<ProjectCycleFields />
 				</Form>
 			</div>
 		</NewModal>
