@@ -11,14 +11,16 @@ import (
 )
 
 type DeleteLogic struct {
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx       context.Context
+	svcCtx    *svc.ServiceContext
+	baseLogic *logic.BaseLogic
 }
 
 func NewDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteLogic {
 	return &DeleteLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -27,7 +29,7 @@ func (l *DeleteLogic) Delete(in *borrower.ProjectManagementTaskDeleteRequest) (r
 		err = errorx.New("request data is nil")
 		return
 	}
-	base := logic.GetBaseLogic(l.svcCtx)
+	base := l.baseLogic
 	claim, err := base.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err

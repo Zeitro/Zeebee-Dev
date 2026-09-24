@@ -11,14 +11,16 @@ import (
 )
 
 type DefaultLogic struct {
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx       context.Context
+	svcCtx    *svc.ServiceContext
+	baseLogic *logic.BaseLogic
 }
 
 func NewDefaultLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DefaultLogic {
 	return &DefaultLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -26,7 +28,7 @@ func (l *DefaultLogic) Default(in *proto.PathIdRequest) (resp *proto.EmptyRespon
 	if in.Data == nil {
 		return nil, errorx.New("request data is nil")
 	}
-	base := logic.GetBaseLogic(l.svcCtx)
+	base := l.baseLogic
 	claim, err := base.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err

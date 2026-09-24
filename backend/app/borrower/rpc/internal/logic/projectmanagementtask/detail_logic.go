@@ -14,14 +14,16 @@ import (
 )
 
 type DetailLogic struct {
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx       context.Context
+	svcCtx    *svc.ServiceContext
+	baseLogic *logic.BaseLogic
 }
 
 func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogic {
 	return &DetailLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -30,7 +32,7 @@ func (l *DetailLogic) Detail(in *borrower.ProjectManagementTaskDetailRequest) (r
 		err = errorx.New("request data is nil")
 		return
 	}
-	base := logic.GetBaseLogic(l.svcCtx)
+	base := l.baseLogic
 	claim, err := base.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
@@ -39,7 +41,7 @@ func (l *DetailLogic) Detail(in *borrower.ProjectManagementTaskDetailRequest) (r
 	if err != nil {
 		return nil, err
 	}
-	data, err := taskEntityWithOverdue(l.ctx, logic.GetBaseLogic(l.svcCtx).ProjectManagementTaskLogic, task)
+	data, err := taskEntityWithOverdue(l.ctx, l.baseLogic.ProjectManagementTaskLogic, task)
 	if err != nil {
 		return nil, err
 	}

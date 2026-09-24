@@ -14,14 +14,16 @@ import (
 )
 
 type UpdateRoleLogic struct {
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx       context.Context
+	svcCtx    *svc.ServiceContext
+	baseLogic *logic.BaseLogic
 }
 
 func NewUpdateRoleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateRoleLogic {
 	return &UpdateRoleLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -30,7 +32,7 @@ func (l *UpdateRoleLogic) UpdateRole(in *borrower.ProjectManagementMemberRoleUpd
 		err = errorx.New("request data is nil")
 		return
 	}
-	claim, err := logic.GetBaseLogic(l.svcCtx).GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +40,7 @@ func (l *UpdateRoleLogic) UpdateRole(in *borrower.ProjectManagementMemberRoleUpd
 	if err != nil {
 		return nil, err
 	}
-	if err = logic.GetBaseLogic(l.svcCtx).ProjectManagementMemberLogic.Update(l.ctx, claim, *input); err != nil {
+	if err = l.baseLogic.ProjectManagementMemberLogic.Update(l.ctx, claim, *input); err != nil {
 		return nil, err
 	}
 	return &proto.EmptyResponse{}, nil

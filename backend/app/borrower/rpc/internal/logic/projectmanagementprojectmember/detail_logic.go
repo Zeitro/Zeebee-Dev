@@ -13,14 +13,16 @@ import (
 )
 
 type DetailLogic struct {
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx       context.Context
+	svcCtx    *svc.ServiceContext
+	baseLogic *logic.BaseLogic
 }
 
 func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogic {
 	return &DetailLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -29,11 +31,11 @@ func (l *DetailLogic) Detail(in *borrower.ProjectManagementMemberDetailRequest) 
 		err = errorx.New("request data is nil")
 		return
 	}
-	claim, err := logic.GetBaseLogic(l.svcCtx).GetUserClaimFromCtx(l.ctx)
+	claim, err := l.baseLogic.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	member, err := logic.GetBaseLogic(l.svcCtx).ProjectManagementMemberLogic.Detail(l.ctx, claim, in.Data.ProjectId, in.Data.Id)
+	member, err := l.baseLogic.ProjectManagementMemberLogic.Detail(l.ctx, claim, in.Data.ProjectId, in.Data.Id)
 	if err != nil {
 		return nil, err
 	}
