@@ -18,14 +18,16 @@ const (
 )
 
 type CandidateLogic struct {
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx       context.Context
+	svcCtx    *svc.ServiceContext
+	baseLogic *logic.BaseLogic
 }
 
 func NewCandidateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CandidateLogic {
 	return &CandidateLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -40,7 +42,7 @@ func (l *CandidateLogic) Candidate(in *admin.ProjectManagementStageCandidateRequ
 	if in.Data.WorkflowType == workflowTypeBound && in.Data.WorkflowId == 0 {
 		return nil, errorx.New("workflow id is required for bound workflow type")
 	}
-	base := logic.GetBaseLogic(l.svcCtx)
+	base := l.baseLogic
 	claim, err := base.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
