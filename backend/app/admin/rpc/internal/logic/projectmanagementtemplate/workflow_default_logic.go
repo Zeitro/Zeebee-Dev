@@ -11,14 +11,16 @@ import (
 )
 
 type WorkflowDefaultLogic struct {
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx       context.Context
+	svcCtx    *svc.ServiceContext
+	baseLogic *logic.BaseLogic
 }
 
 func NewWorkflowDefaultLogic(ctx context.Context, svcCtx *svc.ServiceContext) *WorkflowDefaultLogic {
 	return &WorkflowDefaultLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
+		ctx:       ctx,
+		svcCtx:    svcCtx,
+		baseLogic: logic.GetBaseLogic(svcCtx),
 	}
 }
 
@@ -27,7 +29,7 @@ func (l *WorkflowDefaultLogic) WorkflowDefault(in *admin.ProjectManagementTempla
 		err = errorx.New("request data is nil")
 		return
 	}
-	base := logic.GetBaseLogic(l.svcCtx)
+	base := l.baseLogic
 	claim, err := base.GetUserClaimFromCtx(l.ctx)
 	if err != nil {
 		return nil, err
