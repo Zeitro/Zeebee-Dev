@@ -1,5 +1,7 @@
 /**
- * 我的模板：当前用户另存的项目模板。悬停预览，创建走已有 CreateProjectModal。
+ * 我的模板：当前组织的项目模板。悬停预览，创建走已有 CreateProjectModal，可删除。
+ * 列表 POST `/project_management/template/page`，`template_type = Organization`；
+ * 预览 GET / 删除 DELETE `/project_management/template/:id`。
  */
 'use client';
 
@@ -7,11 +9,12 @@ import { Spin } from 'antd';
 import { useTranslations } from 'next-intl';
 import { NoData } from '@repo/shared-methods';
 import { useAuth } from '@repo/shared-methods/hooks';
+import { TEMPLATE_TYPE } from '../../../enum/template';
 import CreateProjectModal from '../../ProjectList/components/CreateProjectModal';
 import { MyTemplateGrid } from '../components/MyTemplateGrid';
 import { TemplatePreviewModal } from '../components/TemplatePreviewModal';
-import { useMyTemplateList } from '../hooks/useMyTemplateList';
 import { useTemplateGallery } from '../hooks/useTemplateGallery';
+import { useTemplatePage } from '../hooks/useTemplatePage';
 import { mapTemplatePreview } from '../lib/mapTemplatePreview';
 
 /**
@@ -21,12 +24,15 @@ export function ProjectTemplateMine({ PERMISSIONS } = {}) {
 	const t = useTranslations();
 	const { hasPermission } = useAuth();
 	const gallery = useTemplateGallery();
-	const { loading, templates, handleDelete, loadPreview } = useMyTemplateList(gallery.messageApi);
+	const { loading, templates, loadDetail, handleDelete } = useTemplatePage({
+		templateType: TEMPLATE_TYPE.ORGANIZATION,
+		messageApi: gallery.messageApi,
+	});
 	const canCreate = !PERMISSIONS || hasPermission(PERMISSIONS?.PROJECT_LIST?.ADD);
 
 	const openPreview = (template) => {
-		gallery.openPreview(template.workflow_template_id || template.workflow_id, async () =>
-			mapTemplatePreview(await loadPreview(template.id)),
+		gallery.openPreview(template.id, async () =>
+			mapTemplatePreview(await loadDetail(template.id)),
 		);
 	};
 
@@ -52,9 +58,7 @@ export function ProjectTemplateMine({ PERMISSIONS } = {}) {
 					templates={templates}
 					canCreate={canCreate}
 					onPreview={openPreview}
-					onCreate={(template) =>
-						gallery.openCreate(template.workflow_template_id || template.workflow_id)
-					}
+					onCreate={(template) => gallery.openCreate(template.id)}
 					onDelete={handleDelete}
 				/>
 			)}

@@ -408,6 +408,7 @@
 		"subtasks": "子任务",
 		"subtaskCount": "子任务数量：{count}",
 		"attachmentCount": "附件数量：{count}",
+		"commentCount": "评论数量：{count}",
 		"parentLink": "父任务：{title}",
 		"backToParent": "返回上级任务",
 		"backViaSubtask": "（子任务）",

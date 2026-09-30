@@ -409,6 +409,7 @@
 		"subtasks": "Subtasks",
 		"subtaskCount": "Subtasks: {count}",
 		"attachmentCount": "Attachments: {count}",
+		"commentCount": "Comments: {count}",
 		"parentLink": "Parent: {title}",
 		"backToParent": "Back to parent",
 		"backViaSubtask": " (Subtask)",

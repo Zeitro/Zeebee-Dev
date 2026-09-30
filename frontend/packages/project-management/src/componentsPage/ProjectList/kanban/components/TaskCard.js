@@ -12,18 +12,19 @@ import {
 } from '@ant-design/icons';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { Tooltip } from 'antd';
 import { useTranslations } from 'next-intl';
 import { displayValue, formatDate } from '@repo/shared-methods/utils';
-import {
-	PROJECT_PRIORITY,
-	getPriorityI18nKey,
-	getPriorityTagClass,
-} from '../../../../enum/project';
+import { getPriorityI18nKey, getPriorityTagClass } from '../../../../enum/project';
 import { toProjectPriorityLevel } from '../../../../enum/task';
 import { getAssigneeIds, getMemberInitial, getMemberLabel } from './helpers';
 import { TASK_PHASE } from '@repo/project-management/enum/task';
-const PILL_CLASS =
-	'inline-flex items-center gap-0.5 px-2 py-0.5 rounded bg-base-text2 text-[11px] text-base-gray leading-[18px]';
+
+/** 标签统一带 1px 边框，保证有色边框的优先级标签与灰底标签等高；颜色类由各变体单独给，避免 Tailwind 同属性冲突 */
+const PILL_BASE =
+	'inline-flex items-center gap-0.5 px-2 py-px rounded border text-[11px] leading-[18px] whitespace-nowrap';
+const PILL_CLASS = `${PILL_BASE} border-transparent bg-base-text2 text-base-gray`;
+const PILL_OVERDUE_CLASS = `${PILL_BASE} border-transparent bg-[var(--error-light)] text-base-error`;
 
 /**
  * 任务卡视觉内容（列内卡与拖拽预览共用）。
@@ -58,86 +59,74 @@ function TaskCardBody({
 		.filter(Boolean);
 	const priorityLevel = toProjectPriorityLevel(task.priority);
 	const priorityKey = getPriorityI18nKey(priorityLevel);
-	const isCriticalPriority = priorityLevel === PROJECT_PRIORITY.URGENT;
+	const hasPills = Boolean(
+		priorityKey || task.due_date || subtaskCount > 0 || commentCount > 0 || attachmentCount > 0,
+	);
 
 	return (
 		<div
-			role={onClick ? 'button' : undefined}
-			tabIndex={onClick ? 0 : undefined}
 			onClick={onClick}
-			onKeyDown={
-				onClick
-					? (event) => {
-							if (event.key === 'Enter') onClick();
-						}
-					: undefined
-			}
-			className={`w-full min-h-[76px] mb-2.5 rounded-lg bg-white px-3.5 py-3 text-left border border-base-border shadow-[0_1px_4px_rgba(0,0,0,0.06)] cursor-grab flex flex-col transition-shadow duration-150 hover:shadow-[0_0_12px_rgba(0,0,0,0.14),0_2px_8px_rgba(0,0,0,0.08)] ${className}`}
+			className={`w-full min-h-[76px] rounded-lg bg-white px-3.5 py-3 text-left border border-base-border shadow-[0_1px_4px_rgba(0,0,0,0.06)] cursor-pointer flex flex-col transition-[box-shadow,border-color] duration-150 hover:border-blue-light hover:shadow-[0_2px_8px_rgba(0,0,0,0.1)] ${
+				isCompleted ? 'opacity-70' : ''
+			} ${className}`}
 		>
-			<div className="flex items-center gap-1.5 h-5">
+			<div className="flex items-start gap-1.5">
 				<p
-					className={`flex-1 text-[13px] font-medium leading-5 truncate ${
-						isCompleted ? 'line-through text-base-disabled' : 'text-black-light'
+					className={`flex-1 min-w-0 text-[13px] font-medium leading-5 line-clamp-2 break-words ${
+						isCompleted ? 'line-through text-base-label' : 'text-black-light'
 					}`}
 				>
 					{displayValue(task.title)}
 				</p>
 				{task.parent_id ? (
-					<SubnodeOutlined
-						className="text-xs text-base-label shrink-0"
+					<Tooltip
 						title={t('kanban.parentLink', {
 							title: parentTitle || `#${task.parent_id}`,
 						})}
-					/>
+					>
+						<SubnodeOutlined className="mt-1 text-xs text-base-label shrink-0" />
+					</Tooltip>
 				) : null}
 			</div>
-			<div className="flex items-center gap-1 my-2 h-[22px] overflow-hidden">
-				{priorityKey ? (
-					<span
-						className={
-							isCriticalPriority
-								? `${PILL_CLASS} !text-base-error`
-								: `${PILL_CLASS} ${getPriorityTagClass(priorityLevel)}`
-						}
-					>
-						{t(priorityKey)}
-					</span>
-				) : null}
-				{task.due_date ? (
-					<span
-						className={`${PILL_CLASS} ${
-							task?.overdue ? '!text-base-error !bg-[var(--error-light)]' : ''
-						}`}
-					>
-						{displayValue(task.due_date, (value) => formatDate(value))}
-					</span>
-				) : null}
-				{subtaskCount > 0 ? (
-					<span
-						className={PILL_CLASS}
-						title={t('kanban.subtaskCount', { count: subtaskCount })}
-					>
-						<PartitionOutlined className="text-[10px]" />
-						{subtaskCount}
-					</span>
-				) : null}
-				{commentCount > 0 ? (
-					<span className={PILL_CLASS}>
-						<MessageOutlined className="text-[10px]" />
-						{commentCount}
-					</span>
-				) : null}
-				{attachmentCount > 0 ? (
-					<span
-						className={PILL_CLASS}
-						title={t('kanban.attachmentCount', { count: attachmentCount })}
-					>
-						<PaperClipOutlined className="text-[10px]" />
-						{attachmentCount}
-					</span>
-				) : null}
-			</div>
-			<div className="flex items-center justify-between">
+			{hasPills ? (
+				<div className="flex flex-wrap items-center gap-1 mt-2">
+					{priorityKey ? (
+						<span className={`${PILL_BASE} ${getPriorityTagClass(priorityLevel)}`}>
+							{t(priorityKey)}
+						</span>
+					) : null}
+					{task.due_date ? (
+						<span className={task?.overdue ? PILL_OVERDUE_CLASS : PILL_CLASS}>
+							{displayValue(task.due_date, (value) => formatDate(value))}
+						</span>
+					) : null}
+					{subtaskCount > 0 ? (
+						<Tooltip title={t('kanban.subtaskCount', { count: subtaskCount })}>
+							<span className={PILL_CLASS}>
+								<PartitionOutlined className="text-[10px]" />
+								{subtaskCount}
+							</span>
+						</Tooltip>
+					) : null}
+					{commentCount > 0 ? (
+						<Tooltip title={t('kanban.commentCount', { count: commentCount })}>
+							<span className={PILL_CLASS}>
+								<MessageOutlined className="text-[10px]" />
+								{commentCount}
+							</span>
+						</Tooltip>
+					) : null}
+					{attachmentCount > 0 ? (
+						<Tooltip title={t('kanban.attachmentCount', { count: attachmentCount })}>
+							<span className={PILL_CLASS}>
+								<PaperClipOutlined className="text-[10px]" />
+								{attachmentCount}
+							</span>
+						</Tooltip>
+					) : null}
+				</div>
+			) : null}
+			<div className="flex items-center justify-between mt-2">
 				<span className="flex items-center text-xs text-base-gray">#{task.id}</span>
 				{assigneeMembers.length > 0 ? (
 					<span className="inline-flex items-center ml-auto">
@@ -185,6 +174,16 @@ export function TaskCard({
 		data: { task, stateId: task.workflow_state_id },
 	});
 
+	/** 外层已由 dnd-kit 挂 role / tabIndex；这里只补键盘打开，并保留 listeners 自带的 onKeyDown */
+	const handleKeyDown = (event) => {
+		listeners?.onKeyDown?.(event);
+		if (event.target !== event.currentTarget) return;
+		if (event.key === 'Enter' || event.key === ' ') {
+			event.preventDefault();
+			onClick?.();
+		}
+	};
+
 	return (
 		<div
 			ref={setNodeRef}
@@ -194,8 +193,10 @@ export function TaskCard({
 				opacity: isDragging ? 0.4 : 1,
 				zIndex: isDragging ? 999 : 'auto',
 			}}
+			className="mb-2.5 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-base-primary focus-visible:ring-offset-1"
 			{...attributes}
 			{...listeners}
+			onKeyDown={handleKeyDown}
 		>
 			<TaskCardBody
 				task={task}
@@ -234,7 +235,7 @@ export function TaskCardDragPreview({
 				parentTitle={parentTitle}
 				subtaskCount={subtaskCount}
 				workflowState={workflowState}
-				className="!mb-0 !shadow-none cursor-grabbing"
+				className="!shadow-none !cursor-grabbing"
 			/>
 		</div>
 	);

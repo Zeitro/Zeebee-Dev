@@ -1,5 +1,6 @@
 /**
  * 我的模板卡片网格。删除确认在卡片内；预览 / 创建回调由页面传入。
+ * `templates` 为 POST `/project_management/template/page` 的 list 项，直接读后端字段。
  */
 'use client';
 
@@ -8,24 +9,8 @@ import { Tag } from 'antd';
 import { useTranslations } from 'next-intl';
 import { DeleteBtn } from '@repo/shared-methods';
 import { displayValue, formatDate } from '@repo/shared-methods/utils';
+import { sortedStages, templateSummary } from '../lib/mapTemplatePreview';
 import { TemplateCoverCard } from './TemplateCoverCard';
-
-/**
- * 描述优先；否则拼包含项。
- * @param {object} template
- * @param {(key: string) => string} t
- * @returns {string}
- */
-function templateSummary(template, t) {
-	const description = String(template?.description || '').trim();
-	if (description) return description;
-	const bits = [
-		template?.include_workflow ? t('projectTemplate.includeWorkflow') : null,
-		template?.include_tasks ? t('projectTemplate.includeTasks') : null,
-		template?.include_members ? t('projectTemplate.includeMembers') : null,
-	].filter(Boolean);
-	return bits.join(' · ') || t('projectTemplate.customFallback');
-}
 
 /**
  * @param {{
@@ -46,7 +31,7 @@ export function MyTemplateGrid({ templates, canCreate, onPreview, onCreate, onDe
 				return (
 					<TemplateCoverCard
 						key={template.id}
-						cover={template.cover_url || template.cover_image}
+						stages={sortedStages(template)}
 						canCreate={canCreate}
 						onPreview={() => onPreview(template)}
 						onCreate={() => onCreate(template)}
@@ -62,7 +47,8 @@ export function MyTemplateGrid({ templates, canCreate, onPreview, onCreate, onDe
 									</Tag>
 								</div>
 								<div className="line-clamp-2 text-xs leading-relaxed text-base-gray">
-									{templateSummary(template, t)}
+									{templateSummary(template) ||
+										t('projectTemplate.customFallback')}
 								</div>
 								{createdAt ? (
 									<div className="mt-2 text-[11px] text-base-label">

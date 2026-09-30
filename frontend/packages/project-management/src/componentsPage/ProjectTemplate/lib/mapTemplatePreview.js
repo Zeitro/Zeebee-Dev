@@ -1,6 +1,6 @@
 /**
- * 将工作流详情或「我的模板」预览响应收成预览弹层结构。纯映射，不改入参、不发请求。
- * 工作流：`stages` + 嵌套 `transitions`（from_stage_id / to_stage_id）。
+ * 将工作流详情 / 模板分页 list 项收成预览弹层结构。纯映射，不改入参、不发请求。
+ * 工作流 / 模板：`stages` + 嵌套 `transitions`（from_stage_id / to_stage_id）。
  * 另存模板：可含 `snapshot_board` / `snapshot_workflow`，或 `workflows[].states` / `tasks`。
  */
 
@@ -126,4 +126,18 @@ export function mapTemplatePreview(data) {
 export function sortedStages(workflow) {
 	const stages = Array.isArray(workflow?.stages) ? [...workflow.stages] : [];
 	return stages.sort((a, b) => (Number(a?.sort_order) || 0) - (Number(b?.sort_order) || 0));
+}
+
+/**
+ * 卡片摘要：`description` 优先，否则按阶段名拼 `A → B`；都没有返回空串，由调用方给兜底文案。
+ * @param {object|null|undefined} template 模板分页 list 项
+ * @returns {string}
+ */
+export function templateSummary(template) {
+	const description = String(template?.description || '').trim();
+	if (description) return description;
+	return sortedStages(template)
+		.map((stage) => stage?.name)
+		.filter(Boolean)
+		.join(' → ');
 }
